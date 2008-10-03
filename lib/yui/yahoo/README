@@ -1,0 +1,106 @@
+YAHOO Global - Release Notes
+
+2.6.0
+  * No change.
+
+2.5.2
+  * YAHOO.lang now overwrites existing methods when included a second time,
+    but preserves methods that are in the old version but not in the new.
+  * augmentObject overwrite flag works correctly with falsy values
+
+2.5.1
+  * Added Adobe AIR detection.
+
+2.5.0
+  * API doc updates
+
+2.4.0
+  * Added YAHOO.env.ua.mobile
+  * Removed the hasOwnProperty check in isArray to make it perform a bit better.
+  * YAHOO will be created/overwritten if YAHOO is undefined or the defined YAHOO is falsy
+  * YAHOO.lang is now preserved when YAHOO is included a second time.
+
+2.3.1
+  * YAHOO.lang.dump casts primitives to strings
+
+2.3.0
+  * Added YAHOO.env.ua - browser detection
+  * Added YAHOO.lang.merge - object merge
+  * Added YAHOO.lang.trim - whitespace removal
+  * Added YAHOO.lang.augmentObject - mixins.  Renamed augment to augmentProto and 
+    made augment an alias to augmentProto
+  * isObject/isArray return false rather than null when testing null
+
+2.2.2
+
+  * No change
+
+2.2.1
+
+  * YAHOO.lang.isObject returns false for null
+  * YAHOO.lang.isArray no longer generates an error when the argument is null/undefined
+  * Better error messages for YAHOO.lang.augment/extend failures that are usually due 
+    to missing dependencies.
+
+2.2.0a
+
+  * Fixed a typo that prevented the proper detection of multiple YAHOO_config listeners
+
+2.2.0
+
+  * Added configuration of the library via a YAHOO_config object defined
+    prior to the reference to the library.  Currently it supports a listener
+    parameter that will execute every time a new module YUI module is loaded.
+
+  * Added YAHOO.register & YAHOO.getVersion for version stamping modules.
+  
+  * Added YAHOO.env which is the home for the information about the loaded
+    YUI modules, and will host more info later.
+    
+  * YAHOO.util.Lang was relocated to this package and is now YAHOO.lang.
+    YAHOO.extend and YAHOO.augment have moved to env (the original
+    functions still work).
+
+0.12.2
+
+  * No change
+
+0.12.1
+
+  * No change
+
+0.12.0
+
+   * Added YAHOO.augment, which copies all or part of the prototype of one
+     object to another.  
+
+   * YAHOO.namespace now can create multiple namespaces.
+
+   * Added an optional third parameter to YAHOO.extend: overrides.  It takes
+     an object literal of properties/methods to apply to the subclass
+     prototype, overriding the superclass if present.
+
+0.11.4
+
+   * Changed window.YAHOO = window.YAHOO || {} to 
+     if (typeof YAHOO == "undefined") YAHOO = {} because the previous statement
+     contributed to a memory leak in IE6 when the library was hosted in an 
+     iframe.
+
+0.11.3
+
+   * Changed var YAHOO = window.YAHOO || {} to window.YAHOO = window.YAHOO || {}.
+     This fixes an issue in IE where YAHOO would get overwritten if previously
+     defined via array notation (window["YAHOO"]).
+
+0.11.0
+
+   * Added YAHOO.extend, which provides an easy way to assign the prototype,
+     constructor, and superclass properties inheritance properties.  It also
+     prevents the constructor of the superclass from being exectuted twice.
+
+0.10.0
+
+   * Added YAHOO.log that provides a safe way to plumb logging statements in
+     code that will work if the logging component isn't available.
+

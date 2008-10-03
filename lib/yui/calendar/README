@@ -1,0 +1,421 @@
+Calendar Release Notes
+
+*** version 2.6.0 ***
+
++ Fixed incorrect cell index parsing from cell id attribute, when
+  Calendar id contained "cell".
+  
++ Added text to previous month, next month and close icons, to 
+  enhance accessibility for screen-readers.
+  
++ Fixed issue with bubbled previous month, next month click events 
+  missing target information in certain browsers (due to replaced HTML), 
+  by delaying click event handling through a setTimeout.
+  
++ Added destroy method to Calendar/CalendarGroup
+
++ Fixed incorrect clear method behavior for CalendarGroup where all
+  pages would be set to the same month.
+  
++ Refactored code to reduce minified Kweight.
+
+*** version 2.5.2 ***
+
++ CalendarGroup toDate method no longer throws javascript exception
+
+*** version 2.5.1 *** 
+
++ Fixed bug with mindate, maxdate being applied incorrectly if 
+  set to a day on which time change took place (DST, E.U Summertime) 
+  and the day is not the first day of the week.
+
++ Fixed DateMath.getWeekNumber implementation to return correct 
+  week numbers. The older implementation would return Week 0 for 
+  certain weeks (e.g. the week starting Sun Dec 28th 2008)
+
+  To suppor the fix, DateMath.getWeekNumber has a signature 
+  change in 2.5.1 and can now support U.S Week calculations based 
+  on Jan 1st identifying the first week of the year, as well as 
+  ISO8601 week calculations based on Jan 4th identifying the first 
+  week of the year
+
+  The arguments which the method expected prior to 2.5.1 were not 
+  being used in calculating the week number. The new signature is:
+
+  DateMath.getWeekNumber(Date dt, Number firstDayOfWeek, Number janDate)
+
+  Where:
+
+    dt is the date for which week number is required
+
+    firstDayOfWeek is the day index identifying the first 
+    day of the week. Default is 0 (Sunday).
+
+    janDate is the date in the first week of January, which
+    identifies the first week of the year. 
+    Default is YAHOO.widget.DateMath.WEEK_ONE_JAN_DATE (1)
+
+  NOTE: Calendar instances themselves do not currently expose a 
+  configuration property to change the week numbering system 
+  used. A "janDate" value is not passed to the getWeekNumber 
+  method, when used by Calendar, resulting in it using the default value.
+
+  Therefore, ISO8601 week numbering can be generated for Calendars 
+  by setting the value of YAHOO.widget.DateMath.WEEK_ONE_JAN_DATE
+  to 4.
+
+*** version 2.5.0 *** 
+
++ Prevent default event handling in CalendarNavigator enter key 
+  listener, to prevent automatic form submission when using Calendar
+  inside a form.
+
++ Added workaround to DateMath.add and subtract for Safari 2 (webkit) 
+  bug in Date.setDate(n) which doesn't handle value of n less than -128 
+  or greater than 127 correctly.
+
+  See: http://brianary.blogspot.com/2006/03/safari-date-bug.html
+
++ Added border, padding and margin rules to Calendar Sam Skin to 
+  protect Sam Skin's look and feel when Calendar is used with 
+  YUI base.css
+
+*** version 2.4.0 *** 
+
++ Added CalendarNavigator (year selector) feature to allow the user to 
+  jump to a year/month directly without having to scroll through months
+  sequentially. 
+
+  The feature is enabled/configured using the "navigator" configuration
+  property.
+
++ Added Custom Events: 
+
+    showNav/beforeShowNav
+    hideNav/beforeHideNav, 
+    renderNav/beforeRenderNav 
+
+  To Calendar/CalendarGroup, in support of the CalendarNavigator 
+  functionality. 
+
++ Added Custom Events:
+
+    show/beforeShow
+    hide/beforeHide 
+
+  To Calendar and CalendarGroup. Returning false from a 
+  beforeShow/beforeHide listener can be used to prevent the Calendar 
+  from being shown/hidden respectively. 
+
++ Added Public Methods: 
+
+    getCellIndex(date)    [ Calendar ]
+    getCalendarPage(date) [ CalendarGroup ]
+    toDate(dateArray)     [ Calendar/CalendarGroup ]
+    removeRenderers()     [ Calendar/CalendarGroup ]
+    
++ The Calendar/CalendarGroup constructor is now more flexible: 
+
+    * It no longer requires an "id" argument. 
+
+      In it's simplest form, a Calendar/CalendarGroup can be 
+      constructed by simply providing a container id or reference.
+
+          var cal = new YAHOO.widget.Calendar("container"); 
+          -or-
+          var containerDiv = YAHOO.util.Dom.get("container");
+          var cal = new YAHOO.widget.Calendar(containerDiv); 
+
+      An id for the Calendar does not need to be provided, and will be 
+      generated from the container id by appending an "_t" suffix to the
+      container id if only the container is provided. 
+
+    * The container argument can be either a string, representing the 
+      id of the container, or an HTMLElement referring to the container 
+      element itself, as suggested in the example above. 
+
+    * If an HTMLElement is provided for the container argument and the 
+      element does not have an id, one will be generated for it using 
+      YAHOO.util.Dom.generateId(). 
+
+    * The older form of Calendar/CalendarGroup signature, expecting 
+      both an id and containerId is still supported and works as it did 
+      prior to 2.4.0. 
+
++ Fixed performance issue, where the same custom renderer was being 
+  applied multiple times to the same cell.
+
++ Added getDate(year, month, date) factory method to the DateMath utility, 
+  which can be used to create JavaScript Date instances for years less 
+  than 100.
+
+  The default Date(year, month, date) constructor implementations across 
+  browsers, assume that if year < 100, the caller is referring to the 
+  nineteen hundreds, and the year is set to 19xx instead of xx (as with
+  the deprecated setYear method). However Date.setFullYear(xx) can 
+  be used to set dates below 100. The above factory method provides a 
+  construction mechanism consistent with setFullYear.
+
++ Changed Calendar/CalendarGroup/DateMath code to use the DateMath.getDate
+  method, so that 2 digit years are  not assumed to be in the 1900's. 
+
+  NOTE: Calendar's API already expects 4 digit date strings when referring 
+  to years after 999.
+
+*** version 2.3.1 *** 
+
++ Changed Calendar/CalendarGroup to render an empty title bar element 
+  when "close" is set to true, but "title" has not been set, to allow Sam 
+  Skin to render a title bar correctly. 
+
+*** version 2.3.0 *** 
+
++ Added checks to select, selectCell, deselect and deselectCell methods 
+  to ensure the Calendar/Calendar group was not set to an invalid state 
+  by programmatically selecting unselectable dates or cells.
+  
++ Added new locale configuration properties for the Month/Year label 
+  used in the Calendar header (MY_LABEL_MONTH_POSITION, 
+  MY_LABEL_YEAR_POSITION, MY_LABEL_YEAR_SUFFIX, MY_LABEL_MONTH_SUFFIX). 
+  Japan is an example locale, where customization of the Month/Year 
+  label is required.
+  
++ Changed "first", "last" class names to "first-of-type", "last-of-type", 
+  to avoid collision with YUI Grids' use of the "first" class name.
+  
++ Added public isDateOOB method, to check if a given date is outside of 
+  the minimum/maximum configuration dates of the Calendar.
+  
++ Deprecated YAHOO.widget.Calendar.browser, refactored to use 
+  YAHOO.env.ua instead. 
+  
++ Removed overflow:hidden from default Calendar/CalendarGroup container 
+  for non-IE6 browsers to fix clipping issue with IE7 when CalendarGroup 
+  was inside a box with a specific width. overflow:hidden is still 
+  required for IE6 with an iframe shim.
+
++ Added Opera container width calculation fix to CalendarGroup.show 
+  method, to fix incorrect wrapping when using a CalendarGroup which is 
+  initially rendered hidden (display:none). Previously this fix was 
+  only applied on render. 
+
+*** version 2.2.2 *** 
+
++ Fixed problem with selected dates being shared across instances, when 
+  more than one Calendar/CalendarGroup was on the page 
+
+*** version 2.2.1 *** 
+
++ Fixed problem with selectCell adding duplicate selected date entries 
+  for dates which were already selected
+
++ Fixed problem with CalendarGroup iframe shim not covering the 
+  CalendarGroup title area
+  
++ Removed javascript:void(null) from close button and cell links which 
+  was interrupting form submission and firing onbeforeunload in IE
+  
++ Fixed problem with CalendarGroup getSelectedDates returning invalid 
+  results, when used in conjunction with the "selected" Config property 
+  (either passed in the constructor config argument or set seperately 
+  after construction)
+  
++ Refactored Calendar and CalendarGroup to improve performance, 
+  especially when working with a large number of instances in 
+  IE6 
+
+*** version 2.2.0 *** 
+
++ Image customization can now be done through CSS. Images for Close, 
+  Left and Right Arrows are now pulled in using CSS defined in 
+  calendar.css and by default use relative paths to the images in 
+  the same directory as calendar.css.
+  
++ Deprecated Calendar.IMG_ROOT and NAV_ARROW_LEFT, NAV_ARROW_RIGHT 
+  configuration properties. Customizations based on older releases 
+  which set these properties will still function as expected.
+
++ Deprecated CalendarGroup.CSS_2UPCLOSE. Calendar's Style.CSS_CLOSE 
+  property now represents the new default CSS class (calclose) for 
+  the close button. CSS_2UPCLOSE is still applied along with 
+  CSS_CLOSE to the new markup for the close button to support existing
+  customizations of the CSS_2UPCLOSE CSS class (close-icon)
+
++ Fixed problem with Safari setting Calendar pages to incorrect dates 
+  if the pages spanned a year boundary in CalendarGroups with 3 or more 
+  pages, due to a bug in Safari's implementation of Date setMonth
+
++ Fixed problem with CalendarGroup setMonth rendering Calendar pages 
+  with incorrect dates in all browsers if current pages spanned year 
+  boundary 
+
++ Fixed incorrect CalendarGroup logging statement in calendar-debug.js
+
++ Fixed domEventMap support for Safari versions prior to 2.0.2, 
+  caused by hasOwnProperty not being supported
+  
++ Removed unused private property : _pageDate from Calendar class 
+
+*** version 0.12.2 *** 
+
++ Corrected documentation for clearTime function to reflect the 
+  change from midnight to noon 
+
+*** version 0.12.1 *** 
+
++ Calendar and CalendarGroup now automatically parse the argument 
+  passed to setMonth and setYear into an integer, eliminating 
+  potential concatenation bugs. 
+
+*** version 0.12 *** 
+
++ New documentation format implemented
+
++ Calendar2up and Calendar_Core are now deprecated. Now, Calendar alone
+  represents the single Calendar instance, and CalendarGroup represents 
+  an n-up instance, defaulting to 2up
+  
++ Added semantic style classes to Calendar elements to allow for 
+  custom styling solely using CSS.
+  
++ Remapped all configuration properties to use the Config object 
+ (familiar to those who use the Container collection of controls). 
+ Property names are the same as their previous counterparts, but 
+ wrapped into Calendar.cfg, allowing for runtime reconfiguration of 
+ most properties
+ 
++ Added "title" property for setting the Calendar title
+
++ Added "close" property for enabling and disabling the close icon
+
++ Added "iframe" property for enabling an iframe shim in Internet 
+  Explorer 6 and below to fix the select bleed-through bug
+  
++ pageDate moved to property: "pagedate"
+
++ selectedDates moved to property: "selected"
+
++ minDate moved to property : "mindate", which accepts a JavaScript 
+  Date object like its predecessor, but also supports string dates
+  
++ maxDate moved to property : "maxdate", which accepts a JavaScript 
+  Date object like its predecessor, but also supports string dates
+  
++ Moved style declarations to initStyles function
+
++ Optimized event handling in doSelectCell/doCellMouseOver/
+  doCellMouseOut by only attaching the listener to the outer 
+  Calendar container, and only reacting to events on cells with 
+  the "selectable" CSS class.
+  
++ Added domEventMap field for applying DOM event listeners to cells 
+  containing specific class and tag combinations.
+  
++ Moved all cell DOM event attachment to applyListeners function
+
++ Added getDateByCellId / getDateFieldsByCellId helper functions
+
++ Corrected DateMath.getWeekNumber to comply with ISO week number 
+  handling
+  
++ Separated renderCellDefault style portions into styleCellDefault 
+  function for easy extension
+  
++ Deprecated onBeforeSelect. Created beforeSelectEvent which 
+  automatically subscribes to its deprecated predecessor.
+  
++ Deprecated onSelect. Created selectEvent, which automatically 
+  subscribes to its deprecated predecessor.
+  
++ Deprecated onBeforeDeselect. Created beforeSelectEvent which 
+  automatically subscribes to its deprecated predecessor.
+  
++ Deprecated onDeselect. Created beforeDeselectEvent, which 
+  automatically subscribes to its deprecated predecessor.
+  
++ Deprecated onChangePage. Created changePageEvent, which automatically
+  subscribes to its deprecated predecessor.
+  
++ Deprecated onRender. Created renderEvent, which automatically 
+  subscribes to its deprecated predecessor.
+  
++ Deprecated onReset. Created resetEvent, which automatically 
+  subscribes to its deprecated predecessor.
+  
++ Deprecated onClear. Created clearEvent, which automatically 
+  subscribes to its deprecated predecessor.
+  
++ Corrected setMonth documentation to refer to 0-11 indexed months.
+
++ Added show and hide methods to Calendar for setting the Calendar's 
+  display property.
+  
++ Optimized internal render classes to use innerHTML and string buffers
+ 
++ Removed wireCustomEvents function
+
++ Removed wireDefaultEvents function 
+
++ Removed doNextMonth / doPreviousMonth
+
++ Removed all buildShell (header, body, footer) functions, since 
+  the Calendar shell is now built dynamically on each render
+  
++ Wired all CalendarGroup events and configuration properties to 
+  be properly delegated to Calendar
+  
++ Augmented CalendarGroup with all built-in renderers, label functions, 
+  hide, show, and initStyles, creating API transparency between Calendar 
+  and CalendarGroup.
+  
++ Made all tagName, createElement, and entity references XHTML compliant
+
++ Fixed Daylight Saving Time bug for Brazilian time zone 
+
+*** version 0.11.3 *** 
+
++ Calendar_Core: Added arguments for selected/deselected dates to 
+  onSelect/onDeselect
+  
++ CalendarGroup: Fixed bug where selected dates passed to constructor 
+  were not represented in selectedDates
+  
++ Calendar2up: Now displays correctly in Opera 9 
+
+*** version 0.11.0 *** 
+
++ DateMath: DateMath.add now properly adds weeks
+
++ DateMath: between() function added
+
++ DateMath: getWeekNumber() fixed to take starting day of week into
+  account
+  
++ All references to Calendar's built in CSS class handlers are 
+  removed, replaced with calls to Dom utility (addClass, removeClass)
+  
++ Several CSS class constants now have clearer names
+
++ All CSS classes are now properly namespaced to avoid CSS conflicts
+
++ Fixed table:hover bug in CSS
+
++ Calendar no longer requires the container ID and variable name to 
+  match in order for month navigation to function properly
+
++ Calendar month navigation arrows are now represented as 
+  background images 
+
+*** version 0.10.0 *** 
+
++ Major performance improvements from attaching DOM events to 
+  associated table cells only once, when the Calendar shell is built
+  
++ DOM events for mouseover/mouseout are now fired for all browsers 
+ (not just Internet Explorer)
+ 
++ Reset functionality bug fixed for 2-up Calendar view 
+
+*** version 0.9.0 *** 
+
+* Initial release

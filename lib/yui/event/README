@@ -1,0 +1,252 @@
+
+YUI Library - Event - Release Notes
+
+2.6.0
+  * Legacy event check for Webkit increased to capture Safari 2.0.3.
+  * Added add/removeFocusListener, add/removeBlurListener
+
+2.5.2
+
+  * Custom Event fire() now throws caught exceptions if YAHOO.util.throwErrors =
+    true.  In either case, a message is written to the logger console.
+
+2.5.1
+  * Arrays are once again resized when a listener is removed.
+  * onAvailable/onContentReady stop polling when there is nothing to look for.
+
+2.5.0
+  * Added try/catch to getTarget to suppress errors when targeting
+    ActiveX controls.
+  * Increased the default poll interval to 20ms, and decreased poll
+    retries to 2000 to reduce IE CPU usage.
+  * onDOMReady now uses the native DOMContentLoaded event for the
+    latest releases of WebKit since it support for it was added.
+  * Restored the code that removes all listeners during the unload event to
+    address issues caused by the way FireFox persists listeners through 
+    page refreshes.
+
+2.4.1
+  * Reverted clearAttributes() change to fix IE memory leak on iframes/windows
+
+2.4.0
+  * getListeners/purgeElement accepts either an element reference or an element id
+  * onAvailable/onContentReady accepts a single id or an array of ids
+  * No longer removing listeners during the unload event for non-IE browsers
+  * IE unload strategy for cross page memory leaks changed from removing each listener
+    to calling clearAttributes()
+  * the DOMReady property is now public
+  * Changed IE onDOMReady approach from the defered script node hack to the doScroll('left') hack
+  * getCharChode now Remaps SHIFT-TAB key code (25) to TAB (9) in Safari
+  * getCharCode provides the proper key codes for page up and page down in Safari
+  * Restored object check to _isValidCollection.
+  * In KeyListener, added keycode constants for some of the special keys.
+  * Rolled back the change added for hacking around IE errors from bubbled 
+    events that originally targeted an ActiveX control.
+
+2.3.1
+  * CustomEvent fire() now catches exceptions thrown by the subscribers so
+    that the rest of the subscribers execute.  The exception is logged and
+    stored in the "lastError" property.
+  * Performance tweak: _isValidCollection fails strings first.
+  * onAvailable/onContentReady will work if an element ref rather than an
+    id is provided.
+  * getListeners: fixed the values for the obj and adjust properties.
+    Added scope property.
+  * Added IE hack for when the event target is something that can't be
+    inspected (like a VML canvas).  In this case the target is set to
+    the element the listener is bound to.
+
+2.3.0
+  * addListener now produces a logger warning if the supplied callback is 
+    undefined.
+  * Reduced the likelihood that window onload listeners fire before
+    onAvailable listeners when the two happen near the same moment.
+  * Fixed an IE error that could occur when the library was injected into 
+    the page after window onload.
+  * The onDOMReady listener will be executed immediately if the
+    DOMReady event had already fired prior to the call.
+  * Unsubscribing custom events within a handler for the event now works 
+    properly.
+  * EventProvider unsubscribeAll will unsubscribe all listeners from
+    all hosted custom events if the type is not specified.
+  * Event.getKeyCode now checks keyCode before charCode for Safari normalization.  
+    Safari arrow key codes are normalized as well.
+  * Broke up the </script> in Event to allow it to be included inline
+
+2.2.2
+  * No change
+
+2.2.1
+  * onAvailable listeners are processed before onContentReady listeners so
+    they fire in the logical order when an element is found to be available 
+    and ready in the same pass.
+  * Added onDOMReady for receiving notification when the DOM is first usable.
+  * In Internet Explorer, onAvailable/onContentReady checks now start when
+    DOMReady fires to reduce the possibility of receiving an "operation
+    aborted" errors when inserting DOM nodes during in the onAvailable/
+    onContentReady listener execution.
+  * CustomEvent subscribers supplying undefined callbacks will be notified
+    when subscribing rather than having an ambiguous error thrown when the
+    event is fired.
+  * Fixed missing html tags in the examples.
+  * POLL_INTERVAL is 10 ms.
+  * YAHOO.util.CustomEvent is now declared before YAHOO.util.Event.
+
+2.2.0
+
+  * YAHOO.util.KeyListener was moved from the container package into event.
+  
+  * The Safari bug that made it so preventDefault would not work with click
+    and double-click listeners on anchor tags was resolved in version 2.0.4.
+    The workaround (using DOM0 events for these instead of the normal DOM2
+    events) is now only used for releases prior to 2.0.4.
+    
+  * getListeners/purgeElement now work correctly with unload listeners
+
+  * When legacyEvents are used (Safari<2.0.4 click events), if there was an
+    existing DOM0 event that the utility replaced, it is executed along with
+    the listeners that were added with the utility.
+
+  * Restored Event.regCE for compatibility with a beta release of the library
+    that in use in an external API.
+
+  * unsubscribe in CustomEvent and EventProvider will remove all listeners
+    if the listener is omitted.
+
+  * Added unsubscribeAll to EventProvider
+
+  * Added Event.lastError which stores the most recent error object if
+    a browser-specific add/remove listener call throws an exception.
+
+0.12.2
+
+  * Fixed a bug introduced in 0.12.1 release caused nested onAvailable
+    calls to fail.
+
+0.12.1
+
+  * If an error is thrown during the browser-specific add/remove lister call,
+    addListener/removeListener will catch the error and return false.
+
+  * onAvailable array items are nulled out instead of deleted when completed to
+    get around an Opera issue introduced in a recent version of the browser.
+
+0.12.0
+
+   * If the function argument is not provided to Event.removeListener, all
+     all listeners for the specified event type on the element will be removed.
+
+   * CustomEvent now has an optional parameter that defines the signature of
+     the listeners for this event.  Two signatures are supported:
+
+       YAHOO.util.CustomEvent.LIST:
+         param1: event name
+         param2: array of arguments provided to fire()
+         param3: <optional> the custom object supplied to subscribe()
+
+       YAHOO.util.CustomEvent.FLAT:
+         param1: the first argument provided to fire()
+         param2: <optional> the custom object supplied to subscribe()
+
+     The new flat signature makes it possible to provide a better API 
+     when using custom events, and it makes it possible to transparently 
+     wrap DOM events.
+   
+   * The parameters for overriding scope in both Event.addListener, and
+     CustomEvent.subscribe have been augmented.  In addition to the 
+     previous behavior where a true value would make the previous parameter
+     the execution scope, an object can be supplied instead.  If an object
+     is provided, that object becomes the scope obj.  This makes it possible 
+     to pass a both a custom object and adjust the scope to a different object.
+
+   * Added EventProvider, which is a wrapper for CustomEvent that makes it
+     possible to subscribe to events by name, whether or not the event has
+     been created.  This class was designed to be used with YAHOO.augment.
+     EventProvider custom events are created with the new FLAT listener
+     signature.
+
+   * CustomEvent subscribers can return false to stop the propagation of
+     the event.
+
+   * CustomEvents now have an onSubscribe custom event that can used to the
+     case where a subscriber subscribes to an one-time event that has already
+     happened.  Also provides a way for the implementer to defer initialization
+     logic until after the first subscription.
+
+   * Event.getCharCode now always returns keyCode if charCode is not available.
+
+   * Added Event.onContentReady, which is similar to onAvailable, but it also
+     checks simblings to try to determine when the element's children are
+     available.
+
+0.11.4
+
+   * Fixed a memory leak in IE6 that occurred when the utility was hosted in 
+     an iframe.
+
+   * Fixed an issue with Safari click listeners when listeners were removed.
+
+0.11.3
+
+   * The listener cache is now pruned when events are removed.  This fixes
+     a performance issue when adding many listeners, removing them, and
+     adding them again repeatedly.
+
+   * Safari click listeners will work correctly if a bound element is removed
+     from the DOM and a new element with the same ID is added.
+
+   * Removed the code that automatically unsubscribed custom event listeners.
+
+0.11.0
+
+   * Added Event.purgeElement which will remove all listeners added via 
+     addListener from the supplied element.  If an optional "type" parameter
+     is supplied, only events of that type will be removed.  Optionally, the
+     purge can be performed recursively on the element's children as well.
+
+   * Added Event.getListeners which will return all listeners attached to 
+     a given element.. either all listeners or listeners of a specific type.
+
+   * getTarget now automatically resolves text nodes.  The optional parameter
+     for this feature is now deprecated.
+
+   * getRelatedTarget now resolves text nodes for the browsers that return the
+     text node rather than its host HTML element.
+
+   * CustomEvent now logs the custom event activity if the logger widget is available
+
+0.10.0
+
+   * Added Safari dblclick to the list of legacy events.
+
+   * When multiple identical event handlers are defined, multiple calls
+     to removeListener can now remove all of them.
+
+   * removeListener works properly for unload events
+
+   * Legacy event bookkeeping is more efficient, improving the performance for
+     adding Safari click events.
+
+   * _unload() is more efficient, improving the page transition experience in 
+     Safari in particular.
+
+   * addListener, removeListener now return false if the function argument is
+     not valid.
+
+   * Fixed an operator precedence issue in getCharCode.
+
+   * Added Event.getXY, which returns [Event.getPageX(e), Event.getPageY(e)]
+
+   * Added Event.onAvailable, which will execute the callback when the element
+     with the supplied id is found.  Currently searches periodically until the
+     window load event or for up to 10 seconds after the onAvailable method 
+     was executed.
+
+   * The lazy listener attachment process now will poll beyond the window load
+     event in order to better handle the case when a listener is defined
+     late in the page but before the element is in the dom.
+
+   * Fixed browser detection for Opera installations reporting as IE.
+
+   * It is now possible to remove and re-add legacy events (Safari click event).
+

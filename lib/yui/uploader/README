@@ -1,0 +1,30 @@
+YUI Library - Uploader - Release Notes
+
+2.6.0
+  * Changes due to new security rules in Flash Player 10:
+     * Browse() function has been eliminated; the uploader now has to have an internal Flash UI.
+     * The Uploader can be rendered as a transparent Flash layer, or as a skinned button.
+     * Mouse events on the Uploader are exposed to JavaScript.
+
+  * Known issues:
+	 * The intended behavior of the uploader is not to send any cookies with its requests. Due to a limitation 
+	   of the Windows networking library, when running in IE, the uploader sends the cookies with the upload.
+	   However, you cannot rely on this behavior for authentication, because it's absent in other browsers. 
+	   As a workaround, we suggest either using a cookieless upload method or appending document.cookie
+	   to the upload request.
+	 * There are some known issues around keyboard interaction with the uploader. In particular, when the 
+	   uploader is rendered as a transparent layer, it does not respond to keyboard presses - only mouse
+	   functionality is available. When the uploader is rendered as an image, it receives "Space" and "Enter" 
+	   key presses as triggers, but only if the focus is on the uploader component itself. Keyboard tabbing 
+	   to the component behaves differently in different browsers.
+	 * Because of Flash limitations, the uploader does not support basic authentication.
+	 * Because of Flash limitations, the uploader behavior when working through a proxy server is inconsistent 
+	   and unreliable.
+     * When uploading to HTTPS servers, be aware that Flash does not support self-signed certificates. You 
+       would need to obtain certificates from a recognized certificate authority.
+
+2.5.1
+  * Fix to ensure UploadCancel fires when expected.
+  
+2.5.0
+  * Experimental release

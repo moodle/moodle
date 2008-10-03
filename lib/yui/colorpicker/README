@@ -1,0 +1,21 @@
+ColorPicker - Release Notes
+
+2.6.0
+    * Added colorpicker-core.css (empty) for completeness
+
+2.5.1
+   * No change
+
+2.5.0
+   * No change
+
+2.4.0
+   * Initialization values assigned to showcontrols, showrgbcontrols,
+     showwebsafe, showhexsummary, animate, red, green, and blue in the
+     constructor configuration are now honored. 
+
+2.3.1
+   * No change (bug fixes were inherited from slider)
+
+2.3.0
+   * Initial release
