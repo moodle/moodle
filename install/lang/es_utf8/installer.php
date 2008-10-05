@@ -320,4 +320,6 @@ $string['wrongsourcebase'] = 'Base de fuente de URL errónea.';
 $string['wrongzipfilename'] = 'Nombre de archivo ZIP erróneo.';
 $string['wwwroot'] = 'Dirección Web';
 $string['wwwrooterror'] = 'La \'Dirección Web\' parece incorrecta. No se pudo encontrar una instalación de Moodle. El valor ha sido cambiado por el original.';
+$string['xmlrpcrecommended'] = 'Instalar la extensión xmlrpc opcional es útil para la funcionalidad de la Red Moodle.';
+$string['ziprequired'] = 'Moodle requiere ahora la extensión Zip PHP. Ya no se usan ni las binarias info-ZIP ni la librería PclZip.';
 ?>
