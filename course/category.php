@@ -419,7 +419,7 @@
                 if (!empty($acourse->guest)) {
                     echo '<a href="view.php?id='.$acourse->id.'"><img title="'.
                          $strallowguests.'" class="icon" src="'.
-                         $CFG->pixpath.'/i/user.gif" alt="'.$strallowguests.'" /></a>';
+                         $CFG->pixpath.'/i/guest.gif" alt="'.$strallowguests.'" /></a>';
                 }
                 if (!empty($acourse->password)) {
                     echo '<a href="view.php?id='.$acourse->id.'"><img title="'.
