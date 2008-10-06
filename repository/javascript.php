@@ -98,8 +98,8 @@ EOD;
 <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/treeview/treeview-min.js"></script>
 <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/dragdrop/dragdrop-min.js"></script>
 <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/container/container-min.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/resize/resize-beta-min.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/layout/layout-beta-min.js"></script>
+<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/resize/resize-min.js"></script>
+<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/layout/layout-min.js"></script>
 <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/connection/connection-min.js"></script>
 <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/json/json-min.js"></script>
 <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/button/button-min.js"></script>
