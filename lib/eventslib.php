@@ -414,6 +414,8 @@ function events_trigger($eventname, $eventdata) {
                         // ok, queue is empty, lets reset the status back to 0 == ok
                         $handler->status = 0;
                         set_field('events_handlers', 'status', 0, 'id', $handler->id);
+                        // reset static handler cache
+                        events_get_handlers('reset');
                     }
                 }
 
@@ -425,11 +427,15 @@ function events_trigger($eventname, $eventdata) {
                     }
                     // set error count to 1 == send next instant into cron queue
                     set_field('events_handlers', 'status', 1, 'id', $handler->id);
+                    // reset static handler cache
+                    events_get_handlers('reset');
 
                 } else {
                     // increment the error status counter
                     $handler->status++;
                     set_field('events_handlers', 'status', $handler->status, 'id', $handler->id);
+                    // reset static handler cache
+                    events_get_handlers('reset');
                 }
 
                 // update the failed counter
