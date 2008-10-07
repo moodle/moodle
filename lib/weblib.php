@@ -34,7 +34,11 @@
  * - datalib.php - functions that access the database.
  * - moodlelib.php - general-purpose Moodle functions.
  * @author Martin Dougiamas
+<<<<<<< weblib.php
  * @version  $Id$
+=======
+ * @version  $Id$
+>>>>>>> 1.970.2.113
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  */
@@ -4409,7 +4413,7 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='',
  * @todo Finish documenting this function
  */
 function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=false, $link=true, $target='', $alttext=true) {
-    global $CFG, $HTTPSPAGEREQUIRED, $DB;
+    global $CFG, $DB;
 
     $needrec = false;
     // only touch the DB if we are missing data...
@@ -4464,11 +4468,6 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
         $file = 'f2';
     }
     $class = "userpicture";
-    if (!empty($HTTPSPAGEREQUIRED)) {
-        $wwwroot = $CFG->httpswwwroot;
-    } else {
-        $wwwroot = $CFG->wwwroot;
-    }
 
     if (is_null($picture)) {
         $picture = $user->picture;

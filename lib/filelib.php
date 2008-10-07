@@ -9,7 +9,7 @@ require_once("$CFG->libdir/file/file_browser.php");
 require_once("$CFG->libdir/packer/zip_packer.php");
 
 function get_file_url($path, $options=null, $type='coursefile') {
-    global $CFG;
+    global $CFG, $HTTPSPAGEREQUIRED;
 
     $path = str_replace('//', '/', $path);
     $path = trim($path, '/'); // no leading and trailing slashes
@@ -23,7 +23,13 @@ function get_file_url($path, $options=null, $type='coursefile') {
             $url = $CFG->wwwroot."/rss/file.php";
             break;
         case 'user':
-            $url = $CFG->wwwroot."/user/pix.php";
+            if (!empty($HTTPSPAGEREQUIRED)) {
+                $wwwroot = $CFG->httpswwwroot;
+            }
+            else {
+                $wwwroot = $CFG->wwwroot;
+            }
+            $url = $wwwroot."/user/pix.php";
             break;
         case 'usergroup':
             $url = $CFG->wwwroot."/user/pixgroup.php";
