@@ -502,7 +502,7 @@
             }
             $message .= '<br />'.get_string("postupdated", "forum");
 
-            if ($subscribemessage = forum_post_subscription($fromform)) {
+            if ($subscribemessage = forum_post_subscription($fromform, $forum)) {
                 $timemessage = 4;
             }
             if ($forum->type == 'single') {
@@ -533,7 +533,7 @@
                     $timemessage = 4;
                 }
 
-                if ($subscribemessage = forum_post_subscription($fromform)) {
+                if ($subscribemessage = forum_post_subscription($fromform, $forum)) {
                     $timemessage = 4;
                 }
 
@@ -609,7 +609,7 @@
                     $message .= '<p>'.get_string("postaddedtimeleft", "forum", format_time($CFG->maxeditingtime)) . '</p>';
                 }
 
-                if ($subscribemessage = forum_post_subscription($discussion)) {
+                if ($subscribemessage = forum_post_subscription($discussion, $forum)) {
                     $timemessage = 4;
                 }
 

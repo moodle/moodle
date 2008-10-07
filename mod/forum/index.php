@@ -132,7 +132,7 @@
             }
             if (!forum_is_forcesubscribed($forum)) {
                 $subscribed = forum_is_subscribed($USER->id, $forum);
-                if ($subscribe && !$subscribed && $cansub) {
+                if ((has_capability('moodle/course:manageactivities', $coursecontext, $USER->id) || $forum->forcesubscribe != FORUM_DISALLOWSUBSCRIBE) && $subscribe && !$subscribed && $cansub) {
                     forum_subscribe($USER->id, $forumid);
                 } else if (!$subscribe && $subscribed) {
                     forum_unsubscribe($USER->id, $forumid);
