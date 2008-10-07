@@ -57,13 +57,13 @@ function ajax_get_lib($libname) {
             'ajaxcourse' => '/lib/ajax/ajaxcourse.js'
             );
 
+    if (!empty($HTTPSPAGEREQUIRED)) {
+        $wwwroot = $CFG->httpswwwroot;
+    } else {
+        $wwwroot = $CFG->wwwroot;
+    }
+
     if (array_key_exists($libname, $translatelist)) {
-        if (!empty($HTTPSPAGEREQUIRED)) {
-            $wwwroot = $CFG->httpswwwroot;
-        }
-        else {
-            $wwwroot = $CFG->wwwroot;
-        }
         $libpath = $wwwroot . $translatelist[$libname];
     } else {
         $libpath = $libname;
