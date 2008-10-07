@@ -197,7 +197,7 @@ function mnet_server_strip_signature($plaintextmessage) {
     $signature = base64_decode($sig_parser->signature);
     $certificate = $MNET_REMOTE_CLIENT->public_key;
 
-    // If we don't have any certificate for the host, but don't try to check the signature
+    // If we don't have any certificate for the host, don't try to check the signature
     // Just return the parsed request
     if ($certificate == false) {
         return $payload;
