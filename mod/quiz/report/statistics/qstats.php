@@ -135,7 +135,11 @@ class qstats{
 
     function _initial_question_walker(&$stats){
         $stats->gradeaverage = $stats->totalgrades / $stats->s;
-        $stats->facility = $stats->gradeaverage / $stats->maxgrade;
+        if ($stats->maxgrade){
+            $stats->facility = $stats->gradeaverage / $stats->maxgrade;
+        } else {
+            $stats->facility = null;
+        }
         $stats->othergradeaverage = $stats->totalothergrades / $stats->s;
         sort($stats->gradearray, SORT_NUMERIC);
         sort($stats->othergradesarray, SORT_NUMERIC);

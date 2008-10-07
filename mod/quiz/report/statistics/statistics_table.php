@@ -171,7 +171,7 @@ class quiz_report_statistics_table extends flexible_table {
     }
     
     function col_sd($question){
-        if (!is_null($question->_stats->sd)){
+        if (!is_null($question->_stats->sd) && $question->_stats->maxgrade){
             return number_format($question->_stats->sd*100 / $question->_stats->maxgrade, 2).'%';
         } else {
             return '';
@@ -185,7 +185,11 @@ class quiz_report_statistics_table extends flexible_table {
         }
     }
     function col_facility($question){
-        return number_format($question->_stats->facility*100, 2).'%';
+        if (!is_null($question->_stats->facility)){
+            return number_format($question->_stats->facility*100, 2).'%';
+        } else {
+            return '';
+        }
     }
     
 }
