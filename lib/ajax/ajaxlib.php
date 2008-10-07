@@ -9,7 +9,7 @@
  * @return string
  */
 function ajax_get_lib($libname) {
-    global $CFG, , $HTTPSPAGEREQUIRED;
+    global $CFG, $HTTPSPAGEREQUIRED;
 
     $libpath = '';
     $external_yui = false;
