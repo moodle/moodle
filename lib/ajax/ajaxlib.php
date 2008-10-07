@@ -9,7 +9,8 @@
  * @return string
  */
 function ajax_get_lib($libname) {
-    global $CFG;
+    global $CFG, , $HTTPSPAGEREQUIRED;
+
     $libpath = '';
     $external_yui = false;
 
@@ -57,27 +58,33 @@ function ajax_get_lib($libname) {
             'ajaxcourse' => '/lib/ajax/ajaxcourse.js'
             );
 
+    if (!empty($HTTPSPAGEREQUIRED)) {
+        $wwwroot = $CFG->httpswwwroot;
+    } else {
+        $wwwroot = $CFG->wwwroot;
+    }
+
     if (array_key_exists($libname, $translatelist)) {
         // If this is a YUI file and we are using external libraries
-        if (substr($libname, 0, 3) == 'yui' && $CFG->useexternalyui) {
+        if (substr($libname, 0, 3) == 'yui' && !empty($CFG->useexternalyui)) {
             $external_yui = true;
             // Get current version
             include($CFG->libdir.'/yui/version.php');
             $libpath = 'http://yui.yahooapis.com/'.$yuiversion.'/build/'.substr($translatelist[$libname], 9);
         } else {
-            $libpath = $CFG->httpswwwroot . $translatelist[$libname];
+            $libpath = $wwwroot . $translatelist[$libname];
         }
 
     } else if (preg_match('/^https?:/', $libname)) {
         $libpath = $libname;
 
     } else {
-        $libpath = $CFG->httpswwwroot . '/' . $libname;
+        $libpath = $wwwroot . '/' . $libname;
     }
 
     // Make sure the file exists if it is local.
     if ($external_yui === false) {
-        $testpath = str_replace($CFG->httpswwwroot, $CFG->dirroot, $libpath);
+        $testpath = str_replace($wwwroot, $CFG->dirroot, $libpath);
         if (!file_exists($testpath)) {
             throw new moodle_exception('unknownjsinrequirejs', '', '', $libpath);
         }
