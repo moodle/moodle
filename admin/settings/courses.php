@@ -104,7 +104,7 @@ if ($hassiteconfig
     $languages=array();
     $languages[''] = get_string('forceno');
     $languages += get_list_of_languages();
-    $temp->add(new admin_setting_configselect('moodlecourse/lang', get_string('forcelanguage'), '', 0,$languages));
+    $temp->add(new admin_setting_configselect('moodlecourse/lang', get_string('forcelanguage'), '',key($languages),$languages));
 
     if(completion_info::is_enabled_for_site()) {
         $temp->add(new admin_setting_heading('progress', get_string('progress','completion'), ''));
