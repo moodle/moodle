@@ -10,7 +10,7 @@
  */
 function ajax_get_lib($libname) {
 
-    global $CFG;
+    global $CFG, $HTTPSPAGEREQUIRED;
     $libpath = '';
 
     $translatelist = array(
@@ -58,12 +58,18 @@ function ajax_get_lib($libname) {
             );
 
     if (array_key_exists($libname, $translatelist)) {
-        $libpath = $CFG->wwwroot . $translatelist[$libname];
+        if (!empty($HTTPSPAGEREQUIRED)) {
+            $wwwroot = $CFG->httpswwwroot;
+        }
+        else {
+            $wwwroot = $CFG->wwwroot;
+        }
+        $libpath = $wwwroot . $translatelist[$libname];
     } else {
         $libpath = $libname;
     }
 
-    $testpath = str_replace($CFG->wwwroot, $CFG->dirroot, $libpath);
+    $testpath = str_replace($wwwroot, $CFG->dirroot, $libpath);
     if (!file_exists($testpath)) {
         error('require_js: '.$libpath.' - file not found.');
     }

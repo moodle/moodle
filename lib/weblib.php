@@ -4346,7 +4346,7 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='',
  * @todo Finish documenting this function
  */
 function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=false, $link=true, $target='', $alttext=true) {
-    global $CFG, $HTTPSPAGEREQUIRED;
+    global $CFG;
 
     $needrec = false;
     // only touch the DB if we are missing data...
@@ -4401,11 +4401,6 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
         $file = 'f2';
     }
     $class = "userpicture";
-    if (!empty($HTTPSPAGEREQUIRED)) {
-        $wwwroot = $CFG->httpswwwroot;
-    } else {
-        $wwwroot = $CFG->wwwroot;
-    }
 
     if (is_null($picture)) {
         $picture = $user->picture;

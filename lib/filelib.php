@@ -3,7 +3,7 @@
 define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7'); //unique string constant
 
 function get_file_url($path, $options=null, $type='coursefile') {
-    global $CFG;
+    global $CFG, $HTTPSPAGEREQUIRED;
 
     $path = str_replace('//', '/', $path);  
     $path = trim($path, '/'); // no leading and trailing slashes
@@ -17,7 +17,13 @@ function get_file_url($path, $options=null, $type='coursefile') {
             $url = $CFG->wwwroot."/rss/file.php";
             break;
         case 'user':
-            $url = $CFG->wwwroot."/user/pix.php";
+            if (!empty($HTTPSPAGEREQUIRED)) {
+                $wwwroot = $CFG->httpswwwroot;
+            }
+            else {
+                $wwwroot = $CFG->wwwroot;
+            }
+            $url = $wwwroot."/user/pix.php";
             break;
         case 'usergroup':
             $url = $CFG->wwwroot."/user/pixgroup.php";
