@@ -83,7 +83,7 @@
         for ($i = 0; $i < $lesson->maxanswers; $i++) {
             // strip tags because the editor gives <p><br />...
             // also save any answers where the editor is (going to be) used
-            if ((!empty($form->answer[$i]) and trim(strip_tags($form->answer[$i]))) or isset($form->answereditor[$i]) or isset($form->responseeditor[$i])) {
+            if ((isset($form->answer[$i]) and (trim(strip_tags($form->answer[$i]))) != '') or isset($form->answereditor[$i]) or isset($form->responseeditor[$i])) {
                 if ($form->answerid[$i]) {
                     $oldanswer = new stdClass;
                     $oldanswer->id = clean_param($form->answerid[$i], PARAM_INT);

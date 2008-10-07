@@ -87,7 +87,9 @@
             $studentanswer = s(stripslashes_safe($useranswer));
             break;
          case LESSON_SHORTANSWER :
-            if (!$useranswer = $_POST['answer']) {
+            if (isset($_POST['answer'])) {
+                $useranswer = $_POST['answer'];
+            } else {
                 $noanswer = true;
                 break;
             }            
