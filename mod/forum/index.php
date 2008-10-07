@@ -138,7 +138,7 @@
             foreach ($allforums as $forum) {
                 if (!forum_is_forcesubscribed($forum->id)) {
                     $subscribed = forum_is_subscribed($USER->id, $forum->id);
-                    if ($subscribe && !$subscribed) {
+                    if ((has_capability('moodle/course:manageactivities', $coursecontext, $USER->id) || $forum->forcesubscribe != FORUM_DISALLOWSUBSCRIBE) && $subscribe && !$subscribed) {
                         forum_subscribe($USER->id, $forum->id);
                     } elseif (!$subscribe && $subscribed) {
                         forum_unsubscribe($USER->id, $forum->id);

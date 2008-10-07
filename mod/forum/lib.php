@@ -3199,30 +3199,50 @@ function forum_unsubscribe($userid, $forumid) {
  * Given a new post, subscribes or unsubscribes as appropriate.
  * Returns some text which describes what happened.
  */
-function forum_post_subscription($post) {
+function forum_post_subscription($post, $forum) {
 
     global $USER;
 
-    $subscribed=forum_is_subscribed($USER->id, $post->forum);
-    if ((isset($post->subscribe) && $post->subscribe && $subscribed)
-        || (!$post->subscribe && !$subscribed)) {
+    $action = '';
+    $subscribed = forum_is_subscribed($USER->id, $forum);
+    
+    if ($forum->forcesubscribe == FORUM_FORCESUBSCRIBE) { // database ignored
         return "";
-    }
+    } elseif (($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE)
+        && !has_capability('moodle/course:manageactivities', $coursecontext, $USER->id)) {
+        if ($subscribed) {
+            $action = 'unsubscribe'; // sanity check, following MDL-14558
+        } else {
+            return "";
+        }
 
-    if (!$forum = get_record("forum", "id", $post->forum)) {
-        return "";
+    } else { // go with the user's choice
+        if (isset($post->subscribe)) {
+            // no change
+            if ((!empty($post->subscribe) && $subscribed)
+                || (empty($post->subscribe) && !$subscribed)) {
+                return "";
+
+            } elseif (!empty($post->subscribe) && !$subscribed) {
+                $action = 'subscribe';
+
+            } elseif (empty($post->subscribe) && $subscribed) {
+                $action = 'unsubscribe';
+            }
+        }
     }
 
     $info->name  = fullname($USER);
     $info->forum = $forum->name;
 
-    if (!empty($post->subscribe)) {
-        forum_subscribe($USER->id, $post->forum);
-        return "<p>".get_string("nowsubscribed", "forum", $info)."</p>";
+    switch ($action) {
+        case 'subscribe':
+            forum_subscribe($USER->id, $post->forum);
+            return "<p>".get_string("nowsubscribed", "forum", $info)."</p>";
+        case 'unsubscribe':
+            forum_unsubscribe($USER->id, $post->forum);
+            return "<p>".get_string("nownotsubscribed", "forum", $info)."</p>";
     }
-
-    forum_unsubscribe($USER->id, $post->forum);
-    return "<p>".get_string("nownotsubscribed", "forum", $info)."</p>";
 }
 
 
