@@ -2368,11 +2368,11 @@ function move_section_to($course, $section, $destination) {
 /// Moves a whole course section up and down within the course
     global $USER;
 
-    if (!$destination) {
+    if (!$destination && $destination != 0) {
         return true;
     }
 
-    if ($destination > $course->numsections or $destination < 1) {
+    if ($destination > $course->numsections) {
         return false;
     }
 
