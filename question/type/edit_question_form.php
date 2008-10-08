@@ -219,6 +219,17 @@ class question_edit_form extends moodleform {
             $mform->hardFreezeAllVisibleExcept(array('categorymoveto', 'buttonar', 'currentgrp'));
         }
     }
+    
+    function validation($fromform, $files) {
+        $errors= parent::validation($fromform, $files);
+        if (empty($fromform->makecopy) && isset($this->question->id) 
+                && ($this->question->formoptions->canedit || $this->question->formoptions->cansaveasnew) 
+                && empty($fromform->usecurrentcat) && !$this->question->formoptions->canmove){
+            $errors['currentgrp'] = get_string('nopermissionmove', 'question');
+        }
+        return $errors;
+    }
+    
 
     /**
      * Add any question-type specific form fields.
