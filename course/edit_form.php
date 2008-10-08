@@ -74,21 +74,27 @@ class course_edit_form extends moodleform {
         $mform->setDefault('category', $category->id);
         $mform->setType('category', PARAM_INT);
 
-        $mform->addElement('text','fullname', get_string('fullname'),'maxlength="254" size="50"');
-        $mform->setHelpButton('fullname', array('coursefullname', get_string('fullname')), true);
-        $mform->setDefault('fullname', get_string('defaultcoursefullname'));
-        $mform->addRule('fullname', get_string('missingfullname'), 'required', null, 'client');
-        $mform->setType('fullname', PARAM_MULTILANG);
+        if (has_capability('moodle/course:changefullname', $coursecontext)) {
+            $mform->addElement('text','fullname', get_string('fullname'),'maxlength="254" size="50"');
+            $mform->setHelpButton('fullname', array('coursefullname', get_string('fullname')), true);
+            $mform->setDefault('fullname', get_string('defaultcoursefullname'));
+            $mform->addRule('fullname', get_string('missingfullname'), 'required', null, 'client');
+            $mform->setType('fullname', PARAM_MULTILANG);
+        }
 
-        $mform->addElement('text','shortname', get_string('shortname'),'maxlength="100" size="20"');
-        $mform->setHelpButton('shortname', array('courseshortname', get_string('shortname')), true);
-        $mform->setDefault('shortname', get_string('defaultcourseshortname'));
-        $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
-        $mform->setType('shortname', PARAM_MULTILANG);
+        if (has_capability('moodle/course:changeshortname', $coursecontext)) {
+            $mform->addElement('text','shortname', get_string('shortname'),'maxlength="100" size="20"');
+            $mform->setHelpButton('shortname', array('courseshortname', get_string('shortname')), true);
+            $mform->setDefault('shortname', get_string('defaultcourseshortname'));
+            $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
+            $mform->setType('shortname', PARAM_MULTILANG);
+        }
 
-        $mform->addElement('text','idnumber', get_string('idnumbercourse'),'maxlength="100"  size="10"');
-        $mform->setHelpButton('idnumber', array('courseidnumber', get_string('idnumbercourse')), true);
-        $mform->setType('idnumber', PARAM_RAW);
+        if (has_capability('moodle/course:changeidnumber', $coursecontext)) {
+            $mform->addElement('text','idnumber', get_string('idnumbercourse'),'maxlength="100"  size="10"');
+            $mform->setHelpButton('idnumber', array('courseidnumber', get_string('idnumbercourse')), true);
+            $mform->setType('idnumber', PARAM_RAW);
+        }
 
         $mform->addElement('htmleditor','summary', get_string('summary'), array('rows'=> '10', 'cols'=>'65'));
         $mform->setHelpButton('summary', array('text', get_string('helptext')), true);
@@ -308,7 +314,7 @@ class course_edit_form extends moodleform {
         $mform->addElement('select', 'guest', get_string('opentoguests'), $choices);
         $mform->setHelpButton('guest', array('guestaccess', get_string('opentoguests')), true);
         $mform->setDefault('guest', 0);
-        
+
         // If we are creating a course, its enrol method isn't yet chosen, BUT the site has a default enrol method which we can use here
         $enrol_object = $CFG;
         if (!empty($course)) {
@@ -377,8 +383,8 @@ class course_edit_form extends moodleform {
                 $mform->addElement('text', 'role_'.$role->id, $role->name);
                 if ($coursecontext) {
                     if ($rolename = get_record('role_names', 'roleid', $role->id, 'contextid', $coursecontext->id)) {
-                        $mform->setDefault('role_'.$role->id, $rolename->name); 
-                    }  
+                        $mform->setDefault('role_'.$role->id, $rolename->name);
+                    }
                 }
             }
         }
@@ -413,7 +419,7 @@ class course_edit_form extends moodleform {
             $gr_el->load($options);
         }
     }
-        
+
 
 /// perform some extra moodle validation
     function validation($data, $files) {
