@@ -1465,9 +1465,9 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 $completionicon='';
                 if($isediting) {
                     switch($completion) {
-                        case COMPLETION_TRACKING_MANUAL : 
+                        case COMPLETION_TRACKING_MANUAL :
                             $completionicon='manual-enabled'; break;
-                        case COMPLETION_TRACKING_AUTOMATIC : 
+                        case COMPLETION_TRACKING_AUTOMATIC :
                             $completionicon='auto-enabled'; break;
                         default: // wtf
                     }
@@ -1498,8 +1498,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                         $imgtitle=get_string('completion-title-'.$completionicon,'completion');
                         $newstate=
                             $completiondata->completionstate==COMPLETION_COMPLETE
-                            ? COMPLETION_INCOMPLETE 
-                            : COMPLETION_COMPLETE; 
+                            ? COMPLETION_INCOMPLETE
+                            : COMPLETION_COMPLETE;
                         // In manual mode the icon is a toggle form.
                         echo "
 <form class='togglecompletion' method='post' action='togglecompletion.php'><div>";
@@ -2457,11 +2457,11 @@ function move_section_to($course, $section, $destination) {
 /// Moves a whole course section up and down within the course
     global $USER, $DB;
 
-    if (!$destination) {
+    if (!$destination && $destination != 0) {
         return true;
     }
 
-    if ($destination > $course->numsections or $destination < 1) {
+    if ($destination > $course->numsections) {
         return false;
     }
 
