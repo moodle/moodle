@@ -822,7 +822,7 @@ success: function(o) {
      var sform = document.createElement('FORM');
      sform.method = 'POST';
      sform.id = "fp-search-form";
-     sform.action = '$CFG->wwwroot/repository/ws.php?action=search';
+     sform.action = '$CFG->httpswwwroot/repository/ws.php?action=search';
      sform.innerHTML = o.responseText;
      div2.appendChild(sform);
      el.appendChild(div1);
