@@ -28,6 +28,8 @@
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
+    $glossary->cmidnumber = $cm->idnumber;
+
     if (!$glossary->assessed) {
         error("Rating of items not allowed!");
     }
