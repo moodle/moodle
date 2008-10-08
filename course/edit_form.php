@@ -75,16 +75,6 @@ class course_edit_form extends moodleform {
         $mform->setDefault('category', $courseconfig->category);
         $mform->setType('category', PARAM_INT);
 
-        $mform->addElement('text','fullname', get_string('fullnamecourse'),'maxlength="254" size="50"');
-        $mform->setHelpButton('fullname', array('coursefullname', get_string('fullnamecourse')), true);
-        $mform->addRule('fullname', get_string('missingfullname'), 'required', null, 'client');
-        $mform->setType('fullname', PARAM_MULTILANG);
-
-        $mform->addElement('text','shortname', get_string('shortnamecourse'),'maxlength="100" size="20"');
-        $mform->setHelpButton('shortname', array('courseshortname', get_string('shortnamecourse')), true);
-        $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
-        $mform->setType('shortname', PARAM_MULTILANG);
-
         $fullname  = get_string('defaultcoursefullname');
         $shortname = get_string('defaultcourseshortname');
         while ($DB->record_exists('course', array('fullname'=>$fullname))
@@ -92,13 +82,28 @@ class course_edit_form extends moodleform {
             $fullname++;
             $shortname++;
         }
-        $mform->setDefault('fullname', $fullname);
-        $mform->setDefault('shortname', $shortname);
 
+        if (has_capability('moodle/course:changefullname', $coursecontext)) {
+            $mform->addElement('text','fullname', get_string('fullnamecourse'),'maxlength="254" size="50"');
+            $mform->setHelpButton('fullname', array('coursefullname', get_string('fullnamecourse')), true);
+            $mform->addRule('fullname', get_string('missingfullname'), 'required', null, 'client');
+            $mform->setType('fullname', PARAM_MULTILANG);
+            $mform->setDefault('fullname', $fullname);
+        }
 
-        $mform->addElement('text','idnumber', get_string('idnumbercourse'),'maxlength="100"  size="10"');
-        $mform->setHelpButton('idnumber', array('courseidnumber', get_string('idnumbercourse')), true);
-        $mform->setType('idnumber', PARAM_RAW);
+        if (has_capability('moodle/course:changeshortname', $coursecontext)) {
+            $mform->addElement('text','shortname', get_string('shortnamecourse'),'maxlength="100" size="20"');
+            $mform->setHelpButton('shortname', array('courseshortname', get_string('shortnamecourse')), true);
+            $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
+            $mform->setType('shortname', PARAM_MULTILANG);
+            $mform->setDefault('shortname', $shortname);
+        }
+
+        if (has_capability('moodle/course:changeidnumber', $coursecontext)) {
+            $mform->addElement('text','idnumber', get_string('idnumbercourse'),'maxlength="100"  size="10"');
+            $mform->setHelpButton('idnumber', array('courseidnumber', get_string('idnumbercourse')), true);
+            $mform->setType('idnumber', PARAM_RAW);
+        }
 
         $mform->addElement('htmleditor','summary', get_string('summary'), array('rows'=> '10', 'cols'=>'65'));
         $mform->setHelpButton('summary', array('text2', get_string('helptext')), true);
@@ -321,7 +326,7 @@ class course_edit_form extends moodleform {
         $mform->addElement('select', 'guest', get_string('opentoguests'), $choices);
         $mform->setHelpButton('guest', array('guestaccess', get_string('opentoguests')), true);
         $mform->setDefault('guest', $courseconfig->guest);
-        
+
         // If we are creating a course, its enrol method isn't yet chosen, BUT the site has a default enrol method which we can use here
         $enrol_object = $CFG;
         if (!empty($course)) {
@@ -359,7 +364,7 @@ class course_edit_form extends moodleform {
         require_once($CFG->libdir.'/completionlib.php');
         if(completion_info::is_enabled_for_site()) {
             $mform->addElement('header','', get_string('progress','completion'));
-            $mform->addElement('select', 'enablecompletion', get_string('completion','completion'), 
+            $mform->addElement('select', 'enablecompletion', get_string('completion','completion'),
                 array(0=>get_string('completiondisabled','completion'), 1=>get_string('completionenabled','completion')));
             $mform->setDefault('enablecompletion', $courseconfig->enablecompletion);
         } else {
@@ -403,8 +408,8 @@ class course_edit_form extends moodleform {
                 $mform->addElement('text', 'role_'.$role->id, $role->name);
                 if ($coursecontext) {
                     if ($rolename = $DB->get_record('role_names', array('roleid'=>$role->id, 'contextid'=>$coursecontext->id))) {
-                        $mform->setDefault('role_'.$role->id, $rolename->name); 
-                    }  
+                        $mform->setDefault('role_'.$role->id, $rolename->name);
+                    }
                 }
             }
         }
@@ -439,7 +444,7 @@ class course_edit_form extends moodleform {
             $gr_el->load($options);
         }
     }
-        
+
 
 /// perform some extra moodle validation
     function validation($data, $files) {

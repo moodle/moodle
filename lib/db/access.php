@@ -120,7 +120,7 @@ $moodle_capabilities = array(
             'editingteacher' => CAP_ALLOW
         )
     ),
-    
+
     'moodle/site:sendmessage' => array(
 
         'riskbitmask' => RISK_SPAM,
@@ -131,7 +131,7 @@ $moodle_capabilities = array(
             'admin' => CAP_ALLOW,
             'user' => CAP_ALLOW
         )
-    ),   
+    ),
 
     'moodle/site:approvecourse' => array(
 
@@ -669,7 +669,38 @@ $moodle_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
+    'moodle/course:changefullname' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+
+    'moodle/course:changeshortname' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+
+    'moodle/course:changeidnumber' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+
+
     'moodle/site:viewparticipants' => array(
 
         'captype' => 'read',
@@ -874,25 +905,25 @@ $moodle_capabilities = array(
 
     //capabilities designed for the new message system configuration
     'moodle/user:editmessageprofile' => array(
- 
+
          'riskbitmask' => RISK_SPAM,
- 
+
          'captype' => 'write',
          'contextlevel' => CONTEXT_USER,
          'legacy' => array(
              'admin' => CAP_ALLOW
          )
      ),
- 
-     'moodle/user:editownmessageprofile' => array(      
- 
-         'captype' => 'write',     
-         'contextlevel' => CONTEXT_SYSTEM,      
-         'legacy' => array(   
+
+     'moodle/user:editownmessageprofile' => array(
+
+         'captype' => 'write',
+         'contextlevel' => CONTEXT_SYSTEM,
+         'legacy' => array(
              'guest' => CAP_PROHIBIT,
              'user' => CAP_ALLOW,
              'admin' => CAP_ALLOW
-         )    
+         )
      ),
 
     'moodle/question:managecategory' => array(
