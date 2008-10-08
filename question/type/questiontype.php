@@ -306,10 +306,11 @@ class default_questiontype {
             $question->defaultgrade = $form->defaultgrade;
         }
 
-        if (!empty($question->id)) { // Question already exists
-            if (isset($form->categorymoveto)){
+        if (!empty($question->id) && !empty($form->categorymoveto)) { // Question already exists
+            list($movetocategory, $movetocontextid) = explode(',', $form->categorymoveto);
+            if ($movetocategory != $question->category){
                 question_require_capability_on($question, 'move');
-                list($question->category, $movetocontextid) = explode(',', $form->categorymoveto);
+                $question->category = $movetocategory;
                 //don't need to test add permission of category we are moving question to.
                 //Only categories that we have permission to add
                 //a question to will get through the form cleaning code for the select box.

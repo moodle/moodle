@@ -130,6 +130,7 @@ $string['movingquestionsnofiles']=  'Are you sure you want to move question(s) {
 $string['needtochoosecat'] = 'You need to choose a category to move this question to or press \'cancel\'.';
 $string['nocate'] = 'No such category $a!';
 $string['nopermissionadd'] = 'You don\'t have permission to add questions here.';
+$string['nopermissionmove'] = 'You don\'t have permission to move questions from here. You must save the question in this category or save it as a new question.';
 $string['noprobs'] = 'No problems found in your question database.';
 $string['notenoughdatatoeditaquestion'] = 'Neither a question id, nor a category id and question type, was specified.';
 $string['notenoughdatatomovequestions'] = 'You need to provide the question ids of questions you want to move.';
