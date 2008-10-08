@@ -379,6 +379,7 @@ if ($formdata = $mform->get_data()) {
                                 } else {
                                     $scale = $gradeitem->load_scale();
                                     $scales = explode(',', $scale->scale);
+                                    $scales = array_map('trim', $scales); //hack - trim whitespace around scale options 
                                     array_unshift($scales, '-'); // scales start at key 1
                                     $key = array_search($value, $scales);
                                     if ($key === false) {
