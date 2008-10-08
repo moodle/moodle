@@ -87,7 +87,7 @@
         $submitted = $assignmentinstance->submittedlink(true);
 
         $grading_info = grade_get_grades($course->id, 'mod', 'assignment', $cm->instance, $USER->id);
-        if (isset($grading_info->items[0])) {
+        if (isset($grading_info->items[0]) && !$grading_info->items[0]->grades[$USER->id]->hidden ) {
             $grade = $grading_info->items[0]->grades[$USER->id]->str_grade;
         }
         else {
