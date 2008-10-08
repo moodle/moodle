@@ -121,10 +121,12 @@
                 }
 
                 if ($chat->studentlogs or has_capability('mod/chat:readlog',$context)) {
-                    echo '<div class="reportlink">';
-                    echo "<a href=\"report.php?id=$cm->id\">".
-                        get_string('viewreport', 'chat').'</a>';
-                    echo '</div>';
+                    if ($msg = get_records_select('chat_messages', "chatid = '$chat->id' $groupselect", '', 'id', '', 1)) {
+                        echo '<div class="reportlink">';
+                        echo "<a href=\"report.php?id=$cm->id\">".
+                            get_string('viewreport', 'chat').'</a>';
+                        echo '</div>';
+                    }
                 }
 
 
