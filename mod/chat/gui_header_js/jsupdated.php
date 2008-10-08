@@ -193,7 +193,14 @@
             }
         }
 
-        print 'parent.msg.scroll(1,5000000);' . "\n\n";
+        print <<<EOD
+        if(parent.input){
+            var autoscroll = parent.input.document.getElementById('auto');
+            if(parent.msg && autoscroll && autoscroll.checked){
+                parent.msg.scroll(1,5000000);
+            }
+        }
+EOD;
         print "//]]>\n";
         print '</script>' . "\n\n";
         if ($beep) {
