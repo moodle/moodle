@@ -345,7 +345,7 @@ function glossary_get_user_grades($glossary, $userid=0) {
 /**
  * Update activity grades
  *
- * @param object $glossary null means all glossaries
+ * @param object $glossary null means all glossaries (with extra cmidnumber property)
  * @param int $userid specific user only, 0 means all
  */
 function glossary_update_grades($glossary=null, $userid=0, $nullifnone=true) {
@@ -410,16 +410,7 @@ function glossary_grade_item_update($glossary, $grades=NULL) {
     global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
 
-    if(!empty($glossary->cmidnumber)){
-        $params = array('itemname'=>$glossary->name, 'idnumber'=>$glossary->cmidnumber);
-    }else{
-        // MDL-14303
-        if ($cm = get_coursemodule_from_instance('glossary', $glossary->id)) {
-            $params = array('itemname'=>$glossary->name, 'idnumber'=>$cm->id);
-        } else {
-            return false;
-        }
-    }
+    $params = array('itemname'=>$glossary->name, 'idnumber'=>$glossary->cmidnumber);
 
     if (!$glossary->assessed or $glossary->scale == 0) {
         $params['gradetype'] = GRADE_TYPE_NONE;
