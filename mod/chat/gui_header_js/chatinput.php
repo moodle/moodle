@@ -53,7 +53,7 @@
           onsubmit="return empty_field_and_submit()" style="margin:0">
         <input type="text" id="input_chat_message" name="chat_message" size="50" value="" />
         <?php helpbutton('chatting', get_string('helpchatting', 'chat'), 'chat', true, false); ?><br />
-        <input type="checkbox" id="auto" size="50" value="" checked='true' /><?php echo get_string('autoscroll', 'chat');?>
+        <input type="checkbox" id="auto" size="50" value="" checked='true' /><label for="auto"><?php echo get_string('autoscroll', 'chat');?></label>
     </form>
 
     <form action="insert.php" method="post" target="empty" id="sendForm">
