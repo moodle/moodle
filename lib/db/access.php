@@ -672,6 +672,8 @@ $moodle_capabilities = array(
 
     'moodle/course:changefullname' => array(
 
+        'riskbitmask' => RISK_XSS,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -683,6 +685,8 @@ $moodle_capabilities = array(
 
     'moodle/course:changeshortname' => array(
 
+        'riskbitmask' => RISK_XSS,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -693,6 +697,8 @@ $moodle_capabilities = array(
     ),
 
     'moodle/course:changeidnumber' => array(
+
+        'riskbitmask' => RISK_XSS,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
