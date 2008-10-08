@@ -60,6 +60,11 @@ class grade_report_user extends grade_report {
     public $showrank;
 
     /**
+     * show grade percentages
+     */
+    public $showpercentage;
+
+    /**
      * Show hidden items even when user does not have required cap
      */
     public $showhiddenitems;
@@ -76,6 +81,7 @@ class grade_report_user extends grade_report {
         parent::__construct($courseid, $gpr, $context);
 
         $this->showrank        = grade_get_setting($this->courseid, 'report_user_showrank', $CFG->grade_report_user_showrank);
+        $this->showpercentage  = grade_get_setting($this->courseid, 'report_user_showpercentage', $CFG->grade_report_user_showpercentage);
         $this->showhiddenitems = grade_get_setting($this->courseid, 'report_user_showhiddenitems', $CFG->grade_report_user_showhiddenitems);
 
         $switch = grade_get_setting($this->courseid, 'aggregationposition', $CFG->grade_aggregationposition);
@@ -105,17 +111,24 @@ class grade_report_user extends grade_report {
          */
 
         // setting up table headers
+        $tablecolumns = array('itemname', 'category', 'grade');
+        $tableheaders = array($this->get_lang_string('gradeitem', 'grades'),
+                              $this->get_lang_string('category'),
+                              $this->get_lang_string('grade'));
+
+        if ($this->showpercentage) {
+            $tablecolumns[] = 'percentage';
+            $tableheaders[] = $this->get_lang_string('percentage', 'grades');
+        }
+
         if ($this->showrank) {
             // TODO: this is broken if hidden grades present!!
-            $tablecolumns = array('itemname', 'category', 'grade', 'percentage', 'rank', 'feedback');
-            $tableheaders = array($this->get_lang_string('gradeitem', 'grades'), $this->get_lang_string('category'), $this->get_lang_string('grade'),
-                $this->get_lang_string('percent', 'grades'), $this->get_lang_string('rank', 'grades'),
-                $this->get_lang_string('feedback'));
-        } else {
-            $tablecolumns = array('itemname', 'category', 'grade', 'percentage', 'feedback');
-            $tableheaders = array($this->get_lang_string('gradeitem', 'grades'), $this->get_lang_string('category'), $this->get_lang_string('grade'),
-                $this->get_lang_string('percent', 'grades'), $this->get_lang_string('feedback'));
+            $tablecolumns[] = 'rank';
+            $tableheaders[] = $this->get_lang_string('rank');
         }
+
+        $tablecolumns[] = 'feedback';
+        $tableheaders[] = $this->get_lang_string('feedback');
 
         $this->table = new flexible_table('grade-report-user-'.$this->courseid);
 
@@ -244,11 +257,13 @@ class grade_report_user extends grade_report {
             }
 
             /// prints percentage
-            if ($grade_item->needsupdate) {
-                $data[] = '<span class="'.$hidden.$class.'gradingerror">'.get_string('error').'</span>';
+            if ($this->showpercentage) {
+                if ($grade_item->needsupdate) {
+                    $data[] = '<span class="'.$hidden.$class.'gradingerror">'.get_string('error').'</span>';
 
-            } else {
-                $data[] = '<span class="'.$hidden.$class.'">'.grade_format_gradevalue($gradeval, $grade_item, true, GRADE_DISPLAY_TYPE_PERCENTAGE).'</span>';
+                } else {
+                    $data[] = '<span class="'.$hidden.$class.'">'.grade_format_gradevalue($gradeval, $grade_item, true, GRADE_DISPLAY_TYPE_PERCENTAGE).'</span>';
+                }
             }
 
             /// prints rank
@@ -330,6 +345,15 @@ function grade_report_user_settings_definition(&$mform) {
 
     $mform->addElement('select', 'report_user_showrank', get_string('showrank', 'grades'), $options);
     $mform->setHelpButton('report_user_showrank', array('showrank', get_string('showrank', 'grades'), 'grade'));
+
+    if (empty($CFG->grade_report_user_showpercentage)) {
+        $options[-1] = get_string('defaultprev', 'grades', $options[0]);
+    } else {
+        $options[-1] = get_string('defaultprev', 'grades', $options[1]);
+    }
+
+    $mform->addElement('select', 'report_user_showpercentage', get_string('showpercentage', 'grades'), $options);
+    $mform->setHelpButton('report_user_showpercentage', array('showpercentage', get_string('showpercentage', 'grades'), 'grade'));
 
     $options = array(-1 => get_string('default', 'grades'),
                       0 => get_string('hide'),
