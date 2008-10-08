@@ -50,7 +50,7 @@
 
 
         if ($currentgroup) {
-            $groupselect = " AND (groupid = '$currentgroup' OR groupid = 0)";
+            $groupselect = " AND (groupid = $currentgroup OR groupid = 0)";
         } else {
             $groupselect = "";
         }
@@ -105,7 +105,7 @@
     }
 
     if (!empty($currentgroup)) {
-        $groupselect = " AND (groupid = '$currentgroup' OR groupid = 0)";
+        $groupselect = " AND (groupid = $currentgroup OR groupid = 0)";
     } else {
         $groupselect = "";
     }
