@@ -636,7 +636,8 @@ $moodle_capabilities = array(
         'legacy' => array(
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
-        )
+        ),
+        'clonepermissionsfrom' => 'moodle/course:update'
     ),
 
     'moodle/course:changeshortname' => array(
@@ -646,7 +647,8 @@ $moodle_capabilities = array(
         'legacy' => array(
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
-        )
+        ),
+        'clonepermissionsfrom' => 'moodle/course:update'
     ),
 
     'moodle/course:changeidnumber' => array(
@@ -656,7 +658,8 @@ $moodle_capabilities = array(
         'legacy' => array(
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
-        )
+        ),
+        'clonepermissionsfrom' => 'moodle/course:update'
     ),
 
     'moodle/site:viewparticipants' => array(
