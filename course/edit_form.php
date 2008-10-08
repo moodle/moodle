@@ -74,34 +74,29 @@ class course_edit_form extends moodleform {
         $mform->setDefault('category', $category->id);
         $mform->setType('category', PARAM_INT);
 
-        if (has_capability('moodle/course:changefullname', $coursecontext)) {
-            $mform->addElement('text','fullname', get_string('fullname'),'maxlength="254" size="50"');
-            $mform->setHelpButton('fullname', array('coursefullname', get_string('fullname')), true);
-            $mform->addRule('fullname', get_string('missingfullname'), 'required', null, 'client');
-            $mform->setType('fullname', PARAM_MULTILANG);
-        } else {
-            $mform->addElement('static','fullname', get_string('fullname'), get_string('defaultcoursefullname'));
-        }
-
+        $mform->addElement('text','fullname', get_string('fullname'),'maxlength="254" size="50"');
+        $mform->setHelpButton('fullname', array('coursefullname', get_string('fullname')), true);
         $mform->setDefault('fullname', get_string('defaultcoursefullname'));
-
-        if (has_capability('moodle/course:changeshortname', $coursecontext)) {
-            $mform->addElement('text','shortname', get_string('shortname'),'maxlength="100" size="20"');
-            $mform->setHelpButton('shortname', array('courseshortname', get_string('shortname')), true);
-            $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
-            $mform->setType('shortname', PARAM_MULTILANG);
-        } else {
-            $mform->addElement('static','shortname', get_string('shortname'), get_string('defaultcourseshortname'));
+        $mform->addRule('fullname', get_string('missingfullname'), 'required', null, 'client');
+        $mform->setType('fullname', PARAM_MULTILANG);
+        if ($course and !has_capability('moodle/course:changefullname', $coursecontext)) {
+            $mform->hardFreeze('fullname');
         }
 
+        $mform->addElement('text','shortname', get_string('shortname'),'maxlength="100" size="20"');
+        $mform->setHelpButton('shortname', array('courseshortname', get_string('shortname')), true);
         $mform->setDefault('shortname', get_string('defaultcourseshortname'));
+        $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
+        $mform->setType('shortname', PARAM_MULTILANG);
+        if ($course and !has_capability('moodle/course:changeshortname', $coursecontext)) {
+            $mform->hardFreeze('shortname');
+        }
 
-        if (has_capability('moodle/course:changeidnumber', $coursecontext)) {
-            $mform->addElement('text','idnumber', get_string('idnumbercourse'),'maxlength="100"  size="10"');
-            $mform->setHelpButton('idnumber', array('courseidnumber', get_string('idnumbercourse')), true);
-            $mform->setType('idnumber', PARAM_RAW);
-        } else {
-            $mform->addElement('static','idnumber', get_string('idnumber'));
+        $mform->addElement('text','idnumber', get_string('idnumbercourse'),'maxlength="100"  size="10"');
+        $mform->setHelpButton('idnumber', array('courseidnumber', get_string('idnumbercourse')), true);
+        $mform->setType('idnumber', PARAM_RAW);
+        if ($course and !has_capability('moodle/course:changeidnumber', $coursecontext)) {
+            $mform->hardFreeze('idnumber');
         }
 
         $mform->addElement('htmleditor','summary', get_string('summary'), array('rows'=> '10', 'cols'=>'65'));
