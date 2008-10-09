@@ -271,7 +271,7 @@ $string['memorylimithelp'] = '<p>Pašlaik iestatītais PHP atmiņas apjoma ierob
     (atverot šīs lapas, tiks parādīti kļūdas ziņojumi), un fails .htaccess būs jānoņem.</p></li>
 </ol>';
 $string['missingrequiredfield'] = 'Trūkst kāda nepieciešamā lauka';
-$string['moodledocslink'] = 'Šai lapai paredzētie Moodle dokumenti';
+$string['moodledocslink'] = 'Šīs lapas Moodle dokumenti';
 $string['mssql'] = 'SQL*Server (mssql)';
 $string['mssql_n'] = 'SQL*Server ar UTF-8 atbalstu (mssql_n)';
 $string['mssqlextensionisnotpresentinphp'] = 'PHP ar paplašinājumu MSSQL nav pareizi konfigurēta un nevar sazināties ar SQL*Server.  Lūdzu, pārbaudiet php.ini failu vai atkārtoti kompilējiet PHP.';
