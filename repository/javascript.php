@@ -907,7 +907,8 @@ return _client;
 })();
 EOD;
 
-$repos = repository_get_instances(array($context,get_system_context()));
+$user_context = get_context_instance(CONTEXT_USER, $USER->id);
+$repos = repository_get_instances(array($user_context, $context, get_system_context()));
 foreach ($repos as $repo) {
     $js .= "\r\n";
     $js .= 'repository_client_'.$suffix.'.repos.push('.json_encode($repo->ajax_info()).');'."\n";
