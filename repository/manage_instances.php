@@ -46,13 +46,14 @@
 
     } else {
         // throw an error here
+        print_error('wrongcontextid');
         exit;
     }
 
     $baseurl = $CFG->wwwroot . '/repository/manage_instances.php?contextid=' . $contextid . '&amp;sesskey='. sesskey();
 
 
-/// Security: we cannot perform any action if the type is not visible
+/// Security: we cannot perform any action if the type is not visible or if the context has been disabled
     if (!empty($new)){
         $type = repository_get_type_by_typename($new);
     } else if (!empty($edit)){
@@ -62,7 +63,7 @@
         $instance = repository_get_instance($delete);
         $type = repository_get_type_by_id($instance->typeid);
     }
-    if (isset($type) && !$type->get_visible()) {
+    if (isset($type) && ( !$type->get_visible() || (!$type->get_contextvisibility($context->contextlevel)) ) ) {
         print_error('typenotvisible', 'repository', $baseurl);
     }
 

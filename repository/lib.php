@@ -95,6 +95,29 @@ class repository_type {
      */
     private $_sortorder;
 
+     /**
+     * Return if the instance is visible in a context
+     * TODO: check if the context visibility has been overwritten by the plugin creator
+     *       (need to create special functions to be overvwritten in repository class)
+     * @param objet $contextlevel - context level
+     * @return boolean
+     */
+    public function get_contextvisibility($contextlevel) {
+     
+        if ($contextlevel == CONTEXT_COURSE) {
+            return $this->_options['enablecourseinstances'];
+        }
+
+        if ($contextlevel == CONTEXT_USER) {
+            return $this->_options['enableuserinstances'];
+        }
+
+        //the context is SITE
+        return true;
+    }
+     
+
+
     /**
      * repository_type constructor
      * @global <type> $CFG
@@ -123,6 +146,16 @@ class repository_type {
                 }
             }
         }
+
+        //retrieve visibility from option
+        if (array_key_exists('enablecourseinstances',$typeoptions)) {
+            $this->_options['enablecourseinstances'] = $typeoptions['enablecourseinstances'];
+        }
+      
+        if (array_key_exists('enableuserinstances',$typeoptions)) {
+            $this->_options['enableuserinstances'] = $typeoptions['enableuserinstances'];
+        }
+         
     }
 
     /**
@@ -581,6 +614,25 @@ abstract class repository {
     }
 
     /**
+     * Return is the instance is visible
+     * (is the type visible ? is the context enable ?)
+     * @return boolean
+     */
+    public function is_visible() {      
+        $type = repository_get_type_by_id($this->typeid);
+        $instanceoptions = repository_static_function($type->get_typename(), 'get_instance_option_names');
+
+        if ($type->get_visible()) {
+            //if the instance is unique so it's visible, otherwise check if the instance has a enabled context
+            if (empty($instanceoptions) || $type->get_contextvisibility($this->context->contextlevel)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Return the name of this instance, can be overridden.
      * @global <type> $DB
      * @return <type>
@@ -981,16 +1033,24 @@ function repository_check_context($ctx_id) {
 /**
  * Return all types that you a user can create/edit and which are also visible
  * Note: Mostly used in order to know if at least one editable type has been set
+ * @param object $context the context for which we want the editable types
  * @return array types
  */
-function repository_get_editable_types() {
+function repository_get_editable_types($context = null) {
+    
+    if (empty($context)) {
+        $context = get_system_context();
+    }
+
     $types= repository_get_types(true);
     $editabletypes = array();
     foreach ($types as $type) {
         $instanceoptionnames = repository_static_function($type->get_typename(), 'get_instance_option_names');
         if (!empty($instanceoptionnames)) {
-            $editabletypes[]=$type;
-        }
+            if ($type->get_contextvisibility($context->contextlevel)) {
+                $editabletypes[]=$type;
+            }
+         }
     }
     return $editabletypes;
 }
@@ -1054,8 +1114,12 @@ function repository_get_instances($contexts=array(), $userid = null, $onlyvisibl
         $options['name']    = $repo->name;
         $options['type']    = $repo->repositorytype;
         $options['typeid']  = $repo->typeid;
-        $classname = 'repository_' . $repo->repositorytype;
-        $ret[] = new $classname($repo->id, $repo->contextid, $options, $repo->readonly);
+        $classname = 'repository_' . $repo->repositorytype;//
+
+        $repository = new $classname($repo->id, $repo->contextid, $options, $repo->readonly);
+        if (!$onlyvisible || $repository->is_visible()) {
+            $ret[] = $repository;
+        }
     }
     return $ret;
 }
@@ -1247,18 +1311,17 @@ final class repository_instance_form extends moodleform {
         $mform->addElement('text', 'name', get_string('name'), 'maxlength="100" size="30"');
         $mform->addRule('name', $strrequired, 'required', null, 'client');
 
-        if (!$this->instance->readonly) {
-            //add fields
-            if (!$this->instance) {
-                $result = repository_static_function($this->plugin, 'instance_config_form', $mform);
-            } else {
-                $result = $this->instance->instance_config_form($mform);
-            }
 
-            // and set the data if we have some.
-            if ($this->instance) {
-                $data = array();
-                $data['name'] = $this->instance->name;
+        //add fields
+        if (!$this->instance) {
+            $result = repository_static_function($this->plugin, 'instance_config_form', $mform);
+        }
+        else {
+            $data = array();
+            $data['name'] = $this->instance->name;
+            if (!$this->instance->readonly) {
+                $result = $this->instance->instance_config_form($mform);
+                // and set the data if we have some.
                 foreach ($this->instance->get_instance_option_names() as $config) {
                     if (!empty($this->instance->$config)) {
                         $data[$config] = $this->instance->$config;
@@ -1266,15 +1329,8 @@ final class repository_instance_form extends moodleform {
                         $data[$config] = '';
                      }
                 }
-                $this->set_data($data);
             }
-        }
-        else {
-             if ($this->instance) {
-                $data = array();
-                $data['name'] = $this->instance->name;
-                $this->set_data($data);
-             }
+            $this->set_data($data);
         }
 
         $this->add_action_buttons(true, get_string('save','repository'));
@@ -1294,15 +1350,6 @@ final class repository_instance_form extends moodleform {
             $errors = array('name' => get_string('err_uniquename', 'repository'));
         }
 
-        $pluginerrors = array();
-        if ($this->instance) {
-            //$pluginerrors = $this->instance->admin_config_validation($data);
-        } else {
-            //$pluginerrors = repository_static_function($this->plugin, 'admin_config_validation', $data);
-        }
-        if (is_array($pluginerrors)) {
-            $errors = array_merge($errors, $pluginerrors);
-        }
         return $errors;
     }
 }
@@ -1341,10 +1388,22 @@ final class repository_type_form extends moodleform {
                 $result = call_user_func(array($classname,'type_config_form'),$mform);
         }
 
-        // and set the data if we have some.
+        //add "enable course/user instances" checkboxes if multiple instances are allowed
+        $instanceoptionnames = repository_static_function($this->plugin, 'get_instance_option_names');
+        if (!empty($instanceoptionnames)){
+            $mform->addElement('checkbox', 'enablecourseinstances', get_string('enablecourseinstances', 'repository'));
+            $mform->addElement('checkbox', 'enableuserinstances', get_string('enableuserinstances', 'repository'));
+        }
+
+        // set the data if we have some.
         if ($this->instance) {
             $data = array();
             $option_names = call_user_func(array($classname,'get_type_option_names'));
+            if (!empty($instanceoptionnames)){
+                $option_names[] = 'enablecourseinstances';
+                $option_names[] = 'enableuserinstances';
+            }
+
             $instanceoptions = $this->instance->get_options();
             foreach ($option_names as $config) {
                 if (!empty($instanceoptions[$config])) {
@@ -1355,6 +1414,7 @@ final class repository_type_form extends moodleform {
             }
             $this->set_data($data);
         }
+    
         $this->add_action_buttons(true, get_string('save','repository'));
     }
 }
@@ -1386,7 +1446,6 @@ function repository_display_instances_list($context, $typename = null) {
     $settingsstr = get_string('settings');
     $deletestr = get_string('delete');
     $updown = get_string('updown', 'repository');
-    $plugins = get_list_of_plugins('repository');
     //retrieve list of instances. In administration context we want to display all
     //instances of a type, even if this type is not visible. In course/user context we
     //want to display only visible instances, but for every type types. The repository_get_instances()
@@ -1433,13 +1492,13 @@ function repository_display_instances_list($context, $typename = null) {
         $instancehtml .= '<h3>';
         $instancehtml .= get_string('createrepository', 'repository');
         $instancehtml .= '</h3><ul>';
-        foreach ($plugins as $p) {
-            $type = repository_get_type_by_typename($p);
+        $types = repository_get_editable_types($context);
+        foreach ($types as $type) {
             if (!empty($type) && $type->get_visible()) {
-                $instanceoptionnames = repository_static_function($p, 'get_instance_option_names');
+                $instanceoptionnames = repository_static_function($type->get_typename(), 'get_instance_option_names');
                 if (!empty($instanceoptionnames)) {
-                    $instancehtml .= '<li><a href="'.$baseurl.'&amp;new='.$p.'">'.get_string('create', 'repository')
-                        .' "'.get_string('repositoryname', 'repository_'.$p).'" '
+                    $instancehtml .= '<li><a href="'.$baseurl.'&amp;new='.$type->get_typename().'">'.get_string('create', 'repository')
+                        .' "'.get_string('repositoryname', 'repository_'.$type->get_typename()).'" '
                         .get_string('instance', 'repository').'</a></li>';
                     $addable++;
                 }
