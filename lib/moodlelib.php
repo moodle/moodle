@@ -3447,7 +3447,7 @@ function set_login_session_preferences() {
     // Restore the calendar filters, if saved
     if (intval(get_user_preferences('calendar_persistflt', 0))) {
         include_once($CFG->dirroot.'/calendar/lib.php');
-        calendar_set_filters_status(get_user_preferences('calendav_savedflt', 0xff));
+        calendar_set_filters_status(get_user_preferences('calendar_savedflt', 0xff));
     }
 }
 
