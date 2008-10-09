@@ -111,7 +111,7 @@ $string['gdversionhelp'] = '<p>Sul vostro server sembra non essere installato il
 <p>Su Windows normalmente è possibile modificare il file php.ini e togliere il commento dalla linea che contiene php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Gestione insicura dei Globals';
 $string['globalsquoteserror'] = 'Correggere le impostazioni PHP: disabilitare register_globals e/o abilitare magic_quotes_gpc';
-$string['globalswarning'] = '<p><strong>Avvertimento per la sicurezza</strong>: per funzionare correttamente, Moodle richiede <br />alcune modifiche alle attuali impostazioni del PHP.<p/><p><em>Bisogna</em> impostare <code>register_globals=off</code>.<p>Questa impostazione può essere modificata editando il vostro <code>php.ini</code>, la configurazione Apache/IIS <br />o il file <code>.htaccess</code>.</p>';
+$string['globalswarning'] = '<p><strong>Avviso per la sicurezza</strong>: per funzionare correttamente, Moodle richiede <br />alcune modifiche alle attuali impostazioni del PHP.<p/><p><em>Bisogna</em> impostare <code>register_globals=off</code>.<p>Questa impostazione può essere modificata editando il vostro <code>php.ini</code>, la configurazione Apache/IIS <br />o il file <code>.htaccess</code>.</p>';
 $string['help'] = 'Aiuto';
 $string['iconvrecommended'] = 'Installare la libreria opzionale ICONV è caldamente consigliato per migliorare le prestazioni del sito, in particolare se il vostro sito supporta lingue non latine.';
 $string['info'] = 'Informazioni';
@@ -190,4 +190,5 @@ $string['wrongzipfilename'] = 'Il nome del file ZIP è sbagliato.';
 $string['wwwroot'] = 'Indirizzo web';
 $string['wwwrooterror'] = 'L\'indirizzo web sembra non essere valido - questa installazione di Moodle non sembra essere li. Il valore è stato reimpostato';
 $string['xmlrpcrecommended'] = 'L\'installazione della estensione opzionale xmlrpc è utile per le funzionalità del Moodle Networking.';
+$string['ziprequired'] = 'Ora Moodle richiede l\'estensione Zip PHP. Gli esguibili info-ZIP o la libreria PclZip non è più usata.';
 ?>
