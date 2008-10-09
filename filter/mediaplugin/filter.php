@@ -264,7 +264,7 @@ function mediaplugin_filter_qt_callback($link, $autostart=false) {
   codebase="http://www.apple.com/qtactivex/qtplugin.cab" '.$size.'>
  <param name="pluginspage" value="http://www.apple.com/quicktime/download/" />
  <param name="src" value="'.$url.'" />
- <param name="coltroller" value="true" />
+ <param name="controller" value="true" />
  <param name="loop" value="true" />
  <param name="autoplay" value="'.$autostart.'" />
  <param name="autostart" value="'.$autostart.'" />
