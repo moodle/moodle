@@ -463,7 +463,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
 
     print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&amp;");
 
-    echo '<table class="logtable genearlbox boxaligncenter" summary="">'."\n";
+    echo '<table class="logtable generalbox boxaligncenter" summary="">'."\n";
     // echo "<table class=\"logtable\" cellpadding=\"3\" cellspacing=\"0\" summary=\"\">\n";
     echo "<tr>";
     if ($course->id == SITEID) {
