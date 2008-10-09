@@ -21,7 +21,9 @@
     $DB->delete_records("lesson_pages", array("id" => $pageid));
 
     // repair the hole in the linkage
-    if (!$thispage->prevpageid) {
+    if (!$thispage->prevpageid AND !$thispage->nextpageid) {
+        //This is the only page, no repair needed
+    } elseif (!$thispage->prevpageid) {
         // this is the first page...
         if (!$page = $DB->get_record("lesson_pages", array("id" => $thispage->nextpageid))) {
             print_error("Delete: next page not found");
