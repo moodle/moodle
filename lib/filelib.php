@@ -1440,10 +1440,11 @@ function put_records_csv($file, $records, $table = NULL) {
 /**
  * Recursively delete the file or folder with path $location. That is,
  * if it is a file delete it. If it is a folder, delete all its content
- * then delete it. If $location does not exist to start, that is not
- * considered an error.
+ * then delete it. Does not throw an error if the location does not exists,
+ * but will return false.
  *
  * @param $location the path to remove.
+ * @return bool true if the call to unlink() was successful, false otherwise;
  */
 function fulldelete($location) {
     if (is_dir($location)) {
@@ -1471,6 +1472,8 @@ function fulldelete($location) {
         if (!unlink($location)) {
             return false;
         }
+    } else {
+        return false;
     }
     return true;
 }
