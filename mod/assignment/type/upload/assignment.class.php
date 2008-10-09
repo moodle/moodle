@@ -1050,7 +1050,7 @@ class assignment_upload extends assignment_base {
 
         $mform->addElement('select', 'var4', get_string("trackdrafts", "assignment"), $ynoptions);
         $mform->setHelpButton('var4', array('trackdrafts', get_string('trackdrafts', 'assignment'), 'assignment'));
-        $mform->setDefault('trackdrafts', 1);
+        $mform->setDefault('var4', 1);
 
     }
 
