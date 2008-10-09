@@ -150,10 +150,14 @@ class repository_type {
         //retrieve visibility from option
         if (array_key_exists('enablecourseinstances',$typeoptions)) {
             $this->_options['enablecourseinstances'] = $typeoptions['enablecourseinstances'];
+        } else {
+             $this->_options['enablecourseinstances'] = 0;
         }
       
         if (array_key_exists('enableuserinstances',$typeoptions)) {
             $this->_options['enableuserinstances'] = $typeoptions['enableuserinstances'];
+        } else {
+             $this->_options['enableuserinstances'] = 0;
         }
          
     }
