@@ -407,9 +407,11 @@ _client.print_header = function() {
     _client.makepath();
 }
 _client.print_footer = function() {
-    var panel = new YAHOO.util.Element('panel-$suffix');
-    panel.get('element').innerHTML += _client.uploadcontrol();
-    panel.get('element').innerHTML += _client.makepage();
+    var panel = document.getElementById('panel-$suffix');
+    var footer = document.createElement('DIV');
+    panel.appendChild(footer);
+    footer.innerHTML += _client.uploadcontrol();
+    footer.innerHTML += _client.makepage();
     var oDiv = document.getElementById('repo-tb-$suffix');
     if(!_client.ds.nosearch) {
         var search = document.createElement('A');
@@ -535,7 +537,14 @@ _client.buildtree = function(node, level) {
     if(node.children) {
         node.title = '<i><u>'+node.title+'</u></i>';
     }
-    var info = {label:node.title, title:"$strdate"+node.date+' '+'$strsize'+node.size};
+    var info = {
+        label:node.title,
+        title:"$strdate"+node.date+' $strsize'+node.size,
+        filename:node.title,
+        value:node.source,
+        icon:node.thumbnail,
+        path:node.path
+    };
     var tmpNode = new YAHOO.widget.TextNode(info, level, false);
     var tooltip = new YAHOO.widget.Tooltip(tmpNode.labelElId, {
         context:tmpNode.labelElId, text:info.title});
@@ -544,10 +553,6 @@ _client.buildtree = function(node, level) {
     }else{
         tmpNode.repo_id=_client.repositoryid;
     }
-    tmpNode.filename = node.title;
-    tmpNode.value  = node.source;
-    tmpNode.icon = node.thumbnail;
-    tmpNode.path = node.path;
     if(node.children) {
         if(node.expanded) {
             tmpNode.expand();
@@ -563,9 +568,6 @@ _client.buildtree = function(node, level) {
         }
     } else {
         tmpNode.isLeaf = true;
-        tmpNode.onLabelClick = function() {
-            repository_client_$suffix.rename(this.filename, this.value, this.icon, this.repo_id);
-        }
     }
 }
 _client.dynload = function (node, fnLoadComplete) {
@@ -613,6 +615,11 @@ _client.viewlist = function() {
         _client.buildtree(list[k], tree.getRoot());
     }
     tree.draw();
+    tree.subscribe('clickEvent', function(e){
+        if(e.node.isLeaf){
+            repository_client_$suffix.rename(e.node.data.filename, e.node.data.value, e.node.data.icon, e.node.repo_id);
+        }
+    });
     _client.print_footer();
 }
 _client.upload = function() {
