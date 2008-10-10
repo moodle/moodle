@@ -3053,6 +3053,20 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101517);
     }
 
+    if ($result && $oldversion < 2007101526) {
+
+    /// Changing the default of field lang on table user to en_utf8
+        $table = new XMLDBTable('user');
+        $field = new XMLDBField('lang');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, 'en_utf8', 'country');
+
+    /// Launch change of default for field lang
+        $result = $result && change_field_default($table, $field);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2007101526);
+    }
+
     return $result;
 }
 
