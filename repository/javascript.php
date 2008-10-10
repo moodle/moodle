@@ -234,7 +234,7 @@ this.create_picker = function() {
                 try {
                     var json = YAHOO.lang.JSON.parse(o.responseText);
                 } catch(e) {
-                    alert('$strinvalidjson - |search_cb| -'+o.responseText);
+                    alert('$strinvalidjson - |search_cb| -'+_client.stripHTML(o.responseText));
                     return;
                 }
                 _client.ds={};
@@ -296,6 +296,11 @@ _client.ds = null;
 _client.viewmode = 0;
 _client.viewbar =null;
 
+_client.stripHTML = function(str){
+    var re= /<\S[^><]*>/g
+    var ret = str.replace(re, "")
+    return ret;
+}
 // public static mehtod
 _client.postdata = function(obj) {
     var str = '';
@@ -576,7 +581,7 @@ _client.dynload = function (node, fnLoadComplete) {
              try {
                  var json = YAHOO.lang.JSON.parse(o.responseText);
              } catch(e) {
-                 alert('$strinvalidjson - |dynload| -'+o.responseText);
+                 alert('$strinvalidjson - |dynload| -'+_client.stripHTML(o.responseText));
                  return;
              }
              for(k in json.list) {
@@ -652,7 +657,7 @@ upload: function(o) {
         try {
             var ret = YAHOO.lang.JSON.parse(o.responseText);
         } catch(e) {
-            alert('$strinvalidjson - |upload| -'+o.responseText);
+            alert('$strinvalidjson - |upload| -'+_client.stripHTML(o.responseText));
         }
         if(ret && ret.e) {
             var panel = new YAHOO.util.Element('panel-$suffix');
@@ -872,7 +877,7 @@ success: function(o) {
      try {
          var ret = YAHOO.lang.JSON.parse(o.responseText);
      } catch(e) {
-         alert('$strinvalidjson - |req_cb| -'+o.responseText);
+         alert('$strinvalidjson - |req_cb| -'+_client.stripHTML(o.responseText));
      };
      if(ret && ret.e) {
          panel.get('element').innerHTML = ret.e;
@@ -898,7 +903,7 @@ success: function(o) {
      try {
          var ret = YAHOO.lang.JSON.parse(o.responseText);
      } catch(e) {
-         alert('$strinvalidjson - |download_cb| -'+o.responseText);
+         alert('$strinvalidjson - |download_cb| -'+_client.stripHTML(o.responseText));
      }
      if(ret && ret.e) {
          panel.get('element').innerHTML = ret.e;
