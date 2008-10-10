@@ -134,3 +134,38 @@
     padding:1em;
     margin-top:1em;
 }
+
+span.gradeitem input {
+    margin-right: 10px;
+}
+
+span.gradeitem label,
+li.category label.weight {
+    margin-right: 10px;
+}
+
+li.category label.weight {
+    margin-left: 5px;
+}
+
+li.category span.name {
+    font-weight: bold;
+}
+
+img.caticon {
+    width: 11px;
+    height: 11px;
+    margin: 0px -1px 3px 5px;
+}
+
+#gradetree select {
+    margin-left: 10px;
+}
+
+li.category {
+    margin-top: 10px;
+}
+
+li.category ul {
+    margin-top: 10px;
+}

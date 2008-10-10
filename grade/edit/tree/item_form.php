@@ -136,15 +136,13 @@ class edit_item_form extends moodleform {
         $mform->addElement('header', 'headerparent', get_string('parentcategory', 'grades'));
 
         $options = array();
-        $default = '';
         $coefstring = '';
         $categories = grade_category::fetch_all(array('courseid'=>$COURSE->id));
+
         foreach ($categories as $cat) {
             $cat->apply_forced_settings();
             $options[$cat->id] = $cat->get_name();
-            if ($cat->is_course_category()) {
-                $default = $cat->id;
-            }
+
             if ($cat->is_aggregationcoef_used()) {
                 if ($cat->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
                     $coefstring = ($coefstring=='' or $coefstring=='aggregationcoefweight') ? 'aggregationcoefweight' : 'aggregationcoef';

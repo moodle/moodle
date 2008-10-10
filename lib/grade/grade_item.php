@@ -1893,5 +1893,40 @@ class grade_item extends grade_object {
             return $this->decimals;
         }
     }
+
+    function get_formatted_range($rangesdisplaytype=null, $rangesdecimalpoints=null) {
+
+        global $USER;
+
+        // Determine which display type to use for this average
+        if (isset($USER->gradeediting) && $USER->gradeediting[$this->courseid]) {
+            $displaytype = GRADE_DISPLAY_TYPE_REAL;
+
+        } else if ($rangesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) { // no ==0 here, please resave report and user prefs
+            $displaytype = $this->get_displaytype();
+
+        } else {
+            $displaytype = $rangesdisplaytype;
+        }
+
+        // Override grade_item setting if a display preference (not default) was set for the averages
+        if ($rangesdecimalpoints == GRADE_REPORT_PREFERENCE_INHERIT) {
+            $decimalpoints = $this->get_decimals();
+
+        } else {
+            $decimalpoints = $rangesdecimalpoints;
+        }
+
+        if ($displaytype == GRADE_DISPLAY_TYPE_PERCENTAGE) {
+            $grademin = "0 %";
+            $grademax = "100 %";
+
+        } else {
+            $grademin = grade_format_gradevalue($this->grademin, $this, true, $displaytype, $decimalpoints);
+            $grademax = grade_format_gradevalue($this->grademax, $this, true, $displaytype, $decimalpoints);
+        }
+
+        return $grademin.'&ndash;'. $grademax;
+    }
 }
 ?>

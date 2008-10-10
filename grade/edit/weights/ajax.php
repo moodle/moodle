@@ -22,36 +22,47 @@ YAHOO.grade_edit_weights.buildTreeNode = function(element, parentNode) {
     }
 
     if (element.item.table == 'grade_categories') {
-        var tmpNode = new YAHOO.widget.TextNode(element.item.name, parentNode, parentNode.isRoot());
+        var aggregation_types = '<select name="aggregation_'+element.item.id+'">';
+
+        for (var i = 0; i < gew.options.length; i++) {
+            aggregation_types += '<option>' + gew.options[i] + '</option>';
+        }
+
+        var gradecategory = '<span class="gradecategory">'+element.item.name+' '+aggregation_types+'<'+'/span>';
+        var tmpNode = new YAHOO.widget.TextNode(gradecategory, parentNode, parentNode.isRoot());
+        // var tmpNode = new YAHOO.widget.TextNode(element.item.name, parentNode, parentNode.isRoot());
         for (var i = 0; i < element.children.length; i++) {
             gew.buildTreeNode(element.children[i], tmpNode, false);
         }
     } else if (element.item.itemtype == 'mod') {
-        var tmpNode = new YAHOO.widget.TextNode(element.item.name, parentNode, false);
+        var gradeitem = '<span class="gradeitem"><input type="text" size="6" name="weight_'+element.item.id+'" value="'+element.item.aggregationcoef+'"/>'+
+                        element.item.name + '<'+'/span>';
+        var tmpNode = new YAHOO.widget.HTMLNode(gradeitem, parentNode, false);
     }
 };
 
 YAHOO.grade_edit_weights.init = function() {
     var gew = YAHOO.grade_edit_weights;
     var div = document.getElementById('weightstree');
-    gew.tree = new YAHOO.widget.TreeView('weightstree');
+    gew.tree = new YAHOO.widget.TreeView('gradetree');
 
-     //handler for expanding all nodes
-     YAHOO.util.Event.on("expand", "click", function(e) {
-         YAHOO.log("Expanding all TreeView  nodes.", "info", "example");
-         gew.tree.expandAll();
-         YAHOO.util.Event.preventDefault(e);
-     });
+    //handler for expanding all nodes
+    YAHOO.util.Event.on("expand", "click", function(e) {
+        YAHOO.log("Expanding all TreeView  nodes.", "info", "example");
+        gew.tree.expandAll();
+        YAHOO.util.Event.preventDefault(e);
+    });
 
-     //handler for collapsing all nodes
-     YAHOO.util.Event.on("collapse", "click", function(e) {
-         YAHOO.log("Collapsing all TreeView  nodes.", "info", "example");
-         gew.tree.collapseAll();
-         YAHOO.util.Event.preventDefault(e);
-     });
+    //handler for collapsing all nodes
+    YAHOO.util.Event.on("collapse", "click", function(e) {
+        YAHOO.log("Collapsing all TreeView  nodes.", "info", "example");
+        gew.tree.collapseAll();
+        YAHOO.util.Event.preventDefault(e);
+    });
 
-     gew.buildTreeNode();
-     gew.tree.draw();
+    // gew.buildTreeNode();
+    gew.tree.render();
+    gew.tree.expandAll();
 };
 
 YAHOO.util.Event.onDOMReady(YAHOO.grade_edit_weights.init);
