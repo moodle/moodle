@@ -69,7 +69,6 @@ class enrolment_plugin_authorize
             print_heading(get_string('choosemethod', 'enrol_authorize'), 'center');
         }
 
-        print_box_start();
         if ($USER->username == 'guest') { // only real guest user, not for users with guest role
             $curcost = get_course_cost($course);
             echo '<div align="center">';
@@ -96,9 +95,11 @@ class enrolment_plugin_authorize
                     print_error('authorizeerror', 'enrol_authorize', '', $authorizeerror);
                 }
             }
+
+            print_box_start();
             $frmenrol->display();
+            print_box_end();
         }
-        print_box_end();
 
         if ($course->password) {
             $password = '';
@@ -311,16 +312,17 @@ class enrolment_plugin_authorize
                         message_to_admin("Error while trying to enrol " . fullname($USER) . " in '$course->fullname'", $order);
                     }
 
-                    if ($SESSION->wantsurl) {
-                        $destination = $SESSION->wantsurl;
-                        unset($SESSION->wantsurl);
-                    } else {
-                        $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
-                    }
-
                     load_all_capabilities();
-                    redirect($destination, get_string('paymentthanks', 'moodle', $course->fullname), 10);
-                    break;
+
+                    print_box_start('generalbox', 'notice');
+                    echo '<p>'. get_string('paymentthanks', 'moodle', $course->fullname) .'</p>';
+                    echo '<div class="buttons">';
+                    print_single_button("$CFG->wwwroot/enrol/authorize/index.php", array('order'=>$order->id), get_string('payments'));
+                    print_single_button("$CFG->wwwroot/course/view.php", array('id'=>$course->id), $course->fullname);
+                    echo '</div>';
+                    print_box_end();
+                    print_footer($course);
+                    exit; // break;
                 }
             }
             return NULL;

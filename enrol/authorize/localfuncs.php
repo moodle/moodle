@@ -130,7 +130,7 @@ function message_to_admin($subject, $data)
     $eventdata->fullmessage       = $emailmessage;
     $eventdata->fullmessageformat = FORMAT_PLAIN;
     $eventdata->fullmessagehtml   = '';
-    $eventdata->smallmessage      = '';    
+    $eventdata->smallmessage      = '';
     events_trigger('message_send', $eventdata);
 }
 
@@ -188,7 +188,7 @@ function send_welcome_messages($orderdata)
                 $a->profileurl = "$CFG->wwwroot/user/view.php?id=$lastuserid";
                 $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$lastuserid";
                 $emailmessage = get_string('welcometocoursesemail', 'enrol_authorize', $a);
-                
+
                 $eventdata = new object();
                 $eventdata->modulename        = 'moodle';
                 $eventdata->userfrom          = $sender;
@@ -197,7 +197,7 @@ function send_welcome_messages($orderdata)
                 $eventdata->fullmessage       = $emailmessage;
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml   = '';
-                $eventdata->smallmessage      = '';    
+                $eventdata->smallmessage      = '';
                 events_trigger('message_send', $eventdata);
             }
         }
@@ -219,6 +219,7 @@ function authorize_verify_account()
     global $CFG, $USER, $SITE;
     require_once('authorizenet.class.php');
 
+    $original_antest = $CFG->an_test;
     $CFG->an_test = 1; // Test mode
 
     $order = new stdClass();
@@ -238,7 +239,7 @@ function authorize_verify_account()
     $extra = new stdClass();
     $extra->x_card_num = '4111111111111111';
     $extra->x_card_code = '123';
-    $extra->x_exp_date = "129999";
+    $extra->x_exp_date = "12" . intval(date("Y")) + 5;
     $extra->x_currency_code = $order->currency;
     $extra->x_amount = $order->amount;
     $extra->x_first_name = 'Test';
@@ -246,15 +247,18 @@ function authorize_verify_account()
     $extra->x_country = $USER->country;
 
     $extra->x_invoice_num = $order->id;
-    $extra->x_description = 'Verify Account';
+    $extra->x_description = $SITE->shortname . ' - Authorize.net Merchant Account Verification Test';
 
+    $ret = '';
     $message = '';
     if (AN_APPROVED == AuthorizeNet::process($order, $message, $extra, AN_ACTION_AUTH_CAPTURE)) {
-        return get_string('verifyaccountresult', 'enrol_authorize', get_string('success'));
+        $ret = get_string('verifyaccountresult', 'enrol_authorize', get_string('success'));
     }
     else {
-        return get_string('verifyaccountresult', 'enrol_authorize', $message);
+        $ret = get_string('verifyaccountresult', 'enrol_authorize', $message);
     }
+    $CFG->an_test = $original_antest;
+    return $ret;
 }
 
 ?>
