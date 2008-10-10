@@ -345,9 +345,9 @@ function grade_report_user_settings_definition(&$mform) {
     $mform->setHelpButton('report_user_showrank', array('showrank', get_string('showrank', 'grades'), 'grade'));
 
     if (empty($CFG->grade_report_user_showpercentage)) {
-        $options[-1] = get_string('defaultprev', 'grades', $options[0]);
-    } else {
         $options[-1] = get_string('defaultprev', 'grades', $options[1]);
+    } else {
+        $options[-1] = get_string('defaultprev', 'grades', $options[0]);
     }
 
     $mform->addElement('select', 'report_user_showpercentage', get_string('showpercentage', 'grades'), $options);
