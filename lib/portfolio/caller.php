@@ -64,6 +64,15 @@ abstract class portfolio_caller_base {
     */
     protected $supportedformats;
 
+    /**
+    * set this for single file exports
+    */
+    protected $singlefile;
+
+    /**
+    * set this for multi file exports
+    */
+    protected $multifiles;
 
     public function __construct($callbackargs) {
         $expected = call_user_func(array(get_class($this), 'expected_callbackargs'));
@@ -123,6 +132,19 @@ abstract class portfolio_caller_base {
     public abstract function expected_time();
 
     /**
+    * helper method to calculate expected time for multi or single file exports
+    */
+    public function expected_time_file() {
+        if ($this->multifiles) {
+            return portfolio_expected_time_file($this->multifiles);
+        }
+        else if ($this->singlefile) {
+            return portfolio_expected_time_file($this->singlefile);
+        }
+        return PORTFOLIO_TIME_LOW;
+    }
+
+    /**
     * used for displaying the navigation during the export screens.
     *
     * this function must be implemented, but can really return anything.
@@ -138,6 +160,24 @@ abstract class portfolio_caller_base {
     *
     */
     public abstract function get_sha1();
+
+    /**
+    * helper function to calculate the sha1 for multi or single file exports
+    */
+    public function get_sha1_file() {
+        if (empty($this->singlefile) && empty($this->multifiles)) {
+            throw new portfolio_caller_exception('invalidsha1file', 'portfolio', $this->get_return_url());
+        }
+        if ($this->singlefile) {
+            return $this->singlefile->get_contenthash();
+        }
+        $sha1s = array();
+        foreach ($this->multifiles as $file) {
+            $sha1s[] = $file->get_contenthash();
+        }
+        asort($sha1s);
+        return sha1(implode('', $sha1s));
+    }
 
     /*
     * generic getter for properties belonging to this instance
@@ -249,6 +289,19 @@ abstract class portfolio_caller_base {
     public abstract function prepare_package();
 
     /**
+    * helper function to copy files into the temp area
+    * for single or multi file exports.
+    */
+    public function prepare_package_file() {
+        if ($this->singlefile) {
+            return $this->exporter->copy_existing_file($this->singlefile);
+        }
+        foreach ($this->multifiles as $file) {
+            $this->exporter->copy_existing_file($file);
+        }
+    }
+
+    /**
     * array of formats this caller supports
     * the intersection of what this function returns
     * and what the selected portfolio plugin supports
@@ -298,6 +351,44 @@ abstract class portfolio_caller_base {
     }
 
     public abstract function load_data();
+
+    public function set_file_and_format_data($ids=null /* ..pass arguments to area files here. */) {
+        $args = func_get_args();
+        array_shift($args); // shift off $ids
+        if (empty($ids) && count($args) == 0) {
+            return;
+        }
+        $files = array();
+        $fs = get_file_storage();
+        if (!empty($ids)) {
+            if (is_numeric($ids) || $ids instanceof stored_file) {
+                $ids = array($ids);
+            }
+            foreach ($ids as $id) {
+                if ($id instanceof stored_file) {
+                    $files[] = $id;
+                } else {
+                    $files[] = $fs->get_file_by_id($id);
+                }
+            }
+        } else if (count($args) != 0) {
+            if (count($args) != 3) {
+                throw new portfolio_caller_exception('invalidfileareaargs', 'portfolio');
+            }
+            $files = array_values(call_user_func_array(array($fs, 'get_area_files'), $args));
+        }
+        switch (count($files)) {
+            case 0: return;
+            case 1: {
+                $this->singlefile = $files[0];
+                $this->supportedformats = array(portfolio_format_from_file($this->singlefile));
+                return;
+            }
+            default: {
+                $this->multifiles = $files;
+            }
+        }
+    }
 
     public static abstract function expected_callbackargs();
 

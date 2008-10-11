@@ -114,6 +114,12 @@ class portfolio_exporter {
     private $newfilehashes;
 
     /**
+    * selected exportformat
+    * this is also set in export_config in the portfolio and caller classes
+    */
+    private $format;
+
+    /**
     * construct a new exporter for use
     *
     * @param portfolio_plugin_base subclass $instance portfolio instance (passed by reference)
@@ -142,6 +148,9 @@ class portfolio_exporter {
     * like name, visible etc.
     */
     public function get($field) {
+        if ($field == 'format') {
+            return portfolio_format_object($this->format);
+        }
         if (property_exists($this, $field)) {
             return $this->{$field};
         }
@@ -320,6 +329,7 @@ class portfolio_exporter {
                 $callerbits['hideformat'] = $pluginbits['hideformat'] = (count($formats) == 1);
                 $this->caller->set_export_config($callerbits);
                 $this->instance->set_export_config($pluginbits);
+                $this->set('format', $fromform->format);
                 return true;
             } else {
                 $this->print_header('configexport');
@@ -338,6 +348,7 @@ class portfolio_exporter {
                 'format' => $format,
                 'hideformat' => 1
             );
+            $this->set('format', $format);
             $this->instance->set_export_config($config);
             $this->caller->set_export_config(array('format' => $format, 'hideformat' => 1));
             if ($expectedtime == PORTFOLIO_TIME_FORCEQUEUE) {
@@ -680,6 +691,9 @@ class portfolio_exporter {
         }
         $fs = get_file_storage();
         $file_record = $this->new_file_record_base($oldfile->get_filename());
+        if ($dir = $this->get('format')->get_file_directory()) {
+            $file_record->filepath = '/'. $dir . '/';
+        }
         try {
             $newfile = $fs->create_file_from_storedfile($file_record, $oldfile->get_id());
             $this->newfilehashes[$newfile->get_contenthash()] = $newfile;
@@ -698,9 +712,12 @@ class portfolio_exporter {
     * @param string $name filename to use
     * @return new stored_file object
     */
-    public function write_new_file($content, $name) {
+    public function write_new_file($content, $name, $manifest=true) {
         $fs = get_file_storage();
         $file_record = $this->new_file_record_base($name);
+        if (empty($manifest) && ($dir = $this->get('format')->get_file_directory())) {
+            $file_record->filepath = '/' . $dir . '/';
+        }
         return $fs->create_file_from_string($file_record, $content);
     }
 

@@ -2446,7 +2446,7 @@ class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
             }
         }
         $csv = glossary_generate_export_csv($entries, $aliases, $categories);
-        return $this->exporter->write_new_file($csv, clean_filename($this->cm->name) . '.csv');
+        return $this->exporter->write_new_file($csv, clean_filename($this->cm->name) . '.csv', false);
     }
 
     public function check_permissions() {
@@ -2486,7 +2486,7 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
             // in case we don't have USER this will make the entry be printed
             $this->entry->approved = true;
         }
-        $this->supportedformats = array(PORTFOLIO_FORMAT_HTML);
+        $this->supportedformats = array(PORTFOLIO_FORMAT_PLAINHTML);
     }
 
     public function expected_time() {
@@ -2509,7 +2509,7 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
         $entry = clone $this->entry;
         glossary_print_entry($this->get('course'), $this->cm, $this->glossary, $entry, null, null, false);
         $content = ob_get_clean();
-        return $this->exporter->write_new_file($content, clean_filename($this->entry->concept) . '.html');
+        return $this->exporter->write_new_file($content, clean_filename($this->entry->concept) . '.html', false);
     }
 
     public function get_sha1() {

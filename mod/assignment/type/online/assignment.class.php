@@ -275,11 +275,11 @@ class assignment_online extends assignment_base {
 
     function portfolio_prepare_package($exporter, $userid=0) {
         $submission = $this->get_submission($userid);
-        $exporter->write_new_file(format_text($submission->data1, $submission->data2), 'assignment.html');
+        $exporter->write_new_file(format_text($submission->data1, $submission->data2), 'assignment.html', false);
     }
 
     function portfolio_supported_formats() {
-        return array(PORTFOLIO_FORMAT_HTML);
+        return array(PORTFOLIO_FORMAT_PLAINHTML);
     }
 }
 

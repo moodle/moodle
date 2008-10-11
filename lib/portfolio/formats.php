@@ -35,6 +35,14 @@ class portfolio_format_file {
     public static function mimetypes() {
         return array(null);
     }
+
+    public static function get_file_directory() {
+        return null;
+    }
+
+    public static function file_output($file) {
+        return '';
+    }
 }
 
 /**
@@ -51,7 +59,7 @@ class portfolio_format_image extends portfolio_format_file {
 *
 * in case we want to be really specific.
 */
-class portfolio_format_html extends portfolio_format_file {
+class portfolio_format_plainhtml extends portfolio_format_file {
     public static function mimetypes() {
         return array('text/html');
     }
@@ -82,11 +90,33 @@ class portfolio_format_text extends portfolio_format_file {
     }
 }
 
+class portfolio_format_rich {
+    public static function mimetypes() {
+        return array(null);
+    }
+}
+
+class portfolio_format_richhtml extends portfolio_format_rich {
+    public static function get_file_directory() {
+        return 'site_files';
+    }
+    public static function file_output($file) {
+        $path = self::get_file_directory() . '/' . $file->get_filename();
+        if (in_array($file->get_mimetype(), portfolio_format_image::mimetypes())) {
+            return '<img src="' . $path . '" alt="' . $file->get_filename() . '" />';
+        }
+        return '<a href="' . $path . '">' . $file->get_filename() . '</a>';
+    }
+}
+
+class portfolio_format_leap extends portfolio_format_rich { }
+
+
 /**
 * later.... a moodle plugin might support this.
 * it's commented out in portfolio_supported_formats so cannot currently be used.
 */
-class portfolio_format_mbkp extends portfolio_format_file {}
+class portfolio_format_mbkp extends portfolio_format_rich {}
 
 
 ?>

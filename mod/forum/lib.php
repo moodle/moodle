@@ -3178,7 +3178,9 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         $button = new portfolio_add_button();
         $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id));
         if (empty($attachments)) {
-            $button->set_formats(PORTFOLIO_FORMAT_HTML);
+            $button->set_formats(PORTFOLIO_FORMAT_PLAINHTML);
+        } else {
+            $button->set_formats(PORTFOLIO_FORMAT_RICHHTML);
         }
         $commands[] = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
     }
@@ -7229,9 +7231,8 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
     private $post;
     private $forum;
     private $discussion;
-    private $postfiles;
-    private $allfiles;
     private $posts;
+    private $keyedfiles;
 
     public static function expected_callbackargs() {
         return array(
@@ -7278,21 +7279,31 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
             throw new portfolio_caller_exception('invalidcoursemodule');
         }
 
-        $fs = get_file_storage();
-        if ($this->attachment) {
-            if (!$f = $fs->get_file_by_id($this->attachment)) {
-                throw new portfolio_caller_exception('noattachments', 'forum');
+        $modcontext = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        if ($this->post) {
+            $this->set_file_and_format_data($this->attachment, $modcontext->id, 'forum_attachment', $this->post->id);
+            if (!empty($this->multifiles)) {
+                $this->keyedfiles[$this->post->id] = $this->multifiles;
+            } else if (!empty($this->singlefile)) {
+                $this->keyedfiles[$this->post->id] = $this->singlefile;
             }
-            $this->postfiles = array($f);
-            $this->supportedformats = array(portfolio_format_from_file($f));
-        } elseif ($this->post) {
-            $this->postfiles = $fs->get_area_files(get_context_instance(CONTEXT_MODULE, $this->cm->id)->id, 'forum_attachment', $this->post->id, "timemodified", false);
-            $this->supportedformats = array(PORTFOLIO_FORMAT_HTML);
-        } else {
+        } else { // whole thread
+            $fs = get_file_storage();
             $this->posts = forum_get_all_discussion_posts($this->discussion->id, 'p.created ASC');
+            $this->multifiles = array();
             foreach ($this->posts as $post) {
-                $this->allfiles[$post->id] = $fs->get_area_files(get_context_instance(CONTEXT_MODULE, $this->cm->id)->id, 'forum_attachment', $post->id, "timemodified", false);
+                if (!$this->keyedfiles[$post->id] = $fs->get_area_files($modcontext->id, 'forum_attachment', $post->id, "timemodified", false)) {
+                    continue;
+                }
+                $this->multifiles = array_merge($this->multifiles, array_values($this->keyedfiles[$post->id]));
             }
+        }
+        if ($this->attachment) {
+            // do nothing
+        } else if (!empty($this->multifiles) || !empty($this->singlefile)) {
+            $this->supportedformats = array(PORTFOLIO_FORMAT_RICHHTML);
+        } else {
+            $this->supportedformats = array(PORTFOLIO_FORMAT_PLAINHTML);
         }
     }
 
@@ -7318,20 +7329,21 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         // either a whole discussion
         // a single post, with or without attachment
         // or just an attachment with no post
+        $manifest = ($this->exporter->get('format') instanceof PORTFOLIO_FORMAT_RICH);
         if (!$this->post) { // whole discussion
             $content = '';
             foreach ($this->posts as $post) {
                 $content .= '<br /><br />' . $this->prepare_post($post);
-                $this->copy_files($this->allfiles[$post->id]);
             }
-            return $this->get('exporter')->write_new_file($content, 'discussion.html');
+            $this->copy_files($this->multifiles);
+            return $this->get('exporter')->write_new_file($content, 'discussion.html', $manifest);
         }
-        $this->copy_files($this->postfiles, $this->attachment);
         if ($this->attachment) {
-            return; // all we need to do
+            return $this->copy_files(array($this->singlefile), $this->attachment); // all we need to do
         }
+        $this->copy_files($this->multifiles, $this->attachment);
         $post = $this->prepare_post($this->post);
-        $this->get('exporter')->write_new_file($post, 'post.html');
+        $this->get('exporter')->write_new_file($post, 'post.html', $manifest);
     }
 
     private function copy_files($files, $justone=false) {
@@ -7392,17 +7404,12 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
 
         $output .= $formattedtext;
 
-        if (!empty($this->postfiles)) {
-            $attachments = $this->postfiles;
-        } else if (!empty($this->allfiles) && array_key_exists($post->userid, $this->allfiles)) {
-            $attachments = $this->allfiles[$post->userid];
-        }
-        if (!empty($attachments)) {
-            $post->course = $this->get('course')->id;
+        if (array_key_exists($post->id, $this->keyedfiles) && is_array($this->keyedfiles[$post->id])) {
             $output .= '<div class="attachments">';
             $output .= '<br /><b>' .  get_string('attachments', 'forum') . '</b>:<br /><br />';
-            foreach ($attachments as $file) {
-                $output .= $file->get_filename() . '<br />';
+            $format = $this->get('exporter')->get('format');
+            foreach ($this->keyedfiles[$post->id] as $file) {
+                $output .= $format->file_output($file) . '<br/ >';
             }
             $output .= "</div>";
         }
@@ -7413,50 +7420,31 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
     }
 
     function get_sha1() {
+        $filesha = '';
+        try {
+            $filesha = $this->get_sha1_file();
+        } catch (portfolio_caller_exception $e) { } // no files
+
         if ($this->post) {
-            $attachsha1 = $this->files_sha1($this->postfiles, $this->attachment);
-            return sha1($attachsha1 . ',' . $this->post->subject . ',' . $this->post->message);
+            return sha1($filesha . ',' . $this->post->subject . ',' . $this->post->message);
         } else {
-            $sha1s = array();
+            $sha1s = array($filesha);
             foreach ($this->posts as $post) {
-                $sha1s[] = $this->files_sha1($this->allfiles[$post->id]);
                 $sha1s[] = sha1($post->subject . ',' . $post->message);
             }
             return sha1(implode(',', $sha1s));
         }
     }
 
-    function files_sha1($files, $justone=false) {
-        if (empty($files)) {
-            return;
-        }
-        $sha1s = array();
-        foreach ($files as $file) {
-            if ($justone && $file->get_id() == $justone) {
-                return $file->get_contenthash(); // all we have to do
-            }
-            $sha1s[] = $file->get_contenthash();
-        }
-        asort($sha1s);
-        return sha1(implode('', $sha1s));
-    }
-
     function expected_time() {
-        // default...
-        $time = PORTFOLIO_TIME_LOW; // generally just means one post with no attachments
-        if ($this->postfiles) {
-            $time = portfolio_expected_time_file($this->postfiles);
-        } else if ($this->allfiles) {
-            // we have something two dimensional...
-            $files = array();
-            foreach ($this->allfiles as $post => $postfiles) {
-                $files = array_merge($files, $postfiles);
+        $filetime = $this->expected_time_file();
+        if ($this->posts) {
+            $posttime = portfolio_expected_time_db(count($this->posts));
+            if ($filetime < $posttime) {
+                return $posttime;
             }
-            $time = portfolio_expected_time_file($files);
-        } else if ($this->posts) {
-            $time = portfolio_expected_time_db(count($this->posts));
         }
-        return $time;
+        return $filetime;
     }
 
     function check_permissions() {

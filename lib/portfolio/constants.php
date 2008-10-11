@@ -97,9 +97,15 @@ define('PORTFOLIO_FORMAT_FILE', 'file');
 define('PORTFOLIO_FORMAT_MBKP', 'mbkp');
 
 /**
-* html - subtype of file
+* richhtml - like html but with attachments.
 */
-define('PORTFOLIO_FORMAT_HTML', 'html');
+define('PORTFOLIO_FORMAT_RICHHTML', 'richhtml');
+
+
+/**
+* plainhtml - a single html representation - no attachments
+*/
+define('PORTFOLIO_FORMAT_PLAINHTML', 'plainhtml');
 
 /**
 * image - subtype of file

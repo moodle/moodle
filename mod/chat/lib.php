@@ -880,7 +880,7 @@ class chat_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public static function supported_formats() {
-        return array(PORTFOLIO_FORMAT_HTML);
+        return array(PORTFOLIO_FORMAT_PLAINHTML);
     }
 
     public function expected_time() {
@@ -922,7 +922,7 @@ class chat_portfolio_caller extends portfolio_module_caller_base {
         }
         $content = preg_replace('/\<img[^>]*\>/', '', $content);
 
-        $this->exporter->write_new_file($content, clean_filename($this->cm->name . '-session.html'));
+        $this->exporter->write_new_file($content, clean_filename($this->cm->name . '-session.html'), false);
     }
 
     public static function display_name() {

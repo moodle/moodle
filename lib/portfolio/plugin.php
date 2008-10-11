@@ -109,7 +109,17 @@ abstract class portfolio_plugin_base {
     * @return array list of formats
     */
     public static function supported_formats() {
-        return array(PORTFOLIO_FORMAT_FILE);
+        return array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_RICHHTML);
+    }
+
+    /**
+    * override this if you are supporting the 'file' type (or a subformat)
+    * but have restrictions on mimetypes (see googledocs plugin for more info)
+    *
+    * @return boolean
+    */
+    public static function file_mime_check($mimetype) {
+        return true;
     }
 
 

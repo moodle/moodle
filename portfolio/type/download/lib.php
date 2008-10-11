@@ -36,13 +36,6 @@ class portfolio_plugin_download extends portfolio_plugin_pull_base {
         }
     }
 
-    /*
-    public function get_extra_finish_options() {
-        global $CFG;
-        return array($this->get_base_file_url() => get_string('downloadfile', 'portfolio_download'));
-    }
-    */
-
     public function send_package() {}
 
     public function verify_file_request_params($params) {

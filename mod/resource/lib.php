@@ -259,7 +259,7 @@ class resource_base {
         $formatoptions = (object)array('noclean' => true);
         $format = (($text) ? FORMAT_MOODLE : FORMAT_HTML);
         $content = format_text($this->resource->alltext, $format, $formatoptions, $this->course->id);
-        return $exporter->write_new_file($content, $filename);
+        return $exporter->write_new_file($content, $filename, false);
     }
 
     function portfolio_get_sha1_online($text=false) {
@@ -739,7 +739,7 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
         $format = PORTFOLIO_FORMAT_FILE;
         switch ($type) {
             case 'html':
-                $format = PORTFOLIO_FORMAT_HTML;
+                $format = PORTFOLIO_FORMAT_PLAINHTML;
             case 'text':
                 $format = PORTFOLIO_FORMAT_TEXT;
             case 'file':

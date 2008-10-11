@@ -221,7 +221,9 @@ class portfolio_add_button {
             . $this->callbackclass . '&amp;course=' . (!empty($COURSE) ? $COURSE->id : 0);
         $selectoutput = '';
         if (count($this->instances) == 1) {
-            $instance = array_shift($this->instances);
+            $tmp = array_values($this->instances);
+            $instance = $tmp[0];
+            //$instance = array_shift($this->instances);
             $formats = portfolio_supported_formats_intersect($this->formats, $instance->supported_formats());
             if (count($formats) == 0) {
                 // bail. no common formats.
@@ -457,13 +459,14 @@ function portfolio_instances($visibleonly=true, $useronly=true) {
 */
 function portfolio_supported_formats() {
     return array(
-        PORTFOLIO_FORMAT_FILE  => 'portfolio_format_file',
-        PORTFOLIO_FORMAT_IMAGE => 'portfolio_format_image',
-        PORTFOLIO_FORMAT_HTML  => 'portfolio_format_html',
-        PORTFOLIO_FORMAT_TEXT  => 'portfolio_format_text',
-        PORTFOLIO_FORMAT_VIDEO => 'portfolio_format_video',
+        PORTFOLIO_FORMAT_FILE       => 'portfolio_format_file',
+        PORTFOLIO_FORMAT_IMAGE      => 'portfolio_format_image',
+        PORTFOLIO_FORMAT_RICHHTML   => 'portfolio_format_richhtml',
+        PORTFOLIO_FORMAT_PLAINHTML  => 'portfolio_format_plainhtml',
+        PORTFOLIO_FORMAT_TEXT       => 'portfolio_format_text',
+        PORTFOLIO_FORMAT_VIDEO      => 'portfolio_format_video',
         /*PORTFOLIO_FORMAT_MBKP, */ // later
-        /*PORTFOLIO_FORMAT_PIOP, */ // also later
+        /*PORTFOLIO_FORMAT_LEAP, */ // also later
     );
 }
 
@@ -568,6 +571,18 @@ function portfolio_most_specific_formats($specificformats, $generalformats) {
         }
     }
     return array_merge(array_values($specificformats), array_values($generalformats));
+}
+
+/**
+* helper function to return a format object from the constant
+*
+* @param string $name the constant PORTFOLIO_FORMAT_XXX
+*
+* @return portfolio_format object
+*/
+function portfolio_format_object($name) {
+    $formats = portfolio_supported_formats();
+    return new $formats[$name];
 }
 
 /**

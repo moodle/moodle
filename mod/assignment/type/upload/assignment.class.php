@@ -358,7 +358,7 @@ class assignment_upload extends assignment_base {
                 }
 
                 if (has_capability('mod/assignment:exportownsubmission', $this->context)) {
-                    $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'file' => $file->get_id()), '/mod/assignment/lib.php');
+                    $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'fileid' => $file->get_id()), '/mod/assignment/lib.php');
                     $button->set_formats(portfolio_format_from_file($file));
                     $output .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                 }
