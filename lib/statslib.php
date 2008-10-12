@@ -1318,6 +1318,13 @@ function stats_get_time_options($now,$lastweekend,$lastmonthend,$earliestday,$ea
         $timeoptions[STATS_TIME_LASTYEAR] = get_string('lastyear');
     }
 
+    $years = (int)date('y', $now) - (int)date('y', $earliestmonth);
+    if ($years > 1) {
+        for($i = 2; $i <= $years; $i++) {
+            $timeoptions[$i*12+20] = get_string('numyears', 'moodle', $i);
+        }
+    }
+
     return $timeoptions;
 }
 
