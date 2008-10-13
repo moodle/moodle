@@ -338,7 +338,13 @@ _client.loading = function(type, name) {
 }
 _client.rename = function(oldname, url, icon, repo_id) {
     var tree = document.getElementById('treediv-$suffix');
-    tree.style.display = 'none';
+    if(tree){
+        tree.style.display = 'none';
+    }
+    var thumbnail = document.getElementById('fp-grid-panel-$suffix');
+    if(thumbnail){
+        thumbnail.style.display = 'none';
+    }
     var header = document.getElementById('repo-tb-$suffix');
     header.style.display = 'none';
     var footer = document.getElementById('fp-footer-$suffix');
@@ -468,7 +474,9 @@ _client.print_footer = function() {
 }
 _client.viewthumb = function(ds) {
     _client.viewmode = 1;
-    var panel = new YAHOO.util.Element('panel-$suffix');
+    var container = document.getElementById('panel-$suffix');
+    var panel = document.createElement('DIV');
+    panel.id = 'fp-grid-panel-$suffix';
     _client.viewbar.check(1);
     var list = null;
     var args = arguments.length;
@@ -503,7 +511,7 @@ _client.viewthumb = function(ds) {
         title.className = 'label';
         el.appendChild(frame);
         el.appendChild(title);
-        panel.get('element').appendChild(el);
+        panel.appendChild(el);
         if(list[k].children) {
             var folder = new YAHOO.util.Element(link.id);
             folder.ds = list[k].children;
@@ -543,6 +551,7 @@ _client.viewthumb = function(ds) {
         }
         count++;
     }
+    container.appendChild(panel);
     _client.print_footer();
 }
 _client.buildtree = function(node, level) {
