@@ -862,6 +862,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2008101000);
     }
 
+    if ($result && $oldversion < 2008101300) {
+
+        if (!get_config(NULL, 'statsruntimedays')) {
+            set_config('statsruntimedays', '31');
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008101300);
+    }
 
     return $result;
 }
