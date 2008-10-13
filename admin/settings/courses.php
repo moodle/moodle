@@ -27,7 +27,7 @@ if ($hassiteconfig
     for ($i=1; $i<=52; $i++) {
         $sectionmenu[$i] = "$i";
     }
-    $temp->add(new admin_setting_configselect('moodlecourse/numsections', get_string('numberweeks'), '', 1,$sectionmenu));
+    $temp->add(new admin_setting_configselect('moodlecourse/numsections', get_string('numberweeks'), '', 3,$sectionmenu));
     $choices = array();
     $choices['0'] = get_string('hiddensectionscollapsed');
     $choices['1'] = get_string('hiddensectionsinvisible');
