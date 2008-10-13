@@ -247,6 +247,7 @@ class MoodleUnitTestCase extends UnitTestCase {
         UnitTestDB::instantiate();
         global $DB;
         $this->DB =& $DB;
+        ob_start();
     }
 
     /**
@@ -261,8 +262,9 @@ class MoodleUnitTestCase extends UnitTestCase {
         parent::tearDown();
 
         // Output buffering
-        ob_end_flush();
-        ob_start();
+        if (ob_get_length() > 0) {
+            ob_end_flush();
+        }
     }
 
     /**
