@@ -293,6 +293,9 @@ abstract class portfolio_caller_base {
     * for single or multi file exports.
     */
     public function prepare_package_file() {
+        if (empty($this->singlefile) && empty($this->multifiles)) {
+            throw new portfolio_caller_exception('invalidpreparepackagefile', 'portfolio', $this->get_return_url());
+        }
         if ($this->singlefile) {
             return $this->exporter->copy_existing_file($this->singlefile);
         }
