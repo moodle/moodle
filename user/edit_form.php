@@ -75,7 +75,6 @@ class user_edit_form extends moodleform {
 
             /// disable fields that are locked by auth plugins
             $fields = get_user_fieldnames();
-            $freezefields = array();
             $authplugin = get_auth_plugin($user->auth);
             foreach ($fields as $field) {
                 if (!$mform->elementExists($field)) {
@@ -84,13 +83,15 @@ class user_edit_form extends moodleform {
                 $configvariable = 'field_lock_' . $field;
                 if (isset($authplugin->config->{$configvariable})) {
                     if ($authplugin->config->{$configvariable} === 'locked') {
-                        $freezefields[] = $field;
+                        $mform->hardFreeze($field);
+                        $mform->setConstant($field, $user->$field);
                     } else if ($authplugin->config->{$configvariable} === 'unlockedifempty' and $user->$field != '') {
-                        $freezefields[] = $field;
+                        $mform->hardFreeze($field);
+                        $mform->setConstant($field, $user->$field);
                     }
                 }
             }
-            $mform->hardFreeze($freezefields);
+            
         }
 
         /// Next the customisable profile fields
