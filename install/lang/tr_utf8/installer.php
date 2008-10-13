@@ -425,5 +425,7 @@ $string['wrongsourcebase'] = 'Hatalı kaynak URL base.';
 $string['wrongzipfilename'] = 'Hatalı ZIP dosya adı.';
 $string['wwwroot'] = 'Web adresi';
 $string['wwwrooterror'] = 'Web adresi doğru ayarlanmış görünmüyor. Moodle kurulumu belirtilen yerde görünmüyor.';
+$string['xmlrpcrecommended'] = 'İsteğe bağlı xmlrpc eklentisinin kurulması, Moodle Ağı işlevselliği için kullanışlıdır.';
 $string['yourchoice'] = 'Seçiminiz:';
+$string['ziprequired'] = 'Moodle, Zip PHP eklentisini gerektirir. Info-ZIP dosyaları veya PclZip kütüphanesi artık kullanılmamaktadır.';
 ?>
