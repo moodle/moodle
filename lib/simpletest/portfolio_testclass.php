@@ -227,6 +227,8 @@ class portfoliolib_test extends MoodleUnitTestCase {
             $caller->set('user', $user);
         }
         $caller->load_data();
+        // set any format
+        $caller->get('exporter')->set('format', array_shift($caller->supported_formats()));
         return $caller;
     }
 
@@ -239,20 +241,32 @@ class portfoliolib_test extends MoodleUnitTestCase {
                 $plugin_class = "partialmock_plugin_$plugin";
                 $plugin = new $plugin_class(&$this);
 
-                // Create a new fake exporter
-                $exporter = $this->caller->get('exporter'); // new partialmock_exporter(&$this);
-                $exporter->set('caller', $this->caller);
-                $exporter->set('instance', $plugin);
-                $exporter->set('user', $this->caller->get('user'));
-
-                $exception = false;
-                try {
-                    $exporter->process_stage_package();
-                } catch (Exception $e) {
-                    $exception = $e->getMessage();
+                // figure out our format intersection and test all of them.
+                $formats = portfolio_supported_formats_intersect($this->caller->supported_formats(), $plugin->supported_formats());
+                if (count($formats) == 0) {
+                    // bail. no common formats.
+                    continue;
                 }
 
-                $this->assertFalse($exception, "Unwanted exception: $exception");
+                foreach ($formats as $format) {
+                    // Create a new fake exporter
+                    $exporter =& $this->caller->get('exporter'); // new partialmock_exporter(&$this);
+                    $exporter->set('caller', $this->caller);
+                    $exporter->set('instance', $plugin);
+                    $exporter->set('format', $format);
+                    $this->caller->set_export_config(array('format' => $format));
+                    $plugin->set_export_config(array('format' => $format));
+                    $exporter->set('user', $this->caller->get('user'));
+
+                    $exception = false;
+                    try {
+                        $exporter->process_stage_package();
+                    } catch (Exception $e) {
+                        $exception = $e->getMessage();
+                    }
+
+                    $this->assertFalse($exception, "Unwanted exception: $exception");
+                }
             }
         }
     }
