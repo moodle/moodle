@@ -463,8 +463,9 @@
         $timetocheck = stats_get_base_daily() + $CFG->statsruntimestarthour*60*60 + $CFG->statsruntimestartminute*60;
 
         if (time() > $timetocheck) {
-            // process max 31 days per cron execution
-            if (stats_cron_daily(31)) {
+            // process configured number of days as max (defaulting to 31)
+            $maxdays = empty($CFG->statsruntimedays) ? 31 : abs($CFG->statsruntimedays);
+            if (stats_cron_daily($maxdays)) {
                 if (stats_cron_weekly()) {
                     if (stats_cron_monthly()) {
                         stats_clean_old();

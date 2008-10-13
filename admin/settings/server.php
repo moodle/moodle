@@ -123,7 +123,7 @@ $temp->add(new admin_setting_configselect('statsfirstrun', get_string('statsfirs
                                                                                                                                                            60*60*24*140 => get_string('nummonths','moodle',5),
                                                                                                                                                            60*60*24*168 => get_string('nummonths','moodle',6),
                                                                                                                                                            'all' => get_string('all') )));
-$temp->add(new admin_setting_configselect('statsmaxruntime', get_string('statsmaxruntime', 'admin'), get_string('configstatsmaxruntime2', 'admin'), 0, array(0 => get_string('untilcomplete'),
+$temp->add(new admin_setting_configselect('statsmaxruntime', get_string('statsmaxruntime', 'admin'), get_string('configstatsmaxruntime3', 'admin'), 0, array(0 => get_string('untilcomplete'),
                                                                                                                                                             60*30 => '10 '.get_string('minutes'),
                                                                                                                                                             60*30 => '30 '.get_string('minutes'),
                                                                                                                                                             60*60 => '1 '.get_string('hour'),
@@ -134,6 +134,7 @@ $temp->add(new admin_setting_configselect('statsmaxruntime', get_string('statsma
                                                                                                                                                             60*60*6 => '6 '.get_string('hours'),
                                                                                                                                                             60*60*7 => '7 '.get_string('hours'),
                                                                                                                                                             60*60*8 => '8 '.get_string('hours') )));
+$temp->add(new admin_setting_configtext('statsruntimedays', get_string('statsruntimedays', 'admin'), get_string('configstatsruntimedays', 'admin'), 31, PARAM_INT));
 $temp->add(new admin_setting_configtime('statsruntimestarthour', 'statsruntimestartminute', get_string('statsruntimestart', 'admin'), get_string('configstatsruntimestart', 'admin'), array('h' => 0, 'm' => 0)));
 $temp->add(new admin_setting_configtext('statsuserthreshold', get_string('statsuserthreshold', 'admin'), get_string('configstatsuserthreshold', 'admin'), 0, PARAM_INT));
 
