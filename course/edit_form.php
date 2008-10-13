@@ -75,33 +75,23 @@ class course_edit_form extends moodleform {
         $mform->setDefault('category', $courseconfig->category);
         $mform->setType('category', PARAM_INT);
 
-        $fullname  = get_string('defaultcoursefullname');
-        $shortname = get_string('defaultcourseshortname');
-        while ($DB->record_exists('course', array('fullname'=>$fullname))
-            or $DB->record_exists('course', array('fullname'=>$fullname))) {
-            $fullname++;
-            $shortname++;
-        }
-
-        $mform->addElement('text','fullname', get_string('fullnamecourse'),'maxlength="254" size="50"');
-        $mform->setHelpButton('fullname', array('coursefullname', get_string('fullnamecourse')), true);
+        $mform->addElement('text','fullname', get_string('fullname'),'maxlength="254" size="50"');
+        $mform->setHelpButton('fullname', array('coursefullname', get_string('fullname')), true);
+        $mform->setDefault('fullname', get_string('defaultcoursefullname'));
         $mform->addRule('fullname', get_string('missingfullname'), 'required', null, 'client');
         $mform->setType('fullname', PARAM_MULTILANG);
         if ($course and !has_capability('moodle/course:changefullname', $coursecontext)) {
             $mform->hardFreeze('fullname');
         }
 
-        $mform->setDefault('fullname', $fullname);
-
-        $mform->addElement('text','shortname', get_string('shortnamecourse'),'maxlength="100" size="20"');
-        $mform->setHelpButton('shortname', array('courseshortname', get_string('shortnamecourse')), true);
+        $mform->addElement('text','shortname', get_string('shortname'),'maxlength="100" size="20"');
+        $mform->setHelpButton('shortname', array('courseshortname', get_string('shortname')), true);
+        $mform->setDefault('shortname', get_string('defaultcourseshortname'));
         $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
         $mform->setType('shortname', PARAM_MULTILANG);
         if ($course and !has_capability('moodle/course:changeshortname', $coursecontext)) {
             $mform->hardFreeze('shortname');
         }
-
-        $mform->setDefault('shortname', $shortname);
 
         $mform->addElement('text','idnumber', get_string('idnumbercourse'),'maxlength="100"  size="10"');
         $mform->setHelpButton('idnumber', array('courseidnumber', get_string('idnumbercourse')), true);
