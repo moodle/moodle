@@ -468,7 +468,7 @@ class moodleform {
         $mform->setConstants(array($repeathiddenname=>$repeats));
         for ($i=0; $i<$repeats; $i++) {
             foreach ($elementobjs as $elementobj){
-                $elementclone = clone($elementobj);
+                $elementclone = fullclone($elementobj);
                 $name = $elementclone->getName();
                 if (!empty($name)){
                     $elementclone->setName($name."[$i]");
