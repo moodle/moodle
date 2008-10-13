@@ -18,7 +18,7 @@ class testAssignmentPortfolioCallers extends portfoliolib_test {
         parent::setUp();
         $assignment_types = new stdClass();
         $assignment_types->type = GENERATOR_SEQUENCE;
-        $assignment_types->options = array('upload');
+        $assignment_types->options = array('online');
 
         $settings = array('quiet' => 1,
                           'modules_list' => array($this->module_type), 'assignment_grades' => true,
