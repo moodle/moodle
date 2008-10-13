@@ -7404,7 +7404,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
 
         $output .= $formattedtext;
 
-        if (array_key_exists($post->id, $this->keyedfiles) && is_array($this->keyedfiles[$post->id])) {
+        if (is_array($this->keyedfiles) && array_key_exists($post->id, $this->keyedfiles) && is_array($this->keyedfiles[$post->id])) {
             $output .= '<div class="attachments">';
             $output .= '<br /><b>' .  get_string('attachments', 'forum') . '</b>:<br /><br />';
             $format = $this->get('exporter')->get('format');
