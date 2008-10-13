@@ -248,11 +248,13 @@ class moodleform_mod extends moodleform {
                     }
                 }
                 $mform->addElement('select', 'groupingid', get_string('grouping', 'group'), $options);
+                $mform->setHelpButton('groupingid', array('grouping', get_string('grouping', 'group')));
                 $mform->setAdvanced('groupingid');
             }
 
             if ($this->_features->groupmembersonly) {
                 $mform->addElement('checkbox', 'groupmembersonly', get_string('groupmembersonly', 'group'));
+                $mform->setHelpButton('groupmembersonly', array('groupmembersonly', get_string('groupmembersonly', 'group')));
                 $mform->setAdvanced('groupmembersonly');
             }
         }
