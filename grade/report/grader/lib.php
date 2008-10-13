@@ -251,7 +251,7 @@ class grade_report_grader extends grade_report {
                 // this is the first sort, i.e. by last name
                 if (!isset($SESSION->gradeuserreport->sortitemid)) {
                     if ($this->sortitemid == 'firstname' || $this->sortitemid == 'lastname') {
-                        $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';    
+                        $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
                     } else {
                         $this->sortorder = $SESSION->gradeuserreport->sort = 'DESC';
                     }
@@ -672,7 +672,7 @@ class grade_report_grader extends grade_report {
             $scales_list = substr($scales_list, 0, -1);
             $scales_array = get_records_list('scale', 'id', $scales_list);
         }
-        
+
         $row_classes = array(' even ', ' odd ');
 
         $row_classes = array(' even ', ' odd ');
@@ -768,7 +768,7 @@ class grade_report_grader extends grade_report {
                     $hidden = ' hidden ';
                 }
 
-                $gradepass = ' gradefail '; 
+                $gradepass = ' gradefail ';
                 if ($grade->is_passed($item)) {
                     $gradepass = ' gradepass ';
                 } elseif (is_null($grade->is_passed($item))) {
@@ -932,8 +932,8 @@ class grade_report_grader extends grade_report {
             // find sums of all grade items in course
             $SQL = "SELECT g.itemid, SUM(g.finalgrade) AS sum
                       FROM {$CFG->prefix}grade_items gi
-                           JOIN {$CFG->prefix}grade_grades g      ON g.itemid = gi.id 
-                           JOIN {$CFG->prefix}user u              ON u.id = g.userid 
+                           JOIN {$CFG->prefix}grade_grades g      ON g.itemid = gi.id
+                           JOIN {$CFG->prefix}user u              ON u.id = g.userid
                            JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
                            $groupsql
                      WHERE gi.courseid = $this->courseid
@@ -967,7 +967,7 @@ class grade_report_grader extends grade_report {
                       FROM {$CFG->prefix}grade_items gi
                            CROSS JOIN {$CFG->prefix}user u
                            JOIN {$CFG->prefix}role_assignments ra        ON ra.userid = u.id
-                           LEFT OUTER JOIN  {$CFG->prefix}grade_grades g ON (g.itemid = gi.id AND g.userid = u.id AND g.finalgrade IS NOT NULL) 
+                           LEFT OUTER JOIN  {$CFG->prefix}grade_grades g ON (g.itemid = gi.id AND g.userid = u.id AND g.finalgrade IS NOT NULL)
                            $groupsql
                      WHERE gi.courseid = $this->courseid
                            AND ra.roleid in ($this->gradebookroles)
@@ -1073,46 +1073,22 @@ class grade_report_grader extends grade_report {
             foreach ($this->gtree->items as $itemid=>$unused) {
                 $item =& $this->gtree->items[$itemid];
 
-                // Determine which display type to use for this average
-                if ($USER->gradeediting[$this->courseid]) {
-                    $displaytype = GRADE_DISPLAY_TYPE_REAL;
-
-                } else if ($rangesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) { // no ==0 here, please resave report and user prefs
-                    $displaytype = $item->get_displaytype();
-
-                } else {
-                    $displaytype = $rangesdisplaytype;
-                }
-
-                // Override grade_item setting if a display preference (not default) was set for the averages
-                if ($rangesdecimalpoints == GRADE_REPORT_PREFERENCE_INHERIT) {
-                    $decimalpoints = $item->get_decimals();
-
-                } else {
-                    $decimalpoints = $rangesdecimalpoints;
-                }
-
-                if ($displaytype == GRADE_DISPLAY_TYPE_PERCENTAGE) {
-                    $grademin = "0 %";
-                    $grademax = "100 %";
-
-                } else {
-                    $grademin = grade_format_gradevalue($item->grademin, $item, true, $displaytype, $decimalpoints);
-                    $grademax = grade_format_gradevalue($item->grademax, $item, true, $displaytype, $decimalpoints);
-                }
 
                 $hidden = '';
                 if ($item->is_hidden()) {
                     $hidden = ' hidden ';
                 }
 
-                $scalehtml .= '<th class="header c'.$columncount++.' range"><span class="rangevalues'.$hidden.'">'. $grademin.'&ndash;'. $grademax.'</span></th>';
+                $formatted_range = $item->get_formatted_range($rangesdisplaytype, $rangesdecimalpoints);
+
+                $scalehtml .= '<th class="header c'.$columncount++.' range"><span class="rangevalues'.$hidden.'">'. $formatted_range .'</span></th>';
+
             }
             $scalehtml .= '</tr>';
         }
         return $scalehtml;
     }
-    
+
     /**
      * Builds and return the HTML row of ranges for each column (i.e. range).
      * @return string HTML
@@ -1135,7 +1111,7 @@ class grade_report_grader extends grade_report {
             foreach ($this->gtree->items as $itemid=>$unused) {
                 // emulate grade element
                 $item =& $this->gtree->items[$itemid];
-                 
+
                 $eid = $this->gtree->get_item_eid($item);
                 $element = $this->gtree->locate_element($eid);
 
