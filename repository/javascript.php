@@ -337,6 +337,12 @@ _client.loading = function(type, name) {
     panel.get('element').appendChild(content);
 }
 _client.rename = function(oldname, url, icon, repo_id) {
+    var tree = document.getElementById('treediv-$suffix');
+    tree.style.display = 'none';
+    var header = document.getElementById('repo-tb-$suffix');
+    header.style.display = 'none';
+    var footer = document.getElementById('fp-footer-$suffix');
+    footer.style.display = 'none';
     var panel = new YAHOO.util.Element('panel-$suffix');
     var html = '<div class="fp-rename-form">';
     _client.repositoryid=repo_id;
@@ -352,7 +358,7 @@ _client.rename = function(oldname, url, icon, repo_id) {
     html += '<input type="button" onclick="repository_client_$suffix.download()" value="$strdownbtn" />';
     html += '<input type="button" onclick="repository_client_$suffix.hide()" value="$strcancel" /></p>';
     html += '</div>';
-    panel.get('element').innerHTML = html;
+    panel.get('element').innerHTML += html;
 }
 _client.popup = function(url) {
     active_instance = repository_client_$suffix;
@@ -414,6 +420,7 @@ _client.print_header = function() {
 _client.print_footer = function() {
     var panel = document.getElementById('panel-$suffix');
     var footer = document.createElement('DIV');
+    footer.id = 'fp-footer-$suffix';
     panel.appendChild(footer);
     footer.innerHTML += _client.uploadcontrol();
     footer.innerHTML += _client.makepage();
