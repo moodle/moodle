@@ -23,7 +23,7 @@ if ($hassiteconfig
             $formcourseformats["$courseformat"] = get_string("format$courseformat");
         }
     }
-    $temp->add(new admin_setting_configselect('moodlecourse/format', get_string('format'), get_string('courseformats'), key($formcourseformats),$formcourseformats));
+    $temp->add(new admin_setting_configselect('moodlecourse/format', get_string('format'), get_string('courseformats'), 'weeks',$formcourseformats));
     for ($i=1; $i<=52; $i++) {
         $sectionmenu[$i] = "$i";
     }
