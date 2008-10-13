@@ -519,6 +519,7 @@ $string['weightedascending'] = 'Sort by weighted percent ascending';
 $string['weighteddescending'] = 'Sort by weighted percent descending';
 $string['weightedpct'] = 'weighted %%';
 $string['weightedpctcontribution'] = 'weighted %% contribution';
+$string['weightorextracredit'] = 'Weight or extra credit';
 $string['weights'] = 'Weights';
 $string['weightsedit'] = 'Edit weights and extra credits';
 $string['writinggradebookinfo'] = 'Writing gradebook settings';

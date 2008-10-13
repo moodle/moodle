@@ -28,13 +28,13 @@ require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/report/lib.php'; // for preferences
 require_once $CFG->dirroot.'/grade/edit/weights/lib.php';
 
+require_js(array('yui_yahoo', 'yui_dom', 'yui_event', 'yui_json', 'yui_connection', 'yui_dragdrop', 'yui_treeview'));
+
 $courseid        = required_param('id', PARAM_INT);
 $action          = optional_param('action', 0, PARAM_ALPHA);
 $eid             = optional_param('eid', 0, PARAM_ALPHANUM);
 $category        = optional_param('category', null, PARAM_INT);
 $aggregationtype = optional_param('aggregationtype', null, PARAM_INT);
-
-require_js(array('yui_yahoo', 'yui_dom', 'yui_event', 'yui_json', 'yui_connection', 'yui_dragdrop', 'yui_treeview'));
 
 /// Make sure they can even access this course
 
@@ -84,12 +84,10 @@ print_header_simple($strgrades . ': ' . $strgraderreport, ': ' . $strcategoriese
 print_grade_plugin_selector($courseid, 'edit', 'tree');
 
 print_heading(get_string('weightsedit', 'grades'));
-$tree_json = json_encode(get_tree_json($gtree, $gtree->top_element));
 
 $form_key = optional_param('sesskey', null, PARAM_ALPHANUM);
 
-if ($form_key) {
-    $data = data_submitted();
+if ($form_key && $data = data_submitted()) {
 
     foreach ($data as $key => $value) {
         if (preg_match('/aggregation_type_([0-9]*)/', $key, $matches)) {
@@ -147,25 +145,39 @@ if ($form_key) {
     }
 }
 
-// AJAX interface not really needed: adds nice tree functions but not very useful
-// require_once('ajax.php');
-
-print_box_start('gradetreebox generalbox');
-
 // echo '<div id="expandcontractdiv"> <a id="expand" href="#">Expand all</a> <a id="collapse" href="#">Collapse all</a> </div> ';
 
+echo '<button type="button" onclick="toggle_advanced_columns()">Show/Hide advanced columns</button>';
 echo '<form method="post" action="'.$returnurl.'">';
-echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 echo '<div id="gradetree">';
-echo build_html_tree(get_tree_json($gtree, $gtree->top_element), null, $returnurl);
+echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+echo build_html_tree(get_tree_json($gtree, $gtree->top_element, 0, $gpr), null, $returnurl);
 
 // print_grade_tree($gtree, $gtree->top_element, $gpr, $switch);
 //
 echo '</div><div>';
 
 echo '<input type="submit" value="Update weights" />';
-echo '</div></form>';
-print_box_end();
+echo '</div></form>
+
+<script type="text/javascript">
+
+function toggle_advanced_columns() {
+    var advEls = YAHOO.util.Dom.getElementsByClassName("advanced");
+    var shownAdvEls = YAHOO.util.Dom.getElementsByClassName("advancedshown");
+
+    for (var i = 0; i < advEls.length; i++) {
+        YAHOO.util.Dom.replaceClass(advEls[i], "advanced", "advancedshown");
+    }
+
+    for (var i = 0; i < shownAdvEls.length; i++) {
+        YAHOO.util.Dom.replaceClass(shownAdvEls[i], "advancedshown", "advanced");
+    }
+}
+</script>
+<noscript>
+<!-- Print a button for hiding/showing the advanced columns -->
+</noscript>';
 
 print_footer($course);
 die;

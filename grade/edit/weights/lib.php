@@ -23,7 +23,8 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-function get_tree_json(&$gtree, $element, $totals=false) {
+function get_tree_json(&$gtree, $element, $totals=false, $gpr) {
+    global $CFG, $COURSE;
 
     $return_array = array();
 
@@ -33,36 +34,67 @@ function get_tree_json(&$gtree, $element, $totals=false) {
 
     $return_array['item'] = $object;
 
+    $return_array['item']->actions = $gtree->get_edit_icon($element, $gpr);
+    $return_array['item']->actions .= $gtree->get_calculation_icon($element, $gpr);
+
+    if ($element['type'] == 'item' or ($element['type'] == 'category' and $element['depth'] > 1)) {
+        if (element_deletable($element)) {
+            $return_array['item']->actions .= '<a href="index.php?id='.$COURSE->id.'&amp;action=delete&amp;eid='
+                     . $eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'
+                     . get_string('delete').'" title="'.get_string('delete').'"/></a>';
+        }
+        $return_array['item']->actions .= '<a href="index.php?id='.$COURSE->id.'&amp;action=moveselect&amp;eid='
+                 . $eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" alt="'
+                 . get_string('move').'" title="'.get_string('move').'"/></a>';
+    }
+
+    $return_array['item']->actions .= $gtree->get_hiding_icon($element, $gpr);
+    $return_array['item']->actions .= $gtree->get_locking_icon($element, $gpr);
+
     if ($element['type'] == 'category') {
         foreach($element['children'] as $child_el) {
             if (!empty($child_el['object']->itemtype) && ($child_el['object']->itemtype == 'course' || $child_el['object']->itemtype == 'category') && !$totals) {
                 continue;
             }
-            $return_array['children'][] = get_tree_json($gtree, $child_el);
+            $return_array['children'][] = get_tree_json($gtree, $child_el, $totals, $gpr);
         }
     }
 
     return $return_array;
 }
 
-function build_html_tree($tree, $element=null) {
+function build_html_tree($tree, $element=null, $level=0) {
     global $CFG;
 
-    $options = array(GRADE_AGGREGATE_MEAN            =>get_string('aggregatemean', 'grades'),
-                     GRADE_AGGREGATE_WEIGHTED_MEAN   =>get_string('aggregateweightedmean', 'grades'),
-                     GRADE_AGGREGATE_WEIGHTED_MEAN2  =>get_string('aggregateweightedmean2', 'grades'),
-                     GRADE_AGGREGATE_EXTRACREDIT_MEAN=>get_string('aggregateextracreditmean', 'grades'),
-                     GRADE_AGGREGATE_MEDIAN          =>get_string('aggregatemedian', 'grades'),
-                     GRADE_AGGREGATE_MIN             =>get_string('aggregatemin', 'grades'),
-                     GRADE_AGGREGATE_MAX             =>get_string('aggregatemax', 'grades'),
-                     GRADE_AGGREGATE_MODE            =>get_string('aggregatemode', 'grades'),
-                     GRADE_AGGREGATE_SUM             =>get_string('aggregatesum', 'grades'));
+    $options = array(GRADE_AGGREGATE_MEAN             => get_string('aggregatemean', 'grades'),
+                     GRADE_AGGREGATE_WEIGHTED_MEAN    => get_string('aggregateweightedmean', 'grades'),
+                     GRADE_AGGREGATE_WEIGHTED_MEAN2   => get_string('aggregateweightedmean2', 'grades'),
+                     GRADE_AGGREGATE_EXTRACREDIT_MEAN => get_string('aggregateextracreditmean', 'grades'),
+                     GRADE_AGGREGATE_MEDIAN           => get_string('aggregatemedian', 'grades'),
+                     GRADE_AGGREGATE_MIN              => get_string('aggregatemin', 'grades'),
+                     GRADE_AGGREGATE_MAX              => get_string('aggregatemax', 'grades'),
+                     GRADE_AGGREGATE_MODE             => get_string('aggregatemode', 'grades'),
+                     GRADE_AGGREGATE_SUM              => get_string('aggregatesum', 'grades'));
 
     $html = '';
     $root = false;
 
     if (is_null($element)) {
-        $html .= "<ul>\n";
+        $html .= '<table cellpadding="5" class="generaltable">
+                    <tr>
+                        <th class="header name">'.get_string('name').'</th>
+                        <th class="header advanced">'.get_string('aggregation', 'grades').'</th>
+                        <th class="header advanced">'.get_string('weightorextracredit', 'grades').'</th>
+                        <th class="header advanced">'.get_string('range', 'grades').'</th>
+                        <th class="header advanced" style="width: 40px">'.get_string('aggregateonlygraded', 'grades').'</th>
+                        <th class="header advanced" style="width: 40px">'.get_string('aggregatesubcats', 'grades').'</th>
+                        <th class="header advanced" style="width: 40px">'.get_string('aggregateoutcomes', 'grades').'</th>
+                        <th class="header advanced">'.get_string('droplow', 'grades').'</th>
+                        <th class="header advanced">'.get_string('keephigh', 'grades').'</th>
+                        <th class="header advanced">'.get_string('multfactor', 'grades').'</th>
+                        <th class="header advanced">'.get_string('plusfactor', 'grades').'</th>
+                        <th class="header actions">'.get_string('actions').'</th>
+                    </tr>';
         $element = $tree;
         $root = true;
     }
@@ -74,7 +106,6 @@ function build_html_tree($tree, $element=null) {
         $category = grade_category::fetch(array('id' => $element['item']->id));
         $item = $category->get_grade_item();
 
-        $html .= "<li class=\"category\">\n";
         $script = "window.location='index.php?id=$id&amp;category={$category->id}&amp;aggregationtype='+this.value";
         $aggregation_type = choose_from_menu($options, 'aggregation_type_'.$category->id, $category->aggregation, get_string('choose'), $script, 0, true);
 
@@ -82,23 +113,12 @@ function build_html_tree($tree, $element=null) {
         $subcatscheck = ($category->aggregatesubcats == 1) ? 'checked="checked"' : '';
         $outcomescheck = ($category->aggregateoutcomes == 1) ? 'checked="checked"' : '';
 
-        $aggregateonlygraded = '<label for="aggregateonlygraded_'.$category->id.'">'
-                           . '<img src="'.$CFG->pixpath.'/t/nonempty.gif" class="icon caticon" alt="'.get_string('aggregateonlygraded', 'grades').'" '
-                                . 'title="'.get_string('aggregateonlygraded', 'grades').'" /></label>'
-                           . '<input type="checkbox" id="aggregateonlygraded_'.$category->id.'" name="aggregateonlygraded_'.$category->id.'" '
-                                . $onlygradedcheck . ' />';
+        $aggregateonlygraded ='<input type="checkbox" id="aggregateonlygraded_'.$category->id.'" name="aggregateonlygraded_'.$category->id.'" '.$onlygradedcheck . ' />';
+        $aggregatesubcats = '<input type="checkbox" id="aggregatesubcats_'.$category->id.'" name="aggregatesubcats_'.$category->id.'" ' . $subcatscheck.' />';
+        $aggregateoutcomes = '<input type="checkbox" id="aggregateoutcomes_'.$category->id.'" name="aggregateoutcomes_'.$category->id.'" ' . $outcomescheck.' />';
 
-        $aggregatesubcats = '<label for="aggregatesubcats_'.$category->id.'">'
-                           . '<img src="'.$CFG->pixpath.'/t/sigmaplus.gif" class="icon caticon" alt="'.get_string('aggregatesubcats', 'grades').'" '
-                                . 'title="'.get_string('aggregatesubcats', 'grades').'" /></label>'
-                           . '<input type="checkbox" id="aggregatesubcats_'.$category->id.'" name="aggregatesubcats_'.$category->id.'" '
-                                . $subcatscheck.' />';
-
-        $aggregateoutcomes = '<label for="aggregateoutcomes_'.$category->id.'">'
-                           . '<img src="'.$CFG->pixpath.'/t/outcomes.gif" class="icon caticon" alt="'.get_string('aggregateoutcomes', 'grades').'" '
-                                . 'title="'.get_string('aggregateoutcomes', 'grades').'" /></label>'
-                           . '<input type="checkbox" id="aggregateoutcomes_'.$category->id.'" name="aggregateoutcomes_'.$category->id.'" '
-                                . $outcomescheck.' />';
+        $droplow = '<input type="text" size="3" id="droplow_'.$category->id.'" name="droplow_'.$category->id.'" value="'.$category->droplow.'" />';
+        $keephigh = '<input type="text" size="3" id="keephigh_'.$category->id.'" name="keephigh_'.$category->id.'" value="'.$category->keephigh.'" />';
 
         $hidden = '<input type="hidden" name="aggregateonlygraded_original_'.$category->id.'" value="'.$category->aggregateonlygraded.'" />';
         $hidden .= '<input type="hidden" name="aggregatesubcats_original_'.$category->id.'" value="'.$category->aggregatesubcats.'" />';
@@ -107,17 +127,29 @@ function build_html_tree($tree, $element=null) {
         // Add aggregation coef input if not a course item and if parent category has correct aggregation type
         $aggcoef_input = get_weight_input($item);
 
-        $html .= '<span class="name">' . $element['item']->name . '</span>'
-              . $aggregation_type . $aggregateonlygraded . $aggregatesubcats . $aggregateoutcomes . $aggcoef_input . $hidden . "<ul>\n";
+        $html .= '
+                <tr class="category">
+                  <td class="cell name" style="padding-left:' . ($level * 20)
+                  . 'px; background: #DDDDDD url(img/ln.gif) no-repeat scroll ' . (($level - 1) * 20) . 'px 8px">' . $element['item']->name . $hidden . '</td>
+                  <td class="cell advanced">' . $aggregation_type . '</td>
+                  <td class="cell advanced">' . $aggcoef_input . '</td>
+                  <td class="cell advanced">' . $item->get_formatted_range() . '</td>
+                  <td class="cell advanced">' . $aggregateonlygraded . '</td>
+                  <td class="cell advanced">' . $aggregatesubcats . '</td>
+                  <td class="cell advanced">' . $aggregateoutcomes . '</td>
+                  <td class="cell advanced">' . $droplow . '</td>
+                  <td class="cell advanced">' . $keephigh . '</td>
+                  <td class="cell advanced"> - </td>
+                  <td class="cell advanced"> - </td>
+                  <td class="cell actions">' . $element['item']->actions . '</td>
+                </tr>
+                ';
 
         foreach ($element['children'] as $child) {
-            $html .= build_html_tree($tree, $child);
+            $html .= build_html_tree($tree, $child, $level+1);
         }
 
-        $html .= "</ul>\n";
-
     } else { // Dealing with a grade item
-        $html .= "<li>\n";
 
         $item = grade_item::fetch(array('id' => $element['item']->id));
         $element['type'] = 'item';
@@ -140,13 +172,31 @@ function build_html_tree($tree, $element=null) {
 
         // Determine aggregation coef element
         $aggcoef_input = get_weight_input($item);
-        $html .= '<span class="gradeitem">' . "\n$aggcoef_input\n{$element['item']->name} (" . $item->get_formatted_range() . ")</span>\n";
+        $multfactor = '<input type="text" size="3" id="multfactor'.$item->id.'" name="multfactor'.$item->id.'" value="'.$item->multfactor.'" />';
+        $plusfactor = '<input type="text" size="3" id="plusfactor_'.$item->id.'" name="plusfactor_'.$item->id.'" value="'.$item->plusfactor.'" />';
+
+        $html .= '
+                  <tr class="item">
+                      <td class="cell name" style="padding-left:' . ($level * 20)
+                      . 'px; background: #FFFFFF url(img/ln.gif) no-repeat scroll ' . (($level - 1) * 20) . 'px 8px">' . $element['item']->name . '</td>
+                      <td class="cell advanced"> - </td>
+                      <td class="cell advanced">' . $aggcoef_input . '</td>
+                      <td class="cell advanced">' . $item->get_formatted_range() . '</td>
+                      <td class="cell advanced"> - </td>
+                      <td class="cell advanced"> - </td>
+                      <td class="cell advanced"> - </td>
+                      <td class="cell advanced"> - </td>
+                      <td class="cell advanced"> - </td>
+                      <td class="cell advanced">'.$multfactor.'</td>
+                      <td class="cell advanced">'.$plusfactor.'</td>
+                      <td class="cell actions">' . $element['item']->actions . '</td>
+                  </tr>
+                  ';
     }
 
-    $html .= "</li>\n";
 
     if ($root) {
-        $html .= "</ul>\n";
+        $html .= "</table>\n";
     }
 
     return $html;
@@ -182,18 +232,39 @@ function get_weight_input($item) {
         }
 
         if ($aggcoef == 'aggregationcoefweight' || $aggcoef == 'aggregationcoefextra') {
-            return '<label class="weight" for="weight_'.$item->id.'">'.get_string($aggcoef, 'grades').'</label>'
-                           . '<input type="text" size="6" id="weight_'.$item->id.'" name="weight_'.$item->id.'" value="'.$item->aggregationcoef.'" />';
+            return '<input type="text" size="6" id="weight_'.$item->id.'" name="weight_'.$item->id.'" value="'.$item->aggregationcoef.'" />';
         } elseif ($aggcoef == 'aggregationcoefextrasum' ) {
             $checked = ($item->aggregationcoef > 0) ? 'checked="checked"' : '';
             $extracredit = ($item->aggregationcoef > 0) ? 1 : 0;
 
-            return '<label class="weight" for="extracredit_'.$item->id.'">'.get_string($aggcoef, 'grades').'</label>'
-                           . '<input type="checkbox" id="extracredit_'.$item->id.'" name="extracredit_'.$item->id.'" ' . "$checked />\n"
+            return '<input type="checkbox" id="extracredit_'.$item->id.'" name="extracredit_'.$item->id.'" ' . "$checked />\n"
                            . '<input type="hidden" name="extracredit_original_'.$item->id.'" value="'.$extracredit.'" />';
         } else {
             return '';
         }
     }
 }
+
+function element_deletable($element) {
+    global $COURSE;
+
+    if ($element['type'] != 'item') {
+        return true;
+    }
+
+    $grade_item = $element['object'];
+
+    if ($grade_item->itemtype != 'mod' or $grade_item->is_outcome_item() or $grade_item->gradetype == GRADE_TYPE_NONE) {
+        return true;
+    }
+
+    $modinfo = get_fast_modinfo($COURSE);
+    if (!isset($modinfo->instances[$grade_item->itemmodule][$grade_item->iteminstance])) {
+        // module does not exist
+        return true;
+    }
+
+    return false;
+}
+
 ?>
