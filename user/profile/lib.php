@@ -141,6 +141,7 @@ class profile_field_base {
     function edit_field_set_locked(&$mform) {
         if ($this->is_locked() and !has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM))) {
             $mform->hardFreeze($this->inputname);
+            $mform->setConstant($this->inputname, $this->data);
         }
     }
 

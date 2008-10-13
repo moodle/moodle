@@ -1235,6 +1235,19 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         }
     }
 
+    /**
+     * Set constant value not overriden by _POST or _GET
+     * note: this does not work for complex names with [] :-(
+     * @param string $elname name of element
+     * @param mixed $value
+     * @return void
+     */
+    function setConstant($elname, $value) {
+        $this->_constantValues = HTML_QuickForm::arrayMerge($this->_constantValues, array($elname=>$value));
+        $element =& $this->getElement($elname);
+        $element->onQuickFormEvent('updateValue', null, $this);
+    }
+
     function exportValues($elementList = null){
         $unfiltered = array();
         if (null === $elementList) {
@@ -1645,8 +1658,8 @@ function validate_' . $this->_formName . '(frm) {
     /**
      * Displays elements without HTML input tags.
      * This method is different to freeze() in that it makes sure no hidden
-     * elements are included in the form. And a 'hardFrozen' element's submitted value is
-     * ignored.
+     * elements are included in the form.
+     * Note: If you want to make sure the submitted value is ignored, please use setDefaults().
      *
      * This function also removes all previously defined rules.
      *

@@ -82,6 +82,7 @@ class course_edit_form extends moodleform {
         $mform->setType('fullname', PARAM_MULTILANG);
         if ($course and !has_capability('moodle/course:changefullname', $coursecontext)) {
             $mform->hardFreeze('fullname');
+            $mform->setConstant('fullname', $course->fullname);
         }
 
         $mform->addElement('text','shortname', get_string('shortname'),'maxlength="100" size="20"');
@@ -91,6 +92,7 @@ class course_edit_form extends moodleform {
         $mform->setType('shortname', PARAM_MULTILANG);
         if ($course and !has_capability('moodle/course:changeshortname', $coursecontext)) {
             $mform->hardFreeze('shortname');
+            $mform->setConstant('shortname', $course->shortname);
         }
 
         $mform->addElement('text','idnumber', get_string('idnumbercourse'),'maxlength="100"  size="10"');
@@ -98,6 +100,7 @@ class course_edit_form extends moodleform {
         $mform->setType('idnumber', PARAM_RAW);
         if ($course and !has_capability('moodle/course:changeidnumber', $coursecontext)) {
             $mform->hardFreeze('idnumber');
+            $mform->setConstants('idnumber', $course->idnumber);
         }
 
         $mform->addElement('htmleditor','summary', get_string('summary'), array('rows'=> '10', 'cols'=>'65'));
