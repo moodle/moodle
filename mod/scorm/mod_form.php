@@ -268,7 +268,7 @@ class mod_scorm_mod_form extends moodleform_mod {
 
     }
 
-    function defaults_preprocessing(&$default_values) {
+    function data_preprocessing(&$default_values) {
         global $COURSE;
 
         if (isset($default_values['popup']) && ($default_values['popup'] == 1) && isset($default_values['options'])) {
