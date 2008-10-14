@@ -50,6 +50,8 @@ function get_tree_json(&$gtree, $element, $totals=false, $gpr) {
 
     $return_array['item']->actions .= $gtree->get_hiding_icon($element, $gpr);
     $return_array['item']->actions .= $gtree->get_locking_icon($element, $gpr);
+    $return_array['item']->eid = $element['eid'];
+    $return_array['item']->type = $element['type'];
 
     if ($element['type'] == 'category') {
         foreach($element['children'] as $child_el) {
@@ -63,8 +65,11 @@ function get_tree_json(&$gtree, $element, $totals=false, $gpr) {
     return $return_array;
 }
 
-function build_html_tree($tree, $element=null, $level=0) {
-    global $CFG;
+function build_html_tree($tree, $element=null, $level=0, $moving=false, $eid) {
+    global $CFG, $COURSE;
+
+    $showadvanced = optional_param('showadvanced', false, PARAM_BOOL);
+    $advclass = ($showadvanced) ? 'shown' : 'hidden';
 
     $options = array(GRADE_AGGREGATE_MEAN             => get_string('aggregatemean', 'grades'),
                      GRADE_AGGREGATE_WEIGHTED_MEAN    => get_string('aggregateweightedmean', 'grades'),
@@ -82,19 +87,24 @@ function build_html_tree($tree, $element=null, $level=0) {
     if (is_null($element)) {
         $html .= '<table cellpadding="5" class="generaltable">
                     <tr>
-                        <th class="header name">'.get_string('name').'</th>
-                        <th class="header advanced">'.get_string('aggregation', 'grades').'</th>
-                        <th class="header advanced">'.get_string('weightorextracredit', 'grades').'</th>
-                        <th class="header advanced">'.get_string('range', 'grades').'</th>
-                        <th class="header advanced" style="width: 40px">'.get_string('aggregateonlygraded', 'grades').'</th>
-                        <th class="header advanced" style="width: 40px">'.get_string('aggregatesubcats', 'grades').'</th>
-                        <th class="header advanced" style="width: 40px">'.get_string('aggregateoutcomes', 'grades').'</th>
-                        <th class="header advanced">'.get_string('droplow', 'grades').'</th>
-                        <th class="header advanced">'.get_string('keephigh', 'grades').'</th>
-                        <th class="header advanced">'.get_string('multfactor', 'grades').'</th>
-                        <th class="header advanced">'.get_string('plusfactor', 'grades').'</th>
+                        <th class="header name">'.get_string('name').'</th>';
+        if (!$moving) {
+            $html .= '
+                        <th class="header '.$advclass.'">'.get_string('aggregation', 'grades').'</th>
+                        <th class="header '.$advclass.'">'.get_string('weightorextracredit', 'grades').'</th>
+                        <th class="header '.$advclass.'">'.get_string('range', 'grades').'</th>
+                        <th class="header '.$advclass.'" style="width: 40px">'.get_string('aggregateonlygraded', 'grades').'</th>
+                        <th class="header '.$advclass.'" style="width: 40px">'.get_string('aggregatesubcats', 'grades').'</th>
+                        <th class="header '.$advclass.'" style="width: 40px">'.get_string('aggregateoutcomes', 'grades').'</th>
+                        <th class="header '.$advclass.'">'.get_string('droplow', 'grades').'</th>
+                        <th class="header '.$advclass.'">'.get_string('keephigh', 'grades').'</th>
+                        <th class="header '.$advclass.'">'.get_string('multfactor', 'grades').'</th>
+                        <th class="header '.$advclass.'">'.get_string('plusfactor', 'grades').'</th>
                         <th class="header actions">'.get_string('actions').'</th>
-                    </tr>';
+                        ';
+        }
+
+        $html .= '</tr>';
         $element = $tree;
         $root = true;
     }
@@ -102,12 +112,33 @@ function build_html_tree($tree, $element=null, $level=0) {
 
     $id = required_param('id', PARAM_INT);
 
+    /// prepare move target if needed
+    $last = '';
+    $moveto = '';
+
+    if ($moving) {
+        $strmove     = get_string('move');
+        $strmovehere = get_string('movehere');
+        $element['item']->actions = ''; // no action icons when moving
+        $moveto = '<tr><td colspan="12"><a href="index.php?id='.$COURSE->id.'&amp;action=move&amp;eid='.$moving.'&amp;moveafter='
+                . $element['item']->eid.'&amp;sesskey='.sesskey().'"><img class="movetarget" src="'.$CFG->wwwroot.'/pix/movehere.gif" alt="'
+                . $strmovehere.'" title="'.$strmovehere.'" /></a></td></tr>';
+    }
+
+    /// print the list items now
+    if ($moving == $element['item']->eid) {
+
+        // do not diplay children
+        return '<tr><td colspan="12" class="'.$element['item']->type.' moving">'.$element['item']->name.' ('.get_string('move').')</td></tr>';
+
+    }
+
     if (!empty($element['children'])) { // Grade category
         $category = grade_category::fetch(array('id' => $element['item']->id));
         $item = $category->get_grade_item();
 
         $script = "window.location='index.php?id=$id&amp;category={$category->id}&amp;aggregationtype='+this.value";
-        $aggregation_type = choose_from_menu($options, 'aggregation_type_'.$category->id, $category->aggregation, get_string('choose'), $script, 0, true);
+        $aggregation = choose_from_menu($options, 'aggregation_'.$category->id, $category->aggregation, get_string('choose'), $script, 0, true);
 
         $onlygradedcheck = ($category->aggregateonlygraded == 1) ? 'checked="checked"' : '';
         $subcatscheck = ($category->aggregatesubcats == 1) ? 'checked="checked"' : '';
@@ -126,27 +157,34 @@ function build_html_tree($tree, $element=null, $level=0) {
 
         // Add aggregation coef input if not a course item and if parent category has correct aggregation type
         $aggcoef_input = get_weight_input($item);
+        $dimmed = ($item->hidden) ? " dimmed " : "";
 
         $html .= '
-                <tr class="category">
+                <tr class="category '.$dimmed.'">
                   <td class="cell name" style="padding-left:' . ($level * 20)
-                  . 'px; background: #DDDDDD url(img/ln.gif) no-repeat scroll ' . (($level - 1) * 20) . 'px 8px">' . $element['item']->name . $hidden . '</td>
-                  <td class="cell advanced">' . $aggregation_type . '</td>
-                  <td class="cell advanced">' . $aggcoef_input . '</td>
-                  <td class="cell advanced">' . $item->get_formatted_range() . '</td>
-                  <td class="cell advanced">' . $aggregateonlygraded . '</td>
-                  <td class="cell advanced">' . $aggregatesubcats . '</td>
-                  <td class="cell advanced">' . $aggregateoutcomes . '</td>
-                  <td class="cell advanced">' . $droplow . '</td>
-                  <td class="cell advanced">' . $keephigh . '</td>
-                  <td class="cell advanced"> - </td>
-                  <td class="cell advanced"> - </td>
-                  <td class="cell actions">' . $element['item']->actions . '</td>
+                    . 'px; background: #DDDDDD url(img/ln.gif) no-repeat scroll ' . (($level - 1) * 20) . 'px 8px">' . $element['item']->name . $hidden . '</td>';
+
+        if (!$moving) {
+            $html .= '
+                  <td class="cell '.$advclass.'">' . $aggregation . '</td>
+                  <td class="cell '.$advclass.'">' . $aggcoef_input . '</td>
+                  <td class="cell '.$advclass.'">' . $item->get_formatted_range() . '</td>
+                  <td class="cell '.$advclass.'">' . $aggregateonlygraded . '</td>
+                  <td class="cell '.$advclass.'">' . $aggregatesubcats . '</td>
+                  <td class="cell '.$advclass.'">' . $aggregateoutcomes . '</td>
+                  <td class="cell '.$advclass.'">' . $droplow . '</td>
+                  <td class="cell '.$advclass.'">' . $keephigh . '</td>
+                  <td class="cell '.$advclass.'"> - </td>
+                  <td class="cell '.$advclass.'"> - </td>
+                  <td class="cell actions">' . $element['item']->actions . '</td>';
+        }
+
+        $html .= '
                 </tr>
-                ';
+                '.$moveto;
 
         foreach ($element['children'] as $child) {
-            $html .= build_html_tree($tree, $child, $level+1);
+            $html .= build_html_tree($tree, $child, $level+1, $moving, $eid);
         }
 
     } else { // Dealing with a grade item
@@ -175,23 +213,30 @@ function build_html_tree($tree, $element=null, $level=0) {
         $multfactor = '<input type="text" size="3" id="multfactor'.$item->id.'" name="multfactor'.$item->id.'" value="'.$item->multfactor.'" />';
         $plusfactor = '<input type="text" size="3" id="plusfactor_'.$item->id.'" name="plusfactor_'.$item->id.'" value="'.$item->plusfactor.'" />';
 
+        $dimmed = ($item->hidden) ? " dimmed_text " : "";
         $html .= '
-                  <tr class="item">
+                  <tr class="item'.$dimmed.'">
                       <td class="cell name" style="padding-left:' . ($level * 20)
-                      . 'px; background: #FFFFFF url(img/ln.gif) no-repeat scroll ' . (($level - 1) * 20) . 'px 8px">' . $element['item']->name . '</td>
-                      <td class="cell advanced"> - </td>
-                      <td class="cell advanced">' . $aggcoef_input . '</td>
-                      <td class="cell advanced">' . $item->get_formatted_range() . '</td>
-                      <td class="cell advanced"> - </td>
-                      <td class="cell advanced"> - </td>
-                      <td class="cell advanced"> - </td>
-                      <td class="cell advanced"> - </td>
-                      <td class="cell advanced"> - </td>
-                      <td class="cell advanced">'.$multfactor.'</td>
-                      <td class="cell advanced">'.$plusfactor.'</td>
-                      <td class="cell actions">' . $element['item']->actions . '</td>
+                      . 'px; background: #FFFFFF url(img/ln.gif) no-repeat scroll ' . (($level - 1) * 20) . 'px 8px">' . $element['item']->name . '</td>';
+
+        if (!$moving) {
+            $html .= '
+                      <td class="cell '.$advclass.'"> - </td>
+                      <td class="cell '.$advclass.'">' . $aggcoef_input . '</td>
+                      <td class="cell '.$advclass.'">' . $item->get_formatted_range() . '</td>
+                      <td class="cell '.$advclass.'"> - </td>
+                      <td class="cell '.$advclass.'"> - </td>
+                      <td class="cell '.$advclass.'"> - </td>
+                      <td class="cell '.$advclass.'"> - </td>
+                      <td class="cell '.$advclass.'"> - </td>
+                      <td class="cell '.$advclass.'">'.$multfactor.'</td>
+                      <td class="cell '.$advclass.'">'.$plusfactor.'</td>
+                      <td class="cell actions">' . $element['item']->actions . '</td>';
+        }
+
+        $html .= '
                   </tr>
-                  ';
+                  '.$moveto;
     }
 
 
@@ -232,7 +277,7 @@ function get_weight_input($item) {
         }
 
         if ($aggcoef == 'aggregationcoefweight' || $aggcoef == 'aggregationcoefextra') {
-            return '<input type="text" size="6" id="weight_'.$item->id.'" name="weight_'.$item->id.'" value="'.$item->aggregationcoef.'" />';
+            return '<input type="text" size="6" id="aggregationcoef_'.$item->id.'" name="aggregationcoef_'.$item->id.'" value="'.$item->aggregationcoef.'" />';
         } elseif ($aggcoef == 'aggregationcoefextrasum' ) {
             $checked = ($item->aggregationcoef > 0) ? 'checked="checked"' : '';
             $extracredit = ($item->aggregationcoef > 0) ? 1 : 0;

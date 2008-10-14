@@ -1,16 +1,16 @@
-#gradetree tr.category td {
+.gradetreebox tr.category td {
     background-color: #DDDDDD;
 }
 
-#gradetree .category td.name {
+.gradetreebox .category td.name {
     font-weight: bold;
 }
 
-#gradetree td.name {
+.gradetreebox td.name {
 
 }
 
-#gradetree th.actions {
+.gradetreebox th.actions {
     width: 80px;
 }
 
@@ -18,6 +18,39 @@
     background-image: url(img/ln.gif);
 }
 
-.advanced {
+.hidden {
     display: none;
+}
+.shown {
+}
+
+img.iconsmall {
+    margin-left: 4px;
+}
+
+img.icon {
+    margin-right: 5px;
+}
+
+.gradetreebox  {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    padding-bottom: 15px;
+}
+
+.gradetreebox table {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.buttons {
+    margin: 20px;
+    text-align: center;
+    width: 100%;
+}
+
+.buttons .singlebutton {
+    display: inline;
+    padding: 5px;
 }
