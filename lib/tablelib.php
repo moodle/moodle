@@ -718,6 +718,37 @@ class flexible_table {
 
 
     /**
+     * Used from col_* functions when text is to be displayed. Does the
+     * right thing - either converts text to html or strips any html tags
+     * depending on if we are downloading and what is the download type. Params
+     * are the same as format_text function in weblib.php but some default
+     * options are changed.
+     */
+    function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL){
+        if (!$this->is_downloading()){
+            if (is_null($options)){
+                $options = new stdClass;
+            }
+            //some sensible defaults
+            if (!isset($options->para)){
+                $options->para = false;
+            }
+            if (!isset($options->newlines)){
+                $options->newlines = false;
+            }
+            if (!isset($options->smiley)) {
+                $options->smiley = false;
+            }
+            if (!isset($options->filter)) {
+                $options->filter = false;
+            }
+            return format_text($text, $format, $options);
+        } else {
+            $eci =& $this->export_class_instance();
+            return $eci->format_text($text, $format, $options, $courseid);
+        }
+    }
+    /**
      * This method is deprecated although the old api is still supported.
      * @deprecated 1.9.2 - Jun 2, 2008
      */
@@ -1272,6 +1303,16 @@ class table_default_export_format_parent{
     function document_started(){
         return $this->documentstarted;
     }
+    /**
+     * Given text in a variety of format codings, this function returns
+     * the text as safe HTML or as plain text dependent on what is appropriate
+     * for the download format. The default removes all tags.
+     */
+    function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL){
+        //use some whitespace to indicate where there was some line spacing.
+        $text = str_replace(array('</p>', "\n", "\r"), '   ', $text);
+        return strip_tags($text);
+    }
 }
 
 class table_spreadsheet_export_format_parent extends table_default_export_format_parent{
@@ -1502,6 +1543,25 @@ EOF;
     function finish_document(){
         echo "</body>\n</html>";
         exit;
+    }
+    function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL){
+        if (is_null($options)){
+            $options = new stdClass;
+        }
+        //some sensible defaults
+        if (!isset($options->para)){
+            $options->para = false;
+        }
+        if (!isset($options->newlines)){
+            $options->newlines = false;
+        }
+        if (!isset($options->smiley)) {
+            $options->smiley = false;
+        }
+        if (!isset($options->filter)) {
+            $options->filter = false;
+        }
+        return format_text($text, $format, $options);
     }
 }
 ?>

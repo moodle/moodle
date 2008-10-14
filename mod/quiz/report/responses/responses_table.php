@@ -161,7 +161,6 @@ class quiz_report_responses_table extends table_sql {
                 if ($response){
                     $format_options = new stdClass;
                     $format_options->para = false;
-                    $format_options->noclean = true;
                     $format_options->newlines = false;
                     $response = format_text($response, FORMAT_MOODLE, $format_options);
                     if (strlen($response) > QUIZ_REPORT_RESPONSES_MAX_LEN_TO_DISPLAY){
@@ -187,7 +186,7 @@ class quiz_report_responses_table extends table_sql {
                 }
                 
             } else {
-                return $response;
+                return $this->format_text($response);
             }
         } else {
             return NULL;
