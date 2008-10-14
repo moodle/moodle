@@ -110,7 +110,7 @@ class grade_report_overview extends grade_report {
     }
 
     public function fill_table() {
-        global $CFG;
+        global $CFG, $DB;
 
         // MDL-11679, only show 'mycourses' instead of all courses
         if ($courses = get_my_courses($this->user->id, 'c.sortorder ASC', 'id, shortname, showgrades')) {
@@ -121,29 +121,66 @@ class grade_report_overview extends grade_report {
                     continue;
                 }
                 $courselink = '<a href="'.$CFG->wwwroot.'/grade/report/user/index.php?id='.$course->id.'">'.$course->shortname.'</a>';
+                $canviewhidden = has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $course->id));
 
                 // Get course grade_item
-                $grade_item = grade_item::fetch_course_item($course->id);
+                $course_item = grade_item::fetch_course_item($course->id);
 
-                // Get the grade
-                $grade = new grade_grade(array('itemid'=>$grade_item->id, 'userid'=>$this->user->id));
-                $grade->grade_item =& $grade_item;
-                $finalgrade = $grade->finalgrade;
+                // Get the stored grade
+                $course_grade = new grade_grade(array('itemid'=>$course_item->id, 'userid'=>$this->user->id));
+                $course_grade->grade_item =& $course_item;
+                $finalgrade = $course_grade->finalgrade;
 
-                // TODO: this DOES NOT work properly if there are any hidden grades,
-                //       rank might be wrong & totals might be different from user report!!!
-                if ($grade->is_hidden() and !has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $course->id))) {
-                    $finalgrade = null;
+                if (!$canviewhidden and !is_null($finalgrade)) {
+                    if ($course_grade->is_hidden()) {
+                        $finalgrade = null;
+
+                    } else {
+                        // This is a really ugly hack, it will be fixed in 2.0
+                        $items = grade_item::fetch_all(array('courseid'=>$course->id));
+                        $grades = array();
+                        $sql = "SELECT g.*
+                                  FROM {grade_grades} g
+                                  JOIN {grade_items} gi ON gi.id = g.itemid
+                                 WHERE g.userid = ? AND gi.courseid = ?";
+                        if ($gradesrecords = $DB->get_records_sql($sql, array($this->user->id, $course->id))) {
+                            foreach ($gradesrecords as $grade) {
+                                $grades[$grade->itemid] = new grade_grade($grade, false);
+                            }
+                            unset($gradesrecords);
+                        }
+                        foreach ($items as $itemid=>$unused) {
+                            if (!isset($grades[$itemid])) {
+                                $grade_grade = new grade_grade();
+                                $grade_grade->userid = $this->user->id;
+                                $grade_grade->itemid = $items[$itemid]->id;
+                                $grades[$itemid] = $grade_grade;
+                            }
+                            $grades[$itemid]->grade_item =& $items[$itemid];
+                        }
+                        $hiding_affected = grade_grade::get_hiding_affected($grades, $items);
+                        if (array_key_exists($course_item->id, $hiding_affected['altered'])) {
+                            $finalgrade = $hiding_affected['altered'][$course_item->id];
+
+                        } else if (!empty($hiding_affected['unknown'][$course_item->id])) {
+                            $finalgrade = null;
+                        }
+
+                        unset($hiding_affected);
+                        unset($grades);
+                        unset($items);
+                    }
                 }
 
-                $data = array($courselink, grade_format_gradevalue($finalgrade, $grade_item, true));
+                $data = array($courselink, grade_format_gradevalue($finalgrade, $course_item, true));
 
                 if (!$this->showrank) {
                     //nothing to do
 
                 } else if (!is_null($finalgrade)) {
                     /// find the number of users with a higher grade
-                    $params = array($finalgrade, $grade_item->id);
+                    /// please note this can not work if hidden grades involved :-( to be fixed in 2.0
+                    $params = array($finalgrade, $course_item->id);
                     $sql = "SELECT COUNT(DISTINCT(userid))
                               FROM {grade_grades}
                              WHERE finalgrade IS NOT NULL AND finalgrade > ?
