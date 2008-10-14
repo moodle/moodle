@@ -356,7 +356,7 @@ class quiz_statistics_report extends quiz_default_report {
         $quizinformationtable->data[] = array(get_string('quizname', 'quiz_statistics'), $quiz->name);
         $quizinformationtable->data[] = array(get_string('coursename', 'quiz_statistics'), $course->fullname);
         if ($cm->idnumber){
-            $quizinformationtable->data[] = array(get_string('coursename', 'quiz_statistics'), $cm->idnumber);
+            $quizinformationtable->data[] = array(get_string('idnumbermod'), $cm->idnumber);
         }
         if ($quiz->timeopen){
             $quizinformationtable->data[] = array(get_string('quizopen', 'quiz'), userdate($quiz->timeopen));
