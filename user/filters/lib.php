@@ -78,6 +78,9 @@ class user_filtering {
                         }
                         unset($SESSION->user_filtering[$fname][$i]);
                     }
+                    if (empty($SESSION->user_filtering[$fname])) {
+                        unset($SESSION->user_filtering[$fname]);
+                    } 
                 }
             }
             // clear+reload the form
