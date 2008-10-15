@@ -113,13 +113,15 @@
                 groups_print_activity_menu($cm, "view.php?id=$cm->id");
 
                 if ($currentgroup) {
+                    $groupselect = " AND groupid = '$currentgroup'";
                     $groupparam = "&amp;groupid=$currentgroup";
                 } else {
+                    $groupselect = "";
                     $groupparam = "";
                 }
 
                 if ($chat->studentlogs or has_capability('mod/chat:readlog',$context)) {
-                    if ($msg = get_records_select('chat_messages', "chatid = '$chat->id' $groupselect", '', 'id', '', 1)) {
+                    if ($msg = $DB->get_records_select('chat_messages', "chatid = ? $groupselect", array($chat->id))) {
                         echo '<div class="reportlink">';
                         echo "<a href=\"report.php?id=$cm->id\">".
                             get_string('viewreport', 'chat').'</a>';
