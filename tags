@@ -635,7 +635,7 @@ HTMLPurifier_AttrDef_CSS_Border	lib/htmlpurifier/HTMLPurifier/AttrDef/CSS/Border
 HTMLPurifier_AttrDef_CSS_Composite	lib/htmlpurifier/HTMLPurifier/AttrDef/CSS/Composite.php	/^    function HTMLPurifier_AttrDef_CSS_Composite($defs) {$/;"	f
 HTMLPurifier_AttrDef_CSS_DenyElementDecorator	lib/htmlpurifier/HTMLPurifier/AttrDef/CSS/DenyElementDecorator.php	/^    function HTMLPurifier_AttrDef_CSS_DenyElementDecorator(&$def, $element) {$/;"	f
 HTMLPurifier_AttrDef_CSS_Font	lib/htmlpurifier/HTMLPurifier/AttrDef/CSS/Font.php	/^    function HTMLPurifier_AttrDef_CSS_Font($config) {$/;"	f
-HTMLPurifier_AttrDef_CSS_Length	lib/htmlpurifier/HTMLPurifier/AttrDef/CSS/Length.php	/^    function HTMLPurifier_AttrDef_CSS_Length($non_negative = false) {$/;"	f
+HTMLPurifier_AttrDef_CSS_Length	lib/htmlpurifier/HTMLPurifier/AttrDef/CSS/Length.php	/^    function HTMLPurifier_AttrDef_CSS_Length($min = null, $max = null) {$/;"	f
 HTMLPurifier_AttrDef_CSS_ListStyle	lib/htmlpurifier/HTMLPurifier/AttrDef/CSS/ListStyle.php	/^    function HTMLPurifier_AttrDef_CSS_ListStyle($config) {$/;"	f
 HTMLPurifier_AttrDef_CSS_Multiple	lib/htmlpurifier/HTMLPurifier/AttrDef/CSS/Multiple.php	/^    function HTMLPurifier_AttrDef_CSS_Multiple($single, $max = 4) {$/;"	f
 HTMLPurifier_AttrDef_CSS_Number	lib/htmlpurifier/HTMLPurifier/AttrDef/CSS/Number.php	/^    function HTMLPurifier_AttrDef_CSS_Number($non_negative = false) {$/;"	f
@@ -645,7 +645,9 @@ HTMLPurifier_AttrDef_Enum	lib/htmlpurifier/HTMLPurifier/AttrDef/Enum.php	/^    f
 HTMLPurifier_AttrDef_HTML_Bool	lib/htmlpurifier/HTMLPurifier/AttrDef/HTML/Bool.php	/^    function HTMLPurifier_AttrDef_HTML_Bool($name = false) {$this->name = $name;}$/;"	f
 HTMLPurifier_AttrDef_HTML_FrameTarget	lib/htmlpurifier/HTMLPurifier/AttrDef/HTML/FrameTarget.php	/^    function HTMLPurifier_AttrDef_HTML_FrameTarget() {}$/;"	f
 HTMLPurifier_AttrDef_HTML_LinkTypes	lib/htmlpurifier/HTMLPurifier/AttrDef/HTML/LinkTypes.php	/^    function HTMLPurifier_AttrDef_HTML_LinkTypes($name) {$/;"	f
+HTMLPurifier_AttrDef_HTML_Pixels	lib/htmlpurifier/HTMLPurifier/AttrDef/HTML/Pixels.php	/^    function HTMLPurifier_AttrDef_HTML_Pixels($max = null) {$/;"	f
 HTMLPurifier_AttrDef_Integer	lib/htmlpurifier/HTMLPurifier/AttrDef/Integer.php	/^    function HTMLPurifier_AttrDef_Integer($/;"	f
+HTMLPurifier_AttrDef_Switch	lib/htmlpurifier/HTMLPurifier/AttrDef/Switch.php	/^    function HTMLPurifier_AttrDef_Switch($tag, $with_tag, $without_tag) {$/;"	f
 HTMLPurifier_AttrDef_URI	lib/htmlpurifier/HTMLPurifier/AttrDef/URI.php	/^    function HTMLPurifier_AttrDef_URI($embeds_resource = false) {$/;"	f
 HTMLPurifier_AttrDef_URI_Host	lib/htmlpurifier/HTMLPurifier/AttrDef/URI/Host.php	/^    function HTMLPurifier_AttrDef_URI_Host() {$/;"	f
 HTMLPurifier_AttrTransform_BoolToCSS	lib/htmlpurifier/HTMLPurifier/AttrTransform/BoolToCSS.php	/^    function HTMLPurifier_AttrTransform_BoolToCSS($attr, $css) {$/;"	f
@@ -670,21 +672,8 @@ HTMLPurifier_Encoder	lib/htmlpurifier/HTMLPurifier/Encoder.php	/^    function HT
 HTMLPurifier_ErrorCollector	lib/htmlpurifier/HTMLPurifier/ErrorCollector.php	/^    function HTMLPurifier_ErrorCollector(&$context) {$/;"	f
 HTMLPurifier_HTMLDefinition	lib/htmlpurifier/HTMLPurifier/HTMLDefinition.php	/^    function HTMLPurifier_HTMLDefinition() {$/;"	f
 HTMLPurifier_HTMLModuleManager	lib/htmlpurifier/HTMLPurifier/HTMLModuleManager.php	/^    function HTMLPurifier_HTMLModuleManager() {$/;"	f
-HTMLPurifier_HTMLModule_Bdo	lib/htmlpurifier/HTMLPurifier/HTMLModule/Bdo.php	/^    function HTMLPurifier_HTMLModule_Bdo() {$/;"	f
-HTMLPurifier_HTMLModule_Edit	lib/htmlpurifier/HTMLPurifier/HTMLModule/Edit.php	/^    function HTMLPurifier_HTMLModule_Edit() {$/;"	f
-HTMLPurifier_HTMLModule_Hypertext	lib/htmlpurifier/HTMLPurifier/HTMLModule/Hypertext.php	/^    function HTMLPurifier_HTMLModule_Hypertext() {$/;"	f
-HTMLPurifier_HTMLModule_Image	lib/htmlpurifier/HTMLPurifier/HTMLModule/Image.php	/^    function HTMLPurifier_HTMLModule_Image() {$/;"	f
-HTMLPurifier_HTMLModule_Legacy	lib/htmlpurifier/HTMLPurifier/HTMLModule/Legacy.php	/^    function HTMLPurifier_HTMLModule_Legacy() {$/;"	f
-HTMLPurifier_HTMLModule_List	lib/htmlpurifier/HTMLPurifier/HTMLModule/List.php	/^    function HTMLPurifier_HTMLModule_List() {$/;"	f
-HTMLPurifier_HTMLModule_Object	lib/htmlpurifier/HTMLPurifier/HTMLModule/Object.php	/^    function HTMLPurifier_HTMLModule_Object() {$/;"	f
-HTMLPurifier_HTMLModule_Presentation	lib/htmlpurifier/HTMLPurifier/HTMLModule/Presentation.php	/^    function HTMLPurifier_HTMLModule_Presentation() {$/;"	f
-HTMLPurifier_HTMLModule_Ruby	lib/htmlpurifier/HTMLPurifier/HTMLModule/Ruby.php	/^    function HTMLPurifier_HTMLModule_Ruby() {$/;"	f
-HTMLPurifier_HTMLModule_Scripting	lib/htmlpurifier/HTMLPurifier/HTMLModule/Scripting.php	/^    function HTMLPurifier_HTMLModule_Scripting() {$/;"	f
-HTMLPurifier_HTMLModule_StyleAttribute	lib/htmlpurifier/HTMLPurifier/HTMLModule/StyleAttribute.php	/^    function HTMLPurifier_HTMLModule_StyleAttribute() {$/;"	f
-HTMLPurifier_HTMLModule_Tables	lib/htmlpurifier/HTMLPurifier/HTMLModule/Tables.php	/^    function HTMLPurifier_HTMLModule_Tables() {$/;"	f
-HTMLPurifier_HTMLModule_Target	lib/htmlpurifier/HTMLPurifier/HTMLModule/Target.php	/^    function HTMLPurifier_HTMLModule_Target() {$/;"	f
-HTMLPurifier_HTMLModule_Text	lib/htmlpurifier/HTMLPurifier/HTMLModule/Text.php	/^    function HTMLPurifier_HTMLModule_Text() {$/;"	f
 HTMLPurifier_Language	lib/htmlpurifier/HTMLPurifier/Language.php	/^    function HTMLPurifier_Language($config, &$context) {$/;"	f
+HTMLPurifier_Length	lib/htmlpurifier/HTMLPurifier/Length.php	/^    function HTMLPurifier_Length($n = '0', $u = false) {$/;"	f
 HTMLPurifier_Lexer	lib/htmlpurifier/HTMLPurifier/Lexer.php	/^    function HTMLPurifier_Lexer() {$/;"	f
 HTMLPurifier_PercentEncoder	lib/htmlpurifier/HTMLPurifier/PercentEncoder.php	/^    function HTMLPurifier_PercentEncoder($preserve = false) {$/;"	f
 HTMLPurifier_Printer	lib/htmlpurifier/HTMLPurifier/Printer.php	/^    function HTMLPurifier_Printer() {$/;"	f
@@ -699,6 +688,13 @@ HTMLPurifier_Token_Text	lib/htmlpurifier/HTMLPurifier/Token.php	/^    function H
 HTMLPurifier_URI	lib/htmlpurifier/HTMLPurifier/URI.php	/^    function HTMLPurifier_URI($scheme, $userinfo, $host, $port, $path, $query, $fragment) {$/;"	f
 HTMLPurifier_URIDefinition	lib/htmlpurifier/HTMLPurifier/URIDefinition.php	/^    function HTMLPurifier_URIDefinition() {$/;"	f
 HTMLPurifier_URIParser	lib/htmlpurifier/HTMLPurifier/URIParser.php	/^    function HTMLPurifier_URIParser() {$/;"	f
+HTMLPurifier_UnitConverter	lib/htmlpurifier/HTMLPurifier/UnitConverter.php	/^    function HTMLPurifier_UnitConverter($output_precision = 4, $internal_precision = 10, $force_no_bcmath = false) {$/;"	f
+HTML_AJAX_Class_exists	lib/pear/HTML/AJAX.php	/^function HTML_AJAX_Class_exists($class, $autoload) $/;"	f
+HTML_AJAX_Debug	lib/pear/HTML/AJAX/Debug.php	/^    function HTML_AJAX_Debug($errMsg, $errLine, $errCode, $errFile)$/;"	f
+HTML_AJAX_JSON	lib/pear/HTML/AJAX/JSON.php	/^    function HTML_AJAX_JSON($use = 0)$/;"	f
+HTML_AJAX_JSON_Error	lib/pear/HTML/AJAX/JSON.php	/^        function HTML_AJAX_JSON_Error($message = 'unknown error', $code = null,$/;"	f
+HTML_AJAX_Serializer_JSON	lib/pear/HTML/AJAX/Serializer/JSON.php	/^    function HTML_AJAX_Serializer_JSON($use_loose_type = true) $/;"	f
+HTML_AJAX_Server	lib/pear/HTML/AJAX/Server.php	/^    function HTML_AJAX_Server($serverUrl = false) $/;"	f
 HTML_Common	lib/pear/HTML/Common.php	/^    function HTML_Common($attributes = null, $tabOffset = 0)$/;"	f
 HTML_QuickForm	lib/pear/HTML/QuickForm.php	/^    function HTML_QuickForm($formName='', $method='post', $action='', $target='', $attributes=null, $trackSubmit = false)$/;"	f
 HTML_QuickForm_Error	lib/pear/HTML/QuickForm.php	/^    function HTML_QuickForm_Error($code = QUICKFORM_ERROR, $mode = PEAR_ERROR_RETURN,$/;"	f
@@ -1739,8 +1735,6 @@ ServerInfo	lib/adodb/drivers/adodb-postgres64.inc.php	/^	function ServerInfo()$/
 ServerInfo	lib/adodb/drivers/adodb-sapdb.inc.php	/^	function ServerInfo()$/;"	f
 ServerInfo	lib/adodb/drivers/adodb-sqlite.inc.php	/^	function ServerInfo()$/;"	f
 ServerVar	lib/phpmailer/class.phpmailer.php	/^    function ServerVar($varName) {$/;"	f
-Services_JSON	lib/json/JSON.php	/^    function Services_JSON($use = 0)$/;"	f
-Services_JSON_Error	lib/json/JSON.php	/^        function Services_JSON_Error($message = 'unknown error', $code = null,$/;"	f
 Set	lib/adodb/adodb-active-record.inc.php	/^	function Set(&$row)$/;"	f
 Set	lib/editor/htmlarea/popups/select_color.php	/^function Set(string) {$/;"	f
 SetAlias	admin/mysql/pdf_schema.php	/^    function SetAlias($name, $value)$/;"	f
@@ -2322,6 +2316,9 @@ _beginpage	lib/fpdf/fpdf.php	/^function _beginpage($orientation)$/;"	f
 _beginpage	lib/tcpdf/tcpdf.php	/^        function _beginpage($orientation) {$/;"	f
 _booleanExpressionQuery	search/Zend/Search/Lucene/Search/QueryParserContext.php	/^    private function _booleanExpressionQuery()$/;"	f
 _buildPage	lib/simpletestlib/browser.php	/^        function &_buildPage($response) {$/;"	f
+_cacheRuleApi	lib/pear/HTML/AJAX/Server.php	/^    function _cacheRuleApi($classes) {$/;"	f
+_cacheRuleContent	lib/pear/HTML/AJAX/Server.php	/^    function _cacheRuleContent($content) {$/;"	f
+_cacheRuleFile	lib/pear/HTML/AJAX/Server.php	/^    function _cacheRuleFile($files) {$/;"	f
 _calcSheetOffsets	lib/pear/Spreadsheet/Excel/Writer/Workbook.php	/^    function _calcSheetOffsets()$/;"	f
 _calcSize	lib/pear/OLE/PPS/Root.php	/^    function _calcSize(&$raList) $/;"	f
 _calc_sheet_offsets	lib/excel/Workbook.php	/^    function _calc_sheet_offsets()$/;"	f
@@ -2332,6 +2329,7 @@ _calculateNonConjunctionResult	search/Zend/Search/Lucene/Search/Query/Boolean.ph
 _calculateNonConjunctionResult	search/Zend/Search/Lucene/Search/Query/MultiTerm.php	/^    private function _calculateNonConjunctionResult(Zend_Search_Lucene_Interface $reader)$/;"	f
 _calculateSharedStringsSizes	lib/pear/Spreadsheet/Excel/Writer/Workbook.php	/^    function _calculateSharedStringsSizes()$/;"	f
 _calculate_sizes	lib/excel/OLEwriter.php	/^    function _calculate_sizes()$/;"	f
+_callCacheRule	lib/pear/HTML/AJAX/Server.php	/^    function _callCacheRule($rule,$payload) {$/;"	f
 _canonicalType	lib/simpletestlib/expectation.php	/^        function _canonicalType($type) {$/;"	f
 _captureTrace	lib/simpletestlib/simpletest.php	/^        function _captureTrace() {$/;"	f
 _cellToPackedRowcol	lib/pear/Spreadsheet/Excel/Writer/Parser.php	/^    function _cellToPackedRowcol($cell)$/;"	f
@@ -2362,6 +2360,7 @@ _chompRequest	lib/simpletestlib/url.php	/^        function _chompRequest(&$url) 
 _chompScheme	lib/simpletestlib/url.php	/^        function _chompScheme(&$url) {$/;"	f
 _classExists	lib/htmlpurifier/HTMLPurifier/HTMLModuleManager.php	/^    function _classExists($name) {$/;"	f
 _classOrInterfaceExistsWithAutoload	lib/simpletestlib/reflection_php5.php	/^        function _classOrInterfaceExistsWithAutoload($interface, $autoload) {$/;"	f
+_cleanIdentifier	lib/pear/HTML/AJAX/Server.php	/^    function _cleanIdentifier($input) {$/;"	f
 _cleanUpTermInfoCache	search/Zend/Search/Lucene/Index/SegmentInfo.php	/^    private function _cleanUpTermInfoCache()$/;"	f
 _clearError	lib/simpletestlib/socket.php	/^        function _clearError() {$/;"	f
 _clearNestedFramesFocus	lib/simpletestlib/frames.php	/^        function _clearNestedFramesFocus() {$/;"	f
@@ -2407,6 +2406,7 @@ _coerceExpectation	lib/simpletestlib/unit_tester.php	/^        function _coerceE
 _coerceToExpectation	lib/simpletestlib/mock_objects.php	/^        function _coerceToExpectation($expected) {$/;"	f
 _coerceValues	lib/simpletestlib/tag.php	/^        function _coerceValues($values) {$/;"	f
 _collapseStack	lib/htmlpurifier/HTMLPurifier/URIFilter/MakeAbsolute.php	/^    function _collapseStack($stack) {$/;"	f
+_compareEtags	lib/pear/HTML/AJAX/Server.php	/^    function _compareEtags($serverETag) {$/;"	f
 _compileRegex	lib/htmlpurifier/HTMLPurifier/ChildDef/Custom.php	/^    function _compileRegex() {$/;"	f
 _compile_arg_list	lib/smarty/Smarty_Compiler.class.php	/^    function _compile_arg_list($type, $name, $attrs, &$cache_code) {$/;"	f
 _compile_block_tag	lib/smarty/Smarty_Compiler.class.php	/^    function _compile_block_tag($tag_command, $tag_args, $tag_modifier, &$output)$/;"	f
@@ -2522,6 +2522,7 @@ _describeResourceDifference	lib/simpletestlib/dumper.php	/^        function _des
 _describeStringDifference	lib/simpletestlib/dumper.php	/^        function _describeStringDifference($first, $second, $identical) {$/;"	f
 _describeTextMatch	lib/simpletestlib/web_tester.php	/^        function _describeTextMatch($substring, $subject) {$/;"	f
 _detab_callback	lib/markdown.php	/^	function _detab_callback($matches) {$/;"	f
+_detect	lib/pear/HTML/AJAX/Serializer/JSON.php	/^    function _detect()$/;"	f
 _detectCompression	admin/mysql/libraries/File.class.php	/^    function _detectCompression()$/;"	f
 _dieOnNoMethod	lib/simpletestlib/mock_objects.php	/^        function _dieOnNoMethod($method, $task) {$/;"	f
 _dirFlush	lib/adodb/adodb.inc.php	/^   function _dirFlush($dir, $kill_top_level = false) $/;"	f
@@ -2580,6 +2581,7 @@ _endpage	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _endpage() {$/;"	f
 _endpage	lib/fpdf/fpdf.php	/^function _endpage()$/;"	f
 _endpage	lib/tcpdf/tcpdf.php	/^        function _endpage() {$/;"	f
 _errconnect	lib/adodb/drivers/adodb-postgres64.inc.php	/^	function _errconnect()$/;"	f
+_errorHandler	lib/pear/HTML/AJAX.php	/^    function _errorHandler($errno, $errstr, $errfile, $errline)$/;"	f
 _escape	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _escape($s) {$/;"	f
 _escape	lib/fpdf/fpdf.php	/^function _escape($s)$/;"	f
 _escape	lib/fpdf/fpdfprotection.php	/^    function _escape($s) {$/;"	f
@@ -2590,6 +2592,7 @@ _escapetext	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _escapetext($s) {
 _escapetext	lib/tcpdf/tcpdf.php	/^        function _escapetext($s) {$/;"	f
 _eval	lib/smarty/Smarty.class.php	/^    function _eval($code, $params=null)$/;"	f
 _exactPhraseFreq	search/Zend/Search/Lucene/Search/Query/Phrase.php	/^    public function _exactPhraseFreq($docId)$/;"	f
+_exceptionHandler	lib/pear/HTML/AJAX.php	/^    function _exceptionHandler($ex)$/;"	f
 _expand_quoted_text	lib/smarty/Smarty_Compiler.class.php	/^    function _expand_quoted_text($var_expr)$/;"	f
 _expression	lib/excel/Parser.php	/^  function _expression()$/;"	f
 _expression	lib/pear/Spreadsheet/Excel/Writer/Parser.php	/^    function _expression()$/;"	f
@@ -2668,12 +2671,15 @@ _generateId	lib/form/select.php	/^    function _generateId()$/;"	f
 _generateId	lib/form/selectgroups.php	/^    function _generateId()$/;"	f
 _generateId	lib/form/text.php	/^    function _generateId()$/;"	f
 _generateId	lib/pear/HTML/QuickForm/element.php	/^    function _generateId()$/;"	f
+_generateMethodStub	lib/pear/HTML/AJAX.php	/^    function _generateMethodStub($method)$/;"	f
 _generateencryptionkey	lib/fpdf/fpdfprotection.php	/^    function _generateencryptionkey($user_pass, $owner_pass, $protection) {$/;"	f
 _generateencryptionkey	lib/tcpdf/tcpdfprotection.php	/^    function _generateencryptionkey($user_pass, $owner_pass, $protection) {$/;"	f
 _getAttrKey	lib/pear/HTML/Common.php	/^    function _getAttrKey($attr, $attributes)$/;"	f
 _getAttrString	lib/pear/HTML/Common.php	/^    function _getAttrString($attributes)$/;"	f
 _getAttributes	lib/simpletestlib/xml.php	/^        function _getAttributes() {$/;"	f
 _getBaseTestCase	lib/simpletestlib/test_case.php	/^        function _getBaseTestCase($class) {$/;"	f
+_getClientPayload	lib/pear/HTML/AJAX.php	/^    function _getClientPayload()$/;"	f
+_getClientPayloadContentType	lib/pear/HTML/AJAX.php	/^    function _getClientPayloadContentType()$/;"	f
 _getColor	lib/pear/Spreadsheet/Excel/Writer/Format.php	/^    function _getColor($name_color = '')$/;"	f
 _getCommonPath	lib/simpletestlib/authentication.php	/^        function _getCommonPath($first, $second) {$/;"	f
 _getCompoundedRegex	lib/lexer.php	/^        function _getCompoundedRegex() {$/;"	f
@@ -2694,6 +2700,7 @@ _getHostLine	lib/simpletestlib/http.php	/^        function _getHostLine() {$/;"	
 _getIndent	lib/simpletestlib/xml.php	/^        function _getIndent($offset = 0) {$/;"	f
 _getJsValue	lib/pear/HTML/QuickForm/RuleRegistry.php	/^    function _getJsValue(&$element, $elementName, $reset = false, $index = null)$/;"	f
 _getLineEnd	lib/pear/HTML/Common.php	/^    function _getLineEnd()$/;"	f
+_getMethodsToExport	lib/pear/HTML/AJAX.php	/^    function _getMethodsToExport($className)$/;"	f
 _getOptions	lib/pear/Spreadsheet/Excel/Writer/Validator.php	/^    function _getOptions()$/;"	f
 _getParameterSignatures	lib/simpletestlib/reflection_php5.php	/^        function _getParameterSignatures($method) {$/;"	f
 _getParsedTags	lib/simpletestlib/parser.php	/^        function _getParsedTags() {$/;"	f
@@ -2709,6 +2716,9 @@ _getRefIndex	lib/pear/Spreadsheet/Excel/Writer/Parser.php	/^    function _getRef
 _getRegistry	lib/simpletestlib/simpletest.php	/^        function &_getRegistry() {$/;"	f
 _getRequestLine	lib/simpletestlib/http.php	/^        function _getRequestLine($method) {$/;"	f
 _getReturn	lib/simpletestlib/mock_objects.php	/^        function &_getReturn($method, $args, $step) {$/;"	f
+_getSerializedClassNames	lib/pear/HTML/AJAX/Serializer/PHP.php	/^    function _getSerializedClassNames($string) {$/;"	f
+_getSerializer	lib/pear/HTML/AJAX.php	/^    function _getSerializer($type)$/;"	f
+_getServer	lib/pear/HTML/AJAX.php	/^    function _getServer($var)$/;"	f
 _getSheetIndex	lib/pear/Spreadsheet/Excel/Writer/Parser.php	/^    function _getSheetIndex($sheet_name)$/;"	f
 _getShell	lib/simpletestlib/shell_tester.php	/^        function &_getShell() {$/;"	f
 _getSubstring	lib/simpletestlib/web_tester.php	/^        function _getSubstring() {$/;"	f
@@ -2717,6 +2727,7 @@ _getTabs	lib/pear/HTML/Common.php	/^    function _getTabs()$/;"	f
 _getType	lib/simpletestlib/expectation.php	/^        function _getType() {$/;"	f
 _getUrlFromLink	lib/simpletestlib/page.php	/^        function _getUrlFromLink($link) {$/;"	f
 _getValue	lib/simpletestlib/expectation.php	/^        function _getValue() {$/;"	f
+_getVar	lib/pear/HTML/AJAX.php	/^    function _getVar($var)$/;"	f
 _getWidgets	lib/simpletestlib/tag.php	/^        function &_getWidgets() {$/;"	f
 _get_auto_filename	lib/smarty/Smarty.class.php	/^    function _get_auto_filename($auto_base, $auto_source = null, $auto_id = null)$/;"	f
 _get_auto_id	lib/smarty/Smarty.class.php	/^    function _get_auto_id($cache_id=null, $compile_id=null) {$/;"	f
@@ -2753,6 +2764,8 @@ _hs_unescapeEntities	lib/pear/HTML/QuickForm/hierselect.php	/^function _hs_unesc
 _htmlEntities	lib/simpletestlib/reporter.php	/^        function _htmlEntities($message) {$/;"	f
 _if_header_lexer	lib/pear/HTTP/WebDAV/Server.php	/^    function _if_header_lexer($string, &$pos) $/;"	f
 _if_header_parser	lib/pear/HTTP/WebDAV/Server.php	/^    function _if_header_parser($str) $/;"	f
+_iframeGrabProxy	lib/pear/HTML/AJAX.php	/^    function _iframeGrabProxy()$/;"	f
+_iframeWrapper	lib/pear/HTML/AJAX.php	/^    function _iframeWrapper($id, $data, $headers = array())$/;"	f
 _include	lib/smarty/Smarty.class.php	/^    function _include($filename, $once=false, $params=null)$/;"	f
 _init	lib/adodb/drivers/adodb-pdo.inc.php	/^	function _init($parentDriver)$/;"	f
 _init	lib/adodb/drivers/adodb-pdo_mssql.inc.php	/^	function _init($parentDriver)$/;"	f
@@ -2762,6 +2775,8 @@ _init	lib/adodb/drivers/adodb-pdo_pgsql.inc.php	/^	function _init($parentDriver)
 _init	lib/adodb/drivers/adodb-sqlite.inc.php	/^	function _init($parentDriver)$/;"	f
 _init	lib/adodb/session/adodb-session.php	/^	function _init() {$/;"	f
 _init	lib/adodb/session/adodb-session2.php	/^	function _init() {$/;"	f
+_init	lib/pear/HTML/AJAX/Server.php	/^    function _init($className) $/;"	f
+_initAll	lib/pear/HTML/AJAX/Server.php	/^    function _initAll() $/;"	f
 _initDetab	lib/markdown.php	/^	function _initDetab() {$/;"	f
 _initWeight	search/Zend/Search/Lucene/Search/Query.php	/^    protected function _initWeight(Zend_Search_Lucene_Interface $reader)$/;"	f
 _initialize	lib/excel/OLEwriter.php	/^    function _initialize()$/;"	f
@@ -2849,6 +2864,7 @@ _load	lib/simpletestlib/browser.php	/^        function _load($url, $parameters) 
 _loadElement	lib/pear/HTML/QuickForm.php	/^    function &_loadElement($event, $type, $args)$/;"	f
 _loadFrame	lib/simpletestlib/browser.php	/^        function _loadFrame($frames, $url, $parameters) {$/;"	f
 _loadNorm	search/Zend/Search/Lucene/Index/SegmentInfo.php	/^    private function _loadNorm($fieldNum)$/;"	f
+_loadOptions	lib/pear/HTML/AJAX/Server.php	/^    function _loadOptions() $/;"	f
 _loadPage	lib/simpletestlib/browser.php	/^        function _loadPage($url, $parameters) {$/;"	f
 _loadRegex	lib/htmlpurifier/HTMLPurifier/AttrDef/URI/IPv4.php	/^    function _loadRegex() {$/;"	f
 _load_filters	lib/smarty/Smarty_Compiler.class.php	/^    function _load_filters()$/;"	f
@@ -2981,6 +2997,7 @@ _private_has_id_column	lib/simpletestlib.php	/^function _private_has_id_column($
 _processBitmap	lib/pear/Spreadsheet/Excel/Writer/Worksheet.php	/^    function _processBitmap($bitmap)$/;"	f
 _processDefListItems_callback_dd	lib/markdown.php	/^	function _processDefListItems_callback_dd($matches) {$/;"	f
 _processDefListItems_callback_dt	lib/markdown.php	/^	function _processDefListItems_callback_dt($matches) {$/;"	f
+_processInterceptor	lib/pear/HTML/AJAX.php	/^    function _processInterceptor($className,$methodName,$callback,$params) $/;"	f
 _processListItems_callback	lib/markdown.php	/^	function _processListItems_callback($matches) {$/;"	f
 _process_bitmap	lib/excel/Worksheet.php	/^    function _process_bitmap($bitmap)$/;"	f
 _process_compiled_include_callback	lib/smarty/Smarty.class.php	/^    function _process_compiled_include_callback($match) {$/;"	f
@@ -3063,6 +3080,7 @@ _query	lib/adodb/drivers/adodb-sybase.inc.php	/^	function _query($sql,$inputarr)
 _quote_replace	lib/smarty/Smarty_Compiler.class.php	/^    function _quote_replace($string)$/;"	f
 _rangeToPackedRange	lib/pear/Spreadsheet/Excel/Writer/Parser.php	/^    function _rangeToPackedRange($range)$/;"	f
 _readAll	lib/simpletestlib/http.php	/^        function _readAll(&$socket) {$/;"	f
+_readFile	lib/pear/HTML/AJAX/Server.php	/^    function _readFile($file) $/;"	f
 _readPpsWks	lib/pear/OLE.php	/^    function _readPpsWks($pps_wk_start, $big_block_size)$/;"	f
 _read_file	lib/smarty/Smarty.class.php	/^    function _read_file($filename)$/;"	f
 _recaptcha_aes_encrypt	lib/recaptchalib.php	/^function _recaptcha_aes_encrypt($val,$ky) {$/;"	f
@@ -3095,6 +3113,7 @@ _ruleIsUploadedFile	lib/pear/HTML/QuickForm/file.php	/^    function _ruleIsUploa
 _run_mod_handler	lib/smarty/Smarty.class.php	/^    function _run_mod_handler()$/;"	f
 _saveBbd	lib/pear/OLE/PPS/Root.php	/^    function _saveBbd($iSbdSize, $iBsize, $iPpsCnt) $/;"	f
 _saveBigData	lib/pear/OLE/PPS/Root.php	/^    function _saveBigData($iStBlk, &$raList)$/;"	f
+_saveError	lib/pear/HTML/AJAX/Debug.php	/^    function _saveError()$/;"	f
 _saveHeader	lib/pear/OLE/PPS/Root.php	/^    function _saveHeader($iSBDcnt, $iBBcnt, $iPPScnt)$/;"	f
 _savePps	lib/pear/OLE/PPS/Root.php	/^    function _savePps(&$raList) $/;"	f
 _savePpsSetPnt	lib/pear/OLE/PPS.php	/^    function _savePpsSetPnt(&$pps_array) $/;"	f
@@ -3118,6 +3137,10 @@ _seek	lib/adodb/drivers/adodb-sqlite.inc.php	/^   function _seek($row)$/;"	f
 _seek	lib/adodb/drivers/adodb-sybase.inc.php	/^	function _seek($row) $/;"	f
 _selectRunnableTests	lib/simpletestlib/test_case.php	/^        function _selectRunnableTests($existing_classes, $new_classes) {$/;"	f
 _self_test	blocks/moodleblock.class.php	/^    function _self_test() {$/;"	f
+_sendCacheHeaders	lib/pear/HTML/AJAX/Server.php	/^    function _sendCacheHeaders($etag,$notModified) {$/;"	f
+_sendContentLength	lib/pear/HTML/AJAX.php	/^    function _sendContentLength() $/;"	f
+_sendHeaders	lib/pear/HTML/AJAX.php	/^    function _sendHeaders($array)$/;"	f
+_sendResponse	lib/pear/HTML/AJAX.php	/^    function _sendResponse($response)$/;"	f
 _sessionKey	lib/adodb/session/adodb-session.php	/^	function _sessionKey() {$/;"	f
 _sessionKey	lib/adodb/session/adodb-session2.php	/^	function _sessionKey() {$/;"	f
 _setAttribute	lib/simpletestlib/tag.php	/^        function _setAttribute($label, $value) {$/;"	f
@@ -3295,6 +3318,7 @@ _updatefields	lib/adodb/drivers/adodb-postgres7.inc.php	/^	function _updatefield
 _urldecode	lib/pear/HTTP/WebDAV/Server.php	/^    function _urldecode($path) $/;"	f
 _urlencode	lib/pear/HTTP/WebDAV/Server.php	/^    function _urlencode($url) $/;"	f
 _validate	admin/mysql/libraries/sqlvalidator.class.php	/^        function _validate($sql)$/;"	f
+_validatePhpCallback	lib/pear/HTML/AJAX.php	/^    function _validatePhpCallback($callback)$/;"	f
 _validateSQL	admin/mysql/libraries/sqlvalidator.class.php	/^        function _validateSQL($obj, $session, $sql, $method)$/;"	f
 _validate_files	lib/formslib.php	/^    function _validate_files(&$files) {$/;"	f
 _valueIsPossible	lib/simpletestlib/tag.php	/^        function _valueIsPossible($value) {$/;"	f
@@ -3370,10 +3394,12 @@ add	lib/htmlpurifier/HTMLPurifier/DefinitionCache/Decorator/Memory.php	/^    fun
 add	lib/htmlpurifier/HTMLPurifier/DefinitionCache/Null.php	/^    function add($def, $config) {$/;"	f
 add	lib/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer.php	/^    function add($def, $config) {$/;"	f
 add	lib/htmlpurifier/HTMLPurifier/IDAccumulator.php	/^    function add($id) {$/;"	f
+add	lib/htmlpurifier/HTMLPurifier/UnitConverter.php	/^    function add($s1, $s2, $scale) {$/;"	f
 add	lib/pclzip/pclzip.lib.php	/^  function add($p_filelist)$/;"	f
 add	lib/simpletestlib/encoding.php	/^        function add($key, $value) {$/;"	f
 add	lib/simpletestlib/errors.php	/^        function add($severity, $content, $filename, $line) {$/;"	f
 add	mod/wiki/ewiki/ewiki.php	/^   function add($row) {$/;"	f
+addAllowedClasses	lib/pear/HTML/AJAX.php	/^    function addAllowedClasses($classes)$/;"	f
 addAttribute	lib/htmlpurifier/HTMLPurifier/HTMLDefinition.php	/^    function addAttribute($element_name, $attr_name, $def) {$/;"	f
 addBasicHeaders	lib/simpletestlib/authentication.php	/^        function addBasicHeaders(&$request, $username, $password) {$/;"	f
 addBlankElement	lib/htmlpurifier/HTMLPurifier/HTMLDefinition.php	/^    function &addBlankElement($element_name) {$/;"	f
@@ -3750,6 +3776,7 @@ apiVersion	lib/pear/HTML/QuickForm/element.php	/^    function apiVersion()$/;"	f
 apiVersion	lib/pear/HTML/QuickForm/select.php	/^    function apiVersion()$/;"	f
 append	lib/pear/OLE/PPS/File.php	/^    function append($data)$/;"	f
 append	lib/smarty/Smarty.class.php	/^    function append($tpl_var, $value=null, $merge=false)$/;"	f
+appendAttr	lib/pear/HTML/AJAX/Action.php	/^    function appendAttr($id, $attribute, $data = null)$/;"	f
 appendCallingProgram	admin/mysql/libraries/sqlvalidator.class.php	/^        function appendCallingProgram($calling_program, $calling_program_version)$/;"	f
 appendConnectionTechnology	admin/mysql/libraries/sqlvalidator.class.php	/^        function appendConnectionTechnology($connection_technology, $connection_technology_version)$/;"	f
 appendCookieValue	auth/shibboleth/auth.php	/^    function appendCookieValue($value, $CookieArray) {$/;"	f
@@ -3894,6 +3921,7 @@ assertWantedPattern	lib/simpletestlib/web_tester.php	/^        function assertWa
 assertWantedText	lib/simpletestlib/web_tester.php	/^        function assertWantedText($text, $message = '%s') {$/;"	f
 assertWithinMargin	lib/simpletestlib/unit_tester.php	/^        function assertWithinMargin($first, $second, $margin, $message = '%s') {$/;"	f
 assign	lib/smarty/Smarty.class.php	/^    function assign($tpl_var, $value = null)$/;"	f
+assignAttr	lib/pear/HTML/AJAX/Action.php	/^    function assignAttr($id, $attribute, $data = null)$/;"	f
 assign_by_ref	lib/smarty/Smarty.class.php	/^    function assign_by_ref($tpl_var, &$value)$/;"	f
 assign_capability	lib/accesslib.php	/^function assign_capability($capability, $permission, $roleid, $contextid, $overwrite=false) {$/;"	f
 assign_legacy_capabilities	lib/accesslib.php	/^function assign_legacy_capabilities($capability, $legacyperms) {$/;"	f
@@ -4680,6 +4708,7 @@ clear	lib/smarty/Config_File.class.php	/^    function clear($file_name = NULL)$/
 clear	search/Zend/Search/Lucene/PriorityQueue.php	/^    public function clear()$/;"	f
 clear	search/querylib.php	/^    private function clear($id) {$/;"	f
 clearAllTemplates	lib/pear/HTML/QuickForm/Renderer/Default.php	/^    function clearAllTemplates()$/;"	f
+clearAttr	lib/pear/HTML/AJAX/Action.php	/^    function clearAttr($id, $attribute)$/;"	f
 clearDebug	lib/soap/nusoap.php	/^	function clearDebug() {$/;"	f
 clearFrameFocus	lib/simpletestlib/browser.php	/^        function clearFrameFocus() {$/;"	f
 clearFrameFocus	lib/simpletestlib/frames.php	/^        function clearFrameFocus() {$/;"	f
@@ -4724,6 +4753,7 @@ clickSubmitByName	lib/simpletestlib/browser.php	/^        function clickSubmitBy
 clickSubmitByName	lib/simpletestlib/web_tester.php	/^        function clickSubmitByName($name, $additional = false) {$/;"	f
 client	auth/cas/CAS/CAS.php	/^  function client($server_version,$/;"	f
 clientInfo	lib/typo3/class.t3lib_div.php	/^	function clientInfo($useragent='')	{$/;"	f
+clientJsLocation	lib/pear/HTML/AJAX/Server.php	/^    function clientJsLocation() $/;"	f
 clipString	lib/simpletestlib/dumper.php	/^        function clipString($value, $size, $position = 0) {$/;"	f
 clob	lib/adodb/session/adodb-session.php	/^	function clob($clob = null) {$/;"	f
 clob	lib/adodb/session/adodb-session2.php	/^	function clob($clob = null) {$/;"	f
@@ -4782,6 +4812,7 @@ column_style	lib/tablelib.php	/^    function column_style($column, $property, $v
 column_style_all	lib/tablelib.php	/^    function column_style_all($property, $value) {$/;"	f
 column_suppress	lib/tablelib.php	/^    function column_suppress($column) {$/;"	f
 column_type	lib/dmllib.php	/^function column_type($table, $column) {$/;"	f
+combineActions	lib/pear/HTML/AJAX/Action.php	/^    function combineActions(&$instance)$/;"	f
 comma2array	lib/xmldb/classes/XMLDBObject.class.php	/^    function comma2array($string) {$/;"	f
 commentDashState	lib/htmlpurifier/HTMLPurifier/Lexer/PH5P.php	/^    private function commentDashState() {$/;"	f
 commentEndState	lib/htmlpurifier/HTMLPurifier/Lexer/PH5P.php	/^    private function commentEndState() {$/;"	f
@@ -4800,6 +4831,7 @@ commit_sql	lib/dmllib.php	/^function commit_sql() {$/;"	f
 comp	blocks/loancalc/block_loancalc.php	/^function comp(v) { \/\/ general entry point for all cases$/;"	f
 compact_items	lib/grade/grade_scale.php	/^    function compact_items($items=NULL) {$/;"	f
 compact_rdefs	lib/accesslib.php	/^function compact_rdefs(&$rdefs) {$/;"	f
+compareTo	lib/htmlpurifier/HTMLPurifier/Length.php	/^    function compareTo($l) {$/;"	f
 compare_activities_by_time_asc	course/recent.php	/^function compare_activities_by_time_asc($a, $b) {$/;"	f
 compare_activities_by_time_desc	course/recent.php	/^function compare_activities_by_time_desc($a, $b) {$/;"	f
 compare_responses	question/type/match/questiontype.php	/^    function compare_responses($question, $state, $teststate) {$/;"	f
@@ -4860,7 +4892,6 @@ connectCAS	auth/cas/auth.php	/^    function connectCAS() {$/;"	f
 connect_win	question/format/coursetestmanager/format.php	/^    function connect_win($filename) {$/;"	f
 construct	lib/bennu/iCalendar_components.php	/^    function construct() {$/;"	f
 construct	lib/bennu/iCalendar_properties.php	/^    function construct() {$/;"	f
-construct	lib/htmlpurifier/HTMLPurifier/HTMLModule/Tidy.php	/^    function construct($config) {$/;"	f
 construct	lib/pagelib.php	/^    function construct() {$/;"	f
 construct_dataset_menus	question/type/calculated/questiontype.php	/^    function construct_dataset_menus($form, $mandatorydatasets,$/;"	f
 construct_latex_document	filter/tex/latex.php	/^        function construct_latex_document( $formula, $fontsize=12 ) {$/;"	f
@@ -4873,6 +4904,7 @@ conv	lib/typo3/class.t3lib_cs.php	/^	function conv($str,$fromCS,$toCS,$useEntity
 convArray	lib/typo3/class.t3lib_cs.php	/^	function convArray(&$array,$fromCS,$toCS,$useEntityForNoChar=0)	{$/;"	f
 convUmlauts	lib/typo3/class.t3lib_div.php	/^	function convUmlauts($str)	{$/;"	f
 conv_case	lib/typo3/class.t3lib_cs.php	/^	function conv_case($charset,$string,$case)	{$/;"	f
+convert	lib/htmlpurifier/HTMLPurifier/UnitConverter.php	/^    function convert($length, $to_unit) {$/;"	f
 convert	lib/textlib.class.php	/^    function convert($text, $fromCS, $toCS='utf-8') {$/;"	f
 convert	lib/wiki_to_markdown.php	/^  function convert( $content,$courseid ) {$/;"	f
 convertColorHexToDec	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function convertColorHexToDec($color = "#000000"){$/;"	f
@@ -4968,6 +5000,7 @@ createInvoker	lib/simpletestlib/eclipse.php	/^	function &createInvoker(&$invoker
 createInvoker	lib/simpletestlib/scorer.php	/^        function &createInvoker(&$invoker) {$/;"	f
 createInvoker	lib/simpletestlib/test_case.php	/^        function &createInvoker() {$/;"	f
 createLexer	lib/simpletestlib/parser.php	/^        function &createLexer(&$parser) {$/;"	f
+createNode	lib/pear/HTML/AJAX/Action.php	/^    function createNode($id, $tag, $attributes, $type = 'append')$/;"	f
 createSelect	lib/editor/htmlarea/htmlarea.php	/^    function createSelect(txt) {$/;"	f
 createSelect	lib/editor/htmlarea/htmlarea_bak.php	/^    function createSelect(txt) {$/;"	f
 createStart	lib/htmlpurifier/HTMLPurifier/TokenFactory.php	/^    public function createStart($name, $attr = array()) {$/;"	f
@@ -5149,6 +5182,7 @@ data_preprocessing	mod/hotpot/mod_form.php	/^    function data_preprocessing(&$d
 data_preprocessing	mod/lesson/mod_form.php	/^    function data_preprocessing(&$default_values) {$/;"	f
 data_preprocessing	mod/quiz/mod_form.php	/^    function data_preprocessing(&$default_values){$/;"	f
 data_preprocessing	mod/resource/mod_form.php	/^    function data_preprocessing(&$default_values){$/;"	f
+data_preprocessing	mod/scorm/mod_form.php	/^    function data_preprocessing(&$default_values) {$/;"	f
 data_preset_name	mod/data/lib.php	/^function data_preset_name($shortname, $path) {$/;"	f
 data_preset_path	mod/data/lib.php	/^function data_preset_path($course, $userid, $shortname) {$/;"	f
 data_presets_export	mod/data/preset.php	/^function data_presets_export($course, $cm, $data) {$/;"	f
@@ -5216,7 +5250,7 @@ debug	lib/xmldb/classes/XMLDBObject.class.php	/^    function debug($message) {$/
 debug_ordvalue	lib/typo3/class.t3lib_div.php	/^	function debug_ordvalue($string,$characters=100)	{$/;"	f
 debugging	lib/weblib.php	/^function debugging($message='', $level=DEBUG_NORMAL) {$/;"	f
 dec_to_ALPHA	mod/hotpot/report/default.php	/^    function dec_to_ALPHA($dec) {$/;"	f
-decode	lib/json/JSON.php	/^    function decode($str)$/;"	f
+decode	lib/pear/HTML/AJAX/JSON.php	/^    function decode($str)$/;"	f
 decode	lib/soap/nusoap.php	/^	function decode(){$/;"	f
 decodeChunked	lib/soap/nusoap.php	/^	function decodeChunked($buffer, $lb){$/;"	f
 decodeHtml	lib/simpletestlib/parser.php	/^        function decodeHtml($html) {$/;"	f
@@ -5238,7 +5272,6 @@ default_value	lib/bennu/iCalendar_parameters.php	/^    function default_value($p
 default_value	lib/bennu/iCalendar_properties.php	/^    function default_value() {$/;"	f
 defaultquestion	mod/lesson/format.php	/^    function defaultquestion() {$/;"	f
 defaultquestion	question/format.php	/^    function defaultquestion() {$/;"	f
-defaults_preprocessing	mod/scorm/mod_form.php	/^    function defaults_preprocessing(&$default_values) {$/;"	f
 define	lib/htmlpurifier/HTMLPurifier/ConfigSchema.php	/^    function define($namespace, $name, $default, $type, $description) {$/;"	f
 defineAlias	lib/htmlpurifier/HTMLPurifier/ConfigSchema.php	/^    function defineAlias($namespace, $name, $new_namespace, $new_name) {$/;"	f
 defineAllowedValues	lib/htmlpurifier/HTMLPurifier/ConfigSchema.php	/^    function defineAllowedValues($namespace, $name, $allowed_values) {$/;"	f
@@ -5550,6 +5583,7 @@ display_submissions	mod/assignment/lib.php	/^    function display_submissions($m
 display_user_interface	question/category_class.php	/^    function display_user_interface() {$/;"	f
 displaydir	files/index.php	/^function displaydir ($wdir) {$/;"	f
 displaydir	lib/editor/htmlarea/coursefiles.php	/^function displaydir ($wdir) {$/;"	f
+div	lib/htmlpurifier/HTMLPurifier/UnitConverter.php	/^    function div($s1, $s2, $scale) {$/;"	f
 doAbbreviations	lib/markdown.php	/^	function doAbbreviations($text) {$/;"	f
 doAction	search/Zend/Search/Lucene/FSMAction.php	/^    public function doAction()$/;"	f
 doAnchors	lib/markdown.php	/^	function doAnchors($text) {$/;"	f
@@ -5691,8 +5725,9 @@ empty_field_and_submit	mod/chat/gui_header_js/chatinput.php	/^    function empty
 empty_field_and_submit	mod/chat/gui_sockets/chatinput.php	/^function empty_field_and_submit() {$/;"	f
 enableBc	admin/mysql/libraries/Config.class.php	/^    function enableBc()$/;"	f
 enableForm	mod/chat/gui_header_js/chatinput.php	/^    function enableForm() {$/;"	f
+encloseInScript	lib/pear/HTML/AJAX/Helper.php	/^	function encloseInScript($input) {$/;"	f
 encode	lib/htmlpurifier/HTMLPurifier/PercentEncoder.php	/^    function encode($string) {$/;"	f
-encode	lib/json/JSON.php	/^    function encode($var)$/;"	f
+encode	lib/pear/HTML/AJAX/JSON.php	/^    function encode($var)$/;"	f
 encodeAmpsAndAngles	lib/markdown.php	/^	function encodeAmpsAndAngles($text) {$/;"	f
 encodeEmailAddress	lib/markdown.php	/^	function encodeEmailAddress($addr) {$/;"	f
 encodeNorm	search/Zend/Search/Lucene/Search/Similarity.php	/^    static function encodeNorm($f)$/;"	f
@@ -5782,6 +5817,7 @@ escalateReadLock	search/Zend/Search/Lucene/LockManager.php	/^    public static f
 escape	lib/adodb/adodb.inc.php	/^	function escape($s,$magic_quotes=false)$/;"	f
 escape	lib/htmlpurifier/HTMLPurifier/Generator.php	/^    function escape($string) {$/;"	f
 escape	lib/htmlpurifier/HTMLPurifier/Printer.php	/^    function escape($string) {$/;"	f
+escape	lib/pear/HTML/AJAX/Helper.php	/^	function escape($input) {$/;"	f
 escapeCDATA	lib/htmlpurifier/HTMLPurifier/Lexer.php	/^    function escapeCDATA($string) {$/;"	f
 escapeCommentedCDATA	lib/htmlpurifier/HTMLPurifier/Lexer.php	/^    function escapeCommentedCDATA($string) {$/;"	f
 escapeHandler	lib/htmlpurifier/HTMLPurifier/Lexer/PEARSax3.php	/^    function escapeHandler(&$parser, $data) {$/;"	f
@@ -6379,6 +6415,7 @@ forum_forcesubscribe	mod/forum/lib.php	/^function forum_forcesubscribe($forumid,
 forum_get_aggregate_types	mod/forum/lib.php	/^function forum_get_aggregate_types() {$/;"	f
 forum_get_all_discussion_posts	mod/forum/lib.php	/^function forum_get_all_discussion_posts($discussionid, $sort, $tracking=false) {$/;"	f
 forum_get_all_discussion_ratings	mod/forum/lib.php	/^function forum_get_all_discussion_ratings($discussion) {$/;"	f
+forum_get_all_user_ratings	mod/forum/lib.php	/^function forum_get_all_user_ratings($userid, $discussions) {$/;"	f
 forum_get_child_posts	mod/forum/lib.php	/^function forum_get_child_posts($parent, $forumid) {$/;"	f
 forum_get_child_posts_fast	search/documents/forum_document.php	/^function forum_get_child_posts_fast($parent, $forum_id) {$/;"	f
 forum_get_content_for_index	search/documents/forum_document.php	/^function forum_get_content_for_index(&$forum) {$/;"	f
@@ -6434,7 +6471,7 @@ forum_menu_list	mod/forum/search.php	/^function forum_menu_list($course)  {$/;"	
 forum_move_attachments	mod/forum/lib.php	/^function forum_move_attachments($discussion, $forumid) {$/;"	f
 forum_post_ids_by_course	mod/forum/backuplib.php	/^    function forum_post_ids_by_course ($course) {$/;"	f
 forum_post_ids_by_instance	mod/forum/backuplib.php	/^    function forum_post_ids_by_instance ($instanceid) {$/;"	f
-forum_post_subscription	mod/forum/lib.php	/^function forum_post_subscription($post) {$/;"	f
+forum_post_subscription	mod/forum/lib.php	/^function forum_post_subscription($post, $forum) {$/;"	f
 forum_posts_restore_mods	mod/forum/restorelib.php	/^    function forum_posts_restore_mods($new_forum_id,$discussion_id,$info,$restore) {$/;"	f
 forum_print_attachments	mod/forum/lib.php	/^function forum_print_attachments($post, $return=NULL) {$/;"	f
 forum_print_big_search_form	mod/forum/search.php	/^function forum_print_big_search_form($course) {$/;"	f
@@ -6565,12 +6602,15 @@ generateAttributes	lib/htmlpurifier/HTMLPurifier/Generator.php	/^    function ge
 generateBaseDirectoryPath	lib/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer.php	/^    function generateBaseDirectoryPath($config) {$/;"	f
 generateBugReport	admin/mysql/libraries/Sql.class.php	/^    function generateBugReport($message)$/;"	f
 generateChildDef	lib/htmlpurifier/HTMLPurifier/ContentSets.php	/^    function generateChildDef(&$def, $module) {$/;"	f
+generateClassStub	lib/pear/HTML/AJAX.php	/^    function generateClassStub($name)$/;"	f
+generateClient	lib/pear/HTML/AJAX/Server.php	/^    function generateClient() $/;"	f
 generateDirectoryPath	lib/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer.php	/^    function generateDirectoryPath($config) {$/;"	f
 generateFieldSpec	admin/mysql/libraries/Table.class.php	/^    function generateFieldSpec($name, $type, $length = '', $attribute = '',$/;"	f
 generateFilePath	lib/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer.php	/^    function generateFilePath($config) {$/;"	f
 generateFromToken	lib/htmlpurifier/HTMLPurifier/Generator.php	/^    function generateFromToken($token) {$/;"	f
 generateFromTokens	lib/htmlpurifier/HTMLPurifier/Generator.php	/^    function generateFromTokens($tokens, $config, &$context) {$/;"	f
 generateImpliedEndTags	lib/htmlpurifier/HTMLPurifier/Lexer/PH5P.php	/^    private function generateImpliedEndTags($exclude = array()) {$/;"	f
+generateJavaScriptClient	lib/pear/HTML/AJAX.php	/^    function generateJavaScriptClient()$/;"	f
 generateKey	lib/htmlpurifier/HTMLPurifier/DefinitionCache.php	/^    function generateKey($config) {$/;"	f
 generatePartial	lib/simpletestlib/mock_objects.php	/^        function generatePartial($class, $mock_class, $methods) {$/;"	f
 generatePartial	lib/simpletestlib/mock_objects.php	/^        function generatePartial($methods) {$/;"	f
@@ -6714,6 +6754,7 @@ getContent	lib/simpletestlib/http.php	/^        function getContent() {$/;"	f
 getContent	lib/simpletestlib/tag.php	/^        function getContent() {$/;"	f
 getContentAsText	lib/simpletestlib/browser.php	/^        function getContentAsText() {$/;"	f
 getContentLength	admin/mysql/libraries/File.class.php	/^    function getContentLength()$/;"	f
+getContentType	lib/pear/HTML/AJAX/Response.php	/^    function getContentType()$/;"	f
 getContents	backup/restorelib.php	/^        function getContents() {$/;"	f
 getContext	lib/simpletestlib/simpletest.php	/^        function &getContext() {$/;"	f
 getCookie	lib/simpletestlib/web_tester.php	/^        function getCookie($name) {$/;"	f
@@ -7086,6 +7127,7 @@ getMysqlHelpPage	admin/mysql/libraries/engines/binlog.lib.php	/^    function get
 getMysqlHelpPage	admin/mysql/libraries/engines/innodb.lib.php	/^    function getMysqlHelpPage()$/;"	f
 getMysqlHelpPage	admin/mysql/libraries/engines/mrg_myisam.lib.php	/^    function getMysqlHelpPage()$/;"	f
 getMysqlHelpPage	admin/mysql/libraries/engines/ndbcluster.lib.php	/^    function getMysqlHelpPage()$/;"	f
+getN	lib/htmlpurifier/HTMLPurifier/Length.php	/^    function getN() {return $this->n;}$/;"	f
 getName	admin/mysql/libraries/File.class.php	/^    function getName()$/;"	f
 getName	admin/mysql/libraries/Table.class.php	/^    function getName($quoted = false)$/;"	f
 getName	admin/mysql/libraries/Theme.class.php	/^    function getName()$/;"	f
@@ -7157,6 +7199,8 @@ getPath	lib/simpletestlib/cookies.php	/^        function getPath() {$/;"	f
 getPath	lib/simpletestlib/url.php	/^        function getPath() {$/;"	f
 getPath	lib/xmldb/classes/XMLDBStructure.class.php	/^    function getPath() {$/;"	f
 getPattern	search/Zend/Search/Lucene/Search/Query/Wildcard.php	/^    public function getPattern()$/;"	f
+getPayload	lib/pear/HTML/AJAX/Action.php	/^    function getPayload()$/;"	f
+getPayload	lib/pear/HTML/AJAX/Response.php	/^    function getPayload()$/;"	f
 getPort	lib/simpletestlib/url.php	/^        function getPort() {$/;"	f
 getPositionIncrement	search/Zend/Search/Lucene/Analysis/Token.php	/^    public function getPositionIncrement()$/;"	f
 getPositionOfFirstSelect	admin/mysql/libraries/Sql.class.php	/^    function getPositionOfFirstSelect($subquery = 0)$/;"	f
@@ -7276,6 +7320,7 @@ getServerVersion	auth/cas/CAS/client.php	/^  function getServerVersion()$/;"	f
 getServiceURL	auth/cas/CAS/CAS.php	/^   function getServiceURL()$/;"	f
 getSeverityAsString	lib/simpletestlib/errors.php	/^        function getSeverityAsString($severity) {$/;"	f
 getShowAdvanced	lib/formslib.php	/^    function getShowAdvanced(){$/;"	f
+getSigFigs	lib/htmlpurifier/HTMLPurifier/UnitConverter.php	/^    function getSigFigs($n) {$/;"	f
 getSignature	lib/simpletestlib/reflection_php4.php	/^        function getSignature($method) {$/;"	f
 getSignature	lib/simpletestlib/reflection_php5.php	/^        function getSignature($name) {$/;"	f
 getSigns	search/Zend/Search/Lucene/Search/Query/Boolean.php	/^    public function getSigns()$/;"	f
@@ -7379,6 +7424,7 @@ getURL	auth/cas/CAS/PGTStorage/pgt-db.php	/^  function getURL()$/;"	f
 getURL	auth/cas/CAS/client.php	/^  function getURL()$/;"	f
 getURL	lib/typo3/class.t3lib_div.php	/^	function getURL($url)	{$/;"	f
 getUnique	lib/xmldb/classes/XMLDBIndex.class.php	/^    function getUnique() {$/;"	f
+getUnit	lib/htmlpurifier/HTMLPurifier/Length.php	/^    function getUnit() {return $this->unit;}$/;"	f
 getUnsigned	lib/xmldb/classes/XMLDBField.class.php	/^    function getUnsigned() {$/;"	f
 getUpperTerm	search/Zend/Search/Lucene/Search/Query/Range.php	/^    public function getUpperTerm()$/;"	f
 getUrl	lib/simpletestlib/browser.php	/^        function getUrl() {$/;"	f
@@ -7546,6 +7592,7 @@ get_content	blocks/calendar_month/block_calendar_month.php	/^    function get_co
 get_content	blocks/calendar_upcoming/block_calendar_upcoming.php	/^    function get_content() {$/;"	f
 get_content	blocks/course_list/block_course_list.php	/^    function get_content() {$/;"	f
 get_content	blocks/course_summary/block_course_summary.php	/^    function get_content() {$/;"	f
+get_content	blocks/custom_theme/block_custom_theme.php	/^	function get_content() {$/;"	f
 get_content	blocks/glossary_random/block_glossary_random.php	/^    function get_content() {$/;"	f
 get_content	blocks/html/block_html.php	/^    function get_content() {$/;"	f
 get_content	blocks/loancalc/block_loancalc.php	/^    function get_content() {$/;"	f
@@ -7675,6 +7722,7 @@ get_format_name	blog/blogpage.php	/^    function get_format_name() {$/;"	f
 get_format_name	lib/pagelib.php	/^    function get_format_name() {$/;"	f
 get_format_name	my/pagelib.php	/^    function get_format_name() {$/;"	f
 get_format_name	tag/pagelib.php	/^    function get_format_name() {$/;"	f
+get_formatted_range	lib/grade/grade_item.php	/^    function get_formatted_range($rangesdisplaytype=null, $rangesdecimalpoints=null) {$/;"	f
 get_fractional_grade	question/type/questiontype.php	/^    function get_fractional_grade(&$question, &$state) {$/;"	f
 get_full_name	lib/adminlib.php	/^    function get_full_name() {$/;"	f
 get_grade	lib/grade/grade_item.php	/^    function get_grade($userid, $create=true) {$/;"	f
@@ -8038,7 +8086,7 @@ getopt2	lib/profilerlib.php	/^    function getopt2($args, $short_options, $long_
 getpath	question/format/xml/format.php	/^    function getpath( $xml, $path, $default, $istext=false, $error='' ) {$/;"	f
 getquestioncategories	question/format/coursetestmanager/format.php	/^    function getquestioncategories($filename, $mdapath="", $hostname="") {$/;"	f
 getquestions	question/format/coursetestmanager/format.php	/^    function getquestions($filename, $category, $mdapath="", $hostname="") {$/;"	f
-getremoteaddr	lib/moodlelib.php	/^ function getremoteaddr() {$/;"	f
+getremoteaddr	lib/moodlelib.php	/^function getremoteaddr() {$/;"	f
 getweek	lib/moodlelib.php	/^function getweek ($startdate, $thedate) {$/;"	f
 gif_compress	lib/typo3/class.t3lib_div.php	/^	function gif_compress($theFile, $type)	{$/;"	f
 glossary_add_instance	mod/glossary/lib.php	/^function glossary_add_instance($glossary) {$/;"	f
@@ -8283,6 +8331,8 @@ guest_user	lib/moodlelib.php	/^function guest_user() {$/;"	f
 handleElement	lib/htmlpurifier/HTMLPurifier/Injector.php	/^    function handleElement(&$token) {}$/;"	f
 handleElement	lib/htmlpurifier/HTMLPurifier/Injector/AutoParagraph.php	/^    function handleElement(&$token) {$/;"	f
 handleFailure	mod/wiki/view.php	/^function handleFailure(o) {$/;"	f
+handleRequest	lib/pear/HTML/AJAX.php	/^    function handleRequest()$/;"	f
+handleRequest	lib/pear/HTML/AJAX/Server.php	/^    function handleRequest() $/;"	f
 handleResponse	mod/wiki/view.php	/^function handleResponse(o) {$/;"	f
 handleSpanToken	lib/markdown.php	/^	function handleSpanToken($token, &$str) {$/;"	f
 handleText	lib/htmlpurifier/HTMLPurifier/Injector.php	/^    function handleText(&$token) {}$/;"	f
@@ -8564,6 +8614,7 @@ http_PROPFIND	lib/pear/HTTP/WebDAV/Server.php	/^    function http_PROPFIND() $/;
 http_PROPPATCH	lib/pear/HTTP/WebDAV/Server.php	/^    function http_PROPPATCH() $/;"	f
 http_PUT	lib/pear/HTTP/WebDAV/Server.php	/^    function http_PUT() $/;"	f
 http_UNLOCK	lib/pear/HTTP/WebDAV/Server.php	/^    function http_UNLOCK() $/;"	f
+http_build_query	lib/pear/HTML/AJAX/Serializer/Urlencoded.php	/^    function http_build_query($formdata, $numeric_prefix = null, $key = null) $/;"	f
 http_status	lib/pear/HTTP/WebDAV/Server.php	/^    function http_status($status) $/;"	f
 httpsrequired	lib/moodlelib.php	/^function httpsrequired() {$/;"	f
 iCalendar_component	lib/bennu/iCalendar_components.php	/^    function iCalendar_component() {$/;"	f
@@ -8746,6 +8797,7 @@ init	blocks/calendar_month/block_calendar_month.php	/^    function init() {$/;"	
 init	blocks/calendar_upcoming/block_calendar_upcoming.php	/^    function init() {$/;"	f
 init	blocks/course_list/block_course_list.php	/^    function init() {$/;"	f
 init	blocks/course_summary/block_course_summary.php	/^    function init() {$/;"	f
+init	blocks/custom_theme/block_custom_theme.php	/^    function init() {$/;"	f
 init	blocks/glossary_random/block_glossary_random.php	/^    function init() {$/;"	f
 init	blocks/html/block_html.php	/^    function init() {$/;"	f
 init	blocks/loancalc/block_loancalc.php	/^    function init() {$/;"	f
@@ -8821,10 +8873,12 @@ insert	lib/grade/grade_item.php	/^    function insert($source=null) {$/;"	f
 insert	lib/grade/grade_object.php	/^    function insert($source=null) {$/;"	f
 insert	lib/grade/grade_outcome.php	/^    function insert($source=null) {$/;"	f
 insert	lib/grade/grade_scale.php	/^    function insert($source=null) {$/;"	f
+insertAlert	lib/pear/HTML/AJAX/Action.php	/^    function insertAlert($data)$/;"	f
 insertBitmap	lib/pear/Spreadsheet/Excel/Writer/Worksheet.php	/^    function insertBitmap($row, $col, $bitmap, $x = 0, $y = 0, $scale_x = 1, $scale_y = 1)$/;"	f
 insertComment	lib/htmlpurifier/HTMLPurifier/Lexer/PH5P.php	/^    private function insertComment($data) {$/;"	f
 insertElement	lib/htmlpurifier/HTMLPurifier/Lexer/PH5P.php	/^    private function insertElement($token, $append = true) {$/;"	f
 insertElementBefore	lib/pear/HTML/QuickForm.php	/^    function &insertElementBefore(&$element, $nameAfter)$/;"	f
+insertScript	lib/pear/HTML/AJAX/Action.php	/^    function insertScript($data)$/;"	f
 insertText	lib/htmlpurifier/HTMLPurifier/Lexer/PH5P.php	/^    private function insertText($data) {$/;"	f
 insert_before	auth/cas/CAS/domxml-php4-php5.php	/^ function insert_before($newnode,$refnode) {return new php4DOMElement($this->myDOMNode->insertBefore($newnode->myDOMNode,$refnode->myDOMNode),$this->myOwnerDocument);}$/;"	f
 insert_bitmap	lib/excel/Worksheet.php	/^    function insert_bitmap($row, $col, $bitmap, $x = 0, $y = 0, $scale_x = 1, $scale_y = 1)$/;"	f
@@ -8958,6 +9012,7 @@ is	lib/htmlpurifier/HTMLPurifier/Lexer/PEARSax3.php	/^     * Open tag event hand
 is	lib/simpletestlib/reflection_php4.php	/^         *	  interface is returned.$/;"	c
 is	lib/simpletestlib/reflection_php5.php	/^         *    interface is returned.$/;"	c
 isA	lib/simpletestlib/compatibility.php	/^        function isA($object, $class) {$/;"	f
+isAJAX	lib/pear/HTML/AJAX/Helper.php	/^    function isAJAX() {$/;"	f
 isAbsPath	lib/typo3/class.t3lib_div.php	/^	function isAbsPath($path)	{$/;"	f
 isAbstract	lib/simpletestlib/reflection_php4.php	/^        function isAbstract() {$/;"	f
 isAbstract	lib/simpletestlib/reflection_php5.php	/^        function isAbstract() {$/;"	f
@@ -8980,7 +9035,7 @@ isError	admin/mysql/libraries/File.class.php	/^    function isError()$/;"	f
 isError	admin/mysql/libraries/Sql.class.php	/^    function isError()$/;"	f
 isError	lib/adodb/adodb-pear.inc.php	/^	function isError($value)$/;"	f
 isError	lib/htmlpurifier/HTMLPurifier/ConfigSchema.php	/^    function isError($var) {$/;"	f
-isError	lib/json/JSON.php	/^    function isError($data, $code = null)$/;"	f
+isError	lib/pear/HTML/AJAX/JSON.php	/^    function isError($data, $code = null)$/;"	f
 isError	lib/pear/HTML/QuickForm.php	/^    function isError($value)$/;"	f
 isError	lib/pear/PEAR.php	/^    function isError($data, $code = null)$/;"	f
 isError	lib/simpletestlib/socket.php	/^        function isError() {$/;"	f
@@ -9038,6 +9093,7 @@ isUploaded	admin/mysql/libraries/File.class.php	/^    function isUploaded()$/;"	
 isUploadedFile	lib/pear/HTML/QuickForm/file.php	/^    function isUploadedFile()$/;"	f
 isValid	admin/mysql/libraries/StorageEngine.class.php	/^    function isValid($engine)$/;"	f
 isValid	admin/mysql/libraries/sqlvalidator.class.php	/^        function isValid($sql)$/;"	f
+isValid	lib/htmlpurifier/HTMLPurifier/Length.php	/^    function isValid() {$/;"	f
 isValidHost	lib/simpletestlib/cookies.php	/^        function isValidHost($host) {$/;"	f
 isValidName	admin/mysql/libraries/Table.class.php	/^    function isValidName($table_name)$/;"	f
 isValidPath	lib/simpletestlib/cookies.php	/^        function isValidPath($path) {$/;"	f
@@ -9206,6 +9262,9 @@ journal_user_complete_index	mod/journal/lib.php	/^function journal_user_complete
 journal_user_outline	mod/journal/lib.php	/^function journal_user_outline($course, $user, $mod, $journal) {$/;"	f
 js_safe	mod/hotpot/template/default.php	/^    function js_safe($str, $convert_to_unicode=false) {$/;"	f
 js_value	mod/hotpot/template/default.php	/^    function js_value($tags, $more_tags="[0]['#']", $convert_to_unicode=false) {$/;"	f
+jsonEncode	lib/pear/HTML/AJAX/Helper.php	/^	function jsonEncode($input) {$/;"	f
+json_decode	lib/pear/HTML/AJAX/JSON.php	/^	function json_decode($data) {$/;"	f
+json_encode	lib/pear/HTML/AJAX/JSON.php	/^	function json_encode($data) {$/;"	f
 keepalive_client	auth/mnet/auth.php	/^    function keepalive_client() {$/;"	f
 keepalive_server	auth/mnet/auth.php	/^    function keepalive_server($array) {$/;"	f
 key	lib/adodb/adodb-iterator.inc.php	/^    function key() $/;"	f
@@ -9243,6 +9302,7 @@ label_check_backup_mods_instances	mod/label/backuplib.php	/^    function label_c
 label_decode_content_links_caller	mod/label/restorelib.php	/^    function label_decode_content_links_caller($restore) {$/;"	f
 label_delete_instance	mod/label/lib.php	/^function label_delete_instance($id) {$/;"	f
 label_get_coursemodule_info	mod/label/lib.php	/^function label_get_coursemodule_info($coursemodule) {$/;"	f
+label_get_extra_capabilities	mod/label/lib.php	/^function label_get_extra_capabilities() {$/;"	f
 label_get_participants	mod/label/lib.php	/^function label_get_participants($labelid) {$/;"	f
 label_get_post_actions	mod/label/lib.php	/^function label_get_post_actions() {$/;"	f
 label_get_types	mod/label/lib.php	/^function label_get_types() {$/;"	f
@@ -9253,7 +9313,6 @@ label_restore_mods	mod/label/restorelib.php	/^    function label_restore_mods($m
 label_update_instance	mod/label/lib.php	/^function label_update_instance($label) {$/;"	f
 label_upgrade	mod/label/db/mysql.php	/^function label_upgrade($oldversion) {$/;"	f
 label_upgrade	mod/label/db/postgres7.php	/^function label_upgrade($oldversion) {$/;"	f
-lable_get_extra_capabilities	mod/label/lib.php	/^function lable_get_extra_capabilities() {$/;"	f
 lams_add_instance	mod/lams/lib.php	/^function lams_add_instance($lams) {$/;"	f
 lams_cron	mod/lams/lib.php	/^function lams_cron () {$/;"	f
 lams_delete_instance	mod/lams/lib.php	/^function lams_delete_instance($id) {$/;"	f
@@ -9502,6 +9561,7 @@ load_user_accessdata	lib/accesslib.php	/^function load_user_accessdata($userid) 
 load_users	grade/report/grader/lib.php	/^    function load_users() {$/;"	f
 loadeditor	lib/editorlib.php	/^    function loadeditor($args) {$/;"	f
 loadeditor	lib/moodlelib.php	/^function loadeditor($args) {$/;"	f
+loadingMessage	lib/pear/HTML/AJAX/Helper.php	/^	function loadingMessage($body, $class = 'HTML_AJAX_Loading', $/;"	f
 localize	lib/mathslib.php	/^    function localize($formula) {$/;"	f
 locate	lib/adminlib.php	/^    function &locate($name) {$/;"	f
 locate	lib/adminlib.php	/^    function &locate($name, $findpath=false) {$/;"	f
@@ -9533,7 +9593,9 @@ main_upgrade	lib/db/postgres7.php	/^function main_upgrade($oldversion=0) {$/;"	f
 make	lib/htmlpurifier/HTMLPurifier/AttrDef.php	/^    function make($string) {$/;"	f
 make	lib/htmlpurifier/HTMLPurifier/AttrDef/Enum.php	/^    function make($string) {$/;"	f
 make	lib/htmlpurifier/HTMLPurifier/AttrDef/HTML/Bool.php	/^    function make($string) {$/;"	f
+make	lib/htmlpurifier/HTMLPurifier/AttrDef/HTML/Pixels.php	/^    function make($string) {$/;"	f
 make	lib/htmlpurifier/HTMLPurifier/DoctypeRegistry.php	/^    function make($config) {$/;"	f
+make	lib/htmlpurifier/HTMLPurifier/Length.php	/^    function make($s) {$/;"	f
 makeAbsolute	lib/simpletestlib/url.php	/^        function makeAbsolute($base) {$/;"	f
 makeBc	admin/mysql/libraries/Theme_Manager.class.php	/^    function makeBc()$/;"	f
 makeCodeSpan	lib/markdown.php	/^	function makeCodeSpan($code) {$/;"	f
@@ -9717,6 +9779,7 @@ moodle_url	lib/weblib.php	/^    function moodle_url($url = null, $params = array
 moodleform	lib/formslib.php	/^    function moodleform($action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true) {$/;"	f
 moodleform_mod	course/moodleform_mod.php	/^    function moodleform_mod($instance, $section, $cm) {$/;"	f
 morepagestable	admin/mysql/libraries/export/pdf.php	/^    function morepagestable($lineheight=8)$/;"	f
+move	mod/chat/lib.php	/^function move(){$/;"	f
 moveCopy	admin/mysql/libraries/Table.class.php	/^    function moveCopy($source_db, $source_table, $target_db, $target_table, $what, $move, $mode)$/;"	f
 moveUploadedFile	lib/pear/HTML/QuickForm/file.php	/^    function moveUploadedFile($dest, $fileName = '')$/;"	f
 move_after_sortorder	lib/grade/grade_category.php	/^    function move_after_sortorder($sortorder) {$/;"	f
@@ -9733,6 +9796,7 @@ move_section	course/lib.php	/^function move_section($course, $section, $move) {$
 move_section_to	course/lib.php	/^function move_section_to($course, $section, $destination) {$/;"	f
 moveto_module	course/lib.php	/^function moveto_module($mod, $section, $beforemod=NULL) {$/;"	f
 mtrace	lib/moodlelib.php	/^function mtrace($string, $eol="\\n", $sleep=0) {$/;"	f
+mul	lib/htmlpurifier/HTMLPurifier/UnitConverter.php	/^    function mul($s1, $s2, $scale) {$/;"	f
 multilang_filter	filter/multilang/filter.php	/^function multilang_filter($courseid, $text) {$/;"	f
 multilang_filter_impl	filter/multilang/filter.php	/^function multilang_filter_impl($langblock) {$/;"	f
 multilangupgrade_impl	admin/multilangupgrade.php	/^function multilangupgrade_impl($langblock) {$/;"	f
@@ -9764,7 +9828,7 @@ name	question/type/random/questiontype.php	/^    function name() {$/;"	f
 name	question/type/randomsamatch/questiontype.php	/^    function name() {$/;"	f
 name	question/type/shortanswer/questiontype.php	/^    function name() {$/;"	f
 name	question/type/truefalse/questiontype.php	/^    function name() {$/;"	f
-name_value	lib/json/JSON.php	/^    function name_value($name, $value)$/;"	f
+name_value	lib/pear/HTML/AJAX/JSON.php	/^    function name_value($name, $value)$/;"	f
 names.	lib/simpletestlib/reflection_php5.php	/^         *    @returns array               List of parent interface names.$/;"	c
 nat_rand	mod/wiki/ewiki/plugins/email_protect.php	/^ function nat_rand($max, $dr=0.5) {$/;"	f
 navmenu	lib/weblib.php	/^function navmenu($course, $cm=NULL, $targetwindow='self') {$/;"	f
@@ -9946,6 +10010,7 @@ openedRQFirstTerm	search/Zend/Search/Lucene/Search/QueryParser.php	/^    public 
 openedRQLastTerm	search/Zend/Search/Lucene/Search/QueryParser.php	/^    public function openedRQLastTerm()$/;"	f
 openpopup	lib/filterlib.php	/^        function openpopup(url,name,options,fullscreen) {$/;"	f
 openpopup	lib/javascript.php	/^function openpopup(url,name,options,fullscreen) {$/;"	f
+openpopup	mod/chat/chatd.php	/^        function openpopup(url,name,options,fullscreen) {$/;"	f
 openpopup	mod/scorm/player.php	/^                        function openpopup(url,name,options,width,height) {$/;"	f
 optimize	lib/adodb/session/adodb-session.php	/^	function optimize($optimize = null) {$/;"	f
 optimize	lib/adodb/session/adodb-session2.php	/^	function optimize($optimize = null) $/;"	f
@@ -9998,6 +10063,8 @@ over_bounce_threshold	lib/moodlelib.php	/^function over_bounce_threshold($user) 
 overlayMessage	lib/simpletestlib/expectation.php	/^        function overlayMessage($compare, $dumper) {$/;"	f
 owner_document	auth/cas/CAS/domxml-php4-php5.php	/^ function owner_document() {return $this->myOwnerDocument;}$/;"	f
 p	lib/weblib.php	/^function p($var, $strip=false) {$/;"	f
+packJavaScript	lib/pear/HTML/AJAX.php	/^    function packJavaScript($input) $/;"	f
+padding	mod/chat/lib.php	/^function padding($n){$/;"	f
 page_base	lib/pagelib.php	/^    function page_base() {$/;"	f
 page_create_instance	lib/pagelib.php	/^function page_create_instance($instance) {$/;"	f
 page_create_object	lib/pagelib.php	/^function page_create_object($type, $id = NULL) {$/;"	f
@@ -10111,6 +10178,7 @@ parse_cipher	mnet/xmlrpc/xmlparser.php	/^    function parse_cipher($parser, $dat
 parse_co	question/format/examview/format.php	/^    function parse_co($qrec, $question)$/;"	f
 parse_contents	lib/smarty/Config_File.class.php	/^    function parse_contents($contents)$/;"	f
 parse_digest	mnet/xmlrpc/xmlparser.php	/^    function parse_digest($parser, $data) {$/;"	f
+parse_fault	mnet/xmlrpc/xmlparser.php	/^    function parse_fault($parser, $data) {$/;"	f
 parse_http_headers	lib/soap/nusoap.php	/^	function parse_http_headers() {$/;"	f
 parse_info	lib/profilerlib.php	/^    function parse_info($tag, $datasource, &$cfg) {$/;"	f
 parse_ma	question/format/examview/format.php	/^    function parse_ma($qrec, $groupname)$/;"	f
@@ -10186,6 +10254,7 @@ popExpect	lib/pear/PEAR.php	/^    function popExpect()$/;"	f
 popout	lib/soap/nusoap.php	/^		function popout(){ \/\/ Hides message$/;"	f
 populate	lib/htmlpurifier/HTMLPurifier/HTMLModule/Tidy.php	/^    function populate($fixes) {$/;"	f
 populate	mnet/peer.php	/^    function populate($hostinfo) {$/;"	f
+populatePayload	lib/pear/HTML/AJAX.php	/^    function populatePayload()$/;"	f
 popup	lib/soap/nusoap.php	/^		function popup(divid){$/;"	f
 popup_form	lib/weblib.php	/^function popup_form($common, $options, $formid, $selected='', $nothing='choose', $help='', $helptext='', $return=false,$/;"	f
 post	lib/simpletestlib/browser.php	/^        function post($url, $parameters = false) {$/;"	f
@@ -10197,7 +10266,6 @@ ppsTotal	lib/pear/OLE.php	/^    function ppsTotal()$/;"	f
 ppt_clean_text	mod/lesson/importppt.php	/^function ppt_clean_text($string) {$/;"	f
 preFilter	lib/htmlpurifier/HTMLPurifier/Filter.php	/^    function preFilter($html, $config, &$context) {}$/;"	f
 preFilter	lib/htmlpurifier/HTMLPurifier/Filter/YouTube.php	/^    function preFilter($html, $config, &$context) {$/;"	f
-pre_load_all_ratings	mod/forum/lib.php	/^function pre_load_all_ratings(&$cm, $discussion) {$/;"	f
 preconfigure_dbconnection	lib/setuplib.php	/^function preconfigure_dbconnection() {$/;"	f
 preferred_width	blocks/admin_bookmarks/block_admin_bookmarks.php	/^    function preferred_width() {$/;"	f
 preferred_width	blocks/admin_tree/block_admin_tree.php	/^    function preferred_width() {$/;"	f
@@ -10229,7 +10297,7 @@ prepare_new_submission	mod/assignment/type/offline/assignment.class.php	/^    fu
 prepare_test_history_tables	lib/simpletest/fixtures/gradetest.php	/^    function prepare_test_history_tables() {$/;"	f
 prepare_test_tables	lib/simpletest/fixtures/gradetest.php	/^    function prepare_test_tables() {$/;"	f
 preparedatasets	question/type/datasetdependent/abstractqtype.php	/^    function preparedatasets(&$form , $questionfromid='0'){$/;"	f
-prepareusers	mod/chat/gui_sockets/chatinput.php	/^function prepareusers() {$/;"	f
+prependAttr	lib/pear/HTML/AJAX/Action.php	/^    function prependAttr($id, $attribute, $data = null)$/;"	f
 prependCSS	lib/htmlpurifier/HTMLPurifier/AttrTransform.php	/^    function prependCSS(&$attr, $css) {$/;"	f
 prependCSS	lib/htmlpurifier/HTMLPurifier/TagTransform.php	/^    function prependCSS(&$attr, $css) {$/;"	f
 prepend_dirroot	lib/simpletest/slowtestcode.php	/^    function prepend_dirroot($string) {$/;"	f
@@ -10295,7 +10363,7 @@ print_entry	enrol/manual/enrol.php	/^function print_entry($course) {$/;"	f
 print_entry	enrol/manualgroup/enrol.php	/^function print_entry($course) {$/;"	f
 print_entry	enrol/manualgroup/manualgroup/enrol.php	/^function print_entry($course) {$/;"	f
 print_entry	enrol/paypal/enrol.php	/^function print_entry($course) {$/;"	f
-print_error	lib/weblib.php	/^function print_error ($errorcode, $module='', $link='', $a=NULL) {$/;"	f
+print_error	lib/weblib.php	/^function print_error($errorcode, $module='error', $link='', $a=NULL, $extralocations=NULL) {$/;"	f
 print_excel_cells	mod/hotpot/report/default.php	/^    function print_excel_cells(&$wb, &$ws, &$table, &$row, &$properties, &$cells, &$options, $statheadercols=NULL) {$/;"	f
 print_excel_data	mod/hotpot/report/default.php	/^    function print_excel_data(&$wb, &$ws, &$table, &$row, &$options) {$/;"	f
 print_excel_foot	mod/hotpot/report/default.php	/^    function print_excel_foot(&$wb, &$ws, &$table, &$row, &$options) {$/;"	f
@@ -11014,7 +11082,7 @@ redirect	lib/weblib.php	/^function redirect($url, $message='', $delay=-1) {$/;"	
 redirect	message/refresh.php	/^  function redirect() {$/;"	f
 redirect	question/export.php	/^  function redirect() {$/;"	f
 redirectToCas	auth/cas/CAS/client.php	/^  function redirectToCas($gateway=false)$/;"	f
-reduce_string	lib/json/JSON.php	/^    function reduce_string($str)$/;"	f
+reduce_string	lib/pear/HTML/AJAX/JSON.php	/^    function reduce_string($str)$/;"	f
 refineTeX	filter/algebra/algebradebug.php	/^function refineTeX($texexp) {$/;"	f
 refresh_content	blocks/moodleblock.class.php	/^    function refresh_content() {$/;"	f
 refresh_grades	lib/grade/grade_item.php	/^    function refresh_grades($userid=0) {$/;"	f
@@ -11025,10 +11093,16 @@ register	lib/htmlpurifier/HTMLPurifier/DefinitionCacheFactory.php	/^    function
 register	lib/htmlpurifier/HTMLPurifier/DoctypeRegistry.php	/^    function &register($doctype, $xml = true, $modules = array(),$/;"	f
 register	lib/htmlpurifier/HTMLPurifier/URISchemeRegistry.php	/^    function register($scheme, &$scheme_obj) {$/;"	f
 register	lib/soap/nusoap.php	/^	function register($name,$in=array(),$out=array(),$namespace=false,$soapaction=false,$style=false,$use=false,$documentation='',$encodingStyle=''){$/;"	f
+registerClass	lib/pear/HTML/AJAX.php	/^    function registerClass(&$instance, $exportedName = false, $/;"	f
+registerClass	lib/pear/HTML/AJAX/Server.php	/^    function registerClass(&$instance, $exportedName = false, $exportedMethods = false) $/;"	f
 registerElementType	lib/pear/HTML/QuickForm.php	/^    function registerElementType($typeName, $include, $className)$/;"	f
 registerFilter	lib/htmlpurifier/HTMLPurifier/URIDefinition.php	/^    function registerFilter($filter) {$/;"	f
+registerInitObject	lib/pear/HTML/AJAX/Server.php	/^    function registerInitObject(&$instance) {$/;"	f
+registerJSLibrary	lib/pear/HTML/AJAX/Server.php	/^    function registerJSLibrary($libraryName,$fileName,$path = false) {$/;"	f
 registerModule	lib/htmlpurifier/HTMLPurifier/HTMLModuleManager.php	/^    function registerModule($module) {$/;"	f
 registerNoSubmitButton	lib/formslib.php	/^    function registerNoSubmitButton($buttonname){$/;"	f
+registerPhpCallback	lib/pear/HTML/AJAX.php	/^    function registerPhpCallback($callback)$/;"	f
+registerPhpCallback	lib/pear/HTML/AJAX/Server.php	/^    function registerPhpCallback($callback)$/;"	f
 registerRule	lib/pear/HTML/QuickForm.php	/^    function registerRule($ruleName, $type, $data1, $data2 = null)$/;"	f
 registerRule	lib/pear/HTML/QuickForm/RuleRegistry.php	/^    function registerRule($ruleName, $type, $data1, $data2 = null)$/;"	f
 registerShutdownFunc	lib/pear/PEAR.php	/^    function registerShutdownFunc($func, $args = array())$/;"	f
@@ -11051,12 +11125,12 @@ releaseforfill	lib/eaccelerator.class.php	/^    function releaseforfill ($key) {
 releaseforfill	lib/memcached.class.php	/^    function releaseforfill ($key) {$/;"	f
 reload_all_capabilities	lib/accesslib.php	/^function reload_all_capabilities() {$/;"	f
 reload_user_preferences	lib/moodlelib.php	/^function reload_user_preferences() {$/;"	f
-reloadusers	mod/chat/gui_sockets/chatinput.php	/^function reloadusers() {$/;"	f
 remove	lib/htmlpurifier/HTMLPurifier/DefinitionCache.php	/^    function remove($config) {$/;"	f
 remove	lib/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer.php	/^    function remove($config) {$/;"	f
 removeArrayEntryByValue	lib/typo3/class.t3lib_div.php	/^	function removeArrayEntryByValue($array,$cmpValue)	{$/;"	f
 removeAttribute	lib/pear/HTML/Common.php	/^    function removeAttribute($attr)$/;"	f
 removeElement	lib/pear/HTML/QuickForm.php	/^    function &removeElement($elementName, $removeRules = true)$/;"	f
+removeNode	lib/pear/HTML/AJAX/Action.php	/^    function removeNode($id)$/;"	f
 removeOption	lib/form/select.php	/^    function removeOption($value)$/;"	f
 removeOptions	lib/form/select.php	/^    function removeOptions()$/;"	f
 removePrefixPathFromList	lib/typo3/class.t3lib_div.php	/^	function removePrefixPathFromList($fileArr,$prefixToRemove)	{$/;"	f
@@ -11137,6 +11211,7 @@ replace	lib/htmlpurifier/HTMLPurifier/DefinitionCache/Decorator/Cleanup.php	/^  
 replace	lib/htmlpurifier/HTMLPurifier/DefinitionCache/Decorator/Memory.php	/^    function replace($def, $config) {$/;"	f
 replace	lib/htmlpurifier/HTMLPurifier/DefinitionCache/Null.php	/^    function replace($def, $config) {$/;"	f
 replace	lib/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer.php	/^    function replace($def, $config) {$/;"	f
+replaceNode	lib/pear/HTML/AJAX/Action.php	/^    function replaceNode($id, $tag, $attributes)$/;"	f
 replaceSelection	lib/pear/HTML/QuickForm/autocomplete.php	/^function replaceSelection (input, replaceString) {$/;"	f
 replace_child	auth/cas/CAS/domxml-php4-php5.php	/^ function replace_child($oldnode,$newnode) {return new php4DOMElement($this->myDOMNode->replaceChild($oldnode->myDOMNode,$newnode->myDOMNode),$this->myOwnerDocument);}$/;"	f
 replace_cssconstants	lib/cssconstants.php	/^function replace_cssconstants($css) {$/;"	f
@@ -11355,6 +11430,7 @@ restrict_php50_version	lib/environmentlib.php	/^function restrict_php50_version(
 result_dump_file	auth/cas/CAS/domxml-php4-php5.php	/^  function result_dump_file($dom_document,$filename)$/;"	f
 result_dump_mem	auth/cas/CAS/domxml-php4-php5.php	/^  function result_dump_mem($dom_document) {return $dom_document->myDOMNode->saveHTML();}$/;"	f
 results	search/querylib.php	/^    public function results() {$/;"	f
+retrieveActions	lib/pear/HTML/AJAX/Action.php	/^    function retrieveActions()$/;"	f
 retrievePT	auth/cas/CAS/CAS.php	/^   function retrievePT($target_service,&$err_code,&$err_msg)$/;"	f
 retrievePT	auth/cas/CAS/client.php	/^  function retrievePT($target_service,&$err_code,&$err_msg)$/;"	f
 retry	lib/simpletestlib/browser.php	/^        function retry() {$/;"	f
@@ -11393,6 +11469,7 @@ rollback_sql	lib/dmllib.php	/^function rollback_sql() {$/;"	f
 root	auth/cas/CAS/domxml-php4-php5.php	/^ function root() {return new php4DOMElement($this->myDOMNode->documentElement,$this);}$/;"	f
 rootElementPhase	lib/htmlpurifier/HTMLPurifier/Lexer/PH5P.php	/^    private function rootElementPhase($token) {$/;"	f
 round	lib/evalmath/evalmath.class.php	/^    function round($args) {$/;"	f
+round	lib/htmlpurifier/HTMLPurifier/UnitConverter.php	/^    function round($n, $sigfigs) {$/;"	f
 row	lib/htmlpurifier/HTMLPurifier/Printer.php	/^    function row($name, $value) {$/;"	f
 rowcolToCell	lib/pear/Spreadsheet/Excel/Writer.php	/^    function rowcolToCell($row, $col)$/;"	f
 rs2csv	lib/adodb/toexport.inc.php	/^function rs2csv(&$rs,$addtitles=true)$/;"	f
@@ -11434,6 +11511,8 @@ runBasicBlockGamut	lib/markdown.php	/^	function runBasicBlockGamut($text) {$/;"	
 runBlockGamut	lib/markdown.php	/^	function runBlockGamut($text) {$/;"	f
 runSpanGamut	lib/markdown.php	/^	function runSpanGamut($text) {$/;"	f
 s	lib/weblib.php	/^function s($var, $strip=false) {$/;"	f
+safari_refresh	mod/chat/gui_header_js/jsupdate.php	/^        function safari_refresh() {$/;"	f
+safari_refresh	mod/chat/gui_header_js/jsupdated.php	/^        function safari_refresh() {$/;"	f
 safeGetElement	mod/scorm/datamodels/debug.js.php	/^function safeGetElement(doc, el) {$/;"	f
 sample_function_handler	lib/simpletest/testeventslib.php	/^function sample_function_handler($eventdata) {$/;"	f
 sanitisepath	theme/chameleon/ui/ChameleonFileBrowser.class.php	/^    function sanitisepath($path) {$/;"	f
@@ -11479,6 +11558,7 @@ save_session_and_responses	question/type/multichoice/questiontype.php	/^    func
 save_session_and_responses	question/type/questiontype.php	/^    function save_session_and_responses(&$question, &$state) {$/;"	f
 save_session_and_responses	question/type/random/questiontype.php	/^    function save_session_and_responses(&$question, &$state) {$/;"	f
 sb_char_mapping	lib/typo3/class.t3lib_cs.php	/^	function sb_char_mapping($str,$charset,$mode,$opt='')	{$/;"	f
+scale	lib/htmlpurifier/HTMLPurifier/UnitConverter.php	/^    function scale($r, $scale) {$/;"	f
 scandir	lib/moodlelib.php	/^    function scandir($directory) {$/;"	f
 scandir	lib/profilerlib.php	/^    function scandir($dir, $sortorder = 0)$/;"	f
 schedule_backup_course_configure	backup/backup_scheduled.php	/^function schedule_backup_course_configure($course,$starttime = 0) {$/;"	f
@@ -11519,6 +11599,7 @@ scorm_decode_content_links	mod/scorm/restorelib.php	/^    function scorm_decode_
 scorm_decode_content_links_caller	mod/scorm/restorelib.php	/^    function scorm_decode_content_links_caller($restore) {$/;"	f
 scorm_delete_files	mod/scorm/locallib.php	/^function scorm_delete_files($directory) {$/;"	f
 scorm_delete_instance	mod/scorm/lib.php	/^function scorm_delete_instance($id) {$/;"	f
+scorm_element_cmp	mod/scorm/locallib.php	/^function scorm_element_cmp($a, $b) {$/;"	f
 scorm_encode_content_links	mod/scorm/backuplib.php	/^    function scorm_encode_content_links ($content,$preferences) {$/;"	f
 scorm_eval_prerequisites	mod/scorm/datamodels/scorm_12lib.php	/^function scorm_eval_prerequisites($prerequisites, $usertracks) {$/;"	f
 scorm_evaluate_condition	mod/scorm/datamodels/sequencinglib.php	/^function scorm_evaluate_condition ($rolluprulecond,$sco,$userid){$/;"	f
@@ -11562,6 +11643,7 @@ scorm_parse	mod/scorm/locallib.php	/^function scorm_parse($scorm) {$/;"	f
 scorm_parse_aicc	mod/scorm/datamodels/aicclib.php	/^function scorm_parse_aicc($pkgdir,$scormid) {$/;"	f
 scorm_parse_scorm	mod/scorm/datamodels/scormlib.php	/^function scorm_parse_scorm($pkgdir,$scormid) {$/;"	f
 scorm_randomize_children_process	mod/scorm/datamodels/sequencinglib.php	/^function scorm_randomize_children_process($scoid,$userid){$/;"	f
+scorm_reconstitute_array_element	mod/scorm/locallib.php	/^function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $children) {$/;"	f
 scorm_repeater	mod/scorm/locallib.php	/^function scorm_repeater($what, $times) {$/;"	f
 scorm_reset_course_form_defaults	mod/scorm/lib.php	/^function scorm_reset_course_form_defaults($course) {$/;"	f
 scorm_reset_course_form_definition	mod/scorm/lib.php	/^function scorm_reset_course_form_definition(&$mform) {$/;"	f
@@ -11684,6 +11766,11 @@ send_welcome_messages	enrol/authorize/localfuncs.php	/^function send_welcome_mes
 sendfiles	theme/chameleon/ui/ChameleonFileBrowser.class.php	/^    function sendfiles() {$/;"	f
 serialize	lib/bennu/iCalendar_components.php	/^    function serialize() {$/;"	f
 serialize	lib/bennu/iCalendar_properties.php	/^    function serialize() {$/;"	f
+serialize	lib/pear/HTML/AJAX/Serializer/JSON.php	/^    function serialize($input) $/;"	f
+serialize	lib/pear/HTML/AJAX/Serializer/Null.php	/^    function serialize($input) $/;"	f
+serialize	lib/pear/HTML/AJAX/Serializer/PHP.php	/^    function serialize($input) $/;"	f
+serialize	lib/pear/HTML/AJAX/Serializer/Urlencoded.php	/^    function serialize($input) $/;"	f
+serialize	lib/pear/HTML/AJAX/Serializer/XML.php	/^    function serialize($input) $/;"	f
 serialize	lib/soap/nusoap.php	/^	function serialize($debug = 0)$/;"	f
 serialize	lib/soap/nusoap.php	/^	function serialize($use='encoded') {$/;"	f
 serialize	lib/soap/nusoap.php	/^	function serialize(){$/;"	f
@@ -11704,6 +11791,7 @@ serviceMail	auth/cas/CAS/CAS.php	/^  function serviceMail($url,$flags,&$err_code
 serviceMail	auth/cas/CAS/client.php	/^  function serviceMail($url,$flags,&$err_code,&$err_msg,&$pt)$/;"	f
 serviceWeb	auth/cas/CAS/CAS.php	/^  function serviceWeb($url,&$err_code,&$output)$/;"	f
 serviceWeb	auth/cas/CAS/client.php	/^  function serviceWeb($url,&$err_code,&$output)$/;"	f
+sessionError	lib/pear/HTML/AJAX/Debug.php	/^    function sessionError() $/;"	f
 sesskey	lib/moodlelib.php	/^function sesskey() {$/;"	f
 set	admin/mysql/libraries/Config.class.php	/^    function set($setting, $value)$/;"	f
 set	admin/mysql/libraries/Table.class.php	/^    function set($param, $value)$/;"	f
@@ -11756,6 +11844,7 @@ setChecked	lib/pear/HTML/QuickForm/checkbox.php	/^    function setChecked($check
 setChecked	lib/pear/HTML/QuickForm/radio.php	/^    function setChecked($checked)$/;"	f
 setChunkSize	admin/mysql/libraries/File.class.php	/^    function setChunkSize($chunk_size)$/;"	f
 setCipher	lib/adodb/session/adodb-encrypt-mcrypt.php	/^	function setCipher($cipher) {$/;"	f
+setClientJsLocation	lib/pear/HTML/AJAX/Server.php	/^    function setClientJsLocation($location) $/;"	f
 setCloseFieldsetTemplate	lib/pear/HTML/QuickForm/Renderer/Tableless.php	/^    function setCloseFieldsetTemplate($html)$/;"	f
 setCol	lib/pear/Spreadsheet/Excel/Writer/Validator.php	/^   function setCol($col, $row1, $row2, $incell = true)$/;"	f
 setColor	lib/pear/Spreadsheet/Excel/Writer/Format.php	/^    function setColor($color)$/;"	f
@@ -11767,6 +11856,7 @@ setConnectionTechnology	admin/mysql/libraries/sqlvalidator.class.php	/^        f
 setConnectionTimeout	lib/simpletestlib/browser.php	/^        function setConnectionTimeout($timeout) {$/;"	f
 setConnectionTimeout	lib/simpletestlib/user_agent.php	/^        function setConnectionTimeout($timeout) {$/;"	f
 setConnectionTimeout	lib/simpletestlib/web_tester.php	/^        function setConnectionTimeout($timeout) {$/;"	f
+setConstant	lib/formslib.php	/^    function setConstant($elname, $value) {$/;"	f
 setConstants	lib/pear/HTML/QuickForm.php	/^    function setConstants($constantValues = null, $filter = null)$/;"	f
 setContent	lib/pear/HTML/QuickForm/xbutton.php	/^    function setContent($content)$/;"	f
 setContentType	lib/soap/nusoap.php	/^	function setContentType($type, $charset = false) {$/;"	f
@@ -11920,7 +12010,10 @@ setInfo	lib/environmentlib.php	/^    function setInfo($info) {$/;"	f
 setInput	search/Zend/Search/Lucene/Analysis/Analyzer.php	/^    public function setInput($data, $encoding = '')$/;"	f
 setInputEncoding	lib/pear/Spreadsheet/Excel/Writer/Worksheet.php	/^    function setInputEncoding($encoding)$/;"	f
 setInteractive	admin/mysql/libraries/sqlvalidator.class.php	/^        function setInteractive($interactive)$/;"	f
+setInterceptor	lib/pear/HTML/AJAX.php	/^    function setInterceptor($instance) $/;"	f
 setItalic	lib/pear/Spreadsheet/Excel/Writer/Format.php	/^    function setItalic()$/;"	f
+setJavascriptLibraryPath	lib/pear/HTML/AJAX/Server.php	/^    function setJavascriptLibraryPath($library, $path) $/;"	f
+setJavascriptLibraryPaths	lib/pear/HTML/AJAX/Server.php	/^    function setJavascriptLibraryPaths($paths) $/;"	f
 setJsWarnings	lib/pear/HTML/QuickForm.php	/^    function setJsWarnings($pref, $post)$/;"	f
 setKey	admin/mysql/libraries/blowfish.php	/^    function setKey($key)$/;"	f
 setKeys	lib/xmldb/classes/XMLDBTable.class.php	/^    function setKeys($keys) {$/;"	f
@@ -12054,6 +12147,7 @@ setSelectedFromTblChangeRequest	admin/mysql/libraries/File.class.php	/^    funct
 setSelection	lib/pear/Spreadsheet/Excel/Writer/Worksheet.php	/^    function setSelection($first_row,$first_column,$last_row,$last_column)$/;"	f
 setSelectionRange	lib/pear/HTML/QuickForm/autocomplete.php	/^function setSelectionRange(input, selectionStart, selectionEnd) {$/;"	f
 setSequence	lib/xmldb/classes/XMLDBField.class.php	/^    function setSequence($sequence=true) {$/;"	f
+setSerializer	lib/pear/HTML/AJAX/Server.php	/^    function setSerializer($type) $/;"	f
 setServerLoginURL	auth/cas/CAS/CAS.php	/^  function setServerLoginURL($url='')$/;"	f
 setServerLoginURL	auth/cas/CAS/client.php	/^  function setServerLoginURL($url)$/;"	f
 setServerLogoutURL	auth/cas/CAS/CAS.php	/^  function setServerLogoutURL($url='')$/;"	f
@@ -12367,10 +12461,27 @@ setnew_password_and_mail	lib/moodlelib.php	/^function setnew_password_and_mail($
 setup	lib/htmlpurifier/HTMLPurifier/Definition.php	/^    function setup($config) {$/;"	f
 setup	lib/htmlpurifier/HTMLPurifier/DefinitionCacheFactory.php	/^    function setup() {$/;"	f
 setup	lib/htmlpurifier/HTMLPurifier/EntityLookup.php	/^    function setup($file = false) {$/;"	f
+setup	lib/htmlpurifier/HTMLPurifier/HTMLModule.php	/^    function setup($config) {}$/;"	f
+setup	lib/htmlpurifier/HTMLPurifier/HTMLModule/Bdo.php	/^    function setup($config) {$/;"	f
+setup	lib/htmlpurifier/HTMLPurifier/HTMLModule/Edit.php	/^    function setup($config) {$/;"	f
+setup	lib/htmlpurifier/HTMLPurifier/HTMLModule/Hypertext.php	/^    function setup($config) {$/;"	f
+setup	lib/htmlpurifier/HTMLPurifier/HTMLModule/Image.php	/^    function setup($config) {$/;"	f
+setup	lib/htmlpurifier/HTMLPurifier/HTMLModule/Legacy.php	/^    function setup($config) {$/;"	f
+setup	lib/htmlpurifier/HTMLPurifier/HTMLModule/List.php	/^    function setup($config) {$/;"	f
+setup	lib/htmlpurifier/HTMLPurifier/HTMLModule/Object.php	/^    function setup($config) {$/;"	f
+setup	lib/htmlpurifier/HTMLPurifier/HTMLModule/Presentation.php	/^    function setup($config) {$/;"	f
+setup	lib/htmlpurifier/HTMLPurifier/HTMLModule/Ruby.php	/^    function setup($config) {$/;"	f
+setup	lib/htmlpurifier/HTMLPurifier/HTMLModule/Scripting.php	/^    function setup($config) {$/;"	f
+setup	lib/htmlpurifier/HTMLPurifier/HTMLModule/StyleAttribute.php	/^    function setup($config) {$/;"	f
+setup	lib/htmlpurifier/HTMLPurifier/HTMLModule/Tables.php	/^    function setup($config) {$/;"	f
+setup	lib/htmlpurifier/HTMLPurifier/HTMLModule/Target.php	/^    function setup($config) {$/;"	f
+setup	lib/htmlpurifier/HTMLPurifier/HTMLModule/Text.php	/^    function setup($config) {$/;"	f
+setup	lib/htmlpurifier/HTMLPurifier/HTMLModule/Tidy.php	/^    function setup($config) {$/;"	f
 setup	lib/htmlpurifier/HTMLPurifier/HTMLModuleManager.php	/^    function setup($config) {$/;"	f
 setup	lib/htmlpurifier/HTMLPurifier/LanguageFactory.php	/^    function setup() {$/;"	f
 setup	lib/tablelib.php	/^    function setup() {$/;"	f
 setup	mod/resource/type/directory/resource.class.php	/^function setup($form) {$/;"	f
+setupAJAX	lib/pear/HTML/AJAX/Helper.php	/^	function setupAJAX() $/;"	f
 setupConfigStuff	lib/htmlpurifier/HTMLPurifier/HTMLDefinition.php	/^    function setupConfigStuff($config) {$/;"	f
 setupFilters	lib/htmlpurifier/HTMLPurifier/URIDefinition.php	/^    function setupFilters($config) {$/;"	f
 setupForm	user/filters/courserole.php	/^    function setupForm(&$mform) {$/;"	f
@@ -12936,6 +13047,7 @@ test	lib/simpletestlib/mock_objects.php	/^        function test($compare) {$/;"	
 test	lib/simpletestlib/mock_objects.php	/^        function test($parameters) {$/;"	f
 test	lib/simpletestlib/web_tester.php	/^        function test($compare) {$/;"	f
 testClass	mnet/rpclib.php	/^    function testClass() {$/;"	f
+testEncodingSupportsASCII	lib/htmlpurifier/HTMLPurifier/Encoder.php	/^    function testEncodingSupportsASCII($encoding, $bypass = false) {$/;"	f
 testInt	lib/typo3/class.t3lib_div.php	/^	function testInt($var)	{$/;"	f
 testMessage	lib/simpletestlib.php	/^    function testMessage($actual) {$/;"	f
 testMessage	lib/simpletestlib.php	/^    function testMessage($ip) {$/;"	f
@@ -13165,6 +13277,7 @@ toJsString	lib/simpletestlib/ui/webunit_reporter.php	/^		function toJsString($st
 toObject	lib/pear/HTML/QuickForm/Renderer/Object.php	/^    function toObject() $/;"	f
 toParsedXml	lib/simpletestlib/xml.php	/^        function toParsedXml($text) {$/;"	f
 toReversePolish	lib/pear/Spreadsheet/Excel/Writer/Parser.php	/^    function toReversePolish($tree = array())$/;"	f
+toString	lib/htmlpurifier/HTMLPurifier/Length.php	/^    function toString() {$/;"	f
 toString	lib/htmlpurifier/HTMLPurifier/URI.php	/^    function toString() {$/;"	f
 toString	lib/pear/PEAR.php	/^    function toString() {$/;"	f
 to_html	lib/listlib.php	/^    function to_html($indent=0, $extraargs = array()){$/;"	f
@@ -13275,6 +13388,11 @@ unregister_outputfilter	lib/smarty/Smarty.class.php	/^    function unregister_ou
 unregister_postfilter	lib/smarty/Smarty.class.php	/^    function unregister_postfilter($function)$/;"	f
 unregister_prefilter	lib/smarty/Smarty.class.php	/^    function unregister_prefilter($function)$/;"	f
 unregister_resource	lib/smarty/Smarty.class.php	/^    function unregister_resource($type)$/;"	f
+unserialize	lib/pear/HTML/AJAX/Serializer/JSON.php	/^    function unserialize($input) $/;"	f
+unserialize	lib/pear/HTML/AJAX/Serializer/Null.php	/^    function unserialize($input) $/;"	f
+unserialize	lib/pear/HTML/AJAX/Serializer/PHP.php	/^    function unserialize($input, $allowedClasses) $/;"	f
+unserialize	lib/pear/HTML/AJAX/Serializer/Urlencoded.php	/^    function unserialize($input) $/;"	f
+unserialize	lib/pear/HTML/AJAX/Serializer/XML.php	/^    function unserialize($input) $/;"	f
 unsetBrowser	lib/simpletestlib/web_tester.php	/^        function unsetBrowser() {$/;"	f
 unset_cache_flag	lib/moodlelib.php	/^function unset_cache_flag($type, $name) {$/;"	f
 unset_config	lib/moodlelib.php	/^function unset_config($name, $plugin=NULL) {$/;"	f
@@ -13293,6 +13411,7 @@ update	lib/wiki_to_markdown.php	/^  function update( $thing, $textfield, $format
 update	mod/chat/gui_header_js/users.php	/^    function update() {$/;"	f
 update	theme/chameleon/ui/ChameleonCSS.class.php	/^    function update($file, $content = '') {$/;"	f
 updateAttributes	lib/pear/HTML/Common.php	/^    function updateAttributes($attributes)$/;"	f
+updateElement	lib/pear/HTML/AJAX/Helper.php	/^	function updateElement($id, $update, $type, $enclose = false) {$/;"	f
 updateElementAttr	lib/pear/HTML/QuickForm.php	/^    function updateElementAttr($elements, $attrs)$/;"	f
 updateSubmission	lib/formslib.php	/^    function updateSubmission($submission, $files) {$/;"	f
 updateUserSummary	group/members.php	/^function updateUserSummary() {$/;"	f
@@ -13352,6 +13471,7 @@ update_user_record	auth/ldap/auth.php	/^    function update_user_record($usernam
 update_user_record	lib/moodlelib.php	/^function update_user_record($username, $authplugin) {$/;"	f
 updated_forced_settings	lib/grade/grade_category.php	/^    function updated_forced_settings() {$/;"	f
 upgrade_17_groups	lib/db/upgradelib.php	/^function upgrade_17_groups() {$/;"	f
+upgrade_18_broken_groups	lib/db/upgradelib.php	/^function upgrade_18_broken_groups() {$/;"	f
 upgrade_18_gradebook	lib/db/upgradelib.php	/^function upgrade_18_gradebook($courseid) {$/;"	f
 upgrade_18_groups	lib/db/upgradelib.php	/^function upgrade_18_groups() {$/;"	f
 upgrade_18_groups_drop_keys_indexes	lib/db/upgradelib.php	/^function upgrade_18_groups_drop_keys_indexes() {$/;"	f
@@ -13510,8 +13630,8 @@ usergetmidnight	lib/moodlelib.php	/^function usergetmidnight($date, $timezone=99
 usertime	lib/moodlelib.php	/^function usertime($date, $timezone=99) {$/;"	f
 usertimezone	lib/moodlelib.php	/^function usertimezone($timezone=99) {$/;"	f
 usleepWindows	lib/soap/nusoap.php	/^function usleepWindows($usec)$/;"	f
-utf162utf8	lib/json/JSON.php	/^    function utf162utf8($utf16)$/;"	f
-utf82utf16	lib/json/JSON.php	/^    function utf82utf16($utf8)$/;"	f
+utf162utf8	lib/pear/HTML/AJAX/JSON.php	/^    function utf162utf8($utf16)$/;"	f
+utf82utf16	lib/pear/HTML/AJAX/JSON.php	/^    function utf82utf16($utf8)$/;"	f
 utf8CharToUnumber	lib/typo3/class.t3lib_cs.php	/^	function utf8CharToUnumber($str,$hex=0)	{$/;"	f
 utf8_byte2char_pos	lib/typo3/class.t3lib_cs.php	/^	function utf8_byte2char_pos($str,$pos)	{$/;"	f
 utf8_char2byte_pos	lib/typo3/class.t3lib_cs.php	/^	function utf8_char2byte_pos($str,$pos)	{$/;"	f
@@ -13695,7 +13815,7 @@ validate	lib/htmlpurifier/HTMLPurifier/AttrDef/CSS/Composite.php	/^    function 
 validate	lib/htmlpurifier/HTMLPurifier/AttrDef/CSS/DenyElementDecorator.php	/^    function validate($string, $config, $context) {$/;"	f
 validate	lib/htmlpurifier/HTMLPurifier/AttrDef/CSS/Font.php	/^    function validate($string, $config, &$context) {$/;"	f
 validate	lib/htmlpurifier/HTMLPurifier/AttrDef/CSS/FontFamily.php	/^    function validate($string, $config, &$context) {$/;"	f
-validate	lib/htmlpurifier/HTMLPurifier/AttrDef/CSS/Length.php	/^    function validate($length, $config, &$context) {$/;"	f
+validate	lib/htmlpurifier/HTMLPurifier/AttrDef/CSS/Length.php	/^    function validate($string, $config, $context) {$/;"	f
 validate	lib/htmlpurifier/HTMLPurifier/AttrDef/CSS/ListStyle.php	/^    function validate($string, $config, &$context) {$/;"	f
 validate	lib/htmlpurifier/HTMLPurifier/AttrDef/CSS/Multiple.php	/^    function validate($string, $config, &$context) {$/;"	f
 validate	lib/htmlpurifier/HTMLPurifier/AttrDef/CSS/Number.php	/^    function validate($number, $config, &$context) {$/;"	f
@@ -13714,12 +13834,15 @@ validate	lib/htmlpurifier/HTMLPurifier/AttrDef/HTML/Nmtokens.php	/^    function 
 validate	lib/htmlpurifier/HTMLPurifier/AttrDef/HTML/Pixels.php	/^    function validate($string, $config, &$context) {$/;"	f
 validate	lib/htmlpurifier/HTMLPurifier/AttrDef/Integer.php	/^    function validate($integer, $config, &$context) {$/;"	f
 validate	lib/htmlpurifier/HTMLPurifier/AttrDef/Lang.php	/^    function validate($string, $config, &$context) {$/;"	f
+validate	lib/htmlpurifier/HTMLPurifier/AttrDef/Switch.php	/^    function validate($string, $config, $context) {$/;"	f
 validate	lib/htmlpurifier/HTMLPurifier/AttrDef/Text.php	/^    function validate($string, $config, &$context) {$/;"	f
 validate	lib/htmlpurifier/HTMLPurifier/AttrDef/URI.php	/^    function validate($uri, $config, &$context) {$/;"	f
+validate	lib/htmlpurifier/HTMLPurifier/AttrDef/URI/Email/SimpleCheck.php	/^    function validate($string, $config, &$context) {$/;"	f
 validate	lib/htmlpurifier/HTMLPurifier/AttrDef/URI/Host.php	/^    function validate($string, $config, &$context) {$/;"	f
 validate	lib/htmlpurifier/HTMLPurifier/AttrDef/URI/IPv4.php	/^    function validate($aIP, $config, &$context) {$/;"	f
 validate	lib/htmlpurifier/HTMLPurifier/AttrDef/URI/IPv6.php	/^    function validate($aIP, $config, &$context) {$/;"	f
 validate	lib/htmlpurifier/HTMLPurifier/ConfigSchema.php	/^    function validate($var, $type, $allow_null = false) {$/;"	f
+validate	lib/htmlpurifier/HTMLPurifier/Length.php	/^    function validate() {$/;"	f
 validate	lib/htmlpurifier/HTMLPurifier/URI.php	/^    function validate($config, &$context) {$/;"	f
 validate	lib/htmlpurifier/HTMLPurifier/URIScheme.php	/^    function validate(&$uri, $config, &$context) {$/;"	f
 validate	lib/htmlpurifier/HTMLPurifier/URIScheme/ftp.php	/^    function validate(&$uri, $config, &$context) {$/;"	f
@@ -13801,11 +13924,13 @@ validation	question/contextmoveq_form.php	/^    function validation($data, $file
 validation	question/type/calculated/edit_calculated_form.php	/^    function validation($data, $files) {$/;"	f
 validation	question/type/datasetdependent/datasetdefinitions_form.php	/^    function validation($data, $files) {$/;"	f
 validation	question/type/datasetdependent/datasetitems_form.php	/^    function validation($data, $files) {$/;"	f
+validation	question/type/edit_question_form.php	/^    function validation($fromform, $files) {$/;"	f
 validation	question/type/match/edit_match_form.php	/^    function validation($data, $files) {$/;"	f
 validation	question/type/missingtype/edit_missingtype_form.php	/^    function validation($data, $files) {$/;"	f
 validation	question/type/multianswer/edit_multianswer_form.php	/^    function validation($data, $files) {$/;"	f
 validation	question/type/multichoice/edit_multichoice_form.php	/^    function validation($data, $files) {$/;"	f
 validation	question/type/numerical/edit_numerical_form.php	/^    function validation($data, $files) {$/;"	f
+validation	question/type/random/edit_random_form.php	/^    function validation($fromform, $files) {$/;"	f
 validation	question/type/randomsamatch/edit_randomsamatch_form.php	/^    function validation($data, $files) {$/;"	f
 validation	question/type/shortanswer/edit_shortanswer_form.php	/^    function validation($data, $files) {$/;"	f
 validation	user/edit_form.php	/^    function validation($usernew, $files) {$/;"	f
@@ -14155,6 +14280,7 @@ xMetaColumns	lib/adodb/drivers/adodb-informix72.inc.php	/^   function &xMetaColu
 xdebug	lib/soap/nusoap.php	/^	function xdebug($string){$/;"	f
 xml2array	lib/typo3/class.t3lib_div.php	/^	function xml2array($string,$NSprefix='',$reportDocTag=FALSE) {$/;"	f
 xml2tree	lib/typo3/class.t3lib_div.php	/^	function xml2tree($string,$depth=999) {$/;"	f
+xmlError	lib/pear/HTML/AJAX/Debug.php	/^    function xmlError()$/;"	f
 xmlGetHeaderAttribs	lib/typo3/class.t3lib_div.php	/^	function xmlGetHeaderAttribs($xmlData)	{$/;"	f
 xmlOutput	lib/xmldb/classes/XMLDBField.class.php	/^    function xmlOutput() {$/;"	f
 xmlOutput	lib/xmldb/classes/XMLDBIndex.class.php	/^    function xmlOutput() {$/;"	f
@@ -14177,6 +14303,7 @@ xmldb_block_calendar_month_upgrade	blocks/calendar_month/db/upgrade.php	/^functi
 xmldb_block_calendar_upcoming_upgrade	blocks/calendar_upcoming/db/upgrade.php	/^function xmldb_block_calendar_upcoming_upgrade($oldversion=0) {$/;"	f
 xmldb_block_course_list_upgrade	blocks/course_list/db/upgrade.php	/^function xmldb_block_course_list_upgrade($oldversion=0) {$/;"	f
 xmldb_block_course_summary_upgrade	blocks/course_summary/db/upgrade.php	/^function xmldb_block_course_summary_upgrade($oldversion=0) {$/;"	f
+xmldb_block_custom_theme_upgrade	blocks/custom_theme/db/upgrade.php	/^function xmldb_block_custom_theme_upgrade ($oldversion = 0 ) {$/;"	f
 xmldb_block_news_items_upgrade	blocks/news_items/db/upgrade.php	/^function xmldb_block_news_items_upgrade($oldversion=0) {$/;"	f
 xmldb_block_online_users_upgrade	blocks/online_users/db/upgrade.php	/^function xmldb_block_online_users_upgrade($oldversion=0) {$/;"	f
 xmldb_block_participants_upgrade	blocks/participants/db/upgrade.php	/^function xmldb_block_participants_upgrade($oldversion=0) {$/;"	f
