@@ -10,7 +10,8 @@
  */
 require_once('../config.php');
 require_once('lib.php');
-require_once($CFG->libdir.'/pear/HTML/AJAX/JSON.php');
+ini_set('include_path', $CFG->libdir.'/pear'.PATH_SEPARATOR.ini_get('include_path'));
+require_once('HTML/AJAX/JSON.php');
 
 require_js('yui_yahoo');
 require_js('yui_dom');
