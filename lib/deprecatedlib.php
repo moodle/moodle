@@ -456,7 +456,7 @@ function zip_files ($originalfiles, $destination) {
 
     $packer = get_file_packer('application/zip');
 
-    return $packer->archive_to_pathname($zipfiles, $destfilename);
+    return $packer->archive_to_pathname($zipfiles, $destpath . '/' . $destfilename);
 }
 
 /////////////////////////////////////////////////////////////
