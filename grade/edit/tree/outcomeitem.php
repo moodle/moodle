@@ -215,7 +215,7 @@ $navigation = grade_build_nav(__FILE__, $stroutcome, array('courseid' => $course
 
 print_header_simple($strgrades . ': ' . $strgraderreport, ': ' . $stroutcomesedit, $navigation, '', '', true, '', navmenu($course));
 
-if (!$outcomes = grade_outcome::fetch_all_available($COURSE->id)) {
+if (!grade_outcome::fetch_all_available($COURSE->id)) {
     notice_yesno(get_string('nooutcomes', 'grades'), $CFG->wwwroot.'/grade/edit/outcome/course.php?id='.$courseid, $returnurl);
     print_footer($course);
     die();
