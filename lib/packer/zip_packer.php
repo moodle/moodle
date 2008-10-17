@@ -127,7 +127,7 @@ class zip_packer extends file_packer {
                 if ($file->isDot()) {
                     continue;
                 }
-                $newpath = $archivepath.'/'.$file->getFilename();
+                $newpath = $archivepath.$file->getFilename();
                 $this->archive_pathname($ziparch, $newpath, $file->getPathname());
             }
             unset($files); //release file handles
