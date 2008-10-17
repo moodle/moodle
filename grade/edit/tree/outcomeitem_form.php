@@ -57,8 +57,9 @@ class edit_outcomeitem_form extends moodleform {
         $options = array(0=>get_string('none'));
         if ($coursemods = get_course_mods($COURSE->id)) {
             foreach ($coursemods as $coursemod) {
-                $mod = get_coursemodule_from_id($coursemod->modname, $coursemod->id);
-                $options[$coursemod->id] = format_string($mod->name);
+                if ($mod = get_coursemodule_from_id($coursemod->modname, $coursemod->id)) {
+                    $options[$coursemod->id] = format_string($mod->name);
+                }
             }
         }
         $mform->addElement('select', 'cmid', get_string('linkedactivity', 'grades'), $options);
