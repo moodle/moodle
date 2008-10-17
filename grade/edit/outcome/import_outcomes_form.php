@@ -19,8 +19,9 @@ class import_outcomes_form extends moodleform {
             $mform->addElement('radio', 'scope', get_string('importstandard', 'grades'), null, 'global');
             $mform->setDefault('scope', 'custom');
         }
-        
+
         $mform->addElement('file', 'userfile', get_string('importoutcomes', 'grades'));
+        $mform->setHelpButton('userfile', array('importoutcomes', get_string('importoutcomes', 'grades'), 'grade'));
 
         $mform->addElement('submit', 'save', get_string('uploadthisfile'));
 
