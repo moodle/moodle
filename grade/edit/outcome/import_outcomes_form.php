@@ -21,6 +21,7 @@ class import_outcomes_form extends moodleform {
         }
 
         $mform->addElement('file', 'userfile', get_string('importoutcomes', 'grades'));
+        $mform->setHelpButton('userfile', array('importoutcomes', get_string('importoutcomes', 'grades'), 'grade'));
 
         $mform->addElement('submit', 'save', get_string('uploadthisfile'));
 
