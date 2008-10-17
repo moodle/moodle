@@ -348,6 +348,7 @@ $string['nonweightedpct'] = 'non-weighted %%';
 $string['nooutcome'] = 'No outcome';
 $string['nooutcomes'] = 'Outcome items must be linked to a course outcome, but there are no outcomes for this course. Would you like to add one?';
 $string['nopublish'] = 'Do not publish';
+$string['noscales'] = 'Outcomes must be linked to a course scale or global scale, but there are none. Would you like to add one?';
 $string['noselectedcategories'] = 'no categories were selected.';
 $string['noselecteditems'] = 'no items were selected.';
 $string['notteachererror'] = 'You must be a teacher to use this feature.';
