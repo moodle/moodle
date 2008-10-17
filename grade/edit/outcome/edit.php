@@ -133,6 +133,12 @@ if ($courseid) {
     admin_externalpage_print_header();
 }
 
+if (!grade_scale::fetch_all_local($courseid) && !grade_scale::fetch_all_global()) {
+    notice_yesno(get_string('noscales', 'grades'), $CFG->wwwroot.'/grade/edit/scale/edit.php?courseid='.$courseid, $returnurl);
+    print_footer($course);
+    die();
+}
+
 $mform->display();
 
 if ($courseid) {
