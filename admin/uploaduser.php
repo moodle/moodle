@@ -174,7 +174,7 @@ if ($formdata = $mform->is_cancelled()) {
     }
     unset($allowedroles);
 
-    // clear bilk selection
+    // clear bulk selection
     if ($bulk) {
         $SESSION->bulk_users = array();
     }
