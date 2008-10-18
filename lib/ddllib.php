@@ -54,3 +54,34 @@ require_once($CFG->libdir.'/xmldb/xmldb_statement.php');
 require_once($CFG->libdir.'/ddl/sql_generator.php');
 require_once($CFG->libdir.'/ddl/database_manager.php');
 
+
+
+/**
+ * DDL exception class, use instead of error() and "return false;" in ddl code.
+ */
+class ddl_exception extends moodle_exception {
+    function __construct($errorcode, $a=NULL, $debuginfo=null) {
+        parent::__construct($errorcode, '', '', $a, $debuginfo);
+    }
+}
+
+/**
+ * Table does not exist problem exception
+ */
+class ddl_table_missing_exception extends ddl_exception {
+    function __construct($tablename, $debuginfo=null) {
+        parent::__construct('ddltablenotexist', $tablename, $debuginfo);
+    }
+}
+
+/**
+ * Table does not exist problem exception
+ */
+class ddl_field_missing_exception extends ddl_exception {
+    function __construct($fieldname, $tablename, $debuginfo=null) {
+        $a = new object();
+        $a->fieldname = $fieldname;
+        $a->tablename = $tablename;
+        parent::__construct('ddlfieldnotexist', $a, $debuginfo);
+    }
+}
