@@ -250,7 +250,26 @@ abstract class moodle_database {
      * @param mixed $obj optional library specific object
      */
     protected function report_error($sql, array $params=null, $obj=null) {
-        debugging($this->get_last_error() .'<br /><br />'. s($sql).'<br /> ['.var_export($params, true).']');
+        debugging($this->get_last_error() .'<br /><br />'. s($sql).'<br />['.s(var_export($params, true)).']');
+    }
+
+    /**
+     * Print sql debug info
+     * @param string $sql query which caused problems
+     * @param array $params optional query parameters
+     * @param mixed $obj optional library specific object
+     */
+    protected function print_debug($sql, array $params=null, $obj=null) {
+        if (!$this->get_debug()) {
+            return;
+        }
+        //TODO: detect CLI mode and skip s() ;-)
+        echo "<hr />\n";
+        echo s($sql)."\n";
+        if (!is_null($params)) {
+            echo "[".s(var_export($params, true))."]\n";
+        }
+        echo "<hr />\n";
     }
 
     /**

@@ -9,7 +9,8 @@ require_once($CFG->libdir.'/dml/mysqli_native_moodle_recordset.php');
  */
 class mysqli_native_moodle_database extends moodle_database {
 
-    protected $mysqli=null;
+    protected $mysqli = null;
+    protected $debug  = false;
 
     /**
      * Detects if all needed PHP stuff installed.
@@ -324,11 +325,10 @@ class mysqli_native_moodle_database extends moodle_database {
 
     /**
      * Enable/disable very detailed debugging
-     * TODO: do we need levels?
      * @param bool $state
      */
     public function set_debug($state) {
-        //TODO
+        $this->debug = $state;
     }
 
     /**
@@ -336,12 +336,11 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return bool $state
      */
     public function get_debug() {
-        //TODO
+        return $this->debug;
     }
 
     /**
      * Enable/disable detailed sql logging
-     * TODO: do we need levels?
      * @param bool $state
      */
     public function set_logging($state) {
@@ -354,6 +353,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return bool success
      */
     public function change_database_structure($sql) {
+        $this->writes++;
+        $this->print_debug($sql);
         return ($this->mysqli->query($sql) === TRUE);
     }
 
@@ -401,7 +402,7 @@ class mysqli_native_moodle_database extends moodle_database {
         $rawsql = $this->emulate_bound_params($sql, $params);
 
         $this->writes++;
-
+        $this->print_debug($sql, $params);
         $result = $this->mysqli->query($rawsql);
 
         if ($result === false) {
@@ -433,19 +434,20 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return mixed an moodle_recorset object, or false if an error occured.
      */
     public function get_recordset_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
-        list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
-        $rawsql = $this->emulate_bound_params($sql, $params);
-
         if ($limitfrom or $limitnum) {
             $limitfrom = (int)$limitfrom;
             $limitnum  = (int)$limitnum;
             if ($limitnum < 1) {
                 $limitnum = "18446744073709551615";
             }
-            $rawsql .= " LIMIT $limitfrom, $limitnum";
+            $sql .= " LIMIT $limitfrom, $limitnum";
         }
 
+        list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
+        $rawsql = $this->emulate_bound_params($sql, $params);
+
         $this->reads++;
+        $this->print_debug($sql, $params);
         // no MYSQLI_USE_RESULT here, it would block write ops on affected tables
         $result = $this->mysqli->query($rawsql, MYSQLI_STORE_RESULT);
 
@@ -475,19 +477,20 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return mixed an array of objects, or empty array if no records were found, or false if an error occured.
      */
     public function get_records_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
-        list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
-        $rawsql = $this->emulate_bound_params($sql, $params);
-
         if ($limitfrom or $limitnum) {
             $limitfrom = (int)$limitfrom;
             $limitnum  = (int)$limitnum;
             if ($limitnum < 1) {
                 $limitnum = "18446744073709551615";
             }
-            $rawsql .= " LIMIT $limitfrom, $limitnum";
+            $sql .= " LIMIT $limitfrom, $limitnum";
         }
 
+        list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
+        $rawsql = $this->emulate_bound_params($sql, $params);
+
         $this->reads++;
+        $this->print_debug($sql, $params);
         $result = $this->mysqli->query($rawsql, MYSQLI_STORE_RESULT);
 
         if ($result === false) {
@@ -519,6 +522,7 @@ class mysqli_native_moodle_database extends moodle_database {
         $rawsql = $this->emulate_bound_params($sql, $params);
 
         $this->reads++;
+        $this->print_debug($sql, $params);
         $result = $this->mysqli->query($rawsql, MYSQLI_STORE_RESULT);
 
         if ($result === false) {
@@ -563,8 +567,6 @@ class mysqli_native_moodle_database extends moodle_database {
             return false;
         }
 
-        $this->writes++;
-
         $fields = implode(',', array_keys($params));
         $qms    = array_fill(0, count($params), '?');
         $qms    = implode(',', $qms);
@@ -572,6 +574,8 @@ class mysqli_native_moodle_database extends moodle_database {
         $sql = "INSERT INTO {$this->prefix}$table ($fields) VALUES($qms)";
         $rawsql = $this->emulate_bound_params($sql, $params);
 
+        $this->writes++;
+        $this->print_debug($sql, $params);
         $result = $this->mysqli->query($rawsql);
 
         if ($result === false) {
@@ -689,8 +693,6 @@ class mysqli_native_moodle_database extends moodle_database {
             return false;
         }
 
-        $this->writes++;
-
         $sets = array();
         foreach ($params as $field=>$value) {
             $sets[] = "$field = ?";
@@ -702,6 +704,8 @@ class mysqli_native_moodle_database extends moodle_database {
         $sql = "UPDATE {$this->prefix}$table SET $sets WHERE id=?";
         $rawsql = $this->emulate_bound_params($sql, $params);
 
+        $this->writes++;
+        $this->print_debug($sql, $params);
         $result = $this->mysqli->query($rawsql);
 
         if ($result === false) {
@@ -781,6 +785,7 @@ class mysqli_native_moodle_database extends moodle_database {
         $rawsql = $this->emulate_bound_params($sql, $params);
 
         $this->writes++;
+        $this->print_debug($sql, $params);
         $result = $this->mysqli->query($rawsql);
 
         if ($result === false) {
@@ -809,6 +814,7 @@ class mysqli_native_moodle_database extends moodle_database {
         $rawsql = $this->emulate_bound_params($sql, $params);
 
         $this->writes++;
+        $this->print_debug($sql, $params);
         $result = $this->mysqli->query($rawsql);
 
         if ($result === false) {
