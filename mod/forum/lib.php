@@ -3166,11 +3166,14 @@ function forum_is_forcesubscribed($forum) {
 /**
  * TODO document
  */
-function forum_is_subscribed($userid, $forumid) {
-    if (forum_is_forcesubscribed($forumid)) {
+function forum_is_subscribed($userid, $forum) {
+    if (!is_object($forum)) {
+        $forum = get_record('forum', 'id', $forum);
+    }
+    if (forum_is_forcesubscribed($forum)) {
         return true;
     }
-    return record_exists("forum_subscriptions", "userid", $userid, "forum", $forumid);
+    return record_exists("forum_subscriptions", "userid", $userid, "forum", $forum->id);
 }
 
 /**
