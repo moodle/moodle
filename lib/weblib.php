@@ -3812,7 +3812,7 @@ function build_navigation($extranavlinks, $cm = null) {
         if (!is_array($navlink)) {
             continue;
         }
-        if ($navlink['type'] == 'activity' && !$last && $hideactivitylink) {
+        if (!empty($navlink['type']) && $navlink['type'] == 'activity' && !$last && $hideactivitylink) {
             continue;
         }
         $navigation .= '<li class="first">';
