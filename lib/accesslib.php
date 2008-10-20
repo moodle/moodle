@@ -5212,7 +5212,7 @@ function role_fix_names($roleoptions, $context, $rolenamedisplay=ROLENAME_ALIAS)
         }
     }
     foreach ($roleoptions as $rid => $name) {
-        $roleoptions[$rid] = strip_tags($name);
+        $roleoptions[$rid] = strip_tags(format_string($name));
     }
     return $roleoptions;
 }

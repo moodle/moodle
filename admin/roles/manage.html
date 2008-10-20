@@ -24,7 +24,7 @@
 <?php if ($action == 'view') { ?>
     <tr valign="top">
         <td align="right"><?php print_string('name') ?>:</td>
-        <td><?php p($role->name); ?></td>
+        <td><?php p(format_string($role->name)); ?></td>
     </tr>
     <tr valign="top">
         <td align="right"><?php print_string('shortname') ?>:</td>
@@ -32,11 +32,11 @@
     </tr>
     <tr valign="top">
         <td align="right"><?php print_string('description') ?>:</td>
-        <td><?php p($role->description); $usehtmleditor = false; ?></td>
+        <td><?php p(format_text($role->description, FORMAT_HTML)); $usehtmleditor = false; ?></td>
     </tr>
     <tr valign="top">
         <td align="right"><?php print_string('legacytype', 'role') ?>:</td>
-        <td><?php 
+        <td><?php
                 $usehtmleditor = false;
                 if (empty($role->legacytype)) {
                     print_string('none');
