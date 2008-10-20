@@ -71,7 +71,7 @@ function repository_get_client($context) {
 .fp-viewbar{width:300px;float:left}
 .fp-toolbar{padding: .8em;background: #FFFFCC;color:white;text-align:center}
 .fp-toolbar a{padding: 0 .5em}
-.fp-list{list-style-type:none;padding:0}
+.fp-list{list-style-type:none;padding:0;float:left;width:100%;margin:0;}
 .fp-list li{border-bottom:1px dotted gray;margin-bottom: 1em;}
 .fp-repo-name{display:block;padding: .5em;margin-bottom: .5em}
 .fp-pathbar{margin: .4em;border-bottom: 1px dotted gray;}
