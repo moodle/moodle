@@ -1,10 +1,4 @@
 <?php
-/**
- *
- * Modified by Dongsheng Cai <dongsheng@moodle.com>
- * @version $Id$
- *
- */
 ###################################################################
 # smb.php
 # This class implements a SMB stream wrapper based on 'smbclient'
