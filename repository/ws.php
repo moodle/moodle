@@ -155,12 +155,15 @@ EOD;
             $path = $repo->get_file($file, $title);
             $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
             try {
-                $info = repository_move_to_filepool($path, $title, $itemid);
-                if ($env == 'form'){
-                    echo json_encode($info);
-                } else if ($env == 'editor') {
-                    echo json_encode($info);
+                if (preg_match('#(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)#', $path)) {
+                    return array('url'=>$path);
                 } else {
+                    $info = repository_move_to_filepool($path, $title, $itemid);
+                    if ($env == 'form'){
+                        echo json_encode($info);
+                    } else if ($env == 'editor') {
+                        echo json_encode($info);
+                    }
                 }
             } catch (repository_exception $e){
                 $err = new stdclass;
