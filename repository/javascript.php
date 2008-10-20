@@ -49,7 +49,7 @@ function repository_get_client($context) {
     $strsubmit    = get_string('submit', 'repository');
     $strpreview   = get_string('preview', 'repository');
     $strpopup     = get_string('popup', 'repository');
-    $strupload    = get_string('upload', 'repository');
+    $strupload    = get_string('upload', 'repository').'...';
     $struploading = get_string('uploading', 'repository');
     $css = '';
     if (!isset($CFG->repo_yui_loaded)) {
@@ -79,7 +79,7 @@ function repository_get_client($context) {
 .fp-rename-form{text-align:center}
 .fp-rename-form p{margin: 1em;}
 .fp-upload-form{margin: 2em 0;text-align:center}
-.fp-upload-btn a{font-size: 1.5em;background: #ccc;color:white;padding: .5em}
+.fp-upload-btn a{cursor: default;background: white;border:1px solid gray;color:black;padding: .5em}
 .fp-upload-btn a:hover {background: grey;color:white}
 .fp-paging{margin:1em .5em; clear:both;text-align:center;line-height: 2.5em;}
 .fp-paging a{padding: .5em;border: 1px solid #CCC}
@@ -691,7 +691,7 @@ _client.uploadcontrol = function() {
     if(_client.ds.upload) {
         str += '<div id="'+_client.ds.upload.id+'_div" class="fp-upload-form">';
         str += '<form id="'+_client.ds.upload.id+'" onsubmit="return false">';
-        str += '<label for="'+_client.ds.upload.id+'-file">'+_client.ds.upload.label+'</label>';
+        str += '<label for="'+_client.ds.upload.id+'-file">'+_client.ds.upload.label+': </label>';
         str += '<input type="file" id="'+_client.ds.upload.id+'-file" name="repo_upload_file" />';
         str += '<p class="fp-upload-btn"><a href="###" onclick="return repository_client_$suffix.upload();">$strupload</a></p>';
         str += '</form>';
