@@ -208,7 +208,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
      * if user has course:create in any category, we show
      *      newcourse
      */
-     
+
     // Non-cached - get accessinfo
     if (isset($USER->access)) {
         $accessinfo = $USER->access;
@@ -531,7 +531,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             echo "<input type=\"hidden\" id=\"menurestore_site_files\" name=\"restore_site_files\" value=\"0\" />";
         }
         echo "</td></tr>";
-        
+
         // do you want grade histories to be restored?
         if (empty($CFG->disablegradehistory)) {
             echo "<tr>";
@@ -663,7 +663,7 @@ if ($info->backup_moodle_version < 2006092801) {
             $mappableroles = $siteroleschoicearray;
 
             echo ('<tr><td align="right">');
-            echo '<label for="menuroles_'.$roleid.'">'.$role->name." (".($role->shortname).")".'</label>';
+            echo '<label for="menuroles_'.$roleid.'">'.format_string($role->name)." (".($role->shortname).")".'</label>';
             echo ('</td><td align="left">');
 
             /// first, we see if any exact role definition is found
@@ -673,7 +673,7 @@ if ($info->backup_moodle_version < 2006092801) {
                 $matchrole = $samerole->id;
                 // if an exact role is found, it does not matter whether this user can assign this role or not,
                 // this will be presented as a valid option regardless
-                $mappableroles[$samerole->id] = $allroles[$samerole->id]->name." (". $allroles[$samerole->id]->shortname.")";
+                $mappableroles[$samerole->id] = format_string($allroles[$samerole->id]->name)." (". $allroles[$samerole->id]->shortname.")";
             } else {
                 // no exact role found, let's try to match shortname
                 // this is useful in situations where basic roles differ slightly in definition
@@ -714,9 +714,9 @@ echo ('</table>'); // end of role mappings table
 
 /**
  * Look for a role in the database with exactly the same definition as the one in the backup file.
- * 
+ *
  * @param integer $roleid the id that the role in the backup files had on the old server.
- * @param object $role the rest of the definition of the role from the backup file. 
+ * @param object $role the rest of the definition of the role from the backup file.
  */
 function restore_samerole($roleid, $rolefromxml) {
     global $CFG, $DB;
@@ -726,13 +726,13 @@ function restore_samerole($roleid, $rolefromxml) {
 
     // First guess, try let's use the id
     if (restore_is_samerole($roleid, $rolefromxml)) {
-        return $DB->get_record('role', array('id'=>$roleid)); 
+        return $DB->get_record('role', array('id'=>$roleid));
     }
 
     // Second guess, try the shortname
     $testroleid = $DB->get_field('role', 'id', array('shortname'=>$rolefromxml->shortname));
     if ($testroleid && restore_is_samerole($testroleid, $rolefromxml)) {
-        return $DB->get_record('role', array('id'=>$testroleid)); 
+        return $DB->get_record('role', array('id'=>$testroleid));
     }
 
     // Finally, search all other roles. In orter to speed things up, we exclude the ones we have
@@ -770,7 +770,7 @@ function restore_is_samerole($testroleid, $rolefromxml) {
     global $DB;
 
     // Load the role definition from the databse.
-    $rolefromdb = $DB->get_records('role_capabilities', array('roleid'=>$testroleid), '', 'capability,permission'); 
+    $rolefromdb = $DB->get_records('role_capabilities', array('roleid'=>$testroleid), '', 'capability,permission');
     if (!$rolefromdb) {
         return false;
     }
