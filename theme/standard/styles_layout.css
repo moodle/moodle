@@ -2555,7 +2555,8 @@ body.notes .notesgroup {
   width: 85%;
 }
 .que.description .info {
-  display: none;
+  margin: 0.5em 0 0.5em 0.2em;
+  width: 1em;
 }
 .que.description .content,
 .que.description .generalfeedback {
