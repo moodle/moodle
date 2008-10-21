@@ -547,13 +547,13 @@ class quiz_statistics_report extends quiz_default_report {
                     $k2= $s*$m2/($s-1);
                     $k3= $s*$s*$m3/(($s-1)*($s-2));
                     if ($k2){
-                        $quizstats->skewness = $k3 / (pow($k2, 2/3));
+                        $quizstats->skewness = $k3 / (pow($k2, 3/2));
                     }
                 }
     
     
                 if ($s>3){
-                    $k4= (($s*$s*$s)/(($s-1)*($s-2)*($s-3)))*((($s+1)*$m4)-(3*($s-1)*$m2*$m2));
+                    $k4= $s*$s*((($s+1)*$m4)-(3*($s-1)*$m2*$m2))/(($s-1)*($s-2)*($s-3));
                     if ($k2){
                         $quizstats->kurtosis = $k4 / ($k2*$k2);
                     }
