@@ -171,7 +171,7 @@ class quiz_report_statistics_table extends flexible_table {
     }
     
     function col_sd($question){
-        if (!is_null($question->_stats->sd) && $question->_stats->maxgrade){
+        if (!is_null($question->_stats->sd) && ($question->_stats->maxgrade!=0)){
             return number_format($question->_stats->sd*100 / $question->_stats->maxgrade, 2).'%';
         } else {
             return '';
