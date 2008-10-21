@@ -1,8 +1,6 @@
 /*
  * JavaScript library for the quiz module.
  *
- * (c) The Open University and others.
- * @author T.J.Hunt@open.ac.uk and others.
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
@@ -10,6 +8,7 @@ function init_quiz_form() {
     var responseform = document.getElementById('responseform');
     responseform.setAttribute('autocomplete', 'off');
     YAHOO.util.Event.addListener(responseform, 'keypress', check_enter);
+    YAHOO.util.Event.addListener(responseform, 'submit', quiz_timer.stop);
 }
 
 /* Use this in an onkeypress handler, to stop enter submitting the forum unless you
