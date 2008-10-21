@@ -97,7 +97,7 @@ EOD;
 <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/element/element-beta-min.js"></script>
 <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/treeview/treeview-min.js"></script>
 <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/dragdrop/dragdrop-min.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/container/container-min.js"></script>
+<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/container/container.js"></script>
 <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/resize/resize-min.js"></script>
 <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/layout/layout-min.js"></script>
 <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/connection/connection-min.js"></script>
@@ -139,7 +139,6 @@ var resize = null;
 var filepicker = new YAHOO.widget.Panel('file-picker-$suffix', {
     draggable: true,
     close: true,
-    modal: true,
     underlay: 'none',
     zindex: 666666,
     xy: [50, Dom.getDocumentScrollTop()+20]
@@ -337,10 +336,6 @@ _client.loading = function(type, name) {
     panel.get('element').appendChild(content);
 }
 _client.rename = function(oldname, url, icon, repo_id) {
-    var tree = document.getElementById('treediv-$suffix');
-    if(tree){
-        tree.style.display = 'none';
-    }
     var thumbnail = document.getElementById('fp-grid-panel-$suffix');
     if(thumbnail){
         thumbnail.style.display = 'none';
@@ -365,6 +360,10 @@ _client.rename = function(oldname, url, icon, repo_id) {
     html += '<input type="button" onclick="repository_client_$suffix.hide()" value="$strcancel" /></p>';
     html += '</div>';
     panel.get('element').innerHTML += html;
+    var tree = document.getElementById('treediv-$suffix');
+    if(tree){
+        tree.style.display = 'none';
+    }
 }
 _client.popup = function(url) {
     active_instance = repository_client_$suffix;
