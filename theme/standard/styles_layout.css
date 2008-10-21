@@ -2686,11 +2686,12 @@ body.notes .notesgroup {
 }
 .que .content {
   float: left;
-  margin: 0;
+  margin: 0.5em 0;
   width: 88%;
 }
 .que.description .info {
-  display: none;
+  margin: 0.5em 0 0.5em 0.2em;
+  width: 1em;
 }
 .que.description .content,
 .que.description .generalfeedback {
