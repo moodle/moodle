@@ -20,6 +20,7 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
     private $sendtype; // whatever mahara has said it can handle (immediate or queued)
     private $filesmanifest; // manifest of files to send to mahara (set during prepare_package and sent later)
     private $totalsize; // total size of all included files added together
+    private $continueurl; // if we've been sent back a specific url to continue to (eg folder id)
 
     public static function get_name() {
         return get_string('pluginname', 'portfolio_mahara');
@@ -191,6 +192,9 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         if ($response->type =='queued') {
             $this->exporter->set_forcequeue();
         }
+        if (isset($response->querystring)) {
+            $this->continueurl = $response->querystring;
+        }
     }
 
     public function get_continue_url() {
@@ -198,6 +202,9 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         $this->ensure_environment();
         $mnetauth = get_auth_plugin('mnet');
         $remoteurl = '/artefact/file/';// @todo penny this might change later when we change formats.
+        if (isset($this->continueurl)) {
+            $remoteurl .= $this->continueurl;
+        }
         if (!$url = $mnetauth->start_jump_session($this->get_config('mnethostid'), $remoteurl)) {
             return false;
         }
