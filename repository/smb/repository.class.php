@@ -32,13 +32,12 @@ class repository_smb extends repository {
             $file = uniqid('m').$file;
         }
 
-        $fp = fopen($dir.$file, 'w');
         $content = '';
         $fp = fopen($url, 'r');
         while (!feof($fp)) {
             $content .= fread($fp, 1024*8);
         }
-        $fp = fopen($dir.$file, 'w');
+        $fp = fopen($dir.$file, 'wb');
         fwrite($fp, $content);
         return $dir.$file;
     }
