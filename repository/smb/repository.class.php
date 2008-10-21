@@ -33,7 +33,6 @@ class repository_smb extends repository {
         }
 
         $fp = fopen($dir.$file, 'w');
-        $c = new curl;
         $content = '';
         $fp = fopen($url, 'r');
         while (!feof($fp)) {
@@ -47,6 +46,7 @@ class repository_smb extends repository {
         return false;
     }
     public function get_listing($path='') {
+        global $CFG;
         $list = array();
         $ret  = array();
         $ret['dynload'] = true;
@@ -61,10 +61,16 @@ class repository_smb extends repository {
                 $ret['list'][] = array(
                     'title'=>$file,
                     'path'=>$path.$file.'/',
+                    'thumbnail'=>$CFG->pixpath.'/f/folder.gif',
+                    'size'=>0,
+                    'date'=>'',
                     'children'=>array());
             } else {
                 $ret['list'][] = array(
                     'title'=>$file,
+                    'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo("icon", $file),
+                    'size'=>'',
+                    'date'=>'',
                     'source'=>$path.$file);
             }
         }
