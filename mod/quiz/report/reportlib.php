@@ -188,7 +188,7 @@ function quiz_report_grade_bands($bandwidth, $bands, $quizid, $useridlist=''){
         {$CFG->prefix}quiz q
     WHERE qg.quiz = q.id AND qg.quiz = $quizid 
             ".($useridlist?"AND qg.userid IN ($useridlist) ":'')."
-    GROUP BY band
+    GROUP BY FLOOR(qg.grade/$bandwidth)
     ORDER BY band";
     if (!$data = get_records_sql_menu($sql)){
         $data= array();
