@@ -423,26 +423,6 @@ class default_questiontype {
     }
 
     /**
-    * Changes all states for the given attempts over to a new question
-    *
-    * This is used by the versioning code if the teacher requests that a question
-    * gets replaced by the new version. In order for the attempts to be regraded
-    * properly all data in the states referring to the old question need to be
-    * changed to refer to the new version instead. In particular for question types
-    * that use the answers table the answers belonging to the old question have to
-    * be changed to those belonging to the new version.
-    *
-    * @param integer $oldquestionid  The id of the old question
-    * @param object $newquestion    The new question
-    * @param array  $attempts       An array of all attempt objects in whose states
-    *                               replacement should take place
-    */
-    function replace_question_in_attempts($oldquestionid, $newquestion, $attemtps) {
-        echo 'Not yet implemented';
-        return;
-    }
-
-    /**
     * Loads the question type specific options for the question.
     *
     * This function loads any question type specific options for the
@@ -1448,90 +1428,6 @@ class default_questiontype {
     function finished_edit_wizard(&$form) {
         //In the default case there is only one edit page.
         return true;
-    }
-
-    /**
-    * Prints a table of course modules in which the question is used
-    *
-    * TODO: This should be made quiz-independent
-    *
-    * This function is used near the end of the question edit forms in all question types
-    * It prints the table of quizzes in which the question is used
-    * containing checkboxes to allow the teacher to replace the old question version
-    *
-    * @param object $question
-    * @param object $course
-    * @param integer $cmid optional The id of the course module currently being edited
-    */
-    function print_replacement_options($question, $course, $cmid='0') {
-        global $DB;
-
-        // Disable until the versioning code has been fixed
-        if (true) {
-            return;
-        }
-
-        // no need to display replacement options if the question is new
-        if(empty($question->id)) {
-            return true;
-        }
-
-        // get quizzes using the question (using the question_instances table)
-        $quizlist = array();
-        if(!$instances = $DB->get_records('quiz_question_instances', array('question' => $question->id))) {
-            $instances = array();
-        }
-        foreach($instances as $instance) {
-            $quizlist[$instance->quiz] = $instance->quiz;
-        }
-        if(empty($quizlist) or !$quizzes = $DB->get_records_list('quiz', 'id', $quizlist)) {
-            $quizzes = array();
-        }
-
-        // do the printing
-        if(count($quizzes) > 0) {
-            // print the table
-            $strquizname  = get_string('modulename', 'quiz');
-            $strdoreplace = get_string('replace', 'quiz');
-            $straffectedstudents = get_string('affectedstudents', 'quiz', $course->students);
-            echo "<tr valign=\"top\">\n";
-            echo "<td align=\"right\"><b>".get_string("replacementoptions", "quiz").":</b></td>\n";
-            echo "<td align=\"left\">\n";
-            echo "<table cellpadding=\"5\" align=\"left\" class=\"generalbox\" width=\"100%\">\n";
-            echo "<tr>\n";
-            echo "<th align=\"left\" valign=\"top\" nowrap=\"nowrap\" class=\"generaltableheader c0\" scope=\"col\">$strquizname</th>\n";
-            echo "<th align=\"center\" valign=\"top\" nowrap=\"nowrap\" class=\"generaltableheader c0\" scope=\"col\">$strdoreplace</th>\n";
-            echo "<th align=\"left\" valign=\"top\" nowrap=\"nowrap\" class=\"generaltableheader c0\" scope=\"col\">$straffectedstudents</th>\n";
-            echo "</tr>\n";
-            foreach($quizzes as $quiz) {
-                // work out whethere it should be checked by default
-                $checked = '';
-                if((int)$cmid === (int)$quiz->id
-                    or empty($quiz->usercount)) {
-                    $checked = "checked=\"checked\"";
-                }
-
-                // find how many different students have already attempted this quiz
-                $students = array();
-                if($attempts = $DB->get_records_select('quiz_attempts', "quiz = ? AND preview = '0'", array($quiz->id))) {
-                    foreach($attempts as $attempt) {
-                        if ($DB->record_exists('question_states', array('attempt' => $attempt->uniqueid, 'question' => $question->id), 'originalquestion', 0)) {
-                            $students[$attempt->userid] = 1;
-                        }
-                    }
-                }
-                $studentcount = count($students);
-
-                $strstudents = $studentcount === 1 ? $course->student : $course->students;
-                echo "<tr>\n";
-                echo "<td align=\"left\" class=\"generaltablecell c0\">".format_string($quiz->name)."</td>\n";
-                echo "<td align=\"center\" class=\"generaltablecell c0\"><input name=\"q{$quiz->id}replace\" type=\"checkbox\" ".$checked." /></td>\n";
-                echo "<td align=\"left\" class=\"generaltablecell c0\">".(($studentcount) ? $studentcount.' '.$strstudents : '-')."</td>\n";
-                echo "</tr>\n";
-            }
-            echo "</table>\n";
-        }
-        echo "</td></tr>\n";
     }
 
     /**
