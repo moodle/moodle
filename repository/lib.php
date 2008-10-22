@@ -1036,7 +1036,7 @@ function repository_check_context($ctx_id) {
 
 /**
  * Return all types that you a user can create/edit and which are also visible
- * Note: Mostly used in order to know if at least one editable type has been set
+ * Note: Mostly used in order to know if at least one editable type can be set
  * @param object $context the context for which we want the editable types
  * @return array types
  */
@@ -1384,6 +1384,7 @@ final class repository_type_form extends moodleform {
         $mform->addElement('hidden', 'edit',  ($this->instance) ? $this->instance->get_typename() : 0);
         $mform->addElement('hidden', 'new',   $this->plugin);
         $mform->addElement('hidden', 'plugin', $this->plugin);
+
         // let the plugin add its specific fields
         if (!$this->instance) {
                 $result = repository_static_function($this->plugin, 'type_config_form', $mform);
