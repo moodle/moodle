@@ -452,7 +452,7 @@ class moodleform {
 
         if (empty($this->_upload_manager->files[$elname]['clear'])) {
             return false;
-        }        
+        }
 
         if (empty($this->_upload_manager->files[$elname]['tmp_name'])) {
             return false;
@@ -623,7 +623,7 @@ class moodleform {
      * @param array  $attributes associative array of HTML attributes
      * @param int    $originalValue The original general state of the checkboxes before the user first clicks this element
      */
-    function add_checkbox_controller($groupid, $buttontext, $attributes, $originalValue = 0) { 
+    function add_checkbox_controller($groupid, $buttontext, $attributes, $originalValue = 0) {
         global $CFG;
         if (empty($text)) {
             $text = get_string('selectallornone', 'form');
@@ -640,7 +640,7 @@ class moodleform {
 
         $mform->addElement('hidden', "checkbox_controller$groupid");
         $mform->setConstants(array("checkbox_controller$groupid" => $new_select_value));
-        
+
         // Locate all checkboxes for this group and set their value, IF the optional param was given
         if (!is_null($select_value)) {
             foreach ($this->_form->_elements as $element) {
@@ -652,7 +652,7 @@ class moodleform {
 
         $checkbox_controller_name = 'nosubmit_checkbox_controller' . $groupid;
         $mform->registerNoSubmitButton($checkbox_controller_name);
-        
+
         // Prepare Javascript for submit element
         $js = "\n//<![CDATA[\n";
         if (!defined('HTML_QUICKFORM_CHECKBOXCONTROLLER_EXISTS')) {
@@ -662,29 +662,29 @@ function html_quickform_toggle_checkboxes(group) {
     var newvalue = false;
     var global = eval('html_quickform_checkboxgroup' + group + ';');
     if (global == 1) {
-        eval('html_quickform_checkboxgroup' + group + ' = 0;'); 
+        eval('html_quickform_checkboxgroup' + group + ' = 0;');
         newvalue = '';
     } else {
-        eval('html_quickform_checkboxgroup' + group + ' = 1;'); 
+        eval('html_quickform_checkboxgroup' + group + ' = 1;');
         newvalue = 'checked';
     }
 
     for (i = 0; i < checkboxes.length; i++) {
-        checkboxes[i].checked = newvalue; 
+        checkboxes[i].checked = newvalue;
     }
 }
 EOS;
             define('HTML_QUICKFORM_CHECKBOXCONTROLLER_EXISTS', true);
         }
         $js .= "\nvar html_quickform_checkboxgroup$groupid=$originalValue;\n";
-        
+
         $js .= "//]]>\n";
-        
+
         require_once("$CFG->libdir/form/submitlink.php");
         $submitlink = new MoodleQuickForm_submitlink($checkbox_controller_name, $attributes);
         $submitlink->_js = $js;
         $submitlink->_onclick = "html_quickform_toggle_checkboxes($groupid); return false;";
-        $mform->addElement($submitlink); 
+        $mform->addElement($submitlink);
         $mform->setDefault($checkbox_controller_name, $text);
     }
 
@@ -1888,4 +1888,5 @@ MoodleQuickForm::registerElementType('submit', "$CFG->libdir/form/submit.php", '
 MoodleQuickForm::registerElementType('questioncategory', "$CFG->libdir/form/questioncategory.php", 'MoodleQuickForm_questioncategory');
 MoodleQuickForm::registerElementType('advcheckbox', "$CFG->libdir/form/advcheckbox.php", 'MoodleQuickForm_advcheckbox');
 MoodleQuickForm::registerElementType('recaptcha', "$CFG->libdir/form/recaptcha.php", 'MoodleQuickForm_recaptcha');
+MoodleQuickForm::registerElementType('selectwithlink', "$CFG->libdir/form/selectwithlink.php", 'MoodleQuickForm_selectwithlink');
 ?>

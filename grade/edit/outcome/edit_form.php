@@ -46,7 +46,8 @@ class edit_outcome_form extends moodleform {
 
         $options = array();
 
-        $mform->addElement('select', 'scaleid', get_string('scale'), $options);
+        $mform->addElement('selectwithlink', 'scaleid', get_string('scale'), $options, null,
+            array('link' => $CFG->wwwroot.'/grade/edit/scale/edit.php?courseid='.$COURSE->id, 'label' => get_string('scalescustomcreate')));
         $mform->setHelpButton('scaleid', array('scaleid', get_string('scale'), 'grade'));
         $mform->addRule('scaleid', get_string('required'), 'required');
 
