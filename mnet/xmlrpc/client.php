@@ -293,7 +293,7 @@ class mnet_xmlrpc_client {
         global $DB, $CFG;
 
         // Executing any system method is permitted.
-        $system_methods = array('system/listMethods', 'system/methodSignature', 'system/methodHelp', 'system/listServices');
+        $system_methods = array('system/listMethods', 'system/methodSignature', 'system/methodHelp', 'system/listServices', 'system/listFiles', 'system/retrieveFile');
         if (in_array($this->method, $system_methods) ) {
             return true;
         }
