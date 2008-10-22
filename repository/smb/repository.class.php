@@ -49,6 +49,8 @@ class repository_smb extends repository {
         $list = array();
         $ret  = array();
         $ret['dynload'] = true;
+        $ret['nosearch'] = true;
+        $ret['nologin'] = true;
         $ret['list'] = array();
         $ret['path'] = array(array('name'=>'Root', 'path'=>0));
         if (empty($path)) {
