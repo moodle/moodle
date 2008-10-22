@@ -359,6 +359,7 @@ $string['onascaleof'] = ' on a scale of $a->grademin to $a->grademax';
 $string['operations'] = 'Operations';
 $string['options'] = 'Options';
 $string['outcome'] = 'Outcome';
+$string['outcomeassigntocourse'] = 'Assign another outcome to this course';
 $string['outcomecategory'] = 'Create outcomes in category';
 $string['outcomecategorynew'] = 'New category';
 $string['outcomeconfirmdelete'] = 'Are you sure you wish to delete the outcome \"$a\"?';
