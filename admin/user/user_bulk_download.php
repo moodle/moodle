@@ -39,7 +39,7 @@ if ($format) {
 
     if ($extrafields = get_records_select('user_info_field')) {
         foreach ($extrafields as $n=>$v){
-            $fields['profile_field_'.$v->shortname] = 'profile_field_'.$v->name;
+            $fields['profile_field_'.$v->shortname] = 'profile_field_'.$v->shortname;
         }
     }
 
