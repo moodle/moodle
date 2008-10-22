@@ -18,9 +18,7 @@ function check_enter(e) {
     var keyCode = e.keyCode ? e.keyCode : e.which;
     if (keyCode==13 && target.nodeName.toLowerCase()!='a' &&
             (!target.type || !(target.type=='submit' || target.type=='textarea'))) {
-        return false;
-    } else {
-        return true;
+        YAHOO.util.Event.preventDefault(e);
     }
 }
 
