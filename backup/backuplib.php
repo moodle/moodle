@@ -1374,11 +1374,11 @@
                 fwrite ($bf,end_tag("ROLES",4,true));
 
                 //Check if we have custom profile fields to backup
-                if ($cpfields = $DB->get_records_sql("SELECT uif.shortname, uif.datatype, uid.data
+                if ($cpfields = $DB->get_records_sql("SELECT uif.shortname, uif.datatype, uidata.data
                                                         FROM {user_info_field} uif,
-                                                             {user_info_data} uid
-                                                       WHERE uif.id = uid.fieldid
-                                                             AND uid.userid = ?", array($user->id))) {
+                                                             {user_info_data} uidata
+                                                       WHERE uif.id = uidata.fieldid
+                                                             AND uidata.userid = ?", array($user->id))) {
                     //Start USER_CUSTOM_PROFILE_FIELDS tag
                     fwrite ($bf,start_tag("USER_CUSTOM_PROFILE_FIELDS",4,true));
                     //Write custom profile fields
