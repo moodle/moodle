@@ -1040,6 +1040,43 @@ table.rolecap .hiddenrow {
   text-align:center;
 }
 
+table.explainpermissions {
+  border: 1px solid black;
+}
+table.explainpermissions .cell {
+  border-bottom: none;
+}
+table.explainpermissions th.header,
+table.explainpermissions th.cell,
+table.explainpermissions td.cell {
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+}
+table.explainpermissions .newcontext .cell,
+table.explainpermissions th.header.rolename {
+    border-top: 1px solid black;
+}
+table.explainpermissions .cell.inherit,
+table.explainpermissions .cell.noroles {
+  color: grey;
+}
+table.explainpermissions th.assignmentcontext,
+table.explainpermissions th.rolename {
+  text-align: left;
+  padding-left: 0.5em;
+}
+table.explainpermissions th.overridecontextheader {
+  text-align: right;
+  padding-right: 0.5em;
+}
+table.explainpermissions .cell.prohibit {
+  font-weight: bold;
+}
+table.explainpermissions .cell {
+  padding: 0.2em 0.5em;
+  text-align: center;
+}
+
 #admin-lang .generalbox {
   text-align:center;
   margin:auto;
