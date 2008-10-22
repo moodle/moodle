@@ -40,7 +40,7 @@ admin_tree = {
         } else {
             admin_tree.expand(i);
         }
-        YAHOO.util.Event. preventDefault(e);
+        YAHOO.util.Event.preventDefault(e);
     },
 
     collapse: function(i) {
