@@ -154,7 +154,7 @@ var filepicker = new YAHOO.widget.Panel('file-picker-$suffix', {
                 units: [
                 {position: 'top', height: 32, resize: false,
                 body:'<div class="yui-buttongroup fp-viewbar" id="repo-viewbar-$suffix"></div><div class="fp-searchbar" id="search-div-$suffix"></div>', gutter: '2'},
-                {position: 'left', width: 200, resize: true,
+                {position: 'left', width: 200, resize: true, scroll:true,
                 body:'<ul class="fp-list" id="repo-list-$suffix"></ul>', gutter: '0 5 0 2', minWidth: 150, maxWidth: 300 },
                 {position: 'center', body: '<div class="fp-panel" id="panel-$suffix"></div>',
                 scroll: true, gutter: '0 2 0 0' }
