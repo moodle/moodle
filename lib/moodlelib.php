@@ -3829,7 +3829,7 @@ function email_welcome_message_to_user($course, $user=NULL) {
     } else {
         $a = new Object();
         $a->coursename = $course->fullname;
-        $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id";
+        $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id";
         $message = get_string("welcometocoursetext", "", $a);
     }
 
