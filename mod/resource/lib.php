@@ -255,7 +255,7 @@ class resource_base {
     }
 
     function portfolio_prepare_package_online($exporter, $text=false) {
-        $filename = clean_filename($this->cm->name . '.' . (($text) ? 'txt' : 'html'));
+        $filename = clean_filename($this->cm->name . '.' . 'html');
         $formatoptions = (object)array('noclean' => true);
         $format = (($text) ? FORMAT_MOODLE : FORMAT_HTML);
         $content = format_text($this->resource->alltext, $format, $formatoptions, $this->course->id);
