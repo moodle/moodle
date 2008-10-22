@@ -50,7 +50,7 @@ class repository_webdav extends repository {
         $buffer = '';
         $this->wd->open();
         $this->wd->get($url, $buffer);
-        $fp = fopen($dir.$file, 'w');
+        $fp = fopen($dir.$file, 'wb');
         fwrite($fp, $buffer);
         return $dir.$file;
     }
@@ -63,6 +63,8 @@ class repository_webdav extends repository {
         $ret  = array();
         $ret['dynload'] = true;
         $ret['list'] = array();
+        $ret['nosearch'] = true;
+        $ret['nologin'] = true;
         $ret['path'] = array(array('name'=>'Root', 'path'=>0));
         $this->wd->open();
         if (empty($path)) {
