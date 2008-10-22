@@ -3707,7 +3707,7 @@ function email_welcome_message_to_user($course, $user=NULL) {
         $subject = get_string('welcometocourse', '', $course->fullname);
 
         $a->coursename = $course->fullname;
-        $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id";
+        $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id";
         //$message = get_string("welcometocoursetext", "", $a);
         $message = $course->welcomemessage;
 
