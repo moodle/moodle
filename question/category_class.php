@@ -360,14 +360,14 @@ class question_category_object {
     public function move_questions($oldcat, $newcat){
         global $DB;
         $questionids = $DB->get_records_select_menu('question', "category = ? AND (parent = 0 OR parent = id)", array($oldcat), '', 'id,1');
-        if (!question_move_questions_to_category(implode(',', array_keys($questionids)), $newcat)) {
-            print_error('errormovingquestions', 'question', $returnurl, $ids);
+        $ids = implode(',', array_keys($questionids));
+        if (!question_move_questions_to_category($ids, $newcat)) {
+            print_error('errormovingquestions', 'question', $this->pageurl->out(), $ids);
         }
     }
 
     /**
      * Creates a new category with given params
-     *
      */
     public function add_category($newparent, $newcategory, $newinfo) {
         global $DB;
@@ -400,7 +400,6 @@ class question_category_object {
 
     /**
      * Updates an existing category with given params
-     *
      */
     public function update_category($updateid, $newparent, $newname, $newinfo) {
         global $CFG, $QTYPES, $DB;
@@ -408,51 +407,57 @@ class question_category_object {
             print_error('categorynamecantbeblank', 'quiz');
         }
 
-        list($parentid, $tocontextid) = explode(',', $newparent);
-
+        // Get the record we are updating.
         $oldcat = $DB->get_record('question_categories', array('id' => $updateid));
+        $lastcategoryinthiscontext = !$DB->record_exists_select('question_categories',
+                    'contextid = ? AND id <> ?', array($oldcat->contextid, $updateid));
+
+        if (!empty($newparent) && !$lastcategoryinthiscontext) {
+            list($parentid, $tocontextid) = explode(',', $newparent);
+        } else {
+            $parentid = $oldcat->parent;
+            $tocontextid = $oldcat->contextid;
+        }
+
+        // Check permissions.
         $fromcontext = get_context_instance_by_id($oldcat->contextid);
         require_capability('moodle/question:managecategory', $fromcontext);
-        if ($oldcat->contextid == $tocontextid){
+
+        // If moving to another context, check permissions some more.
+        if ($oldcat->contextid != $tocontextid){
+            if ($lastcategoryinthiscontext) {
+                // Don't allow the last category in a context to be moved.
+                print_error('cannotmovecate', 'question', $this->pageurl->out(), $newname);
+            }
             $tocontext = get_context_instance_by_id($tocontextid);
             require_capability('moodle/question:managecategory', $tocontext);
         }
+
+        // Update the category record.
         $cat = NULL;
         $cat->id = $updateid;
         $cat->name = $newname;
         $cat->info = $newinfo;
-        //never move category where it is the default
-        if (1 != $DB->count_records_sql("SELECT count(*)
-                                           FROM {question_categories} c1,
-                                                {question_categories} c2
-                                          WHERE c2.id = ?
-                                            AND c1.contextid = c2.contextid", array($updateid))){
-            // If the question name has changed, rename any random questions in that category.
-            if ($oldcat->name != $cat->name) {
-                $randomqname = $QTYPES[RANDOM]->question_name($cat);
-                $DB->set_field('question', 'name', $randomqname, array('category' => $cat->id), 'qtype', RANDOM);
-                // Ignore errors here. It is not a big deal if the questions are not renamed.
-            }
+        $cat->parent = $parentid;
+        // We don't change $cat->contextid here, if necessary we redirect to contextmove.php later.
+        if (!$DB->update_record('question_categories', $cat)) {
+            print_error('cannotupdatecate', 'question', $this->pageurl->out(), $newname);
+        }
 
-            // Then update the category itself.
-            if ($oldcat->contextid == $tocontextid){ // not moving contexts
-                $cat->parent = $parentid;
-                if (!$DB->update_record("question_categories", $cat)) {
-                    print_error('cannotupdatecate', 'question', $this->pageurl->out(), $newname);
-                } else {
-                    redirect($this->pageurl->out());
-                }
-            } else {
-                if (!$DB->update_record("question_categories", $cat)) {
-                    print_error('cannotupdatecate', 'question', $this->pageurl->out(), $newname);
-                } else {
-                    redirect($CFG->wwwroot.'/question/contextmove.php?'.
-                                $this->pageurl->get_query_string(array('cattomove' => $updateid,
-                                                                        'toparent'=>$newparent)));
-                }
-            }
+        // If the question name has changed, rename any random questions in that category.
+        if ($oldcat->name != $cat->name) {
+            $randomqname = $QTYPES[RANDOM]->question_name($cat);
+            $DB->set_field('question', 'name', $randomqname, array('category' => $cat->id), 'qtype', RANDOM);
+            // Ignore errors here. It is not a big deal if the questions are not renamed.
+        }
+
+        // Then redirect to an appropriate place.
+        if ($oldcat->contextid == $tocontextid) { // not moving contexts
+            redirect($this->pageurl->out());
         } else {
-            print_error('cannotmovecate', 'question', $this->pageurl->out(), $newname);
+            redirect($CFG->wwwroot.'/question/contextmove.php?' .
+                    $this->pageurl->get_query_string(array(
+                    'cattomove' => $updateid, 'toparent'=>$newparent)));
         }
     }
 
