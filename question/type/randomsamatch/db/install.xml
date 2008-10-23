@@ -9,7 +9,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="question"/>
-        <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="questions" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
   </TABLES>
