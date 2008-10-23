@@ -995,6 +995,11 @@ abstract class repository {
     public static function get_instance_option_names() {
         return array();
     }
+
+     public static function mnet_publishes() {
+        return array();
+    }
+
 }
 
 /**
