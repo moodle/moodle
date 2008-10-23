@@ -9,27 +9,21 @@
 
 class repository_youtube extends repository {
     public function __construct($repositoryid, $context = SITEID, $options = array()) {
-        global $SESSION;
         $options['keyword'] = optional_param('youtube_keyword', '', PARAM_RAW);
+        $options['start'] =1;
+        $options['max'] = 25;
+        $options['sort'] = 'relevance';
         parent::__construct($repositoryid, $context, $options);
-        $this->session_name = "youtube_keyword_".$this->id;
-        if (!empty($this->keyword)) {
-            $SESSION->{$this->session_name} = $this->keyword;
-        }
     }
 
     public function check_login() {
-        global $SESSION;
-        return !empty($SESSION->{$this->session_name});
-    }
-
-    public function logout() {
-        global $SESSION;
-        unset($SESSION->{$this->session_name});
-        return $this->print_login();
+        return !empty($this->keyword);
     }
 
     public function search($search_text) {
+        $ret = array();
+        $ret['list'] = $this->_get_collection($search_text, $this->start, $this->max, $this->sort);
+        return $ret;
     }
 
     private function _get_collection($keyword, $start, $max, $sort) {
@@ -51,6 +45,7 @@ class repository_youtube extends repository {
             $list[] = array(
                 'title'=>(string)$title,
                 'thumbnail'=>(string)$attrs['url'],
+                'thumbnail_width'=>145,
                 'size'=>'',
                 'date'=>'',
                 'source'=>$source
@@ -66,14 +61,13 @@ class repository_youtube extends repository {
         return false;
     }
     public function get_listing($path='') {
-        global $CFG, $SESSION;
-        $start = 1;
-        $max   = 25;
-        $sort  = "relevance";
+        global $CFG;
         $list = array();
         $ret  = array();
+        $ret['nologin'] = true;
         $ret['path'] = array(array('name'=>'Root', 'path'=>0));
-        $ret['list'] = $this->_get_collection($SESSION->{$this->session_name}, $start, $max, $sort);
+        echo_fb($this->keyword);
+        $ret['list'] = $this->_get_collection($this->keyword, $this->start, $this->max, $this->sort);
         $file = 'ts.txt';
         return $ret;
     }
