@@ -156,7 +156,7 @@ EOD;
             $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
             try {
                 if (preg_match('#(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)#', $path)) {
-                    return array('url'=>$path);
+                    echo json_encode(array('url'=>$path, 'id'=>$path, 'file'=>$path));
                 } else {
                     $info = repository_move_to_filepool($path, $title, $itemid);
                     if ($env == 'form'){
