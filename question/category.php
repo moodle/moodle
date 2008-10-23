@@ -60,7 +60,7 @@
             list($tocategoryid, $tocontextid) = explode(',', $formdata->category);
             $qcobject->move_questions_and_delete_category($formdata->delete, $tocategoryid);
             $thispageurl->remove_params('cat');
-            $thispageurl->remove_params('category'); // TODO check in fix for bug 5353
+            $thispageurl->remove_params('category');
             redirect($thispageurl->out());
         }
     } else {
@@ -76,6 +76,8 @@
         }
         redirect($thispageurl->out());
     } elseif ((!empty($param->delete) and (!$questionstomove) and confirm_sesskey()))  {
+        $thispageurl->remove_params('cat');
+        $thispageurl->remove_params('category');
         $qcobject->delete_category($param->delete);//delete the category now no questions to move
     }
     $navlinks = array();
