@@ -32,7 +32,7 @@
 
 /// Add required XMLDB action classes
     require_once('actions/XMLDBAction.class.php');
-
+    require_once('actions/XMLDBCheckAction.class.php');
 
 /// Add required XMLDB DB classes
     require_once('../../lib/xmldb/xmldb_object.php');
