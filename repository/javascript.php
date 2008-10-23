@@ -84,10 +84,10 @@ function repository_get_client($context) {
 .fp-paging{margin:1em .5em; clear:both;text-align:center;line-height: 2.5em;}
 .fp-paging a{padding: .5em;border: 1px solid #CCC}
 .fp-popup{text-align:center}
-.fp-grid{width:80px; float:left;text-align:center;}
-.fp-grid div{width: 80px; overflow: hidden}
+.fp-grid{float:left;text-align:center;}
+.fp-grid div{overflow: hidden}
 .fp-grid p{margin:0;padding:0;background: #FFFFCC}
-.fp-grid .label{height:48px}
+.fp-grid .label{height:48px;text-align:center}
 .fp-grid span{background: #EEF9EB;color:gray}
 </style>
 EOD;
@@ -489,7 +489,14 @@ _client.viewthumb = function(ds) {
     var count = 0;
     for(k in list) {
         var el = document.createElement('div');
+        var title = document.createElement('div');
         el.className='fp-grid';
+        if(list[k].thumbnail_width){
+            el.style.width = list[k].thumbnail_width+'px';
+            title.style.width = (list[k].thumbnail_width-20)+'px';
+        } else {
+            el.style.width = title.style.width = '80px';
+        }
         var frame = document.createElement('DIV');
         frame.style.textAlign='center';
         var img = document.createElement('img');
@@ -499,7 +506,6 @@ _client.viewthumb = function(ds) {
         link.id = 'img-id-'+String(count);
         link.appendChild(img);
         frame.appendChild(link);
-        var title = document.createElement('div');
         if(list[k].children) {
             title.innerHTML = '<i><u>'+list[k].title+'</i></u>';
         } else {
