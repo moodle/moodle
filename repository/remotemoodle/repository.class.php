@@ -49,8 +49,8 @@ class repository_remotemoodle extends repository {
         return array($contents, $sf->get_filename());
     }
 
-    public static function getFileList($username) {
-          global $DB, $USER, $MNET_REMOTE_CLIENT;
+    public function getFileList($username) {
+          global $DB, $USER, $MNET_REMOTE_CLIENT, $CFG;
 
         $USER = $DB->get_record('user',array('username' => $username, 'mnethostid' => $MNET_REMOTE_CLIENT->id));
 
@@ -74,16 +74,16 @@ class repository_remotemoodle extends repository {
             $params = $fileinfo->get_params();
             $filearea = $params['filearea'];
             //todo: fix this call, and similar ones here and in build_tree - encoding path works only for real folders
-            $ret['path'][] = _encode_path($filearea, $path, $fileinfo->get_visible_name());
+            $ret['path'][] = repository_remotemoodle::_encode_path($filearea, $path, $fileinfo->get_visible_name());
             if ($fileinfo->is_directory()) {
                 $level = $fileinfo->get_parent();
                 while ($level) {
                     $params = $level->get_params();
-                    $ret['path'][] = _encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
+                    $ret['path'][] = repository_remotemoodle::_encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
                     $level = $level->get_parent();
                 }
             }
-            $filecount = build_tree($fileinfo, $search, $ret['dynload'], $ret['list']);
+            $filecount = repository_remotemoodle::build_tree($fileinfo, $search, $ret['dynload'], $ret['list']);
             $ret['path'] = array_reverse($ret['path']);
         } else {
             // throw some "context/filearea/item/path/file not found" exception?
@@ -104,7 +104,7 @@ class repository_remotemoodle extends repository {
      * @param <type> $visiblename
      * @return <type>
      */
-    function _encode_path($filearea, $path, $visiblename) {
+    public static function _encode_path($filearea, $path, $visiblename) {
         return array('path'=>serialize(array($filearea, $path)), 'name'=>$visiblename);
     }
 
@@ -120,7 +120,7 @@ class repository_remotemoodle extends repository {
      *
      * todo: take $search into account, and respect a threshold for dynamic loading
      */
-    function build_tree($fileinfo, $search, $dynamicmode, &$list) {
+    public static function build_tree($fileinfo, $search, $dynamicmode, &$list) {
         global $CFG;
 
         $filecount = 0;
@@ -139,7 +139,7 @@ class repository_remotemoodle extends repository {
                 $level = $child->get_parent();
                 while ($level) {
                     $params = $level->get_params();
-                    $path[] = _encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
+                    $path[] = repository_remotemoodle::_encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
                     $level = $level->get_parent();
                 }
 
@@ -157,7 +157,7 @@ class repository_remotemoodle extends repository {
                         $_search = false;
                     }
                     $tmp['children'] = array();
-                    $_filecount = build_tree($child, $_search, $dynamicmode, $tmp['children']);
+                    $_filecount = repository_remotemoodle::build_tree($child, $_search, $dynamicmode, $tmp['children']);
                     if ($search && $_filecount) {
                         $tmp['expanded'] = 1;
                     }
