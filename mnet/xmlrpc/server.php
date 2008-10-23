@@ -367,7 +367,7 @@ function mnet_server_dispatch($payload) {
     // Whitelist characters that are permitted in a method name
     // The method name must not begin with a / - avoid absolute paths
     // A dot character . is only allowed in the filename, i.e. something.php
-    if (0 == preg_match("@^[A-Za-z0-9]+/[A-Za-z0-9/_-]+(\.php/)?[A-Za-z0-9_-]+$@",$method)) {
+    if (0 == preg_match("@^[A-Za-z0-9]+/[A-Za-z0-9/_\.-]+(\.php/)?[A-Za-z0-9_-]+$@",$method)) {
         exit(mnet_server_fault(713, 'nosuchfunction'));
     }
 
@@ -489,6 +489,22 @@ function mnet_server_dispatch($payload) {
         if ($filename == 'lib.php') {
             $pluginclass = 'portfolio_plugin_' . $plugin;
             $includefile = '/portfolio/type/'.$plugin.'/lib.php';
+            $response    = mnet_server_invoke_method($includefile, $methodname, $method, $payload, $pluginclass);
+            $response = mnet_server_prepare_response($response);
+            echo $response;
+        } else {
+            // Generate error response - unable to locate function
+            exit(mnet_server_fault(7012, 'nosuchfunction'));
+        }
+
+    } else if ($callstack[0] == 'repository') {
+        // Break out the callstack into its elements
+        list($base, $plugin, $filename, $methodname) = $callstack;
+
+        if ($filename == 'repository.class.php') {
+            $pluginclass = 'repository_' . $plugin;
+            $includefile = '/repository/'.$plugin.'/repository.class.php';
+            debugging(print_r($includefile,true));
             $response    = mnet_server_invoke_method($includefile, $methodname, $method, $payload, $pluginclass);
             $response = mnet_server_prepare_response($response);
             echo $response;
@@ -698,167 +714,9 @@ function mnet_system($method, $params, $hostinfo) {
         }
 
         return $services;
-    } elseif ('system/retrieveFile' == $method) {
-        global $DB, $USER;
-
-        $USER = $DB->get_record('user',array('username' => $params[0], 'mnethostid' => $hostinfo->id));
-        $pathnamehash = $params[1];
-        $fs = get_file_storage();
-    
-        $sf = $fs->get_file_by_hash($pathnamehash);
-     
-        $contents = base64_encode($sf->get_content());
-    
-        return array($contents, $sf->get_filename());
-    } elseif ('system/listFiles' == $method) {
-
-        global $DB, $USER;
-      
-        $USER = $DB->get_record('user',array('username' => $params[0], 'mnethostid' => $hostinfo->id));
-
-        $ret = array();
-        $search = '';
-        // no login required
-        $ret['nologin'] = true;
-        // todo: link to file manager
-        $ret['manage'] = $CFG->wwwroot .'/files/index.php'; // temporary
-
-        $browser = get_file_browser();
-        $itemid = null;
-        $filename = null;
-        $filearea = null;
-        $path = '/';
-        $ret['dynload'] = false;
-
-        if ($fileinfo = $browser->get_file_info(get_system_context(), $filearea, $itemid, $path, $filename)) {
-            
-            $ret['path'] = array();
-            $params = $fileinfo->get_params();
-            $filearea = $params['filearea'];
-            //todo: fix this call, and similar ones here and in build_tree - encoding path works only for real folders
-            $ret['path'][] = _encode_path($filearea, $path, $fileinfo->get_visible_name());
-            if ($fileinfo->is_directory()) {
-                $level = $fileinfo->get_parent();
-                while ($level) {
-                    $params = $level->get_params();
-                    $ret['path'][] = _encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
-                    $level = $level->get_parent();
-                }
-            }
-            $filecount = build_tree($fileinfo, $search, $ret['dynload'], $ret['list']);
-            $ret['path'] = array_reverse($ret['path']);
-        } else {
-            // throw some "context/filearea/item/path/file not found" exception?
-        }
-
-        if (empty($ret['list'])) {
-            throw new repository_exception('emptyfilelist', 'repository_local');
-        } else {   
-                return $ret;       
-        }
-    }
+    }  
     exit(mnet_server_fault(7019, 'nosuchfunction'));
 }
-
- /**
-     *
-     * @param <type> $filearea
-     * @param <type> $path
-     * @param <type> $visiblename
-     * @return <type>
-     */
-    function _encode_path($filearea, $path, $visiblename) {
-        return array('path'=>serialize(array($filearea, $path)), 'name'=>$visiblename);
-    }
-
- /**
-     * Builds a tree of files, to be used by get_listing(). This function is
-     * then called recursively.
-     *
-     * @param $fileinfo an object returned by file_browser::get_file_info()
-     * @param $search searched string
-     * @param $dynamicmode bool no recursive call is done when in dynamic mode
-     * @param $list - the array containing the files under the passed $fileinfo
-     * @returns int the number of files found
-     *
-     * todo: take $search into account, and respect a threshold for dynamic loading
-     */
-    function build_tree($fileinfo, $search, $dynamicmode, &$list) {
-        global $CFG;
-    
-        $filecount = 0;
-        $children = $fileinfo->get_children();
-   
-        foreach ($children as $child) {
-            $filename = $child->get_visible_name();
-            $filesize = $child->get_filesize();
-            $filesize = $filesize ? display_size($filesize) : '';
-            $filedate = $child->get_timemodified();
-            $filedate = $filedate ? userdate($filedate) : '';
-            $filetype = $child->get_mimetype();
-
-            if ($child->is_directory()) {
-                $path = array();
-                $level = $child->get_parent();
-                while ($level) {
-                    $params = $level->get_params();
-                    $path[] = _encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
-                    $level = $level->get_parent();
-                }
-
-                $tmp = array(
-                    'title' => $child->get_visible_name(),
-                    'size' => 0,
-                    'date' => $filedate,
-                    'path' => array_reverse($path),
-                    'thumbnail' => $CFG->pixpath .'/f/folder.gif'
-                );
-
-              
-                    $_search = $search;
-                    if ($search && stristr($tmp['title'], $search) !== false) {
-                        $_search = false;
-                    }
-                    $tmp['children'] = array();
-                    $_filecount = build_tree($child, $_search, $dynamicmode, $tmp['children']);
-                    if ($search && $_filecount) {
-                        $tmp['expanded'] = 1;
-                    }
-
-             
-
-                if (!$search || $_filecount || (stristr($tmp['title'], $search) !== false)) {
-                    $list[] = $tmp;
-                    $filecount += $_filecount;
-                }
-
-            } else { // not a directory
-                // skip the file, if we're in search mode and it's not a match
-                if ($search && (stristr($filename, $search) === false)) {
-                    continue;
-                }
-
-                //retrieve the stored file id
-                  $fs = get_file_storage();
-                  $params = $child->get_params();
-              
-                  $pathnamehash = $fs->get_pathname_hash($params['contextid'], $params['filearea'], $params['itemid'], $params['filepath'], $params['filename']);
-   
-
-                $list[] = array(
-                    'title' => $filename,
-                    'size' => $filesize,
-                    'date' => $filedate,          
-                   'source' => $pathnamehash,
-                    'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo_from_type("icon", $filetype)
-                );
-            
-                $filecount++;
-            }
-        }
-
-        return $filecount;
-    }
 
 /**
  * Initialize the object (if necessary), execute the method or function, and 

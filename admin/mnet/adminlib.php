@@ -41,6 +41,12 @@ function mnet_get_functions($type, $parentname) {
         $filename = $CFG->dirroot . $relname;
         require_once($CFG->libdir . '/portfoliolib.php');
         $publishes = (array)portfolio_static_function($parentname, 'mnet_publishes');
+    } else if ('repository' == $type) {
+        $docname = 'repository.class.php';
+        $relname = '/repository/' . $parentname . '/'. $docname;
+        $filename = $CFG->dirroot . $relname;
+        require_once($CFG->dirroot . '/repository/lib.php');
+        $publishes = (array)repository_static_function($parentname, 'mnet_publishes');
     } else {
         // auth or enrol
         $relname  = '/'.$type.'/'.$parentname.'/'.$docname;
@@ -189,6 +195,12 @@ function upgrade_RPC_functions($returnurl) {
     if ($plugins = get_list_of_plugins('portfolio/type')) {
         foreach ($plugins as $p) {
             mnet_get_functions('portfolio', $p);
+        }
+    }
+
+    if ($plugins = get_list_of_plugins('repository')) {
+        foreach ($plugins as $p) {
+            mnet_get_functions('repository', $p);
         }
     }
 }
