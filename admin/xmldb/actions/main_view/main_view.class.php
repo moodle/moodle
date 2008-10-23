@@ -50,6 +50,7 @@ class main_view extends XMLDBAction {
             'gotolastused' => 'xmldb',
             'checkindexes' => 'xmldb',
             'checkdefaults' => 'xmldb',
+            'checkforeignkeys' => 'xmldb',
             'checkbigints' => 'xmldb'
         ));
     }
@@ -95,6 +96,7 @@ class main_view extends XMLDBAction {
         if ($DB->get_dbfamily() == 'mysql' || $DB->get_dbfamily() == 'postgres') {
             $b .= '&nbsp;<a href="index.php?action=check_bigints">[' . $this->str['checkbigints'] . ']</a>';
         }
+        $b .= '&nbsp;<a href="index.php?action=check_foreign_keys">[' . $this->str['checkforeignkeys'] . ']</a>';
         $b .= '</p>';
     /// Send buttons to output
         $o .= $b;
