@@ -210,14 +210,14 @@ class moodle_list{
      * @return integer $offset + how many toplevel items where there in this list.
      *
      */
-    function list_from_records($paged = false, $offset =1){
+    function list_from_records($paged = false, $offset = 1){
         $this->paged = $paged;
         $this->offset = $offset;
         $this->get_records();
         $records = $this->records;
         $page = $this->page;
         if (!empty($page)) {
-            $this->firstitem = ($page-1) * $this->itemsperpage + 1;
+            $this->firstitem = ($page - 1) * $this->itemsperpage;
             $this->lastitem = $this->firstitem + $this->itemsperpage - 1;
         }
         $itemiter = $offset;
@@ -420,13 +420,13 @@ class moodle_list{
             $this->move_item_right($right);
         } else if (!empty($moveup)) {
             $this->move_item_up_down('up', $moveup);
-            if ($moveup == $this->items[$this->firstitem -1]->id){//redirect to page that item has been moved to.
+            if ($moveup == $this->items[$this->firstitem - 1]->id){//redirect to page that item has been moved to.
                 $this->page --;
                 $this->pageurl->params(array($this->pageparamname => $this->page));
             }
         } else if (!empty($movedown)) {
             $this->move_item_up_down('down', $movedown);
-            if ($movedown == $this->items[$this->lastitem -1]->id){//redirect to page that item has been moved to.
+            if ($movedown == $this->items[$this->lastitem - 1]->id){//redirect to page that item has been moved to.
                 $this->page ++;
                 $this->pageurl->params(array($this->pageparamname => $this->page));
             }
