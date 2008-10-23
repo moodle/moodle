@@ -89,6 +89,11 @@ function repository_get_client($context) {
 .fp-grid p{margin:0;padding:0;background: #FFFFCC}
 .fp-grid .label{height:48px;text-align:center}
 .fp-grid span{background: #EEF9EB;color:gray}
+/* Fix for IE6 */
+* html .yui-skin-sam .yui-panel .hd{
+    margin-right: -10px;
+    width: 660px;
+}
 </style>
 EOD;
 
@@ -709,7 +714,7 @@ _client.makepage = function() {
     if(_client.ds.pages) {
         str += '<div class="fp-paging" id="paging-$suffix">';
         for(var i = 1; i <= _client.ds.pages; i++) {
-            if(!_client.ds.search_result){ 
+            if(!_client.ds.search_result){
                     str += '<a onclick="repository_client_$suffix.req('+_client.repositoryid+', '+i+', 0)" href="###">';
             } else {
                     str += '<a onclick="repository_client_$suffix.search_paging('+_client.repositoryid+', '+i+')" href="###">';
@@ -866,17 +871,17 @@ success: function(o) {
         width : "30em",
         fixedcenter : true,
         zindex: 766667,
-        visible : false, 
+        visible : false,
         constraintoviewport : true,
-        buttons : [ 
+        buttons : [
             { text:"Submit",handler: function() {
                 _client.viewbar.set('disabled', false); _client.loading('load');
                 YAHOO.util.Connect.setForm('fp-search-form', false, false);
                 this.cancel();
                 var trans = YAHOO.util.Connect.asyncRequest('POST',
                     '$CFG->httpswwwroot/repository/ws.php?action=search&env='+_client.env, _client.req_cb);
-                },isDefault:true 
-            }, 
+                },isDefault:true
+            },
             {text:"Cancel",handler:function() {this.cancel()}}
         ]
     });
