@@ -40,7 +40,7 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->libdir . '/moodlelib.php');
 
 class moodlelib_test extends UnitTestCase {
-    
+
     var $user_agents = array(
             'MSIE' => array(
                 '5.5' => array('Windows 2000' => 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0)'),
@@ -102,8 +102,9 @@ class moodlelib_test extends UnitTestCase {
         $this->assertFalse(address_in_subnet('  2.1.2.3 ', '  123.121.234.1  , 1.1.1.1/16,2.2.,3.3.3.3-6  '));
         $this->assertFalse(address_in_subnet('  2.3.234.1  ', '  123.121.234.1  , 1.1.1.1/16,2.2.,3.3.3.3-6  '));
         $this->assertFalse(address_in_subnet('  3.3.3.7  ', '  123.121.234.1  , 1.1.1.1/16,2.2.,3.3.3.3-6  '));
+        $this->assertFalse(address_in_subnet('172.16.1.142', '172.16.1.143/148'));
     }
-    
+
     /**
      * Modifies $_SERVER['HTTP_USER_AGENT'] manually to check if check_browser_version 
      * works as expected.
@@ -128,7 +129,7 @@ class moodlelib_test extends UnitTestCase {
         $this->assertTrue(check_browser_version('Firefox', '1.5'));
         $this->assertFalse(check_browser_version('Firefox', '3.0'));        
     }
-    
+
     function test_optional_param()
     {
         $_POST['username'] = 'post_user';   
@@ -141,7 +142,7 @@ class moodlelib_test extends UnitTestCase {
         unset($_GET['username']);
         $this->assertEqual(optional_param('username', 'default_user'), 'default_user');
     }
-    
+
     /**
      * Used by {@link optional_param()} and {@link required_param()} to
      * clean the variables and/or cast to specific types, based on
