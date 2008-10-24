@@ -38,6 +38,15 @@
 require_once($CFG->libdir.'/dml/moodle_database.php');
 
 /**
+ * DML exception class, use instead of error() in dml code.
+ */
+class dml_exception extends moodle_exception {
+    function __construct($errorcode, $a=NULL, $debuginfo=null) {
+        parent::__construct($errorcode, '', '', $a, $debuginfo);
+    }
+}
+
+/**
  * Sets up global $DB moodle_database instance
  * @return void
  */
