@@ -65,11 +65,10 @@ class repository_remotemoodle extends repository {
      * @param <type> $username
      * @return <type>
      */
-    public function getFileList($username) {
+    public function getFileList($username, $search) {
         global $DB, $USER, $MNET_REMOTE_CLIENT, $CFG;
         $USER = $DB->get_record('user',array('username' => $username, 'mnethostid' => $MNET_REMOTE_CLIENT->id));
         $ret = array();
-        $search = '';
         $ret['nologin'] = true;
         $ret['manage'] = $CFG->wwwroot .'/files/index.php'; // temporary
         $browser = get_file_browser();
@@ -217,7 +216,7 @@ class repository_remotemoodle extends repository {
      * @param <type> $search_text
      * @return <type>
      */
-    public function search($search_text) {
+    public function search($search_text) {       
         return $this->get_listing('', $search_text);
     }
 
@@ -271,7 +270,8 @@ class repository_remotemoodle extends repository {
         $client = new mnet_xmlrpc_client();
       
         $client->set_method('repository/remotemoodle/repository.class.php/getFileList');
-        $client->add_param($USER->username); 
+        $client->add_param($USER->username);
+        $client->add_param($search);
          
         $client->send($mnet_peer);
         
