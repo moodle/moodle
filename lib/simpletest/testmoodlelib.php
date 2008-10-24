@@ -54,8 +54,7 @@ class moodlelib_test extends UnitTestCase {
         $this->assertFalse(address_in_subnet('  2.1.2.3 ', '  123.121.234.1  , 1.1.1.1/16,2.2.,3.3.3.3-6  '));
         $this->assertFalse(address_in_subnet('  2.3.234.1  ', '  123.121.234.1  , 1.1.1.1/16,2.2.,3.3.3.3-6  '));
         $this->assertFalse(address_in_subnet('  3.3.3.7  ', '  123.121.234.1  , 1.1.1.1/16,2.2.,3.3.3.3-6  '));
+        $this->assertFalse(address_in_subnet('172.16.1.142', '172.16.1.143/148'));
     }
-    
 }
-
 ?>
