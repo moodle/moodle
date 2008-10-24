@@ -1,15 +1,15 @@
 <?php
 /**
- * repository_local class
+ * repository_remotemoodle class
  * This is a subclass of repository class
- *
+ * @author Jerome Mouneyrac
  * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
+
 require_once($CFG->dirroot.'/repository/lib.php');
-/**
- *
- */
+
+
 class repository_remotemoodle extends repository {
 
     /**
@@ -26,6 +26,10 @@ class repository_remotemoodle extends repository {
         parent::__construct($repositoryid, $context, $options);
     }
 
+    /**
+     *
+     * @return <type>
+     */
     public static function mnet_publishes() {
         $pf= array();
         $pf['name']        = 'remoterep'; // Name & Description go in lang file
@@ -35,32 +39,39 @@ class repository_remotemoodle extends repository {
         return array($pf);
     }
 
-      public static function retrieveFile($username, $pathnamehash) {
-          global $DB, $USER, $MNET_REMOTE_CLIENT;
-
-      //  $USER = $DB->get_record('user',array('username' => $username, 'mnethostid' => $MNET_REMOTE_CLIENT->id));
-
+    /**
+     *
+     * @global <type> $DB
+     * @global <type> $USER
+     * @global <type> $MNET_REMOTE_CLIENT
+     * @param <type> $username
+     * @param <type> $pathnamehash
+     * @return <type>
+     */
+    public static function retrieveFile($username, $pathnamehash) {
+        global $DB, $USER, $MNET_REMOTE_CLIENT;
         $fs = get_file_storage();
-
         $sf = $fs->get_file_by_hash($pathnamehash);
-
         $contents = base64_encode($sf->get_content());
-
         return array($contents, $sf->get_filename());
     }
 
+    /**
+     *
+     * @global <type> $DB
+     * @global <type> $USER
+     * @global <type> $MNET_REMOTE_CLIENT
+     * @global <type> $CFG
+     * @param <type> $username
+     * @return <type>
+     */
     public function getFileList($username) {
-          global $DB, $USER, $MNET_REMOTE_CLIENT, $CFG;
-
+        global $DB, $USER, $MNET_REMOTE_CLIENT, $CFG;
         $USER = $DB->get_record('user',array('username' => $username, 'mnethostid' => $MNET_REMOTE_CLIENT->id));
-
         $ret = array();
         $search = '';
-        // no login required
         $ret['nologin'] = true;
-        // todo: link to file manager
         $ret['manage'] = $CFG->wwwroot .'/files/index.php'; // temporary
-
         $browser = get_file_browser();
         $itemid = null;
         $filename = null;
@@ -73,7 +84,6 @@ class repository_remotemoodle extends repository {
             $ret['path'] = array();
             $params = $fileinfo->get_params();
             $filearea = $params['filearea'];
-            //todo: fix this call, and similar ones here and in build_tree - encoding path works only for real folders
             $ret['path'][] = repository_remotemoodle::_encode_path($filearea, $path, $fileinfo->get_visible_name());
             if ($fileinfo->is_directory()) {
                 $level = $fileinfo->get_parent();
@@ -85,19 +95,17 @@ class repository_remotemoodle extends repository {
             }
             $filecount = repository_remotemoodle::build_tree($fileinfo, $search, $ret['dynload'], $ret['list']);
             $ret['path'] = array_reverse($ret['path']);
-        } else {
-            // throw some "context/filearea/item/path/file not found" exception?
         }
 
         if (empty($ret['list'])) {
             throw new repository_exception('emptyfilelist', 'repository_local');
         } else {
-                return $ret;
+            return $ret;
         }
         
     }
 
-     /**
+    /**
      *
      * @param <type> $filearea
      * @param <type> $path
@@ -108,7 +116,7 @@ class repository_remotemoodle extends repository {
         return array('path'=>serialize(array($filearea, $path)), 'name'=>$visiblename);
     }
 
- /**
+   /**
      * Builds a tree of files, to be used by get_listing(). This function is
      * then called recursively.
      *
@@ -151,18 +159,15 @@ class repository_remotemoodle extends repository {
                     'thumbnail' => $CFG->pixpath .'/f/folder.gif'
                 );
 
-
-                    $_search = $search;
-                    if ($search && stristr($tmp['title'], $search) !== false) {
-                        $_search = false;
-                    }
-                    $tmp['children'] = array();
-                    $_filecount = repository_remotemoodle::build_tree($child, $_search, $dynamicmode, $tmp['children']);
-                    if ($search && $_filecount) {
-                        $tmp['expanded'] = 1;
-                    }
-
-
+                $_search = $search;
+                if ($search && stristr($tmp['title'], $search) !== false) {
+                    $_search = false;
+                }
+                $tmp['children'] = array();
+                $_filecount = repository_remotemoodle::build_tree($child, $_search, $dynamicmode, $tmp['children']);
+                if ($search && $_filecount) {
+                    $tmp['expanded'] = 1;
+                }
 
                 if (!$search || $_filecount || (stristr($tmp['title'], $search) !== false)) {
                     $list[] = $tmp;
@@ -176,11 +181,10 @@ class repository_remotemoodle extends repository {
                 }
 
                 //retrieve the stored file id
-                  $fs = get_file_storage();
-                  $params = $child->get_params();
+                $fs = get_file_storage();
+                $params = $child->get_params();
 
-                  $pathnamehash = $fs->get_pathname_hash($params['contextid'], $params['filearea'], $params['itemid'], $params['filepath'], $params['filename']);
-
+                $pathnamehash = $fs->get_pathname_hash($params['contextid'], $params['filearea'], $params['itemid'], $params['filepath'], $params['filename']);
 
                 $list[] = array(
                     'title' => $filename,
@@ -193,7 +197,6 @@ class repository_remotemoodle extends repository {
                 $filecount++;
             }
         }
-
         return $filecount;
     }
 
@@ -206,8 +209,6 @@ class repository_remotemoodle extends repository {
      */
     public function print_login($ajax = true) {
         global $SESSION;
-        // TODO
-        // Return file list in moodle
         return $this->get_listing();
     }
 
@@ -225,8 +226,7 @@ class repository_remotemoodle extends repository {
      * @global <type> $MNET
      */
     private function ensure_environment() {
-        global $MNET;
-         
+        global $MNET;      
         if (empty($MNET)) {
             $MNET = new mnet_environment();
             $MNET->init();
@@ -264,14 +264,10 @@ class repository_remotemoodle extends repository {
       
         $host = $DB->get_record('mnet_host',array('id' => $this->options['peer']));
              
-      //  $mnetauth = get_auth_plugin('mnet');
-      //  $url      = $mnetauth->start_jump_session($host->id, '');
-     
         $mnet_peer = new mnet_peer();
         $mnet_peer->set_wwwroot($host->wwwroot);
   
-        //connect to the remote moodle and retrieve the list of files
-       
+        //connect to the remote moodle and retrieve the list of files       
         $client = new mnet_xmlrpc_client();
       
         $client->set_method('repository/remotemoodle/repository.class.php/getFileList');
@@ -291,7 +287,7 @@ class repository_remotemoodle extends repository {
 
    
 
-      /**
+    /**
      * Download a file
      * @global object $CFG
      * @param string $url the url of file
