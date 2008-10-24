@@ -23,6 +23,20 @@ $courseid = required_param('id', PARAM_INT);
 $groupid  = optional_param('group', false, PARAM_INT);
 $userid   = optional_param('user', false, PARAM_INT);
 $action   = groups_param_action();
+// Support either single group= parameter, or array groups[]
+if ($groupid) {
+    $groupids=array($groupid);
+} else {
+    $groupids=array();
+    if (isset($_REQUEST['groups'])) {
+        foreach ($_REQUEST['groups'] as $groupid) {
+            if ($groupid = clean_param($groupid, PARAM_INT)) {
+                $groupids[]=$groupid;
+            }
+        }
+    }
+}
+$singlegroup=count($groupids) == 1;
 
 $returnurl = $CFG->wwwroot.'/group/index.php?id='.$courseid;
 
@@ -42,13 +56,24 @@ if (! has_capability('moodle/course:managegroups', $context)) {
     redirect(); //"group.php?id=$course->id");   // Not allowed to see all groups
 }
 
+// Check for multiple/no group errors
+if(!$singlegroup) {
+    switch($action) {
+        case 'ajax_getmembersingroup':
+        case 'showgroupsettingsform':
+        case 'showaddmembersform':
+        case 'updatemembers':
+            print_error('errorselectone','group',$returnurl);
+    }
+}
+
 switch ($action) {
     case false: //OK, display form.
         break;
 
     case 'ajax_getmembersingroup':
         $roles = array();
-        if ($groupmemberroles = groups_get_members_by_role($groupid,$courseid,'u.id,u.firstname,u.lastname')) {
+        if ($groupmemberroles = groups_get_members_by_role($groupids[0],$courseid,'u.id,u.firstname,u.lastname')) {
             foreach($groupmemberroles as $roleid=>$roledata) {
                 $shortroledata=new StdClass;
                 $shortroledata->name=$roledata->name;
@@ -66,7 +91,11 @@ switch ($action) {
         die;  // Client side JavaScript takes it from here.
 
     case 'deletegroup':
-        redirect('group.php?delete=1&amp;courseid='.$courseid.'&amp;id='.$groupid);
+        if(count($groupids)==0) {
+            print_error('errorselectsome','group',$returnurl);            
+        }
+        $groupidlist=implode(',',$groupids);
+        redirect('delete.php?courseid='.$courseid.'&groups='.$groupidlist);
         break;
 
     case 'showcreateorphangroupform':
@@ -78,7 +107,7 @@ switch ($action) {
         break;
 
     case 'showgroupsettingsform':
-        redirect('group.php?courseid='.$courseid.'&amp;id='.$groupid);
+        redirect('group.php?courseid='.$courseid.'&amp;id='.$groupids[0]);
         break;
 
     case 'updategroups': //Currently reloading.
@@ -88,7 +117,7 @@ switch ($action) {
         break;
 
     case 'showaddmembersform':
-        redirect('members.php?group='.$groupid);
+        redirect('members.php?group='.$groupids[0]);
         break;
 
     case 'updatemembers': //Currently reloading.
@@ -116,19 +145,18 @@ $currenttab = 'groups';
 require('tabs.php');
 
 $disabled = 'disabled="disabled"';
-
-$showeditgroupsettingsform_disabled = $disabled;
-$deletegroup_disabled = $disabled;
-$showcreategroupform_disabled = $disabled;
-
-if (!empty($groupid)) {
+if (ajaxenabled()) {
+    // Some buttons are enabled if single group selected
+    $showaddmembersform_disabled = $singlegroup ? '' : $disabled;
+    $showeditgroupsettingsform_disabled = $singlegroup ? '' : $disabled;
+    $deletegroup_disabled = count($groupids)>0 ? '' : $disabled;
+} else {
+    // Do not disable buttons. The buttons work based on the selected group,
+    // which you can change without reloading the page, so it is not appropriate
+    // to disable them if no group is selected.
     $showaddmembersform_disabled = '';
     $showeditgroupsettingsform_disabled = '';
     $deletegroup_disabled = '';
-} else {
-    $deletegroup_disabled = $disabled;
-    $showeditgroupsettingsform_disabled = $disabled;
-    $showaddmembersform_disabled = $disabled;
 }
 
 print_heading(format_string($course->shortname) .' '.$strgroups, 'center', 3);
@@ -145,30 +173,32 @@ echo "<td>\n";
 echo '<p><label for="groups"><span id="groupslabel">'.get_string('groups').':</span><span id="thegrouping">&nbsp;</span></label></p>'."\n";
 
 if (ajaxenabled()) {
-    $onchange = 'membersCombo.refreshMembers(this.options[this.selectedIndex].value);';
+    $onchange = 'membersCombo.refreshMembers();';
 } else {
     $onchange = '';
 }
 
 
-echo '<select name="group" id="groups" size="15" class="select" onchange="'.$onchange.'"'."\n";
-echo ' onclick="window.status=this.options[this.selectedIndex].title;" onmouseout="window.status=\'\';">'."\n";
+echo '<select name="groups[]" multiple="multiple" id="groups" size="15" class="select" onchange="'.$onchange.'"'."\n";
+echo ' onclick="window.status=this.selectedIndex==-1 ? \'\' : this.options[this.selectedIndex].title;" onmouseout="window.status=\'\';">'."\n";
 
 $groups = groups_get_all_groups($courseid);
-
-$sel_groupid = 0;
+$selectedname = '&nbsp;';
 
 if ($groups) {
     // Print out the HTML
     foreach ($groups as $group) {
         $select = '';
-        if ($groupid == $group->id) {
-            $select = ' selected="selected"';
-            $sel_groupid = $group->id;
-        }
         $usercount = (int)count_records('groups_members', 'groupid', $group->id);
         $groupname = format_string($group->name).' ('.$usercount.')';
-
+        if (in_array($group->id,$groupids)) {
+            $select = ' selected="selected"';
+            if ($singlegroup) {
+                // Only keep selected name if there is one group selected
+                $selectedname = $groupname;
+            }
+        }
+        
         echo "<option value=\"{$group->id}\"$select title=\"$groupname\">$groupname</option>\n";
     }
 } else {
@@ -192,7 +222,10 @@ echo '<p><input type="submit" name="act_showautocreategroupsform" id="showautocr
 
 echo '</td>'."\n";
 echo '<td>'."\n";
-echo '<p><label for="members"><span id="memberslabel">'.get_string('membersofselectedgroup', 'group').' </span><span id="thegroup">&nbsp;</span></label></p>'."\n";
+
+echo '<p><label for="members"><span id="memberslabel">'.
+    get_string('membersofselectedgroup', 'group').
+    ' </span><span id="thegroup">'.$selectedname.'</span></label></p>'."\n";
 //NOTE: the SELECT was, multiple="multiple" name="user[]" - not used and breaks onclick.
 echo '<select name="user" id="members" size="15" class="select"'."\n";
 echo ' onclick="window.status=this.options[this.selectedIndex].title;" onmouseout="window.status=\'\';">'."\n";
@@ -200,9 +233,8 @@ echo ' onclick="window.status=this.options[this.selectedIndex].title;" onmouseou
 $member_names = array();
 
 $atleastonemember = false;
-if ($sel_groupid) {
-
-    if ($groupmemberroles = groups_get_members_by_role($groupid,$courseid,'u.id,u.firstname,u.lastname')) {
+if ($singlegroup) {    
+    if ($groupmemberroles = groups_get_members_by_role($groupids[0],$courseid,'u.id,u.firstname,u.lastname')) {
         foreach($groupmemberroles as $roleid=>$roledata) {
             echo '<optgroup label="'.htmlspecialchars($roledata->name).'">';
             foreach($roledata->users as $member) {
