@@ -1616,7 +1616,7 @@ class grade_item extends grade_object {
         $sql = "SELECT DISTINCT go.userid
                   FROM {$CFG->prefix}grade_grades go
                        JOIN {$CFG->prefix}grade_items gi
-                       ON gi.id = go.itemid
+                       ON (gi.id = go.itemid AND gi.courseid={$this->courseid})
                        LEFT OUTER JOIN {$CFG->prefix}grade_grades g
                        ON (g.userid = go.userid AND g.itemid = $this->id)
                  WHERE gi.id <> $this->id AND g.id IS NULL";
