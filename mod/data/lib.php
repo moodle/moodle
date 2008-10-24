@@ -881,7 +881,7 @@ function data_get_participants($dataid) {
  *       @param string $template                                        *
  * output null                                                          *
  ************************************************************************/
-function data_print_template($template, $records, $data, $search='',$page=0, $return=false) {
+function data_print_template($template, $records, $data, $search='', $page=0, $return=false) {
     global $CFG;
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -924,11 +924,14 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
             $replacement[] = '';
             $replacement[] = '';
         }
+
+        $moreurl = $CFG->wwwroot . '/mod/data/view.php?d=' . $data->id . '&amp;rid=' . $record->id;
+        $search && $moreurl .= '&amp;filter=1';
         $patterns[]='##more##';
-        $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'"><img src="'.$CFG->pixpath.'/i/search.gif" class="iconsmall" alt="'.get_string('more', 'data').'" title="'.get_string('more', 'data').'" /></a>';
+        $replacement[] = '<a href="' . $moreurl . '"><img src="' . $CFG->pixpath . '/i/search.gif" class="iconsmall" alt="' . get_string('more', 'data') . '" title="' . get_string('more', 'data') . '" /></a>';
 
         $patterns[]='##moreurl##';
-        $replacement[] = $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id;
+        $replacement[] = $moreurl;
 
         $patterns[]='##user##';
         $replacement[] = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$record->userid.
@@ -1101,6 +1104,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
         //]]>
         </script>';
     echo '&nbsp;<input type="hidden" name="advanced" value="0" />';
+    echo '&nbsp;<input type="hidden" name="filter" value="1" />';
     echo '&nbsp;<input type="checkbox" id="advancedcheckbox" name="advanced" value="1" '.$checked.' onchange="showHideAdvSearch(this.checked);" /><label for="advancedcheckbox">'.get_string('advancedsearch', 'data').'</label>';
     echo '&nbsp;<input type="submit" value="'.get_string('savesettings','data').'" />';
     echo '<br />';

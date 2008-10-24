@@ -30,11 +30,12 @@
     require_once('pagelib.php');
 
 /// One of these is necessary!
-    $id    = optional_param('id', 0, PARAM_INT);  // course module id
-    $d     = optional_param('d', 0, PARAM_INT);   // database id
-    $rid   = optional_param('rid', 0, PARAM_INT);    //record id
-
-    $mode  = optional_param('mode', '', PARAM_ALPHA);    // Force the browse mode  ('single')
+    $id = optional_param('id', 0, PARAM_INT);  // course module id
+    $d = optional_param('d', 0, PARAM_INT);   // database id
+    $rid = optional_param('rid', 0, PARAM_INT);    //record id
+    $mode = optional_param('mode', '', PARAM_ALPHA);    // Force the browse mode  ('single')
+    $filter = optional_param('filter', 0, PARAM_BOOL);
+    // search filter will only be applied when $filter is true
 
     $edit = optional_param('edit', -1, PARAM_BOOL);
     $page = optional_param('page', 0, PARAM_INT);
@@ -143,8 +144,7 @@
         //(even if page 0 is revisited).
         //A false $paging flag generates advanced search results based on the fields input by the user. 
         //A true $paging flag generates davanced search results from the $SESSION global.
-        //(See lines 147-158)
-        
+
         $paging = optional_param('paging', NULL, PARAM_BOOL);
         if($page == 0 && !isset($paging)) {
             $paging = false;
@@ -221,6 +221,9 @@
         //Paging variable not used for standard search. Set it to null.
         $paging = NULL;
     }
+
+    // Disable search filters if $filter is not true:
+    $filter || $search = '';
 
     $textlib = textlib_get_instance();
     if ($textlib->strlen($search) < 2) {
@@ -577,8 +580,8 @@
             }
 
             if ($mode == 'single') {                  // Single template
-                $baseurl = 'view.php?d='.$data->id.'&amp;mode=single&amp;';
-
+                $baseurl = 'view.php?d=' . $data->id . '&amp;mode=single&amp;';
+                $search && $baseurl .= 'filter=1&amp;';
                 print_paging_bar($totalcount, $page, $nowperpage, $baseurl, $pagevar='page');
 
                 if (empty($data->singletemplate)){
