@@ -94,7 +94,7 @@ class repository_remotemoodle extends repository {
         } else {
                 return $ret;
         }
-        //return "toto";
+        
     }
 
      /**
@@ -280,6 +280,11 @@ class repository_remotemoodle extends repository {
         $client->send($mnet_peer);
         
         $services = $client->response;
+
+         if (empty($services)) {
+            echo json_encode(array('e'=>get_string('failtoretrievelist','repository_remotemoodle')));
+            exit;
+        }
 
         return $services;
     }
