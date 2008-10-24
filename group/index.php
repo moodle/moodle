@@ -12,7 +12,6 @@ require_once('../config.php');
 require_once('lib.php');
 
 ini_set('include_path', $CFG->libdir.'/pear'.PATH_SEPARATOR.ini_get('include_path'));
-require_once('HTML/AJAX/JSON.php');
 
 require_js(array('yui_yahoo', 'yui_dom', 'yui_utilities', 'yui_connection'));
 require_js('group/clientlib.js');
