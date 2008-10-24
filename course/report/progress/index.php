@@ -1,7 +1,8 @@
 <?php
-
 require_once('../../../config.php');
 global $DB;
+
+define('COMPLETION_REPORT_PAGE',50);
 
 // Get course
 $course=$DB->get_record('course',array('id'=>required_param('course',PARAM_INT)));
@@ -17,6 +18,9 @@ $firstnamesort=$sort=='firstname';
 $format=optional_param('format','',PARAM_ALPHA);
 $excel=$format=='excelcsv';
 $csv=$format=='csv' || $excel;
+
+// Whether to start at a particular position
+$start=optional_param('start',0,PARAM_INT);
 
 // Whether to show idnumber
 // TODO: This should really not be using a config option 'intended' for 
@@ -54,8 +58,8 @@ $activities=$completion->get_activities();
 if(count($activities)==0) {
     print_error('err_noactivities','completion',$reportsurl);
 }
-$progress=$completion->get_progress_all($firstnamesort,$group);
 
+$progress=$completion->get_progress_all($firstnamesort,$group,COMPLETION_REPORT_PAGE,$start);
 
 if($csv) {
     header('Content-Disposition: attachment; filename=progress.'.
@@ -93,17 +97,47 @@ if($csv) {
     groups_print_course_menu($course,$CFG->wwwroot.'/course/report/progress/?course='.$course->id);
 }
 
++// Do we need a paging bar?
+if($progress->total > COMPLETION_REPORT_PAGE) {
+    $pagingbar='<div class="completion_pagingbar">';
+
+    if($start>0) {
+        $newstart=$start-COMPLETION_REPORT_PAGE;
+        if($newstart<0) {
+            $newstart=0;
+        }
+        $pagingbar.=link_arrow_left(get_string('previous'),'./?course='.$course->id.
+            ($newstart ? '&amp;start='.$newstart : ''),false,'completion_prev');
+    }
+
+    $a=new StdClass;
+    $a->from=$start+1;
+    $a->to=$start+COMPLETION_REPORT_PAGE;
+    $a->total=$progress->total;
+    $pagingbar.='<p>'.get_string('reportpage','completion',$a).'</p>';
+
+    if($start+COMPLETION_REPORT_PAGE < $progress->total) {
+        $pagingbar.=link_arrow_right(get_string('next'),'./?course='.$course->id.
+            '&amp;start='.($start+COMPLETION_REPORT_PAGE),false,'completion_next');
+    }
+
+    $pagingbar.='</div>';    
+} else {
+    $pagingbar='';
+}
+
 // Okay, let's draw the table of progress info,
 
 // Start of table  
 if(!$csv) {
     print '<br class="clearer"/>'; // ugh
-    if(count($progress)==0) {
+    if(count($progress->users)==0) {
         print '<p class="nousers">'.get_string('err_nousers','completion').'</p>';
         print '<p><a href="'.$reportsurl.'">'.get_string('continue').'</a></p>';
         print_footer($course);
         exit;
     }
+    print $pagingbar;
     print '<table id="completion-progress" class="generaltable flexible boxaligncenter" style="text-align:left"><tr style="vertical-align:top">';
 
     // User heading / sort option
@@ -166,7 +200,7 @@ if($csv) {
 }
 
 // Row for each user
-foreach($progress as $user) {
+foreach($progress->users as $user) {
     // User name
     if($csv) {
         print csv_quote(fullname($user));
@@ -186,9 +220,9 @@ foreach($progress as $user) {
 
         // Get progress information and state
         if(array_key_exists($activity->id,$user->progress)) {
-            $progress=$user->progress[$activity->id];
-            $state=$progress->completionstate;
-            $date=userdate($progress->timemodified);
+            $thisprogress=$user->progress[$activity->id];
+            $state=$thisprogress->completionstate;
+            $date=userdate($thisprogress->timemodified);
         } else {
             $state=COMPLETION_INCOMPLETE;
             $date='';
@@ -233,6 +267,7 @@ if($csv) {
     exit;
 }
 print '</table>';
+print $pagingbar;
 
 print '<ul class="progress-actions"><li><a href="index.php?course='.$course->id.
     '&amp;format=csv">'.get_string('csvdownload','completion').'</a></li>

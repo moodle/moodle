@@ -608,22 +608,31 @@ class completion_info {
      *   last name
      * @param int $groupid Group ID or 0 (default)/false for all groups
      * @return Array of user objects (like mdl_user id, firstname, lastname, idnumber)
+     * @param int $pagesize Number of users to actually return (0 = unlimited)
+     * @param int $start User to start at if paging (0 = first set)
+     * @return Object with ->total and ->start (same as $start) and ->users;
+     *   an array of user objects (like mdl_user id, firstname, lastname)
      *   containing an additional ->progress array of coursemoduleid => completionstate
      */
-    public function get_progress_all($sortfirstname=false, $groupid=0) {
+    public function get_progress_all($sortfirstname=false, $groupid=0,
+  +     $pagesize=0,$start=0) {
         global $CFG, $DB;
+        $resultobject=new StdClass;
 
         // Get list of applicable users
         $users = $this->internal_get_tracked_users($sortfirstname, $groupid);
+        $resultobject->start=$start;
+        $resultobject->total=count($users);
+        $users=array_slice($users,$start,$pagesize);
 
         // Get progress information for these users in groups of 1, 000 (if needed)
         // to avoid making the SQL IN too long
-        $result = array();
+        $resultobject->users=array();
         $userids = array();
         foreach ($users as $user) {
             $userids[] = $user->id;
-            $result[$user->id] = $user;
-            $result[$user->id]->progress = array();
+            $resultobject->users[$user->id]=$user;
+            $resultobject->users[$user->id]->progress=array();            
         }
 
         for($i=0; $i<count($userids); $i+=1000) {
@@ -644,12 +653,12 @@ WHERE
                 $this->internal_systemerror('Failed to obtain completion progress');
             }
             foreach ($rs as $progress) {
-                $result[$progress->userid]->progress[$progress->coursemoduleid] = $progress;
+                $resultobject->users[$progress->userid]->progress[$progress->coursemoduleid]=$progress;
             }
             $rs->close();
         }
 
-        return $result;
+        return $resultobject;
     }
 
     public function inform_grade_changed($cm, $item, $grade, $deleted) {

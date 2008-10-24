@@ -2847,6 +2847,22 @@ body.notes .notesgroup {
 #course-report-progress-index .progress-actions {
   text-align:center;
 }
+#course-report-progress-index .completion_pagingbar {
+  margin:1em 0;
+  text-align:center;
+}
+#course-report-progress-index .completion_prev {
+  display:inline;
+  margin-right:2em;
+}
+#course-report-progress-index .completion_pagingbar p {
+  display:inline;
+  margin:0;
+}
+#course-report-progress-index .completion_next {
+  display:inline;
+  margin-left:2em;
+}
 
 /***
  *** Logs

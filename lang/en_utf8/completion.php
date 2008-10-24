@@ -42,6 +42,7 @@ $string['help_completionview']='requiring view to complete';
 $string['progress']='Student progress';
 $string['progress-title']='$a->user, $a->activity: $a->state $a->date';
 $string['progresstrackedroles'] = 'Progress-tracked roles';
+$string['reportpage']='Showing users {$a->from} to {$a->to} of {$a->total}.';
 $string['restoringcompletiondata']='Writing completion data';
 $string['saved']='Saved';
 $string['unlockcompletion']='Unlock completion options';
