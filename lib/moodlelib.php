@@ -7237,6 +7237,8 @@ function make_unique_id_code($extra='') {
  * Code for type 1 modified from user posted comments by mediator at
  * {@link http://au.php.net/manual/en/function.ip2long.php}
  *
+ * TODO one day we will have to make this work with IP6.
+ *
  * @param string $addr    The address you are checking
  * @param string $subnetstr    The string of subnet addresses
  * @return bool
@@ -7251,7 +7253,7 @@ function address_in_subnet($addr, $subnetstr) {
         $subnet = trim($subnet);
         if (strpos($subnet, '/') !== false) { /// type 1
             list($ip, $mask) = explode('/', $subnet);
-            if ($mask === '') {
+            if ($mask === '' || $mask > 32) {
                 $mask = 32;
             }
             $mask = 0xffffffff << (32 - $mask);
