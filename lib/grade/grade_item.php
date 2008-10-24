@@ -1636,14 +1636,14 @@ class grade_item extends grade_object {
         }
 
         // precreate grades - we need them to exist
-        $params = array($this->id);
+        $params = array($this->courseid, $this->id, $this->id);
         $sql = "SELECT DISTINCT go.userid
                   FROM {grade_grades} go
                        JOIN {grade_items} gi
-                       ON gi.id = go.itemid
+                       ON (gi.id = go.itemid AND gi.courseid = ?)
                        LEFT OUTER JOIN {grade_grades} g
                        ON (g.userid = go.userid AND g.itemid = ?)
-                 WHERE gi.id <> $this->id AND g.id IS NULL";
+                 WHERE gi.id <> ? AND g.id IS NULL";
         if ($missing = $DB->get_records_sql($sql, $params)) {
             foreach ($missing as $m) {
                 $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$m->userid), false);
