@@ -144,7 +144,7 @@ foreach($activities as $activity) {
     $activity->name=shorten_text(urldecode($activity->name));
 
     if($csv) {
-        print $sep.csv_quote($activity->name).$sep.csv_quote($datetext);
+        print $sep.csv_quote(strip_tags($activity->name)).$sep.csv_quote($datetext);
     } else {
         print '<th scope="col" class="'.$activity->datepassedclass.'">'.
             '<a href="'.$CFG->wwwroot.'/mod/'.$activity->modname.
