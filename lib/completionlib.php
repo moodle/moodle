@@ -615,7 +615,7 @@ class completion_info {
      *   containing an additional ->progress array of coursemoduleid => completionstate
      */
     public function get_progress_all($sortfirstname=false, $groupid=0,
-  +     $pagesize=0,$start=0) {
+        $pagesize=0,$start=0) {
         global $CFG, $DB;
         $resultobject=new StdClass;
 

@@ -97,7 +97,7 @@ if($csv) {
     groups_print_course_menu($course,$CFG->wwwroot.'/course/report/progress/?course='.$course->id);
 }
 
-+// Do we need a paging bar?
+// Do we need a paging bar?
 if($progress->total > COMPLETION_REPORT_PAGE) {
     $pagingbar='<div class="completion_pagingbar">';
 
