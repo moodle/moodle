@@ -17,6 +17,8 @@ $string['errorinvalidgroup'] = 'Error, invalid group $a';
 $string['erroreditgrouping'] = 'Error creating/updating grouping $a';
 $string['erroreditgroup'] = 'Error creating/updating group $a';
 $string['erroraddremoveuser'] = 'Error adding/removing user $a to group';
+$string['errorselectone'] = 'Please select a single group before choosing this option';
+$string['errorselectsome'] = 'Please select one or more groups before choosing this option';
 
 $string['groupings'] = 'Groupings';
 $string['grouping'] = 'Grouping';
@@ -32,6 +34,7 @@ $string['databaseupgradegroups'] = 'Groups version is now $a';
 
 $string['deletegroupingconfirm'] = 'Are you sure you want to delete grouping \'$a\'? (Groups in the grouping are not deleted.)';
 $string['deletegroupconfirm'] = 'Are you sure you want to delete group \'$a\'?';
+$string['deletegroupsconfirm'] = 'Are you sure you want to delete the following groups?';
 
 $string['editgroupingsettings'] = 'Edit grouping settings';
 $string['deletegrouping'] = 'Delete grouping';

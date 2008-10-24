@@ -19,6 +19,12 @@ $id       = optional_param('id', 0, PARAM_INT);
 $delete   = optional_param('delete', 0, PARAM_BOOL);
 $confirm  = optional_param('confirm', 0, PARAM_BOOL);
 
+// This script used to support group delete, but that has been moved. In case
+// anyone still links to it, let's redirect to the new script.
+if($delete) {
+    redirect('delete.php?courseid='.$courseid.'&groups='.$id);
+}
+
 if ($id) {
     if (!$group = $DB->get_record('groups', array('id'=>$id))) {
         print_error('invalidgroupid');

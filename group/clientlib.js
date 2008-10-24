@@ -123,15 +123,34 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
  * The Add/Remove Users button also needs to be disabled/enabled
  * depending on whether or not a group is selected
  */
-UpdatableMembersCombo.prototype.refreshMembers = function (groupId) {
-    // Add the loader gif image.
-    createLoaderImg("membersloader", "memberslabel", this.wwwRoot);
+UpdatableMembersCombo.prototype.refreshMembers = function () {
+
+    // Get group selector and check selection type
+    var selectEl = document.getElementById("groups");
+    var selectionCount=0,groupId=0;
+    if( selectEl ) {
+        for (var i = 0; i < selectEl.options.length; i++) {
+            if(selectEl.options[i].selected) {
+                selectionCount++;
+                if(!groupId) {
+                    groupId=selectEl.options[i].value;
+                }
+            }
+        }
+    }
+    var singleSelection=selectionCount == 1;
+
+    // Add the loader gif image (we only load for single selections)
+    if(singleSelection) {
+        createLoaderImg("membersloader", "memberslabel", this.wwwRoot);
+    }
  
     // Update the label.
-    var selectEl = document.getElementById("groups");
     var spanEl = document.getElementById("thegroup");
-    if (selectEl && selectEl.selectedIndex >= 0) {
+    if (singleSelection) {
         spanEl.innerHTML = selectEl.options[selectEl.selectedIndex].title;
+    } else {
+        spanEl.innerHTML = '&nbsp;';
     }
 
     // Clear the members list box.
@@ -142,11 +161,14 @@ UpdatableMembersCombo.prototype.refreshMembers = function (groupId) {
         }
     }
     
-    document.getElementById("showaddmembersform").disabled = false;
-    document.getElementById("showeditgroupsettingsform").disabled = false;
-    document.getElementById("deletegroup").disabled = false;
-    var sUrl = this.wwwRoot+"/group/index.php?id="+this.courseId+"&group="+groupId+"&act_ajax_getmembersingroup";
-    YAHOO.util.Connect.asyncRequest("GET", sUrl, this.connectCallback, null); 
+    document.getElementById("showaddmembersform").disabled = !singleSelection;
+    document.getElementById("showeditgroupsettingsform").disabled = !singleSelection;
+    document.getElementById("deletegroup").disabled = selectionCount == 0;
+
+    if(singleSelection) {
+        var sUrl = this.wwwRoot+"/group/index.php?id="+this.courseId+"&group="+groupId+"&act_ajax_getmembersingroup";
+        YAHOO.util.Connect.asyncRequest("GET", sUrl, this.connectCallback, null);
+    }
 };
 
 
