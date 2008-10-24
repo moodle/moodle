@@ -165,6 +165,10 @@ if ($hassiteconfig
                              'aimid' => get_string('aimid'),
                              'msnid' => get_string('msnid'),
                              'lastaccess' => get_string('lastaccess'))));
+
+        $temp->add(new admin_setting_configmulticheckbox('extrauserselectorfields',
+                get_string('extrauserselectorfields', 'admin'), get_string('configextrauserselectorfields', 'admin'), array('email' => '1'),
+                array('email' => get_string('email'), 'idnumber' => get_string('idnumber'), 'username' => get_string('username'), )));
     }
 
     $ADMIN->add('roles', $temp);
