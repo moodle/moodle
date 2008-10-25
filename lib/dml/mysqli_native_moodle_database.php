@@ -264,6 +264,20 @@ class mysqli_native_moodle_database extends moodle_database {
                 $info->auto_increment= false;
                 $info->unique        = null;
 
+            } else if (preg_match('/([a-z]*blob)/i', $rawcolumn->type, $matches)) {
+                $info->type          = $matches[1];
+                $info->meta_type     = 'B';
+                $info->max_length    = -1;
+                $info->scale         = null;
+                $info->not_null      = ($rawcolumn->null === 'NO');
+                $info->default_value = $rawcolumn->default;
+                $info->has_default   = is_null($info->default_value) ? false : true;
+                $info->primary_key   = false;
+                $info->binary        = true;
+                $info->unsigned      = null;
+                $info->auto_increment= false;
+                $info->unique        = null;
+
             } else if (preg_match('/enum\((.*)\)/i', $rawcolumn->type, $matches)) {
                 $info->type          = 'enum';
                 $info->meta_type     = 'C';
