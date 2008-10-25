@@ -4490,7 +4490,7 @@ class admin_setting_grade_profilereport extends admin_setting_configselect {
                 require_once($CFG->dirroot.'/grade/report/'.$plugin.'/lib.php');
                 $functionname = 'grade_report_'.$plugin.'_profilereport';
                 if (function_exists($functionname)) {
-                    $this->choices[$plugin] = get_string('modulename', 'gradereport_'.$plugin, NULL, $CFG->dirroot.'/grade/report/'.$plugin.'/lang/');
+                    $this->choices[$plugin] = get_string('modulename', 'gradereport_'.$plugin);
                 }
             }
         }
