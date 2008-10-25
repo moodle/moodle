@@ -6,12 +6,10 @@ class mysqli_native_moodle_recordset extends moodle_recordset {
 
     protected $result;
     protected $current;
-    protected $row;
 
     public function __construct($result) {
         $this->result  = $result;
         $this->current = $this->fetch_next();
-        $this->row     = 0;
     }
 
     public function __destruct() {
@@ -21,24 +19,25 @@ class mysqli_native_moodle_recordset extends moodle_recordset {
     private function fetch_next() {
         if ($row = $this->result->fetch_assoc()) {
             $row = array_change_key_case($row, CASE_LOWER);
-            $row = (object)$row;
         }
         return $row;
     }
 
     public function current() {
-        return $this->current;
+        return is_null($this->current) ? null : (object)$this->current;
     }
 
     public function key() {
-        return $this->row;
+    /// return first column value as key
+        if (is_null($this->current)) {
+            return false;
+        }
+        $key = reset($this->current);
+        return $key;
     }
 
     public function next() {
-        if ($this->current = $this->fetch_next()) {
-            $this->row++;
-        }
-        return $this->current;
+        $this->current = $this->fetch_next();
     }
 
     public function rewind() {
@@ -55,6 +54,5 @@ class mysqli_native_moodle_recordset extends moodle_recordset {
             $this->result  = null;
         }
         $this->current = null;
-        $this->row     = 0;
     }
 }
