@@ -236,11 +236,11 @@ class mysqli_native_moodle_database extends moodle_database {
                     $info->unique        = null;
                 }
 
-            } else if (preg_match('/decimal\((\d+),(\d+)\)/i', $rawcolumn->type, $matches)) {
-                $info->type          = 'decimal';
+            } else if (preg_match('/(decimal|double|float)\((\d+),(\d+)\)/i', $rawcolumn->type, $matches)) {
+                $info->type          = $matches[1];
                 $info->meta_type     = 'N';
-                $info->max_length    = $matches[1];
-                $info->scale         = $matches[2];
+                $info->max_length    = $matches[2];
+                $info->scale         = $matches[3];
                 $info->not_null      = ($rawcolumn->null === 'NO');
                 $info->default_value = $rawcolumn->default;
                 $info->has_default   = is_null($info->default_value) ? false : true;
