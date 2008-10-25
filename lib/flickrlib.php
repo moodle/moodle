@@ -70,6 +70,11 @@ class phpFlickr {
 
     function request ($command, $args = array())
     {
+        if ($command == 'upload') {
+            $filecontent = $args['photo'];
+            unset($args['photo']);
+        }
+
         //Sends a request to Flickr's REST endpoint via POST.
         if (substr($command,0,7) != "flickr.") {
             $command = "flickr." . $command;
@@ -77,23 +82,32 @@ class phpFlickr {
 
         //Process arguments, including method and login data.
         $args = array_merge(array("method" => $command, "format" => "php_serial", "api_key" => $this->api_key), $args);
+
         if (!empty($this->token)) {
             $args = array_merge($args, array("auth_token" => $this->token));
-        } elseif (!empty($this->token)) {
-            $args = array_merge($args, array("auth_token" => $this->token));
         }
+
         ksort($args);
         $auth_sig = "";
         foreach ($args as $key => $data) {
-            $auth_sig .= $key . $data;
+            if ($key != 'photo') {
+                $auth_sig .= $key . $data;
+            }
         }
+
         if (!empty($this->secret)) {
             $api_sig = md5($this->secret . $auth_sig);
             $args['api_sig'] = $api_sig;
         }
 
         //$this->req->addHeader("Connection", "Keep-Alive");
-        $ret = $this->curl->post($this->REST, $args);
+        if ($command != 'flickr.upload') {
+            $ret = $this->curl->post($this->REST, $args);
+        } else {
+            $ret = $this->curl->post($this->Upload, $args);
+            print_object($ret);die();
+        }
+
         $this->parsed_response = $this->clean_text_nodes(unserialize($ret));
         if ($this->parsed_response['stat'] == 'fail') {
             if ($this->die_on_error) die("The Flickr API returned the following error: #{$this->parsed_response['code']} - {$this->parsed_response['message']}");

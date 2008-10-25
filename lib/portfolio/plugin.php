@@ -37,32 +37,32 @@
 abstract class portfolio_plugin_base {
 
     /**
-    * boolean
     * whether this object needs writing out to the database
+    * @var boolean $dirty
     */
     protected $dirty;
 
     /**
-    * integer
     * id of instance
+    * @var integer $id
     */
     protected $id;
 
     /**
-    * string
     * name of instance
+    * @var string $name
     */
     protected $name;
 
     /**
-    * string
     * plugin this instance belongs to
+    * @var string $plugin
     */
     protected $plugin;
 
     /**
-    * boolean
     * whether this instance is visible or not
+    * @var boolean $visible
     */
     protected $visible;
 
@@ -239,7 +239,7 @@ abstract class portfolio_plugin_base {
         foreach ($config as $key => $value) {
             if (!in_array($key, $allowed)) {
                 $a = (object)array('property' => $key, 'class' => get_class($this));
-                throw new portfolio_export_exception($this->get('exporter'), 'invalidexportproperty', 'portfolio', $this->get_return_url(), $a);
+                throw new portfolio_export_exception($this->get('exporter'), 'invalidexportproperty', 'portfolio', null, $a);
             }
             $this->exportconfig[$key] = $value;
         }
@@ -261,7 +261,7 @@ abstract class portfolio_plugin_base {
         );
         if (!in_array($key, $allowed)) {
             $a = (object)array('property' => $key, 'class' => get_class($this));
-            throw new portfolio_export_exception($this->get('exporter'), 'invalidexportproperty', 'portfolio', $this->get_return_url(), $a);
+            throw new portfolio_export_exception($this->get('exporter'), 'invalidexportproperty', 'portfolio', null, $a);
         }
         if (!array_key_exists($key, $this->exportconfig)) {
             return null;
