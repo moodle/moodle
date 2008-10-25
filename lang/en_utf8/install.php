@@ -295,6 +295,7 @@ $string['mysql'] = 'MySQL (mysql)';
 $string['mysqli'] = 'Improved MySQL (mysqli)';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MySQL extension so that it can communicate with MySQL.  Please check your php.ini file or recompile PHP.';
 $string['mysqliextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MySQLi extension so that it can communicate with MySQL.  Please check your php.ini file or recompile PHP.  MySQLi extension is not available for PHP 4.';
+$string['nativemysqli'] = 'Improved MySQL (native/mysqli)';
 $string['oci8po'] = 'Oracle (oci8po)';
 $string['ociextensionisnotpresentinphp'] = 'PHP has not been properly configured with the OCI8 extension so that it can communicate with Oracle.  Please check your php.ini file or recompile PHP.';
 $string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';

@@ -57,7 +57,7 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return string
      */
     public function get_name() {
-        return get_string('nativemysqli', 'install'); //TODO: localise
+        return get_string('nativemysqli', 'install');
     }
 
     /**
@@ -66,7 +66,7 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return string
      */
     public function get_configuration_hints() {
-        return get_string('databasesettingssub_mysqlinative', 'install'); //TODO: localise
+        return get_string('databasesettingssub_mysqli', 'install');
     }
 
     /**

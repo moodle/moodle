@@ -166,6 +166,7 @@ mysql416required
 mysqlextensionisnotpresentinphp
 mysqliextensionisnotpresentinphp
 name
+nativemysqli
 newline
 next
 oci8po
