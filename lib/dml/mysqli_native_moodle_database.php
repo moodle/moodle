@@ -355,7 +355,13 @@ class mysqli_native_moodle_database extends moodle_database {
     public function change_database_structure($sql) {
         $this->writes++;
         $this->print_debug($sql);
-        return ($this->mysqli->query($sql) === TRUE);
+        $result = $this->mysqli->query($sql);
+        $this->reset_columns();
+        if ($result === false) {
+            $this->report_error($sql);
+            return false;
+        }
+        return true;
     }
 
     /**
