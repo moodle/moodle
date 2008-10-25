@@ -318,7 +318,7 @@ abstract class moodle_database {
             }
 
         } else {
-            print_error('typenotimplement');
+            throw new dml_exception('typenotimplement');
         }
         return array($sql, $params);
     }
@@ -358,7 +358,7 @@ abstract class moodle_database {
         }
         if ($dollar_count) {
             if ($count) {
-                print_error('mixedtypesqlparam');
+                throw new dml_exception('mixedtypesqlparam');
             }
             $type = SQL_PARAMS_DOLLAR;
             $count = $dollar_count;
@@ -366,7 +366,7 @@ abstract class moodle_database {
         }
         if ($q_count) {
             if ($count) {
-                print_error('mixedtypesqlparam');
+                throw new dml_exception('mixedtypesqlparam');
             }
             $type = SQL_PARAMS_QM;
             $count = $q_count;
@@ -385,7 +385,7 @@ abstract class moodle_database {
         }
 
         if ($count > count($params)) {
-            print_error('invalidqueryparam');
+            throw new dml_exception('invalidqueryparam');
         }
 
         if ($type & $allowed_types) { // bitwise AND
@@ -408,12 +408,12 @@ abstract class moodle_database {
             foreach ($named_matches[0] as $key) {
                 $key = trim($key, ':');
                 if (!array_key_exists($key, $params)) {
-                    print_error('missingkeyinsql', '', '', $key);
+                    throw new dml_exception('missingkeyinsql', '', '', $key);
                 }
                 $finalparams[$key] = $params[$key];
             }
             if ($count != count($finalparams)) {
-                print_error('duplicateparaminsql');
+                throw new dml_exception('duplicateparaminsql');
             }
 
             if ($target_type & SQL_PARAMS_QM) {
@@ -422,11 +422,11 @@ abstract class moodle_database {
             } else if ($target_type & SQL_PARAMS_NAMED) {
                 return array($sql, $finalparams, SQL_PARAMS_NAMED);
             } else {  // $type & SQL_PARAMS_DOLLAR
-                print_error('boundsyntaxnotsupport');
+                throw new dml_exception('boundsyntaxnotsupport');
             }
 
         } else if ($type == SQL_PARAMS_DOLLAR) {
-            print_error('boundsyntaxnotsupport');
+            throw new dml_exception('boundsyntaxnotsupport');
 
         } else { // $type == SQL_PARAMS_QM
             if (count($params) != $count) {
@@ -448,7 +448,7 @@ abstract class moodle_database {
                 }
                 return array($sql, $finalparams, SQL_PARAMS_NAMED);
             } else {  // $type & SQL_PARAMS_DOLLAR
-                print_error('boundsyntaxnotsupport');
+                throw new dml_exception('boundsyntaxnotsupport');
             }
         }
     }
@@ -1417,7 +1417,7 @@ abstract class moodle_database {
         $params = array();
         foreach ($conditions as $key=>$value) {
             if (is_int($key)) {
-                print_error('invalidnumkey');
+                throw new dml_exception('invalidnumkey');
             }
             if (is_null($value)) {
                 $where[] = "$key IS NULL";

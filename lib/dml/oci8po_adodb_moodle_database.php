@@ -13,12 +13,12 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
     public function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
         if ($prefix == '' and !$this->external) {
             //Enforce prefixes for everybody but mysql
-            print_error('prefixcannotbeempty', 'error', '', $this->get_dbfamily());
+            throw new dml_exception('prefixcannotbeempty', $this->get_dbfamily());
         }
         if (!$this->external and strlen($prefix) > 2) {
             //Max prefix length for Oracle is 2cc
             $a = (object)array('dbfamily'=>'oracle', 'maxlength'=>2);
-            print_error('prefixtoolong', 'error', '', $a);
+            throw new dml_exception('prefixtoolong', $a);
         }
         return parent::connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions);
     }

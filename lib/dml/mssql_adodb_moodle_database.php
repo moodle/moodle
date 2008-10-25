@@ -16,7 +16,7 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
     public function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
         if ($prefix == '' and !$this->external) {
             //Enforce prefixes for everybody but mysql
-            print_error('prefixcannotbeempty', 'error', '', $this->get_dbfamily());
+            throw new dml_exception('prefixcannotbeempty', $this->get_dbfamily());
         }
         return parent::connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions);
     }
