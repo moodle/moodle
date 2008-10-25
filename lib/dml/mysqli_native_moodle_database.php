@@ -853,7 +853,7 @@ class mysqli_native_moodle_database extends moodle_database {
         $arr = func_get_args();
         $s = implode(',', $arr);
         if ($s === '') {
-            //TODO: error
+            return "''";
         }
         return "CONCAT($s)";
     }
@@ -864,7 +864,7 @@ class mysqli_native_moodle_database extends moodle_database {
         }
         $s = implode(',', $elements);
         if ($s === '') {
-            //TODO: error
+            return "''";
         }
         return "CONCAT ($s)";
     }
