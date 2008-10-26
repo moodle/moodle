@@ -24,12 +24,12 @@ class mysqli_native_moodle_recordset extends moodle_recordset {
     }
 
     public function current() {
-        return is_null($this->current) ? null : (object)$this->current;
+        return (object)$this->current;
     }
 
     public function key() {
     /// return first column value as key
-        if (is_null($this->current)) {
+        if (!$this->current) {
             return false;
         }
         $key = reset($this->current);
@@ -45,7 +45,7 @@ class mysqli_native_moodle_recordset extends moodle_recordset {
     }
 
     public function valid() {
-        return !is_null($this->current);
+        return !empty($this->current);
     }
 
     public function close() {
