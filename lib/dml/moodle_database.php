@@ -422,11 +422,18 @@ abstract class moodle_database {
             } else if ($target_type & SQL_PARAMS_NAMED) {
                 return array($sql, $finalparams, SQL_PARAMS_NAMED);
             } else {  // $type & SQL_PARAMS_DOLLAR
-                throw new dml_exception('boundsyntaxnotsupport');
+                $sql = preg_replace_callback('/(?<!:):[a-z][a-z0-9_]*/',
+                                             create_function('$matches', 'static $i=0; $i++; return "\$".$i;'),
+                                             $sql);
+                return array($sql, array_values($finalparams), SQL_PARAMS_DOLLAR); // 0-based required
             }
 
         } else if ($type == SQL_PARAMS_DOLLAR) {
-            throw new dml_exception('boundsyntaxnotsupport');
+            if ($target_type & SQL_PARAMS_DOLLAR) {
+                return array($sql, array_values($params), SQL_PARAMS_DOLLAR); // 0-based required
+            } else {
+                throw new dml_exception('boundsyntaxnotsupport');
+            }
 
         } else { // $type == SQL_PARAMS_QM
             if (count($params) != $count) {
@@ -448,7 +455,10 @@ abstract class moodle_database {
                 }
                 return array($sql, $finalparams, SQL_PARAMS_NAMED);
             } else {  // $type & SQL_PARAMS_DOLLAR
-                throw new dml_exception('boundsyntaxnotsupport');
+                $sql = preg_replace_callback('/\?/',
+                                             create_function('$matches', 'static $i=0; $i++; return "\$".$i;'),
+                                             $sql);
+                return array($sql, array_values($params), SQL_PARAMS_DOLLAR); // 0-based required
             }
         }
     }
