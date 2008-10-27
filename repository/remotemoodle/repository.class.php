@@ -273,7 +273,14 @@ class repository_remotemoodle extends repository {
         $client->add_param($USER->username);
         $client->add_param($search);
          
-        $client->send($mnet_peer);
+        if (!$client->send($mnet_peer)) {
+            $message =" ";
+            foreach ($client->error as $errormessage) {
+                $message .= "ERROR: $errormessage . ";
+            }
+            echo json_encode(array('e'=>$message));
+            exit;
+        }
         
         $services = $client->response;
 
