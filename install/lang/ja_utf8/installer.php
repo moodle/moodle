@@ -291,6 +291,7 @@ $string['mysqlextensionisnotpresentinphp'] = 'PHPのMySQL拡張モジュール�
 $string['mysqli'] = 'Improved MySQL (mysqli)';
 $string['mysqliextensionisnotpresentinphp'] = 'PHPのMySQLi拡張モジュールが適切に設定されていないため、MySQLと通信できません。あなたのphp.iniファイルをチェックするか、PHPを再コンパイルしてください。MySQLi拡張モジュールは、PHP4では使用できません。';
 $string['name'] = '名称';
+$string['nativemysqli'] = 'Improved MySQL (ネイティブ/mysqli)';
 $string['next'] = '次へ';
 $string['oci8po'] = 'Oracle (oci8po)';
 $string['ociextensionisnotpresentinphp'] = 'PHPのOCI8拡張モジュールが適切に設定されていないため、Oracleと通信できません。あなたのphp.iniファイルをチェックするか、PHPを再コンパイルしてください。';
