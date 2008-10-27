@@ -55,15 +55,40 @@ class dml_test extends UnitTestCase {
     function test_fix_sql_params() {
         $DB = $this->tdb;
 
+        // Correct table placeholder substitution
+        $sql = "SELECT * FROM {testtable}";
+        $sqlarray = $DB->fix_sql_params($sql);
+        $this->assertEqual("SELECT * FROM {$DB->get_prefix()}testtable", $sqlarray[0]);
+
+        // Conversions of all param types
+        $sql = array();
+        $sql[SQL_PARAMS_NAMED]  = "SELECT * FROM {$DB->get_prefix()}testtable WHERE name = :name, course = :course";
+        $sql[SQL_PARAMS_QM]     = "SELECT * FROM {$DB->get_prefix()}testtable WHERE name = ?, course = ?";
+        $sql[SQL_PARAMS_DOLLAR] = "SELECT * FROM {$DB->get_prefix()}testtable WHERE name = \$1, course = \$2";
+
+        $params = array();
+        $params[SQL_PARAMS_NAMED]  = array('name'=>'first record', 'course'=>1);
+        $params[SQL_PARAMS_QM]     = array('first record', 1);
+        $params[SQL_PARAMS_DOLLAR] = array('first record', 1);
+
+        list($rsql, $rparams, $rtype) = $DB->fix_sql_params($sql[SQL_PARAMS_NAMED], $params[SQL_PARAMS_NAMED]);
+        $this->assertEqual($rsql, $sql[$rtype]);
+        $this->assertEqual($rparams, $params[$rtype]);
+
+        list($rsql, $rparams, $rtype) = $DB->fix_sql_params($sql[SQL_PARAMS_QM], $params[SQL_PARAMS_QM]);
+        $this->assertEqual($rsql, $sql[$rtype]);
+        $this->assertEqual($rparams, $params[$rtype]);
+
+        list($rsql, $rparams, $rtype) = $DB->fix_sql_params($sql[SQL_PARAMS_DOLLAR], $params[SQL_PARAMS_DOLLAR]);
+        $this->assertEqual($rsql, $sql[$rtype]);
+        $this->assertEqual($rparams, $params[$rtype]);
+
+
         // Malformed table placeholder
         $sql = "SELECT * FROM [testtable]";
         $sqlarray = $DB->fix_sql_params($sql);
         $this->assertEqual($sql, $sqlarray[0]);
 
-        // Correct table placeholder substitution
-        $sql = "SELECT * FROM {testtable}";
-        $sqlarray = $DB->fix_sql_params($sql);
-        $this->assertEqual("SELECT * FROM {$DB->get_prefix()}testtable", $sqlarray[0]);
 
         // Mixed param types (colon and dollar)
         $sql = "SELECT * FROM {testtable} WHERE name = :param1, course = \$1";
@@ -127,20 +152,6 @@ class dml_test extends UnitTestCase {
         } catch (Exception $e) {
             $this->assertTrue($e instanceof moodle_exception);
         }
-
-        // Correct named param placeholders
-        $sql = "SELECT * FROM {testtable} WHERE name = :name, course = :course";
-        $params = array('name' => 'first record', 'course' => 1);
-        $sqlarray = $DB->fix_sql_params($sql, $params);
-        $this->assertEqual("SELECT * FROM {$DB->get_prefix()}testtable WHERE name = ?, course = ?", $sqlarray[0]);
-        $this->assertEqual(2, count($sqlarray[1]));
-
-        // Correct ? params
-        $sql = "SELECT * FROM {testtable} WHERE name = ?, course = ?";
-        $params = array('first record', 1);
-        $sqlarray = $DB->fix_sql_params($sql, $params);
-        $this->assertEqual("SELECT * FROM {$DB->get_prefix()}testtable WHERE name = ?, course = ?", $sqlarray[0]);
-        $this->assertEqual(2, count($sqlarray[1]));
 
     }
 
