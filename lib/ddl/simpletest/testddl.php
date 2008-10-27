@@ -217,7 +217,7 @@ class ddl_test extends UnitTestCase {
         $record->type1 = 'news';
         $record->type2 = 'xxxx';
         ob_start(); // hide debug warning
-        @$result = $DB->insert_record('test_table_cust0', $record);
+        $result = @$DB->insert_record('test_table_cust0', $record);
         ob_end_clean();
         $this->assertFalse($result);
 
