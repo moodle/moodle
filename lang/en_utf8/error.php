@@ -11,7 +11,6 @@ $string['blockcannotconfig'] = 'This block does not support global configuration
 $string['blocknameconflict'] = 'Naming conflict: block $a->name has the same title with an existing block: $a->conflict!';
 $string['backupcontainexternal'] = 'This backup file contains external Moodle Network Hosts that are not configured locally';
 $string['backuptablefail'] = 'Backup tables could NOT be set up successfully!';
-$string['boundsyntaxnotsupport'] = 'Pg \$1, \$2 bound syntax not supported yet :-(';
 $string['cannotassignanthing'] = 'Cannot assign moodle/site:doanything';
 $string['cannotassignrole'] = 'Cannot assign role in course';
 $string['cannotassignselfasparent'] = 'Cannot assign self as parent!';

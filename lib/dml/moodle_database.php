@@ -431,8 +431,17 @@ abstract class moodle_database {
         } else if ($type == SQL_PARAMS_DOLLAR) {
             if ($target_type & SQL_PARAMS_DOLLAR) {
                 return array($sql, array_values($params), SQL_PARAMS_DOLLAR); // 0-based required
-            } else {
-                throw new dml_exception('boundsyntaxnotsupport');
+            } else if ($target_type & SQL_PARAMS_QM) {
+                $sql = preg_replace('/\$[0-9]+/', '?', $sql);
+                return array($sql, array_values($params), SQL_PARAMS_QM); // 0-based required
+            } else { //$target_type & SQL_PARAMS_NAMED
+                $sql = preg_replace('/\$([0-9]+)/', ':param\\1', $sql);
+                $finalparams = array();
+                foreach ($params as $key=>$param) {
+                    $key++;
+                    $finalparams['param'.$key] = $param;
+                }
+                return array($sql, $finalparams, SQL_PARAMS_NAMED);
             }
 
         } else { // $type == SQL_PARAMS_QM
