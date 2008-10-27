@@ -861,20 +861,58 @@ class pgsql_native_moodle_database extends moodle_database {
             return false;
         }
 
+        $id = (int)$dataobject->id;
+
         $columns = $this->get_columns($table);
         $cleaned = array();
+        $blobs   = array();
 
         foreach ($dataobject as $field=>$value) {
             if (!isset($columns[$field])) {
                 continue;
             }
-            if (is_bool($value)) {
-                $value = (int)$value; // prevent "false" problems
+            $column = $columns[$field];
+            if ($column->meta_type == 'B') {
+                if (is_null($value)) {
+                    $cleaned[$field] = null;
+                } else {
+                    $blobs[$field] = $value;
+                    $cleaned[$field] = '@#BLOB#@';
+                }
+                continue;
+
+            } else if (is_bool($value)) {
+                $value = (int)$value; // prevent false '' problems
+
+            } else if ($value === '') {
+                if ($column->meta_type == 'I' or $column->meta_type == 'F' or $column->meta_type == 'N') {
+                    $value = 0; // prevent '' problems in numeric fields
+                }
             }
+
             $cleaned[$field] = $value;
         }
 
-        return $this->update_record_raw($table, $cleaned, $bulk);
+        if (!$this->update_record_raw($table, $cleaned, $bulk)) {
+            return false;
+        }
+
+        if (empty($blobs)) {
+            return true;
+        }
+
+        foreach ($blobs as $key=>$value) {
+            $this->writes++;
+            $value = pg_escape_bytea($this->pgsql, $value);
+            $sql = "UPDATE {$this->prefix}$table SET $key = '$value'::bytea WHERE id = $id";
+            $result = pg_query($this->pgsql, $sql);
+            if ($result === false) {
+                return false;
+            }
+            pg_free_result($result);
+        }
+
+        return true;
     }
 
     /**

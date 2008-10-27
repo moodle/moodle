@@ -1168,17 +1168,20 @@ class dml_test extends UnitTestCase {
         $clob = file_get_contents($CFG->libdir.'/dml/simpletest/clob.txt');
         $blob = file_get_contents($CFG->libdir.'/dml/simpletest/randombinary');
 
+        $newclob = substr($clob, 0, 500);
+        $newblob = substr($blob, 0, 250);
+
         $id = $DB->insert_record('testtable', array('description' => $clob, 'image' => $blob));
         $record = $DB->get_record('testtable', array('id' => $id));
-        $record->description = substr($clob, 0, 500);
-        $record->image = substr($blob, 0, 250);
+        $record->description = $newclob;
+        $record->image = $newblob;
         $this->assertTrue($DB->update_record('testtable', $record));
 
         $record = $DB->get_record('testtable', array('id' => $id));
-        $this->assertEqual(substr($clob, 0, 500), $record->description);
-        $this->assertEqual(substr($blob, 0, 250), $record->image);
-        $this->assertEqual(substr($clob, 0, 500), $DB->get_field('testtable', 'description', array('id' => $id)));
-        $this->assertEqual(substr($blob, 0, 250), $DB->get_field('testtable', 'image', array('id' => $id)));
+        $this->assertEqual($newclob, $record->description);
+        $this->assertEqual($newblob, $record->image);
+        $this->assertEqual($newclob, $DB->get_field('testtable', 'description', array('id' => $id)));
+        $this->assertEqual($newblob, $DB->get_field('testtable', 'image', array('id' => $id)));
 
     }
 
