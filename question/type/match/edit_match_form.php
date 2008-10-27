@@ -23,7 +23,7 @@ class question_edit_match_form extends question_edit_form {
         $mform->setHelpButton('shuffleanswers', array('matchshuffle', get_string('shuffle','quiz'), 'quiz'));
         $mform->setDefault('shuffleanswers', 1);
 
-        $mform->addElement('static', 'answersinstruct', get_string('choices', 'quiz'), get_string('filloutthreequestions', 'quiz'));
+        $mform->addElement('static', 'answersinstruct', get_string('choices', 'quiz'), get_string('filloutthreeqsandtwoas', 'qtype_match'));
         $mform->closeHeaderBefore('answersinstruct');
 
         $repeated = array();
@@ -75,26 +75,31 @@ class question_edit_match_form extends question_edit_form {
         $answers = $data['subanswers'];
         $questions = $data['subquestions'];
         $questioncount = 0;
+        $answercount = 0;
         foreach ($questions as $key => $question){
             $trimmedquestion = trim($question);
             $trimmedanswer = trim($answers[$key]);
-            if ($trimmedanswer != '' && $trimmedquestion != ''){
+            if ($trimmedquestion != ''){
                 $questioncount++;
+            }
+            if ($trimmedanswer != '' || $trimmedquestion != ''){
+                $answercount++;
             }
             if ($trimmedquestion != '' && $trimmedanswer == ''){
                 $errors['subanswers['.$key.']'] = get_string('nomatchinganswerforq', 'qtype_match', $trimmedquestion);
             }
         }
-        if ($questioncount==0){
-            $errors['subquestions[0]'] = get_string('notenoughquestions', 'qtype_match', 3);
-            $errors['subquestions[1]'] = get_string('notenoughquestions', 'qtype_match', 3);
-            $errors['subquestions[2]'] = get_string('notenoughquestions', 'qtype_match', 3);
-        } elseif ($questioncount==1){
-            $errors['subquestions[1]'] = get_string('notenoughquestions', 'qtype_match', 3);
-            $errors['subquestions[2]'] = get_string('notenoughquestions', 'qtype_match', 3);
-
-        } elseif ($questioncount==2){
-            $errors['subquestions[2]'] = get_string('notenoughquestions', 'qtype_match', 3);
+        $numberqanda = new stdClass;
+        $numberqanda->q = 2;
+        $numberqanda->a = 3;
+        if ($questioncount < 1){
+            $errors['subquestions[0]'] = get_string('notenoughqsandas', 'qtype_match', $numberqanda);
+        }
+        if ($questioncount < 2){
+            $errors['subquestions[1]'] = get_string('notenoughqsandas', 'qtype_match', $numberqanda);
+        }
+        if ($answercount < 3){
+            $errors['subanswers[2]'] = get_string('notenoughqsandas', 'qtype_match', $numberqanda);
         }
         return $errors;
     }
