@@ -65,12 +65,6 @@ class dml_test extends UnitTestCase {
         $sqlarray = $DB->fix_sql_params($sql);
         $this->assertEqual("SELECT * FROM {$DB->get_prefix()}testtable", $sqlarray[0]);
 
-        // Malformed param placeholders
-        $sql = "SELECT * FROM {testtable} WHERE name = ?param1";
-        $params = array('param1' => 'record2');
-        $sqlarray = $DB->fix_sql_params($sql, $params);
-        $this->assertEqual("SELECT * FROM {$DB->get_prefix()}testtable WHERE name = ?param1", $sqlarray[0]);
-
         // Mixed param types (colon and dollar)
         $sql = "SELECT * FROM {testtable} WHERE name = :param1, course = \$1";
         $params = array('param1' => 'record1', 'param2' => 3);
@@ -127,16 +121,6 @@ class dml_test extends UnitTestCase {
         // Duplicate named param in query
         $sql = "SELECT * FROM {testtable} WHERE name = :name, course = :name";
         $params = array('name' => 'record2', 'course' => 3);
-        try {
-            $sqlarray = $DB->fix_sql_params($sql, $params);
-            $this->fail("Expecting an exception, none occurred");
-        } catch (Exception $e) {
-            $this->assertTrue($e instanceof moodle_exception);
-        }
-
-        // Unsupported Bound params
-        $sql = "SELECT * FROM {testtable} WHERE name = $1, course = $2";
-        $params = array('first record', 1);
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
             $this->fail("Expecting an exception, none occurred");
