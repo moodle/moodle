@@ -1,4 +1,6 @@
 <?php
+$justdefineclass = defined('MOODLE_INTERNAL');
+
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/user/selector/lib.php');
 
@@ -7,7 +9,7 @@ class test_user_selector extends user_selector_base {
         parent::__construct($name);
     }
 
-    protected function find_users($search) {
+    public function find_users($search) {
         global $DB;
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $sql = 'SELECT ' . $this->required_fields_sql('u') .
@@ -25,6 +27,17 @@ class test_user_selector extends user_selector_base {
         }
         return $groupedusers;
     }
+
+    protected function get_options() {
+        $options = parent::get_options();
+        $options['file'] = 'user/selector/test.php';
+        return $options;
+    }
+    
+}
+
+if ($justdefineclass) {
+    return;
 }
 
 print_header();

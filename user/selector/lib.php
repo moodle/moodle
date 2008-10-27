@@ -58,17 +58,22 @@ abstract class user_selector_base {
     // Public API ==============================================================
 
     /**
-     * Constructor
+     * Constructor. Each subclass must have a constructor with this signature.
      *
      * @param string $name the control name/id for use in the HTML.
+     * @param array $options other options needed to construct this selector.
+     * You must be able to clone a userselector by doing new get_class($us)($us->get_name(), $us->get_options());
      */
-    public function __construct($name) {
+    public function __construct($name, $options = array()) {
         global $CFG;
         $this->name = $name;
         if (empty($CFG->extrauserselectorfields)) {
             $this->extrafields = array();
         } else {
             $this->extrafields = explode(',', $CFG->extrauserselectorfields);
+        }
+        if (isset($options['exclude']) && is_array($options['exclude'])) {
+            $this->exclude = $options['exclude'];
         }
     }
 
@@ -116,6 +121,8 @@ abstract class user_selector_base {
      * @return mixed if $return is true, returns the HTML as a string, otherwise returns nothing.
      */
     public function display($return = false) {
+        global $USER, $CFG;
+
         // Ensure that the list of previously selected users is up to date.
         $this->get_selected_users();
 
@@ -157,6 +164,13 @@ abstract class user_selector_base {
         // This method trashes $this->selected, so reset it so if someone tries to
         // Use it again, it is rebuilt.
         $this->selected = null;
+
+        // Put the options into the session for the benefit of the ajax code.
+        $options = $this->get_options();
+        $hash = md5(serialize($options));
+        $USER->userselectors[$hash] = $options;
+        $output .=  '<p><a href="' . $CFG->wwwroot . '/user/selector/search.php?selectorid=' .
+                $hash . '&amp;' . 'sesskey=' . sesskey() . '&amp;search=">Ajax search script</a></p>'; // DONOTCOMMIT
 
         // Return or output it.
         if ($return) {
@@ -219,11 +233,12 @@ abstract class user_selector_base {
      *      containing at least the list of fields returned by the method
      *      required_fields_sql().
      */
-    protected abstract function find_users($search);
+    public abstract function find_users($search);
 
     protected function get_options() {
         return array(
             'class' => get_class($this),
+            'name' => $this->name,
             'exclude' => $this->exclude,
         );
     }
@@ -353,13 +368,13 @@ abstract class user_selector_base {
 }
 
 class role_assign_user_selector extends user_selector_base {
-    protected function find_users($search) {
+    public function find_users($search) {
         return array(); // TODO
     }
 }
 
 class group_members_user_selector extends user_selector_base {
-    protected function find_users($search) {
+    public function find_users($search) {
         return array(); // TODO
     }
 }
