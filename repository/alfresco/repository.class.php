@@ -20,23 +20,25 @@ class repository_alfresco extends repository {
     public function __construct($repositoryid, $context = SITEID, $options = array()) {
         global $SESSION, $CFG;
         parent::__construct ($repositoryid, $context, $options);
-        $this->repo = new Al_Repository($this->alfresco_url);
-        $this->sess_name = 'alfresco_ticket_'.$this->id;
-        $this->username   = optional_param('al_username', '', PARAM_RAW);
-        $this->password   = optional_param('al_password', '', PARAM_RAW);
-        try{
-            if ( empty($SESSION->{$this->sess_name}) && !empty($this->username) && !empty($this->password)) {
-                $this->ticket = $this->repo->authenticate($this->username, $this->password);
-                $SESSION->{$this->sess_name} = $this->ticket;	
-            } else {
-                $this->ticket = $SESSION->{$this->sess_name}; 	
+        if (class_exists('SoapClient')) {
+            $this->repo = new Al_Repository($this->alfresco_url);
+            $this->sess_name = 'alfresco_ticket_'.$this->id;
+            $this->username   = optional_param('al_username', '', PARAM_RAW);
+            $this->password   = optional_param('al_password', '', PARAM_RAW);
+            try{
+                if ( empty($SESSION->{$this->sess_name}) && !empty($this->username) && !empty($this->password)) {
+                    $this->ticket = $this->repo->authenticate($this->username, $this->password);
+                    $SESSION->{$this->sess_name} = $this->ticket;	
+                } else {
+                    $this->ticket = $SESSION->{$this->sess_name}; 	
+                }
+                $this->sess = $this->repo->createSession($this->ticket);
+                $this->store = new SpacesStore($this->sess);
+            } catch (Exception $e) {
+                $this->logout();
             }
-            $this->sess = $this->repo->createSession($this->ticket);
-            $this->store = new SpacesStore($this->sess);
-        } catch (Exception $e) {
-            $this->logout();
+            $this->current_node = null;
         }
-        $this->current_node = null;
     }
     public function print_login() {
         if ($this->options['ajax']) {
@@ -178,8 +180,20 @@ class repository_alfresco extends repository {
     }
 
     public function instance_config_form(&$mform) {
+        $soap = class_exists('SoapClient');
+        if (!$soap) {
+            $mform->addElement('static', null, get_string('notice'), get_string('soapmustbeenabled', 'repository_alfresco'));
+        }
         $mform->addElement('text', 'alfresco_url', get_string('alfresco_url', 'repository_alfresco'), array('size' => '40'));
         $mform->addRule('alfresco_url', get_string('required'), 'required', null, 'client');
+    }
+    public static function plugin_init() {
+        if (!class_exists('SoapClient')) {
+            print_error('soapmustbeenabled', 'repository_alfresco');
+            return false;
+        } else {
+            return true;
+        }
     }
 }
 ?>

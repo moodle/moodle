@@ -246,7 +246,9 @@ class repository_type {
             }
 
             //run init function
-            repository_static_function($this->_typename,"plugin_init");
+            if (!repository_static_function($this->_typename, 'plugin_init')) {
+                throw new repository_exception('cannotcreatetype', 'repository');
+            }
 
         } else {
             throw new repository_exception('existingrepository', 'repository');
@@ -960,8 +962,10 @@ abstract class repository {
 
     /**
      * function which is run when the type is created (moodle administrator add the plugin)
+     * @return boolean success or fail?
      */
     public static function plugin_init(){
+        return true;
     }
 
     /**
