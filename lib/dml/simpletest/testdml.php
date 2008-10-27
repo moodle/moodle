@@ -1081,7 +1081,7 @@ class dml_test extends UnitTestCase {
         $blob = file_get_contents($CFG->libdir.'/dml/simpletest/randombinary');
 
         $this->assertTrue($id = $DB->insert_record('testtable', array('description' => $clob, 'image' => $blob)));
-        $this->assertTrue($record = $DB->get_record('testtable', array('id' => $id)));
+        $record = $DB->get_record('testtable', array('id' => $id));
         $this->assertEqual($clob, $record->description);
         $this->assertEqual($blob, $record->image);
         $this->assertEqual($clob, $DB->get_field('testtable', 'description', array('id' => $id)));

@@ -9,8 +9,9 @@ require_once($CFG->libdir.'/dml/pgsql_native_moodle_recordset.php');
  */
 class pgsql_native_moodle_database extends moodle_database {
 
-    protected $pgsql = null;
-    protected $debug  = false;
+    protected $pgsql     = null;
+    protected $debug     = false;
+    protected $bytea_oid = null;
 
     /**
      * Detects if all needed PHP stuff installed.
@@ -94,6 +95,17 @@ class pgsql_native_moodle_database extends moodle_database {
             return false;
         }
         pg_set_client_encoding($this->pgsql, 'utf8');
+        // find out the bytea oid
+        $sql = "select oid from pg_type where typname = 'bytea'";
+        $result = pg_query($this->pgsql, $sql);
+        if ($result === false) {
+            return false;
+        }
+        $this->bytea_oid = pg_fetch_result($result, 0);
+        pg_free_result($result);
+        if ($this->bytea_oid === false) {
+            return false;
+        }
         return true;
     }
 
@@ -513,7 +525,7 @@ class pgsql_native_moodle_database extends moodle_database {
     }
 
     protected function create_recordset($result) {
-        return new pgsql_native_moodle_recordset($result);
+        return new pgsql_native_moodle_recordset($result, $this->bytea_oid);
     }
 
     /**
@@ -548,6 +560,15 @@ class pgsql_native_moodle_database extends moodle_database {
             $this->report_error($sql, $params);
             return false;
         }
+        // find out if there are any blobs
+        $numrows = pg_num_fields($result);
+        $blobs = array();
+        for($i=0; $i<$numrows; $i++) {
+            $type_oid = pg_field_type_oid($result, $i);
+            if ($type_oid == $this->bytea_oid) {
+                $blobs[] = pg_field_name($result, $i);
+            }
+        }
 
         $rows = pg_fetch_all($result);
         pg_free_result($result);
@@ -556,10 +577,15 @@ class pgsql_native_moodle_database extends moodle_database {
         if ($rows) {
             foreach ($rows as $row) {
                 $id = reset($row);
+                if ($blobs) {
+                    foreach ($blobs as $blob) {
+                        $row[$blob] = pg_unescape_bytea($row[$blob]);
+                    }
+                }
                 $return[$id] = (object)$row;
             }
         }
-         
+
         return $return;
     }
 

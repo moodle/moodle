@@ -6,9 +6,22 @@ class pgsql_native_moodle_recordset extends moodle_recordset {
 
     protected $result;
     protected $current; // current row as array
+    protected $bytea_oid;
+    protected $blobs = array();
 
-    public function __construct($result) {
-        $this->result  = $result;
+    public function __construct($result, $bytea_oid) {
+        $this->result    = $result;
+        $this->bytea_oid = $bytea_oid;
+
+        // find out if there are any blobs
+        $numrows = pg_num_fields($result);
+        for($i=0; $i<$numrows; $i++) {
+            $type_oid = pg_field_type_oid($result, $i);
+            if ($type_oid == $this->bytea_oid) {
+                $this->blobs[] = pg_field_name($result, $i);
+            }
+        }
+
         $this->current = $this->fetch_next();
     }
 
@@ -18,6 +31,13 @@ class pgsql_native_moodle_recordset extends moodle_recordset {
 
     private function fetch_next() {
         $row = pg_fetch_assoc($this->result);
+
+        if ($this->blobs) {
+            foreach ($this->blobs as $blob) {
+                $row[$blob] = pg_unescape_bytea($row[$blob]);
+            }
+        }
+
         return $row;
     }
 
@@ -52,5 +72,6 @@ class pgsql_native_moodle_recordset extends moodle_recordset {
             $this->result  = null;
         }
         $this->current = null;
+        $this->blobs   = null;
     }
 }
