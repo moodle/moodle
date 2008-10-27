@@ -29,13 +29,12 @@ abstract class pdo_moodle_database extends moodle_database {
      * @param string $dbuser
      * @param string $dbpass
      * @param string $dbname
-     * @param bool $dbpersist
      * @param mixed $prefix string means moodle db prefix, false used for external databases where prefix not used
      * @param array $dboptions driver specific options
      * @return bool success
      */
-    public function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
-        $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions);
+    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
+        $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
 
         try {
             $this->pdb = new PDO($this->get_dsn(), $this->dbuser, $this->dbpass, $this->get_pdooptions());
@@ -64,7 +63,7 @@ abstract class pdo_moodle_database extends moodle_database {
      * @return array A key=>value array of PDO driver-specific connection options
      */
     protected function get_pdooptions() {
-        return array(PDO::ATTR_PERSISTENT => $this->dbpersist);
+        return array(PDO::ATTR_PERSISTENT => !empty($this->dboptions['dbpersist']));
     }
 
     protected function configure_dbconnection() {

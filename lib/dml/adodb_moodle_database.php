@@ -35,10 +35,10 @@ abstract class adodb_moodle_database extends moodle_database {
      */
     protected abstract function preconfigure_dbconnection();
 
-    public function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
+    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
         global $CFG;
 
-        $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions);
+        $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
 
         $this->preconfigure_dbconnection();
 
@@ -50,7 +50,7 @@ abstract class adodb_moodle_database extends moodle_database {
         // we probably want to change this value to ''.
         $this->adodb->null2null = 'A long random string that will never, ever match something we want to insert into the database, I hope. \'';
 
-        if (!isset($this->dbpersist) or !empty($this->dbpersist)) {    // Use persistent connection (default)
+        if (!empty($this->dboptions['dbpersist'])) {    // Use persistent connection
             if (!$this->adodb->PConnect($this->dbhost, $this->dbuser, $this->dbpass, $this->dbname)) {
                 return false;
             }

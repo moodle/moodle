@@ -599,7 +599,7 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     $str .= "\r\n";
 
     $database = $databases[$CONFFILE['dbtype']];
-    $dbconfig = $database->export_dbconfig($CONFFILE['dbhost'], $CONFFILE['dbuser'], $CONFFILE['dbpass'], $CONFFILE['dbname'], false, $CONFFILE['prefix']);
+    $dbconfig = $database->export_dbconfig($CONFFILE['dbhost'], $CONFFILE['dbuser'], $CONFFILE['dbpass'], $CONFFILE['dbname'], $CONFFILE['prefix']);
 
     foreach ($dbconfig as $key=>$value) {
         $key = str_pad($key, 9);

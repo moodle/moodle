@@ -44,7 +44,7 @@ for ($i=1; $i<=10; $i++) {
     if (!isset($CFG->$name)) {
         continue;
     }
-    list($library, $driver, $dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions) = $CFG->$name;
+    list($library, $driver, $dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions) = $CFG->$name;
     $dbinfos[$i] = array('name'=>"External database $i ($library/$driver/$dbhost/$dbname/$prefix)", 'installed'=>false, 'configured'=>false);
 
     $classname = "{$driver}_{$library}_moodle_database";
@@ -55,7 +55,7 @@ for ($i=1; $i<=10; $i++) {
     }
     $dbinfos[$i]['installed'] = true;
 
-    if ($d->connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions)) {
+    if ($d->connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions)) {
         $dbinfos[$i]['configured'] = true;
         if (data_submitted() and !empty($selected[$i])) {
             $tests[$i] = $d;
@@ -123,10 +123,10 @@ foreach ($dbinfos as $i=>$dbinfo) {
 echo '</ul></p>';
 echo '<p>External databases are configured in config.php, add lines:
 <pre>
-$CFG->func_test_db_1 = array("adodb", "postgres7", "localhost", "moodleuser", "password", "moodle", false, "test", null);
-$CFG->func_test_db_2 = array("adodb", "mssql", "localhost", "moodleuser", "password", "moodle", false, "test", null);
+$CFG->func_test_db_1 = array("adodb", "postgres7", "localhost", "moodleuser", "password", "moodle", "test", null);
+$CFG->func_test_db_2 = array("adodb", "mssql", "localhost", "moodleuser", "password", "moodle", "test", null);
 </pre>
-where order of parameters is: dblibrary, dbtype, dbhost, dbuser, dbpass, dbname, dbpersist, prefix, dboptions
+where order of parameters is: dblibrary, dbtype, dbhost, dbuser, dbpass, dbname, prefix, dboptions
 </p>';
 echo '<p><input type="submit" value="' . get_string('runtests', 'simpletest') . '" /></p>';
 echo '</div>';

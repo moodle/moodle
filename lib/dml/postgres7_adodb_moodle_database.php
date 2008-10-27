@@ -9,12 +9,12 @@ require_once($CFG->libdir.'/dml/adodb_moodle_database.php');
  */
 class postgres7_adodb_moodle_database extends adodb_moodle_database {
 
-    public function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
+    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
         if ($prefix == '' and !$this->external) {
             //Enforce prefixes for everybody but mysql
             throw new dml_exception('prefixcannotbeempty', $this->get_dbfamily());
         }
-        return parent::connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions);
+        return parent::connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
     }
 
     /**
@@ -72,8 +72,8 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
      * Note: can be used before connect()
      * @return string
      */
-    public function export_dbconfig($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
-        $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions);
+    public function export_dbconfig($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
+        $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
 
         $cfg = new stdClass();
         $cfg->dbtype     = $this->get_dbtype();

@@ -1477,7 +1477,7 @@ class moodle_database_for_testing extends moodle_database {
     protected function get_dblibrary(){}
     public function get_name(){}
     public function get_configuration_hints(){}
-    public function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null){}
+    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null){}
     public function get_server_info(){}
     protected function allowed_param_types(){}
     public function get_last_error(){}

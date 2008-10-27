@@ -36,7 +36,6 @@ abstract class moodle_database {
     protected $dbuser;
     protected $dbpass;
     protected $dbname;
-    protected $dbpersist;
     protected $prefix;
 
     /**
@@ -146,8 +145,8 @@ abstract class moodle_database {
      * Note: can be used before connect()
      * @return string
      */
-    public function export_dbconfig($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
-        $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions);
+    public function export_dbconfig($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
+        $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
 
         $cfg = new stdClass();
         $cfg->dbtype    = $this->get_dbtype();
@@ -171,12 +170,11 @@ abstract class moodle_database {
      * @param string $dbuser
      * @param string $dbpass
      * @param string $dbname
-     * @param bool $dbpersist
      * @param mixed $prefix string means moodle db prefix, false used for external databases where prefix not used
      * @param array $dboptions driver specific options
      * @return bool success
      */
-    public abstract function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null);
+    public abstract function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null);
 
     /**
      * Store various database settings
@@ -184,17 +182,15 @@ abstract class moodle_database {
      * @param string $dbuser
      * @param string $dbpass
      * @param string $dbname
-     * @param bool $dbpersist
      * @param mixed $prefix string means moodle db prefix, false used for external databases where prefix not used
      * @param array $dboptions driver specific options
      * @return void
      */
-    protected function store_settings($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
+    protected function store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
         $this->dbhost    = $dbhost;
         $this->dbuser    = $dbuser;
         $this->dbpass    = $dbpass;
         $this->dbname    = $dbname;
-        $this->dbpersist = $dbpersist;
         $this->prefix    = $prefix;
         $this->dboptions = (array)$dboptions;
     }

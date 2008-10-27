@@ -76,15 +76,14 @@ class mysqli_native_moodle_database extends moodle_database {
      * @param string $dbuser
      * @param string $dbpass
      * @param string $dbname
-     * @param bool $dbpersist
      * @param mixed $prefix string means moodle db prefix, false used for external databases where prefix not used
      * @param array $dboptions driver specific options
      * @return bool success
      */
-    public function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
+    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
         global $CFG;
 
-        $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, false, $prefix, $dboptions);
+        $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
 
         $this->mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
         if ($this->mysqli->connect_error) {

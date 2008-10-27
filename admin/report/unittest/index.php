@@ -115,7 +115,6 @@ $CFG->dblibrary           = $real_cfg->dblibrary;
 $CFG->dbuser              = $real_cfg->dbuser;
 $CFG->dbpass              = $real_cfg->dbpass;
 $CFG->dbname              = $real_cfg->dbname;
-$CFG->dbpersist           = $real_cfg->dbpersist;
 $CFG->unittestprefix      = $real_cfg->unittestprefix;
 $CFG->wwwroot             = $real_cfg->wwwroot;
 $CFG->dirroot             = $real_cfg->dirroot;
@@ -131,7 +130,7 @@ $CFG->footer              = $real_cfg->footer;
 $CFG->debug               = $real_cfg->debug;
 
 $DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
-$DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->unittestprefix);
+$DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->unittestprefix);
 
 if ($DB->get_manager()->table_exists(new xmldb_table('config')) && $config = $DB->get_records('config')) {
     foreach ($config as $conf) {

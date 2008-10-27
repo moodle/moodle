@@ -465,7 +465,7 @@ if ($nextstage == SAVE) {
     $str .= "\r\n";
 
     $DB = $databases[$INSTALL['dbtype']];
-    $dbconfig = $DB->export_dbconfig($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], false, $INSTALL['prefix']);
+    $dbconfig = $DB->export_dbconfig($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], $INSTALL['prefix']);
 
     foreach ($dbconfig as $key=>$value) {
         $key = str_pad($key, 9);

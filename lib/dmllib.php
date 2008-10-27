@@ -69,10 +69,6 @@ function setup_DB() {
         $CFG->dbname = '';
     }
 
-    if (!isset($CFG->dbpersist)) {
-        $CFG->dbpersist = false;
-    }
-
     if (!isset($CFG->dblibrary)) {
         $CFG->dblibrary = 'adodb';
     }
@@ -80,6 +76,11 @@ function setup_DB() {
     if (!isset($CFG->dboptions)) {
         $CFG->dboptions = array();
     }
+
+    if (isset($CFG->dbpersist)) {
+        $CFG->dboptions['dbpersist'] = $CFG->dbpersist;
+    }
+
 
     $DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
 
@@ -97,7 +98,7 @@ function setup_DB() {
     } else {
         $prevdebug = error_reporting(0);
     }
-    if (!$DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->prefix, $CFG->dboptions)) {
+    if (!$DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, $CFG->dboptions)) {
         if (debugging('', DEBUG_ALL)) {
             if ($dberr = ob_get_contents()) {
                 $dberr = '<p><em>'.$dberr.'</em></p>';

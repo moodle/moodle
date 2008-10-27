@@ -89,7 +89,7 @@ class eventslib_test extends MoodleUnitTestCase {
         if (is_null($DB)) {
             $this->realdb = $DB;
             $DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
-            $DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->prefix);
+            $DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix);
         }
 
         events_uninstall('unittest');

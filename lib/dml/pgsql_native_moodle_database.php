@@ -77,15 +77,14 @@ class pgsql_native_moodle_database extends moodle_database {
      * @param string $dbuser
      * @param string $dbpass
      * @param string $dbname
-     * @param bool $dbpersist
      * @param mixed $prefix string means moodle db prefix, false used for external databases where prefix not used
      * @param array $dboptions driver specific options
      * @return bool success
      */
-    public function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
+    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
         global $CFG;
 
-        $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, false, $prefix, $dboptions);
+        $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
 
         //TODO: handle both port and socket connection
         $this->pgsql = pg_connect("host='{$this->dbhost}' user='{$this->dbuser}' password='{$this->dbpass}' dbname='{$this->dbname}'");

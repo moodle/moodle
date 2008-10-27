@@ -10,7 +10,7 @@ require_once($CFG->libdir.'/dml/oci8po_adodb_moodle_recordset.php');
  */
 class oci8po_adodb_moodle_database extends adodb_moodle_database {
 
-    public function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
+    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
         if ($prefix == '' and !$this->external) {
             //Enforce prefixes for everybody but mysql
             throw new dml_exception('prefixcannotbeempty', $this->get_dbfamily());
@@ -20,7 +20,7 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
             $a = (object)array('dbfamily'=>'oracle', 'maxlength'=>2);
             throw new dml_exception('prefixtoolong', $a);
         }
-        return parent::connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions);
+        return parent::connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
     }
 
     /**

@@ -308,7 +308,7 @@ class UnitTestDB {
 
         if (empty(UnitTestDB::$DB)) {
             UnitTestDB::$DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
-            UnitTestDB::$DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->unittestprefix);
+            UnitTestDB::$DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->unittestprefix);
         }
 
         $manager = UnitTestDB::$DB->get_manager();
