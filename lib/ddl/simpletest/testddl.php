@@ -120,7 +120,7 @@ class ddl_test extends UnitTestCase {
         // first make sure it returns false if table does not exist
         $table = $this->tables['test_table0'];
         ob_start(); // hide debug warning
-        $result = $DB->get_records('test_table0');
+        $result = @$DB->get_records('test_table0');
         ob_end_clean();
         $this->assertFalse($result);
 
@@ -207,7 +207,7 @@ class ddl_test extends UnitTestCase {
         $record->type1 = 'xxxxxxxx';
         $record->type2 = 'news';
         ob_start(); // hide debug warning
-        $result = $DB->insert_record('test_table_cust0', $record);
+        $result = @$DB->insert_record('test_table_cust0', $record);
         ob_end_clean();
         $this->assertFalse($result);
 
@@ -217,7 +217,7 @@ class ddl_test extends UnitTestCase {
         $record->type1 = 'news';
         $record->type2 = 'xxxx';
         ob_start(); // hide debug warning
-        $DB->insert_record('test_table_cust0', $record);
+        @$result = $DB->insert_record('test_table_cust0', $record);
         ob_end_clean();
         $this->assertFalse($result);
 
@@ -376,7 +376,7 @@ class ddl_test extends UnitTestCase {
         $record->name = NULL;
 
         ob_start(); // hide debug warning
-        $result = $DB->insert_record('test_table_cust0', $record, false);
+        $result = @$DB->insert_record('test_table_cust0', $record, false);
         ob_end_clean();
         $this->assertFalse($result);
 
@@ -394,7 +394,7 @@ class ddl_test extends UnitTestCase {
         $dbman->change_field_notnull($table, $field);
 
         ob_start(); // hide debug warning
-        $result = $DB->insert_record('test_table_cust0', $record, false);
+        $result = @$DB->insert_record('test_table_cust0', $record, false);
         ob_end_clean();
         $this->assertFalse($result);
 
@@ -459,7 +459,7 @@ class ddl_test extends UnitTestCase {
         $dbman->add_index($table, $index);
 
         ob_start(); // hide debug warning
-        $result = $DB->insert_record('test_table_cust0', $record, false);
+        $result = @$DB->insert_record('test_table_cust0', $record, false);
         ob_end_clean();
         $this->assertFalse($result);
 
@@ -592,7 +592,7 @@ class ddl_test extends UnitTestCase {
         $record->type = 'nothing';
 
         ob_start(); // hide debug warning
-        $result = $DB->insert_record('test_table_cust0', $record, false);
+        $result = @$DB->insert_record('test_table_cust0', $record, false);
         ob_end_clean();
         $this->assertFalse($result);
 
