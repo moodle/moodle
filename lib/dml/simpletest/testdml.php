@@ -222,23 +222,31 @@ class dml_test extends UnitTestCase {
         $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
         $table->add_index('course-id', XMLDB_INDEX_UNIQUE, array('course', 'id'));
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
         $this->tables[$table->getName()] = $table;
 
         $this->assertTrue($indices = $DB->get_indexes('testtable'));
         $this->assertTrue(count($indices) == 2);
-        sort($indices);
-
-        $this->assertFalse($indices[0]['unique']);
-        $this->assertTrue($indices[1]['unique']);
-        $this->assertEqual(1, count($indices[0]['columns']));
-        $this->assertEqual(2, count($indices[1]['columns']));
-        $this->assertEqual('course', $indices[0]['columns'][0]);
-        $this->assertEqual('course', $indices[1]['columns'][0]);
-        $this->assertEqual('id', $indices[1]['columns'][1]);
+        // we do not cvare about index names for now
+        $first = array_shift($indices);
+        $second = array_shift($indices);
+        if (count($first['columns']) == 2) {
+            $composed = $first;
+            $single   = $second;
+        } else {
+            $composed = $second;
+            $single   = $first;
+        }
+        $this->assertFalse($single['unique']);
+        $this->assertTrue($composed['unique']);
+        $this->assertEqual(1, count($single['columns']));
+        $this->assertEqual(2, count($composed['columns']));
+        $this->assertEqual('course', $single['columns'][0]);
+        $this->assertEqual('course', $composed['columns'][0]);
+        $this->assertEqual('id', $composed['columns'][1]);
     }
 
     public function testGetColumns() {

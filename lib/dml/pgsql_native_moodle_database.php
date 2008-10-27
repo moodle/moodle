@@ -187,8 +187,10 @@ class pgsql_native_moodle_database extends moodle_database {
                 if ($matches[4] === 'id') {
                     continue;
                 }
+                $columns = explode(',', $matches[4]);
+                $columns = array_map('trim', $columns);
                 $indexes[$matches[2]] = array('unique'=>!empty($matches[1]),
-                                              'columns'=>explode(',', $matches[4]));
+                                              'columns'=>$columns);
             }
             pg_free_result($result);
         }
