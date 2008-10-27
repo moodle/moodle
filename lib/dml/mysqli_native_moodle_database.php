@@ -889,4 +889,45 @@ class mysqli_native_moodle_database extends moodle_database {
     public function sql_regex($positivematch=true) {
         return $positivematch ? 'REGEXP' : 'NOT REGEXP';
     }
+
+/// transactions
+    /**
+     * on DBs that support it, switch to transaction mode and begin a transaction
+     * you'll need to ensure you call commit_sql() or your changes *will* be lost.
+     *
+     * this is _very_ useful for massive updates
+     */
+    public function begin_sql() {
+        $result = $result = $this->mysqli->query("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED");
+        if ($result === false) {
+            return false;
+        }
+        $result = $result = $this->mysqli->query("BEGIN");
+        if ($result === false) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * on DBs that support it, commit the transaction
+     */
+    public function commit_sql() {
+        $result = $result = $this->mysqli->query("COMMIT");
+        if ($result === false) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * on DBs that support it, rollback the transaction
+     */
+    public function rollback_sql() {
+        $result = $result = $this->mysqli->query("ROLLBACK");
+        if ($result === false) {
+            return false;
+        }
+        return true;
+    }
 }
