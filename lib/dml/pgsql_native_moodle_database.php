@@ -247,8 +247,8 @@ class pgsql_native_moodle_database extends moodle_database {
                 $info->meta_type     = 'C';
                 $info->max_length    = $rawcolumn->atttypmod - 4;
                 $info->scale         = null;
-                $info->not_null      = (bool)$rawcolumn->attnotnull;
-                $info->has_default   = (bool)$rawcolumn->atthasdef;
+                $info->not_null      = ($rawcolumn->attnotnull === 't');
+                $info->has_default   = ($rawcolumn->atthasdef === 't');
                 if ($info->has_default) {
                     $parts = explode('::', $rawcolumn->adsrc);
                     if (count($parts) > 1) {
@@ -279,11 +279,11 @@ class pgsql_native_moodle_database extends moodle_database {
                     $info->meta_type     = 'I';
                     $info->unique        = null;
                     $info->auto_increment= false;
-                    $info->has_default   = (bool)$rawcolumn->atthasdef;
+                    $info->has_default   = ($rawcolumn->atthasdef === 't');
                 }
                 $info->max_length    = $matches[1];
                 $info->scale         = null;
-                $info->not_null      = (bool)$rawcolumn->attnotnull;
+                $info->not_null      = ($rawcolumn->attnotnull === 't');
                 if ($info->has_default) {
                     $info->default_value = $rawcolumn->adsrc;
                 } else {
@@ -300,8 +300,8 @@ class pgsql_native_moodle_database extends moodle_database {
                 $info->unsigned      = null;
                 $info->auto_increment= false;
                 $info->unique        = null;
-                $info->not_null      = (bool)$rawcolumn->attnotnull;
-                $info->has_default   = (bool)$rawcolumn->atthasdef;
+                $info->not_null      = ($rawcolumn->attnotnull === 't');
+                $info->has_default   = ($rawcolumn->atthasdef === 't');
                 if ($info->has_default) {
                     $info->default_value = $rawcolumn->adsrc;
                 } else {
@@ -318,8 +318,8 @@ class pgsql_native_moodle_database extends moodle_database {
                 $info->unsigned      = null;
                 $info->auto_increment= false;
                 $info->unique        = null;
-                $info->not_null      = (bool)$rawcolumn->attnotnull;
-                $info->has_default   = (bool)$rawcolumn->atthasdef;
+                $info->not_null      = ($rawcolumn->attnotnull === 't');
+                $info->has_default   = ($rawcolumn->atthasdef === 't');
                 if ($info->has_default) {
                     $info->default_value = $rawcolumn->adsrc;
                 } else {
@@ -341,8 +341,8 @@ class pgsql_native_moodle_database extends moodle_database {
                 $info->meta_type     = 'X';
                 $info->max_length    = -1;
                 $info->scale         = null;
-                $info->not_null      = (bool)$rawcolumn->attnotnull;
-                $info->has_default   = (bool)$rawcolumn->atthasdef;
+                $info->not_null      = ($rawcolumn->attnotnull === 't');
+                $info->has_default   = ($rawcolumn->atthasdef === 't');
                 if ($info->has_default) {
                     $parts = explode('::', $rawcolumn->adsrc);
                     if (count($parts) > 1) {
@@ -365,7 +365,7 @@ class pgsql_native_moodle_database extends moodle_database {
                 $info->meta_type     = 'B';
                 $info->max_length    = -1;
                 $info->scale         = null;
-                $info->not_null      = (bool)$rawcolumn->attnotnull;
+                $info->not_null      = ($rawcolumn->attnotnull === 't');
                 $info->has_default   = false;
                 $info->default_value = null;
                 $info->primary_key   = false;
