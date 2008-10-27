@@ -101,6 +101,7 @@ $string['databasesettingssub_postgres7'] = '<b>Type:</b> PostgreSQL<br />
 $string['databasesettingswillbecreated'] = '<b>Opmerking:</b> het installatieprogramma zal proberen een databank te maken als die nog niet bestaat.';
 $string['dataroot'] = 'Gegevens';
 $string['datarooterror'] = 'De \'data-map\' die je opgaf kon niet gevonden of gemaakt worden. Verbeter ofwel het pad of maak die map manueel.';
+$string['datarootpublicerror'] = 'De data-map die je geeft is rechtstreeks toegankelijk vanaf het internet. Je moet een andere map kiezen.';
 $string['dbconnectionerror'] = 'We konden geen verbinding maken met de databank die je opgegeven hebt. Controleer je databankinstellingen';
 $string['dbcreationerror'] = 'Probleem met het opbouwen van de databank. De databanknaam kon niet aangemaakt worden met de gegevens die je opgegeven hebt';
 $string['dbhost'] = 'Hostserver';
