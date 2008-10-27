@@ -365,6 +365,8 @@ class pgsql_native_moodle_database extends moodle_database {
             $this->columns[$table][$info->name] = new database_column_info($info);
         }
 
+        pg_free_result($result);
+
         return $this->columns[$table];
     }
 
@@ -437,7 +439,7 @@ class pgsql_native_moodle_database extends moodle_database {
             $this->report_error($sql);
             return false;
         }
-        // no need to free result, we do not expect any here
+        pg_free_result($result);
         return true;
     }
 
@@ -465,7 +467,7 @@ class pgsql_native_moodle_database extends moodle_database {
             return false;
 
         }
-
+        pg_free_result($result);
         return true;
     }
 
@@ -652,8 +654,8 @@ class pgsql_native_moodle_database extends moodle_database {
         if ($returning !== "") {
             $row = pg_fetch_assoc($result);
             $params['id'] = reset($row);
-            pg_free_result($result);
         }
+        pg_free_result($result);
 
         if (!$returnid) {
             return true;
@@ -726,7 +728,10 @@ class pgsql_native_moodle_database extends moodle_database {
             $this->writes++;
             $value = pg_escape_bytea($this->pgsql, $value);
             $sql = "UPDATE {$this->prefix}$table SET $key = '$value'::bytea WHERE id = $id";
-            pg_query($this->pgsql, $sql);
+            $result = pg_query($this->pgsql, $sql);
+            if ($result !== false) {
+                pg_free_result($result);
+            }
         }
 
         return ($returnid ? $id : true);
@@ -803,6 +808,7 @@ class pgsql_native_moodle_database extends moodle_database {
             return false;
         }
 
+        pg_free_result($result);
         return true;
     }
 
@@ -882,6 +888,7 @@ class pgsql_native_moodle_database extends moodle_database {
             $this->report_error($sql, $params);
             return false;
         }
+        pg_free_result($result);
 
         return true;
     }
@@ -910,6 +917,7 @@ class pgsql_native_moodle_database extends moodle_database {
             $this->report_error($sql, $params);
             return false;
         }
+        pg_free_result($result);
 
         return true;
     }
