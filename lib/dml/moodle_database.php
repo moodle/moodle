@@ -926,26 +926,21 @@ abstract class moodle_database {
      * @param string $sql The SQL string you wish to be executed, should normally only return one record.
      * @param array $params array of sql parameters
      * @param bool $ignoremultiple ignore multiple records if found
-     * @return mixed a fieldset object containing the first mathcing record, or false if none found.
+     * @return mixed a fieldset object containing the first matching record, or false if none found.
      */
     public function get_record_sql($sql, array $params=null, $ignoremultiple=false) {
         $count = $ignoremultiple ? 1 : 2;
-        if (!$mrs = $this->get_recordset_sql($sql, $params, 0, $count)) {
-            return false;
-        }
-        if (!$mrs->valid()) {
-            $mrs->close();
+
+        if (!$records = $this->get_records_sql($sql, $params, 0, $count)) {
+            // error or not found
             return false;
         }
 
-        $return = (object)$mrs->current();
-
-        $mrs->next();
-        if (!$ignoremultiple and $mrs->valid()) {
+        if (!$ignoremultiple and count($records) > 1) {
             debugging('Error: mdb->get_record() found more than one record!');
         }
 
-        $mrs->close();
+        $return = reset($records);
         return $return;
     }
 
@@ -988,12 +983,10 @@ abstract class moodle_database {
      * @return mixed the specified value, or false if an error occured.
      */
     public function get_field_sql($sql, array $params=null) {
-        if ($mrs = $this->get_recordset_sql($sql, $params, 0, 1)) {
-            if ($mrs->valid()) {
-                $record = $mrs->current();
-                return reset($record); // first column
-            }
-            $mrs->close();
+        if ($records = $this->get_records_sql($sql, $params, 0, 1)) {
+            $record = reset($records);
+            $record = (array)$record;
+            return reset($record); // first column
         }
         return false;
     }
