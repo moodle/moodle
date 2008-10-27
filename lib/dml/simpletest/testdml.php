@@ -1394,6 +1394,69 @@ class dml_test extends UnitTestCase {
         $this->assertEqual($DB->get_field_sql(
                 "SELECT " . $DB->sql_position("'Oracle'", "'Moodle'") . $DB->sql_null_from_clause()), 0);
     }
+
+    function test_begin_sql() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table($dbman, "testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $active = $DB->begin_sql();
+        if ($active) {
+            // test only if driver supports transactions
+            $data = (object)array('course'=>3);
+            $DB->insert_record('testtable', $data);
+            $this->assertEqual(1, $DB->count_records('testtable'));
+            $DB->commit_sql();
+        }
+    }
+
+    function test_commit_sql() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table($dbman, "testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $active = $DB->begin_sql();
+        if ($active) {
+            // test only if driver supports transactions
+            $data = (object)array('course'=>3);
+            $DB->insert_record('testtable', $data);
+            $DB->commit_sql();
+            $this->assertEqual(1, $DB->count_records('testtable'));
+        }
+    }
+
+    function test_rollback_sql() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table($dbman, "testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $active = $DB->begin_sql();
+        if ($active) {
+            // test only if driver supports transactions
+            $data = (object)array('course'=>3);
+            $DB->insert_record('testtable', $data);
+            $DB->rollback_sql();
+            $this->assertEqual(0, $DB->count_records('testtable'));
+        }
+    }
 }
 
 /**

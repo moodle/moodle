@@ -1543,21 +1543,21 @@ abstract class moodle_database {
      * this is _very_ useful for massive updates
      */
     public function begin_sql() {
-        return true;
+        return false;
     }
 
     /**
      * on DBs that support it, commit the transaction
      */
     public function commit_sql() {
-        return true;
+        return false;
     }
 
     /**
      * on DBs that support it, rollback the transaction
      */
     public function rollback_sql() {
-        return true;
+        return false;
     }
 
 /// performance and logging
