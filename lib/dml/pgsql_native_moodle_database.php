@@ -108,7 +108,7 @@ class pgsql_native_moodle_database extends moodle_database {
         }
         pg_set_client_encoding($this->pgsql, 'utf8');
         // find out the bytea oid
-        $sql = "select oid from pg_type where typname = 'bytea'";
+        $sql = "SELECT oid FROM pg_type WHERE typname = 'bytea'";
         $result = pg_query($this->pgsql, $sql);
         if ($result === false) {
             return false;
