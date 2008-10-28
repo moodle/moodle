@@ -61,7 +61,6 @@ class repository_remotemoodle extends repository {
              
         $browser = get_file_browser();
         $fileinfo = $browser->get_file_info(get_context_instance_by_id($contextid), $filearea, $itemid, $filepath, $filename);
-        $this->log($fileinfo);
         if (empty($fileinfo)) {
             exit(mnet_server_fault(9016, get_string('usercannotaccess', 'repository_remotemoodle',  $file)));
         }
