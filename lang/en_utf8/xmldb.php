@@ -9,11 +9,13 @@ $string['binaryincorrectlength'] = 'Incorrect length for binary field';
 $string['cannotuseidfield'] = 'Cannot insert the \"id\" field. It is an autonumeric column';
 $string['change'] = 'Change';
 $string['charincorrectlength'] = 'Incorrect length for char field';
-$string['checkbigints'] = 'Check Bigints';
-$string['checkdefaults'] = 'Check Defaults';
-$string['checkindexes'] = 'Check Indexes';
+$string['checkbigints'] = 'Check bigints';
+$string['checkdefaults'] = 'Check defaults';
+$string['checkforeignkeys'] = 'Check foreign keys';
+$string['checkindexes'] = 'Check indexes';
 $string['check_defaults'] = 'Look for inconsistent default values';
 $string['check_bigints'] = 'Look for incorrect DB integers';
+$string['check_foreign_keys'] = 'Look for foreign key violations';
 $string['check_indexes'] = 'Look for missing DB indexes';
 $string['completelogbelow'] = '(see the complete log of the search below)';
 $string['confirmcheckbigints'] = 'This functionality will search for <a href=\"http://tracker.moodle.org/browse/MDL-11038\">potential wrong integer fields</a> in your Moodle server, generating (but not executing!) automatically the needed SQL statements to have all the integers in your DB properly defined.<br /><br />
@@ -23,6 +25,9 @@ This functionality doesn\'t perform any action against the DB (just reads from i
 $string['confirmcheckdefaults'] = 'This functionality will search for inconsistent default values in your Moodle server, generating (but not executing!) the needed SQL statements to have all the default values properly defined.<br /><br />
 Once generated you can copy such statements and execute them safely with your favourite SQL interface (don\'t forget to backup your data before doing that).<br /><br />
 It\'s highly recommended to be running the latest (+ version) available of your Moodle release (1.8, 1.9, 2.x ...) before executing the search of inconsistent default values.<br /><br />
+This functionality doesn\'t perform any action against the DB (just reads from it), so can be safely executed at any moment.';
+$string['confirmcheckforeignkeys'] = 'This functionality will search for potential violations of the foreign keys defined in the install.xml definitions. (Moodle does not currently generate acutal foreign key constraints in the database, which is why invalid data may be present.)<br /><br />
+It\'s highly recommended to be running the latest (+ version) available of your Moodle release (1.8, 1.9, 2.x ...) before executing the search of missing indexes.<br /><br />
 This functionality doesn\'t perform any action against the DB (just reads from it), so can be safely executed at any moment.';
 $string['confirmcheckindexes'] = 'This functionality will search for potential missing indexes in your Moodle server, generating (but not executing!) automatically the needed SQL statements to keep everything updated.<br /><br />
 Once generated you can copy such statements and execute them safely with your favourite SQL interface (don\'t forget to backup your data before doing that).<br /><br />
@@ -66,6 +71,7 @@ $string['fieldnameempty'] = 'Name field empty';
 $string['fields'] = 'Fields';
 $string['fieldsusedinkey'] = 'This field is used as key.';
 $string['filenotwriteable'] = 'File not writeable';
+$string['fkviolationdetails'] = 'Foreign key $a->keyname on table $a->tablename is violated by $a->numviolations out of $a->numrows rows.';
 $string['floatincorrectdecimals'] = 'Incorrect number of decimals for float field';
 $string['floatincorrectlength'] = 'Incorrect length for float field';
 $string['gotolastused'] = 'Go to last used file';
@@ -96,12 +102,13 @@ $string['newstatement'] = 'New Statement';
 $string['newtable'] = 'New Table';
 $string['newtablefrommysql'] = 'New Table From MySQL';
 $string['nomissingindexesfound'] = 'No missing indexes have been found, your DB doesn\'t need further actions.';
+$string['noviolatedforeignkeysfound'] = 'No violated foreign keys found';
 $string['nowrongdefaultsfound'] = 'No inconsistent default values have been found, your DB does not need further actions.';
 $string['nowrongintsfound'] = 'No wrong integers have been found, your DB doesn\'t need further actions.';
 $string['numberincorrectdecimals'] = 'Incorrect number of decimals for number field';
 $string['numberincorrectlength'] = 'Incorrect length for number field';
 $string['reserved'] = 'Reserved';
-$string['reservedwords'] = 'Reserved Words';
+$string['reservedwords'] = 'Reserved words';
 $string['revert'] = 'Revert';
 $string['revert_changes'] = 'Revert Changes';
 $string['save'] = 'Save';
@@ -132,6 +139,9 @@ $string['viewedited'] = 'View Edited';
 $string['vieworiginal'] = 'View Original';
 $string['viewphpcode'] = 'View PHP Code';
 $string['viewsqlcode'] = 'View SQL Code';
+$string['violatedforeignkeys'] = 'Violated foreign keys';
+$string['violatedforeignkeysfound'] = 'Violated foreign keys found';
+$string['violations'] = 'Violations';
 $string['wrong'] = 'Wrong';
 $string['wrongdefaults'] = 'Wrong Defaults Found';
 $string['wrongints'] = 'Wrong Integers Found';
