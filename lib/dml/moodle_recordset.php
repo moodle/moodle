@@ -31,10 +31,13 @@ abstract class moodle_recordset implements Iterator {
     //public abstract function next();
 
     /**
-     * Revinds back to the first row
+     * Revinds are not supported!
      * @return void
      */
-    //public abstract function rewind();
+    public function rewind() {
+        // no seeking, sorry - let's ignore it ;-)
+        return;
+    }
 
     /**
      * Did we reach the end?

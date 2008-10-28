@@ -58,10 +58,6 @@ class pgsql_native_moodle_recordset extends moodle_recordset {
         $this->current = $this->fetch_next();
     }
 
-    public function rewind() {
-        // we can not seek, sorry - let's ignore it ;-)
-    }
-
     public function valid() {
         return !empty($this->current);
     }

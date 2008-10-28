@@ -27,10 +27,6 @@ class adodb_moodle_recordset extends moodle_recordset {
         $this->rs->MoveNext();
     }
 
-    public function rewind() {
-        $this->rs->MoveFirst();
-    }
-
     public function valid() {
         return !$this->rs->EOF;
     }

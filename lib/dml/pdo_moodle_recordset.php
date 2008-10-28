@@ -34,13 +34,6 @@ class pdo_moodle_recordset extends moodle_recordset {
         return $this->fields !== false;
     }
 
-    public function rewind() {
-        $this->fields = $this->sth->fetch();
-        if ($this->fields) {
-            $this->rowCount = 0;
-        }
-    }
-
     public function valid() {
         if($this->rowCount < 0) {
             $this->rewind();
