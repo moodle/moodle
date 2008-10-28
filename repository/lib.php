@@ -481,6 +481,9 @@ function repository_get_types($visible=null) {
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 abstract class repository {
+    // $disabled can be set to true to disable a plugin by force
+    // example: self::$disabled = true
+    public $disabled = false;
     public $id;
     public $context;
     public $options;
@@ -1130,7 +1133,7 @@ function repository_get_instances($contexts=array(), $userid = null, $onlyvisibl
         $classname = 'repository_' . $repo->repositorytype;//
 
         $repository = new $classname($repo->id, $repo->contextid, $options, $repo->readonly);
-        if (!$onlyvisible || $repository->is_visible()) {
+        if (!$onlyvisible || ($repository->is_visible() && !$repository->disabled)) {
             $ret[] = $repository;
         }
     }

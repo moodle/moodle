@@ -6,10 +6,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 require_once($CFG->libdir . '/soaplib.php');
-require_once($CFG->libdir . '/alfresco/Service/Repository.php');
-require_once($CFG->libdir . '/alfresco/Service/Session.php');
-require_once($CFG->libdir . '/alfresco/Service/SpacesStore.php');
-require_once($CFG->libdir . '/alfresco/Service/Node.php');
 
 class repository_alfresco extends repository {
     private $repo = null;
@@ -21,6 +17,10 @@ class repository_alfresco extends repository {
         global $SESSION, $CFG;
         parent::__construct ($repositoryid, $context, $options);
         if (class_exists('SoapClient')) {
+            require_once($CFG->libdir . '/alfresco/Service/Repository.php');
+            require_once($CFG->libdir . '/alfresco/Service/Session.php');
+            require_once($CFG->libdir . '/alfresco/Service/SpacesStore.php');
+            require_once($CFG->libdir . '/alfresco/Service/Node.php');
             $this->repo = new Al_Repository($this->alfresco_url);
             $this->sess_name = 'alfresco_ticket_'.$this->id;
             $this->username   = optional_param('al_username', '', PARAM_RAW);
@@ -38,6 +38,8 @@ class repository_alfresco extends repository {
                 $this->logout();
             }
             $this->current_node = null;
+        } else {
+            $this->disabled = true;
         }
     }
     public function print_login() {
