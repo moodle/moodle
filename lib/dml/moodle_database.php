@@ -70,6 +70,13 @@ abstract class moodle_database {
     }
 
     /**
+     * Destructor - cleans up and flushes everything needed.
+     */
+    public function __desctruct() {
+        $this->dispose();
+    }
+
+    /**
      * Detects if all needed PHP stuff installed.
      * Note: can be used before connect()
      * @return mixed true if ok, string if something
@@ -218,7 +225,7 @@ abstract class moodle_database {
             $this->database_manager->dispose();
             $this->database_manager = null;
         }
-        $this->columns   = array();
+        $this->columns = array();
     }
 
     /**
