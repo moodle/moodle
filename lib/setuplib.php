@@ -63,14 +63,24 @@ class coding_exception extends moodle_exception {
  * Default exception handler, uncought exceptions are equivalent to using print_error()
  */
 function default_exception_handler($ex) {
+    global $CFG;
+
     $backtrace = $ex->getTrace();
     $place = array('file'=>$ex->getFile(), 'line'=>$ex->getLine(), 'exception'=>get_class($ex));
     array_unshift($backtrace, $place);
 
     if ($ex instanceof moodle_exception) {
-        _print_normal_error($ex->errorcode, $ex->module, $ex->a, $ex->link, $backtrace, $ex->debuginfo);
+        if (!isset($CFG->theme) or !isset($CFG->stylesheets)) {
+            _print_early_error($ex->errorcode, $ex->module, $ex->a);
+        } else {
+            _print_normal_error($ex->errorcode, $ex->module, $ex->a, $ex->link, $backtrace, $ex->debuginfo);
+        }
     } else {
-        _print_normal_error('generalexceptionmessage', 'error', $ex->getMessage(), '', $backtrace);
+        if (!isset($CFG->theme) or !isset($CFG->stylesheets)) {
+            _print_early_error('generalexceptionmessage', 'error', $ex->getMessage());
+        } else {
+            _print_normal_error('generalexceptionmessage', 'error', $ex->getMessage(), '', $backtrace);
+        }
     }
 }
 

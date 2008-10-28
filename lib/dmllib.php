@@ -89,7 +89,7 @@ function setup_DB() {
     $driverstatus = $DB->driver_installed();
 
     if ($driverstatus !== true) {
-        print_error('dbdriverproblem', 'error', '', $driverstatus);
+        throw new dml_exception('dbdriverproblem', $driverstatus);
     }
 
     if (debugging('', DEBUG_ALL)) {
@@ -127,7 +127,7 @@ function setup_DB() {
                fwrite($fp, time());
             }
         }
-        print_error('dbconnectionfailed', 'error', '', $dberr);
+        throw new dml_exception('dbconnectionfailed', $dberr);
     }
     if (debugging('', DEBUG_ALL)) {
         ob_end_clean();
