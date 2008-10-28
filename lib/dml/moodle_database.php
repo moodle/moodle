@@ -5,20 +5,30 @@ require_once($CFG->libdir.'/dml/moodle_recordset.php');
 
 /// GLOBAL CONSTANTS /////////////////////////////////////////////////////////
 
-/**
- * Bitmask, indicates only :name type parameters are supported by db backend.
- */
+/** Bitmask, indicates :name type parameters are supported by db backend. */
 define('SQL_PARAMS_NAMED', 1);
 
-/**
- * Bitmask, indicates only ? type parameters are supported by db backend.
- */
+/** Bitmask, indicates ? type parameters are supported by db backend. */
 define('SQL_PARAMS_QM', 2);
 
-/**
- * Bitmask, indicates only $1, $2.. type parameters are supported by db backend.
- */
+/** Bitmask, indicates $1, $2, ... type parameters are supported by db backend. */
 define('SQL_PARAMS_DOLLAR', 4);
+
+
+/** Normal select query, reading only */
+define('SQL_QUERY_SELECT', 1);
+
+/** Insert select query, writing */
+define('SQL_QUERY_INSERT', 2);
+
+/** Update select query, writing */
+define('SQL_QUERY_UPDATE', 3);
+
+/** Query changing db structure, writing */
+define('SQL_QUERY_STRUCTURE', 4);
+
+/** Auxiliary query done by driver, setting connection config, getting table info, etc. */
+define('SQL_QUERY_AUX', 5);
 
 /**
  * Abstract class representing moodle database interface.
@@ -226,6 +236,26 @@ abstract class moodle_database {
             $this->database_manager = null;
         }
         $this->columns = array();
+    }
+
+    /**
+     * Called before each db query.
+     * @param string $sql
+     * @param array array of parameters
+     * @param int $type type of query
+     * @return void
+     */
+    public function query_start($sql, $params, $type) {
+        //TODO
+    }
+
+    /**
+     * Called immediately after each db query.
+     * @param mixed db specific result
+     * @return void
+     */
+    public function query_end($result) {
+        //TODO
     }
 
     /**
