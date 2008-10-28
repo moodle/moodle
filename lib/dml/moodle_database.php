@@ -1398,10 +1398,23 @@ abstract class moodle_database {
 
     /**
      * Returns the proper substr() function for each DB.
+     * NOTE: this was originally returning only function name
      *
-     * Relies on ADOdb $adodb->substr property
+     * @param string $expr some string field, no aggregates
+     * @param mixed $start integer or expresion evaluating to int (1 based value; first char has index 1)
+     * @param mixed $length optional integer or expresion evaluating to int
+     * @return string sql fragment
      */
-    public abstract function sql_substr();
+    public function sql_substr($expr, $start, $length=false) {
+        if (count(func_get_args()) < 2) {
+            throw new coding_exception('moodle_database::sql_substr() requires at least two parameters', 'Originaly this function was only returning name of SQL substring function, it now requires all parameters.');
+        }
+        if ($length === false) {
+            return "SUBSTR($expr, $start";
+        } else {
+            return "SUBSTR($expr, $start, $length)";
+        }
+    }
 
     /**
      * Returns the SQL for returning searching one string for the location of another.

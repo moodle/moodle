@@ -541,10 +541,6 @@ abstract class pdo_moodle_database extends moodle_database {
         return $this->execute($sql, $params);
     }
 
-    public function sql_substr() {
-        error('TODO');
-    }
-
     public function sql_concat() {
         error('TODO');
     }

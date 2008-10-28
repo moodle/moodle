@@ -487,10 +487,6 @@ abstract class adodb_moodle_database extends moodle_database {
         }
     }
 
-    public function sql_substr() {
-        return $this->adodb->substr;
-    }
-
     public function sql_concat() {
         $args = func_get_args();
         return call_user_func_array(array($this->adodb, 'Concat'), $args);

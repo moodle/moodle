@@ -1036,10 +1036,6 @@ class pgsql_native_moodle_database extends moodle_database {
         return " $s ";
     }
 
-    public function sql_substr() {
-        return "SUBSTRING";
-    }
-
     public function sql_regex_supported() {
         return true;
     }

@@ -1387,6 +1387,37 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(1, $DB->count_records('testtable'));
     }
 
+    function test_sql_substring() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table($dbman, "testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $string = 'abcdefghij';
+
+        $DB->insert_record('testtable', array('name'=>$string));
+
+        $sql = "SELECT id, ".$DB->sql_substr("name", 5)." AS name FROM {testtable}";
+        $record = $DB->get_record_sql($sql);
+        $this->assertEqual(substr($string, 5-1), $record->name);
+
+        $sql = "SELECT id, ".$DB->sql_substr("name", 5, 2)." AS name FROM {testtable}";
+        $record = $DB->get_record_sql($sql);
+        $this->assertEqual(substr($string, 5-1, 2), $record->name);
+
+        try {
+            @$DB->sql_substr("name");
+            $this->fail("Expecting an exception, none occurred");
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof coding_exception);
+        }
+    }
+
     function test_sql_position() {
         $DB = $this->tdb;
         $this->assertEqual($DB->get_field_sql(
@@ -1502,5 +1533,5 @@ class moodle_database_for_testing extends moodle_database {
     public function delete_records_select($table, $select, array $params=null){}
     public function sql_concat(){}
     public function sql_concat_join($separator="' '", $elements=array()){}
-    public function sql_substr(){}
+    public function sql_substr($expr, $start, $length=false){}
 }

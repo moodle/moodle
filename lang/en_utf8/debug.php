@@ -15,6 +15,7 @@ $string['cannotsetupsite'] = 'Serious Error! Could not set up the site!';
 $string['cannotsetuptable'] = '$a tables could NOT be set up successfully!';
 $string['cannotfindadmin'] = 'Could not find an admin user!';
 $string['cannotupgradedbcustom'] = 'Upgrade of local database customisations failed! (Could not update version in config table)';
+$string['codingerror'] = 'Coding error detected, it must be fixed by a programmer: $a';
 $string['configmoodle'] = 'Moodle has not been configured yet. You need to edit config.php first.';
 $string['dbnotinsert'] = 'Database error - Cannot insert ($a)';
 $string['dbnotupdate'] = 'Database error - Cannot update ($a)';

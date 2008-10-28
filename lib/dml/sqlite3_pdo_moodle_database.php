@@ -302,13 +302,6 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
     }
 
     /**
-     * Returns the proper substr() function for each DB
-     */
-    public function sql_substr() {
-        return 'substr';
-    }
-
-    /**
      * Returns the proper SQL to do CONCAT between the elements passed
      * Can take many parameters
      *

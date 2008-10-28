@@ -45,6 +45,21 @@ class moodle_exception extends Exception {
 }
 
 /**
+ * Exception indicating programming error, must be fixed by a programeer.
+ */
+class coding_exception extends moodle_exception {
+
+    /**
+     * Constructor
+     * @param string $hint short description of problem
+     * @param string $debuginfo detailed information how to fix problem
+     */
+    function __construct($hint, $debuginfo=null) {
+        parent::__construct('codingerror', 'debug', '', $hint, $debuginfo);
+    }
+}
+
+/**
  * Default exception handler, uncought exceptions are equivalent to using print_error()
  */
 function default_exception_handler($ex) {

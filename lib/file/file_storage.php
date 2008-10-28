@@ -183,7 +183,7 @@ class file_storage {
             $sql = "SELECT *
                       FROM {files}
                      WHERE contextid = :contextid AND filearea = :filearea AND itemid = :itemid
-                           AND ".$DB->sql_substr()."(filepath, 1, $length) = :filepath
+                           AND ".$DB->sql_substr("filepath", 1, $length)." = :filepath
                            AND id <> :dirid
                            $dirs
                   ORDER BY $sort";
@@ -212,7 +212,7 @@ class file_storage {
                           FROM {files}
                          WHERE contextid = :contextid AND filearea = :filearea
                                AND itemid = :itemid AND filename = '.'
-                               AND ".$DB->sql_substr()."(filepath, 1, $length) = :filepath
+                               AND ".$DB->sql_substr("filepath", 1, $length)." = :filepath
                                AND id <> :dirid
                       ORDER BY $sort";
                 $reqlevel = substr_count($filepath, '/') + 1;

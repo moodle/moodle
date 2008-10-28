@@ -93,7 +93,7 @@
         } else {
             $usernamefield = $DB->sql_fullname('u.lastname' , 'u.firstname');
         }
-        $where = "AND " . $DB->sql_substr() . "(upper($usernamefield),1," .  $textlib->strlen($hook) . ") = :hookup";
+        $where = "AND " . $DB->sql_substr("upper($usernamefield)", 1, $textlib->strlen($hook)) . " = :hookup";
 
         if ( $hook == 'ALL' ) {
             $where = '';
@@ -115,7 +115,7 @@
         $params['hookup'] = $textlib->strtoupper($hook);
 
         if ($hook != 'ALL' and $hook != 'SPECIAL') {
-            $where = 'AND ' . $DB->sql_substr() . '(upper(concept),1,' .  $textlib->strlen($hook) . ') = :hookup';
+            $where = "AND " . $DB->sql_substr("upper(concept)", 1, $textlib->strlen($hook)) . " = :hookup";
         }
 
         $sqlselect  = "SELECT ge.*, ge.concept AS glossarypivot";
@@ -228,14 +228,14 @@
         case 'letter':
             if ($hook != 'ALL' and $hook != 'SPECIAL') {
                 $params['hookup'] = $textlib->strtoupper($hook);
-                $where = 'AND ' . $DB->sql_substr() . '(upper(concept),1,' .  $textlib->strlen($hook) . ') = :hookup';
+                $where = "AND " . $DB->sql_substr("upper(concept)", 1, $textlib->strlen($hook)) . " = :hookup";
             }
             if ($hook == 'SPECIAL') {
                 //Create appropiate IN contents
                 $alphabet = explode(",", get_string("alphabet"));
                 list($nia, $aparams) = $DB->get_in_or_equal($alphabet, SQL_PARAMS_NAMED, $start='a0', false);
                 $params = array_merge($params, $aparams);
-                $where = 'AND ' . $DB->sql_substr() . "(upper(concept),1,1) $nia";
+                $where = "AND " . $DB->sql_substr("upper(concept)", 1, 1) . " $nia";
             }
         break;
         }

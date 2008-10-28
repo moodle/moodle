@@ -868,11 +868,6 @@ class mysqli_native_moodle_database extends moodle_database {
         return "CONCAT ($s)";
     }
 
-    public function sql_substr() {
-        return "SUBSTRING";
-    }
-
-
     /**
      * Does this driver suppoer regex syntax when searching
      */

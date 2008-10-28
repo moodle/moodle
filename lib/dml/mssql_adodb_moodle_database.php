@@ -143,6 +143,23 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
     }
 
     /**
+     * Returns the proper substr() function for each DB.
+     * NOTE: this was originally returning only function name
+     *
+     * @param string $expr some string field, no aggregates
+     * @param mixed $start integer or expresion evaluating to int
+     * @param mixed $length optional integer or expresion evaluating to int
+     * @return string sql fragment
+     */
+    public function sql_substr($expr, $start, $length=false) {
+        if ($length === false) {
+            return "SUBSTRING($expr, $start, (LEN($expr) - $start + 1))";
+        } else {
+            return "SUBSTRING($expr, $start, $length)";
+        }
+    }
+
+    /**
      * Update a record in a table
      *
      * $dataobject is an object containing needed data
