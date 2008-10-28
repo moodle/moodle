@@ -86,8 +86,21 @@ class pgsql_native_moodle_database extends moodle_database {
 
         $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
 
-        //TODO: handle both port and socket connection
-        $this->pgsql = pg_connect("host='{$this->dbhost}' user='{$this->dbuser}' password='{$this->dbpass}' dbname='{$this->dbname}'");
+        $pass = addcslashes($this->dbpass, "'\\");
+
+        // Unix socket connections should have lower overhead
+        if (empty($this->dboptions['forcetcp']) and ($this->dbhost === 'localhost' or $this->dbhost === '127.0.0.1')) {
+            $connection = "user='$this->dbuser' password='$pass' dbname='$this->dbname'";
+        } else {
+            $connection = "host='$this->dbhost' user='$this->dbuser' password='$pass' dbname='$this->dbname'";
+        }
+
+        if (empty($this->dboptions['dbpersit'])) {
+            $this->pgsql = pg_connect($connection, PGSQL_CONNECT_FORCE_NEW);
+        } else {
+            $this->pgsql = pg_pconnect($connection, PGSQL_CONNECT_FORCE_NEW);
+        }
+
         $status = pg_connection_status($this->pgsql);
         if ($status === PGSQL_CONNECTION_BAD) {
             $this->pgsql = null;
