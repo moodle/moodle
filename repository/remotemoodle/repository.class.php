@@ -325,7 +325,6 @@ class repository_remotemoodle extends repository {
         require_once($CFG->dirroot . '/mnet/xmlrpc/client.php');
         //retrieve the host url
         $this->ensure_environment();
-
         $host = $DB->get_record('mnet_host',array('id' => $this->options['peer']));
         $mnetauth = get_auth_plugin('mnet');
         $mnetauth->start_jump_session($host->id, '');
@@ -340,7 +339,14 @@ class repository_remotemoodle extends repository {
         $client->add_param($USER->username);
         $client->add_param($url);
 
-        $client->send($mnet_peer);
+        if (!$client->send($mnet_peer)) {
+            $message =" ";
+            foreach ($client->error as $errormessage) {
+                $message .= "ERROR: $errormessage . ";
+            }
+            echo json_encode(array('e'=>$message));
+            exit;
+        }
 
         $services = $client->response;
         $content = base64_decode($services[0]);
