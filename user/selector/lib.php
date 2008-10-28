@@ -123,9 +123,6 @@ abstract class user_selector_base {
     public function display($return = false) {
         global $USER, $CFG;
 
-        // Ensure that the list of previously selected users is up to date.
-        $this->get_selected_users();
-
         // Get the list of requested users, and if there is only one, set a flag to autoselect it.
         $search = optional_param($this->name . '_searchtext', '', PARAM_RAW);
         $groupedusers = $this->find_users($search);
@@ -146,12 +143,9 @@ abstract class user_selector_base {
         $output = '<div class="userselector" id="' . $this->name . '_wrapper">' . "\n" .
                 '<select name="' . $name . '" id="' . $this->name . '" ' .
                 $multiselect . 'size="' . $this->rows . '">' . "\n";
-        foreach ($groupedusers as $groupname => $users) {
-            $output .= $this->output_optgroup($groupname, $users, $select);
-        }
-        if (!empty($this->selected)) {
-            $output .= $this->output_optgroup(get_string('previouslyselectedusers'), $this->selected, true);
-        }
+
+        // Populate the select.
+        $output .= $this->output_options($groupedusers, $select);
 
         // Output the search controls.
         $output .= "</select>\n<div>\n";
@@ -161,16 +155,8 @@ abstract class user_selector_base {
                 $this->name . '_searchbutton" value="' . $this->search_button_caption() . '" />';
         $output .= "</div>\n</div>\n\n";
 
-        // This method trashes $this->selected, so reset it so if someone tries to
-        // Use it again, it is rebuilt.
-        $this->selected = null;
-
-        // Put the options into the session for the benefit of the ajax code.
-        $options = $this->get_options();
-        $hash = md5(serialize($options));
-        $USER->userselectors[$hash] = $options;
-        $output .=  '<p><a href="' . $CFG->wwwroot . '/user/selector/search.php?selectorid=' .
-                $hash . '&amp;' . 'sesskey=' . sesskey() . '&amp;search=">Ajax search script</a></p>'; // DONOTCOMMIT
+        // Initialise the ajax functionality.
+        $output .= $this->initialise_javascript();
 
         // Return or output it.
         if ($return) {
@@ -323,6 +309,38 @@ abstract class user_selector_base {
         return array(implode(' AND ', $tests), $params);
     }
 
+    /**
+     * Output the list of <optgroup>s and <options>s that go inside the select.
+     * This method should do the same as the JavaScript method
+     * user_selector.prototype.handle_response.
+     *
+     * @param unknown_type $groupedusers
+     * @param unknown_type $select
+     * @return unknown
+     */
+    protected function output_options($groupedusers, $select) {
+        $output = '';
+
+        // Ensure that the list of previously selected users is up to date.
+        $this->get_selected_users();
+
+        // Output each optgroup.
+        foreach ($groupedusers as $groupname => $users) {
+            $output .= $this->output_optgroup($groupname, $users, $select);
+        }
+
+        // If there were previously selected users who do not match the search, show them too.
+        if (!empty($this->selected)) {
+            $output .= $this->output_optgroup(get_string('previouslyselectedusers'), $this->selected, true);
+        }
+
+        // This method trashes $this->selected, so clear the cache so it is
+        // rebuilt before anyone tried to use it again.
+        $this->selected = null;
+
+        return $output;
+    }
+
     protected function output_optgroup($groupname, $users, $select) {
         $output = '<optgroup label="' . s($groupname) . ' (' . count($users) . ')">' . "\n";
         if (!empty($users)) {
@@ -344,10 +362,10 @@ abstract class user_selector_base {
     }
 
     /**
-     * Convert a user object to a string suitable for displaying as an option in the dropdown.
+     * Convert a user object to a string suitable for displaying as an option in the list box.
      *
      * @param object $user the user to display.
-     * @return string a string representation to display.
+     * @return string a string representation of the user.
      */
     protected function output_user($user) {
         $bits = array(
@@ -365,9 +383,38 @@ abstract class user_selector_base {
     protected function search_button_caption() {
         return get_string('search');
     }
+
+    /**
+     * Enter description here...
+     *
+     */
+    protected function initialise_javascript() {
+        global $USER;
+        $output = '';
+
+        // Required JavaScript code.
+        require_js(array('yui_yahoo', 'yui_event', 'yui_json', 'yui_connection', 'yui_datasource'));
+        require_js('user/selector/script.js');
+
+        // Put the options into the session, to allow search.php to respond to the ajax requests.
+        $options = $this->get_options();
+        $hash = md5(serialize($options));
+        $USER->userselectors[$hash] = $options;
+
+        // Initialise the selector.
+        $output .= print_js_call('new user_selector', array($this->name, $hash,
+                sesskey(), $this->extrafields, get_string('previouslyselectedusers')), true);
+        return $output;
+    }
 }
 
-class role_assign_user_selector extends user_selector_base {
+class role_assign_potential_user_selector extends user_selector_base {
+    public function find_users($search) {
+        return array(); // TODO
+    }
+}
+
+class role_assign_current_user_selector extends user_selector_base {
     public function find_users($search) {
         return array(); // TODO
     }

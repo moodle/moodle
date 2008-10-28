@@ -14,7 +14,8 @@ class test_user_selector extends user_selector_base {
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $sql = 'SELECT ' . $this->required_fields_sql('u') .
                 ' FROM {user} u' .
-                ' WHERE ' . $wherecondition;
+                ' WHERE ' . $wherecondition .
+                ' ORDER BY u.lastname, u.firstname';
         $users = $DB->get_recordset_sql($sql, $params);
         $groupedusers = array();
         if ($search) {
@@ -40,6 +41,8 @@ if ($justdefineclass) {
     return;
 }
 
+require_login();
+require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 print_header();
 
 $userselector = new test_user_selector('myuserselector');

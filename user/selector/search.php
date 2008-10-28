@@ -34,7 +34,9 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/user/selector/lib.php');
 
 // Check access.
-require_login();
+if (!isloggedin()) {;
+    print_error('mustbeloggedin');
+}
 if (!confirm_sesskey()) {
     print_error('invalidsesskey');
 }
@@ -62,5 +64,13 @@ $userselector = new $classname($name, $options);
 
 // Do the search and output the results.
 $users = $userselector->find_users($search);
+foreach ($users as &$group) {
+    foreach ($group as &$user) {
+        $user->fullname = fullname($user);
+    }
+}
+
+
+header('Content-type: application/json');
 echo json_encode(array('results' => $users));
 ?>
