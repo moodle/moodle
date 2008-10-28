@@ -1410,7 +1410,7 @@ abstract class moodle_database {
             throw new coding_exception('moodle_database::sql_substr() requires at least two parameters', 'Originaly this function was only returning name of SQL substring function, it now requires all parameters.');
         }
         if ($length === false) {
-            return "SUBSTR($expr, $start";
+            return "SUBSTR($expr, $start)";
         } else {
             return "SUBSTR($expr, $start, $length)";
         }
