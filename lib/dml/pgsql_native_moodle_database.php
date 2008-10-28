@@ -102,10 +102,12 @@ class pgsql_native_moodle_database extends moodle_database {
         }
 
         $status = pg_connection_status($this->pgsql);
-        if ($status === PGSQL_CONNECTION_BAD) {
+
+        if ($status === false or $status === PGSQL_CONNECTION_BAD) {
             $this->pgsql = null;
             return false;
         }
+
         pg_set_client_encoding($this->pgsql, 'utf8');
         // find out the bytea oid
         $sql = "SELECT oid FROM pg_type WHERE typname = 'bytea'";
@@ -238,7 +240,7 @@ class pgsql_native_moodle_database extends moodle_database {
 
         $sql = "SELECT a.attnum, a.attname AS field, t.typname AS type, a.attlen, a.atttypmod, a.attnotnull, a.atthasdef, d.adsrc
                   FROM pg_catalog.pg_class c
-                  JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid 
+                  JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid
                   JOIN pg_catalog.pg_type t ON t.oid = a.atttypid
              LEFT JOIN pg_catalog.pg_attrdef d ON (d.adrelid = c.oid AND d.adnum = a.attnum)
                  WHERE relkind = 'r' AND c.relname = '$tablename' AND c.reltype > 0 AND a.attnum > 0
@@ -622,7 +624,7 @@ class pgsql_native_moodle_database extends moodle_database {
 
         $return = pg_fetch_all_columns($result, 0);
         pg_free_result($result);
-         
+
         return $return;
     }
 
@@ -678,7 +680,7 @@ class pgsql_native_moodle_database extends moodle_database {
         $count = count($params);
         for ($i=1; $i<=$count; $i++) {
             $values[] = "\$".$i;
-        } 
+        }
         $values = implode(',', $values);
 
         $sql = "INSERT INTO {$this->prefix}$table ($fields) VALUES($values) $returning";
