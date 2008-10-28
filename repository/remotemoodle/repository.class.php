@@ -48,10 +48,26 @@ class repository_remotemoodle extends repository {
      * @param <type> $pathnamehash
      * @return <type>
      */
-    public static function retrieveFile($username, $pathnamehash) {
+    public function retrieveFile($username, $source) {
         global $DB, $USER, $MNET_REMOTE_CLIENT;
+        $USER = $DB->get_record('user',array('username' => $username, 'mnethostid' => $MNET_REMOTE_CLIENT->id));
+        $file = unserialize(base64_decode($source));
+ 
+        $contextid = $file[0];
+        $filearea = $file[1];
+        $itemid = $file[2];
+        $filepath = $file[3];
+        $filename = $file[4];
+             
+        $browser = get_file_browser();
+        $fileinfo = $browser->get_file_info(get_context_instance_by_id($contextid), $filearea, $itemid, $filepath, $filename);
+        $this->log($fileinfo);
+        if (empty($fileinfo)) {
+            exit(mnet_server_fault(9016, get_string('usercannotaccess', 'repository_remotemoodle',  $file)));
+        }
+         
         $fs = get_file_storage();
-        $sf = $fs->get_file_by_hash($pathnamehash);
+        $sf = $fs->get_file($contextid, $filearea, $itemid, $filepath, $filename);
         $contents = base64_encode($sf->get_content());
         return array($contents, $sf->get_filename());
     }
@@ -66,8 +82,11 @@ class repository_remotemoodle extends repository {
      * @return <type>
      */
     public function getFileList($username, $search) {
-        global $DB, $USER, $MNET_REMOTE_CLIENT, $CFG;
+        global $DB, $USER, $MNET_REMOTE_CLIENT, $CFG;     
         $USER = $DB->get_record('user',array('username' => $username, 'mnethostid' => $MNET_REMOTE_CLIENT->id));
+        if (empty($USER)) {
+            exit(mnet_server_fault(9016, get_string('usernotfound', 'repository_remotemoodle',  $username)));
+        }
         $ret = array();
         $ret['nologin'] = true;
         $ret['manage'] = $CFG->wwwroot .'/files/index.php'; // temporary
@@ -83,21 +102,21 @@ class repository_remotemoodle extends repository {
             $ret['path'] = array();
             $params = $fileinfo->get_params();
             $filearea = $params['filearea'];
-            $ret['path'][] = repository_remotemoodle::_encode_path($filearea, $path, $fileinfo->get_visible_name());
+            $ret['path'][] = $this->_encode_path($filearea, $path, $fileinfo->get_visible_name());
             if ($fileinfo->is_directory()) {
                 $level = $fileinfo->get_parent();
                 while ($level) {
                     $params = $level->get_params();
-                    $ret['path'][] = repository_remotemoodle::_encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
+                    $ret['path'][] = $this->_encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
                     $level = $level->get_parent();
                 }
             }
-            $filecount = repository_remotemoodle::build_tree($fileinfo, $search, $ret['dynload'], $ret['list']);
+            $filecount = $this->build_tree($fileinfo, $search, $ret['dynload'], $ret['list']);
             $ret['path'] = array_reverse($ret['path']);
         }
 
         if (empty($ret['list'])) {
-            throw new repository_exception('emptyfilelist', 'repository_local');
+            exit(mnet_server_fault(9016, get_string('emptyfilelist', 'repository_local')));
         } else {
             return $ret;
         }
@@ -111,7 +130,7 @@ class repository_remotemoodle extends repository {
      * @param <type> $visiblename
      * @return <type>
      */
-    public static function _encode_path($filearea, $path, $visiblename) {
+    public function _encode_path($filearea, $path, $visiblename) {
         return array('path'=>serialize(array($filearea, $path)), 'name'=>$visiblename);
     }
 
@@ -127,7 +146,7 @@ class repository_remotemoodle extends repository {
      *
      * todo: take $search into account, and respect a threshold for dynamic loading
      */
-    public static function build_tree($fileinfo, $search, $dynamicmode, &$list) {
+    public function build_tree($fileinfo, $search, $dynamicmode, &$list) {
         global $CFG;
 
         $filecount = 0;
@@ -146,7 +165,7 @@ class repository_remotemoodle extends repository {
                 $level = $child->get_parent();
                 while ($level) {
                     $params = $level->get_params();
-                    $path[] = repository_remotemoodle::_encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
+                    $path[] = $this->_encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
                     $level = $level->get_parent();
                 }
 
@@ -163,7 +182,7 @@ class repository_remotemoodle extends repository {
                     $_search = false;
                 }
                 $tmp['children'] = array();
-                $_filecount = repository_remotemoodle::build_tree($child, $_search, $dynamicmode, $tmp['children']);
+                $_filecount = $this->build_tree($child, $_search, $dynamicmode, $tmp['children']);
                 if ($search && $_filecount) {
                     $tmp['expanded'] = 1;
                 }
@@ -183,13 +202,12 @@ class repository_remotemoodle extends repository {
                 $fs = get_file_storage();
                 $params = $child->get_params();
 
-                $pathnamehash = $fs->get_pathname_hash($params['contextid'], $params['filearea'], $params['itemid'], $params['filepath'], $params['filename']);
-
+                $source = serialize(array($params['contextid'], $params['filearea'], $params['itemid'], $params['filepath'], $params['filename']));
                 $list[] = array(
                     'title' => $filename,
                     'size' => $filesize,
                     'date' => $filedate,
-                   'source' => $pathnamehash,
+                    'source' => base64_encode($source),
                     'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo_from_type("icon", $filetype)
                 );
 
