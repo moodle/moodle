@@ -418,7 +418,10 @@ abstract class moodle_database {
         }
 
         if ($count > count($params)) {
-            throw new dml_exception('invalidqueryparam');
+            $a = new stdClass;
+            $a->expected = $count;
+            $a->actual = count($params);
+            throw new dml_exception('invalidqueryparam', $a);
         }
 
         if ($type & $allowed_types) { // bitwise AND
