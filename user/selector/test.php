@@ -59,7 +59,15 @@ if (!empty($users)) {
 
 echo '<form action="test.php"><div><label for="myuserselector">Select users</label>';
 $userselector->display();
+echo '<p><input type="submit" id="submitbutton" value="Submit" /></p>';
 echo '</div></form>';
+
+echo '<script type="text/javascript">
+function selection_change(isempty) {
+    document.getElementById("submitbutton").disabled = !isempty;
+}
+user_selector.get("myuserselector").subscribe("selectionchanged", selection_change);
+</script>';
 
 print_footer();
 ?>

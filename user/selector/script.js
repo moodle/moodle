@@ -4,8 +4,13 @@
 // package: userselector
 
 /**
- * 
+ * Initialise a new user selector.
  * @constructor
+ * @param String name the control name/id.
+ * @param String hash the hash that identifies this selector in the user's session.
+ * @param String sesskey the user's sesskey.
+ * @param Array extrafields extra fields we are displaying for each user in addition to fullname.
+ * @param String label used for the optgroup of users who are selected but who do not match the current search.
  */
 function user_selector(name, hash, sesskey, extrafields, strprevselected) {
     this.name = name;
@@ -31,11 +36,39 @@ function user_selector(name, hash, sesskey, extrafields, strprevselected) {
     this.searchfield.parentNode.insertBefore(label, this.searchfield);
     searchbutton.parentNode.removeChild(searchbutton);
 
-    // Hook up the event handler.
+    // Hook up the event handler for when the search text changes.
     var oself = this;
     YAHOO.util.Event.addListener(this.searchfield, "keyup", function(e) { oself.handle_keyup() });
     this.lastsearch = this.get_search_text();
+
+    // Define our custom event.
+    this.createEvent('selectionchanged');
+    this.selectionempty = this.is_selection_empty();
+    user_selector.allselectors[name] = this;
+
+    // Hook up the event handler for when the selection changes.
+    YAHOO.util.Event.addListener(this.listbox, "keyup", function(e) { oself.handle_selection_change() });
+    YAHOO.util.Event.addListener(this.listbox, "click", function(e) { oself.handle_selection_change() });
+    YAHOO.util.Event.addListener(this.listbox, "change", function(e) { oself.handle_selection_change() });
 }
+
+/**
+ * A list of all the user_selectors on this page. Use by user_selector.get.
+ *
+ * @property allselectors
+ * @type Object
+ */
+user_selector.allselectors = {};
+
+/**
+ * @param String name the name of a user selector on this page.
+ * @return user_selector the named user selector.
+ */
+user_selector.get = function(name) {
+    return user_selector.allselectors[name];
+}
+
+// Fields set be the constructor ===============================================
 
 /**
  * This id/name used for this control in the HTML.
@@ -52,11 +85,14 @@ user_selector.prototype.name = null;
 user_selector.prototype.extrafields = [];
 
 /**
- * The datasource used to fetch lists of users from Moodle.
- * @property datasource
- * @type YAHOO.widget.DataSource
+ * Name of the previously selected users group.
+ *
+ * @property strprevselected
+ * @type String
  */
-user_selector.prototype.datasource = null;
+user_selector.prototype.strprevselected = '';
+
+// Fields that configure the control's behaviour ===============================
 
 /**
  * Number of seconds to delay before submitting a query request. If a query
@@ -69,13 +105,22 @@ user_selector.prototype.datasource = null;
  */
 user_selector.prototype.querydelay = 0.2;
 
+// Internal fields =============================================================
+
+/**
+ * The datasource used to fetch lists of users from Moodle.
+ * @property datasource
+ * @type YAHOO.widget.DataSource
+ */
+user_selector.prototype.datasource = null;
+
 /**
  * The input element that contains the search term.
  * 
  * @property searchfield
  * @type HTMLInputElement
  */
-user_selector.prototype.searchfield = 0.2;
+user_selector.prototype.searchfield = null;
 
 /**
  * The select element that contains the list of users.
@@ -94,7 +139,7 @@ user_selector.prototype.listbox = null;
 user_selector.prototype.timeoutid = null;
 
 /**
- * The last string that we searched for.
+ * The last string that we searched for, so we can avoid unnecessary repeat searches.
  * 
  * @property lastsearch
  * @type String
@@ -102,21 +147,33 @@ user_selector.prototype.timeoutid = null;
 user_selector.prototype.lastsearch = null;
 
 /**
- * Name of the previously selected users group.
+ * Used while the list of options is being refreshed, to track options that were
+ * selected before, so they are not lost if they do not appear in the search results.
  *
- * @property strprevselected
- * @type String
+ * @property selected
+ * @type Object
  */
-user_selector.prototype.strprevselected = '';
+user_selector.prototype.selected = null;
 
 /**
- * Used to track whether there is only one optoin matchin the search results, if
- * so, it is automatically selected.
+ * Used while the list of options is being refreshed to determine if there is only
+ * one user matching the search, so they can be automatically selected.
  *
- * @property strprevselected
- * @type Object
+ * @property onlyoption
+ * @type HTMLOptionElement
  **/
 user_selector.prototype.onlyoption = null;
+
+/**
+ * Whether any options where selected last time we checked. Used by
+ * handle_selection_change to track when this status changes.
+ *
+ * @property selectionempty
+ * @type Boolean
+ */
+user_selector.prototype.selectionempty = true;
+
+// Methods for handing various events ==========================================
 
 /**
  * Key up hander for the search text box. Trigger an ajax search after a delay.
@@ -170,6 +227,34 @@ user_selector.prototype.handle_response = function(request, data) {
 user_selector.prototype.handle_failure = function() {
     this.listbox.style.background = '';
 }
+
+/**
+ * @return Boolean check all the options and return whether any are selected.
+ */
+user_selector.prototype.is_selection_empty = function() {
+    var options = this.listbox.getElementsByTagName('option');
+    for (i = 0; i < options.length; i++) {
+        var option = options[i];
+        if (option.selected) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Handles when the selection has changed. If the selection has changed from
+ * empty to not-empty, or vice versa, then fire the event handlers.
+ */
+user_selector.prototype.handle_selection_change = function() {
+    var isselectionempty = this.is_selection_empty();
+    if (isselectionempty !== this.selectionempty) {
+        this.fireEvent('selectionchanged', isselectionempty);
+    }
+    this.selectionempty = isselectionempty;
+}
+
+// Methods for refreshing the list of displayed options ========================
 
 /**
  * This method should do the same sort of thing as the PHP method
@@ -268,3 +353,5 @@ user_selector.prototype.output_user = function(user) {
     }
     return output;
 }
+
+YAHOO.lang.augmentProto(user_selector, YAHOO.util.EventProvider);
