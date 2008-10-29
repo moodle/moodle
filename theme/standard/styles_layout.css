@@ -433,16 +433,45 @@ form.popupform label {
   overflow:hidden;
 }
 
+.groupmanagementtable {
+  width: 90%;
+}
+
 .groupmanagementtable td {
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 .groupmanagementtable p {
   text-align: center;
 }
 
-.groupmanagementtable select {
-  width: 18em;
+.groupmanagementtable #memberscell,
+.groupmanagementtable #nonmemberscell {
+  width: 42%;
+}
+.groupmanagementtable #memberscell label,
+.groupmanagementtable #nonmemberscell label {
+  font-weight: bold;
+}
+.groupmanagementtable #buttonscell {
+  width: 16%;
+}
+.groupmanagementtable #buttonscell input {
+    width: 80%;
+    padding: 1em 0;
+    margin: 2em 0;
+}
+.groupmanagementtable #backcell {
+    padding-top: 2em;
+    text-align: center;
+}
+#removeselect_wrapper,
+#addselect_wrapper {
+    width: 100%;
+}
+.groupmanagementtable #removeselect_wrapper label,
+.groupmanagementtable #addselect_wrapper label {
+  font-weight: normal;
 }
 
 #group-groupings .buttons {
@@ -515,6 +544,13 @@ img.icontoggle {
 span.hide,
 div.hide {
   display:none;
+}
+
+.userselector select {
+  width: 100%;
+}
+.userselector div label {
+  margin-right: 0.3em;
 }
 
 /***

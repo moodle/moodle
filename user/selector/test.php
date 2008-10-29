@@ -34,7 +34,6 @@ class test_user_selector extends user_selector_base {
         $options['file'] = 'user/selector/test.php';
         return $options;
     }
-    
 }
 
 if ($justdefineclass) {
@@ -46,7 +45,7 @@ require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 print_header();
 
 $userselector = new test_user_selector('myuserselector');
-$userselector->set_multiselect(false);
+//$userselector->set_multiselect(false);
 
 $users = $userselector->get_selected_users();
 if (!empty($users)) {
@@ -58,14 +57,14 @@ if (!empty($users)) {
     echo '</ul>';
 }
 
-echo '<form action="test.php"><div><label for="myuserselector">Select users</label>';
+echo '<form action="test.php"><div style="width: 30em;"><label for="myuserselector">Select users</label>';
 $userselector->display();
 echo '<p><input type="submit" id="submitbutton" value="Submit" /></p>';
 echo '</div></form>';
 
 echo '<script type="text/javascript">
 function selection_change(isempty) {
-    document.getElementById("submitbutton").disabled = !isempty;
+    document.getElementById("submitbutton").disabled = isempty;
 }
 user_selector.get("myuserselector").subscribe("selectionchanged", selection_change);
 </script>';

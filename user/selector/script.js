@@ -12,14 +12,16 @@
  * @param Array extrafields extra fields we are displaying for each user in addition to fullname.
  * @param String label used for the optgroup of users who are selected but who do not match the current search.
  */
-function user_selector(name, hash, sesskey, extrafields, strprevselected) {
+function user_selector(name, hash, sesskey, extrafields, strprevselected, strnomatchingusers) {
     this.name = name;
     this.extrafields = extrafields;
     this.strprevselected = strprevselected;
+    this.strnomatchingusers = strnomatchingusers;
+    this.searchurl = moodle_cfg.wwwroot + '/user/selector/search.php?selectorid=' +
+            hash + '&sesskey=' + sesskey + '&search='
 
     // Set up the data source.
-    this.datasource = new YAHOO.util.XHRDataSource(moodle_cfg.wwwroot +
-            '/user/selector/search.php?selectorid=' + hash + '&sesskey=' + sesskey + '&search='); 
+    this.datasource = new YAHOO.util.XHRDataSource(this.searchurl); 
     this.datasource.connXhrMode = 'cancelStaleRequests';
     this.datasource.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;
     this.datasource.responseSchema = {resultsList: 'results'};
@@ -92,6 +94,14 @@ user_selector.prototype.extrafields = [];
  */
 user_selector.prototype.strprevselected = '';
 
+/**
+ * Name of the no matching users group.
+ *
+ * @property strnomatchingusers
+ * @type String
+ */
+user_selector.prototype.strnomatchingusers = '';
+
 // Fields that configure the control's behaviour ===============================
 
 /**
@@ -106,6 +116,13 @@ user_selector.prototype.strprevselected = '';
 user_selector.prototype.querydelay = 0.2;
 
 // Internal fields =============================================================
+
+/**
+ * The URL for the datasource.
+ * @property searchurl
+ * @type String
+ */
+user_selector.prototype.searchurl = null;
 
 /**
  * The datasource used to fetch lists of users from Moodle.
@@ -199,6 +216,7 @@ user_selector.prototype.get_search_text = function() {
  */
 user_selector.prototype.send_query = function() {
     var value = this.get_search_text();
+    this.searchfield.className = '';
     if (this.lastsearch == value) {
         return;
     }
@@ -226,6 +244,15 @@ user_selector.prototype.handle_response = function(request, data) {
  */
 user_selector.prototype.handle_failure = function() {
     this.listbox.style.background = '';
+    this.searchfield.className = 'error';
+
+    // If we are in developer debug mode, output a link to help debug the failure.
+    if (moodle_cfg.developerdebug) {
+        var link = document.createElement('a');
+        link.href = this.searchurl + this.get_search_text();
+        link.appendChild(document.createTextNode('Ajax call failed. Click here to try the search call directly.'))
+        this.searchfield.parentNode.appendChild(link);
+    }
 }
 
 /**
@@ -236,10 +263,10 @@ user_selector.prototype.is_selection_empty = function() {
     for (i = 0; i < options.length; i++) {
         var option = options[i];
         if (option.selected) {
-            return true;
+            return false;
         }
     }
-    return false;
+    return true;
 }
 
 /**
@@ -283,8 +310,14 @@ user_selector.prototype.output_options = function(data) {
 
     // Output each optgroup.
     this.onlyoption = null;
+    var nogroups = true;
     for (groupname in results) {
         this.output_group(groupname, results[groupname], false);
+        nogroups = false;
+    }
+
+    if (nogroups) {
+        this.output_group(this.strnomatchingusers, {}, false)
     }
 
     // If there was only one option matching the search results, select it.
@@ -343,7 +376,7 @@ user_selector.prototype.output_group = function(groupname, users, select) {
         var option = document.createElement('option');
         option.disabled = 'disabled';
         option.appendChild(document.createTextNode('\u00A0'));
-        optgroup.appendchild(option);
+        optgroup.appendChild(option);
     }
     this.listbox.appendChild(optgroup);
 }

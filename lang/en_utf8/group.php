@@ -72,6 +72,7 @@ $string['newgrouping'] = 'New grouping';
 $string['backtogroups'] = 'Back to groups';
 $string['backtogroupings'] = 'Back to groupings';
 $string['existingmembers'] = 'Existing members: $a'; 
+$string['potentialmembs'] = 'Potential members';
 $string['potentialmembers'] = 'Potential members: $a';
 $string['groupinfo'] = 'Info about selected group';
 $string['groupinfomembers'] = 'Info about selected members';

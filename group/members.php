@@ -2,24 +2,18 @@
 /**
  * Add/remove members from group.
  *
- * @copyright &copy; 2006 The Open University
+ * @copyright &copy; 2006 The Open University and others
  * @author N.D.Freear AT open.ac.uk
- * @author J.White AT open.ac.uk
+ * @author J.White AT open.ac.uk and others
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package groups
  */
-require_once('../config.php');
-require_once('lib.php');
-
-define("MAX_USERS_PER_PAGE", 5000);
+require_once(dirname(__FILE__) . '/../config.php');
+require_once(dirname(__FILE__) . '/lib.php');
+require_once($CFG->dirroot . '/user/selector/lib.php');
+require_js('group/clientlib.js');
 
 $groupid    = required_param('group', PARAM_INT);
-$searchtext = optional_param('searchtext', '', PARAM_RAW); // search string
-$showall    = optional_param('showall', 0, PARAM_BOOL);
-
-if ($showall) {
-    $searchtext = '';
-}
 
 if (!$group = $DB->get_record('groups', array('id'=>$groupid))) {
     print_error('invalidgroupid');
@@ -34,103 +28,42 @@ require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $courseid);
 require_capability('moodle/course:managegroups', $context);
 
-$strsearch = get_string('search');
-$strshowall = get_string('showall');
 $returnurl = $CFG->wwwroot.'/group/index.php?id='.$courseid.'&group='.$group->id;
 
+if (optional_param('cancel', false, PARAM_BOOL)) {
+    redirect($returnurl);
+}
 
-if ($frm = data_submitted() and confirm_sesskey()) {
-
-    if (isset($frm->cancel)) {
-        redirect($returnurl);
-
-    } else if (isset($frm->add) and !empty($frm->addselect)) {
-
-        foreach ($frm->addselect as $userid) {
-            if (! $userid = clean_param($userid, PARAM_INT)) {
-                continue;
-            }
-            if (!groups_add_member($groupid, $userid)) {
+$groupmembersselector = new group_members_selector('removeselect',
+        array('groupid' => $groupid, 'courseid' => $course->id));
+$groupmembersselector->set_extra_fields(array());
+$potentialmembersselector = new group_non_members_selector('addselect',
+        array('groupid' => $groupid, 'courseid' => $course->id));
+$potentialmembersselector->set_extra_fields(array());
+        
+if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
+    $userstoadd = $potentialmembersselector->get_selected_users();
+    if (!empty($userstoadd)) {
+        foreach ($userstoadd as $user) {
+            if (!groups_add_member($groupid, $user->id)) {
                 print_error('erroraddremoveuser', 'group', $returnurl);
             }
+            $groupmembersselector->invalidate_selected_users();
+            $potentialmembersselector->invalidate_selected_users();
         }
+    }
+}
 
-    } else if (isset($frm->remove) and !empty($frm->removeselect)) {
-
-        foreach ($frm->removeselect as $userid) {
-            if (! $userid = clean_param($userid, PARAM_INT)) {
-                continue;
-            }
-            if (!groups_remove_member($groupid, $userid)) {
+if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
+    $userstoremove = $groupmembersselector->get_selected_users();
+    if (!empty($userstoremove)) {
+        foreach ($userstoremove as $user) {
+            if (!groups_remove_member($groupid, $user->id)) {
                 print_error('erroraddremoveuser', 'group', $returnurl);
             }
+            $groupmembersselector->invalidate_selected_users();
+            $potentialmembersselector->invalidate_selected_users();
         }
-    }
-}
-
-$groupmembersoptions = '';
-$groupmemberscount = 0;
-
-// Get members, organised by role, and display
-if ($groupmemberroles = groups_get_members_by_role($groupid,$courseid,'u.id,u.firstname,u.lastname')) {
-    foreach($groupmemberroles as $roleid=>$roledata) {
-        $groupmembersoptions .= '<optgroup label="'.s($roledata->name).'">';
-        foreach($roledata->users as $member) {
-            $groupmembersoptions .= '<option value="'.$member->id.'">'.fullname($member, true).'</option>';
-            $groupmemberscount ++;
-        }
-        $groupmembersoptions .= '</optgroup>';
-    }
-} else {
-    $groupmembersoptions .= '<option>&nbsp;</option>';
-}
-
-$potentialmembers = array();
-$potentialmembersoptions = '';
-$potentialmemberscount = 0;
-
-// Get potential members, organised by role, and count them
-$potentialmembersbyrole = groups_get_users_not_in_group_by_role($courseid, $groupid, $searchtext);
-$potentialmemberscount=0;
-$potentialmembersids=array();
-if (!empty($potentialmembersbyrole)) {
-    foreach($potentialmembersbyrole as $roledata) {
-        $potentialmemberscount += count($roledata->users);
-        $potentialmembersids = array_merge($potentialmembersids, array_keys($roledata->users));
-    }
-}
-
-$usergroups = array();
-
-if ($potentialmemberscount <=  MAX_USERS_PER_PAGE) {
-    if ($potentialmemberscount > 0) {
-        // Get other groups user already belongs to
-        list($potentialmembersids, $params) = $DB->get_in_or_equal($potentialmembersids, SQL_PARAMS_NAMED, 'pm0');
-        $sql = "SELECT u.id AS userid, g.*
-                  FROM {user} u
-                  JOIN {groups_members} gm ON u.id = gm.userid
-                  JOIN {groups} g ON gm.groupid = g.id
-                 WHERE u.id $potentialmembersids AND g.courseid = :courseid ";
-        $params['courseid'] = $course->id;
-        if ($rs = $DB->get_recordset_sql($sql, $params)) {
-            foreach ($rs as $usergroup) {
-                $usergroups[$usergroup->userid][$usergroup->id] = $usergroup;
-            }
-            $rs->close();
-        }
-
-        foreach ($potentialmembersbyrole as $roleid=>$roledata) {
-            $potentialmembersoptions .= '<optgroup label="'.s($roledata->name).'">';
-            foreach($roledata->users as $member) {
-                $name = s(fullname($member, true));
-                $potentialmembersoptions .= '<option value="'.$member->id.
-                    '" title="'.$name.'">'.$name.
-                    ' ('.@count($usergroups[$member->id]).')</option>';
-            }
-            $potentialmembersoptions .= '</optgroup>';
-        }
-    } else {
-        $potentialmembersoptions .= '<option>&nbsp;</option>';
     }
 }
 
@@ -149,62 +82,8 @@ $navlinks[] = array('name' => $stradduserstogroup, 'link' => null, 'type' => 'mi
 $navigation = build_navigation($navlinks);
 
 print_header("$course->shortname: $strgroups", $course->fullname, $navigation, '', '', true, '', user_login_string($course, $USER));
-
-// Print Javascript for showing the selected users group membership
+check_theme_arrows();
 ?>
-<script type="text/javascript">
-//<![CDATA[
-var userSummaries = Array(
-<?php
-$membercnt = count($potentialmembers);
-$i=1;
-foreach ($potentialmembers as $userid => $potentalmember) {
-
-    if (isset($usergroups[$userid])) {
-        $usergrouplist = '<ul>';
-
-        foreach ($usergroups[$userid] as $groupitem) {
-            $usergrouplist .= '<li>'.addslashes_js(format_string($groupitem->name)).'</li>';
-        }
-        $usergrouplist .= '</ul>';
-    }
-    else {
-    	$usergrouplist = '';
-    }
-    echo "'$usergrouplist'";
-    if ($i < $membercnt) {
-    	echo ', ';
-    }
-    $i++;
-}
-?>
-);
-
-function updateUserSummary() {
-
-    var selectEl = document.getElementById('addselect');
-    var summaryDiv = document.getElementById('group-usersummary');
-    var length = selectEl.length;
-    var selectCnt = 0;
-    var selectIdx = -1;
-
-    for(i=0;i<length;i++) {
-        if (selectEl.options[i].selected) {
-        	selectCnt++;
-            selectIdx = i;
-        }
-    }
-
-    if (selectCnt == 1 && userSummaries[selectIdx]) {
-        summaryDiv.innerHTML = userSummaries[selectIdx];
-    } else {
-        summaryDiv.innerHTML = '';
-    }
-
-    return(true);
-}
-//]]>
-</script>
 
 <div id="addmembersform">
     <h3 class="main"><?php print_string('adduserstogroup', 'group'); echo ": $groupname"; ?></h3>
@@ -214,71 +93,28 @@ function updateUserSummary() {
     <input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
     <input type="hidden" name="group" value="<?php echo $groupid; ?>" />
 
-    <table cellpadding="6" class="generaltable generalbox groupmanagementtable boxaligncenter" summary="">
+    <table class="generaltable generalbox groupmanagementtable boxaligncenter" summary="">
     <tr>
-      <td valign="top">
+      <td id='memberscell'>
           <p>
-            <label for="removeselect"><?php print_string('existingmembers', 'group', $groupmemberscount); ?></label>
+            <label for="removeselect"><?php print_string('groupmembers', 'group'); ?></label>
           </p>
-          <select name="removeselect[]" size="20" id="removeselect" multiple="multiple"
-                  onfocus="document.getElementById('assignform').add.disabled=true;
-                           document.getElementById('assignform').remove.disabled=false;
-                           document.getElementById('assignform').addselect.selectedIndex=-1;"
-                  onclick="this.focus();updateUserSummary();">
-          <?php echo $groupmembersoptions ?>
-          </select></td>
-      <td valign="top">
-<?php // Hidden assignment? ?>
-
-        <?php check_theme_arrows(); ?>
+          <?php $groupmembersselector->display(); ?>
+          </td>
+      <td id='buttonscell'>
         <p class="arrow_button">
             <input name="add" id="add" type="submit" value="<?php echo $THEME->larrow.'&nbsp;'.get_string('add'); ?>" title="<?php print_string('add'); ?>" /><br />
             <input name="remove" id="remove" type="submit" value="<?php echo get_string('remove').'&nbsp;'.$THEME->rarrow; ?>" title="<?php print_string('remove'); ?>" />
         </p>
       </td>
-      <td valign="top">
+      <td id='nonmemberscell'>
           <p>
-            <label for="addselect"><?php print_string('potentialmembers', 'group', $potentialmemberscount); ?></label>
+            <label for="addselect"><?php print_string('potentialmembs', 'group'); ?></label>
           </p>
-          <select name="addselect[]" size="20" id="addselect" multiple="multiple"
-                  onfocus="updateUserSummary();document.getElementById('assignform').add.disabled=false;
-                           document.getElementById('assignform').remove.disabled=true;
-                           document.getElementById('assignform').removeselect.selectedIndex=-1;"
-                  onclick="this.focus();updateUserSummary();">
-          <?php
-            if ($potentialmemberscount > MAX_USERS_PER_PAGE) {
-                echo '<optgroup label="'.get_string('toomanytoshow').'"><option></option></optgroup>'."\n"
-                        .'<optgroup label="'.get_string('trysearching').'"><option></option></optgroup>'."\n";
-            } else {
-                echo $potentialmembersoptions;
-            }
-          ?>
-         </select>
-         <br />
-         <label for="searchtext" class="accesshide"><?php p($strsearch) ?></label>
-         <input type="text" name="searchtext" id="searchtext" size="21" value="<?php p($searchtext) ?>"
-                  onfocus ="getElementById('assignform').add.disabled=true;
-                            getElementById('assignform').remove.disabled=true;
-                            getElementById('assignform').removeselect.selectedIndex=-1;
-                            getElementById('assignform').addselect.selectedIndex=-1;"
-                  onkeydown = "var keyCode = event.which ? event.which : event.keyCode;
-                               if (keyCode == 13) {
-                                    getElementById('assignform').previoussearch.value=1;
-                                    getElementById('assignform').submit();
-                               } " />
-         <input name="search" id="search" type="submit" value="<?php p($strsearch) ?>" />
-         <?php
-              if (!empty($searchtext)) {
-                  echo '<br /><input name="showall" id="showall" type="submit" value="'.s($strshowall).'" />'."\n";
-              }
-         ?>
-       </td>
-       <td valign="top">
-        <p><?php echo($strusergroupmembership) ?></p>
-        <div id="group-usersummary"></div>
-       </td>
+          <?php $potentialmembersselector->display(); ?>
+      </td>
     </tr>
-    <tr><td>
+    <tr><td colspan="3" id='backcell'>
         <input type="submit" name="cancel" value="<?php print_string('backtogroups', 'group'); ?>" />
     </td></tr>
     </table>
@@ -287,5 +123,6 @@ function updateUserSummary() {
 </div>
 
 <?php
+    print_js_call('init_add_remove_members_page');
     print_footer($course);
 ?>

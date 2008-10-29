@@ -37,6 +37,10 @@ define('USER_SELECTOR_DEFAULT_ROWS', 20);
 
 /**
  * Base class for user selectors.
+ *
+ * In your theme, you must give each user-selector a defined width. If the
+ * user selector has name="myid", then the div myid_wrapper must have a width
+ * specified.
  */
 abstract class user_selector_base {
     /** The control name (and id) in the HTML. */
@@ -116,13 +120,21 @@ abstract class user_selector_base {
     }
 
     /**
+     * If you update the database in such a way that it is likely to change the
+     * list of users that this component is allowed to select from, then you
+     * must call this method. For example, on the role assign page, after you have
+     * assigned some roles to some users, you should call this.
+     */
+    public function invalidate_selected_users() {
+        $this->selected = null;
+    }
+
+    /**
      * Output this user_selector as HTML.
      * @param boolean $return if true, return the HTML as a string instead of outputting it.
      * @return mixed if $return is true, returns the HTML as a string, otherwise returns nothing.
      */
     public function display($return = false) {
-        global $USER, $CFG;
-
         // Get the list of requested users.
         $search = optional_param($this->name . '_searchtext', '', PARAM_RAW);
         $groupedusers = $this->find_users($search);
@@ -197,6 +209,16 @@ abstract class user_selector_base {
      */
     public function get_name() {
         return $this->name;
+    }
+
+    /**
+     * Set the user fields that are displayed in the selector in addition to the
+     * user's name.
+     *
+     * @param array $fields a list of field names that exist in the user table.
+     */
+    public function set_extra_fields($fields) {
+        $this->extrafields = $fields;
     }
 
     // API for sublasses =======================================================
@@ -351,7 +373,7 @@ abstract class user_selector_base {
         // If $groupedusers is empty, make a 'no matching users' group. If there
         // is only one selected user, set a flag to select them.
         $select = false;
-        if (empty($groupedusers) && empty($this->selected)) {
+        if (empty($groupedusers)) {
             $groupedusers = array(get_string('nomatchingusers') => array());
         } else if (count($groupedusers) == 1 && count(reset($groupedusers)) == 1) {
             $select = true;
@@ -387,7 +409,7 @@ abstract class user_selector_base {
      */
     protected function output_optgroup($groupname, $users, $select) {
         if (!empty($users)) {
-            $output = '<optgroup label="' . s($groupname) . ' (' . count($users) . ')">' . "\n";
+            $output = '  <optgroup label="' . s($groupname) . ' (' . count($users) . ')">' . "\n";
             foreach ($users as $user) {
                 if ($select || isset($this->selected[$user->id])) {
                     $selectattr = ' selected="selected"';
@@ -395,14 +417,14 @@ abstract class user_selector_base {
                     $selectattr = '';
                 }
                 unset($this->selected[$user->id]);
-                $output .= '<option' . $selectattr . ' value="' . $user->id . '">' .
+                $output .= '    <option' . $selectattr . ' value="' . $user->id . '">' .
                         $this->output_user($user) . "</option>\n";
             }
         } else {
-            $output = '<optgroup label="' . s($groupname) . '">' . "\n";
-            $output .= '<option disabled="disabled">&nbsp;</option>' . "\n";
+            $output = '  <optgroup label="' . s($groupname) . '">' . "\n";
+            $output .= '    <option disabled="disabled">&nbsp;</option>' . "\n";
         }
-        $output .= "</optgroup>\n";
+        $output .= "  </optgroup>\n";
         return $output;
     }
 
@@ -449,7 +471,8 @@ abstract class user_selector_base {
 
         // Initialise the selector.
         $output .= print_js_call('new user_selector', array($this->name, $hash,
-                sesskey(), $this->extrafields, get_string('previouslyselectedusers')), true);
+                sesskey(), $this->extrafields, get_string('previouslyselectedusers'),
+                get_string('nomatchingusers')), true);
         return $output;
     }
 }
@@ -474,9 +497,119 @@ class role_assign_current_user_selector extends user_selector_base {
     }
 }
 
-class group_members_user_selector extends user_selector_base {
+abstract class groups_user_selector_base extends user_selector_base {
+    protected $groupid;
+    protected $courseid;
+
+    /**
+     * @param string $name control name
+     * @param array $options should have two elements with keys groupid and courseid.
+     */
+    public function __construct($name, $options) {
+        global $CFG;
+        parent::__construct($name, $options);
+        $this->groupid = $options['groupid'];
+        $this->courseid = $options['courseid'];
+        require_once($CFG->dirroot . '/group/lib.php');
+    }
+
+    protected function get_options() {
+        $options = parent::get_options();
+        $options['groupid'] = $this->groupid;
+        $options['courseid'] = $this->courseid;
+        return $options;
+    }
+
+    /**
+     * Enter description here...
+     *
+     * @param array $roles array in the format returned by groups_calculate_role_people.
+     * @return array array in the format find_users is supposed to return.
+     */
+    protected function convert_array_format($roles) {
+        if (empty($roles)) {
+            $roles = array();
+        }
+        $groupedusers = array();
+        foreach ($roles as $role) {
+            $groupedusers[$role->name] = $role->users;
+            foreach ($groupedusers[$role->name] as &$user) {
+                unset($user->roles);
+                $user->fullname = fullname($user);
+            }
+        }
+        return $groupedusers;
+    }
+}
+
+/**
+ * User selector subclass for the list of users who are in a certain group.
+ * Used on the add group memebers page.
+ */
+class group_members_selector extends groups_user_selector_base {
     public function find_users($search) {
-        return array(); // TODO
+        list($wherecondition, $params) = $this->search_sql($search, 'u');
+        $roles = groups_get_members_by_role($this->groupid, $this->courseid,
+                $this->required_fields_sql('u'), 'u.lastname, u.firstname',
+                $wherecondition, $params);
+        return $this->convert_array_format($roles);
+    }
+}
+
+/**
+ * User selector subclass for the list of users who are not in a certain group.
+ * Used on the add group memebers page.
+ */
+class group_non_members_selector extends groups_user_selector_base {
+    const MAX_USERS_PER_PAGE = 100;
+
+    protected function output_user($user) {
+        return parent::output_user($user) . ' (' . $user->numgroups . ')';
+    }
+
+    public function find_users($search) {
+        global $DB;
+
+        // Get list of allowed roles.
+        $context = get_context_instance(CONTEXT_COURSE, $this->courseid);
+        if (!$validroleids = groups_get_possible_roles($context)) {
+            return array();
+        }
+        list($roleids, $roleparams) = $DB->get_in_or_equal($validroleids);
+
+        // Get the search condition.
+        list($searchcondition, $searchparams) = $this->search_sql($search, 'u');
+
+        // Build the SQL
+        $fields = "SELECT r.id AS roleid, r.shortname AS roleshortname, r.name AS rolename, u.id AS userid, " . 
+                $this->required_fields_sql('u') .
+                ', (SELECT count(igm.groupid) FROM {groups_members} igm JOIN {groups} ig ON
+                    igm.groupid = ig.id WHERE igm.userid = u.id AND ig.courseid = ?) AS numgroups ';
+        $sql = "   FROM {user} u
+                   JOIN {role_assignments} ra ON ra.userid = u.id
+                   JOIN {role} r ON r.id = ra.roleid
+                  WHERE ra.contextid " . get_related_contexts_string($context) . "
+                        AND u.deleted = 0
+                        AND ra.roleid $roleids
+                        AND u.id NOT IN (SELECT userid
+                                          FROM {groups_members}
+                                         WHERE groupid = ?)
+                        AND $searchcondition";
+        $orderby = " ORDER BY u.lastname, u.firstname";
+
+        $params = array_merge($roleparams, array($this->groupid), $searchparams);
+        $potentialmemberscount = $DB->count_records_sql('SELECT count(DISTINCT u.id) ' . $sql, $params);
+
+        if ($potentialmemberscount > group_non_members_selector::MAX_USERS_PER_PAGE) {
+            return array(get_string('toomanytoshow') => array(),
+                    get_string('trysearching') => array());
+        }
+
+        array_unshift($params, $this->courseid);
+        $rs = $DB->get_recordset_sql($fields . $sql . $orderby, $params);
+        $roles =  groups_calculate_role_people($rs, $context);
+
+        return $this->convert_array_format($roles);
     }
 }
 ?>

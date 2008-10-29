@@ -393,57 +393,6 @@ function groups_delete_groupings($courseid, $showfeedback=false) {
 /* =================================== */
 
 /**
- * Gets the users for a course who are not in a specified group, and returns
- * them in an array organised by role. For the array format, see 
- * groups_get_members_by_role.
- * @param int $groupid The id of the group
- * @param string searchtext similar to searchtext in role assign, search
- * @return array An array of role id or '*' => information about that role 
- *   including a list of users
- */
-function groups_get_users_not_in_group_by_role($courseid, $groupid, $searchtext='', $sort = 'u.lastname ASC') {
-    global $CFG, $DB;
-
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
-
-/// Get list of allowed roles     
-    if (!$validroleids = groups_get_possible_roles($context)) {
-        return array();
-    }
-    list($roleids, $params) = $DB->get_in_or_equal($validroleids, SQL_PARAMS_NAMED, $start='r0');
-    
-    if ($searchtext !== '') {   // Search for a subset of remaining users
-        $LIKE      = $DB->sql_ilike();
-        $FULLNAME  = $DB->sql_fullname();
-        $wheresearch = " AND u.id IN (SELECT id FROM {user} WHERE $FULLNAME $LIKE :search1 OR email $LIKE :search2)";
-        $params['search1'] = "%$searchtext%";
-        $params['search2'] = "%$searchtext%";
-    } else {
-        $wheresearch = '';
-    }
-
-/// Construct the main SQL
-    $sql = " SELECT r.id AS roleid,r.shortname AS roleshortname,r.name AS rolename,
-                    u.id AS userid, u.firstname, u.lastname
-               FROM {user} u
-               JOIN {role_assignments} ra ON ra.userid = u.id
-               JOIN {role} r ON r.id = ra.roleid
-              WHERE ra.contextid ".get_related_contexts_string($context)."
-                    AND u.deleted = 0
-                    AND ra.roleid $roleids
-                    AND u.id NOT IN (SELECT userid
-                                      FROM {groups_members}
-                                     WHERE groupid = :groupid)
-                    $wheresearch
-           ORDER BY $sort";
-    $params['groupid'] = $groupid;
-
-    $rs = $DB->get_recordset_sql($sql, $params);
-    return groups_calculate_role_people($rs, $context);
-}
-
-
-/**
  * Obtains a list of the possible roles that group members might come from,
  * on a course. Generally this includes all the roles who would have 
  * course:view on that course, except the doanything roles.
@@ -620,14 +569,21 @@ function groups_unassign_grouping($groupingid, $groupid) {
  * @param int $courseid Course ID (should match the group's course)
  * @param string $fields List of fields from user table prefixed with u, default 'u.*'
  * @param string $sort SQL ORDER BY clause, default 'u.lastname ASC'
+ * @param string $extrawheretest extra SQL conditions ANDed with the existing where clause.
+ * @param array $whereparams any parameters required by $extrawheretest.
  * @return array Complex array as described above
  */
-function groups_get_members_by_role($groupid, $courseid, $fields='u.*', $sort='u.lastname ASC') {
+function groups_get_members_by_role($groupid, $courseid, $fields='u.*',
+        $sort='u.lastname ASC', $extrawheretest='', $whereparams=array()) {
     global $CFG, $DB;
 
     // Retrieve information about all users and their roles on the course or
     // parent ('related') contexts 
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
+
+    if ($extrawheretest) {
+        $extrawheretest = ' AND ' . $extrawheretest;
+    }
 
     $sql = "SELECT r.id AS roleid, r.shortname AS roleshortname, r.name AS rolename,
                    u.id AS userid, $fields
@@ -636,10 +592,11 @@ function groups_get_members_by_role($groupid, $courseid, $fields='u.*', $sort='u
               JOIN {role_assignments} ra ON ra.userid = u.id 
               JOIN {role} r ON r.id = ra.roleid
              WHERE gm.groupid=?
-                   AND ra.contextid ".get_related_contexts_string($context)."
+                   AND ra.contextid ".get_related_contexts_string($context).
+                   $extrawheretest."
           ORDER BY r.sortorder, $sort";
-    $params = array($groupid);
-    $rs = $DB->get_recordset_sql($sql, $params);
+    array_unshift($whereparams, $groupid);
+    $rs = $DB->get_recordset_sql($sql, $whereparams);
 
     return groups_calculate_role_people($rs, $context);
 }
