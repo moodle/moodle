@@ -108,10 +108,15 @@ class pgsql_native_moodle_database extends moodle_database {
             return false;
         }
 
+        $this->query_start("--pg_set_client_encoding()", null, SQL_QUERY_AUX);
         pg_set_client_encoding($this->pgsql, 'utf8');
+        $this->query_end(true);
+
         // find out the bytea oid
         $sql = "SELECT oid FROM pg_type WHERE typname = 'bytea'";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);
+        $this->query_end($result);
         if ($result === false) {
             return false;
         }
@@ -120,6 +125,7 @@ class pgsql_native_moodle_database extends moodle_database {
         if ($this->bytea_oid === false) {
             return false;
         }
+
         return true;
     }
 
@@ -143,7 +149,9 @@ class pgsql_native_moodle_database extends moodle_database {
     public function get_server_info() {
         static $info;
         if (!$info) {
+            $this->query_start("--pg_version()", null, SQL_QUERY_AUX);
             $info = pg_version($this->pgsql);
+            $this->query_end(true);
         }
         return array('description'=>$info['server'], 'version'=>$info['server']);
     }
@@ -174,13 +182,16 @@ class pgsql_native_moodle_database extends moodle_database {
      * @return array of table names in lowercase and without prefix
      */
     public function get_tables() {
-        $this->reads++;
         $tables = array();
         $prefix = str_replace('_', '\\\\_', $this->prefix);
         $sql = "SELECT tablename
                   FROM pg_catalog.pg_tables
                  WHERE tablename LIKE '$prefix%'";
-        if ($result = pg_query($this->pgsql, $sql)) {
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = pg_query($this->pgsql, $sql);
+        $this->query_end($result);
+        
+        if ($result) {
             while ($row = pg_fetch_row($result)) {
                 $tablename = reset($row);
                 if (strpos($tablename, $this->prefix) !== 0) {
@@ -205,7 +216,12 @@ class pgsql_native_moodle_database extends moodle_database {
         $sql = "SELECT *
                   FROM pg_catalog.pg_indexes
                  WHERE tablename = '$tablename'";
-        if ($result = pg_query($this->pgsql, $sql)) {
+
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = pg_query($this->pgsql, $sql);
+        $this->query_end($result);
+
+        if ($result) {
             while ($row = pg_fetch_assoc($result)) {
                 if (!preg_match('/CREATE (|UNIQUE )INDEX ([^\s]+) ON '.$tablename.' USING ([^\s]+) \(([^\)]+)\)/i', $row['indexdef'], $matches)) {
                     continue;
@@ -246,7 +262,11 @@ class pgsql_native_moodle_database extends moodle_database {
                  WHERE relkind = 'r' AND c.relname = '$tablename' AND c.reltype > 0 AND a.attnum > 0
               ORDER BY a.attnum";
 
-        if (!$result = pg_query($this->pgsql, $sql)) {
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = pg_query($this->pgsql, $sql);
+        $this->query_end($result);
+
+        if (!$result) {
             return array();
         }
         while ($rawcolumn = pg_fetch_object($result)) {
@@ -418,8 +438,12 @@ class pgsql_native_moodle_database extends moodle_database {
      */
     public function setup_is_unicodedb() {
     /// Get PostgreSQL server_encoding value
-        $this->reads++;
-        if (!$result = pg_query($this->pgsql, "SHOW server_encoding")) {
+        $sql = "SHOW server_encoding";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = pg_query($this->pgsql, $sql);
+        $this->query_end($result);
+
+        if (!$result) {
             return false;
         }
         $rawcolumn = pg_fetch_object($result);
@@ -459,10 +483,12 @@ class pgsql_native_moodle_database extends moodle_database {
      * @return bool success
      */
     public function change_database_structure($sql) {
-        $this->writes++;
-        $this->print_debug($sql);
-        $result = pg_query($this->pgsql, $sql);
         $this->reset_columns();
+
+        $this->query_start($sql, null, SQL_QUERY_STRUCTURE);
+        $result = pg_query($this->pgsql, $sql);
+        $this->query_end($result);
+
         if ($result === false) {
             $this->report_error($sql);
             return false;
@@ -486,9 +512,9 @@ class pgsql_native_moodle_database extends moodle_database {
             return false;
         }
 
-        $this->writes++;
-        $this->print_debug($sql, $params);
+        $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $result = pg_query_params($this->pgsql, $sql, $params);
+        $this->query_end($result);
 
         if ($result === false) {
             $this->report_error($sql, $params);
@@ -526,9 +552,9 @@ class pgsql_native_moodle_database extends moodle_database {
 
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
-        $this->reads++;
-        $this->print_debug($sql, $params);
+        $this->query_start($sql, $params, SQL_QUERY_SELECT);
         $result = pg_query_params($this->pgsql, $sql, $params);
+        $this->query_end($result);
 
         if ($result === false) {
             $this->report_error($sql, $params);
@@ -566,9 +592,9 @@ class pgsql_native_moodle_database extends moodle_database {
         }
 
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
-        $this->reads++;
-        $this->print_debug($sql, $params);
+        $this->query_start($sql, $params, SQL_QUERY_SELECT);
         $result = pg_query_params($this->pgsql, $sql, $params);
+        $this->query_end($result);
 
         if ($result === false) {
             $this->report_error($sql, $params);
@@ -613,9 +639,9 @@ class pgsql_native_moodle_database extends moodle_database {
     public function get_fieldset_sql($sql, array $params=null) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
-        $this->reads++;
-        $this->print_debug($sql, $params);
+        $this->query_start($sql, $params, SQL_QUERY_SELECT);
         $result = pg_query_params($this->pgsql, $sql, $params);
+        $this->query_end($result);
 
         if ($result === false) {
             $this->report_error($sql, $params);
@@ -656,9 +682,10 @@ class pgsql_native_moodle_database extends moodle_database {
                     unset($params['id']);
                 } else {
                     //ugly workaround for pg < 8.2
-                    $this->reads++;
                     $seqsql = "SELECT NEXTVAL({$this->prefix}{$table}_id_seq) AS id";
+                    $this->query_start($seqsql, NULL, SQL_QUERY_AUX);
                     $result = pg_query($this->pgsql, $seqsql);
+                    $this->query_end($result);
                     if ($result === false) {
                         throw new dml_exception('missingidsequence', "{$this->prefix}{$table}"); // TODO: add localised string
                     }
@@ -684,9 +711,9 @@ class pgsql_native_moodle_database extends moodle_database {
         $values = implode(',', $values);
 
         $sql = "INSERT INTO {$this->prefix}$table ($fields) VALUES($values) $returning";
-        $this->writes++;
-        $this->print_debug($sql, $params);
+        $this->query_start($sql, $params, SQL_QUERY_INSERT);
         $result = pg_query_params($this->pgsql, $sql, $params);
+        $this->query_end($result);
 
         if ($result === false) {
             $this->report_error($sql, $params);
@@ -767,10 +794,11 @@ class pgsql_native_moodle_database extends moodle_database {
         }
 
         foreach ($blobs as $key=>$value) {
-            $this->writes++;
             $value = pg_escape_bytea($this->pgsql, $value);
             $sql = "UPDATE {$this->prefix}$table SET $key = '$value'::bytea WHERE id = $id";
+            $this->query_start($sql, NULL, SQL_QUERY_UPDATE);
             $result = pg_query($this->pgsql, $sql);
+            $this->query_end($result);
             if ($result !== false) {
                 pg_free_result($result);
             }
@@ -841,9 +869,9 @@ class pgsql_native_moodle_database extends moodle_database {
         $sets = implode(',', $sets);
         $sql = "UPDATE {$this->prefix}$table SET $sets WHERE id=\$".$i;
 
-        $this->writes++;
-        $this->print_debug($sql, $params);
+        $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $result = pg_query_params($this->pgsql, $sql, $params);
+        $this->query_end($result);
 
         if ($result === false) {
             $this->report_error($sql, $params);
@@ -916,10 +944,11 @@ class pgsql_native_moodle_database extends moodle_database {
         }
 
         foreach ($blobs as $key=>$value) {
-            $this->writes++;
             $value = pg_escape_bytea($this->pgsql, $value);
             $sql = "UPDATE {$this->prefix}$table SET $key = '$value'::bytea WHERE id = $id";
+            $this->query_start($sql, NULL, SQL_QUERY_UPDATE);
             $result = pg_query($this->pgsql, $sql);
+            $this->query_end($result);
             if ($result === false) {
                 return false;
             }
@@ -960,9 +989,9 @@ class pgsql_native_moodle_database extends moodle_database {
         }
         $sql = "UPDATE {$this->prefix}$table SET $newfield $select";
 
-        $this->writes++;
-        $this->print_debug($sql, $params);
+        $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $result = pg_query_params($this->pgsql, $sql, $params);
+        $this->query_end($result);
 
         if ($result === false) {
             $this->report_error($sql, $params);
@@ -989,9 +1018,9 @@ class pgsql_native_moodle_database extends moodle_database {
 
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
-        $this->writes++;
-        $this->print_debug($sql, $params);
+        $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $result = pg_query_params($this->pgsql, $sql, $params);
+        $this->query_end($result);
 
         if ($result === false) {
             $this->report_error($sql, $params);
@@ -1054,7 +1083,11 @@ class pgsql_native_moodle_database extends moodle_database {
      * this is _very_ useful for massive updates
      */
     public function begin_sql() {
-        $result = pg_query($this->pgsql, "BEGIN ISOLATION LEVEL READ COMMITTED");
+        $sql = "BEGIN ISOLATION LEVEL READ COMMITTED";
+        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $result = pg_query($this->pgsql, $sql);
+        $this->query_end($result);
+
         if ($result === false) {
             return false;
         }
@@ -1066,7 +1099,11 @@ class pgsql_native_moodle_database extends moodle_database {
      * on DBs that support it, commit the transaction
      */
     public function commit_sql() {
-        $result = pg_query($this->pgsql, "COMMIT");
+        $sql = "COMMIT";
+        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $result = pg_query($this->pgsql, $sql);
+        $this->query_end($result);
+
         if ($result === false) {
             return false;
         }
@@ -1078,7 +1115,11 @@ class pgsql_native_moodle_database extends moodle_database {
      * on DBs that support it, rollback the transaction
      */
     public function rollback_sql() {
-        $result = pg_query($this->pgsql, "ROLLBACK");
+        $sql = "ROLLBACK";
+        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $result = pg_query($this->pgsql, $sql);
+        $this->query_end($result);
+
         if ($result === false) {
             return false;
         }

@@ -243,9 +243,20 @@ abstract class moodle_database {
      * @param string $sql
      * @param array array of parameters
      * @param int $type type of query
+     * @param mixed $extrainfo driver specific extra information
      * @return void
      */
-    public function query_start($sql, $params, $type) {
+    protected function query_start($sql, array $params=null, $type, $extrainfo=null) {
+        switch ($type) {
+            case SQL_QUERY_SELECT:
+            case SQL_QUERY_AUX:
+                $this->reads++;
+                break;
+            case SQL_QUERY_INSERT:
+            case SQL_QUERY_UPDATE:
+            case SQL_QUERY_STRUCTURE:
+                $this->writes++;
+        }
         //TODO
     }
 
@@ -254,7 +265,7 @@ abstract class moodle_database {
      * @param mixed db specific result
      * @return void
      */
-    public function query_end($result) {
+    protected function query_end($result) {
         //TODO
     }
 
