@@ -1,6 +1,7 @@
 <?php
 /**
  * repository_remotemoodle class
+ * This plugin allowed to connect a retrieve a file from another Moodle site
  * This is a subclass of repository class
  * @author Jerome Mouneyrac
  * @version $Id$
@@ -13,7 +14,7 @@ require_once($CFG->dirroot.'/repository/lib.php');
 class repository_remotemoodle extends repository {
 
     /**
-     *
+     * Constructor
      * @global <type> $SESSION
      * @global <type> $action
      * @global <type> $CFG
@@ -27,7 +28,7 @@ class repository_remotemoodle extends repository {
     }
 
     /**
-     *
+     * Declaration of the methods avalaible from mnet
      * @return <type>
      */
     public static function mnet_publishes() {
@@ -40,31 +41,40 @@ class repository_remotemoodle extends repository {
     }
 
     /**
-     *
+     * Retrieve a file for a user of the Moodle client calling this function
+     * The file is encoded in base64
      * @global <type> $DB
      * @global <type> $USER
      * @global <type> $MNET_REMOTE_CLIENT
      * @param <type> $username
-     * @param <type> $pathnamehash
+     * @param <type> $source
      * @return <type>
      */
     public function retrieveFile($username, $source) {
         global $DB, $USER, $MNET_REMOTE_CLIENT;
+
+        ///check the the user is known
+        ///he has to be previously connected to the server site in order to be in the database
         $USER = $DB->get_record('user',array('username' => $username, 'mnethostid' => $MNET_REMOTE_CLIENT->id));
-        $file = unserialize(base64_decode($source));
- 
+        if (empty($USER)) {
+            exit(mnet_server_fault(9016, get_string('usernotfound', 'repository_remotemoodle',  $username)));
+        }
+
+        $file = unserialize(base64_decode($source)); 
         $contextid = $file[0];
         $filearea = $file[1];
         $itemid = $file[2];
         $filepath = $file[3];
         $filename = $file[4];
-             
+        
+        ///check that the user has read permission on this file
         $browser = get_file_browser();
         $fileinfo = $browser->get_file_info(get_context_instance_by_id($contextid), $filearea, $itemid, $filepath, $filename);
         if (empty($fileinfo)) {
             exit(mnet_server_fault(9016, get_string('usercannotaccess', 'repository_remotemoodle',  $file)));
         }
-         
+
+        ///retrieve the file with file API functions and return it encoded in base64
         $fs = get_file_storage();
         $sf = $fs->get_file($contextid, $filearea, $itemid, $filepath, $filename);
         $contents = base64_encode($sf->get_content());
@@ -72,20 +82,25 @@ class repository_remotemoodle extends repository {
     }
 
     /**
-     *
+     * Retrieve file list for a user of the Moodle client calling this function
      * @global <type> $DB
      * @global <type> $USER
      * @global <type> $MNET_REMOTE_CLIENT
      * @global <type> $CFG
      * @param <type> $username
+     * @param <type> $search
      * @return <type>
      */
     public function getFileList($username, $search) {
-        global $DB, $USER, $MNET_REMOTE_CLIENT, $CFG;     
+        global $DB, $USER, $MNET_REMOTE_CLIENT, $CFG;
+
+        ///check the the user is known
+        ///he has to be previously connected to the server site in order to be in the database
         $USER = $DB->get_record('user',array('username' => $username, 'mnethostid' => $MNET_REMOTE_CLIENT->id));
         if (empty($USER)) {
             exit(mnet_server_fault(9016, get_string('usernotfound', 'repository_remotemoodle',  $username)));
         }
+        ///from here the function code is pretty similar to the one in local plugin
         $ret = array();
         $ret['nologin'] = true;
         $ret['manage'] = $CFG->wwwroot .'/files/index.php'; // temporary
@@ -123,7 +138,7 @@ class repository_remotemoodle extends repository {
     }
 
     /**
-     *
+     * Serialize a path
      * @param <type> $filearea
      * @param <type> $path
      * @param <type> $visiblename
@@ -136,6 +151,8 @@ class repository_remotemoodle extends repository {
    /**
      * Builds a tree of files, to be used by get_listing(). This function is
      * then called recursively.
+     *
+     * Note: function similar to the one into local plugin expected the source
      *
      * @param $fileinfo an object returned by file_browser::get_file_info()
      * @param $search searched string
@@ -201,6 +218,9 @@ class repository_remotemoodle extends repository {
                 $fs = get_file_storage();
                 $params = $child->get_params();
 
+                ///we're going to serialize and base64_encode the source
+                //The source includes all parameters that will allow the server to retrieve the file with the file API
+                //The source will be pass into the $url parameter of get_file() function
                 $source = serialize(array($params['contextid'], $params['filearea'], $params['itemid'], $params['filepath'], $params['filename']));
                 $list[] = array(
                     'title' => $filename,
@@ -218,7 +238,7 @@ class repository_remotemoodle extends repository {
 
 
     /**
-     *
+     * Display the file listing - no login required
      * @global <type> $SESSION
      * @param <type> $ajax
      * @return <type>
@@ -229,7 +249,7 @@ class repository_remotemoodle extends repository {
     }
 
     /**
-     *
+     * Display the file listing for the search term
      * @param <type> $search_text
      * @return <type>
      */
@@ -238,7 +258,7 @@ class repository_remotemoodle extends repository {
     }
 
     /**
-     *
+     * Set the MNET environment
      * @global <type> $MNET
      */
     private function ensure_environment() {
@@ -250,8 +270,10 @@ class repository_remotemoodle extends repository {
     }
 
     /**
-     *
+     * Retrieve the file listing - file picker function
      * @global <type> $CFG
+     * @global <type> $DB
+     * @global <type> $USER
      * @param <type> $encodedpath
      * @param <type> $search
      * @return <type>
@@ -259,10 +281,13 @@ class repository_remotemoodle extends repository {
     public function get_listing($encodedpath = '', $search = '') {
         global $CFG, $DB, $USER;
 
-        //check that the host has a version >2.0
+        ///check that the host has a version >2.0
+        ///for that we check that the host has the getFileList() method implemented
+        ///We also check that this method has been activated (if it is not
+        ///the method will not be returned by the system method system/listMethods)
         require_once($CFG->dirroot . '/mnet/xmlrpc/client.php');
         $this->ensure_environment();
-        $host = $DB->get_record('mnet_host',array('id' => $this->options['peer']));
+        $host = $DB->get_record('mnet_host',array('id' => $this->options['peer'])); //need to retrieve the host url
         $mnet_peer = new mnet_peer();
         $mnet_peer->set_wwwroot($host->wwwroot);
         $client = new mnet_xmlrpc_client();
@@ -273,35 +298,25 @@ class repository_remotemoodle extends repository {
             echo json_encode(array('e'=>get_string('connectionfailure','repository_remotemoodle')));
             exit;
         }
-         
-        require_once($CFG->dirroot . '/mnet/xmlrpc/client.php');
-        //retrieve the host url
-        $this->ensure_environment();
-      
-        $host = $DB->get_record('mnet_host',array('id' => $this->options['peer']));
-             
-        $mnet_peer = new mnet_peer();
-        $mnet_peer->set_wwwroot($host->wwwroot);
-  
-        //connect to the remote moodle and retrieve the list of files       
-        $client = new mnet_xmlrpc_client();
-      
+               
+        ///connect to the remote moodle and retrieve the list of files
         $client->set_method('repository/remotemoodle/repository.class.php/getFileList');
         $client->add_param($USER->username);
         $client->add_param($search);
-         
+
+        ///call the method and manage host error
         if (!$client->send($mnet_peer)) {
             $message =" ";
             foreach ($client->error as $errormessage) {
                 $message .= "ERROR: $errormessage . ";
-            }
-            echo json_encode(array('e'=>$message));
+            }          
+            echo json_encode(array('e'=>$message)); //display all error messages
             exit;
         }
         
         $services = $client->response;
-
-         if (empty($services)) {
+        ///display error message if we could retrieve the list or if nothing were returned
+        if (empty($services)) {
             echo json_encode(array('e'=>get_string('failtoretrievelist','repository_remotemoodle')));
             exit;
         }
@@ -321,23 +336,21 @@ class repository_remotemoodle extends repository {
      */
     public function get_file($url, $file = '') {
         global $CFG, $DB, $USER;
-        require_once($CFG->dirroot . '/mnet/xmlrpc/client.php');
-        //retrieve the host url
-        $this->ensure_environment();
-        $host = $DB->get_record('mnet_host',array('id' => $this->options['peer']));
-        $mnetauth = get_auth_plugin('mnet');
-        $mnetauth->start_jump_session($host->id, '');
 
+        ///set mnet environment and set the mnet host
+        require_once($CFG->dirroot . '/mnet/xmlrpc/client.php');     
+        $this->ensure_environment();
+        $host = $DB->get_record('mnet_host',array('id' => $this->options['peer'])); //retrieve the host url
         $mnet_peer = new mnet_peer();
         $mnet_peer->set_wwwroot($host->wwwroot);
 
-        //connect to the remote moodle and retrieve the list of files
+        ///create the client and set the method to call
         $client = new mnet_xmlrpc_client();
-
         $client->set_method('repository/remotemoodle/repository.class.php/retrieveFile');
         $client->add_param($USER->username);
         $client->add_param($url);
 
+        ///call the method and manage host error
         if (!$client->send($mnet_peer)) {
             $message =" ";
             foreach ($client->error as $errormessage) {
@@ -347,10 +360,14 @@ class repository_remotemoodle extends repository {
             exit;
         }
 
-        $services = $client->response;
-        $content = base64_decode($services[0]);
-        $file = $services[1];
+        $services = $client->response; //service contains the file content in the first case of the array, 
+                                       //and the filename in the second
 
+        //the content has been encoded in base64, need to decode it
+        $content = base64_decode($services[0]);
+        $file = $services[1]; //filename
+
+        ///create a temporary folder with a file
         if (!file_exists($CFG->dataroot.'/temp/download')) {
             mkdir($CFG->dataroot.'/temp/download/', 0777, true);
         }
@@ -363,7 +380,8 @@ class repository_remotemoodle extends repository {
         if (file_exists($dir.$file)) {
             $file = uniqid('m').$file;
         }
-        
+
+        ///fill the file with the content
         $fp = fopen($dir.$file, 'w');
         fwrite($fp,$content);
         fclose($fp);
@@ -374,12 +392,14 @@ class repository_remotemoodle extends repository {
 
     /**
      * Add Instance settings input to Moodle form
+     * @global <type> $CFG
+     * @global <type> $DB
      * @param <type> $
      */
     public function instance_config_form(&$mform) {
         global $CFG, $DB;
         
-        //retrieve all peers
+        //retrieve only Moodle peers
         $hosts = $DB->get_records_sql('  SELECT
                                     h.id,
                                     h.wwwroot,
@@ -417,6 +437,7 @@ class repository_remotemoodle extends repository {
      * @return <type>
      */
     public static function get_instance_option_names() {
+        ///the administrator just need to set a peer
         return array('peer');
     }
 }
