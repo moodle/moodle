@@ -39,7 +39,7 @@
         $result = true;
         $request = null;
         if (has_capability('mod/scorm:savetrack', get_context_instance(CONTEXT_MODULE,$cm->id))) {
-            foreach ($_POST as $element => $value) {
+            foreach (data_submitted() as $element => $value) {
                 $element = str_replace('__','.',$element);
                 if (substr($element,0,3) == 'cmi') {
                     $netelement = preg_replace('/\.N(\d+)\./',"\.\$1\.",$element);
