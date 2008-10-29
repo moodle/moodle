@@ -1,4 +1,13 @@
-<?php
+<?php  // $Id$
+/**
+ * Random course generator. By Nicolas Connault and friends.
+ *
+ * To use go to .../admin/generator.php?web_interface=1 in your browser.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package generator
+ *//** */
+
 require_once(dirname(__FILE__).'/../config.php');
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot .'/course/lib.php');
