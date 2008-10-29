@@ -16,7 +16,7 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
     this.connectCallback = {
 
         success: function(o) {
-        	if (o.responseText !== undefined) {
+            if (o.responseText !== undefined) {
                 var groupsComboEl = document.getElementById("groups");
                 var membersComboEl = document.getElementById("members");
 
@@ -27,10 +27,10 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
                     }
                 }
 
-        	    if (groupsComboEl && o.responseText) {
-        	        var groups = eval("("+o.responseText+")");
+                if (groupsComboEl && o.responseText) {
+                    var groups = eval("("+o.responseText+")");
 
-        	        // Populate the groups list box.
+                    // Populate the groups list box.
                     for (var i=0; i<groups.length; i++) {
                         var optionEl = document.createElement("option");
                         optionEl.setAttribute("value", groups[i].id);
@@ -39,9 +39,9 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
                         groupsComboEl.appendChild(optionEl);
                     }
                 }
-        	}
-        	// Remove the loader gif image.
-        	removeLoaderImgs("groupsloader", "groupslabel");
+            }
+            // Remove the loader gif image.
+            removeLoaderImgs("groupsloader", "groupslabel");
         },
 
         failure: function(o) {
@@ -77,9 +77,9 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
     this.connectCallback = {
         success: function(o) {
 
-        	if (o.responseText !== undefined) {
+            if (o.responseText !== undefined) {
                 var selectEl = document.getElementById("members");
-        	    if (selectEl && o.responseText) {
+                if (selectEl && o.responseText) {
                     var roles = eval("("+o.responseText+")");
 
                     // Clear the members list box.
@@ -103,9 +103,9 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
                         selectEl.appendChild(optgroupEl);
                     }
                 }
-        	}
-        	// Remove the loader gif image.
-        	removeLoaderImgs("membersloader", "memberslabel");
+            }
+            // Remove the loader gif image.
+            removeLoaderImgs("membersloader", "memberslabel");
         },
 
         failure: function(o) {
