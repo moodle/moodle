@@ -324,12 +324,12 @@ if ($INSTALL['stage'] == DATABASE) {
     if (empty($errormsg)) {
         error_reporting(0);  // Hide errors
 
-        if (! $dbconnected = $DB->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], false, $INSTALL['prefix'])) {
+        if (! $dbconnected = $DB->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], $INSTALL['prefix'])) {
             if (!$DB->create_database($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'])) {
                  $errormsg = get_string('dbcreationerror', 'install');
                  $nextstage = DATABASE;
             } else {
-                $dbconnected = $DB->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], false, $INSTALL['prefix']);
+                $dbconnected = $DB->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], $INSTALL['prefix']);
             }
         } else {
 // TODO: db encoding checks ??
@@ -376,7 +376,7 @@ if ($INSTALL['stage'] == ENVIRONMENT) {
     $DB = $databases[$INSTALL['dbtype']];
 
     error_reporting(0);  // Hide errors
-    $dbconnected = $DB->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], false, $INSTALL['prefix']);
+    $dbconnected = $DB->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], $INSTALL['prefix']);
     error_reporting(38911);  // Show errors
     if ($dbconnected) {
     /// Execute environment check, printing results
@@ -789,7 +789,7 @@ function form_table($nextstage, $formaction, $databases) {
                 <td colspan="2">
                 <?php
                     error_reporting(0);  // Hide errors
-                    $dbconnected = $DB->connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'], false, $INSTALL['prefix']);
+                    $dbconnected = $DB->connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'], $INSTALL['prefix']);
                     error_reporting(38911);  // Show errors
                     if ($dbconnected) {
                     /// Execute environment check, printing results

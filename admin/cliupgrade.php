@@ -464,12 +464,12 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     if (empty($errormsg)) {
         error_reporting(0);  // Hide errors
 
-        if (! $dbconnected = $DB->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], false, $INSTALL['prefix'])) {
+        if (! $dbconnected = $DB->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], $INSTALL['prefix'])) {
             if (!$DB->create_database($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'])) {
                  $errormsg = get_string('dbcreationerror', 'install');
                  $nextstage = DATABASE;
             } else {
-                $dbconnected = $DB->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], false, $INSTALL['prefix']);
+                $dbconnected = $DB->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], $INSTALL['prefix']);
             }
         } else {
 // TODO: db encoding checks ??

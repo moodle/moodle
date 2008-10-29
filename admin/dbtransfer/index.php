@@ -13,7 +13,7 @@ $form = new database_transfer_form();
 if ($data = $form->get_data()) {
     list($dbtype, $dblibrary) = explode('/', $data->driver);
     $targetdb = moodle_database::get_driver_instance($dbtype, $dblibrary);
-    if (!$targetdb->connect($data->dbhost, $data->dbuser, $data->dbpass, $data->dbname, false, $data->prefix, null)) {
+    if (!$targetdb->connect($data->dbhost, $data->dbuser, $data->dbpass, $data->dbname, $data->prefix, null)) {
         throw new dbtransfer_exception('notargetconectexception', null, "$CFG->wwwroot/$CFG->admin/dbtransfer/");
     }
     if ($targetdb->get_tables()) {

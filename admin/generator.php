@@ -162,7 +162,7 @@ class generator {
 
         $class = get_class($DB);
         $DB = new $class();
-        $DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, true, $this->get('database_prefix'));
+        $DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $this->get('database_prefix'));
     }
 
     public function generate_users() {
