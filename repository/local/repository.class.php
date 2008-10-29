@@ -208,11 +208,14 @@ class repository_local extends repository {
                 if ($search && (stristr($filename, $search) === false)) {
                     continue;
                 }
+                $params = $child->get_params();
+                $source = serialize(array($params['contextid'], $params['filearea'], $params['itemid'], $params['filepath'], $params['filename']));
                 $list[] = array(
                     'title' => $filename,
                     'size' => $filesize,
                     'date' => $filedate,
-                    'source' => $child->get_url(),
+                    //'source' => $child->get_url(),
+                    'source' => base64_encode($source),
                     'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo_from_type("icon", $filetype)
                 );
                 $filecount++;
@@ -220,6 +223,48 @@ class repository_local extends repository {
         }
 
         return $filecount;
+    }
+
+     /**
+     * Download a file, this function can be overridden by
+     * subclass.
+     *
+     * @global object $CFG
+     * @param string $url the url of file
+     * @param string $file save location
+     * @return string the location of the file
+     * @see curl package
+     */
+    public function get_file($url, $file = '') {
+        global $CFG;
+        if (!file_exists($CFG->dataroot.'/temp/download')) {
+            mkdir($CFG->dataroot.'/temp/download/', 0777, true);
+        }
+        if (is_dir($CFG->dataroot.'/temp/download')) {
+            $dir = $CFG->dataroot.'/temp/download/';
+        }
+        if (empty($file)) {
+            $file = uniqid('repo').'_'.time().'.tmp';
+        }
+        if (file_exists($dir.$file)) {
+            $file = uniqid('m').$file;
+        }
+
+        ///retrieve the file
+        $fileparams = unserialize(base64_decode($url));
+        $contextid = $fileparams[0];
+        $filearea = $fileparams[1];
+        $itemid = $fileparams[2];
+        $filepath = $fileparams[3];
+        $filename = $fileparams[4];
+        $fs = get_file_storage();
+        $sf = $fs->get_file($contextid, $filearea, $itemid, $filepath, $filename);
+        $contents = $sf->get_content();
+        $fp = fopen($dir.$file, 'w');      
+        fwrite($fp,$contents);
+        fclose($fp);
+       
+        return $dir.$file;
     }
 
     /**
