@@ -531,10 +531,13 @@
     // of rows anyway. On a large course it will explode badly...
     //
     if ($mode===MODE_ENROLDETAILS) {
-        $userids = $DB->get_fieldset_sql("SELECT u.id $from $where $wheresearch $sort", $params,
-                                         $table->get_page_start(),  $table->get_page_size());
-        $userids = array_unique($userids);
-
+        if ($context->id != $frontpagectx->id) {
+            $userids = $DB->get_fieldset_sql("SELECT DISTINCT u.id $from $where $wheresearch", $params,
+                                             $table->get_page_start(),  $table->get_page_size());
+        } else {
+            $userids = $DB->get_fieldset_sql("SELECT u.id $from $where $wheresearch", $params,
+                                             $table->get_page_start(),  $table->get_page_size());
+        }
         $userlist_extra = get_participants_extra($userids, $avoidroles, $course, $context);
     }
 
