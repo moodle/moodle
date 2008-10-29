@@ -2807,11 +2807,15 @@ function print_js_config($settings = array(), $prefix='', $return = false) {
  */
 function standard_js_config() {
     global $CFG;
-    return print_js_config(array(
+    $config = array(
         'wwwroot' => $CFG->httpswwwroot, // Yes, really.
         'pixpath' => $CFG->pixpath,
         'modpixpath' => $CFG->modpixpath,
-    ), 'moodle_cfg', true);
+    );
+    if (debugging('', DEBUG_DEVELOPER)) {
+        $config['developerdebug'] = true;
+    }
+    return print_js_config($config, 'moodle_cfg', true);
 }
 
 /**
