@@ -89,11 +89,6 @@ function repository_get_client($context) {
 .fp-grid p{margin:0;padding:0;background: #FFFFCC}
 .fp-grid .label{height:48px;text-align:center}
 .fp-grid span{background: #EEF9EB;color:gray}
-/* Fix for IE6 */
-* html .yui-skin-sam .yui-panel .hd{
-    margin-right: -10px;
-    width: 660px;
-}
 </style>
 EOD;
 
@@ -155,7 +150,7 @@ var filepicker = new YAHOO.widget.Panel('file-picker-$suffix', {
     filepicker.beforeRenderEvent.subscribe(function() {
         Event.onAvailable('layout-$suffix', function() {
             layout = new YAHOO.widget.Layout('layout-$suffix', {
-                height: 480, width: 630,
+                height: 480, width: 680,
                 units: [
                 {position: 'top', height: 32, resize: false,
                 body:'<div class="yui-buttongroup fp-viewbar" id="repo-viewbar-$suffix"></div><div class="fp-searchbar" id="search-div-$suffix"></div>', gutter: '2'},
@@ -172,15 +167,23 @@ var filepicker = new YAHOO.widget.Panel('file-picker-$suffix', {
         handles: ['br'],
         autoRatio: true,
         status: true,
-        minWidth: 380,
+        minWidth: 680,
         minHeight: 400
     });
+    if(YAHOO.env.ua.ie == 6){
+        var title_el = document.getElementById('file-picker-$suffix');
+        title_el.style.width = '680px';
+    }
     resize.on('resize', function(args) {
         var panelHeight = args.height;
         var headerHeight = this.header.offsetHeight; // Content + Padding + Border
         var bodyHeight = (panelHeight - headerHeight);
         var bodyContentHeight = (IE_QUIRKS) ? bodyHeight : bodyHeight - PANEL_BODY_PADDING;
         Dom.setStyle(this.body, 'height', bodyContentHeight + 'px');
+        if(YAHOO.env.ua.ie == 6){
+            var title_el = document.getElementById('file-picker-$suffix');
+            title_el.style.width = args.width;
+        }
         if (IE_SYNC) {
             this.sizeUnderlay();
             this.syncIframe();
