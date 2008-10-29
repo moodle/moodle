@@ -46,6 +46,7 @@ require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 print_header();
 
 $userselector = new test_user_selector('myuserselector');
+$userselector->set_multiselect(false);
 
 $users = $userselector->get_selected_users();
 if (!empty($users)) {

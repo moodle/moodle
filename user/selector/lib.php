@@ -123,15 +123,9 @@ abstract class user_selector_base {
     public function display($return = false) {
         global $USER, $CFG;
 
-        // Get the list of requested users, and if there is only one, set a flag to autoselect it.
+        // Get the list of requested users.
         $search = optional_param($this->name . '_searchtext', '', PARAM_RAW);
         $groupedusers = $this->find_users($search);
-        $select = false;
-        if (empty($groupedusers) && empty($this->selected)) {
-            $groupedusers = array(get_string('nomatchingusers') => array());
-        } else if (count($groupedusers) == 1 && count(reset($groupedusers)) == 1) {
-            $select = true;
-        }
 
         // Output the select.
         $name = $this->name;
@@ -145,7 +139,7 @@ abstract class user_selector_base {
                 $multiselect . 'size="' . $this->rows . '">' . "\n";
 
         // Populate the select.
-        $output .= $this->output_options($groupedusers, $select);
+        $output .= $this->output_options($groupedusers);
 
         // Output the search controls.
         $output .= "</select>\n<div>\n";
@@ -221,6 +215,9 @@ abstract class user_selector_base {
      */
     public abstract function find_users($search);
 
+    /**
+     * @return array the options needed to recreate this user_selector.
+     */
     protected function get_options() {
         return array(
             'class' => get_class($this),
@@ -231,11 +228,20 @@ abstract class user_selector_base {
 
     // Inner workings ==========================================================
 
+    /**
+     * Get the list of users that were selected by doing optional_param then
+     * validating the result.
+     *
+     * @return array of user objects.
+     */
     protected function load_selected_users() {
         // See if we got anything.
         $userids = optional_param($this->name, array(), PARAM_INTEGER);
         if (empty($userids)) {
             return array();
+        }
+        if (!$this->multiselect) {
+            $userids = array($userids);
         }
 
         // If we did, use the find_users method to validate the ids.
@@ -248,9 +254,20 @@ abstract class user_selector_base {
         foreach ($groupedusers as $group) {
             $users += $group;
         }
+
+        // If we are only supposed to be selecting a single user, make sure we do.
+        if (!$this->multiselect && count($users) > 1) {
+            $users = array_slice($users, 0, 1);
+        }
+
         return $users;
     }
 
+    /**
+     * @param string $u the table alias for the user table in the query being
+     *      built. May be ''.
+     * @return string fragment of SQL to go in the select list of the query.
+     */
     protected function required_fields_sql($u) {
         // Raw list of fields.
         $fields = array('id', 'firstname', 'lastname');
@@ -265,6 +282,14 @@ abstract class user_selector_base {
         return implode(',', $fields);
     }
 
+    /**
+     * @param string $search the text to search for.
+     * @param string $u the table alias for the user table in the query being
+     *      built. May be ''.
+     * @return array an array with two elements, a fragment of SQL to go in the
+     *      where clause the query, and an array containing any required parameters.
+     *      this uses ? style placeholders.
+     */
     protected function search_sql($search, $u) {
         global $DB;
         $params = array();
@@ -314,15 +339,26 @@ abstract class user_selector_base {
      * This method should do the same as the JavaScript method
      * user_selector.prototype.handle_response.
      *
-     * @param unknown_type $groupedusers
-     * @param unknown_type $select
-     * @return unknown
+     * @param array $groupedusers an array, as returned by find_users.
+     * @return string HTML code.
      */
-    protected function output_options($groupedusers, $select) {
+    protected function output_options($groupedusers) {
         $output = '';
 
         // Ensure that the list of previously selected users is up to date.
         $this->get_selected_users();
+
+        // If $groupedusers is empty, make a 'no matching users' group. If there
+        // is only one selected user, set a flag to select them.
+        $select = false;
+        if (empty($groupedusers) && empty($this->selected)) {
+            $groupedusers = array(get_string('nomatchingusers') => array());
+        } else if (count($groupedusers) == 1 && count(reset($groupedusers)) == 1) {
+            $select = true;
+            if (!$this->multiselect) {
+                $this->selected = array();
+            }
+        }
 
         // Output each optgroup.
         foreach ($groupedusers as $groupname => $users) {
@@ -341,9 +377,17 @@ abstract class user_selector_base {
         return $output;
     }
 
+    /**
+     * Output one particular optgroup. Used by the preceding function output_options.
+     *
+     * @param string $groupname the label for this optgroup.
+     * @param array $users the users to put in this optgroup.
+     * @param boolean $select if true, select the users in this group.
+     * @return string HTML code.
+     */
     protected function output_optgroup($groupname, $users, $select) {
-        $output = '<optgroup label="' . s($groupname) . ' (' . count($users) . ')">' . "\n";
         if (!empty($users)) {
+            $output = '<optgroup label="' . s($groupname) . ' (' . count($users) . ')">' . "\n";
             foreach ($users as $user) {
                 if ($select || isset($this->selected[$user->id])) {
                     $selectattr = ' selected="selected"';
@@ -355,6 +399,7 @@ abstract class user_selector_base {
                         $this->output_user($user) . "</option>\n";
             }
         } else {
+            $output = '<optgroup label="' . s($groupname) . '">' . "\n";
             $output .= '<option disabled="disabled">&nbsp;</option>' . "\n";
         }
         $output .= "</optgroup>\n";
@@ -385,8 +430,9 @@ abstract class user_selector_base {
     }
 
     /**
-     * Enter description here...
+     * 
      *
+     * @return any HTML needed here.
      */
     protected function initialise_javascript() {
         global $USER;
@@ -408,12 +454,20 @@ abstract class user_selector_base {
     }
 }
 
+/**
+ * User selector subclass  for the list of potential users on the assign roles page.
+ *
+ */
 class role_assign_potential_user_selector extends user_selector_base {
     public function find_users($search) {
         return array(); // TODO
     }
 }
 
+/**
+ * User selector subclass for the list of users who already have the role in
+ * question on the assign roles page.
+ */
 class role_assign_current_user_selector extends user_selector_base {
     public function find_users($search) {
         return array(); // TODO

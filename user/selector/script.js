@@ -290,6 +290,9 @@ user_selector.prototype.output_options = function(data) {
     // If there was only one option matching the search results, select it.
     if (this.onlyoption) {
         this.onlyoption.selected = true;
+        if (!this.listbox.multiple) {
+            this.selected = {};
+        }
     }
     this.onlyoption = null;
 
@@ -303,9 +306,16 @@ user_selector.prototype.output_options = function(data) {
         this.output_group(this.strprevselected, this.selected, true);
     }
     this.selected = null;
-
 }
 
+/**
+ * This method should do the same sort of thing as the PHP method
+ * user_selector_base::output_optgroup.
+ *
+ * @param String groupname the label for this optgroup.v
+ * @param Object users the users to put in this optgroup.
+ * @param Boolean select if true, select the users in this group.
+ */
 user_selector.prototype.output_group = function(groupname, users, select) {
     var optgroup = document.createElement('optgroup');
     optgroup.label = groupname;
@@ -327,13 +337,14 @@ user_selector.prototype.output_group = function(groupname, users, select) {
         }
         count++;
     }
-    if (count == 0) {
+    if (count > 0) {
+        optgroup.label += ' (' + count + ')';
+    } else {
         var option = document.createElement('option');
         option.disabled = 'disabled';
         option.appendChild(document.createTextNode('\u00A0'));
         optgroup.appendchild(option);
     }
-    optgroup.label += ' (' + count + ')';
     this.listbox.appendChild(optgroup);
 }
 
@@ -354,4 +365,5 @@ user_selector.prototype.output_user = function(user) {
     return output;
 }
 
+// Say that we want to be a source of custom events.
 YAHOO.lang.augmentProto(user_selector, YAHOO.util.EventProvider);
