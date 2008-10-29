@@ -282,6 +282,9 @@ user_selector.prototype.handle_selection_change = function() {
 }
 
 // Methods for refreshing the list of displayed options ========================
+user_selector.prototype.insert_search_into_str = function(string, search) {
+    return string.replace("''", "'" + search + "'");
+}
 
 /**
  * This method should do the same sort of thing as the PHP method
@@ -317,7 +320,7 @@ user_selector.prototype.output_options = function(data) {
     }
 
     if (nogroups) {
-        this.output_group(this.strnomatchingusers, {}, false)
+        this.output_group(this.insert_search_into_str(this.strnomatchingusers, this.lastsearch), {}, false)
     }
 
     // If there was only one option matching the search results, select it.
@@ -336,7 +339,7 @@ user_selector.prototype.output_options = function(data) {
         break;
     }
     if (areprevselected) {
-        this.output_group(this.strprevselected, this.selected, true);
+        this.output_group(this.insert_search_into_str(this.strprevselected, this.lastsearch), this.selected, true);
     }
     this.selected = null;
 }

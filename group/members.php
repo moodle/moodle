@@ -13,7 +13,7 @@ require_once(dirname(__FILE__) . '/lib.php');
 require_once($CFG->dirroot . '/user/selector/lib.php');
 require_js('group/clientlib.js');
 
-$groupid    = required_param('group', PARAM_INT);
+$groupid = required_param('group', PARAM_INT);
 
 if (!$group = $DB->get_record('groups', array('id'=>$groupid))) {
     print_error('invalidgroupid');
@@ -88,10 +88,9 @@ check_theme_arrows();
 <div id="addmembersform">
     <h3 class="main"><?php print_string('adduserstogroup', 'group'); echo ": $groupname"; ?></h3>
 
-    <form id="assignform" method="post" action="members.php">
+    <form id="assignform" method="post" action="<?php echo $CFG->wwwroot; ?>/group/members.php?group=<?php echo $groupid; ?>">
     <div>
     <input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
-    <input type="hidden" name="group" value="<?php echo $groupid; ?>" />
 
     <table class="generaltable generalbox groupmanagementtable boxaligncenter" summary="">
     <tr>

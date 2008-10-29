@@ -151,7 +151,7 @@ abstract class user_selector_base {
                 $multiselect . 'size="' . $this->rows . '">' . "\n";
 
         // Populate the select.
-        $output .= $this->output_options($groupedusers);
+        $output .= $this->output_options($groupedusers, $search);
 
         // Output the search controls.
         $output .= "</select>\n<div>\n";
@@ -364,7 +364,7 @@ abstract class user_selector_base {
      * @param array $groupedusers an array, as returned by find_users.
      * @return string HTML code.
      */
-    protected function output_options($groupedusers) {
+    protected function output_options($groupedusers, $search) {
         $output = '';
 
         // Ensure that the list of previously selected users is up to date.
@@ -374,7 +374,7 @@ abstract class user_selector_base {
         // is only one selected user, set a flag to select them.
         $select = false;
         if (empty($groupedusers)) {
-            $groupedusers = array(get_string('nomatchingusers') => array());
+            $groupedusers = array(get_string('nomatchingusers', '', $search) => array());
         } else if (count($groupedusers) == 1 && count(reset($groupedusers)) == 1) {
             $select = true;
             if (!$this->multiselect) {
@@ -389,7 +389,7 @@ abstract class user_selector_base {
 
         // If there were previously selected users who do not match the search, show them too.
         if (!empty($this->selected)) {
-            $output .= $this->output_optgroup(get_string('previouslyselectedusers'), $this->selected, true);
+            $output .= $this->output_optgroup(get_string('previouslyselectedusers', '', $search), $this->selected, true);
         }
 
         // This method trashes $this->selected, so clear the cache so it is
@@ -526,14 +526,22 @@ abstract class groups_user_selector_base extends user_selector_base {
      * @param array $roles array in the format returned by groups_calculate_role_people.
      * @return array array in the format find_users is supposed to return.
      */
-    protected function convert_array_format($roles) {
+    protected function convert_array_format($roles, $search) {
         if (empty($roles)) {
             $roles = array();
         }
         $groupedusers = array();
         foreach ($roles as $role) {
-            $groupedusers[$role->name] = $role->users;
-            foreach ($groupedusers[$role->name] as &$user) {
+            if ($search) {
+                $a = new stdClass;
+                $a->role = $role->name;
+                $a->search = $search;
+                $groupname = get_string('matchingsearchandrole', '', $a);
+            } else {
+                $groupname = $role->name;
+            }
+            $groupedusers[$groupname] = $role->users;
+            foreach ($groupedusers[$groupname] as &$user) {
                 unset($user->roles);
                 $user->fullname = fullname($user);
             }
@@ -552,7 +560,7 @@ class group_members_selector extends groups_user_selector_base {
         $roles = groups_get_members_by_role($this->groupid, $this->courseid,
                 $this->required_fields_sql('u'), 'u.lastname, u.firstname',
                 $wherecondition, $params);
-        return $this->convert_array_format($roles);
+        return $this->convert_array_format($roles, $search);
     }
 }
 
@@ -609,7 +617,7 @@ class group_non_members_selector extends groups_user_selector_base {
         $rs = $DB->get_recordset_sql($fields . $sql . $orderby, $params);
         $roles =  groups_calculate_role_people($rs, $context);
 
-        return $this->convert_array_format($roles);
+        return $this->convert_array_format($roles, $search);
     }
 }
 ?>
