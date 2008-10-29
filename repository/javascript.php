@@ -971,6 +971,7 @@ function openpicker_$suffix(params) {
             repository_client_$suffix.formcallback = function() {};
         }
     } else {
+        repository_client_$suffix.target = params.target;
         repository_client_$suffix.instance.show();
     }
 }
