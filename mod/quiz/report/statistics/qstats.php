@@ -94,7 +94,6 @@ class qstats{
         } else {
             $question =& $this->questions[$stats->questionid];
         }
-        $this->_process_actual_responses($question, $state);
 
     }
 
@@ -267,6 +266,18 @@ class qstats{
                             /   $sumofcovariancewithoverallgrade;
             } else {
                 $this->questions[$qid]->_stats->effectiveweight = null;
+            }
+        }
+    }
+    
+    function process_responses(){
+        foreach ($this->states as $state){
+            if ($this->questions[$state->question]->qtype == 'random'){
+                if ($realstate = question_get_real_state($state)){
+                    $this->_process_actual_responses($this->subquestions[$realstate->question], $realstate);
+                }
+            } else {
+                $this->_process_actual_responses($this->questions[$state->question], $state);
             }
         }
         $this->responses = quiz_report_unindex($this->responses);

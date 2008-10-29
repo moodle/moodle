@@ -565,6 +565,7 @@ class quiz_statistics_report extends quiz_default_report {
             $qstats = new qstats($questions, $s, $sumgradesavg);
             $qstats->get_records($quizid, $currentgroup, $groupstudents, $useallattempts);
             $qstats->process_states();
+            $qstats->process_responses();
         } else {
             $qstats = false;
         }
