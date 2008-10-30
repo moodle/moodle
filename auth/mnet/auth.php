@@ -886,7 +886,8 @@ class auth_plugin_mnet extends auth_plugin_base {
 
             unset($logEntryObj->username);
 
-            $insertok = $DB->insert_record('mnet_log', $logEntryObj, false);
+            $logEntryObj = $this->trim_logline($logEntryObj);
+            $insertok = $DB->insert_record('mnet_log', $logEntryObj, false);           
 
             if ($insertok) {
                 $MNET_REMOTE_CLIENT->last_log_id = $logEntryObj->remoteid;
@@ -1340,6 +1341,25 @@ class auth_plugin_mnet extends auth_plugin_base {
             $redirect = $host->wwwroot.'/';
         }
     }
+
+    /**
+     * Trims a log line from mnet peer to limit each part to a length which can be stored in our DB
+     *
+     * @param object $logline The log information to be trimmed
+     * @return object The passed logline object trimmed to not exceed storable limits
+     */
+    function trim_logline ($logline) {
+        $limits = array('ip' => 15, 'coursename' => 40, 'module' => 20, 'action' => 40,
+                        'url' => 255);
+        foreach ($limits as $property => $limit) {
+            if (isset($logline->$property)) {
+                $logline->$property = substr($logline->$property, 0, $limit);
+            }
+        }
+
+        return $logline;
+    }
+
 
 }
 
