@@ -4748,6 +4748,7 @@ function print_png($url, $sizex, $sizey, $return, $parameters='alt=""') {
  *     <li>$table->id - id attribute to put on the table.
  *     <li>$table->rowclass[] - classes to add to particular rows.
  *     <li>$table->summary - Description of the contents for screen readers.
+ *     <li>$table->headspan can be used to make a heading span multiple columns.
  * </ul>
  * @param bool $return whether to return an output string or echo now
  * @return boolean or $string
@@ -4827,13 +4828,18 @@ function print_table($table, $return=false) {
             if (!isset($align[$key])) {
                 $align[$key] = '';
             }
+            if (isset($table->headspan[$key]) && $table->headspan[$key] > 1) {
+                $colspan = ' colspan="' . $table->headspan[$key] . '"';
+            } else {
+                $colspan = '';
+            }
             if ($key == $lastkey) {
                 $extraclass = ' lastcol';
             } else {
                 $extraclass = '';
             }
 
-            $output .= '<th style="vertical-align:top;'. $align[$key].$size[$key] .';white-space:nowrap;" class="header c'.$key.$extraclass.'" scope="col">'. $heading .'</th>';
+            $output .= '<th style="vertical-align:top;'. $align[$key].$size[$key] .';white-space:nowrap;" class="header c'.$key.$extraclass.'" scope="col"' . $colspan . '>'. $heading .'</th>';
         }
         $output .= '</tr>'."\n";
     }
