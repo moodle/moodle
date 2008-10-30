@@ -1299,6 +1299,149 @@ function repository_store_to_filepool($elname, $filearea='user_draft', $filepath
 }
 
 /**
+ * Return the user arborescence in a format to be returned by the function get_listing
+ * @global <type> $CFG
+ * @param <type> $search
+ * @return <type>
+ */
+function repository_get_user_file_tree($search = ""){
+    global $CFG;
+ $ret = array();
+        $ret['nologin'] = true;
+        $ret['manage'] = $CFG->wwwroot .'/files/index.php'; // temporary
+        $browser = get_file_browser();
+        $itemid = null;
+        $filename = null;
+        $filearea = null;
+        $path = '/';
+        $ret['dynload'] = false;
+
+        if ($fileinfo = $browser->get_file_info(get_system_context(), $filearea, $itemid, $path, $filename)) {
+
+            $ret['path'] = array();
+            $params = $fileinfo->get_params();
+            $filearea = $params['filearea'];
+            $ret['path'][] = repository_encode_path($filearea, $path, $fileinfo->get_visible_name());
+            if ($fileinfo->is_directory()) {
+                $level = $fileinfo->get_parent();
+                while ($level) {
+                    $params = $level->get_params();
+                    $ret['path'][] = repository_encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
+                    $level = $level->get_parent();
+                }
+            }
+            $filecount = repository_build_tree($fileinfo, $search, $ret['dynload'], $ret['list']);
+            $ret['path'] = array_reverse($ret['path']);
+        }
+
+        if (empty($ret['list'])) {
+            //exit(mnet_server_fault(9016, get_string('emptyfilelist', 'repository_local')));
+            throw new Exception('emptyfilelist');
+        } else {
+            return $ret;
+        }
+
+}
+
+ /**
+     *
+     * @param <type> $filearea
+     * @param <type> $path
+     * @param <type> $visiblename
+     * @return <type>
+     */
+    function repository_encode_path($filearea, $path, $visiblename) {
+        return array('path'=>serialize(array($filearea, $path)), 'name'=>$visiblename);
+    }
+
+ /**
+     * Builds a tree of files This function is
+     * then called recursively.
+     *
+     * @param $fileinfo an object returned by file_browser::get_file_info()
+     * @param $search searched string
+     * @param $dynamicmode bool no recursive call is done when in dynamic mode
+     * @param $list - the array containing the files under the passed $fileinfo
+     * @returns int the number of files found
+     *
+     * todo: take $search into account, and respect a threshold for dynamic loading
+     */
+    function repository_build_tree($fileinfo, $search, $dynamicmode, &$list) {
+        global $CFG;
+
+        $filecount = 0;
+        $children = $fileinfo->get_children();
+
+        foreach ($children as $child) {
+            $filename = $child->get_visible_name();
+            $filesize = $child->get_filesize();
+            $filesize = $filesize ? display_size($filesize) : '';
+            $filedate = $child->get_timemodified();
+            $filedate = $filedate ? userdate($filedate) : '';
+            $filetype = $child->get_mimetype();
+
+            if ($child->is_directory()) {
+                $path = array();
+                $level = $child->get_parent();
+                while ($level) {
+                    $params = $level->get_params();
+                    $path[] = repository_encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
+                    $level = $level->get_parent();
+                }
+
+                $tmp = array(
+                    'title' => $child->get_visible_name(),
+                    'size' => 0,
+                    'date' => $filedate,
+                    'path' => array_reverse($path),
+                    'thumbnail' => $CFG->pixpath .'/f/folder.gif'
+                );
+
+                //if ($dynamicmode && $child->is_writable()) {
+                //    $tmp['children'] = array();
+                //} else {
+                    // if folder name matches search, we send back all files contained.
+                    $_search = $search;
+                    if ($search && stristr($tmp['title'], $search) !== false) {
+                        $_search = false;
+                    }
+                    $tmp['children'] = array();
+                    $_filecount = repository_build_tree($child, $_search, $dynamicmode, $tmp['children']);
+                    if ($search && $_filecount) {
+                        $tmp['expanded'] = 1;
+                    }
+
+                //}
+
+                if (!$search || $_filecount || (stristr($tmp['title'], $search) !== false)) {
+                    $list[] = $tmp;
+                    $filecount += $_filecount;
+                }
+
+            } else { // not a directory
+                // skip the file, if we're in search mode and it's not a match
+                if ($search && (stristr($filename, $search) === false)) {
+                    continue;
+                }
+                $params = $child->get_params();
+                $source = serialize(array($params['contextid'], $params['filearea'], $params['itemid'], $params['filepath'], $params['filename']));
+                $list[] = array(
+                    'title' => $filename,
+                    'size' => $filesize,
+                    'date' => $filedate,
+                    //'source' => $child->get_url(),
+                    'source' => base64_encode($source),
+                    'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo_from_type("icon", $filetype)
+                );
+                $filecount++;
+            }
+        }
+
+        return $filecount;
+    }
+
+
+/**
  * TODO: write comment
  */
 final class repository_instance_form extends moodleform {

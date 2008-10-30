@@ -100,142 +100,14 @@ class repository_remotemoodle extends repository {
         if (empty($USER)) {
             exit(mnet_server_fault(9016, get_string('usernotfound', 'repository_remotemoodle',  $username)));
         }
-        ///from here the function code is pretty similar to the one in local plugin
-        $ret = array();
-        $ret['nologin'] = true;
-        $ret['manage'] = $CFG->wwwroot .'/files/index.php'; // temporary
-        $browser = get_file_browser();
-        $itemid = null;
-        $filename = null;
-        $filearea = null;
-        $path = '/';
-        $ret['dynload'] = false;
-
-        if ($fileinfo = $browser->get_file_info(get_system_context(), $filearea, $itemid, $path, $filename)) {
-
-            $ret['path'] = array();
-            $params = $fileinfo->get_params();
-            $filearea = $params['filearea'];
-            $ret['path'][] = $this->_encode_path($filearea, $path, $fileinfo->get_visible_name());
-            if ($fileinfo->is_directory()) {
-                $level = $fileinfo->get_parent();
-                while ($level) {
-                    $params = $level->get_params();
-                    $ret['path'][] = $this->_encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
-                    $level = $level->get_parent();
-                }
-            }
-            $filecount = $this->build_tree($fileinfo, $search, $ret['dynload'], $ret['list']);
-            $ret['path'] = array_reverse($ret['path']);
+       
+        try {
+            return repository_get_user_file_tree($search);
         }
-
-        if (empty($ret['list'])) {
-            exit(mnet_server_fault(9016, get_string('emptyfilelist', 'repository_local')));
-        } else {
-            return $ret;
+        catch (Exception $e) {
+            exit(mnet_server_fault(9016, get_string('failtoretrievelist', 'repository_remotemoodle')));
         }
-        
     }
-
-    /**
-     * Serialize a path
-     * @param <type> $filearea
-     * @param <type> $path
-     * @param <type> $visiblename
-     * @return <type>
-     */
-    public function _encode_path($filearea, $path, $visiblename) {
-        return array('path'=>serialize(array($filearea, $path)), 'name'=>$visiblename);
-    }
-
-   /**
-     * Builds a tree of files, to be used by get_listing(). This function is
-     * then called recursively.
-     *
-     * Note: function similar to the one into local plugin expected the source
-     *
-     * @param $fileinfo an object returned by file_browser::get_file_info()
-     * @param $search searched string
-     * @param $dynamicmode bool no recursive call is done when in dynamic mode
-     * @param $list - the array containing the files under the passed $fileinfo
-     * @returns int the number of files found
-     *
-     * todo: take $search into account, and respect a threshold for dynamic loading
-     */
-    public function build_tree($fileinfo, $search, $dynamicmode, &$list) {
-        global $CFG;
-
-        $filecount = 0;
-        $children = $fileinfo->get_children();
-
-        foreach ($children as $child) {
-            $filename = $child->get_visible_name();
-            $filesize = $child->get_filesize();
-            $filesize = $filesize ? display_size($filesize) : '';
-            $filedate = $child->get_timemodified();
-            $filedate = $filedate ? userdate($filedate) : '';
-            $filetype = $child->get_mimetype();
-
-            if ($child->is_directory()) {
-                $path = array();
-                $level = $child->get_parent();
-                while ($level) {
-                    $params = $level->get_params();
-                    $path[] = $this->_encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
-                    $level = $level->get_parent();
-                }
-
-                $tmp = array(
-                    'title' => $child->get_visible_name(),
-                    'size' => 0,
-                    'date' => $filedate,
-                    'path' => array_reverse($path),
-                    'thumbnail' => $CFG->pixpath .'/f/folder.gif'
-                );
-
-                $_search = $search;
-                if ($search && stristr($tmp['title'], $search) !== false) {
-                    $_search = false;
-                }
-                $tmp['children'] = array();
-                $_filecount = $this->build_tree($child, $_search, $dynamicmode, $tmp['children']);
-                if ($search && $_filecount) {
-                    $tmp['expanded'] = 1;
-                }
-
-                if (!$search || $_filecount || (stristr($tmp['title'], $search) !== false)) {
-                    $list[] = $tmp;
-                    $filecount += $_filecount;
-                }
-
-            } else { // not a directory
-                // skip the file, if we're in search mode and it's not a match
-                if ($search && (stristr($filename, $search) === false)) {
-                    continue;
-                }
-
-                //retrieve the stored file id
-                $fs = get_file_storage();
-                $params = $child->get_params();
-
-                ///we're going to serialize and base64_encode the source
-                //The source includes all parameters that will allow the server to retrieve the file with the file API
-                //The source will be pass into the $url parameter of get_file() function
-                $source = serialize(array($params['contextid'], $params['filearea'], $params['itemid'], $params['filepath'], $params['filename']));
-                $list[] = array(
-                    'title' => $filename,
-                    'size' => $filesize,
-                    'date' => $filedate,
-                    'source' => base64_encode($source),
-                    'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo_from_type("icon", $filetype)
-                );
-
-                $filecount++;
-            }
-        }
-        return $filecount;
-    }
-
 
     /**
      * Display the file listing - no login required
