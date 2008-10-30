@@ -772,7 +772,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                           join("\n", $mnet_request->error));
                 break;
             }
-            $mnethostlogsssql = '
+            $mnethostlogssql = '
             SELECT
                 mhostlogs.remoteid, mhostlogs.time, mhostlogs.userid, mhostlogs.ip,
                 mhostlogs.course, mhostlogs.module, mhostlogs.cmid, mhostlogs.action,
@@ -787,7 +787,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                         ' . $CFG->prefix . 'user u
                         INNER JOIN ' . $CFG->prefix . 'log l on l.userid = u.id
                     WHERE
-                        u.mnethostid = $mnethostid
+                        u.mnethostid = ' . $mnethostid . '
                         AND l.id > ' . $mnet_request->response['last log id'] . '
                     ORDER BY remoteid ASC
                     LIMIT 500
