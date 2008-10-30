@@ -797,7 +797,9 @@ class auth_plugin_mnet extends auth_plugin_base {
 
             $mnethostlogs = $DB->get_records_sql($mnethostlogssql, array($mnethostid, $mnet_request->response['last log id']));
 
-            if (false == $mnethostlogs) continue;
+            if ($mnethostlogs == false) {
+                continue;
+            }
 
             $processedlogs = array();
 
