@@ -808,12 +808,13 @@ abstract class repository {
             $DB->update_record('repository_instances', $r);
             unset($options['name']);
         }
+        $result = true;
         foreach ($options as $name=>$value) {
             if ($id = $DB->get_field('repository_instance_config', 'id', array('name'=>$name, 'instanceid'=>$this->id))) {
                 if ($value===null) {
-                    return $DB->delete_records('repository_instance_config', array('name'=>$name, 'instanceid'=>$this->id));
+                    $result = $result && $DB->delete_records('repository_instance_config', array('name'=>$name, 'instanceid'=>$this->id));
                 } else {
-                    return $DB->set_field('repository_instance_config', 'value', $value, array('id'=>$id));
+                    $result = $result && $DB->set_field('repository_instance_config', 'value', $value, array('id'=>$id));
                 }
             } else {
                 if ($value===null) {
@@ -823,10 +824,10 @@ abstract class repository {
                 $config->instanceid = $this->id;
                 $config->name   = $name;
                 $config->value  = $value;
-                return $DB->insert_record('repository_instance_config', $config);
+                $result = $result && $DB->insert_record('repository_instance_config', $config);
             }
         }
-        return true;
+        return $result;
     }
 
     /**
