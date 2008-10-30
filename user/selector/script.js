@@ -249,7 +249,7 @@ user_selector.prototype.handle_failure = function() {
     // If we are in developer debug mode, output a link to help debug the failure.
     if (moodle_cfg.developerdebug) {
         var link = document.createElement('a');
-        link.href = this.searchurl + this.get_search_text();
+        link.href = this.searchurl + this.get_search_text() + '&debug=1';
         link.appendChild(document.createTextNode('Ajax call failed. Click here to try the search call directly.'))
         this.searchfield.parentNode.appendChild(link);
     }
@@ -302,7 +302,7 @@ user_selector.prototype.output_options = function(data) {
             var option = options[0];
             if (option.selected) {
                 var optiontext = option.innerText || option.textContent
-                this.selected[option.value] = { id: option.value, formatted: optiontext };
+                this.selected[option.value] = { id: option.value, name: optiontext, disabled: option.disabled };
             }
             optgroup.removeChild(option);
         }
@@ -360,8 +360,10 @@ user_selector.prototype.output_group = function(groupname, users, select) {
         var user = users[userid];
         var option = document.createElement('option');
         option.value = user.id;
-        option.appendChild(document.createTextNode(this.output_user(user)));
-        if (select || this.selected[user.id]) {
+        option.appendChild(document.createTextNode(user.name));
+        if (user.disabled) {
+            option.disabled = 'disabled';
+        } else if (select || this.selected[user.id]) {
             option.selected = 'selected';
         }
         delete this.selected[user.id];
@@ -382,23 +384,6 @@ user_selector.prototype.output_group = function(groupname, users, select) {
         optgroup.appendChild(option);
     }
     this.listbox.appendChild(optgroup);
-}
-
-/**
- * Convert a user object to a string suitable for displaying as an option in the list box.
- *
- * @param Object user the user to display.
- * @return string a string representation of the user.
- */
-user_selector.prototype.output_user = function(user) {
-    if (user.formatted) {
-        return user.formatted;
-    }
-    var output = user.fullname;
-    for (var i = 0; i < this.extrafields.length; i++) {
-        output += ', ' + user[this.extrafields[i]];
-    }
-    return output;
 }
 
 // Say that we want to be a source of custom events.

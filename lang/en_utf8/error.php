@@ -22,6 +22,7 @@ $string['cannotaddrss'] = 'You do not have permission to add rss feeds';
 $string['cannotaddmodule'] = '$a module could not be added to the module list!';
 $string['cannotaddnewmodule'] = 'Could not add a new module of $a';
 $string['cannotaddnewinstance'] = 'Could not add a new instance of $a';
+$string['cannotassignrolehere'] = 'You are not allowed to assign this role (id = $a->roleid) in this context ($a->context)';
 $string['cannotsaveconfig'] = 'Problem saving config \"$a->name\" as \"$a->value\" for plugin \"$a->plugin\"';
 $string['cannotsavecomment'] = 'Cannot save comment';
 $string['cannotsavefile'] = 'Cannot save the file \"$a\"!';

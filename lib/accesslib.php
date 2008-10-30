@@ -525,6 +525,26 @@ function is_siteadmin($userid) {
     return $DB->record_exists_sql($sql, $params);
 }
 
+/**
+ * @param integer $roleid a role id.
+ * @return boolean, whether this role is an admin role.
+ */
+function is_admin_role($roleid) {
+    global $CFG, $DB;
+
+    $sql = "SELECT 1
+              FROM {role_capabilities} rc
+              JOIN {context} ctx ON ctx.id = rc.contextid
+             WHERE ctx.contextlevel = 10
+                   AND rc.roleid = ?
+                   AND rc.capability IN (?, ?, ?)
+          GROUP BY rc.capability
+            HAVING SUM(rc.permission) > 0";
+    $params = array($roleid, 'moodle/site:config', 'moodle/legacy:admin', 'moodle/site:doanything');
+
+    return $DB->record_exists_sql($sql, $params);
+}
+
 function get_course_from_path ($path) {
     // assume that nothing is more than 1 course deep
     if (preg_match('!^(/.+)/\d+$!', $path, $matches)) {
@@ -4886,7 +4906,9 @@ function sort_by_roleassignment_authority($users, $context, $roles=array(), $sor
  * @param bool gethidden - whether to fetch hidden enrolments too
  * @return array()
  */
-function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.lastname ASC', $gethidden=true, $group='', $limitfrom='', $limitnum='') {
+function get_role_users($roleid, $context, $parent=false, $fields='',
+        $sort='u.lastname, u.firstname', $gethidden=true, $group='',
+        $limitfrom='', $limitnum='', $extrawheretest='', $whereparams=array()) {
     global $DB;
 
     if (empty($fields)) {
@@ -4927,6 +4949,11 @@ function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.l
 
     array_unshift($params, $context->id);
 
+    if ($extrawheretest) {
+        $extrawheretest = ' AND ' . $extrawheretest;
+        $params = array_merge($params, $whereparams);
+    }
+
     $sql = "SELECT $fields, ra.roleid
               FROM {role_assignments} ra
               JOIN {user} u ON u.id = ra.userid
@@ -4936,6 +4963,7 @@ function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.l
                    $roleselect
                    $groupselect
                    $hiddensql
+                   $extrawheretest
           ORDER BY $sort";                  // join now so that we can just use fullname() later
 
     return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);

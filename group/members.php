@@ -94,7 +94,7 @@ check_theme_arrows();
 
     <table class="generaltable generalbox groupmanagementtable boxaligncenter" summary="">
     <tr>
-      <td id='memberscell'>
+      <td id='existingcell'>
           <p>
             <label for="removeselect"><?php print_string('groupmembers', 'group'); ?></label>
           </p>
@@ -106,7 +106,7 @@ check_theme_arrows();
             <input name="remove" id="remove" type="submit" value="<?php echo get_string('remove').'&nbsp;'.$THEME->rarrow; ?>" title="<?php print_string('remove'); ?>" />
         </p>
       </td>
-      <td id='nonmemberscell'>
+      <td id='potentialcell'>
           <p>
             <label for="addselect"><?php print_string('potentialmembs', 'group'); ?></label>
           </p>

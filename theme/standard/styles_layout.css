@@ -436,37 +436,40 @@ form.popupform label {
 .groupmanagementtable {
   width: 90%;
 }
-
 .groupmanagementtable td {
   vertical-align: middle;
 }
-
 .groupmanagementtable p {
-  text-align: center;
+  text-align: left;
+  margin-bottom: 0.2em;
 }
-
-.groupmanagementtable #memberscell,
-.groupmanagementtable #nonmemberscell {
+.groupmanagementtable #existingcell,
+.groupmanagementtable #potentialcell {
   width: 42%;
 }
-.groupmanagementtable #memberscell label,
-.groupmanagementtable #nonmemberscell label {
+.groupmanagementtable #existingcell label,
+.groupmanagementtable #potentialcell label {
   font-weight: bold;
 }
 .groupmanagementtable #buttonscell {
   width: 16%;
 }
+.groupmanagementtable #buttonscell p {
+  text-align: center;
+}
 .groupmanagementtable #buttonscell input {
     width: 80%;
     padding: 1em 0;
-    margin: 2em 0;
+}
+.groupmanagementtable #buttonscell #remove {
+    margin: 7em 0;
 }
 .groupmanagementtable #backcell {
     padding-top: 2em;
     text-align: center;
 }
-#removeselect_wrapper,
-#addselect_wrapper {
+.groupmanagementtable #removeselect_wrapper,
+.groupmanagementtable #addselect_wrapper {
     width: 100%;
 }
 .groupmanagementtable #removeselect_wrapper label,
@@ -548,6 +551,9 @@ div.hide {
 
 .userselector select {
   width: 100%;
+}
+.userselector div {
+  margin-top: 0.2em;
 }
 .userselector div label {
   margin-right: 0.3em;
@@ -1027,11 +1033,47 @@ body#admin-modules table.generaltable td.c0
   padding: 5px;
 }
 
-#admin-roles-manage .selector,
-#admin-roles-assign .selector,
-#admin-roles-override .selector {
-  text-align:center;
-  margin-bottom:1em;
+.roleassigntable {
+    width: 100%;
+}
+.roleassigntable td {
+    vertical-align: middle;
+    padding: 0 0.3em 1em;
+}
+.roleassigntable p {
+    text-align: left;
+    margin-bottom: 0.2em;
+}
+.roleassigntable #existingcell,
+.roleassigntable #potentialcell {
+    width: 38%;
+}
+.roleassigntable #existingcell label,
+.roleassigntable #potentialcell label {
+    font-weight: bold;
+}
+.roleassigntable #buttonscell {
+    width: 24%;
+}
+.roleassigntable #buttonscell #add,
+.roleassigntable #buttonscell #remove {
+    width: 100%;
+    margin: 0.3em 0;
+    padding: 0.5em 0;
+}
+.roleassigntable #buttonscell p {
+    margin: 0.3em 0;
+}
+.roleassigntable #buttonscell #remove {
+    margin-top: 5em;
+}
+.roleassigntable #removeselect_wrapper,
+.roleassigntable #addselect_wrapper {
+    width: 100%;
+}
+.roleassigntable #removeselect_wrapper label,
+.roleassigntable #addselect_wrapper label {
+    font-weight: normal;
 }
 
 #admin-roles-manage table.roledesc,

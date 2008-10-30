@@ -111,3 +111,17 @@ cap_table_filter = {
         }
     }
 };
+
+function init_add_assign_page() {
+    var addselect = user_selector.get('addselect');
+    document.getElementById('add').disabled = addselect.is_selection_empty();
+    addselect.subscribe('selectionchanged', function(isempty) {
+        document.getElementById('add').disabled = isempty;
+    });
+
+    var removeselect = user_selector.get('removeselect');
+    document.getElementById('remove').disabled = removeselect.is_selection_empty();
+    removeselect.subscribe('selectionchanged', function(isempty) {
+        document.getElementById('remove').disabled = isempty;
+    });
+}

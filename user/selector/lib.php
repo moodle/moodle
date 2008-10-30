@@ -71,10 +71,12 @@ abstract class user_selector_base {
     public function __construct($name, $options = array()) {
         global $CFG;
         $this->name = $name;
-        if (empty($CFG->extrauserselectorfields)) {
-            $this->extrafields = array();
-        } else {
+        if (isset($options['extrafields'])) {
+            $this->extrafields = $options['extrafields'];
+        } else if (!empty($CFG->extrauserselectorfields)) {
             $this->extrafields = explode(',', $CFG->extrauserselectorfields);
+        } else {
+            $this->extrafields = array();
         }
         if (isset($options['exclude']) && is_array($options['exclude'])) {
             $this->exclude = $options['exclude'];
@@ -107,7 +109,7 @@ abstract class user_selector_base {
     }
 
     /**
-     * @return array the userids that were selected. This is a more sophisticated version
+     * @return array of user objects. The users that were selected. This is a more sophisticated version
      * of optional_param($this->name, array(), PARAM_INTEGER) that validates the
      * returned list of ids against the rules for this user selector.
      */
@@ -233,7 +235,9 @@ abstract class user_selector_base {
      *      array should be the string names of optgroups. The keys of the inner
      *      arrays should be userids, and the values should be user objects
      *      containing at least the list of fields returned by the method
-     *      required_fields_sql().
+     *      required_fields_sql(). If a user object has a ->disabled property
+     *      that is true, then that option will be displayed greyed out, and
+     *      will not be returned by get_selected_users.
      */
     public abstract function find_users($search);
 
@@ -245,6 +249,7 @@ abstract class user_selector_base {
             'class' => get_class($this),
             'name' => $this->name,
             'exclude' => $this->exclude,
+            'extrafields' => $this->extrafields
         );
     }
 
@@ -274,7 +279,11 @@ abstract class user_selector_base {
         // Aggregate the resulting list back into a single one.
         $users = array();
         foreach ($groupedusers as $group) {
-            $users += $group;
+            foreach ($group as $user) {
+                if (!isset($users[$user->id]) && empty($user->disabled)) {
+                    $users[$user->id] = $user;
+                }
+            }
         }
 
         // If we are only supposed to be selecting a single user, make sure we do.
@@ -317,14 +326,18 @@ abstract class user_selector_base {
         $params = array();
         $tests = array();
 
+        if ($u) {
+            $u .= '.';
+        }
+
         // If we have a $search string, put a field LIKE '$search%' condition on each field.
         if ($search) {
             $conditions = array(
-                $DB->sql_fullname($u . '.firstname', $u . '.lastname'),
-                $conditions[] = $u . '.lastname'
+                $DB->sql_fullname($u . 'firstname', $u . 'lastname'),
+                $conditions[] = $u . 'lastname'
             );
             foreach ($this->extrafields as $field) {
-                $conditions[] = $u . '.' . $field;
+                $conditions[] = $u . $field;
             }
             $ilike = ' ' . $DB->sql_ilike() . ' ?';
             foreach ($conditions as &$condition) {
@@ -334,17 +347,22 @@ abstract class user_selector_base {
             $tests[] = '(' . implode(' OR ', $conditions) . ')';
         }
 
+        // Add some additional sensible conditions
+        $tests[] = $u . "username <> 'guest'";
+        $tests[] = $u . 'deleted = 0';
+        $tests[] = $u . 'confirmed = 1';
+
         // If we are being asked to exclude any users, do that.
         if (!empty($this->exclude)) {
             list($usertest, $userparams) = $DB->get_in_or_equal($this->exclude, SQL_PARAMS_QM, '', false);
-            $tests[] = $u . '.id ' . $usertest;
+            $tests[] = $u . 'id ' . $usertest;
             $params = array_merge($params, $userparams);
         }
 
         // If we are validating a set list of userids, add an id IN (...) test.
         if (!empty($this->validatinguserids)) {
             list($usertest, $userparams) = $DB->get_in_or_equal($this->validatinguserids);
-            $tests[] = $u . '.id ' . $usertest;
+            $tests[] = $u . 'id ' . $usertest;
             $params = array_merge($params, $userparams);
         }
 
@@ -411,13 +429,14 @@ abstract class user_selector_base {
         if (!empty($users)) {
             $output = '  <optgroup label="' . s($groupname) . ' (' . count($users) . ')">' . "\n";
             foreach ($users as $user) {
-                if ($select || isset($this->selected[$user->id])) {
-                    $selectattr = ' selected="selected"';
-                } else {
-                    $selectattr = '';
+                $attributes = '';
+                if (!empty($user->disabled)) {
+                    $attributes .= ' disabled="disabled"';
+                } else if ($select || isset($this->selected[$user->id])) {
+                    $attributes .= ' selected="selected"';
                 }
                 unset($this->selected[$user->id]);
-                $output .= '    <option' . $selectattr . ' value="' . $user->id . '">' .
+                $output .= '    <option' . $attributes . ' value="' . $user->id . '">' .
                         $this->output_user($user) . "</option>\n";
             }
         } else {
@@ -434,7 +453,7 @@ abstract class user_selector_base {
      * @param object $user the user to display.
      * @return string a string representation of the user.
      */
-    protected function output_user($user) {
+    public function output_user($user) {
         $bits = array(
             fullname($user)
         );
@@ -477,13 +496,183 @@ abstract class user_selector_base {
     }
 }
 
+// User selectors for managing role assignments ================================
+
 /**
- * User selector subclass  for the list of potential users on the assign roles page.
- *
+ * Base class to avoid duplicating code.
  */
-class role_assign_potential_user_selector extends user_selector_base {
+abstract class role_assign_user_selector_base extends user_selector_base {
+    const MAX_USERS_PER_PAGE = 100;
+
+    protected $roleid;
+    protected $context;
+
+    /**
+     * @param string $name control name
+     * @param array $options should have two elements with keys groupid and courseid.
+     */
+    public function __construct($name, $options) {
+        global $CFG;
+        parent::__construct($name, $options);
+        $this->roleid = $options['roleid'];
+        if (isset($options['context'])) {
+            $this->context = $options['context'];
+        } else {
+            $this->context = get_context_instance_by_id($options['contextid']);
+        }
+        require_once($CFG->dirroot . '/group/lib.php');
+    }
+
+    protected function get_options() {
+        $options = parent::get_options();
+        $options['roleid'] = $this->roleid;
+        $options['contextid'] = $this->context->id;
+        return $options;
+    }
+}
+
+/**
+ * User selector subclass for the list of potential users on the assign roles page,
+ * when we are assigning in a context below the course level. (CONTEXT_MODULE and
+ * CONTEXT_BLOCK).
+ *
+ * In this case we replicate part of get_users_by_capability() get the users
+ * with moodle/course:view (or moodle/site:doanything). We can't use
+ * get_users_by_capability() becuase 
+ *   1) get_users_by_capability() does not deal with searching by name
+ *   2) exceptions array can be potentially large for large courses
+ */
+class potential_assignees_below_course extends role_assign_user_selector_base {
     public function find_users($search) {
-        return array(); // TODO
+        global $DB;
+
+        // Get roles with some assignement to the 'moodle/course:view' capability.
+        $possibleroles = get_roles_with_capability('moodle/course:view', CAP_ALLOW, $this->context);
+        if (empty($possibleroles)) {
+            // If there aren't any, we are done.
+            return array();
+        }
+
+        // Now exclude the admin roles, and check the actual permission on
+        // 'moodle/course:view' to make sure it is allow.
+        $doanythingroles = get_roles_with_capability('moodle/site:doanything',
+                CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM));
+        $validroleids = array();
+
+        foreach ($possibleroles as $possiblerole) {
+            if (isset($doanythingroles[$possiblerole->id])) {
+                    continue;
+            }
+
+            if ($caps = role_context_capabilities($possiblerole->id, $this->context, 'moodle/course:view')) { // resolved list
+                if (isset($caps['moodle/course:view']) && $caps['moodle/course:view'] > 0) { // resolved capability > 0
+                    $validroleids[] = $possiblerole->id;
+                }
+            }
+        }
+
+        // If there are no valid roles, we are done.
+        if (!$validroleids) {
+            return array();
+        }
+
+        // Now we have to go to the database.
+        list($wherecondition, $params) = $this->search_sql($search, 'u');
+        if ($wherecondition) {
+            $wherecondition = ' AND ' . $wherecondition;
+        }
+        $roleids =  '('.implode(',', $validroleids).')';
+
+        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $countfields = 'SELECT COUNT(1)';
+
+        $sql   = " FROM {user} u
+                   JOIN {role_assignments} ra ON ra.userid = u.id
+                   JOIN {role} r ON r.id = ra.roleid
+                  WHERE ra.contextid " . get_related_contexts_string($this->context)."
+                        $wherecondition
+                        AND ra.roleid IN $roleids
+                        AND u.id NOT IN (
+                           SELECT u.id
+                             FROM {role_assignments} r, {user} u
+                            WHERE r.contextid = ?
+                                  AND u.id = r.userid
+                                  AND r.roleid = ?)";
+        $order = ' ORDER BY lastname ASC, firstname ASC';
+
+        $params[] = $this->context->id;
+        $params[]    = $this->roleid;
+
+        // Check to see if there are too many to show sensibly.
+        $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
+        if ($potentialmemberscount > role_assign_user_selector_base::MAX_USERS_PER_PAGE) {
+            return array(get_string('toomanytoshow') => array(),
+                    get_string('trysearching') => array());
+        }
+
+        // If not, show them.
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
+
+        if (empty($availableusers)) {
+            return array();
+        }
+
+        if ($search) {
+            $groupname = get_string('potusersmatching', 'role', $search);
+        } else {
+            $groupname = get_string('potusers', 'role');
+        }
+
+        return array($groupname => $availableusers);
+    }
+}
+
+/**
+ * User selector subclass for the list of potential users on the assign roles page,
+ * when we are assigning in a context at or above the course level. In this case we
+ * show all the users in the system who do not already have the role.
+ */
+class potential_assignees_course_and_above extends role_assign_user_selector_base {
+    public function find_users($search) {
+        global $DB;
+
+        list($wherecondition, $params) = $this->search_sql($search, '');
+
+        $fields      = 'SELECT ' . $this->required_fields_sql('');
+        $countfields = 'SELECT COUNT(1)';
+
+        $sql = " FROM {user} 
+                WHERE $wherecondition
+                      AND id NOT IN (
+                         SELECT u.id
+                           FROM {role_assignments} r, {user} u
+                          WHERE r.contextid = ?
+                                AND u.id = r.userid
+                                AND r.roleid = ?)";
+        $order = ' ORDER BY lastname ASC, firstname ASC';
+
+        $params[] = $this->context->id;
+        $params[] = $this->roleid;
+
+        $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
+        if ($potentialmemberscount > role_assign_user_selector_base::MAX_USERS_PER_PAGE) {
+            return array(get_string('toomanytoshow') => array(),
+                    get_string('trysearching') => array());
+        }
+
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
+
+        if (empty($availableusers)) {
+            return array();
+        }
+
+        if ($search) {
+            $groupname = get_string('potusersmatching', 'role', $search);
+        } else {
+            $groupname = get_string('potusers', 'role');
+        }
+
+        return array($groupname => $availableusers);
     }
 }
 
@@ -491,12 +680,67 @@ class role_assign_potential_user_selector extends user_selector_base {
  * User selector subclass for the list of users who already have the role in
  * question on the assign roles page.
  */
-class role_assign_current_user_selector extends user_selector_base {
+class existing_role_holders extends role_assign_user_selector_base {
+    protected $strhidden;
+
+    public function __construct($name, $options) {
+        parent::__construct($name, $options);
+        $this->strhidden = get_string('hiddenassign');
+    }
+
     public function find_users($search) {
-        return array(); // TODO
+        list($wherecondition, $params) = $this->search_sql($search, 'u');
+        $contextusers = get_role_users($this->roleid, $this->context, false,
+                $this->required_fields_sql('u') . ', ra.hidden', 'u.lastname, u.firstname',
+                true, '', '', '', $wherecondition, $params);
+
+        if (empty($contextusers)) {
+            return array();
+        }
+
+        if ($search) {
+            $groupname = get_string('extusersmatching', 'role', $search);
+        } else {
+            $groupname = get_string('extusers', 'role');
+        }
+
+        return array($groupname => $contextusers);
+    }
+
+    // Override to add (hidden) to hidden role assignments.
+    public function output_user($user) {
+        $output = parent::output_user($user);
+        if ($user->hidden) {
+            $output .= ' (' . $this->strhidden . ')';
+        }
+        return $output;
     }
 }
 
+/**
+ * A special subclass to use when unassigning admins at site level. Disables
+ * the option for admins to unassign themselves.
+ */
+class existing_role_holders_site_admin extends existing_role_holders {
+    public function find_users($search) {
+        global $USER;
+        $groupeduses = parent::find_users($search);
+        foreach ($groupeduses as $group) {
+            foreach ($group as &$user) {
+                if ($user->id == $USER->id) {
+                    $user->disabled = true;
+                }
+            }
+        }
+        return $groupeduses;
+    }
+}
+
+// User selectors for managing group memebers ==================================
+
+/**
+ * Base class to avoid duplicating code.
+ */
 abstract class groups_user_selector_base extends user_selector_base {
     protected $groupid;
     protected $courseid;
@@ -521,8 +765,6 @@ abstract class groups_user_selector_base extends user_selector_base {
     }
 
     /**
-     * Enter description here...
-     *
      * @param array $roles array in the format returned by groups_calculate_role_people.
      * @return array array in the format find_users is supposed to return.
      */
@@ -571,7 +813,7 @@ class group_members_selector extends groups_user_selector_base {
 class group_non_members_selector extends groups_user_selector_base {
     const MAX_USERS_PER_PAGE = 100;
 
-    protected function output_user($user) {
+    public function output_user($user) {
         return parent::output_user($user) . ' (' . $user->numgroups . ')';
     }
 

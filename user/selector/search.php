@@ -33,6 +33,16 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/user/selector/lib.php');
 
+// In developer debug mode, when there is a debug=1 in the URL send as plain text
+// for easier debugging.
+if (debugging('', DEBUG_DEVELOPER) && optional_param('debug', false, PARAM_BOOL)) {
+    header('Content-type: text/plain; charset=UTF-8');
+    $debugmode = true;
+} else {
+    header('Content-type: application/json');
+    $debugmode = false;
+}
+
 // Check access.
 if (!isloggedin()) {;
     print_error('mustbeloggedin');
@@ -50,8 +60,17 @@ if (!isset($USER->userselectors[$selectorhash])) {
     print_error('unknownuserselector');
 }
 
-// Create the appropriate userselector.
+// Get the options.
 $options = $USER->userselectors[$selectorhash];
+
+if ($debugmode) {
+    echo 'Search string: ', $search, "\n";
+    echo 'Options: ';
+    print_r($options);
+    echo "\n";
+}
+
+// Create the appropriate userselector.
 $classname = $options['class'];
 unset($options['class']);
 $name = $options['name'];
@@ -65,12 +84,16 @@ $userselector = new $classname($name, $options);
 // Do the search and output the results.
 $users = $userselector->find_users($search);
 foreach ($users as &$group) {
-    foreach ($group as &$user) {
-        $user->fullname = fullname($user);
+    foreach ($group as $user) {
+        $output = new stdClass;
+        $output->id = $user->id;
+        $output->name = $userselector->output_user($user);
+        if (!empty($user->disabled)) {
+            $output->disabled = true;
+        }
+        $group[$user->id] = $output;
     }
 }
 
-
-header('Content-type: application/json');
 echo json_encode(array('results' => $users));
 ?>
