@@ -283,7 +283,7 @@ user_selector.prototype.handle_selection_change = function() {
 
 // Methods for refreshing the list of displayed options ========================
 user_selector.prototype.insert_search_into_str = function(string, search) {
-    return string.replace("''", "'" + search + "'");
+    return string.replace("%%SEARCHTERM%%", search);
 }
 
 /**

@@ -471,8 +471,8 @@ abstract class user_selector_base {
 
         // Initialise the selector.
         $output .= print_js_call('new user_selector', array($this->name, $hash,
-                sesskey(), $this->extrafields, get_string('previouslyselectedusers'),
-                get_string('nomatchingusers')), true);
+                sesskey(), $this->extrafields, get_string('previouslyselectedusers', '', '%%SEARCHTERM%%'),
+                get_string('nomatchingusers', '', '%%SEARCHTERM%%')), true);
         return $output;
     }
 }
