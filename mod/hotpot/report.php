@@ -119,7 +119,7 @@
 
         case 'allparticipants':
             // anyone currently allowed to attempt this HotPot
-            if ($records = get_users_by_capability($modulecontext, 'mod/hotpot:attempt', 'u.id,u.id', 'u.id')) {
+            if ($records = hotpot_get_users_by_capability($modulecontext, 'mod/hotpot:attempt')) {
                 foreach ($records as $record) {
                     $users[$record->id] = 1; // "1" means user is allowed to do this HotPot
                 }
@@ -129,13 +129,14 @@
 
         case 'existingstudents':
             // anyone currently allowed to attempt this HotPot who is not a teacher
-            $teachers = get_users_by_capability($modulecontext, 'mod/hotpot:viewreport', 'u.id,u.id', 'u.id');
-            if ($records = get_users_by_capability($modulecontext, 'mod/hotpot:attempt', 'u.id,u.id', 'u.id')) {
+            $teachers = hotpot_get_users_by_capability($modulecontext, 'mod/hotpot:viewreport');
+            if ($records = hotpot_get_users_by_capability($modulecontext, 'mod/hotpot:attempt')) {
                 foreach ($records as $record) {
                     if (empty($teachers[$record->id])) {
                         $users[$record->id] = 1;
                     }
                 }
+                unset($records);
             }
             break;
 
@@ -154,6 +155,7 @@
     }
     if (empty($user_ids)) {
         print_heading(get_string('nousersyet'));
+        print_footer($course);
         exit;
     }
 
@@ -248,6 +250,7 @@
     // stop now if no attempts were found
     if (empty($attempts)) {
         print_heading(get_string('noattemptstoshow','quiz'));
+        print_footer($course);
         exit;
     }
 
@@ -497,31 +500,34 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
             u.lastname
     ", array($hotpot->id));
 
-    // get context
-    $cm = get_coursemodule_from_instance('hotpot', $hotpot->id);
-    $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-
-    // get teachers enrolled students
-    $teachers = get_users_by_capability($modulecontext, 'mod/hotpot:viewreport', 'u.id,u.firstname,u.lastname', 'u.lastname');
-    $students = get_users_by_capability($modulecontext, 'mod/hotpot:attempt', 'u.id,u.firstname,u.lastname', 'u.lastname');
-
-    // current students
-    if (!empty($students)) {
-        $firsttime = true;
-        foreach ($students as $user) {
-            if (isset($users[$user->id])) {
-                if ($firsttime) {
-                    $firsttime = false; // so we only do this once
-                    $menus['reportusers']['existingstudents'] = get_string('existingstudents');
-                    $menus['reportusers'][] = '------';
-                }
-                $menus['reportusers']["$user->id"] = fullname($user);
-                unset($users[$user->id]);
-            }
-        }
-    }
-    // others (former students, teachers, admins, course creators)
     if (!empty($users)) {
+        // get context
+        $cm = get_coursemodule_from_instance('hotpot', $hotpot->id);
+        $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+        $teachers = hotpot_get_users_by_capability($modulecontext, 'mod/hotpot:viewreport');
+        $students = hotpot_get_users_by_capability($modulecontext, 'mod/hotpot:attempt');
+
+        // current students
+        if (!empty($students)) {
+            $firsttime = true;
+            foreach ($users as $user) {
+                if (array_key_exists($user->id, $teachers)) {
+                    continue; // skip teachers
+                }
+                if (array_key_exists($user->id, $students)) {
+                    if ($firsttime) {
+                        $firsttime = false; // so we only do this once
+                        $menus['reportusers']['existingstudents'] = get_string('existingstudents');
+                        $menus['reportusers'][] = '------';
+                    }
+                    $menus['reportusers']["$user->id"] = fullname($user);
+                    unset($users[$user->id]);
+                }
+            }
+            unset($students);
+        }
+        // others (former students, teachers, admins, course creators)
         $firsttime = true;
         foreach ($users as $user) {
             if ($firsttime) {
@@ -648,5 +654,12 @@ function hotpot_get_records_groupby($function, $fieldnames, $table, $select, $pa
     }
 
     return $records;
+}
+function hotpot_get_users_by_capability(&$modulecontext, $capability) {
+    static $users = array();
+    if (! array_key_exists($capability, $users)) {
+        $users[$capability] = get_users_by_capability($modulecontext, $capability, 'u.id,u.id', 'u.id');
+    }
+    return $users[$capability];
 }
 ?>
