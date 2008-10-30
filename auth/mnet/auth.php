@@ -891,6 +891,7 @@ class auth_plugin_mnet extends auth_plugin_base {
 
             if ($insertok) {
                 $MNET_REMOTE_CLIENT->last_log_id = $logEntryObj->remoteid;
+                $MNET_REMOTE_CLIENT->updateparams->last_log_id = $logEntryObj->remoteid;
             } else {
                 $returnString .= 'Record with id '.$logEntryObj->remoteid." failed to insert.\n";
             }
