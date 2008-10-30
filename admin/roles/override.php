@@ -50,8 +50,8 @@
     }
 
 /// needed for tabs.php
-    $overridableroles = get_overridable_roles($context, 'name', ROLENAME_BOTH);
-    $assignableroles  = get_assignable_roles($context, 'name', ROLENAME_BOTH);
+    $overridableroles = get_overridable_roles($context, ROLENAME_BOTH);
+    $assignableroles  = get_assignable_roles($context, ROLENAME_BOTH);
 
 /// Get some language strings
 

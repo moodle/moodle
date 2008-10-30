@@ -1040,6 +1040,14 @@ body#admin-modules table.generaltable td.c0
   margin-right:auto;
 }
 
+#admin-roles-manage .backlink,
+#admin-roles-assign .backlink,
+#admin-roles-override .backlink {
+  text-align: right;
+  width: 90%;
+  margin: 2em auto 1em;
+}
+
 #admin-roles-manage table.rolecap,
 #admin-roles-override table.rolecap {
   margin-left:auto;

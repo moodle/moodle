@@ -155,6 +155,7 @@ define('RISK_DATALOSS',    0x0020);
 define('ROLENAME_ORIGINAL', 0);// the name as defined in the role definition
 define('ROLENAME_ALIAS', 1);   // the name as defined by a role alias
 define('ROLENAME_BOTH', 2);    // Both, like this:  Role alias (Original)
+define('ROLENAME_ORIGINALANDSHORT', 0); // the name as defined in the role definition and the shortname in brackets
 
 $context_cache    = array();    // Cache of all used context objects for performance (by level and instance)
 $context_cache_id = array();    // Index to above cache by id
@@ -3243,7 +3244,14 @@ function capabilities_cleanup($component, $newcapdef=NULL) {
 
 
 /**
- * prints human readable context identifier.
+ * Prints human readable context identifier.
+ *
+ * @param object $context the context.
+ * @param boolean $withprefix whether to prefix the name of the context with the
+ *      type of context, e.g. User, Course, Forum, etc.
+ * @param boolean $short whether to user the short name of the thing. Only applies
+ *      to course contexts
+ * @return string the human readable context name.
  */
 function print_context_name($context, $withprefix = true, $short = false) {
     global $DB;
@@ -3299,14 +3307,13 @@ function print_context_name($context, $withprefix = true, $short = false) {
             break;
 
         case CONTEXT_MODULE: // 1 to 1 to course
-            if ($cm = $DB->get_record('course_modules', array('id'=>$context->instanceid))) {
-                if ($module = $DB->get_record('modules', array('id'=>$cm->module))) {
-                    if ($mod = $DB->get_record($module->name, array('id'=>$cm->instance))) {
-                        if ($withprefix){
-                            $name = get_string('activitymodule').': ';
-                        }
-                        $name .= $mod->name;
+            if ($cm = $DB->get_record_sql('SELECT cm.*, md.name AS modname FROM {course_modules} cm ' .
+                    'JOIN {modules} md ON md.id = cm.module WHERE cm.id = ?', array($context->instanceid))) {
+                if ($mod = $DB->get_record($cm->modname, array('id' => $cm->instance))) {
+                    if ($withprefix){
+                        $name = get_string('modulename', $cm->modname).': ';
                     }
+                    $name .= $mod->name;
                 }
             }
             break;
@@ -3331,11 +3338,60 @@ function print_context_name($context, $withprefix = true, $short = false) {
         default:
             error ('This is an unknown context (' . $context->contextlevel . ') in print_context_name!');
             return false;
-
     }
+
     return $name;
 }
 
+/**
+ * Get a URL for a context, if there is a natural one. For example, for 
+ * CONTEXT_COURSE, this is the course page. For CONTEXT_USER it is the
+ * user profile page.
+ *
+ * First three parameters as for 
+ * @param object $context the context.
+ * @return string a suitable URL, or blank.
+ */
+function get_context_url($context) {
+    global $CFG, $COURSE, $DB;
+
+    $url = '';
+    switch ($context->contextlevel) {
+        case CONTEXT_USER:
+            $url = $CFG->wwwroot . '/user/view.php?id=' . $context->instanceid;
+            if ($COURSE->id != SITEID) {
+                $url .= '&amp;courseid=' . $COURSE->id;
+            }
+            break;
+
+        case CONTEXT_COURSECAT: // Coursecat -> coursecat or site
+            $url = $CFG->wwwroot . '/course/category.php?id=' . $context->instanceid;
+            break;
+
+        case CONTEXT_COURSE: // 1 to 1 to course cat
+            if ($context->instanceid == SITEID) {
+                $url = $CFG->wwwroot . '/';
+            } else {
+                $url = $CFG->wwwroot . '/course/view.php?id=' . $context->instanceid;
+            }
+            break;
+
+        case CONTEXT_MODULE: // 1 to 1 to course
+            if ($modname = $DB->get_field_sql('SELECT md.name AS modname FROM {course_modules} cm ' .
+                    'JOIN {modules} md ON md.id = cm.module WHERE cm.id = ?', array($context->instanceid))) {
+                $url = $CFG->wwwroot . '/mod/' . $modname . '/view.php?id=' . $context->instanceid;
+            }
+            break;
+
+        case CONTEXT_SYSTEM:
+        case CONTEXT_GROUP:
+        case CONTEXT_BLOCK:
+        default:
+            $url = '';
+    }
+
+    return $url;
+}
 
 /**
  * Extracts the relevant capabilities given a contextid.
@@ -4001,12 +4057,16 @@ function allow_assign($sroleid, $troleid) {
 
 /**
  * Gets a list of roles that this user can assign in this context
- * @param object $context
- * @param string $field
- * @param int $rolenamedisplay
- * @return array
+ * @param object $context the context.
+ * @param string $field the field to return for each role.
+ * @param int $rolenamedisplay the type of role name to display. One of the
+ *      ROLENAME_X constants. Default ROLENAME_ALIAS.
+ * @param $withusercounts if true, count the number of users with each role.
+ * @return array if $withusercounts is false, then an array $roleid => $rolename.
+ *      if $withusercounts is true, returns a list of three arrays,
+ *      $rolenames, $rolecounts, and $nameswithcounts.
  */
-function get_assignable_roles($context, $field='name', $rolenamedisplay=ROLENAME_ALIAS) {
+function get_assignable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $withusercounts = false) {
     global $USER, $DB;
 
     if (!has_capability('moodle/role:assign', $context)) {
@@ -4017,37 +4077,69 @@ function get_assignable_roles($context, $field='name', $rolenamedisplay=ROLENAME
     $parents[] = $context->id;
     $contexts = implode(',' , $parents);
 
-    if (!$roles = $DB->get_records_sql("SELECT ro.*
-                                          FROM {role} ro,
-                                               (
+    $params = array();
+    $extrafields = '';
+    if ($rolenamedisplay == ROLENAME_ORIGINALANDSHORT) {
+        $extrafields .= ', ro.shortname';
+    }
+
+    if ($withusercounts) {
+        $countjoinandgroupby =
+                "JOIN 
+                GROUP BY ro.id, ro.name$extrafields";
+        $extrafields = ', (SELECT count(u.id)
+                FROM {role_assignments} cra JOIN {user} u ON cra.userid = u.id
+                WHERE cra.roleid = ro.id AND cra.contextid = :conid AND u.deleted = 0
+                ) AS usercount';
+        $params['conid'] = $context->id;
+    }
+
+    $params['userid'] = $USER->id;
+    if (!$roles = $DB->get_records_sql("SELECT ro.id, ro.name$extrafields
+                                          FROM {role} ro
+                                          JOIN (
                                                    SELECT DISTINCT r.id
                                                      FROM {role} r,
                                                           {role_assignments} ra,
                                                           {role_allow_assign} raa
                                                     WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
                                                       AND raa.roleid = ra.roleid AND r.id = raa.allowassign
-                                               ) inline_view
-                                         WHERE ro.id = inline_view.id
-                                      ORDER BY ro.sortorder ASC", array('userid'=>$USER->id))) {
+                                               ) inline_view ON ro.id = inline_view.id
+                                      ORDER BY ro.sortorder ASC", $params)) {
         return array();
     }
 
+    $rolenames = array();
     foreach ($roles as $role) {
-        $roles[$role->id] = $role->$field;
+        $rolenames[$role->id] = $role->name;
+        if ($rolenamedisplay == ROLENAME_ORIGINALANDSHORT) {
+            $rolenames[$role->id] .= ' (' . $role->shortname . ')';
+        }
+    }
+    if ($rolenamedisplay != ROLENAME_ORIGINALANDSHORT) {
+        $rolenames = role_fix_names($rolenames, $context, $rolenamedisplay);
     }
 
-    return role_fix_names($roles, $context, $rolenamedisplay);
+    if (!$withusercounts) {
+        return $rolenames;
+    }
+
+    $rolecounts = array();
+    $nameswithcounts = array();
+    foreach ($roles as $role) {
+        $nameswithcounts[$role->id] = $rolenames[$role->id] . ' (' . $roles[$role->id]->usercount . ')';
+        $rolecounts[$role->id] = $roles[$role->id]->usercount;
+    }
+    return array($rolenames, $rolecounts, $nameswithcounts);
 }
 
 /**
  * Gets a list of roles that this user can assign in this context, for the switchrole menu
  *
  * @param object $context
- * @param string $field
- * @param int $rolenamedisplay
  * @return array
  */
-function get_assignable_roles_for_switchrole($context, $field='name', $rolenamedisplay=ROLENAME_ALIAS) {
+function get_assignable_roles_for_switchrole($context) {
     global $USER, $DB;
 
     if (!has_capability('moodle/role:assign', $context)) {
@@ -4075,11 +4167,11 @@ function get_assignable_roles_for_switchrole($context, $field='name', $rolenamed
         return array();
     }
 
+    $rolenames = array();
     foreach ($roles as $role) {
-        $roles[$role->id] = $role->$field;
+        $rolenames[$role->id] = $role->name;
     }
-
-    return role_fix_names($roles, $context, $rolenamedisplay);
+    return role_fix_names($rolenames, $context, ROLENAME_ALIAS);
 }
 
 /**
@@ -4089,7 +4181,7 @@ function get_assignable_roles_for_switchrole($context, $field='name', $rolenamed
  * @param int $rolenamedisplay
  * @return array
  */
-function get_overridable_roles($context, $field='name', $rolenamedisplay=ROLENAME_ALIAS) {
+function get_overridable_roles($context, $rolenamedisplay=ROLENAME_ALIAS) {
     global $USER, $DB;
 
     if (!has_capability('moodle/role:override', $context) and !has_capability('moodle/role:safeoverride', $context)) {
@@ -4116,7 +4208,7 @@ function get_overridable_roles($context, $field='name', $rolenamedisplay=ROLENAM
     }
 
     foreach ($roles as $role) {
-        $roles[$role->id] = $role->$field;
+        $roles[$role->id] = $role->name;
     }
 
     return role_fix_names($roles, $context, $rolenamedisplay);
