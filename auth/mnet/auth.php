@@ -771,7 +771,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                           join("\n", $mnet_request->error));
                 break;
             }
-            $query = '
+            $mnethostlogsssql = '
             SELECT
                 mhostlogs.remoteid, mhostlogs.time, mhostlogs.userid, mhostlogs.ip,
                 mhostlogs.course, mhostlogs.module, mhostlogs.cmid, mhostlogs.action,
@@ -794,49 +794,51 @@ class auth_plugin_mnet extends auth_plugin_base {
                 INNER JOIN ' . $CFG->prefix . 'course c on c.id = mhostlogs.course
             ORDER by mhostlogs.remoteid ASC';
 
-            $results = get_records_sql($query);
+            $mnethostlogs = get_records_sql($mnethostlogssql);
 
-            if (false == $results) continue;
+            if (false == $mnethostlogs) continue;
 
-            $param = array();
+            $processedlogs = array();
 
-            foreach($results as $result) {
-                if (!empty($result->modinfo) && !empty($result->cmid)) {
-                    $modinfo = unserialize($result->modinfo);
-                    unset($result->modinfo);
+            foreach($mnethostlogs as $hostlog) {
+                // Extract the name of the relevant module instance from the
+                // course modinfo if possible.
+                if (!empty($hostlog->modinfo) && !empty($hostlog->cmid)) {
+                    $modinfo = unserialize($hostlog->modinfo);
+                    unset($hostlog->modinfo);
                     $modulearray = array();
                     foreach($modinfo as $module) {
                         $modulearray[$module->cm] = urldecode($module->name);
                     }
-                    $result->resource_name = $modulearray[$result->cmid];
+                    $hostlog->resource_name = $modulearray[$hostlog->cmid];
                 } else {
-                    $result->resource_name = '';
+                    $hostlog->resource_name = '';
                 }
 
-                $param[] = array (
-                                    'remoteid'      => $result->remoteid,
-                                    'time'          => $result->time,
-                                    'userid'        => $result->userid,
-                                    'ip'            => $result->ip,
-                                    'course'        => $result->course,
-                                    'coursename'    => $result->coursename,
-                                    'module'        => $result->module,
-                                    'cmid'          => $result->cmid,
-                                    'action'        => $result->action,
-                                    'url'           => $result->url,
-                                    'info'          => $result->info,
-                                    'resource_name' => $result->resource_name,
-                                    'username'      => $result->username
+                $processedlogs[] = array (
+                                    'remoteid'      => $hostlog->remoteid,
+                                    'time'          => $hostlog->time,
+                                    'userid'        => $hostlog->userid,
+                                    'ip'            => $hostlog->ip,
+                                    'course'        => $hostlog->course,
+                                    'coursename'    => $hostlog->coursename,
+                                    'module'        => $hostlog->module,
+                                    'cmid'          => $hostlog->cmid,
+                                    'action'        => $hostlog->action,
+                                    'url'           => $hostlog->url,
+                                    'info'          => $hostlog->info,
+                                    'resource_name' => $hostlog->resource_name,
+                                    'username'      => $hostlog->username
                                  );
             }
 
-            unset($result);
+            unset($hostlog);
 
             $mnet_request = new mnet_xmlrpc_client();
             $mnet_request->set_method('auth/mnet/auth.php/refresh_log');
 
             // set $token and $useragent parameters
-            $mnet_request->add_param($param);
+            $mnet_request->add_param($processedlogs);
 
             if ($mnet_request->send($mnet_peer) === true) {
                 if ($mnet_request->response['code'] > 0) {
