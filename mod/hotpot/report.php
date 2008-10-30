@@ -497,34 +497,36 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
             u.lastname
     ");
 
-    // get context
-    $cm = get_coursemodule_from_instance('hotpot', $hotpot->id);
-    $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-
-    $teachers = hotpot_get_users_by_capability($modulecontext, 'mod/hotpot:viewreport');
-    $students = hotpot_get_users_by_capability($modulecontext, 'mod/hotpot:attempt');
-
-    // current students
-    if ($students = hotpot_get_users_by_capability($modulecontext, 'mod/hotpot:attempt')) {
-        $firsttime = true;
-        foreach ($users as $user) {
-            if (array_key_exists($user->id, $teachers)) {
-                continue; // skip teachers
-            }
-            if (array_key_exists($user->id, $students)) {
-                if ($firsttime) {
-                    $firsttime = false; // so we only do this once
-                    $menus['reportusers']['existingstudents'] = get_string('existingstudents');
-                    $menus['reportusers'][] = '------';
-                }
-                $menus['reportusers']["$user->id"] = fullname($user);
-                unset($users[$user->id]);
-            }
-        }
-        unset($students);
-    }
-    // others (former students, teachers, admins, course creators)
     if (!empty($users)) {
+
+        // get context
+        $cm = get_coursemodule_from_instance('hotpot', $hotpot->id);
+        $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+        $teachers = hotpot_get_users_by_capability($modulecontext, 'mod/hotpot:viewreport');
+        $students = hotpot_get_users_by_capability($modulecontext, 'mod/hotpot:attempt');
+
+        // current students
+        if (!empty($students)) {
+            $firsttime = true;
+            foreach ($users as $user) {
+                if (array_key_exists($user->id, $teachers)) {
+                    continue; // skip teachers
+                }
+                if (array_key_exists($user->id, $students)) {
+                    if ($firsttime) {
+                        $firsttime = false; // so we only do this once
+                        $menus['reportusers']['existingstudents'] = get_string('existingstudents');
+                        $menus['reportusers'][] = '------';
+                    }
+                    $menus['reportusers']["$user->id"] = fullname($user);
+                    unset($users[$user->id]);
+                }
+            }
+            unset($students);
+        }
+
+        // others (former students, teachers, admins, course creators)
         $firsttime = true;
         foreach ($users as $user) {
             if ($firsttime) {
