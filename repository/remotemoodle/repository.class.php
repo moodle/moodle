@@ -159,7 +159,21 @@ class repository_remotemoodle extends repository {
         ///the method will not be returned by the system method system/listMethods)
         require_once($CFG->dirroot . '/mnet/xmlrpc/client.php');
         $this->ensure_environment();
+
+        ///check that the peer has been setup
+        if (!array_key_exists('peer',$this->options)) {
+            echo json_encode(array('e'=>get_string('error').' 9010: '.get_string('hostnotfound','repository_remotemoodle')));
+            exit;
+        }
+
         $host = $DB->get_record('mnet_host',array('id' => $this->options['peer'])); //need to retrieve the host url
+
+        ///check that the peer host exists into the database
+        if (empty($host)) {
+           echo json_encode(array('e'=>get_string('error').' 9011: '.get_string('hostnotfound','repository_remotemoodle')));
+           exit;
+        }
+
         $mnet_peer = new mnet_peer();
         $mnet_peer->set_wwwroot($host->wwwroot);
         $client = new mnet_xmlrpc_client();
