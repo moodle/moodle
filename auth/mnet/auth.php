@@ -771,32 +771,28 @@ class auth_plugin_mnet extends auth_plugin_base {
                           join("\n", $mnet_request->error));
                 break;
             }
-
-            $query = "SELECT
-                          l.id as remoteid,
-                          l.time,
-                          l.userid,
-                          l.ip,
-                          l.course,
-                          l.module,
-                          l.cmid,
-                          l.action,
-                          l.url,
-                          l.info,
-                          c.fullname as coursename,
-                          c.modinfo as modinfo,
-                          u.username
-                      FROM
-                          {$CFG->prefix}user u,
-                          {$CFG->prefix}log l,
-                          {$CFG->prefix}course c
-                      WHERE
-                          l.userid = u.id AND
-                          u.mnethostid = '$mnethostid' AND
-                          l.id > '".$mnet_request->response['last log id']."' AND
-                          c.id = l.course
-                      ORDER BY
-                          remoteid ASC";
+            $query = '
+            SELECT
+                mhostlogs.remoteid, mhostlogs.time, mhostlogs.userid, mhostlogs.ip,
+                mhostlogs.course, mhostlogs.module, mhostlogs.cmid, mhostlogs.action,
+                mhostlogs.url, mhostlogs.info, mhostlogs.username, c.fullname as coursename,
+                c.modinfo
+            FROM
+                (
+                    SELECT
+                        l.id as remoteid, l.time, l.userid, l.ip, l.course, l.module, l.cmid,
+                        l.action, l.url, l.info, u.username
+                    FROM
+                        ' . $CFG->prefix . 'user u
+                        INNER JOIN ' . $CFG->prefix . 'log l on l.userid = u.id
+                    WHERE
+                        u.mnethostid = $mnethostid
+                        AND l.id > ' . $mnet_request->response['last log id'] . '
+                    ORDER BY remoteid ASC
+                    LIMIT 500
+                ) mhostlogs
+                INNER JOIN ' . $CFG->prefix . 'course c on c.id = mhostlogs.course
+            ORDER by mhostlogs.remoteid ASC';
 
             $results = get_records_sql($query);
 
