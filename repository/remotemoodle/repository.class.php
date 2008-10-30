@@ -300,8 +300,13 @@ class repository_remotemoodle extends repository {
             $peers[$host->id] = $host->name;        
         }
 
+       
         $mform->addElement('select', 'peer', get_string('peer', 'repository_remotemoodle'),$peers);
         $mform->addRule('peer', get_string('required'), 'required', null, 'client');
+        
+        if (empty($peers)) {
+            $mform->addElement('static', null, '',  get_string('nopeer','repository_remotemoodle'));
+        }
     }
 
     /**
