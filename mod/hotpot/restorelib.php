@@ -122,7 +122,7 @@ function hotpot_restore_strings(&$restore, $status, &$xml, &$record) {
     // $xml is an XML tree for a hotpot record
     // $record is the newly added hotpot record
     return hotpot_restore_records(
-        $restore, $status, $xml, 'hotpot_strings', array(), '', 'STRING_DATA', 'STRING', 'string'
+        $restore, $status, $xml, 'hotpot_strings', array(), '', 'STRING_DATA', 'STRING', 'md5key'
     );
 }
 function hotpot_restore_questions(&$restore, $status, &$xml, &$record) {
@@ -387,9 +387,10 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
         // if there is a secondary key field  ...
         if ($secondary_key) {
             // check to see if a record with the same value already exists
-            $key_record = get_record($table, $secondary_key, $record->$secondary_key);
-            if ($key_record) {
+            $key_records = get_records($table, $secondary_key, $record->$secondary_key);
+            if ($key_records) {
                 // set new record id from already existing record
+                $key_record = reset($key_records);
                 $record->id = $key_record->id;
             }
         }
