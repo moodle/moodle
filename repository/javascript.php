@@ -265,7 +265,8 @@ this.create_picker = function() {
             searchbtn.on('click', this.fnSearch, this.input_ctl);
         });
         input_ctl.on('contentReady', function() {
-            var k1 = new YAHOO.util.KeyListener(document, {keys:13}, {fn:function(){this.fnSearch()},scope:searchbtn, correctScope: true});
+            var scope = document.getElementById('search-input-$suffix');
+            var k1 = new YAHOO.util.KeyListener(scope, {keys:13}, {fn:function(){this.fnSearch()},scope:searchbtn, correctScope: true});
             k1.enable();
         });
         for(var i=0; i<_client.repos.length; i++) {
