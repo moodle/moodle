@@ -772,7 +772,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                           join("\n", $mnet_request->error));
                 break;
             }
-            $mnethostlogsssql = "
+            $mnethostlogssql = "
             SELECT
                 mhostlogs.remoteid, mhostlogs.time, mhostlogs.userid, mhostlogs.ip,
                 mhostlogs.course, mhostlogs.module, mhostlogs.cmid, mhostlogs.action,
