@@ -2811,6 +2811,7 @@ function standard_js_config() {
         'wwwroot' => $CFG->httpswwwroot, // Yes, really.
         'pixpath' => $CFG->pixpath,
         'modpixpath' => $CFG->modpixpath,
+        'sesskey' => sesskey(),
     );
     if (debugging('', DEBUG_DEVELOPER)) {
         $config['developerdebug'] = true;
