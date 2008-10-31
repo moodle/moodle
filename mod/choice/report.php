@@ -3,10 +3,11 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id       = required_param('id', PARAM_INT);   //moduleid
-    $format   = optional_param('format', CHOICE_PUBLISH_NAMES, PARAM_INT);
-    $download = optional_param('download', '', PARAM_ALPHA);
-    $action   = optional_param('action', '', PARAM_ALPHA);
+    $id         = required_param('id', PARAM_INT);   //moduleid
+    $format     = optional_param('format', CHOICE_PUBLISH_NAMES, PARAM_INT);
+    $download   = optional_param('download', '', PARAM_ALPHA);
+    $action     = optional_param('action', '', PARAM_ALPHA);
+    $attemptids = optional_param('attemptid', array(), PARAM_INT); //get array of responses to delete.
 
     if (! $cm = get_coursemodule_from_id('choice', $id)) {
         error("Course Module ID was incorrect");
@@ -33,7 +34,6 @@
     add_to_log($course->id, "choice", "report", "report.php?id=$cm->id", "$choice->id",$cm->id);
       
     if ($action == 'delete' && has_capability('mod/choice:deleteresponses',$context)) {
-        $attemptids = isset($_POST['attemptid']) ? $_POST['attemptid'] : array(); //get array of repsonses to delete.
         choice_delete_responses($attemptids); //delete responses.
         redirect("report.php?id=$cm->id");                      
     }
