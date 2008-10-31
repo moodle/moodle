@@ -2579,6 +2579,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     // Add in any extra JavaScript libraries that occurred during the header
     $output .= require_js('', 2);
+    $output .= print_js_call('moodle_initialise_body', array(), true);
 
     if ($return) {
         return $output;
