@@ -70,18 +70,39 @@ class phpFlickr {
 
     function request ($command, $args = array())
     {
-        if ($command == 'upload') {
-            $filecontent = $args['photo'];
-            unset($args['photo']);
-        }
-
         //Sends a request to Flickr's REST endpoint via POST.
         if (substr($command,0,7) != "flickr.") {
             $command = "flickr." . $command;
         }
 
         //Process arguments, including method and login data.
-        $args = array_merge(array("method" => $command, "format" => "php_serial", "api_key" => $this->api_key), $args);
+        if ($command == 'flickr.upload') {
+            $photo = $args['photo'];
+            if (empty($args['is_public'])) {
+                $args['is_public'] = 0;
+            }
+            if (empty($args['is_friend'])) {
+                $args['is_friend'] = 0;
+            }
+            if (empty($args['is_family'])) {
+                $args['is_family'] = 0;
+            }
+            if (empty($args['hidden'])) {
+                $args['hidden'] = 1;
+            }
+            $args = array("api_key" => $this->api_key,
+                          "title" => $args['title'],
+                          "description" => $args['description'],
+                          "tags" => $args['tags'],
+                          "is_public" => $args['is_public'],
+                          "is_friend" => $args['is_friend'],
+                          "is_family" => $args['is_family'],
+                          "safety_level" => $args['safety_level'],
+                          "content_type" => $args['content_type'],
+                          "hidden" => $args['hidden']);
+        } else {
+            $args = array_merge(array("method" => $command, "format" => "php_serial", "api_key" => $this->api_key), $args);
+        }
 
         if (!empty($this->token)) {
             $args = array_merge($args, array("auth_token" => $this->token));
@@ -90,9 +111,7 @@ class phpFlickr {
         ksort($args);
         $auth_sig = "";
         foreach ($args as $key => $data) {
-            if ($key != 'photo') {
-                $auth_sig .= $key . $data;
-            }
+            $auth_sig .= $key . $data;
         }
 
         if (!empty($this->secret)) {
@@ -103,12 +122,19 @@ class phpFlickr {
         //$this->req->addHeader("Connection", "Keep-Alive");
         if ($command != 'flickr.upload') {
             $ret = $this->curl->post($this->REST, $args);
+            $this->parsed_response = $this->clean_text_nodes(unserialize($ret));
         } else {
-            $ret = $this->curl->post($this->Upload, $args);
-            print_object($ret);die();
+            $args['photo'] = $photo;
+            $xml = simplexml_load_string($this->curl->post($this->Upload, $args));
+
+            if ($xml['stat'] == 'fail') {
+                $this->parsed_response = array('stat' => (string) $xml['stat'], 'code' => (int) $xml->err['code'], 'message' => (string) $xml->err['msg']);
+            } elseif ($xml['stat'] == 'ok') {
+                $this->parsed_response = array('stat' => (string) $xml['stat'], 'photoid' => (int) $xml->photoid);
+                $this->response = true;
+            }
         }
 
-        $this->parsed_response = $this->clean_text_nodes(unserialize($ret));
         if ($this->parsed_response['stat'] == 'fail') {
             if ($this->die_on_error) die("The Flickr API returned the following error: #{$this->parsed_response['code']} - {$this->parsed_response['message']}");
             else {
@@ -201,7 +227,7 @@ class phpFlickr {
         return unserialize(file_get_contents('http://phpflickr.com/geodata/?format=php&lat=' . $lat . '&lon=' . $lon));
     }
 
-    function auth ($perms = "read", $remember_uri = true)
+    function auth ($perms = "write", $remember_uri = true)
     {
         // Redirects to Flickr's authentication piece if there is no valid token.
         // If remember_uri is set to false, the callback script (included) will

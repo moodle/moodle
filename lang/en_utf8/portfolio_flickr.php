@@ -19,4 +19,5 @@ $string['screenshot'] = 'Screenshots';
 $string['other'] = 'Art, illustration, CGI, or other non-photographic images';
 $string['hidefrompublicsearches'] = 'Hide these images from public searches?';
 $string['set'] = 'Set';
+$string['uploadfailed'] = 'Failed to upload image(s) to flickr.com: $a';
 ?>

@@ -26,20 +26,24 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
             $filesize = $file->get_filesize();
 
             if ($file->is_valid_image()) {
-                $return = $this->flickr->request ('upload', array('photo' => $file->get_content(),
-                                                                  'title' => $this->get_export_config('title'),
-                                                                  'description' => $this->get_export_config('description'),
-                                                                  'tags' => $this->get_export_config('tags'),
-                                                                  'is_public' => $this->get_export_config('is_public'),
-                                                                  'is_friend' => $this->get_export_config('is_friend'),
-                                                                  'is_family' => $this->get_export_config('is_family')));
-
-                // TODO if a set was requested, attach the photo to that set
-                if ($return && $this->get_export_config('set')) {
-                    //
+                $return = $this->flickr->request ('upload', array('photo' => $file,
+                                                                'title' => $this->get_export_config('title'),
+                                                                'description' => $this->get_export_config('description'),
+                                                                'tags' => $this->get_export_config('tags'),
+                                                                'is_public' => $this->get_export_config('is_public'),
+                                                                'is_friend' => $this->get_export_config('is_friend'),
+                                                                'is_family' => $this->get_export_config('is_family'),
+                                                                'safety_level' => $this->get_export_config('safety_level'),
+                                                                'content_type' => $this->get_export_config('content_type'),
+                                                                'hidden' => $this->get_export_config('hidden')));
+                if ($return) {
+                    // Attach photo to a set if requested
+                    if ($this->get_export_config('set')) {
+                        $this->flickr->photosets_addPhoto($this->get_export_config('set'), $this->flickr->parsed_response['photoid']);
+                    }
+                } else {
+                    throw new portfolio_plugin_exception('uploadfailed', 'portfolio_flickr', $this->flickr->error_code . ': ' . $this->flickr->error_msg);
                 }
-                // DEBUG!!!
-                var_dump($return);die();
             }
         }
     }
