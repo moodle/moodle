@@ -3896,7 +3896,7 @@ function forum_print_attachments($post, $cm, $type) {
     $imagereturn = '';
     $output = '';
 
-    $canexport = (has_capability('mod/forum:exportpost', $context) || ($post->userid == $USER->id && has_capability('mod/forum:exportownpost')));
+    $canexport = (has_capability('mod/forum:exportpost', $context) || ($post->userid == $USER->id && has_capability('mod/forum:exportownpost', $context)));
 
     if ($files = $fs->get_area_files($context->id, 'forum_attachment', $post->id, "timemodified", false)) {
         require_once($CFG->libdir . '/portfoliolib.php');
@@ -4447,10 +4447,10 @@ function forum_unsubscribe($userid, $forumid) {
 function forum_post_subscription($post, $forum) {
 
     global $USER;
-    
+
     $action = '';
     $subscribed = forum_is_subscribed($USER->id, $forum);
-    
+
     if ($forum->forcesubscribe == FORUM_FORCESUBSCRIBE) { // database ignored
         return "";
 
