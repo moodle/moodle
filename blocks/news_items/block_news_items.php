@@ -40,10 +40,15 @@ class block_news_items extends block_base {
 
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
+        /// User must have perms to view discussions in that forum
+            if (!has_capability('mod/forum:viewdiscussion', $context)) {
+                return '';
+            }
+
         /// First work out whether we can post to this group and if so, include a link
             $groupmode    = groups_get_activity_groupmode($cm);
             $currentgroup = groups_get_activity_group($cm, true);
-            
+
 
             if (forum_user_can_post_discussion($forum, $currentgroup, $groupmode, $cm, $context)) {
                 $text .= '<div class="newlink"><a href="'.$CFG->wwwroot.'/mod/forum/post.php?forum='.$forum->id.'">'.
