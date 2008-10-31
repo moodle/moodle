@@ -708,7 +708,7 @@ abstract class repository {
             foreach ($configs as $config) {
                 $options[$config] = $params[$config];
             }
-            
+
             if (!empty($id)) {
                 unset($options['name']);
                 $instance = repository_get_instance($id);
@@ -1402,21 +1402,23 @@ function repository_get_user_file_tree($search = ""){
                 //    $tmp['children'] = array();
                 //} else {
                     // if folder name matches search, we send back all files contained.
-                    $_search = $search;
-                    if ($search && stristr($tmp['title'], $search) !== false) {
-                        $_search = false;
-                    }
-                    $tmp['children'] = array();
-                    $_filecount = repository_build_tree($child, $_search, $dynamicmode, $tmp['children']);
-                    if ($search && $_filecount) {
-                        $tmp['expanded'] = 1;
-                    }
+                $_search = $search;
+                if ($search && stristr($tmp['title'], $search) !== false) {
+                    $_search = false;
+                }
+                $tmp['children'] = array();
+                $_filecount = repository_build_tree($child, $_search, $dynamicmode, $tmp['children']);
+                if ($search && $_filecount) {
+                    $tmp['expanded'] = 1;
+                }
 
                 //}
 
-                if (!$search || $_filecount || (stristr($tmp['title'], $search) !== false)) {
-                    $list[] = $tmp;
+                //Uncomment this following line if you wanna display all directory ()even empty
+                //if (!$search || $_filecount || (stristr($tmp['title'], $search) !== false)) {
+                if ($_filecount) {
                     $filecount += $_filecount;
+                    $list[] = $tmp;                    
                 }
 
             } else { // not a directory
