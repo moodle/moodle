@@ -22,6 +22,41 @@
 //
 function SCORMapi1_3() {
     // Standard Data Type Definition
+    
+    // language key has to be checked for language dependent strings
+    var validLanguages = {'aa':'aa', 'ab':'ab', 'ae':'ae', 'af':'af', 'ak':'ak', 'am':'am', 'an':'an', 'ar':'ar', 'as':'as', 'av':'av', 'ay':'ay', 'az':'az', 
+                          'ba':'ba', 'be':'be', 'bg':'bg', 'bh':'bh', 'bi':'bi', 'bm':'bm', 'bn':'bn', 'bo':'bo', 'br':'br', 'bs':'bs',
+                          'ca':'ca', 'ce':'ce', 'ch':'ch', 'co':'co', 'cr':'cr', 'cs':'cs', 'cu':'cu', 'cv':'cv', 'cy':'cy', 
+                          'da':'da', 'de':'de', 'dv':'dv', 'dz':'dz', 'ee':'ee', 'el':'el', 'en':'en', 'eo':'eo', 'es':'es', 'et':'et', 'eu':'eu',
+                          'fa':'fa', 'ff':'ff', 'fi':'fi', 'fj':'fj', 'fo':'fo', 'fr':'fr', 'fy':'fy', 'ga':'ga', 'gd':'gd', 'gl':'gl', 'gn':'gn', 'gu':'gu', 'gv':'gv',
+                          'ha':'ha', 'he':'he', 'hi':'hi', 'ho':'ho', 'hr':'hr', 'ht':'ht', 'hu':'hu', 'hy':'hy', 'hz':'hz',
+                          'ia':'ia', 'id':'id', 'ie':'ie', 'ig':'ig', 'ii':'ii', 'ik':'ik', 'io':'io', 'is':'is', 'it':'it', 'iu':'iu',
+                          'ja':'ja', 'jv':'jv', 'ka':'ka', 'kg':'kg', 'ki':'ki', 'kj':'kj', 'kk':'kk', 'kl':'kl', 'km':'km', 'kn':'kn', 'ko':'ko', 'kr':'kr', 'ks':'ks', 'ku':'ku', 'kv':'kv', 'kw':'kw', 'ky':'ky',
+                          'la':'la', 'lb':'lb', 'lg':'lg', 'li':'li', 'ln':'ln', 'lo':'lo', 'lt':'lt', 'lu':'lu', 'lv':'lv',
+                          'mg':'mg', 'mh':'mh', 'mi':'mi', 'mk':'mk', 'ml':'ml', 'mn':'mn', 'mo':'mo', 'mr':'mr', 'ms':'ms', 'mt':'mt', 'my':'my',
+                          'na':'na', 'nb':'nb', 'nd':'nd', 'ne':'ne', 'ng':'ng', 'nl':'nl', 'nn':'nn', 'no':'no', 'nr':'nr', 'nv':'nv', 'ny':'ny',
+                          'oc':'oc', 'oj':'oj', 'om':'om', 'or':'or', 'os':'os', 'pa':'pa', 'pi':'pi', 'pl':'pl', 'ps':'ps', 'pt':'pt',
+                          'qu':'qu', 'rm':'rm', 'rn':'rn', 'ro':'ro', 'ru':'ru', 'rw':'rw',
+                          'sa':'sa', 'sc':'sc', 'sd':'sd', 'se':'se', 'sg':'sg', 'sh':'sh', 'si':'si', 'sk':'sk', 'sl':'sl', 'sm':'sm', 'sn':'sn', 'so':'so', 'sq':'sq', 'sr':'sr', 'ss':'ss', 'st':'st', 'su':'su', 'sv':'sv', 'sw':'sw',
+                          'ta':'ta', 'te':'te', 'tg':'tg', 'th':'th', 'ti':'ti', 'tk':'tk', 'tl':'tl', 'tn':'tn', 'to':'to', 'tr':'tr', 'ts':'ts', 'tt':'tt', 'tw':'tw', 'ty':'ty',
+                          'ug':'ug', 'uk':'uk', 'ur':'ur', 'uz':'uz', 've':'ve', 'vi':'vi', 'vo':'vo',
+                          'wa':'wa', 'wo':'wo', 'xh':'xh', 'yi':'yi', 'yo':'yo', 'za':'za', 'zh':'zh', 'zu':'zu',
+                          'aar':'aar', 'abk':'abk', 'ave':'ave', 'afr':'afr', 'aka':'aka', 'amh':'amh', 'arg':'arg', 'ara':'ara', 'asm':'asm', 'ava':'ava', 'aym':'aym', 'aze':'aze',
+                          'bak':'bak', 'bel':'bel', 'bul':'bul', 'bih':'bih', 'bis':'bis', 'bam':'bam', 'ben':'ben', 'tib':'tib', 'bod':'bod', 'bre':'bre', 'bos':'bos',
+                          'cat':'cat', 'che':'che', 'cha':'cha', 'cos':'cos', 'cre':'cre', 'cze':'cze', 'ces':'ces', 'chu':'chu', 'chv':'chv', 'wel':'wel', 'cym':'cym',
+                          'dan':'dan', 'ger':'ger', 'deu':'deu', 'div':'div', 'dzo':'dzo', 'ewe':'ewe', 'gre':'gre', 'ell':'ell', 'eng':'eng', 'epo':'epo', 'spa':'spa', 'est':'est', 'baq':'baq', 'eus':'eus', 'per':'per',
+                          'fas':'fas', 'ful':'ful', 'fin':'fin', 'fij':'fij', 'fao':'fao', 'fre':'fre', 'fra':'fra', 'fry':'fry', 'gle':'gle', 'gla':'gla', 'glg':'glg', 'grn':'grn', 'guj':'guj', 'glv':'glv',
+                          'hau':'hau', 'heb':'heb', 'hin':'hin', 'hmo':'hmo', 'hrv':'hrv', 'hat':'hat', 'hun':'hun', 'arm':'arm', 'hye':'hye', 'her':'her',
+                          'ina':'ina', 'ind':'ind', 'ile':'ile', 'ibo':'ibo', 'iii':'iii', 'ipk':'ipk', 'ido':'ido', 'ice':'ice', 'isl':'isl', 'ita':'ita', 'iku':'iku',
+                          'jpn':'jpn', 'jav':'jav', 'geo':'geo', 'kat':'kat', 'kon':'kon', 'kik':'kik', 'kua':'kua', 'kaz':'kaz', 'kal':'kal', 'khm':'khm', 'kan':'kan', 'kor':'kor', 'kau':'kau', 'kas':'kas', 'kur':'kur', 'kom':'kom', 'cor':'cor', 'kir':'kir',
+                          'lat':'lat', 'ltz':'ltz', 'lug':'lug', 'lim':'lim', 'lin':'lin', 'lao':'lao', 'lit':'lit', 'lub':'lub', 'lav':'lav',
+                          'mlg':'mlg', 'mah':'mah', 'mao':'mao', 'mri':'mri', 'mac':'mac', 'mkd':'mkd', 'mal':'mal', 'mon':'mon', 'mol':'mol', 'mar':'mar', 'may':'may', 'msa':'msa', 'mlt':'mlt', 'bur':'bur', 'mya':'mya',
+                          'nau':'nau', 'nob':'nob', 'nde':'nde', 'nep':'nep', 'ndo':'ndo', 'dut':'dut', 'nld':'nld', 'nno':'nno', 'nor':'nor', 'nbl':'nbl', 'nav':'nav', 'nya':'nya',
+                          'oci':'oci', 'oji':'oji', 'orm':'orm', 'ori':'ori', 'oss':'oss', 'pan':'pan', 'pli':'pli', 'pol':'pol', 'pus':'pus', 'por':'por', 'que':'que',
+                          'roh':'roh', 'run':'run', 'rum':'rum', 'ron':'ron', 'rus':'rus', 'kin':'kin', 'san':'san', 'srd':'srd', 'snd':'snd', 'sme':'sme', 'sag':'sag', 'slo':'slo', 'sin':'sin', 'slk':'slk', 'slv':'slv', 'smo':'smo', 'sna':'sna', 'som':'som', 'alb':'alb', 'sqi':'sqi', 'srp':'srp', 'ssw':'ssw', 'sot':'sot', 'sun':'sun', 'swe':'swe', 'swa':'swa',
+                          'tam':'tam', 'tel':'tel', 'tgk':'tgk', 'tha':'tha', 'tir':'tir', 'tuk':'tuk', 'tgl':'tgl', 'tsn':'tsn', 'ton':'ton', 'tur':'tur', 'tso':'tso', 'tat':'tat', 'twi':'twi', 'tah':'tah',
+                          'uig':'uig', 'ukr':'ukr', 'urd':'urd', 'uzb':'uzb', 'ven':'ven', 'vie':'vie', 'vol':'vol', 'wln':'wln', 'wol':'wol', 'xho':'xho', 'yid':'yid', 'yor':'yor', 'zha':'zha', 'chi':'chi', 'zho':'zho', 'zul':'zul'};
+
     var CMIString200 = '^.{0,200}$';
     var CMIString250 = '^.{0,250}$';
     var CMIString1000 = '^.{0,1500}$';
@@ -29,12 +64,14 @@ function SCORMapi1_3() {
     var CMIString64000 = '^.{0,64000}$';
     var CMILang = '^([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?$|^$';
     var CMILangString250 = '^(\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\})?([^\{].{0,250}$)?';
+    var CMILangcr = '^((\{lang=([a-zA-Z]{2,3}|i|x)?(\-[a-zA-Z0-9\-]{2,8})?\}))(.*?)$';
+    var CMILangString250cr = '^((\{lang=([a-zA-Z]{2,3}|i|x)?(\-[a-zA-Z0-9\-]{2,8})?\})?(.{0,250})?)?$';
     var CMILangString4000 = '^(\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\})?([^\{].{0,4000}$)?';
     var CMITime = '^(19[7-9]{1}[0-9]{1}|20[0-2]{1}[0-9]{1}|203[0-8]{1})((-(0[1-9]{1}|1[0-2]{1}))((-(0[1-9]{1}|[1-2]{1}[0-9]{1}|3[0-1]{1}))(T([0-1]{1}[0-9]{1}|2[0-3]{1})((:[0-5]{1}[0-9]{1})((:[0-5]{1}[0-9]{1})((\\.[0-9]{1,2})((Z|([+|-]([0-1]{1}[0-9]{1}|2[0-3]{1})))(:[0-5]{1}[0-9]{1})?)?)?)?)?)?)?)?$';
     var CMITimespan = '^P(\\d+Y)?(\\d+M)?(\\d+D)?(T(((\\d+H)(\\d+M)?(\\d+(\.\\d{1,2})?S)?)|((\\d+M)(\\d+(\.\\d{1,2})?S)?)|((\\d+(\.\\d{1,2})?S))))?$';
     var CMIInteger = '^\\d+$';
     var CMISInteger = '^-?([0-9]+)$';
-    var CMIDecimal = '^-?([0-9]{1,4})(\\.[0-9]{1,18})?$';
+    var CMIDecimal = '^-?([0-9]{1,5})(\\.[0-9]{1,18})?$';
     var CMIIdentifier = '^\\S{0,250}[a-zA-Z0-9]$';
     var CMIShortIdentifier = '^[\\w\.]{1,250}$';
     var CMILongIdentifier = '^\\S{0,4000}[a-zA-Z0-9]$';
@@ -67,7 +104,7 @@ function SCORMapi1_3() {
     var progress_range = '0#1';
     var learner_response = {
         'true-false':{'format':'^true$|^false$', 'max':1, 'delimiter':'', 'unique':false},
-        'choice':{'format':CMIIdentifier, 'max':36, 'delimiter':'[,]', 'unique':true},
+        'choice':{'format':CMIShortIdentifier, 'max':36, 'delimiter':'[,]', 'unique':true},
         'fill-in':{'format':CMILangString250, 'max':10, 'delimiter':'[,]', 'unique':false},
         'long-fill-in':{'format':CMILangString4000, 'max':1, 'delimiter':'', 'unique':false},
         'matching':{'format':CMIShortIdentifier, 'format2':CMIShortIdentifier, 'max':36, 'delimiter':'[,]', 'delimiter2':'[.]', 'unique':false},
@@ -77,28 +114,30 @@ function SCORMapi1_3() {
         'numeric':{'format':CMIDecimal, 'max':1, 'delimiter':'', 'unique':false},
         'other':{'format':CMIString4000, 'max':1, 'delimiter':'', 'unique':false}
     }
+    
     var correct_responses = {
         'true-false':{'pre':'', 'max':1, 'delimiter':'', 'unique':false, 'duplicate':false,
                       'format':'^true$|^false$', 
                       'limit':1},
         'choice':{'pre':'', 'max':36, 'delimiter':'[,]', 'unique':true, 'duplicate':false,
-                  'format':CMIIdentifier},
-        'fill-in':{'pre':'^(\{case_matters=(true|false)\})(\{order_matters=(true|false)\})?|^(\{order_matters=(true|false)\})(\{case_matters=(true|false)\})?',
+                  'format':CMIShortIdentifier},
+//        'fill-in':{'pre':'^(((\{case_matters=(true|false)\})(\{order_matters=(true|false)\})?)|((\{order_matters=(true|false)\})(\{case_matters=(true|false)\})?))(.*?)$',
+        'fill-in':{'pre':'',
                    'max':10, 'delimiter':'[,]', 'unique':false, 'duplicate':false,
-                   'format':CMILangString250},
+                   'format':CMILangString250cr},
         'long-fill-in':{'pre':'^(\{case_matters=(true|false)\})?', 'max':1, 'delimiter':'', 'unique':false, 'duplicate':true,
                         'format':CMILangString4000},
-        'matching':{'pre':'', 'max':36, 'delimiter':'[,]', 'delimiter2':'[.]', 'unique':false, 'duplicate':true,
+        'matching':{'pre':'', 'max':36, 'delimiter':'[,]', 'delimiter2':'[.]', 'unique':false, 'duplicate':false,
                     'format':CMIShortIdentifier, 'format2':CMIShortIdentifier},
         'performance':{'pre':'^(\{order_matters=(true|false)\})?',
-                       'max':250, 'delimiter':'[,]', 'delimiter2':'[.]', 'unique':false, 'duplicate':true,
+                       'max':250, 'delimiter':'[,]', 'delimiter2':'[.]', 'unique':false, 'duplicate':false,
                        'format':'^$|'+CMIShortIdentifier, 'format2':CMIDecimal+'|^$|'+CMIShortIdentifier},
         'sequencing':{'pre':'', 'max':36, 'delimiter':'[,]', 'unique':false, 'duplicate':false,
                       'format':CMIShortIdentifier},
         'likert':{'pre':'', 'max':1, 'delimiter':'', 'unique':false, 'duplicate':false,
                   'format':CMIShortIdentifier,
                   'limit':1},
-        'numeric':{'pre':'', 'max':1, 'delimiter':'', 'unique':false, 'duplicate':false,
+        'numeric':{'pre':'', 'max':2, 'delimiter':'[:]', 'unique':false, 'duplicate':false,
                    'format':CMIDecimal,
                    'limit':1},
         'other':{'pre':'', 'max':1, 'delimiter':'', 'unique':false, 'duplicate':false,
@@ -519,70 +558,44 @@ function SCORMapi1_3() {
                                             break;
                                             case 'cmi.interactions.n.correct_responses.n.pattern':
                                                 if (typeof eval(parentelement) != "undefined") {
-
                                                     // Use cmi.interactions.n.type value to check the right dataelement format
                                                     if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
                                                         var interactiontype = eval(String(parentelement).replace('correct_responses','type'));
+                                                        var interactioncount = eval(parentelement+'._count');
+                                                        // trap duplicate values, which is not allowed for type choice
+                                                        if (interactiontype == 'choice') {
+                                                            for (var i=0; (i < interactioncount) && (errorCode=="0"); i++) {
+                                                               if (eval(parentelement+'.N'+i+'.pattern') == value) {
+                                                                   errorCode = "351";
+                                                               }
+                                                            }
+                                                        }
                                                         if ((typeof correct_responses[interactiontype].limit == 'undefined') ||
                                                             (eval(parentelement+'._count') < correct_responses[interactiontype].limit)) {
-                                                            if (correct_responses[interactiontype].pre != '') {
-                                                                matches = value.match(correct_responses[interactiontype].pre);
-                                                                if (matches != null) {
-                                                                    value = value.substr(0,matches[1].length);
-                                                                }
-                                                            }
                                                             var nodes = new Array();
                                                             if (correct_responses[interactiontype].delimiter != '') {
                                                                 nodes = value.split(correct_responses[interactiontype].delimiter);
                                                             } else {
                                                                 nodes[0] = value;
                                                             }
+                                                            if (interactiontype == 'choice' && nodes.length == 1) {
+                                                              alert('not enough choices: ' + element);
+                                                            }
                                                             if ((nodes.length > 0) && (nodes.length <= correct_responses[interactiontype].max)) {
-                                                                expression = new RegExp(correct_responses[interactiontype].format);
-                                                                for (var i=0; (i < nodes.length) && (errorCode=="0"); i++) {
-                                                                    if (typeof correct_responses[interactiontype].delimiter2 != 'undefined') {
-                                                                        values = nodes[i].split(correct_responses[interactiontype].delimiter2);
-                                                                        if (values.length == 2) {
-                                                                            matches = values[0].match(expression);
-                                                                            if (matches == null) {
-                                                                                errorCode = "406";
-                                                                            } else {
-                                                                                var expression2= new RegExp(correct_responses[interactiontype].format2);
-                                                                                matches = values[1].match(expression2);
-                                                                                if ((matches == null) || (matches.join('').length == 0)) {
-                                                                                    errorCode = "406";
-                                                                                }
-                                                                            }
-                                                                        } else {
-                                                                            errorCode = "406";
-                                                                        }
-                                                                    } else {
-                                                                        matches = nodes[i].match(expression);
-                                                                        if (matches == null) {
-                                                                            errorCode = "406";
-                                                                        } else {
-                                                                            if ((nodes[i] != '') && (correct_responses[interactiontype].unique)) {
-                                                                                for (var j=0; (j<i) && (errorCode=="0"); j++) {
-                                                                                    if (nodes[i] == nodes[j]) {
-                                                                                        errorCode = "406";
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                }
+                                                                errorCode = CRcheckValueNodes (element, interactiontype, nodes, value, errorCode);
                                                             } else if (nodes.length > correct_responses[interactiontype].max) {
                                                                 errorCode = "351";
                                                                 diagnostic = "Data Model Element Pattern Too Long";
                                                             }
-                                                            if ((errorCode == "0") &&
-                                                               ((correct_responses[interactiontype].duplicate == false) || 
-                                                               (!duplicatedPA(element,parentelement,value)))) {
+                                                            if ((errorCode == "0") && ((correct_responses[interactiontype].duplicate == false) || 
+                                                               (!duplicatedPA(element,parentelement,value))) || (errorCode == "0" && value == "")) {
                                                                eval(parentelement+'._count++;');
                                                                eval(subelement+' = new Object();');
                                                             } else {
-                                                                errorCode="351";
-                                                                diagnostic = "Data Model Element Pattern Already Exists";
+                                                                if (errorCode == "0") {
+                                                                    errorCode="351";
+                                                                    diagnostic = "Data Model Element Pattern Already Exists";
+                                                                }
                                                             }
                                                         } else {
                                                             errorCode="351";
@@ -681,19 +694,24 @@ function SCORMapi1_3() {
                                                     }
                                                 }
                                              break;
-                                            case 'cmi.interactions.n.correct_responses.n.pattern':
+                                         case 'cmi.interactions.n.correct_responses.n.pattern':
 											 subel= subelement.split('.');
 											 subel1= 'cmi.interactions.'+subel[2];
-							
 
-                                                 if (typeof eval(subel1+'.type') == "undefined") {
-
+                                                if (typeof eval(subel1+'.type') == "undefined") {
                                                     errorCode="408";
                                                 } else {
-			
-	
                                                     // Use cmi.interactions.n.type value to check the right //dataelement format
-                                                    interactiontype = eval(subel1+'.type');
+                                                    var interactiontype = eval(subel1+'.type');
+                                                    var interactioncount = eval(parentelement+'._count');
+                                                    // trap duplicate values, which is not allowed for type choice
+                                                    if (interactiontype == 'choice') {
+                                                        for (var i=0; (i < interactioncount) && (errorCode=="0"); i++) {
+                                                           if (eval(parentelement+'.N'+i+'.pattern') == value) {
+                                                               errorCode = "351";
+                                                           }
+                                                        }
+                                                    }
                                                     var nodes = new Array();
                                                     if (correct_responses[interactiontype].delimiter != '') {
                                                         nodes = value.split(correct_responses[interactiontype].delimiter);
@@ -702,56 +720,11 @@ function SCORMapi1_3() {
                                                     }
 	
                                                     if ((nodes.length > 0) && (nodes.length <= correct_responses[interactiontype].max)) {
-                                                        expression = new RegExp(correct_responses[interactiontype].format);
-                                                        for (var i=0; (i < nodes.length) && (errorCode=="0"); i++) {
-                                                            if (typeof correct_responses[interactiontype].delimiter2 != 'undefined') {
-		
-	
-                                                                values = nodes[i].split(correct_responses[interactiontype].delimiter2);
-                                                                if (values.length == 2) {
-		
-                                                                    matches = values[0].match(expression);
-                                                                    if (matches == null) {
-		
-                                                                        errorCode = "406";
-                                                                    } else {
-		
-                                                                        var expression2 = new RegExp(correct_responses[interactiontype].format2);
-                                                                        matches = values[1].match(expression2);
-                                                                        if (matches == null) {
-	
-                                                                            errorCode = "406";
-                                                                        }
-                                                                    }
-                                                                } else {
-	                                                                 errorCode = "406";
-                                                                }
-                                                            } else {
-
-                                                                matches = nodes[i].match(expression);
-                                                                //if ((matches == null) || (matches.join('').length == 0)) {
-                                                                if ((matches == null && value != "")||(matches == null && interactiontype=="true-false")){
-
-                                                                    errorCode = "406";
-                                                                } else {
-
-                                                                    if ((nodes[i] != '') && (correct_responses[interactiontype].unique)) {
-                                                                        for (var j=0; (j<i) && (errorCode=="0"); j++) {
-                                                                            if (nodes[i] == nodes[j]) {
-	
-                                                                                errorCode = "406";
-                                                                            }
-                                                                        }
-                                                                    }
-	                                                            }
-                                                            }
-                                                        }
+                                                        errorCode = CRcheckValueNodes (element, interactiontype, nodes, value, errorCode);
                                                     } else if (nodes.length > correct_responses[interactiontype].max) {
-	
                                                         errorCode = "351";
                                                         diagnostic = "Data Model Element Pattern Too Long";
                                                     }
-	
                                                 }
                                              break;
                                         } 
@@ -820,6 +793,120 @@ function SCORMapi1_3() {
         ?>
         return "false";
     }
+
+
+    function CRremovePrefixes (node) {
+        // check for prefixes lang, case, order
+        // case and then order 
+        var seenOrder = false;
+        var seenCase = false;
+        var seenLang = false;
+        var errorCode = "0";
+        while (matches = node.match('^(\{(lang|case_matters|order_matters)=([^\}]+)\})')) {
+            switch (matches[2]) {
+                case 'lang':
+                    // check for language prefix on each node
+                    langmatches = node.match(CMILangcr);
+                    if (langmatches != null) {
+                        lang = langmatches[3];
+                        // check that language string definition is valid
+                        if (lang.length > 0 && lang != undefined) {
+                            if (validLanguages[lang.toLowerCase()] == undefined) {
+                                errorCode = "406";
+                            }
+                        }
+                    }
+                    seenLang = true;
+                break;
+                
+                case 'case_matters':
+                    // check for correct case answer
+                    if (! seenLang && ! seenOrder && ! seenCase) {
+                        if (matches[3] != 'true' && matches[3] != 'false') {
+                            errorCode = "406";
+                        }
+                    }
+                    seenCase = true;
+                break;
+                
+                case 'order_matters':
+                    // check for correct case answer
+                    if (! seenCase && ! seenLang && ! seenOrder) {
+                        if (matches[3] != 'true' && matches[3] != 'false') {
+                            errorCode = "406";
+                        }
+                    }
+                    seenOrder = true;
+                break;
+                
+                default:
+                break;
+            }
+            node = node.substr(matches[1].length);
+        }
+        return {'errorCode': errorCode, 'node': node};
+    }
+
+
+    function CRcheckValueNodes(element, interactiontype, nodes, value, errorCode) {
+        expression = new RegExp(correct_responses[interactiontype].format);
+        for (var i=0; (i < nodes.length) && (errorCode=="0"); i++) {
+            if (interactiontype.match('^(fill-in|long-fill-in|matching|performance|sequencing)$')) {
+                result = CRremovePrefixes(nodes[i]);
+                errorCode = result.errorCode;
+                nodes[i] = result.node;
+            }
+            
+            // check for prefix on each node
+            if (correct_responses[interactiontype].pre != '') {
+                matches = nodes[i].match(correct_responses[interactiontype].pre);
+                if (matches != null) {
+                    nodes[i] = nodes[i].substr(matches[1].length);
+                }
+            }
+            
+            if (correct_responses[interactiontype].delimiter2 != undefined) {
+                values = nodes[i].split(correct_responses[interactiontype].delimiter2);
+                if (values.length == 2) {
+                    matches = values[0].match(expression);
+                    if (matches == null) {
+                        errorCode = "406";
+                    } else {
+                        var expression2 = new RegExp(correct_responses[interactiontype].format2);
+                        matches = values[1].match(expression2);
+                        if (matches == null) {
+                            errorCode = "406";
+                        }
+                    }
+                } else {
+                     errorCode = "406";
+                }
+            } else {
+                matches = nodes[i].match(expression);
+                //if ((matches == null) || (matches.join('').length == 0)) {
+                if ((matches == null && value != "")||(matches == null && interactiontype=="true-false")){
+                    errorCode = "406";
+                } else {
+                    // numeric range - left must be <= right
+                    if (interactiontype == 'numeric' && nodes.length > 1) {
+                        if (parseFloat(nodes[0]) > parseFloat(nodes[1])) {
+                            errorCode = "406";
+                        }
+                    } else {
+                        if ((nodes[i] != '') && (correct_responses[interactiontype].unique)) {
+                            for (var j=0; (j < i) && (errorCode=="0"); j++) {
+                                if (nodes[i] == nodes[j]) {
+                                    errorCode = "406";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } // end of for each nodes
+        return errorCode;
+    }
+
     
     function Commit (param) {
         errorCode = "0";
