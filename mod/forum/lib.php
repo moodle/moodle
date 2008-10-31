@@ -2236,9 +2236,13 @@ function forum_get_discussions($cm, $forumsort="d.timemodified DESC", $fullpost=
 
     $now = round(time(), -2);
 
-    if (!empty($CFG->forum_enabletimedposts)) {
+    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if (!has_capability('mod/forum:viewdiscussion', $modcontext)) { /// User must have perms to view discussions
+        return array();
+    }
+
+    if (!empty($CFG->forum_enabletimedposts)) { /// Users must fulfill timed posts
 
         if (!has_capability('mod/forum:viewhiddentimedposts', $modcontext)) {
             $timelimit = " AND ((d.timestart <= $now AND (d.timeend = 0 OR d.timeend > $now))";
