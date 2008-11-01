@@ -973,9 +973,9 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
     // MDL-11789, apply $CFG->filelifetime here
     if ($lifetime === 'default') {
         if (!empty($CFG->filelifetime)) {
-            $filetime = $CFG->filelifetime;
+            $lifetime = $CFG->filelifetime;
         } else {
-            $filetime = 86400;
+            $lifetime = 86400;
         }
     }
 
