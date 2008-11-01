@@ -11,6 +11,13 @@
 
     admin_externalpage_setup('langimport');
 
+    if (!empty($CFG->skiplangupgrade)) {
+        admin_externalpage_print_header();
+        print_box(get_string('langimportdisabled', 'admin'));
+        print_footer();
+        die;
+    }
+
     $mode          = optional_param('mode', 0, PARAM_INT);     //phase
     $pack          = optional_param('pack', array(), PARAM_FILE);   //pack to install
     $displaylang   = $pack;

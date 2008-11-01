@@ -461,6 +461,7 @@ $string['langmasterpackage'] = 'Master language pack';
 $string['langmasterenglish'] = 'Master English pack';
 $string['langlocalpackage'] = 'Local modifications';
 $string['langimport'] = 'Language import utility';
+$string['langimportdisabled'] = 'Language import feature has been disabled. You have to update your language packs manually at the file-system level.';
 $string['langimportsuccess'] = 'Language pack successfully upgraded';
 $string['langlist'] = 'Languages on language menu';
 $string['langmenu'] = 'Display language menu';
