@@ -261,8 +261,14 @@ $temp->add(new admin_setting_configselect('memcachedpconn', get_string('memcache
                                                  '1' => get_string('yes'))));
 $ADMIN->add('server', $temp);
 
-if (file_exists("$CFG->dirroot/$CFG->admin/mysql/frame.php")) {
-    $ADMIN->add('server', new admin_externalpage('database', get_string('managedatabase'), "$CFG->wwwroot/$CFG->admin/mysql/frame.php"));
+if ($CFG->dbfamily === 'mysql') {
+    if (file_exists("$CFG->dirroot/$CFG->admin/mysql/frame.php")) {
+        $ADMIN->add('server', new admin_externalpage('database', get_string('managedatabase'), "$CFG->wwwroot/$CFG->admin/mysql/frame.php"));
+    }
+} else if ($CFG->dbfamily === 'postgres') {
+    if (file_exists("$CFG->dirroot/$CFG->admin/pgsql/frame.php")) {
+        $ADMIN->add('server', new admin_externalpage('database', get_string('managedatabase'), "$CFG->wwwroot/$CFG->admin/pgsql/frame.php"));
+    }
 }
 
 } // end of speedup
