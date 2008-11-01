@@ -4697,11 +4697,6 @@ function forum_user_can_post_discussion($forum, $currentgroup=null, $unused=-1, 
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
 
-    // normal users with temporary guest access can not add discussions
-    if (has_capability('moodle/legacy:guest', $context, $USER->id, false)) {
-        return false;
-    }
-
     if ($currentgroup === null) {
         $currentgroup = groups_get_activity_group($cm);
     }
