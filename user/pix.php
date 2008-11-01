@@ -17,11 +17,14 @@
 
     if (count($args) == 2) {
         $userid   = (integer)$args[0];
-        $image    = $args[1];
-        $pathname = make_user_directory($userid, true) . "/$image";
-        if (file_exists($pathname) and !is_dir($pathname)) {
-            send_file($pathname, $image);
-        } 
+        // do not serve images of deleted users
+        if ($user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0, 'picture'=>1))) {
+            $image    = $args[1];
+            $pathname = make_user_directory($userid, true) . "/$image";
+            if (file_exists($pathname) and !is_dir($pathname)) {
+                send_file($pathname, $image);
+            }
+        }
     }
 
     // picture was deleted - use default instead
