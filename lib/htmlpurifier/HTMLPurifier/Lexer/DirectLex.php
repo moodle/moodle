@@ -13,6 +13,8 @@
 class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
 {
     
+    public $tracksLineNumbers = true;
+    
     /**
      * Whitespace characters for str(c)spn.
      */
@@ -42,6 +44,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
         $inside_tag = false; // whether or not we're parsing the inside of a tag
         $array = array(); // result array
         
+        // This is also treated to mean maintain *column* numbers too
         $maintain_line_numbers = $config->get('Core', 'MaintainLineNumbers');
         
         if ($maintain_line_numbers === null) {
@@ -50,9 +53,17 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
             $maintain_line_numbers = $config->get('Core', 'CollectErrors');
         }
         
-        if ($maintain_line_numbers) $current_line = 1;
-        else $current_line = false;
+        if ($maintain_line_numbers) {
+            $current_line = 1;
+            $current_col  = 0; 
+            $length = strlen($html);
+        } else {
+            $current_line = false;
+            $current_col  = false;
+            $length = false;
+        }
         $context->register('CurrentLine', $current_line);
+        $context->register('CurrentCol',  $current_col);
         $nl = "\n";
         // how often to manually recalculate. This will ALWAYS be right,
         // but it's pretty wasteful. Set to 0 to turn off
@@ -68,14 +79,31 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
         
         while(++$loops) {
             
-            // recalculate lines
-            if (
-                $maintain_line_numbers && // line number tracking is on
-                $synchronize_interval &&  // synchronization is on
-                $cursor > 0 &&            // cursor is further than zero
-                $loops % $synchronize_interval === 0 // time to synchronize!
-            ) {
-                $current_line = 1 + $this->substrCount($html, $nl, 0, $cursor);
+            // $cursor is either at the start of a token, or inside of
+            // a tag (i.e. there was a < immediately before it), as indicated
+            // by $inside_tag
+            
+            if ($maintain_line_numbers) {
+                
+                // $rcursor, however, is always at the start of a token.
+                $rcursor = $cursor - (int) $inside_tag;
+                
+                // Column number is cheap, so we calculate it every round.
+                // We're interested at the *end* of the newline string, so 
+                // we need to add strlen($nl) == 1 to $nl_pos before subtracting it
+                // from our "rcursor" position.
+                $nl_pos = strrpos($html, $nl, $rcursor - $length);
+                $current_col = $rcursor - (is_bool($nl_pos) ? 0 : $nl_pos + 1);
+                
+                // recalculate lines
+                if (
+                    $synchronize_interval &&  // synchronization is on
+                    $cursor > 0 &&            // cursor is further than zero
+                    $loops % $synchronize_interval === 0 // time to synchronize!
+                ) {
+                    $current_line = 1 + $this->substrCount($html, $nl, 0, $cursor);
+                }
+                
             }
             
             $position_next_lt = strpos($html, '<', $cursor);
@@ -99,7 +127,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                         )
                     );
                 if ($maintain_line_numbers) {
-                    $token->line = $current_line;
+                    $token->rawPosition($current_line, $current_col);
                     $current_line += $this->substrCount($html, $nl, $cursor, $position_next_lt - $cursor);
                 }
                 $array[] = $token;
@@ -119,7 +147,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                             )
                         )
                     );
-                if ($maintain_line_numbers) $token->line = $current_line;
+                if ($maintain_line_numbers) $token->rawPosition($current_line, $current_col);
                 $array[] = $token;
                 break;
             } elseif ($inside_tag && $position_next_gt !== false) {
@@ -167,7 +195,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                             )
                         );
                     if ($maintain_line_numbers) {
-                        $token->line = $current_line;
+                        $token->rawPosition($current_line, $current_col);
                         $current_line += $this->substrCount($html, $nl, $cursor, $strlen_segment);
                     }
                     $array[] = $token;
@@ -182,7 +210,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                     $type = substr($segment, 1);
                     $token = new HTMLPurifier_Token_End($type);
                     if ($maintain_line_numbers) {
-                        $token->line = $current_line;
+                        $token->rawPosition($current_line, $current_col);
                         $current_line += $this->substrCount($html, $nl, $cursor, $position_next_gt - $cursor);
                     }
                     $array[] = $token;
@@ -197,20 +225,12 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                 if (!ctype_alpha($segment[0])) {
                     // XML:  $segment[0] !== '_' && $segment[0] !== ':'
                     if ($e) $e->send(E_NOTICE, 'Lexer: Unescaped lt');
-                    $token = new
-                        HTMLPurifier_Token_Text(
-                            '<' .
-                            $this->parseData(
-                                $segment
-                            ) . 
-                            '>'
-                        );
+                    $token = new HTMLPurifier_Token_Text('<');
                     if ($maintain_line_numbers) {
-                        $token->line = $current_line;
+                        $token->rawPosition($current_line, $current_col);
                         $current_line += $this->substrCount($html, $nl, $cursor, $position_next_gt - $cursor);
                     }
                     $array[] = $token;
-                    $cursor = $position_next_gt + 1;
                     $inside_tag = false;
                     continue;
                 }
@@ -235,7 +255,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                         $token = new HTMLPurifier_Token_Start($segment);
                     }
                     if ($maintain_line_numbers) {
-                        $token->line = $current_line;
+                        $token->rawPosition($current_line, $current_col);
                         $current_line += $this->substrCount($html, $nl, $cursor, $position_next_gt - $cursor);
                     }
                     $array[] = $token;
@@ -267,7 +287,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                     $token = new HTMLPurifier_Token_Start($type, $attr);
                 }
                 if ($maintain_line_numbers) {
-                    $token->line = $current_line;
+                    $token->rawPosition($current_line, $current_col);
                     $current_line += $this->substrCount($html, $nl, $cursor, $position_next_gt - $cursor);
                 }
                 $array[] = $token;
@@ -284,7 +304,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                             substr($html, $cursor)
                         )
                     );
-                if ($maintain_line_numbers) $token->line = $current_line;
+                if ($maintain_line_numbers) $token->rawPosition($current_line, $current_col);
                 // no cursor scroll? Hmm...
                 $array[] = $token;
                 break;
@@ -293,6 +313,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
         }
         
         $context->destroy('CurrentLine');
+        $context->destroy('CurrentCol');
         return $array;
     }
     

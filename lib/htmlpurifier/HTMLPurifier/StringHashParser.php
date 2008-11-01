@@ -78,6 +78,7 @@ class HTMLPurifier_StringHashParser
             if (strncmp('--', $line, 2) === 0) {
                 // Multiline declaration
                 $state = trim($line, '- ');
+                if (!isset($ret[$state])) $ret[$state] = '';
                 continue;
             } elseif (!$state) {
                 $single = true;
@@ -94,7 +95,6 @@ class HTMLPurifier_StringHashParser
                 $single = false;
                 $state  = false;
             } else {
-                if (!isset($ret[$state])) $ret[$state] = '';
                 $ret[$state] .= "$line\n";
             }
         } while (!feof($fh));

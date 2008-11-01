@@ -42,6 +42,12 @@
 class HTMLPurifier_Lexer
 {
     
+    /**
+     * Whether or not this lexer implements line-number/column-number tracking.
+     * If it does, set to true.
+     */
+    public $tracksLineNumbers = false;
+    
     // -- STATIC ----------------------------------------------------------
     
     /**
@@ -70,45 +76,64 @@ class HTMLPurifier_Lexer
             $lexer = $config->get('Core', 'LexerImpl');
         }
         
+        $needs_tracking =
+            $config->get('Core', 'MaintainLineNumbers') ||
+            $config->get('Core', 'CollectErrors');
+        
+        $inst = null;
         if (is_object($lexer)) {
-            return $lexer;
+            $inst = $lexer;
+        } else {
+            
+            if (is_null($lexer)) { do {
+                // auto-detection algorithm
+                
+                if ($needs_tracking) {
+                    $lexer = 'DirectLex';
+                    break;
+                }
+                
+                if (
+                    class_exists('DOMDocument') &&
+                    method_exists('DOMDocument', 'loadHTML') &&
+                    !extension_loaded('domxml')
+                ) {
+                    // check for DOM support, because while it's part of the
+                    // core, it can be disabled compile time. Also, the PECL
+                    // domxml extension overrides the default DOM, and is evil
+                    // and nasty and we shan't bother to support it
+                    $lexer = 'DOMLex';
+                } else {
+                    $lexer = 'DirectLex';
+                }
+                
+            } while(0); } // do..while so we can break
+            
+            // instantiate recognized string names
+            switch ($lexer) {
+                case 'DOMLex':
+                    $inst = new HTMLPurifier_Lexer_DOMLex();
+                    break;
+                case 'DirectLex':
+                    $inst = new HTMLPurifier_Lexer_DirectLex();
+                    break;
+                case 'PH5P':
+                    $inst = new HTMLPurifier_Lexer_PH5P();
+                    break;
+                default:
+                    throw new HTMLPurifier_Exception("Cannot instantiate unrecognized Lexer type " . htmlspecialchars($lexer));
+            }
         }
         
-        if (is_null($lexer)) { do {
-            // auto-detection algorithm
-            
-            // once PHP DOM implements native line numbers, or we
-            // hack out something using XSLT, remove this stipulation
-            $line_numbers = $config->get('Core', 'MaintainLineNumbers');
-            if (
-                $line_numbers === true ||
-                ($line_numbers === null && $config->get('Core', 'CollectErrors'))
-            ) {
-                $lexer = 'DirectLex';
-                break;
-            }
-            
-            if (class_exists('DOMDocument')) {
-                // check for DOM support, because, surprisingly enough,
-                // it's *not* part of the core!
-                $lexer = 'DOMLex';
-            } else {
-                $lexer = 'DirectLex';
-            }
-            
-        } while(0); } // do..while so we can break
+        if (!$inst) throw new HTMLPurifier_Exception('No lexer was instantiated');
         
-        // instantiate recognized string names
-        switch ($lexer) {
-            case 'DOMLex':
-                return new HTMLPurifier_Lexer_DOMLex();
-            case 'DirectLex':
-                return new HTMLPurifier_Lexer_DirectLex();
-            case 'PH5P':
-                return new HTMLPurifier_Lexer_PH5P();
-            default:
-                trigger_error("Cannot instantiate unrecognized Lexer type " . htmlspecialchars($lexer), E_USER_ERROR);
+        // once PHP DOM implements native line numbers, or we
+        // hack out something using XSLT, remove this stipulation
+        if ($needs_tracking && !$inst->tracksLineNumbers) {
+            throw new HTMLPurifier_Exception('Cannot use lexer that does not support line numbers with Core.MaintainLineNumbers or Core.CollectErrors (use DirectLex instead)');
         }
+        
+        return $inst;
         
     }
     
@@ -226,11 +251,6 @@ class HTMLPurifier_Lexer
      */
     public function normalize($html, $config, $context) {
         
-        // extract body from document if applicable
-        if ($config->get('Core', 'ConvertDocumentToFragment')) {
-            $html = $this->extractBody($html);
-        }
-        
         // normalize newlines to \n
         $html = str_replace("\r\n", "\n", $html);
         $html = str_replace("\r", "\n", $html);
@@ -242,6 +262,11 @@ class HTMLPurifier_Lexer
         
         // escape CDATA
         $html = $this->escapeCDATA($html);
+        
+        // extract body from document if applicable
+        if ($config->get('Core', 'ConvertDocumentToFragment')) {
+            $html = $this->extractBody($html);
+        }
         
         // expand entities that aren't the big five
         $html = $this->_entity_parser->substituteNonSpecialEntities($html);

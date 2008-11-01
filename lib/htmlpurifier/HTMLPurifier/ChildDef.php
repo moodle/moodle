@@ -25,6 +25,14 @@ abstract class HTMLPurifier_ChildDef
     public $elements = array();
     
     /**
+     * Get lookup of tag names that should not close this element automatically.
+     * All other elements will do so.
+     */
+    public function getNonAutoCloseElements($config) {
+        return $this->elements;
+    }
+    
+    /**
      * Validates nodes according to definition and returns modification.
      * 
      * @param $tokens_of_children Array of HTMLPurifier_Token

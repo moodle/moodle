@@ -35,8 +35,8 @@ class HTMLPurifier_AttrValidator
         if (!$current_token) $context->register('CurrentToken', $token);
         
         if (
-          !$token instanceof HTMLPurifier_Token_Start &&
-          !$token instanceof HTMLPurifier_Token_Empty
+            !$token instanceof HTMLPurifier_Token_Start &&
+            !$token instanceof HTMLPurifier_Token_Empty
         ) return $token;
         
         // create alias to global definition array, see also $defs
@@ -50,14 +50,18 @@ class HTMLPurifier_AttrValidator
         // nothing currently utilizes this
         foreach ($definition->info_attr_transform_pre as $transform) {
             $attr = $transform->transform($o = $attr, $config, $context);
-            if ($e && ($attr != $o)) $e->send(E_NOTICE, 'AttrValidator: Attributes transformed', $o, $attr);
+            if ($e) {
+                if ($attr != $o) $e->send(E_NOTICE, 'AttrValidator: Attributes transformed', $o, $attr);
+            }
         }
         
         // do local transformations only applicable to this element (pre)
         // ex. <p align="right"> to <p style="text-align:right;">
         foreach ($definition->info[$token->name]->attr_transform_pre as $transform) {
             $attr = $transform->transform($o = $attr, $config, $context);
-            if ($e && ($attr != $o)) $e->send(E_NOTICE, 'AttrValidator: Attributes transformed', $o, $attr);
+            if ($e) {
+                if ($attr != $o) $e->send(E_NOTICE, 'AttrValidator: Attributes transformed', $o, $attr);
+            }
         }
         
         // create alias to this element's attribute definition array, see
@@ -114,6 +118,8 @@ class HTMLPurifier_AttrValidator
                 
                 // simple substitution
                 $attr[$attr_key] = $result;
+            } else {
+                // nothing happens
             }
             
             // we'd also want slightly more complicated substitution
@@ -130,13 +136,17 @@ class HTMLPurifier_AttrValidator
         // global (error reporting untested)
         foreach ($definition->info_attr_transform_post as $transform) {
             $attr = $transform->transform($o = $attr, $config, $context);
-            if ($e && ($attr != $o)) $e->send(E_NOTICE, 'AttrValidator: Attributes transformed', $o, $attr);
+            if ($e) {
+                if ($attr != $o) $e->send(E_NOTICE, 'AttrValidator: Attributes transformed', $o, $attr);
+            }
         }
         
         // local (error reporting untested)
         foreach ($definition->info[$token->name]->attr_transform_post as $transform) {
             $attr = $transform->transform($o = $attr, $config, $context);
-            if ($e && ($attr != $o)) $e->send(E_NOTICE, 'AttrValidator: Attributes transformed', $o, $attr);
+            if ($e) {
+                if ($attr != $o) $e->send(E_NOTICE, 'AttrValidator: Attributes transformed', $o, $attr);
+            }
         }
         
         $token->attr = $attr;

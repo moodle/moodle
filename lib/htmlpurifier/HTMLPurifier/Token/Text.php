@@ -21,10 +21,11 @@ class HTMLPurifier_Token_Text extends HTMLPurifier_Token
      * 
      * @param $data String parsed character data.
      */
-    public function __construct($data, $line = null) {
+    public function __construct($data, $line = null, $col = null) {
         $this->data = $data;
         $this->is_whitespace = ctype_space($data);
         $this->line = $line;
+        $this->col  = $col;
     }
     
 }

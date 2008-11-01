@@ -5,7 +5,7 @@ class HTMLPurifier_URIFilter_DisableExternal extends HTMLPurifier_URIFilter
     public $name = 'DisableExternal';
     protected $ourHostParts = false;
     public function prepare($config) {
-        $our_host = $config->get('URI', 'Host');
+        $our_host = $config->getDefinition('URI')->host;
         if ($our_host !== null) $this->ourHostParts = array_reverse(explode('.', $our_host));
     }
     public function filter(&$uri, $config, $context) {

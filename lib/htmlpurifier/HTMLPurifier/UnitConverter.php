@@ -234,6 +234,18 @@ class HTMLPurifier_UnitConverter
      * Scales a float to $scale digits right of decimal point, like BCMath.
      */
     private function scale($r, $scale) {
+        if ($scale < 0) {
+            // The f sprintf type doesn't support negative numbers, so we
+            // need to cludge things manually. First get the string.
+            $r = sprintf('%.0f', (float) $r);
+            // Due to floating point precision loss, $r will more than likely
+            // look something like 4652999999999.9234. We grab one more digit
+            // than we need to precise from $r and then use that to round
+            // appropriately.
+            $precise = (string) round(substr($r, 0, strlen($r) + $scale), -1);
+            // Now we return it, truncating the zero that was rounded off.
+            return substr($precise, 0, -1) . str_repeat('0', -$scale + 1);
+        }
         return sprintf('%.' . $scale . 'f', (float) $r);
     }
     

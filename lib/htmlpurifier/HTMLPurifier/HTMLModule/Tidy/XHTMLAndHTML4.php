@@ -103,10 +103,6 @@ class HTMLPurifier_HTMLModule_Tidy_XHTMLAndHTML4 extends HTMLPurifier_HTMLModule
         // @hspace for img ------------------------------------------------
         $r['img@hspace'] = new HTMLPurifier_AttrTransform_ImgSpace('hspace');
         
-        // @name for img, a -----------------------------------------------
-        $r['img@name'] = 
-        $r['a@name'] = new HTMLPurifier_AttrTransform_Name();
-        
         // @noshade for hr ------------------------------------------------
         // this transformation is not precise but often good enough.
         // different browsers use different styles to designate noshade

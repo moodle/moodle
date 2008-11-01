@@ -28,7 +28,11 @@ class HTMLPurifier_URIFilter_Munge extends HTMLPurifier_URIFilter
         $this->replace = array_map('rawurlencode', $this->replace);
         
         $new_uri = strtr($this->target, $this->replace);
-        $uri = $this->parser->parse($new_uri); // overwrite
+        $new_uri = $this->parser->parse($new_uri);
+        // don't redirect if the target host is the same as the 
+        // starting host
+        if ($uri->host === $new_uri->host) return true;
+        $uri = $new_uri; // overwrite
         return true;
     }
     

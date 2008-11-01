@@ -271,6 +271,12 @@ class HTMLPurifier_Encoder
         set_error_handler(array('HTMLPurifier_Encoder', 'muteErrorHandler'));
         if ($iconv && !$config->get('Test', 'ForceNoIconv')) {
             $str = iconv($encoding, 'utf-8//IGNORE', $str);
+            if ($str === false) {
+                // $encoding is not a valid encoding
+                restore_error_handler();
+                trigger_error('Invalid encoding ' . $encoding, E_USER_ERROR);
+                return '';
+            }
             // If the string is bjorked by Shift_JIS or a similar encoding
             // that doesn't support all of ASCII, convert the naughty
             // characters to their true byte-wise ASCII/UTF-8 equivalents.
@@ -282,7 +288,7 @@ class HTMLPurifier_Encoder
             restore_error_handler();
             return $str;
         }
-        trigger_error('Encoding not supported', E_USER_ERROR);
+        trigger_error('Encoding not supported, please install iconv', E_USER_ERROR);
     }
     
     /**

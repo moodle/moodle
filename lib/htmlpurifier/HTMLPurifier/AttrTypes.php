@@ -32,6 +32,9 @@ class HTMLPurifier_AttrTypes
         
         // unimplemented aliases
         $this->info['ContentType'] = new HTMLPurifier_AttrDef_Text();
+        $this->info['ContentTypes'] = new HTMLPurifier_AttrDef_Text();
+        $this->info['Charsets'] = new HTMLPurifier_AttrDef_Text();
+        $this->info['Character'] = new HTMLPurifier_AttrDef_Text();
         
         // number is really a positive integer (one or more digits)
         // FIXME: ^^ not always, see start and value of list items

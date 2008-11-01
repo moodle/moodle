@@ -22,7 +22,12 @@ class HTMLPurifier_AttrTransform_ImgRequired extends HTMLPurifier_AttrTransform
         
         if (!isset($attr['alt'])) {
             if ($src) {
-                $attr['alt'] = basename($attr['src']);
+                $alt = $config->get('Attr', 'DefaultImageAlt');
+                if ($alt === null) {
+                    $attr['alt'] = basename($attr['src']);
+                } else {
+                    $attr['alt'] = $alt;
+                }
             } else {
                 $attr['alt'] = $config->get('Attr', 'DefaultInvalidImageAlt');
             }

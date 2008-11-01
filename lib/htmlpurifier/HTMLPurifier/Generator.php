@@ -27,6 +27,11 @@ class HTMLPurifier_Generator
     private $_def;
     
     /**
+     * Cache of %Output.SortAttr
+     */
+    private $_sortAttr;
+    
+    /**
      * Configuration for the generator
      */
     protected $config;
@@ -38,6 +43,7 @@ class HTMLPurifier_Generator
     public function __construct($config, $context) {
         $this->config = $config;
         $this->_scriptFix = $config->get('Output', 'CommentScriptContents');
+        $this->_sortAttr = $config->get('Output', 'SortAttr');
         $this->_def = $config->getHTMLDefinition();
         $this->_xhtml = $this->_def->doctype->xml;
     }
@@ -142,6 +148,7 @@ class HTMLPurifier_Generator
      */
     public function generateAttributes($assoc_array_of_attributes, $element = false) {
         $html = '';
+        if ($this->_sortAttr) ksort($assoc_array_of_attributes);
         foreach ($assoc_array_of_attributes as $key => $value) {
             if (!$this->_xhtml) {
                 // Remove namespaced attributes

@@ -19,6 +19,9 @@ class HTMLPurifier_Strategy_RemoveForeignElements extends HTMLPurifier_Strategy
         $escape_invalid_tags = $config->get('Core', 'EscapeInvalidTags');
         $remove_invalid_img  = $config->get('Core', 'RemoveInvalidImg');
         
+        // currently only used to determine if comments should be kept
+        $trusted = $config->get('HTML', 'Trusted');
+        
         $remove_script_contents = $config->get('Core', 'RemoveScriptContents');
         $hidden_elements     = $config->get('Core', 'HiddenElements');
         
@@ -125,6 +128,23 @@ class HTMLPurifier_Strategy_RemoveForeignElements extends HTMLPurifier_Strategy
                 if ($textify_comments !== false) {
                     $data = $token->data;
                     $token = new HTMLPurifier_Token_Text($data);
+                } elseif ($trusted) {
+                    // keep, but perform comment cleaning
+                    if ($e) {
+                        // perform check whether or not there's a trailing hyphen
+                        if (substr($token->data, -1) == '-') {
+                            $e->send(E_NOTICE, 'Strategy_RemoveForeignElements: Trailing hyphen in comment removed');
+                        }
+                    }
+                    $token->data = rtrim($token->data, '-');
+                    $found_double_hyphen = false;
+                    while (strpos($token->data, '--') !== false) {
+                        if ($e && !$found_double_hyphen) {
+                            $e->send(E_NOTICE, 'Strategy_RemoveForeignElements: Hyphens in comment collapsed');
+                        }
+                        $found_double_hyphen = true; // prevent double-erroring
+                        $token->data = str_replace('--', '-', $token->data);
+                    }
                 } else {
                     // strip comments
                     if ($e) $e->send(E_NOTICE, 'Strategy_RemoveForeignElements: Comment removed');

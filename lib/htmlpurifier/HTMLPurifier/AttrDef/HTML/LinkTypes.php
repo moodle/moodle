@@ -42,10 +42,7 @@ class HTMLPurifier_AttrDef_HTML_LinkTypes extends HTMLPurifier_AttrDef
         }
         
         if (empty($ret_lookup)) return false;
-        
-        $ret_array = array();
-        foreach ($ret_lookup as $part => $bool) $ret_array[] = $part;
-        $string = implode(' ', $ret_array);
+        $string = implode(' ', array_keys($ret_lookup));
         
         return $string;
         

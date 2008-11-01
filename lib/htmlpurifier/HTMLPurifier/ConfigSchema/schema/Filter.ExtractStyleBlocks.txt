@@ -14,13 +14,49 @@ EXTERNAL: CSSTidy
 <p>
   Sample usage:
 </p>
-<pre><![CDATA[$config = HTMLPurifier_Config::createDefault();
-$config->set('Filter', 'ExtractStyleBlocks', true);
-$purifier = new HTMLPurifier($config);
-$styles = $purifier->context->get('StyleBlocks');
-foreach ($styles as $style) {
-    echo '<style type="text/css">' . $style . "</style>\n";
-}]]></pre>
+<pre><![CDATA[
+<?php
+    header('Content-type: text/html; charset=utf-8');
+    echo '<?xml version="1.0" encoding="UTF-8"?>';
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <title>Filter.ExtractStyleBlocks</title>
+<?php
+    require_once '/path/to/library/HTMLPurifier.auto.php';
+    require_once '/path/to/csstidy.class.php';
+    
+    $dirty = '<style>body {color:#F00;}</style> Some text';
+
+    $config = HTMLPurifier_Config::createDefault();
+    $config->set('Filter', 'ExtractStyleBlocks', true);
+    $purifier = new HTMLPurifier($config);
+    
+    $html = $purifier->purify($dirty);
+    
+    // This implementation writes the stylesheets to the styles/ directory.
+    // You can also echo the styles inside the document, but it's a bit
+    // more difficult to make sure they get interpreted properly by
+    // browsers; try the usual CSS armoring techniques.
+    $styles = $purifier->context->get('StyleBlocks');
+    $dir = 'styles/';
+    if (!is_dir($dir)) mkdir($dir);
+    $hash = sha1($_GET['html']);
+    foreach ($styles as $i => $style) {
+        file_put_contents($name = $dir . $hash . "_$i");
+        echo '<link rel="stylesheet" type="text/css" href="'.$name.'" />';
+    }
+?>
+</head>
+<body>
+  <div>
+    <?php echo $html; ?>
+  </div>
+</b]]><![CDATA[ody>
+</html>
+]]></pre>
 <p>
   <strong>Warning:</strong> It is possible for a user to mount an
   imagecrash attack using this CSS. Counter-measures are difficult;
