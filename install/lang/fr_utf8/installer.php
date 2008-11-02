@@ -253,6 +253,7 @@ $string['mysqlextensionisnotpresentinphp'] = 'La configuration de l\'extension M
 $string['mysqli'] = 'Improved MySQL (mysqli)';
 $string['mysqliextensionisnotpresentinphp'] = 'La configuration de l\'extension MySQLi de PHP n\'a pas été effectuée correctement. De ce fait, PHP ne peut communiquer avec MySQL. Veuillez contrôler votre fichier «&nbsp;php.ini&nbsp;» ou recompiler PHP. L\'extension MySQLi n\'est pas disponible pour PHP 4.';
 $string['name'] = 'Nom';
+$string['nativemysqli'] = 'MySQL amélioré (natif, mysqli)';
 $string['next'] = 'Suivant';
 $string['oci8po'] = 'Oracle (oci8po)';
 $string['ociextensionisnotpresentinphp'] = 'La configuration de l\'extension OCI8 de PHP n\'a pas été effectuée correctement. De ce fait, PHP ne peut communiquer avec Oracle. Veuillez contrôler votre fichier «&nbsp;php.ini&nbsp;» ou recompiler PHP.';
