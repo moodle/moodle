@@ -344,7 +344,7 @@
 
             if (!$returnfromfunc or !is_number($returnfromfunc)) {
                 // undo everything we can
-                $modcontext = get_context_instance(COURSE_MODULE, $fromform->coursemodule);
+                $modcontext = get_context_instance(CONTEXT_MODULE, $fromform->coursemodule);
                 $fs = get_file_storage();
                 $fs->delete_area_files($modcontext->id);
                 delete_context(CONTEXT_MODULE, $fromform->coursemodule);
