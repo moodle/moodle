@@ -34,11 +34,7 @@
  * - datalib.php - functions that access the database.
  * - moodlelib.php - general-purpose Moodle functions.
  * @author Martin Dougiamas
-<<<<<<< weblib.php
  * @version  $Id$
-=======
- * @version  $Id$
->>>>>>> 1.970.2.113
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  */
@@ -4088,6 +4084,21 @@ function print_box_end($return=false) {
     return print_container_end($return);
 }
 
+/**
+ * Print (or return) a collapisble region, that has a caption that can
+ * be clicked to expand or collapse the region. If JavaScript is off, then the region
+ * will always be exanded.
+ *
+ * @param string $contents the contents of the box.
+ * @param string $classes class names added to the div that is output.
+ * @param string $id id added to the div that is output. Must not be blank.
+ * @param string $caption text displayed at the top. Clicking on this will cause the region to expand or contract.
+ * @param string $userpref the name of the user preference that stores the user's preferred deafault state.
+ *      (May be blank if you do not wish the state to be persisted.
+ * @param boolean $default Inital collapsed state to use if the user_preference it not set.
+ * @param boolean $return if true, return the HTML as a string, rather than printing it.
+ * @return mixed if $return is false, returns nothing, otherwise returns a string of HTML.
+ */
 function print_collapsible_region($contents, $classes, $id, $caption, $userpref = '', $default = false, $return = false) {
     $output  = print_collapsible_region_start($classes, $id, $caption, $userpref, true);
     $output .= $contents;
@@ -4100,6 +4111,20 @@ function print_collapsible_region($contents, $classes, $id, $caption, $userpref 
     }
 }
 
+/**
+ * Print (or return) the start of a collapisble region, that has a caption that can
+ * be clicked to expand or collapse the region. If JavaScript is off, then the region
+ * will always be exanded.
+ *
+ * @param string $classes class names added to the div that is output.
+ * @param string $id id added to the div that is output. Must not be blank.
+ * @param string $caption text displayed at the top. Clicking on this will cause the region to expand or contract.
+ * @param string $userpref the name of the user preference that stores the user's preferred deafault state.
+ *      (May be blank if you do not wish the state to be persisted.
+ * @param boolean $default Inital collapsed state to use if the user_preference it not set.
+ * @param boolean $return if true, return the HTML as a string, rather than printing it.
+ * @return mixed if $return is false, returns nothing, otherwise returns a string of HTML.
+ */
 function print_collapsible_region_start($classes, $id, $caption, $userpref = false, $default = false, $return = false) {
     global $CFG;
 
@@ -4130,6 +4155,12 @@ function print_collapsible_region_start($classes, $id, $caption, $userpref = fal
     }
 }
 
+/**
+ * Close a region started with print_collapsible_region_start.
+ *
+ * @param boolean $return if true, return the HTML as a string, rather than printing it.
+ * @return mixed if $return is false, returns nothing, otherwise returns a string of HTML.
+ */
 function print_collapsible_region_end($return = false) {
     $output = '</div></div>';
 
