@@ -26,7 +26,7 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
             $filesize = $file->get_filesize();
 
             if ($file->is_valid_image()) {
-                $return = $this->flickr->request ('upload', array('photo' => $file,
+                $return = $this->flickr->upload ('upload', array('photo' => $file,
                                                                 'title' => $this->get_export_config('title'),
                                                                 'description' => $this->get_export_config('description'),
                                                                 'tags' => $this->get_export_config('tags'),
