@@ -40,7 +40,7 @@ function user_selector(name, hash, sesskey, extrafields, strprevselected, strnom
 
     // Hook up the event handler for when the search text changes.
     var oself = this;
-    YAHOO.util.Event.addListener(this.searchfield, "keyup", function(e) { oself.handle_keyup() });
+    YAHOO.util.Event.addListener(this.searchfield, "keyup", function(e) { oself.handle_keyup(e) });
     this.lastsearch = this.get_search_text();
 
     // Define our custom event.
@@ -52,6 +52,22 @@ function user_selector(name, hash, sesskey, extrafields, strprevselected, strnom
     YAHOO.util.Event.addListener(this.listbox, "keyup", function(e) { oself.handle_selection_change() });
     YAHOO.util.Event.addListener(this.listbox, "click", function(e) { oself.handle_selection_change() });
     YAHOO.util.Event.addListener(this.listbox, "change", function(e) { oself.handle_selection_change() });
+
+    // Replace the Clear submit button with a clone that is not a submit button.
+    var oldclearbutton = document.getElementById(this.name + '_clearbutton');
+    this.clearbutton = document.createElement('input');
+    this.clearbutton.type = 'button';
+    this.clearbutton.value = oldclearbutton.value;
+    this.clearbutton.id = oldclearbutton.id;
+    oldclearbutton.id = '';
+    oldclearbutton.parentNode.insertBefore(this.clearbutton, oldclearbutton);
+    oldclearbutton.parentNode.removeChild(oldclearbutton);
+
+    // Enable or diable the clear button.
+    this.clearbutton.disabled = this.get_search_text() == '';
+
+    // Hook up the event handler for the clear button.
+    YAHOO.util.Event.addListener(this.clearbutton, "click", function(e) { oself.handle_clear() });
 }
 
 /**
@@ -140,6 +156,14 @@ user_selector.prototype.datasource = null;
 user_selector.prototype.searchfield = null;
 
 /**
+ * The clear button.
+ * 
+ * @property clearbutton
+ * @type HTMLInputElement
+ */
+user_selector.prototype.clearbutton = null;
+
+/**
  * The select element that contains the list of users.
  * 
  * @property listbox
@@ -193,15 +217,42 @@ user_selector.prototype.selectionempty = true;
 // Methods for handing various events ==========================================
 
 /**
- * Key up hander for the search text box. Trigger an ajax search after a delay.
+ * Key up hander for the search text box.
+ * @param object e the keyup event.
  */
-user_selector.prototype.handle_keyup = function() {
+user_selector.prototype.handle_keyup = function(e) {
+    //  Trigger an ajax search after a delay.
+    this.cancel_timeout();
+    var oself = this;
+    this.timeoutid = setTimeout(function() { oself.send_query() }, this.querydelay * 1000);
+
+    // Enable or diable the clear button.
+    this.clearbutton.disabled = this.get_search_text() == '';
+
+    // If enter was pressed, prevent a form submission from happening.
+    var keyCode = e.keyCode ? e.keyCode : e.which;
+    if (keyCode == 13) {
+        YAHOO.util.Event.stopEvent(e);
+    }
+}
+
+/**
+ * Cancel the search delay timeout, if there is one.
+ */
+user_selector.prototype.cancel_timeout = function() {
     if (this.timeoutid) {
         clearTimeout(this.timeoutid);
         this.timeoutid = null;
     }
-    var oself = this;
-    this.timeoutid = setTimeout(function() { oself.send_query() }, this.querydelay * 1000);
+}
+
+/**
+ * Key up hander for the search text box.
+ */
+user_selector.prototype.handle_clear = function() {
+    this.searchfield.value = '';
+    this.clearbutton.disabled = true;
+    this.send_query();
 }
 
 /**
@@ -215,6 +266,9 @@ user_selector.prototype.get_search_text = function() {
  * Fires off the ajax search request.
  */
 user_selector.prototype.send_query = function() {
+    // Cancel any pending timeout.
+    this.cancel_timeout();
+
     var value = this.get_search_text();
     this.searchfield.className = '';
     if (this.lastsearch == value) {
@@ -324,7 +378,7 @@ user_selector.prototype.output_options = function(data) {
     }
 
     // If there was only one option matching the search results, select it.
-    if (this.onlyoption) {
+    if (this.onlyoption && !this.onlyoption.disabled) {
         this.onlyoption.selected = true;
         if (!this.listbox.multiple) {
             this.selected = {};

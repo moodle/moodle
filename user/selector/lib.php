@@ -139,6 +139,9 @@ abstract class user_selector_base {
     public function display($return = false) {
         // Get the list of requested users.
         $search = optional_param($this->name . '_searchtext', '', PARAM_RAW);
+        if (optional_param($this->name . '_clearbutton', false, PARAM_BOOL)) {
+            $search = '';
+        }
         $groupedusers = $this->find_users($search);
 
         // Output the select.
@@ -158,9 +161,11 @@ abstract class user_selector_base {
         // Output the search controls.
         $output .= "</select>\n<div>\n";
         $output .= '<input type="text" name="' . $this->name . '_searchtext" id="' .
-                $this->name . '_searchtext" value="' . s($search) . '" />';
+                $this->name . '_searchtext" size="15" value="' . s($search) . '" />';
         $output .= '<input type="submit" name="' . $this->name . '_searchbutton" id="' .
                 $this->name . '_searchbutton" value="' . $this->search_button_caption() . '" />';
+        $output .= '<input type="submit" name="' . $this->name . '_clearbutton" id="' .
+                $this->name . '_clearbutton" value="' . get_string('clear') . '" />';
         $output .= "</div>\n</div>\n\n";
 
         // Initialise the ajax functionality.
