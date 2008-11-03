@@ -634,6 +634,10 @@ _client.dynload = function (node, fnLoadComplete) {
     var trans = YAHOO.util.Connect.asyncRequest('POST',
             '$CFG->httpswwwroot/repository/ws.php?action=list', callback, _client.postdata(params));
 }
+_client.viewiframe = function() {
+    var panel = new YAHOO.util.Element('panel-$suffix');
+    panel.get('element').innerHTML = "<iframe frameborder=\"0\" width=\"98%\" height=\"400px\" src=\""+_client.ds.iframe+"\" />";
+}
 _client.viewlist = function() {
     _client.viewmode = 0;
     var panel = new YAHOO.util.Element('panel-$suffix');
@@ -916,6 +920,8 @@ success: function(o) {
      _client.ds = ret;
      if(!_client.ds) {
          return;
+     }else if(_client.ds.iframe) {
+         _client.viewiframe();
      }else if(_client.ds && _client.ds.login) {
          _client.print_login();
      } else if(_client.ds.list) {
