@@ -427,7 +427,7 @@ abstract class user_selector_base {
      */
     protected function output_optgroup($groupname, $users, $select) {
         if (!empty($users)) {
-            $output = '  <optgroup label="' . s($groupname) . ' (' . count($users) . ')">' . "\n";
+            $output = '  <optgroup label="' . htmlspecialchars($groupname) . ' (' . count($users) . ')">' . "\n";
             foreach ($users as $user) {
                 $attributes = '';
                 if (!empty($user->disabled)) {
@@ -440,7 +440,7 @@ abstract class user_selector_base {
                         $this->output_user($user) . "</option>\n";
             }
         } else {
-            $output = '  <optgroup label="' . s($groupname) . '">' . "\n";
+            $output = '  <optgroup label="' . htmlspecialchars($groupname) . '">' . "\n";
             $output .= '    <option disabled="disabled">&nbsp;</option>' . "\n";
         }
         $output .= "  </optgroup>\n";
