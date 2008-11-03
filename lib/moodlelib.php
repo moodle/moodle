@@ -3384,8 +3384,10 @@ function get_complete_user_data($field, $value, $mnethostid=null) {
         $user->lastname   = ' ';
     }
 
-    $user->sesskey  = random_string(10);
-    $user->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
+    if (isset($_SERVER['REMOTE_ADDR'])) {
+        $user->sesskey  = random_string(10);
+        $user->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
+    }
 
     return $user;
 }
