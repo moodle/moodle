@@ -1115,7 +1115,11 @@ function get_user_preferences($name=NULL, $default=NULL, $otheruserid=NULL) {
  */
 function user_preference_allow_ajax_update($name, $paramtype) {
     global $USER;
+
+    // Make sure that the required JavaScript libraries are loaded.
     require_js(array('yui_yahoo', 'yui_connection'));
+
+    // Record in the session that this user_preference is allowed to updated remotely.
     $USER->ajax_updatable_user_prefs[$name] = $paramtype;
 }
 

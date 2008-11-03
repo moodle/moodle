@@ -4088,6 +4088,58 @@ function print_box_end($return=false) {
     return print_container_end($return);
 }
 
+function print_collapsible_region($contents, $classes, $id, $caption, $userpref = '', $default = false, $return = false) {
+    $output  = print_collapsible_region_start($classes, $id, $caption, $userpref, true);
+    $output .= $contents;
+    $output .= print_collapsible_region_end(true);
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+function print_collapsible_region_start($classes, $id, $caption, $userpref = false, $default = false, $return = false) {
+    global $CFG;
+
+    // Include required JavaScript libraries.
+    require_js(array('yui_yahoo', 'yui_dom-event', 'yui_event', 'yui_animation'));
+
+    // Work out the initial state.
+    if (is_string($userpref)) {
+        user_preference_allow_ajax_update($userpref, PARAM_BOOL);
+        $collapsed = get_user_preferences($userpref, $default);
+    } else {
+        $collapsed = $default;
+        $userpref = false;
+    }
+
+    $output = '';
+    $output .= '<div id="' . $id . '" class="collapsibleregion ' . $classes . '">';
+    $output .= '<div id="' . $id . '_inner" class="collapsibleregioninner">';
+    $output .= '<div id="' . $id . '_caption" class="collapsibleregioncaption">';
+    $output .= $caption . ' ';
+    $output .= "</div>\n";
+    $output .= print_js_call('new collapsible_region', array($id, $userpref, get_string('clicktohideshow')), true);
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+function print_collapsible_region_end($return = false) {
+    $output = '</div></div>';
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
 /**
  * Print a message in a standard themed container.
  *
@@ -4101,6 +4153,7 @@ function print_box_end($return=false) {
 function print_container($message, $clearfix=false, $classes='', $idbase='', $return=false) {
 
     $output  = print_container_start($clearfix, $classes, $idbase, true);
+    $output .= $message;
     $output .= print_container_end(true);
 
     if ($return) {

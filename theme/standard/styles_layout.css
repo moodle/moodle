@@ -215,6 +215,14 @@ div.groupselector {
   text-align:center
 }
 
+.collapsibleregion {
+    overflow: hidden;
+}
+div.collapsibleregion div.collapsibleregioncaption a {
+  color: inherit;
+  text-decoration: none;
+}
+
 .noticebox {
   border-width:1px;
   border-style:solid;

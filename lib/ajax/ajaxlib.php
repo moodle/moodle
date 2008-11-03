@@ -75,6 +75,11 @@ function ajax_get_lib($libname) {
             $libpath = $wwwroot . $translatelist[$libname];
         }
 
+        // If we are in developer debug mode, use the non-compressed version of YUI for easier debugging.
+        if (debugging('', DEBUG_DEVELOPER)) {
+            $libpath = str_replace('-min.js', '.js', $libpath);
+        }
+
     } else if (preg_match('/^https?:/', $libname)) {
         $libpath = $libname;
 

@@ -57,6 +57,8 @@ if (!empty($users)) {
     echo '</ul>';
 }
 
+print_collapsible_region('Blah, blah, blah', '', 'mybox', 'Click me!', 'testbox');
+
 echo '<form action="test.php"><div style="width: 30em;"><label for="myuserselector">Select users</label>';
 $userselector->display();
 echo '<p><input type="submit" id="submitbutton" value="Submit" /></p>';
