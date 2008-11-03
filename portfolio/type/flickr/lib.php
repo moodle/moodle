@@ -26,7 +26,8 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
             $filesize = $file->get_filesize();
 
             if ($file->is_valid_image()) {
-                $return = $this->flickr->upload ('upload', array('photo' => $file,
+                /**
+                $return = $this->flickr->upload (array('photo' => $file,
                                                                 'title' => $this->get_export_config('title'),
                                                                 'description' => $this->get_export_config('description'),
                                                                 'tags' => $this->get_export_config('tags'),
@@ -36,6 +37,8 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
                                                                 'safety_level' => $this->get_export_config('safety_level'),
                                                                 'content_type' => $this->get_export_config('content_type'),
                                                                 'hidden' => $this->get_export_config('hidden')));
+                 */
+                $return = $this->flickr->upload($file, $this->get_export_config('title'), $this->get_export_config('description'), $this->get_export_config('tags'), $this->get_export_config('is_public'), $this->get_export_config('is_friend'), $this->get_export_config('is_family'));
                 if ($return) {
                     // Attach photo to a set if requested
                     if ($this->get_export_config('set')) {
