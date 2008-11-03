@@ -5282,8 +5282,8 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
 
 /// originally these special strings were stored in moodle.php now we are only in langconfig.php
     $langconfigstrs = array('alphabet', 'backupnameformat', 'decsep', 'firstdayofweek', 'listsep', 'locale',
-                            'localewin', 'localewincharset', 'oldcharset',
-                            'parentlanguage', 'strftimedate', 'strftimedateshort', 'strftimedatetime',
+                            'localewin', 'localewincharset', 'oldcharset', 'parentlanguage',
+                            'strftimedate', 'strftimedateshort', 'strftimedatefullshort', 'strftimedatetime',
                             'strftimedaydate', 'strftimedaydatetime', 'strftimedayshort', 'strftimedaytime',
                             'strftimemonthyear', 'strftimerecent', 'strftimerecentfull', 'strftimetime',
                             'thischarset', 'thisdirection', 'thislanguage', 'strftimedatetimeshort');

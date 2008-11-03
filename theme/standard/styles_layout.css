@@ -217,10 +217,14 @@ div.groupselector {
 
 .collapsibleregion {
     overflow: hidden;
+    padding: 1px;
+}
+.collapsibleregioncaption img {
+    vertical-align: middle;
 }
 div.collapsibleregion div.collapsibleregioncaption a {
-  color: inherit;
-  text-decoration: none;
+    color: inherit;
+    text-decoration: none;
 }
 
 .noticebox {
@@ -1046,22 +1050,22 @@ body#admin-modules table.generaltable td.c0
 }
 .roleassigntable td {
     vertical-align: middle;
-    padding: 0 0.3em 1em;
+    padding: 0.2em 0.3em;
 }
 .roleassigntable p {
     text-align: left;
-    margin-bottom: 0.2em;
+    margin: 0.2em 0;
 }
 .roleassigntable #existingcell,
 .roleassigntable #potentialcell {
-    width: 38%;
+    width: 42%;
 }
 .roleassigntable #existingcell label,
 .roleassigntable #potentialcell label {
     font-weight: bold;
 }
 .roleassigntable #buttonscell {
-    width: 24%;
+    width: 16%;
 }
 .roleassigntable #buttonscell #add,
 .roleassigntable #buttonscell #remove {
@@ -1072,8 +1076,14 @@ body#admin-modules table.generaltable td.c0
 .roleassigntable #buttonscell p {
     margin: 0.3em 0;
 }
-.roleassigntable #buttonscell #remove {
-    margin-top: 5em;
+.roleassigntable #buttonscell #assignoptions {
+    font-size: 0.75em;
+}
+.roleassigntable #buttonscell #assignoptions .collapsibleregioncaption {
+    font-weight: bold;
+}
+.roleassigntable #buttonscell #addcontrols {
+    height: 13em;
 }
 .roleassigntable #removeselect_wrapper,
 .roleassigntable #addselect_wrapper {

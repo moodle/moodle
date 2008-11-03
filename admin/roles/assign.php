@@ -79,31 +79,42 @@
 
 /// Build the list of options for the enrolment period dropdown.
     $unlimitedperiod = get_string('unlimited');
-    $defaultperiod = $course->enrolperiod;
     for ($i=1; $i<=365; $i++) {
         $seconds = $i * 86400;
         $periodmenu[$seconds] = get_string('numdays', '', $i);
     }
+/// Work out the apropriate default setting.
+    if ($extendperiod) {
+        $defaultperiod = $extendperiod;
+    } else {
+        $defaultperiod = $course->enrolperiod;
+    }
 
 /// Build the list of options for the starting from dropdown.
-    $timeformat = get_string('strftimedate');
+    $timeformat = get_string('strftimedatefullshort');
     $today = time();
     $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
 
     // MDL-12420, preventing course start date showing up as an option at system context and front page roles.
     if ($course->startdate > 0) {
-        $basemenu[0] = get_string('startdate') . ' (' . userdate($course->startdate, $timeformat) . ')';
+        $basemenu[0] = get_string('coursestart') . ' (' . userdate($course->startdate, $timeformat) . ')';
     }
     if ($course->enrollable != 2 || ($course->enrolstartdate == 0 || $course->enrolstartdate <= $today) && ($course->enrolenddate == 0 || $course->enrolenddate > $today)) {
         $basemenu[3] = get_string('today') . ' (' . userdate($today, $timeformat) . ')' ;
     }
     if($course->enrollable == 2) {
         if($course->enrolstartdate > 0) {
-            $basemenu[4] = get_string('courseenrolstartdate') . ' (' . userdate($course->enrolstartdate, $timeformat) . ')';
+            $basemenu[4] = get_string('courseenrolstart') . ' (' . userdate($course->enrolstartdate, $timeformat) . ')';
         }
         if($course->enrolenddate > 0) {
-            $basemenu[5] = get_string('courseenrolenddate') . ' (' . userdate($course->enrolenddate, $timeformat) . ')';
+            $basemenu[5] = get_string('courseenrolend') . ' (' . userdate($course->enrolenddate, $timeformat) . ')';
         }
+    }
+/// Work out the apropriate default setting.
+    if ($extendbase) {
+        $defaultbase = $extendbase;
+    } else {
+        $defaultbase = 3;
     }
 
 /// Print the header and tabs
@@ -148,18 +159,6 @@
     } else {
         $currenttab = 'assign';
         include_once('tabs.php');
-    }
-
-/// Print heading.
-    if ($isfrontpage) {
-        print_heading_with_help(get_string('frontpageroles', 'admin'), 'assignroles');
-    } else {
-        print_heading_with_help(get_string('assignrolesin', 'role', $contextname), 'assignroles');
-    }
-
-/// Print a warning if we are assigning system roles.
-    if ($context->contextlevel == CONTEXT_SYSTEM) {
-        print_box(get_string('globalroleswarning', 'role'));
     }
 
     if ($roleid) {  /// UI for assigning a particular role.
@@ -232,6 +231,8 @@
 
                 $rolename = $DB->get_field('role', 'name', array('id'=>$roleid));
                 add_to_log($course->id, 'role', 'assign', 'admin/roles/assign.php?contextid='.$context->id.'&roleid='.$roleid, $rolename, '', $USER->id);
+                // Counts have changed, so reload.
+                list($assignableroles, $assigncounts, $nameswithcounts) = get_assignable_roles($context, ROLENAME_BOTH, true);
             }
         }
 
@@ -260,7 +261,20 @@
 
                 $rolename = $DB->get_field('role', 'name', array('id'=>$roleid));
                 add_to_log($course->id, 'role', 'unassign', 'admin/roles/assign.php?contextid='.$context->id.'&roleid='.$roleid, $rolename, '', $USER->id);
+                // Counts have changed, so reload.
+                list($assignableroles, $assigncounts, $nameswithcounts) = get_assignable_roles($context, ROLENAME_BOTH, true);
             }
+        }
+
+    /// Print heading.
+        $a = new stdClass;
+        $a->role = $assignableroles[$roleid];
+        $a->context = $contextname;
+        print_heading_with_help(get_string('assignrolenameincontext', 'role', $a), 'assignroles');
+
+    /// Print a warning if we are assigning system roles.
+        if ($context->contextlevel == CONTEXT_SYSTEM) {
+            print_box(get_string('globalroleswarning', 'role'));
         }
 
     /// Print the form.
@@ -279,6 +293,8 @@
           <div id="addcontrols">
               <input name="add" id="add" type="submit" value="<?php echo $THEME->larrow.'&nbsp;'.get_string('add'); ?>" title="<?php print_string('add'); ?>" /><br />
 
+              <?php print_collapsible_region_start('', 'assignoptions', get_string('assignmentoptions', 'role'),
+                    'assignoptionscollapse', true); ?>
               <p><input type="checkbox" name="hidden" id="hidden" value="1" <?php
               if ($hidden) { echo 'checked="checked" '; } ?>/>
               <label for="hidden" title="<?php print_string('createhiddenassign', 'role'); ?>">
@@ -290,7 +306,8 @@
               <?php choose_from_menu($periodmenu, "extendperiod", $defaultperiod, $unlimitedperiod); ?></p>
 
               <p><label for="extendbase"><?php print_string('startingfrom') ?></label><br />
-              <?php choose_from_menu($basemenu, "extendbase", 3, ""); ?></p>
+              <?php choose_from_menu($basemenu, "extendbase", $defaultbase, ""); ?></p>
+              <?php print_collapsible_region_end(); ?>
           </div>
 
           <div id="removecontrols">
@@ -327,6 +344,17 @@
         echo '</div>';
 
     } else {   // Print overview table
+
+        if ($isfrontpage) {
+            print_heading_with_help(get_string('frontpageroles', 'admin'), 'assignroles');
+        } else {
+            print_heading_with_help(get_string('assignrolesin', 'role', $contextname), 'assignroles');
+        }
+
+        // Print a warning if we are assigning system roles.
+        if ($context->contextlevel == CONTEXT_SYSTEM) {
+            print_box(get_string('globalroleswarning', 'role'));
+        }
 
         // Print instruction
         print_heading(get_string('chooseroletoassign', 'role'), 'center', 3);
