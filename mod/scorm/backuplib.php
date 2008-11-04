@@ -217,7 +217,7 @@
                 $status =fwrite ($bf,end_tag('SEQ_RULECOND',5,true));
             }
             //Write end tag
-            $status =fwrite ($bf,end_tag('SEQ_RULECOND',4,true));
+            $status =fwrite ($bf,end_tag('SEQ_RULECONDS',4,true));
         }
         return $status;
     }
