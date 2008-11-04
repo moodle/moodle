@@ -47,6 +47,40 @@ class dml_exception extends moodle_exception {
 }
 
 /**
+ * DML read exception - triggered by SQL syntax errors, missing tables, etc.
+ */
+class dml_read_exception extends dml_exception {
+    public $error;
+    public $sql;
+    public $params;
+
+    function __construct($error, $sql=null, array $params=null) {
+        $this->error  = $error;
+        $this->sql    = $sql;
+        $this->params = $params;
+        $errorinfo = s($error).'<br /><br />'.s($sql).'<br />['.s(var_export($params, true)).']';
+        parent::__construct('dmlreadexception', NULL, $errorinfo);
+    }
+}
+
+/**
+ * DML read exception - triggered by SQL syntax errors, missing tables, etc.
+ */
+class dml_write_exception extends dml_exception {
+    public $error;
+    public $sql;
+    public $params;
+
+    function __construct($error, $sql=null, array $params=null) {
+        $this->error  = $error;
+        $this->sql    = $sql;
+        $this->params = $params;
+        $errorinfo = s($error).'<br /><br />'.s($sql).'<br />['.s(var_export($params, true)).']';
+        parent::__construct('dmlwriteexception', NULL, $errorinfo);
+    }
+}
+
+/**
  * Sets up global $DB moodle_database instance
  * @return void
  */

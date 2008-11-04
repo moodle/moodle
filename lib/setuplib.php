@@ -45,7 +45,7 @@ class moodle_exception extends Exception {
 }
 
 /**
- * Exception indicating programming error, must be fixed by a programeer.
+ * Exception indicating programming error, must be fixed by a programer.
  */
 class coding_exception extends moodle_exception {
 

@@ -294,7 +294,7 @@ abstract class moodle_database {
      * @param mixed $obj optional library specific object
      */
     protected function report_error($sql, array $params=null, $obj=null) {
-        debugging($this->get_last_error() .'<br /><br />'. s($sql).'<br />['.s(var_export($params, true)).']');
+        debugging(s($this->get_last_error()).'<br /><br />'.s($sql).'<br />['.s(var_export($params, true)).']');
     }
 
     /**
