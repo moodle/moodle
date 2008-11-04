@@ -4140,12 +4140,16 @@ function print_collapsible_region_start($classes, $id, $caption, $userpref = fal
         $userpref = false;
     }
 
+    if ($collapsed) {
+        $classes .= ' collapsed';
+    }
+
     $output = '';
     $output .= '<div id="' . $id . '" class="collapsibleregion ' . $classes . '">';
-    $output .= '<div id="' . $id . '_inner" class="collapsibleregioninner">';
+    $output .= '<div id="' . $id . '_sizer">';
     $output .= '<div id="' . $id . '_caption" class="collapsibleregioncaption">';
     $output .= $caption . ' ';
-    $output .= "</div>\n";
+    $output .= '</div><div id="' . $id . '_inner" class="collapsibleregioninner">';
     $output .= print_js_call('new collapsible_region', array($id, $userpref, get_string('clicktohideshow')), true);
 
     if ($return) {
