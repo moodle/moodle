@@ -378,7 +378,10 @@ class resource_file extends resource_base {
             require_js(array('yui_dom'));
 
         ///Moodle Header and navigation bar
-            print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
+            $navlinks = array();
+            $navlinks[] = array('name' => format_string($resource->name), 'link' => null, 'type' => 'misc');
+            $navigation = build_navigation($navlinks);
+            print_header($pagetitle, $course->fullname, $navigation, "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
             $options = new object();
             $options->para = false;
             if (!empty($localpath)) {  // Show some help
