@@ -68,7 +68,10 @@ abstract class moodle_database {
      */
     protected $writes = 0;
 
-    // TODO: do we really need record caching??
+    protected $last_sql;
+    protected $last_params;
+    protected $last_type;
+    protected $last_extrainfo;
 
     /**
      * Contructor - instantiates the database, specifying if it's external (connect to other systems) or no (Moodle DB)
@@ -247,6 +250,11 @@ abstract class moodle_database {
      * @return void
      */
     protected function query_start($sql, array $params=null, $type, $extrainfo=null) {
+        $this->last_sql       = $sql;
+        $this->last_params    = $params;
+        $this->last_type      = $type;
+        $this->last_extrainfo = $extrainfo;
+
         switch ($type) {
             case SQL_QUERY_SELECT:
             case SQL_QUERY_AUX:
@@ -257,7 +265,8 @@ abstract class moodle_database {
             case SQL_QUERY_STRUCTURE:
                 $this->writes++;
         }
-        //TODO
+
+        $this->print_debug($sql, $params);
     }
 
     /**
@@ -266,7 +275,19 @@ abstract class moodle_database {
      * @return void
      */
     protected function query_end($result) {
-        //TODO
+        if ($result !== false) {
+            return;
+        }
+
+        switch ($this->last_type) {
+            case SQL_QUERY_SELECT:
+            case SQL_QUERY_AUX:
+                throw new dml_read_exception($this->get_last_error(), $this->last_sql, $this->last_params);
+            case SQL_QUERY_INSERT:
+            case SQL_QUERY_UPDATE:
+            case SQL_QUERY_STRUCTURE:
+                throw new dml_write_exception($this->get_last_error(), $this->last_sql, $this->last_params);
+        }
     }
 
     /**

@@ -160,7 +160,11 @@ global $HTTPSPAGEREQUIRED;
     }
 
 /// Load up any configuration from the config table
-    $CFG = get_config();
+    try {
+        $CFG = get_config();
+    } catch (dml_read_exception $e) {
+        // most probably empty db, going to install soon
+    }
 
 /// Verify upgrade is not running unless we are in a script that needs to execute in any case
     if (!defined('NO_UPGRADE_CHECK') and isset($CFG->upgraderunning)) {
@@ -191,7 +195,13 @@ global $HTTPSPAGEREQUIRED;
     }
 
 /// Defining the site
-    if ($SITE = get_site()) {
+    try {
+        $SITE = get_site();
+    } catch (dml_read_exception $e) {
+        $SITE = null;
+    }
+
+    if ($SITE) {
         /**
          * If $SITE global from {@link get_site()} is set then SITEID to $SITE->id, otherwise set to 1.
          */
@@ -210,7 +220,11 @@ global $HTTPSPAGEREQUIRED;
 
     // define SYSCONTEXTID in config.php if you want to save some queries (after install or upgrade!)
     if (!defined('SYSCONTEXTID')) {
-        get_system_context();
+        try {
+            get_system_context();
+        } catch (dml_read_exception $e) {
+            // not available yet
+        }
     }
 
 /// Set error reporting back to normal

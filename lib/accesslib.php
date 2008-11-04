@@ -2106,7 +2106,14 @@ function get_system_context($cache=true) {
         return $cached;
     }
 
-    if (!$context = $DB->get_record('context', array('contextlevel'=>CONTEXT_SYSTEM))) {
+    try {
+        $context = $DB->get_record('context', array('contextlevel'=>CONTEXT_SYSTEM));
+    } catch (dml_read_exception $e) {
+        //table does not exist yet, sorry
+        return null;
+    }
+
+    if (!$context) {
         $context = new object();
         $context->contextlevel = CONTEXT_SYSTEM;
         $context->instanceid   = 0;

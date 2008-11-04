@@ -2928,7 +2928,7 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
  * @return mixed string or void
  */
 function print_footer($course=NULL, $usercourse=NULL, $return=false) {
-    global $USER, $CFG, $THEME, $COURSE;
+    global $USER, $CFG, $THEME, $COURSE, $SITE;
 
     if (defined('ADMIN_EXT_HEADER_PRINTED') and !defined('ADMIN_EXT_FOOTER_PRINTED')) {
         admin_externalpage_print_footer();
@@ -2962,7 +2962,7 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
             $home  = false;
 
         } else if ($course === 'home') {   // special case for site home page - please do not remove
-            $course = get_site();
+            $course = $SITE;
             $homelink  = '<div class="sitelink">'.
                '<a title="Moodle '. $CFG->release .'" href="http://moodle.org/">'.
                '<img style="width:100px;height:30px" src="pix/moodlelogo.gif" alt="moodlelogo" /></a></div>';
@@ -2975,7 +2975,7 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
         }
 
     } else {
-        $course = get_site();  // Set course as site course by default
+        $course = $SITE;  // Set course as site course by default
         $homelink = '<div class="homelink"><a '.$CFG->frametarget.' href="'.$CFG->wwwroot.'/">'.get_string('home').'</a></div>';
         $home  = false;
     }
@@ -3651,7 +3651,7 @@ function get_separator() {
  * @param boolean $return False to echo the breadcrumb string (default), true to return it.
  */
 function print_navigation ($navigation, $separator=0, $return=false) {
-    global $CFG, $THEME;
+    global $CFG, $THEME, $SITE;
     $output = '';
 
     if (0 === $separator) {
@@ -3689,9 +3689,11 @@ function print_navigation ($navigation, $separator=0, $return=false) {
             }
         }
 
-        if (! $site = get_site()) {
+        if (!$SITE) {
             $site = new object();
             $site->shortname = get_string('home');
+        } else {
+            $site = $SITE;
         }
 
         //Accessibility: breadcrumb links now in a list, &raquo; replaced with a 'silent' character.
@@ -3773,7 +3775,7 @@ function print_navigation ($navigation, $separator=0, $return=false) {
  *      navigation strings.
  */
 function build_navigation($extranavlinks, $cm = null) {
-    global $CFG, $COURSE, $DB;
+    global $CFG, $COURSE, $DB, $SITE;
 
     if (is_string($extranavlinks)) {
         if ($extranavlinks == '') {
@@ -3786,9 +3788,9 @@ function build_navigation($extranavlinks, $cm = null) {
     $navlinks = array();
 
     //Site name
-    if ($site = get_site()) {
+    if ($SITE) {
         $navlinks[] = array(
-                'name' => format_string($site->shortname),
+                'name' => format_string($SITE->shortname),
                 'link' => "$CFG->wwwroot/",
                 'type' => 'home');
     }
