@@ -388,12 +388,21 @@ function display() {
                 echo '</div>';
             }
             echo '</div></div>';
-
+            
+        ///embedded file into iframe if the resource is on another domain
+        ///
+        ///This case is not XHTML strict but there is no alternative
+        ///The object tag alternative is XHTML strict, however IE6-7 displays a blank object on accross domain by default,
+        ///so we decided to use iframe for accross domain MDL-10021
+        if (!stristr($fullurl,$CFG->wwwroot)) {
+           echo '<p><iframe id="embeddedhtml" src ="'.$fullurl.'" width="100%" height="600"></iframe></p>';
+        }
+        else {
         ///embedded HTML file into an object tag
             echo '<p><object id="embeddedhtml" data="' . $fullurl . '" type="'.$mimetype.'" width="800" height="600">
                     alt : <a href="' . $fullurl . '">' . $fullurl . '</a>
                   </object></p>';
-
+        }
         ///add some javascript in order to fit this object tag into the browser window
             echo '<script type="text/javascript">
                      //<![CDATA[
