@@ -36,6 +36,7 @@
  *   K_PATH_URL_CACHE can't be mapped in Moodle as datadir should not be
  *   accessible directly. However, it doesn't seem to be used within the
  *   library code.
+ *   K_IMAGES_PATH set to Moodle dirroot
  */
 
 if (empty($CFG)) {
@@ -58,11 +59,11 @@ if (!defined("K_TCPDF_EXTERNAL_CONFIG")) {
 		}
 	}
 	
-	// Automatic calculation for the following K_PATH_MAIN constant
-	$k_path_main = str_replace( '\\', '/', realpath(substr(dirname(__FILE__), 0, 0-strlen("config"))));
-	if (substr($k_path_main, -1) != '/') {
-		$k_path_main .= '/';
-	}
+	//// Automatic calculation for the following K_PATH_MAIN constant
+	//$k_path_main = str_replace( '\\', '/', realpath(substr(dirname(__FILE__), 0, 0-strlen("config"))));
+	//if (substr($k_path_main, -1) != '/') {
+    //	$k_path_main .= '/';
+	//}
 	
 	/**
 	 * Installation path (/var/www/tcpdf/).
@@ -71,16 +72,16 @@ if (!defined("K_TCPDF_EXTERNAL_CONFIG")) {
 	//define ("K_PATH_MAIN", $k_path_main);
     define ('K_PATH_MAIN', $CFG->dirroot.'/lib/tcpdf/');
 	
-	// Automatic calculation for the following K_PATH_URL constant
-	if (isset($_SERVER["HTTP_HOST"]) AND (!empty($_SERVER["HTTP_HOST"]))) {
-		if(isset($_SERVER["HTTPS"]) AND (!empty($_SERVER["HTTPS"])) AND strtolower($_SERVER['HTTPS'])!='off') {
-			$k_path_url = "https://";
-		} else {
-			$k_path_url = "http://";
-		}
-		$k_path_url .= $_SERVER["HTTP_HOST"];
-		$k_path_url .= str_replace( '\\', '/', substr($_SERVER["PHP_SELF"], 0, -24));
-	}
+	//// Automatic calculation for the following K_PATH_URL constant
+	//if (isset($_SERVER["HTTP_HOST"]) AND (!empty($_SERVER["HTTP_HOST"]))) {
+    //		if(isset($_SERVER["HTTPS"]) AND (!empty($_SERVER["HTTPS"])) AND strtolower($_SERVER['HTTPS'])!='off') {
+	//		$k_path_url = "https://";
+	//	} else {
+	//		$k_path_url = "http://";
+	//	}
+	//	$k_path_url .= $_SERVER["HTTP_HOST"];
+	//	$k_path_url .= str_replace( '\\', '/', substr($_SERVER["PHP_SELF"], 0, -24));
+	//}
 	
 	/**
 	 * URL path to tcpdf installation folder (http://localhost/tcpdf/).
@@ -110,12 +111,14 @@ if (!defined("K_TCPDF_EXTERNAL_CONFIG")) {
 	/**
 	 *images directory
 	 */
-	define ("K_PATH_IMAGES", K_PATH_MAIN."images/");
+    //define ("K_PATH_IMAGES", K_PATH_MAIN."images/");
+    define("K_PATH_IMAGES", $CFG->dirroot.'/');
 	
 	/**
 	 * blank image
 	 */
-	define ("K_BLANK_IMAGE", K_PATH_IMAGES."_blank.png");
+	//define ("K_BLANK_IMAGE", K_PATH_IMAGES."_blank.png");
+	define ("K_BLANK_IMAGE", K_PATH_MAIN."images/_blank.png");
 	
 	/**
 	 * page format
