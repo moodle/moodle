@@ -219,6 +219,9 @@ div.groupselector {
     overflow: hidden;
     padding: 1px;
 }
+.collapsibleregioncaption {
+    white-space: nowrap;
+}
 .collapsibleregioncaption img {
     vertical-align: middle;
 }
