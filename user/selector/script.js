@@ -474,11 +474,11 @@ YAHOO.lang.augmentProto(user_selector, YAHOO.util.EventProvider);
  */
 function user_selector_options_tracker() {
     var oself = this;
-    YAHOO.util.Event.addListener('userselector_preserveselected', "change",
+    YAHOO.util.Event.addListener('userselector_preserveselected', "click",
             function(e) { oself.handle_option_change('userselector_preserveselected') });
-    YAHOO.util.Event.addListener('userselector_autoselectunique', "change",
+    YAHOO.util.Event.addListener('userselector_autoselectunique', "click",
             function(e) { oself.handle_option_change('userselector_autoselectunique') });
-    YAHOO.util.Event.addListener('userselector_searchanywhere', "change",
+    YAHOO.util.Event.addListener('userselector_searchanywhere', "click",
             function(e) { oself.handle_option_change('userselector_searchanywhere') });
 }
 
