@@ -95,6 +95,7 @@ $string['databasesettingssub_postgres7'] = '<b>Type (typ):</b>PostgreSQL<br />
 <b>User (användare):</b> Ditt användarnamn för tillgång till databasen<br />
 <b>Password (lösenord):</b> Ditt lösenord för tillgång till databasen<br />
 <b>Tables Prefix (prefix för tabeller):</b> ett obligatoriskt prefix som kopplas till alla namn på tabeller';
+$string['databasesettingswillbecreated'] = '<b>OBS!</b> Installeraren kommer att försöka att skapa databasen automatiskt om den inte existerar.';
 $string['dataroot'] = 'katalog för data';
 $string['datarooterror'] = 'Den \"katalog för data\" som Du har angivit gick inte att hitta eller skapa. Du får antingen korrigera sökvägen eller skapa katalogen manuellt.';
 $string['dbconnectionerror'] = 'Det gick inte att ansluta till den databas som Du har angivit. Var snäll och kontrollera inställningarna till Din databas.';
@@ -158,6 +159,7 @@ $string['globalsquoteshelp'] = '<p>Kombinationen av avaktiverade Magic Quotes GP
 <p>Om Du inte har tillgång till Din php.ini, så kanske Du kan placera följande rad i en fil som kallas .htaccess inne i Din Moodle-katalog:
 <blockquote>php_value magic_quotes_gpc On</blockquote>
 <blockquote>php_value register_globals Off</blockquote>';
+$string['globalswarning'] = '<p><strong>Säkerhetsvarning</strong>: för att fungera som det ska så kräver Moodle <br /> att du gör vissa ändringar i dina aktuella inställningar för PHP.</p><p>Du <em>måste</em> ställa in <code>register_globals=off</code>.</p><p>Den här inställningen kan du styra genom att redigera din <code>php.ini</code>, Apache/IIS <br />konfiguration eller <code>.htaccess</code> file.</p>';
 $string['help'] = 'Hjälp';
 $string['iconvrecommended'] = 'Du rekommenderas starkt att installera det valfria ICONV-biblioteket. Detta förbättrar webbplatsens prestanda, speciellt om Din webbplats stödjer icke-latinska språk.';
 $string['info'] = 'Information';
@@ -214,6 +216,7 @@ $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Tidigare';
 $string['qtyperqpwillberemoved'] = 'Under uppgraderingen kommer RQP-frågan att tas bort. Du använde inte den här typen av frågor så Du bör inte stöta på några problem.';
 $string['qtyperqpwillberemovedanyway'] = 'Under uppgraderingen kommer RQP-frågan att tas bort. Du har några RQP-frågor i Din databas och de kommer att sluta att fungera om Du inte installerar om koden från http://moodle.org/mod/data/view.php?d=13&amp;rid=797 innan Du fortsätter med uppgraderingen.';
+$string['remotedownloaderror'] = 'Nedladdningen av en komponent till din server misslyckades, var snäll och verifiera inställningar för proxy. <br /><br />Du måste ladda ner <a href=\"$a->url\">$a->url</a> filen manuellt, kopiera den till \"$a->dest\" på din server och packa upp den där.';
 $string['remotedownloadnotallowed'] = 'De är inte tillåtet att ladda upp komponenter till Din server (allow_url_fopen är avaktiverad). Du måste ladda ner filen <a href=\"$a->url\">$a->url</a> manuellt, kopiera den till \"$a->dest\" på Din server och packa upp den där.';
 $string['report'] = 'Rapport';
 $string['restricted'] = 'Begränsad';
@@ -250,4 +253,5 @@ $string['wrongzipfilename'] = 'Fel namn på ZIP-filen';
 $string['wwwroot'] = 'Webbadress';
 $string['wwwrooterror'] = 'Webbadressen verkar inte vara giltig - den här installationen av Moodle verkar inte att finnas där.
 Värdet nedan har återställts.';
+$string['xmlrpcrecommended'] = 'Att installera den valfria xmlrpc är användbart med tanke på funktionaliteten i Moodle Nätverk.';
 ?>
