@@ -117,51 +117,8 @@
         $defaultbase = 3;
     }
 
-/// Print the header and tabs
-    if ($context->contextlevel == CONTEXT_USER) {
-        $user = $DB->get_record('user', array('id'=>$userid));
-        $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
-
-        /// course header
-        $navlinks = array();
-        if ($courseid != SITEID) {
-            if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_COURSE, $course->id))) {
-                $navlinks[] = array('name' => $strparticipants, 'link' => "$CFG->wwwroot/user/index.php?id=$course->id", 'type' => 'misc');
-            }
-            $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid", 'type' => 'misc');
-            $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
-            $navigation = build_navigation($navlinks);
-
-            print_header("$fullname", "$fullname", $navigation, "", "", true, "&nbsp;", navmenu($course));
-
-        /// site header
-        } else {
-            $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid", 'type' => 'misc');
-            $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
-            $navigation = build_navigation($navlinks);
-            print_header("$course->fullname: $fullname", $course->fullname, $navigation, "", "", true, "&nbsp;", navmenu($course));
-        }
-
-        $showroles = 1;
-        $currenttab = 'assign';
-        include_once($CFG->dirroot.'/user/tabs.php');
-
-    } else if ($context->contextlevel == CONTEXT_SYSTEM) {
-        admin_externalpage_setup('assignroles');
-        admin_externalpage_print_header();
-
-    } else if ($context->contextlevel == CONTEXT_COURSE and $context->instanceid == SITEID) {
-        admin_externalpage_setup('frontpageroles');
-        admin_externalpage_print_header();
-        $currenttab = 'assign';
-        include_once('tabs.php');
-
-    } else {
-        $currenttab = 'assign';
-        include_once('tabs.php');
-    }
-
-    if ($roleid) {  /// UI for assigning a particular role.
+/// Process any incoming role assignments before printing the header.
+    if ($roleid) {
 
     /// Create the user selector objects.
         $options = array('context' => $context, 'roleid' => $roleid);
@@ -265,6 +222,54 @@
                 list($assignableroles, $assigncounts, $nameswithcounts) = get_assignable_roles($context, ROLENAME_BOTH, true);
             }
         }
+    }
+
+/// Print the header and tabs
+    if ($context->contextlevel == CONTEXT_USER) {
+        $user = $DB->get_record('user', array('id'=>$userid));
+        $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
+
+        /// course header
+        $navlinks = array();
+        if ($courseid != SITEID) {
+            if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                $navlinks[] = array('name' => $strparticipants, 'link' => "$CFG->wwwroot/user/index.php?id=$course->id", 'type' => 'misc');
+            }
+            $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid", 'type' => 'misc');
+            $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
+            $navigation = build_navigation($navlinks);
+
+            print_header("$fullname", "$fullname", $navigation, "", "", true, "&nbsp;", navmenu($course));
+
+        /// site header
+        } else {
+            $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid", 'type' => 'misc');
+            $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
+            $navigation = build_navigation($navlinks);
+            print_header("$course->fullname: $fullname", $course->fullname, $navigation, "", "", true, "&nbsp;", navmenu($course));
+        }
+
+        $showroles = 1;
+        $currenttab = 'assign';
+        include_once($CFG->dirroot.'/user/tabs.php');
+
+    } else if ($context->contextlevel == CONTEXT_SYSTEM) {
+        admin_externalpage_setup('assignroles');
+        admin_externalpage_print_header();
+
+    } else if ($context->contextlevel == CONTEXT_COURSE and $context->instanceid == SITEID) {
+        admin_externalpage_setup('frontpageroles');
+        admin_externalpage_print_header();
+        $currenttab = 'assign';
+        include_once('tabs.php');
+
+    } else {
+        $currenttab = 'assign';
+        include_once('tabs.php');
+    }
+
+    if ($roleid) {
+    /// Show UI for assigning a particular role to users.
 
     /// Print heading.
         $a = new stdClass;
@@ -343,7 +348,8 @@
         echo '<p><a href="' . $baseurl . '">' . get_string('backtoallroles', 'role') . '</a></p>';
         echo '</div>';
 
-    } else {   // Print overview table
+    } else {
+    /// Print UI for choosing a role to assign.
 
         if ($isfrontpage) {
             print_heading_with_help(get_string('frontpageroles', 'admin'), 'assignroles');
