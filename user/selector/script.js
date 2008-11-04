@@ -8,17 +8,16 @@
  * @constructor
  * @param String name the control name/id.
  * @param String hash the hash that identifies this selector in the user's session.
- * @param String sesskey the user's sesskey.
  * @param Array extrafields extra fields we are displaying for each user in addition to fullname.
  * @param String label used for the optgroup of users who are selected but who do not match the current search.
  */
-function user_selector(name, hash, sesskey, extrafields, strprevselected, strnomatchingusers) {
+function user_selector(name, hash, extrafields, strprevselected, strnomatchingusers) {
     this.name = name;
     this.extrafields = extrafields;
     this.strprevselected = strprevselected;
     this.strnomatchingusers = strnomatchingusers;
     this.searchurl = moodle_cfg.wwwroot + '/user/selector/search.php?selectorid=' +
-            hash + '&sesskey=' + sesskey + '&search='
+            hash + '&sesskey=' + moodle_cfg.sesskey + '&search='
 
     // Set up the data source.
     this.datasource = new YAHOO.util.XHRDataSource(this.searchurl); 
@@ -52,6 +51,9 @@ function user_selector(name, hash, sesskey, extrafields, strprevselected, strnom
     YAHOO.util.Event.addListener(this.listbox, "keyup", function(e) { oself.handle_selection_change() });
     YAHOO.util.Event.addListener(this.listbox, "click", function(e) { oself.handle_selection_change() });
     YAHOO.util.Event.addListener(this.listbox, "change", function(e) { oself.handle_selection_change() });
+
+    // And when the search any substring preference changes. Do an immediate research.
+    YAHOO.util.Event.addListener('userselector_searchanywhere', "click", function(e) { oself.handle_searchanywhere_click() });
 
     // Replace the Clear submit button with a clone that is not a submit button.
     var oldclearbutton = document.getElementById(this.name + '_clearbutton');
@@ -129,7 +131,7 @@ user_selector.prototype.strnomatchingusers = '';
  * @type Number
  * @default 0.2
  */
-user_selector.prototype.querydelay = 0.2;
+user_selector.prototype.querydelay = 0.5;
 
 // Internal fields =============================================================
 
@@ -224,7 +226,7 @@ user_selector.prototype.handle_keyup = function(e) {
     //  Trigger an ajax search after a delay.
     this.cancel_timeout();
     var oself = this;
-    this.timeoutid = setTimeout(function() { oself.send_query() }, this.querydelay * 1000);
+    this.timeoutid = setTimeout(function() { oself.send_query(false) }, this.querydelay * 1000);
 
     // Enable or diable the clear button.
     this.clearbutton.disabled = this.get_search_text() == '';
@@ -247,12 +249,21 @@ user_selector.prototype.cancel_timeout = function() {
 }
 
 /**
- * Key up hander for the search text box.
+ * Click handler for the clear button..
  */
 user_selector.prototype.handle_clear = function() {
     this.searchfield.value = '';
     this.clearbutton.disabled = true;
-    this.send_query();
+    this.send_query(false);
+}
+
+/**
+ * Trigger a re-search when the 'search any substring' option is changed.
+ */
+user_selector.prototype.handle_searchanywhere_click = function() {
+    if (this.lastsearch != '' && this.get_search_text() != '') {
+        this.send_query(true);
+    }
 }
 
 /**
@@ -263,18 +274,30 @@ user_selector.prototype.get_search_text = function() {
 }
 
 /**
+ * @return the value of one of the option checkboxes.<b> 
+ */
+user_selector.prototype.get_option = function(name) {
+    var checkbox = document.getElementById('userselector_' + name);
+    if (checkbox) {
+        return checkbox.checked;
+    } else {
+        return false;
+    }
+}
+
+/**
  * Fires off the ajax search request.
  */
-user_selector.prototype.send_query = function() {
+user_selector.prototype.send_query = function(forceresearch) {
     // Cancel any pending timeout.
     this.cancel_timeout();
 
     var value = this.get_search_text();
     this.searchfield.className = '';
-    if (this.lastsearch == value) {
+    if (this.lastsearch == value && !forceresearch) {
         return;
     }
-    this.datasource.sendRequest(this.searchfield.value, {
+    this.datasource.sendRequest(value + '&userselector_searchanywhere=' + this.get_option('searchanywhere'), {
         success: this.handle_response,
         failure: this.handle_failure,
         scope: this
@@ -349,12 +372,13 @@ user_selector.prototype.output_options = function(data) {
     // Clear out the existing options, keeping any ones that are already selected.
     this.selected = {};
     var groups = this.listbox.getElementsByTagName('optgroup');
+    var preserveselected = this.get_option('preserveselected');
     while (groups.length > 0) {
         var optgroup = groups[0]; // Remeber that groups is a live array as we remove optgroups from the select, it updates.
         var options = optgroup.getElementsByTagName('option');
         while (options.length > 0) {
             var option = options[0];
-            if (option.selected) {
+            if (preserveselected && option.selected) {
                 var optiontext = option.innerText || option.textContent
                 this.selected[option.value] = { id: option.value, name: optiontext, disabled: option.disabled };
             }
@@ -378,7 +402,7 @@ user_selector.prototype.output_options = function(data) {
     }
 
     // If there was only one option matching the search results, select it.
-    if (this.onlyoption && !this.onlyoption.disabled) {
+    if (this.get_option('autoselectunique') && this.onlyoption && !this.onlyoption.disabled) {
         this.onlyoption.selected = true;
         if (!this.listbox.multiple) {
             this.selected = {};
@@ -442,3 +466,22 @@ user_selector.prototype.output_group = function(groupname, users, select) {
 
 // Say that we want to be a source of custom events.
 YAHOO.lang.augmentProto(user_selector, YAHOO.util.EventProvider);
+
+/**
+ * Initialise a class that updates the user's preferences when they change one of
+ * the options checkboxes.
+ * @constructor
+ */
+function user_selector_options_tracker() {
+    var oself = this;
+    YAHOO.util.Event.addListener('userselector_preserveselected', "change",
+            function(e) { oself.handle_option_change('userselector_preserveselected') });
+    YAHOO.util.Event.addListener('userselector_autoselectunique', "change",
+            function(e) { oself.handle_option_change('userselector_autoselectunique') });
+    YAHOO.util.Event.addListener('userselector_searchanywhere', "change",
+            function(e) { oself.handle_option_change('userselector_searchanywhere') });
+}
+
+user_selector_options_tracker.prototype.handle_option_change = function(option) {
+    set_user_preference(option, document.getElementById(option).checked);
+}

@@ -226,6 +226,9 @@ div.collapsibleregion div.collapsibleregioncaption a {
     color: inherit;
     text-decoration: none;
 }
+.jsenabled .collapsed .collapsibleregioninner {
+    visibility: hidden;
+}
 
 .noticebox {
   border-width:1px;
@@ -570,7 +573,12 @@ div.hide {
 .userselector div label {
   margin-right: 0.3em;
 }
-
+#userselector_options {
+    font-size: 0.75em;
+}
+#userselector_options .collapsibleregioncaption {
+    font-weight: bold;
+}
 /***
  *** Forms
  ***/
@@ -1049,7 +1057,7 @@ body#admin-modules table.generaltable td.c0
     width: 100%;
 }
 .roleassigntable td {
-    vertical-align: middle;
+    vertical-align: top;
     padding: 0.2em 0.3em;
 }
 .roleassigntable p {
@@ -1083,6 +1091,7 @@ body#admin-modules table.generaltable td.c0
     font-weight: bold;
 }
 .roleassigntable #buttonscell #addcontrols {
+    margin-top: 3em;
     height: 13em;
 }
 .roleassigntable #removeselect_wrapper,

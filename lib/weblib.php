@@ -4166,7 +4166,7 @@ function print_collapsible_region_start($classes, $id, $caption, $userpref = fal
  * @return mixed if $return is false, returns nothing, otherwise returns a string of HTML.
  */
 function print_collapsible_region_end($return = false) {
-    $output = '</div></div>';
+    $output = '</div></div></div>';
 
     if ($return) {
         return $output;

@@ -55,10 +55,22 @@ abstract class user_selector_base {
     protected $exclude = array();
     /** A list of the users who are selected. */
     protected $selected = null;
+    /** When the search changes, do we keep previously selected options that do
+     * not match the new search term? */
+    protected $preserveselected = false;
+    /** If only one user matches the search, should we select them automatically. */
+    protected $autoselectunique = false;
+    /** When searching, do we only match the starts of fields (better performace)
+     * or do we match occurrences anywhere? */
+    protected $searchanywhere = false;
 
     // This is used by get selected users, 
     private $validatinguserids = null;
+    // Used to ensure we only output the search options for one user selector on
+    // each page.
+    private static $searchoptionsoutput = false;
 
+    
     // Public API ==============================================================
 
     /**
@@ -81,6 +93,9 @@ abstract class user_selector_base {
         if (isset($options['exclude']) && is_array($options['exclude'])) {
             $this->exclude = $options['exclude'];
         }
+        $this->preserveselected = $this->initialise_option('userselector_preserveselected', $this->preserveselected);
+        $this->autoselectunique = $this->initialise_option('userselector_autoselectunique', $this->autoselectunique);
+        $this->searchanywhere = $this->initialise_option('userselector_searchanywhere', $this->searchanywhere);
     }
 
     /**
@@ -166,10 +181,23 @@ abstract class user_selector_base {
                 $this->name . '_searchbutton" value="' . $this->search_button_caption() . '" />';
         $output .= '<input type="submit" name="' . $this->name . '_clearbutton" id="' .
                 $this->name . '_clearbutton" value="' . get_string('clear') . '" />';
+
+        // And the search options.
+        $optionsoutput = false;
+        if (!user_selector_base::$searchoptionsoutput) {
+            $output .= print_collapsible_region_start('', 'userselector_options',
+                    get_string('searchoptions'), 'userselector_optionscollapsed', true, true);
+            $output .= $this->option_checkbox('preserveselected', $this->preserveselected, get_string('userselectorpreserveselected'));
+            $output .= $this->option_checkbox('autoselectunique', $this->autoselectunique, get_string('userselectorautoselectunique'));
+            $output .= $this->option_checkbox('searchanywhere', $this->searchanywhere, get_string('userselectorsearchanywhere'));
+            $output .= print_collapsible_region_end(true);
+            user_selector_base::$searchoptionsoutput = true;
+            $optionsoutput = true;
+        }
         $output .= "</div>\n</div>\n\n";
 
         // Initialise the ajax functionality.
-        $output .= $this->initialise_javascript();
+        $output .= $this->initialise_javascript($optionsoutput);
 
         // Return or output it.
         if ($return) {
@@ -345,9 +373,14 @@ abstract class user_selector_base {
                 $conditions[] = $u . $field;
             }
             $ilike = ' ' . $DB->sql_ilike() . ' ?';
+            if ($this->searchanywhere) {
+                $searchparam = '%' . $search . '%';
+            } else {
+                $searchparam = $search . '%';
+            }
             foreach ($conditions as &$condition) {
                 $condition .= $ilike;
-                $params[] = $search . '%';
+                $params[] = $searchparam;
             }
             $tests[] = '(' . implode(' OR ', $conditions) . ')';
         }
@@ -393,12 +426,13 @@ abstract class user_selector_base {
         // Ensure that the list of previously selected users is up to date.
         $this->get_selected_users();
 
-        // If $groupedusers is empty, make a 'no matching users' group. If there
-        // is only one selected user, set a flag to select them.
+        // If $groupedusers is empty, make a 'no matching users' group. If there is
+        // only one selected user, set a flag to select them if that option is turned on.
         $select = false;
         if (empty($groupedusers)) {
             $groupedusers = array(get_string('nomatchingusers', '', $search) => array());
-        } else if (count($groupedusers) == 1 && count(reset($groupedusers)) == 1) {
+        } else if ($this->autoselectunique && count($groupedusers) == 1 &&
+                count(reset($groupedusers)) == 1) {
             $select = true;
             if (!$this->multiselect) {
                 $this->selected = array();
@@ -411,7 +445,7 @@ abstract class user_selector_base {
         }
 
         // If there were previously selected users who do not match the search, show them too.
-        if (!empty($this->selected)) {
+        if ($this->preserveselected && !empty($this->selected)) {
             $output .= $this->output_optgroup(get_string('previouslyselectedusers', '', $search), $this->selected, true);
         }
 
@@ -475,12 +509,39 @@ abstract class user_selector_base {
         return get_string('search');
     }
 
+    // Initialise one of the option checkboxes, either from
+    // the request, or failing that from the user_preferences table, or
+    // finally from the given default.
+    private function initialise_option($name, $default) {
+        $param = optional_param($name, null, PARAM_BOOL);
+        if (is_null($param)) {
+            return get_user_preferences($name, $default);
+        } else {
+            set_user_preference($name, $param);
+            return $param;
+        }
+    }
+
+    // Output one of the options checkboxes.
+    private function option_checkbox($name, $on, $label) {
+        if ($on) {
+            $checked = ' checked="checked"';
+        } else {
+            $checked = '';
+        }
+        $name = 'userselector_' . $name;
+        $output = '<p><input type="hidden" name="' . $name . '" value="0" />' .
+                '<input type="checkbox" id="' . $name . '" name="' . $name . '" value="1"' . $checked . ' /> ' .
+                '<label for="' . $name . '">' . $label . "</label></p>\n";
+        user_preference_allow_ajax_update($name, PARAM_BOOL);
+        return $output;
+    }
+
     /**
-     * 
-     *
+     * @param boolean $optiontracker if true, initialise JavaScript for updating the user prefs.
      * @return any HTML needed here.
      */
-    protected function initialise_javascript() {
+    protected function initialise_javascript($optiontracker) {
         global $USER;
         $output = '';
 
@@ -495,8 +556,14 @@ abstract class user_selector_base {
 
         // Initialise the selector.
         $output .= print_js_call('new user_selector', array($this->name, $hash,
-                sesskey(), $this->extrafields, get_string('previouslyselectedusers', '', '%%SEARCHTERM%%'),
+                $this->extrafields, get_string('previouslyselectedusers', '', '%%SEARCHTERM%%'),
                 get_string('nomatchingusers', '', '%%SEARCHTERM%%')), true);
+
+        // Initialise the options tracker, if they are our responsibility.
+        if ($optiontracker) {
+            $output .= print_js_call('new user_selector_options_tracker', array(), true);
+        }
+
         return $output;
     }
 }
