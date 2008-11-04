@@ -137,7 +137,6 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return array of table names in lowercase and without prefix
      */
     public function get_tables() {
-        $this->reads++;
         $tables = array();
         $sql = "SHOW TABLES";
         $this->query_start($sql, null, SQL_QUERY_AUX);
