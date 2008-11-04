@@ -53,7 +53,7 @@ function user_selector(name, hash, extrafields, strprevselected, strnomatchingus
     YAHOO.util.Event.addListener(this.listbox, "change", function(e) { oself.handle_selection_change() });
 
     // And when the search any substring preference changes. Do an immediate research.
-    YAHOO.util.Event.addListener('userselector_searchanywhere', "click", function(e) { oself.handle_searchanywhere_click() });
+    YAHOO.util.Event.addListener('userselector_searchanywhere', 'click', function(e) { oself.handle_searchanywhere_change() });
 
     // Replace the Clear submit button with a clone that is not a submit button.
     var oldclearbutton = document.getElementById(this.name + '_clearbutton');
@@ -260,7 +260,7 @@ user_selector.prototype.handle_clear = function() {
 /**
  * Trigger a re-search when the 'search any substring' option is changed.
  */
-user_selector.prototype.handle_searchanywhere_click = function() {
+user_selector.prototype.handle_searchanywhere_change = function() {
     if (this.lastsearch != '' && this.get_search_text() != '') {
         this.send_query(true);
     }
@@ -474,11 +474,11 @@ YAHOO.lang.augmentProto(user_selector, YAHOO.util.EventProvider);
  */
 function user_selector_options_tracker() {
     var oself = this;
-    YAHOO.util.Event.addListener('userselector_preserveselected', "click",
+    YAHOO.util.Event.addListener('userselector_preserveselected', 'click',
             function(e) { oself.handle_option_change('userselector_preserveselected') });
-    YAHOO.util.Event.addListener('userselector_autoselectunique', "click",
+    YAHOO.util.Event.addListener('userselector_autoselectunique', 'click',
             function(e) { oself.handle_option_change('userselector_autoselectunique') });
-    YAHOO.util.Event.addListener('userselector_searchanywhere', "click",
+    YAHOO.util.Event.addListener('userselector_searchanywhere', 'click',
             function(e) { oself.handle_option_change('userselector_searchanywhere') });
 }
 
