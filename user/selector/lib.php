@@ -82,6 +82,8 @@ abstract class user_selector_base {
      */
     public function __construct($name, $options = array()) {
         global $CFG;
+
+        // Initialise member variables from constructor arguments.
         $this->name = $name;
         if (isset($options['extrafields'])) {
             $this->extrafields = $options['extrafields'];
@@ -93,9 +95,15 @@ abstract class user_selector_base {
         if (isset($options['exclude']) && is_array($options['exclude'])) {
             $this->exclude = $options['exclude'];
         }
+
+        // Read the user prefs / optional_params that we use.
         $this->preserveselected = $this->initialise_option('userselector_preserveselected', $this->preserveselected);
         $this->autoselectunique = $this->initialise_option('userselector_autoselectunique', $this->autoselectunique);
         $this->searchanywhere = $this->initialise_option('userselector_searchanywhere', $this->searchanywhere);
+
+        // Required JavaScript code.
+        require_js(array('yui_yahoo', 'yui_event', 'yui_json', 'yui_connection', 'yui_datasource'));
+        require_js('user/selector/script.js');
     }
 
     /**
@@ -191,13 +199,13 @@ abstract class user_selector_base {
             $output .= $this->option_checkbox('autoselectunique', $this->autoselectunique, get_string('userselectorautoselectunique'));
             $output .= $this->option_checkbox('searchanywhere', $this->searchanywhere, get_string('userselectorsearchanywhere'));
             $output .= print_collapsible_region_end(true);
+            $output .= print_js_call('new user_selector_options_tracker', array(), true);
             user_selector_base::$searchoptionsoutput = true;
-            $optionsoutput = true;
         }
         $output .= "</div>\n</div>\n\n";
 
         // Initialise the ajax functionality.
-        $output .= $this->initialise_javascript($optionsoutput);
+        $output .= $this->initialise_javascript();
 
         // Return or output it.
         if ($return) {
@@ -541,13 +549,9 @@ abstract class user_selector_base {
      * @param boolean $optiontracker if true, initialise JavaScript for updating the user prefs.
      * @return any HTML needed here.
      */
-    protected function initialise_javascript($optiontracker) {
+    protected function initialise_javascript() {
         global $USER;
         $output = '';
-
-        // Required JavaScript code.
-        require_js(array('yui_yahoo', 'yui_event', 'yui_json', 'yui_connection', 'yui_datasource'));
-        require_js('user/selector/script.js');
 
         // Put the options into the session, to allow search.php to respond to the ajax requests.
         $options = $this->get_options();
@@ -558,11 +562,6 @@ abstract class user_selector_base {
         $output .= print_js_call('new user_selector', array($this->name, $hash,
                 $this->extrafields, get_string('previouslyselectedusers', '', '%%SEARCHTERM%%'),
                 get_string('nomatchingusers', '', '%%SEARCHTERM%%')), true);
-
-        // Initialise the options tracker, if they are our responsibility.
-        if ($optiontracker) {
-            $output .= print_js_call('new user_selector_options_tracker', array(), true);
-        }
 
         return $output;
     }
