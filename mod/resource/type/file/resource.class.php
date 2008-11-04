@@ -378,9 +378,7 @@ class resource_file extends resource_base {
             require_js(array('yui_dom'));
 
         ///Moodle Header and navigation bar
-            $navlinks = array();
-            $navlinks[] = array('name' => format_string($resource->name), 'link' => null, 'type' => 'misc');
-            $navigation = build_navigation($navlinks);
+            $navigation = build_navigation($this->navlinks, $cm);
             print_header($pagetitle, $course->fullname, $navigation, "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
             $options = new object();
             $options->para = false;
@@ -398,6 +396,7 @@ class resource_file extends resource_base {
 
         ///add some javascript in order to fit this object tag into the browser window
             echo '<script type="text/javascript">
+                     //<![CDATA[
                      function resizeEmbeddedHtml() {
                          //calculate new embedded html height size
                     ';
@@ -410,7 +409,7 @@ class resource_file extends resource_base {
                     ';
             }
             echo '       //the object tag cannot be smaller than a human readable size
-                         if (objectheight<200){
+                         if (objectheight < 200) {
                              objectheight = 200;
                          }
                          //resize the embedded html object
@@ -419,6 +418,7 @@ class resource_file extends resource_base {
                      }
                      resizeEmbeddedHtml();
                      YAHOO.widget.Overlay.windowResizeEvent.subscribe(resizeEmbeddedHtml);
+                     //]]>
                   </script>
             ';
 
