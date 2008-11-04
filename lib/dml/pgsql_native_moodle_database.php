@@ -92,7 +92,12 @@ class pgsql_native_moodle_database extends moodle_database {
         if (empty($this->dboptions['forcetcp']) and ($this->dbhost === 'localhost' or $this->dbhost === '127.0.0.1')) {
             $connection = "user='$this->dbuser' password='$pass' dbname='$this->dbname'";
         } else {
-            $connection = "host='$this->dbhost' user='$this->dbuser' password='$pass' dbname='$this->dbname'";
+            if (empty($this->dboptions['dbport'])) {
+                $port = 5432;
+            } else {
+                $port = $this->dboptions['dbport'];
+            }
+            $connection = "host='$this->dbhost' port='$port' user='$this->dbuser' password='$pass' dbname='$this->dbname'";
         }
 
         if (empty($this->dboptions['dbpersit'])) {
@@ -190,7 +195,7 @@ class pgsql_native_moodle_database extends moodle_database {
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
-        
+
         if ($result) {
             while ($row = pg_fetch_row($result)) {
                 $tablename = reset($row);
