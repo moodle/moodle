@@ -89,7 +89,10 @@ class mysqli_native_moodle_database extends moodle_database {
         if ($this->mysqli->connect_error) {
             return false;
         }
+        $this->query_start("--set_charset()", null, SQL_QUERY_AUX);
         $this->mysqli->set_charset('utf8');
+        $this->query_end(true);
+
         return true;
     }
 
@@ -136,7 +139,11 @@ class mysqli_native_moodle_database extends moodle_database {
     public function get_tables() {
         $this->reads++;
         $tables = array();
-        if ($result = $this->mysqli->query("SHOW TABLES")) {
+        $sql = "SHOW TABLES";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = $this->mysqli->query($sql);
+        $this->query_end($result);
+        if ($result) {
             while ($arr = $result->fetch_assoc()) {
                 $tablename = reset($arr);
                 if (strpos($tablename, $this->prefix) !== 0) {
@@ -157,7 +164,11 @@ class mysqli_native_moodle_database extends moodle_database {
     public function get_indexes($table) {
         $preflen = strlen($this->prefix);
         $indexes = array();
-        if ($result = $this->mysqli->query("SHOW INDEXES FROM {$this->prefix}$table")) {
+        $sql = "SHOW INDEXES FROM {$this->prefix}$table";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = $this->mysqli->query($sql);
+        $this->query_end($result);
+        if ($result) {
             while ($res = $result->fetch_object()) {
                 if ($res->Key_name === 'PRIMARY') {
                     continue;
@@ -185,11 +196,18 @@ class mysqli_native_moodle_database extends moodle_database {
 
         $this->columns[$table] = array();
 
-        if (!$rawcolumns = $this->get_records_sql("SHOW COLUMNS FROM {".$table."}")) {
+        $sql = "SHOW COLUMNS FROM {$this->prefix}$table";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = $this->mysqli->query($sql);
+        $this->query_end($result);
+
+        if ($result === false) {
             return array();
         }
 
-        foreach ($rawcolumns as $rawcolumn) {
+        while ($rawcolumn = $result->fetch_assoc()) {
+            $rawcolumn = (object)array_change_key_case($rawcolumn, CASE_LOWER);
+
             $info = new object();
             $info->name = $rawcolumn->field;
             $matches = null;
@@ -305,6 +323,8 @@ class mysqli_native_moodle_database extends moodle_database {
             $this->columns[$table][$info->name] = new database_column_info($info);
         }
 
+        $result->close();
+
         return $this->columns[$table];
     }
 
@@ -328,8 +348,12 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return bool
      */
     public function setup_is_unicodedb() {
-        $this->reads++;
-        if ($result = $this->mysqli->query("SHOW LOCAL VARIABLES LIKE 'character_set_database'")) {
+        $sql = "SHOW LOCAL VARIABLES LIKE 'character_set_database'";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = $this->mysqli->query($sql);
+        $this->query_end($result);
+
+        if ($result) {
             $result->close();
             return true;
         }
@@ -366,10 +390,12 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return bool success
      */
     public function change_database_structure($sql) {
-        $this->writes++;
-        $this->print_debug($sql);
-        $result = $this->mysqli->query($sql);
         $this->reset_columns();
+
+        $this->query_start($sql, null, SQL_QUERY_STRUCTURE);
+        $result = $this->mysqli->query($sql);
+        $this->query_end($result);
+
         if ($result === false) {
             $this->report_error($sql);
             return false;
@@ -420,9 +446,9 @@ class mysqli_native_moodle_database extends moodle_database {
 
         $rawsql = $this->emulate_bound_params($sql, $params);
 
-        $this->writes++;
-        $this->print_debug($sql, $params);
+        $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $result = $this->mysqli->query($rawsql);
+        $this->query_end($result);
 
         if ($result === false) {
             $this->report_error($sql, $params);
@@ -465,10 +491,10 @@ class mysqli_native_moodle_database extends moodle_database {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
         $rawsql = $this->emulate_bound_params($sql, $params);
 
-        $this->reads++;
-        $this->print_debug($sql, $params);
+        $this->query_start($sql, $params, SQL_QUERY_SELECT);
         // no MYSQLI_USE_RESULT here, it would block write ops on affected tables
         $result = $this->mysqli->query($rawsql, MYSQLI_STORE_RESULT);
+        $this->query_end($result);
 
         if ($result === false) {
             $this->report_error($sql, $params);
@@ -508,9 +534,9 @@ class mysqli_native_moodle_database extends moodle_database {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
         $rawsql = $this->emulate_bound_params($sql, $params);
 
-        $this->reads++;
-        $this->print_debug($sql, $params);
+        $this->query_start($sql, $params, SQL_QUERY_SELECT);
         $result = $this->mysqli->query($rawsql, MYSQLI_STORE_RESULT);
+        $this->query_end($result);
 
         if ($result === false) {
             $this->report_error($sql, $params);
@@ -518,14 +544,14 @@ class mysqli_native_moodle_database extends moodle_database {
         }
 
         $return = array();
-        
+
         while($row = $result->fetch_assoc()) {
             $row = array_change_key_case($row, CASE_LOWER);
             $id  = reset($row);
             $return[$id] = (object)$row;
         }
         $result->close();
-         
+
         return $return;
     }
 
@@ -540,9 +566,9 @@ class mysqli_native_moodle_database extends moodle_database {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
         $rawsql = $this->emulate_bound_params($sql, $params);
 
-        $this->reads++;
-        $this->print_debug($sql, $params);
+        $this->query_start($sql, $params, SQL_QUERY_SELECT);
         $result = $this->mysqli->query($rawsql, MYSQLI_STORE_RESULT);
+        $this->query_end($result);
 
         if ($result === false) {
             $this->report_error($sql, $params);
@@ -550,12 +576,12 @@ class mysqli_native_moodle_database extends moodle_database {
         }
 
         $return = array();
-        
+
         while($row = $result->fetch_assoc()) {
             $return[] = reset($row);
         }
         $result->close();
-         
+
         return $return;
     }
 
@@ -593,9 +619,9 @@ class mysqli_native_moodle_database extends moodle_database {
         $sql = "INSERT INTO {$this->prefix}$table ($fields) VALUES($qms)";
         $rawsql = $this->emulate_bound_params($sql, $params);
 
-        $this->writes++;
-        $this->print_debug($sql, $params);
+        $this->query_start($sql, $params, SQL_QUERY_INSERT);
         $result = $this->mysqli->query($rawsql);
+        $this->query_end($result);
 
         if ($result === false) {
             $this->report_error($sql, $params);
@@ -723,9 +749,9 @@ class mysqli_native_moodle_database extends moodle_database {
         $sql = "UPDATE {$this->prefix}$table SET $sets WHERE id=?";
         $rawsql = $this->emulate_bound_params($sql, $params);
 
-        $this->writes++;
-        $this->print_debug($sql, $params);
+        $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $result = $this->mysqli->query($rawsql);
+        $this->query_end($result);
 
         if ($result === false) {
             $this->report_error($sql, $params);
@@ -803,9 +829,9 @@ class mysqli_native_moodle_database extends moodle_database {
         $sql = "UPDATE {$this->prefix}$table SET $newfield $select";
         $rawsql = $this->emulate_bound_params($sql, $params);
 
-        $this->writes++;
-        $this->print_debug($sql, $params);
+        $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $result = $this->mysqli->query($rawsql);
+        $this->query_end($result);
 
         if ($result === false) {
             $this->report_error($sql, $params);
@@ -832,9 +858,9 @@ class mysqli_native_moodle_database extends moodle_database {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
         $rawsql = $this->emulate_bound_params($sql, $params);
 
-        $this->writes++;
-        $this->print_debug($sql, $params);
+        $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $result = $this->mysqli->query($rawsql);
+        $this->query_end($result);
 
         if ($result === false) {
             $this->report_error($sql, $params);
@@ -892,11 +918,20 @@ class mysqli_native_moodle_database extends moodle_database {
      * this is _very_ useful for massive updates
      */
     public function begin_sql() {
-        $result = $result = $this->mysqli->query("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED");
+        $sql = "SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED";
+        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $result = $this->mysqli->query($sql);
+        $this->query_end($result);
+
         if ($result === false) {
             return false;
         }
-        $result = $result = $this->mysqli->query("BEGIN");
+
+        $sql = "BEGIN";
+        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $result = $this->mysqli->query($sql);
+        $this->query_end($result);
+
         if ($result === false) {
             return false;
         }
@@ -907,7 +942,11 @@ class mysqli_native_moodle_database extends moodle_database {
      * on DBs that support it, commit the transaction
      */
     public function commit_sql() {
-        $result = $result = $this->mysqli->query("COMMIT");
+        $sql = "COMMIT";
+        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $result = $this->mysqli->query($sql);
+        $this->query_end($result);
+
         if ($result === false) {
             return false;
         }
@@ -918,7 +957,11 @@ class mysqli_native_moodle_database extends moodle_database {
      * on DBs that support it, rollback the transaction
      */
     public function rollback_sql() {
-        $result = $result = $this->mysqli->query("ROLLBACK");
+        $sql = "ROLLBACK";
+        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $result = $this->mysqli->query($sql);
+        $this->query_end($result);
+
         if ($result === false) {
             return false;
         }
