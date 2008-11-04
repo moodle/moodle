@@ -396,6 +396,7 @@ function display() {
 
         ///add some javascript in order to fit this object tag into the browser window
             echo '<script type="text/javascript">
+                     //<![CDATA[
                      function resizeEmbeddedHtml() {
                          //calculate new embedded html height size
                     ';
@@ -408,7 +409,7 @@ function display() {
                     ';
             }
             echo '       //the object tag cannot be smaller than a human readable size
-                         if (objectheight<200){
+                         if (objectheight < 200) {
                              objectheight = 200;
                          }
                          //resize the embedded html object
@@ -417,6 +418,7 @@ function display() {
                      }
                      resizeEmbeddedHtml();
                      YAHOO.widget.Overlay.windowResizeEvent.subscribe(resizeEmbeddedHtml);
+                     //]]>
                   </script>
             ';
 
