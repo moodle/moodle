@@ -5243,7 +5243,7 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
                             'parentlanguage', 'strftimedate', 'strftimedateshort', 'strftimedatetime',
                             'strftimedaydate', 'strftimedaydatetime', 'strftimedayshort', 'strftimedaytime',
                             'strftimemonthyear', 'strftimerecent', 'strftimerecentfull', 'strftimetime',
-                            'thischarset', 'thisdirection', 'thislanguage', 'strftimedatetimeshort');
+                            'thischarset', 'thisdirection', 'thislanguage', 'strftimedatetimeshort', 'thousandssep');
 
     $filetocheck = 'langconfig.php';
     $defaultlang = 'en_utf8';
