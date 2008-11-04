@@ -32,7 +32,7 @@ function user_selector(name, hash, extrafields, strprevselected, strnomatchingus
     // Hide the search button and replace it with a label.
     var searchbutton = document.getElementById(this.name + '_searchbutton');
     var label = document.createElement('label');
-    label.for = this.name + '_searchtext';
+    label.htmlFor = this.name + '_searchtext';
     label.appendChild(document.createTextNode(searchbutton.value));
     this.searchfield.parentNode.insertBefore(label, this.searchfield);
     searchbutton.parentNode.removeChild(searchbutton);
