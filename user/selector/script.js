@@ -378,7 +378,7 @@ user_selector.prototype.output_options = function(data) {
         var options = optgroup.getElementsByTagName('option');
         while (options.length > 0) {
             var option = options[0];
-            if (preserveselected && option.selected) {
+            if (option.selected) {
                 var optiontext = option.innerText || option.textContent
                 this.selected[option.value] = { id: option.value, name: optiontext, disabled: option.disabled };
             }
@@ -416,7 +416,7 @@ user_selector.prototype.output_options = function(data) {
         areprevselected = true;
         break;
     }
-    if (areprevselected) {
+    if (preserveselected && areprevselected) {
         this.output_group(this.insert_search_into_str(this.strprevselected, this.lastsearch), this.selected, true);
     }
     this.selected = null;
