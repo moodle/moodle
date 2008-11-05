@@ -285,8 +285,10 @@ abstract class moodle_database {
                 throw new dml_read_exception($this->get_last_error(), $this->last_sql, $this->last_params);
             case SQL_QUERY_INSERT:
             case SQL_QUERY_UPDATE:
-            case SQL_QUERY_STRUCTURE:
                 throw new dml_write_exception($this->get_last_error(), $this->last_sql, $this->last_params);
+            case SQL_QUERY_STRUCTURE:
+                $this->get_manager(); // includes ddl exceptions classes ;-)
+                throw new ddl_change_structure_exception($this->get_last_error(), $this->last_sql);
         }
     }
 

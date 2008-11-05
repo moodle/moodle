@@ -85,3 +85,18 @@ class ddl_field_missing_exception extends ddl_exception {
         parent::__construct('ddlfieldnotexist', $a, $debuginfo);
     }
 }
+
+/**
+ * Error during changing db structure
+ */
+class ddl_change_structure_exception extends ddl_exception {
+    public $error;
+    public $sql;
+
+    function __construct($error, $sql=null) {
+        $this->error = $error;
+        $this->sql   = $sql;
+        $errorinfo   = s($error).'<br /><br />'.s($sql);
+        parent::__construct('ddlexecuteerror', NULL, $errorinfo);
+    }
+}

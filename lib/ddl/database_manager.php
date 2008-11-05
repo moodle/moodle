@@ -77,11 +77,12 @@ class database_manager {
      * @exception ddl_exception if error found
      *
      * @param string $command The sql string you wish to be executed.
-     * @return vaoid
+     * @return void
      */
     protected function execute_sql($sql) {
         if (!$this->mdb->change_database_structure($sql)) {
-            throw new ddl_exception('ddlexecuteerror', NULL, $this->mdb->get_last_error());
+            // in case driver does not throw exceptions yet ;-)
+            throw new ddl_change_structure_exception($this->mdb->get_last_error(), $sql);
         }
     }
 
