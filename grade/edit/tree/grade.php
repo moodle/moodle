@@ -70,7 +70,7 @@ if (!empty($id)) {
 }
 
 if (!$grade_item = grade_item::fetch(array('id'=>$itemid, 'courseid'=>$courseid))) {
-    print_error('cannofindgradeitem');
+    print_error('cannotfindgradeitem');
 }
 
 // now verify grading user has access to all groups or is member of the same group when separate groups used in course
