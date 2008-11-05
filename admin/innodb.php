@@ -14,7 +14,7 @@
     admin_externalpage_print_header();
     print_heading('Convert all MySQL tables from MYISAM to InnoDB');
 
-    if ($CFG->dbfamily != 'mysql') {
+    if ($DB->get_dbfamily() != 'mysql') {
         notice('This function is for MySQL databases only!', 'index.php');
     }
 

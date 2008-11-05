@@ -246,7 +246,7 @@
  * @todo Document this function
  */
 function forum_print_big_search_form($course) {
-    global $CFG, $words, $subject, $phrase, $user, $userid, $fullwords, $notwords, $datefrom, $dateto;
+    global $CFG, $DB, $words, $subject, $phrase, $user, $userid, $fullwords, $notwords, $datefrom, $dateto;
 
     print_simple_box(get_string('searchforumintro', 'forum'), 'center', '', '', 'searchbox', 'intro');
 
@@ -276,7 +276,7 @@ function forum_print_big_search_form($course) {
     echo '<td class="c1"><input type="text" size="35" name="notwords" id="notwords" value="'.s($notwords, true).'" alt="" /></td>';
     echo '</tr>';
 
-    if ($CFG->dbfamily == 'mysql' || $CFG->dbfamily == 'postgres') {
+    if ($DB->get_db_family() == 'mysql' || $DB->get_db_family() == 'postgres') {
         echo '<tr>';
         echo '<td class="c0"><label for="fullwords">'.get_string('searchfullwords', 'forum').'</label></td>';
         echo '<td class="c1"><input type="text" size="35" name="fullwords" id="fullwords" value="'.s($fullwords, true).'" alt="" /></td>';

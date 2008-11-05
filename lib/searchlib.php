@@ -313,19 +313,19 @@ class search_parser {
  */
 function search_generate_text_SQL($parsetree, $datafield, $metafield, $mainidfield, $useridfield,
                              $userfirstnamefield, $userlastnamefield, $timefield, $instancefield) {
-    global $CFG;
+    global $CFG, $DB;
     static $p = 0;
 
 /// First of all, search for reasons to switch to standard SQL generation
 /// Only mysql are supported for now
-    if ($CFG->dbfamily != 'mysql') {
+    if ($DB->get_db_family() != 'mysql') {
         return search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $useridfield,
                                    $userfirstnamefield, $userlastnamefield, $timefield, $instancefield);
     }
 
 /// Some languages don't have "word separators" and MySQL FULLTEXT doesn't perform well with them, so
 /// switch to standard SQL search generation
-    if ($CFG->dbfamily == 'mysql') {
+    if ($DB->get_db_family() == 'mysql') {
         $nonseparatedlangs = array('ja_utf8', 'th_utf8', 'zh_cn_utf8', 'zh_tw_utf8');
         if (in_array(current_language(), $nonseparatedlangs)) {
             return search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $useridfield,

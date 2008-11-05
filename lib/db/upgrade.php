@@ -93,7 +93,8 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_set_timeout(60*20); // this may take a while
 
     /// Under MySQL and Postgres... detect old NULL contents and change them by correct empty string. MDL-14859
-        if ($CFG->dbfamily == 'mysql' || $CFG->dbfamily == 'postgres') {
+        $dbfamily = $DB->get_dbfamily();
+        if ($dbfamily === 'mysql' || $dbfamily === 'postgres') {
             $DB->execute("UPDATE {user} SET idnumber = '' WHERE idnumber IS NULL");
         }
 

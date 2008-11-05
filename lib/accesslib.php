@@ -5352,12 +5352,13 @@ function build_context_path($force=false) {
      *
      * Different code for each database - mostly for performance reasons
      */
-    if ($CFG->dbfamily == 'mysql') {
+    $dbfamily = $DB->get_dbfamily(); 
+    if ($dbfamily == 'mysql') {
         $updatesql = "UPDATE {context} ct, {context_temp} temp
                          SET ct.path  = temp.path,
                              ct.depth = temp.depth
                        WHERE ct.id = temp.id";
-    } else if ($CFG->dbfamily == 'oracle') {
+    } else if ($dbfamily == 'oracle') {
         $updatesql = "UPDATE {context} ct
                          SET (ct.path, ct.depth) =
                              (SELECT temp.path, temp.depth
@@ -5366,7 +5367,7 @@ function build_context_path($force=false) {
                        WHERE EXISTS (SELECT 'x'
                                        FROM {context_temp} temp
                                        WHERE temp.id = ct.id)";
-    } else if ($CFG->dbfamily == 'postgres' or $CFG->dbfamily == 'mssql') {
+    } else if ($dbfamily == 'postgres' or $dbfamily == 'mssql') {
         $updatesql = "UPDATE {context}
                          SET path  = temp.path,
                              depth = temp.depth

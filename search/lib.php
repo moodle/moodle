@@ -23,7 +23,6 @@ function search_get_document_types($prefix = 'SEARCH_TYPE_') {
 function search_get_document_types($prefix = 'X_SEARCH_TYPE_') {
 function search_get_additional_modules() {
 function search_shorten_url($url, $length=30) {
-function search_escape_string($str) {
 function search_stopwatch($cli = false) {
 function search_pexit($str = "") {
 */
@@ -152,27 +151,6 @@ function search_get_additional_modules() {
 function search_shorten_url($url, $length=30) {
     return substr($url, 0, $length)."...";
 } //search_shorten_url
-
-/**
-* a local function for escaping
-* @param str the string to escape
-* @return the escaped string
-*/
-function search_escape_string($str) {
-    global $CFG;
-
-    switch ($CFG->dbfamily) {
-        case 'mysql':
-            $s = mysql_real_escape_string($str);
-            break;
-        case 'postgres':
-            $s = pg_escape_string($str);
-            break;
-        default:
-            $s = addslashes($str);
-    }
-    return $s;
-} //search_escape_string
 
 /**
 * simple timer function, on first call, records a current microtime stamp, outputs result on 2nd call

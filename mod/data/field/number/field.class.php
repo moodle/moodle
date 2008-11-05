@@ -86,8 +86,8 @@ class data_field_number extends data_field_base {
     }
 
     function get_sort_sql($fieldname) {
-        global $CFG;
-        switch ($CFG->dbfamily) {
+        global $DB;
+        switch ($DB->get_db_family()) {
             case 'mysql':
                 // string in an arithmetic operation is converted to a floating-point number
                 return '('.$fieldname.'+0.0)';
