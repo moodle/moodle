@@ -198,7 +198,7 @@
                 foreach ($assigns as $assign) {
                     if ($context = get_context_instance(CONTEXT_COURSE, $assign->courseid)) {
                         if (role_unassign(0, $assign->id, 0, $context->id)) {
-                            mtrace("Deleted assignment for user $assign->id from course $assign->courseid");
+                            mtrace("removing user $assign->id from course $assign->courseid as they have not accessed the course for over $CFG->longtimenosee days");
                         }
                     }
                 }
