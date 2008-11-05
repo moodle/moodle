@@ -205,7 +205,7 @@ abstract class user_selector_base {
         $output .= "</div>\n</div>\n\n";
 
         // Initialise the ajax functionality.
-        $output .= $this->initialise_javascript();
+        $output .= $this->initialise_javascript($search);
 
         // Return or output it.
         if ($return) {
@@ -539,7 +539,9 @@ abstract class user_selector_base {
         }
         $name = 'userselector_' . $name;
         $output = '<p><input type="hidden" name="' . $name . '" value="0" />' .
-                '<input type="checkbox" id="' . $name . '" name="' . $name . '" value="1"' . $checked . ' /> ' .
+                // For the benefit of brain-dead IE, the id must be different from the name of the hidden form field above.
+                // It seems that document.getElementById('frog') in IE will return and element with name="frog".
+                '<input type="checkbox" id="' . $name . 'id" name="' . $name . '" value="1"' . $checked . ' /> ' .
                 '<label for="' . $name . '">' . $label . "</label></p>\n";
         user_preference_allow_ajax_update($name, PARAM_BOOL);
         return $output;
@@ -549,7 +551,7 @@ abstract class user_selector_base {
      * @param boolean $optiontracker if true, initialise JavaScript for updating the user prefs.
      * @return any HTML needed here.
      */
-    protected function initialise_javascript() {
+    protected function initialise_javascript($search) {
         global $USER;
         $output = '';
 
@@ -559,8 +561,8 @@ abstract class user_selector_base {
         $USER->userselectors[$hash] = $options;
 
         // Initialise the selector.
-        $output .= print_js_call('new user_selector', array($this->name, $hash,
-                $this->extrafields, get_string('previouslyselectedusers', '', '%%SEARCHTERM%%'),
+        $output .= print_js_call('new user_selector', array($this->name, $hash, $this->extrafields,
+                $search, get_string('previouslyselectedusers', '', '%%SEARCHTERM%%'),
                 get_string('nomatchingusers', '', '%%SEARCHTERM%%')), true);
 
         return $output;

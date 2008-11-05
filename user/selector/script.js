@@ -11,7 +11,7 @@
  * @param Array extrafields extra fields we are displaying for each user in addition to fullname.
  * @param String label used for the optgroup of users who are selected but who do not match the current search.
  */
-function user_selector(name, hash, extrafields, strprevselected, strnomatchingusers) {
+function user_selector(name, hash, extrafields, lastsearch, strprevselected, strnomatchingusers) {
     this.name = name;
     this.extrafields = extrafields;
     this.strprevselected = strprevselected;
@@ -40,7 +40,7 @@ function user_selector(name, hash, extrafields, strprevselected, strnomatchingus
     // Hook up the event handler for when the search text changes.
     var oself = this;
     YAHOO.util.Event.addListener(this.searchfield, "keyup", function(e) { oself.handle_keyup(e) });
-    this.lastsearch = this.get_search_text();
+    this.lastsearch = lastsearch;
 
     // Define our custom event.
     this.createEvent('selectionchanged');
@@ -52,8 +52,8 @@ function user_selector(name, hash, extrafields, strprevselected, strnomatchingus
     YAHOO.util.Event.addListener(this.listbox, "click", function(e) { oself.handle_selection_change() });
     YAHOO.util.Event.addListener(this.listbox, "change", function(e) { oself.handle_selection_change() });
 
-    // And when the search any substring preference changes. Do an immediate research.
-    YAHOO.util.Event.addListener('userselector_searchanywhere', 'click', function(e) { oself.handle_searchanywhere_change() });
+    // And when the search any substring preference changes. Do an immediate re-search.
+    YAHOO.util.Event.addListener('userselector_searchanywhereid', 'click', function(e) { oself.handle_searchanywhere_change() });
 
     // Replace the Clear submit button with a clone that is not a submit button.
     var oldclearbutton = document.getElementById(this.name + '_clearbutton');
@@ -70,6 +70,14 @@ function user_selector(name, hash, extrafields, strprevselected, strnomatchingus
 
     // Hook up the event handler for the clear button.
     YAHOO.util.Event.addListener(this.clearbutton, "click", function(e) { oself.handle_clear() });
+
+    // If the contents of the search box is different from the search that was
+    // done on the server, reload the options. (This happens, for example,
+    // in Firefox. Go to the role assign page - the search box will be blank.
+    // Type something in the search box. Then click reload. The text will stay
+    // in the search box, but the server does not know about the new search term,
+    // so without this line, the list would contain all the users.
+    this.send_query(false);
 }
 
 /**
@@ -277,7 +285,7 @@ user_selector.prototype.get_search_text = function() {
  * @return the value of one of the option checkboxes.<b> 
  */
 user_selector.prototype.get_option = function(name) {
-    var checkbox = document.getElementById('userselector_' + name);
+    var checkbox = document.getElementById('userselector_' + name + 'id');
     if (checkbox) {
         return checkbox.checked;
     } else {
@@ -474,14 +482,14 @@ YAHOO.lang.augmentProto(user_selector, YAHOO.util.EventProvider);
  */
 function user_selector_options_tracker() {
     var oself = this;
-    YAHOO.util.Event.addListener('userselector_preserveselected', 'click',
+    YAHOO.util.Event.addListener('userselector_preserveselectedid', 'click',
             function(e) { oself.handle_option_change('userselector_preserveselected') });
-    YAHOO.util.Event.addListener('userselector_autoselectunique', 'click',
+    YAHOO.util.Event.addListener('userselector_autoselectuniqueid', 'click',
             function(e) { oself.handle_option_change('userselector_autoselectunique') });
-    YAHOO.util.Event.addListener('userselector_searchanywhere', 'click',
+    YAHOO.util.Event.addListener('userselector_searchanywhereid', 'click',
             function(e) { oself.handle_option_change('userselector_searchanywhere') });
 }
 
 user_selector_options_tracker.prototype.handle_option_change = function(option) {
-    set_user_preference(option, document.getElementById(option).checked);
+    set_user_preference(option, document.getElementById(option + 'id').checked);
 }
