@@ -1411,6 +1411,7 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(substr($string, 5-1, 2), $record->name);
 
         try {
+            // silence php warning ;-)
             @$DB->sql_substr("name");
             $this->fail("Expecting an exception, none occurred");
         } catch (Exception $e) {
