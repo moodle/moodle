@@ -246,6 +246,11 @@ define('PARAM_BASE64',   0x20000);
  */
 define('PARAM_CAPABILITY',   0x40000);
 
+/**
+ * PARAM_PERMISSION - A permission, one of CAP_INHERIT, CAP_ALLOW, CAP_PREVENT or CAP_PROHIBIT.
+ */
+define('PARAM_PERMISSION',   0x80000);
+
 /// Page types ///
 /**
  * PAGE_COURSE_VIEW is a definition of a page type. For more information on the page class see moodle/lib/pagelib.php.
@@ -610,6 +615,14 @@ function clean_param($param, $type) {
                 return $param;
             } else {
                 return '';
+            }
+
+        case PARAM_PERMISSION:
+            $param = (int)$param;
+            if (in_array($param, array(CAP_INHERIT, CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT))) {
+                return $param;
+            } else {
+                return CAP_INHERIT;
             }
 
         default:                 // throw error, switched parameters in optional_param or another serious problem

@@ -126,7 +126,7 @@ if (!empty($role->legacytype)) {
 foreach ($capabilities as $capability) {
 
     //legacy caps have their own selector
-    if (islegacy($capability->name)) {
+    if (is_legacy($capability->name)) {
         continue;
     }
 

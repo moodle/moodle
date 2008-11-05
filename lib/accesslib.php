@@ -1900,19 +1900,27 @@ function assign_legacy_capabilities($capability, $legacyperms) {
 
 
 /**
- * Checks to see if a capability is a legacy capability.
- * @param $capabilityname
- * @return boolean
+ * Checks to see if a capability is one of the special capabilities
+ *      (either a legacy capability, or moodle/site:doanything).
+ * @param string $capabilityname the capability name, e.g. mod/forum:view.
+ * @return boolean whether this is one of the special capabilities.
  */
-function islegacy($capabilityname) {
-    if (strpos($capabilityname, 'moodle/legacy') === 0) {
+function is_legacy($capabilityname) {
+    if ($capabilityname == 'moodle/site:doanything' || strpos($capabilityname, 'moodle/legacy') === 0) {
         return true;
     } else {
         return false;
     }
 }
 
-
+/**
+ * @param object $capability a capbility - a row from the capabilitites table.
+ * @return boolean whether this capability is safe - that is, wether people with the
+ *      safeoverrides capability should be allowed to change it.
+ */
+function is_safe_capability($capability) {
+    return (RISK_DATALOSS | RISK_MANAGETRUST | RISK_CONFIG | RISK_XSS | RISK_PERSONAL) & $capability->riskbitmask;
+}
 
 /**********************************
  * Context Manipulation functions *
@@ -3421,6 +3429,50 @@ function get_context_url($context) {
 }
 
 /**
+ * Print a risk icon, as a link to the Risks page on Moodle Docs.
+ *
+ * @param string $type the type of risk, will be one of the keys from the 
+ *      get_all_risks array. Must start with 'risk'.
+ */
+function print_risk_icon($type) {
+    global $CFG;
+    static $risksurl = null;
+    if (is_null($risksurl)) {
+        $risksurl = get_docs_url(s(get_string('risks', 'role')));
+    }
+    $iconurl = $CFG->pixpath . '/i/' . str_replace('risk', 'risk_', $type) . '.gif';
+    echo '<a onclick="this.target=\'docspopup\'" title="' . get_string($type, 'admin') .
+            '" href="' . $risksurl . '"> <img src="' . $iconurl . '" alt="' .
+            get_string($type . 'short', 'admin') . '" /></a>';
+}
+
+/**
+ * @return array all the known types of risk. The array keys can be used, for example
+ *      as CSS class names, or in calls to print_risk_icon. The values are the
+ *      corresponding RISK_ constants.
+ */
+function get_all_risks() {
+    return array(
+        'riskmanagetrust' => RISK_MANAGETRUST,
+        'riskconfig' => RISK_CONFIG,
+        'riskxss' => RISK_XSS,
+        'riskpersonal' => RISK_PERSONAL,
+        'riskspam' => RISK_SPAM,
+        'riskdataloss' => RISK_DATALOSS,
+    );
+}
+
+/**
+ * @param object $capability a capability - a row from the mdl_capabilities table.
+ * @return string the human-readable capability name as a link to Moodle Docs.
+ */
+function get_capability_docs_link($capability) {
+    global $CFG;
+    $url = get_docs_url('Capabilities/' . $capability->name);
+    return '<a onclick="this.target=\'docspopup\'" href="' . $url . '">' . get_capability_string($capability->name) . '</a>';
+}
+
+/**
  * Extracts the relevant capabilities given a contextid.
  * All case based, example an instance of forum context.
  * Will fetch all forum related capabilities, while course contexts
@@ -4085,7 +4137,6 @@ function allow_assign($sroleid, $troleid) {
 /**
  * Gets a list of roles that this user can assign in this context
  * @param object $context the context.
- * @param string $field the field to return for each role.
  * @param int $rolenamedisplay the type of role name to display. One of the
  *      ROLENAME_X constants. Default ROLENAME_ALIAS.
  * @param $withusercounts if true, count the number of users with each role.
@@ -4111,9 +4162,6 @@ function get_assignable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $with
     }
 
     if ($withusercounts) {
-        $countjoinandgroupby =
-                "JOIN 
-                GROUP BY ro.id, ro.name$extrafields";
         $extrafields = ', (SELECT count(u.id)
                 FROM {role_assignments} cra JOIN {user} u ON cra.userid = u.id
                 WHERE cra.roleid = ro.id AND cra.contextid = :conid AND u.deleted = 0
@@ -4122,17 +4170,17 @@ function get_assignable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $with
     }
 
     $params['userid'] = $USER->id;
-    if (!$roles = $DB->get_records_sql("SELECT ro.id, ro.name$extrafields
-                                          FROM {role} ro
-                                          JOIN (
-                                                   SELECT DISTINCT r.id
-                                                     FROM {role} r,
-                                                          {role_assignments} ra,
-                                                          {role_allow_assign} raa
-                                                    WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
-                                                      AND raa.roleid = ra.roleid AND r.id = raa.allowassign
-                                               ) inline_view ON ro.id = inline_view.id
-                                      ORDER BY ro.sortorder ASC", $params)) {
+    if (!$roles = $DB->get_records_sql("
+            SELECT ro.id, ro.name$extrafields
+              FROM {role} ro
+              JOIN (SELECT DISTINCT r.id
+                      FROM {role} r,
+                           {role_assignments} ra,
+                           {role_allow_assign} raa
+                     WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
+                       AND raa.roleid = ra.roleid AND r.id = raa.allowassign
+                   ) inline_view ON ro.id = inline_view.id
+          ORDER BY ro.sortorder ASC", $params)) {
         return array();
     }
 
@@ -4163,8 +4211,8 @@ function get_assignable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $with
 /**
  * Gets a list of roles that this user can assign in this context, for the switchrole menu
  *
- * @param object $context
- * @return array
+ * @param object $context the context.
+ * @return an array $roleid => $rolename.
  */
 function get_assignable_roles_for_switchrole($context) {
     global $USER, $DB;
@@ -4177,20 +4225,21 @@ function get_assignable_roles_for_switchrole($context) {
     $parents[] = $context->id;
     $contexts = implode(',' , $parents);
 
-    if (!$roles = $DB->get_records_sql("SELECT ro.*
-                                          FROM {role} ro,
-                                               (
-                                                   SELECT DISTINCT r.id
-                                                     FROM {role} r,
-                                                          {role_assignments} ra,
-                                                          {role_allow_assign} raa,
-                                                          {role_capabilities} rc
-                                                    WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
-                                                      AND raa.roleid = ra.roleid AND r.id = raa.allowassign
-                                                      AND r.id = rc.roleid AND rc.capability = :viewcap AND rc.capability <> :anythingcap
-                                               ) inline_view
-                                           WHERE ro.id = inline_view.id
-                                        ORDER BY ro.sortorder ASC", array('userid'=>$USER->id, 'viewcap'=>'moodle/course:view', 'anythingcap'=>'moodle/site:doanything'))) {
+    if (!$roles = $DB->get_records_sql("
+            SELECT ro.*
+              FROM {role} ro
+              JOIN (SELECT DISTINCT r.id
+                      FROM {role} r,
+                           {role_assignments} ra,
+                           {role_allow_assign} raa,
+                           {role_capabilities} rc
+                     WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
+                       AND raa.roleid = ra.roleid AND r.id = raa.allowassign
+                       AND r.id = rc.roleid AND rc.capability = :viewcap AND rc.capability <> :anythingcap
+                   ) inline_view ON ro.id = inline_view.id
+            ORDER BY ro.sortorder ASC",
+            array('userid'=>$USER->id, 'viewcap'=>'moodle/course:view',
+                    'anythingcap'=>'moodle/site:doanything'))) {
         return array();
     }
 
@@ -4202,16 +4251,20 @@ function get_assignable_roles_for_switchrole($context) {
 }
 
 /**
- * Gets a list of roles that this user can override in this context
- * @param object $context
- * @param string $field
- * @param int $rolenamedisplay
- * @return array
+ * Gets a list of roles that this user can override in this context.
+ *
+ * @param object $context the context.
+ * @param int $rolenamedisplay the type of role name to display. One of the
+ *      ROLENAME_X constants. Default ROLENAME_ALIAS.
+ * @param $withcounts if true, count the number of overrides that are set for each role.
+ * @return array if $withcounts is false, then an array $roleid => $rolename.
+ *      if $withusercounts is true, returns a list of three arrays,
+ *      $rolenames, $rolecounts, and $nameswithcounts.
  */
-function get_overridable_roles($context, $rolenamedisplay=ROLENAME_ALIAS) {
+function get_overridable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $withcounts = false) {
     global $USER, $DB;
 
-    if (!has_capability('moodle/role:override', $context) and !has_capability('moodle/role:safeoverride', $context)) {
+    if (!has_any_capability(array('moodle/role:safeoverride', 'moodle/role:override'), $context)) {
         return array();
     }
 
@@ -4219,26 +4272,55 @@ function get_overridable_roles($context, $rolenamedisplay=ROLENAME_ALIAS) {
     $parents[] = $context->id;
     $contexts = implode(',' , $parents);
 
-    if (!$roles = $DB->get_records_sql("SELECT ro.*
-                                          FROM {role} ro,
-                                               (
-                                                   SELECT DISTINCT r.id
-                                                     FROM {role} r,
-                                                          {role_assignments} ra,
-                                                          {role_allow_override} rao
-                                                    WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
-                                                      AND rao.roleid = ra.roleid AND r.id = rao.allowoverride
-                                               ) inline_view
-                                         WHERE ro.id = inline_view.id
-                                      ORDER BY ro.sortorder ASC", array('userid'=>$USER->id))) {
+    $params = array();
+    $extrafields = '';
+    if ($rolenamedisplay == ROLENAME_ORIGINALANDSHORT) {
+        $extrafields .= ', ro.shortname';
+    }
+
+    $params['userid'] = $USER->id;
+    if ($withcounts) {
+        $extrafields = ', (SELECT count(rc.id) FROM {role_capabilities} rc
+                WHERE rc.roleid = ro.id AND rc.contextid = :conid) AS overridecount';
+        $params['conid'] = $context->id;
+    }
+
+    if (!$roles = $DB->get_records_sql("
+            SELECT ro.id, ro.name$extrafields
+              FROM {role} ro
+              JOIN (
+                       SELECT DISTINCT r.id
+                         FROM {role} r
+                         JOIN {role_allow_override} rao ON r.id = rao.allowoverride
+                         JOIN {role_assignments} ra ON rao.roleid = ra.roleid
+                        WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
+                   ) inline_view ON ro.id = inline_view.id
+          ORDER BY ro.sortorder ASC", $params)) {
         return array();
     }
 
+    $rolenames = array();
     foreach ($roles as $role) {
-        $roles[$role->id] = $role->name;
+        $rolenames[$role->id] = $role->name;
+        if ($rolenamedisplay == ROLENAME_ORIGINALANDSHORT) {
+            $rolenames[$role->id] .= ' (' . $role->shortname . ')';
+        }
+    }
+    if ($rolenamedisplay != ROLENAME_ORIGINALANDSHORT) {
+        $rolenames = role_fix_names($rolenames, $context, $rolenamedisplay);
     }
 
-    return role_fix_names($roles, $context, $rolenamedisplay);
+    if (!$withcounts) {
+        return $rolenames;
+    }
+
+    $rolecounts = array();
+    $nameswithcounts = array();
+    foreach ($roles as $role) {
+        $nameswithcounts[$role->id] = $rolenames[$role->id] . ' (' . $roles[$role->id]->overridecount . ')';
+        $rolecounts[$role->id] = $roles[$role->id]->overridecount;
+    }
+    return array($rolenames, $rolecounts, $nameswithcounts);
 }
 
 /**

@@ -102,7 +102,7 @@
                     }
 
                     // legacy caps have their own selector
-                    if (islegacy($data->{$cap->name})) {
+                    if (is_legacy($data->{$cap->name})) {
                         continue;
                     }
 
@@ -176,7 +176,7 @@
                     }
 
                     // legacy caps have their own selector
-                    if (islegacy($data->{$cap->name}) === 0 ) {
+                    if (is_legacy($data->{$cap->name}) === 0 ) {
                         continue;
                     }
 

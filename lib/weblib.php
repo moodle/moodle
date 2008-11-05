@@ -6934,6 +6934,16 @@ function page_doc_link($text='', $iconpath='') {
 }
 
 /**
+ * @param string $path the end of the URL.
+ * @return The start of a MoodleDocs URL in the user's language.
+ *      E.g. http://docs.moodle.org/en/
+ */
+function get_docs_url($path) {
+    global $CFG;
+    return $CFG->docroot . '/' . str_replace('_utf8', '', current_language()) . '/' . $path;
+}
+
+/**
  * Returns a string containing a link to the user documentation.
  * Also contains an icon by default. Shown to teachers and admin only.
  *
@@ -6949,11 +6959,7 @@ function doc_link($path='', $text='', $iconpath='') {
         return '';
     }
 
-    $lang = str_replace('_utf8', '', current_language());
-    $url = $CFG->docroot. '/' .$lang. '/' .$path;
-
-    $lang = str_replace('_utf8', '', current_language());
-    $url = $CFG->docroot. '/' .$lang. '/' .$path;
+    $url = get_docs_url($path);
 
     $target = '';
     if (!empty($CFG->doctonewwindow)) {

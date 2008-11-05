@@ -16,7 +16,10 @@ if ($currenttab != 'update') {
             $navlinks[] = array('name' => $stradministration, 'link' => '../index.php', 'type' => 'misc');
             $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
             $navigation = build_navigation($navlinks);
-            print_header($SITE->fullname, "$SITE->fullname", $navigation);
+            if (empty($title)) {
+                $title = $SITE->fullname;
+            }
+            print_header($title, "$SITE->fullname", $navigation);
             break;
 
         case CONTEXT_USER:
@@ -37,13 +40,14 @@ if ($currenttab != 'update') {
                                 'type' => 'misc');
             $navigation = build_navigation($navlinks);
 
-            print_header("$SITE->shortname: $category->name", "$SITE->fullname: $strcourses", $navigation, "", "", true);
+            if (empty($title)) {
+                $title = "$SITE->shortname: $category->name";
+            }
+            print_header($title, "$SITE->fullname: $strcourses", $navigation, "", "", true);
             break;
 
         case CONTEXT_COURSE:
             if ($context->instanceid != SITEID) {
-                $streditcoursesettings = get_string("editcoursesettings");
-
                 $course = $DB->get_record('course', array('id'=>$context->instanceid));
 
                 require_login($course);
@@ -51,7 +55,10 @@ if ($currenttab != 'update') {
                                     'link' => "$CFG->wwwroot/admin/roles/assign.php?contextid=$context->id",
                                     'type' => 'misc');
                 $navigation = build_navigation($navlinks);
-                print_header($streditcoursesettings, $course->fullname, $navigation);
+                if (empty($title)) {
+                    $title = get_string("editcoursesettings");
+                }
+                print_header($title, $course->fullname, $navigation);
             }
             break;
 
@@ -76,7 +83,6 @@ if ($currenttab != 'update') {
             require_login($course);
 
             $fullmodulename      = get_string("modulename", $module->name);
-            $streditinga         = get_string("editinga", "moodle", $fullmodulename);
             $strmodulenameplural = get_string("modulenameplural", $module->name);
 
             if ($module->name == "label") {
@@ -99,7 +105,10 @@ if ($currenttab != 'update') {
 
             $navigation = build_navigation($navlinks);
 
-            print_header_simple($streditinga, '', $navigation, $focuscursor, "", false);
+            if (empty($title)) {
+                $title = get_string("editinga", "moodle", $fullmodulename);
+            }
+            print_header_simple($title, '', $navigation, $focuscursor, "", false);
 
             break;
 

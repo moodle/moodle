@@ -96,6 +96,7 @@ $string['cannotopenforwrit'] = 'Cannot open for writing: $a';
 $string['cannotopenfile'] = 'Cannot open file ($a)';
 $string['cannotopentemplate'] = 'Cannot open template file ($a)';
 $string['cannotoverridebaserole'] = 'Cannot override base role capabilities';
+$string['cannotoverriderolehere'] = 'You are not allowed to override this role (id = $a->roleid) in this context ($a->context)';
 $string['cannotreadtmpfile'] = 'Error reading temporary file';
 $string['cannotreaduploadfile'] = 'Could not read uploaded file';
 $string['cannotreadfile'] = 'Cannot read file ($a)';
