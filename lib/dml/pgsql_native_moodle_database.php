@@ -13,6 +13,8 @@ class pgsql_native_moodle_database extends moodle_database {
     protected $debug     = false;
     protected $bytea_oid = null;
 
+    protected $last_debug;
+
     /**
      * Detects if all needed PHP stuff installed.
      * Note: can be used before connect()
@@ -145,6 +147,32 @@ class pgsql_native_moodle_database extends moodle_database {
             $this->pgsql = null;
         }
         parent::dispose();
+    }
+
+
+    /**
+     * Called before each db query.
+     * @param string $sql
+     * @param array array of parameters
+     * @param int $type type of query
+     * @param mixed $extrainfo driver specific extra information
+     * @return void
+     */
+    protected function query_start($sql, array $params=null, $type, $extrainfo=null) {
+        parent::query_start($sql, $params, $type, $extrainfo);
+        // pgsql driver tents to send debug to output, we do not need that ;-)
+        $this->last_debug = error_reporting(0);
+    }
+
+    /**
+     * Called immediately after each db query.
+     * @param mixed db specific result
+     * @return void
+     */
+    protected function query_end($result) {
+        //reset original debug level
+        error_reporting($this->last_debug);
+        parent::query_end($result);
     }
 
     /**
