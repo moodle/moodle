@@ -153,7 +153,7 @@ class default_questiontype {
     /**
      * Return an instance of the question editing form definition. This looks for a
      * class called edit_{$this->name()}_question_form in the file
-     * {$CFG->docroot}/question/type/{$this->name()}/edit_{$this->name()}_question_form.php
+     * {$CFG->dirroot}/question/type/{$this->name()}/edit_{$this->name()}_question_form.php
      * and if it exists returns an instance of it.
      *
      * @param string $submiturl passed on to the constructor call.
