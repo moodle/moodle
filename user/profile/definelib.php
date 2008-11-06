@@ -143,7 +143,10 @@ class profile_define_base {
 
         $data = $this->define_save_preprocess($data); /// hook for child classes
 
-        $old = get_record('user_info_field', 'id', $data->id);
+        $old = false;
+        if (!empty($data->id)) {
+            $old = get_record('user_info_field', 'id', $data->id);
+        }
 
         /// check to see if the category has changed
         if (!$old or $old->categoryid != $data->categoryid) {
