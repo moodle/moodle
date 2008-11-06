@@ -15,7 +15,7 @@
     $courseid       = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
     $hidden         = optional_param('hidden', 0, PARAM_BOOL); // whether this assignment is hidden
     $extendperiod   = optional_param('extendperiod', 0, PARAM_INT);
-    $extendbase     = optional_param('extendbase', 0, PARAM_INT);
+    $extendbase     = optional_param('extendbase', 3, PARAM_INT);
 
     $baseurl = $CFG->wwwroot . '/' . $CFG->admin . '/roles/assign.php?contextid=' . $contextid;
     if (!empty($userid)) {
@@ -103,7 +103,7 @@
 
     // MDL-12420, preventing course start date showing up as an option at system context and front page roles.
     if ($course->startdate > 0) {
-        $basemenu[0] = get_string('coursestart') . ' (' . userdate($course->startdate, $timeformat) . ')';
+        $basemenu[2] = get_string('coursestart') . ' (' . userdate($course->startdate, $timeformat) . ')';
     }
     if ($course->enrollable != 2 || ($course->enrolstartdate == 0 || $course->enrolstartdate <= $today) && ($course->enrolenddate == 0 || $course->enrolenddate > $today)) {
         $basemenu[3] = get_string('today') . ' (' . userdate($today, $timeformat) . ')' ;
@@ -115,12 +115,6 @@
         if($course->enrolenddate > 0) {
             $basemenu[5] = get_string('courseenrolend') . ' (' . userdate($course->enrolenddate, $timeformat) . ')';
         }
-    }
-/// Work out the apropriate default setting.
-    if ($extendbase) {
-        $defaultbase = $extendbase;
-    } else {
-        $defaultbase = 3;
     }
 
 /// Process any incoming role assignments before printing the header.
@@ -162,7 +156,7 @@
 
                     if ($allow) {
                         switch($extendbase) {
-                            case 0:
+                            case 2:
                                 $timestart = $course->startdate;
                                 break;
                             case 3:
@@ -312,10 +306,10 @@
               </label></p>
 
               <p><label for="extendperiod"><?php print_string('enrolperiod') ?></label><br />
-              <?php choose_from_menu($periodmenu, "extendperiod", $defaultperiod, $unlimitedperiod); ?></p>
+              <?php choose_from_menu($periodmenu, 'extendperiod', $defaultperiod, $unlimitedperiod); ?></p>
 
               <p><label for="extendbase"><?php print_string('startingfrom') ?></label><br />
-              <?php choose_from_menu($basemenu, "extendbase", $defaultbase, ""); ?></p>
+              <?php choose_from_menu($basemenu, 'extendbase', $extendbase, ''); ?></p>
               <?php print_collapsible_region_end(); ?>
           </div>
 
