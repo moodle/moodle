@@ -2549,36 +2549,20 @@
         //If $preferences->backup_destination isn't empty, then copy to custom directory
         if (!empty($preferences->backup_destination)) {
             $to_zip_file = $preferences->backup_destination."/".$preferences->backup_name;
+
+            //Copy zip file
+            if ($status) {
+                $status = backup_copy_file ($from_zip_file,$to_zip_file);
+            }
         } else {
             //Define zip destination (course dir)
-            $to_zip_file = $CFG->dataroot."/".$preferences->backup_course;
-
-            //echo "<p>From: ".$from_zip_file."<br />";                                              //Debug
-
-            //echo "<p>Checking: ".$to_zip_file."<br />";                                          //Debug
-
-            //Checks course dir exists
-            $status = check_dir_exists($to_zip_file,true);
-
-            //Define zip destination (backup dir)
-            $to_zip_file = $to_zip_file."/backupdata";
-
-            //echo "<p>Checking: ".$to_zip_file."<br />";                                          //Debug
-
-            //Checks backup dir exists
-            $status = check_dir_exists($to_zip_file,true);
-
-            //Define zip destination (zip file)
-            $to_zip_file = $to_zip_file."/".$preferences->backup_name;
+            $context = get_context_instance(CONTEXT_COURSE, $preferences->backup_course);
+            $fs = get_file_storage();
+            $file_record = array('contextid'=>$context->id, 'filearea'=>'course_backup',
+                    'itemid'=>0, 'filepath'=>'/', 'filename'=>$preferences->backup_name,
+                    'timecreated'=>time(), 'timemodified'=>time());
+            $fs->create_file_from_pathname($file_record, $from_zip_file);
         }
-
-        //echo "<p>To: ".$to_zip_file."<br />";                                              //Debug
-
-        //Copy zip file
-        if ($status) {
-            $status = backup_copy_file ($from_zip_file,$to_zip_file);
-        }
-
         return $status;
     }
 
