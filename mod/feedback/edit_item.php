@@ -144,7 +144,7 @@
     $itemobj = new $itemclass();
     $item_form = &$itemobj->show_edit($item);
     
-    $i_form = &$item_form->_form;
+    $i_form = &$item_form->get_item_form();
     // $i_form->addElement('header', 'general', 'Titel');
     $i_form->addElement('hidden', 'id', $id);
     $i_form->addElement('hidden', 'itemid', isset($item->id)?$item->id:'');

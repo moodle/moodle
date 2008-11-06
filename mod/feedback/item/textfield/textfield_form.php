@@ -1,8 +1,8 @@
 <?php
 
-require_once $CFG->libdir.'/formslib.php';
+require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_form_class.php');
 
-class feedback_textfield_form extends moodleform {
+class feedback_textfield_form extends feedback_item_form {
     var $type = "textfield";
     var $requiredcheck;
     var $itemname;
