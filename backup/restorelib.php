@@ -1171,7 +1171,17 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
 
             // Now that we have IDs for everything, store any completion data
-            if($status && !empty($info->completiondata)) {
+            if($status && !empty($info->completiondata) && count($info->completiondata)>0) {
+                // Get list of users who can view course (& hence have
+                // completion data)
+                if(!isset($restore->userswhocanviewcourse)) {
+                    // Because this is only used here, there is no point requesting
+                    // anything except id
+                    $restore->userswhocanviewcourse=get_users_by_capability(
+                        get_context_instance(CONTEXT_COURSE, $restore->course_id),
+                        'moodle/course:view','u.id');
+                }
+
                 foreach($info->completiondata as $data) {
                     // Convert cmid 
                     $newcmid=backup_getid($restore->backup_unique_code, 'course_modules', $data->coursemoduleid);
@@ -1192,6 +1202,15 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     } else {
                         // Skip missing users
                         debugging("Not restoring completion data for missing user {$data->userid}",DEBUG_DEVELOPER);
+                        continue;
+                    }
+
+                    // Check user is still able to access new course (they
+                    // might have had their role assignment excluded, and it
+                    // creates arguably bogus database rows if we add completion
+                    // data for them, and displays confusingly in the 'number
+                    // of people who have already marked this complete' UI)
+                    if(!array_key_exists($data->userid,$restore->userswhocanviewcourse)) {
                         continue;
                     }
 
