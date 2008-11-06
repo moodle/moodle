@@ -178,7 +178,7 @@ class block_quiz_results extends block_base {
 
             if ($nameformat = B_QUIZRESULTS_NAME_FORMAT_FULL) {
                 if (has_capability('moodle/course:managegroups', $context)) {
-                    $grouplink = $CFG->wwwroot.'/group/overview.php?courseid='.$courseid.'&amp;id=';
+                    $grouplink = $CFG->wwwroot.'/group/overview.php?id='.$courseid.'&amp;group=';
                 } else if (has_capability('moodle/course:viewparticipants', $context)) {
                     $grouplink = $CFG->wwwroot.'/user/index.php?id='.$courseid.'&amp;group=';
                 } else {
