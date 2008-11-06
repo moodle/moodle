@@ -611,7 +611,14 @@
             if ($nameincourse != $role->name) {
                 fwrite ($bf,full_tag('NAMEINCOURSE', 3, false, $nameincourse));
             }
-            // find and write all default capabilities
+        /// List of context level where this role can be assigned.
+            fwrite ($bf,start_tag('CONTEXTLEVELS',3,true));
+            $contextlevels = get_role_contextlevels($role->id);
+            foreach ($contextlevels as $cl) {
+                fwrite ($bf,full_tag('CONTEXTLEVEL', 4, false, $cl));
+            }
+            fwrite ($bf,end_tag('CONTEXTLEVELS',3,true));
+        /// find and write all default capabilities
             fwrite ($bf,start_tag('CAPABILITIES',3,true));
             // pull out all default (site context) capabilities
             if ($capabilities = role_context_capabilities($role->id, $sitecontext)) {

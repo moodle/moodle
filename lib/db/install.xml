@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20081010" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20081022" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -881,7 +881,7 @@
         <INDEX NAME="roleid-contextid" UNIQUE="true" FIELDS="roleid, contextid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="role_sortorder" COMMENT="sort order of course managers in a course" PREVIOUS="role_names" NEXT="user_info_field">
+    <TABLE NAME="role_sortorder" COMMENT="sort order of course managers in a course" PREVIOUS="role_names" NEXT="role_context_levels">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="roleid"/>
@@ -899,7 +899,19 @@
         <INDEX NAME="userid-roleid-contextid" UNIQUE="true" FIELDS="userid, roleid, contextid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="user_info_field" COMMENT="Customisable user profile fields" PREVIOUS="role_sortorder" NEXT="user_info_category">
+    <TABLE NAME="role_context_levels" COMMENT="Lists which roles can be assigned at which context levels. The assignment is allowed in the corresponding row is present in this table." PREVIOUS="role_sortorder" NEXT="user_info_field">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="roleid"/>
+        <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="contextlevel"/>
+        <FIELD NAME="contextlevel" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="roleid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="contextlevel-roleid"/>
+        <KEY NAME="contextlevel-roleid" TYPE="unique" FIELDS="contextlevel, roleid" PREVIOUS="primary" NEXT="roleid"/>
+        <KEY NAME="roleid" TYPE="foreign" FIELDS="roleid" REFTABLE="role" REFFIELDS="id" PREVIOUS="contextlevel-roleid"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="user_info_field" COMMENT="Customisable user profile fields" PREVIOUS="role_context_levels" NEXT="user_info_category">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="shortname"/>
         <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="shortname" SEQUENCE="false" ENUM="false" COMMENT="short name for each field" PREVIOUS="id" NEXT="name"/>

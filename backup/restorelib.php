@@ -5047,13 +5047,20 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                 $this->info->roles[$this->info->tempid]->id = $this->info->tempid;
                                 break;
                             case "NAME":
-                                $this->info->roles[$this->info->tempid]->name = $this->getContents();;
+                                $this->info->roles[$this->info->tempid]->name = $this->getContents();
                                 break;
                             case "SHORTNAME":
-                                $this->info->roles[$this->info->tempid]->shortname = $this->getContents();;
+                                $this->info->roles[$this->info->tempid]->shortname = $this->getContents();
                                 break;
                             case "NAMEINCOURSE": // custom name of the role in course
-                                $this->info->roles[$this->info->tempid]->nameincourse = $this->getContents();;
+                                $this->info->roles[$this->info->tempid]->nameincourse = $this->getContents();
+                                break;
+                        }
+                    }
+                    if ($this->level == 5) {
+                        switch ($tagName) {
+                            case "CONTEXTLEVEL":
+                                $this->info->roles[$this->info->tempid]->contextlevels[] = $this->getContents();
                                 break;
                         }
                     }
@@ -8435,6 +8442,21 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     $newroleid = create_role($roledata->name, $roledata->shortname, '');
                     $status = backup_putid($restore->backup_unique_code,"role",$oldroleid,
                                      $newroleid); // adding a new id
+
+                /// Restore the role contextlevels.
+                    if (isset($roledata->contextlevels)) {
+                        set_role_contextlevels($newroleid, $roledata->contextlevels);                        
+                    } else {
+                        // Data was not in the backup file (must be a pre-2.0 backup).
+                        // Allow this role to be assigned at all levels, which is
+                        // Which is what would have been possible where the backup
+                        // was made.
+                        set_role_contextlevels($newroleid, array(CONTEXT_SYSTEM,
+                                CONTEXT_USER, CONTEXT_COURSECAT, CONTEXT_COURSE,
+                                CONTEXT_MODULE, CONTEXT_BLOCK));
+                    }
+
+                /// Restore all the role capabiltites.
                     foreach ($roledata->capabilities as $capability) {
 
                         $roleinfo = new object();

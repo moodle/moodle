@@ -319,6 +319,10 @@
         echo '<p><a href="' . $baseurl . '">' . get_string('backtoallroles', 'role') . '</a></p>';
         echo '</div>';
 
+    } else if (empty($overridableroles)) {
+    /// Print a message that there are no roles that can me assigned here.
+        print_heading(get_string('notabletooverrideroleshere', 'role'), 'center', 3);
+
     } else {
     /// Show UI for choosing a role to assign.
 

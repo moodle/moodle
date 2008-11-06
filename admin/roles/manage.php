@@ -28,6 +28,15 @@
     $roles = get_all_roles();
     $rolescount = count($roles);
 
+    $allcontextlevels = array(
+        CONTEXT_SYSTEM => get_string('coresystem'),
+        CONTEXT_USER => get_string('user'),
+        CONTEXT_COURSECAT => get_string('category'),
+        CONTEXT_COURSE => get_string('course'),
+        CONTEXT_MODULE => get_string('activitymodule'),
+        CONTEXT_BLOCK => get_string('block')
+    );
+
 /// fix sort order if needed
     $rolesort = array();
     $i = 0;
@@ -91,6 +100,16 @@
                     $newrole->shortname   = $shortname;
                     $newrole->description = $description;
                     $newrole->legacytype  = $legacytype;
+                }
+
+                $newcontextlevels = array();
+                foreach (array_keys($allcontextlevels) as $cl) {
+                    if (optional_param('contextlevel' . $cl, false, PARAM_BOOL)) {
+                        $newcontextlevels[$cl] = $cl;
+                    }
+                }
+                if (empty($errors)) {
+                    set_role_contextlevels($newroleid, $newcontextlevels);
                 }
 
                 $allowed_values = array(CAP_INHERIT, CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT);
@@ -165,6 +184,16 @@
                     $newrole->shortname   = $shortname;
                     $newrole->description = $description;
                     $newrole->legacytype  = $legacytype;
+                }
+
+                $newcontextlevels = array();
+                foreach (array_keys($allcontextlevels) as $cl) {
+                    if (optional_param('contextlevel' . $cl, false, PARAM_BOOL)) {
+                        $newcontextlevels[$cl] = $cl;
+                    }
+                }
+                if (empty($errors)) {
+                    set_role_contextlevels($roleid, $newcontextlevels);
                 }
 
                 $allowed_values = array(CAP_INHERIT, CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT);
@@ -365,6 +394,8 @@
                 // dupilcate all the capabilities
                 role_cap_duplicate($sourcerole, $newrole);
 
+                set_role_contextlevels($newrole, get_role_contextlevels($roleid));
+
                 // dup'ed a role sitewide...
                 mark_context_dirty($sitecontext->path);
 
@@ -380,6 +411,8 @@
             }
 
             if ($confirm and data_submitted() and confirm_sesskey()) {
+                set_role_contextlevels($roleid, get_default_contextlevels(get_legacy_type($roleid)));
+
                 reset_role_capabilities($roleid);
 
                 // reset a role sitewide...
@@ -434,16 +467,21 @@
                 $role->shortname   = '';
                 $role->description = '';
                 $role->legacytype  = '';
+                $rolecontextlevels = array();
             } else {
                 $role = $newrole;
+                $rolecontextlevels = $newcontextlevels;
             }
         } else if ($action == 'edit' and !empty($errors) and !empty($newrole)) {
-                $role = $newrole;
+            $role = $newrole;
+            $rolecontextlevels = $newcontextlevels;
+            
         } else {
             if(!$role = $DB->get_record('role', array('id'=>$roleid))) {
                 print_error('wrongroleid', 'error');
             }
             $role->legacytype = get_legacy_type($role->id);
+            $rolecontextlevels = get_role_contextlevels($roleid);
         }
 
         foreach ($roles as $rolex) {
@@ -496,6 +534,12 @@
         echo '</div>';
 
         $lang = str_replace('_utf8', '', current_language());
+
+        if ($action == 'edit' || $action == 'add') {
+            $disabled = '';
+        } else {
+            $disabled = 'disabled="disabled" ';
+        }
 
         print_simple_box_start('center');
         include_once('manage.html');

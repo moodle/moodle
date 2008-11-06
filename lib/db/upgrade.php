@@ -873,6 +873,81 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2008101300);
     }
 
+    /// New table for storing which roles can be assigned in which contexts.
+    if ($result && $oldversion < 2008110601) {
+
+    /// Define table role_context_levels to be created
+        $table = new xmldb_table('role_context_levels');
+
+    /// Adding fields to table role_context_levels
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('roleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('contextlevel', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table role_context_levels
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('contextlevel-roleid', XMLDB_KEY_UNIQUE, array('contextlevel', 'roleid'));
+        $table->add_key('roleid', XMLDB_KEY_FOREIGN, array('roleid'), 'role', array('id'));
+
+    /// Conditionally launch create table for role_context_levels
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008110601);
+    }
+
+    /// Now populate the role_context_levels table with the defaults that match
+    /// moodle_install_roles, and any other combinations that exist in this system.
+    if ($result && $oldversion < 2008110602) {
+        $roleids = $DB->get_records_menu('role', array(), '', 'shortname,id');
+
+    /// Defaults, should match moodle_install_roles.
+        $rolecontextlevels = array();
+        if (isset($roleids['admin'])) {
+            $rolecontextlevels[$roleids['admin']] = get_default_contextlevels('admin');
+        }
+        if (isset($roleids['coursecreator'])) {
+            $rolecontextlevels[$roleids['coursecreator']] = get_default_contextlevels('coursecreator');
+        }
+        if (isset($roleids['editingteacher'])) {
+            $rolecontextlevels[$roleids['editingteacher']] = get_default_contextlevels('editingteacher');
+        }
+        if (isset($roleids['teacher'])) {
+            $rolecontextlevels[$roleids['teacher']] = get_default_contextlevels('teacher');
+        }
+        if (isset($roleids['student'])) {
+            $rolecontextlevels[$roleids['student']] = get_default_contextlevels('student');
+        }
+        if (isset($roleids['guest'])) {
+            $rolecontextlevels[$roleids['guest']] = get_default_contextlevels('guest');
+        }
+        if (isset($roleids['user'])) {
+            $rolecontextlevels[$roleids['user']] = get_default_contextlevels('user');
+        }
+    
+    /// See what other role assignments are in this database, extend the allowed
+    /// lists to allow them too.
+        $existingrolecontextlevels = $DB->get_recordset_sql('SELECT DISTINCT ra.roleid, con.contextlevel FROM
+                {role_assignments} ra JOIN {context} con ON ra.contextid = con.id');
+        foreach ($existingrolecontextlevels as $rcl) {
+            if (!isset($rolecontextlevels[$rcl->roleid])) {
+                $rolecontextlevels[$rcl->roleid] = array($rcl->contextlevel);
+            } else if (!in_array($rcl->contextlevel, $rolecontextlevels[$rcl->roleid])) {
+                $rolecontextlevels[$rcl->roleid][] = $rcl->contextlevel;
+            }
+        }
+
+    /// Put the data into the database.
+        foreach ($rolecontextlevels as $roleid => $contextlevels) {
+            set_role_contextlevels($roleid, $contextlevels);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008110602);
+    }
+
     return $result;
 }
 

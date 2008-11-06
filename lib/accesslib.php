@@ -1825,6 +1825,14 @@ function moodle_install_roles() {
     //allow_override($editteacherrole, $studentrole);
     //allow_override($editteacherrole, $guestrole);
 
+/// Set up the context levels where you can assign each role.
+    set_role_contextlevels($adminrole->id, get_default_contextlevels('admin'));
+    set_role_contextlevels($coursecreatorrole->id, get_default_contextlevels('coursecreator'));
+    set_role_contextlevels($editteacherrole->id, get_default_contextlevels('editingteacher'));
+    set_role_contextlevels($noneditteacherrole->id, get_default_contextlevels('teacher'));
+    set_role_contextlevels($studentrole->id, get_default_contextlevels('student'));
+    set_role_contextlevels($guestrole->id, get_default_contextlevels('guest'));
+    set_role_contextlevels($userrole->id, get_default_contextlevels('user'));
 }
 
 /**
@@ -1921,6 +1929,7 @@ function is_legacy($capabilityname) {
 function is_safe_capability($capability) {
     return (RISK_DATALOSS | RISK_MANAGETRUST | RISK_CONFIG | RISK_XSS | RISK_PERSONAL) & $capability->riskbitmask;
 }
+
 
 /**********************************
  * Context Manipulation functions *
@@ -2593,6 +2602,7 @@ function delete_role($roleid) {
         $DB->delete_records('role_allow_override', array('roleid'=>$roleid));
         $DB->delete_records('role_allow_override', array('allowoverride'=>$roleid));
         $DB->delete_records('role_names',          array('roleid'=>$roleid));
+        $DB->delete_records('role_context_levels', array('roleid'=>$roleid));
     }
 
 // finally delete the role itself
@@ -3345,12 +3355,12 @@ function print_context_name($context, $withprefix = true, $short = false) {
             if ($cm = $DB->get_record_sql('SELECT cm.*, md.name AS modname FROM {course_modules} cm ' .
                     'JOIN {modules} md ON md.id = cm.module WHERE cm.id = ?', array($context->instanceid))) {
                 if ($mod = $DB->get_record($cm->modname, array('id' => $cm->instance))) {
-                    if ($withprefix){
+                        if ($withprefix){
                         $name = get_string('modulename', $cm->modname).': ';
+                        }
+                        $name .= $mod->name;
                     }
-                    $name .= $mod->name;
                 }
-            }
             break;
 
         case CONTEXT_BLOCK: // not necessarily 1 to 1 to course
@@ -4148,7 +4158,11 @@ function get_assignable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $with
     global $USER, $DB;
 
     if (!has_capability('moodle/role:assign', $context)) {
-        return array();
+        if ($withusercounts) {
+            return array(array(), array(), array());
+        } else {
+            return array();
+        }
     }
 
     $parents = get_parent_contexts($context);
@@ -4170,18 +4184,21 @@ function get_assignable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $with
     }
 
     $params['userid'] = $USER->id;
+    $params['contextlevel'] = $context->contextlevel;
     if (!$roles = $DB->get_records_sql("
-            SELECT ro.id, ro.name$extrafields
-              FROM {role} ro
+             SELECT ro.id, ro.name$extrafields
+               FROM {role} ro
               JOIN (SELECT DISTINCT r.id
-                      FROM {role} r,
-                           {role_assignments} ra,
-                           {role_allow_assign} raa
-                     WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
-                       AND raa.roleid = ra.roleid AND r.id = raa.allowassign
-                   ) inline_view ON ro.id = inline_view.id
-          ORDER BY ro.sortorder ASC", $params)) {
-        return array();
+                     FROM {role} r,
+                          {role_assignments} ra,
+                          {role_allow_assign} raa
+                    WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
+                      AND raa.roleid = ra.roleid AND r.id = raa.allowassign
+                    ) inline_view ON ro.id = inline_view.id
+               JOIN {role_context_levels} rcl ON ro.id = rcl.roleid
+              WHERE rcl.contextlevel = :contextlevel
+           ORDER BY ro.sortorder ASC", $params)) {
+        $roles = array();
     }
 
     $rolenames = array();
@@ -4189,7 +4206,7 @@ function get_assignable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $with
         $rolenames[$role->id] = $role->name;
         if ($rolenamedisplay == ROLENAME_ORIGINALANDSHORT) {
             $rolenames[$role->id] .= ' (' . $role->shortname . ')';
-        }
+    }
     }
     if ($rolenamedisplay != ROLENAME_ORIGINALANDSHORT) {
         $rolenames = role_fix_names($rolenames, $context, $rolenamedisplay);
@@ -4265,7 +4282,11 @@ function get_overridable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $wit
     global $USER, $DB;
 
     if (!has_any_capability(array('moodle/role:safeoverride', 'moodle/role:override'), $context)) {
-        return array();
+        if ($withcounts) {
+            return array(array(), array(), array());
+        } else {
+            return array();
+        }
     }
 
     $parents = get_parent_contexts($context);
@@ -4289,14 +4310,14 @@ function get_overridable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $wit
             SELECT ro.id, ro.name$extrafields
               FROM {role} ro
               JOIN (
-                       SELECT DISTINCT r.id
+                                                   SELECT DISTINCT r.id
                          FROM {role} r
                          JOIN {role_allow_override} rao ON r.id = rao.allowoverride
                          JOIN {role_assignments} ra ON rao.roleid = ra.roleid
-                        WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
+                                                    WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
                    ) inline_view ON ro.id = inline_view.id
           ORDER BY ro.sortorder ASC", $params)) {
-        return array();
+        $roles = array();
     }
 
     $rolenames = array();
@@ -4312,7 +4333,7 @@ function get_overridable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $wit
 
     if (!$withcounts) {
         return $rolenames;
-    }
+}
 
     $rolecounts = array();
     $nameswithcounts = array();
@@ -4321,6 +4342,57 @@ function get_overridable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $wit
         $rolecounts[$role->id] = $roles[$role->id]->overridecount;
     }
     return array($rolenames, $rolecounts, $nameswithcounts);
+}
+
+/**
+ * @param integer $roleid the id of a role.
+ * @return array list of the context levels at which this role may be assigned.
+ */
+function get_role_contextlevels($roleid) {
+    global $DB;
+    return $DB->get_records_menu('role_context_levels', array('roleid' => $roleid),
+            'contextlevel', 'id,contextlevel');
+}
+
+/**
+ * @param string $roleid one of the legacy role types - that is, one of the keys
+ *      from the array returned by get_legacy_roles();
+ * @return array list of the context levels at which this type of role may be assigned by default.
+ */
+function get_default_contextlevels($roletype) {
+    static $defaults = array(
+        'admin' => array(CONTEXT_SYSTEM),
+        'coursecreator' => array(CONTEXT_SYSTEM, CONTEXT_COURSECAT),
+        'editingteacher' => array(CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_MODULE),
+        'teacher' => array(CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_MODULE),
+        'student' => array(CONTEXT_COURSE, CONTEXT_MODULE),
+        'guest' => array(),
+        'user' => array()
+    );
+    
+    return $defaults[$roletype];
+}
+
+/**
+ * Set the context levels at which a particular role can be assigned.
+ * Throws exceptions in case of error.
+ *
+ * @param integer $roleid the id of a role.
+ * @param array $contextlevels the context levels at which this role should be assignable.
+ */
+function set_role_contextlevels($roleid, array $contextlevels) {
+    global $DB;
+    if (!$DB->delete_records('role_context_levels', array('roleid' => $roleid))) {
+        throw new moodle_exception('couldnotdeleterolecontextlevels', '', '', $roleid);
+    }
+    $rcl = new stdClass;
+    $rcl->roleid = $roleid;
+    foreach ($contextlevels as $level) {
+        $rcl->contextlevel = $level;
+        if (!$DB->insert_record('role_context_levels', $rcl, false, true)) {
+            throw new moodle_exception('couldnotdeleterolecontextlevels', '', '', $rcl);            
+        }
+    }
 }
 
 /**

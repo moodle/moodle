@@ -23,19 +23,19 @@
 <table class="roledesc" cellpadding="9" cellspacing="0">
 <?php if ($action == 'view') { ?>
     <tr valign="top">
-        <td align="right"><?php print_string('name') ?>:</td>
+        <td align="right"><?php print_string('name') ?></td>
         <td><?php p(format_string($role->name)); ?></td>
     </tr>
     <tr valign="top">
-        <td align="right"><?php print_string('shortname') ?>:</td>
+        <td align="right"><?php print_string('shortname') ?></td>
         <td><?php p($role->shortname); ?></td>
     </tr>
     <tr valign="top">
-        <td align="right"><?php print_string('description') ?>:</td>
+        <td align="right"><?php print_string('description') ?></td>
         <td><?php p(format_text($role->description, FORMAT_HTML)); $usehtmleditor = false; ?></td>
     </tr>
     <tr valign="top">
-        <td align="right"><?php print_string('legacytype', 'role') ?>:</td>
+        <td align="right"><?php print_string('legacytype', 'role') ?></td>
         <td><?php
                 $usehtmleditor = false;
                 if (empty($role->legacytype)) {
@@ -84,6 +84,21 @@
         </td>
     </tr>
 <?php } ?>
+    <tr valign="top">
+        <td align="right"><?php print_string('maybeassignedin', 'role') ?></td>
+        <td><?php
+            foreach ($allcontextlevels as $cl => $clname) {
+                $extraarguments = $disabled;
+                if (in_array($cl, $rolecontextlevels)) {
+                    $extraarguments .= 'checked="checked"';
+                }
+                echo '<input type="checkbox" id="cl' . $cl . '" name="contextlevel' . $cl .
+                        '" value="1" ' . $extraarguments . '/> ';
+                echo '<label for="cl' . $cl . '">' . $clname . "</label><br />\n";
+            }
+            ?>
+        </td>
+    </tr>
 </table>
 
 <?php
@@ -148,8 +163,6 @@ foreach ($capabilities as $capability) {
         $localoverride = new object();
         $localoverride->permission = $role->{$capability->name};
     }
-
-    $disabled = ($action != 'edit' and $action != 'add') ? ' disabled="disabled" ' : '';
 
     $riskinfo = '<td class="risk managetrust">';
     $rowclasses = '';

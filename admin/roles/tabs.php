@@ -66,49 +66,20 @@ if ($currenttab != 'update') {
             break;
 
         case CONTEXT_MODULE:
-            // get module type?
-            if (!$cm = $DB->get_record('course_modules', array('id'=>$context->instanceid))) {
+            if (!$cm = get_coursemodule_from_id('', $context->instanceid)) {
                 print_error('invalidcoursemodule', 'error');
             }
-            if (!$module = $DB->get_record('modules', array('id'=>$cm->module))) {  //$module->name;
-                print_error('invalidmodule', 'error');
-            }
-            if (!$course = $DB->get_record('course', array('id'=>$cm->course))) {
+            if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
                 print_error('invalidcourse');
-            }
-            if (!$instance = $DB->get_record($module->name, array('id'=>$cm->instance))) {
-                print_error('moduledoesnotexist', 'error');
             }
 
             require_login($course);
-
-            $fullmodulename      = get_string("modulename", $module->name);
-            $strmodulenameplural = get_string("modulenameplural", $module->name);
-
-            if ($module->name == "label") {
-                $focuscursor = "";
-            } else {
-                $focuscursor = "form.name";
-            }
-
-            $navlinks[] = array('name' => $strmodulenameplural,
-                                'link' => "$CFG->wwwroot/mod/$module->name/index.php?id=$course->id",
-                                'type' => 'misc');
-
-            $navlinks[] = array('name' => $instance->name,
-                                'link' => "$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id",
-                                'type' => 'misc');
-
-            $navlinks[] = array('name' => $streditinga,
-                                'link' => "$CFG->wwwroot/course/mod.php?update=$cm->id&amp;sesskey=".sesskey(),
-                                'type' => 'misc');
-
-            $navigation = build_navigation($navlinks);
+            $navigation = build_navigation(get_string('roles'), $cm);
 
             if (empty($title)) {
                 $title = get_string("editinga", "moodle", $fullmodulename);
             }
-            print_header_simple($title, '', $navigation, $focuscursor, "", false);
+            print_header_simple($title, '', $navigation, '', '', false);
 
             break;
 
