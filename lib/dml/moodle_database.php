@@ -73,6 +73,9 @@ abstract class moodle_database {
     protected $last_type;
     protected $last_extrainfo;
 
+    /** internal temporary variable */
+    private $fix_sql_params_i;
+
     /**
      * Contructor - instantiates the database, specifying if it's external (connect to other systems) or no (Moodle DB)
      *              note this has effect to decide if prefix checks must be performed or no
@@ -399,6 +402,12 @@ abstract class moodle_database {
         return preg_replace('/\{([a-z][a-z0-9_]*)\}/', $this->prefix.'$1', $sql);
     }
 
+    /** Internal function */
+    private function _fix_sql_params_dollar_callback($match) {
+        $this->fix_sql_params_i++;
+        return "\$".$this->fix_sql_params_i;
+    }
+
     /**
      * Normalizes sql query parameters and verifies parameters.
      * @param string $sql query or part of it
@@ -492,9 +501,9 @@ abstract class moodle_database {
             } else if ($target_type & SQL_PARAMS_NAMED) {
                 return array($sql, $finalparams, SQL_PARAMS_NAMED);
             } else {  // $type & SQL_PARAMS_DOLLAR
-                $sql = preg_replace_callback('/(?<!:):[a-z][a-z0-9_]*/',
-                                             create_function('$matches', 'static $i=0; $i++; return "\$".$i;'),
-                                             $sql);
+                //lambda-style functions eat memory - we use globals instead :-(
+                $this->fix_sql_params_i = 0;
+                $sql = preg_replace_callback('/(?<!:):[a-z][a-z0-9_]*/', array($this, '_fix_sql_params_dollar_callback'), $sql);
                 return array($sql, array_values($finalparams), SQL_PARAMS_DOLLAR); // 0-based required
             }
 
@@ -534,9 +543,9 @@ abstract class moodle_database {
                 }
                 return array($sql, $finalparams, SQL_PARAMS_NAMED);
             } else {  // $type & SQL_PARAMS_DOLLAR
-                $sql = preg_replace_callback('/\?/',
-                                             create_function('$matches', 'static $i=0; $i++; return "\$".$i;'),
-                                             $sql);
+                //lambda-style functions eat memory - we use globals instead :-(
+                $this->fix_sql_params_i = 0;
+                $sql = preg_replace_callback('/\?/', array($this, '_fix_sql_params_dollar_callback'), $sql);
                 return array($sql, array_values($params), SQL_PARAMS_DOLLAR); // 0-based required
             }
         }
