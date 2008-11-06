@@ -229,17 +229,18 @@ foreach($progress->users as $user) {
         }
 
         // Work out how it corresponds to an icon
-        $completiontype=
-            ($activity->completion==COMPLETION_TRACKING_AUTOMATIC ? 'auto' : 'manual').
-            '-';
         switch($state) {
-            case COMPLETION_INCOMPLETE : $completiontype.='n'; break;
-            case COMPLETION_COMPLETE : $completiontype.='y'; break;
-            case COMPLETION_COMPLETE_PASS : $completiontype.='pass'; break;
-            case COMPLETION_COMPLETE_FAIL : $completiontype.='fail'; break;
+            case COMPLETION_INCOMPLETE : $completiontype='n'; break;
+            case COMPLETION_COMPLETE : $completiontype='y'; break;
+            case COMPLETION_COMPLETE_PASS : $completiontype='pass'; break;
+            case COMPLETION_COMPLETE_FAIL : $completiontype='fail'; break;
         }        
 
-        $describe=get_string('completion-alt-'.$completiontype,'completion');
+        $completionicon='completion-'.
+            ($activity->completion==COMPLETION_TRACKING_AUTOMATIC ? 'auto' : 'manual').
+            '-'.$completiontype;
+        
+        $describe=get_string('completion-alt-auto-'.$completiontype,'completion');
         $a=new StdClass;
         $a->state=$describe;
         $a->date=$date;
@@ -251,7 +252,7 @@ foreach($progress->users as $user) {
             print $sep.csv_quote($describe).$sep.csv_quote($date);
         } else {
             print '<td class="completion-progresscell '.$activity->datepassedclass.'">'.
-                '<img src="'.$CFG->pixpath.'/i/completion-'.$completiontype.
+                '<img src="'.$CFG->pixpath.'/i/'.$completionicon.
                 '.gif" alt="'.$describe.'" title="'.$fulldescribe.'" /></td>';
         }
     }
