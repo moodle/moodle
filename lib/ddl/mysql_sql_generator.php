@@ -110,7 +110,13 @@ class mysql_sql_generator extends sql_generator {
         // ugly hack - mysql does not list temporary tables :-(
         // this polutes the db log with errors :-(
         // TODO: is there a better way?
-        if ($this->mdb->execute("DESCRIBE {".$tablename."}") === false) {
+        try {
+            $result = $this->mdb->execute("DESCRIBE {".$tablename."}");
+        } catch (Exception $e) {
+            $result = false;
+        }
+
+        if ($result === false) {
             $exists = false;
         } else {
             $exists = true;
