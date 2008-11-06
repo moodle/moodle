@@ -6,7 +6,7 @@
 // This is compared against the values stored in the database to determine
 // whether upgrades should be performed (see lib/db/*.php)
 
-    $version = 2008110602;  // YYYYMMDD   = date of the last version bump
+    $version = 2008110603;  // YYYYMMDD   = date of the last version bump
                             //         XX = daily increments
 
     $release = '2.0 dev (Build: 20081106)';  // Human-friendly version name

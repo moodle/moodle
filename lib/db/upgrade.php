@@ -865,7 +865,7 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($result && $oldversion < 2008101300) {
 
-        if (!get_config(NULL, 'statsruntimedays')) {
+        if (!get_2config(NULL, 'statsruntimedays')) {
             set_config('statsruntimedays', '31');
         }
 
@@ -946,6 +946,50 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2008110602);
+    }
+
+    /// Remove any role overrides for moodle/site:doanything, or any permissions
+    /// for it in a role without legacy:admin.
+    if ($result && $oldversion < 2008110603) {
+        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+
+        // Remove all overrides.
+        $DB->delete_records_select('role_capabilities', 'capability = ? AND contextid <> ?', array('moodle/site:doanything', $systemcontext->id));
+
+        // Get the ids of all the roles that are moodle/legacy:admin.
+        $adminroleids = $DB->get_records_menu('role_capabilities',
+                array('capability' => 'moodle/legacy:admin', 'permission' => 1, 'contextid' => $systemcontext->id),
+                '', 'id, roleid');
+
+        // Remove moodle/site:doanything from all other roles.
+        list($notroletest, $params) = $DB->get_in_or_equal($adminroleids, SQL_PARAMS_QM, '', false);
+        $DB->delete_records_select('role_capabilities', "roleid $notroletest AND capability = ? AND contextid = ?",
+                array_merge($params, array('moodle/site:doanything', $systemcontext->id)));
+
+        // Ensure that for all admin-y roles, the permission for moodle/site:doanything is 1
+        list($isroletest, $params) = $DB->get_in_or_equal($adminroleids);
+        $DB->set_field_select('role_capabilities', 'permission', 1,
+                "roleid $isroletest AND capability = ? AND contextid = ?",
+                array_merge($params, array('moodle/site:doanything', $systemcontext->id)));
+
+        // And for any admin-y roles where moodle/site:doanything is not set, set it.
+        $doanythingroleids = $DB->get_records_menu('role_capabilities',
+                array('capability' => 'moodle/site:doanything', 'permission' => 1, 'contextid' => $systemcontext->id),
+                '', 'id, roleid');
+        foreach ($adminroleids as $roleid) {
+            if (!in_array($roleid, $doanythingroleids)) {
+                $rc = new stdClass;
+                $rc->contextid = $systemcontext->id;
+                $rc->roleid = $roleid;
+                $rc->capability = 'moodle/site:doanything';
+                $rc->permission = 1;
+                $rc->timemodified = time();
+                $DB->insert_record('role_capabilities', $rc);
+            }
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008110603);
     }
 
     return $result;
