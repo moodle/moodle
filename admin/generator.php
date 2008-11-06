@@ -673,17 +673,9 @@ class generator {
                 shuffle($users);
                 $users_to_assign = array_slice($users, 0, $this->get('students_per_course'));
 
+                $context = get_context_instance(CONTEXT_COURSE, $courseid);
                 foreach ($users_to_assign as $random_user) {
-
-                    $context = get_context_instance(CONTEXT_COURSE, $courseid);
-
-                    $newra = new stdClass();
-                    $newra->roleid = 5; // Student role
-                    $newra->contextid = $context->id;
-                    $newra->userid = $random_user;
-                    $newra->hidden = 0;
-                    $newra->enrol = 1;
-                    $success = $DB->insert_record('role_assignments', $newra);
+                    $success = role_assign(5, $random_user, 0, $context->id);
 
                     if ($success) {
                         $assigned_count++;
