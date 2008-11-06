@@ -11,11 +11,12 @@
  * @param Array extrafields extra fields we are displaying for each user in addition to fullname.
  * @param String label used for the optgroup of users who are selected but who do not match the current search.
  */
-function user_selector(name, hash, extrafields, lastsearch, strprevselected, strnomatchingusers) {
+function user_selector(name, hash, extrafields, lastsearch, strprevselected, strnomatchingusers, strnone) {
     this.name = name;
     this.extrafields = extrafields;
     this.strprevselected = strprevselected;
     this.strnomatchingusers = strnomatchingusers;
+    this.strnone = strnone;
     this.searchurl = moodle_cfg.wwwroot + '/user/selector/search.php?selectorid=' +
             hash + '&sesskey=' + moodle_cfg.sesskey + '&search='
 
@@ -127,6 +128,14 @@ user_selector.prototype.strprevselected = '';
  * @type String
  */
 user_selector.prototype.strnomatchingusers = '';
+
+/**
+ * Name of the no matching users group when empty.
+ *
+ * @property strnone
+ * @type String
+ */
+user_selector.prototype.strnone = '';
 
 // Fields that configure the control's behaviour ===============================
 
@@ -406,7 +415,11 @@ user_selector.prototype.output_options = function(data) {
     }
 
     if (nogroups) {
-        this.output_group(this.insert_search_into_str(this.strnomatchingusers, this.lastsearch), {}, false)
+        if (this.lastsearch != '') {
+            this.output_group(this.insert_search_into_str(this.strnomatchingusers, this.lastsearch), {}, false)
+        } else {
+            this.output_group(this.strnone, {}, false)
+        }
     }
 
     // If there was only one option matching the search results, select it.

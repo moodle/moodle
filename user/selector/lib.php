@@ -438,7 +438,11 @@ abstract class user_selector_base {
         // only one selected user, set a flag to select them if that option is turned on.
         $select = false;
         if (empty($groupedusers)) {
-            $groupedusers = array(get_string('nomatchingusers', '', $search) => array());
+            if (!empty($search)) {
+                $groupedusers = array(get_string('nomatchingusers', '', $search) => array());
+            } else {
+                $groupedusers = array(get_string('none') => array());
+            }
         } else if ($this->autoselectunique && count($groupedusers) == 1 &&
                 count(reset($groupedusers)) == 1) {
             $select = true;
@@ -563,7 +567,7 @@ abstract class user_selector_base {
         // Initialise the selector.
         $output .= print_js_call('new user_selector', array($this->name, $hash, $this->extrafields,
                 $search, get_string('previouslyselectedusers', '', '%%SEARCHTERM%%'),
-                get_string('nomatchingusers', '', '%%SEARCHTERM%%')), true);
+                get_string('nomatchingusers', '', '%%SEARCHTERM%%'), get_string('none')), true);
 
         return $output;
     }
