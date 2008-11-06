@@ -1148,7 +1148,7 @@ function feedback_get_page_to_continue($feedbackid, $courseid = false, $guestid)
     }
 
     $sql =  "SELECT MAX(fi.position)
-               FROM {feedback_completedtmp} AS fc, {feedback_valuetmp} AS fv, {feedback_item} AS fi
+               FROM {feedback_completedtmp} fc, {feedback_valuetmp} fv, {feedback_item} fi
               WHERE fc.id = fv.completed
                     $userselect
                     AND fc.feedback = :feedbackid
@@ -1415,7 +1415,7 @@ function feedback_get_group_values($item, $groupid = false, $courseid = false){
     //if the groupid is given?
     if (intval($groupid) > 0) {
         $query = 'SELECT fbv .  *
-                    FROM {feedback_value} AS fbv, {feedback_completed} AS fbc, {groups_members} AS gm
+                    FROM {feedback_value} fbv, {feedback_completed} fbc, {groups_members} gm
                    WHERE fbv.item = ?
                          AND fbv.completed = fbc.id
                          AND fbc.userid = gm.userid
@@ -1494,7 +1494,7 @@ function feedback_get_current_completed($feedbackid, $tmp = false, $courseid = f
     }
     //if courseid is set the feedback is global. there can be more than one completed on one feedback
     $sql =  "SELECT fc.*
-               FROM {feedback_value{$tmpstr}} AS fv, {feedback_completed{$tmpstr}} AS fc
+               FROM {feedback_value{$tmpstr}} fv, {feedback_completed{$tmpstr}} fc
               WHERE fv.course_id = :courseid
                     AND fv.completed = fc.id
                     $userselect
@@ -1521,7 +1521,7 @@ function feedback_get_completeds_group($feedback, $groupid = false, $courseid = 
 
     if (intval($groupid) > 0){
         $query = "SELECT fbc.*
-                    FROM {feedback_completed} AS fbc, {groups_members} AS gm
+                    FROM {feedback_completed} fbc, {groups_members} gm
                    WHERE fbc.feedback = ?
                          AND gm.groupid = ?
                          AND fbc.userid = gm.userid";
@@ -1533,7 +1533,7 @@ function feedback_get_completeds_group($feedback, $groupid = false, $courseid = 
     } else {
         if($courseid) {
             $query = "SELECT DISTINCT fbc.*
-                        FROM {feedback_completed} AS fbc, {feedback_value} AS fbv
+                        FROM {feedback_completed} fbc, {feedback_value} fbv
                         WHERE fbc.id = fbv.completed
                             AND fbc.feedback = ?
                             AND fbv.course_id = ?
