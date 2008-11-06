@@ -76,7 +76,8 @@
     if (empty($to)) {
         //Print final message
         print_simple_box(get_string("backupfinished"),"center");
-        print_continue("$CFG->wwwroot/files/index.php?id=".$preferences->backup_course."&amp;wdir=/backupdata");    
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        print_continue("$CFG->wwwroot/files/index.php?contextid=".$context->id."&amp;filearea=course_backup&amp;itemid=0");    
     } else {
         print_simple_box(get_string('importdataexported'),"CENTER");
         if (!empty($preferences->backup_destination)) {
