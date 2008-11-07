@@ -71,8 +71,34 @@ class random_qtype extends default_questiontype {
          $question->id) ? true : false);
     }
 
-    function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
+    /**
+     * Get all the usable questions from a particular question category.
+     *
+     * @param integer $categoryid the id of a question category.
+     * @param boolean whether to include questions from subcategories.
+     * @param string $questionsinuse comma-separated list of question ids to exclude from consideration.
+     * @return array of question records.
+     */
+    function get_usable_questions_from_category($categoryid, $subcategories, $questionsinuse) {
         global $QTYPE_EXCLUDE_FROM_RANDOM;
+        if ($subcategories) {
+            $categorylist = question_categorylist($categoryid);
+        } else {
+            $categorylist = $categoryid;
+        }
+        if (!$catrandoms = get_records_select('question',
+                "category IN ($categorylist)
+                     AND parent = '0'
+                     AND hidden = '0'
+                     AND id NOT IN ($questionsinuse)
+                     AND qtype NOT IN ($QTYPE_EXCLUDE_FROM_RANDOM)", '', 'id')) {
+            $catrandoms = array();
+        }
+        return $catrandoms;
+    }
+
+    function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
+        global $QTYPES;
         // Choose a random question from the category:
         // We need to make sure that no question is used more than once in the
         // quiz. Therfore the following need to be excluded:
@@ -85,26 +111,9 @@ class random_qtype extends default_questiontype {
         }
 
         if (!isset($this->catrandoms[$question->category][$question->questiontext])) {
-            // Need to fetch random questions from category $question->category"
-            // (Note: $this refers to the questiontype, not the question.)
-            global $CFG;
-            if ($question->questiontext == "1") {
-                // recurse into subcategories
-                $categorylist = question_categorylist($question->category);
-            } else {
-                $categorylist = $question->category;
-            }
-            if ($catrandoms = get_records_select('question',
-                    "category IN ($categorylist)
-                         AND parent = '0'
-                         AND hidden = '0'
-                         AND id NOT IN ($cmoptions->questionsinuse)
-                         AND qtype NOT IN ($QTYPE_EXCLUDE_FROM_RANDOM)", '', 'id')) {
-                $this->catrandoms[$question->category][$question->questiontext] =
-                        draw_rand_array($catrandoms, count($catrandoms));
-            } else {
-                $this->catrandoms[$question->category][$question->questiontext] = array();
-            }
+            $this->catrandoms[$question->category][$question->questiontext] =
+                    $this->get_usable_questions_from_category($question->category,
+                    $question->questiontext == "1", $cmoptions->questionsinuse);
         }
 
         while ($wrappedquestion =
@@ -113,7 +122,6 @@ class random_qtype extends default_questiontype {
                 /// $randomquestion is not in use and will therefore be used
                 /// as the randomquestion here...
                 $wrappedquestion = get_record('question', 'id', $wrappedquestion->id);
-                global $QTYPES;
                 $QTYPES[$wrappedquestion->qtype]
                  ->get_question_options($wrappedquestion);
                 $QTYPES[$wrappedquestion->qtype]
