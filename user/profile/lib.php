@@ -110,10 +110,12 @@ class profile_field_base {
      * @return  string  contains error message otherwise NULL
      **/
     function edit_validate_field($usernew) {
+        global $DB;
+
         $errors = array();
         /// Check for uniqueness of data if required
         if ($this->is_unique()) {
-            if ($userid = get_field('user_info_data', 'userid', 'fieldid', $this->field->id, 'data', $usernew->{$this->inputname})) {
+            if ($userid = $DB->get_field('user_info_data', 'userid', array('fieldid'=>$this->field->id, 'data'=>$usernew->{$this->inputname}))) {
                 if ($userid != $usernew->id) {
                     $errors["{$this->inputname}"] = get_string('valuealreadyused');
                 }
