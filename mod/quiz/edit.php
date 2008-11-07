@@ -65,22 +65,27 @@
      * Callback function called from question_list() function (which is called from showbank())
      */
     function module_specific_controls($totalnumber, $recurse, $category, $cmid){
+        global $QTYPES;
+        $out = '';
         $catcontext = get_context_instance_by_id($category->contextid);
         if (has_capability('moodle/question:useall', $catcontext)){
-            for ($i = 1;$i <= min(10, $totalnumber); $i++) {
-                $randomcount[$i] = $i;
+            $randomusablequestions = $QTYPES['random']->get_usable_questions_from_category(
+                    $category->id, $recurse, '0');
+            $maxrand = count($randomusablequestions);
+            if ($maxrand > 0) {
+                for ($i = 1;$i <= min(10, $maxrand); $i++) {
+                    $randomcount[$i] = $i;
+                }
+                for ($i = 20;$i <= min(100, $maxrand); $i += 10) {
+                    $randomcount[$i] = $i;
+                }
+                $out .= '<br />';
+                $out .= get_string('addrandom', 'quiz', choose_from_menu($randomcount, 'randomcount', '1', '', '', '', true));
+                $out .= '<input type="hidden" name="recurse" value="'.$recurse.'" />';
+                $out .= '<input type="hidden" name="categoryid" value="'.$category->id.'" />';
+                $out .= ' <input type="submit" name="addrandom" value="'. get_string('add') .'" />';
+                $out .= helpbutton('random', get_string('random', 'quiz'), 'quiz', true, false, '', true);
             }
-            for ($i = 20;$i <= min(100, $totalnumber); $i += 10) {
-                $randomcount[$i] = $i;
-            }
-            $out = '<br />';
-            $out .= get_string('addrandom', 'quiz', choose_from_menu($randomcount, 'randomcount', '1', '', '', '', true));
-            $out .= '<input type="hidden" name="recurse" value="'.$recurse.'" />';
-            $out .= "<input type=\"hidden\" name=\"categoryid\" value=\"$category->id\" />";
-            $out .= ' <input type="submit" name="addrandom" value="'. get_string('add') .'" />';
-            $out .= helpbutton('random', get_string('random', 'quiz'), 'quiz', true, false, '', true);
-        } else {
-            $out = '';
         }
         return $out;
     }
