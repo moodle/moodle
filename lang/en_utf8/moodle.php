@@ -1578,6 +1578,7 @@ $string['usersnoaccesssince'] = 'Inactive for more than';
 $string['userzones'] = 'User zones';
 $string['usethiscourse'] = 'Use this course';
 $string['usingexistingcourse'] = 'Using existing course';
+$string['valuealreadyused'] = 'This value has already been used.';
 $string['version'] = 'Version';
 $string['view'] = 'View';
 $string['views'] = 'Views';

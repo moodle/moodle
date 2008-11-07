@@ -108,8 +108,16 @@ class profile_field_base {
      * @return  string  contains error message otherwise NULL
      **/
     function edit_validate_field($usernew) {
-        //no errors by default
-        return array();
+        $errors = array();
+        /// Check for uniqueness of data if required
+        if ($this->is_unique()) {
+            if ($userid = get_field('user_info_data', 'userid', 'fieldid', $this->field->id, 'data', $usernew->{$this->inputname})) {
+                if ($userid != $usernew->id) {
+                    $errors["{$this->inputname}"] = get_string('valuealreadyused');
+                }
+            }
+        }
+        return $errors;
     }
 
     /**
