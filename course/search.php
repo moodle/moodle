@@ -196,14 +196,8 @@
             $modulelink = "&amp;modulelist=".$modulelist."&amp;sesskey=".$USER->sesskey;
         }
 
-        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$encodedsearch".$modulelink."&amp;perpage=$perpage&amp;",'page',($perpage == 99999));
-
-        if ($perpage != 99999 && $totalcount > $perpage) {
-            echo "<center><p>";
-            echo "<a href=\"search.php?search=$encodedsearch".$modulelink."&amp;perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
-            echo "</p></center>";
-        }
-
+        print_navigation_bar($totalcount,$page,$perpage,$encodedsearch,$modulelink);
+        
         if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
             foreach ($courses as $course) {
                 $course->fullname = highlight("$search", $course->fullname);
@@ -323,13 +317,7 @@
 
         }
 
-        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$encodedsearch&amp;perpage=$perpage&amp;",'page',($perpage == 99999));
-
-        if ($perpage != 99999 && $totalcount > $perpage) {
-            echo "<center><p>";
-            echo "<a href=\"search.php?search=$encodedsearch&perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
-            echo "</p></center>";
-        }
+        print_navigation_bar($totalcount,$page,$perpage,$encodedsearch,$modulelink);
 
     } else {
         if (!empty($search)) {
@@ -346,5 +334,24 @@
 
     print_footer();
 
+    /**
+     * Print a list navigation bar
+     * Display page numbers, and a link for displaying all entries
+     * @param integer $totalcount - number of entry to display
+     * @param integer $page - page number
+     * @param integer $perpage - number of entry per page
+     * @param string $encodedsearch
+     * @param string $modulelink - module name
+     */
+    function print_navigation_bar($totalcount,$page,$perpage,$encodedsearch,$modulelink) {
+        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$encodedsearch".$modulelink."&amp;perpage=$perpage&amp;",'page',($perpage == 99999));
+
+        //display
+        if ($perpage != 99999 && $totalcount > $perpage) {
+            echo "<center><p>";
+            echo "<a href=\"search.php?search=$encodedsearch".$modulelink."&amp;perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
+            echo "</p></center>";
+        }
+    }
 
 ?>
