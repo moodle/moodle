@@ -146,23 +146,21 @@
     // get list of courses containing modules if required
     elseif (!empty($modulelist) and confirm_sesskey()) {
         $modulename = $modulelist;
-        if (!$modules = $DB->get_records($modulename)) {
-            print_error('invalidmodulename', '', '', $modulename);
-        }
+        $sql =  "SELECT DISTINCT c.id FROM {$CFG->prefix}".$modulelist." module,{$CFG->prefix}course as c"
+            ." WHERE module.course=c.id";
 
-        // run through modules and get (unique) courses
-        $courses = array();
-        foreach ($modules as $module) {
-            $courseid = $module->course;
-            if ($courseid==0) {
-                continue;
+        $courseids = $DB->get_records_sql($sql);
+
+        $firstcourse = $page*$perpage;
+        $lastcourse = $page*$perpage + $perpage -1;
+        $i = 0;
+        foreach ($courseids as $courseid) {
+            if ($i>= $firstcourse && $i<=$lastcourse) {
+                $courses[$courseid->id] = $DB->get_record('course', array('id'=> $courseid->id));
             }
-            if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-                print_error('invalidcourseid', '', '', $courseid);
-            }
-            $courses[$courseid] = $course;
+            $i++;
         }
-        $totalcount = count($courses);
+        $totalcount = count($courseids);
     }
     else {
         $courses = get_courses_search($searchterms, "fullname ASC", 
@@ -190,13 +188,14 @@
         print_heading("$strsearchresults: $totalcount");
 
         $encodedsearch = urlencode($search);
-        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$encodedsearch&amp;perpage=$perpage&amp;",'page',($perpage == 99999));
-
-        if ($perpage != 99999 && $totalcount > $perpage) {
-            echo "<center><p>";
-            echo "<a href=\"search.php?search=$encodedsearch&perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
-            echo "</p></center>";
+        
+     ///add the module parameter to the paging bar if they exists
+        $modulelink = "";
+        if (!empty($modulelist) and confirm_sesskey()) {
+            $modulelink = "&amp;modulelist=".$modulelist."&amp;sesskey=".$USER->sesskey;
         }
+             
+        print_navigation_bar($totalcount,$page,$perpage,$encodedsearch,$modulelink);
 
         if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
             foreach ($courses as $course) {
@@ -317,13 +316,7 @@
 
         }
 
-        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$encodedsearch&amp;perpage=$perpage&amp;",'page',($perpage == 99999));
-
-        if ($perpage != 99999 && $totalcount > $perpage) {
-            echo "<center><p>";
-            echo "<a href=\"search.php?search=$encodedsearch&perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
-            echo "</p></center>";
-        }
+        print_navigation_bar($totalcount,$page,$perpage,$encodedsearch,$modulelink);
 
     } else {
         if (!empty($search)) {
@@ -340,5 +333,24 @@
 
     print_footer();
 
+   /**
+     * Print a list navigation bar
+     * Display page numbers, and a link for displaying all entries
+     * @param integer $totalcount - number of entry to display
+     * @param integer $page - page number
+     * @param integer $perpage - number of entry per page
+     * @param string $encodedsearch
+     * @param string $modulelink - module name
+     */
+    function print_navigation_bar($totalcount,$page,$perpage,$encodedsearch,$modulelink) {
+        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$encodedsearch".$modulelink."&amp;perpage=$perpage&amp;",'page',($perpage == 99999));
+
+        //display
+        if ($perpage != 99999 && $totalcount > $perpage) {
+            echo "<center><p>";
+            echo "<a href=\"search.php?search=$encodedsearch".$modulelink."&amp;perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
+            echo "</p></center>";
+        }
+    }
 
 ?>
