@@ -152,16 +152,22 @@
 
         $courseids = get_records_sql($sql);
 
-        $firstcourse = $page*$perpage;
-        $lastcourse = $page*$perpage + $perpage -1;
-        $i = 0;
-        foreach ($courseids as $courseid) {
-            if ($i>= $firstcourse && $i<=$lastcourse) {
-                $courses[$courseid->id] = get_record('course', 'id', $courseid->id);
+        $courses = array();
+        if (!empty($courseids)) {
+            $firstcourse = $page*$perpage;
+            $lastcourse = $page*$perpage + $perpage -1;
+            $i = 0;
+            foreach ($courseids as $courseid) {
+                if ($i>= $firstcourse && $i<=$lastcourse) {
+                    $courses[$courseid->id] = get_record('course', 'id', $courseid->id);
+                }
+                $i++;
             }
-            $i++;
+            $totalcount = count($courseids);
         }
-        $totalcount = count($courseids);
+        else {
+            $totalcount = 0;
+        }
     }
     else {
         $courses = get_courses_search($searchterms, "fullname ASC", 
