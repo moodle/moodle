@@ -146,23 +146,22 @@
     // get list of courses containing modules if required
     elseif (!empty($modulelist) and confirm_sesskey()) {
         $modulename = $modulelist;
-        if (!$modules = get_records($modulename)) {
-            error( "Could not read data for module=$modulename" );
-        }
 
-        // run through modules and get (unique) courses
-        $courses = array();
-        foreach ($modules as $module) {
-            $courseid = $module->course;
-            if ($courseid==0) {
-                continue;
+        $sql =  "SELECT DISTINCT c.id FROM {$CFG->prefix}".$modulelist." module,{$CFG->prefix}course as c"
+            ." WHERE module.course=c.id";
+
+        $courseids = get_records_sql($sql);
+
+        $firstcourse = $page*$perpage;
+        $lastcourse = $page*$perpage + $perpage -1;
+        $i = 0;
+        foreach ($courseids as $courseid) {
+            if ($i>= $firstcourse && $i<=$lastcourse) {
+                $courses[$courseid->id] = get_record('course', 'id', $courseid->id);
             }
-            if (!$course = get_record('course', 'id', $courseid)) {
-                error( "Could not read data for courseid=$courseid" );
-            }
-            $courses[$courseid] = $course;
+            $i++;
         }
-        $totalcount = count($courses);
+        $totalcount = count($courseids);
     }
     else {
         $courses = get_courses_search($searchterms, "fullname ASC", 
@@ -190,11 +189,18 @@
         print_heading("$strsearchresults: $totalcount");
 
         $encodedsearch = urlencode(stripslashes($search));
-        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$encodedsearch&amp;perpage=$perpage&amp;",'page',($perpage == 99999));
+
+    ///add the module parameter to the paging bar if they exists
+        $modulelink = "";
+        if (!empty($modulelist) and confirm_sesskey()) {
+            $modulelink = "&amp;modulelist=".$modulelist."&amp;sesskey=".$USER->sesskey;
+        }
+
+        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$encodedsearch".$modulelink."&amp;perpage=$perpage&amp;",'page',($perpage == 99999));
 
         if ($perpage != 99999 && $totalcount > $perpage) {
             echo "<center><p>";
-            echo "<a href=\"search.php?search=$encodedsearch&perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
+            echo "<a href=\"search.php?search=$encodedsearch".$modulelink."&amp;perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
             echo "</p></center>";
         }
 
