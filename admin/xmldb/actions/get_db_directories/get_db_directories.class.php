@@ -72,8 +72,8 @@ class get_db_directories extends XMLDBAction {
         }
 
     /// get list of all dirs and create objects with status
-        $db_direcotries = get_db_directories();
-        foreach ($db_direcotries as $path) {
+        $db_directories = get_db_directories();
+        foreach ($db_directories as $path) {
             $dbdir = new stdClass;
             $dbdir->path = $path;
             if (!isset($XMLDB->dbdirs[$dbdir->path])) {
