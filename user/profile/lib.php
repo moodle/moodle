@@ -267,7 +267,7 @@ class profile_field_base {
      * @return   boolean
      */
     function is_unique() {
-        return (boolean)$tihs->field->forceunique;
+        return (boolean)$this->field->forceunique;
     }
 
     /**
