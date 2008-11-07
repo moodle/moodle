@@ -1826,13 +1826,13 @@ function moodle_install_roles() {
     //allow_override($editteacherrole, $guestrole);
 
 /// Set up the context levels where you can assign each role.
-    set_role_contextlevels($adminrole->id, get_default_contextlevels('admin'));
-    set_role_contextlevels($coursecreatorrole->id, get_default_contextlevels('coursecreator'));
-    set_role_contextlevels($editteacherrole->id, get_default_contextlevels('editingteacher'));
-    set_role_contextlevels($noneditteacherrole->id, get_default_contextlevels('teacher'));
-    set_role_contextlevels($studentrole->id, get_default_contextlevels('student'));
-    set_role_contextlevels($guestrole->id, get_default_contextlevels('guest'));
-    set_role_contextlevels($userrole->id, get_default_contextlevels('user'));
+    set_role_contextlevels($adminrole, get_default_contextlevels('admin'));
+    set_role_contextlevels($coursecreatorrole, get_default_contextlevels('coursecreator'));
+    set_role_contextlevels($editteacherrole, get_default_contextlevels('editingteacher'));
+    set_role_contextlevels($noneditteacherrole, get_default_contextlevels('teacher'));
+    set_role_contextlevels($studentrole, get_default_contextlevels('student'));
+    set_role_contextlevels($guestrole, get_default_contextlevels('guest'));
+    set_role_contextlevels($userrole, get_default_contextlevels('user'));
 }
 
 /**
