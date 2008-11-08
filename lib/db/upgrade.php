@@ -865,7 +865,7 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($result && $oldversion < 2008101300) {
 
-        if (!get_2config(NULL, 'statsruntimedays')) {
+        if (!get_config(NULL, 'statsruntimedays')) {
             set_config('statsruntimedays', '31');
         }
 
