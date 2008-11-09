@@ -117,6 +117,7 @@ $string['explainimport'] = 'You must specify the file to import and define the c
 $string['explainspecial'] = 'Shows entries that do not begin with a letter';
 $string['exportedentry'] = 'Exported entry';
 $string['exportentries'] = 'Export entries';
+$string['exportentriestoxml'] = 'Export entries to XML file';
 $string['exportfile'] = 'Export entries to file';
 $string['exportglossary'] = 'Export glossary';
 $string['exporttomainglossary'] = 'Export to main glossary';

@@ -35,9 +35,9 @@
     $strsearchindefinition = get_string("searchindefinition", "glossary");
     $strsearch = get_string("search");
     $strexportfile = get_string("exportfile", "glossary");
-    $strexportentries = get_string('exportentries', 'glossary');
+    $strexportentries = get_string('exportentriestoxml', 'glossary');
 
-    $navigation = build_navigation('', $cm);
+    $navigation = build_navigation($strexportentries, $cm);
     print_header_simple(format_string($glossary->name), "",$navigation,
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
