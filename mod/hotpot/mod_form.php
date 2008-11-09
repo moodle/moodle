@@ -266,7 +266,7 @@ class mod_hotpot_mod_form extends moodleform_mod {
     }
 
     function validation($data, $files) {
-        global $CFG, $USER, $DB;
+        global $CFG, $USER, $DB, $COURSE;
 
         $errors = parent::validation($data, $files);
 
