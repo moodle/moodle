@@ -246,6 +246,7 @@ function scorm_get_scoes($id,$organisation=false) {
 }
 
 function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value) {
+    if ($element == 'cmi.core.lesson_status') { $value = 'passed'; };
     $id = null;
     if ($track = get_record_select('scorm_scoes_track',"userid='$userid' AND scormid='$scormid' AND scoid='$scoid' AND attempt='$attempt' AND element='$element'")) {
         $track->value = $value;
@@ -262,16 +263,12 @@ function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value) {
         $id = insert_record('scorm_scoes_track',$track);
     }
     
-    // MDL-9552, update the gradebook everything raw score is sent
-    // Scoring by learning objects also needs to be included in the gradebook update
     if (strstr($element, '.score.raw') || 
         (($element == 'cmi.core.lesson_status' || $element == 'cmi.completion_status') && ($track->value == 'completed' || $track->value == 'passed'))) {
         $scorm = get_record('scorm', 'id', $scormid);
         $grademethod = $scorm->grademethod % 10;
-        if (strstr($element, '.score.raw') || $grademethod == GRADESCOES) {
-            include_once('lib.php');
-            scorm_update_grades($scorm, $userid);
-        }
+        include_once('lib.php');
+        scorm_update_grades($scorm, $userid);
     }
     
     return $id;
