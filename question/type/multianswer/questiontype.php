@@ -112,16 +112,22 @@ class embedded_cloze_qtype extends default_questiontype {
             }
             $wrapped->name = $question->name;
             $wrapped->parent = $question->id;
+            $previousid = $wrapped->id ;
             $wrapped->category = $question->category . ',1'; // save_question strips this extra bit off again.
             $wrapped = $QTYPES[$wrapped->qtype]->save_question($wrapped,
                     $wrapped, $question->course);
             $sequence[] = $wrapped->id;
+            if ($previousid != 0 && $previousid != $wrapped->id ) { 
+                // for some reasons a new question has been created
+                // so delete the old one
+                delete_question($previousid) ;
+            }
         }
 
         // Delete redundant wrapped questions
-        if(is_array($oldwrappedids) && count($oldwrappedids)){
-            foreach ($oldwrappedids as $id) {
-                delete_question($id) ;
+        if(is_array($oldwrappedquestions) && count($oldwrappedquestions)){
+            foreach ($oldwrappedquestions as $oldwrappedquestion) {
+                delete_question($oldwrappedquestion->id) ;
             }
         }
 
