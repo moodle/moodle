@@ -57,7 +57,7 @@ class question_edit_multianswer_form extends question_edit_form {
             $mform->addElement('header', 'subhdr', get_string('questionno', 'quiz',
                  '{#'.$sub.'}').'&nbsp;'.$question_type_names[$this->questiondisplay->options->questions[$sub]->qtype]);
 
-            $mform->addElement('static', 'sub_'.$sub."_".'questiontext', "subquestiontext",array('cols'=>60, 'rows'=>3));
+            $mform->addElement('static', 'sub_'.$sub."_".'questiontext', get_string('questiondefinition','qtype_multianswer'),array('cols'=>60, 'rows'=>3));
 
             if (isset ( $this->questiondisplay->options->questions[$sub]->questiontext)) {
                 $mform->setDefault('sub_'.$sub."_".'questiontext', $this->questiondisplay->options->questions[$sub]->questiontext);
@@ -67,7 +67,7 @@ class question_edit_multianswer_form extends question_edit_form {
             $mform->setDefault('sub_'.$sub."_".'defaultgrade',$this->questiondisplay->options->questions[$sub]->defaultgrade);
 
                 if ($this->questiondisplay->options->questions[$sub]->qtype =='multichoice'   ) {
-                    $mform->addElement('static', 'sub_'.$sub."_".'layout', get_string('layout', 'quiz'),array('cols'=>60, 'rows'=>1)) ;//, $gradeoptions);
+                    $mform->addElement('static', 'sub_'.$sub."_".'layout', get_string('layout', 'qtype_multianswer'),array('cols'=>60, 'rows'=>1)) ;//, $gradeoptions);
                 }
             foreach ($this->questiondisplay->options->questions[$sub]->answer as $key =>$ans) {
 
@@ -154,16 +154,16 @@ class question_edit_multianswer_form extends question_edit_form {
                         $default_values[$prefix.'layout']  = $subquestion->layout ;
                         switch ($subquestion->layout) {
                             case '0':
-                                $default_values[$prefix.'layout']= get_string('selectelement', 'qtype_multianswer');
+                                $default_values[$prefix.'layout']= get_string('layoutselectinline', 'qtype_multianswer');
                                 break;
                             case '1':
-                                $default_values[$prefix.'layout']= get_string('verticallayout', 'qtype_multianswer');
+                                $default_values[$prefix.'layout']= get_string('layoutvertical', 'qtype_multianswer');
                                 break;                         
                             case '2':
-                                $default_values[$prefix.'layout']= get_string('horizontallayout', 'qtype_multianswer');
+                                $default_values[$prefix.'layout']= get_string('layouthorizontal', 'qtype_multianswer');
                                 break;
                             default:
-                                $default_values[$prefix.'layout']= get_string('unknownlayout', 'qtype_multianswer');
+                                $default_values[$prefix.'layout']= get_string('layoutundefined', 'qtype_multianswer');
                         } 
                     }
                     foreach ($subquestion->answer as $key=>$answer) {
