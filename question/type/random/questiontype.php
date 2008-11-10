@@ -95,7 +95,6 @@ class random_qtype extends default_questiontype {
                      AND qtype NOT IN ($QTYPE_EXCLUDE_FROM_RANDOM)", null, '', 'id')) {
             $catrandoms = array();
         }
-        $catrandoms = swapshuffle_assoc($catrandoms);
         return $catrandoms;
     }
 
@@ -113,9 +112,9 @@ class random_qtype extends default_questiontype {
         }
 
         if (!isset($this->catrandoms[$question->category][$question->questiontext])) {
-            $this->catrandoms[$question->category][$question->questiontext] =
-                    $this->get_usable_questions_from_category($question->category,
+            $catrandoms = $this->get_usable_questions_from_category($question->category,
                     $question->questiontext == "1", $cmoptions->questionsinuse);
+            $this->catrandoms[$question->category][$question->questiontext] = swapshuffle_assoc($catrandoms);
         }
 
         while ($wrappedquestion = array_pop(
