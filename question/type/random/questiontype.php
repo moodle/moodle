@@ -95,6 +95,7 @@ class random_qtype extends default_questiontype {
                      AND qtype NOT IN ($QTYPE_EXCLUDE_FROM_RANDOM)", null, '', 'id')) {
             $catrandoms = array();
         }
+        $catrandoms = swapshuffle_assoc($catrandoms);
         return $catrandoms;
     }
 
