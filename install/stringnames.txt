@@ -129,6 +129,7 @@ phpversion
 phpversionerror
 phpversionhelp
 postgres7
+postgresqlwarning
 previous
 qtyperqpwillberemoved
 qtyperqpwillberemovedanyway

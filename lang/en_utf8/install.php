@@ -256,6 +256,9 @@ $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.3.0 
 <p>You must upgrade PHP or move to a host with a newer version of PHP!<br/>
 (In case of 5.0.x you could also downgrade to 4.4.x version)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
+$string['postgresqlwarning'] = '<strong>Note:</strong> If you experience some connection problems, you can try to set Host Server field as
+ host=\'postgresql_host\' port=\'5432\' dbname=\'postgresql_database_name\' user=\'postgresql_user\' password=\'postgresql_user_password\'
+and to leave empty the Database, User and Password fields. More information on <a href=\"http://docs.moodle.org/en/Installing_Postgres_for_PHP\">Moodle Docs</a>';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle may have trouble with safe mode on';
 $string['safemodehelp'] = '<p>Moodle may have a variety of problems with safe mode on, not least is that 

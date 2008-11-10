@@ -621,7 +621,9 @@ if (isset($_GET['help'])) {
                     echo '<p style="text-align: center">' . get_string('databasesettingswillbecreated', 'install') . '</p>';
                     echo '</div>';
 
-                    echo '<div id="postgres7">' . get_string('databasesettingssub_postgres7', 'install') . '</div>';
+                    echo '<div id="postgres7">' . get_string('databasesettingssub_postgres7', 'install');
+                    echo '<p style="text-align: left">' . get_string('postgresqlwarning', 'install') . '</p>';
+                    echo '</div>';
 
                     echo '<div id="mssql">' . get_string('databasesettingssub_mssql', 'install');
                 /// Link to mssql installation page
