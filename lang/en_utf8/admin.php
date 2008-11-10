@@ -179,6 +179,11 @@ $string['configoverride'] = 'Defined in config.php';
 $string['configpathtoclam'] = 'Path to clam AV.  Probably something like /usr/bin/clamscan or /usr/bin/clamdscan. You need this in order for clam AV to run.';
 $string['configpathtodu'] = 'Path to du. Probably something like /usr/bin/du. If you enter this, pages that display directory contents will run much faster for directories with a lot of files.';
 $string['configperfdebug'] = 'If you turn this on, performance info will be printed in the footer of the standard theme';
+$string['configprofilesforenrolledusersonly'] = '
+<ul>
+<li>When showing the profile page, if a courseid isn\'t defined (this is the public view) AND the user is not enrolled in any courses AND this setting is set as true then replace the profile description won\'t display.</li>
+<li>When editing the profile page, if the description is blank AND the user is not enrolled in any courses AND this setting is set as true then completely hide the description field from the editing page.</li>
+</ul>';
 $string['configprotectusernames'] = 'By default forget_password.php does not display any hints that would allow guessing of usernames or email addresses.';
 $string['configproxyhost'] = 'If this <b>server</b> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname here.  Otherwise leave it blank.';
 $string['configproxypassword'] = 'Password needed to access internet through proxy if required, empty if none (PHP cURL extension required).';
@@ -581,6 +586,7 @@ $string['profilefieldtypetextarea'] = 'Text area';
 $string['profilefieldmaxlength'] = 'Maximum length';
 $string['profilefieldispassword'] = 'Is this a password field?';
 $string['profileforceunique'] = 'Should the data be unique?';
+$string['profilesforenrolledusersonly'] = 'Profiles for enrolled users only';
 $string['profileinvaliddata'] = 'Invalid value';
 $string['profilelocked'] = 'Is this field locked?';
 $string['profilemenudefaultnotinoptions'] = 'The default value is not one of the options';

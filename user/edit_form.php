@@ -61,6 +61,11 @@ class user_edit_form extends moodleform {
             }
         }
 
+        // remove description
+        if (!get_record('role_assignments', 'userid', $userid) && empty($user->description) && $CFG->profilesforenrolledusersonly) {
+            $mform->removeElement('description');
+        }
+
         if ($user = get_record('user', 'id', $userid)) {
 
             // print picture
