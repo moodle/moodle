@@ -79,7 +79,11 @@ class qstats{
 
     function _secondary_states_walker($state, &$stats){
         $gradedifference = ($state->grade - $stats->gradeaverage);
-        $othergradedifference = (($state->sumgrades - $state->grade) - $stats->othergradeaverage);
+        if ($stats->subquestion){
+            $othergradedifference = $state->sumgrades - $stats->othergradeaverage;
+        } else {
+            $othergradedifference = (($state->sumgrades - $state->grade) - $stats->othergradeaverage);
+        }
         $overallgradedifference = $state->sumgrades - $this->sumgradesavg;
         $sortedgradedifference = (array_shift($stats->gradearray) - $stats->gradeaverage);
         $sortedothergradedifference = (array_shift($stats->othergradesarray) - $stats->othergradeaverage);
