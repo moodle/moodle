@@ -10,6 +10,6 @@
                             //         X  = release number 1.8.[0,1,2,3...]
                             //          Y = micro-increments between releases
 
-   $release = '1.8.7+ (Build: 20081109)';     // Human-friendly version name
+   $release = '1.8.7+ (Build: 20081110)';     // Human-friendly version name
 
 ?>
