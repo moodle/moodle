@@ -2710,7 +2710,7 @@ function get_filesdir_from_context($context){
 function question_get_real_state($state){
     $realstate = clone($state);
     $matches = array();
-    if (!preg_match('|^random([0-9]+)-(.+)|', $state->answer, $matches)){
+    if (!preg_match('|^random([0-9]+)-(.*)|', $state->answer, $matches)){
         notify(get_string('errorrandom', 'quiz_statistics'));
         return false;
     } else {
