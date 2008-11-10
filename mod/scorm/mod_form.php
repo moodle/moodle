@@ -23,6 +23,10 @@ class mod_scorm_mod_form extends moodleform_mod {
         if (!$CFG->slasharguments) {
             $mform->addElement('static', '', '',notify(get_string('slashargs', 'scorm'), 'notifyproblem', 'center', true));
         }
+        $zlib = ini_get('zlib.output_compression'); //check for zlib compression - if used, throw error because of IE bug. - SEE MDL-16185
+        if (isset($zlib) && $zlib) {
+            $mform->addElement('static', '', '',notify(get_string('zlibwarning', 'scorm'), 'notifyproblem', 'center', true));
+        }
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 

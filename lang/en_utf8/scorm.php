@@ -188,4 +188,5 @@ $string['noattemptsallowed'] = "Number of attempts allowed";
 $string['noattemptsmade'] = "Number of attempts you have made";
 $string['gradeforattempt'] = "Grade for attempt";
 $string['exceededmaxattempts'] = "You have reached the maximum number of attempts.";
+$string['zlibwarning'] ='Warning: PHP Zlib compression has been enabled on this site, some users may experience issues loading SCORM objects in certain web browsers.'; 
 ?>
