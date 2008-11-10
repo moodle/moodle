@@ -1088,6 +1088,9 @@ table.quizreviewsummary td.cell {
   border :medium solid yellow;
   background-color:lightYellow;
 }
+#mod-quiz-report .negcovar{
+  border :medium solid pink;
+}
 /***
  *** Modules: Resource
  ***/

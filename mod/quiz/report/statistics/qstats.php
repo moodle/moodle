@@ -249,15 +249,24 @@ class qstats{
         foreach (array_keys($this->questions) as $qid){
             $this->_secondary_question_walker($this->questions[$qid]->_stats);
             $this->sumofgradevariance += $this->questions[$qid]->_stats->gradevariance;
-            $sumofcovariancewithoverallgrade += sqrt($this->questions[$qid]->_stats->covariancewithoverallgrade);
+            if ($this->questions[$qid]->_stats->covariancewithoverallgrade >= 0){
+                $sumofcovariancewithoverallgrade += sqrt($this->questions[$qid]->_stats->covariancewithoverallgrade);
+                $this->questions[$qid]->_stats->negcovar = 0;
+            } else {
+                $this->questions[$qid]->_stats->negcovar = 1;
+            }
         }
         foreach (array_keys($this->subquestions) as $qid){
             $this->_secondary_question_walker($this->subquestions[$qid]->_stats);
         }
         foreach (array_keys($this->questions) as $qid){
             if ($sumofcovariancewithoverallgrade){
-                $this->questions[$qid]->_stats->effectiveweight = 100 * sqrt($this->questions[$qid]->_stats->covariancewithoverallgrade)
-                            /   $sumofcovariancewithoverallgrade;
+                if ($this->questions[$qid]->_stats->negcovar){
+                    $this->questions[$qid]->_stats->effectiveweight = null;
+                } else {
+                    $this->questions[$qid]->_stats->effectiveweight = 100 * sqrt($this->questions[$qid]->_stats->covariancewithoverallgrade)
+                                /   $sumofcovariancewithoverallgrade;
+                }
             } else {
                 $this->questions[$qid]->_stats->effectiveweight = null;
             }

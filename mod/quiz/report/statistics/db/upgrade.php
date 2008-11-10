@@ -117,6 +117,23 @@ function xmldb_quizreport_statistics_upgrade($oldversion) {
             }
         }
     }
+    if ($result && $oldversion < 2008111000) {
+        //delete all cached results first
+        $result = $result && $DB->delete_records('quiz_statistics');
+        $result = $result && $DB->delete_records('quiz_question_statistics');
+        $result = $result && $DB->delete_records('quiz_question_response_stats');
+        if ($result){
+        /// Define field anssubqid to be dropped from quiz_question_response_stats
+            $table = new xmldb_table('quiz_question_statistics');
+        /// Define field subqid to be added to quiz_question_response_stats
+            $field = new xmldb_field('negcovar', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'effectiveweight');
+    
+        /// Conditionally launch add field subqid
+            if (!$dbman->field_exists($table, $field)) {
+                $dbman->add_field($table, $field);
+            }
+        }
+    }
     return $result;
 }
 
