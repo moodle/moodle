@@ -210,7 +210,13 @@
     // Print the description
 
     if ($user->description && !isset($hiddenfields['description'])) {
-        echo format_text($user->description, FORMAT_MOODLE)."<hr />";
+        $has_courseid = ($course->id != SITEID);
+        if (!$DB->get_record('role_assignments', array('userid'=>$id))
+            && !$has_courseid && $CFG->profilesforenrolledusersonly) {
+            echo get_string('profilenotshown', 'moodle').'<hr />';
+        } else {
+            echo format_text($user->description, FORMAT_MOODLE)."<hr />";
+        }
     }
 
     // Print all the little details in a list

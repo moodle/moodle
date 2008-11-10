@@ -75,6 +75,13 @@ class user_editadvanced_form extends moodleform {
             }
         }
 
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+        $can_edit_user = has_capability('moodle/user:update', $sitecontext);
+        // remove description
+        if (!$DB->get_record('role_assignments', array('userid'=>$userid)) && empty($user->description) && $CFG->profilesforenrolledusersonly && !$can_edit_user) {
+            $mform->removeElement('description');
+        }
+
         // user can not change own auth method
         if ($userid == $USER->id) {
             $mform->hardFreeze('auth');
