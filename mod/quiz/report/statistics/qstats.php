@@ -89,12 +89,6 @@ class qstats{
         $stats->covariancemaxsum += $sortedgradedifference * $sortedothergradedifference;
         $stats->covariancewithoverallgradesum += $gradedifference * $overallgradedifference;
 
-        if ($stats->subquestion){
-            $question =& $this->subquestions[$stats->questionid];
-        } else {
-            $question =& $this->questions[$stats->questionid];
-        }
-
     }
 
     function add_response_detail_to_array($responsedetail){
