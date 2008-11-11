@@ -2767,7 +2767,7 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         if (count($includedfiles) == 1 && count($fields) == 1) {
             $formats= array(portfolio_format_from_file($includedfiles[0]));
         } else if (count($includedfiles) > 0) {
-            $formats = array(PORTFOLIO_FORMAT_RICHHTML);
+            $formats = array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_RICHHTML);
         }
         return array($formats, $includedfiles);
     }

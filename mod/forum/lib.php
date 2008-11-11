@@ -3184,7 +3184,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         if (empty($attachments)) {
             $button->set_formats(PORTFOLIO_FORMAT_PLAINHTML);
         } else {
-            $button->set_formats(PORTFOLIO_FORMAT_RICHHTML);
+            $button->set_formats(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_RICHHTML);
         }
         $commands[] = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
     }
@@ -7300,7 +7300,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         if ($this->attachment) {
             // do nothing
         } else if (!empty($this->multifiles) || !empty($this->singlefile)) {
-            $this->supportedformats = array(PORTFOLIO_FORMAT_RICHHTML);
+            $this->supportedformats = array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_RICHHTML);
         } else {
             $this->supportedformats = array(PORTFOLIO_FORMAT_PLAINHTML);
         }
