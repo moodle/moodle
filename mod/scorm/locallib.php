@@ -22,9 +22,109 @@ define('AVERAGEATTEMPT', '1');
 define('FIRSTATTEMPT', '2');
 define('LASTATTEMPT', '3');
 
-
 /// Local Library of functions for module scorm
 
+/**
+ * Returns an array of the popup options for SCORM and each options default value
+ * 
+ * @return array an array of popup options as the key and their defaults as the value
+ */
+function scorm_get_popup_options_array(){
+    global $CFG;
+    $cfg_scorm = get_config('scorm');
+    
+    return array('resizable'=> $cfg_scorm->resizable, 
+                 'scrollbars'=> $cfg_scorm->scrollbars, 
+                 'directories'=> $cfg_scorm->directories, 
+                 'location'=> $cfg_scorm->location,
+                 'menubar'=> $cfg_scorm->menubar, 
+                 'toolbar'=> $cfg_scorm->toolbar, 
+                 'status'=> $cfg_scorm->status); 
+}
+
+/**
+ * Returns an array of the array of what grade options
+ * 
+ * @return array an array of what grade options
+ */
+function scorm_get_grade_method_array(){
+    return array (GRADESCOES => get_string('gradescoes', 'scorm'),
+                  GRADEHIGHEST => get_string('gradehighest', 'scorm'),
+                  GRADEAVERAGE => get_string('gradeaverage', 'scorm'),
+                  GRADESUM => get_string('gradesum', 'scorm'));             
+}
+
+/**
+ * Returns an array of the array of what grade options
+ * 
+ * @return array an array of what grade options
+ */
+function scorm_get_what_grade_array(){
+    return array (HIGHESTATTEMPT => get_string('highestattempt', 'scorm'),
+                  AVERAGEATTEMPT => get_string('averageattempt', 'scorm'),
+                  FIRSTATTEMPT => get_string('firstattempt', 'scorm'),
+                  LASTATTEMPT => get_string('lastattempt', 'scorm'));
+}
+
+/**
+ * Returns an array of the array of skip view options
+ * 
+ * @return array an array of skip view options
+ */
+function scorm_get_skip_view_array(){
+   return array(0 => get_string('never'),
+                 1 => get_string('firstaccess','scorm'),
+                 2 => get_string('always'));
+}
+
+/**
+ * Returns an array of the array of hide table of contents options
+ * 
+ * @return array an array of hide table of contents options
+ */
+function scorm_get_hidetoc_array(){
+     return array(0 =>get_string('sided','scorm'),
+                  1 => get_string('hidden','scorm'),
+                  2 => get_string('popupmenu','scorm'));
+}
+
+/**
+ * Returns an array of the array of update frequency options
+ * 
+ * @return array an array of update frequency options
+ */
+function scorm_get_updatefreq_array(){
+    return array(0 => get_string('never'),
+                 1 => get_string('onchanges','scorm'),
+                 2 => get_string('everyday','scorm'),
+                 3 => get_string('everytime','scorm'));
+}
+
+/**
+ * Returns an array of the array of popup display options
+ * 
+ * @return array an array of popup display options
+ */
+function scorm_get_popup_display_array(){
+    return array(0 => get_string('iframe', 'scorm'),
+                 1 => get_string('popup', 'scorm'));
+}
+
+/**
+ * Returns an array of the array of attempt options
+ * 
+ * @return array an array of attempt options
+ */
+function scorm_get_attempts_array(){
+    $attempts = array(0 => get_string('nolimit','scorm'),
+                      1 => get_string('attempt1','scorm'));
+                  
+    for ($i=2; $i<=6; $i++) {
+        $attempts[$i] = get_string('attemptsx','scorm', $i);
+    }
+    
+    return $attempts;
+}
 /**
  * Extracts scrom package, sets up all variables.
  * Called whenever scorm changes
@@ -34,6 +134,7 @@ define('LASTATTEMPT', '3');
  */
 function scorm_parse($scorm, $full) {
     global $CFG, $DB;
+    $cfg_scorm = get_config('scorm');
 
     if (!isset($scorm->cmid)) {
         $cm = get_coursemodule_from_instance('scorm', $scorm->id);
@@ -54,7 +155,7 @@ function scorm_parse($scorm, $full) {
                 $newhash = null;
             }
         } else {
-            if (!$CFG->scorm_allowtypelocalsync) {
+            if (!$cfg_scorm->allowtypelocalsync) {
                 // sorry - localsync disabled
                 return;
             }
@@ -107,7 +208,7 @@ function scorm_parse($scorm, $full) {
             }
         }
 
-    } else if ($scorm->scormtype === SCORM_TYPE_EXTERNAL and $CFG->scorm_allowtypeexternal) {
+    } else if ($scorm->scormtype === SCORM_TYPE_EXTERNAL and $cfg_scorm->allowtypeexternal) {
         if (!$full and $scorm->sha1hash === sha1($scorm->reference)) {
             return;
         }
@@ -118,7 +219,7 @@ function scorm_parse($scorm, $full) {
         }
         $newhash = sha1($scorm->reference);
 
-    } else if ($scorm->scormtype === SCORM_TYPE_IMSREPOSITORY and !empty($CFG->repositoryactivate) and $CFG->scorm_allowtypeimsrepository) {
+    } else if ($scorm->scormtype === SCORM_TYPE_IMSREPOSITORY and !empty($CFG->repositoryactivate) and $cfg_scorm->allowtypeimsrepository) {
         if (!$full and $scorm->sha1hash === sha1($scorm->reference)) {
             return;
         }
@@ -966,11 +1067,13 @@ function scorm_get_attempt_count($user, $scorm) {
 */   
 function scorm_debugging($scorm) {
     global $CFG, $USER;
-    if (!$CFG->scorm_allowapidebug) {
+    $cfg_scorm = get_config('scorm');
+    
+    if (!$cfg_scorm->allowapidebug) {
         return false;
     }
     $identifier = $USER->username.':'.$scorm->name;
-    $test = $CFG->scorm_apidebugmask;
+    $test = $cfg_scorm->apidebugmask;
     // check the regex is only a short list of safe characters
     if (!preg_match('/^[\w\s\*\.\?\+\:\_\\\]+$/', $test)) {
         return false;
