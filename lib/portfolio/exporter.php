@@ -755,7 +755,7 @@ class portfolio_exporter {
         }
         $returnfiles = array();
         foreach ($files as $f) {
-            $returnfiles[$f->get_filename()] = $f;
+            $returnfiles[$f->get_filepath() . '/' . $f->get_filename()] = $f;
         }
         return $returnfiles;
     }
