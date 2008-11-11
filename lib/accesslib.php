@@ -3622,6 +3622,16 @@ function get_parent_contextid($context) {
 }
 
 /**
+ * @param object $context a context object.
+ * @return true if this context is the front page context, or a context inside it,
+ *      otherwise false.
+ */
+function is_inside_frontpage($context) {
+    $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
+    return strpos($context->path . '/', $frontpagecontext->path . '/') === 0;
+}
+
+/**
  * Recursive function which, given a context, find all its children context ids.
  *
  * When called for a course context, it will return the modules and blocks

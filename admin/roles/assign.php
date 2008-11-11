@@ -290,7 +290,7 @@
             $selectsql = "";
         }
 
-        if ($context->contextlevel > CONTEXT_COURSE) { // mod or block (or group?)
+        if ($context->contextlevel > CONTEXT_COURSE && !is_inside_frontpage($context)) { // mod or block (or group?)
 
             /************************************************************************
              *                                                                      *
