@@ -1191,6 +1191,8 @@ $string['phone'] = 'Phone';
 $string['phone2'] = 'Mobile Phone';
 $string['phpinfo'] = 'PHP info';
 $string['pleaseclose'] = 'Please close this window now.';
+$string['pleasesearchmore'] = 'Please search some more';
+$string['pleaseusesearch'] = 'Please use the search';
 $string['plugincheck'] = 'Plugins check';
 $string['pluginchecknotice'] = 'The following tables show the modules, blocks and filters that have been detected in your current Moodle installation; 
 They indicate which plugins are standard, and which are not. All non-standard plugins should be checked and upgraded to their most recent versions 
@@ -1512,6 +1514,8 @@ $string['todaylogs'] = 'Today\'s logs';
 $string['toeveryone'] = 'to everyone';
 $string['toomanybounces'] = 'That email address has had too many bounces. You <b>must</b> change it to continue.';
 $string['toomanytoshow'] = 'There are too many users to show.';
+$string['toomanyuserstoshow'] = 'Too many users ($a) to show';
+$string['toomanyusersmatchsearch'] = 'Too many users ($a->count) match \'$a->search\'';
 $string['toonly'] = 'to $a only';
 $string['top'] = 'Top';
 $string['topic'] = 'Topic';

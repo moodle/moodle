@@ -428,6 +428,7 @@ user_selector.prototype.output_options = function(data) {
         if (!this.listbox.multiple) {
             this.selected = {};
         }
+        this.handle_selection_change();
     }
     this.onlyoption = null;
 
