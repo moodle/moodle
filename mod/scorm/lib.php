@@ -579,18 +579,12 @@ function scorm_get_post_actions() {
 }
 
 function scorm_option2text($scorm) {
-    $SCORM_POPUP_OPTIONS = array('resizable'=>1,
-                                 'scrollbars'=>1,
-                                 'directories'=>0,
-                                 'location'=>0,
-                                 'menubar'=>0,
-                                 'toolbar'=>0,
-                                 'status'=>0);
-
+    $scorm_popoup_options = scorm_get_popup_options_array();
+    
     if (isset($scorm->popup)) {
         if ($scorm->popup == 1) {
             $optionlist = array();
-            foreach ($SCORM_POPUP_OPTIONS as $name => $option) {
+            foreach ($scorm_popoup_options as $name => $option) {
                 if (isset($scorm->$name)) {
                     $optionlist[] = $name.'='.$scorm->$name;
                 } else {

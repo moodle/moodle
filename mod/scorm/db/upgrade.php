@@ -282,22 +282,50 @@ function xmldb_scorm_upgrade($oldversion) {
                 unset_config($rcfg);
             }
         }
-        
-        $cfg_scorm = get_config('scorm');
-        $new_config = array('resizable', 
-                 'scrollbars', 
-                 'directories', 
-                 'location',
-                 'menubar', 
-                 'toolbar', 
-                 'status'); 
-        foreach ($new_config as $ncfg) {
-            if (!isset($cfg_scorm->$ncfg)) {
-                set_config($ncfg, 1, 'scorm');
-            }
-        }
         /// scorm savepoint reached
         upgrade_mod_savepoint($result, 2008090306, 'scorm');
+    }
+    
+    
+
+    // remove redundant config values
+    if ($result && $oldversion < 2008090307) {
+         $redundant_config = array(
+                         'scorm_allowapidebug',
+                         'scorm_allowtypeexternal',
+                         'scorm_allowtypeimsrepository',
+                         'scorm_allowtypelocalsync', 
+                         'scorm_apidebugmask', 
+                         'scorm_frameheight', 
+                         'scorm_framewidth',
+                         'scorm_maxattempts',
+                         'scorm_updatetime',
+                         'scorm_resizable', 
+                         'scorm_scrollbars', 
+                         'scorm_directories', 
+                         'scorm_location',
+                         'scorm_menubar', 
+                         'scorm_toolbar', 
+                         'scorm_status',
+                         'scorm_grademethod',
+                         'scorm_maxgrade',
+                         'scorm_whatgrade',
+                         'scorm_popup',
+                         'scorm_skipview',
+                         'scorm_hidebrowse',
+                         'scorm_hidetoc',
+                         'scorm_hidenav',
+                         'scorm_auto',
+                         'scorm_updatefreq'
+         );
+        foreach ($redundant_config as $rcfg) {
+            if (isset($CFG->$rcfg)) {
+                unset_config($rcfg);
+            }
+        }
+        
+        /// scorm savepoint reached
+        upgrade_mod_savepoint($result, 2008090307, 'scorm');
     }
     
     

@@ -233,11 +233,13 @@ class mod_scorm_mod_form extends moodleform_mod {
         global $COURSE;
 
         if (isset($default_values['popup']) && ($default_values['popup'] == 1) && isset($default_values['options'])) {
-            $options = explode(',',$default_values['options']);
-            foreach ($options as $option) {
-                list($element,$value) = explode('=',$option);
-                $element = trim($element);
-                $default_values[$element] = trim($value);
+            if (!empty($default_values['options'])) {
+                $options = explode(',',$default_values['options']);
+                foreach ($options as $option) {
+                    list($element,$value) = explode('=',$option);
+                    $element = trim($element);
+                    $default_values[$element] = trim($value);
+                }
             }
         }
         if (isset($default_values['grademethod'])) {

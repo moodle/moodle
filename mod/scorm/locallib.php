@@ -33,13 +33,13 @@ function scorm_get_popup_options_array(){
     global $CFG;
     $cfg_scorm = get_config('scorm');
     
-    return array('resizable'=> $cfg_scorm->resizable, 
-                 'scrollbars'=> $cfg_scorm->scrollbars, 
-                 'directories'=> $cfg_scorm->directories, 
-                 'location'=> $cfg_scorm->location,
-                 'menubar'=> $cfg_scorm->menubar, 
-                 'toolbar'=> $cfg_scorm->toolbar, 
-                 'status'=> $cfg_scorm->status); 
+    return array('resizable'=> isset($cfg_scorm->resizable) ? $cfg_scorm->resizable : 0, 
+                 'scrollbars'=> isset($cfg_scorm->scrollbars) ? $cfg_scorm->scrollbars : 0, 
+                 'directories'=> isset($cfg_scorm->directories) ? $cfg_scorm->directories : 0, 
+                 'location'=> isset($cfg_scorm->location) ? $cfg_scorm->location : 0,
+                 'menubar'=> isset($cfg_scorm->menubar) ? $cfg_scorm->menubar : 0, 
+                 'toolbar'=> isset($cfg_scorm->toolbar) ? $cfg_scorm->toolbar : 0, 
+                 'status'=> isset($cfg_scorm->status) ? $cfg_scorm->status : 0); 
 }
 
 /**
