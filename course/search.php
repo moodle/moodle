@@ -147,7 +147,7 @@
     elseif (!empty($modulelist) and confirm_sesskey()) {
         $modulename = $modulelist;
 
-        $sql =  "SELECT DISTINCT c.id FROM {$CFG->prefix}".$modulelist." module,{$CFG->prefix}course as c"
+        $sql =  "SELECT DISTINCT c.id FROM {$CFG->prefix}".$modulelist." module, {$CFG->prefix}course c"
             ." WHERE module.course=c.id";
 
         $courseids = get_records_sql($sql);
