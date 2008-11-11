@@ -62,7 +62,7 @@ class user_edit_form extends moodleform {
         }
 
         // remove description
-        if (!get_record('role_assignments', 'userid', $userid) && empty($user->description) && $CFG->profilesforenrolledusersonly) {
+        if (!get_record('role_assignments', 'userid', $userid) && empty($user->description) && !empty($CFG->profilesforenrolledusersonly)) {
             $mform->removeElement('description');
         }
 
