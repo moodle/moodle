@@ -3328,7 +3328,7 @@ function print_context_name($context, $withprefix = true, $short = false) {
 
         case CONTEXT_COURSE: // 1 to 1 to course cat
             if ($context->instanceid == SITEID) {
-                $name = get_string('frontpage', 'admin');
+                $name = get_string('page', 'admin');
             } else {
                 if ($course = $DB->get_record('course', array('id'=>$context->instanceid))) {
                     if ($withprefix){
@@ -3668,6 +3668,16 @@ function get_parent_contextid($context) {
         return false;
     }
     return array_shift($parentcontexts);
+}
+
+/**
+ * @param object $context a context object.
+ * @return true if this context is the front page context, or a context inside it,
+ *      otherwise false.
+ */
+function is_inside_frontpage($context) {
+    $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
+    return strpos($context->path . '/', $frontpagecontext->path . '/') === 0;
 }
 
 /**

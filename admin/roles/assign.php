@@ -122,7 +122,7 @@
 
     /// Create the user selector objects.
         $options = array('context' => $context, 'roleid' => $roleid);
-        if ($context->contextlevel > CONTEXT_COURSE) {
+        if ($context->contextlevel > CONTEXT_COURSE && !is_inside_frontpage($context)) {
             $potentialuserselector = new potential_assignees_below_course('addselect', $options);
         } else {
             $potentialuserselector = new potential_assignees_course_and_above('addselect', $options);
