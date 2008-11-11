@@ -211,8 +211,7 @@
 
     if ($user->description && !isset($hiddenfields['description'])) {
         $has_courseid = ($course->id != SITEID);
-        if (!$DB->get_record('role_assignments', array('userid'=>$id))
-            && !$has_courseid && !empty($CFG->profilesforenrolledusersonly)) {
+        if (!$has_courseid && !empty($CFG->profilesforenrolledusersonly) && !$DB->get_record('role_assignments', array('userid'=>$id))) {
             echo get_string('profilenotshown', 'moodle').'<hr />';
         } else {
             echo format_text($user->description, FORMAT_MOODLE)."<hr />";
