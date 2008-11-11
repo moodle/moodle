@@ -31,10 +31,12 @@
         $texexp = str_replace('&lt;','<',$texexp);
         $texexp = str_replace('&gt;','>',$texexp);
         $texexp = preg_replace('!\r\n?!',' ',$texexp);
+        $pathname = "$CFG->dataroot/filter/tex/$image";
         $cmd = tex_filter_get_cmd($pathname, $texexp);
         system($cmd, $status);
 
         if (file_exists($pathname)) {
+            require_once($CFG->libdir . '/filelib.php');
             send_file($pathname, $image);
         } else {
             echo "Image not found!";
