@@ -347,7 +347,7 @@ class mod_scorm_mod_form extends moodleform_mod {
             foreach ($options as $option) {
                 $opt = explode('=', $option);
                 if (isset($opt[1])) {
-                    $default_values[$opt][0] = $opt[1];
+                    $default_values[$opt[0]] = $opt[1];
                 }
             }
         }
