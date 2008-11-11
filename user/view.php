@@ -331,7 +331,6 @@
     /// Print the Custom User Fields
     profile_display_fields($user->id);
 
-    require_once($CFG->dirroot . '/blocks/extrafields/user_view.php');
 
     if ($mycourses = get_my_courses($user->id, null, null, false, 21)) {
         $shown=0;
