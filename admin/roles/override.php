@@ -199,7 +199,7 @@
                 $strperms[$permname] =  get_string($permname, 'role');
             }
 ?>
-<form id="overrideform" action=""<?php echo $baseurl; ?>" method="post"><div>
+<form id="overrideform" action="<?php echo $baseurl; ?>" method="post"><div>
     <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
 
     <table class="rolecap" id="overriderolestable">
