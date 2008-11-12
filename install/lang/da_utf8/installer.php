@@ -11,7 +11,7 @@
 
 $string['admindirerror'] = 'Det angivne adminbibliotek er forkert';
 $string['admindirname'] = 'Adminbibliotek';
-$string['admindirsetting'] = 'Nogle få web-hoteller bruger /admin som en speciel URL til at administrere web-hotellet. Det er et problem da Moodle også bruger /admin som standard til administrationssiderne. Hvis det er så kan du omdøbe adminbiblioteket og så angive den nye sti til admin biblioteket her. For eksempel: <br/> <br /><b>moodleadmin</b><br /> <br />
+$string['admindirsetting'] = 'Nogle få web-hoteller bruger /admin som en speciel URL til at administrere web-hotellet. Det er et problem da Moodle også bruger /admin som standard til administrationssiderne. Hvis det er så kan du omdøbe adminbiblioteket og så angive den nye sti til admin biblioteket her. For eksempel: <br /> <br /><b>moodleadmin</b><br /> <br />
 Dette vil rette admin linkene i Moodle.';
 $string['admindirsettinghead'] = 'Sætter admin-biblioteket...';
 $string['admindirsettingsub'] = 'Nogle får webhoteller bruger /admin adresse til kontrolpanelet el.lign. Desværre konflikter dette med standardplaceringen af Moodles administrationssider. Du kan i så tilfælde omdøbe admin-biblioteket i din installation og skrive navnet her. Eksempel:<br /> <br /><b>moodleadmin</b><br /> <br />
@@ -58,7 +58,7 @@ $string['databasecreationsettingssub'] = '<b>Type:</b> fikseret til \"mysql\" af
 <b>User:</b> fikseret til \"root\" af installationsprogrammet<br />
 <b>Password:</b> adgangskoden til din database<br />
 <b>Tables Prefix:</b> valgfrit fornavn (prefix) til alle tabelnavne';
-$string['databasesettings'] = 'Du skal nu konfigurere databasen hvor det meste af Moodle\'s data vil blive gemt. Databaseserveren skal allerede være oprettet og du skal bruge brugernavn og password til en brugerkonto der har rettigheder til at oprette og hente data.<br/>
+$string['databasesettings'] = 'Du skal nu konfigurere databasen hvor det meste af Moodle\'s data vil blive gemt. Databaseserveren skal allerede være oprettet og du skal bruge brugernavn og password til en brugerkonto der har rettigheder til at oprette og hente data.<br />
 <br /> <br />
 <b>Type:</b> mysql eller postgres7<br />
 <b>Vært:</b> f.eks. localhost eller db.isp.com<br />
