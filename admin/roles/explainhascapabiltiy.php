@@ -145,8 +145,8 @@ $strperm = array(
 );
 
 // Start the output.
-print_header(get_string('explainpermissions', 'role'));
-print_heading(get_string('explainpermissions', 'role'));
+print_header(get_string('explainpermission', 'role'));
+print_heading(get_string('explainpermission', 'role'));
 
 // Print a summary of what we are doing.
 $a = new stdClass;
@@ -155,20 +155,28 @@ if ($userid) {
 } else {
     $a->fullname = get_string('nobody');
 }
-$a->context = reset($contexts)->name;
 $a->capability = $capability;
-echo '<p>' . get_string('explainpermissionsdetails', 'role', $a) . '</p>';
+$a->context = reset($contexts)->name;
+if ($userhascapability) {
+    echo '<p>' . get_string('whydoesuserhavecap', 'role', $a) . '</p>';
+} else {
+    echo '<p>' . get_string('whydoesusernothavecap', 'role', $a) . '</p>';
+}
 
 // Print the table header rows.
 echo '<table class="generaltable explainpermissions"><thead>';
-echo '<tr><th scope="col" rowspan="2" class="header">' . get_string('assignmentcontext', 'role') .
-        '</th><th scope="row" class="header overridecontextheader">' . get_string('overridecontext', 'role') . '</th>';
-foreach ($contexts as $con) {
-    echo '<th scope="col" rowspan="2" class="header overridecontext">' . $con->id . '</th>';
+echo '<tr><th scope="col" colspan="2" class="header assignment">' . get_string('roleassignments', 'role') . '</th>';
+if (count($contexts) > 1) {
+    echo '<th scope="col" colspan="' . (count($contexts) - 1) . '" class="header">' . get_string('overridesbycontext', 'role') . '</th>';
 }
+echo '<th scope="col" rowspan="2" class="header">' . get_string('roledefinitions', 'role') . '</th>';
 echo '</tr>';
-echo '<tr><th scope="col" class="header rolename">' . get_string('role') . '</th></tr>';
-echo '</thead><tbody>';
+echo '<tr class="row2"><th scope="col" class="header assignment">' . get_string('context', 'role') .
+        '</th><th scope="col" class="header assignment">' . get_string('role') . '</th>';
+foreach (array_slice($contexts, 0, count($contexts) - 1) as $con) {
+    echo '<th scope="col" class="header overridecontext">' . $con->id . '</th>';
+}
+echo '</tr></thead><tbody>';
 
 // Now print the bulk of the table.
 foreach ($contexts as $con) {
@@ -179,14 +187,14 @@ foreach ($contexts as $con) {
     } else {
         $ras = array(0);
     }
-    $firstcell = '<th class="cell assignmentcontext" rowspan="' . count($ras) . '">' . $con->id . ' ' . $con->name . '</th>';
+    $firstcell = '<th class="cell assignment" rowspan="' . count($ras) . '">' . $con->id . ' ' . $con->name . '</th>';
     $rowclass = ' class="newcontext"';
     foreach ($ras as $roleid) {
         $extraclass = '';
         if (!$roleid) {
             $extraclass = ' noroles';
         }
-        echo '<tr' . $rowclass . '>' . $firstcell . '<th class="cell rolename' . $extraclass . '" scope="row">' . $rolenames[$roleid] . '</th>';
+        echo '<tr' . $rowclass . '>' . $firstcell . '<th class="cell assignment' . $extraclass . '" scope="row">' . $rolenames[$roleid] . '</th>';
         foreach ($contexts as $ocon) {
             if ($roleid == 0) {
                 $perm = '';

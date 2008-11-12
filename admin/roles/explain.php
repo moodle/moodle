@@ -36,7 +36,7 @@
     $canview = has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride',
             'moodle/role:override', 'moodle/role:manage'), $context);
     if (!$canview) {
-        print_error('nopermissions', 'error', '', get_string('explainpermissions', 'role'));
+        print_error('nopermissions', 'error', '', get_string('checkpermissions', 'role'));
     }
 
 /// These are needed early because of tabs.php
@@ -56,8 +56,8 @@
     $userselector->set_rows(10);
 
 /// Work out an appropriate page title.
-    $title = get_string('explainpermissionsin', 'role', $contextname);
-    $straction = get_string('explainpermissions', 'role'); // Used by tabs.php
+    $title = get_string('checkpermissionsin', 'role', $contextname);
+    $straction = get_string('checkpermissions', 'role'); // Used by tabs.php
 
 /// Print the header and tabs
     if ($context->contextlevel == CONTEXT_USER) {
@@ -85,27 +85,26 @@
         }
 
         $showroles = 1;
-        $currenttab = 'explain';
+        $currenttab = 'check';
         include_once($CFG->dirroot.'/user/tabs.php');
 
     } else if ($context->contextlevel == CONTEXT_SYSTEM) {
-        admin_externalpage_setup('assignroles');
-//        admin_externalpage_setup('explainpermissions');
+        admin_externalpage_setup('checkpermissions');
         admin_externalpage_print_header();
 
     } else if ($context->contextlevel == CONTEXT_COURSE and $context->instanceid == SITEID) {
-        admin_externalpage_setup('explainfrontpagepermissions');
+        admin_externalpage_setup('frontpageroles');
         admin_externalpage_print_header();
-        $currenttab = 'explain';
+        $currenttab = 'check';
         include_once('tabs.php');
 
     } else {
-        $currenttab = 'explain';
+        $currenttab = 'check';
         include_once('tabs.php');
     }
 
 /// Print heading.
-    print_heading_with_help($title, 'explainpermissions');
+    print_heading_with_help($title, 'checkpermissions');
 
 /// If a user has been chosen, show all the permissions for this user.
     $user = $userselector->get_selected_user();
@@ -116,15 +115,17 @@
             protected $user;
             protected $fullname;
             protected $baseurl;
+            protected $contextname;
             protected $stryes;
             protected $strno;
             protected $strexplanation;
             private $hascap;
-            public function __construct($context, $user) {
+            public function __construct($context, $user, $contextname) {
                 global $CFG;
                 parent::__construct($context, 'explaincaps');
                 $this->user = $user;
                 $this->fullname = fullname($user);
+                $this->contextname = $contextname;
                 $this->baseurl = $CFG->wwwroot . '/' . $CFG->admin .
                         '/roles/explainhascapabiltiy.php?user=' . $user->id .
                         '&amp;contextid=' . $context->id . '&amp;capability=';
@@ -153,14 +154,15 @@
             protected function add_row_cells($capability) {
                 if ($this->hascap) {
                     $result = $this->stryes;
-                    $tooltip = 'explainwhyhascap';
+                    $tooltip = 'whydoesuserhavecap';
                 } else {
                     $result = $this->strno;
-                    $tooltip = 'explainwhyhasnotcap';
+                    $tooltip = 'whydoesusernothavecap';
                 }
                 $a = new stdClass;
-                $a->username = $this->fullname;
+                $a->fullname = $this->fullname;
                 $a->capability = $capability->name;
+                $a->context = $this->contextname;
                 echo '<td>' . $result . '</td>';
                 echo '<td>';
                 link_to_popup_window($this->baseurl . $capability->name, 'hascapabilityexplanation',
@@ -171,10 +173,10 @@
 
         require_js(array('yui_yahoo', 'yui_dom', 'yui_event'));
         require_js($CFG->admin . '/roles/roles.js');
-        print_box_start('generalbox boxaligncenter');
+        print_box_start('generalbox boxaligncenter boxwidthwide');
         print_heading(get_string('permissionsforuser', 'role', fullname($user)), '', 3);
 
-        $table = new explain_cabability_table($context, $user);
+        $table = new explain_cabability_table($context, $user, $contextname);
         $table->display();
         print_box_end();
 

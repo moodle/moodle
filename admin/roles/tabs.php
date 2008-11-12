@@ -157,11 +157,11 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything ex
 
     }
 
-    if (!empty($assignableroles)) {
+    if (!empty($assignableroles) || $currenttab=='assign') {
         $toprow[] = new tabobject('assign',
                         $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id,
                         get_string('localroles', 'role'),
-                        get_string('showallroles', 'role'),
+                        '',
                         true);
     }
 
@@ -169,7 +169,16 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything ex
         $toprow[] = new tabobject('override',
                         $CFG->wwwroot.'/'.$CFG->admin.'/roles/override.php?contextid='.$context->id,
                         get_string('overridepermissions', 'role'),
-                        get_string('showallroles', 'role'),
+                        '',
+                        true);
+    }
+
+    if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride',
+            'moodle/role:override', 'moodle/role:assign'), $context)) {
+        $toprow[] = new tabobject('check',
+                        $CFG->wwwroot.'/'.$CFG->admin.'/roles/explain.php?contextid='.$context->id,
+                        get_string('checkpermissions', 'role'),
+                        '',
                         true);
     }
 
