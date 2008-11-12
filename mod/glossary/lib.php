@@ -699,99 +699,16 @@ function glossary_print_entry_definition($entry) {
         $ttpresent = false;
     }
 
-    $links = array();
-    $tags = array();
-    $urls = array();
-    $addrs = array();
+    global $GLOSSARY_EXCLUDECONCEPTS;
 
     //Calculate all the strings to be no-linked
     //First, the concept
-    $term = preg_quote(trim($entry->concept),'/');
-    $pat = '/('.$term.')/is';
-    $doNolinks[] = $pat;
+    $GLOSSARY_EXCLUDECONCEPTS=array($entry->concept);
     //Now the aliases
     if ( $aliases = get_records('glossary_alias','entryid',$entry->id) ) {
         foreach ($aliases as $alias) {
-            $term = preg_quote(trim($alias->alias),'/');
-            $pat = '/('.$term.')/is';
-            $doNolinks[] = $pat;
+            $GLOSSARY_EXCLUDECONCEPTS[]=trim($alias->alias);
         }
-    }
-
-
-    //Extract <a>..><a> tags from definition
-    preg_match_all('/<a\s[^>]+?>(.*?)<\/a>/is',$definition,$list_of_a);
-
-    //Save them into links array to use them later
-    foreach (array_unique($list_of_a[0]) as $key=>$value) {
-        $links['<#'.$key.'#>'] = $value;
-    }
-    //Take off every link from definition
-    if ( $links ) {
-        $definition = str_replace($links,array_keys($links),$definition);
-    }
-
-
-    //Extract all tags from definition
-    preg_match_all('/(<.*?>)/is',$definition,$list_of_tags);
-
-    //Save them into tags array to use them later
-    foreach (array_unique($list_of_tags[0]) as $key=>$value) {
-        $tags['<@'.$key.'@>'] = $value;
-    }
-    //Take off every tag from definition
-    if ( $tags ) {
-        $definition = str_replace($tags,array_keys($tags),$definition);
-    }
-
-
-    //Extract all URLS with protocol (http://domain.com) from definition
-    preg_match_all('/([[:space:]]|^|\(|\[)([[:alnum:]]+):\/\/([^[:space:]]*)([[:alnum:]#?\/&=])/is',$definition,$list_of_urls);
-
-    //Save them into urls array to use them later
-    foreach (array_unique($list_of_urls[0]) as $key=>$value) {
-        $urls['<*'.$key.'*>'] = $value;
-    }
-    //Take off every url from definition
-    if ( $urls ) {
-        $definition = str_replace($urls,array_keys($urls),$definition);
-    }
-
-
-    //Extract all WEB ADDRESSES (www.domain.com) from definition
-    preg_match_all('/([[:space:]]|^|\(|\[)www\.([^[:space:]]*)([[:alnum:]#?\/&=])/is',$definition,$list_of_addresses);
-
-    //Save them into addrs array to use them later
-    foreach (array_unique($list_of_addresses[0]) as $key=>$value) {
-        $addrs['<+'.$key.'+>'] = $value;
-    }
-    //Take off every addr from definition
-    if ( $addrs ) {
-        $definition = str_replace($addrs,array_keys($addrs),$definition);
-    }
-
-
-    //Put doNolinks (concept + aliases) enclosed by <nolink> tag
-    $definition= preg_replace($doNolinks,'<span class="nolink">$1</span>',$definition);
-
-    //Restore addrs
-    if ( $addrs ) {
-        $definition = str_replace(array_keys($addrs),$addrs,$definition);
-    }
-
-    //Restore urls
-    if ( $urls ) {
-        $definition = str_replace(array_keys($urls),$urls,$definition);
-    }
-
-    //Restore tags
-    if ( $tags ) {
-        $definition = str_replace(array_keys($tags),$tags,$definition);
-    }
-
-    //Restore links
-    if ( $links ) {
-        $definition = str_replace(array_keys($links),$links,$definition);
     }
 
     $options = new object();
@@ -806,6 +723,10 @@ function glossary_print_entry_definition($entry) {
     }
 
     $text = format_text($definition, $entry->format, $options);
+    
+    // Stop excluding concepts from autolinking
+    unset($GLOSSARY_EXCLUDECONCEPTS);
+    
     if (!empty($entry->highlight)) {
         $text = highlight($entry->highlight, $text);
     }
