@@ -438,8 +438,9 @@ function find_form_errors(&$user, &$usernew, &$err, &$um) {
     if (over_bounce_threshold($user) && $user->email == $usernew->email) 
         $err['email'] = get_string('toomanybounces');
 
-    if (empty($usernew->description) and !has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID)))
-        $err["description"] = get_string("missingdescription");
+    if (empty($usernew->description) and !has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        //$err["description"] = get_string("missingdescription");
+    }
 
     if (empty($usernew->city))
         $err["city"] = get_string("missingcity");

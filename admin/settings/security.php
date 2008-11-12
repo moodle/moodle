@@ -32,6 +32,7 @@ $temp->add(new admin_setting_configselect('bloglevel', get_string('bloglevel', '
                                                                                                                                           2 => get_string('groupblogs','blog'),
                                                                                                                                           1 => get_string('personalblogs','blog'),
                                                                                                                                           0 => get_string('disableblogs','blog'))));
+$temp->add(new admin_setting_configcheckbox('profilesforenrolledusersonly', get_string('profilesforenrolledusersonly','admin'),get_string('configprofilesforenrolledusersonly', 'admin'),'1'));
 
 $ADMIN->add('security', $temp);
 

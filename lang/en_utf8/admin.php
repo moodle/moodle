@@ -130,6 +130,11 @@ $string['configopentogoogle'] = 'If you enable this setting, then Google will be
 $string['configpathtoclam'] = 'Path to clam AV.  Probably something like /usr/bin/clamscan or /usr/bin/clamdscan. You need this in order for clam AV to run.';
 $string['configpathtodu'] = 'Path to du. Probably something like /usr/bin/du. If you enter this, pages that display directory contents will run much faster for directories with a lot of files.';
 $string['configperfdebug'] = 'If you turn this on, performance info will be printed in the footer of the standard theme';
+$string['configprofilesforenrolledusersonly'] = '
+<ul>
+<li>When showing the profile page, if a courseid isn\'t defined (this is the public view) AND the user is not enrolled in any courses AND this setting is set as true then replace the profile description won\'t display.</li>
+<li>When editing the profile page, if the description is blank AND the user is not enrolled in any courses AND this setting is set as true then completely hide the description field from the editing page.</li>
+</ul>';
 $string['configprotectusernames'] = 'By default forget_password.php does not display any hints that would allow guessing of usernames or email addresses.';
 $string['configproxyhost'] = 'If this <b>server</b> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname and port here.  Otherwise leave it blank.';
 $string['configproxyport'] = 'If this server needs to use a proxy computer, then provide the proxy port here.';
@@ -373,6 +378,7 @@ $string['pgclusterdescription'] = 'PostgreSQL version/cluster parameter for comm
 $string['php50restricted'] = 'PHP 5.0.x has a number of known problems, please upgrade to 5.1.x or downgrade to 4.3.x or 4.4.x';
 $string['pleaseregister'] = 'Please register your site to remove this button';
 $string['plugins'] = 'Modules';
+$string['profilesforenrolledusersonly'] = 'Profiles for enrolled users only';
 $string['protectusernames'] = 'Protect usernames';
 $string['proxyhost'] = 'Proxy host';
 $string['proxyport'] = 'Proxy port';

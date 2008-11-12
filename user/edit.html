@@ -265,10 +265,16 @@ if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SI
         ?>
     </td>
 </tr>
-<?php } ?>
+<?php }
+$can_edit_user = has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM));
+if (empty($user->description) && !empty($CFG->profilesforenrolledusersonly) && !record_exists('role_assignments', 'userid', $userid) && !$can_edit_user) {
+    // prevent user editing description
+} else {
+?>
 <tr>
     <th><?php print_string("userdescription") ?>:</th>
-    <td><?php
+    <td>
+    <?php
         if (isset($err["description"])) {
             formerr($err["description"]);
             echo "<br />";
@@ -278,6 +284,10 @@ if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SI
     ?>
     </td>
 </tr>
+<?php
+}
+
+?>
 <tr>
     <td colspan="2" style="text-align: center;"><input type="submit" value="<?php print_string("updatemyprofile") ?>" /></td>
 </tr>
