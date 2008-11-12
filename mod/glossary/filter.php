@@ -143,6 +143,17 @@ function glossary_filter($courseid, $text) {
 
         $conceptlist = filter_remove_duplicates($conceptlist);
     }
+    
+    global $GLOSSARY_EXCLUDECONCEPTS;
+    if(!empty($GLOSSARY_EXCLUDECONCEPTS)) {
+        $reducedconceptlist=array();
+        foreach($conceptlist as $concept) {
+            if(!in_array($concept->phrase,$GLOSSARY_EXCLUDECONCEPTS)) {
+                $reducedconceptlist[]=$concept;
+            }
+        }
+        return filter_phrases($text, $reducedconceptlist);
+    }
 
     return filter_phrases($text, $conceptlist);   // Actually search for concepts!
 }

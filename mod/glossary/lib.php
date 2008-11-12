@@ -693,11 +693,6 @@ function glossary_print_entry_definition($entry) {
         $ttpresent = false;
     }
 
-    $links = array();
-    $tags = array();
-    $urls = array();
-    $addrs = array();
-
     global $GLOSSARY_EXCLUDECONCEPTS;
 
     //Calculate all the strings to be no-linked
