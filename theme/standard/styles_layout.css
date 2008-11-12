@@ -582,6 +582,11 @@ div.hide {
 #userselector_options .collapsibleregioncaption {
     font-weight: bold;
 }
+#userselector_options p {
+    margin:0.2em 0pt;
+    text-align:left;
+}
+
 /***
  *** Forms
  ***/
@@ -1106,13 +1111,13 @@ body#admin-modules table.generaltable td.c0
     font-weight: normal;
 }
 
-#admin-roles-manage table.roledesc,
-#admin-roles-override table.roledesc {
+table.roledesc {
   margin-left:auto;
   margin-right:auto;
 }
 
 #admin-roles-manage .backlink,
+#admin-roles-explain .backlink,
 #admin-roles-assign .backlink,
 #admin-roles-override .backlink {
   text-align: right;
@@ -1120,8 +1125,15 @@ body#admin-modules table.generaltable td.c0
   margin: 2em auto 1em;
 }
 
-#admin-roles-manage table.rolecap,
-#admin-roles-override table.rolecap {
+#admin-roles-explain #chooseuser h3 {
+  margin-top: 0;
+}
+#admin-roles-explain #chooseusersubmit {
+  margin: 1em 0 0;
+  text-align: center;
+}
+
+table.rolecap {
   margin-left:auto;
   margin-right:auto;
 }
@@ -1134,15 +1146,14 @@ table.rolecap .hiddenrow {
   display: none;
 }
 
-.rolecap .inherit,
-.rolecap .allow,
-.rolecap .prevent,
-.rolecap .prohibit {
+table.rolecap .inherit,
+table.rolecap .allow,
+table.rolecap .prevent,
+table.rolecap .prohibit {
   text-align:center;
 }
 
-#admin-roles-manage .rolecap .cap-desc .cap-name,
-#admin-roles-override .rolecap .cap-desc .cap-name {
+table.rolecap .cap-desc .cap-name {
   display: block;
 }
 

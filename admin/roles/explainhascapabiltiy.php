@@ -76,6 +76,47 @@ foreach ($roles as $role) {
 }
 $rolenames = role_fix_names($rolenames, $context);
 
+// Pass over the data once, to find the cell that determines the result.
+$userhascapability = has_capability($capability, $context, $userid, false);
+$areprohibits = false;
+$decisiveassigncon = 0;
+$decisiveoverridecon = 0;
+foreach ($contexts as $con) {
+    if (!empty($accessdata['ra'][$con->path])) {
+        // The array_unique here is to work around bug MDL-14817. Once that bug is
+        // fixed, it can be removed
+        $ras = array_unique($accessdata['ra'][$con->path]);
+    } else {
+        $ras = array();
+    }
+    foreach ($contexts as $ocon) {
+        $summedpermission = 0;
+        foreach ($ras as $roleid) {
+            if (isset($accessdata['rdef'][$ocon->path . ':' . $roleid][$capability])) {
+                $perm = $accessdata['rdef'][$ocon->path . ':' . $roleid][$capability];
+            } else {
+                $perm = CAP_INHERIT;
+            }
+            if ($perm == CAP_PROHIBIT) {
+                $areprohibits = true;
+                $decisiveassigncon = 0;
+                $decisiveoverridecon = 0;
+                break 3;
+            }
+            $summedpermission += $perm;
+        }
+        if ($summedpermission) {
+            $decisiveassigncon = $con->id;
+            $decisiveoverridecon = $ocon->id;
+            break 2;
+        }
+    }
+}
+if (!$areprohibits && !$decisiveassigncon) {
+    $decisiveassigncon = SYSCONTEXTID;
+    $decisiveoverridecon = SYSCONTEXTID;
+}
+
 // Make a fake role to simplify rendering the table below.
 $rolenames[0] = get_string('none');
 
@@ -124,7 +165,9 @@ echo '</thead><tbody>';
 // Now print the bulk of the table.
 foreach ($contexts as $con) {
     if (!empty($accessdata['ra'][$con->path])) {
-        $ras = $accessdata['ra'][$con->path];
+        // The array_unique here is to work around bug MDL-14817. Once that bug is
+        // fixed, it can be removed
+        $ras = array_unique($accessdata['ra'][$con->path]);
     } else {
         $ras = array(0);
     }
@@ -151,7 +194,16 @@ foreach ($contexts as $con) {
             } else {
                 $permission = $strperm[$perm];
             }
-            echo '<td class="cell ' . $cssclasses[$perm] . '">' . $permission . '</td>';
+            $classes = $cssclasses[$perm];
+            if (!$areprohibits && $decisiveassigncon == $con->id && $decisiveoverridecon == $ocon->id) {
+                $classes .= ' decisive';
+                if ($userhascapability) {
+                    $classes .= ' has';
+                } else {
+                    $classes .= ' hasnot';
+                }
+            }
+            echo '<td class="cell ' . $classes . '">' . $permission . '</td>';
         }
         echo '</tr>';
         $firstcell = '';
@@ -162,9 +214,8 @@ echo '</tbody></table>';
 
 // Finish the page.
 echo get_string('explainpermissionsinfo', 'role');
-if ($userid && $capability != 'moodle/site:doanything' &&
-        has_capability('moodle/site:doanything', $context, $userid) &&
-        !has_capability($capability, $context, $userid, false)) {
+if ($userid && $capability != 'moodle/site:doanything' && !$userhascapability &&
+        has_capability('moodle/site:doanything', $context, $userid)) {
     echo '<p>' . get_string('explainpermissionsdoanything', 'role', $capability) . '</p>';
 }
 close_window_button();

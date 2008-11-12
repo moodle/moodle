@@ -1169,7 +1169,21 @@ table.quizreviewsummary td.cell {
   background-color:#FFFFFF;
   border: 1px solid #cecece;
 }
-
+table.explainpermissions .decisive.has,
+#explaincaps .rolecap.yes {
+  background-color: #ddffdd;
+}
+table.explainpermissions .decisive.hasnot,
+#explaincaps .rolecap.no {
+  background-color: #ffdddd;
+}
+table.explainpermissions .prohibit {
+    background-color: #ffbbff;
+    font-weight: bold;
+}
+table.explainpermissions .decisive {
+    font-weight: bold;
+}
 #admin-roles-manage .capdefault {
   background-color:#dddddd;
   border: 1px solid #cecece;

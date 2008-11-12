@@ -496,6 +496,8 @@ YAHOO.lang.augmentProto(user_selector, YAHOO.util.EventProvider);
  */
 function user_selector_options_tracker() {
     var oself = this;
+
+    // Add event listeners.
     YAHOO.util.Event.addListener('userselector_preserveselectedid', 'click',
             function(e) { oself.handle_option_change('userselector_preserveselected') });
     YAHOO.util.Event.addListener('userselector_autoselectuniqueid', 'click',

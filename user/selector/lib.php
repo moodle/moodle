@@ -145,6 +145,24 @@ abstract class user_selector_base {
     }
 
     /**
+     * Convenience method for when multiselect is false (throws an exception if not).
+     * @return object the selected user object, or null if none.
+     */
+    public function get_selected_user() {
+        if ($this->multiselect) {
+            throw new moodle_exception('cannotcallusgetselecteduser');
+        }
+        $users = $this->get_selected_users();
+        if (count($users) == 1) {
+            return reset($users);
+        } else if (count($users) == 0) {
+            return null;
+        } else {
+            throw new moodle_exception('userselectortoomany');
+        }
+    }
+
+    /**
      * If you update the database in such a way that it is likely to change the
      * list of users that this component is allowed to select from, then you
      * must call this method. For example, on the role assign page, after you have
@@ -721,7 +739,7 @@ class potential_assignees_below_course extends role_assign_user_selector_base {
         $order = ' ORDER BY lastname ASC, firstname ASC';
 
         $params[] = $this->context->id;
-        $params[]    = $this->roleid;
+        $params[] = $this->roleid;
 
         // Check to see if there are too many to show sensibly.
         if (!$this->is_validating()) {
