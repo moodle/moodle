@@ -64,7 +64,7 @@ class user_edit_form extends moodleform {
         if ($user = $DB->get_record('user', array('id'=>$userid))) {
 
             // remove description
-            if (empty($user->description) && !empty($CFG->profilesforenrolledusersonly) && !$DB->get_record('role_assignments', array('userid'=>$userid))) {
+            if (empty($user->description) && !empty($CFG->profilesforenrolledusersonly) && !$DB->record_exists('role_assignments', array('userid'=>$userid))) {
                 $mform->removeElement('description');
             }
 

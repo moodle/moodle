@@ -78,7 +78,7 @@ class user_editadvanced_form extends moodleform {
         $sitecontext = get_context_instance(CONTEXT_SYSTEM);
         $can_edit_user = has_capability('moodle/user:update', $sitecontext);
         // remove description
-        if (empty($user->description) && !empty($CFG->profilesforenrolledusersonly) && !$can_edit_user && !$DB->get_record('role_assignments', array('userid'=>$userid))) {
+        if (empty($user->description) && !empty($CFG->profilesforenrolledusersonly) && !$can_edit_user && !$DB->record_exists('role_assignments', array('userid'=>$userid))) {
             $mform->removeElement('description');
         }
 
