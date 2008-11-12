@@ -939,7 +939,7 @@ function check_user_preferences_loaded($time = null) {
     global $USER, $DB;
     static $timenow = null; // Static cache, so we only check up-to-dateness once per request.
 
-    if (!empty($USER->preference)) {
+    if (!empty($USER->preference) && isset($USER->preference['_lastloaded'])) {
         // Already loaded. Are we up to date?
 
         if (is_null($timenow) || (!is_null($time) && $time != $timenow)) {
