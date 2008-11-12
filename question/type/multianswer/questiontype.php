@@ -527,9 +527,10 @@ class embedded_cloze_qtype extends default_questiontype {
                     }
                 }
     
-                // Print the answer text
-                $a->text = '<span class="anun">' . $ordernumber . '<span class="anumsep">.</span></span> ' .
-                        format_text($mcanswer->answer, FORMAT_MOODLE, $formatoptions, $cmoptions->course);
+                // Print the answer text 
+                // Remove automatic numbering
+                // $a->text = $ordernumber<span class="anun">' . $ordernumber . '<span class="anumsep">.</span></span>'.
+                $a->text =format_text($mcanswer->answer, FORMAT_MOODLE, $formatoptions, $cmoptions->course);
     
                 // Print feedback if feedback is on
                 if (($options->feedback || $options->correct_responses) && ($checked )) { //|| $options->readonly
