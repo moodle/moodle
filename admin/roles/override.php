@@ -200,7 +200,8 @@
             }
 ?>
 <form id="overrideform" action="<?php echo $baseurl; ?>" method="post"><div>
-    <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
+    <input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
+    <input type="hidden" name="roleid" value="<?php p($roleid); ?>" />
 
     <table class="rolecap" id="overriderolestable">
         <tr>
