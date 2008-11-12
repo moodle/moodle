@@ -3328,7 +3328,7 @@ function print_context_name($context, $withprefix = true, $short = false) {
 
         case CONTEXT_COURSE: // 1 to 1 to course cat
             if ($context->instanceid == SITEID) {
-                $name = get_string('page', 'admin');
+                $name = get_string('frontpage', 'admin');
             } else {
                 if ($course = $DB->get_record('course', array('id'=>$context->instanceid))) {
                     if ($withprefix){
