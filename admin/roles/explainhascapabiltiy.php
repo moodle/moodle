@@ -91,6 +91,7 @@ foreach ($contexts as $con) {
     }
     foreach ($contexts as $ocon) {
         $summedpermission = 0;
+        $gotsomething = false;
         foreach ($ras as $roleid) {
             if (isset($accessdata['rdef'][$ocon->path . ':' . $roleid][$capability])) {
                 $perm = $accessdata['rdef'][$ocon->path . ':' . $roleid][$capability];
@@ -103,12 +104,19 @@ foreach ($contexts as $con) {
                 $decisiveoverridecon = 0;
                 break 3;
             }
+            if ($perm) {
+                $gotsomething = true;
+            }
             $summedpermission += $perm;
         }
         if ($summedpermission) {
             $decisiveassigncon = $con->id;
             $decisiveoverridecon = $ocon->id;
             break 2;
+        } else if ($gotsomething) {
+            // This else clause makes sure this page matches the actual behaviour of
+            // has_capability, which I believe is buggy. See MDL-17210.
+            break;
         }
     }
 }
