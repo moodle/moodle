@@ -1132,6 +1132,7 @@ $string['previous'] = 'Previous';
 $string['previoussection'] = 'Previous section';
 $string['primaryadminsetup'] = 'Setup administrator account';
 $string['profile'] = 'Profile';
+$string['profilenotshown'] = 'This profile description will not be shown until this person is enrolled in at least one course.';
 $string['publicdirectory'] = 'Public directory';
 $string['publicdirectory0'] = 'Please do not publish this site';
 $string['publicdirectory1'] = 'Publish the site name only';
