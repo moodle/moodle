@@ -233,21 +233,21 @@
         /// course header
         $navlinks = array();
         if ($courseid != SITEID) {
-            if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_COURSE, $course->id))) {
-                $navlinks[] = array('name' => get_string('participants'), 'link' => "$CFG->wwwroot/user/index.php?id=$course->id", 'type' => 'misc');
+            if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_COURSE, $courseid))) {
+                $navlinks[] = array('name' => get_string('participants'), 'link' => "$CFG->wwwroot/user/index.php?id=$courseid", 'type' => 'misc');
             }
             $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid", 'type' => 'misc');
             $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
             $navigation = build_navigation($navlinks);
 
-            print_header($title, "$fullname", $navigation, "", "", true, "&nbsp;", navmenu($course));
+            print_header($title, $fullname, $navigation, '', '', true, '&nbsp;', navmenu($course));
 
         /// site header
         } else {
             $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid", 'type' => 'misc');
             $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
             $navigation = build_navigation($navlinks);
-            print_header($title, $course->fullname, $navigation, "", "", true, "&nbsp;", navmenu($course));
+            print_header($title, $course->fullname, $navigation, '', '', true, '&nbsp;', navmenu($course));
         }
 
         $showroles = 1;
