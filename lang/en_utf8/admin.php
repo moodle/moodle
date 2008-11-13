@@ -150,11 +150,7 @@ $string['configperfdebug'] = 'If you turn this on, performance info will be prin
 $string['configprotectusernames'] = 'By default forget_password.php does not display any hints that would allow guessing of usernames or email addresses.';
 $string['configproxyhost'] = 'If this <b>server</b> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname and port here.  Otherwise leave it blank.';
 $string['configproxyport'] = 'If this server needs to use a proxy computer, then provide the proxy port here.';
-$string['configprofilesforenrolledusersonly'] = '
-<ul>
-<li>When showing the profile page, if a courseid isn\'t defined (this is the public view) AND the user is not enrolled in any courses AND this setting is set as true then replace the profile description won\'t display.</li>
-<li>When editing the profile page, if the description is blank AND the user is not enrolled in any courses AND this setting is set as true then completely hide the description field from the editing page.</li>
-</ul>';
+$string['configprofilesforenrolledusersonly'] = 'To prevent misuse by spammers, profile descriptions of users who are not yet enrolled in any course are hidden. New users must enrol in at least one course before they can add a profile description.';
 $string['configquarantinedir'] = 'If you want clam AV to move infected files to a quarantine directory, enter it here. It must be writable by the webserver.  If you leave this blank, or if you enter a directory that doesn\'t exist or isn\'t writable, infected files will be deleted.  Do not include a trailing slash.';
 $string['configcronclionly'] = 'If this is set, then the cron script can only be run from the commandline instead of via the web.  This overrides the cron password setting below.';
 $string['configcronremotepassword'] = 'This means that the cron.php script cannot be run from a web browser without supplying the password using the following form of URL:<pre>
