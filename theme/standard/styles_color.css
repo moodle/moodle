@@ -1174,15 +1174,16 @@ table.explainpermissions .decisive.has,
   background-color: #ddffdd;
 }
 table.explainpermissions .decisive.hasnot,
+table.explainpermissions .prohibit,
 #explaincaps .rolecap.no {
   background-color: #ffdddd;
 }
-table.explainpermissions .prohibit {
-    background-color: #ffbbff;
-    font-weight: bold;
-}
+table.explainpermissions .prohibit,
 table.explainpermissions .decisive {
-    font-weight: bold;
+  font-weight: bold;
+}
+table.explainpermissions .overridden {
+  text-decoration: line-through;
 }
 #admin-roles-manage .capdefault {
   background-color:#dddddd;

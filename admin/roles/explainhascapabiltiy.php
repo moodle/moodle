@@ -14,9 +14,11 @@ if (!$context) {
 $contextids = get_parent_contexts($context);
 array_unshift($contextids, $context->id);
 $contexts = array();
+$number = count($contextids);
 foreach ($contextids as $contextid) {
     $contexts[$contextid] = get_context_instance_by_id($contextid);
     $contexts[$contextid]->name = print_context_name($contexts[$contextid], true, true);
+    $contexts[$contextid]->number = $number--;
 }
 
 // Validate the user id.
@@ -89,6 +91,7 @@ foreach ($contexts as $con) {
     } else {
         $ras = array();
     }
+    $con->firstoverride = 0;
     foreach ($contexts as $ocon) {
         $summedpermission = 0;
         $gotsomething = false;
@@ -98,24 +101,23 @@ foreach ($contexts as $con) {
             } else {
                 $perm = CAP_INHERIT;
             }
+            if ($perm && !$gotsomething) {
+                $gotsomething = true;
+                $con->firstoverride = $ocon->id;
+            }
             if ($perm == CAP_PROHIBIT) {
                 $areprohibits = true;
                 $decisiveassigncon = 0;
                 $decisiveoverridecon = 0;
-                break 3;
-            }
-            if ($perm) {
-                $gotsomething = true;
+                break;
             }
             $summedpermission += $perm;
         }
-        if ($summedpermission) {
+        if (!$areprohibits && !$decisiveassigncon && $summedpermission) {
             $decisiveassigncon = $con->id;
             $decisiveoverridecon = $ocon->id;
-            break 2;
+            break;
         } else if ($gotsomething) {
-            // This else clause makes sure this page matches the actual behaviour of
-            // has_capability, which I believe is buggy. See MDL-17210.
             break;
         }
     }
@@ -174,7 +176,7 @@ echo '</tr>';
 echo '<tr class="row2"><th scope="col" class="header assignment">' . get_string('context', 'role') .
         '</th><th scope="col" class="header assignment">' . get_string('role') . '</th>';
 foreach (array_slice($contexts, 0, count($contexts) - 1) as $con) {
-    echo '<th scope="col" class="header overridecontext">' . $con->id . '</th>';
+    echo '<th scope="col" class="header overridecontext">' . $con->number . '</th>';
 }
 echo '</tr></thead><tbody>';
 
@@ -187,7 +189,7 @@ foreach ($contexts as $con) {
     } else {
         $ras = array(0);
     }
-    $firstcell = '<th class="cell assignment" rowspan="' . count($ras) . '">' . $con->id . ' ' . $con->name . '</th>';
+    $firstcell = '<th class="cell assignment" rowspan="' . count($ras) . '">' . $con->number . '. ' . $con->name . '</th>';
     $rowclass = ' class="newcontext"';
     foreach ($ras as $roleid) {
         $extraclass = '';
@@ -195,6 +197,7 @@ foreach ($contexts as $con) {
             $extraclass = ' noroles';
         }
         echo '<tr' . $rowclass . '>' . $firstcell . '<th class="cell assignment' . $extraclass . '" scope="row">' . $rolenames[$roleid] . '</th>';
+        $overridden = false;
         foreach ($contexts as $ocon) {
             if ($roleid == 0) {
                 $perm = '';
@@ -219,7 +222,13 @@ foreach ($contexts as $con) {
                     $classes .= ' hasnot';
                 }
             }
+            if ($overridden) {
+                $classes .= ' overridden';
+            }
             echo '<td class="cell ' . $classes . '">' . $permission . '</td>';
+            if ($con->firstoverride == $ocon->id) {
+                $overridden = true;
+            }
         }
         echo '</tr>';
         $firstcell = '';

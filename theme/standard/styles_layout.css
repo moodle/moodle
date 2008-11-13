@@ -1178,6 +1178,7 @@ table.explainpermissions th.cell,
 table.explainpermissions td.cell {
   border-left: 1px solid black;
   border-right: 1px solid black;
+  vertical-align: middle;
 }
 table.explainpermissions .newcontext .cell,
 table.explainpermissions .row2 th.header {
