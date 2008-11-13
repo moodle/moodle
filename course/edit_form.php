@@ -401,13 +401,19 @@ class course_edit_form extends moodleform {
         $mform->addElement('header','rolerenaming', get_string('rolerenaming'));
         $mform->setHelpButton('rolerenaming', array('rolerenaming', get_string('rolerenaming')), true);
 
-        if ($roles = $DB->get_records('role')) {
+        if ($roles = get_all_roles()) {
+            if ($coursecontext) {
+                $roles = role_fix_names($roles, $coursecontext,ROLENAME_ALIAS_RAW);
+            }
+            $assignableroles = get_roles_for_contextlevels(CONTEXT_COURSE);
             foreach ($roles as $role) {
-                $mform->addElement('text', 'role_'.$role->id, $role->name);
-                if ($coursecontext) {
-                    if ($rolename = $DB->get_record('role_names', array('roleid'=>$role->id, 'contextid'=>$coursecontext->id))) {
-                        $mform->setDefault('role_'.$role->id, $rolename->name);
-                    }
+                $mform->addElement('text', 'role_'.$role->id, get_string('yourwordforx', '', $role->name));
+                if (isset($role->localname)) {
+                    $mform->setDefault('role_'.$role->id, $role->localname);
+                }
+                $mform->setType('role_'.$role->id, PARAM_TEXT);
+                if (!in_array($role->id, $assignableroles)) {
+                    $mform->setAdvanced('role_'.$role->id);
                 }
             }
         }
@@ -417,12 +423,6 @@ class course_edit_form extends moodleform {
 //--------------------------------------------------------------------------------
         $mform->addElement('hidden', 'id', null);
         $mform->setType('id', PARAM_INT);
-
-        // fill in default teacher and student names to keep backwards compatibility for a while
-        $mform->addElement('hidden', 'teacher', get_string('defaultcourseteacher'));
-        $mform->addElement('hidden', 'teachers', get_string('defaultcourseteachers'));
-        $mform->addElement('hidden', 'student', get_string('defaultcoursestudent'));
-        $mform->addElement('hidden', 'students', get_string('defaultcoursestudents'));
     }
 
     function definition_after_data() {

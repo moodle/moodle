@@ -158,6 +158,7 @@ define('ROLENAME_ORIGINAL', 0);// the name as defined in the role definition
 define('ROLENAME_ALIAS', 1);   // the name as defined by a role alias
 define('ROLENAME_BOTH', 2);    // Both, like this:  Role alias (Original)
 define('ROLENAME_ORIGINALANDSHORT', 0); // the name as defined in the role definition and the shortname in brackets
+define('ROLENAME_ALIAS_RAW', 1);   // the name as defined by a role alias, in raw form suitable for editing
 
 $context_cache    = array();    // Cache of all used context objects for performance (by level and instance)
 $context_cache_id = array();    // Index to above cache by id
@@ -4349,6 +4350,16 @@ function get_role_contextlevels($roleid) {
 }
 
 /**
+ * @param integer $contextlevel a contextlevel.
+ * @return array list of role ids that are assignable at this context level.
+ */
+function get_roles_for_contextlevels($contextlevel) {
+    global $DB;
+    return $DB->get_records_menu('role_context_levels', array('contextlevel' => $contextlevel),
+            '', 'id,roleid');
+}
+
+/**
  * @param string $roleid one of the legacy role types - that is, one of the keys
  *      from the array returned by get_legacy_roles();
  * @return array list of the context levels at which this type of role may be assigned by default.
@@ -5382,36 +5393,60 @@ function role_get_name($role, $coursecontext) {
 
 /**
  * Prepare list of roles for display, apply aliases and format text
- * @param array $roleoptions array roleid=>rolename
- * @param object $context
- * @return array of role names
+ * @param array $roleoptions array roleid => rolename or roleid => roleobject
+ * @param object $context a context
+ * @return array of context-specific role names, or role objexts with a ->localname field added.
  */
 function role_fix_names($roleoptions, $context, $rolenamedisplay=ROLENAME_ALIAS) {
     global $DB;
+
+    // Make sure we are working with an array roleid => name. Normally we
+    // want to use the unlocalised name if the localised one is not present.
+    $newnames = array();
+    foreach ($roleoptions as $rid => $roleorname) {
+        if ($rolenamedisplay != ROLENAME_ALIAS_RAW) {
+            if (is_object($roleorname)) {
+                $newnames[$rid] = $roleorname->name;
+            } else {
+                $newnames[$rid] = $roleorname;
+            }
+        } else {
+            $newnames[$rid] = '';
+        }
+    }
+
+    // If necessary, get the localised names.
     if ($rolenamedisplay != ROLENAME_ORIGINAL && !empty($context->id)) {
+        // Make sure we have a course context.
         if ($context->contextlevel == CONTEXT_MODULE || $context->contextlevel == CONTEXT_BLOCK) {  // find the parent course context
             if ($parentcontextid = array_shift(get_parent_contexts($context))) {
                 $context = get_context_instance_by_id($parentcontextid);
             }
         }
-        if ($aliasnames = $DB->get_records('role_names', array('contextid'=>$context->id))) {
-            if ($rolenamedisplay == ROLENAME_ALIAS) {
-                foreach ($aliasnames as $alias) {
-                    if (isset($roleoptions[$alias->roleid])) {
-                        $roleoptions[$alias->roleid] = format_string($alias->name);
-                    }
-                }
-            } else if ($rolenamedisplay == ROLENAME_BOTH) {
-                foreach ($aliasnames as $alias) {
-                    if (isset($roleoptions[$alias->roleid])) {
-                        $roleoptions[$alias->roleid] = format_string($alias->name).' ('.format_string($roleoptions[$alias->roleid]).')';
-                    }
+
+        // The get the relevant renames, and use them.
+        $aliasnames = $DB->get_records('role_names', array('contextid'=>$context->id));
+        foreach ($aliasnames as $alias) {
+            if (isset($newnames[$alias->roleid])) {
+                if ($rolenamedisplay == ROLENAME_ALIAS || $rolenamedisplay == ROLENAME_ALIAS_RAW) {
+                    $newnames[$alias->roleid] = $alias->name;
+                } else if ($rolenamedisplay == ROLENAME_BOTH) {
+                    $newnames[$alias->roleid] = $alias->name . ' (' . $roleoptions[$alias->roleid] . ')';
                 }
             }
         }
     }
-    foreach ($roleoptions as $rid => $name) {
-        $roleoptions[$rid] = strip_tags(format_string($name));
+
+    // Finally, apply format_string and put the result in the right place.
+    foreach ($roleoptions as $rid => $roleorname) {
+        if ($rolenamedisplay != ROLENAME_ALIAS_RAW) {
+            $newnames[$rid] = strip_tags(format_string($newnames[$rid]));
+        }
+        if (is_object($roleorname)) {
+            $roleoptions[$rid]->localname = $newnames[$rid];
+        } else {
+            $roleoptions[$rid] = $newnames[$rid];
+        }
     }
     return $roleoptions;
 }
