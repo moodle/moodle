@@ -49,9 +49,8 @@
     $editing         = $PAGE->user_is_editing();
 
     if ($editing) {
-        $strstudents = moodle_strtolower($course->students);
-        $strweekhide = get_string('weekhide', '', $strstudents);
-        $strweekshow = get_string('weekshow', '', $strstudents);
+        $strweekhide = get_string('hideweekfromothers');
+        $strweekshow = get_string('showweekfromothers');
         $strmoveup   = get_string('moveup');
         $strmovedown = get_string('movedown');
     }

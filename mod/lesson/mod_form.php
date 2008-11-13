@@ -74,8 +74,8 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->setDefault('grade', 0);
         $mform->setHelpButton('grade', array('grade', get_string('maximumgrade'), 'lesson'));
 
-        $mform->addElement('selectyesno', 'retake', get_string('canretake', 'lesson', $COURSE->student));
-        $mform->setHelpButton('retake', array('retake', get_string('canretake', 'lesson', $COURSE->student), 'lesson'));
+        $mform->addElement('selectyesno', 'retake', get_string('retakesallowed', 'lesson'));
+        $mform->setHelpButton('retake', array('retake', get_string('retakesallowed', 'lesson'), 'lesson'));
         $mform->setDefault('retake', 0);
 
         $options = array();

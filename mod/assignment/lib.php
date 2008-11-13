@@ -243,7 +243,7 @@ class assignment_base {
         }
 
     /// Print the feedback
-        print_heading(get_string('feedbackfromteacher', 'assignment', $this->course->teacher)); // TODO: fix teacher string
+        print_heading(get_string('feedbackfromteacher', 'assignment', fullname($teacher)));
 
         echo '<table cellspacing="0" class="feedback">';
 
@@ -1089,8 +1089,8 @@ class assignment_base {
                               get_string('fullname'),
                               get_string('grade'),
                               get_string('comment', 'assignment'),
-                              get_string('lastmodified').' ('.$course->student.')',
-                              get_string('lastmodified').' ('.$course->teacher.')',
+                              get_string('lastmodified').' ('.get_string('submission', 'assignment').')',
+                              get_string('lastmodified').' ('.get_string('grade').')',
                               get_string('status'),
                               get_string('finalgrade', 'grades'));
         if ($uses_outcomes) {

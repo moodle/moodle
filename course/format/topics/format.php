@@ -58,11 +58,10 @@
     $editing         = $PAGE->user_is_editing();
 
     if ($editing) {
-        $strstudents = moodle_strtolower($course->students);
-        $strtopichide = get_string('topichide', '', $strstudents);
-        $strtopicshow = get_string('topicshow', '', $strstudents);
-	$strmarkthistopic = get_string('markthistopic');
-	$strmarkedthistopic = get_string('markedthistopic');
+        $strtopichide = get_string('hidetopicfromothers');
+        $strtopicshow = get_string('showtopicfromothers');
+        $strmarkthistopic = get_string('markthistopic');
+        $strmarkedthistopic = get_string('markedthistopic');
         $strmoveup   = get_string('moveup');
         $strmovedown = get_string('movedown');
     }

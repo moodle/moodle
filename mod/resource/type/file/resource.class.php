@@ -28,9 +28,7 @@ class resource_file extends resource_base {
         $littlecfg->wwwroot = $CFG->wwwroot;
 
 
-        $this->parameters = array(
-                'label2'          => array('langstr' => "",
-                                           'value'   =>'/optgroup'),
+        $courseparameters = array(
                 'label3'          => array('langstr' => get_string('course'),
                                            'value'   => 'optgroup'),
 
@@ -46,17 +44,19 @@ class resource_file extends resource_base {
                                            'value'   => $this->course->summary),
                 'courseformat'    => array('langstr' => get_string('format'),
                                            'value'   => $this->course->format),
-                'courseteacher'   => array('langstr' => get_string('wordforteacher'),
-                                           'value'   => $this->course->teacher),
-                'courseteachers'  => array('langstr' => get_string('wordforteachers'),
-                                           'value'   => $this->course->teachers),
-                'coursestudent'   => array('langstr' => get_string('wordforstudent'),
-                                           'value'   => $this->course->student),
-                'coursestudents'  => array('langstr' => get_string('wordforstudents'),
-                                           'value'   => $this->course->students),
+        );
 
-                'label4'          => array('langstr' => "",
-                                           'value'   =>'/optgroup'),
+        $roles = get_all_roles();
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $this->course->id);
+        $roles = role_fix_names($roles, $coursecontext, ROLENAME_ALIAS);
+        foreach ($roles as $role) {
+            $courseparameters['course' . $role->shortname] = array(
+                    'langstr' => get_string('yourwordforx', '', $role->name),
+                    'value' => $role->localname);
+        }
+        $courseparameters['label4'] = array('langstr' => '', 'value'   =>'/optgroup');
+
+        $miscparameters = array(
                 'label5'          => array('langstr' => get_string('miscellaneous'),
                                            'value'   => 'optgroup'),
 
@@ -72,13 +72,12 @@ class resource_file extends resource_base {
                                            'value'   => $this->set_encrypted_parameter()),
 
                 'label6'          => array('langstr' => "",
-                                           'value'   =>'/optgroup')
+                                           'value'   =>'/optgroup'),
         );
 
+        $userparameters = array();
         if (!empty($USER->id)) {
-
             $userparameters = array(
-
                 'label1'          => array('langstr' => get_string('user'),
                                            'value'   => 'optgroup'),
 
@@ -113,11 +112,13 @@ class resource_file extends resource_base {
                 'usertimezone'    => array('langstr' => get_string('timezone'),
                                            'value'   => get_user_timezone_offset()),
                 'userurl'         => array('langstr' => get_string('webpage'),
-                                           'value'   => $USER->url)
-             );
+                                           'value'   => $USER->url),
 
-             $this->parameters = $userparameters + $this->parameters;
+                'label2'          => array('langstr' => "",
+                                           'value'   =>'/optgroup'),
+            );
         }
+        $this->parameters = array_merge($userparameters, $courseparameters, $miscparameters);
     }
 
     function add_instance($resource) {
@@ -268,6 +269,14 @@ class resource_file extends resource_base {
             $parray = explode(',', $resource->alltext);
             foreach ($parray as $fieldstring) {
                 $field = explode('=', $fieldstring);
+                // Backwards compatibility. This is not ideal, but we no longer
+                // store plural role names, so the best we can do is send the
+                // singular instead.
+                if ($field[0] == 'courseteachers') {
+                    $field[0] = 'courseeditingteacher';
+                } else if ($field[0] == 'coursestudents') {
+                    $field[0] = 'coursestudent';
+                }
                 $querys[] = urlencode($field[1]).'='.urlencode($this->parameters[$field[0]]['value']);
             }
             if ($isteamspeak) {
@@ -800,27 +809,27 @@ class resource_file extends resource_base {
 
         $mform->addElement('header', 'parameters', get_string('parameters', 'resource'));
 
-        $options = array();
-        $options['-'] = get_string('chooseparameter', 'resource').'...';
-        $optgroup = '';
+        $optiongroups = array();
+        $optiongroups[''] = array('-' => get_string('chooseaparameter', 'resource'));
+        $addto = &$optiongroups[''];
         foreach ($this->parameters as $pname=>$param) {
             if ($param['value']=='/optgroup') {
-                $optgroup = '';
                 continue;
             }
             if ($param['value']=='optgroup') {
-                $optgroup = $param['langstr'];
+                $optiongroups[$param['langstr']] = array();
+                $addto = &$optiongroups[$param['langstr']];
                 continue;
             }
-            $options[$pname] = $optgroup.' - '.$param['langstr'];
+            $addto[$pname] = $param['langstr'];
         }
 
         for ($i = 0; $i < $this->maxparameters; $i++) {
             $parametername = "parameter$i";
             $parsename = "parse$i";
             $group = array();
-            $group[] =& $mform->createElement('text', $parsename, '', array('size'=>'12'));//TODO: accessiblity
-            $group[] =& $mform->createElement('select', $parametername, '', $options);//TODO: accessiblity
+            $group[] =& $mform->createElement('text', $parsename, '', array('size'=>'12'));
+            $group[] =& $mform->createElement('selectgroups', $parametername, '', $optiongroups);
             $mform->addGroup($group, 'pargroup'.$i, get_string('variablename', 'resource').'='.get_string('parameter', 'resource'), ' ', false);
             $mform->setAdvanced('pargroup'.$i);
 

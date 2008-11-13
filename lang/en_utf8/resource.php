@@ -13,6 +13,7 @@ $string['cannotupdate'] = 'Cannot update resource.';
 $string['choose'] = 'Choose';
 $string['chooseafile'] = 'Choose or upload a file';
 $string['chooseparameter'] = 'Choose parameter';
+$string['chooseaparameter'] = 'Choose a parameter...';
 $string['clicktoopen'] = 'To open this document, click on this link: ';
 $string['configallowlocalfiles'] = 'When creating a new file resource, allow links to files on a local file system such as a CD drive or a hard drive. This may be useful in a classroom where all students have access to a common network drive or where files on a CD need to be accessed. Use of this feature may require changes to your browser\'s security settings.';
 $string['configautofilerenamesettings'] = 'Automatically update references to files and directories when renamed in file manager.';

@@ -127,7 +127,7 @@ class mod_glossary_mod_form extends moodleform_mod {
         $mform->addElement('checkbox', 'userating', get_string('allowratings', 'glossary') , get_string('ratingsuse', 'glossary'));
 
         $options=array();
-        $options[2] = get_string('ratingonlyteachers', 'glossary', moodle_strtolower($COURSE->teachers));
+        $options[2] = get_string('ratingonlywithpermissions', 'glossary');
         $options[1] = get_string('ratingeveryone', 'glossary');
         $mform->addElement('select', 'assessed', get_string('users'), $options);
         $mform->disabledIf('assessed', 'userating');

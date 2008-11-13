@@ -27,10 +27,6 @@
             unset($course->id);
             $teacherid = $course->requester;
             unset($course->requester);
-            $course->teacher = get_string("defaultcourseteacher");
-            $course->teachers = get_string("defaultcourseteachers");
-            $course->student = get_string("defaultcoursestudent");
-            $course->students = get_string("defaultcoursestudents");
             if (!empty($CFG->restrictmodulesfor) && $CFG->restrictmodulesfor != 'none' && !empty($CFG->restrictbydefault)) {
                 $course->restrictmodules = 1;
             }
@@ -52,8 +48,7 @@
                 $user = $DB->get_record('user', array('id'=>$teacherid));
                 $a->name = $course->fullname;
                 $a->url = $CFG->wwwroot.'/course/view.php?id='.$courseid;
-                $a->teacher = $course->teacher;
-                
+
                 $eventdata = new object();
                 $eventdata->modulename        = 'moodle';
                 $eventdata->userfrom          = $USER;

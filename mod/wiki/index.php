@@ -74,11 +74,11 @@
         switch ($wiki->wtype) {
 
         case 'teacher':
-            $wtype = $site->teacher;
+            $wtype = get_string('defaultcoursestudent');
             break;
 
         case 'student':
-            $wtype = $site->student;
+            $wtype = get_string('defaultcoursestudent');
             break;
 
         case 'group':

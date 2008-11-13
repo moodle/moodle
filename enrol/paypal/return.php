@@ -30,7 +30,7 @@
 
     } else {   /// Somehow they aren't enrolled yet!  :-(
         print_header();
-        notice(get_string('paymentsorry', '', $course), $destination);
+        notice(get_string('paymentsorry', '', get_string('defaultcourseteacher')), $destination);
     }
 
 ?>

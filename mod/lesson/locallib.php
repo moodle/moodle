@@ -1614,7 +1614,7 @@ function lesson_print_progress_bar($lesson, $course) {
     
     // catch teachers
     if (has_capability('mod/lesson:manage', $context)) {
-        notify(get_string('progressbarteacherwarning', 'lesson', $course->teachers));
+        notify(get_string('progressbarteacherwarning2', 'lesson'));
         return false;
     }
     if (!isset($USER->modattempts[$lesson->id])) {

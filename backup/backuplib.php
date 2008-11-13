@@ -680,10 +680,6 @@
             fwrite ($bf,full_tag("FORMAT",3,false,$course->format));
             fwrite ($bf,full_tag("SHOWGRADES",3,false,$course->showgrades));
             fwrite ($bf,full_tag("NEWSITEMS",3,false,$course->newsitems));
-            fwrite ($bf,full_tag("TEACHER",3,false,$course->teacher));
-            fwrite ($bf,full_tag("TEACHERS",3,false,$course->teachers));
-            fwrite ($bf,full_tag("STUDENT",3,false,$course->student));
-            fwrite ($bf,full_tag("STUDENTS",3,false,$course->students));
             fwrite ($bf,full_tag("GUEST",3,false,$course->guest));
             fwrite ($bf,full_tag("STARTDATE",3,false,$course->startdate));
             fwrite ($bf,full_tag("NUMSECTIONS",3,false,$course->numsections));
@@ -2686,7 +2682,7 @@
         $preferences->backup_name = required_param('backup_name',PARAM_FILE);
         $preferences->backup_unique_code =  required_param('backup_unique_code');
 
-        $roles = $DB->get_records('role', null, 'sortorder');
+        $roles = get_all_roles();
         $preferences->backuproleassignments = array();
         foreach ($roles as $role) {
             if (optional_param('backupassignments_' . $role->shortname, 0, PARAM_INT)) {

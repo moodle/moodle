@@ -508,17 +508,6 @@ function process_group_tag($tagcontents){
                 $course->visible = 0;
                 // Insert default names for teachers/students, from the current language
                 $site = get_site();
-                if (current_language() == $CFG->lang) {
-                    $course->teacher  = $site->teacher;
-                    $course->teachers = $site->teachers;
-                    $course->student  = $site->student;
-                    $course->students = $site->students;
-                } else {
-                    $course->teacher = get_string("defaultcourseteacher");
-                    $course->teachers = get_string("defaultcourseteachers");
-                    $course->student = get_string("defaultcoursestudent");
-                    $course->students = get_string("defaultcoursestudents");
-                }
 
                 // Handle course categorisation (taken from the group.org.orgunit field if present)
                 if(strlen($group->category)>0){

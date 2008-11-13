@@ -35,8 +35,6 @@ function set_parameters() {
     $site = get_site();
 
     $this->parameters = array(
-            'label2'          => array('langstr' => "",
-                                       'value'   =>'/optgroup'),
             'label3'          => array('langstr' => get_string('course'),
                                        'value'   => 'optgroup'),
 
@@ -52,14 +50,6 @@ function set_parameters() {
                                        'value'   => $this->course->summary),
             'courseformat'    => array('langstr' => get_string('format'),
                                        'value'   => $this->course->format),
-            'courseteacher'   => array('langstr' => get_string('wordforteacher'),
-                                       'value'   => $this->course->teacher),
-            'courseteachers'  => array('langstr' => get_string('wordforteachers'),
-                                       'value'   => $this->course->teachers),
-            'coursestudent'   => array('langstr' => get_string('wordforstudent'),
-                                       'value'   => $this->course->student),
-            'coursestudents'  => array('langstr' => get_string('wordforstudents'),
-                                       'value'   => $this->course->students),
 
             'label4'          => array('langstr' => "",
                                        'value'   =>'/optgroup'),
@@ -78,7 +68,7 @@ function set_parameters() {
                                        'value'   => $this->set_encrypted_parameter()),
 
             'label6'          => array('langstr' => "",
-                                       'value'   =>'/optgroup')
+                                       'value'   =>'/optgroup'),
     );
 
     if (!empty($USER->id)) {
@@ -119,8 +109,10 @@ function set_parameters() {
             'usertimezone'    => array('langstr' => get_string('timezone'),
                                        'value'   => get_user_timezone_offset()),
             'userurl'         => array('langstr' => get_string('webpage'),
-                                       'value'   => $USER->url)
-         );
+                                       'value'   => $USER->url),
+            'label2'          => array('langstr' => "",
+                                       'value'   =>'/optgroup'),
+        );
 
          $this->parameters = $userparameters + $this->parameters;
     }

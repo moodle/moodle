@@ -205,16 +205,14 @@
                         $a->earned = $essayinfo->score;
                         $a->outof  = 1;
                     }
-                    
+
                     // Set rest of the message values
                     $a->question = format_text($pages[$attempt->pageid]->contents, FORMAT_MOODLE, $options);
                     $a->response = s($essayinfo->answer);
-                    $a->teacher  = $course->teacher;
                     $a->comment  = s($essayinfo->response);
-                    
-                    
+
                     // Fetch message HTML and plain text formats
-                    $message  = get_string('essayemailmessage', 'lesson', $a);
+                    $message  = get_string('essayemailmessage2', 'lesson', $a);
                     $plaintxt = format_text_email($message, FORMAT_HTML);
 
                     // Subject
@@ -265,7 +263,7 @@
             
             // Setup table
             $table = new stdClass;
-            $table->head = array($course->students, get_string('essays', 'lesson'), get_string('email', 'lesson'));
+            $table->head = array(get_string('name'), get_string('essays', 'lesson'), get_string('email', 'lesson'));
             $table->align = array('left', 'left', 'left');
             $table->wrap = array('nowrap', 'nowrap', 'nowrap');
 

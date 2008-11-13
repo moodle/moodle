@@ -5,9 +5,9 @@
 
     $id = required_param('id',PARAM_INT);
     $messagebody = optional_param('messagebody','',PARAM_CLEANHTML);
-    $send = optional_param('send','',PARAM_RAW);   // Content is actually treated as boolean
-    $preview = optional_param('preview','',PARAM_RAW);   // Content is actually treated as boolean
-    $edit = optional_param('edit','',PARAM_RAW);   // Content is actually treated as boolean
+    $send = optional_param('send','',PARAM_BOOL);
+    $preview = optional_param('preview','',PARAM_BOOL);
+    $edit = optional_param('edit','',PARAM_BOOL);
     $returnto = optional_param('returnto','',PARAM_LOCALURL);
     $format = optional_param('format',FORMAT_MOODLE,PARAM_INT);
     $deluser = optional_param('deluser',0,PARAM_INT);
@@ -48,7 +48,6 @@
             if (!array_key_exists($m[2],$SESSION->emailto[$id])) {
                 if ($user = $DB->get_record_select('user', "id = ?", array($m[2]), 'id,firstname,lastname,idnumber,email,emailstop,mailformat,lastaccess')) {
                     $SESSION->emailto[$id][$m[2]] = $user;
-                    $SESSION->emailto[$id][$m[2]]->teacher = ($m[1] == 'teacher');
                     $count++;
                 }
             }
@@ -100,12 +99,8 @@
                 echo "\n</form>";
             } else if (!empty($send)) {
                 $good = 1;
-                $teachers = array();
                 foreach ($SESSION->emailto[$id] as $user) {
                     $good = $good && message_post_message($USER,$user,$messagebody,$format,'direct');
-                    if ($user->teacher) {
-                        $teachers[] = $user->id;
-                    }
                 }
                 if (!empty($good)) {
                     print_heading(get_string('messagedselectedusers'));

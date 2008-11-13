@@ -174,7 +174,7 @@
                 $table->cellspacing = '10px';
                 $table->size = array('*', '*', '*');
             
-                $table->head = array(get_string("rank", "lesson"), $course->students, get_string("scores", "lesson"));
+                $table->head = array(get_string("rank", "lesson"), get_string('name'), get_string("scores", "lesson"));
             
                 $printed = 0;
                 while (true) {

@@ -178,7 +178,7 @@
         // make sure there are pages to view
         if (!$DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id, 'prevpageid' => 0))) {
             if (!has_capability('mod/lesson:manage', $context)) {
-                lesson_set_message(get_string('lessonnotready', 'lesson', $course->teacher)); // a nice message to the student
+                lesson_set_message(get_string('lessonnotready2', 'lesson')); // a nice message to the student
             } else {
                 if (!$DB->count_records('lesson_pages', array('lessonid'=>$lesson->id))) {
                     redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id"); // no pages - redirect to add pages

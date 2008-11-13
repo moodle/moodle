@@ -18,6 +18,12 @@
         print_error('coursemisconf');
     }
 
+    if ($sid) {
+        if (!$user = $DB->get_record("user", array("id"=>$sid))) {
+            print_error('invaliduserid');
+        }
+    }
+
     require_login($course->id, false, $cm);
 
     $groupmode = groups_get_activity_groupmode($cm);   // Groups are being used
@@ -49,11 +55,11 @@
 
     $stractual = get_string("actual", "survey");
     $stractualclass = get_string("actualclass", "survey");
-    $stractualstudent = get_string("actualstudent", "survey", $course->student);
+    $stractualstudent = get_string("actualstudent", "survey", fullname($user));
 
     $strpreferred = get_string("preferred", "survey");
     $strpreferredclass = get_string("preferredclass", "survey");
-    $strpreferredstudent = get_string("preferredstudent", "survey", $course->student);
+    $strpreferredstudent = get_string("preferredstudent", "survey", fullname($user));
 
     $virtualscales = false; //set default value for case clauses
 

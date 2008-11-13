@@ -708,10 +708,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $course->format = $course_header->course_format;
             $course->showgrades = $course_header->course_showgrades;
             $course->newsitems = $course_header->course_newsitems;
-            $course->teacher = $course_header->course_teacher;
-            $course->teachers = $course_header->course_teachers;
-            $course->student = $course_header->course_student;
-            $course->students = $course_header->course_students;
             $course->guest = $course_header->course_guest;
             $course->startdate = $course_header->course_startdate;
             $course->startdate += $restore->course_startdateoffset;
@@ -5155,18 +5151,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                             break;
                         case "NEWSITEMS":
                             $this->info->course_newsitems = $this->getContents();
-                            break;
-                        case "TEACHER":
-                            $this->info->course_teacher = $this->getContents();
-                            break;
-                        case "TEACHERS":
-                            $this->info->course_teachers = $this->getContents();
-                            break;
-                        case "STUDENT":
-                            $this->info->course_student = $this->getContents();
-                            break;
-                        case "STUDENTS":
-                            $this->info->course_students = $this->getContents();
                             break;
                         case "GUEST":
                             $this->info->course_guest = $this->getContents();

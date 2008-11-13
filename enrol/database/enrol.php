@@ -26,7 +26,7 @@ function setup_enrolments(&$user) {
     // we execute the below code for every role type.  Otherwise we just
     // execute it once with null (hence the dummy array).
     $roles = !empty($CFG->enrol_db_remoterolefield) && !empty($CFG->enrol_db_localrolefield)
-        ? $DB->get_records('role')
+        ? get_all_roles()
         : array(null);
 
     //error_log('[ENROL_DB] found ' . count($roles) . ' roles:');
@@ -575,10 +575,6 @@ function create_course ($course,$skip_fix_course_sortorder=0){
                           'showgrades'     => 1,
                           'groupmode'      => 0,
                           'groupmodeforce' => 0,
-                          'student'  => $site->student,
-                          'students' => $site->students,
-                          'teacher'  => $site->teacher,
-                          'teachers' => $site->teachers,
                           );
     }
     // overlay template

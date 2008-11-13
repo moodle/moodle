@@ -82,7 +82,7 @@ class assignment_upload extends assignment_base {
 
         if (empty($submission->timemarked)) {   /// Nothing to show, so print nothing
             if ($this->count_responsefiles($USER->id)) {
-                print_heading(get_string('responsefiles', 'assignment', $this->course->teacher), '', 3);
+                print_heading(get_string('responsefiles', 'assignment'), '', 3);
                 $responsefiles = $this->print_responsefiles($USER->id, true);
                 print_simple_box($responsefiles, 'center');
             }

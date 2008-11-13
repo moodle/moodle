@@ -602,7 +602,7 @@ $info = restore_read_xml_info($xml_file);
 
 // fix for MDL-9068, front page course is just a normal course
 $siterolesarray = get_assignable_roles(get_context_instance(CONTEXT_COURSE, $course->id), ROLENAME_ORIGINALANDSHORT);
-$allroles = $DB->get_records('role');
+$allroles = get_all_roles();
 
 echo ('<table width="100%" class="restore-form-instances">');
 echo ('<tr><td align="right" style="width:50%"><b>'.get_string('sourcerole').'</b></td><td align="left" style="width:50%"><b>'.get_string('targetrole').'</b></td></tr>');

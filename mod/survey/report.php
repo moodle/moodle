@@ -97,7 +97,7 @@
         echo "<a href=\"report.php?action=summary&amp;id=$id\">$strsummary</a>";
         echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=scales&amp;id=$id\">$strscales</a>";
         echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=questions&amp;id=$id\">$strquestions</a>";
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=students&amp;id=$id\">$course->students</a>";
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=students&amp;id=$id\">".get_string('participants')."</a>";
         if (has_capability('mod/survey:download', $context)) {
             echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=download&amp;id=$id\">$strdownload</a>";
         }
@@ -106,7 +106,7 @@
         }
     } else {
         echo "<a href=\"report.php?action=questions&amp;id=$id\">$strquestions</a>";
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=students&amp;id=$id\">$course->students</a>";
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=students&amp;id=$id\">".get_string('participants')."</a>";
         if (has_capability('mod/survey:download', $context)) {
             echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=download&amp;id=$id\">$strdownload</a>";
         }
@@ -309,7 +309,7 @@
 
       case "students":
 
-         print_heading(get_string("analysisof", "survey", "$course->students"));
+         print_heading(get_string("analysisof", "survey", get_string('participants')));
 
          if (! $results = survey_get_responses($survey->id, $currentgroup, $groupingid) ) {
              notify(get_string("nobodyyet","survey"));

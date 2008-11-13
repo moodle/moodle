@@ -27,7 +27,7 @@
     // role and update it.  Otherwise, just got through once (with no role
     // specified).
     $roles = !empty($CFG->enrol_db_remoterolefield) && !empty($CFG->enrol_db_localrolefield)
-        ? $DB->get_records('role')
+        ? get_all_roles()
         : array(null);
         
     foreach ($roles as $role) {

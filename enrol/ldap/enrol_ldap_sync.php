@@ -22,7 +22,7 @@
 
     $enrol->check_legacy_config();
 
-    $roles = $DB->get_records('role');
+    $roles = get_all_roles();
     foreach ($roles as $role) {
         $enrol->sync_enrolments($role->shortname, true);
     }

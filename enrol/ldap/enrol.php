@@ -27,7 +27,7 @@ function setup_enrolments(&$user) {
     // we are connected OK, continue...
 
     // Get all the possible roles
-    $roles = $DB->get_records('role');
+    $roles = get_all_roles();
 
     // Make sure the config settings have been upgraded.
     $this->check_legacy_config();
@@ -397,7 +397,7 @@ function process_config($config) {
     }
     set_config('enrol_ldap_autocreate', $config->enrol_ldap_autocreate);
 
-    $roles = $DB->get_records('role');
+    $roles = get_all_roles();
     foreach ($roles as $role) {
         if (!isset($config->{'enrol_ldap_contexts_role'.$role->id})) {
             $config->{'enrol_ldap_contexts_role'.$role->id} = '';
@@ -557,10 +557,6 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
     } else {
         // set defaults
         $course = new object();
-        $course->student  = get_string('defaultcoursestudent');
-        $course->students = get_string('defaultcoursestudents');
-        $course->teacher  = get_string('defaultcourseteacher');
-        $course->teachers = get_string('defaultcourseteachers');
         $course->format = 'topics';
     }
 

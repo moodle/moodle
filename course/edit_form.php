@@ -403,7 +403,7 @@ class course_edit_form extends moodleform {
 
         if ($roles = get_all_roles()) {
             if ($coursecontext) {
-                $roles = role_fix_names($roles, $coursecontext,ROLENAME_ALIAS_RAW);
+                $roles = role_fix_names($roles, $coursecontext, ROLENAME_ALIAS_RAW);
             }
             $assignableroles = get_roles_for_contextlevels(CONTEXT_COURSE);
             foreach ($roles as $role) {

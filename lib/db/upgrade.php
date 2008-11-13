@@ -992,6 +992,38 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2008110603);
     }
 
+    /// Drop the deprecated teacher, teachers, student and students columns from the course table.
+    if ($result && $oldversion < 2008111200) {
+        $table = new xmldb_table('course');
+
+    /// Conditionally launch drop field teacher
+        $field = new xmldb_field('teacher');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+    /// Conditionally launch drop field teacher
+        $field = new xmldb_field('teachers');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+    /// Conditionally launch drop field teacher
+        $field = new xmldb_field('student');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+    /// Conditionally launch drop field teacher
+        $field = new xmldb_field('students');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008111200);
+    }
+
     return $result;
 }
 

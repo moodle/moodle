@@ -181,6 +181,7 @@ $string['rating'] = 'Rating';
 $string['ratingeveryone'] = 'Everyone can rate entries';
 $string['ratingno'] = 'No ratings';
 $string['ratingonlyteachers'] = 'Only $a can rate entries';
+$string['ratingonlywithpermissions'] = 'Only people with permission to rate entries';
 $string['ratings'] = 'Ratings';
 $string['ratingssaved'] = 'Ratings saved';
 $string['ratingsuse'] = 'Use ratings';

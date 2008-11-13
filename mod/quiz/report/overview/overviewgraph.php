@@ -31,7 +31,7 @@ require_capability('mod/quiz:viewreports', $modcontext);
 
 $line = new graph(800,600);
 $line->parameter['title']   = '';
-$line->parameter['y_label_left'] = $course->students;
+$line->parameter['y_label_left'] = get_string('participants');
 $line->parameter['x_label'] = get_string('grade');
 $line->parameter['y_label_angle'] = 90;
 $line->parameter['x_label_angle'] = 0;

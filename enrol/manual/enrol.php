@@ -442,7 +442,7 @@ function print_enrolmentkeyfrom($course) {
         if (!empty($teacher)) {
             $teachername = "<a href=\"../user/view.php?id=$teacher->id&course=".SITEID."\">".fullname($teacher)."</a>.";
         } else {
-            $teachername = strtolower( get_string('defaultcourseteacher') ); //get_string('yourteacher', '', $course->teacher);
+            $teachername = strtolower( get_string('defaultcourseteacher') );
         }
 
         // guest user has a slightly different message

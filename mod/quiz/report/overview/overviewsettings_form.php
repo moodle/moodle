@@ -9,10 +9,10 @@ class mod_quiz_report_overview_settings extends moodleform {
         $mform->addElement('header', 'preferencespage', get_string('preferencespage', 'quiz_overview'));
 
         if (!$this->_customdata['currentgroup']){
-            $studentsstring = "'".$COURSE->students."'";
+            $studentsstring = get_string('participants');
         } else {
             $a = new object();
-            $a->coursestudent = $COURSE->students;
+            $a->coursestudent = get_string('participants');
             $a->groupname = groups_get_group_name($this->_customdata['currentgroup']);
             if (20 < strlen($a->groupname)){
               $studentsstring = get_string('studentingrouplong', 'quiz_overview', $a);

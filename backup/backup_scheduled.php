@@ -471,7 +471,7 @@ function schedule_backup_course_configure($course,$starttime = 0) {
         $preferences->keep_name = $keep_name;
 
         //Roleasignments
-        $roles = $DB->get_records('role', null, 'sortorder');
+        $roles = get_all_roles();
         foreach ($roles as $role) {
             $preferences->backuproleassignments[$role->id] = $role;
         }

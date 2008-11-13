@@ -283,7 +283,7 @@ class quiz_overview_report extends quiz_default_report {
                     if ($currentgroup){
                         $a= new object();
                         $a->groupname = groups_get_group_name($currentgroup);
-                        $a->coursestudents = $COURSE->students;
+                        $a->coursestudents = get_string('participants');
                         $a->countregradeneeded = $countregradeneeded;
                         $regradealldrydolabel = get_string('regradealldrydogroup', 'quiz_overview', $a);
                         $regradealldrylabel = get_string('regradealldrygroup', 'quiz_overview', $a);

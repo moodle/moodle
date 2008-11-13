@@ -538,7 +538,6 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
 
     $basefields = array('id', 'category', 'sortorder',
                         'shortname', 'fullname', 'idnumber',
-                        'teacher', 'teachers', 'student', 'students',
                         'guest', 'startdate', 'visible',
                         'newsitems',  'cost', 'enrol',
                         'groupmode', 'groupmodeforce');
@@ -748,7 +747,6 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
 
     $basefields = array('id', 'category', 'sortorder',
                         'shortname', 'fullname', 'idnumber',
-                        'teacher', 'teachers', 'student', 'students',
                         'guest', 'startdate', 'visible',
                         'newsitems',  'cost', 'enrol',
                         'groupmode', 'groupmodeforce');

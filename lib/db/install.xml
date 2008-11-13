@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20081022" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20081111" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -40,12 +40,8 @@
         <FIELD NAME="format" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="topics" SEQUENCE="false" ENUM="false" PREVIOUS="summary" NEXT="showgrades"/>
         <FIELD NAME="showgrades" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="format" NEXT="modinfo"/>
         <FIELD NAME="modinfo" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="showgrades" NEXT="newsitems"/>
-        <FIELD NAME="newsitems" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="modinfo" NEXT="teacher"/>
-        <FIELD NAME="teacher" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="Teacher" SEQUENCE="false" ENUM="false" PREVIOUS="newsitems" NEXT="teachers"/>
-        <FIELD NAME="teachers" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="Teachers" SEQUENCE="false" ENUM="false" PREVIOUS="teacher" NEXT="student"/>
-        <FIELD NAME="student" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="Student" SEQUENCE="false" ENUM="false" PREVIOUS="teachers" NEXT="students"/>
-        <FIELD NAME="students" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="Students" SEQUENCE="false" ENUM="false" PREVIOUS="student" NEXT="guest"/>
-        <FIELD NAME="guest" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="students" NEXT="startdate"/>
+        <FIELD NAME="newsitems" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="modinfo" NEXT="guest"/>
+        <FIELD NAME="guest" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="newsitems" NEXT="startdate"/>
         <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="guest" NEXT="enrolperiod"/>
         <FIELD NAME="enrolperiod" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="startdate" NEXT="numsections"/>
         <FIELD NAME="numsections" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="enrolperiod" NEXT="marker"/>

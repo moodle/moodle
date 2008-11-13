@@ -28,13 +28,11 @@
     $tabs = $row = $inactive = $activated = array();
 
 /// user attempt count for reports link hover (completed attempts - much faster)
-    $counts           = new stdClass;
-    $counts->attempts = $DB->count_records('lesson_grades', array('lessonid'=>$lesson->id));
-    $counts->student  = $course->student;
+    $attemptscount = $DB->count_records('lesson_grades', array('lessonid'=>$lesson->id));
     
     $row[] = new tabobject('view', "$CFG->wwwroot/mod/lesson/view.php?id=$cm->id", get_string('preview', 'lesson'), get_string('previewlesson', 'lesson', format_string($lesson->name)));
     $row[] = new tabobject('edit', "$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id", get_string('edit', 'lesson'), get_string('edit', 'moodle', format_string($lesson->name)));
-    $row[] = new tabobject('reports', "$CFG->wwwroot/mod/lesson/report.php?id=$cm->id", get_string('reports', 'lesson'), get_string('viewreports', 'lesson', $counts));
+    $row[] = new tabobject('reports', "$CFG->wwwroot/mod/lesson/report.php?id=$cm->id", get_string('reports', 'lesson'), get_string('viewreports2', 'lesson', $attemptscount));
     if (has_capability('mod/lesson:edit', $context)) {
         $row[] = new tabobject('essay', "$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id", get_string('manualgrading', 'lesson'));
     }

@@ -188,7 +188,7 @@
         $table         = new stdClass;
 
         // set up the table object
-        $table->head = array(get_string('studentname', 'lesson', $course->student), get_string('attempts', 'lesson'), get_string('highscore', 'lesson'));
+        $table->head = array(get_string('name'), get_string('attempts', 'lesson'), get_string('highscore', 'lesson'));
         $table->align = array("center", "left", "left");
         $table->wrap = array("nowrap", "nowrap", "nowrap");
         $table->width = "90%";
@@ -863,7 +863,7 @@
                 
                 $gradeinfo = lesson_grade($lesson, $try, $user->id);
                 
-                $table->data[] = array($course->student.':', print_user_picture($user->id, $course->id, $user->picture, 0, true).fullname($user, true));
+                $table->data[] = array(get_string('name').':', print_user_picture($user->id, $course->id, $user->picture, 0, true).fullname($user, true));
                 $table->data[] = array(get_string("timetaken", "lesson").":", format_time($timetotake));
                 $table->data[] = array(get_string("completed", "lesson").":", userdate($completed));
                 $table->data[] = array(get_string('rawgrade', 'lesson').':', $gradeinfo->earned.'/'.$gradeinfo->total);

@@ -1132,10 +1132,6 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         $newsite->numsections = 0;
         $newsite->category = 0;
         $newsite->format = 'site';  // Only for this course
-        $newsite->teacher = get_string("defaultcourseteacher");
-        $newsite->teachers = get_string("defaultcourseteachers");
-        $newsite->student = get_string("defaultcoursestudent");
-        $newsite->students = get_string("defaultcoursestudents");
         $newsite->timemodified = time();
 
         if ($newid = $DB->insert_record('course', $newsite)) {

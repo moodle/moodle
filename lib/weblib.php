@@ -4662,7 +4662,7 @@ function print_user($user, $course, $messageselect=false, $return=false) {
     $output .= '<td class="content">';
     $output .= '<div class="username">'.fullname($user, has_capability('moodle/site:viewfullnames', $context)).'</div>';
     $output .= '<div class="info">';
-    if (!empty($user->role) and ($user->role <> $course->teacher)) {
+    if (!empty($user->role)) {
         $output .= $string->role .': '. $user->role .'<br />';
     }
     if ($user->maildisplay == 1 or ($user->maildisplay == 2 and ($course->id != SITEID) and !isguest()) or

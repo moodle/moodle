@@ -269,7 +269,7 @@
     unset($course);    // To avoid unwanted language effects later
 
     $courses = get_courses_page($category->id, 'c.sortorder ASC',
-                                'c.id,c.sortorder,c.shortname,c.fullname,c.summary,c.visible,c.teacher,c.guest,c.password',
+                                'c.id,c.sortorder,c.shortname,c.fullname,c.summary,c.visible,c.guest,c.password',
                                 $totalcount, $page*$perpage, $perpage);
     $numcourses = count($courses);
 

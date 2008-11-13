@@ -62,7 +62,7 @@ if (!isset ($frm->enrol_ldap_course_summary_editlock)) {
 }
 
 // Roles
-$roles = $DB->get_records('role');
+$roles = get_all_roles();
 foreach($roles as $role) {
     if (!isset($frm->{'enrol_ldap_contexts_role'.$role->id})) {
         $frm->{'enrol_ldap_contexts_role'.$role->id} = '';

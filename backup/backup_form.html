@@ -332,7 +332,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo "<td align=\"right\" valign=\"top\" colspan=\"2\"><b>";
         echo get_string("backuproleassignments");
         echo "</b></td><td colspan=\"2\">";
-        $roles = $DB->get_records('role', null, 'sortorder');
+        $roles = get_all_roles();
         foreach ($roles as $role) {
             print_checkbox('backupassignments_' . $role->shortname, 1, true, strip_tags(format_string($role->name, true)));
             echo "<br />";
