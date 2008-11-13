@@ -238,7 +238,7 @@ $string['enrolcourseenrol_desc'] = 'Enrol/unenrol users from this course using M
                                     methods if the remote hosts allows them. Such enrolments are listed under
                                     <em>Other enrolled users</em>';
 $string['host'] = 'host';
-$string['loginlinkmnetuser'] = '<br/>If you are a Moodle Network remote user and can <a href=\"$a\">confirm your email address here</a>, you can be redirected to your login page.<br />';
+$string['loginlinkmnetuser'] = '<br />If you are a Moodle Network remote user and can <a href=\"$a\">confirm your email address here</a>, you can be redirected to your login page.<br />';
 $string['certdetails'] = 'Cert Details';
 
 $string['error7020'] = 'This error normally occurs if the remote site has created a record for you with the wrong wwwroot, for example, http://yoursite.com instead of http://www.yoursite.com. You should contact the administrator of the remote site with your wwwroot (as specified in config.php) asking her to update her record for your host.';
