@@ -5,8 +5,8 @@ $string['addingtruefalse'] = 'Adding a True/False question';
 $string['correctanswer'] = 'Correct answer';
 $string['editingtruefalse'] = 'Editing a True/False question';
 $string['false'] = 'False';
-$string['feedbackfalse'] = 'Feedback for the reponse \'False\'.';
-$string['feedbacktrue'] = 'Feedback for the reponse \'True\'.';
+$string['feedbackfalse'] = 'Feedback for the response \'False\'.';
+$string['feedbacktrue'] = 'Feedback for the response \'True\'.';
 $string['true'] = 'True';
 $string['truefalse'] = 'True/False';
 
