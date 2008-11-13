@@ -864,15 +864,15 @@ class existing_role_holders extends role_assign_user_selector_base {
 class existing_role_holders_site_admin extends existing_role_holders {
     public function find_users($search) {
         global $USER;
-        $groupeduses = parent::find_users($search);
-        foreach ($groupeduses as $group) {
+        $groupedusers = parent::find_users($search);
+        foreach ($groupedusers as $group) {
             foreach ($group as &$user) {
                 if ($user->id == $USER->id) {
                     $user->disabled = true;
                 }
             }
         }
-        return $groupeduses;
+        return $groupedusers;
     }
 }
 
