@@ -69,6 +69,12 @@ $string['databasesettingssub_mysql'] = '<b>Type:</b> MySQL<br />
 <b>Bruger:</b> brugernavnet til din database<br />
 <b>Password:</b> din databases adgangskode<br />
 <b>Tabelprefix:</b> prefix for alle tabelnavne (mandatory)';
+$string['databasesettingssub_mysqli'] = '<b>Type:</b> Forbedret MySQL<br />
+<b>Vært:</b> ex localhost eller db.isp.com<br />
+<b>Navn:</b> databasenavn, ex moodle<br />
+<b>Bruger:</b> dit brugernavn til databasen<br />
+<b>Adgangskode:</b> din adgangskode til databasen<br />
+<b>Tabelprefix:</b> prefix til alle navne i tabellen (valgfri)';
 $string['databasesettingssub_oci8po'] = '<b>Type:</b> Oracle<br />
 <b>Vært:</b> ikke brugt, skal være blank<br />
 <b>Navn:</b> navnet på forbindelsen fra tnsnames.ora <br />
@@ -90,6 +96,7 @@ $string['databasesettingssub_postgres7'] = '<b>Type:</b> PostgreSQL<br />
 $string['databasesettingswillbecreated'] = '<b>Note:</b> Installationsprocessen vil søge at oprette en database hvis ikke den findes allerede.';
 $string['dataroot'] = 'Databibliotek';
 $string['datarooterror'] = 'Data-biblioteket du specificerede kan ikke findes eller oprettes. Ret stien til biblioteket eller opret det manuelt.';
+$string['datarootpublicerror'] = 'Den datamappe du har angivet har direkte adgang fra internettet, du skal bruge en anden mappe.';
 $string['dbconnectionerror'] = 'Den angive database kunne ikke kontaktes. Kontroller eller ret venligst databaseinformationerne.';
 $string['dbcreationerror'] = 'Fejl ved oprettelse af databasen. Kan ikke oprette den givne database med de angivne indstillinger.';
 $string['dbhost'] = 'Værtsserver';
@@ -202,6 +209,8 @@ $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'Hvis sitet kun benytter iso-8859-1 (latin-1) sprog/tegnsæt, kan du fortsætte med at benytte den nuværende version 4.1.12 af MySQL (eller nyere)';
 $string['mysql416required'] = 'Moodle 1.6 skal som minimum bruge MySql version 4.1.16 for at garantere at data kan konverteres til UTF-8 fremover.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP er ikke blevet ordentligt konfigureret med MySQL  udvidelsen så den kan kommunikere med MySQL. Det kan skyldes at MySQL extension/dll ikke er loadet. Kontroller venlist phpinfo() og php.ini filen eller rekompiler PHP.';
+$string['mysqli'] = 'Forbedret MySql (mysqli)';
+$string['mysqliextensionisnotpresentinphp'] = 'PHP er ikke konfigureret korrekt med MySqli extensionen så den kan kommunikere med MySql. Tjek php.ini eller rekompiler PHP, MySqli extensionen er ikke tilgængelig for PHP 4';
 $string['name'] = 'Navn';
 $string['next'] = 'Næste';
 $string['oci8po'] = 'Oracle (oci8po)';
