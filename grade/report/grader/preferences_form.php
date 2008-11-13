@@ -72,7 +72,10 @@ class grader_report_preferences_form extends moodleform {
             if ($canviewhidden) {
                 $preferences['prefshow']['showaverages']  = $checkbox_default;
             }
-            $preferences['prefshow']['showgroups']        = $checkbox_default;
+            if ($course->groupmode != NOGROUPS) {
+                $preferences['prefshow']['showgroups']        = $checkbox_default;
+            }
+
             $preferences['prefshow']['showlocks']         = $checkbox_default;
 
             $preferences['prefrows'] = array(
@@ -156,7 +159,7 @@ class grader_report_preferences_form extends moodleform {
                     if (!empty($CFG->{$full_pref})) {
                         $course_value = grade_get_setting($course->id, $pref, $CFG->{$full_pref});
                     }
-                    
+
                     if ($pref == 'aggregationposition') {
                         if (!empty($options[$course_value])) {
                             $default = $options[$course_value];
