@@ -321,7 +321,7 @@ $string['auth_radiushost_key'] = 'Host';
 $string['auth_radiussecret_key'] = 'Secret';
 
 // Shibboleth plugin
-$string['auth_shibbolethdescription'] = 'Using this method users are created and authenticated using <a href=\"http://shibboleth.internet2.edu/\">Shibboleth</a>.<br/>Be sure to read the <a href=\"../auth/shibboleth/README.txt\">README</a> for Shibboleth on how to set up your Moodle with Shibboleth';
+$string['auth_shibbolethdescription'] = 'Using this method users are created and authenticated using <a href=\"http://shibboleth.internet2.edu/\">Shibboleth</a>.<br />Be sure to read the <a href=\"../auth/shibboleth/README.txt\">README</a> for Shibboleth on how to set up your Moodle with Shibboleth';
 $string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_shibboleth_login'] = 'Shibboleth Login';
 $string['auth_shibboleth_manual_login'] = 'Manual Login';
