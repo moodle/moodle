@@ -1,10 +1,38 @@
-<?php
+<?php  // $Id$
+
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.org                                            //
+//                                                                       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+
 /**
  * this page defines what roles can override (override roles in different context. For example,
  * we can say that Admin can override teacher roles in a course
  * To be able to override roles. If a user has moodle/role:override at context level
  * and be in the roles_allow_override table.
- */
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package roles
+ *//** */
+
     require_once('../../config.php');
     require_once($CFG->libdir.'/adminlib.php');
 

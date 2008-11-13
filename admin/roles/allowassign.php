@@ -1,4 +1,28 @@
-<?php
+<?php  // $Id$
+
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.org                                            //
+//                                                                       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+
 /**
  * this page defines what roles can access (grant user that role and override that roles'
  * capabilities in different context. For example, we can say that Teachers can only grant
@@ -6,7 +30,11 @@
  * capability moodle/role:assign or moodle/role:manage and this database table roles_deny_grant
  * to be able to grant roles. If a user has moodle/role:manage at site level assignment
  * then he can modify the roles_allow_assign table via this interface.
- */
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package roles
+ *//** */
+
     require_once('../../config.php');
     require_once($CFG->libdir.'/adminlib.php');
 

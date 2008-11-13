@@ -28,7 +28,7 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package userselector
- */
+ *//** */
 
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/user/selector/lib.php');

@@ -124,6 +124,8 @@
  * DB need to ensure that the default role caps
  * are dealt with appropriately.
  *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package roles
  */
 
 require_once $CFG->dirroot.'/lib/blocklib.php';
@@ -3436,24 +3438,6 @@ function get_context_url($context) {
     }
 
     return $url;
-}
-
-/**
- * Print a risk icon, as a link to the Risks page on Moodle Docs.
- *
- * @param string $type the type of risk, will be one of the keys from the 
- *      get_all_risks array. Must start with 'risk'.
- */
-function print_risk_icon($type) {
-    global $CFG;
-    static $risksurl = null;
-    if (is_null($risksurl)) {
-        $risksurl = get_docs_url(s(get_string('risks', 'role')));
-    }
-    $iconurl = $CFG->pixpath . '/i/' . str_replace('risk', 'risk_', $type) . '.gif';
-    echo '<a onclick="this.target=\'docspopup\'" title="' . get_string($type, 'admin') .
-            '" href="' . $risksurl . '"> <img src="' . $iconurl . '" alt="' .
-            get_string($type . 'short', 'admin') . '" /></a>';
 }
 
 /**

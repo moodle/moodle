@@ -1,9 +1,37 @@
-<?php // $Id$
-      // Script to assign users to contexts
+<?php  // $Id$
+
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.org                                            //
+//                                                                       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+
+/**
+ * Shows the result of has_capability for every capability for a user in a context.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package roles
+ *//** */
 
     require_once(dirname(__FILE__) . '/../../config.php');
-    require_once($CFG->libdir.'/adminlib.php');
-    require_once($CFG->dirroot.'/user/selector/lib.php');
+    require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
 
     $contextid = required_param('contextid',PARAM_INT);
     $contextuserid = optional_param('userid', 0, PARAM_INT); // needed for user tabs
@@ -109,74 +137,10 @@
 /// If a user has been chosen, show all the permissions for this user.
     $user = $userselector->get_selected_user();
     if (!is_null($user)) {
-
-    /// Class for rendering the table.
-        class explain_cabability_table extends cabability_table_base {
-            protected $user;
-            protected $fullname;
-            protected $baseurl;
-            protected $contextname;
-            protected $stryes;
-            protected $strno;
-            protected $strexplanation;
-            private $hascap;
-            public function __construct($context, $user, $contextname) {
-                global $CFG;
-                parent::__construct($context, 'explaincaps');
-                $this->user = $user;
-                $this->fullname = fullname($user);
-                $this->contextname = $contextname;
-                $this->baseurl = $CFG->wwwroot . '/' . $CFG->admin .
-                        '/roles/explainhascapabiltiy.php?user=' . $user->id .
-                        '&amp;contextid=' . $context->id . '&amp;capability=';
-                $this->stryes = get_string('yes');
-                $this->strno = get_string('no');
-                $this->strexplanation = get_string('explanation');
-            }
-            protected function add_header_cells() {
-                echo '<th>' . get_string('allowed', 'role') . '</th>';
-                echo '<th>' . $this->strexplanation . '</th>';
-            }
-            protected function num_extra_columns() {
-                return 2;
-            }
-            protected function skip_row($capability) {
-                return $capability->name != 'moodle/site:doanything' && is_legacy($capability->name);
-            }
-            protected function get_row_classes($capability) {
-                $this->hascap = has_capability($capability->name, $this->context, $this->user->id);
-                if ($this->hascap) {
-                    return array('yes');
-                } else {
-                    return array('no');
-                }
-            }
-            protected function add_row_cells($capability) {
-                if ($this->hascap) {
-                    $result = $this->stryes;
-                    $tooltip = 'whydoesuserhavecap';
-                } else {
-                    $result = $this->strno;
-                    $tooltip = 'whydoesusernothavecap';
-                }
-                $a = new stdClass;
-                $a->fullname = $this->fullname;
-                $a->capability = $capability->name;
-                $a->context = $this->contextname;
-                echo '<td>' . $result . '</td>';
-                echo '<td>';
-                link_to_popup_window($this->baseurl . $capability->name, 'hascapabilityexplanation',
-                        $this->strexplanation, 600, 600, get_string($tooltip, 'role', $a));
-                echo '</td>';
-            }
-        }
-
-        require_js(array('yui_yahoo', 'yui_dom', 'yui_event'));
-        require_js($CFG->admin . '/roles/roles.js');
         print_box_start('generalbox boxaligncenter boxwidthwide');
         print_heading(get_string('permissionsforuser', 'role', fullname($user)), '', 3);
 
-        $table = new explain_cabability_table($context, $user, $contextname);
+        $table = new explain_capability_table($context, $user, $contextname);
         $table->display();
         print_box_end();
 

@@ -1,9 +1,37 @@
-<?php // $Id$
-      // Script to assign users to contexts
+<?php  // $Id$
+
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.org                                            //
+//                                                                       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+
+/**
+ * Lets you assign roles to users in a particular context.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package roles
+ *//** */
 
     require_once(dirname(__FILE__) . '/../../config.php');
-    require_once($CFG->libdir.'/adminlib.php');
-    require_once($CFG->dirroot.'/user/selector/lib.php');
+    require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
     require_js(array('yui_yahoo', 'yui_dom', 'yui_event'));
     require_js($CFG->admin . '/roles/roles.js');
 
