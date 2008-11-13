@@ -387,7 +387,7 @@ class grade_report_grader extends grade_report {
      * @return string HTML code
      */
     function get_toggles_html() {
-        global $CFG, $USER;
+        global $CFG, $USER, $COURSE;
 
         $html = '<div id="grade-report-toggles">';
         if ($USER->gradeediting[$this->courseid]) {
@@ -414,7 +414,7 @@ class grade_report_grader extends grade_report {
 
         if (has_capability('moodle/grade:viewall', $this->context)
          and has_capability('moodle/site:accessallgroups', $this->context)
-         and $course_has_groups = true) { // TODO replace that last condition with proper check
+         and $COURSE->groupmode != NOGROUPS) { // TODO replace that last condition with proper check
             $html .= $this->print_toggle('groups', true);
         }
 
