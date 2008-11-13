@@ -3069,8 +3069,40 @@ function can_delete_course($courseid) {
              && has_capability('moodle/course:manageactivities', $context)) );
 }
 
+/**
+ * Save the Your name for 'Some role' strings.
+ *
+ * @param integer $courseid the id of this course.
+ * @param array $data the data that came from the course settings form.
+ */
+function save_local_role_names($courseid, $data) {
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
-/*
+    foreach ($data as $fieldname => $value) {
+        if (!strstr($fieldname, 'role_')) {
+            continue;
+        }
+        list($ignored, $roleid) = explode('_', $fieldname);
+
+        // make up our mind whether we want to delete, update or insert
+        if (!$value) {
+            delete_records('role_names', 'contextid', $context->id, 'roleid', $roleid);
+
+        } else if ($rolename = get_record('role_names', 'contextid', $context->id, 'roleid', $roleid)) {
+            $rolename->name = $value;
+            update_record('role_names', $rolename);
+
+        } else {
+            $rolename = new stdClass;
+            $rolename->contextid = $context->id;
+            $rolename->roleid = $roleid;
+            $rolename->name = $value;
+            insert_record('role_names', $rolename, false);
+        }
+    }
+}
+
+/**
  * Create a course and either return a $course object or false
  *
  * @param object $data  - all the data needed for an entry in the 'course' table
@@ -3115,7 +3147,10 @@ function create_course($data) {
 
         add_to_log(SITEID, 'course', 'new', 'view.php?id='.$course->id, $data->fullname.' (ID '.$course->id.')');
 
-        //trigger events
+        // Save any custom role names.
+        save_local_role_names($course->id, $data);
+
+        // Trigger events
         events_trigger('course_created', $course);
 
         return $course;
@@ -3123,7 +3158,6 @@ function create_course($data) {
 
     return false;   // error
 }
-
 
 /**
  * Update a course and return true or false
@@ -3176,41 +3210,10 @@ function update_course($data) {
         $page = page_create_object(PAGE_COURSE_VIEW, $course->id);
         blocks_remove_inappropriate($page);
 
-        // put custom role names into db
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        // Save any custom role names.
+        save_local_role_names($course->id, $data);
 
-        foreach ($data as $dname => $dvalue) {
-
-            // is this the right param?
-            $dvalue = clean_param($dvalue, PARAM_NOTAGS);
-
-            if (!strstr($dname, 'role_')) {
-                continue;
-            }
-
-            $dt = explode('_', $dname);
-            $roleid = $dt[1];
-            // make up our mind whether we want to delete, update or insert
-
-            if (empty($dvalue)) {
-
-                delete_records('role_names', 'contextid', $context->id, 'roleid', $roleid);
-
-            } else if ($t = get_record('role_names', 'contextid', $context->id, 'roleid', $roleid)) {
-
-                $t->name = $dvalue;
-                update_record('role_names', $t);
-
-            } else {
-
-                $t->contextid = $context->id;
-                $t->roleid = $roleid;
-                $t->name = $dvalue;
-                insert_record('role_names', $t);
-            }
-
-        }
-        //trigger events
+        // Trigger events
         events_trigger('course_updated', $course);
 
         return true;
