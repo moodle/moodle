@@ -32,7 +32,7 @@ $string['closewindow'] = 'Sulje tämä ikkuna';
 $string['compatibilitysettingshead'] = 'Tarkistetaan PHP:n asetukset';
 $string['compatibilitysettingssub'] = 'Palvelimesi pitää läpäistä kaikki testit jotta moodle toimisi oikein.';
 $string['componentisuptodate'] = 'Komponentti on ajan tasalla';
-$string['configfilenotwritten'] = 'Asennus ei pystynyt luomaan automaattisesti config.php tiedostoa, joka olisi sisältänyt valitsemasi asetukset. Todennäköisesti koska Moodlen hakemisto on kirjoitussuojattu. Voit  kopioida seuraavan koodin tiedostoon nimeltä config.php  ja tallentaa tiedostin Moodlen päähakemiston sisälle.';
+$string['configfilenotwritten'] = 'Asennus ei pystynyt luomaan automaattisesti config.php -tiedostoa, joka olisi sisältänyt valitsemasi asetukset, todennäköisesti koska Moodlen hakemisto on kirjoitussuojattu. Voit manuaalisesti kopioida seuraavan koodin tiedostoon nimeltä config.php Moodlen päähakemiston sisällä.';
 $string['configfilewritten'] = 'config.php on luotu.';
 $string['configurationcompletehead'] = 'Asetukset suoritettu';
 $string['configurationcompletesub'] = 'Moodle yritti tallentaa asetustiedostoa \"config.php\" moodlen asennuskansioon.';
@@ -84,7 +84,7 @@ $string['databasesettingssub_postgres7'] = '<b>Tyyppi:</b> PostgreSQL <br />
 <b>Taulukon etuliite:</b> pakollinen etuliite jota käytetään kaikissa taulukoissa';
 $string['dataroot'] = 'Datahakemisto';
 $string['datarooterror'] = '\"Datahakemistoa\", jonka määrittelit, ei voitu löytää, eikä luoda. Joko korjaa polku, tai luo hakemisto manuaalisesti.';
-$string['dbconnectionerror'] = 'Emme pystyneet kytkeytymään tietokantaan, jonka määrittelit. Tarkista tietokanta asetuksesi.';
+$string['dbconnectionerror'] = 'Emme pystyneet kytkeytymään tietokantaan, jonka määrittelit. Tarkista tietokanta-asetuksesi.';
 $string['dbcreationerror'] = 'Tietokannan luomisvirhe. Ei pystytty luomaan annettua tietokannan nimeä tarjotuilla asetuksilla.';
 $string['dbhost'] = 'Palvelin';
 $string['dbprefix'] = 'Taulukon etumerkki';
@@ -123,9 +123,9 @@ $string['fileuploads'] = 'Tiedostojen lähettäminen';
 $string['fileuploadserror'] = 'Tämän pitäisi olla päällä';
 $string['fileuploadshelp'] = '<p>Tiedostojen lähettäminen ei näyttäisi olevan käytössä palvelimellasi.</p>
 
-<p>Moodle voidaan silti asentaa, mutta ilman tätä et pysty lataamaan kurssitiedostoja tai vaihtamaan käyttäjän kuvaa.</p>
+<p>Moodle voidaan silti asentaa, mutta ilman tätä ominaisuutta et pysty lataamaan kurssitiedostoja tai uuden käyttäjän profiilikuvia.</p>
 
-<p>Mahdollistaaksesi tiedostojen latauksen sinun (tai systeemisi ylläpitäjän) täytyy muokata varusohjelmien php.ini tiedosto systeemiisi ja muuttaa asetus <b>file_uploads</b> to \'1\'.</p>';
+<p>Mahdollistaaksesi tiedostojen latauksen sinun (tai systeemisi ylläpitäjän) täytyy muokata varusohjelmien php.ini -tiedosto systeemiisi ja muuttaa asetus <b>file_uploads</b> to \'1\'.</p>';
 $string['gdversion'] = 'GD versio';
 $string['gdversionerror'] = 'GD kirjaston pitäisi olla päällä, että voidaan käsitellä ja luoda kuvia.';
 $string['gdversionhelp'] = '<p>Palvelimellasi ei näyttäisi olevan GD:tä asennettuna.</p>
@@ -158,24 +158,25 @@ $string['memorylimithelp'] = '<p>PHP muistiraja palvelimellesi on tällä hetkel
 
 <p>Tämä saattaa aiheuttaa Moodlelle muistiongelmia myöhemmin, varsinkin jos sinulla on paljon mahdollisia moduuleita ja/tai paljon käyttäjiä.</p>
 
-<p>Suosittelemme, että valitset asetuksiksi PHP:n korkeimmalla mahdollisella raja-arvolla, esimerkiksi 40M.
+<p>Suosittelemme, että valitset asetuksiksi PHP:n korkeimmalla mahdollisella raja-arvolla, esimerkiksi 16M.
 On olemassa monia tapoja joilla voit yrittää tehdä tämän:</p>
 <ol>
-<li>Jos pystyt, uudelleen käännä PHP <i>--enable-memory-limit</i>. :llä.
+<li>Jos pystyt, uudelleenkäännä PHP <i>--enable-memory-limit</i>. :llä.
 Tämä sallii Moodlen asettaa muistirajan itse.</li>
-<li>Jos sinulla on pääsy php.ini tiedostoosi, voit muuttaa <b>memory_limit</b> setuksen siellä johonkin kuten 40M. Jos sinulla ei ole pääsyoikeutta, voit kenties pyytää ylläpitäjää tekemään tämän puolestasi.</li>
+<li>Jos sinulla on pääsy php.ini tiedostoosi, voit muuttaa <b>memory_limit</b> asetuksen siellä johonkin kuten 16M. Jos sinulla ei ole pääsyoikeutta, voit kenties pyytää ylläpitäjää tekemään tämän puolestasi.</li>
 <li>Joillain PHP palvelimilla voit luoda a .htaccess tiedoston Moodle hakemistossa, sisältäen tämän rivin:
-<p><blockquote>php_value memory_limit 40M</blockquote></p>
+<p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>Kuitenkin, joillain palvelimilla tämä estää  <b>kaikkia</b> PHP sivuja toimimasta (näet virheet, kun katsot sivuja), joten sinun täytyy poistaa .htaccess tiedosto.</p></li>
 </ol>';
 $string['missingrequiredfield'] = 'JOitakin vaadituista kentistä puuttuu';
 $string['moodledocslink'] = 'Tämä sivu Moodle Docs -sivustolla';
 $string['mysql416bypassed'] = 'Kuitenkin jos teidän sivustonne käyttää vain iso-8859-1 merkistöä, te voitte jatkaa nykyisen mySQL 4.1.12 käyttöä.';
 $string['mysql416required'] = 'MySQL 4.1.16 on  vähimmäisversio joka vaaditaan Moodle1.6:lle, jotta takaa, että kaikki data voidaan muuntaa UTF-8:ksi tulevaisuudessa';
-$string['mysqlextensionisnotpresentinphp'] = 'PHP:tä ei ole asennettu MySQL laajennuksen kanssa, jotta se voisi kommunikoida MySQL:n kanssa. Tarkista php.ini tiedostosi tai käännä PHP uudelleen.';
+$string['mysqlextensionisnotpresentinphp'] = 'PHP:tä ei ole kunnolla valittu asetukseksi MySQL -laajennuksen kanssa, jotta se voisi kommunikoida MySQL:n kanssa. Tarkista php.ini -tiedostosi tai käännä PHP uudelleen.';
 $string['name'] = 'Nimi';
 $string['next'] = 'Seuraava';
 $string['ok'] = 'OK';
+$string['parentlanguage'] = 'fi_alkup';
 $string['pass'] = 'Tarkastettu';
 $string['password'] = 'Salasana';
 $string['php50restricted'] = 'PHP 5.0.x versiossa on tunnettuja ongelmia, päivitä versioon 5.1.x tai palaa versioihin 4.3.x - 4.4.x';
@@ -205,7 +206,7 @@ $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Suomi';
 $string['user'] = 'Käyttäjä';
 $string['welcomep70'] = 'Napsauta \"Seuraava\"-painiketta jatkaaksesi moodlen asennusta';
-$string['wrongdestpath'] = 'Virheellinen kohde kansio';
+$string['wrongdestpath'] = 'Virheellinen kohdekansio';
 $string['wrongzipfilename'] = 'Virheellinen zip-tiedoston nimi';
 $string['wwwroot'] = 'Web-osoite';
 $string['wwwrooterror'] = 'Web-osoite ei näyttäisi olevan voimassa- tämä Moodle asennus ei näyttäisi olevan siellä.';
