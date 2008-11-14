@@ -319,6 +319,9 @@
                     </iframe>
                     </noscript>
 <?php            
+            //Added incase javascript popups are blocked
+            $link = '<a href="'.$CFG->wwwroot.'/mod/scorm/loadSCO.php?id='.$cm->id.$scoidstr.$modestr.'" target="new">'.get_string('popupblockedlinkname','scorm').'</a>';
+            print_simple_box(get_string('popupblocked','scorm',$link),'center');         
         }
     } else {
         print_simple_box(get_string('noprerequisites','scorm'),'center');

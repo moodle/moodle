@@ -14,45 +14,34 @@ define('GRADESCOES', '0');
 define('GRADEHIGHEST', '1');
 define('GRADEAVERAGE', '2');
 define('GRADESUM', '3');
-$SCORM_GRADE_METHOD = array (GRADESCOES => get_string('gradescoes', 'scorm'),
-                             GRADEHIGHEST => get_string('gradehighest', 'scorm'),
-                             GRADEAVERAGE => get_string('gradeaverage', 'scorm'),
-                             GRADESUM => get_string('gradesum', 'scorm'));
 
 define('HIGHESTATTEMPT', '0');
 define('AVERAGEATTEMPT', '1');
 define('FIRSTATTEMPT', '2');
 define('LASTATTEMPT', '3');
-$SCORM_WHAT_GRADE = array (HIGHESTATTEMPT => get_string('highestattempt', 'scorm'),
-                           AVERAGEATTEMPT => get_string('averageattempt', 'scorm'),
-                           FIRSTATTEMPT => get_string('firstattempt', 'scorm'),
-                           LASTATTEMPT => get_string('lastattempt', 'scorm'));
 
-$SCORM_POPUP_OPTIONS = array('resizable'=>1, 
-                             'scrollbars'=>1, 
-                             'directories'=>0, 
-                             'location'=>0,
-                             'menubar'=>0, 
-                             'toolbar'=>0, 
-                             'status'=>0);
+/**
+ * Returns an array of the popup options for SCORM and each options default value
+ * 
+ * @return array an array of popup options as the key and their defaults as the value
+ */
+function scorm_get_popup_options_array(){
+    global $CFG;
+    return array('resizable'=> isset($CFG->scorm_resizable) ? $CFG->scorm_resizable : 0, 
+                 'scrollbars'=> isset($CFG->scorm_scrollbars) ? $CFG->scorm_scrollbars : 0, 
+                 'directories'=> isset($CFG->scorm_directories) ? $CFG->scorm_directories : 0, 
+                 'location'=> isset($CFG->scorm_location) ? $CFG->scorm_location : 0,
+                 'menubar'=> isset($CFG->scorm_menubar) ? $CFG->scorm_menubar : 0, 
+                 'toolbar'=> isset($CFG->scorm_toolbar) ? $CFG->scorm_toolbar : 0, 
+                 'status'=> isset($CFG->scorm_status) ? $CFG->scorm_status : 0); 
+}
+
 $stdoptions = '';
-foreach ($SCORM_POPUP_OPTIONS as $popupopt => $value) {
+foreach (scorm_get_popup_options_array() as $popupopt => $value) {
     $stdoptions .= $popupopt.'='.$value;
     if ($popupopt != 'status') {
         $stdoptions .= ',';
     }
-}
-
-if (!isset($CFG->scorm_maxattempts)) {
-    set_config('scorm_maxattempts','6');
-}
-
-if (!isset($CFG->scorm_frameheight)) {
-    set_config('scorm_frameheight','500');
-}
-
-if (!isset($CFG->scorm_framewidth)) {
-    set_config('scorm_framewidth','100%');
 }
 
 if (!isset($CFG->scorm_updatetime)) {
@@ -68,6 +57,88 @@ if (!isset($CFG->scorm_windowsettings)) {
 }
 
 /// Local Library of functions for module scorm
+/**
+ * Returns an array of the array of what grade options
+ * 
+ * @return array an array of what grade options
+ */
+function scorm_get_grade_method_array(){
+    return array (GRADESCOES => get_string('gradescoes', 'scorm'),
+                  GRADEHIGHEST => get_string('gradehighest', 'scorm'),
+                  GRADEAVERAGE => get_string('gradeaverage', 'scorm'),
+                  GRADESUM => get_string('gradesum', 'scorm'));             
+}
+
+/**
+ * Returns an array of the array of what grade options
+ * 
+ * @return array an array of what grade options
+ */
+function scorm_get_what_grade_array(){
+    return array (HIGHESTATTEMPT => get_string('highestattempt', 'scorm'),
+                  AVERAGEATTEMPT => get_string('averageattempt', 'scorm'),
+                  FIRSTATTEMPT => get_string('firstattempt', 'scorm'),
+                  LASTATTEMPT => get_string('lastattempt', 'scorm'));
+}
+
+/**
+ * Returns an array of the array of skip view options
+ * 
+ * @return array an array of skip view options
+ */
+function scorm_get_skip_view_array(){
+   return array(0 => get_string('never'),
+                 1 => get_string('firstaccess','scorm'),
+                 2 => get_string('always'));
+}
+
+/**
+ * Returns an array of the array of hide table of contents options
+ * 
+ * @return array an array of hide table of contents options
+ */
+function scorm_get_hidetoc_array(){
+     return array(0 =>get_string('sided','scorm'),
+                  1 => get_string('hidden','scorm'),
+                  2 => get_string('popupmenu','scorm'));
+}
+
+/**
+ * Returns an array of the array of update frequency options
+ * 
+ * @return array an array of update frequency options
+ */
+function scorm_get_updatefreq_array(){
+    return array(0 => get_string('never'),
+                 1 => get_string('everyday','scorm'),
+                 2 => get_string('everytime','scorm'));
+}
+
+/**
+ * Returns an array of the array of popup display options
+ * 
+ * @return array an array of popup display options
+ */
+function scorm_get_popup_display_array(){
+    return array(0 => get_string('iframe', 'scorm'),
+                 1 => get_string('popup', 'scorm'));
+}
+
+/**
+ * Returns an array of the array of attempt options
+ * 
+ * @return array an array of attempt options
+ */
+function scorm_get_attempts_array(){
+    $attempts = array(0 => get_string('nolimit','scorm'),
+                      1 => get_string('attempt1','scorm'));
+                  
+    for ($i=2; $i<=6; $i++) {
+        $attempts[$i] = get_string('attemptsx','scorm', $i);
+    }
+    
+    return $attempts;
+}
 
 /**
 * This function will permanently delete the given
