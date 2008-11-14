@@ -67,7 +67,7 @@
                 // may return 0
                 $currentgroup=false;
             }
-            if (forum_tp_mark_forum_read($user->id, $forum->id,$currentgroup)) {
+            if (forum_tp_mark_forum_read($user, $forum->id,$currentgroup)) {
                 add_to_log($course->id, "forum", "mark read", "view.php?f=$forum->id", $forum->id, $cm->id);
             }
         }
