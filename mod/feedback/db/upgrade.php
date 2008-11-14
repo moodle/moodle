@@ -234,6 +234,11 @@ function xmldb_feedback_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2008050105, 'feedback');
     }
     
+    if ($result && $oldversion < 2008073002) {
+        $update_sql = "UPDATE {feedback_item} SET presentation = '-|-' WHERE presentation = '0|0' AND typ = 'numeric'";
+        $result = $result && $DB->execute($update_sql);
+    }
+    
     return $result;
 }
 
