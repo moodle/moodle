@@ -108,7 +108,7 @@ abstract class capability_table_base {
                     $this->get_row_classes($capability)))) . '">';
 
         /// Table cell for the capability name.
-            echo '<td class="name"><span class="cap-desc">' . get_capability_docs_link($capability) .
+            echo '<th scope="row" class="name"><span class="cap-desc">' . get_capability_docs_link($capability) .
                     '<span class="cap-name">' . $capability->name . '</span></span></td>';
 
         /// Add the cells specific to this table.
@@ -284,7 +284,7 @@ abstract class capability_table_with_risks extends capability_table_base {
     }
 
     protected function add_header_cells() {
-        echo '<th class="risk" colspan="' . $this->num_extra_columns() . '" scope="col">' . get_string('risks','role') . '</th>';
+        echo '<th class="risk" colspan="' . count($this->allrisks) . '" scope="col">' . get_string('risks','role') . '</th>';
     }
 
     protected function num_extra_columns() {
@@ -330,9 +330,11 @@ abstract class capability_table_with_risks extends capability_table_base {
     }
 }
 
-class override_permissions_capability_table extends capability_table_with_risks {
+class override_permissions_table_advanced extends capability_table_with_risks {
     protected $roleid;
     protected $inheritedcapabilities;
+    protected $displaypermissions;
+    protected $strnotset;
     protected $localoverrides;
     protected $changed = array(); // $localoverrides that were changed by the submitted data, and so need to be saved.
     protected $haslockedcapabiltites = false;
@@ -353,6 +355,8 @@ class override_permissions_capability_table extends capability_table_with_risks 
         global $DB;
         parent::__construct($context, 'overriderolestable');
         $this->roleid = $roleid;
+        $this->displaypermissions = $this->allpermissions;
+        $this->strnotset = get_string('notset', 'role');
 
     /// Get the capabiltites from the parent context, so that can be shown in the interface.
         $parentcontext = get_context_instance_by_id(get_parent_contextid($context));
@@ -418,14 +422,12 @@ class override_permissions_capability_table extends capability_table_with_risks 
     }
 
     protected function add_header_cells() {
-        foreach ($this->strperms as $permname => $strpermname) {
-            echo '<th class="' . $permname . '" scope="col">' . $strpermname . '</th>';
-        }
+        echo '<th colspan="' . count($this->displaypermissions) . '" scope="col">' . get_string('permission', 'role') . '</th>';
         parent::add_header_cells();
     }
 
     protected function num_extra_columns() {
-        return count($this->strperms) + parent::num_extra_columns();
+        return count($this->displaypermissions) + parent::num_extra_columns();
     }
 
     protected function skip_row($capability) {
@@ -433,13 +435,19 @@ class override_permissions_capability_table extends capability_table_with_risks 
     }
 
     protected function add_row_cells($capability) {
+        $this->add_permission_cells($capability);
+        parent::add_row_cells($capability);
+    }
+
+    protected function add_permission_cells($capability) {
         $disabled = '';
         if ($capability->locked || $this->inheritedcapabilities[$capability->name] == CAP_PROHIBIT) {
             $disabled = ' disabled="disabled"';
         }
 
     /// One cell for each possible permission.
-        foreach ($this->allpermissions as $perm => $permname) {
+        foreach ($this->displaypermissions as $perm => $permname) {
+            $strperm = $this->strperms[$permname];
             $extraclass = '';
             if ($perm != CAP_INHERIT && $perm == $this->inheritedcapabilities[$capability->name]) {
                 $extraclass = ' capcurrent';
@@ -449,11 +457,43 @@ class override_permissions_capability_table extends capability_table_with_risks 
                 $checked = ' checked="checked"';
             }
             echo '<td class="' . $permname . $extraclass . '">';
-            echo '<input type="radio" title="' . $this->strperms[$permname] . '" name="' . $capability->name .
-                    '" value="' . $perm . '"' . $checked . $disabled . ' />';
-            echo '</td>';
+            echo '<label><input type="radio" name="' . $capability->name .
+                    '" value="' . $perm . '"' . $checked . $disabled . ' /> ';
+            if ($perm == CAP_INHERIT) {
+                $inherited = $this->inheritedcapabilities[$capability->name];
+                if ($inherited == CAP_INHERIT) {
+                    $inherited = $this->strnotset;
+                } else {
+                    $inherited = $this->strperms[$this->allpermissions[$inherited]];
+                }
+                $strperm .= ' (' . $inherited . ')';
+            }
+            echo '<span class="note">' . $strperm . '</span>';
+            echo '</label></td>';
         }
-        parent::add_row_cells($capability);
+    }
+}
+
+class override_permissions_table_basic extends override_permissions_table_advanced {
+    protected $stradvmessage;
+
+    public function __construct($context, $roleid, $safeoverridesonly) {
+        global $DB;
+        parent::__construct($context, $roleid, $safeoverridesonly);
+        unset($this->displaypermissions[CAP_PROHIBIT]);
+        $this->stradvmessage = get_string('useshowadvancedtochange', 'role');
+    }
+
+    protected function add_permission_cells($capability) {
+        if ($this->localoverrides[$capability->name] == CAP_PROHIBIT) {
+            $permname = $this->allpermissions[CAP_PROHIBIT];
+            echo '<td class="' . $permname . '" colspan="' . count($this->displaypermissions) . '">';
+            echo '<input type="hidden" name="' . $capability->name . '" value="' . CAP_PROHIBIT . '" />';
+            echo $this->strperms[$permname] . '<span class="note">' . $this->stradvmessage . '</span>';
+            echo '</td>';
+        } else {
+            parent::add_permission_cells($capability);
+        }
     }
 }
 
@@ -485,7 +525,9 @@ abstract class role_assign_user_selector_base extends user_selector_base {
     }
 
     protected function get_options() {
+        global $CFG;
         $options = parent::get_options();
+        $options['file'] = $CFG->admin . '/roles/lib.php';
         $options['roleid'] = $this->roleid;
         $options['contextid'] = $this->context->id;
         return $options;

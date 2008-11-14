@@ -1134,7 +1134,8 @@ table.roledesc {
 }
 
 table.rolecap {
-  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 .capabilitysearchui {
   text-align: left;
@@ -1145,14 +1146,23 @@ table.rolecap .hiddenrow {
   display: none;
 }
 
+tr.rolecap th {
+  text-align: left;
+  font-weight: normal;
+}
 table.rolecap .inherit,
 table.rolecap .allow,
 table.rolecap .prevent,
 table.rolecap .prohibit {
   text-align:center;
 }
-
-table.rolecap .cap-desc .cap-name {
+table.rolecap label {
+  display: block;
+  width: 100%;
+  height: 2.5em;
+}
+table.rolecap .cap-desc .cap-name,
+.rolecap .note {
   display: block;
 }
 
@@ -1162,8 +1172,9 @@ table.rolecap .cap-desc .cap-name {
   padding-top: 0.75em;
 }
 
-#admin-roles-override .sefeoverridenotice {
-  text-align:center;
+#admin-roles-override .overridenotice {
+    margin: 1em 10% 2em;
+    text-align: left;
 }
 
 table.explainpermissions {

@@ -96,7 +96,7 @@ cap_table_filter = {
                 capssincelastheading = 0;
             }
             if (YAHOO.util.Dom.hasClass(row, 'rolecap')) {
-                var capcell = YAHOO.util.Dom.getElementsByClassName('name', 'td', row)[0];
+                var capcell = YAHOO.util.Dom.getElementsByClassName('name', 'th', row)[0];
                 var capname = capcell.innerText || capcell.textContent;
                 if (capname.indexOf(filtertext) >= 0) {
                     cap_table_filter.set_visible(row, true);

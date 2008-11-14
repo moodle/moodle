@@ -117,9 +117,13 @@
         }
     }
 
-/// get all cababilities
+/// If we are actually overriding a role, create the table object, and save changes if appropriate.
     if ($roleid) {
-        $overridestable = new override_permissions_capability_table($context, $roleid, $safeoverridesonly);
+        if ($showadvanced) {
+            $overridestable = new override_permissions_table_advanced($context, $roleid, $safeoverridesonly);
+        } else {
+            $overridestable = new override_permissions_table_basic($context, $roleid, $safeoverridesonly);
+        }
 
         if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
             $overridestable->save_changes();
@@ -184,9 +188,8 @@
                 $showadvancedlabel = get_string('showadvanced', 'form');
             }
             ?>
-<form id="overrideform" action="<?php echo $baseurl; ?>" method="post"><div>
+<form id="overrideform" action="<?php echo $baseurl . '&amp;roleid=' . $roleid; ?>" method="post"><div>
     <input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
-    <input type="hidden" name="roleid" value="<?php p($roleid); ?>" />
 
     <div class="advancedbutton">
         <input type="submit" name="toggleadvanced" value="<?php echo $showadvancedlabel ?>" />
@@ -197,10 +200,11 @@
     </div>
             <?php
 
+            echo '<p class="overridenotice">' . get_string('highlightedcellshowsinherit', 'role') . ' </p>';
             $overridestable->display();
 
             if ($overridestable->has_locked_capabiltites()) {
-                echo '<div class="sefeoverridenotice">' . get_string('safeoverridenotice', 'role') . "</div>\n";
+                echo '<p class="overridenotice">' . get_string('safeoverridenotice', 'role') . "</p>\n";
             }
 
             ?>
