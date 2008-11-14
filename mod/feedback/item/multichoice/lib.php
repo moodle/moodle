@@ -383,7 +383,7 @@ class feedback_item_multichoice extends feedback_item_base {
         $arrvals = array_values($value);
         $arrvals = clean_param($arrvals, PARAM_INT);  //prevent sql-injection
         $retval = $arrvals[0];
-        for($i = 1; $i < sizeof($arrvals) - 1; $i++) {
+        for($i = 1; $i < sizeof($arrvals); $i++) {
             $retval .= FEEDBACK_MULTICHOICE_LINE_SEP.$arrvals[$i];
         }
         return $retval;
