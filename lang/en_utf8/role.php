@@ -2,6 +2,7 @@
       // role.php - created with Moodle 1.7 beta + (2006101003)
 
 
+$string['addinganewrole'] = 'Adding a new role';
 $string['addrole'] = 'Add a new role';
 $string['allow'] = 'Allow';
 $string['allowassign'] = 'Allow role assignments';
@@ -72,6 +73,7 @@ $string['deletelocalroles'] = 'Delete all local role assignments';
 $string['deleterolesure'] = 'Are you sure that you want to delete role \"$a->name ($a->shortname)\"?</p><p>Currently this role is assigned to $a->count users.';
 $string['duplicaterolesure'] = 'Are you sure that you want to duplicate role \"$a->name ($a->shortname)\"?</p>';
 $string['duplicaterole'] = 'Duplicate role';
+$string['editingrolex'] = 'Editing role \'$a\'';
 $string['editrole'] = 'Edit role';
 $string['errorbadrolename'] = 'Incorrect role name';
 $string['errorbadroleshortname'] = 'Incorrect role name';
@@ -219,11 +221,12 @@ $string['userswiththisrole'] = 'Users with role';
 $string['userswithrole'] = 'All users with a role';
 $string['useshowadvancedtochange'] = 'Use \'Show advanced\' to change';
 $string['viewrole'] = 'View role details';
+$string['viewingdefinitionofrolex'] = 'Viewing the definition of role \'$a\'';
 $string['whydoesuserhavecap'] = 'Why does $a->fullname have capability $a->capability in context $a->context?';
 $string['whydoesusernothavecap'] = 'Why does $a->fullname not have capability $a->capability in context $a->context?';
 $string['xuserswiththerole'] = 'Users with the role \"$a->role\"';
 
-// MNET
+// MNETviewingdefinitionofrolex
 $string['site:mnetlogintoremote'] = 'Roam to a remote Moodle';
 $string['site:mnetloginfromremote'] = 'Login from a remote Moodle';
 

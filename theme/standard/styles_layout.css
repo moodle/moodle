@@ -1164,6 +1164,7 @@ table.rolecap label {
 table.rolecap .cap-desc .cap-name,
 .rolecap .note {
   display: block;
+  padding: 0 0.5em;
 }
 
 #admin-roles-override .cell.c1,

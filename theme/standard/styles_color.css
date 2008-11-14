@@ -1185,7 +1185,7 @@ table.explainpermissions .decisive {
 table.explainpermissions .overridden {
   text-decoration: line-through;
 }
-#admin-roles-manage .capdefault {
+#admin-roles-define .capdefault {
   background-color:#dddddd;
   border: 1px solid #cecece;
 }

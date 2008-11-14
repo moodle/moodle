@@ -400,14 +400,14 @@ abstract class capability_table_with_risks extends capability_table_base {
     }
 }
 
-class define_roles_table_advanced extends capability_table_with_risks {
+class define_role_table_advanced extends capability_table_with_risks {
     protected $roleid;
 
     public function __construct($context, $roleid) {
         $this->roleid = $roleid;
         parent::__construct($context, 'defineroletable');
         $this->displaypermissions = $this->allpermissions;
-        $this->displaypermissions[CAP_INHERIT] = get_string('notset', 'role');
+        $this->strperms[$this->allpermissions[CAP_INHERIT]] = get_string('notset', 'role');
     }
 
     protected function load_current_permissions() {
@@ -420,8 +420,14 @@ class define_roles_table_advanced extends capability_table_with_risks {
 
     protected function load_parent_permissions() {
     /// Get the default permissions, based on legacy role type.
-        if (!empty($this->role->legacytype)) {
-            $this->parentpermissions = get_default_capabilities($role->legacytype);
+        // TODO
+        if ($this->roleid) {
+            $legacy = get_legacy_type($this->roleid);
+        } else {
+            $legacy = '';
+        }
+        if (!empty($legacy)) {
+            $this->parentpermissions = get_default_capabilities($legacy);
         } else {
             $this->parentpermissions = array();
         }
@@ -445,11 +451,71 @@ class define_roles_table_advanced extends capability_table_with_risks {
     }
 
     protected function add_permission_cells($capability) {
+    /// One cell for each possible permission.
+        foreach ($this->displaypermissions as $perm => $permname) {
+            $strperm = $this->strperms[$permname];
+            $extraclass = '';
+            if ($perm == $this->parentpermissions[$capability->name]) {
+                $extraclass = ' capdefault';
+            }
+            $checked = '';
+            if ($this->permissions[$capability->name] == $perm) {
+                $checked = ' checked="checked"';
+            }
+            echo '<td class="' . $permname . $extraclass . '">';
+            echo '<label><input type="radio" name="' . $capability->name .
+                    '" value="' . $perm . '"' . $checked . ' /> ';
+            echo '<span class="note">' . $strperm . '</span>';
+            echo '</label></td>';
+        }
+    }
+}
+
+class define_role_table_basic extends define_role_table_advanced {
+    protected $stradvmessage;
+    protected $strallow;
+
+    public function __construct($context, $roleid) {
+        parent::__construct($context, $roleid);
+        $this->displaypermissions = array(CAP_ALLOW => $this->allpermissions[CAP_ALLOW]);
+        $this->stradvmessage = get_string('useshowadvancedtochange', 'role');
+        $this->strallow = $this->strperms[$this->allpermissions[CAP_ALLOW]];
+    }
+
+    protected function add_permission_cells($capability) {
+        $perm = $this->permissions[$capability->name];
+        $permname = $this->allpermissions[$perm];
+        echo '<td class="' . $permname . '">';
+        if ($perm == CAP_ALLOW || $perm == CAP_INHERIT) {
+            $checked = '';
+            if ($perm == CAP_ALLOW) {
+                $checked = 'checked="checked" ';
+            }
+            echo '<input type="hidden" name="' . $capability->name . '" value="' . CAP_INHERIT . '" />';
+            echo '<label><input type="checkbox" name="' . $capability->name .
+                    '" value="' . CAP_ALLOW . '"' . $checked . ' /> ' . $this->strallow . '</label>';
+        } else {
+            echo '<input type="hidden" name="' . $capability->name . '" value="' . $perm . '" />';
+            echo $this->strperms[$permname] . '<span class="note">' . $this->stradvmessage . '</span>';
+        }
+        echo '</td>';
+    }
+}
+class view_role_definition_table extends define_role_table_advanced {
+    public function __construct($context, $roleid) {
+        parent::__construct($context, $roleid);
+        $this->displaypermissions = array(CAP_ALLOW => $this->allpermissions[CAP_ALLOW]);
+    }
+
+    protected function add_permission_cells($capability) {
+        $perm = $this->permissions[$capability->name];
+        $permname = $this->allpermissions[$perm];
+        echo '<td class="' . $permname . '">' . $this->strperms[$permname] . '</td>';
         
     }
 }
 
-class override_permissions_table_advanced extends capability_table_with_risks {
+class override_permissions_table_advanced extends define_role_table_basic {
     protected $roleid;
     protected $strnotset;
     protected $haslockedcapabiltites = false;
@@ -551,7 +617,6 @@ class override_permissions_table_basic extends override_permissions_table_advanc
     protected $stradvmessage;
 
     public function __construct($context, $roleid, $safeoverridesonly) {
-        global $DB;
         parent::__construct($context, $roleid, $safeoverridesonly);
         unset($this->displaypermissions[CAP_PROHIBIT]);
         $this->stradvmessage = get_string('useshowadvancedtochange', 'role');
