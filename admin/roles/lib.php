@@ -33,24 +33,6 @@
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/user/selector/lib.php');
 
-/**
- * Print a risk icon, as a link to the Risks page on Moodle Docs.
- *
- * @param string $type the type of risk, will be one of the keys from the 
- *      get_all_risks array. Must start with 'risk'.
- */
-function print_risk_icon($type) {
-    global $CFG;
-    static $risksurl = null;
-    if (is_null($risksurl)) {
-        $risksurl = get_docs_url(s(get_string('risks', 'role')));
-    }
-    $iconurl = $CFG->pixpath . '/i/' . str_replace('risk', 'risk_', $type) . '.gif';
-    echo '<a onclick="this.target=\'docspopup\'" title="' . get_string($type, 'admin') .
-            '" href="' . $risksurl . '"> <img src="' . $iconurl . '" alt="' .
-            get_string($type . 'short', 'admin') . '" /></a>';
-}
-
 // Classes for producing tables with one row per capability ====================
 
 /**
@@ -272,6 +254,206 @@ class explain_capability_table extends capability_table_base {
         link_to_popup_window($this->baseurl . $capability->name, 'hascapabilityexplanation',
                 $this->strexplanation, 600, 600, get_string($tooltip, 'role', $a));
         echo '</td>';
+    }
+}
+
+abstract class capability_table_with_risks extends capability_table_base {
+    protected $allrisks;
+    protected $allpermissions; // We don't need perms ourself, but all our subclasses do.
+    protected $strperms; // Language string cache.
+    protected $risksurl; // URL in moodledocs about risks.
+    protected $riskicons = array(); // Cache to avoid regenerating the HTML for each risk icon.
+
+    public function __construct($context, $id) {
+        parent::__construct($context, $id);
+
+        $this->allrisks = get_all_risks();
+        $this->risksurl = get_docs_url(s(get_string('risks', 'role')));
+
+        $this->allpermissions = array(
+            CAP_INHERIT => 'inherit',
+            CAP_ALLOW => 'allow',
+            CAP_PREVENT => 'prevent' ,
+            CAP_PROHIBIT => 'prohibit',
+        );
+
+        $this->strperms = array();
+        foreach ($this->allpermissions as $permname) {
+            $this->strperms[$permname] =  get_string($permname, 'role');
+        }
+    }
+
+    protected function add_header_cells() {
+        echo '<th class="risk" colspan="' . $this->num_extra_columns() . '" scope="col">' . get_string('risks','role') . '</th>';
+    }
+
+    protected function num_extra_columns() {
+        return count($this->allrisks);
+    }
+
+    protected function get_row_classes($capability) {
+        $rowclasses = array();
+        foreach ($this->allrisks as $riskname => $risk) {
+            if ($risk & (int)$capability->riskbitmask) {
+                $rowclasses[] = $riskname;
+            }
+        }
+        return $rowclasses;
+    }
+
+    protected function add_row_cells($capability) {
+    /// One cell for each possible risk.
+        foreach ($this->allrisks as $riskname => $risk) {
+            echo '<td class="risk ' . str_replace('risk', '', $riskname) . '">';
+            if ($risk & (int)$capability->riskbitmask) {
+                echo $this->get_risk_icon($riskname);
+            }
+            echo '</td>';
+        }
+    }
+
+    /**
+     * Print a risk icon, as a link to the Risks page on Moodle Docs.
+     *
+     * @param string $type the type of risk, will be one of the keys from the 
+     *      get_all_risks array. Must start with 'risk'.
+     */
+    function get_risk_icon($type) {
+        global $CFG;
+        if (!isset($this->riskicons[$type])) {
+            $iconurl = $CFG->pixpath . '/i/' . str_replace('risk', 'risk_', $type) . '.gif';
+            $this->riskicons[$type] = link_to_popup_window($this->risksurl, 'docspopup', 
+                    '<img src="' . $iconurl . '" alt="' . get_string($type . 'short', 'admin') . '" />',
+                    0, 0, get_string($type, 'admin'), null, true);
+        }
+        return $this->riskicons[$type];
+    }
+}
+
+class override_permissions_capability_table extends capability_table_with_risks {
+    protected $roleid;
+    protected $inheritedcapabilities;
+    protected $localoverrides;
+    protected $changed = array(); // $localoverrides that were changed by the submitted data, and so need to be saved.
+    protected $haslockedcapabiltites = false;
+
+    /**
+     * Constructor
+     *
+     * This method loads loads all the information about the current state of
+     * the overrides, then updates that based on any submitted data. It also
+     * works out which capabilities should be locked for this user.
+     *
+     * @param object $context the context this table relates to.
+     * @param integer $roleid the role being overridden.
+     * @param boolean $safeoverridesonly If true, the user is only allowed to override
+     *      capabilities with no risks.
+     */
+    public function __construct($context, $roleid, $safeoverridesonly) {
+        global $DB;
+        parent::__construct($context, 'overriderolestable');
+        $this->roleid = $roleid;
+
+    /// Get the capabiltites from the parent context, so that can be shown in the interface.
+        $parentcontext = get_context_instance_by_id(get_parent_contextid($context));
+        $this->inheritedcapabilities = role_context_capabilities($this->roleid, $parentcontext);
+
+    /// And get the current overrides in this context.
+        $this->localoverrides = $DB->get_records_menu('role_capabilities', array('roleid' => $this->roleid,
+                'contextid' => $context->id), '', 'capability,permission');
+
+    /// Determine which capabilities should be locked, also fill in any blank localoverrides
+    /// with an explicit CAP_INHERIT.
+        foreach ($this->capabilities as $capid => $cap) {
+            if (!isset($this->localoverrides[$cap->name])) {
+                $this->localoverrides[$cap->name] = CAP_INHERIT;
+            }
+            if (!isset($this->inheritedcapabilities[$cap->name])) {
+                $this->inheritedcapabilities[$cap->name] = CAP_INHERIT;
+            }
+            $this->capabilities[$capid]->locked = false;
+            if ($safeoverridesonly && !is_safe_capability($capability)) {
+                $this->capabilities[$capid]->locked = true;
+                $this->haslockedcapabiltites = true;
+            }
+        }
+
+    /// Update $this->localoverrides based on submitted data.
+        foreach ($this->capabilities as $cap) {
+            if ($cap->locked || $this->skip_row($cap)) {
+            /// The user is not allowed to change the permission for this capapability
+                continue;
+            }
+
+            $permission = optional_param($cap->name, null, PARAM_PERMISSION);
+            if (is_null($permission)) {
+            /// A permission was not specified in submitted data.
+                continue;
+            }
+
+        /// If the permission has changed, update $this->localoverrides and
+        /// Record the fact there is data to save.
+            if ($this->localoverrides[$cap->name] != $permission) {
+                $this->localoverrides[$cap->name] = $permission;
+                $this->changed[] = $cap->name;
+            }
+        }
+
+        // force accessinfo refresh for users visiting this context...
+        mark_context_dirty($this->context->path);
+    }
+
+    /**
+     * Save any overrides that have been changed.
+     */
+    public function save_changes() {
+        foreach ($this->changed as $changedcap) {
+            assign_capability($changedcap, $this->localoverrides[$changedcap],
+                    $this->roleid, $this->context->id, true);
+        }
+    }
+
+    public function has_locked_capabiltites() {
+        return $this->haslockedcapabiltites;
+    }
+
+    protected function add_header_cells() {
+        foreach ($this->strperms as $permname => $strpermname) {
+            echo '<th class="' . $permname . '" scope="col">' . $strpermname . '</th>';
+        }
+        parent::add_header_cells();
+    }
+
+    protected function num_extra_columns() {
+        return count($this->strperms) + parent::num_extra_columns();
+    }
+
+    protected function skip_row($capability) {
+        return is_legacy($capability->name);
+    }
+
+    protected function add_row_cells($capability) {
+        $disabled = '';
+        if ($capability->locked || $this->inheritedcapabilities[$capability->name] == CAP_PROHIBIT) {
+            $disabled = ' disabled="disabled"';
+        }
+
+    /// One cell for each possible permission.
+        foreach ($this->allpermissions as $perm => $permname) {
+            $extraclass = '';
+            if ($perm != CAP_INHERIT && $perm == $this->inheritedcapabilities[$capability->name]) {
+                $extraclass = ' capcurrent';
+            }
+            $checked = '';
+            if ($this->localoverrides[$capability->name] == $perm) {
+                $checked = ' checked="checked"';
+            }
+            echo '<td class="' . $permname . $extraclass . '">';
+            echo '<input type="radio" title="' . $this->strperms[$permname] . '" name="' . $capability->name .
+                    '" value="' . $perm . '"' . $checked . $disabled . ' />';
+            echo '</td>';
+        }
+        parent::add_row_cells($capability);
     }
 }
 

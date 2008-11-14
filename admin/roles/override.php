@@ -34,9 +34,9 @@
     require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
 
     $contextid = required_param('contextid', PARAM_INT);   // context id
-    $roleid    = optional_param('roleid', 0, PARAM_INT);   // requested role id
-    $userid    = optional_param('userid', 0, PARAM_INT);   // needed for user tabs
-    $courseid  = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
+    $roleid = optional_param('roleid', 0, PARAM_INT);   // requested role id
+    $userid = optional_param('userid', 0, PARAM_INT);   // needed for user tabs
+    $courseid = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
 
     $baseurl = $CFG->wwwroot . '/' . $CFG->admin . '/roles/override.php?contextid=' . $contextid;
     if (!empty($userid)) {
@@ -81,6 +81,13 @@
         redirect($baseurl);
     }
 
+    // Deal with changes to the show advanced state.
+    $showadvanced = get_user_preferences('overridepermissions_showadvanced', false);
+    if (optional_param('toggleadvanced', false, PARAM_BOOL)) {
+        $showadvanced = !$showadvanced;
+        set_user_preference('overridepermissions_showadvanced', $showadvanced);
+    }
+
 /// These are needed early because of tabs.php
     $assignableroles  = get_assignable_roles($context, ROLENAME_BOTH);
     list($overridableroles, $overridecounts, $nameswithcounts) = get_overridable_roles($context, ROLENAME_BOTH, true);
@@ -111,60 +118,18 @@
     }
 
 /// get all cababilities
-    $safeoverridenotice = false;
     if ($roleid) {
-        $capabilities = fetch_context_capabilities($context);
-        if (!$capabilities) {
-            $capabilities = array();
+        $overridestable = new override_permissions_capability_table($context, $roleid, $safeoverridesonly);
+
+        if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
+            $overridestable->save_changes();
+            $rolename = $overridableroles[$roleid];
+            add_to_log($course->id, 'role', 'override', 'admin/roles/override.php?contextid='.$context->id.'&roleid='.$roleid, $rolename, '', $USER->id);
+            redirect($baseurl);
         }
-        // Determine which capabilities should be locked.
-        foreach ($capabilities as $capname=>$capability) {
-            $capabilities[$capname]->locked = false;
-            if ($safeoverridesonly && !is_safe_capability($capability)) {
-                $capabilities[$capname]->locked = true;
-                $safeoverridenotice = true;
-            }
-        }
-    }
-
-    if ($roleid && optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
-    /// Process incoming role override
-        $localoverrides = $DB->get_records('role_capabilities', array('roleid' => $roleid,
-                'contextid' => $context->id), '', 'capability,permission,id');
-
-        foreach ($capabilities as $cap) {
-            if ($cap->locked || is_legacy($cap->name)) {
-                //user not allowed to change this cap
-                continue;
-            }
-
-            $capname = $cap->name;
-            $value = optional_param($capname, null, PARAM_PERMISSION);
-            if (is_null($value)) {
-                //cap not specified in form
-                continue;
-            }
-
-            if (isset($localoverrides[$capname])) {
-                // Something exists, so update it
-                assign_capability($capname, $value, $roleid, $context->id, true);
-            } else { // insert a record
-                if ($value != CAP_INHERIT) {    // Ignore inherits
-                    assign_capability($capname, $value, $roleid, $context->id);
-                }
-            }
-        }
-
-        // force accessinfo refresh for users visiting this context...
-        mark_context_dirty($context->path);
-        $rolename = $overridableroles[$roleid];
-        add_to_log($course->id, 'role', 'override', 'admin/roles/override.php?contextid='.$context->id.'&roleid='.$roleid, $rolename, '', $USER->id);
-        redirect($baseurl);
     }
 
 /// Print the header and tabs
-    require_js(array('yui_yahoo', 'yui_dom', 'yui_event'));
-    require_js($CFG->admin . '/roles/roles.js');
     if ($context->contextlevel == CONTEXT_USER) {
         $user = $DB->get_record('user', array('id'=>$userid));
         $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
@@ -206,142 +171,48 @@
     if ($roleid) {
     /// Show UI for overriding roles.
 
-    /// Get the capabiltites from the parent context, so that can be shown in the interface.
-        $parentcontext = get_context_instance_by_id(get_parent_contextid($context));
-        $r_caps = role_context_capabilities($roleid, $parentcontext);
-
-    /// And get the current overrides in this context.
-        $localoverrides = $DB->get_records('role_capabilities', array('roleid' => $roleid,
-                'contextid' => $context->id), '', 'capability,permission,id');
-
         if (!empty($capabilities)) {
+            print_box(get_string('nocapabilitiesincontext', 'role'), 'generalbox boxaligncenter');
+
+        } else {
             // Print the capabilities overrideable in this context
             print_box_start('generalbox boxwidthwide boxaligncenter');
 
-            $allrisks = get_all_risks();
-            $allpermissions = array(
-                CAP_INHERIT => 'inherit',
-                CAP_ALLOW => 'allow',
-                CAP_PREVENT => 'prevent' ,
-                CAP_PROHIBIT => 'prohibit',
-            );
-            $strperms = array();
-            foreach ($allpermissions as $permname) {
-                $strperms[$permname] =  get_string($permname, 'role');
+            if ($showadvanced) {
+                $showadvancedlabel = get_string('hideadvanced', 'form');
+            } else {
+                $showadvancedlabel = get_string('showadvanced', 'form');
             }
-?>
+            ?>
 <form id="overrideform" action="<?php echo $baseurl; ?>" method="post"><div>
     <input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
     <input type="hidden" name="roleid" value="<?php p($roleid); ?>" />
 
-    <table class="rolecap" id="overriderolestable">
-        <tr>
-            <th class="name" align="left" scope="col"><?php print_string('capability','role') ?></th>
-<?php
-            foreach ($strperms as $permname => $strpermname) {
-                echo '<th class="' . $permname . '" scope="col">' . $strpermname . '</th>';
-            }
-            echo '<th class="risk" colspan="' . count($allrisks) . '" scope="col">' . get_string('risks','role') . '</th>';
-            echo "</tr>\n";
-
-        /// Loop over capabilities.
-            $contextlevel = 0;
-            $component = '';
-            foreach ($capabilities as $capability) {
-
-        /// Legacy caps and doanything should not be overriden - we must use proper capabilities if needed
-            if (is_legacy($capability->name)) {
-                continue;
-            }
-
-        /// Prints a breaker if component or name or context level has changed
-            if (component_level_changed($capability, $component, $contextlevel)) {
-                echo '<tr class="rolecapheading header"><td colspan="' . (2 + count($allpermissions) + count($allrisks)) . '" class="header"><strong>' .
-                        get_component_string($capability->component, $capability->contextlevel) .
-                        '</strong></td></tr>';
-            }
-            $contextlevel = $capability->contextlevel;
-            $component = $capability->component;
-
-        /// Check the capability override for this cap, this role in this context
-            if (isset($localoverrides[$capability->name])) {
-                $localpermission = $localoverrides[$capability->name]->permission;
-            } else {
-                $localpermission = 0;  // Just inherit
-            }
-
-            if (!isset($r_caps[$capability->name])) {
-                $r_caps[$capability->name] = CAP_INHERIT;
-            }
-
-            $disabled = '';
-            if ($capability->locked || $r_caps[$capability->name] == CAP_PROHIBIT) {
-                $disabled = ' disabled="disabled"';
-            }
-
-        /// Start the table row.
-            $rowclasses = array('rolecap');
-            foreach ($allrisks as $riskname => $risk) {
-                if ($risk & (int)$capability->riskbitmask) {
-                    $rowclasses[] = $riskname;
-                }
-            }
-            echo '<tr class="' . implode(' ', $rowclasses) . '">';
-
-        /// Table cell for the capability name.
-            echo '<td class="name"><span class="cap-desc">' . get_capability_docs_link($capability) .
-                    '<span class="cap-name">' . $capability->name . '</span></span></td>';
-
-        /// One cell for each possible permission.
-            foreach ($allpermissions as $perm => $permname) {
-                $extraclass = '';
-                if ($perm != CAP_INHERIT && $perm == $r_caps[$capability->name]) {
-                    $extraclass = ' capcurrent';
-                }
-                $checked = '';
-                if ($localpermission == $perm) {
-                    $checked = ' checked="checked"';
-                }
-                echo '<td class="' . $permname . $extraclass . '">';
-                echo '<input type="radio" title="' . $strperms[$permname] . '" name="' . $capability->name .
-                        '" value="' . $perm . '"' . $checked . $disabled . ' />';
-                echo '</td>';
-            }
-
-        /// One cell for each possible risk.
-            foreach ($allrisks as $riskname => $risk) {
-                echo '<td class="risk ' . str_replace('risk', '', $riskname) . '">';
-                if ($risk & (int)$capability->riskbitmask) {
-                    print_risk_icon($riskname);
-                }
-                echo '</td>';
-            }
-
-        /// End of the row.
-            echo "</tr>\n";
-        }
-?>
-    </table>
+    <div class="advancedbutton">
+        <input type="submit" name="toggleadvanced" value="<?php echo $showadvancedlabel ?>" />
+    </div>
     <div class="submit buttons">
         <input type="submit" name="savechanges" value="<?php print_string('savechanges') ?>" />
         <input type="submit" name="cancel" value="<?php print_string('cancel') ?>" />
     </div>
+            <?php
 
-    <?php
-            if ($safeoverridenotice) {
+            $overridestable->display();
+
+            if ($overridestable->has_locked_capabiltites()) {
                 echo '<div class="sefeoverridenotice">' . get_string('safeoverridenotice', 'role') . "</div>\n";
             }
 
-            if (count($capabilities) > 12) {
-                print_js_call('cap_table_filter.init',
-                        array('overriderolestable', get_string('search'), get_string('clear')));
-            }
+            ?>
+    <div class="submit buttons">
+        <input type="submit" name="savechanges" value="<?php print_string('savechanges') ?>" />
+        <input type="submit" name="cancel" value="<?php print_string('cancel') ?>" />
+    </div>
+</div></form>
 
-            echo "</div></form>\n";
+            <?php
             print_box_end();
 
-        } else {
-            print_box(get_string('nocapabilitiesincontext', 'role'), 'generalbox boxaligncenter');
         }
 
     /// Print a form to swap roles, and a link back to the all roles list.
