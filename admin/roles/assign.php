@@ -286,7 +286,7 @@
         admin_externalpage_setup('assignroles');
         admin_externalpage_print_header();
 
-    } else if ($context->contextlevel == CONTEXT_COURSE and $context->instanceid == SITEID) {
+    } else if ($isfrontpage) {
         admin_externalpage_setup('frontpageroles');
         admin_externalpage_print_header();
         $currenttab = 'assign';
@@ -448,5 +448,9 @@
         }
     }
 
-    print_footer($course);
+    if ($context->contextlevel == CONTEXT_SYSTEM || $isfrontpage) {
+        admin_externalpage_print_footer();
+    } else {
+        print_footer($course);
+    }
 ?>

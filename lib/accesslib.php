@@ -5792,7 +5792,30 @@ function is_contextpath_dirty($pathcontexts, $dirty) {
 }
 
 /**
+ * Fix the roles.sortorder field in the database, so it contains sequential integers,
+ * and return an array of roleids in order.
  *
+ * @param array $allroles array of roles, as returned by get_all_roles();
+ * @return array $role->sortorder =-> $role->id with the keys in ascending order.
+ */
+function fix_role_sortorder($allroles) {
+    $rolesort = array();
+    $i = 0;
+    foreach ($allroles as $role) {
+        $rolesort[$i] = $role->id;
+        if ($role->sortorder != $i) {
+            $r = new object();
+            $r->id = $role->id;
+            $r->sortorder = $i;
+            $DB->update_record('role', $r);
+            $allroles[$role->id]->sortorder = $i;
+        }
+        $i++;
+    }
+    return $rolesort;
+}
+
+/**
  * switch role order (used in admin/roles/manage.php)
  *
  * @param int $first id of role to move down

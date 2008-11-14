@@ -38,6 +38,7 @@
     $userid = optional_param('userid', 0, PARAM_INT);   // needed for user tabs
     $courseid = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
 
+/// Get the base URL for this and related pages into a convenient variable.
     $baseurl = $CFG->wwwroot . '/' . $CFG->admin . '/roles/override.php?contextid=' . $contextid;
     if (!empty($userid)) {
         $baseurl .= '&amp;userid=' . $userid;
@@ -46,6 +47,7 @@
         $baseurl .= '&amp;courseid=' . $courseid;
     }
 
+/// Validate the contextid parameter.
     if (!$context = $DB->get_record('context', array('id'=>$contextid))) {
         print_error('wrongcontextid', 'error');
     }
@@ -56,6 +58,7 @@
         print_error('cannotoverridebaserole', 'error');
     }
 
+/// Validate the courseid parameter.
     if ($context->contextlevel == CONTEXT_COURSE) {
         $courseid = $context->instanceid;
         if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
@@ -70,18 +73,19 @@
         $courseid = SITEID;
     }
 
+/// Check access permissions.
     require_login($course);
-
     $safeoverridesonly = !has_capability('moodle/role:override', $context);
     if ($safeoverridesonly) {
         require_capability('moodle/role:safeoverride', $context);
     }
 
+/// Handle the cancel button.
     if (optional_param('cancel', false, PARAM_BOOL)) {
         redirect($baseurl);
     }
 
-    // Deal with changes to the show advanced state.
+/// Handle the toggle advanced mode button.
     $showadvanced = get_user_preferences('overridepermissions_showadvanced', false);
     if (optional_param('toggleadvanced', false, PARAM_BOOL)) {
         $showadvanced = !$showadvanced;
@@ -100,8 +104,23 @@
         print_error('cannotoverriderolehere', '', get_context_url($context), $a);
     }
 
-/// Get some language strings
-    $straction = get_string('overrideroles', 'role'); // Used by tabs.php
+
+/// If we are actually overriding a role, create the table object, and save changes if appropriate.
+    if ($roleid) {
+        if ($showadvanced) {
+            $overridestable = new override_permissions_table_advanced($context, $roleid, $safeoverridesonly);
+        } else {
+            $overridestable = new override_permissions_table_basic($context, $roleid, $safeoverridesonly);
+        }
+        $overridestable->read_submitted_permissions();
+
+        if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
+            $overridestable->save_changes();
+            $rolename = $overridableroles[$roleid];
+            add_to_log($course->id, 'role', 'override', 'admin/roles/override.php?contextid='.$context->id.'&roleid='.$roleid, $rolename, '', $USER->id);
+            redirect($baseurl);
+        }
+    }
 
 /// Work out an appropriate page title.
     if ($roleid) {
@@ -117,23 +136,8 @@
         }
     }
 
-/// If we are actually overriding a role, create the table object, and save changes if appropriate.
-    if ($roleid) {
-        if ($showadvanced) {
-            $overridestable = new override_permissions_table_advanced($context, $roleid, $safeoverridesonly);
-        } else {
-            $overridestable = new override_permissions_table_basic($context, $roleid, $safeoverridesonly);
-        }
-
-        if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
-            $overridestable->save_changes();
-            $rolename = $overridableroles[$roleid];
-            add_to_log($course->id, 'role', 'override', 'admin/roles/override.php?contextid='.$context->id.'&roleid='.$roleid, $rolename, '', $USER->id);
-            redirect($baseurl);
-        }
-    }
-
-/// Print the header and tabs
+    /// Print the header and tabs
+    $straction = get_string('overrideroles', 'role'); // Used by tabs.php
     if ($context->contextlevel == CONTEXT_USER) {
         $user = $DB->get_record('user', array('id'=>$userid));
         $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));

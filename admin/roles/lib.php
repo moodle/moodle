@@ -257,12 +257,23 @@ class explain_capability_table extends capability_table_base {
     }
 }
 
+/**
+ * This subclass is the bases for both the define roles and override roles
+ * pages. As well as adding the risks columns, this also provides generic
+ * facilities for showing a certain number of permissions columns, and
+ * recording the current and submitted permissions for each capability.
+ */
 abstract class capability_table_with_risks extends capability_table_base {
     protected $allrisks;
     protected $allpermissions; // We don't need perms ourself, but all our subclasses do.
     protected $strperms; // Language string cache.
     protected $risksurl; // URL in moodledocs about risks.
     protected $riskicons = array(); // Cache to avoid regenerating the HTML for each risk icon.
+    /** The capabilities to highlight as default/interited. */
+    protected $parentpermissions;
+    protected $displaypermissions;
+    protected $permissions;
+    protected $changed;
 
     public function __construct($context, $id) {
         parent::__construct($context, $id);
@@ -281,14 +292,70 @@ abstract class capability_table_with_risks extends capability_table_base {
         foreach ($this->allpermissions as $permname) {
             $this->strperms[$permname] =  get_string($permname, 'role');
         }
+
+        $this->load_current_permissions();
+
+    /// Fill in any blank permissions with an explicit CAP_INHERIT, and init a locked field.
+        foreach ($this->capabilities as $capid => $cap) {
+            if (!isset($this->permissions[$cap->name])) {
+                $this->permissions[$cap->name] = CAP_INHERIT;
+            }
+            $this->capabilities[$capid]->locked = false;
+        }
+    }
+
+    protected function load_current_permissions() {
+        global $DB;
+
+    /// Load the overrides/definition in this context.
+        $this->permissions = $DB->get_records_menu('role_capabilities', array('roleid' => $this->roleid,
+                'contextid' => $this->context->id), '', 'capability,permission');
+    }
+
+    protected abstract function load_parent_permissions();
+
+    public abstract function save_changes();
+
+    public function read_submitted_permissions() {
+        /// Update $this->permissions based on submitted data.
+        foreach ($this->capabilities as $cap) {
+            if ($cap->locked || $this->skip_row($cap)) {
+            /// The user is not allowed to change the permission for this capapability
+                continue;
+            }
+
+            $permission = optional_param($cap->name, null, PARAM_PERMISSION);
+            if (is_null($permission)) {
+            /// A permission was not specified in submitted data.
+                continue;
+            }
+
+        /// If the permission has changed, update $this->permissions and
+        /// Record the fact there is data to save.
+            if ($this->permissions[$cap->name] != $permission) {
+                $this->permissions[$cap->name] = $permission;
+                $this->changed[] = $cap->name;
+            }
+        }
+    }
+
+    public function display() {
+        $this->load_parent_permissions();
+        foreach ($this->capabilities as $cap) {
+            if (!isset($this->parentpermissions[$cap->name])) {
+                $this->parentpermissions[$cap->name] = CAP_INHERIT;
+            }
+        }
+        parent::display();
     }
 
     protected function add_header_cells() {
+        echo '<th colspan="' . count($this->displaypermissions) . '" scope="col">' . get_string('permission', 'role') . '</th>';
         echo '<th class="risk" colspan="' . count($this->allrisks) . '" scope="col">' . get_string('risks','role') . '</th>';
     }
 
     protected function num_extra_columns() {
-        return count($this->allrisks);
+        return count($this->displaypermissions) + count($this->allrisks);
     }
 
     protected function get_row_classes($capability) {
@@ -301,7 +368,10 @@ abstract class capability_table_with_risks extends capability_table_base {
         return $rowclasses;
     }
 
+    protected abstract function add_permission_cells($capability);
+
     protected function add_row_cells($capability) {
+        $this->add_permission_cells($capability);
     /// One cell for each possible risk.
         foreach ($this->allrisks as $riskname => $risk) {
             echo '<td class="risk ' . str_replace('risk', '', $riskname) . '">';
@@ -330,13 +400,58 @@ abstract class capability_table_with_risks extends capability_table_base {
     }
 }
 
+class define_roles_table_advanced extends capability_table_with_risks {
+    protected $roleid;
+
+    public function __construct($context, $roleid) {
+        $this->roleid = $roleid;
+        parent::__construct($context, 'defineroletable');
+        $this->displaypermissions = $this->allpermissions;
+        $this->displaypermissions[CAP_INHERIT] = get_string('notset', 'role');
+    }
+
+    protected function load_current_permissions() {
+        if (!$this->roleid) {
+            $this->permissions = array();
+        } else {
+            parent::load_current_permissions();
+        }
+    }
+
+    protected function load_parent_permissions() {
+    /// Get the default permissions, based on legacy role type.
+        if (!empty($this->role->legacytype)) {
+            $this->parentpermissions = get_default_capabilities($role->legacytype);
+        } else {
+            $this->parentpermissions = array();
+        }
+    }
+
+    /**
+     * Save any overrides that have been changed.
+     */
+    public function save_changes() {
+        foreach ($this->changed as $changedcap) {
+            assign_capability($changedcap, $this->permissions[$changedcap],
+                    $this->roleid, $this->context->id, true);
+        }
+
+        // force accessinfo refresh for users visiting this context...
+        mark_context_dirty($this->context->path);
+    }
+
+    protected function skip_row($capability) {
+        return is_legacy($capability->name);
+    }
+
+    protected function add_permission_cells($capability) {
+        
+    }
+}
+
 class override_permissions_table_advanced extends capability_table_with_risks {
     protected $roleid;
-    protected $inheritedcapabilities;
-    protected $displaypermissions;
     protected $strnotset;
-    protected $localoverrides;
-    protected $changed = array(); // $localoverrides that were changed by the submitted data, and so need to be saved.
     protected $haslockedcapabiltites = false;
 
     /**
@@ -352,59 +467,28 @@ class override_permissions_table_advanced extends capability_table_with_risks {
      *      capabilities with no risks.
      */
     public function __construct($context, $roleid, $safeoverridesonly) {
-        global $DB;
-        parent::__construct($context, 'overriderolestable');
         $this->roleid = $roleid;
+        parent::__construct($context, 'overriderolestable');
         $this->displaypermissions = $this->allpermissions;
         $this->strnotset = get_string('notset', 'role');
 
+    /// Determine which capabilities should be locked.
+        if ($safeoverridesonly) {
+            foreach ($this->capabilities as $capid => $cap) {
+                if (!is_safe_capability($capability)) {
+                    $this->capabilities[$capid]->locked = true;
+                    $this->haslockedcapabiltites = true;
+                }
+            }
+        }
+    }
+
+    protected function load_parent_permissions() {
+        global $DB;
+
     /// Get the capabiltites from the parent context, so that can be shown in the interface.
-        $parentcontext = get_context_instance_by_id(get_parent_contextid($context));
-        $this->inheritedcapabilities = role_context_capabilities($this->roleid, $parentcontext);
-
-    /// And get the current overrides in this context.
-        $this->localoverrides = $DB->get_records_menu('role_capabilities', array('roleid' => $this->roleid,
-                'contextid' => $context->id), '', 'capability,permission');
-
-    /// Determine which capabilities should be locked, also fill in any blank localoverrides
-    /// with an explicit CAP_INHERIT.
-        foreach ($this->capabilities as $capid => $cap) {
-            if (!isset($this->localoverrides[$cap->name])) {
-                $this->localoverrides[$cap->name] = CAP_INHERIT;
-            }
-            if (!isset($this->inheritedcapabilities[$cap->name])) {
-                $this->inheritedcapabilities[$cap->name] = CAP_INHERIT;
-            }
-            $this->capabilities[$capid]->locked = false;
-            if ($safeoverridesonly && !is_safe_capability($capability)) {
-                $this->capabilities[$capid]->locked = true;
-                $this->haslockedcapabiltites = true;
-            }
-        }
-
-    /// Update $this->localoverrides based on submitted data.
-        foreach ($this->capabilities as $cap) {
-            if ($cap->locked || $this->skip_row($cap)) {
-            /// The user is not allowed to change the permission for this capapability
-                continue;
-            }
-
-            $permission = optional_param($cap->name, null, PARAM_PERMISSION);
-            if (is_null($permission)) {
-            /// A permission was not specified in submitted data.
-                continue;
-            }
-
-        /// If the permission has changed, update $this->localoverrides and
-        /// Record the fact there is data to save.
-            if ($this->localoverrides[$cap->name] != $permission) {
-                $this->localoverrides[$cap->name] = $permission;
-                $this->changed[] = $cap->name;
-            }
-        }
-
-        // force accessinfo refresh for users visiting this context...
-        mark_context_dirty($this->context->path);
+        $parentcontext = get_context_instance_by_id(get_parent_contextid($this->context));
+        $this->parentpermissions = role_context_capabilities($this->roleid, $parentcontext);
     }
 
     /**
@@ -412,36 +496,25 @@ class override_permissions_table_advanced extends capability_table_with_risks {
      */
     public function save_changes() {
         foreach ($this->changed as $changedcap) {
-            assign_capability($changedcap, $this->localoverrides[$changedcap],
+            assign_capability($changedcap, $this->permissions[$changedcap],
                     $this->roleid, $this->context->id, true);
         }
+
+        // force accessinfo refresh for users visiting this context...
+        mark_context_dirty($this->context->path);
     }
 
     public function has_locked_capabiltites() {
         return $this->haslockedcapabiltites;
     }
 
-    protected function add_header_cells() {
-        echo '<th colspan="' . count($this->displaypermissions) . '" scope="col">' . get_string('permission', 'role') . '</th>';
-        parent::add_header_cells();
-    }
-
-    protected function num_extra_columns() {
-        return count($this->displaypermissions) + parent::num_extra_columns();
-    }
-
     protected function skip_row($capability) {
         return is_legacy($capability->name);
     }
 
-    protected function add_row_cells($capability) {
-        $this->add_permission_cells($capability);
-        parent::add_row_cells($capability);
-    }
-
     protected function add_permission_cells($capability) {
         $disabled = '';
-        if ($capability->locked || $this->inheritedcapabilities[$capability->name] == CAP_PROHIBIT) {
+        if ($capability->locked || $this->parentpermissions[$capability->name] == CAP_PROHIBIT) {
             $disabled = ' disabled="disabled"';
         }
 
@@ -449,18 +522,18 @@ class override_permissions_table_advanced extends capability_table_with_risks {
         foreach ($this->displaypermissions as $perm => $permname) {
             $strperm = $this->strperms[$permname];
             $extraclass = '';
-            if ($perm != CAP_INHERIT && $perm == $this->inheritedcapabilities[$capability->name]) {
+            if ($perm != CAP_INHERIT && $perm == $this->parentpermissions[$capability->name]) {
                 $extraclass = ' capcurrent';
             }
             $checked = '';
-            if ($this->localoverrides[$capability->name] == $perm) {
+            if ($this->permissions[$capability->name] == $perm) {
                 $checked = ' checked="checked"';
             }
             echo '<td class="' . $permname . $extraclass . '">';
             echo '<label><input type="radio" name="' . $capability->name .
                     '" value="' . $perm . '"' . $checked . $disabled . ' /> ';
             if ($perm == CAP_INHERIT) {
-                $inherited = $this->inheritedcapabilities[$capability->name];
+                $inherited = $this->parentpermissions[$capability->name];
                 if ($inherited == CAP_INHERIT) {
                     $inherited = $this->strnotset;
                 } else {
@@ -485,7 +558,7 @@ class override_permissions_table_basic extends override_permissions_table_advanc
     }
 
     protected function add_permission_cells($capability) {
-        if ($this->localoverrides[$capability->name] == CAP_PROHIBIT) {
+        if ($this->permissions[$capability->name] == CAP_PROHIBIT) {
             $permname = $this->allpermissions[CAP_PROHIBIT];
             echo '<td class="' . $permname . '" colspan="' . count($this->displaypermissions) . '">';
             echo '<input type="hidden" name="' . $capability->name . '" value="' . CAP_PROHIBIT . '" />';
