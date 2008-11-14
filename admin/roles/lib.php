@@ -515,7 +515,7 @@ class view_role_definition_table extends define_role_table_advanced {
     }
 }
 
-class override_permissions_table_advanced extends define_role_table_basic {
+class override_permissions_table_advanced extends capability_table_with_risks {
     protected $roleid;
     protected $strnotset;
     protected $haslockedcapabiltites = false;
