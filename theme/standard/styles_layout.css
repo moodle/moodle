@@ -612,7 +612,7 @@ div.hide {
   font-weight: bold;
   margin-left: 0.5em;
 }
-.mform fieldset .advancedbutton{
+.advancedbutton {
    width:100%;
    text-align:right;
 }
@@ -1134,8 +1134,7 @@ table.roledesc {
 }
 
 table.rolecap {
-  margin-left:auto;
-  margin-right:auto;
+  width: 100%;
 }
 .capabilitysearchui {
   text-align: left;

@@ -126,7 +126,7 @@ form.mform .fitemtitle {
     margin: 5px 10pt 0pt 0px;
 }
 
-form.mform fieldset .advancedbutton {
+.advancedbutton {
     text-align: left;
 }
 
