@@ -363,7 +363,7 @@ $string['php52versionhelp'] = '<p>Moodle requires a PHP version of at least 5.2.
 $string['phpversion'] = 'PHP version';
 $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.3.0 or 5.1.0 (5.0.x has a number of known problems).</p>
 <p>You are currently running version $a</p>
-<p>You must upgrade PHP or move to a host with a newer version of PHP!<br/>
+<p>You must upgrade PHP or move to a host with a newer version of PHP!<br />
 (In case of 5.0.x you could also downgrade to 4.4.x version)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['prefixcannotbeempty'] = '<p>Error: database table prefix cannot be empty ($a)</p>
