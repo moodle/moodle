@@ -266,7 +266,7 @@
 
         $replycount = forum_count_replies($post);
 
-        if (!empty($confirm)) {    // User has confirmed the delete
+        if (!empty($confirm) && confirm_sesskey()) {    // User has confirmed the delete
 
             if ($post->totalscore) {
                 notice(get_string("couldnotdeleteratings", "forum"),
@@ -320,7 +320,7 @@
                 }
                 print_header();
                 notice_yesno(get_string("deletesureplural", "forum", $replycount+1),
-                             "post.php?delete=$delete&amp;confirm=$delete",
+                             "post.php?delete=$delete&amp;confirm=$delete&amp;sesskey=".sesskey(),
                              $CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#p'.$post->id);
 
                 forum_print_post($post, $course->id, $ownpost=false, $reply=false, $link=false);
@@ -335,7 +335,7 @@
             } else {
                 print_header();
                 notice_yesno(get_string("deletesure", "forum", $replycount),
-                             "post.php?delete=$delete&amp;confirm=$delete",
+                             "post.php?delete=$delete&amp;confirm=$delete&amp;sesskey=".sesskey(),
                              $CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#p'.$post->id);
                 forum_print_post($post, $forum->course, $ownpost=false, $reply=false, $link=false);
             }
