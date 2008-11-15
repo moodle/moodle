@@ -643,12 +643,14 @@ class resource_file extends resource_base {
                 echo '<param name="loop" value="true" />';
                 echo '<param name="controller" value="true" />';
                 echo '<param name="scale" value="aspect" />';
+                echo '<param name="base" value="." />';
                 echo '<!--[if !IE]>-->';
                 echo "<object type=\"application/x-shockwave-flash\" data=\"$fullurl\">";
                 echo '<param name="controller" value="true" />';
                 echo '<param name="autoplay" value="true" />';
                 echo '<param name="loop" value="true" />';
                 echo '<param name="scale" value="aspect" />';
+                echo '<param name="base" value="." />';
                 echo '<!--<![endif]-->';
                 echo '<a href="' . $fullurl . '">' . $fullurl . '</a>';
                 echo '<!--[if !IE]>-->';
@@ -665,6 +667,7 @@ class resource_file extends resource_base {
             } elseif ($resourcetype == 'pdf') {
                 echo '<div class="resourcepdf">';
                 echo '<object data="' . $fullurl . '" type="application/pdf">';
+                echo '<param name="src" value="' . $fullurl . '" />';
                 echo get_string('clicktoopen', 'resource') . '<a href="' . $fullurl . '">' . format_string($resource->name) . '</a>';
                 echo '</object>';
                 echo '</div>';
