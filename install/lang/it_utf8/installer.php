@@ -39,6 +39,7 @@ $string['continue'] = 'Continua';
 $string['ctyperecommended'] = 'L\'installazione dell\'estensione opzionale ctype PHP è fortemente raccomandata per migliorare le performance del sito, specialmente se sono previste lingue non latine.';
 $string['ctyperequired'] = 'L\'estensione ctype PHP è richiesta da Moodle, per migliorare le performance del sito e offrire compatibilità multilingua.';
 $string['curlrecommended'] = 'L\'installazione della libreria opzionale Curl è fortemente raccomandata per abilitare la funzionalità di Rete di Moodle.';
+$string['curlrequired'] = 'L\'estensione PHP cURL è necessaria per consentire a Moodle di comunicare  con i repostory.';
 $string['customcheck'] = 'Altri controlli';
 $string['database'] = 'Base di dati';
 $string['dataroot'] = 'Directory dati';
