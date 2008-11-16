@@ -612,7 +612,7 @@
             error("You can't split discussions!");
         }
 
-        if (!empty($name)) {    // User has confirmed the prune
+        if (!empty($name) && confirm_sesskey()) {    // User has confirmed the prune
 
             $newdiscussion->course = $discussion->course;
             $newdiscussion->forum = $discussion->forum;
