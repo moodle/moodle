@@ -1279,11 +1279,16 @@
 
         // Use a recordset to for the memory handling on to
         // the DB and run faster
+        // Note the outer join with mnet_host: It shouldn't be neccesary
+        // but there are some sites having mnet_host records missing
+        // and that causes backup to fail (no users). Being a bit more
+        // flexible here (outer joing) we bypass the problem and doesn't
+        // cause more troubles. Eloy - MDL-16879
         $users = $DB->get_recordset_sql("SELECT b.old_id, b.table_name, b.info,
                                                 u.*, m.wwwroot
                                            FROM {backup_ids} b
                                            JOIN {user}       u ON b.old_id=u.id
-                                           JOIN {mnet_host}  m ON u.mnethostid=m.id
+                                           LEFT JOIN {mnet_host}  m ON u.mnethostid=m.id
                                           WHERE b.backup_code = ? AND
                                                 b.table_name = 'user'", array($preferences->backup_unique_code));
 
@@ -1340,7 +1345,7 @@
                 fwrite ($bf,full_tag("AJAX",4,false,$user->ajax));
                 fwrite ($bf,full_tag("AUTOSUBSCRIBE",4,false,$user->autosubscribe));
                 fwrite ($bf,full_tag("TRACKFORUMS",4,false,$user->trackforums));
-                if ($user->mnethostid != $CFG->mnet_localhost_id) {
+                if ($user->mnethostid != $CFG->mnet_localhost_id && !empty($user->wwwroot)) {
                     fwrite ($bf,full_tag("MNETHOSTURL",4,false,$user->wwwroot));
                 }
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$user->timemodified));
