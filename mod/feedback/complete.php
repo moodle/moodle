@@ -75,6 +75,11 @@
         $capabilities->complete = true;
     }
     
+    //check whether the feedback is located and! started from the mainsite
+    if($course->id == SITEID AND !$courseid) {
+        $courseid = SITEID;
+    }
+    
     //check whether the feedback is mapped to the given courseid
     if($course->id == SITEID AND !$capabilities->edititems) {
         if($DB->get_records('feedback_sitecourse_map', array('feedbackid'=>$feedback->id))) {
@@ -82,11 +87,6 @@
                 error("this feedback is not available");
             }
         }
-    }
-    
-    //check whether the feedback is located and! started from the mainsite
-    if($course->id == SITEID AND !$courseid) {
-        $courseid = SITEID;
     }
         
     if($feedback->anonymous != FEEDBACK_ANONYMOUS_YES) {
