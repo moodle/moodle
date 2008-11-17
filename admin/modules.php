@@ -58,8 +58,7 @@
             print_error('moduledoesnotexist', 'error');
         }
         $DB->set_field("modules", "visible", "1", array("id"=>$module->id)); // Show main module
-        $DB->set_field('course_modules', 'visible', '1', 'visibleold',
-                  '1', array('module'=>$module->id)); // Get the previous saved visible state for the course module.
+        $DB->set_field('course_modules', 'visible', '1', array('visibleold'=>1, 'module'=>$module->id)); // Get the previous saved visible state for the course module.
         // clear the course modinfo cache for courses
         // where we just made something visible
         $sql = "UPDATE {course}
