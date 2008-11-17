@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.org                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas, Moodle  http://moodle.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas, Moodle  http://moodle.com//
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -596,12 +596,19 @@ function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=''
                 }
             }
             if ($hascap) {
+                if (empty($fields)) {
+                    $fields = '*';
+                }
                 // return users with confirmed, undeleted accounts who are not site teachers
                 // the following is a mess because of different conventions in the different user functions
                 $sort = str_replace('s.timeaccess', 'lastaccess', $sort); // site users can't be sorted by timeaccess
                 $sort = str_replace('timeaccess', 'lastaccess', $sort); // site users can't be sorted by timeaccess
                 $sort = str_replace('u.', '', $sort); // the get_user function doesn't use the u. prefix to fields
+                $sort = str_replace('ul.', '', $sort); // the get_user function doesn't use the ul. prefix to fields
+                // the following is a mess because of different conventions in the different user functions. MDL-17200
                 $fields = str_replace('u.', '', $fields);
+                $fields = str_replace('ul.', '', $fields);
+                $fields = str_replace('timeaccess', 'lastaccess', $fields);
                 if ($sort) {
                     $sort = $sort .' '. $dir;
                 }
@@ -616,7 +623,7 @@ function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=''
                 }
 
                 return get_users(true, $search, true, $exceptions, $sort, $firstinitial, $lastinitial,
-                                  $page, $recordsperpage, $fields ? $fields : '*');
+                                  $page, $recordsperpage, $fields);
             }
         }
     }
@@ -792,6 +799,10 @@ function get_course_users($courseid, $sort='ul.timeaccess DESC', $exceptions='',
                 if (empty($fields)) {
                     $fields = '*';
                 }
+                // the following is a mess because of different conventions in the different user functions. MDL-17200
+                $fields = str_replace('u.', '', $fields);
+                $fields = str_replace('ul.', '', $fields);
+                $fields = str_replace('timeaccess', 'lastaccess', $fields);
                 return get_users(true, '', true, $exceptions, 'lastname ASC', '', '', '', '', $fields);
             }
         }
