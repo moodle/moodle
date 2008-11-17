@@ -316,7 +316,7 @@
                 $a->quizgrade = quiz_format_grade($quiz, $quiz->grade);
                 $resultinfo .= print_heading(get_string('gradesofar', 'quiz', $a), '', 2, 'main', true);
             } else {
-                $a = quiz_format_grade($quiz, $mygrade) . '/' . format_grade($quiz, $quiz->grade);
+                $a = quiz_format_grade($quiz, $mygrade) . '/' . quiz_format_grade($quiz, $quiz->grade);
                 $resultinfo .= print_heading(get_string('yourfinalgradeis', 'quiz', $a), '', 2, 'main', true);
                 if ($mygradeoverridden) {
                     $resultinfo .= '<p class="overriddennotice">'.get_string('overriddennotice', 'grades')."</p>\n";
