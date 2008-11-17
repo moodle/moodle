@@ -14,7 +14,7 @@ if ($hassiteconfig
 /// Course Default Settings Page
     ///main course settings
     $temp = new admin_settingpage('coursesettings', get_string('coursesettings'));
-    $temp->add(new admin_settings_coursecat_select('moodlecourse/category', get_string('category'), '', 1));
+    $temp->add(new admin_settings_coursecat_select('moodlecourse/category', get_string('category'), get_string('coursehelpcategory'), 1));
     $courseformats = get_list_of_plugins('course/format');
     $formcourseformats = array();
     foreach ($courseformats as $courseformat) {
@@ -23,22 +23,22 @@ if ($hassiteconfig
             $formcourseformats["$courseformat"] = get_string("format$courseformat");
         }
     }
-    $temp->add(new admin_setting_configselect('moodlecourse/format', get_string('format'), get_string('courseformats'), 'weeks',$formcourseformats));
+    $temp->add(new admin_setting_configselect('moodlecourse/format', get_string('format'), get_string('coursehelpformat'), 'weeks',$formcourseformats));
     for ($i=1; $i<=52; $i++) {
         $sectionmenu[$i] = "$i";
     }
-    $temp->add(new admin_setting_configselect('moodlecourse/numsections', get_string('numberweeks'), '', 3,$sectionmenu));
+    $temp->add(new admin_setting_configselect('moodlecourse/numsections', get_string('numberweeks'), get_string('coursehelpnumberweeks'), 3,$sectionmenu));
     $choices = array();
     $choices['0'] = get_string('hiddensectionscollapsed');
     $choices['1'] = get_string('hiddensectionsinvisible');
-    $temp->add(new admin_setting_configselect('moodlecourse/hiddensections', get_string('hiddensections'), '', 0,$choices));
+    $temp->add(new admin_setting_configselect('moodlecourse/hiddensections', get_string('hiddensections'), get_string('coursehelphiddensections'), 0,$choices));
     $options = range(0, 10);
-    $temp->add(new admin_setting_configselect('moodlecourse/newsitems', get_string('newsitemsnumber'), '', 5,$options));
-    $temp->add(new admin_setting_configselect('moodlecourse/showgrades', get_string('showgrades'), get_string('grades'), 1,array(0 => get_string('no'), 1 => get_string('yes'))));
-    $temp->add(new admin_setting_configselect('moodlecourse/showreports', get_string('showreports'), get_string('activityreport'), 0,array(0 => get_string('no'), 1 => get_string('yes'))));
+    $temp->add(new admin_setting_configselect('moodlecourse/newsitems', get_string('newsitemsnumber'), get_string('coursehelpnewsitemsnumber'), 5,$options));
+    $temp->add(new admin_setting_configselect('moodlecourse/showgrades', get_string('showgrades'), get_string('coursehelpshowgrades'), 1,array(0 => get_string('no'), 1 => get_string('yes'))));
+    $temp->add(new admin_setting_configselect('moodlecourse/showreports', get_string('showreports'), '', 0,array(0 => get_string('no'), 1 => get_string('yes'))));
     $choices = get_max_upload_sizes($CFG->maxbytes);
-    $temp->add(new admin_setting_configselect('moodlecourse/maxbytes', get_string('maximumupload'), '', key($choices),$choices));
-    $temp->add(new admin_setting_configselect('moodlecourse/metacourse', get_string('metacourse'), '', 0,array(0 => get_string('no'), 1 => get_string('yes'))));
+    $temp->add(new admin_setting_configselect('moodlecourse/maxbytes', get_string('maximumupload'), get_string('coursehelpmaximumupload'), key($choices),$choices));
+    $temp->add(new admin_setting_configselect('moodlecourse/metacourse', get_string('metacourse'), get_string('coursehelpmetacourse'), 0,array(0 => get_string('no'), 1 => get_string('yes'))));
     
     ///enrolement course settings
     $temp->add(new admin_setting_heading('enrolhdr', get_string('enrolments'), ''));
@@ -55,9 +55,9 @@ if ($hassiteconfig
     asort($choices);
     $choices = array_flip($choices);
     $choices = array_merge(array('' => get_string('sitedefault').' ('.get_string('enrolname', "enrol_$CFG->enrol").')'), $choices);
-    $temp->add(new admin_setting_configselect('moodlecourse/enrol', get_string('enrolmentplugins'), '', key($choices),$choices));
+    $temp->add(new admin_setting_configselect('moodlecourse/enrol', get_string('enrolmentplugins'), get_string('coursehelpenrolmentplugins'), key($choices),$choices));
     $choices = array(0 => get_string('no'), 1 => get_string('yes'), 2 => get_string('enroldate'));
-    $temp->add(new admin_setting_configselect('moodlecourse/enrollable', get_string('enrollable'), '', 1,$choices));
+    $temp->add(new admin_setting_configselect('moodlecourse/enrollable', get_string('enrollable'), get_string('coursehelpenrollable'), 1,$choices));
     $periodmenu=array();
     $periodmenu[0] = get_string('unlimited');
     for ($i=1; $i<=365; $i++) {
@@ -68,14 +68,14 @@ if ($hassiteconfig
     
     ///
     $temp->add(new admin_setting_heading('expirynotifyhdr', get_string('expirynotify'), ''));
-    $temp->add(new admin_setting_configselect('moodlecourse/expirynotify', get_string('notify'), '', 0,array(0 => get_string('no'), 1 => get_string('yes'))));
-    $temp->add(new admin_setting_configselect('moodlecourse/notifystudents', get_string('expirynotifystudents'), '', 0,array(0 => get_string('no'), 1 => get_string('yes'))));
+    $temp->add(new admin_setting_configselect('moodlecourse/expirynotify', get_string('notify'), get_string('coursehelpnotify'), 0,array(0 => get_string('no'), 1 => get_string('yes'))));
+    $temp->add(new admin_setting_configselect('moodlecourse/notifystudents', get_string('expirynotifystudents'), get_string('coursehelpexpirynotifystudents'), 0,array(0 => get_string('no'), 1 => get_string('yes'))));
     $thresholdmenu=array();
     for ($i=1; $i<=30; $i++) {
         $seconds = $i * 86400;
         $thresholdmenu[$seconds] = get_string('numdays', '', $i);
     }
-    $temp->add(new admin_setting_configselect('moodlecourse/expirythreshold', get_string('expirythreshold'), '', 10 * 86400,$thresholdmenu));
+    $temp->add(new admin_setting_configselect('moodlecourse/expirythreshold', get_string('expirythreshold'), get_string('coursehelpexpirythreshold'), 10 * 86400,$thresholdmenu));
 
 
     $temp->add(new admin_setting_heading('groups', get_string('groups', 'group'), ''));
@@ -84,7 +84,7 @@ if ($hassiteconfig
     $choices[SEPARATEGROUPS] = get_string('groupsseparate', 'group');
     $choices[VISIBLEGROUPS] = get_string('groupsvisible', 'group');
     $temp->add(new admin_setting_configselect('moodlecourse/groupmode', get_string('groupmode'), '', key($choices),$choices));
-    $temp->add(new admin_setting_configselect('moodlecourse/groupmodeforce', get_string('force'), get_string('groupmodeforce'), 0,array(0 => get_string('no'), 1 => get_string('yes'))));
+    $temp->add(new admin_setting_configselect('moodlecourse/groupmodeforce', get_string('force'), get_string('coursehelpforce'), 0,array(0 => get_string('no'), 1 => get_string('yes'))));
 
 
     $temp->add(new admin_setting_heading('availability', get_string('availability'), ''));
@@ -92,7 +92,7 @@ if ($hassiteconfig
     $choices['0'] = get_string('courseavailablenot');
     $choices['1'] = get_string('courseavailable');
     $temp->add(new admin_setting_configselect('moodlecourse/visible', get_string('visible'), '', 1,$choices));
-    $temp->add(new admin_setting_configpasswordunmask('moodlecourse/enrolpassword', get_string('enrolmentkey'), '',''));
+    $temp->add(new admin_setting_configpasswordunmask('moodlecourse/enrolpassword', get_string('enrolmentkey'), get_string('coursehelpenrolmentkey'),''));
     $choices = array();
     $choices['0'] = get_string('guestsno');
     $choices['1'] = get_string('guestsyes');
