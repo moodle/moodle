@@ -90,7 +90,7 @@ if($csv) {
     }
     print_header($strcompletion,$course->fullname,build_navigation($navlinks));
     if($svgcleverness) {
-        require_js('textrotate.js');
+        require_js('course/report/progress/textrotate.js');
     }
 
     // Handle groups (if enabled)
