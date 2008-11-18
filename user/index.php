@@ -491,7 +491,7 @@
         // FIX: TODO: This will not work if $currentgroup == 0, i.e. "those not in a group"
         $from  .= 'LEFT JOIN {groups_members} gm ON u.id = gm.userid ';
         $where .= ' AND gm.groupid = :currentgroup';
-        $params['curentgroup'] = $currentgroup;
+        $params['currentgroup'] = $currentgroup;
     }
 
     $totalcount = $DB->count_records_sql("SELECT COUNT(distinct u.id) $from $where", $params);   // Each user could have > 1 role
