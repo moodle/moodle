@@ -487,7 +487,7 @@ abstract class moodle_database {
             foreach ($named_matches[0] as $key) {
                 $key = trim($key, ':');
                 if (!array_key_exists($key, $params)) {
-                    throw new dml_exception('missingkeyinsql', '', '', $key);
+                    throw new dml_exception('missingkeyinsql', $key, '');
                 }
                 $finalparams[$key] = $params[$key];
             }
