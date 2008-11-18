@@ -267,7 +267,7 @@ if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SI
 </tr>
 <?php }
 $can_edit_user = has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM));
-if (empty($user->description) && !empty($CFG->profilesforenrolledusersonly) && !record_exists('role_assignments', 'userid', $userid) && !$can_edit_user) {
+if (empty($user->description) && !empty($CFG->profilesforenrolledusersonly) && !record_exists('role_assignments', 'userid', $user->id) && !$can_edit_user) {
     // prevent user editing description
 } else {
 ?>
