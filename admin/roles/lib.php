@@ -818,7 +818,7 @@ class override_permissions_table_advanced extends capability_table_with_risks {
     /// Determine which capabilities should be locked.
         if ($safeoverridesonly) {
             foreach ($this->capabilities as $capid => $cap) {
-                if (!is_safe_capability($capability)) {
+                if (!is_safe_capability($cap)) {
                     $this->capabilities[$capid]->locked = true;
                     $this->haslockedcapabiltites = true;
                 }

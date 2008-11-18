@@ -98,8 +98,8 @@
 
 /// Make sure this user can override that role
     if ($roleid && !isset($overridableroles[$roleid])) {
-        $a = stdClass;
-        $a->role = $roleid;
+        $a = new stdClass;
+        $a->roleid = $roleid;
         $a->context = $contextname;
         print_error('cannotoverriderolehere', '', get_context_url($context), $a);
     }

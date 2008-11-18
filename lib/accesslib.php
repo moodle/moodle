@@ -1954,9 +1954,8 @@ function is_legacy($capabilityname) {
  *      safeoverrides capability should be allowed to change it.
  */
 function is_safe_capability($capability) {
-    return (RISK_DATALOSS | RISK_MANAGETRUST | RISK_CONFIG | RISK_XSS | RISK_PERSONAL) & $capability->riskbitmask;
+    return !((RISK_DATALOSS | RISK_MANAGETRUST | RISK_CONFIG | RISK_XSS | RISK_PERSONAL) & $capability->riskbitmask);
 }
-
 
 /**********************************
  * Context Manipulation functions *
