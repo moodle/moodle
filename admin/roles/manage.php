@@ -195,7 +195,7 @@
     $currenttab = 'manage';
     include_once('managetabs.php');
 
-    print_heading_with_help(get_string('roles', 'role'), 'roles');
+    print_heading_with_help(get_string('manageroles', 'role'), 'roles');
 
 /// Initialise table.
     $table = new object;
