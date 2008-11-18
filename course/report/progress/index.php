@@ -77,7 +77,7 @@ if($csv) {
     }
 } else {
     // Use SVG to draw sideways text if supported
-    $svgcleverness=ajaxenabled(array('Firefox'=>2.0)) && !$USER->screenreader;
+    $svgcleverness=can_use_rotated_text();
 
     // Navigation and header
     $strreports = get_string("reports");

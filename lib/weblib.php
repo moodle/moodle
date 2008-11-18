@@ -4841,6 +4841,7 @@ function print_png($url, $sizex, $sizey, $return, $parameters='alt=""') {
  *     <li>$table->rowclass[] - classes to add to particular rows.
  *     <li>$table->summary - Description of the contents for screen readers.
  *     <li>$table->headspan can be used to make a heading span multiple columns.
+ *     <li>$table->rotateheaders - Causes the contents of the heading cells to be rotated 90%.
  * </ul>
  * @param bool $return whether to return an output string or echo now
  * @return boolean or $string
@@ -4896,6 +4897,11 @@ function print_table($table, $return=false) {
     if (empty($table->class)) {
         $table->class = 'generaltable';
     }
+    if (!empty($table->rotateheaders)) {
+        $table->class .= ' rotateheaders';
+    } else {
+        $table->rotateheaders = false; // Makes life easier later.
+    }
 
     $tableid = empty($table->id) ? '' : 'id="'.$table->id.'"';
 
@@ -4930,8 +4936,17 @@ function print_table($table, $return=false) {
             } else {
                 $extraclass = '';
             }
+            if ($table->rotateheaders) {
+                $wrapperstart = '<span>';
+                $wrapperend = '</span>';
+            } else {
+                $wrapperstart = '';
+                $wrapperend = '';
+            }
 
-            $output .= '<th style="vertical-align:top;'. $align[$key].$size[$key] .';white-space:nowrap;" class="header c'.$key.$extraclass.'" scope="col"' . $colspan . '>'. $heading .'</th>';
+            $output .= '<th style="vertical-align:top;'. $align[$key].$size[$key] .
+                    ';white-space:nowrap;" class="header c'.$key.$extraclass.'" scope="col"' . $colspan . '>'.
+                    $wrapperstart . $heading . $wrapperend . '</th>';
         }
         $output .= '</tr>'."\n";
     }
@@ -4976,6 +4991,11 @@ function print_table($table, $return=false) {
         }
     }
     $output .= '</table>'."\n";
+
+    if ($table->rotateheaders && can_use_rotated_text()) {
+        require_js(array('yui_yahoo','yui_event','yui_dom'));
+        require_js('course/report/progress/textrotate.js');
+    }
 
     if ($return) {
         return $output;

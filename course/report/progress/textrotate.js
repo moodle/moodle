@@ -67,7 +67,18 @@ function textrotate_init() {
     parent.insertBefore(el,parent.firstChild);
     textrotate_make_svg(el.firstChild);
   }
-  
+
+  elements=YAHOO.util.Dom.getElementsByClassName('rotateheaders', 'table');
+  for(var i=0;i<elements.length;i++)
+  {
+    var table=elements[i];
+    var headercells = YAHOO.util.Dom.getElementsByClassName('header', 'th', table);
+    for(var j=0;j<headercells.length;j++)
+    {
+      var el=headercells[j];
+      textrotate_make_svg(el.firstChild);
+    }
+  }
 }
 
 YAHOO.util.Event.onDOMReady(textrotate_init); 

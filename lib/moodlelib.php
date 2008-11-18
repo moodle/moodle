@@ -6437,6 +6437,14 @@ function can_use_html_editor() {
 }
 
 /**
+ * Can handle rotated text. Whether it is safe to use the trickery in textrotate.js.
+ */
+function can_use_rotated_text() {
+    global $USER;
+    return ajaxenabled(array('Firefox' => 2.0)) && !$USER->screenreader;;
+}
+
+/**
  * Hack to find out the GD version by parsing phpinfo output
  *
  * @return int GD version (1, 2, or 0)
