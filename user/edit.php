@@ -428,7 +428,7 @@ function find_form_errors(&$user, &$usernew, &$err, &$um) {
         $err['email'] = get_string('toomanybounces');
 
     if (empty($usernew->description) and !isadmin()) {
-        if (!empty($CFG->profilesforenrolledusersonly) && !record_exists('user_students', 'userid', $userid) && !record_exists('user_teachers', 'userid', $userid)) {
+        if (!empty($CFG->profilesforenrolledusersonly) && !record_exists('user_students', 'userid', $user->id) && !record_exists('user_teachers', 'userid', $user->id)) {
             ///Prevent mandatory description validation, user hasn't been able to introduce his description
         } else {
             $err["description"] = get_string("missingdescription"); ///Normal description enforcement
