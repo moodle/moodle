@@ -63,6 +63,7 @@
        'langlist'                 => '',
        'locale'                   => '', // by default language pack locales should be used
        'loginhttps'               =>  false,
+       'profilesforenrolledusersonly'               =>  true,
        'loglifetime'              =>  0,
        'longtimenosee'            =>  100,
        'maxbytes'                 =>  0,
