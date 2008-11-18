@@ -186,7 +186,6 @@
 
     if ($user->description && !isset($hiddenfields['description'])) {
         $has_courseid = ($course->id != SITEID);
-        $CFG->profilesforenrolledusersonly = true;
         if (!$has_courseid && !empty($CFG->profilesforenrolledusersonly)
             && !record_exists('role_assignments', 'userid', $id)) {
             echo get_string('profilenotshown', 'moodle').'<hr />';
