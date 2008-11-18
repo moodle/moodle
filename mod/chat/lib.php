@@ -3,7 +3,7 @@
 /// Library of functions and constants for module chat
 require_once($CFG->libdir.'/pagelib.php');
 
-$CFG->chat_enable_ajax = true;
+$CFG->chat_enable_ajax = false;
 $CFG->chat_ajax_debug  = false;
 $CFG->chat_use_cache   = false;
 
