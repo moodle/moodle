@@ -427,8 +427,9 @@ function find_form_errors(&$user, &$usernew, &$err, &$um) {
     if (over_bounce_threshold($user) && $user->email == $usernew->email) 
         $err['email'] = get_string('toomanybounces');
 
-    if (empty($usernew->description) and !isadmin())
-        $err["description"] = get_string("missingdescription");
+    if (empty($usernew->description) and !isadmin()) {
+        //$err["description"] = get_string("missingdescription");
+    }
 
     if (empty($usernew->city))
         $err["city"] = get_string("missingcity");

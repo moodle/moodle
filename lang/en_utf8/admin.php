@@ -221,6 +221,7 @@ $string['pleaseregister'] = 'Please register your site to remove this button';
 $string['pgcluster'] = 'PostgreSQL Cluster';
 $string['pgclusterdescription'] = 'PostgreSQL version/cluster parameter for command line operations. If you only have one postgresql on your system or you are not sure what this is, leave this blank.';
 $string['php50restricted'] = 'PHP 5.0.x has a number of known problems, please upgrade to 5.1.x or downgrade to 4.3.x or 4.4.x';
+$string['configprofilesforenrolledusersonly'] = 'To prevent misuse by spammers, profile descriptions of users who are not yet enrolled in any course are hidden. New users must enrol in at least one course before they can add a profile description.';
 $string['remotelangnotavailable'] = 'Because Moodle can not connect to download.moodle.org, we are unable to do language pack installation automatically. Please download the appropriate zip file(s) from the list below, copy them to your $a directory and unzip them manually.';
 $string['serverchecks'] = 'Server Checks';
 $string['sitelangchanged'] = 'Site language setting changed successfully';

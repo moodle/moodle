@@ -461,6 +461,9 @@ class configvarrss extends configvar {
     $security['loginhttps'] = new configvar (get_string('configloginhttps', 'admin'),
         choose_from_menu ($noyesoptions, 'loginhttps', $config->loginhttps, '', '', '', true) );
 
+/// profilesforenrolledusersonly
+    $security['profilesforenrolledusersonly'] = new configvar (get_string('configprofilesforenrolledusersonly', 'admin'), choose_from_menu ($noyesoptions, 'profilesforenrolledusersonly', $CFG->profilesforenrolledusersonly, '', '', '', true) );
+
 /// runclamonupload
     $security['runclamonupload'] = new configvar (get_string('configrunclamonupload', 'admin'),
         choose_from_menu($noyesoptions, 'runclamonupload', $config->runclamonupload, '', '', '', true) );
