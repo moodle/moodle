@@ -533,7 +533,7 @@ function is_siteadmin($userid) {
  * @return boolean, whether this role is an admin role.
  */
 function is_admin_role($roleid) {
-    global $CFG, $DB;
+    global $DB;
 
     $sql = "SELECT 1
               FROM {role_capabilities} rc
@@ -546,6 +546,30 @@ function is_admin_role($roleid) {
     $params = array($roleid, 'moodle/site:config', 'moodle/legacy:admin', 'moodle/site:doanything');
 
     return $DB->record_exists_sql($sql, $params);
+}
+
+/**
+ * @return all the roles for which is_admin_role($role->id) is true.
+ */
+function get_admin_roles() {
+    global $DB;
+
+    $sql = "SELECT *
+              FROM {role} r
+             WHERE EXISTS (
+                    SELECT 1
+                      FROM {role_capabilities} rc
+                      JOIN {context} ctx ON ctx.id = rc.contextid
+                     WHERE ctx.contextlevel = 10
+                           AND rc.roleid = r.id
+                           AND rc.capability IN (?, ?, ?)
+                  GROUP BY rc.capability
+                    HAVING SUM(rc.permission) > 0
+             )
+          ORDER BY r.sortorder";
+    $params = array('moodle/site:config', 'moodle/legacy:admin', 'moodle/site:doanything');
+
+    return $DB->get_records_sql($sql, $params);
 }
 
 function get_course_from_path ($path) {
@@ -2505,54 +2529,39 @@ function get_local_override($roleid, $contextid, $capability) {
 function create_role($name, $shortname, $description, $legacy='') {
     global $DB;
 
-    // check for duplicate role name
-
-    if ($role = $DB->get_record('role', array('name'=>$name))) {
-        print_error('duplicaterolename');
+    // Get the system context.
+    if (!$context = get_context_instance(CONTEXT_SYSTEM)) {
+        return false;
     }
 
-    if ($role = $DB->get_record('role', array('shortname'=>$shortname))) {
-        print_error('duplicateroleshortname');
-    }
-
+    // Insert the role record.
     $role = new object();
     $role->name = $name;
     $role->shortname = $shortname;
     $role->description = $description;
 
     //find free sortorder number
-    $role->sortorder = $DB->count_records('role');
-    while ($DB->get_record('role',array('sortorder'=>$role->sortorder))) {
-        $role->sortorder += 1;
-    }
+    $role->sortorder = $DB->get_field('role', 'MAX(sortorder) + 1', array());
+    $id = $DB->insert_record('role', $role);
 
-    if (!$context = get_context_instance(CONTEXT_SYSTEM)) {
+    if (!$id) {
         return false;
     }
 
-    if ($id = $DB->insert_record('role', $role)) {
-        if ($legacy) {
-            assign_capability($legacy, CAP_ALLOW, $id, $context->id);
-        }
-
-        /// By default, users with role:manage at site level
-        /// should be able to assign users to this new role, and override this new role's capabilities
-
-        // find all admin roles
-        if ($adminroles = get_roles_with_capability('moodle/role:manage', CAP_ALLOW, $context)) {
-            // foreach admin role
-            foreach ($adminroles as $arole) {
-                // write allow_assign and allow_overrid
-                allow_assign($arole->id, $id);
-                allow_override($arole->id, $id);
-            }
-        }
-
-        return $id;
-    } else {
-        return false;
+    if ($legacy) {
+        assign_capability($legacy, CAP_ALLOW, $id, $context->id);
     }
 
+    // By default, users with role:manage at site level should be able to assign
+    // users to this new role, and override this new role's capabilities.
+    if ($adminroles = get_admin_roles()) {
+        foreach ($adminroles as $arole) {
+            allow_assign($arole->id, $id);
+            allow_override($arole->id, $id);
+        }
+    }
+
+    return $id;
 }
 
 /**
@@ -4374,8 +4383,11 @@ function get_default_contextlevels($roletype) {
         'guest' => array(),
         'user' => array()
     );
-    
-    return $defaults[$roletype];
+    if (isset($defaults[$roletype])) {
+        return $defaults[$roletype];
+    } else {
+        return array();
+    }
 }
 
 /**
@@ -4395,7 +4407,7 @@ function set_role_contextlevels($roleid, array $contextlevels) {
     foreach ($contextlevels as $level) {
         $rcl->contextlevel = $level;
         if (!$DB->insert_record('role_context_levels', $rcl, false, true)) {
-            throw new moodle_exception('couldnotdeleterolecontextlevels', '', '', $rcl);            
+            throw new moodle_exception('couldnotdeleterolecontextlevels', '', '', $rcl);
         }
     }
 }
@@ -5816,47 +5828,19 @@ function fix_role_sortorder($allroles) {
 }
 
 /**
- * switch role order (used in admin/roles/manage.php)
+ * Switch the sort order of two roles (used in admin/roles/manage.php).
  *
- * @param int $first id of role to move down
- * @param int $second id of role to move up
- *
- * @return bool success or failure
+ * @param object $first The first role. Actually, only ->sortorder is used.
+ * @param object $second The second role. Actually, only ->sortorder is used.
+ * @return boolean success or failure
  */
 function switch_roles($first, $second) {
     global $DB;
-
-    $status = true;
-    //first find temorary sortorder number
-    $tempsort = $DB->count_records('role') + 3;
-    while ($DB->get_record('role',array('sortorder'=>$tempsort))) {
-        $tempsort += 3;
-    }
-
-    $r1 = new object();
-    $r1->id        = $first->id;
-    $r1->sortorder = $tempsort;
-    $r2 = new object();
-    $r2->id        = $second->id;
-    $r2->sortorder = $first->sortorder;
-
-    if (!$DB->update_record('role', $r1)) {
-        debugging("Can not update role with ID $r1->id!");
-        $status = false;
-    }
-
-    if (!$DB->update_record('role', $r2)) {
-        debugging("Can not update role with ID $r2->id!");
-        $status = false;
-    }
-
-    $r1->sortorder = $second->sortorder;
-    if (!$DB->update_record('role', $r1)) {
-        debugging("Can not update role with ID $r1->id!");
-        $status = false;
-    }
-
-    return $status;
+    $temp = $DB->get_field('role', 'MAX(sortorder) + 1', array());
+    $result = $DB->set_field('role', 'sortorder', $temp, array('sortorder' => $first->sortorder));
+    $result = $result && $DB->set_field('role', 'sortorder', $first->sortorder, array('sortorder' => $second->sortorder));
+    $result = $result && $DB->set_field('role', 'sortorder', $second->sortorder, array('sortorder' => $temp));
+    return $result;
 }
 
 /**

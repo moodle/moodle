@@ -991,10 +991,6 @@ body#admin-modules table.generaltable td.c0
   padding-bottom: 20px;
 }
 
-#admin-roles-manage table.generalbox {
-  margin: auto;
-}
-
 #admin-stickyblocks .generalbox {
   text-align:center;
 }
@@ -1050,17 +1046,20 @@ body#admin-modules table.generaltable td.c0
 #admin-roles-allowassign .buttons,
 #admin-roles-allowoverride .buttons,
 #admin-roles-manage .buttons,
+#admin-roles-define .buttons,
 #admin-roles-override .buttons {
   margin: 20px;
   text-align:center;
 }
-
 #admin-roles-manage .buttons .singlebutton,
+#admin-roles-define .buttons .singlebutton,
 #admin-roles-override .buttons .singlebutton {
   display: inline;
   padding: 5px;
 }
-
+#admin-roles-define .topfields {
+  margin: 1em 0 2em;
+}
 .roleassigntable {
     width: 100%;
 }
@@ -1110,13 +1109,11 @@ body#admin-modules table.generaltable td.c0
 .roleassigntable #addselect_wrapper label {
     font-weight: normal;
 }
-
-table.roledesc {
-  margin-left:auto;
-  margin-right:auto;
+#admin-roles-define .mform {
+  width: 100%;
 }
-
 #admin-roles-manage .backlink,
+#admin-roles-define .backlink,
 #admin-roles-explain .backlink,
 #admin-roles-assign .backlink,
 #admin-roles-override .backlink {
@@ -1159,9 +1156,9 @@ table.rolecap .prohibit {
 table.rolecap label {
   display: block;
   width: 100%;
-  height: 2.5em;
+  min-height: 2.5em;
 }
-table.rolecap .cap-desc .cap-name,
+.rolecap .cap-name,
 .rolecap .note {
   display: block;
   padding: 0 0.5em;

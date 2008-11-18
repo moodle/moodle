@@ -249,8 +249,7 @@ body#admin-index .copyright {
   font-size: 0.8em;
 }
 
-#admin-roles-manage .rolecap .cap-desc .cap-name,
-#admin-roles-override .rolecap .cap-desc .cap-name,
+.rolecap .cap-name,
 .rolecap .note {
   font-size: 0.75em;
 }

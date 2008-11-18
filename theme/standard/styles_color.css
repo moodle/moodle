@@ -1197,8 +1197,7 @@ table.explainpermissions .overridden {
   border-bottom-color: #cecece;
 }
 
-#admin-roles-manage .rolecap .cap-desc .cap-name,
-#admin-roles-override .rolecap .cap-desc .cap-name,
+.rolecap .cap-name,
 .rolecap .note {
   color: #888;
 }

@@ -274,8 +274,9 @@ abstract class capability_table_with_risks extends capability_table_base {
     protected $displaypermissions;
     protected $permissions;
     protected $changed;
+    protected $roleid;
 
-    public function __construct($context, $id) {
+    public function __construct($context, $id, $roleid) {
         parent::__construct($context, $id);
 
         $this->allrisks = get_all_risks();
@@ -293,6 +294,7 @@ abstract class capability_table_with_risks extends capability_table_base {
             $this->strperms[$permname] =  get_string($permname, 'role');
         }
 
+        $this->roleid = $roleid;
         $this->load_current_permissions();
 
     /// Fill in any blank permissions with an explicit CAP_INHERIT, and init a locked field.
@@ -308,16 +310,23 @@ abstract class capability_table_with_risks extends capability_table_base {
         global $DB;
 
     /// Load the overrides/definition in this context.
-        $this->permissions = $DB->get_records_menu('role_capabilities', array('roleid' => $this->roleid,
-                'contextid' => $this->context->id), '', 'capability,permission');
+        if ($this->roleid) {
+            $this->permissions = $DB->get_records_menu('role_capabilities', array('roleid' => $this->roleid,
+                    'contextid' => $this->context->id), '', 'capability,permission');
+        } else {
+            $this->permissions = array();
+        }
     }
 
     protected abstract function load_parent_permissions();
 
-    public abstract function save_changes();
-
+    /**
+     * Update $this->permissions based on submitted data, while making a list of
+     * changed capabilities in $this->changed.
+     */
     public function read_submitted_permissions() {
-        /// Update $this->permissions based on submitted data.
+        $this->changed = array();
+
         foreach ($this->capabilities as $cap) {
             if ($cap->locked || $this->skip_row($cap)) {
             /// The user is not allowed to change the permission for this capapability
@@ -337,6 +346,20 @@ abstract class capability_table_with_risks extends capability_table_base {
                 $this->changed[] = $cap->name;
             }
         }
+    }
+
+    /**
+     * Save the new values of any permissions that have been changed.
+     */
+    public function save_changes() {
+    /// Set the permissions.
+        foreach ($this->changed as $changedcap) {
+            assign_capability($changedcap, $this->permissions[$changedcap],
+                    $this->roleid, $this->context->id, true);
+        }
+
+    /// Force accessinfo refresh for users visiting this context.
+        mark_context_dirty($this->context->path);
     }
 
     public function display() {
@@ -400,54 +423,276 @@ abstract class capability_table_with_risks extends capability_table_base {
     }
 }
 
+/**
+ * As well as tracking the permissions information about the role we are creating
+ * or editing, we aslo track the other infromation about the role. (This class is
+ * starting to be more and more like a formslib form in some respects.)
+ */
 class define_role_table_advanced extends capability_table_with_risks {
-    protected $roleid;
+    /** Used to store other information (besides permissions) about the role we are creating/editing. */
+    protected $role;
+    /** Used to store errors found when validating the data. */
+    protected $errors;
+    protected $contextlevels;
+    protected $allcontextlevels;
+    protected $legacyroles;
+    protected $disabled = '';
 
     public function __construct($context, $roleid) {
         $this->roleid = $roleid;
-        parent::__construct($context, 'defineroletable');
+        parent::__construct($context, 'defineroletable', $roleid);
         $this->displaypermissions = $this->allpermissions;
         $this->strperms[$this->allpermissions[CAP_INHERIT]] = get_string('notset', 'role');
+
+        $this->allcontextlevels = array(
+            CONTEXT_SYSTEM => get_string('coresystem'),
+            CONTEXT_USER => get_string('user'),
+            CONTEXT_COURSECAT => get_string('category'),
+            CONTEXT_COURSE => get_string('course'),
+            CONTEXT_MODULE => get_string('activitymodule'),
+            CONTEXT_BLOCK => get_string('block')
+        );
+
+        $this->legacyroles = get_legacy_roles();
     }
 
     protected function load_current_permissions() {
-        if (!$this->roleid) {
-            $this->permissions = array();
+        global $DB;
+        if ($this->roleid) {
+            if (!$this->role = $DB->get_record('role', array('id' => $this->roleid))) {
+                throw new moodle_exception('invalidroleid');
+            }
+            $this->role->legacytype = get_legacy_type($this->roleid);
+            $contextlevels = get_role_contextlevels($this->roleid);
+            // Put the contextlevels in the array keys, as well as the values.
+            $this->contextlevels = array_combine($contextlevels, $contextlevels);
         } else {
-            parent::load_current_permissions();
+            $this->role = new stdClass;
+            $this->role->name = '';
+            $this->role->shortname = '';
+            $this->role->description = '';
+            $this->role->legacytype = '';
+            $this->contextlevels = array();
         }
+        parent::load_current_permissions();
+    }
+
+    public function read_submitted_permissions() {
+        global $DB;
+        $this->errors = array();
+
+        // Role name.
+        $name = optional_param('name', null, PARAM_MULTILANG);
+        if (!is_null($name)) {
+            $this->role->name = $name;
+            if (html_is_blank($this->role->name)) {
+                $this->errors['name'] = get_string('errorbadrolename', 'role');
+            }
+        }
+        if ($DB->record_exists_select('role', 'name = ? and id <> ?', array($this->role->name, $this->roleid))) {
+            $this->errors['name'] = get_string('errorexistsrolename', 'role');
+        }
+
+        // Role short name. We clean this in a special way. We want to end up
+        // with only lowercase safe ASCII characters.
+        $shortname = optional_param('shortname', null, PARAM_RAW);
+        if (!is_null($shortname)) {
+            $this->role->shortname = $shortname;
+            $this->role->shortname = textlib_get_instance()->specialtoascii($this->role->shortname);
+            $this->role->shortname = moodle_strtolower(clean_param($this->role->shortname, PARAM_ALPHANUMEXT));
+            if (empty($this->role->shortname)) {
+                $this->errors['shortname'] = get_string('errorbadroleshortname', 'role');
+            }
+        }
+        if ($DB->record_exists_select('role', 'shortname = ? and id <> ?', array($this->role->shortname, $this->roleid))) {
+            $this->errors['shortname'] = get_string('errorexistsroleshortname', 'role');
+        }
+
+        // Description.
+        $description = optional_param('description', null, PARAM_CLEAN);
+        if (!is_null($description)) {
+            $this->role->description = $description;
+        }
+
+        // Legacy type.
+        $legacytype = optional_param('legacytype', null, PARAM_RAW);
+        if (!is_null($legacytype)) {
+            if (array_key_exists($legacytype, $this->legacyroles)) {
+                $this->role->legacytype = $legacytype;
+            } else {
+                $this->role->legacytype = '';
+            }
+        }
+
+        // Assignable context levels.
+        foreach ($this->allcontextlevels as $cl => $notused) {
+            $assignable = optional_param('contextlevel' . $cl, null, PARAM_BOOL);
+            if (!is_null($assignable)) {
+                if ($assignable) {
+                    $this->contextlevels[$cl] = $cl;
+                } else {
+                    unset($this->contextlevels[$cl]);
+                }
+            }
+        }
+
+        // Now read the permissions for each capability.
+        parent::read_submitted_permissions();
+    }
+
+    public function is_submission_valid() {
+        return empty($this->errors);
+    }
+
+    /**
+     * Call this after the table has been initialised, so to indicate that
+     * when save is called, we want to make a duplicate role.
+     */
+    public function make_copy() {
+        $this->roleid = 0;
+        unset($this->role->id);
+        $this->role->name .= ' ' . get_string('copyasnoun');
+        $this->role->shortname .= 'copy';
+    }
+
+    public function get_role_name() {
+        return $this->role->name;
+    }
+
+    public function get_role_id() {
+        return $this->role->id;
+    }
+
+    public function get_legacy_type() {
+        return $this->role->legacytype;
     }
 
     protected function load_parent_permissions() {
-    /// Get the default permissions, based on legacy role type.
-        // TODO
-        if ($this->roleid) {
-            $legacy = get_legacy_type($this->roleid);
-        } else {
-            $legacy = '';
-        }
-        if (!empty($legacy)) {
-            $this->parentpermissions = get_default_capabilities($legacy);
+        if ($this->role->legacytype) {
+            $this->parentpermissions = get_default_capabilities($this->role->legacytype);
         } else {
             $this->parentpermissions = array();
         }
     }
 
-    /**
-     * Save any overrides that have been changed.
-     */
     public function save_changes() {
-        foreach ($this->changed as $changedcap) {
-            assign_capability($changedcap, $this->permissions[$changedcap],
-                    $this->roleid, $this->context->id, true);
+        global $DB;
+
+        if (!$this->roleid) {
+            // Creating role
+            if ($this->legacyroles[$this->role->legacytype]) {
+                $legacycap = $this->legacyroles[$this->role->legacytype];
+            } else {
+                $legacycap = '';
+            }
+            if (!$this->role->id = create_role($this->role->name, $this->role->shortname, $this->role->description, $legacycap)) {
+                throw new moodle_exception('errorcreatingrole');
+            }
+            $this->roleid = $this->role->id; // Needed to make the parent::save_changes(); call work.
+        } else {
+            // Updating role
+            if (!$DB->update_record('role', $this->role)) {
+                 throw new moodle_exception('cannotupdaterole');
+            }
+
+            // Legacy type
+            foreach($this->legacyroles as $type => $cap) {
+                if ($type == $this->role->legacytype) {
+                    assign_capability($cap, CAP_ALLOW, $this->role->id, $this->context->id);
+                } else {
+                    unassign_capability($cap, $this->role->id);
+                } 
+            }
         }
 
-        // force accessinfo refresh for users visiting this context...
-        mark_context_dirty($this->context->path);
+        // Assignable contexts.
+        set_role_contextlevels($this->role->id, $this->contextlevels);
+
+        // Permissions.
+        parent::save_changes();
     }
 
     protected function skip_row($capability) {
         return is_legacy($capability->name);
+    }
+
+    protected function get_name_field($id) {
+        return '<input type="text" id="' . $id . '" name="' . $id . '" maxlength="254" value="' . s($this->role->name) . '" />';
+    }
+
+    protected function get_shortname_field($id) {
+        return '<input type="text" id="' . $id . '" name="' . $id . '" maxlength="254" value="' . s($this->role->shortname) . '" />';
+    }
+    
+    protected function get_description_field($id) {
+        return print_textarea(true, 10, 50, 50, 10, 'description', $this->role->description, 0, true);
+    }
+
+    protected function get_legacy_type_field($id) {
+        $options = array();
+        $options[''] = get_string('none');
+        foreach($this->legacyroles as $type => $cap) {
+            $options[$type] = get_string('legacy:'.$type, 'role');
+        }
+        return choose_from_menu($options, 'legacytype', $this->role->legacytype, '', '', 0, true);
+    }
+
+    protected function get_assignable_levels_control() {
+        $output = '';
+        foreach ($this->allcontextlevels as $cl => $clname) {
+            $extraarguments = $this->disabled;
+            if (in_array($cl, $this->contextlevels)) {
+                $extraarguments .= 'checked="checked" ';
+            }
+            if (!$this->disabled) {
+                $output .= '<input type="hidden" " name="contextlevel' . $cl . '" value="0" />';
+            }
+            $output .= '<input type="checkbox" id="cl' . $cl . '" name="contextlevel' . $cl .
+                    '" value="1" ' . $extraarguments . '/> ';
+            $output .= '<label for="cl' . $cl . '">' . $clname . "</label><br />\n";
+        }
+        return $output;
+    }
+
+    protected function print_field($name, $caption, $field) {
+        // Attempt to generate HTML like formslib.
+        echo '<div class="fitem">';
+        echo '<div class="fitemtitle">';
+        if ($name) {
+            echo '<label for="' . $name . '">';
+        }
+        echo $caption;
+        if ($name) {
+            echo "</label>\n";
+        }
+        echo '</div>';
+        if (isset($this->errors[$name])) {
+            $extraclass = ' error';
+        } else {
+            $extraclass = '';
+        }
+        echo '<div class="felement' . $extraclass . '">';
+        if (isset($this->errors[$name])) {
+            formerr($this->errors[$name]);
+            echo '<br />';
+        }
+        echo $field;
+        echo '</div>';
+        echo '</div>';
+    }
+
+    public function display() {
+        // Extra fields at the top of the page.
+        echo '<div class="topfields clearfix">';
+        $this->print_field('name', get_string('name'), $this->get_name_field('name'));
+        $this->print_field('shortname', get_string('shortname'), $this->get_shortname_field('shortname'));
+        $this->print_field('edit-description', get_string('description'), $this->get_description_field('description'));
+        $this->print_field('menulegacytype', get_string('legacytype', 'role'), $this->get_legacy_type_field('legacytype'));
+        $this->print_field('', get_string('maybeassignedin', 'role'), $this->get_assignable_levels_control());
+        echo "</div>";
+
+        // Now the permissions table.
+        parent::display();
     }
 
     protected function add_permission_cells($capability) {
@@ -485,6 +730,7 @@ class define_role_table_basic extends define_role_table_advanced {
     protected function add_permission_cells($capability) {
         $perm = $this->permissions[$capability->name];
         $permname = $this->allpermissions[$perm];
+        $defaultperm = $this->allpermissions[$this->parentpermissions[$capability->name]];
         echo '<td class="' . $permname . '">';
         if ($perm == CAP_ALLOW || $perm == CAP_INHERIT) {
             $checked = '';
@@ -493,7 +739,8 @@ class define_role_table_basic extends define_role_table_advanced {
             }
             echo '<input type="hidden" name="' . $capability->name . '" value="' . CAP_INHERIT . '" />';
             echo '<label><input type="checkbox" name="' . $capability->name .
-                    '" value="' . CAP_ALLOW . '"' . $checked . ' /> ' . $this->strallow . '</label>';
+                    '" value="' . CAP_ALLOW . '"' . $checked . ' /> ' . $this->strallow .
+                    '<span class="note">' . get_string('defaultx', 'role', $this->strperms[$defaultperm]) . '</span></label>';
         } else {
             echo '<input type="hidden" name="' . $capability->name . '" value="' . $perm . '" />';
             echo $this->strperms[$permname] . '<span class="note">' . $this->stradvmessage . '</span>';
@@ -505,18 +752,49 @@ class view_role_definition_table extends define_role_table_advanced {
     public function __construct($context, $roleid) {
         parent::__construct($context, $roleid);
         $this->displaypermissions = array(CAP_ALLOW => $this->allpermissions[CAP_ALLOW]);
+        $this->disabled = 'disabled="disabled" ';
+    }
+
+    public function save_changes() {
+        throw new moodle_exception('invalidaccess');
+    }
+
+    protected function get_name_field($id) {
+        return strip_tags(format_string($this->role->name));
+    }
+
+    protected function get_shortname_field($id) {
+        return $this->role->shortname;
+    }
+
+    protected function get_description_field($id) {
+        return format_text($this->role->description, FORMAT_HTML);
+    }
+
+    protected function get_legacy_type_field($id) {
+        if (empty($this->role->legacytype)) {
+            return get_string('none');
+        } else {
+            return get_string('legacy:'.$this->role->legacytype, 'role');
+        }
     }
 
     protected function add_permission_cells($capability) {
         $perm = $this->permissions[$capability->name];
         $permname = $this->allpermissions[$perm];
-        echo '<td class="' . $permname . '">' . $this->strperms[$permname] . '</td>';
+        $defaultperm = $this->allpermissions[$this->parentpermissions[$capability->name]];
+        if ($permname != $defaultperm) {
+            $default = get_string('defaultx', 'role', $this->strperms[$defaultperm]);
+        } else {
+            $default = "&#xa0;";
+        }
+        echo '<td class="' . $permname . '">' . $this->strperms[$permname] . '<span class="note">' .
+                $default . '</span></td>';
         
     }
 }
 
 class override_permissions_table_advanced extends capability_table_with_risks {
-    protected $roleid;
     protected $strnotset;
     protected $haslockedcapabiltites = false;
 
@@ -533,8 +811,7 @@ class override_permissions_table_advanced extends capability_table_with_risks {
      *      capabilities with no risks.
      */
     public function __construct($context, $roleid, $safeoverridesonly) {
-        $this->roleid = $roleid;
-        parent::__construct($context, 'overriderolestable');
+        parent::__construct($context, 'overriderolestable', $roleid);
         $this->displaypermissions = $this->allpermissions;
         $this->strnotset = get_string('notset', 'role');
 
@@ -555,19 +832,6 @@ class override_permissions_table_advanced extends capability_table_with_risks {
     /// Get the capabiltites from the parent context, so that can be shown in the interface.
         $parentcontext = get_context_instance_by_id(get_parent_contextid($this->context));
         $this->parentpermissions = role_context_capabilities($this->roleid, $parentcontext);
-    }
-
-    /**
-     * Save any overrides that have been changed.
-     */
-    public function save_changes() {
-        foreach ($this->changed as $changedcap) {
-            assign_capability($changedcap, $this->permissions[$changedcap],
-                    $this->roleid, $this->context->id, true);
-        }
-
-        // force accessinfo refresh for users visiting this context...
-        mark_context_dirty($this->context->path);
     }
 
     public function has_locked_capabiltites() {
