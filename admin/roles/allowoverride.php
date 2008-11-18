@@ -36,46 +36,45 @@
     require_once('../../config.php');
     require_once($CFG->libdir.'/adminlib.php');
 
-    admin_externalpage_setup('defineroles');
+    require_login();
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+    require_capability('moodle/role:manage', $systemcontext);
 
-
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
-    require_capability('moodle/role:manage', $sitecontext);
-
-/// form processiong here
-
-/// get all roles
-
+/// Get all roles
     $roles = get_all_roles();
+    role_fix_names($roles, $systemcontext, ROLENAME_ORIGINAL);
 
-    if ($grant = data_submitted()) {
-
-        foreach ($grant as $grole => $val) {
-            if ($grole == 'dummy') {
-                continue;
-            }
-
-            $string = explode('_', $grole);
-            $temp[$string[1]][$string[2]] = 1; // if set, means can access
-        }
-
-// if current assignment is in data_submitted, ignore, else, write deny into db
-        foreach ($roles as $srole) {
-            foreach ($roles as $trole) {
-                if (isset($temp[$srole->id][$trole->id])) { // if set, need to write to db
-                    if (!$record = $DB->get_record('role_allow_override', array('roleid'=>$srole->id, 'allowoverride'=>$trole->id))) {
-                        allow_override($srole->id, $trole->id);
-                    }
-                } else { //if set, means can access, attempt to remove it from db
-                    $DB->delete_records('role_allow_override', array('roleid'=>$srole->id, 'allowoverride'=>$trole->id));
+/// Process form submission
+    if (optional_param('submit', false, PARAM_BOOL) && data_submitted() && confirm_sesskey()) {
+    /// Delete all records, then add back the ones that should be allowed.
+        $DB->delete_records('role_allow_override');
+        foreach ($roles as $fromroleid => $notused) {
+            foreach ($roles as $targetroleid => $alsonotused) {
+                if (optional_param('s_' . $fromroleid . '_' . $targetroleid, false, PARAM_BOOL)) {
+                    allow_override($fromroleid, $targetroleid);
                 }
             }
         }
-        // updated allowoverride sitewide...
-        mark_context_dirty($sitecontext->path);
-    }
-/// displaying form here
 
+    /// Updated allowoverrides sitewide, so force a premissions refresh, and redirect.
+        mark_context_dirty($systemcontext->path);
+        add_to_log(SITEID, 'role', 'edit allow override', 'admin/roles/allowoverride.php', '', '', $USER->id);
+        redirect($CFG->wwwroot . '/' . $CFG->admin . '/roles/allowoverride.php');
+    }
+
+/// Load the current settings
+    $allowed = array();
+    foreach ($roles as $role) {
+        // Make an array $role->id => false. This is probalby too clever for its own good.1
+        $allowed[$role->id] = array_combine(array_keys($roles), array_fill(0, count($roles), false));
+        }
+    $raas = $DB->get_recordset('role_allow_override');
+    foreach ($raas as $raa) {
+        $allowed[$raa->roleid][$raa->allowoverride] = true;
+    }
+
+/// Display the editing form.
+    admin_externalpage_setup('defineroles');
     admin_externalpage_print_header();
 
     $currenttab='allowoverride';
@@ -85,44 +84,37 @@
     $table->cellpadding = 5;
     $table->cellspacing = 0;
     $table->width = '90%';
-    $table->align[] = 'right';
+    $table->align[] = 'left';
+    $table->rotateheaders = true;
+    $table->head = array('&#xa0;');
 
-/// get all the roles identifier
-    foreach ($roles as $role) {
-        $rolesname[] = format_string($role->name);
-        $roleids[] = $role->id;
-        $table->align[] = 'center';
-        $table->wrap[] = 'nowrap';
+/// Add role name headers.
+    foreach ($roles as $targetrole) {
+        $table->head[] = $targetrole->localname;
+        $table->align[] = 'left';
     }
 
-    $table->head = array_merge(array(''), $rolesname);
-
-    foreach ($roles as $role) {
-        $beta = get_box_list($role->id, $roleids);
-        $table->data[] = array_merge(array(format_string($role->name)), $beta);
+/// Now the rest of the table.
+    foreach ($roles as $fromrole) {
+        $row = array($fromrole->localname);
+        foreach ($roles as $targetrole) {
+            if ($allowed[$fromrole->id][$targetrole->id]) {
+                $checked = ' checked="checked"';
+            } else {
+                $checked = '';
+            }
+            $row[] = '<input type="checkbox" name="s_' . $fromrole->id . '_' . $targetrole->id . '" value="1"' . $checked . ' />';
+        }
+        $table->data[] = $row;
     }
 
     print_simple_box(get_string('configallowoverride2', 'admin'), 'center');
 
     echo '<form action="allowoverride.php" method="post">';
+    echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
     print_table($table);
-    echo '<div class="buttons"><input type="submit" value="'.get_string('savechanges').'"/>';
-    echo '<input type="hidden" name="dummy" value="1" />'; // this is needed otherwise we do not know a form has been submitted
+    echo '<div class="buttons"><input type="submit" name="submit" value="'.get_string('savechanges').'"/>';
     echo '</div></form>';
 
     admin_externalpage_print_footer();
-
-// returns array
-function get_box_list($roleid, $arraylist) {
-    global $DB;
-
-    foreach ($arraylist as $targetid) {
-        if ($DB->get_record('role_allow_override', array('roleid'=>$roleid, 'allowoverride'=>$targetid))) {
-            $array[] = '<input type="checkbox" name="s_'.$roleid.'_'.$targetid.'" value="1" checked="checked"/>';
-        } else {
-            $array[] = '<input type="checkbox" name="s_'.$roleid.'_'.$targetid.'" value="1" />';
-        }
-    }
-    return $array;
-}
 ?>

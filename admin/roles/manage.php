@@ -61,7 +61,6 @@
 /// Get some basic data we are going to need.
     $roles = get_all_roles();
     role_fix_names($roles, $systemcontext, ROLENAME_ORIGINAL);
-    $rolescount = count($roles);
 
     $undeletableroles = array();
     $undeletableroles[$CFG->notloggedinroleid] = 1;
