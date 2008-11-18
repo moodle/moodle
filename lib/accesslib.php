@@ -2541,6 +2541,9 @@ function create_role($name, $shortname, $description, $legacy='') {
 
     //find free sortorder number
     $role->sortorder = $DB->get_field('role', 'MAX(sortorder) + 1', array());
+    if (empty($role->sortorder)) {
+        $role->sortorder = 1;
+    }
     $id = $DB->insert_record('role', $role);
 
     if (!$id) {
@@ -4138,12 +4141,12 @@ function allow_override($sroleid, $troleid) {
  * @param int troleid - target roleid
  * @return int - id or false
  */
-function allow_assign($sroleid, $troleid) {
+function allow_assign($fromroleid, $targetroleid) {
     global $DB;
 
     $record = new object;
-    $record->roleid      = $sroleid;
-    $record->allowassign = $troleid;
+    $record->roleid      = $fromroleid;
+    $record->allowassign = $targetroleid;
     return $DB->insert_record('role_allow_assign', $record);
 }
 
