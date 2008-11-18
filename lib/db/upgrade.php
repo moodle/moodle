@@ -1024,6 +1024,38 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2008111200);
     }
 
+/// Add a unique index to the role.name column.
+    if ($result && $oldversion < 2008111800) {
+
+    /// Define index name (unique) to be added to role
+        $table = new xmldb_table('role');
+        $index = new xmldb_index('name', XMLDB_INDEX_UNIQUE, array('name'));
+
+    /// Conditionally launch add index name
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008111800);
+    }
+
+/// Add a unique index to the role.shortname column.
+    if ($result && $oldversion < 2008111801) {
+
+    /// Define index shortname (unique) to be added to role
+        $table = new xmldb_table('role');
+        $index = new xmldb_index('shortname', XMLDB_INDEX_UNIQUE, array('shortname'));
+
+    /// Conditionally launch add index shortname
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008111801);
+    }
+
     return $result;
 }
 
