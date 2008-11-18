@@ -1822,12 +1822,13 @@ function moodle_install_roles() {
     }
 
 /// Insert the correct records for legacy roles
+    /* create_role already adds all assigns to admins - that looks like a hack
     allow_assign($adminrole, $adminrole);
     allow_assign($adminrole, $coursecreatorrole);
     allow_assign($adminrole, $noneditteacherrole);
     allow_assign($adminrole, $editteacherrole);
     allow_assign($adminrole, $studentrole);
-    allow_assign($adminrole, $guestrole);
+    allow_assign($adminrole, $guestrole);*/
 
     allow_assign($coursecreatorrole, $noneditteacherrole);
     allow_assign($coursecreatorrole, $editteacherrole);
@@ -1839,13 +1840,14 @@ function moodle_install_roles() {
     allow_assign($editteacherrole, $guestrole);
 
 /// Set up default allow override matrix
+    /* create_role already adds all overrides to admins - that looks like a hack
     allow_override($adminrole, $adminrole);
     allow_override($adminrole, $coursecreatorrole);
     allow_override($adminrole, $noneditteacherrole);
     allow_override($adminrole, $editteacherrole);
     allow_override($adminrole, $studentrole);
     allow_override($adminrole, $guestrole);
-    allow_override($adminrole, $userrole);
+    allow_override($adminrole, $userrole);*/
 
     //See MDL-15841   TODO FOR MOODLE 2.0  XXX
     //allow_override($editteacherrole, $noneditteacherrole);
