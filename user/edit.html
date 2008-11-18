@@ -253,7 +253,7 @@ if (isadmin()) {
 <?php } ?>
 <?php
 $can_edit_user = isadmin();
-if (empty($user->description) && !empty($CFG->profilesforenrolledusersonly) && !record_exists('user_students', 'userid', $userid)&& !record_exists('user_teachers', 'userid', $userid)  && !$can_edit_user) {
+if (empty($user->description) && !empty($CFG->profilesforenrolledusersonly) && !record_exists('user_students', 'userid', $user->id)&& !record_exists('user_teachers', 'userid', $user->id)  && !$can_edit_user) {
     // prevent user editing description
 } else {
 ?>
