@@ -926,7 +926,9 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
         }
 
         $moreurl = $CFG->wwwroot . '/mod/data/view.php?d=' . $data->id . '&amp;rid=' . $record->id;
-        $search && $moreurl .= '&amp;filter=1';
+        if ($search) {
+            $moreurl .= '&amp;filter=1';
+        }
         $patterns[]='##more##';
         $replacement[] = '<a href="' . $moreurl . '"><img src="' . $CFG->pixpath . '/i/search.gif" class="iconsmall" alt="' . get_string('more', 'data') . '" title="' . get_string('more', 'data') . '" /></a>';
 
