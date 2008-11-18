@@ -321,7 +321,20 @@ class question_calculated_qtype extends default_questiontype {
         }
 
         // Choose a random dataset
-        $state->options->datasetitem = rand(1, $maxnumber);
+        if (!isset($cmoptions->intro) || strstr($cmoptions->intro, 'synchronize_calculated') === false ) {
+            $state->options->datasetitem = rand(1, $maxnumber);
+        }else{
+            if( !isset($cmoptions->synchronize_calculated)) {
+               $state->options->datasetitem = rand(1, $maxnumber);
+               $cmoptions->synchronize_calculated = $state->options->datasetitem ;
+            }else {
+                if ($cmoptions->synchronize_calculated <= $maxnumber){
+                    $state->options->datasetitem = $cmoptions->synchronize_calculated ;
+                }else {
+                    $state->options->datasetitem = rand(1, $maxnumber);
+                }
+            }
+        };  
         $state->options->dataset =
          $this->pick_question_dataset($question,$state->options->datasetitem);
         $state->responses = array('' => '');
