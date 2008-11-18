@@ -208,6 +208,13 @@
             'completion_stralty' => get_string('completion-alt-manual-y','completion'),
             'completion_straltn' => get_string('completion-alt-manual-n','completion'),
         ));
+        // This value tracks whether there has been a dynamic change to the page.
+        // It is used so that if a user does this - (a) set some tickmarks, (b)
+        // go to another page, (c) clicks Back button - the page will
+        // automatically reload. Otherwise it would start with the wrong tick
+        // values.
+        print '<form action="."><div><input type="hidden" id="completion_dynamic_change"
+          name="completion_dynamic_change" value="0" /></div></form>';
     }
 
     // Course wrapper start.

@@ -2,7 +2,15 @@ var completion_strsaved, completion_strtitley, completion_strtitlen,
   completion_stralty, completion_straltn;
 var completion_wwwroot;
 
-function completion_init() { 
+function completion_init() {
+  // Check the reload-forcing
+  var changeDetector=document.getElementById('completion_dynamic_change');
+  if(changeDetector.value==1) {
+    changeDetector.value=0;  
+    window.location.reload();
+    return; 
+  }
+
   var toggles=YAHOO.util.Dom.getElementsByClassName('togglecompletion', 'form');
   for(var i=0;i<toggles.length;i++) {
     completion_init_toggle(toggles[i]);
@@ -35,6 +43,7 @@ function completion_init_toggle(form) {
 }
 
 function completion_handle_response(o) {
+  document.getElementById('completion_dynamic_change').value=1;
   if(o.responseText!='OK') {
     alert('An error occurred when attempting to save your tick mark.\n\n('+o.responseText+'.)');
     return;
