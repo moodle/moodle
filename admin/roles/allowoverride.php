@@ -97,13 +97,19 @@
 /// Now the rest of the table.
     foreach ($roles as $fromrole) {
         $row = array($fromrole->localname);
+        $a = new stdClass;
+        $a->fromrole = $fromrole->localname;
         foreach ($roles as $targetrole) {
             if ($allowed[$fromrole->id][$targetrole->id]) {
                 $checked = ' checked="checked"';
             } else {
                 $checked = '';
             }
-            $row[] = '<input type="checkbox" name="s_' . $fromrole->id . '_' . $targetrole->id . '" value="1"' . $checked . ' />';
+            $a->targetrole = $targetrole->localname;
+            $name = 's_' . $fromrole->id . '_' . $targetrole->id;
+            $tooltip = get_string('allowroletooverride', 'role', $a);
+            $row[] = '<input type="checkbox" name="' . $name . '" id="' . $name . '" title="' . $tooltip . '" value="1"' . $checked . ' />' .
+                    '<label for="' . $name . '" class="accesshide">' . $tooltip . '</label>';
         }
         $table->data[] = $row;
     }
