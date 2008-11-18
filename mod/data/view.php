@@ -225,7 +225,9 @@
     }
 
     // Disable search filters if $filter is not true:
-    $filter || $search = '';
+    if (! $filter) {
+        $search = '';
+    }
 
     $textlib = textlib_get_instance();
     if ($textlib->strlen($search) < 2) {
