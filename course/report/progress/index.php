@@ -7,7 +7,7 @@ define('COMPLETION_REPORT_PAGE',50);
 // Get course
 $course=$DB->get_record('course',array('id'=>required_param('course',PARAM_INT)));
 if(!$course) {
-    print_error('invalidcourseid');    
+    print_error('invalidcourseid');
 }
 
 // Sort (default lastname, optionally firstname)
@@ -23,7 +23,7 @@ $csv=$format=='csv' || $excel;
 $start=optional_param('start',0,PARAM_INT);
 
 // Whether to show idnumber
-// TODO: This should really not be using a config option 'intended' for 
+// TODO: This should really not be using a config option 'intended' for
 // gradebook, but that option is also used in quiz reports as well. There ought
 // to be a generic option somewhere.
 $idnumbers=$CFG->grade_report_showuseridnumber;
@@ -69,7 +69,7 @@ if($csv) {
         header('Content-Type: text/csv; charset=UTF-16LE');
         print chr(0xFF).chr(0xFE);
         $sep="\t".chr(0);
-        $line="\n".chr(0);        
+        $line="\n".chr(0);
     } else {
         header('Content-Type: text/csv; charset=UTF-8');
         $sep=",";
@@ -77,7 +77,7 @@ if($csv) {
     }
 } else {
     // Use SVG to draw sideways text if supported
-    $svgcleverness=ajaxenabled(array('Firefox'=>2.0)) && !$USER->screenreader; 
+    $svgcleverness=ajaxenabled(array('Firefox'=>2.0)) && !$USER->screenreader;
 
     // Navigation and header
     $strreports = get_string("reports");
@@ -121,14 +121,14 @@ if($progress->total > COMPLETION_REPORT_PAGE) {
             '&amp;start='.($start+COMPLETION_REPORT_PAGE),false,'completion_next');
     }
 
-    $pagingbar.='</div>';    
+    $pagingbar.='</div>';
 } else {
     $pagingbar='';
 }
 
 // Okay, let's draw the table of progress info,
 
-// Start of table  
+// Start of table
 if(!$csv) {
     print '<br class="clearer"/>'; // ugh
     if(count($progress->users)==0) {
@@ -143,7 +143,7 @@ if(!$csv) {
     // User heading / sort option
     print '<th scope="col" class="completion-sortchoice">';
     if($firstnamesort) {
-        print 
+        print
             get_string('firstname').' / <a href="./?course='.$course->id.'">'.
             get_string('lastname').'</a>';
     } else {
@@ -152,11 +152,11 @@ if(!$csv) {
             get_string('lastname');
     }
     print '</th>';
-    
+
     if($idnumbers) {
-        print '<th>'.get_string('idnumber').'</th>';        
+        print '<th>'.get_string('idnumber').'</th>';
     }
-    
+
 } else {
     if($idnumbers) {
         print $sep;
@@ -173,7 +173,7 @@ foreach($activities as $activity) {
     } else {
         $datetext='';
     }
-    
+
     // Some names (labels) come URL-encoded and can be very long, so shorten them
     $activity->name=shorten_text(urldecode($activity->name));
 
@@ -234,12 +234,12 @@ foreach($progress->users as $user) {
             case COMPLETION_COMPLETE : $completiontype='y'; break;
             case COMPLETION_COMPLETE_PASS : $completiontype='pass'; break;
             case COMPLETION_COMPLETE_FAIL : $completiontype='fail'; break;
-        }        
+        }
 
         $completionicon='completion-'.
             ($activity->completion==COMPLETION_TRACKING_AUTOMATIC ? 'auto' : 'manual').
             '-'.$completiontype;
-        
+
         $describe=get_string('completion-alt-auto-'.$completiontype,'completion');
         $a=new StdClass;
         $a->state=$describe;
