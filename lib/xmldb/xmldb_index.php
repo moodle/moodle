@@ -34,7 +34,7 @@ class xmldb_index extends xmldb_object {
     /**
      * Creates one new xmldb_index
      */
-    function __construct($name, $type=null, $fields=null) {
+    function __construct($name, $type=null, $fields=array()) {
         $this->unique = false;
         $this->fields = array();
         parent::__construct($name);

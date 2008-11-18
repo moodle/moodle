@@ -36,7 +36,7 @@ class xmldb_key extends xmldb_object {
     /**
      * Creates one new xmldb_key
      */
-    function __construct($name, $type=null, $fields=null, $reftable=null, $reffields=null) {
+    function __construct($name, $type=null, $fields=array(), $reftable=null, $reffields=null) {
         $this->type = NULL;
         $this->fields = array();
         $this->reftable = NULL;
