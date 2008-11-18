@@ -919,7 +919,7 @@ class view_table_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Conditionally launch add index ' . $index->getName() . XMLDB_LINEFEED;
-        $result .= '        if (!$dbman->index_exists($table, $index) {' . XMLDB_LINEFEED;
+        $result .= '        if (!$dbman->index_exists($table, $index)) {' . XMLDB_LINEFEED;
         $result .= '            $dbman->add_index($table, $index);' . XMLDB_LINEFEED;
         $result .= '        }' . XMLDB_LINEFEED;
 
@@ -967,7 +967,7 @@ class view_table_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Conditionally launch drop index ' . $index->getName() . XMLDB_LINEFEED;
-        $result .= '        if ($dbman->index_exists($table, $index) {' . XMLDB_LINEFEED;
+        $result .= '        if ($dbman->index_exists($table, $index)) {' . XMLDB_LINEFEED;
         $result .= '            $dbman->drop_index($table, $index);' . XMLDB_LINEFEED;
         $result .= '        }' . XMLDB_LINEFEED;
 
