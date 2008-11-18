@@ -3,6 +3,10 @@
 /// Library of functions and constants for module chat
 require_once($CFG->libdir.'/pagelib.php');
 
+$CFG->chat_enable_ajax = true;
+$CFG->chat_ajax_debug  = false;
+$CFG->chat_use_cache   = false;
+
 // The HTML head for the message window to start with (<!-- nix --> is used to get some browsers starting with output
 $CHAT_HTMLHEAD = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\"><html><head></head>\n<body>\n\n".padding(200);
 
@@ -32,7 +36,24 @@ $CHAT_HTMLHEAD_OUT = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional/
 $CHAT_HTMLHEAD_MSGINPUT = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\"><html><head><title>Message Input</title></head><body>";
 
 // The HTML code for the message input page, with JavaScript
-$CHAT_HTMLHEAD_MSGINPUT_JS = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\"><html><head><title>Message Input</title>\n<script type=\"text/javascript\">\n//<![CDATA[\nscroll_active = true;\nfunction empty_field_and_submit()\n{\ndocument.fdummy.arsc_message.value=document.f.arsc_message.value;\ndocument.fdummy.submit();\ndocument.f.arsc_message.focus();\ndocument.f.arsc_message.select();\nreturn false;\n}\n//]]>\n</script>\n</head><body bgcolor=\"#FFFFFF\" OnLoad=\"document.f.arsc_message.focus();document.f.arsc_message.select();\">";
+$CHAT_HTMLHEAD_MSGINPUT_JS = <<<EOD
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+    <head><title>Message Input</title>
+    <script type="text/javascript">
+    //<![CDATA[
+    scroll_active = true;
+    function empty_field_and_submit(){
+        document.fdummy.arsc_message.value=document.f.arsc_message.value;
+        document.fdummy.submit();
+        document.f.arsc_message.focus();
+        document.f.arsc_message.select();
+        return false;
+    }
+    //]]>
+    </script>
+    </head><body OnLoad="document.f.arsc_message.focus();document.f.arsc_message.select();">;
+EOD;
 
 // Dummy data that gets output to the browser as needed, in order to make it show output
 $CHAT_DUMMY_DATA = padding(200);
@@ -692,10 +713,16 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
             return false;
         }
     } else if (substr($text, 0, 1) == '/') {     /// It's a user command
-        if (trim(substr($text, 0, 4)) == '/me') {
+        // support some IRC commands
+        $pattern = '#(^\/)(\w+).*#';
+        preg_match($pattern, trim($text), $matches);
+        $command = $matches[2];
+        switch ($command){
+        case 'me':
             $special = true;
             $outinfo = $message->strtime;
-            $outmain = $sender->firstname.' '.substr($text, 4);
+            $outmain = '*** <b>'.$sender->firstname.' '.substr($text, 4).'</b>';
+            break;
         }
     }
 

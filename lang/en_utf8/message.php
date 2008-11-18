@@ -5,6 +5,7 @@
 $string['addcontact'] = 'Add contact';
 $string['addsomecontacts'] = 'To send a message to someone, or to add a shortcut for them on this page, use the <a href=\"$a\">search tab</a> above.';
 $string['addsomecontactsincoming'] = 'These messages are from people who are not in your contact list. To add them to your contacts, click the \"Add contact\" icon next to their name.';
+$string['ajax_gui'] = 'Ajax chat room';
 $string['ago'] = '$a ago';
 $string['allmine'] = 'All messages to me or from me';
 $string['allstudents'] = 'All messages between students in course';
