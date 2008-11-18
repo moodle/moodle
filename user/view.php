@@ -136,7 +136,6 @@
 
     // Print the description
 
-    var_dump($CFG->profilesforenrolledusersonly);
     if ($user->description && !isset($hiddenfields['description'])) {
         $has_courseid = ($course->id != SITEID);
         if (!$has_courseid && !empty($CFG->profilesforenrolledusersonly)
