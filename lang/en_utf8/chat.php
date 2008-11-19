@@ -38,6 +38,7 @@ $string['generalconfig'] = 'General configuration';
 $string['helpchatting'] = 'Help with chatting';
 $string['idle'] = 'Idle';
 $string['invalidid'] = 'Could not find that chat room!';
+$string['inputarea'] = 'Input area';
 $string['messagebeepseveryone'] = '$a beeps everyone!';
 $string['messagebeepsyou'] = '$a has just beeped you!';
 $string['messageenter'] = '$a has just entered this chat';
@@ -71,6 +72,7 @@ $string['serverip'] = 'Server ip';
 $string['servermax'] = 'Max users';
 $string['serverport'] = 'Server port';
 $string['savemessages'] = 'Save past sessions';
+$string['saidto'] = '<b>said to</b>';
 $string['seesession'] = 'See this session';
 $string['send'] = 'Send';
 $string['sending'] = 'Sending';
@@ -79,6 +81,7 @@ $string['strftimemessage'] = '%%H:%%M';
 $string['studentseereports'] = 'Everyone can view past sessions';
 $string['updatemethod'] = 'Update method';
 $string['updaterate'] = 'Update Rate: ';
+$string['userlist'] = 'User list';
 $string['viewreport'] = 'View past chat sessions';
 
 ?>
