@@ -480,6 +480,7 @@ function chat_login_user($chatid, $version, $groupid, $course) {
     global $USER, $DB;
 
     if (($version != 'sockets') and $chatuser = $DB->get_record('chat_users', array('chatid'=>$chatid, 'userid'=>$USER->id, 'groupid'=>$groupid))) {
+        // this will update logged user information
         $chatuser->version  = $version;
         $chatuser->ip       = $USER->lastip;
         $chatuser->lastping = time();
@@ -495,8 +496,7 @@ function chat_login_user($chatid, $version, $groupid, $course) {
             }
         }
 
-        if (($chatuser->course != $course->id)
-         or ($chatuser->userid != $USER->id)) {
+        if (($chatuser->course != $course->id) or ($chatuser->userid != $USER->id)) {
             return false;
         }
         if (!$DB->update_record('chat_users', $chatuser)) {
@@ -540,7 +540,8 @@ function chat_login_user($chatid, $version, $groupid, $course) {
             $message->system    = 1;
             $message->timestamp = time();
 
-            if (!$DB->insert_record('chat_messages', $message) || !$DB->insert_record('chat_messages_current', $message)) {
+            if (!$DB->insert_record('chat_messages', $message) || !$DB->insert_record('chat_messages_current', $message))
+            {
                 print_error('cantinsert', 'chat');
             }
         }
@@ -723,6 +724,12 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
             $outmain = '*** <b>'.$sender->firstname.' '.substr($text, 4).'</b>';
             break;
         }
+    } elseif (substr($text, 0, 2) == 'To') {
+        $pattern = '#To[[:space:]](.*):(.*)#';
+        preg_match($pattern, trim($text), $matches);
+        $special = true;
+        $outinfo = $message->strtime;
+        $outmain = $sender->firstname.' '.get_string('saidto', 'chat').' <i>'.$matches[1].'</i>: '.$matches[2];
     }
 
     if(!$special) {
