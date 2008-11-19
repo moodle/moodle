@@ -753,6 +753,8 @@ if ($nextstage == SAVE) {
 function form_table($nextstage = WELCOME, $formaction = "install.php") {
     global $INSTALL, $db;
 
+    $enablenext = true;
+
     /// Print the standard form if we aren't in the DOWNLOADLANG page
     /// because it has its own form.
     if ($nextstage != DOWNLOADLANG) {
@@ -787,12 +789,16 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
 
             /// Check that PHP is of a sufficient version
             print_compatibility_row(inst_check_php_version(), get_string('phpversion', 'install'), get_string('phpversionerror', 'install'), 'phpversionhelp');
+            $enablenext = $enablenext && inst_check_php_version();
             /// Check session auto start
             print_compatibility_row(!ini_get_bool('session.auto_start'), get_string('sessionautostart', 'install'), get_string('sessionautostarterror', 'install'), 'sessionautostarthelp');
+            $enablenext = $enablenext && !ini_get_bool('session.auto_start');
             /// Check magic quotes
             print_compatibility_row(!ini_get_bool('magic_quotes_runtime'), get_string('magicquotesruntime', 'install'), get_string('magicquotesruntimeerror', 'install'), 'magicquotesruntimehelp');
+            $enablenext = $enablenext && !ini_get_bool('magic_quotes_runtime');
             /// Check unsupported PHP configuration
-            print_compatibility_row(ini_get_bool('magic_quotes_gpc') || (!ini_get_bool('register_globals')), get_string('globalsquotes', 'install'), get_string('globalsquoteserror', 'install'), 'globalsquoteshelp');
+            print_compatibility_row(!ini_get_bool('register_globals'), get_string('globalsquotes', 'install'), get_string('globalswarning', 'install'));
+            $enablenext = $enablenext && !ini_get_bool('register_globals');
             /// Check safe mode
             print_compatibility_row(!ini_get_bool('safe_mode'), get_string('safemode', 'install'), get_string('safemodeerror', 'install'), 'safemodehelp', true);
             /// Check file uploads
@@ -965,9 +971,11 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
             <div><input type="hidden" name="stage" value="<?php echo $nextstage ?>" /></div>
 <?php
     }
+
+    $disabled = $enablenext ? '' : 'disabled="disabled"';
 ?>
 
-            <?php echo ($nextstage < SAVE) ? "<div><input type=\"submit\" name=\"next\" value=\"".get_string('next')."  &raquo;\" style=\"float: ".fix_align_rtl("right")."\"/></div>\n" : "&nbsp;\n" ?>
+            <?php echo ($nextstage < SAVE) ? "<div><input $disabled type=\"submit\" name=\"next\" value=\"".get_string('next')."  &raquo;\" style=\"float: ".fix_align_rtl("right")."\"/></div>\n" : "&nbsp;\n" ?>
             <?php echo ($nextstage > WELCOME) ? "<div><input type=\"submit\" name=\"prev\" value=\"&laquo;  ".get_string('previous')."\" style=\"float: ".fix_align_rtl("left")."\"/></div>\n" : "&nbsp;\n" ?>
 
 <?php
@@ -1011,7 +1019,9 @@ function print_compatibility_row($success, $testtext, $errormessage, $helpfield=
         echo "</p></td>\n";
         echo "<td valign=\"top\">";
         echo "<p class=\"p_install\">$errormessage ";
-        install_helpbutton("install.php?help=$helpfield");
+        if ($helpfield !== '') {
+            install_helpbutton("install.php?help=$helpfield");
+        }
         echo "</p></td>\n";
     }
     echo "</tr>\n";

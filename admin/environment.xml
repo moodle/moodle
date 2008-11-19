@@ -200,7 +200,7 @@
           <ON_OK message="questioncwqpfsok" />
         </FEEDBACK>
       </CUSTOM_CHECK>
-      <CUSTOM_CHECK file="lib/customcheckslib.php" function="php_check_register_globals" level="optional">
+      <CUSTOM_CHECK file="lib/customcheckslib.php" function="php_check_register_globals" level="required">
         <FEEDBACK>
           <ON_CHECK message="globalswarning" />
         </FEEDBACK>
@@ -272,7 +272,7 @@
       </PHP_EXTENSION>
     </PHP_EXTENSIONS>
     <CUSTOM_CHECKS>
-      <CUSTOM_CHECK file="lib/customcheckslib.php" function="php_check_register_globals" level="optional">
+      <CUSTOM_CHECK file="lib/customcheckslib.php" function="php_check_register_globals" level="required">
         <FEEDBACK>
           <ON_CHECK message="globalswarning" />
         </FEEDBACK>
