@@ -2,11 +2,11 @@
 
 require_once('HTML/QuickForm/element.php');
 
-class MoodleQuickForm_areafiles extends HTML_QuickForm_element {
+class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     protected $_helpbutton = '';
     protected $_options    = array('subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>0);
 
-    function MoodleQuickForm_areafiles($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
+    function MoodleQuickForm_filemanager($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
         global $CFG;
 
         $options = (array)$options;
