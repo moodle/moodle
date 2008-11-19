@@ -3,10 +3,6 @@
 require_once('../../../config.php');
 require_once('../lib.php');
 require_once('common.php');
-function microtime_float(){
-    list($usec, $sec) = explode(" ", microtime());
-    return ((float)$usec+(float)$sec);
-}
 $time_start = microtime_float();
 $id      = required_param('id', PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT); //only for teachers
@@ -49,6 +45,7 @@ if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_
 $strchat = get_string('modulename', 'chat'); // must be before current_language() in chat_login_user() to force course language!!!
 $str_send    = get_string('send', 'chat');
 $str_sending = get_string('sending', 'chat');
+$str_title   = format_string($course->shortname) . ": ".format_string($chat->name,true).$groupname;
 if (!$chat_sid = chat_login_user($chat->id, 'ajax', $groupid, $course)) {
     print_error('cantlogin', 'chat');
 }
@@ -63,7 +60,7 @@ if (!$chat_sid = chat_login_user($chat->id, 'ajax', $groupid, $course)) {
 <link rel="stylesheet" type="text/css" href="<?php echo $CFG->httpswwwroot;?>/lib/yui/layout/assets/skins/sam/layout.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo $CFG->httpswwwroot;?>/lib/yui/button/assets/skins/sam/button.css" />
 <?php
-print_js_config(array('sid'=>$chat_sid,'timer'=>5000, 'chat_lasttime'=>0,'chat_lastrow'=>null), 'chat_cfg');
+print_js_config(array('sid'=>$chat_sid,'timer'=>5000, 'chat_lasttime'=>0,'chat_lastrow'=>null, 'header_title'=>$strchat), 'chat_cfg');
 print_js_config(array('send'=>$str_send, 'sending'=>$str_sending), 'chat_lang');
 ?>
 <script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/yahoo-dom-event/yahoo-dom-event.js"></script>
@@ -80,7 +77,7 @@ print_js_config(array('send'=>$str_send, 'sending'=>$str_sending), 'chat_lang');
 </head>
 <body class=" yui-skin-sam">
 <div id="chat_header">
-<p>Moodle 2.0</p>
+<h1><?php echo $str_title;?></h1>
 </div>
 <div id="chat_input">
     <input type="text" id="input_msgbox" value="" size="48" />

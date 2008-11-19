@@ -1,17 +1,15 @@
 (function() {
-var Dom = YAHOO.util.Dom,
-// record msg IDs
-Event = YAHOO.util.Event;
+var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event;
 // window.onload
 Event.onDOMReady(function() {
     // build layout
     var layout = new YAHOO.widget.Layout({
         units: [
-        { position: 'top', height: 50, body: 'chat_header', header: 'Chat Room', gutter: '5px', collapse: true, resize: false },
+        { position: 'top', height: 60, body: 'chat_header', header: chat_cfg.header_title, gutter: '5px', collapse: true, resize: false },
         { position: 'right', header: 'User List', width: 300, resize: true, gutter: '5px', footer: null, collapse: true, scroll: true, body: 'chat_user_list', animate: false },
-        { position: 'bottom', header: 'Input Area', height: 100, resize: true, body: 'chat_input', gutter: '5px', collapse: true },
-        { position: 'left', header: 'Options', width: 200, resize: true, body: 'chat_options', gutter: '5px', collapse: true, close: true, collapseSize: 50, scroll: true, animate: false },
-        { position: 'center', body: 'chat_panel' }
+        { position: 'bottom', header: 'Input Area', height: 60, resize: true, body: 'chat_input', gutter: '5px', collapse: false },
+        //{ position: 'left', header: 'Options', width: 200, resize: true, body: 'chat_options', gutter: '5px', collapse: true, close: true, collapseSize: 50, scroll: true, animate: false },
+        { position: 'center', body: 'chat_panel', gutter: '5px', scroll: true }
         ]
     });
     layout.on('render', function() {
@@ -21,24 +19,35 @@ Event.onDOMReady(function() {
     });
     layout.render();
     Event.on('btn_send', 'click', function(ev) {
-        var msg = document.getElementById('input_msgbox').value;
-        if (!msg) {
-            alert('null?');
-            return;
-        }
-        var url = 'post.php?chat_sid='+chat_cfg.sid;
         Event.stopEvent(ev);
-        this.value = chat_lang.sending;
-        var a = YAHOO.util.Connect.asyncRequest('POST', url, send_cb, "chat_message="+msg);
+        send_msg();
     });
+    var key_send = new YAHOO.util.KeyListener(document, { keys:13 }, {fn:send_msg, correctScope:true });
+    key_send.enable();
+    document.getElementById('input_msgbox').focus();
+
     // done build layout
     var transaction = YAHOO.util.Connect.asyncRequest('POST', "update.php?chat_sid="+chat_cfg.sid+"&chat_init=1", init_cb, null);
-    var interval = setInterval(function(){
+    interval = setInterval(function(){
         update_info();
     }, chat_cfg.timer);
 });
 })();
+function send_msg() {
+    var msg = document.getElementById('input_msgbox').value;
+    var el_send = document.getElementById('btn_send');
+    if (!msg) {
+        alert('null?');
+        return;
+    }
+    var url = 'post.php?chat_sid='+chat_cfg.sid;
+    el_send.value = chat_lang.sending;
+    var a = YAHOO.util.Connect.asyncRequest('POST', url, send_cb, "chat_message="+msg);
+}
+
+// record msg IDs
 var msgs = [];
+var interval = null;
 
 function update_users(users) {
     if(!users){
@@ -48,7 +57,7 @@ function update_users(users) {
     list.innerHTML = '';
     for(i in users){
         var el = document.createElement('li');
-        el.innerHTML = users[i].firstname;
+        el.innerHTML = users[i].picture+' '+users[i].name;
         console.info(users[i]);
         list.appendChild(el);
     }
@@ -74,12 +83,18 @@ function append_msg(msg) {
 }
 
 var send_cb = {
-success: function(o) {
-             if(o.responseText == 200){
-                 document.getElementById('btn_send').value = chat_lang.send;
-                 document.getElementById('input_msgbox').value = '';
-             }
-         }
+    success: function(o) {
+        if(o.responseText == 200){
+         document.getElementById('btn_send').value = chat_lang.send;
+         document.getElementById('input_msgbox').value = '';
+        }
+        clearInterval(interval)
+        update_info();
+        interval = setInterval(function(){
+            update_info();
+        }, chat_cfg.timer);
+        document.getElementById('input_msgbox').focus();
+    }
 }
 var update_cb = {
 success: function(o){
@@ -125,6 +140,7 @@ var init_cb = {
         }
     }
 }
+
 function in_array(f, t){
     var a = false;
     for( var i = 0; i<t.length; i++){
@@ -134,4 +150,14 @@ function in_array(f, t){
         }
     }
     return a;
+}
+
+// debug code
+if(!console){
+    var console = {
+        info: function(){
+        },
+        log: function(){
+        }
+    }
 }
