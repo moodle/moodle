@@ -467,6 +467,8 @@ abstract class moodle_database {
             throw new dml_exception('invalidqueryparam', $a);
         }
 
+        $target_type = $allowed_types;
+
         if ($type & $allowed_types) { // bitwise AND
             if ($count == count($params)) {
                 if ($type == SQL_PARAMS_QM) {
@@ -477,9 +479,6 @@ abstract class moodle_database {
             }
             // needs some fixing or validation - there might be more params than needed
             $target_type = $type;
-
-        } else {
-            $target_type = $allowed_types;
         }
 
         if ($type == SQL_PARAMS_NAMED) {
