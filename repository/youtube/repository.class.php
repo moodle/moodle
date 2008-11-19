@@ -66,9 +66,7 @@ class repository_youtube extends repository {
         $ret  = array();
         $ret['nologin'] = true;
         $ret['path'] = array(array('name'=>'Root', 'path'=>0));
-        echo_fb($this->keyword);
         $ret['list'] = $this->_get_collection($this->keyword, $this->start, $this->max, $this->sort);
-        $file = 'ts.txt';
         return $ret;
     }
 
