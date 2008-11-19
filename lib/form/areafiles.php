@@ -4,7 +4,7 @@ require_once('HTML/QuickForm/element.php');
 
 class MoodleQuickForm_areafiles extends HTML_QuickForm_element {
     protected $_helpbutton = '';
-    protected $_options    = array('subdirs'=>0, 'maxbytes'=>0);
+    protected $_options    = array('subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>0);
 
     function MoodleQuickForm_areafiles($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
         global $CFG;
@@ -52,6 +52,14 @@ class MoodleQuickForm_areafiles extends HTML_QuickForm_element {
 
     function setSubdirs($allow) {
         $this->_options['subdirs'] = $allow;
+    }
+
+    function getMaxfiles() {
+        return $this->_options['maxfiles'];
+    }
+
+    function setMaxfiles($num) {
+        $this->_options['maxfiles'] = $num;
     }
 
     function setHelpButton($_helpbuttonargs, $function='_helpbutton') {
