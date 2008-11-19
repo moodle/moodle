@@ -14,6 +14,7 @@
     $name    = optional_param('name', '', PARAM_CLEAN);
     $confirm = optional_param('confirm', 0, PARAM_INT);
     $groupid = optional_param('groupid', null, PARAM_INT);
+    $draftitemid = optional_param('attachments', 0, PARAM_INT);
 
 
     //these page_params will be passed as hidden variables later in the form.
@@ -436,10 +437,19 @@
         $coursecontext = get_context_instance(CONTEXT_COURSE, $forum->course);
     }
 
+
+// from now on user must be logged on properly
+
     if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) { // For the logs
         error('Could not get the course module for the forum instance.');
     }
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    require_login($course->id, false, $cm);
+
+    if (isguestuser()) {
+        // just in case
+        print_error('noguest');
+    }
 
     if (!isset($forum->maxattachments)) {  // TODO - delete this once we add a field to the forum table
         $forum->maxattachments = 3;
@@ -447,9 +457,76 @@
 
     $mform_post = new mod_forum_post_form('post.php', array('course'=>$course, 'cm'=>$cm, 'coursecontext'=>$coursecontext, 'modcontext'=>$modcontext, 'forum'=>$forum, 'post'=>$post));
 
-    if ($fromform = $mform_post->get_data()) {
+    file_prepare_draftarea($draftitemid, $modcontext->id, 'forum_attachment', empty($post->id)?null:$post->id , false);
 
-        require_login($course, false, $cm);
+    //load data into form NOW!
+
+    if ($USER->id != $post->userid) {   // Not the original author, so add a message to the end
+        $data->date = userdate($post->modified);
+        if ($post->format == FORMAT_HTML) {
+            $data->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$USER->id.'&course='.$post->course.'">'.
+                           fullname($USER).'</a>';
+            $post->message .= '<p>(<span class="edited">'.get_string('editedby', 'forum', $data).'</span>)</p>';
+        } else {
+            $data->name = fullname($USER);
+            $post->message .= "\n\n(".get_string('editedby', 'forum', $data).')';
+        }
+    }
+
+    if (!empty($parent)) {
+        $heading = get_string("yourreply", "forum");
+    } else {
+        if ($forum->type == 'qanda') {
+            $heading = get_string('yournewquestion', 'forum');
+        } else {
+            $heading = get_string('yournewtopic', 'forum');
+        }
+    }
+
+    if (forum_is_subscribed($USER->id, $forum->id)) {
+        $subscribe = true;
+
+    } else if (forum_user_has_posted($forum->id, 0, $USER->id)) {
+        $subscribe = false;
+
+    } else {
+        // user not posted yet - use subscription default specified in profile
+        $subscribe = !empty($USER->autosubscribe);
+    }
+
+    $mform_post->set_data(array(        'attachments'=>$draftitemid,
+                                        'general'=>$heading,
+                                        'subject'=>$post->subject,
+                                        'message'=>$post->message,
+                                        'subscribe'=>$subscribe?1:0,
+                                        'mailnow'=>!empty($post->mailnow),
+                                        'userid'=>$post->userid,
+                                        'parent'=>$post->parent,
+                                        'discussion'=>$post->discussion,
+                                        'course'=>$course->id) +
+                                        $page_params +
+
+                                (isset($post->format)?array(
+                                        'format'=>$post->format):
+                                    array())+
+
+                                (isset($discussion->timestart)?array(
+                                        'timestart'=>$discussion->timestart):
+                                    array())+
+
+                                (isset($discussion->timeend)?array(
+                                        'timeend'=>$discussion->timeend):
+                                    array())+
+
+                                (isset($post->groupid)?array(
+                                        'groupid'=>$post->groupid):
+                                    array())+
+
+                                (isset($discussion->id)?
+                                        array('discussion'=>$discussion->id):
+                                        array()));
+
+    if ($fromform = $mform_post->get_data()) {
 
         if (empty($SESSION->fromurl)) {
             $errordestination = "$CFG->wwwroot/mod/forum/view.php?f=$forum->id";
@@ -638,12 +715,6 @@
 
     // $course, $forum are defined.  $discussion is for edit and reply only.
 
-    $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
-
-    require_login($course->id, false, $cm);
-
-    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-
     if ($post->discussion) {
         if (! $toppost = $DB->get_record("forum_posts", array("discussion" => $post->discussion, "parent" => 0))) {
             error("Could not find top parent of post $post->id");
@@ -718,102 +789,14 @@
                 forum_print_posts_threaded($course, $cm, $forum, $discussion, $parent, 0, false, false, $forumtracked, $posts);
             }
         }
-        $heading = get_string("yourreply", "forum");
     } else {
         $forum->intro = trim($forum->intro);
         if (!empty($forum->intro)) {
             print_box(format_text($forum->intro), 'generalbox', 'intro');
         }
-        if ($forum->type == 'qanda') {
-            $heading = get_string('yournewquestion', 'forum');
-        } else {
-            $heading = get_string('yournewtopic', 'forum');
-        }
     }
-
-    if ($USER->id != $post->userid) {   // Not the original author, so add a message to the end
-        $data->date = userdate($post->modified);
-        if ($post->format == FORMAT_HTML) {
-            $data->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$USER->id.'&course='.$post->course.'">'.
-                           fullname($USER).'</a>';
-            $post->message .= '<p>(<span class="edited">'.get_string('editedby', 'forum', $data).'</span>)</p>';
-        } else {
-            $data->name = fullname($USER);
-            $post->message .= "\n\n(".get_string('editedby', 'forum', $data).')';
-        }
-    }
-
-    //load data into form
-
-    if (forum_is_subscribed($USER->id, $forum->id)) {
-        $subscribe = true;
-
-    } else if (forum_user_has_posted($forum->id, 0, $USER->id)) {
-        $subscribe = false;
-
-    } else {
-        // user not posted yet - use subscription default specified in profile
-        $subscribe = !empty($USER->autosubscribe);
-    }
-
-    $defaultattachments = array();
-
-    if ($forum->maxattachments) {
-        for ($i=0; $i<$forum->maxattachments; $i++) {
-            $defaultattachments['attachment'.$i] = '';
-        }
-    
-        if (!empty($post->attachment)) {   // We already have some attachments, so show them
-            $fs = get_file_storage();
-    
-            $i = 0;
-            if ($files = $fs->get_area_files($modcontext->id, 'forum_attachment', $post->id, "timemodified ASC", false)) {
-                foreach ($files as $file) {
-                    $defaultattachments['attachment'.$i] = $file->get_filename();
-                    $i++;
-                }
-            }
-        }
-    }
-
-    // HACK ALERT: this is very wrong, the defaults should be always initialized before calling $mform->get_data() !!!
-    $mform_post->set_data(array(    'general'=>$heading,
-                                        'subject'=>$post->subject,
-                                        'message'=>$post->message,
-                                        'subscribe'=>$subscribe?1:0,
-                                        'mailnow'=>!empty($post->mailnow),
-                                        'userid'=>$post->userid,
-                                        'parent'=>$post->parent,
-                                        'discussion'=>$post->discussion,
-                                        'course'=>$course->id) +
-
-                                        $defaultattachments +
-
-                                        $page_params +
-
-                                (isset($post->format)?array(
-                                        'format'=>$post->format):
-                                    array())+
-
-                                (isset($discussion->timestart)?array(
-                                        'timestart'=>$discussion->timestart):
-                                    array())+
-
-                                (isset($discussion->timeend)?array(
-                                        'timeend'=>$discussion->timeend):
-                                    array())+
-
-                                (isset($post->groupid)?array(
-                                        'groupid'=>$post->groupid):
-                                    array())+
-
-                                (isset($discussion->id)?
-                                        array('discussion'=>$discussion->id):
-                                        array()));
-
 
     $mform_post->display();
-
 
     print_footer($course);
 

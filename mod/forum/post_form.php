@@ -21,7 +21,7 @@ class mod_forum_post_form extends moodleform {
         $mform->addElement('text', 'subject', get_string('subject', 'forum'), 'size="48"');
         $mform->setType('subject', PARAM_TEXT);
         $mform->addRule('subject', get_string('required'), 'required', null, 'client');
-        $mform->addRule('subject', get_string('maximumchars', '', 255), 'maxlength', 255, 'client'); 
+        $mform->addRule('subject', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         $mform->addElement('htmleditor', 'message', get_string('message', 'forum'), array('cols'=>50, 'rows'=>30, 'filearea'=>'forumpost'));
         $mform->setType('message', PARAM_RAW);
@@ -53,10 +53,9 @@ class mod_forum_post_form extends moodleform {
         }
 
         if (!empty($forum->maxattachments) && $forum->maxbytes != 1 && has_capability('mod/forum:createattachment', $modcontext))  {  //  1 = No attachments at all
-            for ($i=0; $i<$forum->maxattachments; $i++) {
-                $mform->addElement('filepicker', 'attachment'.$i, get_string('attachment', 'forum'));
-                $mform->setHelpButton('attachment'.$i, array('attachment2', get_string('attachment', 'forum'), 'forum'));
-            }
+            $mform->addElement('filemanager', 'attachments', get_string('attachment', 'forum'),
+                               array('subdirs'=>0, 'maxbytes'=>$forum->maxbytes, 'maxfiles'=>$forum->maxattachments));
+            $mform->setHelpButton('attachments', array('attachment2', get_string('attachment', 'forum'), 'forum'));
         }
 
         if (empty($post->id) && has_capability('moodle/course:manageactivities', $coursecontext)) { // hack alert

@@ -62,19 +62,19 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $this->_options['maxfiles'] = $num;
     }
 
-    function setHelpButton($_helpbuttonargs, $function='_helpbutton') {
-        if (!is_array($_helpbuttonargs)) {
-            $_helpbuttonargs = array($_helpbuttonargs);
-        } else {
-            $_helpbuttonargs = $_helpbuttonargs;
+    function setHelpButton($helpbuttonargs, $function='helpbutton'){
+        if (!is_array($helpbuttonargs)){
+            $helpbuttonargs=array($helpbuttonargs);
+        }else{
+            $helpbuttonargs=$helpbuttonargs;
         }
         //we do this to to return html instead of printing it
         //without having to specify it in every call to make a button.
-        if ('_helpbutton' == $function){
-            $defaultargs = array('', '', 'moodle', true, false, '', true);
-            $_helpbuttonargs = $_helpbuttonargs + $defaultargs ;
+        if ('helpbutton' == $function){
+            $defaultargs=array('', '', 'moodle', true, false, '', true);
+            $helpbuttonargs=$helpbuttonargs + $defaultargs ;
         }
-        $this->_helpbutton=call_user_func_array($function, $_helpbuttonargs);
+        $this->_helpbutton=call_user_func_array($function, $helpbuttonargs);
     }
 
     function getHelpButton() {

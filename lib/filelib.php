@@ -93,7 +93,7 @@ function file_get_new_draftitemid() {
  * @param int &$draftitemid
  * @param int $contextid
  * @param string $filearea
- * @param int $itemid
+ * @param int $itemid (null menas no existing files yet)
  * @param bool subdirs allow directory structure
  * @param string $text usually html text with embedded links to draft area
  * @param boolean $forcehttps force https
@@ -109,9 +109,9 @@ function file_prepare_draftarea(&$draftitemid, $contextid, $filearea, $itemid, $
         // create a new area and copy existing files into
         $draftitemid = file_get_new_draftitemid();
         $file_record = array('contextid'=>$usercontext->id, 'filearea'=>'user_draft', 'itemid'=>$draftitemid);
-        if ($files = $fs->get_area_files($contextid, $filearea, $itemid)) {
+        if (!is_null($itemid) and $files = $fs->get_area_files($contextid, $filearea, $itemid)) {
             foreach ($files as $file) {
-                if (!$subdirs and $file->get_filepath() !== '/') {
+                if (!$subdirs and ($file->is_directory() or $file->get_filepath() !== '/')) {
                     continue;
                 }
                 $fs->create_file_from_storedfile($file_record, $file);
@@ -140,6 +140,24 @@ function file_prepare_draftarea(&$draftitemid, $contextid, $filearea, $itemid, $
     $text = str_replace('@@PLUGINFILE@@/', $draftbase);
 
     return $text;
+}
+
+/**
+ * Returns information about files in draft area
+ * @param <type> $draftitemid 
+ * @return array TODO: count=>n
+ */
+function get_draftarea_info($draftitemid) {
+
+    global $CFG, $USER;
+
+    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+    $fs = get_file_storage();
+
+    // number of files
+    $draftfiles = $fs->get_area_files($usercontext->id, 'user_draft', $draftitemid, 'id', false);
+
+    return array('filecount'=>count($draftfiles));
 }
 
 /**
@@ -278,82 +296,6 @@ function file_get_upload_error($errorcode) {
     }
 
     return $errmessage;
-}
-
-/**
- * Finds occurences of a link to "draftfile.php" in text and replaces the
- * address based on passed information. Matching is performed using the given
- * current itemid, contextid and filearea and $CFG->wwwroot. This function
- * replaces all the urls for one file. If more than one files were sent, it
- * must be called once for each file.
- *
- * @uses $CFG
- * @see file_storage::move_draft_to_final()
- *
- * @param $text string text to modify
- * @param $contextid int context that the files should be assigned to
- * @param $filepath string filepath under which the files should be saved
- * @param $filearea string filearea into which the files should be saved
- * @param $itemid int the itemid to assign to the files
- * @param $currentcontextid int the current contextid of the files
- * @param $currentfilearea string the current filearea of the files (defaults
- *   to "user_draft")
- * @return string modified $text, or null if an error occured.
- */
-function file_rewrite_urls($text, $contextid, $filepath, $filearea, $itemid, $currentcontextid, $currentfilearea = 'user_draft') {
-    global $CFG;
-
-    $context = get_context_instance_by_id($contextid);
-    $currentcontext = get_context_instance_by_id($currentcontextid);
-    $fs = get_file_storage();
-
-    //Make sure this won't match wrong stuff, as much as possible (can probably be improved)
-    // * using $currentcontextid in here ensures that we're only matching files belonging to current user
-    // * placeholders: {wwwroot}/draftfile.php/{currentcontextid}/{currentfilearea}/{itemid}{/filepath}/{filename}
-    // * filepath is optional, everything else is guaranteed to be there.
-    $re = '|'. preg_quote($CFG->wwwroot) .'/draftfile.php/'. $currentcontextid .'/'. $currentfilearea .'/([0-9]+)(/[A-Fa-f0-9]+)?/([^\'^"^\>]+)|';
-    $matches = array();
-    if (!preg_match_all($re, $text, $matches, PREG_SET_ORDER)) {
-        return $text; // no draftfile url in text, no replacement necessary.
-    }
-
-    $replacedfiles = array();
-    foreach($matches as $file) {
-
-        $currenturl = $file[0];
-        $currentitemid = $file[1];
-        if (!empty($file[2])) {
-            $currentfilepath = $file[2];
-        }
-        $currentfilepath .= '/';
-        $currentfilename = $file[3];
-
-        // if a new upload has the same file path/name as an existing file, but different content, we put it in a distinct path.
-        $existingfile = $fs->get_file($currentcontextid, $currentfilearea, $currentitemid, $currentfilepath, $currentfilename);
-        $uploadedfile = $fs->get_file($contextid, $filearea, $itemid, $filepath, $currentfilename);
-        if ($existingfile && $uploadedfile && ($existingfile->get_contenthash() != $uploadedfile->get_contenthash())) {
-            $filepath .= $currentitemid .'/';
-        }
-
-        if ($newfiles = $fs->move_draft_to_final($currentitemid, $contextid, $filearea, $itemid, $filepath, false)) {
-            foreach($newfiles as $newfile) {
-                if (in_array($newfile, $replacedfiles)) {
-                    // if a file is being used more than once, all occurences will be replaced the first time, so ignore it when it comes back.
-                    // ..it wouldn't be in user_draft anymore anyway!
-                    continue;
-                }
-                $replacedfiles[] = $newfile;
-                if ($context->contextlevel == CONTEXT_USER) {
-                    $newurl = $CFG->wwwroot .'/userfile.php/'. $contextid .'/'. $filearea . $newfile->get_filepath() . $newfile->get_filename();
-                } else {
-                    $newurl = $CFG->wwwroot .'/pluginfile.php/'. $contextid .'/'. $filearea .'/'. $itemid . $newfile->get_filepath() . $newfile->get_filename();
-                }
-                $text = str_replace('"'. $currenturl .'"', '"'. $newurl .'"', $text);
-            }
-        } // else file not found, wrong file, or string is just not a file so we leave it alone.
-
-    }
-    return $text;
 }
 
 /**

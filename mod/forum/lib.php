@@ -4047,64 +4047,22 @@ function forum_pluginfile($course, $cminfo, $context, $filearea, $args) {
  * @param $newfile is a full upload array from $_FILES
  * @param $message is a string to hold the messages.
  */
-function forum_add_attachment($post, $forum, $cm, $mform=null, &$message=null, $remove_previous=true) {
-    global $CFG, $DB, $USER;
+function forum_add_attachment($post, $forum, $cm, $mform=null, &$message=null) {
+    global $DB;
 
     if (empty($mform)) {
         return false;
     }
 
-    $filearea = 'forum_attachment';
-
-    $fs = get_file_storage();
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    // The logic here really needs work to handle re-editing properly  TODO XXX
+    $info = get_draftarea_info($post->attachments);
+    $present = ($info['filecount']>0) ? '1' : '';
+    file_convert_draftarea($post->attachments, $context->id, 'forum_attachment', $post->id, false);
 
-    if ($remove_previous) {  // Remove ALL previous files for this post
-        $fs->delete_area_files($context->id, $filearea, $post->id);
-        $post->attachment = 0;
-        $DB->set_field('forum_posts', 'attachment', 0, array('id'=>$post->id));  // Update it now in case we fail later on
-    }
+    $DB->set_field('forum_posts', 'attachment', $present, array('id'=>$post->id));
 
-    $values = $mform->get_data();
-
-    if (!isset($forum->maxattachments)) {  // TODO - delete this once we add a field to the forum table
-        $forum->maxattachments = 3;
-    }
-
-    for ($i=0; $i<$forum->maxattachments; $i++) {
-        $elementname = 'attachment'.$i;
-        if (empty($values->$elementname)) {         // Nothing defined
-            continue;
-        }
-        if (!is_numeric($values->$elementname)) {   // Pre-existing file reference, skip it
-            continue;
-        }
-        if ($mform->save_stored_file($elementname, $context->id, $filearea, $post->id, '/', null, true, $USER->id)) {
-            $post->attachment = '1';
-            $DB->set_field('forum_posts', 'attachment', 1, array('id'=>$post->id));  // Update it now in case we fail later on
-        } else {
-            return false;
-        }
-    }
-}
-
-/**
- * Relinks urls linked to draftfile.php in $post->message.
- */
-function forum_relink_inline_attachments($post, $forum, $cm){
-    global $DB;
-
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $authorcontext = get_context_instance(CONTEXT_USER, $post->userid);
-
-    if ($post->message = file_rewrite_urls($post->message, $context->id, '/', 'forum_post', $post->id, $authorcontext->id)) {
-      $DB->set_field("forum_posts", "message", $post->message, array("id" => $post->id));
-      return true;
-    } else {
-      return false;
-    }
+    return true;
 }
 
 /**
@@ -4126,8 +4084,7 @@ function forum_add_new_post($post, $mform, &$message) {
         return false;
     }
 
-    forum_relink_inline_attachments($post, $forum, $cm);
-    forum_add_attachment($post, $forum, $cm, $mform, $message, false);
+    forum_add_attachment($post, $forum, $cm, $mform, $message);
 
     // Update discussion modified date
     $DB->set_field("forum_discussions", "timemodified", $post->modified, array("id" => $post->discussion));
@@ -4169,8 +4126,7 @@ function forum_update_post($post, $mform, &$message) {
         return false;
     }
 
-    forum_relink_inline_attachments($post, $forum, $cm);
-    forum_add_attachment($post, $forum, $cm, $mform, $message, false);
+    forum_add_attachment($post, $forum, $cm, $mform, $message);
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
         forum_tp_mark_post_read($post->userid, $post, $post->forum);
@@ -4203,7 +4159,7 @@ function forum_add_discussion($discussion, $mform=null, &$message=null) {
     $post->mailed      = 0;
     $post->subject     = $discussion->name;
     $post->message     = $discussion->intro;
-    $post->attachment  = 0;
+    $post->attachments = $discussion->attachments;
     $post->forum       = $forum->id;     // speedup
     $post->course      = $forum->course; // speedup
     $post->format      = $discussion->format;
@@ -4233,8 +4189,7 @@ function forum_add_discussion($discussion, $mform=null, &$message=null) {
     }
 
     if (!empty($cm->id)) {
-        forum_relink_inline_attachments($post, $forum, $cm);
-        forum_add_attachment($post, $forum, $cm, $mform, $message, false);
+        forum_add_attachment($post, $forum, $cm, $mform, $message);
     }
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
