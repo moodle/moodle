@@ -12,7 +12,7 @@ require_once('HTML/QuickForm/element.php');
 
 class MoodleQuickForm_editor extends HTML_QuickForm_element {
     protected $_helpbutton = '';
-    protected $_options    = array('subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>0, 'changeformat'=>0);
+    protected $_options    = array('subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>-1, 'changeformat'=>0);
     protected $_values     = array('text'=>null, 'format'=>null, 'itemid'=>null);
 
     function MoodleQuickForm_editor($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
@@ -158,7 +158,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         $str .= '</div>';
 
     /// embedded image files - TODO: hide if tinymce used because it has own image upload/manage dialog
-        if ($maxfiles) {
+        if ($maxfiles >=0) { // -1 means no files, 0 unlimited
             if (empty($draftitemid)) {
                 // no existing area info provided - let's use fresh new draft area
                 require_once("$CFG->libdir/filelib.php");
