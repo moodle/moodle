@@ -8,7 +8,7 @@
 define("EWIKI_PAGE_SITEMAP", "SiteMap");
 define("EWIKI_SITEMAP_DEPTH", 10);
 $ewiki_t["en"]["INVALIDROOT"] = "You are not authorized to access the current root page so no sitemap can be created.";
-$ewiki_t["en"]["SITEMAPFOR"] = "Site map for ";
+$ewiki_t["en"]["SMFOR"] = "Site map for ";
 $ewiki_t["en"]["VIEWSMFOR"] = "View site map for ";
 $ewiki_plugins["page"][EWIKI_PAGE_SITEMAP]="ewiki_page_sitemap";
 $ewiki_plugins["action"]['sitemap']="ewiki_page_sitemap";
@@ -47,7 +47,7 @@ function ewiki_page_sitemap($id=0, $data=0, $action=0){
     }
     
   }else{
-    $o = ewiki_make_title($id, ewiki_t("SITEMAPFOR")." ".$id, 2);    
+    $o = ewiki_make_title($id, ewiki_t("SMFOR")." ".$id, 2);    
     if(isset($a_validpages[$id])){
       $valid_root=TRUE;
       $str_rootid=$id;
