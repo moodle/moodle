@@ -2,7 +2,7 @@
 require_once('../mod/scorm/locallib.php');
 $yesno = array(0 => get_string('no'),
                1 => get_string('yes'));
-               
+
 $settings->add(new admin_setting_configselect('scorm/grademethod', get_string('grademethod', 'scorm'),get_string('grademethoddesc', 'scorm'), GRADESCOES, scorm_get_grade_method_array()));
 
 for ($i=0; $i<=100; $i++) {
@@ -33,8 +33,8 @@ $settings->add(new admin_setting_configtext('scorm/framewidth', get_string('widt
 $settings->add(new admin_setting_configtext('scorm/frameheight', get_string('height', 'scorm'),
                    get_string('frameheight', 'scorm'), 500));
 
-                   
-                   
+
+
 $settings->add(new admin_setting_configselect('scorm/popup', get_string('display','scorm'), get_string('displaydesc','scorm'), 0, scorm_get_popup_display_array()));
 
 foreach(scorm_get_popup_options_array() as $key => $value){
@@ -42,11 +42,11 @@ foreach(scorm_get_popup_options_array() as $key => $value){
 }
 
 $settings->add(new admin_setting_configselect('scorm/skipview', get_string('skipview', 'scorm'), get_string('skipviewdesc', 'scorm'), 0, scorm_get_skip_view_array()));
-        
+
 $settings->add(new admin_setting_configselect('scorm/hidebrowse', get_string('hidebrowse', 'scorm'), get_string('hidebrowsedesc', 'scorm'), 0, $yesno));
 
 $settings->add(new admin_setting_configselect('scorm/hidetoc', get_string('hidetoc', 'scorm'), get_string('hidetocdesc', 'scorm'), 0, scorm_get_hidetoc_array()));
-    
+
 $settings->add(new admin_setting_configselect('scorm/hidenav', get_string('hidenav', 'scorm'), get_string('hidenavdesc', 'scorm'), 0, $yesno));
 
 $settings->add(new admin_setting_configselect('scorm/auto', get_string('autocontinue', 'scorm'), get_string('autocontinuedesc', 'scorm'), 0, $yesno));
