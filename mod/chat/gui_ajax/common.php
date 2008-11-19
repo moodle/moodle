@@ -17,6 +17,16 @@ function format_user_list($data, $course) {
     }
     return $users;
 }
+function chat_print_error($level, $msg) {
+    header('Content-Length: ' . ob_get_length() );
+    $error = new stdclass;
+    $error->level = $level;
+    $error->msg   = $msg;
+    $response['error'] = $error;
+    echo json_encode($response);
+    ob_end_flush();
+    exit;
+}
 
 class file_cache{
     private $dir = '';

@@ -9,11 +9,14 @@ require_once('../../../config.php');
 require_once('../lib.php');
 require_once('common.php');
 
+ob_start();
 header('Expires: Sun, 28 Dec 1997 09:32:45 GMT');
 header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
 header('Cache-Control: no-cache, must-revalidate');
 header('Pragma: no-cache');
 header('Content-Type: text/html; charset=utf-8');
+header('X-Powered-By: MOODLE-Chat-V2');
+
 
 $time_start = microtime_float();
 
@@ -25,22 +28,22 @@ $chat_lastrow  = optional_param('chat_lastrow', 1, PARAM_INT);
 $response = array();
 
 if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
-    $response['error'] = get_string('notlogged', 'chat');
+    chat_print_error('ERROR', get_string('notlogged','chat'));
 }
 
 //Get the minimal course
 if (!$course = $DB->get_record('course', array('id'=>$chatuser->course), 'id,theme,lang')) {
-    $response['error'] = get_string('invalidcourseid', 'error');
+    chat_print_error('ERROR', get_string('invalidcourseid', 'error'));
 }
 
 //Get the user theme and enough info to be used in chat_format_message() which passes it along to
 if (!$USER = $DB->get_record('user', array('id'=>$chatuser->userid))) {
     // no optimisation here, it would break again in future!
-    $response['error'] = get_string('invaliduserid', 'error');
+    chat_print_error('ERROR', get_string('invaliduserid', 'error'));
 }
 
 if (!$cm = get_coursemodule_from_instance('chat', $chatuser->chatid, $course->id)) {
-    $response['error'] = get_string('invalidcoursemodule', 'error');
+    chat_print_error('ERROR', get_string('invalidcoursemodule', 'error'));
 }
 
 if($CFG->chat_use_cache){
@@ -52,10 +55,6 @@ if($CFG->chat_use_cache){
     }
 } else {
     $users = chat_get_users($chatuser->chatid, $chatuser->groupid, $cm->groupingid);
-}
-
-if (empty($users)) {
-    $response['error'] = get_string('nousers', 'error');
 }
 
 $users = format_user_list($users, $course);
@@ -97,8 +96,6 @@ if (!empty($messages)) {
 }
 
 $chat_newrow = ($chat_lastrow + $num) % 2;
-
-ob_start();
 
 $send_user_list = false;
 if ($messages && ($chat_lasttime != $chat_newlasttime)) {
@@ -146,7 +143,6 @@ if(!empty($CFG->chat_ajax_debug)) {
 
 echo json_encode($response);
 
-header('X-Powered-By: MOODLE-Chat-V2');
 header('Content-Length: ' . ob_get_length() );
 
 ob_end_flush();

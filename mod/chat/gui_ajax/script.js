@@ -113,7 +113,7 @@ function update_info() {
 function append_msg(msg) {
     var list = document.getElementById('msg_list');
     var el = document.createElement('li');
-    console.info('New message:'+msg);
+    console.info('New message:'+msg.msg);
     el.innerHTML = msg.msg;
     if(msg.type && msg.type == 'beep'){
         document.getElementById('notify').innerHTML = '<embed src="../beep.wav" autostart="true" hidden="true" name="beep" />';
@@ -147,6 +147,12 @@ success: function(o){
         alert('json invalid');
         alert(o.responseText);
         return;
+    }
+    if(data.error) {
+        if(data.error.level == 'ERROR'){
+            clearInterval(interval);
+            window.location = chat_cfg.home;
+        }
     }
     if(!data)
          return false;
