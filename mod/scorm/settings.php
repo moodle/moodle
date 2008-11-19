@@ -28,10 +28,10 @@ $settings->add(new admin_setting_configselect('scorm/lastattemptlock', get_strin
 $settings->add(new admin_setting_configselect('scorm/whatgrade', get_string('whatgrade', 'scorm'), get_string('whatgradedesc', 'scorm'), HIGHESTATTEMPT, scorm_get_what_grade_array()));
 
 $settings->add(new admin_setting_configtext('scorm/framewidth', get_string('width', 'scorm'),
-                   get_string('framewidth', 'scorm'), 100, PARAM_INT));
+                   get_string('framewidth', 'scorm'), 100));
 
 $settings->add(new admin_setting_configtext('scorm/frameheight', get_string('height', 'scorm'),
-                   get_string('frameheight', 'scorm'), 500, PARAM_INT));
+                   get_string('frameheight', 'scorm'), 500));
 
                    
                    
