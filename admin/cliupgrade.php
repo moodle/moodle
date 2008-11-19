@@ -280,7 +280,7 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     /// Check magic quotes
     check_compatibility(!ini_get_bool('magic_quotes_runtime'), get_string('magicquotesruntime', 'install'), get_string('magicquotesruntimeerror', 'install'),false,$silent);
     /// Check unsupported PHP configuration
-    check_compatibility(ini_get_bool('magic_quotes_gpc') || (!ini_get_bool('register_globals')), get_string('globalsquotes', 'install'), get_string('globalsquoteserror', 'install'),false,$silent);
+    check_compatibility(ini_get_bool('register_globals'), get_string('globalsquotes', 'install'), get_string('globalswarning', 'install'),false,$silent);
     /// Check safe mode
     check_compatibility(!ini_get_bool('safe_mode'), get_string('safemode', 'install'), get_string('safemodeerror', 'install'), true,$silent);
     /// Check file uploads
