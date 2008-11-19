@@ -60,7 +60,7 @@ if (!$chat_sid = chat_login_user($chat->id, 'ajax', $groupid, $course)) {
 <link rel="stylesheet" type="text/css" href="<?php echo $CFG->httpswwwroot;?>/lib/yui/layout/assets/skins/sam/layout.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo $CFG->httpswwwroot;?>/lib/yui/button/assets/skins/sam/button.css" />
 <?php
-print_js_config(array('sid'=>$chat_sid,'timer'=>5000, 'chat_lasttime'=>0,'chat_lastrow'=>null, 'header_title'=>$strchat), 'chat_cfg');
+print_js_config(array('userid'=>$USER->id, 'sid'=>$chat_sid,'timer'=>5000, 'chat_lasttime'=>0,'chat_lastrow'=>null,'header_title'=>$strchat,'chatroom_name'=>$str_title), 'chat_cfg');
 print_js_config(array('send'=>$str_send, 'sending'=>$str_sending), 'chat_lang');
 ?>
 <script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/yahoo-dom-event/yahoo-dom-event.js"></script>
@@ -92,6 +92,8 @@ print_js_config(array('send'=>$str_send, 'sending'=>$str_sending), 'chat_lang');
 <div id="chat_panel">
 <ul id="msg_list">
 <ul>
+</div>
+<div id="notify">
 </div>
 </body>
 </html>

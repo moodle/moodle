@@ -5,13 +5,14 @@ function microtime_float(){
     return ((float)$usec+(float)$sec);
 }
 
-function format_user_list(&$data, $course) {
+function format_user_list($data, $course) {
     global $CFG, $DB;
     $users = array();
     foreach($data as $v){
         $user['name'] = fullname($v);
         $user['url'] = $CFG->wwwroot.'/user/view.php?id='.$v->id.'&amp;course='.$course->id;
         $user['picture'] = print_user_picture($v->id, 0, $v->picture, false, true, false);
+        $user['id'] = $v->id;
         $users[] = $user;
     }
     return $users;

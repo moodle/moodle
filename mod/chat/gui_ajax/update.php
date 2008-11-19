@@ -109,10 +109,10 @@ header('Content-Type: text/html; charset=utf-8');
 
 ob_start();
 
-$beep = false;
 $sendlist = false;
 if ($messages && ($chat_lasttime != $chat_newlasttime)) {
     foreach ($messages as $n => &$message) {
+        $tmp = new stdclass;
         // when somebody enter room, user list will be updated
         if($message->system == 1){
             $sendlist = true;
@@ -123,21 +123,21 @@ if ($messages && ($chat_lasttime != $chat_newlasttime)) {
             }
             $users = format_user_list($users, $course);
         }
-        $html = chat_format_message($message, $chatuser->course, $USER, $chat_lastrow);
-        if ($html->beep) {
-             $beep = true;
+        if ($html = chat_format_message($message, $chatuser->course, $USER, $chat_lastrow)) {
+            if ($html->beep) {
+                $tmp->type = 'beep';
+            }
+            $tmp->msg  = $html->html;
+            $message = $tmp;
+        } else {
+            unset($message);
         }
-        $message = $html->html;
     }
 }
 
 if($users && $sendlist){
     // return users when system message coming
     $response['users'] = $users;
-}
-
-if ($beep) {
-    $response['beep'] = true;
 }
 
 $response['lasttime'] = $chat_newlasttime;

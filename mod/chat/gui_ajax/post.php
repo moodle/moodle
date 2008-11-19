@@ -3,7 +3,8 @@ include('../../../config.php');
 include('../lib.php');
 
 $chat_sid     = required_param('chat_sid', PARAM_ALPHANUM);
-$chat_message = required_param('chat_message', PARAM_RAW);
+$chat_message = optional_param('chat_message', '', PARAM_RAW);
+$beep_id      = optional_param('beep', '', PARAM_RAW);
 
 if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
     echo 'invalid sid';
@@ -24,11 +25,9 @@ session_write_close();
 chat_delete_old_users();
 $chat_message = clean_text($chat_message, FORMAT_MOODLE);
 
-//TODO: Before insert the chat message into database, we should push the
-//message into a global object (which can hold 100 messages), when user request
-//the lastest messages, we compare the oldest messsage's timestamp $a to user's
-//timestamp $b, if $a<$b, directly return messages in global object, otherwise,
-//fetch the message from database.
+if (!empty($beep_id)) {
+    $chat_message = 'beep '.$beep_id;
+}
 
 if (!empty($chat_message)) {
     $message = new object();
@@ -49,4 +48,3 @@ if (!empty($chat_message)) {
 
     add_to_log($course->id, 'chat', 'talk', "view.php?id=$cm->id", $chat->id, $cm->id);
 }
-?>
