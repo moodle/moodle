@@ -12,7 +12,7 @@ require_once('HTML/QuickForm/element.php');
 
 class MoodleQuickForm_editor extends HTML_QuickForm_element {
     protected $_helpbutton = '';
-    protected $_options    = array('subdirs'=>0, 'maxbytes'=>0, 'changeformat'=>0, 'upload'=>0);
+    protected $_options    = array('subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>0, 'changeformat'=>0);
     protected $_values     = array('text'=>null, 'format'=>null, 'itemid'=>null);
 
     function MoodleQuickForm_editor($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
@@ -58,6 +58,14 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
     function setMaxbytes($maxbytes) {
         global $CFG;
         $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $maxbytes);
+    }
+
+    function getMaxfiles() {
+        return $this->_options['maxfiles'];
+    }
+
+    function setMaxfiles($num) {
+        $this->_options['maxfiles'] = $num;
     }
 
     function getSubdirs() {
@@ -107,7 +115,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
 
         $subdirs      = $this->_options['subdirs'];
         $maxbytes     = $this->_options['maxbytes'];
-        $upload       = $this->_options['upload'];
+        $maxfiles     = $this->_options['maxfiles'];
         $changeformat = $this->_options['changeformat']; // TO DO: implement as ajax calls
 
         $text         = $this->_values['text'];
@@ -116,7 +124,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
 
         // security - never ever allow guest/not logged in user to upload anything
         if (isguestuser() or !isloggedin()) {
-            $upload = 0;
+            $maxfiles = 0;
         }
 
         $str = $this->_getTabs();
@@ -150,7 +158,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         $str .= '</div>';
 
     /// embedded image files - TODO: hide if tinymce used because it has own image upload/manage dialog
-        if ($upload) {
+        if ($maxfiles) {
             if (empty($draftitemid)) {
                 // no existing area info provided - let's use fresh new draft area
                 require_once("$CFG->libdir/filelib.php");
