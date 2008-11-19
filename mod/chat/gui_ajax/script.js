@@ -22,9 +22,18 @@ Event.onDOMReady(function() {
         Event.stopEvent(ev);
         send_msg();
     });
+    Event.on('chat_panel', 'mouseover', function(ev) {
+        Event.stopEvent(ev);
+        scrollable = false;
+    });
+    Event.on('chat_panel', 'mouseout', function(ev) {
+        Event.stopEvent(ev);
+        scrollable = false;
+    });
     var key_send = new YAHOO.util.KeyListener(document, { keys:13 }, {fn:send_msg, correctScope:true });
     key_send.enable();
     document.getElementById('input_msgbox').focus();
+    document.title = chat_cfg.chatroom_name;
 
     // done build layout
     var transaction = YAHOO.util.Connect.asyncRequest('POST', "update.php?chat_sid="+chat_cfg.sid+"&chat_init=1", init_cb, null);
@@ -44,24 +53,33 @@ function send_msg() {
     el_send.value = chat_lang.sending;
     var a = YAHOO.util.Connect.asyncRequest('POST', url, send_cb, "chat_message="+msg);
 }
+function send_beep(id){
+    var url = 'post.php?chat_sid='+chat_cfg.sid;
+    var a = YAHOO.util.Connect.asyncRequest('POST', url, send_cb, "beep="+id);
+}
 
 // record msg IDs
 var msgs = [];
 var interval = null;
+var scrollable = true;
 
 function update_users(users) {
     if(!users){
         return;
     }
     var list = document.getElementById('listing');
-    list.innerHTML = '';
+    var html = '';
     for(i in users){
         var el = document.createElement('li');
-        el.innerHTML = users[i].picture+' '+users[i].name;
-        console.info(users[i]);
+        html += '<table><tr><td>' + users[i].picture + '</td><td>'
+        html += users[i].name+'<br/><a href="###" onclick="send_beep('+users[i].id+')"> Beep </a>';
+        html += '</td></tr></table>';
+        el.innerHTML = html;
+        console.info(el.innerHTML);
         list.appendChild(el);
     }
 }
+
 function update_info() {
     if(!chat_cfg.req_count){
         chat_cfg.req_count = 1;
@@ -78,7 +96,11 @@ function update_info() {
 function append_msg(msg) {
     var list = document.getElementById('msg_list');
     var el = document.createElement('li');
-    el.innerHTML = msg;
+    console.info(msg);
+    el.innerHTML = msg.msg;
+    if(msg.type && msg.type == 'beep'){
+        document.getElementById('notify').innerHTML = '<embed src="../beep.wav" autostart="true" hidden="true" name="beep" />';
+    }
     list.appendChild(el);
 }
 
@@ -124,7 +146,7 @@ success: function(o){
     // update users
     update_users(data['users']);
     // scroll to the bottom of the message list
-    //$('#msgpanel').scrollTop(20000);
+    document.getElementById('chat_panel').parentNode.scrollTop+=500;
 }
 }
 var init_cb = {
