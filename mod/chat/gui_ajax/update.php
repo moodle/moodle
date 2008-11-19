@@ -9,11 +9,17 @@ require_once('../../../config.php');
 require_once('../lib.php');
 require_once('common.php');
 
+header('Expires: Sun, 28 Dec 1997 09:32:45 GMT');
+header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+header('Cache-Control: no-cache, must-revalidate');
+header('Pragma: no-cache');
+header('Content-Type: text/html; charset=utf-8');
+
 $time_start = microtime_float();
 
 $chat_sid      = required_param('chat_sid', PARAM_ALPHANUM);
-$chat_lasttime = optional_param('chat_lasttime', 0, PARAM_INT);
 $chat_init     = optional_param('chat_init', 0, PARAM_INT);
+$chat_lasttime = optional_param('chat_lasttime', 0, PARAM_INT);
 $chat_lastrow  = optional_param('chat_lastrow', 1, PARAM_INT);
 
 $response = array();
@@ -37,8 +43,6 @@ if (!$cm = get_coursemodule_from_instance('chat', $chatuser->chatid, $course->id
     $response['error'] = get_string('invalidcoursemodule', 'error');
 }
 
-$users = new stdclass;
-
 if($CFG->chat_use_cache){
     $cache = new file_cache();
     $users = $cache->get('user');
@@ -46,17 +50,11 @@ if($CFG->chat_use_cache){
         $users = chat_get_users($chatuser->chatid, $chatuser->groupid, $cm->groupingid);
         $cache->set('user', $users);
     }
-    if($CFG->chat_ajax_debug) {
-        $response['cache'] = true;
-    }
 } else {
     $users = chat_get_users($chatuser->chatid, $chatuser->groupid, $cm->groupingid);
-    if($CFG->chat_ajax_debug) {
-        $response['cache'] = false;
-    }
 }
 
-if (!$users) {
+if (empty($users)) {
     $response['error'] = get_string('nousers', 'error');
 }
 
@@ -73,8 +71,9 @@ if ((time() - $chat_lasttime) > $CFG->chat_old_ping) {
     // must be done before chat_get_latest_message!!!
     chat_delete_old_users();
 }
-if ($message = chat_get_latest_message($chatuser->chatid, $chatuser->groupid)) {
-    $chat_newlasttime = $message->timestamp;
+
+if ($latest_message = chat_get_latest_message($chatuser->chatid, $chatuser->groupid)) {
+    $chat_newlasttime = $latest_message->timestamp;
 } else {
     $chat_newlasttime = 0;
 }
@@ -87,45 +86,36 @@ $params = array('groupid'=>$chatuser->groupid, 'chatid'=>$chatuser->chatid, 'las
 
 $groupselect = $chatuser->groupid ? " AND (groupid=".$chatuser->groupid." OR groupid=0) " : "";
 
-$messages = $DB->get_records_select("chat_messages_current",
-                    "chatid = :chatid AND timestamp > :lasttime $groupselect", $params,
-                    "timestamp ASC");
-if ($messages) {
+$messages = $DB->get_records_select('chat_messages_current',
+    'chatid = :chatid AND timestamp > :lasttime '.$groupselect, $params,
+    'timestamp ASC');
+
+if (!empty($messages)) {
     $num = count($messages);
-    if($CFG->chat_ajax_debug) {
-        $response['count'] = $num;
-    }
 } else {
     $num = 0;
 }
 
 $chat_newrow = ($chat_lastrow + $num) % 2;
 
-header('Expires: Sun, 28 Dec 1997 09:32:45 GMT');
-header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
-header('Cache-Control: no-cache, must-revalidate');
-header('Pragma: no-cache');
-header('Content-Type: text/html; charset=utf-8');
-
 ob_start();
 
-$sendlist = false;
+$send_user_list = false;
 if ($messages && ($chat_lasttime != $chat_newlasttime)) {
     foreach ($messages as $n => &$message) {
         $tmp = new stdclass;
         // when somebody enter room, user list will be updated
         if($message->system == 1){
-            $sendlist = true;
-            $users = chat_get_users($chatuser->chatid, $chatuser->groupid, $cm->groupingid);
-            if($CFG->chat_use_cache){
-                $cache = new file_cache();
-                $cache->set('user', $users);
-            }
-            $users = format_user_list($users, $course);
+            $send_user_list = true;
+            $tmp->type = 'system';
+            $users = format_user_list(
+                chat_get_users($chatuser->chatid, $chatuser->groupid, $cm->groupingid), $course);
         }
         if ($html = chat_format_message($message, $chatuser->course, $USER, $chat_lastrow)) {
             if ($html->beep) {
                 $tmp->type = 'beep';
+            } elseif (empty($tmp->type)) {
+                $tmp->type = 'user';
             }
             $tmp->msg  = $html->html;
             $message = $tmp;
@@ -135,10 +125,12 @@ if ($messages && ($chat_lasttime != $chat_newlasttime)) {
     }
 }
 
-if($users && $sendlist){
+if(!empty($users) && $send_user_list){
     // return users when system message coming
     $response['users'] = $users;
 }
+
+$DB->set_field('chat_users', 'lastping', time(), array('id'=>$chatuser->id));
 
 $response['lasttime'] = $chat_newlasttime;
 $response['lastrow']  = $chat_newrow;
@@ -146,17 +138,16 @@ if($messages){
     $response['msgs'] = $messages;
 }
 
-// set user's last active time
-$chatuser->lastping = time();
-$DB->set_field('chat_users', 'lastping', $chatuser->lastping, array('id'=>$chatuser->id));
-header("Content-Length: " . ob_get_length() );
-header("X-Powered-By: MOODLE-Chat-V2");
-ob_end_flush();
-
 $time_end = microtime_float();
 $time = $time_end - $time_start;
-if($CFG->chat_ajax_debug) {
-    $response['time']=$time;
+if(!empty($CFG->chat_ajax_debug)) {
+    $response['time'] = $time;
 }
 
 echo json_encode($response);
+
+header('X-Powered-By: MOODLE-Chat-V2');
+header('Content-Length: ' . ob_get_length() );
+
+ob_end_flush();
+exit;

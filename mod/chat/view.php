@@ -142,17 +142,17 @@
                     $chattarget = "/mod/chat/gui_$CFG->chat_method/index.php?id=$chat->id$groupparam";
                 }
 
-                echo '<p>';
-                link_to_popup_window ($chattarget,
-                        "chat$course->id$chat->id$groupparam", "$strenterchat", 500, 700, get_string('modulename', 'chat'));
-                echo '</p>';
-
                 if ($CFG->chat_enable_ajax) {
                     echo '<p>';
-                    link_to_popup_window ("/mod/chat/gui_ajax/index.php?id=$chat->id$groupparam",
-                        "chat$course->id$chat->id$groupparam", get_string('ajax_gui', 'message'), 500, 700, get_string('modulename', 'chat'));
+                    link_to_popup_window ($chattarget,
+                            "chat$course->id$chat->id$groupparam", "$strenterchat", 500, 700, get_string('modulename', 'chat'));
                     echo '</p>';
                 }
+
+                echo '<p>';
+                link_to_popup_window ("/mod/chat/gui_ajax/index.php?id=$chat->id$groupparam",
+                    "chat$course->id$chat->id$groupparam", get_string('ajax_gui', 'message'), 500, 700, get_string('modulename', 'chat'));
+                echo '</p>';
                 // if user is using screen reader, then there is no need to display this link again
                 if ($CFG->chat_method == 'header_js' && empty($USER->screenreader)) {
                     // show frame/js-less alternative

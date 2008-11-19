@@ -69,7 +69,7 @@ function update_users(users) {
     }
     var list = document.getElementById('listing');
     var html = '';
-    for(i in users){
+    for(var i in users){
         var el = document.createElement('li');
         html += '<table><tr><td>' + users[i].picture + '</td><td>'
         html += users[i].name+'<br/><a href="###" onclick="send_beep('+users[i].id+')"> Beep </a>';

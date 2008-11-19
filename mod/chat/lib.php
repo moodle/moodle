@@ -446,13 +446,11 @@ function chat_get_users($chatid, $groupid=0, $groupingid=0) {
         $groupingjoin = '';
     }
 
-    return $DB->get_records_sql("SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, c.lastmessageping, c.firstping, u.imagealt
-                                  FROM {chat_users} c
-                                  JOIN {user} u ON u.id = c.userid
-                         $groupingjoin
-                                 WHERE c.chatid = :chatid
-                                       $groupselect
-                              ORDER BY c.firstping ASC", $params);
+    return $DB->get_records_sql("SELECT 
+        DISTINCT u.id, u.firstname, u.lastname, u.picture, c.lastmessageping, c.firstping, u.imagealt 
+        FROM {chat_users} c JOIN {user} u ON u.id = c.userid $groupingjoin 
+        WHERE c.chatid = :chatid $groupselect
+        ORDER BY c.firstping ASC", $params);
 }
 
 function chat_get_latest_message($chatid, $groupid=0) {
@@ -466,12 +464,11 @@ function chat_get_latest_message($chatid, $groupid=0) {
         $groupselect = "";
     }
 
-    $sql = "SELECT *
-              FROM {chat_messages_current}
-             WHERE chatid = :chatid
-                   $groupselect
-          ORDER BY timestamp DESC";
+    $sql = "SELECT * 
+        FROM {chat_messages_current} WHERE chatid = :chatid $groupselect
+        ORDER BY timestamp DESC";
 
+    // return the lastest one message
     return $DB->get_record_sql($sql, $params, true);
 }
 
@@ -573,7 +570,9 @@ function chat_delete_old_users() {
             $message->system    = 1;
             $message->timestamp = time();
 
-            if (!$DB->insert_record('chat_messages', $message) || !$DB->insert_record('chat_messages_current', $message) ) {
+            if (!$DB->insert_record('chat_messages', $message)
+                || !$DB->insert_record('chat_messages_current', $message) )
+            {
                 print_error('cantinsert', 'chat');
             }
         }
