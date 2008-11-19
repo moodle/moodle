@@ -147,7 +147,7 @@
                         "chat$course->id$chat->id$groupparam", "$strenterchat", 500, 700, get_string('modulename', 'chat'));
                 echo '</p>';
 
-                if ($CFG->chat_enable_ajax) {
+                if ($CFG->enableajax) {
                     echo '<p>';
                     link_to_popup_window ("/mod/chat/gui_ajax/index.php?id=$chat->id$groupparam",
                         "chat$course->id$chat->id$groupparam", get_string('ajax_gui', 'message'), 500, 700, get_string('modulename', 'chat'));
