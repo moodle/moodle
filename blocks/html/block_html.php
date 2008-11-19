@@ -24,8 +24,13 @@ class block_html extends block_base {
             return $this->content;
         }
 
-        $filteropt = new stdClass;
-        $filteropt->noclean = true;
+        if (!empty($this->instance->pinned) or $this->instance->pagetype === 'course-view') {
+            // fancy html allowed only on course page and in pinned blocks for security reasons
+            $filteropt = new stdClass;
+            $filteropt->noclean = true;
+        } else {
+            $filteropt = null;
+        }
 
         $this->content = new stdClass;
         $this->content->text = isset($this->config->text) ? format_text($this->config->text, FORMAT_HTML, $filteropt) : '';

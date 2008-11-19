@@ -1,4 +1,11 @@
-<?php $usehtmleditor = can_use_html_editor(); ?>
+<?php
+    $usehtmleditor = can_use_html_editor();
+
+    $text = isset($this->config->text) ? $this->config->text : '';
+    if (empty($this->instance->pinned) and $this->instance->pagetype !== 'course-view') {
+        $text = clean_text($text, FORMAT_HTML);
+    }
+?>
 <table cellpadding="9" cellspacing="0">
 <tr valign="top">
     <td align="right"><?php print_string('configtitle', 'block_html'); ?>:</td>
@@ -6,7 +13,7 @@
 </tr>
 <tr valign="top">
     <td align="right"><?php print_string('configcontent', 'block_html'); ?>:</td>
-    <td><?php print_textarea($usehtmleditor, 25, 50, 0, 0, 'text', isset($this->config->text)?$this->config->text:'') ?></td>
+    <td><?php print_textarea($usehtmleditor, 25, 50, 0, 0, 'text', $text) ?></td>
 </tr>
 <tr>
     <td colspan="3" align="center">
