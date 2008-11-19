@@ -220,11 +220,7 @@ global $HTTPSPAGEREQUIRED;
 
     // define SYSCONTEXTID in config.php if you want to save some queries (after install or upgrade!)
     if (!defined('SYSCONTEXTID')) {
-        try {
-            get_system_context();
-        } catch (dml_read_exception $e) {
-            // not available yet
-        }
+        get_system_context();
     }
 
 /// Set error reporting back to normal

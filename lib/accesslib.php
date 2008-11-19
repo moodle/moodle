@@ -1808,7 +1808,7 @@ function moodle_install_roles() {
                                       get_string('authenticateduserdescription'), 'moodle/legacy:user');
 
 /// Now is the correct moment to install capabilities - after creation of legacy roles, but before assigning of roles
-
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
     if (!assign_capability('moodle/site:doanything', CAP_ALLOW, $adminrole, $systemcontext->id)) {
         print_error('cannotassignanthing');
     }
@@ -2133,7 +2133,9 @@ function create_context($contextlevel, $instanceid) {
 }
 
 /**
- * This hacky function is needed because we can not change system context instanceid using normal upgrade routine.
+ * Returns system context or null if can not be created yet.
+ * @param bool $cache use caching
+ * @return mixed system context or null
  */
 function get_system_context($cache=true) {
     global $DB;
@@ -2150,10 +2152,15 @@ function get_system_context($cache=true) {
         }
         return $cached;
     }
-
     try {
-        $context = $DB->get_record('context', array('contextlevel'=>CONTEXT_SYSTEM));
-    } catch (dml_read_exception $e) {
+        // TODO: can not use get_record() because we do not know if query failed :-(
+        //       switch to get_record() later
+        $contextarr = $DB->get_records('context', array('contextlevel'=>CONTEXT_SYSTEM));
+        if ($contextarr === false) {
+            return null;
+        }
+        $context = $contextarr ? reset($contextarr) : null;
+    } catch (dml_exception $e) {
         //table does not exist yet, sorry
         return null;
     }
@@ -2165,20 +2172,13 @@ function get_system_context($cache=true) {
         $context->depth        = 1;
         $context->path         = NULL; //not known before insert
 
-        if (!$context->id = $DB->insert_record('context', $context)) {
-            // better something than nothing - let's hope it will work somehow
-            // DONT do it if we're cli because it's IMMUNTABLE.  Doing it during web installer works because
-            // each step is a new request
-            if (!defined('SYSCONTEXTID') && !defined('CLI_UPGRADE')) {
-                define('SYSCONTEXTID', 1);
-                $context->id   = SYSCONTEXTID;
-                $context->path = '/'.SYSCONTEXTID;
-            } else {
-                $context->id   = 0;
-                $context->path = '/0';
+        try {
+            if (!$context->id = $DB->insert_record('context', $context)) {
+            // can not create context yet, sorry
+                return null;
             }
-            debugging('Can not create system context');
-            return $context;
+        } catch (dml_exception $e) {
+            return null;
         }
     }
 
