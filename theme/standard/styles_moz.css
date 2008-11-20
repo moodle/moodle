@@ -1,6 +1,6 @@
 /*******************************************************************
  styles_moz.css
-  
+
  This CSS file uses the non-standard Mozilla CSS extensions
  to add round corners to the current theme.
 
@@ -80,7 +80,7 @@
   -moz-border-radius:3px;
 }
 
-.categorybox, .categoryboxcontent, 
+.categorybox, .categoryboxcontent,
 .coursebox {
   -moz-border-radius:10px;
 }
@@ -346,4 +346,33 @@ body#course-user .section {
 
 #quiznavigation .qnbutton {
   -moz-box-sizing: content-box;
+}
+#mod-quiz-edit div.quizpage .pagecontent{
+    -moz-border-radius:0.6em;
+    -moz-border-radius-bottomleft:0;
+    -moz-border-radius-topleft:0;
+}
+#mod-quiz-edit .reorder div.question div.content{
+
+    -moz-border-radius:0.3em;
+    -moz-border-radius-bottomleft:0;
+    -moz-border-radius-topleft:0;
+}
+#mod-quiz-edit div.editq div.question div.content{
+    -moz-border-radius:0.6em;
+    -moz-border-radius-bottomleft:0;
+    -moz-border-radius-topleft:0;
+}
+#mod-quiz-edit div.question div.content div.points,
+        #mod-quiz-edit div.question div.content div.qorder{
+    -moz-border-radius:0.2em;
+    -moz-border-radius-bottomleft:0;
+    -moz-border-radius-topleft:0;
+}
+#mod-quiz-edit div.quizpage .pagecontent .pagestatus{
+    -moz-border-radius-bottomright:0.3em;
+    -moz-border-radius-topright:0.3em;
+}
+#mod-quiz-edit div.quizpage .pagecontent form#addquestion{
+    -moz-border-radius:0.2em;
 }

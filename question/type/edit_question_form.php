@@ -193,6 +193,10 @@ class question_edit_form extends moodleform {
         $mform->setType('returnurl', PARAM_LOCALURL);
         $mform->setDefault('returnurl', 0);
 
+        $mform->addElement('hidden', 'appendqnumstring');
+        $mform->setType('appendqnumstring', PARAM_ALPHA);
+        $mform->setDefault('appendqnumstring', 0);
+
         $buttonarray = array();
         if (!empty($this->question->id)){
             //editing / moving question
@@ -219,17 +223,16 @@ class question_edit_form extends moodleform {
             $mform->hardFreezeAllVisibleExcept(array('categorymoveto', 'buttonar', 'currentgrp'));
         }
     }
-    
+
     function validation($fromform, $files) {
         $errors= parent::validation($fromform, $files);
-        if (empty($fromform->makecopy) && isset($this->question->id) 
-                && ($this->question->formoptions->canedit || $this->question->formoptions->cansaveasnew) 
+        if (empty($fromform->makecopy) && isset($this->question->id)
+                && ($this->question->formoptions->canedit || $this->question->formoptions->cansaveasnew)
                 && empty($fromform->usecurrentcat) && !$this->question->formoptions->canmove){
             $errors['currentgrp'] = get_string('nopermissionmove', 'question');
         }
         return $errors;
     }
-    
 
     /**
      * Add any question-type specific form fields.

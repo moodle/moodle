@@ -717,7 +717,7 @@ function close_window($delay=0) {
  * @param mixed $listbox if false, display as a dropdown menu. If true, display as a list box.
  *      By default, the list box will have a number of rows equal to min(10, count($options)), but if
  *      $listbox is an integer, that number is used for size instead.
- * @param 
+ * @param
  */
 function choose_from_menu ($options, $name, $selected='', $nothing='choose', $script='',
                            $nothingvalue='0', $return=false, $disabled=false, $tabindex=0,
@@ -990,26 +990,30 @@ function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $retur
 
 
 /**
- * Implements a complete little popup form
+ * Implements a complete little form with a dropdown menu. When JavaScript is on
+ * selecting an option from the dropdown automatically submits the form (while
+ * avoiding the usual acessibility problems with this appoach). With JavaScript
+ * off, a 'Go' button is printed.
  *
- * @uses $CFG
- * @param string $common  The URL up to the point of the variable that changes
- * @param array $options  Alist of value-label pairs for the popup list
- * @param string $formid Id must be unique on the page (originaly $formname)
- * @param string $selected The option that is already selected
+ * @param string $baseurl The target URL up to the point of the variable that changes
+ * @param array $options A list of value-label pairs for the popup list
+ * @param string $formid id for the control. Must be unique on the page. Used in the HTML.
+ * @param string $selected The option that is initially selected
  * @param string $nothing The label for the "no choice" option
  * @param string $help The name of a help page if help is required
  * @param string $helptext The name of the label for the help button
- * @param boolean $return Indicates whether the function should return the text
+ * @param boolean $return Indicates whether the function should return the HTML
  *         as a string or echo it directly to the page being rendered
  * @param string $targetwindow The name of the target page to open the linked page in.
  * @param string $selectlabel Text to place in a [label] element - preferred for accessibility.
- * @param array $optionsextra TODO, an array?
+ * @param array $optionsextra an array with the same keys as $options. The values are added within the corresponding <option ...> tag.
+ * @param string $submitvalue Optional label for the 'Go' button. Defaults to get_string('go').
+ * @param boolean $disabled If true, the menu will be displayed disabled.
  * @return string If $return is true then the entire form is returned as a string.
  * @todo Finish documenting this function<br>
  */
-function popup_form($common, $options, $formid, $selected='', $nothing='choose', $help='', $helptext='', $return=false,
-$targetwindow='self', $selectlabel='', $optionsextra=NULL) {
+function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose', $help='', $helptext='', $return=false,
+$targetwindow='self', $selectlabel='', $optionsextra=NULL, $submitvalue='', $disabled=false) {
 
     global $CFG, $SESSION;
     static $go, $choose;   /// Locally cached, in case there's lots on a page
@@ -1018,15 +1022,22 @@ $targetwindow='self', $selectlabel='', $optionsextra=NULL) {
         return '';
     }
 
-    if (!isset($go)) {
-        $go = get_string('go');
+    if (empty($submitvalue)){
+        if (!isset($go)) {
+            $go = get_string('go');
+            $submitvalue=$go;
+        }
     }
-
     if ($nothing == 'choose') {
         if (!isset($choose)) {
             $choose = get_string('choose');
         }
         $nothing = $choose.'...';
+    }
+    if ($disabled) {
+        $disabled = 'disabled="disabled"';
+    } else {
+        $disabled = '';
     }
 
     // changed reference to document.getElementById('id_abc') instead of document.abc
@@ -1046,16 +1057,16 @@ $targetwindow='self', $selectlabel='', $optionsextra=NULL) {
         $selectlabel = '<label for="'.$formid.'_jump">'.$selectlabel.'</label>';
     }
 
-    //IE and Opera fire the onchange when ever you move into a dropdwown list with the keyboard.
+    //IE and Opera fire the onchange when ever you move into a dropdown list with the keyboard.
     //onfocus will call a function inside dropdown.js. It fixes this IE/Opera behavior.
     //Note: There is a bug on Opera+Linux with the javascript code (first mouse selection is inactive),
     //so we do not fix the Opera behavior on Linux
     if (check_browser_version('MSIE') || (check_browser_version('Opera') && !check_browser_operating_system("Linux"))) {
-        $output .= '<div>'.$selectlabel.$button.'<select id="'.$formid.'_jump" onfocus="initSelect(\''.$formid.'\','.$targetwindow.')" name="jump">'."\n";
+        $output .= '<div>'.$selectlabel.$button.'<select id="'.$formid.'_jump" onfocus="initSelect(\''.$formid.'\','.$targetwindow.')" name="jump" '.$disabled.'>'."\n";
     }
     //Other browser
     else {
-        $output .= '<div>'.$selectlabel.$button.'<select id="'.$formid.'_jump" name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\''.$formid.'\').jump.options[document.getElementById(\''.$formid.'\').jump.selectedIndex].value;">'."\n";
+        $output .= '<div>'.$selectlabel.$button.'<select id="'.$formid.'_jump" name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\''.$formid.'\').jump.options[document.getElementById(\''.$formid.'\').jump.selectedIndex].value;" '.$disabled.'>'."\n";
     }
 
     if ($nothing != '') {
@@ -1105,10 +1116,10 @@ $targetwindow='self', $selectlabel='', $optionsextra=NULL) {
         } else {
            if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()]))
             {
-                $url = $SESSION->sid_process_url( $common . $value );
+                $url = $SESSION->sid_process_url( $baseurl . $value );
             } else
             {
-                $url=$common . $value;
+                $url=$baseurl . $value;
             }
             $optstr = '   <option value="' . $url . '"';
 
@@ -1144,7 +1155,7 @@ $targetwindow='self', $selectlabel='', $optionsextra=NULL) {
     $output .= '</select>';
     $output .= '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     $output .= '<div id="noscript'.$formid.'" style="display: inline;">';
-    $output .= '<input type="submit" value="'.$go.'" /></div>';
+    $output .= '<input type="submit" value="'.$submitvalue.'" '.$disabled.' /></div>';
     $output .= '<script type="text/javascript">'.
                "\n//<![CDATA[\n".
                'document.getElementById("noscript'.$formid.'").style.display = "none";'.
@@ -2068,7 +2079,7 @@ function get_emoticons_list_for_help_file(){
         $formname = 'theform';
         $fieldname = 'message';
     }
-    
+
     $output .= print_js_call('emoticons_help.init', array($formname, $fieldname, 'emoticonlist'), true);
     return $output;
 
@@ -2596,7 +2607,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
  * require_once in PHP.
  *
  * There are two special-case calls to this function from print_header which are
- * internal to weblib and use the second $extracthtmlparameter:
+ * internal to weblib and use the second $extracthtml parameter:
  * $extracthtml = 1: this is used before printing the header.
  *      It returns the script tag code that should go inside the <head>.
  * $extracthtml = 2: this is used after printing the header and handles any
@@ -2754,7 +2765,7 @@ function print_delayed_js_call($delay, $function, $args = array(), $return = fal
  * variable, and then just output the configuration variables from PHP using
  * this function.
  *
- * For example, look at the code in question_init_qenginejs_script() in 
+ * For example, look at the code in question_init_qenginejs_script() in
  * lib/questionlib.php. It writes out a bunch of $settings like
  * 'pixpath' => $CFG->pixpath, with $prefix = 'qengine_config'. This gets output
  * in print_header, then the code in question/qengine.js can access these variables

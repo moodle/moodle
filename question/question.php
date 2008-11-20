@@ -24,6 +24,7 @@ $wizardnow =  optional_param('wizardnow', '', PARAM_ALPHA);
 $movecontext =  optional_param('movecontext', 0, PARAM_BOOL);//switch to make question
                     //uneditable - form is displayed to edit category only
 $returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
+$appendqnumstring = optional_param('appendqnumstring', '', PARAM_ALPHA);
 
 $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
 
@@ -132,6 +133,8 @@ $toform->category = "$category->id,$category->contextid";
 if ($formeditable && $id){
     $toform->categorymoveto = $toform->category;
 }
+
+$toform->appendqnumstring = $appendqnumstring;
 $toform->returnurl = $returnurl;
 $toform->movecontext = $movecontext;
 if ($cm !== null){
@@ -186,10 +189,14 @@ if ($mform->is_cancelled()){
             notify(get_string('changessaved'), '');
             close_window(3);
         } else {
+            if($appendqnumstring){
+                $returnurl_object=new moodle_url($returnurl);
+                $returnurl=$returnurl_object->out(false,array($appendqnumstring=>($question->id), "sesskey"=>sesskey(), "cmid"=>$cmid));
+            }
             redirect($returnurl);
         }
     } else {
-        $nexturlparams = array('returnurl'=>$returnurl);
+        $nexturlparams = array('returnurl'=>$returnurl, 'appendqnumstring'=>$appendqnumstring);
         if (isset($fromform->nextpageparam) && is_array($fromform->nextpageparam)){
             $nexturlparams += $fromform->nextpageparam;//useful for passing data to the next page which is not saved in the database
         }

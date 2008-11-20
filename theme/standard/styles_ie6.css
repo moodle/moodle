@@ -69,3 +69,22 @@ form.mform textarea {
 #mod-quiz-review #middle-column {
   height: 1%;
 }
+#mod-quiz-edit div.question div.content .questionname,
+#categoryquestions .questionname{
+    /*ie6 shows this as an arrow if this is not specified*/
+    cursor: pointer;
+}
+#mod-quiz-edit #categoryquestions .questiontext{
+    /*ie6 shows this as an arrow if this is not specified*/
+    cursor: pointer;
+}
+#mod-quiz-edit div.tabtree a span img.iconsmall{
+    display:none;
+}
+
+#mod-quiz-edit div.question div.content .questiontext,#categoryquestions .questiontext{
+    width:50%;
+}
+#mod-quiz-edit div.question div.content .questionname,#categoryquestions .questionname{
+    width:20%;
+}

@@ -1091,6 +1091,73 @@ table.quizreviewsummary td.cell {
 #mod-quiz-report .negcovar{
   border :medium solid pink;
 }
+
+#mod-quiz-edit .questionbankwindow div.header{
+/*this color might need to be theme-specific,
+but in terms of usability, as testing showed,
+//TODO: add url
+it must be ensured that the question
+bank window's title is prominent enough*/
+    background-color:#009;
+    color:#fff;
+    background-image:none;
+}
+
+#mod-quiz-edit div.question div.content div.points,
+        #mod-quiz-edit div.question div.content div.qorder{
+    background-color:#ddf;
+}
+
+#mod-quiz-edit div.quizpage .pagecontent .pagestatus{
+    background-color:#eee;
+}
+#mod-quiz-edit .quizpagedelete img{
+    background-color:#d6d6d6;
+}
+#mod-quiz-edit div.quizpage .pagecontent form#addquestion{
+    background-color:#fff;
+}
+#mod-quiz-edit .questioncontentcontainer div.randomquestionqlist{
+    background-color:#eee;
+    color:#777;
+}
+#mod-quiz-edit .questioncontentcontainer div.randomquestionqlist .totalquestionsinrandomqcategory{
+    color:#000;
+}
+/*TODO: below applies to also question bank, so when
+question bank is adapted to the new UI, add the appropriate
+css id's of question bank*/
+#mod-quiz-edit .categoryinfo{
+    background-color:#eee;
+    border-bottom:1px solid #bbb;
+}
+#mod-quiz-edit .paging{
+    background-color:#ddd;
+}
+#mod-quiz-edit .questionsortoptions{
+    background-color:#ddd;
+}
+
+#mod-quiz-edit .paging a:hover{
+    background-color:#eef;
+}
+#mod-quiz-edit div.questionbank{
+    background-color:#e6e6ff;
+}
+#mod-quiz-edit .questionbank div.categoryquestionscontainer,.questionbank .categorysortopotionscontainer,.questionbank .categorypagingbarcontainer,.questionbank .categoryselectallcontainer{
+    background-color:#FFF;
+}
+#mod-quiz-edit div.question div.content div.questioncontrols{
+    background-color:#FFF;
+}
+#mod-quiz-edit div.editq div.question div.content{
+    background-color:#fff;
+}
+#mod-quiz-edit .questionbankwindow div.header a{
+    color:#FFF;
+}
+
+
 /***
  *** Modules: Resource
  ***/
@@ -1211,4 +1278,5 @@ form.mform .fdescription.required {
 form.mform .required .fgroup span label {
   color:#000;
 }
+
 

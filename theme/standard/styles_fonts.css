@@ -1006,7 +1006,60 @@ body#mod-forum-index .generalbox .cell {
   text-decoration: underline;
 }
 
-/***
+#mod-quiz-edit div.reorder .reordercontrols .moveselectedonpage{
+    text-align:right;
+}
+#mod-quiz-edit div.question div.qnum{
+    text-align:right;
+}
+#mod-quiz-edit div.reorder div.question div.qnum{
+    text-align:right;
+    font-size:1em;
+}
+#mod-quiz-edit div.editq div.question div.qnum{
+    font-size:1.5em;
+}
+#mod-quiz-edit .questionbankwindow div.header a{
+    text-decoration:underline;
+}
+#mod-quiz-edit div.questioncontentcontainer a{
+    text-decoration:underline;
+}
+
+#mod-quiz-edit div.questioncontentcontainer div.singlequestion a{
+    text-decoration:underline;
+}
+#mod-quiz-edit div.editq div.question div.content .singlequestion a .questionname,div.editq div.question div.content .singlequestion a .questiontext{
+    text-decoration:underline;
+}
+#mod-quiz-edit div.question div.content .questiontext,
+#categoryquestions .questiontext{
+    font-weight:bold;
+}
+#mod-quiz-edit div.question div.content div.questioncontrols{
+    text-align:right;
+}
+#mod-quiz-edit div.quizpage .pagecontent .pagestatus{
+    font-weight:bold;
+}
+#mod-quiz-edit div.question div.content .questiontype{
+    font-style:italic;
+}
+#mod-quiz-edit .questioncontentcontainer .randomquestioncategory{
+    font-weight:bold;
+}
+#mod-quiz-edit .categoryinfofield{
+    font-style:italic;
+}
+#mod-quiz-edit .categorynamefield{
+    font-weight:bold;
+}
+#mod-quiz-edit .questionbankwindow div.header{
+    font-weight:bold;
+}
+
+
+    /***
  *** Modules: Resource
  ***/
 

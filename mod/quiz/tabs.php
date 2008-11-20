@@ -31,7 +31,7 @@ $tabs = array();
 $row  = array();
 $inactive = array();
 $activated = array();
-
+$stredit=get_string('edit');
 if (has_capability('mod/quiz:view', $context)) {
     $row[] = new tabobject('info', "$CFG->wwwroot/mod/quiz/view.php?id=$cm->id", get_string('info', 'quiz'));
 }
@@ -39,10 +39,11 @@ if (has_capability('mod/quiz:viewreports', $context)) {
     $row[] = new tabobject('reports', "$CFG->wwwroot/mod/quiz/report.php?q=$quiz->id", get_string('results', 'quiz'));
 }
 if (has_capability('mod/quiz:preview', $context)) {
-    $row[] = new tabobject('preview', "$CFG->wwwroot/mod/quiz/startattempt.php?cmid=$cm->id&amp;sesskey=" . sesskey(), get_string('preview', 'quiz'));
+    $strpreview = get_string('preview', 'quiz');
+    $row[] = new tabobject('preview', "$CFG->wwwroot/mod/quiz/startattempt.php?cmid=$cm->id&amp;sesskey=" . sesskey(), "<img src=\"$CFG->pixpath/t/preview.gif\" class=\"iconsmall\" alt=\"$strpreview\" /> $strpreview", $strpreview);
 }
 if (has_capability('mod/quiz:manage', $context)) {
-    $row[] = new tabobject('edit', "$CFG->wwwroot/mod/quiz/edit.php?cmid=$cm->id", get_string('edit'));
+    $row[] = new tabobject('edit', "$CFG->wwwroot/mod/quiz/edit.php?cmid=$cm->id", "<img src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"$stredit\" /> $stredit",$stredit);
 }
 
 if ($currenttab == 'info' && count($row) == 1) {
@@ -101,9 +102,11 @@ if ($currenttab == 'edit' and isset($mode)) {
     $streditingquiz = get_string("editinga", "moodle", $strquiz);
 
     if (has_capability('mod/quiz:manage', $context) && $contexts->have_one_edit_tab_cap('editq')) {
-        $row[] = new tabobject('editq', "$CFG->wwwroot/mod/quiz/edit.php?".$thispageurl->get_query_string(), $strquiz, $streditingquiz);
+        //TODO: ensure that removing get_query_string here won't hurt
+        $row[] = new tabobject('editq', "$CFG->wwwroot/mod/quiz/edit.php?cmid=$cm->id", $stredit, $streditingquiz);
+        $row[] = new tabobject('reorder', "$CFG->wwwroot/mod/quiz/edit.php?reordertool=1&amp;cmid=$cm->id", get_string('orderandpaging','quiz'), $streditingquiz);
     }
-    questionbank_navigation_tabs($row, $contexts, $thispageurl->get_query_string());
+    //questionbank_navigation_tabs($row, $contexts, $thispageurl->get_query_string());
     $tabs[] = $row;
 
 }

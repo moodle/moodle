@@ -158,7 +158,7 @@ function question_list($contexts, $pageurl, $categoryandcontext, $cm = null,
     $straddquestions = get_string("addquestions", "quiz");
     $strimportquestions = get_string("importquestions", "quiz");
     $strexportquestions = get_string("exportquestions", "quiz");
-    $strnoquestions = get_string("noquestions", "quiz");
+    $strnoquestions = get_string("noquestionsincategory", "quiz");
     $strselect = get_string("select", "quiz");
     $strselectall = get_string("selectall", "quiz");
     $strselectnone = get_string("selectnone", "quiz");
@@ -244,7 +244,7 @@ function question_list($contexts, $pageurl, $categoryandcontext, $cm = null,
     list($usql, $params) = $DB->get_in_or_equal($categorylist_array);
     if (!$totalnumber = $DB->count_records_select('question', "category $usql AND parent = '0' $showhidden", $params)) {
         echo "<p style=\"text-align:center;\">";
-        print_string("noquestions", "quiz");
+        echo $strnoquestions;
         echo "</p>";
         return;
     }
@@ -255,14 +255,13 @@ function question_list($contexts, $pageurl, $categoryandcontext, $cm = null,
         if (!$questions = $DB->get_records_select('question', "category $usql AND parent = '0' $showhidden", $params, $sortorderdecoded, '*', 0, $perpage)) {
             // There are no questions at all
             echo "<p style=\"text-align:center;\">";
-            print_string("noquestions", "quiz");
+            echo $strnoquestions;
             echo "</p>";
             return;
         }
     }
 
     print_paging_bar($totalnumber, $page, $perpage, $pageurl, 'qpage');
-
     echo question_sort_options($pageurl, $sortorder);
 
 
@@ -397,15 +396,21 @@ function question_list($contexts, $pageurl, $categoryandcontext, $cm = null,
 function question_sort_options($pageurl, $sortorder){
     global $USER;
     //sort options
-    $html = "<div class=\"mdl-align\">";
-    $html .= '<form method="post" action="edit.php">';
+    $html = "<div class=\"mdl-align questionsortoptions\">";
+    // POST method should only be used for parameters that change data
+    // or if POST method has to be used, the user must be redirected immediately to
+    // non-POSTed page to not break the back button
+    $html .= '<form method="get" action="edit.php">';
     $html .= '<fieldset class="invisiblefieldset" style="display: block;">';
     $html .= '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     $html .= $pageurl->hidden_params_out(array('qsortorder'));
-    $sortoptions = array('alpha' => get_string("sortalpha", "quiz"),
-                         'typealpha' => get_string("sorttypealpha", "quiz"),
-                         'age' => get_string("sortage", "quiz"));
-    $html .=  choose_from_menu ($sortoptions, 'qsortorder', $sortorder, false, 'this.form.submit();', '0', true);
+    //choose_from_menu concatenates the form name with
+    //"menu" so the label is for menuqsortorder
+    $sortoptions = array('alpha' => get_string("qname", "quiz"),
+                         'typealpha' => get_string("qtypename", "quiz"),
+                         'age' => get_string("age", "quiz"));
+    $a =  choose_from_menu ($sortoptions, 'qsortorder', $sortorder, false, 'this.form.submit();', '0', true);
+    $html .= '<label for="menuqsortorder">'.get_string('sortquestionsbyx', 'quiz', $a).'</label>';
     $html .=  '<noscript><div><input type="submit" value="'.get_string("sortsubmit", "quiz").'" /></div></noscript>';
     $html .= '</fieldset>';
     $html .= "</form>\n";

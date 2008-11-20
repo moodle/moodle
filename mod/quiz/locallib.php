@@ -81,9 +81,9 @@ function quiz_create_attempt($quiz, $attemptnumber, $lastattempt, $timenow, $isp
         $attempt->userid = $USER->id;
         $attempt->preview = 0;
         if ($quiz->shufflequestions) {
-            $attempt->layout = quiz_repaginate($quiz->questions, $quiz->questionsperpage, true);
+            $attempt->layout = quiz_clean_layout(quiz_repaginate($quiz->questions, $quiz->questionsperpage, true),true);
         } else {
-            $attempt->layout = $quiz->questions;
+            $attempt->layout = quiz_clean_layout($quiz->questions,true);
         }
     } else {
     /// Build on last attempt.
@@ -229,7 +229,15 @@ function quiz_questions_on_page($layout, $page) {
  *                        So 5,2,0,3,0 means questions 5 and 2 on page 1 and question 3 on page 2
  */
 function quiz_questions_in_quiz($layout) {
-    return str_replace(',0', '', $layout);
+    if($layout){
+        $layout=str_replace(',0', '', $layout);
+        //remove also the zero in the beginning, if any
+        if(isset($layout[0]) && $layout[0]=="0" &&
+                isset($layout[1]) && $layout[1]==","){
+            $layout=substr($layout,2);
+        }
+    }
+    return $layout;
 }
 
 /**
@@ -239,7 +247,31 @@ function quiz_questions_in_quiz($layout) {
  * @param string $layout  The string representing the quiz layout.
  */
 function quiz_number_of_pages($layout) {
-    return substr_count($layout, ',0');
+    $count=0;
+    if($layout){
+        //if the first page is empty, include it, too
+        if (strcmp($layout[0],"0")===0){
+            $count++;
+        }
+        $count+=substr_count($layout, ',0');
+    }
+    return $count;
+}
+/**
+ * Returns the number of questions in the quiz layout
+ *
+ * @return integer         Comma separated list of question ids
+ * @param string $layout  The string representing the quiz layout.
+ */
+function quiz_number_of_questions_in_quiz($layout) {
+    //TODO: clean layout before counting
+    //TODO: remove page breaks
+    $layout=quiz_questions_in_quiz($layout);
+    $count=substr_count($layout, ',');
+    if($count>0){
+        $count++;
+    }
+    return $count;
 }
 
 /**
@@ -275,6 +307,10 @@ function quiz_first_questionnumber($quizlayout, $pagelayout) {
 function quiz_repaginate($layout, $perpage, $shuffle=false) {
     $layout = str_replace(',0', '', $layout); // remove existing page breaks
     $questions = explode(',', $layout);
+    //remove empty pages from beginning
+    while (reset($questions) == '0') {
+        array_shift($questions);
+    }
     if ($shuffle) {
         srand((float)microtime() * 1000000); // for php < 4.2
         shuffle($questions);
@@ -705,7 +741,7 @@ function quiz_question_action_icons($quiz, $cmid, $question, $returnurl){
         $stredit = get_string('edit');
         $strview = get_string('view');
     }
-    $html =''; 
+    $html ='';
     if (($question->qtype != 'random')){
         $html .= quiz_question_preview_button($quiz, $question);
     }
@@ -727,15 +763,19 @@ function quiz_question_action_icons($quiz, $cmid, $question, $returnurl){
  * @param object $question the question
  * @return the HTML for a preview question icon.
  */
-function quiz_question_preview_button($quiz, $question) {
+function quiz_question_preview_button($quiz, $question, $label=true) {
     global $CFG, $COURSE;
     if (!question_has_capability_on($question, 'use', $question->category)){
         return '';
     }
     $strpreview = get_string('previewquestion', 'quiz');
+    $strpreviewlabel="";
+    if($label){
+        $strpreviewlabel = " ".get_string('preview', 'quiz');
+    }
     $quizorcourseid = $quiz->id?('&amp;quizid=' . $quiz->id):('&amp;courseid=' .$COURSE->id);
     return link_to_popup_window('/question/preview.php?id=' . $question->id . $quizorcourseid, 'questionpreview',
-            "<img src=\"$CFG->pixpath/t/preview.gif\" class=\"iconsmall\" alt=\"$strpreview\" />",
+            "<img src=\"$CFG->pixpath/t/preview.gif\" class=\"iconsmall\" alt=\"$strpreview\" />$strpreviewlabel",
             0, 0, $strpreview, QUESTION_PREVIEW_POPUP_OPTIONS, true);
 }
 
@@ -1085,7 +1125,78 @@ function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) 
     // return the number of successfully sent emails
     return $emailresult['good'];
 }
+function print_timing_information($quiz,$showopenstatus=false){
+        $timenow = time();
+        $available = ($quiz->timeopen < $timenow and ($timenow < $quiz->timeclose or !$quiz->timeclose));
+        if ($available) {
+            if ($quiz->timelimit) {
+                echo get_string("quiztimelimit","quiz", format_time($quiz->timelimit * 60))."</p>";
+            }
+            if ($quiz->timeopen) {
+                echo get_string('quizopens', 'quiz'), ': ', userdate($quiz->timeopen);
+            }
+            if ($quiz->timeclose) {
+                echo get_string('quizcloses', 'quiz'), ': ', userdate($quiz->timeclose);
+            }
+            if($showopenstatus){
+                if(!$quiz->timelimit && !$quiz->timeopen && !$quiz->timeclose){
+                    echo get_string('quizopened', 'quiz');
+                }
+            }
+        } else if ($timenow < $quiz->timeopen) {
+            echo get_string("quiznotavailable", "quiz", userdate($quiz->timeopen));
+        } else {
+            echo get_string("quizclosed", "quiz", userdate($quiz->timeclose));
+        }
+        return $available;
 
+}
+
+function quiz_clean_layout($layout,$removeemptypages=false){
+    //remove duplicate "," (or triple, or...)
+    while(strstr($layout,",,")){
+        $layout = str_replace(',,', ',', $layout);
+    }
+    //remove duplicate question ids
+    $layout_arr=explode(",",$layout);
+    $new_arr=array();
+    $seen=array();
+    //remove duplicate questions
+    foreach($layout_arr as $key=>$value){
+         if(!in_array($value,$seen) && $value!=0){
+             $new_arr[]=$value;
+             $seen[]=$value;
+         }else if($value==0){
+             $new_arr[]=0;
+         }
+    }
+    if($removeemptypages){
+        // Avoid duplicate page breaks
+        // Go through all the array keys
+        for($i=0;$i<count($new_arr);$i++){
+            //check if the current position and the one after are both zeros
+            //remove the one after until they are not both zeros
+                while(isset($new_arr[$i+1]) &&
+                        $new_arr[$i]==0 &&
+                        $new_arr[$i+1]==0){
+                    print_r($new_arr);
+                    array_splice($new_arr,$i+1,1);
+                }
+        }
+    }
+    $layout=implode(",",$new_arr);
+    //remove extra "," from beginning and end
+    $layout=trim($layout, ",");
+    //add a ",0" (page break) at the end if there is none
+    $layoutlength=strlen($layout);
+    $last=(strlen($layout)-1);
+    if($layoutlength>1 AND
+            !($layout[$last-1] == ',' AND $layout[$last] == '0')){
+        $layout .= ',0';
+    }
+
+    return $layout;
+}
 /**
  * Print a quiz error message. This is a thin wrapper around print_error, for convinience.
  *
