@@ -747,7 +747,7 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
     }
 
     if ($class ==='') {
-        $class = 'menu'.$name;
+        $class = 'select menu'.$name;
          // name may contaion [], which would make an invalid class. e.g. numeric question type editing form, assignment quickgrading
         $class = str_replace('[', '', $class);
         $class = str_replace(']', '', $class);
