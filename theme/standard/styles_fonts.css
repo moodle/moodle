@@ -304,11 +304,11 @@ body#admin-index .copyright {
     font-style: normal;
 }
 
-.plugincompattable { 
+.plugincompattable {
     text-align: left;
 }
 
-.plugincheckwrapper { 
+.plugincheckwrapper {
     text-align: center;
 }
 
@@ -451,7 +451,7 @@ a.skip-block {
 #calendar .maincalendar .day {
   font-weight: bold;
 }
- 
+
 #calendar h1 {
   font-size:1.0em;
   margin:0;

@@ -2034,7 +2034,7 @@ border-width:0px;
   border:1px solid black;
   padding: 1px 2px;
   background:white;
-  font-size:0.85em; 
+  font-size:0.85em;
 }
 #course-view form.togglecompletion img.iconhelp,
 #course-view span.autocompletion img.iconhelp {
@@ -2083,7 +2083,7 @@ border-width:0px;
   padding: 0;
 }
 .weeks-format .block_calendar_month .minicalendar th,
-.topics-format .block_calendar_month .minicalendar th, 
+.topics-format .block_calendar_month .minicalendar th,
 .weeks-format .block_calendar_month .minicalendar td,
 .topics-format .block_calendar_month .minicalendar td {
   padding: 0.1em 0 0.1em 1px;
@@ -2134,7 +2134,7 @@ border-width:0px;
 .weeks .right,
 .topics .right {
   float: right;
-} 
+}
 
 .section .activity img.activityicon {
   vertical-align:middle;
@@ -2519,7 +2519,7 @@ div.allcoursegrades {
 }
 
 #grade-aggregation-help dt {
-    margin-top: 15px; 
+    margin-top: 15px;
 }
 
 #grade-aggregation-help dd.example {
@@ -3081,7 +3081,7 @@ body.notes .notesgroup {
 }
 
 
-.tabrow0 .here a:link, 
+.tabrow0 .here a:link,
 .tabrow0 .here a:visited,
 .tabrow0 .here a.nolink {
   position:relative;
@@ -4345,17 +4345,17 @@ table.quizreviewsummary td.cell {
   padding: 4px;
 }
 
-#mod-quiz-grading table#grading .header .commands 
+#mod-quiz-grading table#grading .header .commands
 {
   display: inline;
 }
 
-#mod-quiz-grading table#grading .picture 
+#mod-quiz-grading table#grading .picture
 {
   width: 40px;
 }
 
-#mod-quiz-grading table#grading td 
+#mod-quiz-grading table#grading td
 {
   border-left-width: 1px;
   border-right-width: 1px;
@@ -4565,8 +4565,8 @@ table.quizreviewsummary td.cell {
 }
 
 #mod-quiz-edit .questionbankwindow select#catmenu_jump{
-    /* In Opera9, IE6 the width of the 
-    select obeys the width of its content 
+    /* In Opera9, IE6 the width of the
+    select obeys the width of its content
     by default. This prevents that. */
     width:100%;
 }
@@ -4580,7 +4580,7 @@ table.quizreviewsummary td.cell {
 }
 
 
-#mod-quiz-edit div.question div.content div.points, 
+#mod-quiz-edit div.question div.content div.points,
         #mod-quiz-edit div.question div.content div.qorder{
     line-height:1em;
     float:right;
@@ -4615,7 +4615,7 @@ table.quizreviewsummary td.cell {
     white-space:nowrap;
     text-overflow:ellipsis;
     overflow:hidden;
-    zoom:1;    
+    zoom:1;
     position:relative;
     max-width:20%;
     /*ie-only:*/
@@ -4642,7 +4642,7 @@ table.quizreviewsummary td.cell {
     -o-text-overflow:ellipsis;
     text-overflow:ellipsis;
     position:relative;
-    zoom:1;    
+    zoom:1;
     padding-left:0.3em;
     max-width:50%;
     overflow:hidden;
@@ -4927,13 +4927,13 @@ css id's of question bank*/
 
 /*.usejs class is added via javascript so these will toggle if js is enabled*/
 #mod-quiz-edit .usejs #repaginatedialog{
-    display:none;    
+    display:none;
 }
 #mod-quiz-edit .usejs #repaginatedialog .hd{
     display:block;
 }
 #mod-quiz-edit .usejs #repaginatedialog .bd{
-    padding:1em;    
+    padding:1em;
 }
 #mod-quiz-edit .usejs .repaginatecommand #repaginatecommand{
     display:block;
