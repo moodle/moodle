@@ -717,11 +717,14 @@ function close_window($delay=0) {
  * @param mixed $listbox if false, display as a dropdown menu. If true, display as a list box.
  *      By default, the list box will have a number of rows equal to min(10, count($options)), but if
  *      $listbox is an integer, that number is used for size instead.
- * @param
+ * @param boolean $multiple if true, enable multiple selections, else only 1 item can be selected. Used
+ *      when $listbox display is enabled
+ * @param string $class value to use for the class attribute of the &lt;select> element. If none is given,
+ *      then a suitable one is constructed.
  */
 function choose_from_menu ($options, $name, $selected='', $nothing='choose', $script='',
                            $nothingvalue='0', $return=false, $disabled=false, $tabindex=0,
-                           $id='', $listbox=false, $multiple=false) {
+                           $id='', $listbox=false, $multiple=false, $class='') {
 
     if ($nothing == 'choose') {
         $nothing = get_string('choose') .'...';
@@ -743,6 +746,13 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
         $id = str_replace(']', '', $id);
     }
 
+    if ($class ==='') {
+        $class = 'menu'.$name;
+         // name may contaion [], which would make an invalid class. e.g. numeric question type editing form, assignment quickgrading
+        $class = str_replace('[', '', $class);
+        $class = str_replace(']', '', $class);
+    }
+
     if ($listbox) {
         if (is_integer($listbox)) {
             $size = $listbox;
@@ -759,7 +769,7 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
         }
     }
 
-    $output = '<select id="'.$id.'" name="'. $name .'" '. $attributes .'>' . "\n";
+    $output = '<select id="'. $id .'" class="'. $class .'" name="'. $name .'" '. $attributes .'>' . "\n";
     if ($nothing) {
         $output .= '   <option value="'. s($nothingvalue) .'"'. "\n";
         if ($nothingvalue === $selected) {
