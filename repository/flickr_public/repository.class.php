@@ -279,7 +279,7 @@ class repository_flickr_public extends repository {
      */
     public function instance_config_form(&$mform) {
         $mform->addElement('text', 'email_address', get_string('emailaddress', 'repository_flickr_public'));
-        $mform->addRule('email_address', get_string('required'), 'required', null, 'client');
+        //$mform->addRule('email_address', get_string('required'), 'required', null, 'client');
     }
 
     /**
@@ -318,8 +318,8 @@ class repository_flickr_public extends repository {
      */
     public static function plugin_init() {
         //here we create a default instance for this type
-        repository_static_function('flickr_public','create', 'flickr_public', 0, get_system_context(), array('name' => get_string('repositoryname', 'repository_flickr_public'),'email_address' => null),1);
-    }
+        repository_static_function('flickr_public','create', 'flickr_public', 0, get_system_context(), array('name' => get_string('repositoryname', 'repository_flickr_public'),'email_address' => null));
+    }   
 
 }
 
