@@ -674,7 +674,6 @@ class define_role_table_advanced extends capability_table_with_risks {
         echo '<div class="felement' . $extraclass . '">';
         if (isset($this->errors[$name])) {
             formerr($this->errors[$name]);
-            echo '<br />';
         }
         echo $field;
         echo '</div>';

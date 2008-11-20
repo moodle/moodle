@@ -669,10 +669,11 @@ fieldset.fdate_selector label {
 }
 .mform span.error, .mform span.required {
   color: red;
+  float: right;
+  margin-right: 0.3em;
 }
 .mform div.error,.mform fieldset.error {
   border: 1px solid red;
-  padding: 5px;
   color: inherit;
 }
 .mform .fcheckbox input {
