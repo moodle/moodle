@@ -1082,7 +1082,7 @@ function forum_user_complete($course, $user, $mod, $forum) {
             if (!isset($discussions[$post->discussion])) {
                 continue;
             }
-           $discussion = $discussions[$post->discussion];
+            $discussion = $discussions[$post->discussion];
 
             $ratings = null;
 
@@ -1093,12 +1093,9 @@ function forum_user_complete($course, $user, $mod, $forum) {
                     $ratings->assesstimestart = $forum->assesstimestart;
                     $ratings->assesstimefinish = $forum->assesstimefinish;
                     $ratings->allow = false;
-        }
- }
-
-
+                }
+            }
             forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false, $ratings);
-
         }
     } else {
         echo "<p>".get_string("noposts", "forum")."</p>";
