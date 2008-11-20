@@ -1091,7 +1091,18 @@ table.quizreviewsummary td.cell {
 #mod-quiz-report .negcovar{
   border :medium solid pink;
 }
-
+#mod-quiz-edit .statusdisplay{
+	background-color:#ffc;
+}
+#mod-quiz-edit div.quizpage span.pagetitle{
+    color:#006;
+}
+#mod-quiz-edit div.quizpage .pagecontent{
+    background-color:#d6d6d6;
+}
+#mod-quiz-edit div.question div.qnum{
+    color:#333;
+}
 #mod-quiz-edit .questionbankwindow div.header{
 /*this color might need to be theme-specific,
 but in terms of usability, as testing showed,
