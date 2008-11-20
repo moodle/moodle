@@ -269,7 +269,7 @@ this.create_picker = function() {
             var k1 = new YAHOO.util.KeyListener(scope, {keys:13}, {fn:function(){this.fnSearch()},scope:searchbtn, correctScope: true});
             k1.enable();
         });
-        for(var i=0; i<_client.repos.length; i++) {
+        for(var i in _client.repos) {
             var repo = _client.repos[i];
             var li = document.createElement('li');
             li.id = 'repo-$suffix-'+repo.id;
@@ -852,6 +852,7 @@ _client.req = function(id, path, logout) {
 }
 _client.search_form_cb = {
 success: function(o) {
+     var _r = repository_client_$suffix;
      var el = document.getElementById('fp-search-dlg');
      if(el) {
          el.innerHTML = '';
@@ -861,7 +862,7 @@ success: function(o) {
      }
      var div1 = document.createElement('DIV');
      div1.className = 'hd';
-     div1.innerHTML = "$strsearching";
+     div1.innerHTML = "$strsearching\"" + _r.repos[_r.repositoryid].name + '"';
      var div2 = document.createElement('DIV');
      div2.className = 'bd';
      var sform = document.createElement('FORM');
@@ -875,21 +876,21 @@ success: function(o) {
      document.body.appendChild(el);
      var dlg = new YAHOO.widget.Dialog("fp-search-dlg",{
         postmethod: 'async',
+        draggable: true,
         width : "30em",
         fixedcenter : true,
         zindex: 766667,
         visible : false,
         constraintoviewport : true,
         buttons : [
-            { text:"Submit",handler: function() {
+            { text:"$strsubmit",handler: function() {
                 _client.viewbar.set('disabled', false); _client.loading('load');
                 YAHOO.util.Connect.setForm('fp-search-form', false, false);
                 this.cancel();
                 var trans = YAHOO.util.Connect.asyncRequest('POST',
                     '$CFG->httpswwwroot/repository/ws.php?action=search&env='+_client.env, _client.req_cb);
-                },isDefault:true
-            },
-            {text:"Cancel",handler:function() {this.cancel()}}
+                },isDefault:true},
+            {text:"$strcancel",handler:function() {this.cancel()}}
         ]
     });
     dlg.render();
@@ -957,8 +958,10 @@ EOD;
 $user_context = get_context_instance(CONTEXT_USER, $USER->id);
 $repos = repository_get_instances(array($user_context, $context, get_system_context()));
 foreach ($repos as $repo) {
+    $info = $repo->ajax_info();
     $js .= "\r\n";
-    $js .= 'repository_client_'.$suffix.'.repos.push('.json_encode($repo->ajax_info()).');'."\n";
+    $js .= 'repository_client_'.$suffix.'repos=[];';
+    $js .= 'repository_client_'.$suffix.'.repos['.$info->id.']='.json_encode($repo->ajax_info()).';'."\n";
 }
 $js .= "\r\n";
 
