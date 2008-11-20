@@ -11,8 +11,10 @@
 
 $string['closewindow'] = 'ا&#1740;ن پنجره را ببند';
 $string['continue'] = 'ادامه';
+$string['doyouagree'] = 'آ&#1740;ا شرا&#1740;ط را خواند&#1740;د و متوجه شد&#1740;د؟';
 $string['error'] = 'خطا';
 $string['help'] = 'راهنما&#1740;&#1740;';
+$string['invalidemail'] = 'آدرس پست الکترون&#1740;ک نامعتبر';
 $string['language'] = 'زبان';
 $string['name'] = 'نام';
 $string['next'] = 'سپس';

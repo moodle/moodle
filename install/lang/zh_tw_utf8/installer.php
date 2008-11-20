@@ -11,8 +11,10 @@
 
 $string['admindirerror'] = '指定的管理目錄不正確';
 $string['admindirname'] = '管理目錄';
+$string['admindirsetting'] = '有些web主機用/admin作為特定的URL，讓您做一些控制或其他事情。不幸地，這會跟標準的Moodle管理網頁位址相衝突。您可以在這兒修正此錯誤:在您的安裝過程中，重新命名管理者目錄，然後將新的目錄名稱放在這兒。例如:<br/> <br /><b>moodleadmin</b><br /> <br />這將可修正Moodle的admin連結。';
 $string['admindirsettinghead'] = '設定管理目錄 ...';
 $string['admindirsettingsub'] = '少部份主機使用 /admin 作為管理介面或是其他用途的特殊網址，這會與 Moodle 管理介面的標準位置；您可以修改管理介面資料夾的名稱，然後將新名稱輸入這兒。例如 <br /> <br /><b>moodleadmin</b><br /> <br /> 這會修正 Moodle 管理介面的連結。';
+$string['availablelangs'] = '可使用的語言包';
 $string['bypassed'] = '略過';
 $string['cannotcreatelangdir'] = '無法建立語言資料夾。';
 $string['cannotcreatetempdir'] = '無法建立暫存資料夾。';
@@ -24,22 +26,34 @@ $string['cannotsavezipfile'] = '無法儲存 ZIP 檔案。';
 $string['cannotunzipfile'] = '無法解壓縮檔案。';
 $string['caution'] = '注意';
 $string['check'] = '檢查';
+$string['chooselanguage'] = '選擇一種語言';
 $string['chooselanguagehead'] = '選擇一種語言';
 $string['chooselanguagesub'] = '請選擇在安裝過程中使用的語言。稍後您可以根據需要重新選擇用於網站和使用者的語言。';
 $string['closewindow'] = '關閉本視窗';
+$string['compatibilitysettings'] = '檢查您的PHP設定...';
 $string['compatibilitysettingshead'] = '檢查您的PHP設定...';
 $string['compatibilitysettingssub'] = '您的伺服器必須通過所有測試才能夠正確執行 Moodle。';
 $string['componentisuptodate'] = '元件已經是最新的了。';
 $string['configfilenotwritten'] = '這個安裝程式無法自動將您所選擇的設定建立成config.php檔，這可能是因為Moodle目錄無法寫入。您可以手動複製下面的程式碼到Moodle的根目錄下，建立名為config.php的檔案中。';
 $string['configfilewritten'] = 'config.php已經成功建立';
+$string['configurationcomplete'] = '設定完成';
 $string['configurationcompletehead'] = '設定完成';
 $string['configurationcompletesub'] = 'Moodle會嘗試將設定資料儲存在您的Moodle根目錄中。';
 $string['continue'] = '下一頁';
 $string['curlrecommended'] = '建議安裝額外的 Curl 函式庫來啟用 Moodle 網路功能。';
 $string['customcheck'] = '其他檢查';
 $string['database'] = '資料庫';
+$string['databasecreationsettings'] = '現在您必須配置資料庫，它將存放大多數Moodle的資料。這資料庫將會由Moodle4Windows安裝程式自動建立，並設定如下： <b>類型:</b> 由安裝程式固定設為\"mysql\"<br /> <b>主機:</b> 固定設為\"localhost\"<br /> <b>名稱:</b> 資料庫名稱，如，moodle<br /> <b>用戶:</b> 固定設為 \"root\" <br /> <b>密碼:</b> 您資料庫的密碼<br /> <b>表格接首字首:</b> 在所有的表格名稱前加上自定的接首字';
 $string['databasecreationsettingshead'] = '現在您需要設定大部分 Moodle 資料儲存的資料庫，透過下面指定的設定，安裝程式可以自動建立資料庫。';
 $string['databasecreationsettingssub'] = '<b>類型：</b> 安裝程式固定使用 \"mysql\" <br /> <b>主機：</b> 安裝程式固定使用 \"localhost\"<br /> <b>名稱：</b> 資料庫名稱，例如 moodle<br /> <b>帳號：</b> 安裝程式固定使用 \"root\"<br /> <b>密碼：</b> 您的資料庫密碼<br /> <b>資料表前置字元：</b> 選擇性為所有資料表名稱加入前置字元';
+$string['databasesettings'] = '現在您必須設定資料庫，大部分的Moodle資料會儲存在這兒。這個資料庫必須是已建立，而且建立了一個可存取的使用者帳號及密碼。<br/>
+<br /> <br />
+<b>類型:</b> mysql 或 postgres7<br />
+<b>主機:</b> 例如 localhost 或 db.isp.com<br />
+<b>名稱:</b> 資料庫名稱, 例如 moodle<br />
+<b>使用者:</b> 該資料庫使用者名稱<br />
+<b>密碼:</b>該使用者的密碼<br />
+<b>表格前置字元:</b> 所有表格名稱使用選擇性前置位元';
 $string['databasesettingshead'] = '現在您需要設定資料庫，Moodle的大部分資料都會儲存在其中。您應該先建立好這個資料庫並設定好用於存取該資料庫的帳號與密碼。';
 $string['databasesettingssub'] = '<b>資料庫系統:</b> mysql 或 postgres7<br />
 <b>主機:</b> 例如 localhost 或 db.isp.com<br />
@@ -70,12 +84,25 @@ $string['datarooterror'] = '您所指定的\'資料目錄\'找不到或無法建
 $string['dbconnectionerror'] = '無法連到您指定的資料庫,請查檢您的資料庫設定';
 $string['dbcreationerror'] = '建立資料庫錯誤,無法以您給的資料庫名稱建立資料表';
 $string['dbhost'] = '主機位址';
+$string['dbpass'] = '密碼';
 $string['dbprefix'] = '資料表名稱的前置字元';
 $string['dbtype'] = '類型';
 $string['dbwrongencoding'] = '您選擇的資料庫使用了字元集{$a}，我們推薦您使用一個Unicode (UTF-8)字元集的資料庫。當然，您可以選擇“跳過資料庫字元集檢查”來跳過這個環節，但您將來可能會遇到問題。';
 $string['dbwronghostserver'] = '您必須遵循上面所說明的“主機”規則。';
 $string['dbwrongnlslang'] = '在您的web伺服器中的NLS_LANG環境變數必須用 AL32UTF8 字元集。請查閱有關如何正確配置OCI8的PHP文件。';
 $string['dbwrongprefix'] = '您必須遵循上面所說明的“資料表前置字元”規則。';
+$string['directorysettings'] = '<p>請確認Moodle安裝的位置。</p>
+
+<p><b>網站位址:</b>
+指定將存取Moodle的完整網站位址 
+如果您的網站可以透過多個網址進入，請選擇您的學生們最自然會使用的那個。網址不要包含結尾的斜線。</p>
+
+<p><b>Moodle目錄:</b>
+指定此安裝的完整目錄。請確認大小寫是正確的。
+</p>
+
+<p><b>資料目錄:</b>
+您必須給Moodle存放上傳檔案的空間。這個目錄必須是可以給網站伺服器使用者(通常是\'nobody\'或\'apache\')讀取和\"寫入\"的權限。但請注意，這個目錄不應該透過網站瀏覽就可以讀取。';
 $string['directorysettingshead'] = '請確認 Moodle 安裝的目錄位置';
 $string['directorysettingssub'] = '<b>網站位址：</b> 指定存取 Moodle 的完整網址，如果您的網站透過多個網址存取，請選擇其中最常用的一個。網址的末尾不要有斜線。<br /> <br /> <b>Moodle 目錄：</b> 指定安裝的完整路徑，請確認英文大小寫是否正確。 <br /> <br /> <b>資料目錄：</b> 您需要設定一個 Moodle 可以儲存上傳資料的位置，這個位置要能夠讓網頁伺服器(通常是 \'nobody\' 或 \'apache\')讀取與寫入，但是建議不要放在能夠直接透過網址存取的位置。';
 $string['dirroot'] = 'Moodle目錄';
@@ -86,6 +113,7 @@ $string['downloadlanguagebutton'] = '下載 \"{$a}\" 語言包';
 $string['downloadlanguagehead'] = '下載語言包';
 $string['downloadlanguagenotneeded'] = '您可以用預設的語言包 \"{$a}\" 繼續安裝過程。';
 $string['downloadlanguagesub'] = '您現在可以選擇下載一個語言包然後用指定的語言繼續安裝過程。<br /><br />如果您無法下載語言包，安裝過程會繼續以英文繼續進行。（只要安裝完成，您還是可以下載、安裝其他的語言包）';
+$string['doyouagree'] = '您是否已經閱覽以上說明條件並且同意所有內容?';
 $string['environmenterrortodo'] = '在開始安裝這個 Moodle 版本前，您必須修正上述所有環境問題（錯誤）！';
 $string['environmenthead'] = '檢查您的環境中...';
 $string['environmentrecommendcustomcheck'] = '如果這個測試失敗，代表有一個潛在的問題';
@@ -130,7 +158,9 @@ $string['help'] = '輔助說明';
 $string['iconvrecommended'] = '為了提昇網站效率，尤其您的網站支援非拉丁語系的情況下，建議您可以安裝額外的 ICONV 函式庫。';
 $string['info'] = '資訊';
 $string['installation'] = '安裝';
+$string['invalidemail'] = '錯誤的電子郵件';
 $string['invalidmd5'] = '無效的 md5';
+$string['invalidurl'] = '無效的URL網址';
 $string['langdownloaderror'] = '很不幸地，語言“{$a}”並未安裝。安裝過程將以英文繼續。';
 $string['langdownloadok'] = '語言“{$a}”已經成功安裝了。安裝過程將會以此語言繼續。';
 $string['language'] = '語言';
@@ -189,6 +219,7 @@ $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = '向前';
 $string['qtyperqpwillberemoved'] = '在更新時，也將RQP問題移除。您不使用此問題型態，你也不會經歷任何問題。';
 $string['qtyperqpwillberemovedanyway'] = '在更新時，也將RQP問題移除。您的資料庫中有一些RQP問題存在，除非您在繼續更新前，重新安裝程式碼 http://moodle.org/mod/data/view.php?d=13&amp;rid=797，否則它會停止運作。';
+$string['releasenoteslink'] = '關於這個版本的 Moodle資訊，請參考線上 <a target=\"_new\" href=\"$a\">版本摘要</a>';
 $string['remotedownloaderror'] = '下載元件至伺服器失敗，檢查代理伺服器的設定、高度建議安裝PHP cURL，您必須手動下載<a href=\"$a->url\">$a->url</a>，並且複製到伺服器\"$a->dest\" 解壓縮';
 $string['remotedownloadnotallowed'] = '您的伺服器不允許下載元件（停用了 allow_url_fopen ）。<br /><br />您必須手動下載 <a href=\"$a->url\">$a->url</a> ，然後複製到 \"$a->dest\" 並且解壓縮。';
 $string['report'] = '報表';

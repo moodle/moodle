@@ -11,6 +11,12 @@
 
 $string['admindirerror'] = 'Norādītais administratora direktorijs ir nepareizs';
 $string['admindirname'] = 'Administratora direktorijs';
+$string['admindirsetting'] = 'Lai piekļūtu vadības panelim vai citai programmai, /admin kā īpašs URL 
+    tiek izmantots tikai dažos tīmekļa resursdatoros.  Diemžēl tas konfliktē ar Moodle 
+    administratoru lapu parastajām atrašanās vietām.  To var labot, 
+    sistēmā pārdēvējot administratora direktoriju un šeit norādot 
+    jauno nosaukumu.  Piemēram: <br /> <br /><b>moodleadmin</b><br /> <br />
+    Šādi sistēmā Moodle tiks izlabotas administratoru saites.';
 $string['admindirsettinghead'] = 'Administratora direktorija iestatīšana...';
 $string['admindirsettingsub'] = 'Lai piekļūtu vadības panelim vai citai programmai, /admin kā īpašs URL 
     tiek izmantots tikai dažos tīmekļa resursdatoros.  Diemžēl tas konfliktē ar Moodle 
@@ -18,6 +24,7 @@ $string['admindirsettingsub'] = 'Lai piekļūtu vadības panelim vai citai progr
     sistēmā pārdēvējot administratora direktoriju un šeit norādot 
     jauno nosaukumu.  Piemēram: <br /> <br /><b>moodleadmin</b><br /> <br />
     Šādi sistēmā Moodle tiks izlabotas administratoru saites.';
+$string['availablelangs'] = 'Pieejamās valodu pakotnes';
 $string['bypassed'] = 'Apiets';
 $string['cannotcreatelangdir'] = 'Nevar izveidot valodas direktoriju.';
 $string['cannotcreatetempdir'] = 'Nevar izveidot pagaidu direktoriju.';
@@ -29,20 +36,33 @@ $string['cannotsavezipfile'] = 'Nevar saglabāt ZIP failu.';
 $string['cannotunzipfile'] = 'Nevar tilpatspiest failu.';
 $string['caution'] = 'Brīdinājums.';
 $string['check'] = 'Pārbaudīt';
+$string['chooselanguage'] = 'Izvēlēties valodu';
 $string['chooselanguagehead'] = 'Valodas izvēle';
 $string['chooselanguagesub'] = 'Lūdzu, izvēlieties valodu, kas tiks lietota TIKAI instalēšanas laikā. Vietni un lietotājiem pieejamās valodas vēlāk varēsit izvēlēties citā ekrānā.';
 $string['closewindow'] = 'Aizvērt šo logu';
+$string['compatibilitysettings'] = 'Notiek jūsu PHP iestatījumu pārbaude...';
 $string['compatibilitysettingshead'] = 'PHP iestatījumu pārbaude...';
 $string['compatibilitysettingssub'] = 'Lai sistēma Moodle varētu darboties pareizi, jūsu serverim ir veiksmīgi jānokārto visas šīs pārbaudes';
 $string['componentisuptodate'] = 'Komponents atbilst visjaunākajai versijai.';
 $string['configfilenotwritten'] = 'Instalēšanas skripts nevarēja automātiski izveidot failu config.php, kurā tiek iekļauti visi jūsu izraudzītie iestatījumi, jo Moodle direktorijā, iespējams, nevar ierakstīt failus. Tālāk norādīto kodu varat manuāli iekopēt Moodle saknes direktorijā esošajā failā config.php.';
 $string['configfilewritten'] = 'Fails config.php ir sekmīgi izveidots';
+$string['configurationcomplete'] = 'Konfigurēšana pabeigta';
 $string['configurationcompletehead'] = 'Konfigurēšana pabeigta';
 $string['configurationcompletesub'] = 'Sistēma Moodle mēģināja saglabāt jūsu konfigurāciju failā, kas atrodas jūsu Moodle instalācijas saknes direktorijā.';
 $string['continue'] = 'Turpināt';
 $string['curlrecommended'] = 'Lai iespējotu Moodle tīklošanas funkcionalitāti, ļoti ieteicams instalēt neobligāto Curl bibliotēku.';
 $string['customcheck'] = 'Citas pārbaudes';
 $string['database'] = 'Datubāze';
+$string['databasecreationsettings'] = 'Tagad ir jāveic tās datubāzes iestatījumu konfigurēšana, kurā tiks
+    saglabāta lielākā daļa Moodle datu.  Instalēšanas programma automātiski izveidos šo datubāzi,
+    izmantojot tālāk norādītos iestatījumus.<br />
+    <br /><br />
+       <b>Tips:</b> instalēšanas programmas noteiktais ir “mysql”
+       <b>Resursdators:</b> instalēšanas programmas noteiktais ir “localhost”
+       <b>Nosaukums:</b> datubāzes nosaukums, piemēram, Moodle<br />
+       <b>Lietotājs:</b> instalēšanas programmas noteiktais ir “root”
+       <b>Parole:</b> datubāzes piekļuves parole<br />
+       <b>Tabulas prefikss:</b> brīvi izraudzīts prefikss izmantošanai visu tabulu nosaukumos';
 $string['databasecreationsettingshead'] = 'Tagad ir jāveic tās datubāzes iestatījumu konfigurēšana, kurā tiks
     saglabāta lielākā daļa Moodle datu.  Instalēšanas programma automātiski izveidos šo datubāzi,
     izmantojot tālāk norādītos iestatījumus.';
@@ -50,6 +70,16 @@ $string['databasecreationsettingssub'] = '<b>Tips:</b> instalēšanas programmas
        <b>Resursdators:</b> instalēšanas programmas noteiktais ir “localhost”
        <b>Nosaukums:</b> datubāzes nosaukums, piemēram, Moodle<br />
        <b>Lietotājs:</b> instalēšanas programmas noteiktais ir “root”
+       <b>Parole:</b> datubāzes piekļuves parole<br />
+       <b>Tabulas prefikss:</b> brīvi izraudzīts prefikss izmantošanai visu tabulu nosaukumos';
+$string['databasesettings'] = 'Tagad ir jāveic tās datubāzes konfigurēšana, kurā tiks
+    saglabāta lielākā daļa Moodle datu.  Šai datubāzei ir jābūt jau izveidotai,
+    kā arī jābūt izveidotam datubāzes piekļuves lietotājvārdam un parolei.<br />
+    <br /><br />
+       <b>Tips:</b> mysql vai postgres7<br />
+       <b>Resursdators:</b> piemēram, localhost vai db.isp.com<br />
+       <b>Nosaukums:</b> datubāzes nosaukums, piemēram, Moodle<br />
+       <b>Lietotājs:</b> datubāzes izmantotāja lietotājvārds<br />
        <b>Parole:</b> datubāzes piekļuves parole<br />
        <b>Tabulas prefikss:</b> brīvi izraudzīts prefikss izmantošanai visu tabulu nosaukumos';
 $string['databasesettingshead'] = 'Tagad ir jāveic tās datubāzes konfigurēšana, kurā tiks
@@ -102,12 +132,30 @@ $string['datarooterror'] = 'Norādīto vienumu “Datu direktorijs” nevar atra
 $string['dbconnectionerror'] = 'Nevar izveidot savienojumu ar norādīto datubāzi. Lūdzu, pārbaudiet datubāzes iestatījumus.';
 $string['dbcreationerror'] = 'Datubāzes izveides kļūda. Nevar izveidot piešķirto datubāzes nosaukumu, izmantojot norādītos iestatījumus';
 $string['dbhost'] = 'Resursu serveris';
+$string['dbpass'] = 'Parole';
 $string['dbprefix'] = 'Tabulu prefikss';
 $string['dbtype'] = 'Tips';
 $string['dbwrongencoding'] = 'Atlasītajā datubāzē tiek izmantots kāds no neieteicamajiem kodējumiem ($a). Šī kodējuma vietā labāk izmantot datubāzi ar vienotu kodējumu unikodā (UTF-8). Jebkurā gadījumā šo pārbaudi var apiet, tālāk atzīmējot izvēles rūtiņu “Izlaist datubāzes kodējuma pārbaudi”, tomēr tas vēlāk var izraisīt darbības problēmas.';
 $string['dbwronghostserver'] = 'Jāievēro sadaļā “Resursdators” minētie noteikumi.';
 $string['dbwrongnlslang'] = 'Vides mainīgajam NLS_LANG tīmekļa serverī jāizmanto rakstzīmju kopa AL32UTF8. Lai iegūtu informāciju par pareizu OCI8 konfigurēšanu, skatiet PHP dokumentāciju.';
 $string['dbwrongprefix'] = 'Jāievēro sadaļā “Resursdators” minētie noteikumi.';
+$string['directorysettings'] = '<p>Lūdzu, apstipriniet šīs Moodle instalācijas atrašanās vietu.</p>
+
+<p><b>Tīmekļa adrese:</b>
+norādiet pilnu tīmekļa adresi, kurā tiks veikta piekļuve sistēmai Moodle.  
+Ja jūsu tīmekļa vietnei var piekļūt, izmantojot vairākus URL, izvēlieties 
+piemērotāko, kuru lietos jūsu mācību iestādes studenti.  Nelietojiet 
+noslēdzošo slīpsvītru.</p>
+
+<p><b>Moodle direktorijs:</b>
+norādiet pilnu direktorija ceļu uz šo instalāciju.
+Pārbaudiet lielo un mazo burtu lietojumu.</p>
+
+<p><b>Datu direktorijs:</b>
+ir jānorāda vieta, kurā sistēma Moodle var saglabāt augšupielādētos failus.  Šajā
+direktorijā tīmekļa servera lietotājam (parasti “nobody” vai “apache”) jābūt atļaujai lasīt UN IERAKSTĪT failus, 
+tomēr viņš nedrīkst šim direktorijam piekļūt 
+tieši no tīmekļa.</p>';
 $string['directorysettingshead'] = 'Lūdzu, apstipriniet šī Moodle instalācijas atrašanās vietas';
 $string['directorysettingssub'] = '<b>Tīmekļa adrese:</b>
 norādiet pilnu tīmekļa adresi, kurā tiks veikta piekļuve sistēmai Moodle.  
@@ -134,6 +182,7 @@ $string['downloadlanguagebutton'] = 'Lejupielādēt &quot;$a&quot; valodas pakot
 $string['downloadlanguagehead'] = 'Valodas pakotnes lejupielāde';
 $string['downloadlanguagenotneeded'] = 'Varat turpināt instalēšanu, izmantojot noklusējuma (“{$a}”) valodas pakotni.';
 $string['downloadlanguagesub'] = 'Tagad jums ir iespēja lejupielādēt konkrētas valodas pakotni un turpināt instalēšanu šajā valodā.<br /><br />Ja nevarat lejupielādēt valodas pakotni, instalēšana tiks turpināta angļu valodā. (Pēc instalēšanas pabeigšanas varēsit lejupielādēt un instalēt arī citu valodu pakotnes.)';
+$string['doyouagree'] = 'Vai esat izlasījis šos nosacījumus un tos izpratis?';
 $string['environmenterrortodo'] = 'Pirms turpināt instalēt šo Moodle versiju, novērsiet visas atrastās vides problēmas (kļūdas)!';
 $string['environmenthead'] = 'Vides pārbaude...';
 $string['environmentrecommendcustomcheck'] = 'ja šis tests neizpildās korekti, tas norāda uz potenciālu problēmu';
@@ -184,6 +233,7 @@ $string['help'] = 'Palīdzība';
 $string['iconvrecommended'] = 'Ļoti ieteicama neobligātās ICONV bibliotēkas instalēšana, lai uzlabotu vietnes veiktspēju, īpaši, ja vietne atbalsta valodas, kuru pamatā nav latīņu alfabēta.';
 $string['info'] = 'Informācija';
 $string['installation'] = 'Instalēšana';
+$string['invalidemail'] = 'Nederīga e-pasta adrese';
 $string['invalidmd5'] = 'Nederīgs md5';
 $string['langdownloaderror'] = '“{$a}” valodas pakotne diemžēl netika instalēta. Instalēšana tiks turpināta angļu valodā.';
 $string['langdownloadok'] = '“{$a}” valodas pakotne tika sekmīgi instalēta. Instalēšana tiks turpināta šajā valodā.';
@@ -250,6 +300,7 @@ $string['phpversionhelp'] = '<p>Sistēmā Moodle jāizmanto PHP, kuras versija i
 (Ja PHP versija ir 5.0.x, var arī atkāpties uz versiju 4.4.x)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Iepriekšējais';
+$string['releasenoteslink'] = 'Lai iegūtu informāciju par šo sistēmas Moodle versiju, skatiet tiešsaistes <a target=\"_new\" href=\"$a\">Piezīmes par laidienu</a>';
 $string['remotedownloadnotallowed'] = 'Komponentu lejupielāde jūsu serverī nav atļauta (iestatījums allow_url_fopen ir atspējots).<br /><br />Lejupielādējiet šo <a href=\"$a->url\">$a->url</a> failu manuāli, kopējiet to sava servera atrašanās vietā “{$a->dest}” un veiciet tā tilpatspiešanu.';
 $string['report'] = 'Atskaite';
 $string['restricted'] = 'Ierobežots';

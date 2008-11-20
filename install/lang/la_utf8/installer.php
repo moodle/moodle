@@ -11,6 +11,7 @@
 
 $string['check'] = 'comprobāre';
 $string['continue'] = 'perservā';
+$string['doyouagree'] = 'lēgistine hās condicionēs intellēgistique illōs?';
 $string['help'] = 'auxilium';
 $string['language'] = 'lingua';
 $string['name'] = 'nōmen';

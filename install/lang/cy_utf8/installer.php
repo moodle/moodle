@@ -11,6 +11,12 @@
 
 $string['admindirerror'] = 'Mae cyfeiriadur y gweinyddwr a roddwyd yn anghywir';
 $string['admindirname'] = 'Cyfeiriadur y Gweinyddwr';
+$string['admindirsetting'] = 'Nifer fach iawn o westeiwyr gwe sy\'n defnyddio /admin fel URL arbennig i chi gael mynd i mewn i\'r  
+    panel rheoli neu beth bynnag. Yn anffodus, mae hyn yn gwrthdaro â 
+    lleoliad safonol tudalennau gweinyddol Moodle. Gallwch drwsio hyn drwy 
+    ailenwi cyfeiriadur y gweinyddwr wrth osod y rhaglen, a rhoi\'r  
+    enw newydd yma.  Er enghraifft: <br /> <br /><b>gweinyddmoodle</b><br /> <br />
+    Bydd hyn yn trwsio\'r dolenni gweinyddol yn Moodle.';
 $string['admindirsettinghead'] = 'Gosod cyfeiriadur y gweinyddwr...';
 $string['admindirsettingsub'] = 'Nifer fach iawn o westeiwyr gwe sy\'n defnyddio /admin fel URL arbennig i chi gael mynd i mewn i\'r 
 panel rheoli neu beth bynnag. Yn anffodus, mae hyn yn gwrthdaro â  
@@ -18,6 +24,7 @@ lleoliad safonol tudalennau gweinyddol Moodle. Gallwch drwsio hyn drwy
 ailenwi cyfeiriadur y gweinyddwr wrth osod y rhaglen, a rhoi\'r  
 enw newydd yma. Er enghraifft: <br /> <br /><b>gweinyddmoodle</b><br /> <br />
 Bydd hyn yn trwsio dolenni gweinyddol yn Moodle.';
+$string['availablelangs'] = 'Y pecynnau iaith sydd ar gael';
 $string['bypassed'] = 'Pasio Heibio';
 $string['cannotcreatelangdir'] = 'Does dim modd creu cyfeiriadur iaith.';
 $string['cannotcreatetempdir'] = 'Does dim modd creu cyfeiriadur dros dro.';
@@ -29,20 +36,32 @@ $string['cannotsavezipfile'] = 'Does dim modd cadw ffeil ZIP.';
 $string['cannotunzipfile'] = 'Does dim modd dadzipio\'r ffeil.';
 $string['caution'] = 'Gofal';
 $string['check'] = 'Gwirio';
+$string['chooselanguage'] = 'Dewiswch iaith';
 $string['chooselanguagehead'] = 'Dewis iaith';
 $string['chooselanguagesub'] = 'Dewiswch iaith ar gyfer y broses osod YN UNIG. Gallwch ddewis yr iaith ar gyfer y safle ac ar gyfer defnyddwyr yn nes ymlaen ar sgrin arall.';
 $string['closewindow'] = 'Cau\'r ffenstr hon';
+$string['compatibilitysettings'] = 'Wrthi\'n profi eich gosodiadau PHP ...';
 $string['compatibilitysettingshead'] = 'Wrthi\'n profi eich gosodiadau PHP ...';
 $string['compatibilitysettingssub'] = 'Dylai\'ch gweinydd basio\'r holl brofion hyn fel bod Moodle yn rhedeg yn llwyddiannus';
 $string['componentisuptodate'] = 'Mae\'r gydran wedi\'i diweddaru.';
 $string['configfilenotwritten'] = 'Nid oedd y sgript gosod wedi llwyddo i greu ffeil config.php yn awtomatig a oedd yn cynnwys eich gosodiadau personol, fwy na thebyg oherwydd na ellir ysgrifennu dros y cyfeiriadur Moodle. Gallwch gopïo\'r cod canlynol eich hun i ffeil o\'r enw config.php yng nghyfeiriadur gwraidd Moodle.';
 $string['configfilewritten'] = 'Wedi llwyddo i greu\'r ffeil config.php yn llwyddiannus';
+$string['configurationcomplete'] = 'Wedi gorffen ffurfweddu';
 $string['configurationcompletehead'] = 'Wedi gorffen ffurfweddu';
 $string['configurationcompletesub'] = 'Ceisiodd Moodle gadw eich ffurfwedd mewn ffeil yng ngwraidd eich rhaglen Moodle.';
 $string['continue'] = 'Bwrw ymlaen';
 $string['curlrecommended'] = 'Argymhellir yn gryf eich bod yn gosod y llyfrgell Curl ddewisol fel bo Rhwydweithio Moodle yn gallu gweithio.';
 $string['customcheck'] = 'Archwiliadau Eraill';
 $string['database'] = 'Cronfa ddata';
+$string['databasecreationsettings'] = 'Nawr, bydd angen i chi ffurfweddu gosodiadau\'r gronfa ddata lle y caiff y rhan fwyaf o ddata Moodle ei storio. Caiff y gronfa ddata hon ei chreu\'n awtomatig gan y rhaglen osod
+â\'r gosodiadau a roddir isod.<br />
+<br /> <br />
+<b>Math:</b> wedi\'i osod i \"mysql\" gan y rhaglen osod<br />
+<b>Gwesteiwr:</b> wedi\'i osod i \"localhost\" gan y rhaglen osod<br />
+<b>Enw:</b> enw\'r gronfa ddata, ee moodle<br />
+<b>Defnyddiwr:</b> wedi\'i osod i\'r \"gwraidd\" gan y rhaglen osod<br />
+<b>Cyfrinair:</b> cyfrinair eich cronfa ddata<br />
+<b>Llythrennau Blaen Tablau:</b> dewis i roi llythrennau o flaen pob enw tabl';
 $string['databasecreationsettingshead'] = 'Nawr mae angen i chi ffurfweddu gosodiadau\'r gronfa ddata lle caiff y rhan fwyaf o ddata Moodle
 ei storio. Caiff y gronfa ddata hon ei chreu\'n awtomatig gan y rhaglen osod â\'r gosodiadau a bennir isod.';
 $string['databasecreationsettingssub'] = '<b>Math:</b> wedi\'i osod i \"mysql\" gan y rhaglen osod<br />
@@ -51,6 +70,15 @@ $string['databasecreationsettingssub'] = '<b>Math:</b> wedi\'i osod i \"mysql\" 
        <b>Defnyddiwr:</b> wedi\'i osod i\'r \"gwraidd\" gan y rhaglen osod<br />
        <b>Cyfrinair:</b> cyfrinair eich cronfa ddata<br />
        <b>Llythrennau Blaen Tablau:</b> dewis i roi llythrennau o flaen pob enw tabl';
+$string['databasesettings'] = 'Nawr mae angen i chi ffurfweddu\'r gronfa ddata lle caiff y rhan fwyaf o ddata Moodle 
+ei storio. Mae\'n rhaid bod y gronfa ddata hon wedi cael ei chreu a bod enw defnyddiwr a chyfrinair wedi\'u gosod i fynd i mewn iddi.<br />
+<br /> <br />
+<b>Math:</b> mysql neu postgres7<br />
+<b>Gwesteiwr:</b> ee localhost neu db.isp.com<br />
+<b>Enw:</b> enw\'r gronfa ddata, ee moodle<br />
+<b>Defnyddiwr:</b> enw defnyddiwr ar gyfer eich cronfa ddata<br />
+<b>Cyfrinair:</b> cyfrinair ar gyfer eich cronfa ddata<br />
+<b>Llythrennau Blaen Tablau:</b> dewis i roi llythrennau o flaen pob enw tabl';
 $string['databasesettingshead'] = 'Nawr mae angen i chi ffurfweddu\'r gronfa ddata lle caiff y rhan fwyaf o ddata Moodle 
 ei storio. Mae\'n rhaid bod y gronfa ddata hon wedi cael ei chreu a bod enw defnyddiwr a chyfrinair wedi\'u gosod i fynd i mewn iddi.';
 $string['databasesettingssub'] = '<b>Math:</b> mysql neu postgres7<br />
@@ -100,12 +128,29 @@ $string['datarooterror'] = 'Heb lwyddo i ddod o hyd i\'r \'Cyfeiriadur Data\' a 
 $string['dbconnectionerror'] = 'Heb lwyddo i gysylltu â\'r gronfa ddata a nodoch. Tarwch olwg dros osodiadau eich cronfa ddata.';
 $string['dbcreationerror'] = 'Gwall wrth greu cronfa ddata. Heb lwyddo i greu\'r gronfa ddata a enwyd â\'r gosodiadau a roddwyd.';
 $string['dbhost'] = 'Gweinydd y Gwesteiwr';
+$string['dbpass'] = 'Cyfrinair';
 $string['dbprefix'] = 'Llythrennau Blaen Tablau';
 $string['dbtype'] = 'Math';
 $string['dbwrongencoding'] = 'Mae\'r gronfa ddata a ddewiswyd yn rhedeg dan un cod nad yw\'n cael ei argymell ($a).Byddai\'n well defnyddio un cronfa ddata wedi\'i hamgodio gydag Unicode (UTF-8) yn lle hynny. Gallwch hepgor y prawf hwn drwy ddewis \"Hepgor y Prawf Amgodio DB\" isod, ond mae\'n bosib y byddwch yn dod ar draws problemau yn y dyfodol.';
 $string['dbwronghostserver'] = 'Rhaid i chi ddilyn rheolau\'r \"Gwesteiwr\" fel a eglurwyd uchod.';
 $string['dbwrongnlslang'] = 'Rhaid i\'r newidyn amgylchedd NLS_LANG yn eich gweinydd gwe ddefnyddio\'r set nodau AL32UTF8. Darllenwch y dogfennau am PHP am sut i ffurfweddu OCI8 yn gywir.';
 $string['dbwrongprefix'] = 'Rhaid i chi ddilyn rheolau \"Llythrennau Blaen Tablau\" fel a eglurwyd uchod';
+$string['directorysettings'] = '<p>A wnewch chi gadarnhau lleoliadau\'r rhaglen Moodle hon.</p>
+
+<p><b>Cyfeiriad ar y We:</b>
+Rhowch y cyfeiriad ar y we llawn lle byddwch yn mynd i mewn i Moodle.  
+Os gellir defnyddio sawl URL i fynd i mewn i\'ch gwefan yna dewiswch 
+yr un fyddai\'ch myfyrwyr yn fwyaf tebygol o\'i ddefnyddio. Peidiwch â chynnwys 
+slaes ar y diwedd.</p>
+
+<p><b>Cyfeiriadur Moodle:</b>
+Rhowch y llwybr cyfeiriadur llawn i\'r rhaglen a osodwyd.
+Gwnewch yn siŵr eich bod yn defnyddio\'r llythrennau bach/mawr cywir.</p>
+
+<p><b>Cyfeiriadur Data:</b>
+Mae Moodle angen lle ar gyfer cadw ffeiliau sy\'n cael eu llwytho i fyny.  Dylai   
+defnyddiwr gweinydd y we (fel arfer \'neb\' neu \'apache\') allu darllen ac YSGRIFENNU ar y cyfeiriadur hwn,  ond ni ddylid gallu mynd i mewn iddo\'n 
+uniongyrchol drwy\'r we.</p>';
 $string['directorysettingshead'] = 'Cadarnhewch leoliadau\'r rhaglen Moodle hon';
 $string['directorysettingssub'] = '<b>Cyfeiriad ar y We:</b>
 Rhowch y cyfeiriad ar y we llawn lle byddwch yn mynd i mewn i Moodle.  
@@ -130,6 +175,7 @@ $string['downloadlanguagebutton'] = 'Llwytho\'r pecyn iaith &quot;$a&quot;';
 $string['downloadlanguagehead'] = 'Llwytho\'r pecyn iaith i lawr';
 $string['downloadlanguagenotneeded'] = 'Gallwch barhau â\'r broses osod gan ddefnyddio\'r pecyn iaith diofyn, \"$a\".';
 $string['downloadlanguagesub'] = 'Nawr, gallwch ddewis llwytho pecyn iaith i lawr a bwrw ymlaen â\'r broses osod yn yr iaith honno.<br /><br />Os nad ydych chi\'n gallu llwytho\'r pecyn iaith i lawr, bydd y broses osod yn cario ymlaen yn Saesneg. (Ar ôl i\'r broses osod ddod i ben, bydd gennych gyfle i lwytho a gosod pecynnau iaith ychwanegol.)';
+$string['doyouagree'] = 'Ydych chi wedi darllen a deall yr amodau hyn?';
 $string['environmenterrortodo'] = 'Rhaid datrys yr holl broblemau amgylcheddol (gwallau) uchod cyn parhau i osod y fersiwn hwn o Moodle!';
 $string['environmenthead'] = 'Wrthi\'n profi eich amgylchedd ...';
 $string['environmentrecommendcustomcheck'] = 'os yw\'r prawf hwn yn methu, mae\'n dangos problem bosibl';
@@ -177,6 +223,7 @@ $string['help'] = 'Help';
 $string['iconvrecommended'] = 'Argymhellir yn gryf eich bod yn gosod y llyfrgell ICONV ddewisol er mwyn gwella perfformiad y safle, yn enwedig os gall eich safle ddelio ag ieithoedd heblaw rhai Lladin.';
 $string['info'] = 'Gwybodaeth';
 $string['installation'] = 'Gosod';
+$string['invalidemail'] = 'Cyfeiriad e-bost annilys';
 $string['invalidmd5'] = 'md5 annilys';
 $string['langdownloaderror'] = 'Yn anffodus, ni osodwyd yr iaith ganlynol: \"$a\". Bydd y broses osod yn cario ymlaen yn Saesneg.';
 $string['langdownloadok'] = 'Wedi gosod \"$a\" yn llwyddiannus. Bydd y broses osod yn cario ymlaen yn yr iaith hon.';
@@ -241,6 +288,7 @@ $string['phpversionhelp'] = '<p>Mae angen o leiaf fersiwn PHP 4.3.0 neu 5.1.0 ar
 (Os oes gennych 5.0.x gallwch hefyd is-raddio i fersiwn 4.4.x)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Blaenorol';
+$string['releasenoteslink'] = 'I gael gwybodaeth am y fersiwn hwn o Moodle, gweler y <a target=\"_new\" href=\"$a\">Nodiadau Rhyddhau</a> ar-lein';
 $string['remotedownloadnotallowed'] = 'Ni chaniateir llwytho cydrannau i lawr i\'ch gweinydd (mae allow_url_fopen wedi\'i analluogi).<br /><br />Rhaid i chi lwytho\'r ffeil <a href=\"$a->url\">$a->url</a> i lawr eich hun, ei chopïo i \"$a->dest\" yn eich gweinydd, a\'i dadzipio yno.';
 $string['report'] = 'Adroddiad';
 $string['restricted'] = 'Wedi\'i wahardd';

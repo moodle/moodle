@@ -11,8 +11,10 @@
 
 $string['closewindow'] = 'Cerrar esta ventana';
 $string['continue'] = 'Continuar';
+$string['doyouagree'] = '¿Ha leído y comprendido estas condiciones?';
 $string['error'] = 'Error';
 $string['help'] = 'Ayuda';
+$string['invalidemail'] = 'Dirección de correo no válida';
 $string['language'] = 'Idioma';
 $string['name'] = 'Nombre';
 $string['next'] = 'Siguiente';

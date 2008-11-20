@@ -11,22 +11,47 @@
 
 $string['admindirerror'] = 'Određeni administratorski direktorij je nepravilan';
 $string['admindirname'] = 'Administratorski direktorij';
+$string['admindirsetting'] = 'Veoma nekoliko ili priližno nekoliko webhostova koristi administrator kao specijalni URL za Vaš pristup kontrolnoj ploči. Na nesreću ovo je konflikt sa standardnom lokacijom za Moodle administratorsku stranicu. Možete ovo fiksirati preimenovanjem administratorskog direktorija u Vašoj instalaciji, postavijajući ovdje novo ime. Na primjer: <br /> <br /><b>moodleadmin</b><br /> <br />
+Ovo će fiksirati administratorski link na Moodle.';
 $string['caution'] = 'Pažnja';
+$string['chooselanguage'] = 'Izaberite jezik';
 $string['closewindow'] = 'Zatvorite prozor';
+$string['compatibilitysettings'] = 'Provjerite Vaša PHP podešavanja ...';
 $string['configfilenotwritten'] = 'Instalacijska skripta nije u mogućnosti da automatski kreira config.php datoteku koja obuhvata Vaše izabrano podešavanje, vjerovatno zbog Moodle direktorija koji nije pisan. Možete ručno kopirati prateći kod u ime fajla config.php unutar osnovnog direktorija za Moodle.';
 $string['configfilewritten'] = 'config.php je bio uspješno kreiran';
+$string['configurationcomplete'] = 'Konfiguracija je kompletirana';
 $string['continue'] = 'Nastavak';
 $string['database'] = 'Baza podataka';
+$string['databasesettings'] = 'Sada Vam je potrebno da konfigurišete bazu podataka gdje će i većina Moodle podataka biti pohranjena. Ova baza podataka već mora biti kreirana i korisničko ime i lozinku kreirajte da je dostupno.<br />
+<br /> <br />
+<b>Tip:</b> mysql or postgres7<br />
+<b>Glavni:</b> eg lokalhost ili db.isp.com<br />
+<b>Ime:</b> ime baze podataka, eg moodle<br />
+<b>Korisnik:</b> Vaše korisničko ime baze podataka<br />
+<b>Lozinka:</b> your database password<br />
+<b>Tabelarni prefiks:</b> alternativni prefiks da koristi svim imenima tabela';
 $string['dataroot'] = 'Direktorij podataka';
 $string['datarooterror'] = '\'Directorij podataka\' koji ste naveli ne može biti pronađen ili kreiran.  Svaka korekcija puta ili pravljenja ručno tog direktorija.';
 $string['dbconnectionerror'] = 'Ne možemo se spojiti na bazu podataka koju ste naveli. Molimo Vas da provjerite svoja podešavanja baze podataka.';
 $string['dbcreationerror'] = 'Greška prilikom pravljenja baze podataka. Ne možete napraviti ime date baze podataka sa predviđenim podešavanjima';
 $string['dbhost'] = 'Glavni server';
+$string['dbpass'] = 'Lozinka';
 $string['dbprefix'] = 'Lista prefiksa';
 $string['dbtype'] = 'Tip';
+$string['directorysettings'] = '<p>Molim Vas potvrdite lokaciju ove Moodle instalacije.</p>
+
+<p><b>Web Adresa:</b>
+Navedite punu web adresu gdje će Moodle biti dostupan. Ako je Vaš web sajt dostupan preko više URLa tada izaberite što prirodniji jedan od onih koje će Vaši studenti koristiti. Ne uključujte prateću crticu.</p>
+
+<p><b>Moodle Directorij:</b>
+Navedite punu putanju direktorija za ovu instalaciju. Budite sigurni da je gornji/donji slučaj tačan.</p>
+
+<p><b>Directorij podataka:</b>
+Potrebno Vam je mjesto gdje Moodle možete spasiti učitavajući datoteke. Ovaj direktorij bi trebao biti čitljiv i pisan od web server korisnika (obično \'niko\' ili \'apache\'), ali to neće biti direktno pristupačno od weba.</p>';
 $string['dirroot'] = 'Direktorij Moodla';
 $string['dirrooterror'] = 'Podešavanje \'Direktorija Moodla\' izgleda je netačno - ne možemo tamo naći Moodle instalaciju. Niža vrijednost će biti ponovo dovedena na početni položaj.';
 $string['download'] = 'Preuzeti';
+$string['doyouagree'] = 'Da li ste pročitali i razumjeli ove uslove?';
 $string['error'] = 'Greška';
 $string['fail'] = 'Izostati';
 $string['fileuploads'] = 'Katalog za učitavanja datoteka';
@@ -47,6 +72,7 @@ $string['gdversionhelp'] = '<p>Vaš server neće izgledati isto imajući GD inst
 <p>Na osnovu Windows obično možete podesiti php.ini i ne bilježiti liniju referencirajući php_gd2.dll.</p>';
 $string['help'] = 'Pomoć';
 $string['installation'] = 'Instalacija';
+$string['invalidemail'] = 'Pogrešna elektronska adresa';
 $string['language'] = 'Jezik';
 $string['magicquotesruntime'] = 'Čari naznake vremenskog kretanja';
 $string['magicquotesruntimeerror'] = 'Ovo bi trebalo biti isključeno';

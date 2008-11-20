@@ -11,11 +11,15 @@
 
 $string['admindirerror'] = 'Podany katalod admin jest nieprawidłowy';
 $string['admindirname'] = 'Katalog admin';
+$string['admindirsetting'] = 'Bardzo niewiele stron internetowych używa specjalnego URL, aby dostać się do panelu kontrolnego. Niestety kłóci się to ze standardową lokacją stron administratorskich Moodle. Można to naprawić, zmieniając nazwę katalogu administratorskiego w instalacji i wklejając tu nową nazwę. Na przykład: <br /> <br /><b>moodleadmin</b><br /> <br /> 
+
+To naprawi linki administracyjne w Moodle';
 $string['admindirsettinghead'] = 'Ustawienia katalogu administratora ...';
 $string['admindirsettingsub'] = 'Niewiele webhost’ów używa /admin jako specjalnego URL w celu akcesu do panela kontrolnego a także w innych celach. Niestety powoduje to konflikt ze standardową lokalizacją dla stron administratora w Moodle. Powyższy konflikt można naprawić, zmieniając nazwę katalogu administratora podczas instalacji i wstawiając nową nazwę. Na przykład: 
 <br /> <br /><b>moodleadmin</b><br /> <br />
 
 To naprawi linki administratora w Moodle.';
+$string['availablelangs'] = 'Dostępne paczki językowe';
 $string['bypassed'] = 'Ominięty';
 $string['cannotcreatelangdir'] = 'Nie można utworzyć katalogu językowego';
 $string['cannotcreatetempdir'] = 'Nie można utworzyć katalogu tymczasowego';
@@ -27,23 +31,41 @@ $string['cannotsavezipfile'] = 'Nie można zapisać pliku ZIP';
 $string['cannotunzipfile'] = 'Nie można rozpakować (unzip) pliku';
 $string['caution'] = 'Ostrzeżenie';
 $string['check'] = 'Sprawdź';
+$string['chooselanguage'] = 'Wybierz język';
 $string['chooselanguagehead'] = 'Wybierz język';
 $string['chooselanguagesub'] = 'Proszę wybrać język TYLKO do instalacji. Stronę i języki dla użytkowników będzie można wybrać na następnym ekranie.';
 $string['closewindow'] = 'Zamknij to okno';
+$string['compatibilitysettings'] = 'Sprawdzanie Twoich ustawień PHP';
 $string['compatibilitysettingshead'] = 'Sprawdzanie Twoich ustawień PHP';
 $string['compatibilitysettingssub'] = 'Twój serwer powinien przejść wszystkie te testy, by Moodle działał poprawnie.';
 $string['componentisuptodate'] = 'Komponent jest aktualny';
 $string['configfilenotwritten'] = 'Instalator nie mógł automatycznie utworzyć plik config.php zawierający Twoje parametry instalacyjne, prawdopodobnie dlatego że katalog Moodle nie ma prawa zapisu. Musisz ręcznie przekopiować poniższy kod do pliku config.php, który powinien znajdować się w głównym katalogu Moodle.';
 $string['configfilewritten'] = 'config.php został pomyślnie stworzony';
+$string['configurationcomplete'] = 'Konfiguracja skończona';
 $string['configurationcompletehead'] = 'Konfiguracja skończona';
 $string['configurationcompletesub'] = 'Moodle starał sie zapisać twoją konfigurację w pliku w katalogu głównym instalacji Moodle.';
 $string['continue'] = 'Kontynuuj';
 $string['database'] = 'Baza danych';
+$string['databasecreationsettings'] = 'Teraz skonfiguruj bazę danych gdzie Moodle może przechowywać dane. Ta baza danych będzie stworzona automatycznie przez instalator: Moodle4Windows z parametrami instalacyjnymi określanymi poniżej.<br />
+<br /> <br />
+<b>Typ:</b>Instalator ustalił  \"mysql\"<br/>
+<b>Host:</b> Instalator ustalił \"localhost\"<br />
+<b>nazwa:</b>Nazwa Twojej bazy danych, np. Moodle<br/>
+<b>Użytkownik:</b> użytkownik Twojej bazy danych<br />
+<b>Hasło:</b> Hasło dostępu do bazy danych<br />
+<b>Prefiksy tabel:</b> opcjonalny prefiks używany przed wszystkimi nazwami tabeli';
 $string['databasecreationsettingshead'] = 'Teraz musisz skonfigurować ustawienia bazy danych, w której będzie przechowywana większa część danych Moodle. Zostanie ona stworzona automatycznie w czasie instalacji z wyszczególnionymi poniżej ustawieniami.';
 $string['databasecreationsettingssub'] = '<b>Typ:</b> Instalator ustalił  \"mysql\"<br/>
 <b>Host:</b> Instalator ustalił \"localhost\"<br />
 <b>Nazwa:</b> Nazwa Twojej bazy danych, np. Moodle<br/>
 <b>Użytkownik:</b> Użytkownik Twojej bazy danych<br />
+<b>Hasło:</b> Hasło dostępu do bazy danych<br />
+<b>Prefiksy tabel:</b> opcjonalny prefiks używany przed wszystkimi nazwami tabeli';
+$string['databasesettings'] = 'Teraz skonfiguruj bazę danych gdzie Moodle może przechowywać dane. Baza danych musi być utworzona, oraz użytkownik i hasło który może się odwoływać do bazy danych.<br/><br/><br/>
+<b>Typ:</b> mysql lub postgres 7<br/>
+<b>Host:</b> np: localhost lub db.isp.com<br />
+<b>Nazwa:</b>Nazwa Twojej bazy danych, np. Moodle<br/>
+<b>Użytkownik:</b> użytkownik Twojej bazy danych<br />
 <b>Hasło:</b> Hasło dostępu do bazy danych<br />
 <b>Prefiksy tabel:</b> opcjonalny prefiks używany przed wszystkimi nazwami tabeli';
 $string['databasesettingshead'] = 'Teraz musisz skonfigurować baze danych, w której będzie przechowywana większa część danych Moodle. Ta baza danych musi już być utworzona, podobnie jak nazwa użytkownika i hasło jej przypisane.';
@@ -58,9 +80,21 @@ $string['datarooterror'] = 'Katalog z danymi który podałeś nie może być zna
 $string['dbconnectionerror'] = 'Nie można połączyć się z podaną bazą danych. Sprawdź ustawienia Twojej bazy danych.';
 $string['dbcreationerror'] = 'Błąd tworzenia bazy danych. Nie można stworzyć bazy danych o takiej nazwie z dostarczonymi ustawieniami';
 $string['dbhost'] = 'Serwer baz danych';
+$string['dbpass'] = 'Hasło';
 $string['dbprefix'] = 'prefiksy tabel';
 $string['dbtype'] = 'Typ';
 $string['dbwrongencoding'] = 'Wybrana baza danych pracuje w niezalecanym kodowaniu($a). Lepiej używać bazy danych kodowanej jednym z Unicodów (UTF-8). Ale można to obejść wybierając \"opuść test kodowania DB\", ale w przyszłości mogą wystąpić podobne problemy.';
+$string['directorysettings'] = '<p> Potwierdź lokalizację dla tej instalacji Moodle.</p>
+
+<p><b>Adres w sieci:</b>
+Podaj pełny adres w sieci gdzie Moodle będzie dostępny. 
+Jeżeli adresów w sieci jest wiele wybierz jeden który będą używali studenci. Nie dodawaj slash</p>
+
+<p><b> Katalog Moodle:</b>
+Podaj pełną ścieżkę dostępu do tej intalacji upewnij się że wielkość liter jest poprawna. </p>
+
+<p><b> Katalog z danymi:</b>
+Miejsce gdzie Moodle może przechowywać pliki, Ten katalog powinien mieć prawo odczytu i ZAPISU dla serwera www(przeważnie \'nobody\' lub \'apache\'), ale nie ma być dostępny bezpośrednio przez sieć </p>';
 $string['directorysettingshead'] = 'Proszę potwierdzić lokację dla instalacji Moodle.';
 $string['directorysettingssub'] = '<b>Adres strony</b>
 Wpisz pełen adres sieci pod którym będzie dostępne Moodle. Jeśli do strony można dojść przez kilka adresów, należy wpisać ten, którego odruchowo będą używać studenci. Nie używać ukośników
@@ -81,6 +115,7 @@ $string['downloadlanguagebutton'] = 'Pobierz \"$a\" pakiet językowy';
 $string['downloadlanguagehead'] = 'Pobierz pakiet językowy';
 $string['downloadlanguagenotneeded'] = 'Możesz kontynuować proces instalacji, używając domyślnego pakietu językowego \"$a\".';
 $string['downloadlanguagesub'] = 'Teraz masz możliwość załadowania pakietu językowego i kontynuowania procesu instalacji w tym języku.<br/><br/>Jeśli nie możesz załadować pakietu, instalacja będzie się odbywać dalej po angielsku (kiedy się skończy, będziesz mieć możliwość załadowania i zainstalowania dodatkowych pakietów językowych)';
+$string['doyouagree'] = 'Czy przeczytałeś(aś) warunki i rozumiesz je?';
 $string['environmenterrortodo'] = 'Musisz usunąć wszystkie problemy (błędy) w środowisku serwera zanim rozpocznie się instalacja tej wersji Moodle!';
 $string['environmenthead'] = 'Sprawdzam środowisko (ustawienia) ...';
 $string['environmentrecommendinstall'] = 'jest zalecane, żeby było zainstalowane/włączone';
@@ -119,7 +154,9 @@ $string['globalsquoteshelp'] = '<p> Nie jest zalecane ustawienie równocześnie 
 $string['help'] = 'Pomoc';
 $string['info'] = 'Informacja';
 $string['installation'] = 'Instalacja';
+$string['invalidemail'] = 'Niewłaściwy adres e-mail';
 $string['invalidmd5'] = 'Niewłaściwy md5';
+$string['invalidurl'] = 'Niepoprawny URL';
 $string['langdownloaderror'] = 'Niestety język \"$a\" nie jest zainstalowany. Instalacja będzie przebiegać dalej po angielsku.';
 $string['langdownloadok'] = 'Język został \"$a\" zainstalowany pomyślnie. Instalacja będzie w nim kontynuowana w tym języku.';
 $string['language'] = 'Język';
