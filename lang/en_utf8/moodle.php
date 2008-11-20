@@ -657,6 +657,7 @@ $string['filemissing'] = '$a is missing';
 $string['files'] = 'Files';
 $string['filesfolders'] = 'Files/folders';
 $string['filloutallfields'] = 'Please fill out all fields in this form';
+$string['filter'] = 'Filter';
 $string['findmorecourses'] = 'Find more courses...';
 $string['firstdayofweek'] = '0';
 $string['firstname'] = 'First name';

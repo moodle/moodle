@@ -157,8 +157,8 @@ define('RISK_DATALOSS',    0x0020);
 define('ROLENAME_ORIGINAL', 0);// the name as defined in the role definition
 define('ROLENAME_ALIAS', 1);   // the name as defined by a role alias
 define('ROLENAME_BOTH', 2);    // Both, like this:  Role alias (Original)
-define('ROLENAME_ORIGINALANDSHORT', 0); // the name as defined in the role definition and the shortname in brackets
-define('ROLENAME_ALIAS_RAW', 1);   // the name as defined by a role alias, in raw form suitable for editing
+define('ROLENAME_ORIGINALANDSHORT', 3); // the name as defined in the role definition and the shortname in brackets
+define('ROLENAME_ALIAS_RAW', 4);   // the name as defined by a role alias, in raw form suitable for editing
 
 $context_cache    = array();    // Cache of all used context objects for performance (by level and instance)
 $context_cache_id = array();    // Index to above cache by id

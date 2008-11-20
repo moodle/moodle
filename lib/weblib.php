@@ -527,7 +527,7 @@ function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
  * All parameters default to null, only $type and $url are mandatory.
  *
  * $url must be relative to home page  eg /mod/survey/stuff.php
- * @param string $url Web link relative to home page
+ * @param string $url Web link. Either relative to $CFG->wwwroot, or a full URL.
  * @param string $name Name to be assigned to the popup window (this is used by
  *   client-side scripts to "talk" to the popup window)
  * @param string $linkname Text to be displayed as web link
@@ -592,16 +592,16 @@ function element_to_popup_window ($type=null, $url=null, $name=null, $linkname=n
     $element = '';
 
     switch ($type) {
-        case 'button' :
+        case 'button':
             $element = '<input type="button" name="'. $name .'" title="'. $title .'" value="'. $linkname .'" '. $id . $class .
                        "onclick=\"return openpopup('$url', '$name', '$options', $fullscreen);\" />\n";
             break;
-        case 'link' :
-            // some log url entries contain _SERVER[HTTP_REFERRER] in which case wwwroot is already there.
-            if (!(strpos($url,$CFG->wwwroot) === false)) {
-                $url = substr($url, strlen($CFG->wwwroot));
+        case 'link':
+            // Add wwwroot only if the URL does not already start with http:// or https://
+            if (!preg_match('|https?://|', $url)) {
+                $url = $CFG->wwwroot . $url;
             }
-            $element = '<a title="'. s(strip_tags($title)) .'" href="'. $CFG->wwwroot . $url .'" '.
+            $element = '<a title="'. s(strip_tags($title)) .'" href="'. $url .'" '.
                        "onclick=\"this.target='$name'; return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>";
             break;
         default :
@@ -4955,7 +4955,7 @@ function print_table($table, $return=false) {
                 $wrapperend = '';
             }
 
-            $output .= '<th style="vertical-align:top;'. $align[$key].$size[$key] .
+            $output .= '<th style="'. $align[$key].$size[$key] .
                     ';white-space:nowrap;" class="header c'.$key.$extraclass.'" scope="col"' . $colspan . '>'.
                     $wrapperstart . $heading . $wrapperend . '</th>';
         }

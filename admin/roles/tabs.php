@@ -204,7 +204,7 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything ex
     if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride',
             'moodle/role:override', 'moodle/role:assign'), $context)) {
         $toprow[] = new tabobject('check',
-                        $CFG->wwwroot.'/'.$CFG->admin.'/roles/explain.php?contextid='.$context->id,
+                        $CFG->wwwroot.'/'.$CFG->admin.'/roles/check.php?contextid='.$context->id,
                         get_string('checkpermissions', 'role'),
                         '',
                         true);

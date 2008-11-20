@@ -39,7 +39,7 @@ require_once($CFG->dirroot.'/user/selector/lib.php');
  * This class represents a table with one row for each of a list of capabilities
  * where the first cell in the row contains the capability name, and there is
  * arbitrary stuff in the rest of the row. This class is used by
- * admin/roles/manage.php, override.php and explain.php.
+ * admin/roles/manage.php, override.php and check.php.
  *
  * An ajaxy search UI shown at the top, if JavaScript is on.
  */
@@ -125,7 +125,7 @@ abstract class capability_table_base {
                 require_js(array('yui_yahoo', 'yui_dom', 'yui_event'));
                 require_js($CFG->admin . '/roles/roles.js');
                 print_js_call('cap_table_filter.init',
-                        array($this->id, get_string('search'), get_string('clear')));
+                        array($this->id, get_string('filter'), get_string('clear')));
             }
     }
 
@@ -208,7 +208,7 @@ class explain_capability_table extends capability_table_base {
         $this->fullname = fullname($user);
         $this->contextname = $contextname;
         $this->baseurl = $CFG->wwwroot . '/' . $CFG->admin .
-                '/roles/explainhascapabiltiy.php?user=' . $user->id .
+                '/roles/explain.php?user=' . $user->id .
                 '&amp;contextid=' . $context->id . '&amp;capability=';
         $this->stryes = get_string('yes');
         $this->strno = get_string('no');
@@ -373,7 +373,8 @@ abstract class capability_table_with_risks extends capability_table_base {
     }
 
     protected function add_header_cells() {
-        echo '<th colspan="' . count($this->displaypermissions) . '" scope="col">' . get_string('permission', 'role') . '</th>';
+        echo '<th colspan="' . count($this->displaypermissions) . '" scope="col">' .
+                get_string('permission', 'role') . ' ' . helpbutton('permissions', get_string('permissions', 'role'), '', true, false, '', true) . '</th>';
         echo '<th class="risk" colspan="' . count($this->allrisks) . '" scope="col">' . get_string('risks','role') . '</th>';
     }
 
@@ -680,6 +681,13 @@ class define_role_table_advanced extends capability_table_with_risks {
         echo '</div>';
     }
 
+    protected function print_show_hide_advanced_button() {
+        echo '<p class="definenotice">' . get_string('highlightedcellsshowdefault', 'role') . ' </p>';
+        echo '<div class="advancedbutton">';
+        echo '<input type="submit" name="toggleadvanced" value="' . get_string('hideadvanced', 'form') . '" />';
+        echo '</div>';
+    }
+
     public function display() {
         // Extra fields at the top of the page.
         echo '<div class="topfields clearfix">';
@@ -689,6 +697,8 @@ class define_role_table_advanced extends capability_table_with_risks {
         $this->print_field('menulegacytype', get_string('legacytype', 'role'), $this->get_legacy_type_field('legacytype'));
         $this->print_field('', get_string('maybeassignedin', 'role'), $this->get_assignable_levels_control());
         echo "</div>";
+
+        $this->print_show_hide_advanced_button();
 
         // Now the permissions table.
         parent::display();
@@ -726,6 +736,12 @@ class define_role_table_basic extends define_role_table_advanced {
         $this->strallow = $this->strperms[$this->allpermissions[CAP_ALLOW]];
     }
 
+    protected function print_show_hide_advanced_button() {
+        echo '<div class="advancedbutton">';
+        echo '<input type="submit" name="toggleadvanced" value="' . get_string('showadvanced', 'form') . '" />';
+        echo '</div>';
+    }
+
     protected function add_permission_cells($capability) {
         $perm = $this->permissions[$capability->name];
         $permname = $this->allpermissions[$perm];
@@ -738,8 +754,7 @@ class define_role_table_basic extends define_role_table_advanced {
             }
             echo '<input type="hidden" name="' . $capability->name . '" value="' . CAP_INHERIT . '" />';
             echo '<label><input type="checkbox" name="' . $capability->name .
-                    '" value="' . CAP_ALLOW . '"' . $checked . ' /> ' . $this->strallow .
-                    '<span class="note">' . get_string('defaultx', 'role', $this->strperms[$defaultperm]) . '</span></label>';
+                    '" value="' . CAP_ALLOW . '"' . $checked . ' /> ' . $this->strallow . '</label>';
         } else {
             echo '<input type="hidden" name="' . $capability->name . '" value="' . $perm . '" />';
             echo $this->strperms[$permname] . '<span class="note">' . $this->stradvmessage . '</span>';
@@ -776,6 +791,10 @@ class view_role_definition_table extends define_role_table_advanced {
         } else {
             return get_string('legacy:'.$this->role->legacytype, 'role');
         }
+    }
+
+    protected function print_show_hide_advanced_button() {
+        // Do nothing.
     }
 
     protected function add_permission_cells($capability) {

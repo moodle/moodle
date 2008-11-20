@@ -24,158 +24,256 @@
 ///////////////////////////////////////////////////////////////////////////
 
 /**
- * Shows the result of has_capability for every capability for a user in a context.
+ * Elucidates what has_capability does for a particular capability/user/context.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package roles
  *//** */
 
-    require_once(dirname(__FILE__) . '/../../config.php');
-    require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
+require(dirname(__FILE__) . '/../../config.php');
 
-    $contextid = required_param('contextid',PARAM_INT);
-    $contextuserid = optional_param('userid', 0, PARAM_INT); // needed for user tabs
-    $courseid = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
+// Get parameters.
+$userid = required_param('user', PARAM_INTEGER); // We use 0 here to mean not-logged-in.
+$contextid = required_param('contextid', PARAM_INTEGER);
+$capability = required_param('capability', PARAM_CAPABILITY);
 
-    if (! $context = get_context_instance_by_id($contextid)) {
-        print_error('wrongcontextid', 'error');
+// Get the context and its parents.
+$context = get_context_instance_by_id($contextid);
+if (!$context) {
+    print_error('unknowncontext');
+}
+$contextids = get_parent_contexts($context);
+array_unshift($contextids, $context->id);
+$contexts = array();
+$number = count($contextids);
+foreach ($contextids as $contextid) {
+    $contexts[$contextid] = get_context_instance_by_id($contextid);
+    $contexts[$contextid]->name = print_context_name($contexts[$contextid], true, true);
+    $contexts[$contextid]->number = $number--;
+}
+
+// Validate the user id.
+if ($userid) {
+    $user = $DB->get_record('user', array('id' => $userid));
+    if (!$user) {
+        print_error('nosuchuser');
     }
-    $isfrontpage = $context->contextlevel == CONTEXT_COURSE && $context->instanceid == SITEID;
-    $contextname = print_context_name($context);
+} else {
+    $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
+    if (!empty($CFG->forcelogin) ||
+            ($context->contextlevel >= CONTEXT_COURSE && !in_array($frontpagecontext->id, $contextids))) {
+        print_error('cannotgetherewithoutloggingin', 'role');
+    }
+}
 
-    if ($context->contextlevel == CONTEXT_COURSE) {
-        $courseid = $context->instanceid;
-        if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-            print_error('invalidcourse', 'error');
-        }
+// Check access permissions.
+require_login();
+if (!has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride',
+        'moodle/role:override', 'moodle/role:assign'), $context)) {
+    print_error('nopermissions', '', get_string('explainpermissions'));
+}
 
-    } else if (!empty($courseid)){ // we need this for user tabs in user context
-        if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-            print_error('invalidcourse', 'error');
-        }
-
+// This duplicates code in load_all_capabilities and has_capability.
+$systempath = '/' . SYSCONTEXTID;
+if ($userid == 0) {
+    if (!empty($CFG->notloggedinroleid)) {
+        $accessdata = get_role_access($CFG->notloggedinroleid);
+        $accessdata['ra'][$systempath] = array($CFG->notloggedinroleid);
     } else {
-        $courseid = SITEID;
-        $course = clone($SITE);
+        $accessdata = array();
+        $accessdata['ra'] = array();
+        $accessdata['rdef'] = array();
+        $accessdata['loaded'] = array();
     }
+} else if (isguestuser($user)) {
+    $guestrole = get_guest_role();
+    $accessdata = get_role_access($guestrole->id);
+    $accessdata['ra'][$systempath] = array($guestrole->id);
+} else {
+    load_user_accessdata($userid);
+    $accessdata = $ACCESS[$userid];
+}
+if ($context->contextlevel > CONTEXT_COURSE && !path_inaccessdata($context->path, $accessdata)) {
+    load_subcontext($userid, $context, $accessdata);
+}
 
-/// Check login and permissions.
-    require_login($course);
-    $canview = has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride',
-            'moodle/role:override', 'moodle/role:manage'), $context);
-    if (!$canview) {
-        print_error('nopermissions', 'error', '', get_string('checkpermissions', 'role'));
-    }
+// Load the roles we need.
+$roleids = array();
+foreach ($accessdata['ra'] as $roleassignments) {
+    $roleids = array_merge($roleassignments, $roleids);
+}
+$roles = $DB->get_records_list('role', 'id', $roleids);
+$rolenames = array();
+foreach ($roles as $role) {
+    $rolenames[$role->id] = $role->name;
+}
+$rolenames = role_fix_names($rolenames, $context);
 
-/// These are needed early because of tabs.php
-    $assignableroles = get_assignable_roles($context, ROLENAME_BOTH);
-    $overridableroles = get_overridable_roles($context, ROLENAME_BOTH);
-
-/// Get the user_selector we will need.
-/// Teachers within a course just get to see the same list of people they can
-/// assign roles to. Admins (people with moodle/role:manage) can run this report for any user.
-    $options = array('context' => $context, 'roleid' => 0);
-    if ($context->contextlevel > CONTEXT_COURSE && !is_inside_frontpage($context) && !has_capability('moodle/role:manage', $context)) {
-        $userselector = new potential_assignees_below_course('reportuser', $options);
+// Pass over the data once, to find the cell that determines the result.
+$userhascapability = has_capability($capability, $context, $userid, false);
+$areprohibits = false;
+$decisiveassigncon = 0;
+$decisiveoverridecon = 0;
+foreach ($contexts as $con) {
+    if (!empty($accessdata['ra'][$con->path])) {
+        // The array_unique here is to work around bug MDL-14817. Once that bug is
+        // fixed, it can be removed
+        $ras = array_unique($accessdata['ra'][$con->path]);
     } else {
-        $userselector = new potential_assignees_course_and_above('reportuser', $options);
+        $ras = array();
     }
-    $userselector->set_multiselect(false);
-    $userselector->set_rows(10);
-
-/// Work out an appropriate page title.
-    $title = get_string('checkpermissionsin', 'role', $contextname);
-    $straction = get_string('checkpermissions', 'role'); // Used by tabs.php
-
-/// Print the header and tabs
-    if ($context->contextlevel == CONTEXT_USER) {
-        $contextuser = $DB->get_record('user', array('id' => $contextuserid));
-        $fullname = fullname($contextuser, has_capability('moodle/site:viewfullnames', $context));
-
-        /// course header
-        $navlinks = array();
-        if ($courseid != SITEID) {
-            if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_COURSE, $courseid))) {
-                $navlinks[] = array('name' => get_string('participants'), 'link' => "$CFG->wwwroot/user/index.php?id=$courseid", 'type' => 'misc');
+    $con->firstoverride = 0;
+    foreach ($contexts as $ocon) {
+        $summedpermission = 0;
+        $gotsomething = false;
+        foreach ($ras as $roleid) {
+            if (isset($accessdata['rdef'][$ocon->path . ':' . $roleid][$capability])) {
+                $perm = $accessdata['rdef'][$ocon->path . ':' . $roleid][$capability];
+            } else {
+                $perm = CAP_INHERIT;
             }
-            $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$contextuserid&amp;course=$courseid", 'type' => 'misc');
-            $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
-            $navigation = build_navigation($navlinks);
-
-            print_header($title, $fullname, $navigation, '', '', true, '&nbsp;', navmenu($course));
-
-        /// site header
-        } else {
-            $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$contextuserid&amp;course=$courseid", 'type' => 'misc');
-            $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
-            $navigation = build_navigation($navlinks);
-            print_header($title, $course->fullname, $navigation, "", "", true, "&nbsp;", navmenu($course));
+            if ($perm && !$gotsomething) {
+                $gotsomething = true;
+                $con->firstoverride = $ocon->id;
+            }
+            if ($perm == CAP_PROHIBIT) {
+                $areprohibits = true;
+                $decisiveassigncon = 0;
+                $decisiveoverridecon = 0;
+                break;
+            }
+            $summedpermission += $perm;
         }
+        if (!$areprohibits && !$decisiveassigncon && $summedpermission) {
+            $decisiveassigncon = $con->id;
+            $decisiveoverridecon = $ocon->id;
+            break;
+        } else if ($gotsomething) {
+            break;
+        }
+    }
+}
+if (!$areprohibits && !$decisiveassigncon) {
+    $decisiveassigncon = SYSCONTEXTID;
+    $decisiveoverridecon = SYSCONTEXTID;
+}
 
-        $showroles = 1;
-        $currenttab = 'check';
-        include_once($CFG->dirroot.'/user/tabs.php');
+// Make a fake role to simplify rendering the table below.
+$rolenames[0] = get_string('none');
 
-    } else if ($context->contextlevel == CONTEXT_SYSTEM) {
-        admin_externalpage_setup('checkpermissions');
-        admin_externalpage_print_header();
+// Prepare some arrays of strings.
+$cssclasses = array(
+    CAP_INHERIT => 'inherit',
+    CAP_ALLOW => 'allow',
+    CAP_PREVENT => 'prevent',
+    CAP_PROHIBIT => 'prohibit',
+    '' => ''
+);
+$strperm = array(
+    CAP_INHERIT => get_string('inherit', 'role'),
+    CAP_ALLOW => get_string('allow', 'role'),
+    CAP_PREVENT => get_string('prevent', 'role'),
+    CAP_PROHIBIT => get_string('prohibit', 'role'),
+    '' => ''
+);
 
-    } else if ($context->contextlevel == CONTEXT_COURSE and $context->instanceid == SITEID) {
-        admin_externalpage_setup('frontpageroles');
-        admin_externalpage_print_header();
-        $currenttab = 'check';
-        include_once('tabs.php');
+// Start the output.
+print_header(get_string('explainpermission', 'role'));
+print_heading(get_string('explainpermission', 'role'));
 
+// Print a summary of what we are doing.
+$a = new stdClass;
+if ($userid) {
+    $a->fullname = fullname($user);
+} else {
+    $a->fullname = get_string('nobody');
+}
+$a->capability = $capability;
+$a->context = reset($contexts)->name;
+if ($userhascapability) {
+    echo '<p>' . get_string('whydoesuserhavecap', 'role', $a) . '</p>';
+} else {
+    echo '<p>' . get_string('whydoesusernothavecap', 'role', $a) . '</p>';
+}
+
+// Print the table header rows.
+echo '<table class="generaltable explainpermissions"><thead>';
+echo '<tr><th scope="col" colspan="2" class="header assignment">' . get_string('roleassignments', 'role') . '</th>';
+if (count($contexts) > 1) {
+    echo '<th scope="col" colspan="' . (count($contexts) - 1) . '" class="header">' . get_string('overridesbycontext', 'role') . '</th>';
+}
+echo '<th scope="col" rowspan="2" class="header">' . get_string('roledefinitions', 'role') . '</th>';
+echo '</tr>';
+echo '<tr class="row2"><th scope="col" class="header assignment">' . get_string('context', 'role') .
+        '</th><th scope="col" class="header assignment">' . get_string('role') . '</th>';
+foreach (array_slice($contexts, 0, count($contexts) - 1) as $con) {
+    echo '<th scope="col" class="header overridecontext" title="' . $con->name . '">' . $con->number . '</th>';
+}
+echo '</tr></thead><tbody>';
+
+// Now print the bulk of the table.
+foreach ($contexts as $con) {
+    if (!empty($accessdata['ra'][$con->path])) {
+        // The array_unique here is to work around bug MDL-14817. Once that bug is
+        // fixed, it can be removed
+        $ras = array_unique($accessdata['ra'][$con->path]);
     } else {
-        $currenttab = 'check';
-        include_once('tabs.php');
+        $ras = array(0);
     }
-
-/// Print heading.
-    print_heading_with_help($title, 'checkpermissions');
-
-/// If a user has been chosen, show all the permissions for this user.
-    $user = $userselector->get_selected_user();
-    if (!is_null($user)) {
-        print_box_start('generalbox boxaligncenter boxwidthwide');
-        print_heading(get_string('permissionsforuser', 'role', fullname($user)), '', 3);
-
-        $table = new explain_capability_table($context, $user, $contextname);
-        $table->display();
-        print_box_end();
-
-        $selectheading = get_string('selectanotheruser', 'role');
-    } else {
-        $selectheading = get_string('selectauser', 'role');
+    $firstcell = '<th class="cell assignment" rowspan="' . count($ras) . '">' . $con->number . '. ' . $con->name . '</th>';
+    $rowclass = ' class="newcontext"';
+    foreach ($ras as $roleid) {
+        $extraclass = '';
+        if (!$roleid) {
+            $extraclass = ' noroles';
+        }
+        echo '<tr' . $rowclass . '>' . $firstcell . '<th class="cell assignment' . $extraclass . '" scope="row">' . $rolenames[$roleid] . '</th>';
+        $overridden = false;
+        foreach ($contexts as $ocon) {
+            if ($roleid == 0) {
+                $perm = '';
+            } else {
+                if (isset($accessdata['rdef'][$ocon->path . ':' . $roleid][$capability])) {
+                    $perm = $accessdata['rdef'][$ocon->path . ':' . $roleid][$capability];
+                } else {
+                    $perm = CAP_INHERIT;
+                }
+            }
+            if ($perm === CAP_INHERIT && $ocon->id == SYSCONTEXTID) {
+                $permission = get_string('notset', 'role');
+            } else {
+                $permission = $strperm[$perm];
+            }
+            $classes = $cssclasses[$perm];
+            if (!$areprohibits && $decisiveassigncon == $con->id && $decisiveoverridecon == $ocon->id) {
+                $classes .= ' decisive';
+                if ($userhascapability) {
+                    $classes .= ' has';
+                } else {
+                    $classes .= ' hasnot';
+                }
+            }
+            if ($overridden) {
+                $classes .= ' overridden';
+            }
+            echo '<td class="cell ' . $classes . '">' . $permission . '</td>';
+            if ($con->firstoverride == $ocon->id) {
+                $overridden = true;
+            }
+        }
+        echo '</tr>';
+        $firstcell = '';
+        $rowclass = '';
     }
+}
+echo '</tbody></table>';
 
-/// Show UI for choosing a user to report on.
-    print_box_start('generalbox boxwidthnormal boxaligncenter', 'chooseuser');
-    echo '<form method="get" action="' . $CFG->wwwroot . '/' . $CFG->admin . '/roles/explain.php" >';
-
-/// Hidden fields.
-    echo '<input type="hidden" name="contextid" value="' . $context->id . '" />';
-    if (!empty($contextuserid)) {
-        echo '<input type="hidden" name="userid" value="' . $contextuserid . '" />';
-    }
-    if ($courseid && $courseid != SITEID) {
-        echo '<input type="hidden" name="courseid" value="' . $courseid . '" />';
-    }
-
-/// User selector.
-    print_heading('<label for="reportuser">' . $selectheading . '</label>', '', 3);
-    $userselector->display(); 
-
-/// Submit button and the end of the form.
-    echo '<p id="chooseusersubmit"><input type="submit" value="' . get_string('showthisuserspermissions', 'role') . '" /></p>';
-    echo '</form>';
-    print_box_end();
-
-/// Appropriate back link.
-    if (!$isfrontpage && ($url = get_context_url($context))) {
-        echo '<div class="backlink"><a href="' . $url . '">' .
-            get_string('backto', '', $contextname) . '</a></div>';
-    }
-
-    print_footer($course);
+// Finish the page.
+echo get_string('explainpermissionsinfo', 'role');
+if ($userid && $capability != 'moodle/site:doanything' && !$userhascapability &&
+        has_capability('moodle/site:doanything', $context, $userid)) {
+    echo '<p>' . get_string('explainpermissionsdoanything', 'role', $capability) . '</p>';
+}
+close_window_button();
+print_footer('empty');
 ?>

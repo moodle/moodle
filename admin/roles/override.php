@@ -204,7 +204,7 @@
     </div>
             <?php
 
-            echo '<p class="overridenotice">' . get_string('highlightedcellshowsinherit', 'role') . ' </p>';
+            echo '<p class="overridenotice">' . get_string('highlightedcellsshowinherit', 'role') . ' </p>';
             $overridestable->display();
 
             if ($overridestable->has_locked_capabiltites()) {

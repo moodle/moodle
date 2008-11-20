@@ -123,15 +123,10 @@
     print_heading_with_help($title, 'roles');
 
 /// Work out some button labels.
-    if ($action == 'add') {
-        $submitlabel = get_string('addrole', 'role');
+    if ($action == 'add' || $action == 'duplicate') {
+        $submitlabel = get_string('createthisrole', 'role');
     } else {
         $submitlabel = get_string('savechanges');
-    }
-    if ($showadvanced) {
-        $showadvancedlabel = get_string('hideadvanced', 'form');
-    } else {
-        $showadvancedlabel = get_string('showadvanced', 'form');
     }
 
 /// On the view page, show some extra controls at the top.
@@ -161,9 +156,6 @@
     ?>
 <form id="rolesform" class="mform" action="<?php echo $baseurl; ?>" method="post"><div>
 <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
-<div class="advancedbutton">
-    <input type="submit" name="toggleadvanced" value="<?php echo $showadvancedlabel ?>" />
-</div>
 <div class="submit buttons">
     <input type="submit" name="savechanges" value="<?php echo $submitlabel; ?>" />
     <input type="submit" name="cancel" value="<?php print_string('cancel'); ?>" />

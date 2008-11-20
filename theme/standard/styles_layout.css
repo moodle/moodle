@@ -299,6 +299,12 @@ div.collapsibleregion div.collapsibleregioncaption a {
   border-style: solid;
   border-collapse: collapse;
 }
+.generaltable th.header {
+  vertical-align: top;
+}
+table.rotateheaders th.header {
+  vertical-align: bottom;
+}
 
 #participationreport .reporttable {
   text-align: center;
@@ -1163,7 +1169,8 @@ table.rolecap label {
   padding-top: 0.75em;
 }
 
-#admin-roles-override .overridenotice {
+#admin-roles-override .overridenotice,
+#admin-roles-define .definenotice {
     margin: 1em 10% 2em;
     text-align: left;
 }

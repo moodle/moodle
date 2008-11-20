@@ -324,7 +324,7 @@
           <div id="addcontrols">
               <input name="add" id="add" type="submit" value="<?php echo $THEME->larrow.'&nbsp;'.get_string('add'); ?>" title="<?php print_string('add'); ?>" /><br />
 
-              <?php print_collapsible_region_start('', 'assignoptions', get_string('assignmentoptions', 'role'),
+              <?php print_collapsible_region_start('', 'assignoptions', get_string('enrolmentoptions', 'role'),
                     'assignoptionscollapse', true); ?>
               <p><input type="checkbox" name="hidden" id="hidden" value="1" <?php
               if ($hidden) { echo 'checked="checked" '; } ?>/>
