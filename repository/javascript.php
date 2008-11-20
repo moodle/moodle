@@ -210,7 +210,7 @@ this.hide = function() {
 this.create_picker = function() {
     // display UI
     filepicker.render();
-    _client.viewbar.addButtons([btn_list, btn_thumb]);
+    _client.viewbar.addButtons([btn_thumb, btn_list]);
     // init repository list
     repo_list = new YAHOO.util.Element('repo-list-$suffix');
     repo_list.on('contentReady', function(e) {
@@ -252,9 +252,9 @@ this.create_picker = function() {
                 _client.ds.list = json.list;
                 if(_client.ds.list) {
                     if(_client.viewmode) {
-                        _client.viewthumb();
-                    } else {
                         _client.viewlist();
+                    } else {
+                        _client.viewthumb();
                     }
                     var input_ctl = new YAHOO.util.Element('search-input-$suffix');
                     input_ctl.get('element').value='';
@@ -418,9 +418,9 @@ _client.print_login = function() {
 
 _client.viewfiles = function() {
     if(_client.viewmode) {
-        _client.viewthumb();
-    } else {
         _client.viewlist();
+    } else {
+        _client.viewthumb();
     }
 }
 _client.print_header = function() {
@@ -480,11 +480,11 @@ _client.print_footer = function() {
     }
 }
 _client.viewthumb = function(ds) {
-    _client.viewmode = 1;
+    _client.viewmode = 0;
     var container = document.getElementById('panel-$suffix');
     var panel = document.createElement('DIV');
     panel.id = 'fp-grid-panel-$suffix';
-    _client.viewbar.check(1);
+    _client.viewbar.check(0);
     var list = null;
     var args = arguments.length;
     if(args == 1) {
@@ -638,9 +638,9 @@ _client.viewiframe = function() {
     panel.get('element').innerHTML = "<iframe frameborder=\"0\" width=\"98%\" height=\"400px\" src=\""+_client.ds.iframe+"\" />";
 }
 _client.viewlist = function() {
-    _client.viewmode = 0;
+    _client.viewmode = 1;
     var panel = new YAHOO.util.Element('panel-$suffix');
-    _client.viewbar.check(0);
+    _client.viewbar.check(1);
     list = _client.ds.list;
     _client.print_header();
     panel.get('element').innerHTML += '<div id="treediv-$suffix"></div>';
@@ -748,7 +748,7 @@ _client.search_paging = function(id, path) {
     var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->httpswwwroot/repository/ws.php?action='+action, _client.req_cb, _client.postdata(params));
 }
 _client.makepath = function() {
-    if(_client.viewmode == 0) {
+    if(_client.viewmode == 1) {
         return;
     }
     var panel = new YAHOO.util.Element('panel-$suffix');
@@ -925,9 +925,9 @@ success: function(o) {
          _client.print_login();
      } else if(_client.ds.list) {
          if(_client.viewmode) {
-             _client.viewthumb();
-         } else {
              _client.viewlist();
+         } else {
+             _client.viewthumb();
          }
      }
 }
