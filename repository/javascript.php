@@ -364,9 +364,8 @@ _client.rename = function(oldname, url, icon, repo_id) {
     html += '<input type="checkbox" id="syncfile-$suffix" /></p>';
     */
     html += '<p><input type="hidden" id="fileurl-$suffix" value="'+url+'" />';
-    html += '<a href="###" onclick="repository_client_$suffix.viewfiles()">$strback</a> ';
     html += '<input type="button" onclick="repository_client_$suffix.download()" value="$strdownbtn" />';
-    html += '<input type="button" onclick="repository_client_$suffix.hide()" value="$strcancel" /></p>';
+    html += '<input type="button" onclick="repository_client_$suffix.viewfiles()" value="$strcancel" /></p>';
     html += '</div>';
     panel.get('element').innerHTML += html;
     var tree = document.getElementById('treediv-$suffix');
