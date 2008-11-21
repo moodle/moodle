@@ -3640,7 +3640,7 @@ function role_context_capabilities($roleid, $context, $cap='') {
  * @param object $context
  * @return array()
  */
-function get_parent_contexts($context) {
+function get_parent_contexts($context, $includeself = false) {
 
     if ($context->path == '') {
         return array();
@@ -3648,7 +3648,9 @@ function get_parent_contexts($context) {
 
     $parentcontexts = substr($context->path, 1); // kill leading slash
     $parentcontexts = explode('/', $parentcontexts);
-    array_pop($parentcontexts); // and remove its own id
+    if (!$includeself) {
+        array_pop($parentcontexts); // and remove its own id
+    }
 
     return array_reverse($parentcontexts);
 }
