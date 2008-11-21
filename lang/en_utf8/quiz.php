@@ -716,6 +716,6 @@ $string['addnewquestionsqbank'] = 'Add questions to the category $a in the \'Que
 $string['empty'] = 'Empty';
 $string['quizopened'] = 'This quiz is open.';
 $string['areyousuredeleteselected'] = 'Are you sure you want to delete the selected questions?';
-$string['questionsperpageselected'] = 'Questions per page has been set so the paging is currently fixed. As a result, the paging controls have been disabled. You can change this in ';
-$string['shufflequestionsselected'] = '* Shuffle questions has been set so question order is random. As a result, the button Reorder questions has been disabled. You can change this in ';
+$string['questionsperpageselected'] = 'Questions per page has been set so the paging is currently fixed. As a result, the paging controls have been disabled. You can change this in $a.';
+$string['shufflequestionsselected'] = '* Shuffle questions has been set so question order is random. As a result, the button Reorder questions has been disabled. You can change this in $a.';
 ?>

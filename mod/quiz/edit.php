@@ -780,21 +780,21 @@ if($quiz_has_attempts){
     $notifystring.=notify($string,$style='notifyproblem', $align='center', $return=true);
 }
 if($questionsperpagebool && $quiz_reordertool){
-    $string=get_string('questionsperpageselected', 'quiz');
     $updateurl=new moodle_url("$CFG->wwwroot/course/mod.php",
             array("return"=>"true","update"=>$quiz->cmid, "sesskey"=>sesskey()));
-    $string.= '<a href="'.$updateurl->out().'">';
-    $string.=get_string('updatethis', '', get_string('modulename', 'quiz'));
-    $string.='</a>.';
+    $linkstring = '<a href="'.$updateurl->out().'">';
+    $linkstring.=get_string('updatethis', '', get_string('modulename', 'quiz'));
+    $linkstring.='</a>';
+    $string=get_string('questionsperpageselected', 'quiz', $linkstring);
     $notifystring.=notify($string,$style='notifyproblem', $align='center', $return=true);
 }
 if($quiz->shufflequestions && $quiz_reordertool){
-    $string=get_string('shufflequestionsselected', 'quiz');
     $updateurl=new moodle_url("$CFG->wwwroot/course/mod.php",
             array("return"=>"true","update"=>$quiz->cmid, "sesskey"=>sesskey()));
-    $string.= '<a href="'.$updateurl->out().'">';
-    $string.=get_string('updatethis', '', get_string('modulename', 'quiz'));
-    $string.='</a>.';
+    $linkstring = '<a href="'.$updateurl->out().'">';
+    $linkstring.=get_string('updatethis', '', get_string('modulename', 'quiz'));
+    $linkstring.='</a>';
+    $string=get_string('shufflequestionsselected', 'quiz',$linkstring);
     $notifystring.=notify($string,$style='notifyproblem', $align='center', $return=true);
 }
 if(!empty($notifystring)){
