@@ -1177,6 +1177,14 @@ class existing_role_holders extends role_assign_user_selector_base {
     }
 
     protected function this_con_group_name($search, $numusers) {
+        if ($this->context->contextlevel == CONTEXT_SYSTEM) {
+            // Special case in the System context.
+            if ($search) {
+                return get_string('extusersmatching', 'role', $search);
+            } else {
+                return get_string('extusers', 'role');
+            }
+        }
         $contexttype = get_contextlevel_name($this->context->contextlevel);
         if ($search) {
             $a = new stdClass;
