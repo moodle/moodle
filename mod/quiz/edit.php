@@ -135,26 +135,6 @@ function array_add_at($array,$value,$at){
     return $result;
 }
 /**
- * Just like strpos, but it returns the position
- * of the nth instance of the needle.
- * Thanks to chasesan at gmail for strpos2
- * http://www.php.net/manual/en/function.strpos.php
- */
-function strpos2($haystack, $needle, $nth = 1)
-{
-    //Fixes a null return if the position is at the beginning of input
-    //It also changes all input to that of a string ^.~
-    $haystack = ' '.$haystack;
-    if (!strpos($haystack, $needle)){
-        return false;
-    }
-    $offset=0;
-    for($i = 1; $i < $nth; $i++){
-        $offset = strpos($haystack, $needle, $offset) + 1;
-    }
-    return strpos($haystack, $needle, $offset) - 1;
-}
-/**
  * Prints the form for setting a quiz' overall grade
  */
 function quiz_print_grading_form($quiz, $pageurl, $tabindex){
@@ -585,34 +565,40 @@ if (optional_param('savechanges', false, PARAM_BOOL) and confirm_sesskey()) {
     }
     //get a list of questions to move, later to be added in the appropriate
     //place in the string
-    $questionstomove = implode(",", $moveonpagequestions);
     if($moveonpagequestions){
+        $questions = explode(",", $quiz->questions);
+        foreach($moveonpagequestions as $page=>$question){
+            //remove the questions from their original positions first
+            while(($delpos=array_search($question,$questions))!==FALSE){
+                //in case there are multiple instances because of an error, remove all
+                unset($questions[$delpos]);
+            }
+        }
+        //reindex
+        foreach($questions as $question){
+            $newquestions[]=$question;
+        }
+        $questions=$newquestions;
+        
+        //find all pagebreaks
         $pagecount=quiz_number_of_pages($quiz->questions);
-        if($moveselectedonpage>quiz_number_of_pages($quiz->questions)){
+        if($moveselectedonpage>$pagecount){
+            // move to the last page is a page beyond last page was requested
             $moveselectedonpage=$pagecount;
         }
-        $selectedpageend=(strpos2($quiz->questions,",0",$moveselectedonpage));
-        if($selectedpageend!==FALSE){
-            foreach($moveonpagequestions as $page=>$question){
-                $quiz->questions=str_replace("$question,","",$quiz->questions);
-            }
-            if($moveselectedonpage>1){
-                $pagecount=quiz_number_of_pages($quiz->questions);
-                if($moveselectedonpage>quiz_number_of_pages($quiz->questions)){
-                    $moveselectedonpage=$pagecount;
-                }
-                $selectedpageend=(strpos2($quiz->questions,",0",
-                        $moveselectedonpage-1));
-                $start=substr($quiz->questions,0,$selectedpageend+1);
-                $end=substr($quiz->questions,$selectedpageend);
-                $quiz->questions=$start.$questionstomove.$end;
-            }else if ($moveselectedonpage==1){
-                $quiz->questions=$questionstomove.",".$quiz->questions;
-            }
-        }else{
-            //TODO: add alert message
+        if($moveselectedonpage<1){
+            $moveselectedonpage=1;
         }
-
+        $pagebreakpositions=array_keys($questions,0);
+        //move to the end of the selected page
+        $moveselectedpos=$pagebreakpositions[$moveselectedonpage-1];
+        //array_reverse($moveonpagequestions);
+        foreach($moveonpagequestions as $question){
+            $questions=array_add_at($questions,$question,$moveselectedpos);
+            //place the next one after this one:
+            $moveselectedpos++;
+        }
+        $quiz->questions=implode(",",$questions);
     }
     if($moveonpagequestions or $questions){
         if (!$DB->set_field('quiz', 'questions', $quiz->questions,
