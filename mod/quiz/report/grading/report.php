@@ -202,15 +202,14 @@ class quiz_grading_report extends quiz_default_report {
         $a->closespan ='</span>';
         print_heading(get_string('questiontitle', 'quiz_grading', $a));
 
-        // our 3 different views
-        // the first one displays all of the manually graded questions in the quiz
-        // with the number of ungraded attempts for each question
+        // our 2 different views
 
-        // the second view displays the users who have answered the essay question
+        // the first view allows a user to select a question and 
+        // displays the users who have answered the essay question
         // and all of their attempts at answering the question
 
-        // the third prints the question with a comment
-        // and grade form underneath it
+        // the second prints selected attempt answer(s) with a comment
+        // and grade form underneath them
 
         $ungraded = $qattempts[$questionid]->totalattempts- $qattempts[$questionid]->gradedattempts;
         if ($gradenextungraded ||$gradeungraded || $gradeall || $userid || $attemptid){
