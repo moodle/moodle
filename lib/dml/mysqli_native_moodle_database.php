@@ -492,6 +492,10 @@ class mysqli_native_moodle_database extends moodle_database {
         while($row = $result->fetch_assoc()) {
             $row = array_change_key_case($row, CASE_LOWER);
             $id  = reset($row);
+            if (isset($return[$id])) {
+                $colname = key($row);
+                debugging("Did you remember to make the first column something unique in your call to get_records? Duplicate value '$id' found in column '$colname'.", DEBUG_DEVELOPER);
+            }
             $return[$id] = (object)$row;
         }
         $result->close();

@@ -717,6 +717,13 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(1, reset($records)->id);
         $this->assertEqual(2, next($records)->id);
 
+        ob_start(); // hide debug warning
+        $records = $DB->get_records_sql('SELECT course AS id, course AS course FROM {testtable} ', null);
+        $debuginfo = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEqual(3, count($records));
+        $this->assertFalse($debuginfo === '');
     }
 
     public function test_get_records_menu() {

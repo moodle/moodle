@@ -444,10 +444,12 @@ abstract class adodb_moodle_database extends moodle_database {
         if ($records = $rs->GetAssoc(true)) {
             foreach ($records as $key => $record) {
                 $record = array($firstcolumn->name=>$key) + $record; /// Re-add the assoc field  (as FIRST element since 2.0)
-                if ($debugging && array_key_exists($key, $objects)) {
-                    debugging("Did you remember to make the first column something unique in your call to get_records? Duplicate value '$key' found in column '".$firstcolumn->name."'.", DEBUG_DEVELOPER);
-                }
                 $objects[$key] = (object) $record; /// To object
+            }
+            if ($debugging) {
+                if (count($objects) != $rs->_numOfRows) {
+                    debugging("Did you remember to make the first column something unique in your call to get_records? Duplicate values found in column '".$firstcolumn->name."'.", DEBUG_DEVELOPER);
+                }
             }
             return $objects;
     /// Fallback in case we only have 1 field in the recordset. MDL-5877

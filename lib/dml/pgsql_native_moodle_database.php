@@ -601,6 +601,10 @@ class pgsql_native_moodle_database extends moodle_database {
                         $row[$blob] = pg_unescape_bytea($row[$blob]);
                     }
                 }
+                if (isset($return[$id])) {
+                    $colname = key($row);
+                    debugging("Did you remember to make the first column something unique in your call to get_records? Duplicate value '$id' found in column '$colname'.", DEBUG_DEVELOPER);
+                }
                 $return[$id] = (object)$row;
             }
         }
