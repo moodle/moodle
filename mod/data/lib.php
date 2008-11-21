@@ -2555,8 +2555,8 @@ function data_check_required_entries_fields($result) {
         && !get_config("","data/requiredentriesfixflag")) {      //do not show message when upgrading an anterior version when the patch has already been applied
         set_config("data/requiredentriesfixflag",true);
         $databases = $DB->get_records_sql("SELECT d.*, c.fullname
-                                    FROM {$CFG->prefix}data d,
-                                         {$CFG->prefix}course c
+                                    FROM {data} d,
+                                         {course} c
                                     WHERE d.course = c.id
                                     ORDER BY c.fullname, d.name");
         if (!empty($databases)) {
