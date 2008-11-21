@@ -27,7 +27,6 @@ $string['optonlyregradedattempts'] = 'that have been regraded / are marked as ne
 $string['overview'] = 'Grades';
 $string['overviewreport'] = 'Grades report';
 $string['overviewdownload'] = 'Overview download';
-$string['overviewdownload'] = 'Overview download';
 $string['overviewreportgraph'] = 'Overall Number of Students Achieving Grade Ranges';
 $string['overviewreportgraphgroup'] = 'Number of Students in Group \'$a\' Achieving Grade Ranges';
 $string['pagesize'] = 'Page size';

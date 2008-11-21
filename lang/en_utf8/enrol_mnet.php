@@ -2,7 +2,6 @@
 
 $string['description'] = 'Description of enrolment over Moodle Networking.';
 $string['enrolname'] = 'Moodle Networking';
-$string['enrolname'] = 'Moodle Networking';
 $string['allow_allcourses'] = 'Allow enrolment in all remote courses.';
 $string['allcategories'] = '$a potential categories';
 $string['allowedcategories'] = '$a allowed categories';
