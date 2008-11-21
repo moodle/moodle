@@ -494,6 +494,8 @@ $string['rcachettl'] = 'Record cache TTL';
 $string['releasenoteslink'] = 'For information about this version of Moodle, please see the online <a target=\"_new\" href=\"$a\">Release Notes</a>';
 $string['remotelangnotavailable'] = 'Because Moodle can not connect to download.moodle.org, we are unable to do language pack installation automatically. Please download the appropriate zip file(s) from the list below, copy them to your $a directory and unzip them manually.';
 $string['renameerrors'] = 'Errors in renames';
+$string['requiredentrieschanged'] = '<strong>IMPORTANT - PLEASE READ</strong><br/>Due to a bug fix, the behaviour of database activities using the \'Required entries\' and \'Required entries before viewing settings\' settings will change. A more detailed explaination of the changes can be read on <a href=\"http://moodle.org/mod/forum/discuss.php?d=110928\">the database module forum</a> and <a href=\"http://docs.moodle.org/en/Adding/editing_a_database#Required_entries\">Moodle Docs</a>.
+<br/><br/>This change affects the following databases in your system: (Please save this list now, and after the upgrade, check that these activities still work the way that the teacher intends.)<br/><strong style=\"color:red\">$a->text</strong><br/>';
 $string['restrictbydefault'] = 'Restrict modules by default';
 $string['restrictmodulesfor'] = 'Restrict modules for';
 $string['riskconfig'] = 'Users could change site configuration and behaviour';
