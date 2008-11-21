@@ -277,6 +277,8 @@
           <ON_CHECK message="globalswarning" />
         </FEEDBACK>
       </CUSTOM_CHECK>
+       <CUSTOM_CHECK file="mod/data/lib.php" function="data_check_required_entries_fields" level="optional">
+      </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
 </COMPATIBILITY_MATRIX>

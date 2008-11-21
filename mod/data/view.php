@@ -393,13 +393,20 @@
             }
         }
 
-        // Check the number of entries required against the number of entries already made (doesn't apply to teachers)
-        $requiredentries_allowed = true;
-        $numentries = data_numentries($data);
+         $numentries = data_numentries($data);
+    /// Check the number of entries required against the number of entries already made (doesn't apply to teachers)
         if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !has_capability('mod/data:manageentries', $context)) {
             $data->entriesleft = $data->requiredentries - $numentries;
             $strentrieslefttoadd = get_string('entrieslefttoadd', 'data', $data);
             notify($strentrieslefttoadd);
+        }
+
+    /// Check the number of entries required before to view other participant's entries against the number of entries already made (doesn't apply to teachers)
+        $requiredentries_allowed = true;
+        if ($data->requiredentriestoview > 0 && $numentries < $data->requiredentriestoview && !has_capability('mod/data:manageentries', $context)) {
+            $data->entrieslefttoview = $data->requiredentriestoview - $numentries;
+            $strentrieslefttoaddtoview = get_string('entrieslefttoaddtoview', 'data', $data);
+            notify($strentrieslefttoaddtoview);
             $requiredentries_allowed = false;
         }
 

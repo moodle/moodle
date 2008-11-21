@@ -657,6 +657,8 @@ $string['remotelangnotavailable'] = 'Because Moodle can not connect to download.
 $string['renameerrors'] = 'Rename errors';
 $string['requiredtemplate'] = 'Required. You may use template syntax here (%%l = lastname, %%f = firstname, %%u = username). See help for details and examples.';
 $string['requires'] = 'Requires';
+$string['requiredentrieschanged'] = '<strong>IMPORTANT - PLEASE READ</strong><br/>Due to a bug fix, the behaviour of database activities using the \'Required entries\' and \'Required entries before viewing settings\' settings will change. A more detailed explaination of the changes can be read on <a href=\"http://moodle.org/mod/forum/discuss.php?d=110928\">the database module forum</a> and <a href=\"http://docs.moodle.org/en/Adding/editing_a_database#Required_entries\">Moodle Docs</a>.
+<br/><br/>This change affects the following databases in your system: (Please save this list now, and after the upgrade, check that these activities still work the way that the teacher intends.)<br/><strong style=\"color:red\">$a->text</strong><br/>';
 $string['restrictbydefault'] = 'Restrict modules by default';
 $string['restrictmodulesfor'] = 'Restrict modules for';
 $string['reverseproxy'] = 'Reverse proxy';

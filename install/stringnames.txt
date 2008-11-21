@@ -196,6 +196,7 @@ releasenoteslink
 remotedownloaderror
 remotedownloadnotallowed
 report
+requiredentrieschanged
 restricted
 safemode
 safemodeerror
