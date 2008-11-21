@@ -229,6 +229,9 @@ $string['phpversionhelp'] = '<p>Moodle si vyžaduje verziu PHP aspoň  4.1.0.</p
 <p>Vy máte momentálne nainštalovanú túto verziu $a</p>
 <p>Musíte obnoviť PHP alebo presunúť na hostiteľský počítač s novou verziou PHP!</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
+$string['postgresqlwarning'] = '<strong>Poznámka:</strong> Ak pozorujete občasné problémy s pripojením, môžete skúsiť nastaviť pole hostiteľského servera nasledovne
+host=\'postgresql_host\' port=\'5432\' dbname=\'postgresql_database_name\' user=\'postgresql_user\' password=\'postgresql_user_password\'
+a ponechajte prázdne polia databáza, používateľ a heslo. Viac informácií na <a href=\"http://docs.moodle.org/en/Installing_Postgres_for_PHP\">Moodle Docs</a>';
 $string['previous'] = 'Predchádzajúci';
 $string['qtyperqpwillberemoved'] = 'Počas aktualizácie budú odobrané otázky typu RQP. Nemali ste žiadne také, takže by ste nemali zbadať žiadne problémy.';
 $string['qtyperqpwillberemovedanyway'] = 'Počas aktualizácie budú odobrané otázky typu RQP. Vo vašej databáze sa otázky takéhoto typu nachádzajú a nebudú fungovať ak nepreinštalujete program z http://moodle.org/mod/data/view.php?d=13&amp;rid=797 predtým, ako budete pokračovať v aktualizácii.';
