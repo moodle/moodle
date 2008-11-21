@@ -18,7 +18,6 @@ $string['optnoattemptsonly'] = '\'$a\' with no attempts only';
 $string['optonlygradedattempts'] = 'only the attempt that is graded for each user ($a)';
 $string['overview'] = 'Overview';
 $string['overviewdownload'] = 'Overview download';
-$string['overviewdownload'] = 'Overview download';
 $string['overviewreportgraph'] = 'Bar Graph of Number of Students Achieving Grade Ranges';
 $string['pagesize'] = 'Page size';
 $string['preferencespage'] = 'Preferences just for this page';
