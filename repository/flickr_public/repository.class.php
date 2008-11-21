@@ -20,9 +20,9 @@ class repository_flickr_public extends repository {
     public $photos;
 
     /**
-     *
-     * @param <type> $options
-     * @return <type>
+     * save api_key in config table
+     * @param array $options
+     * @return boolean
      */
     public function set_option($options = array()) {
         if (!empty($options['api_key'])) {
@@ -34,9 +34,9 @@ class repository_flickr_public extends repository {
     }
 
     /**
-     *
-     * @param <type> $config
-     * @return <type>
+     * get api_key from config table
+     * @param string $config
+     * @return mixed
      */
     public function get_option($config = '') {
         if ($config==='api_key') {
@@ -49,8 +49,8 @@ class repository_flickr_public extends repository {
     }
 
     /**
-     *
-     * @return <type>
+     * is global_search available?
+     * @return boolean
      */
     public function global_search() {
         if (empty($this->flickr_account)) {
@@ -62,42 +62,39 @@ class repository_flickr_public extends repository {
 
     /**
      *
-     * @global <type> $CFG
-     * @param <type> $repositoryid
-     * @param <type> $context
-     * @param <type> $options
-     * @param <type> $readonly
+     * @global object $CFG
+     * @param int $repositoryid
+     * @param int $context
+     * @param array $options
+     * @param boolean $readonly
      */
     public function __construct($repositoryid, $context = SITEID, $options = array(), $readonly=0) {
-        global $CFG;
-        $options['page'] = optional_param('p', 1, PARAM_INT);
+        global $CFG, $SESSION;
         parent::__construct($repositoryid, $context, $options,$readonly);
         $this->api_key = $this->get_option('api_key');
-        $this->flickr = new phpFlickr($this->api_key);
+        $this->flickr  = new phpFlickr($this->api_key);
         $this->flickr_account = $this->get_option('email_address');
 
         // when flickr account hasn't been set by admin, user can
         // submit a flickr account here.
-        $account = optional_param('flickr_account', '', PARAM_RAW);
-        if (!empty($account)) {
-            $people = $this->flickr->people_findByEmail($account);
-            if (!empty($people)) {
-                $this->flickr_account = $account;
-                set_user_preference('flickr_mail_'.$this->id, $account);
-            } else {
-                throw new repository_exception('invalidemail', 'repository_flickr_public');
-            }
-        }
-
-        $user_mail = get_user_preferences('flickr_mail_'.$this->id, '');
-        if (empty($this->flickr_account) && !empty($user_mail)) {
-            $this->flickr_account = $user_mail;
+        $account  = optional_param('flickr_account', '', PARAM_RAW);
+        $fulltext = optional_param('flickr_fulltext', '', PARAM_RAW);
+        $tag      = optional_param('flickr_tag', '', PARAM_RAW);
+        $this->sess_account = 'flickr_public_'.$this->id.'_account';
+        $this->sess_tag     = 'flickr_public_'.$this->id.'_tag';
+        $this->sess_text    = 'flickr_public_'.$this->id.'_text';
+        if (!empty($account) or !empty($fulltext) or !empty($tag)) {
+            $SESSION->{$this->sess_account} = $account;
+            $SESSION->{$this->sess_tag}  = $tag;
+            $SESSION->{$this->sess_text} = $fulltext;
+            echo json_encode($this->search($fulltext));
+            exit;
         }
     }
 
     /**
-     *
-     * @return <type>
+     * check flickr account
+     * @return boolean
      */
     public function check_login() {
         return !empty($this->flickr_account);
@@ -105,17 +102,30 @@ class repository_flickr_public extends repository {
 
     /**
      *
-     * @param <type> $ajax
-     * @return <type>
+     * @param boolean $ajax
+     * @return array
      */
     public function print_login($ajax = true) {
         if ($ajax) {
             $ret = array();
+            $fulltext = new stdclass;
+            $fulltext->label = get_string('fulltext', 'repository_flickr_public').': ';
+            $fulltext->id    = 'el_fulltext';
+            $fulltext->type = 'text';
+            $fulltext->name = 'flickr_fulltext';
+
+            $tag = new stdclass;
+            $tag->label = get_string('tag', 'repository_flickr_public').': ';
+            $tag->id    = 'el_tag';
+            $tag->type = 'text';
+            $tag->name = 'flickr_tag';
+
+            $email_field = new stdclass;
             $email_field->label = get_string('username', 'repository_flickr_public').': ';
             $email_field->id    = 'account';
             $email_field->type = 'text';
             $email_field->name = 'flickr_account';
-            $ret['login'] = array($email_field);
+            $ret['login'] = array($fulltext, $tag, $email_field);
             return $ret;
         }
     }
@@ -125,7 +135,10 @@ class repository_flickr_public extends repository {
      * @return <type>
      */
     public function logout() {
-        set_user_preference('flickr_mail_'.$this->id, '');
+        global $SESSION;
+        unset($SESSION->{$this->sess_tag});
+        unset($SESSION->{$this->sess_text});
+        unset($SESSION->{$this->sess_account});
         return $this->print_login();
     }
 
@@ -136,34 +149,32 @@ class repository_flickr_public extends repository {
      */
     public function search($search_text) {
         global $SESSION;
-        $people = $this->flickr->people_findByEmail($this->flickr_account);
-        $sess_tag = 'flickr_public_'.$this->id.'_tag';
-        $sess_text = 'flickr_public_'.$this->id.'_text';
-        $this->nsid = $people['nsid'];
-        $tag = optional_param('tag', '', PARAM_CLEANHTML);
+        if (!empty($this->flickr_account)) {
+            $people = $this->flickr->people_findByEmail($this->flickr_account);
+            $this->nsid = $people['nsid'];
+        }
+        if (!empty($SESSION->{$this->sess_account})) {
+            $people = $this->flickr->people_findByEmail($SESSION->{$this->sess_account});
+            $this->nsid = $people['nsid'];
+        }
+        if (empty($this->nsid)) {
+            $this->nsid = null;
+        }
         $is_paging = optional_param('search_paging', '', PARAM_RAW);
-        $page = 1;
         if (!empty($is_paging)) {
             $page = optional_param('p', '', PARAM_INT);
-            if (!empty($SESSION->$sess_tag)) {
-                $tag = $SESSION->$sess_tag;
-            }
-            if (!empty($SESSION->$sess_text)) {
-                $search_text = $SESSION->$sess_text;
-            }
-        }
-        if (!empty($tag)) {
-            $photos = $this->flickr->photos_search(array(
-                'tags'=>$tag,
-                'page'=>$page
-                ));
-            $SESSION->$sess_tag = $tag;
-
         } else {
+            $page = 1;
+        }
+        if (!empty($SESSION->{$this->sess_tag}) or !empty($SESSION->{$this->sess_text}) 
+            or !empty($SESSION->{$this->sess_account}) 
+            or !empty($this->nsid)) {
             $photos = $this->flickr->photos_search(array(
+                'tags'=>$SESSION->{$this->sess_tag},
+                'page'=>$page,
+                'per_page'=>25,
                 'user_id'=>$this->nsid,
                 'text'=>$search_text));
-            $SESSION->$sess_text = $search_text;
         }
         $ret = array();
         return $this->build_list($photos, $page, $ret);
@@ -190,8 +201,10 @@ class repository_flickr_public extends repository {
      * @return <type>
      */
     private function build_list($photos, $path = 1, &$ret) {
-        $photos_url = $this->flickr->urls_getUserPhotos($this->nsid);
-        $ret['manage'] = $photos_url;
+        if (!empty($this->nsid)) {
+            $photos_url = $this->flickr->urls_getUserPhotos($this->nsid);
+            $ret['manage'] = $photos_url;
+        }
         $ret['list']  = array();
         $ret['pages'] = $photos['pages'];
         if (is_int($path) && $path <= $ret['pages']) {
@@ -230,8 +243,11 @@ class repository_flickr_public extends repository {
      * @return <type>
      */
     public function print_search() {
-        parent::print_search();
-        echo '<label>Tag: </label><br /><input type="text" name="tag" /><br />';
+        echo '<input type="hidden" name="repo_id" value="'.$this->id.'" />';
+        echo '<input type="hidden" name="ctx_id" value="'.$this->context->id.'" />';
+        echo '<input type="hidden" name="seekey" value="'.sesskey().'" />';
+        echo '<label>'.get_string('fulltext', 'repository_flickr_public').': </label><br/><input name="s" value="" /><br/>';
+        echo '<label>'.get_string('tag', 'repository_flickr_public').'</label><br /><input type="text" name="tag" /><br />';
         return true;
     }
 
