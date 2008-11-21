@@ -10,7 +10,6 @@ require_once($CFG->libdir.'/dml/pdo_moodle_recordset.php');
 abstract class pdo_moodle_database extends moodle_database {
 
     protected $pdb;
-    protected $debug = false;
     protected $lastError = null;
 
     /**
@@ -127,36 +126,6 @@ abstract class pdo_moodle_database extends moodle_database {
         return $this->lastError;
     }
 
-    protected function report_error($sql, $params, $e) {
-        debugging($e->getMessage() .'<br /><br />'. s($sql));
-    }
-
-    /**
-     * Enable/disable very detailed debugging
-     * TODO: do we need levels?
-     * @param bool $state
-     */
-    public function set_debug($state) {
-        $this->debug = $state;
-    }
-
-    /**
-     * Returns debug status
-     * @return bool $state
-     */
-    public function get_debug() {
-        return $this->debug;
-    }
-
-    /**
-     * Enable/disable detailed sql logging
-     * TODO: do we need levels?
-     * @param bool $state
-     */
-    public function set_logging($state) {
-        //TODO
-    }
-
     /**
      * Function to print/save/ignore debuging messages related to SQL queries.
      */
@@ -186,7 +155,6 @@ abstract class pdo_moodle_database extends moodle_database {
             return true;
         } catch (PDOException $ex) {
             $this->lastError = $ex->getMessage();
-            $this->report_error($sql, null, $ex);
             return false;
         }
     }
@@ -230,7 +198,6 @@ abstract class pdo_moodle_database extends moodle_database {
             return true;
         } catch (PDOException $ex) {
             $this->lastError = $ex->getMessage();
-            $this->report_error($sql, $params, $ex);
             return false;
         }
     }
@@ -247,7 +214,7 @@ abstract class pdo_moodle_database extends moodle_database {
      * @param array $params array of sql parameters
      * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
      * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
-     * @return mixed an moodle_recorset object, or false if an error occured.
+     * @return mixed an moodle_recordset object, or false if an error occured.
      */
     public function get_recordset_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
         try {
@@ -263,7 +230,6 @@ abstract class pdo_moodle_database extends moodle_database {
             return $this->create_recordset($sth);
         } catch (PDOException $ex) {
             $this->lastError = $ex->getMessage();
-            $this->report_error($sql, $params, $ex);
             return false;
         }
     }
@@ -335,7 +301,7 @@ abstract class pdo_moodle_database extends moodle_database {
      * @param bool $returnit return it of inserted record
      * @param bool $bulk true means repeated inserts expected
      * @param bool $customsequence true if 'id' included in $params, disables $returnid
-     * @return mixed success or new id
+     * @return true or new id
      */
     public function insert_record_raw($table, $params, $returnid=true, $bulk=false, $customsequence=false) {
         if (!is_array($params)) {
@@ -383,7 +349,7 @@ abstract class pdo_moodle_database extends moodle_database {
      * @param object $data A data object with values for one or more fields in the record
      * @param bool $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
      * @param bool $bulk true means repeated inserts expected
-     * @return mixed success or new ID
+     * @return true or new id
      */
     public function insert_record($table, $dataobject, $returnid=true, $bulk=false) {
         if (!is_object($dataobject)) {

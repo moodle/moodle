@@ -292,7 +292,7 @@ class ddl_test extends UnitTestCase {
         $dbman->create_table($table);
 
         $record = new object();
-        $recorf->course = 2;
+        $record->onenumber = 2;
         $DB->insert_record('test_table_cust0', $record);
 
         $field = new xmldb_field('onenumber');

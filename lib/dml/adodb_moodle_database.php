@@ -85,8 +85,10 @@ abstract class adodb_moodle_database extends moodle_database {
      * @return array
      */
     public function get_server_info() {
-        //TODO: make all dblibraries return this info in a structured way (new server_info class or so, like database_column_info class)
-        return $this->adodb->ServerInfo();
+        $this->query_start("--adodb-ServerInfo", null, SQL_QUERY_AUX);
+        $info = $this->adodb->ServerInfo();
+        $this->query_end(true);
+        return $info;
     }
 
     /**
@@ -94,7 +96,10 @@ abstract class adodb_moodle_database extends moodle_database {
      * @return array of table names in lowercase and without prefix
      */
     public function get_tables() {
+        $this->query_start("--adodb-MetaTables", null, SQL_QUERY_AUX);
         $metatables = $this->adodb->MetaTables();
+        $this->query_end(true);
+
         $tables = array();
 
         foreach ($metatables as $table) {
@@ -112,8 +117,11 @@ abstract class adodb_moodle_database extends moodle_database {
      * @return array of arrays
      */
     public function get_indexes($table) {
-        $this->reads++;
-        if (!$indexes = $this->adodb->MetaIndexes($this->prefix.$table)) {
+        $this->query_start("--adodb-MetaIndexes", null, SQL_QUERY_AUX);
+        $indexes = $this->adodb->MetaIndexes($this->prefix.$table);
+        $this->query_end(true);
+
+        if (!$indexes) {
             return array();
         }
         $indexes = array_change_key_case($indexes, CASE_LOWER);
@@ -132,8 +140,11 @@ abstract class adodb_moodle_database extends moodle_database {
             return $this->columns[$table];
         }
 
-        $this->reads++;
-        if (!$columns = $this->adodb->MetaColumns($this->prefix.$table)) {
+        $this->query_start("--adodb-MetaColumns", null, SQL_QUERY_AUX);
+        $columns = $this->adodb->MetaColumns($this->prefix.$table);
+        $this->query_end(true);
+
+        if (!$columns) {
             return array();
         }
 
@@ -161,49 +172,21 @@ abstract class adodb_moodle_database extends moodle_database {
     }
 
     /**
-     * Enable/disable very detailed debugging
-     * @param bool $state
-     */
-    public function set_debug($state) {
-        if ($this->adodb) {
-            $this->adodb->debug = $state;
-        }
-    }
-
-    /**
-     * Returns debug status
-     * @return bool $state
-     */
-    public function get_debug() {
-        return $this->adodb->debug;
-    }
-
-    /**
-     * Enable/disable detailed sql logging
-     * @param bool $state
-     */
-    public function set_logging($state) {
-        // TODO: adodb sql logging shares one table without prefix per db - this is no longer acceptable :-(
-        // we must create one table shared by all drivers
-    }
-
-    /**
      * Do NOT use in code, to be used by database_manager only!
      * @param string $sql query
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function change_database_structure($sql) {
-        $this->writes++;
-
-        if ($rs = $this->adodb->Execute($sql)) {
-            $result = true;
-        } else {
-            $result = false;
-            $this->report_error($sql);
-        }
-        // structure changed, reset columns cache
         $this->reset_columns();
-        return $result;
+
+        $this->query_start($sql, null, SQL_QUERY_STRUCTURE);
+        $rs = $this->adodb->Execute($sql);
+        $this->query_end($rs);
+
+        $rs->Close();
+
+        return true;
     }
 
     /**
@@ -211,26 +194,23 @@ abstract class adodb_moodle_database extends moodle_database {
      * Do NOT use this to make changes in db structure, use database_manager::execute_sql() instead!
      * @param string $sql query
      * @param array $params query parameters
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function execute($sql, array $params=null) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
         if (strpos($sql, ';') !== false) {
-            debugging('Error: Multiple sql statements found or bound parameters not used properly in query!');
-            return false;
+            throw new coding_exception('moodle_database::execute() Multiple sql statements found or bound parameters not used properly in query!');
         }
 
-        $this->writes++;
+        $this->query_start($sql, $params, SQL_QUERY_UPDATE);
+        $rs = $this->adodb->Execute($sql, $params);
+        $this->query_end($rs);
 
-        if ($rs = $this->adodb->Execute($sql, $params)) {
-            $result = true;
-            $rs->Close();
-        } else {
-            $result = false;
-            $this->report_error($sql, $params);
-        }
-        return $result;
+        $rs->Close();
+
+        return true;
     }
 
     /**
@@ -240,7 +220,8 @@ abstract class adodb_moodle_database extends moodle_database {
      * @param bool $returnit return it of inserted record
      * @param bool $bulk true means repeated inserts expected
      * @param bool $customsequence true if 'id' included in $params, disables $returnid
-     * @return mixed success or new id
+     * @return mixed true or new id
+     * @throws dml_exception if error
      */
     public function insert_record_raw($table, $params, $returnid=true, $bulk=false, $customsequence=false) {
         if (!is_array($params)) {
@@ -249,7 +230,7 @@ abstract class adodb_moodle_database extends moodle_database {
 
         if ($customsequence) {
             if (!isset($params['id'])) {
-                return false;
+                throw new coding_exception('moodle_database::insert_record_raw() id field must be specified if custom sequences used.');
             }
             $returnid = false;
         } else {
@@ -257,10 +238,8 @@ abstract class adodb_moodle_database extends moodle_database {
         }
 
         if (empty($params)) {
-            return false;
+            throw new coding_exception('moodle_database::insert_record_raw() no fields found.');
         }
-
-        $this->writes++;
 
         $fields = implode(',', array_keys($params));
         $qms    = array_fill(0, count($params), '?');
@@ -268,17 +247,20 @@ abstract class adodb_moodle_database extends moodle_database {
 
         $sql = "INSERT INTO {$this->prefix}$table ($fields) VALUES($qms)";
 
-        if (!$rs = $this->adodb->Execute($sql, $params)) {
-            $this->report_error($sql, $params);
-            return false;
-        }
+        $this->query_start($sql, $params, SQL_QUERY_INSERT);
+        $rs = $this->adodb->Execute($sql, $params);
+        $this->query_end($rs);
+        $rs->Close();
+
         if (!$returnid) {
             return true;
         }
-        if ($id = $this->adodb->Insert_ID()) {
-            return (int)$id;
+
+        if (!$id = $this->adodb->Insert_ID()) {
+            throw new dml_write_exception('unknown error fetching inserted id');
         }
-        return false;
+
+        return (int)$id;
     }
 
     /**
@@ -286,23 +268,22 @@ abstract class adodb_moodle_database extends moodle_database {
      * @param string $table name
      * @param mixed $params data record as object or array
      * @param bool true means repeated updates expected
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function update_record_raw($table, $params, $bulk=false) {
         if (!is_array($params)) {
             $params = (array)$params;
         }
         if (!isset($params['id'])) {
-            return false;
+            throw new coding_exception('moodle_database::update_record_raw() id field must be specified.');
         }
         $id = $params['id'];
         unset($params['id']);
 
         if (empty($params)) {
-            return false;
+            throw new coding_exception('moodle_database::update_record_raw() no fields found.');
         }
-
-        $this->writes++;
 
         $sets = array();
         foreach ($params as $field=>$value) {
@@ -314,10 +295,11 @@ abstract class adodb_moodle_database extends moodle_database {
         $sets = implode(',', $sets);
         $sql = "UPDATE {$this->prefix}$table SET $sets WHERE id=?";
 
-        if (!$rs = $this->adodb->Execute($sql, $params)) {
-            $this->report_error($sql, $params);
-            return false;
-        }
+        $this->query_start($sql, $params, SQL_QUERY_UPDATE);
+        $rs = $this->adodb->Execute($sql, $params);
+        $this->query_end($rs);
+        $rs->Close();
+
         return true;
     }
 
@@ -327,7 +309,8 @@ abstract class adodb_moodle_database extends moodle_database {
      * @param string $table The database table to be checked against.
      * @param string $select A fragment of SQL to be used in a where clause in the SQL call (used to define the selection criteria).
      * @param array $params array of sql parameters
-     * @return returns success.
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function delete_records_select($table, $select, array $params=null) {
         if ($select) {
@@ -337,16 +320,12 @@ abstract class adodb_moodle_database extends moodle_database {
 
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
-        $this->writes++;
+        $this->query_start($sql, $params, SQL_QUERY_UPDATE);
+        $rs = $this->adodb->Execute($sql, $params);
+        $this->query_end($rs);
+        $rs->Close();
 
-        $result = false;
-        if ($rs = $this->adodb->Execute($sql, $params)) {
-            $result = true;
-            $rs->Close();
-        } else {
-            $this->report_error($sql, $params);
-        }
-        return $result;
+        return true;
     }
 
     /**
@@ -361,26 +340,25 @@ abstract class adodb_moodle_database extends moodle_database {
      * @param array $params array of sql parameters
      * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
      * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
-     * @return mixed an moodle_recorset object, or false if an error occured.
+     * @return object moodle_recordset instance
+     * @throws dml_exception if error
      */
     public function get_recordset_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
-
-        $this->reads++;
 
         if ($limitfrom || $limitnum) {
             ///Special case, 0 must be -1 for ADOdb
             $limitfrom = empty($limitfrom) ? -1 : $limitfrom;
             $limitnum  = empty($limitnum) ? -1 : $limitnum;
+            $this->query_start($sql." --LIMIT $limitfrom, $limitnum", $params, SQL_QUERY_SELECT);
             $rs = $this->adodb->SelectLimit($sql, $limitnum, $limitfrom, $params);
-        } else {
-            $rs = $this->adodb->Execute($sql, $params);
-        }
-        if (!$rs) {
-            $this->report_error($sql, $params);
-            return false;
+            $this->query_end($rs);
+            return $this->create_recordset($rs);
         }
 
+        $this->query_start($sql, $params, SQL_QUERY_SELECT);
+        $rs = $this->adodb->Execute($sql, $params);
+        $this->query_end($rs);
         return $this->create_recordset($rs);
     }
 
@@ -399,27 +377,28 @@ abstract class adodb_moodle_database extends moodle_database {
      * @param array $params array of sql parameters
      * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
      * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
-     * @return mixed an array of objects, or empty array if no records were found, or false if an error occured.
+     * @return array of objects indexed by first column
+     * @throws dml_exception if error
      */
     public function get_records_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
-        $this->reads++;
-
+        $rs = null;
         if ($limitfrom || $limitnum) {
             ///Special case, 0 must be -1 for ADOdb
             $limitfrom = empty($limitfrom) ? -1 : $limitfrom;
             $limitnum  = empty($limitnum) ? -1 : $limitnum;
+            $this->query_start($sql." --LIMIT $limitfrom, $limitnum", $params, SQL_QUERY_SELECT);
             $rs = $this->adodb->SelectLimit($sql, $limitnum, $limitfrom, $params);
+            $this->query_end($rs);
         } else {
+            $this->query_start($sql, $params, SQL_QUERY_SELECT);
             $rs = $this->adodb->Execute($sql, $params);
-        }
-        if (!$rs) {
-            $this->report_error($sql, $params);
-            return false;
+            $this->query_end($rs);
         }
         $return = $this->adodb_recordset_to_array($rs);
-        $rs->close();
+        $rs->Close();
+
         return $return;
     }
 
@@ -428,17 +407,16 @@ abstract class adodb_moodle_database extends moodle_database {
      *
      * @param string $sql The SQL query
      * @param array $params array of sql parameters
-     * @return mixed array of values or false if an error occured
+     * @return mixed array of values
+     * @throws dml_exception if error
      */
     public function get_fieldset_sql($sql, array $params=null) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
-        $this->reads++;
+        $this->query_start($sql, $params, SQL_QUERY_SELECT);
+        $rs = $this->adodb->Execute($sql, $params);
+        $this->query_end($rs);
 
-        if (!$rs = $this->adodb->Execute($sql, $params)) {
-            $this->report_error($sql, $params);
-            return false;
-        }
         $results = array();
         while (!$rs->EOF) {
             $res = reset($rs->fields);
@@ -502,8 +480,6 @@ abstract class adodb_moodle_database extends moodle_database {
         }
         return call_user_func_array(array($this->adodb, 'Concat'), $elements);
     }
-
-
 
     public function begin_sql() {
         $this->adodb->BeginTrans();

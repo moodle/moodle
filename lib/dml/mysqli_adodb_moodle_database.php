@@ -15,8 +15,8 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
      * @param string $dbuser
      * @param string $dbpass
      * @param string $dbname
-     *
      * @return bool success
+     * @throws dml_exception if error
      */
     public function create_database($dbhost, $dbuser, $dbpass, $dbname) {
         $this->adodb->database = ''; // reset database name cached by ADODB. Trick from MDL-9609
@@ -50,7 +50,12 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
 
     protected function configure_dbconnection() {
         $this->adodb->SetFetchMode(ADODB_FETCH_ASSOC);
-        $this->adodb->Execute("SET NAMES 'utf8'");
+
+        $sql = "SET NAMES 'utf8'";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = $this->adodb->Execute($sql);
+        $this->query_end($result);
+
         return true;
     }
 
@@ -94,8 +99,12 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
      * @return bool true if db in unicode mode
      */
     function setup_is_unicodedb() {
-        $this->reads++;
-        $rs = $this->adodb->Execute("SHOW LOCAL VARIABLES LIKE 'character_set_database'");
+
+        $sql = "SHOW LOCAL VARIABLES LIKE 'character_set_database'";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $rs = $this->adodb->Execute($sql);
+        $this->query_end($rs);
+
         if ($rs && !$rs->EOF) {
             $records = $rs->GetAssoc(true);
             $encoding = $records['character_set_database']['Value'];
@@ -109,14 +118,20 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
     /**
     /* Tries to change default db encoding to utf8, if empty db
      * @return bool sucecss
+     * @throws dml_exception if error
      */
     public function change_db_encoding() {
         // try forcing utf8 collation, if mysql db and no tables present
-        $this->reads++;
-        if (!$this->adodb->Metatables()) {
-            $SQL = 'ALTER DATABASE '.$this->dbname.' CHARACTER SET utf8';
-            $this->writes++;
-            $this->adodb->Execute($SQL);
+        $this->query_start("--adodb-MetaTables", null, SQL_QUERY_AUX);
+        // TODO: maybe add separate empty database test because this ignores tables without prefix
+        $metatables = $this->adodb->MetaTables();
+        $this->query_end(true);
+
+        if (!$metatables) {
+            $sql = "ALTER DATABASE $this->dbname CHARACTER SET utf8";
+            $this->query_start($sql, null, SQL_QUERY_AUX);
+            $rs = $this->adodb->Execute($sql);
+            $this->query_end($rs);
             if ($this->setup_is_unicodedb()) {
                 $this->configure_dbconnection();
                 return true;
@@ -137,7 +152,8 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
      * @param object $data A data object with values for one or more fields in the record
      * @param bool $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
      * @param bool $bulk true means repeated inserts expected
-     * @return mixed success or new ID
+     * @return true or new id
+     * @throws dml_exception if error
      */
     public function insert_record($table, $dataobject, $returnid=true, $bulk=false) {
         if (!is_object($dataobject)) {
@@ -163,16 +179,11 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
                     // ok - nulls allowed
                 } else {
                     if (!in_array((string)$value, $column->enums)) {
-                        debugging('Enum value '.s($value).' not allowed in field '.$field.' table '.$table.'.');
-                        return false;
+                        throw new dml_write_exception('Enum value '.s($value).' not allowed in field '.$field.' table '.$table.'.');
                     }
                 }
             }
             $cleaned[$field] = $value;
-        }
-
-        if (empty($cleaned)) {
-            return false;
         }
 
         return $this->insert_record_raw($table, $cleaned, $returnid, $bulk);
@@ -188,15 +199,12 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
      * @param string $table The database table to be checked against.
      * @param object $dataobject An object with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
      * @param bool true means repeated updates expected
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function update_record($table, $dataobject, $bulk=false) {
         if (!is_object($dataobject)) {
             $dataobject = (object)$dataobject;
-        }
-
-        if (!isset($dataobject->id) ) {
-            return false;
         }
 
         $columns = $this->get_columns($table);
@@ -223,7 +231,8 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
      * @param string $newvalue the value to set the field to.
      * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
      * @param array $params array of sql parameters
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function set_field_select($table, $newfield, $newvalue, $select, array $params=null) {
         if ($select) {
@@ -245,12 +254,10 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
         }
         $sql = "UPDATE {$this->prefix}$table SET $newfield $select";
 
-        $this->writes++;
+        $this->query_start($sql, $params, SQL_QUERY_UPDATE);
+        $rs = $this->adodb->Execute($sql, $params);
+        $this->query_end($rs);
 
-        if (!$rs = $this->adodb->Execute($sql, $params)) {
-            $this->report_error($sql, $params);
-            return false;
-        }
         return true;
     }
 
@@ -295,14 +302,11 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
      * Basic safety checks only. Lobs are supported.
      * @param string $table name of database table to be inserted into
      * @param mixed $dataobject object or array with fields in the record
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function import_record($table, $dataobject) {
         $dataobject = (object)$dataobject;
-
-        if (empty($dataobject->id)) {
-            return false;
-        }
 
         $columns = $this->get_columns($table);
         $cleaned = array();

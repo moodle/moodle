@@ -10,7 +10,6 @@ require_once($CFG->libdir.'/dml/pgsql_native_moodle_recordset.php');
 class pgsql_native_moodle_database extends moodle_database {
 
     protected $pgsql     = null;
-    protected $debug     = false;
     protected $bytea_oid = null;
 
     protected $last_debug;
@@ -454,7 +453,8 @@ class pgsql_native_moodle_database extends moodle_database {
     /**
      * Reset a sequence to the id field of a table.
      * @param string $table name of table
-     * @return success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function reset_sequence($table) {
         if (!$this->get_manager()->table_exists($table)) {
@@ -487,33 +487,10 @@ class pgsql_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Enable/disable very detailed debugging
-     * @param bool $state
-     */
-    public function set_debug($state) {
-        $this->debug = $state;
-    }
-
-    /**
-     * Returns debug status
-     * @return bool $state
-     */
-    public function get_debug() {
-        return $this->debug;
-    }
-
-    /**
-     * Enable/disable detailed sql logging
-     * @param bool $state
-     */
-    public function set_logging($state) {
-        //TODO
-    }
-
-    /**
      * Do NOT use in code, to be used by database_manager only!
      * @param string $sql query
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function change_database_structure($sql) {
         $this->reset_columns();
@@ -522,10 +499,6 @@ class pgsql_native_moodle_database extends moodle_database {
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
 
-        if ($result === false) {
-            $this->report_error($sql);
-            return false;
-        }
         pg_free_result($result);
         return true;
     }
@@ -535,25 +508,20 @@ class pgsql_native_moodle_database extends moodle_database {
      * Do NOT use this to make changes in db structure, use database_manager::execute_sql() instead!
      * @param string $sql query
      * @param array $params query parameters
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function execute($sql, array $params=null) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
         if (strpos($sql, ';') !== false) {
-            debugging('Error: Multiple sql statements found or bound parameters not used properly in query!');
-            return false;
+            throw new coding_exception('moodle_database::execute() Multiple sql statements found or bound parameters not used properly in query!');
         }
 
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $result = pg_query_params($this->pgsql, $sql, $params);
         $this->query_end($result);
 
-        if ($result === false) {
-            $this->report_error($sql, $params);
-            return false;
-
-        }
         pg_free_result($result);
         return true;
     }
@@ -571,7 +539,8 @@ class pgsql_native_moodle_database extends moodle_database {
      * @param array $params array of sql parameters
      * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
      * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
-     * @return mixed an moodle_recorset object, or false if an error occured.
+     * @return mixed an moodle_recordset object
+     * @throws dml_exception if error
      */
     public function get_recordset_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
         if ($limitfrom or $limitnum) {
@@ -588,11 +557,6 @@ class pgsql_native_moodle_database extends moodle_database {
         $this->query_start($sql, $params, SQL_QUERY_SELECT);
         $result = pg_query_params($this->pgsql, $sql, $params);
         $this->query_end($result);
-
-        if ($result === false) {
-            $this->report_error($sql, $params);
-            return false;
-        }
 
         return $this->create_recordset($result);
     }
@@ -612,7 +576,8 @@ class pgsql_native_moodle_database extends moodle_database {
      * @param array $params array of sql parameters
      * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
      * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
-     * @return mixed an array of objects, or empty array if no records were found, or false if an error occured.
+     * @return mixed an array of objects, or empty array if no records were found
+     * @throws dml_exception if error
      */
     public function get_records_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
         if ($limitfrom or $limitnum) {
@@ -629,10 +594,6 @@ class pgsql_native_moodle_database extends moodle_database {
         $result = pg_query_params($this->pgsql, $sql, $params);
         $this->query_end($result);
 
-        if ($result === false) {
-            $this->report_error($sql, $params);
-            return false;
-        }
         // find out if there are any blobs
         $numrows = pg_num_fields($result);
         $blobs = array();
@@ -667,7 +628,8 @@ class pgsql_native_moodle_database extends moodle_database {
      *
      * @param string $sql The SQL query
      * @param array $params array of sql parameters
-     * @return mixed array of values or false if an error occured
+     * @return mixed array of values
+     * @throws dml_exception if error
      */
     public function get_fieldset_sql($sql, array $params=null) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
@@ -675,11 +637,6 @@ class pgsql_native_moodle_database extends moodle_database {
         $this->query_start($sql, $params, SQL_QUERY_SELECT);
         $result = pg_query_params($this->pgsql, $sql, $params);
         $this->query_end($result);
-
-        if ($result === false) {
-            $this->report_error($sql, $params);
-            return false;
-        }
 
         $return = pg_fetch_all_columns($result, 0);
         pg_free_result($result);
@@ -694,7 +651,8 @@ class pgsql_native_moodle_database extends moodle_database {
      * @param bool $returnit return it of inserted record
      * @param bool $bulk true means repeated inserts expected
      * @param bool $customsequence true if 'id' included in $params, disables $returnid
-     * @return mixed success or new id
+     * @return true or new id
+     * @throws dml_exception if error
      */
     public function insert_record_raw($table, $params, $returnid=true, $bulk=false, $customsequence=false) {
         if (!is_array($params)) {
@@ -705,7 +663,7 @@ class pgsql_native_moodle_database extends moodle_database {
 
         if ($customsequence) {
             if (!isset($params['id'])) {
-                return false;
+                throw new coding_exception('moodle_database::insert_record_raw() id field must be specified if custom sequences used.');
             }
             $returnid = false;
         } else {
@@ -732,7 +690,7 @@ class pgsql_native_moodle_database extends moodle_database {
         }
 
         if (empty($params)) {
-            return false;
+            throw new coding_exception('moodle_database::insert_record_raw() no fields found.');
         }
 
         $fields = implode(',', array_keys($params));
@@ -747,11 +705,6 @@ class pgsql_native_moodle_database extends moodle_database {
         $this->query_start($sql, $params, SQL_QUERY_INSERT);
         $result = pg_query_params($this->pgsql, $sql, $params);
         $this->query_end($result);
-
-        if ($result === false) {
-            $this->report_error($sql, $params);
-            return false;
-        }
 
         if ($returning !== "") {
             $row = pg_fetch_assoc($result);
@@ -775,7 +728,8 @@ class pgsql_native_moodle_database extends moodle_database {
      * @param string $table The database table to be inserted into
      * @param object $data A data object with values for one or more fields in the record
      * @param bool $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
-     * @return mixed success or new ID
+     * @return true or new id
+     * @throws dml_exception if error
      */
     public function insert_record($table, $dataobject, $returnid=true, $bulk=false) {
         if (!is_object($dataobject)) {
@@ -814,17 +768,11 @@ class pgsql_native_moodle_database extends moodle_database {
             $cleaned[$field] = $value;
         }
 
-        if (empty($cleaned)) {
-            return false;
-        }
-
         if (empty($blobs)) {
             return $this->insert_record_raw($table, $cleaned, $returnid, $bulk);
         }
 
-        if (!$id = $this->insert_record_raw($table, $cleaned, true, $bulk)) {
-            return false;
-        }
+        $id = $this->insert_record_raw($table, $cleaned, true, $bulk);
 
         foreach ($blobs as $key=>$value) {
             $value = pg_escape_bytea($this->pgsql, $value);
@@ -847,14 +795,11 @@ class pgsql_native_moodle_database extends moodle_database {
      *
      * @param string $table name of database table to be inserted into
      * @param object $dataobject A data object with values for one or more fields in the record
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function import_record($table, $dataobject) {
         $dataobject = (object)$dataobject;
-
-        if (empty($dataobject->id)) {
-            return false;
-        }
 
         $columns = $this->get_columns($table);
         $cleaned = array();
@@ -874,20 +819,21 @@ class pgsql_native_moodle_database extends moodle_database {
      * @param string $table name
      * @param mixed $params data record as object or array
      * @param bool true means repeated updates expected
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function update_record_raw($table, $params, $bulk=false) {
         if (!is_array($params)) {
             $params = (array)$params;
         }
         if (!isset($params['id'])) {
-            return false;
+            throw new coding_exception('moodle_database::update_record_raw() id field must be specified.');
         }
         $id = $params['id'];
         unset($params['id']);
 
         if (empty($params)) {
-            return false;
+            throw new coding_exception('moodle_database::update_record_raw() no fields found.');
         }
 
         $i = 1;
@@ -906,11 +852,6 @@ class pgsql_native_moodle_database extends moodle_database {
         $result = pg_query_params($this->pgsql, $sql, $params);
         $this->query_end($result);
 
-        if ($result === false) {
-            $this->report_error($sql, $params);
-            return false;
-        }
-
         pg_free_result($result);
         return true;
     }
@@ -925,18 +866,13 @@ class pgsql_native_moodle_database extends moodle_database {
      * @param string $table The database table to be checked against.
      * @param object $dataobject An object with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
      * @param bool true means repeated updates expected
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function update_record($table, $dataobject, $bulk=false) {
         if (!is_object($dataobject)) {
             $dataobject = (object)$dataobject;
         }
-
-        if (!isset($dataobject->id) ) {
-            return false;
-        }
-
-        $id = (int)$dataobject->id;
 
         $columns = $this->get_columns($table);
         $cleaned = array();
@@ -968,13 +904,13 @@ class pgsql_native_moodle_database extends moodle_database {
             $cleaned[$field] = $value;
         }
 
-        if (!$this->update_record_raw($table, $cleaned, $bulk)) {
-            return false;
-        }
+        $this->update_record_raw($table, $cleaned, $bulk);
 
         if (empty($blobs)) {
             return true;
         }
+
+        $id = (int)$dataobject->id;
 
         foreach ($blobs as $key=>$value) {
             $value = pg_escape_bytea($this->pgsql, $value);
@@ -982,9 +918,7 @@ class pgsql_native_moodle_database extends moodle_database {
             $this->query_start($sql, NULL, SQL_QUERY_UPDATE);
             $result = pg_query($this->pgsql, $sql);
             $this->query_end($result);
-            if ($result === false) {
-                return false;
-            }
+
             pg_free_result($result);
         }
 
@@ -999,7 +933,8 @@ class pgsql_native_moodle_database extends moodle_database {
      * @param string $newvalue the value to set the field to.
      * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
      * @param array $params array of sql parameters
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function set_field_select($table, $newfield, $newvalue, $select, array $params=null) {
         if ($select) {
@@ -1026,10 +961,6 @@ class pgsql_native_moodle_database extends moodle_database {
         $result = pg_query_params($this->pgsql, $sql, $params);
         $this->query_end($result);
 
-        if ($result === false) {
-            $this->report_error($sql, $params);
-            return false;
-        }
         pg_free_result($result);
 
         return true;
@@ -1041,7 +972,8 @@ class pgsql_native_moodle_database extends moodle_database {
      * @param string $table The database table to be checked against.
      * @param string $select A fragment of SQL to be used in a where clause in the SQL call (used to define the selection criteria).
      * @param array $params array of sql parameters
-     * @return returns success.
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function delete_records_select($table, $select, array $params=null) {
         if ($select) {
@@ -1055,10 +987,6 @@ class pgsql_native_moodle_database extends moodle_database {
         $result = pg_query_params($this->pgsql, $sql, $params);
         $this->query_end($result);
 
-        if ($result === false) {
-            $this->report_error($sql, $params);
-            return false;
-        }
         pg_free_result($result);
 
         return true;
@@ -1121,9 +1049,6 @@ class pgsql_native_moodle_database extends moodle_database {
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
 
-        if ($result === false) {
-            return false;
-        }
         pg_free_result($result);
         return true;
     }
@@ -1137,9 +1062,6 @@ class pgsql_native_moodle_database extends moodle_database {
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
 
-        if ($result === false) {
-            return false;
-        }
         pg_free_result($result);
         return true;
     }
@@ -1153,9 +1075,6 @@ class pgsql_native_moodle_database extends moodle_database {
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
 
-        if ($result === false) {
-            return false;
-        }
         pg_free_result($result);
         return true;
     }

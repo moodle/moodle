@@ -451,6 +451,7 @@ class dml_test extends UnitTestCase {
         $data = array(array('id' => 1, 'course' => 3, 'name' => 'record1'),
                       array('id' => 2, 'course' => 3, 'name' => 'record2'),
                       array('id' => 3, 'course' => 5, 'name' => 'record3'));
+
         foreach ($data as $record) {
             $DB->insert_record('testtable', $record);
         }
@@ -482,9 +483,9 @@ class dml_test extends UnitTestCase {
         $dbman->create_table($table);
         $this->tables[$table->getName()] = $table;
 
-        $data = array(array('id' => 1, 'course' => 3, 'name' => 'record1'),
-                      array('id' => 2, 'course' => 3, 'name' => 'record2'),
-                      array('id' => 3, 'course' => 5, 'name' => 'record3'));
+        $data = array(array('id'=> 1, 'course' => 3, 'name' => 'record1'),
+                      array('id'=> 2, 'course' => 3, 'name' => 'record2'),
+                      array('id'=> 3, 'course' => 5, 'name' => 'record3'));
         foreach ($data as $record) {
             $DB->insert_record('testtable', $record);
         }

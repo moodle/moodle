@@ -37,7 +37,11 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
 
     protected function configure_dbconnection() {
         $this->adodb->SetFetchMode(ADODB_FETCH_ASSOC);
-        $this->adodb->Execute("SET NAMES 'utf8'");
+
+        $sql = "SET NAMES 'utf8'";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = $this->adodb->Execute($sql);
+        $this->query_end($result);
 
         return true;
     }
@@ -110,8 +114,11 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
             return $this->columns[$table];
         }
 
-        $this->reads++;
-        if (!$columns = $this->adodb->MetaColumns($this->prefix.$table)) {
+        $this->query_start("--adodb-MetaColumns", null, SQL_QUERY_AUX);
+        $columns = $this->adodb->MetaColumns($this->prefix.$table);
+        $this->query_end(true);
+
+        if (!$columns) {
             return array();
         }
 
@@ -145,8 +152,11 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
      */
     function setup_is_unicodedb() {
     /// Get PostgreSQL server_encoding value
-        $this->reads++;
-        $rs = $this->adodb->Execute("SHOW server_encoding");
+        $sql = "SHOW server_encoding";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $rs = $this->adodb->Execute($sql);
+        $this->query_end($rs);
+
         if ($rs && !$rs->EOF) {
             $encoding = $rs->fields['server_encoding'];
             if (strtoupper($encoding) == 'UNICODE' || strtoupper($encoding) == 'UTF8') {
@@ -164,7 +174,8 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
      * @param bool $returnit return it of inserted record
      * @param bool $bulk true means repeated inserts expected
      * @param bool $customsequence true if 'id' included in $params, disables $returnid
-     * @return mixed success or new id
+     * @return true or new id
+     * @throws dml_exception if error
      */
     public function insert_record_raw($table, $params, $returnid=true, $bulk=false, $customsequence=false) {
         if (!is_array($params)) {
@@ -173,29 +184,30 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
 
         if ($customsequence) {
             if (!isset($params['id'])) {
-                return false;
+                throw new coding_exception('moodle_database::insert_record_raw() id field must be specified if custom sequences used.');
             }
             $returnid = false;
 
         } else {
+            unset($params['id']);
             /// Postgres doesn't have the concept of primary key built in
             /// and will return the OID which isn't what we want.
             /// The efficient and transaction-safe strategy is to
             /// move the sequence forward first, and make the insert
             /// with an explicit id.
             if ($returnid) {
-                $this->reads++;
                 $seqname = "{$this->prefix}{$table}_id_seq";
-                if ($nextval = $this->adodb->GenID($seqname)) {
+                $this->query_start('--adodb-GenID', null, SQL_QUERY_AUX);
+                $nextval = $this->adodb->GenID($seqname);
+                $this->query_end(true);
+                if ($nextval) {
                     $params['id'] = (int)$nextval;
                 }
-            } else {
-                unset($params['id']);
             }
         }
 
         if (empty($params)) {
-            return false;
+            throw new coding_exception('moodle_database::insert_record_raw() no fields found.');
         }
 
         $fields = implode(',', array_keys($params));
@@ -203,13 +215,10 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
         $qms    = implode(',', $qms);
 
         $sql = "INSERT INTO {$this->prefix}$table ($fields) VALUES($qms)";
+        $this->query_start($sql, $params, SQL_QUERY_INSERT);
+        $rs = $this->adodb->Execute($sql, $params);
+        $this->query_end($rs);
 
-        $this->writes++;
-
-        if (!$rs = $this->adodb->Execute($sql, $params)) {
-            $this->report_error($sql, $params);
-            return false;
-        }
         if (!$returnid) {
             return true;
         }
@@ -219,17 +228,17 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
 
         $oid = $this->adodb->Insert_ID();
 
-        $this->reads++;
-
         // try to get the primary key based on id
         $sql = "SELECT id FROM {$this->prefix}$table WHERE oid = $oid";
-        if ( ($rs = $this->adodb->Execute($sql))
-             && ($rs->RecordCount() == 1) ) {
+        $this->query_start($sql, $params, SQL_QUERY_AUX);
+        $rs = $this->adodb->Execute($sql, $params);
+        $this->query_end($rs);
+
+        if ( $rs && ($rs->RecordCount() == 1) ) {
             trigger_error("Retrieved id using oid on table $table because we could not find the sequence.");
             return (integer)reset($rs->fields);
         }
-        trigger_error("Failed to retrieve primary key after insert: $sql");
-        return false;
+        throw new dml_write_exception('unknown error fetching inserted id');
     }
 
     /**
@@ -241,7 +250,8 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
      * @param object $data A data object with values for one or more fields in the record
      * @param bool $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
      * @param bool $bulk true means repeated inserts expected
-     * @return mixed success or new ID
+     * @return true or new id
+     * @throws dml_exception if error
      */
     public function insert_record($table, $dataobject, $returnid=true, $bulk=false) {
         //TODO: add support for blobs BYTEA
@@ -280,23 +290,16 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
             $cleaned[$field] = $value;
         }
 
-        if (empty($cleaned)) {
-            return false;
-        }
-
         if (empty($blobs)) {
             return $this->insert_record_raw($table, $cleaned, $returnid, $bulk);
         }
 
-        if (!$id = $this->insert_record_raw($table, $cleaned, true, $bulk)) {
-            return false;
-        }
+        $id = $this->insert_record_raw($table, $cleaned, true, $bulk);
 
         foreach ($blobs as $key=>$value) {
-            $this->writes++;
-            if (!$this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id", 'BLOB')) { // adodb does not use bound parameters for blob updates :-(
-                return false;
-            }
+            $this->query_start('--adodb-UpdateBlob', null, SQL_QUERY_UPDATE);
+            $result = $this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id", 'BLOB');// adodb does not use bound parameters for blob updates :-(
+            $this->query_end($result);
         }
 
         return ($returnid ? $id : true);
@@ -312,18 +315,14 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
      * @param string $table The database table to be checked against.
      * @param object $dataobject An object with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
      * @param bool true means repeated updates expected
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function update_record($table, $dataobject, $bulk=false) {
         //TODO: add support for blobs BYTEA
         if (!is_object($dataobject)) {
             $dataobject = (object)$dataobject;
         }
-
-        if (!isset($dataobject->id) ) {
-            return false;
-        }
-        $id = $dataobject->id;
 
         $columns = $this->get_columns($table);
         $cleaned = array();
@@ -354,19 +353,18 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
             $cleaned[$field] = $value;
         }
 
-        if (!$this->update_record_raw($table, $cleaned, $bulk)) {
-            return false;
-        }
+        $this->update_record_raw($table, $cleaned, $bulk);
 
         if (empty($blobs)) {
             return true;
         }
 
+        $id = $dataobject->id;
+
         foreach ($blobs as $key=>$value) {
-            $this->writes++;
-            if (!$this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id", 'BLOB')) { // adodb does not use bound parameters for blob updates :-(
-                return false;
-            }
+            $this->query_start('--adodb-UpdateBlob', null, SQL_QUERY_UPDATE);
+            $result = $this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id", 'BLOB');// adodb does not use bound parameters for blob updates :-(
+            $this->query_end($result);
         }
 
         return true;
@@ -380,7 +378,8 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
      * @param string $newvalue the value to set the field to.
      * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
      * @param array $params array of sql parameters
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function set_field_select($table, $newfield, $newvalue, $select, array $params=null) {
         $params = (array)$params;
@@ -392,10 +391,9 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
         if ($column->meta_type == 'B') {
             /// update blobs and return
             $select = $this->emulate_bound_params($select, $params); // adodb does not use bound parameters for blob updates :-(
-            $this->writes++;
-            if (!$this->adodb->UpdateBlob($this->prefix.$table, $newfield, $newvalue, $select, 'BLOB')) {
-                return false;
-            }
+            $this->query_start('--adodb-UpdateBlob', null, SQL_QUERY_UPDATE);
+            $result = $this->adodb->UpdateBlob($this->prefix.$table, $newfield, $newvalue, $select, 'BLOB');
+            $this->query_end($result);
             return true;
         }
 
@@ -419,13 +417,9 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
             array_unshift($params, $newvalue); // add as first param
         }
         $sql = "UPDATE {$this->prefix}$table SET $newfield $select";
-
-        $this->writes++;
-
-        if (!$rs = $this->adodb->Execute($sql, $params)) {
-            $this->report_error($sql, $params);
-            return false;
-        }
+        $this->query_start($sql, $params, SQL_QUERY_UPDATE);
+        $rs = $this->adodb->Execute($sql, $params);
+        $this->query_end($rs);
 
         return true;
     }
@@ -475,7 +469,8 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
     /**
      * Reset a sequence to the id field of a table.
      * @param string $table name of table
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function reset_sequence($table) {
         // From http://www.postgresql.org/docs/7.4/static/sql-altersequence.html
@@ -492,7 +487,8 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
      * Basic safety checks only. Lobs are supported.
      * @param string $table name of database table to be inserted into
      * @param mixed $dataobject object or array with fields in the record
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function import_record($table, $dataobject) {
         $dataobject = (object)$dataobject;
@@ -516,9 +512,7 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
             $cleaned[$field] = $value;
         }
 
-        if (!$this->insert_record_raw($table, $cleaned, false, true, true)) {
-            return false;
-        }
+        $this->insert_record_raw($table, $cleaned, false, true, true);
 
         if (empty($blobs)) {
             return true;
@@ -527,10 +521,9 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
     /// We have BLOBs to postprocess
 
         foreach ($blobs as $key=>$value) {
-            $this->writes++;
-            if (!$this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id", 'BLOB')) { // adodb does not use bound parameters for blob updates :-(
-                return false;
-            }
+            $this->query_start('--adodb-UpdateBlob', null, SQL_QUERY_UPDATE);
+            $result = $this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id", 'BLOB');
+            $this->query_end($result);
         }
 
         return true;

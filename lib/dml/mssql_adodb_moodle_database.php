@@ -44,10 +44,16 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
 
         /// No need to set charset. It must be specified in the driver conf
         /// Allow quoted identifiers
-        $this->adodb->Execute('SET QUOTED_IDENTIFIER ON');
+        $sql = "SET QUOTED_IDENTIFIER ON";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $rs = $this->adodb->Execute($sql);
+        $this->query_end($rs);
         /// Force ANSI nulls so the NULL check was done by IS NULL and NOT IS NULL
         /// instead of equal(=) and distinct(<>) simbols
-        $this->adodb->Execute('SET ANSI_NULLS ON');
+        $sql = "SET ANSI_NULLS ON";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $rs = $this->adodb->Execute($sql);
+        $this->query_end($rs);
 
         return true;
     }
@@ -169,15 +175,12 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
      * @param string $table The database table to be checked against.
      * @param object $dataobject An object with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
      * @param bool true means repeated updates expected
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function update_record($table, $dataobject, $bulk=false) {
         if (!is_object($dataobject)) {
             $dataobject = (object)$dataobject;
-        }
-
-        if (! isset($dataobject->id) ) { /// We always need the id to update records
-            return false;
         }
 
         $columns = $this->get_columns($table);
@@ -211,24 +214,17 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
             $cleaned[$field] = $value;
         }
 
-        if (empty($cleaned)) {
-            return false;
-        }
-
         if (empty($blobs)) { /// Without BLOBs, execute the raw update and return
             return $this->update_record_raw($table, $cleaned, $bulk);
         }
 
     /// We have BLOBs to postprocess, execute the raw update and then update blobs
-        if (!$this->update_record_raw($table, $cleaned, $bulk)) {
-            return false;
-        }
+        $this->update_record_raw($table, $cleaned, $bulk);
 
         foreach ($blobs as $key=>$value) {
-            $this->writes++;
-            if (!$this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = {$dataobject->id}")) {
-                return false;
-            }
+            $this->query_start('--adodb-UpdateBlob', null, SQL_QUERY_UPDATE);
+            $result = $this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = {$dataobject->id}");
+            $this->query_end($result);
         }
 
         return true;
@@ -242,7 +238,8 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
      * @param string $newvalue the value to set the field to.
      * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
      * @param array $params array of sql parameters
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function set_field_select($table, $newfield, $newvalue, $select, array $params=null) {
 
@@ -257,8 +254,9 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
         if ($column->meta_type == 'B') { /// If the column is a BLOB (IMAGE)
         /// Update BLOB column and return
             $select = $this->emulate_bound_params($select, $params); // adodb does not use bound parameters for blob updates :-(
-            $this->writes++;
-            return $this->adodb->UpdateBlob($this->prefix.$table, $newfield, $newvalue, $select);
+            $this->query_start('--adodb-UpdateBlob', null, SQL_QUERY_UPDATE);
+            $result = $this->adodb->UpdateBlob($this->prefix.$table, $newfield, $newvalue, $select);
+            $this->query_end($result);
         }
 
     /// Arrived here, normal update (without BLOBs)
@@ -284,12 +282,11 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
         }
         $sql = "UPDATE {$this->prefix}$table SET $newfield WHERE $select";
 
-        $this->writes++;
+        $this->query_start($sql, $params, SQL_QUERY_UPDATE);
+        $rs = $this->adodb->Execute($sql, $params);
+        $this->query_end($rs);
+        $rs->Close();
 
-        if (!$rs = $this->adodb->Execute($sql, $params)) {
-            $this->report_error($sql, $params);
-            return false;
-        }
         return true;
     }
 
@@ -302,7 +299,8 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
      * @param object $data A data object with values for one or more fields in the record
      * @param bool $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
      * @param bool $bulk true means repeated inserts expected
-     * @return mixed success or new ID
+     * @return mixed true or new id
+     * @throws dml_exception if error
      */
     public function insert_record($table, $dataobject, $returnid=true, $bulk=false) {
         if (!is_object($dataobject)) {
@@ -342,25 +340,17 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
             $cleaned[$field] = $value;
         }
 
-        if (empty($cleaned)) {
-            return false;
-        }
-
         if (empty($blobs)) { /// Without BLOBs, execute the raw insert and return
             return $this->insert_record_raw($table, $cleaned, $returnid, $bulk);
         }
 
     /// We have BLOBs to postprocess, insert the raw record fetching the id to be used later
-        if (!$id = $this->insert_record_raw($table, $cleaned, true, $bulk)) {
-            return false;
-        }
-
+        $id = $this->insert_record_raw($table, $cleaned, true, $bulk);
 
         foreach ($blobs as $key=>$value) {
-            $this->writes++;
-            if (!$this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id")) {
-                return false;
-            }
+            $this->query_start('--adodb-UpdateBlob', null, SQL_QUERY_UPDATE);
+            $result = $this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id");
+            $this->query_end($result);
         }
 
         return ($returnid ? $id : true);
@@ -369,7 +359,8 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
     /**
      * Reset a sequence to the id field of a table.
      * @param string $table name of table
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function reset_sequence($table) {
         // From http://msdn.microsoft.com/en-us/library/ms176057.aspx
@@ -389,7 +380,8 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
      * Basic safety checks only. Lobs are supported.
      * @param string $table name of database table to be inserted into
      * @param mixed $dataobject object or array with fields in the record
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function import_record($table, $dataobject) {
         $dataobject = (object)$dataobject;
@@ -417,9 +409,7 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
             $cleaned[$field] = $value;
         }
 
-        if (!$this->insert_record_raw($table, $cleaned, false, true, true)) {
-            return false;
-        }
+        $this->insert_record_raw($table, $cleaned, false, true, true);
 
         if (empty($blobs)) {
             return true;
@@ -428,10 +418,9 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
     /// We have BLOBs to postprocess
 
         foreach ($blobs as $key=>$value) {
-            $this->writes++;
-            if (!$this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id")) {
-                return false;
-            }
+            $this->query_start('--adodb-UpdateBlob', null, SQL_QUERY_UPDATE);
+            $result = $this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id");
+            $this->query_end($result);
         }
 
         return true;

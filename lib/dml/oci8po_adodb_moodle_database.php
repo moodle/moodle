@@ -56,7 +56,10 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
         /// Now set the decimal separator to DOT, Moodle & PHP will always send floats to
         /// DB using DOTS. Manually introduced floats (if using other characters) must be
         /// converted back to DOTs (like gradebook does)
-        $this->adodb->Execute("ALTER SESSION SET NLS_NUMERIC_CHARACTERS='.,'");
+        $sql = "ALTER SESSION SET NLS_NUMERIC_CHARACTERS='.,'";
+        $rs = $this->query_start($sql, null, SQL_QUERY_AUX);
+        $this->adodb->Execute($sql);
+        $this->query_end($rs);
 
         return true;
     }
@@ -107,8 +110,11 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
      * @return bool true if db in unicode mode
      */
     function setup_is_unicodedb() {
-        $this->reads++;
-        $rs = $this->adodb->Execute("SELECT parameter, value FROM nls_database_parameters where parameter = 'NLS_CHARACTERSET'");
+        $sql = "SELECT parameter, value FROM nls_database_parameters where parameter = 'NLS_CHARACTERSET'";
+        $rs = $this->query_start($sql, null, SQL_QUERY_AUX);
+        $this->adodb->Execute($sql);
+        $this->query_end($rs);
+
         if ($rs && !$rs->EOF) {
             $encoding = $rs->fields['value'];
             if (strtoupper($encoding) == 'AL32UTF8') {
@@ -123,7 +129,8 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
      *
      * @param string $sql The SQL query
      * @param array $params array of sql parameters
-     * @return mixed array of values or false if an error occured
+     * @return mixed array of values
+     * @throws dml_exception if error
      */
     public function get_fieldset_sql($sql, array $params=null) {
         if ($result = parent::get_fieldset_sql($sql, $params)) {
@@ -215,15 +222,12 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
      * @param string $table The database table to be checked against.
      * @param object $dataobject An object with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
      * @param bool true means repeated updates expected
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function update_record($table, $dataobject, $bulk=false) {
         if (!is_object($dataobject)) {
             $dataobject = (object)$dataobject;
-        }
-
-        if (! isset($dataobject->id) ) {
-            return false;
         }
 
         $columns = $this->get_columns($table);
@@ -265,31 +269,24 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
             $cleaned[$field] = $value;
         }
 
-        if (empty($cleaned)) {
-            return false;
-        }
 
         if (empty($blobs) && empty($clobs)) { /// Without BLOBs and CLOBs, execute the raw update and return
             return $this->update_record_raw($table, $cleaned, $bulk);
         }
 
     /// We have BLOBs or CLOBs to postprocess, execute the raw update and then update blobs
-        if (!$this->update_record_raw($table, $cleaned, $bulk)) {
-            return false;
-        }
+        $this->update_record_raw($table, $cleaned, $bulk);
 
         foreach ($blobs as $key=>$value) {
-            $this->writes++;
-            if (!$this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = {$dataobject->id}")) {
-                return false;
-            }
+            $this->query_start('--adodb-UpdateBlob', null, SQL_QUERY_UPDATE);
+            $result = $this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = {$dataobject->id}");
+            $this->query_end($result);
         }
 
         foreach ($clobs as $key=>$value) {
-            $this->writes++;
-            if (!$this->adodb->UpdateClob($this->prefix.$table, $key, $value, "id = {$dataobject->id}")) {
-                return false;
-            }
+            $this->query_start('--adodb-UpdateClob', null, SQL_QUERY_UPDATE);
+            $result = $this->adodb->UpdateClob($this->prefix.$table, $key, $value, "id = {$dataobject->id}");
+            $this->query_end($result);
         }
 
         return true;
@@ -304,7 +301,8 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
      * @param object $data A data object with values for one or more fields in the record
      * @param bool $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
      * @param bool $bulk true means repeated inserts expected
-     * @return mixed success or new ID
+     * @return true or new id
+     * @throws dml_exception if error
      */
     public function insert_record($table, $dataobject, $returnid=true, $bulk=false) {
         if (!is_object($dataobject)) {
@@ -350,31 +348,23 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
             $cleaned[$field] = $value;
         }
 
-        if (empty($cleaned)) {
-            return false;
-        }
-
         if (empty($blobs) && empty($clobs)) { /// Without BLOBs and CLOBs, execute the raw insert and return
             return $this->insert_record_raw($table, $cleaned, $returnid, $bulk);
         }
 
         /// We have BLOBs or CLOBs to postprocess, insert the raw record fetching the id to be used later
-        if (!$id = $this->insert_record_raw($table, $cleaned, true, $bulk)) {
-            return false;
-        }
+        $id = $this->insert_record_raw($table, $cleaned, true, $bulk);
 
         foreach ($blobs as $key=>$value) {
-            $this->writes++;
-            if (!$this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id")) {
-                return false;
-            }
+            $this->query_start('--adodb-UpdateBlob', null, SQL_QUERY_UPDATE);
+            $result = $this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id");
+            $this->query_end($result);
         }
 
         foreach ($clobs as $key=>$value) {
-            $this->writes++;
-            if (!$this->adodb->UpdateClob($this->prefix.$table, $key, $value, "id = $id")) {
-                return false;
-            }
+            $this->query_start('--adodb-UpdateClob', null, SQL_QUERY_UPDATE);
+            $result = $this->adodb->UpdateClob($this->prefix.$table, $key, $value, "id = $id");
+            $this->query_end($result);
         }
 
         return ($returnid ? $id : true);
@@ -388,7 +378,8 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
      * @param string $newvalue the value to set the field to.
      * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
      * @param array $params array of sql parameters
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function set_field_select($table, $newfield, $newvalue, $select, array $params=null) {
 
@@ -407,15 +398,19 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
         if ($column->meta_type == 'B') { /// If the column is a BLOB
         /// Update BLOB column and return
             $select = $this->emulate_bound_params($select, $params); // adodb does not use bound parameters for blob updates :-(
-            $this->writes++;
-            return $this->adodb->UpdateBlob($this->prefix.$table, $newfield, $newvalue, $select);
+            $this->query_start('--adodb-UpdateBlob', null, SQL_QUERY_UPDATE);
+            $result = $this->adodb->UpdateBlob($this->prefix.$table, $newfield, $newvalue, $select);
+            $this->query_end($result);
+            return true;
         }
 
         if ($column->meta_type == 'X' && strlen($newvalue) > 4000) { /// If the column is a CLOB with lenght > 4000
         /// Update BLOB column and return
             $select = $this->emulate_bound_params($select, $params); // adodb does not use bound parameters for blob updates :-(
-            $this->writes++;
-            return $this->adodb->UpdateClob($this->prefix.$table, $newfield, $newvalue, $select);
+            $this->query_start('--adodb-UpdateClob', null, SQL_QUERY_UPDATE);
+            $result = $this->adodb->UpdateClob($this->prefix.$table, $newfield, $newvalue, $select);
+            $this->query_end($result);
+            return true;
         }
 
     /// Arrived here, normal update (without BLOBs)
@@ -435,11 +430,10 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
         }
         $sql = "UPDATE {$this->prefix}$table SET $newfield WHERE $select";
 
-        $this->writes++;
-        if (!$rs = $this->adodb->Execute($sql, $params)) {
-            $this->report_error($sql, $params);
-            return false;
-        }
+        $this->query_start($sql, $params, SQL_QUERY_UPDATE);
+        $rs = $rs = $this->adodb->Execute($sql, $params);
+        $this->query_end($rs);
+
         return true;
     }
 
@@ -451,7 +445,8 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
      * @param bool $returnit return it of inserted record
      * @param bool $bulk true means repeated inserts expected
      * @param bool $customsequence true if 'id' included in $params, disables $returnid
-     * @return mixed success or new id
+     * @return true or new id
+     * @throws dml_exception if error
      */
     public function insert_record_raw($table, $params, $returnid=true, $bulk=false, $customsequence=false) {
         if (!is_array($params)) {
@@ -460,7 +455,7 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
 
         if ($customsequence) {
             if (!isset($params['id'])) {
-                return false;
+                throw new coding_exception('moodle_database::insert_record_raw() id field must be specified if custom sequences used.');
             }
             $returnid = false;
         } else {
@@ -470,22 +465,27 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
         if ($returnid) {
             $dbman = $this->get_manager();
             $xmldb_table = new xmldb_table($table);
-            $this->reads++;
+            $this->query_start('--find_sequence_name', null, SQL_QUERY_AUX);
             $seqname = $dbman->find_sequence_name($xmldb_table);
+            $this->query_end(true);
             if (!$seqname) {
             /// Fallback, seqname not found, something is wrong. Inform and use the alternative getNameForObject() method
                 $generator = $this->get_dbman()->generator;
                 $generator->setPrefix($this->getPrefix());
                 $seqname = $generator->getNameForObject($table, 'id', 'seq');
             }
-            $this->reads++;
-            if ($nextval = $this->adodb->GenID($seqname)) {
+            $xmldb_table = new xmldb_table($table);
+            $this->query_start('--adodb-GenID', null, SQL_QUERY_AUX);
+            $nextval = $this->adodb->GenID($seqname);
+            $this->query_end(true);
+
+            if ($nextval) {
                 $params['id'] = (int)$nextval;
             }
         }
 
         if (empty($params)) {
-            return false;
+            throw new coding_exception('moodle_database::insert_record_raw() no fields found.');
         }
 
         $fields = implode(',', array_keys($params));
@@ -508,18 +508,18 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
 
         $sql = "INSERT INTO {$this->prefix}$table ($fields) VALUES($qms)";
 
-        $this->writes++;
-        if (!$rs = $this->adodb->Execute($sql, $params)) {
-            $this->report_error($sql, $params);
-            return false;
-        }
+        $this->query_start($sql, $params, SQL_QUERY_INSERT);
+        $rs = $rs = $this->adodb->Execute($sql, $params);
+        $this->query_end($rs);
+
         if (!$returnid) {
             return true;
         }
         if (!empty($params['id'])) {
             return (int)$params['id'];
         }
-        return false;
+
+        throw new dml_write_exception('unknown error fetching inserted id');
     }
 
     /**
@@ -617,7 +617,8 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
     /**
      * Reset a sequence to the id field of a table.
      * @param string $table name of table
-     * @return bool success
+     * @return bool true
+     * @throws dml_exception if error
      */
     public function reset_sequence($table) {
         // From http://www.acs.ilstu.edu/docs/oracle/server.101/b10759/statements_2011.htm
@@ -628,8 +629,10 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
         $value = (int)$this->get_field_sql('SELECT MAX(id) FROM {'.$table.'}');
         $value++;
         $xmldb_table = new xmldb_table($table);
-        $this->reads++;
+        $this->query_start('--find_sequence_name', null, SQL_QUERY_AUX);
         $seqname = $dbman->find_sequence_name($xmldb_table);
+        $this->query_end(true);
+
         if (!$seqname) {
         /// Fallback, seqname not found, something is wrong. Inform and use the alternative getNameForObject() method
             $generator = $dbman->generator;
@@ -681,9 +684,7 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
             $cleaned[$field] = $value;
         }
 
-        if (!$this->insert_record_raw($table, $cleaned, false, true, true)) {
-            return false;
-        }
+        $this->insert_record_raw($table, $cleaned, false, true, true);
 
         if (empty($blobs) and empty($clobs)) {
             return true;
@@ -692,17 +693,15 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
     /// We have BLOBs or CLOBs to postprocess
 
         foreach ($blobs as $key=>$value) {
-            $this->writes++;
-            if (!$this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id")) {
-                return false;
-            }
+            $this->query_start('--adodb-UpdateBlob', null, SQL_QUERY_UPDATE);
+            $result = $this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id");
+            $this->query_end($result);
         }
 
         foreach ($clobs as $key=>$value) {
-            $this->writes++;
-            if (!$this->adodb->UpdateClob($this->prefix.$table, $key, $value, "id = $id")) {
-                return false;
-            }
+            $this->query_start('--adodb-UpdateClob', null, SQL_QUERY_UPDATE);
+            $result = $this->adodb->UpdateClob($this->prefix.$table, $key, $value, "id = $id");
+            $this->query_end($result);
         }
 
         return true;
