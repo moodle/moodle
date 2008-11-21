@@ -78,6 +78,27 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
+     * Reset a sequence to the id field of a table.
+     * @param string $table name of table
+     * @return bool true
+     * @throws dml_exception if error
+     */
+    public function reset_sequence($table) {
+        if (is_string($table)) {
+            $tablename = $table;
+        } else {
+            $tablename = $table->getName();
+        }
+        // From http://msdn.microsoft.com/en-us/library/ms176057.aspx
+        $value = (int)$this->mdb->get_field_sql('SELECT MAX(id) FROM {'.$tablename.'}');
+        if ($value == 0) {
+            $value = 1;
+        }
+        return $this->mdb->change_database_structure("DBCC CHECKIDENT ('$this->prefix$tablename', RESEED, $value)");
+    }
+
+
+    /**
      * Given one correct xmldb_table, returns the SQL statements
      * to create temporary table (inside one array)
      */

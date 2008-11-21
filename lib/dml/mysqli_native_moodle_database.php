@@ -327,22 +327,6 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Reset a sequence to the id field of a table.
-     * @param string $table name of table
-     * @return bool true
-     * @throws dml_exception if error
-     */
-    public function reset_sequence($table) {
-        // From http://dev.mysql.com/doc/refman/5.0/en/alter-table.html
-        if (!$this->get_manager()->table_exists($table)) {
-            return false;
-        }
-        $value = (int)$this->get_field_sql('SELECT MAX(id) FROM {'.$table.'}');
-        $value++;
-        return $this->change_database_structure("ALTER TABLE $this->prefix$table AUTO_INCREMENT = $value");
-    }
-
-    /**
      * Is db in unicode mode?
      * @return bool
      */

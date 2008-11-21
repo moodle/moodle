@@ -839,6 +839,32 @@ class ddl_test extends UnitTestCase {
     }
 
 
+    public function test_reset_sequence() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = new xmldb_table('testtable');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $record = (object)array('id'=>666, 'course'=>10);
+        $DB->import_record('testtable', $record);
+        $DB->delete_records('testtable');
+
+        $this->assertTrue($dbman->reset_sequence('testtable'));
+        $this->assertEqual(1, $DB->insert_record('testtable', (object)array('course'=>13)));
+
+        $DB->import_record('testtable', $record);
+        $this->assertTrue($dbman->reset_sequence('testtable'));
+        $this->assertEqual(667, $DB->insert_record('testtable', (object)array('course'=>13)));
+
+        $dbman->drop_table($table);
+    }
+
+
  // Following methods are not supported == Do not test
 /*
     public function testRenameIndex() {

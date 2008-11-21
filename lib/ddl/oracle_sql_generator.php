@@ -63,6 +63,36 @@ class oracle_sql_generator extends sql_generator {
     }
 
     /**
+     * Reset a sequence to the id field of a table.
+     * @param string $table name of table
+     * @return bool true
+     * @throws dml_exception if error
+     */
+    public function reset_sequence($table) {
+        if (is_string($table)) {
+            $tablename = $table;
+            $xmldb_table = new xmldb_table($tablename);
+        } else {
+            $tablename = $table->getName();
+            $xmldb_table = $table;
+        }
+        // From http://www.acs.ilstu.edu/docs/oracle/server.101/b10759/statements_2011.htm
+        $value = (int)$this->mdb->get_field_sql('SELECT MAX(id) FROM {'.$tablename.'}');
+        $value++;
+        
+        $seqname = $this->mdb->get_manager()->find_sequence_name($xmldb_table);
+
+        if (!$seqname) {
+        /// Fallback, seqname not found, something is wrong. Inform and use the alternative getNameForObject() method
+            $seqname = $this->getNameForObject($table, 'id', 'seq');
+        }
+
+        $this->mdb->change_database_structure("DROP SEQUENCE $seqname");
+        return $this->mdb->change_database_structure("CREATE SEQUENCE $seqname START WITH $value INCREMENT BY 1 NOMAXVALUE");
+    }
+
+
+    /**
      * Given one correct xmldb_table, returns the SQL statements
      * to create temporary table (inside one array)
      */

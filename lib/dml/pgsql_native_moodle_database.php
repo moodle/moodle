@@ -451,21 +451,6 @@ class pgsql_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Reset a sequence to the id field of a table.
-     * @param string $table name of table
-     * @return bool true
-     * @throws dml_exception if error
-     */
-    public function reset_sequence($table) {
-        if (!$this->get_manager()->table_exists($table)) {
-            return false;
-        }
-        $value = (int)$this->get_field_sql('SELECT MAX(id) FROM {'.$table.'}');
-        $value++;
-        return $this->change_database_structure("ALTER SEQUENCE $this->prefix{$table}_id_seq RESTART WITH $value");
-    }
-
-    /**
      * Is db in unicode mode?
      * @return bool
      */

@@ -188,6 +188,13 @@ abstract class sql_generator {
     }
 
     /**
+     * Reset a sequence to the id field of a table.
+     * @param string $table name of table
+     * @return success
+     */
+    public abstract function reset_sequence($tablename);
+
+    /**
      * This function will return the SQL code needed to create db tables and statements
      */
     public function getCreateStructureSQL($xmldb_structure) {

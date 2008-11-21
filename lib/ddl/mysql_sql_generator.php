@@ -81,6 +81,24 @@ class mysql_sql_generator extends sql_generator {
     }
 
     /**
+     * Reset a sequence to the id field of a table.
+     * @param string $table name of table
+     * @return bool success
+     */
+    public function reset_sequence($table) {
+        if (is_string($table)) {
+            $tablename = $table;
+        } else {
+            $tablename = $table->getName();
+        }
+        // From http://dev.mysql.com/doc/refman/5.0/en/alter-table.html
+        $value = (int)$this->mdb->get_field_sql('SELECT MAX(id) FROM {'.$tablename.'}');
+        $value++;
+        return $this->mdb->change_database_structure("ALTER TABLE $this->prefix$tablename AUTO_INCREMENT = $value");
+    }
+
+
+    /**
      * Given one xmldb_table, check if it exists in DB (true/false)
      *
      * @param mixed the table to be searched (string name or xmldb_table instance)

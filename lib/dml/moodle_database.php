@@ -572,13 +572,6 @@ abstract class moodle_database {
     }
 
     /**
-     * Reset a sequence to the id field of a table.
-     * @param string $table name of table
-     * @return success
-     */
-    public abstract function reset_sequence($table);
-
-    /**
      * Returns sql generator used for db manipulation.
      * Used mostly in upgrade.php scripts.
      * @return object database_manager instance

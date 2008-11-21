@@ -60,6 +60,24 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
+     * Reset a sequence to the id field of a table.
+     * @param string $table name of table
+     * @return bool true
+     * @throws dml_exception if error
+     */
+    public function reset_sequence($table) {
+        if (is_string($table)) {
+            $tablename = $table;
+        } else {
+            $tablename = $table->getName();
+        }
+        // From http://www.postgresql.org/docs/7.4/static/sql-altersequence.html
+        $value = (int)$this->mdb->get_field_sql('SELECT MAX(id) FROM {'.$tablename.'}');
+        $value++;
+        return $this->mdb->change_database_structure("ALTER SEQUENCE $this->prefix{$tablename}_id_seq RESTART WITH $value");
+    }
+
+    /**
      * Given one XMLDB Type, lenght and decimals, returns the DB proper SQL type
      */
     public function getTypeSQL($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {

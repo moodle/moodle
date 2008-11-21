@@ -101,6 +101,27 @@ class database_manager {
     }
 
     /**
+     * Reset a sequence to the id field of a table.
+     * @param string $table name of table
+     * @return success
+     */
+    public function reset_sequence($table) {
+    /// Calculate the name of the table
+        if (is_string($table)) {
+            $tablename = $table;
+        } else {
+            $tablename = $table->getName();
+        }
+
+    /// Check the table exists
+        if (!$this->table_exists($table)) {
+            throw new ddl_table_missing_exception($tablename);
+        }
+
+        return $this->generator->reset_sequence($table);
+    }
+
+    /**
      * Given one xmldb_field, check if it exists in DB (true/false)
      *
      * @param mixed the table to be searched (string name or xmldb_table instance)

@@ -283,21 +283,6 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
     }
 
     /**
-     * Reset a sequence to the id field of a table.
-     * @param string $table name of table
-     * @return bool success
-     */
-    public function reset_sequence($table) {
-        // From http://dev.mysql.com/doc/refman/5.0/en/alter-table.html
-        if (!$this->get_manager()->table_exists($table)) {
-            return false;
-        }
-        $value = (int)$this->get_field_sql('SELECT MAX(id) FROM {'.$table.'}');
-        $value++;
-        return $this->change_database_structure("ALTER TABLE $this->prefix$table AUTO_INCREMENT = $value");
-    }
-
-    /**
      * Import a record into a table, id field is required.
      * Basic safety checks only. Lobs are supported.
      * @param string $table name of database table to be inserted into

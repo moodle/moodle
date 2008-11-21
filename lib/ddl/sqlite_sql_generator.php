@@ -72,6 +72,22 @@ class sqlite_sql_generator extends sql_generator {
     }
 
     /**
+     * Reset a sequence to the id field of a table.
+     * @param string $table name of table
+     * @return bool success
+     */
+    public function reset_sequence($table) {
+        if (is_string($table)) {
+            $tablename = $table;
+        } else {
+            $tablename = $table->getName();
+        }
+        // From http://sqlite.org/autoinc.html
+        $value = (int)$this->mdb->get_field_sql('SELECT MAX(id) FROM {'.$tablename.'}');
+        return $this->mdb->change_database_structure("UPDATE sqlite_sequence SET seq=$value WHERE name='$this->prefix$tablename'");
+    }
+
+    /**
      * Given one correct xmldb_key, returns its specs
      */
     public function getKeySQL($xmldb_table, $xmldb_key) {

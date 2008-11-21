@@ -615,36 +615,6 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
     }
 
     /**
-     * Reset a sequence to the id field of a table.
-     * @param string $table name of table
-     * @return bool true
-     * @throws dml_exception if error
-     */
-    public function reset_sequence($table) {
-        // From http://www.acs.ilstu.edu/docs/oracle/server.101/b10759/statements_2011.htm
-        $dbman = $this->get_manager();
-        if (!$dbman->table_exists($table)) {
-            return false;
-        }
-        $value = (int)$this->get_field_sql('SELECT MAX(id) FROM {'.$table.'}');
-        $value++;
-        $xmldb_table = new xmldb_table($table);
-        $this->query_start('--find_sequence_name', null, SQL_QUERY_AUX);
-        $seqname = $dbman->find_sequence_name($xmldb_table);
-        $this->query_end(true);
-
-        if (!$seqname) {
-        /// Fallback, seqname not found, something is wrong. Inform and use the alternative getNameForObject() method
-            $generator = $dbman->generator;
-            $generator->setPrefix($this->getPrefix());
-            $seqname = $generator->getNameForObject($table, 'id', 'seq');
-        }
-
-        $this->change_database_structure("DROP SEQUENCE $seqname");
-        return $this->change_database_structure("CREATE SEQUENCE $seqname START WITH $value INCREMENT BY 1 NOMAXVALUE");
-    }
-
-    /**
      * Import a record into a table, id field is required.
      * Basic safety checks only. Lobs are supported.
      * @param string $table name of database table to be inserted into

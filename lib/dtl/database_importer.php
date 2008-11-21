@@ -128,7 +128,7 @@ class database_importer {
         $fields = $table->getFields();
         foreach ($fields as $field) {
             if ($field->getSequence()) {
-                $this->mdb->reset_sequence($tablename);
+                $this->manager->reset_sequence($tablename);
                 return;
             }
         }
