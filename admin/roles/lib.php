@@ -1177,17 +1177,21 @@ class existing_role_holders extends role_assign_user_selector_base {
     }
 
     protected function this_con_group_name($search, $numusers) {
+        $contexttype = get_contextlevel_name($this->context->contextlevel);
         if ($search) {
+            $a = new stdClass;
+            $a->search = $search;
+            $a->contexttype = $contexttype;
             if ($numusers) {
-                return get_string('usersinthiscontextmatching', 'role', $search);
+                return get_string('usersinthisxmatching', 'role', $a);
             } else {
-                return get_string('noneinthiscontextmatching', 'role', $search);
+                return get_string('noneinthisxmatching', 'role', $a);
             }
         } else {
             if ($numusers) {
-                return get_string('usersinthiscontext', 'role');
+                return get_string('usersinthisx', 'role', $contexttype);
             } else {
-                return get_string('noneinthiscontext', 'role');
+                return get_string('noneinthisx', 'role', $contexttype);
             }
         }
     }

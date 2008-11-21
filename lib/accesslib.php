@@ -3303,6 +3303,24 @@ function capabilities_cleanup($component, $newcapdef=NULL) {
  * UI FUNCTIONS *
  ****************/
 
+/**
+ * @param integer $contextlevel $context->context level. One of the CONTEXT_... constants.
+ * @return string the name for this type of context.
+ */
+function get_contextlevel_name($contextlevel) {
+    static $strcontextlevels = null;
+    if (is_null($strcontextlevels)) {
+        $strcontextlevels = array(
+            CONTEXT_SYSTEM => get_string('coresystem'),
+            CONTEXT_USER => get_string('user'),
+            CONTEXT_COURSECAT => get_string('category'),
+            CONTEXT_COURSE => get_string('course'),
+            CONTEXT_MODULE => get_string('activitymodule'),
+            CONTEXT_BLOCK => get_string('block')
+        );
+    }
+    return $strcontextlevels[$contextlevel];
+}
 
 /**
  * Prints human readable context identifier.
