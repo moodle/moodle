@@ -427,6 +427,7 @@ _client.print_header = function() {
     var panel = new YAHOO.util.Element('panel-$suffix');
     var str = '';
     str += '<div class="fp-toolbar" id="repo-tb-$suffix"></div>';
+    str += _client.makepage('header');
     panel.set('innerHTML', str);
     _client.makepath();
 }
@@ -436,7 +437,7 @@ _client.print_footer = function() {
     footer.id = 'fp-footer-$suffix';
     panel.appendChild(footer);
     footer.innerHTML += _client.uploadcontrol();
-    footer.innerHTML += _client.makepage();
+    footer.innerHTML += _client.makepage('footer');
     var oDiv = document.getElementById('repo-tb-$suffix');
     if(!_client.ds.nosearch) {
         var search = document.createElement('A');
@@ -716,10 +717,10 @@ _client.uploadcontrol = function() {
     }
     return str;
 }
-_client.makepage = function() {
+_client.makepage = function(id) {
     var str = '';
     if(_client.ds.pages) {
-        str += '<div class="fp-paging" id="paging-$suffix">';
+        str += '<div class="fp-paging" id="paging-'+id+'-$suffix">';
         for(var i = 1; i <= _client.ds.pages; i++) {
             if(!_client.ds.search_result){
                     str += '<a onclick="repository_client_$suffix.req('+_client.repositoryid+', '+i+', 0)" href="###">';
