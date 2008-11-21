@@ -88,7 +88,7 @@ function repository_get_client($context) {
 .fp-grid div{overflow: hidden}
 .fp-grid p{margin:0;padding:0;background: #FFFFCC}
 .fp-grid .label{height:48px;text-align:center}
-.fp-grid span{background: #EEF9EB;color:gray}
+.fp-grid span{color:gray}
 </style>
 EOD;
 
