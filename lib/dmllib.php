@@ -104,7 +104,25 @@ function setup_DB() {
     }
 
     if (!isset($CFG->dblibrary)) {
-        $CFG->dblibrary = 'adodb';
+        switch ($CFG->dbtype) {
+            case 'postgres7' :
+                $CFG->dbtype = 'pgsql';
+                // continue, no break here
+            case 'pgsql' :
+                $CFG->dblibrary = 'native';
+                break;
+
+            case 'mysql' :
+                $CFG->dbtype = 'mysqli';
+                // continue, no break here
+            case 'mysqli' :
+                $CFG->dblibrary = 'native';
+                break;
+
+            default:
+                // the rest of drivers is not converted yet - keep adodb for now
+                $CFG->dblibrary = 'adodb';
+        }
     }
 
     if (!isset($CFG->dboptions)) {
@@ -116,7 +134,9 @@ function setup_DB() {
     }
 
 
-    $DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
+    if (!$DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary)) {
+        throw new dml_exception('dbdriverproblem', "Unknown driver $CFG->dblibrary/$CFG->dbtype");
+    }
 
     $CFG->dbfamily = $DB->get_dbfamily(); // TODO: BC only for now
 
@@ -132,14 +152,21 @@ function setup_DB() {
     } else {
         $prevdebug = error_reporting(0);
     }
-    if (!$DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, $CFG->dboptions)) {
+
+    $connected = false;
+    try {
+        $connected = $DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, $CFG->dboptions);
+    } Catch (Exception $e) {
+        $connected = false;
+    }
+
+    if (!$connected) {
+        $dberr = '';
         if (debugging('', DEBUG_ALL)) {
             if ($dberr = ob_get_contents()) {
                 $dberr = '<p><em>'.$dberr.'</em></p>';
             }
             ob_end_clean();
-        } else {
-            $dberr = '';
         }
         if (empty($CFG->noemailever) and !empty($CFG->emailconnectionerrorsto)) {
             if (file_exists($CFG->dataroot.'/emailcount')){
