@@ -2101,4 +2101,40 @@ function data_get_extra_capabilities() {
     return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames');
 }
 
+/**
+ * This function is declared into environment.xml
+ * Check if both of database required entries fields have been set for a version anterior to 2007101532
+ * This check has been required by the bug MDL-16999
+ * @global <type> $CFG
+ * @param <type> $result
+ * @return object status
+ */
+function check_required_entries_fields($result) {
+    global $CFG;
+    if (!empty($CFG->version)                                             //we are not installing a new Moodle site
+        && $CFG->version < 2007101532                              //the version is anterior to the one when the fix has been applied
+        && !get_config("","data/requiredentriesfixflag")) {      //do not show message when upgrading an anterior version when the patch has already been applied
+        set_config("data/requiredentriesfixflag",true); //set a flag into database in order to let know a Moodle 2.0 upgrade that the message has already been displayed
+        $databases = get_records_sql("SELECT d.*, c.fullname
+                                    FROM {$CFG->prefix}data d,
+                                         {$CFG->prefix}course c
+                                    WHERE d.course = c.id
+                                    ORDER BY c.fullname, d.name");
+        if (!empty($databases)) {          
+            $a = new object();
+            foreach($databases as $database) {
+                if ($database->requiredentries != 0 || $database->requiredentriestoview != 0) {
+                    $a->text .= "".$database->fullname." - " .$database->name. " (course id: ".$database->course." - database id: ".$database->id.")<br/>";
+                    //set the feedback string here and not in xml file since we need something
+                    //more complex than just a string picked from admin.php lang file
+                    $result->setFeedbackStr(array('requiredentrieschanged', 'admin', $a));
+                    $result->setStatus(false);//fail test
+                }
+            }
+            return $result;
+        }
+    }
+    return null;
+}
+
 ?>

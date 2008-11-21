@@ -205,6 +205,8 @@
           <ON_CHECK message="globalswarning" />
         </FEEDBACK>
       </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="mod/data/lib.php" function="check_required_entries_fields" level="optional">
+      </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
   <MOODLE version="2.0" requires="1.9">
