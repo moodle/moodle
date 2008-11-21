@@ -34,7 +34,7 @@
     require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
 
     $contextid = required_param('contextid',PARAM_INT);
-    $contextuserid = optional_param('userid', 0, PARAM_INT); // needed for user tabs
+    $userid = optional_param('userid', 0, PARAM_INT); // needed for user tabs
     $courseid = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
 
     if (! $context = get_context_instance_by_id($contextid)) {
@@ -89,8 +89,8 @@
 
 /// Print the header and tabs
     if ($context->contextlevel == CONTEXT_USER) {
-        $contextuser = $DB->get_record('user', array('id' => $contextuserid));
-        $fullname = fullname($contextuser, has_capability('moodle/site:viewfullnames', $context));
+        $user = $DB->get_record('user', array('id' => $userid));
+        $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
 
         /// course header
         $navlinks = array();
@@ -98,7 +98,7 @@
             if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_COURSE, $courseid))) {
                 $navlinks[] = array('name' => get_string('participants'), 'link' => "$CFG->wwwroot/user/index.php?id=$courseid", 'type' => 'misc');
             }
-            $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$contextuserid&amp;course=$courseid", 'type' => 'misc');
+            $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid", 'type' => 'misc');
             $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
             $navigation = build_navigation($navlinks);
 
@@ -106,7 +106,7 @@
 
         /// site header
         } else {
-            $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$contextuserid&amp;course=$courseid", 'type' => 'misc');
+            $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid", 'type' => 'misc');
             $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
             $navigation = build_navigation($navlinks);
             print_header($title, $course->fullname, $navigation, "", "", true, "&nbsp;", navmenu($course));
@@ -135,12 +135,12 @@
     print_heading_with_help($title, 'checkpermissions');
 
 /// If a user has been chosen, show all the permissions for this user.
-    $user = $userselector->get_selected_user();
-    if (!is_null($user)) {
+    $reportuser = $userselector->get_selected_user();
+    if (!is_null($reportuser)) {
         print_box_start('generalbox boxaligncenter boxwidthwide');
-        print_heading(get_string('permissionsforuser', 'role', fullname($user)), '', 3);
+        print_heading(get_string('permissionsforuser', 'role', fullname($reportuser)), '', 3);
 
-        $table = new explain_capability_table($context, $user, $contextname);
+        $table = new explain_capability_table($context, $reportuser, $contextname);
         $table->display();
         print_box_end();
 
@@ -155,8 +155,8 @@
 
 /// Hidden fields.
     echo '<input type="hidden" name="contextid" value="' . $context->id . '" />';
-    if (!empty($contextuserid)) {
-        echo '<input type="hidden" name="userid" value="' . $contextuserid . '" />';
+    if (!empty($userid)) {
+        echo '<input type="hidden" name="userid" value="' . $userid . '" />';
     }
     if ($courseid && $courseid != SITEID) {
         echo '<input type="hidden" name="courseid" value="' . $courseid . '" />';

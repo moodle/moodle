@@ -258,5 +258,16 @@ $string['course:managegrades'] = 'Manage grades';
 $string['user:editmessageprofile'] = 'Edit user messaging profile';
 $string['user:editownmessageprofile'] = 'Edit own user messaging profile';
 
+$string['assignrolesrelativetothisuser'] = 'Assign roles relative to this user';
+$string['gotoassignroles'] = 'Go to the assign roles page';
+$string['incontext'] = '<b>$a->role</b> in $a->context';
+$string['noassignmentsfound'] = '$a has no role assignments';
+$string['rolesreassigned'] = 'Roles re-assigned';
+$string['rolesunassigned'] = 'Roles unassigned';
+$string['thisusersroles'] = 'This user\'s roles';
+$string['unassignasabove'] = 'Delete selected role assignments';
+$string['unassignexplain'] = 'The form above can only be used to unassign roles that were originally assigned manually or via the workflow. You cannot change assignments that were made though CIRCE or via metacourses.';
+$string['undounassign'] = 'Help! put those role assignments back';
+$string['xroleassignments'] = '$a\'s role assignments';
 
 ?>
