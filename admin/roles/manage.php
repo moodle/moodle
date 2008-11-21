@@ -194,8 +194,6 @@
     $currenttab = 'manage';
     include_once('managetabs.php');
 
-    print_heading_with_help(get_string('manageroles', 'role'), 'roles');
-
 /// Initialise table.
     $table = new object;
     $table->tablealign = 'center';
@@ -203,7 +201,7 @@
     $table->wrap = array('nowrap', '', 'nowrap','nowrap');
     $table->width = '90%';
     $table->head = array(
-        get_string('role'),
+        get_string('role') . ' ' . helpbutton('roles', get_string('roles'), 'moodle', true, false, '', true),
         get_string('description'),
         get_string('shortname'),
         get_string('edit')
