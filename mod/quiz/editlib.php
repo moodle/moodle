@@ -348,7 +348,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
                 echo '<div class="pagestatus">';
                 print_string("noquestionsonpage", "quiz");
                 echo '</div>';
-                if ($allowdelete && !$hasattempts) { // remove from quiz, not question delete.
+                if ($allowdelete && !$quiz->questionsperpage) { // remove from quiz, not question delete.
                     echo '<div class="quizpagedelete">';
                     echo "<a title=\"$strremove\" href=\"".
                             $pageurl->out_action(array('deleteemptypage'=>$i)).
