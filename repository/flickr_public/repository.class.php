@@ -75,8 +75,6 @@ class repository_flickr_public extends repository {
         $this->flickr  = new phpFlickr($this->api_key);
         $this->flickr_account = $this->get_option('email_address');
 
-        // when flickr account hasn't been set by admin, user can
-        // submit a flickr account here.
         $account  = optional_param('flickr_account', '', PARAM_RAW);
         $fulltext = optional_param('flickr_fulltext', '', PARAM_RAW);
         $tag      = optional_param('flickr_tag', '', PARAM_RAW);
@@ -87,7 +85,9 @@ class repository_flickr_public extends repository {
             $SESSION->{$this->sess_account} = $account;
             $SESSION->{$this->sess_tag}  = $tag;
             $SESSION->{$this->sess_text} = $fulltext;
-            echo json_encode($this->search($fulltext));
+            $response = $this->search($fulltext);
+            $response['search_result'] = true;
+            echo json_encode($response);
             exit;
         }
     }
@@ -169,12 +169,13 @@ class repository_flickr_public extends repository {
         if (!empty($SESSION->{$this->sess_tag}) or !empty($SESSION->{$this->sess_text}) 
             or !empty($SESSION->{$this->sess_account}) 
             or !empty($this->nsid)) {
+
             $photos = $this->flickr->photos_search(array(
                 'tags'=>$SESSION->{$this->sess_tag},
                 'page'=>$page,
                 'per_page'=>25,
                 'user_id'=>$this->nsid,
-                'text'=>$search_text));
+                'text'=>$SESSION->{$this->sess_text}));
         }
         $ret = array();
         return $this->build_list($photos, $page, $ret);
