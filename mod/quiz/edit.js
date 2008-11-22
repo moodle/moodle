@@ -5,38 +5,6 @@ YAHOO.namespace("cats.container");
 YAHOO.namespace("quiz.container");
 function init() {
     YAHOO.util.Dom.setStyle('randomquestiondialog', 'display', 'block');
-    YAHOO.cats.container.module = new YAHOO.widget.Module("module");
-    YAHOO.cats.container.show = new YAHOO.widget.Module("show");
-    YAHOO.cats.container.hide = new YAHOO.widget.Module("hide");
-    YAHOO.cats.container.module.render();
-    YAHOO.util.Event.addListener("show", "click", YAHOO.cats.container.module.show,
-            YAHOO.cats.container.module, true);
-    YAHOO.util.Event.addListener("show", "click",
-            function(e){
-                YAHOO.cats.container.hide.show;
-                // for some reason YUI sets element display "block" so we have to reverse that:
-                hideel.setStyle("display", "inline");
-                //TODO: get sURL from the phpdata object somehow
-                var sUrl="";
-                var transaction = YAHOO.util.Connect.asyncRequest("GET", sUrl, null, null);
-                YAHOO.util.Event.stopEvent(e);
-            }, YAHOO.cats.container.hide, true);
-    YAHOO.util.Event.addListener("show", "click", YAHOO.cats.container.show.hide, YAHOO.cats.container.show, true);
-    YAHOO.util.Event.addListener("hide", "click", YAHOO.cats.container.module.hide, YAHOO.cats.container.module, true);
-    YAHOO.util.Event.addListener("hide", "click",
-            function(e){
-                YAHOO.cats.container.show.show;
-                // for some reason YUI sets element display
-                // to "block" so we have to reverse that:
-                showel.setStyle("display", "inline");
-                var sUrl="$surl";
-                var transaction = YAHOO.util.Connect.asyncRequest("GET", sUrl, null, null);
-                YAHOO.util.Event.stopEvent(e);
-            }, YAHOO.cats.container.show, true);
-
-    YAHOO.util.Event.addListener("hide", "click", YAHOO.cats.container.hide.hide, YAHOO.cats.container.hide, true);
-
-    // Instantiate the Dialog
     /* zIndex must be way above 99 to be above the active quiz tab*/
     YAHOO.quiz.container.randomquestiondialog = new YAHOO.widget.Dialog("randomquestiondialog",
                 {
@@ -67,19 +35,6 @@ function init() {
                 (YAHOO.util.Dom.getFirstChild(rbform));
                 var rqpage=YAHOO.util.Dom.get("rform_qpage");
 
-                /*
-                //this should work, it doesn't, no time to debug.
-                var rqpagehiddenel=YAHOO.util.Dom.getFirstChildBy(rbformelements,function(el) {
-                    //alert("infunc");
-                    var result=YAHOO.util.Dom.hasClass(el,"addonpage_formelement");
-                    //if (result) alert ("yes"); else alert("no");
-                    return result;
-                });
-                //no element in rqpagehiddenel
-                //rqpage.value=rqpagehiddenel.value.value;
-                */
-
-                //this works instead
                 for (var i = 0; i < rbformelements.length; i++) {
                     if(YAHOO.util.Dom.hasClass(rbformelements[i],"addonpage_formelement")){
                           //why is this not rqpage.value.value, the first "value" being the element property
@@ -91,7 +46,8 @@ function init() {
             }, YAHOO.quiz.container.randomquestiondialog,
             YAHOO.quiz.container.randomquestiondialog, true);
     YAHOO.quiz.container.randomquestiondialog.render();
-// Instantiate the Dialog
+
+
     YAHOO.quiz.container.repaginatedialog = new YAHOO.widget.Dialog("repaginatedialog",
                 {
                   modal:true,
@@ -106,7 +62,7 @@ function init() {
                   constraintoviewport : true,
                   postmethod: "form"
                  } );
-YAHOO.util.Event.addListener("repaginatecommand", "click",
+    YAHOO.util.Event.addListener("repaginatecommand", "click",
             function(e){
                 YAHOO.util.Dom.setStyle('repaginatedialog', 'display', 'block');
                 this.show();
@@ -116,15 +72,5 @@ YAHOO.util.Event.addListener("repaginatecommand", "click",
 
 }
 
-
-YAHOO.util.Event.addListener(window, "load", init,phpGenerated,true);
+YAHOO.util.Event.addListener(window, "onDomReady", init,phpGenerated,true);
 YAHOO.util.Dom.setStyle('repaginatedialog', 'display', 'block');
-
-//TODO: take this inside the init function to make sure
-//YAHOO.cats.container.module is defined when run
-if (YAHOO.cats.container.module && quiz_qbanktool){
-    YAHOO.cats.container.module.hide();
-    YAHOO.cats.container.show.show();
-    showel.setStyle("display", "inline");
-    YAHOO.cats.container.hide.hide();
-}
