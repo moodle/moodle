@@ -614,8 +614,6 @@ if (optional_param('savechanges', false, PARAM_BOOL) and confirm_sesskey()) {
         }
     }
 
-
-
     $significantchangemade = true;
 }
 /// Delete any teacher preview attempts if the quiz has been modified
@@ -642,27 +640,13 @@ if (isset($quiz->instance) and $DB->record_exists_select('quiz_attempts',
     $quiz_has_attempts=true;
 }
 
-
 $strupdatemodule = has_capability('moodle/course:manageactivities',
         $contexts->lowest()) ?
         update_module_button($cm->id, $course->id,
         get_string('modulename', 'quiz')) :
         "";
 $navigation = build_navigation($pagetitle, $cm);
-$localcss= '<link rel="stylesheet" type="text/css" href="edit_redesign.css" />
-        <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.
-        '/lib/yui/container/assets/container.css" />';
 
-//Thanks to
-//http://vani.vox.com/library/post/yui-simple-showhide-div-using-module.html
-//as soon as javascript toggling and saving the state to the server as an ajax call
-//has been done, add $quiz_hide_javascript to $localjs
-/*$quiz_hide_javascript="";
-if(!$quiz_qbanktool){
-    $quiz_hide_javascript='var quiz_qbanktool=true;';
-}else{
-    $quiz_hide_javascript='var quiz_qbanktool=false;';
-}*/
 $quiz_randomquestion_dialog_listeners='this.dialog_listeners=[';
 if(($numberoflisteners=quiz_number_of_pages($quiz->questions))==0){
     $numberoflisteners=1;
@@ -689,6 +673,8 @@ $localjs= '<script type="text/javascript" charset="utf-8">
 ';
 //apply CSS for when javascript is enabled
 require_js('mod/quiz/editcss.js',true);
+$localcss= '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.
+        '/lib/yui/container/assets/container.css" />';
 print_header_simple($pagetitle, '', $navigation, "", $localcss,true,
         $questionbankmanagement.$strupdatemodule);
 echo $localjs;
@@ -700,27 +686,22 @@ if($quiz_reordertool){
 include('tabs.php');
 
 if($quiz_qbanktool){
-    $showbank_inlinecss='display: none;';
-    $bank_inlinecss='display: block;';
-    $hidebank_inlinecss='display: inline;';
-    $quizcontents_inlinecss="";
-
+    $bankclass="";
+    $quizcontentsclass="";
 }else{
-    $showbank_inlinecss='display: inline;';
-    $bank_inlinecss='display: none;';
-    $hidebank_inlinecss='display: none;';
-    $quizcontents_inlinecss='width:100%;';
+    $bankclass="collapsed";
+    $quizcontentsclass="quizwhenbankcollapsed";
 }
 print_side_block_start(get_string('questionbankcontents','quiz').
         ' <a href="'.
 $thispageurl->out(false,array('qbanktool'=>'1')).
-       '"  style="'.$showbank_inlinecss.'" >['.get_string("show").
-       ']</a><!-- id="show" -->
+       '" id="showbankcmd">['.get_string("show").
+       ']</a>
        <a href="'.$thispageurl->out(false,array('qbanktool'=>'0')).
-       '" style="'.$hidebank_inlinecss.'">['.get_string("hide").
-       ']</a><!-- id="hide" -->
-       ', array("class"=>"questionbankwindow"));
-echo '<div class="container" style="'.$bank_inlinecss.'">';
+       '" id="hidebankcmd">['.get_string("hide").
+       ']</a>
+       ', array("class"=>"questionbankwindow $bankclass"));
+echo '<div class="container">';
 echo '<div id="module" class="module">';
 echo '<div class="bd">';
 $cmoptions = new stdClass;
@@ -740,7 +721,7 @@ if (!$quizname = $DB->get_field($cm->modname, 'name', array('id'=>$cm->instance)
     print_error('cannotmodulename');
 }
 
-echo '<div class="quizcontents" id="quizcontentsblock" style="'.$quizcontents_inlinecss.'">';
+echo '<div class="quizcontents '.$quizcontentsclass.'" id="quizcontentsblock">';
 $questionsperpagebool = ($quiz->questionsperpage < 1) ? 0 : 1;
 if($questionsperpagebool){
     $repaginatingdisabledhtml='disabled="disabled"';

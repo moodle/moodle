@@ -4421,6 +4421,10 @@ table.quizreviewsummary td.cell {
     display:block;
 }
 
+#mod-quiz-edit div.quizwhenbankcollapsed{
+    width:100%;
+}
+
 #mod-quiz-edit div.quizcontents,h2.main{
     clear:left;
 }
@@ -4577,6 +4581,26 @@ table.quizreviewsummary td.cell {
     select obeys the width of its content
     by default. This prevents that. */
     width:100%;
+}
+
+#mod-quiz-edit .collapsed .container{
+    display: none;
+}
+
+#mod-quiz-edit .collapsed .container{
+    display: none;
+}
+#mod-quiz-edit .questionbankwindow #showbankcmd{
+	display:none;
+}
+#mod-quiz-edit .collapsed #showbankcmd{
+	display:inline;
+}
+#mod-quiz-edit .questionbankwindow #hidebankcmd{
+	display:inline;
+}
+#mod-quiz-edit .collapsed #hidebankcmd{
+	display:none;
 }
 
 #mod-quiz-edit .questionbankwindow div.header{
