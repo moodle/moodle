@@ -4,6 +4,7 @@
 YAHOO.namespace("cats.container");
 YAHOO.namespace("quiz.container");
 function init() {
+    alert("loadde");
     YAHOO.util.Dom.setStyle('randomquestiondialog', 'display', 'block');
     /* zIndex must be way above 99 to be above the active quiz tab*/
     YAHOO.quiz.container.randomquestiondialog = new YAHOO.widget.Dialog("randomquestiondialog",
@@ -72,5 +73,5 @@ function init() {
 
 }
 
-YAHOO.util.Event.addListener(window, "onDomReady", init,phpGenerated,true);
+YAHOO.util.Event.onDOMReady(init,phpGenerated,true);
 YAHOO.util.Dom.setStyle('repaginatedialog', 'display', 'block');
