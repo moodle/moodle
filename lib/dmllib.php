@@ -47,6 +47,16 @@ class dml_exception extends moodle_exception {
 }
 
 /**
+ * DML db connection exception - triggered if database not accessible.
+ */
+class dml_connection_exception extends dml_exception {
+    function __construct($error) {
+        $errorinfo = '<em>'.s($error).'</em>';
+        parent::__construct('dbconnectionfailed', NULL, $errorinfo);
+    }
+}
+
+/**
  * DML read exception - triggered by SQL syntax errors, missing tables, etc.
  */
 class dml_read_exception extends dml_exception {
@@ -133,68 +143,38 @@ function setup_DB() {
         $CFG->dboptions['dbpersist'] = $CFG->dbpersist;
     }
 
-
     if (!$DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary)) {
         throw new dml_exception('dbdriverproblem', "Unknown driver $CFG->dblibrary/$CFG->dbtype");
     }
 
-    $CFG->dbfamily = $DB->get_dbfamily(); // TODO: BC only for now
-
-    $driverstatus = $DB->driver_installed();
-
-    if ($driverstatus !== true) {
-        throw new dml_exception('dbdriverproblem', $driverstatus);
-    }
-
-    if (debugging('', DEBUG_ALL)) {
-        // catch errors
-        ob_start();
-    } else {
-        $prevdebug = error_reporting(0);
-    }
-
-    $connected = false;
     try {
-        $connected = $DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, $CFG->dboptions);
-    } Catch (Exception $e) {
-        $connected = false;
-    }
-
-    if (!$connected) {
-        $dberr = '';
-        if (debugging('', DEBUG_ALL)) {
-            if ($dberr = ob_get_contents()) {
-                $dberr = '<p><em>'.$dberr.'</em></p>';
-            }
-            ob_end_clean();
-        }
+        $DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, $CFG->dboptions);
+    } catch (moodle_exception $e) {
         if (empty($CFG->noemailever) and !empty($CFG->emailconnectionerrorsto)) {
             if (file_exists($CFG->dataroot.'/emailcount')){
-                $fp = fopen($CFG->dataroot.'/emailcount', 'r');
-                $content = fread($fp, 24);
-                fclose($fp);
+                $fp = @fopen($CFG->dataroot.'/emailcount', 'r');
+                $content = @fread($fp, 24);
+                @fclose($fp);
                 if((time() - (int)$content) > 600){
                     @mail($CFG->emailconnectionerrorsto,
                         'WARNING: Database connection error: '.$CFG->wwwroot,
                         'Connection error: '.$CFG->wwwroot);
-                    $fp = fopen($CFG->dataroot.'/emailcount', 'w');
-                    fwrite($fp, time());
+                    $fp = @fopen($CFG->dataroot.'/emailcount', 'w');
+                    @fwrite($fp, time());
                 }
             } else {
                @mail($CFG->emailconnectionerrorsto,
                     'WARNING: Database connection error: '.$CFG->wwwroot,
                     'Connection error: '.$CFG->wwwroot);
-               $fp = fopen($CFG->dataroot.'/emailcount', 'w');
-               fwrite($fp, time());
+               $fp = @fopen($CFG->dataroot.'/emailcount', 'w');
+               @fwrite($fp, time());
             }
         }
-        throw new dml_exception('dbconnectionfailed', $dberr);
+        // rethrow the exception
+        throw $e;
     }
-    if (debugging('', DEBUG_ALL)) {
-        ob_end_clean();
-    } else {
-        error_reporting($prevdebug);
-    }
+
+    $CFG->dbfamily = $DB->get_dbfamily(); // TODO: BC only for now
 
     return true;
 }

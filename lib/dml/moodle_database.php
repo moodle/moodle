@@ -198,7 +198,8 @@ abstract class moodle_database {
      * @param string $dbname
      * @param mixed $prefix string means moodle db prefix, false used for external databases where prefix not used
      * @param array $dboptions driver specific options
-     * @return bool success
+     * @return bool true
+     * @throws dml_connection_exception if error
      */
     public abstract function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null);
 

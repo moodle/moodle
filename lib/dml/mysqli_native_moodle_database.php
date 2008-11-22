@@ -82,12 +82,24 @@ class mysqli_native_moodle_database extends moodle_database {
     public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
         global $CFG;
 
+        $driverstatus = $this->driver_installed();
+
+        if ($driverstatus !== true) {
+            throw new dml_exception('dbdriverproblem', $driverstatus);
+        }
+
         $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
 
+        ob_start();
         $this->mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
-        if ($this->mysqli->connect_error) {
-            return false;
+        $dberr = ob_get_contents();
+        ob_end_clean();
+        $errorno = @$this->mysqli->connect_errno;
+
+        if ($errorno !== 0) {
+            throw new dml_connection_exception($dberr);
         }
+
         $this->query_start("--set_charset()", null, SQL_QUERY_AUX);
         $this->mysqli->set_charset('utf8');
         $this->query_end(true);

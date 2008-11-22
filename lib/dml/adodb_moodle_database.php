@@ -38,6 +38,14 @@ abstract class adodb_moodle_database extends moodle_database {
     public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
         global $CFG;
 
+        $driverstatus = $this->driver_installed();
+
+        if ($driverstatus !== true) {
+            throw new dml_exception('dbdriverproblem', $driverstatus);
+        }
+
+        ob_start();
+
         $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
 
         $this->preconfigure_dbconnection();
@@ -50,16 +58,22 @@ abstract class adodb_moodle_database extends moodle_database {
         // we probably want to change this value to ''.
         $this->adodb->null2null = 'A long random string that will never, ever match something we want to insert into the database, I hope. \'';
 
+
         if (!empty($this->dboptions['dbpersist'])) {    // Use persistent connection
-            if (!$this->adodb->PConnect($this->dbhost, $this->dbuser, $this->dbpass, $this->dbname)) {
-                return false;
-            }
+            $connected = $this->adodb->PConnect($this->dbhost, $this->dbuser, $this->dbpass, $this->dbname);
         } else {                                                     // Use single connection
-            if (!$this->adodb->Connect($this->dbhost, $this->dbuser, $this->dbpass, $this->dbname)) {
-                return false;
-            }
+            $connected = $this->adodb->Connect($this->dbhost, $this->dbuser, $this->dbpass, $this->dbname);
         }
+
+        $dberr = ob_get_contents();
+        ob_end_clean();
+
+        if (!$connected) {
+            throw new dml_connection_exception($dberr);
+        }
+
         $this->configure_dbconnection();
+
         return true;
     }
 

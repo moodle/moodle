@@ -71,7 +71,7 @@ function default_exception_handler($ex) {
 
     if ($ex instanceof moodle_exception) {
         if (!isset($CFG->theme) or !isset($CFG->stylesheets)) {
-            _print_early_error($ex->errorcode, $ex->module, $ex->a);
+            _print_early_error($ex->errorcode, $ex->module, $ex->a, $backtrace, $ex->debuginfo);
         } else {
             _print_normal_error($ex->errorcode, $ex->module, $ex->a, $ex->link, $backtrace, $ex->debuginfo);
         }

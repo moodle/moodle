@@ -80,10 +80,17 @@ class pgsql_native_moodle_database extends moodle_database {
      * @param string $dbname
      * @param mixed $prefix string means moodle db prefix, false used for external databases where prefix not used
      * @param array $dboptions driver specific options
-     * @return bool success
+     * @return bool true
+     * @throws dml_connection_exception if error
      */
     public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
         global $CFG;
+
+        $driverstatus = $this->driver_installed();
+
+        if ($driverstatus !== true) {
+            throw new dml_exception('dbdriverproblem', $driverstatus);
+        }
 
         $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
 
@@ -101,17 +108,20 @@ class pgsql_native_moodle_database extends moodle_database {
             $connection = "host='$this->dbhost' port='$port' user='$this->dbuser' password='$pass' dbname='$this->dbname'";
         }
 
+        ob_start();
         if (empty($this->dboptions['dbpersit'])) {
             $this->pgsql = pg_connect($connection, PGSQL_CONNECT_FORCE_NEW);
         } else {
             $this->pgsql = pg_pconnect($connection, PGSQL_CONNECT_FORCE_NEW);
         }
-
+        $dberr = ob_get_contents();
+        ob_end_clean();
+        
         $status = pg_connection_status($this->pgsql);
 
         if ($status === false or $status === PGSQL_CONNECTION_BAD) {
             $this->pgsql = null;
-            return false;
+            throw new dml_connection_exception($dberr);
         }
 
         $this->query_start("--pg_set_client_encoding()", null, SQL_QUERY_AUX);
@@ -123,13 +133,12 @@ class pgsql_native_moodle_database extends moodle_database {
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
-        if ($result === false) {
-            return false;
-        }
+
         $this->bytea_oid = pg_fetch_result($result, 0);
         pg_free_result($result);
         if ($this->bytea_oid === false) {
-            return false;
+            $this->pgsql = null;
+            throw new dml_connection_exception('Can not read bytea type.');
         }
 
         return true;

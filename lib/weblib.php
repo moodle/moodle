@@ -5925,7 +5925,7 @@ function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debugi
  * Internal function - do not use directly!!
  * This function is used if fatal error occures before the themes are fully initialised (eg. in lib/setup.php)
  */
-function _print_early_error($errorcode, $module, $a) {
+function _print_early_error($errorcode, $module, $a, $backtrace=null, $debuginfo=null) {
     $message = get_string($errorcode, $module, $a);
     if ($module === 'error' and strpos($message, '[[') === 0) {
         //search in moodle file if error specified - needed for backwards compatibility
@@ -5958,8 +5958,16 @@ function _print_early_error($errorcode, $module, $a) {
     border-color:black; background-color:#ffffee; border-style:solid; border-radius: 20px; border-collapse: collapse;
     width: 80%; -moz-border-radius: 20px; padding: 15px">
 '.$message.'
-</div>
-</body></html>';
+</div>';
+    if (debugging('', DEBUG_DEVELOPER)) {
+        if ($debuginfo) {
+            debugging($debuginfo, DEBUG_DEVELOPER, $backtrace);
+        } else {
+            notify('Stack trace:'.print_backtrace($backtrace, true), 'notifytiny');
+        }
+    }
+
+    echo '</body></html>';
     die;
 }
 
