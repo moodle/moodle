@@ -1371,36 +1371,44 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(1, $DB->count_records('testtable'));
     }
 
-    function test_sql_substring() {
+    function test_sql_null_from_clause() {
         $DB = $this->tdb;
-        $dbman = $DB->get_manager();
+        $sql = "SELECT 1 AS id ".$DB->sql_null_from_clause();
+        $this->assertEqual($DB->get_field_sql($sql), 1);
+    }
 
-        $table = $this->get_test_table($dbman, "testtable");
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $dbman->create_table($table);
-        $this->tables[$table->getName()] = $table;
+    function test_sql_bitand() {
+        $DB = $this->tdb;
+        $sql = "SELECT ".$DB->sql_bitand(10, 3)." AS number ".$DB->sql_null_from_clause();
+        $this->assertEqual($DB->get_field_sql($sql), 2);
+    }
 
-        $string = 'abcdefghij';
+    function test_sql_bitnot() {
+        $DB = $this->tdb;
 
-        $DB->insert_record('testtable', array('name'=>$string));
+        $not = $DB->sql_bitnot(2);
+        $notlimited = $DB->sql_bitand($not, 7); // might be positive or negative number which can not fit into PHP INT!
 
-        $sql = "SELECT id, ".$DB->sql_substr("name", 5)." AS name FROM {testtable}";
-        $record = $DB->get_record_sql($sql);
-        $this->assertEqual(substr($string, 5-1), $record->name);
+        $sql = "SELECT $notlimited AS number ".$DB->sql_null_from_clause();
+        $this->assertEqual($DB->get_field_sql($sql), 5);
+    }
 
-        $sql = "SELECT id, ".$DB->sql_substr("name", 5, 2)." AS name FROM {testtable}";
-        $record = $DB->get_record_sql($sql);
-        $this->assertEqual(substr($string, 5-1, 2), $record->name);
+    function test_sql_bitor() {
+        $DB = $this->tdb;
+        $sql = "SELECT ".$DB->sql_bitor(10, 3)." AS number ".$DB->sql_null_from_clause();
+        $this->assertEqual($DB->get_field_sql($sql), 11);
+    }
 
-        try {
-            // silence php warning ;-)
-            @$DB->sql_substr("name");
-            $this->fail("Expecting an exception, none occurred");
-        } catch (Exception $e) {
-            $this->assertTrue($e instanceof coding_exception);
-        }
+    function test_sql_bitxor() {
+        $DB = $this->tdb;
+        $sql = "SELECT ".$DB->sql_bitxor(10, 3)." AS number ".$DB->sql_null_from_clause();
+        $this->assertEqual($DB->get_field_sql($sql), 9);
+    }
+
+    function test_sql_ceil() {
+        $DB = $this->tdb;
+        $sql = "SELECT ".$DB->sql_ceil(665.666)." AS number ".$DB->sql_null_from_clause();
+        $this->assertEqual($DB->get_field_sql($sql), 666);
     }
 
     function test_cast_char2int() {
@@ -1455,6 +1463,31 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(count($records), 2);
     }
 
+    function sql_compare_text() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table($dbman, "testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+        $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $DB->insert_record('testtable', array('name'=>'abcd',   'description'=>'abcd'));
+        $DB->insert_record('testtable', array('name'=>'abcdef', 'description'=>'bbcdef'));
+        $DB->insert_record('testtable', array('name'=>'aaaabb', 'description'=>'aaaacccccccccccccccccc'));
+
+        $sql = "SELECT * FROM {testtable} WHERE name = ".$DB->sql_compare_text('description');
+        $records = $DB->get_records_sql($sql);
+        $this->assertEqual(count($records), 1);
+
+        $sql = "SELECT * FROM {testtable} WHERE name = ".$DB->sql_compare_text('description', 4);
+        $records = $DB->get_records_sql($sql);
+        $this->assertEqual(count($records), 2);
+    }
+
     function test_ilike() {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
@@ -1478,14 +1511,81 @@ class dml_test extends UnitTestCase {
 
     function test_concat() {
         $DB = $this->tdb;
-        $sql = "SELECT ".$DB->sql_concat("'name'", "'name2'", "'name3'")." AS fullname ".$DB->sql_null_from_clause();;
-        $this->assertEqual("namename2name3", $DB->get_field_sql($sql));
+        $sql = "SELECT ".$DB->sql_concat("?", "?", "?")." AS fullname ".$DB->sql_null_from_clause();
+        $params = array("name", "name2", "name3");
+        $this->assertEqual("namename2name3", $DB->get_field_sql($sql, $params));
     }
 
-    function test_bitxor() {
+    function test_concat_join() {
         $DB = $this->tdb;
-        $sql = "SELECT ".$DB->sql_bitxor(23,53)." ".$DB->sql_null_from_clause();;
-        $this->assertEqual(34, $DB->get_field_sql($sql));
+        $sql = "SELECT ".$DB->sql_concat_join("' '", array("?", "?", "?"))." AS fullname ".$DB->sql_null_from_clause();
+        $params = array("name", "name2", "name3");
+        $result = $DB->get_field_sql($sql, $params);
+        $this->assertEqual("name name2 name3", $result);
+    }
+
+    function test_sql_fullname() {
+        $DB = $this->tdb;
+        $sql = "SELECT ".$DB->sql_fullname(':first', ':last')." AS fullname ".$DB->sql_null_from_clause();
+        $params = array('first'=>'Firstname', 'last'=>'Surname');
+        $this->assertEqual("Firstname Surname", $DB->get_field_sql($sql, $params));
+    }
+
+    function sql_sql_order_by_text() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table($dbman, "testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $DB->insert_record('testtable', array('description'=>'abcd'));
+        $DB->insert_record('testtable', array('description'=>'dxxx'));
+        $DB->insert_record('testtable', array('description'=>'bcde'));
+
+        $sql = "SELECT * FROM {testtable} ORDER BY ".$DB->sql_order_by_text('description');
+        $records = $DB->get_records_sql($sql);
+        $first = array_unshift($records);
+        $this->assertEqual(1, $first->id);
+        $second = array_unshift($records);
+        $this->assertEqual(3, $second->id);
+        $last = array_unshift($records);
+        $this->assertEqual(2, $last->id);
+    }
+
+    function test_sql_substring() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table($dbman, "testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $string = 'abcdefghij';
+
+        $DB->insert_record('testtable', array('name'=>$string));
+
+        $sql = "SELECT id, ".$DB->sql_substr("name", 5)." AS name FROM {testtable}";
+        $record = $DB->get_record_sql($sql);
+        $this->assertEqual(substr($string, 5-1), $record->name);
+
+        $sql = "SELECT id, ".$DB->sql_substr("name", 5, 2)." AS name FROM {testtable}";
+        $record = $DB->get_record_sql($sql);
+        $this->assertEqual(substr($string, 5-1, 2), $record->name);
+
+        try {
+            // silence php warning ;-)
+            @$DB->sql_substr("name");
+            $this->fail("Expecting an exception, none occurred");
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof coding_exception);
+        }
     }
 
     function test_sql_position() {
@@ -1496,7 +1596,73 @@ class dml_test extends UnitTestCase {
                 "SELECT ".$DB->sql_position("'Oracle'", "'Moodle'").$DB->sql_null_from_clause()), 0);
     }
 
-    function test_regex() {
+    function test_sql_empty() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table($dbman, "testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $DB->insert_record('testtable', array('name'=>''));
+        $DB->insert_record('testtable', array('name'=>null));
+        $DB->insert_record('testtable', array('name'=>'lalalal'));
+        $DB->insert_record('testtable', array('name'=>0));
+
+        $records = $DB->get_records_sql("SELECT * FROM {testtable} WHERE name = '".$DB->sql_empty()."'");
+        $this->assertEqual(count($records), 1);
+        $record = reset($records);
+        $this->assertEqual($record->name, '');
+    }
+
+    function test_sql_isempty() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table($dbman, "testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('namenull', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+        $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('descriptionnull', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $DB->insert_record('testtable', array('name'=>'',   'namenull'=>'',   'description'=>'',   'descriptionnull'=>''));
+        $DB->insert_record('testtable', array('name'=>'??', 'namenull'=>null, 'description'=>'??', 'descriptionnull'=>null));
+        $DB->insert_record('testtable', array('name'=>'la', 'namenull'=>'la', 'description'=>'la', 'descriptionnull'=>'lalala'));
+        $DB->insert_record('testtable', array('name'=>0,    'namenull'=>0,    'description'=>0,    'descriptionnull'=>0));
+
+        $records = $DB->get_records_sql("SELECT * FROM {testtable} WHERE ".$DB->sql_isempty('testtable', 'name', false, false));
+        $this->assertEqual(count($records), 1);
+        $record = reset($records);
+        $this->assertEqual($record->name, '');
+
+        $records = $DB->get_records_sql("SELECT * FROM {testtable} WHERE ".$DB->sql_isempty('testtable', 'namenull', true, false));
+        $this->assertEqual(count($records), 1);
+        $record = reset($records);
+        $this->assertEqual($record->namenull, '');
+
+        $records = $DB->get_records_sql("SELECT * FROM {testtable} WHERE ".$DB->sql_isempty('testtable', 'description', false, true));
+        $this->assertEqual(count($records), 1);
+        $record = reset($records);
+        $this->assertEqual($record->description, '');
+
+        $records = $DB->get_records_sql("SELECT * FROM {testtable} WHERE ".$DB->sql_isempty('testtable', 'descriptionnull', true, true));
+        $this->assertEqual(count($records), 1);
+        $record = reset($records);
+        $this->assertEqual($record->descriptionnull, '');
+    }
+
+    function sql_isnotempty() {
+        //TODO
+    }
+
+    function test_sql_regex() {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 

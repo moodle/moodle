@@ -806,7 +806,7 @@ class mysqli_native_moodle_database extends moodle_database {
 
     public function sql_concat() {
         $arr = func_get_args();
-        $s = implode(',', $arr);
+        $s = implode(', ', $arr);
         if ($s === '') {
             return "''";
         }
@@ -814,14 +814,12 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     public function sql_concat_join($separator="' '", $elements=array()) {
-        for ($n=count($elements)-1; $n > 0 ; $n--) {
-            array_splice($elements, $n, 0, $separator);
-        }
-        $s = implode(',', $elements);
+        $s = implode(', ', $elements);
+
         if ($s === '') {
             return "''";
         }
-        return "CONCAT ($s)";
+        return "CONCAT_WS($separator, $s)";
     }
 
     /**

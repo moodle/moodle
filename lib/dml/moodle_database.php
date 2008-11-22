@@ -336,6 +336,39 @@ abstract class moodle_database {
     }
 
     /**
+     * Returns SQL WHERE conditions.
+     *
+     * @param array conditions - must not contain numeric indexes
+     * @return array sql part and params
+     */
+    protected function where_clause(array $conditions=null) {
+        $allowed_types = $this->allowed_param_types();
+        if (empty($conditions)) {
+            return array('', array());
+        }
+        $where = array();
+        $params = array();
+        foreach ($conditions as $key=>$value) {
+            if (is_int($key)) {
+                throw new dml_exception('invalidnumkey');
+            }
+            if (is_null($value)) {
+                $where[] = "$key IS NULL";
+            } else {
+                if ($allowed_types & SQL_PARAMS_NAMED) {
+                    $where[] = "$key = :$key";
+                    $params[$key] = $value;
+                } else {
+                    $where[] = "$key = ?";
+                    $params[] = $value;
+                }
+            }
+        }
+        $where = implode(" AND ", $where);
+        return array($where, $params);
+    }
+
+    /**
      * Constructs IN() or = sql fragment
      * @param mixed $items single or array of values
      * @param int $type bound param type SQL_PARAMS_QM or SQL_PARAMS_NAMED
@@ -1333,6 +1366,16 @@ abstract class moodle_database {
 
 /// sql contructs
     /**
+     * Returns the FROM clause required by some DBs in all SELECT statements.
+     *
+     * To be used in queries not having FROM clause to provide cross_db
+     * Most DBs don't need it, hence the default is ''
+     */
+    public function sql_null_from_clause() {
+        return '';
+    }
+
+    /**
      * Returns the SQL text to be used in order to perform one bitwise AND operation
      * between 2 integers.
      * @param integer int1 first integer in the operation
@@ -1376,16 +1419,6 @@ abstract class moodle_database {
      */
     public function sql_bitxor($int1, $int2) {
         return '((' . $int1 . ') ^ (' . $int2 . '))';
-    }
-
-    /**
-     * Returns the FROM clause required by some DBs in all SELECT statements.
-     *
-     * To be used in queries not having FROM clause to provide cross_db
-     * Most DBs don't need it, hence the default is ''
-     */
-    public function sql_null_from_clause() {
-        return '';
     }
 
     /**
@@ -1441,6 +1474,19 @@ abstract class moodle_database {
     }
 
     /**
+     * Returns the proper SQL to do LIKE in a case-insensitive way.
+     *
+     * Note the LIKE are case sensitive for Oracle. Oracle 10g is required to use
+     * the caseinsensitive search using regexp_like() or NLS_COMP=LINGUISTIC :-(
+     * See http://docs.moodle.org/en/XMLDB_Problems#Case-insensitive_searches
+     *
+     * @return string
+     */
+    public function sql_ilike() {
+        return 'LIKE';
+    }
+
+    /**
      * Returns the proper SQL to do CONCAT between the elements passed
      * Can take many parameters
      *
@@ -1469,19 +1515,6 @@ abstract class moodle_database {
      */
     function sql_fullname($first='firstname', $last='lastname') {
         return $this->sql_concat($first, "' '", $last);
-    }
-
-    /**
-     * Returns the proper SQL to do LIKE in a case-insensitive way.
-     *
-     * Note the LIKE are case sensitive for Oracle. Oracle 10g is required to use
-     * the caseinsensitive search using regexp_like() or NLS_COMP=LINGUISTIC :-(
-     * See http://docs.moodle.org/en/XMLDB_Problems#Case-insensitive_searches
-     *
-     * @return string
-     */
-    public function sql_ilike() {
-        return 'LIKE';
     }
 
     /**
@@ -1530,39 +1563,6 @@ abstract class moodle_database {
     public function sql_position($needle, $haystack) {
         // Implementation using standard SQL.
         return "POSITION(($needle) IN ($haystack))";
-    }
-
-    /**
-     * Returns SQL WHERE conditions.
-     *
-     * @param array conditions - must not contain numeric indexes
-     * @return array sql part and params
-     */
-    public function where_clause(array $conditions=null) {
-        $allowed_types = $this->allowed_param_types();
-        if (empty($conditions)) {
-            return array('', array());
-        }
-        $where = array();
-        $params = array();
-        foreach ($conditions as $key=>$value) {
-            if (is_int($key)) {
-                throw new dml_exception('invalidnumkey');
-            }
-            if (is_null($value)) {
-                $where[] = "$key IS NULL";
-            } else {
-                if ($allowed_types & SQL_PARAMS_NAMED) {
-                    $where[] = "$key = :$key";
-                    $params[$key] = $value;
-                } else {
-                    $where[] = "$key = ?";
-                    $params[] = $value;
-                }
-            }
-        }
-        $where = implode(" AND ", $where);
-        return array($where, $params);
     }
 
     /**
