@@ -228,7 +228,7 @@ class question_category_object {
      * Displays the user interface
      *
      */
-    function display_randomquestion_user_interface($addonpage) {
+    function display_randomquestion_user_interface($addonpage=0) {
         $this->catform_rand->set_data(array('addonpage'=>$addonpage));
         /// Interface for adding a new category:
         $this->output_new_randomquestion_table();
