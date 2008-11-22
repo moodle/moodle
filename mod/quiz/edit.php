@@ -671,8 +671,6 @@ $localjs= '<script type="text/javascript" charset="utf-8">
     <script type="text/javascript"  src="'.$CFG->wwwroot.
             '/mod/quiz/edit.js" charset="utf-8"></script>
 ';
-//apply CSS for when javascript is enabled
-require_js('mod/quiz/editcss.js',true);
 $localcss= '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.
         '/lib/yui/container/assets/container.css" />';
 print_header_simple($pagetitle, '', $navigation, "", $localcss,true,

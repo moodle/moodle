@@ -4957,17 +4957,17 @@ css id's of question bank*/
     display:none;
 }
 
-/*.usejs class is added via javascript so these will toggle if js is enabled*/
-#mod-quiz-edit .usejs #repaginatedialog{
+/* these will toggle if js is enabled */
+body.jsenabled #quizcontentsblock #repaginatedialog{
     display:none;
 }
-#mod-quiz-edit .usejs #repaginatedialog .hd{
+body.jsenabled #quizcontentsblock #repaginatedialog .hd{
     display:block;
 }
-#mod-quiz-edit .usejs #repaginatedialog .bd{
+body.jsenabled #quizcontentsblock #repaginatedialog .bd{
     padding:1em;
 }
-#mod-quiz-edit .usejs .repaginatecommand #repaginatecommand{
+body.jsenabled #quizcontentsblock  .repaginatecommand #repaginatecommand{
     display:block;
 }
 
