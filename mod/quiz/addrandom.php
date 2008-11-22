@@ -67,7 +67,8 @@
 
     print_heading(get_string("addrandomquestiontoquiz","quiz",$quizname), 'left', 2);
 
-    $qcobject->display_randomquestion_user_interface();
+    $addonpage=optional_param("addonpage_form", 0, PARAM_SEQUENCE);
+    $qcobject->display_randomquestion_user_interface($addonpage);
 
     print_footer($course);
 ?>

@@ -41,8 +41,7 @@ class question_category_edit_form_randomquestion extends moodleform {
 //--------------------------------------------------------------------------------
         $mform->addElement('hidden', 'id', 0);
         $mform->setType('id', PARAM_INT);
-        //TODO: Tim: is this questionable? to add a hidden field right from a get parameter?
-        $mform->addElement('hidden', 'addonpage', optional_param("addonpage_form", 0, PARAM_SEQUENCE), 'id="rform_qpage"');
+        $mform->addElement('hidden', 'addonpage', 0, 'id="rform_qpage"');
         $mform->setType('addonpage', PARAM_SEQUENCE);
     }
 }
