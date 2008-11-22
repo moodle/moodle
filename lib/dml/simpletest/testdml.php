@@ -129,7 +129,7 @@ class dml_test extends UnitTestCase {
             $sqlarray = $DB->fix_sql_params($sql, $params);
             $this->pass();
         } catch (Exception $e) {
-            $this->fail("Unexpected " . get_class($e) . " exception");
+            $this->fail("Unexpected ".get_class($e)." exception");
         }
         $this->assertTrue($sqlarray[0]);
 
@@ -425,7 +425,7 @@ class dml_test extends UnitTestCase {
 
         // Simple placeholder
         $placeholder = "{user}";
-        $this->assertEqual($prefix . "user", $DB->public_fix_table_names($placeholder));
+        $this->assertEqual($prefix."user", $DB->public_fix_table_names($placeholder));
 
         // Full SQL
         $sql = "SELECT * FROM {user}, {funny_table_name}, {mdl_stupid_table} WHERE {user}.id = {funny_table_name}.userid";
@@ -1039,7 +1039,7 @@ class dml_test extends UnitTestCase {
         $dbman->create_table($table);
         $this->tables[$table->getName()] = $table;
 
-        $clob = file_get_contents($CFG->libdir.'/dml/simpletest/clob.txt');
+        $clob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/clob.txt');
 
         $this->assertTrue($id = $DB->insert_record('testtable', array('description' => $clob)));
         $this->assertTrue($record = $DB->get_record('testtable', array('id' => $id)));
@@ -1061,8 +1061,8 @@ class dml_test extends UnitTestCase {
         $dbman->create_table($table);
         $this->tables[$table->getName()] = $table;
 
-        $clob = file_get_contents($CFG->libdir.'/dml/simpletest/clob.txt');
-        $blob = file_get_contents($CFG->libdir.'/dml/simpletest/randombinary');
+        $clob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/clob.txt');
+        $blob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/randombinary');
 
         $this->assertTrue($id = $DB->insert_record('testtable', array('description' => $clob, 'image' => $blob)));
         $record = $DB->get_record('testtable', array('id' => $id));
@@ -1124,7 +1124,7 @@ class dml_test extends UnitTestCase {
         $dbman->create_table($table);
         $this->tables[$table->getName()] = $table;
 
-        $clob = file_get_contents($CFG->libdir.'/dml/simpletest/clob.txt');
+        $clob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/clob.txt');
 
         $id = $DB->insert_record('testtable', array('description' => $clob));
         $record = $DB->get_record('testtable', array('id' => $id));
@@ -1149,8 +1149,8 @@ class dml_test extends UnitTestCase {
         $dbman->create_table($table);
         $this->tables[$table->getName()] = $table;
 
-        $clob = file_get_contents($CFG->libdir.'/dml/simpletest/clob.txt');
-        $blob = file_get_contents($CFG->libdir.'/dml/simpletest/randombinary');
+        $clob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/clob.txt');
+        $blob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/randombinary');
 
         $newclob = substr($clob, 0, 500);
         $newblob = substr($blob, 0, 250);
@@ -1403,12 +1403,128 @@ class dml_test extends UnitTestCase {
         }
     }
 
+    function test_cast_char2int() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table1 = $this->get_test_table($dbman, "testtable1");
+        $table1->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table1->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+        $table1->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table1);
+        $this->tables[$table1->getName()] = $table1;
+
+        $DB->insert_record('testtable1', array('name'=>'100'));
+
+        $table2 = $this->get_test_table($dbman, "testtable2");
+        $table2->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table2->add_field('number', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table2->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table2);
+        $this->tables[$table2->getName()] = $table2;
+
+        $DB->insert_record('testtable2', array('number'=>100));
+
+        try {
+            $sql = "SELECT * FROM {testtable1} t1, {testtable2} t2 WHERE ".$DB->sql_cast_char2int("t1.name")." = t2.number ";
+            $records = $DB->get_records_sql($sql);
+            $this->assertEqual(count($records), 1);
+        } catch (dml_exception $e) {
+            $this->fail("No exception expected");
+        }
+    }
+
+    function test_cast_char2real() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table($dbman, "testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+        $table->add_field('number', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $DB->insert_record('testtable', array('name'=>'10.10', 'number'=>5.1));
+        $DB->insert_record('testtable', array('name'=>'1.10', 'number'=>666));
+        $DB->insert_record('testtable', array('name'=>'11.10', 'number'=>0.1));
+
+        $sql = "SELECT * FROM {testtable} WHERE ".$DB->sql_cast_char2real('name')." > number";
+        $records = $DB->get_records_sql($sql);
+        $this->assertEqual(count($records), 2);
+    }
+
+    function test_ilike() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table($dbman, "testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $DB->insert_record('testtable', array('name'=>'SuperDuperRecord'));
+        $DB->insert_record('testtable', array('name'=>'NoDupor'));
+        $DB->insert_record('testtable', array('name'=>'ouch'));
+
+        $sql = "SELECT * FROM {testtable} WHERE name ".$DB->sql_ilike()." ?";
+        $params = array("%dup_r%");
+        $records = $DB->get_records_sql($sql, $params);
+        $this->assertEqual(count($records), 2);
+    }
+
+    function test_concat() {
+        $DB = $this->tdb;
+        $sql = "SELECT ".$DB->sql_concat("'name'", "'name2'", "'name3'")." AS fullname ".$DB->sql_null_from_clause();;
+        $this->assertEqual("namename2name3", $DB->get_field_sql($sql));
+    }
+
+    function test_bitxor() {
+        $DB = $this->tdb;
+        $sql = "SELECT ".$DB->sql_bitxor(23,53)." ".$DB->sql_null_from_clause();;
+        $this->assertEqual(34, $DB->get_field_sql($sql));
+    }
+
     function test_sql_position() {
         $DB = $this->tdb;
         $this->assertEqual($DB->get_field_sql(
-                "SELECT " . $DB->sql_position("'ood'", "'Moodle'") . $DB->sql_null_from_clause()), 2);
+                "SELECT ".$DB->sql_position("'ood'", "'Moodle'").$DB->sql_null_from_clause()), 2);
         $this->assertEqual($DB->get_field_sql(
-                "SELECT " . $DB->sql_position("'Oracle'", "'Moodle'") . $DB->sql_null_from_clause()), 0);
+                "SELECT ".$DB->sql_position("'Oracle'", "'Moodle'").$DB->sql_null_from_clause()), 0);
+    }
+
+    function test_regex() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        if (!$DB->sql_regex_supported()) {
+            return;
+        }
+
+        $table = $this->get_test_table($dbman, "testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $DB->insert_record('testtable', array('name'=>'lalala'));
+        $DB->insert_record('testtable', array('name'=>'holaaa'));
+        $DB->insert_record('testtable', array('name'=>'aouch'));
+
+        $sql = "SELECT * FROM {testtable} WHERE name ".$DB->sql_regex()." ?";
+        $params = array('a$');
+        $records = $DB->get_records_sql($sql, $params);
+        $this->assertEqual(count($records), 2);
+
+        $sql = "SELECT * FROM {testtable} WHERE name ".$DB->sql_regex(false)." ?";
+        $params = array('.a');
+        $records = $DB->get_records_sql($sql, $params);
+        $this->assertEqual(count($records), 1);
+
     }
 
     function test_begin_sql() {
