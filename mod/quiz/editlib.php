@@ -452,9 +452,9 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
         <?php
             echo '<input type="text" name="q'.$qnum.'" size="' . ($quiz->decimalpoints + 2) . '"
                     value="'.(0 + $quiz->grades[$qnum]).
-                    '" tabindex="'.($lastindex+$qno).'" '.$disabled.' />';
+                    '" tabindex="'.($lastindex+$qno).'" />';
             ?>
-        <input type="submit" class="pointssubmitbutton" value="<?php echo $strsave; ?>" <?php echo $disabled; ?> />
+        <input type="submit" class="pointssubmitbutton" value="<?php echo $strsave; ?>" />
     </fieldset>
 
 </div>
