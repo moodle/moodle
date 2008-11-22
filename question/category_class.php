@@ -302,8 +302,6 @@ class question_category_object {
             $category->categoryheader = $this->str->edit;
             $this->catform->set_data($category);
             $this->catform->display();
-            $this->catform_rand->set_data($category);
-            $this->catform_rand->display();
         } else {
             print_error('invalidcategory', '', '', $categoryid);
         }
