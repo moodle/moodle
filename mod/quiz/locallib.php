@@ -223,7 +223,7 @@ function quiz_questions_on_page($layout, $page) {
 /**
  * Returns a comma separated list of question ids for the quiz
  *
- * @return string         Comma separated list of question ids
+ * @return string         Comma separated list of question ids, without page breaks
  * @param string $layout  The string representing the quiz layout. Each page is represented as a
  *                        comma separated list of question ids and 0 indicating page breaks.
  *                        So 5,2,0,3,0 means questions 5 and 2 on page 1 and question 3 on page 2
@@ -265,7 +265,6 @@ function quiz_number_of_pages($layout) {
  */
 function quiz_number_of_questions_in_quiz($layout) {
     //TODO: clean layout before counting
-    //TODO: remove page breaks
     $layout=quiz_questions_in_quiz($layout);
     $count=substr_count($layout, ',');
     if($count>0){
@@ -761,6 +760,7 @@ function quiz_question_action_icons($quiz, $cmid, $question, $returnurl){
 /**
  * @param object $quiz the quiz
  * @param object $question the question
+ * @param boolean $label if true, show the previewquestion label after the icon
  * @return the HTML for a preview question icon.
  */
 function quiz_question_preview_button($quiz, $question, $label=true) {
@@ -1125,6 +1125,7 @@ function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) 
     // return the number of successfully sent emails
     return $emailresult['good'];
 }
+//TODO: refactor; http://tracker.moodle.org/browse/MDL-17296
 function print_timing_information($quiz,$showopenstatus=false){
         $timenow = time();
         $available = ($quiz->timeopen < $timenow and ($timenow < $quiz->timeclose or !$quiz->timeclose));
@@ -1151,7 +1152,17 @@ function print_timing_information($quiz,$showopenstatus=false){
         return $available;
 
 }
-
+/**
+ * Clean the question layout from various possible anomalies:
+ * - Remove consecutive ","'s
+ * - Remove duplicate question id's
+ * - Remove extra "," from beginning and end
+ * - Finally, add a ",0" in the end if there is none
+ * 
+ * @param $string $layout the quiz layout to clean up, usually from $quiz->questions.
+ * @param boolean $removeemptypages If true, remove empty pages from the quiz. False by default.
+ * @return $string the cleaned-up layout
+ */
 function quiz_clean_layout($layout,$removeemptypages=false){
     //remove duplicate "," (or triple, or...)
     while(strstr($layout,",,")){
@@ -1161,7 +1172,6 @@ function quiz_clean_layout($layout,$removeemptypages=false){
     $layout_arr=explode(",",$layout);
     $new_arr=array();
     $seen=array();
-    //remove duplicate questions
     foreach($layout_arr as $key=>$value){
          if(!in_array($value,$seen) && $value!=0){
              $new_arr[]=$value;

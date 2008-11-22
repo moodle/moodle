@@ -54,6 +54,7 @@ function quiz_delete_quiz_question($id, &$quiz) {
 * @param int $id          The id of the question to be added
 * @param object $quiz  The extended quiz object as used by edit.php
 *                         This is updated by this function
+* @param int $page  Which page in quiz to add the question on; if 0 (default), add at the end
 */
 function quiz_add_quiz_question($id, &$quiz, $page=0) {
     global $DB;
@@ -152,6 +153,8 @@ function quiz_update_question_instance($grade, $questionid, $quizid) {
 * @param object $quiz This is not the standard quiz object used elsewhere but
 *     it contains the quiz layout in $quiz->questions and the grades in
 *     $quiz->grades
+* @param object $pageurl The url of the current page with the parameters required 
+*     for links returning to the current page, as a moodle_url object
 * @param boolean $allowdelete Indicates whether the delete icons should be displayed
 * @param boolean $reordertool  Indicates whether the reorder tool should be displayed
 * @param boolean $quiz_qbanktool  Indicates whether the question bank should be displayed
@@ -162,7 +165,6 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
         $showbreaks=true,$reordertool=false, $quiz_qbanktool=false,
         $hasattempts=false) {
     global $USER, $CFG, $QTYPES, $DB;
-
     $strorder = get_string("order");
     $strquestionname = get_string("questionname", "quiz");
     $strgrade = get_string("grade");
@@ -722,6 +724,11 @@ function quiz_simple_question_list($pageurl, $categorylist, $numbertoshow=3,
 /**
  * Print a given single question in quiz for the edit tab of edit.php.
  * Meant to be used from quiz_print_question_list()
+ * 
+ * @param object $question A question object from the database questions table
+ * @param object $questionurl The url of the question editing page as a moodle_url object
+ * @param object $quiz The quiz in the context of which the question is being displayed
+ * 
  */
 function quiz_print_singlequestion(&$question, &$questionurl, &$quiz){
     $stredit = get_string("edit");
@@ -772,6 +779,11 @@ function quiz_print_singlequestion(&$question, &$questionurl, &$quiz){
 /**
  * Print a given random question in quiz for the edit tab of edit.php.
  * Meant to be used from quiz_print_question_list()
+ *  
+ * @param object $question A question object from the database questions table
+ * @param object $questionurl The url of the question editing page as a moodle_url object
+ * @param object $quiz The quiz in the context of which the question is being displayed
+ * @param boolean $quiz_qbanktool Indicate to this function if the question bank window open 
  */
 function quiz_print_randomquestion(&$question, &$pageurl, &$quiz,$quiz_qbanktool){
     global $DB;
@@ -848,6 +860,10 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz,$quiz_qbanktool
 /**
  * Print a given single question in quiz for the reordertool tab of edit.php.
  * Meant to be used from quiz_print_question_list()
+ * 
+ * @param object $question A question object from the database questions table
+ * @param object $questionurl The url of the question editing page as a moodle_url object
+ * @param object $quiz The quiz in the context of which the question is being displayed
  */
 function quiz_print_singlequestion_reordertool(&$question, &$questionurl, &$quiz){
     $stredit = get_string("edit");
@@ -900,6 +916,10 @@ function quiz_print_singlequestion_reordertool(&$question, &$questionurl, &$quiz
 /**
  * Print a given random question in quiz for the reordertool tab of edit.php.
  * Meant to be used from quiz_print_question_list()
+ * 
+ * @param object $question A question object from the database questions table
+ * @param object $questionurl The url of the question editing page as a moodle_url object
+ * @param object $quiz The quiz in the context of which the question is being displayed
  */
 
 function quiz_print_randomquestion_reordertool(&$question, &$pageurl, &$quiz){
@@ -961,7 +981,14 @@ function quiz_print_randomquestion_reordertool(&$question, &$pageurl, &$quiz){
 }
 /**
  * Creates a textual representation of a question for display.
+ * 
+ * @param object $question A question object from the database questions table
+ * @param boolean $showicon If true, show the question's icon with the question. False by default.
+ * @param boolean $showquestiontext If true (default), show question text after question name. 
+ *       If false, show only question name.
+ * @param boolean $return If true (default), return the output. If false, print it. 
  */
+
 function quiz_question_tostring(&$question,$showicon=false,$showquestiontext=true, $return=true){
         global $COURSE;
         $result="";
@@ -1017,7 +1044,10 @@ function quiz_question_tostring(&$question,$showicon=false,$showquestiontext=tru
  *
  * @author Martin Dougiamas and many others. This has recently been extensively
  *         rewritten by Gustav Delius and other members of the Serving Mathematics project
- *         {@link http://maths.york.ac.uk/serving_maths}
+ *         {@link http://maths.york.ac.uk/serving_maths}. Partially 
+ *         rewritten by Olli Savolainen as a part of the Quiz UI Redesign 
+ *         project in Summer 2008
+ *         {@link http://docs.moodle.org/en/Development:Quiz_UI_redesign}.
  * @param moodle_url $pageurl object representing this pages url.
  */
 function quiz_question_showbank($tabname, $contexts, $pageurl, $cm,
@@ -1163,6 +1193,7 @@ function quiz_question_category_form($contexts, $pageurl, $current, $recurse=1,
 * @param int $perpage     Number of questions to show per page
 * @param boolean $showhidden   True if also hidden questions should be displayed
 * @param boolean $showquestiontext whether the text of each question should be shown in the list
+* @param object $cmoptions Options to be passed on to the callbacks called from this function
 */
 function quiz_question_list($contexts, $pageurl, $categoryandcontext,
         $cm = null, $recurse=1, $page=0, $perpage=100, $showhidden=false,
@@ -1458,6 +1489,13 @@ function array_add_at($array,$value,$at){
 }
 /**
  * Prints the form for setting a quiz' overall grade
+ * 
+ * @param object $quiz The quiz object of the quiz in question
+ * @param object $pageurl The url of the current page with the parameters required 
+ *     for links returning to the current page, as a moodle_url object
+ * @param integer $tabindex The tabindex to start from for the form elements created
+ * @return integer The tabindex from which the calling page can continue, that is,
+ *      the last value used +1.
  */
 function quiz_print_grading_form($quiz, $pageurl, $tabindex){
     global $USER;
@@ -1474,11 +1512,12 @@ function quiz_print_grading_form($quiz, $pageurl, $tabindex){
     helpbutton("maxgrade", get_string("maximumgrade"), "quiz");
     echo '</fieldset>';
     echo "</div></form>\n";
+    return $tabindex+1;
 }
 /**
  * Print the status bar
  *
- * @param mixed $quiz The quiz object of the quiz in question
+ * @param object $quiz The quiz object of the quiz in question
  * @param integer $sumgrades The sum of the grades of the quiz to display
  */
 
