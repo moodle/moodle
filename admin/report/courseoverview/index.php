@@ -75,7 +75,7 @@
         }
         //error_log($sql);
 
-        $courses = $DB->get_records_sql($sql, $pram->params, 0, $numcourses);
+        $courses = $DB->get_records_sql($sql, $param->params, 0, $numcourses);
 
         if (empty($courses)) {
             notify(get_string('statsnodata'));echo '</td></tr></table>';echo '<p>after notify</p>';

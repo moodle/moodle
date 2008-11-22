@@ -27,7 +27,7 @@
               ORDER BY $param->orderby";
     }
 
-    $courses = $DB->get_records_sql($sql, $pram->$prams, 0, $numcourses);
+    $courses = $DB->get_records_sql($sql, $param->$params, 0, $numcourses);
 
     if (empty($courses)) {
         print_error('statsnodata', 'error', $CFG->wwwroot.'/'.$CFG->admin.'/report/course/index.php');
