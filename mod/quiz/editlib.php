@@ -1439,4 +1439,93 @@ function quiz_question_list($contexts, $pageurl, $categoryandcontext,
     echo "</form>\n";
 }
 
+
+/**
+ * Add an arbitrary element to array at a specified index, pushing the rest
+ * back.
+ *
+ * @param array $array The array to operate on
+ * @param mixed $value The element to add
+ * @param integer $at The position at which to add the element
+ * @return array
+ */
+function array_add_at($array,$value,$at){
+    $beginpart=array_slice($array, 0,$at);
+    $endpart=array_slice($array, $at, (count($array)-$at) );
+    $beginpart[]=$value;
+    $result=array_merge($beginpart,$endpart);
+    return $result;
+}
+/**
+ * Prints the form for setting a quiz' overall grade
+ */
+function quiz_print_grading_form($quiz, $pageurl, $tabindex){
+    global $USER;
+    $strsave=get_string('save',"quiz");
+    echo "<form method=\"post\" action=\"edit.php\"><div>";
+    echo '<fieldset class="invisiblefieldset" style="display: block;">';
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
+    echo $pageurl->hidden_params_out();
+    echo '<label for="inputmaxgrade">'.get_string("maximumgrade")."</label>: ";
+    echo '<input type="text" id="inputmaxgrade" name="maxgrade" size="' . ($quiz->decimalpoints + 2) . '" tabindex="'.($tabindex)
+         .'" value="'.quiz_format_grade($quiz, $quiz->grade).'" />';
+    echo '<input type="hidden" name="savechanges" value="save" />';
+    echo '<input type="submit" value="'.$strsave.'" />';
+    helpbutton("maxgrade", get_string("maximumgrade"), "quiz");
+    echo '</fieldset>';
+    echo "</div></form>\n";
+}
+/**
+ * Print the status bar
+ *
+ * @param mixed $quiz The quiz object of the quiz in question
+ * @param integer $sumgrades The sum of the grades of the quiz to display
+ */
+
+function quiz_print_status_bar($quiz,$sumgrades){
+    global $CFG;
+    $numberofquestions=quiz_number_of_questions_in_quiz($quiz->questions);
+    ?><div class="statusdisplay"><span class="totalpoints">
+    <?php echo get_string("totalpoints","quiz") ?>:</span>
+    <?php echo $sumgrades; ?>
+    | <span class="numberofquestions">
+    <?php
+    echo get_string("questions","quiz").": $numberofquestions"
+    ?></span>
+    | <span class="quizopeningstatus">
+    <?php
+    print_timing_information($quiz,true);
+    ?></span><?php
+    // If questions are shuffled, notify the user about the
+    // question order not making much sense
+
+    $updateurl=new moodle_url("$CFG->wwwroot/course/mod.php",
+            array("return"=>"true","update"=>$quiz->cmid, "sesskey"=>sesskey()));
+    echo '<br /><strong><a href="'.$updateurl->out().'">';
+    print_string('updatethis', '', get_string('modulename', 'quiz'));
+    echo '</a>:</strong> ';
+    if($quiz->shufflequestions){
+        echo "*";
+    }
+    echo get_string("shufflequestions",'quiz').": ";
+    if($quiz->shufflequestions){
+        echo get_string("yes");
+    }
+    else{
+        echo get_string("no");
+    }
+    echo " | ";
+    print_string("questionsperpage","quiz");
+    $questionsperpagebool = ($quiz->questionsperpage < 1) ? 0 : 1;
+    if($questionsperpagebool){
+        echo ": $quiz->questionsperpage";
+    }else{
+        echo ": ".get_string("unlimited");
+    }
+
+    ?>
+    </div>
+    <?php
+}
+
 ?>
