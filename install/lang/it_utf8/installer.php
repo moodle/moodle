@@ -41,7 +41,7 @@ $string['ctyperequired'] = 'L\'estensione ctype PHP è richiesta da Moodle, per 
 $string['curlrecommended'] = 'L\'installazione della libreria opzionale Curl è fortemente raccomandata per usare il Moodle Networking.';
 $string['curlrequired'] = 'L\'estensione PHP cURL è necessaria per consentire a Moodle di comunicare  con i repostory.';
 $string['customcheck'] = 'Altri controlli';
-$string['database'] = 'Base di dati';
+$string['database'] = 'Database';
 $string['dataroot'] = 'Directory dati';
 $string['datarooterror'] = 'La \'Directory dati\' specificata non può essere trovata o creata. È possibile correggere il percorso o crearla manualmente.';
 $string['dbconnectionerror'] = 'Non è possibile connettersi alla base dati specificata. Controllare le impostazioni della base dati.';
@@ -72,12 +72,12 @@ $string['fail'] = 'Fallito';
 $string['fileuploads'] = 'Invio file';
 $string['fileuploadserror'] = 'Questo deve essere impostato a on';
 $string['fileuploadshelp'] = '<p>L\'invio dei file sembra essere disabilitato sul vostro server.</p>
-<p>Moodle può essere installato, ma senza questa caratteristica, non si potrà  inviare file per i corsi o nuove immagini degli utenti.</p>
+<p>Moodle può essere installato, ma senza questa caratteristica, non si potrà  inviare file per i corsi o nuove immagini degli utenti.</p>
 <p>Per abilitare l\'invio dei file è necessario modificare il file php.ini sul vostro sistema e cambiare l\'impostazione <b>file_uploads</b> a \'on\'.</p>';
 $string['gdversion'] = 'Versione GD';
 $string['gdversionerror'] = 'La libreria GD deve essere presente per elaborare e creare immagini';
 $string['gdversionhelp'] = '<p>Sul vostro server sembra non essere installato il supporto per le librerie GD.</p>
-<p>GD è una libreria che è richiesta dal PHP per permettere a Moodle di elaborare le immagini (come le icone dei profili utente) e creare nuove immagini (come i grafici dei log). Moodle continuerà  a funzionare senza GD - queste caratteristiche non saranno disponibili sulla vostra installazione.</p>
+<p>GD è una libreria che è richiesta dal PHP per permettere a Moodle di elaborare le immagini (come le icone dei profili utente) e creare nuove immagini (come i grafici dei log). Moodle continuerà  a funzionare senza GD - queste caratteristiche non saranno disponibili sulla vostra installazione.</p>
 <p>Per aggiungere GD al PHP su sistemi operativi Unix/Linux, compilare il PHP utilizzando l\'opzione --with-gd.</p>
 <p>Su Windows normalmente è possibile modificare il file php.ini e togliere il commento dalla linea che contiene php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Gestione insicura dei Globals';
@@ -104,11 +104,11 @@ $string['memorylimithelp'] = '<p>Il limite della memoria assegnata a PHP attualm
 Ci sono diversi modi che potete provare:
 <ol>
 <li>Se possibile, ricompilare il PHP con l\'opzione <i>--enable-memory-limit</i>.
-Questo permetterà  a Moodle di impostare il limite di memoria da solo.</li>
+Questo permetterà  a Moodle di impostare il limite di memoria da solo.</li>
 <li>Se avete accesso al file php.ini, è possibile modificare l\'impostazione <b>memory_limit</b> a un valore tipo 40M. Se non avete l\'accesso potete chiedere al vostro amministratore di sistema di farlo.</li>
 <li>Su alcuni server PHP è possibile creare un file .htaccess nella Directory di Moodle che contenga questa linea:
 <blockquote>php_value memory_limit 40M</blockquote>
-<p>Tuttavia, su alcuni server questo impedirà  a <b>tutte</b> le pagine PHP di funzionare (vedrete degli errori quando visualizzerete le pagine) cosi dovrete rimuovere il file .htaccess.</li></ol>';
+<p>Tuttavia, su alcuni server questo impedirà  a <b>tutte</b> le pagine PHP di funzionare (vedrete degli errori quando visualizzerete le pagine) cosi dovrete rimuovere il file .htaccess.</li></ol>';
 $string['missingrequiredfield'] = 'Mancano alcuni campi richiesti';
 $string['moodledocslink'] = 'Documentazione di Moodle per questa pagina';
 $string['mysql416bypassed'] = 'Comunque, se il vostro sito sta utilizzando SOLO lingue iso-8859-1 (latin), potete continuare ad utilizzare MySQL 4.1.12 (o successivo) attualmente installato.';
@@ -123,7 +123,7 @@ $string['pass'] = 'Passato';
 $string['password'] = 'Password';
 $string['php50restricted'] = 'PHP 5.0.x ha diversi problemi conosciuti, si prega di aggiornare alla versione 5.1.x o tornare alle versioni 4.3.x o 4.4.x';
 $string['phpversion'] = 'Versione PHP';
-$string['phpversionerror'] = 'La versione del PHP deve essere come minimo la 4.1.0';
+$string['phpversionerror'] = 'La versione del PHP deve essere come minimo la 4.1.0'; // ORPHANED
 $string['phpversionhelp'] = '<p>Moodle richiede come minimo la versione 4.1.0 del PHP.</p>
 <p>Attualmente state utilizzando la versione $a</p>
 <p>È necessario aggiornare il PHP o spostarsi su un server con una versione di PHP più recente!</p>';
@@ -135,7 +135,7 @@ $string['report'] = 'Rapporto';
 $string['restricted'] = 'Ridotto';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle può avere problemi con il safemode impostato a on';
-$string['safemodehelp'] = '<p>Moodle può avere diversi problemi con il paramentro safemode impostato a on, non ultima l\'impossibilità  di creare nuovi file.</p>
+$string['safemodehelp'] = '<p>Moodle può avere diversi problemi con il paramentro safemode impostato a on, non ultima l\'impossibilità  di creare nuovi file.</p>
 <p>Safemode è normalmente abiltato da paranoici web server pubblici, se è cosi l\'unica soluzine è trovare un nuovo web server per il tuo sito di Moodle.</p>
 <p>È possibile a continuare l\'installazione se si vuole, ma aspettatevi alcuni problemi dopo.</p>';
 $string['serverchecks'] = 'Controlli Server';
