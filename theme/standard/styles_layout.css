@@ -4591,16 +4591,16 @@ table.quizreviewsummary td.cell {
     display: none;
 }
 #mod-quiz-edit .questionbankwindow #showbankcmd{
-	display:none;
+    display:none;
 }
 #mod-quiz-edit .collapsed #showbankcmd{
-	display:inline;
+    display:inline;
 }
 #mod-quiz-edit .questionbankwindow #hidebankcmd{
-	display:inline;
+    display:inline;
 }
 #mod-quiz-edit .collapsed #hidebankcmd{
-	display:none;
+    display:none;
 }
 
 #mod-quiz-edit .questionbankwindow div.header{
