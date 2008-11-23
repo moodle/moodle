@@ -176,7 +176,6 @@ $string['mysqlextensionisnotpresentinphp'] = 'PHP:tä ei ole kunnolla valittu as
 $string['name'] = 'Nimi';
 $string['next'] = 'Seuraava';
 $string['ok'] = 'OK';
-$string['parentlanguage'] = 'fi_alkup';
 $string['pass'] = 'Tarkastettu';
 $string['password'] = 'Salasana';
 $string['php50restricted'] = 'PHP 5.0.x versiossa on tunnettuja ongelmia, päivitä versioon 5.1.x tai palaa versioihin 4.3.x - 4.4.x';
