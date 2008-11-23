@@ -209,11 +209,11 @@ function quiz_delete_attempt($attempt, $quiz) {
 /**
  * Returns a comma separated list of question ids for the current page
  *
- * @return string         Comma separated list of question ids
- * @param string $layout  The string representing the quiz layout. Each page is represented as a
- *                        comma separated list of question ids and 0 indicating page breaks.
- *                        So 5,2,0,3,0 means questions 5 and 2 on page 1 and question 3 on page 2
- * @param integer $page   The number of the current page.
+ * @param string $layout the string representing the quiz layout. Each page is represented as a
+ *      comma separated list of question ids and 0 indicating page breaks.
+ *      So 5,2,0,3,0 means questions 5 and 2 on page 1 and question 3 on page 2
+ * @param integer $page the number of the current page.
+ * @return string comma separated list of question ids
  */
 function quiz_questions_on_page($layout, $page) {
     $pages = explode(',0', $layout);
@@ -223,51 +223,46 @@ function quiz_questions_on_page($layout, $page) {
 /**
  * Returns a comma separated list of question ids for the quiz
  *
- * @return string         Comma separated list of question ids, without page breaks
- * @param string $layout  The string representing the quiz layout. Each page is represented as a
- *                        comma separated list of question ids and 0 indicating page breaks.
- *                        So 5,2,0,3,0 means questions 5 and 2 on page 1 and question 3 on page 2
+ * @param string $layout The string representing the quiz layout. Each page is
+ *      represented as a comma separated list of question ids and 0 indicating
+ *      page breaks. So 5,2,0,3,0 means questions 5 and 2 on page 1 and question
+ *      3 on page 2
+ * @return string comma separated list of question ids, without page breaks.
  */
 function quiz_questions_in_quiz($layout) {
-    if($layout){
-        $layout=str_replace(',0', '', $layout);
-        //remove also the zero in the beginning, if any
-        if(isset($layout[0]) && $layout[0]=="0" &&
-                isset($layout[1]) && $layout[1]==","){
-            $layout=substr($layout,2);
-        }
-    }
+    $layout = preg_replace('/,(0+,)+/', ',', $layout); // Remove page breaks from the middle.
+    $layout = preg_replace('/^0+,/', '', $layout); // And from the start.
+    $layout = preg_replace('/(^|,)0+$/', '', $layout); // And from the end.
     return $layout;
 }
 
 /**
- * Returns the number of pages in the quiz layout
+ * Returns the number of pages in a quiz layout
  *
- * @return integer         Comma separated list of question ids
- * @param string $layout  The string representing the quiz layout.
+ * @param string $layout The string representing the quiz layout. Always ends in ,0
+ * @return integer The number of pages in the quiz.
  */
 function quiz_number_of_pages($layout) {
-    $count=0;
-    if($layout){
+    $count = 0;
+    if ($layout !== '') {
         //if the first page is empty, include it, too
-        if (strcmp($layout[0],"0")===0){
+        if (strcmp($layout[0], '0') === 0) {
             $count++;
         }
-        $count+=substr_count($layout, ',0');
+        $count += substr_count($layout, ',0');
     }
     return $count;
 }
 /**
  * Returns the number of questions in the quiz layout
  *
- * @return integer         Comma separated list of question ids
- * @param string $layout  The string representing the quiz layout.
+ * @param string $layout the string representing the quiz layout.
+ * @return integer The number of questions in the quiz.
  */
 function quiz_number_of_questions_in_quiz($layout) {
-    //TODO: clean layout before counting
-    $layout=quiz_questions_in_quiz($layout);
-    $count=substr_count($layout, ',');
-    if($count>0){
+    $layout = quiz_questions_in_quiz($layout);
+    $count = substr_count($layout, ',');
+    if ($layout !== '') {
         $count++;
     }
     return $count;
@@ -276,9 +271,9 @@ function quiz_number_of_questions_in_quiz($layout) {
 /**
  * Returns the first question number for the current quiz page
  *
- * @return integer  The number of the first question
  * @param string $quizlayout The string representing the layout for the whole quiz
  * @param string $pagelayout The string representing the layout for the current page
+ * @return integer the number of the first question
  */
 function quiz_first_questionnumber($quizlayout, $pagelayout) {
     // this works by finding all the questions from the quizlayout that
@@ -298,10 +293,10 @@ function quiz_first_questionnumber($quizlayout, $pagelayout) {
 /**
  * Re-paginates the quiz layout
  *
- * @return string         The new layout string
  * @param string $layout  The string representing the quiz layout.
  * @param integer $perpage The number of questions per page
  * @param boolean $shuffle Should the questions be reordered randomly?
+ * @return string the new layout string
  */
 function quiz_repaginate($layout, $perpage, $shuffle=false) {
     $layout = str_replace(',0', '', $layout); // remove existing page breaks
