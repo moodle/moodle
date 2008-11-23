@@ -43,15 +43,19 @@ class simple_rules_test extends MoodleUnitTestCase {
         $quiz = new stdClass;
         $attempt = new stdClass;
 
+        // Test the allowed case by getting the user's IP address. However, this
+        // does not always work, for example using the mac install package on my laptop.
         $quiz->subnet = getremoteaddr();
-        $quiz->questions = '';
-        $quizobj = new quiz($quiz, null, null);
-        $rule = new ipaddress_access_rule($quizobj, 0);
-        $this->assertFalse($rule->prevent_access());
-        $this->assertFalse($rule->description());
-        $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
-        $this->assertFalse($rule->is_finished(0, $attempt));
-        $this->assertFalse($rule->time_left($attempt, 1));
+        if (!empty($quiz->subnet)) {
+            $quiz->questions = '';
+            $quizobj = new quiz($quiz, null, null);
+            $rule = new ipaddress_access_rule($quizobj, 0);
+            $this->assertFalse($rule->prevent_access());
+            $this->assertFalse($rule->description());
+            $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
+            $this->assertFalse($rule->is_finished(0, $attempt));
+            $this->assertFalse($rule->time_left($attempt, 1));
+        }
 
         $quiz->subnet = '0.0.0.0';
         $quiz->questions = '';
