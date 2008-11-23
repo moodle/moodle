@@ -202,7 +202,7 @@ table.formtable tbody th {
  *** Header
  ***/
 
-.breadcrumb .sep, #admin-report-simpletest-index .sep {
+.breadcrumb .sep, #admin-report-unittest-index .sep {
   color:#6666CC;
 }
 
@@ -291,31 +291,31 @@ table.flexible .r1 {
   background-color: #fafafa;
 }
 
-#admin-report-simpletest-index span.notice {
+#admin-report-unittest-index span.notice {
   color: teal;
 }
 
-#admin-report-simpletest-index b.pass {
+#admin-report-unittest-index b.pass {
   color: green;
 }
 
-#admin-report-simpletest-index b.fail, b.exception {
+#admin-report-unittest-index b.fail, b.exception {
   color: red;
 }
 
-#admin-report-simpletest-index .exception, .exception pre {
+#admin-report-unittest-index .exception, .exception pre {
   background-color: #fdd;
 }
 
-#admin-report-simpletest-index .unittestsummary {
+#admin-report-unittest-index .unittestsummary {
   color: white;
 }
 
-#admin-report-simpletest-index .unittestsummary.failed {
+#admin-report-unittest-index .unittestsummary.failed {
   background-color: red;
 }
 
-#admin-report-simpletest-index .unittestsummary.passed {
+#admin-report-unittest-index .unittestsummary.passed {
   background-color: green;
 }
 

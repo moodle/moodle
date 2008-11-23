@@ -47,7 +47,7 @@ function upgrade_db($version, $release) {
 
     $return_url = "$CFG->wwwroot/$CFG->admin/index.php";
     if ($unittest) {
-        $return_url = "$CFG->wwwroot/$CFG->admin/report/simpletest/index.php?continuesetuptesttables=$continuesetuptesttables&amp;upgradetesttables=$upgradetesttables";
+        $return_url = "$CFG->wwwroot/$CFG->admin/report/unittest/index.php?continuesetuptesttables=$continuesetuptesttables&amp;upgradetesttables=$upgradetesttables";
     }
 
     /// set install/upgrade autocontinue session flag
@@ -1419,7 +1419,7 @@ function create_admin_user($user_input=NULL) {
               redirect("$CFG->wwwroot/user/editadvanced.php?id=$user->id");  // Edit thyself
             }
         } else {
-            redirect("$CFG->wwwroot/admin/report/simpletest/index.php?testtablesok=1");
+            redirect("$CFG->wwwroot/admin/report/unittest/index.php?testtablesok=1");
         }
     } else {
         print_error('cannotcreateadminuser', 'debug');
