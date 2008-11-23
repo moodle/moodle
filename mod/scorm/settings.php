@@ -1,7 +1,7 @@
 <?php  //$Id$
 require_once('../mod/scorm/locallib.php');
 
-$settings->add(new admin_setting_configselect('scorm_grademethod', get_string('grademethod', 'scorm'),get_string('grademethoddesc', 'scorm'), GRADESCOES, scorm_get_grade_method_array()));
+$settings->add(new admin_setting_configselect('scorm_grademethod', get_string('grademethod', 'scorm'),get_string('grademethoddesc', 'scorm'), GRADEHIGHEST, scorm_get_grade_method_array()));
 
 for ($i=0; $i<=100; $i++) {
   $grades[$i] = "$i";
