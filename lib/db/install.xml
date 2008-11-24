@@ -180,10 +180,10 @@
 
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="fk_coursemoduleid"/>
-        <KEY NAME="fk_coursemoduleid" TYPE="foreign" FIELDS="coursemoduleid" REFTABLE="course_modules" REFFIELDS="id" PREVIOUS="primary" NEXT="fk_sourcecmid"/>
-        <KEY NAME="fk_sourcecmid" TYPE="foreign" FIELDS="sourcecmid" REFTABLE="course_modules" REFFIELDS="id" PREVIOUS="fk_coursemoduleid" NEXT="fk_gradeitemid"/>
-        <KEY NAME="fk_gradeitemid" TYPE="foreign" FIELDS="gradeitemid" REFTABLE="grade_items" REFFIELDS="id" PREVIOUS="fk_sourcecmid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="coursemoduleid"/>
+        <KEY NAME="coursemoduleid" TYPE="foreign" FIELDS="coursemoduleid" REFTABLE="course_modules" REFFIELDS="id" PREVIOUS="primary" NEXT="sourcecmid"/>
+        <KEY NAME="sourcecmid" TYPE="foreign" FIELDS="sourcecmid" REFTABLE="course_modules" REFFIELDS="id" PREVIOUS="coursemoduleid" NEXT="gradeitemid"/>
+        <KEY NAME="gradeitemid" TYPE="foreign" FIELDS="gradeitemid" REFTABLE="grade_items" REFFIELDS="id" PREVIOUS="sourcecmid"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="course_modules_completion" COMMENT="Stores the completion state (completed or not completed, etc) of each user on each activity." PREVIOUS="course_modules_availability" NEXT="course_sections">
