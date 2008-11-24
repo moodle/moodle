@@ -349,7 +349,7 @@ _client.rename = function(oldname, url, icon, repo_id) {
     if(thumbnail){
         thumbnail.style.display = 'none';
     }
-    var header = document.getElementById('repo-tb-$suffix');
+    var header = document.getElementById('fp-header-$suffix');
     header.style.display = 'none';
     var footer = document.getElementById('fp-footer-$suffix');
     footer.style.display = 'none';
@@ -425,9 +425,10 @@ _client.viewfiles = function() {
 }
 _client.print_header = function() {
     var panel = new YAHOO.util.Element('panel-$suffix');
-    var str = '';
+    var str = '<div id="fp-header-$suffix">';
     str += '<div class="fp-toolbar" id="repo-tb-$suffix"></div>';
     str += _client.makepage('header');
+    str += '</div>';
     panel.set('innerHTML', str);
     _client.makepath();
 }
@@ -499,6 +500,7 @@ _client.viewthumb = function(ds) {
     for(k in list) {
         var el = document.createElement('div');
         var title = document.createElement('div');
+        title.id = 'grid-title-'+String(count);
         el.className='fp-grid';
         if(list[k].thumbnail_width){
             el.style.width = list[k].thumbnail_width+'px';
@@ -520,7 +522,7 @@ _client.viewthumb = function(ds) {
         } else {
             if(list[k].url)
                 title.innerHTML = '<p><a target="_blank" href="'+list[k].url+'">$strpreview</a></p>';
-            title.innerHTML += '<span>'+list[k].title+"</span>";
+            title.innerHTML += '<a href="###"><span>'+list[k].title+"</span></a>";
         }
         title.className = 'label';
         el.appendChild(frame);
@@ -548,16 +550,22 @@ _client.viewthumb = function(ds) {
                 });
             });
         } else {
+            var el_title = new YAHOO.util.Element(title.id);
             var file = new YAHOO.util.Element(link.id);
-            file.title = list[k].title;
-            file.value = list[k].source;
-            file.icon  = list[k].thumbnail;
+            el_title.title = file.title = list[k].title;
+            el_title.value = file.value = list[k].source;
+            el_title.icon = file.icon  = list[k].thumbnail;
             if(list[k].repo_id) {
-                file.repo_id = list[k].repo_id;
+                el_title.repo_id = file.repo_id = list[k].repo_id;
             }else{
-                file.repo_id = _client.repositoryid;
+                el_title.repo_id = file.repo_id = _client.repositoryid;
             }
             file.on('contentReady', function() {
+                this.on('click', function() {
+                    repository_client_$suffix.rename(this.title, this.value, this.icon, this.repo_id);
+                });
+            });
+            el_title.on('contentReady', function() {
                 this.on('click', function() {
                     repository_client_$suffix.rename(this.title, this.value, this.icon, this.repo_id);
                 });
