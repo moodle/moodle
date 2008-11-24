@@ -14,9 +14,10 @@ $string['allowroletooverride'] = 'Allow users with role $a->fromrole to override
 $string['allsiteusers'] = 'All site users';
 $string['assignanotherrole'] = 'Assign another role';
 $string['assignerror'] = 'Error while assigning the role $a->role to user $a->user.';
+$string['assignrolenameincontext'] = 'Assign role \'$a->role\' in $a->context';
 $string['assignroles'] = 'Assign roles';
 $string['assignrolesin'] = 'Assign roles in $a';
-$string['assignrolenameincontext'] = 'Assign role \'$a->role\' in $a->context';
+$string['assignrolesrelativetothisuser'] = 'Assign roles relative to this user';
 $string['assignglobalroles'] = 'Assign system roles';
 $string['assignmentcontext'] = 'Assignment context';
 $string['assignmentoptions'] = 'Assignment options';
@@ -39,6 +40,8 @@ $string['category:visibility'] = 'See hidden categories';
 $string['checkglobalpermissions'] = 'Check system permissions';
 $string['checkpermissions'] = 'Check permissions';
 $string['checkpermissionsin'] = 'Check permissions in $a';
+$string['checksystempermissionsfor'] = 'Check system permissions for $a->fullname';
+$string['checkuserspermissionshere'] = 'Check permissions for $a->fullname has in this $a->contextlevel';
 $string['chooseroletoassign'] = 'Please choose a role to assign';
 $string['context'] = 'Context';
 $string['course:activityvisibility'] = 'Hide/show activities';
@@ -97,6 +100,8 @@ $string['extusers'] = 'Existing users';
 $string['extusersmatching'] = 'Existing users matching \'$a\'';
 $string['globalrole'] = 'System role';
 $string['globalroleswarning'] = 'WARNING! Any roles you assign from this page will apply to the assigned users throughout the entire system, including the front page and all the courses.';
+$string['gotoassignroles'] = 'Go to Assign roles for this $a->contextlevel';
+$string['gotoassignsystemroles'] = 'Go to Assign system roles';
 $string['grade:edit'] = 'Edit grades';
 $string['grade:export'] = 'Export grades';
 $string['grade:hide'] = 'Hide/unhide grades or items';
@@ -136,8 +141,11 @@ $string['my:manageblocks'] = 'Manage myMoodle page blocks';
 $string['nocapabilitiesincontext'] = 'No capabilities available in this context';
 $string['noneinthisx'] = 'None in this $a';
 $string['noneinthisxmatching'] = 'No users matching \'$a->search\' in this $a->contexttype';
+$string['noroleassignments'] = 'This user does not have any role assignments anywhere in this site.';
 $string['notabletoassignroleshere'] = 'You are not able to assign any roles here';
 $string['notabletooverrideroleshere'] = 'You are not able to override the permissions on any roles here';
+$string['notes:manage'] = 'Manage notes';
+$string['notes:view'] = 'View notes';
 $string['notset'] = 'Not set';
 $string['overrideanotherrole'] = 'Override another role';
 $string['overridecontext'] = 'Override context';
@@ -202,6 +210,8 @@ $string['site:import'] = 'Import other courses into a course';
 $string['site:langeditlocal'] = 'Customize local translation';
 $string['site:langeditmaster'] = 'Edit master language packages';
 $string['site:manageblocks'] = 'Manage site-level blocks';
+$string['site:mnetlogintoremote'] = 'Roam to a remote Moodle';
+$string['site:mnetloginfromremote'] = 'Login from a remote Moodle';
 $string['site:readallmessages'] = 'Read all messages on site';
 $string['site:restore'] = 'Restore courses';
 $string['site:sendmessage'] = 'Send messages to any user';
@@ -214,10 +224,13 @@ $string['tag:manage'] = 'Manage all tags';
 $string['tag:create'] = 'Create new tags';
 $string['tag:edit'] = 'Edit existing tags';
 $string['tag:editblocks'] = 'Edit blocks in tags pages';
+$string['thisusersroles'] = 'This user\'s role assignments';
 $string['unassignerror'] = 'Error while unassigning the role $a->role from user $a->user.';
 $string['user:changeownpassword'] = 'Change own password';
 $string['user:create'] = 'Create users';
 $string['user:delete'] = 'Delete users';
+$string['user:editmessageprofile'] = 'Edit user messaging profile';
+$string['user:editownmessageprofile'] = 'Edit own user messaging profile';
 $string['user:editownprofile'] = 'Edit own user profile';
 $string['user:editprofile'] = 'Edit user profile';
 $string['user:loginas'] = 'Login as other users';
@@ -239,35 +252,12 @@ $string['viewrole'] = 'View role details';
 $string['viewingdefinitionofrolex'] = 'Viewing the definition of role \'$a\'';
 $string['whydoesuserhavecap'] = 'Why does $a->fullname have capability $a->capability in context $a->context?';
 $string['whydoesusernothavecap'] = 'Why does $a->fullname not have capability $a->capability in context $a->context?';
+$string['xroleassignments'] = '$a\'s role assignments';
 $string['xuserswiththerole'] = 'Users with the role \"$a->role\"';
-
-// MNETviewingdefinitionofrolex
-$string['site:mnetlogintoremote'] = 'Roam to a remote Moodle';
-$string['site:mnetloginfromremote'] = 'Login from a remote Moodle';
-
-// Notes
-$string['notes:view'] = 'View notes';
-$string['notes:manage'] = 'Manage notes';
 
 //OBSOLETED in 1.9!
 $string['course:viewcoursegrades'] = 'View course grades';
 $string['user:viewusergrades'] = 'View user grades';
 $string['course:managegrades'] = 'Manage grades';
-
-//LUIS: new message system
-$string['user:editmessageprofile'] = 'Edit user messaging profile';
-$string['user:editownmessageprofile'] = 'Edit own user messaging profile';
-
-$string['assignrolesrelativetothisuser'] = 'Assign roles relative to this user';
-$string['gotoassignroles'] = 'Go to the assign roles page';
-$string['incontext'] = '<b>$a->role</b> in $a->context';
-$string['noassignmentsfound'] = '$a has no role assignments';
-$string['rolesreassigned'] = 'Roles re-assigned';
-$string['rolesunassigned'] = 'Roles unassigned';
-$string['thisusersroles'] = 'This user\'s roles';
-$string['unassignasabove'] = 'Delete selected role assignments';
-$string['unassignexplain'] = 'The form above can only be used to unassign roles that were originally assigned manually or via the workflow. You cannot change assignments that were made though CIRCE or via metacourses.';
-$string['undounassign'] = 'Help! put those role assignments back';
-$string['xroleassignments'] = '$a\'s role assignments';
 
 ?>

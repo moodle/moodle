@@ -40,9 +40,11 @@ $userid = required_param('userid', PARAM_INT);
 $courseid = required_param('courseid', PARAM_INT);
 
 // Validate them and get the corresponding objects.
-$user = $DB->get_record('user', array('id' => $userid));
+if (!$user = $DB->get_record('user', array('id' => $userid))) {
+    print_error('invaliduserid');
+}
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('invalidcourse', 'error');
+    print_error('invalidcourse');
 }
 $usercontext = get_context_instance(CONTEXT_USER, $user->id);
 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -55,6 +57,59 @@ $canview = has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverr
         'moodle/role:override', 'moodle/role:manage'), $usercontext);
 if (!$canview) {
     print_error('nopermissions', 'error', '', get_string('checkpermissions', 'role'));
+}
+
+/// Now get the role assignments for this user.
+$sql = "SELECT
+        ra.id, ra.userid, ra.contextid, ra.roleid, ra.enrol,
+        c.path,
+        r.name AS rolename,
+        COALESCE(rn.name, r.name) AS localname
+    FROM
+        {role_assignments} ra
+        JOIN {context} c ON ra.contextid = c.id
+        JOIN {role} r ON ra.roleid = r.id
+        LEFT JOIN {role_names} rn ON rn.roleid = ra.roleid AND rn.contextid = ra.contextid
+    WHERE
+        ra.userid = ?
+    AND ra.active = 1
+    ORDER BY
+        contextlevel DESC, contextid ASC, r.sortorder ASC";
+$roleassignments = $DB->get_records_sql($sql, array($user->id));
+
+/// In order to display a nice tree of contexts, we need to get all the
+/// ancestors of all the contexts in the query we just did.
+$requiredcontexts = array();
+foreach ($roleassignments as $ra) {
+    $requiredcontexts = array_merge($requiredcontexts, explode('/', trim($ra->path, '/')));
+}
+$requiredcontexts = array_unique($requiredcontexts);
+
+/// Now load those contexts.
+if ($requiredcontexts) {
+    list($sqlcontexttest, $contextparams) = $DB->get_in_or_equal($requiredcontexts);
+    $contexts = $DB->get_records_select('context', 'id ' . $sqlcontexttest, $contextparams);
+} else {
+    $contexts = array();
+}
+
+/// Prepare some empty arrays to hold the data we are about to compute.
+foreach ($contexts as $conid => $con) {
+    $contexts[$conid]->children = array();
+    $contexts[$conid]->roleassignments = array();
+}
+
+/// Put the contexts into a tree structure.
+foreach ($contexts as $conid => $con) {
+    $parentcontextid = get_parent_contextid($con);
+    if ($parentcontextid) {
+        $contexts[$parentcontextid]->children[] = $conid;
+    }
+}
+
+/// Put the role capabilites into the context tree.
+foreach ($roleassignments as $ra) {
+    $contexts[$ra->contextid]->roleassignments[$ra->roleid] = $ra;
 }
 
 /// These are needed to determine which tabs tabs.php should show.
@@ -90,125 +145,84 @@ $showroles = 1;
 $currenttab = 'usersroles';
 include_once($CFG->dirroot.'/user/tabs.php');
 print_heading($title, '', 3);
-echo 'Sorry, not complete yet, but I want to get this checked in before I go home.';
-print_footer($course);
-die; // TODO
-// Standard moodleform if statement.
-if ($mform->is_cancelled()) {
+print_box_start('generalbox boxaligncenter boxwidthnormal');
 
-    // Don't think this will ever happen, but do nothing.
-
-} else if ($fromform = $mform->get_data()){
-
-    if (!(isset($fromform->username) && $user = $DB->get_record('user', array('username'=>$fromform->username)))) {
-        
-        // We got data, but the username was invalid.
-        if (!isset($fromform->username)) {
-            $message = get_string('unknownuser', 'report_userroles');
-        } else {
-            $message = get_string('unknownusername', 'report_userroles', $fromform->username);
-        }
-        print_heading($message, '', 3);
-        
-    } else {
-        // We have a valid username, do stuff.
-        $fullname = $fromform->username . ' (' . fullname($user) . ')';
-
-        // Do any role unassignments that were requested.
-        if ($tounassign = optional_param('unassign', array(), PARAM_SEQUENCE)) {
-            echo '<form method="post" action="', $CFG->wwwroot, '/admin/report/userroles/index.php">', "\n";
-            foreach ($tounassign as $assignment) {
-                list($contextid, $roleid) = explode(',', $assignment);
-                role_unassign($roleid, $user->id, 0, $contextid);
-                echo '<input type="hidden" name="assign[]" value="', $assignment, '" />', "\n";
-            }
-            notify(get_string('rolesunassigned', 'report_userroles'), 'notifysuccess');
-            form_fields_to_fool_mform($user->username, $mform);
-            echo '<input type="submit" value="', get_string('undounassign', 'report_userroles'), '" />', "\n";
-            echo '</form>', "\n";
-            
-        // Do any role re-assignments that were requested.
-        } else if ($toassign = optional_param('assign', array(), PARAM_SEQUENCE)) {
-            foreach ($toassign as $assignment) {
-                list($contextid, $roleid) = explode(',', $assignment);
-                role_assign($roleid, $user->id, 0, $contextid);
-            }
-            notify(get_string('rolesreassigned', 'report_userroles'), 'notifysuccess');
-        }
-
-        // Now get the role assignments for this user.
-        $sql = "SELECT
-                ra.id, ra.userid, ra.contextid, ra.roleid, ra.enrol,
-                c.contextlevel, c.instanceid,
-                r.name AS role
-            FROM
-                {role_assignments} ra,
-                {context} c,
-                {role} r
-            WHERE
-                ra.userid = :userid
-            AND ra.contextid = c.id
-            AND ra.roleid = r.id
-            AND ra.active = 1
-            ORDER BY
-                contextlevel DESC, contextid ASC, r.sortorder ASC";
-        $results = $DB->get_records_sql($sql,array('userid'=>$user->id));
-
-        // Display them.
-        if ($results) {
-            print_heading(get_string('allassignments', 'report_userroles', $fullname), '', 3);
-
-            // Start of unassign form.
-            echo "\n\n";
-            echo '<form method="post" action="', $CFG->wwwroot, '/admin/report/userroles/index.php">', "\n";
-
-            // Print all the role assingments for this user.
-            $stredit = get_string('edit');
-            $strgoto = get_string('gotoassignroles', 'report_userroles');
-            foreach ($results as $result) {
-                $result->context = print_context_name($result, true, 'ou');
-                $value = $result->contextid . ',' . $result->roleid;
-                $inputid = 'unassign' . $value;
-                
-                $unassignable = in_array($result->enrol,
-                        array('manual', 'workflowengine', 'fridayeditingcron', 'oucourserole', 'staffrequest'));
-                
-                echo '<p>';
-                if ($unassignable) {
-                    echo '<input type="checkbox" name="unassign[]" value="', $value, '" id="', $inputid, '" />', "\n";
-                    echo '<label for="', $inputid, '">';
-                }
-                echo get_string('incontext', 'report_userroles', $result);
-                if ($unassignable) {
-                    echo '</label>';
-                }
-                echo ' <a title="', $strgoto, '" href="', $CFG->wwwroot, '/admin/roles/assign.php?contextid=',
-                        $result->contextid, '&amp;roleid=', $result->roleid, '"><img ', 
-                        'src="', $CFG->pixpath, '/t/edit.gif" alt="[', $stredit, ']" /></a>';
-                echo "</p>\n";
-            }
-            
-            echo "\n\n";
-            form_fields_to_fool_mform($user->username, $mform);
-            echo '<input type="submit" value="', get_string('unassignasabove', 'report_userroles'), '" />', "\n";
-            echo '</form>', "\n";
-            echo '<p>', get_string('unassignexplain', 'report_userroles'), "</p>\n\n";
-
-        } else {
-            print_heading(get_string('noassignmentsfound', 'report_userroles', $fullname), '', 3);
-        }
-    }
+// Display them.
+if (!$roleassignments) {
+    echo '<p>', get_string('noroleassignments', 'role'), '</p>';
+} else {
+    print_report_tree($systemcontext->id, $contexts, $systemcontext, $fullname);
 }
 
-// Always show the form, so that the user can run another report.
-echo "\n<br />\n<br />\n";
-$mform->display();
+/// End of page.
+print_box_end();
+print_footer($course);
 
-admin_externalpage_print_footer();
+function print_report_tree($contextid, $contexts, $systemcontext, $fullname) {
+    global $CFG;
 
-function form_fields_to_fool_mform($username, $mform) {
-    echo '<input type="hidden" name="username" value="', $username, '" />', "\n";
-    echo '<input type="hidden" name="sesskey" value="', sesskey(), '" />', "\n";
-    echo '<input type="hidden" name="_qf__', $mform->get_name(), '" value="1" />', "\n";
+    // Only compute lang strings, etc once.
+    static $stredit = null, $strcheckpermissions, $globalroleassigner, $assignurl, $checkurl;
+    if (is_null($stredit)) {
+        $stredit = get_string('edit');
+        $strcheckpermissions = get_string('checkpermissions', 'role');
+        $globalroleassigner = has_capability('moodle/role:assign', $systemcontext);
+        $assignurl = $CFG->wwwroot . '/' . $CFG->admin . '/roles/assign.php';
+        $checkurl = $CFG->wwwroot . '/' . $CFG->admin . '/roles/check.php';
+    }
+
+    // Pull the current context into an array for convinience.
+    $context = $contexts[$contextid];
+
+    // Print the context name.
+    print_heading(print_context_name($contexts[$contextid]), '', 4, 'contextname');
+
+    // If there are any role assignments here, print them.
+    foreach ($context->roleassignments as $ra) {
+        $value = $ra->contextid . ',' . $ra->roleid;
+        $inputid = 'unassign' . $value;
+
+        echo '<p>';
+        if ($ra->rolename == $ra->localname) {
+            echo strip_tags(format_string($ra->localname));
+        } else {
+            echo strip_tags(format_string($ra->localname . ' (' . $ra->rolename . ')'));
+        }
+        if (has_capability('moodle/role:assign', $context)) {
+            $raurl = $assignurl . '?contextid=' . $ra->contextid . '&amp;roleid=' .
+                    $ra->roleid . '&amp;removeselect[]=' . $ra->userid;
+            $churl = $checkurl . '?contextid=' . $ra->contextid . '&reportuser=' . $ra->userid;
+            if ($context->contextlevel == CONTEXT_USER) {
+                $raurl .= '&amp;userid=' . $context->instanceid;
+                $churl .= '&amp;userid=' . $context->instanceid;
+            }
+            $a = new stdClass;
+            $a->fullname = $fullname;
+            $a->contextlevel = get_contextlevel_name($context->contextlevel);
+            if ($context->contextlevel == CONTEXT_SYSTEM) {
+                $strgoto = get_string('gotoassignsystemroles', 'role');
+                $strcheck = get_string('checksystempermissionsfor', 'role', $a);
+            } else {
+                $strgoto = get_string('gotoassignroles', 'role', $a);
+                $strcheck = get_string('checkuserspermissionshere', 'role', $a);
+            }
+            echo ' <a title="' . $strgoto . '" href="' . $raurl . '"><img class="iconsmall" src="' .
+                    $CFG->pixpath . '/t/edit.gif" alt="' . $stredit . '" /></a> ';
+            echo ' <a title="' . $strcheck . '" href="' . $churl . '"><img class="iconsmall" src="' .
+                    $CFG->pixpath . '/t/preview.gif" alt="' . $strcheckpermissions . '" /></a> ';
+            echo "</p>\n";
+        }
+    }
+
+    // If there are any child contexts, print them recursively.
+    if (!empty($contexts[$contextid]->children)) {
+        echo '<ul>';
+        foreach ($contexts[$contextid]->children as $childcontextid) {
+            echo '<li>';
+            print_report_tree($childcontextid, $contexts, $systemcontext, $fullname);
+            echo '</li>';
+        }
+        echo '</ul>';
+    }
 }
 ?>
