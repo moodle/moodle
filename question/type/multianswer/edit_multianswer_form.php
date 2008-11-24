@@ -66,6 +66,9 @@ class question_edit_multianswer_form extends question_edit_form {
             $mform->addElement('static', 'sub_'.$sub."_".'defaultgrade', get_string('defaultgrade', 'quiz'));
             $mform->setDefault('sub_'.$sub."_".'defaultgrade',$this->questiondisplay->options->questions[$sub]->defaultgrade);
 
+                if ($this->questiondisplay->options->questions[$sub]->qtype =='shortanswer'   ) {
+                    $mform->addElement('static', 'sub_'.$sub."_".'usecase', get_string('casesensitive', 'quiz'));
+                }
                 if ($this->questiondisplay->options->questions[$sub]->qtype =='multichoice'   ) {
                     $mform->addElement('static', 'sub_'.$sub."_".'layout', get_string('layout', 'qtype_multianswer'),array('cols'=>60, 'rows'=>1)) ;//, $gradeoptions);
                 }
@@ -150,6 +153,16 @@ class question_edit_multianswer_form extends question_edit_form {
                     $answercount = 0;
                     $maxgrade = false;
                     $maxfraction = -1;
+                    if ($subquestion->qtype =='shortanswer'   ) {
+                        switch ($subquestion->usecase) {
+                            case '1':
+                                $default_values[$prefix.'usecase']= get_string('caseyes', 'quiz');
+                                break;                                   
+                            case '0':
+                            default :
+                                $default_values[$prefix.'usecase']= get_string('caseno', 'quiz');                               
+                        }
+                    }
                     if ($subquestion->qtype == 'multichoice' ) {
                         $default_values[$prefix.'layout']  = $subquestion->layout ;
                         switch ($subquestion->layout) {

@@ -269,8 +269,8 @@ class embedded_cloze_qtype extends default_questiontype {
 
         while (ereg('\{#([^[:space:]}]*)}', $qtextremaining, $regs)) {
             $qtextsplits = explode($regs[0], $qtextremaining, 2);
-            echo "<label>"; // MDL-7497
             echo $qtextsplits[0];
+            echo "<label>"; // MDL-7497
             $qtextremaining = $qtextsplits[1];
 
             $positionkey = $regs[1];
@@ -887,7 +887,7 @@ define("NUMERICAL_ABS_ERROR_MARGIN", 6);
 
 // Remaining ANSWER regexes
 define("ANSWER_TYPE_DEF_REGEX",
-       '(NUMERICAL|NM)|(MULTICHOICE|MC)|(MULTICHOICE_V|MCV)|(MULTICHOICE_H|MCH)|(SHORTANSWER|SA|MW)');
+       '(NUMERICAL|NM)|(MULTICHOICE|MC)|(MULTICHOICE_V|MCV)|(MULTICHOICE_H|MCH)|(SHORTANSWER|SA|MW)|(SHORTANSWER_C|SAC|MWC)');
 define("ANSWER_START_REGEX",
        '\{([0-9]*):(' . ANSWER_TYPE_DEF_REGEX . '):');
 
@@ -905,7 +905,8 @@ define("ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE", 4);
 define("ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE_REGULAR", 5);
 define("ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE_HORIZONTAL", 6);
 define("ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER", 7);
-define("ANSWER_REGEX_ALTERNATIVES", 8);
+define("ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER_C", 8);
+define("ANSWER_REGEX_ALTERNATIVES", 9);
 
 function qtype_multianswer_extract_question($text) {
     $question = new stdClass;
@@ -927,6 +928,9 @@ function qtype_multianswer_extract_question($text) {
         } else if(!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER])) {
             $wrapped->qtype = 'shortanswer';
             $wrapped->usecase = 0;
+        } else if(!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER_C])) {
+            $wrapped->qtype = 'shortanswer';
+            $wrapped->usecase = 1;
         } else if(!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE])) {
             $wrapped->qtype = 'multichoice';
             $wrapped->single = 1;
