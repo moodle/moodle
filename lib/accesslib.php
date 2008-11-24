@@ -3368,7 +3368,7 @@ function print_context_name($context, $withprefix = true, $short = false) {
                     if ($withprefix){
                         $name = get_string('course').': ';
                     }
-                    if (!$short){
+                    if ($short){
                         $name .= format_string($course->shortname);
                     } else {
                         $name .= format_string($course->fullname);
