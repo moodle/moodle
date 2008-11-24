@@ -173,7 +173,7 @@ class repository_flickr_public extends repository {
             $photos = $this->flickr->photos_search(array(
                 'tags'=>$SESSION->{$this->sess_tag},
                 'page'=>$page,
-                'per_page'=>25,
+                'per_page'=>24,
                 'user_id'=>$this->nsid,
                 'text'=>$SESSION->{$this->sess_text}));
         }
@@ -189,7 +189,7 @@ class repository_flickr_public extends repository {
     public function get_listing($path = '1') {
         $people = $this->flickr->people_findByEmail($this->flickr_account);
         $this->nsid = $people['nsid'];
-        $photos = $this->flickr->people_getPublicPhotos($people['nsid'], 'original_format', 25, $path);
+        $photos = $this->flickr->people_getPublicPhotos($people['nsid'], 'original_format', 24, $path);
         $ret = array();
 
         return $this->build_list($photos, $path, $ret);
