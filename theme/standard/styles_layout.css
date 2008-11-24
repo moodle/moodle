@@ -1199,7 +1199,7 @@ table.explainpermissions .row2 th.header {
 }
 table.explainpermissions .cell.inherit,
 table.explainpermissions .cell.noroles {
-  color: grey;
+  color: gray;
 }
 table.explainpermissions th.assignment {
   text-align: left;
@@ -1212,7 +1212,6 @@ table.explainpermissions .cell {
   padding: 0.2em 0.5em;
   text-align: center;
 }
-
 #admin-lang .generalbox {
   text-align:center;
   margin:auto;
