@@ -124,7 +124,6 @@ if ($capability) {
 
     // Put the contexts into a tree structure.
     foreach ($contexts as $conid => $con) {
-        $contexts[$conid]->children = array();
         $parentcontextid = get_parent_contextid($con);
         if ($parentcontextid) {
             $contexts[$parentcontextid]->children[] = $conid;
