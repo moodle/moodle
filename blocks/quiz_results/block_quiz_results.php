@@ -89,7 +89,7 @@ class block_quiz_results extends block_base {
         // If the block is configured to operate in group mode, or if the name display format
         // is other than "fullname", then we need to retrieve the full course record
         if (!empty($this->config->usegroups) || $nameformat != B_QUIZRESULTS_NAME_FORMAT_FULL) {
-            $course = $DB->get_record('course', array('id'=>$courseid), 'groupmode, groupmodeforce, student');
+            $course = $DB->get_record('course', array('id'=>$courseid), 'groupmode, groupmodeforce');
         }
 
         if(!empty($this->config->usegroups)) {
