@@ -121,7 +121,7 @@ var repository_client_$suffix = (function() {
 // private static field
 var dver = '1.0';
 // private static methods
-function alert_version() {
+function version() {
     alert(dver);
 }
 function _client() {
@@ -150,7 +150,7 @@ var filepicker = new YAHOO.widget.Panel('file-picker-$suffix', {
     filepicker.beforeRenderEvent.subscribe(function() {
         Event.onAvailable('layout-$suffix', function() {
             layout = new YAHOO.widget.Layout('layout-$suffix', {
-                height: 480, width: 680,
+                height: 480, width: 700,
                 units: [
                 {position: 'top', height: 32, resize: false,
                 body:'<div class="yui-buttongroup fp-viewbar" id="repo-viewbar-$suffix"></div><div class="fp-searchbar" id="search-div-$suffix"></div>', gutter: '2'},
@@ -171,8 +171,8 @@ var filepicker = new YAHOO.widget.Panel('file-picker-$suffix', {
         minHeight: 400
     });
     if(YAHOO.env.ua.ie == 6){
-        var title_el = document.getElementById('file-picker-$suffix');
-        title_el.style.width = '680px';
+        var fp_title = document.getElementById('file-picker-$suffix');
+        fp_title.style.width = '680px';
     }
     resize.on('resize', function(args) {
         var panelHeight = args.height;
@@ -181,8 +181,8 @@ var filepicker = new YAHOO.widget.Panel('file-picker-$suffix', {
         var bodyContentHeight = (IE_QUIRKS) ? bodyHeight : bodyHeight - PANEL_BODY_PADDING;
         Dom.setStyle(this.body, 'height', bodyContentHeight + 'px');
         if(YAHOO.env.ua.ie == 6){
-            var title_el = document.getElementById('file-picker-$suffix');
-            title_el.style.width = args.width;
+            var fp_title = document.getElementById('file-picker-$suffix');
+            fp_title.style.width = args.width;
         }
         if (IE_SYNC) {
             this.sizeUnderlay();
@@ -216,9 +216,9 @@ this.create_picker = function() {
     repo_list.on('contentReady', function(e) {
         var searchbar = new YAHOO.util.Element('search-div-$suffix');
         searchbar.get('element').innerHTML = '<input id="search-input-$suffix" /><button id="search-btn-$suffix">$strsearch</button>';
-        var searchbtn = new YAHOO.util.Element('search-btn-$suffix');
-        var input_ctl = new YAHOO.util.Element('search-input-$suffix');
-        searchbtn.fnSearch = function(e) {
+        var btn_search = new YAHOO.util.Element('search-btn-$suffix');
+        var input_keyword = new YAHOO.util.Element('search-input-$suffix');
+        btn_search.fnSearch = function(e) {
             var el = new YAHOO.util.Element('search-input-$suffix')
             var keyword = el.get('value');
             var params = [];
@@ -229,9 +229,9 @@ this.create_picker = function() {
             params['ctx_id']=$context->id;
             _client.loading('load');
             var trans = YAHOO.util.Connect.asyncRequest('POST',
-                '$CFG->httpswwwroot/repository/ws.php?action=gsearch', this.callback, _client.postdata(params));
+                '$CFG->httpswwwroot/repository/ws.php?action=gsearch', this.global_search_cb, _client.postdata(params));
         }
-        searchbtn.callback={
+        btn_search.global_search_cb={
             success: function(o) {
                 var panel = new YAHOO.util.Element('panel-$suffix');
                 if(!o.responseText) {
@@ -239,34 +239,32 @@ this.create_picker = function() {
                     return;
                 }
                 try {
-                    var json = YAHOO.lang.JSON.parse(o.responseText);
+                    var data = YAHOO.lang.JSON.parse(o.responseText);
                 } catch(e) {
-                    alert('$strinvalidjson - |search_cb| -'+_client.stripHTML(o.responseText));
+                    alert('$strinvalidjson - |global_search_cb| -'+_client.stripHTML(o.responseText));
                     return;
                 }
                 _client.ds={};
-                if(!json.list || json.list.length<1){
+                if(!data.list || data.list.length<1){
                     panel.get('element').innerHTML = '$strnoresult';
                     return;
                 }
-                _client.ds.list = json.list;
-                if(_client.ds.list) {
-                    if(_client.viewmode) {
-                        _client.viewlist();
-                    } else {
-                        _client.viewthumb();
-                    }
-                    var input_ctl = new YAHOO.util.Element('search-input-$suffix');
-                    input_ctl.get('element').value='';
+                _client.ds.list = data.list;
+                if(_client.viewmode) {
+                    _client.viewlist();
+                } else {
+                    _client.viewthumb();
                 }
+                var el = new YAHOO.util.Element('search-input-$suffix')
+                el.set('value', '');
             }
         }
-        searchbtn.on('contentReady', function() {
-            searchbtn.on('click', this.fnSearch, this.input_ctl);
+        btn_search.on('contentReady', function() {
+            btn_search.on('click', this.fnSearch, this.input_keyword);
         });
-        input_ctl.on('contentReady', function() {
+        input_keyword.on('contentReady', function() {
             var scope = document.getElementById('search-input-$suffix');
-            var k1 = new YAHOO.util.KeyListener(scope, {keys:13}, {fn:function(){this.fnSearch()},scope:searchbtn, correctScope: true});
+            var k1 = new YAHOO.util.KeyListener(scope, {keys:13}, {fn:function(){this.fnSearch()},scope:btn_search, correctScope: true});
             k1.enable();
         });
         for(var i in _client.repos) {
@@ -302,13 +300,14 @@ _client.repositoryid = 0;
 // _client.ds save all data received from server side
 _client.ds = null;
 _client.viewmode = 0;
-_client.viewbar =null;
+_client.viewbar = null;
 
 _client.stripHTML = function(str){
     var re= /<\S[^><]*>/g
     var ret = str.replace(re, "")
     return ret;
 }
+
 // public static mehtod
 _client.postdata = function(obj) {
     var str = '';
@@ -436,9 +435,10 @@ _client.print_footer = function() {
     var panel = document.getElementById('panel-$suffix');
     var footer = document.createElement('DIV');
     footer.id = 'fp-footer-$suffix';
-    panel.appendChild(footer);
     footer.innerHTML += _client.uploadcontrol();
     footer.innerHTML += _client.makepage('footer');
+    panel.appendChild(footer);
+    // add repository manage buttons here
     var oDiv = document.getElementById('repo-tb-$suffix');
     if(!_client.ds.nosearch) {
         var search = document.createElement('A');
@@ -483,13 +483,12 @@ _client.print_footer = function() {
 }
 _client.viewthumb = function(ds) {
     _client.viewmode = 0;
+    _client.viewbar.check(0);
     var container = document.getElementById('panel-$suffix');
     var panel = document.createElement('DIV');
     panel.id = 'fp-grid-panel-$suffix';
-    _client.viewbar.check(0);
     var list = null;
-    var args = arguments.length;
-    if(args == 1) {
+    if(arguments.length == 1) {
         list = ds;
     } else {
         // from button
@@ -498,10 +497,20 @@ _client.viewthumb = function(ds) {
     _client.print_header();
     var count = 0;
     for(k in list) {
+        // the container
         var el = document.createElement('div');
+        el.className='fp-grid';
+        // the file name
         var title = document.createElement('div');
         title.id = 'grid-title-'+String(count);
-        el.className='fp-grid';
+        title.className = 'label';
+        if(list[k].children) {
+            title.innerHTML = '<i><u>'+list[k].title+'</i></u>';
+        } else {
+            if(list[k].url)
+                title.innerHTML = '<p><a target="_blank" href="'+list[k].url+'">$strpreview</a></p>';
+            title.innerHTML += '<a href="###"><span>'+list[k].title+"</span></a>";
+        }
         if(list[k].thumbnail_width){
             el.style.width = list[k].thumbnail_width+'px';
             title.style.width = (list[k].thumbnail_width-20)+'px';
@@ -517,14 +526,6 @@ _client.viewthumb = function(ds) {
         link.id = 'img-id-'+String(count);
         link.appendChild(img);
         frame.appendChild(link);
-        if(list[k].children) {
-            title.innerHTML = '<i><u>'+list[k].title+'</i></u>';
-        } else {
-            if(list[k].url)
-                title.innerHTML = '<p><a target="_blank" href="'+list[k].url+'">$strpreview</a></p>';
-            title.innerHTML += '<a href="###"><span>'+list[k].title+"</span></a>";
-        }
-        title.className = 'label';
         el.appendChild(frame);
         el.appendChild(title);
         panel.appendChild(el);
@@ -861,8 +862,8 @@ _client.req = function(id, path, logout) {
 }
 _client.search_form_cb = {
 success: function(o) {
-     var _r = repository_client_$suffix;
      var el = document.getElementById('fp-search-dlg');
+     var _r = repository_client_$suffix;
      if(el) {
          el.innerHTML = '';
      } else {
@@ -918,22 +919,22 @@ _client.req_cb = {
 success: function(o) {
      var panel = new YAHOO.util.Element('panel-$suffix');
      try {
-         var ret = YAHOO.lang.JSON.parse(o.responseText);
+         var data = YAHOO.lang.JSON.parse(o.responseText);
      } catch(e) {
          alert('$strinvalidjson - |req_cb| -'+_client.stripHTML(o.responseText));
      };
-     if(ret && ret.e) {
-         panel.get('element').innerHTML = ret.e;
+     if(data && data.e) {
+         panel.get('element').innerHTML = data.e;
          return;
      }
-     _client.ds = ret;
-     if(!_client.ds) {
+     _client.ds = data;
+     if(!data) {
          return;
-     }else if(_client.ds.iframe) {
+     }else if(data.iframe) {
          _client.viewiframe();
-     }else if(_client.ds && _client.ds.login) {
+     }else if(data.login) {
          _client.print_login();
-     } else if(_client.ds.list) {
+     }else if(data.list) {
          if(_client.viewmode) {
              _client.viewlist();
          } else {
@@ -946,16 +947,16 @@ _client.download_cb = {
 success: function(o) {
      var panel = new YAHOO.util.Element('panel-$suffix');
      try {
-         var ret = YAHOO.lang.JSON.parse(o.responseText);
+         var data = YAHOO.lang.JSON.parse(o.responseText);
      } catch(e) {
          alert('$strinvalidjson - |download_cb| -'+_client.stripHTML(o.responseText));
      }
-     if(ret && ret.e) {
-         panel.get('element').innerHTML = ret.e;
+     if(data && data.e) {
+         panel.get('element').innerHTML = data.e;
          return;
      }
-     if(ret) {
-         repository_client_$suffix.end(ret);
+     if(data) {
+         repository_client_$suffix.end(data);
      }
 }
 }
