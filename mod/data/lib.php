@@ -2113,8 +2113,8 @@ function check_required_entries_fields($result) {
     global $CFG;
     if (!empty($CFG->version)                                             //we are not installing a new Moodle site
         && $CFG->version < 2007101532                              //the version is anterior to the one when the fix has been applied
-        && !get_config("","data/requiredentriesfixflag")) {      //do not show message when upgrading an anterior version when the patch has already been applied
-        set_config("data/requiredentriesfixflag",true); //set a flag into database in order to let know a Moodle 2.0 upgrade that the message has already been displayed
+        && !get_config("data","requiredentriesfixflag")) {      //do not show message when upgrading an anterior version when the patch has already been applied
+        set_config("requiredentriesfixflag",true, 'data'); //set a flag into database in order to let know a Moodle 2.0 upgrade that the message has already been displayed
         $databases = get_records_sql("SELECT d.*, c.fullname
                                     FROM {$CFG->prefix}data d,
                                          {$CFG->prefix}course c
