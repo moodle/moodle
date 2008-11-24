@@ -41,32 +41,32 @@ function mediaplugin_filter($courseid, $text) {
     }
 
     if ($CFG->filter_mediaplugin_enable_swf) {
-        $search = '/<a.*?href="([^<]+\.swf)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
+        $search = '/<a.*?href="([^<]+\.swf)(\?d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>.*?<\/a>/is';
         $newtext = preg_replace_callback($search, 'mediaplugin_filter_swf_callback', $newtext);
     }
 
     if ($CFG->filter_mediaplugin_enable_flv) {
-        $search = '/<a.*?href="([^<]+\.flv)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
+        $search = '/<a.*?href="([^<]+\.flv)(\?d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>.*?<\/a>/is';
         $newtext = preg_replace_callback($search, 'mediaplugin_filter_flv_callback', $newtext);
     }
 
     if ($CFG->filter_mediaplugin_enable_mov) {
-        $search = '/<a.*?href="([^<]+\.mov)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
+        $search = '/<a.*?href="([^<]+\.mov)(\?d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>.*?<\/a>/is';
         $newtext = preg_replace_callback($search, 'mediaplugin_filter_qt_callback', $newtext);
     }
 
     if ($CFG->filter_mediaplugin_enable_wmv) {
-        $search = '/<a.*?href="([^<]+\.wmv)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
+        $search = '/<a.*?href="([^<]+\.wmv)(\?d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>.*?<\/a>/is';
         $newtext = preg_replace_callback($search, 'mediaplugin_filter_wmp_callback', $newtext);
     }
 
     if ($CFG->filter_mediaplugin_enable_mpg) {
-        $search = '/<a.*?href="([^<]+\.mpe?g)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
+        $search = '/<a.*?href="([^<]+\.mpe?g)(\?d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>.*?<\/a>/is';
         $newtext = preg_replace_callback($search, 'mediaplugin_filter_qt_callback', $newtext);
     }
 
     if ($CFG->filter_mediaplugin_enable_avi) {
-        $search = '/<a.*?href="([^<]+\.avi)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
+        $search = '/<a.*?href="([^<]+\.avi)(\?d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>.*?<\/a>/is';
         $newtext = preg_replace_callback($search, 'mediaplugin_filter_wmp_callback', $newtext);
     }
 
