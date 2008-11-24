@@ -904,6 +904,10 @@ class override_permissions_table_basic extends override_permissions_table_advanc
         $this->stradvmessage = get_string('useshowadvancedtochange', 'role');
     }
 
+    protected function skip_row($capability) {
+        return is_legacy($capability->name) || $capability->locked;
+    }
+
     protected function add_permission_cells($capability) {
         if ($this->permissions[$capability->name] == CAP_PROHIBIT) {
             $permname = $this->allpermissions[CAP_PROHIBIT];
