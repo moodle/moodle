@@ -1006,8 +1006,8 @@ class potential_assignees_below_course extends role_assign_user_selector_base {
         }
         $roleids =  '('.implode(',', $validroleids).')';
 
-        $fields      = 'SELECT ' . $this->required_fields_sql('u');
-        $countfields = 'SELECT COUNT(1)';
+        $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('u');
+        $countfields = 'SELECT COUNT(DISTINCT u.id)';
 
         $sql   = " FROM {user} u
                    JOIN {role_assignments} ra ON ra.userid = u.id
