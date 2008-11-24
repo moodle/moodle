@@ -156,10 +156,12 @@ class mysqli_native_moodle_database extends moodle_database {
         if ($result) {
             while ($arr = $result->fetch_assoc()) {
                 $tablename = reset($arr);
-                if (strpos($tablename, $this->prefix) !== 0) {
-                    continue;
+                if ($this->prefix !== '') {
+                    if (strpos($tablename, $this->prefix) !== 0) {
+                        continue;
+                    }
+                    $tablename = substr($tablename, strlen($this->prefix));
                 }
-                $tablename = substr($tablename, strlen($this->prefix));
                 $tables[$tablename] = $tablename;
             }
             $result->close();
@@ -172,7 +174,6 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return array of arrays
      */
     public function get_indexes($table) {
-        $preflen = strlen($this->prefix);
         $indexes = array();
         $sql = "SHOW INDEXES FROM {$this->prefix}$table";
         $this->query_start($sql, null, SQL_QUERY_AUX);
