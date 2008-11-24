@@ -674,7 +674,7 @@ class pgsql_native_moodle_database extends moodle_database {
                     unset($params['id']);
                 } else {
                     //ugly workaround for pg < 8.2
-                    $seqsql = "SELECT NEXTVAL({$this->prefix}{$table}_id_seq) AS id";
+                    $seqsql = "SELECT NEXTVAL('{$this->prefix}{$table}_id_seq') AS id";
                     $this->query_start($seqsql, NULL, SQL_QUERY_AUX);
                     $result = pg_query($this->pgsql, $seqsql);
                     $this->query_end($result);
