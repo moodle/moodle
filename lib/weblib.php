@@ -2134,6 +2134,7 @@ function replace_smilies(&$text) {
         $img[$lang] = array();
         foreach ($emoticons as $emoticon => $image){
             $alttext = get_string($image, 'pix');
+            $alttext = preg_replace('/^\[\[(.*)\]\]$/', '$1', $alttext); /// Clean alttext in case there isn't lang string for it.
             $e[$lang][] = $emoticon;
             $img[$lang][] = '<img alt="'. $alttext .'" width="15" height="15" src="'. $CFG->pixpath .'/s/'. $image .'.gif" />';
         }
