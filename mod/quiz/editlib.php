@@ -786,7 +786,8 @@ function quiz_print_singlequestion(&$question, &$questionurl, &$quiz){
  * @param boolean $quiz_qbanktool Indicate to this function if the question bank window open 
  */
 function quiz_print_randomquestion(&$question, &$pageurl, &$quiz,$quiz_qbanktool){
-    global $DB;
+    global $DB, $THEME;
+    check_theme_arrows();
     echo '<div class="quiz_randomquestion">';
 
     //TODO: Tim? I left this out from the below get_record call:, , 'contextid' => $contextid
@@ -828,8 +829,10 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz,$quiz_qbanktool
                 "cat"=>$category->id.','.$category->contextid)).
                  '">';
         }
-        echo get_string("addnewquestionsqbank","quiz",
-                "<strong>$category->name</strong>");
+        $a = new stdClass;
+        $a->catname = '<strong>' . $category->name . '</strong>';
+        $a->arrow = $THEME->rarrow;
+        echo get_string('addnewquestionsqbank','quiz', $a);
         if(!$quiz_qbanktool){
             echo '</a>';
         }

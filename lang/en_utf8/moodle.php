@@ -285,7 +285,7 @@ $string['coursehelpcategory'] = 'Position the course on the course listing and m
 $string['coursehelpformat'] = 'The course main page will be displayed in this format.';
 $string['coursehelpnumberweeks'] = 'Number of weeks/topics displayed on the course main page.';
 $string['coursehelphiddensections'] = 'How the hidden sections in the course are displayed to students.';
-$string['coursehelpnewsitemsnumber'] = 'Number of recent items appearing on the course home page, in a news box down the right-hand side <br/>(0 => the news box won\'t appear).';
+$string['coursehelpnewsitemsnumber'] = 'Number of recent items appearing on the course home page, in a news box down the right-hand side <br/>(0 means the news box won\'t appear).';
 $string['coursehelpshowgrades'] = 'Enable the display of the gradebook. It does not prevent grades from being displayed within the individual activities.';
 $string['coursehelpmaximumupload'] = 'Define the largest size of file that can be uploaded by students in this course, limited by the site wide setting.';
 $string['coursehelpmetacourse'] = 'Set the course a metacourse. A meta course takes enrolments (and other role assignments) from a \"child\" course or courses.';
