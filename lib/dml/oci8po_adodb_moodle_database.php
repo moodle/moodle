@@ -57,8 +57,8 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
         /// DB using DOTS. Manually introduced floats (if using other characters) must be
         /// converted back to DOTs (like gradebook does)
         $sql = "ALTER SESSION SET NLS_NUMERIC_CHARACTERS='.,'";
-        $rs = $this->query_start($sql, null, SQL_QUERY_AUX);
-        $this->adodb->Execute($sql);
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $rs = $this->adodb->Execute($sql);
         $this->query_end($rs);
 
         return true;
@@ -111,8 +111,8 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
      */
     function setup_is_unicodedb() {
         $sql = "SELECT parameter, value FROM nls_database_parameters where parameter = 'NLS_CHARACTERSET'";
-        $rs = $this->query_start($sql, null, SQL_QUERY_AUX);
-        $this->adodb->Execute($sql);
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $rs = $this->adodb->Execute($sql);
         $this->query_end($rs);
 
         if ($rs && !$rs->EOF) {
