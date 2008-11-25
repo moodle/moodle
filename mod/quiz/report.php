@@ -9,7 +9,7 @@
     $id = optional_param('id',0,PARAM_INT);    // Course Module ID, or
     $q = optional_param('q',0,PARAM_INT);     // quiz ID
 
-    $mode = optional_param('mode', 'overview', PARAM_ALPHA);        // Report mode
+    $mode = optional_param('mode', '', PARAM_ALPHA);        // Report mode
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('quiz', $id)) {
@@ -36,10 +36,20 @@
         }
     }
 
+    
     require_login($course, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    require_capability('mod/quiz:viewreports', $context);
-
+    
+    $reportlist = quiz_report_list($context);
+    if (count($reportlist)==0){
+        print_error('erroraccessingreport', 'quiz');
+    }
+    if ($mode == ''){
+        $mode = reset($reportlist);//first element in array
+    } elseif (!in_array($mode, $reportlist)){
+        print_error('erroraccessingreport', 'quiz');
+    }
+    
     // if no questions have been set up yet redirect to edit.php
     if (!$quiz->questions and has_capability('mod/quiz:manage', $context)) {
         redirect('edit.php?cmid='.$cm->id);

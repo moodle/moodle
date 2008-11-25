@@ -3053,6 +3053,10 @@ function load_capability_def($component) {
             $defpath = $CFG->dirroot.'/grade/report/'.$compparts[1].'/db/access.php';
             $varprefix = $compparts[0].'_'.$compparts[1];
 
+        } else if ($compparts[0] == 'quizreport') {
+            $defpath = $CFG->dirroot.'/mod/quiz/report/'.$compparts[1].'/db/access.php';
+            $varprefix = $compparts[0].'_'.$compparts[1];
+
         } else {
             $defpath = $CFG->dirroot.'/'.$component.'/db/access.php';
             $varprefix = str_replace('/', '_', $component);
@@ -3916,6 +3920,10 @@ function get_capability_string($capabilityname) {
             $string = get_string($stringname, 'gradereport_'.$componentname);
         break;
 
+        case 'quizreport':
+            $string = get_string($stringname, 'quiz_'.$componentname);
+        break;
+
         default:
             $string = get_string($stringname);
         break;
@@ -3972,7 +3980,12 @@ function get_component_string($component, $contextlevel) {
         break;
 
         case CONTEXT_MODULE:
-            $string = get_string('modulename', basename($component));
+            if (preg_match('|^quizreport/([a-z_]*)|', $component, $matches)){
+                $langname = 'quiz_'.$matches[1];
+                $string = get_string($matches[1].':componentname', $langname);
+            } else {
+                $string = get_string('modulename', basename($component));
+            }
         break;
 
         case CONTEXT_BLOCK:

@@ -3,6 +3,8 @@
 
 
 $string['statistics'] = 'Statistics';
+$string['statistics:view'] = 'View statistics report';
+$string['statistics:componentname'] = 'Quiz statistics report';
 $string['statisticsreport'] = 'Statistics report';
 $string['calculatefrom'] = 'Calculate statistics from';
 

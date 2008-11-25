@@ -343,4 +343,45 @@ function quiz_report_scale_sumgrades_as_percentage($rawgrade, $quiz, $round = tr
     }
     return $grade.'%';
 }
+/**
+ * Returns an array of reports to which the current user has access to.
+ * Reports are ordered as they should be for display in tabs.
+ */
+function quiz_report_list($context){
+    global $DB;
+    static $reportlist = null;
+    if (!is_null($reportlist)){
+        return $reportlist;
+    }
+    $reports = $DB->get_records('quiz_report', null, 'displayorder DESC', 'name, capability');
+
+    $reportdirs = get_list_of_plugins("mod/quiz/report");
+    //order the reports tab in descending order of displayorder
+    $reportcaps = array();
+    if ($reports){
+        foreach ($reports as $key => $obj) {
+            if (in_array($obj->name, $reportdirs)) {
+                $reportcaps[$obj->name]=$obj->capability;
+            }
+        }
+    }
+
+    //add any other reports on the end
+    foreach ($reportdirs as $reportname) {
+        if (!isset($reportcaps[$reportname])) {
+            $reportcaps[$reportname]= null;
+        }
+    }
+    $reportlist = array();
+    foreach ($reportcaps as $name => $capability){
+        if (empty($capability)){
+            $capability = 'mod/quiz:viewreports';
+        }
+        if ($has = has_capability($capability, $context)){
+            $reportlist[] = $name;
+        }
+    }
+    return $reportlist;
+}
+
 ?>

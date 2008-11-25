@@ -49,44 +49,25 @@ if (has_capability('mod/quiz:manage', $context)) {
 if ($currenttab == 'info' && count($row) == 1) {
     // Don't show only an info tab (e.g. to students).
 } else {
+    //$reports is passed in from report.php
     $tabs[] = $row;
 }
 
 if ($currenttab == 'reports' and isset($mode)) {
     $activated[] = 'reports';
 
-    // Standard reports we want to show first.
-    $reportrs = $DB->get_recordset('quiz_report', null, 'displayorder DESC', 'id, name');
-    // Reports that are restricted by capability.
-    $reportrestrictions = array(
-        'regrade' => 'mod/quiz:grade',
-        'grading' => 'mod/quiz:grade'
-    );
-    $reportdirs = get_list_of_plugins("mod/quiz/report");
-    //order the reports tab in descending order of displayorder
-    $reportlist = array();
-    foreach ($reportrs as $key => $rs) {
-        if (in_array($rs->name, $reportdirs)) {
-            $reportlist[]=$rs->name;
-        }
-    }
 
-    //add any other reports on the end
-    foreach ($reportdirs as $report) {
-        if (!in_array($report, $reportlist)) {
-            $reportlist[]=$report;
-        }
-    }
 
     $row  = array();
     $currenttab = '';
+
+    $reportlist = quiz_report_list($context);
+    
     foreach ($reportlist as $report) {
-        if (!isset($reportrestrictions[$report]) || has_capability($reportrestrictions[$report], $context)) {
-            $row[] = new tabobject($report, "$CFG->wwwroot/mod/quiz/report.php?q=$quiz->id&amp;mode=$report",
-                                    get_string($report, 'quiz_'.$report));
-            if ($report == $mode) {
-                $currenttab = $report;
-            }
+        $row[] = new tabobject($report, "$CFG->wwwroot/mod/quiz/report.php?q=$quiz->id&amp;mode=$report",
+                                get_string($report, 'quiz_'.$report));
+        if ($report == $mode) {
+            $currenttab = $report;
         }
     }
     $tabs[] = $row;

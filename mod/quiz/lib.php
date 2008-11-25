@@ -1277,7 +1277,10 @@ function quiz_supports($feature) {
  * @return array all other caps used in module
  */
 function quiz_get_extra_capabilities() {
+    global $DB;
     $caps = question_get_all_capabilities();
+    $reportcaps = $DB->get_records_select_menu('capabilities', 'name LIKE ?', array('quizreport/%'), 'id,name');
+    $caps = array_merge($caps, $reportcaps);
     $caps[] = 'moodle/site:accessallgroups';
     return $caps;
 }

@@ -278,7 +278,7 @@ class quiz_overview_report extends quiz_default_report {
             $headers = array();
             if (!$table->is_downloading()) { //do not print notices when downloading
                 //regrade buttons
-                if (has_capability('mod/quiz:grade', $this->context)){
+                if (has_capability('mod/quiz:regrade', $this->context)){
                     $countregradeneeded = $this->count_regrade_all_needed($quiz, $groupstudents);
                     if ($currentgroup){
                         $a= new object();
@@ -359,7 +359,7 @@ class quiz_overview_report extends quiz_default_report {
                     $headers[] = $header;
                  }
             }
-            if (!$table->is_downloading() && has_capability('mod/quiz:grade', $this->context) && $regradedattempts){
+            if (!$table->is_downloading() && has_capability('mod/quiz:regrade', $this->context) && $regradedattempts){
                 $columns[] = 'regraded';
                 $headers[] = get_string('regrade', 'quiz_overview');
             }
@@ -424,7 +424,7 @@ class quiz_overview_report extends quiz_default_report {
      */
     function regrade_all($dry, $quiz, $groupstudents){
         global $DB;
-        if (!has_capability('mod/quiz:grade', $this->context)) {
+        if (!has_capability('mod/quiz:regrade', $this->context)) {
             notify(get_string('regradenotallowed', 'quiz'));
             return true;
         }
@@ -507,7 +507,7 @@ class quiz_overview_report extends quiz_default_report {
     }
     function regrade_all_needed($quiz, $groupstudents){
         global $DB;
-        if (!has_capability('mod/quiz:grade', $this->context)) {
+        if (!has_capability('mod/quiz:regrade', $this->context)) {
             notify(get_string('regradenotallowed', 'quiz'));
             return;
         }
@@ -636,7 +636,7 @@ class quiz_overview_report extends quiz_default_report {
     }
     function regrade_selected_attempts($quiz, $attemptids, $groupstudents){
         global $DB;
-        require_capability('mod/quiz:grade', $this->context);
+        require_capability('mod/quiz:regrade', $this->context);
         if ($groupstudents){
             list($usql, $params) = $DB->get_in_or_equal($groupstudents);
             $where = "qa.userid $usql AND ";

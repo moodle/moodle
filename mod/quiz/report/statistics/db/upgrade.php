@@ -134,6 +134,11 @@ function xmldb_quizreport_statistics_upgrade($oldversion) {
             }
         }
     }
+    
+
+    if ($result && $oldversion < 2008112100) {
+        $result = $result && $DB->set_field('quiz_report', 'capability', 'quizreport/statistics:view', array('name'=>'statistics'));
+    }    
     return $result;
 }
 

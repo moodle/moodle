@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/quiz/report/statistics/db" VERSION="20081110" COMMENT="XMLDB file for Moodle mod/quiz/report/statistics"
+<XMLDB PATH="mod/quiz/report/statistics/db" VERSION="20081118" COMMENT="XMLDB file for Moodle mod/quiz/report/statistics"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
 >
@@ -64,4 +64,11 @@
       </KEYS>
     </TABLE>
   </TABLES>
+  <STATEMENTS>
+    <STATEMENT NAME="insert quiz_report" TYPE="insert" TABLE="quiz_report" COMMENT="Initial insert of records on table quiz_report">
+      <SENTENCES>
+        <SENTENCE TEXT="(name, displayorder, cron, capability) VALUES ('statistics', 8000, 18000, 'quizreport/statistics:view')" />
+      </SENTENCES>
+    </STATEMENT>
+  </STATEMENTS>
 </XMLDB>

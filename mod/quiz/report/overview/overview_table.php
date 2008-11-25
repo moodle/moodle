@@ -94,7 +94,7 @@ class quiz_report_overview_table extends table_sql {
                 echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.
                         get_string('selectnone', 'quiz').'</a> ';
                 echo '&nbsp;&nbsp;';
-                if (has_capability('mod/quiz:grade', $this->context)){
+                if (has_capability('mod/quiz:regrade', $this->context)){
                     echo '<input type="submit" name="regrade" value="'.get_string('regradeselected', 'quiz_overview').'"/>';
                 }
                 echo '<input type="submit" onclick="return confirm(\''.$strreallydel.'\');" name="delete" value="'.get_string('deleteselected', 'quiz_overview').'"/>';
@@ -317,12 +317,12 @@ class quiz_report_overview_table extends table_sql {
                 }
             }
             $this->gradedstatesbyattempt = quiz_get_newgraded_states($attemptids, true, 'qs.id, qs.grade, qs.event, qs.question, qs.attempt');
-            if (has_capability('mod/quiz:grade', $this->context)){
+            if (has_capability('mod/quiz:regrade', $this->context)){
                 $this->regradedqs = quiz_get_regraded_qs($attemptids);
             }
         } else {
             $this->gradedstatesbyattempt = quiz_get_newgraded_states($this->sql, true, 'qs.id, qs.grade, qs.event, qs.question, qs.attempt');
-            if (has_capability('mod/quiz:grade', $this->context)){
+            if (has_capability('mod/quiz:regrade', $this->context)){
                 $this->regradedqs = quiz_get_regraded_qs($this->sql);
             }
         }

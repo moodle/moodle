@@ -32,7 +32,7 @@ if ($quizstatistics->groupid){
     }
 }
 $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-require_capability('mod/quiz:viewreports', $modcontext);
+require_capability('quizreport/statistics:view', $modcontext);
 
 $line = new graph(800,600);
 $line->parameter['title']   = '';
