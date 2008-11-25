@@ -3,6 +3,7 @@ Description of TinyMCE library import into Moodle
 Our changes:
 + added plugins: dragmath, moodlenolink and customised spellchecker
 * modified string handling: see patch-tinymce_strings.txt
+* modified media plugin: see patch-tinymce_plugin_media.txt (MDL-16650)
 
 TODO:
 * spellchecker integration in spellchecker/config.php (MDL-16639)
