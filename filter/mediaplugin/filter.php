@@ -216,14 +216,14 @@ function mediaplugin_filter_youtube_callback($link, $autostart=false) {
     $url = addslashes_js($link[2]);
     $info = addslashes_js($link[3]);
 
-    return '<div title="'.$info.'" class="mediaplugin mediaplugin_youtube">'.
-           '<object type="application/x-shockwave-flash" 
+    return '<object title="'.$info.'" 
+                    class="mediaplugin mediaplugin_youtube" type="application/x-shockwave-flash" 
                     data="'.$site.'youtube.com/v/'.$url.'&amp;fs=1&amp;rel=0" width="425" height="344">'.
            '<param name="movie" value="http://'.$site.'youtube.com/v/'.$url.'&amp;fs=1&amp;rel=0" />'.
            '<param name="FlashVars" value="playerMode=embedded" />'.
            '<param name="wmode" value="transparent" />'.
            '<param name="allowFullScreen" value="true" />'.
-           '</object></div>';
+           '</object>';
 }
 
 /**
