@@ -1109,7 +1109,7 @@ function unset_user_preference($name, $otheruserid=NULL) {
 function get_user_preferences($name=NULL, $default=NULL, $otheruserid=NULL) {
     global $USER, $DB;
 
-    if (empty($otheruserid)){
+    if (empty($otheruserid) || (!empty($USER->id) && ($USER->id == $otheruserid))){
         check_user_preferences_loaded();
 
         if (empty($name)) {
@@ -1123,7 +1123,7 @@ function get_user_preferences($name=NULL, $default=NULL, $otheruserid=NULL) {
     } else {
         if (empty($name)) {
             return $DB->get_records_menu('user_preferences', array('userid'=>$otheruserid), '', 'name,value'); // All values
-        } else if ($value = $DB->get_record('user_preferences', array('userid'=>$otheruserid, 'name'=>$name))) {
+        } else if ($value = $DB->get_field('user_preferences', 'value', array('userid'=>$otheruserid, 'name'=>$name))) {
             return $value; // The single value
         } else {
             return $default; // Default value (or NULL)
