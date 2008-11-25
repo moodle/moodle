@@ -542,51 +542,39 @@ if ($significantchangemade) {
 question_showbank_actions($thispageurl, $cm);
 
 /// all commands have been dealt with, now print the page
-$questionbankmanagement='<a href="'.$CFG->wwwroot.
-        '/question/edit.php?courseid='.$course->id.'">'.
-        get_string("questionbankmanagement","quiz").'</a> ';
 
 if (isset($quiz->instance) and $DB->record_exists_select('quiz_attempts',
         "quiz = ? AND preview = '0'", array($quiz->instance))){
     $quiz_has_attempts=true;
 }
 
+// Print the header.
+$questionbankmanagement='<a href="'.$CFG->wwwroot.
+        '/question/edit.php?courseid='.$course->id.'">'.
+        get_string("questionbankmanagement","quiz").'</a> ';
 $strupdatemodule = has_capability('moodle/course:manageactivities',
         $contexts->lowest()) ?
         update_module_button($cm->id, $course->id,
         get_string('modulename', 'quiz')) :
         "";
 $navigation = build_navigation($pagetitle, $cm);
-
-$quiz_randomquestion_dialog_listeners='this.dialog_listeners=[';
-if(($numberoflisteners=quiz_number_of_pages($quiz->questions))==0){
-    $numberoflisteners=1;
-}
-for($page_iter=1;$page_iter<=$numberoflisteners;$page_iter++){
-    if($page_iter!=1){
-        $quiz_randomquestion_dialog_listeners.= ',';
-    }
-    $quiz_randomquestion_dialog_listeners.= '"addrandomdialoglaunch_'.
-            $page_iter.'"';
-}
-$quiz_randomquestion_dialog_listeners.='];';
-$surl=$thispageurl->out(false,array('qbanktool'=>'0'));
-$surl_js="this.sUrl=\"$surl\";";
-$localjs= '<script type="text/javascript" charset="utf-8">
-    function phpdata(){
-        '.$quiz_randomquestion_dialog_listeners.'
-        '.$surl_js.'
-    }
-    var phpGenerated=new phpdata();
-    </script>
-    <script type="text/javascript"  src="'.$CFG->wwwroot.
-            '/mod/quiz/edit.js" charset="utf-8"></script>
-';
 $localcss= '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.
         '/lib/yui/container/assets/container.css" />';
 print_header_simple($pagetitle, '', $navigation, "", $localcss,true,
         $questionbankmanagement.$strupdatemodule);
-echo $localjs;
+
+// Initialise the JavaScript.
+$quizeditconfig = new stdClass;
+$quizeditconfig->url = $thispageurl->out(false, array('qbanktool' => '0'));
+$quizeditconfig->dialoglisteners =array();
+$numberoflisteners = max(quiz_number_of_pages($quiz->questions), 1);
+for ($pageiter = 1; $pageiter <= $numberoflisteners; $pageiter++) {
+    $quizeditconfig->dialoglisteners[] = 'addrandomdialoglaunch_' . $pageiter;
+}
+print_js_config($quizeditconfig, 'quiz_edit_config');
+require_js('mod/quiz/edit.js');
+
+// Print the tabs.
 $mode = 'editq';
 $currenttab="edit";
 if($quiz_reordertool){

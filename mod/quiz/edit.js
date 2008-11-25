@@ -1,12 +1,10 @@
 /** JavaScript for /mod/quiz/edit.php
  */
-
-YAHOO.namespace("cats.container");
-YAHOO.namespace("quiz.container");
-function init() {
+var quiz_edit = {};
+function quiz_edit_init() {
     YAHOO.util.Dom.setStyle('randomquestiondialog', 'display', 'block');
     /* zIndex must be way above 99 to be above the active quiz tab*/
-    YAHOO.quiz.container.randomquestiondialog = new YAHOO.widget.Dialog("randomquestiondialog",
+    quiz_edit.randomquestiondialog = new YAHOO.widget.Dialog("randomquestiondialog",
                 {
                   constraintoviewport : true,
                   visible : false,
@@ -19,12 +17,11 @@ function init() {
                   draggable: true,
                   dragOnly: true,
                   postmethod: "form"
-
                  } );
     //show the dialog and depending on from which form (corresponding
     // a specific quiz page) it was triggered, set the value of the form's
     // rqpage input element to the form number
-    YAHOO.util.Event.addListener(this.dialog_listeners, "click",
+    YAHOO.util.Event.addListener(this.dialoglisteners, "click",
            function(e){
                    this.show();
                 var rbutton = YAHOO.util.Event.getTarget(e);
@@ -43,12 +40,12 @@ function init() {
                     }
                 }
                 YAHOO.util.Event.stopEvent(e);
-            }, YAHOO.quiz.container.randomquestiondialog,
-            YAHOO.quiz.container.randomquestiondialog, true);
-    YAHOO.quiz.container.randomquestiondialog.render();
+            }, quiz_edit.randomquestiondialog,
+            quiz_edit.randomquestiondialog, true);
+    quiz_edit.randomquestiondialog.render();
 
 
-    YAHOO.quiz.container.repaginatedialog = new YAHOO.widget.Dialog("repaginatedialog",
+    quiz_edit.repaginatedialog = new YAHOO.widget.Dialog("repaginatedialog",
                 {
                   modal:true,
                   width : "100%",
@@ -66,11 +63,11 @@ function init() {
             function(e){
                 YAHOO.util.Dom.setStyle('repaginatedialog', 'display', 'block');
                 this.show();
-            }, YAHOO.quiz.container.repaginatedialog,
-            YAHOO.quiz.container.repaginatedialog, true);
-    YAHOO.quiz.container.repaginatedialog.render();
+            }, quiz_edit.repaginatedialog,
+            quiz_edit.repaginatedialog, true);
+    quiz_edit.repaginatedialog.render();
 
 }
 
-YAHOO.util.Event.onDOMReady(init,phpGenerated,true);
+YAHOO.util.Event.onDOMReady(quiz_edit_init, quiz_edit_config, true);
 YAHOO.util.Dom.setStyle('repaginatedialog', 'display', 'block');
