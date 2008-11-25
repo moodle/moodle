@@ -1889,18 +1889,23 @@ class curl {
     /**
      * HTTP POST method
      */
-    public function post($url, $params = array(), $options = array()){
+    public function post($url, $params = '', $options = array()){
         $options['CURLOPT_POST']       = 1;
-        $this->_tmp_file_post_params = array();
-        foreach ($params as $key => $value) {
-            if ($value instanceof stored_file) {
-                $value->add_to_curl_request($this, $key);
-            } else {
-                $this->_tmp_file_post_params[$key] = $value;
+        if (is_array($params)) {
+            $this->_tmp_file_post_params = array();
+            foreach ($params as $key => $value) {
+                if ($value instanceof stored_file) {
+                    $value->add_to_curl_request($this, $key);
+                } else {
+                    $this->_tmp_file_post_params[$key] = $value;
+                }
             }
+            $options['CURLOPT_POSTFIELDS'] = $this->_tmp_file_post_params;
+            unset($this->_tmp_file_post_params);
+        } else {
+            // $params is the raw post data
+            $options['CURLOPT_POSTFIELDS'] = $params;
         }
-        $options['CURLOPT_POSTFIELDS'] = $this->_tmp_file_post_params;
-        unset($this->_tmp_file_post_params);
         return $this->request($url, $options);
     }
 
