@@ -88,6 +88,9 @@ function mediaplugin_filter($courseid, $text) {
     if ($CFG->filter_mediaplugin_enable_youtube) {
         $search = '/<a.*?href="([^<]*)youtube.com\/watch\?v=([^"]*)"[^>]*>(.*?)<\/a>/is';
         $newtext = preg_replace_callback($search, 'mediaplugin_filter_youtube_callback', $newtext);
+
+        $search = '/<a.*?href="([^<]*)youtube.com\/v\/([^"]*)"[^>]*>(.*?)<\/a>/is';
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_youtube_callback', $newtext);
     }
 
     if (is_null($newtext) or $newtext === $text) {
