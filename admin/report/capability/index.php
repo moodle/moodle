@@ -114,7 +114,7 @@ if ($capability) {
 
     // Now load those contexts.
     list($sqlcontexttest, $contextparams) = $DB->get_in_or_equal($requiredcontexts);
-    $contexts = $DB->get_records_select('context', 'id ' . $sqlcontexttest, $contextparams);
+    $contexts = get_sorted_contexts('ctx.id ' . $sqlcontexttest, $contextparams);
 
     // Prepare some empty arrays to hold the data we are about to compute.
     foreach ($contexts as $conid => $con) {

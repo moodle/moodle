@@ -88,7 +88,7 @@ $requiredcontexts = array_unique($requiredcontexts);
 /// Now load those contexts.
 if ($requiredcontexts) {
     list($sqlcontexttest, $contextparams) = $DB->get_in_or_equal($requiredcontexts);
-    $contexts = $DB->get_records_select('context', 'id ' . $sqlcontexttest, $contextparams);
+    $contexts = get_sorted_contexts('ctx.id ' . $sqlcontexttest, $contextparams);
 } else {
     $contexts = array();
 }

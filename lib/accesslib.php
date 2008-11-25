@@ -3699,6 +3699,34 @@ function is_inside_frontpage($context) {
 }
 
 /**
+ * Does get_records_select on the context table, and returns the results ordered
+ * by contextlevel, and then the natural sort order within each level.
+ * for the purpose of $select, you need to know that the context table has been
+ * aliased to ctx, so for example, you can call get_sorted_contexts('ctx.depth = 3');
+ *
+ * @param string $select the contents of the WHERE clause. Remember to do ctx.fieldname.
+ * @param array $params any parameters required by $select.
+ * @return array the requested context records.
+ */
+function get_sorted_contexts($select, $params = array()) {
+    global $DB;
+    if ($select) {
+        $select = 'WHERE ' . $select;
+    }
+    return $DB->get_records_sql("
+            SELECT ctx.*
+            FROM {context} ctx
+            LEFT JOIN {user} u ON ctx.contextlevel = 30 AND u.id = ctx.instanceid
+            LEFT JOIN {course_categories} cat ON ctx.contextlevel = 40 AND cat.id = ctx.instanceid
+            LEFT JOIN {course} c ON ctx.contextlevel = 50 AND c.id = ctx.instanceid
+            LEFT JOIN {course_modules} cm ON ctx.contextlevel = 70 AND cm.id = ctx.instanceid
+            LEFT JOIN {block_instance} bi ON ctx.contextlevel = 80 AND bi.id = ctx.instanceid
+            $select
+            ORDER BY ctx.contextlevel, bi.position, COALESCE(cat.sortorder, c.sortorder, cm.section, bi.weight), u.lastname, u.firstname, cm.id
+            ", $params);
+}
+
+/**
  * Recursive function which, given a context, find all its children context ids.
  *
  * When called for a course context, it will return the modules and blocks
