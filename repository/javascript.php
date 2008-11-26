@@ -976,10 +976,10 @@ EOD;
 
 $user_context = get_context_instance(CONTEXT_USER, $USER->id);
 $repos = repository::get_instances(array($user_context, $context, get_system_context()));
+$js .= "\r\n".'repository_client_'.$suffix.'repos=[];'."\r\n";
 foreach ($repos as $repo) {
     $info = $repo->ajax_info();
     $js .= "\r\n";
-    $js .= 'repository_client_'.$suffix.'repos=[];';
     $js .= 'repository_client_'.$suffix.'.repos['.$info->id.']='.json_encode($repo->ajax_info()).';'."\n";
 }
 $js .= "\r\n";
