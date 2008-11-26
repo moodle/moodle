@@ -985,7 +985,6 @@ function openpicker_$suffix(params) {
         } else {
             repository_client_$suffix.mimetype = '*';
         }
-        alert(repository_client_$suffix.mimetype);
         repository_client_$suffix.instance = new repository_client_$suffix();
         repository_client_$suffix.instance.create_picker();
         if(params.callback) {
