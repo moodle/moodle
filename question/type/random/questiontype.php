@@ -30,6 +30,12 @@ class random_qtype extends default_questiontype {
         return false;
     }
 
+    function display_question_editing_page(&$mform, $question, $wizardnow){
+        list($heading, $langmodule) = $this->get_heading(empty($question->id));
+        print_heading_with_help($heading, $this->name(), $langmodule);
+        $mform->display();
+    }
+
     function get_question_options(&$question) {
         // Don't do anything here, because the random question has no options.
         // Everything is handled by the create- or restore_session_and_responses
