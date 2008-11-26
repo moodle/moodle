@@ -967,10 +967,8 @@ function quiz_print_randomquestion_reordertool(&$question, &$pageurl, &$quiz){
             '">-->'.$reordercheckboxlabel.$category->name.
             $reordercheckboxlabelclose.'<!--</a>-->';
     echo '<span class="questionpreview">'.$editstring;
-     //TODO: URGENT fix question preview for random questions
-    /*echo
-        quiz_question_preview_button($quiz, $question);
-    */
+    echo quiz_question_preview_button($quiz, $question,false);
+    
     echo '</span>';
     echo "</div>";
 
