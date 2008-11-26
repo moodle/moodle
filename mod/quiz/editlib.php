@@ -806,11 +806,10 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz,$quiz_qbanktool
          $pageurl->out(false,array("qbanktool"=>1,
          "cat"=>$category->id.','.$category->contextid)).
          '">'.$category->name.'</a>';
-    //TODO: URGENT fix question preview for random questions
-    /*echo '<span class="questionpreview">'.
+    echo '<span class="questionpreview">'.
         quiz_question_preview_button($quiz, $question).
         '</span>';
-    */
+    
 
     echo "</div>";
 
