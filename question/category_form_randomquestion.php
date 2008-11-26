@@ -16,16 +16,6 @@ class question_category_edit_form_randomquestion extends moodleform {
         $questioncategoryel = $mform->addElement('questioncategory', 'parent', get_string('parentcategory', 'quiz'),
                     array('contexts'=>$contexts, 'top'=>true, 'currentcat'=>$currentcat, 'nochildrenof'=>$currentcat));
         $mform->setType('parent', PARAM_SEQUENCE);
-        if (1 == $DB->count_records_sql("SELECT count(*)
-                                           FROM {question_categories} c1,
-                                                {question_categories} c2
-                                          WHERE c2.id = ?
-                                            AND c1.contextid = c2.contextid", array($currentcat))){
-            //TODO: Tim? why does the above evaluate true, breaking the form?
-            // and more importantly, if this is a valid situation, how should we react,
-            // that is, what does this mean?
-            //$mform->hardFreeze('parent');
-        }
         $mform->setHelpButton('parent', array('categoryparent', get_string('parent', 'quiz'), 'question'));
 
         $mform->addElement('text','name', get_string('name'),'maxlength="254" size="50"');

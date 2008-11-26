@@ -16,11 +16,15 @@ class question_category_edit_form extends moodleform {
         $questioncategoryel = $mform->addElement('questioncategory', 'parent', get_string('parent', 'quiz'),
                     array('contexts'=>$contexts, 'top'=>true, 'currentcat'=>$currentcat, 'nochildrenof'=>$currentcat));
         $mform->setType('parent', PARAM_SEQUENCE);
+        // This next test is actually looking to see if $currentcat is the id of
+        // a category that already exists, and is the only top-level category in
+        // it context. If so, we stop it from being moved.
         if (1 == $DB->count_records_sql("SELECT count(*)
                                            FROM {question_categories} c1,
                                                 {question_categories} c2
                                           WHERE c2.id = ?
-                                            AND c1.contextid = c2.contextid", array($currentcat))){
+                                            AND c1.contextid = c2.contextid
+                                            AND c1.parent = 0 AND c2.parent = 0", array($currentcat))){
             $mform->hardFreeze('parent');
         }
         $mform->setHelpButton('parent', array('categoryparent', get_string('parent', 'quiz'), 'question'));
