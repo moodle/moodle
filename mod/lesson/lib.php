@@ -508,9 +508,7 @@ function lesson_process_pre_save(&$lesson) {
     unset($lesson->completed);
     unset($lesson->gradebetterthan);
 
-    if (!empty($lesson->password)) {
-        $lesson->password = md5($lesson->password);
-    } else {
+    if (empty($lesson->password)) {
         unset($lesson->password);
     }
 

@@ -182,10 +182,9 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->setHelpButton('usepassword', array('usepassword', get_string('usepassword', 'lesson'), 'lesson'));
         $mform->setDefault('usepassword', 0);
 
-        $mform->addElement('text', 'password', get_string('password', 'lesson'));
+        $mform->addElement('passwordunmask', 'password', get_string('password', 'lesson'));
         $mform->setHelpButton('password', array('password', get_string('password', 'lesson'), 'lesson'));
         $mform->setDefault('password', '');
-        //never displayed converted to md5
         $mform->setType('password', PARAM_RAW);
 
         $mform->addElement('date_time_selector', 'available', get_string('available', 'lesson'), array('optional'=>true));
@@ -299,13 +298,15 @@ class mod_lesson_mod_form extends moodleform_mod {
      * @return void
      **/
     function data_preprocessing(&$default_values) {
+        global $module;
         if (isset($default_values['conditions'])) {
             $conditions = unserialize($default_values['conditions']);
             $default_values['timespent'] = $conditions->timespent;
             $default_values['completed'] = $conditions->completed;
             $default_values['gradebetterthan'] = $conditions->gradebetterthan;
         }
-        if (isset($default_values['password'])) {
+        // after this passwords are clear text, MDL-11090
+        if (isset($default_values['password']) and ($module->version<2008112600)) {
             unset($default_values['password']);
         }
         if (isset($default_values['add']) and $defaults = get_record('lesson_default', 'course', $default_values['course'])) {

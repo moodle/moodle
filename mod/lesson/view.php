@@ -16,6 +16,7 @@
     $id      = required_param('id', PARAM_INT);             // Course Module ID
     $pageid  = optional_param('pageid', NULL, PARAM_INT);   // Lesson Page ID
     $edit    = optional_param('edit', -1, PARAM_BOOL);
+    $userpassword = optional_param('userpassword','',PARAM_CLEAN);
     
     list($cm, $course, $lesson) = lesson_get_basics($id);
 
@@ -50,8 +51,9 @@
         
         } else if ($lesson->usepassword and empty($USER->lessonloggedin[$lesson->id])) { // Password protected lesson code
             $correctpass = false;
-            if ($password = optional_param('userpassword', '', PARAM_CLEAN)) {
-                if ($lesson->password == md5(trim($password))) {
+            if (!empty($userpassword)) {
+                // with or without md5 for backward compatibility (MDL-11090)
+                if (($lesson->password == md5(trim($userpassword))) or ($lesson->password == $userpassword)) {
                     $USER->lessonloggedin[$lesson->id] = true;
                     $correctpass = true;
                     if ($lesson->highscores) {
