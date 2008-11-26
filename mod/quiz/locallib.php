@@ -1158,7 +1158,6 @@ function quiz_clean_layout($layout,$removeemptypages=false){
                 while(isset($new_arr[$i+1]) &&
                         $new_arr[$i]==0 &&
                         $new_arr[$i+1]==0){
-                    print_r($new_arr);
                     array_splice($new_arr,$i+1,1);
                 }
         }
