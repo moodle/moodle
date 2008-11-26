@@ -766,7 +766,7 @@ function quiz_question_preview_button($quiz, $question, $label=true) {
     $strpreview = get_string('previewquestion', 'quiz');
     $strpreviewlabel="";
     if($label){
-        $strpreviewlabel = " ".get_string('preview', 'quiz');
+        $strpreviewlabel = "&nbsp;".get_string('preview', 'quiz');
     }
     $quizorcourseid = $quiz->id?('&amp;quizid=' . $quiz->id):('&amp;courseid=' .$COURSE->id);
     return link_to_popup_window('/question/preview.php?id=' . $question->id . $quizorcourseid, 'questionpreview',
