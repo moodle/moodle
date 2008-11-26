@@ -1341,7 +1341,7 @@ function fix_course_sortorder() {
         //fix the course sortorder ranges
         foreach ($fixcategories as $cat) {
             $sql = "UPDATE {course}
-                       SET sortorder = (sortorder % ".MAX_COURSES_IN_CATEGORY.") + ?
+                       SET sortorder = ".$DB->sql_modulo('sortorder', MAX_COURSES_IN_CATEGORY)." + ?
                      WHERE category = ?";
             $DB->execute($sql, array($cat->sortorder, $cat->id));
         }
