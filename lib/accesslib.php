@@ -5557,10 +5557,7 @@ function component_level_changed($cap, $comp, $contextlevel) {
         $compsa = explode('/', $cap->component);
         $compsb = explode('/', $comp);
 
-        // list of system reports
-        if (($compsa[0] == 'report') &&($compsb[0] == 'report')) {
-            return false;
-        }
+
 
         // we are in gradebook, still
         if (($compsa[0] == 'gradeexport' || $compsa[0] == 'gradeimport' || $compsa[0] == 'gradereport') &&
