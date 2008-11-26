@@ -59,3 +59,9 @@ form.mform .fcheckbox input {
 #mod-quiz-review #middle-column {
   height: 1%;
 }
+.mod-quiz div.tabtree a span img.iconsmall {
+  margin: 0;
+  vertical-align: baseline;
+  position: relative;
+  top: 2px;
+}

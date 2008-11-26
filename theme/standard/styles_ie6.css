@@ -78,10 +78,12 @@ form.mform textarea {
     /*ie6 shows this as an arrow if this is not specified*/
     cursor: pointer;
 }
-#mod-quiz-edit div.tabtree a span img.iconsmall{
-    display:none;
+.mod-quiz div.tabtree a span img.iconsmall {
+  margin: 0;
+  vertical-align: baseline;
+  position: relative;
+  top: 1px;
 }
-
 #mod-quiz-edit div.question div.content .questiontext,#categoryquestions .questiontext{
     width:50%;
 }

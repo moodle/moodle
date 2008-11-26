@@ -4411,6 +4411,9 @@ table.quizreviewsummary td.cell {
   display: block;
   margin: 0.5em 0;
 }
+.mod-quiz div.tabtree a span img.iconsmall {
+  vertical-align: baseline;
+}
 #mod-quiz-edit div.sideblock{
     float:right;
     width:30%;
