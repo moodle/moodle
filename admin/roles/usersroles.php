@@ -72,7 +72,7 @@ $sql = "SELECT
         LEFT JOIN {role_names} rn ON rn.roleid = ra.roleid AND rn.contextid = ra.contextid
     WHERE
         ra.userid = ?
-    AND ra.active = 1
+    "./*AND ra.active = 1*/"
     ORDER BY
         contextlevel DESC, contextid ASC, r.sortorder ASC";
 $roleassignments = $DB->get_records_sql($sql, array($user->id));
