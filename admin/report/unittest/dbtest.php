@@ -11,11 +11,12 @@ require_once($CFG->libdir.'/simpletestlib.php');
 require_once('ex_simple_test.php');
 require_once('ex_reporter.php');
 
-require_login();
-require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
-
 $showpasses = optional_param('showpasses', 0, PARAM_BOOL);
 $selected   = optional_param('selected', array(), PARAM_INT);
+
+// Print the header and check access.
+admin_externalpage_setup('reportdbtest');
+admin_externalpage_print_header();
 
 global $UNITTEST;
 $UNITTEST = new object();
@@ -27,9 +28,6 @@ if (!data_submitted()) {
     }
 }
 
-// Print the header.
-admin_externalpage_setup('reportdbtest');
-admin_externalpage_print_header();
 
 $dbinfos     = array();
 $tests       = array();

@@ -6,17 +6,19 @@
 
     require_once($CFG->libdir.'/adminlib.php');
 
-    admin_externalpage_setup('reportstats');
-
-    admin_externalpage_print_header();
-
-
     $courseid = optional_param('course', SITEID, PARAM_INT);
     $report   = optional_param('report', 0, PARAM_INT);
     $time     = optional_param('time', 0, PARAM_INT);
     $mode     = optional_param('mode', STATS_MODE_GENERAL, PARAM_INT);
     $userid   = optional_param('userid', 0, PARAM_INT);
     $roleid   = 0;
+
+    admin_externalpage_setup('reportstats');
+    admin_externalpage_print_header();
+
+    if (empty($CFG->enablestats)) {
+        redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=stats", get_string('mustenablestats', 'admin'), 3);
+    }
 
     if ($report > 50) {
         $roleid = substr($report,1);
@@ -40,14 +42,6 @@
             print_error('invaliduser', 'error');
         }
     }
-
-    require_login();
-
-    if (empty($CFG->enablestats)) {
-        redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=stats", get_string('mustenablestats', 'admin'), 3);
-    }
-
-    require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM));
 
     add_to_log($course->id, "course", "report stats", "report/stats/index.php?course=$course->id", $course->id);
 

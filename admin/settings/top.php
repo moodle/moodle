@@ -24,6 +24,9 @@ if ($hassiteconfig) {
 }
 
 $ADMIN->add('root', new admin_category('users', get_string('users','admin')));
+  $ADMIN->add('users', new admin_category('authsettings', get_string('authentication','admin')));
+  $ADMIN->add('users', new admin_category('accounts', get_string('accounts', 'admin')));
+  $ADMIN->add('users', new admin_category('roles', get_string('permissions', 'role')));
 $ADMIN->add('root', new admin_category('courses', get_string('courses','admin')));
 $ADMIN->add('root', new admin_category('grades', get_string('grades')));
 $ADMIN->add('root', new admin_category('location', get_string('location','admin')));
@@ -36,8 +39,10 @@ $ADMIN->add('root', new admin_category('server', get_string('server','admin')));
 $ADMIN->add('root', new admin_category('mnet', get_string('net','mnet'), (isset($CFG->mnet_dispatcher_mode) and $CFG->mnet_dispatcher_mode === 'off')));
 $ADMIN->add('root', new admin_category('reports', get_string('reports')));
 $ADMIN->add('root', new admin_category('development', get_string('development', 'admin')));
+
 // hidden unsupported category
 $ADMIN->add('root', new admin_category('unsupported', get_string('unsupported', 'admin'), true));
+
 // hidden search script
 $ADMIN->add('root', new admin_externalpage('search', get_string('searchresults'), "$CFG->wwwroot/$CFG->admin/search.php", 'moodle/site:config', true));
 

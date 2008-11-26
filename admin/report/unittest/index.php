@@ -16,12 +16,6 @@ require_once($CFG->libdir.'/simpletestlib.php');
 require_once('ex_simple_test.php');
 require_once('ex_reporter.php');
 
-require_login();
-require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
-
-$langfile = 'simpletest';
-$unittest = true;
-
 // CGI arguments
 $path = optional_param('path', null, PARAM_PATH);
 $showpasses = optional_param('showpasses', false, PARAM_BOOL);
@@ -35,13 +29,17 @@ $continuesetuptesttables = optional_param('continuesetuptesttables', false, PARA
 $droptesttables = optional_param('droptesttables', false, PARAM_BOOL);
 $testtablesok = optional_param('testtablesok', false, PARAM_BOOL);
 
+admin_externalpage_setup('reportsimpletest');
+admin_externalpage_print_header();
+
+$langfile = 'simpletest';
+$unittest = true;
+
 global $UNITTEST;
 $UNITTEST = new object();
 
 // Print the header.
-admin_externalpage_setup('reportsimpletest');
 $strtitle = get_string('unittests', $langfile);
-admin_externalpage_print_header();
 
 if ($testtablesok) {
     print_heading(get_string('testtablesok', 'simpletest'));

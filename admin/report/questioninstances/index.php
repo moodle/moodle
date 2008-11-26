@@ -11,20 +11,15 @@ require_once(dirname(__FILE__).'/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/questionlib.php');
 
-// Check permissions.
-require_login();
-$systemcontext = get_context_instance(CONTEXT_SYSTEM);
-require_capability('moodle/site:viewreports', $systemcontext);
-
 // Get URL parameters.
 $requestedqtype = optional_param('qtype', '', PARAM_SAFEDIR);
 
-// Log.
-add_to_log(SITEID, "admin", "report questioninstances", "report/questioninstances/index.php?qtype=$requestedqtype", $requestedqtype);
-
-// Print the header.
+// Print the header & check permissions.
 admin_externalpage_setup('reportquestioninstances');
 admin_externalpage_print_header();
+
+// Log.
+add_to_log(SITEID, "admin", "report questioninstances", "report/questioninstances/index.php?qtype=$requestedqtype", $requestedqtype);
 
 // Prepare the list of capabilites to choose from
 $qtypechoices = array();
