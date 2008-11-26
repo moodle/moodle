@@ -188,7 +188,7 @@ class block_admin extends block_list {
 
     /// Repository Instances
         require_once($CFG->dirroot.'/repository/lib.php');
-        $editabletypes = repository_get_editable_types($context);
+        $editabletypes = repository::get_editable_types($context);
         if ($course->id !== SITEID && has_capability('moodle/course:update', $context) && !empty($editabletypes)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/repository/manage_instances.php?contextid='.$context->id.'">'.get_string('repositories').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/repository.png" alt=""/>';

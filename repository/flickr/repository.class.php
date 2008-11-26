@@ -271,7 +271,7 @@ class repository_flickr extends repository {
         $mform->addElement('text', 'secret', get_string('secret', 'repository_flickr'), array('value'=>$secret,'size' => '40'));
 
         //retrieve the flickr instances
-        $instances = repository_get_instances(array(),null,false,"flickr");
+        $instances = repository::get_instances(array(),null,false,"flickr");
         if (empty($instances)) {
             $callbackurl = get_string("callbackwarning","repository_flickr");
              $mform->addElement('static', null, '',  $callbackurl);
@@ -280,7 +280,7 @@ class repository_flickr extends repository {
              $callbackurl = $CFG->wwwroot.'/repository/ws.php?callback=yes&amp;repo_id='.$instances[0]->id;
               $mform->addElement('static', 'callbackurl', '', get_string('callbackurltext', 'repository_flickr', $callbackurl));
         }
-       
+
         $mform->addRule('api_key', $strrequired, 'required', null, 'client');
         $mform->addRule('secret', $strrequired, 'required', null, 'client');
     }

@@ -77,15 +77,15 @@ class repository_local extends repository {
      */
     public function get_listing($encodedpath = '', $search = '') {
         global $CFG;
-     
+
         try {
-            return repository_get_user_file_tree($search);
+            return repository::get_user_file_tree($search);
         }
         catch (Exception $e) {
             throw new repository_exception('emptyfilelist', 'repository_local');
         }
     }
- 
+
      /**
      * Download a file, this function can be overridden by
      * subclass.
@@ -121,10 +121,10 @@ class repository_local extends repository {
         $fs = get_file_storage();
         $sf = $fs->get_file($contextid, $filearea, $itemid, $filepath, $filename);
         $contents = $sf->get_content();
-        $fp = fopen($dir.$file, 'w');      
+        $fp = fopen($dir.$file, 'w');
         fwrite($fp,$contents);
         fclose($fp);
-       
+
         return $dir.$file;
     }
 

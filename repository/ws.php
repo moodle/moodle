@@ -23,7 +23,7 @@
     header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
 
 /// Check permissions
-    if (! (isloggedin() && repository_check_context($ctx_id)) ) {
+    if (! (isloggedin() && repository::check_context($ctx_id)) ) {
         $err = new stdclass;
         $err->e = get_string('nopermissiontoaccess', 'repository');
         die(json_encode($err));
@@ -36,7 +36,7 @@
     switch ($action) {
 
         case 'gsearch':     //  Global Search
-            $repos = repository_get_instances(array(get_context_instance_by_id($ctx_id), get_system_context()));
+            $repos = repository::get_instances(array(get_context_instance_by_id($ctx_id), get_system_context()));
             $list = array();
             foreach($repos as $repo){
                 if ($repo->global_search()) {
@@ -158,7 +158,7 @@ EOD;
                 if (preg_match('#(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)#', $path)) {
                     echo json_encode(array('url'=>$path, 'id'=>$path, 'file'=>$path));
                 } else {
-                    $info = repository_move_to_filepool($path, $title, $itemid);
+                    $info = repository::move_to_filepool($path, $title, $itemid);
                     if ($env == 'form'){
                         echo json_encode($info);
                     } else if ($env == 'editor') {

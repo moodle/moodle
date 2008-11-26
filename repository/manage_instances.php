@@ -55,13 +55,13 @@
 
 /// Security: we cannot perform any action if the type is not visible or if the context has been disabled
     if (!empty($new)){
-        $type = repository_get_type_by_typename($new);
+        $type = repository::get_type_by_typename($new);
     } else if (!empty($edit)){
-        $instance = repository_get_instance($edit);
-        $type = repository_get_type_by_id($instance->typeid);
+        $instance = repository::get_instance($edit);
+        $type = repository::get_type_by_id($instance->typeid);
     } else if (!empty($delete)){
-        $instance = repository_get_instance($delete);
-        $type = repository_get_type_by_id($instance->typeid);
+        $instance = repository::get_instance($delete);
+        $type = repository::get_type_by_id($instance->typeid);
     }
     if (isset($type) && ( !$type->get_visible() || (!$type->get_contextvisibility($context->contextlevel)) ) ) {
         print_error('typenotvisible', 'repository', $baseurl);
@@ -76,7 +76,7 @@
                 'type' => 'misc');
         $navlinks[] = array('name' => $pagename,
                 'link' => null,
-                'type' => 'misc');    
+                'type' => 'misc');
         $fullname = $course->fullname;
     } else {
         $fullname = fullname($user);
@@ -106,12 +106,12 @@
 
     if (!empty($edit) || !empty($new)) {
         if (!empty($edit)) {
-            $instance = repository_get_instance($edit);
+            $instance = repository::get_instance($edit);
             //if you try to edit an instance set as readonly, display an error message
             if ($instance->readonly) {
                 throw new repository_exception('readonlyinstance', 'repository');
             }
-            $instancetype = repository_get_type_by_id($instance->typeid);
+            $instancetype = repository::get_type_by_id($instance->typeid);
             $classname = 'repository_' . $instancetype->get_typename();
             $configs  = $instance->get_instance_option_names();
             $plugin = $instancetype->get_typename();
@@ -142,7 +142,7 @@
                 }
                 $success = $instance->set_option($settings);
             } else {
-                $success = repository_static_function($plugin, 'create', $plugin, 0, get_context_instance_by_id($contextid), $fromform);
+                $success = repository::static_function($plugin, 'create', $plugin, 0, get_context_instance_by_id($contextid), $fromform);
                 $data = data_submitted();
             }
             if ($success) {
@@ -164,7 +164,7 @@
         }
     } else if (!empty($delete)) {
         // admin_externalpage_print_header();
-        $instance = repository_get_instance($delete);
+        $instance = repository::get_instance($delete);
          //if you try to delete an instance set as readonly, display an error message
         if ($instance->readonly) {
             throw new repository_exception('readonlyinstance', 'repository');
@@ -185,7 +185,7 @@
         notice_yesno(get_string('confirmdelete', 'repository', $instance->name), $baseurl . '&amp;delete=' . $delete . '&amp;sure=yes', $baseurl);
         $return = false;
     } else {
-        repository_display_instances_list($context);
+        repository::display_instances_list($context);
         $return = false;
     }
 

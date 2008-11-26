@@ -271,7 +271,7 @@
     if (!empty($user) and $user->id == $USER->id) {
         require_once($CFG->dirroot . '/repository/lib.php');
         $usercontext = get_context_instance(CONTEXT_USER,$user->id);
-        $editabletypes = repository_get_editable_types($usercontext);
+        $editabletypes = repository::get_editable_types($usercontext);
         if (!empty($usercontext) && $usercontext->contextlevel == CONTEXT_USER && !empty($editabletypes)) {
             $toprow[] = new tabobject('repositories', $CFG->wwwroot .'/repository/manage_instances.php?contextid='.$usercontext->id, get_string('repositories', 'repository'));
         }

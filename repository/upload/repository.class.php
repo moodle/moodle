@@ -26,7 +26,7 @@ class repository_upload extends repository {
         parent::__construct($repositoryid, $context, $options);
         if($action=='upload'){
             $filepath = '/'.uniqid().'/';
-            $this->info = repository_store_to_filepool('repo_upload_file', 'user_draft', $filepath);
+            $this->info = repository::store_to_filepool('repo_upload_file', 'user_draft', $filepath);
         }
     }
 
@@ -83,7 +83,7 @@ class repository_upload extends repository {
 
     /**
      *
-     * @return <type> 
+     * @return <type>
      */
     public function get_name(){
         return get_string('repositoryname', 'repository_upload');;

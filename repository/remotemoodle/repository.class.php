@@ -60,13 +60,13 @@ class repository_remotemoodle extends repository {
             exit(mnet_server_fault(9016, get_string('usernotfound', 'repository_remotemoodle',  $username)));
         }
 
-        $file = unserialize(base64_decode($source)); 
+        $file = unserialize(base64_decode($source));
         $contextid = $file[0];
         $filearea = $file[1];
         $itemid = $file[2];
         $filepath = $file[3];
         $filename = $file[4];
-        
+
         ///check that the user has read permission on this file
         $browser = get_file_browser();
         $fileinfo = $browser->get_file_info(get_context_instance_by_id($contextid), $filearea, $itemid, $filepath, $filename);
@@ -100,9 +100,9 @@ class repository_remotemoodle extends repository {
         if (empty($USER)) {
             exit(mnet_server_fault(9016, get_string('usernotfound', 'repository_remotemoodle',  $username)));
         }
-       
+
         try {
-            return repository_get_user_file_tree($search);
+            return repository::get_user_file_tree($search);
         }
         catch (Exception $e) {
             exit(mnet_server_fault(9016, get_string('failtoretrievelist', 'repository_remotemoodle')));
@@ -125,7 +125,7 @@ class repository_remotemoodle extends repository {
      * @param <type> $search_text
      * @return <type>
      */
-    public function search($search_text) {       
+    public function search($search_text) {
         return $this->get_listing('', $search_text);
     }
 
@@ -134,7 +134,7 @@ class repository_remotemoodle extends repository {
      * @global <type> $MNET
      */
     private function ensure_environment() {
-        global $MNET;      
+        global $MNET;
         if (empty($MNET)) {
             $MNET = new mnet_environment();
             $MNET->init();
@@ -184,7 +184,7 @@ class repository_remotemoodle extends repository {
             echo json_encode(array('e'=>get_string('connectionfailure','repository_remotemoodle')));
             exit;
         }
-               
+
         ///connect to the remote moodle and retrieve the list of files
         $client->set_method('repository/remotemoodle/repository.class.php/getFileList');
         $client->add_param($USER->username);
@@ -195,11 +195,11 @@ class repository_remotemoodle extends repository {
             $message =" ";
             foreach ($client->error as $errormessage) {
                 $message .= "ERROR: $errormessage . ";
-            }          
+            }
             echo json_encode(array('e'=>$message)); //display all error messages
             exit;
         }
-        
+
         $services = $client->response;
         ///display error message if we could retrieve the list or if nothing were returned
         if (empty($services)) {
@@ -210,7 +210,7 @@ class repository_remotemoodle extends repository {
         return $services;
     }
 
-   
+
 
     /**
      * Download a file
@@ -224,7 +224,7 @@ class repository_remotemoodle extends repository {
         global $CFG, $DB, $USER;
 
         ///set mnet environment and set the mnet host
-        require_once($CFG->dirroot . '/mnet/xmlrpc/client.php');     
+        require_once($CFG->dirroot . '/mnet/xmlrpc/client.php');
         $this->ensure_environment();
         $host = $DB->get_record('mnet_host',array('id' => $this->options['peer'])); //retrieve the host url
         $mnet_peer = new mnet_peer();
@@ -246,7 +246,7 @@ class repository_remotemoodle extends repository {
             exit;
         }
 
-        $services = $client->response; //service contains the file content in the first case of the array, 
+        $services = $client->response; //service contains the file content in the first case of the array,
                                        //and the filename in the second
 
         //the content has been encoded in base64, need to decode it
@@ -271,9 +271,9 @@ class repository_remotemoodle extends repository {
         $fp = fopen($dir.$file, 'w');
         fwrite($fp,$content);
         fclose($fp);
-         
+
         return $dir.$file;
-       
+
     }
 
     /**
@@ -284,7 +284,7 @@ class repository_remotemoodle extends repository {
      */
     public function instance_config_form(&$mform) {
         global $CFG, $DB;
-        
+
         //retrieve only Moodle peers
         $hosts = $DB->get_records_sql('  SELECT
                                     h.id,
@@ -311,13 +311,13 @@ class repository_remotemoodle extends repository {
                         array($CFG->mnet_localhost_id, 'moodle', 'All Hosts'));
         $peers = array();
         foreach($hosts as $host) {
-            $peers[$host->id] = $host->name;        
+            $peers[$host->id] = $host->name;
         }
 
-       
+
         $mform->addElement('select', 'peer', get_string('peer', 'repository_remotemoodle'),$peers);
         $mform->addRule('peer', get_string('required'), 'required', null, 'client');
-        
+
         if (empty($peers)) {
             $mform->addElement('static', null, '',  get_string('nopeer','repository_remotemoodle'));
         }

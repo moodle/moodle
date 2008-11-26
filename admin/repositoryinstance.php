@@ -42,8 +42,8 @@ $return = true;
 
 if (!empty($edit) || !empty($new)) {
     if (!empty($edit)) {
-        $instance = repository_get_instance($edit);
-        $instancetype = repository_get_type_by_id($instance->typeid);
+        $instance = repository::get_instance($edit);
+        $instancetype = repository::get_type_by_id($instance->typeid);
         $classname = 'repository_' . $instancetype->get_typename();
         $configs  = $instance->get_instance_option_names();
         $plugin = $instancetype->get_typename();
@@ -75,7 +75,7 @@ if (!empty($edit) || !empty($new)) {
             }
             $success = $instance->set_option($settings);
         } else {
-            $success = repository_static_function($plugin, 'create', $plugin, 0, get_system_context(), $fromform);
+            $success = repository::static_function($plugin, 'create', $plugin, 0, get_system_context(), $fromform);
             $data = data_submitted();
         }
         if ($success) {
@@ -99,14 +99,14 @@ if (!empty($edit) || !empty($new)) {
     if (!confirm_sesskey()) {
         print_error('confirmsesskeybad', '', $baseurl);
     }
-    $instance = repository_get_type_by_typename($hide);
+    $instance = repository::get_type_by_typename($hide);
     var_dump($instance);
     var_dump($hide);
     $instance->hide();
     $return = true;
-} else if (!empty($delete)) { 
+} else if (!empty($delete)) {
     admin_externalpage_print_header();
-    $instance = repository_get_instance($delete);
+    $instance = repository::get_instance($delete);
     //if you try to delete an instance set as readonly, display an error message
     if ($instance->readonly) {
             throw new repository_exception('readonlyinstance', 'repository');
@@ -129,7 +129,7 @@ if (!empty($edit) || !empty($new)) {
 }
 
 if (!empty($return)) {
-    
+
     redirect($baseurl);
 }
 admin_externalpage_print_footer();

@@ -6012,7 +6012,7 @@ class admin_setting_managerepository extends admin_setting {
                 return true;
             }
         }
-        foreach (repository_get_types() as $instance) {
+        foreach (repository::get_types() as $instance) {
             $title = $instance->get_typename();
             if (strpos($textlib->strtolower($title), $query) !== false) {
                 return true;
@@ -6030,7 +6030,7 @@ class admin_setting_managerepository extends admin_setting {
         $hiddenstr = get_string('hiddenshow', 'repository');
         $deletestr = get_string('delete');
         $plugins = get_list_of_plugins('repository');
-        $instances = repository_get_types();
+        $instances = repository::get_types();
         $instancesnumber = count($instances);
         $alreadyplugins = array();
         $table = new StdClass;
@@ -6041,8 +6041,8 @@ class admin_setting_managerepository extends admin_setting {
         foreach ($instances as $i) {
             $settings = '';
             //display edit link only if you can config the type or if it has multiple instances (e.g. has instance config)
-            $typeoptionnames = repository_static_function($i->get_typename(), 'get_type_option_names');
-            $instanceoptionnames = repository_static_function($i->get_typename(), 'get_instance_option_names');
+            $typeoptionnames = repository::static_function($i->get_typename(), 'get_type_option_names');
+            $instanceoptionnames = repository::static_function($i->get_typename(), 'get_instance_option_names');
             if ( !empty($typeoptionnames) || !empty($instanceoptionnames)) {
                 $settings .= '<a href="' . $this->baseurl . '&amp;edit=' . $i->get_typename() . '">'
                               . $settingsstr .'</a>' . "\n";

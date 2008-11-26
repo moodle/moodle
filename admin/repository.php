@@ -39,7 +39,7 @@ $return = true;
 
 if (!empty($edit) || !empty($new)) {
     if (!empty($edit)) {
-        $repositorytype = repository_get_type_by_typename($edit);
+        $repositorytype = repository::get_type_by_typename($edit);
         $classname = 'repository_' . $repositorytype->get_typename();
         $configs = call_user_func(array($classname,'get_type_option_names'));
         $plugin = $repositorytype->get_typename();
@@ -56,7 +56,7 @@ if (!empty($edit) || !empty($new)) {
     //detect if we create a new type without config (in this case if don't want to display a setting page during creation)
     $createnewtype = false;
     if (!empty($new)) {
-        $adminconfignames = repository_static_function($new, 'get_type_option_names');
+        $adminconfignames = repository::static_function($new, 'get_type_option_names');
         $createnewtype = empty($adminconfignames);
     }
     // end setup, begin output
@@ -72,7 +72,7 @@ if (!empty($edit) || !empty($new)) {
             foreach($configs as $config) {
                 $settings[$config] = $fromform->$config;
             }
-             $instanceoptionnames = repository_static_function($edit, 'get_instance_option_names');
+             $instanceoptionnames = repository::static_function($edit, 'get_instance_option_names');
             if (!empty($instanceoptionnames)) {
                     if (array_key_exists('enablecourseinstances', $fromform)) {
                         $settings['enablecourseinstances'] = $fromform->enablecourseinstances;
@@ -108,8 +108,8 @@ if (!empty($edit) || !empty($new)) {
         print_heading(get_string('configplugin', 'repository_'.$plugin));
         $displaysettingform = true;
         if ($edit) {
-            $typeoptionnames = repository_static_function($edit, 'get_type_option_names');
-            $instanceoptionnames = repository_static_function($edit, 'get_instance_option_names');
+            $typeoptionnames = repository::static_function($edit, 'get_type_option_names');
+            $instanceoptionnames = repository::static_function($edit, 'get_instance_option_names');
             if (empty($typeoptionnames) && empty($instanceoptionnames)) {
                 $displaysettingform = false;
             }
@@ -123,9 +123,9 @@ if (!empty($edit) || !empty($new)) {
 
         //display instances list and creation form
         if ($edit){
-             $instanceoptionnames = repository_static_function($edit, 'get_instance_option_names');
+             $instanceoptionnames = repository::static_function($edit, 'get_instance_option_names');
              if (!empty($instanceoptionnames)){
-                repository_display_instances_list(get_context_instance(CONTEXT_SYSTEM), $edit);
+                repository::display_instances_list(get_context_instance(CONTEXT_SYSTEM), $edit);
            }
         }
 
@@ -134,12 +134,12 @@ if (!empty($edit) || !empty($new)) {
     if (!confirm_sesskey()) {
         print_error('confirmsesskeybad', '', $baseurl);
     }
-    $repositorytype = repository_get_type_by_typename($hide);
+    $repositorytype = repository::get_type_by_typename($hide);
     $repositorytype->switch_and_update_visibility();
     $return = true;
 } else if (!empty($delete)) {
     admin_externalpage_print_header();
-    $repositorytype = repository_get_type_by_typename($delete);
+    $repositorytype = repository::get_type_by_typename($delete);
     if ($sure) {
         if (!confirm_sesskey()) {
             print_error('confirmsesskeybad', '', $baseurl);
@@ -157,7 +157,7 @@ if (!empty($edit) || !empty($new)) {
     $return = false;
 }
 else if (!empty($move) && !empty($type)) {
-    $repositorytype = repository_get_type_by_typename($type);
+    $repositorytype = repository::get_type_by_typename($type);
     $repositorytype->move_order($move);
 }
 

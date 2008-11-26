@@ -90,6 +90,15 @@ function repository_get_client($context, $filetypes = '*', $returnvalue = '*') {
 .fp-grid .label{height:48px;text-align:center}
 .fp-grid span{color:gray}
 </style>
+
+<!--[if IE 6]>
+    <style type="text/css">
+    /* Fix for IE6 */
+    .yui-skin-sam .yui-panel .hd{
+
+    }
+    </style>
+<![endif]-->
 EOD;
 
         $js = <<<EOD
@@ -966,7 +975,7 @@ return _client;
 EOD;
 
 $user_context = get_context_instance(CONTEXT_USER, $USER->id);
-$repos = repository_get_instances(array($user_context, $context, get_system_context()), null, true, null, $filetypes, $returnvalue);
+$repos = repository::get_instances(array($user_context, $context, get_system_context()));
 foreach ($repos as $repo) {
     $info = $repo->ajax_info();
     $js .= "\r\n";

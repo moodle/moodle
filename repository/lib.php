@@ -103,7 +103,7 @@ class repository_type {
      * @return boolean
      */
     public function get_contextvisibility($contextlevel) {
-     
+
         if ($contextlevel == CONTEXT_COURSE) {
             return $this->_options['enablecourseinstances'];
         }
@@ -115,7 +115,7 @@ class repository_type {
         //the context is SITE
         return true;
     }
-     
+
 
 
     /**
@@ -136,7 +136,7 @@ class repository_type {
 
         //set options attribut
         $this->_options = array();
-        $options = repository_static_function($typename,'get_type_option_names');
+        $options = repository::static_function($typename,'get_type_option_names');
         //check that the type can be setup
         if (!empty($options)) {
             //set the type options
@@ -153,13 +153,13 @@ class repository_type {
         } else {
              $this->_options['enablecourseinstances'] = 0;
         }
-      
+
         if (array_key_exists('enableuserinstances',$typeoptions)) {
             $this->_options['enableuserinstances'] = $typeoptions['enableuserinstances'];
         } else {
              $this->_options['enableuserinstances'] = 0;
         }
-         
+
     }
 
     /**
@@ -238,15 +238,15 @@ class repository_type {
             //if the plugin type has no multiple instance (e.g. has no instance option name) so it wont
             //be possible for the administrator to create a instance
             //in this case we need to create an instance
-            $instanceoptionnames = repository_static_function($this->_typename, 'get_instance_option_names');
+            $instanceoptionnames = repository::static_function($this->_typename, 'get_instance_option_names');
             if (empty($instanceoptionnames)) {
                 $instanceoptions = array();
                 $instanceoptions['name'] = $this->_typename;
-                repository_static_function($this->_typename, 'create', $this->_typename, 0, get_system_context(), $instanceoptions);
+                repository::static_function($this->_typename, 'create', $this->_typename, 0, get_system_context(), $instanceoptions);
             }
 
             //run init function
-            if (!repository_static_function($this->_typename, 'plugin_init')) {
+            if (!repository::static_function($this->_typename, 'plugin_init')) {
                 throw new repository_exception('cannotcreatetype', 'repository');
             }
 
@@ -332,7 +332,7 @@ class repository_type {
     public function move_order($move) {
         global $DB;
 
-        $types = repository_get_types();    // retrieve all types
+        $types = repository::get_types();    // retrieve all types
 
     /// retrieve this type into the returned array
         $i = 0;
@@ -386,7 +386,7 @@ class repository_type {
         global $DB;
 
         //delete all instances of this type
-        $instances = repository_get_instances(array(),null,false,$this->_typename);
+        $instances = repository::get_instances(array(),null,false,$this->_typename);
         foreach ($instances as $instance) {
             $instance->delete();
         }
@@ -398,62 +398,6 @@ class repository_type {
 
         return $DB->delete_records('repository', array('type' => $this->_typename));
     }
-}
-
-/**
- * Return a type for a given type name.
- * @global object $DB
- * @param string $typename the type name
- * @return integer
- */
-function repository_get_type_by_typename($typename) {
-    global $DB;
-
-    if (!$record = $DB->get_record('repository',array('type' => $typename))) {
-        return false;
-    }
-
-    return new repository_type($typename, (array)get_config($typename), $record->visible, $record->sortorder);
-}
-
-/**
- * Return a type for a given type id.
- * @global object $DB
- * @param string $typename the type name
- * @return integer
- */
-function repository_get_type_by_id($id) {
-    global $DB;
-
-    if (!$record = $DB->get_record('repository',array('id' => $id))) {
-        return false;
-    }
-
-    return new repository_type($record->type, (array)get_config($record->type), $record->visible, $record->sortorder);
-}
-
-/**
- * Return all repository types ordered by sortorder
- * first type in returnedarray[0], second type in returnedarray[1], ...
- * @global object $DB
- * @param boolean $visible can return types by visiblity, return all types if null
- * @return array Repository types
- */
-function repository_get_types($visible=null) {
-    global $DB;
-
-    $types = array();
-    $params = null;
-    if (!empty($visible)) {
-        $params = array('visible' => $visible);
-    }
-    if ($records = $DB->get_records('repository',$params,'sortorder')) {
-        foreach($records as $type) {
-            $types[] = new repository_type($type->type, (array)get_config($type->type), $type->visible, $type->sortorder);
-        }
-    }
-
-    return $types;
 }
 
 /**
@@ -489,6 +433,610 @@ abstract class repository {
     public $options;
     public $readonly;
 
+    /**
+     * Return a type for a given type name.
+     * @global object $DB
+     * @param string $typename the type name
+     * @return integer
+     */
+    public static function get_type_by_typename($typename) {
+        global $DB;
+
+        if (!$record = $DB->get_record('repository',array('type' => $typename))) {
+            return false;
+        }
+
+        return new repository_type($typename, (array)get_config($typename), $record->visible, $record->sortorder);
+    }
+
+    /**
+     * Return a type for a given type id.
+     * @global object $DB
+     * @param string $typename the type name
+     * @return integer
+     */
+    public static function get_type_by_id($id) {
+        global $DB;
+
+        if (!$record = $DB->get_record('repository',array('id' => $id))) {
+            return false;
+        }
+
+        return new repository_type($record->type, (array)get_config($record->type), $record->visible, $record->sortorder);
+    }
+
+    /**
+     * Return all repository types ordered by sortorder
+     * first type in returnedarray[0], second type in returnedarray[1], ...
+     * @global object $DB
+     * @param boolean $visible can return types by visiblity, return all types if null
+     * @return array Repository types
+     */
+    public static function get_types($visible=null) {
+        global $DB;
+
+        $types = array();
+        $params = null;
+        if (!empty($visible)) {
+            $params = array('visible' => $visible);
+        }
+        if ($records = $DB->get_records('repository',$params,'sortorder')) {
+            foreach($records as $type) {
+                $types[] = new repository_type($type->type, (array)get_config($type->type), $type->visible, $type->sortorder);
+            }
+        }
+
+        return $types;
+    }
+
+    /**
+     * Check context
+     * @param int $ctx_id
+     * @return boolean
+     */
+    public static function check_context($ctx_id) {
+        global $USER;
+
+        $context = get_context_instance_by_id($ctx_id);
+        $level = $context->contextlevel;
+
+        if ($level == CONTEXT_COURSE) {
+            if (!has_capability('moodle/course:view', $context)) {
+                return false;
+            } else {
+                return true;
+            }
+        } else if ($level == CONTEXT_USER) {
+            $c = get_context_instance(CONTEXT_USER, $USER->id);
+            if ($c->id == $ctx_id) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if ($level == CONTEXT_SYSTEM) {
+            // it is always ok in system level
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Return all types that you a user can create/edit and which are also visible
+     * Note: Mostly used in order to know if at least one editable type can be set
+     * @param object $context the context for which we want the editable types
+     * @return array types
+     */
+    public static function get_editable_types($context = null) {
+
+        if (empty($context)) {
+            $context = get_system_context();
+        }
+
+        $types= repository::get_types(true);
+        $editabletypes = array();
+        foreach ($types as $type) {
+            $instanceoptionnames = repository::static_function($type->get_typename(), 'get_instance_option_names');
+            if (!empty($instanceoptionnames)) {
+                if ($type->get_contextvisibility($context->contextlevel)) {
+                    $editabletypes[]=$type;
+                }
+             }
+        }
+        return $editabletypes;
+    }
+
+    /**
+     * Return repository instances
+     * @global object $DB
+     * @global object $CFG
+     * @global object $USER
+     * @param object $contexts contexts for which the instances are set
+     * @param integer $userid
+     * @param boolean $onlyvisible if visible == true, return visible instances only,
+     *                otherwise, return all instances
+     * @param string $type a type name to retrieve
+     * @return array repository instances
+     */
+    public static function get_instances($contexts=array(), $userid = null, $onlyvisible = true, $type=null) {
+        global $DB, $CFG, $USER;
+
+        $params = array();
+        $sql = 'SELECT i.*, r.type AS repositorytype, r.sortorder, r.visible FROM {repository} r, {repository_instances} i WHERE ';
+        $sql .= 'i.typeid = r.id ';
+
+        if (!empty($userid) && is_numeric($userid)) {
+            $sql .= ' AND (i.userid = 0 or i.userid = ?)';
+            $params[] = $userid;
+        }
+
+        foreach ($contexts as $context) {
+            if (empty($firstcontext)) {
+                $firstcontext = true;
+                $sql .= ' AND ((i.contextid = ?)';
+            } else {
+                $sql .= ' OR (i.contextid = ?)';
+            }
+            $params[] = $context->id;
+        }
+
+        if (!empty($firstcontext)) {
+           $sql .=')';
+        }
+
+        if ($onlyvisible == true) {
+            $sql .= ' AND (r.visible = 1)';
+        }
+
+        if (isset($type)) {
+            $sql .= ' AND (r.type = ?)';
+            $params[] = $type;
+        }
+        $sql .= ' order by r.sortorder, i.name';
+
+        if (!$repos = $DB->get_records_sql($sql, $params)) {
+            $repos = array();
+        }
+
+        $ret = array();
+        foreach ($repos as $repo) {
+            require_once($CFG->dirroot . '/repository/'. $repo->repositorytype.'/repository.class.php');
+            $options['visible'] = $repo->visible;
+            $options['name']    = $repo->name;
+            $options['type']    = $repo->repositorytype;
+            $options['typeid']  = $repo->typeid;
+            $classname = 'repository_' . $repo->repositorytype;//
+
+            $repository = new $classname($repo->id, $repo->contextid, $options, $repo->readonly);
+            if (!$onlyvisible || ($repository->is_visible() && !$repository->disabled)) {
+                $ret[] = $repository;
+            }
+        }
+        return $ret;
+    }
+
+    /**
+     * Get single repository instance
+     * @global object $DB
+     * @global object $CFG
+     * @param integer $id repository id
+     * @return object repository instance
+     */
+    public static function get_instance($id) {
+        global $DB, $CFG;
+        $sql = 'SELECT i.*, r.type AS repositorytype, r.visible FROM {repository} r, {repository_instances} i WHERE ';
+        $sql .= 'i.typeid = r.id AND ';
+        $sql .= 'i.id = '.$id;
+
+        if(!$instance = $DB->get_record_sql($sql)) {
+            return false;
+        }
+        require_once($CFG->dirroot . '/repository/'. $instance->repositorytype
+                . '/repository.class.php');
+        $classname = 'repository_' . $instance->repositorytype;
+        $options['typeid'] = $instance->typeid;
+        $options['type']   = $instance->repositorytype;
+        $options['name']   = $instance->name;
+        return new $classname($instance->id, $instance->contextid, $options, $instance->readonly);
+    }
+
+    /**
+     * call a static function
+     * @global <type> $CFG
+     * @param <type> $plugin
+     * @param <type> $function
+     * @param type $nocallablereturnvalue default value if function not found
+     *             it's mostly used when you don't want to display an error but
+     *             return a boolean
+     * @return <type>
+     */
+    public static function static_function($plugin, $function) {
+        global $CFG;
+
+        //check that the plugin exists
+        $typedirectory = $CFG->dirroot . '/repository/'. $plugin . '/repository.class.php';
+        if (!file_exists($typedirectory)) {
+            throw new repository_exception('invalidplugin', 'repository');
+        }
+
+        $pname = null;
+        if (is_object($plugin) || is_array($plugin)) {
+            $plugin = (object)$plugin;
+            $pname = $plugin->name;
+        } else {
+            $pname = $plugin;
+        }
+
+        $args = func_get_args();
+        if (count($args) <= 2) {
+            $args = array();
+        }
+        else {
+            array_shift($args);
+            array_shift($args);
+        }
+
+        require_once($typedirectory);
+        return call_user_func_array(array('repository_' . $plugin, $function), $args);
+    }
+
+    /**
+     * Move file from download folder to file pool using FILE API
+     * @global object $DB
+     * @global object $CFG
+     * @global object $USER
+     * @param string $path file path in download folder
+     * @param string $name file name
+     * @param integer $itemid item id to identify a file in filepool
+     * @param string $filearea file area
+     * @return array information of file in file pool
+     */
+    public static function move_to_filepool($path, $name, $itemid, $filearea = 'user_draft') {
+        global $DB, $CFG, $USER;
+        $context = get_context_instance(CONTEXT_USER, $USER->id);
+        $now = time();
+        $entry = new object();
+        $entry->filearea  = $filearea;
+        $entry->contextid = $context->id;
+        $entry->filename  = $name;
+        $entry->filepath  = '/'.uniqid().'/';
+        $entry->timecreated  = $now;
+        $entry->timemodified = $now;
+        if(is_numeric($itemid)) {
+            $entry->itemid = $itemid;
+        } else {
+            $entry->itemid = 0;
+        }
+        $entry->mimetype     = mimeinfo('type', $path);
+        $entry->userid       = $USER->id;
+        $fs = get_file_storage();
+        $browser = get_file_browser();
+        if ($file = $fs->create_file_from_pathname($entry, $path)) {
+            $delete = unlink($path);
+            $ret = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+            if(!empty($ret)) {
+                return array('url'=>$ret->get_url(),'id'=>$file->get_itemid(), 'file'=>$file->get_filename());
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public static function download_btn($repo_id, $ctx_id, $sesskey, $title, $src, $returnurl = '') {
+        global $CFG;
+        if (empty($returnurl)) {
+            $returnurl = get_referer();
+        }
+        $str  = '<form action="'.$CFG->httpswwwroot.'/repository/ws.php">';
+        $str .= '  <input type="hidden" name="sesskey" value="'.$sesskey.'" />';
+        $str .= '  <input type="hidden" name="ctx_id" value="'.$ctx_id.'" />';
+        $str .= '  <input type="hidden" name="repo_id" value="'.$repo_id.'" />';
+        $str .= '  <input type="hidden" name="file" value="'.$src.'" />';
+        $str .= '  <input type="hidden" name="action" value="download" />';
+        $str .= '  <input type="hidden" name="returnurl" value="'.$returnurl.'" />';
+        $str .= '  <input type="text" name="title" value="'.$title.'" />';
+        $str .= '  <input type="submit" value="Select it!" />';
+        $str .= '</form>';
+        return $str;
+    }
+
+    /**
+     * Save file to local filesystem pool
+     * @param string $elname name of element
+     * @param string $filearea
+     * @param string $filepath
+     * @param string $filename - use specified filename, if not specified name of uploaded file used
+     * @param bool $override override file if exists
+     * @return mixed stored_file object or false if error; may throw exception if duplicate found
+     */
+    public static function store_to_filepool($elname, $filearea='user_draft', $filepath='/', $filename = '', $override = false) {
+        global $USER;
+        if (!isset($_FILES[$elname])) {
+            return false;
+        }
+
+        if (!$filename) {
+            $filename = $_FILES[$elname]['name'];
+        }
+        $context = get_context_instance(CONTEXT_USER, $USER->id);
+        $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
+        $fs = get_file_storage();
+        $browser = get_file_browser();
+
+        if ($file = $fs->get_file($context->id, $filearea, $itemid, $filepath, $filename)) {
+            if ($override) {
+                $file->delete();
+            } else {
+                return false;
+            }
+        }
+
+        $file_record = new object();
+        $file_record->contextid = $context->id;
+        $file_record->filearea  = $filearea;
+        $file_record->itemid    = $itemid;
+        $file_record->filepath  = $filepath;
+        $file_record->filename  = $filename;
+        $file_record->userid    = $USER->id;
+
+        $file = $fs->create_file_from_pathname($file_record, $_FILES[$elname]['tmp_name']);
+        $info = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+        $ret = array('url'=>$info->get_url(),'id'=>$itemid, 'file'=>$file->get_filename());
+        return $ret;
+    }
+
+    /**
+     * Return the user arborescence in a format to be returned by the function get_listing
+     * @global <type> $CFG
+     * @param <type> $search
+     * @return <type>
+     */
+    public static function get_user_file_tree($search = ""){
+        global $CFG;
+     $ret = array();
+            $ret['nologin'] = true;
+            $ret['manage'] = $CFG->wwwroot .'/files/index.php'; // temporary
+            $browser = get_file_browser();
+            $itemid = null;
+            $filename = null;
+            $filearea = null;
+            $path = '/';
+            $ret['dynload'] = false;
+
+            if ($fileinfo = $browser->get_file_info(get_system_context(), $filearea, $itemid, $path, $filename)) {
+
+                $ret['path'] = array();
+                $params = $fileinfo->get_params();
+                $filearea = $params['filearea'];
+                $ret['path'][] = repository::encode_path($filearea, $path, $fileinfo->get_visible_name());
+                if ($fileinfo->is_directory()) {
+                    $level = $fileinfo->get_parent();
+                    while ($level) {
+                        $params = $level->get_params();
+                        $ret['path'][] = repository::encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
+                        $level = $level->get_parent();
+                    }
+                }
+                $filecount = repository::build_tree($fileinfo, $search, $ret['dynload'], $ret['list']);
+                $ret['path'] = array_reverse($ret['path']);
+            }
+
+            if (empty($ret['list'])) {
+                //exit(mnet_server_fault(9016, get_string('emptyfilelist', 'repository_local')));
+                throw new Exception('emptyfilelist');
+            } else {
+                return $ret;
+            }
+
+    }
+
+    /**
+     *
+     * @param <type> $filearea
+     * @param <type> $path
+     * @param <type> $visiblename
+     * @return <type>
+     */
+    public static function encode_path($filearea, $path, $visiblename) {
+        return array('path'=>serialize(array($filearea, $path)), 'name'=>$visiblename);
+    }
+
+    /**
+     * Builds a tree of files This function is
+     * then called recursively.
+     *
+     * @param $fileinfo an object returned by file_browser::get_file_info()
+     * @param $search searched string
+     * @param $dynamicmode bool no recursive call is done when in dynamic mode
+     * @param $list - the array containing the files under the passed $fileinfo
+     * @returns int the number of files found
+     *
+     * todo: take $search into account, and respect a threshold for dynamic loading
+     */
+    public static function build_tree($fileinfo, $search, $dynamicmode, &$list) {
+        global $CFG;
+
+        $filecount = 0;
+        $children = $fileinfo->get_children();
+
+        foreach ($children as $child) {
+            $filename = $child->get_visible_name();
+            $filesize = $child->get_filesize();
+            $filesize = $filesize ? display_size($filesize) : '';
+            $filedate = $child->get_timemodified();
+            $filedate = $filedate ? userdate($filedate) : '';
+            $filetype = $child->get_mimetype();
+
+            if ($child->is_directory()) {
+                $path = array();
+                $level = $child->get_parent();
+                while ($level) {
+                    $params = $level->get_params();
+                    $path[] = repository::encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
+                    $level = $level->get_parent();
+                }
+
+                $tmp = array(
+                    'title' => $child->get_visible_name(),
+                    'size' => 0,
+                    'date' => $filedate,
+                    'path' => array_reverse($path),
+                    'thumbnail' => $CFG->pixpath .'/f/folder.gif'
+                );
+
+                //if ($dynamicmode && $child->is_writable()) {
+                //    $tmp['children'] = array();
+                //} else {
+                    // if folder name matches search, we send back all files contained.
+                $_search = $search;
+                if ($search && stristr($tmp['title'], $search) !== false) {
+                    $_search = false;
+                }
+                $tmp['children'] = array();
+                $_filecount = repository::build_tree($child, $_search, $dynamicmode, $tmp['children']);
+                if ($search && $_filecount) {
+                    $tmp['expanded'] = 1;
+                }
+
+                //}
+
+                //Uncomment this following line if you wanna display all directory ()even empty
+                //if (!$search || $_filecount || (stristr($tmp['title'], $search) !== false)) {
+                if ($_filecount) {
+                    $filecount += $_filecount;
+                    $list[] = $tmp;
+                }
+
+            } else { // not a directory
+                // skip the file, if we're in search mode and it's not a match
+                if ($search && (stristr($filename, $search) === false)) {
+                    continue;
+                }
+                $params = $child->get_params();
+                $source = serialize(array($params['contextid'], $params['filearea'], $params['itemid'], $params['filepath'], $params['filename']));
+                $list[] = array(
+                    'title' => $filename,
+                    'size' => $filesize,
+                    'date' => $filedate,
+                    //'source' => $child->get_url(),
+                    'source' => base64_encode($source),
+                    'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo_from_type("icon", $filetype)
+                );
+                $filecount++;
+            }
+        }
+
+        return $filecount;
+    }
+
+
+    /**
+     * Display a repository instance list (with edit/delete/create links)
+     * @global object $CFG
+     * @global object $USER
+     * @param object $context the context for which we display the instance
+     * @param string $typename if set, we display only one type of instance
+     */
+    public static function display_instances_list($context, $typename = null) {
+        global $CFG, $USER;
+
+        $output = print_box_start('generalbox','',true);
+        //if the context is SYSTEM, so we call it from administration page
+        $admin = ($context->id == SYSCONTEXTID) ? true : false;
+        if ($admin) {
+            $baseurl = $CFG->httpswwwroot . '/admin/repositoryinstance.php?sesskey=' . sesskey();
+            $output .= "<div ><h2 style='text-align: center'>" . get_string('siteinstances', 'repository') . " ";
+            $output .= "</h2></div>";
+        } else {
+            $baseurl = $CFG->httpswwwroot . '/repository/manage_instances.php?contextid=' . $context->id . '&amp;sesskey=' . sesskey();
+        }
+
+        $namestr = get_string('name');
+        $pluginstr = get_string('plugin', 'repository');
+        $settingsstr = get_string('settings');
+        $deletestr = get_string('delete');
+        $updown = get_string('updown', 'repository');
+        //retrieve list of instances. In administration context we want to display all
+        //instances of a type, even if this type is not visible. In course/user context we
+        //want to display only visible instances, but for every type types. The repository_get_instances()
+        //third parameter displays only visible type.
+        $instances = repository::get_instances(array($context),null,!$admin,$typename);
+        $instancesnumber = count($instances);
+        $alreadyplugins = array();
+
+        $table = new StdClass;
+        $table->head = array($namestr, $pluginstr, $deletestr, $settingsstr);
+        $table->align = array('left', 'left', 'center','center');
+        $table->data = array();
+
+        $updowncount = 1;
+
+        foreach ($instances as $i) {
+            $settings = '';
+            $delete = '';
+            $settings .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;edit=' . $i->id . '">' . $settingsstr . '</a>' . "\n";
+            if (!$i->readonly) {
+                $delete .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;delete=' .  $i->id . '">' . $deletestr . '</a>' . "\n";
+            }
+
+            $type = repository::get_type_by_id($i->typeid);
+            $table->data[] = array($i->name, $type->get_readablename(), $delete, $settings);
+
+            //display a grey row if the type is defined as not visible
+            if (isset($type) && !$type->get_visible()) {
+                $table->rowclass[] = 'dimmed_text';
+            } else {
+                $table->rowclass[] = '';
+            }
+
+            if (!in_array($i->name, $alreadyplugins)) {
+                $alreadyplugins[] = $i->name;
+            }
+        }
+        $output .= print_table($table, true);
+        $instancehtml = '<div>';
+        $addable = 0;
+
+        //if no type is set, we can create all type of instance
+        if (!$typename) {
+            $instancehtml .= '<h3>';
+            $instancehtml .= get_string('createrepository', 'repository');
+            $instancehtml .= '</h3><ul>';
+            $types = repository::get_editable_types($context);
+            foreach ($types as $type) {
+                if (!empty($type) && $type->get_visible()) {
+                    $instanceoptionnames = repository::static_function($type->get_typename(), 'get_instance_option_names');
+                    if (!empty($instanceoptionnames)) {
+                        $instancehtml .= '<li><a href="'.$baseurl.'&amp;new='.$type->get_typename().'">'.get_string('create', 'repository')
+                            .' "'.get_string('repositoryname', 'repository_'.$type->get_typename()).'" '
+                            .get_string('instance', 'repository').'</a></li>';
+                        $addable++;
+                    }
+                }
+            }
+            $instancehtml .= '</ul>';
+
+        } else {
+            $instanceoptionnames = repository::static_function($typename, 'get_instance_option_names');
+            if (!empty($instanceoptionnames)) {   //create a unique type of instance
+                $addable = 1;
+                $instancehtml .= "<form action='".$baseurl."&amp;new=".$typename."' method='post'>
+                    <p style='text-align:center'><input type='submit' value='".get_string('createinstance', 'repository')."'/></p>
+                    </form>";
+            }
+        }
+
+        if ($addable) {
+            $instancehtml .= '</div>';
+            $output .= $instancehtml;
+        }
+
+        $output .= print_box_end(true);
+
+        //print the list + creation links
+        print($output);
+    }
     /**
      * 1. Initialize context and options
      * 2. Accept necessary parameters
@@ -627,9 +1175,9 @@ abstract class repository {
      * (is the type visible ? is the context enable ?)
      * @return boolean
      */
-    public function is_visible() {      
-        $type = repository_get_type_by_id($this->typeid);
-        $instanceoptions = repository_static_function($type->get_typename(), 'get_instance_option_names');
+    public function is_visible() {
+        $type = repository::get_type_by_id($this->typeid);
+        $instanceoptions = repository::static_function($type->get_typename(), 'get_instance_option_names');
 
         if ($type->get_visible()) {
             //if the instance is unique so it's visible, otherwise check if the instance has a enabled context
@@ -733,7 +1281,7 @@ abstract class repository {
 
             if (!empty($id)) {
                 unset($options['name']);
-                $instance = repository_get_instance($id);
+                $instance = repository::get_instance($id);
                 $instance->set_option($options);
                 return $id;
             } else {
@@ -920,7 +1468,7 @@ abstract class repository {
     /**
      * Search files in repository
      * When doing global search, $search_text will be used as
-     * keyword. 
+     * keyword.
      *
      * @return mixed, see get_listing()
      */
@@ -1000,7 +1548,7 @@ abstract class repository {
      */
      public function type_config_form(&$mform) {
     }
-    
+
       /**
      * Edit/Create Instance Settings Moodle form
      * @param object $ Moodle form (passed by reference)
@@ -1042,466 +1590,6 @@ abstract class repository {
 class repository_exception extends moodle_exception {
 }
 
-/**
- * Check context
- * @param int $ctx_id
- * @return boolean
- */
-function repository_check_context($ctx_id) {
-    global $USER;
-
-    $context = get_context_instance_by_id($ctx_id);
-    $level = $context->contextlevel;
-
-    if ($level == CONTEXT_COURSE) {
-        if (!has_capability('moodle/course:view', $context)) {
-            return false;
-        } else {
-            return true;
-        }
-    } else if ($level == CONTEXT_USER) {
-        $c = get_context_instance(CONTEXT_USER, $USER->id);
-        if ($c->id == $ctx_id) {
-            return true;
-        } else {
-            return false;
-        }
-    } else if ($level == CONTEXT_SYSTEM) {
-        // it is always ok in system level
-        return true;
-    }
-    return false;
-}
-
-/**
- * Return all types that you a user can create/edit and which are also visible
- * Note: Mostly used in order to know if at least one editable type can be set
- * @param object $context the context for which we want the editable types
- * @return array types
- */
-function repository_get_editable_types($context = null) {
-    
-    if (empty($context)) {
-        $context = get_system_context();
-    }
-
-    $types= repository_get_types(true);
-    $editabletypes = array();
-    foreach ($types as $type) {
-        $instanceoptionnames = repository_static_function($type->get_typename(), 'get_instance_option_names');
-        if (!empty($instanceoptionnames)) {
-            if ($type->get_contextvisibility($context->contextlevel)) {
-                $editabletypes[]=$type;
-            }
-         }
-    }
-    return $editabletypes;
-}
-
-/**
- * Return repository instances
- * @global object $DB
- * @global object $CFG
- * @global object $USER
- * @param object $contexts contexts for which the instances are set
- * @param integer $userid
- * @param boolean $onlyvisible if visible == true, return visible instances only,
- *                otherwise, return all instances
- * @param string $type a type name to retrieve
- * @param string $filetypes supported file types
- * @param string $returnvalue supportted returned value
- * @return array repository instances
- */
-function repository_get_instances($contexts=array(), $userid = null, $onlyvisible = true, $type=null, $filetypes = '*', $returnvalue = '*') {
-    global $DB, $CFG, $USER;
-
-    $params = array();
-    $sql = 'SELECT i.*, r.type AS repositorytype, r.sortorder, r.visible FROM {repository} r, {repository_instances} i WHERE ';
-    $sql .= 'i.typeid = r.id ';
-
-    if (!empty($userid) && is_numeric($userid)) {
-        $sql .= ' AND (i.userid = 0 or i.userid = ?)';
-        $params[] = $userid;
-    }
-
-    foreach ($contexts as $context) {
-        if (empty($firstcontext)) {
-            $firstcontext = true;
-            $sql .= ' AND ((i.contextid = ?)';
-        } else {
-            $sql .= ' OR (i.contextid = ?)';
-        }
-        $params[] = $context->id;
-    }
-
-    if (!empty($firstcontext)) {
-       $sql .=')';
-    }
-
-    if ($onlyvisible == true) {
-        $sql .= ' AND (r.visible = 1)';
-    }
-
-    if (isset($type)) {
-        $sql .= ' AND (r.type = ?)';
-        $params[] = $type;
-    }
-    $sql .= ' order by r.sortorder, i.name';
-
-    if (!$repos = $DB->get_records_sql($sql, $params)) {
-        $repos = array();
-    }
-
-    $ret = array();
-    foreach ($repos as $repo) {
-        require_once($CFG->dirroot . '/repository/'. $repo->repositorytype.'/repository.class.php');
-        $options['visible'] = $repo->visible;
-        $options['name']    = $repo->name;
-        $options['type']    = $repo->repositorytype;
-        $options['typeid']  = $repo->typeid;
-        $classname = 'repository_' . $repo->repositorytype;//
-
-        $repository = new $classname($repo->id, $repo->contextid, $options, $repo->readonly);
-        if ($filetypes !== '*' and $repository->supported_mimetype() !== '*') {
-            $mimetypes = $repository->supported_mimetype();
-            $is_supported = false;
-            foreach  ($mimetypes as $type) {
-                if (in_array($type, $filetypes)) {
-                    $is_supported = true;
-                }
-            }
-            if (!$is_supported) {
-                continue;
-            }
-        }
-        if ($returnvalue !== '*' and $repository->supported_return_value() !== '*') {
-            $tmp = $repository->supported_return_value();
-            if ($tmp == $returnvalue) {
-                continue;
-            }
-        }
-        if (!$onlyvisible || ($repository->is_visible() && !$repository->disabled)) {
-            $ret[] = $repository;
-        }
-    }
-    return $ret;
-}
-
-/**
- * Get single repository instance
- * @global object $DB
- * @global object $CFG
- * @param integer $id repository id
- * @return object repository instance
- */
-function repository_get_instance($id) {
-    global $DB, $CFG;
-    $sql = 'SELECT i.*, r.type AS repositorytype, r.visible FROM {repository} r, {repository_instances} i WHERE ';
-    $sql .= 'i.typeid = r.id AND ';
-    $sql .= 'i.id = '.$id;
-
-    if(!$instance = $DB->get_record_sql($sql)) {
-        return false;
-    }
-    require_once($CFG->dirroot . '/repository/'. $instance->repositorytype
-            . '/repository.class.php');
-    $classname = 'repository_' . $instance->repositorytype;
-    $options['typeid'] = $instance->typeid;
-    $options['type']   = $instance->repositorytype;
-    $options['name']   = $instance->name;
-    return new $classname($instance->id, $instance->contextid, $options, $instance->readonly);
-}
-
-/**
- * call a static function
- * @global <type> $CFG
- * @param <type> $plugin
- * @param <type> $function
- * @param type $nocallablereturnvalue default value if function not found
- *             it's mostly used when you don't want to display an error but
- *             return a boolean
- * @return <type>
- */
-function repository_static_function($plugin, $function) {
-    global $CFG;
-
-    //check that the plugin exists
-    $typedirectory = $CFG->dirroot . '/repository/'. $plugin . '/repository.class.php';
-    if (!file_exists($typedirectory)) {
-        throw new repository_exception('invalidplugin', 'repository');
-    }
-
-    $pname = null;
-    if (is_object($plugin) || is_array($plugin)) {
-        $plugin = (object)$plugin;
-        $pname = $plugin->name;
-    } else {
-        $pname = $plugin;
-    }
-
-    $args = func_get_args();
-    if (count($args) <= 2) {
-        $args = array();
-    }
-    else {
-        array_shift($args);
-        array_shift($args);
-    }
-
-    require_once($typedirectory);
-    return call_user_func_array(array('repository_' . $plugin, $function), $args);
-}
-
-/**
- * Move file from download folder to file pool using FILE API
- * @global object $DB
- * @global object $CFG
- * @global object $USER
- * @param string $path file path in download folder
- * @param string $name file name
- * @param integer $itemid item id to identify a file in filepool
- * @param string $filearea file area
- * @return array information of file in file pool
- */
-function repository_move_to_filepool($path, $name, $itemid, $filearea = 'user_draft') {
-    global $DB, $CFG, $USER;
-    $context = get_context_instance(CONTEXT_USER, $USER->id);
-    $now = time();
-    $entry = new object();
-    $entry->filearea  = $filearea;
-    $entry->contextid = $context->id;
-    $entry->filename  = $name;
-    $entry->filepath  = '/'.uniqid().'/';
-    $entry->timecreated  = $now;
-    $entry->timemodified = $now;
-    if(is_numeric($itemid)) {
-        $entry->itemid = $itemid;
-    } else {
-        $entry->itemid = 0;
-    }
-    $entry->mimetype     = mimeinfo('type', $path);
-    $entry->userid       = $USER->id;
-    $fs = get_file_storage();
-    $browser = get_file_browser();
-    if ($file = $fs->create_file_from_pathname($entry, $path)) {
-        $delete = unlink($path);
-        $ret = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
-        if(!empty($ret)) {
-            return array('url'=>$ret->get_url(),'id'=>$file->get_itemid(), 'file'=>$file->get_filename());
-        } else {
-            return null;
-        }
-    } else {
-        return null;
-    }
-}
-
-function repository_download_btn($repo_id, $ctx_id, $sesskey, $title, $src, $returnurl = '') {
-    global $CFG;
-    if (empty($returnurl)) {
-        $returnurl = get_referer();
-    }
-    $str  = '<form action="'.$CFG->httpswwwroot.'/repository/ws.php">';
-    $str .= '  <input type="hidden" name="sesskey" value="'.$sesskey.'" />';
-    $str .= '  <input type="hidden" name="ctx_id" value="'.$ctx_id.'" />';
-    $str .= '  <input type="hidden" name="repo_id" value="'.$repo_id.'" />';
-    $str .= '  <input type="hidden" name="file" value="'.$src.'" />';
-    $str .= '  <input type="hidden" name="action" value="download" />';
-    $str .= '  <input type="hidden" name="returnurl" value="'.$returnurl.'" />';
-    $str .= '  <input type="text" name="title" value="'.$title.'" />';
-    $str .= '  <input type="submit" value="Select it!" />';
-    $str .= '</form>';
-    return $str;
-}
-
-/**
- * Save file to local filesystem pool
- * @param string $elname name of element
- * @param string $filearea
- * @param string $filepath
- * @param string $filename - use specified filename, if not specified name of uploaded file used
- * @param bool $override override file if exists
- * @return mixed stored_file object or false if error; may throw exception if duplicate found
- */
-function repository_store_to_filepool($elname, $filearea='user_draft', $filepath='/', $filename = '', $override = false) {
-    global $USER;
-    if (!isset($_FILES[$elname])) {
-        return false;
-    }
-
-    if (!$filename) {
-        $filename = $_FILES[$elname]['name'];
-    }
-    $context = get_context_instance(CONTEXT_USER, $USER->id);
-    $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
-    $fs = get_file_storage();
-    $browser = get_file_browser();
-
-    if ($file = $fs->get_file($context->id, $filearea, $itemid, $filepath, $filename)) {
-        if ($override) {
-            $file->delete();
-        } else {
-            return false;
-        }
-    }
-
-    $file_record = new object();
-    $file_record->contextid = $context->id;
-    $file_record->filearea  = $filearea;
-    $file_record->itemid    = $itemid;
-    $file_record->filepath  = $filepath;
-    $file_record->filename  = $filename;
-    $file_record->userid    = $USER->id;
-
-    $file = $fs->create_file_from_pathname($file_record, $_FILES[$elname]['tmp_name']);
-    $info = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
-    $ret = array('url'=>$info->get_url(),'id'=>$itemid, 'file'=>$file->get_filename());
-    return $ret;
-}
-
-/**
- * Return the user arborescence in a format to be returned by the function get_listing
- * @global <type> $CFG
- * @param <type> $search
- * @return <type>
- */
-function repository_get_user_file_tree($search = ""){
-    global $CFG;
- $ret = array();
-        $ret['nologin'] = true;
-        $ret['manage'] = $CFG->wwwroot .'/files/index.php'; // temporary
-        $browser = get_file_browser();
-        $itemid = null;
-        $filename = null;
-        $filearea = null;
-        $path = '/';
-        $ret['dynload'] = false;
-
-        if ($fileinfo = $browser->get_file_info(get_system_context(), $filearea, $itemid, $path, $filename)) {
-
-            $ret['path'] = array();
-            $params = $fileinfo->get_params();
-            $filearea = $params['filearea'];
-            $ret['path'][] = repository_encode_path($filearea, $path, $fileinfo->get_visible_name());
-            if ($fileinfo->is_directory()) {
-                $level = $fileinfo->get_parent();
-                while ($level) {
-                    $params = $level->get_params();
-                    $ret['path'][] = repository_encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
-                    $level = $level->get_parent();
-                }
-            }
-            $filecount = repository_build_tree($fileinfo, $search, $ret['dynload'], $ret['list']);
-            $ret['path'] = array_reverse($ret['path']);
-        }
-
-        if (empty($ret['list'])) {
-            //exit(mnet_server_fault(9016, get_string('emptyfilelist', 'repository_local')));
-            throw new Exception('emptyfilelist');
-        } else {
-            return $ret;
-        }
-
-}
-
- /**
-     *
-     * @param <type> $filearea
-     * @param <type> $path
-     * @param <type> $visiblename
-     * @return <type>
-     */
-    function repository_encode_path($filearea, $path, $visiblename) {
-        return array('path'=>serialize(array($filearea, $path)), 'name'=>$visiblename);
-    }
-
- /**
-     * Builds a tree of files This function is
-     * then called recursively.
-     *
-     * @param $fileinfo an object returned by file_browser::get_file_info()
-     * @param $search searched string
-     * @param $dynamicmode bool no recursive call is done when in dynamic mode
-     * @param $list - the array containing the files under the passed $fileinfo
-     * @returns int the number of files found
-     *
-     * todo: take $search into account, and respect a threshold for dynamic loading
-     */
-    function repository_build_tree($fileinfo, $search, $dynamicmode, &$list) {
-        global $CFG;
-
-        $filecount = 0;
-        $children = $fileinfo->get_children();
-
-        foreach ($children as $child) {
-            $filename = $child->get_visible_name();
-            $filesize = $child->get_filesize();
-            $filesize = $filesize ? display_size($filesize) : '';
-            $filedate = $child->get_timemodified();
-            $filedate = $filedate ? userdate($filedate) : '';
-            $filetype = $child->get_mimetype();
-
-            if ($child->is_directory()) {
-                $path = array();
-                $level = $child->get_parent();
-                while ($level) {
-                    $params = $level->get_params();
-                    $path[] = repository_encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
-                    $level = $level->get_parent();
-                }
-
-                $tmp = array(
-                    'title' => $child->get_visible_name(),
-                    'size' => 0,
-                    'date' => $filedate,
-                    'path' => array_reverse($path),
-                    'thumbnail' => $CFG->pixpath .'/f/folder.gif'
-                );
-
-                //if ($dynamicmode && $child->is_writable()) {
-                //    $tmp['children'] = array();
-                //} else {
-                    // if folder name matches search, we send back all files contained.
-                $_search = $search;
-                if ($search && stristr($tmp['title'], $search) !== false) {
-                    $_search = false;
-                }
-                $tmp['children'] = array();
-                $_filecount = repository_build_tree($child, $_search, $dynamicmode, $tmp['children']);
-                if ($search && $_filecount) {
-                    $tmp['expanded'] = 1;
-                }
-
-                //}
-
-                //Uncomment this following line if you wanna display all directory ()even empty
-                //if (!$search || $_filecount || (stristr($tmp['title'], $search) !== false)) {
-                if ($_filecount) {
-                    $filecount += $_filecount;
-                    $list[] = $tmp;                    
-                }
-
-            } else { // not a directory
-                // skip the file, if we're in search mode and it's not a match
-                if ($search && (stristr($filename, $search) === false)) {
-                    continue;
-                }
-                $params = $child->get_params();
-                $source = serialize(array($params['contextid'], $params['filearea'], $params['itemid'], $params['filepath'], $params['filename']));
-                $list[] = array(
-                    'title' => $filename,
-                    'size' => $filesize,
-                    'date' => $filedate,
-                    //'source' => $child->get_url(),
-                    'source' => base64_encode($source),
-                    'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo_from_type("icon", $filetype)
-                );
-                $filecount++;
-            }
-        }
-
-        return $filecount;
-    }
 
 
 /**
@@ -1540,7 +1628,7 @@ final class repository_instance_form extends moodleform {
 
         //add fields
         if (!$this->instance) {
-            $result = repository_static_function($this->plugin, 'instance_config_form', $mform);
+            $result = repository::static_function($this->plugin, 'instance_config_form', $mform);
         }
         else {
             $data = array();
@@ -1609,14 +1697,14 @@ final class repository_type_form extends moodleform {
 
         // let the plugin add its specific fields
         if (!$this->instance) {
-                $result = repository_static_function($this->plugin, 'type_config_form', $mform);
+                $result = repository::static_function($this->plugin, 'type_config_form', $mform);
             } else {
                 $classname = 'repository_' . $this->instance->get_typename();
                 $result = call_user_func(array($classname,'type_config_form'),$mform);
         }
 
         //add "enable course/user instances" checkboxes if multiple instances are allowed
-        $instanceoptionnames = repository_static_function($this->plugin, 'get_instance_option_names');
+        $instanceoptionnames = repository::static_function($this->plugin, 'get_instance_option_names');
         if (!empty($instanceoptionnames)){
             $mform->addElement('checkbox', 'enablecourseinstances', get_string('enablecourseinstances', 'repository'));
             $mform->addElement('checkbox', 'enableuserinstances', get_string('enableuserinstances', 'repository'));
@@ -1641,115 +1729,9 @@ final class repository_type_form extends moodleform {
             }
             $this->set_data($data);
         }
-    
+
         $this->add_action_buttons(true, get_string('save','repository'));
     }
 }
 
 
-/**
- * Display a repository instance list (with edit/delete/create links)
- * @global object $CFG
- * @global object $USER
- * @param object $context the context for which we display the instance
- * @param string $typename if set, we display only one type of instance
- */
-function repository_display_instances_list($context, $typename = null) {
-    global $CFG, $USER;
-
-    $output = print_box_start('generalbox','',true);
-    //if the context is SYSTEM, so we call it from administration page
-    $admin = ($context->id == SYSCONTEXTID) ? true : false;
-    if ($admin) {
-        $baseurl = $CFG->httpswwwroot . '/admin/repositoryinstance.php?sesskey=' . sesskey();
-        $output .= "<div ><h2 style='text-align: center'>" . get_string('siteinstances', 'repository') . " ";
-        $output .= "</h2></div>";
-    } else {
-        $baseurl = $CFG->httpswwwroot . '/repository/manage_instances.php?contextid=' . $context->id . '&amp;sesskey=' . sesskey();
-    }
-
-    $namestr = get_string('name');
-    $pluginstr = get_string('plugin', 'repository');
-    $settingsstr = get_string('settings');
-    $deletestr = get_string('delete');
-    $updown = get_string('updown', 'repository');
-    //retrieve list of instances. In administration context we want to display all
-    //instances of a type, even if this type is not visible. In course/user context we
-    //want to display only visible instances, but for every type types. The repository_get_instances()
-    //third parameter displays only visible type.
-    $instances = repository_get_instances(array($context),null,!$admin,$typename);
-    $instancesnumber = count($instances);
-    $alreadyplugins = array();
-
-    $table = new StdClass;
-    $table->head = array($namestr, $pluginstr, $deletestr, $settingsstr);
-    $table->align = array('left', 'left', 'center','center');
-    $table->data = array();
-
-    $updowncount = 1;
-
-    foreach ($instances as $i) {
-        $settings = '';
-        $delete = '';
-        $settings .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;edit=' . $i->id . '">' . $settingsstr . '</a>' . "\n";
-        if (!$i->readonly) {
-            $delete .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;delete=' .  $i->id . '">' . $deletestr . '</a>' . "\n";
-        }
-
-        $type = repository_get_type_by_id($i->typeid);
-        $table->data[] = array($i->name, $type->get_readablename(), $delete, $settings);
-
-        //display a grey row if the type is defined as not visible
-        if (isset($type) && !$type->get_visible()) {
-            $table->rowclass[] = 'dimmed_text';
-        } else {
-            $table->rowclass[] = '';
-        }
-
-        if (!in_array($i->name, $alreadyplugins)) {
-            $alreadyplugins[] = $i->name;
-        }
-    }
-    $output .= print_table($table, true);
-    $instancehtml = '<div>';
-    $addable = 0;
-
-    //if no type is set, we can create all type of instance
-    if (!$typename) {
-        $instancehtml .= '<h3>';
-        $instancehtml .= get_string('createrepository', 'repository');
-        $instancehtml .= '</h3><ul>';
-        $types = repository_get_editable_types($context);
-        foreach ($types as $type) {
-            if (!empty($type) && $type->get_visible()) {
-                $instanceoptionnames = repository_static_function($type->get_typename(), 'get_instance_option_names');
-                if (!empty($instanceoptionnames)) {
-                    $instancehtml .= '<li><a href="'.$baseurl.'&amp;new='.$type->get_typename().'">'.get_string('create', 'repository')
-                        .' "'.get_string('repositoryname', 'repository_'.$type->get_typename()).'" '
-                        .get_string('instance', 'repository').'</a></li>';
-                    $addable++;
-                }
-            }
-        }
-        $instancehtml .= '</ul>';
-
-    } else {
-        $instanceoptionnames = repository_static_function($typename, 'get_instance_option_names');
-        if (!empty($instanceoptionnames)) {   //create a unique type of instance
-            $addable = 1;
-            $instancehtml .= "<form action='".$baseurl."&amp;new=".$typename."' method='post'>
-                <p style='text-align:center'><input type='submit' value='".get_string('createinstance', 'repository')."'/></p>
-                </form>";     
-        }
-    }
-
-    if ($addable) {
-        $instancehtml .= '</div>';
-        $output .= $instancehtml;
-    }
-
-    $output .= print_box_end(true);
-
-    //print the list + creation links
-    print($output);
-}

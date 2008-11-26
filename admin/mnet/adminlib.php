@@ -46,7 +46,7 @@ function mnet_get_functions($type, $parentname) {
         $relname = '/repository/' . $parentname . '/'. $docname;
         $filename = $CFG->dirroot . $relname;
         require_once($CFG->dirroot . '/repository/lib.php');
-        $publishes = (array)repository_static_function($parentname, 'mnet_publishes');
+        $publishes = (array)repository::static_function($parentname, 'mnet_publishes');
     } else {
         // auth or enrol
         $relname  = '/'.$type.'/'.$parentname.'/'.$docname;
