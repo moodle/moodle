@@ -223,7 +223,21 @@ class qformat_default {
     // Somewhere to specify question parameters that are not handled
     // by import but are required db fields.
     // This should not be overridden. 
+        global $CFG;
+
         $question = new stdClass();
+        $question->shuffleanswers = $CFG->quiz_shuffleanswers;
+        $question->defaultgrade = 1;
+        $question->image = "";
+        $question->usecase = 0;
+        $question->multiplier = array();
+        $question->generalfeedback = '';
+        $question->correctfeedback = '';
+        $question->partiallycorrectfeedback = '';
+        $question->incorrectfeedback = '';
+        $question->answernumbering = 'abc';
+        $question->penalty = 0.1;
+        $question->length = 1;
         $question->qoption = 0;
         $question->layout = 1;
         
