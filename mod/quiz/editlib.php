@@ -1536,7 +1536,8 @@ function quiz_print_status_bar($quiz,$sumgrades){
     ?></span>
     | <span class="quizopeningstatus">
     <?php
-    print_timing_information($quiz,true);
+    $accessrule = new open_close_date_access_rule(new quiz($quiz, NULL, NULL, false), time());
+    $accessrule->print_timing_information();
     ?></span><?php
     // If questions are shuffled, notify the user about the
     // question order not making much sense

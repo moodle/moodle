@@ -57,7 +57,7 @@ class quiz_access_manager {
     }
 
     /**
-     * Print each message in an array, each surrounded by &lt;p>, &lt;/p> tags.
+     * Print each message in an array, surrounded by &lt;p>, &lt;/p> tags.
      *
      * @param array $messages the array of message strings.
      * @param boolean $return if true, return a string, instead of outputting.
@@ -509,6 +509,17 @@ class open_close_date_access_rule extends quiz_access_rule_base {
             }
         }
         return false;
+    }
+    /**
+     * Output information about this quiz's open and close dates, and whether
+     * the quiz is currently open.
+     */
+    public function print_timing_information() {
+        $messages = $this->description();
+        if (!$this->prevent_access()) {
+            $messages[] = get_string('quizopened', 'quiz');
+        }
+        echo implode(' | ', $messages);
     }
 }
 

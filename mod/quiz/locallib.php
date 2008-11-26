@@ -1120,33 +1120,7 @@ function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) 
     // return the number of successfully sent emails
     return $emailresult['good'];
 }
-//TODO: refactor; http://tracker.moodle.org/browse/MDL-17296
-function print_timing_information($quiz,$showopenstatus=false){
-        $timenow = time();
-        $available = ($quiz->timeopen < $timenow and ($timenow < $quiz->timeclose or !$quiz->timeclose));
-        if ($available) {
-            if ($quiz->timelimit) {
-                echo get_string("quiztimelimit","quiz", format_time($quiz->timelimit * 60))."</p>";
-            }
-            if ($quiz->timeopen) {
-                echo get_string('quizopens', 'quiz'), ': ', userdate($quiz->timeopen);
-            }
-            if ($quiz->timeclose) {
-                echo get_string('quizcloses', 'quiz'), ': ', userdate($quiz->timeclose);
-            }
-            if($showopenstatus){
-                if(!$quiz->timelimit && !$quiz->timeopen && !$quiz->timeclose){
-                    echo get_string('quizopened', 'quiz');
-                }
-            }
-        } else if ($timenow < $quiz->timeopen) {
-            echo get_string("quiznotavailable", "quiz", userdate($quiz->timeopen));
-        } else {
-            echo get_string("quizclosed", "quiz", userdate($quiz->timeclose));
-        }
-        return $available;
 
-}
 /**
  * Clean the question layout from various possible anomalies:
  * - Remove consecutive ","'s
