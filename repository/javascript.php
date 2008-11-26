@@ -11,7 +11,7 @@
  * @param object $context the context
  * @return array
  */
-function repository_get_client($context) {
+function repository_get_client($context, $filetypes = '*', $returnvalue = '*') {
     global $CFG, $USER;
     $suffix = uniqid();
     $sesskey = sesskey();
@@ -966,7 +966,7 @@ return _client;
 EOD;
 
 $user_context = get_context_instance(CONTEXT_USER, $USER->id);
-$repos = repository_get_instances(array($user_context, $context, get_system_context()));
+$repos = repository_get_instances(array($user_context, $context, get_system_context()), null, true, null, $filetypes, $returnvalue);
 foreach ($repos as $repo) {
     $info = $repo->ajax_info();
     $js .= "\r\n";
@@ -980,11 +980,12 @@ function openpicker_$suffix(params) {
     if(!repository_client_$suffix.instance) {
         repository_client_$suffix.env = params.env;
         repository_client_$suffix.target = params.target;
-        if(params.type) {
-            repository_client_$suffix.filetype = params.filetype;
+        if(params.mimetype) {
+            repository_client_$suffix.mimetype = params.mimetype;
         } else {
-            repository_client_$suffix.filetype = 'all';
+            repository_client_$suffix.mimetype = '*';
         }
+        alert(repository_client_$suffix.mimetype);
         repository_client_$suffix.instance = new repository_client_$suffix();
         repository_client_$suffix.instance.create_picker();
         if(params.callback) {

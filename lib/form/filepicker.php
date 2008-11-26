@@ -15,7 +15,9 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/repository/lib.php');
 class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
     var $_helpbutton='';
 
-    function MoodleQuickForm_filepicker($elementName=null, $elementLabel=null, $attributes=null) {
+    function MoodleQuickForm_filepicker($elementName=null, $elementLabel=null, $attributes=null, $filetypes = '*', $returnvalue = '*') {
+        $this->filetypes = $filetypes;
+        $this->returnvalue = $returnvalue;
         parent::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
     }
 
@@ -70,7 +72,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         } else {
             $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
         }
-        $repository_info = repository_get_client($context);
+        $repository_info = repository_get_client($context, $this->filetypes, $this->returnvalue);
         $suffix = $repository_info['suffix'];
 
         $id     = $this->_attributes['id'];

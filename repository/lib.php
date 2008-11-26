@@ -664,6 +664,26 @@ abstract class repository {
     }
 
     /**
+     * what kind of files will be in this repository?
+     * @return array return '*' means this repository support any files, otherwise
+     *               return mimetypes of files, it can be an array
+     */
+    public function supported_mimetype() {
+        // return array('text/plain', 'image/gif');
+        return '*';
+    }
+
+    /**
+     * does it return a file url or a item_id
+     * @return string
+     */
+    public function supported_return_value() {
+        // return 'link';
+        // return 'ref_id';
+        return '*';
+    }
+
+    /**
      * Provide repository instance information for Ajax
      * @global object $CFG
      * @return object
@@ -1088,9 +1108,11 @@ function repository_get_editable_types($context = null) {
  * @param boolean $onlyvisible if visible == true, return visible instances only,
  *                otherwise, return all instances
  * @param string $type a type name to retrieve
+ * @param string $filetypes supported file types
+ * @param string $returnvalue supportted returned value
  * @return array repository instances
  */
-function repository_get_instances($contexts=array(), $userid = null, $onlyvisible = true, $type=null) {
+function repository_get_instances($contexts=array(), $userid = null, $onlyvisible = true, $type=null, $filetypes = '*', $returnvalue = '*') {
     global $DB, $CFG, $USER;
 
     $params = array();
@@ -1140,6 +1162,24 @@ function repository_get_instances($contexts=array(), $userid = null, $onlyvisibl
         $classname = 'repository_' . $repo->repositorytype;//
 
         $repository = new $classname($repo->id, $repo->contextid, $options, $repo->readonly);
+        if ($filetypes !== '*' and $repository->supported_mimetype() !== '*') {
+            $mimetypes = $repository->supported_mimetype();
+            $is_supported = false;
+            foreach  ($mimetypes as $type) {
+                if (in_array($type, $filetypes)) {
+                    $is_supported = true;
+                }
+            }
+            if (!$is_supported) {
+                continue;
+            }
+        }
+        if ($returnvalue !== '*' and $repository->supported_return_value() !== '*') {
+            $tmp = $repository->supported_return_value();
+            if ($tmp == $returnvalue) {
+                continue;
+            }
+        }
         if (!$onlyvisible || ($repository->is_visible() && !$repository->disabled)) {
             $ret[] = $repository;
         }
