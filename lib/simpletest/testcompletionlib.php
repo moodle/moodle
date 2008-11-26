@@ -90,7 +90,7 @@ class TimeModifiedExpectation extends SimpleExpectation {
 class completionlib_test extends MoodleUnitTestCase {
     var $realdb,$realcfg,$realsession,$realuser;
 
-    function setUp() {
+    function setUp() {        
         global $DB,$CFG,$SESSION,$USER;
         $this->realdb=$DB;
         $this->realcfg=$CFG;
@@ -327,7 +327,8 @@ WHERE
         $c=new completion_cutdown();
         $c->__construct((object)array('id'=>42));
 
-        $cm=(object)array('id'=>13,'course'=>42);
+        $cm=(object)array('id'=>13,'course'=>42,
+            'completion'=>COMPLETION_TRACKING_AUTOMATIC);
 
         $DB->setReturnValue('get_recordset',new fake_recordset(array(
             (object)array('id'=>1,'userid'=>100),
@@ -525,12 +526,14 @@ WHERE
             $progress1,$progress2
         )));
 
-        $this->assertEqual(array(
-           100 => (object)array('id'=>100,'firstname'=>'Woot','lastname'=>'Plugh',
-               'progress'=>array(13=>$progress1)),
-           201 => (object)array('id'=>201,'firstname'=>'Vroom','lastname'=>'Xyzzy',
-               'progress'=>array(14=>$progress2)),
-       ),$c->get_progress_all(false));
+        $this->assertEqual((object)array(
+            'start'=>0,'total'=>2,
+            'users'=>array(
+                100 => (object)array('id'=>100,'firstname'=>'Woot','lastname'=>'Plugh',
+                    'progress'=>array(13=>$progress1)),
+                201 => (object)array('id'=>201,'firstname'=>'Vroom','lastname'=>'Xyzzy',
+                    'progress'=>array(14=>$progress2)),
+            )),$c->get_progress_all(false));
 
         // 2) With more than 1,000 results
         $c->expectAt(1,'internal_get_tracked_users',array(true,3));
@@ -572,8 +575,8 @@ WHERE
         $result=$c->get_progress_all(true,3);
 
         $resultok=true;
-        $resultok = $resultok && ($ids==array_keys($result));
-        foreach($result as $userid => $data) {
+        $resultok = $resultok && ($ids==array_keys($result->users));
+        foreach($result->users as $userid => $data) {
             $resultok = $resultok && $data->firstname=='frog';
             $resultok = $resultok && $data->lastname==$userid;
             $resultok = $resultok && $data->id==$userid;

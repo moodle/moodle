@@ -623,7 +623,7 @@ class completion_info {
         $users = $this->internal_get_tracked_users($sortfirstname, $groupid);
         $resultobject->start=$start;
         $resultobject->total=count($users);
-        $users=array_slice($users,$start,$pagesize);
+        $users=array_slice($users,$start,$pagesize==0 ? count($users)-$start : $pagesize);
 
         // Get progress information for these users in groups of 1, 000 (if needed)
         // to avoid making the SQL IN too long
@@ -649,9 +649,6 @@ FROM
 WHERE
     cm.course=? AND cmc.userid $insql
     ", $params);
-            if (!$rs) {
-                $this->internal_systemerror('Failed to obtain completion progress');
-            }
             foreach ($rs as $progress) {
                 $resultobject->users[$progress->userid]->progress[$progress->coursemoduleid]=$progress;
             }
