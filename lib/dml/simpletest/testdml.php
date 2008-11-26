@@ -1405,6 +1405,12 @@ class dml_test extends UnitTestCase {
         $this->assertEqual($DB->get_field_sql($sql), 9);
     }
 
+    function test_sql_modulo() {
+        $DB = $this->tdb;
+        $sql = "SELECT ".$DB->sql_modulo(10, 7)." AS number ".$DB->sql_null_from_clause();
+        $this->assertEqual($DB->get_field_sql($sql), 3);
+    }
+
     function test_sql_ceil() {
         $DB = $this->tdb;
         $sql = "SELECT ".$DB->sql_ceil(665.666)." AS number ".$DB->sql_null_from_clause();
