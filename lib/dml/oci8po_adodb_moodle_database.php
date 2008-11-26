@@ -173,6 +173,18 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
         return '((' . $int1 . ') # (' . $int2 . '))';
     }
 
+    /**
+     * Returns the SQL text to be used in order to perform module '%'
+     * opration - remainder after division
+     *
+     * @param integer int1 first integer in the operation
+     * @param integer int2 second integer in the operation
+     * @return string the piece of SQL code to be used in your statement.
+     */
+    public function sql_modulo($int1, $int2) {
+        return 'MOD(' . $int1 . ', ' . $int2 . ')';
+    }
+
     function sql_null_from_clause() {
         return ' FROM dual';
     }
