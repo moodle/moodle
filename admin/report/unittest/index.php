@@ -16,14 +16,6 @@ require_once($CFG->libdir.'/simpletestlib.php');
 require_once('ex_simple_test.php');
 require_once('ex_reporter.php');
 
-require_login();
-require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
-
-/* The UNITTEST constant can be checked elsewhere if you need to know
- * when your code is being run as part of a unit test. */
-define('UNITTEST', true);
-$langfile = 'simpletest';
-
 // CGI arguments
 $path = optional_param('path', null, PARAM_PATH);
 $showpasses = optional_param('showpasses', false, PARAM_BOOL);
@@ -31,9 +23,15 @@ $showsearch = optional_param('showsearch', false, PARAM_BOOL);
 $thorough = optional_param('thorough', false, PARAM_BOOL);
 
 // Print the header.
-admin_externalpage_setup('reportsimpletest');
-$strtitle = get_string('unittests', $langfile);
+admin_externalpage_setup('reportunittest');
 admin_externalpage_print_header();
+
+/* The UNITTEST constant can be checked elsewhere if you need to know
+ * when your code is being run as part of a unit test. */
+define('UNITTEST', true);
+$langfile = 'simpletest';
+
+$strtitle = get_string('unittests', $langfile);
 
 if (!is_null($path)) {
     // Create the group of tests.

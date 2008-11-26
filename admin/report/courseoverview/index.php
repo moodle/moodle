@@ -4,15 +4,12 @@
     require_once($CFG->dirroot.'/lib/statslib.php');
     require_once($CFG->libdir.'/adminlib.php');
 
-    admin_externalpage_setup('reportcourseoverview');
-
-    admin_externalpage_print_header();
-
     $report     = optional_param('report', STATS_REPORT_ACTIVE_COURSES, PARAM_INT);
     $time       = optional_param('time', 0, PARAM_INT);
     $numcourses = optional_param('numcourses', 20, PARAM_INT);
 
-    require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM));  // needed?
+    admin_externalpage_setup('reportcourseoverview');
+    admin_externalpage_print_header();
 
     if (empty($CFG->enablestats)) {
         redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=stats", get_string('mustenablestats', 'admin'), 3);

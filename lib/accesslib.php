@@ -3064,7 +3064,11 @@ function load_capability_def($component) {
     } else {
         $compparts = explode('/', $component);
 
-        if ($compparts[0] == 'block') {
+        if ($compparts[0] == 'report') {
+            $defpath = $CFG->dirroot.'/'.$CFG->admin.'/report/'.$compparts[1].'/db/access.php';
+            $varprefix = $compparts[0].'_'.$compparts[1];
+
+        } else if ($compparts[0] == 'block') {
             // Blocks are an exception. Blocks directory is 'blocks', and not
             // 'block'. So we need to jump through hoops.
             $defpath = $CFG->dirroot.'/'.$compparts[0].
@@ -3774,6 +3778,10 @@ function get_capability_string($capabilityname) {
     $componentname = $components[0];               // choice
 
     switch ($names[0]) {
+        case 'report':
+            $string = get_string($stringname, 'report_'.$componentname);
+        break;
+
         case 'mod':
             $string = get_string($stringname, $componentname);
         break;
@@ -3838,6 +3846,8 @@ function get_component_string($component, $contextlevel) {
             } else if (preg_match('|^local|', $component)) {
                 $langname = str_replace('/', '_', $component);
                 $string = get_string('local');
+            } else if (preg_match('|^report/|', $component)) {
+                $string = get_string('reports');
             } else {
                 $string = get_string('coresystem');
             }
@@ -5246,7 +5256,10 @@ function component_level_changed($cap, $comp, $contextlevel) {
         $compsa = explode('/', $cap->component);
         $compsb = explode('/', $comp);
 
-
+        // list of system reports
+        if (($compsa[0] == 'report') &&($compsb[0] == 'report')) {
+            return false;
+        }
 
         // we are in gradebook, still
         if (($compsa[0] == 'gradeexport' || $compsa[0] == 'gradeimport' || $compsa[0] == 'gradereport') &&

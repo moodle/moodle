@@ -5,13 +5,10 @@
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->dirroot.'/backup/lib.php');
 
-    admin_externalpage_setup('reportbackups');
-
-    admin_externalpage_print_header();
-
     $courseid = optional_param('courseid', 0, PARAM_INT);
 
-    require_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM));
+    admin_externalpage_setup('reportbackups');
+    admin_externalpage_print_header();
 
 /// Scheduled backups are disabled by the server admin
     if (!empty($CFG->disablescheduledbackups)) {

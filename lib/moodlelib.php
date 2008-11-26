@@ -6112,7 +6112,7 @@ function get_list_of_plugins($plugin='mod', $exclude='', $basedir='') {
         $dirhandle = opendir($basedir);
         while (false !== ($dir = readdir($dirhandle))) {
             $firstchar = substr($dir, 0, 1);
-            if ($firstchar == '.' or $dir == 'CVS' or $dir == '_vti_cnf' or $dir == $exclude) {
+            if ($firstchar == '.' or $dir == 'CVS' or $dir == '_vti_cnf' or $dir == 'simpletest' or $dir == $exclude) {
                 continue;
             }
             if (filetype($basedir .'/'. $dir) != 'dir') {

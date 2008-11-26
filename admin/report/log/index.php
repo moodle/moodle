@@ -6,7 +6,6 @@
     require_once($CFG->libdir.'/adminlib.php');
 
     admin_externalpage_setup('reportlog');
-
     admin_externalpage_print_header();
 
 
