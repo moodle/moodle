@@ -3491,10 +3491,10 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
     } else {
         $wwwroot = $CFG->wwwroot;
     } 
-	
-	if (is_null($picture)) {
-		$picture = $user->picture;
-	}
+
+    if (is_null($picture) and !empty($user->picture)) {
+        $picture = $user->picture;
+    }
 
     if ($picture) {  // Print custom user picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching

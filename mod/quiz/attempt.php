@@ -118,12 +118,12 @@
 
     $numberofpreviousattempts = count_records_select('quiz_attempts', "quiz = '{$quiz->id}' AND " .
         "userid = '{$USER->id}' AND timefinish > 0 AND preview != 1");
-    if ($quiz->attempts and $numberofpreviousattempts >= $quiz->attempts) {
+    if (!empty($quiz->attempts) and $numberofpreviousattempts >= $quiz->attempts) {
         error(get_string('nomoreattempts', 'quiz'), "view.php?id={$cm->id}");
     }
 
 /// Check subnet access
-    if ($quiz->subnet and !address_in_subnet(getremoteaddr(), $quiz->subnet)) {
+    if (!empty($quiz->subnet) and !address_in_subnet(getremoteaddr(), $quiz->subnet)) {
         if ($isteacher) {
             notify(get_string('subnetnotice', 'quiz'));
         } else {
@@ -132,7 +132,7 @@
     }
 
 /// Check password access
-    if ($quiz->password and empty($_POST['q'])) {
+    if (!empty($quiz->password) and empty($_POST['q'])) {
         if (empty($_POST['quizpassword'])) {
 
             if (trim(strip_tags($quiz->intro))) {
@@ -167,7 +167,7 @@
         }
     }
 
-    if ($quiz->delay1 or $quiz->delay2) {
+    if (!empty($quiz->delay1) or !empty($quiz->delay2)) {
         //quiz enforced time delay
         if ($attempts = quiz_get_user_attempts($quiz->id, $USER->id)) {
             $numattempts = count($attempts);
@@ -179,11 +179,11 @@
         if ($lastattempt_obj) {
             $lastattempt = $lastattempt_obj->timefinish;
         }
-        if ($numattempts == 1 && $quiz->delay1) {
+        if ($numattempts == 1 && !empty($quiz->delay1)) {
             if ($timenow - $quiz->delay1 < $lastattempt) {
                 error(get_string('timedelay', 'quiz'), 'view.php?q='.$quiz->id);
             }
-        } else if($numattempts > 1 && $quiz->delay2) {
+        } else if($numattempts > 1 && !empty($quiz->delay2)) {
             if ($timenow - $quiz->delay2 < $lastattempt) {
                 error(get_string('timedelay', 'quiz'), 'view.php?q='.$quiz->id);
             }
