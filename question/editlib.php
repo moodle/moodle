@@ -77,17 +77,32 @@ function get_questions_category( $category, $noparent=false, $recurse=true, $exp
     return $qresults;
 }
 
+/**
+ * @param integer $categoryid a category id.
+ * @return boolean whether this is the only top-level category in a context.
+ */
+function question_is_only_toplevel_category_in_context($categoryid) {
+    global $DB;
+    return 1 == $DB->count_records_sql("
+            SELECT count(*)
+              FROM {question_categories} c1,
+                   {question_categories} c2
+             WHERE c2.id = ?
+               AND c1.contextid = c2.contextid
+               AND c1.parent = 0 AND c2.parent = 0", array($categoryid));
+}
 
-function question_can_delete_cat($todelete){
-    global $CFG, $DB;
-    $record = $DB->get_record_sql("SELECT count(*) as count, c1.contextid as contextid FROM {question_categories} c1,
-                {question_categories} c2 WHERE c2.id = ?
-                AND c1.contextid = c2.contextid GROUP BY c1.contextid", array($todelete));
-    $contextid = $record->contextid;
-    $count = $record->count;
-    if ($count < 2) {
+/**
+ * Check whether this user is allowed to delete this category.
+ *
+ * @param integer $todelete a category id.
+ */
+function question_can_delete_cat($todelete) {
+    global $DB;
+    if (question_is_only_toplevel_category_in_context($todelete)) {
         print_error('cannotdeletecate', 'question');
     } else {
+        $contextid = $DB->get_field('question_categories', 'contextid', array('id' => $todelete));
         require_capability('moodle/question:managecategory', get_context_instance_by_id($contextid));
     }
 }

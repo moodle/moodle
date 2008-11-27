@@ -2348,7 +2348,7 @@ function question_categorylist($categoryid) {
 
     // returns a comma separated list of ids of the category and all subcategories
     $categorylist = $categoryid;
-    if ($subcategories = $DB->get_records('question_categories', array('parent'=>$categoryid), 'sortorder ASC', 'id, id')) {
+    if ($subcategories = $DB->get_records('question_categories', array('parent'=>$categoryid), 'sortorder ASC', 'id, 1')) {
         foreach ($subcategories as $subcategory) {
             $categorylist .= ','. question_categorylist($subcategory->id);
         }
