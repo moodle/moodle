@@ -3,6 +3,8 @@
 /// Library of functions and constants for module glossary
 /// (replace glossary with the name of your module and delete this line)
 
+require_once($CFG->libdir.'/portfoliolib.php');
+
 define("GLOSSARY_SHOW_ALL_CATEGORIES", 0);
 define("GLOSSARY_SHOW_NOT_CATEGORISED", -1);
 
@@ -814,7 +816,6 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
     if (has_capability('mod/glossary:exportentry', $context)
         || ($entry->userid == $USER->id
             && has_capability('mod/glossary:exportownentry', $context))) {
-        require_once($CFG->libdir . '/portfoliolib.php');
         $button = new portfolio_add_button();
         $button->set_callback_options('glossary_entry_portfolio_caller',  array('id' => $cm->id, 'entryid' => $entry->id));
         $return .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
@@ -2306,7 +2307,6 @@ function glossary_supports($feature) {
     }
 }
 
-require_once($CFG->libdir . '/portfoliolib.php');
 class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
 
     private $glossary;

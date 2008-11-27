@@ -1,5 +1,7 @@
 <?php  // $Id$
 
+require_once($CFG->libdir.'/portfoliolib.php');
+
 define('RESOURCE_LOCALPATH', 'LOCALPATH');
 
 global $RESOURCE_WINDOW_OPTIONS; // must be global because it might be included from a function!
@@ -705,7 +707,6 @@ function resource_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
 }
 
-require_once($CFG->libdir . '/portfoliolib.php');
 class resource_portfolio_caller extends portfolio_module_caller_base {
 
     private $resource;

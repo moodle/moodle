@@ -8,6 +8,7 @@
 
 require_once($CFG->libdir.'/eventslib.php');
 require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir.'/portfoliolib.php');
 
 DEFINE ('ASSIGNMENT_COUNT_WORDS', 1);
 DEFINE ('ASSIGNMENT_COUNT_LETTERS', 2);
@@ -3135,7 +3136,6 @@ function assignment_get_extra_capabilities() {
     return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames');
 }
 
-require_once($CFG->libdir . '/portfoliolib.php');
 class assignment_portfolio_caller extends portfolio_module_caller_base {
 
     /**

@@ -2,6 +2,8 @@
 /// This file to be included so we can assume config.php has already been included.
 /// We also assume that $user, $course, $currenttab have been set
 
+    require_once($CFG->libdir . '/portfoliolib.php');
+
     if (!isset($filtertype)) {
         $filtertype = '';
     }
@@ -254,7 +256,6 @@
     if (!empty($user) and empty($userindexpage) && $user->id == $USER->id && !empty($CFG->enableportfolios) && has_capability('moodle/portfolio:export', get_system_context())) {
 
         /// Portfolio tab
-        require_once($CFG->libdir . '/portfoliolib.php');
         if (portfolio_instances(true, false)) {
             $toprow[] = new tabobject('portfolios', $CFG->wwwroot .'/user/portfolio.php', get_string('portfolios', 'portfolio'));
             if (in_array($currenttab, array('portfolioconf', 'portfoliologs'))) {

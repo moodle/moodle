@@ -2,6 +2,7 @@
 
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/eventslib.php');
+require_once($CFG->libdir.'/portfoliolib.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////
 
@@ -3900,7 +3901,6 @@ function forum_print_attachments($post, $cm, $type) {
     $canexport = (has_capability('mod/forum:exportpost', $context) || ($post->userid == $USER->id && has_capability('mod/forum:exportownpost', $context)));
 
     if ($files = $fs->get_area_files($context->id, 'forum_attachment', $post->id, "timemodified", false)) {
-        require_once($CFG->libdir . '/portfoliolib.php');
         $button = new portfolio_add_button();
         foreach ($files as $file) {
             $filename = $file->get_filename();
@@ -7172,7 +7172,6 @@ function forum_get_extra_capabilities() {
     return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames', 'moodle/site:trustcontent');
 }
 
-require_once($CFG->libdir . '/portfoliolib.php');
 class forum_portfolio_caller extends portfolio_module_caller_base {
 
     protected $postid;

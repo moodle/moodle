@@ -2,6 +2,8 @@
 
 if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) {
 
+    require_once($CFG->libdir. '/portfoliolib.php');
+
     $ADMIN->add('modules', new admin_category('modsettings', get_string('activitymodules')));
     $ADMIN->add('modsettings', new admin_page_managemods());
     if ($modules = $DB->get_records('modules')) {
@@ -140,8 +142,6 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
             }
         }
     }
-
-    require_once($CFG->libdir. '/portfoliolib.php');
 
     $catname =get_string('portfolios', 'portfolio');
     $manage = get_string('manageportfolios', 'portfolio');

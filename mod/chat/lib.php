@@ -2,6 +2,7 @@
 
 /// Library of functions and constants for module chat
 require_once($CFG->libdir.'/pagelib.php');
+require_once($CFG->libdir.'/portfoliolib.php');
 
 $CFG->chat_ajax_debug  = false;
 $CFG->chat_use_cache   = false;
@@ -867,7 +868,6 @@ function chat_get_extra_capabilities() {
     return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames');
 }
 
-require_once($CFG->libdir . '/portfoliolib.php');
 class chat_portfolio_caller extends portfolio_module_caller_base {
 
     private $chat;

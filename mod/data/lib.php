@@ -22,6 +22,8 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
+require_once($CFG->libdir . '/portfoliolib.php');
+
 // Some constants
 define ('DATA_MAX_ENTRIES', 50);
 define ('DATA_PERPAGE_SINGLE', 1);
@@ -1030,7 +1032,6 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
         if (($template == 'singletemplate' || $template == 'listtemplate')
             && ((has_capability('mod/data:exportentry', $context)
                 || (data_isowner($record->id) && has_capability('mod/data:exportownentry', $context))))) {
-            require_once($CFG->libdir . '/portfoliolib.php');
             $button = new portfolio_add_button();
             $button->set_callback_options('data_portfolio_caller', array('id' => $cm->id, 'recordid' => $record->id));
             list($formats, $files) = data_portfolio_caller::formats($fields, $record);
@@ -2540,7 +2541,6 @@ function data_pluginfile($course, $cminfo, $context, $filearea, $args) {
     return false;
 }
 
-require_once($CFG->libdir . '/portfoliolib.php');
 class data_portfolio_caller extends portfolio_module_caller_base {
 
     protected $recordid;
