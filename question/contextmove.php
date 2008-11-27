@@ -154,9 +154,9 @@
         }
 
         //adjust sortorder before we make the cat a peer of it's new peers
-        $peers = get_records_select_menu('question_categories', "contextid = {$toparent->contextid} AND ".
-                                                                 "parent = {$toparent->id}", "sortorder ASC",
-                                                                 "id, id");
+        $peers = get_records_select_menu('question_categories',
+                "contextid = {$toparent->contextid} AND parent = {$toparent->id}",
+                'sortorder ASC', 'id, 1');
         $peers = array_keys($peers);
         if ($totop){
            array_unshift($peers, $cattomove->id);

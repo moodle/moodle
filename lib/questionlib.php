@@ -2011,8 +2011,8 @@ function question_add_tops($categories, $pcontexts){
 function question_categorylist($categoryid) {
     // returns a comma separated list of ids of the category and all subcategories
     $categorylist = $categoryid;
-    if ($subcategories = get_records('question_categories', 'parent', $categoryid, 'sortorder ASC', 'id, id')) {
-        foreach ($subcategories as $subcategory) {
+    if ($subcategories = get_records('question_categories', 'parent', $categoryid, 'sortorder ASC', 'id, 1 AS notused')) {
+        foreach ($ubcategories as $subcategory) {
             $categorylist .= ','. question_categorylist($subcategory->id);
         }
     }
