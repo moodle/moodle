@@ -407,7 +407,7 @@ class quiz_report extends quiz_default_report {
         if ($hasfeedback) {
             $factor = $quiz->grade/$quiz->sumgrades;
             $select .= ', qf.feedbacktext ';
-            $from .= " JOIN {$CFG->prefix}quiz_feedback AS qf ON " .
+            $from .= " LEFT JOIN {$CFG->prefix}quiz_feedback AS qf ON " .
                     "qf.quizid = $quiz->id AND qf.mingrade <= qa.sumgrades * $factor AND qa.sumgrades * $factor < qf.maxgrade";
         }
 
@@ -488,6 +488,9 @@ class quiz_report extends quiz_default_report {
                     }
                     if ($hasfeedback) {
                         if ($attempt->timefinish) {
+                            if (empty($attempt->feedbacktext)) {
+                                $attempt->feedbacktext = '';
+                            }
                             $row[] = format_text($attempt->feedbacktext, FORMAT_MOODLE, $nocleanformatoptions);
                         } else {
                             $row[] = '-';
