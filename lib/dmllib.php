@@ -123,6 +123,10 @@ function setup_DB() {
                 break;
 
             case 'mysql' :
+                if (!extension_loaded('mysqli')) {
+                    $CFG->dblibrary = 'adodb';
+                    break;
+                }
                 $CFG->dbtype = 'mysqli';
                 // continue, no break here
             case 'mysqli' :
