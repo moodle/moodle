@@ -149,6 +149,27 @@ function xmldb_data_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2008091400, 'data');
     }
 
+    if ($result && $oldversion < 2008112700) {
+        if (!get_config('data', 'requiredentriesfixflag')) {
+            unset_config('requiredentriesfixflag', 'data'); // remove old flag
+            $databases = $DB->get_records_sql("SELECT d.*, c.fullname
+                                                 FROM {data} d, {course} c
+                                                WHERE d.course = c.id
+                                                      AND (d.requiredentries > 0 OR d.requiredentriestoview > 0)
+                                             ORDER BY c.fullname, d.name");
+            if (!empty($databases)) {
+                $a = new object();
+                $a->text = '';
+                foreach($databases as $database) {
+                    $a->text .= $database->fullname." - " .$database->name. " (course id: ".$database->course." - database id: ".$database->id.")<br/>";
+                }
+                //TODO: MDL-17427 send this info to "upgrade log" which will be implemented in 2.0
+                notify(get_string('requiredentrieschanged', 'admin', $a));
+            }
+        }
+        upgrade_mod_savepoint($result, 2008112700, 'data');
+    }
+
     return $result;
 }
 

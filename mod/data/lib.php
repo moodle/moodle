@@ -2540,42 +2540,6 @@ function data_pluginfile($course, $cminfo, $context, $filearea, $args) {
     return false;
 }
 
-/**
- * NOTE: this function is called into environment.xml
- * Check if both of database required entries fields have been set for a version anterior to 2008112101
- * This check has been required by the bug MDL-16999
- * @global <type> $CFG
- * @param <type> $result
- * @return object status
- */
-function data_check_required_entries_fields($result) {
-    global $CFG, $DB;
-    if (!empty($CFG->version)                                             //we are not installing a new Moodle site
-        && $CFG->version < 2008112101                              //the version is anterior to the one when the fix has been applied
-        && !get_config("data","requiredentriesfixflag")) {      //do not show message when upgrading an anterior version when the patch has already been applied
-        set_config("requiredentriesfixflag",true,"data");
-        $databases = $DB->get_records_sql("SELECT d.*, c.fullname
-                                    FROM {data} d,
-                                         {course} c
-                                    WHERE d.course = c.id
-                                    ORDER BY c.fullname, d.name");
-        if (!empty($databases)) {
-            $a = new object();
-            foreach($databases as $database) {
-                if ($database->requiredentries != 0 || $database->requiredentriestoview != 0) {
-                    $a->text .= "".$database->fullname." - " .$database->name. " (course id: ".$database->course." - database id: ".$database->id.")<br/>";
-                    //set the feedback string here and not in xml file since we need something
-                    //more complex than just a string picked from admin.php lang file
-                    $result->setFeedbackStr(array('requiredentrieschanged', 'admin', $a));
-                    $result->setStatus(false);//fail test
-                }
-            }
-            return $result;
-        }
-    }
-    return null;
-}
-
 require_once($CFG->libdir . '/portfoliolib.php');
 class data_portfolio_caller extends portfolio_module_caller_base {
 
