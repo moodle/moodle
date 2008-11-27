@@ -348,7 +348,7 @@ class question_category_object {
     /**
      * Deletes an existing question category
      *
-     * @param    int deletecat  id of category to delete
+     * @param int deletecat id of category to delete
      */
     public function delete_category($categoryid) {
         global $CFG, $DB;
@@ -362,11 +362,9 @@ class question_category_object {
         }
 
         /// Finally delete the category itself
-        if ($DB->delete_records("question_categories", array("id" => $category->id))) {
-            notify(get_string("categorydeleted", "quiz", format_string($category->name)), 'notifysuccess');
-            redirect($this->pageurl->out());//always redirect after successful action
-        }
+        $DB->delete_records("question_categories", array("id" => $category->id));
     }
+
     public function move_questions_and_delete_category($oldcat, $newcat){
         question_can_delete_cat($oldcat);
         $this->move_questions($oldcat, $newcat);
