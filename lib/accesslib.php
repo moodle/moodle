@@ -3093,6 +3093,10 @@ function load_capability_def($component) {
             $defpath = $CFG->dirroot.'/grade/report/'.$compparts[1].'/db/access.php';
             $varprefix = $compparts[0].'_'.$compparts[1];
 
+        } else if ($compparts[0] == 'coursereport') {
+            $defpath = $CFG->dirroot.'/course/report/'.$compparts[1].'/db/access.php';
+            $varprefix = $compparts[0].'_'.$compparts[1];
+
         } else {
             $defpath = $CFG->dirroot.'/'.$component.'/db/access.php';
             $varprefix = str_replace('/', '_', $component);
@@ -3818,6 +3822,10 @@ function get_capability_string($capabilityname) {
             $string = get_string($stringname, 'gradereport_'.$componentname);
         break;
 
+        case 'coursereport':
+            $string = get_string($stringname, 'coursereport_'.$componentname);
+        break;
+
         default:
             $string = get_string($stringname);
         break;
@@ -3866,6 +3874,8 @@ function get_component_string($component, $contextlevel) {
                 || preg_match('|^gradeexport/|', $component)
                 || preg_match('|^gradereport/|', $component)) {
                 $string = get_string('gradebook', 'admin');
+            } else if (preg_match('|^coursereport/|', $component)) {
+                $string = get_string('reports');
             } else {
                 $string = get_string('course');
             }
@@ -5257,13 +5267,17 @@ function component_level_changed($cap, $comp, $contextlevel) {
         $compsb = explode('/', $comp);
 
         // list of system reports
-        if (($compsa[0] == 'report') &&($compsb[0] == 'report')) {
+        if (($compsa[0] == 'report') && ($compsb[0] == 'report')) {
             return false;
         }
 
         // we are in gradebook, still
         if (($compsa[0] == 'gradeexport' || $compsa[0] == 'gradeimport' || $compsa[0] == 'gradereport') &&
             ($compsb[0] == 'gradeexport' || $compsb[0] == 'gradeimport' || $compsb[0] == 'gradereport')) {
+            return false;
+        }
+
+        if (($compsa[0] == 'coursereport') && ($compsb[0] == 'coursereport')) {
             return false;
         }
     }

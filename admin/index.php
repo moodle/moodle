@@ -473,6 +473,9 @@
 /// Check all message output plugins and upgrade if necessary
     upgrade_plugins('message','message/output',"$CFG->wwwroot/$CFG->admin/index.php");
 
+/// Check all course report plugins and upgrade if necessary
+    upgrade_plugins('coursereport', 'course/report', "$CFG->wwwroot/$CFG->admin/index.php");
+
 /// Check all admin report plugins and upgrade if necessary
     upgrade_plugins('report', $CFG->admin.'/report', "$CFG->wwwroot/$CFG->admin/index.php");
 
