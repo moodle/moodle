@@ -4403,7 +4403,7 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
     }
     $class = "userpicture";
 
-    if (is_null($picture)) {
+    if (is_null($picture) and !empty($user->picture)) {
         $picture = $user->picture;
     }
 

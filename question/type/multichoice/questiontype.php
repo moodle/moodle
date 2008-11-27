@@ -165,7 +165,7 @@ class question_multichoice_qtype extends default_questiontype {
         $answerids = array_values(array_map(create_function('$val',
          'return $val->id;'), $question->options->answers));
         // Shuffle the answers if required
-        if ($cmoptions->shuffleanswers and $question->options->shuffleanswers) {
+        if (!empty($cmoptions->shuffleanswers) and !empty($question->options->shuffleanswers)) {
            $answerids = swapshuffle($answerids);
         }
         $state->options->order = $answerids;
