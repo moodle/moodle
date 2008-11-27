@@ -523,6 +523,10 @@ class quiz_report extends quiz_default_report {
                         get_string('facilitytitle','quiz_analysis'), get_string('stddevtitle','quiz_analysis'),
                         get_string('dicsindextitle','quiz_analysis'), get_string('disccoefftitle','quiz_analysis'));
 
+        foreach ($headers as $key => $header) {
+            $headers[$key] = preg_replace('/<br[^>]*>/', ' ', $header);
+        }
+
         $col = 0;
         foreach ($headers as $item) {
             $myxls->write(2,$col,$item,$formatbc);
@@ -578,8 +582,8 @@ class quiz_report extends quiz_default_report {
                         get_string('facilitytitle','quiz_analysis'), get_string('stddevtitle','quiz_analysis'),
                         get_string('dicsindextitle','quiz_analysis'), get_string('disccoefftitle','quiz_analysis'));
 
-        foreach($headers as $key=>$header){
-            $headers[$key] = eregi_replace ("<br?>", " ",$header);
+        foreach ($headers as $key => $header) {
+            $headers[$key] = preg_replace('/<br[^>]*>/', ' ', $header);
         }
 
         $data = array();
@@ -603,6 +607,10 @@ class quiz_report extends quiz_default_report {
                         get_string('qcounttitle','quiz_analysis'),
                         get_string('facilitytitle','quiz_analysis'), get_string('stddevtitle','quiz_analysis'),
                         get_string('dicsindextitle','quiz_analysis'), get_string('disccoefftitle','quiz_analysis'));
+
+        foreach ($headers as $key => $header) {
+            $headers[$key] = preg_replace('/<br[^>]*>/', ' ', $header);
+        }
 
         $text = implode("\t", $headers)." \n";
 
