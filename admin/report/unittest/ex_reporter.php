@@ -81,7 +81,7 @@ class ExHtmlReporter extends HtmlReporter {
     /**
      * Private method. Used by printPass/Fail/Error.
      */
-    function _paintPassFail($passorfail, $message) {
+    function _paintPassFail($passorfail, $message, $rawmessage=false) {
         global $FULLME, $CFG;
 
         print_simple_box_start('', '100%', '', 5, $passorfail . ' generalbox');
@@ -99,7 +99,7 @@ class ExHtmlReporter extends HtmlReporter {
         }
         echo "<a href=\"{$url}path=$folder$file\" title=\"$this->strrunonlyfile\">$file</a>";
         echo $this->strseparator, implode($this->strseparator, $breadcrumb);
-        echo $this->strseparator, '<br />', $this->_htmlEntities($message), "\n\n";
+        echo '<br />', ($rawmessage ? $message : $this->_htmlEntities($message)), "\n\n";
         print_simple_box_end();
         flush();
     }
@@ -126,6 +126,34 @@ class ExHtmlReporter extends HtmlReporter {
             print_simple_box_end();
             flush();
         }
+    }
+
+    function paintException($exception) {
+        SimpleReporter::paintException($exception);
+
+        $message = 'Unexpected exception of type [' . s(get_class($exception)) .
+                '] with message ['. s($exception->getMessage()) .
+                '] in ['. s($exception->getFile()) .
+                ' line ' . s($exception->getLine()) . ']';
+
+        if(is_a($exception,'moodle_exception')) {
+            $message.='<br/><br/>Error string: <tt>'.s($exception->errorcode).
+                '</tt> from <tt>'.s($exception->module).'</tt>';
+            if($exception->a!==null) {
+                $message.='(<tt>'.s($exception->a).'</tt>)';
+            }
+            $message.=' &ndash; <i>'.get_string($exception->errorcode,
+                $exception->module,$exception->a).'</i>';
+            if($exception->link) {
+                $message.='<br/>Link: <tt>'.s($exception->link).'</tt>';
+            }
+            if($exception->debuginfo) {
+                // Note debug info is not escaped so may contain formatting
+                $message.='<pre>'.$exception->debuginfo.'</pre>';
+            }
+        }
+
+        $this->_paintPassFail('exception', $message,true);
     }
 
     /**
