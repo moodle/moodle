@@ -29,20 +29,20 @@ class quiz_access_manager {
             $this->_rules[] = new num_attempts_access_rule($this->_quizobj, $this->_timenow);
         }
         $this->_rules[] = new open_close_date_access_rule($this->_quizobj, $this->_timenow);
-        if ($quiz->timelimit && !$canignoretimelimits) {
+        if (!empty($quiz->timelimit) && !$canignoretimelimits) {
             $this->_rules[] = new time_limit_access_rule($this->_quizobj, $this->_timenow);
         }
-        if ($quiz->delay1 || $quiz->delay2) {
+        if (!empty($quiz->delay1) || !empty($quiz->delay2)) {
             $this->_rules[] = new inter_attempt_delay_access_rule($this->_quizobj, $this->_timenow);
         }
-        if ($quiz->subnet) {
+        if (!empty($quiz->subnet)) {
             $this->_rules[] = new ipaddress_access_rule($this->_quizobj, $this->_timenow);
         }
-        if ($quiz->password) {
+        if (!empty($quiz->password)) {
             $this->_passwordrule = new password_access_rule($this->_quizobj, $this->_timenow);
             $this->_rules[] = $this->_passwordrule;
         }
-        if ($quiz->popup) {
+        if (!empty($quiz->popup)) {
             $this->_securewindowrule = new securewindow_access_rule($this->_quizobj, $this->_timenow);
             $this->_rules[] = $this->_securewindowrule;
         }
