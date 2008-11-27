@@ -9,9 +9,9 @@
         print_error("That's an invalid course id");
     }
 
-    require_login($course->id);
+    require_login($course);
 
-    $context=get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
     require_capability('moodle/site:viewreports', $context);
 
     $strreports = get_string('reports');
@@ -26,10 +26,16 @@
     foreach ($directories as $directory) {
         $pluginfile = $CFG->dirroot.'/course/report/'.$directory.'/mod.php';
         if (file_exists($pluginfile)) {
-            echo '<div class="plugin">';
-            //echo $pluginfile;
-            include_once($pluginfile);  // Fragment for listing
-            echo '</div>';
+            ob_start();
+            include($pluginfile);  // Fragment for listing
+            $html = ob_get_contents();
+            ob_end_clean();
+            // add div only if plugin accessible
+            if ($html !== '') {
+                echo '<div class="plugin">';
+                echo $html;
+                echo '</div>';
+            }
         }
     }
 

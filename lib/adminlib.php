@@ -414,6 +414,9 @@ function upgrade_db($version, $release) {
 /// Check all message output plugins and upgrade if necessary
     upgrade_plugins('message','message/output',$return_url);
 
+/// Check all course report plugins and upgrade if necessary
+    upgrade_plugins('coursereport', 'course/report', $return_url);
+
 /// Check all admin report plugins and upgrade if necessary
     upgrade_plugins('report', $CFG->admin.'/report', $return_url);
 
