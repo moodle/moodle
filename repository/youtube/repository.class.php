@@ -45,7 +45,8 @@ class repository_youtube extends repository {
             $list[] = array(
                 'title'=>(string)$title,
                 'thumbnail'=>(string)$attrs['url'],
-                'thumbnail_width'=>145,
+                'thumbnail_width'=>150,
+                'thumbnail_height'=>120,
                 'size'=>'',
                 'date'=>'',
                 'source'=>$source

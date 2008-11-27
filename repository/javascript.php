@@ -528,6 +528,9 @@ _client.viewthumb = function(ds) {
         }
         var frame = document.createElement('DIV');
         frame.style.textAlign='center';
+        if(list[k].thumbnail_height){
+            frame.style.height = list[k].thumbnail_height+'px';
+        }
         var img = document.createElement('img');
         img.src = list[k].thumbnail;
         var link = document.createElement('A');
