@@ -119,19 +119,13 @@ define('QUESTION_FLAGSSHOWN', 1);
 define('QUESTION_FLAGSEDITABLE', 2);
 /**#@-*/
 
-/// QTYPES INITIATION //////////////////
-// These variables get initialised via calls to question_register_questiontype
-// as the question type classes are included.
-global $QTYPES, $QTYPE_EXCLUDE_FROM_RANDOM;
+/// GLOBAL VARAIBLES //////////////////
+global $QTYPES;
 /**
- * Array holding question type objects
+ * Array holding question type objects. Initialised via calls to
+ * question_register_questiontype as the question type classes are included.
  */
 $QTYPES = array();
-/**
- * String in the format "'type1','type2'" that can be used in SQL clauses like
- * "WHERE q.type NOT IN ($QTYPE_EXCLUDE_FROM_RANDOM)".
- */
-$QTYPE_EXCLUDE_FROM_RANDOM = '';
 
 /**
  * Add a new question type to the various global arrays above.
@@ -139,16 +133,10 @@ $QTYPE_EXCLUDE_FROM_RANDOM = '';
  * @param object $qtype An instance of the new question type class.
  */
 function question_register_questiontype($qtype) {
-    global $QTYPES, $QTYPE_EXCLUDE_FROM_RANDOM;
+    global $QTYPES;
 
     $name = $qtype->name();
     $QTYPES[$name] = $qtype;
-    if (!$qtype->is_usable_by_random()) {
-        if ($QTYPE_EXCLUDE_FROM_RANDOM) {
-            $QTYPE_EXCLUDE_FROM_RANDOM .= ',';
-        }
-        $QTYPE_EXCLUDE_FROM_RANDOM .= "'$name'";
-    }
 }
 
 require_once("$CFG->dirroot/question/type/questiontype.php");

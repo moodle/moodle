@@ -68,8 +68,9 @@ class quiz_grading_report extends quiz_default_report {
         }
 
         $gradeableqs = quiz_report_load_questions($quiz);
-        foreach ($gradeableqs as $qid => $questionformenu){
-            if (!$QTYPES[$questionformenu->qtype]->is_manual_graded()){
+        $questionsinuse = implode(',', array_keys($gradeableqs));
+        foreach ($gradeableqs as $qid => $question){
+            if (!$QTYPES[$question->qtype]->is_question_manual_graded($question, $questionsinuse)){
                 unset($gradeableqs[$qid]);
             }
         }

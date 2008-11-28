@@ -19,10 +19,6 @@ class question_essay_qtype extends default_questiontype {
         return true;
     }
 
-    function is_usable_by_random() {
-        return false;
-    }
-
     function save_question_options($question) {
         global $DB;
         $result = true;

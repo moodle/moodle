@@ -85,10 +85,19 @@ class default_questiontype {
     }
 
     /**
-     * @return boolean true if this question can only be graded manually.
+     * @return boolean true if this question type may require manual grading.
      */
     function is_manual_graded() {
         return false;
+    }
+
+    /**
+     * @param object $question a question of this type.
+     * @param string $otherquestionsinuse comma-separate list of other question ids in this attempt.
+     * @return boolean true if a particular instance of this question requires manual grading.
+     */
+    function is_question_manual_graded($question, $otherquestionsinuse) {
+        return $this->is_manual_graded();
     }
 
     /**

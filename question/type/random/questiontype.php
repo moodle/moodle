@@ -11,11 +11,13 @@
  * @subpackage questiontypes
  */
 class random_qtype extends default_questiontype {
+    protected $excludedqtypes = null;
+    protected $manualqtypes = null;
 
     // Caches questions available as randoms sorted by category
     // This is a 2-d array. The first key is question category, and the
     // second is whether to include subcategories.
-    var $catrandoms = array();
+    private $catrandoms = array();
 
     function name() {
         return 'random';
@@ -26,8 +28,63 @@ class random_qtype extends default_questiontype {
         return false;
     }
 
+    function show_analysis_of_responses() {
+        return true;
+    }
+
+    function is_manual_graded() {
+        return true;
+    }
+
+    function is_question_manual_graded($question, $otherquestionsinuse) {
+        global $DB;
+        // We take our best shot at working whether a particular question is manually
+        // graded follows: We look to see if any of the questions that this random
+        // question might select if of a manually graded type. If a category contains
+        // a mixture of manual and non-manual questions, and if all the attempts so
+        // far selected non-manual ones, this will give the wrong answer, but we
+        // don't care. Even so, this is an expensive calculation!
+        $this->init_qtype_lists();
+        if (!$this->manualqtypes) {
+            return false;
+        }
+        if ($question->questiontext) {
+            $categorylist = question_categorylist($question->category);
+        } else {
+            $categorylist = $question->category;
+        }
+        return $DB->record_exists_select('question',
+                "category IN ($categorylist)
+                     AND parent = 0
+                     AND hidden = 0
+                     AND id NOT IN ($otherquestionsinuse)
+                     AND qtype IN ($this->manualqtypes)");
+    }
+
     function is_usable_by_random() {
         return false;
+    }
+
+    /**
+     * This method needs to be called before the ->excludedqtypes and
+     *      ->manualqtypes fields can be used.
+     */
+    function init_qtype_lists() {
+        global $QTYPES;
+        if (is_null($this->excludedqtypes)) {
+            $excludedqtypes = array();
+            $manualqtypes = array();
+            foreach ($QTYPES as $qtype) {
+                $quotedname = "'" . $qtype->name() . "'";
+                if (!$qtype->is_usable_by_random()) {
+                    $excludedqtypes[] = $quotedname;
+                } else if ($qtype->is_manual_graded()) {
+                    $manualqtypes[] = $quotedname;
+                }
+            }
+            $this->excludedqtypes = implode(',', $excludedqtypes);
+            $this->manualqtypes = implode(',', $manualqtypes);
+        }
     }
 
     function display_question_editing_page(&$mform, $question, $wizardnow){
@@ -87,7 +144,8 @@ class random_qtype extends default_questiontype {
      * @return array of question records.
      */
     function get_usable_questions_from_category($categoryid, $subcategories, $questionsinuse) {
-        global $QTYPE_EXCLUDE_FROM_RANDOM, $DB;
+        global $DB;
+        $this->init_qtype_lists();
         if ($subcategories) {
             $categorylist = question_categorylist($categoryid);
         } else {
@@ -95,10 +153,10 @@ class random_qtype extends default_questiontype {
         }
         if (!$catrandoms = $DB->get_records_select('question',
                 "category IN ($categorylist)
-                     AND parent = '0'
-                     AND hidden = '0'
+                     AND parent = 0
+                     AND hidden = 0
                      AND id NOT IN ($questionsinuse)
-                     AND qtype NOT IN ($QTYPE_EXCLUDE_FROM_RANDOM)", null, '', 'id')) {
+                     AND qtype NOT IN ($this->excludedqtypes)", null, '', 'id')) {
             $catrandoms = array();
         }
         return $catrandoms;
