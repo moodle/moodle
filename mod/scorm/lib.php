@@ -22,6 +22,11 @@ function scorm_add_instance($scorm, $mform=null) {
 
     require_once('locallib.php');
 
+    if (empty($scorm->timerestrict)) {
+        $scorm->timeopen = 0;
+        $scorm->timeclose = 0;
+    }
+
     $cmid       = $scorm->coursemodule;
     $cmidnumber = $scorm->cmidnumber;
     $courseid   = $scorm->course;
@@ -103,6 +108,11 @@ function scorm_update_instance($scorm, $mform=null) {
     global $CFG, $DB;
 
     require_once('locallib.php');
+
+    if (empty($scorm->timerestrict)) {
+        $scorm->timeopen = 0;
+        $scorm->timeclose = 0;
+    }
 
     $cmid       = $scorm->coursemodule;
     $cmidnumber = $scorm->cmidnumber;

@@ -65,7 +65,32 @@
         print_header($pagetitle, $course->fullname, $navigation,
                  '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false);
         notice(get_string("activityiscurrentlyhidden"));
+        print_footer($course);
+        die;
     }
+
+    //check if scorm closed
+    $timenow = time();
+    if ($scorm->timeclose !=0) {
+        if ($scorm->timeopen > $timenow) {
+            $navlinks[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+            $navigation = build_navigation($navlinks);
+            print_header($pagetitle, $course->fullname, $navigation,
+                     '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false);
+            print_simple_box(get_string("notopenyet", "scorm", userdate($scorm->timeopen)), "center");
+            print_footer($course);
+            die;
+        } elseif ($timenow > $scorm->timeclose) {
+            $navlinks[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+            $navigation = build_navigation($navlinks);
+            print_header($pagetitle, $course->fullname, $navigation,
+                     '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false);
+            print_simple_box(get_string("expired", "scorm", userdate($scorm->timeclose)), "center");
+            print_footer($course);
+            die;
+        }
+    }
+
     //
     // TOC processing
     //

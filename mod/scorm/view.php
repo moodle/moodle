@@ -87,6 +87,20 @@
         $attemptstatus = scorm_get_attempt_status($USER,$scorm);
     }
     print_simple_box(format_text($scorm->summary).$attemptstatus, 'center', '70%', '', 5, 'generalbox', 'intro');
-    scorm_view_display($USER, $scorm, 'view.php?id='.$cm->id, $cm);
+    
+    $scormopen = true;
+    $timenow = time();
+    if ($scorm->timeclose !=0) {
+        if ($scorm->timeopen > $timenow) {
+            print_simple_box(get_string("notopenyet", "scorm", userdate($scorm->timeopen)), "center");
+            $scormopen = false;
+        } else if ($timenow > $scorm->timeclose) {
+            print_simple_box(get_string("expired", "scorm", userdate($scorm->timeclose)), "center");
+            $scormopen = false;
+        }
+    }
+    if ($scormopen) {
+        scorm_view_display($USER, $scorm, 'view.php?id='.$cm->id, $cm);
+    }
     print_footer($course);
 ?>

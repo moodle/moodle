@@ -67,6 +67,19 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->disabledIf('packagefile', 'scormtype', 'noteq', SCORM_TYPE_LOCAL);
 
 //-------------------------------------------------------------------------------
+// Time restrictions
+        $mform->addElement('header', 'timerestricthdr', get_string('timerestrict', 'scorm'));
+        $mform->addElement('checkbox', 'timerestrict', get_string('timerestrict', 'scorm'));
+        $mform->setHelpButton('timerestrict', array("timerestrict", get_string("timerestrict","scorm"), "scorm"));
+
+
+        $mform->addElement('date_time_selector', 'timeopen', get_string("scormopen", "scorm"));
+        $mform->disabledIf('timeopen', 'timerestrict');
+
+        $mform->addElement('date_time_selector', 'timeclose', get_string("scormclose", "scorm"));
+        $mform->disabledIf('timeclose', 'timerestrict');
+
+//-------------------------------------------------------------------------------
 // Other Settings
         $mform->addElement('header', 'advanced', get_string('othersettings', 'form'));
 
@@ -266,6 +279,11 @@ class mod_scorm_mod_form extends moodleform_mod {
         }
         if (isset($default_values['instance'])) {
             $default_values['datadir'] = $default_values['instance'];
+        }
+        if (empty($default_values['timeopen'])) {
+            $default_values['timerestrict'] = 0;
+        } else {
+            $default_values['timerestrict'] = 1;
         }
     }
 

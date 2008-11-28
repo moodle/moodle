@@ -328,7 +328,20 @@ function xmldb_scorm_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2008090307, 'scorm');
     }
     
-    
+    if ($result && $oldversion < 2008090308) {
+        $table = new xmldb_table('scorm');
+        $field = new xmldb_field('timeopen', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'height');
+        if (!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('timeclose', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'timeopen');
+        if (!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+        
+        /// scorm savepoint reached
+        upgrade_mod_savepoint($result, 2008090308, 'scorm');
+    }
     return $result;
 }
 

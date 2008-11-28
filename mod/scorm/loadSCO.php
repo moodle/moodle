@@ -33,7 +33,17 @@
     }
 
     require_login($course->id, false, $cm);
-
+    
+    //check if scorm closed
+    $timenow = time();
+    if ($scorm->timeclose !=0) {
+        if ($scorm->timeopen > $timenow) {
+            error(get_string("notopenyet", "scorm", userdate($scorm->timeopen)));
+        } else if ($timenow > $scorm->timeclose) {
+            error(get_string("expired", "scorm", userdate($scorm->timeclose)));
+        }
+    }
+   
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if (!empty($scoid)) {
