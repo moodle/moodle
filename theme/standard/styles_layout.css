@@ -4922,6 +4922,9 @@ css id's of question bank*/
 #mod-quiz-edit .questionbankwindow  #catmenu select{
     width:80%;
 }
+#mod-quiz-addrandom select {
+    width:100%;
+}
 #mod-quiz-edit table#categoryquestions{
     width:100%;
     overflow:hidden;
