@@ -152,8 +152,14 @@ class mnet_environment {
     function replace_keys() {
         global $DB, $CFG;
 
+        $keypair = mnet_generate_keypair();
+        if (empty($keypair)) {
+            error_log('Can not generate keypair, sorry');
+            return;
+        }
+
         $this->keypair = array();
-        $this->keypair = mnet_generate_keypair();
+        $this->keypair            = $keypair;
         $this->public_key         = $this->keypair['certificate'];
         $details                  = openssl_x509_parse($this->public_key);
         $this->public_key_expires = $details['validTo_time_t'];

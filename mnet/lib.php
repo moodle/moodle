@@ -391,6 +391,10 @@ function mnet_generate_keypair($dn = null, $days=28) {
     $dn["commonName"] = preg_replace(':/$:', '', $dn["commonName"]);
 
     $new_key = openssl_pkey_new();
+    if ($new_key === false) {
+        // can not generate keys - missing openssl.cnf??
+        return null;
+    }
     $csr_rsc = openssl_csr_new($dn, $new_key, array('private_key_bits',2048));
     $selfSignedCert = openssl_csr_sign($csr_rsc, null, $new_key, $days);
     unset($csr_rsc); // Free up the resource
