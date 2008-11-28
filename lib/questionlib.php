@@ -2012,7 +2012,7 @@ function question_categorylist($categoryid) {
     // returns a comma separated list of ids of the category and all subcategories
     $categorylist = $categoryid;
     if ($subcategories = get_records('question_categories', 'parent', $categoryid, 'sortorder ASC', 'id, 1 AS notused')) {
-        foreach ($ubcategories as $subcategory) {
+        foreach ($subcategories as $subcategory) {
             $categorylist .= ','. question_categorylist($subcategory->id);
         }
     }
