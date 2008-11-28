@@ -1,5 +1,9 @@
 <?php  //$Id$
 
+/*
+ * Please note that is file is always loaded last - it means that you can inject entries into other categories too.
+ */
+
 if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) {
 
     require_once($CFG->libdir. '/portfoliolib.php');
@@ -260,3 +264,22 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
         }
     }
 }
+
+
+/// Now add reports
+
+foreach (get_list_of_plugins($CFG->admin.'/report') as $plugin) {
+    $settings_path = "$CFG->dirroot/$CFG->admin/report/$plugin/settings.php";
+    if (file_exists($settings_path)) {
+        include($settings_path);
+        continue;
+    }
+
+    $index_path = "$CFG->dirroot/$CFG->admin/report/$plugin/index.php";
+    if (!file_exists($index_path)) {
+        continue;
+    }
+    // old style 3rd party plugin without settings.php
+    $ADMIN->add('reports', new admin_externalpage('report'.$plugin, $plugin, $index_path, 'moodle/site:viewreports'));
+}
+
