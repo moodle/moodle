@@ -1106,7 +1106,7 @@ table.quizreviewsummary td.cell {
 #mod-quiz-edit .questionbankwindow div.header{
 /*this color might need to be theme-specific,
 but in terms of usability, as testing showed,
-//TODO: add url
+http://docs.moodle.org/en/Development:Quiz_UI_redesign/usability_testing_of_August_2008/Issues#Question_bank_.2F_question_adding_controls_visibility
 it must be ensured that the question
 bank window's title is prominent enough*/
     background-color:#009;
