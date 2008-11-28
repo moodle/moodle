@@ -433,10 +433,6 @@ if (optional_param('savechanges', false, PARAM_BOOL) and confirm_sesskey()) {
     $rawgrades = (array) data_submitted();
     $moveonpagequestions = array();
     $moveselectedonpage=0;
-    //TODO: Tim: since we are not submitting all of the grades at once in quiz
-    // UI redesign, we cannot unset it since then we could not display it.
-    //Is there really a need to get rid of the old data here?
-    //unset($quiz->grades);
     $moveselectedonpagetop=optional_param("moveselectedonpagetop",0,PARAM_INT);
     $moveselectedonpagebottom=optional_param("moveselectedonpagebottom",0,
             PARAM_INT);
