@@ -352,7 +352,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
                 echo '</div>';
                 if ($allowdelete && !$quiz->questionsperpage) { // remove from quiz, not question delete.
                     echo '<div class="quizpagedelete">';
-                    echo "<a title=\"$strremove\" href=\"".
+                    echo "<a title=\"".get_string("removeemptypage","quiz")."\" href=\"".
                             $pageurl->out_action(array('deleteemptypage'=>$i)).
                             "\"><img src=\"$CFG->pixpath/t/delete.gif\" ".
                             "class=\"iconsmall\"".
