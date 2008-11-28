@@ -30,8 +30,11 @@
 
     //setting the second parameter of process_randomquestion_formdata to true causes it to redirect on success
     //TODO: process if returns false?
-    quiz_process_randomquestion_formdata($qcobject,true, $cmid);
-
+    $newquestioninfo=quiz_process_randomquestion_formdata($qcobject);
+    if($newquestioninfo){
+        redirect($CFG->wwwroot."/mod/quiz/edit.php?cmid=$cmid&addonpage=$newquestioninfo->addonpage&addrandom=1&categoryid=$newquestioninfo->newrandomcategory&randomcount=1&sesskey=".sesskey());
+    }
+    
     //these params are only passed from page request to request while we stay on this page
     //otherwise they would go in question_edit_setup
     $quiz_page = optional_param('quiz_page', 0, PARAM_SEQUENCE);

@@ -649,45 +649,37 @@ function quiz_print_pagecontrols($quiz,$pageurl,$page, $hasattempts){
  * cmid
  *
  * @param object $qcobject
- * @param boolean $redirect if true, redirect to edit.php with GET
- * parameters to add the question
- * @param integer $cmid id of the quiz' course module; required if $redirect=true
- * @return mixed category_id if $redirect==false and operation successfull, returns new category's id. if operation failed, returns false.
+ * @return object an object with properties newrandomcategory and addonpage if operation successful.
+ *      if operation failed, returns false.
  */
-function quiz_process_randomquestion_formdata(&$qcobject, $redirect=false, $cmid=0){
+function quiz_process_randomquestion_formdata(&$qcobject){
     global $CFG,$DB;
     $newrandomcategory=0;
     $addonpage=0;
-    if ($redirect && !$cmid){
-        return false;
-    }
+    $newquestioninfo=false;
     if ($qcobject->catform_rand->is_cancelled()){
         return false;
     }elseif ($catformdata = $qcobject->catform_rand->get_data()) {
+        $newquestioninfo=new stdClass;
         $addonpage=$catformdata->addonpage;
+        $newquestioninfo->addonpage=$catformdata->addonpage;
         if (!$catformdata->id) {//new category
             $newrandomcategory=$qcobject->add_category($catformdata->parent,
                     $catformdata->name, $catformdata->info,true);
             if(!is_null($newrandomcategory)){
                 if (! $newcategory = $DB->get_record('question_categories',
                         array('id'=>$newrandomcategory))) {
-                    print_error('invalidcategoryid');
+                    return false;
                 }
             }else{
-                print_error("cannotcreatecategory");
                 return false;
             }
         } else {
-            print_error("cannotcreatecategory");
             return false;
         }
+        $newquestioninfo->newrandomcategory=$newrandomcategory;
     }
-    if ($redirect && $newrandomcategory){
-        redirect($CFG->wwwroot."/mod/quiz/edit.php?cmid=$cmid&addonpage=$addonpage&addrandom=1&categoryid=$newrandomcategory&randomcount=1&sesskey=".sesskey());
-    }else{
-        return($newrandomcategory);
-
-    }
+    return($newquestioninfo);
 }
 
 

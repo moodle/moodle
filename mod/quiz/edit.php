@@ -244,7 +244,15 @@ $qcobject = new question_category_object(
     null,
     $contexts->having_cap('moodle/question:add'));
 
-$newrandomcategory=quiz_process_randomquestion_formdata($qcobject);
+$newrandomcategory=false;
+$newquestioninfo=quiz_process_randomquestion_formdata($qcobject);
+if($newquestioninfo){
+    $newrandomcategory=$newquestioninfo->newrandomcategory;
+    if (!$newrandomcategory){
+        print_r($newquestioninfo);
+        print_error("cannotcreatecategory");
+    }
+}
 
 if ((optional_param('addrandom', false, PARAM_BOOL) OR $newrandomcategory)
         and confirm_sesskey()) {
