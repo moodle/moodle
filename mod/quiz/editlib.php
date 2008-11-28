@@ -666,17 +666,17 @@ function quiz_process_randomquestion_formdata(&$qcobject){
             $newrandomcategory=$qcobject->add_category($catformdata->parent,
                     $catformdata->name, $catformdata->info,true);
             if(!is_null($newrandomcategory)){
+                $newquestioninfo->newrandomcategory=$newrandomcategory;
                 if (! $newcategory = $DB->get_record('question_categories',
                         array('id'=>$newrandomcategory))) {
-                    return false;
+                    $newquestioninfo->newrandomcategory=false;
                 }
             }else{
-                return false;
+                $newquestioninfo->newrandomcategory=false;
             }
         } else {
-            return false;
+            $newquestioninfo->newrandomcategory=false;
         }
-        $newquestioninfo->newrandomcategory=$newrandomcategory;
     }
     return($newquestioninfo);
 }
