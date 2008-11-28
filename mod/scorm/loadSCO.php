@@ -135,7 +135,7 @@
         //]]>
         </script>
         <noscript>
-            <meta http-equiv="refresh" content="<?php echo $delayseconds ?>;url=<?php echo $result ?>" />
+            <meta http-equiv="refresh" content="0;url=<?php echo $result ?>" />
         </noscript>
     </head>
     <body onload="doredirect();">
