@@ -164,10 +164,10 @@ class block_admin extends block_list {
 
         if (empty($course->metacourse) && ($course->id!==SITEID)) {
             if (has_capability('moodle/legacy:guest', $context, NULL, false)) {   // Are a guest now
-                $this->content->items[]='<a href="enrol.php?id='.$this->instance->pageid.'">'.get_string('enrolme', '', format_string($course->shortname)).'</a>';
+                $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/enrol.php?id='.$this->instance->pageid.'">'.get_string('enrolme', '', format_string($course->shortname)).'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" class="icon" alt="" />';
             } else if (has_capability('moodle/role:unassignself', $context, NULL, false)) {  // Have some role
-                $this->content->items[]='<a href="unenrol.php?id='.$this->instance->pageid.'">'.get_string('unenrolme', '', format_string($course->shortname)).'</a>';
+                $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/unenrol.php?id='.$this->instance->pageid.'">'.get_string('unenrolme', '', format_string($course->shortname)).'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" class="icon" alt="" />';
             }
         }
