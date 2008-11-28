@@ -805,11 +805,15 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz,$quiz_qbanktool
     print_string('random','quiz');
     echo " ".get_string("fromcategory",'quiz').":</div>";
 
+    $a = new stdClass;
+    $a->arrow = $THEME->rarrow;
+    $strshowcategorycontents=get_string('showcategorycontents','quiz', $a);
+    
     echo '<div class="randomquestioncategory">';
     echo '<a href="'.
          $pageurl->out(false,array("qbanktool"=>1,
          "cat"=>$category->id.','.$category->contextid)).
-         '">'.$category->name.'</a>';
+         '" title="'.$strshowcategorycontents.'">'.$category->name.'</a>';
     echo '<span class="questionpreview">'.
         quiz_question_preview_button($quiz, $question).
         '</span>';
@@ -831,9 +835,6 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz,$quiz_qbanktool
         echo '<br />';
 
         //create link to open question bank
-        $a = new stdClass;
-        $a->arrow = $THEME->rarrow;
-        $strshowcategorycontents=get_string('showcategorycontents','quiz', $a);
         $linkcategorycontents=' <a href="'.
             $pageurl->out(false,array("qbanktool"=>1,
             "cat"=>$category->id.','.$category->contextid)).
