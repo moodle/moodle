@@ -387,7 +387,7 @@ class question_multichoice_qtype extends default_questiontype {
         if (!empty($state->responses)) {
             foreach ($state->responses as $aid =>$rid){
                 if (!empty($answers[$rid])) {
-                    $responses[] = $this->format_text($answers[$rid]->answer, $question->questiontextformat);
+                    $responses[] = $answers[$rid]->answer;
                 }
             }
         } else {
@@ -396,8 +396,9 @@ class question_multichoice_qtype extends default_questiontype {
         return $responses;
     }
 
-    function response_summary($question, $state, $length = 80) {
-        return implode(',', $this->get_actual_response($question, $state));
+    
+    function format_response($response, $format){
+        return $this->format_text($response, $format);
     }
     /**
      * @param object $question

@@ -228,7 +228,7 @@ class quiz_statistics_report extends quiz_default_report {
             print_heading(get_string('questioninformation', 'quiz_statistics'));
             print_table($questioninfotable);
             
-            print_box(format_text($question->questiontext).$actions, 'boxaligncenter generalbox boxwidthnormal mdl-align');
+            print_box(format_text($question->questiontext, $question->questiontextformat).$actions, 'boxaligncenter generalbox boxwidthnormal mdl-align');
     
             print_heading(get_string('questionstatistics', 'quiz_statistics'));
             print_table($questionstatstable);

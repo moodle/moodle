@@ -116,11 +116,6 @@ class question_essay_qtype extends default_questiontype {
         return true;
     }
 
-    function response_summary($question, $state, $length = 80) {
-        $responses = $this->get_actual_response($question, $state);
-        $response = reset($responses);
-        return shorten_text($response, $length);
-    }
 
     /**
      * Backup the extra information specific to an essay question - over and above

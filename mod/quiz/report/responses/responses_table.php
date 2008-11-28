@@ -137,6 +137,7 @@ class quiz_report_responses_table extends table_sql {
         }
     }
     function other_cols($colname, $attempt){
+        global $QTYPES;
         static $states =array();
         if (preg_match('/^qsanswer([0-9]+)$/', $colname, $matches)){
             if ($attempt->uniqueid == 0) {
@@ -152,41 +153,37 @@ class quiz_report_responses_table extends table_sql {
             $question = $this->questions[$questionid];
             restore_question_state($question, $stateforqinattempt);
             
-            if ($responses =  get_question_actual_response($question, $stateforqinattempt)){
-                $response = (!empty($responses)? implode('; ',$responses) : '-');
+            if (!$this->is_downloading() || $this->is_downloading() == 'xhtml'){
+                $formathtml = true;
             } else {
-                $response = '';
+                $formathtml = false;
             }
+            
+            $summary =  $QTYPES[$question->qtype]->response_summary($question, $stateforqinattempt,
+                                                QUIZ_REPORT_RESPONSES_MAX_LEN_TO_DISPLAY, $formathtml);
             if (!$this->is_downloading()) {
-                if ($response){
-                    $format_options = new stdClass;
-                    $format_options->para = false;
-                    $format_options->newlines = false;
-                    $response = format_text($response, FORMAT_MOODLE, $format_options);
-                    if (strlen($response) > QUIZ_REPORT_RESPONSES_MAX_LEN_TO_DISPLAY){
-                        $response = shorten_text($response, QUIZ_REPORT_RESPONSES_MAX_LEN_TO_DISPLAY);
-                    }
-                    $response = link_to_popup_window('/mod/quiz/reviewquestion.php?attempt=' .
+                if ($summary){
+                    $summary = link_to_popup_window('/mod/quiz/reviewquestion.php?attempt=' .
                         $attempt->attempt . '&amp;question=' . $question->id,
-                        'reviewquestion', $response, 450, 650, get_string('reviewresponse', 'quiz'),
+                        'reviewquestion', $summary, 450, 650, get_string('reviewresponse', 'quiz'),
                         'none', true);
                     if (question_state_is_graded($stateforqinattempt)
-                                && ($this->questions[$questionid]->maxgrade != 0)){
+                                && ($question->maxgrade != 0)){
                         $grade = $stateforqinattempt->grade
-                                        / $this->questions[$questionid]->maxgrade;
+                                        / $question->maxgrade;
                         $qclass = question_get_feedback_class($grade);
                         $feedbackimg = question_get_feedback_image($grade);
                         $questionclass = "que";
-                        return "<span class=\"$questionclass\"><span class=\"$qclass\">".$response."</span></span>$feedbackimg";
+                        return "<span class=\"$questionclass\"><span class=\"$qclass\">".$summary."</span></span>$feedbackimg";
                     } else {
-                        return $response;
+                        return $summary;
                     }
                 } else {
                     return '';
                 }
                 
             } else {
-                return $this->format_text($response);
+                return $summary;
             }
         } else {
             return NULL;

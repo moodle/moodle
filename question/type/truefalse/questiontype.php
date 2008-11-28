@@ -228,15 +228,6 @@ class question_truefalse_qtype extends default_questiontype {
         return true;
     }
 
-    function response_summary($question, $state, $length=80) {
-        if (isset($question->options->answers[$state->answer])) {
-            $responses = $question->options->answers[$state->answer]->answer;
-        } else {
-            $responses = '';
-        }
-        return $responses;
-    }
-
     function get_actual_response($question, $state) {
         if (isset($question->options->answers[$state->responses['']])) {
             $responses[] = $question->options->answers[$state->responses['']]->answer;

@@ -465,10 +465,7 @@ class question_match_qtype extends default_questiontype {
         }
         return $responsedetails;
     }
-    
-    function response_summary($question, $state, $length=80) {
-        return shorten_text(implode(', ', $this->get_actual_response($question, $state)), $length);
-    }
+
 
     /**
      * @param object $question

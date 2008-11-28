@@ -653,9 +653,7 @@ class embedded_cloze_qtype extends default_questiontype {
             $teststate->responses = array('' => $state->responses[$key]);
             $correct = $QTYPES[$wrapped->qtype]
              ->get_actual_response($wrapped, $teststate);
-            // change separator here if you want
-            $responsesseparator = ',';
-            $responses[$key] = implode($responsesseparator, $correct);
+            $responses[$key] = implode(';', $correct);
         }
         return $responses;
     }

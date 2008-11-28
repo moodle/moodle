@@ -725,9 +725,9 @@ class default_questiontype {
     function get_random_guess_score($question) {
         return 0;
     }
-    /**
+   /**
     * Return the actual response to the question in a given state
-    * for the question.
+    * for the question. Text is not yet formatted for output.
     *
     * @return mixed           An array containing the response or reponses (multiple answer, match)
     *                         given by the user in a particular attempt.
@@ -1233,25 +1233,40 @@ class default_questiontype {
     *
     * This function returns a short string of no more than a given length that
     * summarizes the student's response in the given $state. This is used for
-    * example in the response history table. This string should already be,
-    * for output.
+    * example in the response history table. This string should already be
+    * formatted for output.
     * @return string         The summary of the student response
     * @param object $question
     * @param object $state   The state whose responses are to be summarized
     * @param int $length     The maximum length of the returned string
     */
-    function response_summary($question, $state, $length=80) {
+    function response_summary($question, $state, $length=80, $formatting=true) {
         // This should almost certainly be overridden
         $responses = $this->get_actual_response($question, $state);
-        if (empty($responses) || !is_array($responses)) {
-            $responses = array();
+        if ($formatting){
+            $responses = $this->format_responses($responses, $question->questiontextformat);
         }
-        if (is_array($responses)) {
-            $responses = implode(',', array_map('s', $responses));
-        }
+        $responses = implode(';', $responses);
         return shorten_text($responses, $length);
     }
-
+    /**
+     * @param array responses is an array of responses.
+     * @return formatted responses
+     */
+    function format_responses($responses, $format){
+        $toreturn = array();
+        foreach ($responses as $response){
+            $toreturn[] = $this->format_response($response, $format);
+        }
+        return $toreturn;
+    }
+    /**
+     * @param string response is a response.
+     * @return formatted response
+     */
+    function format_response($response, $format){
+        return s($response);
+    }
     /**
     * Renders the question for printing and returns the LaTeX source produced
     *
