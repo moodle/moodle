@@ -12,6 +12,9 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $item->set_updatedcallback('reset_text_filters_cache');
     $temp->add($item);
     $temp->add(new admin_setting_configcheckbox('enablegroupings', get_string('enablegroupings', 'admin'), get_string('configenablegroupings', 'admin'), 0));
+    $rqsetting = new admin_setting_configcheckbox('selectmanual', get_string('selectmanualquestions', 'qtype_random'), get_string('configselectmanualquestions', 'qtype_random'), 0);
+    $rqsetting->plugin = 'qtype_random';
+    $temp->add($rqsetting);
 
     $ADMIN->add('misc', $temp);
 

@@ -10,6 +10,11 @@
  * @subpackage questiontypes
  */
 class question_essay_qtype extends default_questiontype {
+    var $usablebyrandom;
+
+    function question_essay_qtype() {
+        $this->usablebyrandom = get_config('qtype_random', 'selectmanual');
+    }
 
     function name() {
         return 'essay';
@@ -20,7 +25,7 @@ class question_essay_qtype extends default_questiontype {
     }
 
     function is_usable_by_random() {
-        return false;
+        return $this->usablebyrandom;
     }
 
     function save_question_options($question) {
