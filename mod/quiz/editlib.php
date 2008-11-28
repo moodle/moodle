@@ -705,8 +705,6 @@ function quiz_simple_question_list($pageurl, $categorylist, $numbertoshow=3,
                 "category $usql AND parent = '0' $showhidden",
                 $params, $sortorderdecoded, '*', 0, $numbertoshow)) {
             // There are no questions at all
-            //TODO: if moodle used PHP exceptions, we would raise one here so that
-            //the main UI would know to display quis status "unfinished".
             return;
         }
     }
@@ -782,7 +780,6 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz,$quiz_qbanktool
     check_theme_arrows();
     echo '<div class="quiz_randomquestion">';
 
-    //TODO: Tim? I left this out from the below get_record call:, , 'contextid' => $contextid
     if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
         notify('Random question category not found!');
         return;
@@ -938,7 +935,6 @@ function quiz_print_randomquestion_reordertool(&$question, &$pageurl, &$quiz){
 
     echo '<div class="quiz_randomquestion">';
 
-    //TODO: Tim? I left this out from the below get_record call:, 'contextid', $contextid
     if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
         notify('Random question category not found!');
         return;
@@ -1014,8 +1010,6 @@ function quiz_question_tostring(&$question,$showicon=false,$showquestiontext=tru
             if(!empty($questiontext)){
                 $result.=$questiontext;
             }else{
-                //TODO: if moodle used PHP exceptions, we would raise one here so that
-                //the main UI would know to display quis status "unfinished".
                 $result.='<span class="error">';
                 $result.= get_string("questiontextisempty","quiz");
                 $result.='</span>';
