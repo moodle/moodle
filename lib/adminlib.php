@@ -4267,10 +4267,17 @@ function &admin_get_root($reload=false, $requirefulltree=true) {
 
         // now we process all other files in admin/settings to build the admin tree
         foreach (glob($CFG->dirroot.'/'.$CFG->admin.'/settings/*.php') as $file) {
-            if ($file != $CFG->dirroot.'/'.$CFG->admin.'/settings/top.php') {
-                include($file);
+            if ($file == $CFG->dirroot.'/'.$CFG->admin.'/settings/top.php') {
+                continue;
             }
+            if ($file == $CFG->dirroot.'/'.$CFG->admin.'/settings/plugins.php') {
+                // plugins are loaded last - they may insert pages anywhere
+                continue;
+            }
+            include($file);
         }
+        include($CFG->dirroot.'/'.$CFG->admin.'/settings/plugins.php');
+
         if (file_exists($CFG->dirroot.'/local/settings.php')) {
             include_once($CFG->dirroot.'/local/settings.php');
         }
