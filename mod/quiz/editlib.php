@@ -819,25 +819,30 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz,$quiz_qbanktool
     echo '<div class="randomquestionqlist">';
     $randomquestionlistsize=3;
     if(!$questioncount){
+        //No questions in category, give an error plus instructions
+        //error
         echo '<span class="error">';
         print_string("noquestionsnotinuse", "quiz");
+        echo '</span>';
         echo '<br />';
-        if(!$quiz_qbanktool){
-            echo '<a href="'.
-                $pageurl->out(false,array("qbanktool"=>1,
-                "cat"=>$category->id.','.$category->contextid)).
-                 '">';
-        }
+
+        //create link to open question bank
+        $a = new stdClass;
+        $a->arrow = $THEME->rarrow;
+        $strshowcategorycontents=get_string('showcategorycontents','quiz', $a);
+        $linkcategorycontents=' <a href="'.
+            $pageurl->out(false,array("qbanktool"=>1,
+            "cat"=>$category->id.','.$category->contextid)).
+             '">'.$strshowcategorycontents.'</a>';
+
+        // embed the link into the string with instructions
         $a = new stdClass;
         $a->catname = '<strong>' . $category->name . '</strong>';
-        $a->arrow = $THEME->rarrow;
+        $a->link =  $linkcategorycontents;
         echo get_string('addnewquestionsqbank','quiz', $a);
-        if(!$quiz_qbanktool){
-            echo '</a>';
-        }
 
-        echo '</span>';
     }else{
+        //Category has questions, list a sample of them
         echo "<ul>";
         quiz_simple_question_list($pageurl, $question->category,
                 $randomquestionlistsize);
@@ -845,7 +850,16 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz,$quiz_qbanktool
         if ($questioncount>$randomquestionlistsize){
             echo "... ";
         }
+        
+        $a = new stdClass;
+        $a->arrow = $THEME->rarrow;
+        $strshowcategorycontents=get_string("showcategorycontents","quiz",$a);
         print_string("totalquestionsinrandomqcategory","quiz",$questioncount);
+
+        echo ' <a href="'.
+         $pageurl->out(false,array("qbanktool"=>1,"cat"=>$category->id.','.$category->contextid)).
+         '">'.$strshowcategorycontents.'</a>';
+        
         echo "</li>";
         echo "</ul>";
     }
