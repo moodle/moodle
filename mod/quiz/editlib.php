@@ -737,8 +737,6 @@ function quiz_print_singlequestion(&$question, &$questionurl, &$quiz){
             $formatoptions->noclean = false;
             $formatoptions->para = false;
             $formatoptions->newlines = false;
-            $questiontext=strip_tags(format_text($question->questiontext,
-                    FORMAT_MOODLE,$formatoptions, $COURSE->id));
             if (question_has_capability_on($question, 'edit', $question->category)
                     || question_has_capability_on($question, 'move',
                     $question->category)) {
@@ -759,8 +757,7 @@ function quiz_print_singlequestion(&$question, &$questionurl, &$quiz){
                         "alt=\"$strview\" /></span>".
                         "</a>";
             }else{
-                //TODO: this should be a call to quiz_question_tostring, right?
-                echo $questiontext;
+                quiz_question_tostring($question,false,true,false);
             }
             echo '<span class="questiontype">';
             $namestr = $QTYPES[$question->qtype]->menu_name();
