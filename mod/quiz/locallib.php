@@ -736,9 +736,7 @@ function quiz_question_action_icons($quiz, $cmid, $question, $returnurl){
         $strview = get_string('view');
     }
     $html ='';
-    if (($question->qtype != 'random')){
-        $html .= quiz_question_preview_button($quiz, $question);
-    }
+    $html .= quiz_question_preview_button($quiz, $question);
     $questionparams = array('returnurl' => $returnurl, 'cmid'=>$cmid, 'id' => $question->id);
     $questionurl = new moodle_url("$CFG->wwwroot/question/question.php", $questionparams);
     if (question_has_capability_on($question, 'edit', $question->category) || question_has_capability_on($question, 'move', $question->category)) {
