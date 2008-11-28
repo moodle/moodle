@@ -4683,7 +4683,7 @@ table.quizreviewsummary td.cell {
     position:relative;
     zoom:1;
     padding-left:0.3em;
-    max-width:50%;
+    max-width:40%;
     overflow:hidden;
     white-space:nowrap;
     text-overflow:ellipsis;
@@ -4710,7 +4710,6 @@ table.quizreviewsummary td.cell {
     margin-left:0.3em;
     padding-left:0.2em;
     padding-right:0.2em;
-    background-color:#eee;
 }
 
 #mod-quiz-edit div.question div.content div.quiz_randomquestion .questionpreview{
@@ -4827,6 +4826,60 @@ table.quizreviewsummary td.cell {
     list-style-type:none;
     margin:0;
     padding:0;
+}
+#mod-quiz-edit .reorder .questioncontentcontainer .quiz_randomquestion{
+
+    position:relative;
+}
+
+#mod-quiz-edit .reorder div.question div.content div.quiz_randomquestion{
+    line-height:1em;
+}
+
+#mod-quiz-edit .reorder .questioncontentcontainer .randomquestioncategory label{
+    max-width: 25%;
+    overflow:hidden;
+    padding-left:0.3em;
+    white-space:nowrap;
+    display:inline-block;
+}
+#mod-quiz-edit .reorder .questioncontentcontainer .randomquestionfromcategory label{
+    overflow:hidden;
+    white-space:nowrap;
+    display:inline-block;
+}
+
+#mod-quiz-edit .editq div.question div.content .randomquestioncategory{
+        position:relative;
+    display:inline-block;
+    
+}
+
+#mod-quiz-edit .editq div.question div.content .randomquestioncategory a{
+    display:block;
+    max-width:15em;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    -o-text-overflow:ellipsis;
+    white-space: nowrap;
+    float:left;
+    position:relative;
+}
+#mod-quiz-edit .editq div.question div.content .questionpreview{
+    float:left;
+}
+#mod-quiz-edit .editq div.question div.content .questionpreview a{
+    font-weight:normal;
+    margin-left:0em;
+    display:inline;
+    float:none;
+}
+#mod-quiz-edit .editq div.question div.content .randomquestioncategory .questionpreview img{
+    padding-right:0.3em;
+}
+
+#mod-quiz-edit .questioncontentcontainer div.randomquestionqlist ul li img{
+    padding-right:0.3em;
 }
 
 

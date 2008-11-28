@@ -1134,6 +1134,13 @@ bank window's title is prominent enough*/
 #mod-quiz-edit .questioncontentcontainer div.randomquestionqlist ul{
     color:#555;
 }
+#mod-quiz-edit div.question div.content div.singlequestion .questionpreview{
+    background-color:#eee;
+}
+
+#mod-quiz-edit div.question div.content .questionpreview a{
+    background-color:#eee;
+}
 #mod-quiz-edit .questioncontentcontainer div.randomquestionqlist .totalquestionsinrandomqcategory{
     color:#000;
 }

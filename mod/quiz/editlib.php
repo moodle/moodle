@@ -909,7 +909,7 @@ function quiz_print_singlequestion_reordertool(&$question, &$questionurl, &$quiz
                 $editstring="<a title=\"$stredit\" href=\"".
                         $questionurl->out(false, array('id'=>$question->id)).
                         "\"><img src=\"$CFG->pixpath/t/edit.gif\" alt=\"".
-                        $stredit."\" /> </a>";
+                        $stredit."\" /></a>";
             } elseif (question_has_capability_on($question, 'view',
                     $question->category)){
                 echo "$reordercheckboxlabel".
