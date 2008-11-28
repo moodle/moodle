@@ -171,9 +171,9 @@ function upgrade_migrate_files_blog() {
 
     $fs = get_file_storage();
 
-    $count = $DB->count_records_select('post', "module='blog' AND attachment IS NOT NULL AND attachment <> 1");
+    $count = $DB->count_records_select('post', "module='blog' AND attachment IS NOT NULL AND attachment <> '1'");
 
-    if ($rs = $DB->get_recordset_select('post', "module='blog' AND attachment IS NOT NULL AND attachment <> 1")) {
+    if ($rs = $DB->get_recordset_select('post', "module='blog' AND attachment IS NOT NULL AND attachment <> '1'")) {
 
         upgrade_set_timeout(60*20); // set up timeout, may also abort execution
 
