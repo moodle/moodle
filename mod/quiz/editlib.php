@@ -160,9 +160,8 @@ function quiz_update_question_instance($grade, $questionid, $quizid) {
 * @param boolean $quiz_qbanktool  Indicates whether the question bank should be displayed
 * @param boolean $hasattempts  Indicates whether the quiz has attempts
 */
-//TODO: Tim? remove showbreaks since it is no longer used
 function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
-        $showbreaks=true,$reordertool=false, $quiz_qbanktool=false,
+        $reordertool=false, $quiz_qbanktool=false,
         $hasattempts=false) {
     global $USER, $CFG, $QTYPES, $DB;
     $strorder = get_string("order");

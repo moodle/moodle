@@ -702,7 +702,6 @@ if($quiz_reordertool){
 }
 ob_start();
 $sumgrades = quiz_print_question_list($quiz, $thispageurl, true,
-        null,
         $quiz_reordertool, $quiz_qbanktool, $quiz_has_attempts);
 
 if (!$DB->set_field('quiz', 'sumgrades', $sumgrades, array('id' => $quiz->instance))) {
