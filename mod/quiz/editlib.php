@@ -458,7 +458,11 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
             ?>
         <input type="submit" class="pointssubmitbutton" value="<?php echo $strsave; ?>" />
     </fieldset>
-
+<?php if(strcmp($question->qtype,'random')===0){
+    echo '<a href="'.$questionurl->out().'" class="configurerandomquestion">'.get_string("configurerandomquestion","quiz").'</a>';
+}
+            
+?>
 </div>
 </form>
 
@@ -958,9 +962,6 @@ function quiz_print_randomquestion_reordertool(&$question, &$pageurl, &$quiz){
 
     echo $reordercheckboxlabel;
     print_question_icon($question);
-    $editstring= "<a title=\"$stredit\" href=\"".$url.
-            "\"><img src=\"$CFG->pixpath/t/edit.gif\" alt=\"".
-            get_string("edit")."\" /> </a>";
     $questioncount=$DB->count_records_select('question',
             "category IN ($category->id) AND parent = '0' ");
     $randomquestionlistsize=3;
@@ -980,7 +981,7 @@ function quiz_print_randomquestion_reordertool(&$question, &$pageurl, &$quiz){
             $category->contextid)).
             '">-->'.$reordercheckboxlabel.$category->name.
             $reordercheckboxlabelclose.'<!--</a>-->';
-    echo '<span class="questionpreview">'.$editstring;
+    echo '<span class="questionpreview">';
     echo quiz_question_preview_button($quiz, $question,false);
     
     echo '</span>';

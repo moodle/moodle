@@ -4652,15 +4652,10 @@ table.quizreviewsummary td.cell {
 #mod-quiz-edit div.question div.content .questionname,
 #categoryquestions .questionname{
     white-space:nowrap;
-    text-overflow:ellipsis;
     overflow:hidden;
     zoom:1;
     position:relative;
     max-width:20%;
-    /*ie-only:*/
-    text-overflow:ellipsis;
-    /*opera-only*/
-    -o-text-overflow:ellipsis;
 }
 #mod-quiz-edit div.question div.content .singlequestion .questionname,
 #mod-quiz-edit div.question div.content .singlequestion .questiontext{
@@ -4819,6 +4814,7 @@ table.quizreviewsummary td.cell {
     padding-right:0.2em;
     clear:both;
     margin:0.5em;
+    margin-top:0.8em;
 }
 
 
@@ -4850,7 +4846,8 @@ table.quizreviewsummary td.cell {
 }
 
 #mod-quiz-edit .editq div.question div.content .randomquestioncategory{
-        position:relative;
+    margin-top:0.4em;
+    position:relative;
     display:inline-block;
     
 }
