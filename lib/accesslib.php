@@ -3989,7 +3989,7 @@ function get_component_string($component, $contextlevel) {
                 || preg_match('|^gradereport/|', $component)) {
                 $string = get_string('gradebook', 'admin');
             } else if (preg_match('|^coursereport/|', $component)) {
-                $string = get_string('reports');
+                $string = get_string('coursereports');
             } else {
                 $string = get_string('course');
             }

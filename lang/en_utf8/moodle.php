@@ -304,6 +304,7 @@ $string['coursemessage'] = 'Message course users';
 $string['coursenotaccessible'] = 'This course does not allow public access';
 $string['courseoverview'] = 'Course overview';
 $string['courseoverviewgraph'] = 'Course overview graph';
+$string['coursereports'] = 'Course reports';
 $string['coursereject'] = 'Reject a course request';
 $string['courserejected'] = 'Course has been rejected and the requester has been notified.';
 $string['courserejectemail'] = 'Sorry, but the course you requested has been rejected. Here is the reason provided:
