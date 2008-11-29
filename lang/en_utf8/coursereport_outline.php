@@ -1,5 +1,5 @@
 <?PHP // $Id$
 
-$string['outline:view'] = 'View course outline report';
+$string['outline:view'] = 'View course activity report';
 
 ?>
