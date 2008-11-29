@@ -41,7 +41,7 @@ require_login($course);
 
 // Check basic permission
 $context=get_context_instance(CONTEXT_COURSE,$course->id);
-require_capability('moodle/course:viewprogress',$context);
+require_capability('coursereport/progress:view',$context);
 
 // Get group mode
 $group=groups_get_course_group($course,true); // Supposed to verify group
