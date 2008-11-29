@@ -317,8 +317,8 @@ class embedded_cloze_qtype extends default_questiontype {
 
         while (ereg('\{#([^[:space:]}]*)}', $qtextremaining, $regs)) {
             $qtextsplits = explode($regs[0], $qtextremaining, 2);
-            echo "<label>"; // MDL-7497
             echo $qtextsplits[0];
+            echo "<label>"; // MDL-7497
             $qtextremaining = $qtextsplits[1];
 
             $positionkey = $regs[1];
@@ -341,7 +341,6 @@ class embedded_cloze_qtype extends default_questiontype {
             $feedback = '' ;
             $correctanswer = '';
             $strfeedbackwrapped  = $strfeedback;
-           // if($wrapped->qtype == 'numerical' ||$wrapped->qtype == 'shortanswer'){
                 $testedstate = clone($state);
                 if ($correctanswers =  $QTYPES[$wrapped->qtype]->get_correct_responses($wrapped, $testedstate)) {
                     if ($options->readonly && $options->correct_responses) {
@@ -367,7 +366,6 @@ class embedded_cloze_qtype extends default_questiontype {
                         $feedback = '<div class="correctness">';
                         $feedback .= get_string('correctansweris', 'quiz', s($correctanswer));
                         $feedback .= '</div>';
-                       // $strfeedbackwrapped = get_string('correctanswer and', 'quiz').get_string('feedback', 'quiz');
                     }
                 }
             if ($options->feedback) {
@@ -527,9 +525,8 @@ class embedded_cloze_qtype extends default_questiontype {
                     }
                 }
     
-                // Print the answer text 
-                // Remove automatic numbering
-                // $a->text = $ordernumber<span class="anun">' . $ordernumber . '<span class="anumsep">.</span></span>'.
+                // Print the answer text: no automatic numbering
+
                 $a->text =format_text($mcanswer->answer, FORMAT_MOODLE, $formatoptions, $cmoptions->course);
     
                 // Print feedback if feedback is on
@@ -620,15 +617,19 @@ class embedded_cloze_qtype extends default_questiontype {
         $state->raw_grade = 0;
         foreach($question->options->questions as $key => $wrapped) {
             if ($wrapped != ''){
-            $state->responses[$key] = $state->responses[$key];
-            $teststate->responses = array('' => $state->responses[$key]);
-            $teststate->raw_grade = 0;
-            if (false === $QTYPES[$wrapped->qtype]
-             ->grade_responses($wrapped, $teststate, $cmoptions)) {
-                return false;
+                if(isset($state->responses[$key])){
+                    $state->responses[$key] = $state->responses[$key];
+                }else {
+                    $state->responses[$key] = '' ;
+                }
+                $teststate->responses = array('' => $state->responses[$key]);
+                $teststate->raw_grade = 0;
+                if (false === $QTYPES[$wrapped->qtype]
+                 ->grade_responses($wrapped, $teststate, $cmoptions)) {
+                    return false;
+                }
+                $state->raw_grade += $teststate->raw_grade;
             }
-            $state->raw_grade += $teststate->raw_grade;
-        }
         }
         $state->raw_grade /= $question->defaultgrade;
         $state->raw_grade = min(max((float) $state->raw_grade, 0.0), 1.0)
