@@ -14,7 +14,7 @@
     require_login($course);
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    require_capability('coursereport/log:view', $context);
+    require_capability('coursereport/log:viewlive', $context);
 
     add_to_log($course->id, "course", "report live", "report/log/live.php?id=$course->id", $course->id); 
 
