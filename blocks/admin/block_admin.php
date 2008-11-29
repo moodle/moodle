@@ -154,7 +154,7 @@ class block_admin extends block_list {
         }
 
     /// View course reports
-        if ($course->id !== SITEID and has_capability('moodle/site:viewreports', $context)) {
+        if ($course->id !== SITEID and has_capability('moodle/site:viewreports', $context)) { // basic capability for listing of reports
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/report.php?id='.$this->instance->pageid.'">'.get_string('reports').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/stats.gif" class="icon" alt="" />';
         }

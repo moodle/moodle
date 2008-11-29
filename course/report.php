@@ -12,7 +12,7 @@
     require_login($course);
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    require_capability('moodle/site:viewreports', $context);
+    require_capability('moodle/site:viewreports', $context); // basic capability for listing of reports
 
     $strreports = get_string('reports');
 

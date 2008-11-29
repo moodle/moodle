@@ -14,9 +14,7 @@
     require_login($course);
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    if (!has_capability('moodle/site:viewreports', $context)) {
-        print_error('nopermissions');
-    }
+    require_capability('coursereport/log:view', $context);
 
     add_to_log($course->id, "course", "report live", "report/log/live.php?id=$course->id", $course->id); 
 

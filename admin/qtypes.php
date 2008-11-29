@@ -10,7 +10,7 @@
     require_login();
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);
     require_capability('moodle/question:config', $systemcontext);
-    $canviewreports = has_capability('moodle/site:viewreports', $systemcontext);
+    $canviewreports = has_capability('report/questioninstances:view', $systemcontext);
 
     admin_externalpage_setup('manageqtypes');
 

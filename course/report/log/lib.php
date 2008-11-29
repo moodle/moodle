@@ -95,7 +95,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
         $courses = array();
         $sites = array();
         if ($CFG->mnet_localhost_id == $hostid) {
-            if (has_capability('moodle/site:viewreports', $sitecontext) && $showcourses) {
+            if (has_capability('coursereport/log:view', $sitecontext) && $showcourses) {
                 if ($ccc = $DB->get_records("course", null, "fullname","id,fullname,category")) {
                     foreach ($ccc as $cc) {
                         if ($cc->id == SITEID) {
@@ -107,7 +107,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
                 }
             }
         } else {
-            if (has_capability('moodle/site:viewreports', $sitecontext) && $showcourses) {
+            if (has_capability('coursereport/log:view', $sitecontext) && $showcourses) {
                 $sql = "SELECT DISTINCT course, coursename FROM {mnet_log} where hostid = ?";
                 if ($ccc = $DB->get_records_sql($sql, array($hostid))) {
                     foreach ($ccc as $cc) {
@@ -160,7 +160,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
         }
     }
 
-    if (has_capability('moodle/site:viewreports', $sitecontext) && !$course->category) {
+    if (has_capability('coursereport/log:view', $sitecontext) && !$course->category) {
         $activities["site_errors"] = get_string("siteerrors");
         if ($modid === "site_errors") {
             $selectedactivity = "site_errors";
@@ -214,14 +214,14 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
     echo "<input type=\"hidden\" name=\"chooselog\" value=\"1\" />\n";
     echo "<input type=\"hidden\" name=\"showusers\" value=\"$showusers\" />\n";
     echo "<input type=\"hidden\" name=\"showcourses\" value=\"$showcourses\" />\n";
-    if (has_capability('moodle/site:viewreports', $sitecontext) && $showcourses) {
+    if (has_capability('coursereport/log:view', $sitecontext) && $showcourses) {
         $cid = empty($course->id)? '1' : $course->id; 
         choose_from_menu_nested($dropdown, "host_course", $hostid.'/'.$cid, "");
     } else {
         $courses = array();
         $courses[$course->id] = $course->fullname . ((empty($course->category)) ? ' ('.get_string('site').') ' : '');
         choose_from_menu($courses,"id",$course->id,false);
-        if (has_capability('moodle/site:viewreports', $sitecontext)) {
+        if (has_capability('coursereport/log:view', $sitecontext)) {
             $a = new object();
             $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
                 ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showcourses=1&showusers=$showusers";
@@ -325,7 +325,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         }
     }
 
-    if (has_capability('moodle/site:viewreports', $sitecontext) && $showcourses) {
+    if (has_capability('coursereport/log:view', $sitecontext) && $showcourses) {
         if ($ccc = $DB->get_records("course", null, "fullname", "id,fullname,category")) {
             foreach ($ccc as $cc) {
                 if ($cc->category) {
@@ -372,7 +372,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         }
     }
 
-    if (has_capability('moodle/site:viewreports', $sitecontext) && ($course->id == SITEID)) {
+    if (has_capability('coursereport/log:view', $sitecontext) && ($course->id == SITEID)) {
         $activities["site_errors"] = get_string("siteerrors");
         if ($modid === "site_errors") {
             $selectedactivity = "site_errors";
@@ -426,14 +426,14 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     echo "<input type=\"hidden\" name=\"chooselog\" value=\"1\" />\n";
     echo "<input type=\"hidden\" name=\"showusers\" value=\"$showusers\" />\n";
     echo "<input type=\"hidden\" name=\"showcourses\" value=\"$showcourses\" />\n";
-    if (has_capability('moodle/site:viewreports', $sitecontext) && $showcourses) { 
+    if (has_capability('coursereport/log:view', $sitecontext) && $showcourses) {
         choose_from_menu ($courses, "id", $course->id, "");
     } else {
         //        echo '<input type="hidden" name="id" value="'.$course->id.'" />';
         $courses = array();
         $courses[$course->id] = $course->fullname . (($course->id == SITEID) ? ' ('.get_string('site').') ' : '');
         choose_from_menu($courses,"id",$course->id,false);
-        if (has_capability('moodle/site:viewreports', $sitecontext)) {
+        if (has_capability('coursereport/log:view', $sitecontext)) {
             $a = new object();
             $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
                 ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showcourses=1&showusers=$showusers";

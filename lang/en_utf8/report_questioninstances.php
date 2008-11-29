@@ -1,5 +1,7 @@
 <?PHP  // $Id$
 
+$string['questioninstances:view'] = 'View question instances report';
+
 $string['editquestionshere'] = 'Edit questions in this context';
 $string['getreport'] = 'Get the report';
 $string['hiddenquestions'] = 'Hidden';

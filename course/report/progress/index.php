@@ -1,6 +1,5 @@
 <?php
 require_once('../../../config.php');
-global $DB;
 
 define('COMPLETION_REPORT_PAGE',50);
 
@@ -38,7 +37,7 @@ function csv_quote($value) {
     }
 }
 
-require_login($course->id);
+require_login($course);
 
 // Check basic permission
 $context=get_context_instance(CONTEXT_COURSE,$course->id);

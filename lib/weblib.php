@@ -2469,7 +2469,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
                     } else {
                         $menu .= get_string('failedloginattemptsall', '', $count);
                     }
-                    if (has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM))) {
+                    if (has_capability('coursereport/log:view', get_context_instance(CONTEXT_SYSTEM))) {
                         $menu .= ' (<a href="'.$CFG->wwwroot.'/course/report/log/index.php'.
                                              '?chooselog=1&amp;id=1&amp;modid=site_errors">'.get_string('logs').'</a>)';
                     }
@@ -5497,7 +5497,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     }
     //Accessibility: added Alt text, replaced &gt; &lt; with 'silent' character and 'accesshide' text.
 
-    if ($selectmod and has_capability('moodle/site:viewreports', $context)) {
+    if ($selectmod and has_capability('coursereport/log:view', $context)) {
         $logstext = get_string('alllogs');
         $logslink = '<li>'."\n".'<a title="'.$logstext.'" '.
                     $CFG->frametarget.'onclick="this.target=\''.$CFG->framename.'\';"'.' href="'.
