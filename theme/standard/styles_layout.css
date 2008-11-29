@@ -2101,7 +2101,8 @@ body#course-info .generalbox.info {
   margin-right:5px;
 }
 
-#course-report-log-index .info {
+#course-report-log-index .info,
+#course-report-log-indexlive .info {
   margin-left:auto;
   margin-right:auto;
   text-align:center;

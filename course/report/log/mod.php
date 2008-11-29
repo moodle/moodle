@@ -11,7 +11,9 @@
         print_heading(get_string('chooselogs') .':');
 
         print_log_selector_form($course);
+    }
 
+    if (has_capability('coursereport/log:viewlive', $context)) {
         print_heading(get_string('chooselivelogs') .':');
         echo '<p>';
         link_to_popup_window('/course/report/log/live.php?id='. $course->id,'livelog', get_string('livelogs'), 500, 800);
