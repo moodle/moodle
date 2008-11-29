@@ -44,11 +44,10 @@
         $course->fullname  = $course_stub->coursename;
     }
 
-    require_login($course->id);
-
+    require_login($course);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
-    require_capability('moodle/site:viewreports', $context);
+    require_capability('coursereport/log:view', $context);
 
     add_to_log($course->id, "course", "report log", "report/log/index.php?id=$course->id", $course->id);
 

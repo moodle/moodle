@@ -21,12 +21,10 @@
         }
     }
 
-    require_login();
+    require_login($course);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
-    if (!has_capability('moodle/site:viewreports', $context)) {
-        error('You need do not have the required permission to view reports for this course');
-    }
+    require_capability('coursereport/stats:view', $context);
 
     stats_check_uptodate($course->id);
 

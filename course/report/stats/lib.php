@@ -3,8 +3,7 @@
     * This file is also required by /admin/reports/stats/index.php.
     */
     
-    
-    require_once('../../../config.php');
+   
     require_once($CFG->dirroot.'/lib/statslib.php');
 
 
@@ -21,7 +20,7 @@
         $options = array();
         $options[STATS_MODE_GENERAL] = get_string('statsmodegeneral');
         $options[STATS_MODE_DETAILED] = get_string('statsmodedetailed');
-        if (has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM))) {
+        if (has_capability('coursereport/stats:view', get_context_instance(CONTEXT_SYSTEM))) {
             $options[STATS_MODE_RANKED] = get_string('reports');
         }
         

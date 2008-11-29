@@ -10,7 +10,7 @@
 
     require_login();
 
-    require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM));
+    require_capability('report/courseoverview:view', get_context_instance(CONTEXT_SYSTEM));
 
     stats_check_uptodate();
 
@@ -29,7 +29,7 @@
     $courses = get_records_sql($sql, 0, $numcourses);
 
     if (empty($courses)) {
-        print_error('statsnodata', "", $CFG->wwwroot.'/'.$CFG->admin.'/report/course/index.php');
+        print_error('statsnodata', "", $CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/index.php');
     }
 
 

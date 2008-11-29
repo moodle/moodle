@@ -7,7 +7,7 @@
     require_once($CFG->dirroot.'/course/lib.php');
     require_once($CFG->dirroot.'/course/report/log/lib.php');
 
-    if (has_capability('moodle/site:viewreports', $context)) {
+    if (has_capability('coursereport/log:view', $context)) {
         print_heading(get_string('chooselogs') .':');
 
         print_log_selector_form($course);

@@ -3,12 +3,9 @@
     require_once('../../../config.php');
     require_once($CFG->dirroot.'/lib/statslib.php');
     require_once($CFG->dirroot.'/course/report/stats/lib.php');
+    require_once($CFG->libdir.'/adminlib.php');
 
-    if (empty($CFG->enablestats)) {
-        error("Stats is not enabled.");
-    }
-
-    $courseid = required_param('course', PARAM_INT);
+    $courseid = optional_param('course', SITEID, PARAM_INT);
     $report   = optional_param('report', 0, PARAM_INT);
     $time     = optional_param('time', 0, PARAM_INT);
     $mode     = optional_param('mode', STATS_MODE_GENERAL, PARAM_INT);
@@ -25,7 +22,7 @@
     }
 
     if ($mode == STATS_MODE_RANKED) {
-        redirect($CFG->wwwroot.'/'.$CFG->admin.'/report/stats/index.php?time='.$time);
+        redirect($CFG->wwwroot.'/course/report/stats/index.php?time='.$time);
     }
 
     if (!$course = get_record("course","id",$courseid)) {
@@ -41,26 +38,38 @@
     require_login($course);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
-    require_capability('moodle/site:viewreports', $context);
+    require_capability('coursereport/stats:view', $context);
 
     add_to_log($course->id, "course", "report stats", "report/stats/index.php?course=$course->id", $course->id);
     stats_check_uptodate($course->id);
 
+    if ($course->id == SITEID) {
+        admin_externalpage_setup('reportstats');
+        admin_externalpage_print_header();
 
-    $strreports = get_string("reports");
-    $strstats = get_string('stats');
+    } else {
+        $strreports = get_string("reports");
+        $strstats = get_string('stats');
 
-    $menu = report_stats_mode_menu($course, $mode, $time, "$CFG->wwwroot/course/report/stats/index.php");
+        $menu = report_stats_mode_menu($course, $mode, $time, "$CFG->wwwroot/course/report/stats/index.php");
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strreports, 'link' => "../../report.php?id=$course->id", 'type' => 'misc');
-    $navlinks[] = array('name' => $strstats, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
+        $navlinks = array();
+        $navlinks[] = array('name' => $strreports, 'link' => "$CFG->wwwroot/course/report.php?id=$course->id", 'type' => 'misc');
+        $navlinks[] = array('name' => $strstats, 'link' => null, 'type' => 'misc');
+        $navigation = build_navigation($navlinks);
 
-    print_header("$course->shortname: $strstats", $course->fullname, $navigation, '', '', true, '&nbsp;', $menu);
+        print_header("$course->shortname: $strstats", $course->fullname, $navigation, '', '', true, '&nbsp;', $menu);
+    }
 
+    if (empty($CFG->enablestats)) {
+        if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+            redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=stats", get_string('mustenablestats', 'admin'), 3);
+        } else {
+            error("Stats is not enabled.");
+        }
+    }
 
-    require_once($CFG->dirroot.'/course/report/stats/report.php');
+    require($CFG->dirroot.'/course/report/stats/report.php');
 
     print_footer();
 
