@@ -445,9 +445,9 @@ class mysqli_native_moodle_database extends moodle_database {
      * @throws dml_exception if error
      */
     public function get_recordset_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
+        $limitfrom = (int)$limitfrom;
+        $limitnum  = (int)$limitnum;
         if ($limitfrom or $limitnum) {
-            $limitfrom = (int)$limitfrom;
-            $limitnum  = (int)$limitnum;
             if ($limitnum < 1) {
                 $limitnum = "18446744073709551615";
             }
@@ -484,9 +484,9 @@ class mysqli_native_moodle_database extends moodle_database {
      * @throws dml_exception if error
      */
     public function get_records_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
+        $limitfrom = (int)$limitfrom;
+        $limitnum  = (int)$limitnum;
         if ($limitfrom or $limitnum) {
-            $limitfrom = (int)$limitfrom;
-            $limitnum  = (int)$limitnum;
             if ($limitnum < 1) {
                 $limitnum = "18446744073709551615";
             }
