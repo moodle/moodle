@@ -304,7 +304,6 @@ $string['coursemessage'] = 'Message course users';
 $string['coursenotaccessible'] = 'This course does not allow public access';
 $string['courseoverview'] = 'Course overview';
 $string['courseoverviewgraph'] = 'Course overview graph';
-$string['coursereports'] = 'Course reports';
 $string['coursereject'] = 'Reject a course request';
 $string['courserejected'] = 'Course has been rejected and the requester has been notified.';
 $string['courserejectemail'] = 'Sorry, but the course you requested has been rejected. Here is the reason provided:
@@ -312,6 +311,7 @@ $string['courserejectemail'] = 'Sorry, but the course you requested has been rej
 $a';
 $string['courserejectreason'] = 'Outline your reasons for rejecting this course<br />(this will be emailed to the requester)';
 $string['courserejectsubject'] = 'Your course has been rejected';
+$string['coursereports'] = 'Course reports';
 $string['courserequest'] = 'Course request';
 $string['courserequestfailed'] = 'For some reason, your course request could not be saved';
 $string['courserequestintro'] = 'Use this form to request a course to be created for you.<br />Try and fill in as much information as you can to allow<br />the administrators to understand your reasons for wanting this course.';
