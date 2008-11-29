@@ -26,37 +26,37 @@ define('LASTATTEMPT', '3');
 
 /**
  * Returns an array of the popup options for SCORM and each options default value
- * 
+ *
  * @return array an array of popup options as the key and their defaults as the value
  */
 function scorm_get_popup_options_array(){
     global $CFG;
     $cfg_scorm = get_config('scorm');
-    
-    return array('resizable'=> isset($cfg_scorm->resizable) ? $cfg_scorm->resizable : 0, 
-                 'scrollbars'=> isset($cfg_scorm->scrollbars) ? $cfg_scorm->scrollbars : 0, 
-                 'directories'=> isset($cfg_scorm->directories) ? $cfg_scorm->directories : 0, 
+
+    return array('resizable'=> isset($cfg_scorm->resizable) ? $cfg_scorm->resizable : 0,
+                 'scrollbars'=> isset($cfg_scorm->scrollbars) ? $cfg_scorm->scrollbars : 0,
+                 'directories'=> isset($cfg_scorm->directories) ? $cfg_scorm->directories : 0,
                  'location'=> isset($cfg_scorm->location) ? $cfg_scorm->location : 0,
-                 'menubar'=> isset($cfg_scorm->menubar) ? $cfg_scorm->menubar : 0, 
-                 'toolbar'=> isset($cfg_scorm->toolbar) ? $cfg_scorm->toolbar : 0, 
-                 'status'=> isset($cfg_scorm->status) ? $cfg_scorm->status : 0); 
+                 'menubar'=> isset($cfg_scorm->menubar) ? $cfg_scorm->menubar : 0,
+                 'toolbar'=> isset($cfg_scorm->toolbar) ? $cfg_scorm->toolbar : 0,
+                 'status'=> isset($cfg_scorm->status) ? $cfg_scorm->status : 0);
 }
 
 /**
  * Returns an array of the array of what grade options
- * 
+ *
  * @return array an array of what grade options
  */
 function scorm_get_grade_method_array(){
     return array (GRADESCOES => get_string('gradescoes', 'scorm'),
                   GRADEHIGHEST => get_string('gradehighest', 'scorm'),
                   GRADEAVERAGE => get_string('gradeaverage', 'scorm'),
-                  GRADESUM => get_string('gradesum', 'scorm'));             
+                  GRADESUM => get_string('gradesum', 'scorm'));
 }
 
 /**
  * Returns an array of the array of what grade options
- * 
+ *
  * @return array an array of what grade options
  */
 function scorm_get_what_grade_array(){
@@ -68,7 +68,7 @@ function scorm_get_what_grade_array(){
 
 /**
  * Returns an array of the array of skip view options
- * 
+ *
  * @return array an array of skip view options
  */
 function scorm_get_skip_view_array(){
@@ -79,7 +79,7 @@ function scorm_get_skip_view_array(){
 
 /**
  * Returns an array of the array of hide table of contents options
- * 
+ *
  * @return array an array of hide table of contents options
  */
 function scorm_get_hidetoc_array(){
@@ -90,7 +90,7 @@ function scorm_get_hidetoc_array(){
 
 /**
  * Returns an array of the array of update frequency options
- * 
+ *
  * @return array an array of update frequency options
  */
 function scorm_get_updatefreq_array(){
@@ -102,7 +102,7 @@ function scorm_get_updatefreq_array(){
 
 /**
  * Returns an array of the array of popup display options
- * 
+ *
  * @return array an array of popup display options
  */
 function scorm_get_popup_display_array(){
@@ -112,17 +112,17 @@ function scorm_get_popup_display_array(){
 
 /**
  * Returns an array of the array of attempt options
- * 
+ *
  * @return array an array of attempt options
  */
 function scorm_get_attempts_array(){
     $attempts = array(0 => get_string('nolimit','scorm'),
                       1 => get_string('attempt1','scorm'));
-                  
+
     for ($i=2; $i<=6; $i++) {
         $attempts[$i] = get_string('attemptsx','scorm', $i);
     }
-    
+
     return $attempts;
 }
 /**
@@ -732,10 +732,10 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
         echo $result->toc;
         print_simple_box_end();
     }
-    
+
     // is this the first attempt ?
     $attemptcount = scorm_get_attempt_count($user, $scorm);
-    
+
     // do not give the player launch FORM if the SCORM object is locked after the final attempt
     if ($scorm->lastattemptlock == 0 || $result->attemptleft > 0) {
 ?>
@@ -845,7 +845,7 @@ function scorm_get_count_users($scormid, $groupingid=null) {
 * @param string $element_name Name of array element to get values for
 * @param array $children list of sub elements of this array element that also need instantiating
 * @return None
-*/   
+*/
 function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $children) {
     // reconstitute comments_from_learner and comments_from_lms
     $current = '';
@@ -853,7 +853,7 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
     $current_sub = '';
     $count = 0;
     $count_sub = 0;
-    
+
     // filter out the ones we want
     $element_list = array();
     foreach($userdata as $element => $value){
@@ -861,10 +861,10 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
             $element_list[$element] = $value;
         }
     }
-    
+
     // sort elements in .n array order
     uksort($element_list, "scorm_element_cmp");
-    
+
     // generate JavaScript
     foreach($element_list as $element => $value){
         if ($sversion == 'scorm_13') {
@@ -878,7 +878,7 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
             if ($count_sub > 0) {
                 echo '    '.$element_name.'_'.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
             }
-            $current = $matches[1];            
+            $current = $matches[1];
             $count++;
             $current_subelement = '';
             $current_sub = '';
@@ -892,7 +892,7 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
                 echo '    '.$subelement.".".$child."._children = ".$child."_children;\n";
             }
         }
-        
+
         // now - flesh out the second level elements if there are any
         if ($sversion == 'scorm_13') {
             $element = preg_replace('/(.*?\.N\d+\..*?)\.(\d+)\./', "\$1.N\$2.", $element);
@@ -901,7 +901,7 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
             $element = preg_replace('/(.*?\_\d+\..*?)\.(\d+)\./', "\$1_\$2.", $element);
             preg_match('/.*?\_\d+\.(.*?)\_(\d+)\./', $element, $matches);
         }
-        
+
         // check the sub element type
         if (count($matches) > 0 && $current_subelement != $matches[1]) {
             if ($count_sub > 0) {
@@ -914,16 +914,16 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
             $subelement = substr($element,0,$end);
             echo '    '.$subelement." = new Object();\n";
         }
-        
+
         // now check the subelement subscript
         if (count($matches) > 0 && $current_sub != $matches[2]) {
-            $current_sub = $matches[2];            
+            $current_sub = $matches[2];
             $count_sub++;
             $end = strrpos($element,$matches[2])+strlen($matches[2]);
             $subelement = substr($element,0,$end);
             echo '    '.$subelement." = new Object();\n";
         }
-        
+
         echo '    '.$element.' = \''.$value."';\n";
     }
     if ($count_sub > 0) {
@@ -940,7 +940,7 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
 * @param string $a left array element
 * @param string $b right array element
 * @return comparator - 0,1,-1
-*/   
+*/
 function scorm_element_cmp($a, $b) {
     preg_match('/.*?(\d+)\./', $a, $matches);
     $left = intval($matches[1]);
@@ -982,17 +982,17 @@ function scorm_element_cmp($a, $b) {
 * @param object $user Current context user
 * @param object $scorm a moodle scrom object - mdl_scorm
 * @return string - Attempt status string
-*/   
+*/
 function scorm_get_attempt_status($user, $scorm) {
     global $DB;
-    
+
     $attempts = $DB->get_records_select('scorm_scoes_track',"element='cmi.core.score.raw' AND userid=? AND scormid=?", array($user->id, $scorm->id),'attempt','attempt AS attemptnumber, value AS grade');
     if(empty($attempts)) {
         $attemptcount = 0;
     } else {
         $attemptcount = count($attempts);
     }
-    
+
     $result = '<p>'.get_string('noattemptsallowed', 'scorm').': ';
     if ($scorm->maxattempt > 0) {
         $result .= $scorm->maxattempt . '<BR>';
@@ -1017,7 +1017,7 @@ function scorm_get_attempt_status($user, $scorm) {
            $grademethod = get_string('gradescoes', 'scorm');
         break;
     }
-    
+
     if(!empty($attempts)) {
         foreach($attempts as $attempt) {
             $gradereported = scorm_grade_user_attempt($scorm, $user->id, $attempt->attemptnumber);
@@ -1044,7 +1044,7 @@ function scorm_get_attempt_status($user, $scorm) {
 * @param object $user Current context user
 * @param object $scorm a moodle scrom object - mdl_scorm
 * @return int - no. of attempts so far
-*/   
+*/
 function scorm_get_attempt_count($user, $scorm) {
     global $DB;
     $attemptcount = 0;
@@ -1064,11 +1064,11 @@ function scorm_get_attempt_count($user, $scorm) {
 *
 * @param object $scorm a moodle scrom object - mdl_scorm
 * @return boolean - debugging true/false
-*/   
+*/
 function scorm_debugging($scorm) {
     global $CFG, $USER;
     $cfg_scorm = get_config('scorm');
-    
+
     if (!$cfg_scorm->allowapidebug) {
         return false;
     }
@@ -1081,5 +1081,55 @@ function scorm_debugging($scorm) {
     $res = false;
     eval('$res = preg_match(\'/^'.$test.'/\', $identifier) ? true : false;');
     return $res;
+}
+
+/**
+* Delete Scorm tracks for selected users
+*
+* @param array $attemptids list of attempts that need to be deleted
+* @param int $scormid ID of Scorm
+*
+* return bool true deleted all responses, false failed deleting an attempt - stopped here
+*/
+function scorm_delete_responses($attemptids, $scormid) {
+    if(!is_array($attemptids) || empty($attemptids)) {
+        return false;
+    }
+
+    foreach($attemptids as $num => $attemptid) {
+        if(empty($attemptid)) {
+            unset($attemptids[$num]);
+        }
+    }
+
+    foreach($attemptids as $attempt) {
+        $keys = explode(':', $attempt);
+        if (count($keys) == 2) {
+            $userid = clean_param($keys[0], PARAM_INT);
+            $attemptid = clean_param($keys[1], PARAM_INT);
+            if (!$userid || !$attemptid || !scorm_delete_attempt($userid, $scormid, $attemptid)) {
+                    return false;
+            }
+        } else {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
+* Delete Scorm tracks for selected users
+*
+* @param int $userid ID of User
+* @param int $scormid ID of Scorm
+* @param int $attemptid user attempt that need to be deleted
+*
+* return bool true suceeded
+*/
+function scorm_delete_attempt($userid, $scormid, $attemptid) {
+    global $DB;
+
+    $DB->delete_records('scorm_scoes_track', array('userid' => $userid, 'scormid' => $scormid, 'attempt' => $attemptid));
+    return true;
 }
 ?>

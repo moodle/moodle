@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // scorm.php - created with Moodle 1.7 beta + (2006101003)
 
 
@@ -73,6 +73,7 @@ $string['gradeaverage'] = 'Average grade';
 $string['gradehighest'] = 'Highest grade';
 $string['grademethod'] = 'Grading method';
 $string['grademethoddesc'] = 'This preference sets the default grade method for an activity';
+$string['gradereported'] = 'Grade reported';
 $string['gradescoes'] = 'Learning Objects';
 $string['gradesum'] = 'Sum grade';
 $string['height'] = 'Height';
@@ -157,6 +158,7 @@ $string['scorm:viewscores'] = 'View scores';
 $string['scormclose'] = 'Until';
 $string['scormcourse'] = 'Learning Course';
 $string['scormopen'] = 'Open';
+$string['scormresponsedeleted'] = 'Deleted user attempts';
 $string['scormtype'] = 'Type';
 $string['scrollbars'] = 'Allow the window to be scrolled';
 $string['sided'] = 'On the left side';
@@ -210,5 +212,5 @@ $string['noattemptsallowed'] = "Number of attempts allowed";
 $string['noattemptsmade'] = "Number of attempts you have made";
 $string['gradeforattempt'] = "Grade for attempt";
 $string['exceededmaxattempts'] = "You have reached the maximum number of attempts.";
-$string['zlibwarning'] ='Warning: PHP Zlib compression has been enabled on this site, some users may experience issues loading SCORM objects in certain web browsers.'; 
+$string['zlibwarning'] ='Warning: PHP Zlib compression has been enabled on this site, some users may experience issues loading SCORM objects in certain web browsers.';
 ?>
