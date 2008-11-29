@@ -133,6 +133,7 @@ $string['scorm:skipview'] = 'Skip overview';
 $string['scorm:viewreport'] = 'View reports';
 $string['scorm:viewscores'] = 'View scores';
 $string['scormcourse'] = 'Learning Course';
+$string['scormresponsedeleted'] = 'Deleted user attempts';
 $string['scrollbars'] = 'Allow the window to be scrolled';
 $string['sided'] = 'On the left side';
 $string['skipview'] = 'Student skip content structure page';
