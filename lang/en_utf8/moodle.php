@@ -289,6 +289,7 @@ $string['courserejectemail'] = 'Sorry, but the course you requested has been rej
 $a';
 $string['courserejectreason'] = 'Outline your reasons for rejecting this course<br />(this will be emailed to the requester)';
 $string['courserejectsubject'] = 'Your course has been rejected';
+$string['coursereports'] = 'Course reports';
 $string['courserequest'] = 'Course request';
 $string['courserequestdisabled'] = 'Sorry, but requesting courses has been disabled by the administrator';
 $string['courserequestfailed'] = 'For some reason, your course request could not be saved';
