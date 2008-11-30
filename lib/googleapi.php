@@ -285,6 +285,9 @@ class google_picasa {
     const REALM             = 'http://picasaweb.google.com/data/';
     const USER_PREF_NAME    = 'google_authsub_sesskey_picasa';
     const UPLOAD_LOCATION   = 'http://picasaweb.google.com/data/feed/api/user/default/albumid/default';
+    const ALBUM_PHOTO_LIST  = 'http://picasaweb.google.com/data/feed/api/user/default/albumid/';
+    const PHOTO_SEARCH_URL  = 'http://picasaweb.google.com/data/feed/api/user/default?kind=photo&q=';
+    const LIST_ALBUMS_URL   = 'http://picasaweb.google.com/data/feed/api/user/default';
 
     private $google_curl = null;
 
@@ -332,6 +335,117 @@ class google_picasa {
             return false;
         }
     }
+
+    /**
+     * Returns list of photos for file picker.
+     * If top level then returns list of albums, otherwise
+     * photos within an album.
+     *
+     * @param string $path The path to files (assumed to be albumid)
+     * @return mixed $files A list of files for the file picker
+     */
+    public function get_file_list($path = ''){
+        if(!$path){
+            return $this->get_albums();
+        }else{
+            return $this->get_album_photos($path);
+        }
+    }
+
+    /**
+     * Returns list of photos in album specified
+     *
+     * @param int $albumid Photo album to list photos from
+     * @return mixed $files A list of files for the file picker
+     */
+    public function get_album_photos($albumid){
+        $albumcontent = $this->google_curl->get(google_picasa::ALBUM_PHOTO_LIST.$albumid);
+
+        return $this->get_photo_details($albumcontent);
+    }
+
+    /**
+     * Does text search on the users photos and returns 
+     * matches in format for picasa api
+     *
+     * @param string $query Search terms
+     * @return mixed $files A list of files for the file picker
+     */
+    public function do_photo_search($query){
+        $content = $this->google_curl->get(google_picasa::PHOTO_SEARCH_URL.htmlentities($query));
+
+        return $this->get_photo_details($content);
+    }
+
+    /**
+     * Gets all the users albums and returns them as a list of folders
+     * for the file picker
+     *
+     * @return mixes $files Array in the format get_listing uses for folders
+     */
+    public function get_albums(){
+        $content = $this->google_curl->get(google_picasa::LIST_ALBUMS_URL);
+        $xml = new SimpleXMLElement($content);
+
+        $files = array();
+
+        foreach($xml->entry as $album){
+            $gphoto = $album->children('http://schemas.google.com/photos/2007');
+
+            $mediainfo = $album->children('http://search.yahoo.com/mrss/');
+            //hacky...
+            $thumbnailinfo = $mediainfo->group->thumbnail[0]->attributes();
+
+            $files[] = array( 'title' => (string) $gphoto->name,
+                'date'  => userdate($gphoto->timestamp),
+                'size'  => (int) $gphoto->bytesUsed,
+                'path'  => (string) $gphoto->id,
+                'thumbnail' => (string) $thumbnailinfo['url'],
+                'thumbnail_width' => (int) $thumbnailinfo['width'],
+                'thumbnail_height' => (int) $thumbnailinfo['height'],
+                'children' => array(),
+            );
+
+        }
+
+        return $files;
+    }
+
+    /**
+     * Recieves XML from a picasa list of photos and returns
+     * array in format for file picker.
+     *
+     * @param string $rawxml XML from picasa api
+     * @return mixed $files A list of files for the file picker
+     */
+    public function get_photo_details($rawxml){
+
+        $xml = new SimpleXMLElement($rawxml);
+
+        $files = array();
+
+        foreach($xml->entry as $photo){
+            $gphoto = $photo->children('http://schemas.google.com/photos/2007');
+
+            $mediainfo = $photo->children('http://search.yahoo.com/mrss/');
+            $fullinfo = $mediainfo->group->content->attributes();
+            //hacky...
+            $thumbnailinfo = $mediainfo->group->thumbnail[0]->attributes();
+
+            $files[] = array('title' => (string) $mediainfo->group->title,
+                'date'  => userdate($gphoto->timestamp),
+                'size' => (int) $gphoto->size,
+                'path' => $gphoto->albumid.'/'.$gphoto->id,
+                'thumbnail' => (string) $thumbnailinfo['url'],
+                'thumbnail_width' => (int) $thumbnailinfo['width'],
+                'thumbnail_height' => (int) $thumbnailinfo['height'],
+                'source' => (string) $fullinfo['url'],
+            );
+        }
+
+        return $files;
+    }
+
 }
 
 /**
