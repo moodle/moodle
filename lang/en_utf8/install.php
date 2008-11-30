@@ -64,6 +64,12 @@ $string['databasecreationsettingssub'] = '<b>Type:</b> fixed to \"mysql\" by the
        <b>User:</b> fixed to \"root\" by the installer<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> optional prefix to use for all table names';
+$string['databasecreationsettingssub2'] = '<b>Type:</b> fixed to \"mysqli\" by the installer<br />
+       <b>Host:</b> fixed to \"localhost\" by the installer<br />
+       <b>Name:</b> database name, eg moodle<br />
+       <b>User:</b> fixed to \"root\" by the installer<br />
+       <b>Password:</b> your database password<br />
+       <b>Tables Prefix:</b> optional prefix to use for all table names';
 $string['databasehost']='Database host :';
 $string['databasename']='Database name : ';
 $string['databasepass']='Database password :';
