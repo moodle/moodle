@@ -24,7 +24,9 @@
     require_login($course);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
-    require_capability('coursereport/stats:view', $context);
+    if (!$course->showreports or $USER->id != $userid) {
+        require_capability('coursereport/stats:view', $context);
+    }
 
     stats_check_uptodate($course->id);
 
