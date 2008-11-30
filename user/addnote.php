@@ -16,6 +16,10 @@ require_login($course->id);
 // to create notes the current user needs a capability
 require_capability('moodle/notes:manage', $context);
 
+if (empty($CFG->enablenotes)) {
+    print_error('notesdisabled', 'notes');
+}
+
 if (!empty($users) && confirm_sesskey()) {
     if (count($users) != count($contents) || count($users) != count($states)) {
         error('Parameters malformation', $CFG->wwwroot.'/user/index.php?id='.$id);

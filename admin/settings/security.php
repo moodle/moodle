@@ -54,6 +54,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configtext('minpasswordnonalphanum', get_string('minpasswordnonalphanum', 'admin'), get_string('configminpasswordnonalphanum', 'admin'), 1, PARAM_INT));
     $temp->add(new admin_setting_configcheckbox('disableuserimages', get_string('disableuserimages', 'admin'), get_string('configdisableuserimages', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('emailchangeconfirmation', get_string('emailchangeconfirmation', 'admin'), get_string('configemailchangeconfirmation', 'admin'), 1));
+    $temp->add(new admin_setting_configcheckbox('enablenotes', get_string('enablenotes', 'notes'), get_string('configenablenotes', 'notes'), 1));
     $ADMIN->add('security', $temp);
 
 

@@ -4,7 +4,7 @@ require_once('../config.php');
 require_once('lib.php');
 
 // retrieve parameters
-$noteid       = required_param('note', PARAM_INT);
+$noteid = required_param('id', PARAM_INT);
 
 // locate note information
 if (!$note = note_load($noteid)) {
@@ -22,14 +22,18 @@ if (!$course = get_record('course', 'id', $note->courseid)) {
     }
 
 // require login to access notes
-require_login($course->id);
+require_login($course);
 
 // locate context information
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
 // check capability
 if (!has_capability('moodle/notes:manage', $context)) {
-    error('You may not delete this note');
+    print_error('nopermissiontodelete', 'notes');
+}
+
+if (empty($CFG->enablenotes)) {
+    print_error('notesdisabled', 'notes');
 }
 
 if (data_submitted() && confirm_sesskey()) {
@@ -38,14 +42,15 @@ if (data_submitted() && confirm_sesskey()) {
     if (note_delete($noteid)) {
         add_to_log($note->courseid, 'notes', 'delete', 'index.php?course='.$note->courseid.'&amp;user='.$note->userid . '#note-' . $note->id , 'delete note');
     } else {
-        error('Error occured while deleting post', $returnurl);
+        print_error('cannotdeletepost', 'notes', $returnurl);
     }
     redirect($returnurl);
+
 } else {
 // if data was not submitted yet, then show note data with a delete confirmation form
     $strnotes = get_string('notes', 'notes');
-    $optionsyes = array('note'=>$noteid, 'sesskey'=>sesskey());
-    $optionsno = array('course'=>$course->id, 'user'=>$note->userid);
+    $optionsyes = array('id'=>$noteid, 'sesskey'=>sesskey());
+    $optionsno  = array('course'=>$course->id, 'user'=>$note->userid);
 
 // output HTML
     if (has_capability('moodle/course:viewparticipants', $context) || has_capability('moodle/site:viewparticipants', get_context_instance(CONTEXT_SYSTEM))) {

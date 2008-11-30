@@ -51,9 +51,12 @@
     }
 
 /// require login to access notes
-    require_login($course->id);
+    require_login($course);
     add_to_log($courseid, 'notes', 'view', 'index.php?course='.$courseid.'&amp;user='.$userid, 'view notes');
 
+    if (empty($CFG->enablenotes)) {
+        print_error('notesdisabled', 'notes');
+    }
 
 /// output HTML
     if ($course->id == SITEID) {
@@ -62,7 +65,7 @@
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
     }
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
-    
+
     $strnotes = get_string('notes', 'notes');
     $nav = array();
     if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
@@ -77,7 +80,7 @@
 
     $showroles = 1;
     $currenttab = 'notes';
-    require_once($CFG->dirroot .'/user/tabs.php');
+    require($CFG->dirroot .'/user/tabs.php');
 
     $strsitenotes = get_string('sitenotes', 'notes');
     $strcoursenotes = get_string('coursenotes', 'notes');

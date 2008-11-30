@@ -17,6 +17,10 @@ require_login($course->id);
 // to create notes the current user needs a capability
 require_capability('moodle/notes:manage', $context);
 
+if (empty($CFG->enablenotes)) {
+    print_error('notesdisabled', 'notes');
+}
+
 if (!empty($users) && !empty($content) && confirm_sesskey()) {
     $note = new object();
     $note->courseid = $id;

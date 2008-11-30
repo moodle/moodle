@@ -74,22 +74,23 @@ function note_load($note_id) {
  */
 function note_save(&$note) {
     global $USER;
+
     // setup & clean fields
-    $note->module = 'notes';
+    $note->module       = 'notes';
     $note->lastmodified = time();
     $note->usermodified = $USER->id;
-    if(empty($note->format)) {
+    if (empty($note->format)) {
         $note->format = FORMAT_PLAIN;
     }
-    if(empty($note->publishstate)) {
+    if (empty($note->publishstate)) {
         $note->publishstate = NOTES_STATE_PUBLIC;
     }
     // save data
-    if(empty($note->id)) {
+    if (empty($note->id)) {
         // insert new note
         $note->created = $note->lastmodified;
-        if($id = insert_record('post', $note)) {
-            $note->id = $id;
+        if ($id = insert_record('post', $note)) {
+            $note = addslashes_recursive(get_record('post', 'id', $id));
             $result = true;
         } else {
             $result = false;
@@ -124,7 +125,11 @@ function note_get_state_name($state) {
     if (empty($states)) {
         $states = note_get_state_names();
     }
-    return @$states[$state];
+    if (isset($states[$state])) {
+        return $states[$state];
+    } else {
+        return null;
+    }
 }
 
 /**
@@ -147,8 +152,8 @@ function note_get_state_names() {
  * @param int   $detail OR-ed NOTES_SHOW_xyz flags that specify which note parts to print
  */
 function note_print($note, $detail = NOTES_SHOW_FULL) {
-
     global $CFG, $USER;
+
     if (!$user = get_record('user','id',$note->userid)) {
         debugging("User $note->userid not found");
         return;
@@ -158,9 +163,9 @@ function note_print($note, $detail = NOTES_SHOW_FULL) {
         return;
     }
     $context = get_context_instance(CONTEXT_COURSE, $note->courseid);
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
-    $authoring = new object;
+    $authoring = new object();
     $authoring->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$author->id.'&amp;course='.$note->courseid.'">'.fullname($author).'</a>';
     $authoring->date = userdate($note->lastmodified);
 
@@ -169,7 +174,7 @@ function note_print($note, $detail = NOTES_SHOW_FULL) {
         '" id="note-'. $note->id .'">';
 
     // print note head (e.g. author, user refering to, etc)
-    if($detail & NOTES_SHOW_HEAD) {
+    if ($detail & NOTES_SHOW_HEAD) {
         echo '<div class="header">';
         echo '<div class="user">';
         print_user_picture($user, $note->courseid, $user->picture);
@@ -181,19 +186,19 @@ function note_print($note, $detail = NOTES_SHOW_FULL) {
     }
 
     // print note content
-    if($detail & NOTES_SHOW_BODY) {
+    if ($detail & NOTES_SHOW_BODY) {
         echo '<div class="content">';
         echo format_text($note->content, $note->format);
         echo '</div>';
     }
 
     // print note options (e.g. delete, edit)
-    if($detail & NOTES_SHOW_FOOT) {
-        if (has_capability('moodle/notes:manage', $sitecontext) && $note->publishstate == NOTES_STATE_SITE ||
+    if ($detail & NOTES_SHOW_FOOT) {
+        if (has_capability('moodle/notes:manage', $systemcontext) && $note->publishstate == NOTES_STATE_SITE ||
             has_capability('moodle/notes:manage', $context) && ($note->publishstate == NOTES_STATE_PUBLIC || $note->usermodified == $USER->id)) {
             echo '<div class="footer"><p>';
-            echo '<a href="'.$CFG->wwwroot.'/notes/edit.php?note='.$note->id. '">'. get_string('edit') .'</a> | ';
-            echo '<a href="'.$CFG->wwwroot.'/notes/delete.php?note='.$note->id. '">'. get_string('delete') .'</a>';
+            echo '<a href="'.$CFG->wwwroot.'/notes/edit.php?id='.$note->id. '">'. get_string('edit') .'</a> | ';
+            echo '<a href="'.$CFG->wwwroot.'/notes/delete.php?id='.$note->id. '">'. get_string('delete') .'</a>';
             echo '</p></div>';
         }
     }
@@ -227,22 +232,22 @@ function note_print_list($notes, $detail = NOTES_SHOW_FULL) {
  * @param string  $state state of the notes (i.e. draft, public, site) ('' means any)
  * @param int     $author id of the user who modified the note last time (0 means any)
  */
-function note_print_notes($header, $addcourseid = 0, $viewnotes = true, $courseid = 0, $userid = 0, $state = '', $author = 0)
-{
+function note_print_notes($header, $addcourseid = 0, $viewnotes = true, $courseid = 0, $userid = 0, $state = '', $author = 0) {
     global $CFG;
+
     if ($header) {
         echo '<h3 class="notestitle">' . $header . '</h3>';
         echo '<div class="notesgroup">';
     }
     if ($addcourseid) {
         if ($userid) {
-           echo '<p><a href="'. $CFG->wwwroot .'/notes/add.php?course=' . $addcourseid . '&amp;user=' . $userid . '&amp;state=' . $state . '">' . get_string('addnewnote', 'notes') . '</a></p>';
+           echo '<p><a href="'. $CFG->wwwroot .'/notes/edit.php?courseid=' . $addcourseid . '&amp;userid=' . $userid . '&amp;publishstate=' . $state . '">' . get_string('addnewnote', 'notes') . '</a></p>';
         } else {
            echo '<p><a href="'. $CFG->wwwroot .'/user/index.php?id=' . $addcourseid. '">' . get_string('addnewnoteselect', 'notes') . '</a></p>';
         }
     }
     if ($viewnotes) {
-        $notes =& note_list($courseid, $userid, $state, $author);
+        $notes = note_list($courseid, $userid, $state, $author);
         if ($notes) {
             note_print_list($notes);
         }
