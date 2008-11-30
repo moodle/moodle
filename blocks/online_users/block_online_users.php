@@ -8,7 +8,7 @@
 class block_online_users extends block_base {
     function init() {
         $this->title = get_string('blockname','block_online_users');
-        $this->version = 2007101509;
+        $this->version = 2007101510;
     }
 
     function has_config() {return true;}
@@ -23,7 +23,7 @@ class block_online_users extends block_base {
         $this->content = new stdClass;
         $this->content->text = '';
         $this->content->footer = '';
-        
+
         if (empty($this->instance)) {
             return $this->content;
         }
@@ -37,8 +37,14 @@ class block_online_users extends block_base {
         // Get context so we can check capabilities.
         $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
 
+        if (empty($this->instance->pinned)) {
+            $blockcontext = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
+        } else {
+            $blockcontext = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
+        }
+
         //Calculate if we are in separate groups
-        $isseparategroups = ($COURSE->groupmode == SEPARATEGROUPS 
+        $isseparategroups = ($COURSE->groupmode == SEPARATEGROUPS
                              && $COURSE->groupmodeforce
                              && !has_capability('moodle/site:accessallgroups', $context));
 
@@ -47,6 +53,8 @@ class block_online_users extends block_base {
 
         $groupmembers = "";
         $groupselect = "";
+        $rafrom  = "";
+        $rawhere = "";
 
         //Add this to the SQL to show only group users
         if ($currentgroup !== NULL) {
@@ -56,62 +64,63 @@ class block_online_users extends block_base {
 
         if ($COURSE->id == SITEID) {  // Site-level
             $select = "SELECT u.id, u.username, u.firstname, u.lastname, u.picture, max(u.lastaccess) as lastaccess ";
-            $from = "FROM {$CFG->prefix}user u 
+            $from = "FROM {$CFG->prefix}user u
                           $groupmembers ";
             $where = "WHERE u.lastaccess > $timefrom
                       $groupselect ";
             $order = "ORDER BY lastaccess DESC ";
-            
+
         } else { // Course-level
+            if (!has_capability('moodle/role:viewhiddenassigns', $context)) {
+                $pcontext = get_related_contexts_string($context);
+                $rafrom  = ", {$CFG->prefix}role_assignments ra";
+                $rawhere = " AND ra.userid = u.id AND ra.contextid $pcontext AND ra.hidden = 0";
+            }
+
             $courseselect = "AND ul.courseid = '".$COURSE->id."'";
             $select = "SELECT u.id, u.username, u.firstname, u.lastname, u.picture, max(ul.timeaccess) as lastaccess ";
             $from = "FROM {$CFG->prefix}user_lastaccess ul,
                           {$CFG->prefix}user u
-                          $groupmembers ";
+                          $groupmembers $rafrom ";
             $where =  "WHERE ul.timeaccess > $timefrom
                        AND u.id = ul.userid
                        AND ul.courseid = $COURSE->id
-                       $groupselect ";
+                       $groupselect $rawhere ";
             $order = "ORDER BY lastaccess DESC ";
         }
-        
+
         $groupby = "GROUP BY u.id, u.username, u.firstname, u.lastname, u.picture ";
-        
-        $SQL = $select . $from . $where . $groupby . $order;
 
-        $users = array();        
-        $pcontext = get_related_contexts_string($context);
-    
-        if ($pusers = get_records_sql($SQL, 0, 50)) {   // We'll just take the most recent 50 maximum
-            $hidden = false;
-
-            if (!has_capability('moodle/role:viewhiddenassigns', $context)) {
-                // if current user can't view hidden role assignment in this context and 
-                // user has a hidden role assigned at this context or any parent contexts,
-                // ignore this user
-                $userids = array_keys($pusers);
-                $userids = implode(',', $userids);
-                $sql = "SELECT userid
-                          FROM {$CFG->prefix}role_assignments
-                         WHERE userid IN ($userids) AND contextid $pcontext AND hidden = 1
-                      GROUP BY userid";
-                $hidden = get_records_sql($sql);
-            }
-
-            foreach ($pusers as $puser) {
-                if ($hidden and isset($hidden[$puser->id])) {
-                    continue;
-                }
-
-                $puser->fullname = fullname($puser);
-                $users[$puser->id] = $puser;  
-            }
-        }  
-           
         //Calculate minutes
         $minutes  = floor($timetoshowusers/60);
 
-        $this->content->text = "<div class=\"info\">(".get_string("periodnminutes","block_online_users",$minutes).")</div>";
+        // Verify if we can see the list of users, if not just print number of users
+        if (!has_capability('block/online_users:viewlist', $blockcontext)) {
+            if (!$usercount = count_records_sql("SELECT COUNT(DISTINCT(u.id)) $from $where")) {
+                $usercount = get_string("none");
+            }
+            $this->content->text = "<div class=\"info\">".get_string("periodnminutes","block_online_users",$minutes).": $usercount</div>";
+            return $this->content;
+        }
+
+        $SQL = $select . $from . $where . $groupby . $order;
+
+        if ($users = get_records_sql($SQL, 0, 50)) {   // We'll just take the most recent 50 maximum
+            foreach ($users as $user) {
+                $users[$user->id]->fullname = fullname($user);
+            }
+        } else {
+            $users = array();
+        }
+
+        if (count($users) < 50) {
+            $usercount = "";
+        } else {
+            $usercount = count_records_sql("SELECT COUNT(u.id), u.id $from $where GROUP BY u.id");
+            $usercount = ": $usercount";
+        }
+
+        $this->content->text = "<div class=\"info\">(".get_string("periodnminutes","block_online_users",$minutes)."$usercount)</div>";
 
         //Now, we have in users, the list of users to show
         //Because they are online
@@ -121,7 +130,7 @@ class block_online_users extends block_base {
             $this->content->text .= "<ul class='list'>\n";
             foreach ($users as $user) {
                 $this->content->text .= '<li class="listentry">';
-                $timeago = format_time(time() - $user->lastaccess); //bruno to calculate correctly on frontpage 
+                $timeago = format_time(time() - $user->lastaccess); //bruno to calculate correctly on frontpage
                 if ($user->username == 'guest') {
                     $this->content->text .= '<div class="user">'.print_user_picture($user->id, $COURSE->id, $user->picture, 16, true, false, '', false);
                     $this->content->text .= get_string('guestuser').'</div>';
@@ -131,7 +140,7 @@ class block_online_users extends block_base {
                     $this->content->text .= print_user_picture($user->id, $COURSE->id, $user->picture, 16, true, false, '', false);
                     $this->content->text .= $user->fullname.'</a></div>';
                 }
-                if (!empty($USER->id) and ($USER->id != $user->id) and !empty($CFG->messaging) and 
+                if (!empty($USER->id) and ($USER->id != $user->id) and !empty($CFG->messaging) and
                     !isguest() and $user->username != 'guest') {  // Only when logged in and messaging active etc
                     $this->content->text .= '<div class="message"><a title="'.get_string('messageselectadd').'" href="'.$CFG->wwwroot.'/message/discussion.php?id='.$user->id.'" onclick="this.target=\'message_'.$user->id.'\';return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message_'.$user->id.'\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);">'
                         .'<img class="iconsmall" src="'.$CFG->pixpath.'/t/message.gif" alt="'. get_string('messageselectadd') .'" /></a></div>';
