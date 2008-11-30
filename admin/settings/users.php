@@ -2,6 +2,10 @@
 
 // This file defines settingpages and externalpages under the "users" category
 
+$ADMIN->add('users', new admin_category('authsettings', get_string('authentication','admin')));
+$ADMIN->add('users', new admin_category('accounts', get_string('accounts', 'admin')));
+$ADMIN->add('users', new admin_category('roles', get_string('permissions', 'role')));
+
 if ($hassiteconfig
  or has_capability('moodle/site:uploadusers', $systemcontext)
  or has_capability('moodle/user:create', $systemcontext)
@@ -10,8 +14,6 @@ if ($hassiteconfig
  or has_capability('moodle/role:manage', $systemcontext)
  or has_capability('moodle/role:assign', $systemcontext)) { // speedup for non-admins, add all caps used on this page
 
-
-    $ADMIN->add('users', new admin_category('authsettings', get_string('authentication','admin')));
 
     $temp = new admin_settingpage('manageauths', get_string('authsettings', 'admin'));
     $temp->add(new admin_setting_manageauths());
@@ -70,7 +72,6 @@ if ($hassiteconfig
         $securewwwroot = str_replace('http:','https:',$CFG->wwwroot);
     }
     // stuff under the "accounts" subcategory
-    $ADMIN->add('users', new admin_category('accounts', get_string('accounts', 'admin')));
     $ADMIN->add('accounts', new admin_externalpage('editusers', get_string('userlist','admin'), "$CFG->wwwroot/$CFG->admin/user.php", array('moodle/user:update', 'moodle/user:delete')));
     $ADMIN->add('accounts', new admin_externalpage('userbulk', get_string('userbulk','admin'), "$CFG->wwwroot/$CFG->admin/user/user_bulk.php", array('moodle/user:update', 'moodle/user:delete')));
     $ADMIN->add('accounts', new admin_externalpage('addnewuser', get_string('addnewuser'), "$securewwwroot/user/editadvanced.php?id=-1", 'moodle/user:create'));
@@ -80,7 +81,6 @@ if ($hassiteconfig
 
 
     // stuff under the "roles" subcategory
-    $ADMIN->add('users', new admin_category('roles', get_string('permissions', 'role')));
 
     // "userpolicies" settingpage
     $temp = new admin_settingpage('userpolicies', get_string('userpolicies', 'admin'));
