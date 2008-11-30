@@ -12,6 +12,38 @@ class mysqli_native_moodle_database extends moodle_database {
     protected $mysqli = null;
 
     /**
+     * Attempt to create the database
+     * @param string $dbhost
+     * @param string $dbuser
+     * @param string $dbpass
+     * @param string $dbname
+     * @return bool success
+     * @throws dml_exception if error
+     */
+    /// TODO: Decide if this method should go to DDL instead of being here
+    public function create_database($dbhost, $dbuser, $dbpass, $dbname) {
+        ob_start();
+        $conn= new mysqli($dbhost, $dbuser, $dbpass); /// Connect without db
+        $dberr = ob_get_contents();
+        ob_end_clean();
+        $errorno = @$conn->connect_errno;
+
+        if ($errorno !== 0) {
+            throw new dml_connection_exception($dberr);
+        }
+
+        $result = $conn->query("CREATE DATABASE $dbname DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci");
+
+        $conn->close();
+
+        if (!$result) {
+            throw new dml_exception('cannotcreatedb');
+        }
+
+        return true;
+    }
+
+    /**
      * Detects if all needed PHP stuff installed.
      * Note: can be used before connect()
      * @return mixed true if ok, string if something
