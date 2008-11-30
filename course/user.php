@@ -5,8 +5,6 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $modes = array("outline", "complete", "todaylogs", "alllogs");
-
     $id      = required_param('id',PARAM_INT);       // course id
     $user    = required_param('user',PARAM_INT);     // user id
     $mode    = optional_param('mode', "todaylogs", PARAM_ALPHA);
@@ -22,7 +20,16 @@
     }
 
     require_login();
-    $COURSE = clone($course);
+    $coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
+    $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
+
+    require_login();
+    if (has_capability('moodle/user:viewuseractivitiesreport', $personalcontext) and !has_capability('moodle/course:view', $coursecontext)) {
+        // do not require parents to be enrolled in courses ;-)
+        course_setup($course);
+    } else {
+        require_login($course);
+    }
 
     if ($user->deleted) {
         print_header();
@@ -31,12 +38,52 @@
         die;
     }
 
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $id);
-    $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
+    // prepare list of allowed modes
+    $myreports  = ($course->showreports and $USER->id == $user->id);
+    $anyreport  = has_capability('moodle/user:viewuseractivitiesreport', $personalcontext);
 
-    // if in either context, we can read report, then we can proceed
-    if (!(has_capability('moodle/site:viewreports', $coursecontext) or ($course->showreports and $USER->id == $user->id) or has_capability('moodle/user:viewuseractivitiesreport', $personalcontext))) {
-        print_error('nopermissiontoviewpage', 'error');
+    $modes = array();
+
+    if ($myreports or $anyreport or has_capability('coursereport/outline:view', $coursecontext)) {
+        $modes[] = 'outline';
+    }
+
+    if ($myreports or $anyreport or has_capability('coursereport/outline:view', $coursecontext)) {
+        $modes[] = 'complete';
+    }
+
+    if ($myreports or $anyreport or has_capability('coursereport/log:viewtoday', $coursecontext)) {
+        $modes[] = 'todaylogs';
+    }
+
+    if ($myreports or $anyreport or has_capability('coursereport/log:view', $coursecontext)) {
+        $modes[] = 'alllogs';
+    }
+
+    if ($myreports or $anyreport or has_capability('coursereport/stats:view', $coursecontext)) {
+        $modes[] = 'stats';
+    }
+
+    if (has_capability('moodle/grade:viewall', $coursecontext)) {
+        //ok - can view all course grades
+        $modes[] = 'grade';
+
+    } else if ($course->showgrades and $user->id == $USER->id and has_capability('moodle/grade:view', $coursecontext)) {
+        //ok - can view own grades
+        $modes[] = 'grade';
+
+    } else if ($course->showgrades and has_capability('moodle/grade:viewall', $personalcontext)) {
+        // ok - can view grades of this user - parent most probably
+        $modes[] = 'grade';
+    }
+
+    if (empty($modes)) {
+        require_capability('moodle/user:viewuseractivitiesreport', $personalcontext);
+    }
+
+    if (!in_array($mode, $modes)) {
+        // forbidden or non-exitent mode
+        $mode = reset($modes);
     }
 
     add_to_log($course->id, "course", "user report", "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode", "$user->id");
@@ -73,8 +120,6 @@
     $showroles = 1;
     include($CFG->dirroot.'/user/tabs.php');
 
-    get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
-
     switch ($mode) {
         case "grade":
             if (empty($CFG->grade_profilereport) or !file_exists($CFG->dirroot.'/grade/report/'.$CFG->grade_profilereport.'/lib.php')) {
@@ -84,7 +129,6 @@
             require_once $CFG->dirroot.'/grade/lib.php';
             require_once $CFG->dirroot.'/grade/report/'.$CFG->grade_profilereport.'/lib.php';
 
-            $course = $DB->get_record('course', array('id'=>required_param('id', PARAM_INT)));
             $functionname = 'grade_report_'.$CFG->grade_profilereport.'_profilereport';
             if (function_exists($functionname)) {
                 $functionname($course, $user);
@@ -156,8 +200,7 @@
             }
 
             // MDL-10818, do not display broken graph when user has no permission to view graph
-            if (has_capability('coursereport/stats:view', get_context_instance(CONTEXT_COURSE, $id)) ||
-                ($course->showreports and $USER->id == $user->id)) {
+            if ($myreports or has_capability('coursereport/stats:view', $coursecontext)) {
                 echo '<center><img src="'.$CFG->wwwroot.'/course/report/stats/graph.php?mode='.STATS_MODE_DETAILED.'&course='.$course->id.'&time='.$time.'&report='.STATS_REPORT_USER_VIEW.'&userid='.$user->id.'" alt="'.get_string('statisticsgraph').'" /></center>';
             }
 
@@ -185,9 +228,10 @@
             }
             print_table($table);
             break;
+
         case "outline" :
         case "complete" :
-        default:
+            get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
             $sections = get_all_sections($course->id);
 
             for ($i=0; $i<=$course->numsections; $i++) {
@@ -277,6 +321,8 @@
                 }
             }
             break;
+        default:
+            // can not be reached ;-)
     }
 
 

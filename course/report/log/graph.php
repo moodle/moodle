@@ -17,9 +17,7 @@
     require_login($course);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
-    if ($course->showreports and $USER->id == $user and !isguestuser()) {
-        // no cap required to view own graph
-    } else {
+    if (!$course->showreports or $USER->id != $user) {
         require_capability('coursereport/log:view', $context);
     }
 
