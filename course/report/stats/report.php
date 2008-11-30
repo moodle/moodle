@@ -144,10 +144,14 @@
                         $a[] = $stat->line2;
                     }
                     if (empty($CFG->loglifetime) || ($stat->timeend-(60*60*24)) >= (time()-60*60*24*$CFG->loglifetime)) {
-                        $a[] = '<a href="'.$CFG->wwwroot.'/course/report/log/index.php?id='.
-                            $course->id.'&amp;chooselog=1&amp;showusers=1&amp;showcourses=1&amp;user='
-                            .$userid.'&amp;date='.usergetmidnight($stat->timeend-(60*60*24)).'">'
-                            .get_string('course').' ' .get_string('logs').'</a>&nbsp;';
+                        if (has_capability('coursereport/log:view', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                            $a[] = '<a href="'.$CFG->wwwroot.'/course/report/log/index.php?id='.
+                                $course->id.'&amp;chooselog=1&amp;showusers=1&amp;showcourses=1&amp;user='
+                                .$userid.'&amp;date='.usergetmidnight($stat->timeend-(60*60*24)).'">'
+                                .get_string('course').' ' .get_string('logs').'</a>&nbsp;';
+                        } else {
+                            $a[] = '';
+                        }
                     }
                     $table->data[] = $a;
                 }
@@ -197,10 +201,14 @@
                     krsort($rolesdata);
                     $row = array_merge(array($times[$time]),$rolesdata);
                     if (empty($CFG->loglifetime) || ($stat->timeend-(60*60*24)) >= (time()-60*60*24*$CFG->loglifetime)) {
-                        $row[] = '<a href="'.$CFG->wwwroot.'/course/report/log/index.php?id='
-                            .$course->id.'&amp;chooselog=1&amp;showusers=1&amp;showcourses=1&amp;user='.$userid
-                            .'&amp;date='.usergetmidnight($time-(60*60*24)).'">'
-                            .get_string('course').' ' .get_string('logs').'</a>&nbsp;';
+                        if (has_capability('coursereport/log:view', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                            $row[] = '<a href="'.$CFG->wwwroot.'/course/report/log/index.php?id='
+                                .$course->id.'&amp;chooselog=1&amp;showusers=1&amp;showcourses=1&amp;user='.$userid
+                                .'&amp;date='.usergetmidnight($time-(60*60*24)).'">'
+                                .get_string('course').' ' .get_string('logs').'</a>&nbsp;';
+                        } else {
+                            $row[] = '';
+                        }
                     }
                     $table->data[] = $row;
                 }
