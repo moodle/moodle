@@ -1481,7 +1481,6 @@ class question_calculated_qtype extends default_questiontype {
                     AND a.name = ?", array($form->category, $name));
         $type = 1 ;
         $key = "$type-$form->category-$name";
-        echo "<p>categorydatasetdefs $name  <pre>"; print_r($categorydatasetdefs);echo "</pre></p> ";
         if (!empty($categorydatasetdefs)){ // there is at least one with the same name
             if (isset($categorydatasetdefs[$form->id])) {// it is already used by this question
                     $options[$key] = get_string($prefix."keptcategory$type", $langfile);
