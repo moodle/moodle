@@ -3184,7 +3184,11 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         } else {
             $button->set_formats(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_RICHHTML);
         }
-        $commands[] = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
+
+        $porfoliohtml = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
+        if(!empty($porfoliohtml)){
+            $commands[] = $porfoliohtml;
+        }
     }
 
     echo '<div class="commands">';
