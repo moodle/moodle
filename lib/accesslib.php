@@ -2616,7 +2616,7 @@ function create_role($name, $shortname, $description, $legacy='') {
  * @return success
  */
 function delete_role($roleid) {
-    global $CFG;
+    global $CFG, $USER;
     $success = true;
 
 // mdl 10149, check if this is the last active admin role
