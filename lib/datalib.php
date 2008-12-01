@@ -2255,37 +2255,19 @@ function xmldb_debug($message, $object) {
 }
 
 /**
- * true or false function to see if user can create any courses at all
- * @return bool
+ * @return boolean Whether the user can create courses in any category in the system.
  */
 function user_can_create_courses() {
-    global $USER;
-    // if user has course creation capability at any site or course cat, then return true;
-
-    if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM))) {
-        return true;
-    } else {
-        return (bool) count(get_creatable_categories());
-    }
-
-}
-
-/**
- * Get the list of categories the current user can create courses in
- * @return array
- */
-function get_creatable_categories() {
     global $DB;
-
-    $creatablecats = array();
-    if ($cats = $DB->get_records('course_categories')) {
-        foreach ($cats as $cat) {
-            if (has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $cat->id))) {
-                $creatablecats[$cat->id] = $cat->name;
-            }
+    $catsrs = $DB->get_recordset('course_categories');
+    foreach ($cats as $cat) {
+        if (has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $cat->id))) {
+            $catsrs->close();
+            return true;
         }
     }
-    return $creatablecats;
+    $catsrs->close();
+    return false;
 }
 
 ?>

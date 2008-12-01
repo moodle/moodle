@@ -111,8 +111,9 @@
         $restore_blogs = 1;
     }
 
+    $cancreatecourses = user_can_create_courses();
     if (!isset($restore_restoreto)) {
-        if (!user_can_create_courses()) {
+        if (!$cancreatecourses) {
             $restore_restoreto = 1;
         } else {
             $restore_restoreto = 2;
@@ -231,7 +232,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
     }
 
     // if user can create any course at all, give the option
-    if (user_can_create_courses()) {
+    if ($cancreatecourses) {
         $restore_restoreto_options[2] = get_string("newcourse");
     }
 
@@ -240,7 +241,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
 
     choose_from_menu($restore_restoreto_options, "restore_restoreto", $restore_restoreto, "");
     echo "</td></tr>";
-    if (user_can_create_courses()) {  //display these fields conditionally
+    if ($cancreatecourses) {  //display these fields conditionally
 
         // find the list of cates user can edit
         echo "<tr valign=\"top\" >";
