@@ -149,8 +149,11 @@ class ExHtmlReporter extends HtmlReporter {
             }
             if($exception->debuginfo) {
                 // Note debug info is not escaped so may contain formatting
-                $message.='<pre>'.$exception->debuginfo.'</pre>';
+                $message.='<pre>'.$exception->debuginfo."\n\n";
+            } else {
+                $message.='<pre>';
             }
+            $message.=$exception->getTraceAsString().'</pre>';
         }
 
         $this->_paintPassFail('exception', $message,true);
