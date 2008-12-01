@@ -775,23 +775,27 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
 function scorm_simple_play($scorm,$user) {
     global $DB;
 
-   $result = false;
+    $result = false;
 
-   $scoes = $DB->get_records_select('scorm_scoes', 'scorm = ? AND launch <> ?', array($scorm->id, $DB->sql_empty()));
+    if ($scorm->updatefreq == UPDATE_EVERYTIME) {
+        scorm_parse($scorm, false);
+    }
 
-   if ($scoes && (count($scoes) == 1)) {
-       if ($scorm->skipview >= 1) {
-           $sco = current($scoes);
-           if (scorm_get_tracks($sco->id,$user->id) === false) {
-               header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id);
-               $result = true;
-           } else if ($scorm->skipview == 2) {
-               header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id);
-               $result = true;
-           }
-       }
-   }
-   return $result;
+    $scoes = $DB->get_records_select('scorm_scoes', 'scorm = ? AND launch <> ?', array($scorm->id, $DB->sql_empty()));
+
+    if ($scoes && (count($scoes) == 1)) {
+        if ($scorm->skipview >= 1) {
+            $sco = current($scoes);
+            if (scorm_get_tracks($sco->id,$user->id) === false) {
+                header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id);
+                $result = true;
+            } else if ($scorm->skipview == 2) {
+                header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id);
+                $result = true;
+            }
+        }
+    }
+    return $result;
 }
 /*
 function scorm_simple_play($scorm,$user) {
