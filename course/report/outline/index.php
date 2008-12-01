@@ -12,9 +12,17 @@
     }
 
     require_login($course);
-    require_capability('coursereport/outline:view', get_context_instance(CONTEXT_COURSE, $course->id));
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    require_capability('coursereport/outline:view', $context);
 
     add_to_log($course->id, 'course', 'report outline', "report/outline/index.php?id=$course->id", $course->id);
+
+    $showlastaccess = true;
+    $hiddenfields = explode(',', $CFG->hiddenuserfields);
+
+    if (array_search('lastaccess', $hiddenfields) and !has_capability('moodle/user:viewhiddendetails', $coursecontext)) {
+        $showlastaccess = false;
+    }
 
     $stractivityreport = get_string('activityreport');
     $stractivity       = get_string('activity');
@@ -40,7 +48,9 @@
     echo '<table id="outlinetable" class="generaltable boxaligncenter" cellpadding="5"><tr>';
     echo '<th class="header c0" scope="col">'.$stractivity.'</th>';
     echo '<th class="header c1" scope="col">'.$strviews.'</th>';
-    echo '<th class="header c2" scope="col">'.$strlast.'</th>';
+    if ($showlastaccess) {
+        echo '<th class="header c2" scope="col">'.$strlast.'</th>';
+    }
     echo '</tr>';
 
     $modinfo = get_fast_modinfo($course);
@@ -88,12 +98,14 @@
                 echo '-';
             }
             echo "</td>";
-            echo "<td class=\"cell c2 lastaccess\">";
-            if (isset($views[$cm->id]->lasttime)) {
-                $timeago = format_time(time() - $views[$cm->id]->lasttime);
-                echo userdate($views[$cm->id]->lasttime)." ($timeago)";
+            if ($showlastaccess) {
+                echo "<td class=\"cell c2 lastaccess\">";
+                if (isset($views[$cm->id]->lasttime)) {
+                    $timeago = format_time(time() - $views[$cm->id]->lasttime);
+                    echo userdate($views[$cm->id]->lasttime)." ($timeago)";
+                }
+                echo "</td>";
             }
-            echo "</td>";
             echo '</tr>';
         }
     }
