@@ -958,7 +958,10 @@ function scorm_check_package($data) {
                 } else if ($externalpackage){
                     if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
                         if ($tempdir = scorm_tempdir($scormdir)) {
-                            copy ("$reference", $tempdir.'/'.basename($reference));
+                            $content = download_file_content($reference);
+                            $file = fopen($tempdir.'/'.basename($reference), 'x');
+                            fwrite($file, $content);
+                            fclose($file);
                             $mdcheck = md5_file($tempdir.'/'.basename($reference));
                             scorm_delete_files($tempdir);
                         }
@@ -1010,7 +1013,14 @@ function scorm_check_package($data) {
                     $scormdir = '';
                     if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
                         if ($tempdir = scorm_tempdir($scormdir)) {
-                            copy ("$reference", $tempdir.'/'.basename($reference));
+                            if ($externalpackage){
+                                $content = download_file_content($reference);
+                                $file = fopen($tempdir.'/'.basename($reference), 'x');
+                                fwrite($file, $content);
+                                fclose($file);
+                            } else {
+                                copy ("$reference", $tempdir.'/'.basename($reference));
+                            }
                             unzip_file($tempdir.'/'.basename($reference), $tempdir, false);
                             if (!$externalpackage) {
                                 unlink ($tempdir.'/'.basename($reference));
@@ -1034,7 +1044,10 @@ function scorm_check_package($data) {
                         if ($externalpackage) {
                             if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
                                 if ($tempdir = scorm_tempdir($scormdir)) {
-                                    copy ("$reference", $tempdir.'/'.basename($reference));
+                                    $content = download_file_content($reference);
+                                    $file = fopen($tempdir.'/'.basename($reference), 'x');
+                                    fwrite($file, $content);
+                                    fclose($file);
                                     if (is_file($tempdir.'/'.basename($reference))) {
                                         $validation = scorm_validate_manifest($tempdir.'/'.basename($reference));
                                     } else {
