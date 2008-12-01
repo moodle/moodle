@@ -75,6 +75,10 @@
     } else if ($course->showgrades and has_capability('moodle/grade:viewall', $personalcontext)) {
         // ok - can view grades of this user - parent most probably
         $modes[] = 'grade';
+
+    } else if ($course->showgrades and $anyreport) {
+        // ok - can view grades of this user - parent most probably
+        $modes[] = 'grade';
     }
 
     if (empty($modes)) {
