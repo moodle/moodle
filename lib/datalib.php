@@ -2253,27 +2253,15 @@ function user_can_create_courses() {
 
     if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM))) {
         return true;
-    } else {
-        return (bool) count(get_creatable_categories());
     }
-
-}
-
-/**
- * get the list of categories the current user can create courses in
- * @return array
- */
-function get_creatable_categories() {
-
-    $creatablecats = array();
     if ($cats = get_records('course_categories')) {
         foreach ($cats as $cat) {
             if (has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $cat->id))) {
-                $creatablecats[$cat->id] = $cat->name;
+                return true;
             }
         }
     }
-    return $creatablecats;
+    return false;
 }
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:

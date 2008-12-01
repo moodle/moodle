@@ -214,27 +214,17 @@
     //    2-New course: Create the restore object and launch the execute.
 
     //If the user is a teacher and not a creator or we are restoring from within SITEID
-
-    if (!user_can_create_courses() || $id == SITEID) {
+    $cancreatecourses = user_can_create_courses();
+    if (!$cancreatecourses || $id == SITEID) {
         $restore->course_id = $id;
-        if ($restore->restoreto == 0) {
-            $restore->deleting = true;
-        } else {
-            $restore->deleting = false;
-        }
     }
 
-    //If the user is a creator (or admin)
-    if (user_can_create_courses()) {
-        //Set restore->deleting as needed
-        if ($restore->restoreto == 0) {
-            $restore->deleting = true;
-        } else {
-            $restore->deleting = false;
-        }
+    //Set restore->deleting as needed
+    if ($restore->restoreto == 0) {
+        $restore->deleting = true;
+    } else {
+        $restore->deleting = false;
     }
-
-
 
     // Non-cached - get accessinfo
     if (isset($USER->access)) {
@@ -270,7 +260,7 @@
     //Checks everything and execute restore
     } else if ((($restore->restoreto == 0 or $restore->restoreto == 1) and ($restore->course_id != 0)) or ($restore->restoreto == 2)) {
         //Final access control check
-        if ($restore->course_id == 0 and !user_can_create_courses()) {
+        if ($restore->course_id == 0 and !$cancreatecourses) {
             error("You need to be a creator or admin to restore into new course!");
         } else if ($restore->course_id != 0 and !has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $restore->course_id))) {
             error("You need to be an edit teacher or admin to restore into selected course!");
