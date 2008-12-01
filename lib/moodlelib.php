@@ -31,7 +31,6 @@
  *  - weblib.php      - functions that produce web output
  *  - datalib.php     - functions that access the database
  * @author Martin Dougiamas
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  */
