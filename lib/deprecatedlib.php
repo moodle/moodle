@@ -781,7 +781,7 @@ function stripslashes_recursive($var) {
 }
 
 function addslashes_object($dataobject) {
-    error('addslashes() not available anymore');
+    error('addslashes_object() not available anymore');
 }
 
 function addslashes_recursive($var) {
