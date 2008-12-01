@@ -193,6 +193,10 @@
         $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
     }
 
+    if (isset($hiddenfields['lastaccess'])) {
+        // do not allow access since filtering
+        $accesssince = 0;
+    }
 
 /// Print settings and things in a table across the top
 
@@ -218,59 +222,61 @@
     groups_print_course_menu($course, $baseurl);
     echo '</td>';
 
-    // get minimum lastaccess for this course and display a dropbox to filter by lastaccess going back this far.
-    // we need to make it diferently for normal courses and site course
-    if ($context->id != $frontpagectx->id) {
-        $minlastaccess = $DB->get_field_sql('SELECT min(timeaccess)
-                                               FROM {user_lastaccess}
-                                              WHERE courseid = ?
-                                                    AND timeaccess != 0', array($course->id));
-        $lastaccess0exists = $DB->record_exists('user_lastaccess', array('courseid'=>$course->id, 'timeaccess'=>0));
-    } else {
-        $minlastaccess = $DB->get_field_sql('SELECT min(lastaccess)
-                                               FROM {user}
-                                              WHERE lastaccess != 0');
-        $lastaccess0exists = $DB->record_exists('user', array('lastaccess'=>0));
-    }
-
-    $now = usergetmidnight(time());
-    $timeaccess = array();
-
-    // makes sense for this to go first.
-    $timeoptions[0] = get_string('selectperiod');
-
-    // days
-    for ($i = 1; $i < 7; $i++) {
-        if (strtotime('-'.$i.' days',$now) >= $minlastaccess) {
-            $timeoptions[strtotime('-'.$i.' days',$now)] = get_string('numdays','moodle',$i);
+    if (!isset($hiddenfields['lastaccess'])) {
+        // get minimum lastaccess for this course and display a dropbox to filter by lastaccess going back this far.
+        // we need to make it diferently for normal courses and site course
+        if ($context->id != $frontpagectx->id) {
+            $minlastaccess = $DB->get_field_sql('SELECT min(timeaccess)
+                                                   FROM {user_lastaccess}
+                                                  WHERE courseid = ?
+                                                        AND timeaccess != 0', array($course->id));
+            $lastaccess0exists = $DB->record_exists('user_lastaccess', array('courseid'=>$course->id, 'timeaccess'=>0));
+        } else {
+            $minlastaccess = $DB->get_field_sql('SELECT min(lastaccess)
+                                                   FROM {user}
+                                                  WHERE lastaccess != 0');
+            $lastaccess0exists = $DB->record_exists('user', array('lastaccess'=>0));
         }
-    }
-    // weeks
-    for ($i = 1; $i < 10; $i++) {
-        if (strtotime('-'.$i.' weeks',$now) >= $minlastaccess) {
-            $timeoptions[strtotime('-'.$i.' weeks',$now)] = get_string('numweeks','moodle',$i);
-        }
-    }
-    // months
-    for ($i = 2; $i < 12; $i++) {
-        if (strtotime('-'.$i.' months',$now) >= $minlastaccess) {
-            $timeoptions[strtotime('-'.$i.' months',$now)] = get_string('nummonths','moodle',$i);
-        }
-    }
-    // try a year
-    if (strtotime('-1 year',$now) >= $minlastaccess) {
-        $timeoptions[strtotime('-1 year',$now)] = get_string('lastyear');
-    }
 
-    if (!empty($lastaccess0exists)) {
-        $timeoptions[-1] = get_string('never');
-    }
+        $now = usergetmidnight(time());
+        $timeaccess = array();
 
-    if (count($timeoptions) > 1) {
-        echo '<td class="left">';
-        $baseurl = preg_replace('/&amp;accesssince='.$accesssince.'/','',$baseurl);
-        popup_form($baseurl.'&amp;accesssince=',$timeoptions,'timeoptions',$accesssince, '', '', '', false, 'self', get_string('usersnoaccesssince'));
-        echo '</td>';
+        // makes sense for this to go first.
+        $timeoptions[0] = get_string('selectperiod');
+
+        // days
+        for ($i = 1; $i < 7; $i++) {
+            if (strtotime('-'.$i.' days',$now) >= $minlastaccess) {
+                $timeoptions[strtotime('-'.$i.' days',$now)] = get_string('numdays','moodle',$i);
+            }
+        }
+        // weeks
+        for ($i = 1; $i < 10; $i++) {
+            if (strtotime('-'.$i.' weeks',$now) >= $minlastaccess) {
+                $timeoptions[strtotime('-'.$i.' weeks',$now)] = get_string('numweeks','moodle',$i);
+            }
+        }
+        // months
+        for ($i = 2; $i < 12; $i++) {
+            if (strtotime('-'.$i.' months',$now) >= $minlastaccess) {
+                $timeoptions[strtotime('-'.$i.' months',$now)] = get_string('nummonths','moodle',$i);
+            }
+        }
+        // try a year
+        if (strtotime('-1 year',$now) >= $minlastaccess) {
+            $timeoptions[strtotime('-1 year',$now)] = get_string('lastyear');
+        }
+
+        if (!empty($lastaccess0exists)) {
+            $timeoptions[-1] = get_string('never');
+        }
+
+        if (count($timeoptions) > 1) {
+            echo '<td class="left">';
+            $baseurl = preg_replace('/&amp;accesssince='.$accesssince.'/','',$baseurl);
+            popup_form($baseurl.'&amp;accesssince=',$timeoptions,'timeoptions',$accesssince, '', '', '', false, 'self', get_string('usersnoaccesssince'));
+            echo '</td>';
+        }
     }
 
     // Decide wheteher we will fetch extra enrolment/groups data.
@@ -364,7 +370,10 @@
     $table->define_headers($tableheaders);
     $table->define_baseurl($baseurl);
 
-    $table->sortable(true, 'lastaccess', SORT_DESC);
+    if (!isset($hiddenfields['lastaccess'])) {
+        $table->sortable(true, 'lastaccess', SORT_DESC);
+    }
+
     $table->no_sorting('roles');
     $table->no_sorting('groups');
     $table->no_sorting('groupings');
