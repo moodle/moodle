@@ -221,6 +221,10 @@
             // ok - can view grades of this user - parent most probably
             $gradeaccess = true;
 
+        } else if ($course->showgrades and $anyreport) {
+            // ok - can view grades of this user - parent most probably
+            $gradeaccess = true;
+
         } else {
             $gradeaccess = false;
         }

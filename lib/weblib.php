@@ -4455,7 +4455,9 @@ function print_user($user, $course, $messageselect=false, $return=false) {
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     if (isset($user->context->id)) {
-        $usercontext = get_context_instance_by_id($user->context->id);
+        $usercontext = $user->context;
+    } else {
+        $usercontext = get_context_instance(CONTEXT_USER, $user->id);
     }
 
     if (empty($string)) {     // Cache all the strings for the rest of the page
@@ -4539,8 +4541,7 @@ has_capability('moodle/course:viewhiddenuserfields', $context)) {
         $output .= '<a href="'.$CFG->wwwroot.'/notes/index.php?course=' . $course->id. '&amp;user='.$user->id.'">'.get_string('notes','notes').'</a><br />';
     }
 
-    if (has_capability('moodle/user:viewuseractivitiesreport', $context) || (isset($usercontext) && has_capability('moodle/user:viewuseractivitiesreport', $usercontext))) {
-        $timemidnight = usergetmidnight(time());
+    if (has_capability('moodle/site:viewreports', $context) or has_capability('moodle/user:viewuseractivitiesreport', $usercontext)) {
         $output .= '<a href="'. $CFG->wwwroot .'/course/user.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->activity .'</a><br />';
     }
     if (has_capability('moodle/role:assign', $context) and get_user_roles($context, $user->id, false)) {  // I can unassing and user has some role

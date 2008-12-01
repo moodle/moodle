@@ -859,14 +859,13 @@ $moodle_capabilities = array(
         )
     ),
 
+    // designed for parent role - not used in legacy roles
     'moodle/user:viewuseractivitiesreport' => array(
+        'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'read',
         'contextlevel' => CONTEXT_USER,
         'legacy' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
         )
     ),
 
