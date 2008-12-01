@@ -161,7 +161,8 @@ if ($hassiteconfig
                              'yahooid' => get_string('yahooid'),
                              'aimid' => get_string('aimid'),
                              'msnid' => get_string('msnid'),
-                             'lastaccess' => get_string('lastaccess'))));
+                             'lastaccess' => get_string('lastaccess'),
+                             'mycourses' => get_string('mycourses'))));
 
         $temp->add(new admin_setting_configmulticheckbox('extrauserselectorfields',
                 get_string('extrauserselectorfields', 'admin'), get_string('configextrauserselectorfields', 'admin'), array('email' => '1'),

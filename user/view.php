@@ -321,33 +321,35 @@
     profile_display_fields($user->id);
 
 
-    if ($mycourses = get_my_courses($user->id, null, null, false, 21)) {
-        $shown=0;
-        $courselisting = '';
-        foreach ($mycourses as $mycourse) {
-            if ($mycourse->category) {
-                if ($mycourse->id != $course->id){
-                    $class = '';
-                    if ($mycourse->visible == 0) {
-                        // get_my_courses will filter courses $USER cannot see
-                        // if we get one with visible 0 it just means it's hidden
-                        // ... but not from $USER
-                        $class = 'class="dimmed"';
+    if (!isset($hiddenfields['mycourses'])) {
+        if ($mycourses = get_my_courses($user->id, null, null, false, 21)) {
+            $shown=0;
+            $courselisting = '';
+            foreach ($mycourses as $mycourse) {
+                if ($mycourse->category) {
+                    if ($mycourse->id != $course->id){
+                        $class = '';
+                        if ($mycourse->visible == 0) {
+                            // get_my_courses will filter courses $USER cannot see
+                            // if we get one with visible 0 it just means it's hidden
+                            // ... but not from $USER
+                            $class = 'class="dimmed"';
+                        }
+                        $courselisting .= "<a href=\"{$CFG->wwwroot}/user/view.php?id={$user->id}&amp;course={$mycourse->id}\" $class >"
+                            . format_string($mycourse->fullname) . "</a>, ";
                     }
-                    $courselisting .= "<a href=\"{$CFG->wwwroot}/user/view.php?id={$user->id}&amp;course={$mycourse->id}\" $class >"
-                        . format_string($mycourse->fullname) . "</a>, ";
+                    else {
+                        $courselisting .= format_string($mycourse->fullname) . ", ";
+                    }
                 }
-                else {
-                    $courselisting .= format_string($mycourse->fullname) . ", ";
+                $shown++;
+                if($shown==20) {
+                    $courselisting.= "...";
+                    break;
                 }
             }
-            $shown++;
-            if($shown==20) {
-                $courselisting.= "...";
-                break;
-            }
+            print_row(get_string('courses').':', rtrim($courselisting,', '));
         }
-        print_row(get_string('courses').':', rtrim($courselisting,', '));
     }
 
     if (!isset($hiddenfields['lastaccess'])) {
