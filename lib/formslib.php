@@ -17,7 +17,6 @@
  *
  *
  * @author  Jamie Pratt
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
