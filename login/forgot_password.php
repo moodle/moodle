@@ -108,14 +108,14 @@ if ($mform->is_cancelled()) {
             }
 
             // send email (make sure mail block is off)
-            $user->mailstop = 0;
+            $user->emailstop = 0;
             if (!send_password_change_confirmation_email($user)) {
                 error('error sending password change confirmation email');
             }
 
         } else {
             // send email (make sure mail block is off)
-            $user->mailstop = 0;
+            $user->emailstop = 0;
             if (!send_password_change_info($user)) {
                 error('error sending password change confirmation email');
             }
