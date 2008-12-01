@@ -6,9 +6,6 @@
 
 /// QUESTION TYPE CLASS //////////////////
 
-define("LITERAL", "1");
-define("FILE", "2");
-define("LINK", "3");
 
 
 class question_calculated_qtype extends default_questiontype {
@@ -1455,47 +1452,45 @@ class question_calculated_qtype extends default_questiontype {
 
         // Construct question local options
         global $CFG, $DB;
-        $currentdatasetdef = $DB->get_record_sql(
+        $type = 1 ; // only type = 1 (i.e. old 'LITERAL') has ever been used 
+        if ( ! $currentdatasetdef = $DB->get_record_sql(
                 "SELECT a.*
                    FROM {question_dataset_definitions} a,
                         {question_datasets} b
                   WHERE a.id = b.datasetdefinition
+                    AND a.type = '1'
                     AND b.question = ?
-                    AND a.name = ?", array($form->id, $name))
-        or $currentdatasetdef->type = '0';
-        foreach (array( LITERAL, FILE, LINK) as $type) {
-            $key = "$type-0-$name";
-            if ($currentdatasetdef->type == $type
-                    and $currentdatasetdef->category == 0) {
-                $options[$key] = get_string($prefix."keptlocal$type", $langfile);
-            } else {
-                $options[$key] = get_string($prefix."newlocal$type", $langfile);
-            }
+                    AND a.name = ?", array($form->id, $name))){
+            $currentdatasetdef->type = '0';
+         };
+        $key = "$type-0-$name";
+        if ($currentdatasetdef->type == $type
+                and $currentdatasetdef->category == 0) {
+            $options[$key] = get_string($prefix."keptlocal$type", $langfile);
+        } else {
+            $options[$key] = get_string($prefix."newlocal$type", $langfile);
         }
-
         // Construct question category options
         $categorydatasetdefs = $DB->get_records_sql(
-                "SELECT a.type, a.id
-                   FROM {question_dataset_definitions} a,
-                        {question_datasets} b
+                "SELECT b.question, a.* 
+                   FROM {question_datasets} b,
+                        {question_dataset_definitions} a                       
                   WHERE a.id = b.datasetdefinition
+                    AND a.type = '1'
                     AND a.category = ?
                     AND a.name = ?", array($form->category, $name));
-        foreach(array( LITERAL, FILE, LINK) as $type) {
-            $key = "$type-$form->category-$name";
-            if (isset($categorydatasetdefs[$type])
-                    and $categorydef = $categorydatasetdefs[$type]) {
-                if ($currentdatasetdef->type == $type
-                        and $currentdatasetdef->id == $categorydef->id) {
+        $type = 1 ;
+        $key = "$type-$form->category-$name";
+        echo "<p>categorydatasetdefs $name  <pre>"; print_r($categorydatasetdefs);echo "</pre></p> ";
+        if (!empty($categorydatasetdefs)){ // there is at least one with the same name
+            if (isset($categorydatasetdefs[$form->id])) {// it is already used by this question
                     $options[$key] = get_string($prefix."keptcategory$type", $langfile);
                 } else {
                     $options[$key] = get_string($prefix."existingcategory$type", $langfile);
                 }
-            } else {
-                $options[$key] = get_string($prefix."newcategory$type", $langfile);
-            }
+        } else {
+            $options[$key] = get_string($prefix."newcategory$type", $langfile);
         }
-
         // All done!
         return array($options, $currentdatasetdef->type
                 ? "$currentdatasetdef->type-$currentdatasetdef->category-$name"
