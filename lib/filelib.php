@@ -1614,7 +1614,7 @@ class curl {
                     $this->proxy_type = CURLPROXY_SOCKS5;
                 } else {
                     $this->proxy_type = CURLPROXY_HTTP;
-                    $this->setopt(array('httpproxytunnel'=>true));
+                    $this->setopt(array('httpproxytunnel'=>false));
                 }
                 $this->setopt(array('proxytype'=>$this->proxy_type));
             }
