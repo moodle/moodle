@@ -109,7 +109,7 @@ if ($mform->is_cancelled()) {
         $userauth = get_auth_plugin($user->auth);
         if (has_capability('moodle/user:changeownpassword', $systemcontext, $user->id)) {
             // send email (make sure mail block is off)
-            $user->mailstop = 0;
+            $user->emailstop = 0;
         }
 
         if ($userauth->can_reset_password() and is_enabled_auth($user->auth)
