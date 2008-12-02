@@ -84,8 +84,6 @@ class pgsql_native_moodle_database extends moodle_database {
      * @throws dml_connection_exception if error
      */
     public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
-        global $CFG;
-
         $driverstatus = $this->driver_installed();
 
         if ($driverstatus !== true) {

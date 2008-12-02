@@ -112,8 +112,6 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return bool success
      */
     public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
-        global $CFG;
-
         $driverstatus = $this->driver_installed();
 
         if ($driverstatus !== true) {
