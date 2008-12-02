@@ -1,0 +1,150 @@
+<h1>Embedded answers (Cloze)</h1>
+
+<p>This very flexible question type is similar to a 
+popular format known as the Cloze format.</p>
+
+<p>Questions consist of a passage of text (in Moodle format) that has various sub-questions 
+embedded within it, including</p>
+<ul>
+  <li>short answers&nbsp;(SHORTANSWER or SA or MW),</li>
+  <li>numerical answers (NUMERICAL or NM),</li>
+  <li>multiple choice (MULTICHOICE or MC), represented as a dropdown menu in-line in the text</li>
+  <li>multiple choice (MULTICHOICE_V or MCV), represented a vertical column of radio buttons, or</li>
+  <li>multiple choice (MULTICHOICE_H or MCH), represented as a horizontal row of radio-buttons.</li>
+</ul>
+<p>There is currently no graphical interface to create these 
+questions - you need to specify the question format using the text box or by 
+importing them from external files.</p>
+
+<p>Here is an example of the input text used to specify such a question:</p>
+
+<p><textarea rows="25" wrap="virtual" cols="60">This question consists of some text with an answer embedded right here {1:MULTICHOICE:Wrong answer#Feedback for this wrong answer~Another wrong answer#Feedback for the other wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer} and right after that you will have to deal with this short answer {1:SHORTANSWER:Wrong answer#Feedback for this wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer} and finally we have a floating point number {2:NUMERICAL:=23.8:0.1#Feedback for correct answer 23.8~%50%23.8:2#Feedback for half credit answer in the nearby region of the correct answer}.&lt;br /&gt;
+&lt;br /&gt;
+The  multichoice question can also be shown in the vertical display of the standard moodle multiple choice.&lt;br /&gt;
+&lt;br /&gt;
+{2:MCV:Wrong answer#Feedback for this wrong answer~Another wrong answer#Feedback for the other wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer}&lt;br /&gt;
+Or in an horizontal display that is included here in a table&lt;br /&gt;
+&lt;br /&gt; 
+{2:MCH:Wrong answer#Feedback for this wrong answer~Another wrong answer#Feedback for the other wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer}&lt;br /&gt;
+Note that addresses like www.moodle.org and smileys :-) all work as normal:&lt;br /&gt;
+ a) How good is this? {:MULTICHOICE:=Yes#Correct~No#We have a different opinion}&lt;br /&gt;
+ b) What grade would you give it? {3:NUMERICAL:=3:2}&lt;br /&gt;
+&lt;br /&gt;
+Good luck!
+</textarea>
+</p>
+
+<p>This example will appear to students as follows:<p>
+
+<div id="middle-column"><div><span id="maincontent"></span><div id="q6" class="que multianswer clearfix">
+  <div class="info">
+    <span class="accesshide">Question </span>1      
+    <div class="grade">
+      Marks: --/12.00</div>
+    </div>
+    <div class="content">
+      <div class="ablock clearfix"><label>This question consists of some text with an answer embedded right here <span ><select name="resp3796_1"><option 
+  selected></option><option value="8919">Wrong answer</option><option value="8920">Another wrong answer</option><option value="8921">Correct answer</option><option value="8922">Answer that gives half the credit</option></select></span></label><label>and right after that you will have to deal with this short answer <input name="resp3796_2" size="33" /> </label><label> and finally we have a floating point number <input name="resp3796_3" size="4" /> </label><label>.<br /><br />The multichoice question can also be shown in the vertical display of the standard moodle multiple choice<br /><br />
+        <table width="50%"><tbody><tr><td>
+          <table class="answer">
+            <tr class="r0">
+              <td class="c0 control">
+                <input id="resp3796_8960" name="resp3796_4"  type="radio" value="8960" />
+              </td>
+              <td class="c1 text ">
+                <label for="resp3796_8960">
+                  <span class="anun">1<span class="anumsep">.</span></span> Wrong answer
+                </label>
+              </td>
+              <td class="c0 feedback">
+              </td>
+            </tr>
+            <tr class="r1">
+              <td class="c0 control">
+                <input id="resp3796_8961" name="resp3796_4"  type="radio" value="8961" />
+              </td>
+              <td class="c1 text ">
+                <label for="resp3796_8961">
+                  <span class="anun">2<span class="anumsep">.</span></span> Another wrong answer
+                </label>
+              </td>
+              <td class="c0 feedback">
+              </td>
+            </tr>
+            <tr class="r0">
+              <td class="c0 control">
+                <input id="resp3796_8962" name="resp3796_4"  type="radio" value="8962" />
+              </td>
+              <td class="c1 text ">
+                <label for="resp3796_8962">
+                  <span class="anun">3<span class="anumsep">.</span></span> Correct answer
+                </label>
+              </td>
+              <td class="c0 feedback">
+              </td>
+            </tr>
+            <tr class="r1">
+              <td class="c0 control">
+                <input id="resp3796_8963" name="resp3796_4"  type="radio" value="8963" />
+              </td>
+              <td class="c1 text ">
+                <label for="resp3796_8963">
+                  <span class="anun">4<span class="anumsep">.</span></span> Answer that gives half the credit
+                </label>
+              </td>
+              <td class="c0 feedback">
+              </td>
+            </tr>
+          </table>
+        </td></tr></tbody></table>
+      <br />Or in an horizontal display that is included here in a table<br /><br />
+        <table class="answer">
+          <tr class="r0">
+            <td class="c0 control">
+              <input id="resp3796_8964" name="resp3796_5"  type="radio" value="8964" />
+            </td>
+            <td class="c1 text ">
+              <label for="resp3796_8964">
+                <span class="anun">1<span class="anumsep">.</span></span> Wrong answer
+              </label>
+            </td>
+            <td class="c0 feedback">
+            </td>
+            <td class="c0 control">
+              <input id="resp3796_8965" name="resp3796_5"  type="radio" value="8965" />
+            </td>
+            <td class="c1 text ">
+              <label for="resp3796_8965">
+                <span class="anun">2<span class="anumsep">.</span></span> Another wrong answer
+              </label>
+            </td>
+            <td class="c0 feedback">
+            </td>
+            <td class="c0 control">
+              <input  id="resp3796_8966" name="resp3796_5"  type="radio" value="8966" >
+            </td>
+            <td class="c1 text ">
+              <label for="resp3796_8966">
+                <span class="anun">3<span class="anumsep">.</span></span> Correct answer
+              </label>
+            </td>
+            <td class="c0 feedback">
+            </td>
+            <td class="c0 control">
+              <input  id="resp3796_8967" name="resp3796_5"  type="radio" value="8967" />
+            </td>
+            <td class="c1 text ">
+              <label for="resp3796_8967">
+                <span class="anun">4<span class="anumsep">.</span></span> Answer that gives half the credit
+              </label>
+            </td>
+            <td class="c0 feedback">
+            </td>
+          </tr>
+        </table>
+      <br />Note that addresses like <a href="http://www.moodle.org" target="_blank">www.moodle.org</a> and smileys <img alt="smile" width="15" height="15" src="http://132.208.141.198/moodle_head/pix/s/smiley.gif" /> all work as normal:<br /> a) How good is this? <span><select name="resp3796_6"><option selected></option><option value="8968">Yes</option><option value="8969">No</option></select></span></label><label><br /> b) What grade would you give it? <input name="resp3796_7" size="1" > </label><br /><br />Good luck!
+    </div>
+    <div class="grading">
+    </div>
+  </div>
+</div></div></div>
