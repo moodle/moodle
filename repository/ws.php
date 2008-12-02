@@ -2,16 +2,16 @@
 
 /// The Web service script that is called from the filepicker front end
 
-
     require_once('../config.php');
     require_once('../lib/filelib.php');
     require_once('lib.php');
 
 /// Parameters
     $p     = optional_param('p', '', PARAM_RAW);              // page or path
-    $env   = optional_param('env', 'form', PARAM_ALPHA);      // opened in editor or moodleform
+    $env   = optional_param('env', 'filepicker', PARAM_ALPHA);// opened in editor or moodleform
     $file  = optional_param('file', '', PARAM_RAW);           // file to download
     $title = optional_param('title', '', PARAM_FILE);         // new file name
+    $itemid = optional_param('itemid', '', PARAM_INT);
     $action = optional_param('action', '', PARAM_ALPHA);
     $ctx_id  = optional_param('ctx_id', SITEID, PARAM_INT);   // context ID
     $repo_id = optional_param('repo_id', 1, PARAM_INT);       // repository ID
@@ -34,7 +34,26 @@
 
 /// Check for actions that do not need repository ID
     switch ($action) {
-
+        // delete a file from filemanger
+        case 'delete':
+            try {
+                if (!$context = get_context_instance(CONTEXT_USER, $USER->id)) {
+                }
+                $contextid = $context->id;
+                $fs = get_file_storage();
+                if ($file = $fs->get_file($contextid, 'user_draft', $itemid, '/', $title)) {
+                    $file->delete();
+                    echo 200;
+                } else {
+                    echo '';
+                }
+                exit;
+            } catch (repository_exception $e) {
+                $err = new stdclass;
+                $err->e = $e->getMessage();
+                die(json_encode($err));
+            }
+            break;
         case 'gsearch':     //  Global Search
             $repos = repository::get_instances(array(get_context_instance_by_id($ctx_id), get_system_context()));
             $list = array();
@@ -153,13 +172,15 @@ EOD;
             break;
         case 'download':
             $path = $repo->get_file($file, $title);
-            $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
+            if (empty($itemid)) {
+                $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
+            }
             try {
                 if (preg_match('#(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)#', $path)) {
                     echo json_encode(array('url'=>$path, 'id'=>$path, 'file'=>$path));
                 } else {
                     $info = repository::move_to_filepool($path, $title, $itemid);
-                    if ($env == 'form'){
+                    if ($env == 'filepicker' || $env == 'filemanager'){
                         echo json_encode($info);
                     } else if ($env == 'editor') {
                         echo json_encode($info);

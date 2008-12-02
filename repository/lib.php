@@ -698,23 +698,31 @@ abstract class repository {
         $entry->filearea  = $filearea;
         $entry->contextid = $context->id;
         $entry->filename  = $name;
-        $entry->filepath  = '/'.uniqid().'/';
+        //$entry->filepath  = '/'.uniqid().'/';
+        $entry->filepath  = '/';
         $entry->timecreated  = $now;
         $entry->timemodified = $now;
+        $entry->userid       = $USER->id;
+        $entry->mimetype     = mimeinfo('type', $path);
         if(is_numeric($itemid)) {
             $entry->itemid = $itemid;
         } else {
             $entry->itemid = 0;
         }
-        $entry->mimetype     = mimeinfo('type', $path);
-        $entry->userid       = $USER->id;
         $fs = get_file_storage();
         $browser = get_file_browser();
+        if ($existingfile = $fs->get_file($context->id, $filearea, $itemid, $path, $name)) {
+            $existingfile->delete();
+        }
         if ($file = $fs->create_file_from_pathname($entry, $path)) {
             $delete = unlink($path);
             $ret = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
             if(!empty($ret)) {
-                return array('url'=>$ret->get_url(),'id'=>$file->get_itemid(), 'file'=>$file->get_filename());
+                return array('url'=>$ret->get_url(),
+                    'id'=>$file->get_itemid(),
+                    'file'=>$file->get_filename(),
+                    'icon'=>$CFG->pixpath.'/f/'.mimeinfo('icon', $path)
+                );
             } else {
                 return null;
             }
@@ -750,7 +758,7 @@ abstract class repository {
      * @param bool $override override file if exists
      * @return mixed stored_file object or false if error; may throw exception if duplicate found
      */
-    public static function store_to_filepool($elname, $filearea='user_draft', $filepath='/', $filename = '', $override = false) {
+    public static function store_to_filepool($elname, $filearea='user_draft', $filepath='/', $itemid='', $filename = '', $override = false) {
         global $USER;
         if (!isset($_FILES[$elname])) {
             return false;
@@ -760,7 +768,9 @@ abstract class repository {
             $filename = $_FILES[$elname]['name'];
         }
         $context = get_context_instance(CONTEXT_USER, $USER->id);
-        $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
+        if (empty($itemid)) {
+            $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
+        }
         $fs = get_file_storage();
         $browser = get_file_browser();
 

@@ -1,6 +1,7 @@
 <?php  // $Id$
 
 require_once('HTML/QuickForm/element.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/lib/filelib.php');
 
 class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     protected $_helpbutton = '';
@@ -89,8 +90,46 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         }
     }
 
+    function _get_draftfiles($draftid, $suffix) {
+        global $USER, $CFG;
+        $html = '';
+        if (!$context = get_context_instance(CONTEXT_USER, $USER->id)) {
+        }
+        $contextid = $context->id;
+        $filearea  = 'user_draft';
+
+        $browser = get_file_browser();
+        $fs      = get_file_storage();
+        $filepath = '/';
+        if (!$directory = $fs->get_file($context->id, 'user_draft', $draftid, $filepath, '.')) {
+            $directory = new virtual_root_file($context->id, 'user_draft', $draftid);
+            $filepath = $directory->get_filepath();
+        }
+        $files = $fs->get_directory_files($context->id, 'user_draft', $draftid, $directory->get_filepath());
+        $parent = $directory->get_parent_directory();
+        $html .= '<ul id="draftfiles-'.$suffix.'">';
+        foreach ($files as $file) {
+            $filename    = $file->get_filename();
+            $filenameurl = rawurlencode($filename);
+            $filepath    = $file->get_filepath();
+            $filesize    = $file->get_filesize();
+            $filesize    = $filesize ? display_size($filesize) : '';
+            $mimetype = $file->get_mimetype();
+            $icon    = mimeinfo_from_type('icon', $mimetype);
+            $viewurl = $browser->encodepath("$CFG->wwwroot/draftfile.php", "/$contextid/user_draft/$draftid".$filepath.$filename, false, false);
+            $html .= '<li>';
+            $html .= "<a href=\"$viewurl\"><img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" />&nbsp;".s($filename)." ($filesize)</a> ";
+            $html .= "<a href=\"###\" onclick='rm_$suffix(".$file->get_itemid().", \"".$filename."\", this)'><img src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" /></a>";;
+            $html .= '</li>';
+        }
+        $html .= '</ul>';
+        return $html;
+    }
+
     function toHtml() {
-        global $CFG, $USER;
+        global $CFG, $USER, $COURSE;
+        $strdelete  = get_string('confirmdeletefile', 'repository');
+        $straddfile = get_string('add', 'repository');
 
         // security - never ever allow guest/not logged in user to upload anything or use this element!
         if (isguestuser() or !isloggedin()) {
@@ -114,12 +153,63 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
             $draftitemid = $this->getValue();
         }
 
-        $editorurl = "$CFG->wwwroot/files/draftfiles.php?itemid=$draftitemid&amp;subdirs=$subdirs&amp;maxbytes=$maxbytes";
+        if ($COURSE->id == SITEID) {
+            $context = get_context_instance(CONTEXT_SYSTEM);
+        } else {
+            $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+        }
+
+        $repo_info = repository_get_client($context);
+        $suffix = $repo_info['suffix'];
+
+        $html = $this->_get_draftfiles($draftitemid, $suffix);
 
         $str = $this->_getTabs();
-        $str .= '<input type="hidden" name="'.$elname.'" value="'.$draftitemid.'" />';
-        $str .= '<object type="text/html" id="'.$id.'" data="'.$editorurl.'" height="160" width="600" style="border:1px solid #000">Error</object>'; // TODO: localise, fix styles, etc.
-
+        $str .= $html;
+        $str .= $repo_info['css'];
+        $str .= $repo_info['js'];
+        $str .= <<<EOD
+<script type="text/javascript">
+var elitem = null;
+var rm_cb_$suffix = {
+    success: function(o) {
+        if(o.responseText && o.responseText == 200){
+            elitem.parentNode.removeChild(elitem);
+        }
+    }
+}
+function rm_$suffix(id, name, context) {
+    if (confirm('$strdelete')) {
+        var trans = YAHOO.util.Connect.asyncRequest('POST',
+            '{$CFG->httpswwwroot}/repository/ws.php?action=delete&itemid='+id,
+                rm_cb_$suffix,
+                'title='+name
+                );
+        elitem = context.parentNode;
+    }
+}
+function uf_$suffix(obj) {
+    var list = document.getElementById('draftfiles-$suffix');
+    var html = '<li><a href="'+obj['url']+'"><img src="'+obj['icon']+'" class="icon" /> '+obj['file']+'</a> ';
+    html += '<a href="###" onclick=\'rm_$suffix('+obj['id']+', "'+obj['file']+'", this)\'><img src="{$CFG->pixpath}/t/delete.gif" class="iconsmall" /></a>';;
+    html += '</li>';
+    list.innerHTML += html;
+}
+function callpicker_$suffix() {
+    document.body.className += ' yui-skin-sam';
+    var picker = document.createElement('DIV');
+    picker.id = 'file-picker-$suffix';
+    picker.className = 'file-picker';
+    document.body.appendChild(picker);
+    var el=document.getElementById('$id');
+    openpicker_$suffix({'env':'filemanager', 'target':el, 'itemid': $draftitemid, 'callback':uf_$suffix})
+}
+</script>
+<input value="$draftitemid" name="{$this->_attributes['name']}" type="hidden" />
+<div>
+    <input value="$straddfile" onclick="callpicker_$suffix()" type="button" />
+</div>
+EOD;
         return $str;
     }
 

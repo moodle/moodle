@@ -83,8 +83,8 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
 
         $str .= <<<EOD
 <script type="text/javascript">
-function updatefile_$suffix(str) {
-    document.getElementById('repo_info_$suffix').innerHTML = str;
+function updatefile_$suffix(obj) {
+    document.getElementById('repo_info_$suffix').innerHTML = obj['file'];
 }
 function callpicker_$suffix() {
     document.body.className += ' yui-skin-sam';
@@ -93,7 +93,7 @@ function callpicker_$suffix() {
     picker.className = 'file-picker';
     document.body.appendChild(picker);
     var el=document.getElementById('$id');
-    openpicker_$suffix({'env':'form', 'target':el, 'callback':updatefile_$suffix})
+    openpicker_$suffix({'env':'filepicker', 'target':el, 'callback':updatefile_$suffix})
 }
 </script>
 EOD;

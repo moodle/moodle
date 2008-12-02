@@ -806,6 +806,9 @@ _client.download = function() {
     var file = document.getElementById('fileurl-$suffix').value;
     _client.loading('download', title);
     var params = [];
+    if(_client.itemid){
+        params['itemid']=_client.itemid;
+    }
     params['env']=_client.env;
     params['file']=file;
     params['title']=title;
@@ -838,14 +841,14 @@ _client.login = function() {
     var trans = YAHOO.util.Connect.asyncRequest('POST',
             '$CFG->httpswwwroot/repository/ws.php?action=sign', _client.req_cb, _client.postdata(params));
 }
-_client.end = function(str) {
-    if(_client.env=='form') {
-        _client.target.value = str['id'];
-    }else{
-        _client.target.value = str['url'];
+_client.end = function(obj) {
+    if(_client.env=='filepicker') {
+        _client.target.value = obj['id'];
+    }else if(_client.env=='editor'){
+        _client.target.value = obj['url'];
         _client.target.onchange();
     }
-    _client.formcallback(str['file']);
+    _client.formcallback(obj);
     _client.instance.hide();
     _client.viewfiles();
 }
@@ -992,6 +995,9 @@ function openpicker_$suffix(params) {
     if(!repository_client_$suffix.instance) {
         repository_client_$suffix.env = params.env;
         repository_client_$suffix.target = params.target;
+        if(params.itemid){
+            repository_client_$suffix.itemid = params.itemid;
+        }
         if(params.mimetype) {
             repository_client_$suffix.mimetype = params.mimetype;
         } else {
