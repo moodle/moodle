@@ -6,7 +6,8 @@ popular format known as the Cloze format.</p>
 <p>Questions consist of a passage of text (in Moodle format) that has various sub-questions 
 embedded within it, including</p>
 <ul>
-  <li>short answers&nbsp;(SHORTANSWER or SA or MW),</li>
+  <li>short answers&nbsp;(SHORTANSWER or SA or MW), case is unimportant,</li>
+  <li>short answers&nbsp;(SHORTANSWER_C or SAC or MWC), case must match,</li>
   <li>numerical answers (NUMERICAL or NM),</li>
   <li>multiple choice (MULTICHOICE or MC), represented as a dropdown menu in-line in the text</li>
   <li>multiple choice (MULTICHOICE_V or MCV), represented a vertical column of radio buttons, or</li>
@@ -18,18 +19,21 @@ importing them from external files.</p>
 
 <p>Here is an example of the input text used to specify such a question:</p>
 
-<p><textarea rows="25" wrap="virtual" cols="60">This question consists of some text with an answer embedded right here {1:MULTICHOICE:Wrong answer#Feedback for this wrong answer~Another wrong answer#Feedback for the other wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer} and right after that you will have to deal with this short answer {1:SHORTANSWER:Wrong answer#Feedback for this wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer} and finally we have a floating point number {2:NUMERICAL:=23.8:0.1#Feedback for correct answer 23.8~%50%23.8:2#Feedback for half credit answer in the nearby region of the correct answer}.&lt;br /&gt;
-&lt;br /&gt;
-The  multichoice question can also be shown in the vertical display of the standard moodle multiple choice.&lt;br /&gt;
-&lt;br /&gt;
-{2:MCV:Wrong answer#Feedback for this wrong answer~Another wrong answer#Feedback for the other wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer}&lt;br /&gt;
-Or in an horizontal display that is included here in a table&lt;br /&gt;
-&lt;br /&gt; 
-{2:MCH:Wrong answer#Feedback for this wrong answer~Another wrong answer#Feedback for the other wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer}&lt;br /&gt;
-Note that addresses like www.moodle.org and smileys :-) all work as normal:&lt;br /&gt;
- a) How good is this? {:MULTICHOICE:=Yes#Correct~No#We have a different opinion}&lt;br /&gt;
- b) What grade would you give it? {3:NUMERICAL:=3:2}&lt;br /&gt;
-&lt;br /&gt;
+<p>Note that for multiple choice vertical or horizontal rendering there is no automatic numbering. It can added at each answer as shown here.</p>
+
+<p><textarea rows="25" wrap="virtual" cols="60">This question consists of some text with an answer embedded right here {1:MULTICHOICE:Wrong answer#Feedback for this wrong answer~Another wrong answer#Feedback for the other wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer} and right after that you will have to deal with this short answer {1:SHORTANSWER:Wrong answer#Feedback for this wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer} and finally we have a floating point number {2:NUMERICAL:=23.8:0.1#Feedback for correct answer 23.8~%50%23.8:2#Feedback for half credit answer in the nearby region of the correct answer}.<br />
+<br />
+The  multichoice question can also be shown in the vertical display of the standard moodle multiple choice.<br />
+<br />
+{2:MCV:1. Wrong answer#Feedback for this wrong answer~2. Another wrong answer#Feedback for the other wrong answer~=3. Correct answer#Feedback for correct answer~%50%4. Answer that gives half the credit#Feedback for half credit answer}<br />
+Or in an horizontal display that is included here in a table<br />
+<br /> 
+{2:MCH:a. Wrong answer#Feedback for this wrong answer~b. Another wrong answer#Feedback for the other wrong answer~=c. Correct answer#Feedback for correct answer~%50%d. Answer that gives half the credit#Feedback for half credit answer}<br />
+A shortanswer question where case must match. Write moodle in upper case letters {1:SHORTANSWER_C:moodle#Feedback for moodle in lower case ~=MOODLE#Feedback for MOODLE in upper case ~%50%Moodle#Feedback for only first letter in upper case}<br />
+Note that addresses like www.moodle.org and smileys :-) all work as normal:<br />
+ a) How good is this? {:MULTICHOICE:=Yes#Correct~No#We have a different opinion}<br />
+ b) What grade would you give it? {3:NUMERICAL:=3:2}<br />
+<br />
 Good luck!
 </textarea>
 </p>
@@ -40,7 +44,7 @@ Good luck!
   <div class="info">
     <span class="accesshide">Question </span>1      
     <div class="grade">
-      Marks: --/12.00</div>
+      Marks: --/13.00</div>
     </div>
     <div class="content">
       <div class="ablock clearfix"><label>This question consists of some text with an answer embedded right here <span ><select name="resp3796_1"><option 
@@ -53,7 +57,7 @@ Good luck!
               </td>
               <td class="c1 text ">
                 <label for="resp3796_8960">
-                  <span class="anun">1<span class="anumsep">.</span></span> Wrong answer
+                  1. Wrong answer
                 </label>
               </td>
               <td class="c0 feedback">
@@ -65,7 +69,7 @@ Good luck!
               </td>
               <td class="c1 text ">
                 <label for="resp3796_8961">
-                  <span class="anun">2<span class="anumsep">.</span></span> Another wrong answer
+                  2. Another wrong answer
                 </label>
               </td>
               <td class="c0 feedback">
@@ -77,7 +81,7 @@ Good luck!
               </td>
               <td class="c1 text ">
                 <label for="resp3796_8962">
-                  <span class="anun">3<span class="anumsep">.</span></span> Correct answer
+                  3. Correct answer
                 </label>
               </td>
               <td class="c0 feedback">
@@ -89,7 +93,7 @@ Good luck!
               </td>
               <td class="c1 text ">
                 <label for="resp3796_8963">
-                  <span class="anun">4<span class="anumsep">.</span></span> Answer that gives half the credit
+                  4. Answer that gives half the credit
                 </label>
               </td>
               <td class="c0 feedback">
@@ -105,7 +109,7 @@ Good luck!
             </td>
             <td class="c1 text ">
               <label for="resp3796_8964">
-                <span class="anun">1<span class="anumsep">.</span></span> Wrong answer
+                a. Wrong answer
               </label>
             </td>
             <td class="c0 feedback">
@@ -115,7 +119,7 @@ Good luck!
             </td>
             <td class="c1 text ">
               <label for="resp3796_8965">
-                <span class="anun">2<span class="anumsep">.</span></span> Another wrong answer
+                b. Another wrong answer
               </label>
             </td>
             <td class="c0 feedback">
@@ -125,7 +129,7 @@ Good luck!
             </td>
             <td class="c1 text ">
               <label for="resp3796_8966">
-                <span class="anun">3<span class="anumsep">.</span></span> Correct answer
+                c. Correct answer
               </label>
             </td>
             <td class="c0 feedback">
@@ -135,13 +139,15 @@ Good luck!
             </td>
             <td class="c1 text ">
               <label for="resp3796_8967">
-                <span class="anun">4<span class="anumsep">.</span></span> Answer that gives half the credit
+                d. Answer that gives half the credit
               </label>
             </td>
             <td class="c0 feedback">
             </td>
           </tr>
         </table>
+        <br />
+        A shortanswer question where case must match. Write moodle in upper case letters <input    name="resp3435_6"  type="text" value="" size="6" /> <br />
       <br />Note that addresses like <a href="http://www.moodle.org" target="_blank">www.moodle.org</a> and smileys <img alt="smile" width="15" height="15" src="http://132.208.141.198/moodle_head/pix/s/smiley.gif" /> all work as normal:<br /> a) How good is this? <span><select name="resp3796_6"><option selected></option><option value="8968">Yes</option><option value="8969">No</option></select></span></label><label><br /> b) What grade would you give it? <input name="resp3796_7" size="1" > </label><br /><br />Good luck!
     </div>
     <div class="grading">
