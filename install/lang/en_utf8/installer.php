@@ -90,6 +90,12 @@ $string['databasecreationsettingssub'] = '<b>Type:</b> fixed to \"mysql\" by the
        <b>User:</b> fixed to \"root\" by the installer<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> optional prefix to use for all table names';
+$string['databasecreationsettingssub2'] = '<b>Type:</b> fixed to \"mysqli\" by the installer<br />
+       <b>Host:</b> fixed to \"localhost\" by the installer<br />
+       <b>Name:</b> database name, eg moodle<br />
+       <b>User:</b> fixed to \"root\" by the installer<br />
+       <b>Password:</b> your database password<br />
+       <b>Tables Prefix:</b> optional prefix to use for all table names';
 $string['databasehost']='Database host :';
 $string['databasename']='Database name : ';
 $string['databasepass']='Database password :';
@@ -335,8 +341,8 @@ $string['memorylimithelp'] = '<p>The PHP memory limit for your server is current
 $string['missingrequiredfield'] = 'Some required field is missing';
 $string['moodledocslink'] = 'Moodle Docs for this page';
 $string['mssql'] = 'SQL*Server (mssql)';
-$string['mssql_n'] = 'SQL*Server with UTF-8 support (mssql_n)';
 $string['mssqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MSSQL extension so that it can communicate with SQL*Server.  Please check your php.ini file or recompile PHP.';
+$string['mssql_n'] = 'SQL*Server with UTF-8 support (mssql_n)';
 $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'However, if your site is using iso-8859-1 (latin) languages ONLY, you may continue using your currently installed MySQL 4.1.12 (or higher).';
 $string['mysql416required'] = 'MySQL 4.1.16 is the minimum version required for Moodle 1.6 in order to guarantee that all data can be converted to UTF-8 in the future.';
@@ -348,8 +354,8 @@ $string['nativemysqli'] = 'Improved MySQL (native/mysqli)';
 $string['next'] = 'Next';
 $string['oci8po'] = 'Oracle (oci8po)';
 $string['ociextensionisnotpresentinphp'] = 'PHP has not been properly configured with the OCI8 extension so that it can communicate with Oracle.  Please check your php.ini file or recompile PHP.';
-$string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
 $string['odbcextensionisnotpresentinphp'] = 'PHP has not been properly configured with the ODBC extension so that it can communicate with SQL*Server.  Please check your php.ini file or recompile PHP.';
+$string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
 $string['ok'] = 'OK';
 $string['opensslrecommended'] = 'Installing the optional OpenSSL library is highly recommended -- it enables Moodle Networking functionality.';
 $string['pass'] = 'Pass';
