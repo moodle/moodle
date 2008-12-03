@@ -78,6 +78,12 @@ $string['databasecreationsettingssub'] = '<b>タイプ:</b> インストーラ�
 <b>ユーザ名:</b> インストーラーにより「root」に修正されました。<br />
 <b>パスワード:</b> あなたのデータベースパスワードです。<br />
 <b>テーブル接頭辞:</b> すべてのテーブル名に使用される任意の接頭辞です。';
+$string['databasecreationsettingssub2'] = '<b>タイプ:</b> インストーラーにより「mysqli」に修正されました。<br />
+<b>ホスト:</b> インストーラーにより「localhost」に修正されました。<br />
+<b>データベース名:</b> 例 moodle<br />
+<b>ユーザ名:</b> インストーラーにより「root」に修正されました。<br />
+<b>パスワード:</b> あなたのデータベースパスワードです。<br />
+<b>テーブル接頭辞:</b> すべてのテーブル名に使用される任意の接頭辞です。';
 $string['databasehost'] = 'データベースホスト :';
 $string['databasename'] = 'データベース名 :';
 $string['databasepass'] = 'データベースパスワード :';
@@ -282,8 +288,8 @@ $string['memorylimithelp'] = '<p>現在、サーバのPHPメモリー制限が $
 $string['missingrequiredfield'] = 'いくつかの必須入力フィールドが入力されていません。';
 $string['moodledocslink'] = 'このページのMoodle Docs';
 $string['mssql'] = 'SQL*Server (mssql)';
-$string['mssql_n'] = 'SQL*Server UTF-8サポート (mssql_n)';
 $string['mssqlextensionisnotpresentinphp'] = 'PHPのMSSQL拡張モジュールが適切に設定されていないため、SQL*Serverと通信できません。あなたのphp.iniファイルをチェックするか、PHPを再コンパイルしてください。';
+$string['mssql_n'] = 'SQL*Server UTF-8サポート (mssql_n)';
 $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'あなたのサイトがiso-8859-1 (ラテン) 言語のみ使用している場合、現在インストールされている MySQL 4.1.12 (またはそれ以上) を使用することができます。';
 $string['mysql416required'] = 'Moodle1.6では、将来すべてのデータをUTF-8に変換するため、MySQL 4.1.16が要求される最低限のバージョンです。';
@@ -295,8 +301,8 @@ $string['nativemysqli'] = 'Improved MySQL (ネイティブ/mysqli)';
 $string['next'] = '次へ';
 $string['oci8po'] = 'Oracle (oci8po)';
 $string['ociextensionisnotpresentinphp'] = 'PHPのOCI8拡張モジュールが適切に設定されていないため、Oracleと通信できません。あなたのphp.iniファイルをチェックするか、PHPを再コンパイルしてください。';
-$string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
 $string['odbcextensionisnotpresentinphp'] = 'PHPのODBC拡張モジュールが適切に設定されていないため、SQL*Serverと通信できません。あなたのphp.iniファイルをチェックするか、PHPを再コンパイルしてください。';
+$string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
 $string['ok'] = 'OK';
 $string['opensslrecommended'] = 'Moodleネットワーキング機能を有効にするため、OpenSSLライブラリのインストールを強くお勧めします。';
 $string['pass'] = 'パス';
