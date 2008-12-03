@@ -90,8 +90,8 @@ $ALLOWED_TAGS =
  * @global string $ALLOWED_PROTOCOLS
  */
 $ALLOWED_PROTOCOLS = array('http', 'https', 'ftp', 'news', 'mailto', 'rtsp', 'teamspeak', 'gopher', 'mms',
-                           'color', 'callto', 'cursor', 'text-align', 'font-size', 'font-weight', 'font-style',
-                           'border', 'margin', 'padding', 'background');   // CSS as well to get through kses
+                           'color', 'callto', 'cursor', 'text-align', 'font-size', 'font-weight', 'font-style', 'font-family',
+                           'border', 'margin', 'padding', 'background', 'background-color', 'text-decoration');   // CSS as well to get through kses
 
 
 /// Functions
