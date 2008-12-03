@@ -33,7 +33,7 @@
     }
 
     if (!empty($creator)) {
-        $cat_courses = get_courses($course->category);
+        $cat_courses = get_courses($course->category, $sort="c.sortorder ASC", $fields="c.id, c.fullname");
     } else {
         $cat_courses = array();
     }
