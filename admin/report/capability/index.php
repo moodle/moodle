@@ -106,7 +106,7 @@ if ($capability) {
             SELECT DISTINCT con.path, 1
             FROM {context} con JOIN {role_capabilities} rc ON rc.contextid = con.id
             WHERE capability = ? $sqlroletest", $params);
-    $requiredcontexts = array();
+    $requiredcontexts = array($systemcontext->id);
     foreach ($relevantpaths as $path => $notused) {
         $requiredcontexts = array_merge($requiredcontexts, explode('/', trim($path, '/')));
     }
