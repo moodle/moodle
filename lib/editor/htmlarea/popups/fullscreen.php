@@ -34,7 +34,9 @@ for (var i = 0; i < scripts.length; ++i) {
     } else {
       new_script.src = "../" + script.src;
     }
-    head.appendChild(new_script);
+    if (navigator.appVersion.indexOf("MSIE") > 0 && script.src.indexOf("yui/event/event") == false) {
+      head.appendChild(new_script);
+    }
   }
 }
 </script>
