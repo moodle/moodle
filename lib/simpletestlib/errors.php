@@ -46,9 +46,20 @@ class SimpleErrorTrappingInvoker extends SimpleInvokerDecorator {
     function invoke($method) {
         $queue = &$this->_createErrorQueue();
         set_error_handler('SimpleTestErrorHandler');
-        parent::invoke($method);
+        //moodle hack start
+        // note: this breaks PHP4 compatibility!
+        $rethrow = null;
+        try {
+            parent::invoke($method);
+        } catch (Exception $e) {
+            $rethrow = $e;
+        }
         restore_error_handler();
         $queue->tally();
+        if ($rethrow) {
+            throw $rethrow;
+        }
+        //moodle hack end
     }
     
     /**

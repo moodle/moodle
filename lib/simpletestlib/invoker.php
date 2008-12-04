@@ -65,8 +65,19 @@ class SimpleInvoker {
      */
     function invoke($method) {
         $this->_test_case->setUp();
-        $this->_test_case->$method();
+        // moodle hack start
+        // note: this breaks PHP4 compatibility!
+        $rethrow = null;
+        try {
+            $this->_test_case->$method();
+        } catch (Exception $e) {
+            $rethrow = $e;
+        }
         $this->_test_case->tearDown();
+        if ($rethrow) {
+            throw $rethrow;
+        }
+        // moodle hack end
     }
 
     /**
