@@ -1,5 +1,5 @@
 <?php  //$Id$
-require_once('../mod/scorm/locallib.php');
+require_once($CFG->dirroot . '/mod/scorm/locallib.php');
 $yesno = array(0 => get_string('no'),
                1 => get_string('yes'));
 
