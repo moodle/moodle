@@ -941,6 +941,7 @@ $string['markthistopic'] = 'Highlight this topic as the current topic';
 $string['matchingsearchandrole'] = 'Matching \'$a->search\' and $a->role';
 $string['maximumchars'] = 'Maximum of $a characters';
 $string['maximumgrade'] = 'Maximum grade';
+$string['maximumgradex'] = 'Maximum grade: $a';
 $string['maximumshort'] = 'Max';
 $string['maximumupload'] = 'Maximum upload size';
 $string['maxsize'] = 'Max size: $a';
