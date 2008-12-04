@@ -1,5 +1,6 @@
 <?php  //$Id$
-require_once('../mod/scorm/locallib.php');
+
+require_once($CFG->dirroot . '/mod/scorm/locallib.php');
 
 $settings->add(new admin_setting_configselect('scorm_grademethod', get_string('grademethod', 'scorm'),get_string('grademethoddesc', 'scorm'), GRADEHIGHEST, scorm_get_grade_method_array()));
 
