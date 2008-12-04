@@ -103,7 +103,7 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
             }
             $straddtoquiz = get_string("addtoquiz", "quiz");
             $out = '<strong><label for="menurandomcount">'.get_string('addrandomfromcategory','quiz').
-                    '</label>:</strong><br />';
+                    '</label></strong><br />';
             $out .= get_string('addrandom', 'quiz', choose_from_menu($randomcount,
                     'randomcount', '1', '', '', '', true,$cmoptions->hasattempts));
             $out .= '<input type="hidden" name="recurse" value="'.$recurse.'" />';

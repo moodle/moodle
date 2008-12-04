@@ -788,7 +788,7 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz,$quiz_qbanktool
     echo '<div class="randomquestionfromcategory">';
     print_question_icon($question);
     print_string('random','quiz');
-    echo " ".get_string("fromcategory",'quiz').":</div>";
+    echo " ".get_string("fromcategory",'quiz')."</div>";
 
     $a = new stdClass;
     $a->arrow = $THEME->rarrow;
@@ -1523,7 +1523,7 @@ function quiz_print_status_bar($quiz,$sumgrades){
     global $CFG;
     $numberofquestions=quiz_number_of_questions_in_quiz($quiz->questions);
     ?><div class="statusdisplay"><span class="totalpoints">
-    <?php echo get_string("totalpoints","quiz") ?>:</span>
+    <?php echo get_string("totalpoints","quiz") ?></span>
     <?php echo $sumgrades; ?>
     | <span class="numberofquestions">
     <?php
