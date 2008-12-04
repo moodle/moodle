@@ -337,6 +337,27 @@ body#mod-quiz-report table#attempts .header {
 	float: right;
 }
 
+#mod-quiz-edit div.sideblock{
+    float:left;
+}
+#mod-quiz-edit div.quizcontents {
+    clear:none;
+}
+#mod-quiz-edit div.quizpage span.pagetitle{
+    float:right;
+}
+#mod-quiz-edit div.question div.qnum{
+    float:right;
+}
+/*#mod-quiz-edit div.question div.content div.questioncontrols{
+    float:left;	
+}
+#mod-quiz-edit div.question div.content div.points, #mod-quiz-edit div.question div.content div.qorder {
+    float:left; 
+}
+#mod-quiz-edit div.editq div.question div.content .singlequestion a .questionname, #mod-quiz-edit div.editq div.question div.content .singlequestion a .questiontext {
+    float:right; 
+}*/
 .logtable th {
     text-align: right;
 }
