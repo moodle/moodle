@@ -47,7 +47,7 @@ $string['databasecreationsettingssub'] = '<b>종류:</b> 설치프로그램에 �
 <b>이름:</b>데이터베이스이름, 예:moodle<br />
 <b>사용자:</b> 설치프로그램에 의해 \"root\" 로 고정됨 <br />
 <b>암호:</b> 데이터베이스 암호 <br />
-<b>테이블 첨두어:</b> 모든 테이블에 사용할 선택적 접두어';
+<b>테이블 접두어:</b> 모든 테이블에 사용할 선택적 접두어';
 $string['databasesettingshead'] = '모든 무들데이터가 저장되는 데이터베이스를 설정할 필요가 있습니다. 이 데이터베이스는 이미 만들어졌으며 이에 접근할 수 있는 사용자명과 암호가 등록되어 있어야만 합니다.';
 $string['databasesettingssub'] = '<b>종류:</b> mysql 또는 postgres7<br />
 <b>호스트:</b>예: localhost 또는 db.isp.com <br />
