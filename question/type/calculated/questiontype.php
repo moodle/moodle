@@ -632,6 +632,10 @@ class question_calculated_qtype extends default_questiontype {
         $DB->delete_records("question_numerical_units", array("question" => $questionid));
         if ($datasets = $DB->get_records('question_datasets', array('question' => $questionid))) {
             foreach ($datasets as $dataset) {
+                if (!$DB->get_records_select(
+                        'question_datasets',
+                        "question != ?
+                        AND datasetdefinition = ?;", array($questionid, $dataset->datasetdefinition))){                                 
                 $DB->delete_records('question_dataset_definitions', array('id' => $dataset->datasetdefinition));
                 $DB->delete_records('question_dataset_items', array('definition' => $dataset->datasetdefinition));
             }
