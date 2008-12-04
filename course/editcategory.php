@@ -1,323 +1,93 @@
 <?php // $Id$
 /**
- * Displays a category and all its sub-categories.
- * In editing mode, allows admins to move/delete/hide categories
+ * Page for creating or editing course category name/parent/description.
+ * When called with an id parameter, edits the category with that id.
+ * Otherwise it creates a new category with default parent from the parent
+ * parameter, which may be 0.
  */
 
-require_once("../config.php");
-require_once("lib.php");
+require_once('../config.php');
+require_once('lib.php');
 require_once('editcategory_form.php');
 
-$id             = optional_param('id', 0, PARAM_INT);            // Category id: if not given, show Add a Category form. If given and 'categoryupdate': show edit form
-$page           = optional_param('page', 0, PARAM_INT);          // which page to show
-$perpage        = optional_param('perpage', $CFG->coursesperpage, PARAM_INT); // how many per page
-$hide           = optional_param('hide', 0, PARAM_INT);
-$show           = optional_param('show', 0, PARAM_INT);
-$moveup         = optional_param('moveup', 0, PARAM_INT);
-$movedown       = optional_param('movedown', 0, PARAM_INT);
-$moveto         = optional_param('moveto', 0, PARAM_INT);
-$categoryedit   = optional_param('categoryedit', -1, PARAM_BOOL);    // Enables Move/Delete/Hide icons near each category in the list
-$categoryadd    = optional_param('categoryadd', 0, PARAM_BOOL);  // Enables the Add Category form
-$categoryupdate = optional_param('categoryupdate', 0, PARAM_BOOL); // Enables the Edit Category form
-$resort         = optional_param('resort', 0, PARAM_BOOL);
-$parent         = optional_param('parent', 0, PARAM_INT );
+require_login();
 
-if (!$site = get_site()) {
-    print_error("siteisnotdefined");
-}
-
-if ($categoryadd and !$parent) { // Show Add category form: if $id is given, it is used as the parent category 
-    $strtitle = get_string("addnewcategory");
-    $context = get_context_instance(CONTEXT_SYSTEM);
-    $category = null;
-} elseif ($categoryadd and $parent) {
-	$strtitle = get_string("addnewcategory");
-	$context = get_context_instance(CONTEXT_COURSECAT,$parent);
-	$category = null;
-} elseif (!is_null($id) && !$categoryadd) { // Show Edit category form: $id is given as the identifier of the category being edited
-    $strtitle = get_string("editcategorysettings");
-    $context = get_context_instance(CONTEXT_COURSECAT, $id); 
-    if (!$category = $DB->get_record("course_categories", array("id"=>$id))) {
-        print_error("unknowcategory");
+$id = optional_param('id', 0, PARAM_INT);
+if ($id) {
+    if (!$category = $DB->get_record('course_categories', array('id' => $id))) {
+        print_error('unknowcategory');
     }
-}
-
-$mform = new editcategory_form('editcategory.php', compact(array('category', 'id')));
-
-if (!empty($category)) {
-    $mform->set_data($category); 
-} elseif (!is_null($id)) {
-    $data = new stdClass();
-    $data->parent = $id;
-    $data->categoryadd = 1;
-    $mform->set_data($data);
-}
-    
-if ($mform->is_cancelled()){
-    if (empty($category)) {
-        redirect($CFG->wwwroot .'/course/index.php?categoryedit=on');
+    require_capability('moodle/category:manage', get_context_instance(CONTEXT_COURSECAT, $id));
+    $strtitle = get_string('editcategorysettings');
+} else {
+    $parent = required_param('parent', PARAM_INT);
+    if ($parent) {
+        if (!$DB->record_exists('course_categories', array('id' => $parent))) {
+            print_error('unknowcategory');
+        }
+        $context = get_context_instance(CONTEXT_COURSECAT, $parent);
     } else {
-        redirect($CFG->wwwroot.'/course/category.php?categoryedit=on&id='.$category->id);
-    } 
-} else if (($data = $mform->get_data())) {
+        $context = get_system_context();
+    }
+    $category = new stdClass();
+    $category->id = 0;
+    $category->parent = $parent;
+    require_capability('moodle/category:manage', $context);
+    $strtitle = get_string("addnewcategory");
+}
+
+$mform = new editcategory_form('editcategory.php', $category);
+$mform->set_data($category);
+
+if ($mform->is_cancelled()) {
+    if ($id) {
+        redirect($CFG->wwwroot . '/course/category.php?id=' . $id . '&categoryedit=on');
+    } else if ($parent) {
+        redirect($CFG->wwwroot .'/course/category.php?id=' . $parent . '&categoryedit=on');
+    } else {
+        redirect($CFG->wwwroot .'/course/index.php?categoryedit=on');
+    }
+} else if ($data = $mform->get_data()) {
     $newcategory = new stdClass();
-    $newcategory->name        = $data->name;
+    $newcategory->name = $data->name;
     $newcategory->description = $data->description;
-    $newcategory->parent      = $data->parent; // if $id = 0, the new category will be a top-level category
+    $newcategory->parent = $data->parent; // if $data->parent = 0, the new category will be a top-level category
 
     if (isset($data->theme) && !empty($CFG->allowcategorythemes)) {
         $newcategory->theme = $data->theme;
-        theme_setup(); /// TODO: Do we really want the theme to be changed here? Doesn't look ok IMO. Eloy - 20080828
     }
 
-    if (empty($category) && has_capability('moodle/category:create', $context)) { // Create a new category
-        $newcategory->sortorder   = MAX_COURSES_IN_CATEGORY*MAX_COURSE_CATEGORIES; // put as last category in any parent cat 
-        if (!$newcategory->id = $DB->insert_record('course_categories', $newcategory)) {
-            notify( "Could not insert the new category '$newcategory->name' ");
-        } else {
-            $newcategory->context = get_context_instance(CONTEXT_COURSECAT, $newcategory->id);
-            mark_context_dirty($newcategory->context->path);
-            fix_course_sortorder();
-            redirect('index.php?categoryedit=on');
-        }
-    } elseif (has_capability('moodle/category:update', $context)) {
+    if ($id) {
+        // Update an existing category.
         $newcategory->id = $category->id;
-
         if ($newcategory->parent != $category->parent) {
-            $parent_cat = $DB->get_record('course_categories', array('id'=>$newcategory->parent));
-            move_category($newcategory, $parent_cat); // includes sortorder fix
+            $parent_cat = $DB->get_record('course_categories', array('id' => $newcategory->parent));
+            move_category($newcategory, $parent_cat);
         }
-
         if (!$DB->update_record('course_categories', $newcategory)) {
             print_error( "cannotupdatecategory", '', '', $newcategory->name);
-        } else {
-            if ($newcategory->parent == 0) {
-                $redirect_link = 'index.php?categoryedit=on';
-            } else {
-                $redirect_link = 'category.php?id='.$newcategory->id.'&categoryedit=on'; 
-            }
-            redirect($redirect_link);
         }
-    } 
+        fix_course_sortorder();
+
+    } else {
+        // Create a new category.
+        $newcategory->sortorder = 999;
+        if (!$newcategory->id = $DB->insert_record('course_categories', $newcategory)) {
+            print_error('cannotcreatecategory', '', '', format_string($newcategory->name));
+        }
+        $newcategory->context = get_context_instance(CONTEXT_COURSECAT, $newcategory->id);
+        mark_context_dirty($newcategory->context->path);
+    }
+    redirect('category.php?id='.$newcategory->id.'&categoryedit=on');
 }
 
-
-
-// If id is given, but not categoryadd or categoryupdate, we show the category with its list of subcategories
-if ($id && !$categoryadd && !$categoryupdate && false) { 
-    /* TODO implement
-
-    if ($CFG->forcelogin) {
-        require_login();
-    }
-
-    // Determine whether to allow user to see this category
-    if (has_capability('moodle/course:create', $context)) {
-        if ($categoryedit !== -1) {
-            $USER->categoryediting = $categoryedit;
-        }
-        $navbaritem = update_category_button($category->id);
-        $creatorediting = !empty($USER->categoryediting);
-        $adminediting = (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)) and $creatorediting);
-
-    } else {
-        if (!$category->visible) {
-            print_error('notavailable', 'error');
-        }
-        $navbaritem = print_course_search("", true, "navbar");
-        $adminediting = false;
-        $creatorediting = false;
-    }
-
-    // Resort the category if requested 
-    if ($resort and confirm_sesskey()) {
-        if ($courses = get_courses($id, "fullname ASC", 'c.id,c.fullname,c.sortorder')) {
-            // move it off the range
-            $count = $DB->get_record_sql('SELECT MAX(sortorder) AS max, 1
-                                     FROM {course} WHERE category=' . $category->id);
-            $count = $count->max + 100;
-            $DB->begin_sql();
-            foreach ($courses as $course) {
-                $DB->set_field('course', 'sortorder', $count, array('id'=>$course->id));
-                $count++;
-            }
-            $DB->commit_sql();
-            fix_course_sortorder($category->id);
-        }
-    }
-    
-    // Print headings 
-    $numcategories = $DB->count_records("course_categories");
-
-    $stradministration = get_string("administration");
-    $strcategories = get_string("categories");
-    $strcategory = get_string("category");
-    $strcourses = get_string("courses");
-
-    $navlinks = array();
-    $navlinks[] = array('name' => $strcategories, 'link' => 'index.php', 'type' => 'misc');
-    $navlinks[] = array('name' => $category->name, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-
-    if ($creatorediting) {
-        if ($adminediting) {
-            // modify this to treat this as an admin page
-
-            require_once($CFG->libdir.'/adminlib.php');
-            admin_externalpage_setup('categorymgmt');
-            admin_externalpage_print_header();
-        } else {
-            print_header("$site->shortname: $category->name", "$site->fullname: $strcategories", $navigation, "", "", true, $navbaritem);
-        }
-    } else {
-        print_header("$site->shortname: $category->name", "$site->fullname: $strcategories", $navigation, "", "", true, $navbaritem);
-    }
-
-    // Print button to turn editing off
-    if ($adminediting) {
-        echo '<div class="categoryediting button" align="right">'.update_category_button($category->id).'</div>';
-    }
-
-    // Print link to roles
-
-    if (has_capability('moodle/role:assign', $context)) {
-        echo '<div class="rolelink"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.
-         $context->id.'">'.get_string('assignroles','role').'</a></div>';
-    }
-    
-    // Print the category selector
-
-    $displaylist = array();
-    $parentlist = array();
-
-    make_categories_list($displaylist, $parentlist, "");
-
-    echo '<div class="categorypicker">';
-    popup_form('category.php?id=', $displaylist, 'switchcategory', $category->id, '', '', '', false, 'self', $strcategories.':');
-    echo '</div>';
-
-    // Print current category description
-    if ($category->description) {
-        print_box_start();
-        print_heading(get_string('description'));
-        echo $category->description;
-        print_box_end();
-    }
-    
-    // Editing functions 
-    if ($creatorediting) {
-    // Move a specified category to a new category
-
-        if (!empty($moveto) and $data = data_submitted() and confirm_sesskey()) {   // Some courses are being moved
-
-            // user must have category update in both cats to perform this
-            require_capability('moodle/category:update', $context);
-            require_capability('moodle/category:update', get_context_instance(CONTEXT_COURSECAT, $moveto));
-
-            if (!$destcategory = $DB->get_record("course_categories", array("id"=>$data->moveto))) {
-                pritn_error("unknowcategory");
-            } 
-            // TODO function to move the category
-        }
-
-        // Hide or show a category 
-        if ((!empty($hide) or !empty($show)) and confirm_sesskey()) {
-            require_capability('moodle/category:visibility', $context);
-            if (!empty($hide)) {
-                $category = $DB->get_record("course_categories", array("id"=>$hide));
-                $visible = 0;
-            } else {
-                $category = $DB->get_record("course_categories", array("id"=>$show));
-                $visible = 1;
-            }
-            if ($category) {
-                if (! $DB->set_field("course_categories", "visible", $visible, array("id"=>$category->id))) {
-                    notify("Could not update that category!");
-                }
-            }
-        }
-
-
-        // Move a category up or down 
-        if ((!empty($moveup) or !empty($movedown)) and confirm_sesskey()) {
-            require_capability('moodle/category:update', $context);
-            $movecategory = NULL;
-            $swapcategory = NULL;
-
-            // TODO something like fix_course_sortorder() ?
-
-            // we are going to need to know the range
-            $max = $DB->get_record_sql('SELECT MAX(sortorder) AS max, 1 FROM {course_categories} WHERE id=' . $category->id);
-            $max = $max->max + 100;
-
-            if (!empty($moveup)) {
-                $movecategory = $DB->get_record('course_categories', array('id'=>$moveup));
-                $swapcategory = $DB->get_record('course_categories',
-                                         array('category'=>$category->id,
-                                         'sortorder'=>$movecategory->sortorder - 1));
-            } else {
-                $movecategory = $DB->get_record('course_categories', array('id'=>$movedown));
-                $swapcategory = $DB->get_record('course_categories',
-                                         array('category'=> $category->id,
-                                         'sortorder'=>$movecategory->sortorder + 1));
-            }
-
-            if ($swapcourse and $movecourse) {        // Renumber everything for robustness
-                $DB->begin_sql();
-                if (!(    $DB->set_field("course", "sortorder", $max, aray("id"=>$swapcourse->id))
-                       && $DB->set_field("course", "sortorder", $swapcourse->sortorder, array("id"=>$movecourse->id))
-                       && $DB->set_field("course", "sortorder", $movecourse->sortorder, array("id"=>$swapcourse->id))
-                    )) {
-                    notify("Could not update that course!");
-                }
-                $DB->commit_sql();
-            }
-
-        }
-
-    } // End of editing stuff
-
-    // Print out all the sub-categories
-    if ($subcategories = $DB->get_records("course_categories", array("parent"=>$category->id), "sortorder ASC")) {
-        $firstentry = true;
-        foreach ($subcategories as $subcategory) {
-            if ($subcategory->visible or has_capability('moodle/course:create', $context)) {
-                $subcategorieswereshown = true;
-                if ($firstentry) {
-                    echo '<table border="0" cellspacing="2" cellpadding="4" class="generalbox boxaligncenter">';
-                    echo '<tr><th scope="col">'.get_string('subcategories').'</th></tr>';
-                    echo '<tr><td style="white-space: nowrap">';
-                    $firstentry = false;
-                }
-                $catlinkcss = $subcategory->visible ? "" : " class=\"dimmed\" ";
-                echo '<a '.$catlinkcss.' href="category.php?id='.$subcategory->id.'">'.
-                     format_string($subcategory->name).'</a><br />';
-            }
-        }
-        if (!$firstentry) {
-            echo "</td></tr></table>";
-            echo "<br />";
-        }
-    }
-
-    // print option to add a subcategory
-    if (has_capability('moodle/category:create', $context) && $creatorediting) {
-        $cat->id = $id;
-        $mform->set_data($cat);
-        $mform->display();
-    }
-    */
-} 
 // Print the form
-
-$site = get_site();
-
-$straddnewcategory = get_string("addnewcategory");
-$stradministration = get_string("administration");
-$strcategories = get_string("categories");
+$straddnewcategory = get_string('addnewcategory');
+$stradministration = get_string('administration');
+$strcategories = get_string('categories');
 $navlinks = array();
 
-if (!empty($category->name)) {
+if ($id) {
     $navlinks[] = array('name' => $strtitle,
                         'link' => null,
                         'type' => 'misc');
@@ -333,8 +103,8 @@ if (!empty($category->name)) {
     $navlinks[] = array('name' => $straddnewcategory,
                         'link' => null,
                         'type' => 'misc');
-    $title = "$site->shortname: $straddnewcategory";
-    $fullname = $site->fullname;
+    $title = "$SITE->shortname: $straddnewcategory";
+    $fullname = $SITE->fullname;
 }
 
 $navigation = build_navigation($navlinks);

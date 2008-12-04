@@ -5291,63 +5291,6 @@ function update_module_button($moduleid, $courseid, $string) {
 }
 
 /**
- * Prints the editing button on a category page
- *
- * @uses $CFG
- * @uses $USER
- * @param int $categoryid ?
- * @return string
- * @todo Finish documenting this function
- */
-function update_category_button($categoryid) {
-    global $CFG, $USER;
-
-    if (has_capability('moodle/category:update', get_context_instance(CONTEXT_COURSECAT, $categoryid))) {
-        if (!empty($USER->categoryediting)) {
-            $string = get_string('turneditingoff');
-            $edit = 'off';
-        } else {
-            $string = get_string('turneditingon');
-            $edit = 'on';
-        }
-
-        return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/course/category.php\">".
-               '<div>'.
-               "<input type=\"hidden\" name=\"id\" value=\"$categoryid\" />".
-               "<input type=\"hidden\" name=\"categoryedit\" value=\"$edit\" />".
-               "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />".
-               "<input type=\"submit\" value=\"$string\" /></div></form>";
-    }
-}
-
-/**
- * Prints the editing button on categories listing
- *
- * @uses $CFG
- * @uses $USER
- * @return string
- */
-function update_categories_button() {
-    global $CFG, $USER;
-
-    if (has_capability('moodle/category:update', get_context_instance(CONTEXT_SYSTEM))) {
-        if (!empty($USER->categoryediting)) {
-            $string = get_string('turneditingoff');
-            $categoryedit = 'off';
-        } else {
-            $string = get_string('turneditingon');
-            $categoryedit = 'on';
-        }
-
-        return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/course/index.php\">".
-               '<div>'.
-               '<input type="hidden" name="categoryedit" value="'. $categoryedit .'" />'.
-               '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />'.
-               '<input type="submit" value="'. $string .'" /></div></form>';
-    }
-}
-
-/**
  * Prints the editing button on search results listing
  * For bulk move courses to another category
  */

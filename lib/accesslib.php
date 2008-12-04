@@ -5849,6 +5849,37 @@ function make_context_subobj($rec) {
 }
 
 /**
+ * Do some basic, quick checks to see whether $rec->context looks like a
+ * valid context object.
+ *
+ * @param object $rec a think that has a context, for example a course, 
+ *      course category, course modules, etc.
+ * @param integer $contextlevel the type of thing $rec is, one of the CONTEXT_... constants.
+ * @return boolean whether $rec->context looks like the correct context object
+ *      for this thing.
+ */
+function is_context_subobj_valid($rec, $contextlevel) {
+    return isset($rec->context) && isset($rec->context->id) &&
+            isset($rec->context->path) && isset($rec->context->depth) &&
+            isset($rec->context->contextlevel) && isset($rec->context->instanceid) &&
+            $rec->context->contextlevel == $contextlevel && $rec->context->instanceid == $rec->id;
+}
+
+/**
+ * When you have a record (for example a $category, $course, $user or $cm that may,
+ * or may not, have come from a place that does make_context_subobj, you can use
+ * this method to ensure that $rec->context is present and correct before you continue.
+ *
+ * @param object $rec a thing that has an associated context.
+ * @param integer $contextlevel the type of thing $rec is, one of the CONTEXT_... constants.
+ */
+function ensure_context_subobj_present(&$rec, $contextlevel) {
+    if (!is_context_subobj_valid($rec, $contextlevel)) {
+        $rec->context = get_context_instance($contextlevel, $rec->id);
+    }
+}
+
+/**
  * Fetch recent dirty contexts to know cheaply whether our $USER->access
  * is stale and needs to be reloaded.
  *

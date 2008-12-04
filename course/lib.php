@@ -1626,6 +1626,21 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
 }
 
 /**
+ * Return the course category context for the category with id $categoryid, except
+ * that if $categoryid is 0, return the system context.
+ *
+ * @param integer $categoryid a category id or 0.
+ * @return object the corresponding context
+ */
+function get_category_or_system_context($categoryid) {
+    if ($categoryid) {
+        return get_context_instance(CONTEXT_COURSECAT, $categoryid);
+    } else {
+        return get_context_instance(CONTEXT_SYSTEM);
+    }
+}
+
+/**
  * Rebuilds the cached list of course activities stored in the database
  * @param int $courseid - id of course to rebuil, empty means all
  * @param boolean $clearonly - only clear the modinfo fields, gets rebuild automatically on the fly
@@ -1676,10 +1691,13 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
 }
 
 /**
- * Returns an array of the children categories for the given category
- * ID by caching all of the categories in a static hash
+ * Gets the child categories of a given coures category. Uses a static cache
+ * to make repeat calls efficient.
+ *
+ * @param unknown_type $parentid the id of a course category.
+ * @return array all the child course categories.
  */
-function get_child_categories($parent) {
+function get_child_categories($parentid) {
     static $allcategories = null;
 
     // only fill in this variable the first time
@@ -1695,19 +1713,51 @@ function get_child_categories($parent) {
         }
     }
 
-    if (empty($allcategories[$parent])) {
+    if (empty($allcategories[$parentid])) {
         return array();
     } else {
-        return $allcategories[$parent];
+        return $allcategories[$parentid];
     }
 }
 
 /**
- * Given an empty array, this function recursively travels the
- * categories, building up a nice list for display.  It also makes
- * an array that list all the parents for each category.
+ * This function recursively travels the categories, building up a nice list
+ * for display. It also makes an array that list all the parents for each
+ * category.
+ *
+ * For example, if you have a tree of categories like:
+ *   Miscellaneous (id = 1)
+ *      Subcategory (id = 2)
+ *         Sub-subcategory (id = 4)
+ *   Other category (id = 3)
+ * Then after calling this function you will have
+ * $list = array(1 => 'Miscellaneous', 2 => 'Miscellaneous / Subcategory',
+ *      4 => 'Miscellaneous / Subcategory / Sub-subcategory',
+ *      3 => 'Other category');
+ * $parents = array(2 => array(1), 4 => array(1, 2));
+ *
+ * If you specify $requiredcapability, then only categories where the current
+ * user has that capability will be added to $list, although all categories
+ * will still be added to $parents, and if you only have $requiredcapability
+ * in a child category, not the parent, then the child catgegory will still be
+ * included.
+ *
+ * If you specify the option $excluded, then that category, and all its children,
+ * are omitted from the tree. This is useful when you are doing something like
+ * moving categories, where you do not want to allow people to move a category
+ * to be the child of itself.
+ *
+ * @param array $list For output, accumulates an array categoryid => full category path name
+ * @param array $parents For output, accumulates an array categoryid => list of parent category ids.
+ * @param string $requiredcapability if given, only categories where the current
+ *      user has this capability will be added to $list.
+ * @param integer $excludeid Omit this category and its children from the lists built.
+ * @param object $category Build the tree starting at this category - otherwise starts at the top level.
+ * @param string $path For internal use, as part of recursive calls.
  */
-function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
+function make_categories_list(&$list, &$parents, $requiredcapability = '',
+        $excludeid = 0, $category = NULL, $path = "") {
+
     // initialize the arrays if needed
     if (!is_array($list)) {
         $list = array();
@@ -1716,18 +1766,34 @@ function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
         $parents = array();
     }
 
-    if ($category) {
+    if (empty($category)) {
+        // Start at the top level.
+        $category = new stdClass;
+        $category->id = 0;
+    } else {
+        // This is the excluded category, don't include it.
+        if ($excludeid > 0 && $excludeid == $category->id) {
+            return;
+        }
+
+        // Update $path.
         if ($path) {
             $path = $path.' / '.format_string($category->name);
         } else {
             $path = format_string($category->name);
         }
-        $list[$category->id] = $path;
-    } else {
-        $category->id = 0;
+
+        // Add this category to $list, if the permissions check out.
+        if ($requiredcapability) {
+            ensure_context_subobj_present($category, CONTEXT_COURSECAT);
+        }
+        if (!$requiredcapability || has_capability($requiredcapability, $category->context)) {
+            $list[$category->id] = $path;
+        }
     }
 
-    if ($categories = get_child_categories($category->id)) {   // Print all the children recursively
+    // Add all the children recursively, while updating the parents array.
+    if ($categories = get_child_categories($category->id)) {
         foreach ($categories as $cat) {
             if (!empty($category->id)) {
                 if (isset($parents[$category->id])) {
@@ -1735,7 +1801,7 @@ function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
                 }
                 $parents[$cat->id][] = $category->id;
             }
-            make_categories_list($list, $parents, $cat, $path);
+            make_categories_list($list, $parents, $requiredcapability, $excludeid, $cat, $path);
         }
     }
 }
@@ -1745,7 +1811,7 @@ function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
  * Recursive function to print out all the categories in a nice format
  * with or without courses included
  */
-function print_whole_category_list($category=NULL, $displaylist=NULL, $parentslist=NULL, $depth=-1, $files = true) {
+function print_whole_category_list($category=NULL, $displaylist=NULL, $parentslist=NULL, $depth=-1, $showcourses = true) {
     global $CFG;
 
     if (isset($CFG->max_category_depth) && ($depth >= $CFG->max_category_depth)) {
@@ -1757,8 +1823,8 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
     }
 
     if ($category) {
-        if ($category->visible or has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM))) {
-            print_category_info($category, $depth, $files);
+        if ($category->visible or has_capability('moodle/category:viewhiddencategories', get_context_instance(CONTEXT_SYSTEM))) {
+            print_category_info($category, $depth, $showcourses);
         } else {
             return;  // Don't bother printing children of invisible categories
         }
@@ -1781,7 +1847,7 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
             $down = $last ? false : true;
             $first = false;
 
-            print_whole_category_list($cat, $displaylist, $parentslist, $depth + 1, $files);
+            print_whole_category_list($cat, $displaylist, $parentslist, $depth + 1, $showcourses);
         }
     }
 }
@@ -1807,7 +1873,7 @@ function make_categories_options() {
  * Prints the category info in indented fashion
  * This function is only used by print_whole_category_list() above
  */
-function print_category_info($category, $depth, $files = false) {
+function print_category_info($category, $depth, $showcourses = false) {
     global $CFG, $DB;
     static $strallowguests, $strrequireskey, $strsummary;
 
@@ -1820,7 +1886,7 @@ function print_category_info($category, $depth, $files = false) {
     $catlinkcss = $category->visible ? '' : ' class="dimmed" ';
 
     $coursecount = $DB->count_records('course') <= FRONTPAGECOURSELIMIT;
-    if ($files and $coursecount) {
+    if ($showcourses and $coursecount) {
         $catimage = '<img src="'.$CFG->pixpath.'/i/course.gif" alt="" />';
     } else {
         $catimage = "&nbsp;";
@@ -1829,7 +1895,7 @@ function print_category_info($category, $depth, $files = false) {
     echo "\n\n".'<table class="categorylist">';
 
     $courses = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.guest,c.cost,c.currency');
-    if ($files and $coursecount) {
+    if ($showcourses and $coursecount) {
 
         echo '<tr>';
 
@@ -1900,7 +1966,42 @@ function print_category_info($category, $depth, $files = false) {
     echo '</table>';
 }
 
+/**
+ * Prints the turn editing on/off button on course/index.php or course/category.php.
+ *
+ * @param integer $categoryid The id of the category we are showing, or 0 for system context.
+ * @return string HTML of the editing button, or empty string, if this user is not allowed
+ *      to see it.
+ */
+function update_category_button($categoryid = 0) {
+    global $CFG, $USER;
 
+    // Check permissions.
+    $context = get_category_or_system_context($categoryid);
+    if (!has_any_capability(array('moodle/category:manage', 'moodle/course:create'), $context)) {
+        return '';
+    }
+
+    // Work out the appropriate action.
+    if (!empty($USER->categoryediting)) {
+        $label = get_string('turneditingoff');
+        $edit = 'off';
+    } else {
+        $label = get_string('turneditingon');
+        $edit = 'on';
+    }
+
+    // Generate the button HTML.
+    $options = array('categoryedit' => $edit, 'sesskey' => sesskey());
+    if ($categoryid) {
+        $options['id'] = $categoryid;
+        $page = 'category.php';
+    } else {
+        $page = 'index.php';
+    }
+    return print_single_button($CFG->wwwroot . '/course/' . $page, $options,
+            $label, 'get', '', true);
+}
 
 /**
  * Category is 0 (for all courses) or an object

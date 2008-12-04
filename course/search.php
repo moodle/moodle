@@ -72,7 +72,7 @@
 
     $displaylist = array();
     $parentlist = array();
-    make_categories_list($displaylist, $parentlist, "");
+    make_categories_list($displaylist, $parentlist);
 
     $strcourses = get_string("courses");
     $strsearch = get_string("search");
@@ -258,7 +258,7 @@
 
                 // this is ok since this will get inherited from course category context
                 // if it is set
-                if (has_capability('moodle/category:update', $coursecontext)) {
+                if (has_capability('moodle/category:manage', $coursecontext)) {
                     echo "<input type=\"checkbox\" name=\"c$course->id\" />\n";
                 } else {
                     echo "<input type=\"checkbox\" name=\"c$course->id\" disabled=\"disabled\" />\n";

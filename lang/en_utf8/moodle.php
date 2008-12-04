@@ -329,6 +329,7 @@ $string['courseupdates'] = 'Course updates';
 $string['courseuploadlimit'] = 'Course upload limit';
 $string['create'] = 'Create';
 $string['createaccount'] = 'Create my new account';
+$string['createcategory'] = 'Create category';
 $string['createfolder'] = 'Create a folder in $a';
 $string['createuserandpass'] = 'Choose your username and password';
 $string['createziparchive'] = 'Create zip archive';

@@ -11,35 +11,29 @@ class delete_category_form extends moodleform {
 
         $mform    =& $this->_form;
         $category = $this->_customdata;
+        ensure_context_subobj_present($category, CONTEXT_COURSECAT);
         $this->_category = $category;
 
         $mform->addElement('header','general', get_string('categorycurrentcontents', '', format_string($category->name)));
 
         $displaylist = array();
-        $parentlist = array();
-        $children = array();
-        make_categories_list($displaylist, $parentlist);
-        unset($displaylist[$category->id]);
-        foreach ($displaylist as $catid=>$unused) {
-            // remove all children of $category
-            if (isset($parentlist[$catid]) and in_array($category->id, $parentlist[$catid])) {
-                $children[] = $catid;
-                unset($displaylist[$catid]);
-                continue;
-            }
-            if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $catid))) {
-                unset($displaylist[$catid]);
-            }
-        }
+        $notused = array();
+        make_categories_list($displaylist, $notused, 'moodle/course:create', $category->id);
 
+        // Check permissions, to see if it OK to give the option to delete
+        // the contents, rather than move elsewhere.
         $candeletecontent = true;
-        foreach ($children as $catid) {
-            $context = get_context_instance(CONTEXT_COURSECAT, $catid);
-            if (!has_capability('moodle/category:delete', $context)) {
+        $tocheck = array($category);
+        while (!empty($tocheck)) {
+            $checkcat = array_pop($tocheck);
+            $tocheck = $tocheck + get_child_categories($checkcat->id);
+            if (!has_capability('moodle/category:manage', $checkcat->context)) {
                 $candeletecontent = false;
                 break;
             }
         }
+
+        // TODO check that the user is allowed to delete all the courses MDL-17502!
 
         $options = array();
 
@@ -48,7 +42,7 @@ class delete_category_form extends moodleform {
         }
 
         if ($candeletecontent) {
-            $options[1] =get_string('delete');
+            $options[1] = get_string('delete');
         }
 
         if (empty($options)) {
