@@ -75,7 +75,13 @@ $string['databasecreationsettingssub'] = '<b>종류:</b> 설치프로그램에 �
 <b>이름:</b>데이터베이스이름, 예:moodle<br />
 <b>사용자:</b> 설치프로그램에 의해 \"root\" 로 고정됨 <br />
 <b>암호:</b> 데이터베이스 암호 <br />
-<b>테이블 첨두어:</b> 모든 테이블에 사용할 선택적 접두어';
+<b>테이블 접두어:</b> 모든 테이블에 사용할 선택적 접두어';
+$string['databasecreationsettingssub2'] = '<b>종류:</b> 설치프로그램에 의해 \"mysqli\" 로 고정됨 <br />
+<b>호스트:</b>설치프로그램에 의해 \"localhost\"로 고정됨<br />
+<b>이름:</b>데이터베이스이름, 예:moodle<br />
+<b>사용자:</b> 설치프로그램에 의해 \"root\" 로 고정됨 <br />
+<b>암호:</b> 데이터베이스 암호 <br />
+<b>테이블 접두어:</b> 모든 테이블에 사용할 선택적 접두어';
 $string['databasehost'] = '데이터베이스 호스트 :';
 $string['databasename'] = '데이터베이스 명칭 :';
 $string['databasepass'] = '데이터베이스 비밀번호 :';
