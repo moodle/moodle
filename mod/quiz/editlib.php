@@ -249,10 +249,11 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
         get_string("areyousuredeleteselected","quiz").'")\'; value="'.
         get_string("deleteselected").'"  '.$disabled.' /></div>';
 
+    $a = '<input name="moveselectedonpagetop" type="text" size="2" '.
+        $pagingdisabled.' />';
+        
     $reordercontrols2top='<div class="moveselectedonpage">'.
-        get_string("moveselectedonpage","quiz") .
-        ': <input name="moveselectedonpagetop" type="text" size="2" '.
-        $pagingdisabled.'  />'.
+        get_string("moveselectedonpage","quiz", $a) .
         '<input type="submit" name="savechanges" value="'.
         $strmove.'"  '.$pagingdisabled.' />'.'
         <br /><input type="submit" name="savechanges" value="'.
@@ -260,9 +261,8 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
     $reordercontrols2bottom='<div class="moveselectedonpage">'.
         '<input type="submit" name="savechanges" value="'.
         $strreorderquestions.'"  '.$movedisabled.' /><br />'.
-        get_string("moveselectedonpage","quiz") .
-        ': <input name="moveselectedonpagebottom" type="text" size="2"  '.
-        $pagingdisabled.' />'.'<input type="submit" name="savechanges" value="'.
+        get_string("moveselectedonpage","quiz",$a) .
+        '<input type="submit" name="savechanges" value="'.
         $strmove.'"  '.$pagingdisabled.' /> '.'</div>';
 
     $reordercontrols3='<a href="javascript:select_all_in(\'FORM\',null,'.
@@ -787,8 +787,7 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz,$quiz_qbanktool
 
     echo '<div class="randomquestionfromcategory">';
     print_question_icon($question);
-    print_string('random','quiz');
-    echo " ".get_string("fromcategory",'quiz')."</div>";
+    echo " ".get_string("xfromcategory",'quiz',get_string('random','quiz'))."</div>";
 
     $a = new stdClass;
     $a->arrow = $THEME->rarrow;
@@ -1523,11 +1522,10 @@ function quiz_print_status_bar($quiz,$sumgrades){
     global $CFG;
     $numberofquestions=quiz_number_of_questions_in_quiz($quiz->questions);
     ?><div class="statusdisplay"><span class="totalpoints">
-    <?php echo get_string("totalpoints","quiz") ?></span>
-    <?php echo $sumgrades; ?>
+    <?php echo get_string("totalpointsx","quiz",$sumgrades) ?></span>
     | <span class="numberofquestions">
     <?php
-    echo get_string("questions","quiz").": $numberofquestions"
+    echo get_string("numquestionsx","quiz",$numberofquestions);
     ?></span>
     | <span class="quizopeningstatus">
     <?php
@@ -1545,22 +1543,22 @@ function quiz_print_status_bar($quiz,$sumgrades){
     if($quiz->shufflequestions){
         echo "*";
     }
-    echo get_string("shufflequestions",'quiz').": ";
     if($quiz->shufflequestions){
-        echo get_string("yes");
+        $shuffleqs= get_string("yes");
     }
     else{
-        echo get_string("no");
+        $shuffleqs= get_string("no");
     }
+    echo get_string("shufflequestionsx",'quiz',$shuffleqs);
     echo " | ";
-    print_string("questionsperpage","quiz");
     $questionsperpagebool = ($quiz->questionsperpage < 1) ? 0 : 1;
     if($questionsperpagebool){
-        echo ": $quiz->questionsperpage";
+        $valquestionsparpage=$quiz->questionsperpage;
     }else{
-        echo ": ".get_string("unlimited");
+        $valquestionsparpage=get_string("unlimited");
     }
-
+    print_string("questionsperpagex","quiz",$valquestionsparpage);
+    
     ?>
     </div>
     <?php
