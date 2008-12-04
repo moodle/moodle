@@ -51,9 +51,27 @@ class auth_plugin_shibboleth extends auth_plugin_base {
      * @return bool Authentication success or failure.
      */
     function user_login($username, $password) {
-        
+       global $SESSION;
+
         // If we are in the shibboleth directory then we trust the server var
         if (!empty($_SERVER[$this->config->user_attribute])) {
+            // Associate Shibboleth session with user for SLO preparation
+            $sessionkey = '';
+            if (isset($_SERVER['Shib-Session-ID'])){
+                // This is only available for Shibboleth 2.x SPs
+                $sessionkey = $_SERVER['Shib-Session-ID'];
+            } else {
+                // Try to find out using the user's cookie
+                foreach ($_COOKIE as $name => $value){
+                    if (eregi('_shibsession_', $name)){
+                        $sessionkey = $value;
+                    }
+                }
+            }
+            
+            // Set shibboleth session ID for logout
+            $SESSION->shibboleth_session_id  = $sessionkey;
+
             return (strtolower($_SERVER[$this->config->user_attribute]) == strtolower($username));
         } else {
             // If we are not, the user has used the manual login and the login name is

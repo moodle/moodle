@@ -20,6 +20,7 @@ Changes:
 - 10. 2007: Removed the requirement for email address, surname and given name
             attributes on request of Markus Hagman
 - 11. 2007: Integrated WAYF Service in Moodle
+- 12. 2008: Single Logout support added
 
 Moodle Configuration with Dual login
 -------------------------------------------------------------------------------
@@ -87,7 +88,7 @@ Moodle Configuration with Dual login
                     moodle/auth/shibboleth/ is protected but *not* the other 
                     scripts and especially not the login.php script.
 
-5.  Save the changes for the 'Shibboleth settings'. T
+5.  Save the changes for the 'Shibboleth settings'.
 
     Important Note: If you went for 4.b (integrated WAYF service), saving the 
                     settings will overwrite the Moodle Alternate Login URL
@@ -198,6 +199,51 @@ Example file:
 
 ?>
 --
+
+
+How to add logout support
+--------------------------------------------------------------------------------
+
+In order make Moodle support Shibboleth logout, one has to make the Shibboleth 
+Service Provider (SP) aware of the Moodle logout capability. Only then the SP 
+can trigger Moodle's front or back channel logout handler.
+
+To make the SP aware of the Moodle logout, you have to add the following to the
+Shibboleth main configuration file shibboleth2.xml (usually in /etc/shibboleth/)
+just before the <MetadataProvider> element.
+
+--
+<Notify 
+	Channel="back"
+	Location="https://#YOUR_MOODLE_HOSTNAME#/moodle/auth/shibboleth/logout.php" />
+
+<Notify 
+	Channel="front"
+	Location="https://#YOUR_MOODLE_HOSTNAME#/moodle/auth/shibboleth/logout.php" />
+
+--
+
+The restart the Shibboleth daemon and check the log file for errors. If there 
+were no errors, you cat test the logout feature by accessing Moodle, 
+authenticating via Shibboleth and the access the URL:
+#YOUR_MOODLE_HOSTNAME#/Shibboleth.sso/Logout (assuming you have a standard 
+Shibboleth installation). If everything worked well, you should see a Shibboleth
+page saying that you were successfully logged out and if you go back to Moodle 
+you also should be logged out from Moodle.
+
+
+Limitations:
+Single Logout is only supported with SAML2 and so far only with the Shibboleth 
+Service Provider 2.x. 
+As of December 2008, the Shibboleth Identity Provider 2.1.1 does not yet support
+Single Logout (SLO). Therefore, the logout feature doesn't make that much 
+sense yet. One of the reasons why SLO isn't supported yet is because there aren't 
+ many applications yet that were adapted to support front and back channel 
+logout. Hopefully, the Moodle logout helps to motivate the developers to 
+implement SLO :)
+
+Also see https://spaces.internet2.edu/display/SHIB2/SLOIssues for some 
+background information.
 
 --------------------------------------------------------------------------------
 In case of problems and questions with Shibboleth authentication, contact
