@@ -557,7 +557,7 @@ abstract class moodle_database {
                 return array($sql, array_values($params), SQL_PARAMS_QM); // 0-based required
             } else if ($target_type & SQL_PARAMS_NAMED) {
                 $finalparams = array();
-                $pname = 'param00000';
+                $pname = 'param0';
                 $parts = explode('?', $sql);
                 $sql = array_shift($parts);
                 foreach ($parts as $part) {

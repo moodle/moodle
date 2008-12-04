@@ -545,6 +545,8 @@ class pgsql_native_moodle_database extends moodle_database {
     public function get_recordset_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
         $limitfrom = (int)$limitfrom;
         $limitnum  = (int)$limitnum;
+        $limitfrom = ($limitfrom < 0) ? 0 : $limitfrom;
+        $limitnum  = ($limitnum < 0)  ? 0 : $limitnum;
         if ($limitfrom or $limitnum) {
             if ($limitnum < 1) {
                 $limitnum = "18446744073709551615";
@@ -582,6 +584,8 @@ class pgsql_native_moodle_database extends moodle_database {
     public function get_records_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
         $limitfrom = (int)$limitfrom;
         $limitnum  = (int)$limitnum;
+        $limitfrom = ($limitfrom < 0) ? 0 : $limitfrom;
+        $limitnum  = ($limitnum < 0)  ? 0 : $limitnum;
         if ($limitfrom or $limitnum) {
             if ($limitnum < 1) {
                 $limitnum = "18446744073709551615";
