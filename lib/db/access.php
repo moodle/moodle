@@ -424,7 +424,11 @@ $moodle_capabilities = array(
         )
     ),
 
-    'moodle/category:create' => array(
+    // Create, update and delete course categories. (Deleting a course category
+    // does not let you delete the courses it contains, unless you also have
+    // moodle/course: delete.) Creating and deleting requires this permission in
+    // the parent category.
+    'moodle/category:manage' => array(
 
         'riskbitmask' => RISK_XSS,
 
@@ -432,38 +436,19 @@ $moodle_capabilities = array(
         'contextlevel' => CONTEXT_COURSECAT,
         'legacy' => array(
             'admin' => CAP_ALLOW
-        )
+        ),
+        'clonepermissionsfrom' => 'moodle/category:update'
     ),
 
-    'moodle/category:delete' => array(
+    'moodle/category:viewhiddencategories' => array(
 
-        'riskbitmask' => RISK_DATALOSS,
-
-        'captype' => 'write',
+        'captype' => 'read',
         'contextlevel' => CONTEXT_COURSECAT,
         'legacy' => array(
+            'coursecreator' => CAP_ALLOW,
             'admin' => CAP_ALLOW
-        )
-    ),
-
-    'moodle/category:update' => array(
-
-        'riskbitmask' => RISK_XSS,
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSECAT,
-        'legacy' => array(
-            'admin' => CAP_ALLOW
-        )
-    ),
-
-    'moodle/category:visibility' => array(
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSECAT,
-        'legacy' => array(
-            'admin' => CAP_ALLOW
-        )
+        ),
+        'clonepermissionsfrom' => 'moodle/category:visibility'
     ),
 
     'moodle/course:create' => array(

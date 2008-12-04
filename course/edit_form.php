@@ -56,16 +56,11 @@ class course_edit_form extends moodleform {
 //--------------------------------------------------------------------------------
         $mform->addElement('header','general', get_string('general', 'form'));
 
-        //must have create course capability in both categories in order to move course
+        // Must have create course capability in both categories in order to move course
         if (has_capability('moodle/course:create', $categorycontext)) {
             $displaylist = array();
             $parentlist = array();
-            make_categories_list($displaylist, $parentlist);
-            foreach ($displaylist as $key=>$val) {
-                if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $key))) {
-                    unset($displaylist[$key]);
-                }
-            }
+            make_categories_list($displaylist, $parentlist, 'moodle/course:create');
             $mform->addElement('select', 'category', get_string('category'), $displaylist);
         } else {
             $mform->addElement('hidden', 'category', null);

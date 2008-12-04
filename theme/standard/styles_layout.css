@@ -1941,10 +1941,12 @@ body#course-category .addcategory {
   padding: 10px;
 }
 
+body#course-index .buttons .singlebutton,
 body#course-category .buttons .singlebutton {
   display: inline;
 }
 
+body#course-index .buttons,
 body#course-category .buttons {
   text-align: center;
   margin-bottom: 15px;
@@ -2041,6 +2043,7 @@ body#course-info .generalbox.info {
 
 #coursesearch,
 #coursesearch2 {
+  margin-top: 1em;
   text-align:center;
 }
 

@@ -14,18 +14,17 @@
     $moveup   = optional_param('moveup',0,PARAM_INT);
     $movedown = optional_param('movedown',0,PARAM_INT);
 
-    $sysctx  = get_context_instance(CONTEXT_SYSTEM);
-    $context = $sysctx;
+    if ($CFG->forcelogin) {
+        require_login();
+    }
 
     if (!$site = get_site()) {
         error('Site isn\'t defined!');
     }
 
-    if ($CFG->forcelogin) {
-        require_login();
-    }
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
-    if (has_capability('moodle/category:update', $sysctx)) {
+    if (update_category_button()) {
         if ($categoryedit !== -1) {
             $USER->categoryediting = $categoryedit;
         }
@@ -44,11 +43,9 @@
 
 
 /// Unless it's an editing admin, just print the regular listing of courses/categories
-
     if (!$adminediting) {
 
-      /// Print form for creating new categories
-
+    /// Print form for creating new categories
         $countcategories = count_records('course_categories');
 
         if ($countcategories > 1 || ($countcategories == 1 && count_records('course') > 200)) {
@@ -58,7 +55,7 @@
             $navlinks = array();
             $navlinks[] = array('name'=>$strcategories,'link'=>'','type'=>'misc');
             $navigation = build_navigation($navlinks);
-            print_header("$site->shortname: $strcategories", $strcourses, $navigation, '', '', true, update_categories_button());
+            print_header("$site->shortname: $strcategories", $strcourses, $navigation, '', '', true, update_category_button());
             print_heading($strcategories);
             echo skip_main_destination();
             print_box_start('categorybox');
@@ -69,45 +66,44 @@
             $strfulllistofcourses = get_string('fulllistofcourses');
             print_header("$site->shortname: $strfulllistofcourses", $strfulllistofcourses,
                     build_navigation(array(array('name'=>$strfulllistofcourses, 'link'=>'','type'=>'misc'))),
-                         '', '', true, update_categories_button());
+                         '', '', true, update_category_button());
             echo skip_main_destination();
             print_box_start('courseboxes');
             print_courses(0);
             print_box_end();
         }
 
-        /// I am not sure this context in the next has_capability call is correct.
-        if (isloggedin() and !isguest() and !has_capability('moodle/course:create', $sysctx) and $CFG->enablecourserequests) {  // Print link to request a new course
+        echo '<div class="buttons">';
+        if ($CFG->enablecourserequests and isloggedin() and !isguest() and !has_capability('moodle/course:create', $systemcontext)) {
+        /// Print link to request a new course
             print_single_button('request.php', NULL, get_string('courserequest'), 'get');
         }
-        if (has_capability('moodle/course:create', $sysctx)) {       // Print link to create a new course
+        if (has_capability('moodle/course:create', $systemcontext)) {
+        /// Print link to create a new course
         /// Get the 1st available category
-            $options = array('category' => get_field('course_categories', 'id', 'parent', '0'));
+            $options = array('category' => $CFG->defaultrequestcategory);
             print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
         }
-        if (has_capability('moodle/site:approvecourse', $sysctx)  and !empty($CFG->enablecourserequests)) {
+        if (has_capability('moodle/site:approvecourse', $systemcontext) and !empty($CFG->enablecourserequests)) {
             print_single_button('pending.php',NULL, get_string('coursespending'),'get');
         }
+        echo '</div>';
         print_footer();
         exit;
     }
+/// Everything else is editing on mode.
 
-/// From now on is all the admin/course creator functions
-
-/// Delete a category if necessary
-
+/// Delete a category.
     if (!empty($delete) and confirm_sesskey()) {
-        require_once('delete_category_form.php');
-
         if (!$deletecat = get_record('course_categories', 'id', $delete)) {
             error('Incorrect category id', 'index.php');
         }
+        $context = get_context_instance(CONTEXT_COURSECAT, $delete);
+        require_capability('moodle/category:manage', $context);
+        require_capability('moodle/category:manage', get_category_or_system_context($deletecat->parent));
 
         $heading = get_string('deletecategory', '', format_string($deletecat->name));
-
-        $context = get_context_instance(CONTEXT_COURSECAT, $delete);
-        require_capability('moodle/category:delete', $context);
-
+        require_once('delete_category_form.php');
         $mform = new delete_category_form(null, $deletecat);
         $mform->set_data(array('delete'=>$delete));
 
@@ -124,7 +120,7 @@
                         'generalbox boxwidthnormal boxaligncenter');
             }
             $mform->display();
-            print_footer();
+            admin_externalpage_print_footer();
             exit();
         }
 
@@ -137,16 +133,20 @@
             category_delete_move($deletecat, $data->newparent, true);
         }
 
+        // If we deleted $CFG->defaultrequestcategory, make it point somewhere else.
+        if ($delete == $CFG->defaultrequestcategory) {
+            set_config('defaultrequestcategory', get_field('course_categories', 'MIN(id)', 'parent', 0));
+        }
+
         print_continue('index.php');
 
-        print_footer();
+        admin_externalpage_print_footer();
         die;
     }
 
 /// Print headings
     print_category_edit_header();
     print_heading($strcategories);
-
 
 /// Create a default category if necessary
     if (!$categories = get_categories()) {    /// No category yet!
@@ -160,20 +160,19 @@
         mark_context_dirty('/'.SYSCONTEXTID);
     }
 
-
 /// Move a category to a new parent if required
-
-    if (!empty($move) and ($moveto>=0) and confirm_sesskey()) {
-        if ($tempcat = get_record('course_categories', 'id', $move)) {
-            if ($tempcat->parent != $moveto) {
-                $newp = get_record('course_categories', 'id', $moveto);
-                if (! move_category($tempcat, $newp)) {
+    if (!empty($move) and ($moveto >= 0) and confirm_sesskey()) {
+        if ($cattomove = get_record('course_categories', 'id', $move)) {
+            require_capability('moodle/category:manage', get_category_or_system_context($cattomove->parent));
+            if ($cattomove->parent != $moveto) {
+                $newparent = get_record('course_categories', 'id', $moveto);
+                require_capability('moodle/category:manage', get_category_or_system_context($moveto));
+                if (!move_category($cattomove, $newparent)) {
                     notify('Could not update that category!');
                 }
             }
         }
     }
-
 
 /// Hide or show a category
     if ((!empty($hide) or !empty($show)) and confirm_sesskey()) {
@@ -184,6 +183,7 @@
             $tempcat = get_record('course_categories', 'id', $show);
             $visible = 1;
         }
+        require_capability('moodle/category:manage', get_category_or_system_context($tempcat->parent));
         if ($tempcat) {
             if (! set_field('course_categories', 'visible', $visible, 'id', $tempcat->id)) {
                 notify('Could not update that category!');
@@ -194,15 +194,13 @@
         }
     }
 
-
 /// Move a category up or down
-
     if ((!empty($moveup) or !empty($movedown)) and confirm_sesskey()) {
-
         $swapcategory = NULL;
         $movecategory = NULL;
 
         if (!empty($moveup)) {
+            require_capability('moodle/category:manage', get_context_instance(CONTEXT_COURSECAT, $moveup));
             if ($movecategory = get_record('course_categories', 'id', $moveup)) {
                 $categories = get_categories($movecategory->parent);
 
@@ -216,6 +214,7 @@
             }
         }
         if (!empty($movedown)) {
+            require_capability('moodle/category:manage', get_context_instance(CONTEXT_COURSECAT, $movedown));
             if ($movecategory = get_record('course_categories', 'id', $movedown)) {
                 $categories = get_categories($movecategory->parent);
 
@@ -256,7 +255,6 @@
     fix_course_sortorder();
 
 /// Print out the categories with all the knobs
-
     $strcategories = get_string('categories');
     $strcourses = get_string('courses');
     $strmovecategoryto = get_string('movecategoryto');
@@ -266,7 +264,7 @@
     $parentlist = array();
 
     $displaylist[0] = get_string('top');
-    make_categories_list($displaylist, $parentlist, '');
+    make_categories_list($displaylist, $parentlist);
 
     echo '<table class="generalbox editcourse boxaligncenter"><tr class="header">';
     echo '<th class="header" scope="col">'.$strcategories.'</th>';
@@ -281,52 +279,39 @@
 
     echo '<div class="buttons">';
 
-    if (!empty($category->id)) {
-        // Print link to create a new course in current category
-        if (has_capability('moodle/course:create', $context)) {
-            $options = array();
-            $options['category'] = $category->id;
-            print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
-        }
-    }else{
-        if (has_capability('moodle/course:create', $sysctx)) {
-            // print create course link to first category
-            $options = array();
-            $options = array('category' => get_field('course_categories', 'id', 'parent', '0'));
-            print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
-        }
+    if (has_capability('moodle/course:create', $systemcontext)) {
+        // print create course link to first category
+        $options = array();
+        $options = array('category' => $CFG->defaultrequestcategory);
+        print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
     }
 
     // Print button for creating new categories
-    if (has_capability('moodle/category:create', $context)) {
-        unset($options);
-        if (!empty($category->id)) {
-            $options['id'] = $category->id;
-        } else {
-            $options['id'] = 0;
-        }
-        $options['categoryadd'] = 1;
+    if (has_capability('moodle/category:manage', $systemcontext)) {
+        $options = array();
+        $options['parent'] = 0;
         print_single_button('editcategory.php', $options, get_string('addnewcategory'), 'get');
     }
 
-    if (has_capability('moodle/site:approvecourse', $sysctx)  and !empty($CFG->enablecourserequests)) {
+    if (has_capability('moodle/site:approvecourse', $systemcontext)  and !empty($CFG->enablecourserequests)) {
         print_single_button('pending.php',NULL, get_string('coursespending'), 'get');
     }
     // admin page does not allow custom buttons in the navigation bar
     echo '<div class="singlebutton">';
-    echo update_categories_button();
+    echo update_category_button();
     echo '</div></div>';
 
-    print_footer();
+    admin_externalpage_print_footer();
 
 function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $up=false, $down=false) {
 /// Recursive function to print all the categories ready for editing
 
     global $CFG, $USER;
 
-    static $str = '';
+    static $str = NULL;
 
-    if (empty($str)) {
+    if (is_null($str)) {
+        $str = new stdClass;
         $str->edit     = get_string('edit');
         $str->delete   = get_string('delete');
         $str->moveup   = get_string('moveup');
@@ -334,9 +319,10 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
         $str->edit     = get_string('editthiscategory');
         $str->hide     = get_string('hide');
         $str->show     = get_string('show');
+        $str->spacer = '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> ';
     }
 
-    if ($category) {
+    if (!empty($category)) {
 
         if (!isset($category->context)) {
             $category->context = get_context_instance(CONTEXT_COURSECAT, $category->id);
@@ -356,17 +342,13 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
 
         echo '<td class="icons">';    /// Print little icons
 
-        if (has_capability('moodle/category:update', $category->context)) {
-            echo '<a title="'.$str->edit.'" href="editcategory.php?id='.$category->id.'&amp;sesskey='.sesskey().'"><img'.
+        if (has_capability('moodle/category:manage', $category->context)) {
+            echo '<a title="'.$str->edit.'" href="editcategory.php?id='.$category->id.'"><img'.
                  ' src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$str->edit.'" /></a> ';
-        }
 
-        if (has_capability('moodle/category:delete', $category->context)) {
             echo '<a title="'.$str->delete.'" href="index.php?delete='.$category->id.'&amp;sesskey='.sesskey().'"><img'.
                  ' src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'.$str->delete.'" /></a> ';
-        }
 
-        if (has_capability('moodle/category:visibility', $category->context)) {
             if (!empty($category->visible)) {
                 echo '<a title="'.$str->hide.'" href="index.php?hide='.$category->id.'&amp;sesskey='.sesskey().'"><img'.
                      ' src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.$str->hide.'" /></a> ';
@@ -374,27 +356,33 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
                 echo '<a title="'.$str->show.'" href="index.php?show='.$category->id.'&amp;sesskey='.sesskey().'"><img'.
                      ' src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.$str->show.'" /></a> ';
             }
-        }
 
-        if ($up) {
-            echo '<a title="'.$str->moveup.'" href="index.php?moveup='.$category->id.'&amp;sesskey='.sesskey().'"><img'.
-                 ' src="'.$CFG->pixpath.'/t/up.gif" class="iconsmall" alt="'.$str->moveup.'" /></a> ';
-        }
-        if ($down) {
-            echo '<a title="'.$str->movedown.'" href="index.php?movedown='.$category->id.'&amp;sesskey='.sesskey().'"><img'.
-                 ' src="'.$CFG->pixpath.'/t/down.gif" class="iconsmall" alt="'.$str->movedown.'" /></a> ';
+            if ($up) {
+                echo '<a title="'.$str->moveup.'" href="index.php?moveup='.$category->id.'&amp;sesskey='.sesskey().'"><img'.
+                     ' src="'.$CFG->pixpath.'/t/up.gif" class="iconsmall" alt="'.$str->moveup.'" /></a> ';
+            } else {
+                echo $str->spacer;
+            }
+            if ($down) {
+                echo '<a title="'.$str->movedown.'" href="index.php?movedown='.$category->id.'&amp;sesskey='.sesskey().'"><img'.
+                     ' src="'.$CFG->pixpath.'/t/down.gif" class="iconsmall" alt="'.$str->movedown.'" /></a> ';
+            } else {
+                echo $str->spacer;
+            }
         }
         echo '</td>';
 
         echo '<td align="left">';
-        $tempdisplaylist = $displaylist;
-        unset($tempdisplaylist[$category->id]);
-        foreach ($parentslist as $key => $parents) {
-            if (in_array($category->id, $parents)) {
-                unset($tempdisplaylist[$key]);
+        if (has_capability('moodle/category:manage', $category->context)) {
+            $tempdisplaylist = $displaylist;
+            unset($tempdisplaylist[$category->id]);
+            foreach ($parentslist as $key => $parents) {
+                if (in_array($category->id, $parents)) {
+                    unset($tempdisplaylist[$key]);
+                }
             }
+            popup_form ("index.php?move=$category->id&amp;sesskey=$USER->sesskey&amp;moveto=", $tempdisplaylist, "moveform$category->id", $category->parent, '', '', '', false);
         }
-        popup_form ("index.php?move=$category->id&amp;sesskey=$USER->sesskey&amp;moveto=", $tempdisplaylist, "moveform$category->id", $category->parent, '', '', '', false);
         echo '</td>';
         echo '</tr>';
     } else {
@@ -424,13 +412,8 @@ function print_category_edit_header() {
     global $CFG;
     global $SITE;
 
-    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
-        require_once($CFG->libdir.'/adminlib.php');
-        admin_externalpage_setup('coursemgmt');
-        admin_externalpage_print_header();
-    } else {
-        print_header("$SITE->shortname:". get_string('categories'), get_string('courses'),
-            build_navigation(array(array('name'=>get_string('categories'),'link'=>'','type'=>'misc'))), '', '', true, update_categories_button());
-    }
+    require_once($CFG->libdir.'/adminlib.php');
+    admin_externalpage_setup('coursemgmt');
+    admin_externalpage_print_header();
 }
 ?>

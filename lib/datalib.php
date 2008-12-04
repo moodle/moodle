@@ -1017,14 +1017,14 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
 
             //
             // Perhaps it's actually visible to $USER
-            // check moodle/category:visibility
+            // check moodle/category:viewhiddencategories
             //
             // The name isn't obvious, but the description says
             // "See hidden categories" so the user shall see...
             // But also check if the allowvisiblecoursesinhiddencategories setting is true, and check for course visibility
             if ($viscat === false) {
                 $catctx = $cats[$courses[$n]->category]->context;
-                if (has_capability('moodle/category:visibility', $catctx, $USER->id)) {
+                if (has_capability('moodle/category:viewhiddencategories', $catctx, $USER->id)) {
                     $vcatpaths[$courses[$n]->categorypath] = true;
                     $viscat = true;
                 } elseif ($CFG->allowvisiblecoursesinhiddencategories && $courses[$n]->visible == true) {
@@ -1235,7 +1235,7 @@ function get_categories($parent='none', $sort=NULL, $shallow=true) {
     if( $rs = get_recordset_sql($sql) ){
         while ($cat = rs_fetch_next_record($rs)) {
             $cat = make_context_subobj($cat);
-            if ($cat->visible || has_capability('moodle/category:visibility',$cat->context)) {
+            if ($cat->visible || has_capability('moodle/category:viewhiddencategories',$cat->context)) {
                 $categories[$cat->id] = $cat;
             }
         }
@@ -2172,7 +2172,7 @@ function print_object($object) {
  *   we'll save a dbquery
  *
  * - If we return false, you'll still need to check if
- *   the user can has the 'moodle/category:visibility'
+ *   the user can has the 'moodle/category:viewhiddencategories'
  *   capability...
  *
  * - Will generate 2 DB calls.
