@@ -2012,7 +2012,21 @@ body#course-info .generalbox.info {
 #my-index .name {
   margin-left: 5px;
 }
-
+#course-pending .pendingcourserequests {
+  margin-bottom: 1em;
+}
+#course-pending .pendingcourserequests .singlebutton {
+  display: inline;
+}
+#course-pending .pendingcourserequests .cell {
+  padding: 0 5px;
+}
+#course-pending .pendingcourserequests .cell.c6 {
+  white-space: nowrap;
+}
+#course-pending .singlebutton {
+  text-align: center;
+}
 .categorylist {
   width: 90%;
   margin-left: auto;
