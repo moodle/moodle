@@ -94,11 +94,9 @@ class mod_quiz_mod_form extends moodleform_mod {
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'attemptshdr', get_string('attempts', 'quiz'));
-        $attemptoptions = array();
-        $attemptoptions[0] = get_string("attemptsunlimited", "quiz");
-        $attemptoptions[1] = "1 ".moodle_strtolower(get_string("attempt", "quiz"));
-        for ($i=2;$i<=6;$i++) {
-            $attemptoptions[$i] = "$i ".moodle_strtolower(get_string("attempts", "quiz"));
+        $attemptoptions = array('0' => get_string('unlimited'));
+        for ($i = 1; $i <= 10; $i++) {
+            $attemptoptions[$i] = $i;
         }
         $mform->addElement('select', 'attempts', get_string("attemptsallowed", "quiz"), $attemptoptions);
         $mform->setHelpButton('attempts', array("attempts", get_string("attemptsallowed","quiz"), "quiz"));
