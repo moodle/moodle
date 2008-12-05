@@ -44,8 +44,17 @@ class dml_test extends UnitTestCase {
      * @param string $tablename the name of the table to create.
      * @return xmldb_table the table object.
      */
-    private function get_test_table($tablename="testtable") {
+    private function get_test_table($tablename="") {
         $dbman = $this->tdb->get_manager();
+
+        if ($tablename === "") {
+            if (defined('OCI_HACKERY')) {
+                static $i = 0;
+                $tablename = "unit_table".$i++;
+            } else {
+                $tablename = "unit_table";
+            }
+        }
 
         $table = new xmldb_table($tablename);
         if ($dbman->table_exists($table)) {
@@ -63,7 +72,7 @@ class dml_test extends UnitTestCase {
         // Correct table placeholder substitution
         $sql = "SELECT * FROM {".$tablename."}";
         $sqlarray = $DB->fix_sql_params($sql);
-        $this->assertEqual("SELECT * FROM {$DB->get_prefix()}testtable", $sqlarray[0]);
+        $this->assertEqual("SELECT * FROM {$DB->get_prefix()}".$tablename, $sqlarray[0]);
 
         // Conversions of all param types
         $sql = array();
@@ -241,8 +250,8 @@ class dml_test extends UnitTestCase {
         $this->tables[$tablename] = $table;
 
         $this->assertTrue($indices = $DB->get_indexes($tablename));
-        $this->assertTrue(count($indices) == 2);
-        // we do not cvare about index names for now
+        $this->assertEqual(count($indices), 2);
+        // we do not care about index names for now
         $first = array_shift($indices);
         $second = array_shift($indices);
         if (count($first['columns']) == 2) {
@@ -1149,7 +1158,7 @@ class dml_test extends UnitTestCase {
         $this->assertEqual($blob, $record->image);
         $this->assertEqual($clob, $DB->get_field($tablename, 'description', array('id' => $id)));
         $this->assertEqual($blob, $DB->get_field($tablename, 'image', array('id' => $id)));
- 
+
     }
 
 

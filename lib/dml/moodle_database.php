@@ -778,13 +778,14 @@ abstract class moodle_database {
      * @throws dml_exception if error
      */
     public function get_recordset_select($table, $select, array $params=null, $sort='', $fields='*', $limitfrom=0, $limitnum=0) {
+        $sql = "SELECT $fields FROM {".$table."}";
         if ($select) {
-            $select = "WHERE $select";
+            $sql .= " WHERE $select";
         }
         if ($sort) {
-            $sort = " ORDER BY $sort";
+            $sql .= " ORDER BY $sort";
         }
-        return $this->get_recordset_sql("SELECT $fields FROM {$this->prefix}$table $select $sort", $params, $limitfrom, $limitnum);
+        return $this->get_recordset_sql($sql, $params, $limitfrom, $limitnum);
     }
 
     /**
