@@ -5,7 +5,8 @@
 if ($hassiteconfig
  or has_capability('moodle/site:backup', $systemcontext)
  or has_capability('moodle/category:manage', $systemcontext)
- or has_capability('moodle/course:create', $systemcontext)) { // speedup for non-admins, add all caps used on this page
+ or has_capability('moodle/course:create', $systemcontext)
+ or has_capability('moodle/site:approvecourse', $systemcontext)) { // speedup for non-admins, add all caps used on this page
 
     $ADMIN->add('courses', new admin_externalpage('coursemgmt', get_string('coursemgmt', 'admin'), $CFG->wwwroot . '/course/index.php?categoryedit=on',
             array('moodle/category:manage', 'moodle/course:create')));
@@ -122,6 +123,12 @@ if ($hassiteconfig
     $temp->add(new admin_setting_configcheckbox('enablecourserequests', get_string('enablecourserequests', 'admin'), get_string('configenablecourserequests', 'admin'), 0));
     $temp->add(new admin_settings_coursecat_select('defaultrequestcategory', get_string('defaultrequestcategory', 'admin'), get_string('configdefaultrequestcategory', 'admin'), 1));
     $ADMIN->add('courses', $temp);
+
+/// Pending course requests.
+    if (!empty($CFG->enablecourserequests)) {
+        $ADMIN->add('courses', new admin_externalpage('coursespending', get_string('pendingrequests'),
+                $CFG->wwwroot . '/course/pending.php', array('moodle/site:approvecourse')));
+    }
 
 /// "backups" settingpage
     if (!empty($CFG->backup_version)) {

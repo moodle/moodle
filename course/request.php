@@ -1,52 +1,73 @@
 <?php  // $Id$
 
-    /// this allows a student to request a course be created for them.
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.org                                            //
+//                                                                       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
 
-    require_once('../config.php');
-    require_once('request_form.php');
+/**
+ * Allows a user to request a course be created for them.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package course
+ *//** */
 
+    require_once(dirname(__FILE__) . '/../config.php');
+    require_once($CFG->dirroot . '/course/request_form.php');
+
+/// Where we came from. Used in a number of redirects.
+    $returnurl = $CFG->wwwroot . '/course/index.php';
+
+/// Check permissions.
     require_login();
-
-    if (isguest()) {
-        print_error("noguest");
+    if (isguestuser()) {
+        print_error('guestsarenotallowed', '', $returnurl);
     }
-
     if (empty($CFG->enablecourserequests)) {
-        print_error('courserequestdisabled');
+        print_error('courserequestdisabled', '', $returnurl);
     }
 
-    $requestform = new course_request_form();
+/// Set up the form.
+    $requestform = new course_request_form($CFG->wwwroot . '/course/request.php');
 
-    $strtitle = get_string('courserequest');
-    $navlinks = array();
-    $navlinks[] = array('name' => $strtitle, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-
-    print_header($strtitle, $strtitle, $navigation, $requestform->focus());
-
-    print_simple_box_start('center');
-    print_string('courserequestintro');
-    print_simple_box_end();
-
-
+/// Standard form processing if statement.
     if ($requestform->is_cancelled()){
+        redirect($returnurl);
 
-        redirect($CFG->wwwroot);
-
-    }elseif ($data = $requestform->get_data()) {
+    } else if ($data = $requestform->get_data()) {
+    /// Record the request.
         $data->requester = $USER->id;
-
-        if ($DB->insert_record('course_request', $data)) {
-            notice(get_string('courserequestsuccess'));
-        } else {
-            notice(get_string('courserequestfailed'));
+        if (!$DB->insert_record('course_request', $data)) {
+            print_error('errorsavingrequest', '', $returnurl);
         }
 
-    } else {
-
-        $requestform->display();
+    /// and redirect back to the course listing.
+        notice(get_string('courserequestsuccess'), $returnurl);
     }
 
+/// Show the request form.
+    $strtitle = get_string('courserequest');
+    print_header($strtitle, $strtitle, build_navigation($strtitle), $requestform->focus());
+    print_heading($strtitle);
+    $requestform->display();
     print_footer();
 
 ?>

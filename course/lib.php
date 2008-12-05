@@ -1967,6 +1967,26 @@ function print_category_info($category, $depth, $showcourses = false) {
 }
 
 /**
+ * Print the buttons relating to course requests.
+ *
+ * @param object $systemcontext the system context.
+ */
+function print_course_request_buttons($systemcontext) {
+    global $CFG, $DB;
+    if (empty($CFG->enablecourserequests)) {
+        return;
+    }
+    if (isloggedin() && !isguestuser() && !has_capability('moodle/course:create', $systemcontext)) {
+    /// Print a button to request a new course
+        print_single_button('request.php', NULL, get_string('requestcourse'), 'get');
+    }
+    /// Print a button to manage pending requests
+    if (has_capability('moodle/site:approvecourse', $systemcontext)) {
+        print_single_button('pending.php', NULL, get_string('coursespending'), 'get', '_self', false, '', !$DB->record_exists('course_request', array()));
+    }
+}
+
+/**
  * Prints the turn editing on/off button on course/index.php or course/category.php.
  *
  * @param integer $categoryid The id of the category we are showing, or 0 for system context.

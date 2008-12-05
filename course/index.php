@@ -74,19 +74,13 @@
         }
 
         echo '<div class="buttons">';
-        if ($CFG->enablecourserequests and isloggedin() and !isguest() and !has_capability('moodle/course:create', $systemcontext)) {
-        /// Print link to request a new course
-            print_single_button('request.php', NULL, get_string('courserequest'), 'get');
-        }
         if (has_capability('moodle/course:create', $systemcontext)) {
         /// Print link to create a new course
         /// Get the 1st available category
             $options = array('category' => $CFG->defaultrequestcategory);
             print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
         }
-        if (has_capability('moodle/site:approvecourse', $systemcontext) and !empty($CFG->enablecourserequests)) {
-            print_single_button('pending.php',NULL, get_string('coursespending'),'get');
-        }
+        print_course_request_buttons($systemcontext);
         echo '</div>';
         print_footer();
         exit;
@@ -262,9 +256,7 @@
         print_single_button('editcategory.php', $options, get_string('addnewcategory'), 'get');
     }
 
-    if (has_capability('moodle/site:approvecourse', $systemcontext)  and !empty($CFG->enablecourserequests)) {
-        print_single_button('pending.php',NULL, get_string('coursespending'), 'get');
-    }
+    print_course_request_buttons($systemcontext);
     // admin page does not allow custom buttons in the navigation bar
     echo '<div class="singlebutton">';
     echo update_category_button();

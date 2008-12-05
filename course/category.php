@@ -437,6 +437,10 @@
         $options['category'] = $category->id;
         print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
     }
+
+    if (!empty($CFG->enablecourserequests) && $category->id == $CFG->enablecourserequests) {
+        print_course_request_buttons(get_context_instance(CONTEXT_SYSTEM));
+    }
     echo '</div>';
 
     print_course_search();
