@@ -85,12 +85,10 @@
     $yesnooptions = array();
     $yesnooptions[0] = get_string("no");
     $yesnooptions[1] = get_string("yes");
-    
-    $attemptoptions = array();
-    $attemptoptions[0] = get_string("attemptsunlimited", "quiz");
-    $attemptoptions[1] = "1 ".strtolower(get_string("attempt", "quiz"));
-    for ($i=2;$i<=6;$i++) {
-        $attemptoptions[$i] = "$i ".strtolower(get_string("attempts", "quiz"));
+
+    $attemptoptions = array('0' => get_string('unlimited'));
+    for ($i = 1; $i <= 10; $i++) {
+        $attemptoptions[$i] = $i;
     }
 
     //enforced time delay between quiz attempts add-on
