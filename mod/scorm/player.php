@@ -46,10 +46,10 @@
     $strexit = get_string('exitactivity','scorm');
 
     $navlinks = array();
-    
+
     if ($course->id != SITEID) {
         if ($scorms = get_all_instances_in_course('scorm', $course)) {
-            // The module SCORM/AICC activity with the first id is the course  
+            // The module SCORM/AICC activity with the first id is the course
             $firstscorm = current($scorms);
             if (!(($course->format == 'scorm') && ($firstscorm->id == $scorm->id))) {
                 $navlinks[] = array('name' => $strscorms, 'link' => "index.php?id=$course->id", 'type' => 'activity');
@@ -61,7 +61,7 @@
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE,$course->id))) {
         $navlinks[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
         $navigation = build_navigation($navlinks);
-        
+
         print_header($pagetitle, $course->fullname, $navigation,
                  '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false);
         notice(get_string("activityiscurrentlyhidden"));
@@ -125,7 +125,7 @@
     }
 
     add_to_log($course->id, 'scorm', 'view', "player.php?id=$cm->id&scoid=$sco->id", "$scorm->id", $cm->id);
-    
+
 
     $scoidstr = '&amp;scoid='.$sco->id;
     $scoidpop = '&scoid='.$sco->id;
@@ -153,21 +153,21 @@
     $navlinks[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
     $navigation = build_navigation($navlinks);
     $exitlink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$scorm->course.'" title="'.$strexit.'">'.$strexit.'</a> ';
-    
+
     print_header($pagetitle, $course->fullname,
                  $navigation,
                  '', '', true, $exitlink.update_module_button($cm->id, $course->id, $strscorm), '', false, $bodyscript);
     //if ($sco->scormtype == 'sco') {
 ?>
     <script type="text/javascript" src="request.js"></script>
-    <script type="text/javascript" src="api.php?id=<?php echo $cm->id.$scoidstr.$modestr.$attemptstr ?>"></script>
+    <script type="text/javascript" src="loaddatamodel.php?id=<?php echo $cm->id.$scoidstr.$modestr.$attemptstr ?>"></script>
     <script type="text/javascript" src="<?php echo $CFG->wwwroot; ?>/mod/scorm/rd.js"></script>
     <script type="text/javascript">
-    <!--    
+    <!--
         window.onresize = function() {
             scorm_resize(<?php echo $scorm->width.", ".$scorm->height; ?>);
         };
-    -->  
+    -->
     </script>
 <?php
     //}
@@ -185,7 +185,7 @@
     }
 ?>
     <div id="scormpage">
-<?php  
+<?php
     if ($scorm->hidetoc == 0) {
 ?>
         <div id="tocbox">
@@ -241,13 +241,13 @@
                    (
                        ($sco->previd != 0) &&  // This is not the first learning object of the package
                        ((!isset($sco->previous)) || ($sco->previous == 0))   // Moodle must manage the previous link
-                   ) || 
+                   ) ||
                    (
                        ($sco->nextid != 0) &&  // This is not the last learning object of the package
                        ((!isset($sco->next)) || ($sco->next == 0))       // Moodle must manage the next link
-                   ) 
+                   )
                )
-           ) || ($scorm->hidetoc == 2)      // Teacher want to display toc in a small dropdown menu 
+           ) || ($scorm->hidetoc == 2)      // Teacher want to display toc in a small dropdown menu
        ) {
 ?>
             <div id="scormtop">
@@ -285,7 +285,7 @@
         ?>
                 </div>
 <?php
-        } 
+        }
 ?>
             </div> <!-- Scormtop -->
 <?php
@@ -303,7 +303,7 @@
         if ($scorm->popup == 0) {
             echo "                <script type=\"text/javascript\">scorm_resize(".$scorm->width.", ".$scorm->height.");</script>\n";
             $fullurl="loadSCO.php?id=".$cm->id.$scoidstr.$modestr;
-            echo "                <iframe id=\"scoframe1\" class=\"scoframe\" name=\"scoframe1\" src=\"{$fullurl}\"></iframe>\n";   
+            echo "                <iframe id=\"scoframe1\" class=\"scoframe\" name=\"scoframe1\" src=\"{$fullurl}\"></iframe>\n";
         } else {
             // Clean the name for the window as IE is fussy
             $name = ereg_replace("[^A-Za-z0-9]", "", $scorm->name);
@@ -321,7 +321,7 @@
                             if ((width==100) && (height==100)) {
                                 // Fullscreen
                                 windowobj.moveTo(0,0);
-                            } 
+                            }
                             if (width<=100) {
                                 width = Math.round(screen.availWidth * width / 100);
                             }
@@ -343,10 +343,10 @@
                     <iframe id="main" class="scoframe" src="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr ?>">
                     </iframe>
                     </noscript>
-<?php            
+<?php
             //Added incase javascript popups are blocked
             $link = '<a href="'.$CFG->wwwroot.'/mod/scorm/loadSCO.php?id='.$cm->id.$scoidstr.$modestr.'" target="new">'.get_string('popupblockedlinkname','scorm').'</a>';
-            print_simple_box(get_string('popupblocked','scorm',$link),'center');         
+            print_simple_box(get_string('popupblocked','scorm',$link),'center');
         }
     } else {
         print_simple_box(get_string('noprerequisites','scorm'),'center');
