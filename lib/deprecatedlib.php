@@ -682,7 +682,7 @@ function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=''
                                      {$CFG->prefix}role_assignments ra on u.id=ra.userid INNER JOIN
                                      {$CFG->prefix}role_capabilities rc ON ra.roleid=rc.roleid INNER JOIN
                                      {$CFG->prefix}context c ON c.id=ra.contextid LEFT OUTER JOIN
-                                     {$CFG->prefix}user_lastaccess ul on ul.userid=ra.userid
+                                     {$CFG->prefix}user_lastaccess ul on ul.userid=ra.userid AND ul.courseid = $courseid
                                      $groupmembers
                                 WHERE $select $search $sort $dir", $page, $recordsperpage);
 
