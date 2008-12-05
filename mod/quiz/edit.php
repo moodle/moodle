@@ -168,8 +168,7 @@ add_to_log($cm->course, 'quiz', 'editquestions',
 //this page.
 require_capability('mod/quiz:manage', $contexts->lowest());
 
-if (isset($quiz->instance)
-&& empty($quiz->grades)){  // Construct an array to hold all the grades.
+if (isset($quiz->instance) && empty($quiz->grades)){  // Construct an array to hold all the grades.
     $quiz->grades = quiz_get_all_question_grades($quiz);
 }
 
@@ -387,9 +386,8 @@ if ((($deleteemptypage = optional_param('deleteemptypage', false, PARAM_INT))
             array('id' => $quiz->instance))) {
         print_error('cannotsavequestion', 'quiz');
     }
-
-
 }
+
 $deletequestions=array();
 if($quizdeleteselected=optional_param('quizdeleteselected',false)){
     $rawgrades = (array) data_submitted();
@@ -400,7 +398,6 @@ if($quizdeleteselected=optional_param('quizdeleteselected',false)){
         }
     }
 }
-
 
 if ( (($delete = optional_param('delete', false, PARAM_INT)) !== false OR
         !empty($deletequestions)) and confirm_sesskey() ) {
@@ -447,8 +444,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) and confirm_sesskey()) {
             /// Parse input for question -> grades
             $key = $matches[1];
             $quiz->grades[$key] = $value;
-            quiz_update_question_instance($quiz->grades[$key], $key,
-            $quiz->instance);
+            quiz_update_question_instance($quiz->grades[$key], $key, $quiz->instance);
 
         } elseif (preg_match('!^o([0-9]+)$!', $key, $matches)) {
             /// Parse input for ordering info
@@ -461,6 +457,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) and confirm_sesskey()) {
                 $value++;
             }
             $questions[$value] = $oldquestions[$key];
+
         } elseif (preg_match('!^s([0-9]+)$!', $key, $matches)){
             // Parse input for selected questions
             // (add new pages after questions in quiz)
@@ -540,6 +537,7 @@ if ($significantchangemade) {
             quiz_delete_attempt($attempt, $quiz);
         }
     }
+    quiz_update_sumgrades($quiz);
     redirect($qcobject->pageurl->out());
 }
 
@@ -696,28 +694,20 @@ if($quiz_reordertool){
     echo ' <input type="submit" name="repaginate" value="'. $gostring .'" '.$repaginatingdisabledhtml.' />';
     echo '</div></fieldset></form></div></div>';
 }
-ob_start();
-$sumgrades = quiz_print_question_list($quiz, $thispageurl, true,
-        $quiz_reordertool, $quiz_qbanktool, $quiz_has_attempts);
-
-if (!$DB->set_field('quiz', 'sumgrades', $sumgrades, array('id' => $quiz->instance))) {
-    print_error('cannotsetsumgrades', 'quiz');
-}
-
-$question_list=ob_get_contents();
-ob_end_clean();
 $tabindex=0;
 
 if(!$quiz_reordertool){
-    quiz_print_grading_form($quiz,$thispageurl,$tabindex);
+    quiz_print_grading_form($quiz, $thispageurl, $tabindex);
 }
-quiz_print_status_bar($quiz,$sumgrades);
+quiz_print_status_bar($quiz);
 ?>
 <div class="<?php echo $currenttab; ?>">
-<?php echo $question_list; ?>
+<?php quiz_print_question_list($quiz, $thispageurl, true,
+        $quiz_reordertool, $quiz_qbanktool, $quiz_has_attempts); ?>
 </div>
 <?php
-//close <div class="quizcontents">:
+
+// Close <div class="quizcontents">:
 echo '</div>';
 
 if(!$quiz_reordertool){

@@ -1515,14 +1515,13 @@ function quiz_print_grading_form($quiz, $pageurl, $tabindex){
  * Print the status bar
  *
  * @param object $quiz The quiz object of the quiz in question
- * @param integer $sumgrades The sum of the grades of the quiz to display
  */
 
-function quiz_print_status_bar($quiz,$sumgrades){
+function quiz_print_status_bar($quiz){
     global $CFG;
     $numberofquestions=quiz_number_of_questions_in_quiz($quiz->questions);
     ?><div class="statusdisplay"><span class="totalpoints">
-    <?php echo get_string("totalpointsx","quiz",$sumgrades) ?></span>
+    <?php echo get_string('totalpointsx', 'quiz', quiz_format_grade($quiz, $quiz->sumgrades)) ?></span>
     | <span class="numberofquestions">
     <?php
     echo get_string("numquestionsx","quiz",$numberofquestions);

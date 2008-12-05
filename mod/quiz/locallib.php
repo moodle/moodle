@@ -359,12 +359,11 @@ function quiz_print_navigation_panel($page, $pages) {
 
 /**
  * Creates an array of maximum grades for a quiz
- *
  * The grades are extracted from the quiz_question_instances table.
- * @return array        Array of grades indexed by question id
- *                      These are the maximum possible grades that
- *                      students can achieve for each of the questions
+ * 
  * @param integer $quiz The quiz object
+ * @return array Array of grades indexed by question id. These are the maximum
+ *      possible grades that students can achieve for each of the questions.
  */
 function quiz_get_all_question_grades($quiz) {
     global $CFG, $DB;
@@ -399,7 +398,25 @@ function quiz_get_all_question_grades($quiz) {
     return $grades;
 }
 
-
+/**
+ * Update the sumgrades field of the quiz. This needs to be called whenever
+ * the grading structure of the quiz is changed. For example if a question is
+ * added or removed, or a question weight is changed.
+ *
+ * @param object $quiz a quiz.
+ */
+function quiz_update_sumgrades($quiz) {
+    global $DB;
+    $grades = quiz_get_all_question_grades($quiz);
+    $sumgrades = 0;
+    foreach ($grades as $grade) {
+        $sumgrades += $grade;
+    }
+    if (!isset($quiz->sumgrades) || $quiz->sumgrades != $sumgrades) {
+        $DB->set_field('quiz', 'sumgrades', $sumgrades, array('id' => $quiz->id));
+        $quiz->sumgrades = $sumgrades;
+    }
+}
 
 /**
  * Convert the raw grade stored in $attempt into a grade out of the maximum
