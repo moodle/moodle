@@ -43,7 +43,7 @@ class group_form extends moodleform {
     }
 
     function validation($data, $files) {
-        global $COURSE;
+        global $COURSE, $CFG;
 
         $errors = parent::validation($data, $files);
 
@@ -52,6 +52,14 @@ class group_form extends moodleform {
             if ($group->name != $name) {
                 if (groups_get_group_by_name($COURSE->id,  $name)) {
                     $errors['name'] = get_string('groupnameexists', 'group', $name);
+                }
+            }
+
+            if (!empty($CFG->enrol_manual_usepasswordpolicy) and $data['enrolmentkey'] != '' and $group->enrolmentkey !== $data['enrolmentkey']) {
+                // enforce password policy only if changing password
+                $errmsg = '';
+                if (!check_password_policy($data['enrolmentkey'], $errmsg)) {
+                    $errors['enrolmentkey'] = $errmsg;
                 }
             }
 
