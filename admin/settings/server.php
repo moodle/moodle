@@ -211,7 +211,10 @@ $temp->add(new admin_setting_configselect('loglifetime', get_string('loglifetime
                                                                                                                                                 120 => get_string('numdays', '', 120),
                                                                                                                                                 90 => get_string('numdays', '', 90),
                                                                                                                                                 60 => get_string('numdays', '', 60),
-                                                                                                                                                35 => get_string('numdays', '', 35))));
+                                                                                                                                                35 => get_string('numdays', '', 35),
+                                                                                                                                                10 => get_string('numdays', '', 10),
+                                                                                                                                                5 => get_string('numdays', '', 5),
+                                                                                                                                                2 => get_string('numdays', '', 2))));
 
 
 $temp->add(new admin_setting_configcheckbox('disablegradehistory', get_string('disablegradehistory', 'grades'),
