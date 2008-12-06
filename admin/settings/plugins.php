@@ -159,5 +159,6 @@ foreach (get_list_of_plugins($CFG->admin.'/report') as $plugin) {
         continue;
     }
     // old style 3rd party plugin without settings.php
-    $ADMIN->add('reports', new admin_externalpage('report'.$plugin, $plugin, $index_path, 'moodle/site:viewreports'));
+    $www_path = "$CFG->wwwroot/$CFG->admin/report/$plugin/index.php";
+    $ADMIN->add('reports', new admin_externalpage('report'.$plugin, $plugin, $www_path, 'moodle/site:viewreports'));
 }
