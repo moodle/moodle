@@ -11,6 +11,8 @@ $string['description'] = 'This is the default form of enrolment. There are two m
 </ul>';
 $string['enrolmentkeyerror'] = 'That enrolment key was incorrect, please try again.';
 $string['enrolname'] = 'Internal Enrolment';
+$string['enrol_manual_requirekey'] = 'Require course enrolment keys in new courses and prevent removing of existing keys.';
 $string['enrol_manual_showhint'] = 'Enable this setting to reveal the first character of the enrolment key as a hint if one enters an incorrect key.';
+$string['enrol_manual_usepasswordpolicy'] = 'Use current user password policy for course enrolment keys.';
 $string['keyholderrole' ] = 'The role of the user that holds the enrolment key for a course. Displayed to students attempting to enrol on the course.';
 ?>

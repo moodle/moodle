@@ -322,6 +322,13 @@ class course_edit_form extends moodleform {
         $mform->setDefault('enrolpassword', $courseconfig->enrolpassword);
         $mform->setType('enrolpassword', PARAM_RAW);
 
+        if (empty($course) or ($course->password !== '' and $course->id != SITEID)) {
+            // do not require password in existing courses that do not have password yet - backwards compatibility ;-)
+            if (!empty($CFG->enrol_manual_requirekey)) {
+                $mform->addRule('enrolpassword', get_string('required'), 'required', null, 'client');
+            }
+        }
+
         $choices = array();
         $choices['0'] = get_string('guestsno');
         $choices['1'] = get_string('guestsyes');
@@ -451,7 +458,7 @@ class course_edit_form extends moodleform {
 
 /// perform some extra moodle validation
     function validation($data, $files) {
-        global $DB;
+        global $DB, $CFG;
 
         $errors = parent::validation($data, $files);
         if ($foundcourses = $DB->get_records('course', array('shortname'=>$data['shortname']))) {
@@ -470,6 +477,17 @@ class course_edit_form extends moodleform {
         if (empty($data['enrolenddisabled'])){
             if ($data['enrolenddate'] <= $data['enrolstartdate']){
                 $errors['enroldateendgrp'] = get_string('enrolenddaterror');
+            }
+        }
+
+        if (!empty($CFG->enrol_manual_usepasswordpolicy) and isset($data['enrolpassword']) and $data['enrolpassword'] != '') {
+            $course = $this->_customdata['course'];
+            if ($course->password !== $data['enrolpassword']) {
+                // enforce password policy only if changing password - backwards compatibility
+                $errmsg = '';
+                if (!check_password_policy($data['enrolpassword'], $errmsg)) {
+                    $errors['enrolpassword'] = $errmsg;
+                }
             }
         }
 

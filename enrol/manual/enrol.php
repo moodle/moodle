@@ -224,6 +224,14 @@ function config_form($frm) {
         $frm->enrol_manual_showhint = 1;
     }
 
+    if (!isset($frm->enrol_manual_usepasswordpolicy)) {
+        $frm->enrol_manual_usepasswordpolicy = 0;
+    }
+
+    if (!isset($frm->enrol_manual_requirekey)) {
+        $frm->enrol_manual_requirekey = 0;
+    }
+
     include ("$CFG->dirroot/enrol/manual/config.html");
 }
 
