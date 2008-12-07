@@ -75,6 +75,12 @@ $string['databasecreationsettingssub'] = '<b>Type&nbsp;:</b> réglé sur «&nbsp
 <b>Utilisateur&nbsp;:</b> réglé sur «&nbsp;root&nbsp;» par l\'installeur<br />
 <b>Mot de passe&nbsp;:</b> le mot de passe de la base de données<br />
 <b>Préfixe des tables&nbsp;:</b> le préfixe à utiliser pour les noms de toutes les tables (facultatif)';
+$string['databasecreationsettingssub2'] = '<b>Type&nbsp;:</b> réglé sur «&nbsp;mysqli&nbsp;» par l\'installeur<br />
+<b>Serveur&nbsp;:</b> réglé sur «&nbsp;localhost&nbsp;» par l\'installeur<br />
+<b>Nom&nbsp;:</b> nom de la base de données, par exemple «&nbsp;moodle&nbsp;»<br />
+<b>Utilisateur&nbsp;:</b> réglé sur «&nbsp;root&nbsp;» par l\'installeur<br />
+<b>Mot de passe&nbsp;:</b> le mot de passe de la base de données<br />
+<b>Préfixe des tables&nbsp;:</b> le préfixe à utiliser pour les noms de toutes les tables (facultatif)';
 $string['databasehost'] = 'Serveur de base de données :';
 $string['databasename'] = 'Nom de la base de données :';
 $string['databasepass'] = 'Mot de passe de la base de données :';
@@ -280,7 +286,7 @@ $string['releasenoteslink'] = 'Pour des informations sur cette version de Moodle
 $string['remotedownloaderror'] = 'Le téléchargement de composants sur votre serveur a échoué. Veuillez vérifier les réglages de proxy. L\'extension cURL de PHP est vivement recommandée.<br /><br />Vous devez télécharger manuellement le fichier <a href=\"$a->url\">$a->url</a>, le copier sur votre serveur à l\'emplacement «&nbsp;$a->dest&nbsp;» et le décompresser à cet endroit';
 $string['remotedownloadnotallowed'] = 'Le téléchargement de composants sur votre serveur n\'est pas autorisé (l\'option allow_url_fopen est désactivée).<br /><br />Vous devez télécharger manuellement le fichier <a href=\"$a->url\">$a->url</a>, le copier vers «&nbsp;$a->dest&nbsp;» dans votre serveur et le décompresser';
 $string['report'] = 'Rapport';
-$string['requiredentrieschanged'] = '<strong>IMPORTANT&nbsp;!</strong><br/>En raison de la correction d\'un bogue, le comportement des bases de données qui utilisent les réglages «&nbsp;Fiches requises&nbsp;» et «&nbsp;Fiches requises avant consultation&nbsp;» est modifié. Une explication détaillée des changements peut être lue dans le <a href=\"http://moodle.org/mod/forum/discuss.php?d=110928\">forum dédié au module Base de données (en anglais)</a> et <a href=\"http://docs.moodle.org/en/Adding/editing_a_database#Required_entries\">Moodle Docs (en anglais pour l\'instant)</a>.<br/><br/>Cette modification a un impact sur les bases de données suivantes de votre Moodle&nbsp;: (veuillez Enregistrer cette liste maintenant et, une fois la mise à jour effectuée, vérifier que ces activités continuent de fonctionner de la façon désirée par l\'enseignant.)<br/><strong style=\"color:red\">$a->text</strong><br/>';
+$string['requiredentrieschanged'] = '<strong>IMPORTANT&nbsp;!<br />(Ce message d\'avertissement ne sera affiché que durant cette mise à jour.)</strong><br/>En raison de la correction d\'un bogue, le comportement des bases de données qui utilisent les réglages «&nbsp;Fiches requises&nbsp;» et «&nbsp;Fiches requises avant consultation&nbsp;» est modifié. Une explication détaillée des changements peut être lue dans le <a href=\"http://moodle.org/mod/forum/discuss.php?d=110928\" target=\"_blank\">forum dédié au module Base de données (en anglais)</a> et <a href=\"http://docs.moodle.org/en/Adding/editing_a_database#Required_entries\" target=\"_blank\">Moodle Docs (en anglais pour l\'instant)</a>.<br/><br/>Cette modification a un impact sur les bases de données suivantes de votre Moodle&nbsp;: (veuillez Enregistrer cette liste maintenant et, une fois la mise à jour effectuée, vérifier que ces activités continuent de fonctionner de la façon désirée par l\'enseignant.)<br/><strong style=\"color:red\">$a->text</strong><br/>';
 $string['restricted'] = 'Interdit';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle risque de rencontrer des problèmes lorsque le mode «&nbsp;safe mode&nbsp;» est activé';
