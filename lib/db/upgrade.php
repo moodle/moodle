@@ -1109,7 +1109,20 @@ function xmldb_main_upgrade($oldversion) {
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2008112400);
     }
-    
+
+    if ($result && $oldversion < 2008120700) {
+
+    /// Changing precision of field shortname on table course_request to (100)
+        $table = new xmldb_table('course_request');
+        $field = new xmldb_field('shortname', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, null, null, 'fullname');
+
+    /// Launch change of precision for field shortname
+        $dbman->change_field_precision($table, $field);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008120700);
+    }
+
     
     return $result;
 }
