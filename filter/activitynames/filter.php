@@ -50,12 +50,14 @@
                     //Exclude labels, hidden activities and activities for group members only 
                     if ($activity->mod != "label" and $activity->visible and empty($activity->groupmembersonly)) {
                         $title = s(trim(strip_tags(urldecode($activity->name))));
+                        $currentname = trim(urldecode($activity->name));
+                        $entitisedname  = s($currentname);
                         /// Avoid empty or unlinkable activity names
                         if (!empty($title)) {
                             $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/$activity->mod/view.php?id=$activity->cm\" $CFG->frametarget>";
-                            $currentname = urldecode($activity->name);
-                            if ($currentname = trim($currentname)) {
-                                $activitylist[] = new filterobject($currentname, $href_tag_begin, '</a>', false, true);
+                            $activitylist[] = new filterobject($currentname, $href_tag_begin, '</a>', false, true);
+                            if ($currentname != $entitisedname) { /// If name has some entity (&amp; &quot; &lt; &gt;) add that filter too. MDL-17545
+                                $activitylist[] = new filterobject($entitisedname, $href_tag_begin, '</a>', false, true);
                             }
                         }
                     }
