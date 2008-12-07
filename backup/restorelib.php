@@ -3398,7 +3398,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $group_member->userid = $user->new_id;
 
             //The structure is equal to the db, so insert the groups_members
-            if (!insert_record ("groups_members", $group_member)) {
+            if (record_exists("groups_members", 'groupid', $group_member->groupid, 'userid', $group_member->userid)) {
+                // user already member
+            } else if (!insert_record ("groups_members", $group_member)) {
                 $status = false;
                 continue;
             }
