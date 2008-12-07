@@ -56,11 +56,11 @@
 
     if ($sco->scormtype == 'asset') {
        $attempt = scorm_get_last_attempt($scorm->id,$USER->id);
-       $element = $scorm->version == 'scorm_13'?'cmi.completion_status':'cmi.core.lesson_status';
+       $element = ($scorm->version == 'scorm_13' || $scorm->version == 'SCORM_1.3') ?'cmi.completion_status':'cmi.core.lesson_status';
        $value = 'completed';
        $result = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $element, $value);
     }
-    
+
     //
     // Forge SCO URL
     //
@@ -76,7 +76,7 @@
             $sco->parameters = substr($sco->parameters,1);
         }
     }
-    
+
     if ($version == 'AICC') {
         if (isset($sco->parameters) && (!empty($sco->parameters))) {
             $sco->parameters = '&'. $sco->parameters;
@@ -89,7 +89,7 @@
             $launcher = $sco->launch;
         }
     }
-    
+
     if (scorm_external_link($sco->launch)) {
         // Remote learning activity
         $result = $launcher;
@@ -113,38 +113,81 @@
             $result = $CFG->wwwroot.'/file.php/'.$scorm->course.'/'.$basedir.'/'.$launcher;
         }
     }
-    
+
     $scormpixdir = $CFG->modpixpath.'/scorm/pix';
+
+    // which API are we looking for
+    $LMS_api = ($scorm->version == 'scorm_12' || $scorm->version == 'SCORM_1.2' || empty($scorm->version)) ? 'API' : 'API_1484_11';
 ?>
 <html>
     <head>
         <title>LoadSCO</title>
         <script type="text/javascript">
         //<![CDATA[
-        function doredirect() {
-            var e = document.getElementById("countdown");
-            var cSeconds = parseInt(e.innerHTML);
-            var timer = setInterval(function() {
-                                            if( cSeconds ) {
-                                                e.innerHTML = --cSeconds;
-                                            } else {
-                                                clearInterval(timer);
-                                                document.body.innerHTML = "<?php echo get_string('activitypleasewait', 'scorm');?>";
-                                                location = "<?php echo $result ?>";
-                                            }
-                                        }, 1000);
+        var apiHandle = null;
+        var findAPITries = 0;
+
+        function getAPIHandle() {
+           if (apiHandle == null) {
+              apiHandle = getAPI();
+           }
+           return apiHandle;
         }
-        //]]>         
+
+        function findAPI(win) {
+           while ((win.<?echo $LMS_api; ?> == null) && (win.parent != null) && (win.parent != win)) {
+              findAPITries++;
+              // Note: 7 is an arbitrary number, but should be more than sufficient
+              if (findAPITries > 7) {
+                 return null;
+              }
+              win = win.parent;
+           }
+           return win.<?echo $LMS_api; ?>;
+        }
+
+        // hun for the API - needs to be loaded before we can launch the package
+        function getAPI() {
+           var theAPI = findAPI(window);
+           if ((theAPI == null) && (window.opener != null) && (typeof(window.opener) != "undefined")) {
+              theAPI = findAPI(window.opener);
+           }
+           if (theAPI == null) {
+              return null;
+           }
+           return theAPI;
+        }
+
+        function doredirect() {
+            if (getAPI() != null) {
+                location = "<?php echo $result ?>";
+            }
+            else {
+                document.body.innerHTML = "<p><?php echo get_string('activityloading', 'scorm');?> <span id='countdown'><?php echo $delayseconds ?></span> <?php echo get_string('numseconds');?>. &nbsp; <img src='<?php echo $scormpixdir;?>/wait.gif'><p>";
+                var e = document.getElementById("countdown");
+                var cSeconds = parseInt(e.innerHTML);
+                var timer = setInterval(function() {
+                                                if( cSeconds && getAPI() == null ) {
+                                                    e.innerHTML = --cSeconds;
+                                                } else {
+                                                    clearInterval(timer);
+                                                    document.body.innerHTML = "<p><?php echo get_string('activitypleasewait', 'scorm');?></p>";
+                                                    location = "<?php echo $result ?>";
+                                                }
+                                            }, 1000);
+            }
+        }
+        //]]>
         </script>
         <noscript>
             <meta http-equiv="refresh" content="0;url=<?php echo $result ?>" />
-        </noscript> 
+        </noscript>
     </head>
     <body onload="doredirect();">
-        <p><?php echo get_string('activityloading', 'scorm');?> <span id="countdown"><?php echo $delayseconds ?></span> <?php echo get_string('numseconds');?>. &nbsp; <img src='<?php echo $scormpixdir;?>/wait.gif'><p>
+        <p><?php echo get_string('activitypleasewait', 'scorm');?></p>
         <?php if (debugging('',DEBUG_DEVELOPER)) {
                   add_to_log($course->id, 'scorm', 'launch', 'view.php?id='.$cm->id, $result, $cm->id);
               }
         ?>
-    </body> 
+    </body>
 </html>

@@ -40,7 +40,7 @@ function setLoggingActive (flag) {
     new cookie("SCORMLoggingActive", flag, 365, "/").set();
 }
 
-// toggle the logging 
+// toggle the logging
 function toggleLog () {
     if (getLoggingActive() == "A") {
         AppendToLog("Moodle Logging Deactivated", 0);
@@ -59,12 +59,12 @@ var logString = "";
 var logRow = 0;
 var logPopUpWindow = "N";
 var debugSCORMVersion = '<?php echo $scorm->version; ?>';
-<?php 
-   $LMS_prefix = $scorm->version == 'scorm_12' ? 'LMS' : '';
-   $LMS_api = $scorm->version == 'scorm_12' ? 'API' : 'API_1484_11';
-   
+<?php
+   $LMS_prefix = ($scorm->version == 'scorm_12' || $scorm->version == 'SCORM_1.2' || empty($scorm->version)) ? 'LMS' : '';
+   $LMS_api = ($scorm->version == 'scorm_12' || $scorm->version == 'SCORM_1.2' || empty($scorm->version)) ? 'API' : 'API_1484_11';
+
    $LMS_elements = array();
-   if ($scorm->version == 'scorm_12') {
+   if ($scorm->version == 'scorm_12' || $scorm->version == 'SCORM_1.2' || empty($scorm->version)) {
        $LMS_elements = array(   'cmi.core._children',
                                 'cmi.core.student_id',
                                 'cmi.core.student_name',
