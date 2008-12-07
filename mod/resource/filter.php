@@ -56,14 +56,22 @@
             $resourcelist = array();
 
             foreach ($resources as $resource) {
-                $currentname = trim($resource->name);
-                $strippedname = strip_tags($currentname);
+                $currentname    = trim($resource->name);
+                $entitisedname  = s($currentname);
+                $strippedname   = strip_tags($currentname);
                 /// Avoid empty or unlinkable resource names
                 if (!empty($strippedname)) {
                     $resourcelist[] = new filterobject($currentname,
                             '<a class="resource autolink" title="'.$strippedname.'" href="'.
-                             $CFG->wwwroot.'/mod/resource/view.php?r='.$resource->id.'" '.$CFG->frametarget.'>', 
+                             $CFG->wwwroot.'/mod/resource/view.php?r='.$resource->id.'" '.$CFG->frametarget.'>',
                              '</a>', false, true);
+                    if ($currentname != $entitisedname) { /// If name has some entity (&amp; &quot; &lt; &gt;) add that filter too. MDL-17518
+                        $resourcelist[] = new filterobject($entitisedname,
+                                '<a class="resource autolink" title="'.$strippedname.'" href="'.
+                                 $CFG->wwwroot.'/mod/resource/view.php?r='.$resource->id.'" '.$CFG->frametarget.'>',
+                                 '</a>', false, true);
+
+                    }
                 }
             }
 
