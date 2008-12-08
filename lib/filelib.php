@@ -2087,7 +2087,8 @@ class file_type_to_ext {
 
     public function get_file_ext($types) {
         $this->result = array();
-        if (in_array('*', $types)) {
+        if ((is_array($types) && in_array('*', $types)) ||
+            $types == '*') {
             return '*';
         }
         foreach ($types as $key=>$value){

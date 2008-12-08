@@ -99,7 +99,7 @@ $output .= <<<EOF
         picker.id = 'file-picker-'+suffix;
         document.body.appendChild(picker);
         var el = win.document.getElementById(field_name);
-        eval('openpicker_'+suffix+'({"env":"editor","target":el, "mimetype":type})');
+        eval('openpicker_'+suffix+'({"env":"editor","target":el, "filetype":type})');
     }
 EOF;
 

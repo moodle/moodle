@@ -1268,11 +1268,13 @@ abstract class repository {
      */
     final public function ajax_info() {
         global $CFG;
+        $ft = new file_type_to_ext;
         $repo = new stdclass;
         $repo->id   = $this->id;
         $repo->name = $this->get_name();
         $repo->type = $this->options['type'];
         $repo->icon = $CFG->httpswwwroot.'/repository/'.$repo->type.'/icon.png';
+        $repo->filetype = $ft->get_file_ext($this->supported_filetypes());
         return $repo;
     }
 

@@ -122,6 +122,16 @@ EOD;
     $js .= <<<EOD
 <script type="text/javascript">
 //<![CDATA[
+//
+Array.prototype.in_array = function(p_val) {
+    for(var i = 0, l = this.length; i < l; i++) {
+        if(this[i] == p_val) {
+            return true;
+        }
+    }
+    return false;
+}
+
 var active_instance = null;
 function repository_callback(id) {
     active_instance.req(id, '', 0);
@@ -278,26 +288,36 @@ this.create_picker = function() {
         });
         for(var i in _client.repos) {
             var repo = _client.repos[i];
-            var li = document.createElement('li');
-            li.id = 'repo-$suffix-'+repo.id;
-            var icon = document.createElement('img');
-            icon.src = repo.icon;
-            icon.width = '16';
-            icon.height = '16';
-            var link = document.createElement('a');
-            link.href = '###';
-            link.id = 'repo-call-$suffix-'+repo.id;
-            link.appendChild(icon);
-            link.className = 'fp-repo-name';
-            link.onclick = function() {
-                var re = /repo-call-$suffix-(\d+)/i;
-                var id = this.id.match(re);
-                repository_client_$suffix.req(id[1], '', 0);
+            var support = false;
+            if(repo.filetype!='*'){
+                for (var j in repo.filetype){
+                    if(repository_client_$suffix.filetype.in_array(repo.filetype[j])){
+                        support = true;
+                    }
+                }
             }
-            link.innerHTML += ' '+repo.name;
-            li.appendChild(link);
-            this.appendChild(li);
-            repo = null;
+            if(repo.filetype == '*' || support){
+                var li = document.createElement('li');
+                li.id = 'repo-$suffix-'+repo.id;
+                var icon = document.createElement('img');
+                icon.src = repo.icon;
+                icon.width = '16';
+                icon.height = '16';
+                var link = document.createElement('a');
+                link.href = '###';
+                link.id = 'repo-call-$suffix-'+repo.id;
+                link.appendChild(icon);
+                link.className = 'fp-repo-name';
+                link.onclick = function() {
+                    var re = /repo-call-$suffix-(\d+)/i;
+                    var id = this.id.match(re);
+                    repository_client_$suffix.req(id[1], '', 0);
+                }
+                link.innerHTML += ' '+repo.name;
+                li.appendChild(link);
+                this.appendChild(li);
+                repo = null;
+            }
         }
     });
 }
@@ -985,7 +1005,7 @@ if (is_array($filetypes) && in_array('*', $filetypes)) {
     $filetypes = '*';
 }
 $repos = repository::get_instances(array($user_context, $context, get_system_context()), null, true, null, $filetypes, $returnvalue);
-$js .= "\r\n".'repository_client_'.$suffix.'repos=[];'."\r\n";
+$js .= "\r\n".'repository_client_'.$suffix.'.repos=[];'."\r\n";
 foreach ($repos as $repo) {
     $info = $repo->ajax_info();
     $js .= "\r\n";
@@ -993,6 +1013,9 @@ foreach ($repos as $repo) {
 }
 $js .= "\r\n";
 
+$ft = new file_type_to_ext();
+$image_file_ext = json_encode($ft->get_file_ext(array('image')));
+$video_file_ext = json_encode($ft->get_file_ext(array('video')));
 $js .= <<<EOD
 function openpicker_$suffix(params) {
     if(!repository_client_$suffix.instance) {
@@ -1001,10 +1024,14 @@ function openpicker_$suffix(params) {
         if(params.itemid){
             repository_client_$suffix.itemid = params.itemid;
         }
-        if(params.mimetype) {
-            repository_client_$suffix.mimetype = params.mimetype;
+        if(params.filetype) {
+            if(params.filetype == 'image') {
+                repository_client_$suffix.filetype = $image_file_ext;
+            } else if(params.filetype == 'video' || params.filetype== 'media') {
+                repository_client_$suffix.filetype = $video_file_ext;
+            }
         } else {
-            repository_client_$suffix.mimetype = '*';
+            repository_client_$suffix.filetype = '*';
         }
         repository_client_$suffix.instance = new repository_client_$suffix();
         repository_client_$suffix.instance.create_picker();
