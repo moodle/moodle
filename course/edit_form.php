@@ -315,6 +315,10 @@ class course_edit_form extends moodleform {
         $mform->addElement('select', 'visible', get_string('availability'), $choices);
         $mform->setHelpButton('visible', array('courseavailability', get_string('availability')), true);
         $mform->setDefault('visible', $courseconfig->visible);
+        if ($course and !has_capability('moodle/course:visibility', $coursecontext)) {
+            $mform->hardFreeze('visible');
+            $mform->setConstant('visible', $course->visible);
+        }
 
         $mform->addElement('passwordunmask', 'enrolpassword', get_string('enrolmentkey'), 'size="25"');
         $mform->setHelpButton('enrolpassword', array('enrolmentkey', get_string('enrolmentkey')), true);
