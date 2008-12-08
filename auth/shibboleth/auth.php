@@ -46,8 +46,8 @@ class auth_plugin_shibboleth extends auth_plugin_base {
      * Returns true if the username and password work and false if they are
      * wrong or don't exist.
      *
-     * @param string $username The username
-     * @param string $password The password
+     * @param string $username The username (with system magic quotes)
+     * @param string $password The password (with system magic quotes)
      * @return bool Authentication success or failure.
      */
     function user_login($username, $password) {
@@ -140,6 +140,7 @@ class auth_plugin_shibboleth extends auth_plugin_base {
      */
     function get_attributes() {
         $configarray = (array) $this->config;
+
         $moodleattributes = array();
         foreach ($this->userfields as $field) {
             if (isset($configarray["field_map_$field"])) {

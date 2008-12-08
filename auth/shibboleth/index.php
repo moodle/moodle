@@ -43,7 +43,7 @@
             update_user_login_times();
             
             // Don't show username on login page
-            $SESSION->set_moodle_cookie('nobody');
+            set_moodle_cookie('nobody');
 
             set_login_session_preferences();
             
@@ -87,7 +87,7 @@
 
     // If we can find any (user independent) Shibboleth attributes but no user
     // attributes we probably didn't receive any user attributes
-    elseif (!empty($_SERVER['HTTP_SHIB_APPLICATION_ID'])) {
+    elseif (!empty($_SERVER['HTTP_SHIB_APPLICATION_ID']) || !empty($_SERVER['Shib-Application-ID'])) {
         print_error('shib_no_attributes_error', 'auth' , '', '\''.$pluginconfig->user_attribute.'\', \''.$pluginconfig->field_map_firstname.'\', \''.$pluginconfig->field_map_lastname.'\' and \''.$pluginconfig->field_map_email.'\'');
     } else {
         print_error('shib_not_set_up_error', 'auth');
