@@ -123,9 +123,9 @@ EOD;
 <script type="text/javascript">
 //<![CDATA[
 //
-Array.prototype.in_array = function(p_val) {
-    for(var i = 0, l = this.length; i < l; i++) {
-        if(this[i] == p_val) {
+var mdl_in_array = function(el, arr) {
+    for(var i = 0, l = arr.length; i < l; i++) {
+        if(arr[i] == el) {
             return true;
         }
     }
@@ -212,6 +212,9 @@ var filepicker = new YAHOO.widget.Panel('file-picker-$suffix', {
         layout.resize();
 
     }, filepicker, true);
+    filepicker.update_instances = function(){
+        _client.print_instances();
+    }
     _client.viewbar = new YAHOO.widget.ButtonGroup({
         id: 'btngroup-$suffix',
         name: 'buttons',
@@ -221,6 +224,7 @@ var filepicker = new YAHOO.widget.Panel('file-picker-$suffix', {
 }
 // public method
 this.show = function() {
+    filepicker.update_instances();
     filepicker.show();
 }
 this.hide = function() {
@@ -286,39 +290,7 @@ this.create_picker = function() {
             var k1 = new YAHOO.util.KeyListener(scope, {keys:13}, {fn:function(){this.fnSearch()},scope:btn_search, correctScope: true});
             k1.enable();
         });
-        for(var i in _client.repos) {
-            var repo = _client.repos[i];
-            var support = false;
-            if(repo.filetype!='*'){
-                for (var j in repo.filetype){
-                    if(repository_client_$suffix.filetype.in_array(repo.filetype[j])){
-                        support = true;
-                    }
-                }
-            }
-            if(repo.filetype == '*' || support){
-                var li = document.createElement('li');
-                li.id = 'repo-$suffix-'+repo.id;
-                var icon = document.createElement('img');
-                icon.src = repo.icon;
-                icon.width = '16';
-                icon.height = '16';
-                var link = document.createElement('a');
-                link.href = '###';
-                link.id = 'repo-call-$suffix-'+repo.id;
-                link.appendChild(icon);
-                link.className = 'fp-repo-name';
-                link.onclick = function() {
-                    var re = /repo-call-$suffix-(\d+)/i;
-                    var id = this.id.match(re);
-                    repository_client_$suffix.req(id[1], '', 0);
-                }
-                link.innerHTML += ' '+repo.name;
-                li.appendChild(link);
-                this.appendChild(li);
-                repo = null;
-            }
-        }
+        _client.print_instances();
     });
 }
 }
@@ -330,7 +302,47 @@ _client.repositoryid = 0;
 _client.ds = null;
 _client.viewmode = 0;
 _client.viewbar = null;
-
+_client.print_instances = function() {
+    var container = new YAHOO.util.Element('repo-list-$suffix');
+    container.set('innerHTML', '');
+    for(var i in _client.repos) {
+        var repo = _client.repos[i];
+        var support = false;
+        if(repository_client_$suffix.env=='editor'){
+            if(repo.filetype!='*'){
+                for (var j in repo.filetype){
+                    if(mdl_in_array(repo.filetype[j], _client.filetype)){
+                        support = true;
+                    }
+                }
+            }
+        }else{
+            support = true;
+        }
+        if(repo.filetype == '*' || support){
+            var li = document.createElement('li');
+            li.id = 'repo-$suffix-'+repo.id;
+            var icon = document.createElement('img');
+            icon.src = repo.icon;
+            icon.width = '16';
+            icon.height = '16';
+            var link = document.createElement('a');
+            link.href = '###';
+            link.id = 'repo-call-$suffix-'+repo.id;
+            link.appendChild(icon);
+            link.className = 'fp-repo-name';
+            link.onclick = function() {
+                var re = /repo-call-$suffix-(\d+)/i;
+                var id = this.id.match(re);
+                repository_client_$suffix.req(id[1], '', 0);
+            }
+            link.innerHTML += ' '+repo.name;
+            li.appendChild(link);
+            container.appendChild(li);
+            repo = null;
+        }
+    }
+}
 _client.stripHTML = function(str){
     var re= /<\S[^><]*>/g
     var ret = str.replace(re, "")
@@ -1018,20 +1030,20 @@ $image_file_ext = json_encode($ft->get_file_ext(array('image')));
 $video_file_ext = json_encode($ft->get_file_ext(array('video')));
 $js .= <<<EOD
 function openpicker_$suffix(params) {
+    if(params.filetype) {
+        if(params.filetype == 'image') {
+            repository_client_$suffix.filetype = $image_file_ext;
+        } else if(params.filetype == 'video' || params.filetype== 'media') {
+            repository_client_$suffix.filetype = $video_file_ext;
+        }
+    } else {
+        repository_client_$suffix.filetype = '*';
+    }
     if(!repository_client_$suffix.instance) {
         repository_client_$suffix.env = params.env;
         repository_client_$suffix.target = params.target;
         if(params.itemid){
             repository_client_$suffix.itemid = params.itemid;
-        }
-        if(params.filetype) {
-            if(params.filetype == 'image') {
-                repository_client_$suffix.filetype = $image_file_ext;
-            } else if(params.filetype == 'video' || params.filetype== 'media') {
-                repository_client_$suffix.filetype = $video_file_ext;
-            }
-        } else {
-            repository_client_$suffix.filetype = '*';
         }
         repository_client_$suffix.instance = new repository_client_$suffix();
         repository_client_$suffix.instance.create_picker();
