@@ -37,6 +37,8 @@
  *
  * Whether the user can do something...
  * - has_capability()
+ * - has_any_capability()
+ * - has_all_capabilities()
  * - require_capability()
  * - require_login() (from moodlelib)
  *
@@ -494,6 +496,28 @@ function has_any_capability($capabilities, $context, $userid=NULL, $doanything=t
         }
     }
     return false;
+}
+
+/**
+ * This function returns whether the current user has all of the capabilities in the
+ * $capabilities array. This is a simple wrapper around has_capability for convinience.
+ *
+ * There are probably tricks that could be done to improve the performance here, for example,
+ * check the capabilities that are already cached first.
+ *
+ * @param array $capabilities - an array of capability names.
+ * @param object $context - a context object (record from context table)
+ * @param integer $userid - a userid number, empty if current $USER
+ * @param bool $doanything - if false, ignore do anything
+ * @return bool
+ */
+function has_all_capabilities($capabilities, $context, $userid=NULL, $doanything=true) {
+    foreach ($capabilities as $capability) {
+        if (!has_capability($capability, $context, $userid, $doanything)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 /**

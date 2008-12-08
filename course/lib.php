@@ -1749,8 +1749,9 @@ function get_child_categories($parentid) {
  *
  * @param array $list For output, accumulates an array categoryid => full category path name
  * @param array $parents For output, accumulates an array categoryid => list of parent category ids.
- * @param string $requiredcapability if given, only categories where the current
- *      user has this capability will be added to $list.
+ * @param string/array $requiredcapability if given, only categories where the current
+ *      user has this capability will be added to $list. Can also be an array of capabilities,
+ *      in which case they are all required.
  * @param integer $excludeid Omit this category and its children from the lists built.
  * @param object $category Build the tree starting at this category - otherwise starts at the top level.
  * @param string $path For internal use, as part of recursive calls.
@@ -1787,7 +1788,7 @@ function make_categories_list(&$list, &$parents, $requiredcapability = '',
         if ($requiredcapability) {
             ensure_context_subobj_present($category, CONTEXT_COURSECAT);
         }
-        if (!$requiredcapability || has_capability($requiredcapability, $category->context)) {
+        if (!$requiredcapability || has_all_capabilities($requiredcapability, $category->context)) {
             $list[$category->id] = $path;
         }
     }

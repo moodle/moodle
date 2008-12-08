@@ -108,11 +108,6 @@
             require_once($CFG->libdir . '/questionlib.php');
             print_category_edit_header();
             print_heading($heading);
-            print_box(get_string('deletecategorycheck2'), 'generalbox boxwidthnormal boxaligncenter');
-            if (question_context_has_any_questions($context)) {
-                print_box(get_string('deletecoursecategorywithquestions', 'question'), 
-                        'generalbox boxwidthnormal boxaligncenter');
-            }
             $mform->display();
             admin_externalpage_print_footer();
             exit();

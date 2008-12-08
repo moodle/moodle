@@ -467,5 +467,6 @@ $string['wrongroleid'] = 'Incorrect role ID!';
 $string['wrongsourcebase'] = 'Wrong source URL base';
 $string['wrongzipfilename'] = 'Wrong ZIP file name';
 $string['xmldberror'] = 'XMLDB error!';
+$string['youcannotdeletecategory'] = 'You cannot delete category \'$a\' becuase you can neither delete the contents, nor move them elsewhere.';
 
 ?>
