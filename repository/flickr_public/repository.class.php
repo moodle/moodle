@@ -338,5 +338,7 @@ class repository_flickr_public extends repository {
 
         repository::static_function('flickr_public','create', 'flickr_public', 0, get_system_context(), array('name' => get_string('repositoryname', 'repository_flickr_public'),'email_address' => null),1);
     }
+    public function supported_filetypes() {
+        return array('web_image');
+    }
 }
-

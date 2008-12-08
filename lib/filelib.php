@@ -2049,3 +2049,65 @@ class curl_cache {
         }
     }
 }
+class file_type_to_ext {
+    public function __construct($file = '') {
+        global $CFG;
+        if (empty($file)) {
+            $this->file = $CFG->libdir.'/file/file_types.mm';
+        } else {
+            $this->file = $file;
+        }
+        $this->tree = array();
+        $this->result = array();
+    }
+    private function _browse_nodes($parent, $types) {
+        $key = (string)$parent['TEXT'];
+        if(isset($parent->node)) {
+            $this->tree[$key] = array();
+            if (in_array((string)$parent['TEXT'], $types)) {
+                $this->_select_nodes($parent, $this->result);
+            } else {
+                foreach($parent->node as $v){
+                    $this->_browse_nodes($v, $types);
+                }
+            }
+        } else {
+            $this->tree[] = $key;
+        }
+    }
+    private function _select_nodes($parent){
+        if(isset($parent->node)) {
+            foreach($parent->node as $v){
+                $this->_select_nodes($v, $this->result);
+            }
+        } else {
+            $this->result[] = (string)$parent['TEXT'];
+        }
+    }
+
+    public function get_file_ext($types) {
+        $this->result = array();
+        if (in_array('*', $types)) {
+            return '*';
+        }
+        foreach ($types as $key=>$value){
+            if (strpos($value, '.') !== false) {
+                $this->result[] = $value;
+                unset($types[$key]);
+            }
+        }
+        if (file_exists($this->file)) {
+            $xml = simplexml_load_file($this->file);
+            foreach($xml->node->node as $v){
+                if (in_array((string)$v['TEXT'], $types)) {
+                    $this->_select_nodes($v);
+                } else {
+                    $this->_browse_nodes($v, $types);
+                }
+            }
+        } else {
+            exit('Failed to open test.xml.');
+        }
+        return $this->result;
+    }
+}

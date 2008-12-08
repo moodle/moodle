@@ -557,7 +557,7 @@ abstract class repository {
      * @param string $type a type name to retrieve
      * @return array repository instances
      */
-    public static function get_instances($contexts=array(), $userid = null, $onlyvisible = true, $type=null) {
+    public static function get_instances($contexts=array(), $userid = null, $onlyvisible = true, $type=null, $filetypes = '*', $returnvalue = '*') {
         global $DB, $CFG, $USER;
 
         $params = array();
@@ -605,10 +605,30 @@ abstract class repository {
             $options['type']    = $repo->repositorytype;
             $options['typeid']  = $repo->typeid;
             $classname = 'repository_' . $repo->repositorytype;//
+            $is_supported = true;
 
             $repository = new $classname($repo->id, $repo->contextid, $options, $repo->readonly);
+            $ft = new file_type_to_ext();
+            if ($filetypes !== '*' and $repository->supported_filetypes() !== '*') {
+                $filetypes = $ft->get_file_ext($filetypes);
+                $supported_filetypes = $ft->get_file_ext($repository->supported_filetypes());
+                $is_supported = false;
+                foreach  ($supported_filetypes as $type) {
+                    if (in_array($type, $filetypes)) {
+                        $is_supported = true;
+                    }
+                }
+            }
+            if ($returnvalue !== '*' and $repository->supported_return_value() !== '*') {
+                $tmp = $repository->supported_return_value();
+                if ($tmp != $returnvalue) {
+                    $is_supported = false;
+                }
+            }
             if (!$onlyvisible || ($repository->is_visible() && !$repository->disabled)) {
-                $ret[] = $repository;
+                if ($is_supported) {
+                    $ret[] = $repository;
+                }
             }
         }
         return $ret;
@@ -1226,7 +1246,7 @@ abstract class repository {
      * @return array return '*' means this repository support any files, otherwise
      *               return mimetypes of files, it can be an array
      */
-    public function supported_mimetype() {
+    public function supported_filetypes() {
         // return array('text/plain', 'image/gif');
         return '*';
     }
@@ -1238,7 +1258,7 @@ abstract class repository {
     public function supported_return_value() {
         // return 'link';
         // return 'ref_id';
-        return '*';
+        return 'ref_id';
     }
 
     /**

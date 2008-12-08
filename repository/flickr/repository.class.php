@@ -292,4 +292,7 @@ class repository_flickr extends repository {
     public static function get_type_option_names() {
         return array('api_key', 'secret');
     }
+    public function supported_filetypes() {
+        return array('web_image');
+    }
 }

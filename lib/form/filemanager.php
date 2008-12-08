@@ -16,6 +16,16 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
                 $this->_options[$name] = $value;
             }
         }
+        if (!empty($options['filetypes'])) {
+            $this->filetypes = $options['filetypes'];
+        } else {
+            $this->filetypes = '*';
+        }
+        if (!empty($options['returnvalue'])) {
+            $this->returnvalue = $options['returnvalue'];
+        } else {
+            $this->returnvalue = '*';
+        }
         if (!empty($options['maxbytes'])) {
             $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $options['maxbytes']);
         }
@@ -159,7 +169,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
             $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
         }
 
-        $repo_info = repository_get_client($context);
+        $repo_info = repository_get_client($context, $this->filetypes, $this->returnvalue);
         $suffix = $repo_info['suffix'];
 
         $html = $this->_get_draftfiles($draftitemid, $suffix);

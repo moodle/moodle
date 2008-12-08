@@ -83,4 +83,12 @@ class repository_youtube extends repository {
             return $ret;
         }
     }
+    public function supported_return_value() {
+        // return 'link';
+        // return 'ref_id';
+        return 'link';
+    }
+    public function supported_filetypes() {
+        return array('web_video');
+    }
 }
