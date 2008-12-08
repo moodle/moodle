@@ -116,7 +116,7 @@
 
         if ($CFG->emailchangeconfirmation) {
             // Handle change of email carefully for non-trusted users
-            if ($user->email != $usernew->email && !has_capability('moodle/user:update', $systemcontext)) {
+            if (isset($usernew->email) and $user->email != $usernew->email && !has_capability('moodle/user:update', $systemcontext)) {
                 $a = new stdClass();
                 $a->newemail = $usernew->preference_newemail = $usernew->email;
                 $usernew->preference_newemailkey = random_string(20);
