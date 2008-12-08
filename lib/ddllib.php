@@ -56,7 +56,7 @@
 
 /// Based on $CFG->dbtype, add the proper generator class
     if (!file_exists($CFG->libdir . '/xmldb/classes/generators/' . $CFG->dbtype . '/' . $CFG->dbtype . '.class.php')) {
-        error ('DB Type: ' . $CFG->dbtype . ' not supported by XMLDDB');
+        error ('DB Type: ' . $CFG->dbtype . ' not supported by XMLDB');
     }
     require_once($CFG->libdir . '/xmldb/classes/generators/' . $CFG->dbtype . '/' . $CFG->dbtype . '.class.php');
 
