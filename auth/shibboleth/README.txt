@@ -170,6 +170,39 @@ Example file:
 ?>
 --
 
+
+How to upgrade your Service Provider to 2.x
+-------------------------------------------------------------------------------
+
+In case your upgrade your Service Provider 1.3.x to 2.x, be aware of the fact 
+that in version 2.0 the default behaviour regarding attribute propagation 
+changed.
+While the Service Provider 1.3.x published the Shibboleth attributes to the
+web server environment as HTTP Request headers, the Service Provider 2.x 
+publishes attributes as environment variables, which increases the security for
+some platforms.
+However, this change has the effect that the attribute names change.
+E.g. while the surname attribute was published as 'HTTP_SHIB_PERSON_SURNAME' 
+with 1.3.x, this attribute will be available in $_SERVER['Shib-Person-surname']
+or depending on your /etc/shibboleth/attribute-map.xml file just as 
+$_SERVER['sn'].
+Because Moodle needs to know what Shibboleth attributes it shall map onto which
+Moodle user profile field, one has to make sure the mapping is updated as well
+after the Service Provider upgrade.
+
+********************************************************************************
+Because you risk locking yourself out of Moodle it is strongly 
+recommended to use the following approach when upgrading the Service Provider:
+1. Enable manual authentication before the upgrade. 
+2. Make sure that you have at least one manual account with administration 
+   privileges working before upgrading your Service Provider to 2.x.
+3. After the SP upgrade, use this account to log into Moodle and adapt the 
+   attribute mapping in 'Site Administration -> Users -> Shibboleth' to reflect 
+   the changed attribute names.
+4. Test the login with a Shibboleth account
+5. If all is working, disable manual authentication again
+********************************************************************************
+
 --------------------------------------------------------------------------------
 In case of problems and questions with Shibboleth authentication, contact
 Lukas Haemmerle <haemmerle@switch.ch> or Markus Hagman <hagman@hytti.uku.fi>
