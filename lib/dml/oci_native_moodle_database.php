@@ -1118,13 +1118,11 @@ class oci_native_moodle_database extends moodle_database {
     }
 
     public function sql_bitor($int1, $int2) {
-        // TODO: this can not work because the number of params does not match
         return '((' . $int1 . ') + (' . $int2 . ') - ' . $this->sql_bitand($int1, $int2) . ')';
     }
 
     public function sql_bitxor($int1, $int2) {
-        // TODO: this can not work because the number of params does not match
-        return '(' . sql_bitor($int1, $int2) . ' - ' . $this->sql_bitand($int1, $int2) . ')';
+        return '(' . $this->sql_bitor($int1, $int2) . ' - ' . $this->sql_bitand($int1, $int2) . ')';
     }
 
     /**
