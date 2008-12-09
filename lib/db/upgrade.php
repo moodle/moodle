@@ -3076,20 +3076,22 @@ function xmldb_main_upgrade($oldversion=0) {
     /// For MDL-17501. Ensure that any role that has moodle/course:update also
     /// has moodle/course:visibility.
     if ($result && $oldversion < 2007101532.10) {
-    /// Get the roles with 'moodle/course:update'.
-        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-        $roles = get_roles_with_capability('moodle/course:update', CAP_ALLOW, $systemcontext);
+        if (!empty($CFG->rolesactive)) { // In case we are upgrading from Moodle 1.6.
+        /// Get the roles with 'moodle/course:update'.
+            $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+            $roles = get_roles_with_capability('moodle/course:update', CAP_ALLOW, $systemcontext);
 
-    /// Give those roles 'moodle/course:visibility'.
-        foreach ($roles as $role) {
-            assign_capability('moodle/course:visibility', CAP_ALLOW, $role->id, $systemcontext->id);
+        /// Give those roles 'moodle/course:visibility'.
+            foreach ($roles as $role) {
+                assign_capability('moodle/course:visibility', CAP_ALLOW, $role->id, $systemcontext->id);
+            }
+
+        /// Force all sessions to refresh access data.
+            mark_context_dirty($systemcontext->path);
         }
 
-    /// Force all sessions to refresh access data.
-        mark_context_dirty($systemcontext->path);
-
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2007101532.10);
+        /// Main savepoint reached
+            upgrade_main_savepoint($result, 2007101532.10);
     }
 
     return $result;
