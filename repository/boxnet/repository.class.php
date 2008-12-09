@@ -181,7 +181,7 @@ class repository_boxnet extends repository {
         $ret['manage'] = 'http://www.box.net/files';
         $ret['path'] = array(array('name'=>'Root', 'path'=>0));
         if(!empty($tree)) {
-            $ret['list']   = $tree;
+            $ret['list']   = array_filter($tree, array($this, 'filter'));
         }
         return $ret;
     }

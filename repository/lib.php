@@ -557,7 +557,7 @@ abstract class repository {
      * @param string $type a type name to retrieve
      * @return array repository instances
      */
-    public static function get_instances($contexts=array(), $userid = null, $onlyvisible = true, $type=null, $filetypes = '*', $returnvalue = '*') {
+    public static function get_instances($contexts=array(), $userid = null, $onlyvisible = true, $type=null, $accepted_types = '*', $returnvalue = '*') {
         global $DB, $CFG, $USER;
 
         $params = array();
@@ -598,23 +598,25 @@ abstract class repository {
         }
 
         $ret = array();
+        $ft = new file_type_to_ext();
         foreach ($repos as $repo) {
             require_once($CFG->dirroot . '/repository/'. $repo->repositorytype.'/repository.class.php');
             $options['visible'] = $repo->visible;
             $options['name']    = $repo->name;
             $options['type']    = $repo->repositorytype;
             $options['typeid']  = $repo->typeid;
+            // tell instance what file types will be accepted by file picker
+            $options['accepted_types'] = $ft->get_file_ext($accepted_types);
             $classname = 'repository_' . $repo->repositorytype;//
             $is_supported = true;
 
             $repository = new $classname($repo->id, $repo->contextid, $options, $repo->readonly);
-            $ft = new file_type_to_ext();
-            if ($filetypes !== '*' and $repository->supported_filetypes() !== '*') {
-                $filetypes = $ft->get_file_ext($filetypes);
+            if ($accepted_types !== '*' and $repository->supported_filetypes() !== '*') {
+                $accepted_types = $ft->get_file_ext($accepted_types);
                 $supported_filetypes = $ft->get_file_ext($repository->supported_filetypes());
                 $is_supported = false;
                 foreach  ($supported_filetypes as $type) {
-                    if (in_array($type, $filetypes)) {
+                    if (in_array($type, $accepted_types)) {
                         $is_supported = true;
                     }
                 }
@@ -1274,7 +1276,8 @@ abstract class repository {
         $repo->name = $this->get_name();
         $repo->type = $this->options['type'];
         $repo->icon = $CFG->httpswwwroot.'/repository/'.$repo->type.'/icon.png';
-        $repo->filetype = $ft->get_file_ext($this->supported_filetypes());
+        $repo->supported_types = $ft->get_file_ext($this->supported_filetypes());
+        $repo->accepted_types = $this->accepted_types;
         return $repo;
     }
 
@@ -1453,6 +1456,28 @@ abstract class repository {
         } else {
             return $ret;
         }
+    }
+
+    public function filter(&$value) {
+        $pass = false;
+        $accepted_types = optional_param('accepted_types', '', PARAM_RAW);
+        $ft = new file_type_to_ext;
+        $ext = $ft->get_file_ext($this->supported_filetypes());
+        if (isset($value->children)) {
+            $pass = true;
+            $value->children = array_filter($value->children, array($this, 'filter'));
+        } else {
+            if ($accepted_types == '*') {
+                $pass = true;
+            } elseif (is_array($accepted_types)) {
+                foreach ($accepted_types as $type) {
+                    if (preg_match('#'.$type.'$#', $value['title'])) {
+                        $pass = true;
+                    }
+                }
+            }
+        }
+        return $pass;
     }
 
     /**

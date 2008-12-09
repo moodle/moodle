@@ -11,7 +11,7 @@
  * @param object $context the context
  * @return array
  */
-function repository_get_client($context, $filetypes = '*', $returnvalue = '*') {
+function repository_get_client($context, $accepted_filetypes = '*', $returnvalue = '*') {
     global $CFG, $USER;
     $suffix = uniqid();
     $sesskey = sesskey();
@@ -309,9 +309,9 @@ _client.print_instances = function() {
         var repo = _client.repos[i];
         var support = false;
         if(repository_client_$suffix.env=='editor'){
-            if(repo.filetype!='*'){
-                for (var j in repo.filetype){
-                    if(mdl_in_array(repo.filetype[j], _client.filetype)){
+            if(repo.supported_types!='*'){
+                for (var j in repo.supported_types){
+                    if(mdl_in_array(repo.supported_types[j], _client.accepted_types)){
                         support = true;
                     }
                 }
@@ -319,7 +319,7 @@ _client.print_instances = function() {
         }else{
             support = true;
         }
-        if(repo.filetype == '*' || support){
+        if(repo.supported_types == '*' || support){
             var li = document.createElement('li');
             li.id = 'repo-$suffix-'+repo.id;
             var icon = document.createElement('img');
@@ -905,6 +905,7 @@ _client.req = function(id, path, logout) {
     params['sesskey']='$sesskey';
     params['ctx_id']=$context->id;
     params['repo_id']=id;
+    params['accepted_types'] = _client.accepted_types;
     var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->httpswwwroot/repository/ws.php?action='+action, _client.req_cb, _client.postdata(params));
 }
 _client.search_form_cb = {
@@ -1013,10 +1014,10 @@ return _client;
 EOD;
 
 $user_context = get_context_instance(CONTEXT_USER, $USER->id);
-if (is_array($filetypes) && in_array('*', $filetypes)) {
-    $filetypes = '*';
+if (is_array($accepted_filetypes) && in_array('*', $accepted_filetypes)) {
+    $accepted_filetypes = '*';
 }
-$repos = repository::get_instances(array($user_context, $context, get_system_context()), null, true, null, $filetypes, $returnvalue);
+$repos = repository::get_instances(array($user_context, $context, get_system_context()), null, true, null, $accepted_filetypes, $returnvalue);
 $js .= "\r\n".'repository_client_'.$suffix.'.repos=[];'."\r\n";
 foreach ($repos as $repo) {
     $info = $repo->ajax_info();
@@ -1028,16 +1029,17 @@ $js .= "\r\n";
 $ft = new file_type_to_ext();
 $image_file_ext = json_encode($ft->get_file_ext(array('image')));
 $video_file_ext = json_encode($ft->get_file_ext(array('video')));
+$accpeted_file_ext = json_encode($ft->get_file_ext($accepted_filetypes));
 $js .= <<<EOD
 function openpicker_$suffix(params) {
     if(params.filetype) {
         if(params.filetype == 'image') {
-            repository_client_$suffix.filetype = $image_file_ext;
+            repository_client_$suffix.accepted_types = $image_file_ext;
         } else if(params.filetype == 'video' || params.filetype== 'media') {
-            repository_client_$suffix.filetype = $video_file_ext;
+            repository_client_$suffix.accepted_types = $video_file_ext;
         }
     } else {
-        repository_client_$suffix.filetype = '*';
+        repository_client_$suffix.accepted_types = $accpeted_file_ext;
     }
     if(!repository_client_$suffix.instance) {
         repository_client_$suffix.env = params.env;
