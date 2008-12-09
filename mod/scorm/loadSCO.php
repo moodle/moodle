@@ -143,7 +143,7 @@
         }
 
         function findAPI(win) {
-           while ((win.<?echo $LMS_api; ?> == null) && (win.parent != null) && (win.parent != win)) {
+           while ((win.<?php echo $LMS_api; ?> == null) && (win.parent != null) && (win.parent != win)) {
               findAPITries++;
               // Note: 7 is an arbitrary number, but should be more than sufficient
               if (findAPITries > 7) {
@@ -151,7 +151,7 @@
               }
               win = win.parent;
            }
-           return win.<?echo $LMS_api; ?>;
+           return win.<?php echo $LMS_api; ?>;
         }
 
         // hun for the API - needs to be loaded before we can launch the package
