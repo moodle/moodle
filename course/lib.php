@@ -1670,10 +1670,6 @@ function make_categories_list(&$list, &$parents, $requiredcapability = '',
         $parents = array();
     }
 
-    if (is_string($requiredcapability) && $requiredcapability) {
-        $requiredcapability = array($requiredcapability);
-    }
-
     if (empty($category)) {
         // Start at the top level.
         $category = new stdClass;
