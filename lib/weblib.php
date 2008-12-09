@@ -5299,7 +5299,7 @@ function update_categories_search_button($search,$page,$perpage) {
     global $CFG, $USER;
 
     // not sure if this capability is the best  here
-    if (has_capability('moodle/category:update', get_context_instance(CONTEXT_SYSTEM))) {
+    if (has_capability('moodle/category:manage', get_context_instance(CONTEXT_SYSTEM))) {
         if (!empty($USER->categoryediting)) {
             $string = get_string("turneditingoff");
             $edit = "off";
