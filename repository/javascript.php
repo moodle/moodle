@@ -308,7 +308,7 @@ _client.print_instances = function() {
     for(var i in _client.repos) {
         var repo = _client.repos[i];
         var support = false;
-        if(repository_client_$suffix.env=='editor'){
+        if(repository_client_$suffix.env=='editor' && _client.accepted_types != '*'){
             if(repo.supported_types!='*'){
                 for (var j in repo.supported_types){
                     if(mdl_in_array(repo.supported_types[j], _client.accepted_types)){
@@ -1037,6 +1037,8 @@ function openpicker_$suffix(params) {
             repository_client_$suffix.accepted_types = $image_file_ext;
         } else if(params.filetype == 'video' || params.filetype== 'media') {
             repository_client_$suffix.accepted_types = $video_file_ext;
+        } else if(params.filetype == 'file') {
+            repository_client_$suffix.accepted_types = '*';
         }
     } else {
         repository_client_$suffix.accepted_types = $accpeted_file_ext;
