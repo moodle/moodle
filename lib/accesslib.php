@@ -512,6 +512,10 @@ function has_any_capability($capabilities, $context, $userid=NULL, $doanything=t
  * @return bool
  */
 function has_all_capabilities($capabilities, $context, $userid=NULL, $doanything=true) {
+    if (!is_array($capabilities)) {
+        debugging('Incorrect $capabilities parameter in has_all_capabilities() call - must be an array');
+        return false;
+    }
     foreach ($capabilities as $capability) {
         if (!has_capability($capability, $context, $userid, $doanything)) {
             return false;
