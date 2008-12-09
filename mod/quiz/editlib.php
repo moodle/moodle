@@ -1064,11 +1064,11 @@ function quiz_question_showbank($tabname, $contexts, $pageurl, $cm,
                 $key = $matches[1];
                 $questionlist .= $key.',';
                 question_require_capability_on($key, 'edit');
-                if (record_exists('quiz_question_instances', 'question', $key)) {
+                if ($DB->record_exists('quiz_question_instances', array('question'=>$key))) {
                     $questionnames .= '* ';
                     $inuse = true;
                 }
-                $questionnames .= get_field('question', 'name', 'id', $key).
+                $questionnames .= $DB->get_field('question', 'name', array('id'=>$key)).
                         '<br />';
             }
         }
