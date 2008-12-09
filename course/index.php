@@ -124,7 +124,7 @@
 
         // If we deleted $CFG->defaultrequestcategory, make it point somewhere else.
         if ($delete == $CFG->defaultrequestcategory) {
-            set_config('defaultrequestcategory', get_field('course_categories', 'MIN(id)', 'parent', 0));
+            set_config('defaultrequestcategory', $DB->get_field('course_categories', 'MIN(id)', array('parent'=>0)));
         }
 
         print_continue('index.php');
