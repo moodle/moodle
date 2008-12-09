@@ -1692,11 +1692,15 @@ function make_categories_list(&$list, &$parents, $requiredcapability = '',
         }
 
         // Add this category to $list, if the permissions check out.
-        if ($requiredcapability) {
-            ensure_context_subobj_present($category, CONTEXT_COURSECAT);
-        }
-        if (!$requiredcapability || has_all_capabilities($requiredcapability, $category->context)) {
+        if (empty($requiredcapability)) {
             $list[$category->id] = $path;
+
+        } else {
+            ensure_context_subobj_present($category, CONTEXT_COURSECAT);
+            $requiredcapability = (array)$requiredcapability;
+            if (has_all_capabilities($requiredcapability, $category->context)) {
+                $list[$category->id] = $path;
+            }
         }
     }
 
