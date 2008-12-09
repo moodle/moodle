@@ -402,8 +402,8 @@ function profile_signup_fields(&$mform) {
      //only retrieve required custom fields (with category information)
     //results are sort by categories, then by fields
     $sql = "SELECT uf.id as fieldid, ic.id as categoryid, ic.name as categoryname, uf.datatype
-                FROM ".$CFG->prefix."user_info_field uf
-                JOIN ".$CFG->prefix."user_info_category ic
+                FROM {user_info_field} uf
+                JOIN {user_info_category} ic
                 ON uf.categoryid = ic.id AND uf.signup = 1
                 ORDER BY ic.sortorder ASC, uf.sortorder ASC";
 
