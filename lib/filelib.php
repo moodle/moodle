@@ -2088,8 +2088,8 @@ class file_type_to_ext {
     public function get_file_ext($types) {
         $this->result = array();
         if ((is_array($types) && in_array('*', $types)) ||
-            $types == '*') {
-            return '*';
+            $types == '*' || empty($types)) {
+            return array('*');
         }
         foreach ($types as $key=>$value){
             if (strpos($value, '.') !== false) {
