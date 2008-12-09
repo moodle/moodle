@@ -95,6 +95,9 @@ class repository_picasa extends repository {
     public function get_name(){
         return get_string('repositoryname', 'repository_picasa');
     }
+    public function supported_filetypes() {
+        return array('web_image');
+    }
 }
 
 // Icon for this plugin retrieved from http://www.iconspedia.com/icon/picasa-2711.html
