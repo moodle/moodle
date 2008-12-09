@@ -146,7 +146,7 @@
     // get list of courses containing modules if required
     elseif (!empty($modulelist) and confirm_sesskey()) {
         $modulename = $modulelist;
-        $sql =  "SELECT DISTINCT c.id FROM {$CFG->prefix}".$modulelist." module, {$CFG->prefix}course c"
+        $sql =  "SELECT DISTINCT c.id FROM {".$modulelist."} module, {course} c"
             ." WHERE module.course=c.id";
 
         $courseids = $DB->get_records_sql($sql);
