@@ -161,7 +161,7 @@ function LogoutNotification($SessionID){
 			$ADODB_SESS_LIFE   = $CFG->sessiontimeout;
 		}
 		
-			if ($user_session_data = get_records_sql('SELECT sesskey, sessdata FROM '. $CFG->prefix .'sessions2 WHERE expiry > NOW()')) {
+			if ($user_session_data =  $DB->get_records_sql('SELECT sesskey, sessdata FROM {sessions2} WHERE expiry > NOW()')) {
 			foreach ($user_session_data as $session_data) {
 				
 				//print_r($session_data);
