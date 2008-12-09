@@ -101,7 +101,7 @@
     echo '<div align="center"><table width="80%" cellpadding="10">';
     if ($courseitemfilter > 0) {
         $avgvalue = 'avg(value)';
-        if ($CFG->dbtype == 'postgres7') {
+        if ($DB->get_dbfamily() == 'postgres') { // TODO: this should be moved to standard sql DML function ;-)
              $avgvalue = 'avg(cast (value as integer))';
         }
         if ($courses = $DB->get_records_sql ("SELECT fv.course_id, c.shortname, $avgvalue AS avgvalue
