@@ -39,7 +39,7 @@
     </script>
     
     <br />
-    <div align="center" class="form">
+    <div class="mdl-align form">
     <form id="myform" action="localpath.php" method="post">
     <fieldset class="invisiblefieldset">
     <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>">

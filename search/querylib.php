@@ -326,7 +326,7 @@ class SearchQuery {
       $next   = get_string('next', 'search');
       $back   = get_string('back', 'search');
 
-      $ret = "<div align='center' id='search_page_links'>";
+      $ret = "<div class='mdl-align' id='search_page_links'>";
 
       //Back is disabled if we're on page 1
       if ($page > 1) {

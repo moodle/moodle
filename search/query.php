@@ -274,8 +274,7 @@
     ?>
     </form>
     <br/>
-
-    <div align="center">
+    <div class="mdl-align">
     <?php
     print_string('searching', 'search') . ': ';
 
@@ -365,8 +364,8 @@
         }
         print_box_end();
     ?>
-    <div align="center">
-    <?php
+    <div class="mdl-align">
+    <?php 
         print_string('ittook', 'search');
         search_stopwatch();
         print_string('tofetchtheseresults', 'search');

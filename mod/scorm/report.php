@@ -220,7 +220,7 @@
                 if ($scoes = $DB->get_records_select('scorm_scoes',"scorm=? ORDER BY id", array($scorm->id))) {
                     if (!empty($userdata)) {
                         print_simple_box_start('center');
-                        echo '<div align="center">'."\n";
+                        echo '<div class="mdl-align">'."\n";
                         print_user_picture($user, $course->id, $userdata->picture, false, false);
                         echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user&amp;course=$course->id\">".
                              "$userdata->firstname $userdata->lastname</a><br />";
@@ -282,7 +282,7 @@
             print_simple_box_start('center');
             //print_heading(format_string($sco->title));
             print_heading('<a href="'.$CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;mode=browse&amp;scoid='.$sco->id.'" target="_new">'.format_string($sco->title).'</a>');
-            echo '<div align="center">'."\n";
+            echo '<div class="mdl-align">'."\n";
             print_user_picture($user, $course->id, $userdata->picture, false, false);
             echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user&amp;course=$course->id\">".
                  "$userdata->firstname $userdata->lastname</a><br />";

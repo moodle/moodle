@@ -274,7 +274,7 @@
     echo "</ul>\n";
 
     if (!empty($sectionmenu)) {
-        echo '<div align="center" class="jumpmenu">';
+        echo '<div class="jumpmenu">';
         echo popup_form($CFG->wwwroot.'/course/view.php?id='.$course->id.'&amp;', $sectionmenu,
                    'sectionmenu', '', get_string('jumpto'), '', '', true);
         echo '</div>';

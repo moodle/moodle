@@ -227,7 +227,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 
         require_once($CFG->dirroot.'/mod/data/field/'.$this->type.'/mod.html');
 
-        echo '<div align="center">';
+        echo '<div class="mdl-align">';
         echo '<input type="submit" value="'.$savebutton.'" />'."\n";
         echo '<input type="submit" name="cancel" value="'.get_string('cancel').'" />'."\n";
         echo '</div>';

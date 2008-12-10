@@ -114,7 +114,7 @@
                     print '</ul>';
                 }
                 print ''
-                .   '<div align="center"><table border="0"><tr><td>'
+                .   '<div class="mdl-align"><table border="0"><tr><td>'
                 .   '<form target="_parent" method="post" action="'.$ME.'">'
                 .   '<input type="hidden" name="id" value="'.$course->id.'" />'
                 .   '<input type="hidden" name="regrade" value="'.$regrade.'" />'

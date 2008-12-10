@@ -33,7 +33,7 @@
     </script>
     
     <br />
-    <div align="center" class="form">
+    <div class="mdl-align form">
     <form id="myform">
     <fieldset class="invisiblefieldset">
     <input type="file" size="60" name="myfile" /><br />

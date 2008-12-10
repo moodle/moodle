@@ -295,7 +295,7 @@ function message_get_contact($contactid) {
 function message_print_search_results($frm) {
     global $USER, $CFG, $DB;
 
-    echo '<div align="center">';
+    echo '<div class="mdl-align">';
 
     /// search for person
     if (!empty($frm->personsubmit) and !empty($frm->name)) {
