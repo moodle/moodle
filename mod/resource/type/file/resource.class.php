@@ -389,7 +389,7 @@ class resource_file extends resource_base {
             $options = new object();
             $options->para = false;
             if (!empty($localpath)) {  // Show some help
-                echo '<div align="right" class="helplink">';
+                echo '<div class="mdl-right helplink">';
                 link_to_popup_window ('/mod/resource/type/file/localpath.php', get_string('localfile', 'resource'), get_string('localfilehelp','resource'), 400, 500, get_string('localfilehelp', 'resource'));
                 echo '</div>';
             }
@@ -462,7 +462,7 @@ class resource_file extends resource_base {
             $options->para = false;
             echo '<div class="summary">'.format_text($resource->summary, FORMAT_HTML, $options).'</div>';
             if (!empty($localpath)) {  // Show some help
-                echo '<div align="right" class="helplink">';
+                echo '<div class="mdl-right helplink">';
                 link_to_popup_window ('/mod/resource/type/file/localpath.php', get_string('localfile', 'resource'),
                         get_string('localfilehelp','resource'), 400, 500, get_string('localfilehelp', 'resource'));
                 echo '</div>';
@@ -688,7 +688,7 @@ class resource_file extends resource_base {
 
         } else {              // Display the resource on it's own
             if (!empty($localpath)) {   // Show a link to help work around browser security
-                echo '<div align="right" class="helplink">';
+                echo '<div class="mdl-right helplink">';
                 link_to_popup_window ('/mod/resource/type/file/localpath.php', get_string('localfile', 'resource'),
                         get_string('localfilehelp','resource'), 400, 500, get_string('localfilehelp', 'resource'));
                 echo '</div>';

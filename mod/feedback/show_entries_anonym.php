@@ -93,7 +93,7 @@
         }
     </script>
 
-    <div align="center">
+    <div class="mdl-align">
     <form name="frm" action="<?php echo me();?>" method="post">
         <table>
             <tr>

@@ -138,12 +138,12 @@
 
             $completedFeedbackCount = feedback_get_completeds_group_count($feedback, $mygroupid);
             if($feedback->course == SITEID){
-                echo '<div align="center"><a href="'.htmlspecialchars('analysis_course.php?id=' . $id . '&courseid='.$courseid).'">';
+                echo '<div class="mdl-align"><a href="'.htmlspecialchars('analysis_course.php?id=' . $id . '&courseid='.$courseid).'">';
                 echo get_string('course') .' '. get_string('analysis', 'feedback') . ' ('.get_string('completed_feedbacks', 'feedback').': '.intval($completedFeedbackCount).')</a>';
                 helpbutton('viewcompleted', '', 'feedback', true, true);
                 echo '</div>';
             }else {
-                echo '<div align="center"><a href="'.htmlspecialchars('analysis.php?id=' . $id . '&courseid='.$courseid).'">';
+                echo '<div class="mdl-align"><a href="'.htmlspecialchars('analysis.php?id=' . $id . '&courseid='.$courseid).'">';
                 echo get_string('analysis', 'feedback') . ' ('.get_string('completed_feedbacks', 'feedback').': '.intval($completedFeedbackCount).')</a>';
                 echo '</div>';
             }
@@ -167,7 +167,7 @@
                 $choose_group_form->set_data(array('id'=>$id, 'lstgroupid'=>$SESSION->feedback->lstgroupid, 'do_show'=>$do_show));
                 $choose_group_form->display();
             }
-            echo '<div align="center"><table><tr><td width="400">';
+            echo '<div class="mdl-align"><table><tr><td width="400">';
             if (!$students) {
                 if($courseid != SITEID){
                     notify(get_string('noexistingstudents'));

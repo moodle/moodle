@@ -65,7 +65,7 @@
         
         // print_simple_box_start('center', '80%');
         print_box_start('generalbox boxaligncenter boxwidthwide');
-        echo '<div align="center" class="printview"><table>';
+        echo '<div class="mdl-align printview"><table>';
         //print the inserted items
         $itempos = 0;
         foreach($feedbackitems as $feedbackitem){

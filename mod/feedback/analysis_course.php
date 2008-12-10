@@ -70,7 +70,7 @@
 
     if( $capabilities->viewreports ) {
         //button "export to excel"
-        echo '<div align="center">';
+        echo '<div class="mdl-align">';
         $export_button_link = 'analysis_to_excel.php';
         $export_button_options = array('sesskey'=>$USER->sesskey, 'id'=>$id, 'coursefilter'=>$coursefilter);
         $export_button_label = get_string('export_to_excel', 'feedback');
@@ -98,7 +98,7 @@
     }
 
     echo '<form name="report" method="post">';
-    echo '<div align="center"><table width="80%" cellpadding="10">';
+    echo '<div class="mdl-align"><table width="80%" cellpadding="10">';
     if ($courseitemfilter > 0) {
         $avgvalue = 'avg(value)';
         if ($DB->get_dbfamily() == 'postgres') { // TODO: this should be moved to standard sql DML function ;-)

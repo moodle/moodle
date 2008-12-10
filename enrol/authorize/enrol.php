@@ -71,7 +71,7 @@ class enrolment_plugin_authorize
 
         if ($USER->username == 'guest') { // only real guest user, not for users with guest role
             $curcost = get_course_cost($course);
-            echo '<div align="center">';
+            echo '<div class="mdl-align">';
             echo '<p>'.get_string('paymentrequired').'</p>';
             echo '<p><b>'.get_string('cost').": $curcost[currency] $curcost[cost]".'</b></p>';
             echo '<p><a href="'.$CFG->httpswwwroot.'/login/">'.get_string('loginsite').'</a></p>';

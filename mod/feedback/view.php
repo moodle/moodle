@@ -131,7 +131,7 @@
     
     if( (intval($feedback->publish_stats) == 1) AND ( $capabilities->viewanalysepage) AND !( $capabilities->viewreports) ) {
         if($multiple_count = $DB->count_records('feedback_tracking', array('userid'=>$USER->id, 'feedback'=>$feedback->id))) {
-            echo '<div align="center"><a href="'.htmlspecialchars('analysis.php?id=' . $id . '&courseid='.$courseid).'">';
+            echo '<div class="mdl-align"><a href="'.htmlspecialchars('analysis.php?id=' . $id . '&courseid='.$courseid).'">';
             echo get_string('completed_feedbacks', 'feedback').'</a>';
             echo '</div>';
         }
@@ -143,7 +143,7 @@
         if($feedback->course == SITEID) {
             // print_simple_box_start('center', '80%');
             print_box_start('generalbox boxaligncenter boxwidthwide');
-            echo '<div align="center">';
+            echo '<div class="mdl-align">';
             echo '<form action="mapcourse.php" method="get">';
             echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
             echo '<input type="hidden" name="id" value="'.$id.'" />';

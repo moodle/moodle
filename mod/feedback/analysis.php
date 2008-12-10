@@ -114,7 +114,7 @@
         }
 
         //button "export to excel"
-        //echo '<div align="center">';
+        //echo '<div class="mdl-align">';
         // echo '<div class="feedback_centered_button">';
         echo '<div class="form-buttons">';
         $export_button_link = 'analysis_to_excel.php';
@@ -148,7 +148,7 @@
             $check_anonymously = false;
         }
     }
-    // echo '<div align="center"><table width="80%" cellpadding="10"><tr><td>';
+    // echo '<div class="mdl-align"><table width="80%" cellpadding="10"><tr><td>';
     echo '<div><table width="80%" cellpadding="10"><tr><td>';
     if($check_anonymously) {
         $itemnr = 0;

@@ -99,7 +99,7 @@
         print_box_end();
     }else {
         $templates = feedback_get_template_list($course, true);
-        echo '<div align="center">';
+        echo '<div class="mdl-align">';
         if(!is_array($templates)) {
             // print_simple_box(get_string('no_templates_available_yet', 'feedback'), "center");
             print_box(get_string('no_templates_available_yet', 'feedback'), 'generalbox boxaligncenter');

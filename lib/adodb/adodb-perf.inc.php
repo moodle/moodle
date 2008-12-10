@@ -751,7 +751,7 @@ Committed_AS:   348732 kB
 			echo $this->Tables(); break;
 		}
 		global $ADODB_vers;
-		echo "<p><div align=center><font size=1>$ADODB_vers Sponsored by <a href=http://phplens.com/>phpLens</a></font></div>";
+		echo "<p><div class='mdl-align'><font size=1>$ADODB_vers Sponsored by <a href=http://phplens.com/>phpLens</a></font></div>";
 	}
 	
 	/*

@@ -832,9 +832,9 @@ function forum_cron() {
                         }
                     }
                     if ($canunsubscribe) {
-                        $posthtml .= "\n<div align=\"right\"><font size=\"1\"><a href=\"$CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\">".get_string("unsubscribe", "forum")."</a></font></div>";
+                        $posthtml .= "\n<div class='mdl-right'><font size=\"1\"><a href=\"$CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\">".get_string("unsubscribe", "forum")."</a></font></div>";
                     } else {
-                        $posthtml .= "\n<div align=\"right\"><font size=\"1\">".get_string("everyoneissubscribed", "forum")."</font></div>";
+                        $posthtml .= "\n<div class='mdl-right'><font size=\"1\">".get_string("everyoneissubscribed", "forum")."</font></div>";
                     }
                     $posthtml .= '<hr size="1" noshade="noshade" /></p>';
                 }

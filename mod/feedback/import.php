@@ -132,7 +132,7 @@
 
      <?php
 
-    echo '<div align="center">';
+    echo '<div class="mdl-align">';
     print_single_button('edit.php', array('id'=>$id, 'do_show'=>'templates'), get_string('cancel'));
     echo '</div>';
     print_footer($course);

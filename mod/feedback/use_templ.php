@@ -98,7 +98,7 @@
         echo '<p align="center">'.get_string('preview', 'feedback').'</p>';
         // print_simple_box_start('center', '75%');
         print_box_start('generalbox boxaligncenter boxwidthwide');
-        echo '<div align="center"><table>';
+        echo '<div class="mdl-align"><table>';
         foreach($templateitems as $templateitem){
             echo '<tr>';
             if($templateitem->hasvalue == 1 AND $feedback->autonumbering) {
