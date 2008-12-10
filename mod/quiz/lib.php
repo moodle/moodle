@@ -10,7 +10,6 @@
 */
 
 require_once($CFG->libdir.'/pagelib.php');
-require_once($CFG->libdir.'/questionlib.php');
 require_once($CFG->libdir.'/eventslib.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////////////
@@ -153,8 +152,9 @@ function quiz_delete_instance($id) {
     $result = true;
 
     if ($attempts = $DB->get_records("quiz_attempts", array("quiz"=>$quiz->id))) {
+        // TODO: this should use the delete_attempt($attempt->uniqueid) function in questionlib.php
+        // require_once($CFG->libdir.'/questionlib.php');
         foreach ($attempts as $attempt) {
-            // TODO: this should use the delete_attempt($attempt->uniqueid) function in questionlib.php
             if (! $DB->delete_records("question_states", array("attempt"=>$attempt->uniqueid))) {
                 $result = false;
             }
@@ -270,8 +270,7 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
     return true;
 }
 
-
-function quiz_cron () {
+function quiz_cron() {
 /// Function to be run periodically according to the moodle cron
 /// This function searches for things that need to be done, such
 /// as sending out mail, toggling flags etc ...
@@ -530,8 +529,6 @@ function quiz_get_participants($quizid) {
 
 function quiz_refresh_events($courseid = 0) {
     global $DB;
-// This horrible function only seems to be called from mod/quiz/db/[dbtype].php.
-
 // This standard function will check all instances of this module
 // and make sure there are up-to-date events created for each of them.
 // If courseid = 0, then every quiz event in the site is checked, else
@@ -659,7 +656,6 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart, $course
          return;
     }
 
-
     $cm_context      = get_context_instance(CONTEXT_MODULE, $cm->id);
     $grader          = has_capability('moodle/grade:viewall', $cm_context);
     $accessallgroups = has_capability('moodle/site:accessallgroups', $cm_context);
@@ -714,7 +710,6 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart, $course
 
   return;
 }
-
 
 function quiz_print_recent_mod_activity($activity, $courseid, $detail, $modnames) {
     global $CFG;
@@ -957,7 +952,6 @@ function quiz_after_add_or_update($quiz) {
         }
     }
 
-
     // Update the events relating to this quiz.
     // This is slightly inefficient, deleting the old events and creating new ones. However,
     // there are at most two events, and this keeps the code simpler.
@@ -1081,6 +1075,9 @@ function quiz_reset_gradebook($courseid, $type='') {
  */
 function quiz_reset_userdata($data) {
     global $CFG, $QTYPES, $DB;
+
+    // TODO: this should use the delete_attempt($attempt->uniqueid) function in questionlib.php
+    // require_once($CFG->libdir.'/questionlib.php');
 
     $componentstr = get_string('modulenameplural', 'quiz');
     $status = array();
@@ -1277,7 +1274,8 @@ function quiz_supports($feature) {
  * @return array all other caps used in module
  */
 function quiz_get_extra_capabilities() {
-    global $DB;
+    global $DB, $CFG;
+    require_once($CFG->libdir.'/questionlib.php');
     $caps = question_get_all_capabilities();
     $reportcaps = $DB->get_records_select_menu('capabilities', 'name LIKE ?', array('quizreport/%'), 'id,name');
     $caps = array_merge($caps, $reportcaps);
