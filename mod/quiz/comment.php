@@ -75,13 +75,13 @@
             echo '<div class="boxaligncenter"><input type="button" onclick="window.opener.location.reload(1); self.close();return false;" value="' .
                     get_string('closewindow') . "\" /></div>";
 
-            print_footer();
+            print_footer('empty');
             exit;
         }
     }
 
     question_print_comment_box($question, $state, $attempt, $CFG->wwwroot.'/mod/quiz/comment.php');
 
-    print_footer();
+    print_footer('empty');
 
 ?>

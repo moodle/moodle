@@ -860,7 +860,7 @@ class default_questiontype {
             $question_to_comment = isset($question->randomquestionid) ? $question->randomquestionid : $question->id;
             $commentlink = link_to_popup_window($options->questioncommentlink .
                     '?attempt=' . $state->attempt . '&amp;question=' . $question_to_comment,
-                    'commentquestion', $strcomment, 450, 650, $strcomment, 'none', true);
+                    'commentquestion', $strcomment, 470, 740, $strcomment, 'none', true);
             $commentlink = '<div class="commentlink">'. $commentlink .'</div>';
         }
 
