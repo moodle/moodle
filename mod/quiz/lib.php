@@ -10,7 +10,6 @@
 */
 
 require_once($CFG->libdir.'/pagelib.php');
-require_once($CFG->libdir.'/questionlib.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////////////
 
@@ -119,7 +118,6 @@ function quiz_update_instance($quiz) {
     return true;
 }
 
-
 function quiz_delete_instance($id) {
 /// Given an ID of an instance of this module,
 /// this function will permanently delete the instance
@@ -132,8 +130,9 @@ function quiz_delete_instance($id) {
     $result = true;
 
     if ($attempts = get_records("quiz_attempts", "quiz", "$quiz->id")) {
+        // TODO: this should use the delete_attempt($attempt->uniqueid) function in questionlib.php
+        // require_once($CFG->libdir.'/questionlib.php');
         foreach ($attempts as $attempt) {
-            // TODO: this should use the delete_attempt($attempt->uniqueid) function in questionlib.php
             if (! delete_records("question_states", "attempt", "$attempt->uniqueid")) {
                 $result = false;
             }
@@ -175,7 +174,6 @@ function quiz_delete_instance($id) {
     return $result;
 }
 
-
 function quiz_user_outline($course, $user, $mod, $quiz) {
 /// Return a small object with summary information about what a
 /// user has done with a given particular instance of this module
@@ -192,9 +190,7 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
         return $result;
     }
     return NULL;
-
 }
-
 
 function quiz_user_complete($course, $user, $mod, $quiz) {
 /// Print a detailed representation of what a  user has done with
@@ -220,8 +216,7 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
     return true;
 }
 
-
-function quiz_cron () {
+function quiz_cron() {
 /// Function to be run periodically according to the moodle cron
 /// This function searches for things that need to be done, such
 /// as sending out mail, toggling flags etc ...
@@ -415,7 +410,6 @@ function quiz_grade_item_delete($quiz) {
     return grade_update('mod/quiz', $quiz->course, 'mod', 'quiz', $quiz->id, 0, NULL, array('deleted'=>1));
 }
 
-
 function quiz_get_participants($quizid) {
 /// Returns an array of users who have data in a given quiz
 /// (users with records in quiz_attempts and quiz_question_versions)
@@ -448,8 +442,6 @@ function quiz_get_participants($quizid) {
 }
 
 function quiz_refresh_events($courseid = 0) {
-// This horrible function only seems to be called from mod/quiz/db/[dbtype].php.
-
 // This standard function will check all instances of this module
 // and make sure there are up-to-date events created for each of them.
 // If courseid = 0, then every quiz event in the site is checked, else
@@ -573,7 +565,6 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart, $course
          return;
     }
 
-
     $cm_context      = get_context_instance(CONTEXT_MODULE, $cm->id);
     $grader          = has_capability('moodle/grade:viewall', $cm_context);
     $accessallgroups = has_capability('moodle/site:accessallgroups', $cm_context);
@@ -628,7 +619,6 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart, $course
 
   return;
 }
-
 
 function quiz_print_recent_mod_activity($activity, $courseid, $detail, $modnames) {
     global $CFG;
@@ -870,7 +860,6 @@ function quiz_after_add_or_update($quiz) {
         }
     }
 
-
     // Update the events relating to this quiz.
     // This is slightly inefficient, deleting the old events and creating new ones. However,
     // there are at most two events, and this keeps the code simpler.
@@ -996,6 +985,9 @@ function quiz_reset_gradebook($courseid, $type='') {
  */
 function quiz_reset_userdata($data) {
     global $CFG, $QTYPES;
+
+    // TODO: this should use the delete_attempt($attempt->uniqueid) function in questionlib.php
+    // require_once($CFG->libdir.'/questionlib.php');
 
     $componentstr = get_string('modulenameplural', 'quiz');
     $status = array();
