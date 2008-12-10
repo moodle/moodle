@@ -171,20 +171,6 @@
     }
 
 
-/// Print slightly annoying registration button
-    $options = array();
-    $options['sesskey'] = $USER->sesskey;
-    print_box_start('generalbox adminwarning');
-    if(!isset($CFG->registered)) {
-       print_string('pleaseregister', 'admin');
-    }
-    else { /* if (isset($CFG->registered) && $CFG->registered < (time() - 3600*24*30*6)) { */
-       print_string('pleaserefreshregistration', 'admin', userdate($CFG->registered));
-    }
-    print_single_button('register.php', $options, get_string('registration'));
-    print_box_end();
-
-
     //////////////////////////////////////////////////////////////////////////////////////////////////
     ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO HIDE, REMOVE OR MODIFY THIS COPYRIGHT NOTICE ///
     $copyrighttext = '<a href="http://moodle.org/">Moodle</a> '.

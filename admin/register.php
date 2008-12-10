@@ -2,17 +2,17 @@
        // register.php - allows admin to register their site on moodle.org
 
     require_once('../config.php');
+    require_once($CFG->libdir.'/adminlib.php');
 
     require_login();
 
     require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
+
+    admin_externalpage_setup('adminregistration');
+
     if (!$site = get_site()) {
         redirect("index.php");
-    }
-
-    if (!confirm_sesskey()) {
-        print_error('confirmsesskeybad', 'error');
     }
 
     if (!$admin = get_admin()) {
@@ -27,6 +27,8 @@
         set_config('siteidentifier', random_string(32).$_SERVER['HTTP_HOST']);
     }
 
+/// Print the header stuff
+    admin_externalpage_print_header();
 
 /// Print headings
 
@@ -37,7 +39,6 @@
     $navlinks[] = array('name' => $stradministration, 'link' => "../$CFG->admin/index.php", 'type' => 'misc');
     $navlinks[] = array('name' => $strregistration, 'link' => null, 'type' => 'misc');
     $navigation = build_navigation($navlinks);
-    print_header("$site->shortname: $strregistration", $site->fullname, $navigation);
 
     print_heading($strregistration);
 
@@ -132,11 +133,11 @@
               FROM {role_capabilities} rc,
                    {role_assignments} ra,
                    {user} u
-             WHERE (rc.capability = 'moodle/course:update' or rc.capability='moodle/site:doanything')
+             WHERE (rc.capability = ? or rc.capability = ?)
                    AND rc.roleid = ra.roleid
                    AND u.id = ra.userid";
 
-    $count = $DB->count_records_sql($sql);
+    $count = $DB->count_records_sql($sql, array('moodle/course:update', 'moodle/site:doanything'));
     echo get_string("teachers").": ".$count;
     echo "<input type=\"hidden\" name=\"courseupdaters\" value=\"$count\" />\n";
     echo '<br />';
@@ -187,6 +188,5 @@
 
     echo "</form>\n";
 
-    print_footer();
-
-?>
+/// Print footer
+    admin_externalpage_print_footer();
