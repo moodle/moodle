@@ -20,7 +20,7 @@ class enrol_authorize_form extends moodleform
         $mform->addElement('header', 'general', get_string('paymentrequired'));
         $othermethodstr = $this->other_method_available($paymentmethod);
         if ($othermethodstr) {
-            $mform->addElement('static', '', '<div align="right">' . $othermethodstr . '</div>', '');
+            $mform->addElement('static', '', '<div class="mdl-right">' . $othermethodstr . '</div>', '');
         }
 
         $mform->addElement('hidden', 'id', $course->id);

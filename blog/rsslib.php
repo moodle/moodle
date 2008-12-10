@@ -40,7 +40,7 @@
 
         require_once($CFG->libdir.'/filelib.php');
         $path = get_file_url($path, null, 'rssfile');
-        print '<div align="right"><a href="'. $path .'"><img src="'. $rsspix .'" title="'. strip_tags($tooltiptext) .'" alt="'.get_string('rss').'" /></a></div>';
+        print '<div class="mdl-right"><a href="'. $path .'"><img src="'. $rsspix .'" title="'. strip_tags($tooltiptext) .'" alt="'.get_string('rss').'" /></a></div>';
 
     }
 

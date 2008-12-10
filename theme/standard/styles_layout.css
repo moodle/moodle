@@ -108,6 +108,12 @@ h6.main {
 .mdl-align {
   text-align: center;
 }
+.mdl-left {
+  text-align: left;
+}
+.mdl-right {
+  text-align: right;
+}
 
 .continuebutton {
   text-align: center;

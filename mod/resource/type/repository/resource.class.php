@@ -375,7 +375,7 @@ function display() {
 
         echo '<div class="summary">'.format_text($resource->summary, FORMAT_HTML, $formatoptions).'</div>';
         if (!empty($localpath)) {  // Show some help
-            echo '<div align="right" class="helplink">';
+            echo '<div class="mdl-right helplink">';
             link_to_popup_window ('/mod/resource/type/file/localpath.php', get_string('localfile', 'resource'), get_string('localfilehelp','resource'), 400, 500, get_string('localfilehelp', 'resource'));
             echo '</div>';
         }
@@ -489,7 +489,7 @@ function display() {
 
     } else {              // Display the resource on it's own
         if (!empty($localpath)) {   // Show a link to help work around browser security
-            echo '<div align="right" class="helplink">';
+            echo '<div class="mdl-right helplink">';
             link_to_popup_window ('/mod/resource/type/file/localpath.php', get_string('localfile', 'resource'), get_string('localfilehelp','resource'), 400, 500, get_string('localfilehelp', 'resource'));
             echo '</div>';
             echo "<center><p>(<a href=\"$fullurl\">$fullurl</a>)</p></center>";

@@ -822,7 +822,7 @@
                 echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
                 echo '<input type="hidden" name="currentfile" value="'.$currentfile.'" />';
                 echo '<input type="hidden" name="mode" value="helpfiles" />';
-                echo "<div align=\"center\">\n";
+                echo "<div class='mdl-align'>\n";
                 echo "<textarea rows=\"$fileeditorrows\" cols=\"$fileeditorcols\" name=\"filedata\">";
                 if (file_exists("$saveto/$currentfile")) {
                     echo htmlspecialchars(file_get_contents("$saveto/$currentfile"));
@@ -842,7 +842,7 @@
             if (is_readable("$altdir/$currentfile")) {
                 // show the content of the same help file in alternative location
                 echo '<fieldset><legend>'.$straltdirtitle.'</legend>';
-                echo "<div align=\"center\">\n";
+                echo "<div class='mdl-align'>\n";
                 echo "<textarea rows=\"$fileeditorrows\" cols=\"$fileeditorcols\" name=\"\">";
                 if (file_exists("$altdir/$currentfile")) {
                     echo htmlspecialchars(file_get_contents("$altdir/$currentfile"));
@@ -869,7 +869,7 @@
                 echo '<fieldset><legend>'.$strlangmasterenglish;
                 helpbutton('langpackages', $strlangmasterenglish);
                 echo '</legend>';
-                echo "<div align=\"center\">\n<textarea rows=\"$fileeditorrows\" cols=\"$fileeditorcols\" name=\"\">";
+                echo "<div class='mdl-align'>\n<textarea rows=\"$fileeditorrows\" cols=\"$fileeditorcols\" name=\"\">";
                 echo htmlspecialchars(file_get_contents($ensrc));
                 echo "</textarea>\n</div>\n";
                 $preview_url = lang_help_preview_url($currentfile, true, 'en_utf8');   // do not display en_utf8_local

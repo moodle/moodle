@@ -50,7 +50,7 @@ class question_dataset_dependent_definitions_form extends moodleform {
         $datadefscat= array();
         $datadefscat  = $this->qtypeobj->get_dataset_definitions_category($this->question);
         $datasetmenus = array();
-        $label = "<div align=\"center\">".get_string('datasetrole', 'qtype_datasetdependent','numerical')."</div>";
+        $label = "<div class='mdl-align'>".get_string('datasetrole', 'qtype_datasetdependent','numerical')."</div>";
         $mform->addElement('html', $label);// explaining the role of datasets so other strings can be shortened
         $mform->addElement('header', 'mandatoryhdr', get_string('mandatoryhdr', $stringfile));
         $labelsharedwildcard = get_string("sharedwildcard", "qtype_datasetdependent");

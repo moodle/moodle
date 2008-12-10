@@ -2869,7 +2869,7 @@ function exercise_print_upload_form($exercise) {
         error("Course Module ID was incorrect");
     }
 
-    echo "<div align=\"center\">";
+    echo "<div class='mdl-align'>";
     echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"upload.php\">";
     echo " <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
     require_once($CFG->dirroot.'/lib/uploadlib.php');

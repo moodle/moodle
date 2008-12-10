@@ -1639,7 +1639,7 @@ function ewiki_page_edit_preview(&$data) {
    $preview_text=$GLOBALS["ewiki_plugins"]["render"][0]($_REQUEST["content"], 1, EWIKI_ALLOW_HTML || (@$data["flags"]&EWIKI_DB_F_HTML));
    return( '<div class="preview">'
            . "<hr noshade>"
-           . "<div align=\"right\">" . ewiki_t("PREVIEW") . "</div><hr noshade><br />\n"
+           . "<div class='mdl-right'>" . ewiki_t("PREVIEW") . "</div><hr noshade><br />\n"
            . format_text($preview_text, $moodle_format)
            . "<br /><br /><hr noshade><br />"
            . "</div>"
@@ -1659,7 +1659,7 @@ function ewiki_control_links($id, &$data, $action) {
    }
 
    $o = "\n"
-      . '<div align="right" class="action-links control-links">'
+      . '<div class="mdl-right action-links control-links">'
       . "\n<br />\n"
       . "<hr noshade>" . "\n";
 
