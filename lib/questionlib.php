@@ -1729,26 +1729,38 @@ function get_question_image($question) {
     return $img;
 }
 
-function question_print_comment_fields($question, $state, $prefix, $cmoptions) {
+function question_print_comment_fields($question, $state, $prefix, $cmoptions, $caption = '') {
     $idprefix = preg_replace('/[^-_a-zA-Z0-9]/', '', $prefix);
     $grade = question_format_grade($cmoptions, $state->last_graded->grade);
     $maxgrade = question_format_grade($cmoptions, $question->maxgrade);
     $fieldsize = strlen($maxgrade) - 1;
-    echo '<table class="que comment">' . "\n";
-    echo '<tr valign="top">' . "\n";
-    echo '<th><label for="' . $idprefix . '_comment_box">' .
-            get_string('comment', 'quiz') . "</label></th>\n";
-    echo '<td>';
-    print_textarea(can_use_html_editor(), 15, 60, 630, 300, $prefix . '[comment]',
-            $state->manualcomment, 0, false, $idprefix . '_comment_box');
-    echo "</td>\n";
-    echo "</tr>\n";
-    echo '<tr valign="top">' . "\n";
-    echo '<th><label for="' .  $idprefix . '_grade_field">' . get_string('grade', 'quiz') . "</label></th>\n";
-    echo '<td><input type="text" name="' . $prefix . '[grade]" size="' . $fieldsize .
-            '" id="' . $idprefix . '_grade_field" value="' . $grade . '" />/' . $maxgrade . "</td>\n";
-    echo "</tr>\n";
-    echo "</table>\n";
+    if (empty($caption)) {
+        $caption = format_string($question->name);
+    }
+    ?>
+<fieldset class="que comment clearfix">
+    <legend class="ftoggler"><?php echo $caption; ?></legend>
+    <div class="fcontainer clearfix">
+        <div class="fitem">
+            <div class="fitemtitle">
+                <label for="<?php echo $idprefix; ?>_comment_box"><?php print_string('comment', 'quiz'); ?></label>
+            </div>
+            <div class="felement fhtmleditor">
+                <?php print_textarea(can_use_html_editor(), 15, 60, 630, 300, $prefix . '[comment]',
+                        $state->manualcomment, 0, false, $idprefix . '_comment_box'); ?>
+            </div>
+        </div>
+        <div class="fitem">
+            <div class="fitemtitle">
+                <label for="<?php echo $idprefix; ?>_grade_field"><?php print_string('grade', 'quiz'); ?></label>
+            </div>
+            <div class="felement ftext">
+                <input type="text" name="<?php echo $prefix; ?>[grade]" size="<?php echo $fieldsize; ?>" id="<?php echo $idprefix; ?>_grade_field" value="<?php echo $grade; ?>" /> / <?php echo $maxgrade; ?>
+            </div>
+        </div>
+    </div>
+</fieldset>
+    <?php
 }
 
 /**

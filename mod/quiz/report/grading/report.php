@@ -371,7 +371,7 @@ class quiz_grading_report extends quiz_default_report {
 
             // Display the form with one part for each selected attempt
 
-            echo '<form method="post" action="report.php">'.
+            echo '<form method="post" action="report.php" class="mform" id="manualgradingform">'.
                 '<input type="hidden" name="mode" value="grading" />'.
                 '<input type="hidden" name="q" value="'.$quiz->id.'" />'.
                 '<input type="hidden" name="sesskey" value="'.sesskey().'" />'.
@@ -390,10 +390,10 @@ class quiz_grading_report extends quiz_default_report {
                 $options->readonly = 1;
 
                 if (question_state_is_graded($state)) {
-                    $gradedclass = ' class="highlightgraded" ';
+                    $gradedclass = 'main highlightgraded';
                     $gradedstring = ' ' . get_string('graded','quiz_grading');
                 } else {
-                    $gradedclass = '';
+                    $gradedclass = 'main';
                     $gradedstring = '';
                 }
                 $a = new object();
@@ -402,8 +402,7 @@ class quiz_grading_report extends quiz_default_report {
 
                 // print the user name, attempt count, the question, and some more hidden fields
                 echo '<div class="boxaligncenter" width="80%" style="clear:left;padding:15px;">';
-                echo "<span$gradedclass>" . get_string('gradingattempt', 'quiz_grading', $a);
-                echo $gradedstring . '</span>';
+                print_heading(get_string('gradingattempt', 'quiz_grading', $a) . $gradedstring, '', 3, $gradedclass);
 
                 // Print the question, without showing any previous comment.
                 $copy = $state->manualcomment;
@@ -413,8 +412,8 @@ class quiz_grading_report extends quiz_default_report {
 
                 // The print the comment and grade fields, putting back the previous comment.
                 $state->manualcomment = $copy;
-                question_print_comment_fields($question, $state,
-                        'manualgrades[' . $attempt->uniqueid . ']', $quiz);
+                question_print_comment_fields($question, $state, 'manualgrades[' . $attempt->uniqueid . ']',
+                        $quiz, get_string('manualgrading', 'quiz'));
 
                 echo '</div>';
             }

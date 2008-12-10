@@ -740,10 +740,19 @@ class quiz_attempt extends quiz {
     }
 
     public function question_print_comment_fields($questionid, $prefix) {
+        global $DB;
+
         $this->ensure_question_loaded($questionid);
         $this->ensure_state_loaded($questionid);
+
+    /// Work out a nice title.
+        $student = $DB->get_record('user', array('id' => $this->get_userid()));
+        $a = new object();
+        $a->fullname = fullname($student, true);
+        $a->attempt = $this->get_attempt_number();
+
         question_print_comment_fields($this->questions[$questionid],
-                $this->states[$questionid], $prefix, $this->quiz);
+                $this->states[$questionid], $prefix, $this->quiz, get_string('gradingattempt', 'quiz_grading', $a));
     }
 
     // Private methods =====================================================================

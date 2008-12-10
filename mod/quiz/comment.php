@@ -10,8 +10,8 @@
     require_once('../../config.php');
     require_once('locallib.php');
 
-    $attemptid =required_param('attempt', PARAM_INT); // attempt id
-    $questionid =required_param('question', PARAM_INT); // question id
+    $attemptid = required_param('attempt', PARAM_INT); // attempt id
+    $questionid = required_param('question', PARAM_INT); // question id
 
     $attemptobj = new quiz_attempt($attemptid);
 
@@ -46,9 +46,7 @@
     /// If success, notify and print a close button.
         if (!is_string($error)) {
             notify(get_string('changessaved'), 'notifysuccess');
-            close_window_button('closewindow', false, true);
-            print_footer();
-            exit;
+            close_window(2, true);
         }
 
     /// Otherwise, display the error and fall throug to re-display the form.
@@ -56,14 +54,30 @@
     }
 
 /// Print the comment form.
-    echo '<form method="post" action="' . $CFG->wwwroot . '/mod/quiz/comment.php">';
+    echo '<form method="post" class="mform" id="manualgradingform" action="' . $CFG->wwwroot . '/mod/quiz/comment.php">';
     $attemptobj->question_print_comment_fields($questionid, 'response');
-    echo '<input type="hidden" name="attempt" value="' . $attemptobj->get_uniqueid() . '" />';
-    echo '<input type="hidden" name="question" value="' . $questionid . '" />';
-    echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
-    echo '<input type="submit" name="submit" value="' . get_string('save', 'quiz') . '" />';
+?>
+<div>
+    <input type="hidden" name="attempt" value="<?php echo $attemptobj->get_uniqueid(); ?>" />
+    <input type="hidden" name="question" value="<?php echo $questionid; ?>" />
+    <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
+</div>
+<fieldset class="hidden">
+    <div>
+        <div class="fitem">
+            <div class="fitemtitle">
+                <div class="fgrouplabel"><label> </label></div>
+            </div>
+            <fieldset class="felement fgroup">
+                <input id="id_submitbutton" type="submit" name="submit" value="<?php print_string('save', 'quiz'); ?>"/>
+                <input id="id_cancel" type="button" value="<?php print_string('cancel'); ?>" onclick="close_window"/>
+            </fieldset>
+        </div>
+    </div>
+</fieldset>
+<?php
     echo '</form>';
 
 /// End of the page.
-    print_footer();
+    print_footer('empty');
 ?>

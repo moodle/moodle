@@ -935,7 +935,7 @@ class default_questiontype {
             $strcomment = get_string('commentorgrade', 'quiz');
             $commentlink = link_to_popup_window($options->questioncommentlink .
                     '?attempt=' . $state->attempt . '&amp;question=' . $actualquestionid,
-                    'commentquestion', $strcomment, 450, 650, $strcomment, 'none', true);
+                    'commentquestion', $strcomment, 480, 750, $strcomment, 'none', true);
             $commentlink = '<div class="commentlink">'. $commentlink .'</div>';
         }
 
