@@ -391,6 +391,7 @@ class quiz_report extends quiz_default_report {
     
                 $options = quiz_get_reviewoptions($quiz, $attempt, $context);
                 unset($options->questioncommentlink);
+                $options->noeditlink = true;
                 $copy = $state->manualcomment;
                 $state->manualcomment = '';
     

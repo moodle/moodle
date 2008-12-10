@@ -74,7 +74,15 @@
         }
     }
 
-    add_to_log($course->id, "quiz", "review", "review.php?id=$cm->id&amp;attempt=$attempt->id", "$quiz->id", "$cm->id");
+/// Bits needed to print a good URL for this page.
+    $urloptions = '';
+    if ($showall) {
+        $urloptions .= '&amp;showall=true';
+    } else if ($page > 0) {
+        $urloptions .= '&amp;page=' . $page;
+    }
+
+    add_to_log($course->id, 'quiz', 'review', 'review.php?attempt=' . $attempt->id . $urloptions, $quiz->id, $cm->id);
 
 /// Load all the questions and states needed by this script
 
@@ -186,12 +194,6 @@
     if (has_capability('mod/quiz:viewreports', $context) &&
             count($attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND userid = '$attempt->userid'", 'attempt ASC')) > 1) {
     /// List of all this user's attempts for people who can see reports.
-        $urloptions = '';
-        if ($showall) {
-            $urloptions .= '&amp;showall=true';
-        } else if ($page > 0) {
-            $urloptions .= '&amp;page=' . $page;
-        }
         $attemptlist = array();
         foreach ($attempts as $at) {
             if ($at->id == $attempt->id) {
@@ -269,6 +271,7 @@
     }
 
 /// Print all the questions
+    $quiz->thispageurl = $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $attempt->id . $urloptions;
     $number = quiz_first_questionnumber($attempt->layout, $pagelist);
     foreach ($pagequestions as $i) {
         if (!isset($questions[$i])) {

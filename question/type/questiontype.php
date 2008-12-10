@@ -826,28 +826,17 @@ class default_questiontype {
         global $CFG;
         $isgraded = question_state_is_graded($state->last_graded);
 
-        // get the context so we can determine whether some extra links
-        // should be shown.
+        // Get the context we should use to check permissions.
         if (!empty($cmoptions->id)) {
-            $cm = get_coursemodule_from_instance('quiz', $cmoptions->id);
-            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-            $cmorcourseid = '&amp;cmid='.$cm->id;
+            $context = get_context_instance(CONTEXT_MODULE, $cmoptions->id);
         } else if (!empty($cmoptions->course)) {
             $context = get_context_instance(CONTEXT_COURSE, $cmoptions->course);
-            $cmorcourseid = '&amp;courseid='.$cmoptions->course;
         } else {
-            error('Need to provide courseid or cmid to print_question.');
+            $context = null;
         }
 
         // For editing teachers print a link to an editing popup window
-        $editlink = '';
-        if (question_has_capability_on($question, 'edit')) {
-            $stredit = get_string('edit');
-            $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="'.$stredit.'" />';
-            $editlink = link_to_popup_window('/question/question.php?inpopup=1&amp;id=' .
-                    $question->id . $cmorcourseid, 'editquestion',
-                    $linktext, false, false, $stredit, '', true);
-        }
+        $editlink = $this->get_question_edit_link($question, $cmoptions, $options);
 
         $generalfeedback = '';
         if ($isgraded && $options->generalfeedback) {
@@ -866,16 +855,61 @@ class default_questiontype {
         $comment = stripslashes($state->manualcomment);
         $commentlink = '';
 
-        if (isset($options->questioncommentlink) && $context && has_capability('mod/quiz:grade', $context)) {
+        if (!empty($options->questioncommentlink)) {
             $strcomment = get_string('commentorgrade', 'quiz');
             $question_to_comment = isset($question->randomquestionid) ? $question->randomquestionid : $question->id;
-            $commentlink = '<div class="commentlink">'.link_to_popup_window ($options->questioncommentlink.'?attempt='.$state->attempt.'&amp;question='.$question_to_comment,
-                             'commentquestion', $strcomment, 450, 650, $strcomment, 'none', true).'</div>';
+            $commentlink = link_to_popup_window($options->questioncommentlink .
+                    '?attempt=' . $state->attempt . '&amp;question=' . $question_to_comment,
+                    'commentquestion', $strcomment, 450, 650, $strcomment, 'none', true);
+            $commentlink = '<div class="commentlink">'. $commentlink .'</div>';
         }
 
         $history = $this->history($question, $state, $number, $cmoptions, $options);
 
         include "$CFG->dirroot/question/type/question.html";
+    }
+
+    /**
+     * Get a link to an edit icon for this question, if the current user is allowed
+     * to edit it.
+     *
+     * @param object $question the question object.
+     * @param object $cmoptions the options from the module. If $cmoptions->thispageurl is set
+     *      then the link will be to edit the question in this browser window, then return to
+     *      $cmoptions->thispageurl. Otherwise the link will be to edit in a popup.
+     * @return string the HTML of the link, or nothing it the currenty user is not allowed to edit.
+     */
+    function get_question_edit_link($question, $cmoptions, $options) {
+        global $CFG;
+
+    /// Is this user allowed to edit this question?
+        if (!empty($options->noeditlink) || !question_has_capability_on($question, 'edit')) {
+            return '';
+        }
+
+    /// Work out the right URL.
+        $linkurl = '/question/question.php?id=' . $question->id;
+        if (!empty($cmoptions->id)) {
+            $linkurl .= '&amp;cmid=' . $cmoptions->id;
+        } else if (!empty($cmoptions->course)) {
+            $linkurl .= '&amp;courseid=' . $cmoptions->course;
+        } else {
+            error('Need to provide courseid or cmid to get_question_edit_link.');
+        }
+
+    /// Work out the contents of the link.
+        $stredit = get_string('edit');
+        $linktext = '<img src="' . $CFG->pixpath . '/t/edit.gif" alt="' . $stredit . '" />';
+
+        if (!empty($cmoptions->thispageurl)) {
+        /// The module allow editing in the same window, print an ordinary link.
+            return '<a href="' . $CFG->wwwroot . $linkurl . '&amp;returnurl=' . urlencode($cmoptions->thispageurl) .
+                    '" title="' . $stredit . '">' . $linktext . '</a>';
+        } else {
+        /// We have to edit in a pop-up.
+            return link_to_popup_window($linkurl . '&amp;inpopup=1', 'editquestion',
+                    $linktext, false, false, $stredit, '', true);
+        }
     }
 
     /*

@@ -45,24 +45,8 @@ class description_qtype extends default_questiontype {
         global $CFG;
         $isfinished = question_state_is_graded($state->last_graded) || $state->event == QUESTION_EVENTCLOSE;
 
-        if (!empty($cmoptions->id)) {
-            $cm = get_coursemodule_from_instance('quiz', $cmoptions->id);
-            $cmorcourseid = '&amp;cmid='.$cm->id;
-        } else if (!empty($cmoptions->course)) {
-            $cmorcourseid = '&amp;courseid='.$cmoptions->course;
-        } else {
-            error('Need to provide courseid or cmid to print_question.');
-        }
-
         // For editing teachers print a link to an editing popup window
-        $editlink = '';
-        if (question_has_capability_on($question, 'edit')) {
-            $stredit = get_string('edit');
-            $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="'.$stredit.'" />';
-            $editlink = link_to_popup_window('/question/question.php?inpopup=1&amp;id=' .
-                    $question->id . $cmorcourseid, 'editquestion',
-                    $linktext, false, false, $stredit, '', true);
-        }
+        $editlink = $this->get_question_edit_link($question, $cmoptions, $options);
 
         $questiontext = $this->format_text($question->questiontext, $question->questiontextformat, $cmoptions);
         $image = get_question_image($question);

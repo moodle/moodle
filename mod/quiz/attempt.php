@@ -463,8 +463,8 @@
     }
 
     // Start the form
-    echo '<form id="responseform" method="post" action="attempt.php?q=', s($quiz->id), '&amp;page=', s($page),
-            '" enctype="multipart/form-data"' .
+    $quiz->thispageurl = $CFG->wwwroot . '/mod/quiz/attempt.php?q=' . s($quiz->id) . '&amp;page=' . s($page);
+    echo '<form id="responseform" method="post" action="', $quiz->thispageurl . '" enctype="multipart/form-data"' .
             ' onclick="this.autocomplete=\'off\'" onkeypress="return check_enter(event);">', "\n";
     if($quiz->timelimit > 0) {
         // Make sure javascript is enabled for time limited quizzes

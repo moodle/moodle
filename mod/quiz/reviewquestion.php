@@ -96,6 +96,9 @@
         error("Unable to load questiontype specific question information");
     }
 
+    $baseurl = $CFG->wwwroot . '/mod/quiz/reviewquestion.php?question=' . $question->id . '&amp;number=' . $number . '&amp;attempt=';
+    $quiz->thispageurl = $baseurl . $attempt->id;
+
     $session = get_record('question_sessions', 'attemptid', $attempt->uniqueid, 'questionid', $question->id);
     $state->sumpenalty = $session->sumpenalty;
     $state->manualcomment = $session->manualcomment;
@@ -132,7 +135,7 @@
         foreach ($attempts as $at) {
             $attemptlist .= ($at->id == $attempt->id)
                 ? '<b>'.$at->attempt.'</b>, '
-                : '<a href="reviewquestion.php?attempt='.$at->id.'&amp;question='.$question->id.'&amp;number='.$number.'">'.$at->attempt.'</a>, ';
+                : '<a href="' . $baseurl . $at->id . '">'.$at->attempt.'</a>, ';
         }
         $table->data[] = array(get_string('attempts', 'quiz').':', trim($attemptlist, ' ,'));
     }

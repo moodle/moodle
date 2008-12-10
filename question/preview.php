@@ -182,6 +182,7 @@
 
     // TODO: should not use quiz-specific function here
     $options = quiz_get_renderoptions($quiz->review, $curstate);
+    $options->noeditlink = true;
 
     // Fill in the correct responses (unless the question is in readonly mode)
     if ($fillcorrect && !$options->readonly) {
