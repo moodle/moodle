@@ -271,7 +271,7 @@
     </form>
     <br/>
     
-    <div align="center">
+    <div style="text-align:center">
     <?php
     print_string('searching', 'search') . ': ';
     
@@ -347,7 +347,7 @@
         }     
         print_box_end();
     ?>
-    <div align="center">
+    <div style="text-align:center">
     <?php 
         print_string('ittook', 'search');
         search_stopwatch(); 

@@ -71,13 +71,13 @@
             $boxwidth = 500;
             if (trim(strip_tags($hotpot->summary))) {
                 print_simple_box_start($boxalign, $boxwidth);
-                print '<div align="center">'.format_text($hotpot->summary)."</div>\n";
+                print '<div style="text-align:center">'.format_text($hotpot->summary)."</div>\n";
                 print_simple_box_end();
                 print "<br />\n";
             }
             print '<form id="passwordform" method="post" action="view.php?id='.$cm->id.'">'."\n";
             print_simple_box_start($boxalign, $boxwidth);
-            print '<div align="center">';
+            print '<div style="text-align:center">';
             print get_string('requirepasswordmessage', 'quiz').'<br /><br />';
             print '<b>'.get_string('password').':</b> ';
             print '<input name="hppassword" type="password" value="" /> ';

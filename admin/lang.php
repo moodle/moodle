@@ -830,7 +830,7 @@
                     echo ($filetemplate);
                 }
                 echo "</textarea>\n</div>\n";
-                echo '<div align="center"><input type="submit" value="'.get_string('savechanges').'" /></div>';
+                echo '<div style="text-align:center"><input type="submit" value="'.get_string('savechanges').'" /></div>';
                 echo '</form>';
                 $preview_url = lang_help_preview_url($currentfile, !$uselocal);
                 if ($preview_url) {
