@@ -1704,9 +1704,7 @@ function get_html_head_contributions(&$questionlist, &$questions, &$states) {
  */
 function print_question(&$question, &$state, $number, $cmoptions, $options=null) {
     global $QTYPES;
-
-    $QTYPES[$question->qtype]->print_question($question, $state, $number,
-     $cmoptions, $options);
+    $QTYPES[$question->qtype]->print_question($question, $state, $number, $cmoptions, $options);
 }
 /**
  * Saves question options
