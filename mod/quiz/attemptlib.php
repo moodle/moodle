@@ -470,7 +470,7 @@ class quiz_attempt extends quiz {
         return $this->attempt->userid;
     }
 
-    /** @return boolean whether this attemp has been finished (true) or is still in progress (false). */
+    /** @return boolean whether this attempt has been finished (true) or is still in progress (false). */
     public function is_finished() {
         return $this->attempt->timefinish != 0;
     }
@@ -641,6 +641,10 @@ class quiz_attempt extends quiz {
                 $this->page_and_question_fragment($questionid, $page, $showall);
     }
 
+    public function set_this_page_url($url) {
+        $this->quiz->thispageurl = $url;
+    }
+
     // Bits of content =====================================================================
     public function get_html_head_contributions($page = 'all') {
         return get_html_head_contributions($this->get_question_ids($page),
@@ -660,11 +664,23 @@ class quiz_attempt extends quiz {
         echo '</div>';
     }
 
-    public function print_question($id) {
-        if ($this->is_finished()) {
+    /**
+     * Wrapper round print_question from lib/questionlib.php.
+     *
+     * @param integer $id the id of a question in this quiz attempt.
+     * @param boolean $reviewing is the being printed on an attempt or a review page.
+     * @param string $thispageurl the URL of the page this question is being printed on.
+     */
+    public function print_question($id, $reviewing, $thispageurl = '') {
+        if ($reviewing) {
             $options = $this->get_review_options();
         } else {
             $options = $this->get_render_options($this->states[$id]);
+        }
+        if ($thispageurl) {
+            $this->quiz->thispageurl = $thispageurl;
+        } else {
+            unset($thispageurl);
         }
         print_question($this->questions[$id], $this->states[$id], $this->questions[$id]->_number,
                 $this->quiz, $options);

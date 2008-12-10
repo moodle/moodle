@@ -408,6 +408,7 @@ class quiz_grading_report extends quiz_default_report {
                 // Print the question, without showing any previous comment.
                 $copy = $state->manualcomment;
                 $state->manualcomment = '';
+                $options->noeditlink = true;
                 print_question($question, $state, '', $quiz, $options);
 
                 // The print the comment and grade fields, putting back the previous comment.

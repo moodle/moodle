@@ -138,7 +138,7 @@
 
 /// Print all the questions
     foreach ($attemptobj->get_question_ids($page) as $id) {
-        $attemptobj->print_question($id);
+        $attemptobj->print_question($id, false, $attemptobj->attempt_url($id, $page));
     }
 
 /// Print a link to the next page.

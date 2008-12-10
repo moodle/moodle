@@ -50,6 +50,10 @@
         $attemptobj->load_specific_question_state($questionid, $stateid);
     }
 
+/// Work out the base URL of this page.
+    $baseurl = $CFG->wwwroot . '/mod/quiz/reviewquestion.php?attempt=' .
+            $attemptobj->get_attemptid() . '&amp;question=' . $questionid;
+
 /// Log this review.
     add_to_log($attemptobj->get_courseid(), 'quiz', 'review', 'reviewquestion.php?attempt=' .
             $attemptobj->get_attemptid() . '&question=' . $questionid .
@@ -86,9 +90,7 @@
 
 /// Other attempts at the quiz.
     if ($attemptobj->has_capability('mod/quiz:viewreports')) {
-        $attemptlist = $attemptobj->links_to_other_attempts(
-                'reviewquestion.php?attempt=' . $attemptobj->get_attemptid() .
-                '&amp;question=' . $questionid);
+        $attemptlist = $attemptobj->links_to_other_attempts($baseurl);
         if ($attemptlist) {
             $rows[] = '<tr><th scope="row" class="cell">' . get_string('attempts', 'quiz') .
                     '</th><td class="cell">' . $attemptlist . '</td></tr>';
@@ -110,7 +112,10 @@
     }
 
 /// Print the question in the requested state.
-    $attemptobj->print_question($questionid);
+    if ($stateid) {
+        $baseurl .= '&amp;state=' . $stateid;
+    }
+    $attemptobj->print_question($questionid, true, $baseurl);
 
 /// Finish the page
     print_footer();

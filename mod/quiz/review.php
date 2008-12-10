@@ -224,7 +224,7 @@
         $lastpage = $attemptobj->is_last_page($page);
     }
     foreach ($attemptobj->get_question_ids($thispage) as $id) {
-        $attemptobj->print_question($id);
+        $attemptobj->print_question($id, true, $attemptobj->review_url($id, $page, $showall));
     }
 
 /// Close form if we opened it.
