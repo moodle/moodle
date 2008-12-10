@@ -1211,7 +1211,7 @@ function quiz_question_list($contexts, $pageurl, $categoryandcontext,
     $strselectall = get_string("selectall", "quiz");
     $strselectnone = get_string("selectnone", "quiz");
     $strcreatenewquestion = get_string("createnewquestion", "quiz");
-    $strquestionname = get_string("questionname", "quiz");
+    $strquestion = get_string("question", "quiz");
     $strdelete = get_string("delete");
     $stredit = get_string("edit");
     $strmove = get_string('moveqtoanothercontext', 'question');
@@ -1332,7 +1332,7 @@ function quiz_question_list($contexts, $pageurl, $categoryandcontext,
     echo '<table id="categoryquestions" style="width: 100%"><colgroup><col id="qaction"></col><col id="qname"></col><col id="qextraactions"></col></colgroup><tr>';
     echo "<th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$straction</th>";
 
-    echo "<th style=\"white-space:nowrap; text-align: left;\" class=\"header\" scope=\"col\">$strquestionname</th>";
+    echo "<th style=\"white-space:nowrap; text-align: left;\" class=\"header\" scope=\"col\">$strquestion</th>";
     echo "<th style=\"white-space:nowrap; text-align: left;\" class=\"header\" scope=\"col\"></th>";
     echo "</tr>\n";
     foreach ($questions as $question) {
