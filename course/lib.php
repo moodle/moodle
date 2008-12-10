@@ -1981,7 +1981,7 @@ function print_course_request_buttons($systemcontext) {
     if (empty($CFG->enablecourserequests)) {
         return;
     }
-    if (isloggedin() && !isguestuser() && !has_capability('moodle/course:create', $systemcontext)) {
+    if (isloggedin() && !isguestuser() && !has_capability('moodle/course:create', $systemcontext) && has_capability('moodle/course:request', $systemcontext)) {
     /// Print a button to request a new course
         print_single_button('request.php', NULL, get_string('requestcourse'), 'get');
     }

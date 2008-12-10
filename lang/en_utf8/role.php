@@ -58,6 +58,7 @@ $string['course:managefiles'] = 'Manage files';
 $string['course:managegroups'] = 'Manage groups';
 $string['course:managemetacourse'] = 'Manage metacourse';
 $string['course:managescales'] = 'Manage scales';
+$string['course:request'] = 'Request new courses';
 $string['course:reset'] = 'Reset course';
 $string['course:sectionvisibility'] = 'Control section visibility';
 $string['course:setcurrentsection'] = 'Set current section';

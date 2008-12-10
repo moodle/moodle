@@ -38,7 +38,19 @@ require_once($CFG->libdir.'/formslib.php');
  */
 class course_request_form extends moodleform {
     function definition() {
+        global $DB, $USER;
+
         $mform =& $this->_form;
+
+        if ($pending = $DB->get_records('course_request', array('requester' => $USER->id))) {
+            $mform->addElement('header', 'pendinglist', get_string('coursespending'));
+            $list = array();
+            foreach ($pending as $cp) {
+                $list[] = format_string($cp->fullname);
+            }
+            $list = implode(', ', $list);
+            $mform->addElement('static', 'pendingcourses', get_string('courses'), $list);
+        }
 
         $mform->addElement('header','coursedetails', get_string('courserequestdetails'));
 
