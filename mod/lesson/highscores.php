@@ -138,7 +138,7 @@
     switch ($mode) {
         case 'add':
             print_simple_box_start('center');
-            echo '<div style="text-align:center">
+            echo '<div class="mdl-align">
                  <form id="nickname" method ="post" action="'.$CFG->wwwroot.'/mod/lesson/highscores.php" autocomplete="off">
                  <input type="hidden" name="id" value="'.$cm->id.'" />
                  <input type="hidden" name="mode" value="save" />

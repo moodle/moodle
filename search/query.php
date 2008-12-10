@@ -271,7 +271,7 @@
     </form>
     <br/>
     
-    <div style="text-align:center">
+    <div class="mdl-align">
     <?php
     print_string('searching', 'search') . ': ';
     

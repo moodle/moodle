@@ -51,7 +51,7 @@ function print_entry($course) {
                 // in unencrypted connection...
                 $wwwroot = str_replace("http://", "https://", $CFG->wwwroot);
             }
-            echo '<div style="text-align:center"><p>'.get_string('paymentrequired').'</p>';
+            echo '<div class="mdl-align"><p>'.get_string('paymentrequired').'</p>';
             echo '<p><b>'.get_string('cost').": $CFG->enrol_currency $cost".'</b></p>';
             echo '<p><a href="'.$wwwroot.'/login/">'.get_string('loginsite').'</a></p>';
             echo '</div>';

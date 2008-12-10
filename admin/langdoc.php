@@ -186,7 +186,7 @@ $langdir/$currentfile")."</font></p>";
             if ($preview_url) {
                 link_to_popup_window($preview_url, 'popup', get_string('preview'));
             }
-            echo '<div style="text-align:center"><input type="submit" value="'.get_string('savechanges').': lang/'.$currentlang.'/'.$currentfile.'" /></div>';
+            echo '<div class="mdl-align"><input type="submit" value="'.get_string('savechanges').': lang/'.$currentlang.'/'.$currentfile.'" /></div>';
             echo '</form>';
         }
 

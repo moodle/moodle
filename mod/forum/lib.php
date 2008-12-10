@@ -900,7 +900,7 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
     $posthtml .= forum_make_mail_post($course, $forum, $discussion, $post, $userfrom, $userto, false, $canreply, true, false);
 
     if ($canunsubscribe) {
-        $posthtml .= '<hr /><div style="text-align:center" class="unsubscribelink">
+        $posthtml .= '<hr /><div class="mdl-align unsubscribelink">
                       <a href="'.$CFG->wwwroot.'/mod/forum/subscribe.php?id='.$forum->id.'">'.get_string('unsubscribe', 'forum').'</a>&nbsp;
                       <a href="'.$CFG->wwwroot.'/mod/forum/unsubscribeall.php">'.get_string('unsubscribeall', 'forum').'</a></div>';
     }

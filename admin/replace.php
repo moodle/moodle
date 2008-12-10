@@ -19,7 +19,7 @@ print_heading('Search and replace text throughout the whole database');
 if (!data_submitted() or !$search or !$replace or !confirm_sesskey()) {   /// Print a form
 
     print_simple_box_start('center');
-    echo '<div style="text-align:center">';
+    echo '<div class="mdl-align">';
     echo '<form action="replace.php" method="post">';
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     echo 'Search whole database for: <input type="text" name="search" /><br />';

@@ -216,7 +216,7 @@ function ewiki_page_filedownload($id, $data, $action, $def_sec="") {
                "orderby"=>$orderby, "section" => $sec)) .
                '">' . $title . "</a>";
          }
-         $o .= '<div style="text-align:center" class="darker">'.implode(" &middot; ", $oa).'</div><br />';
+         $o .= '<div class="mdl-align darker">'.implode(" &middot; ", $oa).'</div><br />';
       }
    }
 
