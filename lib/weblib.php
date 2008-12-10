@@ -675,26 +675,31 @@ function close_window_button($name='closewindow', $return=false, $reloadopener =
 }
 
 /*
- * Try and close the current window immediately using Javascript
- * @param int $delay the delay in seconds before closing the window
+ * Try and close the current window using JavaScript, either immediately, or after a delay.
+ * @param integer $delay a delay in seconds before closing the window. Default 0.
+ * @param boolean $reloadopener if true, we will see if this window was a pop-up, and try
+ *      to reload the parent window before this one closes.
  */
-function close_window($delay=0) {
-?>
-<script type="text/javascript">
-//<![CDATA[
-    function close_this_window() {
-        self.close();
-    }
-    setTimeout("close_this_window()", <?php echo $delay * 1000 ?>);
-//]]>
-</script>
-<noscript><center>
-<?php print_string('pleaseclose') ?>
-</center></noscript>
-<?php
-    die;
-}
+function close_window($delay = 0, $reloadopener = false) {
+    global $THEME;
 
+    if (!defined('HEADER_PRINTED')) {
+        print_header(get_string('closewindow'));
+    } else {
+        print_container_end_all(false, $THEME->open_header_containers);
+    }
+
+    if ($reloadopener) {
+        $function = 'close_window_reloading_opener';
+    } else {
+        $function = 'close_window';
+    }
+    echo '<p class="centerpara">' . get_string('windowclosing') . '</p>';
+    print_delayed_js_call($delay, $function);
+
+    print_footer('empty');
+    exit;
+}
 
 /**
  * Given an array of values, output the HTML for a select element with those options.
