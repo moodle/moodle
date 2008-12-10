@@ -463,6 +463,14 @@ $moodle_capabilities = array(
         )
     ),
 
+    'moodle/course:request' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'user' => CAP_ALLOW,
+        )
+    ),
+
     'moodle/course:delete' => array(
 
         'riskbitmask' => RISK_DATALOSS,

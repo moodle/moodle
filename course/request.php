@@ -44,19 +44,38 @@
     if (empty($CFG->enablecourserequests)) {
         print_error('courserequestdisabled', '', $returnurl);
     }
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+    require_capability('moodle/course:request', $systemcontext);
 
 /// Set up the form.
     $requestform = new course_request_form($CFG->wwwroot . '/course/request.php');
+
+    $strtitle = get_string('courserequest');
 
 /// Standard form processing if statement.
     if ($requestform->is_cancelled()){
         redirect($returnurl);
 
     } else if ($data = $requestform->get_data()) {
+        print_header($strtitle, $strtitle, build_navigation($strtitle), $requestform->focus());
+        print_heading($strtitle);
+
     /// Record the request.
         $data->requester = $USER->id;
         if (!insert_record('course_request', $data)) {
             print_error('errorsavingrequest', '', $returnurl);
+        }
+
+    /// Notify the admin if required.
+        if ($CFG->courserequestnotify) {
+            if ($user = get_record('user', 'username', $CFG->courserequestnotify, 'mnethostid', $CFG->mnet_localhost_id)) {
+                $subject = get_string('courserequest');
+                $a = new object();
+                $a->link = "$CFG->wwwroot/course/pending.php";
+                $a->user = fullname($USER);
+                $messagetext = get_string('courserequestnotifyemail', 'admin', $a);
+                email_to_user($user, $USER, $subject, $messagetext);
+            }
         }
 
     /// and redirect back to the course listing.
@@ -64,7 +83,6 @@
     }
 
 /// Show the request form.
-    $strtitle = get_string('courserequest');
     print_header($strtitle, $strtitle, build_navigation($strtitle), $requestform->focus());
     print_heading($strtitle);
     $requestform->display();

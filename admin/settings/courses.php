@@ -17,6 +17,7 @@ if ($hassiteconfig
     $temp = new admin_settingpage('courserequest', get_string('courserequest'));
     $temp->add(new admin_setting_configcheckbox('enablecourserequests', get_string('enablecourserequests', 'admin'), get_string('configenablecourserequests', 'admin'), 0));
     $temp->add(new admin_settings_coursecat_select('defaultrequestcategory', get_string('defaultrequestcategory', 'admin'), get_string('configdefaultrequestcategory', 'admin'), 1));
+    $temp->add(new admin_setting_configtext('courserequestnotify', get_string('courserequestnotify', 'admin'), get_string('configcourserequestnotify', 'admin'), ''));
     $ADMIN->add('courses', $temp);
 
     // Pending course requests.
