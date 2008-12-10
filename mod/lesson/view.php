@@ -53,7 +53,7 @@
             $correctpass = false;
             if (!empty($userpassword)) {
                 // with or without md5 for backward compatibility (MDL-11090)
-                if (($lesson->password == md5(trim($userpassword))) or ($lesson->password == $userpassword)) {
+                if (($lesson->password == md5(trim($userpassword))) or ($lesson->password == trim($userpassword))) {
                     $USER->lessonloggedin[$lesson->id] = true;
                     $correctpass = true;
                     if ($lesson->highscores) {
