@@ -445,13 +445,13 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
                 ?>
 <div class="points">
 <form method="post" action="edit.php"><div>
-    <label for="<?php echo "inputq$qnum" ?>"><?php echo $strgrade; ?></label>:<br />
     <fieldset class="invisiblefieldset" style="display: block;">
+    <label for="<?php echo "inputq$qnum" ?>"><?php echo $strgrade; ?></label>:<br />
     <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
     <?php echo $pageurl->hidden_params_out(); ?>
     <input type="hidden" name="savechanges" value="save" />
         <?php
-            echo '<input type="text" name="q'.$qnum.'" size="' . ($quiz->decimalpoints + 2) . '"
+            echo '<input type="text" name="q'.$qnum.'" id="inputq'.$qnum.'" size="' . ($quiz->decimalpoints + 2) . '"
                     value="'.(0 + $quiz->grades[$qnum]).
                     '" tabindex="'.($lastindex+$qno).'" />';
             ?>
