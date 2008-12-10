@@ -193,12 +193,10 @@ class question_truefalse_qtype extends default_questiontype {
         $falseid   = $question->name_prefix.'false';
 
         $radiotrue = '<input type="radio"' . $truechecked . $readonly . $inputname
-            . 'id="'.$trueid . '" value="' . $trueanswer->id . '" alt="'
-            . s($trueanswer->answer) . '" /><label for="'.$trueid . '">'
+            . 'id="'.$trueid . '" value="' . $trueanswer->id . '" /><label for="'.$trueid . '">'
             . s($trueanswer->answer) . '</label>';
         $radiofalse = '<input type="radio"' . $falsechecked . $readonly . $inputname
-            . 'id="'.$falseid . '" value="' . $falseanswer->id . '" alt="'
-            . s($falseanswer->answer) . '" /><label for="'.$falseid . '">'
+            . 'id="'.$falseid . '" value="' . $falseanswer->id . '" /><label for="'.$falseid . '">'
             . s($falseanswer->answer) . '</label>';
 
         $feedback = '';
