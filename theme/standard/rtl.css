@@ -348,16 +348,156 @@ body#mod-quiz-report table#attempts .header {
 }
 #mod-quiz-edit div.question div.qnum{
     float:right;
+    padding-right:0;
+    padding-left:0.3em;
 }
-/*#mod-quiz-edit div.question div.content div.questioncontrols{
-    float:left;	
+
+#mod-quiz-edit div.question div.content div.points,
+        #mod-quiz-edit div.question div.content div.qorder{
+    left:50px;
+    right:auto;
+    
 }
-#mod-quiz-edit div.question div.content div.points, #mod-quiz-edit div.question div.content div.qorder {
-    float:left; 
+#mod-quiz-edit div.question div.content div.questioncontrols{
+    right:auto;
+    left:0.3em;
 }
-#mod-quiz-edit div.editq div.question div.content .singlequestion a .questionname, #mod-quiz-edit div.editq div.question div.content .singlequestion a .questiontext {
-    float:right; 
-}*/
+#mod-quiz-edit div.question div.content div.questioncontrols{
+    text-align:left;
+}
+
+#mod-quiz-edit div.reorder .reordercontrols .moveselectedonpage{
+    clear:left;
+    float:left;
+}
+
+#mod-quiz-edit div.reorder .reordercontrols .addnewpagesafterselected,#mod-quiz-edit .repaginatecommand{
+    float:left;
+    clear:left;
+    padding-right:auto;
+    padding-left:1em;
+}
+
+#mod-quiz-edit div.reorder .reordercontrols .deleteselected{
+    float:left;
+    margin-right:auto;
+    margin-left:1em;
+}
+
+#mod-quiz-edit div.reorder .reordercontrols{
+    padding-right:auto;
+    padding-left:1em;
+}
+#mod-quiz-edit div.reorder .reordercontrols .moveselectedonpage{
+    text-align:left;
+}
+#mod-quiz-edit div.question div.qnum{
+    text-align:left;
+}
+#mod-quiz-edit div.reorder div.question div.qnum{
+    text-align:left;
+}
+
+
+
+#mod-quiz-edit .editq div.question div.content .randomquestioncategory a{
+    float:right;
+}
+#mod-quiz-edit div.editq div.question div.content .singlequestion a .questionname,
+#mod-quiz-edit div.editq div.question div.content .singlequestion a .questiontext{
+    float:right;
+}
+#mod-quiz-edit div.question div.content .questiontype{
+    clear:right;
+    float:right;
+}
+#mod-quiz-edit .editq div.questioncontentcontainer  div.singlequestion img{
+    float:right;
+    padding-left:0.3em;
+}
+#mod-quiz-edit .editq div.question div.content .questionpreview{
+    float:right;
+}
+#mod-quiz-edit div.quizpage .pagecontent{
+    float:right;
+    margin-left:auto;
+    margin-right:0.3em;
+
+    border-left:none;
+    -webkit-border-radius:0.6em;
+    border-radius:0.6em;
+    -moz-border-radius:0.6em;
+    
+    margin-right:0.3em;
+    border-right:solid #777 thin;
+    -webkit-border-radius-bottomright:0;
+    -webkit-border-radius-topright:0;
+    border-radius-bottomright:0;
+    border-radius-topright:0;
+    -moz-border-radius-bottomright:0;
+    -moz-border-radius-topright:0;
+}
+#mod-quiz-edit div.editq div.question div.content{
+    float:right;
+    -webkit-border-radius:0.6em;
+    border-radius:0.6em;
+    -moz-border-radius:0.6em;
+    -webkit-border-radius-bottomright:0;
+    -webkit-border-radius-topright:0;
+    border-radius-bottomright:0;
+    border-radius-topright:0;
+    -moz-border-radius-bottomright:0;
+    -moz-border-radius-topright:0;
+    
+}
+
+#mod-quiz-edit .reorder div.question div.content{
+    float:right;
+    -webkit-border-radius:0.3em;
+    border-radius:0.3em;
+    -moz-border-radius:0.3em;
+    -webkit-border-radius-bottomright:0;
+    -webkit-border-radius-topright:0;
+    border-radius-bottomright:0;
+    border-radius-topright:0;
+    -moz-border-radius-bottomright:0;
+    -moz-border-radius-topright:0;
+}
+#mod-quiz-edit div.quizpage .pagecontent .pagestatus{
+    -webkit-border-radius:0.3em;
+    border-radius:0.3em;
+    -moz-border-radius:0.3em;
+    -webkit-border-radius-bottomright:0;
+    -webkit-border-radius-topright:0;
+    border-radius-bottomright:0;
+    border-radius-topright:0;
+    -moz-border-radius-bottomright:0;
+    -moz-border-radius-topright:0;
+}
+#mod-quiz-edit .pagecontrols{
+    margin-left:auto;
+    margin-right:0.5em;
+}
+#mod-quiz-edit .pagecontrols .singlebutton{
+    float:right;
+}
+#mod-quiz-edit div.quizpage .pagecontent form.randomquestionform{
+    padding-right:1em;
+}
+#mod-quiz-edit div.question{
+    clear:right;
+}
+
+#mod-quiz-edit h2.main{
+    padding-left:1em;
+    padding-right:inherit;
+}
+
+#mod-quiz-edit .quizpagedelete{
+    right:auto;
+    left:0.2em;
+}
+
 .logtable th {
     text-align: right;
 }

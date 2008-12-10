@@ -4657,7 +4657,6 @@ table.quizreviewsummary td.cell {
 #mod-quiz-edit div.question div.content div.points,
         #mod-quiz-edit div.question div.content div.qorder{
     line-height:1em;
-    float:right;
     max-width:30%;
     position:absolute;
     right:50px;
