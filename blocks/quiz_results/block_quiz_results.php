@@ -60,14 +60,14 @@ class block_quiz_results extends block_base {
         }
 
         // Get the quiz record
-        $quiz = $DB->get_record('quiz', array('id'=>$quizid));
+        $quiz = $DB->get_record('quiz', array('id' => $quizid));
         if (empty($quiz)) {
             $this->content->text = get_string('error_emptyquizrecord', 'block_quiz_results');
             return $this->content;
         }
 
         // Get the grades for this quiz
-        $grades = $DB->get_records('quiz_grades', array('quiz'=>$quizid), 'grade, timemodified DESC');
+        $grades = $DB->get_records('quiz_grades', array('quiz' => $quizid), 'grade, timemodified DESC');
 
         if (empty($grades)) {
             // No grades, sorry
@@ -75,7 +75,7 @@ class block_quiz_results extends block_base {
             return $this->content;
         }
 
-        if(empty($this->config->showbest) && empty($this->config->showworst)) {
+        if (empty($this->config->showbest) && empty($this->config->showworst)) {
             $this->content->text = get_string('configuredtoshownothing', 'block_quiz_results');
             return $this->content;
         }
@@ -86,15 +86,9 @@ class block_quiz_results extends block_base {
 
         $nameformat = intval(empty($this->config->nameformat)  ? B_QUIZRESULTS_NAME_FORMAT_FULL : $this->config->nameformat);
 
-        // If the block is configured to operate in group mode, or if the name display format
-        // is other than "fullname", then we need to retrieve the full course record
-        if (!empty($this->config->usegroups) || $nameformat != B_QUIZRESULTS_NAME_FORMAT_FULL) {
-            $course = $DB->get_record('course', array('id'=>$courseid), 'groupmode, groupmodeforce');
-        }
-
         if(!empty($this->config->usegroups)) {
             $groupmode = groups_get_activity_groupmode(
-                    get_coursemodule_from_instance('quiz', $quizid, $course->id), $course);
+                    get_coursemodule_from_instance('quiz', $quizid, $courseid), $courseid);
         }
 
         if (has_capability('moodle/site:accessallgroups', $context) && $groupmode == SEPARATEGROUPS) {
@@ -115,30 +109,32 @@ class block_quiz_results extends block_base {
 
             // Find out all the userids which have a submitted grade
             $userids = array();
+            $gradeforuser = array();
             foreach($grades as $grade) {
                 $userids[] = $grade->userid;
+                $gradeforuser[$grade->userid] = (float)$grade->grade;
             }
 
             // Now find which groups these users belong in
-            $groupofuser = $DB->get_records_sql(
-            'SELECT m.userid, m.groupid, g.name FROM {groups} g LEFT JOIN {groups_members} m ON g.id = m.groupid '.
-            'WHERE g.courseid = ? AND m.userid IN ('.implode(',', $userids).')', array($courseid)
-            );
+            list($usertest, $params) = $DB->get_in_or_equal($userids);
+            $params[] = $courseid;
+            $usergroups = $DB->get_records_sql('
+                    SELECT gm.id, gm.userid, gm.groupid, g.name
+                    FROM {groups} g
+                    LEFT JOIN {groups_members} gm ON g.id = gm.groupid
+                    WHERE gm.userid ' . $usertest . ' AND g.courseid = ?', $params);
 
+            // Now, iterate the grades again and sum them up for each group
             $groupgrades = array();
-
-            // OK... now, iterate the grades again and sum them up for each group
-            foreach($grades as $grade) {
-                if(isset($groupofuser[$grade->userid])) {
-                    // Count this result only if the user is in a group
-                    $groupid = $groupofuser[$grade->userid]->groupid;
-                    if(!isset($groupgrades[$groupid])) {
-                        $groupgrades[$groupid] = array('sum' => (float)$grade->grade, 'number' => 1, 'group' => $groupofuser[$grade->userid]->name);
-                    }
-                    else {
-                        $groupgrades[$groupid]['sum'] += $grade->grade;
-                        ++$groupgrades[$groupid]['number'];
-                    }
+            foreach ($usergroups as $usergroup) {
+                if (!isset($groupgrades[$usergroup->groupid])) {
+                    $groupgrades[$usergroup->groupid] = array(
+                            'sum' => (float)$gradeforuser[$usergroup->userid],
+                            'number' => 1,
+                            'group' => $usergroup->name);
+                } else {
+                    $groupgrades[$usergroup->groupid]['sum'] += $gradeforuser[$usergroup->userid];
+                    $groupgrades[$usergroup->groupid]['number'] += 1;
                 }
             }
 
@@ -275,14 +271,20 @@ class block_quiz_results extends block_base {
                 return $this->content;
             }
 
-            $mygroupsusers = $DB->get_records_list('groups_members', 'groupid', array_keys($mygroups), '', 'userid, id');
-            // There should be at least one user there, ourselves. So no more tests.
+            // Get users from the same groups as me.
+            list($grouptest, $params) = $DB->get_in_or_equal(array_keys($mygroups));
+            $mygroupsusers = $DB->get_records_sql_menu(
+                    'SELECT DISTINCT userid, 1 FROM {groups_members} WHERE groupid ' . $grouptest,
+                    $params);
 
-            // Just filter out the grades belonging to other users, and proceed as if there were no groups
-            $strallowedusers = implode(',', array_keys($mygroupsusers));
-            $grades = array_filter($grades, create_function('$el', '$allowed = explode(",", "'.$strallowedusers.'"); return in_array($el->userid, $allowed);'));
+            // Filter out the grades belonging to other users, and proceed as if there were no groups
+            foreach ($grades as $key => $grade) {
+                if (!isset($mygroupsusers[$grade->userid])) {
+                    unset($grades[$key]);
+                }
+            }
 
-            // NO break; HERE, JUST GO AHEAD
+            // No break, fall through to the default case now we have filtered the $grades array.
             default:
             case NOGROUPS:
             // Single user mode
