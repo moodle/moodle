@@ -35,7 +35,8 @@ class question_match_qtype extends default_questiontype {
 
         // Insert all the new question+answer pairs
         foreach ($question->subquestions as $key => $questiontext) {
-            $answertext = $question->subanswers[$key];
+            $questiontext = trim($questiontext);
+            $answertext = trim($question->subanswers[$key]);
             if ($questiontext != '' || $answertext != '') {
                 if ($subquestion = array_shift($oldsubquestions)) {  // Existing answer, so reuse it
                     $subquestion->questiontext = $questiontext;
@@ -199,7 +200,7 @@ class question_match_qtype extends default_questiontype {
         $responses = array();
         foreach ($subquestions as $key => $subquestion) {
             $response = 0;
-            if ($subquestion->questiontext) {
+            if ($subquestion->questiontext !== '') {
                 if ($state->responses[$key]) {
                     $response = $state->responses[$key];
                     if (!array_key_exists($response, $subquestion->options->answers)) {
