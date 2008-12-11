@@ -2202,61 +2202,59 @@ function convert_urls_into_links(&$text) {
  * This function will highlight search words in a given string
  * It cares about HTML and will not ruin links.  It's best to use
  * this function after performing any conversions to HTML.
- * Function found here: http://forums.devshed.com/t67822/scdaa2d1c3d4bacb4671d075ad41f0854.html
  *
- * @param string $needle The string to search for
- * @param string $haystack The string to search for $needle in
- * @param int $case whether to do case-sensitive or insensitive matching.
- * @return string
- * @todo Finish documenting this function
+ * @param string $needle The search string. Syntax like "word1 +word2 -word3" is dealt with correctly.
+ * @param string $haystack The string (HTML) within which to highlight the search terms.
+ * @param boolean $matchcase whether to do case-sensitive. Default case-insensitive.
+ * @param string $prefix the string to put before each search term found.
+ * @param string $suffix the string to put after each search term found.
+ * @return string The highlighted HTML.
  */
-function highlight($needle, $haystack, $case=0,
-                    $left_string='<span class="highlight">', $right_string='</span>') {
+function highlight($needle, $haystack, $matchcase = false,
+        $prefix = '<span class="highlight">', $suffix = '</span>') {
 
+/// Quick bail-out in trivial cases.
     if (empty($needle) or empty($haystack)) {
         return $haystack;
     }
 
-    //$list_of_words = eregi_replace("[^-a-zA-Z0-9&.']", " ", $needle);  // bug 3101
-    $list_of_words = $needle;
-    $list_array = explode(' ', $list_of_words);
-    for ($i=0; $i<sizeof($list_array); $i++) {
-        if (strlen($list_array[$i]) == 1) {
-            $list_array[$i] = '';
+/// Break up the search term into words, discard any -words and build a regexp.
+    $words = preg_split('/ +/', trim($needle));
+    foreach ($words as $index => $word) {
+        if (strpos($word, '-') === 0) {
+            unset($words[$index]);
+        } else if (strpos($word, '+') === 0) {
+            $words[$index] = '\b' . preg_quote(ltrim($word, '+'), '/') . '\b'; // Match only as a complete word.
+        } else {
+            $words[$index] = preg_quote($word, '/');
         }
     }
-    $list_of_words = implode(' ', $list_array);
-    $list_of_words_cp = $list_of_words;
-    $final = array();
-    preg_match_all('/<(.+?)>/is',$haystack,$list_of_words);
-
-    foreach (array_unique($list_of_words[0]) as $key=>$value) {
-        $final['<|'.$key.'|>'] = $value;
+    $regexp = '/(' . implode('|', $words) . ')/u'; // u is do UTF-8 matching.
+    if (!$matchcase) {
+        $regexp .= 'i';
     }
 
-    $haystack = str_replace($final,array_keys($final),$haystack);
-    $list_of_words_cp = eregi_replace(' +', '|', $list_of_words_cp);
-
-    if ($list_of_words_cp{0}=='|') {
-        $list_of_words_cp{0} = '';
-    }
-    if ($list_of_words_cp{strlen($list_of_words_cp)-1}=='|') {
-        $list_of_words_cp{strlen($list_of_words_cp)-1}='';
+/// Another chance to bail-out if $search was only -words
+    if (empty($words)) {
+        return $haystack;
     }
 
-    $list_of_words_cp = trim($list_of_words_cp);
-
-    if ($list_of_words_cp) {
-
-      $list_of_words_cp = "(". $list_of_words_cp .")";
-
-      if (!$case){
-        $haystack = eregi_replace("$list_of_words_cp", "$left_string"."\\1"."$right_string", $haystack);
-      } else {
-        $haystack = ereg_replace("$list_of_words_cp", "$left_string"."\\1"."$right_string", $haystack);
-      }
+/// Find all the HTML tags in the input, and store them in a placeholders array.
+    $placeholders = array();
+    $matches = array();
+    preg_match_all('/<[^>]*>/', $haystack, $matches);
+    foreach (array_unique($matches[0]) as $key => $htmltag) {
+        $placeholders['<|' . $key . '|>'] = $htmltag;
     }
-    $haystack = str_replace(array_keys($final),$final,$haystack);
+
+/// In $hastack, replace each HTML tag with the corresponding placeholder.
+    $haystack = str_replace($placeholders, array_keys($placeholders), $haystack);
+
+/// In the resulting string, Do the highlighting.
+    $haystack = preg_replace($regexp, $prefix . '$1' . $suffix, $haystack);
+
+/// Turn the placeholders back into HTML tags.
+    $haystack = str_replace(array_keys($placeholders), $placeholders, $haystack);
 
     return $haystack;
 }

@@ -54,5 +54,17 @@ class web_test extends MoodleUnitTestCase {
         $this->assertEqual($tl->code2utf8(0x7fd2).$tl->code2utf8(0x7fd2),
             format_text_email('<p>&#x7fd2;&#x7FD2;</p>',FORMAT_HTML));
     }
+
+    function test_highlight() {
+        $this->assertEqual(highlight('good', 'This is good'), 'This is <span class="highlight">good</span>');
+        $this->assertEqual(highlight('SpaN', 'span'), '<span class="highlight">span</span>');
+        $this->assertEqual(highlight('span', 'SpaN'), '<span class="highlight">SpaN</span>');
+        $this->assertEqual(highlight('span', '<span>span</span>'), '<span><span class="highlight">span</span></span>');
+        $this->assertEqual(highlight('good is', 'He is good'), 'He <span class="highlight">is</span> <span class="highlight">good</span>');
+        $this->assertEqual(highlight('+good', 'This is good'), 'This is <span class="highlight">good</span>');
+        $this->assertEqual(highlight('-good', 'This is good'), 'This is good');
+        $this->assertEqual(highlight('+good', 'This is goodness'), 'This is goodness');
+        $this->assertEqual(highlight('good', 'This is goodness'), 'This is <span class="highlight">good</span>ness');
+    }
 }
 ?>
