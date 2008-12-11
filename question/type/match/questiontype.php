@@ -128,8 +128,7 @@ class question_match_qtype extends default_questiontype {
             $answer->id       = $subquestion->code;
             $answer->answer   = $subquestion->answertext;
             $answer->fraction = 1.0;
-            $state->options->subquestions[$key]->options
-                    ->answers[$subquestion->code] = clone($answer);
+            $state->options->subquestions[$key]->options->answers[$subquestion->code] = clone($answer);
 
             $state->responses[$key] = '';
         }
@@ -147,8 +146,7 @@ class question_match_qtype extends default_questiontype {
         // list of question answer pairs (e.g. 1-1,2-3,3-2), where the ids of
         // both refer to the id in the table question_match_sub.
         $responses = explode(',', $state->responses['']);
-        $responses = array_map(create_function('$val',
-         'return explode("-", $val);'), $responses);
+        $responses = array_map(create_function('$val', 'return explode("-", $val);'), $responses);
 
         if (!$questions = get_records('question_match_sub', 'question', $question->id, 'id ASC')) {
            notify('Error: Missing subquestions!');
@@ -172,8 +170,7 @@ class question_match_qtype extends default_questiontype {
             $answer->id       = $subquestion->code;
             $answer->answer   = format_string($subquestion->answertext);
             $answer->fraction = 1.0;
-            $state->options->subquestions[$key]->options
-             ->answers[$subquestion->code] = clone($answer);
+            $state->options->subquestions[$key]->options->answers[$subquestion->code] = clone($answer);
         }
 
         return true;
