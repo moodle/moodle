@@ -252,10 +252,6 @@
     }
 
     print_course_request_buttons($systemcontext);
-    // admin page does not allow custom buttons in the navigation bar
-    echo '<div class="singlebutton">';
-    echo update_category_button();
-    echo '</div></div>';
 
     admin_externalpage_print_footer();
 
@@ -369,7 +365,7 @@ function print_category_edit_header() {
     global $SITE;
 
     require_once($CFG->libdir.'/adminlib.php');
-    admin_externalpage_setup('coursemgmt');
+    admin_externalpage_setup('coursemgmt', update_category_button());
     admin_externalpage_print_header();
 }
 ?>

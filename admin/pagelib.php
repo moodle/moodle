@@ -20,8 +20,11 @@ page_map_class(PAGE_ADMIN, 'page_admin');
 
 class page_admin extends page_base {
 
-    var $section;
+    var $section = '';
     var $visiblepathtosection;
+    var $extraurlparams = array();
+    var $extrabutton = '';
+    var $url = '';
 
     // hack alert!
     // this function works around the inability to store the section name
@@ -62,6 +65,9 @@ class page_admin extends page_base {
 
     function url_get_path() {
         global $CFG;
+        if (!empty($this->url)) {
+            return $this->url;
+        }
 
         $adminroot =& admin_get_root(false, false); //settings not required - only pages
 
@@ -73,8 +79,29 @@ class page_admin extends page_base {
         }
     }
 
+    /**
+     * Use this to pass extra HTML that is added after the turn blocks editing on/off button.
+     *
+     * @param string $extrabutton HTML code.
+     */
+    function set_extra_button($extrabutton) {
+        $this->extrabutton = $extrabutton;
+    }
+
+    /**
+     * Use this to pass extra URL parameters that, for example, the blocks editing controls need to reload the current page accurately.
+     *
+     * @param array $extraurlparams paramname => value array.
+     */
+    function set_extra_url_params($extraurlparams, $actualurl = '') {
+        $this->extraurlparams = $extraurlparams;
+        if (!empty($actualurl)) {
+            $this->url = $actualurl;
+        }
+    }
+
     function url_get_parameters() {  // only handles parameters relevant to the admin pagetype
-        return array('section' => (isset($this->section) ? $this->section : ''));
+        return array_merge($this->extraurlparams, array('section' => $this->section));
     }
 
     function blocks_get_positions() {
@@ -107,13 +134,19 @@ class page_admin extends page_base {
 
         // The search page currently doesn't handle block editing
         if ($this->section != 'search' and $this->user_allowed_editing()) {
-            $buttons = '<div><form '.$CFG->frametarget.' method="get" action="' . $this->url_get_path() . '">'.
-                '<div><input type="hidden" name="adminedit" value="'.($this->user_is_editing()?'off':'on').'" />'.
-                '<input type="hidden" name="section" value="'.$this->section.'" />'.
-                '<input type="submit" value="'.get_string($this->user_is_editing()?'blockseditoff':'blocksediton').'" /></div></form></div>';
+            $options = $this->url_get_parameters();
+            if ($this->user_is_editing()) {
+                $caption = get_string('blockseditoff');
+                $options['adminedit'] = 'off';
+            } else {
+                $caption = get_string('blocksediton');
+                $options['adminedit'] = 'on';
+            }
+            $buttons = print_single_button($this->url_get_path(), $options, $caption, 'get', '', true);
         } else {
             $buttons = '&nbsp;';
         }
+        $buttons .= $this->extrabutton;
 
         $navlinks = array();
         foreach ($this->visiblepathtosection as $element) {

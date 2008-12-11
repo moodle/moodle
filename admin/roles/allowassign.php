@@ -76,7 +76,7 @@
     }
 
 /// Display the editing form.
-    admin_externalpage_setup('defineroles');
+    admin_externalpage_setup('defineroles', '', array(), $CFG->wwwroot . '/' . $CFG->admin . '/roles/allowassign.php');
     admin_externalpage_print_header();
 
     $currenttab='allowassign';

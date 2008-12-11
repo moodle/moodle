@@ -74,7 +74,7 @@
     }
 
 /// Display the editing form.
-    admin_externalpage_setup('defineroles');
+    admin_externalpage_setup('defineroles', '', array(), $CFG->wwwroot . '/' . $CFG->admin . '/roles/allowoverride.php');
     admin_externalpage_print_header();
 
     $currenttab='allowoverride';

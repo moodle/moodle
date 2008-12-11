@@ -2122,6 +2122,9 @@ class admin_externalpage extends part_of_admin_tree {
      * @param string $visiblename The displayed name for this external page. Usually obtained through get_string().
      * @param string $url The external URL that we should link to when someone requests this external page.
      * @param mixed $req_capability The role capability/permission a user must have to access this external page. Defaults to 'moodle/site:config'.
+     * @param boolean $hidden Is this external page hidden in admin tree block? Default false.
+     * @param context $context The context the page relates to. Not sure what happens
+     *      if you specify something other than system or front page. Defaults to system.
      */
     function admin_externalpage($name, $visiblename, $url, $req_capability='moodle/site:config', $hidden=false, $context=NULL) {
         $this->name        = $name;
@@ -2132,7 +2135,7 @@ class admin_externalpage extends part_of_admin_tree {
         } else {
             $this->req_capability = array($req_capability);
         }
-        $this->hidden  = $hidden;
+        $this->hidden = $hidden;
         $this->context = $context;
     }
 
@@ -5169,8 +5172,13 @@ class admin_setting_manageportfolio extends admin_setting {
  * checks specified in page definition.
  * This function must be called on each admin page before other code.
  * @param string $section name of page
+ * @param string $extrabutton extra HTML that is added after the blocks editing on/off button.
+ * @param string $extraurlparams an array paramname => paramvalue, or parameters that need to be
+ *      added to the turn blocks editing on/off form, so this page reloads correctly.
+ * @param string $actualurl if the actual page being viewed is not the normal one for this
+ *      page (e.g. admin/roles/allowassin.php, instead of admin/roles/manage.php, you can pass the alternate URL here.
  */
-function admin_externalpage_setup($section) {
+function admin_externalpage_setup($section, $extrabutton='', $extraurlparams=array(), $actualurl='') {
 
     global $CFG, $PAGE, $USER;
     require_once($CFG->libdir.'/blocklib.php');
@@ -5200,6 +5208,8 @@ function admin_externalpage_setup($section) {
     page_map_class(PAGE_ADMIN, 'page_admin');
     $PAGE = page_create_object(PAGE_ADMIN, 0); // there must be any constant id number
     $PAGE->init_extra($section); // hack alert!
+    $PAGE->set_extra_button($extrabutton);
+    $PAGE->set_extra_url_params($extraurlparams, $actualurl);
 
     $adminediting = optional_param('adminedit', -1, PARAM_BOOL);
 

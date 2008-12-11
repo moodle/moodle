@@ -117,11 +117,11 @@
         include_once($CFG->dirroot.'/user/tabs.php');
 
     } else if ($context->contextlevel == CONTEXT_SYSTEM) {
-        admin_externalpage_setup('checkpermissions');
+        admin_externalpage_setup('checkpermissions', '', array('contextid' => $contextid));
         admin_externalpage_print_header();
 
     } else if ($context->contextlevel == CONTEXT_COURSE and $context->instanceid == SITEID) {
-        admin_externalpage_setup('frontpageroles');
+        admin_externalpage_setup('frontpageroles', '', array('contextid' => $contextid), $CFG->wwwroot . '/' . $CFG->admin . '/roles/check.php');
         admin_externalpage_print_header();
         $currenttab = 'check';
         include_once('tabs.php');
