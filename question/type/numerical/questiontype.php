@@ -195,6 +195,12 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         // Delete the units previously saved for this question.
         delete_records('question_numerical_units', 'question', $question->id);
 
+        // Nothing to do.
+        if (!isset($question->multiplier)) {
+            $result->units = array();
+            return $result;
+        }
+
         // Save the new units.
         $units = array();
         foreach ($question->multiplier as $i => $multiplier) {
