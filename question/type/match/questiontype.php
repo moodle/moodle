@@ -270,7 +270,7 @@ class question_match_qtype extends default_questiontype {
 
         // Print the input controls
         foreach ($subquestions as $key => $subquestion) {
-            if ($subquestion->questiontext != '') {
+            if ($subquestion->questiontext !== '') {
                 // Subquestion text:
                 $a = new stdClass;
                 $a->text = $this->format_text($subquestion->questiontext,
@@ -332,7 +332,7 @@ class question_match_qtype extends default_questiontype {
         $sumgrade = 0;
         $totalgrade = 0;
         foreach ($subquestions as $key => $sub) {
-            if ($sub->questiontext) {
+            if ($sub->questiontext !== '') {
                 $totalgrade += 1;
                 $response = $responses[$key];
                 if ($response && !array_key_exists($response, $sub->options->answers)) {
