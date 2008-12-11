@@ -144,11 +144,11 @@
         $currenttab = 'assign';
         include_once($CFG->dirroot.'/user/tabs.php');
     } else if ($context->contextlevel == CONTEXT_SYSTEM) {
-        admin_externalpage_setup('assignroles');
-        admin_externalpage_print_header();
+        admin_externalpage_setup('assignroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
+        admin_externalpage_print_header('');
     } else if ($context->contextlevel==CONTEXT_COURSE and $context->instanceid == SITEID) {
-        admin_externalpage_setup('frontpageroles');
-        admin_externalpage_print_header();
+        admin_externalpage_setup('frontpageroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
+        admin_externalpage_print_header('');
         $currenttab = 'assign';
         include_once('tabs.php');
     } else {

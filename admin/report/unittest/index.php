@@ -23,7 +23,8 @@ $showsearch = optional_param('showsearch', false, PARAM_BOOL);
 $thorough = optional_param('thorough', false, PARAM_BOOL);
 
 // Print the header.
-admin_externalpage_setup('reportunittest');
+admin_externalpage_setup('reportunittest', '', array('showpasses' => $showpasses,
+        'showsearch' => $showsearch, 'thorough' => $thorough));
 admin_externalpage_print_header();
 
 /* The UNITTEST constant can be checked elsewhere if you need to know

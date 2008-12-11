@@ -93,15 +93,11 @@
         // Integrate into the admin tree only if the user can edit categories at the top level,
         // otherwise the admin block does not appear to this user, and you get an error.
         require_once($CFG->libdir.'/adminlib.php');
-        admin_externalpage_setup('coursemgmt');
+        admin_externalpage_setup('coursemgmt', $navbaritem, array('id' => $id,
+                'page' => $page, 'perpage' => $perpage), $CFG->wwwroot . '/course/category.php');
         admin_externalpage_print_header();
     } else {
         print_header("$site->shortname: $category->name", "$site->fullname: $strcourses", $navigation, '', '', true, $navbaritem);
-    }
-
-/// Print button to turn editing off
-    if ($editingon) {
-        echo '<div class="categoryediting button">'.update_category_button($category->id).'</div>';
     }
 
 /// Print link to roles

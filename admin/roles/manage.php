@@ -4,8 +4,6 @@
 
     require_once($CFG->libdir.'/adminlib.php');
 
-    admin_externalpage_setup('defineroles');
-
     $roleid      = optional_param('roleid', 0, PARAM_INT);             // if set, we are editing a role
     $name        = optional_param('name', '', PARAM_MULTILANG);        // new role name
     $shortname   = optional_param('shortname', '', PARAM_RAW);         // new role shortname, special cleaning before storage
@@ -13,6 +11,8 @@
     $action      = optional_param('action', '', PARAM_ALPHA);
     $confirm     = optional_param('confirm', 0, PARAM_BOOL);
     $cancel      = optional_param('cancel', 0, PARAM_BOOL);
+
+    admin_externalpage_setup('defineroles', '', array('roleid' => $roleid));
 
     $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
@@ -414,7 +414,7 @@
 
 /// print UI now
 
-    admin_externalpage_print_header();
+    admin_externalpage_print_header('');
 
     $currenttab = 'manage';
     include_once('managetabs.php');

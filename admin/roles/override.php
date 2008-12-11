@@ -171,7 +171,7 @@
         include_once($CFG->dirroot.'/user/tabs.php');
     } else if ($context->contextlevel==CONTEXT_COURSE and $context->instanceid == SITEID) {
         require_once($CFG->libdir.'/adminlib.php');
-        admin_externalpage_setup('frontpageroles');
+        admin_externalpage_setup('frontpageroles', '', array('contextid' => $contextid, 'roleid' => $roleid), $CFG->wwwroot . '/' . $CFG->admin . '/roles/override.php');
         admin_externalpage_print_header();
         $currenttab = 'override';
         include_once('tabs.php');

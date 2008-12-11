@@ -8,8 +8,7 @@
     require_once('../../config.php');
     require_once($CFG->libdir.'/adminlib.php');
 
-    admin_externalpage_setup('defineroles');
-
+    admin_externalpage_setup('defineroles', '', array(), $CFG->wwwroot . '/' . $CFG->admin . '/roles/allowoverride.php');
 
     $sitecontext = get_context_instance(CONTEXT_SYSTEM);
     require_capability('moodle/role:manage', $sitecontext);
