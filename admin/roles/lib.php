@@ -109,7 +109,7 @@ abstract class capability_table_base {
 
         /// Table cell for the capability name.
             echo '<th scope="row" class="name"><span class="cap-desc">' . get_capability_docs_link($capability) .
-                    '<span class="cap-name">' . $capability->name . '</span></span></td>';
+                    '<span class="cap-name">' . $capability->name . '</span></span></th>';
 
         /// Add the cells specific to this table.
             $this->add_row_cells($capability);
@@ -466,7 +466,11 @@ class define_role_table_advanced extends capability_table_with_risks {
             $this->role->legacytype = get_legacy_type($this->roleid);
             $contextlevels = get_role_contextlevels($this->roleid);
             // Put the contextlevels in the array keys, as well as the values.
-            $this->contextlevels = array_combine($contextlevels, $contextlevels);
+            if (!empty($contextlevels)) {
+                $this->contextlevels = array_combine($contextlevels, $contextlevels);
+            } else {
+                $this->contextlevels = array();
+            }
         } else {
             $this->role = new stdClass;
             $this->role->name = '';
@@ -646,7 +650,7 @@ class define_role_table_advanced extends capability_table_with_risks {
                 $extraarguments .= 'checked="checked" ';
             }
             if (!$this->disabled) {
-                $output .= '<input type="hidden" " name="contextlevel' . $cl . '" value="0" />';
+                $output .= '<input type="hidden" name="contextlevel' . $cl . '" value="0" />';
             }
             $output .= '<input type="checkbox" id="cl' . $cl . '" name="contextlevel' . $cl .
                     '" value="1" ' . $extraarguments . '/> ';
