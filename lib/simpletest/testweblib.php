@@ -26,21 +26,21 @@ class web_test extends UnitTestCase {
         $this->assertEqual(format_string("ANother & &&&&& Category"), "ANother &amp; &amp;&amp;&amp;&amp;&amp; Category");
         $this->assertEqual(format_string("ANother & &&&&& Category", true), "ANother &amp; &amp;&amp;&amp;&amp;&amp; Category");
         $this->assertEqual(format_string("Nick's Test Site & Other things", true), "Nick's Test Site &amp; Other things");
-        
+
         // String entities
         $this->assertEqual(format_string("&quot;"), "&quot;");
-        
+
         // Digital entities
         $this->assertEqual(format_string("&11234;"), "&11234;");
-        
+
         // Unicode entities
         $this->assertEqual(format_string("&#4475;"), "&#4475;");
     }    
-    
+
     function test_s() {
           $this->assertEqual(s("This Breaks \" Strict"), "This Breaks &quot; Strict"); 
     }
-    
+
     function test_format_text_email() {
         $this->assertEqual('This is a test',
             format_text_email('<p>This is a <strong>test</strong></p>',FORMAT_HTML));
@@ -53,6 +53,18 @@ class web_test extends UnitTestCase {
             format_text_email('<p>Two bullets: &#x2022; &#8226;</p>',FORMAT_HTML));
         $this->assertEqual($tl->code2utf8(0x7fd2).$tl->code2utf8(0x7fd2),
             format_text_email('<p>&#x7fd2;&#x7FD2;</p>',FORMAT_HTML));
+    }
+
+    function test_highlight() {
+        $this->assertEqual(highlight('good', 'This is good'), 'This is <span class="highlight">good</span>');
+        $this->assertEqual(highlight('SpaN', 'span'), '<span class="highlight">span</span>');
+        $this->assertEqual(highlight('span', 'SpaN'), '<span class="highlight">SpaN</span>');
+        $this->assertEqual(highlight('span', '<span>span</span>'), '<span><span class="highlight">span</span></span>');
+        $this->assertEqual(highlight('good is', 'He is good'), 'He <span class="highlight">is</span> <span class="highlight">good</span>');
+        $this->assertEqual(highlight('+good', 'This is good'), 'This is <span class="highlight">good</span>');
+        $this->assertEqual(highlight('-good', 'This is good'), 'This is good');
+        $this->assertEqual(highlight('+good', 'This is goodness'), 'This is goodness');
+        $this->assertEqual(highlight('good', 'This is goodness'), 'This is <span class="highlight">good</span>ness');
     }
 }
 ?>
