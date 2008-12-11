@@ -33,22 +33,18 @@
         require_login();
     }
 
-    if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM))) {
+    if (update_category_button()) {
         if ($edit !== -1) {
             $USER->categoryediting = $edit;
-            // If the edit mode we are leaving has higher per page than the one we are entering,
-            // with pages, chances are you will get a no courses found error. So when we are switching
-            // modes, set page to 0.
-            $page = 0;
         }
+        $adminediting = !empty($USER->categoryediting);
+    } else {
+        $adminediting = false;
     }
 
 /// Editing functions
-
     if (has_capability('moodle/course:visibility', get_context_instance(CONTEXT_SYSTEM))) {
-
     /// Hide or show a course
-
         if ($hide or $show and confirm_sesskey()) {
             if ($hide) {
                 $course = get_record("course", "id", $hide);
@@ -63,7 +59,6 @@
                 }
             }
         }
-
     }
 
     if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM)) && $perpage != 99999) {
@@ -106,7 +101,6 @@
     }
 
     if (!empty($moveto) and $data = data_submitted() and confirm_sesskey()) {   // Some courses are being moved
-
         if (! $destcategory = get_record("course_categories", "id", $data->moveto)) {
             error("Error finding the category");
         }
@@ -170,7 +164,7 @@
         }
     }
     else {
-        $courses = get_courses_search($searchterms, "fullname ASC", 
+        $courses = get_courses_search($searchterms, "fullname ASC",
             $page, $perpage, $totalcount);
     }
 
@@ -188,12 +182,9 @@
 
     print_header("$site->fullname : $strsearchresults", $site->fullname, $navigation, "", "", "", $searchform);
 
-
     $lastcategory = -1;
     if ($courses) {
-
         print_heading("$strsearchresults: $totalcount");
-
         $encodedsearch = urlencode(stripslashes($search));
 
     ///add the module parameter to the paging bar if they exists
@@ -202,21 +193,20 @@
             $modulelink = "&amp;modulelist=".$modulelist."&amp;sesskey=".$USER->sesskey;
         }
 
-        print_navigation_bar($totalcount,$page,$perpage,$encodedsearch,$modulelink);
-        
-        if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+        print_navigation_bar($totalcount, $page, $perpage, $encodedsearch, $modulelink);
+
+        if (!$adminediting) {
+        /// Show browse view.
             foreach ($courses as $course) {
-                $course->fullname = highlight("$search", $course->fullname);
-                $course->summary = highlight("$search", $course->summary);
                 $course->summary .= "<br /><p class=\"category\">";
                 $course->summary .= "$strcategory: <a href=\"category.php?id=$course->category\">";
                 $course->summary .= $displaylist[$course->category];
                 $course->summary .= "</a></p>";
-                print_course($course);
+                print_course($course, $search);
                 print_spacer(5,5);
             }
-        } else { // slightly more sophisticated
-
+        } else {
+        /// Show editing UI.
             echo "<form id=\"movecourses\" action=\"search.php\" method=\"post\">\n";
             echo "<div><input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />\n";
             echo "<input type=\"hidden\" name=\"search\" value=\"".s($search, true)."\" />\n";
@@ -228,15 +218,14 @@
             echo "<th scope=\"col\">$strselect</th>\n";
             echo "<th scope=\"col\">$stredit</th></tr>\n";
 
-            foreach ($courses as $course) {    		    
-                
+            foreach ($courses as $course) {
+
                 if (isset($course->context)) {
                     $coursecontext = $course->context;
                 } else {
                     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
                 }
 
-                $course->fullname = highlight("$search", $course->fullname);
                 $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
 
                 // are we displaying the front page (courseid=1)?
@@ -254,7 +243,7 @@
 
                 echo "<tr>\n";
                 echo "<td><a $linkcss href=\"view.php?id=$course->id\">"
-                    . format_string($course->fullname) . "</a></td>\n";
+                    . highlight($search, format_string($course->fullname)) . "</a></td>\n";
                 echo "<td>".$displaylist[$course->category]."</td>\n";
                 echo "<td>\n";
 

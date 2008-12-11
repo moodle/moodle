@@ -1972,13 +1972,15 @@ function print_courses($category) {
             echo '</div>';
         }
     }
-
-
-
 }
 
-
-function print_course($course) {
+/**
+ * Print a description of a course, suitable for browsing in a list.
+ *
+ * @param object $course the course object.
+ * @param string $highlightterms (optional) some search terms that should be highlighted in the display.
+ */
+function print_course($course, $highlightterms = '') {
 
     global $CFG, $USER;
 
@@ -1994,7 +1996,7 @@ function print_course($course) {
     echo '<div class="info">';
     echo '<div class="name"><a title="'.get_string('entercourse').'"'.
          $linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.
-         format_string($course->fullname).'</a></div>';
+         highlight($highlightterms, format_string($course->fullname)).'</a></div>';
 
     /// first find all roles that are supposed to be displayed
 
@@ -2081,11 +2083,10 @@ function print_course($course) {
     $options = NULL;
     $options->noclean = true;
     $options->para = false;
-    echo format_text($course->summary, FORMAT_MOODLE, $options,  $course->id);
+    echo highlight($highlightterms, format_text($course->summary, FORMAT_MOODLE, $options,  $course->id));
     echo '</div>';
     echo '</div>';
 }
-
 
 function print_my_moodle() {
 /// Prints custom user information on the home page.
@@ -2114,7 +2115,7 @@ function print_my_moodle() {
                     continue;
                 }
                 echo '<li>';
-                print_course($course, "100%");
+                print_course($course);
                 echo "</li>\n";
             }
             echo "</ul>\n";
