@@ -451,13 +451,19 @@ function delete_attempt($attemptid) {
 function delete_question($questionid) {
     global $QTYPES;
 
+    if (!$question = get_record('question', 'id', $questionid)) {
+        // In some situations, for example if this was a child of a
+        // Cloze question that was previously deleted, the question may already
+        // have gone. In this case, just do nothing.
+        return;
+    }
+
     // Do not delete a question if it is used by an activity module
     if (count(question_list_instances($questionid))) {
         return;
     }
 
     // delete questiontype-specific data
-    $question = get_record('question', 'id', $questionid);
     question_require_capability_on($question, 'edit');
     if ($question) {
         if (isset($QTYPES[$question->qtype])) {
