@@ -225,6 +225,11 @@ class repository_type {
         //only create a new type if it doesn't already exist
         $existingtype = $DB->get_record('repository', array('type'=>$this->_typename));
         if (!$existingtype) {
+            //run init function
+            if (!repository::static_function($this->_typename, 'plugin_init')) {
+                throw new repository_exception('cannotcreatetype', 'repository');
+            }
+
             //create the type
             $newtype = new stdclass;
             $newtype->type = $this->_typename;
@@ -243,11 +248,6 @@ class repository_type {
                 $instanceoptions = array();
                 $instanceoptions['name'] = $this->_typename;
                 repository::static_function($this->_typename, 'create', $this->_typename, 0, get_system_context(), $instanceoptions);
-            }
-
-            //run init function
-            if (!repository::static_function($this->_typename, 'plugin_init')) {
-                throw new repository_exception('cannotcreatetype', 'repository');
             }
 
         } else {
@@ -677,7 +677,8 @@ abstract class repository {
         //check that the plugin exists
         $typedirectory = $CFG->dirroot . '/repository/'. $plugin . '/repository.class.php';
         if (!file_exists($typedirectory)) {
-            throw new repository_exception('invalidplugin', 'repository');
+            //throw new repository_exception('invalidplugin', 'repository');
+            return false;
         }
 
         $pname = null;
@@ -1595,7 +1596,7 @@ abstract class repository {
      * function which is run when the type is created (moodle administrator add the plugin)
      * @return boolean success or fail?
      */
-    public static function plugin_init(){
+    public static function plugin_init() {
         return true;
     }
 

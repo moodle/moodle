@@ -182,12 +182,13 @@ class repository_alfresco extends repository {
     }
 
     public function instance_config_form(&$mform) {
-        $soap = class_exists('SoapClient');
-        if (!$soap) {
+        if (!class_exists('SoapClient')) {
             $mform->addElement('static', null, get_string('notice'), get_string('soapmustbeenabled', 'repository_alfresco'));
+            return false;
         }
         $mform->addElement('text', 'alfresco_url', get_string('alfresco_url', 'repository_alfresco'), array('size' => '40'));
         $mform->addRule('alfresco_url', get_string('required'), 'required', null, 'client');
+        return false;
     }
     public static function plugin_init() {
         if (!class_exists('SoapClient')) {
