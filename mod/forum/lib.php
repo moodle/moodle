@@ -83,9 +83,13 @@ function forum_add_instance($forum) {
     }
 
     if ($forum->forcesubscribe == FORUM_INITIALSUBSCRIBE) {
-        // all users should be subscribed initially
-        $users = get_users_by_capability(get_context_instance(CONTEXT_COURSE, $forum->course),
-                                         'mod/forum:initialsubscriptions', 'u.id', '', '','','',null, false);
+    /// all users should be subscribed initially
+    /// Note: forum_get_potential_subscribers should take the forum context,
+    /// but that does not exist yet, becuase the forum is only half build at this
+    /// stage. However, because the forum is brand new, we know that there are
+    /// no role assignments or overrides in the forum context, so using the
+    /// course context gives the same list of users.
+        $users = forum_get_potential_subscribers(get_context_instance(CONTEXT_COURSE, $forum->course), 0, 'id, email', '');
         foreach ($users as $user) {
             forum_subscribe($user->id, $forum->id);
         }
@@ -386,7 +390,8 @@ function forum_cron() {
 
             // caching subscribed users of each forum
             if (!isset($subscribedusers[$forumid])) {
-                if ($subusers = forum_subscribed_users($courses[$courseid], $forums[$forumid], 0, false)) {
+                if ($subusers = forum_subscribed_users($courses[$courseid], $forums[$forumid], 0,
+                        get_context_instance(CONTEXT_MODULE, $coursemodules[$forumid]))) {
                     foreach ($subusers as $postuser) {
                         // do not try to mail users with stopped email
                         if ($postuser->emailstop) {
@@ -2661,10 +2666,28 @@ function forum_get_user_discussions($courseid, $userid, $groupid=0) {
 }
 
 /**
- * Returns list of user objects that are subscribed to this forum
+ * Get the list of potential subscribers to a forum. 
+ *
+ * @param object $forumcontext the forum context.
+ * @param integer $groupid the id of a group, or 0 for all groups.
+ * @param string $fields the list of fields to return for each user. As for get_users_by_capability.
+ * @param string $sort sort order. As for get_users_by_capability.
+ * @return array list of users.
  */
-function forum_subscribed_users($course, $forum, $groupid=0) {
+function forum_get_potential_subscribers($forumcontext, $groupid, $fields, $sort) {
+    return get_users_by_capability($forumcontext, 'mod/forum:initialsubscriptions', $fields, $sort, '', '', $groupid, '', false, true);
+}
 
+/**
+ * Returns list of user objects that are subscribed to this forum
+ *
+ * @param object $course the course
+ * @param forum $forum the forum
+ * @param integer $groupid group id, or 0 for all.
+ * @param object $context the forum context, to save re-fetching it where possible.
+ * @return array list of users.
+ */
+function forum_subscribed_users($course, $forum, $groupid=0, $context = NULL) {
     global $CFG, $DB;
     $params = array($forum->id);
 
@@ -2699,9 +2722,11 @@ function forum_subscribed_users($course, $forum, $groupid=0) {
               u.mnethostid";
 
     if (forum_is_forcesubscribed($forum)) {
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        if (is_null($context)) {
+            $context = get_context_instance(CONTEXT_MODULE, get_coursemodule_from_instance('forum', $forum->id, $course->id));
+        }
         $sort = "u.email ASC";
-        $results = get_users_by_capability($context, 'mod/forum:initialsubscriptions', $fields, $sort, '','','','', false, true);
+        $results = forum_get_potential_subscribers($context, $groupid, $fields, $sort);
     } else {
         $results = $DB->get_records_sql("SELECT $fields
                               FROM {user} u,
