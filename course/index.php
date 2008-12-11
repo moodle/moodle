@@ -116,7 +116,7 @@
         print_category_edit_header();
         print_heading($heading);
 
-        if ($data->fulldelete) {
+        if ($datadelete) {
             category_delete_full($deletecat, true);
         } else {
             category_delete_move($deletecat, $data->newparent, true);
@@ -232,11 +232,9 @@
     echo '</tr>';
 
     print_category_edit(NULL, $displaylist, $parentlist);
-
     echo '</table>';
 
     echo '<div class="buttons">';
-
     if (has_capability('moodle/course:create', $systemcontext)) {
         // print create course link to first category
         $options = array();
@@ -252,6 +250,7 @@
     }
 
     print_course_request_buttons($systemcontext);
+    echo '</div>';
 
     admin_externalpage_print_footer();
 
