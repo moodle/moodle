@@ -270,5 +270,7 @@ $string['wrongsourcebase'] = 'URL iturriaren oinarri akastuna.';
 $string['wrongzipfilename'] = 'ZIP fitxategiko izen desegokia.';
 $string['wwwroot'] = 'Web helbidea';
 $string['wwwrooterror'] = '\'Web helbidea\' zuzena ez dela dirudi. Ezin izan da Moodle-ren instalazioa aurkitu. Jatorrizko balorea berrezarri da.';
+$string['xmlrpcrecommended'] = 'Aukerazko xmlrpc luzapena instalatzea baliagarria da Moodle Sarea funtzionalitaterako.';
 $string['yourchoice'] = 'Zure aukera:';
+$string['ziprequired'] = 'Moodle-k orain Zip PHP luzapena behar du. Dagoeneko ez dira info-ZIP bitarrak erabiltzen ezta PclZip liburutegia ere.';
 ?>

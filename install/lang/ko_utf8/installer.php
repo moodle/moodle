@@ -61,14 +61,7 @@ $string['curlrecommended'] = '무들 네트웍 기능을 활성화하기 위해�
 $string['curlrequired'] = '무들 저장소와 교신하기 위해서는 cURL 확장이 필요합니다.';
 $string['customcheck'] = '다른 점검들';
 $string['database'] = '데이타 베이스';
-$string['databasecreationsettings'] = '지금 당신은 모든 무들 데이터가 저장될 데이터베이스를 설정할 필요가 있습니다. 이 데이터베이스는  아래에 있는 특별한 설정의 윈도우 설치 프로그램으로써 무들 프로그램에 의해 자동설치 될 것입니다.<br />
-<br /> <br />
-<b>종류:</b> 설치프로그램에 의해 \"mysql\" 로 고정됨 <br />
-<b>호스트:</b> 설치프로그램에 의해 \"localhost\"로 고정됨<br />
-<b>이름:</b> 데이터베이스 이름, 예: moodle<br />
-<b>사용자:</b> 설치프로그램에 의해 \"root\" 로 고정됨 <br />
-<b>암호:</b> 데이터베이스 암호 <br />
-<b>테이블 접두어:</b> 모든 테이블에 사용할 선택적 접두어';
+$string['databasecreationsettings'] = '이제 모든 무들 데이터가 저장될 데이터베이스를 설정할 필요가 있습니다. 이 데이터베이스는 아래에 지정된 설정 내용으로 무들 프로그램에 의해 자동설치 될 것입니다.<br /> <br /> <br /> <b>종류:</b> 설치프로그램에 의해 \"mysql\" 로 고정됨 <br /> <b>호스트:</b> 설치프로그램에 의해 \"localhost\"로 고정됨<br /> <b>이름:</b> 데이터베이스 이름, 예: moodle<br /> <b>사용자:</b> 설치프로그램에 의해 \"root\" 로 고정됨 <br /> <b>암호:</b> 데이터베이스 암호 <br /> <b>테이블 접두어:</b> 모든 테이블에 사용할 선택적 접두어';
 $string['databasecreationsettingshead'] = '대부분의 무들 데이터가 저장될 데이터베이스를 설정해야 합니다. 설치프로그램에 의해 자동으로 아래에 명시된 설정대로 데이터베이스가 생성될 것입니다.';
 $string['databasecreationsettingssub'] = '<b>종류:</b> 설치프로그램에 의해 \"mysql\" 로 고정됨 <br />
 <b>호스트:</b>설치프로그램에 의해 \"localhost\"로 고정됨<br />
