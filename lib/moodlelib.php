@@ -7439,7 +7439,11 @@ function getremoteaddr() {
             return cleanremoteaddr($_SERVER['HTTP_X_FORWARDED_FOR']);
         }
     }
-    return cleanremoteaddr($_SERVER['REMOTE_ADDR']);
+    if (!empty($_SERVER['REMOTE_ADDR'])) {
+        return cleanremoteaddr($_SERVER['REMOTE_ADDR']);
+    } else {
+        return null;
+    }
 }
 
 /**
