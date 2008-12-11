@@ -21,19 +21,19 @@ importing them from external files.</p>
 
 <p>Note that for multiple choice vertical or horizontal rendering there is no automatic numbering. It can added at each answer as shown here.</p>
 
-<p><textarea rows="25" wrap="virtual" cols="60">This question consists of some text with an answer embedded right here {1:MULTICHOICE:Wrong answer#Feedback for this wrong answer~Another wrong answer#Feedback for the other wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer} and right after that you will have to deal with this short answer {1:SHORTANSWER:Wrong answer#Feedback for this wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer} and finally we have a floating point number {2:NUMERICAL:=23.8:0.1#Feedback for correct answer 23.8~%50%23.8:2#Feedback for half credit answer in the nearby region of the correct answer}.<br />
-<br />
-The  multichoice question can also be shown in the vertical display of the standard moodle multiple choice.<br />
-<br />
-{2:MCV:1. Wrong answer#Feedback for this wrong answer~2. Another wrong answer#Feedback for the other wrong answer~=3. Correct answer#Feedback for correct answer~%50%4. Answer that gives half the credit#Feedback for half credit answer}<br />
-Or in an horizontal display that is included here in a table<br />
-<br /> 
-{2:MCH:a. Wrong answer#Feedback for this wrong answer~b. Another wrong answer#Feedback for the other wrong answer~=c. Correct answer#Feedback for correct answer~%50%d. Answer that gives half the credit#Feedback for half credit answer}<br />
-A shortanswer question where case must match. Write moodle in upper case letters {1:SHORTANSWER_C:moodle#Feedback for moodle in lower case ~=MOODLE#Feedback for MOODLE in upper case ~%50%Moodle#Feedback for only first letter in upper case}<br />
-Note that addresses like www.moodle.org and smileys :-) all work as normal:<br />
- a) How good is this? {:MULTICHOICE:=Yes#Correct~No#We have a different opinion}<br />
- b) What grade would you give it? {3:NUMERICAL:=3:2}<br />
-<br />
+<p><textarea rows="25" cols="60">This question consists of some text with an answer embedded right here {1:MULTICHOICE:Wrong answer#Feedback for this wrong answer~Another wrong answer#Feedback for the other wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer} and right after that you will have to deal with this short answer {1:SHORTANSWER:Wrong answer#Feedback for this wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer} and finally we have a floating point number {2:NUMERICAL:=23.8:0.1#Feedback for correct answer 23.8~%50%23.8:2#Feedback for half credit answer in the nearby region of the correct answer}.
+
+The  multichoice question can also be shown in the vertical display of the standard moodle multiple choice.
+
+{2:MCV:1. Wrong answer#Feedback for this wrong answer~2. Another wrong answer#Feedback for the other wrong answer~=3. Correct answer#Feedback for correct answer~%50%4. Answer that gives half the credit#Feedback for half credit answer}
+Or in an horizontal display that is included here in a table
+
+{2:MCH:a. Wrong answer#Feedback for this wrong answer~b. Another wrong answer#Feedback for the other wrong answer~=c. Correct answer#Feedback for correct answer~%50%d. Answer that gives half the credit#Feedback for half credit answer}
+A shortanswer question where case must match. Write moodle in upper case letters {1:SHORTANSWER_C:moodle#Feedback for moodle in lower case ~=MOODLE#Feedback for MOODLE in upper case ~%50%Moodle#Feedback for only first letter in upper case}
+Note that addresses like www.moodle.org and smileys :-) all work as normal:
+ a) How good is this? {:MULTICHOICE:=Yes#Correct~No#We have a different opinion}
+ b) What grade would you give it? {3:NUMERICAL:=3:2}
+
 Good luck!
 </textarea>
 </p>
@@ -47,8 +47,11 @@ Good luck!
       Marks: --/13.00</div>
     </div>
     <div class="content">
-      <div class="ablock clearfix"><label>This question consists of some text with an answer embedded right here <span ><select name="resp3796_1"><option 
-  selected></option><option value="8919">Wrong answer</option><option value="8920">Another wrong answer</option><option value="8921">Correct answer</option><option value="8922">Answer that gives half the credit</option></select></span></label><label>and right after that you will have to deal with this short answer <input name="resp3796_2" size="33" /> </label><label> and finally we have a floating point number <input name="resp3796_3" size="4" /> </label><label>.<br /><br />The multichoice question can also be shown in the vertical display of the standard moodle multiple choice<br /><br />
+      <div class="ablock clearfix"><label>This question consists of some text with an answer embedded right here <span><select name="resp3796_1"><option 
+  selected></option><option value="8919">Wrong answer</option><option value="8920">Another wrong answer</option><option value="8921">Correct answer</option><option value="8922">Answer that gives half the credit</option></select></span></label><label>and right after that you will have to deal with this short answer <input name="resp3796_2" size="33" /> </label><label> and finally we have a floating point number <input name="resp3796_3" size="4" /> </label>.<br />
+  <br />
+  The multichoice question can also be shown in the vertical display of the standard moodle multiple choice<br />
+  <br />
         <table width="50%"><tbody><tr><td>
           <table class="answer">
             <tr class="r0">
@@ -148,7 +151,9 @@ Good luck!
         </table>
         <br />
         A shortanswer question where case must match. Write moodle in upper case letters <input    name="resp3435_6"  type="text" value="" size="6" /> <br />
-      <br />Note that addresses like <a href="http://www.moodle.org" target="_blank">www.moodle.org</a> and smileys <img alt="smile" width="15" height="15" src="http://132.208.141.198/moodle_head/pix/s/smiley.gif" /> all work as normal:<br /> a) How good is this? <span><select name="resp3796_6"><option selected></option><option value="8968">Yes</option><option value="8969">No</option></select></span></label><label><br /> b) What grade would you give it? <input name="resp3796_7" size="1" > </label><br /><br />Good luck!
+      <br />Note that addresses like <a href="http://www.moodle.org" target="_blank">www.moodle.org</a> and smileys <img alt="smile" width="15" height="15" src="http://132.208.141.198/moodle_head/pix/s/smiley.gif" /> all work as normal:<br />
+       a) How good is this? <span><select name="resp3796_6"><option selected></option><option value="8968">Yes</option><option value="8969">No</option></select></span><label><br />
+       b) What grade would you give it? <input name="resp3796_7" size="1" > </label><br /><br />Good luck!
     </div>
     <div class="grading">
     </div>
