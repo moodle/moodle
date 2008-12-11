@@ -297,8 +297,8 @@
             $hidden["id"]                 =  $id;
             print_string('longtimewarning','admin');
 
-            if ($restore->users && !empty($info->mnet_externalusers)
-                && $info->mnet_externalusers === 'true') {
+            if ($restore->users && !empty($info->mnet_remoteusers)
+                && $info->mnet_remoteusers === 'true') {
                 if ($info->original_wwwroot === $CFG->wwwroot) {
                     print '<p>'.get_string('mnetrestore_extusers','admin').'</p>';
                 } else {

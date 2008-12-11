@@ -4945,8 +4945,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         case "ORIGINAL_WWWROOT":
                             $this->info->original_wwwroot = $this->getContents();
                             break;
-                        case "MNET_EXTERNALUSERS":
-                            $this->info->mnet_externalusers = $this->getContents();
+                        case "MNET_REMOTEUSERS":
+                            $this->info->mnet_remoteusers = $this->getContents();
                             break;
                     }
                 }
