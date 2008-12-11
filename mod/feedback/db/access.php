@@ -49,7 +49,7 @@ $mod_feedback_capabilities = array(
     
     'mod/feedback:complete' => array(
 
-        'riskbitmask' => RISK_SPAM | RISK_XSS,
+        'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
