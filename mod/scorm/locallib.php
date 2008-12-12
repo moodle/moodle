@@ -927,6 +927,8 @@ function scorm_validate($data) {
 function scorm_check_package($data) {
     global $CFG, $COURSE;
 
+    require_once($CFG->libdir.'/filelib.php');
+
     $courseid = $data->course;                  // Course Module ID
     $reference = $data->reference;              // Package path
     $scormid = $data->instance;                 // scorm ID
