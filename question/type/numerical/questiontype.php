@@ -263,17 +263,6 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         return ($answer->min <= $response && $response <= $answer->max);
     }
 
-    // ULPGC ecastro
-    function check_response(&$question, &$state){
-        $answers = &$question->options->answers;
-        foreach($answers as $aid => $answer) {
-            if($this->test_response($question, $state, $answer)) {
-                return $aid;
-            }
-        }
-        return false;
-    }
-
     function get_correct_responses(&$question, &$state) {
         $correct = parent::get_correct_responses($question, $state);
         $unit = $this->get_default_numerical_unit($question);
