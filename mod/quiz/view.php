@@ -318,12 +318,12 @@
             } else {
                 $a = quiz_format_grade($quiz, $mygrade) . '/' . quiz_format_grade($quiz, $quiz->grade);
                 $resultinfo .= print_heading(get_string('yourfinalgradeis', 'quiz', $a), '', 2, 'main', true);
-                if ($mygradeoverridden) {
-                    $resultinfo .= '<p class="overriddennotice">'.get_string('overriddennotice', 'grades')."</p>\n";
-                }
             }
         }
 
+        if ($mygradeoverridden) {
+            $resultinfo .= '<p class="overriddennotice">'.get_string('overriddennotice', 'grades')."</p>\n";
+        }
         if ($gradebookfeedback) {
             $resultinfo .= print_heading(get_string('comment', 'quiz'), '', 3, 'main', true);
             $resultinfo .= '<p class="quizteacherfeedback">'.$gradebookfeedback."</p>\n";
