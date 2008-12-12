@@ -2196,7 +2196,7 @@ class admin_externalpage extends part_of_admin_tree {
         }
         $context = empty($this->context) ? get_context_instance(CONTEXT_SYSTEM) : $this->context;
         foreach($this->req_capability as $cap) {
-            if (has_capability($cap, $context)) {
+            if (is_valid_capability($cap) and has_capability($cap, $context)) {
                 return true;
             }
         }
@@ -2346,7 +2346,7 @@ class admin_settingpage extends part_of_admin_tree {
         }
         $context = empty($this->context) ? get_context_instance(CONTEXT_SYSTEM) : $this->context;
         foreach($this->req_capability as $cap) {
-            if (has_capability($cap, $context)) {
+            if (is_valid_capability($cap) and has_capability($cap, $context)) {
                 return true;
             }
         }

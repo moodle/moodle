@@ -3295,6 +3295,9 @@ function update_capabilities($component='moodle') {
     // role assignments?
     capabilities_cleanup($component, $filecaps);
 
+    // reset static caches
+    is_valid_capability('reset', false);
+
     return true;
 }
 
@@ -3894,10 +3897,17 @@ function get_related_contexts_string($context) {
     }
 }
 
-function is_valid_capability($capabilityname) {
+/**
+ * Verifies if given capability installed.
+ *
+ * @param string $capabilityname
+ * @param bool $cached
+ * @return book true if capability exists
+ */
+function is_valid_capability($capabilityname, $cached=true) {
     static $capsnames = null; // one request per page only
 
-    if (is_null($capsnames)) {
+    if (is_null($capsnames) or !$cached) {
         global $DB;
         $capsnames = $DB->get_records_menu('capabilities', null, '', 'name, 1');
     }
