@@ -51,6 +51,7 @@ function xmldb_qtype_multichoice_upgrade($oldversion=0) {
     // with a defaultgrade of 1, when it shoud be 0. We need to reset them all to 0.
     // This is re-occurrence of MDL-7925, so we need to do it again. 
     if ($result && $oldversion < 2007072000) {
+        require_once($CFG->libdir . '/questionlib.php');
         $result = $result && set_field('question', 'defaultgrade', 0,
                 'qtype', DESCRIPTION, 'defaultgrade', 1);
     }
