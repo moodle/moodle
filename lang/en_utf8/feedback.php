@@ -125,6 +125,7 @@ $string['no_items_available_yet'] = 'No questions have been set up yet';
 $string['no_templates_available_yet'] = 'No templates available yet';
 $string['non_anonymous'] = 'User\'s name will be logged and shown with answers';
 $string['non_anonymous_entries'] = 'non anonymous entries';
+$string['notavailable'] = 'this feedback is not available';
 $string['not_completed_yet'] = 'Not completed yet';
 $string['not_selected'] = 'Not selected';
 $string['numeric'] = 'Numeric answer';
