@@ -1521,22 +1521,26 @@ function get_question_image($question) {
 }
 
 function question_print_comment_box($question, $state, $attempt, $url) {
-   global $CFG;
+    global $CFG, $QTYPES;
 
-   $prefix = 'response';
-   $usehtmleditor = can_use_richtext_editor();
-   $grade = round($state->last_graded->grade, 3);
-   echo '<form method="post" action="'.$url.'">';
-   include($CFG->dirroot.'/question/comment.html');
-   echo '<input type="hidden" name="attempt" value="'.$attempt->uniqueid.'" />';
-   echo '<input type="hidden" name="question" value="'.$question->id.'" />';
-   echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-   echo '<input type="submit" name="submit" value="'.get_string('save', 'quiz').'" />';
-   echo '</form>';
+    $prefix = 'response';
+    $usehtmleditor = can_use_richtext_editor();
+    if (!question_state_is_graded($state) && $QTYPES[$question->qtype]->is_question_manual_graded($question, $attempt->layout)) {
+        $grade = '';
+    } else {
+        $grade = round($state->last_graded->grade, 3);
+    }
+    echo '<form method="post" action="'.$url.'">';
+    include($CFG->dirroot.'/question/comment.html');
+    echo '<input type="hidden" name="attempt" value="'.$attempt->uniqueid.'" />';
+    echo '<input type="hidden" name="question" value="'.$question->id.'" />';
+    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+    echo '<input type="submit" name="submit" value="'.get_string('save', 'quiz').'" />';
+    echo '</form>';
 
-   if ($usehtmleditor) {
-       use_html_editor();
-   }
+    if ($usehtmleditor) {
+        use_html_editor();
+    }
 }
 
 /**
@@ -1548,12 +1552,13 @@ function question_print_comment_box($question, $state, $attempt, $url) {
  * @param object $question the question
  * @param object $state the state to be updated.
  * @param object $attempt the attempt the state belongs to, to be updated.
- * @param string $comment the comment the teacher added
- * @param float $grade the grade the teacher assigned.
+ * @param string $comment the new comment from the teacher.
+ * @param mixed $grade the grade the teacher assigned, or '' to not change the grade.
  * @return mixed true on success, a string error message if a problem is detected
  *         (for example score out of range).
  */
 function question_process_comment($question, &$state, &$attempt, $comment, $grade) {
+    $grade = trim($grade);
     if ($grade < 0 || $grade > $question->maxgrade) {
         $a = new stdClass;
         $a->grade = $grade;
@@ -1570,24 +1575,16 @@ function question_process_comment($question, &$state, &$attempt, $comment, $grad
     }
 
     // Update the attempt if the score has changed.
-    if (abs($state->last_graded->grade - $grade) > 0.002) {
+    if ($grade !== '' && (abs($state->last_graded->grade - $grade) > 0.002 || $state->last_graded->event != QUESTION_EVENTMANUALGRADE)) {
         $attempt->sumgrades = $attempt->sumgrades - $state->last_graded->grade + $grade;
         $attempt->timemodified = time();
         if (!update_record('quiz_attempts', $attempt)) {
             return get_string('errorupdatingattempt', 'question', $attempt);
         }
-    }
-
-    // Update the state if either the score has changed, or this is the first
-    // manual grade event and there is actually a grade of comment to process.
-    // We don't need to store the modified state in the database, we just need
-    // to set the $state->changed flag.
-    if (abs($state->last_graded->grade - $grade) > 0.002 ||
-            ($state->last_graded->event != QUESTION_EVENTMANUALGRADE && ($grade > 0.002 || $comment != ''))) {
 
         // We want to update existing state (rather than creating new one) if it
         // was itself created by a manual grading event.
-        $state->update = ($state->event == QUESTION_EVENTMANUALGRADE) ? 1 : 0;
+        $state->update = $state->event == QUESTION_EVENTMANUALGRADE;
 
         // Update the other parts of the state object.
         $state->raw_grade = $grade;
