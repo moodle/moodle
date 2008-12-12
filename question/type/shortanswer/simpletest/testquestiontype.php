@@ -67,9 +67,147 @@ class question_shortanswer_qtype_test extends UnitTestCase {
         $this->assertTrue($this->qtype->compare_string_with_wildcard('   *   ', '\*', false));
         $this->assertTrue($this->qtype->compare_string_with_wildcard('*', '\*', false));
         $this->assertTrue($this->qtype->compare_string_with_wildcard('Frog*toad', 'Frog\*toad', false));
-        $this->assertfalse($this->qtype->compare_string_with_wildcard('a', '[a-z]', false));
+        $this->assertFalse($this->qtype->compare_string_with_wildcard('a', '[a-z]', false));
         $this->assertTrue($this->qtype->compare_string_with_wildcard('[a-z]', '[a-z]', false));
         $this->assertTrue($this->qtype->compare_string_with_wildcard('\{}/', '\{}/', true));
+    }
+
+    function test_check_response() {
+        $answer1 = new stdClass;
+        $answer1->id = 17;
+        $answer1->answer = "celine";
+        $answer1->fraction = 1;
+        $answer2 = new stdClass;
+        $answer2->id = 23;
+        $answer2->answer = "c*line";
+        $answer2->fraction = 0.8;
+        $answer3 = new stdClass;
+        $answer3->id = 23;
+        $answer3->answer = "*line";
+        $answer3->fraction = 0.7;
+        $answer4 = new stdClass;
+        $answer4->id = 29;
+        $answer4->answer = "12\*13";
+        $answer4->fraction = 0.5;
+
+        $question = new stdClass;
+        $question->options->answers = array(
+            17 => $answer1,
+            23 => $answer2,
+            29 => $answer3,
+            31 => $answer4
+        );
+        $question->options->usecase = true;
+
+        $state = new stdClass;
+
+        $state->responses = array('' => 'celine');
+        $this->assertEqual($this->qtype->check_response($question, $state), 17);
+
+        $state->responses = array('' => 'caline');
+        $this->assertEqual($this->qtype->check_response($question, $state), 23);
+
+        $state->responses = array('' => 'aline');
+        $this->assertEqual($this->qtype->check_response($question, $state), 29);
+
+        $state->responses = array('' => 'frog');
+        $this->assertFalse($this->qtype->check_response($question, $state));
+
+        $state->responses = array('' => '12*13');
+        $this->assertEqual($this->qtype->check_response($question, $state), 31);
+
+        $question->options->usecase = false;
+
+        $answer1->answer = "Fred's";
+        $question->options->answers[17] = $answer1;
+
+        $state->responses = array('' => 'frog');
+        $this->assertFalse($this->qtype->check_response($question, $state));
+
+        $state->responses = array('' => "fred\'s");
+        $this->assertEqual($this->qtype->check_response($question, $state), 17);
+
+        $state->responses = array('' => '12*13');
+        $this->assertEqual($this->qtype->check_response($question, $state), 31);
+
+        $state->responses = array('' => 'caLINe');
+        $this->assertEqual($this->qtype->check_response($question, $state), 23);
+
+        $state->responses = array('' => 'ALIne');
+        $this->assertEqual($this->qtype->check_response($question, $state), 29);
+    }
+
+    function test_compare_responses() {
+        $question = new stdClass;
+        $question->options->usecase = false;
+
+        $state = new stdClass;
+        $teststate = new stdClass;
+        $this->assertFalse($this->qtype->compare_responses($question, $state, $teststate));
+
+        $state->responses = array('' => '');
+        $this->assertFalse($this->qtype->compare_responses($question, $state, $teststate));
+
+        $state = new stdClass;
+        $teststate->responses = array('' => '');
+        $this->assertFalse($this->qtype->compare_responses($question, $state, $teststate));
+
+        $state->responses = array('' => '');
+        $this->assertTrue($this->qtype->compare_responses($question, $state, $teststate));
+
+        $state->responses = array('' => 'frog');
+        $teststate->responses = array('' => 'frog');
+        $this->assertTrue($this->qtype->compare_responses($question, $state, $teststate));
+
+        $state->responses = array('' => 'frog');
+        $teststate->responses = array('' => 'Frog');
+        $this->assertFalse($this->qtype->compare_responses($question, $state, $teststate));
+
+        $state->responses = array('' => "\'");
+        $teststate->responses = array('' => "\'");
+        $this->assertTrue($this->qtype->compare_responses($question, $state, $teststate));
+
+        $state->responses = array('' => 'frog*toad');
+        $teststate->responses = array('' => 'frog*TOAD');
+        $this->assertFalse($this->qtype->compare_responses($question, $state, $teststate));
+
+        $state->responses = array('' => 'frog*');
+        $teststate->responses = array('' => 'frogs');
+        $this->assertFalse($this->qtype->compare_responses($question, $state, $teststate));
+
+        $state->responses = array('' => 'frogs');
+        $teststate->responses = array('' => 'frog*');
+        $this->assertFalse($this->qtype->compare_responses($question, $state, $teststate));
+
+        $question->options->usecase = true;
+
+        $state->responses = array('' => '');
+        $teststate->responses = array('' => '');
+        $this->assertTrue($this->qtype->compare_responses($question, $state, $teststate));
+
+        $state->responses = array('' => 'frog');
+        $teststate->responses = array('' => 'frog');
+        $this->assertTrue($this->qtype->compare_responses($question, $state, $teststate));
+
+        $state->responses = array('' => 'frog');
+        $teststate->responses = array('' => 'Frog');
+        $this->assertFalse($this->qtype->compare_responses($question, $state, $teststate));
+
+        $state->responses = array('' => "\'");
+        $teststate->responses = array('' => "\'");
+        $this->assertTrue($this->qtype->compare_responses($question, $state, $teststate));
+
+        $state->responses = array('' => 'frog*toad');
+        $teststate->responses = array('' => 'frog*toad');
+        $this->assertTrue($this->qtype->compare_responses($question, $state, $teststate));
+
+        $state->responses = array('' => 'frog*');
+        $teststate->responses = array('' => 'frogs');
+        $this->assertFalse($this->qtype->compare_responses($question, $state, $teststate));
+
+        $state->responses = array('' => 'frogs');
+        $teststate->responses = array('' => 'frog*');
+        $this->assertFalse($this->qtype->compare_responses($question, $state, $teststate));
     }
 
     function test_get_correct_responses() {
