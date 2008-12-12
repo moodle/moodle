@@ -168,7 +168,7 @@ class question_match_qtype extends default_questiontype {
             // answers per question, each with different marks and feedback.
             $answer = new stdClass();
             $answer->id       = $subquestion->code;
-            $answer->answer   = format_string($subquestion->answertext);
+            $answer->answer   = $subquestion->answertext;
             $answer->fraction = 1.0;
             $state->options->subquestions[$key]->options
              ->answers[$subquestion->code] = clone($answer);
@@ -234,9 +234,9 @@ class question_match_qtype extends default_questiontype {
         $subquestions   = $state->options->subquestions;
         $correctanswers = $this->get_correct_responses($question, $state);
         $nameprefix     = $question->name_prefix;
-        $answers        = array();
-        $allanswers     = array();
-        $answerids      = array();
+        $answers        = array(); // Answer choices formatted ready for output.
+        $allanswers     = array(); // This and the next used to detect identical answers
+        $answerids      = array(); // and adjust ids.
         $responses      = &$state->responses;
 
         // Prepare a list of answers, removing duplicates. 
@@ -244,7 +244,7 @@ class question_match_qtype extends default_questiontype {
             foreach ($subquestion->options->answers as $ans) {
                 $allanswers[$ans->id] = $ans->answer;
                 if (!in_array($ans->answer, $answers)) {
-                    $answers[$ans->id] = $ans->answer;
+                    $answers[$ans->id] = strip_tags(format_string($ans->answer, false));
                     $answerids[$ans->answer] = $ans->id;
                 }
             }
