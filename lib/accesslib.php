@@ -356,20 +356,8 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
 
 /// Some sanity checks
     if (debugging('',DEBUG_DEVELOPER)) {
-        static $capsnames = null; // one request per page only
-        
-        if (is_null($capsnames)) {
-            if ($caps = get_records('capabilities', '', '', '', 'id, name')) {
-                $capsnames = array();
-                foreach ($caps as $cap) {
-                    $capsnames[$cap->name] = true;
-                }
-            }
-        }
-        if ($capsnames) { // ignore if can not fetch caps
-            if (!isset($capsnames[$capability])) {
-                debugging('Capability "'.$capability.'" was not found! This should be fixed in code.');
-            }
+        if (!is_valid_capability($capability)) {
+            debugging('Capability "'.$capability.'" was not found! This should be fixed in code.');
         }
         if (!is_bool($doanything)) {
             debugging('Capability parameter "doanything" is wierd ("'.$doanything.'"). This should be fixed in code.');
@@ -3321,6 +3309,9 @@ function update_capabilities($component='moodle') {
     // role assignments?
     capabilities_cleanup($component, $filecaps);
 
+    // reset static caches
+    is_valid_capability('reset', false);
+
     return true;
 }
 
@@ -3793,6 +3784,23 @@ function get_related_contexts_string($context) {
     } else {
         return (' ='.$context->id);
     }
+}
+
+/**
+ * Verifies if given capability installed.
+ *
+ * @param string $capabilityname
+ * @param bool $cached
+ * @return book true if capability exists
+ */
+function is_valid_capability($capabilityname, $cached=true) {
+    static $capsnames = null; // one request per page only
+
+    if (is_null($capsnames) or !$cached) {
+        $capsnames = get_records_menu('capabilities', '', '', '', 'name, 1');
+    }
+
+    return array_key_exists($capabilityname, $capsnames);
 }
 
 /**
