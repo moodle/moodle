@@ -955,11 +955,9 @@ function question_load_states(&$questions, &$states, $cmoptions, $attempt, $last
                 $states[$qid]->last_graded = clone($states[$qid]);
             }
         } else {
-            // If the new attempt is to be based on a previous attempt get it and clean things
-            // Having lastattemptid filled implies that (should we double check?):
-            //    $attempt->attempt > 1 and $cmoptions->attemptonlast and !$attempt->preview
             if ($lastattemptid) {
-                // find the responses from the previous attempt and save them to the new session
+                // If the new attempt is to be based on this previous attempt.
+                // Find the responses from the previous attempt and save them to the new session
 
                 // Load the last graded state for the question
                 $statefields = 'n.questionid as question, s.*, n.sumpenalty';
