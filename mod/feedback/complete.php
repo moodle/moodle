@@ -24,7 +24,7 @@
     $highlightrequired = false;
 
     if(($formdata = data_submitted()) AND !confirm_sesskey()) {
-        error('no sesskey defined');
+        print_error('invalidsesskey');
     }
 
     //if the use hit enter into a textfield so the form should not submit
@@ -48,7 +48,7 @@
             $gonextpage = false;
             $gopreviouspage = true;
         }else {
-            error('parameter (gopage) required');
+            print_error('missingparameter');
         }
     }else {
         $gonextpage = $gopreviouspage = false;
@@ -57,15 +57,15 @@
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-            error("Course Module ID was incorrect");
+            print_error('invalidcoursemodule');
         }
      
         if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-            error("Course is misconfigured");
+            print_error('coursemisconf');
         }
      
         if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-            error("Course module is incorrect");
+            print_error('invalidcoursemodule');
         }
     }
 
@@ -84,7 +84,7 @@
     if($course->id == SITEID AND !$capabilities->edititems) {
         if($DB->get_records('feedback_sitecourse_map', array('feedbackid'=>$feedback->id))) {
             if(!$DB->get_record('feedback_sitecourse_map', array('feedbackid'=>$feedback->id, 'courseid'=>$courseid))){
-                error("this feedback is not available");
+                print_error('notavailable', 'feedback');
             }
         }
     }
@@ -109,12 +109,12 @@
             require_course_login($course2); //this overwrites the object $course :-(
             $course = $DB->get_record("course", array("id"=>$cm->course)); // the workaround
         }else {
-            error("courseid is not correct");
+            print_error('invalidcourseid');
         }
     }
     
     if(!$capabilities->complete) {
-        error(get_string('error'));
+        print_error('error');
     }
     
     /// Print the page header
@@ -168,7 +168,8 @@
     if($feedback_can_submit) {
         //preserving the items
         if($preservevalues == 1){
-            if(!$SESSION->feedback->is_started == true)error('error', $CFG->wwwroot.'/course/view.php?id='.$course->id);
+            if(!$SESSION->feedback->is_started == true)
+                print_error('error', '', $CFG->wwwroot.'/course/view.php?id='.$course->id);
             //checken, ob alle required items einen wert haben
             if(feedback_check_values($_POST, $startitempos, $lastitempos)) {
                     $userid = $USER->id; //arb
@@ -183,7 +184,7 @@
                     if(isset($lastpage)) {
                         $gopage = $lastpage;
                     }else {
-                        error('parameter failed');
+                        print_error('missingparameter');
                     }
                 }
             }else {
@@ -192,7 +193,7 @@
                 if(isset($lastpage)) {
                     $gopage = $lastpage;
                 }else {
-                    error('parameter failed');
+                    print_error('missingparameter');
                 }
             
             }

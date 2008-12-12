@@ -18,20 +18,20 @@
     $userid = optional_param('userid', false, PARAM_INT);
     
     if(($formdata = data_submitted()) AND !confirm_sesskey()) {
-        error('no sesskey defined');
+        print_error('invalidsesskey');
     }
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-            error("Course Module ID was incorrect");
+            print_error('invalidcoursemodule');
         }
      
         if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-            error("Course is misconfigured");
+            print_error('coursemisconf');
         }
      
         if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-            error("Course module is incorrect");
+            print_error('invalidcoursemodule');
         }
     }
     $capabilities = feedback_load_capabilities($cm->id);
@@ -39,7 +39,7 @@
     require_login($course->id, true, $cm);
     
     if(!$capabilities->viewreports){
-        error(get_string('error'));
+        print_error('error');
     }
 
 
