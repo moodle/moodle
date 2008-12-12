@@ -173,7 +173,7 @@ class question_match_qtype extends default_questiontype {
             // answers per question, each with different marks and feedback.
             $answer = new stdClass();
             $answer->id       = $subquestion->code;
-            $answer->answer   = format_string($subquestion->answertext);
+            $answer->answer   = $subquestion->answertext;
             $answer->fraction = 1.0;
             $state->options->subquestions[$key]->options
              ->answers[$subquestion->code] = clone($answer);
@@ -223,7 +223,7 @@ class question_match_qtype extends default_questiontype {
 
         foreach ($subquestions as $subquestion) {
             foreach ($subquestion->options->answers as $ans) {
-                $answers[$ans->id] = $ans->answer;
+                $answers[$ans->id] = strip_tags(format_string($ans->answer, false));
             }
         }
 
