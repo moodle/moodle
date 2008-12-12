@@ -14,11 +14,11 @@
     $postid = optional_param('postid', 0, PARAM_INT);        // Used for tracking read posts if user initiated.
 
     if (!$discussion = $DB->get_record('forum_discussions', array('id' => $d))) {
-        error("Discussion ID was incorrect or no longer exists");
+        print_error('invaliddiscussionid', 'forum');
     }
 
     if (!$course = $DB->get_record('course', array('id' => $discussion->course))) {
-        error("Course ID is incorrect - discussion is faulty");
+        print_error('invalidcourseid');
     }
 
     if (!$forum = $DB->get_record('forum', array('id' => $discussion->forum))) {
@@ -26,7 +26,7 @@
     }
 
     if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-        error('Course Module ID was incorrect');
+        print_error('invalidcoursemodule');
     }
 
     require_course_login($course, true, $cm);
@@ -38,7 +38,7 @@
         if (!($USER->id == $discussion->userid || (($discussion->timestart == 0
             || $discussion->timestart <= time())
             && ($discussion->timeend == 0 || $discussion->timeend > time())))) {
-            error('Discussion ID was incorrect or no longer exists', "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
+            print_error('invaliddiscussionid', 'forum', "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
         }
     }
 
@@ -49,19 +49,19 @@
         require_capability('mod/forum:movediscussions', $modcontext);
 
         if ($forum->type == 'single') {
-            error('Cannot move discussion from a simple single discussion forum', $return);
+            print_error('cannotmovefromsingleforum', 'forum', $return);
         }
 
         if (!$forumto = $DB->get_record('forum', array('id' => $move))) {
-            error('You can\'t move to that forum - it doesn\'t exist!', $return);
+            print_error('cannotmovetonotexist', 'forum', $return);
         }
 
         if (!$cmto = get_coursemodule_from_instance('forum', $forumto->id, $course->id)) {
-            error('Target forum not found in this course.', $return);
+            print_error('cannotmovetonotfound', 'forum', $return);
         }
 
         if (!coursemodule_visible_for_user($cmto)) {
-            error('Forum not visible', $return);
+            print_error('cannotmovenotvisible', 'forum', $return);
         }
 
         if (!forum_move_attachments($discussion, $forum->id, $forumto->id)) {
@@ -78,8 +78,7 @@
         // the regeneration of the feeds since the discussions have been
         // moved.
         if (!forum_rss_delete_file($forum) || !forum_rss_delete_file($forumto)) {
-            error('Could not purge the cached RSS feeds for the source and/or'.
-                   'destination forum(s) - check your file permissionsforums', $return);
+            print_error('cannotpurgecachedrss', 'forum', $return);
         }
 
         redirect($return.'&amp;moved=-1&amp;sesskey='.sesskey());
@@ -110,12 +109,12 @@
     }
 
     if (! $post = forum_get_post_full($parent)) {
-        error("Discussion no longer exists", "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
+        print_error("notexists", 'forum', "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
     }
 
 
     if (!forum_user_can_view_post($post, $course, $cm, $forum, $discussion)) {
-        error('You do not have permissions to view this post', "$CFG->wwwroot/mod/forum/view.php?id=$forum->id");
+        print_error('nopermissiontoview', 'forum', "$CFG->wwwroot/mod/forum/view.php?id=$forum->id");
     }
 
     if ($mark == 'read' or $mark == 'unread') {

@@ -31,25 +31,25 @@
 
         if (!empty($forum)) {      // User is starting a new discussion in a forum
             if (! $forum = $DB->get_record('forum', array('id' => $forum))) {
-                error('The forum number was incorrect');
+                print_error('invalidforumid', 'forum');
             }
         } else if (!empty($reply)) {      // User is writing a new reply
             if (! $parent = forum_get_post_full($reply)) {
-                error('Parent post ID was incorrect');
+                print_error('invalidparentpostid', 'forum');
             }
             if (! $discussion = $DB->get_record('forum_discussions', array('id' => $parent->discussion))) {
-                error('This post is not part of a discussion!');
+                print_error('notpartofdiscussion', 'forum');
             }
             if (! $forum = $DB->get_record('forum', array('id' => $discussion->forum))) {
-                error('The forum number was incorrect');
+                print_error('invalidforumid');
             }
         }
         if (! $course = $DB->get_record('course', array('id' => $forum->course))) {
-            error('The course number was incorrect');
+            print_error('invalidcourseid');
         }
 
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) { // For the logs
-            error('Could not get the course module for the forum instance.');
+            print_error('invalidcoursemodule');
         } else {
             $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         }
@@ -71,13 +71,13 @@
 
     if (!empty($forum)) {      // User is starting a new discussion in a forum
         if (! $forum = $DB->get_record("forum", array("id" => $forum))) {
-            error("The forum number was incorrect ($forum)");
+            print_error('invalidforumid', 'forum');
         }
         if (! $course = $DB->get_record("course", array("id" => $forum->course))) {
-            error("The course number was incorrect ($forum->course)");
+            print_error('invalidcourseid');
         }
         if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-            error("Incorrect course module");
+            print_error("invalidcoursemodule");
         }
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -125,19 +125,19 @@
     } else if (!empty($reply)) {      // User is writing a new reply
 
         if (! $parent = forum_get_post_full($reply)) {
-            error("Parent post ID was incorrect");
+            print_error('invalidparentpostid', 'forum');
         }
         if (! $discussion = $DB->get_record("forum_discussions", array("id" => $parent->discussion))) {
-            error("This post is not part of a discussion!");
+            print_error('notpartofdiscussion', 'forum');
         }
         if (! $forum = $DB->get_record("forum", array("id" => $discussion->forum))) {
-            error("The forum number was incorrect ($discussion->forum)");
+            print_error('invalidforumid', 'forum');
         }
         if (! $course = $DB->get_record("course", array("id" => $discussion->course))) {
-            error("The course number was incorrect ($discussion->course)");
+            print_error('invalidcourseid');
         }
         if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-            error("Incorrect cm");
+            print_error('invalidcoursemodule');
         }
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -191,37 +191,37 @@
     } else if (!empty($edit)) {  // User is editing their own post
 
         if (! $post = forum_get_post_full($edit)) {
-            error("Post ID was incorrect");
+            print_error('invalidpostid', 'forum');
         }
         if ($post->parent) {
             if (! $parent = forum_get_post_full($post->parent)) {
-                error("Parent post ID was incorrect ($post->parent)");
+                print_error('invalidparentpostid', 'forum');
             }
         }
 
         if (! $discussion = $DB->get_record("forum_discussions", array("id" => $post->discussion))) {
-            error("This post is not part of a discussion! ($edit)");
+            print_error('notpartofdiscussion', 'forum');
         }
         if (! $forum = $DB->get_record("forum", array("id" => $discussion->forum))) {
-            error("The forum number was incorrect ($discussion->forum)");
+            print_error('invalidforumid', 'forum');
         }
         if (! $course = $DB->get_record("course", array("id" => $discussion->course))) {
-            error("The course number was incorrect ($discussion->course)");
+            print_error('invalidcourseid');
         }
         if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-            error('Could not get the course module for the forum instance.');
+            print_error('invalidcoursemodule');
         } else {
             $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         }
         if (!($forum->type == 'news' && !$post->parent && $discussion->timestart > time())) {
             if (((time() - $post->created) > $CFG->maxeditingtime) and
                         !has_capability('mod/forum:editanypost', $modcontext)) {
-                error( get_string("maxtimehaspassed", "forum", format_time($CFG->maxeditingtime)) );
+                print_error('maxtimehaspassed', 'forum', '', format_time($CFG->maxeditingtime));
             }
         }
         if (($post->userid <> $USER->id) and
                     !has_capability('mod/forum:editanypost', $modcontext)) {
-            error("You can't edit other people's posts!");
+            print_error('cannoteditposts', 'forum');
         }
 
 
@@ -239,19 +239,19 @@
     }else if (!empty($delete)) {  // User is deleting a post
 
         if (! $post = forum_get_post_full($delete)) {
-            error("Post ID was incorrect");
+            print_error('invalidpostid', 'forum');
         }
         if (! $discussion = $DB->get_record("forum_discussions", array("id" => $post->discussion))) {
-            error("This post is not part of a discussion!");
+            print_error('notpartofdiscussion', 'forum');
         }
         if (! $forum = $DB->get_record("forum", array("id" => $discussion->forum))) {
-            error("The forum number was incorrect ($discussion->forum)");
+            print_error('invalidforumid', 'forum');
         }
         if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $forum->course)) {
-            error('Could not get the course module for the forum instance.');
+            print_error('invalidcoursemodule');
         }
         if (!$course = $DB->get_record('course', array('id' => $forum->course))) {
-            error('Incorrect course');
+            print_error('invalidcourseid');
         }
 
         require_login($course, false, $cm);
@@ -259,7 +259,7 @@
 
         if ( !(($post->userid == $USER->id && has_capability('mod/forum:deleteownpost', $modcontext))
                     || has_capability('mod/forum:deleteanypost', $modcontext)) ) {
-            error("You can't delete this post!");
+            print_error('cannotdeletepost', 'forum');
         }
 
 
@@ -304,7 +304,7 @@
 
                     redirect(forum_go_back_to($discussionurl));
                 } else {
-                    error("An error occurred while deleting record $post->id");
+                    print_error('errorwhiledelete', 'forum');
                 }
             }
 
@@ -346,27 +346,27 @@
     } else if (!empty($prune)) {  // Pruning
 
         if (!$post = forum_get_post_full($prune)) {
-            error("Post ID was incorrect");
+            print_error('invalidpostid', 'forum');
         }
         if (!$discussion = $DB->get_record("forum_discussions", array("id" => $post->discussion))) {
-            error("This post is not part of a discussion!");
+            print_error('notpartofdiscussion', 'forum');
         }
         if (!$forum = $DB->get_record("forum", array("id" => $discussion->forum))) {
-            error("The forum number was incorrect ($discussion->forum)");
+            print_error('invalidforumid', 'forum');
         }
         if ($forum->type == 'single') {
-            error('Discussions from this forum cannot be split');
+            print_error('cannotsplit', 'forum');
         }
         if (!$post->parent) {
-            error('This is already the first post in the discussion');
+            print_error('alreadyfirstpost', 'forum');
         }
         if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $forum->course)) { // For the logs
-            error('Could not get the course module for the forum instance.');
+            print_error('invalidcoursemodule');
         } else {
             $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         }
         if (!has_capability('mod/forum:splitdiscussions', $modcontext)) {
-            error("You can't split discussions!");
+            print_error('cannotsplit', 'forum');
         }
 
         if (!empty($name) && confirm_sesskey()) {    // User has confirmed the prune
@@ -384,7 +384,7 @@
             $newdiscussion->timeend      = $discussion->timeend;
 
             if (!$newid = $DB->insert_record('forum_discussions', $newdiscussion)) {
-                error('Could not create new discussion');
+                print_error('cannotcreatediscussion', 'forum');
             }
 
             $newpost = new object();
@@ -393,7 +393,7 @@
             $newpost->subject = $name;
 
             if (!$DB->update_record("forum_posts", $newpost)) {
-                error('Could not update the original post');
+                print_error('cannotupdatediscussion', 'forum');
             }
 
             forum_change_discussionid($post->id, $newid);
@@ -428,7 +428,7 @@
         print_footer($course);
         die;
     } else {
-        error("No operation specified");
+        print_error('unknowaction');
 
     }
 
@@ -441,7 +441,7 @@
 // from now on user must be logged on properly
 
     if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) { // For the logs
-        error('Could not get the course module for the forum instance.');
+        print_error('invalidcoursemodule');
     }
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_login($course->id, false, $cm);
@@ -555,7 +555,7 @@
             if ( !(($realpost->userid == $USER->id && (has_capability('mod/forum:replypost', $modcontext)
                                 || has_capability('mod/forum:startdiscussion', $modcontext))) ||
                                 has_capability('mod/forum:editanypost', $modcontext)) ) {
-                error("You can not update this post");
+                print_error('cannotupdatepost', 'forum');
             }
 
             $updatepost = $fromform; //realpost
@@ -649,7 +649,7 @@
 
         } else {                     // Adding a new discussion
             if (!forum_user_can_post_discussion($forum, $fromform->groupid, -1, $cm, $modcontext)) {
-                error('Can not add discussion, sorry.');
+                print_error('cannotcreatediscussion', 'forum');
             }
             if (empty($fromform->groupid)) {
                 $fromform->groupid = -1;
@@ -717,7 +717,7 @@
 
     if ($post->discussion) {
         if (! $toppost = $DB->get_record("forum_posts", array("discussion" => $post->discussion, "parent" => 0))) {
-            error("Could not find top parent of post $post->id");
+            print_error("Could not find top parent of post $post->id");
         }
     } else {
         $toppost->subject = ($forum->type == "news") ? get_string("addanewtopic", "forum") :
@@ -761,10 +761,10 @@
 
 // checkup
     if (!empty($parent) && !forum_user_can_see_post($forum, $discussion, $post, null, $cm)) {
-        error("You cannot reply to this post");
+        print_error('cannotreply', 'forum');
     }
     if (empty($parent) && empty($edit) && !forum_user_can_post_discussion($forum, $groupid, -1, $cm, $modcontext)) {
-        error("You cannot start a new discussion in this forum");
+        print_error('cannotcreatediscussion', 'forum');
     }
 
     if ($forum->type == 'qanda'
@@ -778,7 +778,7 @@
 
     if (!empty($parent)) {
         if (! $discussion = $DB->get_record('forum_discussions', array('id' => $parent->discussion))) {
-            error('This post is not part of a discussion!');
+            print_error('notpartofdiscussion', 'forum');
         }
 
         forum_print_post($parent, $discussion, $forum, $cm, $course, false, false, false);

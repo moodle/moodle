@@ -9,11 +9,11 @@
 
     if ($id) {
         if (! $course = $DB->get_record('course', array('id' => $id))) {
-            error("Course ID is incorrect");
+            print_error('invalidcourseid');
         }
     } else {
         if (! $course = get_site()) {
-            error("Could not find a top-level course!");
+            print_error('nosite');
         }
     }
 
