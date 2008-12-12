@@ -162,7 +162,7 @@
 
         /*
         if (!blog_user_can_view_user_post($template['userid'])) {
-            error ('you can not view this post');
+            print_error('cannotviewuserblog', 'blog');
         }*/
 
         $stredit = get_string('edit');

@@ -174,13 +174,13 @@
                 $params["userid"] = $userid;
             }
             if (!$attempts = $DB->get_records_select('lesson_attempts', "pageid $usql".$queryadd, $params)) {
-                error ('No one has answered essay questions yet...');
+                print_error('nooneansweredthisquestion', 'lesson');
             }
             // Get the answers
             list($answerUsql, $parameters) = $DB->get_in_or_equal(array_keys($pages));
             $parameters["lessonid"] = $lesson->id;
             if (!$answers = $DB->get_records_select('lesson_answers', "lessonid = :lessonid AND pageid $answerUsql", $parameters, '', 'pageid, score')) {
-                error ('Could not find answer records.');
+                print_error('cannotfindanswer', 'lesson');
             }
             $options = new stdClass;
             $options->noclean = true;

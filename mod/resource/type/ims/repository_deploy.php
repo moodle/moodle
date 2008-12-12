@@ -105,7 +105,7 @@
     /// Load imsmanifest to memory (instead of using a full parser,
     /// we are going to use xmlize intensively (because files aren't too big)
         if (!$imsmanifest = ims_file2var ($resourcedir.'/imsmanifest.xml')) {
-            error (get_string ('errorreadingfile', 'error', 'imsmanifest.xml'));
+            print_error('errorreadingfile', 'error', '', 'imsmanifest.xml');
         }
             
     /// Check if the first line is a proper one, because I've seen some
@@ -124,7 +124,7 @@
                 return;
             }
             else {
-                error (get_string ('invalidxmlfile', 'error', 'imsmanifest.xml'));
+                print_error('invalidxmlfile', 'error', '', 'imsmanifest.xml');
             }
         }
     
@@ -138,7 +138,7 @@
     /// Extract every manifest present in the imsmanifest file.
     /// Returns a tree structure.
         if (!$manifests = ims_extract_manifests($data)) {
-            error (get_string('nonmeaningfulcontent', 'error'));
+            print_error('nonmeaningfulcontent', 'error');
         }
     
     /// Process every manifest found in inverse order so every one 
@@ -156,7 +156,11 @@
     /// First we select an organization an load all the items
 
         if (!$items = ims_process_organizations($data['manifest']['#']['organizations']['0'])) {
-            if ($all == 'force') return; else error (get_string('nonmeaningfulcontent', 'error'));
+            if ($all == 'force') {
+                return;
+            } else {
+                print_error('nonmeaningfulcontent', 'error');
+            }
         }
     
     /// Detect if all the resources share a common xml:base tag
@@ -164,7 +168,7 @@
       
     /// Now, we load all the resources available (keys are identifiers)
         if (!$resources = ims_load_resources($data['manifest']['#']['resources']['0']['#']['resource'], $manifest_base, $resources_base)) {
-            error (get_string('nonmeaningfulcontent', 'error'));
+            print_error('nonmeaningfulcontent', 'error');
         }
     ///Now we assign to each item, its resource (by identifier)
         foreach ($items as $key=>$item) {
@@ -178,7 +182,7 @@
     /// Create the INDEX (moodle_inx.ser - where the order of the pages are stored serialized) file
         $items['title'] = $title;
         if (!ims_save_serialized_file($resourcedir.'/moodle_inx.ser', $items)) {
-            error (get_string('errorcreatingfile', 'error', 'moodle_inx.ser'));
+            print_error('errorcreatingfile', 'error', '', 'moodle_inx.ser');
         }
     
     /// No zip so no HASH

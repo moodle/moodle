@@ -181,7 +181,7 @@
 
     if ($mode == 'missing') {
         if (!file_exists($langdir)) {
-            error ('to edit this language pack, you need to put it in '.$CFG->dataroot.'/lang');
+            print_error('invalidlangpack');
         }
 
         // Following variables store the HTML output to be echo-ed

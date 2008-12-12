@@ -416,7 +416,7 @@ class resource_ims extends resource_base {
                 $resourcedir = $CFG->repository . $resource->reference;
             }
             if (!$items = ims_load_serialized_file($resourcedir.'/moodle_inx.ser')) {
-                error (get_string('errorreadingfile', 'error', 'moodle_inx.ser'));
+                print_error('errorreadingfile', 'error', '', 'moodle_inx.ser');
             }
         }
 

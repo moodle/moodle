@@ -7,6 +7,7 @@ $string['back'] = 'Back';
 $string['backtomainview'] = 'Back To Main';
 $string['binaryincorrectlength'] = 'Incorrect length for binary field';
 $string['cannotuseidfield'] = 'Cannot insert the \"id\" field. It is an autonumeric column';
+$string['cannotinstantiateclass'] = 'Error: cannot instantiate class (actions/$a->action/$a->actionclass)';
 $string['change'] = 'Change';
 $string['charincorrectlength'] = 'Incorrect length for char field';
 $string['checkbigints'] = 'Check bigints';

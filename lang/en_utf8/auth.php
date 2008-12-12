@@ -9,6 +9,8 @@ $string['forgottenpassword'] = 'If you enter a URL here, it will be used as the 
 $string['forgottenpasswordurl'] = 'Forgotten password URL';
 $string['pluginnotenabled'] = 'Authentication plugin \'$a\' is not enabled.';
 $string['pluginnotinstalled'] = 'Authentication plugin \'$a\' is not installed.';
+$string['user_activatenotsupportusertype'] = 'auth: ldap user_activate() does not support selected usertype: $a';
+$string['user_disablenotsupportusertype'] = 'auth: ldap user_disable() does not support selected usertype (..yet)';
 // synchronization
 $string['auth_sync_script'] ='Cron synchronization script';
 $string['auth_dbinsertuser'] ='Inserted user $a[0] id $a[1]';

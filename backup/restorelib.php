@@ -7284,7 +7284,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         //Check the file exists
         if (!is_file($file)) {
             if (!defined('RESTORE_SILENTLY')) {
-                error ("File not exists ($file)");
+                print_error('nofile');
             } else {
                 $errorstr = "File not exists ($file)";
                 return false;
@@ -7294,9 +7294,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         //Check the file name ends with .zip
         if (!substr($file,-4) == ".zip") {
             if (!defined('RESTORE_SILENTLY')) {
-                error ("File has an incorrect extension");
+                print_error('incorrectext');
             } else {
-                $errorstr = 'File has an incorrect extension';
+                $errorstr = get_string('incorrectext', 'error');
                 return false;
             }
         }
@@ -7463,7 +7463,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         if (!$status) {
             if (!defined('RESTORE_SILENTLY')) {
-                error ("An error has ocurred");
+                print_error('error');
             } else {
                 $errorstr = "An error has occured"; // helpful! :P
                 return false;

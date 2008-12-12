@@ -355,7 +355,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 // strings (UCS-2 Little Endian format) and surrounded with
                 // double quotes. See http://support.microsoft.com/?kbid=269190
                 if (!function_exists('mb_convert_encoding')) {
-                    print_error ('auth_ldap_no_mbstring', 'auth');
+                    print_error('auth_ldap_no_mbstring', 'auth');
                 }
 
                 // First create the user account, and mark it as disabled.
@@ -366,7 +366,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $userdn = 'cn=' .  $this->ldap_addslashes($extusername) .
                           ',' . $this->config->create_context;
                 if (!ldap_add($ldapconnection, $userdn, $newuser)) {
-                    print_error ('auth_ldap_ad_create_req', 'auth');
+                    print_error('auth_ldap_ad_create_req', 'auth');
                 }
 
                 // Now set the password
@@ -376,7 +376,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 if(!ldap_modify($ldapconnection, $userdn, $newuser)) {
                     // Something went wrong: delete the user account and error out
                     ldap_delete ($ldapconnection, $userdn);
-                    print_error ('auth_ldap_ad_create_req', 'auth');
+                    print_error('auth_ldap_ad_create_req', 'auth');
                 }
                 $uadd = true;
                 break;
@@ -918,7 +918,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                                                  & (~AUTH_AD_ACCOUNTDISABLE);
                 break;
             default:
-                error ('auth: ldap user_activate() does not support selected usertype:"'.$this->config->user_type.'" (..yet)');
+                print_error('user_activatenotsupportusertype', 'auth', '', $this->config->user_type);
         }
         $result = ldap_modify($ldapconnection, $userdn, $newinfo);
         ldap_close($ldapconnection);
@@ -953,7 +953,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                                                  | AUTH_AD_ACCOUNTDISABLE;
                 break;
             default:
-                error ('auth: ldap user_disable() does not support selected usertype (..yet)');
+                print_error('user_disablenotsupportusertype', 'auth');
         }
         $result = ldap_modify($ldapconnection, $userdn, $newinfo);
         ldap_close($ldapconnection);

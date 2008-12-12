@@ -88,7 +88,7 @@ class qformat_default {
                     if ($pageid) {
                         // the new page follows on from this page
                         if (!$page = $DB->get_record("lesson_pages", array("id" => $pageid))) {
-                            error ("Format: Page $pageid not found");
+                            print_error('invalidpageid', 'lesson');
                         }
                         $newpage->prevpageid = $pageid;
                         $newpage->nextpageid = $page->nextpageid;

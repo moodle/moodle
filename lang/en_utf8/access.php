@@ -10,6 +10,7 @@ $string['accessstatement'] = 'Accessibility statement';
 $string['activitynext'] = 'Next activity';
 $string['activityprev'] = 'Previous activity';
 $string['breadcrumb'] = 'Breadcrumb trail';
+$string['cannotdeleterolenoadmin'] = 'You can not delete this role because there is no other admin roles with users assigned';
 $string['currentweek'] = 'This week ';
 $string['currenttopic'] = 'This topic ';
 $string['monthnext'] = 'Next month';

@@ -2627,7 +2627,7 @@ function delete_role($roleid) {
                 }
             }
             if ($status !== true) {
-                error ('You can not delete this role because there is no other admin roles with users assigned');
+                print_error('cannotdeleterolenoadmin', 'access');
             }
         }
     }
@@ -3455,7 +3455,7 @@ function print_context_name($context, $withprefix = true, $short = false) {
             break;
 
         default:
-            error ('This is an unknown context (' . $context->contextlevel . ') in print_context_name!');
+            print_error('unknowncontext');
             return false;
     }
 
@@ -4045,7 +4045,7 @@ function get_component_string($component, $contextlevel) {
         break;
 
         default:
-            error ('This is an unknown context $contextlevel (' . $contextlevel . ') in get_component_string!');
+            print_error('unknowncontext');
         return false;
 
     }

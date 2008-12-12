@@ -1611,7 +1611,7 @@ class default_questiontype {
     /// If anything has changed, update it in the database.
         if ($updateqrec){
             if (!$DB->update_record('question', $question)){
-                error ('Couldn\'t update question '.$question->name);
+                print_error('cannotupdatequestion', 'question');
             }
         }
 
@@ -1630,7 +1630,7 @@ class default_questiontype {
             /// If anything has changed, update it in the database.
                 if ($answerchanged){
                     if (!$DB->update_record('question_answers', $answer)){
-                        error ('Couldn\'t update question ('.$question->name.') answer '.$answer->id);
+                        print_error('cannotupdatequestion', 'question');
                     }
                 }
             }

@@ -231,7 +231,7 @@ $navlinks = array();
         break;
 
         default:
-            error ('Error unknown filtertype');
+            print_error('unknownfiletype');
         break;
     }
 

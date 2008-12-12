@@ -313,7 +313,7 @@
             echo "</div>";
         } else {
             //Show error
-            error ("Something was wrong checking restore preferences");
+            print_error('error');
         }
 
     //If we are here. Something must be wrong. Debug !!!
@@ -321,7 +321,7 @@
         print_object($restore);
         print_object($info);
         print_object($course_header);
-        error ("Something must be wrong");
+        print_error('error');
     }
 
 ?>

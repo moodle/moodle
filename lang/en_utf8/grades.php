@@ -354,6 +354,7 @@ $string['noselectedcategories'] = 'no categories were selected.';
 $string['noselecteditems'] = 'no items were selected.';
 $string['notteachererror'] = 'You must be a teacher to use this feature.';
 $string['nousersloaded'] = 'No users loaded';
+$string['norolesdefined' ] = 'no roles defined in admin->appearance->graderoles';
 $string['numberofgrades'] = 'Number of grades';
 $string['onascaleof'] = ' on a scale of $a->grademin to $a->grademax';
 $string['operations'] = 'Operations';

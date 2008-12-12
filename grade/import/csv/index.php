@@ -177,7 +177,7 @@ if ($formdata = $mform->get_data()) {
             $h = trim($h); $header[$i] = $h; // remove whitespace
         }
     } else {
-        error ('could not open file');
+        print_error('cannotopenfile');
     }
 
     $map = array();
@@ -481,7 +481,7 @@ if ($formdata = $mform->get_data()) {
         // temporary file can go now
         unlink($filename);
     } else {
-        error ('import file '.$filename.' not readable');
+        print_error('cannotreadfil');
     }
 
 } else {

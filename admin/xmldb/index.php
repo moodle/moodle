@@ -111,10 +111,13 @@
                 print_error('xmldberror');
             }
         } else {
-            error ("Error: cannot instantiate class (actions/$action/$actionclass)");
+            $a = new stdclass;
+            $a->action = $action;
+            $a->actionclass = $actionclass;
+            print_error('cannotinstantiateclass', 'xmldb', '', $a);
         }
     } else {
-        error ("Error: wrong action specified ($action)");
+        print_error('invalidaction');
     }
 
     if ($xmldb_action->getDoesGenerate() != ACTION_GENERATE_XML) {

@@ -69,8 +69,7 @@
     echo "</table>";
     
     if (!$status) {
-        error ("The backup did not complete successfully", 
-               "$CFG->wwwroot/course/view.php?id=$course->id");
+        print_error('error', 'error', "$CFG->wwwroot/course/view.php?id=$course->id");
     }
 
     if (empty($to)) {

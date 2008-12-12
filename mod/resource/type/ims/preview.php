@@ -30,7 +30,7 @@
 /// Load serialized IMS CP index to memory only once.
     if (empty($items)) {
         if (!$items = ims_load_serialized_file($deploydir.'/moodle_inx.ser')) {
-            error (get_string('errorreadingfile', 'error', 'moodle_inx.ser'));
+            print_error('errorreadingfile', 'error', '', 'moodle_inx.ser');
         }
     }
 

@@ -149,6 +149,7 @@ $string['importentries'] = 'Import entries';
 $string['importentriesfromxml'] = 'Import entries from XML file';
 $string['includegroupbreaks'] = 'Include group breaks';
 $string['invalidid'] = 'Incorrect glossary id';
+$string['invalidglossaryformat'] = 'Invalid Glossary Format';
 $string['isglobal'] = 'Is this glossary global?';
 $string['letter'] = 'letter';
 $string['linkcategory'] = 'Automatically link this category';

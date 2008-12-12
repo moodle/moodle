@@ -450,6 +450,7 @@ $string['installedlangs'] = 'Installed language packs';
 $string['intcachemax'] = 'Int. cache max';
 $string['invalidsection'] = 'Invalid section.';
 $string['invaliduserchangeme'] = 'Username \"changeme\" is reserved -- you cannot create an account with it.';
+$string['invalidlangpack'] = 'to edit this language pack, you need to put it in language folder.';
 $string['ipblocker'] = 'IP Blocker';
 $string['ipblocked'] = 'This site is not available currently.';
 $string['iplookup'] = 'IP address lookup';

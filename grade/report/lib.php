@@ -144,7 +144,7 @@ abstract class grade_report {
         global $CFG, $COURSE, $DB;
 
         if (empty($CFG->gradebookroles)) {
-            error ('no roles defined in admin->appearance->graderoles');
+            print_error('norolesdefined', 'grades');
         }
 
 
