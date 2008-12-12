@@ -18,7 +18,7 @@ if ($data = $form->get_data()) {
     }
     if ($targetdb->get_tables()) {
         // TODO add exception or string...
-        error('Sorry, tables already exist in selected database. Can not continue.'); 
+        print_error('ddltablealreadyexists'); 
     }
     admin_externalpage_print_header();
     dbtransfer_transfer_database($DB, $targetdb);

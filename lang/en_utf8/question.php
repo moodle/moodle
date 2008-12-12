@@ -114,6 +114,7 @@ $string['maketoplevelitem'] = 'Move to top level';
 $string['missingoption'] = 'The cloze question $a is missing its options';
 $string['missingimportantcode'] = 'This question type is missing important code: $a.';
 $string['missingcourseorcmid'] = 'Need to provide courseid or cmid to print_question.';
+$string['missingcourseorcmidtolink'] = 'Need to provide courseid or cmid to get_question_edit_link.';
 $string['modified'] = 'Last saved';
 $string['move']= 'Move from $a and change links.';
 $string['movecategory']= 'Move Category';

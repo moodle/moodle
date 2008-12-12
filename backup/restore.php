@@ -25,7 +25,7 @@
 
     //Get and check course
     if (! $course = get_record("course", "id", $id)) {
-        error("Course ID was incorrect (can't find it)");
+        print_error('invalidcourseid');
     }
     // To some reasons, course_startdateoffset value was lost during restoring
     // See MDL-17469

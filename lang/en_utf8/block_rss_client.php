@@ -6,6 +6,7 @@ $string['addfeed'] = 'Add a news feed URL:';
 $string['addheadlineblock'] = 'Add RSS headline block';
 $string['addnew'] = 'Add New';
 $string['blockname'] = 'RSS Client';
+$string['cannotmakemodification'] = 'You are not allowed to make modifications to this RSS feed at this time.';
 $string['choosefeedlabel'] = 'Choose the feeds which you would like to make available in this block:';
 $string['clientchannellink'] = 'Source site...';
 $string['clientnumentries'] = 'The default number of entries to show per feed.';

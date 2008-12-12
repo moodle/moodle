@@ -18,7 +18,7 @@ $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
 // Make sure course is OK and user has access to manage groups
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    error('Course ID was incorrect');
+    print_error('invalidcourseid');
 }
 require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -29,10 +29,10 @@ $groupidarray = explode(',',$groupids);
 $groupnames = array();
 foreach($groupidarray as $groupid) {
     if (!$group = $DB->get_record('groups', array('id' => $groupid))) {
-        error('Group ID was incorrect');
+        print_error('invalidgroupid');
     }
     if ($courseid != $group->courseid) {
-        error('Group not on required course');
+        print_error('groupunknown', '', '', $group->courseid);
     }
     $groupnames[] = format_string($group->name);
 }

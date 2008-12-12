@@ -47,7 +47,7 @@
 
     // Get the course object and related bits.
     if (! $course = $DB->get_record("course", array("id"=> $quiz->course))) {
-        error("This course doesn't exist");
+        print_error('invalidcourseid');
     }
     //you need mod/quiz:manage in addition to question capabilities to access this page.
     require_capability('mod/quiz:manage', $contexts->lowest());
@@ -60,7 +60,7 @@
     print_header_simple($streditingquiz, '', $navigation, "", "", true, $strupdatemodule);
 
     if (!$quizname = $DB->get_field($cm->modname, 'name', array('id'=> $cm->instance))) {
-                error('Cannot get the module name in build navigation.');
+                print_error('invalidcoursemodule');
     }
 
     print_heading(get_string("addrandomquestiontoquiz","quiz",$quizname), 'left', 2);

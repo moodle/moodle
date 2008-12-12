@@ -498,8 +498,8 @@ abstract class pdo_moodle_database extends moodle_database {
                 array_unshift($params, $newvalue);
                 break;
             default:
-                $this->lastError = 'Unknown parameter type in file ' . __FILE__ . ' on line ' . __LINE__ . '.';
-                error($this->lastError);
+                $this->lastError = __FILE__ . ' LINE: ' . __LINE__ . '.';
+                print_error(unknowparamtype, 'error', '', $this->lastError);
             }
         }
         $sql = "UPDATE {{$table}} SET $newfield $select";
@@ -508,11 +508,11 @@ abstract class pdo_moodle_database extends moodle_database {
     }
 
     public function sql_concat() {
-        error('TODO');
+        print_error('TODO');
     }
 
     public function sql_concat_join($separator="' '", $elements=array()) {
-        error('TODO');
+        print_error('TODO');
     }
 
     public function begin_sql() {

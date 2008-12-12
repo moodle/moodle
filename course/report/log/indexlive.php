@@ -9,7 +9,7 @@
     $id = optional_param('id', 0, PARAM_INT);// Course ID
 
     if (!$course = $DB->get_record('course', array('id'=>$id)) ) {
-        error('That\'s an invalid course id'.$id);
+        print_error('invalidcourseid');
     }
 
     require_login($course);

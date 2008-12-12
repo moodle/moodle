@@ -194,7 +194,7 @@ class zip_archive extends file_archive {
             $this->close();
             $res = $this->open($this->archivepathname, file_archive::OPEN, $this->encoding);
             if ($res !== true) {
-                error('Can not open zip file, probably zip extension bug on 64bit os'); //TODO ??
+                print_error('cannotopenzip'); //TODO ??
             }
         }
 
@@ -225,7 +225,7 @@ class zip_archive extends file_archive {
             $this->close();
             $res = $this->open($this->archivepathname, file_archive::OPEN, $this->encoding);
             if ($res !== true) {
-                error('Can not open zip file, probably zip extension bug on 64bit os'); //TODO ??
+                print_error('cannotopenzip'); //TODO ??
             }
         }
         $this->usedmem += strlen($contents);

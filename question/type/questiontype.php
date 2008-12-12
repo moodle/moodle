@@ -1030,7 +1030,7 @@ class default_questiontype {
         } else if (!empty($cmoptions->course)) {
             $linkurl .= '&amp;courseid=' . $cmoptions->course;
         } else {
-            error('Need to provide courseid or cmid to get_question_edit_link.');
+            print_error('missingcourseorcmidtolink', 'question');
         }
 
     /// Work out the contents of the link.

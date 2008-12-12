@@ -66,7 +66,7 @@
         if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
             redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=stats", get_string('mustenablestats', 'admin'), 3);
         } else {
-            error("Stats is not enabled.");
+            print_error('statsdisable');
         }
     }
 
