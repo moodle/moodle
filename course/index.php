@@ -116,7 +116,7 @@
         print_category_edit_header();
         print_heading($heading);
 
-        if ($datadelete) {
+        if ($data->fulldelete) {
             category_delete_full($deletecat, true);
         } else {
             category_delete_move($deletecat, $data->newparent, true);
