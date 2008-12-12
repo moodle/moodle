@@ -404,12 +404,20 @@ class question_match_qtype extends default_questiontype {
      * This is used in question/backuplib.php
      */
     function backup($bf,$preferences,$question,$level=6) {
-
         $status = true;
+
+        // Output the shuffleanswers setting.
+        $matchoptions = get_record('question_match', 'question', $question);
+        if ($matchoptions) {
+            $status = fwrite ($bf,start_tag("MATCHOPTIONS",6,true));
+            fwrite ($bf,full_tag("SHUFFLEANSWERS",7,false,$matchoptions->shuffleanswers));
+            $status = fwrite ($bf,end_tag("MATCHOPTIONS",6,true));
+        }
 
         $matchs = get_records("question_match_sub","question",$question,"id");
         //If there are matchs
         if ($matchs) {
+            //Print match contents
             $status = fwrite ($bf,start_tag("MATCHS",6,true));
             //Iterate over each match
             foreach ($matchs as $match) {
@@ -434,7 +442,6 @@ class question_match_qtype extends default_questiontype {
      * This is used in question/restorelib.php
      */
     function restore($old_question_id,$new_question_id,$info,$restore) {
-
         $status = true;
 
         //Get the matchs array
@@ -495,6 +502,13 @@ class question_match_qtype extends default_questiontype {
         $match = new stdClass;
         $match->question = $new_question_id;
         $match->subquestions = $subquestions_field;
+
+        // Get the shuffleanswers option, if it is there.
+        if (!empty($info['#']['MATCHOPTIONS']['0']['#']['SHUFFLEANSWERS'])) {
+            $match->shuffleanswers = backup_todb($info['#']['MATCHOPTIONS']['0']['#']['SHUFFLEANSWERS']['0']['#']);
+        } else {
+            $match->shuffleanswers = 1;
+        }
 
         //The structure is equal to the db, so insert the question_match_sub
         $newid = insert_record ("question_match",$match);
@@ -576,26 +590,13 @@ class question_match_qtype extends default_questiontype {
             //Get the match_sub from backup_ids (for the question)
             if (!$match_que = backup_getid($restore->backup_unique_code,"question_match_sub",$match_question_id)) {
                 echo 'Could not recode question in question_match_sub '.$match_question_id.'<br />';
-            }
-            //Get the match_sub from backup_ids (for the answer)
-            if ($match_answer_id) { // only recode answer if not 0, not answered yet
-              if (!$match_ans = backup_getid($restore->backup_unique_code,"question_match_sub",$match_answer_id)) {
-                  echo 'Could not recode answer in question_match_sub '.$match_answer_id.'<br />';
-              }
-            }
-
-            if ($match_que) {
-                //If the question hasn't response, it must be 0
-                if (!$match_ans and $match_answer_id == 0) {
-                    $match_ans->new_id = 0;
-                }
-
+            } else {
                 if ($in_first) {
-                    $answer_field .= $match_que->new_id."-".$match_ans->new_id;
                     $in_first = false;
                 } else {
-                    $answer_field .= ",".$match_que->new_id."-".$match_ans->new_id;
+                    $answer_field .= ',';
                 }
+                $answer_field .= $match_que->new_id.'-'.$match_answer_id;
             }
             //check for next
             $tok = strtok(",");
