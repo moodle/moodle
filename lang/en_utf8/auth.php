@@ -314,10 +314,16 @@ $string['auth_radiusdescription'] = 'This method uses a <a href=\"http://en.wiki
 $string['auth_radiushost'] = 'Address of the RADIUS server';
 $string['auth_radiusnasport'] = 'Port to use to connect';
 $string['auth_radiussecret'] = 'Shared secret';
+$string['auth_radiustype'] = 'Choose an authentication scheme to use with the RADIUS server.';
+$string['auth_radiustypepap'] = 'PAP';
+$string['auth_radiustypechapmd5'] = 'CHAP MD5';
+$string['auth_radiustypemschapv1'] = 'Microsoft CHAP version 1';
+$string['auth_radiustypemschapv2'] = 'Microsoft CHAP version 2';
 $string['auth_radiuschangepasswordurl_key'] = 'Password-change URL';
 $string['auth_radiusnasport_key'] = 'Port';
 $string['auth_radiushost_key'] = 'Host';
 $string['auth_radiussecret_key'] = 'Secret';
+$string['auth_radiustype_key'] = 'Authentication';
 
 // Shibboleth plugin
 $string['auth_shibbolethdescription'] = 'Using this method users are created and authenticated using <a href=\"http://shibboleth.internet2.edu/\">Shibboleth</a>.<br />Be sure to read the <a href=\"../auth/shibboleth/README.txt\">README</a> for Shibboleth on how to set up your Moodle with Shibboleth';
@@ -355,7 +361,7 @@ $string['auth_usernameexists'] = 'Selected username already exists. Please choos
 $string['authenticationoptions'] = 'Authentication options';
 $string['authinstructions'] = 'Here you can provide instructions for your users, so they know which username and password they should be using.  The text you enter here will appear on the login page.  If you leave this blank then no instructions will be printed.';
 $string['changepassword'] = 'Change password URL';
-$string['changepasswordhelp'] = 'Here you can specify a location at which your users can recover or change their username/password if they\'ve forgotten it.  This will be provided to users as a button on the login page and their user page.  if you leave this blank the button will not be printed.';
+$string['changepasswordhelp'] = 'Here you can specify a location at which your users can recover or change their username/password if they\'ve forgotten it. This will be provided to users as a button on the login page and their user page. If you leave this blank the button will not be printed.';
 $string['chooseauthmethod'] = 'Choose an authentication method';
 $string['createpasswordifneeded'] = 'Create password if needed';
 $string['errorpasswordupdate'] = 'Error updating password, password not changed';

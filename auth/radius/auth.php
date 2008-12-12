@@ -9,8 +9,10 @@
  *
  * Authenticates against a RADIUS server.
  * Contributed by Clive Gould <clive@ce.bromley.ac.uk>
+ * CHAP support contributed by Stanislav Tsymbalov http://www.tsymbalov.net/
  *
  * 2006-08-31  File created.
+ * 2008-03-12  CHAP support added by Stanislav Tsymbalov.
  */
 
 if (!defined('MOODLE_INTERNAL')) {
@@ -42,6 +44,7 @@ class auth_plugin_radius extends auth_plugin_base {
      */
     function user_login ($username, $password) {
         require_once 'Auth/RADIUS.php';
+        require_once 'Crypt/CHAP.php';
 
         // Added by Clive on 7th May for test purposes
         // printf("Username: $username <br/>");
@@ -50,8 +53,51 @@ class auth_plugin_radius extends auth_plugin_base {
         // printf("nasport: $this->config->nasport <br/>");
         // printf("secret: $this->config->secret <br/>");
 
-        $rauth = new Auth_RADIUS_PAP($username, $password);
+        // Added by Stanislav Tsymbalov on 12th March 2008 only for test purposes
+        //$type = 'PAP';
+        //$type = 'CHAP_MD5';
+        //$type = 'MSCHAPv1';
+        //$type = 'MSCHAPv2';
+        $type = $this->config->radiustype;
+        if (empty($type)) {
+            $type = 'PAP';
+        }
+
+        $classname = 'Auth_RADIUS_' . $type;
+        $rauth = new $classname($username, $password);
         $rauth->addServer($this->config->host, $this->config->nasport, $this->config->secret);
+
+        $rauth->username = $username;
+
+        switch($type) {
+        case 'CHAP_MD5':
+        case 'MSCHAPv1':
+            $classname = $type == 'MSCHAPv1' ? 'Crypt_CHAP_MSv1' : 'Crypt_CHAP_MD5';
+            $crpt = new $classname;
+            $crpt->password = $password;
+            $rauth->challenge = $crpt->challenge;
+            $rauth->chapid = $crpt->chapid;
+            $rauth->response = $crpt->challengeResponse();
+            $rauth->flags = 1;
+            // If you must use deprecated and weak LAN-Manager-Responses use this:
+            // $rauth->lmResponse = $crpt->lmChallengeResponse();
+            // $rauth->flags = 0;
+            break;
+
+        case 'MSCHAPv2':
+            $crpt = new Crypt_CHAP_MSv2;
+            $crpt->username = $username;
+            $crpt->password = $password;
+            $rauth->challenge = $crpt->authChallenge;
+            $rauth->peerChallenge = $crpt->peerChallenge;
+            $rauth->chapid = $crpt->chapid;
+            $rauth->response = $crpt->challengeResponse();
+            break;
+
+        default:
+            $rauth->password = $password;
+            break;
+        }
 
         if (!$rauth->start()) {
             printf("Radius start: %s<br/>\n", $rauth->getError());
@@ -122,6 +168,9 @@ class auth_plugin_radius extends auth_plugin_base {
         if (!isset ($config->nasport)) {
             $config->nasport = '1812';
         }
+        if (!isset($config->radiustype)) {
+            $config->radiustype = 'PAP';
+        }
         if (!isset ($config->secret)) {
             $config->secret = '';
         }
@@ -134,6 +183,7 @@ class auth_plugin_radius extends auth_plugin_base {
         set_config('nasport', $config->nasport, 'auth/radius');
         set_config('secret',  $config->secret,  'auth/radius');
         set_config('changepasswordurl', $config->changepasswordurl, 'auth/radius');
+        set_config('radiustype', $config->radiustype, 'auth/radius');
 
         return true;
     }

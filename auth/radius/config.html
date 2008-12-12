@@ -1,10 +1,12 @@
 <?php
 
-// TODO: this generates broken file errors, needs safer test -JH
-
 // Is Auth/RADIUS really there?
-if (!defined('Auth_RADIUS_PAP') or !class_exists(Auth_RADIUS_PAP) or !include_once('Auth/RADIUS.php')) {
-    print '<p style="text-align:center; color: red"><strong>Warning: The Auth_RADIUS module does not seem to be present. Please ensure it is installed and enabled.</strong></p>';
+if (!extension_loaded('radius')) {
+    print '<div class="box errorbox errorboxcontent"><p class="errormessage"><strong>Warning: The PHP RADIUS extension is not present. Please ensure it is installed and enabled.</strong></p></div>';
+}
+include_once 'Auth/RADIUS.php';
+if (!class_exists('Auth_RADIUS')) {
+    print '<div class="box errorbox errorboxcontent"><p class="errormessage"><strong>Warning: There is a problem with the PHP Pear Auth_RADIUS package. Please ensure it is installed correctly.</strong></p></div>';
 }
 
 // set to defaults if undefined
@@ -13,6 +15,9 @@ if (!isset($config->host)) {
 }
 if (!isset($config->nasport)) {
     $config->nasport = '1812';
+}
+if (!isset($config->radiustype)) {
+    $config->radiustype = 'PAP';
 }
 if (!isset($config->secret)) {
     $config->secret = '';
@@ -53,6 +58,28 @@ if (!isset($config->changepasswordurl)) {
     </td>
     <td><?php print_string('auth_radiusnasport', 'auth') ?></td>
 </tr>
+
+<tr valign="top" >
+    <td align="right"><?php print_string('auth_radiustype_key', 'auth') ?>: </td>
+    <td>
+<?php
+
+    $radiustype = array();
+    $radiustype['PAP']      = get_string('auth_radiustypepap', 'auth');
+    $radiustype['CHAP_MD5'] = get_string('auth_radiustypechapmd5', 'auth');
+    $radiustype['MSCHAPv1'] = get_string('auth_radiustypemschapv1', 'auth');
+    $radiustype['MSCHAPv2'] = get_string('auth_radiustypemschapv2', 'auth');
+    choose_from_menu($radiustype, 'radiustype', $config->radiustype, '');
+
+    if (isset($err['radiustype'])) {
+        formerr($err['radiustype']);
+    }
+
+?>
+    </td>
+    <td><?php print_string('auth_radiustype', 'auth') ?></td>
+</tr>
+
 
 <tr valign="top" >
     <td align="right"><?php print_string('auth_radiussecret_key', 'auth') ?>: </td>
