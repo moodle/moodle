@@ -184,14 +184,9 @@ class question_shortanswer_qtype extends default_questiontype {
         include("$CFG->dirroot/question/type/shortanswer/display.html");
     }
 
-    // ULPGC ecastro
     function check_response(&$question, &$state) {
-        $answers = &$question->options->answers;
-        $testedstate = clone($state);
-        $teststate   = clone($state);
-        foreach($answers as $aid => $answer) {
-            $teststate->responses[''] = trim($answer->answer);
-            if($this->compare_responses($question, $testedstate, $teststate)) {
+        foreach($question->options->answers as $aid => $answer) {
+            if ($this->test_response($question, $state, $answer)) {
                 return $aid;
             }
         }
@@ -200,13 +195,7 @@ class question_shortanswer_qtype extends default_questiontype {
 
     function compare_responses($question, $state, $teststate) {
         if (isset($state->responses['']) && isset($teststate->responses[''])) {
-            if ($question->options->usecase) {
-                return strcmp($state->responses[''], $teststate->responses['']) == 0;
-            } else {
-                $textlib = textlib_get_instance();
-                return strcmp($textlib->strtolower($state->responses['']),
-                        $textlib->strtolower($teststate->responses[''])) == 0;
-            }
+            return $state->responses[''] === $teststate->responses[''];
         }
         return false;
     }
