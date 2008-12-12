@@ -717,7 +717,7 @@
 
     if ($post->discussion) {
         if (! $toppost = $DB->get_record("forum_posts", array("discussion" => $post->discussion, "parent" => 0))) {
-            print_error("Could not find top parent of post $post->id");
+            print_error('cannotfindparentpost', 'forum', '', $post->id);
         }
     } else {
         $toppost->subject = ($forum->type == "news") ? get_string("addanewtopic", "forum") :

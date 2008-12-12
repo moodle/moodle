@@ -54,6 +54,7 @@ $string['cannotreply'] = 'You cannot reply to this post';
 $string['cannotfindorcreateforum'] = 'Could not find or create a main news forum for the site';
 $string['cannotfindfirstpost'] = 'Could not find the first post in this forum';
 $string['cannotfinddisscussion'] = 'Could not find the discussion in this forum';
+$string['cannotfindparentpost'] = 'Could not find top parent of post $a';
 $string['cannottrack'] = 'Could not stop tracking that forum';
 $string['cannotmovefromsingleforum'] = 'Cannot move discussion from a simple single discussion forum';
 $string['cannotmovetonotexist'] = 'You can\'t move to that forum - it doesn\'t exist!';
