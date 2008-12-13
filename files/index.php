@@ -780,7 +780,7 @@ function displaydir ($wdir) {
                 $fileurl  = rawurlencode($wdir."/".$dir);
                 $filesafe = rawurlencode($dir);
                 $filesize = display_size(get_directory_size("$fullpath/$dir"));
-                $filedate = userdate(filemtime($filename), "%d %b %Y, %I:%M %p");
+                $filedate = userdate(filemtime($filename), get_string("strftimedatetime"));
                 print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" />", 'checkbox');
                 print_cell("left", "<a href=\"index.php?id=$id&amp;wdir=$fileurl&amp;choose=$choose\"><img src=\"$CFG->pixpath/f/folder.gif\" class=\"icon\" alt=\"$strfolder\" />&nbsp;".htmlspecialchars($dir)."</a>", 'name');
                 print_cell("right", $filesize, 'size');
@@ -804,7 +804,7 @@ function displaydir ($wdir) {
             $fileurl     = trim($wdir, "/")."/$file";
             $filesafe    = rawurlencode($file);
             $fileurlsafe = rawurlencode($fileurl);
-            $filedate    = userdate(filemtime($filename), "%d %b %Y, %I:%M %p");
+            $filedate    = userdate(filemtime($filename), get_string("strftimedatetime"));
 
             $selectfile = trim($fileurl, "/");
 
