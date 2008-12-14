@@ -89,6 +89,7 @@ $temp->add(new admin_setting_configselect('sessiontimeout', get_string('sessiont
                                                                                                                                                       300 => get_string('numminutes', '', 5))));
 $temp->add(new admin_setting_configtext('sessioncookie', get_string('sessioncookie', 'admin'), get_string('configsessioncookie', 'admin'), '', PARAM_ALPHANUM));
 $temp->add(new admin_setting_configtext('sessioncookiepath', get_string('sessioncookiepath', 'admin'), get_string('configsessioncookiepath', 'admin'), '/', PARAM_LOCALURL));
+$temp->add(new admin_setting_configtext('sessioncookiedomain', get_string('sessioncookiedomain', 'admin'), get_string('configsessioncookiedomain', 'admin'), '', PARAM_TEXT, 50));
 $ADMIN->add('server', $temp, 50);
 
 

@@ -18,7 +18,7 @@ class moodle_session {
 
         if (!NO_MOODLE_COOKIES) {
             session_name('MoodleSession'.$CFG->sessioncookie);
-            session_set_cookie_params(0, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
+            session_set_cookie_params(0, $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $CFG->cookiesecure, $CFG->cookiehttponly);
             @session_start();
             if (!isset($_SESSION['SESSION'])) {
                 $_SESSION['SESSION'] = new object();
@@ -26,7 +26,7 @@ class moodle_session {
                 if (!empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie])) {
                     $_SESSION['SESSION']->has_timed_out = true;
                 }
-                setcookie('MoodleSessionTest'.$CFG->sessioncookie, $_SESSION['SESSION']->session_test, 0, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
+                setcookie('MoodleSessionTest'.$CFG->sessioncookie, $_SESSION['SESSION']->session_test, 0, $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $CFG->cookiesecure, $CFG->cookiehttponly);
                 $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] = $_SESSION['SESSION']->session_test;
             }
             if (!isset($_SESSION['USER'])) {
@@ -80,8 +80,8 @@ class moodle_session {
         moodle_setlocale();
 
         //clear session cookies
-        setcookie('MoodleSession'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
-        setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
+        setcookie('MoodleSession'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $CFG->cookiesecure, $CFG->cookiehttponly);
+        setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $CFG->cookiesecure, $CFG->cookiehttponly);
 
         //increment database error counters
         if (isset($CFG->session_error_counter)) {
@@ -105,7 +105,7 @@ class moodle_session {
             error_log('MoodleSessionTest cookie could not be set in moodlelib.php:'.__LINE__);
             error_log('Headers were already sent in file: '.$file.' on line '.$line);
         } else {
-            setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
+            setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $CFG->cookiesecure, $CFG->cookiehttponly);
         }
 
         $this->session = new object();
@@ -181,6 +181,9 @@ class moodle_session {
         if (!isset($CFG->sessioncookie)) {
             $CFG->sessioncookie = '';
         }
+        if (!isset($CFG->sessioncookiedomain)) {
+            $CFG->sessioncookiedomain = '';
+        }
         if (!isset($CFG->sessioncookiepath)) {
             $CFG->sessioncookiepath = '/';
         }
@@ -253,8 +256,8 @@ class moodle_session {
         $seconds = DAYSECS*$days;
 
         // no need to set secure or http cookie only here - it is not secret
-        setCookie($cookiename, '', time() - HOURSECS, $CFG->sessioncookiepath);
-        setCookie($cookiename, rc4encrypt($thing), time()+$seconds, $CFG->sessioncookiepath);
+        setcookie($cookiename, '', time() - HOURSECS, $CFG->sessioncookiepath, $CFG->sessioncookiedomain);
+        setcookie($cookiename, rc4encrypt($thing), time()+$seconds, $CFG->sessioncookiepath, $CFG->sessioncookiedomain);
     }
 
     /**
