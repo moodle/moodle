@@ -259,21 +259,25 @@ function xmldb_scorm_upgrade($oldversion) {
         if (!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
-        
+
     /// scorm savepoint reached
         upgrade_mod_savepoint($result, 2008090305, 'scorm');
     }
-    
+
 
     // remove redundant config values
     if ($result && $oldversion < 2008090306) {
+        /*
+         * comment this out as it is handled by the update mark 2008090310 below
+         * left for historical documentation as some early adopters may have done
+         * this already.
          $redundant_config = array(
                          'scorm_allowapidebug',
                          'scorm_allowtypeexternal',
                          'scorm_allowtypeimsrepository',
-                         'scorm_allowtypelocalsync', 
-                         'scorm_apidebugmask', 
-                         'scorm_frameheight', 
+                         'scorm_allowtypelocalsync',
+                         'scorm_apidebugmask',
+                         'scorm_frameheight',
                          'scorm_framewidth',
                          'scorm_maxattempts',
                          'scorm_updatetime');
@@ -282,30 +286,35 @@ function xmldb_scorm_upgrade($oldversion) {
                 unset_config($rcfg);
             }
         }
+         */
         /// scorm savepoint reached
         upgrade_mod_savepoint($result, 2008090306, 'scorm');
     }
-    
-    
+
+
 
     // remove redundant config values
     if ($result && $oldversion < 2008090307) {
+        /*
+         * comment this out as it is handled by the update mark 2008090310 below
+         * left for historical documentation as some early adopters may have done
+         * this already.
          $redundant_config = array(
                          'scorm_allowapidebug',
                          'scorm_allowtypeexternal',
                          'scorm_allowtypeimsrepository',
-                         'scorm_allowtypelocalsync', 
-                         'scorm_apidebugmask', 
-                         'scorm_frameheight', 
+                         'scorm_allowtypelocalsync',
+                         'scorm_apidebugmask',
+                         'scorm_frameheight',
                          'scorm_framewidth',
                          'scorm_maxattempts',
                          'scorm_updatetime',
-                         'scorm_resizable', 
-                         'scorm_scrollbars', 
-                         'scorm_directories', 
+                         'scorm_resizable',
+                         'scorm_scrollbars',
+                         'scorm_directories',
                          'scorm_location',
-                         'scorm_menubar', 
-                         'scorm_toolbar', 
+                         'scorm_menubar',
+                         'scorm_toolbar',
                          'scorm_status',
                          'scorm_grademethod',
                          'scorm_maxgrade',
@@ -323,11 +332,12 @@ function xmldb_scorm_upgrade($oldversion) {
                 unset_config($rcfg);
             }
         }
-        
+         */
+
         /// scorm savepoint reached
         upgrade_mod_savepoint($result, 2008090307, 'scorm');
     }
-    
+
     if ($result && $oldversion < 2008090308) {
         $table = new xmldb_table('scorm');
         $field = new xmldb_field('timeopen', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'height');
@@ -338,10 +348,61 @@ function xmldb_scorm_upgrade($oldversion) {
         if (!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
-        
+
         /// scorm savepoint reached
         upgrade_mod_savepoint($result, 2008090308, 'scorm');
     }
+
+
+    if ($result && $oldversion < 2008090310) {
+        // take above blocks that delete config and move the values in to config_plugins
+
+        $redundant_config = array(
+                         'scorm_allowapidebug',
+                         'scorm_allowtypeexternal',
+                         'scorm_allowtypeimsrepository',
+                         'scorm_allowtypelocalsync',
+                         'scorm_apidebugmask',
+                         'scorm_frameheight',
+                         'scorm_framewidth',
+                         'scorm_maxattempts',
+                         'scorm_updatetime',
+                         'scorm_resizable',
+                         'scorm_scrollbars',
+                         'scorm_directories',
+                         'scorm_location',
+                         'scorm_menubar',
+                         'scorm_toolbar',
+                         'scorm_status',
+                         'scorm_grademethod',
+                         'scorm_maxgrade',
+                         'scorm_whatgrade',
+                         'scorm_popup',
+                         'scorm_skipview',
+                         'scorm_hidebrowse',
+                         'scorm_hidetoc',
+                         'scorm_hidenav',
+                         'scorm_auto',
+                         'scorm_updatefreq',
+                         'scorm_displayattemptstatus',
+                         'scorm_displaycoursestructure',
+                         'scorm_forcecompleted',
+                         'scorm_forcenewattempt',
+                         'scorm_lastattemptlock'
+         );
+
+        foreach ($redundant_config as $rcfg) {
+            if (isset($CFG->$rcfg)) {
+                $shortname = substr($rcfg, 6);
+                $result = $result && set_config($shortname, $CFG->$rcfg, 'scorm');
+                $result = $result && unset_config($rcfg);
+            }
+        }
+
+        /// scorm savepoint reached
+        upgrade_mod_savepoint($result, 2008090310, 'scorm');
+    }
+
     return $result;
 }
 
