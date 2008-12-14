@@ -998,11 +998,11 @@ function quiz_after_add_or_update($quiz) {
 }
 
 function quiz_get_view_actions() {
-    return array('view','view all','report');
+    return array('view', 'view all', 'report', 'review');
 }
 
 function quiz_get_post_actions() {
-    return array('attempt','editquestions','review','submit');
+    return array('attempt', 'close attempt', 'preview', 'editquestions', 'delete attempt', 'manualgrade');
 }
 
 /**
