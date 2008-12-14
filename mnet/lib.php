@@ -626,12 +626,20 @@ function mnet_get_peer_host ($mnethostid) {
  */
 function mnet_sso_apply_indirection ($url) {
     global $MNETIDPJUMPURL;
+    global $CFG;
 
     $localpart='';
     $urlparts = parse_url($url[1]);
     if($urlparts) {
         if (isset($urlparts['path'])) {
-            $localpart .= $urlparts['path'];
+            $path = $urlparts['path'];
+            // if our wwwroot has a path component, need to strip that path from beginning of the
+            // 'localpart' to make it relative to moodle's wwwroot
+            $wwwrootpath = parse_url($CFG->wwwroot, PHP_URL_PATH);
+            if (!empty($wwwrootpath) and strpos($path, $wwwrootpath) === 0) {
+                $path = substr($path, strlen($wwwrootpath));
+            }
+            $localpart .= $path;
         }
         if (isset($urlparts['query'])) {
             $localpart .= '?'.$urlparts['query'];
