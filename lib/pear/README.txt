@@ -65,6 +65,17 @@ In detail, the libraries added here are:
     - by Elizabeth Smith, Arpad Ray, Joshua Eichorn, David Coallier and Laurent Yaish
     - License: LGPL
     - http://pear.php.net/package/HTML_AJAX/
+- PEAR Auth_RADIUS:
+    - Current version: 1.0.6 (2008-04-13)
+    - by Michael Bretterklieber
+    - License: BSD
+    - http://pear.php.net/package/Auth_RADIUS
+- PEAR Crypt_CHAP:
+    - Current Version: 1.0.1 (2007-03-14)
+    - by Michael Bretterklieber
+    - License: BSD
+    - http://pear.php.net/package/Crypt_CHAP
+
 
 
 ----------------------------------------------------------------
