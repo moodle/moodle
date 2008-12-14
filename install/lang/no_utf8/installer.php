@@ -100,6 +100,7 @@ $string['databasesettingssub_postgres7'] = '<b>Type:</b> PostgreSQL<br />
 $string['databasesettingswillbecreated'] = '<b>NB:</b> Installeringen vil prøve å lage databasen automatisk hvis den ikke eksisterer.';
 $string['dataroot'] = 'Datamappe';
 $string['datarooterror'] = '\"Datamappen\" du oppga kunne ikke bli funnet eller opprettet. Vennligst rett stien eller opprett katalogen manuelt.';
+$string['datarootpublicerror'] = 'Datakatalogen du oppga er direkte tilgjengelig via web. Du må velge en annen katalog!';
 $string['dbconnectionerror'] = 'Fikk ingen forbindelse til databasen du oppga. Vennligst sjekk database-innstillingene dine.';
 $string['dbcreationerror'] = 'Feil under opprettelse av database. Kunne ikke opprette gitte databasenavn med oppgitte innstillinger';
 $string['dbhost'] = 'Tjenervert';
@@ -111,14 +112,11 @@ $string['dbwrongnlslang'] = 'NLS_LANG variabelen i webserveren din må bruke AL3
 $string['dbwrongprefix'] = 'Du må følge \"Tabell-prefiks\" reglene som forklart over.';
 $string['directorysettingshead'] = 'Vennligst bekreft lokasjonen for denne Moodle-installsjonen';
 $string['directorysettingssub'] = '<p>Vennligst bekreft lokasjonen for denne Moodle-installsjonen.</p>
-
 <p><b>Web Addresse:</b>
 Angi full webadresse for hvor Moodle vil være tilgjengelig.  
 Hvis nettstedet er tilgjengelig via flere URL\'er velg den det er mest naturlig at studentene vil bruke. Ikke bruke etterfølgende skråstrek.</p>
-
 <p><b>Moodle Mappe:</b>
 Oppgi full mappesti til installasjonen. Pass på at små/store bokstaver stemmer.</p>
-
 <p><b>Data Mappe:</b>
 Du trenger et sted hvor moodle kan lagre opplastede filer. Denne katalogen bør være lesbar OG SKRIVBAR av webserverbrukeren (vanligvis \'ingen\' eller \'apache\'), men det bør være tilgjengelig direkte fra webben .</p>';
 $string['dirroot'] = 'Moodlemappe';
@@ -144,25 +142,18 @@ $string['fail'] = 'Feilet';
 $string['fileuploads'] = 'Filopplastinger';
 $string['fileuploadserror'] = 'Denne skulle finnes på';
 $string['fileuploadshelp'] = '<p>Filopplasting ser ut til å være slått av på serveren din.</p>
-
 <p>Moodle kan fortsatt installeres, men uten denne muligheten, vil du ikke kunne laste opp kursfiler eller nye profilbilder.</p>
-
 <p>For å slå på filopplasting må du (eller systemadministratoren) måtte redigere php.ini fila for hele systemet ditt og endre innstillingene for <b>file_uploads</b> til \'1\'.</p>';
 $string['gdversion'] = 'GD versjon';
 $string['gdversionerror'] = 'GD-biblioteket må være tilstede for å kunne behandle og opprette bilder.';
 $string['gdversionhelp'] = '<p>Det ser ikke ut som serveren din har GD installert.</p>
-
 <p>GD er et bibliotek som kreves av PHP for å tillate Moodle å behandle bilder (som brukerprofil-ikonene) og for å lage nye bilder (som log-grafene). Moodle kan virke uten GD - men disse mulighetene vil ikke være tilgjengelig for deg.</p>
-
 <p>For å legge til GD under Unix, kompiler PHP med --with-gd innstillingen</p>
-
 <p>I Windows kan du vanligvis redigere php.ini og ta bort kommentarmarkeringen på linjen for php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Usikker behandling av Globale verdier';
 $string['globalsquoteserror'] = 'Ordne PHP innstillingene: slå av register_globals og/eller slå på magic_quotes_gpc';
 $string['globalsquoteshelp'] = '<p>Kombinasjonen av avslått Magic Quotes GPC og påslått Register Globals er ikke anbefalt.</p>
-
 <p>Anbefalt innstilling er: <b>magic_quotes_gpc = On</b> og <b>register_globals = Off</b> i php.ini fila di</p>
-
 <p>Hvis du ikke har tilgang til  php.ini, kan du klare å plassere følgende linjer i en fil som heter eller skal hete .htaccess i Moodle-mappen din:
 <blockquote>php_value magic_quotes_gpc On</blockquote>
 <blockquote>php_value register_globals Off</blockquote>
@@ -179,9 +170,7 @@ $string['language'] = 'Språk';
 $string['magicquotesruntime'] = 'Magic Quotes Oppetid';
 $string['magicquotesruntimeerror'] = 'Denne bør være av';
 $string['magicquotesruntimehelp'] = '<p>Magic quotes runtime/oppetid bør være slått av for at Moodle skal fungere ordentlig.</p>
-
 <p>Normalt er den avslått som standard... se innstillingen for <b>magic_quotes_runtime</b> i php.ini fila.</p>
-
 <p>Hvis du ikke har tilgang til php.ini, kan du skrive inn følgende linjer i en fil som du kaller .htaccess i Moodlekatalogen din:
 <blockquote>php_value magic_quotes_runtime Off</blockquote>
 </p>';
@@ -189,9 +178,7 @@ $string['mbstringrecommended'] = 'Installering av det valgfrie bibliotek MBSTRIN
 $string['memorylimit'] = 'Minne-grense';
 $string['memorylimiterror'] = 'Minnegrensen for PHP er satt for lavt... du kan få problemer med dette senere.';
 $string['memorylimithelp'] = '<p>PHP minnegrensen for serveren din er nå satt til $a.</p>
-
 <p>Dette kan skape minneproblemer for Moodle senere, spesielt hvis du har mange moduler tillatt og/eller mange brukere.</p>
-
 <p>Vi anbefaler at du konfigurer PHP med en høyere grense enn mulig, for eksepmel 40M. Det er flere måter å gjøre dette på.:</p>
 <ol>
 <li>Hvis du har muligheten, rekompiler PHP med<i>--enable-memory-limit</i>.  
@@ -231,6 +218,7 @@ $string['phpversionhelp'] = '<p>Moodle trenger en PHP versjon minst 4.3.0 eller 
 <Du kjører nå versjon $a</p>
 <p>Du må oppgradere PHP eller flytte til en server med en nyere versjon av PHP!<br /> (I forhold til 5.0.x kan du også nedgradere til versjon 4.4.x)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
+$string['postgresqlwarning'] = '<strong>OBS:</strong> Dersom du opplever tilkoblingsproblemer, kan du prøve å sette Host Server feltet som: host=\'postgresql_host\' port=\'5432\' dbname=\'postgresql_database_name\' user=\'postgresql_user\' password=\'postgresql_user_password\' og feltene for Database, Bruker og Passord være tomme. Du finner mer informasjon på <a href=\"http://docs.moodle.org/en/Installing_Postgres_for_PHP\">Moodle Docs</a>';
 $string['previous'] = 'Forrige';
 $string['qtyperqpwillberemoved'] = 'I oppgraderingen vil RQP spørsmålstypen bli fjernet. Du har ikke brukt denne spørsmålstypen, så du skulle ikke ha noe problem med dette.';
 $string['qtyperqpwillberemovedanyway'] = 'Under oppgraderingen vil RQP spørsmålstypen bli fjernet. Du har noen RQP spørsmål i databasen din, og disse vil slutte å virke om du ikke reinstallerer programmet fra http://moodle.org/mod/data/view.php?d=13&amp;rid=797 før du fortsetter oppgraderingen';
@@ -242,15 +230,12 @@ $string['restricted'] = 'Begrenset';
 $string['safemode'] = 'Sikkermodus';
 $string['safemodeerror'] = 'Moodle kan ha trøbbel når sikkermodus er på';
 $string['safemodehelp'] = '<p>Moodle kan oppleve en rekke problemer med sikkermodus på, ikke minst det at du sannsynligvis ikke kan opprette nye filer.</p>
-
 <P>Sikkermodus er vanligvis bare slått på på paranoide offentlige webtjenere, så det kan hende du må finne en ny webtilbyder for Moodle-siden din.</p>
-
 <p>Du kan fortsette installasjonen hvis du ønsker, men det kan hende du får en del problemer.</p>';
 $string['serverchecks'] = 'Serveren sjekker';
 $string['sessionautostart'] = 'Sesjon Autostart';
 $string['sessionautostarterror'] = 'Denne bør være av';
 $string['sessionautostarthelp'] = '<P>Moodle trenger sesjonsupport og vil ikke virke uten.</p>
-
 <p>Sesjoner kan slås på i php.ini fila se etter session.auto_start variabelen.</p>';
 $string['skipdbencodingtest'] = 'Hopp over DB koding testen';
 $string['status'] = 'Status';
@@ -274,4 +259,5 @@ $string['wrongzipfilename'] = 'Galt ZIP-filnavn.';
 $string['wwwroot'] = 'Web addresse';
 $string['wwwrooterror'] = 'Webadressen synes ikke å være gyldig - denne Moodleinstallasjonen synes ikke å være der. Innstilling har blitt resatt.';
 $string['xmlrpcrecommended'] = 'Å installere det valgfrie xmlrpc-tillegget er nyttig for Moodle Networking funksjonaliteten.';
+$string['ziprequired'] = 'ZIP PHP-tillegget kreves nå av Moodle. Info-ZIP eller PclZIP biblioteket er ikke lenger i bruk.';
 ?>
