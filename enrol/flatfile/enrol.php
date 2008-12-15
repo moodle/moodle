@@ -197,7 +197,7 @@ function get_access_icons($course) {
    
                         if ($fields[1] == "student") {
 
-                            if ($teachers = get_users_by_capability($context, 'moodle/course:update', 'u.*,ra.hidden', 'sortorder ASC')) {
+                            if ($teachers = get_users_by_capability($context, 'moodle/course:update', 'u.*,ra.hidden', 'ra.sortorder ASC')) {
                                 foreach ($teachers as $u) {
                                     if (!$u->hidden || has_capability('moodle/role:viewhiddenassigns', $context)) {
                                         $teacher = $u;
