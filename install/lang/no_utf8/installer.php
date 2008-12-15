@@ -226,6 +226,7 @@ $string['remotedownloaderror'] = 'Mislykkes i å laste ned komponenten til din s
 $string['remotedownloadnotallowed'] = 'Nedlasting av komponenter til din tjenermaskin er ikke tillatt (allow_url_fopen er satt til ulovlig). <br /> <br />Du må laste ned
 <a href=\"$a->url\">$a->url</a>-filen manuelt, kopiere den til \"$a->dest\" på tjeneren og pakke den ut der.';
 $string['report'] = 'Rapport';
+$string['requiredentrieschanged'] = '<strong>VIKTIG - VÆR VENNLIG LES<br/>(Denne advarselen vil kun vises ved denne oppgraderingen)</strong><br/>På grunn av en feilreting, vil aktiviteter ved bruk av \'Nødvendige tilføyelser\' og \'Nødvendige tilføyelser før en kan se innstillinger\' endres. En mer detaljert forklaring på endringene kan en lese (på engelsk) på <a href=\"http://moodle.org/mod/forum/discuss.php?110928\" target=\"_blank\">databaseforumet</a>. <br/><br/>Denne endringen påvirker følgende databaser i systemet ditt: (Vær vennlig å lagre denne listen nå, og etter at oppgraderingen er ferdig, sjekk at disse aktivitetene fremdeles virker slik lærerne ønsker).<br/><strong style?\"color:red\">$a->text</strong><br/>';
 $string['restricted'] = 'Begrenset';
 $string['safemode'] = 'Sikkermodus';
 $string['safemodeerror'] = 'Moodle kan ha trøbbel når sikkermodus er på';
