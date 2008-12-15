@@ -369,6 +369,32 @@ abstract class moodle_database {
     }
 
     /**
+     * Returns SQL WHERE conditions for the ..._list methods.
+     *
+     * @param string $field the name of a field.
+     * @param array $values the values field might take.
+     * @return array sql part and params
+     */
+    protected function where_clause_list($field, array $values) {
+        $params = array();
+        $select = array();
+        $values = (array)$values;
+        foreach ($values as $value) {
+            if (is_bool($value)) {
+                $value = (int)$value;
+            }
+            if (is_null($value)) {
+                $select[] = "$field IS NULL";
+            } else {
+                $select[] = "$field = ?";
+                $params[] = $value;
+            }
+        }
+        $select = implode(" OR ", $select);
+        return array($select, $params);
+    }
+
+    /**
      * Constructs IN() or = sql fragment
      * @param mixed $items single or array of values
      * @param int $type bound param type SQL_PARAMS_QM or SQL_PARAMS_NAMED
@@ -742,20 +768,7 @@ abstract class moodle_database {
      * @throws dml_exception if error
      */
     public function get_recordset_list($table, $field, array $values, $sort='', $fields='*', $limitfrom=0, $limitnum=0) {
-        $params = array();
-        $select = array();
-        foreach ($values as $value) {
-            if (is_bool($value)) {
-                $value = (int)$value;
-            }
-            if (is_null($value)) {
-                $select[] = "$field IS NULL";
-            } else {
-                $select[] = "$field = ?";
-                $params[] = $value;
-            }
-        }
-        $select = implode(" OR ", $select);
+        list($select, $params) = $this->where_clause_list($field, $values);
         return $this->get_recordset_select($table, $select, $params, $sort, $fields, $limitfrom, $limitnum);
     }
 
@@ -847,25 +860,11 @@ abstract class moodle_database {
      * @throws dml_exception if error
      */
     public function get_records_list($table, $field, array $values, $sort='', $fields='*', $limitfrom=0, $limitnum=0) {
-        $params = array();
-        $select = array();
-        $values = (array)$values;
-        foreach ($values as $value) {
-            if (is_bool($value)) {
-                $value = (int)$value;
-            }
-            if (is_null($value)) {
-                $select[] = "$field IS NULL";
-            } else {
-                $select[] = "$field = ?";
-                $params[] = $value;
-            }
-        }
+        list($select, $params) = $this->where_clause_list($field, $values);
         if (empty($select)) {
             // nothing to return
             return array();
         }
-        $select = implode(" OR ", $select);
         return $this->get_records_select($table, $select, $params, $sort, $fields, $limitfrom, $limitnum);
     }
 
@@ -1349,6 +1348,24 @@ abstract class moodle_database {
             return $this->execute("TRUNCATE TABLE {".$table."}");
         }
         list($select, $params) = $this->where_clause($conditions);
+        return $this->delete_records_select($table, $select, $params);
+    }
+
+    /**
+     * Delete the records from a table where one field match one list of values.
+     *
+     * @param string $table the table to delete from.
+     * @param string $field The field to search
+     * @param string $values array of values
+     * @return bool true.
+     * @throws dml_exception if error
+     */
+    public function delete_records_list($table, $field, array $values, $sort='', $fields='*', $limitfrom=0, $limitnum=0) {
+        list($select, $params) = $this->where_clause_list($field, $values);
+        if (empty($select)) {
+            // nothing to delete
+            return;
+        }
         return $this->delete_records_select($table, $select, $params);
     }
 
