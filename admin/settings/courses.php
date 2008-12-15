@@ -143,6 +143,7 @@ if ($hassiteconfig
         $temp->add(new admin_setting_configcheckbox('backup/backup_sche_userfiles', get_string('userfiles'), get_string('backupuserfileshelp'), 0));
         $temp->add(new admin_setting_configcheckbox('backup/backup_sche_coursefiles', get_string('coursefiles'), get_string('backupcoursefileshelp'), 0));
         $temp->add(new admin_setting_configcheckbox('backup/backup_sche_sitefiles', get_string('sitefiles'), get_string('backupsitefileshelp'), 0));
+        $temp->add(new admin_setting_configcheckbox('backup_sche_gradebook_history', get_string('gradebookhistories', 'grades'), get_string('backupgradebookhistoryhelp'), 0));
         $temp->add(new admin_setting_configcheckbox('backup/backup_sche_messages', get_string('messages', 'message'), get_string('backupmessageshelp','message'), 0));
         $temp->add(new admin_setting_configcheckbox('backup/backup_sche_blogs', get_string('blogs', 'blog'), get_string('backupblogshelp','blog'), 0));
 

@@ -347,6 +347,9 @@ function schedule_backup_course_configure($course,$starttime = 0) {
         if (!isset($backup_config->backup_sche_sitefiles)) {
             $backup_config->backup_sche_sitefiles = 1;
         }
+        if (!isset($backup_config->backup_sche_gradebook_history)) {
+            $backup_config->backup_sche_gradebook_history = 0;
+        }
         if (!isset($backup_config->backup_sche_messages)) {
             $backup_config->backup_sche_messages = 0;
         }
@@ -449,6 +452,7 @@ function schedule_backup_course_configure($course,$starttime = 0) {
         $preferences->backup_user_files = $backup_config->backup_sche_userfiles;
         $preferences->backup_course_files = $backup_config->backup_sche_coursefiles;
         $preferences->backup_site_files = $backup_config->backup_sche_sitefiles;
+        $preferences->backup_gradebook_history = $backup_config->backup_sche_gradebook_history;
         $preferences->backup_messages = $backup_config->backup_sche_messages;
         $preferences->backup_blogs = $backup_config->backup_sche_blogs;
         $preferences->backup_course = $course->id;
