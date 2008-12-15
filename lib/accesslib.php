@@ -4353,7 +4353,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 
     // What roles/rolecaps are interesting?
     if (is_array($capability)) {
-        $caps = "'" . impode("','", $capability) . "'";
+        $caps = "'" . implode("','", $capability) . "'";
         $capabilities = $capability;
     } else {
         $caps = "'" . $capability . "'";
