@@ -597,6 +597,16 @@ class dml_test extends UnitTestCase {
             $counter++;
         }
         $this->assertEqual(3, $counter);
+        $rs->close();
+
+        $rs = $DB->get_recordset_list($tablename, 'course',array()); /// Must return 0 rows without conditions. MDL-17645
+
+        $counter = 0;
+        foreach ($rs as $record) {
+            $counter++;
+        }
+        $this->assertEqual(0, $counter);
+        $rs->close();
     }
 
     public function test_get_recordset_select() {
@@ -746,6 +756,9 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(1, reset($records)->id);
         $this->assertEqual(2, next($records)->id);
         $this->assertEqual(4, next($records)->id);
+
+        $this->assertIdentical(array(), $records = $DB->get_records_list($tablename, 'course', array())); /// Must return 0 rows without conditions. MDL-17645
+        $this->assertEqual(0, count($records));
 
     }
 
@@ -1485,6 +1498,30 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('course' => 2));
 
         $this->assertTrue($DB->delete_records_select($tablename, 'course = ?', array(2)));
+        $this->assertEqual(1, $DB->count_records($tablename));
+    }
+
+    public function test_delete_records_list() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$tablename] = $table;
+
+        $DB->insert_record($tablename, array('course' => 1));
+        $DB->insert_record($tablename, array('course' => 2));
+        $DB->insert_record($tablename, array('course' => 3));
+
+        $this->assertTrue($DB->delete_records_list($tablename, 'course', array(2, 3)));
+        $this->assertEqual(1, $DB->count_records($tablename));
+
+        $this->assertTrue($DB->delete_records_list($tablename, 'course', array())); /// Must delete 0 rows without conditions. MDL-17645
         $this->assertEqual(1, $DB->count_records($tablename));
     }
 

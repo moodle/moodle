@@ -769,6 +769,10 @@ abstract class moodle_database {
      */
     public function get_recordset_list($table, $field, array $values, $sort='', $fields='*', $limitfrom=0, $limitnum=0) {
         list($select, $params) = $this->where_clause_list($field, $values);
+        if (empty($select)) {
+            $select = '? = ?'; /// Fake condition, won't return rows ever. MDL-17645
+            $params = array(1, 2);
+        }
         return $this->get_recordset_select($table, $select, $params, $sort, $fields, $limitfrom, $limitnum);
     }
 
@@ -1360,11 +1364,11 @@ abstract class moodle_database {
      * @return bool true.
      * @throws dml_exception if error
      */
-    public function delete_records_list($table, $field, array $values, $sort='', $fields='*', $limitfrom=0, $limitnum=0) {
+    public function delete_records_list($table, $field, array $values) {
         list($select, $params) = $this->where_clause_list($field, $values);
         if (empty($select)) {
             // nothing to delete
-            return;
+            return true;
         }
         return $this->delete_records_select($table, $select, $params);
     }
