@@ -77,7 +77,7 @@ function forum_add_instance($forum) {
     /// stage. However, because the forum is brand new, we know that there are
     /// no role assignments or overrides in the forum context, so using the
     /// course context gives the same list of users.
-        $users = forum_get_potential_subscribers(get_context_instance(CONTEXT_COURSE, $forum->course), 0, 'id, email', '');
+        $users = forum_get_potential_subscribers(get_context_instance(CONTEXT_COURSE, $forum->course), 0, 'u.id, u.email', '');
         foreach ($users as $user) {
             forum_subscribe($user->id, $forum->id);
         }
