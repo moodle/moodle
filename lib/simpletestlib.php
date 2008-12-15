@@ -279,6 +279,53 @@ class MoodleUnitTestCase extends UnitTestCase {
         UnitTestDB::restore();
         fulldelete($this->pkfile);
     }
+
+    /**
+     * Load a table with some rows of data. A typical call would look like:
+     *
+     * $config = $this->load_test_data('config_plugins',
+     *         array('plugin', 'name', 'value'), array(
+     *         array('frog', 'numlegs', 2),
+     *         array('frog', 'sound', 'croak'),
+     *         array('frog', 'action', 'jump'),
+     * ));
+     *
+     * @param string $table the table name.
+     * @param array $cols the columns to fill.
+     * @param array $data the data to load.
+     * @return array $objects corresponding to $data.
+     */
+    public function load_test_data($table, array $cols, array $data) {
+        global $DB;
+        $results = array();
+        foreach ($data as $rowid => $row) {
+            $obj = new stdClass;
+            foreach ($cols as $key => $colname) {
+                $obj->$colname = $row[$key];
+            }
+            $obj->id = $DB->insert_record($table, $obj);
+            $results[$rowid] = $obj;
+        }
+        return $results;
+    }
+
+    /**
+     * Clean up data loaded with load_test_data. The call corresponding to the
+     * example load above would be:
+     *
+     * $this->delete_test_data('config_plugins', $config);
+     *
+     * @param string $table the table name.
+     * @param array $rows the rows to delete. Actually, only $rows[$key]->id is used.
+     */
+    public function delete_test_data($table, array $rows) {
+        global $DB;
+        $ids = array();
+        foreach ($rows as $row) {
+            $ids[] = $row->id;
+        }
+        $DB->delete_records_list($table, 'id', $ids);
+    }
 }
 
 /**
