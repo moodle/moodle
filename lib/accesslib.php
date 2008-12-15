@@ -625,6 +625,7 @@ function path_inaccessdata($path, $accessdata) {
  *    AND that role has moodle/legacy:guest === 1...
  *    THEN we act as if we hadn't seen it.
  *
+ * Note that this function must be kept in synch with has_capability_in_accessdata.
  *
  * To Do:
  *
@@ -4310,7 +4311,10 @@ function get_default_course_role($course) {
  * on some DBs.
  *
  * @param $context - object
- * @param $capability - string capability
+ * @param $capability - string capability, or an array of capabilities, in which
+ *               case users having any of those capabilities will be returned.
+ *               For performance reasons, you are advised to put the capability
+ *               that the user is most likely to have first.
  * @param $fields - fields to be pulled
  * @param $sort - the sort order
  * @param $limitfrom - number of records to skip (offset)
@@ -4348,9 +4352,16 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     }
 
     // What roles/rolecaps are interesting?
-    $caps = "'$capability'";
+    if (is_array($capability)) {
+        $caps = "'" . impode("','", $capability) . "'";
+        $capabilities = $capability;
+    } else {
+        $caps = "'" . $capability . "'";
+        $capabilities = array($capability);
+    }
     if ($doanything===true) {
-        $caps.=",'moodle/site:doanything'";
+        $caps .= ",'moodle/site:doanything'";
+        $capabilities[] = 'moodle/site:doanything';
         $doanything_join='';
         $doanything_cond='';
     } else {
@@ -4632,7 +4643,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     //   (last rec or last in page), trigger the check-permission idiom
     // - the check permission idiom will
     //   - add the default enrolment if needed
-    //   - call has_capability_from_rarc(), which based on RAs and RCs will return a bool
+    //   - call has_any_capability_from_rarc(), which based on RAs and RCs will return a bool
     //     (should be fairly tight code ;-) )
     // - if the user has permission, all is good, just $c++ (counter)
     // - ...else, decrease the counter - so pagination is kept straight,
@@ -4675,7 +4686,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
                     $ras[] = array( 'roleid' => $CFG->defaultuserroleid,
                                     'depth'  => 1 );
                 }
-                if (has_capability_from_rarc($ras, $roleperms, $capability, $doanything)) {
+                if (has_any_capability_from_rarc($ras, $roleperms, $capabilities)) {
                     $c++;
                 } else {
                     // remove the user from the result set,
@@ -4719,7 +4730,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
             $ras[] = array( 'roleid' => $CFG->defaultuserroleid,
                             'depth'  => 1 );
         }
-        if (!has_capability_from_rarc($ras, $roleperms, $capability, $doanything)) {
+        if (!has_any_capability_from_rarc($ras, $roleperms, $capabilities)) {
             // remove the user from the result set,
             // only if we are 'in the page'
             if ($limitfrom === 0 || $c >= $limitfrom) {
@@ -4734,32 +4745,27 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 }
 
 /*
- * Fast (fast!) utility function to resolve if a capability is granted,
- * based on Role Assignments and Role Capabilities.
+ * Fast (fast!) utility function to resolve if any of a list of capabilities is
+ * granted, based on Role Assignments and Role Capabilities.
  *
  * Used (at least) by get_users_by_capability().
  *
  * If PHP had fast built-in memoize functions, we could
  * add a $contextid parameter and memoize the return values.
  *
+ * Note that this function must be kept in synch with has_capability_in_accessdata.
+ *
  * @param array $ras - role assignments
  * @param array $roleperms - role permissions
- * @param string $capability - name of the capability
- * @param bool $doanything
+ * @param string $capabilities - array of capability names
  * @return boolean
- * 
  */
-function has_capability_from_rarc($ras, $roleperms, $capability, $doanything) {
+function has_any_capability_from_rarc($ras, $roleperms, $caps) {
     // Mini-state machine, using $hascap
     // $hascap[ 'moodle/foo:bar' ]->perm = CAP_SOMETHING (numeric constant)
     // $hascap[ 'moodle/foo:bar' ]->radepth = depth of the role assignment that set it
     // $hascap[ 'moodle/foo:bar' ]->rcdepth = depth of the rolecap that set it
     // -- when resolving conflicts, we need to look into radepth first, if unresolved
-    
-    $caps = array($capability);
-    if ($doanything) {
-        $caps[] = 'moodle/site:candoanything';
-    }
 
     $hascap = array();
 
@@ -4830,10 +4836,10 @@ function has_capability_from_rarc($ras, $roleperms, $capability, $doanything) {
             $hascap[$cap]->perm += $rp->perm;
         }
     }
-    if ($hascap[$capability]->perm > 0
-        || ($doanything && isset($hascap['moodle/site:candoanything'])
-            && $hascap['moodle/site:candoanything']->perm > 0)) {
-        return true;
+    foreach ($caps as $capability) {
+        if (isset($hascap[$capability]) && $hascap[$capability]->perm > 0) {
+            return true;
+        }
     }
     return false;
 }
