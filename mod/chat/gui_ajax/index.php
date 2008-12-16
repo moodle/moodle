@@ -90,8 +90,14 @@ print_js_config(array('send'=>$str_send, 'sending'=>$str_sending, 'inputarea'=>$
 <h1><?php echo $str_title;?></h1>
 </div>
 <div id="chat_input">
+<?php
+if(has_capability('mod/chat:talk', $context)){
+?>
     <input type="text" id="input_msgbox" value="" size="48" />
     <input type="button" id="btn_send" value="<?php echo $str_send;?>" />
+<?php
+}
+?>
 </div>
 <div id="chat_user_list">
 <ul id="listing">
