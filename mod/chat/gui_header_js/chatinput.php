@@ -6,10 +6,25 @@
     require('../lib.php');
 
     $chat_sid = required_param('chat_sid', PARAM_ALPHANUM);
+    $chatid   = required_param('chat_id', PARAM_INT);
 
     if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
         print_error('notlogged', 'chat');
     }
+    if (!$chat = get_record('chat', 'id', $chatid)) {
+        error('Could not find that chat room!');
+    }
+
+    if (!$course = get_record('course', 'id', $chat->course)) {
+        error('Could not find the course this belongs to!');
+    }
+
+    if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
+        error('Course Module ID was incorrect');
+    }
+    
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
 
     //Get the user theme
     $USER = $DB->get_record('user', array('id'=>$chatuser->userid));
@@ -48,6 +63,7 @@
     $meta = ob_get_clean();
     print_header('', '', '', 'input_chat_message', $meta, false);
 
+    if(has_capability('mod/chat:chatlog',$context)){
 ?>
     <form action="../empty.php" method="post" target="empty" id="inputForm"
           onsubmit="return empty_field_and_submit()" style="margin:0">
@@ -55,6 +71,9 @@
         <?php helpbutton('chatting', get_string('helpchatting', 'chat'), 'chat', true, false); ?><br />
         <input type="checkbox" id="auto" size="50" value="" checked='true' /><label for="auto"><?php echo get_string('autoscroll', 'chat');?></label>
     </form>
+<?php
+    }
+?>
 
     <form action="insert.php" method="post" target="empty" id="sendForm">
         <input type="hidden" name="chat_sid" value="<?php echo $chat_sid ?>" />

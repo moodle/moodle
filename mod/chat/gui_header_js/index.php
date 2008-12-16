@@ -50,7 +50,7 @@
         print_error('cantlogin', 'chat');
     }
 
-    $params = "chat_sid=$chat_sid";
+    $params = "chat_id=$id&chat_sid={$chat_sid}";
 
     // fallback to the old jsupdate, but allow other update modes
     $updatemode = 'jsupdate';
