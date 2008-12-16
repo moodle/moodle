@@ -51,7 +51,8 @@ class main_view extends XMLDBAction {
             'checkindexes' => 'xmldb',
             'checkdefaults' => 'xmldb',
             'checkforeignkeys' => 'xmldb',
-            'checkbigints' => 'xmldb'
+            'checkbigints' => 'xmldb',
+            'doc' => 'xmldb'
         ));
     }
 
@@ -179,6 +180,16 @@ class main_view extends XMLDBAction {
                     }
                 } else {
                     $b .= '[' . $this->str['save'] . ']';
+                }
+                $b .= '</td><td class="button cell">';
+            /// The document button
+                if ($dbdir->path_exists &&
+                    file_exists($key . '/install.xml') &&
+                    is_readable($key . '/install.xml') &&
+                    is_readable($key)) {
+                    $b .= '<a href="index.php?action=generate_documentation&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '">[' . $this->str['doc'] . ']</a>';
+                } else {
+                    $b .= '[' . $this->str['doc'] . ']';
                 }
                 $b .= '</td><td class="button cell">';
             /// The revert button
