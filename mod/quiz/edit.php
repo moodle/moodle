@@ -249,6 +249,9 @@ if($newquestioninfo){
     if (!$newrandomcategory){
         print_r($newquestioninfo);
         print_error("cannotcreatecategory");
+    }else{
+        add_to_log($quiz->course, 'quiz', 'addcategory',
+                "view.php?id=$cm->id", "$newrandomcategory", $cm->id);
     }
 }
 
