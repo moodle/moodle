@@ -78,6 +78,10 @@ print_heading($tagname, '', 2, 'headingblock header tag-heading');
 tag_print_management_box($tag);
 tag_print_description_box($tag);
 
+echo '<div style="text-align: center "><p><a href="#course">'.get_string('courses').
+ '</a> | <a href="#blog">'.get_string('relatedblogs', 'tag').
+ '</a> | <a href="#user">'.get_string('users').'</a></p></div>';
+
 // Display courses tagged with the tag
 require_once($CFG->dirroot.'/tag/coursetagslib.php');
 if ($courses = coursetag_get_tagged_courses($tag->id)) {
@@ -85,7 +89,8 @@ if ($courses = coursetag_get_tagged_courses($tag->id)) {
     $totalcount = count( $courses );
     print_box_start('generalbox', 'tag-blogs'); //could use an id separate from tag-blogs, but would have to copy the css style to make it look the same
 
-    $heading = get_string('tagindex_coursetitle', 'tag', $tagname) .': '. $totalcount;
+    $heading = get_string('courses') . ' ' . get_string('taggedwith', 'tag', $tagname) .': '. $totalcount;
+    echo "<a name='course'></a>";
     print_heading($heading, '', 3);
 
     foreach ($courses as $course) {
@@ -106,7 +111,8 @@ if (has_capability('moodle/blog:view', $systemcontext)) {  // You have to see bl
     if ($blogs = blog_fetch_entries('', $count, 0, 'site', '', $tag->id)) {
 
         print_box_start('generalbox', 'tag-blogs');
-        $heading = get_string('relatedblogs', 'tag', $tagname);
+        $heading = get_string('relatedblogs', 'tag', $tagname). ' ' . get_string('taggedwith', 'tag', $tagname);
+        echo "<a name='blog'></a>";
         print_heading($heading, '', 3);
 
         echo '<ul id="tagblogentries">';
@@ -141,7 +147,8 @@ if ($usercount > 0) {
     //user table box
     print_box_start('generalbox', 'tag-user-table');
 
-    $heading = get_string('userstaggedwith', 'tag', $tagname) . ': ' . $usercount;
+    $heading = get_string('users'). ' ' . get_string('taggedwith', 'tag', $tagname) . ': ' . $usercount;
+    echo "<a name='user'></a>";
     print_heading($heading, '', 3);
 
     $baseurl = $CFG->wwwroot.'/tag/index.php?id=' . $tag->id;
