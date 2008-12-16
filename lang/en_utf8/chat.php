@@ -3,9 +3,10 @@
 
 $string['autoscroll'] = 'Auto Scroll';
 $string['beep'] = 'beep';
-$string['chat:chat'] = 'Talk in a chat';
+$string['chat:chat'] = 'Access a chat room';
 $string['chat:deletelog'] = 'Delete chat logs';
 $string['chat:readlog'] = 'Read chat logs';
+$string['chat:talk'] = 'Talk in a chat';
 $string['chatintro'] = 'Introduction text';
 $string['chatname'] = 'Name of this chat room';
 $string['chatreport'] = 'Chat sessions';

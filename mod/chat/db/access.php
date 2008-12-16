@@ -47,6 +47,20 @@ $mod_chat_capabilities = array(
         )
     ),
 
+    'mod/chat:talk' => array(
+
+        'riskbitmask' => RISK_SPAM,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+
     'mod/chat:readlog' => array(
 
         'captype' => 'read',
