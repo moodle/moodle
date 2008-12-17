@@ -4617,6 +4617,12 @@ table.quizreviewsummary td.cell {
     width:8em;
     padding:0.2em;
 }
+#mod-quiz-edit div.question div.content div.points input{
+    width:2em;
+}
+#mod-quiz-edit div.question div.content div.points input.pointssubmitbutton{
+    width:auto;
+}
 
 #mod-quiz-edit .questionbankwindow select#catmenu_jump{
     /* In Opera9, IE6 the width of the
