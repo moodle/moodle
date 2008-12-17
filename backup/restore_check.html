@@ -270,6 +270,8 @@
             print_error("cannotrestoreadminoredit");
         }
         $show_continue_button = true;
+        $messages = array();
+
         //Check if we've selected any mod's user info and restore->users
         //is set to none. Change it to course and inform.
         if ($restore->users == 2) {
@@ -285,36 +287,52 @@
                 $changed = 1;
             }
             if ($changed) {
-                echo get_string ("noteuserschangednonetocourse");
-                echo "<hr noshade size=\"1\">";
+                $messages[] = get_string ("noteuserschangednonetocourse");
                 $restore->users = 1;
             }
         }
+
+    /// If restoring users and backup has mnet remote users and we are restoring to different site, forbid restore to non-admins. MDL-17009
+        if ($restore->users != 2 &&                                                   /// If restoring users
+            !empty($info->mnet_remoteusers) && $info->mnet_remoteusers === 'true'  && /// and backup contains remote users
+            $info->original_wwwroot !== $CFG->wwwroot) {                              /// and backup is being restored to different site
+
+        /// If user is admin (by 'moodle/user:create' cap), warn about conversion to local auth if missing mnet hosts and continue restore
+            if (has_capability('moodle/user:create', get_context_instance(CONTEXT_SYSTEM))) {
+                $messages[] = get_string('mnetrestore_extusers_admin', 'admin');
+                $show_continue_button = true;
+
+        /// else, notify about the thing (suggesting to ask admin) and stop restore
+            } else {
+                $messages[] = get_string('mnetrestore_extusers_noadmin', 'admin');
+                $show_continue_button = false;
+            }
+        }
+
         //Save the restore session object
         $SESSION->restore = $restore;
+
+        echo "<div style='text-align:center'>";
+
+    /// Printout messages
+        foreach ($messages as $message) {
+            echo '<p>' . $message . '</p>';
+        }
+
+    /// Warning and button
         if ($show_continue_button) {
             //Print the continue button to execute the restore NOW !!!!
             //All is prepared !!!
-            echo "<div style='text-align:center'>";
             $hidden["launch"]             = "execute";
             $hidden["file"]               =  $file;
             $hidden["id"]                 =  $id;
             print_string('longtimewarning','admin');
 
-            if ($restore->users && !empty($info->mnet_remoteusers)
-                && $info->mnet_remoteusers === 'true') {
-                if ($info->original_wwwroot === $CFG->wwwroot) {
-                    print '<p>'.get_string('mnetrestore_extusers','admin').'</p>';
-                } else {
-                    print '<p>'. get_string('mnetrestore_extusers_mismatch','admin').'</p>';
-                }
-            }
+
+        /// Restore button
             print_single_button("restore.php", $hidden, get_string("restorecoursenow"),"post");
-            echo "</div>";
-        } else {
-            //Show error
-            print_error('error');
         }
+        echo "</div>";
 
     //If we are here. Something must be wrong. Debug !!!
     } else {
