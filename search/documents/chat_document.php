@@ -32,9 +32,9 @@ class ChatTrackSearchDocument extends SearchDocument {
     /**
     * constructor
     */
-    public function __construct(&$chatsession, $chat_module_id, $course_id, $group_id, $context_id) {
+    public function __construct(&$chatsession, $chat_id, $chat_module_id, $course_id, $group_id, $context_id) {
         // generic information; required
-        $doc->docid         = $chat_module_id.'-'.$chatsession['sessionstart'].'-'.$chatsession['sessionend'];
+        $doc->docid         = $chat_id.'-'.$chatsession['sessionstart'].'-'.$chatsession['sessionend'];
         $doc->documenttype  = SEARCH_TYPE_CHAT;
         $doc->itemtype      = 'session';
         $doc->contextid     = $context_id;
@@ -50,10 +50,10 @@ class ChatTrackSearchDocument extends SearchDocument {
         $doc->url           = chat_make_link($chat_module_id, $chatsession['sessionstart'], $chatsession['sessionend']);
         
         // module specific information; optional
-        $data->chat         = $chat_module_id;
+        $data->chat         = $chat_id;
         
         // construct the parent class
-        parent::__construct($doc, $data, $course_id, $group_id, 0, PATH_FOR_SEARCH_TYPE_CHAT);
+        parent::__construct($doc, $data, $course_id, $group_id, 0, 'mod/'.SEARCH_TYPE_CHAT);
     } 
 }
 
@@ -176,7 +176,7 @@ function chat_get_content_for_index(&$chat) {
                 foreach($aTrack->sessionusers as $aUserId){
                     $user = get_record('user', 'id', $aUserId);
                     $aTrack->authors = ($user) ? fullname($user) : '' ;
-                    $documents[] = new ChatTrackSearchDocument(get_object_vars($aTrack), $cm->id, $chat->course, $aTrack->groupid, $context->id);
+                    $documents[] = new ChatTrackSearchDocument(get_object_vars($aTrack), $chat->id, $cm->id, $chat->course, $aTrack->groupid, $context->id);
                 }
             }
         }
@@ -207,7 +207,7 @@ function chat_single_document($id, $itemtype) {
         $tracks = chat_get_session_tracks($chat->id, $sessionstart, $sessionstart);
         if ($tracks){
             $aTrack = $tracks[0];
-            $document = new ChatTrackSearchDocument(get_object_vars($aTrack), $cm->id, $chat->course, $aTrack->groupid, $context->id);
+            $document = new ChatTrackSearchDocument(get_object_vars($aTrack), $chat_id, $cm->id, $chat->course, $aTrack->groupid, $context->id);
             return $document;
         }
     }
@@ -255,8 +255,7 @@ function chat_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     
     include_once("{$CFG->dirroot}/{$path}/lib.php");
 
-    list($chat_id, $sessionstart, $sessionend) = split('-', $id);
-
+    list($chat_id, $sessionstart, $sessionend) = split('-', $this_id);
     // get the chat session and all related stuff
     $chat = get_record('chat', 'id', $chat_id);
     $context = get_record('context', 'id', $context_id);
@@ -271,7 +270,6 @@ function chat_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     
     //group consistency check : checks the following situations about groups
     // trap if user is not same group and groups are separated
-    $current_group = get_current_group($course->id);
     $course = get_record('course', 'id', $chat->course);
     if ((groupmode($course, $cm) == SEPARATEGROUPS) && !ismember($group_id) && !has_capability('moodle/site:accessallgroups', $context)){ 
         if (!empty($CFG->search_access_debug)) echo "search reject : chat element is in separated group ";
@@ -294,8 +292,13 @@ function chat_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
 *
 */
 function chat_link_post_processing($title){
-     setLocale(LC_TIME, substr(current_language(), 0, 2));
-     $title = preg_replace('/TT_(.*)_TT/e', "userdate(\\1)", $title);
-     return mb_convert_encoding($title, 'UTF-8', 'auto');
+    global $CFG;
+    setLocale(LC_TIME, substr(current_language(), 0, 2));
+    $title = preg_replace('/TT_(.*)_TT/e', "userdate(\\1)", $title);
+    
+    if ($CFG->block_search_utf8dir){
+        return mb_convert_encoding($title, 'UTF-8', 'auto');
+    }
+    return mb_convert_encoding($title, 'auto', 'UTF-8');
 }
 ?>

@@ -36,7 +36,7 @@
       global $CFG;
 
       if (empty($CFG->enableglobalsearch)) {
-        return '';
+        return get_string('disabledsearch', 'search');
       }
 
       //cache block contents

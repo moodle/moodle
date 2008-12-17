@@ -15,16 +15,20 @@
 
 /**
 * @param object $resource
-* @uses CFG, USER
+* @uses $CFG
 */
-function get_text_for_indexing_htm(&$resource){
-    global $CFG, $USER;
+function get_text_for_indexing_htm(&$resource, $directfile = ''){
+    global $CFG;
     
     // SECURITY : do not allow non admin execute anything on system !!
-    if (!isadmin($USER->id)) return;
+    if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) return;
 
     // just get text
-    $text = implode('', file("{$CFG->dataroot}/{$resource->course}/{$resource->reference}"));
+    if ($directfile == ''){
+        $text = implode('', file("{$CFG->dataroot}/{$resource->course}/{$resource->reference}"));
+    } else {
+        $text = implode('', file("{$CFG->dataroot}/{$directfile}"));
+    }
 
     // extract keywords and other interesting meta information and put it back as real content for indexing
     if (preg_match('/(.*)<meta ([^>]*)>(.*)/is', $text, $matches)){
@@ -40,7 +44,7 @@ function get_text_for_indexing_htm(&$resource){
     $text = preg_replace("/<[^>]*>/", '', $text);
     $text = preg_replace("/<!--[^>]*-->/", '', $text);
     $text = html_entity_decode($text, ENT_COMPAT, 'UTF-8');
-    $text = mb_convert_encoding($text, 'UTF-8', 'AUTO');
+    $text = mb_convert_encoding($text, 'UTF-8', 'auto');
     
     /*
     * debug code for tracing input

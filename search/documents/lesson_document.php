@@ -49,7 +49,7 @@ class LessonPageSearchDocument extends SearchDocument {
         // module specific information
         $data->lesson      = $page['lessonid'];
         
-        parent::__construct($doc, $data, $course_id, 0, 0, PATH_FOR_SEARCH_TYPE_LESSON);
+        parent::__construct($doc, $data, $course_id, 0, 0, 'mod/'.SEARCH_TYPE_LESSON);
     } 
 }
 
@@ -73,8 +73,11 @@ function lesson_make_link($lessonmoduleid, $itemid, $itemtype) {
 *
 */
 function lesson_iterator() {
-    $lessons = get_records('lesson');
-    return $lessons;
+    if ($lessons = get_records('lesson')){
+        return $lessons;
+    } else {
+        return array();
+    }
 }
 
 /**
@@ -210,7 +213,12 @@ function lesson_check_text_access($path, $itemtype, $this_id, $user, $group_id, 
 *
 */
 function lesson_link_post_processing($title){
-     return mb_convert_encoding($title, 'UTF-8', 'auto');
+    global $CFG;
+    
+    if ($CFG->block_search_utf8dir){
+        return mb_convert_encoding($title, 'UTF-8', 'auto');
+    }
+    return mb_convert_encoding($title, 'auto', 'UTF-8');
 }
 
 ?>

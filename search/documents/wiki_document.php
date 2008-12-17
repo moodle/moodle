@@ -50,7 +50,7 @@ class WikiSearchDocument extends SearchDocument {
         $data->wiki     = $wiki_id;
         
         // construct the parent class
-        parent::__construct($doc, $data, $course_id, $group_id, $user_id, PATH_FOR_SEARCH_TYPE_WIKI);
+        parent::__construct($doc, $data, $course_id, $group_id, $user_id, 'mod/'.SEARCH_TYPE_WIKI);
     } 
 }
 
@@ -268,7 +268,12 @@ function wiki_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
 *
 */
 function wiki_link_post_processing($title){
-     return mb_convert_encoding($title, 'UTF-8', 'auto');
+    global $CFG;
+    
+    if ($CFG->block_search_utf8dir){
+        return mb_convert_encoding($title, 'UTF-8', 'auto');
+    }
+    return mb_convert_encoding($title, 'auto', 'UTF-8');
 }
 
 ?>

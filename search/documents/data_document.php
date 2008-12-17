@@ -54,7 +54,7 @@ class DataSearchDocument extends SearchDocument {
         $data->database = $record['dataid'];
         
         // construct the parent class
-        parent::__construct($doc, $data, $course_id, $record['groupid'], $record['userid'], PATH_FOR_SEARCH_TYPE_DATA);
+        parent::__construct($doc, $data, $course_id, $record['groupid'], $record['userid'], 'mod/'.SEARCH_TYPE_DATA);
     } 
 }
 
@@ -203,6 +203,7 @@ function data_get_content_for_index(&$database) {
             unset($records_content[$aRecordId]['_first']);
     
             // concatenates all other texts
+            $content = '';
             foreach($records_content[$aRecordId] as $aField){
                 $content = @$content.' '.$aField;
             }
@@ -348,7 +349,6 @@ function data_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     
     //group consistency check : checks the following situations about groups
     // trap if user is not same group and groups are separated
-    $current_group = get_current_group($course->id);
     $course = get_record('course', 'id', $data->course);
     if ((groupmode($course, $cm) == SEPARATEGROUPS) && !ismember($group_id) && !has_capability('moodle/site:accessallgroups', $context)){ 
         if (!empty($CFG->search_access_debug)) echo "search reject : separated group owned resource ";
@@ -368,7 +368,7 @@ function data_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     // trap if unapproved and has not approval capabilities
     // TODO : report a potential capability lack of : mod/data:approve
     $approval = get_field('data_records', 'approved', 'id', $record->id);
-    if (!$approval && !isteacher($data->course) && !has_capability('mod/data:manageentries', $context)){
+    if (!$approval && !has_capability('mod/data:manageentries', $context)){
         if (!empty($CFG->search_access_debug)) echo "search reject : unapproved resource ";
         return false;
     }
@@ -377,7 +377,7 @@ function data_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     // trap if too few records
     // TODO : report a potential capability lack of : mod/data:viewhiddenentries
     $recordsAmount = count_records('data_records', 'dataid', $data->id);
-    if ($data->requiredentriestoview > $recordsAmount && !isteacher($data->course) && !has_capability('mod/data:manageentries', $context)) {
+    if ($data->requiredentriestoview > $recordsAmount && !has_capability('mod/data:manageentries', $context)) {
         if (!empty($CFG->search_access_debug)) echo "search reject : not enough records to view ";
         return false;
     }
@@ -387,12 +387,12 @@ function data_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     // TODO : report a potential capability lack of : mod/data:viewhiddenentries
     $now = usertime(time());
     if ($data->timeviewfrom > 0)
-        if ($now < $data->timeviewfrom && !isteacher($data->course) && !has_capability('mod/data:manageentries', $context)) {
+        if ($now < $data->timeviewfrom && !has_capability('mod/data:manageentries', $context)) {
             if (!empty($CFG->search_access_debug)) echo "search reject : still not open activity ";
             return false;
         }
     if ($data->timeviewto > 0)
-        if ($now > $data->timeviewto && !isteacher($data->course) && !has_capability('mod/data:manageentries', $context)) {
+        if ($now > $data->timeviewto && !has_capability('mod/data:manageentries', $context)) {
             if (!empty($CFG->search_access_debug)) echo "search reject : closed activity ";
             return false;
         }
@@ -405,7 +405,12 @@ function data_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
 * @param string $title
 */
 function data_link_post_processing($title){
-    return mb_convert_encoding($title, 'UTF-8', 'auto');
+    global $CFG;
+    
+    if ($CFG->block_search_utf8dir){
+        return mb_convert_encoding($title, 'UTF-8', 'auto');
+    }
+    return mb_convert_encoding($title, 'auto', 'UTF-8');
 }
 
 ?>

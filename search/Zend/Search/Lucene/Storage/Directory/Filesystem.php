@@ -15,16 +15,16 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Storage
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 
 /** Zend_Search_Lucene_Storage_Directory */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Storage/Directory.php';
+require_once 'Zend/Search/Lucene/Storage/Directory.php';
 
 /** Zend_Search_Lucene_Storage_File_Filesystem */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Storage/File/Filesystem.php';
+require_once 'Zend/Search/Lucene/Storage/File/Filesystem.php';
 
 
 /**
@@ -33,7 +33,7 @@ require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Storage/File/Filesystem.p
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Storage
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Storage_Directory_Filesystem extends Zend_Search_Lucene_Storage_Directory
@@ -43,7 +43,7 @@ class Zend_Search_Lucene_Storage_Directory_Filesystem extends Zend_Search_Lucene
      *
      * @var string
      */
-    private $_dirPath = null;
+    protected $_dirPath = null;
 
     /**
      * Cache for Zend_Search_Lucene_Storage_File_Filesystem objects
@@ -52,7 +52,35 @@ class Zend_Search_Lucene_Storage_Directory_Filesystem extends Zend_Search_Lucene
      * @var array
      * @throws Zend_Search_Lucene_Exception
      */
-    private $_fileHandlers;
+    protected $_fileHandlers;
+
+    /**
+     * Default file permissions
+     *
+     * @var integer
+     */
+    protected static $_defaultFilePermissions = 0666;
+
+
+    /**
+     * Get default file permissions
+     *
+     * @return integer
+     */
+    public static function getDefaultFilePermissions()
+    {
+        return self::$_defaultFilePermissions;
+    }
+
+    /**
+     * Set default file permissions
+     *
+     * @param integer $mode
+     */
+    public static function setDefaultFilePermissions($mode)
+    {
+        self::$_defaultFilePermissions = $mode;
+    }
 
 
     /**
@@ -144,6 +172,7 @@ class Zend_Search_Lucene_Storage_Directory_Filesystem extends Zend_Search_Lucene
      *
      * @param string $filename
      * @return Zend_Search_Lucene_Storage_File
+     * @throws Zend_Search_Lucene_Exception
      */
     public function createFile($filename)
     {
@@ -152,6 +181,16 @@ class Zend_Search_Lucene_Storage_Directory_Filesystem extends Zend_Search_Lucene
         }
         unset($this->_fileHandlers[$filename]);
         $this->_fileHandlers[$filename] = new Zend_Search_Lucene_Storage_File_Filesystem($this->_dirPath . '/' . $filename, 'w+b');
+
+        global $php_errormsg;
+        $trackErrors = ini_get('track_errors'); 
+        ini_set('track_errors', '1');
+        if (!@chmod($this->_dirPath . '/' . $filename, self::$_defaultFilePermissions)) {
+            ini_set('track_errors', $trackErrors);
+            throw new Zend_Search_Lucene_Exception($php_errormsg);
+        }
+        ini_set('track_errors', $trackErrors);
+
         return $this->_fileHandlers[$filename];
     }
 
@@ -161,22 +200,42 @@ class Zend_Search_Lucene_Storage_Directory_Filesystem extends Zend_Search_Lucene
      *
      * @param string $filename
      * @return void
+     * @throws Zend_Search_Lucene_Exception
      */
     public function deleteFile($filename)
     {
-        /**
-         * @todo add support of "deletable" file
-         * "deletable" is used on Windows systems if file can't be deleted
-         * (while it is still open).
-         */
-
         if (isset($this->_fileHandlers[$filename])) {
             $this->_fileHandlers[$filename]->close();
         }
         unset($this->_fileHandlers[$filename]);
-        unlink($this->_dirPath . '/' . $filename);
+
+        global $php_errormsg;
+        $trackErrors = ini_get('track_errors'); ini_set('track_errors', '1');
+        if (!@unlink($this->_dirPath . '/' . $filename)) {
+            ini_set('track_errors', $trackErrors);
+            
+            // keep loose on failed deletion.
+            // throw new Zend_Search_Lucene_Exception('Can\'t delete file: ' . $php_errormsg);
+        }
+        ini_set('track_errors', $trackErrors);
     }
 
+    /**
+     * Purge file if it's cached by directory object
+     * 
+     * Method is used to prevent 'too many open files' error
+     *
+     * @param string $filename
+     * @return void
+     */
+    public function purgeFile($filename)
+    {
+        if (isset($this->_fileHandlers[$filename])) {
+            $this->_fileHandlers[$filename]->close();
+        }
+        unset($this->_fileHandlers[$filename]);
+    }
+    
 
     /**
      * Returns true if a file with the given $filename exists.

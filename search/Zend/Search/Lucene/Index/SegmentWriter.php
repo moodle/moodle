@@ -15,23 +15,23 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Index
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 
 /** Zend_Search_Lucene_Exception */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Exception.php';
+require_once 'Zend/Search/Lucene/Exception.php';
 
 /** Zend_Search_Lucene_Index_SegmentInfo */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Index/SegmentInfo.php';
+require_once 'Zend/Search/Lucene/Index/SegmentInfo.php';
 
 
 /**
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Index
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Search_Lucene_Index_SegmentWriter
@@ -47,18 +47,32 @@ abstract class Zend_Search_Lucene_Index_SegmentWriter
      */
     public static $indexInterval = 128;
 
-    /** Expert: The fraction of TermDocs entries stored in skip tables.
+    /**
+     * Expert: The fraction of TermDocs entries stored in skip tables.
      * Larger values result in smaller indexes, greater acceleration, but fewer
      * accelerable cases, while smaller values result in bigger indexes,
      * less acceleration and more
      * accelerable cases. More detailed experiments would be useful here.
      *
-     * 0x0x7FFFFFFF indicates that we don't use skip data
-     * Default value is 16
+     * 0x7FFFFFFF indicates that we don't use skip data
+     *
+     * Note: not used in current implementation
      *
      * @var integer
      */
     public static $skipInterval = 0x7FFFFFFF;
+
+    /**
+     * Expert: The maximum number of skip levels. Smaller values result in
+     * slightly smaller indexes, but slower skipping in big posting lists.
+     *
+     * 0 indicates that we don't use skip data
+     *
+     * Note: not used in current implementation
+     *
+     * @var integer
+     */
+    public static $maxSkipLevels = 0;
 
     /**
      * Number of docs in a segment
@@ -246,12 +260,28 @@ abstract class Zend_Search_Lucene_Index_SegmentWriter
     }
 
     /**
+     * Return segment name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->_name;
+    }
+    
+    /**
      * Dump Field Info (.fnm) segment file
      */
     protected function _dumpFNM()
     {
         $fnmFile = $this->_directory->createFile($this->_name . '.fnm');
         $fnmFile->writeVInt(count($this->_fields));
+
+        $nrmFile = $this->_directory->createFile($this->_name . '.nrm');
+        // Write header
+        $nrmFile->writeBytes('NRM');
+        // Write format specifier
+        $nrmFile->writeByte((int)0xFF);
 
         foreach ($this->_fields as $field) {
             $fnmFile->writeString($field->name);
@@ -262,14 +292,18 @@ abstract class Zend_Search_Lucene_Index_SegmentWriter
                                );
 
             if ($field->isIndexed) {
-                $normFileName = $this->_name . '.f' . $field->number;
-                $fFile = $this->_directory->createFile($normFileName);
-                $fFile->writeBytes($this->_norms[$field->name]);
-                $this->_files[] = $normFileName;
+                // pre-2.1 index mode (not used now)
+                // $normFileName = $this->_name . '.f' . $field->number;
+                // $fFile = $this->_directory->createFile($normFileName);
+                // $fFile->writeBytes($this->_norms[$field->name]);
+                // $this->_files[] = $normFileName;
+
+                $nrmFile->writeBytes($this->_norms[$field->name]);
             }
         }
 
         $this->_files[] = $this->_name . '.fnm';
+        $this->_files[] = $this->_name . '.nrm';
     }
 
 
@@ -351,16 +385,18 @@ abstract class Zend_Search_Lucene_Index_SegmentWriter
     public function initializeDictionaryFiles()
     {
         $this->_tisFile = $this->_directory->createFile($this->_name . '.tis');
-        $this->_tisFile->writeInt((int)0xFFFFFFFE);
+        $this->_tisFile->writeInt((int)0xFFFFFFFD);
         $this->_tisFile->writeLong(0 /* dummy data for terms count */);
         $this->_tisFile->writeInt(self::$indexInterval);
         $this->_tisFile->writeInt(self::$skipInterval);
+        $this->_tisFile->writeInt(self::$maxSkipLevels);
 
         $this->_tiiFile = $this->_directory->createFile($this->_name . '.tii');
-        $this->_tiiFile->writeInt((int)0xFFFFFFFE);
+        $this->_tiiFile->writeInt((int)0xFFFFFFFD);
         $this->_tiiFile->writeLong(0 /* dummy data for terms count */);
         $this->_tiiFile->writeInt(self::$indexInterval);
         $this->_tiiFile->writeInt(self::$skipInterval);
+        $this->_tiiFile->writeInt(self::$maxSkipLevels);
 
         /** Dump dictionary header */
         $this->_tiiFile->writeVInt(0);                    // preffix length
@@ -370,7 +406,7 @@ abstract class Zend_Search_Lucene_Index_SegmentWriter
         $this->_tiiFile->writeVInt(0);                    // DocFreq
         $this->_tiiFile->writeVInt(0);                    // FreqDelta
         $this->_tiiFile->writeVInt(0);                    // ProxDelta
-        $this->_tiiFile->writeVInt(20);                   // IndexDelta
+        $this->_tiiFile->writeVInt(24);                   // IndexDelta
 
         $this->_frqFile = $this->_directory->createFile($this->_name . '.frq');
         $this->_prxFile = $this->_directory->createFile($this->_name . '.prx');
@@ -384,7 +420,7 @@ abstract class Zend_Search_Lucene_Index_SegmentWriter
         $this->_prevTermInfo      = null;
         $this->_prevIndexTerm     = null;
         $this->_prevIndexTermInfo = null;
-        $this->_lastIndexPosition = 20;
+        $this->_lastIndexPosition = 24;
         $this->_termCount         = 0;
 
     }

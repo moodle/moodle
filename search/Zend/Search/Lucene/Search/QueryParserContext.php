@@ -15,50 +15,50 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** Zend_Search_Lucene_FSM */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/FSM.php';
+require_once 'Zend/Search/Lucene/FSM.php';
 
 
 /** Zend_Search_Lucene_Index_Term */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Index/Term.php';
+require_once 'Zend/Search/Lucene/Index/Term.php';
 
 /** Zend_Search_Lucene_Search_QueryToken */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Search/QueryToken.php';
+require_once 'Zend/Search/Lucene/Search/QueryToken.php';
 
 /** Zend_Search_Lucene_Search_Query_Term */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Search/Query/Term.php';
+require_once 'Zend/Search/Lucene/Search/Query/Term.php';
 
 /** Zend_Search_Lucene_Search_Query_MultiTerm */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Search/Query/MultiTerm.php';
+require_once 'Zend/Search/Lucene/Search/Query/MultiTerm.php';
 
 /** Zend_Search_Lucene_Search_Query_Boolean */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Search/Query/Boolean.php';
+require_once 'Zend/Search/Lucene/Search/Query/Boolean.php';
 
 /** Zend_Search_Lucene_Search_Query_Phrase */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Search/Query/Phrase.php';
+require_once 'Zend/Search/Lucene/Search/Query/Phrase.php';
 
 /** Zend_Search_Lucene_Exception */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Exception.php';
+require_once 'Zend/Search/Lucene/Exception.php';
 
 /** Zend_Search_Lucene_Search_QueryParserException */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Search/QueryParserException.php';
+require_once 'Zend/Search/Lucene/Search/QueryParserException.php';
 
 /** Zend_Search_Lucene_Search_BooleanExpressionRecognizer */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Search/BooleanExpressionRecognizer.php';
+require_once 'Zend/Search/Lucene/Search/BooleanExpressionRecognizer.php';
 
 /** Zend_Search_Lucene_Search_QueryEntry */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Search/QueryEntry.php';
+require_once 'Zend/Search/Lucene/Search/QueryEntry.php';
 
 
 /**
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Search_QueryParserContext
@@ -360,7 +360,7 @@ class Zend_Search_Lucene_Search_QueryParserContext
             }
 
             if (!$nonNegativeEntryFound) {
-            	unset($conjuctions[$conjuctionId]);
+                unset($conjuctions[$conjuctionId]);
             }
         }
 
@@ -382,7 +382,7 @@ class Zend_Search_Lucene_Search_QueryParserContext
         }
 
         if (count($subqueries) == 0) {
-            return new Zend_Search_Lucene_Search_Query_Empty();
+            return new Zend_Search_Lucene_Search_Query_Insignificant();
         }
 
         if (count($subqueries) == 1) {

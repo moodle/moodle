@@ -9,6 +9,10 @@
 * @date 2008/03/31
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
+* @note : The Adobe SWF Converters library is not GPL, although it can be of free use in some
+* situations. This file is provided for convenience, but should use having a glance at 
+* {@link http://www.adobe.com/licensing/developer/}
+*
 * this is a format handler for getting text out of a proprietary binary format 
 * so it can be indexed by Lucene search engine
 */
@@ -17,7 +21,7 @@
 * @param object $resource
 * @uses $CFG
 */
-function get_text_for_indexing_pdf(&$resource, $directfile = ''){
+function get_text_for_indexing_swf(&$resource, $directfile = ''){
     global $CFG;
     
     // SECURITY : do not allow non admin execute anything on system !!
@@ -32,27 +36,33 @@ function get_text_for_indexing_pdf(&$resource, $directfile = ''){
 
     // just call pdftotext over stdout and capture the output
     if (!empty($CFG->block_search_pdf_to_text_cmd)){
-        preg_match("/^\S+/", $CFG->block_search_pdf_to_text_cmd, $matches);
-        if (!file_exists("{$moodleroot}{$matches[0]}")){
-            mtrace('Error with pdf to text converter command : executable not found at '.$moodleroot.$matches[0]);
+        $command = trim($CFG->block_search_swf_to_text_cmd);
+        if (!file_exists("{$moodleroot}{$command}")){
+            mtrace('Error with swf to text converter command : executable not found as '.$moodleroot.$command);
         } else {
             if ($directfile == ''){
                 $file = escapeshellarg("{$CFG->dataroot}/{$resource->course}/{$resource->reference}");
             } else {
                 $file = escapeshellarg("{$CFG->dataroot}/{$directfile}");
             }
-            $command = trim($CFG->block_search_pdf_to_text_cmd);
-            $text_converter_cmd = "{$moodleroot}{$command} $file -";
+            $text_converter_cmd = "{$moodleroot}{$command} -t $file";
             $result = shell_exec($text_converter_cmd);
+            
+            // result is in html. We must strip it off
+            $result = preg_replace("/<[^>]*>/", '', $result);
+            $result = preg_replace("/<!--[^>]*-->/", '', $result);
+            $result = html_entity_decode($result, ENT_COMPAT, 'UTF-8');
+            $result = mb_convert_encoding($result, 'UTF-8', 'auto');
+            
             if ($result){
                 return $result;
             } else {
-                mtrace('Error with pdf to text converter command : execution failed for '.$text_converter_cmd.'. Check for execution permission on pdf converter executable.');
+                mtrace('Error with swf to text converter command : execution failed for '.$text_converter_cmd.'. Check for execution permission on swf converter executable.');
                 return '';
             }
         }
     } else {
-        mtrace('Error with pdf to text converter command : command not set up. Execute once search block configuration.');
+        mtrace('Error with swf to text converter command : command not set up. Execute once search block configuration.');
         return '';
     }
 }

@@ -15,23 +15,23 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 
 /** Zend_Search_Lucene_Search_Query */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Search/Query.php';
+require_once 'Zend/Search/Lucene/Search/Query.php';
 
 /** Zend_Search_Lucene_Search_Weight_MultiTerm */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Search/Weight/MultiTerm.php';
+require_once 'Zend/Search/Lucene/Search/Weight/MultiTerm.php';
 
 
 /**
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Search_Query_MultiTerm extends Zend_Search_Lucene_Search_Query
@@ -103,7 +103,6 @@ class Zend_Search_Lucene_Search_Query_MultiTerm extends Zend_Search_Lucene_Searc
      *
      * @param array $terms    Array of Zend_Search_Lucene_Index_Term objects
      * @param array $signs    Array of signs.  Sign is boolean|null.
-     * @return void
      */
     public function __construct($terms = null, $signs = null)
     {
@@ -139,6 +138,7 @@ class Zend_Search_Lucene_Search_Query_MultiTerm extends Zend_Search_Lucene_Searc
     public function addTerm(Zend_Search_Lucene_Index_Term $term, $sign = null) {
         if ($sign !== true || $this->_signs !== null) {       // Skip, if all terms are required
             if ($this->_signs === null) {                     // Check, If all previous terms are required
+                $this->_signs = array();
                 foreach ($this->_terms as $prevTerm) {
                     $this->_signs[] = true;
                 }
@@ -316,22 +316,47 @@ class Zend_Search_Lucene_Search_Query_MultiTerm extends Zend_Search_Lucene_Searc
             $this->_resVector = array();
         }
 
-        foreach( $this->_terms as $termId=>$term ) {
+        $resVectors      = array();
+        $resVectorsSizes = array();
+        $resVectorsIds   = array(); // is used to prevent arrays comparison
+        foreach ($this->_terms as $termId => $term) {
+            $resVectors[]      = array_flip($reader->termDocs($term));
+            $resVectorsSizes[] = count(end($resVectors));
+            $resVectorsIds[]   = $termId;
+
+            $this->_termsFreqs[$termId] = $reader->termFreqs($term);
+        }
+        // sort resvectors in order of subquery cardinality increasing
+        array_multisort($resVectorsSizes, SORT_ASC, SORT_NUMERIC,
+                        $resVectorsIds,   SORT_ASC, SORT_NUMERIC,
+                        $resVectors);
+
+        foreach ($resVectors as $nextResVector) {
             if($this->_resVector === null) {
-                $this->_resVector = array_flip($reader->termDocs($term));
+                $this->_resVector = $nextResVector;
             } else {
-                $this->_resVector = array_intersect_key($this->_resVector, array_flip($reader->termDocs($term)));
+                //$this->_resVector = array_intersect_key($this->_resVector, $nextResVector);
+                
+                /**
+                 * This code is used as workaround for array_intersect_key() slowness problem.
+                 */
+                $updatedVector = array();
+                foreach ($this->_resVector as $id => $value) {
+                    if (isset($nextResVector[$id])) {
+                        $updatedVector[$id] = $value;
+                    }
+                }
+                $this->_resVector = $updatedVector;
             }
 
             if (count($this->_resVector) == 0) {
                 // Empty result set, we don't need to check other terms
                 break;
             }
-
-            $this->_termsFreqs[$termId] = $reader->termFreqs($term);
         }
 
-        ksort($this->_resVector, SORT_NUMERIC);
+        // ksort($this->_resVector, SORT_NUMERIC);
+        // Docs are returned ordered. Used algorithm doesn't change elements order.
     }
 
 
@@ -343,21 +368,21 @@ class Zend_Search_Lucene_Search_Query_MultiTerm extends Zend_Search_Lucene_Searc
      */
     private function _calculateNonConjunctionResult(Zend_Search_Lucene_Interface $reader)
     {
-        $required   = null;
+        $requiredVectors      = array();
+        $requiredVectorsSizes = array();
+        $requiredVectorsIds   = array(); // is used to prevent arrays comparison
+        
         $optional   = array();
         $prohibited = array();
-
+        
         foreach ($this->_terms as $termId => $term) {
             $termDocs = array_flip($reader->termDocs($term));
 
             if ($this->_signs[$termId] === true) {
                 // required
-                if ($required !== null) {
-                    // array intersection
-                    $required = array_intersect_key($required, $termDocs);
-                } else {
-                    $required = $termDocs;
-                }
+                $requiredVectors[]      = $termDocs;
+                $requiredVectorsSizes[] = count($termDocs);
+                $requiredVectorsIds[]   = $termId;
             } elseif ($this->_signs[$termId] === false) {
                 // prohibited
                 // array union
@@ -371,16 +396,65 @@ class Zend_Search_Lucene_Search_Query_MultiTerm extends Zend_Search_Lucene_Searc
             $this->_termsFreqs[$termId] = $reader->termFreqs($term);
         }
 
+        // sort resvectors in order of subquery cardinality increasing
+        array_multisort($requiredVectorsSizes, SORT_ASC, SORT_NUMERIC,
+                        $requiredVectorsIds,   SORT_ASC, SORT_NUMERIC,
+                        $requiredVectors);
+        
+        $required = null;
+        foreach ($requiredVectors as $nextResVector) {
+            if($required === null) {
+                $required = $nextResVector;
+            } else {
+                //$required = array_intersect_key($required, $nextResVector);
+                
+                /**
+                 * This code is used as workaround for array_intersect_key() slowness problem.
+                 */
+                $updatedVector = array();
+                foreach ($required as $id => $value) {
+                    if (isset($nextResVector[$id])) {
+                        $updatedVector[$id] = $value;
+                    }
+                }
+                $required = $updatedVector;
+            }
+
+            if (count($required) == 0) {
+                // Empty result set, we don't need to check other terms
+                break;
+            }
+        }
+                
         if ($required !== null) {
-            $this->_resVector = (count($prohibited) > 0) ?
-                                           array_diff_key($required, $prohibited) :
-                                           $required;
+            $this->_resVector = $required;
         } else {
-            $this->_resVector = (count($prohibited) > 0) ?
-                                           array_diff_key($optional, $prohibited) :
-                                           $optional;
+            $this->_resVector = $optional;
         }
 
+        if (count($prohibited) != 0) {
+            // $this->_resVector = array_diff_key($this->_resVector, $prohibited);
+            
+            /**
+             * This code is used as workaround for array_diff_key() slowness problem.
+             */
+            if (count($this->_resVector) < count($prohibited)) {
+                $updatedVector = $this->_resVector;
+                foreach ($this->_resVector as $id => $value) {
+                    if (isset($prohibited[$id])) {
+                        unset($updatedVector[$id]);
+                    }
+                }
+                $this->_resVector = $updatedVector;
+            } else {
+                $updatedVector = $this->_resVector;
+                foreach ($prohibited as $id => $value) {
+                    unset($updatedVector[$id]);
+                }
+                $this->_resVector = $updatedVector;
+            }
+        }
+        
         ksort($this->_resVector, SORT_NUMERIC);
     }
 

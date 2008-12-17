@@ -15,23 +15,23 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Storage
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 
 /** Zend_Search_Lucene_Storage_File */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Storage/File.php';
+require_once 'Zend/Search/Lucene/Storage/File.php';
 
 /** Zend_Search_Lucene_Exception */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Exception.php';
+require_once 'Zend/Search/Lucene/Exception.php';
 
 
 /**
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Storage
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Storage_File_Filesystem extends Zend_Search_Lucene_Storage_File
@@ -41,7 +41,8 @@ class Zend_Search_Lucene_Storage_File_Filesystem extends Zend_Search_Lucene_Stor
      *
      * @var resource
      */
-    private $_fileHandle;
+    protected $_fileHandle;
+
 
     /**
      * Class constructor.  Open the file.
@@ -52,6 +53,11 @@ class Zend_Search_Lucene_Storage_File_Filesystem extends Zend_Search_Lucene_Stor
     public function __construct($filename, $mode='r+b')
     {
         global $php_errormsg;
+
+        if (strpos($mode, 'w') === false  &&  !is_readable($filename)) {
+            // opening for reading non-readable file
+            throw new Zend_Search_Lucene_Exception('File \'' . $filename . '\' is not readable.');
+        }
 
         $trackErrors = ini_get('track_errors');
         ini_set('track_errors', '1');
@@ -185,12 +191,12 @@ class Zend_Search_Lucene_Storage_File_Filesystem extends Zend_Search_Lucene_Stor
      * Lock type may be a LOCK_SH (shared lock) or a LOCK_EX (exclusive lock)
      *
      * @param integer $lockType
-     * @param boolean $nonBlockinLock
+     * @param boolean $nonBlockingLock
      * @return boolean
      */
-    public function lock($lockType, $nonBlockinLock = false)
+    public function lock($lockType, $nonBlockingLock = false)
     {
-        if ($nonBlockinLock) {
+        if ($nonBlockingLock) {
             return flock($this->_fileHandle, $lockType | LOCK_NB);
         } else {
             return flock($this->_fileHandle, $lockType);
@@ -214,3 +220,4 @@ class Zend_Search_Lucene_Storage_File_Filesystem extends Zend_Search_Lucene_Stor
     }
 }
 
+?>

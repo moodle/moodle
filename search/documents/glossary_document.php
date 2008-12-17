@@ -52,7 +52,7 @@ class GlossarySearchDocument extends SearchDocument {
         $data->glossary = $entry['glossaryid'];
         
         // construct the parent class
-        parent::__construct($doc, $data, $course_id, -1, $entry['userid'], PATH_FOR_SEARCH_TYPE_GLOSSARY);
+        parent::__construct($doc, $data, $course_id, -1, $entry['userid'], 'mod/'.SEARCH_TYPE_GLOSSARY);
     }
 }
 
@@ -122,6 +122,7 @@ function glossary_iterator() {
 * @return an array of searchable documents
 */
 function glossary_get_content_for_index(&$glossary) {
+    // global $DB;
 
     // get context
     $coursemodule = get_field('modules', 'id', 'name', 'glossary');
@@ -144,8 +145,7 @@ function glossary_get_content_for_index(&$glossary) {
     
     // index comments
     if (count($entryIds)){
-        $entryIdList = implode(',', $entryIds);
-        $comments = get_records_list('glossary_comments', 'entryid', $entryIdList);
+        $comments = get_records_list('glossary_comments', 'entryid', implode(',',$entryIds));
         if ($comments){
             foreach($comments as $comment) {
                 if (strlen($comment->entrycomment) > 0) {
@@ -227,7 +227,7 @@ function glossary_check_text_access($path, $itemtype, $this_id, $user, $group_id
     global $CFG;
     
     // get the glossary object and all related stuff
-    $entry = get_record('glossary_entries', 'id', $id);
+    $entry = get_record('glossary_entries', 'id', $this_id);
     $glossary = get_record('glossary', 'id', $entry->glossaryid);
     $context = get_record('context', 'id', $context_id);
     $cm = get_record('course_modules', 'id', $context->instanceid);
@@ -251,7 +251,12 @@ function glossary_check_text_access($path, $itemtype, $this_id, $user, $group_id
 * @param string $title
 */
 function glossary_link_post_processing($title){
-    return mb_convert_encoding($title, 'UTF-8', 'auto');
+    global $CFG;
+    
+    if ($CFG->block_search_utf8dir){
+        return mb_convert_encoding($title, 'UTF-8', 'auto');
+    }
+    return mb_convert_encoding($title, 'auto', 'UTF-8');
 }
 
 ?>

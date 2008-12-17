@@ -14,16 +14,16 @@
  *
  * @category   Zend
  * @package    Zend_Search_Lucene
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 
 /** Zend_Search_Lucene_FSMAction */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/FSMAction.php';
+require_once 'Zend/Search/Lucene/FSMAction.php';
 
 /** Zend_Search_Exception */
-require_once $CFG->dirroot.'/search/Zend/Search/Exception.php';
+require_once 'Zend/Search/Exception.php';
 
 
 /**
@@ -37,7 +37,7 @@ require_once $CFG->dirroot.'/search/Zend/Search/Exception.php';
  *
  * @category   Zend
  * @package    Zend_Search_Lucene
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Search_Lucene_FSM

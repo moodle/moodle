@@ -1,15 +1,34 @@
 <?php
+$string['asynchronous'] = 'Asynchronous (Ajax)';
 $string['blockname'] = 'Global Search';
+$string['blockssearchswitches'] = 'Indexer activation for blocks';
+$string['blockssearchmnetfeatures'] = 'Moodle Network Search';
+$string['bytes'] = ' bytes (0 stands for no limits)';
 $string['configbuttonlabel'] = 'Button label';
 $string['configenablefileindexing'] = 'Enable file indexing';
 $string['configfiletypes'] = 'File types handled';
 $string['configlimitindexbody'] = 'Indexed body size limitation';
 $string['configpdftotextcmd'] = 'Path to command pdftotext';
+$string['configsearchtext'] = 'Search text';
+$string['configtypetotxtcmd'] = 'Converter\'s command line';
+$string['configtypetotxtenv'] = 'Environment define for converter';
+$string['configusingsoftlock'] = 'Software interlocking (for NFS mounted clusters)';
+$string['configutf8transcoding'] = 'UTF8 transcoding direction of results';
 $string['configwordtotextcmd'] = 'Path to command doctotext';
 $string['configwordtotextenv'] = 'Environment setting for the MSWord converter';
-$string['configsearchtext'] = 'Search text';
+$string['disabled'] = 'Disabled';
+$string['disabledsearch'] = 'The global search engine is off. Inform your administrator.';
+$string['enabled'] = 'Enabled';
 $string['go'] = 'Go!';
-$string['bytes'] = ' bytes (0 stands for no limits)';
+$string['handlingfor'] = 'Extra handling for';
+$string['modulessearchswitches'] = 'Indexer activation for modules';
+$string['nosearchableblocks'] = 'No searchable blocks';
+$string['nosearchablemodules'] = 'No searchable modules';
+$string['pdfhandling'] = 'Acrobat PDF handling';
+$string['search'] = 'Search';
+$string['searchdiscovery'] = 'Searchable items discovery';
 $string['searchmoodle'] = 'Search Moodle';
+$string['synchronous'] = 'Synchronous';
 $string['usemoodleroot'] = 'Use moodle root for external converters';
+$string['wordhandling'] = 'Microsoft Word handling';
 ?>

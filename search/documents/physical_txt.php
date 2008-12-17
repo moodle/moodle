@@ -15,16 +15,21 @@
 
 /**
 * @param object $resource
-* @uses CFG, USER
+* @uses $CFG
 */
-function get_text_for_indexing_txt(&$resource){
-    global $CFG, $USER;
+function get_text_for_indexing_txt(&$resource, $directfile = ''){
+    global $CFG;
     
     // SECURITY : do not allow non admin execute anything on system !!
-    if (!isadmin($USER->id)) return;
+    if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) return;
 
     // just try to get text empirically from ppt binary flow
-    $text = implode('', file("{$CFG->dataroot}/{$resource->course}/{$resource->reference}"));
+    if ($directfile == ''){
+        $text = implode('', file("{$CFG->dataroot}/{$resource->course}/{$resource->reference}"));
+    } else {
+        $text = implode('', file("{$CFG->dataroot}/{$directfile}"));
+    }
+    
     if (!empty($CFG->block_search_limit_index_body)){
         $text = shorten($text, $CFG->block_search_limit_index_body);
     }

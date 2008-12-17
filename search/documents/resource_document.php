@@ -44,7 +44,7 @@ class ResourceSearchDocument extends SearchDocument {
         $data = array();
         
         // construct the parent class
-        parent::__construct($doc, $data, $resource['course'], 0, 0, PATH_FOR_SEARCH_TYPE_RESOURCE);
+        parent::__construct($doc, $data, $resource['course'], 0, 0, 'mod/'.SEARCH_TYPE_RESOURCE);
     } //constructor
 } //ResourceSearchDocument
 
@@ -95,15 +95,15 @@ function resource_get_content_for_index(&$notneeded) {
             alltext != '&nbsp;' AND 
             type != 'file' 
     ";
-    $resources = get_records_sql($query);
-
-    foreach($resources as $aResource){
-        $coursemodule = get_field('modules', 'id', 'name', 'resource');
-        $cm = get_record('course_modules', 'course', $aResource->course, 'module', $coursemodule, 'instance', $aResource->id);
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        $aResource->id = $cm->id;
-        $documents[] = new ResourceSearchDocument(get_object_vars($aResource), $context->id);
-        mtrace("finished $aResource->name");
+    if ($resources = get_records_sql($query)){ 
+        foreach($resources as $aResource){
+            $coursemodule = get_field('modules', 'id', 'name', 'resource');
+            $cm = get_record('course_modules', 'course', $aResource->course, 'module', $coursemodule, 'instance', $aResource->id);
+            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+            $aResource->id = $cm->id;
+            $documents[] = new ResourceSearchDocument(get_object_vars($aResource), $context->id);
+            mtrace("finished $aResource->name");
+        }
     }
 
     // special physical files handling
@@ -135,10 +135,8 @@ function resource_get_content_for_index(&$notneeded) {
                cm.module = m.id AND
                m.name = 'resource'
         ";
-        $resources = get_records_sql($query);
-        
+        if ($resources = get_records_sql($query)){        
         // invokes external content extractor if exists.
-        if ($resources){
             foreach($resources as $aResource){
                 // fetches a physical indexable document and adds it to documents passed by ref
                 $coursemodule = get_field('modules', 'id', 'name', 'resource');
@@ -323,6 +321,11 @@ function resource_check_text_access($path, $itemtype, $this_id, $user, $group_id
 * @param string $title
 */
 function resource_link_post_processing($title){
-    return mb_convert_encoding($title, 'UTF-8', 'auto');
+    global $CFG;
+    
+    if ($CFG->block_search_utf8dir){
+        return mb_convert_encoding($title, 'UTF-8', 'auto');
+    }
+    return mb_convert_encoding($title, 'auto', 'UTF-8');
 }
 ?>
