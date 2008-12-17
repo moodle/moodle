@@ -1088,15 +1088,8 @@ function &get_fast_modinfo(&$course, $userid=0) {
 
     $modlurals = array();
 
-    $cmids    = array();
-    $contexts = null;
-    foreach ($info as $mod) {
-        $cmids[$mod->cm] = $mod->cm;
-    }
-    if ($cmids) {
-        // preload all module contexts with one query
-        $contexts = get_context_instance(CONTEXT_MODULE, $cmids);
-    }
+    // If we haven't already preloaded contexts for the course, do it now
+    preload_course_contexts($course->id);
 
     foreach ($info as $mod) {
         if (empty($mod->name)) {
@@ -1128,11 +1121,14 @@ function &get_fast_modinfo(&$course, $userid=0) {
         }
         $cm->modplural = $modlurals[$cm->modname];
 
-        if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $contexts[$cm->id], $userid)) {
+        $modcontext = get_context_instance(CONTEXT_MODULE,$cm->id);
+
+        if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', 
+            $modcontext, $userid)) {
             $cm->uservisible = false;
 
         } else if (!empty($CFG->enablegroupings) and !empty($cm->groupmembersonly)
-                and !has_capability('moodle/site:accessallgroups', $contexts[$cm->id], $userid)) {
+                and !has_capability('moodle/site:accessallgroups', $modcontext, $userid)) {
             if (is_null($modinfo->groups)) {
                 $modinfo->groups = groups_get_user_groups($course->id, $userid);
             }

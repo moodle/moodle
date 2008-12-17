@@ -2423,6 +2423,56 @@ function cleanup_contexts() {
 }
 
 /**
+ * Preloads all contexts relating to a course: course, modules, and blocks.
+ *
+ * @param int $courseid Course ID
+ */
+function preload_course_contexts($courseid) {
+    global $context_cache, $context_cache_id, $CFG;
+
+    // Users can call this multiple times without doing any harm
+    static $preloadedcourses=array();
+    if(array_key_exists($courseid,$preloadedcourses)) {
+        return;
+    }
+
+    $rs=get_recordset_sql("
+SELECT 
+    x.instanceid, x.id, x.contextlevel, x.path, x.depth
+FROM 
+    {$CFG->prefix}course_modules cm
+    INNER JOIN {$CFG->prefix}context x ON x.instanceid=cm.id
+WHERE
+    cm.course={$courseid}
+    AND x.contextlevel=".CONTEXT_MODULE."
+UNION ALL
+SELECT 
+    x.instanceid, x.id, x.contextlevel, x.path, x.depth
+FROM 
+    {$CFG->prefix}block_instance bi
+    INNER JOIN {$CFG->prefix}context x ON x.instanceid=bi.id
+WHERE
+    bi.pageid={$courseid}
+    AND bi.pagetype='course-view'
+    AND x.contextlevel=".CONTEXT_BLOCK."
+UNION ALL
+SELECT 
+    x.instanceid, x.id, x.contextlevel, x.path, x.depth
+FROM 
+    {$CFG->prefix}context x
+WHERE
+    x.instanceid={$courseid}
+    AND x.contextlevel=".CONTEXT_COURSE."
+");
+    while($context=rs_fetch_next_record($rs)) {
+        $context_cache[$context->contextlevel][$context->instanceid] = $context;
+        $context_cache_id[$context->id] = $context;
+    }
+    rs_close($rs);
+    $preloadedcourses[$courseid]=true;
+}
+
+/**
  * Get the context instance as an object. This function will create the
  * context instance if it does not exist yet.
  * @param integer $level The context level, for example CONTEXT_COURSE, or CONTEXT_MODULE.
