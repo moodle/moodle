@@ -707,7 +707,7 @@ function has_capability_in_accessdata($capability, $context, $accessdata, $doany
                 if ($can < 1) {
                     if ($doanything) {
                         // didn't find it as an explicit cap,
-                        // but maybe the user candoanything in this context...
+                        // but maybe the user can doanything in this context...
                         return has_capability_in_accessdata('moodle/site:doanything', $context, $accessdata, false);
                     } else {
                         return false;
@@ -800,7 +800,7 @@ function has_capability_in_accessdata($capability, $context, $accessdata, $doany
     if ($can < 1) {
         if ($doanything) {
             // didn't find it as an explicit cap,
-            // but maybe the user candoanything in this context...
+            // but maybe the user can doanything in this context...
             return has_capability_in_accessdata('moodle/site:doanything', $context, $accessdata, false);
         } else {
             return false;
