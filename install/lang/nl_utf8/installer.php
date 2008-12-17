@@ -76,6 +76,12 @@ $string['databasecreationsettingssub'] = '<b>Type:</b> \"mysql\" gekozen door he
 <b>Gebruiker:</b> \"root\" gekozen door het installatiescript<br />
 <b>Wachtwoord:</b> het wachtwoord van jouw databank<br />
 <b>Tabelvoorvoegsel:</b> een voorvoegsel dat je wil gebruiken voor alle tabelnamen.';
+$string['databasecreationsettingssub2'] = '<b>Type:</b> ingesteld als \"mysqli\" door het installatiescript<br />
+<b>Host:</b> ingesteld als \"localhost\"  door het installatiescript<br />
+<b>Naam:</b> database naam, bv moodle<br />
+<b>Gebruiker:</b> ingesteld als \"root\"  door het installatiescript<br />
+<b>Wachtwoord:</b> het wachtwoord van jouw databank<br />
+<b>Tabelvoorvoegsel:</b> een voorvoegsel dat je wil gebruiken voor alle tabelnamen.';
 $string['databasehost'] = 'Databank host:';
 $string['databasename'] = 'Datanbanknaam:';
 $string['databasepass'] = 'Databank wachtwoord:';
@@ -319,6 +325,8 @@ $string['releasenoteslink'] = 'Informatie over deze Moodleversie kun je vinden i
 $string['remotedownloaderror'] = 'De download van de component naar jouw server is mislukt, controleer je proxy-instellingen, de PHP cURL-extentie wordt ten zeerste aanbevolen te installeren.<br /><br />Je moet je <a href=\"$a->url\">$a->url</a> bestand manueel downloaden , kopiëren naar de map \"$a->dest\" op je server en het daar unzippen.';
 $string['remotedownloadnotallowed'] = 'Het downloaden van componenten naar je server is niet toegelaten (allow_url_fopen is uitgeschakeld)<br /><br />Je moet het <a href=\"$a->url\">$a->url</a>bestand manueel downloaden en het kopiëren naar \"$a->dest\" op je server en het daar unzippen.';
 $string['report'] = 'Rapport';
+$string['requiredentrieschanged'] = '<strong>BELANGRIJK - LEES DIT<br /> (Deze waarschuwingsboodschap zal alleen tijdens deze upgrade getoond worden)</strong><br /> Door een bug fix zal het gedrag van databankactiviteiten die gebruik maken van \'Vereiste items\' en \'Vereiste items voor bekijken\' wijzigen. Een meer gedetailleerde beschrijving vind je in <a href=\"http://moodle.org/mod/forum/discuss.php?d=110928\" target=\"_blank\">the database module forum</a>. Het verwachte gedrag van deze instellingen kun je ook nalezen op  <a href=\"http://docs.moodle.org/en/Adding/editing_a_database#Required_entries\" target=\"_blank\">Moodle Docs</a>.<br/><br/>
+Deze wijziging heeft effect op volgende databanken in je systeem (bewaar deze lijst nu, zodat je na de upgrade kunt testen of de activiteiten nog steeds werken zoals de leraar het bedoelt): <br/><strong style=\"color:red\">$a->text</strong><br/>';
 $string['restricted'] = 'Beperkt';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle kan bestanden niet juist behandelen met safe mode ingeschakeld';
