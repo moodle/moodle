@@ -1,153 +1,92 @@
-2006/09/08
-----------
-Google Summer of Code is finished, spent a couple of weeks away from
-the project to think about it and also to take a break. Working on it
-now I discovered bugs in the query parser (now fixed), and I also
-un-convoluted the querylib logic (well slighlty).
+This directoery contains the central implementation of
+Moodle's Global Search Engine.
 
-Updated ZFS files to latest SVN.
+The Global Search Engine stores indexes about a huge quantity  
+of information from within modules, block or resources stored 
+by Moodle either in the database or the file system.
 
-2006/08/21
-----------
-Fixed index document count, and created new config variable to store
-the size. (Search now has 3 global vars in $CFG, date, size and complete,
-see indexer.php for var names). Index size is cached to provide an always
-current value for the index - this is to take into account the fact that
-deleted documents are in fact not removed from the index, but instead just
-marked as deleted and not returned in search results. The actual document
-still features in the index, and skews sizes. When the index optimiser is
-completed in ZFS, then these deleted documents will be pruned, thus
-correctly modifying the index size.
+The administrator initialy indexes the existing content. Once this 
+first initialization performed, the search engine maintains indexes
+regularily, adding new entries, deleting obsolete one or updating
+some that have changed.
 
-Additional commenting added.
+Search will produce links for acceding the information in a similar
+context as usually accessed, from the current user point of view.
+Results filtering removes from results any link to information the
+current user would not be allowed to acces on a straight situation.
 
-Query page logic very slightly modified to clean up GET string a bit (removed
-'p' variable).
+Deployment
+###########
 
-Add/delete functions added to other document types.
+The search engine is now part of Moodle core distribution.
 
-A few TODO fields added to source, indicating changes still to come (or at
-least to be considered).
+Some extra libraries might be added for converting physical documents to text
+so it can be indexed. Moodle CVS (entry contrib/patches/global_search_libraries)
+provides packs for antiword and xpdf GPL libraries the search engine is ready for 
+shockwave indexing, but will not provide Adobe Search converters that should be 
+obtained at http://www.adobe.com/licensing/developer/
 
-2006/08/16
-----------
-Add/delete/update cron functions finished - can be called seperately
-or all at once via cron.php.
+1. Go to the block administration panel and setup once the Global Search
+block. This will initialize useful parameters for the global search engine.
 
-Document date field added to index and database summary.
+2. Insert a new Global Search block somewhere in a course or top-level screen. 
 
-Some index db functionality abstracted out to indexlib.php - can
-use IndexDBControl class to add/del documents from database, and
-to make sure the db table is functioning.
+3. Launch an empty search (you must be administrator).
 
-DB sql files changed to add some extra fields.
+4. Go to the statistics screen.
 
-Default 'simple' query modified to search title and author, as well
-as contents of document, to provide better results for users.
+5. Activate indexation (indexersplash.php). Beware, if your Moodle has
+a large amount of content, indexing process may be VERY LONG.
 
-2006/08/14
-----------
-First revision of the advanced search page completed. Functional,
-but needs a date search field still.
+To search, go back to the search block and try a query.
 
-2006/08/02
-----------
-Added resource search type, and the ability to specify custom 'virtual'
-models to search - allowing for non-module specific information to be
-indexed. Specify the extra search types to use in lib.php.
+Handled information for indexing
+################################
 
-2006/07/28
-----------
-Added delete logic to documents; the moodle database log is checked
-and any found delete events are used to remove the referenced documents
-from the database table and search index.
+In the actual state, the engine indexes the following information:
 
-Added database table name constant to lib.php, must change files using
-the static table name.
+- assignment descriptions
+- forum posts
+- database records (using textual fields only)
+- database comments
+- glossary entries
+- glossary comments on entries
+- Moodle native resources
+- physical MSWord files as resources (.doc)
+- physical Powerpoint files as resources (.ppt)
+- physical PDF files as resources 
+- physical text files as resources (.txt)
+- physical html files as resources (.htm and .html)
+- physical xml files as resources (.xml)
+- wiki pages
+- chat sessions
+- lesson pages
 
-Changed documents to use 'docid' instead of 'id' to reference the moodle
-instance id, since Zend Search adds it's own internal 'id' field. Noticed
-this whilst working on deletions.
+Some third party plugins are also searchable using the new Search API implementation
 
-Added some additional fields to the permissions checking method, must still
-implement it though.
+- Techproject
 
-2006/07/25
-----------
-Query logic moved into the SearchQuery class in querylib.php. Should be able
-to include this file in any page and run a query against the index (PHP 5
-checks must be added to those pages then, though).
+Extensions
+##########
 
-Index info can be retrieved using IndexInfo class in indexlib.php.
+The reviewed search engine API allows: 
 
-Abstracted some stuff away, to reduce rendundancy and decrease the
-likelihood of errors. Improved the stats.php page to include some
-diagnostics for adminstrators.
+- indexing of blocks contents
+- indexation of modules or blocks containing a complex information model
+- securing the access to the results
+- adding indexing handling for additional modules and plugins adding a php calibrated script
+- adding physical filetype handling adding a php calibrated script
 
-delete.php skeleton created for removing deleted documents from the
-index. cron.php will contain the logic for running delete.php,
-update.php and eventually add.php.
+Global Search on NFS Mounted clusters
+#####################################
 
-2006/07/11
-----------
-(Warning: It took me 1900 seconds to index the forum, go make coffee
-whilst you wait.) [Moodle.org forum data]
+This version contains a patched Lucene Zend implementation that allows using the Global Search engine in an NFS mounted shared volume for Web clustering. This implementation 
+remains highly experimental and not all tests have been processed. Some changes may
+occur in the SoftLockManager that was added to the Lucene engine.
 
-Forum search functions changed to use 'get_recordset' instead of
-'get_records', for speed reasons. This provides a significant improvement,
-but indexing is still slow - getting data from the database and Zend's
-tokenising _seem_ to be the prime suspects at the moment.
+Future extensions
+#################
 
-/search/tests/ added - index.php can be used to see which modules are
-ready to be included in the search index, and it informs you of any
-errors - should be a prerequisite for indexing.
-
-Search result pagination added to query.php, will default to 20 until
-an admin page for the search module is written.
-
-2006/07/07
-----------
-Search-enabling functions moved out've the mod's lib.php files and into
-/search/documents/mod_document.php - this requires the search module to
-operate without requiring modification of lib files.
-
-SearchDocument base class improved, and the way module documents extend
-it. A custom-data field has been added to allow modules to add any custom
-data they wish to be stored in the index - this field is serialised into
-the index as a binary field.
-
-Database field 'type' renamed to 'doctype' to match the renaming in the
-index, 'type' seems to be a reserved word in Lucene. Several index field
-names change to be more descriptive (cid -> course_id). URLs are now
-stored in the index, and don't have to be generated on the fly during
-display of query results.
-
-2006/07/05
-------
-Started cleaning and standardising things.
-
-cvs v1.1
---------
-This is the initial release (prototype) of Moodle's new search module -
-so basically watch out for sharp edges.
-
-The structure has not been finalised, but this is what is working at the
-moment, when I start looking at other content to index, it will most likely
-change. I don't recommend trying to make your own content modules indexable,
-at least not until the whole flow is finalised. I will be implementing the
-functions needed to index all of the default content modules on Moodle, so
-expect that around mid-August.
-
-Wiki pages were my goal for this release, they can be indexed and searched,
-but not updated or deleted at this stage (was waiting for ZF 0.14 actually).
-
-I need to check the PostgreSQL sql file, I don't have a PG7 install lying
-around to test on, so the script is untested.
-
-To index for the first time, login as an admin user and browse to /search/index.php
-or /search/stats.php - there will be a message and a link telling you to go index.
-
--- Michael Champanis (mchampan)
-   email: cynnical@gmail.com
-   skype: mchampan
-   Summer of Code 2006
+- Should be added more information to index such as forum and glossary attachements, 
+  so will other standard module contents.
+- extending the search capability to a mnet network information space by aggregating remote search responses.

@@ -35,6 +35,10 @@
 */
 require_once('../config.php');
 require_once("$CFG->dirroot/search/lib.php");
+//require_once("debugging.php");
+
+$separator = (array_key_exists('WINDIR', $_SERVER)) ? ';' : ':' ;
+    ini_set('include_path', $CFG->dirroot.'\search'.$separator.ini_get('include_path'));
 
 /// only administrators can index the moodle installation, because access to all pages is required
 
@@ -44,7 +48,7 @@ require_once("$CFG->dirroot/search/lib.php");
         error(get_string('globalsearchdisabled', 'search'));
     }
     
-    if (!isadmin()) {
+    if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
         error(get_string('beadmin', 'search'), "$CFG->wwwroot/login/index.php");
     } 
     
@@ -61,12 +65,6 @@ require_once("$CFG->dirroot/search/lib.php");
     
 /// check for php5 (lib.php)
 
-    if (!search_check_php5()) {
-        $phpversion = phpversion();
-        mtrace("Sorry, global search requires PHP 5.0.0 or later (currently using version ".phpversion().")");
-        exit(0);
-    } 
-    
     //php5 found, continue including php5-only files
     //require_once("$CFG->dirroot/search/Zend/Search/Lucene.php");
     require_once("$CFG->dirroot/search/indexlib.php");
@@ -94,13 +92,16 @@ require_once("$CFG->dirroot/search/lib.php");
         mtrace("Data directory ($index_path) does not exist, attempting to create.");
         if (!mkdir($index_path)) {
             search_pexit("Error creating data directory at: $index_path. Please correct.");
-        }  else {
+        } 
+        else {
             mtrace("Directory successfully created.");
         } 
-    } else {
-        mtrace("Using $index_path as data directory.");
+    } 
+    else {
+        mtrace("Using {$index_path} as data directory.");
     } 
     
+    Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8_CaseInsensitive());
     $index = new Zend_Search_Lucene($index_path, true);
     
     /*
@@ -124,31 +125,39 @@ require_once("$CFG->dirroot/search/lib.php");
     // * mod_iterator
     // * mod_get_content_for_index
     //are the sole basis for including a module in the index at the moment.
-    $searchables = array();
+
+    $searchables = search_collect_searchables();
     
-/// collects modules
+/// start indexation
 
-    if ($mods = get_records('modules', '', '', '', 'id,name')) {
-        $searchables = array_merge($searchables, $mods);
-    }
-    mtrace(count($searchables).' modules found.');
-      
-    // collects blocks as indexable information may be found in blocks either
-    if ($blocks = get_records('block', '', '', '', 'id,name')) {
-        // prepend the "block_" prefix to discriminate document type plugins
-        foreach(array_keys($blocks) as $aBlockId){
-            $blocks[$aBlockId]->name = 'block_'.$blocks[$aBlockId]->name;
-        }
-        $searchables = array_merge($searchables, $blocks);
-        mtrace(count($blocks).' blocks found.');
-    }
-      
-/// add virtual modules onto the back of the array
-
-    $searchables = array_merge($searchables, search_get_additional_modules());
     if ($searchables){
         foreach ($searchables as $mod) {
-            $class_file = $CFG->dirroot.'/search/documents/'.$mod->name.'_document.php';
+        
+            echo "start {$mod->name}";
+        
+            $key = 'search_in_'.$mod->name;
+            if (isset($CFG->$key) && !$CFG->$key) {
+                mtrace("module $key has been administratively disabled. Skipping...\n");
+                continue;
+            }
+        
+            if ($mod->location == 'internal'){
+                $class_file = $CFG->dirroot.'/search/documents/'.$mod->name.'_document.php';
+            } else {
+                $class_file = $CFG->dirroot.'/'.$mod->location.'/'.$mod->name.'/search_document.php';
+            }
+            
+            /*
+            if (!file_exists($class_file)){
+                if (defined("PATH_FOR_SEARCH_TYPE_{$mod->name}")){
+                    eval("\$pluginpath = PATH_FOR_SEARCH_TYPE_{$mod->name}");
+                    $class_file = "{$CFG->dirroot}/{$pluginpath}/searchlib.php";
+                } else {
+                   mtrace ("No search document found for plugin {$mod->name}. Ignoring.");
+                   continue;
+                }
+            }
+            */
          
             if (file_exists($class_file)) {
                 include_once($class_file);
@@ -195,6 +204,8 @@ require_once("$CFG->dirroot/search/lib.php");
                     mtrace("-- $counter documents indexed");
                     mtrace("done.\n");
                 }
+            } else {
+               mtrace ("No search document found for plugin {$mod->name}. Ignoring.");
             }
         }
     }

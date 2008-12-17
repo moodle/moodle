@@ -16,41 +16,88 @@
 *
 */
 
-/*
-// function reference
-function search_get_document_types($prefix = 'SEARCH_TYPE_') {
-function search_get_additional_modules() {
-function search_shorten_url($url, $length=30) {
-function search_escape_string($str) {
-function search_check_php5($feedback = false) {
-function search_stopwatch($cli = false) {
-function search_pexit($str = "") {
+/**
+* Constants
 */
-
-define('SEARCH_INDEX_PATH', "$CFG->dataroot/search");
+define('SEARCH_INDEX_PATH', "{$CFG->dataroot}/search");
 define('SEARCH_DATABASE_TABLE', 'block_search_documents');
 
-//document types that can be searched
-//define('SEARCH_TYPE_NONE', 'none');
-define('SEARCH_TYPE_WIKI', 'wiki');
-define('PATH_FOR_SEARCH_TYPE_WIKI', 'mod/wiki');
-define('SEARCH_TYPE_FORUM', 'forum');
-define('PATH_FOR_SEARCH_TYPE_FORUM', 'mod/forum');
-define('SEARCH_TYPE_GLOSSARY', 'glossary');
-define('PATH_FOR_SEARCH_TYPE_GLOSSARY', 'mod/glossary');
-define('SEARCH_TYPE_RESOURCE', 'resource');
-define('PATH_FOR_SEARCH_TYPE_RESOURCE', 'mod/resource');
-define('SEARCH_TYPE_TECHPROJECT', 'techproject');
-define('PATH_FOR_SEARCH_TYPE_TECHPROJECT', 'mod/techproject');
-define('SEARCH_TYPE_DATA', 'data');
-define('PATH_FOR_SEARCH_TYPE_DATA', 'mod/data');
-define('SEARCH_TYPE_CHAT', 'chat');
-define('PATH_FOR_SEARCH_TYPE_CHAT', 'mod/chat');
-define('SEARCH_TYPE_LESSON', 'lesson');
-define('PATH_FOR_SEARCH_TYPE_LESSON', 'mod/lesson');
+// get document types
+include "{$CFG->dirroot}/search/searchtypes.php";
 
 /**
-* returns all the document type constants
+* collects all searchable items identities
+* @param boolean $namelist if true, only returns list of names of searchable items
+* @param boolean $verbose if true, prints a discovering status
+* @return an array of names or an array of type descriptors
+*/
+function search_collect_searchables($namelist=false, $verbose=true){
+    global $CFG;
+    
+    $searchables = array();
+    $searchables_names = array();
+    
+/// get all installed modules
+    if ($mods = get_records('modules', '', '', 'name', 'id,name')){
+
+        $searchabletypes = array_values(search_get_document_types());
+
+        foreach($mods as $mod){
+            if (in_array($mod->name, $searchabletypes)){
+                $mod->location = 'internal';
+                $searchables[$mod->name] = $mod;
+                $searchables_names[] = $mod->name;
+            } else {
+                $documentfile = $CFG->dirroot."/mod/{$mod->name}/search_document.php";
+                $mod->location = 'mod';
+                if (file_exists($documentfile)){
+                    $searchables[$mod->name] = $mod;
+                    $searchables_names[] = $mod->name;
+                }
+            }        
+        }    
+        if ($verbose) mtrace(count($searchables).' modules to search in / '.count($mods).' modules found.');
+    }
+      
+/// collects blocks as indexable information may be found in blocks either
+    if ($blocks = get_records('block', '', '', 'name', 'id,name')) {
+        $blocks_searchables = array();
+        // prepend the "block_" prefix to discriminate document type plugins
+        foreach($blocks as $block){
+            $block->dirname = $block->name;
+            $block->name = 'block_'.$block->name;
+            if (in_array('SEARCH_TYPE_'.strtoupper($block->name), $searchabletypes)){
+                $mod->location = 'internal';
+                $blocks_searchables[] = $block;
+                $searchables_names[] = $block->name;
+            } else {
+                $documentfile = $CFG->dirroot."/blocks/{$block->dirname}/search_document.php";
+                if (file_exists($documentfile)){
+                    $mod->location = 'blocks';
+                    $blocks_searchables[$block->name] = $block;
+                    $searchables_names[] = $block->name;
+                }
+            }        
+        }    
+        if ($verbose) mtrace(count($blocks_searchables).' blocks to search in / '.count($blocks).' blocks found.');
+        $searchables = array_merge($searchables, $blocks_searchables);
+    }
+      
+/// add virtual modules onto the back of the array
+
+    $additional = search_get_additional_modules();
+    if (!empty($additional)){
+        if ($verbose) mtrace(count($additional).' additional to search in.');
+        $searchables = array_merge($searchables, $additional);
+    }
+    
+    if ($namelist)
+        return $searchables_names;
+    return $searchables;
+}
+
+/**
+* returns all the document type constants that are known in core implementation
 * @param prefix a pattern for recognizing constants
 * @return an array of type labels
 */
@@ -63,7 +110,7 @@ function search_get_document_types($prefix = 'SEARCH_TYPE_') {
     } 
     sort($ret);
     return $ret;
-} //search_get_document_types
+}
 
 /**
 * additional virtual modules to index
@@ -75,10 +122,16 @@ function search_get_document_types($prefix = 'SEARCH_TYPE_') {
 */
 function search_get_additional_modules() {
     $extras = array(/* additional keywords go here */);
+    if (defined('SEARCH_EXTRAS')){
+        $extras = explode(',', SEARCH_EXTRAS);
+    }
+
     $ret = array();
+    $temp = new StdClass;
     foreach($extras as $extra) {
         $temp->name = $extra;
-        $ret[] = clone($temp);
+        $temp->location = 'internal';
+        $ret[$temp->name] = clone($temp);
     } 
     return $ret;
 } //search_get_additional_modules
@@ -112,23 +165,6 @@ function search_escape_string($str) {
     }
     return $s;
 } //search_escape_string
-
-/**
-* get a real php 5 version number, using 5.0.0 arbitrarily
-* @param feedback if true, prints a feedback message to output.
-* @return true if version of PHP is high enough
-*/
-function search_check_php5($feedback = false) {
-    if (!check_php_version("5.0.0")) {
-        if ($feedback) {
-            print_heading(get_string('versiontoolow', 'search'));
-        }
-        return false;
-    } 
-    else {
-      return true;
-    } 
-} //search_check_php5
 
 /**
 * simple timer function, on first call, records a current microtime stamp, outputs result on 2nd call

@@ -1,47 +1,51 @@
 <?php
-/**
-* Global Search Engine for Moodle
-*
-* @package search
-* @category core
-* @subpackage search_engine
-* @author Michael Champanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
-* @date 2008/03/31
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-*
-* Asynchronous index cleaner
-*
-* Major chages in this review is passing the xxxx_db_names return to
-* multiple arity to handle multiple document types modules
-*/
+    /**
+    * Global Search Engine for Moodle
+    *
+    * @package search
+    * @category core
+    * @subpackage search_engine
+    * @author Michael Champanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+    * @date 2008/03/31
+    * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+    *
+    * Asynchronous index cleaner
+    *
+    * Major chages in this review is passing the xxxx_db_names return to
+    * multiple arity to handle multiple document types modules
+    */
+    
+    /**
+    * includes and requires
+    */
+    require_once('../config.php');
 
-/**
-* includes and requires
-*/
-require_once('../config.php');
-require_once("$CFG->dirroot/search/lib.php");
+/// makes inclusions of the Zend Engine more reliable                               
+    $separator = (array_key_exists('WINDIR', $_SERVER)) ? ';' : ':' ;                   
+    ini_set('include_path', $CFG->dirroot.'/search'.$separator.ini_get('include_path'));
 
+    require_once("$CFG->dirroot/search/lib.php");
+    require_once("$CFG->dirroot/search/indexlib.php");    
+    
+    
+/// checks global search activation
 
     require_login();
-    
+
     if (empty($CFG->enableglobalsearch)) {
         error(get_string('globalsearchdisabled', 'search'));
     }
     
-    if (!isadmin()) {
+    if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
         error(get_string('beadmin', 'search'), "$CFG->wwwroot/login/index.php");
     } //if
     
-    //check for php5 (lib.php)
-    if (!search_check_php5()) {
-        $phpversion = phpversion();
-        mtrace("Sorry, global search requires PHP 5.0.0 or later (currently using version ".phpversion().")");
-        exit(0);
+    try {
+        $index = new Zend_Search_Lucene(SEARCH_INDEX_PATH);
+    } catch(LuceneException $e) {
+        mtrace("Could not construct a valid index. Maybe the first indexation was never made, or files might be corrupted. Run complete indexation again.");
+        return;
     }
-    
-    require_once("$CFG->dirroot/search/indexlib.php");
-    
-    $index = new Zend_Search_Lucene(SEARCH_INDEX_PATH);
     $dbcontrol = new IndexDBControl();
     $deletion_count = 0;
     $startcleantime = time();
@@ -49,6 +53,7 @@ require_once("$CFG->dirroot/search/lib.php");
     mtrace('Starting clean-up of removed records...');
     mtrace('Index size before: '.$CFG->search_index_size."\n");
     
+/// check all modules
     if ($mods = get_records_select('modules')) {
         $mods = array_merge($mods, search_get_additional_modules());
         
@@ -68,7 +73,7 @@ require_once("$CFG->dirroot/search/lib.php");
                     $valuesArray = $db_names_function();
                     if ($valuesArray){
                         foreach($valuesArray as $values){
-                           $where = (isset($values[5])) ? 'WHERE '.$values[5] : '';
+                           $where = (!empty($values[5])) ? 'WHERE '.$values[5] : '';
                            $itemtypes = ($values[4] != '*' && $values[4] != 'any') ? " itemtype = '{$values[4]}' AND " : '' ;
                            $query = "
                                 SELECT 

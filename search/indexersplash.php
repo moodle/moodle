@@ -18,7 +18,11 @@
 * includes and requires
 */
 require_once('../config.php');
-require_once("$CFG->dirroot/search/lib.php");
+require_once("{$CFG->dirroot}/search/lib.php");
+
+/// makes inclusions of the Zend Engine more reliable
+$separator = (array_key_exists('WINDIR', $_SERVER)) ? ';' : ':' ;
+ini_set('include_path', $CFG->dirroot.'\search'.$separator.ini_get('include_path'));
 
 /// check global search is enabled 
 
@@ -28,17 +32,9 @@ require_once("$CFG->dirroot/search/lib.php");
         error(get_string('globalsearchdisabled', 'search'));
     }
     
-    if (!isadmin()) {
+    if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
         error(get_string('beadmin', 'search'), "$CFG->wwwroot/login/index.php");
     } 
-    
-/// check for php5 (lib.php)
-
-    if (!search_check_php5()) {
-        $phpversion = phpversion();
-        mtrace("Sorry, global search requires PHP 5.0.0 or later (currently using version ".phpversion().")");
-        exit(0);
-    }
     
     require_once("$CFG->dirroot/search/indexlib.php");
     $indexinfo = new IndexInfo();

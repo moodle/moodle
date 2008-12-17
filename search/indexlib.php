@@ -78,7 +78,8 @@ class IndexInfo {
             $this->dbcount = count_records(SEARCH_DATABASE_TABLE);
             
             //individual document types
-            $types = search_get_document_types();
+            // $types = search_get_document_types();
+            $types = search_collect_searchables(true, false);
             sort($types);
             
             foreach($types as $type) {
