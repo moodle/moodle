@@ -172,6 +172,8 @@
             print_error('cannotupdatelevel');
         }
 
+        rebuild_course_cache($cm->course);
+
         if (SITEID == $cm->course) {
             redirect($CFG->wwwroot);
         } else {

@@ -738,10 +738,16 @@ class grade_grade extends grade_object {
     
     /**
      * Used to notify the completion system (if necessary) that a user's grade
-     * has changed.
+     * has changed, and clear up a possible score cache.
      * @param bool deleted True if grade was actually deleted
      */
     function notify_changed($deleted) {
+        // Grades may be cached in user session
+        global $USER,$SESSION;
+        if($USER->id==$this->userid) {
+            unset($SESSION->gradescorecache[$this->itemid]);
+        }
+
         // Ignore during restore
         // TODO There should be a proper way to determine when we are in restore
         // so that this hack looking for a $restore global is not needed.

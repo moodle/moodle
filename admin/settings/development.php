@@ -14,11 +14,6 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $item->set_updatedcallback('reset_text_filters_cache');
     $temp->add($item);
 
-    // Completion system
-    require_once($CFG->libdir.'/completionlib.php');
-    $temp->add(new admin_setting_configcheckbox('enablecompletion', get_string('enablecompletion','completion'), get_string('configenablecompletion','completion'), COMPLETION_DISABLED));
-    $temp->add(new admin_setting_pickroles('progresstrackedroles', get_string('progresstrackedroles','completion'), get_string('configprogresstrackedroles', 'completion'), array('moodle/legacy:student')));
-
     $ADMIN->add('experimental', $temp);
 
     // DB transfer related pages

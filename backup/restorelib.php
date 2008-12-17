@@ -1127,6 +1127,10 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                         $course_module->completionview=$mod->completionview;
                                         $course_module->completionexpected=$mod->completionexpected;
 
+                                        $course_module->availablefrom=$mod->availablefrom+$restore->course_startdateoffset;
+                                        $course_module->availableuntil=$mod->availableuntil+$restore->course_startdateoffset;
+                                        $course_module->showavailability=$mod->showavailability;
+
                                         $newidmod = $DB->insert_record("course_modules", $course_module);
                                         if ($newidmod) {
                                             //save old and new module id
@@ -1221,6 +1225,61 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             }
 
+            // Store availability information
+            if($status && !empty($info->availabilitydata) && count($info->availabilitydata)>0) {
+
+                foreach($info->availabilitydata as $data) {
+                    // Convert cmid 
+                    $newcmid=backup_getid($restore->backup_unique_code, 'course_modules', $data->coursemoduleid);
+                    if($newcmid) {
+                        $data->coursemoduleid=$newcmid->new_id;
+                    } else {
+                        if (!defined('RESTORE_SILENTLY')) {
+                            echo "<p>Can't find new ID for cm $data->coursemoduleid, ignoring availability condition.</p>";
+                        }
+                        $status=false;
+                        continue;
+                    }
+
+                    // Convert source cmid 
+                    if($data->sourcecmid) {
+                        $newcmid=backup_getid($restore->backup_unique_code, 'course_modules', $data->sourcecmid);
+                        if($newcmid) {
+                            $data->sourcecmid=$newcmid->new_id;
+                        } else {
+                            if (!defined('RESTORE_SILENTLY')) {
+                                echo "<p>Can't find new ID for source cm $data->sourcecmid, ignoring availability condition.</p>";
+                            }
+                            $status=false;
+                            continue;
+                        }
+                    }
+
+                    // Convert grade id
+                    if($data->gradeitemid) {
+                        $newgradeid=backup_getid($restore->backup_unique_code,
+                            'grade_items',$data->gradeitemid);
+                        if($newgradeid) {
+                            $data->gradeitemid=$newgradeid->new_id;
+                        } else {
+                            if (!defined('RESTORE_SILENTLY')) {
+                                echo "<p>Can't find new ID for grade item $data->gradeitemid, ignoring availability condition.</p>";
+                            }
+                            $status=false;
+                            continue;
+                        }                        
+                    }
+
+                    // Add record
+                    if(!$DB->insert_record('course_modules_availability',$data)) {
+                        if (!defined('RESTORE_SILENTLY')) {
+                            echo "<p>Failed to insert availability data record.</p>";
+                        }
+                        $status=false;
+                        continue;
+                    }
+                }
+            }
         } else {
             $status = false;
         }
@@ -5618,6 +5677,12 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                 isset($this->info->tempmod->completionview) ? $this->info->tempmod->completionview : 0;
                             $this->info->tempsection->mods[$this->info->tempmod->id]->completionexpected =
                                 isset($this->info->tempmod->completionexpected) ? $this->info->tempmod->completionexpected : 0;
+                            $this->info->tempsection->mods[$this->info->tempmod->id]->availablefrom =
+                                isset($this->info->tempmod->availablefrom) ? $this->info->tempmod->availablefrom : 0;
+                            $this->info->tempsection->mods[$this->info->tempmod->id]->availableuntil =
+                                isset($this->info->tempmod->availableuntil) ? $this->info->tempmod->availableuntil : 0;
+                            $this->info->tempsection->mods[$this->info->tempmod->id]->showavailability =
+                                isset($this->info->tempmod->showavailability) ? $this->info->tempmod->showavailability : 0;
                                 
                             unset($this->info->tempmod);
                     }
@@ -5668,6 +5733,15 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                             break;
                         case "COMPLETIONEXPECTED":
                             $this->info->tempmod->completionexpected = $this->getContents();
+                            break;
+                        case "AVAILABLEFROM":
+                            $this->info->tempmod->availablefrom = $this->getContents();
+                            break;
+                        case "AVAILABLEUNTIL":
+                            $this->info->tempmod->availableuntil = $this->getContents();
+                            break;
+                        case "SHOWAVAILABILITY":
+                            $this->info->tempmod->showavailability = $this->getContents();
                             break;
                         default:
                             break;
@@ -5790,6 +5864,40 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                 break;
                             case 'TIMEMODIFIED' :
                                 $this->info->tempcompletion->timemodified=$this->getContents();
+                                break;
+                        }
+                    }
+                }
+
+                if (isset($this->tree[7]) && $this->tree[7] == "AVAILABILITYDATA") {
+                    if($this->level == 8) {
+                        switch($tagName) {
+                            case 'AVAILABILITY':
+                                // Got all data to make completion entry...
+                                $this->info->tempavailability->coursemoduleid=$this->info->tempmod->id;                                
+                                $this->info->availabilitydata[]=$this->info->tempavailability;
+                                unset($this->info->tempavailability);
+                                $this->info->tempavailability=new stdClass;
+                                break;
+                        }
+                    }
+
+                    if($this->level == 9) {
+                        switch($tagName) {
+                            case 'SOURCECMID' :
+                                $this->info->tempavailability->sourcecmid=$this->getContents();
+                                break;
+                            case 'REQUIREDCOMPLETION' :
+                                $this->info->tempavailability->requiredcompletion=$this->getContents();
+                               break;
+                            case 'GRADEITEMID' :
+                                $this->info->tempavailability->gradeitemid=$this->getContents();
+                                break;
+                            case 'GRADEMIN' :
+                                $this->info->tempavailability->grademin=$this->getContents();
+                                break;
+                            case 'GRADEMAX' :
+                                $this->info->tempavailability->grademax=$this->getContents();
                                 break;
                         }
                     }

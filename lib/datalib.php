@@ -1835,7 +1835,7 @@ function instance_is_visible($moduletype, $module) {
  * @return bool
  */
 function coursemodule_visible_for_user($cm, $userid=0) {
-    global $USER;
+    global $USER,$CFG;
 
     if (empty($cm->id)) {
         debugging("Incorrect course module parameter!", DEBUG_DEVELOPER);
@@ -1846,6 +1846,15 @@ function coursemodule_visible_for_user($cm, $userid=0) {
     }
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $cm->id), $userid)) {
         return false;
+    }
+    if ($CFG->enableavailability) {
+        require_once($CFG->libdir.'/conditionlib.php');
+        $ci=new condition_info($cm,CONDITION_MISSING_EXTRATABLE);
+        if(!$ci->is_available($cm->availableinfo,false,$userid) and 
+            !has_capability('moodle/course:viewhiddenactivities', 
+                get_context_instance(CONTEXT_MODULE, $cm->id), $userid)) {
+            return false;
+        }
     }
     return groups_course_module_visible($cm, $userid);
 }

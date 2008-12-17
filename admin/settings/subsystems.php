@@ -29,4 +29,15 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $options = array('off'=>get_string('off', 'mnet'), 'strict'=>get_string('on', 'mnet'));
     $optionalsubsystems->add(new admin_setting_configselect('mnet_dispatcher_mode', get_string('net', 'mnet'), get_string('configmnet', 'mnet'), 'off', $options));
 
+    // Conditional activities: completion and availability
+    $optionalsubsystems->add(new admin_setting_configcheckbox('enablecompletion', 
+        get_string('enablecompletion','completion'), 
+        get_string('configenablecompletion','completion'), 0));
+    $optionalsubsystems->add(new admin_setting_pickroles('progresstrackedroles', 
+        get_string('progresstrackedroles','completion'),
+        get_string('configprogresstrackedroles', 'completion'),
+        array('moodle/legacy:student')));
+    $optionalsubsystems->add(new admin_setting_configcheckbox('enableavailability',
+        get_string('enableavailability','condition'),
+        get_string('configenableavailability','condition'), 0));
 }

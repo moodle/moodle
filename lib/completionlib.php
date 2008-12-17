@@ -394,13 +394,15 @@ class completion_info {
      * Obtains completion data for a particular activity and user (from the
      * session cache if available, or by SQL query)
      *
-     * @param object $cm Activity
+     * @param object $cm Activity; only required field is ->id
      * @param bool $wholecourse If true (default false) then, when necessary to
      *   fill the cache, retrieves information from the entire course not just for
      *   this one activity
      * @param int $userid User ID or 0 (default) for current user
-     * @param array $modinfo For unit testing only, supply the value
-     *   here. Otherwise the method calls get_fast_modinfo
+     * @param array $modinfo Supply the value here - this is used for unit 
+     *   testing and so that it can be called recursively from within 
+     *   get_fast_modinfo. (Needs only list of all CMs with IDs.)
+     *   Otherwise the method calls get_fast_modinfo itself.
      * @return object Completion data (record from course_modules_completion)
      * @throws Exception In some cases where the requested course-module is not
      *   found on the specified course
@@ -632,7 +634,7 @@ class completion_info {
         foreach ($users as $user) {
             $userids[] = $user->id;
             $resultobject->users[$user->id]=$user;
-            $resultobject->users[$user->id]->progress=array();            
+            $resultobject->users[$user->id]->progress=array();
         }
 
         for($i=0; $i<count($userids); $i+=1000) {
@@ -716,22 +718,24 @@ WHERE
     }
 
     /**
-     * This temporary function is intended to be replaced once a Moodle exception
-     * system is agreed. Code that used to call this function should instead
-     * throw an exception, so this function should be deleted. The function is
-     * only used internally.
-     *
      * This is to be used only for system errors (things that shouldn't happen)
      * and not user-level errors.
      *
      * @param string $error Error string (will not be displayed to user unless
      *   debugging is enabled)
+     * @throws moodle_exception Exception with the error string as debug info
      */
     function internal_systemerror($error) {
         global $CFG;
+        throw new moodle_exception('err_system','completion',
+            $CFG->wwwroot.'/course/view.php?id='.$this->course->id,null,$error);
+    }
 
-        debugging($error, DEBUG_ALL);
-        print_error('err_system', 'completion', $CFG->wwwroot.'/course/view.php?id='.$this->course->id);
+    /** For testing only. Wipes information cached in user session. */
+    static function wipe_session_cache() {
+        global $SESSION;
+        unset($SESSION->completioncache);
+        unset($SESSION->completioncacheuserid);
     }
 }
 

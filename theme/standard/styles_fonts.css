@@ -569,6 +569,19 @@ h2.headingblock {
   color: #666666;
 }
 
+#course-view .availabilityinfo {
+  font-size:0.85em;
+  color:#aaa;
+}
+#course-view .availabilityinfo strong {
+  font-weight:normal;
+  color:black;
+}
+#course-view .dimmed_text img {
+  opacity:0.3;
+  filter: alpha(opacity='30'); 
+}
+
 /***
  *** Doc
  ***/
@@ -1056,6 +1069,10 @@ body#mod-forum-index .generalbox .cell {
 }
 #mod-quiz-edit .questionbankwindow div.header{
     font-weight:bold;
+}
+#mod-quiz-edit a.configurerandomquestion{
+    font-size:small;
+    text-decoration:underline;
 }
 
 

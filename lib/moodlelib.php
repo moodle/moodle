@@ -2047,6 +2047,30 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
             print_error('nocontext');
         }
     }
+
+    // Conditional activity access control
+    if(!empty($CFG->enableavailability) and $cm) {
+        // We cache conditional access in session
+        if(!isset($SESSION->conditionaccessok)) {
+            $SESSION->conditionaccessok=array();
+        }
+        // If you have been allowed into the module once then you are allowed
+        // in for rest of session, no need to do conditional checks
+        if(!array_key_exists($cm->id,$SESSION->conditionaccessok)) {
+            // Get condition info (does a query for the availability table)
+            require_once($CFG->libdir.'/conditionlib.php');        
+            $ci=new condition_info($cm,CONDITION_MISSING_EXTRATABLE);
+            // Check condition for user (this will do a query if the availability
+            // information depends on grade or completion information)
+            if($ci->is_available($junk) || 
+                has_capability('moodle/course:viewhiddenactivities', $COURSE->context)) {
+                $SESSION->conditionaccessok[$cm->id]=true;
+            } else {
+                print_error('activityiscurrentlyhidden');
+            }
+        }
+    }
+
     if ($COURSE->id == SITEID) {
         /// Eliminate hidden site activities straight away
         if (!empty($cm) && !$cm->visible

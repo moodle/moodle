@@ -1227,6 +1227,10 @@
                fwrite ($bf,full_tag("COMPLETIONGRADEITEMNUMBER",6,false,$course_module->completiongradeitemnumber));
                fwrite ($bf,full_tag("COMPLETIONVIEW",6,false,$course_module->completionview));
                fwrite ($bf,full_tag("COMPLETIONEXPECTED",6,false,$course_module->completionexpected));
+               fwrite ($bf,full_tag("AVAILABLEFROM",6,false,$course_module->availablefrom));
+               fwrite ($bf,full_tag("AVAILABLEUNTIL",6,false,$course_module->availableuntil));
+               fwrite ($bf,full_tag("SHOWAVAILABILITY",6,false,$course_module->showavailability));
+
                // get all the role_capabilities overrides in this mod
                write_role_overrides_xml($bf, $context, 6);
                /// write role_assign code here
@@ -1252,6 +1256,27 @@
                    }
 
                    fwrite ($bf,end_tag("COMPLETIONDATA",6,true));
+               }
+
+               // Write availability data if enabled
+               require_once($CFG->libdir.'/conditionlib.php');
+               if(!empty($CFG->enableavailability)) {                   
+                   fwrite ($bf,start_tag("AVAILABILITYDATA",6,true));
+                   // Get all availability restrictions for this activity
+                   $data=$DB->get_records('course_modules_availability',
+                       array('coursemoduleid'=>$course_module->id));
+                   $data=$data ? $data : array();
+                   foreach($data as $availability) {
+                       // Write availability record
+                       fwrite ($bf,start_tag("AVAILABILITY",7,true));
+                       fwrite ($bf,full_tag("SOURCECMID",8,false,$availability->sourcecmid));
+                       fwrite ($bf,full_tag("REQUIREDCOMPLETION",8,false,$availability->requiredcompletion));
+                       fwrite ($bf,full_tag("GRADEITEMID",8,false,$availability->gradeitemid));
+                       fwrite ($bf,full_tag("GRADEMIN",8,false,$availability->grademin));
+                       fwrite ($bf,full_tag("GRADEMAX",8,false,$availability->grademax));
+                       fwrite ($bf,end_tag("AVAILABILITY",7,true));                       
+                   }
+                   fwrite ($bf,end_tag("AVAILABILITYDATA",6,true));
                }
 
                fwrite ($bf,end_tag("MOD",5,true));

@@ -6,6 +6,7 @@
     require_once("lib.php");
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->libdir.'/completionlib.php');
+    require_once($CFG->libdir.'/conditionlib.php');
 
     $add    = optional_param('add', 0, PARAM_ALPHA);
     $update = optional_param('update', 0, PARAM_INT);
@@ -123,6 +124,11 @@
         $form->completionview     = $cm->completionview;
         $form->completionexpected = $cm->completionexpected;
         $form->completionusegrade = is_null($cm->completiongradeitemnumber) ? 0 : 1;
+        if(!empty($CFG->enableavailability)) {
+            $form->availablefrom      = $cm->availablefrom;
+            $form->availableuntil     = $cm->availableuntil;
+            $form->showavailability   = $cm->showavailability;
+        }
 
         if ($items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$form->modulename,
                                                  'iteminstance'=>$form->instance, 'courseid'=>$course->id))) {
@@ -285,6 +291,12 @@
                 $cm->completionview            = $fromform->completionview;
                 $cm->completionexpected        = $fromform->completionexpected;
             }
+            if(!empty($CFG->enableavailability)) {
+                $cm->availablefrom             = $fromform->availablefrom;
+                $cm->availableuntil            = $fromform->availableuntil;
+                $cm->showavailability          = $fromform->showavailability;
+                condition_info::update_cm_from_form($cm,$fromform,true);
+            }
 
             if (!$DB->update_record('course_modules', $cm)) {
                 print_error('cannotupdatecoursemodule');
@@ -335,6 +347,11 @@
                 $newcm->completionview            = $fromform->completionview;
                 $newcm->completionexpected        = $fromform->completionexpected;
             }
+            if(!empty($CFG->enableavailability)) {
+                $newcm->availablefrom             = $fromform->availablefrom;
+                $newcm->availableuntil            = $fromform->availableuntil;
+                $newcm->showavailability          = $fromform->showavailability;
+            }
 
             if (!$fromform->coursemodule = add_course_module($newcm)) {
                 print_error('cannotaddcoursemodule');
@@ -379,6 +396,12 @@
             if (isset($fromform->cmidnumber)) { //label
                 // set cm idnumber - uniqueness is already verified by form validation
                 set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);
+            }
+
+            // Set up conditions
+            if($CFG->enableavailability) {
+                condition_info::update_cm_from_form(
+                    (object)array('id'=>$fromform->coursemodule),$fromform,false);
             }
 
             add_to_log($course->id, "course", "add mod",
