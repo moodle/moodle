@@ -2174,11 +2174,11 @@ function html_to_text($html) {
 
     require_once($CFG->libdir .'/html2text.php');
 
-    $result = html2text($html);
+    $h2t = new html2text($html);
+    $result = $h2t->get_text();
 
-    // html2text does not fix numerical entities so handle those here.
-    $tl=textlib_get_instance();
-    $result = $tl->entities_to_utf8($result,false);
+    // html2text does not fix HTML entities so handle those here.
+    $result = html_entity_decode($result, ENT_NOQUOTES, 'UTF-8');
 
     return $result;
 }
