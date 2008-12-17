@@ -390,8 +390,8 @@ function forum_cron() {
 
             // caching subscribed users of each forum
             if (!isset($subscribedusers[$forumid])) {
-                if ($subusers = forum_subscribed_users($courses[$courseid], $forums[$forumid], 0,
-                        get_context_instance(CONTEXT_MODULE, $coursemodules[$forumid]))) {
+                $modcontext = get_context_instance(CONTEXT_MODULE, $coursemodules[$forumid]->id);
+                if ($subusers = forum_subscribed_users($courses[$courseid], $forums[$forumid], 0, $modcontext)) {
                     foreach ($subusers as $postuser) {
                         // do not try to mail users with stopped email
                         if ($postuser->emailstop) {
@@ -2722,8 +2722,9 @@ function forum_subscribed_users($course, $forum, $groupid=0, $context = NULL) {
               u.mnethostid";
 
     if (forum_is_forcesubscribed($forum)) {
-        if (is_null($context)) {
-            $context = get_context_instance(CONTEXT_MODULE, get_coursemodule_from_instance('forum', $forum->id, $course->id));
+        if (empty($context)) {
+            $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id);
+            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         }
         $sort = "u.email ASC";
         $results = forum_get_potential_subscribers($context, $groupid, $fields, $sort);
