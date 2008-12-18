@@ -39,6 +39,7 @@
         }
     }
 
+    preload_course_contexts($course->id);
     if (!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
         print_error('nocontext');
     }
