@@ -2507,6 +2507,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         /// Iterate over all users loaded from xml
             $counter = 0;
+
+        /// Init trailing messages
+            $messages = array();
             foreach ($info->users as $userid) {
                 $rec = backup_getid($restore->backup_unique_code,"user",$userid);
                 $user = $rec->info;
@@ -2565,9 +2568,15 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     if (isset($mnethosts[$user->mnethosturl])) {
                         $user->mnethostid = $mnethosts[$user->mnethosturl]->id;
                     } else {
-                        // should not happen, as we check in restore_chech.php
-                        // but handle the error if it does
-                        print_error('backupcontainexternal', 'error');
+                        // lookup failed, switch user auth to manual and host to local. MDL-17009
+                        if ($CFG->registerauth == 'email') {
+                            $user->auth = 'email';
+                        } else {
+                            $user->auth = 'manual';
+                        }
+                        $user->mnethostid = $CFG->mnet_localhost_id;
+                        // inform about the automatic switch of authentication/host
+                        $messages[] = get_string('mnetrestore_extusers_switchuserauth', 'admin', $user);
                     }
                 }
                 unset($user->mnethosturl);
@@ -2834,6 +2843,17 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     backup_flush(300);
                 }
             } /// End of loop over all the users loaded from xml
+
+        /// Inform about all the messages geerated while restoring users
+            if (!defined('RESTORE_SILENTLY')) {
+                if ($messages) {
+                    echo '<ul>';
+                    foreach ($messages as $message) {
+                        echo '<li>' . $message . '</li>';
+                    }
+                    echo '</ul>';
+                }
+            }
         }
 
         return $status;
