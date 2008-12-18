@@ -252,7 +252,7 @@ function forum_get_completion_state($course,$cm,$userid,$type) {
     global $CFG,$DB;
 
     // Get forum details
-    if(!($forum=$DB->get_record('forum',array('id'=>$cm->instance)))) {
+    if (!($forum=$DB->get_record('forum',array('id'=>$cm->instance)))) {
         throw new Exception("Can't find forum {$cm->instance}");
     }
 
@@ -268,30 +268,30 @@ FROM
 WHERE
     fp.userid=:userid AND fd.forum=:forumid";
 
-    if($forum->completiondiscussions) {
+    if ($forum->completiondiscussions) {
         $value = $forum->completiondiscussions <=
-          $DB->count_records('forum_discussions',array('forum'=>$forum->id,'userid'=>$userid));
-          if($type==COMPLETION_AND) {
-            $result=$result && $value;
+                 $DB->count_records('forum_discussions',array('forum'=>$forum->id,'userid'=>$userid));
+        if ($type == COMPLETION_AND) {
+            $result = $result && $value;
         } else {
-            $result=$result || $value;
+            $result = $result || $value;
         }
     }
-    if($forum->completionreplies) {
+    if ($forum->completionreplies) {
         $value = $forum->completionreplies <=
-            $DB->get_field_sql( $postcountsql.' AND fp.parent<>0',$postcountparams);
-        if($type==COMPLETION_AND) {
-            $result=$result && $value;
+                 $DB->get_field_sql( $postcountsql.' AND fp.parent<>0',$postcountparams);
+        if ($type==COMPLETION_AND) {
+            $result = $result && $value;
         } else {
-            $result=$result || $value;
+            $result = $result || $value;
         }
     }
-    if($forum->completionposts) {
+    if ($forum->completionposts) {
         $value = $forum->completionposts <= $DB->get_field_sql($postcountsql,$postcountparams);
-        if($type==COMPLETION_AND) {
-            $result=$result && $value;
+        if ($type == COMPLETION_AND) {
+            $result = $result && $value;
         } else {
-            $result=$result || $value;
+            $result = $result || $value;
         }
     }
 
