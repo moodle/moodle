@@ -362,7 +362,7 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
 
     if ($page->blocks_default_position() == $position &&
         $page->user_is_editing() &&
-        ($managecourseblocks || $editmymoodle || $myownblogpage)) {
+        ($managecourseblocks || $editmymoodle || $myownblogpage || defined('ADMIN_STICKYBLOCKS'))) {
 
         blocks_print_adminblock($page, $pageblocks);
     }

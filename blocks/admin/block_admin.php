@@ -19,6 +19,12 @@ class block_admin extends block_list {
         $this->content->icons = array();
         $this->content->footer = '';
 
+        if (empty($this->instance->pageid)) { // sticky
+            if (!empty($COURSE)) {
+                $this->instance->pageid = $COURSE->id;
+            }
+        }
+
         if (empty($this->instance)) {
             return $this->content = '';
         } else if ($this->instance->pageid == SITEID) {
