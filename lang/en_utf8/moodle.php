@@ -801,6 +801,7 @@ $string['helpwiththis'] = 'Help with this';
 $string['helpwiki'] = 'How to write Wiki-like text';
 $string['helpwriting'] = 'Write carefully';
 $string['hiddenassign'] = 'Hidden assignment';
+$string['hiddenfromstudents'] = 'Hidden from students';
 $string['hiddensections'] = 'Hidden sections';
 $string['hiddensectionscollapsed'] = 'Hidden sections are shown in collapsed form';
 $string['hiddensectionsinvisible'] = 'Hidden sections are completely invisible';

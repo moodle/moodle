@@ -1389,8 +1389,20 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             }
 
             if (isset($modinfo->cms[$modnumber])) {
+                // We can continue (because it will not be displayed at all)
+                // if:
+                // 1) The activity is not visible to users
+                // and
+                // 2a) The 'showavailability' option is not set (if that is set,
+                //     we need to display the activity so we can show 
+                //     availability info)
+                // or
+                // 2b) The 'availableinfo' is empty, i.e. the activity was 
+                //     hidden in a way that leaves no info, such as using the 
+                //     eye icon.
                 if (!$modinfo->cms[$modnumber]->uservisible &&
-                    empty($modinfo->cms[$modnumber]->showavailability)) {
+                    (empty($modinfo->cms[$modnumber]->showavailability) ||
+                      empty($modinfo->cms[$modnumber]->availableinfo))) {
                     // visibility shortcut
                     continue;
                 }
@@ -1426,7 +1438,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
             if ($mod->modname == "label") {
                 if (!$mod->visible || !$mod->uservisible) {
-                    echo "<div class=\"dimmed_text\">";
+                    echo '<div class="dimmed_text"><span class="accesshide">'.
+                        get_string('hiddenfromstudents').'</span></div>';
                 }
                 echo format_text($extra, FORMAT_HTML, $labelformatoptions);
                 if (!$mod->visible) {
@@ -1475,11 +1488,19 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 // about visibility, without the actual link
                 if($mod->uservisible) {
                     // Display normal module link
-                    $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
-                    echo '<a '.$linkcss.' '.$extra.        // Title unnecessary!
-                         ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.
-                         '<img src="'.$icon.'" class="activityicon" alt="" /> <span>'.
-                         $instancename.$altname.'</span></a>';
+                    if($mod->visible) {
+                        $linkcss='';
+                        $accesstext='';
+                    } else {
+                        $linkcss = ' class="dimmed" ';
+                        $accesstext='<span class="accesshide">'.
+                            get_string('hiddenfromstudents').': </span>';
+                    }
+                        
+                    echo '<a '.$linkcss.' '.$extra.
+                         ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.                         
+                         '<img src="'.$icon.'" class="activityicon" alt="" /> '.
+                         $accesstext.'<span>'.$instancename.$altname.'</span></a>';
 
                     if (!empty($CFG->enablegroupings) && !empty($mod->groupingid) && has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
                         if (!isset($groupings)) {
@@ -1489,9 +1510,10 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     }
                 } else {
                     // Display greyed-out text of link
-                    echo '<span class="dimmed_text" '.$extra.' >'.
-                         '<img src="'.$icon.'" class="activityicon" alt="" /> <span>'.
-                         $instancename.$altname.'</span></span>';
+                    echo '<span class="dimmed_text" '.$extra.' ><span class="accesshide">'.
+                        get_string('notavailableyet','condition').': </span>'.
+                        '<img src="'.$icon.'" class="activityicon" alt="" /> <span>'.
+                        $instancename.$altname.'</span></span>';
                 }
             }
             if ($usetracking && $mod->modname == 'forum') {

@@ -17,6 +17,7 @@ $string['completioncondition']='Activity completion condition';
 $string['help_conditiondates']='available dates';
 $string['help_showavailability']='display of unavailable activities';
 $string['none']='(none)';
+$string['notavailableyet']='Not available yet';
 $string['requires_completion_0']='Not available unless the activity <strong>$a</strong> is incomplete.';
 $string['requires_completion_1']='Not available until the activity <strong>$a</strong> is marked complete.';
 $string['requires_completion_2']='Not available until the activity <strong>$a</strong> is complete and passed.';
