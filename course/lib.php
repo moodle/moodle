@@ -1439,10 +1439,10 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             if ($mod->modname == "label") {
                 if (!$mod->visible || !$mod->uservisible) {
                     echo '<div class="dimmed_text"><span class="accesshide">'.
-                        get_string('hiddenfromstudents').'</span></div>';
+                        get_string('hiddenfromstudents').'</span>';
                 }
                 echo format_text($extra, FORMAT_HTML, $labelformatoptions);
-                if (!$mod->visible) {
+                if (!$mod->visible || !$mod->uservisible) {
                     echo "</div>";
                 }
                 if (!empty($CFG->enablegroupings) && !empty($mod->groupingid) && has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
