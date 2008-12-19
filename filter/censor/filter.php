@@ -9,37 +9,57 @@
 //
 //////////////////////////////////////////////////////////////
 
-/// This is the filtering function itself.  It accepts the 
-/// courseid and the text to be filtered (in HTML form).
-
-function censor_filter($courseid, $text) {
-
-    static $words;
-    global $CFG;
-
-    if (!isset($CFG->filter_censor_badwords)) {
-        set_config( 'filter_censor_badwords','' );
+/// This is the filtering class. It accepts the courseid and 
+/// options to be filtered (In HTML form).
+class censor_filter extends filter_base {
+    function __construct($courseid, $format, $options) {
+        parent::__construct($courseid, $format, $options);
     }
-
-    if (empty($words)) {
-        $words = array();
-        // if no user-specified words, use default list from language pack
-        if (empty($CFG->filter_censor_badwords)) {
-            $badwords = explode(',',get_string('badwords','censor') );
+    private function _canseecensor() {
+        $cansee = false;
+        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        if (has_capability('moodle/site:doanything', $context)) {
+            $cansee = true; 
         }
-        else {
-            $badwords = explode(',', $CFG->filter_censor_badwords );
-        }
-        foreach ($badwords as $badword) {
-            $badword = trim($badword);
-            // See MDL-3964 for explanation of leaving the badword in the span title 
-            $words[] = new filterobject($badword, '<span class="censoredtext" title="'.$badword.'">', '</span>', 
-                                        false, false, str_pad('',strlen($badword),'*'));
-        }
+        return $cansee;
     }
+    function hash(){
+        $cap = "mod/filter:censor";
+        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+        if (has_capability('moodle/site:doanything', $context)) {
+            $cap = "mod/filter:seecensor";
+        }
+        return $cap;
+    }
+    function filter($text){
+        static $words;
+        global $CFG;
 
-    return filter_phrases($text, $words);  // Look for all these words in the text
+        if (!isset($CFG->filter_censor_badwords)) {
+            set_config( 'filter_censor_badwords','' );
+        }
+
+        if (empty($words)) {
+            $words = array();
+            if (empty($CFG->filter_censor_badwords)) {
+                $badwords = explode(',',get_string('badwords','censor'));
+            }
+            else {
+                $badwords = explode(',', $CFG->filter_censor_badwords);
+            }
+            foreach ($badwords as $badword) {
+                $badword = trim($badword);
+                if($this->_canseecensor()){
+                    $words[] = new filterobject($badword, '<span title"'.$badword.'">', '</span>',
+                        false, false, $badword);
+                } else {
+                    $words[] = new filterobject($badword, '<span class="censoredtext" title="'.$badword.'">',
+                        '</span>', false, false, str_pad('',strlen($badword),'*'));
+                }
+            }
+        }
+        return filter_phrases($text, $words);
+    }
 }
-
 
 ?>

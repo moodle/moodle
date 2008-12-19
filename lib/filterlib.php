@@ -1,6 +1,55 @@
 <?php // $Id$
       // Contains special functions that are particularly useful to filters
 
+abstract class filter_base {
+    public static $filters = array();
+    protected $courseid;
+    protected $format;
+    protected $options;
+
+    public function __construct($courseid, $format, $options) {
+        $this->courseid = $courseid;
+        $this->format   = $format;
+        $this->options  = $options;
+    }
+
+    public static function addfilter($classname, $obj) {
+        if (empty(self::$filters[$classname])) {
+            self::$filters[$classname] = $obj;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static function do_filter($text, $courseid = null) {
+        global $CFG;
+
+        foreach (self::$filters as $n=>$obj) {
+            $text = $obj->filter($text); 
+        }
+
+        // back compatable with old filter plugins
+        $textfilters = explode(',', $CFG->textfilters);
+        foreach ($textfilters as $v) {
+            $text_filter = basename($v).'_filter';
+            if (empty(self::$filters[$text_filter]) && is_readable($CFG->dirroot .'/'. $v .'/filter.php')) {
+                include_once($CFG->dirroot .'/'. $v .'/filter.php');
+                if (function_exists($text_filter)) {
+                    $text = $text_filter($courseid, $text);
+                }
+            }
+        }
+        return $text;
+    }
+
+    public function hash() {
+        return __CLASS__;
+    }
+
+    // filter plugin must overwrite this function to filter
+    abstract function filter($text);
+}
 
 /**
  * This is just a little object to define a phrase and some instructions 

@@ -1,6 +1,5 @@
 <?php // $Id$
 
-
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -1352,6 +1351,8 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
     global $CFG, $COURSE, $DB;
 
     static $croncache = array();
+    
+    $hashstr = '';
 
     if ($text === '') {
         return ''; // no need to do any filters and cleaning
@@ -1379,15 +1380,34 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
     if (!isset($options->newlines)) {
         $options->newlines=true;
     }
-
     if (empty($courseid)) {
         $courseid = $COURSE->id;
     }
 
+    // if filter plugin is OOP format, add it to filter list and append hash
+    // value to $hashstr
+    if (!empty($CFG->textfilters)) {
+        require_once($CFG->libdir.'/filterlib.php');
+        $textfilters = explode(',', $CFG->textfilters);
+        foreach ($textfilters as $textfilter) {
+            if (is_readable($CFG->dirroot .'/'. $textfilter .'/filter.php')) {
+                include_once($CFG->dirroot .'/'. $textfilter .'/filter.php');
+                $text_filter = basename($textfilter).'_filter';
+                if (class_exists($text_filter)) {
+                    $obj = new $text_filter($courseid, $format, $options);
+                    filter_base::addfilter($text_filter, $obj);
+                    $hashstr .= $obj->hash();
+                }
+            }
+        }
+    }
     if (!empty($CFG->cachetext) and empty($options->nocache)) {
-        $time = time() - $CFG->cachetext;
-        $md5key = md5($text.'-'.(int)$courseid.'-'.current_language().'-'.(int)$format.(int)$options->trusttext.(int)$options->noclean.(int)$options->smiley.(int)$options->filter.(int)$options->para.(int)$options->newlines);
+        $hashstr .= $text.'-'.(int)$courseid.'-'.current_language().'-'.(int)$format.(int)$options->trusttext.(int)$options->noclean.(int)$options->smiley.(int)$options->filter.(int)$options->para.(int)$options->newlines;
+        // for debug filtering system
+        // $hashstr .= time();
 
+        $time = time() - $CFG->cachetext;
+        $md5key = md5($hashstr); 
         if (defined('FULLME') and FULLME == 'cron') {
             if (isset($croncache[$md5key])) {
                 return $croncache[$md5key];
@@ -1438,7 +1458,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
                 $text = clean_text($text, FORMAT_HTML);
             }
             if ($options->filter) {
-                $text = filter_text($text, $courseid);
+                $text = filter_base::do_filter($text, $courseid);
             }
             break;
 
@@ -1467,7 +1487,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             }
 
             if ($options->filter) {
-                $text = filter_text($text, $courseid);
+                $text = filter_base::do_filter($text, $courseid);
             }
             break;
 
@@ -1478,7 +1498,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             }
 
             if ($options->filter) {
-                $text = filter_text($text, $courseid);
+                $text = filter_base::do_filter($text, $courseid);
             }
             break;
     }

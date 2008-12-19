@@ -91,13 +91,18 @@ function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $a
     return $output;
 }
 
-function tex_filter ($courseid, $text) {
-    global $CFG, $DB;
-
-    /// Do a quick check using stripos to avoid unnecessary work
-    if (!preg_match('/<tex/i',$text) and !strstr($text,'$$') and !strstr($text,'\\[') and !preg_match('/\[tex/i',$text)) { //added one more tag (dlnsk)
-        return $text;
+class tex_filter extends filter_base {
+    function __construct($courseid, $format, $options) {
+        parent::__construct($courseid, $format, $options);
     }
+    function filter ($text) {
+
+        global $CFG, $DB;
+
+        /// Do a quick check using stripos to avoid unnecessary work
+        if (!preg_match('/<tex/i',$text) and !strstr($text,'$$') and !strstr($text,'\\[') and !preg_match('/\[tex/i',$text)) { //added one more tag (dlnsk)
+            return $text;
+        }
 
 #    //restrict filtering to forum 130 (Maths Tools on moodle.org)
 #    $scriptname = $_SERVER['SCRIPT_NAME'];
@@ -115,48 +120,49 @@ function tex_filter ($courseid, $text) {
 #    if ($discussion->forum != 130) {
 #        return $text;
 #    }
-    $text .= ' ';
-    preg_match_all('/\$(\$\$+?)([^\$])/s',$text,$matches);
-    for ($i=0;$i<count($matches[0]);$i++) {
-        $replacement = str_replace('$','&#x00024;',$matches[1][$i]).$matches[2][$i];
-        $text = str_replace($matches[0][$i],$replacement,$text);
-    }
+        $text .= ' ';
+        preg_match_all('/\$(\$\$+?)([^\$])/s',$text,$matches);
+        for ($i=0;$i<count($matches[0]);$i++) {
+            $replacement = str_replace('$','&#x00024;',$matches[1][$i]).$matches[2][$i];
+            $text = str_replace($matches[0][$i],$replacement,$text);
+        }
 
-    // <tex> TeX expression </tex>
-    // or <tex alt="My alternative text to be used instead of the TeX form"> TeX expression </tex>
-    // or $$ TeX expression $$
-    // or \[ TeX expression \]          // original tag of MathType and TeXaide (dlnsk)
-    // or [tex] TeX expression [/tex]   // somtime it's more comfortable than <tex> (dlnsk)
-    preg_match_all('/<tex(?:\s+alt=["\'](.*?)["\'])?>(.+?)<\/tex>|\$\$(.+?)\$\$|\\\\\[(.+?)\\\\\]|\\[tex\\](.+?)\\[\/tex\\]/is', $text, $matches);
-    for ($i=0; $i<count($matches[0]); $i++) {
-        $texexp = $matches[2][$i] . $matches[3][$i] . $matches[4][$i] . $matches[5][$i];
-        $alt = $matches[1][$i];
-        $texexp = str_replace('<nolink>','',$texexp);
-        $texexp = str_replace('</nolink>','',$texexp);
-        $texexp = str_replace('<span class="nolink">','',$texexp);
-        $texexp = str_replace('</span>','',$texexp);
-        $texexp = eregi_replace("<br[[:space:]]*\/?>", '', $texexp);  //dlnsk
-        $align = "middle";
-        if (preg_match('/^align=bottom /',$texexp)) {
-          $align = "text-bottom";
-          $texexp = preg_replace('/^align=bottom /','',$texexp);
-        } else if (preg_match('/^align=top /',$texexp)) {
-          $align = "text-top";
-          $texexp = preg_replace('/^align=top /','',$texexp);
+        // <tex> TeX expression </tex>
+        // or <tex alt="My alternative text to be used instead of the TeX form"> TeX expression </tex>
+        // or $$ TeX expression $$
+        // or \[ TeX expression \]          // original tag of MathType and TeXaide (dlnsk)
+        // or [tex] TeX expression [/tex]   // somtime it's more comfortable than <tex> (dlnsk)
+        preg_match_all('/<tex(?:\s+alt=["\'](.*?)["\'])?>(.+?)<\/tex>|\$\$(.+?)\$\$|\\\\\[(.+?)\\\\\]|\\[tex\\](.+?)\\[\/tex\\]/is', $text, $matches);
+        for ($i=0; $i<count($matches[0]); $i++) {
+            $texexp = $matches[2][$i] . $matches[3][$i] . $matches[4][$i] . $matches[5][$i];
+            $alt = $matches[1][$i];
+            $texexp = str_replace('<nolink>','',$texexp);
+            $texexp = str_replace('</nolink>','',$texexp);
+            $texexp = str_replace('<span class="nolink">','',$texexp);
+            $texexp = str_replace('</span>','',$texexp);
+            $texexp = eregi_replace("<br[[:space:]]*\/?>", '', $texexp);  //dlnsk
+            $align = "middle";
+            if (preg_match('/^align=bottom /',$texexp)) {
+              $align = "text-bottom";
+              $texexp = preg_replace('/^align=bottom /','',$texexp);
+            } else if (preg_match('/^align=top /',$texexp)) {
+              $align = "text-top";
+              $texexp = preg_replace('/^align=top /','',$texexp);
+            }
+            $md5 = md5($texexp);
+            if (! $texcache = $DB->get_record("cache_filters", array("filter"=>"tex", "md5key"=>$md5))) {
+                $texcache->filter = 'tex';
+                $texcache->version = 1;
+                $texcache->md5key = $md5;
+                $texcache->rawtext = $texexp;
+                $texcache->timemodified = time();
+                $DB->insert_record("cache_filters", $texcache, false);
+            }
+            $filename = $md5 . ".gif";
+            $text = str_replace( $matches[0][$i], string_file_picture_tex($filename, $texexp, '', '', $align, $alt), $text);
         }
-        $md5 = md5($texexp);
-        if (! $texcache = $DB->get_record("cache_filters", array("filter"=>"tex", "md5key"=>$md5))) {
-            $texcache->filter = 'tex';
-            $texcache->version = 1;
-            $texcache->md5key = $md5;
-            $texcache->rawtext = $texexp;
-            $texcache->timemodified = time();
-            $DB->insert_record("cache_filters",$texcache, false);
-        }
-        $filename = $md5 . ".gif";
-        $text = str_replace( $matches[0][$i], string_file_picture_tex($filename, $texexp, '', '', $align, $alt), $text);
+        return $text;
     }
-    return $text;
 }
 
 ?>

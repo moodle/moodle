@@ -36,32 +36,38 @@
 // Following new syntax is not compatible with old one:
 //   <span lang="XX" class="multilang">one lang</span><span lang="YY" class="multilang">another language</span>
 
-function multilang_filter($courseid, $text) {
-    global $CFG;
-
-    // [pj] I don't know about you but I find this new implementation funny :P
-    // [skodak] I was laughing while rewriting it ;-)
-    // [nicolasconnault] Should support inverted attributes: <span class="multilang" lang="en"> (Doesn't work curently)
-    // [skodak] it supports it now, though it is slower - any better idea? 
-
-    if (empty($text) or is_numeric($text)) {
-        return $text;
+class multilang_filter extends filter_base {
+    function __construct($courseid, $format, $options) {
+        parent::__construct($courseid, $format, $options);
     }
 
-    if (empty($CFG->filter_multilang_force_old) and !empty($CFG->filter_multilang_converted)) {
-        // new syntax
-        $search = '/(<span(\s+lang="[a-zA-Z0-9_-]+"|\s+class="multilang"){2}\s*>.*?<\/span>)(\s*<span(\s+lang="[a-zA-Z0-9_-]+"|\s+class="multilang"){2}\s*>.*?<\/span>)+/is';
-    } else {
-        // old syntax
-        $search = '/(<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.*?<\/(?:lang|span)>)(\s*<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.*?<\/(?:lang|span)>)+/is';
-    }
+    function filter($text) {
+        global $CFG;
 
-    $result = preg_replace_callback($search, 'multilang_filter_impl', $text);
+        // [pj] I don't know about you but I find this new implementation funny :P
+        // [skodak] I was laughing while rewriting it ;-)
+        // [nicolasconnault] Should support inverted attributes: <span class="multilang" lang="en"> (Doesn't work curently)
+        // [skodak] it supports it now, though it is slower - any better idea? 
 
-    if (is_null($result)) {
-        return $text; //error during regex processing (too many nested spans?)
-    } else {
-        return $result;
+        if (empty($text) or is_numeric($text)) {
+            return $text;
+        }
+
+        if (empty($CFG->filter_multilang_force_old) and !empty($CFG->filter_multilang_converted)) {
+            // new syntax
+            $search = '/(<span(\s+lang="[a-zA-Z0-9_-]+"|\s+class="multilang"){2}\s*>.*?<\/span>)(\s*<span(\s+lang="[a-zA-Z0-9_-]+"|\s+class="multilang"){2}\s*>.*?<\/span>)+/is';
+        } else {
+            // old syntax
+            $search = '/(<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.*?<\/(?:lang|span)>)(\s*<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.*?<\/(?:lang|span)>)+/is';
+        }
+
+        $result = preg_replace_callback($search, 'multilang_filter_impl', $text);
+
+        if (is_null($result)) {
+            return $text; //error during regex processing (too many nested spans?)
+        } else {
+            return $result;
+        }
     }
 }
 
