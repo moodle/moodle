@@ -182,31 +182,31 @@
         $myreports  = ($course->showreports and $USER->id == $user->id);
         $anyreport  = has_capability('moodle/user:viewuseractivitiesreport', $personalcontext);
 
-        $secondrow = array();
+        $reportsecondrow = array();
 
         if ($myreports or $anyreport or has_capability('coursereport/outline:view', $coursecontext)) {
-            $secondrow[] = new tabobject('outline', $CFG->wwwroot.'/course/user.php?id='.$course->id.
+            $reportsecondrow[] = new tabobject('outline', $CFG->wwwroot.'/course/user.php?id='.$course->id.
                                          '&amp;user='.$user->id.'&amp;mode=outline', get_string('outlinereport'));
         }
 
         if ($myreports or $anyreport or has_capability('coursereport/outline:view', $coursecontext)) {
-            $secondrow[] = new tabobject('complete', $CFG->wwwroot.'/course/user.php?id='.$course->id.
+            $reportsecondrow[] = new tabobject('complete', $CFG->wwwroot.'/course/user.php?id='.$course->id.
                                          '&amp;user='.$user->id.'&amp;mode=complete', get_string('completereport'));
         }
 
         if ($myreports or $anyreport or has_capability('coursereport/log:viewtoday', $coursecontext)) {
-            $secondrow[] = new tabobject('todaylogs', $CFG->wwwroot.'/course/user.php?id='.$course->id.
+            $reportsecondrow[] = new tabobject('todaylogs', $CFG->wwwroot.'/course/user.php?id='.$course->id.
                                          '&amp;user='.$user->id.'&amp;mode=todaylogs', get_string('todaylogs'));
         }
 
         if ($myreports or $anyreport or has_capability('coursereport/log:view', $coursecontext)) {
-            $secondrow[] = new tabobject('alllogs', $CFG->wwwroot.'/course/user.php?id='.$course->id.
+            $reportsecondrow[] = new tabobject('alllogs', $CFG->wwwroot.'/course/user.php?id='.$course->id.
                                          '&amp;user='.$user->id.'&amp;mode=alllogs', get_string('alllogs'));
         }
 
         if (!empty($CFG->enablestats)) {
             if ($myreports or $anyreport or has_capability('coursereport/stats:view', $coursecontext)) {
-                $secondrow[] = new tabobject('stats',$CFG->wwwroot.'/course/user.php?id='.$course->id.
+                $reportsecondrow[] = new tabobject('stats',$CFG->wwwroot.'/course/user.php?id='.$course->id.
                                              '&amp;user='.$user->id.'&amp;mode=stats',get_string('stats'));
             }
         }
@@ -232,18 +232,17 @@
         }
 
         if ($gradeaccess) {
-            $secondrow[] = new tabobject('grade', $CFG->wwwroot.'/course/user.php?id='.$course->id.
+            $reportsecondrow[] = new tabobject('grade', $CFG->wwwroot.'/course/user.php?id='.$course->id.
                                          '&amp;user='.$user->id.'&amp;mode=grade', get_string('grade'));
         }
 
-        if ($secondrow) {
+        if ($reportsecondrow) {
             $toprow[] = new tabobject('reports', $CFG->wwwroot.'/course/user.php?id='.$course->id.
                                       '&amp;user='.$user->id.'&amp;mode=outline', get_string('activityreports'));
             if (in_array($currenttab, array('outline', 'complete', 'todaylogs', 'alllogs', 'stats', 'grade'))) {
                 $inactive  = array('reports');
                 $activetwo = array('reports');
-            } else {
-                $secondrow = array();
+                $secondrow = $reportsecondrow;
             }
         }
     }    //close last bracket (individual tags)
