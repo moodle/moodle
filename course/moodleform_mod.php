@@ -434,7 +434,9 @@ class moodleform_mod extends moodleform {
                 $completionoptions=array();
                 $modinfo=get_fast_modinfo($COURSE);
                 foreach($modinfo->cms as $id=>$cm) {
-                    $completionoptions[$id]=$cm->name;
+                    if($cm->completion) {
+                        $completionoptions[$id]=$cm->name;
+                    }
                 }
                 asort($completionoptions);
                 $completionoptions=array(0=>get_string('none','condition'))+$completionoptions;
