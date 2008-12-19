@@ -396,6 +396,7 @@ class moodleform_mod extends moodleform {
             // Conditions based on grades
             $gradeoptions=array();
             $items=grade_item::fetch_all(array('courseid'=>$COURSE->id));
+            $items=$items ? $items : array();
             foreach($items as $id=>$item) {
                 $gradeoptions[$id]=$item->get_name();
             }
