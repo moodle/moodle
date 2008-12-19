@@ -5269,7 +5269,7 @@ function get_role_users($roleid, $context, $parent=false, $fields='',
         $fields = 'u.id, u.confirmed, u.username, u.firstname, u.lastname, '.
                   'u.maildisplay, u.mailformat, u.maildigest, u.email, u.city, '.
                   'u.country, u.picture, u.idnumber, u.department, u.institution, '.
-                  'u.emailstop, u.lang, u.timezone, r.name as rolename';
+                  'u.emailstop, u.lang, u.timezone, u.lastaccess, u.mnethostid, r.name as rolename';
     }
 
     // whether this assignment is hidden
