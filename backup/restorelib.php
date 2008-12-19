@@ -1237,7 +1237,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         if (!defined('RESTORE_SILENTLY')) {
                             echo "<p>Can't find new ID for cm $data->coursemoduleid, ignoring availability condition.</p>";
                         }
-                        $status=false;
                         continue;
                     }
 
@@ -1250,25 +1249,11 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                             if (!defined('RESTORE_SILENTLY')) {
                                 echo "<p>Can't find new ID for source cm $data->sourcecmid, ignoring availability condition.</p>";
                             }
-                            $status=false;
                             continue;
                         }
                     }
 
-                    // Convert grade id
-                    if($data->gradeitemid) {
-                        $newgradeid=backup_getid($restore->backup_unique_code,
-                            'grade_items',$data->gradeitemid);
-                        if($newgradeid) {
-                            $data->gradeitemid=$newgradeid->new_id;
-                        } else {
-                            if (!defined('RESTORE_SILENTLY')) {
-                                echo "<p>Can't find new ID for grade item $data->gradeitemid, ignoring availability condition.</p>";
-                            }
-                            $status=false;
-                            continue;
-                        }                        
-                    }
+                    // Grade id is not converted (convert later)
 
                     // Add record
                     if(!$DB->insert_record('course_modules_availability',$data)) {
@@ -5905,19 +5890,19 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     if($this->level == 9) {
                         switch($tagName) {
                             case 'SOURCECMID' :
-                                $this->info->tempavailability->sourcecmid=$this->getContents();
+                                $this->info->tempavailability->sourcecmid=backup_todb($this->getContents());
                                 break;
                             case 'REQUIREDCOMPLETION' :
-                                $this->info->tempavailability->requiredcompletion=$this->getContents();
+                                $this->info->tempavailability->requiredcompletion=backup_todb($this->getContents());
                                break;
                             case 'GRADEITEMID' :
-                                $this->info->tempavailability->gradeitemid=$this->getContents();
+                                $this->info->tempavailability->gradeitemid=backup_todb($this->getContents());
                                 break;
                             case 'GRADEMIN' :
-                                $this->info->tempavailability->grademin=$this->getContents();
+                                $this->info->tempavailability->grademin=backup_todb($this->getContents());
                                 break;
                             case 'GRADEMAX' :
-                                $this->info->tempavailability->grademax=$this->getContents();
+                                $this->info->tempavailability->grademax=backup_todb($this->getContents());
                                 break;
                         }
                     }
@@ -8377,6 +8362,34 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     }
                 }
             }
+            // Availability system, if used, needs to find IDs for grade items
+            $rs=$DB->get_recordset_sql("
+SELECT 
+    cma.id,cma.gradeitemid 
+FROM 
+    {course_modules) cm
+    INNER JOIN {course_modules_availability} cma on cm.id=cma.coursemoduleid
+WHERE
+    cma.gradeitemid IS NOT NULL
+    AND cm.course=?
+",array($restore->course_id));
+            foreach($rs as $rec) {
+                $newgradeid=backup_getid($restore->backup_unique_code,
+                    'grade_items',$rec->gradeitemid);
+                if($newgradeid) {
+                    $newdata=(object)array(
+                        'id'=>$rec->id,
+                        'gradeitemid'=>$newgradeid->new_id);
+                    $DB->update_record('course_modules_availability',$newdata);
+                } else {
+                    if (!defined('RESTORE_SILENTLY')) {
+                        echo "<p>Can't find new ID for grade item $data->gradeitemid, ignoring availability condition.</p>";
+                    }
+                    continue;
+                }
+            }
+            $rs->close();
+
             if (!defined('RESTORE_SILENTLY')) {
                 echo '</li>';
             }
