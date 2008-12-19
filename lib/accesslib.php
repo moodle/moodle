@@ -5325,7 +5325,7 @@ function get_role_users($roleid, $context, $parent=false, $fields='',
 
 /**
  * Counts all the users assigned this role in this context or higher
- * @param int roleid
+ * @param int roleid (can also be an array of ints!)
  * @param int contextid
  * @param bool parent if true, get list of users assigned in higher context too
  * @return count
@@ -5343,12 +5343,22 @@ function count_role_users($roleid, $context, $parent=false) {
         $parentcontexts = '';
     }
 
+    if ($roleid) {
+        list($rids, $params) = $DB->get_in_or_equal($roleid, SQL_PARAMS_QM);
+        $roleselect = "AND r.roleid $rids";
+    } else {
+        $params = array();
+        $roleselect = '';
+    }
+
+    array_unshift($params, $context->id);
+
     $sql = "SELECT count(u.id)
               FROM {role_assignments} r
               JOIN {user} u ON u.id = r.userid
              WHERE (r.contextid = ? $parentcontexts)
-                   AND r.roleid = ? AND u.deleted = 0";
-    $params = array($context->id, $roleid);
+                   $roleselect
+                   AND u.deleted = 0";
 
     return $DB->count_records_sql($sql, $params);
 }
