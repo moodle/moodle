@@ -411,6 +411,9 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
             $element = $track->element;
             $usertrack->{$element} = $track->value;
             switch ($element) {
+                case 'x.start.time':
+                    $usertrack->x_start_time = $track->value;
+                    break;
                 case 'cmi.core.lesson_status':
                 case 'cmi.completion_status':
                     if ($track->value == 'not attempted') {
@@ -443,6 +446,47 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
         return false;
     }
 }
+
+
+/* Find the start and finsh time for a a given SCO attempt
+ *
+ * @param int $scormid SCORM Id
+ * @param int $scoid SCO Id
+ * @param int $userid User Id
+ * @param int $attemt Attempt Id
+ *
+ * @return object start and finsh time EPOC secods
+ *
+ */
+function scorm_get_sco_runtime($scormid, $scoid, $userid, $attempt=1) {
+	global $DB;
+
+    $timedata = new object();
+    $sql = !empty($scoid) ? "userid=$userid AND scormid=$scormid AND scoid=$scoid AND attempt=$attempt" : "userid=$userid AND scormid=$scormid AND attempt=$attempt";
+    $tracks = $DB->get_records_select('scorm_scoes_track',"$sql ORDER BY timemodified ASC");
+    if ($tracks) {
+        $tracks = array_values($tracks);
+    }
+
+    if ($start_track = $DB->get_records_select('scorm_scoes_track',"$sql AND element='x.start.time' ORDER BY scoid ASC")) {
+        $start_track = array_values($start_track);
+        $timedata->start = $start_track[0]->value;
+    }
+    else if ($tracks) {
+        $timedata->start = $tracks[0]->timemodified;
+    }
+    else {
+        $timedata->start = false;
+    }
+    if ($tracks && $track = array_pop($tracks)) {
+        $timedata->finish = $track->timemodified;
+    }
+    else {
+        $timedata->finish = $timedata->start;
+    }
+    return $timedata;
+}
+
 
 function scorm_get_user_data($userid) {
     global $DB;
