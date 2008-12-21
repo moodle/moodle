@@ -411,7 +411,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                 }
                 $result->toc .= '<a href="javascript:expandCollide(\'img'.$sublist.'\',\'s'.$sublist.'\','.$nextsco->id.');"><img id="img'.$sublist.'" src="'.$scormpixdir.'/'.$icon.'.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
             } else if ($isvisible) {
-                $result->toc .= '<img src="'.$scormpixdir.'/spacer.gif" />';
+                $result->toc .= '<img src="'.$scormpixdir.'/spacer.gif" alt="spacer" />';
             }
             if (empty($sco->title)) {
                 $sco->title = $sco->identifier;
