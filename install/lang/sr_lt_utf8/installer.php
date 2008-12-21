@@ -101,6 +101,7 @@ $string['databasesettingssub_postgres7'] = '<b>Tip:</b> PostgreSQL<br />
 $string['databasesettingswillbecreated'] = '<b>Napomena:</b> Program ѕa instalaciju će automatski pokušati da kreira bazu podataka ukoliko ona ne postoji.';
 $string['dataroot'] = 'Direktorijum podataka';
 $string['datarooterror'] = '\'Direktorijum podataka\' koji ste naveli ne može biti pronađen ili kreiran. Unesite tačnu putanju ili napravite taj direktorijum ručno.';
+$string['datarootpublicerror'] = '\'Direktorijum za podatke\' koji ste podesili je direktno dostupan sa Weba, morate koristiti drugi direktorijum.';
 $string['dbconnectionerror'] = 'Nemoguće je uspostaviti vezu sa bazom podataka koju ste naveli. Molimo proverite podešavanja baze podataka.';
 $string['dbcreationerror'] = 'Greška pri kreiranju baze podataka. Nije bilo moguće kreirati bazu navedenog imena uz zadata podešavanja';
 $string['dbhost'] = 'Server';
