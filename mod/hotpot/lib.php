@@ -1873,14 +1873,11 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
             //include_once "$CFG->dirroot/filter/mediaplugin/filter.php";
             include_once "$CFG->dirroot/mod/hotpot/mediaplayers/moodle/filter.php";
 
-            // exclude swf files from the filter
-            //$CFG->filter_mediaplugin_ignore_swf = true;
-
             $space = '\s(?:.+\s)?';
             $quote = '["'."']?"; // single, double, or no quote
 
             // patterns to media files types and paths
-            $filetype = "avi|mpeg|mpg|mp3|mov|wmv";
+            $filetype = "avi|mpeg|mpg|mp3|mov|wmv|swf|flv";
             $filepath = ".*?\.($filetype)";
 
             $tagopen = '(?:(<)|(\\\\u003C))'; // left angle-bracket (uses two parenthese)
