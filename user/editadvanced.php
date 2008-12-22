@@ -186,10 +186,10 @@
 /// Display page header
     if ($user->id == -1 or ($user->id != $USER->id)) {
         if ($user->id == -1) {
-            admin_externalpage_setup('addnewuser');
+            admin_externalpage_setup('addnewuser', '', array('id' => -1));
             admin_externalpage_print_header();
         } else {
-            admin_externalpage_setup('editusers');
+            admin_externalpage_setup('editusers', '', array('id' => $user->id, 'course' => SITEID), $CFG->wwwroot . '/user/editadvanced.php');
             admin_externalpage_print_header();
             $userfullname = fullname($user, true);
             print_heading($userfullname);
