@@ -9,8 +9,8 @@
 * @return boolean
 */
 function scorm_eval_prerequisites($prerequisites, $usertracks) {
-    
-    // this is really a little language parser - AICC_SCRIPT is the reference 
+
+    // this is really a little language parser - AICC_SCRIPT is the reference
     // see 2.3.2.5.1. Sequencing/Navigation Today  - from the SCORM 1.2 spec
     $element = '';
     $stack = array();
@@ -28,7 +28,7 @@ function scorm_eval_prerequisites($prerequisites, $usertracks) {
                 'b' => 'browsed',
                 'n' => 'notattempted'
                 );
-    $i=0;  
+    $i=0;
 
     // expand the amp entities
     $prerequisites = preg_replace('/&amp;/', '&', $prerequisites);
@@ -50,7 +50,7 @@ function scorm_eval_prerequisites($prerequisites, $usertracks) {
         if (!preg_match('/^(&&|\|\||\(|\))$/', $element)) {
             // create each individual expression
             // search for ~ = <> X*{}
-    
+
             // sets like 3*{S34, S36, S37, S39}
             if (preg_match('/^(\d+)\*\{(.+)\}$/', $element, $matches)) {
                 $repeat = $matches[1];
@@ -67,11 +67,11 @@ function scorm_eval_prerequisites($prerequisites, $usertracks) {
                 } else {
                     $element = 'false';
                 }
-    
+
             // ~ Not
             } else if ($element == '~') {
                 $element = '!';
-    
+
             // = | <>
             } else if (preg_match('/^(.+)(\=|\<\>)(.+)$/', $element, $matches)) {
                 $element = trim($matches[1]);
@@ -89,7 +89,7 @@ function scorm_eval_prerequisites($prerequisites, $usertracks) {
                 } else {
                   $element = 'false';
                 }
-    
+
             // everything else must be an element defined like S45 ...
             } else {
                 if (isset($usertracks[$element]) &&
@@ -99,7 +99,7 @@ function scorm_eval_prerequisites($prerequisites, $usertracks) {
                     $element = 'false';
                 }
             }
-    
+
         }
         $stack []= ' '.$element.' ';
     }
@@ -108,20 +108,20 @@ function scorm_eval_prerequisites($prerequisites, $usertracks) {
 
 function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='normal',$attempt='',$play=false) {
     global $CFG, $DB;
-    
+
     $strexpand = get_string('expcoll','scorm');
     $modestr = '';
     if ($mode == 'browse') {
         $modestr = '&amp;mode='.$mode;
-    } 
+    }
     $scormpixdir = $CFG->modpixpath.'/scorm/pix';
-    
+
     $result = new stdClass();
     $result->toc = "<ul id='s0' class='$liststyle'>\n";
     $tocmenus = array();
     $result->prerequisites = true;
     $incomplete = false;
-    
+
     //
     // Get the current organization infos
     //
@@ -161,7 +161,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         $nextid = 0;
         $findnext = false;
         $parents[$level]='/';
-        
+
         foreach ($scoes as $pos => $sco) {
             $isvisible = false;
             $sco->title = $sco->title;
@@ -215,7 +215,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                 }
                 $result->toc .= '<a href="javascript:expandCollide(\'img'.$sublist.'\',\'s'.$sublist.'\','.$nextsco->id.');"><img id="img'.$sublist.'" src="'.$scormpixdir.'/'.$icon.'.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
             } else if ($isvisible) {
-                $result->toc .= '<img src="'.$scormpixdir.'/spacer.gif" alt="spacer" />';
+                $result->toc .= '<img src="'.$scormpixdir.'/spacer.gif" alt="" />';
             }
             if (empty($sco->title)) {
                 $sco->title = $sco->identifier;
@@ -236,7 +236,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         } else {
                             $statusicon = '<img src="'.$scormpixdir.'/assetc.gif" alt="'.get_string('assetlaunched','scorm').'" title="'.get_string('assetlaunched','scorm').'" />';
                         }
-                    
+
                         if (($usertrack->status == 'notattempted') || ($usertrack->status == 'incomplete') || ($usertrack->status == 'browsed')) {
                             $incomplete = true;
                             if ($play && empty($scoid)) {
@@ -270,7 +270,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         $shownext = isset($sco->next) ? $sco->next : 0;
                         $showprev = isset($sco->previous) ? $sco->previous : 0;
                     }
-                
+
                     if (($nextid == 0) && (scorm_count_launchable($scorm->id,$currentorg) > 1) && ($nextsco!==false) && (!$findnext)) {
                         if (!empty($sco->launch)) {
                             $previd = $sco->id;
@@ -302,7 +302,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         for ($i=0;$i<$level;$i++) {
             $result->toc .= "\t\t</ul></li>\n";
         }
-        
+
         if ($play) {
             // it is possible that scoid is still not set, in this case we dont want an empty object
             if ($scoid) {
@@ -338,7 +338,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
           //]]>
           </script>'."\n";
     }
-    
+
     $url = $CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;currentorg='.$currentorg.$modestr.'&amp;scoid=';
     $result->tocmenu = popup_form($url,$tocmenus, "tocmenu", $sco->id, '', '', '', true);
 
