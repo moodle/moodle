@@ -200,7 +200,7 @@ function scorm_parse_aicc($pkgdir,$scormid) {
     //print_r($courses);
 
     $oldscoes = get_records('scorm_scoes','scorm',$scormid);
-    
+
     $launch = 0;
     if (isset($courses)) {
         foreach ($courses as $course) {
@@ -231,7 +231,7 @@ function scorm_parse_aicc($pkgdir,$scormid) {
                     $sco->scorm = $scormid;
                     $sco->organization = $course->id;
                     $sco->title = $element->title;
-                 
+
                     if (!isset($element->parent) || strtolower($element->parent) == 'root') {
                         $sco->parent = '/';
                     } else {
@@ -305,20 +305,20 @@ function scorm_parse_aicc($pkgdir,$scormid) {
 
 function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='normal',$attempt='',$play=false) {
     global $CFG;
-    
+
     $strexpand = get_string('expcoll','scorm');
     $modestr = '';
     if ($mode == 'browse') {
         $modestr = '&amp;mode='.$mode;
-    } 
+    }
     $scormpixdir = $CFG->modpixpath.'/scorm/pix';
-    
+
     $result = new stdClass();
     $result->toc = "<ul id='s0' class='$liststyle'>\n";
     $tocmenus = array();
     $result->prerequisites = true;
     $incomplete = false;
-    
+
     //
     // Get the current organization infos
     //
@@ -338,7 +338,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     if ($scoes = scorm_get_scoes($scorm->id, $currentorg)){
         //
         // Retrieve user tracking data for each learning object
-        // 
+        //
         $usertracks = array();
         foreach ($scoes as $sco) {
             if (!empty($sco->launch)) {
@@ -357,7 +357,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         $nextid = 0;
         $findnext = false;
         $parents[$level]='/';
-        
+
         foreach ($scoes as $pos => $sco) {
             $isvisible = false;
             $sco->title = stripslashes($sco->title);
@@ -411,7 +411,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                 }
                 $result->toc .= '<a href="javascript:expandCollide(\'img'.$sublist.'\',\'s'.$sublist.'\','.$nextsco->id.');"><img id="img'.$sublist.'" src="'.$scormpixdir.'/'.$icon.'.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
             } else if ($isvisible) {
-                $result->toc .= '<img src="'.$scormpixdir.'/spacer.gif" alt="spacer" />';
+                $result->toc .= '<img src="'.$scormpixdir.'/spacer.gif" alt="" />';
             }
             if (empty($sco->title)) {
                 $sco->title = $sco->identifier;
@@ -432,7 +432,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         } else {
                             $statusicon = '<img src="'.$scormpixdir.'/assetc.gif" alt="'.get_string('assetlaunched','scorm').'" title="'.get_string('assetlaunched','scorm').'" />';
                         }
-                    
+
                         if (($usertrack->status == 'notattempted') || ($usertrack->status == 'incomplete') || ($usertrack->status == 'browsed')) {
                             $incomplete = true;
                             if ($play && empty($scoid)) {
@@ -464,7 +464,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         $shownext = isset($sco->next) ? $sco->next : 0;
                         $showprev = isset($sco->previous) ? $sco->previous : 0;
                     }
-                
+
                     if (($nextid == 0) && (scorm_count_launchable($scorm->id,$currentorg) > 1) && ($nextsco!==false) && (!$findnext)) {
                         if (!empty($sco->launch)) {
                             $previd = $sco->id;
@@ -496,7 +496,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         for ($i=0;$i<$level;$i++) {
             $result->toc .= "\t\t</ul></li>\n";
         }
-        
+
         if ($play) {
             $sco = scorm_get_sco($scoid);
             $sco->previd = $previd;
@@ -529,7 +529,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
           //]]>
           </script>'."\n";
     }
-    
+
     $url = $CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;currentorg='.$currentorg.$modestr.'&amp;scoid=';
     $result->tocmenu = popup_form($url,$tocmenus, "tocmenu", $sco->id, '', '', '', true);
 
