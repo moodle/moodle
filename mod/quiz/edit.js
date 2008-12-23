@@ -42,6 +42,14 @@ function quiz_edit_init() {
                 YAHOO.util.Event.stopEvent(e);
             }, quiz_edit.randomquestiondialog,
             quiz_edit.randomquestiondialog, true);
+
+    quiz_edit.randomquestiondialog.cfg.setProperty("keylisteners", [
+     new YAHOO.util.KeyListener(document,
+                                {keys:[27]},
+                                function(types, args, obj) { quiz_edit.randomquestiondialog.hide();
+    })
+    ]); 
+
     quiz_edit.randomquestiondialog.render();
 
 
@@ -65,6 +73,14 @@ function quiz_edit_init() {
                 this.show();
             }, quiz_edit.repaginatedialog,
             quiz_edit.repaginatedialog, true);
+
+    quiz_edit.repaginatedialog.cfg.setProperty("keylisteners", [
+     new YAHOO.util.KeyListener(document,
+                                {keys:[27]},
+                                function(types, args, obj) { quiz_edit.repaginatedialog.hide();
+    })
+    ]); 
+
     quiz_edit.repaginatedialog.render();
 
 }
