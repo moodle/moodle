@@ -275,6 +275,10 @@ $string['previous'] = 'קודם';
 $string['qtyperqpwillberemoved'] = 'במהלך השדרוג, סוג שאלת ה-RQP תוסר. לא השתמשת בסוג השאלה, כך שאינך אמור להיתקל בבעיות כלשהן.';
 $string['qtyperqpwillberemovedanyway'] = 'במהלך השדרוג, סוג שאלת ה-RQP תוסר. יש לך כמה שאלות RQP במסד הנתונים ,והם יופסקו לעבוד אלא אם כן תתקין מחדש את הקוד מ- http://moodle.org/mod/data/view.php?d=13&amp;rid=797 לפני שתמשיך עם השדרוג.';
 $string['releasenoteslink'] = 'למידע על גירסה זו של Moodle, אנא בקר ב <a target=\"new\" href=\"$a\"> שחרור גירסה </a>';
+$string['remotedownloaderror'] = 'הורדת הרכיב לשרת שלך כשלה, אנא וודא את הגדרות ה-proxy שלך. תוספת PHP cURL מומלצת מאוד להתקנה.
+<br /><br />
+הינך צריך להוריד את קובץ ההדרכה <a href=\"$a->url\">$a->url</a> ולהעתיק אותו ל \"$a->dest\"
+בשרת שלך ולכווץ אותו שם.';
 $string['remotedownloadnotallowed'] = 'לא מורשה הורדה של רכיבים לשרת שלך (פונקצייתallow_url_fopen מנוטרלת).<br /><br />עליך להוריד את קובץ ה<a href=\"$a->url\">$a->url</a> באופן ידני, להעתיק אותו לתוך \"$a->dest\" בשרת שלך, ולפתוח אותו שם.';
 $string['report'] = 'דוח';
 $string['restricted'] = 'מוגבל';
