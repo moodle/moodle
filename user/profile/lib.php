@@ -242,7 +242,11 @@ class profile_field_base {
             case PROFILE_VISIBLE_ALL:
                 return true;
             case PROFILE_VISIBLE_PRIVATE:
-                return ($this->userid == $USER->id);
+                if ($this->userid == $USER->id) {
+                    return true;
+                } else {
+                    return has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM));
+                }
             default:
                 return has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM));
         }
