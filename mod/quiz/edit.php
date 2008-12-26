@@ -566,7 +566,9 @@ $localcss= '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.
         '/lib/yui/container/assets/container.css" />';
 print_header_simple($pagetitle, '', $navigation, "", $localcss,true,
         $questionbankmanagement.$strupdatemodule);
-
+//TODO: these skip links really need to be right after the opening of the body element,
+// and preferably implemented in an <ul> element. See MDL-17730.
+echo '<a href="#quizcontentsblock" class="skip">Question bank</a> <a href="#quizcontentsblock" class="skip">Quiz contents</a>';
 // Initialise the JavaScript.
 $quizeditconfig = new stdClass;
 $quizeditconfig->url = $thispageurl->out(false, array('qbanktool' => '0'));
@@ -602,6 +604,8 @@ $thispageurl->out(false,array('qbanktool'=>'1')).
        '" id="hidebankcmd">['.get_string("hide").
        ']</a>
        ', array("class"=>"questionbankwindow $bankclass"));
+
+echo '<span id="questionbank"></span>';
 echo '<div class="container">';
 echo '<div id="module" class="module">';
 echo '<div class="bd">';
