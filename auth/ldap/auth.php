@@ -795,6 +795,9 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $user->confirmed  = 1;
                 $user->auth       = 'ldap';
                 $user->mnethostid = $CFG->mnet_localhost_id;
+                // get_userinfo_asobj() might have replaced $user->username with the value
+                // from the LDAP server (which can be mixed-case). Make sure it's lowercase
+                $user->username = trim(moodle_strtolower($user->username));
                 if (empty($user->lang)) {
                     $user->lang = $CFG->lang;
                 }
