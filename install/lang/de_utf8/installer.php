@@ -44,60 +44,60 @@ $string['curlrequired'] = 'Die PHP-Erweiterung cURL wird von Moodle benötigt, u
 $string['customcheck'] = 'Weitere Überprüfungen';
 $string['database'] = 'Datenbank';
 $string['databasecreationsettingshead'] = 'Sie müssen Einstellungen für die Datenbank konfigurieren, in der die meisten Moodle-Daten abgelegt werden. Der Installationsprozess erstellt die Datenbanktabellen automatisch auf der Grundlage der Einstellungen.';
-$string['databasecreationsettingssub'] = '<b>Typ:</b> \"mysql\" vom Installer festgelegt<br />
-<b>Host:</b> \"localhost\" vom Installer festgelegt<br />
+$string['databasecreationsettingssub'] = '<b>Typ:</b> vom Installer festgelegt auf  \"mysql\" <br />
+<b>Host:</b> vom Installer festgelegt auf  \"localhost\"<br />
 <b>Name:</b> Datenbankname, z.B. moodle<br />
-<b>User:</b> \"root\" vom Installer festgelegt<br />
-<b>Password:</b> Ihr Datenbankpasswort<br />
-<b>Tables Prefix:</b> optionaler Prefix für alle Tabellennamen';
+<b>Nutzer:</b> vom Installer festgelegt auf  \"root\"<br />
+<b>Passwort:</b> Ihr Datenbankpasswort<br />
+<b>Tabellen-Prefix:</b> optionaler Prefix für alle Tabellennamen';
 $string['databasesettingshead'] = 'Sie müssen nun die Einstellungen für die Datenbank konfigurieren, in der die meisten Moodle-Daten abgelegt werden. Diese Datenbank muss bereits vorher angelegt und mit Nutzernamen und Passwort versehen worden sein, um auf sie zugreifen zu können.';
 $string['databasesettingssub'] = '<b>Typ:</b> mysql oder postgres7<br />
 <b>Host:</b> z.B. localhost oder db.isp.com<br />
 <b>Name:</b> Datenbankname, z.B. moodle<br />
-<b>User:</b> Ihr Anmeldename für die Datenbank<br />
-<b>Password:</b> Ihr Passwort für die Datenbank<br />
-<b>Tabellen-Prefix:</b> optionaler Prefix für alle Tabellen';
+<b>Nutzer:</b> Ihr Benutzername für die Datenbank<br />
+<b>Passwort:</b> Ihr Passwort für die Datenbank<br />
+<b>Tabellen-Prefix:</b> optionaler Prefix für alle Tabellennamen';
 $string['databasesettingssub_mssql'] = '<b>Typ:</b> SQL*Server (ohne UTF-8)<b><strong class=\"errormsg\">Experimentell! (nicht für Produktivumgebungen)</strong></b><br /><br />
 <b>Host:</b> z.B. localhost oder db.isp.com<br />
 <b>Name:</b> Datenbankname, z.B. moodle<br />
-<b>User:</b> Ihr Anmeldename für die Datenbank<br />
-<b>Password:</b> Ihr Passwort für die Datenbank<br />
-<b>Tabellen-Prefix:</b> Prefix für alle Tabellen (notwendig)';
+<b>Nutzer:</b> Ihr Benutzername für die Datenbank<br />
+<b>Passwort:</b> Ihr Passwort für die Datenbank<br />
+<b>Tabellen-Prefix:</b> Prefix für alle Tabellennamen (notwendig)';
 $string['databasesettingssub_mssql_n'] = '<b>Typ:</b> SQL*Server (mit UTF-8)<br />
 <b>Host:</b> z.B. localhost oder db.isp.com<br />
 <b>Name:</b> Datenbankname, z.B. moodle<br />
-<b>User:</b> Ihr Anmeldename für die Datenbank<br />
-<b>Password:</b> Ihr Passwort für die Datenbank<br />
+<b>Nutzer:</b> Ihr Anmeldename für die Datenbank<br />
+<b>Passwort:</b> Ihr Passwort für die Datenbank<br />
 <b>Tabellen-Prefix:</b> Prefix für alle Tabellen (notwendig)';
 $string['databasesettingssub_mysql'] = '<b>Typ:</b> MySQL<br />
 <b>Host:</b> z.B. localhost oder db.isp.com<br />
 <b>Name:</b> Datenbankname, z.B. moodle<br />
-<b>User:</b> Ihr Anmeldename für die Datenbank<br />
-<b>Password:</b> Ihr Passwort für die Datenbank<br />
+<b>Nutzer:</b> Ihr Benutzername für die Datenbank<br />
+<b>Passwort:</b> Ihr Passwort für die Datenbank<br />
 <b>Tabellen-Prefix:</b> Prefix für alle Tabellen (optional)';
 $string['databasesettingssub_mysqli'] = '<b>Typ:</b> Improved MySQL<br />
 <b>Host:</b> z.B. localhost oder db.domain.com<br />
 <b>Name:</b> Datenbank-Name, z.B moodle<br />
-<b>User:</b> Ihr Datenbank-Anmeldename<br />
-<b>Passwort:</b> Ihr Datenbank-Passwort<br />
+<b>Nutzer:</b> Ihr Benutzername für die Datenbank<br />
+<b>Passwort:</b> Ihr Passwort für die Datenbank<br />
 <b>Tabellen-Prefix:</b> Prefix für alle Tabellen (optional)';
 $string['databasesettingssub_oci8po'] = '<b>Typ:</b> Oracle<br />
 <b>Host:</b> unbenutzt - muss leer bleiben!<br />
 <b>Name:</b> vorgegebener Verbindungname zu tnsnames.ora<br />
-<b>User:</b> Ihr Anmeldename für die Datenbank<br />
-<b>Password:</b> Ihr Passwort für die Datenbank<br />
+<b>Nutzer:</b> Ihr Benutzername für die Datenbank<br />
+<b>Passwort:</b> Ihr Passwort für die Datenbank<br />
 <b>Tabellen-Prefix:</b> Prefix für alle Tabellen (notwendig, 2cc. max)';
 $string['databasesettingssub_odbc_mssql'] = '<b>Typ:</b> SQL*Server (over ODBC) <b><font color=\"red\">Experimentell! (nicht für den produktiven Einsatz)</font></b><br />
 <b>Host:</b> vorgegebener DSN-Name im ODBC-Kontrolldialog<br />
 <b>Name:</b> Datenbankname, z.B. moodle<br />
-<b>User:</b> Ihr Anmeldename für die Datenbank<br />
-<b>Password:</b> Ihr Passwort für die Datenbank<br />
+<b>Nutzer:</b> Ihr Benutzername für die Datenbank<br />
+<b>Passwort:</b> Ihr Passwort für die Datenbank<br />
 <b>Tabellen-Prefix:</b> Prefix für alle Tabellen (notwendig)';
 $string['databasesettingssub_postgres7'] = '<b>Typ:</b> PostgreSQL<br />
 <b>Host:</b> z.B. localhost oder db.isp.com<br />
 <b>Name:</b> Datenbankname, z.B. moodle<br />
-<b>User:</b> Ihr Anmeldename für die Datenbank<br />
-<b>Password:</b> Ihr Passwort für die Datenbank<br />
+<b>Nutzer:</b> Ihr Benutzername für die Datenbank<br />
+<b>Passwort:</b> Ihr Passwort für die Datenbank<br />
 <b>Tabellen-Prefix:</b> Prefix für alle Tabellen (notwendig)';
 $string['databasesettingswillbecreated'] = '<b>Hinweis: </b> Das Installationsprogramm wird versuchen, automatisch eine Datenbank anzulegen, sofern diese noch nicht besteht.';
 $string['dataroot'] = 'Daten-Verzeichnis';
@@ -225,6 +225,11 @@ $string['qtyperqpwillberemovedanyway'] = 'Während des Updates wird der Fragenty
 $string['remotedownloaderror'] = 'Der Download auf Ihren Server konnte nicht ausgeführt werden. Prüfen Sie bitte die Proxy-Einstellungen, die PHP CURL Erweiterung wird dringend empfohlen.<br /><br />Die Datei <a href=\"$a->url\">$a->url</a> muss nun manuell herunter geladen, entpackt und auf den Server nach \"$a->dest\" kopiert werden. there.';
 $string['remotedownloadnotallowed'] = 'Der Download von Komponenten auf Ihren Server ist nicht erlaubt (allow_url_fopen ist deaktiviert). <br /><br /> Die Datei <a href=\"$a->url\">$a->url</a> muss manuell heruntergeladen werden. Kopieren Sie die Datei nach \"$a->dest\" auf Ihren Server und entpacken Sie sie dort.';
 $string['report'] = 'Bericht';
+$string['requiredentrieschanged'] = '<strong>WICHTIG - UNBEDINGT LESEN<br />Die Warnung wird ausschließlich bei dieser Aktualisierung gezeigt!</strong><br />
+Infolge einer Fehlerkorrektur wird sich das Verhalten von Datenbankaktivitäten ändern, die die Einstellungen \'Required entries\' und \'Required entries before viewing settings\' nutzen.
+
+Weitere Erklärungen entnehmen Sie bitte den  <a href=\"http://docs.moodle.org/en/Adding/editing_a_database#Required_entries\" target=\"_blank\">Moodle Docs</a>.
+<br/><br/>Diese Änderung betrifft die folgenden Daten in Ihrem System . Bitte sichern Sie die nachfolgende Liste und prüfen Sie nach der Aktualisierung, ob alle Aktivitäten noch wie beabsichtigt funktionieren.<br/><strong style=\"color:red\">$a->text</strong><br/>';
 $string['restricted'] = 'Eingeschränkt';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Die Nutzung von Moodle im Safe Mode kann zu Schwierigkeiten führen.';
