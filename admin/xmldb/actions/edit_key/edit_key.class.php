@@ -84,7 +84,7 @@ class edit_key extends XMLDBAction {
     /// Fetch request data
         $tableparam = required_param('table', PARAM_CLEAN);
         if (!$table =& $structure->getTable($tableparam)) {
-            $this->errormsg = 'Wrong table specified: ' . $tableparm;
+            $this->errormsg = 'Wrong table specified: ' . $tableparam;
             return false;
         }
         $keyparam = required_param('key', PARAM_CLEAN);
