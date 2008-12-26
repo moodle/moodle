@@ -568,7 +568,8 @@ print_header_simple($pagetitle, '', $navigation, "", $localcss,true,
         $questionbankmanagement.$strupdatemodule);
 //TODO: these skip links really need to be right after the opening of the body element,
 // and preferably implemented in an <ul> element. See MDL-17730.
-echo '<a href="#quizcontentsblock" class="skip">Question bank</a> <a href="#quizcontentsblock" class="skip">Quiz contents</a>';
+echo '<a href="#questionbank" class="skip">Question bank</a> '.
+        '<a href="#quizcontentsblock" class="skip">Quiz contents</a>';
 // Initialise the JavaScript.
 $quizeditconfig = new stdClass;
 $quizeditconfig->url = $thispageurl->out(false, array('qbanktool' => '0'));
