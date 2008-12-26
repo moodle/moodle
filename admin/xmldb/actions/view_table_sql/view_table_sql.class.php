@@ -80,7 +80,7 @@ class view_table_sql extends XMLDBAction {
     /// Get parameters
         $tableparam = required_param('table', PARAM_PATH);
         if (!$table =& $structure->getTable($tableparam)) {
-            $this->errormsg = 'Wrong table specified: ' . $tableparm;
+            $this->errormsg = 'Wrong table specified: ' . $tableparam;
             return false;
         }
         $generatorparam = optional_param('generator', null, PARAM_ALPHANUM);
