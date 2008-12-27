@@ -29,7 +29,7 @@ require_once("$CFG->dirroot/mod/resource/lib.php");
 class LabelSearchDocument extends SearchDocument {
     public function __construct(&$label, $context_id) {
         // generic information; required
-        $doc->docid     = $label['course'];
+        $doc->docid     = $label['id'];
         $doc->documenttype = SEARCH_TYPE_LABEL;
         $doc->itemtype     = 'label';
         $doc->contextid    = $context_id;
