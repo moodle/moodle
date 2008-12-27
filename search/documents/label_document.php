@@ -154,7 +154,7 @@ function label_check_text_access($path, $itemtype, $this_id, $user, $group_id, $
     $r = get_record('label', 'id', $this_id);
     $module_context = get_record('context', 'id', $context_id);
     $cm = get_record('course_modules', 'id', $module_context->instanceid);
-    $course_context = get_context_instance(COURSE_CONTEXT, $r->course);
+    $course_context = get_context_instance(CONTEXT_COURSE, $r->course);
 
     //check if englobing course is visible
     if (!has_capability('moodle/course:view', $course_context)){
