@@ -307,6 +307,17 @@ function resource_check_text_access($path, $itemtype, $this_id, $user, $group_id
     $r = get_record('resource', 'id', $this_id);
     $module_context = get_record('context', 'id', $context_id);
     $cm = get_record('course_modules', 'id', $module_context->instanceid);
+    $course_context = get_context_instance(CONTEXT_COURSE, $r->course);
+
+    //check if course is visible
+    if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', $course_context)) {
+        return false;
+    }
+
+    //check if user is registered in course or course is open to guests
+    if (!$course->guest && !has_capability('moodle/course:view', $course_context)) {
+        return false;
+    }
 
     //check if found course module is visible
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $module_context)){
