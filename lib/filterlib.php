@@ -30,13 +30,15 @@ abstract class filter_base {
         }
 
         // back compatable with old filter plugins
-        $textfilters = explode(',', $CFG->textfilters);
-        foreach ($textfilters as $v) {
-            $text_filter = basename($v).'_filter';
-            if (empty(self::$filters[$text_filter]) && is_readable($CFG->dirroot .'/'. $v .'/filter.php')) {
-                include_once($CFG->dirroot .'/'. $v .'/filter.php');
-                if (function_exists($text_filter)) {
-                    $text = $text_filter($courseid, $text);
+        if (isset($CFG->textfilters)) {
+            $textfilters = explode(',', $CFG->textfilters);
+            foreach ($textfilters as $v) {
+                $text_filter = basename($v).'_filter';
+                if (empty(self::$filters[$text_filter]) && is_readable($CFG->dirroot .'/'. $v .'/filter.php')) {
+                    include_once($CFG->dirroot .'/'. $v .'/filter.php');
+                    if (function_exists($text_filter)) {
+                        $text = $text_filter($courseid, $text);
+                    }
                 }
             }
         }
