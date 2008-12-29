@@ -47,9 +47,11 @@ class group_form extends moodleform {
 
         $errors = parent::validation($data, $files);
 
+        $textlib = textlib_get_instance();
+
         $name = trim(stripslashes($data['name']));
         if ($data['id'] and $group = get_record('groups', 'id', $data['id'])) {
-            if ($group->name != $name) {
+            if ($textlib->strtolower($group->name) != $textlib->strtolower($name)) {
                 if (groups_get_group_by_name($COURSE->id,  $name)) {
                     $errors['name'] = get_string('groupnameexists', 'group', $name);
                 }
