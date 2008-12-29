@@ -2084,7 +2084,7 @@ function cleanAttributes2($htmlArray){
             $arreach['value'] = preg_replace("/b\s*i\s*n\s*d\s*i\s*n\s*g/i", "Xbinding", $arreach['value']);
         } else if ($arreach['name'] == 'href') {
             //Adobe Acrobat Reader XSS protection
-            $arreach['value'] = preg_replace('/(\.(pdf|fdf|xfdf|xdp|xfd))[^a-z0-9_\.\-].*$/i', '$1', $arreach['value']);
+            $arreach['value'] = preg_replace('/(\.(pdf|fdf|xfdf|xdp|xfd)[^#]*)#.*$/i', '$1', $arreach['value']);
         }
         $attStr .=  ' '.$arreach['name'].'="'.$arreach['value'].'"';
     }
