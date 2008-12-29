@@ -40,7 +40,7 @@
     }
     if (!empty($CFG->showcrondebugging)) {
         $CFG->debug = DEBUG_DEVELOPER;
-        $CFG->displaydebug = true;
+        $CFG->debugdisplay = true;
     }
 
 /// extra safety
