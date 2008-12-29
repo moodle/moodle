@@ -89,8 +89,8 @@
         }
     }
 
-    //Check for "security" if the course is hidden or the activity is hidden
-    if (!$isblog and (!$course->visible || !$cm->visible) && (!has_capability('moodle/course:viewhiddenactivities', $context))) {
+    //Do not allow acesss to hidden courses or activities because we can not trust user id - this will be improved in 2.0
+    if (!$isblog and (!$course->visible || !$cm->visible)) {
         rss_not_found();
     }
 
