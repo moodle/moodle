@@ -124,11 +124,11 @@ class grade_report_user extends grade_report {
         if ($this->showrank) {
             // TODO: this is broken if hidden grades present!!
             $tablecolumns[] = 'rank';
-            $tableheaders[] = $this->get_lang_string('rank');
+            $tableheaders[] = $this->get_lang_string('rank', 'grades');
         }
 
         $tablecolumns[] = 'feedback';
-        $tableheaders[] = $this->get_lang_string('feedback');
+        $tableheaders[] = $this->get_lang_string('feedback', 'grades');
 
         $this->table = new flexible_table('grade-report-user-'.$this->courseid);
 
