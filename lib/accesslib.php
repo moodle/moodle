@@ -2411,50 +2411,44 @@ function cleanup_contexts() {
  * Preloads all contexts relating to a course: course, modules, and blocks.
  *
  * @param int $courseid Course ID
+ * @return void
  */
 function preload_course_contexts($courseid) {
-    global $context_cache, $context_cache_id, $CFG, $DB;
+    global $context_cache, $context_cache_id, $DB;
 
     // Users can call this multiple times without doing any harm
-    static $preloadedcourses=array();
-    if(array_key_exists($courseid,$preloadedcourses)) {
+    static $preloadedcourses = array();
+    if (array_key_exists($courseid, $preloadedcourses)) {
         return;
     }
 
-    $rs=$DB->get_recordset_sql("
-SELECT 
-    x.instanceid, x.id, x.contextlevel, x.path, x.depth
-FROM 
-    {course_modules} cm
-    INNER JOIN {context} x ON x.instanceid=cm.id
-WHERE
-    cm.course=?
-    AND x.contextlevel=".CONTEXT_MODULE."
-UNION ALL
-SELECT 
-    x.instanceid, x.id, x.contextlevel, x.path, x.depth
-FROM 
-    {block_instance} bi
-    INNER JOIN {context} x ON x.instanceid=bi.id
-WHERE
-    bi.pageid=?
-    AND bi.pagetype='course-view'
-    AND x.contextlevel=".CONTEXT_BLOCK."
-UNION ALL
-SELECT 
-    x.instanceid, x.id, x.contextlevel, x.path, x.depth
-FROM 
-    {context} x
-WHERE
-    x.instanceid=?
-    AND x.contextlevel=".CONTEXT_COURSE."
-",array($courseid,$courseid,$courseid)); // Note, repetition of parameter annoying but required
+    $params = array($courseid, $courseid, $courseid);
+    $sql = "SELECT x.instanceid, x.id, x.contextlevel, x.path, x.depth
+              FROM {course_modules} cm
+              JOIN {context} x ON x.instanceid=cm.id
+             WHERE cm.course=? AND x.contextlevel=".CONTEXT_MODULE."
+
+         UNION ALL
+
+            SELECT x.instanceid, x.id, x.contextlevel, x.path, x.depth
+              FROM {block_instance} bi
+              JOIN {context} x ON x.instanceid=bi.id
+             WHERE bi.pageid=? AND bi.pagetype='course-view'
+                   AND x.contextlevel=".CONTEXT_BLOCK."
+
+         UNION ALL
+
+            SELECT x.instanceid, x.id, x.contextlevel, x.path, x.depth
+              FROM {context} x
+             WHERE x.instanceid=? AND x.contextlevel=".CONTEXT_COURSE."";
+
+    $rs = $DB->get_recordset_sql($sql, $params);
     foreach($rs as $context) {
         $context_cache[$context->contextlevel][$context->instanceid] = $context;
         $context_cache_id[$context->id] = $context;
     }
     $rs->close();
-    $preloadedcourses[$courseid]=true;
+    $preloadedcourses[$courseid] = true;
 }
 
 /**
