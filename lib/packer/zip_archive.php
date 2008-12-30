@@ -189,12 +189,14 @@ class zip_archive extends file_archive {
             return false;
         }
 
-        if ($this->count() > 0 and $this->count() % 500 === 0) {
-        // workaround for open file handles problem, ZipArchive uses file locking in order to prevent file modifications before the close() (strange, eh?)
-            $this->close();
-            $res = $this->open($this->archivepathname, file_archive::OPEN, $this->encoding);
-            if ($res !== true) {
-                print_error('cannotopenzip'); //TODO ??
+        if (!check_php_version('5.2.8')) {
+            // workaround for open file handles problem, ZipArchive uses file locking in order to prevent file modifications before the close() (strange, eh?)
+            if ($this->count() > 0 and $this->count() % 500 === 0) {
+                $this->close();
+                $res = $this->open($this->archivepathname, file_archive::OPEN, $this->encoding);
+                if ($res !== true) {
+                    print_error('cannotopenzip'); //TODO ??
+                }
             }
         }
 
