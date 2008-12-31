@@ -165,17 +165,19 @@
 
     //Link to calendar export page
     echo '<div class="bottom">';
-    print_single_button('export.php', array('course'=>$courseid), get_string('exportcalendar', 'calendar'));
+    if (!empty($CFG->enablecalendarexport)) {
+        print_single_button('export.php', array('course'=>$courseid), get_string('exportcalendar', 'calendar'));
 
-    if (!empty($USER->id)) {
-        $authtoken = sha1($USER->username . $USER->password);
-        $usernameencoded = urlencode($USER->username);
+        if (!empty($USER->id)) {
+            $authtoken = sha1($USER->username . $USER->password);
+            $usernameencoded = urlencode($USER->username);
 
-        echo "<a href=\"export_execute.php?preset_what=all&amp;preset_time=recentupcoming&amp;username=$usernameencoded&amp;authtoken=$authtoken\">"
-             .'<img src="'.$CFG->pixpath.'/i/ical.gif" height="14" width="36" '
-             .'alt="'.get_string('ical', 'calendar').'" '
-             .'title="'.get_string('quickdownloadcalendar', 'calendar').'" />'
-             .'</a>';
+            echo "<a href=\"export_execute.php?preset_what=all&amp;preset_time=recentupcoming&amp;username=$usernameencoded&amp;authtoken=$authtoken\">"
+                 .'<img src="'.$CFG->pixpath.'/i/ical.gif" height="14" width="36" '
+                 .'alt="'.get_string('ical', 'calendar').'" '
+                 .'title="'.get_string('quickdownloadcalendar', 'calendar').'" />'
+                 .'</a>';
+        }
     }
 
     echo '</div>';

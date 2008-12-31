@@ -8,6 +8,10 @@ require_once($CFG->libdir.'/bennu/bennu.inc.php');
 $username = required_param('username', PARAM_TEXT);
 $authtoken = required_param('authtoken', PARAM_ALPHANUM);
 
+if (empty($CFG->enablecalendarexport)) {
+    die('no export');
+}
+
 //Fetch user information
 if (!$user = get_complete_user_data('username', $username)) {
    //No such user
