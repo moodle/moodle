@@ -15,6 +15,10 @@ if ($courseid = optional_param('course', 0, PARAM_INT)) {
 
 require_login();
 
+if (empty($CFG->enablecalendarexport)) {
+    die('no export');
+}
+
 if(!$site = get_site()) {
     redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
 }
