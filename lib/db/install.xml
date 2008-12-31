@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20081208" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20081231" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -401,7 +401,7 @@
         <INDEX NAME="userid-contactid" UNIQUE="true" FIELDS="userid, contactid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="modules" COMMENT="modules available in the site" PREVIOUS="message_contacts" NEXT="sessions2">
+    <TABLE NAME="modules" COMMENT="modules available in the site" PREVIOUS="message_contacts" NEXT="sessions">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="version"/>
@@ -418,24 +418,28 @@
         <INDEX NAME="name" UNIQUE="false" FIELDS="name"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="sessions2" COMMENT="Optional database session storage in new format, not used by default" PREVIOUS="modules" NEXT="timezone">
+    <TABLE NAME="sessions" COMMENT="Database based session storage - now recommended" PREVIOUS="modules" NEXT="timezone">
       <FIELDS>
-        <FIELD NAME="sesskey" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" ENUM="false" NEXT="expiry"/>
-        <FIELD NAME="expiry" TYPE="datetime" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="sesskey" NEXT="expireref"/>
-        <FIELD NAME="expireref" TYPE="char" LENGTH="250" NOTNULL="false" DEFAULT="" SEQUENCE="false" ENUM="false" PREVIOUS="expiry" NEXT="created"/>
-        <FIELD NAME="created" TYPE="datetime" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="expireref" NEXT="modified"/>
-        <FIELD NAME="modified" TYPE="datetime" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="created" NEXT="sessdata"/>
-        <FIELD NAME="sessdata" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="modified"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="sid"/>
+        <FIELD NAME="sid" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Session id" PREVIOUS="id" NEXT="sessdata"/>
+        <FIELD NAME="sessdata" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="session content" PREVIOUS="sid" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="sessdata" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="timecreated" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="timemodified" NEXT="lastip"/>
+        <FIELD NAME="lastip" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="sesskey"/>
+        <FIELD NAME="sesskey" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="lastip"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="sesskey"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="userid"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="expiry" UNIQUE="false" FIELDS="expiry" NEXT="expireref"/>
-        <INDEX NAME="expireref" UNIQUE="false" FIELDS="expireref" PREVIOUS="expiry"/>
+        <INDEX NAME="sid" UNIQUE="true" FIELDS="sid" NEXT="timecreated"/>
+        <INDEX NAME="timecreated" UNIQUE="false" FIELDS="timecreated" PREVIOUS="sid" NEXT="timemodified"/>
+        <INDEX NAME="timemodified" UNIQUE="false" FIELDS="timemodified" PREVIOUS="timecreated"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="timezone" COMMENT="Rules for calculating local wall clock time for users" PREVIOUS="sessions2" NEXT="user">
+    <TABLE NAME="timezone" COMMENT="Rules for calculating local wall clock time for users" PREVIOUS="sessions" NEXT="user">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="year"/>
