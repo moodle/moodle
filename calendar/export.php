@@ -84,7 +84,7 @@ echo '<td class="maincalendar">';
 
 $username = $USER->username;
 $usernameencoded = urlencode($USER->username);
-$authtoken = sha1($USER->username . $USER->password);
+$authtoken = sha1($USER->username . $USER->password . $CFG->calendar_exportsalt);
 
 switch($action) {
     case 'advanced':

@@ -19,7 +19,7 @@ if (!$user = get_complete_user_data('username', $username)) {
 }
 
 //Check authentication token
-if ($authtoken != sha1($username . $user->password)) {
+if ($authtoken != sha1($username . $user->password . $CFG->calendar_exportsalt)) {
     die('Invalid authentication token');
 }
 

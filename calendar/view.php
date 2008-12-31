@@ -169,7 +169,7 @@
         print_single_button('export.php', array('course'=>$courseid), get_string('exportcalendar', 'calendar'));
 
         if (!empty($USER->id)) {
-            $authtoken = sha1($USER->username . $USER->password);
+            $authtoken = sha1($USER->username . $USER->password . $CFG->calendar_exportsalt);
             $usernameencoded = urlencode($USER->username);
 
             echo "<a href=\"export_execute.php?preset_what=all&amp;preset_time=recentupcoming&amp;username=$usernameencoded&amp;authtoken=$authtoken\">"
