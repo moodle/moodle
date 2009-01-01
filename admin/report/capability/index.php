@@ -177,10 +177,10 @@ function print_report_tree($contextid, $contexts, $allroles) {
     // Start the list item, and print the context name as a link to the place to
     // make changes.
     if ($contextid == get_system_context()->id) {
-        $url = $CFG->wwwroot . '/admin/roles/manage.php';
+        $url = "$CFG->wwwroot/$CFG->admin/roles/manage.php";
         $title = get_string('changeroles', 'report_capability');
     } else {
-        $url = $CFG->wwwroot . '/admin/roles/override.php?contextid=' . $contextid;
+        $url = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid";
         $title = get_string('changeoverrides', 'report_capability');
     }
     echo '<h3><a href="' . $url . '" title="' . $title . '">', print_context_name($contexts[$contextid]), '</a></h3>';

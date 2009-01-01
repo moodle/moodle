@@ -35,8 +35,8 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
-require_once($CFG->libdir . '/portfoliolib.php');
-require_once($CFG->dirroot . '/admin/generator.php');
+require_once("$CFG->libdir/portfoliolib.php");
+require_once("$CFG->dirroot/$CFG->admin/generator.php");
 
 class portfolio_plugin_test extends portfolio_plugin_push_base {
     public function expected_time($callertime){
@@ -183,9 +183,6 @@ foreach ($portfolio_plugins as $plugin) {
     require_once($CFG->dirroot . "/portfolio/type/$plugin/lib.php");
     Mock::generatePartial("portfolio_plugin_$plugin", "partialmock_plugin_$plugin", array('send_package'));
 }
-
-require_once($CFG->libdir . '/portfoliolib.php');
-require_once($CFG->dirroot . '/admin/generator.php');
 
 class portfoliolib_test extends MoodleUnitTestCase {
 

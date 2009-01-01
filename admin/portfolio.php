@@ -28,9 +28,9 @@ admin_externalpage_setup($pagename);
 require_login(SITEID, false);
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
-$baseurl = $CFG->wwwroot . '/admin/settings.php?section=manageportfolios';
-$sesskeyurl = $CFG->wwwroot . '/' . $CFG->admin . '/portfolio.php?sesskey=' . sesskey();
-$configstr = get_string('manageportfolios', 'portfolio');
+$baseurl    = "$CFG->wwwroot/$CFG->admin/settings.php?section=manageportfolios";
+$sesskeyurl = "$CFG->wwwroot/$CFG->admin/portfolio.php?sesskey=" . sesskey();
+$configstr  = get_string('manageportfolios', 'portfolio');
 
 $return = true; // direct back to the main page
 

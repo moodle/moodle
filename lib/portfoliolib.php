@@ -946,7 +946,7 @@ function portfolio_insane_notify_admins($insane, $instances=false) {
 
     $a = new StdClass;
     $a->sitename = $site->fullname;
-    $a->fixurl   = $CFG->wwwroot . '/admin/settings.php?section=manageportfolios';
+    $a->fixurl   = "$CFG->wwwroot/$CFG->admin/settings.php?section=manageportfolios";
     $a->htmllist = portfolio_report_insane($insane, $instances, true);
     $a->textlist = '';
 

@@ -28,8 +28,8 @@ admin_externalpage_setup($pagename);
 require_login(SITEID, false);
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
-$sesskeyurl = $CFG->wwwroot . '/' . $CFG->admin . '/repositoryinstance.php?sesskey=' . sesskey();
-$baseurl    = $CFG->wwwroot . '/admin/repository.php?session='. sesskey() .'&amp;edit=';
+$sesskeyurl = "$CFG->wwwroot/$CFG->admin/repositoryinstance.php?sesskey=" . sesskey();
+$baseurl    = "$CFG->wwwroot/$CFG->admin/repository.php?session=". sesskey() .'&amp;edit=';
 if ($new) {
     $baseurl .= $new;
 }
@@ -124,7 +124,7 @@ if (!empty($edit) || !empty($new)) {
         }
         exit;
     }
-    notice_yesno(get_string('confirmdelete', 'repository', $instance->name), $sesskeyurl . '&amp;type=' . $type . '&amp;delete=' . $delete . '&amp;sure=yes', $CFG->wwwroot . '/admin/repositoryinstance.php?session='. sesskey());
+    notice_yesno(get_string('confirmdelete', 'repository', $instance->name), $sesskeyurl . '&amp;type=' . $type . '&amp;delete=' . $delete . '&amp;sure=yes', "$CFG->wwwroot/$CFG->admin/repositoryinstance.php?session=". sesskey());
     $return = false;
 }
 

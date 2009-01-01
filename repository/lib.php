@@ -978,7 +978,7 @@ abstract class repository {
         //if the context is SYSTEM, so we call it from administration page
         $admin = ($context->id == SYSCONTEXTID) ? true : false;
         if ($admin) {
-            $baseurl = $CFG->httpswwwroot . '/admin/repositoryinstance.php?sesskey=' . sesskey();
+            $baseurl = "$CFG->httpswwwroot/$CFG->admin/repositoryinstance.php?sesskey=" . sesskey();
             $output .= "<div ><h2 style='text-align: center'>" . get_string('siteinstances', 'repository') . " ";
             $output .= "</h2></div>";
         } else {

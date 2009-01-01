@@ -328,14 +328,14 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
     /// check wwwroot
     if (ini_get('allow_url_fopen') && false) {  /// This was not reliable
-        if (($fh = @fopen($INSTALL['wwwroot'].'/admin/cliupgrade.php', 'r')) === false) {
+        if (($fh = @fopen($INSTALL['wwwroot']."/$CFG->admin/cliupgrade.php", 'r')) === false) {
             console_write(STDERR,get_string('wwwrooterror'),'install',false);
         }
     }
     if (isset($fh)) fclose($fh);
 
     /// check dirroot
-    if (($fh = @fopen($INSTALL['dirroot'].'/admin/cliupgrade.php', 'r')) === false ) {
+    if (($fh = @fopen($INSTALL['dirroot']."/$CFG->admin/cliupgrade.php", 'r')) === false ) {
         console_write(STDERR,get_string('dirrooterror'),'install',false);
     }
     if (isset($fh)) fclose($fh);
@@ -1043,7 +1043,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     upgrade_local_db('');  // Don't return anywhere
 
     /// Check for changes to RPC functions
-    require_once($CFG->dirroot.'/admin/mnet/adminlib.php');
+    require_once("$CFG->dirroot/$CFG->admin/mnet/adminlib.php");
     if ( $verbose > CLI_NO ) {
         print_heading(get_string('upgradingrpcfunctions','install'),'',1);
     }

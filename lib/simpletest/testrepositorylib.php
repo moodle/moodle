@@ -35,8 +35,8 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
-require_once($CFG->dirroot . '/repository/lib.php');
-require_once($CFG->dirroot . '/admin/generator.php');
+require_once("$CFG->dirroot/repository/lib.php");
+require_once("$CFG->dirroot/$CFG->admin/generator.php");
 
 // Generate a mock class for each plugin subclass present
 $repository_plugins = get_list_of_plugins('repository');

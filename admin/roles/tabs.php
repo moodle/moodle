@@ -80,7 +80,7 @@ if ($currenttab != 'update') {
 
                 require_login($course);
                 $navlinks[] = array('name' => get_string('roles'),
-                                    'link' => "$CFG->wwwroot/admin/roles/assign.php?contextid=$context->id",
+                                    'link' => "$CFG->wwwroot/$CFG->admin/roles/assign.php?contextid=$context->id",
                                     'type' => 'misc');
                 $navigation = build_navigation($navlinks);
                 if (empty($title)) {

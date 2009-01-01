@@ -1,7 +1,7 @@
 <?php // $Id$
-require_once($CFG->libdir.'/simpletest/portfolio_testclass.php');
-require_once($CFG->dirroot.'/mod/glossary/lib.php');
-require_once($CFG->dirroot.'/admin/generator.php');
+require_once("$CFG->libdir/simpletest/portfolio_testclass.php");
+require_once("$CFG->dirroot/mod/glossary/lib.php");
+require_once("$CFG->dirroot/$CFG->admin/generator.php");
 
 Mock::generate('glossary_entry_portfolio_caller', 'mock_entry_caller');
 Mock::generate('glossary_csv_portfolio_caller', 'mock_csv_caller');

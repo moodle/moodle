@@ -46,7 +46,7 @@ if ($testtablesok) {
     print_heading(get_string('testtablesok', 'simpletest'));
 }
 
-$baseurl = $CFG->wwwroot . '/admin/report/unittest/index.php';
+$baseurl = "$CFG->wwwroot/$CFG->admin/report/unittest/index.php";
 
 // Add unittest prefix to config.php if needed
 if ($addconfigprefix && !isset($CFG->unittestprefix)) {

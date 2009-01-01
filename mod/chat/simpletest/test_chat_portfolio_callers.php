@@ -1,7 +1,7 @@
 <?php // $Id$
-require_once($CFG->libdir.'/simpletest/portfolio_testclass.php');
-require_once($CFG->dirroot.'/mod/chat/lib.php');
-require_once($CFG->dirroot.'/admin/generator.php');
+require_once("$CFG->libdir/simpletest/portfolio_testclass.php");
+require_once("$CFG->dirroot/mod/chat/lib.php");
+require_once("$CFG->dirroot/$CFG->admin/generator.php");
 
 Mock::generate('chat_portfolio_caller', 'mock_caller');
 Mock::generate('portfolio_exporter', 'mock_exporter');

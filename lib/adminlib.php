@@ -1422,7 +1422,7 @@ function create_admin_user($user_input=NULL) {
               redirect("$CFG->wwwroot/user/editadvanced.php?id=$user->id");  // Edit thyself
             }
         } else {
-            redirect("$CFG->wwwroot/admin/report/unittest/index.php?testtablesok=1");
+            redirect("$CFG->wwwroot/$CFG->admin/report/unittest/index.php?testtablesok=1");
         }
     } else {
         print_error('cannotcreateadminuser', 'debug');
@@ -6102,7 +6102,7 @@ class admin_setting_managerepository extends admin_setting {
         $addable = 0;
         foreach ($plugins as $p) {
             if (!in_array($p, $alreadyplugins)) {
-                $instancehtml .= '<li><a href="'.$CFG->wwwroot.'/admin/repository.php?sesskey='
+                $instancehtml .= '<li><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/repository.php?sesskey='
                     .$USER->sesskey.'&amp;new='.$p.'">'.get_string('add', 'repository')
                     .' "'.get_string('repositoryname', 'repository_'.$p).'" '
                     .'</a></li>';
