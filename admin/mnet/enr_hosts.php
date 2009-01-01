@@ -38,7 +38,7 @@
            . '</tr>';
     $hosts = $enrolment->list_remote_servers();
     foreach ($hosts as $host) {
-        $coursesurl = "{$CFG->wwwroot}/admin/mnet/enr_courses.php?host={$host->id}&amp;sesskey={$USER->sesskey}";
+        $coursesurl = "{$CFG->wwwroot}/$CFG->admin/mnet/enr_courses.php?host={$host->id}&amp;sesskey={$USER->sesskey}";
         $coursecount = get_field_sql("SELECT count(id) FROM {$CFG->prefix}mnet_enrol_course WHERE hostid={$host->id}");
         if (empty($coursecount)) {
             $coursecount = '?';

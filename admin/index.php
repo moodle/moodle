@@ -426,7 +426,7 @@
     upgrade_local_db("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
 /// Check for changes to RPC functions
-    require_once($CFG->dirroot.'/admin/mnet/adminlib.php');
+    require_once("$CFG->dirroot/$CFG->admin/mnet/adminlib.php");
     upgrade_RPC_functions("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
 

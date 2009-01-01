@@ -72,7 +72,7 @@ function mnet_get_functions($type, $parentname) {
     if (!file_exists($filename)) return false;
 
     if (extension_loaded('tokenizer')) {
-        include_once $CFG->dirroot.'/admin/mnet/MethodTable.php';
+        include_once "$CFG->dirroot/$CFG->admin/mnet/MethodTable.php";
         $functions = (array)MethodTable::create($filename,false);
     }
 

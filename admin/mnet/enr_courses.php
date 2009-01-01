@@ -38,7 +38,7 @@
     " class=\"icon\" alt=\"".get_string("course")."\" />";
 
     foreach ($courses as $course) {
-        $link = $CFG->wwwroot . '/admin/mnet/enr_course_enrol.php?'
+        $link = "$CFG->wwwroot/$CFG->admin/mnet/enr_course_enrol.php?"
             . "host={$mnethost}&amp;courseid={$course->id}&amp;sesskey={$USER->sesskey}";
         echo '<tr>'
                . "<td>$icon</td>"

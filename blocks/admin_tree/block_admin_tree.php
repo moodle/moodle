@@ -196,7 +196,7 @@ class block_admin_tree extends block_base {
             $searchcontent = isset($CFG->adminsearchquery) ? $CFG->adminsearchquery : '';
 
             $this->content->footer = '<div class="adminsearchform">'.
-                                     '<form action="'.$CFG->wwwroot.'/admin/search.php" method="get"><div>'.
+                                     '<form action="'.$CFG->wwwroot.'/'.$CFG->admin.'/search.php" method="get"><div>'.
                                      '<label for="query" class="accesshide">'.get_string('searchinsettings', 'admin').'</label>'.
                                      '<input type="text" name="query" id="query" size="8" value="'.s($searchcontent).'" />'.
                                      '<input type="submit" value="'.get_string('search').'" /></div>'.
