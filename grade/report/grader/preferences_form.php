@@ -72,10 +72,7 @@ class grader_report_preferences_form extends moodleform {
             if ($canviewhidden) {
                 $preferences['prefshow']['showaverages']  = $checkbox_default;
             }
-            if ($course->groupmode != NOGROUPS) {
-                $preferences['prefshow']['showgroups']        = $checkbox_default;
-            }
-
+            $preferences['prefshow']['showgroups']        = $checkbox_default;
             $preferences['prefshow']['showlocks']         = $checkbox_default;
 
             $preferences['prefrows'] = array(
