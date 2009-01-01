@@ -415,6 +415,7 @@ $string['displayingusers'] = 'Displaying users $a->start to $a->end';
 $string['displayonpage'] = 'Display on page';
 $string['documentation'] = 'Moodle Documentation';
 $string['donotask'] = 'Do Not Ask';
+$string['donotclickcontinue'] = 'Do not click on the following continue link ;-)';
 $string['down'] = 'Down';
 $string['downloadexcel'] = 'Download in Excel format';
 $string['downloadods'] = 'Download in ODS format';
