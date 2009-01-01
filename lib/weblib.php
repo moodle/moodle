@@ -2497,7 +2497,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     }
 
     if (file_exists($CFG->dataroot.'/'.SITEID.'/maintenance.html')) {
-        $button = '<a href="'.$CFG->wwwroot.'/admin/maintenance.php">'.get_string('maintenancemode', 'admin').'</a> '.$button;
+        $button = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/maintenance.php">'.get_string('maintenancemode', 'admin').'</a> '.$button;
         if(!empty($title)) {
             $title .= ' - ';
         }

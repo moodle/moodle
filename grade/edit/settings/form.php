@@ -46,7 +46,7 @@ class course_settings_form extends moodleform {
         $strchangedefaults = get_string('changedefaults', 'grades');
         $mform->addElement('header', 'general', get_string('generalsettings', 'grades'));
         if ($can_view_admin_links) {
-            $link = '<a href="' . $CFG->wwwroot . '/admin/settings.php?section=gradessettings">' . $strchangedefaults . '</a>';
+            $link = '<a href="' . $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=gradessettings">' . $strchangedefaults . '</a>';
             $mform->addElement('static', 'generalsettingslink', $link);
         }
         $options = array(-1                                      => get_string('default', 'grades'),
@@ -65,7 +65,7 @@ class course_settings_form extends moodleform {
         // Grade item settings
         $mform->addElement('header', 'grade_item_settings', get_string('gradeitemsettings', 'grades'));
         if ($can_view_admin_links) {
-            $link = '<a href="' . $CFG->wwwroot . '/admin/settings.php?section=gradeitemsettings">' . $strchangedefaults . '</a>';
+            $link = '<a href="' . $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=gradeitemsettings">' . $strchangedefaults . '</a>';
             $mform->addElement('static', 'gradeitemsettingslink', $link);
         }
 
@@ -100,7 +100,7 @@ class course_settings_form extends moodleform {
                     if (function_exists($functionname)) {
                         $mform->addElement('header', 'grade_'.$type.$plugin, get_string('modulename', 'grade'.$type.'_'.$plugin, NULL, $CFG->dirroot.'/grade/'.$type.'/'.$plugin.'/lang/'));
                         if ($can_view_admin_links) {
-                            $link = '<a href="' . $CFG->wwwroot . '/admin/settings.php?section=gradereport' . $plugin . '">' . $strchangedefaults . '</a>';
+                            $link = '<a href="' . $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=gradereport' . $plugin . '">' . $strchangedefaults . '</a>';
                             $mform->addElement('static', 'gradeitemsettingslink', $link);
                         }    
                         $functionname($mform);
