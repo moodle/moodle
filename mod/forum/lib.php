@@ -125,7 +125,23 @@ function forum_update_instance($forum) {
                 notify('Warning! There is more than one discussion in this forum - using the most recent');
                 $discussion = array_pop($discussions);
             } else {
-                error('Could not find the discussion in this forum');
+                // try to recover by creating initial discussion - MDL-16262
+                $discussion = new object();
+                $discussion->course   = $forum->course;
+                $discussion->forum    = $forum->id;
+                $discussion->name     = $forum->name;
+                $discussion->intro    = $forum->intro;
+                $discussion->assessed = $forum->assessed;
+                $discussion->format   = $forum->type;
+                $discussion->mailnow  = false;
+                $discussion->groupid  = -1;
+
+                forum_add_discussion($discussion, $discussion->intro);
+
+                if (! $discussion = get_record('forum_discussions', 'forum', $forum->id)) {
+                    error('Could not add the discussion for this forum');
+                }
+
             }
         }
         if (! $post = get_record('forum_posts', 'id', $discussion->firstpost)) {
