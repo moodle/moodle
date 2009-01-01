@@ -7567,7 +7567,11 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             else {
                 if (empty($noredirect)) {
-                    redirect($CFG->wwwroot.'/backup/restore.php?backup_unique_code='.$backup_unique_code.'&launch=form&file='.$file.'&id='.$id);
+                    // in 2.0 we must not print "Continue" redirect link here, because ppl click on it and the execution gets interrupted on next page!!!
+                    // imo RESTORE_SILENTLY is an ugly hack :-P
+                    $sillystr = get_string('donotclickcontinue');
+                    redirect($CFG->wwwroot.'/backup/restore.php?backup_unique_code='.$backup_unique_code.'&launch=form&file='.$file.'&id='.$id, $sillystr, 0);
+
                 } else {
                     return $backup_unique_code;
                 }
