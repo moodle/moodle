@@ -414,7 +414,7 @@ class grade_report_grader extends grade_report {
 
         if (has_capability('moodle/grade:viewall', $this->context)
          and has_capability('moodle/site:accessallgroups', $this->context)
-         and $COURSE->groupmode != NOGROUPS) { // TODO replace that last condition with proper check
+         and ($course_has_groups = true)) { // TODO replace that last condition with proper check
             $html .= $this->print_toggle('groups', true);
         }
 
