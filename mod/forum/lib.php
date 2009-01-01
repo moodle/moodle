@@ -6836,11 +6836,12 @@ function forum_reset_userdata($data) {
         // remove ratings
         $DB->delete_records_select('forum_ratings', "post IN ($postssql)", $params);
 
-        // all posts
-        $DB->delete_records_select('forum_posts', "discussion IN ($discussionssql)", $params);
+        // all posts - initial posts must be kept in single simple discussion forums
+        $DB->delete_records_select('forum_posts', "discussion IN ($discussionssql) AND parent <> 0", $params); // first all children
+        $DB->delete_records_select('forum_posts', "discussion IN ($discussionssql AND f.type <> 'single') AND parent = 0", $params); // now the initial posts for non single simple
 
-        // finally all discussions
-        $DB->delete_records_select('forum_discussions', "forum IN ($forumssql)", $params);
+        // finally all discussions except single simple forums
+        delete_records_select('forum_discussions', "forum IN ($forumssql AND f.type <> 'single')", $params);
 
         // remove all grades from gradebook
         if (empty($data->reset_gradebook_grades)) {
