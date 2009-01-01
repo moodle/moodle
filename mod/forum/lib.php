@@ -6443,11 +6443,12 @@ function forum_reset_userdata($data) {
         // remove ratings
         delete_records_select('forum_ratings', "post IN ($postssql)");
 
-        // all posts
-        delete_records_select('forum_posts', "discussion IN ($discussionssql)");
+        // all posts - initial posts must be kept in single simple discussion forums
+        delete_records_select('forum_posts', "discussion IN ($discussionssql) AND parent <> 0"); // first all children
+        delete_records_select('forum_posts', "discussion IN ($discussionssql AND f.type <> 'single') AND parent = 0"); // now the initial posts for non single simple
 
-        // finally all discussions
-        delete_records_select('forum_discussions', "forum IN ($forumssql)");
+        // finally all discussions except single simple forums
+        delete_records_select('forum_discussions', "forum IN ($forumssql AND f.type <> 'single')");
 
         // now get rid of all attachments
         if ($forums = get_records_sql($forumssql)) {
