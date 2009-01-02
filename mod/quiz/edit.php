@@ -690,7 +690,7 @@ if($quiz_reordertool){
     echo '<form action="edit.php" method="post">';
     echo '<fieldset class="invisiblefieldset">';
     echo $thispageurl->hidden_params_out();
-    echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     //YUI does not submit the value of the submit button so
             //we need to add the value:
     echo '<input type="hidden" name="repaginate" value="'.$gostring.'" />';

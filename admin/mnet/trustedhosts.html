@@ -13,7 +13,7 @@ admin_externalpage_print_header();
         <td class="cell c1" colspan="2">
             <form  method="post" action="trustedhosts.php">
             <div>
-                <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
+                <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
                 <textarea name="hostlist" cols="40" rows="20"><?php echo $trusted_hosts; ?></textarea><br />
                 <input type="submit" value="<?php print_string('savechanges'); ?>" />
             </div>
@@ -54,7 +54,7 @@ admin_externalpage_print_header();
         <td class="cell c1" colspan="2">
             <form  method="get" action="trustedhosts.php">
             <div>
-                <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
+                <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
                 <input type="text" name="testipaddress" value="<?php echo $test_ip_address; ?>" />
                 <input type="submit" value="<?php print_string('go'); ?>" />
             </div>

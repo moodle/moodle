@@ -20,7 +20,7 @@
 
     // Moodle 1.4+ requires sesskey to be passed in forms
     if (isset($USER->sesskey)) {
-        $sesskey = '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+        $sesskey = '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     } else {
         $sesskey = '';
     }

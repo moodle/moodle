@@ -58,7 +58,7 @@
     <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
     <input type="hidden" name="action" value="updatepage" />
     <input type="hidden" name="pageid" value="<?php echo $pageid ?>" />
-    <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />        
+    <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />        
     <input type="hidden" name="redirect" value="<?php echo $redirect ?>" />        
     <input type="hidden" name="redisplay" value="0" />
     <center>

@@ -1421,7 +1421,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             echo '<li class="activity '.$mod->modname.'" id="module-'.$modnumber.'">';  // Unique ID
             if ($ismoving) {
                 echo '<a title="'.$strmovefull.'"'.
-                     ' href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'&amp;sesskey='.$USER->sesskey.'">'.
+                     ' href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'&amp;sesskey='.sesskey().'">'.
                      '<img class="movetarget" src="'.$CFG->pixpath.'/movehere.gif" '.
                      ' alt="'.$strmovehere.'" /></a><br />
                      ';
@@ -1636,7 +1636,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
     if ($ismoving) {
         echo '<li><a title="'.$strmovefull.'"'.
-             ' href="'.$CFG->wwwroot.'/course/mod.php?movetosection='.$section->id.'&amp;sesskey='.$USER->sesskey.'">'.
+             ' href="'.$CFG->wwwroot.'/course/mod.php?movetosection='.$section->id.'&amp;sesskey='.sesskey().'">'.
              '<img class="movetarget" src="'.$CFG->pixpath.'/movehere.gif" '.
              ' alt="'.$strmovehere.'" /></a></li>
              ';

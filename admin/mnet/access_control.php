@@ -169,14 +169,14 @@ if (!$acl) {
     foreach ($acl as $aclrecord) {
         if ($aclrecord->accessctrl == 'allow') {
             $accesscolumn = get_string('allow', 'mnet')
-                . " (<a href=\"?id={$aclrecord->id}&amp;action=acl&amp;accessctrl=deny&amp;sesskey={$USER->sesskey}\">"
+                . " (<a href=\"?id={$aclrecord->id}&amp;action=acl&amp;accessctrl=deny&amp;sesskey=".sesskey()."\">"
                 . get_string('deny', 'mnet') . "</a>)";
         } else {
             $accesscolumn = get_string('deny', 'mnet')
-                . " (<a href=\"?id={$aclrecord->id}&amp;action=acl&amp;accessctrl=allow&amp;sesskey={$USER->sesskey}\">"
+                . " (<a href=\"?id={$aclrecord->id}&amp;action=acl&amp;accessctrl=allow&amp;sesskey=".sesskey()."\">"
                 . get_string('allow', 'mnet') . "</a>)";
         }
-        $deletecolumn = "<a href=\"?id={$aclrecord->id}&amp;action=delete&amp;sesskey={$USER->sesskey}\">"
+        $deletecolumn = "<a href=\"?id={$aclrecord->id}&amp;action=delete&amp;sesskey=".sesskey()."\">"
                 . get_string('delete') . "</a>";
         $table->data[] = array ($aclrecord->username, $aclrecord->mnet_host_id, $accesscolumn, $deletecolumn);
     }

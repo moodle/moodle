@@ -76,7 +76,7 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
     echo '<form id="editing" method="post" action="send.php">';
     echo '<div class="message-form">';
     echo '<input type="hidden" name="id" value="'.$user->id.'" />';
-    echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 
     $usehtmleditor = (can_use_html_editor() && get_user_preferences('message_usehtmleditor', 0));
     if ($usehtmleditor) {

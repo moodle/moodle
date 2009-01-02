@@ -21,7 +21,7 @@ if (!data_submitted() or !$search or !$replace or !confirm_sesskey()) {   /// Pr
     print_simple_box_start('center');
     echo '<div class="mdl-align">';
     echo '<form action="replace.php" method="post">';
-    echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo 'Search whole database for: <input type="text" name="search" /><br />';
     echo 'Replace with this string: <input type="text" name="replace" /><br />';
     echo '<input type="submit" value="Yes, do it now" /><br />';

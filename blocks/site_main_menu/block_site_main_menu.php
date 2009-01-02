@@ -88,7 +88,7 @@ class block_site_main_menu extends block_list {
 
         if ($ismoving) {
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" alt="" />';
-            $this->content->items[] = $USER->activitycopyname.'&nbsp;(<a href="'.$CFG->wwwroot.'/course/mod.php?cancelcopy=true&amp;sesskey='.$USER->sesskey.'">'.$strcancel.'</a>)';
+            $this->content->items[] = $USER->activitycopyname.'&nbsp;(<a href="'.$CFG->wwwroot.'/course/mod.php?cancelcopy=true&amp;sesskey='.sesskey().'">'.$strcancel.'</a>)';
         }
 
         if (!empty($section->sequence)) {
@@ -116,7 +116,7 @@ class block_site_main_menu extends block_list {
                         if ($mod->id == $USER->activitycopy) {
                             continue;
                         }
-                        $this->content->items[] = '<a title="'.$strmovefull.'" href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'&amp;sesskey='.$USER->sesskey.'">'.
+                        $this->content->items[] = '<a title="'.$strmovefull.'" href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'&amp;sesskey='.sesskey().'">'.
                             '<img style="height:16px; width:80px; border:0px" src="'.$CFG->pixpath.'/movehere.gif" alt="'.$strmovehere.'" /></a>';
                         $this->content->icons[] = '';
                     }
@@ -148,7 +148,7 @@ class block_site_main_menu extends block_list {
         }
 
         if ($ismoving) {
-            $this->content->items[] = '<a title="'.$strmovefull.'" href="'.$CFG->wwwroot.'/course/mod.php?movetosection='.$section->id.'&amp;sesskey='.$USER->sesskey.'">'.
+            $this->content->items[] = '<a title="'.$strmovefull.'" href="'.$CFG->wwwroot.'/course/mod.php?movetosection='.$section->id.'&amp;sesskey='.sesskey().'">'.
                                       '<img style="height:16px; width:80px; border:0px" src="'.$CFG->pixpath.'/movehere.gif" alt="'.$strmovehere.'" /></a>';
             $this->content->icons[] = '';
         }

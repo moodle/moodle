@@ -8,7 +8,7 @@ if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict'
 <div id="trustedhosts"><!-- See theme/standard/styles_layout.css #trustedhosts .generaltable for rules -->
     <form  method="post" action="peers.php">
         <div>
-            <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
+            <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
             <input type="hidden" name="updateregisterall" value="1" />
             <table cellspacing="0" cellpadding="5" class="generaltable generalbox" >
                 <tr>
@@ -71,7 +71,7 @@ if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict'
             <tr>
                 <th class="header c4" colspan="4">
                     <?php print_string('addnewhost', 'mnet'); ?>
-                    <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
+                    <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
                     <input type="hidden" name="step" value="input" />
                 </th>
             </tr>

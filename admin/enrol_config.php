@@ -45,7 +45,7 @@
 
     echo "<form $CFG->frametarget id=\"enrolmenu\" method=\"post\" action=\"enrol_config.php\">";
     echo "<div>";
-    echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\" />";
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
     echo "<input type=\"hidden\" name=\"enrol\" value=\"".$enrol."\" />";
 
 /// Print current enrolment type description

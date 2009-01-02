@@ -284,7 +284,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
         echo '<form method="post" action="edit.php" id="quizquestions"><div>';
 
         echo $pageurl->hidden_params_out();
-        echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 
         echo $reordercontrolstop;
     }
@@ -447,7 +447,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
 <form method="post" action="edit.php"><div>
     <fieldset class="invisiblefieldset" style="display: block;">
     <label for="<?php echo "inputq$qnum" ?>"><?php echo $strgrade; ?></label>:<br />
-    <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
+    <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
     <?php echo $pageurl->hidden_params_out(); ?>
     <input type="hidden" name="savechanges" value="save" />
         <?php
@@ -1326,7 +1326,7 @@ function quiz_question_list($contexts, $pageurl, $categoryandcontext,
 
     echo '<form method="post" action="edit.php">';
     echo '<fieldset class="invisiblefieldset" style="display: block;">';
-    echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo $pageurl->hidden_params_out();
     echo '<div class="categoryquestionscontainer">';
     echo '<table id="categoryquestions" style="width: 100%"><colgroup><col id="qaction"></col><col id="qname"></col><col id="qextraactions"></col></colgroup><tr>';

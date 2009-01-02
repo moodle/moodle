@@ -51,7 +51,7 @@
     <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
     <input type="hidden" name="action" value="insertpage" />
     <input type="hidden" name="pageid" value="<?php echo $pageid ?>" />
-    <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
+    <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
       <?php
         echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
         echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br />";

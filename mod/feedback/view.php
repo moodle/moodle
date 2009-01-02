@@ -145,7 +145,7 @@
             print_box_start('generalbox boxaligncenter boxwidthwide');
             echo '<div class="mdl-align">';
             echo '<form action="mapcourse.php" method="get">';
-            echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+            echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
             echo '<input type="hidden" name="id" value="'.$id.'" />';
             echo '<button type="submit">'.get_string('mapcourses', 'feedback').'</button>';
             helpbutton('mapcourse', '', 'feedback', true, true);

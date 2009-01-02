@@ -42,7 +42,7 @@
     $maxuploadsize = get_max_upload_file_size();
     echo '<center><form method="post" enctype="multipart/form-data" action="uploadcsv.php"><div>
           <input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'" />
-          <input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+          <input type="hidden" name="sesskey" value="'.sesskey().'" />';
           upload_print_form_fragment(1, array('csvfile'), array(get_string('file')));
     echo '<input type="submit" value="'.get_string('upload').'" />';
     echo '</div></form></center><br />';

@@ -287,7 +287,7 @@ function checknos() {
         echo '<div>'."\n";
         echo '<input type="hidden" name="id" value="'.$id.'" />'."\n";
         echo '<input type="hidden" name="returnto" value="'. format_string($_SERVER['REQUEST_URI']) .'" />'."\n";
-        echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />'."\n";
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />'."\n";
 
         foreach ($users as $u) {
             $data = array('<a href="'.$CFG->wwwroot.'/user/view.php?id='.$u->userid.'&amp;course='.$course->id.'">'.fullname($u,true).'</a>'."\n",

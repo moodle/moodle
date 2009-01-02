@@ -670,7 +670,7 @@
             }
             if ($editable) {
                 $o .= '<tr><td>&nbsp;</td><td><br />';
-                $o .= '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+                $o .= '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
                 $o .= '<input type="hidden" name="currentfile" value="'.$currentfile.'" />';
                 $o .= '<input type="hidden" name="mode" value="compare" />';
                 $o .= '<input type="submit" name="update" tabindex="'.$missingcounter.'" value="'.get_string('savechanges').': '.$currentfile.'" />';
@@ -819,7 +819,7 @@
                 // generate an editor for the current help file in $saveto
                 echo '<fieldset><legend>'.$strsavetotitle.'</legend>';
                 echo "<form id=\"helpfileeditor\" action=\"lang.php\" method=\"post\">";
-                echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+                echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
                 echo '<input type="hidden" name="currentfile" value="'.$currentfile.'" />';
                 echo '<input type="hidden" name="mode" value="helpfiles" />';
                 echo "<div class='mdl-align'>\n";

@@ -6103,7 +6103,7 @@ class admin_setting_managerepository extends admin_setting {
         foreach ($plugins as $p) {
             if (!in_array($p, $alreadyplugins)) {
                 $instancehtml .= '<li><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/repository.php?sesskey='
-                    .$USER->sesskey.'&amp;new='.$p.'">'.get_string('add', 'repository')
+                    .sesskey().'&amp;new='.$p.'">'.get_string('add', 'repository')
                     .' "'.get_string('repositoryname', 'repository_'.$p).'" '
                     .'</a></li>';
                 $addable++;

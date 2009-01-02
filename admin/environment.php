@@ -55,7 +55,7 @@
     admin_externalpage_print_header();
 
 /// Print the component download link
-    echo '<div class="reportlink"><a href="environment.php?action=updatecomponent&amp;sesskey='.$USER->sesskey.'">'.$strupdate.'</a></div>';
+    echo '<div class="reportlink"><a href="environment.php?action=updatecomponent&amp;sesskey='.sesskey().'">'.$strupdate.'</a></div>';
 
     print_heading($strenvironment);
 

@@ -96,7 +96,7 @@
     print_box_start('generalbox boxaligncenter boxwidthwide');
     echo '<form method="post">';
     echo '<input type="hidden" name="id" value="'.$id.'" />';
-    echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     
     $sql = "select c.id, c.shortname
               from {course} c

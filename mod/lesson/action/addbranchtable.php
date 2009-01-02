@@ -42,7 +42,7 @@
     <input type="hidden" name="action" value="insertpage" />
     <input type="hidden" name="pageid" value="<?PHP echo $pageid ?>" />
     <input type="hidden" name="qtype" value="<?PHP echo LESSON_BRANCHTABLE ?>" />
-    <input type="hidden" name="sesskey" value="<?PHP echo $USER->sesskey ?>" />
+    <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
     <table class="generalbox boxaligncenter" cellpadding="5" border="1">
     <tr valign="top">
     <td><strong><label for="title"><?php print_string("pagetitle", "lesson"); ?>:</label></strong><br />

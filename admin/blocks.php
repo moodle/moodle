@@ -163,7 +163,7 @@
         $blockobject = $blockobjects[$blockid];
         $block       = $blocks[$blockid];
 
-        $delete = '<a href="blocks.php?delete='.$blockid.'&amp;sesskey='.$USER->sesskey.'">'.$strdelete.'</a>';
+        $delete = '<a href="blocks.php?delete='.$blockid.'&amp;sesskey='.sesskey().'">'.$strdelete.'</a>';
 
         $settings = ''; // By default, no configuration
         if ($blockobject->has_config()) {
@@ -190,19 +190,19 @@
         $class = ''; // Nothing fancy, by default
 
         if ($blocks[$blockid]->visible) {
-            $visible = '<a href="blocks.php?hide='.$blockid.'&amp;sesskey='.$USER->sesskey.'" title="'.$strhide.'">'.
+            $visible = '<a href="blocks.php?hide='.$blockid.'&amp;sesskey='.sesskey().'" title="'.$strhide.'">'.
                        '<img src="'.$CFG->pixpath.'/i/hide.gif" class="icon" alt="'.$strhide.'" /></a>';
         } else {
-            $visible = '<a href="blocks.php?show='.$blockid.'&amp;sesskey='.$USER->sesskey.'" title="'.$strshow.'">'.
+            $visible = '<a href="blocks.php?show='.$blockid.'&amp;sesskey='.sesskey().'" title="'.$strshow.'">'.
                        '<img src="'.$CFG->pixpath.'/i/show.gif" class="icon" alt="'.$strshow.'" /></a>';
             $class = ' class="dimmed_text"'; // Leading space required!
         }
         if ($blockobject->instance_allow_multiple()) {
             if($blocks[$blockid]->multiple) {
-                $multiple = '<span style="white-space: nowrap;">'.get_string('yes').' (<a href="blocks.php?multiple='.$blockid.'&amp;sesskey='.$USER->sesskey.'">'.get_string('change', 'admin').'</a>)</span>';
+                $multiple = '<span style="white-space: nowrap;">'.get_string('yes').' (<a href="blocks.php?multiple='.$blockid.'&amp;sesskey='.sesskey().'">'.get_string('change', 'admin').'</a>)</span>';
             }
             else {
-                $multiple = '<span style="white-space: nowrap;">'.get_string('no').' (<a href="blocks.php?multiple='.$blockid.'&amp;sesskey='.$USER->sesskey.'">'.get_string('change', 'admin').'</a>)</span>';
+                $multiple = '<span style="white-space: nowrap;">'.get_string('no').' (<a href="blocks.php?multiple='.$blockid.'&amp;sesskey='.sesskey().'">'.get_string('change', 'admin').'</a>)</span>';
             }
         }
         else {
@@ -239,7 +239,7 @@
         foreach ($incompatible as $block) {
             $table->add_data(array(
                 $block->name,
-                '<a href="blocks.php?delete='.$block->id.'&amp;sesskey='.$USER->sesskey.'">'.$strdelete.'</a>',
+                '<a href="blocks.php?delete='.$block->id.'&amp;sesskey='.sesskey().'">'.$strdelete.'</a>',
             ));
         }
         $table->print_html();

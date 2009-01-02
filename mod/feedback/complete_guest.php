@@ -284,7 +284,7 @@
                 echo '<tr><td colspan="3" align="center">
                         <input type="hidden" name="anonymous" value="0" />
                         <input type="hidden" name="anonymous_response" value="'.FEEDBACK_ANONYMOUS_YES.'" />
-                        <input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />
+                        <input type="hidden" name="sesskey" value="'.sesskey().'" />
                         &nbsp;
                       </td></tr>';
                 //check, if there exists required-elements

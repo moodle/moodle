@@ -665,7 +665,7 @@
             ';
         echo '<form action="action_redir.php" method="post" id="participantsform" onsubmit="return checksubmit(this);">';
         echo '<div>';
-        echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<input type="hidden" name="returnto" value="'.s(me()).'" />';
     }
 

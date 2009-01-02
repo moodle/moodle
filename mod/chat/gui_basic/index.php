@@ -125,7 +125,7 @@
     echo '<input type="hidden" name="id" value="'.$id.'" />';
     echo '<input type="hidden" name="groupid" value="'.$groupid.'" />';
     echo '<input type="hidden" name="last" value="'.time().'" />';
-    echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<input type="submit" value="'.get_string('submit').'" />&nbsp;';
     echo '<input type="submit" name="refresh" value="'.get_string('refresh').'" />';
     echo '<input type="checkbox" name="newonly" id="newonly" '.($newonly?'checked="checked" ':'').'/><label for="newonly">'.get_string('newonlymsg', 'message').'</label>';

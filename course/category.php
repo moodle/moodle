@@ -328,11 +328,11 @@
                 if (has_capability('moodle/course:visibility', $coursecontext) && has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
                     if (!empty($acourse->visible)) {
                         echo '<a title="'.$strhide.'" href="category.php?id='.$category->id.'&amp;page='.$page.
-                            '&amp;perpage='.$perpage.'&amp;hide='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
+                            '&amp;perpage='.$perpage.'&amp;hide='.$acourse->id.'&amp;sesskey='.sesskey().'">'.
                             '<img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.$strhide.'" /></a> ';
                     } else {
                         echo '<a title="'.$strshow.'" href="category.php?id='.$category->id.'&amp;page='.$page.
-                            '&amp;perpage='.$perpage.'&amp;show='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
+                            '&amp;perpage='.$perpage.'&amp;show='.$acourse->id.'&amp;sesskey='.sesskey().'">'.
                             '<img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.$strshow.'" /></a> ';
                     }
                 } else {
@@ -357,7 +357,7 @@
                 if (has_capability('moodle/category:manage', $context)) {
                     if ($up) {
                         echo '<a title="'.$strmoveup.'" href="category.php?id='.$category->id.'&amp;page='.$page.
-                             '&amp;perpage='.$perpage.'&amp;moveup='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
+                             '&amp;perpage='.$perpage.'&amp;moveup='.$acourse->id.'&amp;sesskey='.sesskey().'">'.
                              '<img src="'.$CFG->pixpath.'/t/up.gif" class="iconsmall" alt="'.$strmoveup.'" /></a> ';
                     } else {
                         echo $spacer;
@@ -365,7 +365,7 @@
 
                     if ($down) {
                         echo '<a title="'.$strmovedown.'" href="category.php?id='.$category->id.'&amp;page='.$page.
-                             '&amp;perpage='.$perpage.'&amp;movedown='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
+                             '&amp;perpage='.$perpage.'&amp;movedown='.$acourse->id.'&amp;sesskey='.sesskey().'">'.
                              '<img src="'.$CFG->pixpath.'/t/down.gif" class="iconsmall" alt="'.$strmovedown.'" /></a> ';
                     } else {
                         echo $spacer;

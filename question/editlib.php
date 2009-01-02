@@ -282,7 +282,7 @@ function question_list($contexts, $pageurl, $categoryandcontext, $cm = null,
 
     echo '<form method="post" action="edit.php">';
     echo '<fieldset class="invisiblefieldset" style="display: block;">';
-    echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo $pageurl->hidden_params_out();
     echo '<table id="categoryquestions" style="width: 100%"><tr>';
     echo "<th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$straction</th>";
@@ -417,7 +417,7 @@ function question_sort_options($pageurl, $sortorder){
     // non-POSTed page to not break the back button
     $html .= '<form method="get" action="edit.php">';
     $html .= '<fieldset class="invisiblefieldset" style="display: block;">';
-    $html .= '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+    $html .= '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     $html .= $pageurl->hidden_params_out(array('qsortorder'));
     //choose_from_menu concatenates the form name with
     //"menu" so the label is for menuqsortorder

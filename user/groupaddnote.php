@@ -57,7 +57,7 @@ print_heading($straddnote);
 echo '<form method="post" action="groupaddnote.php" >';
 echo '<div style="width:100%;text-align:center;">';
 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
-echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 $state_names = note_get_state_names();
 
 // the first time list hack

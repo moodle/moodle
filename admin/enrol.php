@@ -64,7 +64,7 @@
 
     echo "<form $CFG->frametarget id=\"enrolmenu\" method=\"post\" action=\"enrol.php\">";
     echo "<div>";
-    echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\" />";
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
 
     $table = new stdClass();
     $table->head = array(get_string('name'), get_string('enable'), get_string('default'), $str->settings);

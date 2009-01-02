@@ -38,7 +38,7 @@
 
     foreach ($courses as $course) {
         $link = "$CFG->wwwroot/$CFG->admin/mnet/enr_course_enrol.php?"
-            . "host={$mnethost}&amp;courseid={$course->id}&amp;sesskey={$USER->sesskey}";
+            . "host={$mnethost}&amp;courseid={$course->id}&amp;sesskey=".sesskey();
         echo '<tr>'
                . "<td>$icon</td>"
                . "<td><a href=\"$link\">".format_string($course->fullname). "</a></td>"

@@ -20,7 +20,7 @@ print_simple_box_start("center", "");
 
 <form method="post" action="mnet_services.php">
 <div>
-<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
+<input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
 <input type="hidden" name="step" value="<?php echo $mnet_peer->nextstep; ?>" />
 <input type="hidden" name="hostid" value="<?php echo ($mnet_peer->id)?  $mnet_peer->id : '0' ; ?>" />
 <table cellpadding="9" cellspacing="0" >

@@ -50,9 +50,9 @@
             $MNET->get_private_key();
             $SESSION->mnet_confirm_delete_key = md5(sha1($MNET->keypair['keypair_PEM'])).':'.time();
             notice_yesno(get_string("deletekeycheck", "mnet"),
-                                    "index.php?sesskey=$USER->sesskey&amp;confirm=".md5($MNET->public_key),
+                                    "index.php?sesskey=".sesskey()."&amp;confirm=".md5($MNET->public_key),
                                     "index.php",
-                                     array('sesskey' => $USER->sesskey),
+                                     array('sesskey' => sesskey()),
                                      NULL,
                                     'post',
                                     'get');
@@ -126,7 +126,7 @@
                 </tr>
                 <tr valign="top">
                     <td align="left" width="10" nowrap="nowrap"><?php print_string('expireyourkey', 'mnet'); ?></td>
-                    <td align="left"><input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
+                    <td align="left"><input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
                         <input type="hidden" name="deleteKey" value="" />
                         <input type="submit" name="submit" value="<?php print_string('delete'); ?>" />
                     </td>
