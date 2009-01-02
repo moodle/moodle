@@ -64,6 +64,12 @@ $string['database'] = 'Adatbázis';
 $string['databasecreationsettings'] = 'Most a Moodle adatait tároló adatbázis beállításait kell elvégeznie. Ezt az adatbázist a telepítő automatikusan beállítja az alábbiak szerint. <br /><br /><br /><b>Típus: </b>a telepítő \"mysql\"-re állítja be<br /><b>Gazdagép</b>: a telepítő \"localhost\"-ra állítja<br /><b>Név</b>: az adatbázis neve, pl. moodle<br /><b>Felhasználó</b>: a telepítő \"root\"-ra állítja<br /><b>Jelszó</b>: az Ön jelszava az adatbázishoz<br /><b>Táblázat előtagja</b>: opcionális előtag az összes táblázatnévhez';
 $string['databasecreationsettingshead'] = 'Most a Moodle adatait tároló adatbázis beállításait kell elvégeznie. Ezt az adatbázist a telepítő automatikusan beállítja az alábbiak szerint.';
 $string['databasecreationsettingssub'] = '<b>Típus: </b>a telepítő \"mysql\"-re állítja be<br /><b>Gazdagép</b>: a telepítő \"localhost\"-ra állítja<br /><b>Név</b>: az adatbázis neve, pl. moodle<br /><b>Felhasználó</b>: a telepítő  \"root\"-ra állítja<br /><b>Jelszó</b>: az Ön jelszava az adatbázishoz<br /><b>Táblázat előtagja</b>: opcionális előtag az összes táblázatnévhez';
+$string['databasecreationsettingssub2'] = '<b>Típus:</b> a telepítő \"mysqli\"-re állítja<br />
+<b>Gazdagép:</b> a telepítő \"localhost\"-ra állítja <br />
+<b>Név:</b> az adatbázis neve, pl. moodle<br />
+<b>Felhasználó:</b> a telepítő \"root\"-ra állítja<br />
+<b>Jelszó:</b> az Ön jelszava az adatbázishoz<br />
+<b>Táblák előtagja:</b> választható előtag az összes táblanévhez';
 $string['databasehost'] = 'Az adatbázis gazdagépe:';
 $string['databasename'] = 'Az adatbázis neve:';
 $string['databasepass'] = 'Az adatbázis jelszava:';
@@ -178,6 +184,7 @@ $string['mysqlextensionisnotpresentinphp'] = 'A PHP nincs jól beállítva a MyS
 $string['mysqli'] = 'Javított MySQL (mysqli)';
 $string['mysqliextensionisnotpresentinphp'] = 'A PHP nincs jól beállítva a MySQL-kiterjesztéshez, így nem tud vele kommunikálni. Ellenőrizze a php.ini fájlt, vagy fordítsa újra a PHP-t. A MySQLi-kiterjesztés PHP 4 esetén nem használható.';
 $string['name'] = 'Név';
+$string['nativemysqli'] = 'Tökéletesített MySQL (native/mysqli)';
 $string['next'] = 'Következő';
 $string['oci8po'] = 'Oracle (oci8po)';
 $string['ociextensionisnotpresentinphp'] = 'A PHP nincs megfelelően beállítva az OCI8 bővítéshez, így nem tud kommunikálni az Oracle-lal. Ellenőrizze a php.ini állományt, vagy fordítsa le újra a PHP-t.';
@@ -205,6 +212,7 @@ $string['releasenoteslink'] = 'A Moodle ezen verziójának adataival kapcsolatos
 $string['remotedownloaderror'] =  'Az összetevőt nem lehet szerverére letölteni, ellenőrizze a proxy beállításait. Ajánlatos a PHP cURL-kiterjesztés használata. A(z) <a href=\"$a->url\">$a->url</a> állományt töltse le kézzel, másolja át szerverén a(z) \"$a->dest\" célkönyvtárba, és csomagolja ki ott.';
 $string['remotedownloadnotallowed'] =  'Az összetevőket nem lehet szerverére letölteni(az allow_url_fopen ki van kapcsolva). A(z) <a href=\"$a->url\">$a->url</a> állományt töltse le kézzel, másolja át szerverén a(z) \"$a->dest\" célkönyvtárba, és csomagolja ki ott.';
 $string['report'] = 'Jelentés';
+$string['requiredentrieschanged'] = '<strong>FONTOS - OLVASSA EL!<br/>(Ez a figyelmeztetés csak ezen frissítés alkalmával jelenik meg)</strong><br/>Hibajavítás miatt a \'Kitöltendő bejegyzések\' és a \'Megtekintés beállítása előtti kitöltendő bejegyzések\' beállításokat használó adatbázis-tevékenységek viselkedése módosulni fog. Részletesebben lásd az <a href="http://moodle.org/mod/forum/discuss.php?d=110928" target="_blank">adatbázismodul fórumát</a>. Az elvárt viselkedésről olvashat itt is: <a href="http://docs.moodle.org/en/Adding/editing_a_database#Required_entries" target="_blank">Moodle Docs</a>. <br/><br/>A változás rendszerében az alábbi adatbázisokat fogja érinteni: (a listát most és frissítés után is mentse el, és ellenőrizze, hogy a tevékenységek továbbra is a tanár szándékainak megfelelően működnek-e.)<br/><strong style="color:red">$a->text</strong><br/>';
 $string['restricted'] = 'Korlátozott';
 $string['safemode'] = 'Biztonságos mód';
 $string['safemodeerror'] = 'A Moodle bekapcsolt biztonságos mód esetén gondokba ütközhet';
