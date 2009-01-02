@@ -22,8 +22,8 @@
         $course_header->course_fullname =   stripslashes_safe($form1->fullname);   //"update_FullName";
     /// Roll dates only if the backup course has a start date
     /// (some formats like main page, social..., haven't it and rolling dates
-    /// from 0 produces crazy dates. MDL-10125
-        if ($course_header->course_startdate) {
+    /// from 0 produces crazy dates. MDL-10125 and we have passed some custom startyear/month/day. MDL-12922
+        if ($course_header->course_startdate && !empty($form1->startyear)) {
             $form1->startdate = make_timestamp($form1->startyear, $form1->startmonth, $form1->startday);
             $currentcoursestartdate = $course_header->course_startdate;
             $coursestartdatedateoffset = $form1->startdate - $currentcoursestartdate;
