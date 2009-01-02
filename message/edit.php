@@ -51,7 +51,7 @@
             if (empty($SESSION->wantsurl)) {
                 $SESSION->wantsurl = $CFG->httpswwwroot.'/message/edit.php';
             }
-            redirect($CFG->httpswwwroot.'/login/index.php');
+            redirect(get_login_url());
         }
     }
 

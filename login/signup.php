@@ -29,7 +29,7 @@
     $mform_signup = new login_signup_form();
 
     if ($mform_signup->is_cancelled()) {
-        redirect($CFG->httpswwwroot.'/login/index.php');
+        redirect(get_login_url());
 
     } else if ($user = $mform_signup->get_data()) {
         $user->confirmed   = 0;

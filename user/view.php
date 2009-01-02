@@ -50,7 +50,7 @@
     if (!empty($CFG->forceloginforprofiles)) {
         require_login();
         if (isguest()) {
-            redirect("$CFG->wwwroot/login/index.php");
+            redirect(get_login_url());
         }
     }
 

@@ -46,16 +46,12 @@
     require_login($course->id, false, $cm);
 
     if (isguest()) {   // Guests can't subscribe
-        $wwwroot = $CFG->wwwroot.'/login/index.php';
-        if (!empty($CFG->loginhttps)) {
-            $wwwroot = str_replace('http:','https:', $wwwroot);
-        }
 
         $navigation = build_navigation('', $cm);
         print_header($course->shortname, $course->fullname, $navigation, '', '', true, "", navmenu($course, $cm));
 
         notice_yesno(get_string('noguestsubscribe', 'forum').'<br /><br />'.get_string('liketologin'),
-                     $wwwroot, $_SERVER['HTTP_REFERER']);
+                     get_login_url(), $_SERVER['HTTP_REFERER']);
         print_footer($course);
         exit;
     }

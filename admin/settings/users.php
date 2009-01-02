@@ -22,7 +22,7 @@ if ($hassiteconfig
     $temp->add(new admin_setting_configselect('guestloginbutton', get_string('guestloginbutton', 'auth'),
                                               get_string('showguestlogin', 'auth'), '1', array('0'=>get_string('hide'), '1'=>get_string('show'))));
     $temp->add(new admin_setting_configtext('alternateloginurl', get_string('alternateloginurl', 'auth'),
-                                            get_string('alternatelogin', 'auth', htmlspecialchars($CFG->wwwroot.'/login/index.php')), ''));
+                                            get_string('alternatelogin', 'auth', htmlspecialchars(get_login_url())), ''));
     $temp->add(new admin_setting_configtext('forgottenpasswordurl', get_string('forgottenpasswordurl', 'auth'),
                                             get_string('forgottenpassword', 'auth'), ''));
     $temp->add(new admin_setting_configtextarea('auth_instructions', get_string('instructions', 'auth'),

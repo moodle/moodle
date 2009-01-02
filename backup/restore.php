@@ -61,21 +61,23 @@
         $to = $SESSION->restore->course_id;
     }
 
+    $loginurl = get_login_url();
+
     if (!empty($id)) {
         require_login($id);
         if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))) {
             if (empty($to)) {
-                print_error("cannotuseadminadminorteacher", '', "$CFG->wwwroot/login/index.php");
+                print_error("cannotuseadminadminorteacher", '', $loginurl);
             } else {
                 if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $to))
                     && !has_capability('moodle/site:import',  get_context_instance(CONTEXT_COURSE, $to))) {
-                    print_error("cannotuseadminadminorteacher", '', "$CFG->wwwroot/login/index.php");
+                    print_error("cannotuseadminadminorteacher", '', $loginurl);
                 }
             }
         }
     } else {
         if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM))) {
-            print_error("cannotuseadmin", '', "$CFG->wwwroot/login/index.php");
+            print_error("cannotuseadmin", '', $loginurl);
         }
     }
 

@@ -21,7 +21,7 @@
         if (empty($SESSION->wantsurl)) {
             $SESSION->wantsurl = $CFG->httpswwwroot.'/login/change_password.php';
         }
-        redirect($CFG->httpswwwroot.'/login/index.php');
+        redirect(get_login_url());
     }
 
     // do not require change own password cap if change forced

@@ -25,14 +25,16 @@
     //Check login
     require_login();
 
+    $loginurl = get_login_url();
+
     //Check admin
     if (!empty($id)) {
         if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))) {
-            print_error('cannotuseadminadminorteacher', '', '$CFG->wwwroot/login/index.php');
+            print_error('cannotuseadminadminorteacher', '', $loginurl);
         }
     } else {
         if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM))) {
-            print_error('cannotuseadmin', '', '$CFG->wwwroot/login/index.php');
+            print_error('cannotuseadmin', '', $loginurl);
         }
     }
 

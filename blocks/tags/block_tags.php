@@ -309,7 +309,7 @@ EOT;
             } else {
                 //if not logged in
                 $this->content->footer = '<hr />'.get_string('please', $tagslang).'
-                    <a href="'.$CFG->wwwroot.'/login/index.php">'.get_string('login', $tagslang).'
+                    <a href="'.get_login_url().'">'.get_string('login', $tagslang).'
                         </a> '.get_string('tagunits', $tagslang);
             }
         }

@@ -33,7 +33,7 @@ ini_set('include_path', $CFG->dirroot.'\search'.$separator.ini_get('include_path
     }
 
     if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
-        print_error('beadmin', 'search', "$CFG->wwwroot/login/index.php");
+        print_error('beadmin', 'search', get_login_url());
     }
 
     require_once("$CFG->dirroot/search/indexlib.php");

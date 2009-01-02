@@ -18,7 +18,7 @@ $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 $strforgotten = get_string('passwordforgotten');
 $strlogin     = get_string('login');
 
-$navigation = build_navigation(array(array('name' => $strlogin, 'link' => "$CFG->wwwroot/login/index.php", 'type' => 'misc'),
+$navigation = build_navigation(array(array('name' => $strlogin, 'link' => get_login_url(), 'type' => 'misc'),
                                      array('name' => $strforgotten, 'link' => null, 'type' => 'misc')));
 
 // if alternatepasswordurl is defined, then we'll just head there
@@ -91,7 +91,7 @@ if ($p_secret !== false) {
 $mform = new login_forgot_password_form();
 
 if ($mform->is_cancelled()) {
-    redirect($CFG->httpswwwroot.'/login/index.php');
+    redirect(get_login_url());
 
 } else if ($data = $mform->get_data()) {
 /// find the user in the database and mail info

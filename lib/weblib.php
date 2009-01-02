@@ -3506,11 +3506,7 @@ function user_login_string($course=NULL, $user=NULL) {
         $realuserinfo = '';
     }
 
-    if (empty($CFG->loginhttps)) {
-        $wwwroot = $CFG->wwwroot;
-    } else {
-        $wwwroot = str_replace('http:','https:',$CFG->wwwroot);
-    }
+    $loginurl = get_login_url();
 
     if (empty($course->id)) {
         // $course->id is not defined during installation
@@ -3525,7 +3521,7 @@ function user_login_string($course=NULL, $user=NULL) {
         }
         if (isset($user->username) && $user->username == 'guest') {
             $loggedinas = $realuserinfo.get_string('loggedinasguest').
-                      " (<a $CFG->frametarget href=\"$wwwroot/login/index.php\">".get_string('login').'</a>)';
+                      " (<a $CFG->frametarget href=\"$loginurl\">".get_string('login').'</a>)';
         } else if (!empty($user->access['rsw'][$context->path])) {
             $rolename = '';
             if ($role = $DB->get_record('role', array('id'=>$user->access['rsw'][$context->path]))) {
@@ -3540,7 +3536,7 @@ function user_login_string($course=NULL, $user=NULL) {
         }
     } else {
         $loggedinas = get_string('loggedinnot', 'moodle').
-                      " (<a $CFG->frametarget href=\"$wwwroot/login/index.php\">".get_string('login').'</a>)';
+                      " (<a $CFG->frametarget href=\"$loginurl\">".get_string('login').'</a>)';
     }
     return '<div class="logininfo">'.$loggedinas.'</div>';
 }

@@ -95,6 +95,29 @@ class moodle_session {
         session_set_user($user);
     }
 
+    protected function check_security() {
+        global $CFG;
+
+        if (!empty($_SESSION['USER']->id)) {
+            /// Make sure current IP matches the one for this session (if required)
+            $remoteaddr = getremoteaddr();
+
+            if (empty($_SESSION['USER']->sessionip)) {
+                $_SESSION['USER']->sessionip = $remoteaddr;
+            }
+
+            if ($_SESSION['USER']->sessionip != $remoteaddr) {
+                if (!is_guestuser($_SESSION['USER'])) {
+                    $link = '';
+                } else {
+                    
+                }
+                print_error('sessionipnomatch', 'error');
+            }
+        }
+
+    }
+
     /**
      * Terminates active moodle session
      */

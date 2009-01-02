@@ -14,22 +14,23 @@
     $cancel = optional_param( 'cancel' );
     $launch = optional_param( 'launch' );
 
+    $loginurl = get_login_url();
 
     if (!empty($id)) {
         require_login($id);
         if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $id))) {
-            print_error('cannotuseadminadminorteacher', 'error', "$CFG->wwwroot/login/index.php");
+            print_error('cannotuseadminadminorteacher', 'error', $loginurl);
         }
     } else {
         require_login();
         if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM))) {
-            print_error('cannotuseadmin', 'error', "$CFG->wwwroot/login/index.php");
+            print_error('cannotuseadmin', 'error', $loginurl);
         }
     }
 
     if (!empty($to)) {
         if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $to))) {
-            print_error('cannotuseadminadminorteacher', 'error', "$CFG->wwwroot/login/index.php");
+            print_error('cannotuseadminadminorteacher', 'error', $loginurl);
         }
     }
 

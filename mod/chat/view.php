@@ -50,13 +50,9 @@
         $navigation = build_navigation('', $cm);
         print_header_simple(format_string($chat->name), '', $navigation,
                       '', '', true, '', navmenu($course, $cm));
-        $wwwroot = $CFG->wwwroot.'/login/index.php';
-        if (!empty($CFG->loginhttps)) {
-            $wwwroot = str_replace('http:','https:', $wwwroot);
-        }
 
         notice_yesno(get_string('noguests', 'chat').'<br /><br />'.get_string('liketologin'),
-                $wwwroot, $CFG->wwwroot.'/course/view.php?id='.$course->id);
+                get_login_url(), $CFG->wwwroot.'/course/view.php?id='.$course->id);
 
         print_footer($course);
         exit;

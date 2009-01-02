@@ -49,7 +49,7 @@ $separator = (array_key_exists('WINDIR', $_SERVER)) ? ';' : ':' ;
     }
 
     if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
-        print_error('beadmin', 'search', "$CFG->wwwroot/login/index.php");
+        print_error('beadmin', 'search', get_login_url());
     }
 
 /// confirmation flag to prevent accidental reindexing (indexersplash.php is the correct entry point)

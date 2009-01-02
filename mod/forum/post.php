@@ -24,11 +24,6 @@
 
     if (has_capability('moodle/legacy:guest', $sitecontext, NULL, false)) {
 
-        $wwwroot = $CFG->wwwroot.'/login/index.php';
-        if (!empty($CFG->loginhttps)) {
-            $wwwroot = str_replace('http:', 'https:', $wwwroot);
-        }
-
         if (!empty($forum)) {      // User is starting a new discussion in a forum
             if (! $forum = $DB->get_record('forum', array('id' => $forum))) {
                 print_error('invalidforumid', 'forum');
@@ -62,7 +57,7 @@
         print_header($course->shortname, $course->fullname, $navigation, '' , '', true, "", navmenu($course, $cm));
 
         notice_yesno(get_string('noguestpost', 'forum').'<br /><br />'.get_string('liketologin'),
-                     $wwwroot, get_referer(false));
+                     get_login_url(), get_referer(false));
         print_footer($course);
         exit;
     }

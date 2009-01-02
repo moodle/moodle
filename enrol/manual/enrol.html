@@ -39,12 +39,7 @@
 
     if (isguestuser()) {
         print_box_start('centerpara');
-        if (empty($CFG->loginhttps)) {
-            $loginurl = $CFG->wwwroot .'/login/index.php';
-        } else {
-            $wwwroot = str_replace('http:','https:', $CFG->wwwroot);
-            $loginurl = $wwwroot .'/login/index.php';
-        }
+        $loginurl = get_login_url();
         print_single_button($loginurl, null, get_string('login'));
         print_box_end();
     }

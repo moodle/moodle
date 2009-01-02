@@ -1862,6 +1862,27 @@ function course_setup($courseorid=0) {
 }
 
 /**
+ * Returns full login url.
+ *
+ * @param bool $loginguest add login guest param
+ * @return string login url
+ */
+function get_login_url($loginguest=false) {
+    global $CFG;
+
+    if (empty($CFG->loginhttps) or $loginguest) { //do not require https for guest logins
+        $loginguest = $loginguest ? '?loginguest=true' : '';
+        $url = "$CFG->wwwroot/login/index.php$loginguest";
+
+    } else {
+        $wwwroot = str_replace('http:','https:', $CFG->wwwroot);
+        $url = "$wwwroot/login/index.php";
+    }
+
+    return $url;
+}
+
+/**
  * This function checks that the current user is logged in and has the
  * required privileges
  *
@@ -1906,17 +1927,12 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
             $SESSION->fromurl  = $_SERVER['HTTP_REFERER'];
         }
         if ($autologinguest and !empty($CFG->guestloginbutton) and !empty($CFG->autologinguests) and ($COURSE->id == SITEID or $COURSE->guest) ) {
-            $loginguest = '?loginguest=true';
+            $loginguest = true;
         } else {
-            $loginguest = '';
+            $loginguest = false;
         }
-        if (empty($CFG->loginhttps) or $loginguest) { //do not require https for guest logins
-            redirect($CFG->wwwroot .'/login/index.php'. $loginguest);
-        } else {
-            $wwwroot = str_replace('http:','https:', $CFG->wwwroot);
-            redirect($wwwroot .'/login/index.php');
-        }
-        exit;
+        redirect(get_login_url($loginguest));
+        exit; // never reached
     }
 
 /// loginas as redirection if needed
@@ -1954,13 +1970,6 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
     if (user_not_fully_set_up($USER)) {
         $SESSION->wantsurl = $FULLME;
         redirect($CFG->wwwroot .'/user/edit.php?id='. $USER->id .'&amp;course='. SITEID);
-    }
-
-/// Make sure current IP matches the one for this session (if required)
-    if (!empty($CFG->tracksessionip)) {
-        if ($USER->sessionIP != md5(getremoteaddr())) {
-            print_error('sessionipnomatch', 'error');
-        }
     }
 
 /// Make sure the USER has a sesskey set up.  Used for checking script parameters.
@@ -2069,7 +2078,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
                 case 1:    /// Guests always allowed
                     if (!has_capability('moodle/course:view', $COURSE->context)) {    // Prohibited by capability
                         print_header_simple();
-                        notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), "$CFG->wwwroot/login/index.php");
+                        notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), get_login_url());
                     }
                     if (!empty($cm) and !$cm->visible) { // Not allowed to see module, send to course page
                         redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course,
@@ -2094,7 +2103,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
                     print_header_simple('', '',
                             build_navigation(array(array('name' => $strloggedinasguest, 'link' => null, 'type' => 'misc'))));
                     if (empty($USER->access['rsw'][$COURSE->context->path])) {  // Normal guest
-                        notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), "$CFG->wwwroot/login/index.php");
+                        notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), get_login_url());
                     } else {
                         notify(get_string('guestsnotallowed', '', format_string($COURSE->fullname)));
                         echo '<div class="notifyproblem">'.switchroles_form($COURSE->id).'</div>';

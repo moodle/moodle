@@ -12,14 +12,9 @@
     $mymoodlestr = get_string('mymoodle','my');
 
     if (isguest()) {
-        $wwwroot = $CFG->wwwroot.'/login/index.php';
-        if (!empty($CFG->loginhttps)) {
-            $wwwroot = str_replace('http:','https:', $wwwroot);
-        }
-
         print_header($mymoodlestr);
         notice_yesno(get_string('noguest', 'my').'<br /><br />'.get_string('liketologin'),
-                     $wwwroot, $CFG->wwwroot);
+                     get_login_url(), $CFG->wwwroot);
         print_footer();
         die();
     }

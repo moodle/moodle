@@ -5,19 +5,21 @@
     //Check login
     require_login();
 
+    $loginurl = get_login_url();
+
     if (!empty($course->id)) {
         if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $course->id))) {
             if (empty($to)) {
-                print_error("cannotuseadminadminorteacher", '', "$CFG->wwwroot/login/index.php");
+                print_error("cannotuseadminadminorteacher", '', $loginurl);
             } else {
                 if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $to))) {
-                    print_error("cannotuseadminadminorteacher", '', "$CFG->wwwroot/login/index.php");
+                    print_error("cannotuseadminadminorteacher", '', $loginurl);
                 }
             }
         }
     } else {
         if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM))) {
-            print_error("cannotuseadmin", '', "$CFG->wwwroot/login/index.php");
+            print_error("cannotuseadmin", '', $loginurl);
         }
     }
 

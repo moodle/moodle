@@ -127,12 +127,8 @@
         $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
         if (has_capability('moodle/legacy:guest', $sitecontext, NULL, false)) {      // Guest on whole site
-            $wwwroot = $CFG->wwwroot.'/login/index.php';
-            if (!empty($CFG->loginhttps)) {
-                $wwwroot = str_replace('http:','https:', $wwwroot);
-            }
             notice_yesno(get_string('noguestchoose', 'choice').'<br /><br />'.get_string('liketologin'),
-                         $wwwroot, $_SERVER['HTTP_REFERER']);
+                         get_login_url(), $_SERVER['HTTP_REFERER']);
 
         } else if (has_capability('moodle/legacy:guest', $context, NULL, false)) {   // Guest in this course only
             $SESSION->wantsurl = $FULLME;

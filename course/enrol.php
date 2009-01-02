@@ -11,12 +11,8 @@
     $loginasguest = optional_param('loginasguest', 0, PARAM_BOOL); // hmm, is this still needed?
 
     if (!isloggedin()) {
-        $wwwroot = $CFG->wwwroot;
-        if (!empty($CFG->loginhttps)) {
-            $wwwroot = str_replace('http:','https:', $wwwroot);
-        }
         // do not use require_login here because we are usually comming from it
-        redirect($wwwroot.'/login/index.php');
+        redirect(get_login_url());
     }
 
     if (!$course = $DB->get_record('course', array('id'=>$id))) {
