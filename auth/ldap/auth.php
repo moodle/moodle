@@ -1835,7 +1835,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         if ($user) {
             add_to_log(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID,
                        $user->id, 0, $user->id);
-            $USER = complete_user_login($user);
+            complete_user_login($user);
 
             // Cleanup the key to prevent reuse...
             // and to allow re-logins with normal credentials

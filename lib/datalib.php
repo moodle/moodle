@@ -1897,7 +1897,7 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
     if ($user) {
         $userid = $user;
     } else {
-        if (is_loggedinas()) {  // Don't log
+        if (session_is_loggedinas()) {  // Don't log
             return;
         }
         $userid = empty($USER->id) ? '0' : $USER->id;
@@ -1972,7 +1972,7 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
 function user_accesstime_log($courseid=0) {
     global $USER, $CFG, $DB;
 
-    if (!isloggedin() or is_loggedinas()) {
+    if (!isloggedin() or session_is_loggedinas()) {
         // no access tracking
         return;
     }

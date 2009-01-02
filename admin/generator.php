@@ -1141,7 +1141,7 @@ class generator_cli extends generator {
                 echo "Invalid username or password!{$this->eolchar}";
                 die();
             }
-            $USER = complete_user_login($user);
+            complete_user_login($user);
             $systemcontext = get_context_instance(CONTEXT_SYSTEM);
             if (!has_capability('moodle/site:doanything', $systemcontext)) {
                 echo "You do not have administration privileges on this Moodle site. "

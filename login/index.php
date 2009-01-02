@@ -158,7 +158,7 @@ httpsrequired();
         /// Let's get them all set up.
             add_to_log(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID,
                        $user->id, 0, $user->id);
-            $USER = complete_user_login($user);
+            complete_user_login($user);
 
         /// Prepare redirection
             if (user_not_fully_set_up($USER)) {

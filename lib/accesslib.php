@@ -1769,9 +1769,15 @@ function load_temp_role($context, $roleid, $accessdata) {
 /**
  * Check all the login enrolment information for the given user object
  * by querying the enrolment plugins
+ * @return void
  */
 function check_enrolment_plugins(&$user) {
     global $CFG;
+
+    if (empty($user->id) or isguestuser($user)) {
+        // shortcut - there is no enrolment work for guests and not-logged-in users
+        return;
+    }
 
     static $inprogress;  // To prevent this function being called more than once in an invocation
 

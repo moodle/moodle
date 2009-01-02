@@ -4,7 +4,7 @@
  * Factory method returning moodle_session object.
  * @return moodle_session
  */
-function get_session() {
+function session_get_instance() {
     static $session = null;
 
     if (is_null($session)) {
@@ -18,7 +18,7 @@ function get_session() {
  * Class handling all session and cookies related stuff.
  */
 class moodle_session {
-    function __construct() {
+    public function __construct() {
         global $CFG;
         $this->prepare_cookies();
         $this->init_session_storage();
@@ -44,12 +44,55 @@ class moodle_session {
             }
         }
 
-        if (!isset($_SESSION['USER']->id)) {
-            $_SESSION['USER']->id = 0; // to enable proper function of $CFG->notloggedinroleid hack
-            if (isset($CFG->mnet_localhost_id)) {
-                $_SESSION['USER']->mnethostid = $CFG->mnet_localhost_id;
+        $this->check_user_initialised();
+    }
+
+    /**
+     * Initialise $USER object, handles google access.
+     *
+     * @return void
+     */
+    protected function check_user_initialised() {
+        if (isset($_SESSION['USER']->id)) {
+            // already set up $USER
+            return;
+        }
+
+        $user = null;
+
+        if (!empty($CFG->opentogoogle) and !NO_MOODLE_COOKIES) {
+            if (!empty($_SERVER['HTTP_USER_AGENT'])) {
+                // allow web spiders in as guest users
+                if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== false ) {
+                    $user = guest_user();
+                } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'google.com') !== false ) { // Google
+                    $user = guest_user();
+                } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'Yahoo! Slurp') !== false ) {  // Yahoo
+                    $user = guest_user();
+                } else if (strpos($_SERVER['HTTP_USER_AGENT'], '[ZSEBOT]') !== false ) {  // Zoomspider
+                    $user = guest_user();
+                } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSNBOT') !== false ) {  // MSN Search
+                    $user = guest_user();
+                }
+            }
+            if (!$user and !empty($_SERVER['HTTP_REFERER'])) {
+                // automaticaly log in users coming from search engine results
+                if (strpos($_SERVER['HTTP_REFERER'], 'google') !== false ) {
+                    $user = guest_user();
+                } else if (strpos($_SERVER['HTTP_REFERER'], 'altavista') !== false ) {
+                    $user = guest_user();
+                }
             }
         }
+
+        if (!$user) {
+            $user = new object();
+            $user->id = 0; // to enable proper function of $CFG->notloggedinroleid hack
+            if (isset($CFG->mnet_localhost_id)) {
+                $user->mnethostid = $CFG->mnet_localhost_id;
+            }
+        }
+        session_set_user($user);
     }
 
     /**
@@ -83,7 +126,7 @@ class moodle_session {
     /**
      * Prepare cookies and varions system settings
      */
-    private function prepare_cookies() {
+    protected function prepare_cookies() {
         global $CFG, $nomoodlecookie;
 
         if (!defined('NO_MOODLE_COOKIES')) {
@@ -121,6 +164,7 @@ class moodle_session {
             unset(${'MoodleSession'.$CFG->sessioncookie});
             unset($_GET['MoodleSession'.$CFG->sessioncookie]);
             unset($_POST['MoodleSession'.$CFG->sessioncookie]);
+            unset($_REQUEST['MoodleSession'.$CFG->sessioncookie]);
         }
         //compatibility hack for Moodle Cron, cookies not deleted, but set to "deleted" - should not be needed with NO_MOODLE_COOKIES in cron.php now
         if (!empty($_COOKIE['MoodleSession'.$CFG->sessioncookie]) && $_COOKIE['MoodleSession'.$CFG->sessioncookie] == "deleted") {
@@ -131,7 +175,7 @@ class moodle_session {
     /**
      * Inits session storage.
      */
-    private function init_session_storage() {
+    protected function init_session_storage() {
         global $CFG;
 
     /// Set up session handling
@@ -254,10 +298,23 @@ function get_moodle_cookie() {
 }
 
 /**
+ * Setup $USER object - called during login, loginas, etc.
+ * Preloads capabilities and checks enrolment plugins
+ *
+ * @param object $user full user record object
+ * @return void
+ */
+function session_set_user($user) {
+    $_SESSION['USER'] = $user;
+    check_enrolment_plugins($_SESSION['USER']);
+    load_all_capabilities();
+}
+
+/**
  * Is current $USER logged-in-as somebody else?
  * @return bool
  */
-function is_loggedinas() {
+function session_is_loggedinas() {
     return !empty($_SESSION['USER']->realuser);
 }
 
@@ -265,8 +322,8 @@ function is_loggedinas() {
  * Returns the $USER object ignoring current login-as session
  * @return object user object
  */
-function get_real_user() {
-    if (is_loggedinas()) {
+function session_get_realuser() {
+    if (session_is_loggedinas()) {
         return $_SESSION['REALUSER'];
     } else {
         return $_SESSION['USER'];
@@ -280,7 +337,7 @@ function get_real_user() {
  * @return void
  */
 function session_loginas($userid, $context) {
-    if (is_loggedinas()) {
+    if (session_is_loggedinas()) {
         return;
     }
 
@@ -290,12 +347,10 @@ function session_loginas($userid, $context) {
 
     /// Create the new $USER object with all details and reload needed capabilitites
     $_SESSION['REALUSER'] = $_SESSION['USER'];
-    $_SESSION['USER'] = get_complete_user_data('id', $userid);
-    $_SESSION['USER']->realuser       = $_SESSION['REALUSER']->id;
-    $_SESSION['USER']->loginascontext = $context;
-
-    check_enrolment_plugins($_SESSION['USER']);
-    load_all_capabilities();
+    $user = get_complete_user_data('id', $userid);
+    $user->realuser       = $_SESSION['REALUSER']->id;
+    $user->loginascontext = $context;
+    session_set_user($user);
 }
 
 /**
@@ -303,7 +358,7 @@ function session_loginas($userid, $context) {
  * @return void
  */
 function session_unloginas() {
-    if (!is_loggedinas()) {
+    if (!session_is_loggedinas()) {
         return;
     }
 

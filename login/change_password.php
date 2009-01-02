@@ -30,7 +30,7 @@
     }
 
     // do not allow "Logged in as" users to change any passwords
-    if (is_loggedinas()) {
+    if (session_is_loggedinas()) {
         print_error('cannotcallscript');
     }
 

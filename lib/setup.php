@@ -387,7 +387,7 @@ global $HTTPSPAGEREQUIRED;
     }
 
 /// start session and prepare global $SESSION, $USER
-    get_session();
+    session_get_instance();
     $SESSION = &$_SESSION['SESSION'];
     $USER    = &$_SESSION['USER'];
 
@@ -450,34 +450,6 @@ global $HTTPSPAGEREQUIRED;
     // set default locale and themes - might be changed again later from require_login()
     course_setup();
 
-    if (!empty($CFG->opentogoogle)) {
-        if (!NO_MOODLE_COOKIES and empty($USER->id)) {  // Ignore anyone logged in, or scripts without cookies
-            if (!empty($_SERVER['HTTP_USER_AGENT'])) {
-                if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== false ) {
-                    $USER = guest_user();
-                } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'google.com') !== false ) { // Google
-                    $USER = guest_user();
-                } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'Yahoo! Slurp') !== false ) {  // Yahoo
-                    $USER = guest_user();
-                } else if (strpos($_SERVER['HTTP_USER_AGENT'], '[ZSEBOT]') !== false ) {  // Zoomspider
-                    $USER = guest_user();
-                } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSNBOT') !== false ) {  // MSN Search
-                    $USER = guest_user();
-                }
-            }
-            if (empty($USER) && !empty($_SERVER['HTTP_REFERER'])) {
-                if (strpos($_SERVER['HTTP_REFERER'], 'google') !== false ) {
-                    $USER = guest_user();
-                } else if (strpos($_SERVER['HTTP_REFERER'], 'altavista') !== false ) {
-                    $USER = guest_user();
-                }
-            }
-            if (!empty($USER->id)) {
-                load_all_capabilities();
-            }
-        }
-    }
-
     if ($CFG->theme == 'standard' or $CFG->theme == 'standardwhite') {    // Temporary measure to help with XHTML validation
         if (isset($_SERVER['HTTP_USER_AGENT']) and empty($USER->id)) {      // Allow W3CValidator in as user called w3cvalidator (or guest)
             if ((strpos($_SERVER['HTTP_USER_AGENT'], 'W3C_Validator') !== false) or
@@ -504,8 +476,8 @@ global $HTTPSPAGEREQUIRED;
             $apachelog_name = clean_filename($USER->firstname . " " .
                                              $USER->lastname);
         }
-        if (is_loggedinas()) {
-            $realuser = get_real_user();
+        if (session_is_loggedinas()) {
+            $realuser = session_get_realuser();
             $apachelog_username = clean_filename($realuser->username." as ".$apachelog_username);
             $apachelog_name = clean_filename($realuser->firstname." ".$realuser->lastname ." as ".$apachelog_name);
             $apachelog_userid = clean_filename($realuser->id." as ".$apachelog_userid);

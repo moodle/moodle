@@ -1920,7 +1920,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
     }
 
 /// loginas as redirection if needed
-    if ($COURSE->id != SITEID and is_loggedinas()) {
+    if ($COURSE->id != SITEID and session_is_loggedinas()) {
         if ($USER->loginascontext->contextlevel == CONTEXT_COURSE) {
             if ($USER->loginascontext->instanceid != $COURSE->id) {
                 print_error('loginasonecourse', '', $CFG->wwwroot.'/course/view.php?id='.$USER->loginascontext->instanceid);
@@ -1929,7 +1929,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
     }
 
 /// check whether the user should be changing password (but only if it is REALLY them)
-    if (get_user_preferences('auth_forcepasswordchange') && !is_loggedinas()) {
+    if (get_user_preferences('auth_forcepasswordchange') && !session_is_loggedinas()) {
         $userauth = get_auth_plugin($USER->auth);
         if ($userauth->can_change_password()) {
             $SESSION->wantsurl = $FULLME;
@@ -2107,8 +2107,8 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
     /// For non-guests, check if they have course view access
 
         } else if (has_capability('moodle/course:view', $COURSE->context)) {
-            if (is_loggedinas()) {   // Make sure the REAL person can also access this course
-                $realuser = get_real_user();
+            if (session_is_loggedinas()) {   // Make sure the REAL person can also access this course
+                $realuser = session_get_realuser();
                 if (!has_capability('moodle/course:view', $COURSE->context, $realuser->id)) {
                     print_header_simple();
                     notice(get_string('studentnotallowed', '', fullname($USER, true)), $CFG->wwwroot .'/');
@@ -2154,7 +2154,7 @@ function require_logout() {
         }
     }
 
-    get_session()->terminate();
+    session_get_instance()->terminate();
 }
 
 /**
@@ -3143,17 +3143,15 @@ function authenticate_user_login($username, $password) {
  * NOTE:
  * - It will NOT log anything -- up to the caller to decide what to log.
  *
- *
- *
  * @uses $CFG, $USER
  * @param string $user obj
- * @return user|flase A {@link $USER} object or false if error
+ * @return object A {@link $USER} object - BC only, do not use
  */
 function complete_user_login($user) {
     global $CFG, $USER, $SESSION;
 
-    $USER = $user; // this is required because we need to access preferences here!
-    check_user_preferences_loaded();
+    // check enrolments, load caps and setup $USER object
+    session_set_user($user);
 
     update_user_login_times();
     if (empty($CFG->nolastloggedin)) {
@@ -3165,12 +3163,6 @@ function complete_user_login($user) {
         set_moodle_cookie('nobody');
     }
     set_login_session_preferences();
-
-    // Call enrolment plugins
-    check_enrolment_plugins($user);
-
-    /// This is what lets the user do anything on the site :-)
-    load_all_capabilities();
 
     /// Select password change url
     $userauth = get_auth_plugin($USER->auth);
