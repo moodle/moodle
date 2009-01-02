@@ -2229,14 +2229,12 @@ function require_user_key_login($script, $instance=null) {
     }
 
 /// emulate normal session
-    $USER    = $user;
+    session_set_user($user);
 
 /// note we are not using normal login
     if (!defined('USER_KEY_LOGIN')) {
         define('USER_KEY_LOGIN', true);
     }
-
-    load_all_capabilities();
 
 /// return isntance id - it might be empty
     return $key->instance;
