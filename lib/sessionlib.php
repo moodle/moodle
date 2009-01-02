@@ -249,6 +249,61 @@ function get_moodle_cookie() {
     }
 }
 
+function session_loginas($userid, $context) {
+    global $USER, $SESSION;
+
+    if (!empty($USER->realuser)) {
+        return;
+    }
+
+/// Remember current timeaccess settings for later
+
+    if (isset($USER->timeaccess)) {
+        $SESSION->oldtimeaccess = $USER->timeaccess;
+    }
+    if (isset($USER->grade_last_report)) {
+        $SESSION->grade_last_report = $USER->grade_last_report;
+    }
+
+    $olduserid   = $USER->id;
+
+/// Create the new USER object with all details and reload needed capabilitites
+    $USER = get_complete_user_data('id', $userid);
+    $USER->realuser = $olduserid;
+    $USER->loginascontext = $context;
+    check_enrolment_plugins($USER);
+    load_all_capabilities();   // reload capabilities
+
+    if (isset($SESSION->currentgroup)) {    // Remember current cache setting for later
+        $SESSION->oldcurrentgroup = $SESSION->currentgroup;
+        unset($SESSION->currentgroup);
+    }
+}
+
+function session_unloginas() {
+    global $USER, $SESSION;
+
+    if (empty($USER->realuser)) {
+        return;
+    }
+
+    $USER = get_complete_user_data('id', $USER->realuser);
+    load_all_capabilities();   // load all this user's normal capabilities
+
+    if (isset($SESSION->oldcurrentgroup)) {      // Restore previous "current group" cache.
+        $SESSION->currentgroup = $SESSION->oldcurrentgroup;
+        unset($SESSION->oldcurrentgroup);
+    }
+    if (isset($SESSION->oldtimeaccess)) {        // Restore previous timeaccess settings
+        $USER->timeaccess = $SESSION->oldtimeaccess;
+        unset($SESSION->oldtimeaccess);
+    }
+    if (isset($SESSION->grade_last_report)) {    // Restore grade defaults if any
+        $USER->grade_last_report = $SESSION->grade_last_report;
+        unset($SESSION->grade_last_report);
+    }
+}
+
 /**
 * Enable cookieless sessions by including $CFG->usesid=true;
 * in config.php.

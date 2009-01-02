@@ -12,21 +12,7 @@
             print_error('confirmsesskeybad');
         }
 
-        $USER = get_complete_user_data('id', $USER->realuser);
-        load_all_capabilities();   // load all this user's normal capabilities
-
-        if (isset($SESSION->oldcurrentgroup)) {      // Restore previous "current group" cache.
-            $SESSION->currentgroup = $SESSION->oldcurrentgroup;
-            unset($SESSION->oldcurrentgroup);
-        }
-        if (isset($SESSION->oldtimeaccess)) {        // Restore previous timeaccess settings
-            $USER->timeaccess = $SESSION->oldtimeaccess;
-            unset($SESSION->oldtimeaccess);
-        }
-        if (isset($SESSION->grade_last_report)) {    // Restore grade defaults if any
-            $USER->grade_last_report = $SESSION->grade_last_report;
-            unset($SESSION->grade_last_report);
-        }
+        session_unloginas();
 
         if ($return and isset($_SERVER["HTTP_REFERER"])) { // That's all we wanted to do, so let's go back
             redirect($_SERVER["HTTP_REFERER"]);
@@ -73,32 +59,9 @@
         $context = $coursecontext;
     }
 
-/// Remember current timeaccess settings for later
-
-    if (isset($USER->timeaccess)) {
-        $SESSION->oldtimeaccess = $USER->timeaccess;
-    }
-    if (isset($USER->grade_last_report)) {
-        $SESSION->grade_last_report = $USER->grade_last_report;
-    }
-
 /// Login as this user and return to course home page.
-
     $oldfullname = fullname($USER, true);
-    $olduserid   = $USER->id;
-
-/// Create the new USER object with all details and reload needed capabilitites
-    $USER = get_complete_user_data('id', $userid);
-    $USER->realuser = $olduserid;
-    $USER->loginascontext = $context;
-    check_enrolment_plugins($USER);
-    load_all_capabilities();   // reload capabilities
-
-    if (isset($SESSION->currentgroup)) {    // Remember current cache setting for later
-        $SESSION->oldcurrentgroup = $SESSION->currentgroup;
-        unset($SESSION->currentgroup);
-    }
-
+    session_loginas($userid, $context);
     $newfullname = fullname($USER, true);
 
     add_to_log($course->id, "course", "loginas", "../user/view.php?id=$course->id&amp;user=$userid", "$oldfullname -> $newfullname");
