@@ -114,7 +114,7 @@
                 echo '<input type="hidden" name="deletetempl" value="'.$template->id.'" />';
                 echo '<input type="hidden" name="shoulddelete" value="1" />';
                 echo '<input type="hidden" name="id" value="'.$id.'" />';
-                echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
+                echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
                 echo '</form>';
                 echo '</td></tr>';
             }
@@ -122,7 +122,7 @@
         }
 ?>
         <form name="frm" action="<?php echo $ME;?>" method="post">
-            <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey;?>" />
+            <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
             <input type="hidden" name="id" value="<?php echo $id;?>" />
             <input type="hidden" name="canceldelete" value="0" />
             <button type="button" onclick="this.form.canceldelete.value=1;this.form.submit();"><?php print_string('cancel');?></button>

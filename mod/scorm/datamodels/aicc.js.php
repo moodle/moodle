@@ -527,7 +527,7 @@ function AICCapi() {
         }
         //popupwin(datastring);
         var myRequest = NewHttpReq();
-        result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php p($USER->sesskey) ?>"+datastring);
+        result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php echo sesskey() ?>"+datastring);
         results = result.split('\n');
         errorCode = results[1];
         return results[0];

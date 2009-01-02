@@ -117,13 +117,14 @@ print_header_simple($title, '', $nav, '', '', false);
         $script = coursetag_get_jscript();
         $addtagshelp = helpbutton('addtags', 'adding tags', $tagslang, TRUE, FALSE, '', TRUE);
         $edittagthisunit = get_string('edittagthisunit', $tagslang);
-    $arrowtitle = get_string('arrowtitle', $tagslang);
+        $arrowtitle = get_string('arrowtitle', $tagslang);
+        $sesskey = sesskey();
         $outstr .= <<<EOT
             $script
             <form action="$CFG->wwwroot/tag/coursetags_edit.php" method="post" id="coursetag">
                 <div style="display: none;">
                     <input type="hidden" name="courseid" value="$course->id" />
-                    <input type="hidden" name="sesskey" value="$USER->sesskey" />
+                    <input type="hidden" name="sesskey" value="$sesskey" />
                 </div>
                 <div class="coursetag_edit_centered">
                     <div class="coursetag_edit_row">

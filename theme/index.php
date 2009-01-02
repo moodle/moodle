@@ -57,7 +57,7 @@
     print_heading($strthemes);
 
     $themes = get_list_of_plugins("theme");
-    $sesskey = !empty($USER->id) ? $USER->sesskey : '';
+    $sesskey = sesskey();
 
     echo "<table style=\"margin-left:auto;margin-right:auto;\" cellpadding=\"7\" cellspacing=\"5\">\n";
 

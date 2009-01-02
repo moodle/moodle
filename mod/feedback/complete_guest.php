@@ -77,9 +77,7 @@
     }
     
     //check whether the user has a session
-    if(!isset($USER->sesskey) OR !$USER->sesskey) {
-        print_error('error');
-    }
+    // there used to be a sesskey test - this could not work - sorry
     
     //check whether the feedback is located and! started from the mainsite
     if($course->id == SITEID AND !$courseid) {
@@ -150,7 +148,7 @@
             //check, if all required items have a value
             if(feedback_check_values($_POST, $startitempos, $lastitempos)) {
                 $userid = $USER->id; //arb
-                if($completedid = feedback_save_guest_values($_POST, $USER->sesskey)){
+                if($completedid = feedback_save_guest_values($_POST, sesskey())){
                     add_to_log($course->id, 'feedback', 'startcomplete', 'view.php?id='.$cm->id, $feedback->id); //arb: log even guest submissions or at least the startcomplete since the other add log event is elsewhere
                     
                     if(!$gonextpage AND !$gopreviouspage) $preservevalues = false;//es kann gespeichert werden
@@ -220,7 +218,7 @@
             $firstpagebreak = false;
         }
         $maxitemcount = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
-        $feedbackcompletedtmp = feedback_get_current_completed($feedback->id, true, $courseid, $USER->sesskey);
+        $feedbackcompletedtmp = feedback_get_current_completed($feedback->id, true, $courseid, sesskey());
 
         /// Print the main part of the page
         ///////////////////////////////////////////////////////////////////////////
@@ -308,7 +306,7 @@
                         $value =  isset($formdata->{$frmvaluename})?$formdata->{$frmvaluename}:NULL;
                     }else {
                         if(isset($feedbackcompletedtmp->id)) {
-                            $value = feedback_get_item_value($feedbackcompletedtmp->id, $feedbackitem->id, $USER->sesskey);
+                            $value = feedback_get_item_value($feedbackcompletedtmp->id, $feedbackitem->id, sesskey());
                         }
                     }
                     echo '<tr>';

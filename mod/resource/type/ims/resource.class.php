@@ -384,7 +384,7 @@ class resource_ims extends resource_base {
                 $options['courseid'] = $course->id;
                 $options['cmid'] = $cm->id;
                 $options['file'] = $resource->reference;
-                $options['sesskey'] = $USER->sesskey;
+                $options['sesskey'] = sesskey();
                 $options['inpopup'] = $inpopup;
                 if ($errorcode == 3) {
                     $label = get_string ('deploy', 'resource');

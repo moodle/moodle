@@ -107,7 +107,7 @@ switch ($action) {
                     "index.php?id={$courseid}", "index.php?id={$courseid}",
                     array('outcomeid' => $outcome->id,
                         'action'=> 'delete',
-                        'sesskey' =>  $USER->sesskey,
+                        'sesskey' =>  sesskey(),
                         'deleteconfirmed'=> 1)
                     );
             print_footer();
@@ -176,7 +176,7 @@ if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
         $buttons .= "<a title=\"$stredit\" href=\"edit.php?courseid=$courseid&amp;id=$outcome->id\"><img".
                     " src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"$stredit\" /></a> ";
         if ($outcome->can_delete()) {
-            $buttons .= "<a title=\"$strdelete\" href=\"index.php?id=$courseid&amp;outcomeid=$outcome->id&amp;action=delete&amp;sesskey=$USER->sesskey\"><img".
+            $buttons .= "<a title=\"$strdelete\" href=\"index.php?id=$courseid&amp;outcomeid=$outcome->id&amp;action=delete&amp;sesskey=".sesskey()."\"><img".
                         " src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"$strdelete\" /></a> ";
         }
         $line[] = $buttons;
@@ -233,7 +233,7 @@ if ($outcomes = grade_outcome::fetch_all_global()) {
                         " src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"$stredit\" /></a> ";
         }
         if (has_capability('moodle/grade:manage', get_context_instance(CONTEXT_SYSTEM)) and $outcome->can_delete()) {
-            $buttons .= "<a title=\"$strdelete\" href=\"index.php?id=$courseid&amp;outcomeid=$outcome->id&amp;action=delete&amp;sesskey=$USER->sesskey\"><img".
+            $buttons .= "<a title=\"$strdelete\" href=\"index.php?id=$courseid&amp;outcomeid=$outcome->id&amp;action=delete&amp;sesskey=".sesskey()."\"><img".
                         " src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"$strdelete\" /></a> ";
         }
         $line[] = $buttons;

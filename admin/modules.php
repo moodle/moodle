@@ -205,7 +205,7 @@
         // took out hspace="\10\", because it does not validate. don't know what to replace with.
         $icon = "<img src=\"$CFG->modpixpath/$module->name/icon.gif\" class=\"icon\" alt=\"\" />";
 
-        $delete = "<a href=\"modules.php?delete=$module->name&amp;sesskey=$USER->sesskey\">$strdelete</a>";
+        $delete = "<a href=\"modules.php?delete=$module->name&amp;sesskey=".sesskey()."\">$strdelete</a>";
 
         if (file_exists("$CFG->dirroot/mod/$module->name/settings.php") ||
                 file_exists("$CFG->dirroot/mod/$module->name/settingstree.php")) {
@@ -224,11 +224,11 @@
         }
 
         if ($module->visible) {
-            $visible = "<a href=\"modules.php?hide=$module->name&amp;sesskey=$USER->sesskey\" title=\"$strhide\">".
+            $visible = "<a href=\"modules.php?hide=$module->name&amp;sesskey=".sesskey()."\" title=\"$strhide\">".
                        "<img src=\"$CFG->pixpath/i/hide.gif\" class=\"icon\" alt=\"$strhide\" /></a>";
             $class = "";
         } else {
-            $visible = "<a href=\"modules.php?show=$module->name&amp;sesskey=$USER->sesskey\" title=\"$strshow\">".
+            $visible = "<a href=\"modules.php?show=$module->name&amp;sesskey=".sesskey()."\" title=\"$strshow\">".
                        "<img src=\"$CFG->pixpath/i/show.gif\" class=\"icon\" alt=\"$strshow\" /></a>";
             $class = " class=\"dimmed_text\"";
         }

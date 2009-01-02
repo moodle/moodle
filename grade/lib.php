@@ -1166,7 +1166,7 @@ class grade_seq extends grade_structure {
         global $USER, $CFG;
 
         $this->courseid   = $courseid;
-        $this->commonvars = "&amp;sesskey=$USER->sesskey&amp;id=$this->courseid";
+        $this->commonvars = "&amp;sesskey=".sesskey()."&amp;id=$this->courseid";
         $this->context    = get_context_instance(CONTEXT_COURSE, $courseid);
 
         // get course grade tree
@@ -1310,7 +1310,7 @@ class grade_tree extends grade_structure {
         global $USER, $CFG;
 
         $this->courseid   = $courseid;
-        $this->commonvars = "&amp;sesskey=$USER->sesskey&amp;id=$this->courseid";
+        $this->commonvars = "&amp;sesskey=".sesskey()."&amp;id=$this->courseid";
         $this->levels     = array();
         $this->context    = get_context_instance(CONTEXT_COURSE, $courseid);
 

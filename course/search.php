@@ -188,7 +188,7 @@
      ///add the module parameter to the paging bar if they exists
         $modulelink = "";
         if (!empty($modulelist) and confirm_sesskey()) {
-            $modulelink = "&amp;modulelist=".$modulelist."&amp;sesskey=".$USER->sesskey;
+            $modulelink = "&amp;modulelist=".$modulelist."&amp;sesskey=".sesskey();
         }
 
         print_navigation_bar($totalcount, $page, $perpage, $encodedsearch, $modulelink);
@@ -205,7 +205,7 @@
         } else {
         /// Show editing UI.
             echo "<form id=\"movecourses\" action=\"search.php\" method=\"post\">\n";
-            echo "<div><input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />\n";
+            echo "<div><input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n";
             echo "<input type=\"hidden\" name=\"search\" value=\"".s($search)."\" />\n";
             echo "<input type=\"hidden\" name=\"page\" value=\"$page\" />\n";
             echo "<input type=\"hidden\" name=\"perpage\" value=\"$perpage\" /></div>\n";
@@ -277,10 +277,10 @@
                 // checks whether user can change visibility
                 if (has_capability('moodle/course:visibility', $coursecontext)) {
                     if (!empty($course->visible)) {
-                        echo "<a title=\"".get_string("hide")."\" href=\"search.php?search=$encodedsearch&amp;perpage=$perpage&amp;page=$page&amp;hide=$course->id&amp;sesskey=$USER->sesskey\">\n<img".
+                        echo "<a title=\"".get_string("hide")."\" href=\"search.php?search=$encodedsearch&amp;perpage=$perpage&amp;page=$page&amp;hide=$course->id&amp;sesskey=".sesskey()."\">\n<img".
                             " src=\"$pixpath/t/hide.gif\" class=\"iconsmall\" alt=\"".get_string("hide")."\" /></a>\n ";
                     } else {
-                        echo "<a title=\"".get_string("show")."\" href=\"search.php?search=$encodedsearch&amp;perpage=$perpage&amp;page=$page&amp;show=$course->id&amp;sesskey=$USER->sesskey\">\n<img".
+                        echo "<a title=\"".get_string("show")."\" href=\"search.php?search=$encodedsearch&amp;perpage=$perpage&amp;page=$page&amp;show=$course->id&amp;sesskey=".sesskey()."\">\n<img".
                             " src=\"$pixpath/t/show.gif\" class=\"iconsmall\" alt=\"".get_string("show")."\" /></a>\n ";
                     }
                 }

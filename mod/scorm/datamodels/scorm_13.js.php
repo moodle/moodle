@@ -1237,7 +1237,7 @@ function SCORMapi1_3() {
 //            }
         ?>
         var myRequest = NewHttpReq();
-        var result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php p($USER->sesskey) ?>"+datastring);
+        var result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php echo sesskey() ?>"+datastring);
         <?php
 //            if (scorm_debugging($scorm)) {
 //                echo 'popupwin(result);';

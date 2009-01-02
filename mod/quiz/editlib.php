@@ -447,7 +447,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
 <form method="post" action="edit.php"><div>
     <fieldset class="invisiblefieldset" style="display: block;">
     <label for="<?php echo "inputq$qnum" ?>"><?php echo $strgrade; ?></label>:<br />
-    <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
+    <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
     <?php echo $pageurl->hidden_params_out(); ?>
     <input type="hidden" name="savechanges" value="save" />
         <?php
@@ -1499,7 +1499,7 @@ function quiz_print_grading_form($quiz, $pageurl, $tabindex){
     $strsave=get_string('save',"quiz");
     echo "<form method=\"post\" action=\"edit.php\"><div>";
     echo '<fieldset class="invisiblefieldset" style="display: block;">';
-    echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
     echo $pageurl->hidden_params_out();
     $a='<input type="text" id="inputmaxgrade" name="maxgrade" size="' . ($quiz->decimalpoints + 2) . '" tabindex="'.($tabindex)
          .'" value="'.quiz_format_grade($quiz, $quiz->grade).'" />';

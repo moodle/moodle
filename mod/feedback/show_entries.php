@@ -193,7 +193,7 @@
                                 <td align="right">
                                 <?php
                                     $show_button_link = $ME;
-                                    $show_button_options = array('sesskey'=>$USER->sesskey, 'userid'=>$student->id, 'do_show'=>'showoneentry', 'id'=>$id);
+                                    $show_button_options = array('sesskey'=>sesskey(), 'userid'=>$student->id, 'do_show'=>'showoneentry', 'id'=>$id);
                                     $show_button_label = get_string('show_entries', 'feedback');
                                     print_single_button($show_button_link, $show_button_options, $show_button_label, 'post');
                                 ?>
@@ -204,7 +204,7 @@
                                 <td align="right">
                                 <?php
                                     $delete_button_link = 'delete_completed.php';
-                                    $delete_button_options = array('sesskey'=>$USER->sesskey, 'completedid'=>$feedbackcompleted->id, 'do_show'=>'showoneentry', 'id'=>$id);
+                                    $delete_button_options = array('sesskey'=>sesskey(), 'completedid'=>$feedbackcompleted->id, 'do_show'=>'showoneentry', 'id'=>$id);
                                     $delete_button_label = get_string('delete_entry', 'feedback');
                                     print_single_button($delete_button_link, $delete_button_options, $delete_button_label, 'post');
                                 ?>
@@ -228,7 +228,7 @@
                     <td align="right">
                         <?php
                             $show_anon_button_link = 'show_entries_anonym.php';
-                            $show_anon_button_options = array('sesskey'=>$USER->sesskey, 'userid'=>0, 'do_show'=>'showoneentry', 'id'=>$id);
+                            $show_anon_button_options = array('sesskey'=>sesskey(), 'userid'=>0, 'do_show'=>'showoneentry', 'id'=>$id);
                             $show_anon_button_label = get_string('show_entries', 'feedback');
                             print_single_button($show_anon_button_link, $show_anon_button_options, $show_anon_button_label, 'post');
                         ?>
@@ -259,7 +259,7 @@
             // print_simple_box_start("center", '50%');
             print_box_start('generalbox boxaligncenter boxwidthnormal');
             echo '<form>';
-            echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
+            echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
             echo '<table width="100%">';
             $itemnr = 0;
             foreach($feedbackitems as $feedbackitem){

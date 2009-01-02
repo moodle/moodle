@@ -185,7 +185,7 @@
     // print_simple_box_start('center');
     print_box_start('generalbox boxwidthwide boxaligncenter');
         echo '<form action="'.$ME.'" method="post">';
-        echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     
     //this div makes the buttons stand side by side
     echo '<div>';

@@ -585,7 +585,7 @@ function SCORMapi1_2() {
         datastring += '&scoid=<?php echo $scoid ?>';
         
         var myRequest = NewHttpReq();
-        result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php p($USER->sesskey) ?>"+datastring);
+        result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php echo sesskey() ?>"+datastring);
         results = String(result).split('\n');
         errorCode = results[1];
         return results[0];

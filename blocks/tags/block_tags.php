@@ -230,6 +230,7 @@ class block_tags extends block_base {
                     $buttonadd = get_string('add', $tagslang);
                     $arrowtitle = get_string('arrowtitle', $tagslang);
                     $coursetaghelpbutton = helpbutton('addtags', 'adding tags', $tagslang, TRUE, FALSE, '', TRUE);
+                    $sesskey = sesskey();
                     $this->content->footer .= <<<EOT
                         <hr />
                         <form action="{$CFG->wwwroot}/tag/coursetags_add.php" method="post" id="coursetag"
@@ -237,7 +238,7 @@ class block_tags extends block_base {
                             <div style="display: none;">
                                 <input type="hidden" name="entryid" value="$COURSE->id" />
                                 <input type="hidden" name="userid" value="$USER->id" />
-                                <input type="hidden" name="sesskey" value="$USER->sesskey" />
+                                <input type="hidden" name="sesskey" value="$sesskey" />
                             </div>
                             <div><label for="coursetag_new_tag">$tagthisunit</label></div>
                             <div class="coursetag_form_wrapper">

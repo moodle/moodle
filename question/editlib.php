@@ -338,7 +338,7 @@ function question_list($contexts, $pageurl, $categoryandcontext, $cm = null,
         if (question_has_capability_on($question, 'edit', $question->category)) {
             // hide-feature
             if($question->hidden) {
-                echo "<a title=\"$strrestore\" href=\"edit.php?".$pageurl->get_query_string()."&amp;unhide=$question->id&amp;sesskey=$USER->sesskey\"><img
+                echo "<a title=\"$strrestore\" href=\"edit.php?".$pageurl->get_query_string()."&amp;unhide=$question->id&amp;sesskey=".sesskey()."\"><img
                         src=\"$CFG->pixpath/t/restore.gif\" alt=\"$strrestore\" /></a>";
             } else {
                 echo "<a title=\"$strdelete\" href=\"edit.php?".$pageurl->get_query_string()."&amp;deleteselected=$question->id&amp;q$question->id=1\"><img

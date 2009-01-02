@@ -186,7 +186,7 @@
             //if the user is not known so we cannot save the values temporarly
             if(!isset($USER->username) OR $USER->username == 'guest') {
                 $completefile = 'complete_guest.php';
-                $guestid = $USER->sesskey;
+                $guestid = sesskey();
             }else {
                 $completefile = 'complete.php';
                 $guestid = false;

@@ -332,7 +332,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
                     unset($tempdisplaylist[$key]);
                 }
             }
-            popup_form ("index.php?move=$category->id&amp;sesskey=$USER->sesskey&amp;moveto=", $tempdisplaylist, "moveform$category->id", $category->parent, '', '', '', false);
+            popup_form ("index.php?move=$category->id&amp;sesskey=".sesskey()."&amp;moveto=", $tempdisplaylist, "moveform$category->id", $category->parent, '', '', '', false);
         }
         echo '</td>';
         echo '</tr>';

@@ -98,7 +98,7 @@
         <table>
             <tr>
                 <td>
-                    <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey;?>" />
+                    <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
                     <select name="completedid" size="<?php echo (sizeof($feedbackcompleteds)>10)?10:5;?>">
 <?php
                     if(is_array($feedbackcompleteds)) {
@@ -142,7 +142,7 @@
             // print_simple_box_start("center", '50%');
             print_box_start('generalbox boxaligncenter boxwidthnormal');
             echo '<form>';
-            echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
+            echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
             echo '<table width="100%">';
             $itemnr = 0;
             foreach($feedbackitems as $feedbackitem){

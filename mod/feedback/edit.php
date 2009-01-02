@@ -408,7 +408,7 @@
         
         $query = 'id='.$id;
         $query .= '&do_show='.$tab;
-        //$query .= '&sesskey='.$USER->sesskey;
+        //$query .= '&sesskey='.sesskey();
         
         return $query;
     }
@@ -416,7 +416,7 @@
     function feedback_edit_print_default_form_values($id, $tab) {
         global $USER;
         
-        echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<input type="hidden" name="id" value="'.$id.'" />';
         echo '<input type="hidden" name="do_show" value="'.$tab.'" />';
     }

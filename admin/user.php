@@ -225,7 +225,7 @@
                 $deletebutton = "";
             } else {
                 if (has_capability('moodle/user:delete', $sitecontext)) {
-                    $deletebutton = "<a href=\"user.php?delete=$user->id&amp;sesskey=$USER->sesskey\">$strdelete</a>";
+                    $deletebutton = "<a href=\"user.php?delete=$user->id&amp;sesskey=".sesskey()."\">$strdelete</a>";
                 } else {
                     $deletebutton ="";
                 }
@@ -234,7 +234,7 @@
             if (has_capability('moodle/user:update', $sitecontext) and ($user->id==$USER->id or $user->id != $mainadmin->id) and !is_mnet_remote_user($user)) {
                 $editbutton = "<a href=\"$securewwwroot/user/editadvanced.php?id=$user->id&amp;course=$site->id\">$stredit</a>";
                 if ($user->confirmed == 0) {
-                    $confirmbutton = "<a href=\"user.php?confirmuser=$user->id&amp;sesskey=$USER->sesskey\">" . get_string('confirm') . "</a>";
+                    $confirmbutton = "<a href=\"user.php?confirmuser=$user->id&amp;sesskey=".sesskey()."\">" . get_string('confirm') . "</a>";
                 } else {
                     $confirmbutton = "";
                 }

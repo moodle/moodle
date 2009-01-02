@@ -60,7 +60,7 @@
 
         if ($deletesession and has_capability('mod/chat:deletelog', $context)) {
             notice_yesno(get_string('deletesessionsure', 'chat'),
-                         "report.php?id=$cm->id&amp;deletesession=1&amp;confirmdelete=1&amp;start=$start&amp;end=$end&amp;sesskey=$USER->sesskey",
+                         "report.php?id=$cm->id&amp;deletesession=1&amp;confirmdelete=1&amp;start=$start&amp;end=$end&amp;sesskey=".sesskey(),
                          "report.php?id=$cm->id");
         }
 

@@ -18,12 +18,7 @@
 
     add_to_log($course->id, "hotpot", "view all", "index.php?id=$course->id", "");
 
-    // Moodle 1.4+ requires sesskey to be passed in forms
-    if (isset($USER->sesskey)) {
-        $sesskey = '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    } else {
-        $sesskey = '';
-    }
+    $sesskey = '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 
     // get message strings for titles
     $strmodulenameplural = get_string("modulenameplural", "hotpot");
