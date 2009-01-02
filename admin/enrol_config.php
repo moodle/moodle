@@ -22,7 +22,7 @@
             print_error('confirmsesskeybad', 'error');
         }
         if ($enrolment->process_config($frm)) {
-            redirect("enrol.php?sesskey=$USER->sesskey", get_string("changessaved"), 1);
+            redirect("enrol.php?sesskey=".sesskey(), get_string("changessaved"), 1);
         }
     } else {
         $frm = $CFG;

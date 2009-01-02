@@ -78,7 +78,7 @@
 
         if (!$confirm) {
             notice_yesno(get_string("moduledeleteconfirm", "", $strmodulename),
-                         "modules.php?delete=$delete&amp;confirm=1&amp;sesskey=$USER->sesskey",
+                         "modules.php?delete=$delete&amp;confirm=1&amp;sesskey=".sesskey(),
                          "modules.php");
             admin_externalpage_print_footer();
             exit;
@@ -217,7 +217,7 @@
         $count = $DB->count_records_select($module->name, "course<>0");
         if ($count>0) {
             $countlink = "<a href=\"{$CFG->wwwroot}/course/search.php?modulelist=$module->name" .
-                "&amp;sesskey={$USER->sesskey}\" title=\"$strshowmodulecourse\">$count</a>";
+                "&amp;sesskey=".sesskey()."\" title=\"$strshowmodulecourse\">$count</a>";
         }
         else {
             $countlink = "$count";

@@ -23,7 +23,7 @@
     // so we can strip them from the submitted data BEFORE handling it.
     $hiddendata = array(
         'block' => $blockid,
-        'sesskey' => $USER->sesskey
+        'sesskey' => sesskey()
     );
 
     /// If data submitted, then process and store.

@@ -181,7 +181,7 @@
         $count      = $DB->count_records('block_instance', array('blockid'=>$blockid, 'pagetype'=>'course-view'));
 
         if ($count>0) {
-            $blocklist = "<a href=\"{$CFG->wwwroot}/course/search.php?blocklist=$blockid&amp;sesskey={$USER->sesskey}\" ";
+            $blocklist = "<a href=\"{$CFG->wwwroot}/course/search.php?blocklist=$blockid&amp;sesskey=".sesskey()."\" ";
             $blocklist .= "title=\"$strshowblockcourse\" >$totalcount</a>";
         }
         else {

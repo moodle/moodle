@@ -261,7 +261,7 @@
                 $deletebutton = get_string($accessctrl, 'mnet');
                 if (has_capability('moodle/user:delete', $sitecontext)) {
                     // TODO: this should be under a separate capability
-                    $deletebutton .= " (<a href=\"?acl={$user->id}&amp;accessctrl=$changeaccessto&amp;sesskey={$USER->sesskey}\">"
+                    $deletebutton .= " (<a href=\"?acl={$user->id}&amp;accessctrl=$changeaccessto&amp;sesskey=".sesskey()."\">"
                             . get_string($changeaccessto, 'mnet') . " access</a>)";
                 }
                 // mnet info in edit column
