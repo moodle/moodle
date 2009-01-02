@@ -364,7 +364,7 @@
                         echo '<form name="frm" action="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'" method="post" onsubmit=" ">';
                     }
                 }
-                echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
+                echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
                 echo '<input type="hidden" name="courseid" value="'. $courseid . '" />';
                 echo '<button type="submit">'.get_string('cancel').'</button>';
                 echo '</form>';
