@@ -688,7 +688,7 @@ global $HTTPSPAGEREQUIRED;
                     $USER = guest_user();
                 }
             }
-            if (empty($USER) && !empty($_SERVER['HTTP_REFERER'])) {
+            if (!empty($CFG->guestloginbutton) && empty($USER) && !empty($_SERVER['HTTP_REFERER'])) {
                 if (strpos($_SERVER['HTTP_REFERER'], 'google') !== false ) {
                     $USER = guest_user();
                 } else if (strpos($_SERVER['HTTP_REFERER'], 'altavista') !== false ) {
@@ -701,14 +701,16 @@ global $HTTPSPAGEREQUIRED;
         }
     }
 
-    if ($CFG->theme == 'standard' or $CFG->theme == 'standardwhite') {    // Temporary measure to help with XHTML validation
-        if (isset($_SERVER['HTTP_USER_AGENT']) and empty($_SESSION['USER']->id)) {      // Allow W3CValidator in as user called w3cvalidator (or guest)
-            if ((strpos($_SERVER['HTTP_USER_AGENT'], 'W3C_Validator') !== false) or
-                (strpos($_SERVER['HTTP_USER_AGENT'], 'Cynthia') !== false )) {
-                if ($USER = get_complete_user_data("username", "w3cvalidator")) {
-                    $USER->ignoresesskey = true;
-                } else {
-                    $USER = guest_user();
+    if (!empty($CFG->guestloginbutton)) {
+        if ($CFG->theme == 'standard' or $CFG->theme == 'standardwhite') {    // Temporary measure to help with XHTML validation
+            if (isset($_SERVER['HTTP_USER_AGENT']) and empty($_SESSION['USER']->id)) {      // Allow W3CValidator in as user called w3cvalidator (or guest)
+                if ((strpos($_SERVER['HTTP_USER_AGENT'], 'W3C_Validator') !== false) or
+                    (strpos($_SERVER['HTTP_USER_AGENT'], 'Cynthia') !== false )) {
+                    if ($USER = get_complete_user_data("username", "w3cvalidator")) {
+                        $USER->ignoresesskey = true;
+                    } else {
+                        $USER = guest_user();
+                    }
                 }
             }
         }
