@@ -258,9 +258,7 @@ function get_moodle_cookie() {
  * @return bool
  */
 function is_loggedinas() {
-    global $USER;
-
-    return !empty($USER->realuser);
+    return !empty($_SESSION['USER']->realuser);
 }
 
 /**
@@ -282,23 +280,22 @@ function get_real_user() {
  * @return void
  */
 function session_loginas($userid, $context) {
-    global $USER, $SESSION;
-
     if (is_loggedinas()) {
         return;
     }
 
-    // switch to fresh session
-    $_SESSION['REALSESSION'] = $SESSION;
+    // switch to fresh new $SESSION
+    $_SESSION['REALSESSION'] = $_SESSION['SESSION'];
     $_SESSION['SESSION']     = new object();
 
-/// Create the new USER object with all details and reload needed capabilitites
-    $_SESSION['REALUSER'] = $USER;
-    $USER = get_complete_user_data('id', $userid);
-    $USER->realuser       = $_SESSION['REALUSER']->id;
-    $USER->loginascontext = $context;
-    check_enrolment_plugins($USER);
-    load_all_capabilities();   // reload capabilities
+    /// Create the new $USER object with all details and reload needed capabilitites
+    $_SESSION['REALUSER'] = $_SESSION['USER'];
+    $_SESSION['USER'] = get_complete_user_data('id', $userid);
+    $_SESSION['USER']->realuser       = $_SESSION['REALUSER']->id;
+    $_SESSION['USER']->loginascontext = $context;
+
+    check_enrolment_plugins($_SESSION['USER']);
+    load_all_capabilities();
 }
 
 /**
@@ -306,8 +303,6 @@ function session_loginas($userid, $context) {
  * @return void
  */
 function session_unloginas() {
-    global $USER, $SESSION;
-
     if (!is_loggedinas()) {
         return;
     }
