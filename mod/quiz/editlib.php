@@ -447,7 +447,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
 <form method="post" action="edit.php"><div>
     <fieldset class="invisiblefieldset" style="display: block;">
     <label for="<?php echo "inputq$qnum" ?>"><?php echo $strgrade; ?></label>:<br />
-    <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
+    <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
     <?php echo $pageurl->hidden_params_out(); ?>
     <input type="hidden" name="savechanges" value="save" />
         <?php
