@@ -3497,7 +3497,7 @@ function user_login_string($course=NULL, $user=NULL) {
         $course = $SITE;
     }
 
-    if (!empty($user->realuser)) {
+    if (is_loggedinas()) {
         if ($realuser = $DB->get_record('user', array('id'=>$user->realuser))) {
             $fullname = fullname($realuser, true);
             $realuserinfo = " [<a $CFG->frametarget
@@ -4755,7 +4755,7 @@ has_capability('moodle/course:viewhiddenuserfields', $context)) {
     if (has_capability('moodle/role:assign', $context) and get_user_roles($context, $user->id, false)) {  // I can unassing and user has some role
         $output .= '<a href="'. $CFG->wwwroot .'/course/unenrol.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->unenrol .'</a><br />';
     }
-    if ($USER->id != $user->id && empty($USER->realuser) && has_capability('moodle/user:loginas', $context) &&
+    if ($USER->id != $user->id && !is_loggedinas() && has_capability('moodle/user:loginas', $context) &&
                                  ! has_capability('moodle/site:doanything', $context, $user->id, false)) {
         $output .= '<a href="'. $CFG->wwwroot .'/course/loginas.php?id='. $course->id .'&amp;user='. $user->id .'&amp;sesskey='. sesskey() .'">'. $string->loginas .'</a><br />';
     }

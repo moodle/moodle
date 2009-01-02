@@ -7,7 +7,7 @@
 /// Reset user back to their real self if needed
     $return = optional_param('return', 0, PARAM_BOOL);   // return to the page we came from
 
-    if (!empty($USER->realuser)) {
+    if (is_loggedinas()) {
         if (!confirm_sesskey()) {
             print_error('confirmsesskeybad');
         }

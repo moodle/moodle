@@ -411,7 +411,7 @@
     if ($passwordchangeurl) {
         $params = array('id'=>$course->id);
 
-        if (!empty($USER->realuser)) {
+        if (is_loggedinas()) {
             $passwordchangeurl = ''; // do not use actual change password url - might contain sensitive data
         } else {
             $parts = explode('?', $passwordchangeurl);
@@ -429,7 +429,7 @@
         foreach($params as $key=>$value) {
             echo '<input type="hidden" name="'.$key.'" value="'.s($value).'" />';
         }
-        if (!empty($USER->realuser)) {
+        if (is_loggedinas()) {
             // changing of password when "Logged in as" is not allowed
             echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" disabled=\"disabled\" />";
         } else {
@@ -471,7 +471,7 @@
         }
     }
 
-    if (!$user->deleted and $USER->id != $user->id  && empty($USER->realuser) && has_capability('moodle/user:loginas', $coursecontext) &&
+    if (!$user->deleted and $USER->id != $user->id  && !is_loggedinas() && has_capability('moodle/user:loginas', $coursecontext) &&
                                  ! has_capability('moodle/site:doanything', $coursecontext, $user->id, false)) {
         echo '<form action="'.$CFG->wwwroot.'/course/loginas.php" method="get">';
         echo '<div>';

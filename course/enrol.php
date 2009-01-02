@@ -28,7 +28,7 @@
     }
 
 /// do not use when in course login as
-    if (!empty($USER->realuser) and $USER->loginascontext->contextlevel == CONTEXT_COURSE) {
+    if (is_loggedinas() and $USER->loginascontext->contextlevel == CONTEXT_COURSE) {
         print_error('loginasnoenrol', '', $CFG->wwwroot.'/course/view.php?id='.$USER->loginascontext->instanceid);
     }
 

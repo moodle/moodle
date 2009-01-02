@@ -30,7 +30,7 @@
     }
 
     // do not allow "Logged in as" users to change any passwords
-    if (!empty($USER->realuser)) {
+    if (is_loggedinas()) {
         print_error('cannotcallscript');
     }
 

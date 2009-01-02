@@ -1920,7 +1920,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
     }
 
 /// loginas as redirection if needed
-    if ($COURSE->id != SITEID and !empty($USER->realuser)) {
+    if ($COURSE->id != SITEID and is_loggedinas()) {
         if ($USER->loginascontext->contextlevel == CONTEXT_COURSE) {
             if ($USER->loginascontext->instanceid != $COURSE->id) {
                 print_error('loginasonecourse', '', $CFG->wwwroot.'/course/view.php?id='.$USER->loginascontext->instanceid);
@@ -1929,7 +1929,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
     }
 
 /// check whether the user should be changing password (but only if it is REALLY them)
-    if (get_user_preferences('auth_forcepasswordchange') && empty($USER->realuser)) {
+    if (get_user_preferences('auth_forcepasswordchange') && !is_loggedinas()) {
         $userauth = get_auth_plugin($USER->auth);
         if ($userauth->can_change_password()) {
             $SESSION->wantsurl = $FULLME;
@@ -2107,7 +2107,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
     /// For non-guests, check if they have course view access
 
         } else if (has_capability('moodle/course:view', $COURSE->context)) {
-            if (!empty($USER->realuser)) {   // Make sure the REAL person can also access this course
+            if (is_loggedinas()) {   // Make sure the REAL person can also access this course
                 if (!has_capability('moodle/course:view', $COURSE->context, $USER->realuser)) {
                     print_header_simple();
                     notice(get_string('studentnotallowed', '', fullname($USER, true)), $CFG->wwwroot .'/');

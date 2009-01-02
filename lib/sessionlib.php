@@ -1,5 +1,9 @@
 <?php  //$Id$
 
+/**
+ * Factory method returning moodle_session object.
+ * @return moodle_session
+ */
 function get_session() {
     static $session = null;
 
@@ -70,7 +74,7 @@ class moodle_session {
             error_log('Can not terminate session properly - headers were already sent in file: '.$file.' on line '.$line);
         } else {
             // TODO: regenerate session ID here
-            
+
         }
 
         @session_write_close();
@@ -249,10 +253,26 @@ function get_moodle_cookie() {
     }
 }
 
+/**
+ * Is current $USER logged-in-as somebody else?
+ * @return bool
+ */
+function is_loggedinas() {
+    global $USER;
+
+    return !empty($USER->realuser);
+}
+
+/**
+ * Login as another user - no security checks here.
+ * @param int $userid
+ * @param object $context
+ * @return void
+ */
 function session_loginas($userid, $context) {
     global $USER, $SESSION;
 
-    if (!empty($USER->realuser)) {
+    if (is_loggedinas()) {
         return;
     }
 
@@ -280,10 +300,14 @@ function session_loginas($userid, $context) {
     }
 }
 
+/**
+ * Terminate login-as session
+ * @return void
+ */
 function session_unloginas() {
     global $USER, $SESSION;
 
-    if (empty($USER->realuser)) {
+    if (!is_loggedinas()) {
         return;
     }
 

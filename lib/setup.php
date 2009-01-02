@@ -504,7 +504,7 @@ global $HTTPSPAGEREQUIRED;
             $apachelog_name = clean_filename($USER->firstname . " " .
                                              $USER->lastname);
         }
-        if (isset($USER->realuser)) {
+        if (is_loggedinas()) {
             if ($realuser = $DB->get_record('user', array('id'=>$USER->realuser))) {
                 $apachelog_username = clean_filename($realuser->username." as ".$apachelog_username);
                 $apachelog_name = clean_filename($realuser->firstname." ".$realuser->lastname ." as ".$apachelog_name);

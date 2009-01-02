@@ -94,7 +94,7 @@ class completionlib_test extends MoodleUnitTestCase {
         global $DB,$CFG,$SESSION,$USER;
         $this->realdb=$DB;
         $this->realcfg=$CFG;
-        $this->realuser=$USER;
+        $this->prevuser=$USER;
         $DB=new mock_database();
         $CFG=clone($this->realcfg);
         $CFG->prefix='test_';
@@ -108,7 +108,7 @@ class completionlib_test extends MoodleUnitTestCase {
         $DB=$this->realdb;
         $CFG=$this->realcfg;
         $SESSION=$this->realsession;
-        $USER=$this->realuser;
+        $USER=$this->prevuser;
     }
 
     function test_is_enabled() {
