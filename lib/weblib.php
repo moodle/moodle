@@ -5925,7 +5925,7 @@ function _print_early_error($errorcode, $module, $a, $backtrace=null, $debuginfo
     if (debugging('', DEBUG_DEVELOPER)) {
         if ($debuginfo) {
             debugging($debuginfo, DEBUG_DEVELOPER, $backtrace);
-        } else {
+        } else if ($backtrace) {
             notify('Stack trace:'.print_backtrace($backtrace, true), 'notifytiny');
         }
     }

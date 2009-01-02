@@ -45,6 +45,8 @@ class moodle_session {
         }
 
         $this->check_user_initialised();
+
+        $this->check_security();
     }
 
     /**
@@ -95,11 +97,15 @@ class moodle_session {
         session_set_user($user);
     }
 
+    /**
+     * Does various session security checks
+     * @global void
+     */
     protected function check_security() {
         global $CFG;
 
-        if (!empty($_SESSION['USER']->id)) {
-            /// Make sure current IP matches the one for this session (if required)
+        if (!empty($_SESSION['USER']->id) and !empty($CFG->tracksessionip)) {
+            /// Make sure current IP matches the one for this session
             $remoteaddr = getremoteaddr();
 
             if (empty($_SESSION['USER']->sessionip)) {
@@ -107,14 +113,13 @@ class moodle_session {
             }
 
             if ($_SESSION['USER']->sessionip != $remoteaddr) {
-                if (!is_guestuser($_SESSION['USER'])) {
-                    $link = '';
-                } else {
-                    
-                }
-                print_error('sessionipnomatch', 'error');
+                // this is a security feature - terminate the session in case of any doubt
+                $this->terminate();
+                print_error('sessionipnomatch2', 'error');
             }
         }
+
+        // TODO: add wwwroot check here
 
     }
 
@@ -138,11 +143,12 @@ class moodle_session {
         $line = null;
         if (headers_sent($file, $line)) {
             error_log('Can not terminate session properly - headers were already sent in file: '.$file.' on line '.$line);
-        } else {
-            // TODO: regenerate session ID here
-
         }
 
+        // now let's try to get a new session id and destroy the old one
+        @session_regenerate_id(true);
+
+        // close the session
         @session_write_close();
     }
 

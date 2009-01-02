@@ -268,6 +268,10 @@ define ('DEBUG_ALL', 6143);
 /** DEBUG_ALL with extra Moodle debug messages - (DEBUG_ALL | 32768) */
 define ('DEBUG_DEVELOPER', 38911);
 
+/** Get remote addr constant */
+define('GETREMOTEADDR_SKIP_HTTP_CLIENT_IP', '1');
+/** Get remote addr constant */
+define('GETREMOTEADDR_SKIP_HTTP_X_FORWARDED_FOR', '2');
 
 /// Blog access level constant declaration ///
 define ('BLOG_USER_LEVEL', 1);
@@ -3362,10 +3366,6 @@ function get_complete_user_data($field, $value, $mnethostid=null) {
         $user->lang       = $CFG->lang;               // Guest language always same as site
         $user->firstname  = get_string('guestuser');  // Name always in current language
         $user->lastname   = ' ';
-    }
-
-    if (isset($_SERVER['REMOTE_ADDR'])) {
-        $user->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
     }
 
     return $user;
@@ -7395,8 +7395,6 @@ function remoteip_in_list($list){
  *
  * @return string The remote IP address
  */
-define('GETREMOTEADDR_SKIP_HTTP_CLIENT_IP', '1');
-define('GETREMOTEADDR_SKIP_HTTP_X_FORWARDED_FOR', '2');
 function getremoteaddr() {
     global $CFG;
 

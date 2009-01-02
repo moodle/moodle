@@ -386,11 +386,7 @@ global $HTTPSPAGEREQUIRED;
         }
     }
 
-/// start session and prepare global $SESSION, $USER
-    session_get_instance();
-    $SESSION = &$_SESSION['SESSION'];
-    $USER    = &$_SESSION['USER'];
-
+/// initialise ME's
     if (defined('FULLME')) {     // Usually in command-line scripts like admin/cron.php
         $FULLME = FULLME;
         $ME = FULLME;
@@ -398,6 +394,11 @@ global $HTTPSPAGEREQUIRED;
         $FULLME = qualified_me();
         $ME = strip_querystring($FULLME);
     }
+
+/// start session and prepare global $SESSION, $USER
+    session_get_instance();
+    $SESSION = &$_SESSION['SESSION'];
+    $USER    = &$_SESSION['USER'];
 
 /// Load up theme variables (colours etc)
 
