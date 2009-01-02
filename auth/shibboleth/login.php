@@ -38,7 +38,7 @@ httpsrequired();
     $loginurl = (!empty($CFG->alternateloginurl)) ? $CFG->alternateloginurl : '';
 
 
-    if (get_moodle_cookie() == '') {   
+    if (get_moodle_cookie() == '') {
         set_moodle_cookie('nobody');   // To help search for cookies
     }
 

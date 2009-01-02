@@ -99,7 +99,7 @@ httpsrequired();
 
 /// Check if the user has actually submitted login data to us
 
-    if (empty($CFG->usesid) and $testcookies and ($SESSION->get_moodle_cookie() == '')) {    // Login without cookie when test requested
+    if (empty($CFG->usesid) and $testcookies and (get_moodle_cookie() == '')) {    // Login without cookie when test requested
 
         $errormsg = get_string("cookiesnotenabled");
         $errorcode = 1;
@@ -268,12 +268,12 @@ httpsrequired();
 
 /// Generate the login page with forms
 
-    if ($SESSION->get_moodle_cookie() == '') {
-        $SESSION->set_moodle_cookie('nobody');   // To help search for cookies
+    if (get_moodle_cookie() == '') {
+        set_moodle_cookie('nobody');   // To help search for cookies
     }
 
     if (empty($frm->username) && $authsequence[0] != 'shibboleth') {  // See bug 5184
-        $frm->username = $SESSION->get_moodle_cookie() === 'nobody' ? '' : $SESSION->get_moodle_cookie();
+        $frm->username = get_moodle_cookie() === 'nobody' ? '' : get_moodle_cookie();
         $frm->password = "";
     }
 

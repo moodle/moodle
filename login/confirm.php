@@ -48,7 +48,7 @@
                 print_error('cannotfinduser', '', '', $username);
             }
 
-            $SESSION->set_moodle_cookie($USER->username);
+            set_moodle_cookie($USER->username);
 
             if ( ! empty($SESSION->wantsurl) ) {   // Send them where they were going
                 $goto = $SESSION->wantsurl;

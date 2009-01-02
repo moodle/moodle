@@ -85,8 +85,8 @@
     }
 
 
-    if ($SESSION->get_moodle_cookie() == '') {
-        $SESSION->set_moodle_cookie('nobody');   // To help search for cookies on login page
+    if (get_moodle_cookie() == '') {
+        set_moodle_cookie('nobody');   // To help search for cookies on login page
     }
 
     if (!empty($USER->id)) {

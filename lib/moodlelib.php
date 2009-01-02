@@ -1828,55 +1828,6 @@ function dayofweek($day, $month, $year) {
 /// USER AUTHENTICATION AND LOGIN ////////////////////////////////////////
 
 /**
- * Makes sure that $USER->sesskey exists, if $USER itself exists. It sets a new sesskey
- * if one does not already exist, but does not overwrite existing sesskeys. Returns the
- * sesskey string if $USER exists, or boolean false if not.
- *
- * @uses $USER
- * @return string
- */
-function sesskey() {
-    global $USER;
-
-    if(!isset($USER)) {
-        return false;
-    }
-
-    if (empty($USER->sesskey)) {
-        $USER->sesskey = random_string(10);
-    }
-
-    return $USER->sesskey;
-}
-
-
-/**
- * For security purposes, this function will check that the currently
- * given sesskey (passed as a parameter to the script or this function)
- * matches that of the current user.
- *
- * @param string $sesskey optionally provided sesskey
- * @return bool
- */
-function confirm_sesskey($sesskey=NULL) {
-    global $USER;
-
-    if (!empty($USER->ignoresesskey) || !empty($CFG->ignoresesskey)) {
-        return true;
-    }
-
-    if (empty($sesskey)) {
-        $sesskey = required_param('sesskey', PARAM_RAW);  // Check script parameters
-    }
-
-    if (!isset($USER->sesskey)) {
-        return false;
-    }
-
-    return ($USER->sesskey === $sesskey);
-}
-
-/**
  * Setup all global $CFG course variables, set locale and also themes
  * This function can be used on pages that do not require login instead of require_login()
  *
@@ -2202,7 +2153,7 @@ function require_logout() {
         }
     }
 
-    $SESSION->terminate();
+    get_session()->terminate();
 }
 
 /**
@@ -3205,12 +3156,12 @@ function complete_user_login($user) {
 
     update_user_login_times();
     if (empty($CFG->nolastloggedin)) {
-        $SESSION->set_moodle_cookie($USER->username);
+        set_moodle_cookie($USER->username);
     } else {
         // do not store last logged in user in cookie
         // auth plugins can temporarily override this from loginpage_hook()
         // do not save $CFG->nolastloggedin in database!
-        $SESSION->set_moodle_cookie('nobody');
+        set_moodle_cookie('nobody');
     }
     set_login_session_preferences();
 

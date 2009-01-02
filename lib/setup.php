@@ -386,19 +386,10 @@ global $HTTPSPAGEREQUIRED;
         }
     }
 
-/// start session and prepare global $SESSION
-    $SESSION = new moodle_session();
-
-/// set up global $USER
-    if (!NO_MOODLE_COOKIES) {
-        $USER = &$_SESSION['USER'];
-    } else {
-        $USER     = new object();
-        $USER->id = 0; // user not logged in when session disabled
-        if (isset($CFG->mnet_localhost_id)) {
-            $USER->mnethostid = $CFG->mnet_localhost_id;
-        }
-    }
+/// start session and prepare global $SESSION, $USER
+    get_session();
+    $SESSION = &$_SESSION['SESSION'];
+    $USER    = &$_SESSION['USER'];
 
     if (defined('FULLME')) {     // Usually in command-line scripts like admin/cron.php
         $FULLME = FULLME;
@@ -429,9 +420,6 @@ global $HTTPSPAGEREQUIRED;
     if (!isset($CFG->theme)) {
         $CFG->theme = 'standardwhite';
     }
-
-/// now do a session test to prevent random user switching - observed on some PHP/Apache combinations,
-    $SESSION->session_verify();
 
 /// Set language/locale of printed times.  If user has chosen a language that
 /// that is different from the site language, then use the locale specified
