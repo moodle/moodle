@@ -558,7 +558,7 @@ function calendar_print_event($event) {
             $editlink   = CALENDAR_URL.'event.php?action=edit&amp;id='.$event->id.$calendarcourseid;
             $deletelink = CALENDAR_URL.'event.php?action=delete&amp;id='.$event->id.$calendarcourseid;
         } else {
-            $editlink   = $CFG->wwwroot.'/course/mod.php?update='.$event->cmid.'&amp;return=true&amp;sesskey='.$USER->sesskey;
+            $editlink   = $CFG->wwwroot.'/course/mod.php?update='.$event->cmid.'&amp;return=true&amp;sesskey='.sesskey();
             $deletelink = ''; // deleting activities directly from calendar is dangerous/confusing - see MDL-11843
         }
         echo ' <a href="'.$editlink.'"><img
@@ -1143,25 +1143,6 @@ function calendar_get_course_cached(&$coursecache, $courseid) {
 
 function calendar_session_vars($course=null) {
     global $SESSION, $USER;
-
-    if(!empty($USER->id) && isset($USER->realuser) && !isset($SESSION->cal_loggedinas)) {
-        // We just logged in as someone else, update the filtering
-        unset($SESSION->cal_users_shown);
-        unset($SESSION->cal_courses_shown);
-        $SESSION->cal_loggedinas = true;
-        if(intval(get_user_preferences('calendar_persistflt', 0))) {
-            calendar_set_filters_status(get_user_preferences('calendar_savedflt', 0xff));
-        }
-    }
-    else if(!empty($USER->id) && !isset($USER->realuser) && isset($SESSION->cal_loggedinas)) {
-        // We just logged back to our real self, update again
-        unset($SESSION->cal_users_shown);
-        unset($SESSION->cal_courses_shown);
-        unset($SESSION->cal_loggedinas);
-        if(intval(get_user_preferences('calendar_persistflt', 0))) {
-            calendar_set_filters_status(get_user_preferences('calendar_savedflt', 0xff));
-        }
-    }
 
     if(!isset($SESSION->cal_course_referer)) {
         $SESSION->cal_course_referer = 0;

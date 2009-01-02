@@ -264,6 +264,18 @@ function is_loggedinas() {
 }
 
 /**
+ * Returns the $USER object ignoring current login-as session
+ * @return object user object
+ */
+function get_real_user() {
+    if (is_loggedinas()) {
+        return $_SESSION['REALUSER'];
+    } else {
+        return $_SESSION['USER'];
+    }
+}
+
+/**
  * Login as another user - no security checks here.
  * @param int $userid
  * @param object $context
@@ -276,28 +288,17 @@ function session_loginas($userid, $context) {
         return;
     }
 
-/// Remember current timeaccess settings for later
-
-    if (isset($USER->timeaccess)) {
-        $SESSION->oldtimeaccess = $USER->timeaccess;
-    }
-    if (isset($USER->grade_last_report)) {
-        $SESSION->grade_last_report = $USER->grade_last_report;
-    }
-
-    $olduserid   = $USER->id;
+    // switch to fresh session
+    $_SESSION['REALSESSION'] = $SESSION;
+    $_SESSION['SESSION']     = new object();
 
 /// Create the new USER object with all details and reload needed capabilitites
+    $_SESSION['REALUSER'] = $USER;
     $USER = get_complete_user_data('id', $userid);
-    $USER->realuser = $olduserid;
+    $USER->realuser       = $_SESSION['REALUSER']->id;
     $USER->loginascontext = $context;
     check_enrolment_plugins($USER);
     load_all_capabilities();   // reload capabilities
-
-    if (isset($SESSION->currentgroup)) {    // Remember current cache setting for later
-        $SESSION->oldcurrentgroup = $SESSION->currentgroup;
-        unset($SESSION->currentgroup);
-    }
 }
 
 /**
@@ -311,21 +312,11 @@ function session_unloginas() {
         return;
     }
 
-    $USER = get_complete_user_data('id', $USER->realuser);
-    load_all_capabilities();   // load all this user's normal capabilities
+    $_SESSION['SESSION'] = $_SESSION['REALSESSION'];
+    unset($_SESSION['REALSESSION']);
 
-    if (isset($SESSION->oldcurrentgroup)) {      // Restore previous "current group" cache.
-        $SESSION->currentgroup = $SESSION->oldcurrentgroup;
-        unset($SESSION->oldcurrentgroup);
-    }
-    if (isset($SESSION->oldtimeaccess)) {        // Restore previous timeaccess settings
-        $USER->timeaccess = $SESSION->oldtimeaccess;
-        unset($SESSION->oldtimeaccess);
-    }
-    if (isset($SESSION->grade_last_report)) {    // Restore grade defaults if any
-        $USER->grade_last_report = $SESSION->grade_last_report;
-        unset($SESSION->grade_last_report);
-    }
+    $_SESSION['USER'] = $_SESSION['REALUSER'];
+    unset($_SESSION['REALUSER']);
 }
 
 /**

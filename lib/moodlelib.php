@@ -2108,7 +2108,8 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
 
         } else if (has_capability('moodle/course:view', $COURSE->context)) {
             if (is_loggedinas()) {   // Make sure the REAL person can also access this course
-                if (!has_capability('moodle/course:view', $COURSE->context, $USER->realuser)) {
+                $realuser = get_real_user();
+                if (!has_capability('moodle/course:view', $COURSE->context, $realuser->id)) {
                     print_header_simple();
                     notice(get_string('studentnotallowed', '', fullname($USER, true)), $CFG->wwwroot .'/');
                 }
