@@ -215,10 +215,6 @@ class moodle_session {
 function sesskey() {
     global $USER;
 
-    if(!isset($USER)) {
-        return false;
-    }
-
     if (empty($USER->sesskey)) {
         $USER->sesskey = random_string(10);
     }
@@ -238,7 +234,7 @@ function sesskey() {
 function confirm_sesskey($sesskey=NULL) {
     global $USER;
 
-    if (!empty($USER->ignoresesskey) || !empty($CFG->ignoresesskey)) {
+    if (!empty($USER->ignoresesskey)) {
         return true;
     }
 
@@ -246,11 +242,7 @@ function confirm_sesskey($sesskey=NULL) {
         $sesskey = required_param('sesskey', PARAM_RAW);  // Check script parameters
     }
 
-    if (!isset($USER->sesskey)) {
-        return false;
-    }
-
-    return ($USER->sesskey === $sesskey);
+    return (sesskey() === $sesskey);
 }
 
 /**
@@ -308,6 +300,7 @@ function session_set_user($user) {
     $_SESSION['USER'] = $user;
     check_enrolment_plugins($_SESSION['USER']);
     load_all_capabilities();
+    sesskey(); // init session key
 }
 
 /**
