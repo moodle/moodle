@@ -234,6 +234,9 @@ $string['phpversionhelp'] = '<p>Moodle vyžaduje PHP alespoň verze 4.3.0 nebo 5
 <p>Musíte PHP upgradovat, nebo přejít k hostiteli s vyšší verzí!<br />
 (U PHP 5.0.x můžete také přejít na nižší verzi 4.4.x či 4.3.x.)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
+$string['postgresqlwarning'] = '<strong>Poznámka:</strong> Pokud máte problém s konektivitou k databázi, zkuste nastavit pole \"Hostitelský server\" na hodnotu
+host=\'postgresql_hostitel\' port=\'5432\' dbname=\'nazev_postgresql_databaze\' user=\'uzivatel_postgresql\' password=\'heslo_uzivatele_postgresql\' a 
+ponechte pole Databáze, Uživatel a Heslo prázdné. Více informací najdete v <a href=\"http://docs.moodle.org/en/Installing_Postgres_for_PHP\">dokumentaci</a>';
 $string['previous'] = 'Předchozí';
 $string['qtyperqpwillberemoved'] = 'Během upgrade bude odstraněn typ testové úlohy RQP. Tento typ jste nepoužívali, takže byste neměli zaznamenta žádné problémy.';
 $string['qtyperqpwillberemovedanyway'] = 'Během upgrade bude odstraněn typ testové úlohy RQP. Ve vaší databázi existuje několik takových úloh a ty nebudou fungovat, dokud nepřeinstalujete kód z http://moodle.org/mod/data/view.php?d=13&amp;rid=797 před pokračováním upgrade.';
