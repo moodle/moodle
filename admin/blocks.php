@@ -73,7 +73,7 @@
 
         if (!$confirm) {
             notice_yesno(get_string('blockdeleteconfirm', '', $strblockname),
-                         'blocks.php?delete='.$block->id.'&amp;confirm=1&amp;sesskey='.$USER->sesskey,
+                         'blocks.php?delete='.$block->id.'&amp;confirm=1&amp;sesskey='.sesskey(),
                          'blocks.php');
             admin_externalpage_print_footer();
             exit;
