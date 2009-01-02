@@ -254,6 +254,11 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         }
         helpbutton("coursestartdate", get_string("startdate"));
         echo "</td></tr>";
+    } else {
+    /// If user cannot create course, prevent any change in startyear/month/day (so restore wont calculate any roll. MDL-12922
+        echo '<input type="hidden" name="startyear" value="0" />';
+        echo '<input type="hidden" name="startmonth" value="0" />';
+        echo '<input type="hidden" name="startday" value="0" />';
     }
     //Line
     echo "<tr><td colspan=\"4\"><hr /></td></tr>";
