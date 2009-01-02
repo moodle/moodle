@@ -44,11 +44,11 @@
 
             // The user has confirmed successfully, let's log them in
 
-            if (!$USER = get_complete_user_data('username', $username)) {
+            if (!$user = get_complete_user_data('username', $username)) {
                 print_error('cannotfinduser', '', '', $username);
             }
 
-            set_moodle_cookie($USER->username);
+            complete_user_login($user);
 
             if ( ! empty($SESSION->wantsurl) ) {   // Send them where they were going
                 $goto = $SESSION->wantsurl;

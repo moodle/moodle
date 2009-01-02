@@ -66,7 +66,7 @@
 
 
 /// emulate normal session
-    $USER = get_admin();      /// Temporarily, to provide environment for this script
+    session_set_user(get_admin());      /// Temporarily, to provide environment for this script
 
 /// ignore admins timezone, language and locale - use site deafult instead!
     $USER->timezone = $CFG->timezone;

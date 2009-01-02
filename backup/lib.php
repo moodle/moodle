@@ -615,7 +615,7 @@
         global $CFG,$SESSION,$USER, $DB; // is there such a thing on cron? I guess so..
         global $restore; // ick
         if (empty($USER)) {
-            $USER = get_admin();
+            session_set_user(get_admin());
             $USER->admin = 1; // not sure why, but this doesn't get set
         }
 

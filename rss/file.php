@@ -21,10 +21,8 @@
 
     $lifetime = 3600;  // Seconds for files to remain in caches - 1 hour
 
-    // hack for problems with concurrent use of NO_MOODLE_COOKIES and capabilities MDL-7243
+    // this is a big one big hack - NO_MOODLE_COOKIES is not compatible with capabilities MDL-7243
     // it should be replaced once we get to codes in urls 
-    $USER = new object();
-    $USER->id = 0;
 
     // disable moodle specific debug messages
     disable_debugging();

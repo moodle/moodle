@@ -1414,9 +1414,9 @@ function create_admin_user($user_input=NULL) {
 
             // Log the user in.
             set_config('rolesactive', 1);
-            $USER = get_complete_user_data('username', 'admin');
-            $USER->newadminuser = 1;
-            load_all_capabilities();
+            $user = get_complete_user_data('username', 'admin');
+            $user->newadminuser = 1;
+            complete_user_login($user);
 
             if (!defined('CLI_UPGRADE')||!CLI_UPGRADE) {
               redirect("$CFG->wwwroot/user/editadvanced.php?id=$user->id");  // Edit thyself

@@ -450,14 +450,17 @@ global $HTTPSPAGEREQUIRED;
     // set default locale and themes - might be changed again later from require_login()
     course_setup();
 
-    if ($CFG->theme == 'standard' or $CFG->theme == 'standardwhite') {    // Temporary measure to help with XHTML validation
-        if (isset($_SERVER['HTTP_USER_AGENT']) and empty($USER->id)) {      // Allow W3CValidator in as user called w3cvalidator (or guest)
-            if ((strpos($_SERVER['HTTP_USER_AGENT'], 'W3C_Validator') !== false) or
-                (strpos($_SERVER['HTTP_USER_AGENT'], 'Cynthia') !== false )) {
-                if ($USER = get_complete_user_data("username", "w3cvalidator")) {
-                    $USER->ignoresesskey = true;
-                } else {
-                    $USER = guest_user();
+    if (!empty($CFG->guestloginbutton)) {
+        if ($CFG->theme == 'standard' or $CFG->theme == 'standardwhite') {    // Temporary measure to help with XHTML validation
+            if (isset($_SERVER['HTTP_USER_AGENT']) and empty($USER->id)) {      // Allow W3CValidator in as user called w3cvalidator (or guest)
+                if ((strpos($_SERVER['HTTP_USER_AGENT'], 'W3C_Validator') !== false) or
+                    (strpos($_SERVER['HTTP_USER_AGENT'], 'Cynthia') !== false )) {
+                    if ($user = get_complete_user_data("username", "w3cvalidator")) {
+                        $user->ignoresesskey = true;
+                    } else {
+                        $user = guest_user();
+                    }
+                    session_set_user($user);
                 }
             }
         }

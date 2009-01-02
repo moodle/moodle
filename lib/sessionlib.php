@@ -75,7 +75,7 @@ class moodle_session {
                     $user = guest_user();
                 }
             }
-            if (!$user and !empty($_SERVER['HTTP_REFERER'])) {
+            if (!empty($CFG->guestloginbutton) and !$user and !empty($_SERVER['HTTP_REFERER'])) {
                 // automaticaly log in users coming from search engine results
                 if (strpos($_SERVER['HTTP_REFERER'], 'google') !== false ) {
                     $user = guest_user();
