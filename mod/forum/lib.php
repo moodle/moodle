@@ -323,7 +323,6 @@ WHERE
 function forum_cron() {
     global $CFG, $USER, $DB;
 
-    $cronuser = clone($USER);
     $site = get_site();
 
     // all users that are subscribed to any post that needs sending
@@ -439,7 +438,7 @@ function forum_cron() {
             @set_time_limit(120); // terminate if processing of any account takes longer than 2 minutes
 
             // set this so that the capabilities are cached, and environment matches receiving user
-            $USER = $userto;
+            cron_setup_user($userto);
 
             mtrace('Processing user '.$userto->id);
 
@@ -489,7 +488,7 @@ function forum_cron() {
                 }
 
                 // setup global $COURSE properly - needed for roles and languages
-                course_setup($course);   // More environment
+                cron_setup_user($userto, $course);
 
                 // Fill caches
                 if (!isset($userto->viewfullnames[$forum->id])) {
@@ -618,8 +617,7 @@ function forum_cron() {
     unset($mailcount);
     unset($errorcount);
 
-    $USER = clone($cronuser);
-    course_setup(SITEID);
+    cron_setup_user();
 
     $sitetimezone = $CFG->timezone;
 
@@ -722,8 +720,7 @@ function forum_cron() {
 
                 @set_time_limit(120); // terminate if processing of any account takes longer than 2 minutes
 
-                $USER = $cronuser;
-                course_setup(SITEID); // reset cron user language, theme and timezone settings
+                cron_setup_user();
 
                 mtrace(get_string('processingdigest', 'forum', $userid), '... ');
 
@@ -733,8 +730,7 @@ function forum_cron() {
 
                 // Override the language and timezone of the "current" user, so that
                 // mail is customised for the receiver.
-                $USER = $userto;
-                course_setup(SITEID);
+                cron_setup_user($userto);
 
                 // init caches
                 $userto->viewfullnames = array();
@@ -767,7 +763,7 @@ function forum_cron() {
                     $cm         = $coursemodules[$forum->id];
 
                     //override language
-                    course_setup($course);
+                    cron_setup_user($userto, $course);
 
                     // Fill caches
                     if (!isset($userto->viewfullnames[$forum->id])) {
@@ -894,8 +890,7 @@ function forum_cron() {
         set_config('digestmailtimelast', $timenow);
     }
 
-    $USER = $cronuser;
-    course_setup(SITEID); // reset cron user language, theme and timezone settings
+    cron_setup_user();
 
     if (!empty($usermailcount)) {
         mtrace(get_string('digestsentusers', 'forum', $usermailcount));

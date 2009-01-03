@@ -1847,11 +1847,8 @@ function course_setup($courseorid=0) {
     } else if (is_object($courseorid)) {
         $COURSE = clone($courseorid);
     } else {
-        global $course; // used here only to prevent repeated fetching from DB - may be removed later
         if ($courseorid == SITEID) {
             $COURSE = clone($SITE);
-        } else if (!empty($course->id) and $course->id == $courseorid) {
-            $COURSE = clone($course);
         } else {
             if (!$COURSE = $DB->get_record('course', array('id'=>$courseorid))) {
                 print_error('invalidcourseid');

@@ -392,6 +392,53 @@ function session_unloginas() {
 }
 
 /**
+ * Sets up current user and course enviroment (lang, etc.) in cron.
+ * Do not use outside of cron script!
+ *
+ * @param object $user full user object, null means default cron user (admin)
+ * @param $course full course record, null means $SITE
+ * @return void
+ */
+function cron_setup_user($user=null, $course=null) {
+    global $CFG, $SITE;
+
+    static $cronuser    = null;
+    static $cronsession = null;
+
+    if (empty($cronuser)) {
+        /// ignore admins timezone, language and locale - use site deafult instead!
+        $cronuser = get_admin();
+        $cronuser->timezone = $CFG->timezone;
+        $cronuser->lang = '';
+        $cronuser->theme = '';
+
+        $cronsession = array();
+    }
+
+    if (!$user) {
+        // cached default cron user (==modified admin for now)
+        session_set_user($cronuser);
+        $_SESSION['SESSION'] = $cronsession;
+
+    } else {
+        // emulate real user session - needed for caps in cron
+        if ($_SESSION['USER']->id != $user->id) {
+            session_set_user($user);
+            $_SESSION['SESSION'] = array();
+        }
+    }
+
+    if ($course) {
+        course_setup($course);
+    } else {
+        course_setup($SITE);
+    }
+
+    // TODO: it should be possible to improve perf by caching some limited number of users here ;-)
+
+}
+
+/**
 * Enable cookieless sessions by including $CFG->usesid=true;
 * in config.php.
 * Based on code from php manual by Richard at postamble.co.uk

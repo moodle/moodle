@@ -2118,8 +2118,7 @@ function assignment_cron () {
 
             /// Override the language and timezone of the "current" user, so that
             /// mail is customised for the receiver.
-            $USER = $user;
-            course_setup($course);
+            cron_setup_user($user, $course);
 
             if (!has_capability('moodle/course:view', get_context_instance(CONTEXT_COURSE, $submission->course), $user->id)) {
                 echo fullname($user)." not an active participant in " . format_string($course->shortname) . "\n";
@@ -2180,9 +2179,7 @@ function assignment_cron () {
             }
         }
 
-        $USER = $realuser;
-        course_setup(SITEID); // reset cron user language, theme and timezone settings
-
+        cron_setup_user();
     }
 
     return true;

@@ -273,9 +273,6 @@ function cron() {
     }
 
     if ($rs = $DB->get_recordset_select('course', 'enrolperiod > 0 AND expirynotify > 0 AND expirythreshold > 0')) {
-
-        $cronuser = clone($USER);
-
         $admin = get_admin();
 
         foreach ($rs as $course) {
@@ -322,8 +319,7 @@ function cron() {
                         $a->current[] = fullname($user) . " <$user->email>";
                         if ($course->notifystudents) {     // Send this guy notice
                             // setup global $COURSE properly - needed for languages
-                            $USER = $user;
-                            course_setup($course);
+                            cron_setup_user($user, $course);
                             $a->coursename = format_string($cname);
                             $a->course     = $a->coursename;
                             $strexpirynotifystudentsemail = get_string('expirynotifystudentsemail', '', $a);
@@ -349,8 +345,7 @@ function cron() {
                 if ($a->current || $a->past) {
                     foreach ($teachers as $teacher) {
                         // setup global $COURSE properly - needed for languages
-                        $USER = $teacher;
-                        course_setup($course);
+                        cron_setup_user($teacher, $course);
                         $a->coursename = format_string($cname);
                         $strexpirynotifyemail = get_string('expirynotifyemail', '', $a);
                         $strexpirynotify      = get_string('expirynotify');
@@ -369,9 +364,8 @@ function cron() {
                 }
             }
         }
-        $USER = $cronuser;
-        course_setup($SITE);   // More environment
         $rs->close();
+        cron_setup_user();
     }
 
     set_config('lastexpirynotify', date('Ymd'));

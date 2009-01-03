@@ -66,13 +66,7 @@
 
 
 /// emulate normal session
-    session_set_user(get_admin());      /// Temporarily, to provide environment for this script
-
-/// ignore admins timezone, language and locale - use site deafult instead!
-    $USER->timezone = $CFG->timezone;
-    $USER->lang = '';
-    $USER->theme = '';
-    course_setup(SITEID);
+    cron_setup_user();
 
 /// send mime type and encoding
     if (check_browser_version('MSIE')) {
