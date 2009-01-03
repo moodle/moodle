@@ -1408,7 +1408,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 
         $time = time() - $CFG->cachetext;
         $md5key = md5($hashstr); 
-        if (defined('FULLME') and FULLME == 'cron') {
+        if (CLI_SCRIPT) {
             if (isset($croncache[$md5key])) {
                 return $croncache[$md5key];
             }
@@ -1416,7 +1416,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 
         if ($oldcacheitem = $DB->get_record('cache_text', array('md5key'=>$md5key), '*', true)) {
             if ($oldcacheitem->timemodified >= $time) {
-                if (defined('FULLME') and FULLME == 'cron') {
+                if (CLI_SCRIPT) {
                     if (count($croncache) > 150) {
                         reset($croncache);
                         $key = key($croncache);
@@ -1504,7 +1504,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
     }
 
     if (empty($options->nocache) and !empty($CFG->cachetext) and $CFG->currenttextiscacheable) {
-        if (defined('FULLME') and FULLME == 'cron') {
+        if (CLI_SCRIPT) {
             // special static cron cache - no need to store it in db if its not already there
             if (count($croncache) > 150) {
                 reset($croncache);
@@ -5814,7 +5814,7 @@ function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debugi
         $message = get_string($errorcode, 'moodle', $a);
     }
 
-    if (defined('FULLME') && FULLME == 'cron') {
+    if (CLI_SCRIPT) {
         // Errors in cron should be mtrace'd.
         mtrace($message);
         die;
@@ -6160,7 +6160,7 @@ function notice ($message, $link='', $course=NULL) {
 
     $message = clean_text($message);   // In case nasties are in here
 
-    if (defined('FULLME') && FULLME == 'cron') {
+    if (CLI_SCRIPT) {
         // notices in cron should be mtrace'd.
         mtrace($message);
         die;

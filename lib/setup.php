@@ -89,6 +89,23 @@ global $HTTPSPAGEREQUIRED;
         die;
     }
 
+/// Detect CLI scripts - CLI scripts are executed from command line, do not have session and we do not want HTML in output
+    if (!defined('CLI_SCRIPT')) { // CLI_SCRIPT might be defined in 'fake' CLI scripts like admin/cron.php
+        if (isset($_SERVER['REMOTE_ADDR'])) {
+            define('CLI_SCRIPT', false);
+        } else {
+            define('CLI_SCRIPT', true);
+        }
+    }
+
+/// The current directory in PHP version 4.3.0 and above isn't necessarily the
+/// directory of the script when run from the command line. The require_once()
+/// would fail, so we'll have to chdir()
+    if (!isset($_SERVER['REMOTE_ADDR']) && isset($_SERVER['argv'][0])) {
+        chdir(dirname($_SERVER['argv'][0]));
+    }
+
+
 /// store settings from config.php in array in $CFG - we can use it later to detect problems and overrides
     $CFG->config_php_settings = (array)$CFG;
 

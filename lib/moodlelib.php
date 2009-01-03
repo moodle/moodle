@@ -3070,12 +3070,12 @@ function authenticate_user_login($username, $password) {
         $auth = empty($user->auth) ? 'manual' : $user->auth;  // use manual if auth not set
         if ($auth=='nologin' or !is_enabled_auth($auth)) {
             add_to_log(0, 'login', 'error', 'index.php', $username);
-            error_log('[client '.$_SERVER['REMOTE_ADDR']."]  $CFG->wwwroot  Disabled Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Disabled Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             return false;
         }
         if (!empty($user->deleted)) {
             add_to_log(0, 'login', 'error', 'index.php', $username);
-            error_log('[client '.$_SERVER['REMOTE_ADDR']."]  $CFG->wwwroot  Deleted Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Deleted Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             return false;
         }
         $auths = array($auth);
@@ -3138,7 +3138,7 @@ function authenticate_user_login($username, $password) {
     // failed if all the plugins have failed
     add_to_log(0, 'login', 'error', 'index.php', $username);
     if (debugging('', DEBUG_ALL)) {
-        error_log('[client '.$_SERVER['REMOTE_ADDR']."]  $CFG->wwwroot  Failed Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+        error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Failed Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
     }
     return false;
 }

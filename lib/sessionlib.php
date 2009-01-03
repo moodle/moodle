@@ -159,14 +159,17 @@ class moodle_session {
         global $CFG, $nomoodlecookie;
 
         if (!defined('NO_MOODLE_COOKIES')) {
-            if (isset($nomoodlecookie)) {
+            if (CLI_SCRIPT) {
+                // CLI scripts can not have session
+                define('NO_MOODLE_COOKIES', true);
+            } else if (isset($nomoodlecookie)) {
                 // backwards compatibility only
                 define('NO_MOODLE_COOKIES', $nomoodlecookie);
-                unset($nomoodlecookie);
             } else {
                 define('NO_MOODLE_COOKIES', false);
             }
         }
+        unset($nomoodlecookie); // cleanup
 
         if (!isset($CFG->cookiesecure) or strpos($CFG->wwwroot, 'https://') !== 0) {
             $CFG->cookiesecure = 0;

@@ -241,8 +241,8 @@ function get_role_access($roleid, $accessdata=NULL) {
           ORDER BY ctx.depth, ctx.path";
     $params = array($roleid);
 
-    // we need extra caching in cron only
-    if (defined('FULLME') and FULLME === 'cron') {
+    // we need extra caching in CLI scripts and cron
+    if (CLI_SCRIPT) {
         static $cron_cache = array();
 
         if (!isset($cron_cache[$roleid])) {
@@ -385,7 +385,7 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
         array_shift($contexts);
     }
 
-    if (defined('FULLME') && FULLME === 'cron' && !isset($USER->access)) {
+    if (CLI_SCRIPT && !isset($USER->access)) {
         // In cron, some modules setup a 'fake' $USER,
         // ensure we load the appropriate accessdata.
         if (isset($ACCESS[$userid])) {
@@ -422,7 +422,7 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
         $ACCESS = array();
         $RDEFS = array();
 
-        if (defined('FULLME') && FULLME === 'cron') {
+        if (CLI_SCRIPT) {
             load_user_accessdata($userid);
             $USER->access = $ACCESS[$userid];
             $DIRTYCONTEXTS = array();

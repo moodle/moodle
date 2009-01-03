@@ -6,16 +6,13 @@
  * php -d error_log=/path/to/log thisfile.php will override the default error log for php cli, which is stderr, so if you want this script to just print stuff out, use php thisfile.php instead.
  */
 
-require_once($CFG->libdir.'/eventslib.php');
-
-
 $fd = fopen('php://stdin','r');
 if (!$fd) {
     exit();
 }
 
-$FULLME='cron';
 require_once(dirname(dirname(__FILE__)).'/config.php');
+require_once($CFG->libdir.'/eventslib.php');
 require_once($CFG->dirroot.'/lib/uploadlib.php'); // contains virus handling stuff.
 
 $site = get_site();

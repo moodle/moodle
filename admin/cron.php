@@ -13,22 +13,16 @@
     set_time_limit(0);
     $starttime = microtime();
 
+/// this cron script might be considered to be a CLI script even when accessed over HTTP,
+/// we do not want HTML in output and there is no real session ;-)
+    define('CLI_SCRIPT', true);
+
 /// The following is a hack necessary to allow this script to work well 
 /// from the command line.
-
-    define('FULLME', 'cron');
-
+    define('FULLME', 'cron'); //TODO: to be removed soon ;-)
 
 /// Do not set moodle cookie because we do not need it here, it is better to emulate session
     define('NO_MOODLE_COOKIES', true);
-
-/// The current directory in PHP version 4.3.0 and above isn't necessarily the
-/// directory of the script when run from the command line. The require_once()
-/// would fail, so we'll have to chdir()
-
-    if (!isset($_SERVER['REMOTE_ADDR']) && isset($_SERVER['argv'][0])) {
-        chdir(dirname($_SERVER['argv'][0]));
-    }
 
     require_once(dirname(__FILE__) . '/../config.php');
     require_once($CFG->libdir.'/adminlib.php');
