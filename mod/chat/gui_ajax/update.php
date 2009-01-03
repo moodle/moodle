@@ -5,6 +5,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
+define('NO_MOODLE_COOKIES', true); // session not used here
+
 require_once('../../../config.php');
 require_once('../lib.php');
 require_once('common.php');
