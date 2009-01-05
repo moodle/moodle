@@ -1210,6 +1210,11 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2008123101);
     }
 
+    if ($result && $oldversion < 2009010500) {
+    /// clean up config table a bit
+        unset_config('session_error_counter');
+    }
+
     return $result;
 }
 
