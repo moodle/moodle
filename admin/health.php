@@ -498,42 +498,6 @@ class problem_000010 extends problem_base {
     }
 }
 
-class problem_000011 extends problem_base {
-    function title() {
-        return 'Session errors detected';
-    }
-    function exists() {
-        global $CFG;
-        return isset($CFG->session_error_counter);
-    }
-    function severity() {
-        return SEVERITY_ANNOYANCE;
-    }
-    function description() {
-        global $CFG;
-        if (isset($CFG->session_error_counter)) {
-            return 'Session problems were detected. Total count: '.$CFG->session_error_counter;
-        } else {
-            return 'No session errors detected.';
-        }
-    }
-    function solution() {
-        global $CFG, $DB;
-        if (optional_param('resetsesserrorcounter', 0, PARAM_BOOL)) {
-            if ($DB->get_field('config', 'name', array('name'=>'session_error_counter'))) {
-                $DB->delete_records('config', array('name'=>'session_error_counter'));
-            }
-            return 'Error counter was cleared.';
-        } else {
-            return '<p>Session errors can be caused by:</p><ul>' .
-            '<li>unresolved problem in server software (aka random switching of users),</li>' .
-            '<li>blocked or modified cookies,</li>' .
-            '<li>deleting of active session files.</li>' .
-            '</ul><p><a href="'.me().'&amp;resetsesserrorcounter=1">Reset counter</a></p>';
-        }
-    }
-}
-
 class problem_000012 extends problem_base {
     function title() {
         return 'Random questions data consistency';
