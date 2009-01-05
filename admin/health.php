@@ -411,7 +411,7 @@ class problem_000009 extends problem_base {
         return 'You should change the password of the user <strong>'.$CFG->dbuser.'</strong> both in your database and in your Moodle <strong>config.php</strong> immediately!'.($CFG->dbuser != 'root'?'':' It would also be a good idea to change the user account from root to something else, because this would lessen the impact in the event that your database is compromised anyway.');
     }
 }
-
+/* // not implemented in 2.0 yet
 class problem_000010 extends problem_base {
     function title() {
         return 'Uploaded files: slasharguments disabled or not working';
@@ -496,7 +496,7 @@ class problem_000010 extends problem_base {
             default:  return 0;
         }
     }
-}
+}*/
 
 class problem_000012 extends problem_base {
     function title() {
