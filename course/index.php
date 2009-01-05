@@ -283,6 +283,7 @@
     }
 
     print_course_request_buttons($systemcontext);
+    echo '</div>';
 
     admin_externalpage_print_footer();
 
