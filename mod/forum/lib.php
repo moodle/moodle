@@ -6851,7 +6851,7 @@ function forum_reset_userdata($data) {
         $DB->delete_records_select('forum_posts', "discussion IN ($discussionssql AND f.type <> 'single') AND parent = 0", $params); // now the initial posts for non single simple
 
         // finally all discussions except single simple forums
-        delete_records_select('forum_discussions', "forum IN ($forumssql AND f.type <> 'single')", $params);
+        $DB->delete_records_select('forum_discussions', "forum IN ($forumssql AND f.type <> 'single')", $params);
 
         // remove all grades from gradebook
         if (empty($data->reset_gradebook_grades)) {

@@ -11,11 +11,11 @@
     if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
         print_error('notlogged', 'chat');
     }
-    if (!$chat = get_record('chat', 'id', $chatid)) {
+    if (!$chat = $DB->get_record('chat', array('id'=>$chatid))) {
         error('Could not find that chat room!');
     }
 
-    if (!$course = get_record('course', 'id', $chat->course)) {
+    if (!$course = $DB->get_record('course', array('id'=>$chat->course))) {
         error('Could not find the course this belongs to!');
     }
 

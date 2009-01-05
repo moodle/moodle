@@ -24,7 +24,7 @@
     $backup_unique_code = optional_param('backup_unique_code',0,PARAM_INT);
 
     //Get and check course
-    if (! $course = get_record("course", "id", $id)) {
+    if (! $course = $DB->get_record("course", array("id"=>$id))) {
         print_error('invalidcourseid');
     }
     // To some reasons, course_startdateoffset value was lost during restoring
