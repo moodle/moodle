@@ -445,7 +445,10 @@ class qformat_hotpot extends qformat_default {
                         $question->fraction[$aa] = 1;
                     }
                 }
-                $questions[] = $question;
+                // add a sanity check for empty questions, see MDL-17779
+                if (!empty($question->questiontext)) {
+                    $questions[] = $question;
+                }
                 $q++;
             }
             $x++;
