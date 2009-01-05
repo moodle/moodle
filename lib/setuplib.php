@@ -134,7 +134,7 @@ function initialise_fullme() {
 
         // NOTE: ignore PATH_INFO because it is incorrectly encoded using 8bit filesystem legacy encoding in IIS
         //       since 2.0 we rely on iis rewrite extenssion like Helicon ISAPI_rewrite
-        //       example rule: RewriteRule ^([^\?]+\.php)(\/.+)$ $1\?file=$2 [QSA]
+        //       example rule: RewriteRule ^([^\?]+?\.php)(\/.+)$ $1\?file=$2 [QSA]
 
         if ($_SERVER['QUERY_STRING'] != '') {
             // iis is decoding the query string, let's reencode it in order to emulate QUERY_STRING in Apache
