@@ -77,6 +77,14 @@ global $THEME;
 */
 global $HTTPSPAGEREQUIRED;
 
+/** Full script path including all params, slash arguments, scheme and host.*/
+global $FULLME;
+/** Script path including query string and slash arguments without host. */
+global $ME;
+/** $FULLME without slasharguments and query string.*/
+global $FULLSCRIPT;
+/** Relative moodle script path "/course/view.php" */
+global $SCRIPT;
 
 /// First try to detect some attacks on older buggy PHP versions
     if (isset($_REQUEST['GLOBALS']) || isset($_COOKIE['GLOBALS']) || isset($_FILES['GLOBALS'])) {
@@ -404,13 +412,7 @@ global $HTTPSPAGEREQUIRED;
     }
 
 /// initialise ME's
-    if (defined('FULLME')) {     // Usually in command-line scripts like admin/cron.php
-        $FULLME = FULLME;
-        $ME = FULLME;
-    } else {
-        $FULLME = qualified_me();
-        $ME = strip_querystring($FULLME);
-    }
+    initialise_fullme();
 
 /// start session and prepare global $SESSION, $USER
     session_get_instance();

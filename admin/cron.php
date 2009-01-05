@@ -17,9 +17,8 @@
 /// we do not want HTML in output and there is no real session ;-)
     define('CLI_SCRIPT', true);
 
-/// The following is a hack necessary to allow this script to work well 
-/// from the command line.
-    define('FULLME', 'cron'); //TODO: to be removed soon ;-)
+/// Following hack used to identify cron and other CLI scripts - use CLI_SCRIPT or $FULLME == "/$CFG->admin/cropn.php" instead
+    //define('FULLME', 'cron');
 
 /// Do not set moodle cookie because we do not need it here, it is better to emulate session
     define('NO_MOODLE_COOKIES', true);

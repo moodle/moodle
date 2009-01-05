@@ -46,6 +46,8 @@ class portfolio_export_exception extends portfolio_exception {
     * @param mixed $a language string data (optional, defaults to  null)
     */
     public function __construct($exporter, $errorcode, $module=null, $continue=null, $a=null) {
+        global $SCRIPT, $CFG;
+
         if (!empty($exporter) && $exporter instanceof portfolio_exporter) {
             if (empty($continue)) {
                 $caller = $exporter->get('caller');
@@ -53,7 +55,7 @@ class portfolio_export_exception extends portfolio_exception {
                     $continue = $exporter->get('caller')->get_return_url();
                 }
             }
-            if (!defined('FULLME') || FULLME != 'cron') { // TODO: this is not nice at all
+            if ($SCRIPT == "/$CFG->admin/cron.php") {
                 $exporter->process_stage_cleanup();
             }
         } else {

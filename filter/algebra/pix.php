@@ -27,7 +27,7 @@
 
     //error_reporting(E_ALL);
 
-    $relativepath = get_file_argument('pix.php');
+    $relativepath = get_file_argument();
 
     $args = explode('/', trim($relativepath, '/'));
 

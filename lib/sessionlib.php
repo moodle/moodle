@@ -118,9 +118,6 @@ class moodle_session {
                 print_error('sessionipnomatch2', 'error');
             }
         }
-
-        // TODO: add wwwroot check here
-
     }
 
     /**
@@ -171,7 +168,7 @@ class moodle_session {
         }
         unset($nomoodlecookie); // cleanup
 
-        if (!isset($CFG->cookiesecure) or strpos($CFG->wwwroot, 'https://') !== 0) {
+        if (!isset($CFG->cookiesecure) or (strpos($CFG->wwwroot, 'https://') !== 0 and empty($CFG->sslproxy))) {
             $CFG->cookiesecure = 0;
         }
 

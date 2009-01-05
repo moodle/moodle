@@ -6,7 +6,7 @@
     //       in order to avoid messing redirects. MDL-14495
     require_login(0, true, null, false);
 
-    $relativepath = get_file_argument('question/exportfile.php');
+    $relativepath = get_file_argument();
     if (!$relativepath) {
         print_error('invalidarg', 'question');
     }

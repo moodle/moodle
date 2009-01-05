@@ -68,6 +68,9 @@ $CFG->dbpersist = false;         // Should database connections be reused?
 // web address to where moodle has been installed.  If your web site
 // is accessible via multiple URLs then choose the most natural one
 // that your students would use.  Do not include a trailing slash
+//
+// If you need both intranet and Internet access please read
+// http://docs.moodle.org/en/masquerading
 
 $CFG->wwwroot   = 'http://example.com/moodle';
 
@@ -192,6 +195,13 @@ $CFG->admin = 'admin';
 //      $CFG->mailprefix = 'mdl+'; // + is the separator for Exim and Postfix.
 //      $CFG->mailprefix = 'mdl-'; // - is the separator for qmail
 //      $CFG->maildomain = 'youremaildomain.com';
+//
+// Enable when setting up advanced reverse proxy load balancing configurations.
+//      $CFG->reverseproxy = true;
+//
+// Enable when using external SSL appliance for performance reasons.
+// Please note that site may be accessible via https: or https:, but not both!
+//      $CFG->sslproxy = true;
 //
 // The following setting will tell Moodle to respect your PHP session
 // settings. Use this if you want to control session configuration

@@ -286,7 +286,7 @@ function checknos() {
         echo '<form action="'.$CFG->wwwroot.'/user/action_redir.php" method="post" id="studentsform" onsubmit="return checksubmit(this);">'."\n";
         echo '<div>'."\n";
         echo '<input type="hidden" name="id" value="'.$id.'" />'."\n";
-        echo '<input type="hidden" name="returnto" value="'. format_string($_SERVER['REQUEST_URI']) .'" />'."\n";
+        echo '<input type="hidden" name="returnto" value="'. s($FULLME) .'" />'."\n";
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />'."\n";
 
         foreach ($users as $u) {

@@ -14,7 +14,7 @@
     // disable moodle specific debug messages
     disable_debugging();
 
-    $relativepath = get_file_argument('file.php');
+    $relativepath = get_file_argument();
     // force download for any student-submitted files to prevent XSS attacks.
     $forcedownload = 1;
 

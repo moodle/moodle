@@ -11,7 +11,7 @@
     // disable moodle specific debug messages
     disable_debugging();
 
-    $relativepath = get_file_argument('draftfile.php');
+    $relativepath = get_file_argument();
 
     // relative path must start with '/'
     if (!$relativepath) {

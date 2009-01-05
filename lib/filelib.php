@@ -32,7 +32,7 @@ function get_file_url($path, $options=null, $type='coursefile') {
             $url = $wwwroot."/user/pix.php";
             break;
         case 'usergroup':
-            $url = $CFG->wwwroot."/user/pixgroup.php";
+            $url = $CFG->wwwroot."/user/grouppix.php";
             break;
         case 'httpscoursefile':
             $url = $CFG->httpswwwroot."/file.php";

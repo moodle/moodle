@@ -85,6 +85,106 @@ function default_exception_handler($ex) {
 }
 
 /**
+ * Initialises $FULLME and friends.
+ * @return void
+ */
+function initialise_fullme() {
+    global $CFG, $FULLME, $ME, $SCRIPT, $FULLSCRIPT;
+
+    $url = parse_url($CFG->wwwroot);
+
+    if (CLI_SCRIPT) {
+        // urls do not make much sense in CLI scripts
+        $backtrace = debug_backtrace();
+        $topfile = array_pop($backtrace);
+        $topfile = realpath($topfile['file']);
+        $dirroot = realpath($CFG->dirroot);
+
+        if (strpos($topfile, $dirroot) !== 0) {
+            $SCRIPT = $FULLSCRIPT = $FULLME = $ME = null;
+        } else {
+            $relme = substr($topfile, strlen($dirroot));
+            $relme = str_replace('\\', '/', $relme); // Win fix
+            $SCRIPT = $FULLSCRIPT = $FULLME = $ME = $relme;
+        }
+
+        return;
+    }
+
+    $rurl = array();
+    $hostport = explode(':', $_SERVER['HTTP_HOST']);
+    $rurl['host'] = reset($hostport);
+    $rurl['port'] = $_SERVER['SERVER_PORT'];
+    $rurl['path'] = $_SERVER['SCRIPT_NAME']; // script path without slash arguments
+
+    if (stripos($_SERVER['SERVER_SOFTWARE'], 'apache') !== false) {
+        //Apache server
+        $rurl['scheme']   = empty($_SERVER['HTTPS']) ? 'http' : 'https';
+        $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
+
+    } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'lighttpd') !== false) {
+        //lighttpd
+        $rurl['scheme']   = empty($_SERVER['HTTPS']) ? 'http' : 'https';
+        $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
+
+    } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'iis') !== false) {
+        //IIS
+        $rurl['scheme']   = ($_SERVER['HTTPS'] == 'off') ? 'http' : 'https';
+        $rurl['fullpath'] = $_SERVER['SCRIPT_NAME'];
+
+        // NOTE: ignore PATH_INFO because it is incorrectly encoded using 8bit filesystem legacy encoding in IIS
+        //       since 2.0 we rely on iis rewrite extenssion like Helicon ISAPI_rewrite
+        //       example rule: RewriteRule ^([^\?]+\.php)(\/.+)$ $1\?file=$2 [QSA]
+
+        if ($_SERVER['QUERY_STRING'] != '') {
+            // iis is decoding the query string, let's reencode it in order to emulate QUERY_STRING in Apache
+            // TODO: move this into lib/setup.php
+            $encoded = urlencode($_SERVER['QUERY_STRING']);
+            $encoded = str_replace(urlencode('='), '=', $encoded);
+            $encoded = str_replace(urlencode('%'), '%', $encoded);
+            $encoded = str_replace(urlencode('&'), '&', $encoded);
+            $rurl['fullpath'] .= '?'.$encoded;
+        }
+        $_SERVER['REQUEST_URI'] = $rurl['fullpath']; // extra IIS compatibility
+
+    } else {
+        print_error('usupportedwebserver', 'error', '', $_SERVER['SERVER_SOFTWARE']);
+    }
+
+    if (strpos($rurl['path'], $url['path']) === 0) {
+        $SCRIPT = substr($rurl['path'], strlen($url['path']));
+    } else {
+        // probably some weird external script
+        $SCRIPT = $FULLSCRIPT = $FULLME = $ME = null;
+        return;
+    }
+
+    // $CFG->sslproxy specifies if external SSL apliance is used (server using http, ext box translating everything to https)
+    if (empty($CFG->sslproxy)) {
+        if ($rurl['scheme'] == 'http' and $url['scheme'] == 'https') {
+            print_error('sslonlyaccess', 'error');
+        }
+    }
+
+    // $CFG->reverseproxy specifies if reverse proxy server used - used in advanced load balancing setups only!
+    // this is not supposed to solve lan/wan access problems!!!!!
+    if (empty($CFG->reverseproxy)) {
+        if (($rurl['host'] != $url['host']) or (!empty($url['port']) and $rurl['port'] != $url['port'])) {
+            print_error('wwwrootmismatch', 'error', '', $CFG->wwwroot);
+        }
+    }
+
+    $FULLME     = $rurl['scheme'].'://'.$url['host'];
+    if (!empty($url['port'])) {
+        $FULLME .= ':'.$url['port'];
+    }
+    $FULLSCRIPT = $FULLME.$rurl['path'];
+    $FULLME     = $FULLME.$rurl['fullpath'];
+    $ME         = $rurl['fullpath'];
+
+}
+
+/**
  * Initializes our performance info early.
  *
  * Pairs up with get_performance_info() which is actually
@@ -130,7 +230,7 @@ function init_performance_info() {
  * @param string $newlimit the new memory limit
  * @return bool
  */
-function raise_memory_limit ($newlimit) {
+function raise_memory_limit($newlimit) {
 
     if (empty($newlimit)) {
         return false;
@@ -166,6 +266,7 @@ function get_real_size($size=0) {
     if (!$size) {
         return 0;
     }
+    $scan = array();
     $scan['MB'] = 1048576;
     $scan['Mb'] = 1048576;
     $scan['M'] = 1048576;

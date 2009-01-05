@@ -11,7 +11,7 @@
     // disable moodle specific debug messages
     disable_debugging();
 
-    $relativepath = get_file_argument('pixgroup.php');
+    $relativepath = get_file_argument();
 
     $args = explode('/', trim($relativepath, '/'));
 

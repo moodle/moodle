@@ -215,32 +215,8 @@ function get_referer($stripquery=true) {
  * @return string
  */
  function me() {
-
-    if (!empty($_SERVER['REQUEST_URI'])) {
-        return $_SERVER['REQUEST_URI'];
-
-    } else if (!empty($_SERVER['PHP_SELF'])) {
-        if (!empty($_SERVER['QUERY_STRING'])) {
-            return $_SERVER['PHP_SELF'] .'?'. $_SERVER['QUERY_STRING'];
-        }
-        return $_SERVER['PHP_SELF'];
-
-    } else if (!empty($_SERVER['SCRIPT_NAME'])) {
-        if (!empty($_SERVER['QUERY_STRING'])) {
-            return $_SERVER['SCRIPT_NAME'] .'?'. $_SERVER['QUERY_STRING'];
-        }
-        return $_SERVER['SCRIPT_NAME'];
-
-    } else if (!empty($_SERVER['URL'])) {     // May help IIS (not well tested)
-        if (!empty($_SERVER['QUERY_STRING'])) {
-            return $_SERVER['URL'] .'?'. $_SERVER['QUERY_STRING'];
-        }
-        return $_SERVER['URL'];
-
-    } else {
-        notify('Warning: Could not find any of these web server variables: $REQUEST_URI, $PHP_SELF, $SCRIPT_NAME or $URL');
-        return false;
-    }
+     global $ME;
+     return $ME;
 }
 
 /**
@@ -249,49 +225,8 @@ function get_referer($stripquery=true) {
  * @return string
  */
 function qualified_me() {
-
-    global $CFG;
-
-    if (!empty($CFG->wwwroot)) {
-        $url = parse_url($CFG->wwwroot);
-    }
-
-    if (!empty($url['host'])) {
-        $hostname = $url['host'];
-    } else if (!empty($_SERVER['SERVER_NAME'])) {
-        $hostname = $_SERVER['SERVER_NAME'];
-    } else if (!empty($_ENV['SERVER_NAME'])) {
-        $hostname = $_ENV['SERVER_NAME'];
-    } else if (!empty($_SERVER['HTTP_HOST'])) {
-        $hostname = $_SERVER['HTTP_HOST'];
-    } else if (!empty($_ENV['HTTP_HOST'])) {
-        $hostname = $_ENV['HTTP_HOST'];
-    } else {
-        notify('Warning: could not find the name of this server!');
-        return false;
-    }
-
-    if (!empty($url['port'])) {
-        $hostname .= ':'.$url['port'];
-    } else if (!empty($_SERVER['SERVER_PORT'])) {
-        if ($_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443) {
-            $hostname .= ':'.$_SERVER['SERVER_PORT'];
-        }
-    }
-
-    // TODO, this does not work in the situation described in MDL-11061, but
-    // I don't know how to fix it. Possibly believe $CFG->wwwroot ahead of what
-    // the server reports.
-    if (isset($_SERVER['HTTPS'])) {
-        $protocol = ($_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://';
-    } else if (isset($_SERVER['SERVER_PORT'])) { # Apache2 does not export $_SERVER['HTTPS']
-        $protocol = ($_SERVER['SERVER_PORT'] == '443') ? 'https://' : 'http://';
-    } else {
-        $protocol = 'http://';
-    }
-
-    $url_prefix = $protocol.$hostname;
-    return $url_prefix . me();
+    global $FULLME;
+    return $FULLME;
 }
 
 
@@ -319,10 +254,10 @@ class moodle_url {
      * @param array $params these params override anything in the query string where params have the same name.
      */
     function moodle_url($url = null, $params = array()){
-        global $FULLME;
+        global $ME;
         if ($url !== ''){
             if ($url === null){
-                $url = strip_querystring($FULLME);
+                $url = $ME;
             }
             $parts = parse_url($url);
             if ($parts === FALSE){
@@ -1216,96 +1151,26 @@ function validate_email($address) {
 
 /**
  * Extracts file argument either from file parameter or PATH_INFO
+ * Note: $scriptname parameter is not needed anymore
  *
- * @param string $scriptname name of the calling script
  * @return string file path (only safe characters)
  */
-function get_file_argument($scriptname) {
-    global $_SERVER;
+function get_file_argument() {
+    global $SCRIPT;
 
-    $relativepath = FALSE;
-
-    // first try normal parameter (compatible method == no relative links!)
     $relativepath = optional_param('file', FALSE, PARAM_PATH);
-    if ($relativepath === '/testslasharguments') {
-        echo 'test -1      : Incorrect use - try "file.php/testslasharguments" instead'; //indicate fopen/fread works for health center
-        die;
-    }
 
     // then try extract file from PATH_INFO (slasharguments method)
-    if (!$relativepath and !empty($_SERVER['PATH_INFO'])) {
-        $path_info = $_SERVER['PATH_INFO'];
+    if ($relativepath === false and isset($_SERVER['PATH_INFO']) and $_SERVER['PATH_INFO'] !== '') {
         // check that PATH_INFO works == must not contain the script name
-        if (!strpos($path_info, $scriptname)) {
-            $relativepath = clean_param(rawurldecode($path_info), PARAM_PATH);
-            if ($relativepath === '/testslasharguments') {
-                echo 'test 1      : Slasharguments test passed. Server confguration is compatible with file.php/1/pic.jpg slashargument setting.'; //indicate ok for health center
-                die;
-            }
+        if (strpos($_SERVER['PATH_INFO'], $SCRIPT) === false) {
+            $relativepath = clean_param(urldecode($_SERVER['PATH_INFO']), PARAM_PATH);
         }
     }
 
-    // now if both fail try the old way
-    // (for compatibility with misconfigured or older buggy php implementations)
-    if (!$relativepath) {
-        $arr = explode($scriptname, me());
-        if (!empty($arr[1])) {
-            $path_info = strip_querystring($arr[1]);
-            $relativepath = clean_param(rawurldecode($path_info), PARAM_PATH);
-            if ($relativepath === '/testslasharguments') {
-                echo 'test 2      : Slasharguments test passed (compatibility hack). Server confguration may be compatible with file.php/1/pic.jpg slashargument setting'; //indicate ok for health center
-                die;
-            }
-        }
-    }
+    // note: we are not using any other way because they are not compatible with unicode file names ;-)
 
     return $relativepath;
-}
-
-/**
- * Searches the current environment variables for some slash arguments
- *
- * @param string $file ?
- * @todo Finish documenting this function
- */
-function get_slash_arguments($file='file.php') {
-
-    if (!$string = me()) {
-        return false;
-    }
-
-    $pathinfo = explode($file, $string);
-
-    if (!empty($pathinfo[1])) {
-        return $pathinfo[1];
-    } else {
-        return false;
-    }
-}
-
-/**
- * Extracts arguments from "/foo/bar/something"
- * eg http://mysite.com/script.php/foo/bar/something
- *
- * @param string $string ?
- * @param int $i ?
- * @return array|string
- * @todo Finish documenting this function
- */
-function parse_slash_arguments($string, $i=0) {
-
-    if (detect_munged_arguments($string)) {
-        return false;
-    }
-    $args = explode('/', $string);
-
-    if ($i) {     // return just the required argument
-        return $args[$i];
-
-    } else {      // return the whole array
-        array_shift($args);  // get rid of the empty first one
-        return $args;
-    }
 }
 
 /**
@@ -3086,11 +2951,11 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
  * @uses $USER
  * @uses $SESSION
  * @uses $COURSE
- * @uses $FULLME
+ * @uses $SCRIPT
  * @return string
  */
 function current_theme() {
-    global $CFG, $USER, $SESSION, $COURSE, $FULLME;
+    global $CFG, $USER, $SESSION, $COURSE, $SCRIPT;
 
     if (empty($CFG->themeorder)) {
         $themeorder = array('page', 'course', 'category', 'session', 'user', 'site');
@@ -3123,7 +2988,7 @@ function current_theme() {
             case 'category':
                 if (!empty($CFG->allowcategorythemes)) {
                 /// Nasty hack to check if we're in a category page
-                    if (stripos($FULLME, 'course/category.php') !== false) {
+                    if ($SCRIPT == '/course/category.php') {
                         global $id;
                         if (!empty($id)) {
                             $theme = current_category_theme($id);
@@ -6700,18 +6565,17 @@ function print_side_block_end($attributes = array(), $title='') {
 
 function page_id_and_class(&$getid, &$getclass) {
     // Create class and id for this page
-    global $CFG, $ME;
+    global $CFG, $SCRIPT;
 
     static $class = NULL;
     static $id    = NULL;
 
     if (empty($CFG->pagepath)) {
-        $CFG->pagepath = $ME;
+        $CFG->pagepath = ltrim($SCRIPT, '/');
     }
 
     if (empty($class) || empty($id)) {
-        $path = str_replace($CFG->httpswwwroot.'/', '', $CFG->pagepath);  //Because the page could be HTTPSPAGEREQUIRED
-        $path = str_replace('.php', '', $path);
+        $path = str_replace('.php', '', $CFG->pagepath);
         if (substr($path, -1) == '/') {
             $path .= 'index';
         }
@@ -6917,7 +6781,7 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
  * @param string $iconpath  The path to the icon to be displayed
  */
 function page_doc_link($text='', $iconpath='') {
-    global $ME, $COURSE, $CFG;
+    global $SCRIPT, $COURSE, $CFG;
 
     if (empty($CFG->docroot) or empty($CFG->rolesactive)) {
         return '';
@@ -6934,11 +6798,10 @@ function page_doc_link($text='', $iconpath='') {
     }
 
     if (empty($CFG->pagepath)) {
-        $CFG->pagepath = $ME;
+        $CFG->pagepath = ltrim($SCRIPT, '/');
     }
 
-    $path = str_replace($CFG->httpswwwroot.'/','', $CFG->pagepath);  // Because the page could be HTTPSPAGEREQUIRED
-    $path = str_replace('.php', '', $path);
+    $path = str_replace('.php', '', $CFG->pagepath);
 
     if (empty($path)) {   // Not for home page
         return '';

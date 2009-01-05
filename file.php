@@ -27,7 +27,7 @@
     // disable moodle specific debug messages
     disable_debugging();
 
-    $relativepath = get_file_argument('file.php');
+    $relativepath = get_file_argument();
     $forcedownload = optional_param('forcedownload', 0, PARAM_BOOL);
 
     // relative path must start with '/', because of backup/restore!!!

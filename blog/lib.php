@@ -141,7 +141,7 @@
      *     display the entry in its abbreviated format (eg. index page)
      */
     function blog_print_entry($blogEntry, $viewtype='full', $filtertype='', $filterselect='', $mode='loud') {
-        global $USER, $CFG, $COURSE, $ME, $DB;
+        global $USER, $CFG, $COURSE, $DB;
 
         $template['body'] = format_text($blogEntry->summary, $blogEntry->format);
         $template['title'] = '<a id=b"'. s($blogEntry->id) .'" />';

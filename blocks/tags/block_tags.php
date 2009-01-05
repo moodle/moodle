@@ -38,7 +38,7 @@ class block_tags extends block_base {
 
     function get_content() {
 
-        global $CFG, $SITE, $COURSE, $USER;
+        global $CFG, $SITE, $COURSE, $USER, $SCRIPT;
 
         if (empty($CFG->usetags)) {
             $this->content->text = '';
@@ -80,7 +80,7 @@ class block_tags extends block_base {
             $loggedin = isloggedin() && !$isguest;
             $coursepage = $canedit = false;
             $coursepage = (isset($COURSE->id) && $COURSE->id != SITEID);
-            $mymoodlepage = strpos($_SERVER['PHP_SELF'], 'my') > 0 ? true : false;
+            $mymoodlepage = ($SCRIPT == '/my/index.php') ? true : false;
             $sitepage = (isset($COURSE->id) && $COURSE->id == SITEID && !$mymoodlepage);
             $coursecontext = get_context_instance(CONTEXT_COURSE, $COURSE->id);
             if ($coursepage) {

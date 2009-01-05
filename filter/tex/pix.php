@@ -28,7 +28,7 @@ define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
 
     error_reporting(E_ALL);
 
-    $relativepath = get_file_argument('pix.php');
+    $relativepath = get_file_argument();
 
     $args = explode('/', trim($relativepath, '/'));
 

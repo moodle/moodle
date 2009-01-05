@@ -5,6 +5,30 @@
  */
 
 /**
+ *Tries to detect the right www root setting.
+ *
+ * @return string detected www root
+ */
+function install_guess_wwwroot() {
+    $wwwroot = '';
+    if (empty($_SERVER['HTTPS']) or $_SERVER['HTTPS'] == 'off') {
+        $wwwroot .= 'http://';
+    } else {
+        $wwwroot .= 'https://';
+    }
+    $hostport = explode(':', $_SERVER['HTTP_HOST']);
+    $wwwroot .= reset($hostport);
+    if ($_SERVER['SERVER_PORT'] != 80 and $_SERVER['SERVER_PORT'] != '443') {
+        $wwwroot .= ':'.$_SERVER['SERVER_PORT'];
+    }
+    $wwwroot .= $_SERVER['SCRIPT_NAME'];
+
+    list($wwwroot, $xtra) = explode('/install.php', $wwwroot);
+
+    return $wwwroot;
+}
+
+/**
  * This function returns a list of languages and their full names. The
  * list of available languages is fetched from install/lang/xx/installer.php
  * and it's used exclusively by the installation process

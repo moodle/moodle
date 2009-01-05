@@ -180,7 +180,7 @@ foreach($supported as $driver) {
 
 /// guess the www root
 if ($INSTALL['wwwroot'] == '') {
-    list($INSTALL['wwwroot'], $xtra) = explode('/install.php', qualified_me());
+    $INSTALL['wwwroot'] = install_guess_wwwroot();
     $INSTALL['wwwrootform'] = $INSTALL['wwwroot'];
 
     // now try to guess the correct dataroot not accessible via web
