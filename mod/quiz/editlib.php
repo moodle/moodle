@@ -182,53 +182,31 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
     $strtype = get_string("type", "quiz");
     $strpreview = get_string("preview", "quiz");
 
-    /*if (!$quiz->questions) {
-        echo "<p class=\"quizquestionlistcontrols\">";
-        print_string("noquestions", "quiz");
-        echo "</p>";
-        return 0;
-    }*/
-    if($quiz->questions){
+    if ($quiz->questions) {
         list($usql, $params) = $DB->get_in_or_equal(explode(',', $quiz->questions));
         $questions = $DB->get_records_sql("SELECT q.*,c.contextid
                               FROM {question} q,
                                    {question_categories} c
                              WHERE q.id $usql
                                AND q.category = c.id", $params);
+    } else {
+        $questions = array();
     }
-    // if user only has empty pages we have to keep that: out with OR (!$questions)
-    if (!$quiz->questions) {
-        $pagecount=1;
-        echo  '<div class="quizpage"><span class="pagetitle">Page&nbsp;'.
-                $pagecount.'</span><div class="pagecontent"><div class="pagestatus">';
-        print_string("noquestionsinquiz", "quiz");
-        echo '</div>';
-        if(!$reordertool){
-            quiz_print_pagecontrols($quiz, $pageurl, $pagecount,$hasattempts);
-        }
-        echo "</div></div></div>";
-        //this is how it worked before summer 2008
-        //OR !$questions
-        if(!isset($questions)){
-            return 0;
-        }
-    }
-
 
     $layout=quiz_clean_layout($quiz->questions);
     $order = explode(',', $layout);
     $lastindex = count($order)-1;
 
-    if ($hasattempts){
+    if ($hasattempts) {
         $disabled='disabled="disabled"';
         $movedisabled='';
         $pagingdisabled='';
-    }else{
+    } else {
         $disabled='';
         $movedisabled='';
         $pagingdisabled='';
     }
-    if($quiz->shufflequestions){
+    if ($quiz->shufflequestions) {
         $movedisabled='disabled="disabled"';
     }
     if($quiz->questionsperpage){
@@ -288,17 +266,6 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
 
         echo $reordercontrolstop;
     }
-
-    /* // Tim: is this a separate case from the above "no questions in quiz"? Should it still be done?:
-    if(!$quiz->questions){
-        $pagecount=1;
-        echo  '<div class="quizpage"><span class="pagetitle">Page&nbsp;'.
-                $pagecount.'</span><div class="pagecontent">';
-        print_string("noquestions", "quiz");
-        quiz_print_pagecontrols($quiz, $pageurl, $pagecount);
-        echo "</div></div>";
-
-    }*/
 
     //the current question ordinal (no descriptions)
     $qno = 1;
