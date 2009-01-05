@@ -233,6 +233,8 @@ $string['qtyperqpwillberemovedanyway'] = '갱신과정에서 RQP 문제 유형�
 $string['remotedownloaderror'] = '서버로 구성요소를 다운로드하는데 실패하였습니다. 프록시 설정을 확인하십시요. PHP cURL 확장라이브러리를 추천합니다. <br /><br /> <a href=\"$a->url\">$a->url</a> 파일을 수동으로 다운로드해서 서버의 \"$a->dest\"에 복사한 다음 거기서 압축을 해제하십시요.';
 $string['remotedownloadnotallowed'] = '서버로 구성요소를 내려받는 것이 허용되지 않습니다. (allow_url_fopen 이 비활성화 됨).<br /><br /> 수동으로 <a href=\"$a->url\">$a->url</a> 파일을 다운로드 하고, 서버의 \"$a->dest\"에 복사한 다음 거기서 압축을 해제하십시요.';
 $string['report'] = '보고서';
+$string['requiredentrieschanged'] = '<strong>중요 - 필히 읽어볼 것<br/>(본 경고문은 이 판의 판올림 과정에서만 보이게 될 것입니다.)</strong><br/>버그 수정 때문에, \'항목 필수\' 및 \'설정 보기전 항목 필수\'설정을 이용하는 데이터베이스 활동에 대한 작동이 변경될 것입니다. 좀 더 자세한 변경 내용은 <a href=\"http://moodle.org/mod/forum/discuss.php?d=110928\" target=\"_blank\">데이터베이스 모듈 포럼</a>을 참고하면 됩니다. 이러한 설정이 어떻게 작동할 것인가는 <a href=\"http://docs.moodle.org/en/Adding/editing_a_database#Required_entries\" target=\"_blank\">무들 문서 창고</a>에서 역시 찾아볼 수 있습니다.
+<br/><br/>본 변경은 여러분의 시스템의 다음과 같은 데이터베이스에 영향을 줄 것입니다.(바라옵건데 지금 즉시 이 목록을 저장하여 두고, 판올림 이후에 활동들이 교수자들의 의도한 대로 온전히 구동되는지를 점검해 보기 바랍니다.)<br/><strong style=\"color:red\">$a->text</strong><br/>';
 $string['restricted'] = '제한됨';
 $string['safemode'] = '안전모드';
 $string['safemodeerror'] = '아마 안전모드(Safe Mode)가 작동되어서 문제가 생겼을 것입니다.';
