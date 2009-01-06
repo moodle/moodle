@@ -391,6 +391,7 @@ $string['remotedownloaderror'] = 'Download of component to your server failed, p
 $string['remotedownloadnotallowed'] = 'Download of components to your server isn\'t allowed (allow_url_fopen is disabled).<br /><br />You must download the <a href=\"$a->url\">$a->url</a> file manually, copy it to \"$a->dest\" in your server and unzip it there.';
 $string['restricteduser'] = 'Sorry, but your current account \"$a\" is restricted from doing that';
 $string['reportnotavailable'] = 'This type of report is only available for the site course';
+$string['reverseproxyabused'] = 'Reverse proxy enabled, server can not be accessed directly, sorry.<br />Please contact server administrator.';
 $string['rpcerror'] = 'RPC enrol/mnet/available_courses: ($a)';
 $string['scheduledbackupsdisabled'] = 'Scheduled backups have been disabled by the server admin';
 $string['sectionnotexist'] = 'This section does not exist';

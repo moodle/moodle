@@ -172,6 +172,11 @@ function initialise_fullme() {
         if (($rurl['host'] != $url['host']) or (!empty($url['port']) and $rurl['port'] != $url['port'])) {
             print_error('wwwrootmismatch', 'error', '', $CFG->wwwroot);
         }
+    } else {
+        if ($rurl['host'] == $url['host']) {
+            // hopefully this will stop all those "clever" admins trying to set up moodle with two different addresses in intranet and Internet
+            print_error('reverseproxyabused', 'error');
+        }
     }
 
     $FULLME     = $rurl['scheme'].'://'.$url['host'];
