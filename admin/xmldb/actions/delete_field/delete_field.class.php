@@ -82,7 +82,7 @@ class delete_field extends XMLDBAction {
             $o.= '      </td><td>';
             $o.= '      <div class="singlebutton">';
             $o.= '        <form action="index.php?action=edit_table&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '" method="post"><fieldset class="invisiblefieldset">';
-            $o.= '          <input type="submit" value="'. $this->str['no'] .'" /></div></form></fieldset>';
+            $o.= '          <input type="submit" value="'. $this->str['no'] .'" /></fieldset></form></div>';
             $o.= '      </td></tr>';
             $o.= '    </table>';
             $o.= '  </td></tr>';
