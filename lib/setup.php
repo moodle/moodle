@@ -371,6 +371,14 @@ $CFG->os = PHP_OS;
         }
     }
 
+/// neutralise nasty chars in PHP_SELF
+    if (isset($_SERVER['PHP_SELF'])) {
+        $phppos = strpos($_SERVER['PHP_SELF'], '.php');
+        if ($phppos !== false) {
+            $_SERVER['PHP_SELF'] = substr($_SERVER['PHP_SELF'], 0, $phppos+4);
+        }
+        unset($phppos);
+    }
 
 /// The following code can emulate "register globals" if required.
 /// This hack is no longer being applied as of Moodle 1.6 unless you really 
