@@ -21,6 +21,20 @@ class profile_define_text extends profile_define_base {
         $form->addElement('selectyesno', 'param3', get_string('profilefieldispassword', 'admin'));
         $form->setDefault('param3', 0); // defaults to 'no'
         $form->setType('param3', PARAM_INT);
+
+        /// Param 4 for text type contains a link
+        $form->addElement('text', 'param4', get_string('profilefieldlink', 'admin'));
+        $form->setType('param4', PARAM_URL);
+        $form->setHelpButton('param4', array('profilefieldlink', get_string('helpprofilefieldlink', 'admin')));
+
+        /// Param 5 for text type contains link target
+        $targetoptions = array( ''       => get_string('linktargetnone', 'editor'),
+                                '_blank' => get_string('linktargetblank', 'editor'),
+                                '_self'  => get_string('linktargetself', 'editor'),
+                                '_top'   => get_string('linktargettop', 'editor')
+                              );
+        $form->addElement('select', 'param5', get_string('profilefieldlinktarget', 'admin'), $targetoptions);
+        $form->setType('param5', PARAM_RAW);
     }
 
 }
