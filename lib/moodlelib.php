@@ -7420,56 +7420,89 @@ function getremoteaddr() {
 }
 
 /**
- * Cleans a remote address ready to put into the log table
+ * Cleans an ip address. Internal addresses are now allowed.
+ * (Originally local addresses were not allowed.)
+ *
+ * @param string $addr IPv4 or IPv6 address
+ * @param bool $compress use IPv6 address compression
+ * @return string normalised ip address string, null if error
  */
-function cleanremoteaddr($addr) {
-    $originaladdr = $addr;
-    $matches = array();
-    // first get all things that look like IP addresses.
-    if (!preg_match_all('/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/',$addr,$matches,PREG_SET_ORDER)) {
-        return '';
-    }
-    $goodmatches = array();
-    $lanmatches = array();
-    foreach ($matches as $match) {
-        //        print_r($match);
-        // check to make sure it's not an internal address.
-        // the following are reserved for private lans...
-        // 10.0.0.0 - 10.255.255.255
-        // 172.16.0.0 - 172.31.255.255
-        // 192.168.0.0 - 192.168.255.255
-        // 169.254.0.0 -169.254.255.255
-        $bits = explode('.',$match[0]);
-        if (count($bits) != 4) {
-            // weird, preg match shouldn't give us it.
-            continue;
-        }
-        if (($bits[0] == 10)
-            || ($bits[0] == 172 && $bits[1] >= 16 && $bits[1] <= 31)
-            || ($bits[0] == 192 && $bits[1] == 168)
-            || ($bits[0] == 169 && $bits[1] == 254)) {
-            $lanmatches[] = $match[0];
-            continue;
-        }
-        // finally, it's ok
-        $goodmatches[] = $match[0];
-    }
-    if (!count($goodmatches)) {
-        // perhaps we have a lan match, it's probably better to return that.
-        if (!count($lanmatches)) {
-            return '';
-        } else {
-            return array_pop($lanmatches);
-        }
-    }
-    if (count($goodmatches) == 1) {
-        return $goodmatches[0];
-    }
-    //Commented out following because there are so many, and it clogs the logs   MDL-13544
-    //error_log("NOTICE: cleanremoteaddr gives us something funny: $originaladdr had ".count($goodmatches)." matches");
+function cleanremoteaddr($addr, $compress=false) {
+    $addr = trim($addr);
 
-    // We need to return something, so return the first
-    return array_pop($goodmatches);
+    //TODO: maybe add a separate function is_addr_public() or something like this
+
+    if (strpos($addr, ':') !== false) {
+        // can be only IPv6
+        $parts = explode(':', $addr);
+        $count = count($parts);
+
+        if (strpos($parts[$count-1], '.') !== false) {
+            //legacy ipv4 notation
+            $last = array_pop($parts);
+            $ipv4 = cleanremoteaddr($last, true);
+            if ($ipv4 === null) {
+                return null;
+            }
+            $bits = explode('.', $ipv4);
+            $parts[] = dechex($bits[0]).dechex($bits[1]);
+            $parts[] = dechex($bits[2]).dechex($bits[3]);
+            $count = count($parts);
+            $addr = implode(':', $parts);
+        }
+
+        if ($count < 3 or $count > 8) {
+            return null; // severly malformed
+        }
+
+        if ($count != 8) {
+            if (strpos($addr, '::') === false) {
+                return null; // malformed
+            }
+            // uncompress ::
+            $insertat = array_search('', $parts, true);
+            $missing = array_fill(0, 1 + 8 - $count, '0');
+            array_splice($parts, $insertat, 1, $missing);
+            foreach ($parts as $key=>$part) {
+                if ($part === '') {
+                    $parts[$key] = '0';
+                }
+            }
+        }
+
+        $adr = implode(':', $parts);
+        if (!preg_match('/^([0-9a-f]{1,4})(:[0-9a-f]{1,4})*$/i', $adr)) {
+            return null; // incorrect format - sorry
+        }
+
+        // normalise 0s and case
+        $parts = array_map('hexdec', $parts);
+        $parts = array_map('dechex', $parts);
+
+        $result = implode(':', $parts);
+
+        if ($compress) {
+            $result = preg_replace('/:?0:0:(0:)*/', '::', $result, 1);
+        }
+
+        return $result;
+    }
+
+    // first get all things that look like IPv4 addresses
+    $parts = array();
+    if (!preg_match('/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/', $addr, $parts)) {
+        return null;
+    }
+    unset($parts[0]);
+    
+    foreach ($parts as $key=>$match) {
+        if ($match > 255) {
+            return null;
+        }
+        $parts[$key] = (int)$match; // normalise 0s
+    }
+
+    return implode('.', $parts);
 }
 
 /**
