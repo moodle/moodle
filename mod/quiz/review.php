@@ -74,7 +74,7 @@
     require_js('mod/quiz/quiz.js');
     $headtags = $attemptobj->get_html_head_contributions($page);
     if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
-        $accessmanager->setup_secure_page($course->shortname.': '.format_string($quiz->name), $headtags);
+        $accessmanager->setup_secure_page($attemptobj->get_course()->shortname.': '.format_string($attemptobj->get_quiz_name()), $headtags);
     } else {
         print_header_simple(format_string($attemptobj->get_quiz_name()), '', $attemptobj->navigation($strreviewtitle),
                 '', $headtags, true, $attemptobj->update_module_button());
@@ -255,6 +255,6 @@
     if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
         print_footer('empty');
     } else {
-        print_footer($course);
+        print_footer($attemptobj->get_course());
     }
 ?>
