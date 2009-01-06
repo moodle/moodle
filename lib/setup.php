@@ -408,6 +408,7 @@ global $SCRIPT;
         }
         if (!empty($_SERVER['PATH_TRANSLATED'])) {
             $_SERVER['PATH_TRANSLATED'] = stripslashes($_SERVER['PATH_TRANSLATED']);
+        }
     }
 
 /// neutralise nasty chars in PHP_SELF
