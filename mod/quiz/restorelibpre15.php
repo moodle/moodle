@@ -1458,7 +1458,6 @@
             //Now, build the RESPONSES record structure
             $response->attempt = $attempt_id;
             $response->question = backup_todb($res_info['#']['QUESTION']['0']['#']);
-            $response->originalquestion = backup_todb($res_info['#']['ORIGINALQUESTION']['0']['#']);
             $response->answer = backup_todb($res_info['#']['ANSWER']['0']['#']);
             $response->grade = backup_todb($res_info['#']['GRADE']['0']['#']);
 
@@ -1466,12 +1465,6 @@
             $question = backup_getid($restore->backup_unique_code,"question",$response->question);
             if ($question) {
                 $response->question = $question->new_id;
-            }
-
-            //We have to recode the originalquestion field
-            $question = backup_getid($restore->backup_unique_code,"question",$response->originalquestion);
-            if ($question) {
-                $response->originalquestion = $question->new_id;
             }
 
             //Set the raw_grade field (default to the existing grade one, no penalty in pre15 backups)

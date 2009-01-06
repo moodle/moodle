@@ -1218,6 +1218,21 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2009010500);
     }
 
+    if ($result && $oldversion < 2009010600) {
+
+    /// Define field originalquestion to be dropped from question_states
+        $table = new xmldb_table('question_states');
+        $field = new xmldb_field('originalquestion');
+
+    /// Conditionally launch drop field originalquestion
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009010600);
+    }
+
     return $result;
 }
 

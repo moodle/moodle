@@ -357,7 +357,6 @@
                 //Print state contents
                 fwrite ($bf,full_tag("ID",$level + 2,false,$state->id));
                 fwrite ($bf,full_tag("QUESTION",$level + 2,false,$state->question));
-                fwrite ($bf,full_tag("ORIGINALQUESTION",$level + 2,false,$state->originalquestion));
                 fwrite ($bf,full_tag("SEQ_NUMBER",$level + 2,false,$state->seq_number));
                 fwrite ($bf,full_tag("ANSWER",$level + 2,false,$state->answer));
                 fwrite ($bf,full_tag("TIMESTAMP",$level + 2,false,$state->timestamp));

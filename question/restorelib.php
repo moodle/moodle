@@ -795,7 +795,6 @@
             $state = new stdClass;
             $state->attempt = $attempt_id;
             $state->question = backup_todb($res_info['#']['QUESTION']['0']['#']);
-            $state->originalquestion = backup_todb($res_info['#']['ORIGINALQUESTION']['0']['#']);
             $state->seq_number = backup_todb($res_info['#']['SEQ_NUMBER']['0']['#']);
             $state->answer = backup_todb($res_info['#']['ANSWER']['0']['#']);
             $state->timestamp = backup_todb($res_info['#']['TIMESTAMP']['0']['#']);
@@ -811,16 +810,6 @@
                 $state->question = $question->new_id;
             } else {
                 echo 'Could not recode question id '.$state->question.' for state '.$oldid.'<br />';
-            }
-
-            //We have to recode the originalquestion field if it is nonzero
-            if ($state->originalquestion) {
-                $question = backup_getid($restore->backup_unique_code,"question",$state->originalquestion);
-                if ($question) {
-                    $state->originalquestion = $question->new_id;
-                } else {
-                    echo 'Could not recode originalquestion id '.$state->question.' for state '.$oldid.'<br />';
-                }
             }
 
             //We have to recode the answer field
