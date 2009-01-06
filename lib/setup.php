@@ -408,7 +408,15 @@ global $SCRIPT;
         }
         if (!empty($_SERVER['PATH_TRANSLATED'])) {
             $_SERVER['PATH_TRANSLATED'] = stripslashes($_SERVER['PATH_TRANSLATED']);
+    }
+
+/// neutralise nasty chars in PHP_SELF
+    if (isset($_SERVER['PHP_SELF'])) {
+        $phppos = strpos($_SERVER['PHP_SELF'], '.php');
+        if ($phppos !== false) {
+            $_SERVER['PHP_SELF'] = substr($_SERVER['PHP_SELF'], 0, $phppos+4);
         }
+        unset($phppos);
     }
 
 /// initialise ME's
