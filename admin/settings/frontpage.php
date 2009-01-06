@@ -26,6 +26,13 @@ if (get_site()) { //do not use during installation
         $temp->add(new admin_setting_special_frontpagedesc());
         $temp->add(new admin_setting_courselist_frontpage(false)); // non-loggedin version of the setting (that's what the parameter is for :) )
         $temp->add(new admin_setting_courselist_frontpage(true)); // loggedin version of the setting
+        
+        $options = array();
+        for ($i=1; $i<100; $i++) {
+            $options[$i] = $i;
+        }
+        $temp->add(new admin_setting_configselect('max_category_depth', get_string('sitemaxcategorydepth','admin'), get_string('sitemaxcategorydepthhelp','admin'), 50, $options));
+        
         $temp->add(new admin_setting_sitesetcheckbox('numsections', get_string('sitesection'), get_string('sitesectionhelp','admin'), 1));
         $temp->add(new admin_setting_sitesetselect('newsitems', get_string('newsitemsnumber'), '', 3,
              array('0' => '0',
