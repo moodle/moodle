@@ -137,13 +137,7 @@ function initialise_fullme() {
         //       example rule: RewriteRule ^([^\?]+?\.php)(\/.+)$ $1\?file=$2 [QSA]
 
         if ($_SERVER['QUERY_STRING'] != '') {
-            // iis is decoding the query string, let's reencode it in order to emulate QUERY_STRING in Apache
-            // TODO: move this into lib/setup.php
-            $encoded = urlencode($_SERVER['QUERY_STRING']);
-            $encoded = str_replace(urlencode('='), '=', $encoded);
-            $encoded = str_replace(urlencode('%'), '%', $encoded);
-            $encoded = str_replace(urlencode('&'), '&', $encoded);
-            $rurl['fullpath'] .= '?'.$encoded;
+            $rurl['fullpath'] .= '?'.$_SERVER['QUERY_STRING'];
         }
         $_SERVER['REQUEST_URI'] = $rurl['fullpath']; // extra IIS compatibility
 
