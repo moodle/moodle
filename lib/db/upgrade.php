@@ -926,7 +926,7 @@ function xmldb_main_upgrade($oldversion) {
         if (isset($roleids['user'])) {
             $rolecontextlevels[$roleids['user']] = get_default_contextlevels('user');
         }
-    
+
     /// See what other role assignments are in this database, extend the allowed
     /// lists to allow them too.
         $existingrolecontextlevels = $DB->get_recordset_sql('SELECT DISTINCT ra.roleid, con.contextlevel FROM
@@ -1165,51 +1165,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2008121701);
     }
 
-    if ($result && $oldversion < 2008123100) {
-
-    /// Define table sessions to be dropped
-        $table = new xmldb_table('sessions2');
-
-    /// Conditionally launch drop table for sessions
-        if ($dbman->table_exists($table)) {
-            $dbman->drop_table($table);
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2008123100);
-    }
-
-    if ($result && $oldversion < 2008123101) {
-
-    /// Define table sessions to be created
-        $table = new xmldb_table('sessions');
-
-    /// Adding fields to table sessions
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('sid', XMLDB_TYPE_CHAR, '128', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('sessdata', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
-        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('lastip', XMLDB_TYPE_CHAR, '40', null, null, null, null, null, null);
-        $table->add_field('sesskey', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, null);
-
-    /// Adding keys to table sessions
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
-
-    /// Adding indexes to table sessions
-        $table->add_index('sid', XMLDB_INDEX_UNIQUE, array('sid'));
-        $table->add_index('timecreated', XMLDB_INDEX_NOTUNIQUE, array('timecreated'));
-        $table->add_index('timemodified', XMLDB_INDEX_NOTUNIQUE, array('timemodified'));
-
-    /// Launch create table for sessions
-        $dbman->create_table($table);
-
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2008123101);
-    }
-
     if ($result && $oldversion < 2009010500) {
     /// clean up config table a bit
         unset_config('session_error_counter');
@@ -1231,6 +1186,113 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2009010600);
+    }
+
+    if ($result && $oldversion < 2009010601) {
+
+    /// Changing precision of field ip on table log to (45)
+        $table = new xmldb_table('log');
+        $field = new xmldb_field('ip', XMLDB_TYPE_CHAR, '45', null, XMLDB_NOTNULL, null, null, null, null, 'userid');
+
+    /// Launch change of precision for field ip
+        $dbman->change_field_precision($table, $field);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009010601);
+    }
+
+    if ($result && $oldversion < 2009010602) {
+
+    /// Changing precision of field lastip on table user to (45)
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('lastip', XMLDB_TYPE_CHAR, '45', null, XMLDB_NOTNULL, null, null, null, null, 'currentlogin');
+
+    /// Launch change of precision for field lastip
+        $dbman->change_field_precision($table, $field);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009010602);
+    }
+
+    if ($result && $oldversion < 2009010603) {
+
+    /// Changing precision of field ip_address on table mnet_host to (45)
+        $table = new xmldb_table('mnet_host');
+        $field = new xmldb_field('ip_address', XMLDB_TYPE_CHAR, '45', null, XMLDB_NOTNULL, null, null, null, null, 'wwwroot');
+
+    /// Launch change of precision for field ip_address
+        $dbman->change_field_precision($table, $field);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009010603);
+    }
+
+    if ($result && $oldversion < 2009010604) {
+
+    /// Changing precision of field ip on table mnet_log to (45)
+        $table = new xmldb_table('mnet_log');
+        $field = new xmldb_field('ip', XMLDB_TYPE_CHAR, '45', null, XMLDB_NOTNULL, null, null, null, null, 'userid');
+
+    /// Launch change of precision for field ip
+        $dbman->change_field_precision($table, $field);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009010604);
+    }
+
+    if ($result && $oldversion < 2009010605) {
+
+    /// Define table sessions to be dropped
+        $table = new xmldb_table('sessions2');
+
+    /// Conditionally launch drop table for sessions
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+    /// Define table sessions to be dropped
+        $table = new xmldb_table('sessions');
+
+    /// Conditionally launch drop table for sessions
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009010605);
+    }
+
+    if ($result && $oldversion < 2009010606) {
+
+    /// Define table sessions to be created
+        $table = new xmldb_table('sessions');
+
+    /// Adding fields to table sessions
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('state', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('sid', XMLDB_TYPE_CHAR, '128', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('sessdata', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('firstip', XMLDB_TYPE_CHAR, '45', null, null, null, null, null, null);
+        $table->add_field('lastip', XMLDB_TYPE_CHAR, '45', null, null, null, null, null, null);
+
+    /// Adding keys to table sessions
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+    /// Adding indexes to table sessions
+        $table->add_index('state', XMLDB_INDEX_NOTUNIQUE, array('state'));
+        $table->add_index('sid', XMLDB_INDEX_UNIQUE, array('sid'));
+        $table->add_index('timecreated', XMLDB_INDEX_NOTUNIQUE, array('timecreated'));
+        $table->add_index('timemodified', XMLDB_INDEX_NOTUNIQUE, array('timemodified'));
+
+    /// Launch create table for sessions
+        $dbman->create_table($table);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009010606);
     }
 
     return $result;

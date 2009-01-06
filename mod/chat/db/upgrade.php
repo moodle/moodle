@@ -58,6 +58,19 @@ function xmldb_chat_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2008072400, 'chat');
     }
 
+    if ($result && $oldversion < 2009010600) {
+
+    /// Changing precision of field ip on table chat_users to (45)
+        $table = new xmldb_table('chat_users');
+        $field = new xmldb_field('ip', XMLDB_TYPE_CHAR, '45', null, XMLDB_NOTNULL, null, null, null, null, 'version');
+
+    /// Launch change of precision for field ip
+        $dbman->change_field_precision($table, $field);
+
+    /// chat savepoint reached
+        upgrade_mod_savepoint($result, 2009010600, 'chat');
+    }
+
     return $result;
 }
 
