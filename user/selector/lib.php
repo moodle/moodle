@@ -95,6 +95,9 @@ abstract class user_selector_base {
         if (isset($options['exclude']) && is_array($options['exclude'])) {
             $this->exclude = $options['exclude'];
         }
+        if (isset($options['multiselect'])) {
+            $this->multiselect = $options['multiselect'];
+        }
 
         // Read the user prefs / optional_params that we use.
         $this->preserveselected = $this->initialise_option('userselector_preserveselected', $this->preserveselected);
@@ -321,7 +324,8 @@ abstract class user_selector_base {
             'class' => get_class($this),
             'name' => $this->name,
             'exclude' => $this->exclude,
-            'extrafields' => $this->extrafields
+            'extrafields' => $this->extrafields,
+            'multiselect' => $this->multiselect
         );
     }
 
