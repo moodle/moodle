@@ -125,7 +125,10 @@
                             } 
                             
                             //add new modified document back into index
-                            $add = $get_document_function($update->id, $update->itemtype);
+                            if (!$add = $get_document_function($update->id, $update->itemtype)){
+                                // ignore on errors
+                                continue;
+                            }
                             
                             //object to insert into db
                             $dbid = $dbcontrol->addDocument($add);
