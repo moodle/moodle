@@ -1085,7 +1085,7 @@ $moodle_capabilities = array(
     ),
 
     'moodle/site:mnetlogintoremote' => array(
-        'riskbitmask' => RISK_PERSONAL | RISK_XSS,
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
