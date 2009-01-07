@@ -481,7 +481,7 @@ function report_security_check_riskxss($detailed=false) {
                 JOIN {context} sc ON (sc.path = c.path OR sc.path LIKE ".$DB->sql_concat('c.path', "'/%'").")
                 JOIN {role_assignments} ra ON (ra.contextid = sc.id AND ra.roleid = rc.roleid)
                 JOIN {user} u ON u.id = ra.userid
-               WHERE ".$DB->sql_bitand('cap.riskbitmask', RISK_XSS)."
+               WHERE ".$DB->sql_bitand('cap.riskbitmask', RISK_XSS)." <> 0
                      AND rc.permission = :capallow
                      AND u.deleted = 0";
 
@@ -540,7 +540,7 @@ function report_security_check_defaultuserrole($detailed=false) {
     $sql = "SELECT COUNT(DISTINCT rc.contextid)
               FROM {role_capabilities} rc
               JOIN {capabilities} cap ON cap.name = rc.capability
-             WHERE ".$DB->sql_bitand('cap.riskbitmask', (RISK_XSS | RISK_CONFIG | RISK_DATALOSS))."
+             WHERE ".$DB->sql_bitand('cap.riskbitmask', (RISK_XSS | RISK_CONFIG | RISK_DATALOSS))." <> 0
                    AND rc.permission = :capallow
                    AND rc.roleid = :roleid";
 
@@ -619,7 +619,7 @@ function report_security_check_guestrole($detailed=false) {
     $sql = "SELECT COUNT(DISTINCT rc.contextid)
               FROM {role_capabilities} rc
               JOIN {capabilities} cap ON cap.name = rc.capability
-             WHERE ".$DB->sql_bitand('cap.riskbitmask', (RISK_XSS | RISK_CONFIG | RISK_DATALOSS))."
+             WHERE ".$DB->sql_bitand('cap.riskbitmask', (RISK_XSS | RISK_CONFIG | RISK_DATALOSS))." <> 0
                    AND rc.permission = :capallow
                    AND rc.roleid = :roleid";
 
@@ -695,7 +695,7 @@ function report_security_check_frontpagerole($detailed=false) {
     $sql = "SELECT COUNT(DISTINCT rc.contextid)
               FROM {role_capabilities} rc
               JOIN {capabilities} cap ON cap.name = rc.capability
-             WHERE ".$DB->sql_bitand('cap.riskbitmask', (RISK_XSS | RISK_CONFIG | RISK_DATALOSS))."
+             WHERE ".$DB->sql_bitand('cap.riskbitmask', (RISK_XSS | RISK_CONFIG | RISK_DATALOSS))." <> 0
                    AND rc.permission = :capallow
                    AND rc.roleid = :roleid";
 
@@ -784,7 +784,7 @@ function report_security_check_defaultcourserole($detailed=false) {
     $sql = "SELECT DISTINCT rc.contextid
               FROM {role_capabilities} rc
               JOIN {capabilities} cap ON cap.name = rc.capability
-             WHERE ".$DB->sql_bitand('cap.riskbitmask', (RISK_XSS | RISK_CONFIG | RISK_DATALOSS))."
+             WHERE ".$DB->sql_bitand('cap.riskbitmask', (RISK_XSS | RISK_CONFIG | RISK_DATALOSS))." <> 0
                    AND rc.permission = :capallow
                    AND rc.roleid = :roleid";
 
@@ -901,7 +901,7 @@ function report_security_check_courserole($detailed=false) {
     $sql = "SELECT rc.roleid, rc.contextid
               FROM {role_capabilities} rc
               JOIN {capabilities} cap ON cap.name = rc.capability
-             WHERE ".$DB->sql_bitand('cap.riskbitmask', (RISK_XSS | RISK_CONFIG | RISK_DATALOSS))."
+             WHERE ".$DB->sql_bitand('cap.riskbitmask', (RISK_XSS | RISK_CONFIG | RISK_DATALOSS))." <> 0
                    AND rc.permission = :capallow
                    AND rc.roleid $inroles
           GROUP BY rc.roleid, rc.contextid

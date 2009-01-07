@@ -1400,9 +1400,13 @@ abstract class moodle_database {
     /**
      * Returns the SQL text to be used in order to perform one bitwise AND operation
      * between 2 integers.
+     *
+     * NOTE: The SQL result is a number and can not be used directly in
+     *       SQL condition, please compare it to some number to get a bool!!
+     *
      * @param integer int1 first integer in the operation
      * @param integer int2 second integer in the operation
-     * @return string the piece of SQL code to be used in your statement.
+     * @return string the piece of SQL code to be used in your statement
      */
     public function sql_bitand($int1, $int2) {
         return '((' . $int1 . ') & (' . $int2 . '))';
@@ -1423,6 +1427,9 @@ abstract class moodle_database {
      * Returns the SQL text to be used in order to perform one bitwise OR operation
      * between 2 integers.
      *
+     * NOTE: The SQL result is a number and can not be used directly in
+     *       SQL condition, please compare it to some number to get a bool!!
+     *
      * @param integer int1 first integer in the operation
      * @param integer int2 second integer in the operation
      * @return string the piece of SQL code to be used in your statement.
@@ -1434,6 +1441,9 @@ abstract class moodle_database {
     /**
      * Returns the SQL text to be used in order to perform one bitwise XOR operation
      * between 2 integers.
+     *
+     * NOTE: The SQL result is a number and can not be used directly in
+     *       SQL condition, please compare it to some number to get a bool!!
      *
      * @param integer int1 first integer in the operation
      * @param integer int2 second integer in the operation
