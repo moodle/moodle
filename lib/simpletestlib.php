@@ -244,7 +244,6 @@ class MoodleUnitTestCase extends UnitTestCase {
      */
     public function setUp() {
         parent::setUp();
-        UnitTestDB::instantiate();
         global $DB;
         $this->DB =& $DB;
         ob_start();
@@ -348,7 +347,6 @@ class UnitTestDB {
     public static function instantiate() {
         global $CFG, $DB;
         UnitTestDB::$real_db = clone($DB);
-
         if (empty($CFG->unittestprefix)) {
             print_error("prefixnotset", 'simpletest');
         }
