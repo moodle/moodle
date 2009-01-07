@@ -26,7 +26,6 @@ class repository_wikimedia extends repository {
     }
     // login 
     public function check_login() {
-        echo_fb($this->keyword);
         return !empty($this->keyword);
     }
     // if check_login returns false,
