@@ -4410,6 +4410,7 @@ function send_password_change_confirmation_email($user) {
 
     $data = new object();
     $data->firstname = $user->firstname;
+    $data->lastname  = $user->lastname;
     $data->sitename  = format_string($site->fullname);
     $data->link      = $CFG->httpswwwroot .'/login/forgot_password.php?p='. $user->secret .'&s='. urlencode($user->username);
     $data->admin     = generate_email_signoff();
