@@ -148,7 +148,7 @@
     if (substr($CFG->wwwroot, -1) == '/') {
         print_box(get_string('cfgwwwrootslashwarning', 'admin'), 'generalbox adminwarning');
     }
-    if (strpos($ME, $CFG->httpswwwroot.'/') === false) {
+    if (strpos($FULLME, $CFG->httpswwwroot.'/') === false) {
         print_box(get_string('cfgwwwrootwarning', 'admin'), 'generalbox adminwarning');
     }
 
