@@ -4438,6 +4438,14 @@ table.quizreviewsummary td.cell {
   cursor: pointer;
   white-space: normal;
 }
+#quiznavigation #user-picture {
+    margin: 0.5em 0;
+}
+#quiznavigation #user-picture img {
+    width: auto;
+    height: auto;
+    float: left;
+}
 #quiznavigation .othernav {
   clear: both;
 }

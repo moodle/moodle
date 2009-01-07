@@ -896,6 +896,17 @@ abstract class quiz_nav_panel_base {
 
     abstract protected function get_end_bits();
 
+    protected function get_user_picture() {
+        global $DB;
+        $user = $DB->get_record('user', array('id' => $this->attemptobj->get_userid()));
+        $output = '';
+        $output .= '<div id="user-picture" class="clearfix">';
+        $output .= print_user_picture($user, $this->attemptobj->get_courseid(), NULL, 0, true, false);
+        $output .= ' ' . fullname($user);
+        $output .= '</div>';
+        return $output;
+    }
+
     protected function get_question_state_classes($question) {
         // The current status of the question.
         $classes = $this->attemptobj->get_question_status($question->id);
@@ -914,8 +925,12 @@ abstract class quiz_nav_panel_base {
 
     public function display() {
         $strquiznavigation = get_string('quiznavigation', 'quiz');
-        $content = $this->get_question_buttons() . "\n" . '<div class="othernav">' .
-                "\n" . $this->get_end_bits() . "\n</div>\n";
+        $content = '';
+        if ($this->attemptobj->get_quiz()->showuserpicture) {
+            $content .= $this->get_user_picture() . "\n";
+        }
+        $content .= $this->get_question_buttons() . "\n";
+        $content .= '<div class="othernav">' . "\n" . $this->get_end_bits() . "\n</div>\n";
         print_side_block($strquiznavigation, $content, NULL, NULL, '', array('id' => 'quiznavigation'), $strquiznavigation);
     }
 }

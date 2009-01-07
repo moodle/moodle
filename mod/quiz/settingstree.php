@@ -86,6 +86,11 @@ $quizsettings->add(new admin_setting_yesno_with_advanced('quiz/shuffleanswers',
         get_string('shufflewithin', 'quiz'), get_string('configshufflewithin', 'quiz'),
         array('value' => 1, 'fix' => false)));
 
+// showuserpicture
+$quizsettings->add(new admin_setting_yesno_with_advanced('quiz/showuserpicture',
+        get_string('showuserpicture', 'quiz'), get_string('configshowuserpicture', 'quiz'),
+        array('value' => 0, 'fix' => false)));
+
 // attempts
 $options = array(get_string('unlimited'));
 for ($i = 1; $i <= 6; $i++) {

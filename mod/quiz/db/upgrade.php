@@ -212,6 +212,21 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2008112101, 'quiz');
     }
 
+    if ($result && $oldversion < 2009010700) {
+
+    /// Define field showuserpicture to be added to quiz
+        $table = new xmldb_table('quiz');
+        $field = new xmldb_field('showuserpicture', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, '0', 'delay2');
+
+    /// Conditionally launch add field showuserpicture
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// quiz savepoint reached
+        upgrade_mod_savepoint($result, 2009010700, 'quiz');
+    }
+
     return $result;
 }
 

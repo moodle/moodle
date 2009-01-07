@@ -98,6 +98,11 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->setAdvanced('shuffleanswers', $quizconfig->fix_shuffleanswers);
         $mform->setDefault('shuffleanswers', $quizconfig->shuffleanswers);
 
+        $mform->addElement('selectyesno', 'showuserpicture', get_string('showuserpicture', 'quiz'));
+        $mform->setHelpButton('showuserpicture', array('showuserpicture', get_string('showuserpicture', 'quiz'), 'quiz'));
+        $mform->setAdvanced('showuserpicture', $quizconfig->fix_showuserpicture);
+        $mform->setDefault('showuserpicture', $quizconfig->showuserpicture);
+
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'attemptshdr', get_string('attempts', 'quiz'));
         $attemptoptions = array('0' => get_string('unlimited'));

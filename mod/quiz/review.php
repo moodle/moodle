@@ -136,7 +136,8 @@
 /// First we assemble all the rows that are appopriate to the current situation in
 /// an array, then later we only output the table if there are any rows to show.
     $rows = array();
-    if ($attemptobj->get_userid() <> $USER->id) {
+    if (!$attemptobj->get_quiz()->showuserpicture && $attemptobj->get_userid() <> $USER->id) {
+    /// If showuserpicture is true, the picture is shown elsewhere, so don't repeat it.
         $student = $DB->get_record('user', array('id' => $attemptobj->get_userid()));
         $picture = print_user_picture($student, $attemptobj->get_courseid(), $student->picture, false, true);
         $rows[] = '<tr><th scope="row" class="cell">' . $picture . '</th><td class="cell"><a href="' .
