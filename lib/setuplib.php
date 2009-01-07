@@ -91,6 +91,10 @@ function default_exception_handler($ex) {
 function initialise_fullme() {
     global $CFG, $FULLME, $ME, $SCRIPT, $FULLSCRIPT;
 
+    if (substr($CFG->wwwroot, -1) == '/') {
+        print_error('wwwrootslash', 'error');
+    }
+
     $url = parse_url($CFG->wwwroot);
     if (!isset($url['path'])) {
         $url['path'] = '';

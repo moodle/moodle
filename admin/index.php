@@ -145,13 +145,6 @@
         print_box(get_string('displayerrorswarning', 'admin'), 'generalbox adminwarning');
     }
 
-    if (substr($CFG->wwwroot, -1) == '/') {
-        print_box(get_string('cfgwwwrootslashwarning', 'admin'), 'generalbox adminwarning');
-    }
-    if (strpos($FULLME, $CFG->httpswwwroot.'/') === false) {
-        print_box(get_string('cfgwwwrootwarning', 'admin'), 'generalbox adminwarning');
-    }
-
 /// If no recently cron run
     $lastcron = $DB->get_field_sql('SELECT MAX(lastcron) FROM {modules}');
     if (time() - $lastcron > 3600 * 24) {

@@ -477,6 +477,7 @@ $string['wrongroleid'] = 'Incorrect role ID!';
 $string['wrongsourcebase'] = 'Wrong source URL base';
 $string['wrongzipfilename'] = 'Wrong ZIP file name';
 $string['wwwrootmismatch'] = 'Incorrect access detected, this server may be accessed only through \"$a\" address, sorry.<br />Please notify server administrator.';
+$string['wwwrootslash'] = 'Detected incorrect \$CFG->wwwroot in config.php, it must not contain trailing slash.<br />Please notify server administrator.';
 $string['xmldberror'] = 'XMLDB error!';
 $string['youcannotdeletecategory'] = 'You cannot delete category \'$a\' becuase you can neither delete the contents, nor move them elsewhere.';
 
