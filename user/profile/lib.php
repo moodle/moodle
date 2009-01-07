@@ -71,7 +71,9 @@ class profile_field_base {
             $this->edit_field_set_default($mform);
             $this->edit_field_set_required($mform);
             $this->edit_field_set_locked($mform);
+            return true;
         }
+        return false;
     }
 
     /**
@@ -315,13 +317,17 @@ function profile_definition(&$mform) {
         if ($categories = get_records_select('user_info_category', '', 'sortorder ASC')) {
             foreach ($categories as $category) {
                 if ($fields = get_records_select('user_info_field', "categoryid=$category->id", 'sortorder ASC')) {
-                    $mform->addElement('header', 'category_'.$category->id, format_string($category->name));
+                    $displayed = false;
                     foreach ($fields as $field) {
                         require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
                         $newfield = 'profile_field_'.$field->datatype;
                         $formfield = new $newfield($field->id);
-                        $formfield->edit_field($mform);
-
+                        if ($formfield->edit_field($mform)) {
+                            $displayed = true;
+                        }   
+                    }
+                    if ($displayed) {
+                        $mform->addElement('header', 'category_'.$category->id, format_string($category->name));
                     }
                 }
             }
