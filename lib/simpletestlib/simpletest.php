@@ -276,6 +276,19 @@ class SimpleTestContext {
         $this->_test = &$test;
     }
 
+//moodlefix begins
+    /**
+     *    Unsets the current test case instance. Avoids
+     *    problems when test classes rely on their destructors
+     *    being called at a predictable time.
+     *    @access public
+     */
+    function unsetTest() {
+        $this->clear();
+        $this->_test = NULL;
+    }
+
+//moodlefix ends
     /**
      *    Accessor for currently running test case.
      *    @return SimpleTestCase    Current test.

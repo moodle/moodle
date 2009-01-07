@@ -148,6 +148,9 @@ class SimpleTestCase {
             $reporter->paintCaseEnd($this->getLabel());
         }
         unset($this->_reporter);
+//moodlefix begins
+        $context->unsetTest();
+//moodlefix ends
         return $reporter->getStatus();
     }
 
