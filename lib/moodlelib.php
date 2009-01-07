@@ -4437,9 +4437,10 @@ function send_password_change_confirmation_email($user) {
 
     $data = new object();
     $data->firstname = $user->firstname;
-    $data->sitename = format_string($site->fullname);
-    $data->link = $CFG->httpswwwroot .'/login/forgot_password.php?p='. $user->secret .'&s='. urlencode($user->username);
-    $data->admin = generate_email_signoff();
+    $data->lastname  = $user->lastname;
+    $data->sitename  = format_string($site->fullname);
+    $data->link      = $CFG->httpswwwroot .'/login/forgot_password.php?p='. $user->secret .'&s='. urlencode($user->username);
+    $data->admin     = generate_email_signoff();
 
     $message = get_string('emailpasswordconfirmation', '', $data);
     $subject = get_string('emailpasswordconfirmationsubject', '', format_string($site->fullname));
