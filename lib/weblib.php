@@ -4404,7 +4404,7 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='',
  * you save a DB query.
  *
  * @param int $user takes a userid, or a userobj
- * @param int $courseid ?
+ * @param int $courseid The course we are in. Only needed if $link is true.
  * @param boolean $picture Print the user picture?
  * @param int $size Size in pixels.  Special values are (true/1 = 100px) and (false/0 = 35px) for backward compatability
  * @param boolean $return If false print picture to current page, otherwise return the output as string
