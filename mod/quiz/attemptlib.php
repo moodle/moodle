@@ -319,7 +319,7 @@ class quiz {
         }
 
         // Break up the layout string into pages.
-        $pagelayouts = explode(',0', $layout);
+        $pagelayouts = explode(',0', quiz_clean_layout($layout, true));
 
         // Strip off any empty last page (normally there is one).
         if (end($pagelayouts) == '') {

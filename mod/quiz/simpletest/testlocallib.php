@@ -48,5 +48,28 @@ class quiz_locallib_test extends MoodleUnitTestCase {
         $this->assertEqual(quiz_number_of_questions_in_quiz('1,2,3,0'), 3);
         $this->assertEqual(quiz_number_of_questions_in_quiz('0,1,0,0,2,0'), 2);
     }
+
+    function test_quiz_clean_layout() {
+        // Without stripping empty pages.
+        $this->assertEqual(quiz_clean_layout(',,1,,,2,,'), '1,2,0');
+        $this->assertEqual(quiz_clean_layout(''), '0');
+        $this->assertEqual(quiz_clean_layout('0'), '0');
+        $this->assertEqual(quiz_clean_layout('0,0'), '0,0');
+        $this->assertEqual(quiz_clean_layout('0,0,0'), '0,0,0');
+        $this->assertEqual(quiz_clean_layout('1'), '1,0');
+        $this->assertEqual(quiz_clean_layout('1,2'), '1,2,0');
+        $this->assertEqual(quiz_clean_layout('1,0,2'), '1,0,2,0');
+        $this->assertEqual(quiz_clean_layout('0,1,0,0,2,0'), '0,1,0,0,2,0');
+
+        // With stripping empty pages.
+        $this->assertEqual(quiz_clean_layout('', true), '0');
+        $this->assertEqual(quiz_clean_layout('0', true), '0');
+        $this->assertEqual(quiz_clean_layout('0,0', true), '0');
+        $this->assertEqual(quiz_clean_layout('0,0,0', true), '0');
+        $this->assertEqual(quiz_clean_layout('1', true), '1,0');
+        $this->assertEqual(quiz_clean_layout('1,2', true), '1,2,0');
+        $this->assertEqual(quiz_clean_layout('1,0,2', true), '1,0,2,0');
+        $this->assertEqual(quiz_clean_layout('0,1,0,0,2,0', true), '1,0,2,0');
+    }
 }
 ?>

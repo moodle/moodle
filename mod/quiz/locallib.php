@@ -1147,48 +1147,43 @@ function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) 
  * @param boolean $removeemptypages If true, remove empty pages from the quiz. False by default.
  * @return $string the cleaned-up layout
  */
-function quiz_clean_layout($layout,$removeemptypages=false){
-    //remove duplicate "," (or triple, or...)
-    while(strstr($layout,",,")){
-        $layout = str_replace(',,', ',', $layout);
-    }
-    //remove duplicate question ids
-    $layout_arr=explode(",",$layout);
-    $new_arr=array();
-    $seen=array();
-    foreach($layout_arr as $key=>$value){
-         if(!in_array($value,$seen) && $value!=0){
-             $new_arr[]=$value;
-             $seen[]=$value;
-         }else if($value==0){
-             $new_arr[]=0;
-         }
-    }
-    if($removeemptypages){
-        // Avoid duplicate page breaks
-        // Go through all the array keys
-        for($i=0;$i<count($new_arr);$i++){
-            //check if the current position and the one after are both zeros
-            //remove the one after until they are not both zeros
-                while(isset($new_arr[$i+1]) &&
-                        $new_arr[$i]==0 &&
-                        $new_arr[$i+1]==0){
-                    array_splice($new_arr,$i+1,1);
-                }
+function quiz_clean_layout($layout, $removeemptypages = false){
+    // Remove duplicate "," (or triple, or...)
+    $layout = preg_replace('/,{2,}/', ',', trim($layout, ','));
+
+    // Remove duplicate question ids
+    $layout = explode(',', $layout);
+    $cleanerlayout = array();
+    $seen = array();
+    foreach ($layout as $item) {
+        if ($item == 0) {
+            $cleanerlayout[] = '0';
+        } else if (!in_array($item, $seen)) {
+            $cleanerlayout[] = $item;
+            $seen[] = $item;
         }
     }
-    $layout=implode(",",$new_arr);
-    //remove extra "," from beginning and end
-    $layout=trim($layout, ",");
-    //add a ",0" (page break) at the end if there is none
-    $layoutlength=strlen($layout);
-    $last=(strlen($layout)-1);
-    if($layoutlength>1 AND
-            !($layout[$last-1] == ',' AND $layout[$last] == '0')){
-        $layout .= ',0';
+
+    if ($removeemptypages) {
+        // Avoid duplicate page breaks
+        $layout = $cleanerlayout;
+        $cleanerlayout = array();
+        $stripfollowingbreaks = true; // Ensure breaks are stripped from the start.
+        foreach ($layout as $item) {
+            if ($stripfollowingbreaks && $item == 0) {
+                continue;
+            }
+            $cleanerlayout[] = $item;
+            $stripfollowingbreaks = $item == 0;
+        }
     }
 
-    return $layout;
+    // Add a page break at the end if there is none
+    if (end($cleanerlayout) !== '0') {
+        $cleanerlayout[] = '0';
+    }
+
+    return implode(',', $cleanerlayout);
 }
 /**
  * Print a quiz error message. This is a thin wrapper around print_error, for convinience.
