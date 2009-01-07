@@ -1468,7 +1468,7 @@ abstract class repository {
             $pass = true;
             $value->children = array_filter($value->children, array($this, 'filter'));
         } else {
-            if ($accepted_types == '*') {
+            if ($accepted_types == '*' || in_array('*', $accepted_types)) {
                 $pass = true;
             } elseif (is_array($accepted_types)) {
                 foreach ($accepted_types as $type) {
