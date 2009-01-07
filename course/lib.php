@@ -31,26 +31,58 @@ function make_log_url($module, $url) {
         case 'admin':
         case 'calendar':
         case 'mnet course':
-            return "/course/$url";
+            if (strpos($url, '../') === 0) {
+                $url = ltrim($url, '.');
+            } else {
+                $url = "/course/$url";
+            }
             break;
         case 'user':
         case 'blog':
-            return "/$module/$url";
+            $url = "/$module/$url";
             break;
         case 'upload':
-            return $url;
+            $url = $url;
             break;
         case 'library':
         case '':
-            return '/';
+            $url = '/';
             break;
         case 'message':
-            return "/message/$url";
+            $url = "/message/$url";
+            break;
+        case 'notes':
+            $url = "/notes/$url";
             break;
         default:
-            return "/mod/$module/$url";
+            $url = "/mod/$module/$url";
             break;
     }
+
+    //now let's sanitise urls - there might be some ugly nasties:-(
+    $parts = explode('?', $url);
+    $script = array_shift($parts);
+    if (strpos($script, 'http') === 0) {
+        $script = clean_param($script, PARAM_URL);
+    } else {
+        $script = clean_param($script, PARAM_PATH);
+    }
+
+    $query = '';
+    if ($parts) {
+        $query = implode('', $parts);
+        $query = str_replace('&amp;', '&', $query); // both & and &amp; are stored in db :-|
+        $parts = explode('&', $query);
+        $eq = urlencode('=');
+        foreach ($parts as $key=>$part) {
+            $part = urlencode(urldecode($part));
+            $part = str_replace($eq, '=', $part);
+            $parts[$key] = $part;
+        }
+        $query = '?'.implode('&amp;', $parts);
+    }
+
+    return $script.$query;
 }
 
 
@@ -301,10 +333,6 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         $tl=textlib_get_instance();
         $brokenurl=($tl->strlen($log->url)==100 && $tl->substr($log->url,97)=='...');
 
-        $log->url  = strip_tags(urldecode($log->url));   // Some XSS protection
-        $log->info = strip_tags(urldecode($log->info));  // Some XSS protection
-        $log->url  = s($log->url); /// XSS protection and XHTML compatibility - should be in link_to_popup_window() instead!!
-
         echo '<tr class="r'.$row.'">';
         if ($course->id == SITEID) {
             echo "<td class=\"cell c0\">\n";
@@ -417,10 +445,6 @@ function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC",
         //Filter log->info
         $log->info = format_string($log->info);
 
-        $log->url  = strip_tags(urldecode($log->url));   // Some XSS protection
-        $log->info = strip_tags(urldecode($log->info));  // Some XSS protection
-        $log->url  = str_replace('&', '&amp;', $log->url); /// XHTML compatibility
-
         echo '<tr class="r'.$row.'">';
         if ($course->id == SITEID) {
             echo "<td class=\"r$row c0\" >\n";
@@ -512,10 +536,7 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
 
         //Filter log->info
         $log->info = format_string($log->info);
-
-        $log->url  = strip_tags(urldecode($log->url));     // Some XSS protection
         $log->info = strip_tags(urldecode($log->info));    // Some XSS protection
-        $log->url  = str_replace('&', '&amp;', $log->url); // XHTML compatibility
 
         $firstField = $courses[$log->course];
         $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
