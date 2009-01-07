@@ -62,7 +62,7 @@ function module_specific_actions($pageurl, $questionid, $cmid, $canuse, $cmoptio
  * (which is called from showbank())
  * Displays button in form with checkboxes for each question.
  */
-function module_specific_buttons($cmid,$cmoptions){
+function module_specific_buttons($cmid, $cmoptions){
     if($cmoptions->hasattempts){
         $disabled='disabled="disabled"';
     }else{
@@ -540,7 +540,7 @@ if ($significantchangemade) {
         }
     }
     quiz_update_sumgrades($quiz);
-    redirect($qcobject->pageurl->out());
+    redirect($thispageurl->out());
 }
 
 question_showbank_actions($thispageurl, $cm);
