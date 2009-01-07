@@ -29,6 +29,10 @@ $continuesetuptesttables = optional_param('continuesetuptesttables', false, PARA
 $droptesttables = optional_param('droptesttables', false, PARAM_BOOL);
 $testtablesok = optional_param('testtablesok', false, PARAM_BOOL);
 
+if ($setuptesttables || $continuesetuptesttables || $upgradetesttables) {
+    // Make sure this option is off during upgrade. It is not very helpful, and can break things.
+    $CFG->xmlstrictheaders = false;
+}
 admin_externalpage_setup('reportsimpletest', '', array('showpasses' => $showpasses,
         'showsearch' => $showsearch, 'thorough' => $thorough));
 admin_externalpage_print_header();
