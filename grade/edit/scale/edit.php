@@ -108,7 +108,7 @@ if ($mform->is_cancelled()) {
         if (isset($data->standard)) {
             $scale->courseid = !empty($data->standard) ? 0 : $courseid;
         } else {
-            unset($scale->couseid); // keep previous
+            unset($scale->courseid); // keep previous
         }
         $scale->update();
     }

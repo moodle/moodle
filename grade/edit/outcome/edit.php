@@ -111,7 +111,7 @@ if ($mform->is_cancelled()) {
         if (isset($data->standard)) {
             $outcome->courseid = !empty($data->standard) ? null : $courseid;
         } else {
-            unset($outcome->couseid); // keep previous
+            unset($outcome->courseid); // keep previous
         }
         $outcome->update();
     }
