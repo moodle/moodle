@@ -92,6 +92,10 @@ function initialise_fullme() {
     global $CFG, $FULLME, $ME, $SCRIPT, $FULLSCRIPT;
 
     $url = parse_url($CFG->wwwroot);
+    if (!isset($url['path'])) {
+        $url['path'] = '';
+    }
+    $url['path'] .= '/';
 
     if (CLI_SCRIPT) {
         // urls do not make much sense in CLI scripts
@@ -146,7 +150,7 @@ function initialise_fullme() {
     }
 
     if (strpos($rurl['path'], $url['path']) === 0) {
-        $SCRIPT = substr($rurl['path'], strlen($url['path']));
+        $SCRIPT = substr($rurl['path'], strlen($url['path'])-1);
     } else {
         // probably some weird external script
         $SCRIPT = $FULLSCRIPT = $FULLME = $ME = null;
