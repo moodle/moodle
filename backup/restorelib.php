@@ -3280,8 +3280,13 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         }
 
                         // scale is not course unique
-
-                        $sca_db = $DB->get_records('scale', array('scale'=>$sca->scale, 'courseid'=>$course_to_search), true);
+                        //Going to compare LOB columns so, use the cross-db sql_compare_text() in both sides.
+                        $compare_scale_clause = $DB->sql_compare_text('scale')  . ' = ' . $DB->sql_compare_text(':scaledesc');
+                        $params = array('courseid'=>$course_to_search, 'scaledesc'=>$sca->scale);
+                        $sca_db = $DB->get_record_sql("SELECT *
+                                                         FROM {scale}
+                                                        WHERE courseid = :courseid
+                                                          AND $compare_scale_clause", $params, true);
 
                         //If it doesn't exist, create
                         if (!$sca_db) {
