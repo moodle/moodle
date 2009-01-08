@@ -227,7 +227,7 @@ class grade_category extends grade_object {
                     $child->path  = null;
                     $child->depth = 0;
                     $child->update($source);
-                } 
+                }
             }
         }
 
@@ -602,7 +602,18 @@ class grade_category extends grade_object {
                 break;
 
             case GRADE_AGGREGATE_MODE:       // the most common value, average used if multimode
-                $freq = array_count_values($grade_values);
+                // array_count_values only counts INT and STRING, so if grades are floats we must convert them to string
+                $converted_grade_values = array();
+
+                foreach ($grade_values as $k => $gv) {
+                    if (!is_int($gv) && !is_string($gv)) {
+                        $converted_grade_values[$k] = (string) $gv;
+                    } else {
+                        $converted_grade_values[$k] = $gv;
+                    }
+                }
+
+                $freq = array_count_values($converted_grade_values);
                 arsort($freq);                      // sort by frequency keeping keys
                 $top = reset($freq);               // highest frequency count
                 $modes = array_keys($freq, $top);  // search for all modes (have the same highest count)
@@ -686,6 +697,10 @@ class grade_category extends grade_object {
      * @return boolean (just plain return;)
      */
     function sum_grades(&$grade, $oldfinalgrade, $items, $grade_values, $excluded) {
+        if (empty($items)) {
+            return null;
+        }
+
         // ungraded and exluded items are not used in aggregation
         foreach ($grade_values as $itemid=>$v) {
             if (is_null($v)) {
@@ -881,7 +896,7 @@ class grade_category extends grade_object {
                     //fix paths and depts
                     static $recursioncounter = 0; // prevents infinite recursion
                     $recursioncounter++;
-                    if ($recursioncounter < 5) { 
+                    if ($recursioncounter < 5) {
                         // fix paths and depths!
                         $grade_category = new grade_category($cat, false);
                         $grade_category->depth = 0;
@@ -889,7 +904,7 @@ class grade_category extends grade_object {
                         $grade_category->update('system');
                         return $this->get_children($include_category_items);
                     }
-                } 
+                }
                 // prevent problems with duplicate sortorders in db
                 $sortorder = $cat->sortorder;
                 while(array_key_exists($sortorder, $cats[$cat->parent]->children)) {
