@@ -3214,9 +3214,10 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         }
 
                         // scale is not course unique, use get_record_sql to suppress warning
-
+                        //Going to compare LOB columns so, use the cross-db sql_compare_text() in both sides.
+                        $compare_scale_clause = sql_compare_text('scale')  . "=" .  sql_compare_text("'" . $sca->scale . "'");
                         $sca_db = get_record_sql("SELECT * FROM {$CFG->prefix}scale
-                                                           WHERE scale = '$sca->scale'
+                                                           WHERE $compare_scale_clause
                                                            AND courseid = $course_to_search", true);
 
                         //If it doesn't exist, create
