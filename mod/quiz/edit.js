@@ -52,6 +52,12 @@ function quiz_edit_init() {
 
     quiz_edit.randomquestiondialog.render();
 
+    // Nasty hack, remove once the YUI bug causing MDL-17594 is fixed.
+    // https://sourceforge.net/tracker/index.php?func=detail&aid=2493426&group_id=165715&atid=836476
+    var elementcauseinglayoutproblem = document.getElementById('_yuiResizeMonitor');
+    if (elementcauseinglayoutproblem) {
+        elementcauseinglayoutproblem.style.left = '0px';
+    }
 
     quiz_edit.repaginatedialog = new YAHOO.widget.Dialog("repaginatedialog",
                 {
