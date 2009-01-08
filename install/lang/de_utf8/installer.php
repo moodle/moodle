@@ -225,11 +225,6 @@ $string['qtyperqpwillberemovedanyway'] = 'Während des Updates wird der Fragenty
 $string['remotedownloaderror'] = 'Der Download auf Ihren Server konnte nicht ausgeführt werden. Prüfen Sie bitte die Proxy-Einstellungen, die PHP CURL Erweiterung wird dringend empfohlen.<br /><br />Die Datei <a href=\"$a->url\">$a->url</a> muss nun manuell herunter geladen, entpackt und auf den Server nach \"$a->dest\" kopiert werden. there.';
 $string['remotedownloadnotallowed'] = 'Der Download von Komponenten auf Ihren Server ist nicht erlaubt (allow_url_fopen ist deaktiviert). <br /><br /> Die Datei <a href=\"$a->url\">$a->url</a> muss manuell heruntergeladen werden. Kopieren Sie die Datei nach \"$a->dest\" auf Ihren Server und entpacken Sie sie dort.';
 $string['report'] = 'Bericht';
-$string['requiredentrieschanged'] = '<strong>WICHTIG - UNBEDINGT LESEN<br />Die Warnung wird ausschließlich bei dieser Aktualisierung gezeigt!</strong><br />
-Infolge einer Fehlerkorrektur wird sich das Verhalten von Datenbankaktivitäten ändern, die die Einstellungen \'Required entries\' und \'Required entries before viewing settings\' nutzen.
-
-Weitere Erklärungen entnehmen Sie bitte den  <a href=\"http://docs.moodle.org/en/Adding/editing_a_database#Required_entries\" target=\"_blank\">Moodle Docs</a>.
-<br/><br/>Diese Änderung betrifft die folgenden Daten in Ihrem System . Bitte sichern Sie die nachfolgende Liste und prüfen Sie nach der Aktualisierung, ob alle Aktivitäten noch wie beabsichtigt funktionieren.<br/><strong style=\"color:red\">$a->text</strong><br/>';
 $string['restricted'] = 'Eingeschränkt';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Die Nutzung von Moodle im Safe Mode kann zu Schwierigkeiten führen.';

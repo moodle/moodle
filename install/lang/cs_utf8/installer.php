@@ -243,9 +243,6 @@ $string['qtyperqpwillberemovedanyway'] = 'Během upgrade bude odstraněn typ tes
 $string['remotedownloaderror'] = 'Stahování komponenty na váš server selhalo. Prověřte nastavení proxy. Vřele doporučujeme PHP rozšíření cURL.<br /><br />Nyní musíte stáhnout soubor <a href=\"$a->url\">$a->url</a> ručně, překopírovat jej do \"$a->dest\" na vašem serveru a tam jej rozbalit.';
 $string['remotedownloadnotallowed'] = 'Stahování komponent na server není povoleno (direktiva allow_url_fopen je ve stavu \'vypnuto\').<br /><br />Musíte soubor stáhnout <a href=\"$a->url\">$a->url</a> ručně, zkopírovat jej na serveru do umístění \"$a->dest\" a tam jej dekomprimovat.';
 $string['report'] = 'Sestava';
-$string['requiredentrieschanged'] = '<strong>ČTĚTE - DŮLEŽITÉ UPOZORNĚNÍ<br/>(tato zpráva se zobrazuje pouze jednou při tomto upgrade)</strong>
-<br />Vzhledem k provedené opravě chyby se mění chování modulů Databáze, které používají nastavení \'Počet požadovaných záznamů\' a \'Počet záznamů požadovaných před zpřístupněním databáze\'. Podrobnější vysvětlení změn najdete <a href=\"http://moodle.org/mod/forum/discuss.php?d=110928\" target=\"_blank\">v diskusním fóru k modulu Databáze</a>. Očekávané chování tohoto nastavení je popsáno <a href=\"http://docs.moodle.org/en/Adding/editing_a_database#Required_entries\" target=\"_blank\">v anglické dokumentaci</a>.
-<br/><br/>Tato změna ovlivní následující Databáze ve vašich kurzech. Tento seznam si uložte a po skončení upgrade ověřte, že tyto moduly stále pracují dle záměru vyučujících:<br/><strong style=\"color:red\">$a->text</strong><br/>';
 $string['restricted'] = 'Nedostupné';
 $string['safemode'] = 'Bezpečný režim (Safe Mode)';
 $string['safemodeerror'] = 'Se zapnutým bezpečným režimem (Safe Mode) může mít Moodle problémy.';
