@@ -402,56 +402,6 @@ function resource_get_coursemodule_info($coursemodule) {
    return $info;
 }
 
-function resource_fetch_remote_file ($cm, $url, $headers = "" ) {
-/// Snoopy is an HTTP client in PHP
-
-    global $CFG;
-
-    require_once("$CFG->libdir/snoopy/Snoopy.class.inc");
-
-    $client = new Snoopy();
-    $ua = 'Moodle/'. $CFG->release . ' (+http://moodle.org';
-    if ( $CFG->resource_usecache ) {
-        $ua = $ua . ')';
-    } else {
-        $ua = $ua . '; No cache)';
-    }
-    $client->agent = $ua;
-    $client->read_timeout = 5;
-    $client->use_gzip = true;
-    if (is_array($headers) ) {
-        $client->rawheaders = $headers;
-    }
-
-    @$client->fetch($url);
-    if ( $client->status >= 200 && $client->status < 300 ) {
-        $tags = array("A"      => "href=",
-                      "IMG"    => "src=",
-                      "LINK"   => "href=",
-                      "AREA"   => "href=",
-                      "FRAME"  => "src=",
-                      "IFRAME" => "src=",
-                      "FORM"   => "action=");
-
-        foreach ($tags as $tag => $key) {
-            $prefix = "fetch.php?id=$cm->id&amp;url=";
-            if ( $tag == "IMG" or $tag == "LINK" or $tag == "FORM") {
-                $prefix = "";
-            }
-            $client->results = resource_redirect_tags($client->results, $url, $tag, $key,$prefix);
-        }
-    } else {
-        if ( $client->status >= 400 && $client->status < 500) {
-            $client->results = get_string("fetchclienterror","resource");  // Client error
-        } elseif ( $client->status >= 500 && $client->status < 600) {
-            $client->results = get_string("fetchservererror","resource");  // Server error
-        } else {
-            $client->results = get_string("fetcherror","resource");     // Redirection? HEAD? Unknown error.
-        }
-    }
-    return $client;
-}
-
 function resource_redirect_tags($text, $url, $tagtoparse, $keytoparse,$prefix = "" ) {
     $valid = 1;
     if ( strpos($url,"?") == FALSE ) {

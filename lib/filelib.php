@@ -344,68 +344,6 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
     // check if proxy (if used) should be bypassed for this url
     $proxybypass = is_proxybypass( $url );
 
-    if (!extension_loaded('curl') or ($ch = curl_init($url)) === false) {
-        require_once($CFG->libdir.'/snoopy/Snoopy.class.inc');
-        $snoopy = new Snoopy();
-        $snoopy->read_timeout = $timeout;
-        $snoopy->_fp_timeout  = $connecttimeout;
-        if (!$proxybypass) {
-            $snoopy->proxy_host   = $CFG->proxyhost;
-            $snoopy->proxy_port   = $CFG->proxyport;
-            if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
-                // this will probably fail, but let's try it anyway
-                $snoopy->proxy_user     = $CFG->proxyuser;
-                $snoopy->proxy_password = $CFG->proxypassword;
-            }
-        }
-
-        if (is_array($headers) ) {
-            $client->rawheaders = $headers;
-        }
-
-        if (is_array($postdata)) {
-            $fetch = @$snoopy->fetch($url, $postdata); // use more specific debug code bellow
-        } else {
-            $fetch = @$snoopy->fetch($url); // use more specific debug code bellow
-        }
-
-        if ($fetch) {
-            if ($fullresponse) {
-                //fix header line endings
-                foreach ($snoopy->headers as $key=>$unused) {
-                    $snoopy->headers[$key] = trim($snoopy->headers[$key]);
-                }
-                $response = new object();
-                $response->status        = $snoopy->status;
-                $response->headers       = $snoopy->headers;
-                $response->response_code = trim($snoopy->response_code);
-                $response->results       = $snoopy->results;
-                $response->error         = $snoopy->error;
-                return $response;
-
-            } else if ($snoopy->status != 200) {
-                debugging("Snoopy request for \"$url\" failed, http response code: ".$snoopy->response_code, DEBUG_ALL);
-                return false;
-
-            } else {
-                return $snoopy->results;
-            }
-        } else {
-            if ($fullresponse) {
-                $response = new object();
-                $response->status        = $snoopy->status;
-                $response->headers       = array();
-                $response->response_code = $snoopy->response_code;
-                $response->results       = '';
-                $response->error         = $snoopy->error;
-                return $response;
-            } else {
-                debugging("Snoopy request for \"$url\" failed with: ".$snoopy->error, DEBUG_ALL);
-                return false;
-            }
-        }
-    }
-
     // set extra headers
     if (is_array($headers) ) {
         $headers2 = array();
