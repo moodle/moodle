@@ -607,7 +607,18 @@ class grade_category extends grade_object {
                 break;
 
             case GRADE_AGGREGATE_MODE:       // the most common value, average used if multimode
-                $freq = array_count_values($grade_values);
+                // array_count_values only counts INT and STRING, so if grades are floats we must convert them to string
+                $converted_grade_values = array();
+
+                foreach ($grade_values as $k => $gv) {
+                    if (!is_int($gv) && !is_string($gv)) {
+                        $converted_grade_values[$k] = (string) $gv;
+                    } else {
+                        $converted_grade_values[$k] = $gv;
+                    }
+                }
+
+                $freq = array_count_values($converted_grade_values);
                 arsort($freq);                      // sort by frequency keeping keys
                 $top = reset($freq);               // highest frequency count
                 $modes = array_keys($freq, $top);  // search for all modes (have the same highest count)
