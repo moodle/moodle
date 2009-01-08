@@ -93,10 +93,20 @@ class edit_item_form extends moodleform {
 
         /// grade display prefs
         $default_gradedisplaytype = grade_get_setting($COURSE->id, 'displaytype', $CFG->grade_displaytype);
-        $options = array(GRADE_DISPLAY_TYPE_DEFAULT    => get_string('default', 'grades'),
-                         GRADE_DISPLAY_TYPE_REAL       => get_string('real', 'grades'),
-                         GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
-                         GRADE_DISPLAY_TYPE_LETTER     => get_string('letter', 'grades'));
+        $options = array(GRADE_DISPLAY_TYPE_DEFAULT            => get_string('default', 'grades'),
+                         GRADE_DISPLAY_TYPE_REAL               => get_string('real', 'grades'),
+                         GRADE_DISPLAY_TYPE_PERCENTAGE         => get_string('percentage', 'grades'),
+                         GRADE_DISPLAY_TYPE_LETTER             => get_string('letter', 'grades'),
+                         GRADE_DISPLAY_TYPE_REAL_PERCENTAGE    => get_string('realpercentage', 'grades'),
+                         GRADE_DISPLAY_TYPE_REAL_LETTER        => get_string('realletter', 'grades'),
+                         GRADE_DISPLAY_TYPE_LETTER_REAL        => get_string('letterreal', 'grades'),
+                         GRADE_DISPLAY_TYPE_LETTER_PERCENTAGE  => get_string('letterpercentage', 'grades'),
+                         GRADE_DISPLAY_TYPE_PERCENTAGE_LETTER  => get_string('percentageletter', 'grades'),
+                         GRADE_DISPLAY_TYPE_PERCENTAGE_REAL    => get_string('percentagereal', 'grades')
+                         );
+
+        asort($options);
+
         foreach ($options as $key=>$option) {
             if ($key == $default_gradedisplaytype) {
                 $options[GRADE_DISPLAY_TYPE_DEFAULT] = get_string('defaultprev', 'grades', $option);
@@ -136,12 +146,16 @@ class edit_item_form extends moodleform {
         $mform->addElement('header', 'headerparent', get_string('parentcategory', 'grades'));
 
         $options = array();
+        $default = '';
         $coefstring = '';
         $categories = grade_category::fetch_all(array('courseid'=>$COURSE->id));
 
         foreach ($categories as $cat) {
             $cat->apply_forced_settings();
             $options[$cat->id] = $cat->get_name();
+            if ($cat->is_course_category()) {
+                $default = $cat->id;
+            }
 
             if ($cat->is_aggregationcoef_used()) {
                 if ($cat->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
