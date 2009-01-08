@@ -10,8 +10,6 @@ $temp = new admin_settingpage('systempaths', get_string('systempaths','admin'));
 $temp->add(new admin_setting_configselect('gdversion', get_string('gdversion','admin'), get_string('configgdversion', 'admin'), check_gd_version(), array('0' => get_string('gdnot'),
                                                                                                                                                           '1' => get_string('gd1'),
                                                                                                                                                           '2' => get_string('gd2'))));
-$temp->add(new admin_setting_configexecutable('zip', get_string('pathtozip','admin'), get_string('configzip', 'admin'), ''));
-$temp->add(new admin_setting_configexecutable('unzip', get_string('pathtounzip','admin'), get_string('configunzip', 'admin'), ''));
 $temp->add(new admin_setting_configexecutable('pathtodu', get_string('pathtodu', 'admin'), get_string('configpathtodu', 'admin'), ''));
 $temp->add(new admin_setting_configexecutable('aspellpath', get_string('aspellpath', 'admin'), get_string('edhelpaspellpath'), ''));
 $ADMIN->add('server', $temp, 0);

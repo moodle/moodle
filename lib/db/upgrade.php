@@ -1309,6 +1309,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2009010800);
     }
 
+    if ($result && $oldversion < 2009010801) {
+    /// Remove unused settings
+        unset_config('zip');
+        unset_config('unzip');
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009010801);
+    }
+
     return $result;
 }
 
