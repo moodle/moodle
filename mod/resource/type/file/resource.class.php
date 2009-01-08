@@ -153,7 +153,17 @@ class resource_file extends resource_base {
             if (empty($resource->framepage)) {
                 $resource->options = '';
             } else {
-                $resource->options = 'frame';
+                switch ($resource->framepage) {
+                    case 1:
+                        $resource->options = 'frame';
+                        break;
+                    case 2:
+                        $resource->options = 'objectframe';
+                        break;
+                    default:
+                        $resource->options = '';
+                        break;
+                }
             }
             unset($resource->framepage);
             $resource->popup = '';
@@ -376,73 +386,94 @@ class resource_file extends resource_base {
         /// Now check whether we need to display a frameset
 
         $frameset = optional_param('frameset', '', PARAM_ALPHA);
-        if (empty($frameset) and !$embedded and !$inpopup and ($resource->options == "frame") and empty($USER->screenreader)) {  
-        ///Yahoo javascript libaries for updating embedded object size
-            require_js(array('yui_utilities'));
-            require_js(array('yui_container'));
-            require_js(array('yui_dom-event'));
-            require_js(array('yui_dom'));
+        if (empty($frameset) and !$embedded and !$inpopup and ($resource->options == "frame"  || $resource->options == "objectframe") and empty($USER->screenreader)) {
+        /// display the resource into a object tag
+            if ($resource->options == "objectframe") {
+            ///Yahoo javascript libaries for updating embedded object size
+                require_js(array('yui_utilities'));
+                require_js(array('yui_container'));
+                require_js(array('yui_dom-event'));
+                require_js(array('yui_dom'));
 
-        ///Moodle Header and navigation bar
-            $navigation = build_navigation($this->navlinks, $cm);
-            print_header($pagetitle, $course->fullname, $navigation, "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
-            $options = new object();
-            $options->para = false;
-            if (!empty($localpath)) {  // Show some help
-                echo '<div class="mdl-right helplink">';
-                link_to_popup_window ('/mod/resource/type/file/localpath.php', get_string('localfile', 'resource'), get_string('localfilehelp','resource'), 400, 500, get_string('localfilehelp', 'resource'));
-                echo '</div>';
-            }
-            echo '</div></div>';
-            
-        ///embedded file into iframe if the resource is on another domain
-        ///
-        ///This case is not XHTML strict but there is no alternative
-        ///The object tag alternative is XHTML strict, however IE6-7 displays a blank object on accross domain by default,
-        ///so we decided to use iframe for accross domain MDL-10021
-        if (!stristr($fullurl,$CFG->wwwroot)) {
-           echo '<p><iframe id="embeddedhtml" src ="'.$fullurl.'" width="100%" height="600"></iframe></p>';
-        }
-        else {
-        ///embedded HTML file into an object tag
-            echo '<p><object id="embeddedhtml" data="' . $fullurl . '" type="'.$mimetype.'" width="800" height="600">
-                    alt : <a href="' . $fullurl . '">' . $fullurl . '</a>
-                  </object></p>';
-        }
-        ///add some javascript in order to fit this object tag into the browser window
-            echo '<script type="text/javascript">
-                     //<![CDATA[
-                     function resizeEmbeddedHtml() {
-                         //calculate new embedded html height size
-                    ';
-            if (!empty($resource->summary)) {
-                echo'    objectheight =  YAHOO.util.Dom.getViewportHeight() - 230;
-                    ';
-            }
-            else {
-                echo'    objectheight =  YAHOO.util.Dom.getViewportHeight() - 120;
-                    ';
-            }
-            echo '       //the object tag cannot be smaller than a human readable size
-                         if (objectheight < 200) {
-                             objectheight = 200;
+            ///Moodle Header and navigation bar
+                $navigation = build_navigation($this->navlinks, $cm);
+                print_header($pagetitle, $course->fullname, $navigation, "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
+                $options = new object();
+                $options->para = false;
+                if (!empty($localpath)) {  // Show some help
+                    echo '<div class="mdl-right helplink">';
+                    link_to_popup_window ('/mod/resource/type/file/localpath.php', get_string('localfile', 'resource'), get_string('localfilehelp','resource'), 400, 500, get_string('localfilehelp', 'resource'));
+                    echo '</div>';
+                }
+                echo '</div></div>';
+
+            /// embedded file into iframe if the resource is on another domain
+            ///
+            /// This case is not XHTML strict but there is no alternative
+            /// The object tag alternative is XHTML strict, however IE6-7 displays a blank object on accross domain by default,
+            /// so we decided to use iframe for accross domain MDL-10021
+                if (!stristr($fullurl,$CFG->wwwroot)) {
+                   echo '<p><iframe id="embeddedhtml" src ="'.$fullurl.'" width="100%" height="600"></iframe></p>';
+                }
+                else {
+                ///embedded HTML file into an object tag
+                    echo '<p><object id="embeddedhtml" data="' . $fullurl . '" type="'.$mimetype.'" width="800" height="600">
+                            alt : <a href="' . $fullurl . '">' . $fullurl . '</a>
+                          </object></p>';
+                }
+            ///add some javascript in order to fit this object tag into the browser window
+                echo '<script type="text/javascript">
+                         //<![CDATA[
+                         function resizeEmbeddedHtml() {
+                             //calculate new embedded html height size
+                        ';
+                if (!empty($resource->summary)) {
+                    echo'    objectheight =  YAHOO.util.Dom.getViewportHeight() - 230;
+                        ';
+                }
+                else {
+                    echo'    objectheight =  YAHOO.util.Dom.getViewportHeight() - 120;
+                        ';
+                }
+                echo '       //the object tag cannot be smaller than a human readable size
+                             if (objectheight < 200) {
+                                 objectheight = 200;
+                             }
+                             //resize the embedded html object
+                             YAHOO.util.Dom.setStyle("embeddedhtml", "height", objectheight+"px");
+                             YAHOO.util.Dom.setStyle("embeddedhtml", "width", "100%");
                          }
-                         //resize the embedded html object
-                         YAHOO.util.Dom.setStyle("embeddedhtml", "height", objectheight+"px");
-                         YAHOO.util.Dom.setStyle("embeddedhtml", "width", "100%");
-                     }
-                     resizeEmbeddedHtml();
-                     YAHOO.widget.Overlay.windowResizeEvent.subscribe(resizeEmbeddedHtml);
-                     //]]>
-                  </script>
-            ';
+                         resizeEmbeddedHtml();
+                         YAHOO.widget.Overlay.windowResizeEvent.subscribe(resizeEmbeddedHtml);
+                         //]]>
+                      </script>
+                ';
 
-        ///print the summary
-            if (!empty($resource->summary)) {
-                print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center");
-            }
-            echo "</body></html>";
-            exit;            
+            ///print the summary
+                if (!empty($resource->summary)) {
+                    print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center");
+                }
+                echo "</body></html>";
+                exit;
+            } else {
+            /// display the resource into a frame tag
+                @header('Content-Type: text/html; charset=utf-8');
+                echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
+                echo "<html dir=\"ltr\">\n";
+                echo '<head>';
+                echo '<meta http-equiv="content-type" content="text/html; charset=utf-8" />';
+                echo "<title>" . format_string($course->shortname) . ": ".strip_tags(format_string($resource->name,true))."</title></head>\n";
+                echo "<frameset rows=\"$CFG->resource_framesize,*\">";
+                echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;frameset=top\" title=\"".get_string('modulename','resource')."\"/>";
+                if (!empty($localpath)) {  // Show it like this so we interpose some HTML
+                    echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;inpopup=true\" title=\"".get_string('modulename','resource')."\"/>";
+                } else {
+                    echo "<frame src=\"$fullurl\" title=\"".get_string('modulename','resource')."\"/>";
+                }
+                echo "</frameset>";
+                echo "</html>";
+                exit;
+             }
         }
 
 
@@ -732,8 +763,15 @@ class resource_file extends resource_base {
             }
         } else {
             $defaults['windowpopup'] = 0;
+        /// set default value of 'keep navigation visible'
             if (array_key_exists('options', $defaults)) {
-                $defaults['framepage'] = ($defaults['options']=='frame');
+                if ($defaults['options']=='frame') {
+                    $defaults['framepage'] = 1;
+                } else if ($defaults['options']=='objectframe') {
+                    $defaults['framepage'] = 2;
+                } else {
+                    $defaults['framepage'] = 0;
+                }
             }
         }
         /// load up any stored parameters
@@ -789,7 +827,8 @@ class resource_file extends resource_base {
         $mform->setDefault('windowpopup', !empty($CFG->resource_popup));
         $mform->disabledIf('windowpopup', 'forcedownload', 'checked');
 
-        $mform->addElement('checkbox', 'framepage', get_string('keepnavigationvisible', 'resource'));
+        $navoptions = array(0 => get_string('keepnavigationvisibleno','resource'), 1 => get_string('keepnavigationvisibleyesframe','resource'), 2 => get_string('keepnavigationvisibleyesobject','resource'));
+        $mform->addElement('select', 'framepage', get_string('keepnavigationvisible', 'resource'), $navoptions);
 
         $mform->setHelpButton('framepage', array('frameifpossible', get_string('keepnavigationvisible', 'resource'), 'resource'));
         $mform->setDefault('framepage', 0);
