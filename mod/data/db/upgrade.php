@@ -151,7 +151,6 @@ function xmldb_data_upgrade($oldversion) {
 
     if ($result && $oldversion < 2008112700) {
         if (!get_config('data', 'requiredentriesfixflag')) {
-            unset_config('requiredentriesfixflag', 'data'); // remove old flag
             $databases = $DB->get_records_sql("SELECT d.*, c.fullname
                                                  FROM {data} d, {course} c
                                                 WHERE d.course = c.id
@@ -167,6 +166,7 @@ function xmldb_data_upgrade($oldversion) {
                 notify(get_string('requiredentrieschanged', 'admin', $a));
             }
         }
+        unset_config('requiredentriesfixflag', 'data'); // remove old flag
         upgrade_mod_savepoint($result, 2008112700, 'data');
     }
 
