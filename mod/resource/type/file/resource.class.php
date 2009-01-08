@@ -152,7 +152,17 @@ function _postprocess(&$resource) {
         if (empty($resource->framepage)) {
             $resource->options = '';
         } else {
-            $resource->options = 'frame';
+            switch ($resource->framepage) {
+                case 1:
+                    $resource->options = 'frame';
+                    break;
+                case 2:
+                    $resource->options = 'objectframe';
+                    break;
+                default:
+                    $resource->options = '';
+                    break;
+            }
         }
         unset($resource->framepage);
         $resource->popup = '';
@@ -371,7 +381,9 @@ function display() {
     /// Now check whether we need to display a frameset
 
     $frameset = optional_param('frameset', '', PARAM_ALPHA);
-    if (empty($frameset) and !$embedded and !$inpopup and ($resource->options == "frame") and empty($USER->screenreader)) {      
+    if (empty($frameset) and !$embedded and !$inpopup and ($resource->options == "frame" || $resource->options == "objectframe") and empty($USER->screenreader)) {
+    /// display the resource into a object tag
+        if ($resource->options == "objectframe") {
         ///Yahoo javascript libaries for updating embedded object size
             require_js(array('yui_utilities'));
             require_js(array('yui_container'));
@@ -389,20 +401,20 @@ function display() {
             }
             echo '</div></div>';
             
-        ///embedded file into iframe if the resource is on another domain
+        /// embedded file into iframe if the resource is on another domain
         ///
-        ///This case is not XHTML strict but there is no alternative
-        ///The object tag alternative is XHTML strict, however IE6-7 displays a blank object on accross domain by default,
-        ///so we decided to use iframe for accross domain MDL-10021
-        if (!stristr($fullurl,$CFG->wwwroot)) {
-           echo '<p><iframe id="embeddedhtml" src ="'.$fullurl.'" width="100%" height="600"></iframe></p>';
-        }
-        else {
-        ///embedded HTML file into an object tag
-            echo '<p><object id="embeddedhtml" data="' . $fullurl . '" type="'.$mimetype.'" width="800" height="600">
-                    alt : <a href="' . $fullurl . '">' . $fullurl . '</a>
-                  </object></p>';
-        }
+        /// This case is not XHTML strict but there is no alternative
+        /// The object tag alternative is XHTML strict, however IE6-7 displays a blank object on accross domain by default,
+        /// so we decided to use iframe for accross domain MDL-10021
+            if (!stristr($fullurl,$CFG->wwwroot)) {
+               echo '<p><iframe id="embeddedhtml" src ="'.$fullurl.'" width="100%" height="600"></iframe></p>';
+            }
+            else {
+            ///embedded HTML file into an object tag
+                echo '<p><object id="embeddedhtml" data="' . $fullurl . '" type="'.$mimetype.'" width="800" height="600">
+                        alt : <a href="' . $fullurl . '">' . $fullurl . '</a>
+                      </object></p>';
+            }
         ///add some javascript in order to fit this object tag into the browser window
             echo '<script type="text/javascript">
                      //<![CDATA[
@@ -437,7 +449,25 @@ function display() {
             }
             echo "</body></html>";
             exit;
-        
+        } else {
+        /// display the resource into a frame tag
+            @header('Content-Type: text/html; charset=utf-8');
+            echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
+            echo "<html dir=\"ltr\">\n";
+            echo '<head>';
+            echo '<meta http-equiv="content-type" content="text/html; charset=utf-8" />';
+            echo "<title>" . format_string($course->shortname) . ": ".strip_tags(format_string($resource->name,true))."</title></head>\n";
+            echo "<frameset rows=\"$CFG->resource_framesize,*\">";
+            echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;frameset=top\" title=\"".get_string('modulename','resource')."\"/>";
+            if (!empty($localpath)) {  // Show it like this so we interpose some HTML
+                echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;inpopup=true\" title=\"".get_string('modulename','resource')."\"/>";
+            } else {
+                echo "<frame src=\"$fullurl\" title=\"".get_string('modulename','resource')."\"/>";
+            }
+            echo "</frameset>";
+            echo "</html>";
+            exit;
+       }
     }
 
 
@@ -717,8 +747,15 @@ function setup_preprocessing(&$defaults){
         }
     } else {
         $defaults['windowpopup'] = 0;
+    /// set default value of 'keep navigation visible'
         if (array_key_exists('options', $defaults)) {
-            $defaults['framepage'] = ($defaults['options']=='frame');
+            if ($defaults['options']=='frame') {
+                $defaults['framepage'] = 1;
+            } else if ($defaults['options']=='objectframe') {
+                $defaults['framepage'] = 2;
+            } else {
+                $defaults['framepage'] = 0;
+            }
         }
     }
     /// load up any stored parameters
@@ -763,8 +800,11 @@ function setup_elements(&$mform) {
     $mform->addElement('select', 'windowpopup', get_string('display', 'resource'), $woptions);
     $mform->setDefault('windowpopup', !empty($CFG->resource_popup));
         
-    $mform->addElement('checkbox', 'framepage', get_string('keepnavigationvisible', 'resource'));
-    
+    $navoptions = array(0 => get_string('keepnavigationvisibleno','resource'),
+                        1 => get_string('keepnavigationvisibleyesframe','resource'),
+                        2 => get_string('keepnavigationvisibleyesobject','resource'));
+    $mform->addElement('select', 'framepage', get_string('keepnavigationvisible', 'resource'), $navoptions);
+
     $mform->setHelpButton('framepage', array('frameifpossible', get_string('keepnavigationvisible', 'resource'), 'resource'));
     $mform->setDefault('framepage', 0);
     $mform->disabledIf('framepage', 'windowpopup', 'eq', 1);
