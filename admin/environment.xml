@@ -128,10 +128,6 @@
         </FEEDBACK>
       </PHP_EXTENSION>
     </PHP_EXTENSIONS>
-    <CUSTOM_CHECKS>
-      <CUSTOM_CHECK file="mod/data/lib.php" function="check_required_entries_fields" level="optional">
-      </CUSTOM_CHECK>
-     </CUSTOM_CHECKS>
   </MOODLE>
   <MOODLE version="1.9">
     <UNICODE level="required">

@@ -44,6 +44,28 @@ function xmldb_data_upgrade($oldversion=0) {
 
     }
 
+    ///Display a warning message about "Required Entries" fix from MDL-16999
+    if ($result && $oldversion < 2007022602) {
+        if (!get_config('data', 'requiredentriesfixflag')) {
+            set_config('requiredentriesfixflag', true, 'data'); // remove old flag
+
+            $databases = get_records_sql("SELECT d.*, c.fullname
+                                              FROM {$CFG->prefix}data d, {$CFG->prefix}course c
+                                              WHERE d.course = c.id
+                                              AND (d.requiredentries > 0 OR d.requiredentriestoview > 0)
+                                              ORDER BY c.fullname, d.name");
+            if (!empty($databases)) {
+                $a = new object();
+                $a->text = '';
+                foreach($databases as $database) {
+                    $a->text .= "<p>".$database->fullname." - " .$database->name. " (course id: ".$database->course." - database id: ".$database->id.")</p>";
+                }
+                notify(get_string('requiredentrieschanged', 'data', $a));
+            }
+        }
+    }
+
+
     return $result;
 }
 
