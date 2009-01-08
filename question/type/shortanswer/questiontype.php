@@ -427,7 +427,7 @@ class question_shortanswer_qtype extends default_questiontype {
                         if ('' !== $state->last_graded->penalty && ((float)$state->last_graded->penalty) > 0.0) {
                             // A penalty was applied so display it
                             echo ' ';
-                            print_string('gradingdetailspenalty', 'quiz', $state->last_graded->penalty);
+                            print_string('gradingdetailspenalty', 'quiz', question_format_grade($cmoptions, $state->last_graded->penalty));
                         } else {
                             /* No penalty was applied even though the answer was
                             not correct (eg. a syntax error) so tell the student

@@ -68,6 +68,7 @@
         $quiz->review = get_config('quiz', 'review');
         require_login($courseid, false);
         $quiz->course = $courseid;
+        $quiz->decimalpoints = get_config('quiz', 'decimalpoints');
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
     } else if (!$quiz = $DB->get_record('quiz', array('id' => $quizid))) {
         print_error('invalidquizid', 'quiz', '', $quizid);
@@ -115,6 +116,7 @@
     $attempt->timemodified = $timenow;
     $attempt->uniqueid = 0;
     $attempt->id = 0;
+    $attempt->layout = $id;
 
     // Restore the history of question sessions from the moodle session or create
     // new sessions. Make $states a reference to the states array in the moodle
