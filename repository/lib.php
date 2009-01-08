@@ -611,25 +611,31 @@ abstract class repository {
             $is_supported = true;
 
             $repository = new $classname($repo->id, $repo->contextid, $options, $repo->readonly);
-            if ($accepted_types !== '*' and $repository->supported_filetypes() !== '*') {
-                $accepted_types = $ft->get_file_ext($accepted_types);
-                $supported_filetypes = $ft->get_file_ext($repository->supported_filetypes());
-                $is_supported = false;
-                foreach  ($supported_filetypes as $type) {
-                    if (in_array($type, $accepted_types)) {
-                        $is_supported = true;
+            if (empty($repository->super_called)) {
+                debugging('parent::__construct must be called by '.$repo->repositorytype.' plugin.');
+            } else {
+                if ($accepted_types !== '*' and $repository->supported_filetypes() !== '*') {
+                    $accepted_types = $ft->get_file_ext($accepted_types);
+                    $supported_filetypes = $ft->get_file_ext($repository->supported_filetypes());
+                    $is_supported = false;
+                    foreach  ($supported_filetypes as $type) {
+                        if (in_array($type, $accepted_types)) {
+                            $is_supported = true;
+                        }
                     }
                 }
-            }
-            if ($returnvalue !== '*' and $repository->supported_return_value() !== '*') {
-                $tmp = $repository->supported_return_value();
-                if ($tmp != $returnvalue) {
-                    $is_supported = false;
+                if ($returnvalue !== '*' and $repository->supported_return_value() !== '*') {
+                    $tmp = $repository->supported_return_value();
+                    if ($tmp != $returnvalue) {
+                        $is_supported = false;
+                    }
                 }
-            }
-            if (!$onlyvisible || ($repository->is_visible() && !$repository->disabled)) {
-                if ($is_supported) {
-                    $ret[] = $repository;
+                if (!$onlyvisible || ($repository->is_visible() && !$repository->disabled)) {
+                    // super_called will make sure the parent construct function is called
+                    // by repository construct function
+                    if ($is_supported) {
+                        $ret[] = $repository;
+                    }
                 }
             }
         }
@@ -658,7 +664,11 @@ abstract class repository {
         $options['typeid'] = $instance->typeid;
         $options['type']   = $instance->repositorytype;
         $options['name']   = $instance->name;
-        return new $classname($instance->id, $instance->contextid, $options, $instance->readonly);
+        $obj = new $classname($instance->id, $instance->contextid, $options, $instance->readonly);
+        if (empty($obj->super_called)) {
+            debugging('parent::__construct must be called by '.$classname.' plugin.');
+        }
+        return $obj;
     }
 
     /**
@@ -1093,6 +1103,7 @@ abstract class repository {
             $this->options[$n] = $v;
         }
         $this->name = $this->get_name();
+        $this->super_called = true;
     }
 
     /**
