@@ -68,8 +68,8 @@
 
     /// Notify the admin if required.
         if ($CFG->courserequestnotify) {
-            if ($user = $user = $DB->get_record('user', array('username' => $CFG->courserequestnotify,
-                    'mnethostid' => $CFG->mnet_localhost_id))) {
+            $users = get_users_from_config($CFG->courserequestnotify, 'moodle/site:approvecourse');
+            foreach ($users as $user) {
                 $eventdata = new object();
                 $eventdata->modulename        = 'moodle';
                 $eventdata->component         = 'course';

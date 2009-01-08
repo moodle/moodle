@@ -1295,6 +1295,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2009010606);
     }
 
+    if ($result && $oldversion < 2009010800) {
+    /// Update the notifyloginfailures setting.
+        if ($CFG->notifyloginfailures == 'mainadmin') {
+            set_config('notifyloginfailures', get_admin()->username);
+        } else if ($CFG->notifyloginfailures == 'alladmins') {
+            set_config('notifyloginfailures', '$@ALL@$');
+        } else {
+            set_config('notifyloginfailures', '');
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009010800);
+    }
+
     return $result;
 }
 

@@ -90,9 +90,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
                                                                                                                                                                                 'admin' => get_string('administrators'),
                                                                                                                                                                                 'teacher' => get_string('administratorsandteachers'),
                                                                                                                                                                                 'everybody' => get_string('everybody'))));
-    $temp->add(new admin_setting_configselect('notifyloginfailures', get_string('notifyloginfailures', 'admin'), get_string('confignotifyloginfailures', 'admin'), '', array('' => get_string('nobody'),
-                                                                                                                                                                             'mainadmin' => get_string('administrator'),
-                                                                                                                                                                             'alladmins' => get_string('administratorsall'))));
+    $temp->add(new admin_setting_users_with_capability('notifyloginfailures', get_string('notifyloginfailures', 'admin'), get_string('confignotifyloginfailures', 'admin'), array(), 'moodle/site:config'));
     $options = array();
     for ($i = 1; $i <= 100; $i++) {
         $options[$i] = $i;

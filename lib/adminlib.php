@@ -3292,8 +3292,9 @@ class admin_setting_configmultiselect extends admin_setting_configselect {
         }
 
         $defaults = array();
+        $size = min(10, count($this->choices));
         $return = '<div class="form-select"><input type="hidden" name="'.$this->get_full_name().'[xxxxx]" value="1" />'; // something must be submitted even if nothing selected
-        $return .= '<select id="'.$this->get_id().'" name="'.$this->get_full_name().'[]" size="10" multiple="multiple">';
+        $return .= '<select id="'.$this->get_id().'" name="'.$this->get_full_name().'[]" size="'.$size.'" multiple="multiple">';
         foreach ($this->choices as $key => $description) {
             if (in_array($key, $data)) {
                 $selected = 'selected="selected"';
@@ -3408,6 +3409,71 @@ class admin_setting_configiplist extends admin_setting_configtextarea {
         } else {
             return get_string('validateerror', 'admin');
         }
+    }
+}
+
+/**
+ * An admin setting for selecting one or more users, who have a particular capability
+ * in the system context. Warning, make sure the list will never be too long. There is
+ * no paging or searching of this list.
+ *
+ * To correctly get a list of users from this config setting, you need to call the
+ * get_users_from_config($CFG->mysetting, $capability); function in moodlelib.php.
+ */
+class admin_setting_users_with_capability extends admin_setting_configmultiselect {
+    protected $capability;
+
+    /**
+     * Constructor.
+     *
+     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
+     * @param string $visiblename localised name
+     * @param string $description localised long description
+     * @param array $defaultsetting array of usernames
+     * @param string $capability string capability name.
+     */
+    function __construct($name, $visiblename, $description, $defaultsetting, $capability) {
+        $users = get_users_by_capability(get_context_instance(CONTEXT_SYSTEM),
+                $capability, 'username,firstname,lastname', 'lastname,firstname');
+        $choices = array(
+            '$@NONE@$' => get_string('nobody'),
+            '$@ALL@$' => get_string('everyonewhocan', 'admin', get_capability_string($capability)),
+        );
+        foreach ($users as $user) {
+            $choices[$user->username] = fullname($user);
+        }
+        parent::admin_setting_configmultiselect($name, $visiblename, $description, $defaultsetting, $choices);
+    }
+
+    function get_defaultsetting() {
+        $this->load_choices();
+        if (empty($this->defaultsetting)) {
+            return array('$@NONE@$');
+        } else if (array_key_exists($this->defaultsetting, $this->choices)) {
+            return $this->defaultsetting;
+        } else {
+            return '';
+        }
+    }
+
+    function get_setting() {
+        $result = parent::get_setting();
+        if (empty($result)) {
+            $result = array('$@NONE@$');
+        }
+        return $result;
+    }
+
+    function write_setting($data) {
+        // If all is selected, remove any explicit options.
+        if (in_array('$@ALL@$', $data)) {
+            $data = array('$@ALL@$');
+        }
+        // None never needs to be writted to the DB.
+        if (in_array('$@NONE@$', $data)) {
+            unset($data[array_search('$@NONE@$', $data)]);
+        }
+        return parent::write_setting($data);
     }
 }
 

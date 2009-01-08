@@ -819,6 +819,24 @@ function unset_all_config_for_plugin($plugin) {
 }
 
 /**
+ * Use this funciton to get a list of users from a config setting of type admin_setting_users_with_capability.
+ * @param string $value the value of the config setting. 
+ * @param string $capability the capability - must match the one passed to the admin_setting_users_with_capability constructor.
+ * @return array of user objects.
+ */
+function get_users_from_config($value, $capability) {
+    global $CFG;
+    if ($value == '$@ALL@$') {
+        $users = get_users_by_capability(get_context_instance(CONTEXT_SYSTEM), $capability);
+    } else {
+        list($where, $params) = $DB->get_in_or_equal(explode(',', $CFG->courserequestnotify));
+        $params[] = $CFG->mnet_localhost_id;
+        $users = $DB->get_records_select('user', 'username ' . $where . ' AND mnethostid = ?', $params);
+    }
+    return $users;
+}
+
+/**
  * Get volatile flags
  *
  * @param string $type
@@ -6556,14 +6574,7 @@ function upgrade_set_timeout($max_execution_time=300) {
 function notify_login_failures() {
     global $CFG, $DB;
 
-    switch ($CFG->notifyloginfailures) {
-        case 'mainadmin' :
-            $recip = array(get_admin());
-            break;
-        case 'alladmins':
-            $recip = get_admins();
-            break;
-    }
+    $recip = get_users_from_config($CFG->notifyloginfailures, 'moodle/site:config');
 
     if (empty($CFG->lastnotifyfailure)) {
         $CFG->lastnotifyfailure=0;
