@@ -548,8 +548,6 @@ _client.viewthumb = function(ds) {
         if(list[k].children) {
             title.innerHTML = '<i><u>'+list[k].title+'</i></u>';
         } else {
-            if(list[k].url)
-                title.innerHTML = '<p><a target="_blank" href="'+list[k].url+'">$strpreview</a></p>';
             title.innerHTML += '<a href="###"><span>'+list[k].title+"</span></a>";
         }
         if(list[k].thumbnail_width){
@@ -571,7 +569,11 @@ _client.viewthumb = function(ds) {
         link.appendChild(img);
         frame.appendChild(link);
         el.appendChild(frame);
+        if(list[k].url) {
+            el.innerHTML += '<p><a target="_blank" href="'+list[k].url+'">$strpreview</a></p>';
+        }
         el.appendChild(title);
+        
         panel.appendChild(el);
         if(list[k].children) {
             var folder = new YAHOO.util.Element(link.id);
