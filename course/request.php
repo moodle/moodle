@@ -68,7 +68,8 @@
 
     /// Notify the admin if required.
         if ($CFG->courserequestnotify) {
-            if ($user = get_record('user', 'username', $CFG->courserequestnotify, 'mnethostid', $CFG->mnet_localhost_id)) {
+            $users = get_users_from_config($CFG->courserequestnotify, 'moodle/site:approvecourse');
+            foreach ($users as $user) {
                 $subject = get_string('courserequest');
                 $a = new object();
                 $a->link = "$CFG->wwwroot/course/pending.php";

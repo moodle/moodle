@@ -789,6 +789,25 @@ function get_cache_flags($type, $changedsince=NULL) {
 }
 
 /**
+ * Use this funciton to get a list of users from a config setting of type admin_setting_users_with_capability.
+ * @param string $value the value of the config setting. 
+ * @param string $capability the capability - must match the one passed to the admin_setting_users_with_capability constructor.
+ * @return array of user objects.
+ */
+function get_users_from_config($value, $capability) {
+    global $CFG;
+    if ($value == '$@ALL@$') {
+        $users = get_users_by_capability(get_context_instance(CONTEXT_SYSTEM), $capability);
+    } else if ($value) {
+        $usernames = explode(',', $value);
+        $users = get_records_select('user', "username IN ('" . implode("','", $usernames) . "') AND mnethostid = " . $CFG->mnet_localhost_id);
+    } else {
+        $users = array();
+    }
+    return $users;
+}
+
+/**
  * Get volatile flags
  *
  * @param string $type
