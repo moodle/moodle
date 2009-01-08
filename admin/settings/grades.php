@@ -5,11 +5,23 @@
 if (has_capability('moodle/grade:manage', $systemcontext)
  or has_capability('moodle/grade:manageletters', $systemcontext)) { // speedup for non-admins, add all caps used on this page
 
+    require_once $CFG->libdir.'/grade/constants.php';
+    $display_types = array(GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
+                           GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
+                           GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades'),
+                           GRADE_DISPLAY_TYPE_REAL_PERCENTAGE => get_string('realpercentage', 'grades'),
+                           GRADE_DISPLAY_TYPE_REAL_LETTER => get_string('realletter', 'grades'),
+                           GRADE_DISPLAY_TYPE_LETTER_REAL => get_string('letterreal', 'grades'),
+                           GRADE_DISPLAY_TYPE_LETTER_PERCENTAGE => get_string('letterpercentage', 'grades'),
+                           GRADE_DISPLAY_TYPE_PERCENTAGE_LETTER => get_string('percentageletter', 'grades'),
+                           GRADE_DISPLAY_TYPE_PERCENTAGE_REAL => get_string('percentagereal', 'grades')
+                           );
+    asort($display_types);
+
     // General settings
 
     $temp = new admin_settingpage('gradessettings', get_string('generalsettings', 'grades'), 'moodle/grade:manage');
     if ($ADMIN->fulltree) {
-        require_once $CFG->libdir.'/grade/constants.php';
 
         // new CFG variable for gradebook (what roles to display)
         $temp->add(new admin_setting_special_gradebookroles());
@@ -30,18 +42,6 @@ if (has_capability('moodle/grade:manage', $systemcontext)
 
         // enable publishing in exports/imports
         $temp->add(new admin_setting_configcheckbox('gradepublishing', get_string('gradepublishing', 'grades'), get_string('configgradepublishing', 'grades'), 0));
-
-        $display_types = array(GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
-                               GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
-                               GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades'),
-                               GRADE_DISPLAY_TYPE_REAL_PERCENTAGE => get_string('realpercentage', 'grades'),
-                               GRADE_DISPLAY_TYPE_REAL_LETTER => get_string('realletter', 'grades'),
-                               GRADE_DISPLAY_TYPE_LETTER_REAL => get_string('letterreal', 'grades'),
-                               GRADE_DISPLAY_TYPE_LETTER_PERCENTAGE => get_string('letterpercentage', 'grades'),
-                               GRADE_DISPLAY_TYPE_PERCENTAGE_LETTER => get_string('percentageletter', 'grades'),
-                               GRADE_DISPLAY_TYPE_PERCENTAGE_REAL => get_string('percentagereal', 'grades')
-                               );
-        asort($display_types);
 
         $temp->add(new admin_setting_configselect('grade_export_displaytype', get_string('gradeexportdisplaytype', 'grades'),
                                                   get_string('configgradeexportdisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL, $display_types));
@@ -110,15 +110,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
     $temp = new admin_settingpage('gradeitemsettings', get_string('gradeitemsettings', 'grades'), 'moodle/grade:manage');
     if ($ADMIN->fulltree) {
         $temp->add(new admin_setting_configselect('grade_displaytype', get_string('gradedisplaytype', 'grades'),
-                                                  get_string('configgradedisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL,
-                                                  array(GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
-                                                        GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
-                                                        GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades'),
-                                                        GRADE_DISPLAY_TYPE_REAL_PERCENTAGE => get_string('realpercentage', 'grades'),
-                                                        GRADE_DISPLAY_TYPE_REAL_LETTER => get_string('realletter', 'grades'),
-                                                        GRADE_DISPLAY_TYPE_LETTER_REAL => get_string('letterreal', 'grades'),
-                                                        GRADE_DISPLAY_TYPE_LETTER_PERCENTAGE => get_string('letterpercentage', 'grades'),
-                                                        GRADE_DISPLAY_TYPE_PERCENTAGE_REAL => get_string('percentagereal', 'grades'))));
+                                                  get_string('configgradedisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL, $display_types));
 
         $temp->add(new admin_setting_configselect('grade_decimalpoints', get_string('decimalpoints', 'grades'),
                                                   get_string('configdecimalpoints', 'grades'), 2,
