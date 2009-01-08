@@ -1466,7 +1466,9 @@ abstract class repository {
         $ext = $ft->get_file_ext($this->supported_filetypes());
         if (isset($value->children)) {
             $pass = true;
-            $value->children = array_filter($value->children, array($this, 'filter'));
+            if (!empty($value->children)) {
+                $value->children = array_filter($value->children, array($this, 'filter'));
+            }
         } else {
             if ($accepted_types == '*' || in_array('*', $accepted_types)) {
                 $pass = true;
