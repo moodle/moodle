@@ -2248,6 +2248,7 @@ function delete_context($contextlevel, $instanceid) {
     if ($context = $DB->get_record('context', array('contextlevel'=>$contextlevel, 'instanceid'=>$instanceid))) {
         $result = $DB->delete_records('role_assignments', array('contextid'=>$context->id)) &&
                   $DB->delete_records('role_capabilities', array('contextid'=>$context->id)) &&
+                  $DB->delete_records('role_names', array('contextid'=>$context->id)) &&
                   $DB->delete_records('context', array('id'=>$context->id));
 
         // do not mark dirty contexts if parents unknown
