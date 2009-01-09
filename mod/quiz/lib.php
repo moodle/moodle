@@ -179,7 +179,7 @@ function quiz_delete_instance($id) {
 
     $pagetypes = page_import_types('mod/quiz/');
     foreach($pagetypes as $pagetype) {
-        if (!$DB->delete_records('block_instance', array('pageid'=>$quiz->id, 'pagetype'=>$pagetype))) {
+        if(!blocks_delete_all_on_page($pagetype, $quiz->id)) {
             $result = false;
         }
     }

@@ -792,7 +792,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         global $CFG, $DB;
         $status = true;
 
-        $DB->delete_records('block_instance', array('pageid'=>$restore->course_id, 'pagetype'=>PAGE_COURSE_VIEW));
+        blocks_delete_all_on_page(PAGE_COURSE_VIEW, $restore->course_id);
         if (empty($backup_block_format)) {     // This is a backup from Moodle < 1.5
             if (empty($blockinfo)) {
                 // Looks like it's from Moodle < 1.3. Let's give the course default blocks...

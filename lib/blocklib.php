@@ -210,6 +210,7 @@ function blocks_delete_instance($instance,$pinned=false) {
     } else {
         // Now kill the db record;
         $DB->delete_records('block_instance', array('id'=>$instance->id));
+        delete_context(CONTEXT_BLOCK, $instance->id);
         // And now, decrement the weight of all blocks after this one
         $sql = "UPDATE {block_instance}
                    SET weight = weight - 1
@@ -502,7 +503,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
             // Define the data we're going to silently include in the instance config form here,
             // so we can strip them from the submitted data BEFORE serializing it.
             $hiddendata = array(
-                'sesskey' => $USER->sesskey,
+                'sesskey' => sesskey(),
                 'instanceid' => $instance->id,
                 'blockaction' => 'config'
             );
@@ -981,12 +982,31 @@ function blocks_print_adminblock(&$page, &$pageblocks) {
         }
         asort($menu);
 
-        $target = $page->url_get_full(array('sesskey' => $USER->sesskey, 'blockaction' => 'add'));
+        $target = $page->url_get_full(array('sesskey' => sesskey(), 'blockaction' => 'add'));
         $content = popup_form($target.'&amp;blockid=', $menu, 'add_block', '', $stradd .'...', '', '', true);
         print_side_block($strblocks, $content, NULL, NULL, NULL, array('class' => 'block_adminblock'));
     }
 }
 
+/**
+ * Delete all the blocks from a particular page.
+ *
+ * @param string $pagetype the page type.
+ * @param integer $pageid the page id.
+ * @return success of failure.
+ */
+function blocks_delete_all_on_page($pagetype, $pageid) {
+    global $DB;
+    if ($instances = $DB->get_records('block_instance', array('pageid' => $pageid, 'pagetype' => $pagetype))) {
+        foreach ($instances as $instance) {
+            delete_context(CONTEXT_BLOCK, $instance->id); // Ingore any failures here.
+        }
+    }
+    return $DB->delete_records('block_instance', array('pageid' => $pageid, 'pagetype' => $pagetype));
+}
+
+// Dispite what this function is called, it seems to be mostly used to populate
+// the default blocks when a new course (or whatever) is created.
 function blocks_repopulate_page($page) {
     global $CFG, $DB;
 
@@ -1018,7 +1038,7 @@ function blocks_repopulate_page($page) {
     // indexed and the indexes match, so we can work straight away... but CAREFULLY!
 
     // Ready to start creating block instances, but first drop any existing ones
-    $DB->delete_records('block_instance', array('pageid'=>$page->get_id(), 'pagetype'=>$page->get_type()));
+    blocks_delete_all_on_page($page->get_type(), $page->get_id());
 
     // Here we slyly count $posblocks and NOT $positions. This can actually make a difference
     // if the textual representation has undefined slots in the end. So we only work with as many
