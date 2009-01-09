@@ -91,37 +91,92 @@ class moodlelib_test extends MoodleUnitTestCase {
     }
 
     function test_address_in_subnet() {
-        $this->assertTrue(address_in_subnet('123.121.234.1', '123.121.234.1'));
-        $this->assertFalse(address_in_subnet('123.121.234.2', '123.121.234.1'));
-        $this->assertFalse(address_in_subnet('123.121.134.1', '123.121.234.1'));
-        $this->assertFalse(address_in_subnet('113.121.234.1', '123.121.234.1'));
-        $this->assertTrue(address_in_subnet('123.121.234.0', '123.121.234.2/28'));
-        $this->assertTrue(address_in_subnet('123.121.234.15', '123.121.234.2/28'));
-        $this->assertFalse(address_in_subnet('123.121.234.16', '123.121.234.2/28'));
-        $this->assertFalse(address_in_subnet('123.121.234.255', '123.121.234.2/28'));
-        $this->assertTrue(address_in_subnet('123.121.234.0', '123.121.234.0/')); // / is like /32.
-        $this->assertFalse(address_in_subnet('123.121.234.1', '123.121.234.0/'));
-        $this->assertFalse(address_in_subnet('232.232.232.232', '123.121.234.0/0'));
-        $this->assertFalse(address_in_subnet('123.122.234.1', '123.121.'));
-        $this->assertFalse(address_in_subnet('223.121.234.1', '123.121.'));
-        $this->assertTrue(address_in_subnet('123.121.234.1', '123.121'));
-        $this->assertFalse(address_in_subnet('123.122.234.1', '123.121'));
-        $this->assertFalse(address_in_subnet('223.121.234.1', '123.121'));
-        $this->assertFalse(address_in_subnet('123.121.234.100', '123.121.234.10'));
-        $this->assertFalse(address_in_subnet('123.121.234.9', '123.121.234.10-20'));
-        $this->assertTrue(address_in_subnet('123.121.234.10', '123.121.234.10-20'));
-        $this->assertTrue(address_in_subnet('123.121.234.15', '123.121.234.10-20'));
-        $this->assertTrue(address_in_subnet('123.121.234.20', '123.121.234.10-20'));
-        $this->assertFalse(address_in_subnet('123.121.234.21', '123.121.234.10-20'));
-        $this->assertTrue(address_in_subnet('  123.121.234.1  ', '  123.121.234.1  , 1.1.1.1/16,2.2.,3.3.3.3-6  '));
-        $this->assertTrue(address_in_subnet('  1.1.2.3 ', '  123.121.234.1  , 1.1.1.1/16,2.2.,3.3.3.3-6  '));
-        $this->assertTrue(address_in_subnet('  2.2.234.1  ', '  123.121.234.1  , 1.1.1.1/16,2.2.,3.3.3.3-6  '));
-        $this->assertTrue(address_in_subnet('  3.3.3.4  ', '  123.121.234.1  , 1.1.1.1/16,2.2.,3.3.3.3-6  '));
-        $this->assertFalse(address_in_subnet('  123.121.234.2  ', '  123.121.234.1  , 1.1.1.1/16,2.2.,3.3.3.3-6  '));
-        $this->assertFalse(address_in_subnet('  2.1.2.3 ', '  123.121.234.1  , 1.1.1.1/16,2.2.,3.3.3.3-6  '));
-        $this->assertFalse(address_in_subnet('  2.3.234.1  ', '  123.121.234.1  , 1.1.1.1/16,2.2.,3.3.3.3-6  '));
-        $this->assertFalse(address_in_subnet('  3.3.3.7  ', '  123.121.234.1  , 1.1.1.1/16,2.2.,3.3.3.3-6  '));
-        $this->assertFalse(address_in_subnet('172.16.1.142', '172.16.1.143/148'));
+    /// 1: xxx.xxx.xxx.xxx/nn or xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx/nnn          (number of bits in net mask)
+        $this->assertTrue(address_in_subnet('123.121.234.1', '123.121.234.1/32'));
+        $this->assertFalse(address_in_subnet('123.121.23.1', '123.121.23.0/32'));
+        $this->assertTrue(address_in_subnet('10.10.10.100',  '123.121.23.45/0'));
+        $this->assertTrue(address_in_subnet('123.121.234.1', '123.121.234.0/24'));
+        $this->assertFalse(address_in_subnet('123.121.34.1', '123.121.234.0/24'));
+        $this->assertTrue(address_in_subnet('123.121.234.1', '123.121.234.0/30'));
+        $this->assertFalse(address_in_subnet('123.121.23.8', '123.121.23.0/30'));
+        $this->assertTrue(address_in_subnet('baba:baba::baba', 'baba:baba::baba/128'));
+        $this->assertFalse(address_in_subnet('bab:baba::baba', 'bab:baba::cece/128'));
+        $this->assertTrue(address_in_subnet('baba:baba::baba', 'cece:cece::cece/0'));
+        $this->assertTrue(address_in_subnet('baba:baba::baba', 'baba:baba::baba/128'));
+        $this->assertTrue(address_in_subnet('baba:baba::00ba', 'baba:baba::/120'));
+        $this->assertFalse(address_in_subnet('baba:baba::aba', 'baba:baba::/120'));
+        $this->assertTrue(address_in_subnet('baba::baba:00ba', 'baba::baba:0/112'));
+        $this->assertFalse(address_in_subnet('baba::aba:00ba', 'baba::baba:0/112'));
+        $this->assertFalse(address_in_subnet('aba::baba:0000', 'baba::baba:0/112'));
+
+        // fixed input
+        $this->assertTrue(address_in_subnet('123.121.23.1   ', ' 123.121.23.0 / 24'));
+        $this->assertTrue(address_in_subnet('::ffff:10.1.1.1', ' 0:0:0:000:0:ffff:a1:10 / 126'));
+
+        // incorrect input
+        $this->assertFalse(address_in_subnet('123.121.234.1', '123.121.234.1/-2'));
+        $this->assertFalse(address_in_subnet('123.121.234.1', '123.121.234.1/64'));
+        $this->assertFalse(address_in_subnet('123.121.234.x', '123.121.234.1/24'));
+        $this->assertFalse(address_in_subnet('123.121.234.0', '123.121.234.xx/24'));
+        $this->assertFalse(address_in_subnet('123.121.234.1', '123.121.234.1/xx0'));
+        $this->assertFalse(address_in_subnet('::1', '::aa:0/xx0'));
+        $this->assertFalse(address_in_subnet('::1', '::aa:0/-5'));
+        $this->assertFalse(address_in_subnet('::1', '::aa:0/130'));
+        $this->assertFalse(address_in_subnet('x:1', '::aa:0/130'));
+        $this->assertFalse(address_in_subnet('::1', '::ax:0/130'));
+
+
+    /// 2: xxx.xxx.xxx.xxx-yyy or  xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx::xxxx-yyyy (a range of IP addresses in the last group)
+        $this->assertTrue(address_in_subnet('123.121.234.12', '123.121.234.12-14'));
+        $this->assertTrue(address_in_subnet('123.121.234.13', '123.121.234.12-14'));
+        $this->assertTrue(address_in_subnet('123.121.234.14', '123.121.234.12-14'));
+        $this->assertFalse(address_in_subnet('123.121.234.1', '123.121.234.12-14'));
+        $this->assertFalse(address_in_subnet('123.121.234.20', '123.121.234.12-14'));
+        $this->assertFalse(address_in_subnet('123.121.23.12', '123.121.234.12-14'));
+        $this->assertFalse(address_in_subnet('123.12.234.12', '123.121.234.12-14'));
+        $this->assertTrue(address_in_subnet('baba:baba::baba', 'baba:baba::baba-babe'));
+        $this->assertTrue(address_in_subnet('baba:baba::babc', 'baba:baba::baba-babe'));
+        $this->assertTrue(address_in_subnet('baba:baba::babe', 'baba:baba::baba-babe'));
+        $this->assertFalse(address_in_subnet('bab:baba::bab0', 'bab:baba::baba-babe'));
+        $this->assertFalse(address_in_subnet('bab:baba::babf', 'bab:baba::baba-babe'));
+        $this->assertFalse(address_in_subnet('bab:baba::bfbe', 'bab:baba::baba-babe'));
+        $this->assertFalse(address_in_subnet('bfb:baba::babe', 'bab:baba::baba-babe'));
+
+        // fixed input
+        $this->assertTrue(address_in_subnet('123.121.234.12', '123.121.234.12 - 14 '));
+        $this->assertTrue(address_in_subnet('bab:baba::babe', 'bab:baba::baba - babe  '));
+
+        // incorrect input
+        $this->assertFalse(address_in_subnet('123.121.234.12', '123.121.234.12-234.14'));
+        $this->assertFalse(address_in_subnet('123.121.234.12', '123.121.234.12-256'));
+        $this->assertFalse(address_in_subnet('123.121.234.12', '123.121.234.12--256'));
+
+
+    /// 3: xxx.xxx or xxx.xxx. or xxx:xxx:xxxx or xxx:xxx:xxxx.                  (incomplete address, a bit non-technical ;-)
+        $this->assertTrue(address_in_subnet('123.121.234.12', '123.121.234.12'));
+        $this->assertFalse(address_in_subnet('123.121.23.12', '123.121.23.13'));
+        $this->assertTrue(address_in_subnet('123.121.234.12', '123.121.234.'));
+        $this->assertTrue(address_in_subnet('123.121.234.12', '123.121.234'));
+        $this->assertTrue(address_in_subnet('123.121.234.12', '123.121'));
+        $this->assertTrue(address_in_subnet('123.121.234.12', '123'));
+        $this->assertFalse(address_in_subnet('123.121.234.1', '12.121.234.'));
+        $this->assertFalse(address_in_subnet('123.121.234.1', '12.121.234'));
+        $this->assertTrue(address_in_subnet('baba:baba::bab', 'baba:baba::bab'));
+        $this->assertFalse(address_in_subnet('baba:baba::ba', 'baba:baba::bc'));
+        $this->assertTrue(address_in_subnet('baba:baba::bab', 'baba:baba'));
+        $this->assertTrue(address_in_subnet('baba:baba::bab', 'baba:'));
+        $this->assertFalse(address_in_subnet('bab:baba::bab', 'baba:'));
+
+
+    /// multiple subnets
+        $this->assertTrue(address_in_subnet('123.121.234.12', '::1/64, 124., 123.121.234.10-30'));
+        $this->assertTrue(address_in_subnet('124.121.234.12', '::1/64, 124., 123.121.234.10-30'));
+        $this->assertTrue(address_in_subnet('::2',            '::1/64, 124., 123.121.234.10-30'));
+        $this->assertFalse(address_in_subnet('12.121.234.12', '::1/64, 124., 123.121.234.10-30'));
+
+
+    /// other incorrect input
+        $this->assertFalse(address_in_subnet('123.123.123.123', ''));
     }
 
     /**

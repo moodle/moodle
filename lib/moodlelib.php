@@ -7275,13 +7275,11 @@ function make_unique_id_code($extra='') {
  *
  * The parameter is a comma separated string of subnet definitions.
  * Subnet strings can be in one of three formats:
- *   1: xxx.xxx.xxx.xxx/xx
- *   2: xxx.xxx
- *   3: xxx.xxx.xxx.xxx-xxx   //a range of IP addresses in the last group.
+ *   1: xxx.xxx.xxx.xxx/nn or xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx/nnn          (number of bits in net mask)
+ *   2: xxx.xxx.xxx.xxx-yyy or  xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx::xxxx-yyyy (a range of IP addresses in the last group)
+ *   3: xxx.xxx or xxx.xxx. or xxx:xxx:xxxx or xxx:xxx:xxxx.                  (incomplete address, a bit non-technical ;-)
  * Code for type 1 modified from user posted comments by mediator at
  * {@link http://au.php.net/manual/en/function.ip2long.php}
- *
- * TODO one day we will have to make this work with IP6.
  *
  * @param string $addr    The address you are checking
  * @param string $subnetstr    The string of subnet addresses
@@ -7292,37 +7290,206 @@ function address_in_subnet($addr, $subnetstr) {
     $subnets = explode(',', $subnetstr);
     $found = false;
     $addr = trim($addr);
+    $addr = cleanremoteaddr($addr, false); // normalise
+    if ($addr === null) {
+        return false;
+    }
+    $addrparts = explode(':', $addr);
+
+    $ipv6 = strpos($addr, ':');
 
     foreach ($subnets as $subnet) {
         $subnet = trim($subnet);
-        if (strpos($subnet, '/') !== false) { /// type 1
-            list($ip, $mask) = explode('/', $subnet);
-            if ($mask === '' || $mask > 32) {
-                $mask = 32;
-            }
-            $mask = 0xffffffff << (32 - $mask);
-            $found = ((ip2long($addr) & $mask) == (ip2long($ip) & $mask));
-        } else if (strpos($subnet, '-') !== false)  {/// type 3
-            $subnetparts = explode('.', $subnet);
-            $addrparts = explode('.', $addr);
-            $subnetrange = explode('-', array_pop($subnetparts));
-            if (count($subnetrange) == 2) {
-                $lastaddrpart = array_pop($addrparts);
-                $found = ($subnetparts == $addrparts &&
-                        $subnetrange[0] <= $lastaddrpart && $lastaddrpart <= $subnetrange[1]);
-            }
-        } else { /// type 2
-            if ($subnet[strlen($subnet) - 1] != '.') {
-                $subnet .= '.';
-            }
-            $found = (strpos($addr . '.', $subnet) === 0);
+        if ($subnet === '') {
+            continue;
         }
 
-        if ($found) {
-            break;
+        if (strpos($subnet, '/') !== false) {
+        ///1: xxx.xxx.xxx.xxx/nn or xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx/nnn
+            list($ip, $mask) = explode('/', $subnet);
+            $mask = trim($mask);
+            if (!is_number($mask)) {
+                continue; // incorect mask number, eh?
+            }
+            $ip = cleanremoteaddr($ip, false); // normalise
+            if ($ip === null) {
+                continue;
+            }
+            if (strpos($ip, ':') !== false) {
+                // IPv6
+                if (!$ipv6) {
+                    continue;
+                }
+                if ($mask > 128 or $mask < 0) {
+                    continue; // nonsense
+                }
+                if ($mask == 0) {
+                    return true; // any address
+                }
+                if ($mask == 128) {
+                    if ($ip === $addr) {
+                        return true;
+                    }
+                    continue;
+                }
+                $ipparts = explode(':', $ip);
+                $modulo  = $mask % 16;
+                $ipnet   = array_slice($ipparts, 0, ($mask-$modulo)/16);
+                $addrnet = array_slice($addrparts, 0, ($mask-$modulo)/16);
+                if (implode(':', $ipnet) === implode(':', $addrnet)) {
+                    if ($modulo == 0) {
+                        return true;
+                    }
+                    $pos     = ($mask-$modulo)/16;
+                    $ipnet   = hexdec($ipparts[$pos]);
+                    $addrnet = hexdec($addrparts[$pos]);
+                    $mask    = 0xffff << (16 - $modulo);
+                    if (($addrnet & $mask) == ($ipnet & $mask)) {
+                        return true;
+                    }
+                }
+
+            } else {
+                // IPv4
+                if ($ipv6) {
+                    continue;
+                }
+                if ($mask > 32 or $mask < 0) {
+                    continue; // nonsense
+                }
+                if ($mask == 0) {
+                    return true;
+                }
+                if ($mask == 32) {
+                    if ($ip === $addr) {
+                        return true;
+                    }
+                    continue;
+                }
+                $mask = 0xffffffff << (32 - $mask);
+                if (((ip2long($addr) & $mask) == (ip2long($ip) & $mask))) {
+                    return true;
+                }
+            }
+
+        } else if (strpos($subnet, '-') !== false)  {
+        /// 2: xxx.xxx.xxx.xxx-yyy or  xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx::xxxx-yyyy ...a range of IP addresses in the last group.
+            $parts = explode('-', $subnet);
+            if (count($parts) != 2) {
+                continue;
+            }
+
+            if (strpos($subnet, ':') !== false) {
+                // IPv6
+                if (!$ipv6) {
+                    continue;
+                }
+                $ipstart = cleanremoteaddr(trim($parts[0]), false); // normalise
+                if ($ipstart === null) {
+                    continue;
+                }
+                $ipparts = explode(':', $ipstart);
+                $start = hexdec(array_pop($ipparts));
+                $ipparts[] = trim($parts[1]);
+                $ipend = cleanremoteaddr(implode(':', $ipparts), false); // normalise
+                if ($ipend === null) {
+                    continue;
+                }
+                $ipparts[7] = '';
+                $ipnet = implode(':', $ipparts);
+                if (strpos($addr, $ipnet) !== 0) {
+                    continue;
+                }
+                $ipparts = explode(':', $ipend);
+                $end = hexdec($ipparts[7]);
+
+                $addrend = hexdec($addrparts[7]);
+
+                if (($addrend >= $start) and ($addrend <= $end)) {
+                    return true;
+                }
+
+            } else {
+                // IPv4
+                if ($ipv6) {
+                    continue;
+                }
+                $ipstart = cleanremoteaddr(trim($parts[0]), false); // normalise
+                if ($ipstart === null) {
+                    continue;
+                }
+                $ipparts = explode('.', $ipstart);
+                $ipparts[3] = trim($parts[1]);
+                $ipend = cleanremoteaddr(implode('.', $ipparts), false); // normalise
+                if ($ipend === null) {
+                    continue;
+                }
+
+                if ((ip2long($addr) >= ip2long($ipstart)) and (ip2long($addr) <= ip2long($ipend))) {
+                    return true;
+                }
+            }
+
+        } else {
+        /// 3: xxx.xxx or xxx.xxx. or xxx:xxx:xxxx or xxx:xxx:xxxx.
+            if (strpos($subnet, ':') !== false) {
+                // IPv6
+                if (!$ipv6) {
+                    continue;
+                }
+                $parts = explode(':', $subnet);
+                $count = count($parts);
+                if ($parts[$count-1] === '') {
+                    unset($parts[$count-1]); // trim trailing :
+                    $count--;
+                    $subnet = implode('.', $parts);
+                }
+                $isip = cleanremoteaddr($subnet, false); // normalise
+                if ($isip !== null) {
+                    if ($isip === $addr) {
+                        return true;
+                    }
+                    continue;
+                } else if ($count > 8) {
+                    continue;
+                }
+                $zeros = array_fill(0, 8-$count, '0');
+                $subnet = $subnet.':'.implode(':', $zeros).'/'.($count*16);
+                if (address_in_subnet($addr, $subnet)) {
+                    return true;
+                }
+
+            } else {
+                // IPv4
+                if ($ipv6) {
+                    continue;
+                }
+                $parts = explode('.', $subnet);
+                $count = count($parts);
+                if ($parts[$count-1] === '') {
+                    unset($parts[$count-1]); // trim trailing .
+                    $count--;
+                    $subnet = implode('.', $parts);
+                }
+                if ($count == 4) {
+                    $subnet = cleanremoteaddr($subnet, false); // normalise
+                    if ($subnet === $addr) {
+                        return true;
+                    }
+                    continue;
+                } else if ($count > 4) {
+                    continue;
+                }
+                $zeros = array_fill(0, 4-$count, '0');
+                $subnet = $subnet.'.'.implode('.', $zeros).'/'.($count*8);
+                if (address_in_subnet($addr, $subnet)) {
+                    return true;
+                }
+            }
         }
     }
-    return $found;
+
+    return false;
 }
 
 /**
