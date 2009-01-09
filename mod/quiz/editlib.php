@@ -223,8 +223,8 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
         $pagingdisabled.' /></div>';
     $reordercontrols1.='<div class="quizdeleteselected">'.
         '<input type="submit" name="quizdeleteselected" '.
-        'onclick=\'return confirm("'.
-        get_string("areyousuredeleteselected","quiz").'")\'; value="'.
+        'onclick="return confirm(\''.
+        get_string("areyousuredeleteselected","quiz").'\');" value="'.
         get_string("deleteselected").'"  '.$disabled.' /></div>';
 
     $a = '<input name="moveselectedonpagetop" type="text" size="2" '.
