@@ -2619,8 +2619,9 @@ function delete_course_module($id) {
         foreach ($grade_items as $grade_item) {
             $grade_item->delete('moddelete');
         }
-
     }
+
+    delete_context(CONTEXT_MODULE, $cm->id);
     return $DB->delete_records('course_modules', array('id'=>$cm->id));
 }
 
