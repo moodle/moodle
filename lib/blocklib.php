@@ -208,6 +208,7 @@ function blocks_delete_instance($instance,$pinned=false) {
     } else {
         // Now kill the db record;
         delete_records('block_instance', 'id', $instance->id);
+        delete_context(CONTEXT_BLOCK, $instance->id);
         // And now, decrement the weight of all blocks after this one
         execute_sql('UPDATE '.$CFG->prefix.'block_instance SET weight = weight - 1 WHERE pagetype = \''.$instance->pagetype.
                     '\' AND pageid = '.$instance->pageid.' AND position = \''.$instance->position.
@@ -972,6 +973,24 @@ function blocks_print_adminblock(&$page, &$pageblocks) {
     }
 }
 
+/**
+ * Delete all the blocks from a particular page.
+ *
+ * @param string $pagetype the page type.
+ * @param integer $pageid the page id.
+ * @return success of failure.
+ */
+function blocks_delete_all_on_page($pagetype, $pageid) {
+    if ($instances = get_records_select('block_instance', 'pageid = ' . $pageid . ' AND pagetype = ' . $pagetype)) {
+        foreach ($instances as $instance) {
+            delete_context(CONTEXT_BLOCK, $instance->id); // Ingore any failures here.
+        }
+    }
+    return delete_records('block_instance', 'pageid', $pageid, 'pagetype', $pagetype);
+}
+
+// Dispite what this function is called, it seems to be mostly used to populate
+// the default blocks when a new course (or whatever) is created.
 function blocks_repopulate_page($page) {
     global $CFG;
 
@@ -1003,7 +1022,7 @@ function blocks_repopulate_page($page) {
     // indexed and the indexes match, so we can work straight away... but CAREFULLY!
 
     // Ready to start creating block instances, but first drop any existing ones
-    delete_records('block_instance', 'pageid', $page->get_id(), 'pagetype', $page->get_type());
+    blocks_delete_all_on_page($page->get_type(), $page->get_id());
 
     // Here we slyly count $posblocks and NOT $positions. This can actually make a difference
     // if the textual representation has undefined slots in the end. So we only work with as many
