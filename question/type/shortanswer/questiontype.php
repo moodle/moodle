@@ -22,20 +22,12 @@ class question_shortanswer_qtype extends default_questiontype {
         return 'shortanswer';
     }
 
-    function get_question_options(&$question) {
-        // Get additional information from database
-        // and attach it to the question object
-        if (!$question->options = get_record('question_shortanswer', 'question', $question->id)) {
-            notify('Error: Missing question options!');
-            return false;
-        }
+    function extra_question_fields() {
+        return array('question_shortanswer','answers','usecase');
+    }
 
-        if (!$question->options->answers = get_records('question_answers', 'question',
-                $question->id, 'id ASC')) {
-            notify('Error: Missing question answers for shortanswer question ' . $question->id . '!');
-            return false;
-        }
-        return true;
+    function questionid_column_name() {
+        return 'question';
     }
 
     function save_question_options($question) {
@@ -82,22 +74,10 @@ class question_shortanswer_qtype extends default_questiontype {
             }
         }
 
-        if ($options = get_record("question_shortanswer", "question", $question->id)) {
-            $options->answers = implode(",",$answers);
-            $options->usecase = $question->usecase;
-            if (!update_record("question_shortanswer", $options)) {
-                $result->error = "Could not update quiz shortanswer options! (id=$options->id)";
-                return $result;
-            }
-        } else {
-            unset($options);
-            $options->question = $question->id;
-            $options->answers = implode(",",$answers);
-            $options->usecase = $question->usecase;
-            if (!insert_record("question_shortanswer", $options)) {
-                $result->error = "Could not insert quiz shortanswer options!";
-                return $result;
-            }
+        $question->answers = implode(',', $answers);
+        $parentresult = parent::save_question_options($question);
+        if($parentresult !== null) { // Parent function returns null if all is OK
+            return $parentresult;
         }
 
         // delete old answer records
@@ -115,17 +95,6 @@ class question_shortanswer_qtype extends default_questiontype {
         } else {
             return true;
         }
-    }
-
-    /**
-    * Deletes question from the question-type specific tables
-    *
-    * @return boolean Success/Failure
-    * @param object $question  The question being deleted
-    */
-    function delete_question($questionid) {
-        delete_records("question_shortanswer", "question", $questionid);
-        return true;
     }
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {

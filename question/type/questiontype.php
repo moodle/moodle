@@ -104,6 +104,14 @@ class default_questiontype {
     }
 
     /**
+        * If you use extra_question_fields, overload this function to return question id field name
+        *  in case you table use another name for this column
+        */
+    function questionid_column_name() {
+        return 'questionid';
+    }
+
+    /**
      * If your question type has a table that extends the question_answers table,
      * make this method return an array wherer the first element is the table name,
      * and the subsequent entries are the column names (apart from id and answerid).
@@ -365,11 +373,12 @@ class default_questiontype {
             $question_extension_table = array_shift($extra_question_fields);
 
             $function = 'update_record';
-            $options = get_record($question_extension_table, 'questionid', $question->id);
+            $questionidcolname = $this->questionid_column_name();
+            $options = get_record($question_extension_table,  $questionidcolname, $question->id);
             if (!$options) {
                 $function = 'insert_record';
                 $options = new stdClass;
-                $options->questionid = $question->id;
+                $options->$questionidcolname = $question->id;
             }
             foreach ($extra_question_fields as $field) {
                 if (!isset($question->$field)) {
@@ -437,7 +446,7 @@ class default_questiontype {
         $extra_question_fields = $this->extra_question_fields();
         if (is_array($extra_question_fields)) {
             $question_extension_table = array_shift($extra_question_fields);
-            $extra_data = get_record($question_extension_table, 'questionid', $question->id, '', '', '', '', implode(', ', $extra_question_fields));
+            $extra_data = get_record($question_extension_table, $this->questionid_column_name(), $question->id, '', '', '', '', implode(', ', $extra_question_fields));
             if ($extra_data) {
                 foreach ($extra_question_fields as $field) {
                     $question->options->$field = $extra_data->$field;
@@ -494,7 +503,8 @@ class default_questiontype {
         $extra_question_fields = $this->extra_question_fields();
         if (is_array($extra_question_fields)) {
             $question_extension_table = array_shift($extra_question_fields);
-            $success = $success && delete_records($question_extension_table, 'questionid', $questionid);
+            $success = $success && delete_records($question_extension_table,
+                    $this->questionid_column_name(), $questionid);
         }
 
         $extra_answer_fields = $this->extra_answer_fields();
