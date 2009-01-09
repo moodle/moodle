@@ -3490,7 +3490,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             //The structure is equal to the db, so insert the groups_members
             if ($DB->record_exists("groups_members", array('groupid'=>$group_member->groupid, 'userid'=>$group_member->userid))) {
                 // user already member
-            if (!$DB->insert_record ("groups_members", $group_member)) {
+            } else if (!$DB->insert_record ("groups_members", $group_member)) {
                 $status = false;
                 continue;
             }
