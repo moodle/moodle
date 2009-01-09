@@ -120,6 +120,13 @@
             if (!$DB->delete_records("course_modules", array("module"=>$module->id))) {
                 notify("Error occurred while deleting all $strmodulename records in course_modules table");
             }
+            if ($coursemods) {
+                foreach ($coursemods as $coursemod) {
+                    if (!delete_context(CONTEXT_MODULE, $coursemod->id)) {
+                        notify("Could not delete the context for $strmodulename with id = $coursemod->id");
+                    }
+                }
+            }
 
             // Then delete all the logs
             if (!$DB->delete_records("log", array("module"=>$module->name))) {
