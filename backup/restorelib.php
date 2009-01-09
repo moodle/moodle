@@ -8162,9 +8162,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     echo '</li>';
                 }
             }
-            /// force full refresh of grading data after all items are created
-                grade_force_full_regrading($restore->course_id);
-                grade_grab_course_grades($restore->course_id);
+        /// force full refresh of grading data after all items are created
+            grade_force_full_regrading($restore->course_id);
+            grade_grab_course_grades($restore->course_id);
         }
 
         /*******************************************************************************
