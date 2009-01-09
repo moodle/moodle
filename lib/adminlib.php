@@ -1611,8 +1611,10 @@ function is_dataroot_insecure($fetchtest=false) {
     }
 
     $testurl = $datarooturl.'/diag/public.txt';
-
-    if (extension_loaded('curl') and ($ch = @curl_init($testurl)) !== false) {
+    if (extension_loaded('curl') and
+        !(stripos(ini_get('disable_functions'), 'curl_init') !== FALSE) and
+        !(stripos(ini_get('disable_functions'), 'curl_setop') !== FALSE) and
+        ($ch = @curl_init($testurl)) !== false) {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, false);
         $data = curl_exec($ch);
@@ -6162,7 +6164,6 @@ class admin_setting_managerepository extends admin_setting {
         }
         $output .= print_table($table, true);
         $instancehtml = '<div><h3>';
-        $addable = 0;
         $instancehtml .= get_string('addplugin', 'repository');
         $instancehtml .= '</h3><ul>';
         $addable = 0;
