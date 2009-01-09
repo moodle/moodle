@@ -140,6 +140,12 @@ class block_online_users extends block_base {
             //Accessibility: Don't want 'Alt' text for the user picture; DO want it for the envelope/message link (existing lang string).
             //Accessibility: Converted <div> to <ul>, inherit existing classes & styles.
             $this->content->text .= "<ul class='list'>\n";
+            if (!empty($USER->id) && has_capability('moodle/site:sendmessage', $context)
+                           && !empty($CFG->messaging) && !isguest()) {
+                $canshowicon = true;
+            } else {
+                $canshowicon = false;
+            }
             foreach ($users as $user) {
                 $this->content->text .= '<li class="listentry">';
                 $timeago = format_time(time() - $user->lastaccess); //bruno to calculate correctly on frontpage
@@ -152,9 +158,7 @@ class block_online_users extends block_base {
                     $this->content->text .= print_user_picture($user->id, $COURSE->id, $user->picture, 16, true, false, '', false);
                     $this->content->text .= $user->fullname.'</a></div>';
                 }
-                if (!empty($USER->id) and ($USER->id != $user->id) and !empty($CFG->messaging) and
-                    has_capability('moodle/site:sendmessage', $context) and
-                    !isguest() and $user->username != 'guest') {  // Only when logged in and messaging active etc
+                if ($canshowicon and ($USER->id != $user->id) and  $user->username != 'guest') {  // Only when logged in and messaging active etc
                     $this->content->text .= '<div class="message"><a title="'.get_string('messageselectadd').'" href="'.$CFG->wwwroot.'/message/discussion.php?id='.$user->id.'" onclick="this.target=\'message_'.$user->id.'\';return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message_'.$user->id.'\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);">'
                         .'<img class="iconsmall" src="'.$CFG->pixpath.'/t/message.gif" alt="'. get_string('messageselectadd') .'" /></a></div>';
                 }
