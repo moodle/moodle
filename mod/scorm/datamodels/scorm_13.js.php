@@ -1,8 +1,8 @@
 <?php
     require_once($CFG->dirroot.'/mod/scorm/locallib.php');
-    
+
     if (isset($userdata->status)) {
-        if (!isset($userdata->{'cmi.exit'}) || (($userdata->{'cmi.exit'} == 'time-out') || ($userdata->{'cmi.exit'} == 'normal'))) { 
+        if (!isset($userdata->{'cmi.exit'}) || (($userdata->{'cmi.exit'} == 'time-out') || ($userdata->{'cmi.exit'} == 'normal'))) {
                 $userdata->entry = 'ab-initio';
         } else {
             if (isset($userdata->{'cmi.exit'}) && (($userdata->{'cmi.exit'} == 'suspend') || ($userdata->{'cmi.exit'} == 'logout'))) {
@@ -15,18 +15,18 @@
 ?>
 
 // Used need to debug cmi content (if you uncomment this, you must comment the definition inside SCORMapi1_3)
-//var cmi = new Object(); 
+//var cmi = new Object();
 
 //
 // SCORM 1.3 API Implementation
 //
 function SCORMapi1_3() {
     // Standard Data Type Definition
-    
+
     // language key has to be checked for language dependent strings
-    var validLanguages = {'aa':'aa', 'ab':'ab', 'ae':'ae', 'af':'af', 'ak':'ak', 'am':'am', 'an':'an', 'ar':'ar', 'as':'as', 'av':'av', 'ay':'ay', 'az':'az', 
+    var validLanguages = {'aa':'aa', 'ab':'ab', 'ae':'ae', 'af':'af', 'ak':'ak', 'am':'am', 'an':'an', 'ar':'ar', 'as':'as', 'av':'av', 'ay':'ay', 'az':'az',
                           'ba':'ba', 'be':'be', 'bg':'bg', 'bh':'bh', 'bi':'bi', 'bm':'bm', 'bn':'bn', 'bo':'bo', 'br':'br', 'bs':'bs',
-                          'ca':'ca', 'ce':'ce', 'ch':'ch', 'co':'co', 'cr':'cr', 'cs':'cs', 'cu':'cu', 'cv':'cv', 'cy':'cy', 
+                          'ca':'ca', 'ce':'ce', 'ch':'ch', 'co':'co', 'cr':'cr', 'cs':'cs', 'cu':'cu', 'cv':'cv', 'cy':'cy',
                           'da':'da', 'de':'de', 'dv':'dv', 'dz':'dz', 'ee':'ee', 'el':'el', 'en':'en', 'eo':'eo', 'es':'es', 'et':'et', 'eu':'eu',
                           'fa':'fa', 'ff':'ff', 'fi':'fi', 'fj':'fj', 'fo':'fo', 'fr':'fr', 'fy':'fy', 'ga':'ga', 'gd':'gd', 'gl':'gl', 'gn':'gn', 'gu':'gu', 'gv':'gv',
                           'ha':'ha', 'he':'he', 'hi':'hi', 'ho':'ho', 'hr':'hr', 'ht':'ht', 'hu':'hu', 'hy':'hy', 'hz':'hz',
@@ -57,11 +57,11 @@ function SCORMapi1_3() {
                           'tam':'tam', 'tel':'tel', 'tgk':'tgk', 'tha':'tha', 'tir':'tir', 'tuk':'tuk', 'tgl':'tgl', 'tsn':'tsn', 'ton':'ton', 'tur':'tur', 'tso':'tso', 'tat':'tat', 'twi':'twi', 'tah':'tah',
                           'uig':'uig', 'ukr':'ukr', 'urd':'urd', 'uzb':'uzb', 'ven':'ven', 'vie':'vie', 'vol':'vol', 'wln':'wln', 'wol':'wol', 'xho':'xho', 'yid':'yid', 'yor':'yor', 'zha':'zha', 'chi':'chi', 'zho':'zho', 'zul':'zul'};
 
-    var CMIString200 = '^.{0,200}$';
-    var CMIString250 = '^.{0,250}$';
-    var CMIString1000 = '^.{0,1500}$';
-    var CMIString4000 = '^.{0,4000}$';
-    var CMIString64000 = '^.{0,64000}$';
+    var CMIString200 = '^[\\u0000-\\uFFFF]{0,200}$$';
+    var CMIString250 = '^[\\u0000-\\uFFFF]{0,250}$';
+    var CMIString1000 = '^[\\u0000-\\uFFFF]{0,1000}$';
+    var CMIString4000 = '^[\\u0000-\\uFFFF]{0,4000}$';
+    var CMIString64000 = '^[\\u0000-\\uFFFF]{0,64000}$';
     var CMILang = '^([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?$|^$';
     var CMILangString250 = '^(\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\})?([^\{].{0,250}$)?';
     var CMILangcr = '^((\{lang=([a-zA-Z]{2,3}|i|x)?(\-[a-zA-Z0-9\-]{2,8})?\}))(.*?)$';
@@ -114,10 +114,10 @@ function SCORMapi1_3() {
         'numeric':{'format':CMIDecimal, 'max':1, 'delimiter':'', 'unique':false},
         'other':{'format':CMIString4000, 'max':1, 'delimiter':'', 'unique':false}
     }
-    
+
     var correct_responses = {
         'true-false':{'pre':'', 'max':1, 'delimiter':'', 'unique':false, 'duplicate':false,
-                      'format':'^true$|^false$', 
+                      'format':'^true$|^false$',
                       'limit':1},
         'choice':{'pre':'', 'max':36, 'delimiter':'[,]', 'unique':true, 'duplicate':false,
                   'format':CMIShortIdentifier},
@@ -255,8 +255,8 @@ function SCORMapi1_3() {
 
     if (cmi.completion_status == '') {
         cmi.completion_status = 'not attempted';
-    } 
-    
+    }
+
     //
     // API Methods definition
     //
@@ -270,7 +270,7 @@ function SCORMapi1_3() {
             if ((!Initialized) && (!Terminated)) {
                 Initialized = true;
                 errorCode = "0";
-                <?php 
+                <?php
                     if (scorm_debugging($scorm)) {
 //                        echo 'alert("Initialized SCORM 1.3");';
                         echo 'LogAPICall("Initialize", param, "", errorCode);';
@@ -287,7 +287,7 @@ function SCORMapi1_3() {
         } else {
             errorCode = "201";
         }
-        <?php 
+        <?php
             if (scorm_debugging($scorm)) {
 //                echo 'alert("Initialize: "+GetErrorString(errorCode));';
                 echo 'LogAPICall("Initialize", param, "", errorCode);';
@@ -295,12 +295,12 @@ function SCORMapi1_3() {
         ?>
         return "false";
     }
-    
+
     function Terminate (param) {
         errorCode = "0";
         if (param == "") {
             if ((Initialized) && (!Terminated)) {
-                <?php 
+                <?php
                     if (scorm_debugging($scorm)) {
 //                        echo 'alert("Terminated SCORM 1.3");';
                         echo 'LogAPICall("Terminate", param, "", 0);';
@@ -332,7 +332,7 @@ function SCORMapi1_3() {
                     if (<?php echo $scorm->auto ?> == 1) {
                         setTimeout('top.nextSCO();',500);
                     }
-                }    
+                }
                 return "true";
             } else {
                 if (Terminated) {
@@ -344,14 +344,14 @@ function SCORMapi1_3() {
         } else {
             errorCode = "201";
         }
-        <?php 
+        <?php
             if (scorm_debugging($scorm)) {
                 echo 'alert("Terminate: "+GetErrorString(errorCode));';
             }
         ?>
         return "false";
     }
-    
+
     function GetValue (element) {
         errorCode = "0";
         diagnostic = "";
@@ -376,7 +376,7 @@ function SCORMapi1_3() {
 
                             if ((typeof eval(subelement) != "undefined") && (eval(subelement) != null)) {
                                 errorCode = "0";
-                                <?php 
+                                <?php
                                     if (scorm_debugging($scorm)) {
 //                                        echo 'alert("GetValue("+element+") -> "+eval(element));';
                                         echo 'LogAPICall("GetValue", element, eval(element), 0);';
@@ -436,13 +436,13 @@ function SCORMapi1_3() {
                 errorCode = "301";
             }
         } else {
-            if (Terminated) {                
+            if (Terminated) {
                 errorCode = "123";
             } else {
                 errorCode = "122";
             }
         }
-        <?php 
+        <?php
             if (scorm_debugging($scorm)) {
 //                echo 'alert("GetValue("+element+") -> "+GetErrorString(errorCode));';
                 echo 'LogAPICall("GetValue", element, "", errorCode);';
@@ -450,7 +450,7 @@ function SCORMapi1_3() {
         ?>
         return "";
     }
-    
+
     function SetValue (element,value) {
         errorCode = "0";
         diagnostic = "";
@@ -511,7 +511,7 @@ function SCORMapi1_3() {
 
                                     if ((typeof eval(subelement)) == "undefined") {
                                         switch (elementmodel) {
-                                            case 'cmi.objectives.n.id': 
+                                            case 'cmi.objectives.n.id':
                                                 if (!duplicatedID(element,parentelement,value)) {
                                                     if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
                                                         eval(parentelement+'._count++;');
@@ -539,7 +539,7 @@ function SCORMapi1_3() {
                                                     var subobject = eval(subelement);
                                                     subobject.objectives = new Object();
                                                     subobject.objectives._count = 0;
-                                                } 
+                                                }
                                             break;
                                             case 'cmi.interactions.n.objectives.n.id':
                                                 if (typeof eval(parentelement) != "undefined") {
@@ -587,7 +587,7 @@ function SCORMapi1_3() {
                                                                 errorCode = "351";
                                                                 diagnostic = "Data Model Element Pattern Too Long";
                                                             }
-                                                            if ((errorCode == "0") && ((correct_responses[interactiontype].duplicate == false) || 
+                                                            if ((errorCode == "0") && ((correct_responses[interactiontype].duplicate == false) ||
                                                                (!duplicatedPA(element,parentelement,value))) || (errorCode == "0" && value == "")) {
                                                                eval(parentelement+'._count++;');
                                                                eval(subelement+' = new Object();');
@@ -617,7 +617,7 @@ function SCORMapi1_3() {
                                                     } else {
                                                         errorCode="351";
                                                         diagnostic = "Data Model Element Collection Set Out Of Order";
-                                                    } 
+                                                    }
                                                 } else {
                                                     errorCode="408";
                                                 }
@@ -630,7 +630,7 @@ function SCORMapi1_3() {
                                                     errorCode = "351";
                                                     diagnostic = "Write Once Violation";
                                                 }
-                                            break; 
+                                            break;
                                             case 'cmi.interactions.n.objectives.n.id':
                                                 if (duplicatedID(element,parentelement,value)) {
                                                     errorCode = "351";
@@ -718,7 +718,7 @@ function SCORMapi1_3() {
                                                     } else {
                                                         nodes[0] = value;
                                                     }
-	
+
                                                     if ((nodes.length > 0) && (nodes.length <= correct_responses[interactiontype].max)) {
                                                         errorCode = CRcheckValueNodes (element, interactiontype, nodes, value, errorCode);
                                                     } else if (nodes.length > correct_responses[interactiontype].max) {
@@ -727,7 +727,7 @@ function SCORMapi1_3() {
                                                     }
                                                 }
                                              break;
-                                        } 
+                                        }
                                     }
                                 }
                             }
@@ -742,7 +742,7 @@ function SCORMapi1_3() {
                                         if ((ranges[1] == '*') || (value <= ranges[1])) {
                                             eval(element+'=value;');
                                             errorCode = "0";
-                                            <?php 
+                                            <?php
                                                 if (scorm_debugging($scorm)) {
 //                                                    echo 'alert("SetValue("+element+","+value+") -> OK");';
                                                     echo 'LogAPICall("SetValue", element, value, errorCode);';
@@ -757,8 +757,8 @@ function SCORMapi1_3() {
                                     }
                                 } else {
                                     eval(element+'=value;');
-                                    errorCode = "0"; 
-                                    <?php 
+                                    errorCode = "0";
+                                    <?php
                                         if (scorm_debugging($scorm)) {
 //                                           echo 'alert("SetValue("+element+","+value+") -> OK");';
                                             echo 'LogAPICall("SetValue", element, value, errorCode);';
@@ -786,7 +786,7 @@ function SCORMapi1_3() {
                 errorCode = "132";
             }
         }
-        <?php 
+        <?php
             if (scorm_debugging($scorm)) {
                 echo 'LogAPICall("SetValue", element, value, errorCode);';
             }
@@ -797,7 +797,7 @@ function SCORMapi1_3() {
 
     function CRremovePrefixes (node) {
         // check for prefixes lang, case, order
-        // case and then order 
+        // case and then order
         var seenOrder = false;
         var seenCase = false;
         var seenLang = false;
@@ -818,7 +818,7 @@ function SCORMapi1_3() {
                     }
                     seenLang = true;
                 break;
-                
+
                 case 'case_matters':
                     // check for correct case answer
                     if (! seenLang && ! seenOrder && ! seenCase) {
@@ -828,7 +828,7 @@ function SCORMapi1_3() {
                     }
                     seenCase = true;
                 break;
-                
+
                 case 'order_matters':
                     // check for correct case answer
                     if (! seenCase && ! seenLang && ! seenOrder) {
@@ -838,7 +838,7 @@ function SCORMapi1_3() {
                     }
                     seenOrder = true;
                 break;
-                
+
                 default:
                 break;
             }
@@ -856,7 +856,7 @@ function SCORMapi1_3() {
                 errorCode = result.errorCode;
                 nodes[i] = result.node;
             }
-            
+
             // check for prefix on each node
             if (correct_responses[interactiontype].pre != '') {
                 matches = nodes[i].match(correct_responses[interactiontype].pre);
@@ -864,7 +864,7 @@ function SCORMapi1_3() {
                     nodes[i] = nodes[i].substr(matches[1].length);
                 }
             }
-            
+
             if (correct_responses[interactiontype].delimiter2 != undefined) {
                 values = nodes[i].split(correct_responses[interactiontype].delimiter2);
                 if (values.length == 2) {
@@ -907,13 +907,13 @@ function SCORMapi1_3() {
         return errorCode;
     }
 
-    
+
     function Commit (param) {
         errorCode = "0";
         if (param == "") {
             if ((Initialized) && (!Terminated)) {
                 result = StoreData(cmi,false);
-                <?php 
+                <?php
                     if (scorm_debugging($scorm)) {
                         echo 'LogAPICall("Commit", param, "", 0);';
                         //echo 'alert("Data Commited");';
@@ -930,7 +930,7 @@ function SCORMapi1_3() {
         } else {
             errorCode = "201";
         }
-        <?php 
+        <?php
             if (scorm_debugging($scorm)) {
                 echo 'LogAPICall("Commit", param, "", 0);';
 //                echo 'alert("Commit: "+GetErrorString(errorCode));';
@@ -938,16 +938,16 @@ function SCORMapi1_3() {
         ?>
         return "false";
     }
-    
+
     function GetLastError () {
-     <?php 
+     <?php
         if (scorm_debugging($scorm)) {
             echo 'LogAPICall("GetLastError", "", "", errorCode);';
         }
     ?>
         return errorCode;
     }
-    
+
     function GetErrorString (param) {
         if (param != "") {
             var errorString = "";
@@ -1031,14 +1031,14 @@ function SCORMapi1_3() {
                     errorString = "Data Model Dependency Not Established";
                 break;
             }
-            <?php 
+            <?php
             if (scorm_debugging($scorm)) {
                 echo 'LogAPICall("GetErrorString", param,  errorString, 0);';
             }
              ?>
             return errorString;
         } else {
-           <?php 
+           <?php
             if (scorm_debugging($scorm)) {
                 echo 'LogAPICall("GetErrorString", param,  "No error string found!", 0);';
             }
@@ -1046,17 +1046,17 @@ function SCORMapi1_3() {
             return "";
         }
     }
-    
+
     function GetDiagnostic (param) {
         if (diagnostic != "") {
-            <?php 
+            <?php
                 if (scorm_debugging($scorm)) {
                     echo 'LogAPICall("GetDiagnostic", param, diagnostic, 0);';
                 }
             ?>
             return diagnostic;
         }
-        <?php 
+        <?php
             if (scorm_debugging($scorm)) {
                 echo 'LogAPICall("GetDiagnostic", param, param, 0);';
             }
@@ -1071,7 +1071,7 @@ function SCORMapi1_3() {
             if ((parent+'.N'+n+'.id' != element) && (eval(parent+'.N'+n+'.id') == value)) {
                 found = true;
             }
-        } 
+        }
         return found;
     }
 
@@ -1082,7 +1082,7 @@ function SCORMapi1_3() {
             if ((parent+'.N'+n+'.pattern' != element) && (eval(parent+'.N'+n+'.pattern') == value)) {
                 found = true;
             }
-        } 
+        }
         return found;
     }
 
@@ -1100,7 +1100,7 @@ function SCORMapi1_3() {
     }
 
     function AddTime (first, second) {
-        <?php 
+        <?php
 //            if (scorm_debugging($scorm)) {
 //                echo 'alert("AddTime: "+first+" + "+second);';
 //            }
@@ -1128,7 +1128,7 @@ function SCORMapi1_3() {
             if(parseInt(firstarray[9],10)>0){ firsthours=parseInt(firstarray[9],10); }
             var secondhours=0;
             if(parseInt(secondarray[9],10)>0){ secondhours=parseInt(secondarray[9],10); }
-            var hours = firsthours+secondhours+change; //Hours 
+            var hours = firsthours+secondhours+change; //Hours
             change = Math.floor(hours/24);
             hours = Math.round(hours-(change*24));
             var firstdays=0;
@@ -1250,7 +1250,7 @@ function SCORMapi1_3() {
         errorCode = results[1];
         return results[0];
     }
-    
+
     this.Initialize = Initialize;
     this.Terminate = Terminate;
     this.GetValue = GetValue;
