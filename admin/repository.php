@@ -6,13 +6,13 @@ require_once($CFG->libdir . '/adminlib.php');
 
 $CFG->pagepath = 'admin/managerepositories';
 
-$edit    = optional_param('edit', 0, PARAM_ALPHAEXT);
+$edit    = optional_param('edit', 0, PARAM_ALPHANUM);
 $new     = optional_param('new', '', PARAM_FORMAT);
 $hide    = optional_param('hide', '', PARAM_ALPHANUM);
-$delete  = optional_param('delete', 0, PARAM_ALPHAEXT);
+$delete  = optional_param('delete', 0, PARAM_ALPHANUM);
 $sure    = optional_param('sure', '', PARAM_ALPHA);
-$move    = optional_param('move', '', PARAM_ALPHAEXT);
-$type    = optional_param('type', '', PARAM_ALPHAEXT);
+$move    = optional_param('move', '', PARAM_ALPHANUM);
+$type    = optional_param('type', '', PARAM_ALPHANUM);
 
 $display = true; // fall through to normal display
 
