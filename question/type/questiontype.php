@@ -127,7 +127,7 @@ class default_questiontype {
     function has_wildcards_in_responses($question, $subqid) {
         return false;
     }
-    
+
     /**
      * @return whether the question_answers.answer field needs to have
      * restore_decode_content_links_worker called on it.
@@ -146,6 +146,14 @@ class default_questiontype {
      */
     function extra_question_fields() {
         return null;
+    }
+
+    /**
+        * If you use extra_question_fields, overload this function to return question id field name
+        *  in case you table use another name for this column
+        */
+    function questionid_column_name() {
+        return 'questionid';
     }
 
     /**
@@ -401,11 +409,12 @@ class default_questiontype {
             $question_extension_table = array_shift($extra_question_fields);
 
             $function = 'update_record';
-            $options = $DB->get_record($question_extension_table, array('questionid' => $question->id));
+            $questionidcolname = $this->questionid_column_name();
+            $options = $DB->get_record($question_extension_table, array($questionidcolname => $question->id));
             if (!$options) {
                 $function = 'insert_record';
                 $options = new stdClass;
-                $options->questionid = $question->id;
+                $options->$questionidcolname = $question->id;
             }
             foreach ($extra_question_fields as $field) {
                 if (!isset($question->$field)) {
@@ -453,7 +462,7 @@ class default_questiontype {
         $extra_question_fields = $this->extra_question_fields();
         if (is_array($extra_question_fields)) {
             $question_extension_table = array_shift($extra_question_fields);
-            $extra_data = $DB->get_record($question_extension_table, array('questionid' => $question->id), '', implode(', ', $extra_question_fields));
+            $extra_data = $DB->get_record($question_extension_table, array($this->questionid_column_name() => $question->id), implode(', ', $extra_question_fields));
             if ($extra_data) {
                 foreach ($extra_question_fields as $field) {
                     $question->options->$field = $extra_data->$field;
@@ -510,7 +519,8 @@ class default_questiontype {
         $extra_question_fields = $this->extra_question_fields();
         if (is_array($extra_question_fields)) {
             $question_extension_table = array_shift($extra_question_fields);
-            $success = $success && $DB->delete_records($question_extension_table, array('questionid' => $questionid));
+            $success = $success && $DB->delete_records($question_extension_table,
+                    array($this->questionid_column_name() => $questionid));
         }
 
         $extra_answer_fields = $this->extra_answer_fields();
