@@ -8,7 +8,7 @@ $CFG->pagepath = 'admin/managerepositories';
 
 $edit    = optional_param('edit', 0, PARAM_ALPHAEXT);
 $new     = optional_param('new', '', PARAM_FORMAT);
-$hide    = optional_param('hide', 0, PARAM_ALPHAEXT);
+$hide    = optional_param('hide', '', PARAM_ALPHANUM);
 $delete  = optional_param('delete', 0, PARAM_ALPHAEXT);
 $sure    = optional_param('sure', '', PARAM_ALPHA);
 $move    = optional_param('move', '', PARAM_ALPHAEXT);
@@ -134,6 +134,7 @@ if (!empty($edit) || !empty($new)) {
     if (!confirm_sesskey()) {
         print_error('confirmsesskeybad', '', $baseurl);
     }
+    var_dump($hide);
     $repositorytype = repository::get_type_by_typename($hide);
     $repositorytype->switch_and_update_visibility();
     $return = true;
