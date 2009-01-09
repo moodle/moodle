@@ -510,17 +510,6 @@ class open_close_date_access_rule extends quiz_access_rule_base {
         }
         return false;
     }
-    /**
-     * Output information about this quiz's open and close dates, and whether
-     * the quiz is currently open.
-     */
-    public function print_timing_information() {
-        $messages = $this->description();
-        if (!$this->prevent_access()) {
-            $messages[] = get_string('quizopened', 'quiz');
-        }
-        echo implode(' | ', $messages);
-    }
 }
 
 /**

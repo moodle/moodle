@@ -1495,8 +1495,35 @@ function quiz_print_status_bar($quiz){
     ?></span>
     | <span class="quizopeningstatus">
     <?php
-    $accessrule = new open_close_date_access_rule(new quiz($quiz, NULL, NULL, false), time());
-    $accessrule->print_timing_information();
+    $available = true;
+    $dates = array();
+    $timenow = time();
+    $dateformat = get_string('strftimedatetimeshort');
+    if ($quiz->timeopen > 0) {
+        if ($timenow > $quiz->timeopen) {
+            $dates[] = get_string('openedat', 'quiz', userdate($quiz->timeopen, $dateformat));
+        } else {
+            $dates[] = get_string('opensat', 'quiz', userdate($quiz->timeopen, $dateformat));
+            $available = false;
+        }
+    }
+    if ($quiz->timeclose > 0) {
+        if ($timenow > $quiz->timeclose) {
+            $dates[] = get_string('closedat', 'quiz', userdate($quiz->timeclose, $dateformat));
+            $available = false;
+        } else {
+            $dates[] = get_string('closesat', 'quiz', userdate($quiz->timeclose, $dateformat));
+        }
+    }
+    if (empty($dates)) {
+        $dates[] = get_string('alwaysavailable', 'quiz');
+    }
+    $dates = implode(', ', $dates);
+    if ($available) {
+        print_string('quizisopen', 'quiz', $dates);
+    } else {
+        print_string('quizisclosed', 'quiz', $dates);
+    }
     ?></span><?php
     // If questions are shuffled, notify the user about the
     // question order not making much sense
