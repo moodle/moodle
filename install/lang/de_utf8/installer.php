@@ -16,7 +16,7 @@ $string['admindirsettingsub'] = 'Einige wenige Webhosting-Anbieter benutzen /adm
 z.B.: <br /> <br /><b>moodleadmin</b><br /> 
 Dies ändert die Links für das Admin-Verzeichnis in Moodle.';
 $string['bypassed'] = 'Unberücksichtigt';
-$string['cannotcreatelangdir'] = 'Das Verzeichnis \"lang\" kann nicht angelegt werden.';
+$string['cannotcreatelangdir'] = 'Verzeichnis \"lang\" kann nicht angelegt werden';
 $string['cannotcreatetempdir'] = 'Das Verzeichnis \"temp\" kann nicht angelegt werden.';
 $string['cannotdownloadcomponents'] = 'Einige Komponenten können nicht heruntergeladen werden.';
 $string['cannotdownloadzipfile'] = 'ZIP-Datei kann nicht heruntergeladen werden.';
