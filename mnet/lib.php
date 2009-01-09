@@ -413,27 +413,6 @@ function mnet_generate_keypair($dn = null, $days=28) {
 }
 
 /**
- * Check that an IP address falls within the given network/mask
- * ok for export
- *
- * @param  string   $address        Dotted quad
- * @param  string   $network        Dotted quad
- * @param  string   $mask           A number, e.g. 16, 24, 32
- * @return bool
- */
-function ip_in_range($address, $network, $mask) {
-   $lnetwork  = ip2long($network);
-   $laddress  = ip2long($address);
-
-   $binnet    = str_pad( decbin($lnetwork),32,"0","STR_PAD_LEFT" );
-   $firstpart = substr($binnet,0,$mask);
-
-   $binip     = str_pad( decbin($laddress),32,"0","STR_PAD_LEFT" );
-   $firstip   = substr($binip,0,$mask);
-   return(strcmp($firstpart,$firstip)==0);
-}
-
-/**
  * Check that a given function (or method) in an include file has been designated
  * ok for export
  *

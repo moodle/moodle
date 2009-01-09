@@ -34,13 +34,9 @@
     $in_range = false;
     if (!empty($test_ip_address)) {
         foreach($old_trusted_hosts as $host) {
-            list($network, $mask) = explode('/', $host.'/');
-            if (empty($network)) continue;
-            if (strlen($mask) == 0) $mask = 32;
-            
-            if (ip_in_range($test_ip_address, $network, $mask)) {
+            if (address_in_subnet($test_ip_address, $host)) {
                 $in_range = true;
-                $validated_by = $network.'/'.$mask;
+                $validated_by = $host;
                 break;
             }
         }

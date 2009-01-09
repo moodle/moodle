@@ -59,11 +59,7 @@ class mnet_remote_client extends mnet_peer {
         $trusted_hosts = explode(',', get_config('mnet', 'mnet_trusted_hosts'));
 
         foreach($trusted_hosts as $host) {
-            list($network, $mask) = explode('/', $host.'/');
-            if (empty($network)) continue;
-            if (strlen($mask) == 0) $mask = 32;
-            
-            if (ip_in_range($_SERVER['REMOTE_ADDR'], $network, $mask)) {
+            if (address_in_subnet(getremoteaddr(), $host)) {
                 return true;
             }
         }
