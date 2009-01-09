@@ -7493,8 +7493,27 @@ function cleanremoteaddr($addr, $compress=false) {
 
         $result = implode(':', $parts);
 
-        if ($compress) {
-            $result = preg_replace('/:?0:0:(0:)*/', '::', $result, 1);
+        if (!$compress) {
+            return $result;
+        }
+
+        if ($result === '0:0:0:0:0:0:0:0') {
+            return '::'; // all addresses
+        }
+
+        $compressed = preg_replace('/(:0)+:0$/', '::', $result, 1);
+        if ($compressed !== $result) {
+            return $compressed;
+        }
+
+        $compressed = preg_replace('/^(0:){2,7}/', '::', $result, 1);
+        if ($compressed !== $result) {
+            return $compressed;
+        }
+
+        $compressed = preg_replace('/(:0){2,6}:/', '::', $result, 1);
+        if ($compressed !== $result) {
+            return $compressed;
         }
 
         return $result;

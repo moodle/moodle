@@ -71,6 +71,25 @@ class moodlelib_test extends MoodleUnitTestCase {
     function tearDown() {
     }
 
+    function test_cleanremoteaddr() {
+        //IPv4
+        $this->assertEqual(cleanremoteaddr('1023.121.234.1'), null);
+        $this->assertEqual(cleanremoteaddr('123.121.234.01 '), '123.121.234.1');
+
+        //IPv6
+        $this->assertEqual(cleanremoteaddr('0:0:0:0:0:0:0:0:0'), null);
+        $this->assertEqual(cleanremoteaddr('0:0:0:0:0:0:0:abh'), null);
+        $this->assertEqual(cleanremoteaddr('0:0:0:::0:0:1'), null);
+        $this->assertEqual(cleanremoteaddr('0:0:0:0:0:0:0:0', true), '::');
+        $this->assertEqual(cleanremoteaddr('0:0:0:0:0:0:1:1', true), '::1:1');
+        $this->assertEqual(cleanremoteaddr('abcd:00ef:0:0:0:0:0:0', true), 'abcd:ef::');
+        $this->assertEqual(cleanremoteaddr('1:0:0:0:0:0:0:1', true), '1::1');
+        $this->assertEqual(cleanremoteaddr('::10:1', false), '0:0:0:0:0:0:10:1');
+        $this->assertEqual(cleanremoteaddr('01:1::', false), '1:1:0:0:0:0:0:0');
+        $this->assertEqual(cleanremoteaddr('10::10', false), '10:0:0:0:0:0:0:10');
+        $this->assertEqual(cleanremoteaddr('::ffff:192.168.1.1', true), '::ffff:c0a8:11');
+    }
+
     function test_address_in_subnet() {
         $this->assertTrue(address_in_subnet('123.121.234.1', '123.121.234.1'));
         $this->assertFalse(address_in_subnet('123.121.234.2', '123.121.234.1'));
@@ -183,7 +202,7 @@ class moodlelib_test extends MoodleUnitTestCase {
             '#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)');
 
         $this->assertEqual(clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_CLEAN),
-            '#()*#,9789\\\'\".,');
+            '#()*#,9789\'".,');
 
         // Test PARAM_URL and PARAM_LOCALURL a bit
         $this->assertEqual(clean_param('http://google.com/', PARAM_URL), 'http://google.com/');
