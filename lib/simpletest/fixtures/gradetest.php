@@ -49,7 +49,7 @@ Mock::generate('grade_outcome', 'mock_grade_outcome');
  * category1 => array(category2 => array(grade_item1, grade_item2), category3 => array(grade_item3))
  * 3 users for 3 grade_items
  */
-class grade_test extends MoodleUnitTestCase {
+class grade_test extends FakeDBUnitTestCase {
 
     public $grade_tables = array('grade_categories',
                                 'scale',

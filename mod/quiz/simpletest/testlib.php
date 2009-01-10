@@ -13,7 +13,7 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
 
-class quiz_lib_test extends MoodleUnitTestCase {
+class quiz_lib_test extends FakeDBUnitTestCase {
     function test_quiz_has_grades() {
         $quiz = new stdClass;
         $quiz->grade = '100.0000';

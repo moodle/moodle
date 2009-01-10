@@ -74,7 +74,7 @@ class sample_handler_class {
     }
 }
 
-class eventslib_test extends MoodleUnitTestCase {
+class eventslib_test extends FakeDBUnitTestCase {
     private $realdb;
     /**
      * Create temporary entries in the database for these tests.

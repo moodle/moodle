@@ -46,7 +46,7 @@ foreach ($repository_plugins as $plugin) {
     Mock::generatePartial("repository_$plugin", "partialmock_$plugin", array('send_package'));
 }
 
-class repositorylib_test extends MoodleUnitTestCase {
+class repositorylib_test extends FakeDBUnitTestCase {
 
     function setup() {
         parent::setup();

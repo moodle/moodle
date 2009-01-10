@@ -14,7 +14,7 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
 
-class question_numerical_qtype_test extends MoodleUnitTestCase {
+class question_numerical_qtype_test extends FakeDBUnitTestCase {
     var $tolerance = 0.00000001;
     var $qtype;
 

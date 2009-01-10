@@ -14,7 +14,7 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-class simple_rules_test extends MoodleUnitTestCase {
+class simple_rules_test extends FakeDBUnitTestCase {
     function test_num_attempts_access_rule() {
         $quiz = new stdClass;
         $quiz->attempts = 3;
@@ -89,7 +89,7 @@ class simple_rules_test extends MoodleUnitTestCase {
     }
 }
 
-class open_close_date_access_rule_test extends MoodleUnitTestCase {
+class open_close_date_access_rule_test extends FakeDBUnitTestCase {
     function test_no_dates() {
         $quiz = new stdClass;
         $quiz->timeopen = 0;
@@ -211,7 +211,7 @@ class open_close_date_access_rule_test extends MoodleUnitTestCase {
     }
 }
 
-class inter_attempt_delay_access_rule_test extends MoodleUnitTestCase {
+class inter_attempt_delay_access_rule_test extends FakeDBUnitTestCase {
     function test_just_first_delay() {
         $quiz = new stdClass;
         $quiz->attempts = 3;
@@ -361,7 +361,7 @@ class inter_attempt_delay_access_rule_test extends MoodleUnitTestCase {
     }
 }
 
-class password_access_rule_test extends MoodleUnitTestCase {
+class password_access_rule_test extends FakeDBUnitTestCase {
     function test_password_access_rule() {
         $quiz = new stdClass;
         $quiz->password = 'frog';
@@ -417,7 +417,7 @@ class password_access_rule_test extends MoodleUnitTestCase {
     }
 }
 
-class securewindow_access_rule_test extends MoodleUnitTestCase {
+class securewindow_access_rule_test extends FakeDBUnitTestCase {
     // Nothing very testable in this class, just test that it obeys the general access rule contact.
 
     function test_securewindow_access_rule() {
@@ -436,7 +436,7 @@ class securewindow_access_rule_test extends MoodleUnitTestCase {
     }
 }
 
-class quiz_access_manager_test extends MoodleUnitTestCase {
+class quiz_access_manager_test extends FakeDBUnitTestCase {
     // TODO
 }
 ?>

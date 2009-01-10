@@ -149,7 +149,7 @@ class CheckSpecifiedFieldsExpectation extends SimpleExpectation {
     }
 }
 
-class MoodleUnitTestCase extends UnitTestCase {
+class FakeDBUnitTestCase extends UnitTestCase {
     public $tables = array();
     public $pkfile;
     public $cfg;
@@ -181,7 +181,7 @@ class MoodleUnitTestCase extends UnitTestCase {
             $tabledata = '';
 
             foreach ($tables as $table) {
-                if ($table != 'sessions2') {
+                if ($table != 'sessions') {
                     if (!$max_id = $DB->get_field_sql("SELECT MAX(id) FROM {$CFG->unittestprefix}{$table}")) {
                         $max_id = 0;
                     }

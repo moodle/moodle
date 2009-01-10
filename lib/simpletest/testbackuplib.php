@@ -36,16 +36,8 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once($CFG->dirroot . '/backup/backuplib.php');
-Mock::generate('ADODB_mysql');
-Mock::generate('ADORecordSet_mysql');
 
-class backuplib_test extends MoodleUnitTestCase {
-    var $real_db;
-    var $real_dataroot;
-    var $rs;
-    var $firstcolumn;
-    var $testfiles = array();
-    var $userbasedir;
+class backuplib_test extends UnitTestCase {
 
 }
 

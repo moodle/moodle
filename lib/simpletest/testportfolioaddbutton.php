@@ -37,7 +37,7 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->libdir . '/portfoliolib.php');
 
-class portfoliolibaddbutton_test extends MoodleUnitTestCase {
+class portfoliolibaddbutton_test extends FakeDBUnitTestCase {
 
     function test_set_formats() {
 

@@ -37,7 +37,7 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->libdir . '/questionlib.php');
 
-class questionlib_test extends MoodleUnitTestCase {
+class questionlib_test extends FakeDBUnitTestCase {
 
 
     function setUp() {

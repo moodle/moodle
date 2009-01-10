@@ -11,7 +11,7 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
-class simpletestlib_test extends MoodleUnitTestCase {
+class simpletestlib_test extends FakeDBUnitTestCase {
 
     function test_load_delete_test_data() {
         global $DB;

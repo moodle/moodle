@@ -12,7 +12,7 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
-class accesslib_test extends MoodleUnitTestCase {
+class accesslib_test extends FakeDBUnitTestCase {
 
     function test_get_parent_contexts() {
         $context = get_context_instance(CONTEXT_SYSTEM);

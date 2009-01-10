@@ -184,7 +184,7 @@ foreach ($portfolio_plugins as $plugin) {
     Mock::generatePartial("portfolio_plugin_$plugin", "partialmock_plugin_$plugin", array('send_package'));
 }
 
-class portfoliolib_test extends MoodleUnitTestCase {
+class portfoliolib_test extends FakeDBUnitTestCase {
 
     function setup() {
         parent::setup();

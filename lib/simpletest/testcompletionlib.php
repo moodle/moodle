@@ -87,7 +87,7 @@ class TimeModifiedExpectation extends SimpleExpectation {
     }
 }
 
-class completionlib_test extends MoodleUnitTestCase {
+class completionlib_test extends FakeDBUnitTestCase {
     var $realdb,$realcfg,$realsession,$realuser;
 
     function setUp() {        

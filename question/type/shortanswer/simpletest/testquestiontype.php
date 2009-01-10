@@ -14,7 +14,7 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->dirroot . '/question/type/questiontype.php');
 
-class question_shortanswer_qtype_test extends MoodleUnitTestCase {
+class question_shortanswer_qtype_test extends FakeDBUnitTestCase {
     var $qtype;
 
     function setUp() {
