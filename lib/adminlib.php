@@ -368,63 +368,27 @@ function upgrade_db($version, $release) {
     $origxmlstrictheaders = !empty($CFG->xmlstrictheaders);
     $CFG->xmlstrictheaders = false;
 
-/// Find and check all main modules and load them up or upgrade them if necessary
-/// first old *.php update and then the new upgrade.php script
-    upgrade_activity_modules($return_url);  // Return here afterwards
+/// upgrade all plugins types
+    $upgradedplugins = false;
+    $plugintypes = get_plugin_types();
+    foreach ($plugintypes as $type=>$location) {
+        $upgradedplugins = upgrade_plugins($type, $location) || $upgradedplugins;
+    }
 
-/// Check all questiontype plugins and upgrade if necessary
-/// first old *.php update and then the new upgrade.php script
-/// It is important that this is done AFTER the quiz module has been upgraded
-    upgrade_plugins('qtype', 'question/type', $return_url);  // Return here afterwards
-
-/// Check all blocks and load (or upgrade them if necessary)
-/// first old *.php update and then the new upgrade.php script
-    require_once("$CFG->dirroot/lib/blocklib.php");
-    upgrade_blocks_plugins($return_url);  // Return here afterwards
-
-/// Check all enrolment plugins and upgrade if necessary
-/// first old *.php update and then the new upgrade.php script
-    upgrade_plugins('enrol', 'enrol', $return_url);  // Return here afterwards
-
-/// Check all auth plugins and upgrade if necessary
-    upgrade_plugins('auth','auth',$return_url);
-
-/// Check all course formats and upgrade if necessary
-    upgrade_plugins('format','course/format',$return_url);
-
-/// Check for local database customisations
-/// first old *.php update and then the new upgrade.php script
-    require_once("$CFG->dirroot/lib/locallib.php");
-    upgrade_local_db($return_url);  // Return here afterwards
+    if ($upgradedplugins) {
+        print_continue($return_url);
+        print_footer();
+        die;
+    }
 
 /// Check for changes to RPC functions
     require_once("$CFG->dirroot/$CFG->admin/mnet/adminlib.php");
     upgrade_RPC_functions($return_url);  // Return here afterwards
 
-/// Upgrade all plugins for gradebook
-    upgrade_plugins('gradeexport', 'grade/export', $return_url);
-    upgrade_plugins('gradeimport', 'grade/import', $return_url);
-    upgrade_plugins('gradereport', 'grade/report', $return_url);
-
-/// Check all message output plugins and upgrade if necessary
-    upgrade_plugins('message','message/output',$return_url);
-
-/// Check all course report plugins and upgrade if necessary
-    upgrade_plugins('coursereport', 'course/report', $return_url);
-
-/// Check all admin report plugins and upgrade if necessary
-    upgrade_plugins('report', $CFG->admin.'/report', $return_url);
-
-/// Check all quiz report plugins and upgrade if necessary
-    upgrade_plugins('quizreport', 'mod/quiz/report', $return_url);
-
-/// Check all portfolio plugins and upgrade if necessary
-    upgrade_plugins('portfolio', 'portfolio/type', $return_url);
-
-/// Check all progress tracker plugins and upgrade if necessary
-    upgrade_plugins('trackerexport', 'tracker/export', $return_url);
-    upgrade_plugins('trackerimport', 'tracker/import', $return_url);
-    upgrade_plugins('trackerreport', 'tracker/report', $return_url);
+/// Check for local database customisations
+/// first old *.php update and then the new upgrade.php script
+    require_once("$CFG->dirroot/lib/locallib.php");
+    upgrade_local_db($return_url);  // Return here afterwards
 
 /// just make sure upgrade logging is properly terminated
     upgrade_log_finish();
@@ -723,6 +687,33 @@ function get_used_table_names() {
 }
 
 /**
+ * Lists all plugin types
+ * @return array of strings - name=>location
+ */
+function get_plugin_types() {
+    global $CFG;
+
+    return array('mod'           => 'mod',
+                 'qtype'         => 'question/type',
+                 'blocks'        => 'blocks',
+                 'auth'          => 'auth',
+                 'enrol'         => 'enrol',
+                 'format'        => 'course/format',
+                 'gradeexport'   => 'grade/export',
+                 'gradeimport'   => 'grade/import',
+                 'gradereport'   => 'grade/report',
+                 'message'       => 'message/output',
+                 'coursereport'  => 'course/report',
+                 'report'        => $CFG->admin.'/report',
+                 'quizreport'    => 'mod/quiz/report',
+                 'portfolio'     => 'portfolio/type',
+                 'trackerexport' => 'tracker/export',
+                 'trackerimport' => 'tracker/import',
+                 'trackerreport' => 'tracker/report',
+                );
+}
+
+/**
  * Returns list of all directories where we expect install.xml files
  * @return array of paths
  */
@@ -804,6 +795,18 @@ function get_db_directories() {
     return $dbdirs;
 }
 
+function print_upgrade_header() {
+    if (defined('HEADER_PRINTED')) {
+        return;
+    }
+
+    $strpluginsetup  = get_string('pluginsetup');
+
+    print_header($strpluginsetup, $strpluginsetup,
+        build_navigation(array(array('name' => $strpluginsetup, 'link' => null, 'type' => 'misc'))), '',
+        upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
+}
+
 /**
  * Upgrade plugins
  *
@@ -812,11 +815,15 @@ function get_db_directories() {
  * @param string $dir  The directory where the plugins are located (e.g. 'question/questiontypes')
  * @param string $return The url to prompt the user to continue to
  */
-function upgrade_plugins($type, $dir, $return) {
+function upgrade_plugins($type, $dir) {
     global $CFG, $interactive, $DB;
 
-/// Let's know if the header has been printed, so the funcion is being called embedded in an outer page
-    $embedded = defined('HEADER_PRINTED');
+/// special cases
+    if ($type === 'mod') {
+        return upgrade_activity_modules();
+    } else if ($type === 'blocks') {
+        return upgrade_blocks_plugins();
+    }
 
     $plugs = get_list_of_plugins($dir);
     $updated_plugins = false;
@@ -851,11 +858,7 @@ function upgrade_plugins($type, $dir, $return) {
                 $info->pluginversion  = $plugin->version;
                 $info->currentmoodle = $CFG->version;
                 $info->requiremoodle = $plugin->requires;
-                if (!$updated_plugins && !$embedded) {
-                    print_header($strpluginsetup, $strpluginsetup,
-                        build_navigation(array(array('name' => $strpluginsetup, 'link' => null, 'type' => 'misc'))), '',
-                        upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
-                }
+                print_upgrade_header();
                 upgrade_log_start();
                 notify(get_string('pluginrequirementsnotmet', 'error', $info));
                 $updated_plugins = true;
@@ -875,11 +878,7 @@ function upgrade_plugins($type, $dir, $return) {
         if ($installedversion == $plugin->version) {
             // do nothing
         } else if ($installedversion < $plugin->version) {
-            if (!$updated_plugins && !$embedded) {
-                print_header($strpluginsetup, $strpluginsetup,
-                        build_navigation(array(array('name' => $strpluginsetup, 'link' => null, 'type' => 'misc'))), '',
-                        upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
-            }
+            print_upgrade_header();
             $updated_plugins = true;
             upgrade_log_start();
             print_heading($dir.'/'. $plugin->name .' plugin needs upgrading');
@@ -973,20 +972,7 @@ function upgrade_plugins($type, $dir, $return) {
 
     upgrade_log_finish();
 
-    if ($updated_plugins && !$embedded) {
-        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-            print_continue($return);
-            print_footer('none');
-            die;
-        } else if (CLI_UPGRADE && ($interactive > CLI_SEMI )) {
-            console_write('askcontinue');
-            if (read_boolean()){
-                return ;
-            } else {
-                console_write_error('','',false);
-            }
-        }
-    }
+    return $updated_plugins;
 }
 
 /**
@@ -996,7 +982,7 @@ function upgrade_plugins($type, $dir, $return) {
  * @param string $return The url to prompt the user to continue to
  * @todo Finish documenting this function
  */
-function upgrade_activity_modules($return) {
+function upgrade_activity_modules() {
 
     global $CFG, $interactive, $DB, $unittest;
 
@@ -1041,11 +1027,7 @@ function upgrade_activity_modules($return) {
                 $info->moduleversion  = $module->version;
                 $info->currentmoodle = $CFG->version;
                 $info->requiremoodle = $module->requires;
-                if (!$updated_modules) {
-                    print_header($strmodulesetup, $strmodulesetup,
-                            build_navigation(array(array('name' => $strmodulesetup, 'link' => null, 'type' => 'misc'))), '',
-                            upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
-                }
+                print_upgrade_header();
                 upgrade_log_start();
                 notify(get_string('modulerequirementsnotmet', 'error', $info));
                 $updated_modules = true;
@@ -1066,11 +1048,7 @@ function upgrade_activity_modules($return) {
                     notify('Upgrade file ' . $mod . ': ' . $fullmod . '/db/upgrade.php is not readable');
                     continue;
                 }
-                if (!$updated_modules) {
-                    print_header($strmodulesetup, $strmodulesetup,
-                            build_navigation(array(array('name' => $strmodulesetup, 'link' => null, 'type' => 'misc'))), '',
-                            upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
-                }
+                print_upgrade_header();
                 upgrade_log_start();
 
                 print_heading($module->name .' module needs upgrading');
@@ -1127,13 +1105,7 @@ function upgrade_activity_modules($return) {
             }
 
         } else {    // module not installed yet, so install it
-            if (!$updated_modules) {
-                if ((!defined('CLI_UPGRADE') || !CLI_UPGRADE) && !$unittest) {
-                    print_header($strmodulesetup, $strmodulesetup,
-                        build_navigation(array(array('name' => $strmodulesetup, 'link' => null, 'type' => 'misc'))), '',
-                        upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
-                }
-            }
+            print_upgrade_header();
             upgrade_log_start();
             print_heading($module->name);
             $updated_modules = true;
@@ -1223,20 +1195,7 @@ function upgrade_activity_modules($return) {
 
     upgrade_log_finish(); // finish logging if started
 
-    if ($updated_modules) {
-        if (!defined('CLI_UPGRADE')|| !CLI_UPGRADE ) {
-            print_continue($return);
-            print_footer('none');
-            die;
-        } else if ( CLI_UPGRADE && ($interactive > CLI_SEMI) ) {
-            console_write('askcontinue');
-            if (read_boolean()){
-                return ;
-            }else {
-                console_write_error('','',false);
-            }
-        }
-    }
+    return $updated_modules;
 }
 
 /**

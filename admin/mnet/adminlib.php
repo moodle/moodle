@@ -143,6 +143,11 @@ function mnet_get_functions($type, $parentname) {
 function upgrade_RPC_functions($returnurl) {
     global $CFG;
 
+    // TODO: rewrite this thing so that it:
+    //         1/ does not include half the world
+    //         2/ returns status if something upgraded - needed for proper conitnue button
+    //         3/ upgrade functions in general should not use normal function calls to moodle core and modules
+
     $basedir = $CFG->dirroot.'/mod';
     if (file_exists($basedir) && filetype($basedir) == 'dir') {
         $dirhandle = opendir($basedir);

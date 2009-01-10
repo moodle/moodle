@@ -1071,8 +1071,10 @@ function blocks_repopulate_page($page) {
 
 //This function finds all available blocks and install them
 //into blocks table or do all the upgrade process if newer
-function upgrade_blocks_plugins($continueto) {
+function upgrade_blocks_plugins() {
     global $CFG, $interactive, $DB;
+
+    $updated_blocks = false;
 
     $blocktitles = array();
     $invalidblocks = array();
@@ -1090,7 +1092,7 @@ function upgrade_blocks_plugins($continueto) {
 
     $site = get_site();
 
-    if (!$blocks = get_list_of_plugins('blocks', 'db') ) {
+    if (!$blocks = get_list_of_plugins('blocks') ) {
         print_error('noblocks', 'debug');
     }
 
@@ -1174,14 +1176,7 @@ function upgrade_blocks_plugins($continueto) {
             if ($currblock->version == $block->version) {
                 // do nothing
             } else if ($currblock->version < $block->version) {
-                if (empty($updated_blocks)) {
-                    $strblocksetup    = get_string('blocksetup');
-                    if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                    print_header($strblocksetup, $strblocksetup,
-                            build_navigation(array(array('name' => $strblocksetup, 'link' => null, 'type' => 'misc'))), '',
-                            upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
-                    }
-                }
+                print_upgrade_header();
                 $updated_blocks = true;
                 upgrade_log_start();
 
@@ -1258,14 +1253,7 @@ function upgrade_blocks_plugins($continueto) {
                 // AND PHP's associative arrays ;)
                 print_error('blocknameconflict', '', '', (object)array('name'=>$block->name, 'conflict'=>$conflictblock));
             }
-            if (empty($updated_blocks)) {
-                $strblocksetup    = get_string('blocksetup');
-                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE) {
-                print_header($strblocksetup, $strblocksetup,
-                        build_navigation(array(array('name' => $strblocksetup, 'link' => null, 'type' => 'misc'))), '',
-                        upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
-            }
-            }
+            print_upgrade_header();
             $updated_blocks = true;
             upgrade_log_start();
             print_heading($block->name);
@@ -1342,20 +1330,7 @@ function upgrade_blocks_plugins($continueto) {
 
     upgrade_log_finish();
 
-    if (!empty($updated_blocks)) {
-        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE) {
-        print_continue($continueto);
-        print_footer('none');
-        die;
-        } else if ( CLI_UPGRADE && ($interactive > CLI_SEMI) ) {
-            console_write('askcontinue');
-            if (read_boolean()){
-                return ;
-            }else {
-                console_write_error('','',false);
-            }
-        }
-    }
+    return $updated_blocks;
 }
 
 ?>
