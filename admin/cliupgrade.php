@@ -796,7 +796,6 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         if (!$confirmrelease) {
             console_write_error('versionerror');
         }
-        $autopilot = 1 ;
 
         $strdatabasesetup    = get_string("databasesetup");
         $strdatabasesuccess  = get_string("databasesuccess");
@@ -918,10 +917,8 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
                     }
                 } else {
 
-                    if ( $interactive == CLI_FULL || ($interactive == CLI_SEMI && !isset($INSTALL['autopilot']))) {
+                    if ( $interactive == CLI_FULL || $interactive == CLI_SEMI) {
                         console_write('environmentok', 'admin');
-                        console_write('unattendedoperation','admin');
-                        $autopilot = read_boolean();
                     }
                 }
             }
@@ -1057,8 +1054,6 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
     /// just make sure upgrade logging is properly terminated
     upgrade_log_finish();
-
-    unset($SESSION->installautopilot);
 
     /// Set up the site
     if (! $site = get_site()) {

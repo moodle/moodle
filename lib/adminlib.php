@@ -40,7 +40,6 @@ function upgrade_db($version, $release) {
     $confirmrelease          = optional_param('confirmrelease', $unittest, PARAM_BOOL);
     $confirmplugins          = optional_param('confirmplugincheck', $unittest, PARAM_BOOL);
     $agreelicense            = optional_param('agreelicense', $unittest, PARAM_BOOL);
-    $autopilot               = optional_param('autopilot', $unittest, PARAM_BOOL);
     $setuptesttables         = optional_param('setuptesttables', false, PARAM_BOOL);
     $continuesetuptesttables = optional_param('continuesetuptesttables', false, PARAM_BOOL);
     $upgradetesttables       = optional_param('upgradetesttables', false, PARAM_BOOL);
@@ -48,11 +47,6 @@ function upgrade_db($version, $release) {
     $return_url = "$CFG->wwwroot/$CFG->admin/index.php";
     if ($unittest) {
         $return_url = "$CFG->wwwroot/$CFG->admin/report/unittest/index.php?continuesetuptesttables=$continuesetuptesttables&amp;upgradetesttables=$upgradetesttables";
-    }
-
-    /// set install/upgrade autocontinue session flag
-    if ($autopilot) {
-        $SESSION->installautopilot = $autopilot;
     }
 
     /// Check if the main tables have been installed yet or not.
@@ -72,7 +66,7 @@ function upgrade_db($version, $release) {
     unset($mtables);
     unset($tables);
 
-    if ($unittest && $autopilot) {
+    if ($unittest) {
         echo upgrade_get_javascript();
     }
 
@@ -104,7 +98,6 @@ function upgrade_db($version, $release) {
             echo '<input type="hidden" name="agreelicense" value="1" />';
             echo '<input type="hidden" name="confirmrelease" value="1" />';
             echo '</div>';
-            echo '<div class="continuebutton"><input name="autopilot" id="autopilot" type="checkbox" value="1" /><label for="autopilot">'.get_string('unattendedoperation', 'admin').'</label>';
             echo '<br /><br /><input type="submit" value="'.get_string('continue').'" /></div>';
             echo '</form>';
             print_footer('none');
@@ -279,7 +272,6 @@ function upgrade_db($version, $release) {
             echo '<input type="hidden" name="confirmrelease" value="1" />';
             echo '<input type="hidden" name="confirmplugincheck" value="1" />';
             echo '</div>';
-            echo '<div class="continuebutton"><input name="autopilot" id="autopilot" type="checkbox" value="1" /><label for="autopilot">'.get_string('unattendedoperation', 'admin').'</label>';
             echo '<br /><br /><input type="submit" value="'.get_string('continue').'" /></div>';
             echo '</form>';
             print_footer('none');
@@ -392,8 +384,6 @@ function upgrade_db($version, $release) {
 
 /// just make sure upgrade logging is properly terminated
     upgrade_log_finish();
-
-    unset($SESSION->installautopilot);
 
     // Turn xmlstrictheaders back on now.
     $CFG->xmlstrictheaders = $origxmlstrictheaders;
@@ -1299,16 +1289,9 @@ function print_progress_redraw($thisbarid, $done, $total, $width, $donetext='') 
 }
 
 function upgrade_get_javascript() {
-    global $CFG, $SESSION;
+    global $CFG;
 
-    if (!empty($SESSION->installautopilot)) {
-        $linktoscrolltoerrors = '<script type="text/javascript">var installautopilot = true;</script>'."\n";
-    } else {
-        $linktoscrolltoerrors = '<script type="text/javascript">var installautopilot = false;</script>'."\n";
-    }
-    $linktoscrolltoerrors .= '<script type="text/javascript" src="' . $CFG->wwwroot . '/lib/scroll_to_errors.js"></script>';
-
-    return $linktoscrolltoerrors;
+    return '<script type="text/javascript" src="'.$CFG->wwwroot.'/lib/scroll_to_errors.js"></script>';
 }
 
 function create_admin_user($user_input=NULL) {
