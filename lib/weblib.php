@@ -2243,7 +2243,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     $heading = format_string($heading); // Fix for MDL-8582
 
-    if (defined('CLI_UPGRADE') && CLI_UPGRADE ) {
+    if (defined('CLI_SCRIPT')) {
         $output = $heading;
         if ($return) {
             return $output;
@@ -3828,9 +3828,9 @@ function print_heading($text, $align='', $size=2, $class='main', $return=false, 
     if ($id) {
         $id = ' id="'.$id.'"';
     }
-    if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-    $output = "<h$size $align $class $id>".$text."</h$size>";
-    } else if ( CLI_UPGRADE ) {
+    if (!defined('CLI_SCRIPT')) {
+        $output = "<h$size $align $class $id>".$text."</h$size>";
+    } else {
         $output = $text;
         if ($size == 1) {
             $output = '=>'.$output;
@@ -3842,9 +3842,9 @@ function print_heading($text, $align='', $size=2, $class='main', $return=false, 
     if ($return) {
         return $output;
     } else {
-        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-        echo $output;
-        } else if (CLI_UPGRADE && ($verbose > CLI_NO) ) {
+        if (!defined('CLI_SCRIPT')) {
+            echo $output;
+        } else {
             console_write(STDOUT,$output,'',false);
             print_newline();
         }
@@ -6193,17 +6193,26 @@ function notify($message, $style='notifyproblem', $align='center', $return=false
     }
 
     $message = clean_text($message);
-    if(!defined('CLI_UPGRADE')||!CLI_UPGRADE) {
-    $output = '<div class="'.$style.'" style="text-align:'. $align .'">'. $message .'</div>'."\n";
-    } else if (CLI_UPGRADE && $DB->get_debug()) {
-        $output = '++'.$message.'++';
-        return ;
+    if (!defined('CLI_SCRIPT')) {
+        $output = '<div class="'.$style.'" style="text-align:'. $align .'">'. $message .'</div>'."\n";
+    } else {
+        if ($style === 'notifysuccess') {
+            $output = '++'.$message.'++';
+        } else {
+            $output = '!!'.$message.'!!';
+        }
     }
 
     if ($return) {
         return $output;
     }
-    echo $output;
+
+    if (!defined('CLI_SCRIPT')) {
+        echo $output;
+    } else {
+        console_write(STDOUT,$output,'',false);
+        print_newline();
+    }
 }
 
 
