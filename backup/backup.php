@@ -42,14 +42,6 @@
     //Check necessary functions exists. Thanks to gregb@crowncollege.edu
     backup_required_functions();
 
-    //Check backup_version
-    if ($id) {
-        $linkto = "backup.php?id=".$id.((!empty($to)) ? '&to='.$to : '');
-    } else {
-        $linkto = "backup.php";
-    }
-    upgrade_backup_db($linkto);
-
     //Get strings
     if (empty($to)) {
         $strcoursebackup = get_string("coursebackup");

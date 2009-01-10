@@ -156,7 +156,10 @@ function upgrade_db($version, $release) {
                                                'style' => 'default',
                                                'template' => 'default',
                                                'theme' => 'standardwhite',
-                                               'filter_multilang_converted' => 1));
+                                               'filter_multilang_converted' => 1,
+                                               'backup_version' => 2008111700,
+                                               'backup_release' => '2.0 dev',
+                                              ));
 
         // store main version
         if (!set_config('version', $version)) {
@@ -372,11 +375,6 @@ function upgrade_db($version, $release) {
 /// first old *.php update and then the new upgrade.php script
 /// It is important that this is done AFTER the quiz module has been upgraded
     upgrade_plugins('qtype', 'question/type', $return_url);  // Return here afterwards
-
-/// Upgrade backup/restore system if necessary
-/// first old *.php update and then the new upgrade.php script
-    require_once("$CFG->dirroot/backup/lib.php");
-    upgrade_backup_db($return_url);  // Return here afterwards
 
 /// Upgrade blocks system if necessary
 /// first old *.php update and then the new upgrade.php script
@@ -658,10 +656,6 @@ function upgrade_plugin_savepoint($result, $version, $type, $dir) {
     }
 }
 
-function upgrade_backup_savepoint($result, $version) {
-    //TODO
-}
-
 /**
  * Delete all plugin tables
  * @name string name of plugin, used as table prefix
@@ -763,9 +757,6 @@ function get_db_directories() {
             $dbdirs[] = $CFG->dirroot.'/question/type/'.$plugin.'/db';
         }
     }
-
-/// Now, backup/restore stuff (backup/db)
-    $dbdirs[] = $CFG->dirroot.'/backup/db';
 
 /// Now, block system stuff (blocks/db)
     $dbdirs[] = $CFG->dirroot.'/blocks/db';

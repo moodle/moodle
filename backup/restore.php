@@ -89,14 +89,6 @@
     //Check necessary functions exists. Thanks to gregb@crowncollege.edu
     backup_required_functions();
 
-    //Check backup_version
-    if ($file) {
-        $linkto = "restore.php?id=".$id."&amp;file=".$file;
-    } else {
-        $linkto = "restore.php";
-    }
-    upgrade_backup_db($linkto);
-
     //Get strings
     if (empty($to)) {
         $strcourserestore = get_string("courserestore");
