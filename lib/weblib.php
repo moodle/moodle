@@ -2243,7 +2243,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     $heading = format_string($heading); // Fix for MDL-8582
 
-    if (defined('CLI_SCRIPT')) {
+    if (CLI_SCRIPT) {
         $output = $heading;
         if ($return) {
             return $output;
@@ -3828,7 +3828,7 @@ function print_heading($text, $align='', $size=2, $class='main', $return=false, 
     if ($id) {
         $id = ' id="'.$id.'"';
     }
-    if (!defined('CLI_SCRIPT')) {
+    if (!CLI_SCRIPT) {
         $output = "<h$size $align $class $id>".$text."</h$size>";
     } else {
         $output = $text;
@@ -3842,7 +3842,7 @@ function print_heading($text, $align='', $size=2, $class='main', $return=false, 
     if ($return) {
         return $output;
     } else {
-        if (!defined('CLI_SCRIPT')) {
+        if (!CLI_SCRIPT) {
             echo $output;
         } else {
             console_write(STDOUT,$output,'',false);
@@ -6193,7 +6193,7 @@ function notify($message, $style='notifyproblem', $align='center', $return=false
     }
 
     $message = clean_text($message);
-    if (!defined('CLI_SCRIPT')) {
+    if (!CLI_SCRIPT) {
         $output = '<div class="'.$style.'" style="text-align:'. $align .'">'. $message .'</div>'."\n";
     } else {
         if ($style === 'notifysuccess') {
@@ -6207,7 +6207,7 @@ function notify($message, $style='notifyproblem', $align='center', $return=false
         return $output;
     }
 
-    if (!defined('CLI_SCRIPT')) {
+    if (!CLI_SCRIPT) {
         echo $output;
     } else {
         console_write(STDOUT,$output,'',false);
