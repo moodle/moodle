@@ -596,6 +596,16 @@ class TestSuite {
             if (is_string($this->_test_cases[$i])) {
                 $class = $this->_test_cases[$i];
                 $test = &new $class();
+                // moodle hack start
+                global $CFG;
+                if (empty($CFG->unittestprefix)) {
+                    if ($test instanceof FakeDBUnitTestCase) {
+                        // do not execute this test because test tables not present!
+                        unset($test);
+                        continue;
+                    }
+                }
+                // moodle hack end
                 $test->run($reporter);
                 unset($test);
             } else {

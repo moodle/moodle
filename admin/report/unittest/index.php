@@ -16,23 +16,21 @@ require_once($CFG->libdir.'/simpletestlib.php');
 require_once('ex_simple_test.php');
 require_once('ex_reporter.php');
 
-// CGI arguments
-$path = optional_param('path', null, PARAM_PATH);
-$showpasses = optional_param('showpasses', false, PARAM_BOOL);
-$showsearch = optional_param('showsearch', false, PARAM_BOOL);
-$addconfigprefix = optional_param('addconfigprefix', false, PARAM_RAW);
-$setuptesttables = optional_param('setuptesttables', false, PARAM_BOOL);
-$upgradetesttables = optional_param('upgradetesttables', false, PARAM_BOOL);
+// page parameters
+$path                    = optional_param('path', null, PARAM_PATH);
+$showpasses              = optional_param('showpasses', false, PARAM_BOOL);
+$showsearch              = optional_param('showsearch', false, PARAM_BOOL);
+$setuptesttables         = optional_param('setuptesttables', false, PARAM_BOOL);
+$upgradetesttables       = optional_param('upgradetesttables', false, PARAM_BOOL);
 $continuesetuptesttables = optional_param('continuesetuptesttables', false, PARAM_BOOL);
-$droptesttables = optional_param('droptesttables', false, PARAM_BOOL);
-$testtablesok = optional_param('testtablesok', false, PARAM_BOOL);
+$droptesttables          = optional_param('droptesttables', false, PARAM_BOOL);
+$testtablesok            = optional_param('testtablesok', false, PARAM_BOOL);
 
 if ($setuptesttables || $continuesetuptesttables || $upgradetesttables) {
     // Make sure this option is off during upgrade. It is not very helpful, and can break things.
     $CFG->xmlstrictheaders = false;
 }
-admin_externalpage_setup('reportsimpletest', '', array('showpasses' => $showpasses,
-        'showsearch' => $showsearch));
+admin_externalpage_setup('reportsimpletest', '', array('showpasses'=>$showpasses, 'showsearch'=>$showsearch));
 admin_externalpage_print_header();
 
 $langfile = 'simpletest';
@@ -48,149 +46,97 @@ if ($testtablesok) {
     print_heading(get_string('testtablesok', 'simpletest'));
 }
 
-$baseurl = "$CFG->wwwroot/$CFG->admin/report/unittest/index.php";
+if (!empty($CFG->unittestprefix)) {
+    // Temporarily override $DB and $CFG for a fresh install on the unit test prefix
+    $real_version = $CFG->version;
 
-// Add unittest prefix to config.php if needed
-if ($addconfigprefix && !isset($CFG->unittestprefix)) {
-    // Open config file, search for $CFG->prefix and append a new line under it
-    if ($handle = @fopen($CFG->dirroot.'/config.php', 'r+')) {
+    $real_db = $DB;
+    $real_cfg = $CFG;
+    $CFG = new stdClass();
+    $CFG->dbhost              = $real_cfg->dbhost;
+    $CFG->dbtype              = $real_cfg->dbtype;
+    $CFG->dblibrary           = $real_cfg->dblibrary;
+    $CFG->dbuser              = $real_cfg->dbuser;
+    $CFG->dbpass              = $real_cfg->dbpass;
+    $CFG->dbname              = $real_cfg->dbname;
+    $CFG->unittestprefix      = $real_cfg->unittestprefix;
+    $CFG->wwwroot             = $real_cfg->wwwroot;
+    $CFG->dirroot             = $real_cfg->dirroot;
+    $CFG->libdir              = $real_cfg->libdir;
+    $CFG->dataroot            = $real_cfg->dataroot;
+    $CFG->admin               = $real_cfg->admin;
+    $CFG->release             = $real_cfg->release;
+    $CFG->version             = $real_cfg->version;
+    $CFG->config_php_settings = $real_cfg->config_php_settings;
+    $CFG->frametarget         = $real_cfg->frametarget;
+    $CFG->framename           = $real_cfg->framename;
+    $CFG->footer              = $real_cfg->footer;
+    $CFG->debug               = $real_cfg->debug;
 
-        $new_file = '';
+    $DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
+    $DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->unittestprefix);
 
-        while (!feof($handle)) {
-            $line = fgets($handle, 4096);
-            $prefix_line = null;
+    if ($DB->get_manager()->table_exists(new xmldb_table('config')) && $config = $DB->get_records('config')) {
+        foreach ($config as $conf) {
+            $CFG->{$conf->name} = $conf->value;
+        }
+        $testtablesok = true;
+    }
 
-            if (preg_match('/CFG\-\>prefix/', $line, $matches)) {
-                $prefix_line = "\$CFG->unittestprefix = '$addconfigprefix';\n";
+    $test_tables = $DB->get_tables();
+
+    // Test DB upgrade
+    if (!$upgradetesttables && $real_version != $CFG->version) {
+        notice_yesno(get_string('testtablesneedupgrade', 'simpletest'), $FULLSCRIPT . '?upgradetesttables=1', $FULLSCRIPT);
+        $DB->dispose();
+        $DB = $real_db;
+        admin_externalpage_print_footer();
+        exit();
+    }
+
+    // Build/upgrade test tables if requested and needed
+    if ($setuptesttables || $continuesetuptesttables || $upgradetesttables) {
+
+        $version = null;
+        $release = null;
+        include("$CFG->dirroot/version.php");       // defines $version and $release
+
+        if (!$continuesetuptesttables && !$upgradetesttables) {
+            // Drop all tables first if they exist
+            $manager = $DB->get_manager();
+            foreach ($test_tables as $table) {
+                $xmldbtable = new xmldb_table($table);
+                $manager->drop_table($xmldbtable);
             }
-
-            $new_file .= $line;
-            $new_file .= $prefix_line;
         }
 
-        fclose($handle);
-        $handle = fopen($CFG->dirroot.'/config.php', 'w');
-        fwrite($handle, $new_file);
-        fclose($handle);
-        $CFG->unittestprefix = $addconfigprefix;
-    } else {
-        notify(get_string('confignonwritable', 'simpletest'));
-        die();
+        upgrade_db($version, $release, true);
     }
-}
 
-if (empty($CFG->unittestprefix)) {
-    // TODO replace error with proper admin dialog
-
-    print_box_start('generalbox', 'notice');
-    if (is_writable($CFG->dirroot.'/config.php')) {
-        echo '<p>'.get_string("prefixnotset", 'simpletest').'</p>';
-        echo '<form method="post" action="'.$baseurl.'">
-                <table class="generaltable">
-                    <tr>
-                        <th class="header"><label for="prefix">'.get_string('prefix', 'simpletest').'</label></th>
-                        <td class="cell"><input type="text" size="5" name="addconfigprefix" id="prefix" value="tst_" /></td>
-                        <td class="cell"><input type="submit" value="'.get_string('addconfigprefix', 'simpletest').'" /></td>
-                    </tr>
-                </table>
-              </form>';
-    } else {
-        notify(get_string('confignonwritable', 'simpletest'));
-    }
-    print_box_end();
-
-    admin_externalpage_print_footer();
-    exit();
-}
-
-// Temporarily override $DB and $CFG for a fresh install on the unit test prefix
-$real_version = $CFG->version;
-
-$real_db = clone($DB);
-$real_cfg = clone($CFG);
-$CFG = new stdClass();
-$CFG->dbhost              = $real_cfg->dbhost;
-$CFG->dbtype              = $real_cfg->dbtype;
-$CFG->dblibrary           = $real_cfg->dblibrary;
-$CFG->dbuser              = $real_cfg->dbuser;
-$CFG->dbpass              = $real_cfg->dbpass;
-$CFG->dbname              = $real_cfg->dbname;
-$CFG->unittestprefix      = $real_cfg->unittestprefix;
-$CFG->wwwroot             = $real_cfg->wwwroot;
-$CFG->dirroot             = $real_cfg->dirroot;
-$CFG->libdir              = $real_cfg->libdir;
-$CFG->dataroot            = $real_cfg->dataroot;
-$CFG->admin               = $real_cfg->admin;
-$CFG->release             = $real_cfg->release;
-$CFG->version             = $real_cfg->version;
-$CFG->config_php_settings = $real_cfg->config_php_settings;
-$CFG->frametarget         = $real_cfg->frametarget;
-$CFG->framename           = $real_cfg->framename;
-$CFG->footer              = $real_cfg->footer;
-$CFG->debug               = $real_cfg->debug;
-
-$DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
-$DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->unittestprefix);
-
-if ($DB->get_manager()->table_exists(new xmldb_table('config')) && $config = $DB->get_records('config')) {
-    foreach ($config as $conf) {
-        $CFG->{$conf->name} = $conf->value;
-    }
-    $testtablesok = true;
-}
-
-$test_tables = $DB->get_tables();
-
-// Test DB upgrade
-if (!$upgradetesttables && $real_version != $CFG->version) {
-    notice_yesno(get_string('testtablesneedupgrade', 'simpletest'), $baseurl . '?upgradetesttables=1', $baseurl);
-    $DB->dispose();
-    $DB = $real_db;
-    admin_externalpage_print_footer();
-    exit();
-}
-
-// Build/upgrade test tables if requested and needed
-if ($setuptesttables || $continuesetuptesttables || $upgradetesttables) {
-
-    $version = null;
-    $release = null;
-    include("$CFG->dirroot/version.php");       // defines $version and $release
-
-    if (!$continuesetuptesttables && !$upgradetesttables) {
-        // Drop all tables first if they exist
+    if ($droptesttables) {
         $manager = $DB->get_manager();
         foreach ($test_tables as $table) {
             $xmldbtable = new xmldb_table($table);
             $manager->drop_table($xmldbtable);
         }
+        $test_tables = $DB->get_tables();
+        $testtablesok = false;
     }
 
-    upgrade_db($version, $release, true);
-}
-
-if ($droptesttables) {
-    $manager = $DB->get_manager();
-    foreach ($test_tables as $table) {
-        $xmldbtable = new xmldb_table($table);
-        $manager->drop_table($xmldbtable);
+    if (empty($test_tables['config'])) {
+        // TODO replace error with proper admin dialog
+        notice_yesno(get_string('tablesnotsetup', 'simpletest'), $FULLSCRIPT . '?setuptesttables=1', $FULLSCRIPT);
+        $DB = $real_db;
+        admin_externalpage_print_footer();
+        exit();
     }
-    $test_tables = $DB->get_tables();
-    $testtablesok = false;
-}
 
-if (empty($test_tables['config'])) {
-    // TODO replace error with proper admin dialog
-    notice_yesno(get_string('tablesnotsetup', 'simpletest'), $baseurl . '?setuptesttables=1', $baseurl);
+    $DB->dispose();
     $DB = $real_db;
-    admin_externalpage_print_footer();
-    exit();
-}
+    $CFG = $real_cfg;
 
-$DB->dispose();
-$DB = $real_db;
-$CFG = $real_cfg;
+    // end of ugly hack
+}
 
 if (!is_null($path)) {
     // Create the group of tests.
@@ -261,7 +207,12 @@ echo '</form>';
 print_box_end();
 
 print_box_start('generalbox boxwidthwide boxaligncenter');
-if ($testtablesok) {
+if (empty($CFG->unittestprefix)) {
+    print_heading(get_string('testdboperations', 'simpletest'));
+    // TODO: localise
+    echo '<p>Please add $CFG->unittestprefix="tst_"; or some other unique test table prefix if you want to execute all tests';
+    
+} else {
     print_heading(get_string('testdboperations', 'simpletest'));
     echo '<p>'.get_string('unittestprefixsetting', 'simpletest', $CFG).'</p>';
     echo '<form style="display:inline" method="get" action="index.php">';

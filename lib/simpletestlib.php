@@ -163,9 +163,15 @@ class FakeDBUnitTestCase extends UnitTestCase {
      * @throws moodle_exception if CSV file cannot be created
      */
     public function __construct($label = false) {
+        global $DB, $CFG;
+
+        if (empty($CFG->unittestprefix)) {
+            return;
+        }
+
         parent::UnitTestCase($label);
         // MDL-16483 Get PKs and save data to text file
-        global $DB, $CFG;
+
         $this->pkfile = $CFG->dataroot.'/testtablespks.csv';
         $this->cfg = $CFG;
 
@@ -203,6 +209,10 @@ class FakeDBUnitTestCase extends UnitTestCase {
     private function truncate_test_tables($tabledata) {
         global $CFG, $DB;
 
+        if (empty($CFG->unittestprefix)) {
+            return;
+        }
+
         $tables = $DB->get_tables();
 
         foreach ($tables as $table) {
@@ -220,6 +230,12 @@ class FakeDBUnitTestCase extends UnitTestCase {
      * @throws moodle_exception if file doesn't exist
      */
     public function get_table_data($filename) {
+        global $CFG;
+
+        if (empty($CFG->unittestprefix)) {
+            return;
+        }
+
         if (file_exists($this->pkfile)) {
             $handle = fopen($this->pkfile, 'r');
             $tabledata = array();
@@ -243,8 +259,13 @@ class FakeDBUnitTestCase extends UnitTestCase {
      * TODO Improve detection of incorrectly built DB test tables (e.g. detect version discrepancy and offer to upgrade/rebuild)
      */
     public function setUp() {
+        global $DB, $CFG;
+
+        if (empty($CFG->unittestprefix)) {
+            return;
+        }
+
         parent::setUp();
-        global $DB;
         $this->DB =& $DB;
         ob_start();
     }
@@ -253,7 +274,12 @@ class FakeDBUnitTestCase extends UnitTestCase {
      * Method called after each test method. Doesn't do anything extraordinary except restore the global $DB to the real one.
      */
     public function tearDown() {
-        global $DB;
+        global $DB, $CFG;
+
+        if (empty($CFG->unittestprefix)) {
+            return;
+        }
+
         if (empty($DB)) {
             $DB = $this->DB;
         }
@@ -272,6 +298,10 @@ class FakeDBUnitTestCase extends UnitTestCase {
      */
     public function __destruct() {
         global $CFG, $DB;
+
+        if (empty($CFG->unittestprefix)) {
+            return;
+        }
 
         $CFG = $this->cfg;
         $this->tearDown();
@@ -295,7 +325,12 @@ class FakeDBUnitTestCase extends UnitTestCase {
      * @return array $objects corresponding to $data.
      */
     public function load_test_data($table, array $cols, array $data) {
-        global $DB;
+        global $CFG, $DB;
+
+        if (empty($CFG->unittestprefix)) {
+            return;
+        }
+
         $results = array();
         foreach ($data as $rowid => $row) {
             $obj = new stdClass;
@@ -318,7 +353,12 @@ class FakeDBUnitTestCase extends UnitTestCase {
      * @param array $rows the rows to delete. Actually, only $rows[$key]->id is used.
      */
     public function delete_test_data($table, array $rows) {
-        global $DB;
+        global $CFG, $DB;
+
+        if (empty($CFG->unittestprefix)) {
+            return;
+        }
+
         $ids = array();
         foreach ($rows as $row) {
             $ids[] = $row->id;

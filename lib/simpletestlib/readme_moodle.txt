@@ -8,6 +8,7 @@ Changes:
  * Bug fix in simpletest.php and test_case.php. Marked with //moodlefix begins,
    //moodlefix ends comments. This has been reported back to the simpletest mailing
    list. Hopefully will be included in a future release.
+ * modified run() in test_case.php - skipping tests that need fake db if prefix not set
 
 skodak, Tim
 

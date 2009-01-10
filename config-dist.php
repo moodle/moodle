@@ -54,7 +54,6 @@ $CFG->dbname    = 'moodle';      // database name, eg moodle
 $CFG->dbuser    = 'username';    // your database username
 $CFG->dbpass    = 'password';    // your database password
 $CFG->prefix    = 'mdl_';        // Prefix to use for all table names
-// $CFG->unittest_prefix = 'tst_'; // Prefix used for unit test tables. Needs to be un-commented for test tables installation to proceed
 
 $CFG->dbpersist = false;         // Should database connections be reused?
                  // "false" is the most stable setting
@@ -287,6 +286,26 @@ $CFG->admin = 'admin';
 //
 // NOTE: if you are using custompix in your theme, see /fixpix.php.
 //
+// Set the priority of themes from highest to lowest. This is useful (for
+// example) in sites where the user theme should override all other theme
+// settings for accessibility reasons. You can also disable types of themes
+// by removing them from the array. The default setting is:
+//      $CFG->themeorder = array('page', 'course', 'category', 'session', 'user', 'site');
+// NOTE: course, category, session, user themes still require the
+// respective settings to be enabled
+//
+// When working with production data on test servers, no emails should ever be send to real users
+// $CFG->noemailever = true;
+//
+
+//=========================================================================
+// 8. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
+//=========================================================================
+//
+// Specify prefix for fake unit test tables. If not specified only tests
+// taht do not need fake tables will be executed.
+// $CFG->unittestprefix = 'tst_';
+//
 // special magic evil developer only wanting to edit the xmldb files manually
 // AND don't use the XMLDBEditor nor the prev/next stuff at all (Mahara and others)
 // Uncomment these if you're lazy like Penny
@@ -299,18 +318,7 @@ $CFG->admin = 'admin';
 // Uncomment this if you're lazy like Petr
 // $CFG->xmldbreconstructprevnext = true;
 //
-// Set the priority of themes from highest to lowest. This is useful (for
-// example) in sites where the user theme should override all other theme
-// settings for accessibility reasons. You can also disable types of themes
-// by removing them from the array. The default setting is:
-//      $CFG->themeorder = array('page', 'course', 'category', 'session', 'user', 'site');
-// NOTE: course, category, session, user themes still require the
-// respective settings to be enabled
-//
-// When working with production data on test servers, no emails should ever be send to real users
-// $CFG->noemailever = true;
-//
-//
+
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
 //=========================================================================
