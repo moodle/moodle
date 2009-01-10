@@ -159,6 +159,7 @@ function upgrade_db($version, $release) {
                                                'filter_multilang_converted' => 1,
                                                'backup_version' => 2008111700,
                                                'backup_release' => '2.0 dev',
+                                               'blocks_version' => 2007081300, // might be removed soon
                                               ));
 
         // store main version
@@ -376,13 +377,9 @@ function upgrade_db($version, $release) {
 /// It is important that this is done AFTER the quiz module has been upgraded
     upgrade_plugins('qtype', 'question/type', $return_url);  // Return here afterwards
 
-/// Upgrade blocks system if necessary
-/// first old *.php update and then the new upgrade.php script
-    require_once("$CFG->dirroot/lib/blocklib.php");
-    upgrade_blocks_db($return_url);  // Return here afterwards
-
 /// Check all blocks and load (or upgrade them if necessary)
 /// first old *.php update and then the new upgrade.php script
+    require_once("$CFG->dirroot/lib/blocklib.php");
     upgrade_blocks_plugins($return_url);  // Return here afterwards
 
 /// Check all enrolment plugins and upgrade if necessary
@@ -757,9 +754,6 @@ function get_db_directories() {
             $dbdirs[] = $CFG->dirroot.'/question/type/'.$plugin.'/db';
         }
     }
-
-/// Now, block system stuff (blocks/db)
-    $dbdirs[] = $CFG->dirroot.'/blocks/db';
 
 /// Now, blocks (blocks/xxx/db)
     if ($plugins = get_list_of_plugins('blocks', 'db')) {
@@ -4718,7 +4712,7 @@ class admin_page_manageblocks extends admin_externalpage {
         }
 
         $found = false;
-        if (!empty($CFG->blocks_version) and $blocks = $DB->get_records('block')) {
+        if ($blocks = $DB->get_records('block')) {
             $textlib = textlib_get_instance();
             foreach ($blocks as $block) {
                 if (strpos($block->name, $query) !== false) {

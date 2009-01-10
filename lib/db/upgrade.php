@@ -1318,6 +1318,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2009010801);
     }
 
+    if ($result && $oldversion < 2009011000) {
+
+    /// Changing nullability of field configdata on table block_instance to null
+        $table = new xmldb_table('block_instance');
+        $field = new xmldb_field('configdata');
+        $field->set_attributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'visible');
+
+    /// Launch change of nullability for field configdata
+        $dbman->change_field_notnull($table, $field);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009011000);
+    }
+
     return $result;
 }
 

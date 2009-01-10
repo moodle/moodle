@@ -998,16 +998,9 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     }
     upgrade_plugins('qtype', 'question/type', '');  // Don't return anywhere
 
-    /// Upgrade blocks system if necessary
-    /// first old *.php update and then the new upgrade.php script
-    require_once("$CFG->dirroot/lib/blocklib.php");
-    if ( $verbose > CLI_NO ) {
-        print_heading(get_string('upgradingblocksdb','install'),'',1);
-    }
-    upgrade_blocks_db('');  // Don't return anywhere
-
     /// Check all blocks and load (or upgrade them if necessary)
     /// first old *.php update and then the new upgrade.php script
+    require_once("$CFG->dirroot/lib/blocklib.php");
     if ( $verbose > CLI_NO ) {
         print_heading(get_string('upgradingblocksplugin','install'),'',1);
     }
