@@ -36,15 +36,14 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once($CFG->dirroot . '/course/lib.php');
-global $DB;
-Mock::generate(get_class($DB), 'mockDB');
 
-class courselib_test extends MoodleUnitTestCase {
+class courselib_test extends UnitTestCase {
     var $realDB;
 
     function setUp() {
         global $DB;
-        $this->realDB = clone($DB);
+        Mock::generate(get_class($DB), 'mockDB');
+        $this->realDB = $DB;
         $DB = new mockDB();
     }
 
