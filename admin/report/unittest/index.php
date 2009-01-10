@@ -20,7 +20,6 @@ require_once('ex_reporter.php');
 $path = optional_param('path', null, PARAM_PATH);
 $showpasses = optional_param('showpasses', false, PARAM_BOOL);
 $showsearch = optional_param('showsearch', false, PARAM_BOOL);
-$rundbtests = optional_param('rundbtests', false, PARAM_BOOL);
 $addconfigprefix = optional_param('addconfigprefix', false, PARAM_RAW);
 $setuptesttables = optional_param('setuptesttables', false, PARAM_BOOL);
 $upgradetesttables = optional_param('upgradetesttables', false, PARAM_BOOL);
@@ -201,8 +200,6 @@ if (!is_null($path)) {
     // keep in CVS, but which is not really relevant. It does no harm
     // to leave this here.
     $test->addIgnoreFolder($CFG->dirroot . '/_nonproject');
-    $test->addIgnoreFolder($CFG->libdir . '/ddl');
-    $test->addIgnoreFolder($CFG->libdir . '/dml');
 
     // Make the reporter, which is what displays the results.
     $reporter = new ExHtmlReporter($showpasses);
@@ -229,16 +226,6 @@ if (!is_null($path)) {
     } else {
         print_simple_box(get_string('pathdoesnotexist', $langfile, $path), '', '', '', '', 'errorbox');
         $ok = false;
-    }
-
-    // Add ddl and dml tests if requested
-    if ($rundbtests) {
-        if (!strstr($path, $CFG->libdir . '/ddl')) {
-            $test->addTestFile($CFG->libdir . '/ddl/simpletest/testddl.php');
-        }
-        if (!strstr($path, $CFG->libdir . '/dml')) {
-            $test->addTestFile($CFG->libdir . '/dml/simpletest/testdml.php');
-        }
     }
 
     // If we have something to test, do it.
@@ -268,7 +255,6 @@ echo '<p>';
     echo '<label for="path">', get_string('onlytest', $langfile), '</label> ';
     echo '<input type="text" id="path" name="path" value="', $displaypath, '" size="40" />';
 echo '</p>';
-echo '<p>'; print_checkbox('rundbtests', 1, $rundbtests, get_string('rundbtests', $langfile)); echo '</p>'; // TODO: localise
 echo '<input type="submit" value="' . get_string('runtests', $langfile) . '" />';
 echo '</fieldset>';
 echo '</form>';
