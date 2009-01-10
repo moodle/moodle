@@ -24,13 +24,11 @@ require_once($CFG->libdir . '/simpletestlib/test_case.php');
  */
 class AutoGroupTest extends GroupTest {
 
-    var $thorough;
     var $showsearch;
 
-    function AutoGroupTest($showsearch, $thorough, $test_name = null) {
+    function AutoGroupTest($showsearch, $test_name = null) {
         $this->GroupTest($test_name);
         $this->showsearch = $showsearch;
-        $this->thorough = $thorough;
     }
 
     function run(&$reporter) {
@@ -68,8 +66,7 @@ class AutoGroupTest extends GroupTest {
                 if ($file != 'CVS' && !in_array($file_path, $this->ignorefolders)) {
                     $this->_recurseFolders($file_path);
                 }
-            } elseif (preg_match('/simpletest(\/|\\\\)test.*\.php$/', $file_path) ||
-                    ($this->thorough && preg_match('/simpletest(\/|\\\\)slowtest.*\.php$/', $file_path))) {
+            } elseif (preg_match('/simpletest(\/|\\\\)test.*\.php$/', $file_path)) {
 
                 $s_count++;
                 // OK, found: this shows as a 'Notice' for any 'simpletest/test*.php' file.

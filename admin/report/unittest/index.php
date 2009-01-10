@@ -21,7 +21,6 @@ $path = optional_param('path', null, PARAM_PATH);
 $showpasses = optional_param('showpasses', false, PARAM_BOOL);
 $showsearch = optional_param('showsearch', false, PARAM_BOOL);
 $rundbtests = optional_param('rundbtests', false, PARAM_BOOL);
-$thorough = optional_param('thorough', false, PARAM_BOOL);
 $addconfigprefix = optional_param('addconfigprefix', false, PARAM_RAW);
 $setuptesttables = optional_param('setuptesttables', false, PARAM_BOOL);
 $upgradetesttables = optional_param('upgradetesttables', false, PARAM_BOOL);
@@ -34,7 +33,7 @@ if ($setuptesttables || $continuesetuptesttables || $upgradetesttables) {
     $CFG->xmlstrictheaders = false;
 }
 admin_externalpage_setup('reportsimpletest', '', array('showpasses' => $showpasses,
-        'showsearch' => $showsearch, 'thorough' => $thorough));
+        'showsearch' => $showsearch));
 admin_externalpage_print_header();
 
 $langfile = 'simpletest';
@@ -196,7 +195,7 @@ $CFG = $real_cfg;
 
 if (!is_null($path)) {
     // Create the group of tests.
-    $test = new AutoGroupTest($showsearch, $thorough);
+    $test = new AutoGroupTest($showsearch);
 
     // OU specific. We use the _nonproject folder for stuff we want to
     // keep in CVS, but which is not really relevant. It does no harm
@@ -265,7 +264,6 @@ echo '<form method="get" action="index.php">';
 echo '<fieldset class="invisiblefieldset">';
 echo '<p>'; print_checkbox('showpasses', 1, $showpasses, get_string('showpasses', $langfile)); echo '</p>';
 echo '<p>'; print_checkbox('showsearch', 1, $showsearch, get_string('showsearch', $langfile)); echo '</p>';
-echo '<p>'; print_checkbox('thorough', 1, $thorough, get_string('thorough', $langfile)); echo '</p>';
 echo '<p>';
     echo '<label for="path">', get_string('onlytest', $langfile), '</label> ';
     echo '<input type="text" id="path" name="path" value="', $displaypath, '" size="40" />';
