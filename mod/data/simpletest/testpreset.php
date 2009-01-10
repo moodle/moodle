@@ -37,7 +37,7 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->dirroot . '/mod/data/lib.php');
 
-class data_preset_test extends MoodleUnitTestCase {
+class data_preset_test extends UnitTestCase {
 
     function setUp() {
     }

@@ -216,7 +216,7 @@ class portfoliolib_test extends MoodleUnitTestCase {
     protected function setup_caller($class, $callbackargs, $user=null) {
         global $DB;
         $caller = new $class($callbackargs);
-        $caller->set('exporter', new partialmock_exporter(&$this));
+        $caller->set('exporter', new partialmock_exporter($this));
         if (is_numeric($user)) {
             $user = $DB->get_record('user', array('id' => $user));
         }
@@ -236,7 +236,7 @@ class portfoliolib_test extends MoodleUnitTestCase {
             foreach ($plugins as $plugin) {
                 // Instantiate a fake plugin instance
                 $plugin_class = "partialmock_plugin_$plugin";
-                $plugin = new $plugin_class(&$this);
+                $plugin = new $plugin_class($this);
 
                 // figure out our format intersection and test all of them.
                 $formats = portfolio_supported_formats_intersect($this->caller->supported_formats(), $plugin->supported_formats());

@@ -58,7 +58,7 @@ class repositorylib_test extends MoodleUnitTestCase {
         foreach ($plugins as $plugin) {
             // Instantiate a fake plugin instance
             $plugin_class = "partialmock_$plugin";
-            $plugin = new $plugin_class(&$this);
+            $plugin = new $plugin_class($this);
 
             // add common plugin tests here
         }

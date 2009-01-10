@@ -42,7 +42,7 @@ require_once($CFG->libdir . '/ajax/ajaxlib.php');
  * @author Petr Skoda (skodak)
  * @version $Id$
  */
-class ajaxlib_test extends MoodleUnitTestCase {
+class ajax_test extends UnitTestCase {
     function test_ajax_get_lib() {
         global $CFG;
         $cases = array(

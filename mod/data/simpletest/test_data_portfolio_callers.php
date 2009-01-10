@@ -1,6 +1,6 @@
 <?php // $Id$
 require_once("$CFG->libdir/simpletest/portfolio_testclass.php");
-require_once("$CFG->dirroot.'/mod/data/lib.php");
+require_once("$CFG->dirroot/mod/data/lib.php");
 require_once("$CFG->dirroot/$CFG->admin/generator.php");
 
 Mock::generate('data_portfolio_caller', 'mock_caller');

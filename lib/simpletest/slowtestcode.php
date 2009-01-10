@@ -12,7 +12,7 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
-class slow_code_test extends MoodleUnitTestCase {
+class slow_code_test extends UnitTestCase {
     var $php_code_extensions = array('php', 'html', 'php\.inc');
     var $ignore_folders = array();
     var $phppath;

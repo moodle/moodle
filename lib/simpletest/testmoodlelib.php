@@ -39,7 +39,7 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->libdir . '/moodlelib.php');
 
-class moodlelib_test extends MoodleUnitTestCase {
+class moodlelib_test extends UnitTestCase {
 
     var $user_agents = array(
             'MSIE' => array(

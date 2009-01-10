@@ -12,7 +12,7 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
-class web_test extends MoodleUnitTestCase {
+class web_test extends UnitTestCase {
 
     function setUp() {
     }
