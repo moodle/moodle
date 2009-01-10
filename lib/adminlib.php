@@ -985,11 +985,11 @@ function upgrade_plugins($type, $dir, $return) {
             print_footer('none');
             die;
         } else if (CLI_UPGRADE && ($interactive > CLI_SEMI )) {
-            console_write(STDOUT,'askcontinue');
+            console_write('askcontinue');
             if (read_boolean()){
                 return ;
             } else {
-                console_write(STDERR,'','',false);
+                console_write_error('','',false);
             }
         }
     }
@@ -1235,11 +1235,11 @@ function upgrade_activity_modules($return) {
             print_footer('none');
             die;
         } else if ( CLI_UPGRADE && ($interactive > CLI_SEMI) ) {
-            console_write(STDOUT,'askcontinue');
+            console_write('askcontinue');
             if (read_boolean()){
                 return ;
             }else {
-                console_write(STDERR,'','',false);
+                console_write_error('','',false);
             }
         }
     }

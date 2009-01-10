@@ -206,8 +206,8 @@ function validate_option_values($options){
     }
     if (isset($values['lang'])) {
         if (!valid_language($values['lang'])) {
-            console_write(STDERR,'invalidvalueforlanguage');
-        console_write(STDOUT, "\n", '', false);
+            console_write_error('invalidvalueforlanguage');
+        console_write( "\n", '', false);
         }
     }
     if (isset($values['webdir'])) {
@@ -233,7 +233,7 @@ function validate_option_values($options){
     if (isset($values['dbtype'])) {
         $dbtypes=array('mysql','oci8po','postgres7','mssql','mssql_n','odbc_mssql');
         if (!in_array($values['dbtype'],$dbtypes)) {
-            console_write(STDERR,'invaliddbtype');
+            console_write_error('invaliddbtype');
         }
     }
     if (isset($values['dbhost'])) {
@@ -308,12 +308,12 @@ function validate_option_values($options){
     }
     if (isset($values['verbose'])) {
         if(!valid_int_range($values['verbose'],CLI_NO,CLI_FULL)){
-            console_write(STDERR,'invalidverbosevalue');
+            console_write_error('invalidverbosevalue');
         }
     }
     if (isset($values['interactivelevel'])) {
         if(!valid_int_range($values['verbose'],CLI_NO,CLI_FULL)){
-            console_write(STDERR,'invalidinteractivevalue');
+            console_write_error('invalidinteractivevalue');
         }
     }
 
@@ -321,25 +321,6 @@ function validate_option_values($options){
         /**
          * @todo  nothing really
          */
-    }
-}
-//=========================================================================//
-/**
- * Write to standard out and error with exit in error
- *
- * @param standard out/err $stream
- * @param string  $identifier
- * @param name of module $module
- */
-function console_write($stream,$identifier,$module='install',$use_string_lib=true) {
-    if ($use_string_lib) {
-        fwrite($stream,get_string($identifier,$module));
-    } else {
-        fwrite($stream,$identifier);
-    }
-    if ($stream == STDERR) {
-        fwrite($stream, "\n\n" . get_string('aborting',$module) . "\n\n");
-        die;
     }
 }
 //=========================================================================//
@@ -364,8 +345,8 @@ function read_int() {
     if (valid_param($input,PARAM_INT)) {
         return $input;
     } else {
-        console_write(STDERR,'invalidint');
-        console_write(STDOUT, "\n", '', false);
+        console_write_error('invalidint');
+        console_write( "\n", '', false);
     }
 }
 //=========================================================================//
@@ -381,8 +362,8 @@ function read_int_range($start,$end) {
     if (valid_int_range($input,$start,$end)) {
         return $input;
     } else {
-        console_write(STDERR,'invalidintrange');
-        console_write(STDOUT, "\n", '', false);
+        console_write_error('invalidintrange');
+        console_write( "\n", '', false);
     }
 
 }
@@ -401,8 +382,8 @@ function read_yes_no() {
             return 'no';
         }
     } else {
-        console_write(STDERR,'invalidyesno');
-        console_write(STDOUT, "\n", '', false);
+        console_write_error('invalidyesno');
+        console_write( "\n", '', false);
     }
 }
 
@@ -429,8 +410,8 @@ function read_element($set=array()) {
     if (valid_element($input,$set)) {
         return $input;
     } else {
-        console_write(STDERR,'invalidsetelement');
-        console_write(STDOUT, "\n", '', false);
+        console_write_error('invalidsetelement');
+        console_write( "\n", '', false);
     }
 }
 //=========================================================================//
@@ -448,7 +429,7 @@ function read_url() {
             return  $input;
         }
     } else {
-        console_write(STDERR,'invalidurl');
+        console_write_error('invalidurl');
     }
 
 }
@@ -476,22 +457,22 @@ function read_dir() {
 function check_compatibility($success, $testtext,$errormessage,$caution=false,$silent=false) {
     if ($success) {
         if (!$silent) {
-            console_write(STDOUT,get_string('pass', 'install'),'',false);
+            console_write(get_string('pass', 'install'),'',false);
         }
     } else {
         if ($caution) {
             if (!$silent) {
-                console_write(STDOUT,get_string('caution', 'install'),'',false);
+                console_write(get_string('caution', 'install'),'',false);
             }
         } else {
-            console_write(STDOUT,get_string('fail', 'install'),'',false);
-            console_write(STDERR,$errormessage,'',false);
+            console_write(get_string('fail', 'install'),'',false);
+            console_write_error($errormessage,'',false);
         }
     }
     if (!$silent) {
-        console_write(STDOUT,"\t\t",'',false);
-        console_write(STDOUT,$testtext,'',false);
-        console_write(STDOUT,"\n",'',false);
+        console_write("\t\t",'',false);
+        console_write($testtext,'',false);
+        console_write("\n",'',false);
     }
     return $success;
 }
@@ -503,23 +484,23 @@ function check_compatibility($success, $testtext,$errormessage,$caution=false,$s
  * @param array $env, of type object
  */
 function print_environment_status($env = array()) {
-    console_write(STDOUT, get_string('name') . "\t\t\t" . get_string('info') . "\t" . get_string('status') . "\n\r", '', false);
-    //console_write(STDOUT,"Status\t\tInfo\t\tPart\n\r",'',false);
+    console_write( get_string('name') . "\t\t\t" . get_string('info') . "\t" . get_string('status') . "\n\r", '', false);
+    //console_write("Status\t\tInfo\t\tPart\n\r",'',false);
     foreach ( $env as  $object) {
-        console_write(STDOUT,$object->part,'',false);
-        console_write(STDOUT,"\t\t",'',false);
+        console_write($object->part,'',false);
+        console_write("\t\t",'',false);
         if (!empty($object->info)) {
-            console_write(STDOUT, $object->info, '', false);
+            console_write( $object->info, '', false);
         } else {
-            console_write(STDOUT, "\t", '', false);
+            console_write( "\t", '', false);
         }
-        console_write(STDOUT, "\t\t", '', false);
+        console_write( "\t\t", '', false);
         if ($object->status == 1 ) {
-            console_write(STDOUT,'ok','',false);
+            console_write('ok','',false);
         } else {
-            console_write(STDOUT,'fail','',false);
+            console_write('fail','',false);
         }
-        console_write(STDOUT,"\n\r",'',false);
+        console_write("\n\r",'',false);
     }
 }
 
@@ -529,27 +510,27 @@ function print_environment_status($env = array()) {
  * @param array $env, of type object
  */
 function print_environment_status_detailed($env = array()) {
-    console_write(STDOUT,"Status\t\tLevel\t\tCurrent ver\tRequired ver\t\tPart\t\tInfo\n\r",'',false);
+    console_write("Status\t\tLevel\t\tCurrent ver\tRequired ver\t\tPart\t\tInfo\n\r",'',false);
     foreach ( $env as  $object) {
 
         if ($object->status == 1 ) {
-            console_write(STDOUT,'ok ','',false);
+            console_write('ok ','',false);
         } else if ($object->errorcode != 0) {
-            console_write(STDOUT,'fail ','',false);
+            console_write('fail ','',false);
         } else {
-            console_write(STDOUT,'----','',false);
+            console_write('----','',false);
         }
-        console_write(STDOUT,"\t\t",'',false);
-        console_write(STDOUT,$object->level,'',false);
-        console_write(STDOUT,"\t\t",'',false);
-        console_write(STDOUT,$object->current_version,'',false);
-        console_write(STDOUT,"\t",'',false);
-        console_write(STDOUT,$object->needed_version,'',false);
-        console_write(STDOUT,"\t\t",'',false);
-        console_write(STDOUT,$object->part,'',false);
-        console_write(STDOUT,"\t\t",'',false);
-        console_write(STDOUT,$object->info,'',false);
-        console_write(STDOUT,"\n\r",'',false);
+        console_write("\t\t",'',false);
+        console_write($object->level,'',false);
+        console_write("\t\t",'',false);
+        console_write($object->current_version,'',false);
+        console_write("\t",'',false);
+        console_write($object->needed_version,'',false);
+        console_write("\t\t",'',false);
+        console_write($object->part,'',false);
+        console_write("\t\t",'',false);
+        console_write($object->info,'',false);
+        console_write("\n\r",'',false);
     }
 }
 /**
@@ -558,6 +539,6 @@ function print_environment_status_detailed($env = array()) {
  */
 
 function print_newline() {
-    console_write(STDOUT, "\n", '', false);
+    console_write( "\n", '', false);
 }
 ?>

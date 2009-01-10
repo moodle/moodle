@@ -154,7 +154,7 @@ $args = Console_Getopt::readPHPArgv();
 
 //checking errors for argument fetching
 if (PEAR::isError($args)) {
-    console_write(STDOUT,'pearargerror','install');
+    console_write('pearargerror','install');
     die();
 }
 
@@ -173,8 +173,8 @@ if ( realpath($_SERVER['argv'][0]) == __FILE__ && count($args)>1) {
 
 //detect erros in the options
 if (PEAR::isError($console_opt)) {
-    console_write(STDOUT,'invalidargumenthelp');
-    console_write(STDOUT, "\n", '', false);
+    console_write('invalidargumenthelp');
+    console_write( "\n", '', false);
     die();
 }
 
@@ -184,8 +184,8 @@ $options=get_options($console_opt);
 // if user want help print the help without validating option values
 if (is_array($options)) {
     if(array_key_exists('help',$options)){
-        console_write(STDOUT,'usagehelp');
-        console_write(STDOUT, "\n", '', false);
+        console_write('usagehelp');
+        console_write( "\n", '', false);
         die ;
     }
 }
@@ -230,11 +230,11 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
     //welcome message
     if ($verbose > CLI_NO) {
-        console_write(STDOUT, "\n", '', false);
-        console_write(STDOUT, "\n", '', false);
-        console_write(STDOUT,'welcometext','install');
-        console_write(STDOUT, "\n", '', false);
-        console_write(STDOUT, "\n", '', false);
+        console_write( "\n", '', false);
+        console_write( "\n", '', false);
+        console_write('welcometext','install');
+        console_write( "\n", '', false);
+        console_write( "\n", '', false);
     }
     //============================================================================//
     //Language selection for the installation
@@ -242,20 +242,20 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['lang'])) ) ) {
         $langs=get_installer_list_of_languages();
 
-        console_write(STDOUT, "\n", '', false);
-        console_write(STDOUT, "\n", '', false);
-        console_write(STDOUT,'selectlanguage','install');
-        console_write(STDOUT, "\n", '', false);
-        console_write(STDOUT,'availablelangs','install');
-        console_write(STDOUT, "\n", '', false);
+        console_write( "\n", '', false);
+        console_write( "\n", '', false);
+        console_write('selectlanguage','install');
+        console_write( "\n", '', false);
+        console_write('availablelangs','install');
+        console_write( "\n", '', false);
         //output available languages
         foreach ( $langs as $language ) {
-            console_write(STDOUT,"\t",'',false);
-            console_write(STDOUT,$language,'',false);
-            console_write(STDOUT,"\n",'',false);
+            console_write("\t",'',false);
+            console_write($language,'',false);
+            console_write("\n",'',false);
         }
-        console_write(STDOUT, "\n", '', false);
-        console_write(STDOUT,'yourchoice','install');
+        console_write( "\n", '', false);
+        console_write('yourchoice','install');
         $short_code_langs = get_short_codes($langs);
 
         $INSTALL['lang']=read_element($short_code_langs);
@@ -269,9 +269,9 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     if ($verbose == CLI_NO) {
         $silent=true;
     }else{
-        console_write(STDOUT, "\n", '', false);
-        console_write(STDOUT,'checkingphpsettings','install');
-        console_write(STDOUT, "\n", '', false);
+        console_write( "\n", '', false);
+        console_write('checkingphpsettings','install');
+        console_write( "\n", '', false);
     }
     /// Check that PHP is of a sufficient version
     check_compatibility(inst_check_php_version(), get_string('phpversion', 'install'), get_string('php52versionerror', 'install'),false,$silent);
@@ -298,28 +298,28 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
 
     if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['dirroot']) || !isset($INSTALL['wwwroot']) || !isset($INSTALL['dataroot']) ) ) ) {
-        console_write(STDOUT, "\n", '', false);
-        console_write(STDOUT, "\n", '', false);
-        console_write(STDOUT,'locationanddirectories','install');
-        console_write(STDOUT, "\n", '', false);
-        console_write(STDOUT, "\n", '', false);
+        console_write( "\n", '', false);
+        console_write( "\n", '', false);
+        console_write('locationanddirectories','install');
+        console_write( "\n", '', false);
+        console_write( "\n", '', false);
     }
 
     //input the web directory
     if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['dirroot'])) ) ) {
-        console_write(STDOUT,'inputwebdirectory','install');
+        console_write('inputwebdirectory','install');
         //if directories validation lib is found change this to read_dir() and
         //edit read_dir() in lib/installlib.php to point to validation code
         $INSTALL['dirroot']=read();
     }
     //input the web adress
     if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['wwwroot'])) ) ) {
-        console_write(STDOUT,'inputwebadress','install');
+        console_write('inputwebadress','install');
         $INSTALL['wwwroot']=read_url();
     }
     //input data directory
     if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['dataroot'])) ) ) {
-        console_write(STDOUT,'inputdatadirectory','install');
+        console_write('inputdatadirectory','install');
         //if directories validation lib is found change this to read_dir() and
         //edit read_dir() in lib/installlib.php to point to validation code
         $INSTALL['dataroot']=read();
@@ -329,21 +329,21 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     /// check wwwroot
     if (ini_get('allow_url_fopen') && false) {  /// This was not reliable
         if (($fh = @fopen($INSTALL['wwwroot']."/$CFG->admin/cliupgrade.php", 'r')) === false) {
-            console_write(STDERR,get_string('wwwrooterror'),'install',false);
+            console_write_error(get_string('wwwrooterror'),'install',false);
         }
     }
     if (isset($fh)) fclose($fh);
 
     /// check dirroot
     if (($fh = @fopen($INSTALL['dirroot']."/$CFG->admin/cliupgrade.php", 'r')) === false ) {
-        console_write(STDERR,get_string('dirrooterror'),'install',false);
+        console_write_error(get_string('dirrooterror'),'install',false);
     }
     if (isset($fh)) fclose($fh);
 
     /// check dataroot
     $CFG->dataroot = $INSTALL['dataroot'];
     if (make_upload_directory('sessions', false) === false ) {
-        console_write(STDERR,get_string('datarooterror'),'install',false);
+        console_write_error(get_string('datarooterror'),'install',false);
     }
 
     //================================================================================//
@@ -352,49 +352,49 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
     // Database section heading
     if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['dbhost']) || !isset($INSTALL['dbname']) || !isset($INSTALL['dbtype']) || !isset($INSTALL['dbuser']) ||  !isset($INSTALL['dbpass']) || !isset($INSTALL['prefix']) ) ) ) {
-        console_write(STDOUT, "\n", '', false);
-        console_write(STDOUT, "\n", '', false);
-        console_write(STDOUT,'databasesettingsformoodle','install');
-        console_write(STDOUT, "\n", '', false);
-        console_write(STDOUT, "\n", '', false);
+        console_write( "\n", '', false);
+        console_write( "\n", '', false);
+        console_write('databasesettingsformoodle','install');
+        console_write( "\n", '', false);
+        console_write( "\n", '', false);
     }
 
     //Input dialogs
     if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['dbhost']) ))) {
-        console_write(STDOUT,'databasehost','install');
+        console_write('databasehost','install');
         $INSTALL['dbhost']=read(); // localhost
     }
     if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['dbname']) ))) {
-        console_write(STDOUT,'databasename','install');
+        console_write('databasename','install');
         $INSTALL['dbname']=read(); //'moodletest3';
     }
     if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['dbtype']) ))) {
         $dbtypes=array('mysql','oci8po','postgres7','mssql','mssql_n','odbc_mssql');
-        console_write(STDOUT, "\n", '', false);
-        console_write(STDOUT,'availabledbtypes','install');
-        console_write(STDOUT, "\n", '', false);
+        console_write( "\n", '', false);
+        console_write('availabledbtypes','install');
+        console_write( "\n", '', false);
         foreach ($dbtypes as $dbtype) {
-            console_write(STDOUT,"\t",'',false);
-            console_write(STDOUT,$dbtype,'install');
-            console_write(STDOUT,"\n",'',false);
+            console_write("\t",'',false);
+            console_write($dbtype,'install');
+            console_write("\n",'',false);
         }
 
-        console_write(STDOUT,'yourchoice','install');
+        console_write('yourchoice','install');
         $INSTALL['dbtype']=read_element($dbtypes);//'mysql';//
     }
 
     if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['dbuser']) ))) {
-        console_write(STDOUT,'databaseuser','install');
+        console_write('databaseuser','install');
         $INSTALL['dbuser']=read();//'root';
     }
 
     if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['dbpass']) ))) {
-        console_write(STDOUT,'databasepass','install');
+        console_write('databasepass','install');
         $INSTALL['dbpass']=read();//'';
     }
 
     if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['prefix']) ))) {
-        console_write(STDOUT,'tableprefix','install');
+        console_write('tableprefix','install');
         $INSTALL['prefix']=read();//'mdl_';//
     }
 
@@ -478,7 +478,7 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
     // check for errors in db section
     if (isset($errormsg)) {
-        console_write(STDERR,$errormsg,'',false);
+        console_write_error($errormsg,'',false);
     }
 
 
@@ -499,7 +499,7 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
     // check for errors in environment
     if (isset($errormsg)) {
-        console_write(STDERR,$errormsg,'',false);
+        console_write_error($errormsg,'',false);
     }
 
     // Print Environment Status
@@ -514,9 +514,9 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['downloadlangaugepack']) ))) {
         $site_langs=get_list_of_languages();
         if (!key_exists($INSTALL['lang'],$site_langs)) {
-            console_write(STDOUT, "\n", '', false);
-            console_write(STDOUT, "\n", '', false);
-            console_write(STDOUT,'downloadlanguagepack','install');
+            console_write( "\n", '', false);
+            console_write( "\n", '', false);
+            console_write('downloadlanguagepack','install');
             $download_lang_pack=read_yes_no();
             if($download_lang_pack == 'yes'){
 
@@ -524,7 +524,7 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
                 /// Create necessary lang dir
                 if (!make_upload_directory('lang', false)) {
-                    console_write(STDERR,get_string('cannotcreatelangdir','error'),false);
+                    console_write_error(get_string('cannotcreatelangdir','error'),false);
                 }
 
                 /// Download and install component
@@ -537,10 +537,10 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
                             $a = new stdClass();
                             $a->url = 'http://download.moodle.org/lang16/'.$pack.'.zip';
                             $a->dest= $CFG->dataroot.'/lang';
-                            console_write(STDOUT,get_string($cd->get_error(), 'error', $a),false);
+                            console_write(get_string($cd->get_error(), 'error', $a),false);
                         } else {
                             $downloaderror = get_string($cd->get_error(), 'error');
-                            console_write(STDOUT,get_string($cd->get_error(), 'error'),false);
+                            console_write(get_string($cd->get_error(), 'error'),false);
                         }
                         break;
                         case UPTODATE:
@@ -561,7 +561,7 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
     if ( $verbose > CLI_NO && !empty($downloadsuccess)) {
         //print success message if language pack download is successful
-        console_write(STDOUT,'downloadsuccess');
+        console_write('downloadsuccess');
         print_newline();
     }
 
@@ -587,8 +587,8 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
 
     if ($verbose > CLI_NO) {
-        console_write(STDOUT,'creatingconfigfile','install');
-        console_write(STDOUT, "\n", '', false);
+        console_write('creatingconfigfile','install');
+        console_write( "\n", '', false);
     }
 
     $str  = '<?php  /// Moodle Configuration File '."\r\n";
@@ -628,40 +628,40 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         fwrite($fh, $str);
         fclose($fh);
         if ($verbose > CLI_NO) {
-            console_write(STDOUT,'configfilecreated','install');
-            console_write(STDOUT, "\n", '', false);
+            console_write('configfilecreated','install');
+            console_write( "\n", '', false);
         }
     } else {
-        console_write(STDOUT,'configfilenotwritten','install');
-        console_write(STDOUT, "\n", '', false);
-        console_write(STDOUT, "\n", '', false);
-        console_write(STDERR, $str, '', false);
+        console_write('configfilenotwritten','install');
+        console_write( "\n", '', false);
+        console_write( "\n", '', false);
+        console_write_error( $str, '', false);
     }
     if ( $verbose ) {
-        console_write(STDOUT,'installationiscomplete','install');
-        console_write(STDOUT, "\n", '', false);
+        console_write('installationiscomplete','install');
+        console_write( "\n", '', false);
     }
 }
 
 
 if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     // This is what happens if there is no upgrade....
-    //console_write(STDERR,'configurationfileexist','install');
-    //console_write(STDOUT, "\n", '', false);
+    //console_write_error('configurationfileexist','install');
+    //console_write( "\n", '', false);
     //die;
 
 
 
     // If the configuration file does not exists exit, this should never occur !!
     if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
-        console_write(STDERR,'configfiledoesnotexist','install');
+        console_write_error('configfiledoesnotexist','install');
     }
 
     /// Check that PHP is of a sufficient version
     /// Moved here because older versions do not allow while(@ob_end_clean());
     if (version_compare(phpversion(), "5.2.4") < 0) {
         $phpversion = phpversion();
-        console_write(STDERR,"Sorry, Moodle requires PHP 5.2.4 or later (currently using version $phpversion)",'',false);
+        console_write_error("Sorry, Moodle requires PHP 5.2.4 or later (currently using version $phpversion)",'',false);
     }
     /// Turn off time limits and try to flush everything all the time, sometimes upgrades can be slow.
 
@@ -684,22 +684,22 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
     ///check PHP Settings
     if (ini_get_bool('session.auto_start')) {
-        console_write(STDERR,"The PHP server variable 'session.auto_start' should be Off ",'',false);
+        console_write_error("The PHP server variable 'session.auto_start' should be Off ",'',false);
     }
 
     if (ini_get_bool('magic_quotes_runtime')) {
-        console_write(STDERR,"The PHP server variable 'magic_quotes_runtime' should be Off ",'',false);
+        console_write_error("The PHP server variable 'magic_quotes_runtime' should be Off ",'',false);
     }
 
     if (!ini_get_bool('file_uploads')) {
 
-        console_write(STDERR,"The PHP server variable 'file_uploads' is not turned On" ,'',false);
+        console_write_error("The PHP server variable 'file_uploads' is not turned On" ,'',false);
     }
 
     /// Check that config.php has been edited
 
     if ($CFG->wwwroot == "http://example.com/moodle") {
-        console_write(STDERR,"Moodle has not been configured yet.  You need to edit config.php first.",'',false);
+        console_write_error("Moodle has not been configured yet.  You need to edit config.php first.",'',false);
     }
 
 
@@ -707,7 +707,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
     $dirroot = dirname(realpath("../index.php"));
     if (!empty($dirroot) and $dirroot != $CFG->dirroot) {
-        console_write(STDERR,"Please fix your settings in config.php:
+        console_write_error("Please fix your settings in config.php:
               \nYou have:
               \n\$CFG->dirroot = \"".addslashes($CFG->dirroot)."\";
               \nbut it should be:
@@ -729,7 +729,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     }
 
     if (!$version or !$release) {
-        console_write(STDERR,'Main version.php was not readable or specified','',false);# without version, stop
+        console_write_error('Main version.php was not readable or specified','',false);# without version, stop
     }
 
 
@@ -765,11 +765,11 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
         if ( $interactive == CLI_FULL || ($interactive == CLI_SEMI && (!isset($INSTALL['agreelicense']) || empty($INSTALL['agreelicense']))) ) {
             //Print copyright notice and ask to continue
-            console_write(STDOUT,get_string('copyrightnotice'),'',false);
+            console_write(get_string('copyrightnotice'),'',false);
             print_newline();
-            console_write(STDOUT,get_string('gpl'),'',false);
+            console_write(get_string('gpl'),'',false);
             print_newline();
-            console_write(STDOUT,'doyouagree','install',true);
+            console_write('doyouagree','install',true);
             $agreelicense = read_boolean();
         }
 
@@ -778,15 +778,15 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         }
 
         if (!$agreelicense) {
-            console_write(STDERR,'disagreelicense');
+            console_write_error('disagreelicense');
         }
 
         if ( $interactive == CLI_FULL || ( $interactive == CLI_SEMI && (!isset($INSTALL['confirmrelease']) || empty($INSTALL['confirmrelease'])))) {
-            console_write(STDOUT,get_string("currentrelease"),'',false);
+            console_write(get_string("currentrelease"),'',false);
             print_newline();
-            console_write(STDOUT,"Moodle $release",'',false);
+            console_write("Moodle $release",'',false);
             print_newline();
-            console_write(STDOUT,'askcontinue');
+            console_write('askcontinue');
             $confirmrelease = read_boolean();
         }
 
@@ -794,7 +794,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
             $confirmrelease = $DEFAULT['confirmrelease'];
         }
         if (!$confirmrelease) {
-            console_write(STDERR,'versionerror');
+            console_write_error('versionerror');
         }
         $autopilot = 1 ;
 
@@ -813,7 +813,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         if (!$DB->setup_is_unicodedb()) {
             if (!$DB->change_db_encoding()) {
                 // If could not convert successfully, throw error, and prevent installation
-                console_write(STDERR,'unicoderequired', 'admin');
+                console_write_error('unicoderequired', 'admin');
             }
         }
 
@@ -883,9 +883,9 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
                 if ( $interactive == CLI_FULL || ($interactive == CLI_SEMI && !isset($INSTALL['confirmupgrade']))) {
                     print_newline();
-                    console_write(STDOUT,$strdatabasechecking,'',false);
+                    console_write($strdatabasechecking,'',false);
                     print_newline();
-                    console_write(STDOUT,'askcontinue');
+                    console_write('askcontinue');
                     $confirmupgrade = read_boolean();
                 }
             }
@@ -893,34 +893,34 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
                 if ( $interactive == CLI_FULL || ($interactive == CLI_SEMI && !isset($INSTALL['confirmrelease']))) {
                     $strcurrentrelease = get_string("currentrelease");
-                    console_write(STDOUT,$strcurrentrelease,'',false);
+                    console_write($strcurrentrelease,'',false);
                     print_newline();
-                    console_write(STDOUT,"Moodle $release",'',false);
+                    console_write("Moodle $release",'',false);
                     print_newline();
-                    console_write(STDOUT,get_string('releasenoteslink', 'install', 'http://docs.moodle.org/en/Release_Notes'),'',false);
+                    console_write(get_string('releasenoteslink', 'install', 'http://docs.moodle.org/en/Release_Notes'),'',false);
                     print_newline();
-                    console_write(STDOUT,'askcontinue');
+                    console_write('askcontinue');
                     $confirmrelease = read_boolean();
                 }
                 require_once($CFG->libdir.'/environmentlib.php');
 
-                console_write(STDOUT,'environment', 'admin');
+                console_write('environment', 'admin');
                 if (!check_moodle_environment($release, $environment_results, false)) {
                     // Print Environment Status
                     if ($verbose > CLI_NO) {
                         print_newline();
                         print_environment_status_detailed($environment_results);
                         print_newline();
-                        console_write(STDOUT,'environmenterrorupgrade', 'admin');
+                        console_write('environmenterrorupgrade', 'admin');
                     }
                     if(!read_boolean()){
-                        console_write(STDERR,'','',false);
+                        console_write_error('','',false);
                     }
                 } else {
 
                     if ( $interactive == CLI_FULL || ($interactive == CLI_SEMI && !isset($INSTALL['autopilot']))) {
-                        console_write(STDOUT,'environmentok', 'admin');
-                        console_write(STDOUT,'unattendedoperation','admin');
+                        console_write('environmentok', 'admin');
+                        console_write('unattendedoperation','admin');
                         $autopilot = read_boolean();
                     }
                 }
@@ -939,7 +939,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
             upgrade_language_pack();
 
             if ( $verbose > CLI_NO ) {
-                console_write(STDOUT,$strdatabasechecking,'',false);
+                console_write($strdatabasechecking,'',false);
             }
 
             /// Launch the old main upgrade (if exists)
@@ -955,18 +955,18 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
             /// If successful, continue upgrading roles and setting everything properly
             if ($status) {
                 if (!update_capabilities()) {
-                    console_write(STDERR,'Had trouble upgrading the core capabilities for the Roles System','',false);
+                    console_write_error('Had trouble upgrading the core capabilities for the Roles System','',false);
                 }
                 if (set_config("version", $version)) {
                     remove_dir($CFG->dataroot . '/cache', true); // flush cache
                     notify($strdatabasesuccess, "green");
                     /// print_continue("upgradesettings.php");
                 } else {
-                    console_write(STDERR,'Upgrade failed!  (Could not update version in config table)','',false);
+                    console_write_error('Upgrade failed!  (Could not update version in config table)','',false);
                 }
                 /// Main upgrade not success
             } else {
-                console_write(STDERR,'Main Upgrade failed!  See lib/db/upgrade.php','',false);
+                console_write_error('Main Upgrade failed!  See lib/db/upgrade.php','',false);
 
             }
             upgrade_log_finish();
@@ -978,7 +978,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         }
     } else {
         if (!set_config("version", $version)) {
-            console_write(STDERR,"A problem occurred inserting current version into databases",'',false);
+            console_write_error("A problem occurred inserting current version into databases",'',false);
         }
     }
 
@@ -1073,31 +1073,31 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         require_once($CFG->libdir.'/blocklib.php');
 
         if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( (!isset($INSTALL['sitefullname'])) || (!isset($INSTALL['siteshortname'])) || (!isset($INSTALL['sitesummary'])) || (!isset($INSTALL['sitenewsitems'])) )) ) {
-            console_write(STDOUT,'siteinfo');
+            console_write('siteinfo');
             print_newline();
         }
 
         if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['sitefullname'])) ) ) {
-            console_write(STDOUT,'sitefullname');
+            console_write('sitefullname');
             $sitefullname = read();
         } else if (isset($INSTALL['sitefullname'])) {
             $sitefullname = $INSTALL['sitefullname'];
         }
 
         if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['siteshortname'])) ) ) {
-            console_write(STDOUT,'siteshortname');
+            console_write('siteshortname');
             $siteshortname = read();
         } else if (isset($INSTALL['siteshortname'])) {
             $siteshortname = $INSTALL['siteshortname'];
         }
         if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['sitesummary'])) ) ) {
-            console_write(STDOUT,'sitesummary');
+            console_write('sitesummary');
             $sitesummary =read();
         } else if (isset($INSTALL['sitesummary'])) {
             $sitesummary = $INSTALL['sitesummary'];
         }
         if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['sitenewsitems'])) ) ) {
-            console_write(STDOUT,'sitenewsitems');
+            console_write('sitenewsitems');
             $sitenewsitems = read_int();
         } else if (isset($INSTALL['sitenewsitems'])) {
             $sitenewsitems = $INSTALL['sitenewsitems'];
@@ -1157,12 +1157,12 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
         // If full interactive or semi interactive with at least one option is not set print the admininfo message
         if ( ($interactive == CLI_FULL) || ($interactive == CLI_SEMI && (!isset($INSTALL['adminfirstname']) || !isset($INSTALL['adminlastname']) || !isset($INSTALL['adminusername']) || !isset($INSTALL['adminpassword']) || !isset($INSTALL['adminemail']) ))) {
-            console_write(STDOUT,'admininfo');
+            console_write('admininfo');
             print_newline();
         }
         // Assign the first name
         if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['adminfirstname'])) ) ) {
-            console_write(STDOUT,'adminfirstname');
+            console_write('adminfirstname');
             $adminfirstname = read();
         } else if (isset($INSTALL['adminfirstname'])) {
             $adminfirstname = $INSTALL['adminfirstname'];
@@ -1170,7 +1170,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
         // Assign the last name
         if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['adminlastname'])) ) ) {
-            console_write(STDOUT,'adminlastname');
+            console_write('adminlastname');
             $adminlastname = read();
         } else if (isset($INSTALL['adminlastname'])) {
             $adminlastname = $INSTALL['adminlastname'];
@@ -1178,7 +1178,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
         // Assign user name
         if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['adminusername'])) ) ) {
-            console_write(STDOUT,'adminusername');
+            console_write('adminusername');
             $adminusername = read();
         } else if (isset($INSTALL['adminusername'])) {
             $adminusername = $INSTALL['adminusername'];
@@ -1186,7 +1186,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
         // Assign password
         if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['adminpassword'])) ) ) {
-            console_write(STDOUT,'adminpassword');
+            console_write('adminpassword');
             $adminpassword = read();
         } else if (isset($INSTALL['adminpassword'])) {
             $adminpassword = $INSTALL['adminpassword'];
@@ -1194,7 +1194,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
         // Assign email
         if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( !isset($INSTALL['adminemail'])) ) ) {
-            console_write(STDOUT,'adminemail');
+            console_write('adminemail');
             $adminemail = read();
         } else if (isset($INSTALL['adminemail'])) {
             $adminemail = $INSTALL['adminemail'];
@@ -1234,8 +1234,8 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     }
     if ( $verbose > CLI_NO ) {
         print_newline();
-        console_write(STDOUT,'upgradingcompleted');
-        console_write(STDOUT, "\n", '', false);
+        console_write('upgradingcompleted');
+        console_write( "\n", '', false);
     }
 }
 

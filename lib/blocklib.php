@@ -1105,11 +1105,11 @@ function upgrade_blocks_db($continueto) {
                 print_footer('none');
                 exit;
                 } else if (CLI_UPGRADE && ($interactive > CLI_SEMI) ) {
-                    console_write(STDOUT,'askcontinue');
+                    console_write('askcontinue');
                     if (read_boolean()){
                         return ;
                     }else {
-                        console_write(STDERR,'','',false);
+                        console_write_error('','',false);
                     }
                 }
             } else {
@@ -1457,11 +1457,11 @@ function upgrade_blocks_plugins($continueto) {
         print_footer('none');
         die;
         } else if ( CLI_UPGRADE && ($interactive > CLI_SEMI) ) {
-            console_write(STDOUT,'askcontinue');
+            console_write('askcontinue');
             if (read_boolean()){
                 return ;
             }else {
-                console_write(STDERR,'','',false);
+                console_write_error('','',false);
             }
         }
     }

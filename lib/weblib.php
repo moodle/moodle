@@ -2248,7 +2248,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         if ($return) {
             return $output;
         } else {
-            console_write(STDOUT,$output . "\n",'',false);
+            console_write($output . "\n",'',false);
             return;
         }
     }
@@ -3845,8 +3845,7 @@ function print_heading($text, $align='', $size=2, $class='main', $return=false, 
         if (!CLI_SCRIPT) {
             echo $output;
         } else {
-            console_write(STDOUT,$output,'',false);
-            print_newline();
+            console_write($output."\n", '', false);
         }
     }
 }
@@ -6210,8 +6209,7 @@ function notify($message, $style='notifyproblem', $align='center', $return=false
     if (!CLI_SCRIPT) {
         echo $output;
     } else {
-        console_write(STDOUT,$output,'',false);
-        print_newline();
+        console_write($output."\n", '', false);
     }
 }
 
@@ -7091,6 +7089,64 @@ function is_in_popup() {
 
     return ($inpopup);
 }
+
+//=========================================================================//
+/**
+ * Write to standard out and error with exit in error.
+ *
+ * @param standard out/err $stream
+ * @param string  $identifier
+ * @param name of module $module
+ */
+function console_write($identifier, $module='install', $use_string_lib=true) {
+    if (!isset($_SERVER['REMOTE_ADDR'])) {
+        // real CLI script
+        if ($use_string_lib) {
+            fwrite(STDOUT, get_string($identifier, $module));
+        } else {
+            fwrite(STDOUT, $identifier);
+        }
+    } else {
+        // emulated cli script - something like cron
+        if ($use_string_lib) {
+            echo get_string($identifier, $module);
+        } else {
+            echo $identifier;
+        }
+    }
+}
+
+//=========================================================================//
+/**
+ * Write to standard out and error with exit in error.
+ *
+ * @param standard out/err $stream
+ * @param string  $identifier
+ * @param name of module $module
+ */
+function console_write_error($identifier, $module='install', $use_string_lib=true) {
+    if (!isset($_SERVER['REMOTE_ADDR'])) {
+        // real CLI script
+        if ($use_string_lib) {
+            fwrite(STDERR, get_string($identifier, $module));
+        } else {
+            fwrite(STDERR, $identifier);
+        }
+        fwrite(STDERR, "\n\n".get_string('aborting', $module)."\n\n");
+    } else {
+        // emulated cli script - something like cron
+        if ($use_string_lib) {
+            echo get_string($identifier, $module);
+        } else {
+            echo $identifier;
+        }
+        echo "\n\n".get_string('aborting', $module)."\n\n";
+    }
+
+    die; die; die;
+}
+
+
 class progress_bar {
     private $html_id;
     private $percent;
