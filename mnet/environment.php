@@ -24,52 +24,19 @@ class mnet_environment {
     function init() {
         global $CFG, $DB;
 
-        if (empty($CFG->mnet_dispatcher_mode)) {
-            set_config('mnet_dispatcher_mode', 'off');
-        }
-
         // Bootstrap the object data on first load.
-        if (empty($CFG->mnet_localhost_id) ) {
-            if (!$CFG->mnet_localhost_id = get_config(NULL, 'mnet_localhost_id')) {  // Double-check db
-                $this->wwwroot    = $CFG->wwwroot;
-                if (empty($_SERVER['SERVER_ADDR'])) {
-                    // SERVER_ADDR is only returned by Apache-like webservers
-                    $my_hostname = mnet_get_hostname_from_uri($CFG->wwwroot);
-                    $my_ip       = gethostbyname($my_hostname);  // Returns unmodified hostname on failure. DOH!
-                    if ($my_ip == $my_hostname) {
-                        $this->ip_address = 'UNKNOWN';
-                    } else {
-                        $this->ip_address = $my_ip;
-                    }
-                } else {
-                    $this->ip_address = $_SERVER['SERVER_ADDR'];
-                }
+        if (!$hostobject = $DB->get_record('mnet_host', array('id'=>$CFG->mnet_localhost_id))) {
+            return false;
+        }
+        $temparr = get_object_vars($hostobject);
+        foreach($temparr as $key => $value) {
+            $this->$key = $value;
+        }
+        unset($hostobject, $temparr);
 
-                if ($existingrecord = $DB->get_record('mnet_host', array('ip_address'=>$this->ip_address))) {
-                    $this->id = $existingrecord->id;
-                } else {  // make a new one
-                    $this->id       = $DB->insert_record('mnet_host', $this);
-                }
-    
-                set_config('mnet_localhost_id', $this->id);
-                $this->get_keypair();
-            }
-        } else {
-            $hostobject = $DB->get_record('mnet_host', array('id'=>$CFG->mnet_localhost_id));
-            if(is_object($hostobject)) {
-                $temparr = get_object_vars($hostobject);
-                foreach($temparr as $key => $value) {
-                    $this->$key = $value;
-                }
-                unset($hostobject, $temparr);
-            } else {
-                return false;
-            }
-
-            // Unless this is an install/upgrade, generate the SSL keys.
-            if(empty($this->public_key)) {
-                $this->get_keypair();
-            }
+        // Unless this is an install/upgrade, generate the SSL keys.
+        if (empty($this->public_key)) {
+            $this->get_keypair();
         }
 
         // We need to set up a record that represents 'all hosts'. Any rights
@@ -93,11 +60,12 @@ class mnet_environment {
     }
 
     function get_keypair() {
-        global $DB, $SESSION;
+        global $DB, $CFG;
 
         // We don't generate keys on install/upgrade because we want the USER
         // record to have an email address, city and country already.
-        if (!empty($SESSION->upgraderunning)) return true;
+        if (empty($CFG->rolesactive)) return true;
+        if ($CFG->mnet_dispatcher_mode == 'off') return true;
         if (!extension_loaded("openssl")) return true;
         if (!empty($this->keypair)) return true;
 

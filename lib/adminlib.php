@@ -128,6 +128,10 @@ function upgrade_db($version, $release) {
 
         $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml");
 
+    /// set all core default records and default settings
+        require_once("$CFG->libdir/db/install.php");
+        xmldb_main_install($version);
+
     /// Continue with the instalation
 
         // Install the roles system.
@@ -140,38 +144,12 @@ function upgrade_db($version, $release) {
         message_update_providers();
         message_update_providers('message');
 
-        /// This is used to handle any settings that must exist in $CFG but which do not exist in
-        /// admin_get_root()/$ADMIN as admin_setting objects (there are some exceptions).
-        apply_default_exception_settings(array('auth' => 'email',
-                                               'auth_pop3mailbox' => 'INBOX',
-                                               'enrol' => 'manual',
-                                               'enrol_plugins_enabled' => 'manual',
-                                               'style' => 'default',
-                                               'template' => 'default',
-                                               'theme' => 'standardwhite',
-                                               'filter_multilang_converted' => 1,
-                                               'backup_version' => 2008111700,
-                                               'backup_release' => '2.0 dev',
-                                               'blocks_version' => 2007081300, // might be removed soon
-                                              ));
-
-        // store main version
-        if (!set_config('version', $version)) {
-            print_error('cannotupdateversion', 'debug');
-        }
-
-
         // Write default settings unconditionally (i.e. even if a setting is already set, overwrite it)
-        // (this should only have any effect during initial install).
         admin_apply_default_settings(NULL, true);
-
         notify($strdatabasesuccess, 'notifysuccess');
 
         /// do not show certificates in log ;-)
         $DB->set_debug(false);
-
-        // hack - set up mnet
-        require_once $CFG->dirroot.'/mnet/lib.php';
 
         print_continue("index.php?continuesetuptesttables=$setuptesttables&amp;upgradetesttables=$upgradetesttables");
         print_footer('none');
@@ -190,7 +168,6 @@ function upgrade_db($version, $release) {
     }
 
     if ($version > $CFG->version) {  // upgrade
-
         require_once($CFG->libdir.'/db/upgrade.php'); // Defines upgrades
         require_once($CFG->libdir.'/db/upgradelib.php');   // Upgrade-related functions
 
@@ -297,14 +274,7 @@ function upgrade_db($version, $release) {
             print_heading($strdatabasechecking);
             $DB->set_debug(true);
         /// Launch the old main upgrade (if exists)
-            $status = true;
-            if (function_exists('main_upgrade')) {
-                $status = main_upgrade($CFG->version);
-            }
-        /// If succesful and exists launch the new main upgrade (XMLDB), called xmldb_main_upgrade
-            if ($status && function_exists('xmldb_main_upgrade')) {
-                $status = xmldb_main_upgrade($CFG->version);
-            }
+            $status = xmldb_main_upgrade($CFG->version);
             $DB->set_debug(false);
         /// If successful, continue upgrading roles and setting everything properly
             if ($status) {
@@ -369,13 +339,15 @@ function upgrade_db($version, $release) {
 
     if ($upgradedplugins) {
         print_continue($return_url);
-        print_footer();
+        print_footer('none');
         die;
     }
 
 /// Check for changes to RPC functions
-    require_once("$CFG->dirroot/$CFG->admin/mnet/adminlib.php");
-    upgrade_RPC_functions($return_url);  // Return here afterwards
+    if ($CFG->mnet_dispatcher_mode != 'off') {
+        require_once("$CFG->dirroot/$CFG->admin/mnet/adminlib.php");
+        upgrade_RPC_functions($return_url);  // Return here afterwards
+    }
 
 /// Check for local database customisations
 /// first old *.php update and then the new upgrade.php script
@@ -388,101 +360,11 @@ function upgrade_db($version, $release) {
     // Turn xmlstrictheaders back on now.
     $CFG->xmlstrictheaders = $origxmlstrictheaders;
 
-    if (!$unittest) {
-    /// Set up the blank site - to be customized later at the end of install.
-        if (! $site = get_site()) {
-            build_site_course();
-            redirect("index.php?continuesetuptesttables=$continuesetuptesttables&amp;upgradetesttables=$upgradetesttables");
-        }
-
-        // initialise default blocks on admin and site page if needed
-        if (empty($CFG->adminblocks_initialised)) {
-            require_once("$CFG->dirroot/$CFG->admin/pagelib.php");
-            require_once($CFG->libdir.'/blocklib.php');
-            page_map_class(PAGE_ADMIN, 'page_admin');
-            $page = page_create_object(PAGE_ADMIN, 0); // there must be some id number
-            blocks_repopulate_page($page);
-
-            //add admin_tree block to site if not already present
-            if ($admintree = $DB->get_record('block', array('name'=>'admin_tree'))) {
-                $page = page_create_object(PAGE_COURSE_VIEW, SITEID);
-                $pageblocks=blocks_get_by_page($page);
-                blocks_execute_action($page, $pageblocks, 'add', (int)$admintree->id, false, false);
-                if ($admintreeinstance = $DB->get_record('block_instance', array('pagetype'=>$page->type, 'pageid'=>SITEID, 'blockid'=>$admintree->id))) {
-                    $pageblocks=blocks_get_by_page($page);
-                    blocks_execute_action($page, $pageblocks, 'moveleft', $admintreeinstance, false, false);
-                }
-            }
-
-            set_config('adminblocks_initialised', 1);
-        }
-
-    /// Define the unique site ID code if it isn't already
-        if (empty($CFG->siteidentifier)) {    // Unique site identification code
-            set_config('siteidentifier', random_string(32).$_SERVER['HTTP_HOST']);
-        }
-
-    /// ugly hack - if mnet is not initialised include the mnet lib, it adds needed mnet records and configures config options
-    ///             we should not do such crazy stuff in lib functions!!!
-        if (empty($CFG->mnet_localhost_id)) {
-            require_once $CFG->dirroot.'/mnet/lib.php';
-        }
-
-    /// Check if the guest user exists.  If not, create one.
-        if (!$DB->record_exists('user', array('username'=>'guest'))) {
-            if (! $guest = create_guest_record()) {
-                notify("Could not create guest user record !!!");
-            }
-        }
-
-    /// Set up the admin user
-        if (empty($CFG->rolesactive)) {
-            build_context_path(); // just in case - should not be needed
-            create_admin_user();
-        }
-    } else {
-        build_site_course();
-        create_guest_record();
+/// make sure admin user is created - this is the last step because we need
+/// session to be working properly in order to edit admin account
+    if (empty($CFG->rolesactive)) {
         create_admin_user();
-        redirect($return_url);
     }
-}
-
-function build_site_course() {
-    global $CFG, $DB, $unittest;
-
-    $continuesetuptesttables= optional_param('continuesetuptesttables', $unittest, PARAM_BOOL);
-
-    // We are about to create the site "course"
-    require_once($CFG->libdir.'/blocklib.php');
-
-    $newsite = new object();
-    $newsite->fullname = "";
-    $newsite->shortname = "";
-    $newsite->summary = NULL;
-    $newsite->newsitems = 3;
-    $newsite->numsections = 0;
-    $newsite->category = 0;
-    $newsite->format = 'site';  // Only for this course
-    $newsite->teacher = get_string("defaultcourseteacher");
-    $newsite->teachers = get_string("defaultcourseteachers");
-    $newsite->student = get_string("defaultcoursestudent");
-    $newsite->students = get_string("defaultcoursestudents");
-    $newsite->timemodified = time();
-
-    if (!$newid = $DB->insert_record('course', $newsite)) {
-        print_error('cannotsetupsite', 'error');
-    }
-    // make sure course context exists
-    get_context_instance(CONTEXT_COURSE, $newid);
-
-    // Site created, add blocks for it
-    $page = page_create_object(PAGE_COURSE_VIEW, $newid);
-    blocks_repopulate_page($page); // Return value not checked because you can always edit later
-
-    // create default course category
-    $cat = get_course_category();
-
 }
 
 /**
@@ -1329,9 +1211,9 @@ function create_admin_user($user_input=NULL) {
                 print_error('noadminrole', 'message');
             }
 
-            $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+            $systemcontext = get_context_instance(CONTEXT_SYSTEM);
             foreach ($adminroles as $adminrole) {
-                role_assign($adminrole->id, $user->id, 0, $sitecontext->id);
+                role_assign($adminrole->id, $user->id, 0, $systemcontext->id);
             }
 
             //set default message preferences
@@ -2120,7 +2002,8 @@ class admin_externalpage extends part_of_admin_tree {
      * @return bool True if user has access, false otherwise.
      */
     function check_access() {
-        if (!get_site()) {
+        global $CFG;
+        if (empty($CFG->rolesactive)) {
             return true; // no access check before site is fully set up
         }
         $context = empty($this->context) ? get_context_instance(CONTEXT_SYSTEM) : $this->context;
@@ -2270,7 +2153,8 @@ class admin_settingpage extends part_of_admin_tree {
 
     // see admin_externalpage
     function check_access() {
-        if (!get_site()) {
+        global $CFG;
+        if (empty($CFG->rolesactive)) {
             return true; // no access check before site is fully set up
         }
         $context = empty($this->context) ? get_context_instance(CONTEXT_SYSTEM) : $this->context;
@@ -5347,7 +5231,7 @@ function admin_externalpage_print_footer() {
  * Returns the reference to admin tree root
  * @return reference
  */
-function &admin_get_root($reload=false, $requirefulltree=true) {
+function admin_get_root($reload=false, $requirefulltree=true) {
     global $CFG, $DB;
 
     static $ADMIN = NULL;
@@ -5390,12 +5274,12 @@ function &admin_get_root($reload=false, $requirefulltree=true) {
                 // plugins are loaded last - they may insert pages anywhere
                 continue;
             }
-            include($file);
+            require($file);
         }
-        include($CFG->dirroot.'/'.$CFG->admin.'/settings/plugins.php');
+        require($CFG->dirroot.'/'.$CFG->admin.'/settings/plugins.php');
 
         if (file_exists($CFG->dirroot.'/local/settings.php')) {
-            include_once($CFG->dirroot.'/local/settings.php');
+            require($CFG->dirroot.'/local/settings.php');
         }
     }
 
@@ -5414,7 +5298,7 @@ function admin_apply_default_settings($node=NULL, $unconditional=true) {
     global $CFG;
 
     if (is_null($node)) {
-        $node =& admin_get_root(true, true);
+        $node = admin_get_root(true, true);
     }
 
     if (is_a($node, 'admin_category')) {
@@ -5620,16 +5504,6 @@ function admin_output_new_settings_by_page($node) {
     }
 
     return $return;
-}
-
-/**
- * Unconditionally applies default admin settings in main config table
- * @param array $defaults array of string values
- */
-function apply_default_exception_settings($defaults) {
-    foreach($defaults as $key => $value) {
-        set_config($key, $value, NULL);
-    }
 }
 
 /**

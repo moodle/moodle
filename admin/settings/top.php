@@ -6,11 +6,11 @@
 // are added to them.
 
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-if (get_site()) {
-    $hassiteconfig = has_capability('moodle/site:config', $systemcontext);
-} else {
+if (empty($CFG->rolesactive)) {
     // installation starts - no permission checks
     $hassiteconfig = true;
+} else {
+    $hassiteconfig = has_capability('moodle/site:config', $systemcontext);
 }
 
 $ADMIN->add('root', new admin_externalpage('adminnotifications', get_string('notifications'), "$CFG->wwwroot/$CFG->admin/index.php"));

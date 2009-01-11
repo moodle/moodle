@@ -2834,9 +2834,8 @@ function create_guest_record() {
     $guest->lang        = $CFG->lang;
     $guest->timemodified= time();
 
-    if (! $guest->id = $DB->insert_record('user', $guest)) {
-        return false;
-    }
+    $id = $DB->insert_record('user', $guest);
+    $guest = $DB->get_record('user', array('id'=>$id));
 
     return $guest;
 }

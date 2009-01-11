@@ -94,7 +94,7 @@ class completion_info {
      */
     public static function is_enabled_for_site() {
         global $CFG;
-        return $CFG->enablecompletion;
+        return !empty($CFG->enablecompletion);
     }
 
     /**

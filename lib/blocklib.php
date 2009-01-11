@@ -1072,32 +1072,27 @@ function blocks_repopulate_page($page) {
 //This function finds all available blocks and install them
 //into blocks table or do all the upgrade process if newer
 function upgrade_blocks_plugins() {
-    global $CFG, $interactive, $DB;
+    global $CFG, $interactive, $DB, $SITE;
+
+    require_once($CFG->dirroot .'/blocks/moodleblock.class.php');
 
     $updated_blocks = false;
 
-    $blocktitles = array();
+    $blocktitles   = array();
     $invalidblocks = array();
-    $validblocks = array();
-    $notices = array();
+    $validblocks   = array();
+    $notices       = array();
 
     //Count the number of blocks in db
     $blockcount = $DB->count_records('block');
     //If there isn't records. This is the first install, so I remember it
-    if ($blockcount == 0) {
-        $first_install = true;
-    } else {
-        $first_install = false;
-    }
-
-    $site = get_site();
+    $first_install = ($blockcount == 0);
 
     if (!$blocks = get_list_of_plugins('blocks') ) {
         print_error('noblocks', 'debug');
     }
 
-    include_once($CFG->dirroot .'/blocks/moodleblock.class.php');
-    if(!class_exists('block_base')) {
+    if (!class_exists('block_base')) {
         print_error('noblockbase');
     }
 
@@ -1308,24 +1303,22 @@ function upgrade_blocks_plugins() {
         }
     }
 
-    // Finally, if we are in the first_install of BLOCKS (this means that we are
-    // upgrading from Moodle < 1.3), put blocks in all existing courses.
+    // Finally, if we are in the first_install of BLOCKS setup frontpage and admin page blocks
     if ($first_install) {
+        require_once($CFG->dirroot.'/'.$CFG->admin.'/pagelib.php');
+
         upgrade_log_start();
-        //Iterate over each course
+        //Iterate over each course - there should be only site course here now
         if ($courses = $DB->get_records('course')) {
             foreach ($courses as $course) {
                 $page = page_create_object(PAGE_COURSE_VIEW, $course->id);
                 blocks_repopulate_page($page);
             }
         }
-    }
 
-    if (!empty($CFG->siteblocksadded)) {     /// This is a once-off hack to make a proper upgrade
-        upgrade_log_start();
-        $page = page_create_object(PAGE_COURSE_VIEW, SITEID);
+        page_map_class(PAGE_ADMIN, 'page_admin');
+        $page = page_create_object(PAGE_ADMIN, 0); // there must be some id number
         blocks_repopulate_page($page);
-        $DB->delete_records('config', array('name'=>'siteblocksadded'));
     }
 
     upgrade_log_finish();

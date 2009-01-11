@@ -24,13 +24,6 @@
         $session_has_timed_out = false;
     }
 
-/// Check if the guest user exists.  If not, create one.
-    if (!$DB->record_exists('user', array('username'=>'guest', 'mnethostid'=>$CFG->mnet_localhost_id))) {
-        if (! $guest = create_guest_record()) {
-            notify('Could not create guest user record !!!');
-        }
-    }
-
 // setup and verify auth settings
 
 if (!isset($CFG->registerauth)) {

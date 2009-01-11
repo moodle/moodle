@@ -350,18 +350,15 @@ function mnet_generate_keypair($dn = null, $days=28) {
     $break = strpos($host.'/' , '/');
     $host   = substr($host, 0, $break);
 
-    if ($result = $DB->get_record('course', array("id"=>SITEID))) {
-        $organization = $result->fullname;
-    } else {
-        $organization = 'None';
-    }
+    $site = get_site();
+    $organization = $site->fullname;
 
     $keypair = array();
 
     $country  = 'NZ';
     $province = 'Wellington';
     $locality = 'Wellington';
-    $email    = $CFG->noreplyaddress;
+    $email    = !empty($CFG->noreplyaddress) ? $CFG->noreplyaddress : 'noreply@'.$_SERVER['HTTP_HOST'];
 
     if(!empty($USER->country)) {
         $country  = $USER->country;

@@ -66,7 +66,7 @@ if ($hassiteconfig
     }
 
 
-    if(empty($CFG->loginhttps)) {
+    if (empty($CFG->loginhttps)) {
         $securewwwroot = $CFG->wwwroot;
     } else {
         $securewwwroot = str_replace('http:','https:',$CFG->wwwroot);

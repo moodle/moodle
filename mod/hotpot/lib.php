@@ -1,16 +1,6 @@
 <?PHP  // $Id$
 
 //////////////////////////////////
-/// CONFIGURATION settings
-
-if (!isset($CFG->hotpot_showtimes)) {
-    set_config("hotpot_showtimes", 0);
-}
-if (!isset($CFG->hotpot_excelencodings)) {
-    set_config("hotpot_excelencodings", "");
-}
-
-//////////////////////////////////
 /// CONSTANTS and GLOBAL VARIABLES
 
 $CFG->hotpotroot = "$CFG->dirroot/mod/hotpot";

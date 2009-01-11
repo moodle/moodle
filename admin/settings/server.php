@@ -12,7 +12,7 @@ $temp->add(new admin_setting_configselect('gdversion', get_string('gdversion','a
                                                                                                                                                           '2' => get_string('gd2'))));
 $temp->add(new admin_setting_configexecutable('pathtodu', get_string('pathtodu', 'admin'), get_string('configpathtodu', 'admin'), ''));
 $temp->add(new admin_setting_configexecutable('aspellpath', get_string('aspellpath', 'admin'), get_string('edhelpaspellpath'), ''));
-$ADMIN->add('server', $temp, 0);
+$ADMIN->add('server', $temp);
 
 
 
@@ -69,7 +69,7 @@ if (isloggedin()) {
 $temp->add(new admin_setting_configtext('supportname', get_string('supportname', 'admin'), get_string('configsupportname', 'admin'), $primaryadminname, PARAM_NOTAGS));
 $temp->add(new admin_setting_configtext('supportemail', get_string('supportemail', 'admin'), get_string('configsupportemail', 'admin'), $primaryadminemail, PARAM_NOTAGS));
 $temp->add(new admin_setting_configtext('supportpage', get_string('supportpage', 'admin'), get_string('configsupportpage', 'admin'), '', PARAM_URL));
-$ADMIN->add('server', $temp, 100);
+$ADMIN->add('server', $temp);
 
 
 
@@ -88,7 +88,7 @@ $temp->add(new admin_setting_configselect('sessiontimeout', get_string('sessiont
 $temp->add(new admin_setting_configtext('sessioncookie', get_string('sessioncookie', 'admin'), get_string('configsessioncookie', 'admin'), '', PARAM_ALPHANUM));
 $temp->add(new admin_setting_configtext('sessioncookiepath', get_string('sessioncookiepath', 'admin'), get_string('configsessioncookiepath', 'admin'), '/', PARAM_LOCALURL));
 $temp->add(new admin_setting_configtext('sessioncookiedomain', get_string('sessioncookiedomain', 'admin'), get_string('configsessioncookiedomain', 'admin'), '', PARAM_TEXT, 50));
-$ADMIN->add('server', $temp, 50);
+$ADMIN->add('server', $temp);
 
 
 

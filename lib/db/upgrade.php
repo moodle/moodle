@@ -1309,15 +1309,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2009010800);
     }
 
-    if ($result && $oldversion < 2009010801) {
-    /// Remove unused settings
-        unset_config('zip');
-        unset_config('unzip');
-
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009010801);
-    }
-
     if ($result && $oldversion < 2009011000) {
 
     /// Changing nullability of field configdata on table block_instance to null
@@ -1331,6 +1322,17 @@ function xmldb_main_upgrade($oldversion) {
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2009011000);
     }
+
+    if ($result && $oldversion < 2009011100) {
+    /// Remove unused settings
+        unset_config('zip');
+        unset_config('unzip');
+        unset_config('adminblocks_initialised');
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009011100);
+    }
+
 
     return $result;
 }
