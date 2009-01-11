@@ -150,7 +150,7 @@ function initialise_fullme() {
         $_SERVER['REQUEST_URI'] = $rurl['fullpath']; // extra IIS compatibility
 
     } else {
-        print_error('usupportedwebserver', 'error', '', $_SERVER['SERVER_SOFTWARE']);
+        print_error('unsupportedwebserver', 'error', '', $_SERVER['SERVER_SOFTWARE']);
     }
 
     if (strpos($rurl['path'], $url['path']) === 0) {
