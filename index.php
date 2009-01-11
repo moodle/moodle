@@ -68,7 +68,7 @@
         user_accesstime_log();
     }
 
-    if ($CFG->rolesactive) { // if already using roles system
+    if (!empty($CFG->rolesactive)) { // if already using roles system
         if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
             if (moodle_needs_upgrading()) {
                 redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
@@ -79,7 +79,7 @@
             }
         }
     } else { // if upgrading from 1.6 or below
-        if (is_siteadmin() && moodle_needs_upgrading()) {
+        if (is_siteadmin($USER->id) && moodle_needs_upgrading()) {
             redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
         }
     }

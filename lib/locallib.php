@@ -172,7 +172,6 @@ function upgrade_local_db($continueto) {
         }
 
     } else if ($local_version < $CFG->local_version) {
-        upgrade_log_start();
         notify('WARNING!!!  The local version you are using is OLDER than the version that made these databases!');
     }
 
@@ -180,8 +179,6 @@ function upgrade_local_db($continueto) {
     if (!update_capabilities('local')) {
         print_error('cannotsetupcapformod', 'error', '', 'local');
     }
-
-    upgrade_log_finish();
 }
 
 /**

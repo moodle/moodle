@@ -14,11 +14,6 @@ require_once($CFG->libdir.'/ddllib.php');
 require_once($CFG->libdir.'/xmlize.php');
 require_once($CFG->libdir.'/messagelib.php');      // Messagelib functions
 
-global $upgradeloghandle, $upgradelogbuffer;
-
-$upgradeloghandle = false;
-$upgradelogbuffer = '';
-
 define('INSECURE_DATAROOT_WARNING', 1);
 define('INSECURE_DATAROOT_ERROR', 2);
 
@@ -116,7 +111,6 @@ function upgrade_db($version, $release) {
     /// return to original debugging level
         $CFG->debug = $origdebug;
         error_reporting($CFG->debug);
-        upgrade_log_start();
         $DB->set_debug(true);
 
         if (!$DB->setup_is_unicodedb()) {
@@ -127,6 +121,7 @@ function upgrade_db($version, $release) {
         }
 
         $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml");
+        upgrade_log_start(); // move here because we want the flag to be stored in config table ;-)
 
     /// set all core default records and default settings
         require_once("$CFG->libdir/db/install.php");
@@ -310,12 +305,9 @@ function upgrade_db($version, $release) {
                 print_footer('none');
                 die;
             }
-            upgrade_log_finish();
         }
     } else if ($version < $CFG->version) {
-        upgrade_log_start();
         notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
-        upgrade_log_finish();
     }
 
 /// Updated human-readable release version if necessary
@@ -837,12 +829,9 @@ function upgrade_plugins($type, $dir) {
                 echo '<hr />';
             }
         } else {
-            upgrade_log_start();
             print_error('cannotdowngrade', 'debug', '', (object)array('oldversion'=>$installedversion, 'newversion'=>$plugin->version));
         }
     }
-
-    upgrade_log_finish();
 
     return $updated_plugins;
 }
@@ -972,7 +961,6 @@ function upgrade_activity_modules() {
                 $updated_modules = true;
 
             } else {
-                upgrade_log_start();
                 print_error('cannotdowngrade', 'debug', '', (object)array('oldversion'=>$currmodule->version, 'newversion'=>$module->version));
             }
 
@@ -1064,8 +1052,6 @@ function upgrade_activity_modules() {
             }
         }
     }
-
-    upgrade_log_finish(); // finish logging if started
 
     return $updated_modules;
 }
@@ -1246,7 +1232,7 @@ function create_admin_user($user_input=NULL) {
  * Marks start of upgrade, blocks any other access to site.
  * The upgrade is finished at the end of script or after timeout.
  */
-function start_upgrade() {
+function upgrade_log_start() {
     global $CFG, $DB;
 
     static $started = false;
@@ -1257,89 +1243,26 @@ function start_upgrade() {
     } else {
         ignore_user_abort(true);
         register_shutdown_function('upgrade_finished_handler');
-        if ($CFG->version === '' || !$DB->get_manager()->table_exists(new xmldb_table('config'))) {
-            // db not installed yet
-            $CFG->upgraderunning = time()+300;
-        } else {
-            set_config('upgraderunning', time()+300);
-        }
+        set_config('upgraderunning', time()+300);
         $started = true;
     }
 }
 
 /**
- * Internal function - executed at the very end of each upgrade.
+ * Internal function - executed if upgrade interruped.
  */
 function upgrade_finished_handler() {
     upgrade_log_finish();
-    unset_config('upgraderunning');
-    ignore_user_abort(false);
 }
 
 /**
- * Start logging of output into file (if not disabled) and
- * prevent aborting and concurrent execution of upgrade script.
- *
- * Please note that you can not write into session variables after calling this function!
- *
- * This function may be called repeatedly.
- */
-function upgrade_log_start() {
-    global $upgradeloghandle;
-
-    start_upgrade(); // make sure the upgrade is started
-
-    if ($upgradeloghandle and ($upgradeloghandle !== 'error')) {
-        return;
-    }
-
-    make_upload_directory('upgradelogs');
-    ob_start('upgrade_log_callback', 2); // function for logging to disk; flush each line of text ASAP
-}
-
-/**
- * Terminate logging of output, flush all data.
- *
- * Please make sure that each upgrade_log_start() is properly terminated by
- * this function or print_error().
+ * Indicates upgrade is finished.
  *
  * This function may be called repeatedly.
  */
 function upgrade_log_finish() {
-    global $CFG, $upgradeloghandle, $upgradelogbuffer;
-
-    @ob_end_flush();
-    if ($upgradelogbuffer !== '') {
-        @fwrite($upgradeloghandle, $upgradelogbuffer);
-        $upgradelogbuffer = '';
-    }
-    if ($upgradeloghandle and ($upgradeloghandle !== 'error')) {
-        @fclose($upgradeloghandle);
-        $upgradeloghandle = false;
-    }
-}
-
-/**
- * Callback function for logging into files. Not more than one file is created per minute,
- * upgrade session (terminated by upgrade_log_finish()) is always stored in one file.
- *
- * This function must not output any characters or throw warnigns and errors!
- */
-function upgrade_log_callback($string) {
-    global $CFG, $upgradeloghandle, $upgradelogbuffer;
-
-    if (empty($CFG->disableupgradelogging) and ($string != '') and ($upgradeloghandle !== 'error')) {
-        if ($upgradeloghandle or ($upgradeloghandle = @fopen($CFG->dataroot.'/upgradelogs/upg_'.date('Ymd-Hi').'.html', 'a'))) {
-            $upgradelogbuffer .= $string;
-            if (strlen($upgradelogbuffer) > 2048) { // 2kB write buffer
-                @fwrite($upgradeloghandle, $upgradelogbuffer);
-                $upgradelogbuffer = '';
-            }
-        } else {
-            $upgradeloghandle = 'error';
-        }
-    }
-    return $string;
+    unset_config('upgraderunning');
+    ignore_user_abort(false);
 }
 
 /**

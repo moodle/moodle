@@ -966,12 +966,9 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
                 console_write_error('Main Upgrade failed!  See lib/db/upgrade.php','',false);
 
             }
-            upgrade_log_finish();
 
         } else if ($version < $CFG->version) {
-            upgrade_log_start();
             notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
-            upgrade_log_finish();
         }
     } else {
         if (!set_config("version", $version)) {
