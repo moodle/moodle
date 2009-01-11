@@ -2272,7 +2272,7 @@ function xmldb_debug($message, $object) {
 function user_can_create_courses() {
     global $DB;
     $catsrs = $DB->get_recordset('course_categories');
-    foreach ($cats as $cat) {
+    foreach ($catsrs as $cat) {
         if (has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $cat->id))) {
             $catsrs->close();
             return true;
