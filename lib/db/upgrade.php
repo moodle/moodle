@@ -1333,6 +1333,23 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2009011100);
     }
 
+    if ($result && $oldversion < 2009011101) {
+    /// Migrate backup settings to core plugin config table
+        $configs = $DB->get_records('backup_config');
+        foreach ($configs as $config) {
+            set_config($config->name, $config->value, 'backup');
+        }
+
+    /// Define table to be dropped
+        $table = new xmldb_table('backup_config');
+
+    /// Launch drop table for old backup config
+        $dbman->drop_table($table);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009011101);
+    }
+
 
     return $result;
 }

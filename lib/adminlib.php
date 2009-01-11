@@ -1830,16 +1830,7 @@ class admin_setting {
 
     function config_read($name) {
         global $CFG;
-        if ($this->plugin === 'backup') {
-            require_once($CFG->dirroot.'/backup/lib.php');
-            $backupconfig = backup_get_config();
-            if (isset($backupconfig->$name)) {
-                return $backupconfig->$name;
-            } else {
-                return NULL;
-            }
-
-        } else if (!empty($this->plugin)) {
+        if (!empty($this->plugin)) {
             $value = get_config($this->plugin, $name);
             return $value === false ? NULL : $value;
 
@@ -1853,13 +1844,7 @@ class admin_setting {
     }
 
     function config_write($name, $value) {
-        global $CFG;
-        if ($this->plugin === 'backup') {
-            require_once($CFG->dirroot.'/backup/lib.php');
-            return (boolean)backup_set_config($name, $value);
-        } else {
-            return (boolean)set_config($name, $value, $this->plugin);
-        }
+        return (boolean)set_config($name, $value, $this->plugin);
     }
 
     /**

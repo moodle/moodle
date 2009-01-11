@@ -4,30 +4,14 @@
 
     require_once($CFG->dirroot.'/lib/uploadlib.php');
 
-    //Sets a name/value pair in backup_config table
+    //Sets a name/value pair in config_plugin table
     function backup_set_config($name, $value) {
-        global $DB;
-
-        if ($DB->get_field("backup_config", "name", array("name"=>$name))) {
-            return $DB->set_field("backup_config", "value", $value, array("name"=>$name));
-        } else {
-            $config = new object();
-            $config->name  = $name;
-            $config->value = $value;
-            return $DB->insert_record("backup_config", $config);
-        }
+        return set_config($name, $value, 'backup');
     }
 
-    //Gets all the information from backup_config table
+    //Gets all the information from config_plugin table
     function backup_get_config() {
-        global $DB;
-
-        $backup_config = null;
-        if ($configs = $DB->get_records("backup_config")) {
-            foreach ($configs as $config) {
-                $backup_config[$config->name] = $config->value;
-            }
-        }
+        $backup_config = get_config('backup');
         return (object)$backup_config;
     }
 

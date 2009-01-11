@@ -702,7 +702,7 @@ function set_config($name, $value, $plugin=NULL) {
             $config = new object();
             $config->name  = $name;
             $config->value = $value;
-            return $DB->insert_record('config', $config);
+            return $DB->insert_record('config', $config, false);
         }
 
     } else { // plugin scope
@@ -720,7 +720,7 @@ function set_config($name, $value, $plugin=NULL) {
             $config->plugin = $plugin;
             $config->name   = $name;
             $config->value  = $value;
-            return $DB->insert_record('config_plugins', $config);
+            return $DB->insert_record('config_plugins', $config, false);
         }
     }
 }
