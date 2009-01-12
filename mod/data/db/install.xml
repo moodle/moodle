@@ -130,18 +130,4 @@
       </KEYS>
     </TABLE>
   </TABLES>
-  <STATEMENTS>
-    <STATEMENT NAME="insert log_display" TYPE="insert" TABLE="log_display" COMMENT="Initial insert of records on table log_display">
-      <SENTENCES>
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('data', 'view', 'data', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('data', 'add', 'data', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('data', 'update', 'data', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('data', 'record delete', 'data', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('data', 'fields add', 'data_fields', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('data', 'fields update', 'data_fields', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('data', 'templates saved', 'data', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('data', 'templates def', 'data', 'name')" />
-      </SENTENCES>
-    </STATEMENT>
-  </STATEMENTS>
 </XMLDB>

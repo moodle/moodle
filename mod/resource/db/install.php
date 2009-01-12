@@ -1,0 +1,17 @@
+<?php  //$Id$
+
+// This file replaces:
+//   * STATEMENTS section in db/install.xml
+//   * lib.php/modulename_install() post installation hook
+//   * partially defaults.php
+
+function xmldb_resource_install() {
+    global $DB;
+
+/// Install logging support
+
+    upgrade_log_display_entry('resource', 'view', 'resource', 'name');
+    upgrade_log_display_entry('resource', 'update', 'resource', 'name');
+    upgrade_log_display_entry('resource', 'add', 'resource', 'name');
+
+}

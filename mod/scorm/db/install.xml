@@ -194,14 +194,4 @@
       </KEYS>
     </TABLE>
   </TABLES>
-  <STATEMENTS>
-    <STATEMENT NAME="insert log_display" TYPE="insert" TABLE="log_display" COMMENT="Initial insert of records on table log_display">
-      <SENTENCES>
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('scorm', 'view', 'scorm', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('scorm', 'review', 'scorm', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('scorm', 'update', 'scorm', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('scorm', 'add', 'scorm', 'name')" />
-      </SENTENCES>
-    </STATEMENT>
-  </STATEMENTS>
 </XMLDB>

@@ -166,22 +166,4 @@
       </INDEXES>
     </TABLE>
   </TABLES>
-  <STATEMENTS>
-    <STATEMENT NAME="insert log_display" TYPE="insert" TABLE="log_display" COMMENT="Initial insert of records on table log_display">
-      <SENTENCES>
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('forum', 'add', 'forum', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('forum', 'update', 'forum', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('forum', 'add discussion', 'forum_discussions', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('forum', 'add post', 'forum_posts', 'subject')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('forum', 'update post', 'forum_posts', 'subject')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('forum', 'user report', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('forum', 'move discussion', 'forum_discussions', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('forum', 'view subscribers', 'forum', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('forum', 'view discussion', 'forum_discussions', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('forum', 'view forum', 'forum', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('forum', 'subscribe', 'forum', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('forum', 'unsubscribe', 'forum', 'name')" />
-      </SENTENCES>
-    </STATEMENT>
-  </STATEMENTS>
 </XMLDB>

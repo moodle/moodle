@@ -29,13 +29,6 @@ if(!isset($SESSION->feedback) OR !is_object($SESSION->feedback)) {
     $SESSION->feedback = new object();
 }
 
-/** 
- * Code to be executed when a module is installed
- */ 
-function feedback_install() {
-    return true; 
-}
-
 /**
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, null if doesn't know

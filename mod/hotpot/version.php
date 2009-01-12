@@ -3,7 +3,7 @@
 ///  Code fragment to define the version of hotpot
 ///  This fragment is called by moodle_needs_upgrading() and /admin/index.php
 /////////////////////////////////////////////////////////////////////////////////
-$module->version  = 2007101511;   // release date of this version (see note below)
+$module->version  = 2008011200;   // release date of this version (see note below)
 $module->release  = 'v2.4.2';    // human-friendly version name (used in mod/hotpot/lib.php)
 $module->requires = 2007101509;  // Requires this Moodle version
 $module->cron     = 0;            // period for cron to check this module (secs)

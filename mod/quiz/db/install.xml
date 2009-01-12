@@ -121,29 +121,4 @@
       </KEYS>
     </TABLE>
   </TABLES>
-  <STATEMENTS>
-    <STATEMENT NAME="insert log_display" TYPE="insert" TABLE="log_display" COMMENT="Initial insert of records on table log_display" NEXT="insert quiz_report">
-      <SENTENCES>
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('quiz', 'add', 'quiz', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('quiz', 'update', 'quiz', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('quiz', 'view', 'quiz', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('quiz', 'report', 'quiz', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('quiz', 'attempt', 'quiz', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('quiz', 'submit', 'quiz', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('quiz', 'review', 'quiz', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('quiz', 'editquestions', 'quiz', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('quiz', 'preview', 'quiz', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('quiz', 'start attempt', 'quiz', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('quiz', 'close attempt', 'quiz', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('quiz', 'continue attempt', 'quiz', 'name')" />
-      </SENTENCES>
-    </STATEMENT>
-    <STATEMENT NAME="insert quiz_report" TYPE="insert" TABLE="quiz_report" COMMENT="Initial insert of records on table quiz_report" PREVIOUS="insert log_display">
-      <SENTENCES>
-        <SENTENCE TEXT="(name, displayorder) VALUES ('overview', '10000')" />
-        <SENTENCE TEXT="(name, displayorder) VALUES ('responses', '9000')" />
-        <SENTENCE TEXT="(name, displayorder) VALUES ('grading', '6000')" />
-      </SENTENCES>
-    </STATEMENT>
-  </STATEMENTS>
 </XMLDB>

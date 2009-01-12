@@ -68,13 +68,6 @@ define("QUIZ_MAX_EVENT_LENGTH", 5*24*60*60);   // 5 days maximum
 /// FUNCTIONS ///////////////////////////////////////////////////////////////////
 
 /**
- * Code to be executed when a module is installed
- */ 
-function quiz_install() {
-    return true; 
-}
-
-/**
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
  * will create a new instance and return the id number

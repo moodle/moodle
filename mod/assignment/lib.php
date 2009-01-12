@@ -1967,13 +1967,6 @@ class mod_assignment_upload_file_form extends moodleform {
 /// OTHER STANDARD FUNCTIONS ////////////////////////////////////////////////////////
 
 /**
- * Code to be executed when a module is installed
- */
-function assignment_install() {
-    return true;
-}
-
-/**
  * Deletes an assignment instance
  *
  * This is done by calling the delete_instance() method of the assignment type class

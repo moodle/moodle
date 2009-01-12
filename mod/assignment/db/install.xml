@@ -61,15 +61,4 @@
       </INDEXES>
     </TABLE>
   </TABLES>
-  <STATEMENTS>
-    <STATEMENT NAME="insert log_display" TYPE="insert" TABLE="log_display" COMMENT="Initial insert of records on table log_display">
-      <SENTENCES>
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('assignment', 'view', 'assignment', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('assignment', 'add', 'assignment', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('assignment', 'update', 'assignment', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('assignment', 'view submission', 'assignment', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('assignment', 'upload', 'assignment', 'name')" />
-      </SENTENCES>
-    </STATEMENT>
-  </STATEMENTS>
 </XMLDB>

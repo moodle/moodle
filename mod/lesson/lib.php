@@ -11,14 +11,6 @@ require_once($CFG->libdir.'/eventslib.php');
 
 define("LESSON_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
 
-/** 
- * Code to be executed when a module is installed
- */ 
-function lesson_install() {
-    return true; 
-}
-
-
 /**
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function

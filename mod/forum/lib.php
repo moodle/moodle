@@ -31,14 +31,6 @@ define ('FORUM_AGGREGATE_SUM', 5);
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
 
 /**
- * Code to be executed when a module is installed
- */
-function forum_install() {
-    return true;
-}
-
-
-/**
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
  * will create a new instance and return the id number

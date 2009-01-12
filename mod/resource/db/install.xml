@@ -25,13 +25,4 @@
       </INDEXES>
     </TABLE>
   </TABLES>
-  <STATEMENTS>
-    <STATEMENT NAME="insert log_display" TYPE="insert" TABLE="log_display" COMMENT="Initial insert of records on table log_display">
-      <SENTENCES>
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('resource', 'view', 'resource', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('resource', 'update', 'resource', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('resource', 'add', 'resource', 'name')" />
-      </SENTENCES>
-    </STATEMENT>
-  </STATEMENTS>
 </XMLDB>

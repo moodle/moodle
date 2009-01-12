@@ -151,24 +151,4 @@
       </INDEXES>
     </TABLE>
   </TABLES>
-  <STATEMENTS>
-    <STATEMENT NAME="insert log_display" TYPE="insert" TABLE="log_display" COMMENT="Initial insert of records on table log_display">
-      <SENTENCES>
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('glossary', 'add', 'glossary', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('glossary', 'update', 'glossary', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('glossary', 'view', 'glossary', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('glossary', 'view all', 'glossary', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('glossary', 'add entry', 'glossary', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('glossary', 'update entry', 'glossary', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('glossary', 'add category', 'glossary', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('glossary', 'update category', 'glossary', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('glossary', 'delete category', 'glossary', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('glossary', 'add comment', 'glossary', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('glossary', 'update comment', 'glossary', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('glossary', 'delete comment', 'glossary', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('glossary', 'approve entry', 'glossary', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('glossary', 'view entry', 'glossary_entries', 'concept')" />
-      </SENTENCES>
-    </STATEMENT>
-  </STATEMENTS>
 </XMLDB>

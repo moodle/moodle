@@ -158,15 +158,4 @@
       </INDEXES>
     </TABLE>
   </TABLES>
-  <STATEMENTS>
-    <STATEMENT NAME="insert log_display" TYPE="insert" TABLE="log_display" COMMENT="Initial insert of records on table log_display">
-      <SENTENCES>
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('feedback', 'startcomplete', 'feedback', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('feedback', 'submit', 'feedback', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('feedback', 'delete', 'feedback', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('feedback', 'view', 'feedback', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('feedback', 'view all', 'course', 'shortname')" />
-      </SENTENCES>
-    </STATEMENT>
-  </STATEMENTS>
 </XMLDB>

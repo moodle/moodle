@@ -18,6 +18,13 @@ function xmldb_hotpot_upgrade($oldversion) {
         // ensure "hotpot_upgrade_grades" function is available
         require_once $CFG->dirroot.'/mod/hotpot/lib.php';
         hotpot_upgrade_grades();
+        upgrade_mod_savepoint(true, 2007101511, 'hotpot');
+    }
+
+    if ($result && $oldversion < 2008011200) {
+        // remove not used setting
+        unset_config('hotpot_initialdisable');
+        upgrade_mod_savepoint(true, 2008011200, 'hotpot');
     }
 
     return $result;

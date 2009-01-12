@@ -382,7 +382,7 @@ function get_db_directories() {
  * @param string $return The url to prompt the user to continue to
  */
 function upgrade_plugins($type, $dir) {
-    global $CFG, $interactive, $DB;
+    global $CFG, $DB;
 
 /// special cases
     if ($type === 'mod') {
@@ -521,20 +521,14 @@ function upgrade_plugins($type, $dir) {
 
 /**
  * Find and check all modules and load them up or upgrade them if necessary
- *
- * @uses $CFG
- * @param string $return The url to prompt the user to continue to
- * @todo Finish documenting this function
  */
 function upgrade_activity_modules() {
-
-    global $CFG, $interactive, $DB, $unittest;
+    global $CFG, $DB;
 
     if (!$mods = get_list_of_plugins('mod') ) {
         print_error('nomodules', 'debug');
     }
 
-    $updated_modules = false;
     $strmodulesetup  = get_string('modulesetup');
 
     foreach ($mods as $mod) {
@@ -547,11 +541,11 @@ function upgrade_activity_modules() {
 
         unset($module);
 
-        if ( is_readable($fullmod .'/version.php')) {
-            include_once($fullmod .'/version.php');  // defines $module with version etc
+
+        if (is_readable($fullmod .'/version.php')) {
+            require($fullmod .'/version.php');  // defines $module with version etc
         } else {
-            notify('Module '. $mod .': '. $fullmod .'/version.php was not readable');
-            continue;
+            error('Module '. $mod .': '. $fullmod .'/version.php was not readable'); // TODO: localise
         }
 
         $newupgrade = false;
@@ -573,7 +567,6 @@ function upgrade_activity_modules() {
                 $info->requiremoodle = $module->requires;
                 upgrade_log_start();
                 notify(get_string('modulerequirementsnotmet', 'error', $info));
-                $updated_modules = true;
                 continue;
             }
         }
@@ -627,8 +620,6 @@ function upgrade_activity_modules() {
             /// Update message providers
                 message_update_providers('mod/'.$module->name);
 
-                $updated_modules = true;
-
             } else {
                 print_error('cannotdowngrade', 'debug', '', (object)array('oldversion'=>$currmodule->version, 'newversion'=>$module->version));
             }
@@ -636,46 +627,31 @@ function upgrade_activity_modules() {
         } else {    // module not installed yet, so install it
             upgrade_log_start();
             print_heading($module->name);
-            $updated_modules = true;
-            // To avoid unnecessary output from the SQL queries in the CLI version
-            @set_time_limit(0);  // To allow slow databases to complete the long SQL
 
-        /// Both old .sql files and new install.xml are supported
-        /// but we priorize install.xml (XMLDB) if present
-            if (file_exists($fullmod . '/db/install.xml')) {
-                $DB->get_manager()->install_from_xmldb_file($fullmod . '/db/install.xml'); //New method
-                $status = true;
+        /// Execute install.xml (XMLDB) - must be present
+            $DB->get_manager()->install_from_xmldb_file($fullmod . '/db/install.xml'); //New method
+
+        /// Post installation hook - optional
+            if (file_exists("$fullmod/db/install.php")) {
+                require_once("$fullmod/db/install.php");
+                $post_install_function = 'xmldb_'.$module->name.'_install';;
+                $post_install_function();
             }
 
         /// Continue with the installation, roles and other stuff
-            if ($status) {
-                if ($module->id = $DB->insert_record('modules', $module)) {
+            $module->id = $DB->insert_record('modules', $module);
 
-                /// Capabilities
-                    update_capabilities('mod/'.$module->name);
+        /// Capabilities
+            update_capabilities('mod/'.$module->name);
 
-                /// Events
-                    events_update_definition('mod/'.$module->name);
+        /// Events
+            events_update_definition('mod/'.$module->name);
 
-                /// Message providers
-                    message_update_providers('mod/'.$module->name);
+        /// Message providers
+            message_update_providers('mod/'.$module->name);
 
-                /// Run local install function if there is one
-                    $installfunction = $module->name.'_install';
-                    if (function_exists($installfunction)) {
-                        if (! $installfunction() ) {
-                            notify('Encountered a problem running install function for '.$module->name.'!');
-                        }
-                    }
-
-                    notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
-                    print_upgrade_separator();
-                } else {
-                    print_error('cannotaddmodule', '', '', $module->name);
-                }
-            } else {
-                print_error('cannotsetuptable', 'debug', '', $module->name);
-            }
+            notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
+            print_upgrade_separator();
         }
 
     /// Check submodules of this module if necessary
@@ -710,8 +686,6 @@ function upgrade_activity_modules() {
             }
         }
     }
-
-    return $updated_modules;
 }
 
 /**
@@ -898,7 +872,6 @@ function upgrade_log_start($preinstall=false) {
                 build_navigation(array(array('name' => $strupgrade, 'link' => null, 'type' => 'misc'))), '',
                 upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
         }
-        //$DB->set_debug(true); // should be configurable soon
 
         ignore_user_abort(true);
         register_shutdown_function('upgrade_finished_handler');
