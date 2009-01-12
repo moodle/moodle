@@ -134,16 +134,11 @@ function upgrade_local_db() {
         upgrade_log_start();
         require_once ($CFG->dirroot .'/local/db/upgrade.php');
 
-        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-            $DB->set_debug(true);
-        }
         xmldb_local_upgrade($CFG->local_version);
-        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-            $DB->set_debug(false);
-        }
         set_config('local_version', $local_version);
         notify(get_string('databasesuccess'), 'notifysuccess');
         notify(get_string('databaseupgradelocal', '', $local_version), 'notifysuccess');
+        print_upgrade_separator();
 
         return true;
 

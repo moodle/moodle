@@ -390,9 +390,6 @@ function upgrade_plugins($type, $dir) {
             $updated_plugins = true;
             upgrade_log_start();
             print_heading($dir.'/'. $plugin->name .' plugin needs upgrading');
-            if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                $DB->set_debug(true);
-            }
             @set_time_limit(0);  // To allow slow databases to complete the long SQL
 
             if ($installedversion == 0) {    // It's a new install of this plugin
@@ -402,9 +399,6 @@ function upgrade_plugins($type, $dir) {
                     $DB->get_manager()->install_from_xmldb_file($fullplug . '/db/install.xml'); //New method
                 }
                 $status = true;
-                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                    $DB->set_debug(false);
-                }
             /// Continue with the instalation, roles and other stuff
                 if ($status) {
                 /// OK so far, now update the plugins record
@@ -439,16 +433,10 @@ function upgrade_plugins($type, $dir) {
                 $newupgrade_function = 'xmldb_' .$plugin->fullname .'_upgrade';
                 $newupgrade_status = true;
                 if ($newupgrade && function_exists($newupgrade_function)) {
-                    if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                        $DB->set_debug(true);
-                    }
                     $newupgrade_status = $newupgrade_function($installedversion);
                 } else if ($newupgrade) {
                     notify ('Upgrade function ' . $newupgrade_function . ' was not available in ' .
                              $fullplug . '/db/upgrade.php');
-                }
-                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                    $DB->set_debug(false);
                 }
             /// Now analyze upgrade results
                 if ($newupgrade_status) {    // No upgrading failed
@@ -466,9 +454,7 @@ function upgrade_plugins($type, $dir) {
                     notify('Upgrading '. $plugin->name .' from '. $installedversion .' to '. $plugin->version .' FAILED!');
                 }
             }
-            if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                echo '<hr />';
-            }
+            print_upgrade_separator();
         } else {
             print_error('cannotdowngrade', 'debug', '', (object)array('oldversion'=>$installedversion, 'newversion'=>$plugin->version));
         }
@@ -559,16 +545,10 @@ function upgrade_activity_modules() {
             /// Then, the new function if exists and the old one was ok
                 $newupgrade_status = true;
                 if ($newupgrade && function_exists($newupgrade_function)) {
-                    if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                        $DB->set_debug(true);
-                    }
                     $newupgrade_status = $newupgrade_function($currmodule->version, $module);
                 } else if ($newupgrade) {
                     notify ('Upgrade function ' . $newupgrade_function . ' was not available in ' .
                              $mod . ': ' . $fullmod . '/db/upgrade.php');
-                }
-                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                    $DB->set_debug(false);
                 }
             /// Now analyze upgrade results
                 if ($newupgrade_status) {    // No upgrading failed
@@ -577,9 +557,7 @@ function upgrade_activity_modules() {
                     $DB->update_record('modules', $module);
                     remove_dir($CFG->dataroot . '/cache', true); // flush cache
                     notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
-                    if (!defined('CLI_UPGRADE') || !CLI_UPGRADE) {
-                       echo '<hr />';
-                    }
+                    print_upgrade_separator();
                 } else {
                     notify('Upgrading '. $module->name .' from '. $currmodule->version .' to '. $module->version .' FAILED!');
                 }
@@ -604,9 +582,6 @@ function upgrade_activity_modules() {
             print_heading($module->name);
             $updated_modules = true;
             // To avoid unnecessary output from the SQL queries in the CLI version
-            if (!defined('CLI_UPGRADE')|| !CLI_UPGRADE ) {
-                $DB->set_debug(true);
-            }
             @set_time_limit(0);  // To allow slow databases to complete the long SQL
 
         /// Both old .sql files and new install.xml are supported
@@ -614,9 +589,6 @@ function upgrade_activity_modules() {
             if (file_exists($fullmod . '/db/install.xml')) {
                 $DB->get_manager()->install_from_xmldb_file($fullmod . '/db/install.xml'); //New method
                 $status = true;
-            }
-            if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                $DB->set_debug(false);
             }
 
         /// Continue with the installation, roles and other stuff
@@ -641,9 +613,7 @@ function upgrade_activity_modules() {
                     }
 
                     notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
-                    if (!defined('CLI_UPGRADE')|| !CLI_UPGRADE ) {
-                       echo '<hr />';
-                    }
+                    print_upgrade_separator();
                 } else {
                     print_error('cannotaddmodule', '', '', $module->name);
                 }
@@ -852,12 +822,16 @@ function create_admin_user($user_input=NULL) {
  * Marks start of upgrade, blocks any other access to site.
  * The upgrade is finished at the end of script or after timeout.
  */
-function upgrade_log_start() {
+function upgrade_log_start($preinstall=false) {
     global $CFG, $DB;
 
     static $started = false;
 
-    if ($started) {
+    if ($preinstall) {
+        ignore_user_abort(true);
+        upgrade_setup_debug(true);
+
+    } else if ($started) {
         upgrade_set_timeout(120);
 
     } else {
@@ -868,9 +842,11 @@ function upgrade_log_start() {
                 build_navigation(array(array('name' => $strupgrade, 'link' => null, 'type' => 'misc'))), '',
                 upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
         }
+        //$DB->set_debug(true); // should be configurable soon
 
         ignore_user_abort(true);
         register_shutdown_function('upgrade_finished_handler');
+        upgrade_setup_debug(true);
         set_config('upgraderunning', time()+300);
         $started = true;
     }
@@ -889,15 +865,40 @@ function upgrade_finished_handler() {
  * This function may be called repeatedly.
  */
 function upgrade_log_finish($continueurl=null) {
-    global $CFG;
+    global $CFG, $DB;
+
     if (!empty($CFG->upgraderunning)) {
         unset_config('upgraderunning');
+        upgrade_setup_debug(false);
         ignore_user_abort(false);
         if ($continueurl) {
             print_continue($continueurl);
             print_footer('none');
             die;
         }
+    }
+}
+
+function upgrade_setup_debug($starting) {
+    global $CFG, $DB;
+
+    static $originaldebug = null;
+
+    if ($starting) {
+        if ($originaldebug === null) {
+            $originaldebug = $DB->get_debug();
+        }
+        if (!empty($CFG->upgradeshowsql)) {
+            $DB->set_debug(true);
+        }
+    } else {
+        $DB->set_debug($originaldebug);
+    }
+}
+
+function print_upgrade_separator() {
+    if (!CLI_SCRIPT) {
+        echo '<hr />';
     }
 }
 

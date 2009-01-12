@@ -142,7 +142,6 @@
     /// return to original debugging level
         $CFG->debug = $origdebug;
         error_reporting($CFG->debug);
-        $DB->set_debug(true);
 
         if (!$DB->setup_is_unicodedb()) {
             if (!$DB->change_db_encoding()) {
@@ -151,8 +150,10 @@
             }
         }
 
+        upgrade_log_start(true); // does not store ugprade runnign flag
+        print_heading('coresystem');
         $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml");
-        upgrade_log_start(); // move here because we want the flag to be stored in config table ;-)
+        upgrade_log_start();     // we want the flag to be stored in config table ;-)
 
     /// set all core default records and default settings
         require_once("$CFG->libdir/db/install.php");
@@ -173,9 +174,7 @@
         // Write default settings unconditionally (i.e. even if a setting is already set, overwrite it)
         admin_apply_default_settings(NULL, true);
         notify($strdatabasesuccess, 'notifysuccess');
-
-        /// do not show certificates in log ;-)
-        $DB->set_debug(false);
+        print_upgrade_separator();
     }
 
 
@@ -277,7 +276,6 @@
 
         } else {
 
-            $strdatabasesuccess  = get_string("databasesuccess");
             upgrade_log_start();
 
         /// return to original debugging level
@@ -291,15 +289,11 @@
             }
 
             print_heading($strdatabasechecking);
-            $DB->set_debug(true);
         /// Launch the old main upgrade (if exists)
             $status = xmldb_main_upgrade($CFG->version);
-            $DB->set_debug(false);
         /// If successful, continue upgrading roles and setting everything properly
             if ($status) {
-                if (!update_capabilities()) {
-                    print_error('cannotupgradecapabilities', 'debug');
-                }
+                update_capabilities();
 
                 // Update core events
                 events_update_definition();
@@ -310,7 +304,8 @@
 
                 set_config("version", $version);
                 remove_dir($CFG->dataroot . '/cache', true); // flush cache
-                notify($strdatabasesuccess, "green");
+                notify(get_string("databasesuccess"), "green");
+                print_upgrade_separator();
 
         /// Main upgrade not success
             } else {

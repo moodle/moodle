@@ -1485,9 +1485,6 @@ function forum_upgrade_grades() {
               FROM {forum} f, {course_modules} cm, {modules} m
              WHERE m.name='forum' AND m.id=cm.module AND cm.instance=f.id";
     if ($rs = $DB->get_recordset_sql($sql)) {
-        // too much debug output
-        $prevdebug = $DB->get_debug();
-        $DB->set_debug(false);
         $pbar = new progress_bar('forumupgradegrades', 500, true);
         $i=0;
         foreach ($rs as $forum) {
@@ -1496,7 +1493,6 @@ function forum_upgrade_grades() {
             forum_update_grades($forum, 0, false);
             $pbar->update($i, $count, "Updating Forum grades ($i/$count).");
         }
-        $DB->set_debug($prevdebug);
         $rs->close();
     }
 }

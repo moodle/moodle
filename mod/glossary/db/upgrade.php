@@ -50,8 +50,6 @@ function xmldb_glossary_upgrade($oldversion) {
 
             $pbar = new progress_bar('migrateglossaryfiles', 500, true);
 
-            $olddebug = $DB->get_debug();
-            $DB->set_debug(false); // lower debug level, there might be very many files
             $i = 0;
             foreach ($rs as $entry) {
                 $i++;
@@ -96,7 +94,6 @@ function xmldb_glossary_upgrade($oldversion) {
                 @rmdir("$CFG->dataroot/$entry->course/$CFG->moddata/glossary/$entry->glossaryid");
                 @rmdir("$CFG->dataroot/$entry->course/$CFG->moddata/glossary");
             }
-            $DB->set_debug($olddebug); // reset debug level
             $rs->close();
         }
 

@@ -848,8 +848,6 @@ function data_upgrade_grades() {
              WHERE m.name='data' AND m.id=cm.module AND cm.instance=d.id";
     if ($rs = $DB->get_recordset_sql($sql)) {
         // too much debug output
-        $prevdebug = $DB->get_debug();
-        $DB->set_debug(false);
         $pbar = new progress_bar('dataupgradegrades', 500, true);
         $i=0;
         foreach ($rs as $data) {
@@ -858,7 +856,6 @@ function data_upgrade_grades() {
             data_update_grades($data, 0, false);
             $pbar->update($i, $count, "Updating Database grades ($i/$count).");
         }
-        $DB->set_debug($prevdebug);
         $rs->close();
     }
 }

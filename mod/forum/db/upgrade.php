@@ -53,12 +53,10 @@ function xmldb_forum_upgrade($oldversion) {
                  WHERE ra.id IS NULL";
 
         if ($rs = $DB->get_recordset_sql($sql, $params)) {
-            $DB->set_debug(false);
             foreach ($rs as $remove) {
                 $DB->delete_records('forum_subscriptions', array('userid'=>$remove->userid, 'forum'=>$remove->forumid));
                 echo '.';
             }
-            $DB->set_debug(true);
             $rs->close();
         }
 
@@ -118,8 +116,6 @@ function xmldb_forum_upgrade($oldversion) {
 
             $pbar = new progress_bar('migrateforumfiles', 500, true);
 
-            $olddebug = $DB->get_debug();
-            $DB->set_debug(false); // lower debug level, there might be very many files
             $i = 0;
             foreach ($rs as $post) {
                 $i++;
@@ -159,7 +155,6 @@ function xmldb_forum_upgrade($oldversion) {
                 @rmdir("$CFG->dataroot/$post->course/$CFG->moddata/forum/$post->forum");
                 @rmdir("$CFG->dataroot/$post->course/$CFG->moddata/forum");
             }
-            $DB->set_debug($olddebug); // reset debug level
             $rs->close();
         }
 

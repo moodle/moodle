@@ -1614,6 +1614,10 @@ function compact_rdefs(&$rdefs) {
 function load_all_capabilities() {
     global $USER, $CFG, $DIRTYCONTEXTS;
 
+    if (empty($CFG->rolesactive)) {
+        return;
+    }
+
     $base = '/'.SYSCONTEXTID;
 
     if (isguestuser()) {
@@ -4728,7 +4732,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 
     // is the default role interesting? does it have
     // a relevant rolecap? (we use this a lot later)
-    if (in_array((int)$CFG->defaultuserroleid, $roleids, true)) {
+    if (isset($CFG->defaultuserroleid) and in_array((int)$CFG->defaultuserroleid, $roleids, true)) {
         $defaultroleinteresting = true;
     } else {
         $defaultroleinteresting = false;
@@ -5993,6 +5997,11 @@ function get_dirty_contexts($time) {
  */
 function mark_context_dirty($path) {
     global $CFG, $DIRTYCONTEXTS;
+
+    if (empty($CFG->rolesactive)) {
+        return;
+    }
+
     // only if it is a non-empty string
     if (is_string($path) && $path !== '') {
         set_cache_flag('accesslib/dirtycontexts', $path, 1, time()+$CFG->sessiontimeout);

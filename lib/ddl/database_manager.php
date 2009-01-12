@@ -141,10 +141,6 @@ class database_manager {
             throw new ddl_table_missing_exception($tablename);
         }
 
-    /// Do this function silenty (to avoid output in install/upgrade process)
-        $olddbdebug = $this->mdb->get_debug();
-        $this->mdb->set_debug(false);
-
         if (is_string($field)) {
             $fieldname = $field;
         } else {
@@ -156,9 +152,6 @@ class database_manager {
         $columns = $this->mdb->get_columns($tablename, false);
 
         $exists = array_key_exists($fieldname,  $columns);
-
-    /// Re-set original debug
-        $this->mdb->set_debug($olddbdebug);
 
         return $exists;
     }
@@ -180,10 +173,6 @@ class database_manager {
             throw new ddl_table_missing_exception($tablename);
         }
 
-    /// Do this function silenty (to avoid output in install/upgrade process)
-        $olddbdebug = $this->mdb->get_debug();
-        $this->mdb->set_debug(false);
-
     /// Extract index columns
         $indcolumns = $xmldb_index->getFields();
 
@@ -197,13 +186,11 @@ class database_manager {
             $diferences = array_merge(array_diff($columns, $indcolumns), array_diff($indcolumns, $columns));
         /// If no diferences, we have find the index
             if (empty($diferences)) {
-                $this->mdb->set_debug($olddbdebug);
                 return $indexname;
             }
         }
 
     /// Arriving here, index not found
-        $this->mdb->set_debug($olddbdebug);
         return false;
     }
 
@@ -243,10 +230,6 @@ class database_manager {
             throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
         }
 
-    /// Do this function silenty (to avoid output in install/upgrade process)
-        $olddbdebug = $this->mdb->get_debug();
-        $this->mdb->set_debug(false);
-
     /// Get list of check_constraints in table/field
         $checks = false;
         if ($objchecks = $this->generator->getCheckConstraintsFromDB($xmldb_table, $xmldb_field)) {
@@ -258,7 +241,6 @@ class database_manager {
         }
 
     /// Arriving here, check not found
-        $this->mdb->set_debug($olddbdebug);
         return $checks;
     }
 
@@ -336,13 +318,8 @@ class database_manager {
 
         $sequencename = false;
 
-    /// Do this function silenty (to avoid output in install/upgrade process)
-        $olddbdebug = $this->mdb->get_debug();
-        $this->mdb->set_debug(false);
-
         $sequencename = $this->generator->getSequenceFromDB($xmldb_table);
 
-        $this->mdb->set_debug($olddbdebug);
         return $sequencename;
     }
 
@@ -441,16 +418,9 @@ class database_manager {
      */
     public function install_from_xmldb_structure($xmldb_structure) {
 
-        /// Do this function silenty (to avoid output in install/upgrade process)
-        $olddbdebug = $this->mdb->get_debug();
-        $this->mdb->set_debug(false);
-
         if (!$sqlarr = $this->generator->getCreateStructureSQL($xmldb_structure)) {
             return; // nothing to do
         }
-
-        $this->mdb->set_debug($olddbdebug);
-
         $this->execute_sql_arr($sqlarr);
     }
 

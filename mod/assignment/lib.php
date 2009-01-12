@@ -2254,8 +2254,6 @@ function assignment_upgrade_grades() {
              WHERE m.name='assignment' AND m.id=cm.module AND cm.instance=a.id";
     if ($rs = $DB->get_recordset_sql($sql)) {
         // too much debug output
-        $prevdebug = $DB->get_debug();
-        $DB->set_debug(false);
         $pbar = new progress_bar('assignmentupgradegrades', 500, true);
         $i=0;
         foreach ($rs as $assignment) {
@@ -2264,7 +2262,6 @@ function assignment_upgrade_grades() {
             assignment_update_grades($assignment);
             $pbar->update($i, $count, "Updating Assignment grades ($i/$count).");
         }
-        $DB->set_debug($prevdebug);
         $rs->close();
         upgrade_set_timeout(); // reset to default timeout
     }

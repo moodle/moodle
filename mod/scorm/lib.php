@@ -512,8 +512,6 @@ function scorm_upgrade_grades() {
               FROM {scorm} s, {course_modules} cm, {modules} m
              WHERE m.name='scorm' AND m.id=cm.module AND cm.instance=s.id";
     if ($rs = $DB->get_recordset_sql($sql)) {
-        $prevdebug = $DB->get_debug();
-        $DB->set_debug(false);
         $pbar = new progress_bar('scormupgradegrades', 500, true);
         $i=0;
         foreach ($rs as $scorm) {
@@ -522,7 +520,6 @@ function scorm_upgrade_grades() {
             scorm_update_grades($scorm, 0, false);
             $pbar->update($i, $count, "Updating Scorm grades ($i/$count).");
         }
-        $DB->set_debug($prevdebug);
         $rs->close();
     }
 }

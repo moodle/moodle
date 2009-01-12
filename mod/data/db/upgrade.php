@@ -94,8 +94,6 @@ function xmldb_data_upgrade($oldversion) {
 
             $pbar = new progress_bar('migratedatafiles', 500, true);
 
-            $olddebug = $DB->get_debug();
-            $DB->set_debug(false); // lower debug level, there might be very many files
             $i = 0;
             foreach ($rs as $content) {
                 $i++;
@@ -143,7 +141,6 @@ function xmldb_data_upgrade($oldversion) {
                 @rmdir("$CFG->dataroot/$content->course/$CFG->moddata/data");
                 @rmdir("$CFG->dataroot/$content->course/$CFG->moddata");
             }
-            $DB->set_debug($olddebug); // reset debug level
             $rs->close();
         }
         upgrade_mod_savepoint($result, 2008091400, 'data');

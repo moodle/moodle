@@ -294,16 +294,16 @@ $CFG->admin = 'admin';
 // NOTE: course, category, session, user themes still require the
 // respective settings to be enabled
 //
-// When working with production data on test servers, no emails should ever be send to real users
-// $CFG->noemailever = true;
-//
 
 //=========================================================================
 // 8. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================
 //
+// When working with production data on test servers, no emails should ever be send to real users
+// $CFG->noemailever = true;
+//
 // Specify prefix for fake unit test tables. If not specified only tests
-// taht do not need fake tables will be executed.
+// that do not need fake tables will be executed.
 // $CFG->unittestprefix = 'tst_';
 //
 // special magic evil developer only wanting to edit the xmldb files manually
@@ -312,12 +312,18 @@ $CFG->admin = 'admin';
 // $CFG->xmldbdisablecommentchecking = true;
 // $CFG->xmldbdisablenextprevchecking = true;
 //
-// special magig evil developer only wanting to edit xmldb files manually
+// Special magic - evil developer only wanting to edit xmldb files manually
 // AND allowing the XMLDBEditor to recostruct the prev/next elements every
 // time one file is loaded and saved (Moodle).
 // Uncomment this if you're lazy like Petr
 // $CFG->xmldbreconstructprevnext = true;
 //
+//
+// Since 2.0 sql queries are not shown during upgrade by default.
+// Please note that this setting may produce very long upgrade page on large sites.
+// $CFG->upgradeshowsql = true;
+
+
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

@@ -166,10 +166,6 @@ abstract class sql_generator {
      * @return boolean true/false
      */
     public function table_exists($table, $temptable=false) {
-    /// Do this function silenty (to avoid output in install/upgrade process)
-        $olddbdebug = $this->mdb->get_debug();
-        $this->mdb->set_debug(false);
-
         if (is_string($table)) {
             $tablename = $table;
         } else {
@@ -180,9 +176,6 @@ abstract class sql_generator {
     /// get all tables in moodle database
         $tables = $this->mdb->get_tables();
         $exists = in_array($tablename, $tables);
-
-    /// Re-set original debug
-        $this->mdb->set_debug($olddbdebug);
 
         return $exists;
     }

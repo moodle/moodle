@@ -37,14 +37,12 @@ function upgrade_fix_category_depths() {
                   FROM {course_categories} c, {course_categories} pc
                  WHERE c.parent=pc.id AND c.depth=0 AND pc.depth=?";
         if ($rs = $DB->get_recordset_sql($sql, array($parentdepth))) {
-            $DB->set_debug(false);
             foreach ($rs as $cat) {
                 $cat->depth = $parentdepth+1;
                 $cat->path  = $cat->path.'/'.$cat->id;
                 $DB->update_record('course_categories', $cat);
             }
             $rs->close();
-            $DB->set_debug(false);
         }
         $parentdepth++;
         if ($parentdepth > 100) {
@@ -68,8 +66,6 @@ function upgrade_migrate_files_courses() {
     $pbar = new progress_bar('migratecoursefiles', 500, true);
 
     $rs = $DB->get_recordset('course');
-    $olddebug = $DB->get_debug();
-    $DB->set_debug(false); // lower debug level, there might be many files
     $i = 0;
     foreach ($rs as $course) {
         $i++;
@@ -78,7 +74,6 @@ function upgrade_migrate_files_courses() {
         upgrade_migrate_files_course($context, '/', true);
         $pbar->update($i, $count, "Migrated course files - course $i/$count.");
     }
-    $DB->set_debug($olddebug); // reset debug level
     $rs->close();
 
     return true;
@@ -179,8 +174,6 @@ function upgrade_migrate_files_blog() {
 
         $pbar = new progress_bar('migrateblogfiles', 500, true);
 
-        $olddebug = $DB->get_debug();
-        $DB->set_debug(false); // lower debug level, there might be many files
         $i = 0;
         foreach ($rs as $entry) {
             $i++;
@@ -216,7 +209,6 @@ function upgrade_migrate_files_blog() {
             $DB->update_record('post', $entry);
             $pbar->update($i, $count, "Migrated blog attachments - $i/$count.");
         }
-        $DB->set_debug($olddebug); // reset debug level
         $rs->close();
     }
 

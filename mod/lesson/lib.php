@@ -424,8 +424,6 @@ function lesson_upgrade_grades() {
               FROM {lesson} l, {course_modules} cm, {modules} m
              WHERE m.name='lesson' AND m.id=cm.module AND cm.instance=l.id";
     if ($rs = $DB->get_recordset_sql($sql)) {
-        $prevdebug = $DB->get_debug();
-        $DB->set_debug(false);
         $pbar = new progress_bar('lessonupgradegrades', 500, true);
         $i=0;
         foreach ($rs as $lesson) {
@@ -434,7 +432,6 @@ function lesson_upgrade_grades() {
             lesson_update_grades($lesson, 0, false);
             $pbar->update($i, $count, "Updating Lesson grades ($i/$count).");
         }
-        $DB->set_debug($prevdebug);
         $rs->close();
     }
 }

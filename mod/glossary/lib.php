@@ -386,8 +386,6 @@ function glossary_upgrade_grades() {
               FROM {glossary} g, {course_modules} cm, {modules} m
              WHERE m.name='glossary' AND m.id=cm.module AND cm.instance=g.id";
     if ($rs = $DB->get_recordset_sql($sql)) {
-        $prevdebug = $DB->get_debug();
-        $DB->set_debug(false);
         $pbar = new progress_bar('glossaryupgradegrades', 500, true);
         $i=0;
         foreach ($rs as $glossary) {
@@ -396,7 +394,6 @@ function glossary_upgrade_grades() {
             glossary_update_grades($glossary, 0, false);
             $pbar->update($i, $count, "Updating Glossary grades ($i/$count).");
         }
-        $DB->set_debug($prevdebug);
         $rs->close();
     }
 }

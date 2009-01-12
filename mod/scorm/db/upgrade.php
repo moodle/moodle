@@ -186,8 +186,6 @@ function xmldb_scorm_upgrade($oldversion) {
 
             $pbar = new progress_bar('migratescormfiles', 500, true);
 
-            $olddebug = $DB->get_debug();
-            $DB->set_debug(false); // lower debug level, there might be many files
             $i = 0;
             foreach ($rs as $scorm) {
                 $i++;
@@ -226,7 +224,6 @@ function xmldb_scorm_upgrade($oldversion) {
                 @rmdir("$CFG->dataroot/$scorm->course/$CFG->moddata/scorm/");
                 @rmdir("$CFG->dataroot/$scorm->course/$CFG->moddata/");
             }
-            $DB->set_debug($olddebug); // reset debug level
             $rs->close();
         }
 

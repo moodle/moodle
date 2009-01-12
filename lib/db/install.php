@@ -45,7 +45,8 @@ function xmldb_main_install($version) {
     $cat = get_course_category();
 
 
-    $defaults = array('auth'                  => 'email',
+    $defaults = array('rolesactive'           => '0',         // marks fully set up system
+                      'auth'                  => 'email',
                       'auth_pop3mailbox'      => 'INBOX',
                       'enrol'                 => 'manual',
                       'enrol_plugins_enabled' => 'manual',

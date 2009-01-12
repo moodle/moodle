@@ -1183,16 +1183,10 @@ function upgrade_blocks_plugins() {
             /// Then, the new function if exists and the old one was ok
                 $newupgrade_status = true;
                 if ($newupgrade && function_exists($newupgrade_function)) {
-                    if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                        $DB->set_debug(true);
-                    }
                     $newupgrade_status = $newupgrade_function($currblock->version, $block);
                 } else if ($newupgrade) {
                     notify ('Upgrade function ' . $newupgrade_function . ' was not available in ' .
                              $fullblock . '/db/upgrade.php');
-                }
-                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                    $DB->set_debug(false);
                 }
             /// Now analyze upgrade results
                 if ($newupgrade_status) {    // No upgrading failed
@@ -1221,9 +1215,7 @@ function upgrade_blocks_plugins() {
                 } else {
                     notify('Upgrading block '. $block->name .' from '. $currblock->version .' to '. $block->version .' FAILED!');
                 }
-                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                echo '<hr />';
-                }
+                print_upgrade_separator();
             } else {
                 print_error('cannotdowngrade', 'debug', '', (object)array('oldversion'=>$currblock->version, 'newversion'=>$block->version));
             }
@@ -1249,18 +1241,12 @@ function upgrade_blocks_plugins() {
             $updated_blocks = true;
             upgrade_log_start();
             print_heading($block->name);
-            if (!defined('CLI_UPGRADE')||!CLI_UPGRADE) {
-                $DB->set_debug(true);
-            }
             @set_time_limit(0);  // To allow slow databases to complete the long SQL
 
         /// Both old .sql files and new install.xml are supported
         /// but we priorize install.xml (XMLDB) if present
             if (file_exists($fullblock . '/db/install.xml')) {
                 $DB->get_manager()->install_from_xmldb_file($fullblock . '/db/install.xml'); //New method
-            }
-            if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                $DB->set_debug(false);
             }
             $block->id = $DB->insert_record('block', $block);
             $blockobj->after_install();
@@ -1275,9 +1261,7 @@ function upgrade_blocks_plugins() {
             message_update_providers($component);
 
             notify(get_string('blocksuccess', '', $blocktitle), 'notifysuccess');
-            if (!defined('CLI_UPGRADE')|| !CLI_UPGRADE) {
-                echo '<hr />';
-            }
+            print_upgrade_separator();
         }
 
         $blocktitles[$block->name] = $blocktitle;

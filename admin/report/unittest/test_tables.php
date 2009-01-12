@@ -81,9 +81,6 @@ die;die;die;
     // Write default settings unconditionally (i.e. even if a setting is already set, overwrite it)
     admin_apply_default_settings(NULL, true);
 
-    /// do not show certificates in log ;-)
-    $DB->set_debug(false);
-
 
 /// upgrade all plugins types
     $upgradedplugins = false;

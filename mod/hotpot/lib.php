@@ -1291,8 +1291,6 @@ function hotpot_upgrade_grades() {
         WHERE m.name='hotpot' AND m.id=cm.module AND cm.instance=h.id";
     if ($rs = $DB->get_recordset_sql($sql)) {
         // too much debug output
-        $prevdebug = $DB->get_debug();
-        $DB->set_debug(false);
         $pbar = new progress_bar('hotpotupgradegrades', 500, true);
         $i=0;
         foreach ($rs as $hotpot) {
@@ -1301,7 +1299,6 @@ function hotpot_upgrade_grades() {
             hotpot_update_grades($hotpot, 0, false);
             $pbar->update($i, $count, "Updating Hotpot grades ($i/$count).");
         }
-        $DB->set_debug($prevdebug);
         $rs->close();
     }
 }

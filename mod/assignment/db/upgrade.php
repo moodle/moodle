@@ -54,8 +54,6 @@ function xmldb_assignment_upgrade($oldversion) {
 
             $pbar = new progress_bar('migrateassignmentfiles', 500, true);
 
-            $olddebug = $DB->get_debug();
-            $DB->set_debug(false); // lower debug level, there might be many files
             $i = 0;
             foreach ($rs as $submission) {
                 $i++;
@@ -127,7 +125,6 @@ function xmldb_assignment_upgrade($oldversion) {
                 @rmdir("$CFG->dataroot/$submission->course/$CFG->moddata/assignment/$submission->assignment");
                 @rmdir("$CFG->dataroot/$submission->course/$CFG->moddata/assignment");
             }
-            $DB->set_debug($olddebug); // reset debug level
             $rs->close();
 
         }
