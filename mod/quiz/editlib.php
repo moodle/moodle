@@ -1493,41 +1493,42 @@ function quiz_print_status_bar($quiz){
     <?php
     echo get_string("numquestionsx","quiz",$numberofquestions);
     ?></span>
-    | <span class="quizopeningstatus">
     <?php
+
+// Current status of the quiz, with open an close dates as a tool tip.
     $available = true;
     $dates = array();
     $timenow = time();
-    $dateformat = get_string('strftimedatetimeshort');
     if ($quiz->timeopen > 0) {
         if ($timenow > $quiz->timeopen) {
-            $dates[] = get_string('openedat', 'quiz', userdate($quiz->timeopen, $dateformat));
+            $dates[] = get_string('quizopenedon', 'quiz', userdate($quiz->timeopen));
         } else {
-            $dates[] = get_string('opensat', 'quiz', userdate($quiz->timeopen, $dateformat));
+            $dates[] = get_string('quizwillopen', 'quiz', userdate($quiz->timeopen));
             $available = false;
         }
     }
     if ($quiz->timeclose > 0) {
         if ($timenow > $quiz->timeclose) {
-            $dates[] = get_string('closedat', 'quiz', userdate($quiz->timeclose, $dateformat));
+            $dates[] = get_string('quizclosed', 'quiz', userdate($quiz->timeclose));
             $available = false;
         } else {
-            $dates[] = get_string('closesat', 'quiz', userdate($quiz->timeclose, $dateformat));
+            $dates[] = get_string('quizcloseson', 'quiz', userdate($quiz->timeclose));
         }
     }
     if (empty($dates)) {
         $dates[] = get_string('alwaysavailable', 'quiz');
     }
-    $dates = implode(', ', $dates);
+    $dates = implode('. ', $dates);
+    echo ' | <span class="quizopeningstatus" title="' . $dates . '">';
     if ($available) {
-        print_string('quizisopen', 'quiz', $dates);
+        print_string('quizisopen', 'quiz');
     } else {
-        print_string('quizisclosed', 'quiz', $dates);
+        print_string('quizisclosed', 'quiz');
     }
-    ?></span><?php
+    echo '</span>';
+
     // If questions are shuffled, notify the user about the
     // question order not making much sense
-
     $updateurl=new moodle_url("$CFG->wwwroot/course/mod.php",
             array("return"=>"true","update"=>$quiz->cmid, "sesskey"=>sesskey()));
     echo '<br /><strong><a href="'.$updateurl->out().'">';
@@ -1551,7 +1552,7 @@ function quiz_print_status_bar($quiz){
         $valquestionsparpage=get_string("unlimited");
     }
     print_string("questionsperpagex","quiz",$valquestionsparpage);
-    
+
     ?>
     </div>
     <?php
