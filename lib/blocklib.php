@@ -981,7 +981,7 @@ function blocks_print_adminblock(&$page, &$pageblocks) {
  * @return success of failure.
  */
 function blocks_delete_all_on_page($pagetype, $pageid) {
-    if ($instances = get_records_select('block_instance', 'pageid = ' . $pageid . ' AND pagetype = ' . $pagetype)) {
+    if ($instances = get_records_select('block_instance', "pageid = $pageid AND pagetype = '$pagetype'")) {
         foreach ($instances as $instance) {
             delete_context(CONTEXT_BLOCK, $instance->id); // Ingore any failures here.
         }
