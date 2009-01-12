@@ -3567,7 +3567,23 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
     $strdeleted = get_string('deleted');
 
-/// First delete every instance of every module
+/// Clean up course formats (iterate through all formats in the even the course format was ever changed)
+    $formats = get_list_of_plugins('course/format');
+    foreach ($formats as $format) {
+        $formatdelete = $format.'_course_format_delete_course';
+        $formatlib    = "$CFG->dirroot/course/format/$format/lib.php";
+        if (file_exists($formatlib)) {
+            include_once($formatlib);
+            if (function_exists($formatdelete)) {
+                if ($showfeedback) {
+                    notify($strdeleted.' '.$format);
+                }
+                $formatdelete($course->id);
+            }
+        }
+    }
+
+/// Delete every instance of every module
 
     if ($allmods = get_records('modules') ) {
         foreach ($allmods as $mod) {
