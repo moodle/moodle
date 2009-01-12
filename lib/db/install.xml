@@ -2122,34 +2122,4 @@
       </INDEXES>
     </TABLE>
   </TABLES>
-  <STATEMENTS>
-    <STATEMENT NAME="insert mnet_application" TYPE="insert" TABLE="mnet_application" COMMENT="Initial insert of records on table mnet_application" NEXT="insert log_display">
-      <SENTENCES>
-        <SENTENCE TEXT="(name, display_name, xmlrpc_server_url, sso_land_url, sso_jump_url) VALUES ('moodle','Moodle','/mnet/xmlrpc/server.php', '/auth/mnet/land.php', '/auth/mnet/jump.php')" />
-        <SENTENCE TEXT="(name, display_name, xmlrpc_server_url, sso_land_url, sso_jump_url) VALUES ('mahara','Mahara','/api/xmlrpc/server.php',  '/auth/xmlrpc/land.php', '/auth/xmlrpc/jump.php')" />
-      </SENTENCES>
-    </STATEMENT>
-    <STATEMENT NAME="insert log_display" TYPE="insert" TABLE="log_display" COMMENT="Initial insert of records on table log_display" PREVIOUS="insert mnet_application">
-      <SENTENCES>
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('user', 'view', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'user report', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'view', 'course', 'fullname')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'update', 'course', 'fullname')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'enrol', 'course', 'fullname')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'unenrol', 'course', 'fullname')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'report log', 'course', 'fullname')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'report live', 'course', 'fullname')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'report outline', 'course', 'fullname')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'report participation', 'course', 'fullname')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'report stats', 'course', 'fullname')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('message', 'write', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('message', 'read', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('message', 'add contact', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('message', 'remove contact', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('message', 'block contact', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('message', 'unblock contact', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('group', 'view', 'groups', 'name')" />
-      </SENTENCES>
-    </STATEMENT>
-  </STATEMENTS>
 </XMLDB>

@@ -71,7 +71,7 @@
 
     $version = null;
     $release = null;
-    include("$CFG->dirroot/version.php");       // defines $version and $release
+    require("$CFG->dirroot/version.php");       // defines $version and $release
 
     if (!$version or !$release) {
         print_error('withoutversion', 'debug'); // without version, stop
@@ -122,12 +122,7 @@
             print_header($strcurrentrelease, $strcurrentrelease, $navigation, "", "", false, "&nbsp;", "&nbsp;");
             print_heading("Moodle $release");
             print_box(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'), 'generalbox boxaligncenter boxwidthwide');
-            echo '<form action="index.php"><div>';
-            echo '<input type="hidden" name="agreelicense" value="1" />';
-            echo '<input type="hidden" name="confirmrelease" value="1" />';
-            echo '</div>';
-            echo '<br /><br /><input type="submit" value="'.get_string('continue').'" /></div>';
-            echo '</form>';
+            print_continue('index.php?agreelicense=1&confirmrelease=1');
             print_footer('none');
             die;
         }
@@ -157,7 +152,10 @@
 
     /// set all core default records and default settings
         require_once("$CFG->libdir/db/install.php");
-        xmldb_main_install($version);
+        xmldb_main_install();
+
+    /// store version
+        upgrade_main_savepoint(true, $version, false);
 
     /// Continue with the instalation
 
@@ -171,7 +169,7 @@
         message_update_providers();
         message_update_providers('message');
 
-        // Write default settings unconditionally (i.e. even if a setting is already set, overwrite it)
+        // Write default settings unconditionally
         admin_apply_default_settings(NULL, true);
         notify($strdatabasesuccess, 'notifysuccess');
         print_upgrade_separator();

@@ -18,6 +18,36 @@ define('INSECURE_DATAROOT_WARNING', 1);
 define('INSECURE_DATAROOT_ERROR', 2);
 
 /**
+ * Insert or update log display entry. Entry may already exist.
+ * $module, $action must be unique
+ *
+ * @param string $module
+ * @param string $action
+ * @param string $mtable
+ * @param string $field
+ * @return void
+ *
+ */
+function upgrade_log_display_entry($module, $action, $mtable, $field) {
+    global $DB;
+
+    if ($type = $DB->get_record('log_display', array('module'=>$module, 'action'=>$action))) {
+        $type->mtable = $mtable;
+        $type->field  = $field;
+        $DB->update_record('log_display', $type);
+
+    } else {
+        $type = new object();
+        $type->module = $module;
+        $type->action = $action;
+        $type->mtable = $mtable;
+        $type->field  = $field;
+
+        $DB->insert_record('log_display', $type, false);
+    }
+}
+
+/**
  * Upgrade savepoint, marks end of each upgrade block.
  * It stores new main version, resets upgrade timeout
  * and abort upgrade if user cancels page loading.
@@ -27,9 +57,10 @@ define('INSECURE_DATAROOT_ERROR', 2);
  *
  * @param bool $result false if upgrade step failed, true if completed
  * @param string or float $version main version
+ * @param bool $allowabort allow user to abort script execution here
  * @return void
  */
-function upgrade_main_savepoint($result, $version) {
+function upgrade_main_savepoint($result, $version, $allowabort=true) {
     global $CFG;
 
     if ($result) {
@@ -39,14 +70,14 @@ function upgrade_main_savepoint($result, $version) {
         }
         set_config('version', $version);
     } else {
-        notify ("Upgrade savepoint: Error during main upgrade to version $version");
+        error("Upgrade savepoint: Error during main upgrade to version $version"); // TODO: localise
     }
 
     // reset upgrade timeout to default
     upgrade_set_timeout();
 
     // this is a safe place to stop upgrades if user aborts page loading
-    if (connection_aborted()) {
+    if ($allowabort and connection_aborted()) {
         die;
     }
 }
@@ -54,13 +85,15 @@ function upgrade_main_savepoint($result, $version) {
 /**
  * Module upgrade savepoint, marks end of module upgrade blocks
  * It stores module version, resets upgrade timeout
- * and abort upgrade if usercancels page loading.
+ * and abort upgrade if user cancels page loading.
  *
  * @param bool $result false if upgrade step failed, true if completed
  * @param string or float $version main version
+ * @param string $modname name of module
+ * @param bool $allowabort allow user to abort script execution here
  * @return void
  */
-function upgrade_mod_savepoint($result, $version, $modname) {
+function upgrade_mod_savepoint($result, $version, $modname, $allowabort=true) {
     global $DB;
 
     if (!$module = $DB->get_record('modules', array('name'=>$modname))) {
@@ -75,19 +108,30 @@ function upgrade_mod_savepoint($result, $version, $modname) {
         $module->version = $version;
         $DB->update_record('modules', $module);
     } else {
-        notify ("Upgrade savepoint: Error during mod upgrade to version $version");
+        error("Upgrade savepoint: Error during mod upgrade to version $version"); // TODO: localise
     }
 
     // reset upgrade timeout to default
     upgrade_set_timeout();
 
     // this is a safe place to stop upgrades if user aborts page loading
-    if (connection_aborted()) {
+    if ($allowabort and connection_aborted()) {
         die;
     }
 }
 
-function upgrade_blocks_savepoint($result, $version, $blockname) {
+/**
+ * Blocks upgrade savepoint, marks end of blocks upgrade blocks
+ * It stores block version, resets upgrade timeout
+ * and abort upgrade if user cancels page loading.
+ *
+ * @param bool $result false if upgrade step failed, true if completed
+ * @param string or float $version main version
+ * @param string $blockname name of block
+ * @param bool $allowabort allow user to abort script execution here
+ * @return void
+ */
+function upgrade_blocks_savepoint($result, $version, $blockname, $allowabort=true) {
     global $DB;
 
     if (!$block = $DB->get_record('block', array('name'=>$blockname))) {
@@ -102,19 +146,31 @@ function upgrade_blocks_savepoint($result, $version, $blockname) {
         $block->version = $version;
         $DB->update_record('block', $block);
     } else {
-        notify ("Upgrade savepoint: Error during mod upgrade to version $version");
+        error("Upgrade savepoint: Error during mod upgrade to version $version"); // TODO: localise
     }
 
     // reset upgrade timeout to default
     upgrade_set_timeout();
 
     // this is a safe place to stop upgrades if user aborts page loading
-    if (connection_aborted()) {
+    if ($allowabort and connection_aborted()) {
         die;
     }
 }
 
-function upgrade_plugin_savepoint($result, $version, $type, $dir) {
+/**
+ * Plugins upgrade savepoint, marks end of blocks upgrade blocks
+ * It stores plugin version, resets upgrade timeout
+ * and abort upgrade if user cancels page loading.
+ *
+ * @param bool $result false if upgrade step failed, true if completed
+ * @param string or float $version main version
+ * @param string $type name of plugin
+ * @param string $dir location of plugin
+ * @param bool $allowabort allow user to abort script execution here
+ * @return void
+ */
+function upgrade_plugin_savepoint($result, $version, $type, $dir, $allowabort=true) {
     if ($result) {
         $fullname = $type . '_' . $dir;
         $installedversion = get_config($fullname, 'version');
@@ -127,14 +183,14 @@ function upgrade_plugin_savepoint($result, $version, $type, $dir) {
         }
         set_config('version', $version, $fullname);
     } else {
-        notify ("Upgrade savepoint: Error during mod upgrade to version $version");
+        error("Upgrade savepoint: Error during mod upgrade to version $version"); // TODO: localise
     }
 
     // Reset upgrade timeout to default
     upgrade_set_timeout();
 
     // This is a safe place to stop upgrades if user aborts page loading
-    if (connection_aborted()) {
+    if ($allowabort and connection_aborted()) {
         die;
     }
 }

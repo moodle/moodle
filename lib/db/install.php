@@ -3,7 +3,7 @@
 // This file is executed right after the install.xml
 //
 
-function xmldb_main_install($version) {
+function xmldb_main_install() {
     global $CFG, $DB, $SITE;
 
 /// TODO: move all statements from install.xml here
@@ -91,12 +91,45 @@ function xmldb_main_install($version) {
     $mnetid = $DB->insert_record('mnet_host', $mnethost);
     set_config('mnet_localhost_id', $mnetid);
 
+    // Initial insert of mnet applications info
+    $mnet_app = new object();
+    $mnet_app->name              = 'moodle';
+    $mnet_app->display_name      = 'Moodle';
+    $mnet_app->xmlrpc_server_url = '/mnet/xmlrpc/server.php';
+    $mnet_app->sso_land_url      = '/auth/mnet/land.php';
+    $mnet_app->sso_jump_url      = '/auth/mnet/land.php';
+    $DB->insert_record('mnet_application', $mnet_app);
+
+    $mnet_app = new object();
+    $mnet_app->name              = 'mahara';
+    $mnet_app->display_name      = 'Mahara';
+    $mnet_app->xmlrpc_server_url = '/api/xmlrpc/server.php';
+    $mnet_app->sso_land_url      = '/auth/xmlrpc/land.php';
+    $mnet_app->sso_jump_url      = '/auth/xmlrpc/jump.php';
+    $DB->insert_record('mnet_application', $mnet_app);
+
+/// insert log entries - replaces statements section in install.xml
+    upgrade_log_display_entry('user', 'view', 'user', 'CONCAT(firstname,\' \',lastname)');
+    upgrade_log_display_entry('course', 'user report', 'user', 'CONCAT(firstname,\' \',lastname)');
+    upgrade_log_display_entry('course', 'view', 'course', 'fullname');
+    upgrade_log_display_entry('course', 'update', 'course', 'fullname');
+    upgrade_log_display_entry('course', 'enrol', 'course', 'fullname');
+    upgrade_log_display_entry('course', 'unenrol', 'course', 'fullname');
+    upgrade_log_display_entry('course', 'report log', 'course', 'fullname');
+    upgrade_log_display_entry('course', 'report live', 'course', 'fullname');
+    upgrade_log_display_entry('course', 'report outline', 'course', 'fullname');
+    upgrade_log_display_entry('course', 'report participation', 'course', 'fullname');
+    upgrade_log_display_entry('course', 'report stats', 'course', 'fullname');
+    upgrade_log_display_entry('message', 'write', 'user', 'CONCAT(firstname,\' \',lastname)');
+    upgrade_log_display_entry('message', 'read', 'user', 'CONCAT(firstname,\' \',lastname)');
+    upgrade_log_display_entry('message', 'add contact', 'user', 'CONCAT(firstname,\' \',lastname)');
+    upgrade_log_display_entry('message', 'remove contact', 'user', 'CONCAT(firstname,\' \',lastname)');
+    upgrade_log_display_entry('message', 'block contact', 'user', 'CONCAT(firstname,\' \',lastname)');
+    upgrade_log_display_entry('message', 'unblock contact', 'user', 'CONCAT(firstname,\' \',lastname)');
+    upgrade_log_display_entry('group', 'view', 'groups', 'name');
+
 
 /// Create guest record
     create_guest_record();
-
-
-/// everything ready - store main version :-D
-    set_config('version', $version);
 
 }
