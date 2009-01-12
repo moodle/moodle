@@ -94,6 +94,10 @@
     }
     unset($tables);
 
+    // Turn off xmlstrictheaders during upgrade.
+    $origxmlstrictheaders = !empty($CFG->xmlstrictheaders);
+    $CFG->xmlstrictheaders = false;
+
     if (!$maintables) {
     /// hide errors from headers in case debug enabled in config.php
         $origdebug = $CFG->debug;
@@ -172,11 +176,6 @@
 
         /// do not show certificates in log ;-)
         $DB->set_debug(false);
-
-        print_continue("index.php");
-        print_footer('none');
-
-        die;
     }
 
 
@@ -201,7 +200,6 @@
         $origdebug = $CFG->debug;
         $CFG->debug = DEBUG_MINIMAL;
         error_reporting($CFG->debug);
-        $CFG->xmlstrictheaders = false;
 
         // logo ut in case we are upgrading from pre 1.9 version in order to prevent
         // weird session/role problems caused by incorrect data in USER and SESSION
@@ -280,9 +278,7 @@
         } else {
 
             $strdatabasesuccess  = get_string("databasesuccess");
-            $navigation = build_navigation(array(array('name'=>$strdatabasesuccess, 'link'=>null, 'type'=>'misc')));
-            print_header($strdatabasechecking, $stradministration, $navigation,
-                    "", upgrade_get_javascript(), false, "&nbsp;", "&nbsp;");
+            upgrade_log_start();
 
         /// return to original debugging level
             $CFG->debug = $origdebug;
@@ -312,15 +308,10 @@
                 message_update_providers();
                 message_update_providers('message');
 
-                if (set_config("version", $version)) {
-                    remove_dir($CFG->dataroot . '/cache', true); // flush cache
-                    notify($strdatabasesuccess, "green");
-                    print_continue("upgradesettings.php");
-                    print_footer('none');
-                    exit;
-                } else {
-                    print_error('cannotupdateversion', 'debug');
-                }
+                set_config("version", $version);
+                remove_dir($CFG->dataroot . '/cache', true); // flush cache
+                notify($strdatabasesuccess, "green");
+
         /// Main upgrade not success
             } else {
                 notify('Main Upgrade failed!  See lib/db/upgrade.php');
@@ -341,49 +332,39 @@
         }
     }
 
-    // Turn off xmlstrictheaders during upgrade.
-    $origxmlstrictheaders = !empty($CFG->xmlstrictheaders);
-    $CFG->xmlstrictheaders = false;
-
 /// upgrade all plugins types
-    $upgradedplugins = false;
     $plugintypes = get_plugin_types();
     foreach ($plugintypes as $type=>$location) {
-        $upgradedplugins = upgrade_plugins($type, $location) || $upgradedplugins;
-    }
-
-    if ($upgradedplugins) {
-        print_continue($FULLSCRIPT);
-        print_footer('none');
-        die;
+        upgrade_plugins($type, $location);
     }
 
 /// Check for changes to RPC functions
     if ($CFG->mnet_dispatcher_mode != 'off') {
         require_once("$CFG->dirroot/$CFG->admin/mnet/adminlib.php");
-        upgrade_RPC_functions($FULLSCRIPT);  // Return here afterwards
+        upgrade_RPC_functions();  // Return here afterwards
     }
 
 /// Check for local database customisations
     require_once("$CFG->dirroot/lib/locallib.php");
-    upgrade_local_db($FULLSCRIPT);  // Return here afterwards
-
-/// just make sure upgrade logging is properly terminated
-    upgrade_log_finish();
-
-    // Turn xmlstrictheaders back on now.
-    $CFG->xmlstrictheaders = $origxmlstrictheaders;
+    upgrade_local_db();  // Return here afterwards
 
 /// make sure admin user is created - this is the last step because we need
 /// session to be working properly in order to edit admin account
     if (empty($CFG->rolesactive)) {
         $adminuser = create_admin_user();
         $adminuser->newadminuser = 1;
-        complete_user_login($adminuser);
+        complete_user_login($adminuser, false);
+        upgrade_log_finish("$CFG->wwwroot/user/editadvanced.php?id=$adminuser->id"); // Edit thyself
 
-        redirect("$CFG->wwwroot/user/editadvanced.php?id=$adminuser->id");  // Edit thyself
+    } else {
+    /// just make sure upgrade logging is properly terminated
+        upgrade_log_finish('upgradesettings.php');
     }
 
+
+    // Turn xmlstrictheaders back on now.
+    $CFG->xmlstrictheaders = $origxmlstrictheaders;
+    unset($origxmlstrictheaders);
 
 /// Check for valid admin user - no guest autologin
     require_login(0, false);

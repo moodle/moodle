@@ -317,18 +317,6 @@ function get_db_directories() {
     return $dbdirs;
 }
 
-function print_upgrade_header() {
-    if (defined('HEADER_PRINTED')) {
-        return;
-    }
-
-    $strpluginsetup  = get_string('pluginsetup');
-
-    print_header($strpluginsetup, $strpluginsetup,
-        build_navigation(array(array('name' => $strpluginsetup, 'link' => null, 'type' => 'misc'))), '',
-        upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
-}
-
 /**
  * Upgrade plugins
  *
@@ -358,7 +346,7 @@ function upgrade_plugins($type, $dir) {
         unset($plugin);
 
         if (is_readable($fullplug .'/version.php')) {
-            include_once($fullplug .'/version.php');  // defines $plugin with version etc
+            include($fullplug .'/version.php');  // defines $plugin with version etc
         } else {
             continue;                              // Nothing to do.
         }
@@ -380,7 +368,6 @@ function upgrade_plugins($type, $dir) {
                 $info->pluginversion  = $plugin->version;
                 $info->currentmoodle = $CFG->version;
                 $info->requiremoodle = $plugin->requires;
-                print_upgrade_header();
                 upgrade_log_start();
                 notify(get_string('pluginrequirementsnotmet', 'error', $info));
                 $updated_plugins = true;
@@ -400,7 +387,6 @@ function upgrade_plugins($type, $dir) {
         if ($installedversion == $plugin->version) {
             // do nothing
         } else if ($installedversion < $plugin->version) {
-            print_upgrade_header();
             $updated_plugins = true;
             upgrade_log_start();
             print_heading($dir.'/'. $plugin->name .' plugin needs upgrading');
@@ -425,9 +411,8 @@ function upgrade_plugins($type, $dir) {
                     set_config('version', $plugin->version, $plugin->fullname);
 
                 /// Install capabilities
-                    if (!update_capabilities($type.'/'.$plug)) {
-                        print_error('cannotsetupcapforplugin', '', '', $plugin->name);
-                    }
+                    update_capabilities($type.'/'.$plug);
+
                 /// Install events
                     events_update_definition($type.'/'.$plug);
 
@@ -469,9 +454,7 @@ function upgrade_plugins($type, $dir) {
                 if ($newupgrade_status) {    // No upgrading failed
                 /// OK so far, now update the plugins record
                     set_config('version', $plugin->version, $plugin->fullname);
-                    if (!update_capabilities($type.'/'.$plug)) {
-                        print_error('cannotupdateplugincap', '', '', $plugin->name);
-                    }
+                    update_capabilities($type.'/'.$plug);
                 /// Update events
                     events_update_definition($type.'/'.$plug);
 
@@ -546,7 +529,6 @@ function upgrade_activity_modules() {
                 $info->moduleversion  = $module->version;
                 $info->currentmoodle = $CFG->version;
                 $info->requiremoodle = $module->requires;
-                print_upgrade_header();
                 upgrade_log_start();
                 notify(get_string('modulerequirementsnotmet', 'error', $info));
                 $updated_modules = true;
@@ -567,7 +549,6 @@ function upgrade_activity_modules() {
                     notify('Upgrade file ' . $mod . ': ' . $fullmod . '/db/upgrade.php is not readable');
                     continue;
                 }
-                print_upgrade_header();
                 upgrade_log_start();
 
                 print_heading($module->name .' module needs upgrading');
@@ -593,9 +574,7 @@ function upgrade_activity_modules() {
                 if ($newupgrade_status) {    // No upgrading failed
                     // OK so far, now update the modules record
                     $module->id = $currmodule->id;
-                    if (!$DB->update_record('modules', $module)) {
-                        print_error('cannotupdatemod', '', '', $module->name);
-                    }
+                    $DB->update_record('modules', $module);
                     remove_dir($CFG->dataroot . '/cache', true); // flush cache
                     notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
                     if (!defined('CLI_UPGRADE') || !CLI_UPGRADE) {
@@ -606,9 +585,7 @@ function upgrade_activity_modules() {
                 }
 
             /// Update the capabilities table?
-                if (!update_capabilities('mod/'.$module->name)) {
-                    print_error('cannotupdatemodcap', '', '', $module->name);
-                }
+                update_capabilities('mod/'.$module->name);
 
             /// Update events
                 events_update_definition('mod/'.$module->name);
@@ -623,7 +600,6 @@ function upgrade_activity_modules() {
             }
 
         } else {    // module not installed yet, so install it
-            print_upgrade_header();
             upgrade_log_start();
             print_heading($module->name);
             $updated_modules = true;
@@ -648,9 +624,7 @@ function upgrade_activity_modules() {
                 if ($module->id = $DB->insert_record('modules', $module)) {
 
                 /// Capabilities
-                    if (!update_capabilities('mod/'.$module->name)) {
-                        print_error('cannotsetupcapformod', '', '', $module->name);
-                    }
+                    update_capabilities('mod/'.$module->name);
 
                 /// Events
                     events_update_definition('mod/'.$module->name);
@@ -887,6 +861,14 @@ function upgrade_log_start() {
         upgrade_set_timeout(120);
 
     } else {
+        if (!CLI_SCRIPT and !defined('HEADER_PRINTED')) {
+            $strupgrade  = get_string('upgrade');
+
+            print_header($strupgrade, $strupgrade,
+                build_navigation(array(array('name' => $strupgrade, 'link' => null, 'type' => 'misc'))), '',
+                upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
+        }
+
         ignore_user_abort(true);
         register_shutdown_function('upgrade_finished_handler');
         set_config('upgraderunning', time()+300);
@@ -906,9 +888,17 @@ function upgrade_finished_handler() {
  *
  * This function may be called repeatedly.
  */
-function upgrade_log_finish() {
-    unset_config('upgraderunning');
-    ignore_user_abort(false);
+function upgrade_log_finish($continueurl=null) {
+    global $CFG;
+    if (!empty($CFG->upgraderunning)) {
+        unset_config('upgraderunning');
+        ignore_user_abort(false);
+        if ($continueurl) {
+            print_continue($continueurl);
+            print_footer('none');
+            die;
+        }
+    }
 }
 
 /**

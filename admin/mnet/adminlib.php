@@ -140,7 +140,7 @@ function mnet_get_functions($type, $parentname) {
     return true;
 }
 
-function upgrade_RPC_functions($returnurl) {
+function upgrade_RPC_functions() {
     global $CFG;
 
     // TODO: rewrite this thing so that it:

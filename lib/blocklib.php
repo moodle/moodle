@@ -1171,7 +1171,6 @@ function upgrade_blocks_plugins() {
             if ($currblock->version == $block->version) {
                 // do nothing
             } else if ($currblock->version < $block->version) {
-                print_upgrade_header();
                 $updated_blocks = true;
                 upgrade_log_start();
 
@@ -1242,12 +1241,11 @@ function upgrade_blocks_plugins() {
             // [pj] Normally this would be inline in the if, but we need to
             //      check for NULL (necessary for 4.0.5 <= PHP < 4.2.0)
             $conflictblock = array_search($blocktitle, $blocktitles);
-            if($conflictblock !== false && $conflictblock !== NULL) {
+            if ($conflictblock !== false && $conflictblock !== NULL) {
                 // Duplicate block titles are not allowed, they confuse people
                 // AND PHP's associative arrays ;)
                 print_error('blocknameconflict', '', '', (object)array('name'=>$block->name, 'conflict'=>$conflictblock));
             }
-            print_upgrade_header();
             $updated_blocks = true;
             upgrade_log_start();
             print_heading($block->name);
@@ -1261,34 +1259,24 @@ function upgrade_blocks_plugins() {
             if (file_exists($fullblock . '/db/install.xml')) {
                 $DB->get_manager()->install_from_xmldb_file($fullblock . '/db/install.xml'); //New method
             }
-            $status = true;
             if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                 $DB->set_debug(false);
             }
-            if ($status) {
-                if ($block->id = $DB->insert_record('block', $block)) {
-                    $blockobj->after_install();
-                    $component = 'block/'.$block->name;
-                    if (!update_capabilities($component)) {
-                        notify('Could not set up '.$block->name.' capabilities!');
-                    }
+            $block->id = $DB->insert_record('block', $block);
+            $blockobj->after_install();
+            $component = 'block/'.$block->name;
+            update_capabilities($component);
 
-                    // Update events
-                    events_update_definition($component);
+            // Update events
+            events_update_definition($component);
 
-                    // Update message providers
-                    require_once($CFG->libdir .'/messagelib.php');      // Messagelib functions
-                    message_update_providers($component);
+            // Update message providers
+            require_once($CFG->libdir .'/messagelib.php');      // Messagelib functions
+            message_update_providers($component);
 
-                    notify(get_string('blocksuccess', '', $blocktitle), 'notifysuccess');
-                    if (!defined('CLI_UPGRADE')|| !CLI_UPGRADE) {
-                    echo '<hr />';
-                    }
-                } else {
-                    print_error('cannotaddblock', '', '', $block->name);
-                }
-            } else {
-                print_error('cannotsetupblock', '', '', $block->name);
+            notify(get_string('blocksuccess', '', $blocktitle), 'notifysuccess');
+            if (!defined('CLI_UPGRADE')|| !CLI_UPGRADE) {
+                echo '<hr />';
             }
         }
 

@@ -3172,22 +3172,25 @@ function authenticate_user_login($username, $password) {
  * @param string $user obj
  * @return object A {@link $USER} object - BC only, do not use
  */
-function complete_user_login($user) {
+function complete_user_login($user, $setcookie=true) {
     global $CFG, $USER, $SESSION;
 
     // check enrolments, load caps and setup $USER object
     session_set_user($user);
 
     update_user_login_times();
-    if (empty($CFG->nolastloggedin)) {
-        set_moodle_cookie($USER->username);
-    } else {
-        // do not store last logged in user in cookie
-        // auth plugins can temporarily override this from loginpage_hook()
-        // do not save $CFG->nolastloggedin in database!
-        set_moodle_cookie('nobody');
-    }
     set_login_session_preferences();
+
+    if ($setcookie) {
+        if (empty($CFG->nolastloggedin)) {
+            set_moodle_cookie($USER->username);
+        } else {
+            // do not store last logged in user in cookie
+            // auth plugins can temporarily override this from loginpage_hook()
+            // do not save $CFG->nolastloggedin in database!
+            set_moodle_cookie('nobody');
+        }
+    }
 
     /// Select password change url
     $userauth = get_auth_plugin($USER->auth);

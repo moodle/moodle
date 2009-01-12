@@ -3895,11 +3895,6 @@ function print_continue($link, $return=false) {
 
     global $CFG;
 
-    // in case we are logging upgrade in admin/index.php stop it
-    if (function_exists('upgrade_log_finish')) {
-        upgrade_log_finish();
-    }
-
     $output = '';
 
     if ($link == '') {
@@ -5729,11 +5724,6 @@ function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debugi
                 notify('Stack trace:'.print_backtrace($backtrace, true), 'notifytiny');
             }
         }
-    }
-
-    // in case we are logging upgrade in admin/index.php stop it
-    if (function_exists('upgrade_log_finish')) {
-        upgrade_log_finish();
     }
 
     if (!empty($link)) {

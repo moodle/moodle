@@ -112,15 +112,15 @@
  * On success it prints a continue link. On failure it prints an error.
  *
  * @uses $CFG
- * @param string $continueto a URL passed to print_continue() if the local upgrades succeed.
+ * @return bool true if upgraded anything
  */
-function upgrade_local_db($continueto) {
+function upgrade_local_db() {
 
     global $CFG, $DB;
 
     // if we don't have code version or a db upgrade file, just return true, we're unneeded
     if (!file_exists($CFG->dirroot.'/local/version.php') || !file_exists($CFG->dirroot.'/local/db/upgrade.php')) {
-        return true;
+        return false;
     }
 
     require_once ($CFG->dirroot .'/local/version.php');  // Get code versions
@@ -131,54 +131,30 @@ function upgrade_local_db($continueto) {
 
     if ($local_version > $CFG->local_version) { // upgrade!
         $strdatabaseupgrades = get_string('databaseupgrades');
-        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-        print_header($strdatabaseupgrades, $strdatabaseupgrades,
-            build_navigation(array(array('name' => $strdatabaseupgrades, 'link' => null, 'type' => 'misc'))), '', upgrade_get_javascript());
-        }
-
         upgrade_log_start();
         require_once ($CFG->dirroot .'/local/db/upgrade.php');
 
         if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
             $DB->set_debug(true);
         }
-        if (xmldb_local_upgrade($CFG->local_version)) {
-            if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                $DB->set_debug(false);
-            }
-            if (set_config('local_version', $local_version)) {
-                notify(get_string('databasesuccess'), 'notifysuccess');
-                notify(get_string('databaseupgradelocal', '', $local_version), 'notifysuccess');
-                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                print_continue($continueto);
-                print_footer('none');
-                exit;
-                } else if (CLI_UPGRADE && ($interactive > CLI_SEMI) ) {
-                    console_write('askcontinue');
-                    if (read_boolean()){
-                        return ;
-                    }else {
-                        console_write_error('','',false);
-                    }
-                }
-            } else {
-                print_error('cannotupgradedbcustom', 'debug');
-            }
-        } else {
-            if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                $DB->set_debug(false);
-            }
-            print_error('upgradefail', 'debug', '', 'local/version.php');
+        xmldb_local_upgrade($CFG->local_version);
+        if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
+            $DB->set_debug(false);
         }
+        set_config('local_version', $local_version);
+        notify(get_string('databasesuccess'), 'notifysuccess');
+        notify(get_string('databaseupgradelocal', '', $local_version), 'notifysuccess');
+
+        return true;
 
     } else if ($local_version < $CFG->local_version) {
         notify('WARNING!!!  The local version you are using is OLDER than the version that made these databases!');
     }
 
     /// Capabilities
-    if (!update_capabilities('local')) {
-        print_error('cannotsetupcapformod', 'error', '', 'local');
-    }
+    update_capabilities('local');
+
+    return false;
 }
 
 /**

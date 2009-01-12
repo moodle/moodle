@@ -3257,7 +3257,7 @@ function reset_role_capabilities($roleid) {
  * the database.
  *
  * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
- * @return boolean
+ * @return boolean true if success, exception in case of any problems
  */
 function update_capabilities($component='moodle') {
     global $DB;
@@ -3278,9 +3278,7 @@ function update_capabilities($component='moodle') {
                     $updatecap = new object();
                     $updatecap->id = $cachedcap->id;
                     $updatecap->riskbitmask = $filecaps[$cachedcap->name]['riskbitmask'];
-                    if (!$DB->update_record('capabilities', $updatecap)) {
-                        return false;
-                    }
+                    $DB->update_record('capabilities', $updatecap);
                 }
 
                 if (!array_key_exists('contextlevel', $filecaps[$cachedcap->name])) {
@@ -3290,9 +3288,7 @@ function update_capabilities($component='moodle') {
                     $updatecap = new object();
                     $updatecap->id = $cachedcap->id;
                     $updatecap->contextlevel = $filecaps[$cachedcap->name]['contextlevel'];
-                    if (!$DB->update_record('capabilities', $updatecap)) {
-                        return false;
-                    }
+                    $DB->update_record('capabilities', $updatecap);
                 }
             }
         }
@@ -3319,10 +3315,7 @@ function update_capabilities($component='moodle') {
         $capability->component = $component;
         $capability->riskbitmask = $capdef['riskbitmask'];
 
-        if (!$DB->insert_record('capabilities', $capability, false)) {
-            return false;
-        }
-
+        $DB->insert_record('capabilities', $capability, false);
 
         if (isset($capdef['clonepermissionsfrom']) && in_array($capdef['clonepermissionsfrom'], $storedcaps)){
             if ($rolecapabilities = $DB->get_records('role_capabilities', array('capability'=>$capdef['clonepermissionsfrom']))){
