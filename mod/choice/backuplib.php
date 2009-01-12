@@ -123,9 +123,9 @@
 
         $status = true;
 
-        $choice_answers = $DB->get_records("choice_options", array("choiceid" => $choice),"id");
+        $choice_options = $DB->get_records("choice_options", array("choiceid" => $choice),"id");
         //If there is options
-        if ($choice_options) {
+        if (!empty($choice_options)) {
             //Write start tag
             $status =fwrite ($bf,start_tag("OPTIONS",4,true));
             //Iterate over each answer
