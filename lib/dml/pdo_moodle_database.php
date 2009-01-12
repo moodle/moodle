@@ -151,7 +151,7 @@ abstract class pdo_moodle_database extends moodle_database {
                 $this->debug_query($sql);
             }
             $this->pdb->exec($sql);
-            $this->reset_columns();
+            $this->reset_caches();
             return true;
         } catch (PDOException $ex) {
             $this->lastError = $ex->getMessage();

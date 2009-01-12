@@ -177,8 +177,11 @@ class mysqli_native_moodle_database extends moodle_database {
      * Return tables in database WITHOUT current prefix
      * @return array of table names in lowercase and without prefix
      */
-    public function get_tables() {
-        $tables = array();
+    public function get_tables($usecache=true) {
+        if ($usecache and $this->tables !== null) {
+            return $this->tables;
+        }
+        $this->tables = array();
         $sql = "SHOW TABLES";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
@@ -192,11 +195,11 @@ class mysqli_native_moodle_database extends moodle_database {
                     }
                     $tablename = substr($tablename, strlen($this->prefix));
                 }
-                $tables[$tablename] = $tablename;
+                $this->tables[$tablename] = $tablename;
             }
             $result->close();
         }
-        return $tables;
+        return $this->tables;
     }
 
     /**
@@ -393,7 +396,7 @@ class mysqli_native_moodle_database extends moodle_database {
      * @throws dml_exception if error
      */
     public function change_database_structure($sql) {
-        $this->reset_columns();
+        $this->reset_caches();
 
         $this->query_start($sql, null, SQL_QUERY_STRUCTURE);
         $result = $this->mysqli->query($sql);

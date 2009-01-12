@@ -109,7 +109,7 @@ abstract class adodb_moodle_database extends moodle_database {
      * Return tables in database WITHOUT current prefix
      * @return array of table names in lowercase and without prefix
      */
-    public function get_tables() {
+    public function get_tables($usecache=true) {
         $this->query_start("--adodb-MetaTables", null, SQL_QUERY_AUX);
         $metatables = $this->adodb->MetaTables();
         $this->query_end(true);
@@ -192,7 +192,7 @@ abstract class adodb_moodle_database extends moodle_database {
      * @throws dml_exception if error
      */
     public function change_database_structure($sql) {
-        $this->reset_columns();
+        $this->reset_caches();
 
         $this->query_start($sql, null, SQL_QUERY_STRUCTURE);
         $rs = $this->adodb->Execute($sql);

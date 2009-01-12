@@ -40,6 +40,7 @@ abstract class moodle_database {
     protected $database_manager;
 
     protected $columns = array(); // I wish we had a shared memory cache for this :-(
+    protected $tables  = null;
 
     // db connection options
     protected $dbhost;
@@ -246,6 +247,7 @@ abstract class moodle_database {
             $this->database_manager = null;
         }
         $this->columns = array();
+        $this->tables  = null;
     }
 
     /**
@@ -606,7 +608,7 @@ abstract class moodle_database {
      * Return tables in database WITHOUT current prefix
      * @return array of table names in lowercase and without prefix
      */
-    public abstract function get_tables();
+    public abstract function get_tables($usecache=true);
 
     /**
      * Return table indexes - everything lowercased
@@ -627,8 +629,9 @@ abstract class moodle_database {
      * @param string $table - empty means all, or one if name of table given
      * @return void
      */
-    public function reset_columns() {
+    public function reset_caches() {
         $this->columns = array();
+        $this->tables  = null;
     }
 
     /**

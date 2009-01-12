@@ -235,7 +235,7 @@ class oci_native_moodle_database extends moodle_database {
      * Return tables in database WITHOUT current prefix
      * @return array of table names in lowercase and without prefix
      */
-    public function get_tables() {
+    public function get_tables($usecache=true) {
         $tables = array();
         $prefix = str_replace('_', "\\_", strtoupper($this->prefix));
         $sql = "SELECT TABLE_NAME
@@ -516,7 +516,7 @@ class oci_native_moodle_database extends moodle_database {
      * @throws dml_exception if error
      */
     public function change_database_structure($sql) {
-        $this->reset_columns();
+        $this->reset_caches();
 
         $this->query_start($sql, null, SQL_QUERY_STRUCTURE);
         $stmt = $this->parse_query($sql);

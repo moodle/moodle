@@ -108,7 +108,7 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
      * Return tables in database WITHOUT current prefix
      * @return array of table names in lowercase and without prefix
      */
-    public function get_tables() {
+    public function get_tables($usecache=true) {
         $tables = array();
 
         $sql = 'SELECT name FROM sqlite_master WHERE type="table" UNION ALL SELECT name FROM sqlite_temp_master WHERE type="table" ORDER BY name';

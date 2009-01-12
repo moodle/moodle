@@ -1964,7 +1964,7 @@ class moodle_database_for_testing extends moodle_database {
     public function get_server_info(){}
     protected function allowed_param_types(){}
     public function get_last_error(){}
-    public function get_tables(){}
+    public function get_tables($usecache=true){}
     public function get_indexes($table){}
     public function get_columns($table, $usecache=true){}
     public function set_debug($state){}

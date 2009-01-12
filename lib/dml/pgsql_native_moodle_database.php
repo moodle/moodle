@@ -228,8 +228,11 @@ class pgsql_native_moodle_database extends moodle_database {
      * Return tables in database WITHOUT current prefix
      * @return array of table names in lowercase and without prefix
      */
-    public function get_tables() {
-        $tables = array();
+    public function get_tables($usecache=true) {
+        if ($usecache and $this->tables !== null) {
+            return $this->tables;
+        }
+        $this->tables = array();
         $prefix = str_replace('_', '\\\\_', $this->prefix);
         $sql = "SELECT tablename
                   FROM pg_catalog.pg_tables
@@ -245,11 +248,11 @@ class pgsql_native_moodle_database extends moodle_database {
                     continue;
                 }
                 $tablename = substr($tablename, strlen($this->prefix));
-                $tables[$tablename] = $tablename;
+                $this->tables[$tablename] = $tablename;
             }
             pg_free_result($result);
         }
-        return $tables;
+        return $this->tables;
     }
 
     /**
@@ -493,7 +496,7 @@ class pgsql_native_moodle_database extends moodle_database {
      * @throws dml_exception if error
      */
     public function change_database_structure($sql) {
-        $this->reset_columns();
+        $this->reset_caches();
 
         $this->query_start($sql, null, SQL_QUERY_STRUCTURE);
         $result = pg_query($this->pgsql, $sql);
