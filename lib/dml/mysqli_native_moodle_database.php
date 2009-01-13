@@ -808,7 +808,6 @@ class mysqli_native_moodle_database extends moodle_database {
             array_unshift($params, $newvalue);
         }
         $sql = "UPDATE {$this->prefix}$table SET $newfield $select";
-var_dump($params);
         $rawsql = $this->emulate_bound_params($sql, $params);
 
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
