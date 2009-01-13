@@ -5767,6 +5767,8 @@ function get_list_of_countries() {
 
     if (!empty($string)) {
         uasort($string, 'strcoll');
+    } else {
+        print_error('countriesphpempty', '', '', $lang);
     }
 
     return $string;

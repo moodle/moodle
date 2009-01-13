@@ -172,6 +172,7 @@ $string['commentmisconf'] = 'Comment ID is misconfigured';
 $string['componentisuptodate'] = 'Component is up-to-date';
 $string['confirmsesskeybad'] = 'Sorry, but your session key could not be confirmed to carry out this action.  This security feature prevents against accidental or malicious execution of important functions in your name.  Please make sure you really wanted to execute this function.';
 $string['couldnotassignrole'] = 'A serious but unspecified error occurred while trying to assign a role to you';
+$string['countriesphpempty'] = 'Error: The file countries.php in language pack $a is empty or missing.';
 $string['coursegroupunknown'] = 'Course corresponding to group $a not specified';
 $string['coursemisconf'] = 'Course is misconfigured';
 $string['courserequestdisabled'] = 'Sorry, but requesting courses has been disabled by the administrator';
