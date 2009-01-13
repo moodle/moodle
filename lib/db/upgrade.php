@@ -1350,6 +1350,34 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2009011101);
     }
 
+    if ($result && $oldversion < 2009011303) {
+
+    /// Define table config_log to be created
+        $table = new xmldb_table('config_log');
+
+    /// Adding fields to table config_log
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('plugin', XMLDB_TYPE_CHAR, '100', null, null, null, null, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('value', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
+        $table->add_field('oldvalue', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
+
+    /// Adding keys to table config_log
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+    /// Adding indexes to table config_log
+        $table->add_index('timemodified', XMLDB_INDEX_NOTUNIQUE, array('timemodified'));
+
+    /// Launch create table for config_log
+        $dbman->create_table($table);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009011303);
+    }
+
 
     return $result;
 }

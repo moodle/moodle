@@ -1794,7 +1794,7 @@ class admin_settingpage implements part_of_admin_tree {
  * Admin settings class. Only exists on setting pages.
  * Read & write happens at this level; no authentication.
  */
-class admin_setting {
+abstract class admin_setting {
 
     public $name;
     public $visiblename;
@@ -1865,18 +1865,46 @@ class admin_setting {
         }
     }
 
+    /**
+     *
+     * @param <type> $name
+     * @param <type> $value
+     * @return <type> Write setting to confix table
+     */
     public function config_write($name, $value) {
-        return (boolean)set_config($name, $value, $this->plugin);
+        global $DB, $USER, $CFG;
+
+        // make sure it is a real change
+        $oldvalue = get_config($this->plugin, $name);
+        $oldvalue = ($oldvalue === false) ? null : $oldvalue; // normalise
+        $value = is_null($value) ? null : (string)$value;
+
+        if ($oldvalue === $value) {
+            return true;
+        }
+
+        // store change
+        set_config($name, $value, $this->plugin);
+
+
+        // log change
+        $log = new object();
+        $log->userid       = empty($CFG->rolesactive) ? 0 :$USER->id; // 0 as user id during install
+        $log->timemodified = time();
+        $log->plugin       = $this->plugin;
+        $log->name         = $name;
+        $log->value        = $value;
+        $log->oldvalue     = $oldvalue;
+        $DB->insert_record('config_log', $log);
+
+        return true; // BC only
     }
 
     /**
      * Returns current value of this setting
      * @return mixed array or string depending on instance, NULL means not set yet
      */
-    public function get_setting() {
-        // has to be overridden
-        return NULL;
-    }
+    public abstract function get_setting();
 
     /**
      * Returns default setting if exists
@@ -1891,10 +1919,7 @@ class admin_setting {
      * @param mixed string or array, must not be NULL
      * @return '' if ok, string error message otherwise
      */
-    public function write_setting($data) {
-        // should be overridden
-        return '';
-    }
+    public abstract function write_setting($data);
 
     /**
      * Return part of form with setting
@@ -4533,6 +4558,10 @@ class admin_setting_manageportfolio extends admin_setting {
         return true;
     }
 
+    public function write_setting($data) {
+        return '';
+    }
+
     public function is_related($query) {
         if (parent::is_related($query)) {
             return true;
@@ -4931,7 +4960,7 @@ function admin_write_settings($formdata) {
 
     // now update $SITE - it might have been changed
     $SITE = $DB->get_record('course', array('id'=>$SITE->id));
-    $COURSE = clone($SITE);
+    course_setup($SITE);
 
     // now reload all settings - some of them might depend on the changed
     admin_get_root(true);
@@ -5427,6 +5456,7 @@ class admin_setting_managerepository extends admin_setting {
 
     public function write_setting($data) {
         $url = $this->baseurl . '&amp;new=' . $data;
+        return '';
         // TODO
         // Should not use redirect and exit here
         // Find a better way to do this.
