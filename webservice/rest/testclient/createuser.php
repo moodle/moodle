@@ -14,10 +14,10 @@ start_interface("Create A User");
 
 $ch = curl_init();
 
-$data['user:username'] = "jerome4";
-$data['user:firstname'] = "jerome4";
-$data['user:lastname'] = "jerome4";
-$data['user:email'] = "jerome4@mouneyrac.com";
+$data['user:username'] = "mockuser4";
+$data['user:firstname'] = "mockuser4";
+$data['user:lastname'] = "mockuser4";
+$data['user:email'] = "mockuser4@lastname.com";
 
 var_dump($data);
 
