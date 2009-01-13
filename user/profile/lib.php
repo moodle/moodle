@@ -320,20 +320,30 @@ function profile_load_data(&$user) {
 function profile_definition(&$mform) {
     global $CFG, $DB;
 
+    // if user is "admin" fields are displayed regardless
+    $update = has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM));
+
     if ($categories = $DB->get_records('user_info_category', null, 'sortorder ASC')) {
         foreach ($categories as $category) {
             if ($fields = $DB->get_records('user_info_field', array('categoryid'=>$category->id), 'sortorder ASC')) {
-                $displayed = false;
+                    
+                // check first if *any* fields will be displayed
+                $display = false;
                 foreach ($fields as $field) {
-                    require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-                    $newfield = 'profile_field_'.$field->datatype;
-                    $formfield = new $newfield($field->id);
-                    if ($formfield->edit_field($mform)) {
-                        $displayed = true;
+                    if ($field->visible != PROFILE_VISIBLE_NONE) {
+                        $display = true;
                     }
                 }
-                if ($displayed) {
+
+                // display the header and the fields
+                if ($display or $update) {
                     $mform->addElement('header', 'category_'.$category->id, format_string($category->name));
+                    foreach ($fields as $field) {
+                        require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
+                        $newfield = 'profile_field_'.$field->datatype;
+                        $formfield = new $newfield($field->id);
+                        $formfield->edit_field($mform);
+                    }
                 }
             }
         }
