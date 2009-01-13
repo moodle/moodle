@@ -750,6 +750,18 @@ function admin_critical_warnings_present() {
 }
 
 /**
+ * Detects if float support at least 10 deciman digits
+ * and also if float-->string conversion works as expected.
+ * @return bool true if problem found
+ */
+function is_float_problem() {
+    $num1 = 2009010200.01;
+    $num2 = 2009010200.02;
+
+    return ((string)$num1 === (string)$num2 or $num1 === $num2 or $num2 <= (string)$num1);
+}
+
+/**
  * Try to verify that dataroot is not accessible from web.
  * It is not 100% correct but might help to reduce number of vulnerable sites.
  *

@@ -61,6 +61,10 @@
         error("The PHP server variable 'file_uploads' is not turned On - $documentationlink");
     }
 
+    if (is_float_problem()) {
+        print_error('phpfloatproblem', 'admin', '', $documentationlink);
+    }
+
     if (empty($CFG->prefix) && $CFG->dbfamily != 'mysql') {  //Enforce prefixes for everybody but mysql
         error('$CFG->prefix can\'t be empty for your target DB (' . $CFG->dbtype . ')');
     }
