@@ -44,6 +44,10 @@
         print_error('phpvaron', 'debug', '', (object)array('name'=>'file_uploads', 'link'=>$documentationlink));
     }
 
+    if (is_float_problem()) {
+        print_error('phpfloatproblem', 'admin', '', $documentationlink);
+    }
+
 /// Check that config.php has been edited
 
     if ($CFG->wwwroot == "http://example.com/moodle") {
