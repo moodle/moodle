@@ -420,7 +420,9 @@ class mysqli_native_moodle_database extends moodle_database {
                 $return .= (int)$param;
             } else if (is_null($param)) {
                 $return .= 'NULL';
-            } else if (is_numeric($param)) {
+            } else if (is_number($param)) { // we can not use is_numeric() because it eats leading zeros from strings like 0045646
+                $return .= $param;
+            } else if (is_float($param)) {
                 $return .= $param;
             } else {
                 $param = $this->mysqli->real_escape_string($param);
@@ -806,6 +808,7 @@ class mysqli_native_moodle_database extends moodle_database {
             array_unshift($params, $newvalue);
         }
         $sql = "UPDATE {$this->prefix}$table SET $newfield $select";
+var_dump($params);
         $rawsql = $this->emulate_bound_params($sql, $params);
 
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
