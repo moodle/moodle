@@ -866,7 +866,7 @@ function upgrade_log_start($preinstall=false) {
 
     } else {
         if (!CLI_SCRIPT and !defined('HEADER_PRINTED')) {
-            $strupgrade  = get_string('upgrade');
+            $strupgrade  = get_string('upgradingversion', 'admin');
 
             print_header($strupgrade, $strupgrade,
                 build_navigation(array(array('name' => $strupgrade, 'link' => null, 'type' => 'misc'))), '',

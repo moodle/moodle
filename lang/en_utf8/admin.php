@@ -805,6 +805,7 @@ Are you sure you want to upgrade this server to this version?';
 $string['upgradetimedout'] = 'Upgrade timed out, please restart the upgrade.';
 $string['upgradingdata'] = 'Upgrading data';
 $string['upgradinglogs'] = 'Upgrading logs';
+$string['upgradingversion'] = 'Upgrading to new version';
 $string['uploaduserspreview'] = 'Upload users preview';
 $string['uploadusersresult'] = 'Upload users results';
 $string['upwards'] = 'upwards';

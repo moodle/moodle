@@ -241,13 +241,7 @@
                     print_string('langpackwillbeupdated', 'admin');
                     print_box_end();
                 }
-                echo '<form action="index.php"><div>';
-                echo '<input type="hidden" name="confirmupgrade" value="1" />';
-                echo '<input type="hidden" name="confirmrelease" value="1" />';
-                echo '</div>';
-                echo '<div class="continuebutton">';
-                echo '<br /><br /><input type="submit" value="'.get_string('continue').'" /></div>';
-                echo '</form>';
+                print_continue('index.php?confirmupgrade=1&confirmrelease=1');
             }
 
             print_footer('none');
@@ -266,13 +260,7 @@
             echo '<div class="continuebutton">';
             print_single_button('index.php', array('confirmupgrade' => 1, 'confirmrelease' => 1), get_string('reload'), 'get');
             echo '</div><br />';
-            echo '<form action="index.php"><div>';
-            echo '<input type="hidden" name="confirmupgrade" value="1" />';
-            echo '<input type="hidden" name="confirmrelease" value="1" />';
-            echo '<input type="hidden" name="confirmplugincheck" value="1" />';
-            echo '</div>';
-            echo '<br /><br /><input type="submit" value="'.get_string('continue').'" /></div>';
-            echo '</form>';
+            print_continue('index.php?confirmupgrade=1&confirmrelease=1&confirmplugincheck=1');
             print_footer('none');
             die();
 
