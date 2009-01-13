@@ -871,6 +871,7 @@ _client.login = function() {
     params['repo_id'] = _client.repositoryid;
     params['ctx_id'] = $context->id;
     params['sesskey']= '$sesskey';
+    params['accepted_types'] = _client.accepted_types;
     _client.loading('load');
     var trans = YAHOO.util.Connect.asyncRequest('POST',
             '$CFG->httpswwwroot/repository/ws.php?action=sign', _client.req_cb, _client.postdata(params));

@@ -1481,7 +1481,8 @@ abstract class repository {
                 $value->children = array_filter($value->children, array($this, 'filter'));
             }
         } else {
-            if ($accepted_types == '*' || in_array('*', $accepted_types)) {
+            if ($accepted_types == '*' or empty($accepted_types)
+                or (is_array($accepted_types) and in_array('*', $accepted_types))) {
                 $pass = true;
             } elseif (is_array($accepted_types)) {
                 foreach ($accepted_types as $type) {
