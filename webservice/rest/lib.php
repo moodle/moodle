@@ -59,10 +59,7 @@ function retrieve_params ($description) {
     //retrieve REST param matching the description
 
     foreach ($description['wsparams'] as $paramname => $paramtype) {
-        varlog('--retrieve_params--');
-        varlog($paramname);
         $value = optional_param($paramname,null,$paramtype);
-        varlog($value);
         if (!empty($value)) {
             $fullstopposition = strrpos($paramname,":");
             varlog(substr($paramname,0,$fullstopposition));
@@ -75,7 +72,6 @@ function retrieve_params ($description) {
             }
         }
     }
-    varlog($params);
     return $params;
 }
 
