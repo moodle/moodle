@@ -27,29 +27,13 @@
 /// This is the main script for the complete XMLDB interface. From here
 /// all the actions supported will be launched.
 
-/// Add required XMLDB constants
-    require_once('../../lib/xmldb/xmldb_constants.php');
-
+    require_once('../../config.php');
+    require_once($CFG->libdir.'/adminlib.php');
+    require_once($CFG->libdir.'/ddllib.php');
 /// Add required XMLDB action classes
     require_once('actions/XMLDBAction.class.php');
     require_once('actions/XMLDBCheckAction.class.php');
 
-/// Add required XMLDB DB classes
-    require_once('../../lib/xmldb/xmldb_object.php');
-    require_once('../../lib/xmldb/xmldb_file.php');
-    require_once('../../lib/xmldb/xmldb_structure.php');
-    require_once('../../lib/xmldb/xmldb_table.php');
-    require_once('../../lib/xmldb/xmldb_field.php');
-    require_once('../../lib/xmldb/xmldb_key.php');
-    require_once('../../lib/xmldb/xmldb_index.php');
-    require_once('../../lib/xmldb/xmldb_statement.php');
-
-/// Add Moodle config script (this is loaded AFTER all the rest
-/// of classes because it starts the SESSION and classes to be
-/// stored there MUST be declared before in order to avoid
-/// getting "incomplete" objects
-    require_once('../../config.php');
-    require_once($CFG->libdir.'/adminlib.php');
 
     admin_externalpage_setup('xmldbeditor');
 
@@ -58,11 +42,13 @@
 
 /// Handle session data
     global $XMLDB;
-/// The global SESSION object where everything will happen
+
+/// State is stored in session - we have to serialise it because the classes are not loaded when creating session
     if (!isset($SESSION->xmldb)) {
-        $SESSION->xmldb = new stdClass;
+        $XMLDB = new stdClass;
+    } else {
+        $XMLDB = unserialize($SESSION->xmldb);
     }
-    $XMLDB =& $SESSION->xmldb;
 
 /// Some previous checks
     if (! $site = get_site()) {
@@ -86,6 +72,9 @@
         if ($xmldb_action = new $action) {
             //Invoke it
             $result = $xmldb_action->invoke();
+            // store the result in session
+            $SESSION->xmldb = serialize($XMLDB);
+
             if ($result) {
             /// Based on getDoesGenerate()
                 switch ($xmldb_action->getDoesGenerate()) {
