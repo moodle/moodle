@@ -47,12 +47,17 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
     // Get all the possible users
     $users = array();
 
+    // Define limitfrom and limitnum for queries below
+    // If $showusers is enabled... don't apply limitfrom and limitnum
+    $limitfrom = empty($showusers) ? 0 : '';
+    $limitnum  = empty($showusers) ? COURSE_MAX_USERS_PER_DROPDOWN + 1 : '';
+
     // If looking at a different host, we're interested in all our site users
     if ($hostid == $CFG->mnet_localhost_id && $course->id != SITEID) {
-        $courseusers = get_users_by_capability($context, 'moodle/course:view', 'u.id, u.firstname, u.lastname, u.idnumber', 'lastname ASC, firstname ASC', '','', $selectedgroup,'', false);
+        $courseusers = get_users_by_capability($context, 'moodle/course:view', 'u.id, u.firstname, u.lastname, u.idnumber', 'lastname ASC, firstname ASC', $limitfrom, $limitnum, $selectedgroup,'', false);
     } else {
         // this may be a lot of users :-(
-        $courseusers = $DB->get_records('user', array('deleted'=>0), 'lastaccess DESC', 'id, firstname, lastname, idnumber');
+        $courseusers = $DB->get_records('user', array('deleted'=>0), 'lastaccess DESC', 'id, firstname, lastname, idnumber', $limitfrom, $limitnum);
     }
 
     if (count($courseusers) < COURSE_MAX_USERS_PER_DROPDOWN && !$showusers) {
