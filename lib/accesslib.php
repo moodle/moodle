@@ -4362,8 +4362,8 @@ function get_default_course_role($course) {
  *               case users having any of those capabilities will be returned.
  *               For performance reasons, you are advised to put the capability
  *               that the user is most likely to have first.
- * @param $fields - fields to be pulled
- * @param $sort - the sort order
+ * @param $fields - fields to be pulled. The user table is aliased to 'u'. u.id MUST be included.
+ * @param $sort - the sort order. Default is lastaccess time.
  * @param $limitfrom - number of records to skip (offset)
  * @param $limitnum - number of records to fetch
  * @param $groups - single group or array of groups - only return
@@ -4520,6 +4520,11 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
             $fields = 'u.*, ul.timeaccess as lastaccess';
         } else {
             $fields = 'u.*';
+        }
+    } else {
+        if (debugging('', DEBUG_DEVELOPER) && strpos($fields, 'u.*') === false &&
+                strpos($fields, 'u.id') === false) {
+            debugging('u.id must be included in the list of fields passed to get_users_by_capability.', DEBUG_DEVELOPER);
         }
     }
 
