@@ -5,6 +5,7 @@ Removed:
  * cute_icons_for_site/
  * docs/
  * pear/
+ * session/
  * tests/
  * server.php
 
@@ -25,7 +26,7 @@ Our changes:
        not able to return the Insert_ID() at all. MDL-14886.
        Reported to ADOdb at: http://phplens.com/lens/lensforum/msgs.php?id=17068
        Once fixed by adodb guys, we'll return to their official distro.
-
+ 
 skodak, iarenaza, moodler, stronk7
 
 $Id$

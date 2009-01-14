@@ -216,7 +216,7 @@ class FakeDBUnitTestCase extends UnitTestCase {
         $tables = $DB->get_tables();
 
         foreach ($tables as $table) {
-            if ($table != 'sessions2' && isset($tabledata[$table])) {
+            if ($table != 'sessions' && isset($tabledata[$table])) {
                 // $DB->delete_records_select($table, "id > ?", array($tabledata[$table]));
             }
         }

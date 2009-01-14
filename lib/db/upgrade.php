@@ -1240,61 +1240,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2009010604);
     }
 
-    if ($result && $oldversion < 2009010605) {
-
-    /// Define table sessions to be dropped
-        $table = new xmldb_table('sessions2');
-
-    /// Conditionally launch drop table for sessions
-        if ($dbman->table_exists($table)) {
-            $dbman->drop_table($table);
-        }
-
-    /// Define table sessions to be dropped
-        $table = new xmldb_table('sessions');
-
-    /// Conditionally launch drop table for sessions
-        if ($dbman->table_exists($table)) {
-            $dbman->drop_table($table);
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009010605);
-    }
-
-    if ($result && $oldversion < 2009010606) {
-
-    /// Define table sessions to be created
-        $table = new xmldb_table('sessions');
-
-    /// Adding fields to table sessions
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('state', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('sid', XMLDB_TYPE_CHAR, '128', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('sessdata', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
-        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('firstip', XMLDB_TYPE_CHAR, '45', null, null, null, null, null, null);
-        $table->add_field('lastip', XMLDB_TYPE_CHAR, '45', null, null, null, null, null, null);
-
-    /// Adding keys to table sessions
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
-
-    /// Adding indexes to table sessions
-        $table->add_index('state', XMLDB_INDEX_NOTUNIQUE, array('state'));
-        $table->add_index('sid', XMLDB_INDEX_UNIQUE, array('sid'));
-        $table->add_index('timecreated', XMLDB_INDEX_NOTUNIQUE, array('timecreated'));
-        $table->add_index('timemodified', XMLDB_INDEX_NOTUNIQUE, array('timemodified'));
-
-    /// Launch create table for sessions
-        $dbman->create_table($table);
-
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009010606);
-    }
-
     if ($result && $oldversion < 2009010800) {
     /// Update the notifyloginfailures setting.
         if ($CFG->notifyloginfailures == 'mainadmin') {
@@ -1376,6 +1321,56 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2009011303);
+    }
+
+    if ($result && $oldversion < 2009011400) {
+
+    /// Define table sessions2 to be dropped
+        $table = new xmldb_table('sessions2');
+
+    /// Conditionally launch drop table for sessions
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+    /// Define table sessions to be dropped
+        $table = new xmldb_table('sessions');
+
+    /// Conditionally launch drop table for sessions
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+    /// Define table sessions to be created
+        $table = new xmldb_table('sessions');
+
+    /// Adding fields to table sessions
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('state', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('sid', XMLDB_TYPE_CHAR, '128', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('sessdata', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+        $table->add_field('sessdatahash', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('firstip', XMLDB_TYPE_CHAR, '45', null, null, null, null, null, null);
+        $table->add_field('lastip', XMLDB_TYPE_CHAR, '45', null, null, null, null, null, null);
+
+    /// Adding keys to table sessions
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+    /// Adding indexes to table sessions
+        $table->add_index('state', XMLDB_INDEX_NOTUNIQUE, array('state'));
+        $table->add_index('sid', XMLDB_INDEX_UNIQUE, array('sid'));
+        $table->add_index('timecreated', XMLDB_INDEX_NOTUNIQUE, array('timecreated'));
+        $table->add_index('timemodified', XMLDB_INDEX_NOTUNIQUE, array('timemodified'));
+
+    /// Launch create table for sessions
+        $dbman->create_table($table);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009011400);
     }
 
 

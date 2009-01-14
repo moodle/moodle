@@ -38,7 +38,7 @@ while(@ob_end_flush());
 
 echo '<strong>Progress:</strong>';
 $i = 0;
-$skiptables = array('config', 'user_students', 'user_teachers');//, 'sessions2');
+$skiptables = array('config', 'user_students', 'user_teachers');
 
 foreach ($tables as $table) {
     if (strpos($table,'pma') === 0) { // Not our tables
