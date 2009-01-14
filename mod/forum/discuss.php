@@ -4,7 +4,6 @@
 //  If no post is given, displays all posts in a discussion
 
     require_once('../../config.php');
-    require_once('lib.php');
 
     $d      = required_param('d', PARAM_INT);                // Discussion ID
     $parent = optional_param('parent', 0, PARAM_INT);        // If set, then display this post and all children.
@@ -30,6 +29,9 @@
     }
 
     require_course_login($course, true, $cm);
+
+    // move this down fix for MDL-6926
+    require_once('lib.php');
 
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/forum:viewdiscussion', $modcontext, NULL, true, 'noviewdiscussionspermission', 'forum');

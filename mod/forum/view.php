@@ -26,6 +26,9 @@
         if (! $forum = $DB->get_record("forum", array("id" => $cm->instance))) {
             print_error('invalidforumid', 'forum');
         }
+        // move require_course_login here to use forced language for course
+        // fix for MDL-6926
+        require_course_login($course, true, $cm);
         $strforums = get_string("modulenameplural", "forum");
         $strforum = get_string("modulename", "forum");
         $buttontext = update_module_button($cm->id, $course->id, $strforum);
@@ -39,13 +42,14 @@
             print_error('coursemisconf');
         }
 
-        $strforums = get_string("modulenameplural", "forum");
-        $strforum = get_string("modulename", "forum");
-
         if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
             print_error('missingparameter');
         }
-
+        // move require_course_login here to use forced language for course
+        // fix for MDL-6926
+        require_course_login($course, true, $cm);
+        $strforums = get_string("modulenameplural", "forum");
+        $strforum = get_string("modulename", "forum");
         $buttontext = update_module_button($cm->id, $course->id, $strforum);
 
     } else {
@@ -56,8 +60,6 @@
         $buttontext = forum_search_form($course, $search);
     }
 
-
-    require_course_login($course, true, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 
