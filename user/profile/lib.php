@@ -418,7 +418,7 @@ function profile_signup_fields(&$mform) {
     $sql = "SELECT uf.id as fieldid, ic.id as categoryid, ic.name as categoryname, uf.datatype
                 FROM ".$CFG->prefix."user_info_field uf
                 JOIN ".$CFG->prefix."user_info_category ic
-                ON uf.categoryid = ic.id AND uf.signup = 1
+                ON uf.categoryid = ic.id AND uf.signup = 1 AND uf.visible<>0
                 ORDER BY ic.sortorder ASC, uf.sortorder ASC";
 
     if ( $fields = get_records_sql($sql)) {
