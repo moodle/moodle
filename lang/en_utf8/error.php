@@ -403,6 +403,7 @@ $string['sessionerroruser'] = 'Your session has timed out.  Please login again.'
 $string['sessionerroruser2'] = 'A server error that affects your login session was detected. Please login again or restart your browser.';
 $string['sessionipnomatch'] = 'Sorry, but your IP number seems to have changed from when you first logged in.  This security feature prevents crackers stealing your identity while logged in to this site.  Normal users should not be seeing this message - please ask the site administrator for help.';
 $string['sessionipnomatch2'] = 'Sorry, but your IP number seems to have changed from when you first logged in.  This security feature prevents crackers stealing your identity while logged in to this site. You may see this error if you use wireless networks or if you are roaming between different networks. Please ask the site administrator for more help.<br /><br />If you want to continue please press F5 key to refresh this page.';
+$string['sessionnotwritable'] = 'Write permission problem detected in session directory.<br /><br />Please notify server administrator.';
 $string['socksnotsupported'] = 'SOCKS5 proxy is not supported in PHP4';
 $string['spellcheckernotconf'] = 'Spellchecker not configured';
 $string['sslonlyaccess'] = 'For security reasons only https connections are allowed, sorry.';

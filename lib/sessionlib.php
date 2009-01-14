@@ -8,7 +8,8 @@ function session_get_instance() {
     static $session = null;
 
     if (is_null($session)) {
-        $session = new moodle_session();
+        $session = new legacy_session();
+        // TODO: add db and custom session class support here
     }
 
     return $session;
@@ -17,7 +18,7 @@ function session_get_instance() {
 /**
  * Class handling all session and cookies related stuff.
  */
-class moodle_session {
+abstract class moodle_session {
     public function __construct() {
         global $CFG;
         $this->prepare_cookies();
@@ -204,32 +205,46 @@ class moodle_session {
     /**
      * Inits session storage.
      */
+    protected abstract function init_session_storage();
+
+}
+
+/**
+ * Legacy moodle sessions stored in files, not recommended any more.
+ */
+class legacy_session extends moodle_session {
     protected function init_session_storage() {
         global $CFG;
 
-    /// Set up session handling
-        if(empty($CFG->respectsessionsettings)) {
-            if (true) {   /// File-based sessions
-                // Some distros disable GC by setting probability to 0
-                // overriding the PHP default of 1
-                // (gc_probability is divided by gc_divisor, which defaults to 1000)
-                if (ini_get('session.gc_probability') == 0) {
-                    ini_set('session.gc_probability', 1);
-                }
-
-                if (!empty($CFG->sessiontimeout)) {
-                    ini_set('session.gc_maxlifetime', $CFG->sessiontimeout);
-                }
-
-                if (!file_exists($CFG->dataroot .'/sessions')) {
-                    make_upload_directory('sessions');
-                }
-                ini_set('session.save_path', $CFG->dataroot .'/sessions');
-
-            } else {                         /// Database sessions
-                // TODO: implement proper database session storage
-            }
+        // Some distros disable GC by setting probability to 0
+        // overriding the PHP default of 1
+        // (gc_probability is divided by gc_divisor, which defaults to 1000)
+        if (ini_get('session.gc_probability') == 0) {
+            ini_set('session.gc_probability', 1);
         }
+
+        if (!empty($CFG->sessiontimeout)) {
+            ini_set('session.gc_maxlifetime', $CFG->sessiontimeout);
+        }
+
+        if (!file_exists($CFG->dataroot .'/sessions')) {
+            make_upload_directory('sessions');
+        }
+        if (!is_writable($CFG->dataroot .'/sessions/')) {
+            print_error('sessionnotwritable', 'error');
+        }
+        ini_set('session.save_path', $CFG->dataroot .'/sessions');
+    }
+}
+
+/**
+ * Recommended moodle session storage.
+ */
+class database_session extends moodle_session {
+    protected function init_session_storage() {
+        global $CFG;
+
+        
     }
 }
 
