@@ -545,11 +545,7 @@ _client.viewthumb = function(ds) {
         var title = document.createElement('div');
         title.id = 'grid-title-'+String(count);
         title.className = 'label';
-        if(list[k].children) {
-            title.innerHTML = '<i><u>'+list[k].title+'</i></u>';
-        } else {
-            title.innerHTML += '<a href="###"><span>'+list[k].title+"</span></a>";
-        }
+        title.innerHTML += '<a href="###"><span>'+list[k].title+"</span></a>";
         if(list[k].thumbnail_width){
             el.style.width = list[k].thumbnail_width+'px';
             title.style.width = (list[k].thumbnail_width-20)+'px';
@@ -566,12 +562,12 @@ _client.viewthumb = function(ds) {
         var link = document.createElement('A');
         link.href='###';
         link.id = 'img-id-'+String(count);
-        link.appendChild(img);
-        frame.appendChild(link);
-        el.appendChild(frame);
         if(list[k].url) {
             el.innerHTML += '<p><a target="_blank" href="'+list[k].url+'">$strpreview</a></p>';
         }
+        link.appendChild(img);
+        frame.appendChild(link);
+        el.appendChild(frame);
         el.appendChild(title);
         
         panel.appendChild(el);
@@ -579,6 +575,7 @@ _client.viewthumb = function(ds) {
             var folder = new YAHOO.util.Element(link.id);
             folder.ds = list[k].children;
             folder.path = list[k].path;
+            var el_title = new YAHOO.util.Element(title.id);
             folder.on('contentReady', function() {
                 this.on('click', function() {
                     if(_client.ds.dynload) {
@@ -596,6 +593,11 @@ _client.viewthumb = function(ds) {
                     }
                 });
             });
+            el_title.on('contentReady', function() {
+                this.on('click', function(){
+                    folder.fireEvent('click');
+                });
+            });    
         } else {
             var el_title = new YAHOO.util.Element(title.id);
             var file = new YAHOO.util.Element(link.id);
