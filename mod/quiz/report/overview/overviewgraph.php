@@ -87,7 +87,7 @@ if (array_sum($line->y_data['allusers'])>QUIZ_REPORT_MAX_PARTICIPANTS_TO_SHOW_AL
 $line->y_order = array('allusers');
 if ($groups){
     foreach (array_keys($groups) as $group){
-        $useridingroup = get_users_by_capability($modcontext, 'mod/quiz:attempt','','','','',$group,'',false);
+        $useridingroup = get_users_by_capability($modcontext, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'','','','',$group,'',false);
         if ($useridingroup){
             $useridingrouplist = join(',',array_keys($useridingroup));
             $groupdata = quiz_report_grade_bands($bandwidth, $bands, $quizid, $useridingrouplist);

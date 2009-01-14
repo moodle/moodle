@@ -103,7 +103,8 @@
 
         // Print information about timings.
         $timenow = time();
-        $available = ($quiz->timeopen < $timenow and ($timenow < $quiz->timeclose or !$quiz->timeclose));
+        $available = ($quiz->timeopen < $timenow and ($timenow < $quiz->timeclose or !$quiz->timeclose)) &&
+                has_capability('mod/quiz:attempt', $context);
         if ($available) {
             if ($quiz->timelimit) {
                 echo "<p>".get_string("quiztimelimit","quiz", format_time($quiz->timelimit * 60))."</p>";
@@ -144,7 +145,7 @@
         finish_page($course);
     }
 
-    if (!(has_capability('mod/quiz:attempt', $context) || has_capability('mod/quiz:preview', $context))) {
+    if (!has_any_capability(array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt', 'mod/quiz:preview'), $context)) {
         print_box('<p>' . get_string('youneedtoenrol', 'quiz') . '</p><p>' .
                 print_continue($CFG->wwwroot . '/course/view.php?id=' . $course->id, true) .
                 '</p>', 'generalbox', 'notice');
@@ -229,9 +230,9 @@
 
             // Add the attempt number, making it a link, if appropriate.
             if ($attempt->preview) {
-                $row[] = make_review_link(get_string('preview', 'quiz'), $quiz, $attempt);
+                $row[] = make_review_link(get_string('preview', 'quiz'), $quiz, $attempt, $context);
             } else {
-                $row[] = make_review_link($attempt->attempt, $quiz, $attempt);
+                $row[] = make_review_link($attempt->attempt, $quiz, $attempt, $context);
             }
 
             // prepare strings for time taken and date completed
@@ -258,7 +259,7 @@
 
             if ($markcolumn && $attempt->timefinish > 0) {
                 if ($attemptoptions->scores) {
-                    $row[] = make_review_link(round($attempt->sumgrades, $quiz->decimalpoints), $quiz, $attempt);
+                    $row[] = make_review_link(round($attempt->sumgrades, $quiz->decimalpoints), $quiz, $attempt, $context);
                 } else {
                     $row[] = '';
                 }
@@ -275,7 +276,7 @@
                         $table->rowclass[$attempt->attempt] = 'bestrow';
                     }
 
-                    $row[] = make_review_link($formattedgrade, $quiz, $attempt);
+                    $row[] = make_review_link($formattedgrade, $quiz, $attempt, $context);
                 } else {
                     $row[] = '';
                 }
@@ -453,9 +454,13 @@ function finish_page($course) {
 }
 
 /** Make some text into a link to review the quiz, if that is appropriate. */
-function make_review_link($linktext, $quiz, $attempt) {
-    // If not even responses are to be shown in review then we don't allow any review
-    if (!($quiz->review & QUIZ_REVIEW_RESPONSES)) {
+function make_review_link($linktext, $quiz, $attempt, $context) {
+    static $canreview = null;
+    if (is_null($canreview)) {
+        $canreview = has_capability('mod/quiz:reviewmyattempts', $context);
+    }
+    // If not even responses are to be shown in review then we don't allow any review, or does not have review capability.
+    if (!$canreview || !($quiz->review & QUIZ_REVIEW_RESPONSES)) {
         return $linktext;
     }
 

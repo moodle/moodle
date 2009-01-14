@@ -430,6 +430,7 @@ $string['quiz:grade'] = 'Grade quizzes manually';
 $string['quiz:ignoretimelimits'] = 'Ignores time limit on quizzes';
 $string['quiz:manage'] = 'Manage quizzes';
 $string['quiz:preview'] = 'Preview quizzes';
+$string['quiz:reviewmyattempts'] = 'Review your own attempts';
 $string['quiz:view'] = 'View quiz information';
 $string['quiz:viewreports'] = 'View quiz reports';
 $string['quizavailable'] = 'The quiz is available until: $a';

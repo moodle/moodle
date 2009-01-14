@@ -1106,7 +1106,7 @@ function quiz_print_overview($courses, &$htmlarray) {
                 // The $quiz objects returned by get_all_instances_in_course have the necessary $cm 
                 // fields set to make the following call work.
                 $str .= '<div class="info">' . quiz_num_attempt_summary($quiz, $quiz, true) . '</div>';
-            } else if (has_capability('mod/quiz:attempt', $context)){ // Student
+            } else if (has_any_capability(array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $context)) { // Student
             /// For student-like people, tell them how many attempts they have made.
                 if (isset($USER->id) && ($attempts = quiz_get_user_attempts($quiz->id, $USER->id))) {
                     $numattempts = count($attempts);

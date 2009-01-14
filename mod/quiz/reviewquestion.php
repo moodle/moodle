@@ -63,6 +63,7 @@
         if (!$attempt->timefinish) {
             redirect('attempt.php?q='.$quiz->id);
         }
+        require_capability('mod/quiz:reviewmyattempts', $context);
         // If not even responses are to be shown in review then we
         // don't allow any review
         if (!($quiz->review & QUIZ_REVIEW_RESPONSES)) {

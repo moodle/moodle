@@ -119,7 +119,7 @@ class quiz_report extends quiz_default_report {
             }
         }
         $nostudents = false;
-        if (!$students = get_users_by_capability($context, 'mod/quiz:attempt','','','','','','',false)){
+        if (!$students = get_users_by_capability($context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'','','','','','',false)){
             notify(get_string('nostudentsyet'));
             $nostudents = true;
             $studentslist = '';

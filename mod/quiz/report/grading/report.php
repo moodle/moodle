@@ -83,8 +83,8 @@ class quiz_report extends quiz_default_report {
         }
 
         $currentgroup = groups_get_activity_group($this->cm, true);
-        $this->users     = get_users_by_capability($this->context, 'mod/quiz:attempt','','','','',$currentgroup,'',false);
-        $this->userids   = implode(',', array_keys($this->users));
+        $this->users = get_users_by_capability($this->context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'','','','',$currentgroup,'',false);
+        $this->userids = implode(',', array_keys($this->users));
 
 
         if (!empty($questionid)) {

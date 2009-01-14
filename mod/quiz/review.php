@@ -52,6 +52,12 @@
         if ($attempt->userid != $USER->id) {
             error("This is not your attempt!", 'view.php?q=' . $quiz->id);
         }
+        // Check capabilities.
+        if ($options->quizstate == QUIZ_STATE_IMMEDIATELY) {
+            require_capability('mod/quiz:attempt', $context);
+        } else {
+            require_capability('mod/quiz:reviewmyattempts', $context);
+        }
         // Can't review if Student's may review ... Responses is turned on.
         if (!$options->responses) {
             if ($options->quizstate == QUIZ_STATE_IMMEDIATELY) {

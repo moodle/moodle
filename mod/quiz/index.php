@@ -53,15 +53,16 @@
     }
     array_unshift($align, 'center');
 
-    $showing = 'scores';  // default
+    $showing = '';  // default
 
     if (has_capability('mod/quiz:viewreports', $coursecontext)) {
         array_push($headings, get_string('attempts', 'quiz'));
         array_push($align, 'left');
         $showing = 'stats';
-    } else if (has_capability('mod/quiz:attempt', $coursecontext)) {
+    } else if (has_any_capability(array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $coursecontext)) {
         array_push($headings, get_string('bestgrade', 'quiz'), get_string('feedback', 'quiz'));
         array_push($align, 'left', 'left');
+        $showing = 'scores';  // default
     }
 
     $table->head = $headings;
