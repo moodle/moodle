@@ -7,9 +7,10 @@
  * @author Jerome Mouneyrac
  */
 require_once(dirname(dirname(__FILE__)) . '/lib/moodlewsapi.php');
+require_once(dirname(dirname(__FILE__)) . '/user/api.php');
 
 /**
- * WORK IN PROGRESS
+ * WORK IN PROGRESS, DO NOT USE IT
  */
 final class user_ws_api extends moodle_ws_api {
 
@@ -34,30 +35,48 @@ final class user_ws_api extends moodle_ws_api {
           $this->descriptions['tmp_get_users']   = array( 'wsparams' => array('search'=> PARAM_ALPHA),
                                                       'return' => array('user', array('id' => PARAM_RAW, 'auth' => PARAM_RAW, 'confirmed' => PARAM_RAW, 'username' => PARAM_RAW, 'idnumber' => PARAM_RAW,
                                                                                     'firstname' => PARAM_RAW, 'lastname' => PARAM_RAW, 'email' => PARAM_RAW, 'emailstop' => PARAM_RAW,
-                                                                                    'lang' => PARAM_RAW, 'theme' => PARAM_RAW, 'timezone' => PARAM_RAW, 'mailformat' => PARAM_RAW)),
-                                                      'paramorder' => array('get' => true, 'search' => '', 'confirmed' => false, 'exceptions' =>null, 'sort' => 'firstname ASC',
-                                                                          'firstinitial' => '', 'lastinitial' => '', 'page' => '', 'recordsperpage' => '',
-                                                                          'fields' => 'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat',
-                                                                          'extraselect' => '', 'extraparams' => null));
+                                                                                    'lang' => PARAM_RAW, 'theme' => PARAM_RAW, 'timezone' => PARAM_RAW, 'mailformat' => PARAM_RAW)));
 
-          $this->descriptions['tmp_create_user'] = array( 'wsparams' => array('user:username'=> PARAM_RAW, 'user:firstname'=> PARAM_RAW, 'user:lastname'=> PARAM_RAW, 'user:email'=> PARAM_RAW, 'user:password'=> PARAM_RAW),
-                                                      'return' => array('userid', PARAM_RAW),
-                                                      'paramorder' => array('user' => array('username' => null, 'firstname' => null, 'lastname'=> null, 'email'=> null, 'password'=>'')));
+          $this->descriptions['tmp_create_user'] = array( 'wsparams' => array('username'=> PARAM_RAW, 'firstname'=> PARAM_RAW, 'lastname'=> PARAM_RAW, 'email'=> PARAM_RAW, 'password'=> PARAM_RAW),
+                                                      'return' => array('userid', PARAM_RAW));
 
-          $this->descriptions['tmp_namedparams_get_users']   = array( 'wsparams' => array('selectioncriteria:search'=> PARAM_RAW),
+
+          $this->descriptions['tmp_namedparams_get_users']   = array( 'wsparams' => array('search'=> PARAM_RAW),
                                                       'return' => array('user', array('id' => PARAM_RAW, 'auth' => PARAM_RAW, 'confirmed' => PARAM_RAW, 'username' => PARAM_RAW, 'idnumber' => PARAM_RAW,
                                                                                     'firstname' => PARAM_RAW, 'lastname' => PARAM_RAW, 'email' => PARAM_RAW, 'emailstop' => PARAM_RAW,
-                                                                                    'lang' => PARAM_RAW, 'theme' => PARAM_RAW, 'timezone' => PARAM_RAW, 'mailformat' => PARAM_RAW)),
-                                                      'paramorder' => array('sort' => 'firstname ASC', '$recordsperpage' => 999999, 'page' => 0,
-                                                                            'fields' => 'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat',
-                                                                            'selectioncriteria' => array('search' => '')));
+                                                                                    'lang' => PARAM_RAW, 'theme' => PARAM_RAW, 'timezone' => PARAM_RAW, 'mailformat' => PARAM_RAW)));
     }
 
+    /**
+     *
+     * @param <type> $search
+     * @return <type>
+     */
+    static function tmp_get_users($search) {
+        return user_api::tmp_get_users( true, $search, false, null, 'firstname ASC','', '', '', '',
+                                        'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat');
+    }
+
+    /**
+     *
+     * @param <type> $username
+     * @param <type> $firstname
+     * @param <type> $lastname
+     * @param <type> $email
+     * @param <type> $password
+     * @return <type> 
+     */
+    static function tmp_create_user($username, $firstname, $lastname, $email, $password) {
+        $user = array();
+        $user['username'] = $username;
+        $user['firstname'] = $firstname;
+        $user['lastname'] = $lastname;
+        $user['email'] = $email;
+        $user['password'] = $password;
+        return user_api::tmp_create_user($user);
+    
+    }
 
 }
-
-
-
-
 
 ?>

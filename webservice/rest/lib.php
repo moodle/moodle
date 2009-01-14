@@ -22,7 +22,6 @@ function call_moodle_function ($rest_arguments) {
 
     $classname = str_replace('/', '_', $apipath); // convert '/' into '_' (e.g. /mod/forum/ => _mod_forum_)
     $classname = substr($classname,1, strlen($classname) - 1); //remove first _ (e.g. _mod_forum => mod_forum)
-    $coreclassname = $classname."api";
     $classname .= 'ws_api';
 
 ///these three next lines can be generic => create a function
@@ -38,9 +37,9 @@ function call_moodle_function ($rest_arguments) {
     if ($params === false) {
         //return an error message, the REST params doesn't match with the web service description
     }
-    require_once($CFG->dirroot.$apipath.'api.php');
-    $res = call_user_func_array  ( $coreclassname.'::'.$functionname, $params);
-
+    //require_once($CFG->dirroot.$apipath.'api.php');
+    $res = call_user_func_array  ( $classname.'::'.$functionname, $params);
+    
 ///Transform result into xml in order to send the REST response
     $return =  mdl_conn_rest_object_to_xml ($res,$description['return'][0]);
 
@@ -55,21 +54,16 @@ function call_moodle_function ($rest_arguments) {
  * @return <type>
  */
 function retrieve_params ($description) {
-    $params = $description['paramorder'];
+    $params = $description['wsparam'];
     //retrieve REST param matching the description
 
     foreach ($description['wsparams'] as $paramname => $paramtype) {
         $value = optional_param($paramname,null,$paramtype);
         if (!empty($value)) {
-            $fullstopposition = strrpos($paramname,":");
-            //case: param is an object/array
-            if  (!empty($fullstopposition)) {
-                    $params[substr($paramname,0,$fullstopposition)][substr($paramname,$fullstopposition+1, strlen($paramname) - $fullstopposition)] = $value;
-            } else {
-                 $params[$paramname] = $value;
+                $params[$paramname] = $value;
             }
         }
-    }
+    
     return $params;
 }
 
