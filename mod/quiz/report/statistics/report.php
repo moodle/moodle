@@ -65,7 +65,7 @@ class quiz_statistics_report extends quiz_default_report {
         $nostudentsingroup = false;//true if a group is selected and their is noeone in it.
         if (!empty($currentgroup)) {
             // all users who can attempt quizzes and who are in the currently selected group
-            $groupstudents = get_users_by_capability($context, 'mod/quiz:attempt','','','','',$currentgroup,'',false);
+            $groupstudents = get_users_by_capability($context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'','','','',$currentgroup,'',false);
             if (!$groupstudents){
                 $nostudentsingroup = true;
             }

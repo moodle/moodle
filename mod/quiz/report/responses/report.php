@@ -104,7 +104,7 @@ class quiz_responses_report extends quiz_default_report {
         $displayoptions['qmfilter'] = $qmfilter;
 
         //work out the sql for this table.
-        if (!$students = get_users_by_capability($context, 'mod/quiz:attempt','','','','','','',false)){
+        if (!$students = get_users_by_capability($context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'','','','','','',false)){
             $students = array();
         } else {
             $students = array_keys($students);
@@ -116,7 +116,7 @@ class quiz_responses_report extends quiz_default_report {
             $groupstudents = array();
         } else {
             // all users who can attempt quizzes and who are in the currently selected group
-            if (!$groupstudents = get_users_by_capability($context, 'mod/quiz:attempt','','','','',$currentgroup,'',false)){
+            if (!$groupstudents = get_users_by_capability($context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'','','','',$currentgroup,'',false)){
                 $groupstudents = array();
             } else {
                 $groupstudents = array_keys($groupstudents);

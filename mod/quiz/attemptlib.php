@@ -493,6 +493,20 @@ class quiz_attempt extends quiz {
                 (!$this->is_preview_user() || $this->attempt->preview);
     }
 
+    /**
+     * Check the appropriate capability to see whether this user may review their own attempt.
+     * If not, prints an error.
+     */
+    public function check_review_capability() {
+        if (!$this->has_capability('mod/quiz:viewreports')) {
+            if ($this->get_review_options()->quizstate == QUIZ_STATE_IMMEDIATELY) {
+                $this->require_capability('mod/quiz:attempt');
+            } else {
+                $this->require_capability('mod/quiz:reviewmyattempts');
+            }
+        }
+    }
+
     public function get_question_state($questionid) {
         $this->ensure_state_loaded($questionid);
         return $this->states[$questionid];

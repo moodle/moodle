@@ -19,6 +19,7 @@
 
 /// Check login.
     require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
+    $attemptobj->check_review_capability();
 
 /// Create an object to manage all the other (non-roles) access rules.
     $accessmanager = $attemptobj->get_access_manager(time());

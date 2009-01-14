@@ -19,6 +19,7 @@
 
 /// Check login.
     require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
+    $attemptobj->check_review_capability();
 
 /// Permissions checks for normal users who do not have quiz:viewreports capability.
     if (!$attemptobj->has_capability('mod/quiz:viewreports')) {

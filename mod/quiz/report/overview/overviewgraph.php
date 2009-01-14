@@ -14,7 +14,7 @@ if ($groupid && $groupmode = groups_get_activity_groupmode($cm)) {   // Groups a
     $groups = groups_get_activity_allowed_groups($cm);
     if (array_key_exists($groupid, $groups)){
         $group = $groups[$groupid];
-        if (!$groupusers = get_users_by_capability($modcontext, 'mod/quiz:attempt','','','','',$group->id,'',false)){
+        if (!$groupusers = get_users_by_capability($modcontext, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'','','','',$group->id,'',false)){
             print_error('nostudentsingroup');
         } else {
             $groupusers = array_keys($groupusers);

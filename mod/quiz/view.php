@@ -40,6 +40,7 @@
 
 /// Cache some other capabilites we use several times.
     $canattempt = has_capability('mod/quiz:attempt', $context);
+    $canreviewmine = has_capability('mod/quiz:reviewmyattempts', $context);
     $canpreview = has_capability('mod/quiz:preview', $context);
 
 /// Create an object to manage all the other (non-roles) access rules.
@@ -122,8 +123,8 @@
         finish_page($course);
     }
 
-/// If they are not using guest access, and they can't do the quiz, tell them that.
-    if (!($canattempt || $canpreview)) {
+/// If they are not enrolled in this course in a good enough role, tell them to enrol.
+    if (!($canattempt || $canpreview || $canreviewmine)) {
         print_box('<p>' . get_string('youneedtoenrol', 'quiz') . "</p>\n\n<p>" .
                 print_continue($CFG->wwwroot . '/course/view.php?id=' . $course->id, true) .
                 "</p>\n", 'generalbox', 'notice');
@@ -200,9 +201,11 @@
             $table->align[] = 'center';
             $table->size[] = '';
         }
-        $table->head[] = get_string('review', 'quiz');
-        $table->align[] = 'center';
-        $table->size[] = '';
+        if ($canreviewmine) {
+            $table->head[] = get_string('review', 'quiz');
+            $table->align[] = 'center';
+            $table->size[] = '';
+        }
         if ($feedbackcolumn) {
             $table->head[] = get_string('feedback', 'quiz');
             $table->align[] = 'left';
@@ -271,7 +274,9 @@
                 }
             }
 
-            $row[] = $accessmanager->make_review_link($attempt, $canpreview, $attemptoptions);
+            if ($canreviewmine) {
+                $row[] = $accessmanager->make_review_link($attempt, $canpreview, $attemptoptions);
+            }
 
             if ($feedbackcolumn && $attempt->timefinish > 0) {
                 if ($attemptoptions->overallfeedback) {
@@ -341,23 +346,23 @@
         print_heading(get_string("noquestions", "quiz"));
     } else {
         if ($unfinished) {
-            if ($canpreview) {
-                $buttontext = get_string('continuepreview', 'quiz');
-            } else {
+            if ($canattempt) {
                 $buttontext = get_string('continueattemptquiz', 'quiz');
+            } else if ($canpreview) {
+                $buttontext = get_string('continuepreview', 'quiz');
             }
         } else {
-            $messages = $accessmanager->prevent_new_attempt($numattempts, $lastfinishedattempt);
-            if (!$canpreview && $messages) {
-                $accessmanager->print_messages($messages);
-            } else {
-                if ($canpreview) {
-                    $buttontext = get_string('previewquiznow', 'quiz');
+            if ($canattempt) {
+                $messages = $accessmanager->prevent_new_attempt($numattempts, $lastfinishedattempt);
+                if ($messages) {
+                    $accessmanager->print_messages($messages);
                 } else if ($numattempts == 0) {
                     $buttontext = get_string('attemptquiznow', 'quiz');
                 } else {
                     $buttontext = get_string('reattemptquiz', 'quiz');
                 }
+            } else if ($canpreview) {
+                $buttontext = get_string('previewquiznow', 'quiz');
             }
         }
 
@@ -365,7 +370,7 @@
         if ($buttontext) {
             if (!$moreattempts) {
                 $buttontext = '';
-            } else if (!$canpreview && $messages = $accessmanager->prevent_access()) {
+            } else if ($canattempt && $messages = $accessmanager->prevent_access()) {
                 $accessmanager->print_messages($messages);
                 $buttontext = '';
             }

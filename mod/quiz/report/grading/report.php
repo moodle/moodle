@@ -83,8 +83,7 @@ class quiz_grading_report extends quiz_default_report {
         }
 
         $currentgroup = groups_get_activity_group($this->cm, true);
-        $this->users     = get_users_by_capability($this->context, 'mod/quiz:attempt','','','','',$currentgroup,'',false);
-
+        $this->users = get_users_by_capability($this->context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'','','','',$currentgroup,'',false);
 
         if (!empty($questionid)) {
             if (!isset($gradeableqs[$questionid])){

@@ -22,11 +22,23 @@ $mod_quiz_capabilities = array(
 
     // Ability to do the quiz as a 'student'.
     'mod/quiz:attempt' => array(
+        'riskbitmask' => RISK_SPAM,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
             'student' => CAP_ALLOW
         )
+    ),
+
+    // Ability for a 'Student' to review their previous attempts. Review by
+    // 'Teachers' is controlled by mod/quiz:viewreports.
+    'mod/quiz:reviewmyattempts' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'student' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/quiz:attempt'
     ),
 
     // Edit the quiz settings, add and remove questions.
