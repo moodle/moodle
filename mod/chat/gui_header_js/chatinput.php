@@ -63,7 +63,6 @@
     $meta = ob_get_clean();
     print_header('', '', '', 'input_chat_message', $meta, false);
 
-    if(has_capability('mod/chat:chatlog',$context)){
 ?>
     <form action="../empty.php" method="post" target="empty" id="inputForm"
           onsubmit="return empty_field_and_submit()" style="margin:0">
@@ -71,9 +70,6 @@
         <?php helpbutton('chatting', get_string('helpchatting', 'chat'), 'chat', true, false); ?><br />
         <input type="checkbox" id="auto" size="50" value="" checked='true' /><label for="auto"><?php echo get_string('autoscroll', 'chat');?></label>
     </form>
-<?php
-    }
-?>
 
     <form action="insert.php" method="post" target="empty" id="sendForm">
         <input type="hidden" name="chat_sid" value="<?php echo $chat_sid ?>" />
