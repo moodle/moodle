@@ -28,10 +28,11 @@ if (get_site()) { //do not use during installation
         $temp->add(new admin_setting_courselist_frontpage(true)); // loggedin version of the setting
         
         $options = array();
+        $options[] = get_string('unlimited');
         for ($i=1; $i<100; $i++) {
             $options[$i] = $i;
         }
-        $temp->add(new admin_setting_configselect('max_category_depth', get_string('sitemaxcategorydepth','admin'), get_string('sitemaxcategorydepthhelp','admin'), 50, $options));
+        $temp->add(new admin_setting_configselect('maxcategorydepth', get_string('configsitemaxcategorydepth','admin'), get_string('configsitemaxcategorydepthhelp','admin'), 0, $options));
         
         $temp->add(new admin_setting_sitesetcheckbox('numsections', get_string('sitesection'), get_string('sitesectionhelp','admin'), 1));
         $temp->add(new admin_setting_sitesetselect('newsitems', get_string('newsitemsnumber'), '', 3,

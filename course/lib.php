@@ -1943,7 +1943,8 @@ function make_categories_list(&$list, &$parents, $requiredcapability = '',
 function print_whole_category_list($category=NULL, $displaylist=NULL, $parentslist=NULL, $depth=-1, $showcourses = true) {
     global $CFG;
 
-    if (isset($CFG->max_category_depth) && ($depth >= $CFG->max_category_depth)) {
+    // maxcategorydepth == 0 meant no limit
+    if (!empty($CFG->maxcategorydepth) && $depth >= $CFG->maxcategorydepth) {
         return;
     }
 
@@ -2043,7 +2044,12 @@ function print_category_info($category, $depth, $showcourses = false) {
         echo '<td class="category info">&nbsp;</td>';
         echo '</tr>';
 
-        if ($courses && !(isset($CFG->max_category_depth)&&($depth>=$CFG->max_category_depth-1))) {
+        // does the depth exceed maxcategorydepth
+        // maxcategorydepth == 0 or unset meant no limit
+
+        $limit = !(isset($CFG->maxcategorydepth) && ($depth >= $CFG->maxcategorydepth-1));
+
+        if ($courses && ($limit || $CFG->maxcategorydepth == 0)) {
             foreach ($courses as $course) {
                 $linkcss = $course->visible ? '' : ' class="dimmed" ';
                 echo '<tr><td valign="top">&nbsp;';
