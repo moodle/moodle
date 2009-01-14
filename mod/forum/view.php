@@ -26,6 +26,9 @@
         if (! $forum = get_record("forum", "id", $cm->instance)) {
             error("Forum ID was incorrect");
         }
+        // move require_course_login here to use forced language for course
+        // fix for MDL-6926
+        require_course_login($course, true, $cm);
         $strforums = get_string("modulenameplural", "forum");
         $strforum = get_string("modulename", "forum");
         $buttontext = update_module_button($cm->id, $course->id, $strforum);
@@ -39,13 +42,16 @@
             error("Forum is misconfigured - don't know what course it's from");
         }
 
-        $strforums = get_string("modulenameplural", "forum");
-        $strforum = get_string("modulename", "forum");
-
         if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
             error("Course Module missing");
         }
 
+        // move require_course_login here to use forced language for course
+        // fix for MDL-6926
+        require_course_login($course, true, $cm);
+
+        $strforums = get_string("modulenameplural", "forum");
+        $strforum = get_string("modulename", "forum");
         $buttontext = update_module_button($cm->id, $course->id, $strforum);
 
     } else {
@@ -56,10 +62,7 @@
         $buttontext = forum_search_form($course, $search);
     }
 
-
-    require_course_login($course, true, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-
 
 /// Print header.
     $navigation = build_navigation('', $cm);

@@ -4,7 +4,6 @@
 
     require_once('../../config.php');
     require_once('lib.php');
-    require_once('post_form.php');
 
     $reply   = optional_param('reply', 0, PARAM_INT);
     $forum   = optional_param('forum', 0, PARAM_INT);
@@ -138,6 +137,9 @@
         if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
             error("Incorrect cm");
         }
+
+        // call course_setup to use forced language, MDL-6926 
+        course_setup($course->id);
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         $modcontext    = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -439,6 +441,11 @@
         error('Could not get the course module for the forum instance.');
     }
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    // setup course variable to force form language
+    // fix for MDL-6926
+    course_setup($course->id);
+    require_once('post_form.php');
 
     $mform_post = new mod_forum_post_form('post.php', array('course'=>$course, 'cm'=>$cm, 'coursecontext'=>$coursecontext, 'modcontext'=>$modcontext, 'forum'=>$forum, 'post'=>$post));
 
