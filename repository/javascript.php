@@ -84,6 +84,7 @@ function repository_get_client($context, $accepted_filetypes = '*', $returnvalue
 .fp-upload-btn a:hover {background: grey;color:white}
 .fp-paging{margin:1em .5em; clear:both;text-align:center;line-height: 2.5em;}
 .fp-paging a{padding: .5em;border: 1px solid #CCC}
+.fp-paging a.cur_page{border: 1px solid blue}
 .fp-popup{text-align:center}
 .fp-grid{float:left;text-align:center;}
 .fp-grid div{overflow: hidden}
@@ -469,7 +470,9 @@ _client.print_header = function() {
     var panel = new YAHOO.util.Element('panel-$suffix');
     var str = '<div id="fp-header-$suffix">';
     str += '<div class="fp-toolbar" id="repo-tb-$suffix"></div>';
-    str += _client.makepage('header');
+    if(_client.ds.pages < 8){
+        str += _client.makepage('header');
+    }
     str += '</div>';
     panel.set('innerHTML', str);
     _client.makepath();
@@ -776,18 +779,49 @@ _client.uploadcontrol = function() {
     }
     return str;
 }
+_client.paging_node = function(type, page) {
+    if (page == _client.ds.page) {
+        str = '<a class="cur_page" onclick="repository_client_$suffix.'+type+'('+_client.repositoryid+', '+page+', 0)" href="###">';
+    } else {
+        str = '<a onclick="repository_client_$suffix.'+type+'('+_client.repositoryid+', '+page+', 0)" href="###">';
+    }
+    return str;
+}
 _client.makepage = function(id) {
     var str = '';
     if(_client.ds.pages) {
         str += '<div class="fp-paging" id="paging-'+id+'-$suffix">';
-        for(var i = 1; i <= _client.ds.pages; i++) {
-            if(!_client.ds.search_result){
-                    str += '<a onclick="repository_client_$suffix.req('+_client.repositoryid+', '+i+', 0)" href="###">';
-            } else {
-                    str += '<a onclick="repository_client_$suffix.search_paging('+_client.repositoryid+', '+i+')" href="###">';
+        if(!_client.ds.search_result){
+            var action = 'req';
+        } else {
+            var action = 'search_paging';
+        }
+        str += _client.paging_node(action, 1)+'1</a>';
+
+        if (_client.ds.page+2>=_client.ds.pages) {
+            var max = _client.ds.pages;
+        } else {
+            var max = _client.ds.page+2;
+        }
+        if (_client.ds.page-2 >= 3) {
+            str += ' ... ';
+            for(var i = _client.ds.page-2; i < max; i++) {
+                str += _client.paging_node(action, i);
+                str += String(i);
+                str += '</a> ';
             }
-            str += String(i);
-            str += '</a> ';
+        } else {
+            for(var i = 2; i < max; i++) {
+                str += _client.paging_node(action, i);
+                str += String(i);
+                str += '</a> ';
+            }
+        }
+        if (max==_client.ds.pages) {
+            str += _client.paging_node(action, _client.ds.pages)+_client.ds.pages+'</a>';
+        } else {
+            str += _client.paging_node(action, max)+max+'</a>';
+            str += ' ... '+_client.paging_node(action, _client.ds.pages)+_client.ds.pages+'</a>';
         }
         str += '</div>';
     }
