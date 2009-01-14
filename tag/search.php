@@ -24,7 +24,7 @@ $manage_link = '&nbsp;';
 print_header_simple(get_string('tags', 'tag'), '', $navigation);
 
 if ( has_capability('moodle/tag:manage',$systemcontext) ) {
-    echo '<div class="managelink"><a href='. $CFG->wwwroot .'/tag/manage.php>' . get_string('managetags', 'tag') . '</a></div>' ;
+    echo '<div class="managelink"><a href="'. $CFG->wwwroot .'/tag/manage.php">' . get_string('managetags', 'tag') . '</a></div>' ;
 }
 
 print_heading(get_string('searchtags', 'tag'), '', 2);

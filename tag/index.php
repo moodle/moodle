@@ -135,7 +135,7 @@ if (has_capability('moodle/blog:view', $systemcontext)) {  // You have to see bl
         }
         echo '</ul>';
 
-        echo '<p class="moreblogs"><a href="'.$CFG->wwwroot.'/blog/index.php?filtertype=site&filterselect=0&tagid='.$tag->id.'">'.get_string('seeallblogs', 'tag', $tagname).'</a></p>';
+        echo '<p class="moreblogs"><a href="'.$CFG->wwwroot.'/blog/index.php?filtertype=site&amp;filterselect=0&amp;tagid='.$tag->id.'">'.get_string('seeallblogs', 'tag', $tagname).'</a></p>';
 
         print_box_end();
     }

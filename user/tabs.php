@@ -26,6 +26,7 @@
     $inactive = NULL;
     $activetwo = NULL;
     $toprow = array();
+    $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
 
     /**************************************
      * Site Level participation or Blogs  *
@@ -36,7 +37,7 @@
         print_heading(format_string($site->fullname));
 
         if ($CFG->bloglevel >= 4) {
-            if (has_capability('moodle/site:viewparticipants', get_context_instance(CONTEXT_SYSTEM))) {
+            if (has_capability('moodle/site:viewparticipants', $systemcontext)) {
                 $toprow[] = new tabobject('participants', $CFG->wwwroot.'/user/index.php?id='.SITEID,
                     get_string('participants'));
             }
@@ -91,7 +92,6 @@
         }
         print_heading(fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id))));
 
-        $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
         $coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
         $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
 
