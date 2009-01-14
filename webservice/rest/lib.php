@@ -62,8 +62,6 @@ function retrieve_params ($description) {
         $value = optional_param($paramname,null,$paramtype);
         if (!empty($value)) {
             $fullstopposition = strrpos($paramname,":");
-            varlog(substr($paramname,0,$fullstopposition));
-            varlog(substr($paramname,$fullstopposition+1, strlen($paramname) - $fullstopposition));
             //case: param is an object/array
             if  (!empty($fullstopposition)) {
                     $params[substr($paramname,0,$fullstopposition)][substr($paramname,$fullstopposition+1, strlen($paramname) - $fullstopposition)] = $value;
