@@ -2546,7 +2546,7 @@ class admin_setting_users_with_capability extends admin_setting_configmultiselec
      */
     function __construct($name, $visiblename, $description, $defaultsetting, $capability) {
         $users = get_users_by_capability(get_context_instance(CONTEXT_SYSTEM),
-                $capability, 'username,firstname,lastname', 'lastname,firstname');
+                $capability, 'u.id,u.username,u.firstname,u.lastname', 'u.lastname,u.firstname');
         $choices = array(
             '$@NONE@$' => get_string('nobody'),
             '$@ALL@$' => get_string('everyonewhocan', 'admin', get_capability_string($capability)),
