@@ -147,7 +147,7 @@ class repository_flickr extends repository {
         $ret['manage'] = $photos_url;
         $ret['list']  = array();
         $ret['pages'] = $photos['pages'];
-        if(is_int($path) && $path <= $ret['pages']) {
+        if($path <= $ret['pages']) {
             $ret['page'] = $path;
         } else {
             $ret['page'] = 1;
