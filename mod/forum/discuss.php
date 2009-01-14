@@ -28,9 +28,11 @@
     if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
         error('Course Module ID was incorrect');
     }
+
+    require_course_login($course, true, $cm);
+
     // move this down fix for MDL-6926
     require_once("lib.php");
-    require_course_login($course, true, $cm);
 
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
     $canviewdiscussion = has_capability('mod/forum:viewdiscussion', $modcontext);
