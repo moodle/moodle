@@ -67,6 +67,7 @@ function repository_get_client($context, $accepted_filetypes = '*', $returnvalue
 .file-picker a{color: #336699}
 .file-picker a:hover{background:#003366;color:white}
 .fp-panel{padding:0;margin:0; text-align:left;}
+.fp-login-form{text-align:center}
 .fp-searchbar{float:right}
 .fp-viewbar{width:300px;float:left}
 .fp-toolbar{padding: .8em;background: #FFFFCC;color:white;text-align:center}
@@ -421,7 +422,7 @@ _client.popup = function(url) {
 _client.print_login = function() {
     var panel = new YAHOO.util.Element('panel-$suffix');
     var data = _client.ds.login;
-    var str = '';
+    var str = '<div class="fp-login-form">';
     var has_pop = false;
     for(var k in data) {
         if(data[k].type=='popup') {
@@ -453,6 +454,7 @@ _client.print_login = function() {
     if(!has_pop) {
         str += '<p><input type="button" onclick="repository_client_$suffix.login()" value="$strsubmit" /></p>';
     }
+    str += '</div>';
     panel.get('element').innerHTML = str;
 }
 
