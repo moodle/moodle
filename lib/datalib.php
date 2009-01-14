@@ -210,11 +210,14 @@ function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions=''
  * @uses SITEID
  * @deprecated Use {@link get_course_users()} instead.
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @param string $exceptions A comma separated list of user->id to be skiped in the result returned by the function
+ * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
+ * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
  * @return object|false  {@link $USER} records or false if error.
  */
-function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') {
+function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='', $limitfrom='', $limitnum='') {
 
-    return get_course_users(SITEID, $sort, $exceptions, $fields);
+    return get_course_users(SITEID, $sort, $exceptions, $fields, $limitfrom, $limitnum);
 }
 
 
