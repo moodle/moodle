@@ -69,7 +69,7 @@ class repository_smb extends repository {
             } else {
                 $ret['list'][] = array(
                     'title'=>$file,
-                    'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo("icon", $file),
+                    'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo('icon32', $file),
                     'size'=>'',
                     'date'=>'',
                     'source'=>$path.$file);

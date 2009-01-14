@@ -95,7 +95,7 @@ class repository_webdav extends repository {
                 $title = urldecode(substr($v['href'], strpos($v['href'], $path)+strlen($path)));
                 $ret['list'][] = array(
                     'title'=>$title,
-                    'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo("icon", $title),
+                    'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo('icon32', $title),
                     'size'=>$v['getcontentlength'],
                     'date'=>$filedate,
                     'source'=>$v['href']

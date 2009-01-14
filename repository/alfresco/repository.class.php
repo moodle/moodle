@@ -117,7 +117,7 @@ class repository_alfresco extends repository {
                     'children'=>array());
             } elseif ($child->child->type == $file_filter) {
                 $ret['list'][] = array('title'=>$child->child->cm_name,
-                    'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo("icon", $child->child->cm_name),
+                    'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo('icon32', $child->child->cm_name),
                     'source'=>$child->child->id);
             }
         }

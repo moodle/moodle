@@ -668,13 +668,24 @@ function get_mimetypes_array() {
  * @return string Requested piece of information from array
  */
 function mimeinfo($element, $filename) {
+    global $CFG;
     $mimeinfo = get_mimetypes_array();
 
     if (eregi('\.([a-z0-9]+)$', $filename, $match)) {
         if (isset($mimeinfo[strtolower($match[1])][$element])) {
             return $mimeinfo[strtolower($match[1])][$element];
         } else {
-            return $mimeinfo['xxx'][$element];   // By default
+            if ($element == 'icon32' and isset($mimeinfo[strtolower($match[1])]['icon'])) {
+                $filename = substr($mimeinfo[strtolower($match[1])]['icon'], 0, -4);
+                $filename .= '-32.png';
+                if (file_exists($CFG->dirroot.'/pix/f/'.$filename)) {
+                    return $filename;
+                } else {
+                    return $CFG->pixpath.'/f/unknown-32.png';   // By default
+                }
+            } else {
+                return $mimeinfo['xxx'][$element];   // By default
+            }
         }
     } else {
         return $mimeinfo['xxx'][$element];   // By default

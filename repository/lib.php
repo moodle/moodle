@@ -754,7 +754,7 @@ abstract class repository {
                 return array('url'=>$ret->get_url(),
                     'id'=>$file->get_itemid(),
                     'file'=>$file->get_filename(),
-                    'icon'=>$CFG->pixpath.'/f/'.mimeinfo('icon', $path)
+                    'icon'=>$CFG->pixpath.'/f/'.mimeinfo('icon32', $path)
                 );
             } else {
                 return null;
@@ -964,7 +964,7 @@ abstract class repository {
                     'date' => $filedate,
                     //'source' => $child->get_url(),
                     'source' => base64_encode($source),
-                    'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo_from_type("icon", $filetype)
+                    'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo('icon32', $filename)
                 );
                 $filecount++;
             }
