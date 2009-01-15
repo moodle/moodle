@@ -107,7 +107,7 @@ function report_security_check_noauth($detailed=false) {
     $result->details = null;
     $result->status  = null;
     $result->link    = null;
-    $result->link    = "$CFG->wwwroot/$CFG->admin/settings.php?section=manageauths";
+    $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=manageauths\">".get_string('authsettings', 'admin').'</a>';
 
     if (is_enabled_auth('none')) {
         $result->status = REPORT_SECURITY_CRITICAL;
@@ -138,7 +138,7 @@ function report_security_check_passwordpolicy($detailed=false) {
     $result->info    = null;
     $result->details = null;
     $result->status  = null;
-    $result->link    = "$CFG->wwwroot/$CFG->admin/settings.php?section=sitepolicies";
+    $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=sitepolicies\">".get_string('sitepolicies', 'admin').'</a>';
 
     if (empty($CFG->passwordpolicy)) {
         $result->status = REPORT_SECURITY_WARNING;
@@ -169,7 +169,7 @@ function report_security_check_embed($detailed=false) {
     $result->info    = null;
     $result->details = null;
     $result->status  = null;
-    $result->link    = "$CFG->wwwroot/$CFG->admin/settings.php?section=sitepolicies";
+    $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=sitepolicies\">".get_string('sitepolicies', 'admin').'</a>';
 
     if (!empty($CFG->allowobjectembed)) {
         $result->status = REPORT_SECURITY_CRITICAL;
@@ -200,7 +200,7 @@ function report_security_check_mediafilterswf($detailed=false) {
     $result->info    = null;
     $result->details = null;
     $result->status  = null;
-    $result->link    = "$CFG->wwwroot/$CFG->admin/settings.php?section=filtersettingfiltermediaplugin";
+    $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=filtersettingfiltermediaplugin\">".get_string('filtersettings', 'admin').'</a>';
 
     if (!empty($CFG->textfilters)) {
         $activefilters = explode(',', $CFG->textfilters);
@@ -305,7 +305,7 @@ function report_security_check_openprofiles($detailed=false) {
     $result->info    = null;
     $result->details = null;
     $result->status  = null;
-    $result->link    = "$CFG->wwwroot/$CFG->admin/settings.php?section=sitepolicies";
+    $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=sitepolicies\">".get_string('sitepolicies', 'admin').'</a>';
 
     if (empty($CFG->forcelogin) and empty($CFG->forceloginforprofiles)) {
         $result->status = REPORT_SECURITY_WARNING;
@@ -337,7 +337,7 @@ function report_security_check_google($detailed=false) {
     $result->info    = null;
     $result->details = null;
     $result->status  = null;
-    $result->link    = "$CFG->wwwroot/$CFG->admin/settings.php?section=sitepolicies";
+    $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=sitepolicies\">".get_string('sitepolicies', 'admin').'</a>';
 
     if (empty($CFG->opentogoogle)) {
         $result->status = REPORT_SECURITY_OK;
@@ -371,7 +371,7 @@ function report_security_check_emailchangeconfirmation($detailed=false) {
     $result->info    = null;
     $result->details = null;
     $result->status  = null;
-    $result->link    = "$CFG->wwwroot/$CFG->admin/settings.php?section=sitepolicies";
+    $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=sitepolicies\">".get_string('sitepolicies', 'admin').'</a>';
 
     if (empty($CFG->emailchangeconfirmation)) {
         $result->status = REPORT_SECURITY_WARNING;
@@ -407,7 +407,7 @@ function report_security_check_cookiesecure($detailed=false) {
     $result->info    = null;
     $result->details = null;
     $result->status  = null;
-    $result->link    = "$CFG->wwwroot/$CFG->admin/settings.php?section=httpsecurity";
+    $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=httpsecurity\">".get_string('httpsecurity', 'admin').'</a>';
 
     if (empty($CFG->cookiesecure)) {
         $result->status = REPORT_SECURITY_SERIOUS;
@@ -515,7 +515,7 @@ function report_security_check_defaultuserrole($detailed=false) {
     $result->info    = null;
     $result->details = null;
     $result->status  = null;
-    $result->link    = "$CFG->wwwroot/$CFG->admin/settings.php?section=userpolicies";
+    $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=userpolicies\">".get_string('userpolicies', 'admin').'</a>';;
 
     if (!$default_role = $DB->get_record('role', array('id'=>$CFG->defaultuserroleid))) {
         $result->status  = REPORT_SECURITY_WARNING;
@@ -594,7 +594,7 @@ function report_security_check_guestrole($detailed=false) {
     $result->info    = null;
     $result->details = null;
     $result->status  = null;
-    $result->link    = "$CFG->wwwroot/$CFG->admin/settings.php?section=userpolicies";
+    $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=userpolicies\">".get_string('userpolicies', 'admin').'</a>';;
 
     if (!$guest_role = $DB->get_record('role', array('id'=>$CFG->guestroleid))) {
         $result->status  = REPORT_SECURITY_WARNING;
@@ -670,7 +670,7 @@ function report_security_check_frontpagerole($detailed=false) {
     $result->info    = null;
     $result->details = null;
     $result->status  = null;
-    $result->link    = "$CFG->wwwroot/$CFG->admin/settings.php?section=frontpagesettings";
+    $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=frontpagesettings\">".get_string('frontpagesettings','admin').'</a>';;
 
     if (!$frontpage_role = $DB->get_record('role', array('id'=>$CFG->defaultfrontpageroleid))) {
         $result->status  = REPORT_SECURITY_INFO;
@@ -746,7 +746,7 @@ function report_security_check_defaultcourserole($detailed=false) {
     $result->info    = null;
     $result->details = null;
     $result->status  = null;
-    $result->link    = "$CFG->wwwroot/$CFG->admin/settings.php?section=userpolicies";
+    $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=userpolicies\">".get_string('userpolicies', 'admin').'</a>';;
 
     if ($detailed) {
         $result->details = get_string('check_defaultcourserole_details', 'report_security');

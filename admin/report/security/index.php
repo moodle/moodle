@@ -76,7 +76,7 @@ if ($issue and ($result = $issue(true))) {
     $row[0] = $result->name;
     $row[1] = $statusarr[$result->status];
     $row[2] = $result->info;
-    $row[3] = is_null($result->link) ? '-' : "<a href='$result->link'>$strconfig</a>";
+    $row[3] = is_null($result->link) ? '&nbsp;' : $result->link;
 
     $table->data[] = $row;
 
