@@ -675,8 +675,12 @@ function mimeinfo($element, $filename) {
         if (isset($mimeinfo[strtolower($match[1])][$element])) {
             return $mimeinfo[strtolower($match[1])][$element];
         } else {
-            if ($element == 'icon32' and isset($mimeinfo[strtolower($match[1])]['icon'])) {
-                $filename = substr($mimeinfo[strtolower($match[1])]['icon'], 0, -4);
+            if ($element == 'icon32') {
+                if (isset($mimeinfo[strtolower($match[1])]['icon'])) {
+                    $filename = substr($mimeinfo[strtolower($match[1])]['icon'], 0, -4);
+                } else {
+                    $filename = 'unknown';
+                }
                 $filename .= '-32.png';
                 if (file_exists($CFG->dirroot.'/pix/f/'.$filename)) {
                     return $filename;
