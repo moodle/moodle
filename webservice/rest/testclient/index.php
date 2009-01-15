@@ -13,9 +13,10 @@ require_once ('config_rest.php');
 
 start_interface (false);
 
-$links = array( array('getusers.php','getusers()'),
-                array('createuser.php','createuser()'),
-                array('namedparams_get_users.php','namedparams_get_users()'));
+$links = array( array('getusers.php','get_users()'),
+                array('createuser.php','create_user()'),
+                array('deleteuser.php','delete_user()'),
+                array('updateuser.php','update_user()'));
 
 echo '<ul>';
 foreach ($links as $link) {

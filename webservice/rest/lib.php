@@ -54,8 +54,8 @@ function call_moodle_function ($rest_arguments) {
  * @return <type>
  */
 function retrieve_params ($description) {
-    $params = $description['wsparam'];
-    //retrieve REST param matching the description
+//    $params = $description['wsparams'];
+    //retrieve REST param matching the description (warning: PHP assign the first instanciation as the first position in the table)
 
     foreach ($description['wsparams'] as $paramname => $paramtype) {
         $value = optional_param($paramname,null,$paramtype);

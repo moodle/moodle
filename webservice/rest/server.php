@@ -15,10 +15,6 @@
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once('lib.php');
 
-if (empty($CFG->enablewebservices)) {
-    die;
-}
-
 //retrieve path and function name from the URL
 $rest_arguments = get_file_argument('server.php');
 
