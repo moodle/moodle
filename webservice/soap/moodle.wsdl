@@ -1,0 +1,56 @@
+<?xml version ='1.0' encoding ='UTF-8' ?>
+        <definitions name='User'
+          targetNamespace='http://example.org/User'
+          xmlns:tns=' http://example.org/User '
+          xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/'
+          xmlns:xsd='http://www.w3.org/2001/XMLSchema'
+          xmlns:soapenc='http://schemas.xmlsoap.org/soap/encoding/'
+          xmlns:wsdl='http://schemas.xmlsoap.org/wsdl/'
+          xmlns='http://schemas.xmlsoap.org/wsdl/'>
+
+          <types>
+         <xsd:schema
+             targetNamespace="http://example.org/User"
+             xmlns="http://www.w3.org/2001/XMLSchema">
+             <xsd:complexType name="user">
+             </xsd:complexType>
+          </xsd:schema>
+       </types>
+
+
+        <message name='getusersRequest'>
+          <part name='search' type='xsd:string'/>
+        </message>
+        <message name='getusersResponse'>
+          <part name='user' type='xsd:user'/>
+        </message>
+
+        <portType name='UserPortType'>
+          <operation name='tmp_get_users'>
+            <input message='tns:getusersRequest'/>
+            <output message='tns:getusersResponse'/>
+          </operation>
+        </portType>
+
+        <binding name='UserBinding' type='tns:UserPortType'>
+          <soap:binding style='rpc'
+            transport='http://schemas.xmlsoap.org/soap/http'/>
+          <operation name='tmp_get_users'>
+            <soap:operation soapAction='urn:xmethods-delayed-quotes#tmp_get_users'/>
+            <input>
+              <soap:body use='encoded' namespace='urn:xmethods-delayed-quotes'
+                encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
+            </input>
+            <output>
+              <soap:body use='encoded' namespace='urn:xmethods-delayed-quotes'
+                encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
+            </output>
+          </operation>
+        </binding>
+
+        <service name='UserService'>
+          <port name='UserPort' binding='UserBinding'>
+            <soap:address location='http://jerome.moodle.com/Moodle_HEAD/moodle/webservice/soap/server.php?classpath=user'/>
+          </port>
+        </service>
+        </definitions>
