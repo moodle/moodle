@@ -1609,9 +1609,20 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                             $completiondata->completionstate==COMPLETION_COMPLETE
                             ? COMPLETION_INCOMPLETE
                             : COMPLETION_COMPLETE;
-                        // In manual mode the icon is a toggle form.
+                        // In manual mode the icon is a toggle form...
+
+                        // If this completion state is used by the
+                        // conditional activities system, we need to turn
+                        // off the JS.
+                        if (!empty($CFG->enableavailability) && 
+                            condition_info::completion_value_used_as_condition(
+                            $course, $mod)) {
+                            $extraclass = ' preventjs';
+                        } else {
+                            $extraclass = '';
+                        }
                         echo "
-<form class='togglecompletion' method='post' action='togglecompletion.php'><div>";
+<form class='togglecompletion$extraclass' method='post' action='togglecompletion.php'><div>";
                         if(!$shownhelp && !$isediting) {
                             helpbutton('completionicons',get_string('completionicons','completion'),'completion');
                             $shownhelp=true;

@@ -13,7 +13,9 @@ function completion_init() {
 
   var toggles=YAHOO.util.Dom.getElementsByClassName('togglecompletion', 'form');
   for(var i=0;i<toggles.length;i++) {
-    completion_init_toggle(toggles[i]);
+    if(toggles[i].className.indexOf('preventjs')==-1) {
+      completion_init_toggle(toggles[i]);
+    }
   }
 } 
 

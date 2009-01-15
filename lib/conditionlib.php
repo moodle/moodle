@@ -534,5 +534,29 @@ WHERE
             }
         }
     }
+
+    /**
+     * Used in course/lib.php because we need to disable the completion JS if
+     * a completion value affects a conditional activity.
+     * @param object $course Moodle course object
+     * @param object $cm Moodle course-module
+     * @return bool True if this is used in a condition, false otherwise
+     */
+    public static function completion_value_used_as_condition($course,$cm) {
+        // Have we already worked out a list of required completion values
+        // for this course? If so just use that
+        static $affected = array();
+        if (!array_key_exists($course->id, $affected)) {
+            // We don't have data for this course, build it
+            $modinfo = get_fast_modinfo($course);
+            $affected[$course->id] = array();
+            foreach ($modinfo->cms as $cm) {
+                foreach ($cm->conditionscompletion as $cmid=>$expectedcompletion) {
+                    $affected[$course->id][$cmid] = true;
+                }
+            }
+        }
+        return array_key_exists($cm->id,$affected[$course->id]);
+    }
 }
 ?>
