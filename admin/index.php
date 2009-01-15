@@ -48,13 +48,6 @@
         print_error('phpfloatproblem', 'admin', '', $documentationlink);
     }
 
-/// Check that config.php has been edited
-
-    if ($CFG->wwwroot == "http://example.com/moodle") {
-        print_error('configmoodle', 'debug');
-    }
-
-
 /// Check settings in config.php
 
     $dirroot = dirname(realpath("../index.php"));
