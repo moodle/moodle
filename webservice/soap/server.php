@@ -12,6 +12,10 @@
  */
 require_once(dirname(__FILE__) . '/../../config.php');
 
+if (empty($CFG->enablewebservices)) {
+    die;
+}
+
 //retrieve the api name
 $classpath = optional_param(classpath,null,PARAM_ALPHA);
 require_once(dirname(__FILE__) . '/../../'.$classpath.'/wsapi.php');
