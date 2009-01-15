@@ -259,8 +259,6 @@
 
         } else {
 
-            upgrade_log_start();
-
         /// return to original debugging level
             $CFG->debug = $origdebug;
             error_reporting($CFG->debug);
