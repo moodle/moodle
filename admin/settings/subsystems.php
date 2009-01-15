@@ -12,6 +12,8 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     $optionalsubsystems->add(new admin_setting_configcheckbox('enableportfolios', get_string('enabled', 'portfolio'), get_string('enableddesc', 'portfolio'), 0));
 
+    $optionalsubsystems->add(new admin_setting_configcheckbox('enablewebservices', get_string('enablewebservices', 'admin'), get_string('configenablewebservices', 'admin'), 0));
+
     $optionalsubsystems->add(new admin_setting_configcheckbox('messaging', get_string('messaging', 'admin'), get_string('configmessaging','admin'), 1));
 
     $optionalsubsystems->add(new admin_setting_configcheckbox('enablestats', get_string('enablestats', 'admin'), get_string('configenablestats', 'admin'), 0));
