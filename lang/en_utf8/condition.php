@@ -4,6 +4,7 @@ $string['addcompletions']='Add {no} activity conditions to form';
 $string['availabilityconditions']='Restrict availability';
 $string['availablefrom']='Only available from';
 $string['availableuntil']='Only available until';
+$string['badavailabledates']='Invalid dates. If you set both dates, the \'available from\' date should be before the \'until\' date.';
 $string['completion_complete']=' must be marked complete';
 $string['completion_incomplete']=' must not be marked complete';
 $string['completion_pass']=' must be complete with pass grade';

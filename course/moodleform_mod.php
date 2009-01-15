@@ -248,6 +248,13 @@ class moodleform_mod extends moodleform {
             }
         }
 
+        // Conditions: Don't let them set dates which make no sense
+        if (array_key_exists('availablefrom', $data) && 
+            $data['availablefrom'] && $data['availableuntil'] && 
+            $data['availablefrom']>=$data['availableuntil']) {
+            $errors['availablefrom'] = get_string('badavailabledates', 'condition');
+        }
+        
         return $errors;
     }
 
