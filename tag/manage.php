@@ -137,10 +137,10 @@ if ($notice) {
 
 // small form to add an official tag
 print('<form class="tag-management-form" method="post" action="'.$CFG->wwwroot.'/tag/manage.php">');
-print('<input type="hidden" name="action" value="addofficialtag">');
+print('<input type="hidden" name="action" value="addofficialtag" />');
 print('<div class="tag-management-form generalbox"><label class="accesshide" for="id_otagsadd">'. get_string('addotags', 'tag') .'</label>'.
-    '<input name="otagsadd" id="id_otagsadd" type="text">'.
-    '<input name="addotags" value="'. get_string('addotags', 'tag') .'" onclick="skipClientValidation = true;" id="id_addotags" type="submit">'.
+    '<input name="otagsadd" id="id_otagsadd" type="text" />'.
+    '<input name="addotags" value="'. get_string('addotags', 'tag') .'" onclick="skipClientValidation = true;" id="id_addotags" type="submit" />'.
     '</div>');
 print('</form>');
 
