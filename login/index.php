@@ -3,7 +3,7 @@
 
     require_once("../config.php");
 
-    // check if major upgrade needed - also present in /index.php
+/// check if major upgrade needed - also present in /index.php
     if ((int)$CFG->version < 2009011400) { //1.9 or older
         @require_logout();
         redirect("$CFG->wwwroot/$CFG->admin/");
@@ -24,18 +24,18 @@
         $session_has_timed_out = false;
     }
 
-// auth plugins may override these - SSO anyone?
-$frm  = false;
-$user = false;
+/// auth plugins may override these - SSO anyone?
+    $frm  = false;
+    $user = false;
 
-$authsequence = get_enabled_auth_plugins(true); // auths, in sequence
-foreach($authsequence as $authname) {
-    $authplugin = get_auth_plugin($authname);
-    $authplugin->loginpage_hook();
-}
+    $authsequence = get_enabled_auth_plugins(true); // auths, in sequence
+    foreach($authsequence as $authname) {
+        $authplugin = get_auth_plugin($authname);
+        $authplugin->loginpage_hook();
+    }
 
 //HTTPS is potentially required in this page
-httpsrequired();
+    httpsrequired();
 
 /// Define variables used in page
     if (!$site = get_site()) {
