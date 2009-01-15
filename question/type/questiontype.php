@@ -836,15 +836,6 @@ class default_questiontype {
         global $CFG;
         $isgraded = question_state_is_graded($state->last_graded);
 
-        // Get the context we should use to check permissions.
-        if (!empty($cmoptions->id)) {
-            $context = get_context_instance(CONTEXT_MODULE, $cmoptions->id);
-        } else if (!empty($cmoptions->course)) {
-            $context = get_context_instance(CONTEXT_COURSE, $cmoptions->course);
-        } else {
-            $context = null;
-        }
-
         // For editing teachers print a link to an editing popup window
         $editlink = $this->get_question_edit_link($question, $cmoptions, $options);
 
