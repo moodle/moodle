@@ -322,6 +322,17 @@ table.flexible .r1 {
   background-color: green;
 }
 
+#admin-report-security-index .statuswarning {
+  background-color: #f0e000;
+}
+
+#admin-report-security-index .statusserious {
+  background-color: #f07000;
+}
+
+#admin-report-security-index .statuscritical {
+  background-color: #f00000;
+}
 
 .plugincompattable td.ok {
     color: #008000;
