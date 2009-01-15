@@ -20,6 +20,9 @@ class MoodleQuickForm_textarea extends HTML_QuickForm_textarea{
      * @var string
      */
     var $_helpbutton='';
+
+    var $_hiddenLabel=false;
+
     /**
      * set html for help button
      *
@@ -61,6 +64,21 @@ class MoodleQuickForm_textarea extends HTML_QuickForm_textarea{
     function getHelpButton(){
         return $this->_helpbutton;
     }
+
+    function setHiddenLabel($hiddenLabel){
+        $this->_hiddenLabel = $hiddenLabel;
+    }
+
+    function toHtml(){
+        if ($this->_hiddenLabel){
+            $this->_generateId();
+            return '<label class="accesshide" for="' . $this->getAttribute('id') . '" >' .
+                    $this->getLabel() . '</label>' . parent::toHtml();
+        } else {
+            return parent::toHtml();
+        }
+    }
+
     /**
      * Called by HTML_QuickForm whenever form event is made on this element
      *

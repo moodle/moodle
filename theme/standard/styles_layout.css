@@ -702,6 +702,14 @@ fieldset.fdate_selector label {
 .mform label .req, .mform label .adv {
   cursor: help;
 }
+.mform .ftags label.accesshide {
+  display: block;
+  position: static;
+}
+.mform .ftags select {
+  margin-bottom: 0.7em;
+  min-width: 22em;
+}
 
 /* form frozen */
 div.mform div.fitem div.fstatic{
