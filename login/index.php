@@ -4,7 +4,7 @@
     require_once("../config.php");
 
     // check if major upgrade needed - also present in /index.php
-    if ((int)$CFG->version < 2006101100) { //1.7 or older
+    if ((int)$CFG->version < 2009011400) { //1.9 or older
         @require_logout();
         redirect("$CFG->wwwroot/$CFG->admin/");
     }
@@ -23,16 +23,6 @@
     } else {
         $session_has_timed_out = false;
     }
-
-// setup and verify auth settings
-
-if (!isset($CFG->registerauth)) {
-    set_config('registerauth', '');
-}
-
-if (!isset($CFG->auth_instructions)) {
-    set_config('auth_instructions', '');
-}
 
 // auth plugins may override these - SSO anyone?
 $frm  = false;

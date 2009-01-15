@@ -49,10 +49,6 @@ function isteacher($courseid=0, $userid=0, $obsolete_includeadmin=true) {
 /// Is the user able to access this course as a teacher?
     global $CFG;
 
-    if (empty($CFG->rolesactive)) {     // Teachers are locked out during an upgrade to 1.7
-        return false;
-    }
-
     if ($courseid) {
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
     } else {
@@ -74,10 +70,6 @@ function isteacher($courseid=0, $userid=0, $obsolete_includeadmin=true) {
  */
 function isteacherinanycourse($userid=0, $includeadmin=true) {
     global $USER, $CFG, $DB;
-
-    if (empty($CFG->rolesactive)) {     // Teachers are locked out during an upgrade to 1.7
-        return false;
-    }
 
     if (!$userid) {
         if (empty($USER->id)) {
@@ -128,10 +120,6 @@ function isteacherinanycourse($userid=0, $includeadmin=true) {
  */
 function isguest($userid=0) {
     global $CFG;
-
-    if (empty($CFG->rolesactive)) {
-        return false;
-    }
 
     $context = get_context_instance(CONTEXT_SYSTEM);
 

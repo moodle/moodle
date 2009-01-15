@@ -1594,9 +1594,6 @@ class admin_externalpage implements part_of_admin_tree {
      */
     public function check_access() {
         global $CFG;
-        if (empty($CFG->rolesactive)) {
-            return true; // no access check before site is fully set up
-        }
         $context = empty($this->context) ? get_context_instance(CONTEXT_SYSTEM) : $this->context;
         foreach($this->req_capability as $cap) {
             if (is_valid_capability($cap) and has_capability($cap, $context)) {
@@ -1745,9 +1742,6 @@ class admin_settingpage implements part_of_admin_tree {
     // see admin_externalpage
     public function check_access() {
         global $CFG;
-        if (empty($CFG->rolesactive)) {
-            return true; // no access check before site is fully set up
-        }
         $context = empty($this->context) ? get_context_instance(CONTEXT_SYSTEM) : $this->context;
         foreach($this->req_capability as $cap) {
             if (is_valid_capability($cap) and has_capability($cap, $context)) {

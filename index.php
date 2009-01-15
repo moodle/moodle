@@ -34,10 +34,6 @@
     require_once($CFG->dirroot .'/course/lib.php');
     require_once($CFG->dirroot .'/lib/blocklib.php');
 
-    if (empty($SITE)) {
-        redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
-    }
-
     // Bounds for block widths
     // more flexible for theme designers taken from theme config.php
     $lmin = (empty($THEME->block_l_min_width)) ? 100 : $THEME->block_l_min_width;
@@ -51,14 +47,8 @@
     define('BLOCK_R_MAX_WIDTH', $rmax);
 
     // check if major upgrade needed - also present in login/index.php
-    if ((int)$CFG->version < 2006101100) { //1.7 or older
+    if (empty($CFG->version) or (int)$CFG->version < 2009011400) { //1.9 or older
         @require_logout();
-        redirect("$CFG->wwwroot/$CFG->admin/");
-    }
-    // Trigger 1.9 accesslib upgrade?
-    if ((int)$CFG->version < 2007092000 
-        && isset($USER->id) 
-        && is_siteadmin($USER->id)) { // this test is expensive, but is only triggered during the upgrade
         redirect("$CFG->wwwroot/$CFG->admin/");
     }
 
@@ -68,19 +58,13 @@
         user_accesstime_log();
     }
 
-    if (!empty($CFG->rolesactive)) { // if already using roles system
-        if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
-            if (moodle_needs_upgrading()) {
-                redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
-            }
-        } else if (!empty($CFG->mymoodleredirect)) {    // Redirect logged-in users to My Moodle overview if required
-            if (isloggedin() && $USER->username != 'guest') {
-                redirect($CFG->wwwroot .'/my/index.php');
-            }
-        }
-    } else { // if upgrading from 1.6 or below
-        if (is_siteadmin($USER->id) && moodle_needs_upgrading()) {
+    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+        if (moodle_needs_upgrading()) {
             redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
+        }
+    } else if (!empty($CFG->mymoodleredirect)) {    // Redirect logged-in users to My Moodle overview if required
+        if (isloggedin() && $USER->username != 'guest') {
+            redirect($CFG->wwwroot .'/my/index.php');
         }
     }
 

@@ -351,7 +351,16 @@ function get_guest_role() {
  * @return bool
  */
 function has_capability($capability, $context, $userid=NULL, $doanything=true) {
-    global $USER, $ACCESS, $CFG, $DIRTYCONTEXTS, $DB;
+    global $USER, $ACCESS, $CFG, $DIRTYCONTEXTS, $DB, $SCRIPT;
+
+    if (empty($CFG->rolesactive)) {
+        if ($SCRIPT === "/$CFG->admin/index.php" or $SCRIPT === "/$CFG->admin/cliupgrade.php") {
+            // we are in an installer - roles can not work yet
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     // the original $CONTEXT here was hiding serious errors
     // for security reasons do not reuse previous context
@@ -1177,12 +1186,6 @@ function get_user_access_sitewide($userid) {
 
     global $CFG, $DB;
 
-    // this flag has not been set!
-    // (not clean install, or upgraded successfully to 1.7 and up)
-    if (empty($CFG->rolesactive)) {
-        return false;
-    }
-
     /* Get in 3 cheap DB queries...
      * - role assignments - with role_caps
      * - relevant role caps
@@ -1614,6 +1617,7 @@ function compact_rdefs(&$rdefs) {
 function load_all_capabilities() {
     global $USER, $CFG, $DIRTYCONTEXTS;
 
+    // roles not installed yet - we are in the middle of installation
     if (empty($CFG->rolesactive)) {
         return;
     }
