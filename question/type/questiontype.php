@@ -1604,8 +1604,35 @@ class default_questiontype {
      * This is used in question/backuplib.php
      */
     function backup($bf,$preferences,$question,$level=6) {
-        // The default type has nothing to back up
-        return true;
+
+        $status = true;
+        $extraquestionfields = $this->extra_question_fields();
+
+        if (is_array($extraquestionfields)) {
+            $questionextensiontable = array_shift($extraquestionfields);
+            $record = get_record($questionextensiontable, $this->questionid_column_name(), $question);
+            if ($record) {
+                $tagname = strtoupper($this->name());
+                $status = $status && fwrite($bf, start_tag($tagname, $level, true));
+                foreach ($extraquestionfields as $field) {
+                    if (!isset($record->$field)) {
+                        echo "No data for field $field when backuping " .
+                                $this->name() . ' question id ' . $question;
+                        return false;
+                    }
+                    fwrite($bf, full_tag(strtoupper($field), $level + 1, false, $record->$field));
+                }
+                $status = $status && fwrite($bf, end_tag($tagname, $level, true));
+            }
+        }
+
+        $extraasnwersfields = $this->extra_answer_fields();
+        if (is_array($extraasnwersfields)) {
+            //TODO backup the answers, with any extra data.
+        } else {
+            $status = $status && question_backup_answers($bf, $preferences, $question);
+        }
+        return $status;
     }
 
 /// RESTORE FUNCTIONS /////////////////
@@ -1616,8 +1643,29 @@ class default_questiontype {
      * This is used in question/restorelib.php
      */
     function restore($old_question_id,$new_question_id,$info,$restore) {
-        // The default question type has nothing to restore
-        return true;
+
+        $status = true;
+        $extraquestionfields = $this->extra_question_fields();
+
+        if (is_array($extraquestionfields)) {
+            $questionextensiontable = array_shift($extraquestionfields);
+            $tagname = strtoupper($this->name());
+            $recordinfo = $info['#'][$tagname][0];
+
+            $record = new stdClass;
+            $qidcolname = $this->questionid_column_name();
+            $record->$qidcolname = $new_question_id;
+            foreach ($extraquestionfields as $field) {
+                $record->$field = backup_todb($recordinfo['#'][strtoupper($field)]['0']['#']);
+            }
+            if (!insert_record($questionextensiontable, $record)) {
+                echo "Can't insert record in $questionextensiontable when restoring " .
+                                $this->name() . ' question id ' . $question;
+                $status = false;
+            }
+        }
+        //TODO restore extra data in answers
+        return $status;
     }
 
     function restore_map($old_question_id,$new_question_id,$info,$restore) {

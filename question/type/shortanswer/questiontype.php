@@ -200,34 +200,6 @@ class question_shortanswer_qtype extends default_questiontype {
         return $response;
     }
 
-    /// BACKUP FUNCTIONS ////////////////////////////
-
-    /*
-     * Backup the data in the question
-     *
-     * This is used in question/backuplib.php
-     */
-    function backup($bf,$preferences,$question,$level=6) {
-
-        $status = true;
-
-        $shortanswers = get_records('question_shortanswer', 'question', $question, 'id ASC');
-        //If there are shortanswers
-        if ($shortanswers) {
-            //Iterate over each shortanswer
-            foreach ($shortanswers as $shortanswer) {
-                $status = fwrite ($bf,start_tag("SHORTANSWER",$level,true));
-                //Print shortanswer contents
-                fwrite ($bf,full_tag("ANSWERS",$level+1,false,$shortanswer->answers));
-                fwrite ($bf,full_tag("USECASE",$level+1,false,$shortanswer->usecase));
-                $status = fwrite ($bf,end_tag("SHORTANSWER",$level,true));
-            }
-            //Now print question_answers
-            $status = question_backup_answers($bf,$preferences,$question);
-        }
-        return $status;
-    }
-
 /// RESTORE FUNCTIONS /////////////////
 
     /*
@@ -237,59 +209,36 @@ class question_shortanswer_qtype extends default_questiontype {
      */
     function restore($old_question_id,$new_question_id,$info,$restore) {
 
-        $status = true;
+        $status = parent::restore($old_question_id, $new_question_id, $info, $restore);
 
-        //Get the shortanswers array
-        $shortanswers = $info['#']['SHORTANSWER'];
-
-        //Iterate over shortanswers
-        for($i = 0; $i < sizeof($shortanswers); $i++) {
-            $sho_info = $shortanswers[$i];
-
-            //Now, build the question_shortanswer record structure
-            $shortanswer = new stdClass;
-            $shortanswer->question = $new_question_id;
-            $shortanswer->answers = backup_todb($sho_info['#']['ANSWERS']['0']['#']);
-            $shortanswer->usecase = backup_todb($sho_info['#']['USECASE']['0']['#']);
+        if ($status) {
+            $extraquestionfields = $this->extra_question_fields();
+            $questionextensiontable = array_shift($extraquestionfields);
 
             //We have to recode the answers field (a list of answers id)
-            //Extracts answer id from sequence
-            $answers_field = "";
-            $in_first = true;
-            $tok = strtok($shortanswer->answers,",");
-            while ($tok) {
-                //Get the answer from backup_ids
-                $answer = backup_getid($restore->backup_unique_code,"question_answers",$tok);
-                if ($answer) {
-                    if ($in_first) {
-                        $answers_field .= $answer->new_id;
-                        $in_first = false;
-                    } else {
-                        $answers_field .= ",".$answer->new_id;
+            $questionextradata = get_record($questionextensiontable, $this->questionid_column_name(), $new_question_id);
+            if (isset($questionextradata->answers)) {
+                $answers_field = "";
+                $in_first = true;
+                $tok = strtok($questionextradata->answers, ",");
+                while ($tok) {
+                    // Get the answer from backup_ids
+                    $answer = backup_getid($restore->backup_unique_code,"question_answers",$tok);
+                    if ($answer) {
+                        if ($in_first) {
+                            $answers_field .= $answer->new_id;
+                            $in_first = false;
+                        } else {
+                            $answers_field .= ",".$answer->new_id;
+                        }
                     }
+                    // Check for next
+                    $tok = strtok(",");
                 }
-                //check for next
-                $tok = strtok(",");
-            }
-            //We have the answers field recoded to its new ids
-            $shortanswer->answers = $answers_field;
-
-            //The structure is equal to the db, so insert the question_shortanswer
-            $newid = insert_record ("question_shortanswer",$shortanswer);
-
-            //Do some output
-            if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
-                }
-                backup_flush(300);
-            }
-
-            if (!$newid) {
-                $status = false;
+                // We have the answers field recoded to its new ids
+                $questionextradata->answers = $answers_field;
+                // Update the question
+                $status = $status && update_record($questionextensiontable, $questionextradata);
             }
         }
 
