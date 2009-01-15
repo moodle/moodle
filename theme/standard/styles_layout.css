@@ -2042,6 +2042,10 @@ border-width:0px;
   margin-right:20px; /* Space allowed for completion icons if enabled */
   position:relative;
 }
+.dir-rtl#course-view li.activity {
+  margin-right:0px;
+  margin-left:20px;
+}
 #course-view li.activity form.togglecompletion,
 #course-view li.activity span.autocompletion {
   display:inline;
@@ -2050,6 +2054,11 @@ border-width:0px;
   top:0;
   z-index:10;
   padding:0.2em 0;
+}
+.dir-rtl#course-view li.activity form.togglecompletion,
+.dir-rtl#course-view li.activity span.autocompletion {
+  right:auto;
+  left:-20px;
 }
 #course-view li.activity form.togglecompletion div {
   display:inline;
