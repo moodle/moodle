@@ -6,9 +6,6 @@
 function xmldb_main_install() {
     global $CFG, $DB, $SITE;
 
-/// TODO: move all statements from install.xml here
-
-
 /// make sure system context exists
     $syscontext = get_context_instance(CONTEXT_SYSTEM);
     if ($syscontext->id != 1) {

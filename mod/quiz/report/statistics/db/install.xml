@@ -64,11 +64,4 @@
       </KEYS>
     </TABLE>
   </TABLES>
-  <STATEMENTS>
-    <STATEMENT NAME="insert quiz_report" TYPE="insert" TABLE="quiz_report" COMMENT="Initial insert of records on table quiz_report">
-      <SENTENCES>
-        <SENTENCE TEXT="(name, displayorder, cron, capability) VALUES ('statistics', 8000, 18000, 'quizreport/statistics:view')" />
-      </SENTENCES>
-    </STATEMENT>
-  </STATEMENTS>
 </XMLDB>
