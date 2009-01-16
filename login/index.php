@@ -4,7 +4,7 @@
     require_once("../config.php");
 
 /// check if major upgrade needed - also present in /index.php
-    if ((int)$CFG->version < 2009011400) { //1.9 or older
+    if ((int)$CFG->version < 2009011600) { //1.9 or older
         @require_logout();
         redirect("$CFG->wwwroot/$CFG->admin/");
     }

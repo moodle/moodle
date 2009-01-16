@@ -324,7 +324,7 @@ class database_session extends session_stub {
                 $record->state        = 0;
                 $record->sid          = $sid;
                 $record->sessdata     = null;
-                $record->sessdatahash = sha1('');
+                $record->sessdatahash = null;
                 $record->userid       = 0;
                 $record->timecreated  = $record->timemodified = time();
                 $record->firstip      = $record->lastip = getremoteaddr();
@@ -359,7 +359,7 @@ class database_session extends session_stub {
 
         $this->record->sid          = $sid;                         // it might be regenerated
         $this->record->sessdata     = base64_encode($session_data); // there might be some binary mess :-(
-        $this->record->sessdatahash = sha1($this->record->sessdata);
+        $this->record->sessdatahash = md5($this->record->sessdata);
         $this->record->userid       = empty($USER->realuser) ? $USER->id : $USER->realuser;
         $this->record->timemodified = time();
         $this->record->lastip       = getremoteaddr();
@@ -369,6 +369,7 @@ class database_session extends session_stub {
         } catch (dml_exception $ex) {
             error_log('Can not write session to database.');
         }
+
         return true;
     }
 

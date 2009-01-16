@@ -443,7 +443,7 @@
         <FIELD NAME="sid" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Session id" PREVIOUS="state" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="sid" NEXT="sessdata"/>
         <FIELD NAME="sessdata" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="session content" PREVIOUS="userid" NEXT="sessdatahash"/>
-        <FIELD NAME="sessdatahash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="verifies integrity of sessdata" PREVIOUS="sessdata" NEXT="timecreated"/>
+        <FIELD NAME="sessdatahash" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="verifies integrity of sessdata" PREVIOUS="sessdata" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="sessdatahash" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="timecreated" NEXT="firstip"/>
         <FIELD NAME="firstip" TYPE="char" LENGTH="45" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="timemodified" NEXT="lastip"/>
