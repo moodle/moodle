@@ -836,10 +836,11 @@ function question_load_questions($questionids, $extrafields = '', $join = '') {
  * Private function to factor common code out of get_question_options().
  *
  * @param object $question the question to tidy.
+ * @param boolean $loadtags load the question tags from the tags table. Optional, default false.
  * @return boolean true if successful, else false.
  */
-function _tidy_question(&$question) {
-    global $QTYPES;
+function _tidy_question(&$question, $loadtags = false) {
+    global $CFG, $QTYPES;
     if (!array_key_exists($question->qtype, $QTYPES)) {
         $question->qtype = 'missingtype';
         $question->questiontext = '<p>' . get_string('warningmissingtype', 'quiz') . '</p>' . $question->questiontext;
@@ -849,6 +850,10 @@ function _tidy_question(&$question) {
         if (isset($question->_partiallyloaded)) {
             unset($question->_partiallyloaded);
         }
+    }
+    if ($loadtags && !empty($CFG->usetags)) {
+        require_once($CFG->dirroot . '/tag/lib.php');
+        $question->tags = tag_get_tags_array('question', $question->id);
     }
     return $success;
 }
@@ -862,18 +867,19 @@ function _tidy_question(&$question) {
  *
  * @param mixed $questions Either an array of question objects to be updated
  *         or just a single question object
+ * @param boolean $loadtags load the question tags from the tags table. Optional, default false.
  * @return bool Indicates success or failure.
  */
-function get_question_options(&$questions) {
+function get_question_options(&$questions, $loadtags = false) {
     if (is_array($questions)) { // deal with an array of questions
         foreach ($questions as $i => $notused) {
-            if (!_tidy_question($questions[$i])) {
+            if (!_tidy_question($questions[$i], $loadtags)) {
                 return false;
             }
         }
         return true;
     } else { // deal with single question
-        return _tidy_question($questions);
+        return _tidy_question($questions, $loadtags);
     }
 }
 

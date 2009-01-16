@@ -46,18 +46,15 @@ if ($cmid){
 }
 $contexts = new question_edit_contexts($thiscontext);
 
-
 if (!$returnurl) {
     $returnurl = "{$CFG->wwwroot}/question/edit.php?courseid={$COURSE->id}";
 }
-
-
 
 if ($id) {
     if (!$question = $DB->get_record('question', array('id' => $id))) {
         print_error('questiondoesnotexist', 'question', $returnurl);
     }
-    get_question_options($question);
+    get_question_options($question, true);
 } else if ($categoryid && $qtype) { // only for creating new questions
     $question = new stdClass;
     $question->category = $categoryid;
@@ -72,7 +69,7 @@ if (!$category = $DB->get_record('question_categories', array('id' => $question-
 }
 
 //permissions
-$question->formoptions = new object();
+$question->formoptions = new stdClass;
 
 $categorycontext = get_context_instance_by_id($category->contextid);
 $addpermission = has_capability('moodle/question:add', $categorycontext);
@@ -99,7 +96,6 @@ if ($id) {
         }
     }
 
-
 } else  { // creating a new question
     require_capability('moodle/question:add', $categorycontext);
     $formeditable = true;
@@ -107,13 +103,11 @@ if ($id) {
     $question->formoptions->movecontext = false;
 }
 
-
 // Validate the question type.
 if (!isset($QTYPES[$question->qtype])) {
     print_error('unknownquestiontype', 'question', $returnurl, $question->qtype);
 }
 $CFG->pagepath = 'question/type/' . $question->qtype;
-
 
 // Create the question editing form.
 if ($wizardnow!=='' && !$movecontext){
@@ -183,7 +177,12 @@ if ($mform->is_cancelled()){
         }
     }
 
-    $question = $QTYPES[$question->qtype]->save_question($question, $fromform, $COURSE, $wizardnow);
+    $question = $QTYPES[$question->qtype]->save_question($question, $fromform, $COURSE, $wizardnow, true);
+    if (!empty($CFG->usetags)) {
+        require_once($CFG->dirroot.'/tag/lib.php');
+        tag_set('question', $question->id, $fromform->tags);
+    }
+
     if (($QTYPES[$question->qtype]->finished_edit_wizard($fromform)) || $movecontext){
         if ($inpopup) {
             notify(get_string('changessaved'), '');
@@ -241,7 +240,6 @@ if ($mform->is_cancelled()){
         $navigation = build_navigation($navlinks);
         print_header_simple($streditingquestion, '', $navigation);
     }
-
 
     // Display a heading, question editing form and possibly some extra content needed for
     // for this question type.

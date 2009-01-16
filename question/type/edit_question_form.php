@@ -146,6 +146,11 @@ class question_edit_form extends moodleform {
         // Any questiontype specific fields.
         $this->definition_inner($mform);
 
+        if (!empty($CFG->usetags)) {
+            $mform->addElement('header', 'tagsheader', get_string('tags'));
+            $mform->addElement('tags', 'tags', get_string('tags'));
+        }
+
         if (!empty($this->question->id)){
             $mform->addElement('header', 'createdmodifiedheader', get_string('createdmodifiedheader', 'question'));
             $a = new object();
