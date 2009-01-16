@@ -12,6 +12,7 @@ $string['delete'] = 'Delete';
 $string['deleted'] = 'Deleted';
 $string['deletedcoursetags'] = 'Deleted - course tags';
 $string['edittag'] = 'Edit this tag';
+$string['entertags'] = 'Enter tags separated by commas';
 $string['errordeleting'] = 'Error deleting tag with id $a, please report to your system administrator.';
 $string['errortagfrontpage'] = 'Tagging the site main page is not allowed';
 $string['errorupdatingrecord'] = 'Error updating tag record';

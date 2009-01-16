@@ -38,37 +38,36 @@ class MoodleQuickForm_tags extends MoodleQuickForm_group {
     /** Inidcates that the user should be the usual interface, with the official
      * tags listed seprately, and a text box where they can type anything.
      * @var integer */
-    const DEFAULTUI = 0;
+    const DEFAULTUI = 'defaultui';
     /** Indicates that the user should only be allowed to select official tags.
      * @var integer */
-    const ONLYOFFICIAL = 1;
+    const ONLYOFFICIAL = 'onlyofficial';
     /** Indicates that the user should just be given a text box to type in (they
      * can still type official tags though.
      * @var integer */
-    const NOOFFICIAL = 2;
+    const NOOFFICIAL = 'noofficial';
 
     /**
      * Control the fieldnames for form elements
      *
      * display => integer, one of the constants above.
      */
-    var $_options = array('display' => MoodleQuickForm_tags::DEFAULTUI);
-
-   /**
-    * These complement separators, they are appended to the resultant HTML
-    * @access   private
-    * @var      array
-    */
-    var $_wrap = array('', '');
+    protected $_options = array('display' => MoodleQuickForm_tags::DEFAULTUI);
 
     /**
-    * Constructor
-    *
-    * @param string $elementName Element name
-    * @param mixed $elementLabel  Label(s) for an element
-    * @param array $options Options to control the element's display
-    * @param mixed $attributes Either a typical HTML attribute string or an associative array.
-    */
+     * Caches the list of official tags, to save repeat DB queries.
+     * @var array
+     */
+    protected $_officialtags = null;
+
+    /**
+     * Constructor
+     *
+     * @param string $elementName Element name
+     * @param mixed $elementLabel Label(s) for an element
+     * @param array $options Options to control the element's display
+     * @param mixed $attributes Either a typical HTML attribute string or an associative array.
+     */
     function MoodleQuickForm_tags($elementName = null, $elementLabel = null, $options = array(), $attributes = null) {
         $this->HTML_QuickForm_element($elementName, $elementLabel, $attributes);
         $this->_persistantFreeze = true;
@@ -79,7 +78,7 @@ class MoodleQuickForm_tags extends MoodleQuickForm_group {
             foreach ($options as $name => $value) {
                 if (isset($this->_options[$name])) {
                     if (is_array($value) && is_array($this->_options[$name])) {
-                        $this->_options[$name] = @array_merge($this->_options[$name], $value);
+                        $this->_options[$name] = array_merge($this->_options[$name], $value);
                     } else {
                         $this->_options[$name] = $value;
                     }
@@ -88,12 +87,24 @@ class MoodleQuickForm_tags extends MoodleQuickForm_group {
         }
     }
 
-    function _createElements() {
+    protected function _load_official_tags() {
         global $CFG, $DB;
+        if (!is_null($this->_officialtags)) {
+            return;
+        }
+        $namefield = empty($CFG->keeptagnamecase) ? 'name' : 'rawname';
+        $this->_officialtags = $DB->get_records_menu('tag', array('tagtype' => 'official'), $namefield, 'id,' . $namefield);
+    }
+
+    function _createElements() {
+        global $CFG;
         $this->_elements = array();
 
         // Official tags.
-        if ($this->_options['display'] != MoodleQuickForm_tags::NOOFFICIAL) {
+        $showingofficial = $this->_options['display'] != MoodleQuickForm_tags::NOOFFICIAL;
+        if ($showingofficial) {
+            $this->_load_official_tags();
+
             // If the user can manage official tags, give them a link to manage them.
             $label = get_string('otags', 'tag');
             if (has_capability('moodle/tag:manage', get_context_instance(CONTEXT_SYSTEM))) {
@@ -103,13 +114,11 @@ class MoodleQuickForm_tags extends MoodleQuickForm_group {
 
             // Get the list of official tags.
             $noofficial = false;
-            $namefield = empty($CFG->keeptagnamecase) ? 'name' : 'rawname';
-            $officialtags = $DB->get_records_sql_menu("SELECT id, $namefield FROM {tag} WHERE tagtype='official' ORDER by $namefield ASC");
-            if (empty($officialtags)) {
+            if (empty($this->_officialtags)) {
                 $officialtags = array('' => get_string('none'));
                 $noofficial = true;
             } else {
-                $officialtags = array_combine($officialtags, $officialtags);
+                $officialtags = array_combine($this->_officialtags, $this->_officialtags);
             }
 
             // Create the element.
@@ -119,14 +128,17 @@ class MoodleQuickForm_tags extends MoodleQuickForm_group {
             if ($noofficial) {
                 $officialtagsselect->updateAttributes(array('disabled' => 'disabled'));
             }
-
-            // 
             $this->_elements[] = $officialtagsselect;
         }
 
         // Other tags.
         if ($this->_options['display'] != MoodleQuickForm_tags::ONLYOFFICIAL) {
-            $othertags = MoodleQuickForm::createElement('textarea', 'othertags', get_string('othertags', 'tag'), array('cols'=>'40', 'rows'=>'5'));
+            if ($showingofficial) {
+                $label = get_string('othertags', 'tag');
+            } else {
+                $label = get_string('entertags', 'tag');
+            }
+            $othertags = MoodleQuickForm::createElement('textarea', 'othertags', $label, array('cols'=>'40', 'rows'=>'5'));
             $this->_elements[] = $othertags;
         }
 
@@ -139,12 +151,61 @@ class MoodleQuickForm_tags extends MoodleQuickForm_group {
         }
     }
 
+    function onQuickFormEvent($event, $arg, &$caller) {
+        switch ($event) {
+            case 'updateValue':
+                // Get the value we should be setting.
+                $value = $this->_findValue($caller->_constantValues);
+                if (null === $value) {
+                    // if no boxes were checked, then there is no value in the array
+                    // yet we don't want to display default value in this case
+                    if ($caller->isSubmitted()) {
+                        $value = $this->_findValue($caller->_submitValues);
+                    } else {
+                        $value = $this->_findValue($caller->_defaultValues);
+                    }
+                }
+
+                if (!empty($value) && !(isset($value['officialtags']) || isset($value['othertags']))) {
+                    // Separate the official and unoffical tags, if necessary.
+                    $official = array();
+                    $other = array();
+                    if ($this->_options['display'] != MoodleQuickForm_tags::NOOFFICIAL) {
+                        $this->_load_official_tags();
+                        $officaltags = array_combine($this->_officialtags, $this->_officialtags);
+                        foreach ($value as $tag) {
+                            if (isset($officaltags[$tag])) {
+                                $official[] = $tag;
+                            } else {
+                                $other[] = $tag;
+                            }
+                        }
+                    } else {
+                        $other = $value;
+                    }
+                    $value = array('officialtags' => $official, 'othertags' => implode(', ', $other));
+                }
+                if (!empty($value)) {
+                    $this->setValue($value);
+                }
+
+                break;
+            default:
+                return parent::onQuickFormEvent($event, $arg, $caller);
+        }
+    }
+
     function toHtml() {
         require_once('HTML/QuickForm/Renderer/Default.php');
         $renderer =& new HTML_QuickForm_Renderer_Default();
         $renderer->setElementTemplate('{element}');
         parent::accept($renderer);
-        return $this->_wrap[0] . $renderer->toHtml() . $this->_wrap[1];
+        return $renderer->toHtml();
+    }
+
+    function accept(&$renderer, $required = false, $error = null)
+    {
+        $renderer->renderElement($this, $required, $error);
     }
 
     function exportValue(&$submitValues, $assoc = false) {
