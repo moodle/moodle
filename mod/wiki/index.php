@@ -68,7 +68,7 @@
         }
 
         $timmod = '<span class="smallinfo">'.userdate($wiki->timemodified).'</span>';
-        $summary = '<span class="smallinfo">'.format_text($wiki->summary).'</span>';
+        $summary = '<div class="smallinfo">'.format_text($wiki->summary).'</div>';
 
         $site = get_site();
         switch ($wiki->wtype) {
