@@ -89,7 +89,7 @@
         if (trim(strip_tags($quiz->intro))) {
             $formatoptions->noclean = true;
             $formatoptions->para    = false;
-            print_box('<div>'.format_text($quiz->intro, FORMAT_MOODLE, $formatoptions).'</div>', 'generalbox', 'intro');
+            print_box(format_text($quiz->intro, FORMAT_MOODLE, $formatoptions), 'generalbox', 'intro');
         }
 
         echo '<div class="quizinfo">';
