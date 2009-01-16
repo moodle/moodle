@@ -116,16 +116,18 @@ function mediaplugin_filter_mp3_callback($link) {
     static $count = 0;
     $count++;
     $id = 'filter_mp3_'.time().$count; //we need something unique because it might be stored in text cache
+    $div_id = 'filter_mp3player_'.time().$count;
 
     $url = addslashes_js($link[1]);
 
     return $link[0].
 '<span class="mediaplugin mediaplugin_mp3" id="'.$id.'">('.get_string('mp3audio', 'mediaplugin').')</span>
+<div id="'.$div_id.'" style="display:inline"></div>
 <script type="text/javascript">
 //<![CDATA[
   var FO = { movie:"'.$CFG->wwwroot.'/filter/mediaplugin/mp3player.swf?src='.$url.'",
     width:"90", height:"15", majorversion:"6", build:"40", flashvars:"'.$c.'", quality: "high" };
-  UFO.create(FO, "'.$id.'");
+  UFO.create(FO, "'.$div_id.'");
 //]]>
 </script>';
 }
@@ -134,6 +136,7 @@ function mediaplugin_filter_swf_callback($link) {
     static $count = 0;
     $count++;
     $id = 'filter_swf_'.time().$count; //we need something unique because it might be stored in text cache
+    $div_id = 'filter_swfplayer_'.time().$count;
 
     $width  = empty($link[3]) ? '400' : $link[3];
     $height = empty($link[4]) ? '300' : $link[4];
@@ -141,11 +144,12 @@ function mediaplugin_filter_swf_callback($link) {
 
     return $link[0].
 '<span class="mediaplugin mediaplugin_swf" id="'.$id.'">('.get_string('flashanimation', 'mediaplugin').')</span>
+<div id="'.$div_id.'" style="display:inline"></div>
 <script type="text/javascript">
 //<![CDATA[
   var FO = { movie:"'.$url.'", width:"'.$width.'", height:"'.$height.'", majorversion:"6", build:"40",
     allowscriptaccess:"never", quality: "high" };
-  UFO.create(FO, "'.$id.'");
+  UFO.create(FO, "'.$div_id.'");
 //]]>
 </script>';
 }
@@ -156,6 +160,7 @@ function mediaplugin_filter_flv_callback($link) {
     static $count = 0;
     $count++;
     $id = 'filter_flv_'.time().$count; //we need something unique because it might be stored in text cache
+    $div_id = 'filter_flvplayer_'.time().$count;
 
     $width  = empty($link[3]) ? '480' : $link[3];
     $height = empty($link[4]) ? '360' : $link[4];
@@ -163,12 +168,13 @@ function mediaplugin_filter_flv_callback($link) {
 
     return $link[0].
 '<span class="mediaplugin mediaplugin_flv" id="'.$id.'">('.get_string('flashvideo', 'mediaplugin').')</span>
+<div id="'.$div_id.'" style="display:inline"></div>
 <script type="text/javascript">
 //<![CDATA[
   var FO = { movie:"'.$CFG->wwwroot.'/filter/mediaplugin/flvplayer.swf?file='.$url.'",
     width:"'.$width.'", height:"'.$height.'", majorversion:"6", build:"40",
     allowscriptaccess:"never", quality: "high" };
-  UFO.create(FO, "'.$id.'");
+  UFO.create(FO, "'.$div_id.'");
 //]]>
 </script>';
 }
