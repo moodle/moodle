@@ -24,11 +24,49 @@
         <message name='getusersResponse'>
           <part name='user' type='xsd:user'/>
         </message>
+        <message name='createuserRequest'>
+          <part name='username' type='xsd:string'/>
+          <part name='firstname' type='xsd:string'/>
+          <part name='lastname' type='xsd:string'/>
+          <part name='email' type='xsd:string'/>
+          <part name='password' type='xsd:string'/>
+        </message>
+        <message name='createuserResponse'>
+          <part name='useris' type='xsd:string'/>
+        </message>
+        <message name='deleteuserRequest'>
+          <part name='username' type='xsd:string'/>
+          <part name='mnethostid' type='xsd:string'/>
+        </message>
+        <message name='deleteuserResponse'>
+          <part name='result' type='xsd:integer'/>
+        </message>
+        <message name='updateuserRequest'>
+          <part name='username' type='xsd:string'/>
+          <part name='mnethostid' type='xsd:string'/>
+          <part name='newusername' type='xsd:string'/>
+          <part name='firstname' type='xsd:string'/>
+        </message>
+        <message name='updateuserResponse'>
+          <part name='result' type='xsd:integer'/>
+        </message>
 
         <portType name='UserPortType'>
           <operation name='tmp_get_users'>
             <input message='tns:getusersRequest'/>
             <output message='tns:getusersResponse'/>
+          </operation>
+          <operation name='tmp_create_user'>
+            <input message='tns:createuserRequest'/>
+            <output message='tns:createuserResponse'/>
+          </operation>
+          <operation name='tmp_delete_user'>
+            <input message='tns:deleteuserRequest'/>
+            <output message='tns:deleteuserResponse'/>
+          </operation>
+          <operation name='tmp_update_user'>
+            <input message='tns:updateuserRequest'/>
+            <output message='tns:updateuserResponse'/>
           </operation>
         </portType>
 
@@ -37,6 +75,39 @@
             transport='http://schemas.xmlsoap.org/soap/http'/>
           <operation name='tmp_get_users'>
             <soap:operation soapAction='urn:xmethods-delayed-quotes#tmp_get_users'/>
+            <input>
+              <soap:body use='encoded' namespace='urn:xmethods-delayed-quotes'
+                encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
+            </input>
+            <output>
+              <soap:body use='encoded' namespace='urn:xmethods-delayed-quotes'
+                encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
+            </output>
+          </operation>
+          <operation name='tmp_create_user'>
+            <soap:operation soapAction='urn:xmethods-delayed-quotes#tmp_create_user'/>
+            <input>
+              <soap:body use='encoded' namespace='urn:xmethods-delayed-quotes'
+                encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
+            </input>
+            <output>
+              <soap:body use='encoded' namespace='urn:xmethods-delayed-quotes'
+                encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
+            </output>
+          </operation>
+          <operation name='tmp_delete_user'>
+            <soap:operation soapAction='urn:xmethods-delayed-quotes#tmp_delete_user'/>
+            <input>
+              <soap:body use='encoded' namespace='urn:xmethods-delayed-quotes'
+                encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
+            </input>
+            <output>
+              <soap:body use='encoded' namespace='urn:xmethods-delayed-quotes'
+                encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
+            </output>
+          </operation>
+          <operation name='tmp_update_user'>
+            <soap:operation soapAction='urn:xmethods-delayed-quotes#tmp_update_user'/>
             <input>
               <soap:body use='encoded' namespace='urn:xmethods-delayed-quotes'
                 encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
