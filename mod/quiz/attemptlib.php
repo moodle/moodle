@@ -54,6 +54,7 @@ class quiz {
     function __construct($quiz, $cm, $course, $getcontext = true) {
         $this->quiz = $quiz;
         $this->cm = $cm;
+        $this->quiz->cmid = $this->cm->id;
         $this->course = $course;
         if ($getcontext && !empty($cm->id)) {
             $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -653,10 +654,6 @@ class quiz_attempt extends quiz {
         global $CFG;
         return $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $this->attempt->id .
                 $this->page_and_question_fragment($questionid, $page, $showall);
-    }
-
-    public function set_this_page_url($url) {
-        $this->quiz->thispageurl = $url;
     }
 
     // Bits of content =====================================================================

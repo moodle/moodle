@@ -1026,8 +1026,8 @@ class default_questiontype {
 
     /// Work out the right URL.
         $linkurl = '/question/question.php?id=' . $question->id;
-        if (!empty($cmoptions->id)) {
-            $linkurl .= '&amp;cmid=' . $cmoptions->id;
+        if (!empty($cmoptions->cmid)) {
+            $linkurl .= '&amp;cmid=' . $cmoptions->cmid;
         } else if (!empty($cmoptions->course)) {
             $linkurl .= '&amp;courseid=' . $cmoptions->course;
         } else {
