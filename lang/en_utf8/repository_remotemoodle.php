@@ -12,5 +12,5 @@ $string['connectionfailure'] = 'Failed to retrieve file listing - The host moodl
 $string['failtoretrievelist'] = 'List could not be retrieved or is empty';
 $string['usernotfound'] = 'The user $a is not registered into the remote Moodle';
 $string['usercannotaccess'] = 'You ($a) cannot access to this file';
-$string['nopeer'] = '<div style=\"font-size:0.8em\">Please setup some <a href=\"http://docs.moodle.org/en/admin/mnet/peers#Peer_to_Peer_Network\">Moodle peers</a> for your Moodle site. </div>';
+$string['nopeer'] = '<div>Please setup some <a href=\"http://docs.moodle.org/en/admin/mnet/peers#Peer_to_Peer_Network\">Moodle peers</a> for your Moodle site. </div>';
 $string['hostnotfound'] = 'Cannot find the remote Moodle into the database - contact your system administrator';

@@ -704,7 +704,7 @@ $string['unknowntype'] = 'Question type not supported at line $a. The question w
 $string['unsupportedformulafunction'] = 'The function $a is not supported';
 $string['unusedcategorydeleted'] = 'This category has been deleted because, after deleting the course, its questions weren\'t used anymore.';
 $string['updatesettings'] = 'Update quiz settings';
-$string['upgradesure'] = '<div style=\"color: red;\">In particular the quiz module will perform an extensive change of the quiz tables and this upgrade has not yet been sufficiently tested. You are very strongly urged to backup your database tables before proceeding.</div>';
+$string['upgradesure'] = '<div>In particular the quiz module will perform an extensive change of the quiz tables and this upgrade has not yet been sufficiently tested. You are very strongly urged to backup your database tables before proceeding.</div>';
 $string['url'] = 'URL';
 $string['usedcategorymoved'] = 'This category has been preserved and moved to the site level because it is a published category still in use by other courses.';
 $string['validate'] = 'Validate';
