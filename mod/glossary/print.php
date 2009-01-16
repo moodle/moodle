@@ -173,7 +173,7 @@
                         $pivottoshow = fullname($user);
                     }
 
-                    echo "<p align=\"center\"><strong>".clean_text($pivottoshow)."</strong></p>" ;
+                    echo "<p class='mdl-align'><strong>".clean_text($pivottoshow)."</strong></p>" ;
                 }
             }
 
