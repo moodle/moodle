@@ -841,7 +841,8 @@ class grade_structure {
             $header .= $this->get_element_icon($element, $spacerifnone);
         }
 
-        $header .= $element['object']->get_name();
+        $title = $element['object']->get_name();
+        $header .= $title;
 
         if ($element['type'] != 'item' and $element['type'] != 'categoryitem' and $element['type'] != 'courseitem') {
             return $header;
@@ -862,7 +863,7 @@ class grade_structure {
                     $url = $CFG->wwwroot.'/mod/'.$itemmodule.'/view.php?id='.$cm->id;
                 }
 
-                $header = '<a href="'.$url.'">'.$header.'</a>';
+                $header = '<a href="'.$url.'" title="'.$title.'">'.$header.'</a>';
             }
         }
 
@@ -1044,13 +1045,13 @@ class grade_structure {
         $strparams = $this->get_params_for_iconstr($element);
         $strunlock = get_string('unlockverbose', 'grades', $strparams);
         $strlock = get_string('lockverbose', 'grades', $strparams);
-        
+
         // Don't allow an unlocking action for a grade whose grade item is locked: just print a state icon
         if ($element['type'] == 'grade' && $element['object']->grade_item->is_locked()) {
             $strparamobj = new stdClass();
             $strparamobj->itemname = $element['object']->grade_item->itemname;
             $strnonunlockable = get_string('nonunlockableverbose', 'grades', $strparamobj);
-            $action  = '<img src="'.$CFG->pixpath.'/t/unlock_gray.gif" alt="'.$strnonunlockable.'" class="iconsmall" title="'.$strnonunlockable.'"/>'; 
+            $action  = '<img src="'.$CFG->pixpath.'/t/unlock_gray.gif" alt="'.$strnonunlockable.'" class="iconsmall" title="'.$strnonunlockable.'"/>';
         } elseif ($element['object']->is_locked()) {
             $icon = 'unlock';
             $tooltip = $strunlock;
