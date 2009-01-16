@@ -36,6 +36,7 @@
  *
  * local/version.php
  * local/db/upgrade.php
+ * local/db/install.php
  *
  * In the file version.php, set the variable $local_version to a versionstamp
  * value like 2006030300 (a concatenation of year, month, day, serial).
@@ -44,18 +45,19 @@
  * function xmldb_local_upgrade($oldversion) to make the database changes.
  *
  * Note that you don't need to have an install.xml file. Instead,
- * when your moodle instance is first installed, xmldb_local_upgrade() will be called
- * with $oldversion set to 0, so that all the updates run.
+ * when your moodle instance is first installed, xmldb_local_install() will be called.
+ *
+ * Please note that modifying of core tables is NOT supported at all!
  *
  * Local capabilities
  * ------------------
  *
  * If your local customisations require their own capabilities, use
- * 
+ *
  * local/db/access.php
  *
  * You should create an array called $local_capabilities, which looks like:
- * 
+ *
  * $local_capabilities = array(
  *         'moodle/local:capability' => array(
  *         'captype' => 'read',
@@ -73,16 +75,16 @@
  * ----------------------
  *
  * Moodle supports looking in the local/ directory for language files.
- * You would need to create local/lang/en_utf8/local.php 
+ * You would need to create local/lang/en_utf8/local.php
  * and then could call strings like get_string('key', 'local');
- * Make sure you don't call the language file something that moodle already has one of, 
+ * Make sure you don't call the language file something that moodle already has one of,
  * stick to local or $clientname)
- * 
+ *
  *
  * Local admin menu items
  * ----------------------
  *
- * It is possible to add new items to the admin_tree block.  
+ * It is possible to add new items to the admin_tree block.
  * To do this, create a file, local/settings.php
  * which can access the $ADMIN variable directly and add things to it.
  * You might do something like:
@@ -109,36 +111,48 @@
  * local/version.php. If not, it looks for a function called 'xmldb_local_upgrade'
  * in a file called 'local/db/upgrade.php', and if it's there calls it with the
  * appropiate $oldversion parameter. Then it updates $CFG->local_version.
- * On success it prints a continue link. On failure it prints an error.
  *
  * @uses $CFG
  * @return bool true if upgraded anything
  */
 function upgrade_local_db() {
-
     global $CFG, $DB;
 
-    // if we don't have code version or a db upgrade file, just return true, we're unneeded
-    if (!file_exists($CFG->dirroot.'/local/version.php') || !file_exists($CFG->dirroot.'/local/db/upgrade.php')) {
+    // if we don't have code version, just return false
+    if (!file_exists($CFG->dirroot.'/local/version.php')) {
         return false;
     }
 
-    require_once ($CFG->dirroot .'/local/version.php');  // Get code versions
+    $local_version = null;
+    require($CFG->dirroot.'/local/version.php');  // Get code versions
 
-    if (empty($CFG->local_version)) { // normally we'd install, but just replay all the upgrades.
-        $CFG->local_version = 0;
-    }
-
-    if ($local_version > $CFG->local_version) { // upgrade!
-        $strdatabaseupgrades = get_string('databaseupgrades');
+    if (empty($CFG->local_version)) { // install
         upgrade_log_start();
-        require_once ($CFG->dirroot .'/local/db/upgrade.php');
-
-        xmldb_local_upgrade($CFG->local_version);
+        if (file_exists($CFG->dirroot.'/local/db/install.php')) {
+            require_once($CFG->dirroot.'/local/db/install.php');
+            xmldb_local_install();
+        }
         set_config('local_version', $local_version);
-        notify(get_string('databasesuccess'), 'notifysuccess');
         notify(get_string('databaseupgradelocal', '', $local_version), 'notifysuccess');
         print_upgrade_separator();
+
+        /// Capabilities
+        update_capabilities('local');
+
+        return true;
+
+    } else if ($local_version > $CFG->local_version) { // upgrade!
+        upgrade_log_start();
+        if (file_exists($CFG->dirroot.'/local/db/upgrade.php')) {
+            require_once($CFG->dirroot.'/local/db/upgrade.php');
+            xmldb_local_upgrade($CFG->local_version);
+        }
+        set_config('local_version', $local_version);
+        notify(get_string('databaseupgradelocal', '', $local_version), 'notifysuccess');
+        print_upgrade_separator();
+
+        /// Capabilities
+        update_capabilities('local');
 
         return true;
 
@@ -146,8 +160,6 @@ function upgrade_local_db() {
         notify('WARNING!!!  The local version you are using is OLDER than the version that made these databases!');
     }
 
-    /// Capabilities
-    update_capabilities('local');
 
     return false;
 }
