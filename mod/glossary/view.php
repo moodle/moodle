@@ -325,7 +325,7 @@
     if ( $glossary->intro && $showcommonelements ) {
         $options = new stdclass;
         $options->para = false;
-        print_box('<div>'.format_text($glossary->intro, FORMAT_MOODLE, $options).'</div>', 'generalbox', 'intro');
+        print_box(format_text($glossary->intro, FORMAT_MOODLE, $options), 'generalbox', 'intro');
     }
 
 /// Search box
