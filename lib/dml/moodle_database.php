@@ -1739,6 +1739,17 @@ abstract class moodle_database {
         return false;
     }
 
+/// session locking
+    public function get_session_lock($name, $timeout) {
+        // TODO: make this abstract
+        return true;
+    }
+
+    public function release_session_lock($name) {
+        // TODO: make this abstract
+        return true;
+    }
+
 /// performance and logging
     /**
      * Returns number of reads done by this database

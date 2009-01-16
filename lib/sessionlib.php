@@ -311,12 +311,16 @@ class database_session extends session_stub {
     public function handler_read($sid) {
         global $CFG;
 
-        // TODO: implement normal locking (and later speculative locking)
         // TODO: implement timeout + auth plugin hook (see gc)
 
         if ($this->record and $this->record->sid != $sid) {
             error_log('Weird error reading session - mismatched sid');
             return '';
+        }
+
+        // lock session
+        while (!$this->database->get_session_lock($sid, 10)) {
+            sleep(1);
         }
 
         try {
@@ -367,6 +371,8 @@ class database_session extends session_stub {
             return true;
         }
 
+        $this->database->release_session_lock($this->record->sid);
+
         $this->record->sid          = $sid;                         // it might be regenerated
         $this->record->sessdata     = base64_encode($session_data); // there might be some binary mess :-(
         $this->record->sessdatahash = md5($this->record->sessdata);
@@ -391,6 +397,8 @@ class database_session extends session_stub {
             return true;
         }
 
+        $this->database->release_session_lock($this->record->sid);
+
         try {
             $this->database->delete_records('sessions', array('sid'=>$this->record->sid));
         } catch (dml_exception $ex) {
@@ -404,7 +412,7 @@ class database_session extends session_stub {
         $select = "timemodified + :maxlifetime < :now";
         $params = array('now'=>time(), 'maxlifetime'=>$maxlifetime);
 
-        // TODO: add auth plugin hook that would allow extennding of max lifetime
+        // TODO: add auth plugin hook that would allow extending of max lifetime
 
         try {
             $this->database->delete_records_select('sessions', $select, $params);

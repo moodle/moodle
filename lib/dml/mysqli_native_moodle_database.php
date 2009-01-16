@@ -23,7 +23,7 @@ class mysqli_native_moodle_database extends moodle_database {
     /// TODO: Decide if this method should go to DDL instead of being here
     public function create_database($dbhost, $dbuser, $dbpass, $dbname) {
         ob_start();
-        $conn= new mysqli($dbhost, $dbuser, $dbpass); /// Connect without db
+        $conn = new mysqli($dbhost, $dbuser, $dbpass); /// Connect without db
         $dberr = ob_get_contents();
         ob_end_clean();
         $errorno = @$conn->connect_errno;
@@ -878,6 +878,51 @@ class mysqli_native_moodle_database extends moodle_database {
      */
     public function sql_regex($positivematch=true) {
         return $positivematch ? 'REGEXP' : 'NOT REGEXP';
+    }
+
+/// session locking
+    public function get_session_lock($name, $timeout) {
+        $fullname = $this->dbname.'-'.$this->prefix.'-'.$name;
+        $sql = "SELECT GET_LOCK(?,?)";
+        $params = array($fullname, $timeout);
+        $rawsql = $this->emulate_bound_params($sql, $params);
+
+        $this->query_start($sql, $params, SQL_QUERY_AUX);
+        $result = $this->mysqli->query($rawsql);
+        $this->query_end($result);
+
+        if ($result) {
+            $arr = $result->fetch_assoc();
+            $result->close();
+
+            if (reset($arr) == 1) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function release_session_lock($name) {
+        $fullname = $this->dbname.'-'.$this->prefix.'-'.$name;
+        $sql = "SELECT RELEASE_LOCK(?)";
+        $params = array($fullname);
+        $rawsql = $this->emulate_bound_params($sql, $params);
+
+        $this->query_start($sql, $params, SQL_QUERY_AUX);
+        $result = $this->mysqli->query($rawsql);
+        $this->query_end($result);
+
+        if ($result) {
+            $arr = $result->fetch_assoc();
+            $result->close();
+
+            if (reset($arr) == 1) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 /// transactions
