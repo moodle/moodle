@@ -112,16 +112,10 @@ switch ($action) {
         $post->summary      = $existing->summary;
         $post->publishstate = $existing->publishstate;
         $post->format       = $existing->format;
+        $post->tags = tag_get_tags_array('post', $post->id);
         $post->action       = $action;
         $strformheading = get_string('updateentrywithid', 'blog');
 
-        if ($itemptags = tag_get_tags_csv('post', $post->id, TAG_RETURN_TEXT, 'default')) {
-            $post->ptags = $itemptags;
-        }
-        
-        if ($itemotags = tag_get_tags_array('post', $post->id, 'official')) {
-            $post->otags = array_keys($itemotags);
-        }
     break;
     default :
         print_error('unknowaction');
@@ -179,16 +173,17 @@ function do_add($post, $blogeditform) {
     $post->created      = time();
 
     // Insert the new blog entry.
-    if ($id = $DB->insert_record('post', $post)) {
-        $post->id = $id;
-        // add blog attachment
+    if ($post->id = $DB->insert_record('post', $post)) {
+        // Add blog attachment
         if ($blogeditform->get_new_filename('attachment')) {
             if ($blogeditform->save_stored_file('attachment', SYSCONTEXTID, 'blog', $post->id, '/', false, $USER->id)) {
                 $DB->set_field("post", "attachment", 1, array("id"=>$post->id));
             }
         }
 
-        add_tags_info($post->id);
+        // Update tags.
+        tag_set('post', $post->id, $post->tags);
+
         add_to_log(SITEID, 'blog', 'add', 'index.php?userid='.$post->userid.'&postid='.$post->id, $post->subject);
 
     } else {
@@ -216,15 +211,9 @@ function do_edit($post, $blogeditform) {
         }
     }
 
-    // update record
+    // Update record
     if ($DB->update_record('post', $post)) {
-        // delete all tags associated with this entry
-        
-        //$DB->delete_records('blog_tag_instance', array('entryid'=>$post->id));
-        //$DB->delete_records('tag_instance', array('itemid'=>$post->id, 'itemtype'=>'blog'));
-        //untag_an_item('post', $post->id);
-        // add them back
-        add_tags_info($post->id);
+        tag_set('post', $post->id, $post->tags);
 
         add_to_log(SITEID, 'blog', 'update', 'index.php?userid='.$USER->id.'&postid='.$post->id, $post->subject);
 
@@ -233,25 +222,4 @@ function do_edit($post, $blogeditform) {
     }
 }
 
-/**
- * function to attach tags into a post
- * @param int postid - id of the blog
- */
-function add_tags_info($postid) {
-    
-    $tags = array();
-    if ($otags = optional_param('otags', '', PARAM_INT)) {
-        foreach ($otags as $tagid) {
-            // TODO : make this use the tag name in the form
-            if ($tag = tag_get('id', $tagid)) {
-                $tags[] = $tag->name;
-            }
-        }
-    }
-
-    $manual_tags = optional_param('ptags', '', PARAM_NOTAGS);
-    $tags = array_merge($tags, explode(',', $manual_tags));
-    
-    tag_set('post', $postid, $tags);
-}
 ?>

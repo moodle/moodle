@@ -32,16 +32,9 @@ class blog_edit_form extends moodleform {
 
         if (!empty($CFG->usetags)) {
             $mform->addElement('header', 'tagshdr', get_string('tags', 'tag'));
-            $mform->createElement('select', 'otags', get_string('otags','tag'));
-
-            $otagsselEl =& $mform->addElement('select', 'otags', get_string('otags', 'tag'), array(), 'size="5"');
-            $otagsselEl->setMultiple(true);
-            $this->otags_select_setup();
-
-            $mform->addElement('textarea', 'ptags', get_string('ptags', 'tag'), array('cols'=>'40', 'rows'=>'5'));
-            $mform->setType('ptagsadd', PARAM_NOTAGS);
+            $mform->addElement('tags', 'tags', get_string('tags'));
         }
-        
+
         $this->add_action_buttons();
 
         $mform->addElement('hidden', 'action');
