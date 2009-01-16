@@ -160,10 +160,10 @@
         moodle_install_roles();
 
         // Install core event handlers
-        events_update_definition();
+        events_update_definition('moodle');
 
         // Install core message providers
-        message_update_providers();
+        message_update_providers('moodle');
         message_update_providers('message');
 
         // Write default settings unconditionally
@@ -274,13 +274,13 @@
             $status = xmldb_main_upgrade($CFG->version);
         /// If successful, continue upgrading roles and setting everything properly
             if ($status) {
-                update_capabilities();
+                update_capabilities('moodle');
 
                 // Update core events
-                events_update_definition();
+                events_update_definition('moodle');
 
                 // Update core message providers
-                message_update_providers();
+                message_update_providers('moodle');
                 message_update_providers('message');
 
                 set_config("version", $version);
