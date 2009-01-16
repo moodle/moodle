@@ -2533,7 +2533,7 @@ class admin_setting_configtime extends admin_setting {
  * get_users_from_config($CFG->mysetting, $capability); function in moodlelib.php.
  */
 class admin_setting_users_with_capability extends admin_setting_configmultiselect {
-    protected $capability;
+    var $capability;
 
     /**
      * Constructor.
@@ -2544,7 +2544,7 @@ class admin_setting_users_with_capability extends admin_setting_configmultiselec
      * @param array $defaultsetting array of usernames
      * @param string $capability string capability name.
      */
-    function __construct($name, $visiblename, $description, $defaultsetting, $capability) {
+    function admin_setting_users_with_capability($name, $visiblename, $description, $defaultsetting, $capability) {
         $users = get_users_by_capability(get_context_instance(CONTEXT_SYSTEM),
                 $capability, 'u.id,u.username,u.firstname,u.lastname', 'u.lastname,u.firstname');
         $choices = array(
