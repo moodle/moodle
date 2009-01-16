@@ -1701,6 +1701,7 @@ class default_questiontype {
      * This is used in question/restorelib.php
      */
     function restore($old_question_id,$new_question_id,$info,$restore) {
+        global $DB;
 
         $status = true;
         $extraquestionfields = $this->extra_question_fields();
@@ -1716,7 +1717,7 @@ class default_questiontype {
             foreach ($extraquestionfields as $field) {
                 $record->$field = backup_todb($recordinfo['#'][strtoupper($field)]['0']['#']);
             }
-            if (!insert_record($questionextensiontable, $record)) {
+            if (!$DB->insert_record($questionextensiontable, $record)) {
                 echo "Can't insert record in $questionextensiontable when restoring " .
                                 $this->name() . ' question id ' . $question;
                 $status = false;
