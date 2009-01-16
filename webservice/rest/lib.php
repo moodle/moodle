@@ -41,7 +41,7 @@ function call_moodle_function ($rest_arguments) {
     $res = call_user_func_array  ( $classname.'::'.$functionname, $params);
     
 ///Transform result into xml in order to send the REST response
-    $return =  mdl_conn_rest_object_to_xml ($res,$description['return'][0]);
+    $return =  mdl_conn_rest_object_to_xml ($res,key($description['return']));
 
 	return "<Result>$return</Result>";
 }

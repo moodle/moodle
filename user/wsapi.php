@@ -33,24 +33,24 @@ final class user_ws_api extends moodle_ws_api {
        ///
        ///TODO: manage object->object parameter
           $this->descriptions['tmp_get_users']   = array( 'wsparams' => array('search'=> PARAM_ALPHANUM),
-                                                      'return' => array('user', array('id' => PARAM_RAW, 'auth' => PARAM_RAW, 'confirmed' => PARAM_RAW, 'username' => PARAM_RAW, 'idnumber' => PARAM_RAW,
+                                                      'return' => array('user'=> array('id' => PARAM_RAW, 'auth' => PARAM_RAW, 'confirmed' => PARAM_RAW, 'username' => PARAM_RAW, 'idnumber' => PARAM_RAW,
                                                                                     'firstname' => PARAM_RAW, 'lastname' => PARAM_RAW, 'email' => PARAM_RAW, 'emailstop' => PARAM_RAW,
                                                                                     'lang' => PARAM_RAW, 'theme' => PARAM_RAW, 'timezone' => PARAM_RAW, 'mailformat' => PARAM_RAW)));
 
           $this->descriptions['tmp_create_user'] = array( 'wsparams' => array('username'=> PARAM_RAW, 'firstname'=> PARAM_RAW, 'lastname'=> PARAM_RAW, 'email'=> PARAM_RAW, 'password'=> PARAM_RAW),
-                                                      'return' => array('userid', PARAM_RAW));
+                                                      'return' => array('userid' => PARAM_RAW));
 
 
           $this->descriptions['tmp_namedparams_get_users']   = array( 'wsparams' => array('search'=> PARAM_RAW),
-                                                      'return' => array('user', array('id' => PARAM_RAW, 'auth' => PARAM_RAW, 'confirmed' => PARAM_RAW, 'username' => PARAM_RAW, 'idnumber' => PARAM_RAW,
+                                                      'return' => array('user' => array('id' => PARAM_RAW, 'auth' => PARAM_RAW, 'confirmed' => PARAM_RAW, 'username' => PARAM_RAW, 'idnumber' => PARAM_RAW,
                                                                                     'firstname' => PARAM_RAW, 'lastname' => PARAM_RAW, 'email' => PARAM_RAW, 'emailstop' => PARAM_RAW,
                                                                                     'lang' => PARAM_RAW, 'theme' => PARAM_RAW, 'timezone' => PARAM_RAW, 'mailformat' => PARAM_RAW)));
     
           $this->descriptions['tmp_delete_user']   = array( 'wsparams' => array('username'=> PARAM_ALPHANUM, 'mnethostid'=> PARAM_NUMBER),
-                                                      'return' => array('result', PARAM_BOOL));
+                                                      'return' => array('result' => PARAM_BOOL));
 
           $this->descriptions['tmp_update_user']   = array( 'wsparams' => array('username'=> PARAM_ALPHANUM, 'mnethostid'=> PARAM_NUMBER, 'newusername' => PARAM_ALPHANUM, 'firstname' => PARAM_ALPHANUM),
-                                                      'return' => array('result', PARAM_BOOL));
+                                                      'return' => array('result' => PARAM_BOOL));
     }
 
     /**
