@@ -290,7 +290,7 @@ class database_session extends session_stub {
                                            array($this, 'handler_destroy'),
                                            array($this, 'handler_gc'));
         if (!$result) {
-            print_error('dbsessionhandlerproblem'); //TODO: localise
+            print_error('dbsessionhandlerproblem', 'error');
         }
     }
 
@@ -311,7 +311,8 @@ class database_session extends session_stub {
     public function handler_read($sid) {
         global $CFG;
 
-        //TODO: implement locking and all the bells and whistles
+        // TODO: implement normal locking (and later speculative locking)
+        // TODO: implement timeout + auth plugin hook (see gc)
 
         if ($this->record and $this->record->sid != $sid) {
             error_log('Weird error reading session - mismatched sid');
@@ -342,6 +343,15 @@ class database_session extends session_stub {
             return '';
         }
 
+        if (md5($record->sessdata) !== $record->sessdatahash) {
+            // probably this is caused by misconfigured mysql - the allowed request size might be too small
+            try {
+                $this->database->delete_records('sessions', array('sid'=>$record->sid));
+            } catch (dml_exception $ignored) {
+            }
+            print_error('dbsessionbroken', 'error');
+        }
+
         $data = base64_decode($record->sessdata);
         unset($record->sessdata); // conserve memory
         $this->record = $record;
@@ -363,6 +373,8 @@ class database_session extends session_stub {
         $this->record->userid       = empty($USER->realuser) ? $USER->id : $USER->realuser;
         $this->record->timemodified = time();
         $this->record->lastip       = getremoteaddr();
+
+        // TODO: verify session changed before doing update
 
         try {
             $this->database->update_record_raw('sessions', $this->record);
@@ -391,6 +403,8 @@ class database_session extends session_stub {
     public function handler_gc($maxlifetime) {
         $select = "timemodified + :maxlifetime < :now";
         $params = array('now'=>time(), 'maxlifetime'=>$maxlifetime);
+
+        // TODO: add auth plugin hook that would allow extennding of max lifetime
 
         try {
             $this->database->delete_records_select('sessions', $select, $params);
