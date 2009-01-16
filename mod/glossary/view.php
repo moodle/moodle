@@ -322,7 +322,9 @@
 
 /// Info box
     if ( $glossary->intro && $showcommonelements ) {
-        print_box(format_text($glossary->intro), 'generalbox', 'intro');
+        $options = new stdclass;
+        $options->para = false;
+        print_box('<div>'.format_text($glossary->intro, FORMAT_MOODLE, $options).'</div>', 'generalbox', 'intro');
     }
 
 /// Search box
