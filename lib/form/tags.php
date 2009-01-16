@@ -85,6 +85,10 @@ class MoodleQuickForm_tags extends MoodleQuickForm_group {
                 }
             }
         }
+        global $CFG;
+        if (empty($CFG->usetags)) {
+            debugging('A tags formslib field has been created even thought $CFG->usetags is false.', DEBUG_DEVELOPER);
+        }
     }
 
     protected function _load_official_tags() {
