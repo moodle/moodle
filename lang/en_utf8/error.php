@@ -189,6 +189,8 @@ $string['dbconnectionfailed'] = '<p>Error: Database connection failed</p>
 $string['dbdriverproblem'] = '<p>Error: database driver problem detected</p>
 <p>The site administrator should verify server configuration</p><p>$a</p>';
 $string['dbupdatefailed'] = 'Database update failed';
+$string['dbsessionbroken'] = 'Serious database session problem detected.<br /><br />Please notify server administrator.';
+$string['dbsessionhandlerproblem'] = 'Setting up of database session failed.<br /><br />Please notify server administrator.';
 $string['ddlexecuteerror'] = 'DDL sql execution error';
 $string['ddlfieldalreadyexists'] = 'Field \"$a\" does not exist';
 $string['ddlfieldnotexist'] = 'Field \"$a->fieldname\" does not exist in table \"$a->tablename\"';
