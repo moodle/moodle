@@ -77,6 +77,8 @@ abstract class moodle_database {
     protected $last_type;
     protected $last_extrainfo;
 
+    protected $used_for_db_sessions = 0;
+
     /** internal temporary variable */
     private $fix_sql_params_i;
 
@@ -94,6 +96,13 @@ abstract class moodle_database {
      */
     public function __desctruct() {
         $this->dispose();
+    }
+
+    /**
+     * Called only from session code!
+     */
+    public function used_for_db_sessions() {
+        $this->used_for_db_sessions = 1;
     }
 
     /**
@@ -242,6 +251,11 @@ abstract class moodle_database {
      * Do NOT use connect() again, create a new instance if needed.
      */
     public function dispose() {
+        if ($this->used_for_db_sessions) {
+            // this is needed because we need to save session to db before closing it
+            session_write_close();
+            $this->used_for_db_sessions = 0;
+        }
         if ($this->database_manager) {
             $this->database_manager->dispose();
             $this->database_manager = null;

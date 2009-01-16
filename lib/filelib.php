@@ -986,7 +986,7 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
     }
 
     if (empty($filter)) {
-        if ($mimetype == 'text/html' && !empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
+        if ($mimetype == 'text/html' && !empty($CFG->usesid)) {
             //cookieless mode - rewrite links
             @header('Content-Type: text/html');
             $path = $pathisstring ? $path : implode('', file($path));
@@ -1014,7 +1014,7 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
 
             $text = file_modify_html_header($text);
             $output = format_text($text, FORMAT_HTML, $options, $COURSE->id);
-            if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
+            if (!empty($CFG->usesid)) {
                 //cookieless mode - rewrite links
                 $output = sid_ob_rewrite($output);
             }
@@ -1030,7 +1030,7 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
             $options->noclean = true;
             $text = htmlentities($pathisstring ? $path : implode('', file($path)));
             $output = '<pre>'. format_text($text, FORMAT_MOODLE, $options, $COURSE->id) .'</pre>';
-            if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
+            if (!empty($CFG->usesid)) {
                 //cookieless mode - rewrite links
                 $output = sid_ob_rewrite($output);
             }
@@ -1173,7 +1173,7 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
 
     if (empty($filter)) {
         $filtered = false;
-        if ($mimetype == 'text/html' && !empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
+        if ($mimetype == 'text/html' && !empty($CFG->usesid)) {
             //cookieless mode - rewrite links
             @header('Content-Type: text/html');
             $text = $stored_file->get_content();
@@ -1201,7 +1201,7 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
             $text = $stored_file->get_content();
             $text = file_modify_html_header($text);
             $output = format_text($text, FORMAT_HTML, $options, $COURSE->id);
-            if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
+            if (!empty($CFG->usesid)) {
                 //cookieless mode - rewrite links
                 $output = sid_ob_rewrite($output);
             }
@@ -1217,7 +1217,7 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
             $options->noclean = true;
             $text = $stored_file->get_content();
             $output = '<pre>'. format_text($text, FORMAT_MOODLE, $options, $COURSE->id) .'</pre>';
-            if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
+            if (!empty($CFG->usesid)) {
                 //cookieless mode - rewrite links
                 $output = sid_ob_rewrite($output);
             }

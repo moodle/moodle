@@ -5,35 +5,68 @@
  * @return moodle_session
  */
 function session_get_instance() {
+    global $CFG;
+
     static $session = null;
 
     if (is_null($session)) {
-        $session = new legacy_session();
-        // TODO: add db and custom session class support here
+        if (defined('SESSION_CUSTOM')) {
+            // this is a hook for custom session handling, webservices, etc.
+            if (defined('SESSION_CUSTOM_FILE')) {
+                require_once($CFG->dirroot.SESSION_CUSTOM_FILE);
+            }
+            $session_class = SESSION_CUSTOM;
+            $session = new $session_class();
+
+        } else if (!isset($CFG->dbsessions) or $CFG->dbsessions) {
+            // default recommended session type
+            $session = new database_session();
+
+        } else {
+            // legacy limited file based storage - some features and auth plugins will not work, sorry
+            $session = new legacy_file_session();
+        }
     }
 
     return $session;
 }
 
+interface moodle_session {
+    public function terminate();
+}
+
 /**
  * Class handling all session and cookies related stuff.
  */
-abstract class moodle_session {
+abstract class session_stub implements moodle_session {
     public function __construct() {
         global $CFG;
-        $this->prepare_cookies();
-        $this->init_session_storage();
 
-        if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
-            sid_start_ob();
+        if (!defined('NO_MOODLE_COOKIES')) {
+            if (CLI_SCRIPT) {
+                // CLI scripts can not have session
+                define('NO_MOODLE_COOKIES', true);
+            } else {
+                define('NO_MOODLE_COOKIES', false);
+            }
         }
 
         if (NO_MOODLE_COOKIES) {
+            // session not used at all
+            $CFG->usesid = false;
+
             $_SESSION = array();
             $_SESSION['SESSION'] = new object();
-            $_SESSION['USER'] = new object();
+            $_SESSION['USER']    = new object();
 
         } else {
+            $this->prepare_cookies();
+            $this->init_session_storage();
+
+            if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
+                sid_start_ob();
+            }
+
             session_name('MoodleSession'.$CFG->sessioncookie);
             session_set_cookie_params(0, $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $CFG->cookiesecure, $CFG->cookiehttponly);
             @session_start();
@@ -93,6 +126,8 @@ abstract class moodle_session {
             $user->id = 0; // to enable proper function of $CFG->notloggedinroleid hack
             if (isset($CFG->mnet_localhost_id)) {
                 $user->mnethostid = $CFG->mnet_localhost_id;
+            } else {
+                $user->mnethostid = 1;
             }
         }
         session_set_user($user);
@@ -104,6 +139,10 @@ abstract class moodle_session {
      */
     protected function check_security() {
         global $CFG;
+
+        if (NO_MOODLE_COOKIES) {
+            return;
+        }
 
         if (!empty($_SESSION['USER']->id) and !empty($CFG->tracksessionip)) {
             /// Make sure current IP matches the one for this session
@@ -154,20 +193,7 @@ abstract class moodle_session {
      * Prepare cookies and varions system settings
      */
     protected function prepare_cookies() {
-        global $CFG, $nomoodlecookie;
-
-        if (!defined('NO_MOODLE_COOKIES')) {
-            if (CLI_SCRIPT) {
-                // CLI scripts can not have session
-                define('NO_MOODLE_COOKIES', true);
-            } else if (isset($nomoodlecookie)) {
-                // backwards compatibility only
-                define('NO_MOODLE_COOKIES', $nomoodlecookie);
-            } else {
-                define('NO_MOODLE_COOKIES', false);
-            }
-        }
-        unset($nomoodlecookie); // cleanup
+        global $CFG;
 
         if (!isset($CFG->cookiesecure) or (strpos($CFG->wwwroot, 'https://') !== 0 and empty($CFG->sslproxy))) {
             $CFG->cookiesecure = 0;
@@ -212,9 +238,11 @@ abstract class moodle_session {
 /**
  * Legacy moodle sessions stored in files, not recommended any more.
  */
-class legacy_session extends moodle_session {
+class legacy_file_session extends session_stub {
     protected function init_session_storage() {
         global $CFG;
+
+        ini_set('session.save_handler', 'files');
 
         // Some distros disable GC by setting probability to 0
         // overriding the PHP default of 1
@@ -240,12 +268,138 @@ class legacy_session extends moodle_session {
 /**
  * Recommended moodle session storage.
  */
-class database_session extends moodle_session {
+class database_session extends session_stub {
+    protected $record   = null;
+    protected $database = null;
+
     protected function init_session_storage() {
         global $CFG;
 
-        
+        if (ini_get('session.gc_probability') == 0) {
+            ini_set('session.gc_probability', 1);
+        }
+
+        if (!empty($CFG->sessiontimeout)) {
+            ini_set('session.gc_maxlifetime', $CFG->sessiontimeout);
+        }
+
+        $result = session_set_save_handler(array($this, 'handler_open'),
+                                           array($this, 'handler_close'),
+                                           array($this, 'handler_read'),
+                                           array($this, 'handler_write'),
+                                           array($this, 'handler_destroy'),
+                                           array($this, 'handler_gc'));
+        if (!$result) {
+            print_error('dbsessionhandlerproblem'); //TODO: localise
+        }
     }
+
+    public function handler_open($save_path, $session_name) {
+        global $DB;
+
+        $this->database = $DB;
+        $this->database->used_for_db_sessions();
+
+        return true;
+    }
+
+    public function handler_close() {
+        $this->record = null;
+        return true;
+    }
+
+    public function handler_read($sid) {
+        global $CFG;
+
+        //TODO: implement locking and all the bells and whistles
+
+        if ($this->record and $this->record->sid != $sid) {
+            error_log('Weird error reading session - mismatched sid');
+            return '';
+        }
+
+        try {
+            if (!$record = $this->database->get_record('sessions', array('sid'=>$sid))) {
+                $record = new object();
+                $record->state        = 0;
+                $record->sid          = $sid;
+                $record->sessdata     = null;
+                $record->sessdatahash = sha1('');
+                $record->userid       = 0;
+                $record->timecreated  = $record->timemodified = time();
+                $record->firstip      = $record->lastip = getremoteaddr();
+
+                $record->id = $this->database->insert_record_raw('sessions', $record);
+
+                $this->record = $record;
+
+                return '';
+            }
+        } catch (dml_exception $ex) {
+            if (!empty($CFG->rolesactive)) {
+                error_log('Can not read or insert database sessions');
+            }
+            return '';
+        }
+
+        $data = base64_decode($record->sessdata);
+        unset($record->sessdata); // conserve memory
+        $this->record = $record;
+
+        return $data;
+    }
+
+    public function handler_write($sid, $session_data) {
+        global $USER;
+
+        if (!$this->record) {
+            error_log('Weird error writing session');
+            return true;
+        }
+
+        $this->record->sid          = $sid;                         // it might be regenerated
+        $this->record->sessdata     = base64_encode($session_data); // there might be some binary mess :-(
+        $this->record->sessdatahash = sha1($this->record->sessdata);
+        $this->record->userid       = empty($USER->realuser) ? $USER->id : $USER->realuser;
+        $this->record->timemodified = time();
+        $this->record->lastip       = getremoteaddr();
+
+        try {
+            $this->database->update_record_raw('sessions', $this->record);
+        } catch (dml_exception $ex) {
+            error_log('Can not write session to database.');
+        }
+        return true;
+    }
+
+    public function handler_destroy($sid) {
+        if (!$this->record or $this->record->sid != $sid) {
+            error_log('Weird error destroying session - mismatched sid');
+            return true;
+        }
+
+        try {
+            $this->database->delete_records('sessions', array('sid'=>$this->record->sid));
+        } catch (dml_exception $ex) {
+            error_log('Can not destroy database session.');
+        }
+
+        return true;
+    }
+
+    public function handler_gc($maxlifetime) {
+        $select = "timemodified + :maxlifetime < :now";
+        $params = array('now'=>time(), 'maxlifetime'=>$maxlifetime);
+
+        try {
+            $this->database->delete_records_select('sessions', $select, $params);
+        } catch (dml_exception $ex) {
+            error_log('Can not garbage collect database sessions.');
+        }
+
+        return true;
+    }
+
 }
 
 /**
@@ -300,6 +454,10 @@ function confirm_sesskey($sesskey=NULL) {
 function set_moodle_cookie($thing) {
     global $CFG;
 
+    if (NO_MOODLE_COOKIES) {
+        return;
+    }
+
     if ($thing == 'guest') {  // Ignore guest account
         return;
     }
@@ -322,6 +480,10 @@ function set_moodle_cookie($thing) {
  */
 function get_moodle_cookie() {
     global $CFG;
+
+    if (NO_MOODLE_COOKIES) {
+        return '';
+    }
 
     $cookiename = 'MOODLEID_'.$CFG->sessioncookie;
 
