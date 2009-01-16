@@ -860,7 +860,8 @@ class grade_structure {
             $header .= $this->get_element_icon($element, $spacerifnone);
         }
 
-        $header .= $element['object']->get_name();
+        $title = $element['object']->get_name();
+        $header .= $title;
 
         if ($element['type'] != 'item' and $element['type'] != 'categoryitem' and $element['type'] != 'courseitem') {
             return $header;
@@ -881,7 +882,7 @@ class grade_structure {
                     $url = $CFG->wwwroot.'/mod/'.$itemmodule.'/view.php?id='.$cm->id;
                 }
 
-                $header = '<a href="'.$url.'">'.$header.'</a>';
+                $header = '<a href="'.$url.'" title="'.$title.'">'.$header.'</a>';
             }
         }
 
