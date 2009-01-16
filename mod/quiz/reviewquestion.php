@@ -99,6 +99,7 @@
 
     $baseurl = $CFG->wwwroot . '/mod/quiz/reviewquestion.php?question=' . $question->id . '&amp;number=' . $number . '&amp;attempt=';
     $quiz->thispageurl = $baseurl . $attempt->id;
+    $quiz->cmid = $cm->id;
 
     $session = get_record('question_sessions', 'attemptid', $attempt->uniqueid, 'questionid', $question->id);
     $state->sumpenalty = $session->sumpenalty;

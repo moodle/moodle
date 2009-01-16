@@ -278,6 +278,7 @@
 
 /// Print all the questions
     $quiz->thispageurl = $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $attempt->id . $urloptions;
+    $quiz->cmid = $cm->id;
     $number = quiz_first_questionnumber($attempt->layout, $pagelist);
     foreach ($pagequestions as $i) {
         if (!isset($questions[$i])) {

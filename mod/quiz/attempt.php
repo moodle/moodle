@@ -464,6 +464,7 @@
 
     // Start the form
     $quiz->thispageurl = $CFG->wwwroot . '/mod/quiz/attempt.php?q=' . s($quiz->id) . '&amp;page=' . s($page);
+    $quiz->cmid = $cm->id;
     echo '<form id="responseform" method="post" action="', $quiz->thispageurl . '" enctype="multipart/form-data"' .
             ' onclick="this.autocomplete=\'off\'" onkeypress="return check_enter(event);">', "\n";
     if($quiz->timelimit > 0) {

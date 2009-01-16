@@ -877,7 +877,7 @@ class default_questiontype {
      * @param object $question the question object.
      * @param object $cmoptions the options from the module. If $cmoptions->thispageurl is set
      *      then the link will be to edit the question in this browser window, then return to
-     *      $cmoptions->thispageurl. Otherwise the link will be to edit in a popup.
+     *      $cmoptions->thispageurl. Otherwise the link will be to edit in a popup. $cmoptions->cmid should also be set.
      * @return string the HTML of the link, or nothing it the currenty user is not allowed to edit.
      */
     function get_question_edit_link($question, $cmoptions, $options) {
@@ -890,8 +890,8 @@ class default_questiontype {
 
     /// Work out the right URL.
         $linkurl = '/question/question.php?id=' . $question->id;
-        if (!empty($cmoptions->id)) {
-            $linkurl .= '&amp;cmid=' . $cmoptions->id;
+        if (!empty($cmoptions->cmid)) {
+            $linkurl .= '&amp;cmid=' . $cmoptions->cmid;
         } else if (!empty($cmoptions->course)) {
             $linkurl .= '&amp;courseid=' . $cmoptions->course;
         } else {
