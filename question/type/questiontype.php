@@ -1661,13 +1661,14 @@ class default_questiontype {
      * This is used in question/backuplib.php
      */
     function backup($bf,$preferences,$question,$level=6) {
+        global $DB;
 
         $status = true;
         $extraquestionfields = $this->extra_question_fields();
 
         if (is_array($extraquestionfields)) {
             $questionextensiontable = array_shift($extraquestionfields);
-            $record = get_record($questionextensiontable, $this->questionid_column_name(), $question);
+            $record = $DB->get_record($questionextensiontable, array($this->questionid_column_name() => $question));
             if ($record) {
                 $tagname = strtoupper($this->name());
                 $status = $status && fwrite($bf, start_tag($tagname, $level, true));
