@@ -70,8 +70,8 @@ function useredit_update_trackforums($user, $usernew) {
     }
 }
 
-function useredit_update_interests($user, $csv_tag_names) {
-    tag_set('user', $user->id, explode(',', $csv_tag_names));
+function useredit_update_interests($user, $interests) {
+    tag_set('user', $user->id, $interests);
 }
 
 function useredit_shared_definition(&$mform) {
@@ -248,11 +248,10 @@ function useredit_shared_definition(&$mform) {
 
     }
 
-    if ( !empty($CFG->usetags) && has_capability('moodle/tag:create', get_context_instance(CONTEXT_SYSTEM)) ) {
+    if (!empty($CFG->usetags)) {
         $mform->addElement('header', 'moodle_interests', get_string('interests'));
-        $mform->addElement('textarea', 'interests', get_string('interestslist'), 'cols="45" rows="3"');
-        $mform->setHelpButton('interests', array('interestslist', get_string('helpinterestslist'),
-                          false, true, false));
+        $mform->addElement('tags', 'interests', get_string('interestslist'), array('display' => 'noofficial'));
+        $mform->setHelpButton('interests', array('interestslist', get_string('helpinterestslist'), false, true, false));
     }
 
     /// Moodle optional fields

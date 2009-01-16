@@ -43,7 +43,7 @@
     // User interests separated by commas
     if (!empty($CFG->usetags)) {
         require_once($CFG->dirroot.'/tag/lib.php');
-        $user->interests = tag_get_tags_csv('user', $user->id, TAG_RETURN_TEXT);
+        $user->interests = tag_get_tags_array('user', $id);
     }
 
     // remote users cannot be edited
