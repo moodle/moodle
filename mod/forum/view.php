@@ -235,7 +235,7 @@
             if (!empty($forum->intro)) {
                 print_box(format_text($forum->intro), 'generalbox', 'intro');
             }
-            echo '<p align="center">';
+            echo '<p class="mdl-align">';
             if (forum_user_can_post_discussion($forum, null, -1, $cm)) {
                 print_string("allowsdiscussions", "forum");
             } else {
