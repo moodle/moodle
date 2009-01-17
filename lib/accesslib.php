@@ -1787,7 +1787,7 @@ function check_enrolment_plugins(&$user) {
         return;
     }
 
-    static $inprogress;  // To prevent this function being called more than once in an invocation
+    static $inprogress = array();  // To prevent this function being called more than once in an invocation
 
     if (!empty($inprogress[$user->id])) {
         return;
@@ -1855,9 +1855,7 @@ function moodle_install_roles() {
     if (!assign_capability('moodle/site:doanything', CAP_ALLOW, $adminrole, $systemcontext->id)) {
         print_error('cannotassignanthing');
     }
-    if (!update_capabilities()) {
-        print_error('cannotupgradecaps');
-    }
+    update_capabilities('moodle');
 
 /// Upgrade guest (only 1 entry).
     if ($guestuser = $DB->get_record('user', array('username'=>'guest'))) {
@@ -1865,14 +1863,6 @@ function moodle_install_roles() {
     }
 
 /// Insert the correct records for legacy roles
-    /* create_role already adds all assigns to admins - that looks like a hack
-    allow_assign($adminrole, $adminrole);
-    allow_assign($adminrole, $coursecreatorrole);
-    allow_assign($adminrole, $noneditteacherrole);
-    allow_assign($adminrole, $editteacherrole);
-    allow_assign($adminrole, $studentrole);
-    allow_assign($adminrole, $guestrole);*/
-
     allow_assign($coursecreatorrole, $noneditteacherrole);
     allow_assign($coursecreatorrole, $editteacherrole);
     allow_assign($coursecreatorrole, $studentrole);
@@ -1883,15 +1873,6 @@ function moodle_install_roles() {
     allow_assign($editteacherrole, $guestrole);
 
 /// Set up default allow override matrix
-    /* create_role already adds all overrides to admins - that looks like a hack
-    allow_override($adminrole, $adminrole);
-    allow_override($adminrole, $coursecreatorrole);
-    allow_override($adminrole, $noneditteacherrole);
-    allow_override($adminrole, $editteacherrole);
-    allow_override($adminrole, $studentrole);
-    allow_override($adminrole, $guestrole);
-    allow_override($adminrole, $userrole);*/
-
     //See MDL-15841   TODO FOR MOODLE 2.0  XXX
     //allow_override($editteacherrole, $noneditteacherrole);
     //allow_override($editteacherrole, $studentrole);
@@ -2625,8 +2606,8 @@ function create_role($name, $shortname, $description, $legacy='') {
 
     // Insert the role record.
     $role = new object();
-    $role->name = $name;
-    $role->shortname = $shortname;
+    $role->name        = $name;
+    $role->shortname   = $shortname;
     $role->description = $description;
 
     //find free sortorder number
@@ -2636,21 +2617,8 @@ function create_role($name, $shortname, $description, $legacy='') {
     }
     $id = $DB->insert_record('role', $role);
 
-    if (!$id) {
-        return false;
-    }
-
     if ($legacy) {
         assign_capability($legacy, CAP_ALLOW, $id, $context->id);
-    }
-
-    // By default, users with role:manage at site level should be able to assign
-    // users to this new role, and override this new role's capabilities.
-    if ($adminroles = get_admin_roles()) {
-        foreach ($adminroles as $arole) {
-            allow_assign($arole->id, $id);
-            allow_override($arole->id, $id);
-        }
     }
 
     return $id;
@@ -4357,29 +4325,34 @@ function get_assignable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $with
 
     if ($withusercounts) {
         $extrafields = ', (SELECT count(u.id)
-                FROM {role_assignments} cra JOIN {user} u ON cra.userid = u.id
-                WHERE cra.roleid = ro.id AND cra.contextid = :conid AND u.deleted = 0
-                ) AS usercount';
+                             FROM {role_assignments} cra JOIN {user} u ON cra.userid = u.id
+                            WHERE cra.roleid = ro.id AND cra.contextid = :conid AND u.deleted = 0
+                          ) AS usercount';
         $params['conid'] = $context->id;
+    }
+
+    $raafrom  = ", {role_allow_assign} raa";
+    $raawhere = "AND raa.roleid = ra.roleid AND r.id = raa.allowassign";
+    if (has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
+        // show all roles allowed in this context to admins
+        $raafrom  = "";
+        $raawhere = "";        
     }
 
     $params['userid'] = $USER->id;
     $params['contextlevel'] = $context->contextlevel;
-    if (!$roles = $DB->get_records_sql("
+    $roles = $DB->get_records_sql("
              SELECT ro.id, ro.name$extrafields
                FROM {role} ro
-              JOIN (SELECT DISTINCT r.id
-                     FROM {role} r,
-                          {role_assignments} ra,
-                          {role_allow_assign} raa
-                    WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
-                      AND raa.roleid = ra.roleid AND r.id = raa.allowassign
+               JOIN (SELECT DISTINCT r.id
+                       FROM {role} r,
+                            {role_assignments} ra $raafrom
+                      WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
+                            $raawhere
                     ) inline_view ON ro.id = inline_view.id
                JOIN {role_context_levels} rcl ON ro.id = rcl.roleid
               WHERE rcl.contextlevel = :contextlevel
-           ORDER BY ro.sortorder ASC", $params)) {
-        $roles = array();
-    }
+           ORDER BY ro.sortorder ASC", $params);
 
     $rolenames = array();
     foreach ($roles as $role) {
@@ -4422,21 +4395,29 @@ function get_assignable_roles_for_switchrole($context) {
     $parents[] = $context->id;
     $contexts = implode(',' , $parents);
 
+    $raafrom  = "{role_allow_assign} raa,";
+    $raawhere = "AND raa.roleid = ra.roleid AND r.id = raa.allowassign";
+    if (has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
+        // show all roles allowed in this context to admins
+        $raafrom  = "";
+        $raawhere = "";
+    }
+
     if (!$roles = $DB->get_records_sql("
             SELECT ro.*
               FROM {role} ro
               JOIN (SELECT DISTINCT r.id
                       FROM {role} r,
                            {role_assignments} ra,
-                           {role_allow_assign} raa,
+                           $raafrom
                            {role_capabilities} rc
                      WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
-                       AND raa.roleid = ra.roleid AND r.id = raa.allowassign
-                       AND r.id = rc.roleid AND rc.capability = :viewcap AND rc.capability <> :anythingcap
+                           $raawhere
+                           AND r.id = rc.roleid AND rc.capability = :viewcap AND rc.capability <> :anythingcap
                    ) inline_view ON ro.id = inline_view.id
-            ORDER BY ro.sortorder ASC",
+          ORDER BY ro.sortorder ASC",
             array('userid'=>$USER->id, 'viewcap'=>'moodle/course:view',
-                    'anythingcap'=>'moodle/site:doanything'))) {
+                  'anythingcap'=>'moodle/site:doanything'))) {
         return array();
     }
 
@@ -4486,18 +4467,24 @@ function get_overridable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $wit
         $params['conid'] = $context->id;
     }
 
-    if (!$roles = $DB->get_records_sql("
+    if (has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
+        // show all roles to admins
+        $roles = $DB->get_records_sql("
             SELECT ro.id, ro.name$extrafields
               FROM {role} ro
-              JOIN (
-                                                   SELECT DISTINCT r.id
-                         FROM {role} r
-                         JOIN {role_allow_override} rao ON r.id = rao.allowoverride
-                         JOIN {role_assignments} ra ON rao.roleid = ra.roleid
-                                                    WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
+          ORDER BY ro.sortorder ASC", $params);
+        
+    } else {
+        $roles = $DB->get_records_sql("
+            SELECT ro.id, ro.name$extrafields
+              FROM {role} ro
+              JOIN (SELECT DISTINCT r.id
+                      FROM {role} r
+                      JOIN {role_allow_override} rao ON r.id = rao.allowoverride
+                      JOIN {role_assignments} ra ON rao.roleid = ra.roleid
+                     WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
                    ) inline_view ON ro.id = inline_view.id
-          ORDER BY ro.sortorder ASC", $params)) {
-        $roles = array();
+          ORDER BY ro.sortorder ASC", $params);
     }
 
     $rolenames = array();

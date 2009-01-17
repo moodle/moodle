@@ -129,4 +129,7 @@ function xmldb_main_install() {
 /// Create guest record
     create_guest_record();
 
+/// Install the roles system.
+    moodle_install_roles();
+
 }

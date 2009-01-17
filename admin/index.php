@@ -160,9 +160,6 @@
 
     /// Continue with the instalation
 
-        // Install the roles system.
-        moodle_install_roles();
-
         // Install core event handlers
         events_update_definition('moodle');
 
