@@ -344,7 +344,10 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
     // check if proxy (if used) should be bypassed for this url
     $proxybypass = is_proxybypass($url);
 
-    $ch = curl_init($url);
+    if (!$ch = curl_init($url)) {
+        debugging('Can not init curl.');
+        return false;
+    }
 
     // set extra headers
     if (is_array($headers) ) {
