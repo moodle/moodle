@@ -83,5 +83,5 @@
     // ========================================
     // finally send the file
     // ========================================
-    session_write_close(); // unlock session during fileserving
+    session_get_instance()->write_close(); // unlock session during fileserving
     send_stored_file($file, 0, false, $forcedownload);

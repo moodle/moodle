@@ -24,7 +24,7 @@ require_once($CFG->libdir.'/dtllib.php');
 function dbtransfer_export_xml_database($description, $mdb) {
     @set_time_limit(0);
 
-    session_write_close(); // release session
+    session_get_instance()->write_close(); // release session
 
     header('Content-Type: application/xhtml+xml');
     header('Content-Disposition: attachment; filename=database.xml');
@@ -45,7 +45,7 @@ function dbtransfer_export_xml_database($description, $mdb) {
 function dbtransfer_transfer_database($sourcedb, $targetdb) {
     @set_time_limit(0);
 
-    session_write_close(); // release session
+    session_get_instance()->write_close(); // release session
 
     $var = new database_mover($sourcedb, $targetdb);
     $var->export_database(null);

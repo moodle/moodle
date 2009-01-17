@@ -33,7 +33,19 @@ function session_get_instance() {
 }
 
 interface moodle_session {
-    public function terminate();
+    /**
+     * Terminate current session
+     * @return void
+     */
+    public function terminate_current();
+
+    /**
+     * No more changes in session expected.
+     * Unblocks the sesions, other scripts may start executing in parallel.
+     * @return void
+     */
+    public function write_close();
+
 }
 
 /**
@@ -85,6 +97,52 @@ abstract class session_stub implements moodle_session {
         $this->check_user_initialised();
 
         $this->check_security();
+    }
+
+    /**
+     * Terminates active moodle session
+     */
+    public function terminate_current() {
+        global $CFG, $SESSION, $USER;
+
+        if (NO_MOODLE_COOKIES) {
+            return;
+        }
+
+        $_SESSION = array();
+
+        $SESSION  = new object();
+        $USER     = new object();
+        $USER->id = 0;
+        if (isset($CFG->mnet_localhost_id)) {
+            $USER->mnethostid = $CFG->mnet_localhost_id;
+        }
+
+        // Initialize variable to pass-by-reference to headers_sent(&$file, &$line)
+        $file = null;
+        $line = null;
+        if (headers_sent($file, $line)) {
+            error_log('Can not terminate session properly - headers were already sent in file: '.$file.' on line '.$line);
+        }
+
+        // now let's try to get a new session id and destroy the old one
+        @session_regenerate_id(true);
+
+        // close the session
+        @session_write_close();
+    }
+
+    /**
+     * No more changes in session expected.
+     * Unblocks the sesions, other scripts may start executing in parallel.
+     * @return void
+     */
+    public function write_close() {
+        if (NO_MOODLE_COOKIES) {
+            return;
+        }
+
+        session_write_close();
     }
 
     /**
@@ -158,39 +216,10 @@ abstract class session_stub implements moodle_session {
 
             if ($_SESSION['USER']->sessionip != $remoteaddr) {
                 // this is a security feature - terminate the session in case of any doubt
-                $this->terminate();
+                $this->terminate_current();
                 print_error('sessionipnomatch2', 'error');
             }
         }
-    }
-
-    /**
-     * Terminates active moodle session
-     */
-    public function terminate() {
-        global $CFG, $SESSION, $USER;
-
-        $_SESSION = array();
-
-        $SESSION  = new object();
-        $USER     = new object();
-        $USER->id = 0;
-        if (isset($CFG->mnet_localhost_id)) {
-            $USER->mnethostid = $CFG->mnet_localhost_id;
-        }
-
-        // Initialize variable to pass-by-reference to headers_sent(&$file, &$line)
-        $file = null;
-        $line = null;
-        if (headers_sent($file, $line)) {
-            error_log('Can not terminate session properly - headers were already sent in file: '.$file.' on line '.$line);
-        }
-
-        // now let's try to get a new session id and destroy the old one
-        @session_regenerate_id(true);
-
-        // close the session
-        @session_write_close();
     }
 
     /**
@@ -268,6 +297,7 @@ class legacy_file_session extends session_stub {
         }
         ini_set('session.save_path', $CFG->dataroot .'/sessions');
     }
+
 }
 
 /**

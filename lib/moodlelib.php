@@ -2182,7 +2182,7 @@ function require_logout() {
         }
     }
 
-    session_get_instance()->terminate();
+    session_get_instance()->terminate_current();
 }
 
 /**

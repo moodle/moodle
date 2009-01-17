@@ -56,7 +56,7 @@
     $stradministration = get_string('administration');
     $strreports = get_string('reports');
 
-    session_write_close();
+    session_get_instance()->write_close();
 
     $navlinks = array();
 

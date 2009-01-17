@@ -37,7 +37,7 @@
     }
 
 /// extra safety
-    @session_write_close();
+    @session_get_instance()->write_close();
 
 /// check if execution allowed
     if (isset($_SERVER['REMOTE_ADDR'])) { // if the script is accessed via the web.

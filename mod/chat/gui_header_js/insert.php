@@ -28,7 +28,7 @@
         print_error('noguests');
     }
 
-    session_write_close();
+    session_get_instance()->write_close();
 
 /// Delete old users now
 

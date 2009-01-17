@@ -246,7 +246,7 @@ abstract class moodle_database {
     public function dispose() {
         if ($this->used_for_db_sessions) {
             // this is needed because we need to save session to db before closing it
-            session_write_close();
+            session_get_instance()->write_close();
             $this->used_for_db_sessions = false;
         }
         if ($this->database_manager) {

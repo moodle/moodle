@@ -787,7 +787,7 @@ function send_temp_file($path, $filename, $pathisstring=false) {
     global $CFG;
 
     // close session - not needed anymore
-    @session_write_close();
+    @session_get_instance()->write_close();
 
     if (!$pathisstring) {
         if (!file_exists($path)) {
@@ -874,7 +874,7 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
         }
     }
 
-    session_write_close(); // unlock session during fileserving
+    session_get_instance()->write_close(); // unlock session during fileserving
 
     // Use given MIME type if specified, otherwise guess it using mimeinfo.
     // IE, Konqueror and Opera open html file directly in browser from web even when directed to save it to disk :-O
@@ -1078,7 +1078,7 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
         ignore_user_abort(true);
     }
 
-    session_write_close(); // unlock session during fileserving
+    session_get_instance()->write_close(); // unlock session during fileserving
 
     // Use given MIME type if specified, otherwise guess it using mimeinfo.
     // IE, Konqueror and Opera open html file directly in browser from web even when directed to save it to disk :-O

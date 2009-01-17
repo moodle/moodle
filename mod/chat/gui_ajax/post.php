@@ -29,7 +29,7 @@ if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
 if (isguest()) {
     chat_print_error('ERROR', get_string('notlogged','chat'));
 }
-session_write_close();
+session_get_instance()->write_close();
 chat_delete_old_users();
 $chat_message = clean_text($chat_message, FORMAT_MOODLE);
 

@@ -103,7 +103,7 @@
             send_file_not_found();
         }
 
-        session_write_close(); // unlock session during fileserving
+        session_get_instance()->write_close(); // unlock session during fileserving
         send_stored_file($file, 60*60, 0, $forcedownload);
 
 
@@ -123,7 +123,7 @@
                 send_file_not_found();
             }
 
-            session_write_close(); // unlock session during fileserving
+            session_get_instance()->write_close(); // unlock session during fileserving
             send_stored_file($file, 0, 0, true);
 
         } else if ($filearea === 'course_intro') {
@@ -138,7 +138,7 @@
                 send_file_not_found();
             }
 
-            session_write_close(); // unlock session during fileserving
+            session_get_instance()->write_close(); // unlock session during fileserving
             send_stored_file($file, 60*60, 0, false); // TODO: change timeout?
 
         } else if ($filearea === 'user_profile') {
@@ -175,7 +175,7 @@
                 send_file_not_found();
             }
 
-            session_write_close(); // unlock session during fileserving
+            session_get_instance()->write_close(); // unlock session during fileserving
             send_stored_file($file, 0, 0, true); // must force download - security!
 
         } else {

@@ -71,7 +71,7 @@
         }
 
         // send the file
-        session_write_close(); // unlock session during fileserving
+        session_get_instance()->write_close(); // unlock session during fileserving
         $filename = $args[count($args)-1];
         send_file($pathname, $filename, $lifetime, $CFG->filteruploadedfiles, false, $forcedownload);
     } else {

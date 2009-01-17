@@ -18,7 +18,7 @@
 
     add_to_log($course->id, "course", "report live", "report/log/live.php?id=$course->id", $course->id); 
 
-    session_write_close();
+    session_get_instance()->write_close();
 
     // we override the default framename so header/footer
     // links open in a new window 
