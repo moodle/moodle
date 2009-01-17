@@ -30,6 +30,10 @@
 
     require_course_login($course, true, $cm);
 
+/// Add ajax-related libs
+    require_js(array('yui_yahoo', 'yui_event', 'yui_dom', 'yui_connection', 'yui_json'));
+    require_js($CFG->wwwroot . '/mod/forum/rate_ajax.js');
+
     // move this down fix for MDL-6926
     require_once('lib.php');
 

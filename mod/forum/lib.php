@@ -3042,7 +3042,9 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
             }
 
             if ($canviewallratings and !$mypost) {
-                forum_print_ratings($post->id, $ratings->scale, $forum->assessed, $canviewallratings, $allratings);
+                echo '<span class="forumpostratingtext">' .
+                     forum_print_ratings($post->id, $ratings->scale, $forum->assessed, $canviewallratings, $allratings, true) .
+                     '</span>';
                 if (!empty($ratings->allow)) {
                     echo '&nbsp;';
                     forum_print_rating_menu($post->id, $USER->id, $ratings->scale, $myrating);
@@ -3050,7 +3052,9 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
                 }
 
             } else if ($mypost) {
-                forum_print_ratings($post->id, $ratings->scale, $forum->assessed, true, $allratings);
+                echo '<span class="forumpostratingtext">' .
+                     forum_print_ratings($post->id, $ratings->scale, $forum->assessed, true, $allratings, true) .
+                     '</span>';
 
             } else if (!empty($ratings->allow) ) {
                 forum_print_rating_menu($post->id, $USER->id, $ratings->scale, $myrating);
@@ -3274,7 +3278,7 @@ function forum_shorten_post($message) {
  * Forumid prevents the double lookup of the forumid in discussion to determine the aggregate type
  * Scale is an array of ratings
  */
-function forum_print_ratings($postid, $scale, $aggregatetype, $link=true, $ratings=null) {
+function forum_print_ratings($postid, $scale, $aggregatetype, $link=true, $ratings=null, $return=false) {
 
     $strratings = '';
 
@@ -3307,11 +3311,18 @@ function forum_print_ratings($postid, $scale, $aggregatetype, $link=true, $ratin
             $strratings = get_string("ratings", "forum");
         }
 
-        echo "$strratings: ";
+        $strratings .= ': ';
+
         if ($link) {
-            link_to_popup_window ("/mod/forum/report.php?id=$postid", "ratings", $agg, 400, 600);
+            $strratings .= link_to_popup_window ("/mod/forum/report.php?id=$postid", "ratings", $agg, 400, 600, null, null, true);
         } else {
-            echo "$agg ";
+            $strratings .= "$agg ";
+        }
+
+        if ($return) {
+            return $strratings;
+        } else {
+            echo $strratings;
         }
     }
 }
@@ -3559,7 +3570,7 @@ function forum_print_rating_menu($postid, $userid, $scale, $myrating=NULL) {
         $strrate = get_string("rate", "forum");
     }
     $scale = array(FORUM_UNSET_POST_RATING => $strrate.'...') + $scale;
-    choose_from_menu($scale, $postid, $myrating, '');
+    choose_from_menu($scale, $postid, $myrating, '', '', '0', false, false, 0, '', false, false, 'forumpostratingmenu');
 }
 
 /**
@@ -5007,7 +5018,14 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
     if ($ratingsformused) {
         if ($ratingsmenuused) {
             echo '<div class="ratingsubmit">';
-            echo '<input type="submit" value="'.get_string('sendinratings', 'forum').'" />';
+            echo '<input type="submit" id="forumpostratingsubmit" value="'.get_string('sendinratings', 'forum').'" />';
+            if (ajaxenabled() && !empty($CFG->forum_ajaxrating)) { /// AJAX enabled, standard submission form
+                $rate_ajax_config_settings = array("pixpath"=>$CFG->pixpath, "wwwroot"=>$CFG->wwwroot, "sesskey"=>sesskey());
+                echo "<script type=\"text/javascript\">//<![CDATA[\n".
+                     "var rate_ajax_config = " . json_encode($rate_ajax_config_settings) . ";\n".
+                     "init_rate_ajax();\n".
+                     "//]]></script>\n";
+            }
             if ($forum->scale < 0) {
                 if ($scale = get_record("scale", "id", abs($forum->scale))) {
                     print_scale_menu_helpbutton($course->id, $scale );
