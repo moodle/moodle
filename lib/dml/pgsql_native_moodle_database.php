@@ -1047,6 +1047,46 @@ class pgsql_native_moodle_database extends moodle_database {
         return $positivematch ? '~*' : '!~*';
     }
 
+/// session locking
+    public function session_lock_supported() {
+        return $this->is_min_version('8.2.0');
+    }
+
+    public function get_session_lock($rowid) {
+        // TODO: there is a potential locking problem for database running
+        //       multiple instances of moodle, we could try to use pg_advisory_lock(int, int),
+        //       luckily there is not a big chance that they would collide
+        if (!$this->session_lock_supported()) {
+            return;
+        }
+
+        parent::get_session_lock($rowid);
+        $sql = "SELECT pg_advisory_lock($rowid)";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = pg_query($this->pgsql, $sql);
+        $this->query_end($result);
+
+        if ($result) {
+            pg_free_result($result);
+        }
+    }
+
+    public function release_session_lock($rowid) {
+        if (!$this->session_lock_supported()) {
+            return;
+        }
+        parent::release_session_lock($rowid);
+
+        $sql = "SELECT pg_advisory_unlock($rowid)";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = pg_query($this->pgsql, $sql);
+        $this->query_end($result);
+
+        if ($result) {
+            pg_free_result($result);
+        }
+    }
+
 /// transactions
     /**
      * on DBs that support it, switch to transaction mode and begin a transaction

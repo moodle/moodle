@@ -5,7 +5,7 @@
  * @return moodle_session
  */
 function session_get_instance() {
-    global $CFG;
+    global $CFG, $DB;
 
     static $session = null;
 
@@ -18,7 +18,8 @@ function session_get_instance() {
             $session_class = SESSION_CUSTOM;
             $session = new $session_class();
 
-        } else if (!isset($CFG->dbsessions) or $CFG->dbsessions) {
+        //} else if ((!isset($CFG->dbsessions) or $CFG->dbsessions) and $DB->session_lock_supported()) {
+        } else if (!empty($CFG->dbsessions) and $DB->session_lock_supported()) {
             // default recommended session type
             $session = new database_session();
 
@@ -299,8 +300,6 @@ class database_session extends session_stub {
         global $DB;
 
         $this->database = $DB;
-        $this->database->used_for_db_sessions();
-
         return true;
     }
 

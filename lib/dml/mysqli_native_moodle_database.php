@@ -881,7 +881,12 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
 /// session locking
+    public function session_lock_supported() {
+        return true;
+    }
+
     public function get_session_lock($rowid) {
+        parent::get_session_lock($rowid);
         $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
         $sql = "SELECT GET_LOCK('$fullname',120)";
         $this->query_start($sql, null, SQL_QUERY_AUX);
@@ -893,17 +898,16 @@ class mysqli_native_moodle_database extends moodle_database {
             $result->close();
 
             if (reset($arr) == 1) {
-                return true;
+                return;
             } else {
                 // try again!
-                return $this->get_session_lock($rowid);
+                $this->get_session_lock($rowid);
             }
         }
-
-        return false;
     }
 
     public function release_session_lock($rowid) {
+        parent::release_session_lock($rowid);
         $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
         $sql = "SELECT RELEASE_LOCK('$fullname')";
         $this->query_start($sql, null, SQL_QUERY_AUX);
@@ -911,15 +915,8 @@ class mysqli_native_moodle_database extends moodle_database {
         $this->query_end($result);
 
         if ($result) {
-            $arr = $result->fetch_assoc();
             $result->close();
-
-            if (reset($arr) == 1) {
-                return true;
-            }
         }
-
-        return false;
     }
 
 /// transactions

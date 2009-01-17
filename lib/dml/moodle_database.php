@@ -77,7 +77,7 @@ abstract class moodle_database {
     protected $last_type;
     protected $last_extrainfo;
 
-    protected $used_for_db_sessions = 0;
+    protected $used_for_db_sessions = false;
 
     /** internal temporary variable */
     private $fix_sql_params_i;
@@ -96,13 +96,6 @@ abstract class moodle_database {
      */
     public function __desctruct() {
         $this->dispose();
-    }
-
-    /**
-     * Called only from session code!
-     */
-    public function used_for_db_sessions() {
-        $this->used_for_db_sessions = 1;
     }
 
     /**
@@ -254,7 +247,7 @@ abstract class moodle_database {
         if ($this->used_for_db_sessions) {
             // this is needed because we need to save session to db before closing it
             session_write_close();
-            $this->used_for_db_sessions = 0;
+            $this->used_for_db_sessions = false;
         }
         if ($this->database_manager) {
             $this->database_manager->dispose();
@@ -1740,14 +1733,15 @@ abstract class moodle_database {
     }
 
 /// session locking
+    public function session_lock_supported() {
+        return false;
+    }
+
     public function get_session_lock($rowid) {
-        // TODO: make this abstract
-        return true;
+        $this->used_for_db_sessions = true;
     }
 
     public function release_session_lock($rowid) {
-        // TODO: make this abstract
-        return true;
     }
 
 /// performance and logging
