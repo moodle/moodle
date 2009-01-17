@@ -1740,12 +1740,12 @@ abstract class moodle_database {
     }
 
 /// session locking
-    public function get_session_lock($name, $timeout) {
+    public function get_session_lock($rowid) {
         // TODO: make this abstract
         return true;
     }
 
-    public function release_session_lock($name) {
+    public function release_session_lock($rowid) {
         // TODO: make this abstract
         return true;
     }

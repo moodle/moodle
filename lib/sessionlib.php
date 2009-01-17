@@ -251,9 +251,10 @@ class legacy_file_session extends session_stub {
             ini_set('session.gc_probability', 1);
         }
 
-        if (!empty($CFG->sessiontimeout)) {
-            ini_set('session.gc_maxlifetime', $CFG->sessiontimeout);
+        if (empty($CFG->sessiontimeout)) {
+            $CFG->sessiontimeout = 7200;
         }
+        ini_set('session.gc_maxlifetime', $CFG->sessiontimeout);
 
         if (!file_exists($CFG->dataroot .'/sessions')) {
             make_upload_directory('sessions');
@@ -311,20 +312,16 @@ class database_session extends session_stub {
     public function handler_read($sid) {
         global $CFG;
 
-        // TODO: implement timeout + auth plugin hook (see gc)
-
         if ($this->record and $this->record->sid != $sid) {
             error_log('Weird error reading session - mismatched sid');
             return '';
         }
 
-        // lock session
-        while (!$this->database->get_session_lock($sid, 10)) {
-            sleep(1);
-        }
-
         try {
-            if (!$record = $this->database->get_record('sessions', array('sid'=>$sid))) {
+            if ($record = $this->database->get_record('sessions', array('sid'=>$sid))) {
+                $this->database->get_session_lock($record->id);
+                
+            } else {
                 $record = new object();
                 $record->state        = 0;
                 $record->sid          = $sid;
@@ -333,12 +330,9 @@ class database_session extends session_stub {
                 $record->userid       = 0;
                 $record->timecreated  = $record->timemodified = time();
                 $record->firstip      = $record->lastip = getremoteaddr();
-
                 $record->id = $this->database->insert_record_raw('sessions', $record);
 
-                $this->record = $record;
-
-                return '';
+                $this->database->get_session_lock($record->id);
             }
         } catch (dml_exception $ex) {
             if (!empty($CFG->rolesactive)) {
@@ -347,16 +341,38 @@ class database_session extends session_stub {
             return '';
         }
 
-        if (md5($record->sessdata) !== $record->sessdatahash) {
-            // probably this is caused by misconfigured mysql - the allowed request size might be too small
+        // verify timeout
+        if ($record->timemodified + $CFG->sessiontimeout < time()) {
+            // TODO: implement auth plugin timeout hook (see gc)
+            $record->state        = 0;
+            $record->sessdata     = null;
+            $record->sessdatahash = null;
+            $record->userid       = 0;
+            $record->timecreated  = $record->timemodified = time();
+            $record->firstip      = $record->lastip = getremoteaddr();
             try {
-                $this->database->delete_records('sessions', array('sid'=>$record->sid));
-            } catch (dml_exception $ignored) {
+                $this->database->update_record('sessions', $record);
+            } catch (dml_exception $ex) {
+                error_log('Can time out database session');
+                return '';
             }
-            print_error('dbsessionbroken', 'error');
         }
 
-        $data = base64_decode($record->sessdata);
+        if ($record->sessdatahash !== null) {
+            if (md5($record->sessdata) !== $record->sessdatahash) {
+                // probably this is caused by misconfigured mysql - the allowed request size might be too small
+                try {
+                    $this->database->delete_records('sessions', array('sid'=>$record->sid));
+                } catch (dml_exception $ignored) {
+                }
+                print_error('dbsessionbroken', 'error');
+            }
+
+            $data = base64_decode($record->sessdata);
+        } else {
+            $data = '';
+        }
+
         unset($record->sessdata); // conserve memory
         $this->record = $record;
 
@@ -371,7 +387,7 @@ class database_session extends session_stub {
             return true;
         }
 
-        $this->database->release_session_lock($this->record->sid);
+        $this->database->release_session_lock($this->record->id);
 
         $this->record->sid          = $sid;                         // it might be regenerated
         $this->record->sessdata     = base64_encode($session_data); // there might be some binary mess :-(
@@ -397,7 +413,7 @@ class database_session extends session_stub {
             return true;
         }
 
-        $this->database->release_session_lock($this->record->sid);
+        $this->database->release_session_lock($this->record->id);
 
         try {
             $this->database->delete_records('sessions', array('sid'=>$this->record->sid));
@@ -408,7 +424,10 @@ class database_session extends session_stub {
         return true;
     }
 
-    public function handler_gc($maxlifetime) {
+    public function handler_gc($ignored_maxlifetime) {
+        global $CFG;
+        $maxlifetime = $CFG->sessiontimeout;
+
         $select = "timemodified + :maxlifetime < :now";
         $params = array('now'=>time(), 'maxlifetime'=>$maxlifetime);
 

@@ -881,14 +881,11 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
 /// session locking
-    public function get_session_lock($name, $timeout) {
-        $fullname = $this->dbname.'-'.$this->prefix.'-'.$name;
-        $sql = "SELECT GET_LOCK(?,?)";
-        $params = array($fullname, $timeout);
-        $rawsql = $this->emulate_bound_params($sql, $params);
-
-        $this->query_start($sql, $params, SQL_QUERY_AUX);
-        $result = $this->mysqli->query($rawsql);
+    public function get_session_lock($rowid) {
+        $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
+        $sql = "SELECT GET_LOCK('$fullname',120)";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = $this->mysqli->query($sql);
         $this->query_end($result);
 
         if ($result) {
@@ -897,20 +894,20 @@ class mysqli_native_moodle_database extends moodle_database {
 
             if (reset($arr) == 1) {
                 return true;
+            } else {
+                // try again!
+                return $this->get_session_lock($rowid);
             }
         }
 
         return false;
     }
 
-    public function release_session_lock($name) {
-        $fullname = $this->dbname.'-'.$this->prefix.'-'.$name;
-        $sql = "SELECT RELEASE_LOCK(?)";
-        $params = array($fullname);
-        $rawsql = $this->emulate_bound_params($sql, $params);
-
-        $this->query_start($sql, $params, SQL_QUERY_AUX);
-        $result = $this->mysqli->query($rawsql);
+    public function release_session_lock($rowid) {
+        $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
+        $sql = "SELECT RELEASE_LOCK('$fullname')";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = $this->mysqli->query($sql);
         $this->query_end($result);
 
         if ($result) {
