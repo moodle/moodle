@@ -2,6 +2,7 @@
 
 //  Collect ratings, store them, then return to where we came from
 
+/// TODO: Centralise duplicate code in rate.php and rate_ajax.php
 
     require_once('../../config.php');
     require_once('lib.php');
