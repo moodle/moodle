@@ -280,13 +280,13 @@ class database_session extends session_stub {
     protected function init_session_storage() {
         global $CFG;
 
-        if (ini_get('session.gc_probability') == 0) {
-            ini_set('session.gc_probability', 1);
-        }
+        // ini_get('session.gc_probability') == 0 means we rely on cron cleanup only
+        // TODO: implement cron db session cleanup
 
-        if (!empty($CFG->sessiontimeout)) {
-            ini_set('session.gc_maxlifetime', $CFG->sessiontimeout);
+        if (empty($CFG->sessiontimeout)) {
+            $CFG->sessiontimeout = 7200;
         }
+        ini_set('session.gc_maxlifetime', $CFG->sessiontimeout);
 
         $result = session_set_save_handler(array($this, 'handler_open'),
                                            array($this, 'handler_close'),
