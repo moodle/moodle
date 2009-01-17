@@ -1201,7 +1201,7 @@ class oci_native_moodle_database extends moodle_database {
         return null;
     }
 
-/// session lcoking
+/// session locking
     // http://download.oracle.com/docs/cd/B10501_01/appdev.920/a96612/d_lock2.htm#999576
 
 /// transactions
