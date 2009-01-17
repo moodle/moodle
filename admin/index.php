@@ -100,6 +100,10 @@
         $origdebug = $CFG->debug;
         $CFG->debug = DEBUG_MINIMAL;
         error_reporting($CFG->debug);
+
+    /// remove current session content completely
+        session_get_instance()->terminate_current();
+
         if (empty($agreelicense)) {
             $strlicense = get_string('license');
             $navigation = build_navigation(array(array('name'=>$strlicense, 'link'=>null, 'type'=>'misc')));
@@ -327,10 +331,15 @@
 /// make sure admin user is created - this is the last step because we need
 /// session to be working properly in order to edit admin account
     if (empty($CFG->rolesactive)) {
+        $sessionstarted = optional_param('sessionstarted', 0, PARAM_BOOL);
+        if (!$sessionstarted) {
+            // we neeed this redirect to setup proper session
+            upgrade_log_finish('index.php?sessionstarted=1');
+        }
         $adminuser = create_admin_user();
         $adminuser->newadminuser = 1;
         complete_user_login($adminuser, false);
-        upgrade_log_finish("$CFG->wwwroot/user/editadvanced.php?id=$adminuser->id"); // Edit thyself
+        redirect("$CFG->wwwroot/user/editadvanced.php?id=$adminuser->id"); // Edit thyself
 
     } else {
     /// just make sure upgrade logging is properly terminated

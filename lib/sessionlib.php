@@ -18,8 +18,7 @@ function session_get_instance() {
             $session_class = SESSION_CUSTOM;
             $session = new $session_class();
 
-        //} else if ((!isset($CFG->dbsessions) or $CFG->dbsessions) and $DB->session_lock_supported()) {
-        } else if (!empty($CFG->dbsessions) and $DB->session_lock_supported()) {
+        } else if ((!isset($CFG->dbsessions) or $CFG->dbsessions) and $DB->session_lock_supported()) {
             // default recommended session type
             $session = new database_session();
 
@@ -38,6 +37,11 @@ interface moodle_session {
      * @return void
      */
     public function terminate_current();
+
+    /**
+     * Terminates all sessions.
+     */
+    public function terminate_all();
 
     /**
      * No more changes in session expected.
@@ -76,7 +80,9 @@ abstract class session_stub implements moodle_session {
             $this->prepare_cookies();
             $this->init_session_storage();
 
-            if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
+            $newsession = empty($_COOKIE['MoodleSession'.$CFG->sessioncookie]);
+
+            if (!empty($CFG->usesid) && $newsession) {
                 sid_start_ob();
             } else {
                 $CFG->usesid = 0;
@@ -88,6 +94,9 @@ abstract class session_stub implements moodle_session {
             @session_start();
             if (!isset($_SESSION['SESSION'])) {
                 $_SESSION['SESSION'] = new object();
+                if (!$newsession and !empty($CFG->rolesactive)) {
+                    $_SESSION['SESSION']->has_timed_out = true;
+                }
             }
             if (!isset($_SESSION['USER'])) {
                 $_SESSION['USER'] = new object();
@@ -110,13 +119,15 @@ abstract class session_stub implements moodle_session {
         }
 
         $_SESSION = array();
-
-        $SESSION  = new object();
-        $USER     = new object();
-        $USER->id = 0;
+        $_SESSION['SESSION'] = new object();
+        $_SESSION['USER']    = new object();
+        $_SESSION['USER']->id = 0;
         if (isset($CFG->mnet_localhost_id)) {
-            $USER->mnethostid = $CFG->mnet_localhost_id;
+            $_SESSION['USER']->mnethostid = $CFG->mnet_localhost_id;
         }
+
+        $SESSION = $_SESSION['SESSION']; // this may not work properly
+        $USER    =  $_SESSION['USER'];   // this may not work properly
 
         // Initialize variable to pass-by-reference to headers_sent(&$file, &$line)
         $file = null;
@@ -125,11 +136,11 @@ abstract class session_stub implements moodle_session {
             error_log('Can not terminate session properly - headers were already sent in file: '.$file.' on line '.$line);
         }
 
-        // now let's try to get a new session id and destroy the old one
-        @session_regenerate_id(true);
+        // now let's try to get a new session id
+        session_regenerate_id();
 
         // close the session
-        @session_write_close();
+        session_write_close();
     }
 
     /**
@@ -298,6 +309,9 @@ class legacy_file_session extends session_stub {
         ini_set('session.save_path', $CFG->dataroot .'/sessions');
     }
 
+    public function terminate_all() {
+        // TODO
+    }
 }
 
 /**
@@ -326,6 +340,15 @@ class database_session extends session_stub {
                                            array($this, 'handler_gc'));
         if (!$result) {
             print_error('dbsessionhandlerproblem', 'error');
+        }
+    }
+
+    public function terminate_all() {
+        try {
+            // do not show any warnings - might be during upgrade/installation
+            $this->database->delete_records('sessions');
+        } catch (dml_exception $ignored) {
+            
         }
     }
 

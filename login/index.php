@@ -19,7 +19,7 @@
 /// Check for timed out sessions
     if (!empty($SESSION->has_timed_out)) {
         $session_has_timed_out = true;
-        $SESSION->has_timed_out = false;
+        unset($SESSION->has_timed_out);
     } else {
         $session_has_timed_out = false;
     }
