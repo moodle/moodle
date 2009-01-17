@@ -353,7 +353,7 @@ class database_session extends session_stub {
             try {
                 $this->database->update_record('sessions', $record);
             } catch (dml_exception $ex) {
-                error_log('Can time out database session');
+                error_log('Can not time out database session');
                 return '';
             }
         }
