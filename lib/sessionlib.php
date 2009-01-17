@@ -54,7 +54,7 @@ abstract class session_stub implements moodle_session {
 
         if (NO_MOODLE_COOKIES) {
             // session not used at all
-            $CFG->usesid = false;
+            $CFG->usesid = 0;
 
             $_SESSION = array();
             $_SESSION['SESSION'] = new object();
@@ -66,6 +66,9 @@ abstract class session_stub implements moodle_session {
 
             if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
                 sid_start_ob();
+            } else {
+                $CFG->usesid = 0;
+                ini_set('session.use_trans_sid', '0');
             }
 
             session_name('MoodleSession'.$CFG->sessioncookie);
