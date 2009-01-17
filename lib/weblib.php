@@ -848,7 +848,6 @@ function close_window($delay=0) {
     die;
 }
 
-
 /**
  * Given an array of values, output the HTML for a select element with those options.
  * Normally, you only need to use the first few parameters.
@@ -867,9 +866,17 @@ function close_window($delay=0) {
  * @param int $tabindex if give, sets the tabindex attribute on the &lt;select> element. Default none.
  * @param string $id value to use for the id attribute of the &lt;select> element. If none is given,
  *      then a suitable one is constructed.
+ * @param mixed $listbox if false, display as a dropdown menu. If true, display as a list box.
+ *      By default, the list box will have a number of rows equal to min(10, count($options)), but if
+ *      $listbox is an integer, that number is used for size instead.
+ * @param boolean $multiple if true, enable multiple selections, else only 1 item can be selected. Used
+ *      when $listbox display is enabled
+ * @param string $class value to use for the class attribute of the &lt;select> element. If none is given,
+ *      then a suitable one is constructed.
  */
 function choose_from_menu ($options, $name, $selected='', $nothing='choose', $script='',
-                           $nothingvalue='0', $return=false, $disabled=false, $tabindex=0, $id='') {
+                           $nothingvalue='0', $return=false, $disabled=false, $tabindex=0,
+                           $id='', $listbox=false, $multiple=false, $class='') {
 
     if ($nothing == 'choose') {
         $nothing = get_string('choose') .'...';
@@ -886,12 +893,36 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
 
     if ($id ==='') {
         $id = 'menu'.$name;
-         // name may contaion [], which would make an invalid id. e.g. numeric question type editing form, assignment quickgrading
+        // name may contaion [], which would make an invalid id. e.g. numeric question type editing form, assignment quickgrading
         $id = str_replace('[', '', $id);
         $id = str_replace(']', '', $id);
     }
 
-    $output = '<select id="'.$id.'" name="'. $name .'" '. $attributes .'>' . "\n";
+    if ($class ==='') {
+        $class = 'menu'.$name;
+        // name may contaion [], which would make an invalid class. e.g. numeric question type editing form, assignment quickgrading
+        $class = str_replace('[', '', $class);
+        $class = str_replace(']', '', $class);
+    }
+    $class = 'select ' . $class; /// Add 'select' selector always
+
+    if ($listbox) {
+        if (is_integer($listbox)) {
+            $size = $listbox;
+        } else {
+            $numchoices = count($options);
+            if ($nothing) {
+                $numchoices += 1;
+            }
+            $size = min(10, $numchoices);
+        }
+        $attributes .= ' size="' . $size . '"';
+        if ($multiple) {
+            $attributes .= ' multiple="multiple"';
+        }
+    }
+
+    $output = '<select id="'. $id .'" class="'. $class .'" name="'. $name .'" '. $attributes .'>' . "\n";
     if ($nothing) {
         $output .= '   <option value="'. s($nothingvalue) .'"'. "\n";
         if ($nothingvalue === $selected) {
@@ -899,10 +930,12 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
         }
         $output .= '>'. $nothing .'</option>' . "\n";
     }
+
     if (!empty($options)) {
         foreach ($options as $value => $label) {
             $output .= '   <option value="'. s($value) .'"';
-            if ((string)$value == (string)$selected) {
+            if ((string)$value == (string)$selected ||
+                    (is_array($selected) && in_array($value, $selected))) {
                 $output .= ' selected="selected"';
             }
             if ($label === '') {
