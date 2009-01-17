@@ -270,7 +270,7 @@ $string['remotedownloaderror'] = 'Stiahnutie komponentu na server zlyhalo, skont
 $string['remotedownloadnotallowed'] = 'Nahrávanie komponentov na server nie je povolené (direktíva allow_url_fopen je v stave \'vypnuté\').<br /><br />Musíte súbor stiahnuť <a href=\"$a->url\">$a->url</a> ručne, skopírovať ho na serveri do umiestnenia \"$a->dest\" a tam ho dekomprimovať.';
 $string['report'] = 'Záznamy';
 $string['requiredentrieschanged'] = '<strong>DÔLEŽITÉ - PROSÍM ČÍTAJTE<br/>(Toto upozornenie je zobrazované iba počas tejto aktualizácie)</strong><br/>Vzhľadom k oprave chyby sa zmenilo správanie aktivity databáza, konkrétne nastavení \'Required entries\' a \'Required entries before viewing settings\'. Viac informácií sa dozviete na <a href=\"http://moodle.org/mod/forum/discuss.php?d=110928\" target=\"_blank\">fóre o databázovom module</a>. Očakávané správanie týchto nastavení je vysvetlené aj na <a href=\"http://docs.moodle.org/en/Adding/editing_a_database#Required_entries\" target=\"_blank\">Moodle Docs</a>.
-<br/><br/>Táto zmena ovplyvní nasledovné databázy vo vašom systéme: (Tento zoznam si uložte a po aktualizácii skontrolujte, či sú nastavené tak, ako učitelia očakávajú.)<br/><strong style=\"color:red\">$a->text</strong><br/>';
+<br/><br/>Táto zmena ovplyvní nasledovné databázy vo vašom systéme: (Tento zoznam si uložte a po aktualizácii skontrolujte, či sú nastavené tak, ako učitelia očakávajú.)<br/><strong style=\"color:red\">$a->text</strong><br/>'; // ORPHANED
 $string['restricted'] = 'Obmedzený';
 $string['safemode'] = 'Bezpečný mód';
 $string['safemodeerror'] = 'Moodle môže mať problémy, ak je zapnutý bezpečný mód';
