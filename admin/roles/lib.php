@@ -590,15 +590,11 @@ class define_role_table_advanced extends capability_table_with_risks {
             } else {
                 $legacycap = '';
             }
-            if (!$this->role->id = create_role($this->role->name, $this->role->shortname, $this->role->description, $legacycap)) {
-                throw new moodle_exception('errorcreatingrole');
-            }
+            $this->role->id = create_role($this->role->name, $this->role->shortname, $this->role->description, $legacycap);
             $this->roleid = $this->role->id; // Needed to make the parent::save_changes(); call work.
         } else {
             // Updating role
-            if (!$DB->update_record('role', $this->role)) {
-                 throw new moodle_exception('cannotupdaterole');
-            }
+            $DB->update_record('role', $this->role);
 
             // Legacy type
             foreach($this->legacyroles as $type => $cap) {

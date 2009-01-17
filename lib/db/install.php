@@ -9,7 +9,7 @@ function xmldb_main_install() {
 /// make sure system context exists
     $syscontext = get_context_instance(CONTEXT_SYSTEM);
     if ($syscontext->id != 1) {
-        throw new moodle_exception('generalexceptionmessafe', 'error', '', 'Unexpected system context id created!');
+        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Unexpected system context id created!');
     }
 
 
@@ -31,7 +31,7 @@ function xmldb_main_install() {
     $DB->insert_record('course', $newsite);
     $SITE = get_site();
     if ($SITE->id != 1) {
-        throw new moodle_exception('generalexceptionmessafe', 'error', '', 'Unexpected site course id created!');
+        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Unexpected site course id created!');
     }
 
 

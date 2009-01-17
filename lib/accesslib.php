@@ -2594,15 +2594,13 @@ function get_local_override($roleid, $contextid, $capability) {
  * @param shortname - role short name
  * @param description - role description
  * @param legacy - optional legacy capability
- * @return id or false
+ * @return id or dml_exception
  */
 function create_role($name, $shortname, $description, $legacy='') {
     global $DB;
 
     // Get the system context.
-    if (!$context = get_context_instance(CONTEXT_SYSTEM)) {
-        return false;
-    }
+    $context = get_context_instance(CONTEXT_SYSTEM);
 
     // Insert the role record.
     $role = new object();
@@ -4562,16 +4560,12 @@ function get_default_contextlevels($roletype) {
  */
 function set_role_contextlevels($roleid, array $contextlevels) {
     global $DB;
-    if (!$DB->delete_records('role_context_levels', array('roleid' => $roleid))) {
-        throw new moodle_exception('couldnotdeleterolecontextlevels', '', '', $roleid);
-    }
+    $DB->delete_records('role_context_levels', array('roleid' => $roleid));
     $rcl = new stdClass;
     $rcl->roleid = $roleid;
     foreach ($contextlevels as $level) {
         $rcl->contextlevel = $level;
-        if (!$DB->insert_record('role_context_levels', $rcl, false, true)) {
-            throw new moodle_exception('couldnotdeleterolecontextlevels', '', '', $rcl);
-        }
+        $DB->insert_record('role_context_levels', $rcl, false, true);
     }
 }
 
