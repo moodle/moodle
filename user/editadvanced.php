@@ -177,6 +177,7 @@
                 redirect("$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id");
             }            
         } else {
+            session_get_instance()->gc(); // remove stale sessions
             redirect("$CFG->wwwroot/$CFG->admin/user.php");
         }
         //never reached

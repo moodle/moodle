@@ -343,6 +343,10 @@ class auth_plugin_base {
         //override if needed
     }
 
+    function ignore_timeout_hook($userid, $userauth, $sid, $timecreated, $timemodified) {
+        return false;
+    }
+
     /**
      * Return the properly translated human-friendly title of this auth plugin
      */

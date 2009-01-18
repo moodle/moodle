@@ -413,7 +413,7 @@ class database_session extends session_stub {
             $this->database->delete_records_select('sessions', "userid IN (SELECT id FROM {user} WHERE auth $notplugins)", $params);
 
             /// now get a list of time-out candidates
-            $sql = "SELECT s.*, u.auth
+            $sql = "SELECT s.*, u.auth, u.username
                       FROM {sessions} s
                       JOIN {user} u ON u.id = s.userid
                      WHERE s.timemodified + ? < ?";
@@ -425,9 +425,11 @@ class database_session extends session_stub {
             }
             $records = $this->database->get_records_sql($sql, $params);
             foreach ($records as $record) {
-                foreach ($authplugins as $authplugin) {
-                    if ($authplugin->ignore_timeout($record->userid, $records->auth, $record->timecreated, $record->timemodified)) {
-                        continue;
+                if (!empty($record->userid) and $record->username !== 'guest') { // skips not logged in and guests
+                    foreach ($authplugins as $authplugin) {
+                        if ($authplugin->ignore_timeout_hook($record->userid, $records->auth, $record->sid, $record->timecreated, $record->timemodified)) {
+                            continue;
+                        }
                     }
                 }
                 $this->database->delete_records('sessions', array('id'=>$record->id));
@@ -481,12 +483,18 @@ class database_session extends session_stub {
         // verify timeout
         if ($record->timemodified + $CFG->sessiontimeout < time()) {
             $ignoretimeout = false;
-            $authsequence = get_enabled_auth_plugins(); // auths, in sequence
-            foreach($authsequence as $authname) {
-                $authplugin = get_auth_plugin($authname);
-                if ($authplugin->ignore_timeout($record->userid, $records->auth, $record->timecreated, $record->timemodified)) {
-                    $ignoretimeout = true;
-                    break;
+            if (!empty($record->userid)) { // skips not logged in
+                if ($user = $this->database->get_record('user', array('id'=>$record->userid))) {
+                    if ($user->username !== 'guest') {
+                        $authsequence = get_enabled_auth_plugins(); // auths, in sequence
+                        foreach($authsequence as $authname) {
+                            $authplugin = get_auth_plugin($authname);
+                            if ($authplugin->ignore_timeout_hook($user->id, $user->auth, $record->sid, $record->timecreated, $record->timemodified)) {
+                                $ignoretimeout = true;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
             if ($ignoretimeout) {
