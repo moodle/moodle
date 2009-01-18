@@ -52,7 +52,7 @@ switch ($action) {
         if ($auth == $CFG->registerauth) {
             set_config('registerauth', '');
         }
-        session_get_instance()->gc(); // remove stale sessions
+        session_gc(); // remove stale sessions
         break;
 
     case 'enable':
@@ -62,7 +62,7 @@ switch ($action) {
             $authsenabled = array_unique($authsenabled);
             set_config('auth', implode(',', $authsenabled));
         }
-        session_get_instance()->gc(); // remove stale sessions
+        session_gc(); // remove stale sessions
         break;
 
     case 'down':

@@ -87,7 +87,7 @@
 /// Session gc
 
     mtrace("Cleaning up stale sessions");
-    session_get_instance()->gc();
+    session_gc();
 
 /// Run all cron jobs for each module
 

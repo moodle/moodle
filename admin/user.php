@@ -80,7 +80,7 @@
             } else {
                 notify(get_string('deletednot', '', fullname($user, true)));
             }
-            session_get_instance()->gc(); // remove stale sessions
+            session_gc(); // remove stale sessions
         }
     } else if ($acl and confirm_sesskey()) {
         if (!has_capability('moodle/user:delete', $sitecontext)) {

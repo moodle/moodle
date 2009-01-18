@@ -10,8 +10,12 @@ function session_get_instance() {
     static $session = null;
 
     if (is_null($session)) {
+        if (empty($CFG->sessiontimeout)) {
+            $CFG->sessiontimeout = 7200;
+        }
+
         if (defined('SESSION_CUSTOM')) {
-            // this is a hook for custom session handling, webservices, etc.
+            // this is a hook for webservices, key based login, etc.
             if (defined('SESSION_CUSTOM_FILE')) {
                 require_once($CFG->dirroot.SESSION_CUSTOM_FILE);
             }
@@ -39,25 +43,11 @@ interface moodle_session {
     public function terminate_current();
 
     /**
-     * Terminates all sessions, auth hooks are not executed.
-     * Useful in ugrade scripts.
-     */
-    public function terminate_all();
-
-    /**
      * No more changes in session expected.
      * Unblocks the sesions, other scripts may start executing in parallel.
      * @return void
      */
     public function write_close();
-
-    /**
-     * Session garbage collection
-     * - verify timeout for all users
-     * - kill sessions of all deleted users
-     * - kill sessions of users with disabled plugins or 'nologin' plugin
-     */
-    public function gc();
 }
 
 /**
@@ -304,9 +294,6 @@ class legacy_file_session extends session_stub {
             ini_set('session.gc_probability', 1);
         }
 
-        if (empty($CFG->sessiontimeout)) {
-            $CFG->sessiontimeout = 7200;
-        }
         ini_set('session.gc_maxlifetime', $CFG->sessiontimeout);
 
         if (!file_exists($CFG->dataroot .'/sessions')) {
@@ -317,25 +304,6 @@ class legacy_file_session extends session_stub {
         }
         ini_set('session.save_path', $CFG->dataroot .'/sessions');
     }
-
-    /**
-     * Terminates all sessions, auth hooks are not executed.
-     * Useful in ugrade scripts.
-     */
-    public function terminate_all() {
-        // TODO
-    }
-
-    /**
-     * Session garbage collection
-     * - verify timeout for all users
-     * - kill sessions of all deleted users
-     * - kill sessions of users with disabled plugins or 'nologin' plugin
-     */
-    public function gc() {
-        // difficult/slow
-    }
-
 }
 
 /**
@@ -357,9 +325,6 @@ class database_session extends session_stub {
         // gc only from CRON - individual user timeouts now checked during each access
         ini_set('session.gc_probability', 0);
 
-        if (empty($CFG->sessiontimeout)) {
-            $CFG->sessiontimeout = 7200;
-        }
         ini_set('session.gc_maxlifetime', $CFG->sessiontimeout);
 
         $result = session_set_save_handler(array($this, 'handler_open'),
@@ -370,72 +335,6 @@ class database_session extends session_stub {
                                            array($this, 'handler_gc'));
         if (!$result) {
             print_error('dbsessionhandlerproblem', 'error');
-        }
-    }
-
-    /**
-     * Terminates all sessions, auth hooks are not executed.
-     * Useful in ugrade scripts.
-     */
-    public function terminate_all() {
-        try {
-            // do not show any warnings - might be during upgrade/installation
-            $this->database->delete_records('sessions');
-        } catch (dml_exception $ignored) {
-        }
-    }
-
-    /**
-     * Session garbage collection
-     * - verify timeout for all users
-     * - kill sessions of all deleted users
-     * - kill sessions of users with disabled plugins or 'nologin' plugin
-     */
-    public function gc() {
-        global $CFG;
-        $maxlifetime = $CFG->sessiontimeout;
-
-        if (empty($CFG->rolesactive)) {
-            return;
-        }
-
-        try {
-            /// kill all sessions of deleted users
-            $this->database->delete_records_select('sessions', "userid IN (SELECT id FROM {user} WHERE deleted <> 0)");
-
-            /// kill sessions of users with disabled plugins
-            $auth_sequence = get_enabled_auth_plugins(true);
-            $auth_sequence = array_flip($auth_sequence);
-            unset($auth_sequence['nologin']); // no login allowed
-            $auth_sequence = array_flip($auth_sequence);
-            $notplugins = null;
-            list($notplugins, $params) = $this->database->get_in_or_equal($auth_sequence, SQL_PARAMS_QM, '', false);
-            $this->database->delete_records_select('sessions', "userid IN (SELECT id FROM {user} WHERE auth $notplugins)", $params);
-
-            /// now get a list of time-out candidates
-            $sql = "SELECT s.*, u.auth, u.username
-                      FROM {sessions} s
-                      JOIN {user} u ON u.id = s.userid
-                     WHERE s.timemodified + ? < ?";
-            $params = array($maxlifetime, time());
-
-            $authplugins = array();
-            foreach($auth_sequence as $authname) {
-                $authplugins[$authname] = get_auth_plugin($authname);
-            }
-            $records = $this->database->get_records_sql($sql, $params);
-            foreach ($records as $record) {
-                if (!empty($record->userid) and $record->username !== 'guest') { // skips not logged in and guests
-                    foreach ($authplugins as $authplugin) {
-                        if ($authplugin->ignore_timeout_hook($record->userid, $records->auth, $record->sid, $record->timecreated, $record->timemodified)) {
-                            continue;
-                        }
-                    }
-                }
-                $this->database->delete_records('sessions', array('id'=>$record->id));
-            }
-        } catch (dml_exception $ex) {
-            error_log('Error gc-ing sessions');
         }
     }
 
@@ -489,7 +388,7 @@ class database_session extends session_stub {
                         $authsequence = get_enabled_auth_plugins(); // auths, in sequence
                         foreach($authsequence as $authname) {
                             $authplugin = get_auth_plugin($authname);
-                            if ($authplugin->ignore_timeout_hook($user->id, $user->auth, $record->sid, $record->timecreated, $record->timemodified)) {
+                            if ($authplugin->ignore_timeout_hook($user, $record->sid, $record->timecreated, $record->timemodified)) {
                                 $ignoretimeout = true;
                                 break;
                             }
@@ -593,7 +492,117 @@ class database_session extends session_stub {
         $this->gc();
         return true;
     }
+}
 
+/**
+ * Terminates all sessions, auth hooks are not executed.
+ * Useful in ugrade scripts.
+ */
+function session_kill_all() {
+    global $CFG, $DB;
+
+    try {
+        // do not show any warnings - might be during upgrade/installation
+        $DB->delete_records('sessions');
+    } catch (dml_exception $ignored) {
+    }
+
+    $sessiondir = "$CFG->dataroot/sessions/";
+    if (is_dir($sessiondir)) {
+        // TODO: delete all files, watch out some might be locked
+    }
+}
+
+/**
+ * Terminates one sessions, auth hooks are not executed.
+ *
+ * @param string $sid session id
+ */
+function session_kill($sid) {
+    global $CFG, $DB;
+
+    try {
+        // do not show any warnings - might be during upgrade/installation
+        $$DB->delete_records('sessions', array('sid'=>$sid));
+    } catch (dml_exception $ignored) {
+    }
+
+    $sessionfile = clean_param("$CFG->dataroot/sessions/$sid", PARAM_FILE);
+    if (file_exists($sessionfile)) {
+        // TODO: delete file, watch out might be locked
+    }
+}
+
+/**
+ * Terminates all sessions of one user, auth hooks are not executed.
+ * NOTE: This can not work for file based sessions!
+ *
+ * @param int $userid user id
+ */
+function session_kill_user($userid) {
+    global $CFG, $DB;
+
+    try {
+        // do not show any warnings - might be during upgrade/installation
+        $$DB->delete_records('sessions', array('userid'=>$userid));
+    } catch (dml_exception $ignored) {
+    }
+}
+
+/**
+ * Session garbage collection
+ * - verify timeout for all users
+ * - kill sessions of all deleted users
+ * - kill sessions of users with disabled plugins or 'nologin' plugin
+ *
+ * NOTE: this can not work when legacy file sessions used!
+ */
+function session_gc() {
+    global $CFG, $DB;
+
+    $maxlifetime = $CFG->sessiontimeout;
+
+    if (empty($CFG->rolesactive)) {
+        return;
+    }
+
+    try {
+        /// kill all sessions of deleted users
+        $DB->delete_records_select('sessions', "userid IN (SELECT id FROM {user} WHERE deleted <> 0)");
+
+        /// kill sessions of users with disabled plugins
+        $auth_sequence = get_enabled_auth_plugins(true);
+        $auth_sequence = array_flip($auth_sequence);
+        unset($auth_sequence['nologin']); // no login allowed
+        $auth_sequence = array_flip($auth_sequence);
+        $notplugins = null;
+        list($notplugins, $params) = $DB->get_in_or_equal($auth_sequence, SQL_PARAMS_QM, '', false);
+        $DB->delete_records_select('sessions', "userid IN (SELECT id FROM {user} WHERE auth $notplugins)", $params);
+
+        /// now get a list of time-out candidates
+        $sql = "SELECT u.*, s.sid, s.timecreated AS s_timecreated, s.timemodified AS s_timemodified
+                  FROM {user} u
+                  JOIN {sessions} s ON s.userid = u.id
+                 WHERE s.timemodified + ? < ? AND u.username <> 'guest'";
+        $params = array($maxlifetime, time());
+
+        $authplugins = array();
+        foreach($auth_sequence as $authname) {
+            $authplugins[$authname] = get_auth_plugin($authname);
+        }
+        $rs = $DB->get_recordset_sql($sql, $params);
+        foreach ($rs as $user) {
+            foreach ($authplugins as $authplugin) {
+                if ($authplugin->ignore_timeout_hook($user, $user->sid, $user->s_timecreated, $user->s_timemodified)) {
+                    continue;
+                }
+            }
+            $DB->delete_records('sessions', array('sid'=>$user->sid));
+        }
+        $rs->close();
+    } catch (dml_exception $ex) {
+        error_log('Error gc-ing sessions');
+    }
 }
 
 /**
@@ -688,6 +697,7 @@ function get_moodle_cookie() {
         return ($thing == 'guest') ? '': $thing;  // Ignore guest account
     }
 }
+
 
 /**
  * Setup $USER object - called during login, loginas, etc.

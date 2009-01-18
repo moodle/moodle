@@ -35,7 +35,7 @@ if ($confirm and confirm_sesskey()) {
         }
         $rs->close;
     }
-    session_get_instance()->gc(); // remove stale sessions
+    session_gc(); // remove stale sessions
     redirect($return, get_string('changessaved'));
 
 } else {

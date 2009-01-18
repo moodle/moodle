@@ -343,7 +343,16 @@ class auth_plugin_base {
         //override if needed
     }
 
-    function ignore_timeout_hook($userid, $userauth, $sid, $timecreated, $timemodified) {
+    /**
+     * Hook called before timing out of database session.
+     * This is usueful for SSO and MNET.
+     * @param object $user
+     * @param string $sid session id
+     * @param int $timecreated start of session
+     * @param int $timemodified user last seen
+     * @return bool true means do not timeout session yet
+     */
+    function ignore_timeout_hook($user, $sid, $timecreated, $timemodified) {
         return false;
     }
 
