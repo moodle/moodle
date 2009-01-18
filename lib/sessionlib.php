@@ -14,12 +14,12 @@ function session_get_instance() {
             $CFG->sessiontimeout = 7200;
         }
 
-        if (defined('SESSION_CUSTOM')) {
+        if (defined('SESSION_CUSTOM_CLASS')) {
             // this is a hook for webservices, key based login, etc.
             if (defined('SESSION_CUSTOM_FILE')) {
                 require_once($CFG->dirroot.SESSION_CUSTOM_FILE);
             }
-            $session_class = SESSION_CUSTOM;
+            $session_class = SESSION_CUSTOM_CLASS;
             $session = new $session_class();
 
         } else if ((!isset($CFG->dbsessions) or $CFG->dbsessions) and $DB->session_lock_supported()) {
