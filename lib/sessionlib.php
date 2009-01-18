@@ -58,7 +58,10 @@ abstract class session_stub implements moodle_session {
         global $CFG;
 
         if (!defined('NO_MOODLE_COOKIES')) {
-            if (CLI_SCRIPT) {
+            if (empty($CFG->version) or $CFG->version < 2009011600) {
+                // no session before sessions table gets greated
+                define('NO_MOODLE_COOKIES', true);
+            } else if (CLI_SCRIPT) {
                 // CLI scripts can not have session
                 define('NO_MOODLE_COOKIES', true);
             } else {
@@ -89,10 +92,10 @@ abstract class session_stub implements moodle_session {
 
             session_name('MoodleSession'.$CFG->sessioncookie);
             session_set_cookie_params(0, $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $CFG->cookiesecure, $CFG->cookiehttponly);
-            @session_start();
+            session_start();
             if (!isset($_SESSION['SESSION'])) {
                 $_SESSION['SESSION'] = new object();
-                if (!$newsession and !empty($CFG->rolesactive)) {
+                if (!$newsession) {
                     $_SESSION['SESSION']->has_timed_out = true;
                 }
             }
@@ -116,6 +119,7 @@ abstract class session_stub implements moodle_session {
             return;
         }
 
+        // Initialize variable to pass-by-reference to headers_sent(&$file, &$line)
         $_SESSION = array();
         $_SESSION['SESSION'] = new object();
         $_SESSION['USER']    = new object();
@@ -123,22 +127,25 @@ abstract class session_stub implements moodle_session {
         if (isset($CFG->mnet_localhost_id)) {
             $_SESSION['USER']->mnethostid = $CFG->mnet_localhost_id;
         }
-
         $SESSION = $_SESSION['SESSION']; // this may not work properly
         $USER    =  $_SESSION['USER'];   // this may not work properly
 
-        // Initialize variable to pass-by-reference to headers_sent(&$file, &$line)
         $file = null;
         $line = null;
         if (headers_sent($file, $line)) {
             error_log('Can not terminate session properly - headers were already sent in file: '.$file.' on line '.$line);
         }
 
-        // now let's try to get a new session id
-        session_regenerate_id();
+        $oldid = session_id();
 
-        // close the session
+        // now let's try to get a new session id and delete the old one
+        session_regenerate_id();
+        // write the new session
         session_write_close();
+
+        // make sure the old session gets killed,
+        // the optional param in session_regenerate_id() does not seem to work consistently
+        session_kill($oldid);
     }
 
     /**
@@ -275,7 +282,6 @@ abstract class session_stub implements moodle_session {
      * Inits session storage.
      */
     protected abstract function init_session_storage();
-
 }
 
 /**
@@ -373,9 +379,7 @@ class database_session extends session_stub {
                 $this->database->get_session_lock($record->id);
             }
         } catch (dml_exception $ex) {
-            if (!empty($CFG->rolesactive)) {
-                error_log('Can not read or insert database sessions');
-            }
+            error_log('Can not read or insert database sessions');
             return '';
         }
 
@@ -489,9 +493,18 @@ class database_session extends session_stub {
     }
 
     public function handler_gc($ignored_maxlifetime) {
-        $this->gc();
+        session_gc();
         return true;
     }
+}
+
+/**
+ * returns true if legacy session used.
+ * @return bool true if legacy(==file) based session used
+ */
+function session_is_legacy() {
+    global $CFG, $DB;
+    return ((isset($CFG->dbsessions) and !$CFG->dbsessions) or !$DB->session_lock_supported());
 }
 
 /**
@@ -501,15 +514,46 @@ class database_session extends session_stub {
 function session_kill_all() {
     global $CFG, $DB;
 
+    // always check db table - custom session classes use sessions table
     try {
-        // do not show any warnings - might be during upgrade/installation
         $DB->delete_records('sessions');
     } catch (dml_exception $ignored) {
+        // do not show any warnings - might be during upgrade/installation
     }
 
-    $sessiondir = "$CFG->dataroot/sessions/";
-    if (is_dir($sessiondir)) {
-        // TODO: delete all files, watch out some might be locked
+    if (session_is_legacy()) {
+        $sessiondir = "$CFG->dataroot/sessions";
+        if (is_dir($sessiondir)) {
+            foreach (glob("$sessiondir/sess_*") as $filename) {
+                @unlink($filename);
+            }
+        }
+    }
+}
+
+/**
+ * Mark session as accessed, prevents timeouts.
+ * @param string $sid
+ */
+function session_touch($sid) {
+    global $CFG, $DB;
+
+    // always check db table - custom session classes use sessions table
+    try {
+        $sql = "UPDATE {sessions} SET timemodified=? WHERE sid=?";
+        $params = array(time(), $sid);
+        $DB->execute($sql, $params);
+    } catch (dml_exception $ignored) {
+        // do not show any warnings - might be during upgrade/installation
+    }
+
+    if (session_is_legacy()) {
+        $sid = clean_param($sid, PARAM_FILE);
+        $sessionfile = clean_param("$CFG->dataroot/sessions/sess_$sid", PARAM_FILE);
+        if (file_exists($sessionfile)) {
+            // if the file is locked it means that it will be updated anyway
+            @touch($sessionfile);
+        }
     }
 }
 
@@ -521,15 +565,19 @@ function session_kill_all() {
 function session_kill($sid) {
     global $CFG, $DB;
 
+    // always check db table - custom session classes use sessions table
     try {
-        // do not show any warnings - might be during upgrade/installation
-        $$DB->delete_records('sessions', array('sid'=>$sid));
+        $DB->delete_records('sessions', array('sid'=>$sid));
     } catch (dml_exception $ignored) {
+        // do not show any warnings - might be during upgrade/installation
     }
 
-    $sessionfile = clean_param("$CFG->dataroot/sessions/$sid", PARAM_FILE);
-    if (file_exists($sessionfile)) {
-        // TODO: delete file, watch out might be locked
+    if (session_is_legacy()) {
+        $sid = clean_param($sid, PARAM_FILE);
+        $sessionfile = "$CFG->dataroot/sessions/sess_$sid";
+        if (file_exists($sessionfile)) {
+            @unlink($sessionfile);
+        }
     }
 }
 
@@ -542,10 +590,15 @@ function session_kill($sid) {
 function session_kill_user($userid) {
     global $CFG, $DB;
 
+    // always check db table - custom session classes use sessions table
     try {
-        // do not show any warnings - might be during upgrade/installation
-        $$DB->delete_records('sessions', array('userid'=>$userid));
+        $DB->delete_records('sessions', array('userid'=>$userid));
     } catch (dml_exception $ignored) {
+        // do not show any warnings - might be during upgrade/installation
+    }
+
+    if (session_is_legacy()) {
+        // log error?
     }
 }
 
@@ -561,10 +614,6 @@ function session_gc() {
     global $CFG, $DB;
 
     $maxlifetime = $CFG->sessiontimeout;
-
-    if (empty($CFG->rolesactive)) {
-        return;
-    }
 
     try {
         /// kill all sessions of deleted users
