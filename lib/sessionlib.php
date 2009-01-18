@@ -426,7 +426,7 @@ class database_session extends session_stub {
             }
         }
 
-        if ($record->sessdatahash !== null) {
+        if ($record->sessdata !== null) {
             if (md5($record->sessdata) !== $record->sessdatahash) {
                 // probably this is caused by misconfigured mysql - the allowed request size might be too small
                 try {
