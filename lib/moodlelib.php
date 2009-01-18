@@ -2170,7 +2170,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
  * @uses $USER
  */
 function require_logout() {
-    global $USER, $CFG, $SESSION;
+    global $USER;
 
     if (isloggedin()) {
         add_to_log(SITEID, "user", "logout", "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);

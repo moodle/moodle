@@ -37,7 +37,7 @@
     }
 
 /// extra safety
-    @session_get_instance()->write_close();
+    session_get_instance()->write_close();
 
 /// check if execution allowed
     if (isset($_SERVER['REMOTE_ADDR'])) { // if the script is accessed via the web.
@@ -82,6 +82,12 @@
     $timenow  = time();
 
     mtrace("Server Time: ".date('r',$timenow)."\n\n");
+
+
+/// Session gc
+
+    mtrace("Cleaning up stale sessions");
+    session_get_instance()->gc();
 
 /// Run all cron jobs for each module
 
@@ -547,10 +553,6 @@
         mtrace('done.');
     }
 
-
-    //Unset session variables and destroy it
-    @session_unset();
-    @session_destroy();
 
     mtrace("Cron script completed correctly");
 

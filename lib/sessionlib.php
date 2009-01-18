@@ -39,7 +39,8 @@ interface moodle_session {
     public function terminate_current();
 
     /**
-     * Terminates all sessions.
+     * Terminates all sessions, auth hooks are not executed.
+     * Useful in ugrade scripts.
      */
     public function terminate_all();
 
@@ -50,6 +51,13 @@ interface moodle_session {
      */
     public function write_close();
 
+    /**
+     * Session garbage collection
+     * - verify timeout for all users
+     * - kill sessions of all deleted users
+     * - kill sessions of users with disabled plugins or 'nologin' plugin
+     */
+    public function gc();
 }
 
 /**
@@ -157,7 +165,8 @@ abstract class session_stub implements moodle_session {
     }
 
     /**
-     * Initialise $USER object, handles google access.
+     * Initialise $USER object, handles google access
+     * and sets up not logged in user properly.
      *
      * @return void
      */
@@ -309,9 +318,24 @@ class legacy_file_session extends session_stub {
         ini_set('session.save_path', $CFG->dataroot .'/sessions');
     }
 
+    /**
+     * Terminates all sessions, auth hooks are not executed.
+     * Useful in ugrade scripts.
+     */
     public function terminate_all() {
         // TODO
     }
+
+    /**
+     * Session garbage collection
+     * - verify timeout for all users
+     * - kill sessions of all deleted users
+     * - kill sessions of users with disabled plugins or 'nologin' plugin
+     */
+    public function gc() {
+        // difficult/slow
+    }
+
 }
 
 /**
@@ -321,11 +345,17 @@ class database_session extends session_stub {
     protected $record   = null;
     protected $database = null;
 
+    public function __construct() {
+        global $DB;
+        $this->database = $DB;
+        parent::__construct();
+    }
+
     protected function init_session_storage() {
         global $CFG;
 
-        // ini_get('session.gc_probability') == 0 means we rely on cron cleanup only
-        // TODO: implement cron db session cleanup
+        // gc only from CRON - individual user timeouts now checked during each access
+        ini_set('session.gc_probability', 0);
 
         if (empty($CFG->sessiontimeout)) {
             $CFG->sessiontimeout = 7200;
@@ -343,19 +373,71 @@ class database_session extends session_stub {
         }
     }
 
+    /**
+     * Terminates all sessions, auth hooks are not executed.
+     * Useful in ugrade scripts.
+     */
     public function terminate_all() {
         try {
             // do not show any warnings - might be during upgrade/installation
             $this->database->delete_records('sessions');
         } catch (dml_exception $ignored) {
-            
+        }
+    }
+
+    /**
+     * Session garbage collection
+     * - verify timeout for all users
+     * - kill sessions of all deleted users
+     * - kill sessions of users with disabled plugins or 'nologin' plugin
+     */
+    public function gc() {
+        global $CFG;
+        $maxlifetime = $CFG->sessiontimeout;
+
+        if (empty($CFG->rolesactive)) {
+            return;
+        }
+
+        try {
+            /// kill all sessions of deleted users
+            $this->database->delete_records_select('sessions', "userid IN (SELECT id FROM {user} WHERE deleted <> 0)");
+
+            /// kill sessions of users with disabled plugins
+            $auth_sequence = get_enabled_auth_plugins(true);
+            $auth_sequence = array_flip($auth_sequence);
+            unset($auth_sequence['nologin']); // no login allowed
+            $auth_sequence = array_flip($auth_sequence);
+            $notplugins = null;
+            list($notplugins, $params) = $this->database->get_in_or_equal($auth_sequence, SQL_PARAMS_QM, '', false);
+            $this->database->delete_records_select('sessions', "userid IN (SELECT id FROM {user} WHERE auth $notplugins)", $params);
+
+            /// now get a list of time-out candidates
+            $sql = "SELECT s.*, u.auth
+                      FROM {sessions} s
+                      JOIN {user} u ON u.id = s.userid
+                     WHERE s.timemodified + ? < ?";
+            $params = array($maxlifetime, time());
+
+            $authplugins = array();
+            foreach($auth_sequence as $authname) {
+                $authplugins[$authname] = get_auth_plugin($authname);
+            }
+            $records = $this->database->get_records_sql($sql, $params);
+            foreach ($records as $record) {
+                foreach ($authplugins as $authplugin) {
+                    if ($authplugin->ignore_timeout($record->userid, $records->auth, $record->timecreated, $record->timemodified)) {
+                        continue;
+                    }
+                }
+                $this->database->delete_records('sessions', array('id'=>$record->id));
+            }
+        } catch (dml_exception $ex) {
+            error_log('Error gc-ing sessions');
         }
     }
 
     public function handler_open($save_path, $session_name) {
-        global $DB;
-
-        $this->database = $DB;
         return true;
     }
 
@@ -375,7 +457,7 @@ class database_session extends session_stub {
         try {
             if ($record = $this->database->get_record('sessions', array('sid'=>$sid))) {
                 $this->database->get_session_lock($record->id);
-                
+
             } else {
                 $record = new object();
                 $record->state        = 0;
@@ -398,18 +480,38 @@ class database_session extends session_stub {
 
         // verify timeout
         if ($record->timemodified + $CFG->sessiontimeout < time()) {
-            // TODO: implement auth plugin timeout hook (see gc)
-            $record->state        = 0;
-            $record->sessdata     = null;
-            $record->sessdatahash = null;
-            $record->userid       = 0;
-            $record->timecreated  = $record->timemodified = time();
-            $record->firstip      = $record->lastip = getremoteaddr();
-            try {
-                $this->database->update_record('sessions', $record);
-            } catch (dml_exception $ex) {
-                error_log('Can not time out database session');
-                return '';
+            $ignoretimeout = false;
+            $authsequence = get_enabled_auth_plugins(); // auths, in sequence
+            foreach($authsequence as $authname) {
+                $authplugin = get_auth_plugin($authname);
+                if ($authplugin->ignore_timeout($record->userid, $records->auth, $record->timecreated, $record->timemodified)) {
+                    $ignoretimeout = true;
+                    break;
+                }
+            }
+            if ($ignoretimeout) {
+                //refresh session
+                $record->timemodified = time();
+                try {
+                    $this->database->update_record('sessions', $record);
+                } catch (dml_exception $ex) {
+                    error_log('Can not refresh database session');
+                    return '';
+                }
+            } else {
+                //time out session
+                $record->state        = 0;
+                $record->sessdata     = null;
+                $record->sessdatahash = null;
+                $record->userid       = 0;
+                $record->timecreated  = $record->timemodified = time();
+                $record->firstip      = $record->lastip = getremoteaddr();
+                try {
+                    $this->database->update_record('sessions', $record);
+                } catch (dml_exception $ex) {
+                    error_log('Can not time out database session');
+                    return '';
+                }
             }
         }
 
@@ -480,20 +582,7 @@ class database_session extends session_stub {
     }
 
     public function handler_gc($ignored_maxlifetime) {
-        global $CFG;
-        $maxlifetime = $CFG->sessiontimeout;
-
-        $select = "timemodified + :maxlifetime < :now";
-        $params = array('now'=>time(), 'maxlifetime'=>$maxlifetime);
-
-        // TODO: add auth plugin hook that would allow extending of max lifetime
-
-        try {
-            $this->database->delete_records_select('sessions', $select, $params);
-        } catch (dml_exception $ex) {
-            error_log('Can not garbage collect database sessions.');
-        }
-
+        $this->gc();
         return true;
     }
 
@@ -601,8 +690,12 @@ function get_moodle_cookie() {
  */
 function session_set_user($user) {
     $_SESSION['USER'] = $user;
-    check_enrolment_plugins($_SESSION['USER']);
-    load_all_capabilities();
+    unset($_SESSION['USER']->description); // conserve memory
+    if (!isset($_SESSION['USER']->access)) {
+        // check enrolments and load caps only once
+        check_enrolment_plugins($_SESSION['USER']);
+        load_all_capabilities();
+    }
     sesskey(); // init session key
 }
 
@@ -683,8 +776,9 @@ function cron_setup_user($user=null, $course=null) {
         /// ignore admins timezone, language and locale - use site deafult instead!
         $cronuser = get_admin();
         $cronuser->timezone = $CFG->timezone;
-        $cronuser->lang = '';
-        $cronuser->theme = '';
+        $cronuser->lang     = '';
+        $cronuser->theme    = '';
+        unset($cronuser->description);
 
         $cronsession = array();
     }
