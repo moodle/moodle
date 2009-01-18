@@ -202,11 +202,6 @@ $CFG->admin = 'admin';
 // Please note that site may be accessible via https: or https:, but not both!
 //      $CFG->sslproxy = true;
 //
-// The following setting will tell Moodle to respect your PHP session
-// settings. Use this if you want to control session configuration
-// from php.ini, httpd.conf or .htaccess files.
-//      $CFG->respectsessionsettings = true;
-//
 // This setting will cause the userdate() function not to fix %d in
 // date strings, and just let them show with a zero prefix.
 //      $CFG->nofixday = true;
