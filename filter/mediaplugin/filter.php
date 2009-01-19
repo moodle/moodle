@@ -122,7 +122,7 @@ function mediaplugin_filter_mp3_callback($link) {
 
     return $link[0].
 '<span class="mediaplugin mediaplugin_mp3" id="'.$id.'">('.get_string('mp3audio', 'mediaplugin').')</span>
-<div id="'.$div_id.'" style="display:inline"></div>
+<div id="'.$div_id.'" class="mediaplugin_mp3"></div>
 <script type="text/javascript">
 //<![CDATA[
   var FO = { movie:"'.$CFG->wwwroot.'/filter/mediaplugin/mp3player.swf?src='.$url.'",
@@ -144,7 +144,7 @@ function mediaplugin_filter_swf_callback($link) {
 
     return $link[0].
 '<span class="mediaplugin mediaplugin_swf" id="'.$id.'">('.get_string('flashanimation', 'mediaplugin').')</span>
-<div id="'.$div_id.'" style="display:inline"></div>
+<div id="'.$div_id.'" class="mediaplugin_swf"></div>
 <script type="text/javascript">
 //<![CDATA[
   var FO = { movie:"'.$url.'", width:"'.$width.'", height:"'.$height.'", majorversion:"6", build:"40",
@@ -168,7 +168,7 @@ function mediaplugin_filter_flv_callback($link) {
 
     return $link[0].
 '<span class="mediaplugin mediaplugin_flv" id="'.$id.'">('.get_string('flashvideo', 'mediaplugin').')</span>
-<div id="'.$div_id.'" style="display:inline"></div>
+<div id="'.$div_id.'" class="mediaplugin_flv"></div>
 <script type="text/javascript">
 //<![CDATA[
   var FO = { movie:"'.$CFG->wwwroot.'/filter/mediaplugin/flvplayer.swf?file='.$url.'",

@@ -822,14 +822,14 @@ table.navbar {
 /***
  *** Filters
  ***/
-span.mediaplugin {
+.mediaplugin {
   display:block;
   clear:both;
   margin-top:5px;
   margin-bottom:5px;
 }
 
-span.mediaplugin_mp3 {
+.mediaplugin_mp3, .mediaplugin_swf, .mediaplugin_flv {
   display:inline;
   clear:none;
   margin:0px;
