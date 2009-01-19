@@ -6842,10 +6842,9 @@ function random_string ($length=15) {
  * @return string $truncate - shortened string
  */
 
-function shorten_text($text, $ideal=30, $exact = false) {
+function shorten_text($text, $ideal=30, $exact = false, $ending='...') {
 
     global $CFG;
-    $ending = '...';
 
     // if the plain text is shorter than the maximum length, return the whole text
     if (strlen(preg_replace('/<.*?>/', '', $text)) <= $ideal) {

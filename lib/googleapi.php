@@ -432,14 +432,23 @@ class google_picasa {
             //hacky...
             $thumbnailinfo = $mediainfo->group->thumbnail[0]->attributes();
 
-            $files[] = array('title' => (string) $mediainfo->group->title,
+            // Derive the nicest file name we can
+            if (!empty($mediainfo->group->description)) {
+                $title = shorten_text((string)$mediainfo->group->description, 20, false, '');
+                $title = clean_filename($title).'.jpg';
+            } else {
+                $title = (string)$mediainfo->group->title;
+            }
+
+            $files[] = array(
+                'title' => $title,
                 'date'  => userdate($gphoto->timestamp),
                 'size' => (int) $gphoto->size,
                 'path' => $gphoto->albumid.'/'.$gphoto->id,
                 'thumbnail' => (string) $thumbnailinfo['url'],
                 'thumbnail_width' => 72,  // 72 is the native maximum dimension
                 'thumbnail_height' => 72,
-                'source' => (string) $fullinfo['url'],
+                'source' => (string) $fullinfo['url']
             );
         }
 
