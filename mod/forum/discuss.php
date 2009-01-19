@@ -70,6 +70,9 @@
             error('Forum not visible', $return);
         }
 
+        require_capability('mod/forum:startdiscussion',
+            get_context_instance(CONTEXT_MODULE,$cmto->id));
+
         if (!forum_move_attachments($discussion, $forumto->id)) {
             notify("Errors occurred while moving attachment directories - check your file permissions");
         }
@@ -185,7 +188,8 @@
             $section = -1;
             $forummenu = array();
             foreach ($modinfo->instances['forum'] as $forumcm) {
-                if (!$forumcm->uservisible) {
+                if (!$forumcm->uservisible || !has_capability('mod/forum:startdiscussion',
+                    get_context_instance(CONTEXT_MODULE,$forumcm->id))) {
                     continue;
                 }
 
