@@ -20,7 +20,7 @@ function repository_get_yui() {
         'element/element-beta-min.js',
         'treeview/treeview-min.js',
         'dragdrop/dragdrop-min.js',
-        'container/container.js',
+        'container/container-min.js',
         'resize/resize-min.js',
         'layout/layout-min.js',
         'connection/connection-min.js',
@@ -29,7 +29,7 @@ function repository_get_yui() {
         'selector/selector-beta-min.js'
         );
     foreach ($jslist as $js) {
-        readfile($CFG->httpswwwroot.'/lib/yui/'.$js);
+        readfile($CFG->dirroot.'/lib/yui/'.$js);
     }
     exit();
 }
