@@ -232,7 +232,9 @@
 
         case 'eachuser':
             if (!empty($forum->intro)) {
-                print_box(format_text($forum->intro), 'generalbox', 'intro');
+                $options = new stdclass;
+                $options->para = false;
+                print_box(format_text($forum->intro, FORMAT_MOODLE, $options), 'generalbox', 'intro');
             }
             echo '<p class="mdl-align">';
             if (forum_user_can_post_discussion($forum, null, -1, $cm)) {
@@ -258,7 +260,9 @@
 
         default:
             if (!empty($forum->intro)) {
-                print_box(format_text($forum->intro), 'generalbox', 'intro');
+                $options = new stdclass;
+                $options->para = false;
+                print_box(format_text($forum->intro, FORMAT_MOODLE, $options), 'generalbox', 'intro');
             }
             echo '<br />';
             if (!empty($showall)) {
