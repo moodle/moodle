@@ -4,6 +4,35 @@
 //       Don't modify this file unless you know how it works             //
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
+
+require_once(dirname(dirname(__FILE__)).'/config.php');
+$yui     = optional_param('yui', 0, PARAM_RAW);              // page or path
+if (!empty($yui)) {
+    repository_get_yui();
+}
+function repository_get_yui() {
+    global $CFG;
+    header('Expires: '.gmdate('D, d M Y H:i:s', time()+60*24*1000).'GMT');
+    header('cache-control: public');
+    header('Pragma: ');
+    $jslist = array(
+        'yahoo-dom-event/yahoo-dom-event.js',
+        'element/element-beta-min.js',
+        'treeview/treeview-min.js',
+        'dragdrop/dragdrop-min.js',
+        'container/container.js',
+        'resize/resize-min.js',
+        'layout/layout-min.js',
+        'connection/connection-min.js',
+        'json/json-min.js',
+        'button/button-min.js',
+        'selector/selector-beta-min.js'
+        );
+    foreach ($jslist as $js) {
+        readfile($CFG->httpswwwroot.'/lib/yui/'.$js);
+    }
+    exit();
+}
 /**
  * Return javascript to create file picker to browse repositories
  * @global object $CFG
@@ -103,19 +132,7 @@ function repository_get_client($context, $accepted_filetypes = '*', $returnvalue
 <![endif]-->
 EOD;
 
-        $js = <<<EOD
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/yahoo-dom-event/yahoo-dom-event.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/element/element-beta-min.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/treeview/treeview-min.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/dragdrop/dragdrop-min.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/container/container.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/resize/resize-min.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/layout/layout-min.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/connection/connection-min.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/json/json-min.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/button/button-min.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/selector/selector-beta-min.js"></script>
-EOD;
+        $js = '<script type="text/javascript" src="'.$CFG->httpswwwroot.'/repository/javascript.php?yui=1"></script>';
         $CFG->repo_yui_loaded = true;
     } else {
         $js = '';
@@ -496,19 +513,21 @@ _client.print_footer = function() {
         }
     }
     // weather we use cache for this instance, this button will reload listing anyway
-    var ccache = document.createElement('A');
-    ccache.href = '###';
-    ccache.innerHTML = '<img src="$CFG->pixpath/a/refresh.png" /> $strrefresh';
-    oDiv.appendChild(ccache);
-    ccache.onclick = function() {
-        var params = [];
-        params['env']=_client.env;
-        params['sesskey']='$sesskey';
-        params['ctx_id']=$context->id;
-        params['repo_id']=repository_client_$suffix.repositoryid;
-        _client.loading('load');
-        var trans = YAHOO.util.Connect.asyncRequest('POST',
-                '$CFG->httpswwwroot/repository/ws.php?action=ccache', repository_client_$suffix.req_cb, _client.postdata(params));
+    if(!_client.ds.nofresh) {
+        var ccache = document.createElement('A');
+        ccache.href = '###';
+        ccache.innerHTML = '<img src="$CFG->pixpath/a/refresh.png" /> $strrefresh';
+        oDiv.appendChild(ccache);
+        ccache.onclick = function() {
+            var params = [];
+            params['env']=_client.env;
+            params['sesskey']='$sesskey';
+            params['ctx_id']=$context->id;
+            params['repo_id']=repository_client_$suffix.repositoryid;
+            _client.loading('load');
+            var trans = YAHOO.util.Connect.asyncRequest('POST',
+                    '$CFG->httpswwwroot/repository/ws.php?action=ccache', repository_client_$suffix.req_cb, _client.postdata(params));
+        }
     }
     if(_client.ds.manage) {
         var mgr = document.createElement('A');
