@@ -401,8 +401,8 @@ class google_picasa {
                 'size'  => (int) $gphoto->bytesUsed,
                 'path'  => (string) $gphoto->id,
                 'thumbnail' => (string) $thumbnailinfo['url'],
-                'thumbnail_width' => (int) $thumbnailinfo['width'],
-                'thumbnail_height' => (int) $thumbnailinfo['height'],
+                'thumbnail_width' => 160,  // 160 is the native maximum dimension
+                'thumbnail_height' => 160,
                 'children' => array(),
             );
 
@@ -437,8 +437,8 @@ class google_picasa {
                 'size' => (int) $gphoto->size,
                 'path' => $gphoto->albumid.'/'.$gphoto->id,
                 'thumbnail' => (string) $thumbnailinfo['url'],
-                'thumbnail_width' => (int) $thumbnailinfo['width'],
-                'thumbnail_height' => (int) $thumbnailinfo['height'],
+                'thumbnail_width' => 72,  // 72 is the native maximum dimension
+                'thumbnail_height' => 72,
                 'source' => (string) $fullinfo['url'],
             );
         }
