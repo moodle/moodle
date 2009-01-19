@@ -191,6 +191,7 @@ $string['dbdriverproblem'] = '<p>Error: database driver problem detected</p>
 $string['dbupdatefailed'] = 'Database update failed';
 $string['dbsessionbroken'] = 'Serious database session problem detected.<br /><br />Please notify server administrator.';
 $string['dbsessionhandlerproblem'] = 'Setting up of database session failed.<br /><br />Please notify server administrator.';
+$string['dbsessionmysqlpacketsize'] = 'Serious session error detected.<br /><br />Please notify administrator, this problem is most probably caused by small value in max_packet_size MySQL setting.';
 $string['ddlexecuteerror'] = 'DDL sql execution error';
 $string['ddlfieldalreadyexists'] = 'Field \"$a\" does not exist';
 $string['ddlfieldnotexist'] = 'Field \"$a->fieldname\" does not exist in table \"$a->tablename\"';

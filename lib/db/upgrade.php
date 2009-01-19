@@ -1323,7 +1323,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2009011303);
     }
 
-    if ($result && $oldversion < 2009011600) {
+    if ($result && $oldversion < 2009011900) {
 
     /// Define table sessions2 to be dropped
         $table = new xmldb_table('sessions2');
@@ -1350,7 +1350,6 @@ function xmldb_main_upgrade($oldversion) {
         $table->add_field('sid', XMLDB_TYPE_CHAR, '128', null, XMLDB_NOTNULL, null, null, null, null);
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
         $table->add_field('sessdata', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
-        $table->add_field('sessdatahash', XMLDB_TYPE_CHAR, '40', null, null, null, null, null, null);
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
         $table->add_field('firstip', XMLDB_TYPE_CHAR, '45', null, null, null, null, null, null);
@@ -1370,7 +1369,7 @@ function xmldb_main_upgrade($oldversion) {
         $dbman->create_table($table);
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009011600);
+        upgrade_main_savepoint($result, 2009011900);
     }
 
 

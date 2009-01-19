@@ -60,7 +60,7 @@ abstract class session_stub implements moodle_session {
         global $CFG;
 
         if (!defined('NO_MOODLE_COOKIES')) {
-            if (empty($CFG->version) or $CFG->version < 2009011600) {
+            if (empty($CFG->version) or $CFG->version < 2009011900) {
                 // no session before sessions table gets greated
                 define('NO_MOODLE_COOKIES', true);
             } else if (CLI_SCRIPT) {
@@ -322,6 +322,15 @@ class database_session extends session_stub {
         global $DB;
         $this->database = $DB;
         parent::__construct();
+
+        if (!empty($this->record->state)) {
+            // something is very wrong
+            session_kill($this->record->sid);
+
+            if ($this->record->state == 9) {
+                print_error('dbsessionmysqlpacketsize', 'error');
+            }
+        }
     }
 
     protected function init_session_storage() {
@@ -372,7 +381,6 @@ class database_session extends session_stub {
                 $record->state        = 0;
                 $record->sid          = $sid;
                 $record->sessdata     = null;
-                $record->sessdatahash = null;
                 $record->userid       = 0;
                 $record->timecreated  = $record->timemodified = time();
                 $record->firstip      = $record->lastip = getremoteaddr();
@@ -415,7 +423,6 @@ class database_session extends session_stub {
                 //time out session
                 $record->state        = 0;
                 $record->sessdata     = null;
-                $record->sessdatahash = null;
                 $record->userid       = 0;
                 $record->timecreated  = $record->timemodified = time();
                 $record->firstip      = $record->lastip = getremoteaddr();
@@ -428,20 +435,7 @@ class database_session extends session_stub {
             }
         }
 
-        if ($record->sessdata !== null) {
-            if (md5($record->sessdata) !== $record->sessdatahash) {
-                // probably this is caused by misconfigured mysql - the allowed request size might be too small
-                try {
-                    $this->database->delete_records('sessions', array('sid'=>$record->sid));
-                } catch (dml_exception $ignored) {
-                }
-                print_error('dbsessionbroken', 'error');
-            }
-
-            $data = base64_decode($record->sessdata);
-        } else {
-            $data = '';
-        }
+        $data = is_null($record->sessdata) ? '' : base64_decode($record->sessdata);
 
         unset($record->sessdata); // conserve memory
         $this->record = $record;
@@ -452,36 +446,55 @@ class database_session extends session_stub {
     public function handler_write($sid, $session_data) {
         global $USER;
 
-        try {
-            if (isset($this->record->id)) {
-                $record->sid                = $sid;                         // might be regenerating sid
-                $this->record->sessdata     = base64_encode($session_data); // there might be some binary mess :-(
-                $this->record->sessdatahash = md5($this->record->sessdata);
-                $this->record->userid       = empty($USER->realuser) ? $USER->id : $USER->realuser;
-                $this->record->timemodified = time();
-                $this->record->lastip       = getremoteaddr();
+        $userid = 0;
+        if (!empty($USER->realuser)) {
+            $userid = $USER->realuser;
+        } else if (!empty($USER->id)) {
+            $userid = $USER->id;
+        }
 
-                // TODO: verify session changed before doing update
+        if (isset($this->record->id)) {
+            $record->state              = 0;
+            $record->sid                = $sid;                         // might be regenerating sid
+            $this->record->sessdata     = base64_encode($session_data); // there might be some binary mess :-(
+            $this->record->userid       = $userid;
+            $this->record->timemodified = time();
+            $this->record->lastip       = getremoteaddr();
 
+            // TODO: verify session changed before doing update
+
+            try {
                 $this->database->update_record_raw('sessions', $this->record);
+            } catch (dml_exception $ex) {
+                if ($this->database->get_dbfamily() === 'mysql') {
+                    try {
+                        $this->database->set_field('sessions', 'state', 9, array('id'=>$this->record->id));
+                    } catch (Exception $ignored) {
 
-            } else {
-                // session already destroyed
-                $record = new object();
-                $record->state        = 0;
-                $record->sid          = $sid;
-                $record->sessdata     = base64_encode($session_data); // there might be some binary mess :-(
-                $record->sessdatahash = md5($record->sessdata);
-                $record->userid       = empty($USER->realuser) ? $USER->id : $USER->realuser;
-                $record->timecreated  = $record->timemodified = time();
-                $record->firstip      = $record->lastip = getremoteaddr();
-                $record->id           = $this->database->insert_record_raw('sessions', $record);
-                $this->record = $record;
-
-                $this->database->get_session_lock($this->record->id);
+                    }
+                    error_log('Can not write session - please verify max_packet_size is at least 4MB');
+                } else {
+                    error_log('Can not write session');
+                }
             }
-        } catch (dml_exception $ex) {
-            error_log('Can not write session');
+
+        } else {
+            // session already destroyed
+            $record = new object();
+            $record->state        = 0;
+            $record->sid          = $sid;
+            $record->sessdata     = base64_encode($session_data); // there might be some binary mess :-(
+            $record->userid       = $userid;
+            $record->timecreated  = $record->timemodified = time();
+            $record->firstip      = $record->lastip = getremoteaddr();
+            $record->id           = $this->database->insert_record_raw('sessions', $record);
+            $this->record = $record;
+
+            try {
+                $this->database->get_session_lock($this->record->id);
+            } catch (dml_exception $ex) {
+                error_log('Can not write new session');
+            }
         }
 
         return true;

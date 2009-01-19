@@ -47,7 +47,7 @@
     define('BLOCK_R_MAX_WIDTH', $rmax);
 
     // check if major upgrade needed - also present in login/index.php
-    if (empty($CFG->version) or (int)$CFG->version < 2009011600) { //1.9 or older
+    if (empty($CFG->version) or (int)$CFG->version < 2009011900) { //1.9 or older
         @require_logout();
         redirect("$CFG->wwwroot/$CFG->admin/");
     }
