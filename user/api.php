@@ -27,7 +27,7 @@ final class user_api {
      *      ->lastinitial    string     ?
      * @return array|false Array of {@link $USER} objects. False is returned if an error is encountered.
      */
-    static function tmp_namedparams_get_users($sort='firstname ASC', $recordsperpage=999999, $page=0, $fields='*', $selectioncriteria=NULL) {
+    static function tmp_get_users($sort='firstname ASC', $recordsperpage=999999, $page=0, $fields='*', $selectioncriteria=NULL) {
         global $DB;
 
          ///WS: convert array into an object
@@ -74,82 +74,12 @@ final class user_api {
                 $params = $params + (array)$selectioncriteria->extraparams;
             }
         }
-
+        varlog($DB->get_records_select('user', $select, $params, $sort, $fields, $page, $recordsperpage));
+       
         return $DB->get_records_select('user', $select, $params, $sort, $fields, $page, $recordsperpage);
     }
 
-    /**
-     * Returns a subset of users
-     *
-     * @uses $CFG
-     * @param bool $get If false then only a count of the records is returned
-     * @param string $search A simple string to search for
-     * @param bool $confirmed A switch to allow/disallow unconfirmed users
-     * @param array(int) $exceptions A list of IDs to ignore, eg 2,4,5,8,9,10
-     * @param string $sort A SQL snippet for the sorting criteria to use
-     * @param string $firstinitial ?
-     * @param string $lastinitial ?
-     * @param string $page ?
-     * @param string $recordsperpage ?
-     * @param string $fields A comma separated list of fields to be returned from the chosen table.
-     * @return object|false|int  {@link $USER} records unless get is false in which case the integer count of the records found is returned. False is returned if an error is encountered.
-     */
-    static function tmp_get_users($get=true, $search='', $confirmed=false, array $exceptions=null, $sort='firstname ASC',
-                       $firstinitial='', $lastinitial='', $page='', $recordsperpage='', $fields='*', $extraselect='', array $extraparams=null) {
-        global $DB;
-
-        if ($get && !$recordsperpage) {
-            debugging('Call to get_users with $get = true no $recordsperpage limit. ' .
-                    'On large installations, this will probably cause an out of memory error. ' .
-                    'Please think again and change your code so that it does not try to ' .
-                    'load so much data into memory.', DEBUG_DEVELOPER);
-        }
-
-        $LIKE      = $DB->sql_ilike();
-        $fullname  = $DB->sql_fullname();
-
-        $select = " username <> :guest AND deleted = 0";
-        $params = array('guest'=>'guest');
-
-        if (!empty($search)){
-            $search = trim($search);
-            $select .= " AND ($fullname $LIKE :search1 OR email $LIKE :search2 OR username = :search3)";
-            $params['search1'] = "%$search%";
-            $params['search2'] = "%$search%";
-            $params['search3'] = "$search";
-        }
-
-        if ($confirmed) {
-            $select .= " AND confirmed = 1";
-        }
-
-        if ($exceptions) {
-            list($exceptions, $eparams) = $DB->get_in_or_equal($exceptions, SQL_PARAMS_NAMED, 'ex0000', false);
-            $params = $params + $eparams;
-            $except = " AND id $exceptions";
-        }
-
-        if ($firstinitial) {
-            $select .= " AND firstname $LIKE :fni";
-            $params['fni'] = "$firstinitial%";
-        }
-        if ($lastinitial) {
-            $select .= " AND lastname $LIKE :lni";
-            $params['lni'] = "$lastinitial%";
-        }
-
-        if ($extraselect) {
-            $select .= " AND $extraselect";
-            $params = $params + (array)$extraparams;
-        }
-
-        if ($get) {
-            return $DB->get_records_select('user', $select, $params, $sort, $fields, $page, $recordsperpage);
-        } else {
-            return $DB->count_records_select('user', $select, $params);
-        }
-    }
-
+   
     /**
      * Creates an User with given information. Required fields are:
      * -username

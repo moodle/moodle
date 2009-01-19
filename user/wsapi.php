@@ -25,16 +25,11 @@ final class user_ws_api extends moodle_ws_api {
        ///
        ///Note: web services param names have not importance. However 'paramorder' must match the function params order.
        ///And all web services param names defined into 'wsparams' should be included into 'paramorder' (otherwise they will not be used)
-          $this->descriptions['tmp_get_users']   = array( 'wsparams' => array('search'=> PARAM_ALPHANUM),
-                                                      'return' => array('user'=> array('id' => PARAM_RAW, 'auth' => PARAM_RAW, 'confirmed' => PARAM_RAW, 'username' => PARAM_RAW, 'idnumber' => PARAM_RAW,
-                                                                                    'firstname' => PARAM_RAW, 'lastname' => PARAM_RAW, 'email' => PARAM_RAW, 'emailstop' => PARAM_RAW,
-                                                                                    'lang' => PARAM_RAW, 'theme' => PARAM_RAW, 'timezone' => PARAM_RAW, 'mailformat' => PARAM_RAW)));
-
           $this->descriptions['tmp_create_user'] = array( 'wsparams' => array('username'=> PARAM_RAW, 'firstname'=> PARAM_RAW, 'lastname'=> PARAM_RAW, 'email'=> PARAM_RAW, 'password'=> PARAM_RAW),
                                                       'return' => array('userid' => PARAM_RAW));
 
 
-          $this->descriptions['tmp_namedparams_get_users']   = array( 'wsparams' => array('search'=> PARAM_RAW),
+          $this->descriptions['tmp_get_users']   = array( 'wsparams' => array('search'=> PARAM_ALPHANUM),
                                                       'return' => array('user' => array('id' => PARAM_RAW, 'auth' => PARAM_RAW, 'confirmed' => PARAM_RAW, 'username' => PARAM_RAW, 'idnumber' => PARAM_RAW,
                                                                                     'firstname' => PARAM_RAW, 'lastname' => PARAM_RAW, 'email' => PARAM_RAW, 'emailstop' => PARAM_RAW,
                                                                                     'lang' => PARAM_RAW, 'theme' => PARAM_RAW, 'timezone' => PARAM_RAW, 'mailformat' => PARAM_RAW)));
@@ -52,8 +47,9 @@ final class user_ws_api extends moodle_ws_api {
      * @return object user
      */
     static function tmp_get_users($search) {
-        return user_api::tmp_get_users( true, $search, false, null, 'firstname ASC','', '', '', '',
-                                        'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat');
+        $selectioncriteria = new stdClass();
+        $selectioncriteria->search = $search;
+        return user_api::tmp_get_users('firstname ASC', 999999, 0, 'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat', $selectioncriteria);
     }
 
     /**
