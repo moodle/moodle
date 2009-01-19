@@ -54,6 +54,8 @@ interface moodle_session {
  * Class handling all session and cookies related stuff.
  */
 abstract class session_stub implements moodle_session {
+    protected $justloggedout;
+
     public function __construct() {
         global $CFG;
 
@@ -95,7 +97,7 @@ abstract class session_stub implements moodle_session {
             session_start();
             if (!isset($_SESSION['SESSION'])) {
                 $_SESSION['SESSION'] = new object();
-                if (!$newsession) {
+                if (!$newsession and !$this->justloggedout) {
                     $_SESSION['SESSION']->has_timed_out = true;
                 }
             }
@@ -128,7 +130,7 @@ abstract class session_stub implements moodle_session {
             $_SESSION['USER']->mnethostid = $CFG->mnet_localhost_id;
         }
         $SESSION = $_SESSION['SESSION']; // this may not work properly
-        $USER    =  $_SESSION['USER'];   // this may not work properly
+        $USER    = $_SESSION['USER'];    // this may not work properly
 
         $file = null;
         $line = null;
@@ -136,16 +138,13 @@ abstract class session_stub implements moodle_session {
             error_log('Can not terminate session properly - headers were already sent in file: '.$file.' on line '.$line);
         }
 
-        $oldid = session_id();
-
         // now let's try to get a new session id and delete the old one
-        session_regenerate_id();
+        $this->justloggedout = true;
+        session_regenerate_id(true);
+        $this->justloggedout = false;
+
         // write the new session
         session_write_close();
-
-        // make sure the old session gets killed,
-        // the optional param in session_regenerate_id() does not seem to work consistently
-        session_kill($oldid);
     }
 
     /**
@@ -349,6 +348,9 @@ class database_session extends session_stub {
     }
 
     public function handler_close() {
+        if (isset($this->record->id)) {
+            $this->database->release_session_lock($this->record->id);
+        }
         $this->record = null;
         return true;
     }
@@ -374,7 +376,7 @@ class database_session extends session_stub {
                 $record->userid       = 0;
                 $record->timecreated  = $record->timemodified = time();
                 $record->firstip      = $record->lastip = getremoteaddr();
-                $record->id = $this->database->insert_record_raw('sessions', $record);
+                $record->id           = $this->database->insert_record_raw('sessions', $record);
 
                 $this->database->get_session_lock($record->id);
             }
@@ -450,43 +452,47 @@ class database_session extends session_stub {
     public function handler_write($sid, $session_data) {
         global $USER;
 
-        if (!$this->record) {
-            error_log('Weird error writing session');
-            return true;
-        }
-
-        $this->database->release_session_lock($this->record->id);
-
-        $this->record->sid          = $sid;                         // it might be regenerated
-        $this->record->sessdata     = base64_encode($session_data); // there might be some binary mess :-(
-        $this->record->sessdatahash = md5($this->record->sessdata);
-        $this->record->userid       = empty($USER->realuser) ? $USER->id : $USER->realuser;
-        $this->record->timemodified = time();
-        $this->record->lastip       = getremoteaddr();
-
-        // TODO: verify session changed before doing update
-
         try {
-            $this->database->update_record_raw('sessions', $this->record);
+            if (isset($this->record->id)) {
+                $record->sid                = $sid;                         // might be regenerating sid
+                $this->record->sessdata     = base64_encode($session_data); // there might be some binary mess :-(
+                $this->record->sessdatahash = md5($this->record->sessdata);
+                $this->record->userid       = empty($USER->realuser) ? $USER->id : $USER->realuser;
+                $this->record->timemodified = time();
+                $this->record->lastip       = getremoteaddr();
+
+                // TODO: verify session changed before doing update
+
+                $this->database->update_record_raw('sessions', $this->record);
+
+            } else {
+                // session already destroyed
+                $record = new object();
+                $record->state        = 0;
+                $record->sid          = $sid;
+                $record->sessdata     = base64_encode($session_data); // there might be some binary mess :-(
+                $record->sessdatahash = md5($record->sessdata);
+                $record->userid       = empty($USER->realuser) ? $USER->id : $USER->realuser;
+                $record->timecreated  = $record->timemodified = time();
+                $record->firstip      = $record->lastip = getremoteaddr();
+                $record->id           = $this->database->insert_record_raw('sessions', $record);
+                $this->record = $record;
+
+                $this->database->get_session_lock($this->record->id);
+            }
         } catch (dml_exception $ex) {
-            error_log('Can not write session to database.');
+            error_log('Can not write session');
         }
 
         return true;
     }
 
     public function handler_destroy($sid) {
-        if (!$this->record or $this->record->sid != $sid) {
-            error_log('Weird error destroying session - mismatched sid');
-            return true;
-        }
+        session_kill($sid);
 
-        $this->database->release_session_lock($this->record->id);
-
-        try {
-            $this->database->delete_records('sessions', array('sid'=>$this->record->sid));
-        } catch (dml_exception $ex) {
-            error_log('Can not destroy database session.');
+        if (isset($this->record->id) and $this->record->sid === $sid) {
+            $this->database->release_session_lock($this->record->id);
+            $this->record = null;
         }
 
         return true;
