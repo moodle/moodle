@@ -472,7 +472,7 @@ class database_session extends session_stub {
                     } catch (Exception $ignored) {
 
                     }
-                    error_log('Can not write session - please verify max_packet_size is at least 4MB');
+                    error_log('Can not write session - please verify max_allowed_packet is at least 4M!');
                 } else {
                     error_log('Can not write session');
                 }
