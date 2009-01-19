@@ -448,7 +448,8 @@ class google_picasa {
                 'thumbnail' => (string) $thumbnailinfo['url'],
                 'thumbnail_width' => 72,  // 72 is the native maximum dimension
                 'thumbnail_height' => 72,
-                'source' => (string) $fullinfo['url']
+                'source' => (string) $fullinfo['url'],
+                'url' => (string) $fullinfo['url']
             );
         }
 
