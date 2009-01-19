@@ -354,9 +354,13 @@ function message_print_search_results($frm) {
 
 
     /// search messages for keywords
-    } else if (!empty($frm->keywordssubmit) and !empty($frm->keywords)) {
+    } else if (!empty($frm->keywordssubmit)) {
         $keywordstring = clean_text(trim($frm->keywords));
-        $keywords = explode(' ', $keywordstring);
+        if ($keywordstring) {
+            $keywords = explode(' ', $keywordstring);
+        } else {
+            $keywords = array();
+        }
         $tome     = false;
         $fromme   = false;
         $courseid = 'none';
@@ -735,10 +739,11 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
     }
 
     if (empty($searchcond)) {
-        return array();
+        $searchcond = " m.fullmessage $LIKE :ss1";
+        $params['ss1'] = "%";
+    } else {
+        $searchcond = implode(" AND ", $searchcond);
     }
-
-    $searchcond = implode(" AND ", $searchcond);
 
 
     /// There are several possibilities
