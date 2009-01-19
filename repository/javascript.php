@@ -452,15 +452,15 @@ _client.print_login = function() {
             str += '<p><textarea id="'+data[k].id+'" name="'+data[k].name+'"></textarea></p>';
         }else{
             str += '<p>';
-            var lable_id = '';
+            var label_id = '';
             var field_id = '';
             var field_value = '';
             if(data[k].id) {
-                lable_id = ' for="'+data[k].id+'"';
+                label_id = ' for="'+data[k].id+'"';
                 field_id = ' id="'+data[k].id+'"';
             }
             if (data[k].label) {
-                str += '<label'+lable_id+'>'+data[k].label+'</label><br/>';
+                str += '<label'+label_id+'>'+data[k].label+'</label>&nbsp;';
             }
             if(data[k].value) {
                 field_value = ' value="'+data[k].value+'"';
@@ -572,7 +572,7 @@ _client.viewthumb = function(ds) {
         title.innerHTML += '<a href="###"><span>'+list[k].title+"</span></a>";
         if(list[k].thumbnail_width){
             el.style.width = list[k].thumbnail_width+'px';
-            title.style.width = (list[k].thumbnail_width-20)+'px';
+            title.style.width = (list[k].thumbnail_width-10)+'px';
         } else {
             el.style.width = title.style.width = '80px';
         }
