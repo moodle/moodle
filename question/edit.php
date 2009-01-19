@@ -1,22 +1,43 @@
 <?php // $Id$
+
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.org                                            //
+//                                                                       //
+// Copyright (C) 1999 onwards Martin Dougiamas and others                //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+
 /**
 * Page to edit the question bank
 *
-* TODO: add logging
-*
-* @author Martin Dougiamas and many others. This has recently been extensively
-*         rewritten by Gustav Delius and other members of the Serving Mathematics project
-*         {@link http://maths.york.ac.uk/serving_maths}
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 * @package questionbank
-*/
+*//** */
 
     require_once("../config.php");
     require_once("editlib.php");
 
     list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) = question_edit_setup('questions');
+    $questionbank = new question_bank_view();
+    $questionbank->process_actions($thispageurl, $cm);
 
-    question_showbank_actions($thispageurl, $cm);
+    // TODO log this page view.
 
     $context = $contexts->lowest();
     $streditingquestions = get_string('editquestions', "quiz");
@@ -48,12 +69,12 @@
         include('tabs.php');
     }
 
-
     echo '<table class="boxaligncenter" border="0" cellpadding="2" cellspacing="0">';
     echo '<tr><td valign="top">';
 
-    question_showbank('questions', $contexts, $thispageurl, $cm, $pagevars['qpage'], $pagevars['qperpage'], $pagevars['qsortorder'], $pagevars['qsortorderdecoded'],
-                    $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'], $pagevars['showquestiontext']);
+    $questionbank->display('questions', $contexts, $thispageurl, $cm, $pagevars['qpage'],
+            $pagevars['qperpage'], $pagevars['qsortorder'], $pagevars['qsortorderdecoded'],
+            $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'], $pagevars['showquestiontext']);
 
     echo '</td></tr>';
     echo '</table>';

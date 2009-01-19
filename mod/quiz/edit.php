@@ -1,4 +1,28 @@
 <?php // $Id$
+
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.org                                            //
+//                                                                       //
+// Copyright (C) 1999 onwards Martin Dougiamas and others                //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+
 /**
  * Page to edit quizzes
  *
@@ -19,14 +43,10 @@
  * delete       Removes a question from the quiz
  * savechanges  Saves the order and grades for questions in the quiz
  *
- * @author Martin Dougiamas and many others. This has recently been extensively
- *         rewritten by Gustav Delius and other members of the Serving Mathematics project
- *         {@link http://maths.york.ac.uk/serving_maths}. The UI and some functionality
- *         was rewritten as a part of the Quiz UI Redesign project in Summer 2008
- *         {@link http://docs.moodle.org/en/Development:Quiz_UI_redesign}.
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package quiz
- */
+ *//** */
+
 require_once("../../config.php");
 require_once($CFG->dirroot.'/mod/quiz/editlib.php');
 require_once($CFG->dirroot."/question/category_class.php");
@@ -134,6 +154,7 @@ if ($quiz_qbanktool > -1) {
 } else {
     $quiz_qbanktool = get_user_preferences("quiz_qbanktool_open",0);
 }
+$questionbank = new quiz_question_bank_view();
 
 //will be set further down in the code
 $quiz_has_attempts=false;
@@ -543,13 +564,13 @@ if ($significantchangemade) {
     redirect($thispageurl->out());
 }
 
-question_showbank_actions($thispageurl, $cm);
+$questionbank->process_actions($thispageurl, $cm);
 
 /// all commands have been dealt with, now print the page
 
 if (isset($quiz->instance) and $DB->record_exists_select('quiz_attempts',
         "quiz = ? AND preview = '0'", array($quiz->instance))){
-    $quiz_has_attempts=true;
+    $questionbank->set_quiz_has_attempts(true);
 }
 
 // Print the header.
@@ -610,14 +631,12 @@ echo '<span id="questionbank"></span>';
 echo '<div class="container">';
 echo '<div id="module" class="module">';
 echo '<div class="bd">';
-$cmoptions = new stdClass;
-$cmoptions->hasattempts=$quiz_has_attempts;
-quiz_question_showbank('editq', $contexts, $thispageurl, $cm,
+$questionbank->display('editq', $contexts, $thispageurl, $cm,
         $pagevars['qpage'],
         $pagevars['qperpage'], $pagevars['qsortorder'],
         $pagevars['qsortorderdecoded'],
         $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'],
-        $pagevars['showquestiontext'],$cmoptions);
+        $pagevars['showquestiontext']);
 echo '</div> <!-- end .bd -->';
 echo '</div> <!-- end .module -->';
 echo '</div> <!-- end .container -->';
