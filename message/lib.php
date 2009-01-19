@@ -1,5 +1,5 @@
-<?php
-/// library functions for messaging
+<?php  
+///// library functions for messaging %Id%
 
 require_once($CFG->libdir.'/eventslib.php');
 
@@ -455,7 +455,7 @@ function message_print_search_results($frm) {
                 echo '<td class="contact">';
                 message_print_user($userto, $tocontact, $toblocked);
                 echo '</td>';
-                echo '<td class="summary">'.message_get_fragment($message->message, $keywords);
+                echo '<td class="summary">'.message_get_fragment($message->fullmessage, $keywords);
                 echo '<br /><div class="link">';
                 message_history_link($message->useridto, $message->useridfrom, false,
                                      $keywordstring, 'm'.$message->id, $strcontext);
@@ -719,17 +719,17 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
         if (substr($searchterm,0,1) == "+") {
             $searchterm = substr($searchterm,1);
             $searchterm = preg_quote($searchterm, '|');
-            $searchcond[] = "m.message $REGEXP :ss$i";
+            $searchcond[] = "m.fullmessage $REGEXP :ss$i";
             $params['ss'.$i] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
 
         } else if (substr($searchterm,0,1) == "-") {
             $searchterm = substr($searchterm,1);
             $searchterm = preg_quote($searchterm, '|');
-            $searchcond[] = "m.message $NOTREGEXP :ss$i";
+            $searchcond[] = "m.fullmessage $NOTREGEXP :ss$i";
             $params['ss'.$i] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
 
         } else {
-            $searchcond[] = "m.message $NOT $LIKE :ss$i";
+            $searchcond[] = "m.fullmessage $NOT $LIKE :ss$i";
             $params['ss'.$i] = "%$searchterm%";
         }
     }
@@ -751,10 +751,10 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
     ///    c.  Messages to and from user
 
     if ($courseid == SITEID) { /// admin is searching all messages
-        $m_read   = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.message, m.timecreated
+        $m_read   = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.fullmessage, m.timecreated
                                             FROM {message_read} m
                                            WHERE $searchcond", $params);
-        $m_unread = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.message, m.timecreated
+        $m_unread = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.fullmessage, m.timecreated
                                             FROM {message} m
                                            WHERE $searchcond", $params);
 
@@ -779,10 +779,10 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
             $params['userid'] = $userid;
         }
 
-        $m_read   = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.message, m.timecreated
+        $m_read   = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.fullmessage, m.timecreated
                                             FROM {message_read} m
                                            WHERE $searchcond", $params);
-        $m_unread = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.message, m.timecreated
+        $m_unread = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.fullmessage, m.timecreated
                                             FROM {message} m
                                            WHERE $searchcond", $params);
 
@@ -933,7 +933,7 @@ function message_format_message(&$message, &$user, $format='', $keywords='', $cl
     $time = userdate($message->timecreated, $dateformat);
     $options = new object();
     $options->para = false;
-    $messagetext = format_text($message->message, $message->format, $options);
+    $messagetext = format_text($message->fullmessage, $message->fullmessageformat, $options);
     if ($keywords) {
         $messagetext = highlight($keywords, $messagetext);
     }

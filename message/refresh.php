@@ -57,11 +57,7 @@
             $options = new object();
             $options->para = false;
             $options->newlines = true;
-            if ($message->format == FORMAT_HTML){
-                $printmessage = format_text($message->fullmessagehtml, $message->format, $options, 0);                
-            } else{
-                $printmessage = format_text($message->fullmessage, $message->format, $options, 0);
-            }
+            $printmessage = format_text($message->fullmessage, $message->fullmessageformat, $options, 0);
             $printmessage = '<div class="message other"><span class="author">'.s($userfullname).'</span> '.
                 '<span class="time">['.$time.']</span>: '.
                 '<span class="content">'.$printmessage.'</span></div>';
