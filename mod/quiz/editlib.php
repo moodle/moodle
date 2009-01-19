@@ -1030,7 +1030,6 @@ class quiz_question_bank_view extends question_bank_view {
 
     /**
      * Shows the question bank editing interface.
-     * A changed copy of the function at question/editlib.php; to be refactored.
      *
      * The function also processes a number of actions:
      *
@@ -1043,7 +1042,7 @@ class quiz_question_bank_view extends question_bank_view {
      */
     function display($tabname, $contexts, $pageurl, $cm, $page, $perpage, $sortorder,
             $sortorderdecoded, $cat, $recurse, $showhidden, $showquestiontext){
-        global $COURSE,$DB;
+        global $COURSE, $DB;
 
         if (optional_param('deleteselected', false, PARAM_BOOL)){ // teacher still has to confirm
             // make a list of all the questions that are selected
@@ -1057,12 +1056,11 @@ class quiz_question_bank_view extends question_bank_view {
                     $key = $matches[1];
                     $questionlist .= $key.',';
                     question_require_capability_on($key, 'edit');
-                    if ($DB->record_exists('quiz_question_instances', array('question'=>$key))) {
+                    if ($DB->record_exists('quiz_question_instances', array('question' => $key))) {
                         $questionnames .= '* ';
                         $inuse = true;
                     }
-                    $questionnames .= $DB->get_field('question', 'name', array('id'=>$key)).
-                            '<br />';
+                    $questionnames .= $DB->get_field('question', 'name', array('id' => $key)) . '<br />';
                 }
             }
             if (!$questionlist) { // no questions were selected
@@ -1075,81 +1073,68 @@ class quiz_question_bank_view extends question_bank_view {
                 $questionnames .= '<br />'.get_string('questionsinuse', 'quiz');
             }
             notice_yesno(get_string("deletequestionscheck", "quiz", $questionnames),
-                        $pageurl->out_action(array('deleteselected'=>$questionlist,
-                                'confirm'=>md5($questionlist))),
+                        $pageurl->out_action(array('deleteselected'=>$questionlist, 'confirm'=>md5($questionlist))),
                         $pageurl->out_action());
-        }else{
-            //actual question bank
-            // starts with category selection form
-            list($categoryid, $contextid)=  explode(',', $cat);
 
-            if (!$categoryid) {
-                print_box_start('generalbox questionbank');
-                $this->display_category_form($contexts->having_one_edit_tab_cap($tabname), $pageurl, $cat, $recurse, $showhidden, $showquestiontext);
-                echo "<p style=\"text-align:center;\"><b>";
-                print_string("selectcategoryabove", "quiz");
-                echo "</b></p>";
-                print_box_end();
-                return;
-            }
-
-            if (!$category = $DB->get_record('question_categories',
-                    array('id' => $categoryid, 'contextid' => $contextid))) {
-                        print_box_start('generalbox questionbank');
-                notify('Category not found!');
-                print_box_end();
-                return;
-            }
-            $formatoptions = new stdClass;
-            $formatoptions->noclean = true;
-            $strcategory = get_string('category', 'quiz');
-            echo '<div class="categoryinfo"><div class="categorynamefieldcontainer">'.
-                    $strcategory;
-            echo ': <span class="categorynamefield">';
-            echo shorten_text(strip_tags(format_text($category->name, FORMAT_MOODLE,
-                    $formatoptions, $COURSE->id)),60);
-            echo '</span></div><div class="categoryinfofieldcontainer"><span class="categoryinfofield">';
-            echo shorten_text(strip_tags(format_text($category->info, FORMAT_MOODLE,
-                    $formatoptions, $COURSE->id)),200);
-            echo '</span></div></div>';
-
-            print_box_start('generalbox questionbank');
-
-            $this->display_category_form($contexts->having_one_edit_tab_cap($tabname),
-                    $pageurl, $cat, $recurse, $showhidden, $showquestiontext);
-            // continues with list of questions
-
-            $this->display_question_list($contexts->having_one_edit_tab_cap($tabname),
-                    $pageurl,
-                    $cat,
-                    isset($cm) ? $cm : null,
-                    $recurse,
-                    $page,
-                    $perpage,
-                    $showhidden,
-                    $sortorder,
-                    $sortorderdecoded,
-                    $showquestiontext,
-                    $contexts->having_cap('moodle/question:add'));
-
-            echo '<hr/><form method="get" action="edit.php" id="displayoptions">';
-            echo "<fieldset class='invisiblefieldset'>";
-            echo $pageurl->hidden_params_out(array('recurse', 'showhidden',
-                    'showquestiontext'));
-            $this->display_category_form_checkbox('recurse', $recurse);
-            $this->display_category_form_checkbox('showhidden', $showhidden);
-            echo '<noscript><div class="centerpara"><input type="submit" value="'.
-                    get_string('go') .'" />';
-            echo '</div></noscript></fieldset></form>';
-
-            print_box_end();
+            return;
         }
 
+        // Category selection form
+        list($categoryid, $contextid) = explode(',', $cat);
+        if (!$categoryid) {
+            print_box_start('generalbox questionbank');
+            $this->display_category_form($contexts->having_one_edit_tab_cap($tabname), $pageurl, $cat, $recurse, $showhidden, $showquestiontext);
+            echo "<p style=\"text-align:center;\"><b>";
+            print_string("selectcategoryabove", "quiz");
+            echo "</b></p>";
+            print_box_end();
+            return;
+        }
+
+        if (!$category = $DB->get_record('question_categories',
+                array('id' => $categoryid, 'contextid' => $contextid))) {
+                    print_box_start('generalbox questionbank');
+            notify('Category not found!');
+            return;
+        }
+        $formatoptions = new stdClass;
+        $formatoptions->noclean = true;
+        $strcategory = get_string('category', 'quiz');
+        echo '<div class="categoryinfo"><div class="categorynamefieldcontainer">'.
+                $strcategory;
+        echo ': <span class="categorynamefield">';
+        echo shorten_text(strip_tags(format_text($category->name, FORMAT_MOODLE,
+                $formatoptions, $COURSE->id)),60);
+        echo '</span></div><div class="categoryinfofieldcontainer"><span class="categoryinfofield">';
+        echo shorten_text(strip_tags(format_text($category->info, FORMAT_MOODLE,
+                $formatoptions, $COURSE->id)),200);
+        echo '</span></div></div>';
+
+        print_box_start('generalbox questionbank');
+
+        $this->display_category_form($contexts->having_one_edit_tab_cap($tabname),
+                $pageurl, $cat, $recurse, $showhidden, $showquestiontext);
+
+        // continues with list of questions
+        $this->display_question_list($contexts->having_one_edit_tab_cap($tabname), $pageurl, $cat, isset($cm) ? $cm : null,
+                $recurse, $page, $perpage, $showhidden, $sortorder, $sortorderdecoded, $showquestiontext,
+                $contexts->having_cap('moodle/question:add'));
+
+        echo '<hr/><form method="get" action="edit.php" id="displayoptions">';
+        echo "<fieldset class='invisiblefieldset'>";
+        echo $pageurl->hidden_params_out(array('recurse', 'showhidden',
+                'showquestiontext'));
+        $this->display_category_form_checkbox('recurse', $recurse);
+        $this->display_category_form_checkbox('showhidden', $showhidden);
+        echo '<noscript><div class="centerpara"><input type="submit" value="'.
+                get_string('go') .'" />';
+        echo '</div></noscript></fieldset></form>';
+
+        print_box_end();
     }
+
     /**
      * prints a form to choose categories
-     * A changed copy of the function at question/editlib.php; to be refactored.
-     *
      */
     function display_category_form($contexts, $pageurl, $current, $recurse=1,
             $showhidden=false, $showquestiontext=false) {
@@ -1163,14 +1148,13 @@ class quiz_question_bank_view extends question_bank_view {
         $strshow = get_string('show', 'quiz');
         $streditcats = get_string('editcategories', 'quiz');
 
-        popup_form ('edit.php?'.$pageurl->get_query_string().'&amp;category=',
+        popup_form('edit.php?'.$pageurl->get_query_string().'&amp;category=',
                 $catmenu, 'catmenu', $current, '', '', '', false, 'self',
                 $strselectcategory.":");
     }
 
     /**
     * Prints the table of questions in a category with interactions
-    * A changed copy of the function at question/editlib.php; to be refactored.
     *
     * @param object $course   The course object
     * @param int $categoryid  The id of the question category to be displayed
@@ -1186,7 +1170,11 @@ class quiz_question_bank_view extends question_bank_view {
             $sortorder='typename', $sortorderdecoded='qtype, name ASC',
             $showquestiontext = false, $addcontexts = array()) {
         global $USER, $CFG, $THEME, $COURSE, $DB;
+
         list($categoryid, $contextid)=  explode(',', $categoryandcontext);
+
+        $cmoptions = new stdClass;
+        $cmoptions->hasattempts = $this->quizhasattempts;
 
         $qtypemenu = question_type_menu();
 
@@ -1237,11 +1225,8 @@ class quiz_question_bank_view extends question_bank_view {
         } else {
             $quizid = 0;
         }
-        //create the url of the new question page to forward to. return url is given
-        //as a parameter and automatically urlencoded.
 
-
-
+        // Create the url of the new question page to forward to.
         $returnurl = $pageurl->out();
         $questionurl = new moodle_url("$CFG->wwwroot/question/question.php",
                                     array('returnurl' => $returnurl));
@@ -1258,38 +1243,34 @@ class quiz_question_bank_view extends question_bank_view {
             $questionmoveurl->param('courseid', $COURSE->id);
         }
 
-
-        $categorylist = ($recurse) ? question_categorylist($category->id) : $category->id;
-
-        // hide-feature
-        $showhidden = $showhidden ? '' : " AND hidden = '0'";
         echo '<div class="createnewquestion">';
         if ($canadd) {
-            popup_form ($questionurl->out(false, array('category' => $category->id)).
-                    '&amp;qtype=', $qtypemenu, "addquestion_$page", "", "choose", "",
+            popup_form($questionurl->out(false, array('category' => $category->id)).
+                    '&amp;qtype=', $qtypemenu, "addquestion", "", "choose", "",
                     "", false, "self", "<strong>$strcreatenewquestion</strong>");
             helpbutton("questiontypes", $strcreatenewquestion, "quiz");
-        }
-        else {
+        } else {
             print_string('nopermissionadd', 'question');
         }
         echo '</div>';
 
+        $categorylist = ($recurse) ? question_categorylist($category->id) : $category->id;
+        $categorylist_array =  explode(',', $categorylist);
 
-            $categorylist_array =  explode(',', $categorylist);
+        $showhidden = $showhidden ? '' : " AND hidden = '0'";
 
         list($usql, $params) = $DB->get_in_or_equal($categorylist_array);
         if (!$totalnumber = $DB->count_records_select('question',
                 "category $usql AND parent = '0' $showhidden", $params)) {
             echo '<div class="categoryquestionscontainer noquestionsincategory">';
-            print_string("noquestions", "quiz");
-            echo "</div>";
+            print_string('noquestions', 'quiz');
+            echo '</div>';
             return;
         }
 
         if (!$questions = $DB->get_records_select('question',
-                    "category $usql AND parent = '0' $showhidden", $params, $sortorderdecoded,
-                    '*', $page*$perpage, $perpage)) {
+                "category $usql AND parent = '0' $showhidden", $params, $sortorderdecoded,
+                '*', $page*$perpage, $perpage)) {
 
             // There are no questions on the requested page.
             $page = 0;
@@ -1298,17 +1279,16 @@ class quiz_question_bank_view extends question_bank_view {
                     '*', 0, $perpage)) {
                 // There are no questions at all
                 echo '<div class="categoryquestionscontainer noquestionsincategory">';
-                print_string("noquestions", "quiz");
-                echo "</div>";
+                print_string('noquestions', 'quiz');
+                echo '</div>';
                 return;
             }
         }
 
-
-
         echo '<div class="categorysortopotionscontainer">';
         $this->display_question_sort_options($pageurl, $sortorder);
         echo '</div>';
+
         echo '<div class="categorypagingbarcontainer">';
         print_paging_bar($totalnumber, $page, $perpage, $pageurl, 'qpage');
         echo '</div>';
@@ -1343,13 +1323,9 @@ class quiz_question_bank_view extends question_bank_view {
 
             echo "<tr>\n<td style=\"white-space:nowrap;\" $nameclass>\n";
 
-            $canuseq = question_has_capability_on($question, 'use',
-                    $question->category);
+            $canuseq = question_has_capability_on($question, 'use', $question->category);
             if (function_exists('module_specific_actions')) {
-                $cmoptions = new stdClass;
-                $cmoptions->hasattempts = $this->quizhasattempts;
-                echo module_specific_actions($pageurl, $question->id, $cm->id,
-                $canuseq, $cmoptions);
+                echo module_specific_actions($pageurl, $question->id, $cm->id, $canuseq, $cmoptions);
             }
 
             if ($caneditall || $canmoveall || $canuseall){
@@ -1358,38 +1334,33 @@ class quiz_question_bank_view extends question_bank_view {
             echo "</td>\n";
 
             echo "<td $nameclass><div>";
-            $questionstring=quiz_question_tostring($question,false,true,true);
+            $questionstring = quiz_question_tostring($question,false,true,true);
             echo "<label for=\"checkq$question->id\">";
             print_question_icon($question);
             echo " $questionstring</label>";
-
-
-
             echo "</div></td>\n";
-            echo "<td>";
-            // edit, hide, delete question, using question capabilities, not quiz capabilieies
-            if (question_has_capability_on($question, 'edit', $question->category) ||
-                    question_has_capability_on($question, 'move',
-                    $question->category)) {
-                echo "<a title=\"$stredit\" href=\"".$questionurl->out(false,
-                        array('id'=>$question->id))."\"> <img
-                        src=\"$CFG->pixpath/t/edit.gif\" alt=\"$stredit\" /></a>";
-            } elseif (question_has_capability_on($question, 'view',
-                    $question->category)){
 
-                echo "<a title=\"$strview\" href=\"".$questionurl->out(false,
-                        array('id'=>$question->id))."\"><img
-                        src=\"$CFG->pixpath/i/info.gif\" alt=\"$strview\" /></a>";
+            echo "<td>\n";
+
+            // edit, hide, delete question, using question capabilities, not quiz capabilities
+            if (question_has_capability_on($question, 'edit', $question->category) ||
+                    question_has_capability_on($question, 'move', $question->category)) {
+                echo "<a title=\"$stredit\" href=\"".$questionurl->out(false, array('id'=>$question->id))."\">
+                        <img src=\"$CFG->pixpath/t/edit.gif\" alt=\"$stredit\" /></a>";
+            } elseif (question_has_capability_on($question, 'view', $question->category)) {
+                echo "<a title=\"$strview\" href=\"".$questionurl->out(false, array('id'=>$question->id))."\">
+                        <img src=\"$CFG->pixpath/i/info.gif\" alt=\"$strview\" /></a>";
             }
+
             // preview
             if ($canuseq) {
                 $quizorcourseid = $quizid?('&amp;quizid=' . $quizid):('&amp;courseid=' .$COURSE->id);
                 link_to_popup_window('/question/preview.php?id=' . $question->id .
                         $quizorcourseid, 'questionpreview',
-                        "<img src=\"$CFG->pixpath/t/preview.gif\" class=\"iconsmall\" alt=\"$strpreview\" />",
+                        " <img src=\"$CFG->pixpath/t/preview.gif\" class=\"iconsmall\" alt=\"$strpreview\" />",
                         0, 0, $strpreview, QUESTION_PREVIEW_POPUP_OPTIONS);
             }
-            echo "</td>";
+            echo "</td>\n";
 
             echo "</tr>\n";
             if($showquestiontext){
@@ -1397,20 +1368,15 @@ class quiz_question_bank_view extends question_bank_view {
                 $formatoptions = new stdClass;
                 $formatoptions->noclean = true;
                 $formatoptions->para = false;
-                echo format_text($question->questiontext,
-                        $question->questiontextformat,
+                echo format_text($question->questiontext, $question->questiontextformat,
                         $formatoptions, $COURSE->id);
                 echo "</td></tr>\n";
             }
         }
         echo "</table></div>\n";
 
-
-
-
         echo '<div class="categorypagingbarcontainer pagingbottom">';
-        $paging = print_paging_bar($totalnumber, $page, $perpage,
-                $pageurl, 'qpage', false, true);
+        $paging = print_paging_bar($totalnumber, $page, $perpage, $pageurl, 'qpage', false, true);
         if ($totalnumber > DEFAULT_QUESTIONS_PER_PAGE) {
             if ($perpage == DEFAULT_QUESTIONS_PER_PAGE) {
                 $showall = '<a href="edit.php?'.$pageurl->get_query_string(array('qperpage'=>1000)).'">'.get_string('showall', 'moodle', $totalnumber).'</a>';
@@ -1426,6 +1392,7 @@ class quiz_question_bank_view extends question_bank_view {
         }
         echo $paging;
         echo '</div>';
+
         echo '<div class="categoryselectallcontainer">';
         if ($caneditall || $canmoveall || $canuseall){
             echo '<a href="javascript:select_all_in(\'TABLE\',null,\'categoryquestions\');">'.$strselectall.'</a> /'.
@@ -1433,22 +1400,22 @@ class quiz_question_bank_view extends question_bank_view {
             echo '<br />';
         }
         echo "</div>\n";
+
         echo '<div class="modulespecificbuttonscontainer">';
         if ($caneditall || $canmoveall || $canuseall){
             echo '<strong>&nbsp;'.get_string('withselected', 'quiz').':</strong><br />';
+
             if (function_exists('module_specific_buttons')) {
                 echo module_specific_buttons($cm->id,$cmoptions);
             }
+
             // print delete and move selected question
             if ($caneditall) {
-                echo '<input type="submit" name="deleteselected" value="'.
-                        $strdelete."\" />\n";
+                echo '<input type="submit" name="deleteselected" value="' . $strdelete . "\" />\n";
             }
+
             if (function_exists('module_specific_controls') && $canuseall) {
-                $cmoptions = new stdClass;
-                $cmoptions->hasattempts = $this->quizhasattempts;
-                $modulespecific=module_specific_controls($totalnumber, $recurse, $category,
-                        $cm->id,$cmoptions);
+                $modulespecific = module_specific_controls($totalnumber, $recurse, $category, $cm->id,$cmoptions);
                 if(!empty($modulespecific)){
                     echo "<hr />$modulespecific";
                 }
