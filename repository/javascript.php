@@ -12,9 +12,15 @@ if (!empty($yui)) {
 }
 function repository_get_yui() {
     global $CFG;
-    header('Expires: '.gmdate('D, d M Y H:i:s', time()+60*24*1000).'GMT');
-    header('cache-control: public');
-    header('Pragma: ');
+
+    $lifetime = '86400';
+
+    @header('Content-type: text/javascript'); 
+    @header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
+    @header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .'GMT');
+    @header('Cache-control: max-age='.$lifetime);
+    @header('Pragma: ');
+
     $jslist = array(
         'yahoo-dom-event/yahoo-dom-event.js',
         'element/element-beta-min.js',
@@ -29,7 +35,9 @@ function repository_get_yui() {
         'selector/selector-beta-min.js'
         );
     foreach ($jslist as $js) {
+        echo "/* Included from lib/yui/$js */\n";
         readfile($CFG->dirroot.'/lib/yui/'.$js);
+        echo "\n\n";
     }
     exit();
 }
