@@ -22,16 +22,9 @@ final class user_ws_api extends moodle_ws_api {
        ///The desciption of the web service
        ///
        ///'wsparams' and 'return' are used to described the web services to the end user (can build WSDL file from these information)
-       ///'paramorder' is used internally by developers implementing a new protocol. It contains the params of the called function in a good order and with default value
        ///
        ///Note: web services param names have not importance. However 'paramorder' must match the function params order.
        ///And all web services param names defined into 'wsparams' should be included into 'paramorder' (otherwise they will not be used)
-       ///
-       ///How to define an object/array attribut web service parameter: 'any object/array name' + ':' + 'attribut/key name'. 'attribut/key name' must match the real attribut name.
-       ///e.g: a function has a parameter that is an object with a attribut named 'username'. You will need to declare 'anyobjectname:username' into 'wsparams'.
-       ///     Then 'paramorder'=> array('anyobjectname' => array('username' => ...));
-       ///
-       ///TODO: manage object->object parameter
           $this->descriptions['tmp_get_users']   = array( 'wsparams' => array('search'=> PARAM_ALPHANUM),
                                                       'return' => array('user'=> array('id' => PARAM_RAW, 'auth' => PARAM_RAW, 'confirmed' => PARAM_RAW, 'username' => PARAM_RAW, 'idnumber' => PARAM_RAW,
                                                                                     'firstname' => PARAM_RAW, 'lastname' => PARAM_RAW, 'email' => PARAM_RAW, 'emailstop' => PARAM_RAW,
