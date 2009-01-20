@@ -11,6 +11,8 @@ $mon  = optional_param('cal_m', 0, PARAM_INT);
 $yr   = optional_param('cal_y', 0, PARAM_INT);
 if ($courseid = optional_param('course', 0, PARAM_INT)) {
     $course = $DB->get_record('course', array('id'=>$courseid)); 
+} else {
+    $course = NULL;
 }
 
 require_login();
@@ -30,7 +32,7 @@ $pagetitle = get_string('export', 'calendar');
 $navlinks = array();
 $now = usergetdate(time());
 
-if ($course->id != SITEID) {
+if (!empty($courseid) && $course->id != SITEID) {
     $navlinks[] = array('name' => $course->shortname,
                         'link' => "$CFG->wwwroot/course/view.php?id=$course->id",
                         'type' => 'misc');
