@@ -331,7 +331,7 @@ $string['releasenoteslink'] = 'このバージョンのMoodleに関する情報�
 $string['remotedownloaderror'] = 'あなたのサーバへのコンポーネントのダウンロードに失敗しました。プロクシ設定を確認してください。PHP cURL拡張モジュールの使用を強くお勧めします。<br /><br /><a href=\"$a->url\">$a->url</a>ファイルを手動でダウンロードした後、あなたのサーバの「$a->dest」にコピーおよび解凍してください。';
 $string['remotedownloadnotallowed'] = 'あなたのサーバーにコンポーネントをダウンロードすることができません (allow_url_fopen が無効)。<br /><br /><a href=\"$a->url\">$a->url</a> ファイルを手動でダウンロードして、サーバの「 $a->dest 」にコピーした後、解凍してください。';
 $string['report'] = 'レポート';
-$string['requiredentrieschanged'] = '<strong>重要 - お読みください<br/>(この警告メッセージは、このアップグレード中のみ表示されます。)</strong><br/>バグ修正のため、「必須エントリ数」および「閲覧前に必要な入力エントリ数」を使用しているデータベース活動の設定は変更されます。この変更に関する詳細は、<a href=\"http://moodle.org/mod/forum/discuss.php?d=110928\" target=\"_blank\">データベースモジュールフォーラム</a>でご覧いただけます。また、これらの設定に関する詳細は、<a href=\"http://docs.moodle.org/en/Adding/editing_a_database#Required_entries\" target=\"_blank\">でご覧いただけます。<br/><br/>この変更は、あなたのシステムの以下のデータベースに影響があります: (このリストを保存して、アップグレード後、教師が意図するよう動作するか確認してください)<br/><strong style=\"color:red\">$a->text</strong><br/>';
+$string['requiredentrieschanged'] = '<strong>重要 - お読みください<br/>(この警告メッセージは、このアップグレード中のみ表示されます。)</strong><br/>バグ修正のため、「必須エントリ数」および「閲覧前に必要な入力エントリ数」を使用しているデータベース活動の設定は変更されます。この変更に関する詳細は、<a href=\"http://moodle.org/mod/forum/discuss.php?d=110928\" target=\"_blank\">データベースモジュールフォーラム</a>でご覧いただけます。また、これらの設定に関する詳細は、<a href=\"http://docs.moodle.org/en/Adding/editing_a_database#Required_entries\" target=\"_blank\">でご覧いただけます。<br/><br/>この変更は、あなたのシステムの以下のデータベースに影響があります: (このリストを保存して、アップグレード後、教師が意図するよう動作するか確認してください)<br/><strong>$a->text</strong><br/>';
 $string['restricted'] = '使用禁止';
 $string['safemode'] = 'セーフモード';
 $string['safemodeerror'] = 'セーフモードが有効の場合、Moodleに問題が発生する場合があります。';
