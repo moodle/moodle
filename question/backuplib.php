@@ -436,7 +436,7 @@
 
     function question_insert_c_and_q_ids_for_course($coursecontext, $backup_unique_code){
         global $CFG;
-            // First, all categories from this course's context.
+        // First, all categories from this course's context.
         $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
                                    (backup_code, table_name, old_id, info)
                                SELECT '$backup_unique_code', 'question_categories', qc.id, 'course'
@@ -451,13 +451,13 @@
      */
     function question_insert_q_ids($backup_unique_code, $info){
         global $CFG;
-            //put the ids of the questions from all these categories into the db.
+        //put the ids of the questions from all these categories into the db.
         $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
                                        (backup_code, table_name, old_id, info)
                                        SELECT '$backup_unique_code', 'question', q.id, ''
                                        FROM {$CFG->prefix}question q, {$CFG->prefix}backup_ids bk
                                        WHERE q.category = bk.old_id AND bk.table_name = 'question_categories' 
-                                       AND bk.info = '$info'
+                                       AND " . sql_compare_text('bk.info') . " = '$info'
                                        AND bk.backup_code = '$backup_unique_code'", false);
         return $status;
     }
