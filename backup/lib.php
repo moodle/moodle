@@ -435,6 +435,25 @@
         upgrade_log_finish();
     }
 
+    /**
+     * Are we restoring a backup that was made on the same site that we are restoring to?
+     * This relies on some information that was only added to backup files in January 2009.
+     * For older backup files, fall back to guessing based on wwwroot. MDL-16614 explains
+     * when this guess could give the wrong answer.
+     * @return boolean true if the backup was made on the same site we are restoring to.
+     */
+    function backup_is_same_site(&$restore) {
+        global $CFG;
+        static $hashedsiteid = null;
+        if (is_null($hashedsiteid)) {
+            $hashedsiteid = md5(get_site_identifier());
+        }
+        if (!empty($restore->original_siteidentifier)) {
+            return $restore->original_siteidentifier == $hashedsiteid;
+        } else {
+            return $restore->original_wwwroot == $CFG->wwwroot;
+        }
+    }
 
     //This function is used to insert records in the backup_ids table
     //If the info field is greater than max_db_storage, then its info

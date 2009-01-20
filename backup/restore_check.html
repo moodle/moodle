@@ -291,7 +291,7 @@
     /// If restoring users and backup has mnet remote users and we are restoring to different site, forbid restore to non-admins. MDL-17009
         if ($restore->users != 2 &&                                                   /// If restoring users
             !empty($info->mnet_remoteusers) && $info->mnet_remoteusers === 'true'  && /// and backup contains remote users
-            $info->original_wwwroot !== $CFG->wwwroot) {                              /// and backup is being restored to different site
+            !backup_is_same_site($info)) {                              /// and backup is being restored to different site
 
         /// If user is admin (by 'moodle/user:create' cap), warn about conversion to local auth if missing mnet hosts and continue restore
             if (has_capability('moodle/user:create', get_context_instance(CONTEXT_SYSTEM))) {

@@ -13,6 +13,10 @@
     //Add info->original_wwwroot to $restore to be able to use it in all the restore process
     //(mainly when decoding internal links)
     $restore->original_wwwroot = $info->original_wwwroot;
+    // Copy $info->original_siteidentifier, is present, so backup_is_same_site can work.
+    if (isset($info->original_siteidentifier)) {
+        $restore->original_siteidentifier = $info->original_siteidentifier;
+    }
     //Add info->backup_version to $restore to be able to detect versions in the restore process
     //(to decide when to convert wiki texts to markdown...)
     $restore->backup_version = $info->backup_backup_version;

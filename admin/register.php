@@ -23,13 +23,7 @@
         $admin->country = $CFG->country;
     }
 
-    if (empty($CFG->siteidentifier)) {    // Unique site identification code
-        set_config('siteidentifier', random_string(32).$_SERVER['HTTP_HOST']);
-    }
-
-
 /// Print headings
-
     $stradministration = get_string("administration");
     $strregistration = get_string("registration");
     $strregistrationinfo = get_string("registrationinfo");
@@ -54,7 +48,7 @@
     echo "<!-- Together they form a key.  If any of these change between updates then the entry  -->\n";
     echo "<!-- is flagged as a new entry and will be manually checked by the list maintainer -->\n";
     echo "<input type=\"hidden\" name=\"url\" value=\"$CFG->wwwroot\" />\n";
-    echo "<input type=\"hidden\" name=\"secret\" value=\"$CFG->siteidentifier\" />\n";
+    echo "<input type=\"hidden\" name=\"secret\" value=\"" . get_site_identifier() . "\" />\n";
     echo "<input type=\"hidden\" name=\"host\" value=\"".$_SERVER["HTTP_HOST"]."\" />\n";
     echo "<input type=\"hidden\" name=\"lang\" value=\"".current_language()."\" />\n";
 

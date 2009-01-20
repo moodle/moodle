@@ -553,10 +553,8 @@
         set_config('adminblocks_initialised', 1);
     }
 
-/// Define the unique site ID code if it isn't already
-    if (empty($CFG->siteidentifier)) {    // Unique site identification code
-        set_config('siteidentifier', random_string(32).$_SERVER['HTTP_HOST']);
-    }
+/// Define the unique site ID code if it isn't already set. This getter does that as a side-effect.
+    get_site_identifier();
 
 /// Check if the guest user exists.  If not, create one.
     if (! record_exists("user", "username", "guest")) {

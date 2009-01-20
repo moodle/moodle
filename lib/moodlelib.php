@@ -3939,14 +3939,9 @@ function reset_course_userdata($data) {
 function generate_email_processing_address($modid,$modargs) {
     global $CFG;
 
-    if (empty($CFG->siteidentifier)) {    // Unique site identification code
-        set_config('siteidentifier', random_string(32));
-    }
-
     $header = $CFG->mailprefix . substr(base64_encode(pack('C',$modid)),0,2).$modargs;
-    return $header . substr(md5($header.$CFG->siteidentifier),0,16).'@'.$CFG->maildomain;
+    return $header . substr(md5($header.get_site_identifier()),0,16).'@'.$CFG->maildomain;
 }
-
 
 function moodle_process_email($modargs,$body) {
     // the first char should be an unencoded letter. We'll take this as an action
@@ -8301,6 +8296,19 @@ function is_primary_admin($userid){
     }else{
         return false;
     }
+}
+
+/**
+ * @return string $CFG->siteidentifier, first making sure it is properly initialised.
+ */
+function get_site_identifier() {
+    global $CFG;
+    // Check to see if it is missing. If so, initialise it.
+    if (empty($CFG->siteidentifier)) {
+        set_config('siteidentifier', random_string(32) . $_SERVER['HTTP_HOST']);
+    }
+    // Return it.
+    return $CFG->siteidentifier;
 }
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:

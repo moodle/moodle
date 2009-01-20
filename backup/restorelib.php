@@ -486,6 +486,15 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             //The backup date
             $tab[3][0] = "<b>".get_string("backupdate").":</b>";
             $tab[3][1] = userdate($info->backup_date);
+            //Is this the same Moodle install?
+            if (!empty($info->original_siteidentifier)) {
+                $tab[4][0] = "<b>".get_string("backupfromthissite").":</b>";
+                if (backup_is_same_site($info)) {
+                    $tab[4][1] = get_string('yes');
+                } else {
+                    $tab[4][1] = get_string('no');
+                }
+            }
             //Print title
             print_heading(get_string("backup").":");
             $table->data = $tab;
@@ -1260,7 +1269,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     $dbmetacourse = false;
                     //Check if child course exists in destination server
                     //(by id in the same server or by idnumber and shortname in other server)
-                    if ($restore->original_wwwroot == $CFG->wwwroot) {
+                    if (backup_is_same_site($restore)) {
                         //Same server, lets see by id
                         $dbcourse = get_record('course','id',$child->id);
                     } else {
@@ -1292,7 +1301,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     $dbmetacourse = false;
                     //Check if parent course exists in destination server
                     //(by id in the same server or by idnumber and shortname in other server)
-                    if ($restore->original_wwwroot == $CFG->wwwroot) {
+                    if (backup_is_same_site($restore)) {
                         //Same server, lets see by id
                         $dbcourse = get_record('course','id',$parent->id);
                     } else {
@@ -2562,7 +2571,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     //    - if the destination site is different (by wwwroot) reset it.
                     //    - if the destination site is the same (by wwwroot), leave it unmodified
 
-                    if ($restore->original_wwwroot != $CFG->wwwroot) {
+                    if (!backup_is_same_site($restore)) {
                         $user->policyagreed = 0;
                     } else {
                         //Nothing to do, we are in the same server
@@ -2627,7 +2636,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         //    - if we are in the same server (by wwwroot), maintain it unmodified.
                         if (empty($user->roles['teacher']->enrol)) {
                             $user->roles['teacher']->enrol = $CFG->enrol;
-                        } else if ($restore->original_wwwroot != $CFG->wwwroot) {
+                        } else if (!backup_is_same_site($restore)) {
                             $user->roles['teacher']->enrol = $CFG->enrol;
                         } else {
                             //Nothing to do. Leave it unmodified
@@ -2673,7 +2682,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         //    - if we are in the same server (by wwwroot), maintain it unmodified.
                         if (empty($user->roles['student']->enrol)) {
                             $user->roles['student']->enrol = $CFG->enrol;
-                        } else if ($restore->original_wwwroot != $CFG->wwwroot) {
+                        } else if (!backup_is_same_site($restore)) {
                             $user->roles['student']->enrol = $CFG->enrol;
                         } else {
                             //Nothing to do. Leave it unmodified
@@ -4965,6 +4974,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                             break;
                         case "ORIGINAL_WWWROOT":
                             $this->info->original_wwwroot = $this->getContents();
+                            break;
+                        case "ORIGINAL_SITE_IDENTIFIER_HASH":
+                            $this->info->original_siteidentifier = $this->getContents();
                             break;
                         case "MNET_REMOTEUSERS":
                             $this->info->mnet_remoteusers = $this->getContents();
