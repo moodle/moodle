@@ -127,6 +127,397 @@ function question_can_delete_cat($todelete) {
     }
 }
 
+abstract class question_bank_column_base {
+
+    /**
+     * Output the column header cell.
+     * @param integer $currentsort 0 for none. 1 for normal sort, -1 for reverse sort.
+     */
+    public function display_header($currentsort) {
+        // TODO.
+    }
+
+    /**
+     * Output this column.
+     * @param object $question the row from the $question table, augmented with extra information.
+     * @param string $rowclasses CSS class names that should be applied to this row of output.
+     */
+    public function display($question, $rowclasses) {
+        $this->display_start($question, $rowclasses);
+        $this->display_content($question, $rowclasses);
+        $this->display_end($question, $rowclasses);
+    }
+
+    protected function display_start($question, $rowclasses) {
+        echo '<td class="' . $this->get_css_classes($question, $rowclasses) . '">';
+    }
+
+    /**
+     * @param object $question the row from the $question table, augmented with extra information.
+     * @param string $rowclasses CSS class names that should be applied to this row of output.
+     * @return string CSS class names that should be applied to this column. Should normally be
+     *      a simple work relating the the column type like 'questionname'.
+     */
+    abstract protected function get_css_classes($question, $rowclasses);
+
+    /**
+     * Output the contents of this column.
+     * @param object $question the row from the $question table, augmented with extra information.
+     * @param string $rowclasses CSS class names that should be applied to this row of output.
+     */
+    abstract protected function display_content($question, $rowclasses);
+
+    protected function display_end($question, $rowclasses) {
+        echo '</td>';
+    }
+
+    /**
+     * Return an array 'table_alias' => 'JOIN clause' to bring in any data that
+     * this column required.
+     *
+     * The return values for all the columns will be checked. It is OK if two
+     * columns join in the same table with the same alias and identical JOIN clauses.
+     * If to columns try to use the same alias with different joins, you get an error.
+     * The only table included by default is the question table, which is aliased to 'q'.
+     *
+     * @return array 'table_alias' => 'JOIN clause'
+     */
+    public function get_extra_joins() {
+        return array();
+    }
+
+    /**
+     * @return array fields required. use table alias 'q' for the question table, or one of the
+     * ones from get_extra_joins. Every field requested must specify a table prefix.
+     */
+    public function get_required_fields() {
+        return array();
+    }
+
+    /**
+     * Can this column be sorted on? You can return either:
+     *  + false for no (the default),
+     *  + true for yes, or
+     *  + an array of subnames to sort on. E.g. 'firstname', 'lastname'.
+     * If this method returns true, sort_expression must be implemented.
+     * @return mixed  
+     */
+    public function is_sortable() {
+        return false;
+    }
+
+    /**
+     * Helper method for building sort clauses.
+     * @param boolean $reverse whether the normal direction should be reversed.
+     * @param string $normaldir 'ASC' or 'DESC'
+     * @return string 'ASC' or 'DESC'
+     */
+    protected function sortorder($reverse, $normaldir = 'ASC') {
+        switch ($normaldir) {
+            case 'ASC':
+                if ($reverse) {
+                    return ' DESC';
+                } else {
+                    return ' ASC';
+                }
+            case 'DESC':
+                if ($reverse) {
+                    return ' ASC';
+                } else {
+                    return ' DESC';
+                }
+            default:
+                throw new coding_exception('$normaldir should be ASC or DESC.');
+        }
+    }
+
+    /**
+     * @param $reverse Whether to sort in the reverse of the default sort order.
+     * @param $subsort if is_sortable returns an array of subnames, then this will be
+     *      one of those. Otherwise will be empty.
+     * @return string some SQL to go in the order by clause.
+     */
+    public function sort_expression($reverse, $subsort) {
+        throw new coding_exception('A subclass of question_bank_column_base must implement sort_expression if is_sortable returns true.');
+    }
+}
+
+/**
+ * A column with a checkbox for each question with name q{questionid}.
+ */
+class question_bank_checkbox_column extends question_bank_column_base {
+    protected $strselect;
+
+    public function __construct() {
+        parent::__construct();
+        $this->strselect = get_string('select', 'quiz');
+    }
+
+    protected function get_css_classes($question, $rowclasses) {
+        return 'checkbox';
+    }
+
+    protected function display_content($question, $rowclasses) {
+        echo '<input title="' . $this->strselect . '" type="checkbox" name="q' .
+                $question->id . '" id="checkq' . $question->id . '" value="1" />';
+    }
+
+    public function get_required_fields() {
+        return array('q.id');
+    }
+}
+
+/**
+ * A column type for the name of the question type.
+ */
+class question_bank_question_type_column extends question_bank_column_base {
+    protected function get_css_classes($question, $rowclasses) {
+        return 'qtype';
+    }
+
+    protected function display_content($question, $rowclasses) {
+        echo print_question_icon($question);
+    }
+
+    public function get_required_fields() {
+        return array('q.qtype');
+    }
+
+    public function is_sortable() {
+        return true;
+    }
+
+    public function sort_expression($reverse, $subsort) {
+        return 'q.qtype' . $this->sortorder($reverse);
+    }
+}
+
+/**
+ * A column type for the name of the question name.
+ */
+class question_bank_question_name_column extends question_bank_column_base {
+    protected function get_css_classes($question, $rowclasses) {
+        return 'questionname';
+    }
+
+    protected function display_content($question, $rowclasses) {
+        echo format_string($question->name);
+    }
+
+    public function get_required_fields() {
+        return array('q.name');
+    }
+
+    public function is_sortable() {
+        return true;
+    }
+
+    public function sort_expression($reverse, $subsort) {
+        return 'q.name' . $this->sortorder($reverse);
+    }
+}
+
+/**
+ * A column type for the name of the question creator.
+ */
+class question_bank_creator_name_column extends question_bank_column_base {
+    protected function get_css_classes($question, $rowclasses) {
+        return 'creatorname';
+    }
+
+    protected function display_content($question, $rowclasses) {
+        if (!empty($question->creatorfirstname) && !empty($question->creatorlastname)) {
+            $u = new stdClass;
+            $u->firstname = $question->creatorfirstname;
+            $u->lastname = $question->creatorlastname;
+            echo fullname($u);
+        }
+    }
+
+    public function get_extra_joins() {
+        return array('uc' => 'LEFT JOIN {user} uc ON uc.id = q.createdby');
+    }
+
+    public function get_required_fields() {
+        return array('uc.firstname AS creatorfirstname', 'uc.lastname AS creatorlastname');
+    }
+
+    public function is_sortable() {
+        return array('firstname', 'lastname');
+    }
+
+    public function sort_expression($reverse, $subsort) {
+        if (in_array($subsort, $this->is_sortable())) {
+            return 'uc.' . $subsort . $this->sortorder($reverse);
+        } else {
+            throw new coding_exception('Unexpected $subsort type.');
+        }
+    }
+}
+
+/**
+ * A column type for the name of the question last modifier.
+ */
+class question_bank_modifier_name_column extends question_bank_column_base {
+    protected function get_css_classes($question, $rowclasses) {
+        return 'modifiername';
+    }
+
+    protected function display_content($question, $rowclasses) {
+        if (!empty($question->modifierfirstname) && !empty($question->modifierlastname)) {
+            $u = new stdClass;
+            $u->firstname = $question->modifierfirstname;
+            $u->lastname = $question->modifierlastname;
+            echo fullname($u);
+        }
+    }
+
+    public function get_extra_joins() {
+        return array('um' => 'LEFT JOIN {user} um ON um.id = q.modifiedby');
+    }
+
+    public function get_required_fields() {
+        return array('um.firstname AS modifierfirstname', 'um.lastname AS modifierlastname');
+    }
+
+    public function is_sortable() {
+        return array('firstname', 'lastname');
+    }
+
+    public function sort_expression($reverse, $subsort) {
+        if (in_array($subsort, $this->is_sortable())) {
+            return 'um.' . $subsort . $this->sortorder($reverse);
+        } else {
+            throw new coding_exception('Unexpected $subsort type.');
+        }
+    }
+}
+
+/**
+ * A base class for actions that are an icon that lets you manipulate the question in some way.
+ */
+abstract class question_bank_action_column_base extends question_bank_column_base {
+    protected function print_icon($icon, $title, $url) {
+        global $CFG;
+        echo '<a title="' . $title . '" href="' . $url . '">
+                <img src="' . $CFG->pixpath . '/t/' . $icon . '" class="iconsmall" alt="' . $title . '" /></a>';
+    }
+
+    public function get_required_fields() {
+        return array('q.id');
+    }
+}
+
+class question_bank_edit_action_column extends question_bank_action_column_base {
+    protected $stredit;
+    protected $strview;
+    protected $questionurl;
+
+    public function __construct($questionurl) {
+        parent::__construct();
+        $this->questionurl = $questionurl;
+        $this->stredit = get_string('edit');
+        $this->strview = get_string('view');
+    }
+
+    protected function get_css_classes($question, $rowclasses) {
+        return 'editaction';
+    }
+
+    protected function display_content($question, $rowclasses) {
+        if (question_has_capability_on($question, 'edit') ||
+                question_has_capability_on($question, 'move')) {
+            $this->print_icon('edit', $this->stredit, $this->questionurl->out(false, array('id' => $question->id)));
+        } else {
+            $this->print_icon('info', $this->strview, $this->questionurl->out(false, array('id' => $question->id)));
+        }
+    }
+}
+
+class question_bank_preview_action_column extends question_bank_action_column_base {
+    protected $strpreview;
+    protected $quizorcourseid;
+
+    public function __construct($quizorcourseid) {
+        parent::__construct();
+        $this->quizorcourseid = $quizorcourseid;
+        $this->stredit = get_string('preview');
+    }
+
+    protected function get_css_classes($question, $rowclasses) {
+        return 'previewaction';
+    }
+
+    protected function display_content($question, $rowclasses) {
+        if (question_has_capability_on($question, 'use')) {
+            link_to_popup_window('/question/preview.php?id=' . $question->id .
+                    $this->quizorcourseid, 'questionpreview',
+                    ' <img src="' . $CFG->pixpath . '/t/preview.gif" class="iconsmall" alt="' . $this->strpreview . '" />',
+                    0, 0, $this->strpreview, QUESTION_PREVIEW_POPUP_OPTIONS);
+        }
+    }
+
+    public function get_required_fields() {
+        return array('q.id');
+    }
+}
+
+class question_bank_move_action_column extends question_bank_action_column_base {
+    protected $strmove;
+    protected $questionurl;
+
+    public function __construct($questionurl) {
+        parent::__construct();
+        $this->questionurl = $questionurl;
+        $this->strmove = get_string('move');
+    }
+
+    protected function get_css_classes($question, $rowclasses) {
+        return 'editaction';
+    }
+
+    protected function display_content($question, $rowclasses) {
+        if (question_has_capability_on($question, 'move')) {
+            $this->print_icon('move', $this->strmove, $this->questionurl->out(false, array('id' => $question->id)));
+        }
+    }
+}
+
+/**
+ * action to delete (or hide) a question, or restore a previously hidden question.
+ */
+class question_bank_delete_action_column extends question_bank_action_column_base {
+    protected $strdelete;
+    protected $strrestore;
+    protected $questionurl;
+
+    public function __construct($questionurl) {
+        parent::__construct();
+        $this->questionurl = $questionurl;
+        $this->strdelete = get_string('delete');
+        $this->strrestore = get_string('restore');
+    }
+
+    protected function get_css_classes($question, $rowclasses) {
+        return 'deleteaction';
+    }
+
+    protected function display_content($question, $rowclasses) {
+        if (question_has_capability_on($question, 'edit')) {
+            if ($question->hidden) {
+                $this->print_icon('restore', $this->strrestore, $pageurl->out(false, array('unhide' => $question->id)));
+            } else {
+                $this->print_icon('restore', $this->strrestore,
+                        $pageurl->out(false, array('deleteselected' => $question->id, 'q' . $question->id => 1)));
+            }
+        }
+    }
+
+    public function get_required_fields() {
+        return array('q.id', 'q.hidden');
+    }
+}
+
 /**
  * This class prints a view of the question bank, including
  *  + Some controls to allow users to to select what is displayed.
