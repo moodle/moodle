@@ -111,7 +111,7 @@
                 // This instance is configured - show Add/Edit feeds link.
                 $script = $page->url_get_full(
                                     array('instanceid' => $this->instance->id,
-                                          'sesskey' => $USER->sesskey,
+                                          'sesskey' => sesskey(),
                                           'blockaction' => 'config',
                                           'currentaction' => 'managefeeds',
                                           'id' => $this->courseid,
@@ -123,7 +123,7 @@
                 if (has_capability('block/rss_client:manageanyfeeds', $context)) {
                     $script = $page->url_get_full(
                                     array('instanceid' => $this->instance->id,
-                                          'sesskey' => $USER->sesskey,
+                                          'sesskey' => sesskey(),
                                           'blockaction' => 'config',
                                           'currentaction' => 'configblock',
                                           'id' => $this->courseid,

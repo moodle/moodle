@@ -7,7 +7,7 @@ require_once($CFG->libdir.'/adminlib.php');
 
 $query = trim(optional_param('query', '', PARAM_NOTAGS));  // Search string
 
-$adminroot =& admin_get_root(); // need all settings here
+$adminroot = admin_get_root(); // need all settings here
 $adminroot->search = $query; // So we can reference it in search boxes later in this invocation
 $statusmsg = '';
 $errormsg  = '';
@@ -20,7 +20,7 @@ if ($data = data_submitted() and confirm_sesskey()) {
     if (admin_write_settings($data)) {
         $statusmsg = get_string('changessaved');
     }
-    $adminroot =& admin_get_root(true); //reload tree
+    $adminroot = admin_get_root(true); //reload tree
 
     if (!empty($adminroot->errors)) {
         $errormsg = get_string('errorwithsettings', 'admin');

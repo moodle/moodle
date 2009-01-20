@@ -40,7 +40,7 @@ class block_admin_bookmarks extends block_base {
         if (get_user_preferences('admin_bookmarks')) {
             // this is expensive! Only require when bookmakrs exist..
             require_once($CFG->libdir.'/adminlib.php');
-            $adminroot =& admin_get_root(false, false);  // settings not required - only pages
+            $adminroot = admin_get_root(false, false);  // settings not required - only pages
 
             $bookmarks = explode(',', get_user_preferences('admin_bookmarks'));
             // hmm... just a liiitle (potentially) processor-intensive
@@ -51,9 +51,9 @@ class block_admin_bookmarks extends block_base {
 
             foreach($bookmarks as $bookmark) {
                 $temp = $adminroot->locate($bookmark);
-                if (is_a($temp, 'admin_settingpage')) {
+                if ($temp instanceof admin_settingpage) {
                     $this->content->text .= '<li><a href="' . $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=' . $bookmark . '">' . $temp->visiblename . "</a></li>\n";
-                } else if (is_a($temp, 'admin_externalpage')) {
+                } else if ($temp instanceof admin_externalpage) {
                     $this->content->text .= '<li><a href="' . $temp->url . '">' . $temp->visiblename . "</a></li>\n";
                 }
             }

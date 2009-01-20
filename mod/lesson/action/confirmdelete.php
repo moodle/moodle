@@ -26,6 +26,6 @@
         }
     }
     notice_yesno(get_string("confirmdeletionofthispage","lesson"), 
-         "lesson.php?action=delete&amp;id=$cm->id&amp;pageid=$pageid&amp;sesskey=".$USER->sesskey, 
+         "lesson.php?action=delete&amp;id=$cm->id&amp;pageid=$pageid&amp;sesskey=".sesskey(),
          "view.php?id=$cm->id");
 ?>

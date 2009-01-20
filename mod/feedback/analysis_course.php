@@ -72,7 +72,7 @@
         //button "export to excel"
         echo '<div class="mdl-align">';
         $export_button_link = 'analysis_to_excel.php';
-        $export_button_options = array('sesskey'=>$USER->sesskey, 'id'=>$id, 'coursefilter'=>$coursefilter);
+        $export_button_options = array('sesskey'=>sesskey(), 'id'=>$id, 'coursefilter'=>$coursefilter);
         $export_button_label = get_string('export_to_excel', 'feedback');
         print_single_button($export_button_link, $export_button_options, $export_button_label, 'post');
         echo '</div>';
@@ -128,7 +128,7 @@
 
         echo get_string('search_course', 'feedback') . ': ';
         echo '<input type="text" name="searchcourse" value="'.s($searchcourse).'"/> <input type="submit" value="'.get_string('search').'"/>';
-        echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<input type="hidden" name="id" value="'.$id.'" />';
         echo '<input type="hidden" name="courseitemfilter" value="'.$courseitemfilter.'" />';
         echo '<input type="hidden" name="courseitemfiltertyp" value="'.$courseitemfiltertyp.'" />';

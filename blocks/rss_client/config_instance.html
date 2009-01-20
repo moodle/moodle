@@ -104,7 +104,7 @@ print_box_start();
                         || has_capability('block/rss_client:createsharedfeeds', $context)) {
 
                     $addrsspage = $page->url_get_full(array('instanceid' => $this->instance->id, 
-                                                            'sesskey' => $USER->sesskey,
+                                                            'sesskey' => sesskey(),
                                                             'blockaction' => 'config', 
                                                             'currentaction' => 'managefeeds',
                                                             'id' => $id));

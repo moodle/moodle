@@ -5,7 +5,7 @@ require('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 require_login();
-$adminroot =& admin_get_root(false, false); // settings not required - only pages
+$adminroot = admin_get_root(false, false); // settings not required - only pages
 
 if ($section = optional_param('section', '', PARAM_SAFEDIR) and confirm_sesskey()) {
 
@@ -26,9 +26,9 @@ if ($section = optional_param('section', '', PARAM_SAFEDIR) and confirm_sesskey(
 
         $temp = $adminroot->locate($section);
 
-        if (is_a($temp, 'admin_externalpage')) {
+        if ($temp instanceof admin_externalpage) {
             redirect($temp->url, get_string('bookmarkdeleted','admin'));
-        } elseif (is_a($temp, 'admin_settingpage')) {
+        } elseif ($temp instanceof admin_settingpage) {
             redirect($CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=' . $section);
         } else {
             redirect($CFG->wwwroot);

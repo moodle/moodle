@@ -36,11 +36,11 @@ class page_admin extends page_base {
             return;
         }
 
-        $adminroot =& admin_get_root(false, false); //settings not required - only pages
+        $adminroot = admin_get_root(false, false); //settings not required - only pages
 
         // fetch the path parameter
         $this->section = $section;
-        $current =& $adminroot->locate($section, true);
+        $current = $adminroot->locate($section, true);
         $this->visiblepathtosection = array_reverse($current->visiblepath);
 
         // all done
@@ -69,10 +69,10 @@ class page_admin extends page_base {
             return $this->url;
         }
 
-        $adminroot =& admin_get_root(false, false); //settings not required - only pages
+        $adminroot = admin_get_root(false, false); //settings not required - only pages
 
-        $root =& $adminroot->locate($this->section);
-        if (is_a($root, 'admin_externalpage')) {
+        $root = $adminroot->locate($this->section);
+        if ($root instanceof admin_externalpage) {
             return $root->url;
         } else {
             return ($CFG->wwwroot . '/' . $CFG->admin . '/settings.php');

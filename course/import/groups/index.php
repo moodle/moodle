@@ -87,7 +87,7 @@
             if ( !(isset($required[$h]) or
                 isset($optionalDefaults[$h]) or
                 isset($optional[$h])) ) {
-                print_error('invalidfieldname', 'error', 'index.php?id='.$id.'&amp;sesskey='.$USER->sesskey, $h);
+                print_error('invalidfieldname', 'error', 'index.php?id='.$id.'&amp;sesskey='.sesskey(), $h);
             }
             if ( isset($required[$h]) ) {
                 $required[$h] = 2;
@@ -96,7 +96,7 @@
         // check for required fields
         foreach ($required as $key => $value) {
             if ($value < 2) {
-                print_error('fieldrequired', 'error', 'uploaduser.php?id='.$id.'&amp;sesskey='.$USER->sesskey, $key);
+                print_error('fieldrequired', 'error', 'uploaduser.php?id='.$id.'&amp;sesskey='.sesskey(), $key);
             }
         }
         $linenum = 2; // since header is line 1
@@ -121,7 +121,7 @@
                 foreach ($record as $name => $value) {
                     // check for required values
                     if (isset($required[$name]) and !$value) {
-                        print_error('missingfield', 'error', 'uploaduser.php?sesskey='.$USER->sesskey, $name);
+                        print_error('missingfield', 'error', 'uploaduser.php?sesskey='.sesskey(), $name);
                     }
                     else if ($name == "groupname") {
                         $newgroup->name = $value;

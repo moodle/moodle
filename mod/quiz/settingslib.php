@@ -18,9 +18,9 @@ class admin_setting_quiz_reviewoptions extends admin_setting {
             QUIZ_REVIEW_SCORES => 'scores',
             QUIZ_REVIEW_OVERALLFEEDBACK => 'overallfeedback');
 
-    function __construct($name, $visiblename, $description, $defaultsetting) {
+    public function __construct($name, $visiblename, $description, $defaultsetting) {
         $this->plugin = 'quiz';
-        parent::admin_setting($name, $visiblename, $description, $defaultsetting);
+        parent::__construct($name, $visiblename, $description, $defaultsetting);
     }
 
     private function normalise_data($data) {
@@ -35,7 +35,7 @@ class admin_setting_quiz_reviewoptions extends admin_setting {
         return $value;
     }
 
-    function get_setting() {
+    public function get_setting() {
         $value = $this->config_read($this->name);
         $fix = $this->config_read('fix_' . $this->name);
         if (is_null($value) or is_null($fix)) {
@@ -44,7 +44,7 @@ class admin_setting_quiz_reviewoptions extends admin_setting {
         return array('value' => $value, 'fix' => $fix);
     }
 
-    function write_setting($data) {
+    public function write_setting($data) {
         if (!isset($data['value'])) {
             $data['value'] = $this->normalise_data($data);
         }
@@ -62,7 +62,7 @@ class admin_setting_quiz_reviewoptions extends admin_setting {
         return '';
     }
 
-    function output_html($data, $query='') {
+    public function output_html($data, $query='') {
         if (!isset($data['value'])) {
             $data['value'] = $this->normalise_data($data);
         }

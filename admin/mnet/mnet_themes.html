@@ -18,7 +18,7 @@ if ($mnet_peer->id != $CFG->mnet_all_hosts_id) {
 print_tabs(array($tabs), 'mnetthemes');
 
     $themes = get_list_of_plugins("theme");
-    $sesskey = !empty($USER->id) ? $USER->sesskey : '';
+    $sesskey = sesskey();
 
     echo '<table style="margin-left:auto;margin-right:auto;" cellpadding="7" cellspacing="5">';
 

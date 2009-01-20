@@ -41,7 +41,7 @@
 
         notice_yesno("$strdeletecoursecheck<br /><br />" . format_string($course->fullname) .
                      " (" . format_string($course->shortname) . ")",
-                     "delete.php?id=$course->id&amp;delete=".md5($course->timemodified)."&amp;sesskey=$USER->sesskey",
+                     "delete.php?id=$course->id&amp;delete=".md5($course->timemodified)."&amp;sesskey=".sesskey(),
                      "category.php?id=$course->category");
 
         print_footer($course);

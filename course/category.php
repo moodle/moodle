@@ -423,7 +423,7 @@
         unset($options);
         $options['id'] = $category->id;
         $options['resort'] = 'name';
-        $options['sesskey'] = $USER->sesskey;
+        $options['sesskey'] = sesskey();
         print_single_button('category.php', $options, get_string('resortcoursesbyname'), 'get');
     }
 

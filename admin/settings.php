@@ -12,10 +12,10 @@ $adminediting = optional_param('adminedit', -1, PARAM_BOOL);
 /// no guest autologin
 require_login(0, false);
 
-$adminroot =& admin_get_root(); // need all settings
-$page      =& $adminroot->locate($section);
+$adminroot = admin_get_root(); // need all settings
+$page      = $adminroot->locate($section);
 
-if (empty($page) or !is_a($page, 'admin_settingpage')) {
+if (empty($page) or !($page instanceof admin_settingpage)) {
     print_error('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
     die;
 }

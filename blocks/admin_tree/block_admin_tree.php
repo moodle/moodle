@@ -57,7 +57,7 @@ class block_admin_tree extends block_base {
 
     function build_tree (&$content) {
         global $CFG;
-        if (is_a($content, 'admin_settingpage')) {
+        if ($content instanceof admin_settingpage) {
             // show hidden pages in tree if hidden page active
             if ($content->check_access() and (($content->name == $this->section) or !$content->is_hidden())) {
                 $class = ($content->name == $this->section) ? 'link current' : 'link';
@@ -66,7 +66,7 @@ class block_admin_tree extends block_base {
                 }
                 $this->create_item($content->visiblename, $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section='.$content->name,$CFG->pixpath.'/i/item.gif', $class);
             }
-        } else if (is_a($content, 'admin_externalpage')) {
+        } else if ($content instanceof admin_externalpage) {
             // show hidden pages in tree if hidden page active
             if ($content->check_access() and (($content->name == $this->section) or !$content->is_hidden())) {
                 $class = ($content->name == $this->section) ? 'link current' : 'link';
@@ -80,7 +80,7 @@ class block_admin_tree extends block_base {
                 }
                 $this->create_item($content->visiblename, $content->url, $CFG->pixpath.'/i/item.gif', $class);
             }
-        } else if (is_a($content, 'admin_category')) {
+        } else if ($content instanceof admin_category) {
             if ($content->check_access() and !$content->is_hidden()) {
 
                 // check if the category we're currently printing is a parent category for the current page; if it is, we
@@ -117,7 +117,7 @@ class block_admin_tree extends block_base {
         }
 
         require_once($CFG->libdir.'/adminlib.php');
-        $adminroot =& admin_get_root(false, false); // settings not required - only pages
+        $adminroot = admin_get_root(false, false); // settings not required - only pages
 
         if ($current = $adminroot->locate($this->section, true)) {
             $this->pathtosection = $current->path;

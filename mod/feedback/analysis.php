@@ -118,7 +118,7 @@
         // echo '<div class="feedback_centered_button">';
         echo '<div class="form-buttons">';
         $export_button_link = 'analysis_to_excel.php';
-        $export_button_options = array('sesskey'=>$USER->sesskey, 'id'=>$id);
+        $export_button_options = array('sesskey'=>sesskey(), 'id'=>$id);
         $export_button_label = get_string('export_to_excel', 'feedback');
         print_single_button($export_button_link, $export_button_options, $export_button_label, 'post');
         echo '</div>';
