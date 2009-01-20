@@ -125,6 +125,7 @@ foreach($events as $event) {
         }
     }
     $ev = new iCalendar_event;
+    $ev->add_property('uid', $event->id.'@'.$_SERVER['HTTP_HOST']);
     $ev->add_property('summary', $event->name);
     $ev->add_property('description', $event->description);
     $ev->add_property('class', 'PUBLIC'); // PUBLIC / PRIVATE / CONFIDENTIAL
