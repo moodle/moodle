@@ -1013,6 +1013,10 @@ body#admin-modules table.generaltable td.c0
   text-align: center;
 }
 
+#admin-maintenance .buttons {
+  text-align:center;
+}
+
 #admin-report-unittest-index .exception pre {
   padding: 8px;
 }
