@@ -327,7 +327,7 @@
                 print_plugin_tables();
                 echo "<br />";
                 echo '<div class="continuebutton">';
-                echo '<a href="index.php?confirmupgrade=1&confirmrelease=1" title="'.get_string('reload').'" ><img src="'.$CFG->pixpath.'/i/reload.gif" alt="'.get_string('reload').'" /></a>';
+                echo '<a href="index.php?confirmupgrade=1&confirmrelease=1" title="'.get_string('reload').'" ><img src="'.$CFG->pixpath.'/i/reload.gif" alt="" /> '.get_string('reload').'</a>';
                 echo '</div><br />';
                 echo '<form action="index.php"><div>';
                 echo '<input type="hidden" name="confirmupgrade" value="1" />';
