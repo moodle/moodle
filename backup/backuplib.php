@@ -473,6 +473,8 @@
         fwrite ($bf,full_tag("DATE",2,false,$preferences->backup_unique_code));
         //The original site wwwroot
         fwrite ($bf,full_tag("ORIGINAL_WWWROOT",2,false,$CFG->wwwroot));
+        //The original site identifier. MD5 hashed for security.
+        fwrite ($bf,full_tag("ORIGINAL_SITE_IDENTIFIER_HASH",2,false,md5(get_site_identifier())));
         //Indicate if it includes external MNET users
         $sql = "SELECT b.old_id
                   FROM {backup_ids} b

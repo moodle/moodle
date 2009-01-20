@@ -343,7 +343,6 @@
         upgrade_log_finish('upgradesettings.php');
     }
 
-
     // Turn xmlstrictheaders back on now.
     $CFG->xmlstrictheaders = $origxmlstrictheaders;
     unset($origxmlstrictheaders);
@@ -363,7 +362,6 @@
     }
 
 /// Check if we are returning from moodle.org registration and if so, we mark that fact to remove reminders
-
     if (!empty($id) and $id == $CFG->siteidentifier) {
         set_config('registered', time());
     }

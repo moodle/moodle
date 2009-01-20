@@ -151,6 +151,7 @@ $string['backupexecuteathelp'] = 'Choose what time automated backups should run 
 $string['backupfailed'] = 'Some of your courses weren\'t saved!!';
 $string['backupfilename'] = 'backup';
 $string['backupfinished'] = 'Backup completed successfully';
+$string['backupfromthissite'] = 'Backup was made on this site?';
 $string['backupgradebookhistoryhelp'] = 'If enabled then gradebook history will be included in automated backups. Note that grade history must not be disabled in server settings (disablegradehistory) in order for this to work';
 $string['backupincludemoduleshelp'] = 'Choose whether you want to include course modules, with or without user data, in automated backups';
 $string['backupincludemoduleuserdatahelp'] = 'Choose whether you want to include module user data in automated backups.';

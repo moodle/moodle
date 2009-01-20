@@ -337,8 +337,28 @@
             $question->hidden = backup_todb($que_info['#']['HIDDEN']['0']['#']);
             $question->timecreated = backup_todb_optional_field($que_info, 'TIMECREATED', 0);
             $question->timemodified = backup_todb_optional_field($que_info, 'TIMEMODIFIED', 0);
-            $question->createdby = backup_todb_optional_field($que_info, 'CREATEDBY', null);
-            $question->modifiedby = backup_todb_optional_field($que_info, 'MODIFIEDBY', null);
+
+            // Set the createdby field, if the user was in the backup, or if we are on the same site.
+            $createdby = backup_todb_optional_field($que_info, 'CREATEDBY', null);
+            if (!empty($createdby)) {
+                $user = backup_getid($restore->backup_unique_code, 'user', $createdby);
+                if ($user) {
+                    $question->createdby = $user->new_id;
+                } else if (backup_is_same_site($restore)) {
+                    $question->createdby = $createdby;
+                }
+            }
+
+            // Set the modifiedby field, if the user was in the backup, or if we are on the same site.
+            $modifiedby = backup_todb_optional_field($que_info, 'MODIFIEDBY', null);
+            if (!empty($createdby)) {
+                $user = backup_getid($restore->backup_unique_code, 'user', $modifiedby);
+                if ($user) {
+                    $question->modifiedby = $user->new_id;
+                } else if (backup_is_same_site($restore)) {
+                    $question->modifiedby = $modifiedby;
+                }
+            }
 
             if ($restore->backup_version < 2006032200) {
                 // The qtype was an integer that now needs to be converted to the name
