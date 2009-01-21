@@ -74,8 +74,7 @@ final class user_api {
                 $params = $params + (array)$selectioncriteria->extraparams;
             }
         }
-        varlog($DB->get_records_select('user', $select, $params, $sort, $fields, $page, $recordsperpage));
-       
+
         return $DB->get_records_select('user', $select, $params, $sort, $fields, $page, $recordsperpage);
     }
 
