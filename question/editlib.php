@@ -241,7 +241,7 @@ abstract class question_bank_column_base {
      * @return string internal name for this column. Used as a CSS class name,
      *     and to store information about the current sort. Must match PARAM_ALPHA.
      */
-    abstract protected function get_name();
+    abstract public function get_name();
 
     /**
      * Output the contents of this column.
@@ -343,7 +343,7 @@ class question_bank_checkbox_column extends question_bank_column_base {
         $this->strselect = get_string('select', 'quiz');
     }
 
-    protected function get_name() {
+    public function get_name() {
         return 'checkbox';
     }
 
@@ -365,7 +365,7 @@ class question_bank_checkbox_column extends question_bank_column_base {
  * A column type for the name of the question type.
  */
 class question_bank_question_type_column extends question_bank_column_base {
-    protected function get_name() {
+    public function get_name() {
         return 'qtype';
     }
 
@@ -390,7 +390,7 @@ class question_bank_question_type_column extends question_bank_column_base {
  * A column type for the name of the question name.
  */
 class question_bank_question_name_column extends question_bank_column_base {
-    protected function get_name() {
+    public function get_name() {
         return 'questionname';
     }
 
@@ -415,7 +415,7 @@ class question_bank_question_name_column extends question_bank_column_base {
  * A column type for the name of the question creator.
  */
 class question_bank_creator_name_column extends question_bank_column_base {
-    protected function get_name() {
+    public function get_name() {
         return 'creatorname';
     }
 
@@ -452,7 +452,7 @@ class question_bank_creator_name_column extends question_bank_column_base {
  * A column type for the name of the question last modifier.
  */
 class question_bank_modifier_name_column extends question_bank_column_base {
-    protected function get_name() {
+    public function get_name() {
         return 'modifiername';
     }
 
@@ -515,7 +515,7 @@ class question_bank_edit_action_column extends question_bank_action_column_base 
         $this->strview = get_string('view');
     }
 
-    protected function get_name() {
+    public function get_name() {
         return 'editaction';
     }
 
@@ -537,7 +537,7 @@ class question_bank_preview_action_column extends question_bank_action_column_ba
         $this->stredit = get_string('preview');
     }
 
-    protected function get_name() {
+    public function get_name() {
         return 'previewaction';
     }
 
@@ -562,8 +562,8 @@ class question_bank_move_action_column extends question_bank_action_column_base 
         $this->strmove = get_string('move');
     }
 
-    protected function get_name() {
-        return 'editaction';
+    public function get_name() {
+        return 'moveaction';
     }
 
     protected function display_content($question, $rowclasses) {
@@ -586,7 +586,7 @@ class question_bank_delete_action_column extends question_bank_action_column_bas
         $this->strrestore = get_string('restore');
     }
 
-    protected function get_name() {
+    public function get_name() {
         return 'deleteaction';
     }
 
@@ -664,7 +664,7 @@ class question_bank_view {
         $this->init_sort();
     }
 
-    protected function init_columns() {
+    protected function init_column_types() {
         $types = array(
             new question_bank_checkbox_column($this),
             new question_bank_question_type_column($this),
@@ -677,7 +677,7 @@ class question_bank_view {
             new question_bank_delete_action_column($this),
         );
         $this->knowncolumntypes = array();
-        foreach ($columns as $col) {
+        foreach ($types as $col) {
             $this->knowncolumntypes[$col->get_name()] = $col;
         }
     }
