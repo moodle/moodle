@@ -759,7 +759,7 @@ function report_security_check_defaultcourserole($detailed=false) {
     if ($anything_contexts = get_records_sql($sql)) {
         foreach($anything_contexts as $contextid) {
             if ($contextid == SYSCONTEXTID) {
-                $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&roleid=$CFG->defaultcourseroleid";
+                $a = "$CFG->wwwroot/$CFG->admin/roles/manage.php?action=view&roleid=$CFG->defaultcourseroleid";
             } else {
                 $a = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid&roleid=$CFG->defaultcourseroleid";
             }
@@ -778,7 +778,7 @@ function report_security_check_defaultcourserole($detailed=false) {
     if ($riskycontexts = get_records_sql($sql)) {
         foreach($riskycontexts as $contextid=>$unused) {
             if ($contextid == SYSCONTEXTID) {
-                $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&roleid=$CFG->defaultcourseroleid";
+                $a = "$CFG->wwwroot/$CFG->admin/roles/manage.php?action=view&roleid=$CFG->defaultcourseroleid";
             } else {
                 $a = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid&roleid=$CFG->defaultcourseroleid";
             }
@@ -865,11 +865,11 @@ function report_security_check_courserole($detailed=false) {
           ORDER BY rc.roleid, rc.contextid";
 
     $rs = get_recordset_sql($sql);
-    foreach($rs as $res) {
+    while ($res = rs_fetch_next_record($rs)) {
         $roleid    = $res->roleid;
         $contextid = $res->contextid;
         if ($contextid == SYSCONTEXTID) {
-            $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&roleid=$roleid";
+            $a = "$CFG->wwwroot/$CFG->admin/roles/manage.php?action=view&roleid=$roleid";
         } else {
             $a = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid&roleid=$roleid";
         }
@@ -888,11 +888,11 @@ function report_security_check_courserole($detailed=false) {
           GROUP BY rc.roleid, rc.contextid
           ORDER BY rc.roleid, rc.contextid";
     $rs = get_recordset_sql($sql);
-    foreach($rs as $res) {
+    while ($res = rs_fetch_next_record($rs)) {
         $roleid    = $res->roleid;
         $contextid = $res->contextid;
         if ($contextid == SYSCONTEXTID) {
-            $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&roleid=$roleid";
+            $a = "$CFG->wwwroot/$CFG->admin/roles/manage.php?action=view&roleid=$roleid";
         } else {
             $a = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid&roleid=$roleid";
         }
@@ -909,7 +909,7 @@ function report_security_check_courserole($detailed=false) {
                    AND rc.roleid IN ($inroles)";
     if ($legacys = get_records_sql($sql)) {
         foreach ($legacys as $roleid=>$unused) {
-            $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&roleid=$roleid";
+            $a = "$CFG->wwwroot/$CFG->admin/roles/manage.php?action=view&roleid=$roleid";
             $problems[] = get_string('check_defaultcourserole_legacy', 'report_security', $a);
         }
     }
