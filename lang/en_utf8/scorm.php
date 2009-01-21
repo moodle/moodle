@@ -151,6 +151,7 @@ $string['review'] = 'Review';
 $string['reviewmode'] = 'Review Mode';
 $string['scoes'] = 'Learning Objects';
 $string['score'] = 'Score';
+$string['scorm:deleteresponses'] = 'Delete SCORM attempts';
 $string['scorm:savetrack'] = 'Save tracks';
 $string['scorm:skipview'] = 'Skip overview';
 $string['scorm:viewreport'] = 'View reports';
