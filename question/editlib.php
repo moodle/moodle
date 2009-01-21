@@ -238,7 +238,8 @@ abstract class question_bank_column_base {
 
     /**
      * @param object $question the row from the $question table, augmented with extra information.
-     * @return string internal name for this column. Used as a CSS class name, and to store information about the current sort.
+     * @return string internal name for this column. Used as a CSS class name,
+     *     and to store information about the current sort. Must match PARAM_ALPHA.
      */
     abstract protected function get_name();
 
@@ -261,6 +262,9 @@ abstract class question_bank_column_base {
      * columns join in the same table with the same alias and identical JOIN clauses.
      * If to columns try to use the same alias with different joins, you get an error.
      * The only table included by default is the question table, which is aliased to 'q'.
+     *
+     * It is importnat that your join simply adds additional data (or NULLs) to the
+     * existing rows of the query. It must not cause additional rows.
      *
      * @return array 'table_alias' => 'JOIN clause'
      */
@@ -625,6 +629,12 @@ class question_bank_view {
     protected $quizorcourseid;
     protected $contexts;
     protected $cm;
+    protected $knowncolumntypes;
+    protected $visiblecolumns;
+    protected $requiredcolumns;
+    protected $sort;
+    protected $countsql;
+    protected $loadsql;
 
     public function __construct($contexts, $pageurl, $cm = null) {
         global $CFG, $COURSE;
@@ -647,6 +657,137 @@ class question_bank_view {
         } else {
             $this->editquestionurl->param('courseid', $COURSE->id);
         }
+
+        $this->init_column_types();
+        $this->init_columns(array('checkbox', 'qtype', 'questionname', 'creatorname',
+                'modifiername', 'editaction', 'previewaction', 'moveaction', 'deleteaction'));
+        $this->init_sort();
+    }
+
+    protected function init_columns() {
+        $types = array(
+            new question_bank_checkbox_column($this),
+            new question_bank_question_type_column($this),
+            new question_bank_question_name_column($this),
+            new question_bank_creator_name_column($this),
+            new question_bank_modifier_name_column($this),
+            new question_bank_edit_action_column($this),
+            new question_bank_preview_action_column($this),
+            new question_bank_move_action_column($this),
+            new question_bank_delete_action_column($this),
+        );
+        $this->knowncolumntypes = array();
+        foreach ($columns as $col) {
+            $this->knowncolumntypes[$col->get_name()] = $col;
+        }
+    }
+
+    protected function init_columns($wanted) {
+        $this->visiblecolumns = array();
+        foreach ($wanted as $colname) {
+            if (!isset($this->knowncolumntypes[$colname])) {
+                throw new coding_exception('Unknown column type ' . $colname . ' requested in init columns.');
+            }
+            $this->visiblecolumns[$colname] = $this->knowncolumntypes[$colname];
+        }
+        $this->requiredcolumns = $this->visiblecolumns;
+    }
+
+    protected function init_sort() {
+        $this->init_sort_from_params();
+        if (empty($this->sort)) {
+            $this->sort = $this->default_sort();
+        }
+    }
+
+    /**
+     * Deal with a sort name of the forum columnname, or colname_subsort by
+     * breaking it up, validating the bits that are presend, and returning them.
+     * If there is no subsort, then $subsort is returned as ''.
+     * @return array array($colname, $subsort).
+     */
+    protected function parse_subsort($sort) {
+    /// Do the parsing.
+        if (strpos($sort, '_') !== false) {
+            list($colname, $subsort) = explode('_', $sort, 2);
+        } else {
+            $colname = $sort;
+            $subsort = '';
+        }
+    /// Validate the column name.
+        if (!isset($this->knowncolumntypes[$colname]) || !$this->knowncolumntypes[$colname]->is_sortable()) {
+            $this->baseurl->remove_params('qbs1', 'qbs2', 'qbs3');
+            throw new moodle_exception('unknownsortcolumn', '', $link = $this->baseurl->out(), $colname);
+        }
+    /// Validate the subsort, if present.
+        if ($subsort) {
+            $subsorts = $this->knowncolumntypes[$colname]->is_sortable();
+            if (!is_array($subsorts) || !isset($subsorts[$subsort])) {
+                throw new moodle_exception('unknownsortcolumn', '', $link = $this->baseurl->out(), $sort);
+            }
+        }
+        return array($colname, $subsort);
+    }
+
+    protected function init_sort_from_params() {
+        $this->sort = array();
+        for ($i = 1; $i < 3; $i++) {
+            if (!$sort = optional_param('qbs1', '', PARAM_ALPHAEXT)) {
+                break;
+            }
+            // Work out the appropriate order.
+            $order = 1;
+            if ($sort[0] == '-') {
+                $order = -1;
+                $sort = substr($sort1, 1);
+                if (!$sort) {
+                    break;
+                }
+            }
+            // Deal with subsorts.
+            list($colname, $subsort) = $this->parse_subsort($sort);
+            $this->requiredcolumns[$colname] = $this->knowncolumntypes[$colname];
+            $sort[$sort] = $order;
+        }
+    }
+
+    protected function default_sort() {
+        return array('qtype' => 1, 'questionname' => 1);
+    }
+
+    protected function build_query_sql() {
+    /// Get the required tables.
+        $joins = array();
+        foreach ($this->requiredcolumns as $column) {
+            $extrajoins = $column->get_extra_joins();
+            foreach ($extrajoins as $prefix => $join) {
+                if (isset($joins[$prefix]) && $joins[$prefix] != $join) {
+                    throw new coding_exception('Join ' . $join . ' conflicts with previous join ' . $joins[$prefix]);
+                }
+                $joins[$prefix] = $join;
+            }
+        }
+
+    /// Get the required fields.
+        $fields = array();
+        foreach ($this->visiblecolumns as $column) {
+            $fields += $column->get_required_fields();
+        }
+        $fields = array_unique($fields);
+
+    /// Build the order by clause.
+        $sorts = array();
+        foreach ($this->sort as $sort => $order) {
+            list($colname, $subsort) = $this->parse_subsort($sort);
+            $sorts[] = $this->knowncolumntypes[$colname]->sort_expression($order < 0, $subsort);
+        }
+
+    /// Build the SQL.
+        $sql = ' FROM {question} q ' . implode(' ', $joins);
+        // TODO where clause.
+        $sql .= ' ORDER BY ' . implode(', ', $sorts);
+        $this->countsql = 'SELECT count(1)' . $sql;
+        $this->loadsql = 'SELECT ' . implode(', ', $fields) . $sql;
     }
 
     public function base_url($questionid) {

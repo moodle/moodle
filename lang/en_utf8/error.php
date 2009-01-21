@@ -441,6 +441,7 @@ $string['unknownrole'] = 'Unknown role \"$a\"';
 $string['unknownuseraction'] = 'Sorry, I do not understand this user action';
 $string['unknownuserselector'] = 'Unknown user selector';
 $string['unknownmodulename'] = 'Unknown module name for form';
+$string['unknownsortcolumn'] = 'Unknown sort column $a';
 $string['unknoworder'] = 'Unknown ordering';
 $string['unknowparamtype'] = 'Unknown parameter type: $a';
 $string['unknowquestiontype'] = 'Unsupported question type $a';
