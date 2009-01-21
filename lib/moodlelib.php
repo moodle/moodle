@@ -120,7 +120,7 @@ define('PARAM_NUMBER',  0x000a);
 define('PARAM_ALPHA',    0x0004);
 
 /**
- * PARAM_ALPHAEXT the same contents as PARAM_ALPHA plus the chars in quotes: "/-" allowed
+ * PARAM_ALPHAEXT the same contents as PARAM_ALPHA plus the chars in quotes: "_-" allowed
  * NOTE: originally this allowed "/" too, please use PARAM_SAFEPATH if "/" needed
  */
 define('PARAM_ALPHAEXT', 0x2000);
