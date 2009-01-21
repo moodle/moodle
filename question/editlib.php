@@ -128,13 +128,97 @@ function question_can_delete_cat($todelete) {
 }
 
 abstract class question_bank_column_base {
+    protected $qbank;
+
+    /**
+     * Constructor.
+     * @param $qbank the question_bank_view we are helping to render.
+     */
+    public function __construct(question_bank_view $qbank) {
+        $this->qbank = $qbank;
+        $this->init();
+    }
+
+    /**
+     * A chance for subclasses to initialise themselves, for example to load lang strings,
+     * without having to override the constructor.
+     */
+    protected function init() {
+    }
 
     /**
      * Output the column header cell.
      * @param integer $currentsort 0 for none. 1 for normal sort, -1 for reverse sort.
      */
-    public function display_header($currentsort) {
-        // TODO.
+    public function display_header() {
+        echo '<th class=header ' . $this->get_name() . '" scope="col">';
+        $sortable = $this->is_sortable();
+        $name = $this->get_name();
+        $title = $this->get_title();
+        if (is_array($sortable)) {
+            if ($title) {
+                echo '<div class="title">' . $title . '</div>';
+            }
+            $links = array();
+            foreach ($sortable as $subsort => $details) {
+                $links[] = $this->make_sort_link($name . '_' . $subsort, $details['title'], !empty($details['reverse']));
+            }
+            echo implode(' / ', $links);
+        } else if ($sortable) {
+            echo $this->make_sort_link($name, $this->qbank->get_sort($name), $title);
+        } else {
+            echo $title;
+        }
+        echo "</th>\n";
+    }
+
+    /**
+     * Title for this column. Not used if is_sortable returns an array.
+     * @param object $question the row from the $question table, augmented with extra information.
+     * @param string $rowclasses CSS class names that should be applied to this row of output.
+     */
+    protected function get_title() {
+        return '';
+    }
+
+    /**
+     * Get a link that changes the sort order, and indicates the current sort state.
+     * @param $name internal name used for this type of sorting.
+     * @param $currentsort the current sort order -1, 0, 1 for descending, none, ascending.
+     * @param $title the link text.
+     * @param $defaultreverse whether the default sort order for this column is descending, rather than ascending.
+     * @return string HTML fragment.
+     */
+    protected function make_sort_link($name, $currentsort, $title, $defaultreverse = false) {
+        $newsortreverse = $defaultreverse;
+        if ($currentsort) {
+            $newsortreverse = $currentsort > 0;
+        }
+        if ($newsortreverse) {
+            $tip = get_string('sortbyxreverse', '', $title);
+        } else {
+            $tip = get_string('sortbyx', '', $title);
+        }
+        echo '<a href="' . $this->qbank->new_sort_url($name, $newsortreverse) . '" title="' . $tip . '">';
+        echo $title;
+        if ($currentsort) {
+            echo $this->get_sort_icon($currentsort < 0);
+        }
+        echo '</a>';
+    }
+
+    /**
+     * Get an icon representing the corrent sort state.
+     * @param $reverse sort is descending, not ascending.
+     * @return string HTML image tag.
+     */
+    protected function get_sort_icon($reverse) {
+        global $CFG;
+        if ($reverse) {
+            return ' <img src="' . $CFG->pixpath . '/t/up.gif" alt="' . get_string('desc') . '" />';
+        } else {
+            return ' <img src="' . $CFG->pixpath . '/t/down.gif" alt="' . get_string('asc') . '" />';
+        }
     }
 
     /**
@@ -149,16 +233,14 @@ abstract class question_bank_column_base {
     }
 
     protected function display_start($question, $rowclasses) {
-        echo '<td class="' . $this->get_css_classes($question, $rowclasses) . '">';
+        echo '<td class="' . $this->get_name() . '">';
     }
 
     /**
      * @param object $question the row from the $question table, augmented with extra information.
-     * @param string $rowclasses CSS class names that should be applied to this row of output.
-     * @return string CSS class names that should be applied to this column. Should normally be
-     *      a simple work relating the the column type like 'questionname'.
+     * @return string internal name for this column. Used as a CSS class name, and to store information about the current sort.
      */
-    abstract protected function get_css_classes($question, $rowclasses);
+    abstract protected function get_name();
 
     /**
      * Output the contents of this column.
@@ -168,7 +250,7 @@ abstract class question_bank_column_base {
     abstract protected function display_content($question, $rowclasses);
 
     protected function display_end($question, $rowclasses) {
-        echo '</td>';
+        echo "</td>\n";
     }
 
     /**
@@ -197,10 +279,15 @@ abstract class question_bank_column_base {
     /**
      * Can this column be sorted on? You can return either:
      *  + false for no (the default),
-     *  + true for yes, or
-     *  + an array of subnames to sort on. E.g. 'firstname', 'lastname'.
-     * If this method returns true, sort_expression must be implemented.
-     * @return mixed  
+     *  + a field name, if sorting this column corresponds to sorting on that datbase field.
+     *  + an array of subnames to sort on as follows
+     *  return array(
+     *      'firstname' => array('field' => 'uc.firstname', 'title' => get_string('firstname')),
+     *      'lastname' => array('field' => 'uc.lastname', 'field' => get_string('lastname')),
+     *  );
+     * As well as field, and field, you can also add 'revers' => 1 if you want the default sort
+     * order to be DESC.
+     * @return mixed as above.
      */
     public function is_sortable() {
         return false;
@@ -212,22 +299,11 @@ abstract class question_bank_column_base {
      * @param string $normaldir 'ASC' or 'DESC'
      * @return string 'ASC' or 'DESC'
      */
-    protected function sortorder($reverse, $normaldir = 'ASC') {
-        switch ($normaldir) {
-            case 'ASC':
-                if ($reverse) {
-                    return ' DESC';
-                } else {
-                    return ' ASC';
-                }
-            case 'DESC':
-                if ($reverse) {
-                    return ' ASC';
-                } else {
-                    return ' DESC';
-                }
-            default:
-                throw new coding_exception('$normaldir should be ASC or DESC.');
+    protected function sortorder($reverse) {
+        if ($reverse) {
+            return ' DESC';
+        } else {
+            return ' ASC';
         }
     }
 
@@ -238,7 +314,18 @@ abstract class question_bank_column_base {
      * @return string some SQL to go in the order by clause.
      */
     public function sort_expression($reverse, $subsort) {
-        throw new coding_exception('A subclass of question_bank_column_base must implement sort_expression if is_sortable returns true.');
+        $sortable = $this->is_sortable();
+        if (is_array($sortable)) {
+            if (array_key_exists($subsort, $sortable)) {
+                return $sortable[$sortable]['field'] . $this->sortorder($reverse, !empty($sortable[$sortable]['reverse']));
+            } else {
+                throw new coding_exception('Unexpected $subsort type: ' . $subsort);
+            }
+        } else if ($sortable) {
+            return $sortable . $this->sortorder($reverse);
+        } else {
+            throw new coding_exception('sort_expression called on a non-sortable column.');
+        }
     }
 }
 
@@ -248,13 +335,16 @@ abstract class question_bank_column_base {
 class question_bank_checkbox_column extends question_bank_column_base {
     protected $strselect;
 
-    public function __construct() {
-        parent::__construct();
+    public function init() {
         $this->strselect = get_string('select', 'quiz');
     }
 
-    protected function get_css_classes($question, $rowclasses) {
+    protected function get_name() {
         return 'checkbox';
+    }
+
+    protected function get_title() {
+        return '<input type="checkbox" disabled="disabled" />';
     }
 
     protected function display_content($question, $rowclasses) {
@@ -271,8 +361,12 @@ class question_bank_checkbox_column extends question_bank_column_base {
  * A column type for the name of the question type.
  */
 class question_bank_question_type_column extends question_bank_column_base {
-    protected function get_css_classes($question, $rowclasses) {
+    protected function get_name() {
         return 'qtype';
+    }
+
+    protected function get_title() {
+        return get_string('qtypeveryshort', 'question');
     }
 
     protected function display_content($question, $rowclasses) {
@@ -284,11 +378,7 @@ class question_bank_question_type_column extends question_bank_column_base {
     }
 
     public function is_sortable() {
-        return true;
-    }
-
-    public function sort_expression($reverse, $subsort) {
-        return 'q.qtype' . $this->sortorder($reverse);
+        return 'q.qtype';
     }
 }
 
@@ -296,8 +386,12 @@ class question_bank_question_type_column extends question_bank_column_base {
  * A column type for the name of the question name.
  */
 class question_bank_question_name_column extends question_bank_column_base {
-    protected function get_css_classes($question, $rowclasses) {
+    protected function get_name() {
         return 'questionname';
+    }
+
+    protected function get_title() {
+        return get_string('question');
     }
 
     protected function display_content($question, $rowclasses) {
@@ -309,11 +403,7 @@ class question_bank_question_name_column extends question_bank_column_base {
     }
 
     public function is_sortable() {
-        return true;
-    }
-
-    public function sort_expression($reverse, $subsort) {
-        return 'q.name' . $this->sortorder($reverse);
+        return 'q.name';
     }
 }
 
@@ -321,8 +411,12 @@ class question_bank_question_name_column extends question_bank_column_base {
  * A column type for the name of the question creator.
  */
 class question_bank_creator_name_column extends question_bank_column_base {
-    protected function get_css_classes($question, $rowclasses) {
+    protected function get_name() {
         return 'creatorname';
+    }
+
+    protected function get_title() {
+        return get_string('createdby', 'question');
     }
 
     protected function display_content($question, $rowclasses) {
@@ -343,15 +437,10 @@ class question_bank_creator_name_column extends question_bank_column_base {
     }
 
     public function is_sortable() {
-        return array('firstname', 'lastname');
-    }
-
-    public function sort_expression($reverse, $subsort) {
-        if (in_array($subsort, $this->is_sortable())) {
-            return 'uc.' . $subsort . $this->sortorder($reverse);
-        } else {
-            throw new coding_exception('Unexpected $subsort type.');
-        }
+        return array(
+            'firstname' => array('field' => 'uc.firstname', 'title' => get_string('firstname')),
+            'lastname' => array('field' => 'uc.lastname', 'title' => get_string('lastname')),
+        );
     }
 }
 
@@ -359,8 +448,12 @@ class question_bank_creator_name_column extends question_bank_column_base {
  * A column type for the name of the question last modifier.
  */
 class question_bank_modifier_name_column extends question_bank_column_base {
-    protected function get_css_classes($question, $rowclasses) {
+    protected function get_name() {
         return 'modifiername';
+    }
+
+    protected function get_title() {
+        return get_string('lastmodifiedby', 'question');
     }
 
     protected function display_content($question, $rowclasses) {
@@ -381,15 +474,10 @@ class question_bank_modifier_name_column extends question_bank_column_base {
     }
 
     public function is_sortable() {
-        return array('firstname', 'lastname');
-    }
-
-    public function sort_expression($reverse, $subsort) {
-        if (in_array($subsort, $this->is_sortable())) {
-            return 'um.' . $subsort . $this->sortorder($reverse);
-        } else {
-            throw new coding_exception('Unexpected $subsort type.');
-        }
+        return array(
+            'firstname' => array('field' => 'um.firstname', 'title' => get_string('firstname')),
+            'lastname' => array('field' => 'um.lastname', 'title' => get_string('lastname')),
+        );
     }
 }
 
@@ -397,6 +485,11 @@ class question_bank_modifier_name_column extends question_bank_column_base {
  * A base class for actions that are an icon that lets you manipulate the question in some way.
  */
 abstract class question_bank_action_column_base extends question_bank_column_base {
+
+    protected function get_title() {
+        return '&#160;';
+    }
+
     protected function print_icon($icon, $title, $url) {
         global $CFG;
         echo '<a title="' . $title . '" href="' . $url . '">
@@ -411,47 +504,42 @@ abstract class question_bank_action_column_base extends question_bank_column_bas
 class question_bank_edit_action_column extends question_bank_action_column_base {
     protected $stredit;
     protected $strview;
-    protected $questionurl;
 
-    public function __construct($questionurl) {
-        parent::__construct();
-        $this->questionurl = $questionurl;
+    public function init() {
+        parent::init();
         $this->stredit = get_string('edit');
         $this->strview = get_string('view');
     }
 
-    protected function get_css_classes($question, $rowclasses) {
+    protected function get_name() {
         return 'editaction';
     }
 
     protected function display_content($question, $rowclasses) {
         if (question_has_capability_on($question, 'edit') ||
                 question_has_capability_on($question, 'move')) {
-            $this->print_icon('edit', $this->stredit, $this->questionurl->out(false, array('id' => $question->id)));
+            $this->print_icon('edit', $this->stredit, $this->qbank->edit_question_url($question->id));
         } else {
-            $this->print_icon('info', $this->strview, $this->questionurl->out(false, array('id' => $question->id)));
+            $this->print_icon('info', $this->strview, $this->qbank->edit_question_url($question->id));
         }
     }
 }
 
 class question_bank_preview_action_column extends question_bank_action_column_base {
     protected $strpreview;
-    protected $quizorcourseid;
 
-    public function __construct($quizorcourseid) {
-        parent::__construct();
-        $this->quizorcourseid = $quizorcourseid;
+    public function init() {
+        parent::init();
         $this->stredit = get_string('preview');
     }
 
-    protected function get_css_classes($question, $rowclasses) {
+    protected function get_name() {
         return 'previewaction';
     }
 
     protected function display_content($question, $rowclasses) {
         if (question_has_capability_on($question, 'use')) {
-            link_to_popup_window('/question/preview.php?id=' . $question->id .
-                    $this->quizorcourseid, 'questionpreview',
+            link_to_popup_window($this->qbank->preview_question_url($question->id), 'questionpreview',
                     ' <img src="' . $CFG->pixpath . '/t/preview.gif" class="iconsmall" alt="' . $this->strpreview . '" />',
                     0, 0, $this->strpreview, QUESTION_PREVIEW_POPUP_OPTIONS);
         }
@@ -464,21 +552,19 @@ class question_bank_preview_action_column extends question_bank_action_column_ba
 
 class question_bank_move_action_column extends question_bank_action_column_base {
     protected $strmove;
-    protected $questionurl;
 
-    public function __construct($questionurl) {
-        parent::__construct();
-        $this->questionurl = $questionurl;
+    public function init() {
+        parent::init();
         $this->strmove = get_string('move');
     }
 
-    protected function get_css_classes($question, $rowclasses) {
+    protected function get_name() {
         return 'editaction';
     }
 
     protected function display_content($question, $rowclasses) {
         if (question_has_capability_on($question, 'move')) {
-            $this->print_icon('move', $this->strmove, $this->questionurl->out(false, array('id' => $question->id)));
+            $this->print_icon('move', $this->strmove, $this->qbank->edit_question_url($question->id));
         }
     }
 }
@@ -489,26 +575,24 @@ class question_bank_move_action_column extends question_bank_action_column_base 
 class question_bank_delete_action_column extends question_bank_action_column_base {
     protected $strdelete;
     protected $strrestore;
-    protected $questionurl;
 
-    public function __construct($questionurl) {
-        parent::__construct();
-        $this->questionurl = $questionurl;
+    public function init() {
+        parent::init();
         $this->strdelete = get_string('delete');
         $this->strrestore = get_string('restore');
     }
 
-    protected function get_css_classes($question, $rowclasses) {
+    protected function get_name() {
         return 'deleteaction';
     }
 
     protected function display_content($question, $rowclasses) {
         if (question_has_capability_on($question, 'edit')) {
             if ($question->hidden) {
-                $this->print_icon('restore', $this->strrestore, $pageurl->out(false, array('unhide' => $question->id)));
+                $this->print_icon('restore', $this->strrestore, $this->qbank->base_url()->out(false, array('unhide' => $question->id)));
             } else {
                 $this->print_icon('restore', $this->strrestore,
-                        $pageurl->out(false, array('deleteselected' => $question->id, 'q' . $question->id => 1)));
+                        $this->qbank->base_url()->out(false, array('deleteselected' => $question->id, 'q' . $question->id => 1)));
             }
         }
     }
@@ -536,8 +620,46 @@ class question_bank_delete_action_column extends question_bank_action_column_bas
  *  + outputting table headers.
  */
 class question_bank_view {
-    public function __construct() {
+    protected $baseurl;
+    protected $editquestionurl;
+    protected $quizorcourseid;
+    protected $contexts;
+    protected $cm;
 
+    public function __construct($contexts, $pageurl, $cm = null) {
+        global $CFG, $COURSE;
+
+        $this->contexts = $contexts;
+        $this->baseurl = $pageurl;
+        $this->cm = $cm;
+
+        if (!empty($cm) && $cm->modname == 'quiz') {
+            $this->quizorcourseid = '&amp;quizid=' . $cm->instance;
+        } else {
+            $this->quizorcourseid = '&amp;courseid=' .$COURSE->id;
+        }
+
+        // Create the url of the new question page to forward to.
+        $this->editquestionurl = new moodle_url("$CFG->wwwroot/question/question.php",
+                array('returnurl' => $pageurl->out()));
+        if ($cm !== null){
+            $this->editquestionurl->param('cmid', $cm->id);
+        } else {
+            $this->editquestionurl->param('courseid', $COURSE->id);
+        }
+    }
+
+    public function base_url($questionid) {
+        return $baseurl;
+    }
+
+    public function edit_question_url($questionid) {
+        return $this->editquestionurl->out(false, array('id' => $questionid));
+    }
+
+    public function preview_question_url($questionid) {
+        global $CFG;
+        return $CFG->wwwroot . '/question/preview.php?id=' . $question->id . $this->quizorcourseid;
     }
 
     /**
@@ -552,42 +674,11 @@ class question_bank_view {
      * category      Chooses the category
      * displayoptions Sets display options
      */
-    function display($tabname, $contexts, $pageurl, $cm, $page, $perpage, $sortorder,
+    public function display($tabname, $page, $perpage, $sortorder,
             $sortorderdecoded, $cat, $recurse, $showhidden, $showquestiontext){
         global $COURSE, $DB;
 
-        if (optional_param('deleteselected', false, PARAM_BOOL)){ // teacher still has to confirm
-            // make a list of all the questions that are selected
-            $rawquestions = $_REQUEST; // This code is called by both POST forms and GET links, so cannot use data_submitted.
-            $questionlist = '';  // comma separated list of ids of questions to be deleted
-            $questionnames = ''; // string with names of questions separated by <br /> with
-                                 // an asterix in front of those that are in use
-            $inuse = false;      // set to true if at least one of the questions is in use
-            foreach ($rawquestions as $key => $value) {    // Parse input for question ids
-                if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
-                    $key = $matches[1];
-                    $questionlist .= $key.',';
-                    question_require_capability_on($key, 'edit');
-                    if ($DB->record_exists('quiz_question_instances', array('question' => $key))) {
-                        $questionnames .= '* ';
-                        $inuse = true;
-                    }
-                    $questionnames .= $DB->get_field('question', 'name', array('id' => $key)) . '<br />';
-                }
-            }
-            if (!$questionlist) { // no questions were selected
-                redirect($pageurl->out());
-            }
-            $questionlist = rtrim($questionlist, ',');
-
-            // Add an explanation about questions in use
-            if ($inuse) {
-                $questionnames .= '<br />'.get_string('questionsinuse', 'quiz');
-            }
-            notice_yesno(get_string("deletequestionscheck", "quiz", $questionnames),
-                        $pageurl->out_action(array('deleteselected'=>$questionlist, 'confirm'=>md5($questionlist))),
-                        $pageurl->out_action());
-
+        if ($this->process_actions_needing_ui()) {
             return;
         }
 
@@ -595,13 +686,13 @@ class question_bank_view {
         print_box_start('generalbox questionbank');
         print_heading(get_string('questionbank', 'question'), '', 2);
 
-        $this->display_category_form($contexts->having_one_edit_tab_cap($tabname),
-                $pageurl, $cat, $recurse, $showhidden, $showquestiontext);
+        $this->display_category_form($this->contexts->having_one_edit_tab_cap($tabname),
+                $this->baseurl, $cat, $recurse, $showhidden, $showquestiontext);
 
         // continues with list of questions
-        $this->display_question_list($contexts->having_one_edit_tab_cap($tabname), $pageurl, $cat, isset($cm) ? $cm : null,
+        $this->display_question_list($this->contexts->having_one_edit_tab_cap($tabname), $this->baseurl, $cat, $this->cm,
                 $recurse, $page, $perpage, $showhidden, $sortorder, $sortorderdecoded, $showquestiontext,
-                $contexts->having_cap('moodle/question:add'));
+                $this->contexts->having_cap('moodle/question:add'));
 
         print_box_end();
     }
@@ -609,7 +700,7 @@ class question_bank_view {
     /**
      * prints a form to choose categories
      */
-    function display_category_form($contexts, $pageurl, $current, $recurse=1,
+    protected function display_category_form($contexts, $pageurl, $current, $recurse=1,
             $showhidden=false, $showquestiontext=false) {
         global $CFG;
 
@@ -661,11 +752,11 @@ class question_bank_view {
     * @param boolean $showhidden   True if also hidden questions should be displayed
     * @param boolean $showquestiontext whether the text of each question should be shown in the list
     */
-    function display_question_list($contexts, $pageurl, $categoryandcontext,
+    protected function display_question_list($contexts, $pageurl, $categoryandcontext,
             $cm = null, $recurse=1, $page=0, $perpage=100, $showhidden=false,
             $sortorder='typename', $sortorderdecoded='qtype, name ASC',
             $showquestiontext = false, $addcontexts = array()) {
-        global $USER, $CFG, $THEME, $COURSE, $DB;
+        global $CFG, $COURSE, $DB;
 
         list($categoryid, $contextid)=  explode(',', $categoryandcontext);
 
@@ -945,8 +1036,7 @@ class question_bank_view {
         echo "</form>\n";
     }
 
-    function display_question_sort_options($pageurl, $sortorder){
-        global $USER;
+    protected function display_question_sort_options($pageurl, $sortorder){
         //sort options
         $html = "<div class=\"mdl-align questionsortoptions\">";
         // POST method should only be used for parameters that change data
@@ -970,7 +1060,7 @@ class question_bank_view {
         echo $html;
     }
 
-    function process_actions($pageurl, $cm){
+    public function process_actions() {
         global $CFG, $COURSE, $DB;
         /// Now, check for commands on this page and modify variables as necessary
         if (optional_param('move', false, PARAM_BOOL) and confirm_sesskey()) { /// Move selected questions to new category
@@ -1057,6 +1147,43 @@ class question_bank_view {
                 print_error('cannotunhidequestion', 'question');
             }
             redirect($pageurl->out());
+        }
+    }
+
+    public function process_actions_needing_ui() {
+        if (optional_param('deleteselected', false, PARAM_BOOL)) {
+            // make a list of all the questions that are selected
+            $rawquestions = $_REQUEST; // This code is called by both POST forms and GET links, so cannot use data_submitted.
+            $questionlist = '';  // comma separated list of ids of questions to be deleted
+            $questionnames = ''; // string with names of questions separated by <br /> with
+                                 // an asterix in front of those that are in use
+            $inuse = false;      // set to true if at least one of the questions is in use
+            foreach ($rawquestions as $key => $value) {    // Parse input for question ids
+                if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
+                    $key = $matches[1];
+                    $questionlist .= $key.',';
+                    question_require_capability_on($key, 'edit');
+                    if ($DB->record_exists('quiz_question_instances', array('question' => $key))) {
+                        $questionnames .= '* ';
+                        $inuse = true;
+                    }
+                    $questionnames .= $DB->get_field('question', 'name', array('id' => $key)) . '<br />';
+                }
+            }
+            if (!$questionlist) { // no questions were selected
+                redirect($this->baseurl->out());
+            }
+            $questionlist = rtrim($questionlist, ',');
+
+            // Add an explanation about questions in use
+            if ($inuse) {
+                $questionnames .= '<br />'.get_string('questionsinuse', 'quiz');
+            }
+            notice_yesno(get_string("deletequestionscheck", "quiz", $questionnames),
+                        $pageurl->out_action(array('deleteselected'=>$questionlist, 'confirm'=>md5($questionlist))),
+                        $pageurl->out_action());
+
+            return true;
         }
     }
 }

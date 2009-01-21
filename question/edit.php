@@ -34,8 +34,8 @@
     require_once("editlib.php");
 
     list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) = question_edit_setup('questions');
-    $questionbank = new question_bank_view();
-    $questionbank->process_actions($thispageurl, $cm);
+    $questionbank = new question_bank_view($contexts, $thispageurl, $cm);
+    $questionbank->process_actions();
 
     // TODO log this page view.
 
@@ -72,7 +72,7 @@
     echo '<table class="boxaligncenter" border="0" cellpadding="2" cellspacing="0">';
     echo '<tr><td valign="top">';
 
-    $questionbank->display('questions', $contexts, $thispageurl, $cm, $pagevars['qpage'],
+    $questionbank->display('questions', $pagevars['qpage'],
             $pagevars['qperpage'], $pagevars['qsortorder'], $pagevars['qsortorderdecoded'],
             $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'], $pagevars['showquestiontext']);
 

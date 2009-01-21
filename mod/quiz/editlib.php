@@ -1014,8 +1014,8 @@ function quiz_question_tostring(&$question,$showicon=false,$showquestiontext=tru
 class quiz_question_bank_view extends question_bank_view {
     protected $quizhasattempts = false;
 
-    public function __construct() {
-
+    public function __construct($contexts, $pageurl, $cm = null) {
+        parent::__construct($contexts, $pageurl, $cm);
     }
 
     /**
@@ -1040,42 +1040,11 @@ class quiz_question_bank_view extends question_bank_view {
      * category      Chooses the category
      * displayoptions Sets display options
      */
-    function display($tabname, $contexts, $pageurl, $cm, $page, $perpage, $sortorder,
+    public function display($tabname, $page, $perpage, $sortorder,
             $sortorderdecoded, $cat, $recurse, $showhidden, $showquestiontext){
         global $COURSE, $DB;
 
-        if (optional_param('deleteselected', false, PARAM_BOOL)){ // teacher still has to confirm
-            // make a list of all the questions that are selected
-            $rawquestions = $_REQUEST; // This code is called by both POST forms and GET links, so cannot use data_submitted.
-            $questionlist = '';  // comma separated list of ids of questions to be deleted
-            $questionnames = ''; // string with names of questions separated by <br /> with
-                                 // an asterix in front of those that are in use
-            $inuse = false;      // set to true if at least one of the questions is in use
-            foreach ($rawquestions as $key => $value) {    // Parse input for question ids
-                if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
-                    $key = $matches[1];
-                    $questionlist .= $key.',';
-                    question_require_capability_on($key, 'edit');
-                    if ($DB->record_exists('quiz_question_instances', array('question' => $key))) {
-                        $questionnames .= '* ';
-                        $inuse = true;
-                    }
-                    $questionnames .= $DB->get_field('question', 'name', array('id' => $key)) . '<br />';
-                }
-            }
-            if (!$questionlist) { // no questions were selected
-                redirect($pageurl->out());
-            }
-            $questionlist = rtrim($questionlist, ',');
-
-            // Add an explanation about questions in use
-            if ($inuse) {
-                $questionnames .= '<br />'.get_string('questionsinuse', 'quiz');
-            }
-            notice_yesno(get_string("deletequestionscheck", "quiz", $questionnames),
-                        $pageurl->out_action(array('deleteselected'=>$questionlist, 'confirm'=>md5($questionlist))),
-                        $pageurl->out_action());
-
+        if ($this->process_actions_needing_ui()) {
             return;
         }
 
@@ -1112,17 +1081,17 @@ class quiz_question_bank_view extends question_bank_view {
 
         print_box_start('generalbox questionbank');
 
-        $this->display_category_form($contexts->having_one_edit_tab_cap($tabname),
-                $pageurl, $cat, $recurse, $showhidden, $showquestiontext);
+        $this->display_category_form($this->contexts->having_one_edit_tab_cap($tabname),
+                $this->baseurl, $cat, $recurse, $showhidden, $showquestiontext);
 
         // continues with list of questions
-        $this->display_question_list($contexts->having_one_edit_tab_cap($tabname), $pageurl, $cat, isset($cm) ? $cm : null,
+        $this->display_question_list($this->contexts->having_one_edit_tab_cap($tabname), $this->baseurl, $cat, $this->cm,
                 $recurse, $page, $perpage, $showhidden, $sortorder, $sortorderdecoded, $showquestiontext,
-                $contexts->having_cap('moodle/question:add'));
+                $this->contexts->having_cap('moodle/question:add'));
 
         echo '<hr/><form method="get" action="edit.php" id="displayoptions">';
         echo "<fieldset class='invisiblefieldset'>";
-        echo $pageurl->hidden_params_out(array('recurse', 'showhidden',
+        echo $this->baseurl->hidden_params_out(array('recurse', 'showhidden',
                 'showquestiontext'));
         $this->display_category_form_checkbox('recurse', $recurse);
         $this->display_category_form_checkbox('showhidden', $showhidden);
@@ -1136,7 +1105,7 @@ class quiz_question_bank_view extends question_bank_view {
     /**
      * prints a form to choose categories
      */
-    function display_category_form($contexts, $pageurl, $current, $recurse=1,
+    protected function display_category_form($contexts, $pageurl, $current, $recurse=1,
             $showhidden=false, $showquestiontext=false) {
         global $CFG;
 
@@ -1165,11 +1134,11 @@ class quiz_question_bank_view extends question_bank_view {
     * @param boolean $showhidden   True if also hidden questions should be displayed
     * @param boolean $showquestiontext whether the text of each question should be shown in the list
     */
-    function display_question_list($contexts, $pageurl, $categoryandcontext,
+    protected function display_question_list($contexts, $pageurl, $categoryandcontext,
             $cm = null, $recurse=1, $page=0, $perpage=100, $showhidden=false,
             $sortorder='typename', $sortorderdecoded='qtype, name ASC',
             $showquestiontext = false, $addcontexts = array()) {
-        global $USER, $CFG, $THEME, $COURSE, $DB;
+        global $CFG, $COURSE, $DB;
 
         list($categoryid, $contextid)=  explode(',', $categoryandcontext);
 
@@ -1274,7 +1243,7 @@ class quiz_question_bank_view extends question_bank_view {
 
             // There are no questions on the requested page.
             $page = 0;
-            if (!$questionsatall = $DB->get_records_select('question',
+            if (!$questions = $DB->get_records_select('question',
                     "category $usql AND parent = '0' $showhidden", $params, $sortorderdecoded,
                     '*', 0, $perpage)) {
                 // There are no questions at all
@@ -1426,23 +1395,157 @@ class quiz_question_bank_view extends question_bank_view {
         echo '</fieldset>';
         echo "</form>\n";
     }
-}
 
-/**
- * Add an arbitrary element to array at a specified index, pushing the rest
- * back.
- *
- * @param array $array The array to operate on
- * @param mixed $value The element to add
- * @param integer $at The position at which to add the element
- * @return array
- */
-function array_add_at($array,$value,$at){
-    $beginpart=array_slice($array, 0,$at);
-    $endpart=array_slice($array, $at, (count($array)-$at) );
-    $beginpart[]=$value;
-    $result=array_merge($beginpart,$endpart);
-    return $result;
+    protected function display_question_sort_options($pageurl, $sortorder){
+        //sort options
+        $html = "<div class=\"mdl-align questionsortoptions\">";
+        // POST method should only be used for parameters that change data
+        // or if POST method has to be used, the user must be redirected immediately to
+        // non-POSTed page to not break the back button
+        $html .= '<form method="get" action="edit.php">';
+        $html .= '<fieldset class="invisiblefieldset" style="display: block;">';
+        $html .= '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+        $html .= $pageurl->hidden_params_out(array('qsortorder'));
+        //choose_from_menu concatenates the form name with
+        //"menu" so the label is for menuqsortorder
+        $sortoptions = array('alpha' => get_string("qname", "quiz"),
+                             'typealpha' => get_string("qtypename", "quiz"),
+                             'age' => get_string("age", "quiz"));
+        $a =  choose_from_menu($sortoptions, 'qsortorder', $sortorder, false, 'this.form.submit();', '0', true);
+        $html .= '<label for="menuqsortorder">'.get_string('sortquestionsbyx', 'quiz', $a).'</label>';
+        $html .=  '<noscript><div><input type="submit" value="'.get_string("sortsubmit", "quiz").'" /></div></noscript>';
+        $html .= '</fieldset>';
+        $html .= "</form>\n";
+        $html .= "</div>\n";
+        echo $html;
+    }
+
+    public function process_actions() {
+        global $CFG, $COURSE, $DB;
+        /// Now, check for commands on this page and modify variables as necessary
+        if (optional_param('move', false, PARAM_BOOL) and confirm_sesskey()) { /// Move selected questions to new category
+            $category = required_param('category', PARAM_SEQUENCE);
+            list($tocategoryid, $contextid) = explode(',', $category);
+            if (! $tocategory = $DB->get_record('question_categories', array('id' => $tocategoryid, 'contextid' => $contextid))) {
+                print_error('cannotfindcate', 'question');
+            }
+            $tocontext = get_context_instance_by_id($contextid);
+            require_capability('moodle/question:add', $tocontext);
+            $rawdata = (array) data_submitted();
+            $questionids = array();
+            foreach ($rawdata as $key => $value) {    // Parse input for question ids
+                if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
+                    $key = $matches[1];
+                    $questionids[] = $key;
+                }
+            }
+            if ($questionids){
+                list($usql, $params) = $DB->get_in_or_equal($questionids);
+                $sql = "SELECT q.*, c.contextid FROM {question} q, {question_categories} c WHERE q.id $usql AND c.id = q.category";
+                if (!$questions = $DB->get_records_sql($sql, $params)){
+                    print_error('questiondoesnotexist', 'question', $pageurl->out());
+                }
+                $checkforfiles = false;
+                foreach ($questions as $question){
+                    //check capabilities
+                    question_require_capability_on($question, 'move');
+                    $fromcontext = get_context_instance_by_id($question->contextid);
+                    if (get_filesdir_from_context($fromcontext) != get_filesdir_from_context($tocontext)){
+                        $checkforfiles = true;
+                    }
+                }
+                $returnurl = $pageurl->out(false, array('category'=>"$tocategoryid,$contextid"));
+                if (!$checkforfiles){
+                    if (!question_move_questions_to_category(implode(',', $questionids), $tocategory->id)) {
+                        print_error('errormovingquestions', 'question', $returnurl, $questionids);
+                    }
+                    redirect($returnurl);
+                } else {
+                    $movecontexturl  = new moodle_url($CFG->wwwroot.'/question/contextmoveq.php',
+                                                    array('returnurl' => $returnurl,
+                                                            'ids'=>$questionidlist,
+                                                            'tocatid'=> $tocategoryid));
+                    if ($cm){
+                        $movecontexturl->param('cmid', $cm->id);
+                    } else {
+                        $movecontexturl->param('courseid', $COURSE->id);
+                    }
+                    redirect($movecontexturl->out());
+                }
+            }
+        }
+
+        if (optional_param('deleteselected', false, PARAM_BOOL)) { // delete selected questions from the category
+            if (($confirm = optional_param('confirm', '', PARAM_ALPHANUM)) and confirm_sesskey()) { // teacher has already confirmed the action
+                $deleteselected = required_param('deleteselected');
+                if ($confirm == md5($deleteselected)) {
+                    if ($questionlist = explode(',', $deleteselected)) {
+                        // for each question either hide it if it is in use or delete it
+                        foreach ($questionlist as $questionid) {
+                            question_require_capability_on($questionid, 'edit');
+                            if ($DB->record_exists('quiz_question_instances', array('question' => $questionid))) {
+                                if (!$DB->set_field('question', 'hidden', 1, array('id' => $questionid))) {
+                                    question_require_capability_on($questionid, 'edit');
+                                    print_error('cannothidequestion', 'question');
+                                }
+                            } else {
+                                delete_question($questionid);
+                            }
+                        }
+                    }
+                    redirect($pageurl->out());
+                } else {
+                    print_error('invalidconfirm', 'question');
+                }
+            }
+        }
+
+        // Unhide a question
+        if(($unhide = optional_param('unhide', '', PARAM_INT)) and confirm_sesskey()) {
+            question_require_capability_on($unhide, 'edit');
+            if(!$DB->set_field('question', 'hidden', 0, array('id', $unhide))) {
+                print_error('cannotunhidequestion', 'question');
+            }
+            redirect($pageurl->out());
+        }
+    }
+
+    public function process_actions_needing_ui() {
+        if (optional_param('deleteselected', false, PARAM_BOOL)) {
+            // make a list of all the questions that are selected
+            $rawquestions = $_REQUEST; // This code is called by both POST forms and GET links, so cannot use data_submitted.
+            $questionlist = '';  // comma separated list of ids of questions to be deleted
+            $questionnames = ''; // string with names of questions separated by <br /> with
+                                 // an asterix in front of those that are in use
+            $inuse = false;      // set to true if at least one of the questions is in use
+            foreach ($rawquestions as $key => $value) {    // Parse input for question ids
+                if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
+                    $key = $matches[1];
+                    $questionlist .= $key.',';
+                    question_require_capability_on($key, 'edit');
+                    if ($DB->record_exists('quiz_question_instances', array('question' => $key))) {
+                        $questionnames .= '* ';
+                        $inuse = true;
+                    }
+                    $questionnames .= $DB->get_field('question', 'name', array('id' => $key)) . '<br />';
+                }
+            }
+            if (!$questionlist) { // no questions were selected
+                redirect($this->baseurl->out());
+            }
+            $questionlist = rtrim($questionlist, ',');
+
+            // Add an explanation about questions in use
+            if ($inuse) {
+                $questionnames .= '<br />'.get_string('questionsinuse', 'quiz');
+            }
+            notice_yesno(get_string("deletequestionscheck", "quiz", $questionnames),
+                        $pageurl->out_action(array('deleteselected'=>$questionlist, 'confirm'=>md5($questionlist))),
+                        $pageurl->out_action());
+
+            return true;
+        }
+    }
 }
 
 /**

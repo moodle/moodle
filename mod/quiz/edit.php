@@ -154,7 +154,7 @@ if ($quiz_qbanktool > -1) {
 } else {
     $quiz_qbanktool = get_user_preferences("quiz_qbanktool_open",0);
 }
-$questionbank = new quiz_question_bank_view();
+$questionbank = new quiz_question_bank_view($contexts, $thispageurl, $cm);
 
 //will be set further down in the code
 $quiz_has_attempts=false;
@@ -631,7 +631,7 @@ echo '<span id="questionbank"></span>';
 echo '<div class="container">';
 echo '<div id="module" class="module">';
 echo '<div class="bd">';
-$questionbank->display('editq', $contexts, $thispageurl, $cm,
+$questionbank->display('editq',
         $pagevars['qpage'],
         $pagevars['qperpage'], $pagevars['qsortorder'],
         $pagevars['qsortorderdecoded'],
