@@ -35,6 +35,8 @@ $string['configfilewritten'] = 'config.php已經成功建立';
 $string['configurationcompletehead'] = '設定完成';
 $string['configurationcompletesub'] = 'Moodle會嘗試將設定資料儲存在您的Moodle根目錄中。';
 $string['continue'] = '下一頁';
+$string['ctyperecommended'] = '強烈建議您安裝ctype 的PHP 延伸套件，特別是，您的網站要支援非拉丁語系語言的話，可以改善網站效能。';
+$string['ctyperequired'] = '為了改善網站效能與提供多種語言的相容性，現在 Moodle 需要安裝 ctype 的PHP 延伸套件。';
 $string['curlrecommended'] = '建議安裝額外的 Curl 函式庫來啟用 Moodle 網路功能。';
 $string['customcheck'] = '其他檢查';
 $string['database'] = '資料庫';
@@ -187,7 +189,7 @@ $string['phpversionhelp'] = '<p>Moodle 需要至少4.1.0.的PHP版本 </p>
 <p>您必須更新您的 PHP 或在有更新版本的主機進行安裝!</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = '向前';
-$string['qtyperqpwillberemoved'] = '在更新時，也將RQP問題移除。您不使用此問題型態，你也不會經歷任何問題。';
+$string['qtyperqpwillberemoved'] = '在更新期間，RQP問題類型將被移除。您不能再使用這種問題類型，這樣就不會遇到任何問題。';
 $string['qtyperqpwillberemovedanyway'] = '在更新時，也將RQP問題移除。您的資料庫中有一些RQP問題存在，除非您在繼續更新前，重新安裝程式碼 http://moodle.org/mod/data/view.php?d=13&amp;rid=797，否則它會停止運作。';
 $string['remotedownloaderror'] = '下載元件至伺服器失敗，檢查代理伺服器的設定、高度建議安裝PHP cURL，您必須手動下載<a href=\"$a->url\">$a->url</a>，並且複製到伺服器\"$a->dest\" 解壓縮';
 $string['remotedownloadnotallowed'] = '您的伺服器不允許下載元件（停用了 allow_url_fopen ）。<br /><br />您必須手動下載 <a href=\"$a->url\">$a->url</a> ，然後複製到 \"$a->dest\" 並且解壓縮。';
