@@ -35,7 +35,7 @@ function call_moodle_function ($rest_arguments) {
     if ($params === false) {
         //return an error message, the REST params doesn't match with the web service description
     }
-    $res = call_user_func_array  ( $classname.'::'.$functionname, $params);
+    $res = call_user_func_array  ( $classname.'::'.$functionname, array($params));
     
 ///Transform result into xml in order to send the REST response
     $return =  mdl_conn_rest_object_to_xml ($res,key($description['return']));
@@ -51,13 +51,21 @@ function call_moodle_function ($rest_arguments) {
  * @return <type>
  */
 function retrieve_params ($description) {
+    $params = array();
     //retrieve REST param matching the description (warning: PHP assign the first instanciation as the first position in the table)
-    foreach ($description['wsparams'] as $paramname => $paramtype) {
+    foreach ($description['params'] as $paramname => $paramtype) {
         $value = optional_param($paramname,null,$paramtype);
         if (!empty($value)) {
                 $params[$paramname] = $value;
-            }
         }
+    }
+    //retrieve REST optional params
+    foreach ($description['optionalparams'] as $paramname => $paramtype) {
+        $value = optional_param($paramname,null,$paramtype);
+        if (!empty($value)) {
+                $params[$paramname] = $value;
+        }
+    }
     
     return $params;
 }

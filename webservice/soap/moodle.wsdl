@@ -17,18 +17,13 @@
         </types>
 
         <message name="tmp_get_usersRequest">
-            <part name="search" type="xsd:string"/>
+            <part name="params" type="xsd:object"/>
         </message>
         <message name="tmp_get_usersResponse">
             <part name="user" type="xsd:object"/>
         </message>
         <message name="tmp_create_userRequest">
-            <part name="username" type="xsd:string"/>
-            <part name="firstname" type="xsd:string"/>
-
-            <part name="lastname" type="xsd:string"/>
-            <part name="email" type="xsd:string"/>
-            <part name="password" type="xsd:string"/>
+            <part name="params" type="xsd:object"/>
         </message>
         <message name="tmp_create_userResponse">
             <part name="userid" type="xsd:string"/>
@@ -41,18 +36,14 @@
             <part name="user" type="xsd:object"/>
         </message>
         <message name="tmp_delete_userRequest">
-            <part name="username" type="xsd:string"/>
-            <part name="mnethostid" type="xsd:integer"/>
+             <part name="params" type="xsd:object"/>
         </message>
         <message name="tmp_delete_userResponse">
 
             <part name="result" type="xsd:object"/>
         </message>
         <message name="tmp_update_userRequest">
-            <part name="username" type="xsd:string"/>
-            <part name="mnethostid" type="xsd:integer"/>
-            <part name="newusername" type="xsd:string"/>
-            <part name="firstname" type="xsd:string"/>
+             <part name="params" type="xsd:object"/>
         </message>
         <message name="tmp_update_userResponse">
 

@@ -20,13 +20,13 @@ $client = new SoapClient("../moodle.wsdl",array(
     "exceptions" => 0));
 
 try {
-    var_dump($client->tmp_get_users("admin"));
+    var_dump($client->tmp_get_users(array('search' => "admin")));
     printLastRequestResponse($client);
-    var_dump($client->tmp_create_user("mockuser6","firstname6","lastname6","mockuser6@mockuser6.com", "password6"));
+    var_dump($client->tmp_create_user(array('username' => "mockuser66",'firstname' => "firstname6",'lastname' => "lastname6",'email' => "mockuser6@mockuser6.com",'password' => "password6")));
     printLastRequestResponse($client);
-    var_dump($client->tmp_update_user("mockuser6",1,"mockuser6b","firstname6b"));
+    var_dump($client->tmp_update_user(array('username' => "mockuser66",'mnethostid' => 1,'newusername' => "mockuser6b",'firstname' => "firstname6b")));
     printLastRequestResponse($client);
-    var_dump($client->tmp_delete_user("mockuser6b",1));
+    var_dump($client->tmp_delete_user(array('username' => "mockuser6b",'mnethostid' => 1)));
     printLastRequestResponse($client);
 } catch (SoapFault $exception) {
     echo $exception;
