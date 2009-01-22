@@ -22,13 +22,11 @@ function call_moodle_function ($rest_arguments) {
 
     $classname = str_replace('/', '_', $apipath); // convert '/' into '_' (e.g. /mod/forum/ => _mod_forum_)
     $classname = substr($classname,1, strlen($classname) - 1); //remove first _ (e.g. _mod_forum => mod_forum)
-    $classname .= 'ws_api';
+    $classname .= 'external';
 
-///these three next lines can be generic => create a function
-    require_once($CFG->dirroot.$apipath.'wsapi.php');
-    $api = new $classname();
-
-    $description = $api->get_function_webservice_description($functionname); //retrieve the web service description for this function
+    require_once($CFG->dirroot.$apipath.'external.php');
+    $wsapi = new $classname();
+    $description = $wsapi->get_function_webservice_description($functionname); //retrieve the web service description for this function
 
 ///This following line is only REST protocol
     $params = retrieve_params ($description); //retrieve the REST params
@@ -37,7 +35,6 @@ function call_moodle_function ($rest_arguments) {
     if ($params === false) {
         //return an error message, the REST params doesn't match with the web service description
     }
-    //require_once($CFG->dirroot.$apipath.'api.php');
     $res = call_user_func_array  ( $classname.'::'.$functionname, $params);
     
 ///Transform result into xml in order to send the REST response
@@ -54,9 +51,7 @@ function call_moodle_function ($rest_arguments) {
  * @return <type>
  */
 function retrieve_params ($description) {
-//    $params = $description['wsparams'];
     //retrieve REST param matching the description (warning: PHP assign the first instanciation as the first position in the table)
-
     foreach ($description['wsparams'] as $paramname => $paramtype) {
         $value = optional_param($paramname,null,$paramtype);
         if (!empty($value)) {

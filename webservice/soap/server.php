@@ -18,11 +18,11 @@ if (empty($CFG->enablewebservices)) {
 
 //retrieve the api name
 $classpath = optional_param(classpath,null,PARAM_ALPHA);
-require_once(dirname(__FILE__) . '/../../'.$classpath.'/wsapi.php');
+require_once(dirname(__FILE__) . '/../../'.$classpath.'/external.php');
 
 /// run the server
 $server = new SoapServer("moodle.wsdl");
-$server->setClass($classpath."_ws_api");
+$server->setClass($classpath."_external");
 $server->handle();
 
 ?>

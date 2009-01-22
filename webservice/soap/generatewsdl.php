@@ -20,8 +20,8 @@ class wsdl_generator {
 
     function __construct () {
         // The exception list
-        // if ever there is some wsapi.php file that are not a web service class, they need to be declared here
-        // example: $this->exceptionlist['/home/jerome/Projects/Moodle_HEAD/moodle/mod/scorm/wsapi.php'] = true;
+        // if ever there is some external.php file that are not a web service class, they need to be declared here
+        // example: $this->exceptionlist['/home/jerome/Projects/Moodle_HEAD/moodle/mod/scorm/external.php'] = true;
         $this->exceptionlist = array();
     }
 
@@ -75,9 +75,9 @@ EOF;
 
          ///load the class        
             $classpath = substr($fileapipath,strlen($CFG->dirroot)+1); //remove the dir root + / from the file path
-            $classpath = substr($classpath,0,strlen($classpath) - 10); //remove /wsapi.php from the classpath
+            $classpath = substr($classpath,0,strlen($classpath) - 10); //remove /external.php from the classpath
             $classpath = str_replace('/','_',$classpath); //convert all / into _
-            $classname = $classpath."_ws_api";
+            $classname = $classpath."_external";
             $api = new $classname();
 
              $wsdlporttype .= <<<EOF
@@ -208,7 +208,7 @@ EOF;
                          $this->setListApiFiles($files, $path);
                     }
                  ///retrieve api.php file
-                    else if ($file == "wsapi.php" && ! $this->inExceptionList($path)) {
+                    else if ($file == "external.php" && ! $this->inExceptionList($path)) {
                         $files[] = $path;
                     }
                 }
@@ -223,7 +223,7 @@ EOF;
 
     /**
      * Hacky function
-     * We need to define if we remove all wsapi.php file from Moodle when they do not really
+     * We need to define if we remove all external.php file from Moodle when they do not really
      * are ws api file for Moodle ws API
      * @param string $path
      * @return boolean true if the path if in the exception list
