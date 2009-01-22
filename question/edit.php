@@ -34,7 +34,7 @@
     require_once("editlib.php");
 
     list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) = question_edit_setup('questions');
-    $questionbank = new question_bank_view($contexts, $thispageurl, $cm);
+    $questionbank = new question_bank_view($contexts, $thispageurl, $COURSE, $cm);
     $questionbank->process_actions();
 
     // TODO log this page view.

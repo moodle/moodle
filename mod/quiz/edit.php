@@ -53,31 +53,6 @@ require_once($CFG->dirroot."/question/category_class.php");
 require_js(array('yui_yahoo','yui_dom-event','yui_container','yui_dragdrop'));
 
 /**
- * Callback function called from question_list() function (which is called
- * from showbank())
- * Displays action icon as first action for each question.
- */
-function module_specific_actions($pageurl, $questionid, $cmid, $canuse, $cmoptions){
-    global $CFG;
-    if ($canuse && !$cmoptions->hasattempts){
-        // for RTL languages: switch right and left arrows /****/
-        if (right_to_left()) {
-            $movearrow = 'removeright.gif';
-        } else {
-            $movearrow = 'moveleft.gif';
-        }
-        $straddtoquiz = get_string("addtoquiz", "quiz");
-        $out = "<a title=\"$straddtoquiz\" href=\"edit.php?".
-                $pageurl->get_query_string().
-                "&amp;addquestion=$questionid&amp;sesskey=".
-                sesskey()."\"><img src=\"$CFG->pixpath/t/$movearrow\"
-                alt=\"$straddtoquiz\" /></a>&nbsp;";
-        return $out;
-    } else {
-        return '';
-    }
-}
-/**
  * Callback function called from question_list() function
  * (which is called from showbank())
  * Displays button in form with checkboxes for each question.
@@ -154,7 +129,6 @@ if ($quiz_qbanktool > -1) {
 } else {
     $quiz_qbanktool = get_user_preferences("quiz_qbanktool_open",0);
 }
-$questionbank = new quiz_question_bank_view($contexts, $thispageurl, $cm);
 
 //will be set further down in the code
 $quiz_has_attempts=false;
@@ -179,6 +153,8 @@ if($quiz_reordertool){
 if (! $course = $DB->get_record('course', array('id' => $quiz->course))) {
     print_error('invalidcourseid', 'error');
 }
+
+$questionbank = new quiz_question_bank_view($contexts, $thispageurl, $course, $cm);
 
 // Log this visit.
 add_to_log($cm->course, 'quiz', 'editquestions',

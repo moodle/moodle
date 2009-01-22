@@ -184,9 +184,7 @@ abstract class question_bank_column_base {
      * @param object $question the row from the $question table, augmented with extra information.
      * @param string $rowclasses CSS class names that should be applied to this row of output.
      */
-    abstract protected function get_title() {
-        return '';
-    }
+    abstract protected function get_title();
 
     /**
      * @return string a fuller version of the name. Use this when get_title() returns
@@ -416,6 +414,8 @@ class question_bank_question_type_column extends question_bank_column_base {
  * A column type for the name of the question name.
  */
 class question_bank_question_name_column extends question_bank_column_base {
+    protected $checkboxespresent = null;
+
     public function get_name() {
         return 'questionname';
     }
@@ -424,12 +424,30 @@ class question_bank_question_name_column extends question_bank_column_base {
         return get_string('question');
     }
 
+    protected function label_for($question) {
+        if (is_null($this->checkboxespresent)) {
+            $this->checkboxespresent = $this->qbank->has_column('checkbox');
+        }
+        if ($this->checkboxespresent) {
+            return 'checkq' . $question->id;
+        } else {
+            return '';
+        }
+    }
+
     protected function display_content($question, $rowclasses) {
+        $labelfor = $this->label_for($question);
+        if ($labelfor) {
+            echo '<label for="' . $labelfor . '">';
+        }
         echo format_string($question->name);
+        if ($labelfor) {
+            echo '</label>';
+        }
     }
 
     public function get_required_fields() {
-        return array('q.name');
+        return array('q.id', 'q.name');
     }
 
     public function is_sortable() {
@@ -655,6 +673,7 @@ class question_bank_view {
     protected $quizorcourseid;
     protected $contexts;
     protected $cm;
+    protected $course;
     protected $knowncolumntypes;
     protected $visiblecolumns;
     protected $requiredcolumns;
@@ -662,17 +681,18 @@ class question_bank_view {
     protected $countsql;
     protected $loadsql;
 
-    public function __construct($contexts, $pageurl, $cm = null) {
-        global $CFG, $COURSE;
+    public function __construct($contexts, $pageurl, $course, $cm = null) {
+        global $CFG;
 
         $this->contexts = $contexts;
         $this->baseurl = $pageurl;
+        $this->course = $course;
         $this->cm = $cm;
 
         if (!empty($cm) && $cm->modname == 'quiz') {
             $this->quizorcourseid = '&amp;quizid=' . $cm->instance;
         } else {
-            $this->quizorcourseid = '&amp;courseid=' .$COURSE->id;
+            $this->quizorcourseid = '&amp;courseid=' .$this->course->id;
         }
 
         // Create the url of the new question page to forward to.
@@ -681,17 +701,21 @@ class question_bank_view {
         if ($cm !== null){
             $this->editquestionurl->param('cmid', $cm->id);
         } else {
-            $this->editquestionurl->param('courseid', $COURSE->id);
+            $this->editquestionurl->param('courseid', $this->course->id);
         }
 
         $this->init_column_types();
-        $this->init_columns(array('checkbox', 'qtype', 'questionname', 'creatorname',
-                'modifiername', 'editaction', 'previewaction', 'moveaction', 'deleteaction'));
+        $this->init_columns($this->wanted_columns());
         $this->init_sort();
     }
 
-    protected function init_column_types() {
-        $types = array(
+    protected function wanted_columns() {
+        return array('checkbox', 'qtype', 'questionname', 'creatorname',
+                'modifiername', 'editaction', 'previewaction', 'moveaction', 'deleteaction');
+    }
+
+    protected function know_field_types() {
+        return array(
             new question_bank_checkbox_column($this),
             new question_bank_question_type_column($this),
             new question_bank_question_name_column($this),
@@ -702,8 +726,11 @@ class question_bank_view {
             new question_bank_move_action_column($this),
             new question_bank_delete_action_column($this),
         );
+    }
+
+    protected function init_column_types() {
         $this->knowncolumntypes = array();
-        foreach ($types as $col) {
+        foreach ($this->know_field_types() as $col) {
             $this->knowncolumntypes[$col->get_name()] = $col;
         }
     }
@@ -843,7 +870,6 @@ class question_bank_view {
      */
     public function display($tabname, $page, $perpage, $sortorder,
             $sortorderdecoded, $cat, $recurse, $showhidden, $showquestiontext){
-        global $COURSE, $DB;
 
         if ($this->process_actions_needing_ui()) {
             return;
@@ -854,7 +880,13 @@ class question_bank_view {
         print_heading(get_string('questionbank', 'question'), '', 2);
 
         $this->display_category_form($this->contexts->having_one_edit_tab_cap($tabname),
-                $this->baseurl, $cat, $recurse, $showhidden, $showquestiontext);
+                $this->baseurl, $cat);
+        $this->display_options($recurse, $showhidden, $showquestiontext);
+
+        if (!$category = $this->get_current_category($cat)) {
+            return;
+        }
+        $this->print_category_info($category);
 
         // continues with list of questions
         $this->display_question_list($this->contexts->having_one_edit_tab_cap($tabname), $this->baseurl, $cat, $this->cm,
@@ -864,27 +896,61 @@ class question_bank_view {
         print_box_end();
     }
 
+    protected function print_choose_category_message($categoryandcontext) {
+        echo "<p style=\"text-align:center;\"><b>";
+        print_string("selectcategoryabove", "quiz");
+        echo "</b></p>";
+    }
+
+    protected function get_current_category($categoryandcontext) {
+        global $DB;
+        list($categoryid, $contextid) = explode(',', $categoryandcontext);
+        if (!$categoryid) {
+            $this->print_choose_category_message($categoryandcontext);
+            return false;
+        }
+
+        if (!$category = $DB->get_record('question_categories',
+                array('id' => $categoryid, 'contextid' => $contextid))) {
+            print_box_start('generalbox questionbank');
+            notify('Category not found!');
+            print_box_end();
+            return false;
+        }
+
+        return $category;
+    }
+
+    protected function print_category_info($category) {
+        $formatoptions = new stdClass;
+        $formatoptions->noclean = true;
+        echo '<div class="boxaligncenter">';
+        echo format_text($category->info, FORMAT_MOODLE, $formatoptions, $this->course->id);
+        echo "</div>\n";
+    }
+
     /**
      * prints a form to choose categories
      */
-    protected function display_category_form($contexts, $pageurl, $current, $recurse=1,
-            $showhidden=false, $showquestiontext=false) {
+    protected function display_category_form($contexts, $pageurl, $current) {
         global $CFG;
 
     /// Get all the existing categories now
         $catmenu = question_category_options($contexts, false, 0, true);
 
-        $strcategory = get_string('category', 'quiz');
+        $strcategory = get_string('selectcategory', 'quiz');
         $strshow = get_string('show', 'quiz');
         $streditcats = get_string('editcategories', 'quiz');
 
         popup_form('edit.php?'.$pageurl->get_query_string().'&amp;category=',
                 $catmenu, 'catmenu', $current, '', '', '', false, 'self',
-                "<strong>$strcategory</strong>");
+                $strcategory);
+    }
 
+    protected function display_options($recurse = 1, $showhidden = false, $showquestiontext = false) {
         echo '<form method="get" action="edit.php" id="displayoptions">';
         echo "<fieldset class='invisiblefieldset'>";
-        echo $pageurl->hidden_params_out(array('recurse', 'showhidden', 'showquestiontext'));
+        echo $this->baseurl->hidden_params_out(array('recurse', 'showhidden', 'showquestiontext'));
         $this->display_category_form_checkbox('recurse', $recurse);
         $this->display_category_form_checkbox('showhidden', $showhidden);
         $this->display_category_form_checkbox('showquestiontext', $showquestiontext);
@@ -893,7 +959,7 @@ class question_bank_view {
     }
 
     /**
-     * Private funciton to help the preceeding function.
+     * Print a single option checkbox. Used by the preceeding.
      */
     protected function display_category_form_checkbox($name, $checked) {
         echo '<div><input type="hidden" id="' . $name . '_off" name="' . $name . '" value="0" />';
@@ -923,9 +989,12 @@ class question_bank_view {
             $cm = null, $recurse=1, $page=0, $perpage=100, $showhidden=false,
             $sortorder='typename', $sortorderdecoded='qtype, name ASC',
             $showquestiontext = false, $addcontexts = array()) {
-        global $CFG, $COURSE, $DB;
+        global $CFG, $DB;
 
         list($categoryid, $contextid)=  explode(',', $categoryandcontext);
+
+        $cmoptions = new stdClass;
+        $cmoptions->hasattempts = !empty($this->quizhasattempts);
 
         $qtypemenu = question_type_menu();
 
@@ -984,21 +1053,15 @@ class question_bank_view {
         if ($cm!==null){
             $questionurl->param('cmid', $cm->id);
         } else {
-            $questionurl->param('courseid', $COURSE->id);
+            $questionurl->param('courseid', $this->course->id);
         }
         $questionmoveurl = new moodle_url("$CFG->wwwroot/question/contextmoveq.php",
                                     array('returnurl' => $returnurl));
         if ($cm!==null){
             $questionmoveurl->param('cmid', $cm->id);
         } else {
-            $questionmoveurl->param('courseid', $COURSE->id);
+            $questionmoveurl->param('courseid', $this->course->id);
         }
-
-        echo '<div class="boxaligncenter">';
-        $formatoptions = new stdClass;
-        $formatoptions->noclean = true;
-        echo format_text($category->info, FORMAT_MOODLE, $formatoptions, $COURSE->id);
-        echo "</div>\n";
 
         echo '<div class="createnewquestion">';
         if ($canadd) {
@@ -1082,7 +1145,7 @@ class question_bank_view {
 
             $canuseq = question_has_capability_on($question, 'use', $question->category);
             if (function_exists('module_specific_actions')) {
-                echo module_specific_actions($pageurl, $question->id, $cm->id, $canuseq);
+                echo module_specific_actions($pageurl, $question->id, $this->cm->id, $canuseq, $cmoptions);
             }
 
             if ($caneditall || $canmoveall || $canuseall){
@@ -1109,7 +1172,7 @@ class question_bank_view {
 
             // preview
             if ($canuseq) {
-                $quizorcourseid = $quizid?('&amp;quizid=' . $quizid):('&amp;courseid=' .$COURSE->id);
+                $quizorcourseid = $quizid?('&amp;quizid=' . $quizid):('&amp;courseid=' .$this->course->id);
                 link_to_popup_window('/question/preview.php?id=' . $question->id .
                         $quizorcourseid, 'questionpreview',
                         " <img src=\"$CFG->pixpath/t/preview.gif\" class=\"iconsmall\" alt=\"$strpreview\" />",
@@ -1140,7 +1203,7 @@ class question_bank_view {
                 $formatoptions->noclean = true;
                 $formatoptions->para = false;
                 echo format_text($question->questiontext, $question->questiontextformat,
-                        $formatoptions, $COURSE->id);
+                        $formatoptions, $this->course->id);
                 echo "</td></tr>\n";
             }
         }
@@ -1177,7 +1240,7 @@ class question_bank_view {
             echo '<strong>&nbsp;'.get_string('withselected', 'quiz').':</strong><br />';
 
             if (function_exists('module_specific_buttons')) {
-                echo module_specific_buttons($cm->id);
+                echo module_specific_buttons($this->cm->id,$cmoptions);
             }
 
             // print delete and move selected question
@@ -1191,7 +1254,7 @@ class question_bank_view {
             }
 
             if (function_exists('module_specific_controls') && $canuseall) {
-                $modulespecific = module_specific_controls($totalnumber, $recurse, $category, $cm->id);
+                $modulespecific = module_specific_controls($totalnumber, $recurse, $category, $this->cm->id,$cmoptions);
                 if(!empty($modulespecific)){
                     echo "<hr />$modulespecific";
                 }
@@ -1228,7 +1291,7 @@ class question_bank_view {
     }
 
     public function process_actions() {
-        global $CFG, $COURSE, $DB;
+        global $CFG, $DB;
         /// Now, check for commands on this page and modify variables as necessary
         if (optional_param('move', false, PARAM_BOOL) and confirm_sesskey()) { /// Move selected questions to new category
             $category = required_param('category', PARAM_SEQUENCE);
@@ -1275,7 +1338,7 @@ class question_bank_view {
                     if ($cm){
                         $movecontexturl->param('cmid', $cm->id);
                     } else {
-                        $movecontexturl->param('courseid', $COURSE->id);
+                        $movecontexturl->param('courseid', $this->course->id);
                     }
                     redirect($movecontexturl->out());
                 }
@@ -1363,7 +1426,7 @@ class question_bank_view {
  * @return array $thispageurl, $contexts, $cmid, $cm, $module, $pagevars
  */
 function question_edit_setup($edittab, $requirecmid = false, $requirecourseid = true){
-    global $COURSE, $QUESTION_EDITTABCAPS, $DB;
+    global $QUESTION_EDITTABCAPS, $DB;
 
     //$thispageurl is used to construct urls for all question edit pages we link to from this page. It contains an array
     //of parameters that are passed from page to page.
