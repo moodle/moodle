@@ -1062,6 +1062,7 @@ class question_bank_question_name_text_column extends question_bank_question_nam
     public function get_required_fields() {
         $fields = parent::get_required_fields();
         $fields[] = 'q.questiontext';
+        $fields[] = 'q.questiontextformat';
         return $fields;
     }
 }
@@ -1096,9 +1097,14 @@ class quiz_question_bank_view extends question_bank_view {
         }
     }
 
+    public function preview_question_url($questionid) {
+        global $CFG;
+        return $CFG->wwwroot . '/question/preview.php?id=' . $questionid . $this->quizorcourseid;
+    }
+
     public function add_to_quiz_url($questionid) {
         global $CFG;
-        return $CFG->wwwroot . '/mod/quiz/edit.php?' . $pageurl->get_query_string() .
+        return $CFG->wwwroot . '/mod/quiz/edit.php?' . $this->baseurl->get_query_string() .
                 '&amp;addquestion=' . $questionid . '&amp;sesskey=' . sesskey();
     }
 
