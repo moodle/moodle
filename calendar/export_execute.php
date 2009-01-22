@@ -11,12 +11,12 @@ $authtoken = required_param('authtoken', PARAM_ALPHANUM);
 //Fetch user information
 if (!$user = get_complete_user_data('username', $username)) {
    //No such user
-   die("No such user '$username'");
+    die('Invalid authentication');
 }
 
 //Check authentication token
 if ($authtoken != sha1($username . $user->password)) {
-    die('Invalid authentication token');
+    die('Invalid authentication');
 }
 
 $what = optional_param('preset_what', 'all', PARAM_ALPHA);
