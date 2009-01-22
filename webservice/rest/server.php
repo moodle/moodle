@@ -13,7 +13,7 @@
  */
 
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
-require_once('lib.php');
+require_once('locallib.php');
 
 if (empty($CFG->enablewebservices)) {
     die;
@@ -23,6 +23,6 @@ if (empty($CFG->enablewebservices)) {
 $rest_arguments = get_file_argument('server.php');
 
 header ("Content-type: text/xml");
-
+//TODO implement authentication (probably in the locallib.php)
 echo call_moodle_function($rest_arguments);
 ?>

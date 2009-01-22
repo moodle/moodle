@@ -81,12 +81,12 @@ final class user_external extends moodle_external {
         global $DB;
         $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$mnethostid));
     /// PLEASE UNCOMMENT HERE ONCE AUTHENTICATION IS IMPLEMENTED - $USER/context need to be set here
-        //if (require_capability('moodle/user:delete', get_context_instance(CONTEXT_SYSTEM))) {
+//        if (has_capability('moodle/user:delete', get_context_instance(CONTEXT_SYSTEM))) {
             return delete_user($user); //this function is in moodlelib.php
-        //}
-        //else {
-        //    throw new moodle_exception('couldnotdeleteuser');
-        //}
+//        }
+//        else {
+//            throw new moodle_exception('couldnotdeleteuser');
+//        }
     }
 
     /**
