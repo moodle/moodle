@@ -155,19 +155,26 @@ abstract class question_bank_column_base {
         $sortable = $this->is_sortable();
         $name = $this->get_name();
         $title = $this->get_title();
+        $tip = $this->get_tip();
         if (is_array($sortable)) {
             if ($title) {
                 echo '<div class="title">' . $title . '</div>';
             }
             $links = array();
             foreach ($sortable as $subsort => $details) {
-                $links[] = $this->make_sort_link($name . '_' . $subsort, $details['title'], !empty($details['reverse']));
+                $links[] = $this->make_sort_link($name . '_' . $subsort, $details['title'], '', !empty($details['reverse']));
             }
             echo implode(' / ', $links);
         } else if ($sortable) {
-            echo $this->make_sort_link($name, $this->qbank->get_sort($name), $title);
+            echo $this->make_sort_link($name, $this->qbank->get_sort($name), $title, $tip);
         } else {
+            if ($tip) {
+                echo '<span title="' . $tip . '">';
+            }
             echo $title;
+            if ($tip) {
+                echo '</span>';
+            }
         }
         echo "</th>\n";
     }
@@ -177,7 +184,15 @@ abstract class question_bank_column_base {
      * @param object $question the row from the $question table, augmented with extra information.
      * @param string $rowclasses CSS class names that should be applied to this row of output.
      */
-    protected function get_title() {
+    abstract protected function get_title() {
+        return '';
+    }
+
+    /**
+     * @return string a fuller version of the name. Use this when get_title() returns
+     * something very short, and you want a longer version as a tool tip.
+     */
+    protected function get_title_tip() {
         return '';
     }
 
@@ -194,10 +209,13 @@ abstract class question_bank_column_base {
         if ($currentsort) {
             $newsortreverse = $currentsort > 0;
         }
+        if (!$tip) {
+            $tip = $title;
+        }
         if ($newsortreverse) {
-            $tip = get_string('sortbyxreverse', '', $title);
+            $tip = get_string('sortbyxreverse', '', $tip);
         } else {
-            $tip = get_string('sortbyx', '', $title);
+            $tip = get_string('sortbyx', '', $tip);
         }
         echo '<a href="' . $this->qbank->new_sort_url($name, $newsortreverse) . '" title="' . $tip . '">';
         echo $title;
@@ -351,6 +369,10 @@ class question_bank_checkbox_column extends question_bank_column_base {
         return '<input type="checkbox" disabled="disabled" />';
     }
 
+    protected function get_title_tip() {
+        return get_string('selectquestionsforbulk', 'question');
+    }
+
     protected function display_content($question, $rowclasses) {
         echo '<input title="' . $this->strselect . '" type="checkbox" name="q' .
                 $question->id . '" id="checkq' . $question->id . '" value="1" />';
@@ -371,6 +393,10 @@ class question_bank_question_type_column extends question_bank_column_base {
 
     protected function get_title() {
         return get_string('qtypeveryshort', 'question');
+    }
+
+    protected function get_title_tip() {
+        return get_string('questiontype', 'question');
     }
 
     protected function display_content($question, $rowclasses) {
