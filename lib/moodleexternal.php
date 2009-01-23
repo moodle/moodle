@@ -13,12 +13,11 @@
 abstract class moodle_external {
 
  protected $descriptions;
- protected $user;
 
     /**
      * Constructor - We set the description of this API in order to be access by Web service
      */
-    function __construct ($user = null) {
+    function __construct () {
         $this->descriptions = array();
     }
 
