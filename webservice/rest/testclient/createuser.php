@@ -21,6 +21,17 @@ $data['email'] = "mockuser5@lastname.com";
 
 var_dump($data);
 
+//we are asking for a token
+$connectiondata['username'] = 'admin';
+$connectiondata['password'] = 'admin';
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/user/tmp_get_token');
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS, format_postdata($connectiondata));
+$token = curl_exec($ch);
+$data['token'] = $token;
+
 curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/user/tmp_create_user');
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 curl_setopt($ch, CURLOPT_POST, 1);

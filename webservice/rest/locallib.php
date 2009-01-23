@@ -35,6 +35,26 @@ function call_moodle_function ($rest_arguments) {
     if ($params === false) {
         //return an error message, the REST params doesn't match with the web service description
     }
+
+/// Authentication process
+/// TODO: this use a fake token => need to implement token generation
+    $token = optional_param('token',null,PARAM_ALPHANUM);
+    if (empty($token)) {
+        if ($functionname != 'tmp_get_token') {
+            throw new moodle_exception('identifyfirst');
+        } else {
+            if (optional_param('username',null,PARAM_ALPHANUM) == 'admin' && optional_param('password',null,PARAM_ALPHANUM) == 'admin') {
+                return '465465465468468464';
+            } else {
+                throw new moodle_exception('wrongusernamepassword');
+            }
+        }
+    } else {
+        if (!mock_check_token($token)) {
+            throw new moodle_exception('wrongidentification');
+        }
+    }
+
     $res = call_user_func_array  ( $classname.'::'.$functionname, array($params));
     
 ///Transform result into xml in order to send the REST response
@@ -43,6 +63,19 @@ function call_moodle_function ($rest_arguments) {
 	return "<Result>$return</Result>";
 }
 
+/**
+ * TODO: remove this funcion once token implementation is done
+ * Mock function waiting for token system implementation
+ * @param <type> $token
+ * @return <type> 
+ */
+function mock_check_token($token) {
+    if ($token == 465465465468468464) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 /**
  *

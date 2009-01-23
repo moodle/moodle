@@ -34,6 +34,18 @@ if ($search) {
 
     var_dump($CFG->serverurl.'/user/tmp_get_users');
 
+    
+    //we are asking for a token
+    $connectiondata['username'] = 'admin';
+    $connectiondata['password'] = 'admin';
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/user/tmp_get_token');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, format_postdata($connectiondata));
+    $token = curl_exec($ch);
+    $data['token'] = $token;
+  
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/user/tmp_get_users');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
