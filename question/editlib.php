@@ -174,7 +174,7 @@ abstract class question_bank_column_base {
                 $links[] = $this->make_sort_link($name . '_' . $subsort,
                         $details['title'], '', !empty($details['reverse']));
             }
-            echo implode(' / ', $links);
+            echo '<div class="sorters">' . implode(' / ', $links) . '</div>';
         } else if ($sortable) {
             echo $this->make_sort_link($name, $title, $tip);
         } else {
@@ -1095,7 +1095,6 @@ class question_bank_view {
         }
 
         // Category selection form
-        print_box_start('generalbox questionbank');
         print_heading(get_string('questionbank', 'question'), '', 2);
 
         $this->display_category_form($this->contexts->having_one_edit_tab_cap($tabname),
@@ -1111,8 +1110,6 @@ class question_bank_view {
         $this->display_question_list($this->contexts->having_one_edit_tab_cap($tabname), $this->baseurl, $cat, $this->cm,
                 $recurse, $page, $perpage, $showhidden, $sortorder, $sortorderdecoded, $showquestiontext,
                 $this->contexts->having_cap('moodle/question:add'));
-
-        print_box_end();
     }
 
     protected function print_choose_category_message($categoryandcontext) {

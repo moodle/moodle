@@ -4718,9 +4718,15 @@ table.quizreviewsummary td.cell {
     padding-right:0.3em;
 }
 
-.sideblock #categoryquestions .header {
+#categoryquestions .header {
   text-align: center;
-  padding:0;
+  padding: 0 2px;
+}
+
+#categoryquestions th.modifiername .sorters,
+#categoryquestions th.creatorname .sorters {
+  font-weight: normal;
+  font-size: 0.8em;
 }
 
 #mod-quiz-edit div.question div.content .questionname,
@@ -5017,11 +5023,13 @@ css id's of question bank*/
 #categoryquestions .iconcol {
   width: 15px;
   text-align: center;
+  padding: 0;
 }
 
 #categoryquestions .checkbox {
   width: 19px;
   text-align: center;
+  padding: 0;
 }
 
 #categoryquestions .qtype {
@@ -5030,6 +5038,7 @@ css id's of question bank*/
 
 #mod-quiz-edit #categoryquestions .qtype {
   width: 24px;
+  padding: 0;
 }
 
 #categoryquestions .questiontext p {
