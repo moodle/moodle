@@ -718,14 +718,17 @@
         $SESSION->restore->metacourse   = $restore->metacourse = (isset($preferences['restore_metacourse']) ? $preferences['restore_metacourse'] : 0);
         $SESSION->restore->restoreto    = $restore->restoreto = 1;
         $SESSION->restore->users        = $restore->users = $userdata;
+        $SESSION->restore->groups       = $restore->groups = (isset($preferences['restore_groups']) ? $preferences['restore_groups'] : RESTORE_GROUPS_NONE);
         $SESSION->restore->logs         = $restore->logs = (isset($preferences['restore_logs']) ? $preferences['restore_logs'] : 0);
         $SESSION->restore->user_files   = $restore->user_files = $userdata;
         $SESSION->restore->messages     = $restore->messages = (isset($preferences['restore_messages']) ? $preferences['restore_messages'] : 0);
+        $SESSION->restore->blogs        = $restore->blogs = (isset($preferences['restore_blogs']) ? $preferences['restore_blogs'] : 0);
         $SESSION->restore->course_id    = $restore->course_id = $destinationcourse;
         $SESSION->restore->restoreto    = 1;
         $SESSION->restore->course_id    = $destinationcourse;
         $SESSION->restore->deleting     = $emptyfirst;
         $SESSION->restore->restore_course_files = $restore->course_files = (isset($preferences['restore_course_files']) ? $preferences['restore_course_files'] : 0);
+        $SESSION->restore->restore_site_files = $restore->site_files = (isset($preferences['restore_site_files']) ? $preferences['restore_site_files'] : 0);
         $SESSION->restore->backup_version = $SESSION->info->backup_backup_version;
         $SESSION->restore->course_startdateoffset = $course->startdate - $SESSION->course_header->course_startdate;
 
