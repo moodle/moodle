@@ -191,11 +191,11 @@ class question_match_qtype extends default_questiontype {
         $responses = array();
         foreach ($subquestions as $key => $subquestion) {
             $response = 0;
-            if ($subquestion->questiontext !== '') {
+            if ($subquestion->questiontext !== '' && !is_null($subquestion->questiontext)) {
                 if ($state->responses[$key]) {
                     $response = $state->responses[$key];
                     if (!array_key_exists($response, $subquestion->options->answers)) {
-                        // If studen's answer did not match by id, but there may be
+                        // If student's answer did not match by id, but there may be
                         // two answers with the same text, but different ids,
                         // so we need to try matching the answer text.
                         $expected_answer = reset($subquestion->options->answers);
@@ -221,7 +221,7 @@ class question_match_qtype extends default_questiontype {
         $responses = array();
         foreach ($state->options->subquestions as $sub) {
             foreach ($sub->options->answers as $answer) {
-                if (1 == $answer->fraction && $sub->questiontext != '') {
+                if (1 == $answer->fraction && $sub->questiontext != '' && !is_null($sub->questiontext)) {
                     $responses[$sub->id] = $answer->id;
                 }
             }
@@ -270,7 +270,7 @@ class question_match_qtype extends default_questiontype {
 
         // Print the input controls
         foreach ($subquestions as $key => $subquestion) {
-            if ($subquestion->questiontext !== '') {
+            if ($subquestion->questiontext !== '' && !is_null($subquestion->questiontext)) {
                 // Subquestion text:
                 $a = new stdClass;
                 $a->text = $this->format_text($subquestion->questiontext,
@@ -332,7 +332,7 @@ class question_match_qtype extends default_questiontype {
         $sumgrade = 0;
         $totalgrade = 0;
         foreach ($subquestions as $key => $sub) {
-            if ($sub->questiontext !== '') {
+            if ($sub->questiontext !== '' && !is_null($sub->questiontext)) {
                 $totalgrade += 1;
                 $response = $responses[$key];
                 if ($response && !array_key_exists($response, $sub->options->answers)) {
@@ -384,7 +384,7 @@ class question_match_qtype extends default_questiontype {
         $answers = array();
         if (is_array($question->options->subquestions)) {
             foreach ($question->options->subquestions as $aid => $answer) {
-                if ($answer->questiontext) {
+                if ($answer->questiontext !== '' && !is_null($answer->questiontext)) {
                     $r = new stdClass;
                     $r->answer = $answer->questiontext . ": " . $answer->answertext;
                     $r->credit = 1;
