@@ -14,7 +14,8 @@
  * @return string xml object
  */
 function call_moodle_function ($rest_arguments) {
-    global $CFG;
+    global $CFG, $USER;
+    
 ///REST params conversion
     $functionname = substr($rest_arguments,strrpos($rest_arguments,"/")+1); //retrieve the function name (it's located after the last '/') in $rest_arguments
                                                                             //$rest_argument
@@ -23,18 +24,6 @@ function call_moodle_function ($rest_arguments) {
     $classname = str_replace('/', '_', $apipath); // convert '/' into '_' (e.g. /mod/forum/ => _mod_forum_)
     $classname = substr($classname,1, strlen($classname) - 1); //remove first _ (e.g. _mod_forum => mod_forum)
     $classname .= 'external';
-
-    require_once($CFG->dirroot.$apipath.'external.php');
-    $wsapi = new $classname();
-    $description = $wsapi->get_function_webservice_description($functionname); //retrieve the web service description for this function
-
-///This following line is only REST protocol
-    $params = retrieve_params ($description); //retrieve the REST params
-
-///Generic part to any protocols
-    if ($params === false) {
-        //return an error message, the REST params doesn't match with the web service description
-    }
 
 /// Authentication process
 /// TODO: this use a fake token => need to implement token generation
@@ -50,10 +39,29 @@ function call_moodle_function ($rest_arguments) {
             }
         }
     } else {
-        if (!mock_check_token($token)) {
+        $user = mock_check_token($token);
+        if (empty($user)) {
             throw new moodle_exception('wrongidentification');
         }
+        else {
+            $USER = $user;
+        }
     }
+
+/// load the external class
+    require_once($CFG->dirroot.$apipath.'external.php');
+    $wsapi = new $classname();
+    $description = $wsapi->get_function_webservice_description($functionname); //retrieve the web service description for this function
+
+/// This following line is only REST protocol
+    $params = retrieve_params ($description); //retrieve the REST params
+
+/// Generic part to any protocols
+    if ($params === false) {
+        //return an error message, the REST params doesn't match with the web service description
+    }
+
+
 
     $res = call_user_func_array  ( $classname.'::'.$functionname, array($params));
     
@@ -64,14 +72,23 @@ function call_moodle_function ($rest_arguments) {
 }
 
 /**
- * TODO: remove this funcion once token implementation is done
+ * TODO: remove/rewrite this funcion 
  * Mock function waiting for token system implementation
  * @param <type> $token
  * @return <type> 
  */
 function mock_check_token($token) {
+    //fake test
     if ($token == 465465465468468464) {
-        return true;
+        ///retrieve the user
+        global $DB;
+        $user = $DB->get_record('user', array('username'=>'admin', 'mnethostid'=>1));
+
+        if (empty($user)) {
+            return false;
+        }
+        
+        return $user;
     } else {
         return false;
     }
