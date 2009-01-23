@@ -144,17 +144,17 @@ function display_response(menu, response) {
 
     /** Process ok response, displaying it **/
     var ratingsDiv  = YAHOO.util.Dom.getAncestorByTagName(menu, 'div');
-    var ratingsSpan = YAHOO.util.Dom.getFirstChildBy(ratingsDiv, function(el){return el.getAttribute('class') == 'forumpostratingtext';});
+    var ratingsSpan = YAHOO.util.Dom.getFirstChildBy(ratingsDiv, function(el){return YAHOO.util.Dom.hasClass(el,'forumpostratingtext');});
 
-    /** span doesn't exist (first rate), add it, shouldn't happen ever but... **/
+    /** span doesn't exist (first rate), add it, shouldn't happen ever but... fallback**/
     if (!ratingsSpan) {
-        var ratingsSpan = document.createElement('span');
+        ratingsSpan = document.createElement('span');
         YAHOO.util.Dom.addClass(ratingsSpan, 'forumpostratingtext');
         ratingsDiv.appendChild(ratingsSpan);
     }
 
     /** finally replace span HTML **/
-    ratingsSpan.innerHTML = response.message;
+    ratingsSpan.innerHTML = response.message ? response.message : ''; /** Prevent null to be printed in IE7 **/
 }
 
 /**
