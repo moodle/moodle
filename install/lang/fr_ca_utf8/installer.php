@@ -65,7 +65,6 @@ $string['safemodehelp'] = '<p>Moodle risque de rencontrer un certain nombre de p
 $string['sessionautostart'] = 'Démarrage automatique des sessions';
 $string['sessionautostarterror'] = 'Ce paramètre doit être désactivé';
 $string['sessionautostarthelp'] = '<p>Moodle a besoin du support des sessions. il ne fonctionnera pas sans cela.</p> <p>Les sessions peuvent être activées dans le fichier « php.ini » de votre serveur, en changeant la valeur du paramètre <b>session.auto_start</b>.</p>';
-$string['status'] = 'Statuts';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Français - Canada';

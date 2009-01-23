@@ -15,11 +15,11 @@ $string['admindirsettinghead'] = 'Admin direktorioa aukeratu...';
 $string['admindirsettingsub'] = '<p>Oso web zerbitzari gutxik erabiltzen dute /admin kontrol-panel edo antzekora era sartzeko URL berezi gisa. Zoritxorrez, hau ez dator bat Moodlen lehenetsitako administrazio-orrien kokapenarekin. Nahi izanez gero, zure instalazioko admin direktorioaren izena alda dezakezu, hemen izen berria idatziz. Adibidez: <blockquote> moodleadmin</blockquote>.
 Horrela Moodle-ko admin loturak berrezarriko dira.</p>';
 $string['bypassed'] = 'Saihestua';
-$string['cannotcreatelangdir'] = 'Lang direktorioa ezin da sortu';
-$string['cannotcreatetempdir'] = 'Temp direktorioa ezin da sortu';
+$string['cannotcreatelangdir'] = 'Ezin da hizkuntza-direktorioa sortu';
+$string['cannotcreatetempdir'] = 'Ezin da temp direktorioa sortu';
 $string['cannotdownloadcomponents'] = 'Ezin dira osagaiak jaitsi';
 $string['cannotdownloadzipfile'] = 'Ezin da ZIP fitxategia jaitsi';
-$string['cannotfindcomponent'] = 'Osagaia ezin da aurkitu';
+$string['cannotfindcomponent'] = 'Ezin da osagaia aurkitu';
 $string['cannotsavemd5file'] = 'Ezin da Md5 fitxategia gorde.';
 $string['cannotsavezipfile'] = 'Ezin da ZIP fitxategia gorde.';
 $string['cannotunzipfile'] = 'Ezin da fitxategia deskonprimatu.';
