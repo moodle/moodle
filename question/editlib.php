@@ -149,12 +149,16 @@ abstract class question_bank_column_base {
     protected function init() {
     }
 
+    public function is_extra_row() {
+        return false;
+    }
+
     /**
      * Output the column header cell.
      * @param integer $currentsort 0 for none. 1 for normal sort, -1 for reverse sort.
      */
     public function display_header() {
-        echo '<th class="header ' . $this->get_name() . '" scope="col">';
+        echo '<th class="header ' . $this->get_classes() . '" scope="col">';
         $sortable = $this->is_sortable();
         $name = $this->get_name();
         $title = $this->get_title();
@@ -255,7 +259,16 @@ abstract class question_bank_column_base {
     }
 
     protected function display_start($question, $rowclasses) {
-        echo '<td class="' . $this->get_name() . '">';
+        echo '<td class="' . $this->get_classes() . '">';
+    }
+
+    /**
+     * @return string the CSS classes to apply to every cell in this column.
+     */
+    protected function get_classes() {
+        $classes = $this->get_extra_classes();
+        $classes[] = $this->get_name();
+        return implode(' ', $classes);
     }
 
     /**
@@ -264,6 +277,13 @@ abstract class question_bank_column_base {
      *     and to store information about the current sort. Must match PARAM_ALPHA.
      */
     abstract public function get_name();
+
+    /**
+     * @return array any extra class names you would like applied to every cell in this column.
+     */
+    public function get_extra_classes() {
+        return array();
+    }
 
     /**
      * Output the contents of this column.
@@ -544,6 +564,10 @@ abstract class question_bank_action_column_base extends question_bank_column_bas
         return '&#160;';
     }
 
+    public function get_extra_classes() {
+        return array('iconcol');
+    }
+
     protected function print_icon($icon, $title, $url) {
         global $CFG;
         echo '<a title="' . $title . '" href="' . $url . '">
@@ -661,13 +685,36 @@ class question_bank_delete_action_column extends question_bank_action_column_bas
  * Base class for 'columns' that are actually displayed as a row following the main question row.
  */
 abstract class question_bank_row_base extends question_bank_column_base {
-    // TODO
+    public function is_extra_row() {
+        return true;
+    }
+
+    protected function display_start($question, $rowclasses) {
+        if ($rowclasses) {
+            echo '<tr class="' . $rowclasses . '">' . "\n";
+        } else {
+            echo "<tr>\n";
+        }
+        echo '<td colspan="' . $this->qbank->get_column_count() . '" class="' . $this->get_name() . '">';
+    }
+
+    protected function display_end($question, $rowclasses) {
+        echo "</td></tr>\n";
+    }
 }
 
 /**
  * A column type for the name of the question name.
  */
 class question_bank_question_text_row extends question_bank_row_base {
+    protected $formatoptions;
+
+    protected function init() {
+        $this->formatoptions = new stdClass;
+        $this->formatoptions->noclean = true;
+        $this->formatoptions->para = false;
+    }
+
     public function get_name() {
         return 'questiontext';
     }
@@ -677,18 +724,16 @@ class question_bank_question_text_row extends question_bank_row_base {
     }
 
     protected function display_content($question, $rowclasses) {
-        // TODO
-//        echo '<tr><td colspan="3" ' . $textclass . '>';
-//        $formatoptions = new stdClass;
-//        $formatoptions->noclean = true;
-//        $formatoptions->para = false;
-//        echo format_text($question->questiontext, $question->questiontextformat,
-//                $formatoptions, $this->course->id);
-//        echo "</td></tr>\n";
+        $text = format_text($question->questiontext, $question->questiontextformat,
+                $this->formatoptions, $this->qbank->get_courseid());
+        if ($text == '') {
+            $text = '&#160;';
+        }
+        echo $text;
     }
 
     public function get_required_fields() {
-        return array('q.questiontext');
+        return array('q.questiontext', 'q.questiontextformat');
     }
 }
 
@@ -720,6 +765,7 @@ class question_bank_view {
     protected $course;
     protected $knowncolumntypes;
     protected $visiblecolumns;
+    protected $extrarows;
     protected $requiredcolumns;
     protected $sort;
     protected $countsql;
@@ -755,8 +801,12 @@ class question_bank_view {
     }
 
     protected function wanted_columns() {
-        return array('checkbox', 'qtype', 'questionname', 'creatorname',
+        $columns = array('checkbox', 'qtype', 'questionname', 'creatorname',
                 'modifiername', 'editaction', 'previewaction', 'moveaction', 'deleteaction');
+        if (optional_param('qbshowtext', false, PARAM_BOOL)) {
+            $columns[] = 'questiontext';
+        }
+        return $columns;
     }
 
     protected function know_field_types() {
@@ -770,6 +820,7 @@ class question_bank_view {
             new question_bank_preview_action_column($this),
             new question_bank_move_action_column($this),
             new question_bank_delete_action_column($this),
+            new question_bank_question_text_row($this),
         );
     }
 
@@ -782,13 +833,19 @@ class question_bank_view {
 
     protected function init_columns($wanted) {
         $this->visiblecolumns = array();
+        $this->extrarows = array();
         foreach ($wanted as $colname) {
             if (!isset($this->knowncolumntypes[$colname])) {
                 throw new coding_exception('Unknown column type ' . $colname . ' requested in init columns.');
             }
-            $this->visiblecolumns[$colname] = $this->knowncolumntypes[$colname];
+            $column = $this->knowncolumntypes[$colname];
+            if ($column->is_extra_row()) {
+                $this->extrarows[$colname] = $column;
+            } else {
+                $this->visiblecolumns[$colname] = $column;
+            }
         }
-        $this->requiredcolumns = $this->visiblecolumns;
+        $this->requiredcolumns = array_merge($this->visiblecolumns, $this->extrarows);
     }
 
     /**
@@ -797,6 +854,17 @@ class question_bank_view {
      */
     public function has_column($colname) {
         return isset($this->visiblecolumns[$colname]);
+    }
+
+    /**
+     * @return integer The number of columns in the table.
+     */
+    public function get_column_count() {
+        return count($this->visiblecolumns);
+    }
+
+    public function get_courseid() {
+        return $this->course->id;
     }
 
     protected function init_sort() {
@@ -934,6 +1002,9 @@ class question_bank_view {
         $fields = array('q.hidden', 'q.category');
         foreach ($this->visiblecolumns as $column) {
             $fields = array_merge($fields, $column->get_required_fields());
+        }
+        foreach ($this->extrarows as $row) {
+            $fields = array_merge($fields, $row->get_required_fields());
         }
         $fields = array_unique($fields);
 
@@ -1095,9 +1166,9 @@ class question_bank_view {
         echo '<form method="get" action="edit.php" id="displayoptions">';
         echo "<fieldset class='invisiblefieldset'>";
         echo $this->baseurl->hidden_params_out(array('recurse', 'showhidden', 'showquestiontext'));
-        $this->display_category_form_checkbox('recurse', $recurse);
-        $this->display_category_form_checkbox('showhidden', $showhidden);
-        $this->display_category_form_checkbox('showquestiontext', $showquestiontext);
+        $this->display_category_form_checkbox('recurse', get_string('recurse', 'quiz'));
+        $this->display_category_form_checkbox('showhidden', get_string('showhidden', 'quiz'));
+        $this->display_category_form_checkbox('qbshowtext', get_string('showquestiontext', 'quiz'));
         echo '<noscript><div class="centerpara"><input type="submit" value="'. get_string('go') .'" />';
         echo '</div></noscript></fieldset></form>';
     }
@@ -1105,16 +1176,15 @@ class question_bank_view {
     /**
      * Print a single option checkbox. Used by the preceeding.
      */
-    protected function display_category_form_checkbox($name, $checked) {
+    protected function display_category_form_checkbox($name, $label) {
         echo '<div><input type="hidden" id="' . $name . '_off" name="' . $name . '" value="0" />';
         echo '<input type="checkbox" id="' . $name . '_on" name="' . $name . '" value="1"';
-        if ($checked) {
+        if (optional_param($name, false, PARAM_BOOL)) {
             echo ' checked="checked"';
         }
         echo ' onchange="getElementById(\'displayoptions\').submit(); return true;" />';
-        echo '<label for="' . $name . '_on">';
-        print_string($name, 'quiz');
-        echo "</label></div>\n";
+        echo '<label for="' . $name . '_on">' . $label . '</label>';
+        echo "</div>\n";
     }
 
     protected function create_new_question_form($category, $canadd) {
@@ -1187,8 +1257,10 @@ class question_bank_view {
         echo '<div class="categoryquestionscontainer">';
 
         $this->start_table();
+        $rowcount = 0;
         foreach ($questions as $question) {
-            $this->print_table_row($question);
+            $this->print_table_row($question, $rowcount);
+            $rowcount += 1;
         }
         $this->end_table();
 
@@ -1270,16 +1342,19 @@ class question_bank_view {
         echo "</tr>\n";
     }
 
-    protected function get_row_classes($question) {
+    protected function get_row_classes($question, $rowcount) {
         $classes = array();
         if ($question->hidden) {
             $classes[] = 'dimmed_text';
         }
+        if (!empty($this->extrarows)) {
+            $classes[] = 'r' . ($rowcount % 2);
+        }
         return $classes;
     }
 
-    protected function print_table_row($question) {
-        $rowclasses = implode(' ', $this->get_row_classes($question));
+    protected function print_table_row($question, $rowcount) {
+        $rowclasses = implode(' ', $this->get_row_classes($question, $rowcount));
         if ($rowclasses) {
             echo '<tr class="' . $rowclasses . '">' . "\n";
         } else {
@@ -1289,30 +1364,9 @@ class question_bank_view {
             $column->display($question, $rowclasses);
         }
         echo "</tr>\n";
-    }
-
-    protected function display_question_sort_options($pageurl, $sortorder){
-        //sort options
-        $html = "<div class=\"mdl-align questionsortoptions\">";
-        // POST method should only be used for parameters that change data
-        // or if POST method has to be used, the user must be redirected immediately to
-        // non-POSTed page to not break the back button
-        $html .= '<form method="get" action="edit.php">';
-        $html .= '<fieldset class="invisiblefieldset" style="display: block;">';
-        $html .= '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        $html .= $pageurl->hidden_params_out(array('qsortorder'));
-        //choose_from_menu concatenates the form name with
-        //"menu" so the label is for menuqsortorder
-        $sortoptions = array('alpha' => get_string("qname", "quiz"),
-                             'typealpha' => get_string("qtypename", "quiz"),
-                             'age' => get_string("age", "quiz"));
-        $a =  choose_from_menu($sortoptions, 'qsortorder', $sortorder, false, 'this.form.submit();', '0', true);
-        $html .= '<label for="menuqsortorder">'.get_string('sortquestionsbyx', 'quiz', $a).'</label>';
-        $html .=  '<noscript><div><input type="submit" value="'.get_string("sortsubmit", "quiz").'" /></div></noscript>';
-        $html .= '</fieldset>';
-        $html .= "</form>\n";
-        $html .= "</div>\n";
-        echo $html;
+        foreach ($this->extrarows as $row) {
+            $row->display($question, $rowclasses);
+        }
     }
 
     public function process_actions() {

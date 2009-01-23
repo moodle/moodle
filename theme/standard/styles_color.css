@@ -1187,7 +1187,12 @@ css id's of question bank*/
 #mod-quiz-edit .questionbankwindow div.header a{
     color:#FFF;
 }
-
+#categoryquestions .r1 {
+  background: #e4e4e4;
+}
+#categoryquestions .header {
+  border: 0 none;
+}
 
 /***
  *** Modules: Resource

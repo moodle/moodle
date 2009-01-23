@@ -1163,8 +1163,8 @@ class quiz_question_bank_view extends question_bank_view {
         echo '<form method="get" action="edit.php" id="displayoptions">';
         echo "<fieldset class='invisiblefieldset'>";
         echo $this->baseurl->hidden_params_out(array('recurse', 'showhidden', 'showquestiontext'));
-        $this->display_category_form_checkbox('recurse', $recurse);
-        $this->display_category_form_checkbox('showhidden', $showhidden);
+        $this->display_category_form_checkbox('recurse', get_string('recurse', 'quiz'));
+        $this->display_category_form_checkbox('showhidden', get_string('showhidden', 'quiz'));
         echo '<noscript><div class="centerpara"><input type="submit" value="'. get_string('go') .'" />';
         echo '</div></noscript></fieldset></form>';
     }

@@ -4718,6 +4718,10 @@ table.quizreviewsummary td.cell {
     padding-right:0.3em;
 }
 
+.sideblock #categoryquestions .header {
+  text-align: center;
+  padding:0;
+}
 
 #mod-quiz-edit div.question div.content .questionname,
 #categoryquestions .questionname{
@@ -5000,8 +5004,9 @@ css id's of question bank*/
     width:100%;
 }
 #mod-quiz-edit table#categoryquestions{
-    width:100%;
-    overflow:hidden;
+    width: 100%;
+    overflow: hidden;
+    table-layout: fixed;
 }
 
 #mod-quiz-edit table#categoryquestions td,#mod-quiz-edit table#categoryquestions th{
@@ -5009,10 +5014,27 @@ css id's of question bank*/
     white-space:nowrap;
 }
 
-#mod-quiz-edit table#categoryquestions .iconsmall{
-    padding-left:5px;
+#categoryquestions .iconcol {
+  width: 15px;
+  text-align: center;
 }
 
+#categoryquestions .checkbox {
+  width: 19px;
+  text-align: center;
+}
+
+#categoryquestions .qtype {
+  text-align: center;
+}
+
+#mod-quiz-edit #categoryquestions .qtype {
+  width: 24px;
+}
+
+#categoryquestions .questiontext p {
+  margin: 0;
+}
 #mod-quiz-edit .categoryinfo{
     padding:0.3em;
 }

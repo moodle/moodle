@@ -1046,7 +1046,7 @@ body#mod-forum-index .generalbox .cell {
     text-decoration:underline;
 }
 #mod-quiz-edit div.question div.content .questiontext,
-#categoryquestions .questiontext{
+#mod-quiz-edit #categoryquestions .questiontext {
     font-weight:bold;
 }
 #mod-quiz-edit div.question div.content div.questioncontrols{
