@@ -45,7 +45,7 @@ $string['chooselanguagesub'] = 'Scegliete la lingua da usare durante l\'installa
 $string['closewindow'] = 'Chiudi questa finestra';
 $string['compatibilitysettings'] = 'Verifica impostazioni PHP...';
 $string['compatibilitysettingshead'] = 'Verifica impostazioni PHP...';
-$string['compatibilitysettingssub'] = 'Il vostro server deve superare tutti i test seguenti per consentire il corretto funzionamento di Moodle';
+$string['compatibilitysettingssub'] = 'Il vostro server deve superare tutti i seguenti test per consentire il corretto funzionamento di Moodle';
 $string['componentisuptodate'] = 'Il componente è aggiornato.';
 $string['configfilecreated'] = 'File di configurazione creato correttamente';
 $string['configfiledoesnotexist'] = 'Il file di configurazione non esiste';
@@ -63,14 +63,14 @@ $string['curlrecommended'] = 'L\'installazione della libreria opzionale Curl è 
 $string['curlrequired'] = 'L\'estensione PHP cURL è necessaria per consentire a Moodle di comunicare  con i repostory.';
 $string['customcheck'] = 'Altri controlli';
 $string['database'] = 'Database';
-$string['databasecreationsettings'] = 'Dovete specificare le impostazioni del Database dove Moodle memorizzerà la maggior parte dei dati. Il Database sarà configurato automaticamente in accordo alle seguenti specifiche.<br /><br /><br />
+$string['databasecreationsettings'] = 'Specificate le impostazioni del Database dove Moodle memorizzerà larga parte dei dati. Il Database sarà configurato automaticamente in accordo alle specifiche fornite.<br /><br /><br />
 <b>Tipo:</b> impostato a \"mysql\" dallo script di installazione<br />
 <b>Host:</b> impostato a \"localhost\" dallo script di installazione<br />
 <b>Nome:</b> nome del Database, ad esempio \"moodle\"<br />
 <b>Utente:</b> impostato a \"root\" dallo script di installazione<br />
 <b>Password:</b> la password per l\'accesso al Database<br />
 <b>Prefisso tabelle:</b> prefisso opzionale da usare per i nomi delle tabelle';
-$string['databasecreationsettingshead'] = 'Dovete specificare le impostazioni del Database dove Moodle memorizzerà la maggior parte dei dati. Il Database sarà configurato automaticamente in accordo alle seguenti specifiche.';
+$string['databasecreationsettingshead'] = 'Specificate le impostazioni del Database dove Moodle memorizzerà larga parte dei dati. Il Database sarà configurato automaticamente in accordo alle specifiche fornite.';
 $string['databasecreationsettingssub'] = '<b>Tipo:</b> impostato a \"mysql\" dallo script di installazione<br />
 <b>Host:</b> impostato a \"localhost\" dallo script di installazione<br />
 <b>Nome:</b> nome del Database, ad esempio \"moodle\"<br />
@@ -86,77 +86,77 @@ $string['databasecreationsettingssub2'] = '<b>Tipo:</b> impostato a \"mysqli\" d
 $string['databasehost'] = 'Database host:';
 $string['databasename'] = 'Nome del Database';
 $string['databasepass'] = 'Password Database';
-$string['databasesettings'] = '<p>Dovete specificare le impostazioni del Database dove Moodle memorizzerà la maggior parte dei dati. Il Database deve già esistere e dovete disporre di username e password per accedervi.</p>
+$string['databasesettings'] = 'Specificate le impostazioni del Database dove Moodle memorizzerà larga parte dei dati. Il Database deve già esistere e dovete disporre di username e password per accedervi.<br />
 <b>Tipo:</b> mysql o postgres7<br/>
 <b>Host:</b> es. localhost o db.isp.com<br />
-<b>Nome:</b>il nome del Database, ad esempio \"moodle\"<br/>
-<b>Utente:</b>utente del Database<br/>
-<b>Password:</b>password dell\'utente<br/>
-<b>Prefisso tabelle:</b>prefisso opzionale da usare per i nomi delle tabelle';
+<b>Nome:</b> il nome del Database, ad esempio \"moodle\"<br/>
+<b>Utente:</b> utente del Database<br/>
+<b>Password:</b> password dell\'utente<br/>
+<b>Prefisso tabelle:</b> prefisso opzionale da usare per i nomi delle tabelle';
 $string['databasesettingsformoodle'] = 'Impostazioni del Database di Moodle';
-$string['databasesettingshead'] = 'Dovete specificare le impostazioni del Database dove Moodle memorizzerà la maggior parte dei dati. Il Database deve già esistere e dovete disporre di username e password per accedervi.';
+$string['databasesettingshead'] = 'Specificate le impostazioni del Database dove Moodle memorizzerà larga parte dei dati. Il Database deve già esistere e dovete disporre di username e password per accedervi.';
 $string['databasesettingssub'] = '<b>Tipo:</b> mysql o postgres7<br/>
 <b>Host:</b> es. localhost o db.isp.com<br />
-<b>Nome:</b>il nome del Database, ad esempio \"moodle\"<br/>
-<b>Utente:</b>utente del Database<br/>
-<b>Password:</b>password dell\'utente<br/>
-<b>Prefisso tabelle:</b>prefisso opzionale da usare per i nomi delle tabelle';
-$string['databasesettingssub_mssql'] = '<b>Tipo:</b> SQL*Server (non UTF-8) <strong class=\"errormsg\">Ancora in sperimentazione! (non usare su siti in produzione)</strong></b><br/>
+<b>Nome:</b> il nome del Database, ad esempio \"moodle\"<br/>
+<b>Utente:</b> utente del Database<br/>
+<b>Password:</b> password dell\'utente<br/>
+<b>Prefisso tabelle:</b> prefisso opzionale da usare per i nomi delle tabelle';
+$string['databasesettingssub_mssql'] = '<b>Tipo:</b> SQL*Server (non UTF-8) <strong class=\"errormsg\">Ancora in sperimentazione! (da non usare su siti in produzione)</strong></b><br/>
 <b>Host:</b> es. localhost o db.isp.com<br />
-<b>Nome:</b>il nome del Database, ad esempio \"moodle\"<br/>
-<b>Utente:</b>utente del Database<br/>
+<b>Nome:</b> il nome del Database, ad esempio \"moodle\"<br/>
+<b>Utente:</b> utente del Database<br/>
 <b>Password:</b>password dell\'utente<br/>
 <b>Prefisso tabelle:</b>prefisso obbligatorio da usare per i nomi delle tabelle';
 $string['databasesettingssub_mssql_n'] = '<b>Tipo:</b> SQL*Server (UTF-8 enabled) <br/>
 <b>Host:</b> es. localhost o db.isp.com<br />
-<b>Nome:</b>il nome del Database, ad esempio \"moodle\"<br/>
-<b>Utente:</b>utente del Database<br/>
-<b>Password:</b>password dell\'utente<br/>
-<b>Prefisso tabelle:</b>prefisso obbligatorio  da usare per i nomi delle tabelle';
+<b>Nome:</b> il nome del Database, ad esempio \"moodle\"<br/>
+<b>Utente:</b> utente del Database<br/>
+<b>Password:</b> password dell\'utente<br/>
+<b>Prefisso tabelle:</b> prefisso obbligatorio  da usare per i nomi delle tabelle';
 $string['databasesettingssub_mysql'] = '<b>Tipo:</b> MySQL<br/>
 <b>Host:</b> es. localhost o db.isp.com<br />
-<b>Nome:</b>il nome del Database, ad esempio \"moodle\"<br/>
-<b>Utente:</b>utente del Database<br/>
-<b>Password:</b>password dell\'utente<br/>
-<b>Prefisso tabelle:</b>prefisso opzionale da usare per i nomi delle tabelle';
+<b>Nome:</b> il nome del Database, ad esempio \"moodle\"<br/>
+<b>Utente:</b> utente del Database<br/>
+<b>Password:</b> password dell\'utente<br/>
+<b>Prefisso tabelle:</b> prefisso opzionale da usare per i nomi delle tabelle';
 $string['databasesettingssub_mysqli'] = '<b>Tipo:</b> MySQL Improved<br/>
 <b>Host:</b> es. localhost o db.isp.com<br />
-<b>Nome:</b>il nome del Database, ad esempio \"moodle\"<br/>
-<b>Utente:</b>utente del Database<br/>
-<b>Password:</b>password dell\'utente<br/>
-<b>Prefisso tabelle:</b>prefisso opzionale da usare per i nomi delle tabelle';
+<b>Nome:</b> il nome del Database, ad esempio \"moodle\"<br/>
+<b>Utente:</b> utente del Database<br/>
+<b>Password:</b> password dell\'utente<br/>
+<b>Prefisso tabelle:</b> prefisso opzionale da usare per i nomi delle tabelle';
 $string['databasesettingssub_oci8po'] = '<b>Tipo:</b> Oracle<br/>
 <b>Host:</b> da non usare, lasciare vuoto<br />
-<b>Nome:</b>il nome della connessione  tnsnames.ora<br/>
-<b>Utente:</b>utente del Database<br/>
-<b>Password:</b>password dell\'utente<br/>
-<b>Prefisso tabelle:</b>prefisso da usare per i nomi delle tabelle (obbligatorio, max. 2 caratteri)';
-$string['databasesettingssub_odbc_mssql'] = '<b>Tipo:</b> SQL*Server (via ODBC) <strong class=\"errormsg\">Ancora in sperimentazione! (non usare su siti in produzione)</strong></b><br/>
+<b>Nome:</b>i l nome della connessione  tnsnames.ora<br/>
+<b>Utente:</b> utente del Database<br/>
+<b>Password:</b> password dell\'utente<br/>
+<b>Prefisso tabelle:</b> prefisso da usare per i nomi delle tabelle (obbligatorio, max. 2 caratteri)';
+$string['databasesettingssub_odbc_mssql'] = '<b>Tipo:</b> SQL*Server (via ODBC) <strong class=\"errormsg\">Ancora in sperimentazione! (da non usare su siti in produzione)</strong></b><br/>
 <b>Host:</b> es. localhost o db.isp.com<br />
-<b>Nome:</b>il nome del Database, ad esempio \"moodle\"<br/>
-<b>Utente:</b>utente del Database<br/>
-<b>Password:</b>password dell\'utente<br/>
-<b>Prefisso tabelle:</b>prefisso obbligatorio da usare per i nomi delle tabelle';
+<b>Nome:</b> il nome del Database, ad esempio \"moodle\"<br/>
+<b>Utente:</b> utente del Database<br/>
+<b>Password:</b> password dell\'utente<br/>
+<b>Prefisso tabelle:</b> prefisso obbligatorio da usare per i nomi delle tabelle';
 $string['databasesettingssub_postgres7'] = '<b>Tipo:</b> PostgreSQL<br/>
 <b>Host:</b> es. localhost o db.isp.com<br />
-<b>Nome:</b>il nome del Database, ad esempio \"moodle\"<br/>
-<b>Utente:</b>utente del Database<br/>
-<b>Password:</b>password dell\'utente<br/>
-<b>Prefisso tabelle:</b>prefisso obbligatorio da usare per i nomi delle tabelle';
-$string['databasesettingssub_sqlite3_pdo'] = '<b>Tipo:</b> SQLite 3 (PDO)<strong class=\"errormsg\">Ancora in sperimentazione! (non usare su siti in produzione)</strong></b><br/>
+<b>Nome:</b> il nome del Database, ad esempio \"moodle\"<br/>
+<b>Utente:</b> utente del Database<br/>
+<b>Password:</b> password dell\'utente<br/>
+<b>Prefisso tabelle:</b> prefisso obbligatorio da usare per i nomi delle tabelle';
+$string['databasesettingssub_sqlite3_pdo'] = '<b>Tipo:</b> SQLite 3 (PDO)<strong class=\"errormsg\">Ancora in sperimentazione! (da non usare su siti in produzione)</strong></b><br/>
 <b>Host:</b> percorso assoluto della cartella dove il database sarà memorizzato. Specificate localhost oppure lasciate vuoto per specificare la cartella dei dati di Moodle<br />
 <b>Nome:</b>il nome del Database, ad esempio \"moodle\" (opzionale)<br/>
-<b>Utente:</b>utente del Database (opzionale)<br/>
-<b>Password:</b>password dell\'utente (opzionale)<br/>
-<b>Prefisso tabelle:</b>prefisso opzionale da usare per i nomi delle tabelle';
+<b>Utente:</b> utente del Database (opzionale)<br/>
+<b>Password:</b> password dell\'utente (opzionale)<br/>
+<b>Prefisso tabelle:</b> prefisso opzionale da usare per i nomi delle tabelle';
 $string['databasesettingswillbecreated'] = '<b>Attenzione:</b> se il Database specificato non esiste, lo script di installazione tenterà di crearlo.';
 $string['databasetype'] = 'Tipo di Database';
 $string['databaseuser'] = 'Utente del Database';
 $string['dataroot'] = 'Cartella dei dati';
 $string['datarooterror'] = 'La \'Cartella dei dati\' specificata non è stata trovata né è stato possibile crearla. Modificate il percorso oppure createla manualmente.';
-$string['datarootpublicerror'] = 'La \'Cartella dei dati\' specificata è accessibile direttamente via web. Devi specificare una cartella diversa.';
+$string['datarootpublicerror'] = 'La \'Cartella dei dati\' specificata è accessibile direttamente via web. Dovete specificare una cartella alternativa.';
 $string['dbconnectionerror'] = 'Non è possibile connettersi al Database. Verificate le impostazioni che avete fornito.';
-$string['dbcreationerror'] = 'Errore nella creazione del Database. Non è possibile creare un Database usando con le impostazioni fornite.';
+$string['dbcreationerror'] = 'Errore nella creazione del Database. Non è possibile creare un Database usando le impostazioni fornite.';
 $string['dbhost'] = 'Host server';
 $string['dbpass'] = 'Password';
 $string['dbprefix'] = 'Prefisso tabelle';
@@ -167,10 +167,10 @@ $string['dbwrongnlslang'] = 'La variabile di ambiente NLS_LANG nel tuo web serve
 $string['dbwrongprefix'] = 'E\' necessario attenersi alle indicazioni relative al \"Prefisso tabelle\" come sopra indicato.';
 $string['directorysettings'] = '<p>Verificate e confermate la correttezza degli indirizzi web e dei percorsi assoluti di installazione.</p>
 <p><b>Indirizzo web:</b> Specificate l\'indirizzo web per raggiungere la vostra installazione Moodle. Se l\'installazione è raggiungibile da più di una URL, allora specificate la URL che sarà utilizzata dai vostri studenti. Non aggiungete uno slash al termine della URL.</p>
-<p><b>Cartella di Moodle</b> Specificate il percorso assoluto della cartella dove state installando Moodle. Accertatevi che il nome della cartella tenga conto di eventuali lettere maiuscole o minuscole.</p>
+<p><b>Cartella di Moodle:</b> Specificate il percorso assoluto della cartella dove state installando Moodle. Accertatevi che il nome della cartella tenga conto di eventuali lettere maiuscole o minuscole.</p>
 <p><b>Cartella dei dati:</b> E\' la cartella dove Moodle inserirà i file caricati dagli utenti. Il web server (in genere \'nobody\' o \'apache\') DEVE avere i permessi di lettura e di scrittura su questa cartella. In aggiunta, la cartella dati non deve essere direttamente accessibile via web.</p>';
 $string['directorysettingshead'] = 'Verificate e confermate la correttezza degli indirizzi web e dei percorsi assoluti di installazione';
-$string['directorysettingssub'] = '<b>Indirizzo web:</b> Specificate l\'indirizzo web per raggiungere la vostra installazione Moodle. Se l\'installazione è raggiungibile da più di un aURL, allora specificate la URL che sarà utilizzata dai vostri studenti. Non aggiungete uno slash al termine della URL.
+$string['directorysettingssub'] = '<b>Indirizzo web:</b> Specificate l\'indirizzo web per raggiungere la vostra installazione Moodle. Se l\'installazione è raggiungibile da più di una URL, allora specificate la URL che sarà utilizzata dai vostri studenti. Non aggiungete uno slash al termine della URL.
 <br/>
 <br/>
 <b>Cartella di Moodle</b> Specificate il percorso assoluto della cartella dove state installando Moodle. Accertatevi che il nome della cartella tenga conto di eventuali lettere maiuscole o minuscole.
@@ -226,9 +226,9 @@ $string['globalswarning'] = '<p><strong>Avviso per la sicurezza</strong>: per fu
 $string['help'] = 'Aiuto';
 $string['iconvrecommended'] = 'Installare la libreria opzionale ICONV è caldamente consigliato per migliorare le prestazioni del sito, in particolare se il vostro sito supporta lingue non latine.';
 $string['info'] = 'Informazioni';
-$string['inputdatadirectory'] = 'Cartella dei dati';
+$string['inputdatadirectory'] = 'Cartella dei dati:';
 $string['inputwebadress'] = 'Indirizzo Web:';
-$string['inputwebdirectory'] = 'Cartella di Moodle';
+$string['inputwebdirectory'] = 'Cartella di Moodle:';
 $string['installation'] = 'Installazione';
 $string['installationiscomplete'] = 'L\'installazione è stata completata!';
 $string['invalidargumenthelp'] = 'Errore: argomento(i) non valido(i)
