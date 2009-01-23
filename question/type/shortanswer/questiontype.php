@@ -262,6 +262,8 @@ class question_shortanswer_qtype extends default_questiontype {
                 $status = $status && $DB->update_record($questionextensiontable, $questionextradata);
             }
         }
+
+        return $status;
     }
 
    /**
