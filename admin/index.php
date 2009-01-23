@@ -123,7 +123,7 @@
             print_header($strcurrentrelease, $strcurrentrelease, $navigation, "", "", false, "&nbsp;", "&nbsp;");
             print_heading("Moodle $release");
             print_box(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'), 'generalbox boxaligncenter boxwidthwide');
-            print_continue('index.php?agreelicense=1&confirmrelease=1');
+            print_continue('index.php?agreelicense=1&amp;confirmrelease=1');
             print_footer('none');
             die;
         }
@@ -227,7 +227,7 @@
                     print_box_end();
                 }
                 notice_yesno(get_string('environmenterrorupgrade', 'admin'),
-                             'index.php?confirmupgrade=1&confirmrelease=1', 'index.php');
+                             'index.php?confirmupgrade=1&amp;confirmrelease=1', 'index.php');
             } else {
                 notify(get_string('environmentok', 'admin'), 'notifysuccess');
                 if (empty($CFG->skiplangupgrade)) {
@@ -235,7 +235,7 @@
                     print_string('langpackwillbeupdated', 'admin');
                     print_box_end();
                 }
-                print_continue('index.php?confirmupgrade=1&confirmrelease=1');
+                print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1');
             }
 
             print_footer('none');
@@ -252,9 +252,9 @@
             print_plugin_tables();
             echo "<br />";
             echo '<div class="continuebutton">';
-            echo '<a href="index.php?confirmupgrade=1&confirmrelease=1" title="'.get_string('reload').'" ><img src="'.$CFG->pixpath.'/i/reload.gif" alt="" /> '.get_string('reload').'</a>';
+            echo '<a href="index.php?confirmupgrade=1&amp;confirmrelease=1" title="'.get_string('reload').'" ><img src="'.$CFG->pixpath.'/i/reload.gif" alt="" /> '.get_string('reload').'</a>';
             echo '</div><br />';
-            print_continue('index.php?confirmupgrade=1&confirmrelease=1&confirmplugincheck=1');
+            print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1&amp;confirmplugincheck=1');
             print_footer('none');
             die();
 
