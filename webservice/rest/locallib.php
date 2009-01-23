@@ -32,18 +32,21 @@ function call_moodle_function ($rest_arguments) {
         if ($functionname != 'tmp_get_token') {
             throw new moodle_exception('identifyfirst');
         } else {
-            if (optional_param('username',null,PARAM_ALPHANUM) == 'admin' && optional_param('password',null,PARAM_ALPHANUM) == 'admin') {
+            ///TODO: authentication + token generation need to be implemented
+            if (optional_param('username',null,PARAM_ALPHANUM) == 'wsuser' && optional_param('password',null,PARAM_ALPHANUM) == 'wspassword') {
                 return '465465465468468464';
             } else {
                 throw new moodle_exception('wrongusernamepassword');
             }
         }
     } else {
+        ///TDO: following function will need to be modified
         $user = mock_check_token($token);
         if (empty($user)) {
             throw new moodle_exception('wrongidentification');
         }
         else {
+            ///TODO: probably change this
             $USER = $user;
         }
     }
@@ -82,7 +85,7 @@ function mock_check_token($token) {
     if ($token == 465465465468468464) {
         ///retrieve the user
         global $DB;
-        $user = $DB->get_record('user', array('username'=>'admin', 'mnethostid'=>1));
+        $user = $DB->get_record('user', array('username'=>'wsuser', 'mnethostid'=>1));
 
         if (empty($user)) {
             return false;

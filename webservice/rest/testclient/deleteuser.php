@@ -32,8 +32,8 @@ start_interface("Delete a user");
 if ($username) {
   
      //we are asking for a token
-    $connectiondata['username'] = 'admin';
-    $connectiondata['password'] = 'admin';
+    $connectiondata['username'] = 'wsuser';
+    $connectiondata['password'] = 'wspassword';
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/user/tmp_get_token');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
