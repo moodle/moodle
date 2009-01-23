@@ -140,6 +140,8 @@ abstract class question_bank_column_base {
     public function __construct(question_bank_view $qbank) {
         $this->qbank = $qbank;
         $this->init();
+        require_js(array('yui_yahoo','yui_event'));
+        require_js('question/qbank.js');
     }
 
     /**
@@ -390,7 +392,7 @@ class question_bank_checkbox_column extends question_bank_column_base {
     }
 
     protected function get_title() {
-        return '<input type="checkbox" disabled="disabled" />';
+        return '<input type="checkbox" disabled="disabled" id="qbheadercheckbox" />';
     }
 
     protected function get_title_tip() {
@@ -399,7 +401,9 @@ class question_bank_checkbox_column extends question_bank_column_base {
 
     protected function display_content($question, $rowclasses) {
         echo '<input title="' . $this->strselect . '" type="checkbox" name="q' .
-                $question->id . '" id="checkq' . $question->id . '" value="1" />';
+                $question->id . '" id="checkq' . $question->id . '" value="1"/>';
+        print_js_call('question_bank.init_checkbox_column', array(get_string('selectall'),
+                get_string('deselectall'), 'checkq' . $question->id));
     }
 
     public function get_required_fields() {
@@ -1281,14 +1285,6 @@ class question_bank_view {
         }
         echo $paging;
         echo '</div>';
-
-        echo '<div class="categoryselectallcontainer">';
-        if ($caneditall || $canmoveall || $canuseall){
-            echo '<a href="javascript:select_all_in(\'TABLE\',null,\'categoryquestions\');">'.$strselectall.'</a> /'.
-             ' <a href="javascript:deselect_all_in(\'TABLE\',null,\'categoryquestions\');">'.$strselectnone.'</a>';
-            echo '<br />';
-        }
-        echo "</div>\n";
 
         echo '<div class="modulespecificbuttonscontainer">';
         if ($caneditall || $canmoveall || $canuseall){
