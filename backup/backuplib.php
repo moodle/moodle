@@ -2314,7 +2314,7 @@
     //It does this conversions:
     // - $CFG->wwwroot/file.php/courseid ------------------> $@FILEPHP@$ (slasharguments links)
     // - $CFG->wwwroot/file.php?file=/courseid ------------> $@FILEPHP@$ (non-slasharguments links)
-    // - Every module xxxx_encode_content_links() is executed too
+    // - Every module/block/course_format xxxx_encode_content_links() is executed too
     //
     function backup_encode_absolute_links($content) {
         global $CFG,$preferences, $DB;
@@ -2370,6 +2370,25 @@
             if (function_exists($function_name)) {
                 $result = $function_name($result,$mypreferences);
             }
+        }
+
+        // For the current course format call its encode_content_links method (if it exists)
+        static $format_function_name;
+        if (!isset($format_function_name)) {
+            $format_function_name = false;
+            if ($format = $DB->get_field('course','format', array('id'=>$mypreferences->backup_course))) {
+                if (file_exists("$CFG->dirroot/course/format/$format/backuplib.php")) {
+                    include_once("$CFG->dirroot/course/format/$format/backuplib.php");
+                    $function_name = $format.'_encode_format_content_links';
+                    if (function_exists($function_name)) {
+                        $format_function_name = $function_name;
+                    }
+                }
+            }
+        }
+        // If the above worked - then we have a function to call
+        if ($format_function_name) {
+            $result = $format_function_name($result, $mypreferences);
         }
 
         // For each block, call its encode_content_links method.
