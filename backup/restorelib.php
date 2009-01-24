@@ -81,7 +81,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     }
 
     //This function makes all the necessary calls to xxxx_decode_content_links_caller()
-    //function in each module, passing them the desired contents to be decoded
+    //function in each module/block/course format..., passing them the desired contents to be decoded
     //from backup format to destination site/course in order to mantain inter-activities
     //working in the backup/restore process
     function restore_decode_content_links($restore) {
@@ -148,6 +148,23 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
         }
 
+        // For the course format call its decode_content_links method (if it exists)
+        $format = get_field('course', 'format', 'id', $restore->course_id);
+        if (file_exists("$CFG->dirroot/course/format/$format/restorelib.php")) {
+            include_once("$CFG->dirroot/course/format/$format/restorelib.php");
+            $function_name = $format.'_decode_format_content_links_caller';
+
+            if (function_exists($function_name)) {
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo "<li>".get_string ("from")." ".get_string("format").' '.$format;
+                }
+                $status = $function_name($restore);
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo '</li>';
+                }
+            }
+        }
+
         // Process all html text also in blocks too
         if (!defined('RESTORE_SILENTLY')) {
             echo '<li>'.get_string ('from').' '.get_string('blocks');
@@ -186,11 +203,31 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //its task is to ask all modules (maybe other linkable objects) to restore
     //links to them.
     function restore_decode_content_links_worker($content,$restore) {
+        global $CFG;
         foreach($restore->mods as $name => $info) {
             $function_name = $name."_decode_content_links";
             if (function_exists($function_name)) {
                 $content = $function_name($content,$restore);
             }
+        }
+
+        // For the current format, call decode_format_content_links if it exists
+        static $format_function_name;
+        if (!isset($format_function_name)) {
+            $format_function_name = false;
+            if ($format = get_field('course', 'format', 'id', $restore->course_id)) {
+                if (file_exists("$CFG->dirroot/course/format/$format/restorelib.php")) {
+                    include_once("$CFG->dirroot/course/format/$format/restorelib.php");
+                    $function_name = $format.'_decode_format_content_links';
+                    if (function_exists($function_name)) {
+                        $format_function_name = $function_name;
+                    }
+                }
+            }
+        }
+        // If the above worked - then we have a function to call
+        if ($format_function_name) {
+            $content = $format_function_name($content, $restore);
         }
 
         // For each block, call its encode_content_links method
