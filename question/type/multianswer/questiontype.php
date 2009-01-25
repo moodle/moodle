@@ -101,7 +101,7 @@ class embedded_cloze_qtype extends default_questiontype {
         }
         $sequence = array();
         foreach($question->options->questions as $wrapped) {
-            if ($wrapped != ''){
+            if (!is_null($wrapped)){
                 // if we still have some old wrapped question ids, reuse the next of them
 
                 if (is_array($oldwrappedquestions) && $oldwrappedquestion = array_shift($oldwrappedquestions)) {
@@ -240,16 +240,16 @@ class embedded_cloze_qtype extends default_questiontype {
         global $QTYPES;
         $responses = array();
         foreach($question->options->questions as $key => $wrapped) {
-            if ($wrapped != ''){
-            if ($correct = $QTYPES[$wrapped->qtype]->get_correct_responses($wrapped, $state)) {
-                $responses[$key] = $correct[''];
-            } else {
-                // if there is no correct answer to this subquestion then there
-                // can not be a correct answer to the whole question either, so
-                // we have to return null.
-                return null;
+            if (!is_null($wrapped)){
+                if ($correct = $QTYPES[$wrapped->qtype]->get_correct_responses($wrapped, $state)) {
+                    $responses[$key] = $correct[''];
+                } else {
+                    // if there is no correct answer to this subquestion then there
+                    // can not be a correct answer to the whole question either, so
+                    // we have to return null.
+                    return null;
+                }
             }
-        }
         }
         return $responses;
     }
@@ -258,7 +258,7 @@ class embedded_cloze_qtype extends default_questiontype {
         global $QTYPES;
         $responses = array();
         foreach($question->options->questions as $key => $wrapped) {
-            if ($wrapped != ''){
+            if (!is_null($wrapped)){
                 if ($correct = $QTYPES[$wrapped->qtype]->get_possible_responses($wrapped)) {
                     $responses += $correct;
                 } else {
@@ -275,7 +275,7 @@ class embedded_cloze_qtype extends default_questiontype {
         global $QTYPES;
         $details = array();
         foreach($question->options->questions as $key => $wrapped) {
-            if ($wrapped != ''){
+            if (!is_null($wrapped)){
                 $stateforquestion = clone($state);
                 $stateforquestion->responses[''] = $state->responses[$key];
                 $details = array_merge($details, $QTYPES[$wrapped->qtype]->get_actual_response_details($wrapped, $stateforquestion));
@@ -616,7 +616,7 @@ class embedded_cloze_qtype extends default_questiontype {
         $teststate = clone($state);
         $state->raw_grade = 0;
         foreach($question->options->questions as $key => $wrapped) {
-            if ($wrapped != ''){
+            if (!is_null($wrapped)){
                 if(isset($state->responses[$key])){
                     $state->responses[$key] = $state->responses[$key];
                 }else {
@@ -984,8 +984,11 @@ function qtype_multianswer_extract_question($text) {
         ; preg_match('/'.ANSWER_REGEX.'/', $question->questiontext, $answerregs)
         ; ++$positionkey ) {
         $wrapped = new stdClass;
-        $wrapped->defaultgrade = $answerregs[ANSWER_REGEX_NORM]
-            or $wrapped->defaultgrade = '1';
+        if (isset($answerregs[ANSWER_REGEX_NORM])&& $answerregs[ANSWER_REGEX_NORM]!== ''){
+            $wrapped->defaultgrade = $answerregs[ANSWER_REGEX_NORM];
+        } else {
+            $wrapped->defaultgrade = '1';
+        }
         if (!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_NUMERICAL])) {
             $wrapped->qtype = 'numerical';
             $wrapped->multiplier = array();
