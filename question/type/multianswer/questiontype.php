@@ -85,7 +85,7 @@ class embedded_cloze_qtype extends default_questiontype {
         }
         $sequence = array();
         foreach($question->options->questions as $wrapped) {
-            if ($wrapped != ''){
+            if (!is_null($wrapped)){
             // if we still have some old wrapped question ids, reuse the next of them
 
                 if (is_array($oldwrappedquestions) && $oldwrappedquestion = array_shift($oldwrappedquestions)) {
@@ -222,7 +222,7 @@ class embedded_cloze_qtype extends default_questiontype {
         global $QTYPES;
         $responses = array();
         foreach($question->options->questions as $key => $wrapped) {
-            if ($wrapped != ''){
+            if (!is_null($wrapped)){
             if ($correct = $QTYPES[$wrapped->qtype]->get_correct_responses($wrapped, $state)) {
                 $responses[$key] = $correct[''];
             } else {
@@ -293,7 +293,6 @@ class embedded_cloze_qtype extends default_questiontype {
             $feedback = '' ;
             $correctanswer = '';
             $strfeedbackwrapped  = $strfeedback;
-           // if($wrapped->qtype == 'numerical' ||$wrapped->qtype == 'shortanswer'){
                 $testedstate = clone($state);
                 if ($correctanswers =  $QTYPES[$wrapped->qtype]->get_correct_responses($wrapped, $testedstate)) {
                     if ($options->readonly && $options->correct_responses) {
@@ -319,7 +318,6 @@ class embedded_cloze_qtype extends default_questiontype {
                         $feedback = '<div class="correctness">';
                         $feedback .= get_string('correctansweris', 'quiz', s($correctanswer, true));
                         $feedback .= '</div>';
-                       // $strfeedbackwrapped = get_string('correctanswer and', 'quiz').get_string('feedback', 'quiz');
                     }
                 }
             if ($options->feedback) {
@@ -479,9 +477,8 @@ class embedded_cloze_qtype extends default_questiontype {
                     }
                 }
     
-                // Print the answer text
-                // Remove automatic numbering
-                // $a->text = $ordernumber<span class="anun">' . $ordernumber . '<span class="anumsep">.</span></span>'.
+                // Print the answer text: no automatic numbering
+
                 $a->text =format_text($mcanswer->answer, FORMAT_MOODLE, $formatoptions, $cmoptions->course);
     
                 // Print feedback if feedback is on
@@ -571,7 +568,7 @@ class embedded_cloze_qtype extends default_questiontype {
         $teststate = clone($state);
         $state->raw_grade = 0;
         foreach($question->options->questions as $key => $wrapped) {
-            if ($wrapped != ''){
+            if (!is_null($wrapped)){
             $state->responses[$key] = $state->responses[$key];
             $teststate->responses = array('' => $state->responses[$key]);
             $teststate->raw_grade = 0;
