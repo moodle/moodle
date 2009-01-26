@@ -310,7 +310,7 @@ $string['qtyperqpwillberemoved'] = 'Durante l\'aggiornamento, il tipo di domanda
 $string['qtyperqpwillberemovedanyway'] = 'Durante l\'aggiornamento, il tipo di domanda RQP sarà rimosso. Il sito ha alcune domande RPQ nel database e queste non funzioneranno più a meno di reinstallare il codice da http://moodle.org/mod/data/view.php?d=13&amp;rid=797 prima di continuare con l\'aggiornamento.';
 $string['releasenoteslink'] = 'Per informazioni su questa versione di Moodle, fate riferimento alle Note di Rilascio su $a';
 $string['remotedownloadnotallowed'] = 'Non è permesso scaricare i componenti su vostro server (allow_url_fopen è disabilitato). <br /><br /> È necessario scaricare manualmente il file <a href=\"$a->url\">$a->url</a>, copiarlo in \"$a->dest\" sul vostro server e scompattarlo la.';
-$string['report'] = 'Rapporto';
+$string['report'] = 'Report';
 $string['restricted'] = 'Ridotto';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle può avere problemi con il safe mode impostato a on';
