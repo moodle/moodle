@@ -101,7 +101,7 @@ class embedded_cloze_qtype extends default_questiontype {
         }
         $sequence = array();
         foreach($question->options->questions as $wrapped) {
-            if (!is_null($wrapped)){
+            if (!empty($wrapped)){
                 // if we still have some old wrapped question ids, reuse the next of them
 
                 if (is_array($oldwrappedquestions) && $oldwrappedquestion = array_shift($oldwrappedquestions)) {
@@ -240,7 +240,7 @@ class embedded_cloze_qtype extends default_questiontype {
         global $QTYPES;
         $responses = array();
         foreach($question->options->questions as $key => $wrapped) {
-            if (!is_null($wrapped)){
+            if (!empty($wrapped)){
                 if ($correct = $QTYPES[$wrapped->qtype]->get_correct_responses($wrapped, $state)) {
                     $responses[$key] = $correct[''];
                 } else {
@@ -258,7 +258,7 @@ class embedded_cloze_qtype extends default_questiontype {
         global $QTYPES;
         $responses = array();
         foreach($question->options->questions as $key => $wrapped) {
-            if (!is_null($wrapped)){
+            if (!empty($wrapped)){
                 if ($correct = $QTYPES[$wrapped->qtype]->get_possible_responses($wrapped)) {
                     $responses += $correct;
                 } else {
@@ -275,7 +275,7 @@ class embedded_cloze_qtype extends default_questiontype {
         global $QTYPES;
         $details = array();
         foreach($question->options->questions as $key => $wrapped) {
-            if (!is_null($wrapped)){
+            if (!empty($wrapped)){
                 $stateforquestion = clone($state);
                 $stateforquestion->responses[''] = $state->responses[$key];
                 $details = array_merge($details, $QTYPES[$wrapped->qtype]->get_actual_response_details($wrapped, $stateforquestion));
@@ -616,7 +616,7 @@ class embedded_cloze_qtype extends default_questiontype {
         $teststate = clone($state);
         $state->raw_grade = 0;
         foreach($question->options->questions as $key => $wrapped) {
-            if (!is_null($wrapped)){
+            if (!empty($wrapped)){
                 if(isset($state->responses[$key])){
                     $state->responses[$key] = $state->responses[$key];
                 }else {

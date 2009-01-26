@@ -36,7 +36,7 @@ class question_edit_multianswer_form extends question_edit_form {
         if ( isset($this->questiondisplay->options->questions) && is_array($this->questiondisplay->options->questions) ) {
             $countsubquestions =0;
             foreach($this->questiondisplay->options->questions as $subquestion){
-                if ($subquestion != ''){
+                if (!empty($subquestion)){
                    $countsubquestions++;
                 }
             }
@@ -97,7 +97,7 @@ class question_edit_multianswer_form extends question_edit_form {
         if (isset($question->id) and $question->id and $question->qtype and $question->questiontext) {
 
             foreach ($question->options->questions as $key => $wrapped) {
-                if($wrapped != ''){
+                if(!empty($wrapped)){
                 // The old way of restoring the definitions is kept to gradually
                 // update all multianswer questions
                 if (empty($wrapped->questiontext)) {
