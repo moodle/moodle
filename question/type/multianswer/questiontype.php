@@ -85,7 +85,7 @@ class embedded_cloze_qtype extends default_questiontype {
         }
         $sequence = array();
         foreach($question->options->questions as $wrapped) {
-            if (!is_null($wrapped)){
+            if (!empty($wrapped)){
             // if we still have some old wrapped question ids, reuse the next of them
 
                 if (is_array($oldwrappedquestions) && $oldwrappedquestion = array_shift($oldwrappedquestions)) {
@@ -222,16 +222,16 @@ class embedded_cloze_qtype extends default_questiontype {
         global $QTYPES;
         $responses = array();
         foreach($question->options->questions as $key => $wrapped) {
-            if (!is_null($wrapped)){
-            if ($correct = $QTYPES[$wrapped->qtype]->get_correct_responses($wrapped, $state)) {
-                $responses[$key] = $correct[''];
-            } else {
-                // if there is no correct answer to this subquestion then there
-                // can not be a correct answer to the whole question either, so
-                // we have to return null.
-                return null;
+            if (  !empty($wrapped)){
+                if ($correct = $QTYPES[$wrapped->qtype]->get_correct_responses($wrapped, $state)) {
+                    $responses[$key] = $correct[''];
+                } else {
+                    // if there is no correct answer to this subquestion then there
+                    // can not be a correct answer to the whole question either, so
+                    // we have to return null.
+                    return null;
+                }
             }
-        }
         }
         return $responses;
     }
@@ -568,7 +568,7 @@ class embedded_cloze_qtype extends default_questiontype {
         $teststate = clone($state);
         $state->raw_grade = 0;
         foreach($question->options->questions as $key => $wrapped) {
-            if (!is_null($wrapped)){
+            if (!empty($wrapped)){
             $state->responses[$key] = $state->responses[$key];
             $teststate->responses = array('' => $state->responses[$key]);
             $teststate->raw_grade = 0;
