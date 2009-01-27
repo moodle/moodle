@@ -487,7 +487,7 @@ function report_security_check_riskxss($detailed=false) {
     $sqlfrom = "FROM {role_capabilities} rc
                 JOIN {capabilities} cap ON cap.name = rc.capability
                 JOIN {context} c ON c.id = rc.contextid
-                JOIN {context} sc ON (sc.path = c.path OR sc.path LIKE ".$DB->sql_concat('c.path', "'/%'").")
+                JOIN {context} sc ON (sc.path = c.path OR sc.path LIKE ".$DB->sql_concat('c.path', "'/%'")." OR c.path LIKE ".$DB->sql_concat('sc.path', "'/%'").")
                 JOIN {role_assignments} ra ON (ra.contextid = sc.id AND ra.roleid = rc.roleid)
                 JOIN {user} u ON u.id = ra.userid
                WHERE ".$DB->sql_bitand('cap.riskbitmask', RISK_XSS)." <> 0
