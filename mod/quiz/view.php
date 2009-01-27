@@ -104,8 +104,7 @@
 
         // Print information about timings.
         $timenow = time();
-        $available = ($quiz->timeopen < $timenow and ($timenow < $quiz->timeclose or !$quiz->timeclose)) &&
-                has_capability('mod/quiz:attempt', $context);
+        $available = $quiz->timeopen < $timenow && ($timenow < $quiz->timeclose || !$quiz->timeclose);
         if ($available) {
             if ($quiz->timelimit) {
                 echo "<p>".get_string("quiztimelimit","quiz", format_time($quiz->timelimit * 60))."</p>";
@@ -122,6 +121,7 @@
             echo "<p>".get_string("quizclosed", "quiz", userdate($quiz->timeclose))."</p>";
         }
         echo '</div>';
+        $available = $available && has_any_capability(array('mod/quiz:attempt', 'mod/quiz:preview'), $context);
     } else {
         $available = false;
     }
