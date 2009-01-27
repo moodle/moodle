@@ -180,6 +180,7 @@ $string['invaliddiscussionid'] = 'Discussion ID was incorrect or no longer exist
 $string['invalidpostid'] = 'Invalid Post ID - $a';
 $string['invalidparentpostid'] = 'Parent post ID was incorrect';
 $string['invalidaccess'] = 'This page was not accessed correctly';
+$string['invalidrate'] = 'Invalid rate ($a)';
 $string['mailnow'] = 'Mail now';
 $string['manydiscussions'] = 'Discussions per page';
 $string['markalldread'] = 'Mark all posts in this discussion read.';
