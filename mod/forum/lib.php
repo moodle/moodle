@@ -5264,7 +5264,9 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
     $ratingsmenuused = false;
     $ratingsformused = false;
     if ($forum->assessed and isloggedin()) {
-        if ($ratings->scale = make_grades_menu($forum->scale)) {
+        if ($scale = make_grades_menu($forum->scale)) {
+            $ratings =new object();
+            $ratings->scale = $scale;
             $ratings->assesstimestart = $forum->assesstimestart;
             $ratings->assesstimefinish = $forum->assesstimefinish;
             $ratings->allow = $canrate;
@@ -5292,7 +5294,6 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
             }
         }
     }
-
 
     $post->forum = $forum->id;   // Add the forum id to the post object, later used by forum_print_post
     $post->forumtype = $forum->type;

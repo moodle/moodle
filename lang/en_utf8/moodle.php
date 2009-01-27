@@ -1355,6 +1355,7 @@ $string['scalescustomno'] = 'No custom scales have been created yet';
 $string['scalesstandard'] = 'Standard scales';
 $string['scalestandard'] = 'Standard scale';
 $string['scalestip'] = 'To create custom scales, use the \'Scales...\' link in your course administration menu.';
+$string['scalestip2'] = 'To create custom scales, click the Grades link in the course administration menu, then choose Edit, Scales.';
 $string['schedule'] = 'Schedule';
 $string['scheduledbackupsinactive'] = 'Scheduled backups haven\'t been enabled by the site admin';
 $string['scheduledbackupstatus'] = 'Scheduled backup status';
