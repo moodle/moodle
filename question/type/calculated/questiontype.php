@@ -149,6 +149,9 @@ class question_calculated_qtype extends default_questiontype {
             $units = &$result->units;
         }
         // Insert all the new answers
+        if (isset($question->answer) && !isset($question->answers)) {
+            $question->answers=$question->answer;
+        }
         foreach ($question->answers as $key => $dataanswer) {
             if (  trim($dataanswer) != '' ) {
                 $answer = new stdClass;
