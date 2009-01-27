@@ -2434,4 +2434,36 @@ END_OF_SCRIPT;
     print '<span class="helplink">'.$html.'</span>';
 }
 
+/**
+ * Called by course/reset.php
+ * @param $mform form passed by reference
+ */
+function hotpot_reset_course_form($course) {
+    print_checkbox('reset_hotpot_deleteallattempts', 1, true, get_string('deleteallattempts', 'hotpot'), '', '');  echo '<br />';
+}
+function hotpot_delete_userdata($data, $showfeedback=true) {
+    global $CFG;
+    
+    if (!empty($data->reset_hotpot_deleteallattempts)) {
+
+        $hotpotids = "SELECT h.id FROM {$CFG->prefix}hotpot h WHERE h.course={$data->courseid}";
+        $attemptids = "SELECT a.id FROM {$CFG->prefix}hotpot_attempts a WHERE a.hotpot in ($hotpotids)";
+
+        delete_records_select('hotpot_responses', "attempt in ($attemptids)");
+        delete_records_select('hotpot_details', "attempt in ($attemptids)");
+        delete_records_select('hotpot_attempts', "hotpot IN ($hotpotids)");
+
+        if ($showfeedback) {
+            notify(get_string('reset').': '.get_string('modulenameplural', 'hotpot'), 'notifysuccess');
+        }
+    }
+}
+
+/**
+ * Course reset form defaults.
+ */
+function hotpot_reset_course_form_defaults($course) {
+    return array('reset_hotpot_deleteallattempts' => 1);
+}
+
 ?>
