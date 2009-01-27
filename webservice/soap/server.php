@@ -16,18 +16,59 @@ if (empty($CFG->enablewebservices)) {
     die;
 }
 
-//retrieve the api name
-$classpath = optional_param(classpath,null,PARAM_ALPHA);
-require_once(dirname(__FILE__) . '/../../'.$classpath.'/external.php');
+// retrieve the token from the url
+// if the token doesn't exist, set a class containing only get_token()
+$token = optional_param('token',null,PARAM_ALPHANUM);
+if (empty($token)) {
+    $server = new SoapServer($CFG->wwwroot."/webservice/soap/generatewsdl.php");
+    $server->setClass("soap_authentication");
+    $server->handle();
+} else { // if token exist, do the authentication here
+    /// TODO: following function will need to be modified
+    $user = mock_check_token($token);
+    if (empty($user)) {
+        throw new moodle_exception('wrongidentification');
+    } else {
+        /// TODO: probably change this
+        global $USER;
+        $USER = $user;
+    }
 
-//TODO retrieve the token from the url
-//     if the token doesn't exist create a server with a connection.wsdl
-//     and set a class containing only get_token() (need to create connection.wsdl and class soapiniconnection)
-//     if token exist, do the authentication here
+    //retrieve the api name
+    $classpath = optional_param(classpath,null,PARAM_ALPHA);
+    require_once(dirname(__FILE__) . '/../../'.$classpath.'/external.php');
 
-/// run the server
-$server = new SoapServer("moodle.wsdl"); //TODO: need to call the wsdl generation on the fly
-$server->setClass($classpath."_external"); //TODO: pass $user as parameter
-$server->handle();
+    /// run the server
+    $server = new SoapServer($CFG->wwwroot."/webservice/soap/generatewsdl.php?token=".$token); //TODO: need to call the wsdl generation on the fly
+    $server->setClass($classpath."_external"); //TODO: pass $user as parameter
+    $server->handle();
+}
 
+
+function mock_check_token($token) {
+    //fake test
+    if ($token == 465465465468468464) {
+        ///retrieve the user
+        global $DB;
+        $user = $DB->get_record('user', array('username'=>'wsuser', 'mnethostid'=>1));
+
+        if (empty($user)) {
+            return false;
+        }
+
+        return $user;
+    } else {
+        return false;
+    }
+}
+
+class soap_authentication {
+    function tmp_get_token($params) {
+        if ($params['username'] == 'wsuser' && $params['password'] == 'wspassword') {
+                return '465465465468468464';
+            } else {
+                throw new moodle_exception('wrongusernamepassword');
+            }
+    }
+}
 ?>

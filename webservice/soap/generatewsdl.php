@@ -5,8 +5,9 @@
  */
 
 require_once('../../config.php');
+$token = optional_param('token',null,PARAM_ALPHANUM);
 $wsdl_generator = new wsdl_generator();
-$wsdl = $wsdl_generator->generate_wsdl();
+$wsdl = $wsdl_generator->generate_wsdl($token);
 echo $wsdl;
 
 /**
@@ -28,10 +29,16 @@ class wsdl_generator {
     /**
      * Generate the WSDL for Moodle API
      * @global <type> $CFG
+     * @param <type> $token
      * @return string wsdl xml
      */
-    public function generate_wsdl () {
+    public function generate_wsdl ($token = null) {
         global $CFG;
+
+        if (empty($token)) {
+           
+            return $this->generate_authentication_wsdl();
+        }
 
      ///initialize different wsdl part
         $wsdlmessage = "";
@@ -75,8 +82,11 @@ EOF;
 
          ///load the class        
             $classpath = substr($fileapipath,strlen($CFG->dirroot)+1); //remove the dir root + / from the file path
-            $classpath = substr($classpath,0,strlen($classpath) - 10); //remove /external.php from the classpath
+            varlog($classpath);
+            $classpath = substr($classpath,0,strlen($classpath) - 13); //remove /external.php from the classpath
+            varlog($classpath);
             $classpath = str_replace('/','_',$classpath); //convert all / into _
+            varlog($classpath);
             $classname = $classpath."_external";
             $api = new $classname();
 
@@ -92,7 +102,7 @@ EOF;
              $wsdlservice .= <<<EOF
         <service name='{$classpath}Service'>
                 <port name='{$classpath}Port' binding='{$classpath}Binding'>
-                    <soap:address location='{$CFG->wwwroot}/webservice/soap/server.php?classpath={$classpath}'/>
+                    <soap:address location='{$CFG->wwwroot}/webservice/soap/server.php?classpath={$classpath}&amp;token={$token}'/>
                 </port>
         </service>
 
@@ -104,13 +114,26 @@ EOF;
         <message name="{$functionname}Request">
 
 EOF;
-            foreach ($description['wsparams'] as $param => $paramtype) {
+                /*
+            foreach ($description['params'] as $param => $paramtype) {
                 $wsparamtype = $this->converterMoodleParamIntoWsParam($paramtype);
                 $wsdlmessage .= <<<EOF
             <part name="{$param}" type="xsd:{$wsparamtype}"/>
 
 EOF;
             }
+            foreach ($description['optionalparams'] as $param => $paramtype) {
+                $wsparamtype = $this->converterMoodleParamIntoWsParam($paramtype);
+                $wsdlmessage .= <<<EOF
+            <part name="{$param}" type="xsd:{$wsparamtype}"/>
+
+EOF;
+            }   * */
+              $wsdlmessage .= <<<EOF
+            <part name="params" type="xsd:object"/>
+
+EOF;
+
              $wsdlmessage .= <<<EOF
         </message>
         <message name="{$functionname}Response">
@@ -177,11 +200,72 @@ EOF;
 
 EOF;
 
-        $this->wsdl =  $wsdl;
         return $wsdl;
-        //$this->writewsdl();
     }
 
+    private function generate_authentication_wsdl() {
+        global $CFG;
+        $wsdl = <<<EOF
+<?xml version ='1.0' encoding ='UTF-8' ?>
+    <definitions name='User'
+                 targetNamespace='http://example.org/User'
+                 xmlns:tns=' http://example.org/User '
+                 xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/'
+                 xmlns:xsd='http://www.w3.org/2001/XMLSchema'
+                 xmlns:soapenc='http://schemas.xmlsoap.org/soap/encoding/'
+                 xmlns:wsdl='http://schemas.xmlsoap.org/wsdl/'
+                 xmlns='http://schemas.xmlsoap.org/wsdl/'>
+
+        <types>
+            <xsd:schema targetNamespace="http://example.org/User"
+                        xmlns="http://www.w3.org/2001/XMLSchema">
+                <xsd:complexType name="object">
+                </xsd:complexType>
+            </xsd:schema>
+        </types>
+
+        <message name="tmp_get_tokenRequest">
+            <part name="params" type="xsd:object"/>
+        </message>
+        <message name="tmp_get_tokenResponse">
+            <part name="user" type="xsd:object"/>
+        </message>
+
+        <portType name='userPortType'>
+            <operation name='tmp_get_token'>
+                <input message='tns:tmp_get_tokenRequest'/>
+                <output message='tns:tmp_get_tokenResponse'/>
+            </operation>
+        </portType>
+
+        <binding name='userBinding' type='tns:userPortType'>
+            <soap:binding style='rpc'
+                          transport='http://schemas.xmlsoap.org/soap/http'/>
+
+            <operation name='tmp_get_token'>
+                <soap:operation soapAction='urn:xmethods-delayed-quotes#tmp_get_token'/>
+                <input>
+                    <soap:body use='encoded' namespace='urn:xmethods-delayed-quotes'
+                               encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
+                </input>
+                <output>
+
+                    <soap:body use='encoded' namespace='urn:xmethods-delayed-quotes'
+                               encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
+                </output>
+           </operation>
+
+        </binding>
+
+        <service name='userService'>
+                <port name='userPort' binding='userBinding'>
+                    <soap:address location='{$CFG->wwwroot}/webservice/soap/server.php'/>
+                </port>
+        </service>
+    </definitions>
+EOF;
+        return $wsdl;
+    }
 
     /**
      * Retrieve all api.php from Moodle (except the one of the exception list)
@@ -253,13 +337,6 @@ EOF;
                 break;
         }
     }
-/*
-    private function writewsdl() {
-        $fp = fopen('moodle.wsdl', 'w');
-        fwrite($fp, $this->wsdl);
-        fclose($fp);
-    }
-*/
 
 }
 

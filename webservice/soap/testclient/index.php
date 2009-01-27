@@ -13,23 +13,34 @@
  */
 require_once(dirname(__FILE__) . '/../../../config.php');
 
-//$client = new SoapClient("moodle.wsdl");
-
-$client = new SoapClient("../moodle.wsdl",array(
+//1. authentication
+$client = new SoapClient($CFG->wwwroot."/webservice/soap/generatewsdl.php",array(
     "trace"      => 1,
     "exceptions" => 0));
 
 try {
+    $token = $client->tmp_get_token(array('username' => "wsuser", 'password' => "wspassword"));
+    printLastRequestResponse($client);
+   
+} catch (SoapFault $exception) {
+    echo $exception;
+}
+
+
+//2. test functions
+$client = new SoapClient($CFG->wwwroot."/webservice/soap/generatewsdl.php?token=".$token,array(
+    "trace"      => 1,
+    "exceptions" => 0));
+
+try {   
     var_dump($client->tmp_get_users(array('search' => "admin")));
     printLastRequestResponse($client);
     var_dump($client->tmp_create_user(array('username' => "mockuser66",'firstname' => "firstname6",'lastname' => "lastname6",'email' => "mockuser6@mockuser6.com",'password' => "password6")));
     printLastRequestResponse($client);
     var_dump($client->tmp_update_user(array('username' => "mockuser66",'mnethostid' => 1,'newusername' => "mockuser6b",'firstname' => "firstname6b")));
     printLastRequestResponse($client);
-    //not working till authentication implemented
-    //(remove the has_capaibility of the user/external.php to make it work without authentication)
-    //var_dump($client->tmp_delete_user(array('username' => "mockuser6b",'mnethostid' => 1)));
-    //printLastRequestResponse($client);
+    var_dump($client->tmp_delete_user(array('username' => "mockuser6b",'mnethostid' => 1)));
+    printLastRequestResponse($client);
 } catch (SoapFault $exception) {
     echo $exception;
 }

@@ -32,7 +32,7 @@ function call_moodle_function ($rest_arguments) {
         if ($functionname != 'tmp_get_token') {
             throw new moodle_exception('identifyfirst');
         } else {
-            ///TODO: authentication + token generation need to be implemented
+            /// TODO: authentication + token generation need to be implemented
             if (optional_param('username',null,PARAM_ALPHANUM) == 'wsuser' && optional_param('password',null,PARAM_ALPHANUM) == 'wspassword') {
                 return '465465465468468464';
             } else {
@@ -40,13 +40,13 @@ function call_moodle_function ($rest_arguments) {
             }
         }
     } else {
-        ///TDO: following function will need to be modified
+        /// TODO: following function will need to be modified
         $user = mock_check_token($token);
         if (empty($user)) {
             throw new moodle_exception('wrongidentification');
         }
         else {
-            ///TODO: probably change this
+            /// TODO: probably change this
             $USER = $user;
         }
     }
