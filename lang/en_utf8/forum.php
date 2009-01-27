@@ -108,6 +108,7 @@ $string['inforum'] = 'in $a';
 $string['intronews'] = 'General news and announcements';
 $string['introsocial'] = 'An open forum for chatting about anything you want to';
 $string['introteacher'] = 'A forum for teacher-only notes and discussion';
+$string['invalidrate'] = 'Invalid rate ($a)';
 $string['lastpost'] = 'Last post';
 $string['learningforums'] = 'Learning forums';
 $string['mailnow'] = 'Mail now';
