@@ -15,6 +15,7 @@ $string['statusinfo'] = 'Information';
 $string['statusok'] = 'OK';
 $string['statusserious'] = 'Serious';
 $string['statuswarning'] = 'Warning';
+$string['timewarning'] = 'Data processing may take a long time, please be patient...';
 
 $string['check_configrw_details'] = '<p>It is recommended that the file permissions of config.php are changed after installation so that the file cannot be modified by the web server.
 Please note that this measure does not improve security of the server significantly, though it may slow down or limit general exploits.</p>';
