@@ -203,4 +203,6 @@ $string['error_nofeedbackurlformmail'] = 'Please enter a URL for the form proces
 
 // error messages (attempt.php)
 $string['error_invalidquiztype'] = 'Quiz type is missing or invalid';
+
+$string['deleteallattempts'] = 'Delete all attempts';
 ?>
