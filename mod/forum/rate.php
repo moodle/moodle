@@ -15,7 +15,7 @@
     }
 
     if (!$forum = get_record('forum', 'id', $forumid)) {
-        error("Course ID was incorrect");
+        error("Forum ID was incorrect");
     }
     
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
