@@ -10,7 +10,7 @@
     $forumid = required_param('forumid', PARAM_INT); // The forum the rated posts are from
 
     if (!$forum = get_record('forum', 'id', $forumid)) {
-        error("Course ID was incorrect");
+        error("Forum ID was incorrect");
     }
 
     if (!$course = get_record('course', 'id', $forum->course)) {
