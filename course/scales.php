@@ -42,6 +42,7 @@
                 echo text_to_html($scale->description);
                 print_simple_box_end();
                 close_window_button();
+                print_footer('empty');
                 exit;
             }
         }
@@ -52,7 +53,7 @@
 
         if (has_capability('moodle/course:managescales', $context)) {
             echo "<p align=\"center\">(";
-            print_string("scalestip");
+            print_string('scalestip2');
             echo ")</p>";
         }
 
@@ -94,6 +95,6 @@
     }
 
     close_window_button();
-    exit;
+    print_footer('empty');
 
 ?>
