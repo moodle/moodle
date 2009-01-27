@@ -926,6 +926,14 @@ body#admin-modules table.generaltable td.c0
   margin-top: 1em;
 }
 
+#admin-report-security-index #timewarning {
+  text-align:center;
+}
+
+#admin-report-security-index .timewarninghidden {
+  display:none;
+}
+
 #admin-roles-allowassign .buttons,
 #admin-roles-allowoverride .buttons,
 #admin-roles-manage .buttons,

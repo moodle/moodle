@@ -48,6 +48,10 @@ admin_externalpage_print_header();
 
 print_heading(get_string('reportsecurity', 'report_security'));
 
+echo '<div id="timewarning">'.get_string('timewarning', 'report_security').'</div>';
+while(@ob_end_flush());
+@flush();
+
 $strok       = '<span class="statusok">'.get_string('statusok', 'report_security').'</span>';
 $strinfo     = '<span class="statusinfo">'.get_string('statusinfo', 'report_security').'</span>';
 $strwarning  = '<span class="statuswarning">'.get_string('statuswarning', 'report_security').'</span>';
@@ -68,6 +72,8 @@ $statusarr = array(REPORT_SECURITY_OK       => $strok,
 $url = "$CFG->wwwroot/$CFG->admin/report/security/index.php";
 
 if ($issue and ($result = $issue(true))) {
+    report_security_hide_timearning();
+
     $table = new object();
     $table->head  = array($strissue, $strstatus, $strdesc, $strconfig);
     $table->size  = array('30%', '10%', '50%', '10%' );
@@ -91,6 +97,8 @@ if ($issue and ($result = $issue(true))) {
     print_continue($url);
 
 } else {
+    report_security_hide_timearning();
+
     $table = new object();
     $table->head  = array($strissue, $strstatus, $strdesc);
     $table->size  = array('30%', '10%', '60%' );

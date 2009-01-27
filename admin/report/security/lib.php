@@ -32,6 +32,15 @@ define('REPORT_SECURITY_WARNING', 'warning');
 define('REPORT_SECURITY_SERIOUS', 'serious');
 define('REPORT_SECURITY_CRITICAL', 'critical');
 
+function report_security_hide_timearning() {
+     echo '<script type="text/javascript">
+//<![CDATA[
+    var el = document.getElementById("timewarning");
+    el.setAttribute("class", "timewarninghidden");
+//]]>
+</script>';
+
+}
 
 function report_security_get_issue_list() {
     return array(
