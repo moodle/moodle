@@ -13,6 +13,10 @@
     if (! $cm = get_coursemodule_from_instance('forum', $forumid, $id)) {
         error('Course Module ID was incorrect');
     }
+
+    if (!$forum = get_record('forum', 'id', $forumid)) {
+        error("Course ID was incorrect");
+    }
     
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
@@ -39,6 +43,9 @@
 
         $lastpostid = 0;
 
+    /// Calculate scale values
+        $scale_values = make_grades_menu($forum->scale);
+
         foreach ((array)$data as $postid => $rating) {
             if ($postid == "id") {
                 continue;
@@ -46,6 +53,11 @@
 
             $postid = (int)$postid;
             $lastpostid = $postid;
+
+        /// Check rate is valid for for that forum scale values
+            if (!array_key_exists($rating, $scale_values) && $rating != FORUM_UNSET_POST_RATING) {
+                print_error('invalidrate', 'forum', '', $rating);
+            }
 
             if ($rating == FORUM_UNSET_POST_RATING) {
                 delete_records('forum_ratings', 'post', $postid, 'userid', $USER->id);
