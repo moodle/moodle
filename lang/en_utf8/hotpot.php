@@ -28,6 +28,7 @@ $string['copytoclipboard'] = 'Copy to Clipboard';
 $string['correct'] = 'Correct';
 $string['deleteabandoned'] = 'Delete abandoned';
 $string['deleteabandonedcheck'] = 'Do you really want to delete all $a abandoned attempts?';
+$string['deleteallattempts'] = 'Delete all attempts';
 $string['displaycoursenext'] = 'Display Course page next';
 $string['displayhotpotnext'] = 'Display Hot Potatoes quiz next';
 $string['displayindexnext'] = 'Display HotPot index next';
