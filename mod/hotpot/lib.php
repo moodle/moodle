@@ -2607,4 +2607,48 @@ function hotpot_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
 }
 
+/**
+ * This function is used by the reset_course_userdata function in moodlelib.
+ * This function will remove all attempts from hotpot quizzes in the specified course.
+ * @param $data the data submitted from the reset course.
+ * @return array status array
+ */
+function hotpot_reset_userdata($data) {
+    global $CFG;
+    require_once($CFG->libdir.'/filelib.php');
+
+    $status = array();
+
+    if (!empty($data->reset_hotpot_deleteallattempts)) {
+
+        $hotpotids = "SELECT h.id FROM {$CFG->prefix}hotpot h WHERE h.course={$data->courseid}";
+        $attemptids = "SELECT a.id FROM {$CFG->prefix}hotpot_attempts a WHERE a.hotpot in ($hotpotids)";
+
+        delete_records_select('hotpot_responses', "attempt in ($attemptids)");
+        delete_records_select('hotpot_details', "attempt in ($attemptids)");
+        delete_records_select('hotpot_attempts', "hotpot IN ($hotpotids)");
+
+        $status[] = array('component' => get_string('modulenameplural', 'hotpot'),
+                          'item' => get_string('deleteallattempts', 'hotpot'),
+                          'error' => false);
+    }
+
+    return $status;
+}
+
+/**
+ * Called by course/reset.php
+ * @param $mform form passed by reference
+ */
+function hotpot_reset_course_form_definition(&$mform) {
+    $mform->addElement('header', 'hotpotheader', get_string('modulenameplural', 'hotpot'));
+    $mform->addElement('checkbox', 'reset_hotpot_deleteallattempts', get_string('deleteallattempts', 'hotpot'));
+}
+
+/**
+ * Course reset form defaults.
+ */
+function hotpot_reset_course_form_defaults($course) {
+    return array('reset_hotpot_deleteallattempts' => 1);
+}
 ?>
