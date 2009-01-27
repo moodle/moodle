@@ -38,6 +38,10 @@ if (array_search($issue, $issues, true) === false) {
     $issue = '';
 }
 
+// we may need a bit more memory and this may take a long time to process
+@raise_memory_limit('128M');
+@set_time_limit(0);
+
 // Print the header.
 admin_externalpage_setup('reportsecurity');
 admin_externalpage_print_header();
