@@ -211,7 +211,8 @@
             if (!empty($forummenu)) {
                 echo "<div style=\"float:right;\">";
                 echo popup_form("$CFG->wwwroot/mod/forum/", $forummenu, "forummenu", "",
-                                 get_string("movethisdiscussionto", "forum"), "", "", true);
+                                 get_string("movethisdiscussionto", "forum"), "", "", true,'self','',NULL,
+                                 get_string('move'),false,true);
                 echo "</div>";
             }
         }
