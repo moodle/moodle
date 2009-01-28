@@ -7,7 +7,7 @@
  * @author Jerome Mouneyrac
  */
 require_once(dirname(dirname(__FILE__)) . '/lib/moodleexternal.php');
-require_once(dirname(dirname(__FILE__)) . '/user/api.php');
+require_once(dirname(dirname(__FILE__)) . '/user/lib.php');
 
 /**
  * WORK IN PROGRESS, DO NOT USE IT
@@ -51,10 +51,7 @@ final class user_external extends moodle_external {
      * @return object user
      */
     static function tmp_get_users($params) {
-
-        $selectioncriteria = new stdClass();
-        $selectioncriteria->search = $params['search'];
-        return user_api::tmp_get_users('firstname ASC', 999999, 0, 'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat', $selectioncriteria);
+        return get_users(true, $params['search'], false, null, 'firstname ASC','', '', '', '', 'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat');
     }
 
     /**
@@ -68,13 +65,22 @@ final class user_external extends moodle_external {
      * @return integer id of new user
      */
     static function tmp_create_user($params) {
-        $user = array();
-        $user['username'] = $params['username'];
-        $user['firstname'] = $params['firstname'];
-        $user['lastname'] = $params['lastname'];
-        $user['email'] = $params['email'];
-        $user['password'] = $params['password'];
-        return user_api::tmp_create_user($user);    
+        global $USER;
+        if (has_capability('moodle/user:create', get_context_instance(CONTEXT_SYSTEM))) {
+            $user = array();
+            $user['username'] = $params['username'];
+            $user['firstname'] = $params['firstname'];
+            $user['lastname'] = $params['lastname'];
+            $user['email'] = $params['email'];
+            $user['password'] = $params['password'];
+            ///
+            /// TODO: implement a core function (look at some code into editadvanced.php)
+            ///
+            return user_lib::tmp_create_user($user);
+        }
+        else {
+            throw new moodle_exception('couldnotcreateeuser');
+        }    
     }
 
     /**
@@ -119,7 +125,10 @@ final class user_external extends moodle_external {
             $user->firstname = $params['firstname'];
         }
 
-        return user_api::tmp_update_user($user);
+        ///
+        /// TODO: implement a core function (look at some code into edit.php/editadvanced.php)
+        ///
+        return user_lib::tmp_update_user($user);
     }
 
 }

@@ -2,7 +2,7 @@
 /**
  * Created on 01/12/2008
  *
- * user core api
+ * user core functions
  *
  * @author Jerome Mouneyrac
  */
@@ -10,7 +10,7 @@
 /**
  * DO NOT USE ANYTHING FROM THIS FILE - WORK IN PROGRESS
  */
-final class user_api {
+final class user_lib {
 
     /**
      * Returns a subset of users (DO NOT COUNT)
@@ -136,67 +136,7 @@ final class user_api {
         throw new moodle_exception('couldnotcreateuser');
     }
 
-    /**
-     * Marks user deleted in internal user database and notifies the auth plugin.
-     * Also unenrols user from all roles and does other cleanup.
-     * @param object $user       Userobject before delete    (without system magic quotes)
-     * @return boolean success
-     */
-    static function tmp_delete_user($user) {
-        global $CFG, $DB;
-        require_once($CFG->libdir.'/grouplib.php');
-        require_once($CFG->libdir.'/gradelib.php');
-
-        $DB->begin_sql();
-
-        // delete all grades - backup is kept in grade_grades_history table
-        if ($grades = grade_grade::fetch_all(array('userid'=>$user->id))) {
-            foreach ($grades as $grade) {
-                $grade->delete('userdelete');
-            }
-        }
-
-        // remove from all groups
-        $DB->delete_records('groups_members', array('userid'=>$user->id));
-
-        // unenrol from all roles in all contexts
-        role_unassign(0, $user->id); // this might be slow but it is really needed - modules might do some extra cleanup!
-
-        // now do a final accesslib cleanup - removes all role assingments in user context and context itself
-        delete_context(CONTEXT_USER, $user->id);
-
-        require_once($CFG->dirroot.'/tag/lib.php');
-        tag_set('user', $user->id, array());
-
-        // workaround for bulk deletes of users with the same email address
-        $delname = "$user->email.".time();
-        while ($DB->record_exists('user', array('username'=>$delname))) { // no need to use mnethostid here
-            $delname++;
-        }
-
-        // mark internal user record as "deleted"
-        $updateuser = new object();
-        $updateuser->id           = $user->id;
-        $updateuser->deleted      = 1;
-        $updateuser->username     = $delname;         // Remember it just in case
-        $updateuser->email        = '';               // Clear this field to free it up
-        $updateuser->idnumber     = '';               // Clear this field to free it up
-        $updateuser->timemodified = time();
-
-        if ($DB->update_record('user', $updateuser)) {
-            $DB->commit_sql();
-            // notify auth plugin - do not block the delete even when plugin fails
-            $authplugin = get_auth_plugin($user->auth);
-            $authplugin->user_delete($user);
-
-            events_trigger('user_deleted', $user);
-            return true;
-
-        } else {
-            $DB->rollback_sql();
-            return false;
-        }
-    }
+    
 
     /**
      * Update a user record from its id
