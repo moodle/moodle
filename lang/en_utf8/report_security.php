@@ -28,39 +28,39 @@ $string['check_cookiesecure_error'] = 'Please enable secure cookies';
 $string['check_cookiesecure_name'] = 'Secure cookies';
 $string['check_cookiesecure_ok'] = 'Secure cookies enabled.';
 
-$string['check_courserole_anything'] = 'The do anything capability must not be allowed in this <a href=\"$a\">context</a>.';
+$string['check_courserole_anything'] = 'The \"doanything\" capability must not be allowed in this <a href=\"$a\">context</a>.';
 $string['check_courserole_details'] = '<p>Each course has one default enrolment role specified. Please make sure no risky capabilities are allowed for this role.</p>
 <p>The only supported legacy type for the default course role is <em>Student</em>.</p>';
 $string['check_courserole_error'] = 'Incorrectly defined default course roles detected!';
 $string['check_courserole_legacy'] = 'Unsupported legacy type detected in the <a href=\"$a\">role</a>.';
 $string['check_courserole_name'] = 'Default roles (courses)';
 $string['check_courserole_notyet'] = 'Used only default course role.';
-$string['check_courserole_ok'] = 'Default course role definitions OK.';
+$string['check_courserole_ok'] = 'Default course role definitions is OK.';
 $string['check_courserole_risky'] = 'Risky capabilities detected in <a href=\"$a\">context</a>.';
 
-$string['check_defaultcourserole_anything'] = 'The do anything capability must not be allowed in this <a href=\"$a\">context</a>.';
+$string['check_defaultcourserole_anything'] = 'The \"doanything\" capability must not be allowed in this <a href=\"$a\">context</a>.';
 $string['check_defaultcourserole_details'] = '<p>The default student role for course enrolment specifies the default role for courses. Please make sure no risky capabilities are allowed in this role.</p>
 <p>The only supported legacy type for default role is <em>Student</em>.</p>';
 $string['check_defaultcourserole_error'] = 'Incorrectly defined default course role \"$a\" detected!';
 $string['check_defaultcourserole_legacy'] = 'Unsupported legacy type detected.';
 $string['check_defaultcourserole_name'] = 'Default course role (global)';
 $string['check_defaultcourserole_notset'] = 'Default role is not set.';
-$string['check_defaultcourserole_ok'] = 'Site default role definition OK.';
+$string['check_defaultcourserole_ok'] = 'Site default role definition is OK.';
 $string['check_defaultcourserole_risky'] = 'Risky capabilities detected in <a href=\"$a\">context</a>.';
 
 $string['check_defaultuserrole_details'] = '<p>All logged in users are given capabilities of the default user role. Please make sure no risky capabilities are allowed in this role.</p>
 <p>The only supported legacy type for the default user role is <em>Authenticated user</em>. The course view capability must not be enabled.</p>';
-$string['check_defaultuserrole_error'] = 'Incorrectly defined default user role \"$a\" detected!';
+$string['check_defaultuserrole_error'] = 'The default user role \"$a\" is incorrectly defined!';
 $string['check_defaultuserrole_name'] = 'Registered user role';
 $string['check_defaultuserrole_notset'] = 'Default role is not set.';
-$string['check_defaultuserrole_ok'] = 'Registered user role definition ok.';
+$string['check_defaultuserrole_ok'] = 'Registered user role definition is OK.';
 
 $string['check_displayerrors_details'] = '<p>Enabling the PHP setting <code>display_errors</code> is not recommended on production sites because error messages can reveal sensitive information about your server.</p>';
 $string['check_displayerrors_error'] = 'The PHP setting to display errors is enabled. It is recommended that this is disabled.';
 $string['check_displayerrors_name'] = 'Displaying of PHP errors';
 $string['check_displayerrors_ok'] = 'Displaying of PHP errors disabled.';
 
-$string['check_emailchangeconfirmation_details'] = '<p>It is recommended that an email confirmation step is required when users change their email address in their profile. If disabled, spammers may try to exploit the server for resending of spam.</p>';
+$string['check_emailchangeconfirmation_details'] = '<p>It is recommended that an email confirmation step is required when users change their email address in their profile. If disabled, spammers may try to exploit the server to send spam.</p>';
 $string['check_emailchangeconfirmation_error'] = 'Users may enter any email address.';
 $string['check_emailchangeconfirmation_name'] = 'Email change confirmation';
 $string['check_emailchangeconfirmation_ok'] = 'Confirmation of change of email address in user profile.';
@@ -75,7 +75,7 @@ $string['check_frontpagerole_details'] = '<p>The default frontpage role is given
 $string['check_frontpagerole_error'] = 'Incorrectly defined frontpage role \"$a\" detected!';
 $string['check_frontpagerole_name'] = 'Frontpage role';
 $string['check_frontpagerole_notset'] = 'Frontpage role is not set.';
-$string['check_frontpagerole_ok'] = 'Frontpage role definition OK.';
+$string['check_frontpagerole_ok'] = 'Frontpage role definition is OK.';
 
 $string['check_globals_details'] = '<p>Register globals is considered to be a highly insecure PHP setting.</p>
 <p><code>register_globals=off</code> must be set in PHP configuration. This setting is controlled by editing your <code>php.ini</code>, Apache/IIS configuration or <code>.htaccess</code> file.</p>';
@@ -83,18 +83,18 @@ $string['check_globals_error'] = 'Register globals MUST be disabled. Please fix 
 $string['check_globals_name'] = 'Register globals';
 $string['check_globals_ok'] = 'Register globals are disabled.';
 
-$string['check_google_details'] = '<p>The Open to Google setting enables search engines to enter courses with guest access. There is no point in enabling this setting if guest login not allowed.</p>';
-$string['check_google_error'] = 'Search engines guest access allowed and guest access disabled.';
+$string['check_google_details'] = '<p>The Open to Google setting enables search engines to enter courses with guest access. There is no point in enabling this setting if guest login is not allowed.</p>';
+$string['check_google_error'] = 'Search engine access is allowed but guest access is disabled.';
 $string['check_google_info'] = 'Search engines may enter as guests.';
 $string['check_google_name'] = 'Open to Google';
-$string['check_google_ok'] = 'Search engines guest access not enabled.';
+$string['check_google_ok'] = 'Search engine access is not enabled.';
 
 $string['check_guestrole_details'] = '<p>The guest role is used for guests, not logged in users and temporary guest course access. Please make sure no risky capabilities are allowed in this role.</p>
 <p>The only supported legacy type for guest role is <em>Guest</em>.</p>';
-$string['check_guestrole_error'] = 'Incorrectly defined guest role \"$a\" detected!';
+$string['check_guestrole_error'] = 'The guest role \"$a\" is incorrectly defined!';
 $string['check_guestrole_name'] = 'Guest role';
 $string['check_guestrole_notset'] = 'Guest role is not set.';
-$string['check_guestrole_ok'] = 'Guest role definition OK.';
+$string['check_guestrole_ok'] = 'Guest role definition is OK.';
 
 $string['check_mediafilterswf_details'] = '<p>Automatic swf embedding is very dangerous - any registered user may launch an XSS attack against other server users. Please disable it on production servers.</p>';
 $string['check_mediafilterswf_error'] = 'Flash media filter is enabled - this is very dangerous for the majority of servers.';
@@ -117,15 +117,15 @@ $string['check_passwordpolicy_error'] = 'Password policy not set.';
 $string['check_passwordpolicy_name'] = 'Password policy';
 $string['check_passwordpolicy_ok'] = 'Password policy enabled.';
 
-$string['check_riskadmin_detailsok'] = '<p>Please verify the following list of administrators:<br />$a</p>';
-$string['check_riskadmin_detailswarning'] = '<p>Please verify the following list of administrators:<br />$a->admins</p>
-<p>It is recommended to assign administrator role in system context only. Following users have unsupported admin role assignments:<br />$a->unsupported</p>';
+$string['check_riskadmin_detailsok'] = '<p>Please verify the following list of administrators:</p><p>$a</p>';
+$string['check_riskadmin_detailswarning'] = '<p>Please verify the following list of administrators:</p><p>$a->admins</p>
+<p>It is recommended to assign administrator role in system context only. Following users have unsupported admin role assignments:</p><p>$a->unsupported</p>';
 $string['check_riskadmin_name'] = 'Administrators';
 $string['check_riskadmin_ok'] = 'Found $a server administrator(s).';
 $string['check_riskadmin_warning'] = 'Found $a->admincount server administrators and $a->unsupcount unsupported admin role assignments.';
 
 $string['check_riskxss_details'] = '<p>RISK_XSS denotes all dangerous capabilities that only trusted users may use.</p>
-<p>Please verify following list of users and make sure that you trust them completely on this server:<br />$a</p>';
+<p>Please verify the following list of users and make sure that you trust them completely on this server:</p><p>$a</p>';
 $string['check_riskxss_name'] = 'XSS trusted users';
 $string['check_riskxss_warning'] = 'RISK_XSS - found $a users that have to be trusted.';
 
