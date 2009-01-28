@@ -112,7 +112,7 @@
             print_heading(get_string('copyrightnotice'));
             print_box(text_to_html(get_string('gpl')), 'copyrightnotice');
             echo "<br />";
-            notice_yesno(get_string('doyouagree'), "index.php?agreelicense=1",
+            notice_yesno(get_string('doyouagree'), "index.php?agreelicense=1&lang=$CFG->lang",
                                                    "http://docs.moodle.org/en/License");
             print_footer('none');
             exit;
@@ -123,7 +123,7 @@
             print_header($strcurrentrelease, $strcurrentrelease, $navigation, "", "", false, "&nbsp;", "&nbsp;");
             print_heading("Moodle $release");
             print_box(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'), 'generalbox boxaligncenter boxwidthwide');
-            print_continue('index.php?agreelicense=1&amp;confirmrelease=1');
+            print_continue("index.php?agreelicense=1&amp;confirmrelease=1&lang=$CFG->lang");
             print_footer('none');
             die;
         }
@@ -331,7 +331,7 @@
         $sessionstarted = optional_param('sessionstarted', 0, PARAM_BOOL);
         if (!$sessionstarted) {
             // we neeed this redirect to setup proper session
-            upgrade_log_finish('index.php?sessionstarted=1');
+            upgrade_log_finish("index.php?sessionstarted=1&lang=$CFG->lang");
         }
         $adminuser = create_admin_user();
         $adminuser->newadminuser = 1;
