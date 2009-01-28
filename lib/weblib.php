@@ -5464,10 +5464,24 @@ function print_date_selector($day, $month, $year, $currenttime=0, $return=false)
     for ($i=1970; $i<=2020; $i++) {
         $years[$i] = $i;
     }
-    return choose_from_menu($days,   $day,   $currentdate['mday'], '', '', '0', $return)
-          .choose_from_menu($months, $month, $currentdate['mon'],  '', '', '0', $return)
-          .choose_from_menu($years,  $year,  $currentdate['year'], '', '', '0', $return);
 
+    // Build or print result
+    $result='';
+    // Note: There should probably be a fieldset around these fields as they are
+    // clearly grouped. However this causes problems with display. See Mozilla
+    // bug 474415
+    $result.='<label class="accesshide" for="menu'.$day.'">'.get_string('day','form').'</label>';
+    $result.=choose_from_menu($days,   $day,   $currentdate['mday'], '', '', '0', true);
+    $result.='<label class="accesshide" for="menu'.$month.'">'.get_string('month','form').'</label>';
+    $result.=choose_from_menu($months, $month, $currentdate['mon'],  '', '', '0', true);
+    $result.='<label class="accesshide" for="menu'.$year.'">'.get_string('year','form').'</label>';
+    $result.=choose_from_menu($years,  $year,  $currentdate['year'], '', '', '0', true);
+
+    if ($return) {
+        return $result;
+    } else {
+        echo $result;
+    }
 }
 
 /**
@@ -5495,8 +5509,21 @@ function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=fa
         $minutes[$i] = sprintf("%02d",$i);
     }
 
-    return choose_from_menu($hours,   $hour,   $currentdate['hours'],   '','','0',$return)
-          .choose_from_menu($minutes, $minute, $currentdate['minutes'], '','','0',$return);
+    // Build or print result
+    $result='';
+    // Note: There should probably be a fieldset around these fields as they are
+    // clearly grouped. However this causes problems with display. See Mozilla
+    // bug 474415
+    $result.='<label class="accesshide" for="menu'.$hour.'">'.get_string('hour','form').'</label>';
+    $result.=choose_from_menu($hours,   $hour,   $currentdate['hours'],   '','','0',true);
+    $result.='<label class="accesshide" for="menu'.$minute.'">'.get_string('minute','form').'</label>';
+    $result.=choose_from_menu($minutes, $minute, $currentdate['minutes'], '','','0',true);
+
+    if ($return) {
+        return $result;
+    } else {
+        echo $result;
+    }
 }
 
 /**
