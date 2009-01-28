@@ -3391,7 +3391,7 @@ function forum_get_ratings_count($postid, $scale, $ratings=NULL) {
     $scalecount = count($scale)-1; //this should give us the last element of the scale aka the max grade with  $scale[$scalecount]
 
     if ($count > $scale[$scalecount]) { //if the count exceeds the forum scale (i.e. max grade then set the score to the max grade
-        $count = $scalecount;
+        $count = $scale[$scalecount];
     }
     return $scale[$count];
 }
