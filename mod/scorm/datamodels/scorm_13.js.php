@@ -57,7 +57,7 @@ function SCORMapi1_3() {
                           'tam':'tam', 'tel':'tel', 'tgk':'tgk', 'tha':'tha', 'tir':'tir', 'tuk':'tuk', 'tgl':'tgl', 'tsn':'tsn', 'ton':'ton', 'tur':'tur', 'tso':'tso', 'tat':'tat', 'twi':'twi', 'tah':'tah',
                           'uig':'uig', 'ukr':'ukr', 'urd':'urd', 'uzb':'uzb', 'ven':'ven', 'vie':'vie', 'vol':'vol', 'wln':'wln', 'wol':'wol', 'xho':'xho', 'yid':'yid', 'yor':'yor', 'zha':'zha', 'chi':'chi', 'zho':'zho', 'zul':'zul'};
 
-    var CMIString200 = '^[\\u0000-\\uFFFF]{0,200}$$';
+    var CMIString200 = '^[\\u0000-\\uFFFF]{0,200}$';
     var CMIString250 = '^[\\u0000-\\uFFFF]{0,250}$';
     var CMIString1000 = '^[\\u0000-\\uFFFF]{0,1000}$';
     var CMIString4000 = '^[\\u0000-\\uFFFF]{0,4000}$';
