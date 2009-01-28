@@ -1168,11 +1168,14 @@ function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $retur
  * @param string $targetwindow The name of the target page to open the linked page in.
  * @param string $selectlabel Text to place in a [label] element - preferred for accessibility.
  * @param array $optionsextra TODO, an array?
+ * @param mixed $gobutton If set, this turns off the JavaScript and uses a 'go'
+ *   button instead (as is always included for JS-disabled users). Set to true
+ *   for a literal 'Go' button, or to a string to change the name of the button.
  * @return string If $return is true then the entire form is returned as a string.
  * @todo Finish documenting this function<br>
  */
 function popup_form($common, $options, $formid, $selected='', $nothing='choose', $help='', $helptext='', $return=false,
-$targetwindow='self', $selectlabel='', $optionsextra=NULL) {
+$targetwindow='self', $selectlabel='', $optionsextra=NULL, $gobutton=NULL) {
 
     global $CFG;
     static $go, $choose;   /// Locally cached, in case there's lots on a page
@@ -1209,17 +1212,24 @@ $targetwindow='self', $selectlabel='', $optionsextra=NULL) {
         $selectlabel = '<label for="'.$formid.'_jump">'.$selectlabel.'</label>';
     }
 
-    //IE and Opera fire the onchange when ever you move into a dropdwown list with the keyboard.
-    //onfocus will call a function inside dropdown.js. It fixes this IE/Opera behavior.
-    //Note: There is a bug on Opera+Linux with the javascript code (first mouse selection is inactive),
-    //so we do not fix the Opera behavior on Linux
-    if (check_browser_version('MSIE') || (check_browser_version('Opera') && !check_browser_operating_system("Linux"))) {
-        $output .= '<div>'.$selectlabel.$button.'<select id="'.$formid.'_jump" onfocus="initSelect(\''.$formid.'\','.$targetwindow.')" name="jump">'."\n";
-    }
-    //Other browser
-    else {
-        $output .= '<div>'.$selectlabel.$button.'<select id="'.$formid.'_jump" name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\''.$formid.'\').jump.options[document.getElementById(\''.$formid.'\').jump.selectedIndex].value;">'."\n";
-    }
+    if ($gobutton) {
+        // Using the no-JavaScript version
+        $javascript = '';
+    } else if (check_browser_version('MSIE') || (check_browser_version('Opera') && !check_browser_operating_system("Linux"))) {
+        //IE and Opera fire the onchange when ever you move into a dropdown list with the keyboard.
+        //onfocus will call a function inside dropdown.js. It fixes this IE/Opera behavior.
+        //Note: There is a bug on Opera+Linux with the javascript code (first mouse selection is inactive),
+        //so we do not fix the Opera behavior on Linux
+        $javascript = ' onfocus="initSelect(\''.$formid.'\','.$targetwindow.')"';
+    } else {
+        //Other browser
+        $javascript = ' onchange="'.$targetwindow.
+          '.location=document.getElementById(\''.$formid.
+          '\').jump.options[document.getElementById(\''.
+          $formid.'\').jump.selectedIndex].value;"';
+    }    
+
+    $output .= '<div>'.$selectlabel.$button.'<select id="'.$formid.'_jump" name="jump"'.$javascript.'>'."\n";
 
     if ($nothing != '') {
         $output .= "   <option value=\"javascript:void(0)\">$nothing</option>\n";
@@ -1297,13 +1307,18 @@ $targetwindow='self', $selectlabel='', $optionsextra=NULL) {
 
     $output .= '</select>';
     $output .= '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    $output .= '<div id="noscript'.$formid.'" style="display: inline;">';
-    $output .= '<input type="submit" value="'.$go.'" /></div>';
-    $output .= '<script type="text/javascript">'.
-               "\n//<![CDATA[\n".
-               'document.getElementById("noscript'.$formid.'").style.display = "none";'.
-               "\n//]]>\n".'</script>';
-    $output .= '</div>';
+    if ($gobutton) {
+        $output .= '<input type="submit" value="'.
+            ($gobutton===true ? $go : $gobutton).'" />';
+    } else {
+        $output .= '<div id="noscript'.$formid.'" style="display: inline;">';
+        $output .= '<input type="submit" value="'.$go.'" /></div>';
+        $output .= '<script type="text/javascript">'.
+                   "\n//<![CDATA[\n".
+                   'document.getElementById("noscript'.$formid.'").style.display = "none";'.
+                   "\n//]]>\n".'</script>';
+        $output .= '</div>';
+    }
     $output .= '</form>';
 
     if ($return) {
