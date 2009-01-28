@@ -57,11 +57,11 @@ function SCORMapi1_3() {
                           'tam':'tam', 'tel':'tel', 'tgk':'tgk', 'tha':'tha', 'tir':'tir', 'tuk':'tuk', 'tgl':'tgl', 'tsn':'tsn', 'ton':'ton', 'tur':'tur', 'tso':'tso', 'tat':'tat', 'twi':'twi', 'tah':'tah',
                           'uig':'uig', 'ukr':'ukr', 'urd':'urd', 'uzb':'uzb', 'ven':'ven', 'vie':'vie', 'vol':'vol', 'wln':'wln', 'wol':'wol', 'xho':'xho', 'yid':'yid', 'yor':'yor', 'zha':'zha', 'chi':'chi', 'zho':'zho', 'zul':'zul'};
 
-    var CMIString200 = '^.{0,200}$';
-    var CMIString250 = '^.{0,250}$';
-    var CMIString1000 = '^.{0,1500}$';
-    var CMIString4000 = '^.{0,4000}$';
-    var CMIString64000 = '^.{0,64000}$';
+    var CMIString200 = '^[\\u0000-\\uFFFF]{0,200}$$';
+    var CMIString250 = '^[\\u0000-\\uFFFF]{0,250}$';
+    var CMIString1000 = '^[\\u0000-\\uFFFF]{0,1000}$';
+    var CMIString4000 = '^[\\u0000-\\uFFFF]{0,4000}$';
+    var CMIString64000 = '^[\\u0000-\\uFFFF]{0,64000}$';    
     var CMILang = '^([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?$|^$';
     var CMILangString250 = '^(\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\})?([^\{].{0,250}$)?';
     var CMILangcr = '^((\{lang=([a-zA-Z]{2,3}|i|x)?(\-[a-zA-Z0-9\-]{2,8})?\}))(.*?)$';
