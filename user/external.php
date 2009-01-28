@@ -51,7 +51,14 @@ final class user_external extends moodle_external {
      * @return object user
      */
     static function tmp_get_users($params) {
-        return get_users(true, $params['search'], false, null, 'firstname ASC','', '', '', '', 'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat');
+        global $USER;
+        if (has_capability('moodle/user:viewdetails', get_context_instance(CONTEXT_SYSTEM))) {
+            return get_users(true, $params['search'], false, null, 'firstname ASC','', '', '', '', 'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat');
+
+        }
+        else {
+            throw new moodle_exception('couldnotvieweuser');
+        }
     }
 
     /**
@@ -73,9 +80,6 @@ final class user_external extends moodle_external {
             $user['lastname'] = $params['lastname'];
             $user['email'] = $params['email'];
             $user['password'] = $params['password'];
-            ///
-            /// TODO: implement a core function (look at some code into editadvanced.php)
-            ///
             return user_lib::tmp_create_user($user);
         }
         else {
@@ -115,20 +119,22 @@ final class user_external extends moodle_external {
      * @return bool true if success
      */
     static function tmp_update_user($params) {
-        global $DB;
-        $user = $DB->get_record('user', array('username'=>$params['username'], 'mnethostid'=>$params['mnethostid']));
+        global $DB,$USER;
+        if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM))) {
+            $user = $DB->get_record('user', array('username'=>$params['username'], 'mnethostid'=>$params['mnethostid']));
 
-        if (!empty($params['newusername'])) {
-            $user->username = $params['newusername'];
+            if (!empty($params['newusername'])) {
+                $user->username = $params['newusername'];
+            }
+            if (!empty($params['firstname'])) {
+                $user->firstname = $params['firstname'];
+            }
+            return user_lib::tmp_update_user($user);
         }
-        if (!empty($params['firstname'])) {
-            $user->firstname = $params['firstname'];
+        else {
+            throw new moodle_exception('couldnotupdateuser');
         }
-
-        ///
-        /// TODO: implement a core function (look at some code into edit.php/editadvanced.php)
-        ///
-        return user_lib::tmp_update_user($user);
+       
     }
 
 }
