@@ -97,9 +97,8 @@ final class user_external extends moodle_external {
      */
     static function tmp_delete_user($params) {
         global $DB,$USER;
-
-        $user = $DB->get_record('user', array('username'=>$params['username'], 'mnethostid'=>$params['mnethostid']));
         if (has_capability('moodle/user:delete', get_context_instance(CONTEXT_SYSTEM))) {
+            $user = $DB->get_record('user', array('username'=>$params['username'], 'mnethostid'=>$params['mnethostid']));
             return delete_user($user); //this function is in moodlelib.php
         }
         else {
