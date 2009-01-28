@@ -27,6 +27,9 @@ define ('REDIRECT',           8); /// 8. Redirect to index.php
 /// This has to be defined to avoid a notice in current_language()
 define('SITEID', 0);
 
+/// Defined to avoid some notices in weblib and so on. This is a web installer, so set it to false
+define('CLI_SCRIPT', false);
+
 /// Begin the session as we are holding all information in a session
 /// variable until the end.
 
