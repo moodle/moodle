@@ -177,14 +177,17 @@
                                  fullname($userdata).'</a>';
                         $row[] = '<a href="report.php?a='.$scorm->id.'&amp;user='.$scouser->userid.'&amp;attempt='.$a.'">'.$a.'</a>';
                         $select = 'scormid = '.$scorm->id.' and userid = '.$scouser->userid.' and attempt = '.$a;
-                        $timetracks = get_record_select('scorm_scoes_track', $select,'min(timemodified) as started, max(timemodified) as last');
+//                        $timetracks = get_record_select('scorm_scoes_track', $select,'min(timemodified) as started, max(timemodified) as last');
+                        $timetracks = scorm_get_sco_runtime($scorm->id, false, $scouser->userid, $a);
                         // jump out here if this attempt doesnt exist
-                        if (!$timetracks->started) {
+//                        if (!$timetracks->started) {
+                        if (!$timetracks->start) {
                             continue;
                         }
-                        $row[] = userdate($timetracks->started, get_string('strftimedaydatetime'));
-                        $row[] = userdate($timetracks->last, get_string('strftimedaydatetime'));
-
+//                        $row[] = userdate($timetracks->started, get_string('strftimedaydatetime'));
+//                        $row[] = userdate($timetracks->last, get_string('strftimedaydatetime'));
+                        $row[] = userdate($timetracks->start, get_string('strftimedaydatetime'));
+                        $row[] = userdate($timetracks->finish, get_string('strftimedaydatetime'));
                         $row[] = scorm_grade_user_attempt($scorm, $scouser->userid, $a);
                         $table->data[] = $row;
                     }

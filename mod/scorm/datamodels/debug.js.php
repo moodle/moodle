@@ -588,7 +588,7 @@ function UpdateLog(s) {
         + '            </select>'
         + '            <input type="text" name="API_ELEMENT" id="API_ELEMENT" size="40"><br />'
         + '            <br />'
-        + '            <label><b>Select API Function to Call</b></label> &nbsp;&nbsp;&nbsp;&nbsp; <input type = "button" value = "<?echo $LMS_prefix; ?>GetValue()"'
+        + '            <label><b>Select API Function to Call</b></label> &nbsp;&nbsp;&nbsp;&nbsp; <input type = "button" value = "<?php echo $LMS_prefix; ?>GetValue()"'
         + '                         onclick = "tryLMSGetValue();" id="lmsGetButton"'
         + '                         name="lmsGetButton">&nbsp;&nbsp;-- OR --&nbsp;&nbsp;'
         + '            <input type="button" value="<?php echo $LMS_prefix; ?>SetValue()"'
