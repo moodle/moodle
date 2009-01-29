@@ -191,7 +191,7 @@ function mnet_server_strip_signature($plaintextmessage) {
     $MNET_REMOTE_CLIENT->was_signed();
 
     // Load any information we have about this mnet peer
-    $MNET_REMOTE_CLIENT->set_wwwroot($crypt_parser->remote_wwwroot);
+    $MNET_REMOTE_CLIENT->set_wwwroot($sig_parser->remote_wwwroot);
 
     $payload = base64_decode($sig_parser->data_object);
     $signature = base64_decode($sig_parser->signature);
