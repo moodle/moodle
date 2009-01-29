@@ -58,7 +58,7 @@ class profile_field_menu extends profile_field_base {
      * @param   integer   the key returned from the select input in the form
      */
     function edit_save_data_preprocess($key) {
-        return isset($this->options[$key]) ? $this->options[$key] : NULL;
+        return isset($this->options[$key]) ? addslashes($this->options[$key]) : NULL;
     }
 
     /**
