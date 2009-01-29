@@ -9,13 +9,13 @@ function xmldb_survey_install() {
     global $DB;
 
 /// Install logging support
-    upgrade_log_display_entry('survey', 'add', 'survey', 'name');
-    upgrade_log_display_entry('survey', 'update', 'survey', 'name');
-    upgrade_log_display_entry('survey', 'download', 'survey', 'name');
-    upgrade_log_display_entry('survey', 'view form', 'survey', 'name');
-    upgrade_log_display_entry('survey', 'view graph', 'survey', 'name');
-    upgrade_log_display_entry('survey', 'view report', 'survey', 'name');
-    upgrade_log_display_entry('survey', 'submit', 'survey', 'name');
+    update_log_display_entry('survey', 'add', 'survey', 'name');
+    update_log_display_entry('survey', 'update', 'survey', 'name');
+    update_log_display_entry('survey', 'download', 'survey', 'name');
+    update_log_display_entry('survey', 'view form', 'survey', 'name');
+    update_log_display_entry('survey', 'view graph', 'survey', 'name');
+    update_log_display_entry('survey', 'view report', 'survey', 'name');
+    update_log_display_entry('survey', 'submit', 'survey', 'name');
 
 
 /// insert survey data

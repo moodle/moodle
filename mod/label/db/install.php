@@ -9,7 +9,7 @@ function xmldb_label_install() {
     global $DB;
 
 /// Install logging support
-    upgrade_log_display_entry('label', 'add', 'label', 'name');
-    upgrade_log_display_entry('label', 'update', 'label', 'name');
+    update_log_display_entry('label', 'add', 'label', 'name');
+    update_log_display_entry('label', 'update', 'label', 'name');
 
 }

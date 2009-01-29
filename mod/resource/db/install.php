@@ -10,8 +10,8 @@ function xmldb_resource_install() {
 
 /// Install logging support
 
-    upgrade_log_display_entry('resource', 'view', 'resource', 'name');
-    upgrade_log_display_entry('resource', 'update', 'resource', 'name');
-    upgrade_log_display_entry('resource', 'add', 'resource', 'name');
+    update_log_display_entry('resource', 'view', 'resource', 'name');
+    update_log_display_entry('resource', 'update', 'resource', 'name');
+    update_log_display_entry('resource', 'add', 'resource', 'name');
 
 }

@@ -9,18 +9,18 @@ function xmldb_quiz_install() {
     global $DB;
 
 /// Install logging support
-    upgrade_log_display_entry('quiz', 'add', 'quiz', 'name');
-    upgrade_log_display_entry('quiz', 'update', 'quiz', 'name');
-    upgrade_log_display_entry('quiz', 'view', 'quiz', 'name');
-    upgrade_log_display_entry('quiz', 'report', 'quiz', 'name');
-    upgrade_log_display_entry('quiz', 'attempt', 'quiz', 'name');
-    upgrade_log_display_entry('quiz', 'submit', 'quiz', 'name');
-    upgrade_log_display_entry('quiz', 'review', 'quiz', 'name');
-    upgrade_log_display_entry('quiz', 'editquestions', 'quiz', 'name');
-    upgrade_log_display_entry('quiz', 'preview', 'quiz', 'name');
-    upgrade_log_display_entry('quiz', 'start attempt', 'quiz', 'name');
-    upgrade_log_display_entry('quiz', 'close attempt', 'quiz', 'name');
-    upgrade_log_display_entry('quiz', 'continue attempt', 'quiz', 'name');
+    update_log_display_entry('quiz', 'add', 'quiz', 'name');
+    update_log_display_entry('quiz', 'update', 'quiz', 'name');
+    update_log_display_entry('quiz', 'view', 'quiz', 'name');
+    update_log_display_entry('quiz', 'report', 'quiz', 'name');
+    update_log_display_entry('quiz', 'attempt', 'quiz', 'name');
+    update_log_display_entry('quiz', 'submit', 'quiz', 'name');
+    update_log_display_entry('quiz', 'review', 'quiz', 'name');
+    update_log_display_entry('quiz', 'editquestions', 'quiz', 'name');
+    update_log_display_entry('quiz', 'preview', 'quiz', 'name');
+    update_log_display_entry('quiz', 'start attempt', 'quiz', 'name');
+    update_log_display_entry('quiz', 'close attempt', 'quiz', 'name');
+    update_log_display_entry('quiz', 'continue attempt', 'quiz', 'name');
 
     $record = new object();
     $record->name         = 'overview';

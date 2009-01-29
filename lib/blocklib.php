@@ -1172,7 +1172,7 @@ function upgrade_blocks_plugins() {
                 // do nothing
             } else if ($currblock->version < $block->version) {
                 $updated_blocks = true;
-                upgrade_log_start();
+                upgrade_started();
 
                 print_heading('New version of '.$blocktitle.' ('.$block->name.') exists');
                 @set_time_limit(0);  // To allow slow databases to complete the long SQL
@@ -1239,7 +1239,7 @@ function upgrade_blocks_plugins() {
                 print_error('blocknameconflict', '', '', (object)array('name'=>$block->name, 'conflict'=>$conflictblock));
             }
             $updated_blocks = true;
-            upgrade_log_start();
+            upgrade_started();
             print_heading($block->name);
             @set_time_limit(0);  // To allow slow databases to complete the long SQL
 

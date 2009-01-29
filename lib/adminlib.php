@@ -28,7 +28,7 @@ define('INSECURE_DATAROOT_ERROR', 2);
  * @return void
  *
  */
-function upgrade_log_display_entry($module, $action, $mtable, $field) {
+function update_log_display_entry($module, $action, $mtable, $field) {
     global $DB;
 
     if ($type = $DB->get_record('log_display', array('module'=>$module, 'action'=>$action))) {
@@ -424,7 +424,7 @@ function upgrade_plugins($type, $dir) {
                 $info->pluginversion  = $plugin->version;
                 $info->currentmoodle = $CFG->version;
                 $info->requiremoodle = $plugin->requires;
-                upgrade_log_start();
+                upgrade_started();
                 notify(get_string('pluginrequirementsnotmet', 'error', $info));
                 $updated_plugins = true;
                 continue;
@@ -444,7 +444,7 @@ function upgrade_plugins($type, $dir) {
             // do nothing
         } else if ($installedversion < $plugin->version) {
             $updated_plugins = true;
-            upgrade_log_start();
+            upgrade_started();
             print_heading($dir.'/'. $plugin->name .' plugin needs upgrading');
             @set_time_limit(0);  // To allow slow databases to complete the long SQL
 
@@ -565,7 +565,7 @@ function upgrade_activity_modules() {
                 $info->moduleversion  = $module->version;
                 $info->currentmoodle = $CFG->version;
                 $info->requiremoodle = $module->requires;
-                upgrade_log_start();
+                upgrade_started();
                 notify(get_string('modulerequirementsnotmet', 'error', $info));
                 continue;
             }
@@ -584,7 +584,7 @@ function upgrade_activity_modules() {
                     notify('Upgrade file ' . $mod . ': ' . $fullmod . '/db/upgrade.php is not readable');
                     continue;
                 }
-                upgrade_log_start();
+                upgrade_started();
 
                 print_heading($module->name .' module needs upgrading');
 
@@ -625,7 +625,7 @@ function upgrade_activity_modules() {
             }
 
         } else {    // module not installed yet, so install it
-            upgrade_log_start();
+            upgrade_started();
             print_heading($module->name);
 
         /// Execute install.xml (XMLDB) - must be present
@@ -852,7 +852,7 @@ function create_admin_user($user_input=NULL) {
  * Marks start of upgrade, blocks any other access to site.
  * The upgrade is finished at the end of script or after timeout.
  */
-function upgrade_log_start($preinstall=false) {
+function upgrade_started($preinstall=false) {
     global $CFG, $DB;
 
     static $started = false;
@@ -885,7 +885,7 @@ function upgrade_log_start($preinstall=false) {
  * Internal function - executed if upgrade interruped.
  */
 function upgrade_finished_handler() {
-    upgrade_log_finish();
+    upgrade_finished();
 }
 
 /**
@@ -893,7 +893,7 @@ function upgrade_finished_handler() {
  *
  * This function may be called repeatedly.
  */
-function upgrade_log_finish($continueurl=null) {
+function upgrade_finished($continueurl=null) {
     global $CFG, $DB;
 
     if (!empty($CFG->upgraderunning)) {

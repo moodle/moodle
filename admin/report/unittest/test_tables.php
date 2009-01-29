@@ -101,7 +101,7 @@ die;die;die;
     upgrade_local_db($return_url);  // Return here afterwards
 
 /// just make sure upgrade logging is properly terminated
-    upgrade_log_finish();
+    upgrade_finished();
 
 /// make sure admin user is created - this is the last step because we need
 /// session to be working properly in order to edit admin account

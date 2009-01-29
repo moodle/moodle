@@ -106,24 +106,24 @@ function xmldb_main_install() {
     $DB->insert_record('mnet_application', $mnet_app);
 
 /// insert log entries - replaces statements section in install.xml
-    upgrade_log_display_entry('user', 'view', 'user', 'CONCAT(firstname,\' \',lastname)');
-    upgrade_log_display_entry('course', 'user report', 'user', 'CONCAT(firstname,\' \',lastname)');
-    upgrade_log_display_entry('course', 'view', 'course', 'fullname');
-    upgrade_log_display_entry('course', 'update', 'course', 'fullname');
-    upgrade_log_display_entry('course', 'enrol', 'course', 'fullname');
-    upgrade_log_display_entry('course', 'unenrol', 'course', 'fullname');
-    upgrade_log_display_entry('course', 'report log', 'course', 'fullname');
-    upgrade_log_display_entry('course', 'report live', 'course', 'fullname');
-    upgrade_log_display_entry('course', 'report outline', 'course', 'fullname');
-    upgrade_log_display_entry('course', 'report participation', 'course', 'fullname');
-    upgrade_log_display_entry('course', 'report stats', 'course', 'fullname');
-    upgrade_log_display_entry('message', 'write', 'user', 'CONCAT(firstname,\' \',lastname)');
-    upgrade_log_display_entry('message', 'read', 'user', 'CONCAT(firstname,\' \',lastname)');
-    upgrade_log_display_entry('message', 'add contact', 'user', 'CONCAT(firstname,\' \',lastname)');
-    upgrade_log_display_entry('message', 'remove contact', 'user', 'CONCAT(firstname,\' \',lastname)');
-    upgrade_log_display_entry('message', 'block contact', 'user', 'CONCAT(firstname,\' \',lastname)');
-    upgrade_log_display_entry('message', 'unblock contact', 'user', 'CONCAT(firstname,\' \',lastname)');
-    upgrade_log_display_entry('group', 'view', 'groups', 'name');
+    update_log_display_entry('user', 'view', 'user', 'CONCAT(firstname,\' \',lastname)');
+    update_log_display_entry('course', 'user report', 'user', 'CONCAT(firstname,\' \',lastname)');
+    update_log_display_entry('course', 'view', 'course', 'fullname');
+    update_log_display_entry('course', 'update', 'course', 'fullname');
+    update_log_display_entry('course', 'enrol', 'course', 'fullname');
+    update_log_display_entry('course', 'unenrol', 'course', 'fullname');
+    update_log_display_entry('course', 'report log', 'course', 'fullname');
+    update_log_display_entry('course', 'report live', 'course', 'fullname');
+    update_log_display_entry('course', 'report outline', 'course', 'fullname');
+    update_log_display_entry('course', 'report participation', 'course', 'fullname');
+    update_log_display_entry('course', 'report stats', 'course', 'fullname');
+    update_log_display_entry('message', 'write', 'user', 'CONCAT(firstname,\' \',lastname)');
+    update_log_display_entry('message', 'read', 'user', 'CONCAT(firstname,\' \',lastname)');
+    update_log_display_entry('message', 'add contact', 'user', 'CONCAT(firstname,\' \',lastname)');
+    update_log_display_entry('message', 'remove contact', 'user', 'CONCAT(firstname,\' \',lastname)');
+    update_log_display_entry('message', 'block contact', 'user', 'CONCAT(firstname,\' \',lastname)');
+    update_log_display_entry('message', 'unblock contact', 'user', 'CONCAT(firstname,\' \',lastname)');
+    update_log_display_entry('group', 'view', 'groups', 'name');
 
 
 /// Create guest record

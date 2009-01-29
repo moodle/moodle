@@ -127,7 +127,7 @@ function upgrade_local_db() {
     require($CFG->dirroot.'/local/version.php');  // Get code versions
 
     if (empty($CFG->local_version)) { // install
-        upgrade_log_start();
+        upgrade_started();
         if (file_exists($CFG->dirroot.'/local/db/install.php')) {
             require_once($CFG->dirroot.'/local/db/install.php');
             xmldb_local_install();
@@ -142,7 +142,7 @@ function upgrade_local_db() {
         return true;
 
     } else if ($local_version > $CFG->local_version) { // upgrade!
-        upgrade_log_start();
+        upgrade_started();
         if (file_exists($CFG->dirroot.'/local/db/upgrade.php')) {
             require_once($CFG->dirroot.'/local/db/upgrade.php');
             xmldb_local_upgrade($CFG->local_version);

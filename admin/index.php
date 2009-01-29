@@ -146,10 +146,10 @@
             }
         }
 
-        upgrade_log_start(true); // does not store ugprade runnign flag
+        upgrade_started(true); // does not store ugprade runnign flag
         print_heading('coresystem');
         $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml");
-        upgrade_log_start();     // we want the flag to be stored in config table ;-)
+        upgrade_started();     // we want the flag to be stored in config table ;-)
 
     /// set all core default records and default settings
         require_once("$CFG->libdir/db/install.php");
@@ -263,7 +263,7 @@
         /// return to original debugging level
             $CFG->debug = $origdebug;
             error_reporting($CFG->debug);
-            upgrade_log_start();
+            upgrade_started();
 
         /// Upgrade current language pack if we can
             if (empty($CFG->skiplangupgrade)) {
@@ -331,7 +331,7 @@
         $sessionstarted = optional_param('sessionstarted', 0, PARAM_BOOL);
         if (!$sessionstarted) {
             // we neeed this redirect to setup proper session
-            upgrade_log_finish("index.php?sessionstarted=1&lang=$CFG->lang");
+            upgrade_finished("index.php?sessionstarted=1&lang=$CFG->lang");
         }
         $adminuser = create_admin_user();
         $adminuser->newadminuser = 1;
@@ -340,7 +340,7 @@
 
     } else {
     /// just make sure upgrade logging is properly terminated
-        upgrade_log_finish('upgradesettings.php');
+        upgrade_finished('upgradesettings.php');
     }
 
     // Turn xmlstrictheaders back on now.

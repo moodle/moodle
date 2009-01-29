@@ -804,7 +804,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         /// return to original debugging level
         $CFG->debug = $origdebug;
         error_reporting($CFG->debug);
-        upgrade_log_start();
+        upgrade_started();
 
         /// Both old .sql files and new install.xml are supported
         /// But we prioritise install.xml (XMLDB) if present
@@ -930,7 +930,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
             /// return to original debugging level
             $CFG->debug = $origdebug;
             error_reporting($CFG->debug);
-            upgrade_log_start();
+            upgrade_started();
 
             /// Upgrade current language pack if we can
             upgrade_language_pack();
@@ -1050,7 +1050,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
 
     /// just make sure upgrade logging is properly terminated
-    upgrade_log_finish();
+    upgrade_finished();
 
     /// Set up the site
     if (! $site = get_site()) {
