@@ -93,7 +93,7 @@
                     $myxls->write_string($row,3,$ug2);
 
                     if (isset($option_text)) {
-                        $myxls->write_string($row,4,format_string($useroption,true));
+                        $myxls->write_string($row,4,format_string($option_text,true));
                     }
                     $row++;
                     $pos=4;
