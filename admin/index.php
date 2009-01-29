@@ -21,6 +21,7 @@
 
     require('../config.php');
     require_once($CFG->libdir.'/adminlib.php');        // Contains various admin-only functions
+    require_once($CFG->libdir.'/upgradelib.php');
 
     $id             = optional_param('id', '', PARAM_TEXT);
     $confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
