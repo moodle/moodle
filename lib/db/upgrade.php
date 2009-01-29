@@ -1372,7 +1372,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2009011900);
     }
 
-    if ($result && $oldversion < 2009012900) {
+    if ($result && $oldversion < 2009012901) {
 
     /// Define table upgrade_log to be created
         $table = new xmldb_table('upgrade_log');
@@ -1381,6 +1381,7 @@ function xmldb_main_upgrade($oldversion) {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('type', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, null);
         $table->add_field('plugin', XMLDB_TYPE_CHAR, '100', null, null, null, null, null, null);
+        $table->add_field('version', XMLDB_TYPE_CHAR, '100', null, null, null, null, null, null);
         $table->add_field('info', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
         $table->add_field('details', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
         $table->add_field('backtrace', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
@@ -1401,7 +1402,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009012900);
+        upgrade_main_savepoint($result, 2009012901);
     }
 
     return $result;
