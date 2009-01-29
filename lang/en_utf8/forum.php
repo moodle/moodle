@@ -165,6 +165,7 @@ $string['nopostforum'] = 'Sorry, you are not allowed to post to this forum';
 $string['noposts'] = 'No posts';
 $string['nopostscontaining'] = 'No posts containing \'$a\' were found';
 $string['noquestions'] = 'There are no questions yet in this forum';
+$string['noratinggiven'] = 'No rating given';
 $string['nosubscribers'] = 'There are no subscribers yet for this forum';
 $string['nothingnew'] = 'Nothing new for $a';
 $string['notingroup'] = 'Sorry, but you need to be part of a group to see this forum.';
