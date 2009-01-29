@@ -105,6 +105,7 @@ function xmldb_main_install() {
     $mnet_app->sso_jump_url      = '/auth/xmlrpc/jump.php';
     $DB->insert_record('mnet_application', $mnet_app);
 
+
 /// insert log entries - replaces statements section in install.xml
     update_log_display_entry('user', 'view', 'user', 'CONCAT(firstname,\' \',lastname)');
     update_log_display_entry('course', 'user report', 'user', 'CONCAT(firstname,\' \',lastname)');
@@ -127,9 +128,85 @@ function xmldb_main_install() {
 
 
 /// Create guest record
-    create_guest_record();
+    $guest = new object();
+    $guest->auth        = 'manual';
+    $guest->username    = 'guest';
+    $guest->password    = hash_internal_user_password('guest');
+    $guest->firstname   = get_string('guestuser');
+    $guest->lastname    = ' ';
+    $guest->email       = 'root@localhost';
+    $guest->description = get_string('guestuserinfo');
+    $guest->mnethostid  = $CFG->mnet_localhost_id;
+    $guest->confirmed   = 1;
+    $guest->lang        = $CFG->lang;
+    $guest->timemodified= time();
+    $guest->id = $DB->insert_record('user', $guest);
+
+
+/// Now create admin user
+    $admin = new object();
+    $admin->auth         = 'manual';
+    $admin->firstname    = get_string('admin');
+    $admin->lastname     = get_string('user');
+    $admin->username     = 'admin';
+    $admin->password     = 'adminsetuppending';
+    $admin->email        = 'root@localhost';
+    $admin->confirmed    = 1;
+    $admin->mnethostid   = $CFG->mnet_localhost_id;
+    $admin->lang         = $CFG->lang;
+    $admin->maildisplay  = 1;
+    $admin->timemodified = time();
+    $admin->lastip       = getremoteaddr(); // installation hijacking prevention
+    $admin->id = $DB->insert_record('user', $admin);
+
 
 /// Install the roles system.
-    moodle_install_roles();
+    $adminrole          = create_role(get_string('administrator'), 'admin',
+                                      get_string('administratordescription'), 'moodle/legacy:admin');
+    $coursecreatorrole  = create_role(get_string('coursecreators'), 'coursecreator',
+                                      get_string('coursecreatorsdescription'), 'moodle/legacy:coursecreator');
+    $editteacherrole    = create_role(get_string('defaultcourseteacher'), 'editingteacher',
+                                      get_string('defaultcourseteacherdescription'), 'moodle/legacy:editingteacher');
+    $noneditteacherrole = create_role(get_string('noneditingteacher'), 'teacher',
+                                      get_string('noneditingteacherdescription'), 'moodle/legacy:teacher');
+    $studentrole        = create_role(get_string('defaultcoursestudent'), 'student',
+                                      get_string('defaultcoursestudentdescription'), 'moodle/legacy:student');
+    $guestrole          = create_role(get_string('guest'), 'guest',
+                                      get_string('guestdescription'), 'moodle/legacy:guest');
+    $userrole           = create_role(get_string('authenticateduser'), 'user',
+                                      get_string('authenticateduserdescription'), 'moodle/legacy:user');
+
+    /// Now is the correct moment to install capabilities - after creation of legacy roles, but before assigning of roles
+    assign_capability('moodle/site:doanything', CAP_ALLOW, $adminrole, $syscontext->id);
+    update_capabilities('moodle');
+
+    /// assign default roles
+    role_assign($guestrole, $guest->id, 0, $syscontext->id);
+    role_assign($adminrole, $admin->id, 0, $syscontext->id);
+
+    /// Insert the correct records for legacy roles
+    allow_assign($coursecreatorrole, $noneditteacherrole);
+    allow_assign($coursecreatorrole, $editteacherrole);
+    allow_assign($coursecreatorrole, $studentrole);
+    allow_assign($coursecreatorrole, $guestrole);
+
+    allow_assign($editteacherrole, $noneditteacherrole);
+    allow_assign($editteacherrole, $studentrole);
+    allow_assign($editteacherrole, $guestrole);
+
+    /// Set up default allow override matrix
+    //See MDL-15841   TODO FOR MOODLE 2.0  XXX
+    //allow_override($editteacherrole, $noneditteacherrole);
+    //allow_override($editteacherrole, $studentrole);
+    //allow_override($editteacherrole, $guestrole);
+
+    /// Set up the context levels where you can assign each role.
+    set_role_contextlevels($adminrole,          get_default_contextlevels('admin'));
+    set_role_contextlevels($coursecreatorrole,  get_default_contextlevels('coursecreator'));
+    set_role_contextlevels($editteacherrole,    get_default_contextlevels('editingteacher'));
+    set_role_contextlevels($noneditteacherrole, get_default_contextlevels('teacher'));
+    set_role_contextlevels($studentrole,        get_default_contextlevels('student'));
+    set_role_contextlevels($guestrole,          get_default_contextlevels('guest'));
+    set_role_contextlevels($userrole,           get_default_contextlevels('user'));
 
 }

@@ -230,56 +230,6 @@ function set_cron_lock($name, $until, $ignorecurrent=false) {
     return true;
 }
 
-function create_admin_user($user_input=NULL) {
-    global $CFG, $DB;
-
-    $user = new object();
-    $user->auth         = 'manual';
-    $user->firstname    = get_string('admin');
-    $user->lastname     = get_string('user');
-    $user->username     = 'admin';
-    $user->password     = hash_internal_user_password('admin');
-    $user->email        = 'root@localhost';
-    $user->confirmed    = 1;
-    $user->mnethostid   = $CFG->mnet_localhost_id;
-    $user->lang         = $CFG->lang;
-    $user->maildisplay  = 1;
-    $user->timemodified = time();
-
-    if ($user_input) { // do we want to override any defaults?
-        foreach ($user_input as $key=>$value) {
-            $user->$key = $value;
-        }
-    }
-    $user->id = $DB->insert_record('user', $user);
-
-    if (!$user = $DB->get_record('user', array('id'=>$user->id))) {   // Double check.
-        print_error('invaliduserid');
-    }
-
-    // Assign the default admin roles to the new user.
-    if (!$adminroles = get_roles_with_capability('moodle/legacy:admin', CAP_ALLOW)) {
-        print_error('noadminrole', 'message');
-    }
-
-    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-    foreach ($adminroles as $adminrole) {
-        role_assign($adminrole->id, $user->id, 0, $systemcontext->id);
-    }
-
-    //set default message preferences
-    if (!message_set_default_message_preferences($user)){
-        print_error('cannotsavemessageprefs', 'message');
-    }
-
-    $user = get_complete_user_data('username', 'admin');
-
-    // indicate that this site is fully configured
-    set_config('rolesactive', 1);
-
-    return $user;
-}
-
 /**
  * Test if and critical warnings are present
  * @return bool

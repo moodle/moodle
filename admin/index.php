@@ -326,25 +326,56 @@
     require_once("$CFG->dirroot/lib/locallib.php");
     upgrade_local_db();  // Return here afterwards
 
+/// indicate that this site is fully configured except the admin password
+    if (empty($CFG->rolesactive)) {
+        set_config('rolesactive', 1);
+        set_config('adminsetuppending', 1);
+        // we neeed this redirect to setup proper session
+        upgrade_finished("index.php?sessionstarted=1&lang=$CFG->lang");
+    }
+
 /// make sure admin user is created - this is the last step because we need
 /// session to be working properly in order to edit admin account
-    if (empty($CFG->rolesactive)) {
+     if (!empty($CFG->adminsetuppending)) {
         $sessionstarted = optional_param('sessionstarted', 0, PARAM_BOOL);
         if (!$sessionstarted) {
-            // we neeed this redirect to setup proper session
-            upgrade_finished("index.php?sessionstarted=1&lang=$CFG->lang");
+            redirect("index.php?sessionstarted=1&lang=$CFG->lang");
+        } else {
+            $sessionverify = optional_param('sessionverify', 0, PARAM_BOOL);
+            if (!$sessionverify) {
+                $SESSION->sessionverify = 1;
+                redirect("index.php?sessionstarted=1&sessionverify=1&lang=$CFG->lang");
+            } else {
+                if (empty($SESSION->sessionverify)) {
+                    print_error('installsessionerror', 'admin', "index.php?sessionstarted=1&lang=$CFG->lang");
+                }
+                unset($SESSION->sessionverify);
+            }
         }
-        $adminuser = create_admin_user();
-        $adminuser->newadminuser = 1;
-        complete_user_login($adminuser, false);
-        redirect("$CFG->wwwroot/user/editadvanced.php?id=$adminuser->id"); // Edit thyself
+
+        $adminuser = get_complete_user_data('username', 'admin');
+
+        if ($adminuser->password === 'adminsetuppending') {
+            // prevent installation hijacking
+            if ($adminuser->lastip !== getremoteaddr()) {
+                print_error('installhijacked', 'admin');
+            }
+            // login user and let him set password and admin details
+            $adminuser->newadminuser = 1;
+            message_set_default_message_preferences($adminuser);
+            complete_user_login($adminuser, false);
+            redirect("$CFG->wwwroot/user/editadvanced.php?id=$adminuser->id"); // Edit thyself
+
+        } else {
+            unset_config('adminsetuppending');
+        }
 
     } else {
     /// just make sure upgrade logging is properly terminated
         upgrade_finished('upgradesettings.php');
     }
 
-    // Turn xmlstrictheaders back on now.
+// Turn xmlstrictheaders back on now.
     $CFG->xmlstrictheaders = $origxmlstrictheaders;
     unset($origxmlstrictheaders);
 
