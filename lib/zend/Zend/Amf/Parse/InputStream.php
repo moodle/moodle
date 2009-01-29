@@ -13,39 +13,26 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Version
+ * @package    Zend_Amf
+ * @subpackage Parse
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
  */
+
+/** Zend_Amf_Util_BinaryStream */
+require_once 'Zend/Amf/Util/BinaryStream.php';
 
 /**
- * Class to store and retrieve the version of Zend Framework.
+ * InputStream is used to iterate at a binary level through the AMF request.
  *
- * @category   Zend
- * @package    Zend_Version
+ * InputStream extends BinaryStream as eventually BinaryStream could be placed 
+ * outside of Zend_Amf in order to allow other packages to use the class.
+ *
+ * @package    Zend_Amf
+ * @subpackage Parse
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-final class Zend_Version
+class Zend_Amf_Parse_InputStream extends Zend_Amf_Util_BinaryStream
 {
-    /**
-     * Zend Framework version identification - see compareVersion()
-     */
-    const VERSION = '1.7.3';
-
-    /**
-     * Compare the specified Zend Framework version string $version
-     * with the current Zend_Version::VERSION of the Zend Framework.
-     *
-     * @param  string  $version  A version string (e.g. "0.7.1").
-     * @return boolean           -1 if the $version is older,
-     *                           0 if they are the same,
-     *                           and +1 if $version is newer.
-     *
-     */
-    public static function compareVersion($version)
-    {
-        return version_compare($version, self::VERSION);
-    }
 }

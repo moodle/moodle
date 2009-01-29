@@ -13,39 +13,59 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Version
+ * @package    Zend_Service
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
 
+
 /**
- * Class to store and retrieve the version of Zend Framework.
- *
+ * Zend_Http_Client
+ */
+require_once 'Zend/Http/Client.php';
+
+
+/**
  * @category   Zend
- * @package    Zend_Version
+ * @package    Zend_Service
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-final class Zend_Version
+abstract class Zend_Service_Abstract
 {
     /**
-     * Zend Framework version identification - see compareVersion()
+     * HTTP Client used to query all web services
+     *
+     * @var Zend_Http_Client
      */
-    const VERSION = '1.7.3';
+    protected static $_httpClient = null;
+
 
     /**
-     * Compare the specified Zend Framework version string $version
-     * with the current Zend_Version::VERSION of the Zend Framework.
+     * Sets the HTTP client object to use for retrieving the feeds.  If none
+     * is set, the default Zend_Http_Client will be used.
      *
-     * @param  string  $version  A version string (e.g. "0.7.1").
-     * @return boolean           -1 if the $version is older,
-     *                           0 if they are the same,
-     *                           and +1 if $version is newer.
-     *
+     * @param Zend_Http_Client $httpClient
      */
-    public static function compareVersion($version)
+    final public static function setHttpClient(Zend_Http_Client $httpClient)
     {
-        return version_compare($version, self::VERSION);
+        self::$_httpClient = $httpClient;
+    }
+
+
+    /**
+     * Gets the HTTP client object.
+     *
+     * @return Zend_Http_Client
+     */
+    final public static function getHttpClient()
+    {
+        if (!self::$_httpClient instanceof Zend_Http_Client) {
+            self::$_httpClient = new Zend_Http_Client();
+        }
+
+        return self::$_httpClient;
     }
 }
+

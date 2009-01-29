@@ -13,39 +13,46 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Version
+ * @package    Zend_Amf
+ * @subpackage Parse
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
  */
 
 /**
- * Class to store and retrieve the version of Zend Framework.
+ * Base abstract class for all AMF serializers.
  *
- * @category   Zend
- * @package    Zend_Version
+ * @package    Zend_Amf
+ * @subpackage Parse
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-final class Zend_Version
+abstract class Zend_Amf_Parse_Serializer
 {
     /**
-     * Zend Framework version identification - see compareVersion()
+     * Refrence to the current output stream being constructed
+     *
+     * @var string
      */
-    const VERSION = '1.7.3';
+    protected $_stream;
 
     /**
-     * Compare the specified Zend Framework version string $version
-     * with the current Zend_Version::VERSION of the Zend Framework.
-     *
-     * @param  string  $version  A version string (e.g. "0.7.1").
-     * @return boolean           -1 if the $version is older,
-     *                           0 if they are the same,
-     *                           and +1 if $version is newer.
-     *
+     * Constructor
+     * 
+     * @param  Zend_Amf_Parse_OutputStream $stream 
+     * @return void
      */
-    public static function compareVersion($version)
+    public function __construct(Zend_Amf_Parse_OutputStream $stream)
     {
-        return version_compare($version, self::VERSION);
+        $this->_stream = $stream;
     }
+
+    /**
+     * Find the PHP object type and convert it into an AMF object type
+     *
+     * @param  mixed $content
+     * @param  int $markerType
+     * @return void
+     */
+    public abstract function writeTypeMarker($content, $markerType=null);
 }

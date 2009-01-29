@@ -152,6 +152,11 @@ class Zend_Loader
      * This function uses the PHP include_path, where PHP's is_readable()
      * does not.
      *
+     * Note from ZF-2900:
+     * If you use custom error handler, please check whether return value
+     *  from error_reporting() is zero or not.
+     * At mark of fopen() can not suppress warning if the handler is used.
+     *
      * @param string   $filename
      * @return boolean
      */

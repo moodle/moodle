@@ -82,11 +82,8 @@ EOF;
 
          ///load the class        
             $classpath = substr($fileapipath,strlen($CFG->dirroot)+1); //remove the dir root + / from the file path
-            varlog($classpath);
             $classpath = substr($classpath,0,strlen($classpath) - 13); //remove /external.php from the classpath
-            varlog($classpath);
             $classpath = str_replace('/','_',$classpath); //convert all / into _
-            varlog($classpath);
             $classname = $classpath."_external";
             $api = new $classname();
 

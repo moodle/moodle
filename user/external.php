@@ -57,14 +57,13 @@ final class user_external extends moodle_external {
 
         }
         else {
-            throw new moodle_exception('couldnotvieweuser');
+            throw new moodle_exception('wscouldnotvieweuser');
         }
     }
 
     /**
      * Create a user
      * @param array $params
-     * @param  $username string
      *  ->firstname string
      *  ->lastname string
      *  ->email string
@@ -83,7 +82,7 @@ final class user_external extends moodle_external {
             return user_lib::tmp_create_user($user);
         }
         else {
-            throw new moodle_exception('couldnotcreateeuser');
+            throw new moodle_exception('wscouldnotcreateeuser');
         }    
     }
 
@@ -102,7 +101,7 @@ final class user_external extends moodle_external {
             return delete_user($user); //this function is in moodlelib.php
         }
         else {
-            throw new moodle_exception('couldnotdeleteuser');
+            throw new moodle_exception('wscouldnotdeleteuser');
         }
     }
 
@@ -131,7 +130,7 @@ final class user_external extends moodle_external {
             return user_lib::tmp_update_user($user);
         }
         else {
-            throw new moodle_exception('couldnotupdateuser');
+            throw new moodle_exception('wscouldnotupdateuser');
         }
        
     }

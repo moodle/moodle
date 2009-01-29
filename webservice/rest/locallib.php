@@ -64,9 +64,11 @@ function call_moodle_function ($rest_arguments) {
         //return an error message, the REST params doesn't match with the web service description
     }
 
-
-
-    $res = call_user_func_array  ( $classname.'::'.$functionname, array($params));
+    try {
+        $res = call_user_func_array  ( $classname.'::'.$functionname, array($params));
+    } catch (moodle_exception $e) {
+        return "<Result>".$e->getMessage()."</Result>";
+    }
     
 ///Transform result into xml in order to send the REST response
     $return =  mdl_conn_rest_object_to_xml ($res,key($description['return']));
