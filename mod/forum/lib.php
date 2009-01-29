@@ -3588,8 +3588,17 @@ function forum_get_ratings_mean($postid, $scale, $ratings=NULL) {
 
 /**
  * Return the count of the ratings of a post given to the current user by others.
- * Scale is an array of possible ratings in the scale - the end of the scale is the highest or max grade
- * Ratings is an optional simple array of actual ratings (just integers)
+ *
+ * For numerical grades, the scale index is the same as the real grade value from interval {0..n}
+ * and $scale looks like Array( 0 => '0/n', 1 => '1/n', ..., n => 'n/n' )
+ *
+ * For scales, the index is the order of the scale item {1..n}
+ * and $scale looks like Array( 1 => 'poor', 2 => 'weak', 3 => 'good' )
+ * In case of no ratings done yet, we have nothing to display.
+ *
+ * @param int $postid
+ * @param array $scale Possible ratings in the scale - the end of the scale is the highest or max grade
+ * @param array $ratings An optional simple array of actual ratings (just integers)
  */
 function forum_get_ratings_count($postid, $scale, $ratings=NULL) {
     global $DB;
@@ -3602,7 +3611,24 @@ function forum_get_ratings_count($postid, $scale, $ratings=NULL) {
         }
     }
 
-    return count($ratings);
+    $count = count($ratings);
+    $maxgradeidx = max(array_keys($scale)); // For numerical grades, the index is the same as the real grade value {0..n}
+                                            // and $scale looks like Array( 0 => '0/n', 1 => '1/n', ..., n => 'n/n' )
+                                            // For scales, the index is the order of the scale item {1..n}
+                                            // and $scale looks like Array( 1 => 'poor', 2 => 'weak', 3 => 'good' )
+    if (! array_key_exists(0, $scale)) {
+        $scaleused = true;
+    } else {
+        $scaleused = false;
+    }
+
+    if (($count == 0) && ($scaleused)) {    // If no rating given yet and we use a scale
+        return get_string('noratinggiven', 'forum');
+    } elseif ($count > $maxgradeidx) {      // The count exceeds the max grade
+        return $scale[$maxgradeidx];
+    } else {                                // Display the grade, eg. '3/10' or 'weak'
+        return $scale[$count];
+    }
 }
 
 /**
