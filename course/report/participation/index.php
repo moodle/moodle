@@ -43,7 +43,7 @@
     $actionoptions = array('' => $strallactions,
                            'view' => $strview,
                            'post' => $strpost,);
-    if (!in_array($action, $actionoptions)) {
+    if (!array_key_exists($action, $actionoptions)) {
         $action = '';
     }
 
