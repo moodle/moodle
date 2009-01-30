@@ -10,7 +10,6 @@
 /**
  * DO NOT USE ANYTHING FROM THIS FILE - WORK IN PROGRESS
  */
-final class user_lib {
 
     /**
      * Returns a subset of users (DO NOT COUNT)
@@ -27,7 +26,7 @@ final class user_lib {
      *      ->lastinitial    string     ?
      * @return array|false Array of {@link $USER} objects. False is returned if an error is encountered.
      */
-    static function tmp_get_users($sort='firstname ASC', $recordsperpage=999999, $page=0, $fields='*', $selectioncriteria=NULL) {
+    function tmp_get_users($sort='firstname ASC', $recordsperpage=999999, $page=0, $fields='*', $selectioncriteria=NULL) {
         global $DB;
 
          ///WS: convert array into an object
@@ -102,7 +101,7 @@ final class user_lib {
      *
      * @return userid or thrown exceptions
      */
-    static function tmp_create_user($user) {
+    function tmp_create_user($user) {
         global $CFG, $DB;
      ///WS: convert user array into an user object
         if (is_array($user))  {
@@ -143,7 +142,7 @@ final class user_lib {
      * Warning: no checks are done on the data!!!
      * @param object $user 
      */
-    static function tmp_update_user($user) {
+    function tmp_update_user($user) {
         global $DB;
         if ($DB->update_record('user', $user)) {
             $DB->commit_sql();
@@ -155,6 +154,6 @@ final class user_lib {
         }
     }
 
-}
+
 
 ?>

@@ -79,7 +79,7 @@ final class user_external extends moodle_external {
             $user['lastname'] = $params['lastname'];
             $user['email'] = $params['email'];
             $user['password'] = $params['password'];
-            return user_lib::tmp_create_user($user);
+            return tmp_create_user($user);
         }
         else {
             throw new moodle_exception('wscouldnotcreateeuser');
@@ -127,7 +127,7 @@ final class user_external extends moodle_external {
             if (!empty($params['firstname'])) {
                 $user->firstname = $params['firstname'];
             }
-            return user_lib::tmp_update_user($user);
+            return tmp_update_user($user);
         }
         else {
             throw new moodle_exception('wscouldnotupdateuser');
