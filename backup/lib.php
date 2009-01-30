@@ -649,7 +649,7 @@
     function import_backup_file_silently($pathtofile,$destinationcourse,$emptyfirst=false,$userdata=false, $preferences=array()) {
         global $CFG,$SESSION,$USER; // is there such a thing on cron? I guess so..
         global $restore; // ick
-        if (empty($USER) || empty($USER->id)) {
+        if (empty($USER)) {
             $USER = get_admin();
             $USER->admin = 1; // not sure why, but this doesn't get set
         }
