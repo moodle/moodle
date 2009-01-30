@@ -1,6 +1,6 @@
 <?php
 /**
- * Main script - SOAP server
+ * Main script - REST server
  *
  * @author Jerome Mouneyrac <jerome@moodle.com>
  * @version 1.0
@@ -38,7 +38,7 @@ if (empty($token)) {
     //retrieve the api name
     $classpath = optional_param(classpath,null,PARAM_ALPHA);
     require_once(dirname(__FILE__) . '/../../'.$classpath.'/external.php');
- 
+
     /// run the server
     $server = new Zend_Rest_Server(); //TODO: need to call the wsdl generation on the fly
     $server->setClass($classpath."_external"); //TODO: pass $user as parameter
@@ -64,12 +64,17 @@ function mock_check_token($token) {
 }
 
 class soap_authentication {
+    /**
+     *
+     * @param array $params
+     * @return integer
+     */
     function tmp_get_token($params) {
         if ($params['username'] == 'wsuser' && $params['password'] == 'wspassword') {
-                return '465465465468468464';
-            } else {
-                throw new moodle_exception('wrongusernamepassword');
-            }
+            return '465465465468468464';
+        } else {
+            throw new moodle_exception('wrongusernamepassword');
+        }
     }
 }
 ?>

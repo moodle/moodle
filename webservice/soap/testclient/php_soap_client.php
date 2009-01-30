@@ -21,7 +21,7 @@ $client = new SoapClient($CFG->wwwroot."/webservice/soap/generatewsdl.php",array
 try {
     $token = $client->tmp_get_token(array('username' => "wsuser", 'password' => "wspassword"));
     printLastRequestResponse($client);
-   
+
 } catch (SoapFault $exception) {
     echo $exception;
 }

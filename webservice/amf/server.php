@@ -27,22 +27,6 @@ $server = new Zend_Amf_Server();
 $server->setClass($classpath."_external");
 $response = $server->handle();
 echo $response;
-/*
- *
 
-varlog("-- The Moodle AMF server is running --");
-//basic test server
-$server = new Zend_Amf_Server();
-$server->addFunction('hello');
-$response = $server->handle();
-echo $response;
-
-
-function hello($name, $greeting = 'The Moodle server say Hi to')
-{
-    varlog($greeting . ', ' . $name);
-    return $greeting . ', ' . $name;
-}
-*/
 
 ?>
