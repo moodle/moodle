@@ -3410,9 +3410,15 @@ function forum_get_ratings_count($postid, $scale, $ratings=NULL) {
     if (($count == 0) && ($scaleused)) {    // If no rating given yet and we use a scale
         return get_string('noratinggiven', 'forum');
     } elseif ($count > $maxgradeidx) {      // The count exceeds the max grade
-        return $scale[$maxgradeidx];
-    } else {                                // Display the grade, eg. '3/10' or 'weak'
-        return $scale[$count];
+        $a = new stdClass();
+        $a->count = $count;
+        $a->grade = $scale[$maxgradeidx];
+        return get_string('aggregatecountformat', 'forum', $a);
+    } else {                                // Display the count and the aggregated grade for this post
+        $a = new stdClass();
+        $a->count = $count;
+        $a->grade = $scale[$count];
+        return get_string('aggregatecountformat', 'forum', $a);
     }
 }
 

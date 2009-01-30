@@ -7,6 +7,7 @@ $string['addanewtopic'] = 'Add a new topic';
 $string['advancedsearch'] = 'Advanced search';
 $string['aggregateavg'] = 'Average of ratings';
 $string['aggregatecount'] = 'Count of ratings';
+$string['aggregatecountformat'] = '$a->count (grade: $a->grade)';
 $string['aggregatemax'] = 'Maximum rating';
 $string['aggregatemin'] = 'Minimum rating';
 $string['aggregatenone'] = 'No ratings';
