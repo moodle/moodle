@@ -4403,12 +4403,13 @@ function reset_password_and_mail($user) {
     }
 
     $a = new object();
-    $a->firstname = $user->firstname;
-    $a->sitename = format_string($site->fullname);
-    $a->username = $user->username;
+    $a->firstname   = $user->firstname;
+    $a->lastname    = $user->lastname;
+    $a->sitename    = format_string($site->fullname);
+    $a->username    = $user->username;
     $a->newpassword = $newpassword;
-    $a->link = $CFG->httpswwwroot .'/login/change_password.php';
-    $a->signoff = generate_email_signoff();
+    $a->link        = $CFG->httpswwwroot .'/login/change_password.php';
+    $a->signoff     = generate_email_signoff();
 
     $message = get_string('newpasswordtext', '', $a);
 
@@ -4497,6 +4498,7 @@ function send_password_change_info($user) {
 
     $data = new object();
     $data->firstname = $user->firstname;
+    $data->lastname  = $user->lastname;
     $data->sitename = format_string($site->fullname);
     $data->admin = generate_email_signoff();
 
