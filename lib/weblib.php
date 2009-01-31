@@ -1023,7 +1023,7 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
           '.location=document.getElementById(\''.$formid.
           '\').jump.options[document.getElementById(\''.
           $formid.'\').jump.selectedIndex].value;"';
-    }    
+    }
 
     $output .= '<div style="white-space:nowrap">'.$selectlabel.$button.'<select id="'.$formid.'_jump" name="jump"'.$javascript.'>'."\n";
 
@@ -1229,7 +1229,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
     global $CFG, $COURSE, $DB;
 
     static $croncache = array();
-    
+
     $hashstr = '';
 
     if ($text === '') {
@@ -1285,7 +1285,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         // $hashstr .= time();
 
         $time = time() - $CFG->cachetext;
-        $md5key = md5($hashstr); 
+        $md5key = md5($hashstr);
         if (CLI_SCRIPT) {
             if (isset($croncache[$md5key])) {
                 return $croncache[$md5key];
@@ -6953,6 +6953,14 @@ function debugging($message='', $level=DEBUG_NORMAL, $backtrace=null) {
  */
 function print_backtrace($callers, $return=false) {
     global $CFG;
+
+    if (empty($callers)) {
+        if ($return) {
+            return '';
+        } else {
+            return;
+        }
+    }
 
     $from = '<ul style="text-align: left">';
     foreach ($callers as $caller) {

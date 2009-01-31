@@ -3099,9 +3099,7 @@ function get_cached_capabilities($component='moodle') {
  */
 function get_default_capabilities($legacyrole) {
     global $DB;
-    if (!$allcaps = $DB->get_records('capabilities')) {
-        print_error('nocaps', 'debug');
-    }
+    $allcaps = $DB->get_records('capabilities');
     $alldefs = array();
     $defaults = array();
     $components = array();

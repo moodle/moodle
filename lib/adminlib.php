@@ -95,7 +95,7 @@ function get_plugin_types() {
 
     return array('mod'           => 'mod',
                  'qtype'         => 'question/type',
-                 'blocks'        => 'blocks',
+                 'block'         => 'blocks',
                  'auth'          => 'auth',
                  'enrol'         => 'enrol',
                  'format'        => 'course/format',
@@ -105,11 +105,12 @@ function get_plugin_types() {
                  'message'       => 'message/output',
                  'coursereport'  => 'course/report',
                  'report'        => $CFG->admin.'/report',
-                 'quizreport'    => 'mod/quiz/report',
                  'portfolio'     => 'portfolio/type',
-                 'trackerexport' => 'tracker/export',
-                 'trackerimport' => 'tracker/import',
-                 'trackerreport' => 'tracker/report',
+
+        // following types a very ugly hacks - we should not make exceptions like this - all plugins should be equal;
+        // these plugins may cause problems such as when wanting to uninstall them
+                 'quizreport'      => 'mod/quiz/report',
+                 'assignment_type' => 'mod/assignment/type',
                 );
 }
 

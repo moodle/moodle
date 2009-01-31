@@ -1119,8 +1119,6 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
             // create default course category
             $cat = get_course_category();
 
-        } else {
-            print_error('cannotsetupsite', 'error');
         }
     }
 

@@ -1,0 +1,19 @@
+This files describes API changes in /blocks/* - activity modules,
+information provided here is intended especially for developers.
+
+=== 2.0 ===
+
+required changes in code:
+* use new DML syntax everywhere
+* use new DDL syntax in db/upgrade.php
+* replace defaults.php by settings.php and db/install.php
+* replace STATEMENTS section in db/install.xml by db/install.php
+* move post instalation code from install() method into db/install.php
+* completely rewrite file handling
+* rewrite backup/restore
+
+optional - no changes needed in older code:
+* 
+
+
+TODO: add links to docs

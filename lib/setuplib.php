@@ -77,7 +77,7 @@ function default_exception_handler($ex) {
         }
     } else {
         if (!isset($CFG->theme) or !isset($CFG->stylesheets)) {
-            _print_early_error('generalexceptionmessage', 'error', $ex->getMessage());
+            _print_early_error('generalexceptionmessage', 'error', $ex->getMessage(), $backtrace);
         } else {
             _print_normal_error('generalexceptionmessage', 'error', $ex->getMessage(), '', $backtrace);
         }

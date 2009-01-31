@@ -106,65 +106,6 @@
  */
 
 /**
- * This function checks to see whether local database customisations are up-to-date
- * by comparing $CFG->local_version to the variable $local_version defined in
- * local/version.php. If not, it looks for a function called 'xmldb_local_upgrade'
- * in a file called 'local/db/upgrade.php', and if it's there calls it with the
- * appropiate $oldversion parameter. Then it updates $CFG->local_version.
- *
- * @uses $CFG
- * @return bool true if upgraded anything
- */
-function upgrade_local_db() {
-    global $CFG, $DB;
-
-    // if we don't have code version, just return false
-    if (!file_exists($CFG->dirroot.'/local/version.php')) {
-        return false;
-    }
-
-    $local_version = null;
-    require($CFG->dirroot.'/local/version.php');  // Get code versions
-
-    if (empty($CFG->local_version)) { // install
-        upgrade_started();
-        if (file_exists($CFG->dirroot.'/local/db/install.php')) {
-            require_once($CFG->dirroot.'/local/db/install.php');
-            xmldb_local_install();
-        }
-        set_config('local_version', $local_version);
-        notify(get_string('databaseupgradelocal', '', $local_version), 'notifysuccess');
-        print_upgrade_separator();
-
-        /// Capabilities
-        update_capabilities('local');
-
-        return true;
-
-    } else if ($local_version > $CFG->local_version) { // upgrade!
-        upgrade_started();
-        if (file_exists($CFG->dirroot.'/local/db/upgrade.php')) {
-            require_once($CFG->dirroot.'/local/db/upgrade.php');
-            xmldb_local_upgrade($CFG->local_version);
-        }
-        set_config('local_version', $local_version);
-        notify(get_string('databaseupgradelocal', '', $local_version), 'notifysuccess');
-        print_upgrade_separator();
-
-        /// Capabilities
-        update_capabilities('local');
-
-        return true;
-
-    } else if ($local_version < $CFG->local_version) {
-        notify('WARNING!!!  The local version you are using is OLDER than the version that made these databases!');
-    }
-
-
-    return false;
-}
-
-/**
  * Notify local code that a course is being deleted.
  * Look for a function local_delete_course() in a file called
  * local/lib.php andn call it if it is there.

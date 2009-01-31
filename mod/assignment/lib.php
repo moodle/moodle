@@ -2882,17 +2882,6 @@ function assignment_types() {
     return $types;
 }
 
-/**
- * Executes upgrade scripts for assignment types when necessary
- */
-function assignment_upgrade_submodules() {
-    global $CFG;
-
-/// Install/upgrade assignment types (it uses, simply, the standard plugin architecture)
-    upgrade_plugins('assignment_type', 'mod/assignment/type', "$CFG->wwwroot/$CFG->admin/index.php");
-
-}
-
 function assignment_print_overview($courses, &$htmlarray) {
     global $USER, $CFG, $DB;
 

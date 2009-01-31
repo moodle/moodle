@@ -30,6 +30,38 @@ function xmldb_main_upgrade($oldversion) {
     ///upgrade supported only from 1.9.x ///
     ////////////////////////////////////////
 
+    if ($result && $oldversion < 2008030600) {
+        //NOTE: this table was added much later, that is why this step is repeated later in this file
+
+    /// Define table upgrade_log to be created
+        $table = new xmldb_table('upgrade_log');
+
+    /// Adding fields to table upgrade_log
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('type', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('plugin', XMLDB_TYPE_CHAR, '100', null, null, null, null, null, null);
+        $table->add_field('version', XMLDB_TYPE_CHAR, '100', null, null, null, null, null, null);
+        $table->add_field('info', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('details', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
+        $table->add_field('backtrace', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table upgrade_log
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+    /// Adding indexes to table upgrade_log
+        $table->add_index('timemodified', XMLDB_INDEX_NOTUNIQUE, array('timemodified'));
+        $table->add_index('type-timemodified', XMLDB_INDEX_NOTUNIQUE, array('type', 'timemodified'));
+
+    /// Create table for upgrade_log
+        $dbman->create_table($table);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008030600);
+    }
+
     if ($result && $oldversion < 2008030700) {
         upgrade_set_timeout(60*20); // this may take a while
 
@@ -1373,6 +1405,7 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($result && $oldversion < 2009012901) {
+        // NOTE: this table may already exist, see beginning of this file ;-)
 
     /// Define table upgrade_log to be created
         $table = new xmldb_table('upgrade_log');

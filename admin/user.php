@@ -103,14 +103,10 @@
             $aclrecord->mnet_host_id = $user->mnethostid;
             $aclrecord->username = $user->username;
             $aclrecord->accessctrl = $accessctrl;
-            if (!$DB->insert_record('mnet_sso_access_control', $aclrecord)) {
-                print_error('dbnotinsert', 'debug', '', 'the MNET access control list');
-            }
+            $DB->insert_record('mnet_sso_access_control', $aclrecord);
         } else {
             $aclrecord->accessctrl = $accessctrl;
-            if (!$DB->update_record('mnet_sso_access_control', $aclrecord)) {
-                print_error('dbnotupdate', 'debug', '', 'the MNET access control list');
-            }
+            $DB->update_record('mnet_sso_access_control', $aclrecord);
         }
         $mnethosts = $DB->get_records('mnet_host', null, 'id', 'id,wwwroot,name');
         notify("MNET access control list updated: username '$user->username' from host '"
