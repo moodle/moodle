@@ -14,12 +14,10 @@ $string['admindirname'] = 'Dossier d\'administration';
 $string['admindirsetting'] = 'Quelques hébergeurs web utilisent le dossier « /admin » comme URL spéciale vous permettant d\'accéder à un tableau de bord ou autre chose. Ceci entre en collision avec l\'emplacement standard des pages d\'administration de Moodle. Vous pouvez corriger cela en renommant le dossier d\'administration de votre installation de Moodle, en inscrivant ici le nouveau nom, par exemple <br /> <br /><b>moodleadmin</b>.<br /> <br />Les liens vers l\'administration de Moodle seront ainsi corrigés.</p>';
 $string['caution'] = 'Attention';
 $string['chooselanguage'] = 'Choisissez une langue';
-$string['closewindow'] = 'Fermer cette fenêtre';
 $string['compatibilitysettings'] = 'Vérification de votre configuration PHP...';
 $string['configfilenotwritten'] = 'Le programme d\'installation n\'a pas pu créer automatiquement le fichier de configuration « config.php » contenant vos réglages, vraisemblablement parce que le dossier principal de Moodle n\'est pas accessible en écriture. Vous pouvez copier le code ci-dessous dans un fichier appelé « config.php », que vous placerez à l\'intérieur du dossier principal de Moodle (là où se trouve un fichier « config-dist.php »).';
 $string['configfilewritten'] = 'Le fichier « config.php » a été créé avec succès';
 $string['configurationcomplete'] = 'Configuration terminée';
-$string['continue'] = 'Continuer';
 $string['database'] = 'Base de données';
 $string['databasesettings'] = 'La base de données dans laquelle sont enregistrées la plupart des données utilisées par Moodle doit maintenant être configurée. Cette base de données doit avoir déjà été créée sur le serveur, ainsi qu\'un nom d\'utilisateur et un mot de passe permettant d\'y accéder.<br /><br /> <br />
 <b>Type :</b> mysql ou postgres7<br />
@@ -43,8 +41,6 @@ $string['directorysettings'] = '<p>Veuillez confirmer les emplacements de cette 
 $string['dirroot'] = 'Dossier Moodle';
 $string['dirrooterror'] = 'Le dossier Moodle semble incorrect : aucune installation de Moodle ne se trouve dans ce dossier. Le dossier Moodle indiqué ci-dessous est vraisemblablement correct.';
 $string['download'] = 'Télécharger';
-$string['doyouagree'] = 'Avez-vous lu et compris ces conditions ?';
-$string['error'] = 'Erreur';
 $string['fail'] = 'Échec';
 $string['fileuploads'] = 'Téléchargement des fichiers';
 $string['fileuploadserror'] = 'Le téléchargement des fichiers sur le serveur doit être activé';
@@ -52,9 +48,7 @@ $string['fileuploadshelp'] = '<p>Le téléchargement des fichiers semble désact
 $string['gdversion'] = 'Version de GD';
 $string['gdversionerror'] = 'La librairie GD doit être activée pour traiter et créer les images';
 $string['gdversionhelp'] = '<p>Il semble que la librairie GD n\'est pas installée sur votre serveur.</p> <p>GD est une librairie requise par PHP pour permettre à Moodle de traiter les images (comme les photos des profils) et de créer des graphiques (par exemple ceux des historiques). Moodle fonctionnera sans GD, mais ces fonctionnalités ne seront pas disponibles pour vous.</p> <p>Sous Unix ou Mac OS X, pour ajouter GD à PHP, vous pouvez compiler PHP avec l\'option <i>--with-gd</i>.</p> <p>Sous Windows, on peut normalement modifier le fichier « php.ini » en enlevant le commentaire de la ligne référençant la librairie php_gd2.dll.</p>';
-$string['help'] = 'Aide';
 $string['installation'] = 'Installation';
-$string['language'] = 'Langue';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Ce réglage doit être désactivé';
 $string['magicquotesruntimehelp'] = '<p>Le réglage « Magic quotes runtime » doit être désactivé pour que Moodle fonctionne correctement.</p> <p>Il est normalement désactivé par défaut. Voyez le paramètre <b>magic_quotes_runtime</b> du fichier « php.ini » de votre serveur.</p> <p>Si vous n\'avez pas accès à votre fichier « php.ini », vous pouvez créer dans le dossier principal de Moodle un fichier « .htaccess » contenant cette ligne : <p><blockquote>php_value magic_quotes_runtime Off</blockquote></p>';
@@ -66,16 +60,11 @@ $string['memorylimithelp'] = '<p>La limite de mémoire de PHP sur votre serveur 
 <li>si vous avez accès à votre fichier « php.ini », vous pouvez attribuer au paramètre <b>memory_limit</b> une valeur comme 40M. Si vous n\'y avez pas accès, demandez à l\'administrateur de le faire pour vous ;</li>
 <li>sur certains serveur, vous pouvez créer dans le dossier principal de Moodle un fichier « .htaccess » contenant cette ligne : <p><blockquote>php_value memory_limit 40M</blockquote></p> <p>Cependant, sur certains serveur, cela empêchera le fonctionnement correcte de <b>tous</b> les fichiers PHP (vous verrez s\'afficher des erreurs lors de la consultation de pages). Dans ce cas, vous devrez supprimer le fichier « .htaccess ».</li>
 </ol>';
-$string['name'] = 'Nom';
-$string['next'] = 'Suivant';
-$string['ok'] = 'Ok';
 $string['parentlanguage'] = 'fr_utf8';
 $string['pass'] = 'Réussi';
-$string['password'] = 'Mot de passe';
 $string['phpversion'] = 'Version de PHP';
 $string['phpversionerror'] = 'La version du programme PHP doit être au moins 4.1.0';
 $string['phpversionhelp'] = '<p>Moodle nécessite au minimum la version 4.1.0 de PHP.</p> <p>Vous utilisez actuellement la version $a.</p> <p>Pour que Moodle fonctionne, vous devez mettre à jour PHP ou aller chez un hébergeur ayant une version récente de PHP.</p>';
-$string['previous'] = 'Précédent';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle risque de rencontrer des problèmes lorsque le mode « safe mode » est activé';
 $string['safemodehelp'] = '<p>Moodle risque de rencontrer un certain nombre de problèmes lorsque le mode « safe mode » est activé. Il pourra notamment être incapable de créer de nouveaux fichiers.</p> <p>Ce mode n\'est habituellement activé que chez certains hébergeurs paranoïaques. Il vous faudra donc trouver un autre hébergeur pour votre site Moodle.</p> <p>Vous pouvez continuer l\'installation de Moodle, mais attendez-vous à des problèmes ultérieurement.</p>';
@@ -85,7 +74,6 @@ $string['sessionautostarthelp'] = '<p>Moodle a besoin du support des sessions. i
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Français - Canada';
-$string['user'] = 'Utilisateur';
 $string['wwwroot'] = 'Adresse web';
 $string['wwwrooterror'] = 'L\'adresse web indiquée semble incorrecte : aucune installation de Moodle ne se trouve à cette adresse.';
 ?>
