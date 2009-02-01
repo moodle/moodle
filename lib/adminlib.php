@@ -739,29 +739,40 @@ class admin_category implements parentable_part_of_admin_tree {
 }
 
 class admin_root extends admin_category {
-    /**
-     * list of errors
-     */
+    /** list of errors */
     public $errors;
 
-    /**
-     * search query
-     */
+    /** search query */
     public $search;
 
-    /**
-     * full tree flag - true means all settings required, false onlypages required
-     */
+    /** full tree flag - true means all settings required, false onlypages required */
     public $fulltree;
 
+    /** flag indicating loaded tree */
     public $loaded;
 
+    /** site custom defaults overriding defaults in setings files */
+    public $custom_defaults;
+
     public function __construct($fulltree) {
+        global $CFG;
+
         parent::__construct('root', get_string('administration'), false);
         $this->errors   = array();
         $this->search   = '';
         $this->fulltree = $fulltree;
         $this->loaded   = false;
+
+        // load custom defaults if found
+        $this->custom_defaults = null;
+        $defaultsfile = "$CFG->dirroot/local/defaults.php";
+        if (is_readable($defaultsfile)) {
+            $defaults = array();
+            include($defaultsfile);
+            if (is_array($defaults) and count($defaults)) {
+                $this->custom_defaults = $defaults;
+            }
+        }
     }
 
     public function purge_children($requirefulltree) {
@@ -1130,7 +1141,9 @@ abstract class admin_setting {
         }
         if (!empty($bits)) {
             $this->plugin = array_pop($bits);
-            if (!preg_match('/^[a-zA-Z0-9_]+$/', $this->plugin)) {
+            if ($this->plugin === 'moodle') {
+                $this->plugin = null;
+            } else if (!preg_match('/^[a-zA-Z0-9_]+$/', $this->plugin)) {
                 throw new moodle_exception('invalidadminsettingname', '', '', $name);
             }
         }
@@ -1205,6 +1218,15 @@ abstract class admin_setting {
      * @return mixed array or string depending on instance; NULL means no default, user must supply
      */
     public function get_defaultsetting() {
+        $adminroot =  admin_get_root(false, false);
+        if (!empty($adminroot->custom_defaults)) {
+            $plugin = is_null($this->plugin) ? 'moodle' : $this->plugin;
+            if (isset($adminroot->custom_defaults[$plugin])) {
+                if (array_key_exists($this->name, $adminroot->custom_defaults[$plugin])) { // null is valid valie here ;-)
+                    return $adminroot->custom_defaults[$plugin][$this->name];
+                }
+            }
+        }
         return $this->defaultsetting;
     }
 
@@ -2155,10 +2177,11 @@ class admin_setting_users_with_capability extends admin_setting_configmultiselec
 
     public function get_defaultsetting() {
         $this->load_choices();
-        if (empty($this->defaultsetting)) {
+        $defaultsetting = parent::get_defaultsetting();
+        if (empty($defaultsetting)) {
             return array('$@NONE@$');
-        } else if (array_key_exists($this->defaultsetting, $this->choices)) {
-            return $this->defaultsetting;
+        } else if (array_key_exists($defaultsetting, $this->choices)) {
+            return $defaultsetting;
         } else {
             return '';
         }
@@ -3291,10 +3314,11 @@ class admin_setting_special_registerauth extends admin_setting_configselect {
         parent::__construct('registerauth', get_string('selfregistration', 'auth'), get_string('selfregistration_help', 'auth'), '', null);
     }
 
-    public function get_defaultsettings() {
+    public function get_defaultsetting() {
         $this->load_choices();
-        if (array_key_exists($this->defaultsetting, $this->choices)) {
-            return $this->defaultsetting;
+        $defaultsetting = parent::get_defaultsetting();
+        if (array_key_exists($defaultsetting, $this->choices)) {
+            return $defaultsetting;
         } else {
             return '';
         }
