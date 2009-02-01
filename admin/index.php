@@ -111,7 +111,9 @@
             print_header($strlicense, $strlicense, $navigation, "", "", false, "&nbsp;", "&nbsp;");
             print_heading("<a href=\"http://moodle.org\">Moodle</a> - Modular Object-Oriented Dynamic Learning Environment");
             print_heading(get_string('copyrightnotice'));
-            print_box(text_to_html(get_string('gpl')), 'copyrightnotice');
+            $copyrightnotice = text_to_html(get_string('gpl'));
+            $copyrightnotice = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $copyrightnotice); // extremely ugly validation hack
+            print_box($copyrightnotice, 'copyrightnotice');
             echo "<br />";
             notice_yesno(get_string('doyouagree'), "index.php?agreelicense=1&lang=$CFG->lang",
                                                    "http://docs.moodle.org/en/License");
@@ -225,7 +227,7 @@
                     print_string('langpackwillbeupdated', 'admin');
                     print_box_end();
                 }
-                print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1');
+                print_continue('index.php?confirmupgrade=1&confirmrelease=1');
             }
 
             print_footer('none');
