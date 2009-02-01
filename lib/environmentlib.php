@@ -122,6 +122,8 @@ function check_moodle_environment($version, &$environment_results, $print_table=
  * @param array environment_results array of results gathered
  */
 function print_moodle_environment($result, $environment_results) {
+    global $CFG;
+
 /// Get some strings
     $strname = get_string('name');
     $strinfo = get_string('info');
@@ -159,6 +161,7 @@ function print_moodle_environment($result, $environment_results) {
     foreach ($environment_results as $environment_result) {
         $errorline   = false;
         $warningline = false;
+        $stringtouse = '';
         if ($continue) {
             $type = $environment_result->getPart();
             $info = $environment_result->getInfo();
@@ -227,7 +230,11 @@ function print_moodle_environment($result, $environment_results) {
             if (!empty($info)){
                $linkparts[] = $info;
             }
-            $report = doc_link(join($linkparts, '/'), get_string($stringtouse, 'admin', $rec));
+            if (empty($CFG->docroot)) {
+                $report = get_string($stringtouse, 'admin', $rec);
+            } else {
+                $report = doc_link(join($linkparts, '/'), get_string($stringtouse, 'admin', $rec));
+            }
 
 
         /// Format error or warning line
@@ -430,7 +437,6 @@ function get_environment_for_version($version) {
  * @return array array of results encapsulated in one environment_result object
  */
 function environment_check($version) {
-
     global $CFG;
 
 /// Normalize the version requested
@@ -439,7 +445,7 @@ function environment_check($version) {
     $results = array(); //To store all the results
 
 /// Only run the moodle versions checker on upgrade, not on install
-    if (empty($CFG->running_installer)) {
+    if (!empty($CFG->version)) {
         $results[] = environment_check_moodle($version);
     }
     $results[] = environment_check_unicode($version);

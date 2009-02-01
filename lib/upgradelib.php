@@ -817,6 +817,15 @@ function upgrade_setup_debug($starting) {
     }
 }
 
+function print_upgrade_reload($url) {
+    global $CFG;
+
+    echo "<br />";
+    echo '<div class="continuebutton">';
+    echo '<a href="'.$url.'" title="'.get_string('reload').'" ><img src="'.$CFG->pixpath.'/i/reload.gif" alt="" /> '.get_string('reload').'</a>';
+    echo '</div><br />';
+}
+
 function print_upgrade_separator() {
     if (!CLI_SCRIPT) {
         echo '<hr />';

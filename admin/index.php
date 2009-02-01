@@ -102,6 +102,9 @@
         $CFG->debug = DEBUG_MINIMAL;
         error_reporting($CFG->debug);
 
+    /// fake some settings
+        $CFG->docroot = 'http://docs.moodle.org';
+
     /// remove current session content completely
         session_get_instance()->terminate_current();
 
@@ -116,15 +119,25 @@
             notice_yesno(get_string('doyouagree'), "index.php?agreelicense=1&lang=$CFG->lang",
                                                    "http://docs.moodle.org/en/License");
             print_footer('none');
-            exit;
+            die;
         }
         if (empty($confirmrelease)) {
             $strcurrentrelease = get_string("currentrelease");
             $navigation = build_navigation(array(array('name'=>$strcurrentrelease, 'link'=>null, 'type'=>'misc')));
             print_header($strcurrentrelease, $strcurrentrelease, $navigation, "", "", false, "&nbsp;", "&nbsp;");
             print_heading("Moodle $release");
-            print_box(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'), 'generalbox boxaligncenter boxwidthwide');
-            print_continue("index.php?agreelicense=1&amp;confirmrelease=1&lang=$CFG->lang");
+            $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes');
+            $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
+            print_box($releasenoteslink, 'generalbox boxaligncenter boxwidthwide');
+
+            require_once($CFG->libdir.'/environmentlib.php');
+            if (!check_moodle_environment($release, $environment_results, true)) {
+                print_upgrade_reload("index.php?agreelicense=1&lang=$CFG->lang");
+            } else {
+                notify(get_string('environmentok', 'admin'), 'notifysuccess');
+                print_continue("index.php?agreelicense=1confirmrelease=1&lang=$CFG->lang");
+            }
+
             print_footer('none');
             die;
         }
@@ -209,22 +222,18 @@
             $navigation = build_navigation(array(array('name'=>$strcurrentrelease, 'link'=>null, 'type'=>'misc')));
             print_header($strcurrentrelease, $strcurrentrelease, $navigation, "", "", false, "&nbsp;", "&nbsp;");
             print_heading("Moodle $release");
-            print_box(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'));
+            $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes');
+            $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
+            print_box($releasenoteslink);
 
             require_once($CFG->libdir.'/environmentlib.php');
             print_heading(get_string('environment', 'admin'));
             if (!check_moodle_environment($release, $environment_results, true)) {
-                if (empty($CFG->skiplangupgrade)) {
-                    print_box_start('generalbox', 'notice'); // MDL-8330
-                    print_string('langpackwillbeupdated', 'admin');
-                    print_box_end();
-                }
-                notice_yesno(get_string('environmenterrorupgrade', 'admin'),
-                             'index.php?confirmupgrade=1&amp;confirmrelease=1', 'index.php');
+                print_upgrade_reload('index.php?confirmupgrade=1');
             } else {
                 notify(get_string('environmentok', 'admin'), 'notifysuccess');
                 if (empty($CFG->skiplangupgrade)) {
-                    print_box_start('generalbox', 'notice'); // MDL-8330
+                    print_box_start('generalbox', 'notice');
                     print_string('langpackwillbeupdated', 'admin');
                     print_box_end();
                 }
@@ -239,14 +248,11 @@
             $navigation = build_navigation(array(array('name'=>$strplugincheck, 'link'=>null, 'type'=>'misc')));
             print_header($strplugincheck, $strplugincheck, $navigation, "", "", false, "&nbsp;", "&nbsp;");
             print_heading($strplugincheck);
-            print_box_start('generalbox', 'notice'); // MDL-8330
+            print_box_start('generalbox', 'notice');
             print_string('pluginchecknotice');
             print_box_end();
             print_plugin_tables();
-            echo "<br />";
-            echo '<div class="continuebutton">';
-            echo '<a href="index.php?confirmupgrade=1&amp;confirmrelease=1" title="'.get_string('reload').'" ><img src="'.$CFG->pixpath.'/i/reload.gif" alt="" /> '.get_string('reload').'</a>';
-            echo '</div><br />';
+            print_upgrade_reload('index.php?confirmupgrade=1&amp;confirmrelease=1');
             print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1&amp;confirmplugincheck=1');
             print_footer('none');
             die();
@@ -297,8 +303,8 @@
     }
 
 /// upgrade all plugins types
-    $plugintypes = get_plugin_types();
     try {
+        $plugintypes = get_plugin_types();
         foreach ($plugintypes as $type=>$location) {
             upgrade_plugins($type, $location, 'print_upgrade_part_start', 'print_upgrade_part_end');
         }
@@ -309,6 +315,7 @@
 /// Check for changes to RPC functions
     if ($CFG->mnet_dispatcher_mode != 'off') {
         try {
+            // this needs a full rewrite, sorry to mention that :-(
             require_once("$CFG->dirroot/$CFG->admin/mnet/adminlib.php");
             upgrade_RPC_functions();  // Return here afterwards
         } catch (Exception $ex) {
