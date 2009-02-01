@@ -10,6 +10,8 @@ if (file_exists('./config.php')) {
     $configfile = './config.php';
 }
 
+die('Working on a new installer, please create config.php manually. Sorry for the complication, skodak ;-)');
+
 ///==========================================================================//
 /// We are doing this in stages
 define ('WELCOME',            0); /// 0. Welcome and language settings
