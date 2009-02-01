@@ -102,13 +102,15 @@
     /// fake some settings
         $CFG->docroot = 'http://docs.moodle.org';
 
+        $strinstallation = get_string('installation', 'install');
+
     /// remove current session content completely
         session_get_instance()->terminate_current();
 
         if (empty($agreelicense)) {
             $strlicense = get_string('license');
             $navigation = build_navigation(array(array('name'=>$strlicense, 'link'=>null, 'type'=>'misc')));
-            print_header($strlicense, $strlicense, $navigation, "", "", false, "&nbsp;", "&nbsp;");
+            print_header($strinstallation, $strinstallation, $navigation, "", "", false, "&nbsp;", "&nbsp;");
             print_heading("<a href=\"http://moodle.org\">Moodle</a> - Modular Object-Oriented Dynamic Learning Environment");
             print_heading(get_string('copyrightnotice'));
             $copyrightnotice = text_to_html(get_string('gpl'));
@@ -123,7 +125,7 @@
         if (empty($confirmrelease)) {
             $strcurrentrelease = get_string("currentrelease");
             $navigation = build_navigation(array(array('name'=>$strcurrentrelease, 'link'=>null, 'type'=>'misc')));
-            print_header($strcurrentrelease, $strcurrentrelease, $navigation, "", "", false, "&nbsp;", "&nbsp;");
+            print_header($strinstallation, $strinstallation, $navigation, "", "", false, "&nbsp;", "&nbsp;");
             print_heading("Moodle $release");
             $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes');
             $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
@@ -141,10 +143,10 @@
             die;
         }
 
-        $strdatabasesetup    = get_string("databasesetup");
+        $strdatabasesetup = get_string("databasesetup");
         $navigation = build_navigation(array(array('name'=>$strdatabasesetup, 'link'=>null, 'type'=>'misc')));
 
-        print_header($strdatabasesetup, $strdatabasesetup, $navigation,
+        print_header($strinstallation, $strinstallation, $navigation,
                     "", upgrade_get_javascript(), false, "&nbsp;", "&nbsp;");
 
         if (!$DB->setup_is_unicodedb()) {
