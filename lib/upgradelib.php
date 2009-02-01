@@ -886,8 +886,7 @@ function print_upgrade_part_end($plugin, $installation) {
 
 function upgrade_get_javascript() {
     global $CFG;
-
-    return '<script type="text/javascript" src="'.$CFG->wwwroot.'/lib/scroll_to_errors.js"></script>';
+    return '<script type="text/javascript" src="'.$CFG->wwwroot.'/lib/scroll_to_page_end.js"></script>';
 }
 
 
