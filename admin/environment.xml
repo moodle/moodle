@@ -270,13 +270,30 @@
           <ON_ERROR message="ziprequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
-    </PHP_EXTENSIONS>
-    <CUSTOM_CHECKS>
-      <CUSTOM_CHECK file="lib/customcheckslib.php" function="php_check_register_globals" level="required">
+      <PHP_EXTENSION name="gd" level="optional">
         <FEEDBACK>
-          <ON_CHECK message="globalswarning" />
+          <ON_CHECK message="gdrecommended" />
         </FEEDBACK>
-      </CUSTOM_CHECK>
+      </PHP_EXTENSION>
+    </PHP_EXTENSIONS>
+    <PHP_SETTINGS>
+      <PHP_SETTING name="memory_limit" value="40M" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="settingmemorylimit" />
+        </FEEDBACK>
+      </PHP_SETTING>
+      <PHP_SETTING name="safe_mode" value="0" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="settingsafemode" />
+        </FEEDBACK>
+      </PHP_SETTING>
+      <PHP_SETTING name="file_uploads" value="1" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="settingfileuploads" />
+        </FEEDBACK>
+      </PHP_SETTING>
+    </PHP_SETTINGS>
+    <CUSTOM_CHECKS>
     </CUSTOM_CHECKS>
   </MOODLE>
 </COMPATIBILITY_MATRIX>

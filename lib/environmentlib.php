@@ -50,6 +50,7 @@
     define('NO_CUSTOM_CHECK_FOUND',             12);
     define('CUSTOM_CHECK_FILE_MISSING',         13);
     define('CUSTOM_CHECK_FUNCTION_MISSING',     14);
+    define('NO_PHP_SETTINGS_NAME_FOUND',        15);
 
 /**
  * This function will perform the whole check, returning
@@ -111,7 +112,6 @@ function check_moodle_environment($version, &$environment_results, $print_table=
     if ($print_table) {
         print_moodle_environment($result && $status, $environment_results);
     }
-
     return ($result && $status);
 }
 
@@ -193,6 +193,14 @@ function print_moodle_environment($result, $environment_results) {
                         $stringtouse = 'environmentrequirecustomcheck';
                     } else {
                         $stringtouse = 'environmentrecommendcustomcheck';
+                    }
+                } else if ($environment_result->getPart() == 'php_setting') {
+                    if ($status) {
+                        $stringtouse = 'environmentsettingok';
+                    } else if ($environment_result->getLevel() == 'required') {
+                        $stringtouse = 'environmenmustfixsetting';
+                    } else {
+                        $stringtouse = 'environmenshouldfixsetting';
                     }
                 } else {
                     if ($environment_result->getLevel() == 'required') {
@@ -455,6 +463,9 @@ function environment_check($version) {
     $phpext_results = environment_check_php_extensions($version);
     $results = array_merge($results, $phpext_results);
 
+    $phpsetting_results = environment_check_php_settings($version);
+    $results = array_merge($results, $phpsetting_results);
+
     $custom_results = environment_custom_checks($version);
     $results = array_merge($results, $custom_results);
 
@@ -511,6 +522,81 @@ function environment_check_php_extensions($version) {
 
     /// Do any actions defined in the XML file.
         process_environment_result($extension, $result);
+
+    /// Add the result to the array of results
+        $results[] = $result;
+    }
+
+
+    return $results;
+}
+
+/**
+ * This function will check if php extensions requirements are satisfied
+ * @param string $version xml version we are going to use to test this server
+ * @return array array of results encapsulated in one environment_result object
+ */
+function environment_check_php_settings($version) {
+
+    $results = array();
+
+/// Get the enviroment version we need
+    if (!$data = get_environment_for_version($version)) {
+    /// Error. No version data found
+        $result = new environment_results('php_setting');
+        $result->setStatus(false);
+        $result->setErrorCode(NO_VERSION_DATA_FOUND);
+        return $result;
+    }
+
+/// Extract the php_setting part
+    if (!isset($data['#']['PHP_SETTINGS']['0']['#']['PHP_SETTING'])) {
+    /// No PHP section found - ignore
+        return $results;
+    }
+/// Iterate over settings checking them and creating the needed environment_results
+    foreach($data['#']['PHP_SETTINGS']['0']['#']['PHP_SETTING'] as $setting) {
+        $result = new environment_results('php_setting');
+    /// Check for level
+        $level = get_level($setting);
+        $result->setLevel($level);
+    /// Check for extension name
+        if (!isset($setting['@']['name'])) {
+            $result->setStatus(false);
+            $result->setErrorCode(NO_PHP_SETTINGS_NAME_FOUND);
+        } else {
+            $setting_name  = $setting['@']['name'];
+            $setting_value = $setting['@']['value'];
+            $result->setInfo($setting_name);
+
+            if ($setting_name == 'memory_limit') {
+                $current = ini_get('memory_limit');
+                if ($current == -1) {
+                    $result->setStatus(true);
+                } else {
+                    $current  = get_real_size($current);
+                    $minlimit = get_real_size($setting_value);
+                    if ($current < $minlimit) {
+                        @ini_set('memory_limit', $setting_value);
+                        $current = ini_get('memory_limit');
+                        $current = get_real_size($current);
+                    }
+                    $result->setStatus($current >= $minlimit);
+                }
+
+            } else {
+                $current = ini_get_bool($setting_name);
+            /// The name exists. Just check if it's an installed extension
+                if ($current == $setting_value) {
+                    $result->setStatus(true);
+                } else {
+                    $result->setStatus(false);
+                }
+            }
+        }
+
+    /// Do any actions defined in the XML file.
+        process_environment_result($setting, $result);
 
     /// Add the result to the array of results
         $results[] = $result;
@@ -947,7 +1033,7 @@ function process_environment_messages($xml, &$result) {
  */
 class environment_results {
 
-    var $part;            //which are we checking (database, php, php_extension)
+    var $part;            //which are we checking (database, php, php_extension, php_extension)
     var $status;          //true/false
     var $error_code;      //integer. See constants at the beginning of the file
     var $level;           //required/optional
