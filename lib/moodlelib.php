@@ -820,7 +820,7 @@ function unset_all_config_for_plugin($plugin) {
 
 /**
  * Use this funciton to get a list of users from a config setting of type admin_setting_users_with_capability.
- * @param string $value the value of the config setting. 
+ * @param string $value the value of the config setting.
  * @param string $capability the capability - must match the one passed to the admin_setting_users_with_capability constructor.
  * @return array of user objects.
  */
@@ -2037,11 +2037,11 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
         // in for rest of session, no need to do conditional checks
         if(!array_key_exists($cm->id,$SESSION->conditionaccessok)) {
             // Get condition info (does a query for the availability table)
-            require_once($CFG->libdir.'/conditionlib.php');        
+            require_once($CFG->libdir.'/conditionlib.php');
             $ci=new condition_info($cm,CONDITION_MISSING_EXTRATABLE);
             // Check condition for user (this will do a query if the availability
             // information depends on grade or completion information)
-            if($ci->is_available($junk) || 
+            if($ci->is_available($junk) ||
                 has_capability('moodle/course:viewhiddenactivities', $COURSE->context)) {
                 $SESSION->conditionaccessok[$cm->id]=true;
             } else {
@@ -7685,7 +7685,7 @@ function cleanremoteaddr($addr, $compress=false) {
         return null;
     }
     unset($parts[0]);
-    
+
     foreach ($parts as $key=>$match) {
         if ($match > 255) {
             return null;
