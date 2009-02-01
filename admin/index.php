@@ -98,9 +98,6 @@
 
     if (!$maintables) {
     /// hide errors from headers in case debug enabled in config.php
-        $origdebug = $CFG->debug;
-        $CFG->debug = DEBUG_MINIMAL;
-        error_reporting($CFG->debug);
 
     /// fake some settings
         $CFG->docroot = 'http://docs.moodle.org';
@@ -135,7 +132,7 @@
                 print_upgrade_reload("index.php?agreelicense=1&lang=$CFG->lang");
             } else {
                 notify(get_string('environmentok', 'admin'), 'notifysuccess');
-                print_continue("index.php?agreelicense=1confirmrelease=1&lang=$CFG->lang");
+                print_continue("index.php?agreelicense=1&confirmrelease=1&lang=$CFG->lang");
             }
 
             print_footer('none');
@@ -147,10 +144,6 @@
 
         print_header($strdatabasesetup, $strdatabasesetup, $navigation,
                     "", upgrade_get_javascript(), false, "&nbsp;", "&nbsp;");
-
-    /// return to original debugging level
-        $CFG->debug = $origdebug;
-        error_reporting($CFG->debug);
 
         if (!$DB->setup_is_unicodedb()) {
             if (!$DB->change_db_encoding()) {
@@ -204,11 +197,6 @@
         $a->newversion = "$release ($version)";
         $strdatabasechecking = get_string("databasechecking", "", $a);
 
-        // hide errors from headers in case debug is enabled
-        $origdebug = $CFG->debug;
-        $CFG->debug = DEBUG_MINIMAL;
-        error_reporting($CFG->debug);
-
         if (empty($confirmupgrade)) {
             $navigation = build_navigation(array(array('name'=>$strdatabasechecking, 'link'=>null, 'type'=>'misc')));
             print_header($strdatabasechecking, $stradministration, $navigation, "", "", false, "&nbsp;", "&nbsp;");
@@ -258,10 +246,6 @@
             die();
 
         } else {
-        /// return to original debugging level
-            $CFG->debug = $origdebug;
-            error_reporting($CFG->debug);
-
         /// Upgrade current language pack if we can
             if (empty($CFG->skiplangupgrade)) {
                 upgrade_language_pack();
