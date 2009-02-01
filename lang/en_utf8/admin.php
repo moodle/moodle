@@ -311,6 +311,7 @@ $string['frontpagerestore'] = 'Front Page restore';
 $string['frontpageroles'] = 'Front Page roles';
 $string['frontpagesettings'] = 'Front Page settings';
 $string['fullnamedisplay'] = 'Full Name Format';
+$string['gdrecommended'] = 'GD extension is used for conversion of images, some features such as user progile images will not be available if missing.';
 $string['gdversion'] = 'GD version';
 $string['generalsettings'] = 'General settings';
 $string['globalsquoteswarning'] = '<p><strong>Security Warning</strong>: to operate properly, Moodle requires <br />that you make certain changes to your current PHP settings.<p/><p>You <em>must</em> set <code>register_globals=off</code> and/or <code>magic_quotes_gpc=on</code>. <br />If possible, you should set <code>register_globals=off</code> to improve general <br /> server security, setting <code>magic_quotes_gpc=on</code> is also recommended.<p/><p>These settings are controlled by editing your <code>php.ini</code>, Apache/IIS <br />configuration or <code>.htaccess</code> file.</p>';
