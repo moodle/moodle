@@ -4039,7 +4039,7 @@ function admin_externalpage_print_header($focus='') {
 
     define('ADMIN_EXT_HEADER_PRINTED', 'true');
 
-    if (!empty($SITE->fullname)) {
+    if (!empty($SITE->fullname) and !empty($SITE->shortname)) {
         $pageblocks = blocks_setup($PAGE);
 
         $preferred_width_left = bounded_number(BLOCK_L_MIN_WIDTH,
@@ -4085,7 +4085,10 @@ function admin_externalpage_print_header($focus='') {
             }
         }
     } else {
-        print_header();
+        $strinstallation = get_string('installation', 'install');
+        $strsettings = get_string('settings');
+        $navigation = build_navigation(array(array('name'=>$strsettings, 'link'=>null, 'type'=>'misc')));
+        print_header($strinstallation, $strinstallation, $navigation, "", "", false, "&nbsp;", "&nbsp;");
     }
 }
 

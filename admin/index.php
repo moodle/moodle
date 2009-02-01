@@ -145,9 +145,7 @@
 
         $strdatabasesetup = get_string("databasesetup");
         $navigation = build_navigation(array(array('name'=>$strdatabasesetup, 'link'=>null, 'type'=>'misc')));
-
-        print_header($strinstallation, $strinstallation, $navigation,
-                    "", upgrade_get_javascript(), false, "&nbsp;", "&nbsp;");
+        print_header($strinstallation, $strinstallation, $navigation, "", upgrade_get_javascript(), false, "&nbsp;", "&nbsp;");
 
         if (!$DB->setup_is_unicodedb()) {
             if (!$DB->change_db_encoding()) {

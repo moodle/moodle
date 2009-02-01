@@ -196,8 +196,10 @@
             print_heading($userfullname);
         }
     } else if (!empty($USER->newadminuser)) {
+        $strinstallation = get_string('installation', 'install');
         $strprimaryadminsetup = get_string('primaryadminsetup');
-        print_header($strprimaryadminsetup, $strprimaryadminsetup);
+        $navigation = build_navigation(array(array('name'=>$strprimaryadminsetup, 'link'=>null, 'type'=>'misc')));
+        print_header($strinstallation, $strinstallation, $navigation, "", "", false, "&nbsp;", "&nbsp;");
         print_simple_box(get_string('configintroadmin', 'admin'), 'center', '50%');
         echo '<br />';
     } else {

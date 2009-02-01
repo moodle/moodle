@@ -3707,7 +3707,7 @@ function build_navigation($extranavlinks, $cm = null) {
     $navlinks = array();
 
     //Site name
-    if ($SITE) {
+    if (!empty($SITE->shortname)) {
         $navlinks[] = array(
                 'name' => format_string($SITE->shortname),
                 'link' => "$CFG->wwwroot/",
