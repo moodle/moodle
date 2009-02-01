@@ -85,6 +85,24 @@ function default_exception_handler($ex) {
 }
 
 /**
+ * This function verifies the sanity of PHP configuration
+ * and stops execution if anything critical found.
+ */
+function setup_validate_php_configuration() {
+   // this must be very fast - no slow checks here!!!
+
+   if (ini_get_bool('register_globals')) {
+       print_error('globalswarning', 'admin');
+   }
+   if (ini_get_bool('session.auto_start')) {
+       print_error('sessionautostartwarning', 'admin');
+   }
+   if (ini_get_bool('magic_quotes_runtime')) {
+       print_error('fatalmagicquotesruntime', 'admin');
+   }
+}
+
+/**
  * Initialises $FULLME and friends.
  * @return void
  */

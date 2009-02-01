@@ -86,12 +86,6 @@ global $FULLSCRIPT;
 /** Relative moodle script path "/course/view.php" */
 global $SCRIPT;
 
-/// First try to detect some attacks on older buggy PHP versions
-    if (isset($_REQUEST['GLOBALS']) || isset($_COOKIE['GLOBALS']) || isset($_FILES['GLOBALS'])) {
-        die('Fatal: Illegal GLOBALS overwrite attempt detected!');
-    }
-
-
     if (!isset($CFG->wwwroot)) {
         trigger_error('Fatal: $CFG->wwwroot is not configured! Exiting.');
         die;
@@ -169,6 +163,9 @@ global $SCRIPT;
 
 /// set handler for uncought exceptions - equivalent to print_error() call
     set_exception_handler('default_exception_handler');
+
+/// make sure PHP is not severly misconfigured
+    setup_validate_php_configuration();
 
 /// Connect to the database
     setup_DB();

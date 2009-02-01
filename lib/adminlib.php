@@ -244,9 +244,7 @@ function admin_critical_warnings_present() {
 
     if (!isset($SESSION->admin_critical_warning)) {
         $SESSION->admin_critical_warning = 0;
-        if (ini_get_bool('register_globals')) {
-            $SESSION->admin_critical_warning = 1;
-        } else if (is_dataroot_insecure(true) === INSECURE_DATAROOT_ERROR) {
+        if (is_dataroot_insecure(true) === INSECURE_DATAROOT_ERROR) {
             $SESSION->admin_critical_warning = 1;
         }
     }

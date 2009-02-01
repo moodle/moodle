@@ -8,9 +8,9 @@
 
 /// Check that PHP is of a sufficient version
 /// Moved here because older versions do not allow while(@ob_end_clean());
-    if (version_compare(phpversion(), "5.2.4") < 0) {
+    if (version_compare(phpversion(), "5.2.8") < 0) {
         $phpversion = phpversion();
-        echo "Sorry, Moodle requires PHP 5.2.4 or later (currently using version $phpversion)";
+        echo "Sorry, Moodle requires PHP 5.2.8 or later (currently using version $phpversion)";
         die;
     }
 
@@ -405,9 +405,8 @@
 
 /// setup critical warnings before printing admin tree block
     $insecuredataroot         = is_dataroot_insecure(true);
-    $register_globals_enabled = ini_get_bool('register_globals');
 
-    $SESSION->admin_critical_warning = ($register_globals_enabled || $insecuredataroot==INSECURE_DATAROOT_ERROR);
+    $SESSION->admin_critical_warning = ($insecuredataroot==INSECURE_DATAROOT_ERROR);
 
     $adminroot = admin_get_root();
 
@@ -431,10 +430,6 @@
 /// Check for any special upgrades that might need to be run
     if (!empty($CFG->upgrade)) {
         print_box(get_string("upgrade$CFG->upgrade", "admin", "$CFG->wwwroot/$CFG->admin/upgrade$CFG->upgrade.php"));
-    }
-
-    if ($register_globals_enabled) {
-        print_box(get_string('globalswarning', 'admin'), 'generalbox adminerror');
     }
 
     if ($insecuredataroot == INSECURE_DATAROOT_WARNING) {
