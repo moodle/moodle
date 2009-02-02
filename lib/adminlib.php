@@ -4623,6 +4623,7 @@ function print_plugin_tables() {
     foreach($installed_blocks as $block) {
         $plugins_installed['blocks'][] = $block->name;
     }
+    $plugins_installed['filter'] = array();
 
     $plugins_ondisk = array();
     $plugins_ondisk['mod'] = get_list_of_plugins('mod', 'db');
