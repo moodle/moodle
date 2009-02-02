@@ -6,11 +6,12 @@
         die;
     }
 
-/// Check that PHP is of a sufficient version
-/// Moved here because older versions do not allow while(@ob_end_clean());
-    if (version_compare(phpversion(), "5.2.8") < 0) {
+/// Check that PHP is of a sufficient version as soon as possible
+    if (version_compare(phpversion(), "5.2.0") < 0) {
         $phpversion = phpversion();
-        echo "Sorry, Moodle requires PHP 5.2.8 or later (currently using version $phpversion)";
+        // do NOT localise - lang strings would not work here and we CAN not move it to later palce
+        echo "Sorry, Moodle 2.0 requires PHP 5.2.8 or later (currently using version $phpversion). ";
+        echo "Please upgrade your server software or use latest Moodle 1.9.x instead.";
         die;
     }
 
