@@ -484,16 +484,18 @@ function report_security_check_riskxss($detailed=false) {
 
     $params = array('capallow'=>CAP_ALLOW);
 
-    $sqlfrom = "FROM (SELECT rcx.* FROM {role_capabilities} rcx JOIN {capabilities} cap ON (cap.name = rcx.capability AND ".$DB->sql_bitand('cap.riskbitmask', RISK_XSS)." <> 0))rc,
+    $sqlfrom = "FROM (SELECT rcx.*
+                       FROM {role_capabilities} rcx
+                       JOIN {capabilities} cap ON (cap.name = rcx.capability AND ".$DB->sql_bitand('cap.riskbitmask', RISK_XSS)." <> 0)
+                       WHERE rcx.permission = :capallow) rc,
                      {context} c,
                      {context} sc,
                      {role_assignments} ra,
                      {user} u
                WHERE c.id = rc.contextid
                      AND (sc.path = c.path OR sc.path LIKE ".$DB->sql_concat('c.path', "'/%'")." OR c.path LIKE ".$DB->sql_concat('sc.path', "'/%'").")
-                     AND u.id = ra.userid
-                     AND ra.contextid = sc.id AND ra.roleid = rc.roleid
-                     AND rc.permission = :capallow AND u.deleted = 0";
+                     AND u.id = ra.userid AND u.deleted = 0
+                     AND ra.contextid = sc.id AND ra.roleid = rc.roleid";
 
     $count = $DB->count_records_sql("SELECT COUNT(DISTINCT u.id) $sqlfrom", $params);
 
@@ -993,15 +995,17 @@ function report_security_check_riskadmin($detailed=false) {
 
     $admins = $DB->get_records_sql($sql, $params);
 
-    $sqlfrom = "FROM {role_capabilities} rc
-                JOIN {context} c ON c.id = rc.contextid
-                JOIN {context} sc ON (sc.path = c.path OR sc.path LIKE ".$DB->sql_concat('c.path', "'/%'").")
-                JOIN {role_assignments} ra ON (ra.contextid = sc.id AND ra.roleid = rc.roleid)
-                JOIN {user} u ON u.id = ra.userid
-               WHERE rc.capability = :doanything
-                     AND rc.permission = :capallow
-                     AND u.deleted = 0
-                     AND ra.contextid <> :syscontextid";
+    $sqlfrom = "FROM (SELECT rcx.*
+                       FROM {role_capabilities} rcx
+                       WHERE rcx.capability = :doanything AND rcx.permission = :capallow) rc,
+                     {context} c,
+                     {context} sc,
+                     {role_assignments} ra,
+                     {user} u
+               WHERE c.id = rc.contextid
+                     AND (sc.path = c.path OR sc.path LIKE ".$DB->sql_concat('c.path', "'/%'")." OR c.path LIKE ".$DB->sql_concat('sc.path', "'/%'").")
+                     AND u.id = ra.userid AND u.deleted = 0
+                     AND ra.contextid = sc.id AND ra.roleid = rc.roleid AND ra.contextid <> :syscontextid";
 
     $count = $DB->count_records_sql("SELECT COUNT(DISTINCT u.id) $sqlfrom", $params);
 
