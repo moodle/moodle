@@ -4097,7 +4097,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     // If the user is a remote mnet user, parse the email text for URL to the
     // wwwroot and modify the url to direct the user's browser to login at their
     // home site (identity provider - idp) before hitting the link itself
-    if ($user->mnethostid > 1) {
+    if (is_mnet_remote_user($user)) {
         require_once($CFG->dirroot.'/mnet/lib.php');
         // Form the request url to hit the idp's jump.php
         if (isset($mnetjumps[$user->mnethostid])) {
