@@ -482,16 +482,18 @@ function report_security_check_riskxss($detailed=false) {
     $result->status  = REPORT_SECURITY_WARNING;
     $result->link    = null;
 
-    $sqlfrom = "FROM (SELECT rcx.* FROM {$CFG->prefix}role_capabilities rcx JOIN {$CFG->prefix}capabilities cap ON (cap.name = rcx.capability AND ".sql_bitand('cap.riskbitmask', RISK_XSS)." <> 0))rc,
+    $sqlfrom = "FROM (SELECT rcx.*
+                        FROM {$CFG->prefix}role_capabilities rcx
+                        JOIN {$CFG->prefix}capabilities cap ON (cap.name = rcx.capability AND ".sql_bitand('cap.riskbitmask', RISK_XSS)." <> 0)
+                       WHERE rcx.permission = ".CAP_ALLOW.") rc,
                      {$CFG->prefix}context c,
                      {$CFG->prefix}context sc,
                      {$CFG->prefix}role_assignments ra,
                      {$CFG->prefix}user u
                WHERE c.id = rc.contextid
                      AND (sc.path = c.path OR sc.path LIKE ".sql_concat('c.path', "'/%'")." OR c.path LIKE ".sql_concat('sc.path', "'/%'").")
-                     AND u.id = ra.userid
-                     AND ra.contextid = sc.id AND ra.roleid = rc.roleid
-                     AND rc.permission = ".CAP_ALLOW." AND u.deleted = 0";
+                     AND u.id = ra.userid AND u.deleted = 0
+                     AND ra.contextid = sc.id AND ra.roleid = rc.roleid";
 
     $count = count_records_sql("SELECT COUNT(DISTINCT u.id) $sqlfrom");
 
@@ -971,15 +973,17 @@ function report_security_check_riskadmin($detailed=false) {
 
     $admins = get_records_sql($sql);
 
-    $sqlfrom = "FROM {$CFG->prefix}role_capabilities rc
-                JOIN {$CFG->prefix}context c ON c.id = rc.contextid
-                JOIN {$CFG->prefix}context sc ON (sc.path = c.path OR sc.path LIKE ".sql_concat('c.path', "'/%'").")
-                JOIN {$CFG->prefix}role_assignments ra ON (ra.contextid = sc.id AND ra.roleid = rc.roleid)
-                JOIN {$CFG->prefix}user u ON u.id = ra.userid
-               WHERE rc.capability = 'moodle/site:doanything'
-                     AND rc.permission = ".CAP_ALLOW."
-                     AND u.deleted = 0
-                     AND ra.contextid <> ".SYSCONTEXTID."";
+    $sqlfrom = "FROM (SELECT rcx.*
+                        FROM {$CFG->prefix}role_capabilities rcx
+                       WHERE rcx.capability = 'moodle/site:doanything' AND rcx.permission = ".CAP_ALLOW.") rc,
+                     {$CFG->prefix}context c,
+                     {$CFG->prefix}context sc,
+                     {$CFG->prefix}role_assignments ra,
+                     {$CFG->prefix}user u
+               WHERE c.id = rc.contextid
+                     AND (sc.path = c.path OR sc.path LIKE ".sql_concat('c.path', "'/%'")." OR c.path LIKE ".sql_concat('sc.path', "'/%'").")
+                     AND u.id = ra.userid AND u.deleted = 0
+                     AND ra.contextid = sc.id AND ra.roleid = rc.roleid AND ra.contextid <> ".SYSCONTEXTID."";
 
     $count = count_records_sql("SELECT COUNT(DISTINCT u.id) $sqlfrom");
 
