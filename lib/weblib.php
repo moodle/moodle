@@ -5480,7 +5480,7 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
             $mod->name = '('.$mod->name.')';
         }
         $class = 'activity '.$mod->modname;
-        $class .= ($cmid == $mod->cm) ? ' selected' : '';
+        $class .= ($cmid == $mod->id) ? ' selected' : '';
         $menu[] = '<li class="'.$class.'">'.
                   '<img src="'.$CFG->modpixpath.'/'.$mod->modname.'/icon.gif" alt="" />'.
                   '<a href="'.$CFG->wwwroot.'/mod/'.$url.'">'.$mod->name.'</a></li>';
