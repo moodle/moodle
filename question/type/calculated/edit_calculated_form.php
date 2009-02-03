@@ -40,8 +40,8 @@ class question_edit_calculated_form extends question_edit_form {
         $repeated = array();
         $repeated[] =& $mform->createElement('header', 'answerhdr', get_string('answerhdr', 'qtype_calculated', '{no}'));
 
-        $repeated[] =& $mform->createElement('text', 'answers', get_string('correctanswerformula', 'quiz').'=', array('size' => 50));
-        $repeatedoptions['answers']['type'] = PARAM_NOTAGS;
+        $repeated[] =& $mform->createElement('text', 'answer', get_string('correctanswerformula', 'quiz').'=', array('size' => 50));
+        $repeatedoptions['answer']['type'] = PARAM_NOTAGS;
 
         $creategrades = get_grade_options();
         $gradeoptions = $creategrades->gradeoptions;
@@ -115,7 +115,7 @@ class question_edit_calculated_form extends question_edit_form {
             if (count($answers)) {
                 $key = 0;
                 foreach ($answers as $answer){
-                    $default_values['answers['.$key.']'] = $answer->answer;
+                    $default_values['answer['.$key.']'] = $answer->answer;
                     $default_values['fraction['.$key.']'] = $answer->fraction;
                     $default_values['tolerance['.$key.']'] = $answer->tolerance;
                     $default_values['tolerancetype['.$key.']'] = $answer->tolerancetype;
@@ -193,7 +193,7 @@ class question_edit_calculated_form extends question_edit_form {
                 }
             }
         }
-        $answers = $data['answers'];
+        $answers = $data['answer'];
         $answercount = 0;
         $maxgrade = false;
         $possibledatasets = $this->qtypeobj->find_dataset_names($data['questiontext']);
@@ -204,7 +204,7 @@ class question_edit_calculated_form extends question_edit_form {
         if ( count($mandatorydatasets )==0){
           //  $errors['questiontext']=get_string('atleastonewildcard', 'qtype_datasetdependent');
             foreach ($answers as $key => $answer){
-                $errors['answers['.$key.']'] = get_string('atleastonewildcard', 'qtype_datasetdependent');
+                $errors['answer['.$key.']'] = get_string('atleastonewildcard', 'qtype_datasetdependent');
             }
         }
         foreach ($answers as $key => $answer){
@@ -214,7 +214,7 @@ class question_edit_calculated_form extends question_edit_form {
             if (($trimmedanswer!='')||$answercount==0){
                 $eqerror = qtype_calculated_find_formula_errors($trimmedanswer);
                 if (FALSE !== $eqerror){
-                    $errors['answers['.$key.']'] = $eqerror;
+                    $errors['answer['.$key.']'] = $eqerror;
                 }
             }
             if ($trimmedanswer!=''){
@@ -277,7 +277,7 @@ class question_edit_calculated_form extends question_edit_form {
             }
         }
         if ($answercount==0){
-            $errors['answers[0]'] = get_string('atleastoneanswer', 'qtype_calculated');
+            $errors['answer[0]'] = get_string('atleastoneanswer', 'qtype_calculated');
         }
         if ($maxgrade == false) {
             $errors['fraction[0]'] = get_string('fractionsnomax', 'question');
