@@ -3629,9 +3629,9 @@ function print_navigation ($navigation, $separator=0, $return=false) {
             $url   = $navitem['url'];
 
             if (empty($url)) {
-                $output .= '<li class="first">'."$separator $title</li>\n";
+                $output .= '<li>'."$separator $title</li>\n";
             } else {
-                $output .= '<li class="first">'."$separator\n<a ".$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'
+                $output .= '<li>'."$separator\n<a ".$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'
                            .$url.'">'."$title</a>\n</li>\n";
             }
         }
