@@ -10,6 +10,8 @@
 
 require_once(dirname(dirname(__FILE__)) . '/lib/moodleexternal.php');
 require_once(dirname(dirname(__FILE__)) . '/group/lib.php');
+require_once(dirname(dirname(__FILE__)) . '/lib/grouplib.php');
+
 
 /**
  * Group external api class
@@ -28,6 +30,11 @@ final class group_external extends moodle_external {
           $this->descriptions['tmp_create_group']   = array( 'params' => array('groupname'=> PARAM_RAW, 'courseid'=> PARAM_INT),
                                                             'optionalparams' => array( ),
                                                             'return' => array('groupid' => PARAM_INT));
+
+          $this->descriptions['tmp_get_group']     = array( 'params' => array('groupid'=> PARAM_INT),
+                                                            'optionalparams' => array( ),
+                                                            'return' => array('group' => array('id' => PARAM_RAW, 'courseid' => PARAM_RAW,
+																		'name' => PARAM_RAW, 'enrolmentkey' => PARAM_RAW)));
 
           $this->descriptions['tmp_add_groupmember']   = array( 'params' => array('groupid'=> PARAM_INT, 'userid'=> PARAM_INT),
                                                             'optionalparams' => array( ),
@@ -68,6 +75,21 @@ final class group_external extends moodle_external {
 		else {
             throw new moodle_exception('wscouldnotaddgroupmember');
         }
+	}
+
+	static function tmp_get_group($params){
+
+			// @TODO: any capability to check?
+			$group = groups_get_group($params['groupid']);
+
+			$ret = new StdClass();
+			$ret->id = $group->id;
+			$ret->courseid = $group->courseid;
+			$ret->name = $group->name;
+			$ret->enrolmentkey = $group->enrolmentkey;
+
+			return $ret;
+
 	}
 }
 
