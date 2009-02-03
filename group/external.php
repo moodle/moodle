@@ -35,6 +35,9 @@ final class group_external extends moodle_external {
                                                             'optionalparams' => array( ),
                                                             'return' => array('group' => array('id' => PARAM_RAW, 'courseid' => PARAM_RAW,
 																		'name' => PARAM_RAW, 'enrolmentkey' => PARAM_RAW)));
+		  $this->descriptions['tmp_delete_group']     = array( 'params' => array('groupid'=> PARAM_INT),
+                                                            'optionalparams' => array( ),
+                                                            'return' => array('result' => PARAM_BOOL));
 
           $this->descriptions['tmp_add_groupmember']   = array( 'params' => array('groupid'=> PARAM_INT, 'userid'=> PARAM_INT),
                                                             'optionalparams' => array( ),
@@ -89,6 +92,20 @@ final class group_external extends moodle_external {
 			$ret->enrolmentkey = $group->enrolmentkey;
 
 			return $ret;
+
+	}
+
+		static function tmp_delete_group($params){
+
+		if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_SYSTEM))) {
+
+			// @TODO groups_add_member() does not check userid
+			return groups_delete_group($params['groupid']);
+		}
+		else {
+            throw new moodle_exception('wscouldnotdeletegroup');
+        }
+
 
 	}
 }

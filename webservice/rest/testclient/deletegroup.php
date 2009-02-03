@@ -17,13 +17,13 @@ foreach ($params as $param) {
 	$$param = (isset($_POST[$param]))?$_POST[$param]:'';
 }
 
-start_interface("Get Group");
+start_interface("Delete group");
 ?>
 
-<form action="getgroup.php" method="post">
+<form action="deletegroup.php" method="post">
 <table border="0">
     <tr><td>Group id: </td><td><input type="text" name="groupid" value="<?php echo $groupid; ?>"/></td></tr>
-    <tr><td></td><td><input type="submit" value="Find Group"></td></tr>
+    <tr><td></td><td><input type="submit" value="Delete Group"></td></tr>
 </table>
 </form>
 
@@ -45,7 +45,7 @@ if ($groupid) {
     $data['groupid'] = $groupid;
 
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/group/tmp_get_group');
+    curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/group/tmp_delete_group');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_POSTFIELDS, format_postdata($data));
@@ -53,7 +53,7 @@ if ($groupid) {
 
     $res = basicxml_xml_to_object($out);
 
-	show_object($res->group);
+	show_object($res);
 
     show_xml ($out);
 } else {
