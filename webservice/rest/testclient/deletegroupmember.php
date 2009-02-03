@@ -1,6 +1,5 @@
 <?php
 /**
- * Created on 10/17/2008
  *
  * Rest Test Client
  *
@@ -11,27 +10,31 @@
 
 require_once ('config_rest.php');
 
-$params = array('groupid');
+$params = array('groupid', 'userid');
 
 foreach ($params as $param) {
 	$$param = (isset($_POST[$param]))?$_POST[$param]:'';
 }
 
-start_interface("Delete group");
+start_interface("Delete group member from a group");
 ?>
 
-<form action="deletegroup.php" method="post">
+<form action="deletegroupmember.php" method="post">
 <table border="0">
     <tr><td>Group id: </td><td><input type="text" name="groupid" value="<?php echo $groupid; ?>"/></td></tr>
-    <tr><td></td><td><input type="submit" value="Delete Group"></td></tr>
+    <tr><td>User id: </td><td><input type="text" name="userid" value="<?php echo $userid; ?>"/></td></tr>
+    <tr><td></td><td><input type="submit" value="Delete"></td></tr>
 </table>
 </form>
 
 <?php
 
-if ($groupid) {
+if ($groupid && $userid) {
 
-     //we are asking for a token
+    var_dump($CFG->serverurl.'/group/tmp_delete_groupmember');
+
+
+    //we are asking for a token
     $connectiondata['username'] = 'wsuser';
     $connectiondata['password'] = 'wspassword';
     $ch = curl_init();
@@ -40,13 +43,13 @@ if ($groupid) {
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_POSTFIELDS, format_postdata($connectiondata));
     $token = curl_exec($ch);
-    $data['token'] = $token;
 
-    $data['groupid'] = $groupid;
+    $data['token'] = $token;
+	$data['groupid'] = $groupid;
+	$data['userid'] = $userid;
 
     $ch = curl_init();
-
-    curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/group/tmp_delete_group');
+    curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/group/tmp_delete_groupmember');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_POSTFIELDS, format_postdata($data));
@@ -54,7 +57,7 @@ if ($groupid) {
 
     $res = basicxml_xml_to_object($out);
 
-	show_object($res);
+    show_object($res->result);
 
     show_xml ($out);
 } else {

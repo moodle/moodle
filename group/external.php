@@ -43,6 +43,10 @@ final class group_external extends moodle_external {
                                                             'optionalparams' => array( ),
                                                             'return' => array('result' => PARAM_BOOL));
 
+		  $this->descriptions['tmp_delete_groupmember']   = array( 'params' => array('groupid'=> PARAM_INT, 'userid'=> PARAM_INT),
+                                                            'optionalparams' => array( ),
+                                                            'return' => array('result' => PARAM_BOOL));
+
     }
 
     /**
@@ -68,18 +72,6 @@ final class group_external extends moodle_external {
         }
     }
 
-	static function tmp_add_groupmember($params){
-
-		if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_SYSTEM))) {
-
-			// @TODO groups_add_member() does not check userid
-			return groups_add_member($params['groupid'], $params['userid']);
-		}
-		else {
-            throw new moodle_exception('wscouldnotaddgroupmember');
-        }
-	}
-
 	static function tmp_get_group($params){
 
 			// @TODO: any capability to check?
@@ -95,7 +87,7 @@ final class group_external extends moodle_external {
 
 	}
 
-		static function tmp_delete_group($params){
+	static function tmp_delete_group($params){
 
 		if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_SYSTEM))) {
 
@@ -105,9 +97,32 @@ final class group_external extends moodle_external {
 		else {
             throw new moodle_exception('wscouldnotdeletegroup');
         }
-
-
 	}
+
+	static function tmp_get_groupmember($params){
+	}
+
+	static function tmp_add_groupmember($params){
+
+		if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_SYSTEM))) {
+
+			// @TODO groups_add_member() does not check userid
+			return groups_add_member($params['groupid'], $params['userid']);
+		}
+		else {
+            throw new moodle_exception('wscouldnotaddgroupmember');
+        }
+	}
+
+	static function tmp_delete_groupmember($params){
+		if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_SYSTEM))) {
+
+			return groups_remove_member($params['groupid'], $params['userid']);
+		} else {
+            throw new moodle_exception('wscouldnotremovegroupmember');
+        }
+	}
+
 }
 
 ?>
