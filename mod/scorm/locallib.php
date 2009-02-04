@@ -256,7 +256,7 @@ function scorm_get_scoes($id,$organisation=false) {
 function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value) {
     $id = null;
     if ($track = get_record_select('scorm_scoes_track',"userid='$userid' AND scormid='$scormid' AND scoid='$scoid' AND attempt='$attempt' AND element='$element'")) {
-        $track->value = $value;
+        $track->value = addslashes($value);
         $track->timemodified = time();
         $id = update_record('scorm_scoes_track',$track);
     } else {
@@ -296,7 +296,7 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
         $usertrack->timemodified = 0;
         foreach ($tracks as $track) {
             $element = $track->element;
-            $usertrack->{$element} = $track->value;
+            $usertrack->{$element} =  stripslashes_safe($track->value);
             switch ($element) {
                 case 'cmi.core.lesson_status':
                 case 'cmi.completion_status':
