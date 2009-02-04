@@ -319,7 +319,7 @@ function scorm_get_scoes($id,$organisation=false) {
 function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value) {
     $id = null;
     if ($track = get_record_select('scorm_scoes_track',"userid='$userid' AND scormid='$scormid' AND scoid='$scoid' AND attempt='$attempt' AND element='$element'")) {
-        $track->value = $value;
+        $track->value = addslashes($value);
         $track->timemodified = time();
         $id = update_record('scorm_scoes_track',$track);
     } else {
@@ -367,6 +367,7 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
         $usertrack->timemodified = 0;
         foreach ($tracks as $track) {
             $element = $track->element;
+            $track->value = stripslashes_safe($track->value);
             $usertrack->{$element} = $track->value;
             switch ($element) {
                 case 'x.start.time':
@@ -381,8 +382,8 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
                 break;
                 case 'cmi.core.score.raw':
                 case 'cmi.score.raw':
-                    $usertrack->score_raw = $track->value;
-                break;
+                    $usertrack->score_raw = sprintf('%0d', $track->value);
+                    break;
                 case 'cmi.core.session_time':
                 case 'cmi.session_time':
                     $usertrack->session_time = $track->value;
