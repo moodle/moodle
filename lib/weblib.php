@@ -6305,9 +6305,9 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
         if ($page > 0) {
             $pagenum = $page - 1;
             if (!is_a($baseurl, 'moodle_url')){
-                $output .= '&nbsp;(<a href="'. $baseurl . $pagevar .'='. $pagenum .'">'. get_string('previous') .'</a>)&nbsp;';
+                $output .= '&nbsp;(<a class="previous" href="'. $baseurl . $pagevar .'='. $pagenum .'">'. get_string('previous') .'</a>)&nbsp;';
             } else {
-                $output .= '&nbsp;(<a href="'. $baseurl->out(false, array($pagevar => $pagenum)).'">'. get_string('previous') .'</a>)&nbsp;';
+                $output .= '&nbsp;(<a class="previous" href="'. $baseurl->out(false, array($pagevar => $pagenum)).'">'. get_string('previous') .'</a>)&nbsp;';
             }
         }
         if ($perpage > 0) {
@@ -6353,9 +6353,9 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
         $pagenum = $page + 1;
         if ($pagenum != $displaypage) {
             if (!is_a($baseurl, 'moodle_url')){
-                $output .= '&nbsp;&nbsp;(<a href="'. $baseurl . $pagevar .'='. $pagenum .'">'. get_string('next') .'</a>)';
+                $output .= '&nbsp;&nbsp;(<a class="next" href="'. $baseurl . $pagevar .'='. $pagenum .'">'. get_string('next') .'</a>)';
             } else {
-                $output .= '&nbsp;&nbsp;(<a href="'. $baseurl->out(false, array($pagevar => $pagenum)) .'">'. get_string('next') .'</a>)';
+                $output .= '&nbsp;&nbsp;(<a class="next" href="'. $baseurl->out(false, array($pagevar => $pagenum)) .'">'. get_string('next') .'</a>)';
             }
         }
         $output .= '</div>';
