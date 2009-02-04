@@ -220,7 +220,7 @@
         echo '<div class="audience">'.$blogtype.'</div>';
 
         // Print whole message
-        echo format_text($template['body']);
+        echo $template['body'];
 
         /// Print attachments
         echo $attachedimages;
