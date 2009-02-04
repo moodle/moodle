@@ -974,6 +974,11 @@
                     //Get section id when restoring in existing course
                     $rec = get_record("course_sections","course",$restore->course_id,
                                                         "section",$section->section);
+                    //If section exists, has empty summary and backup has some summary, use it. MDL-8848
+                    if ($rec && empty($rec->summary) && !empty($section->summary)) {
+                        $rec->summary = $section->summary;
+                        update_record("course_sections", $rec);
+                    }
                     //If that section doesn't exist, get section 0 (every mod will be
                     //asigned there
                     if(!$rec) {
