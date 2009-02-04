@@ -3642,9 +3642,9 @@ function get_separator() {
  *
  * @uses $CFG
  * @param mixed $navigation The breadcrumb navigation string to be printed
- * @param string $separator The breadcrumb trail separator. The default 0 leads to the use
- *  of $THEME->rarrow, themes could use '&rarr;', '/', or '' for a style-sheet solution.
+ * @param string $separator OBSOLETE, mostly not used any more. See build_navigation instead.
  * @param boolean $return False to echo the breadcrumb string (default), true to return it.
+ * @return string or null, depending on $return.
  */
 function print_navigation ($navigation, $separator=0, $return=false) {
     global $CFG, $THEME;
