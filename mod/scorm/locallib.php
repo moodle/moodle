@@ -307,7 +307,7 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
                 break;  
                 case 'cmi.core.score.raw':
                 case 'cmi.score.raw':
-                    $usertrack->score_raw = $track->value;
+                    $usertrack->score_raw = sprintf('%0d', $track->value);
                 break;  
                 case 'cmi.core.session_time':
                 case 'cmi.session_time':

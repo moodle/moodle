@@ -1189,7 +1189,7 @@ function SCORMapi1_3() {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
                         var elementstring = '&'+underscore(element)+'='+encodeURIComponent(data[property]);
                         if ((typeof eval('datamodel["'+elementmodel+'"].defaultvalue')) != "undefined") {
-                            if (eval('datamodel["'+elementmodel+'"].defaultvalue') != data[property]) {
+                            if (eval('datamodel["'+elementmodel+'"].defaultvalue') != data[property] || eval('typeof(datamodel["'+elementmodel+'"].defaultvalue)') != typeof(data[property])) {
                                 datastring += elementstring;
                             }
                         } else {
