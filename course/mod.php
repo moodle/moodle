@@ -606,7 +606,7 @@
         $form->mode         = "add";
         $form->sesskey      = !empty($USER->id) ? $USER->sesskey : '';
 
-        $sectionname    = get_string("name$course->format");
+        $sectionname    = get_section_name($course->format);
         $fullmodulename = get_string("modulename", $module->name);
 
         if ($form->section) {
@@ -655,7 +655,7 @@
             $form->type = $type;
         }
 
-        $sectionname    = get_string("name$course->format");
+        $sectionname    = get_section_name($course->format);
         $fullmodulename = get_string("modulename", $module->name);
 
         if ($form->section && $course->format != 'site') {
