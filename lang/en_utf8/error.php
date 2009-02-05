@@ -245,6 +245,7 @@ $string['hashpoolproblem'] = 'Incorrect pool file content $a.';
 $string['incorrectext'] = 'File has an incorrect extension';
 $string['invalidaction'] = 'Invalid action parameter';
 $string['invalidactivityid'] = 'Invalid Activity ID';
+$string['invalidadminsettingname'] = 'Invalid admin setting ($a)';
 $string['invalidarguments'] = 'No valid arguments supplied';
 $string['invalidargorconf'] = 'No valid arguments supplied or incorrect server configuration';
 $string['invalidaccessparameter'] = 'Invalid access parameter';
