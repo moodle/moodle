@@ -44,7 +44,12 @@ function get_file_url($path, $options=null, $type='coursefile') {
 
     if ($CFG->slasharguments) {
         $parts = explode('/', $path);
-        $parts = array_map('rawurlencode', $parts);
+        foreach ($parts as $key => $part) {
+        /// anchor dash character should not be encoded
+            $subparts = explode('#', $part);
+            $subparts = array_map('rawurlencode', $subparts);
+            $parts[$key] = implode('#', $subparts);
+        }
         $path  = implode('/', $parts);
         $ffurl = $url.'/'.$path;
         $separator = '?';
