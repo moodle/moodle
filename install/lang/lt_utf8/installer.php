@@ -11,10 +11,8 @@
 
 $string['closewindow'] = 'Uždaryti šį langą';
 $string['continue'] = 'Tęsti';
-$string['doyouagree'] = 'Ar perskaitėte sąlygas ir ar jas supratote?';
 $string['error'] = 'Klaida';
 $string['help'] = 'Pagalba';
-$string['invalidemail'] = 'Neiteisingas el. pašto adresas';
 $string['language'] = 'Kalba';
 $string['name'] = 'Vardas';
 $string['next'] = 'Toliau';

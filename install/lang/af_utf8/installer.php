@@ -11,10 +11,8 @@
 
 $string['closewindow'] = 'Maak die venster toe';
 $string['continue'] = 'Gaan voort';
-$string['doyouagree'] = 'Het jy die voorwaardes gelees en verstaan jy dit?';
 $string['error'] = 'Fout';
 $string['help'] = 'Help';
-$string['invalidemail'] = 'Ongeldige email adres';
 $string['language'] = 'Taal';
 $string['name'] = 'Naam';
 $string['next'] = 'Volgende';

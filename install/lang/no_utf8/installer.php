@@ -11,12 +11,9 @@
 
 $string['admindirerror'] = 'Admin mappen som er angitt er feil';
 $string['admindirname'] = 'Admin mappe';
-$string['admindirsetting'] = 'Noen få webservere bruker /admin som en spesiell URL for å få tak i kontrollpanel eller lignende. Uheldigvis er dette i konflikt med standardplasseringen for Moodle\'s adminsider. Du kan ordne dette ved å gi adminkatalogen et nytt navn i installasjonen din, og skrive det nye navnet her. For eksempel <br /> <br /><b>moodleadmin</b><br /> <br />
-Dette vil ordne adminlenkene i Moodle.';
 $string['admindirsettinghead'] = 'Setter adminmappen';
 $string['admindirsettingsub'] = 'Noen få webservere bruker /admin som en spesiell URL for å få tak i kontrollpanel eller lignende. Uheldigvis er dette i konflikt med standardplasseringen for Moodle\'s adminsider. Du kan ordne dette ved å gi adminkatalogen et nytt navn i installasjonen din, og skrive det nye navnet her. For eksempel <br /> <br /><b>moodleadmin</b><br /> <br />
 Dette vil ordne adminlenkene i Moodle.';
-$string['availablelangs'] = 'Tilgjengelige språkpakker';
 $string['bypassed'] = 'Utelatt';
 $string['cannotcreatelangdir'] = 'Kan ikke opprette mappen \'lang\'.';
 $string['cannotcreatetempdir'] = 'Kan ikke opprette mappen \'temp';
@@ -28,17 +25,14 @@ $string['cannotsavezipfile'] = 'Kan ikke lagre ZIP-fil.';
 $string['cannotunzipfile'] = 'Kan ikke pakke opp (unzip) filen.';
 $string['caution'] = 'Varsel';
 $string['check'] = 'Sjekk';
-$string['chooselanguage'] = 'Velg et språk';
 $string['chooselanguagehead'] = 'Velg et språk';
 $string['chooselanguagesub'] = 'Velg språk (bare for INSTALLASJONEN). Du vil kunne velge språk for nettsted og bruker på et skjermbilde senere.';
 $string['closewindow'] = 'Lukk dette vinduet';
-$string['compatibilitysettings'] = 'Sjekker PHP innstillingene dine...';
 $string['compatibilitysettingshead'] = 'Sjekker PHP innstillinge dine...';
 $string['compatibilitysettingssub'] = 'Serveren din må tilfredsstille alle disse testene for å kjøre Moodle orntlig.';
 $string['componentisuptodate'] = 'Komponenten er ajourført.';
 $string['configfilenotwritten'] = 'Installerinsprogrammet var ikke i stand til å lage config.php med dine valgte innstillinger automatisk, antakelig fordi det ikke er tilgang til å skrive i Moodle-mappen. Du kan manuelt kopiere følgende kode i en fil som du kaller config.php i rot-mappen i Moodle.';
 $string['configfilewritten'] = 'config.php er opprett uten feil';
-$string['configurationcomplete'] = 'Konfigurasjonen er ferdig';
 $string['configurationcompletehead'] = 'Konfigurasjonen er ferdig';
 $string['configurationcompletesub'] = 'Moodle gjorde et forsøk på å lagre konfigurasjonen din i en fil i roten av Moodle-installasjonen din';
 $string['continue'] = 'Fortsett';
@@ -47,24 +41,8 @@ $string['ctyperequired'] = 'PHP tillegget ctype er nå påkrevd av Moodle for å
 $string['curlrecommended'] = 'Vi anbefaler sterkt at Curl-biblioteket legges til i php.ini for å aktivere Moodles Nettverksfunksjonalitet.';
 $string['customcheck'] = 'A';
 $string['database'] = 'Database';
-$string['databasecreationsettings'] = 'Nå må du konfigurere databaseinnstillinge hvor mesteparten av Moodle-dataene vil lagres. Denne databasen blir laget automatisk av innstalleringsprogrammet med innstillingene under.<br />
-<br /><br />
-<b>Type:</b> satt til \"mysql\" av installeringsprogrammet<br />
-<b>Vert:</b> satt til \"localhost\" av installeringsprogrammet<br />
-<b>Navn:</b> databasenavn f.eks. moodle<br />
-<b>Bruker:</b> satt til \"root\" av installeringsprogrammet<br />
-<b>Passord:</b> databasepassordet ditt<br />
-<b>Tabell prefix:</b> alternativt prefiks å bruke foran alle tabellnavnene<br />';
 $string['databasecreationsettingshead'] = 'Nå må du konfigurere databaseinnstillinge hvor mesteparten av Moodle-dataene vil lagres. Denne databasen blir laget automatisk av innstalleringsprogrammet med innstillingene under.';
 $string['databasecreationsettingssub'] = '<b>Type:</b> satt til \"mysql\" av installeringsprogrammet<br />
-<b>Vert:</b> satt til \"localhost\" av installeringsprogrammet<br />
-<b>Navn:</b> databasenavn f.eks. moodle<br />
-<b>Bruker:</b> satt til \"root\" av installeringsprogrammet<br />
-<b>Passord:</b> databasepassordet ditt<br />
-<b>Tabell prefix:</b> alternativt prefiks å bruke foran alle tabellnavnene';
-$string['databasesettings'] = 'Nå må du konfigurere databaseinnstillinge hvor mesteparten av Moodle-dataene vil lagres. Denne databasen må allerede ha blitt laget og et brukernavn og passord for å få tilgang til den.<br />
-<br /><br />
-<b>Type:</b> satt til \"mysql\" av installeringsprogrammet<br />
 <b>Vert:</b> satt til \"localhost\" av installeringsprogrammet<br />
 <b>Navn:</b> databasenavn f.eks. moodle<br />
 <b>Bruker:</b> satt til \"root\" av installeringsprogrammet<br />
@@ -126,21 +104,12 @@ $string['datarootpublicerror'] = 'Datakatalogen du oppga er direkte tilgjengelig
 $string['dbconnectionerror'] = 'Fikk ingen forbindelse til databasen du oppga. Vennligst sjekk database-innstillingene dine.';
 $string['dbcreationerror'] = 'Feil under opprettelse av database. Kunne ikke opprette gitte databasenavn med oppgitte innstillinger';
 $string['dbhost'] = 'Tjenervert';
-$string['dbpass'] = 'Passord';
 $string['dbprefix'] = 'Tabellprefix';
 $string['dbtype'] = 'Type';
 $string['dbwrongencoding'] = 'Den valgte databasen kjører på ikke-anbefalt språk-koding ($a). Det ville vært bedre å bruke en Unicode (UTF-8) kodet database istedet. Du kan imidlertid omgå denne testen ved å velge \"Hopp over DB-koding Test\" innstillingen under, men du kan oppleve problemer med dette senere.';
 $string['dbwronghostserver'] = 'Du må følge \"Tjener\" reglene som forklart over.';
 $string['dbwrongnlslang'] = 'NLS_LANG variabelen i webserveren din må bruke AL32UTF tegnsettet. Se PHP-dokumentasjonen om hvordan å konfigurere OCI8 ordentlig.';
 $string['dbwrongprefix'] = 'Du må følge \"Tabell-prefiks\" reglene som forklart over.';
-$string['directorysettings'] = '<p>Vennligst bekreft lokasjonen for denne Moodle-installsjonen.</p>
-<p><b>Web Addresse:</b>
-Angi full webadresse for hvor Moodle vil være tilgjengelig.  
-Hvis nettstedet er tilgjengelig via flere URL\'er velg den det er mest naturlig at studentene vil bruke. Ikke bruke etterfølgende skråstrek.</p>
-<p><b>Moodle Mappe:</b>
-Oppgi full mappesti til installasjonen. Pass på at små/store bokstaver stemmer.</p>
-<p><b>Data Mappe:</b>
-Du trenger et sted hvor moodle kan lagre opplastede filer. Denne katalogen bør være lesbar OG SKRIVBAR av webserverbrukeren (vanligvis \'ingen\' eller \'apache\'), men det bør være tilgjengelig direkte fra webben .</p>';
 $string['directorysettingshead'] = 'Vennligst bekreft lokasjonen for denne Moodle-installsjonen';
 $string['directorysettingssub'] = '<p>Vennligst bekreft lokasjonen for denne Moodle-installsjonen.</p>
 <p><b>Web Addresse:</b>
@@ -158,7 +127,6 @@ $string['downloadlanguagebutton'] = 'Last ned &quot;$a&quot; språkpakken';
 $string['downloadlanguagehead'] = 'Last ned språkpakke';
 $string['downloadlanguagenotneeded'] = 'Du kan fortsette installasjonsprosessen med gjeldende språkpakke, \"$a\".';
 $string['downloadlanguagesub'] = 'Du har nå valget mellom å laste ned en språkpakke og fortsette installasjonsprosessen med dette språket.<br /><br />Hvis du ikke får til å laste ned språkpakken, vil installasjonsprosessen fortsette på Engelsk. (Med en gang installasjonen er ferdig, vil du ha muligheten til å laste ned og installere flere språkpakker).';
-$string['doyouagree'] = 'Har du lest og forstått disse betingelsene?';
 $string['environmenterrortodo'] = 'Du må løse alle de nevnte problem (feil) identifiserti omgivelsene før du fortsetter å installere denne Moodle versjonen!';
 $string['environmenthead'] = 'Sjekker \"omgivelsene\" dine...';
 $string['environmentrecommendcustomcheck'] = 'Hvis denne testen feiler, kan det bety et mulig problem.';
@@ -195,9 +163,7 @@ $string['help'] = 'Hjelp';
 $string['iconvrecommended'] = 'Installering av ICONV-biblioteket er sterkt anbefalt for å forbedre ytelsen, spesielt hvis siten din støtter ikke-latinske språk.';
 $string['info'] = 'Informasjon';
 $string['installation'] = 'Installasjon';
-$string['invalidemail'] = 'Feil e-postadresse';
 $string['invalidmd5'] = 'Ugyldig md5';
-$string['invalidurl'] = 'Ugyldig URL';
 $string['langdownloaderror'] = 'Beklageligvis ble ikke språkpakken \"$a\" installert. Installasjonsprosessen vil fortsette på Engelsk.';
 $string['langdownloadok'] = 'Installasjonen av språket \"$a\" var vellykket. Installasjonen vil nå fortsette på dette språket.';
 $string['language'] = 'Språk';
@@ -252,15 +218,14 @@ $string['phpversionhelp'] = '<p>Moodle trenger en PHP versjon minst 4.3.0 eller 
 <Du kjører nå versjon $a</p>
 <p>Du må oppgradere PHP eller flytte til en server med en nyere versjon av PHP!<br /> (I forhold til 5.0.x kan du også nedgradere til versjon 4.4.x)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
+$string['postgresqlwarning'] = '<strong>OBS:</strong> Dersom du opplever tilkoblingsproblemer, kan du prøve å sette Host Server feltet som: host=\'postgresql_host\' port=\'5432\' dbname=\'postgresql_database_name\' user=\'postgresql_user\' password=\'postgresql_user_password\' og feltene for Database, Bruker og Passord være tomme. Du finner mer informasjon på <a href=\"http://docs.moodle.org/en/Installing_Postgres_for_PHP\">Moodle Docs</a>';
 $string['previous'] = 'Forrige';
 $string['qtyperqpwillberemoved'] = 'I oppgraderingen vil RQP spørsmålstypen bli fjernet. Du har ikke brukt denne spørsmålstypen, så du skulle ikke ha noe problem med dette.';
 $string['qtyperqpwillberemovedanyway'] = 'Under oppgraderingen vil RQP spørsmålstypen bli fjernet. Du har noen RQP spørsmål i databasen din, og disse vil slutte å virke om du ikke reinstallerer programmet fra http://moodle.org/mod/data/view.php?d=13&amp;rid=797 før du fortsetter oppgraderingen';
-$string['releasenoteslink'] = 'For mer informasjon om denne versjonen av Moodle, sjekk online via  <a target=\"_new\" href=\"$a\">Release Notes</a>';
 $string['remotedownloaderror'] = 'Mislykkes i å laste ned komponenten til din server, vennligst sjekk proxy-innstillingene. PHP cURL tillegget er sterkt anbefalt. <br /><br />Du må laste ned <a href=\"$a->url\">$a->url</a> filen manuelt, kopiere den til \"$a->dest\" på serveren din og pakke den ut der.';
 $string['remotedownloadnotallowed'] = 'Nedlasting av komponenter til din tjenermaskin er ikke tillatt (allow_url_fopen er satt til ulovlig). <br /> <br />Du må laste ned
 <a href=\"$a->url\">$a->url</a>-filen manuelt, kopiere den til \"$a->dest\" på tjeneren og pakke den ut der.';
 $string['report'] = 'Rapport';
-$string['requiredentrieschanged'] = '<strong>VIKTIG - VÆR VENNLIG LES<br/>(Denne advarselen vil kun vises ved denne oppgraderingen)</strong><br/>På grunn av en feilreting, vil aktiviteter ved bruk av \'Nødvendige tilføyelser\' og \'Nødvendige tilføyelser før en kan se innstillinger\' endres. En mer detaljert forklaring på endringene kan en lese (på engelsk) på <a href=\"http://moodle.org/mod/forum/discuss.php?110928\" target=\"_blank\">databaseforumet</a>. <br/><br/>Denne endringen påvirker følgende databaser i systemet ditt: (Vær vennlig å lagre denne listen nå, og etter at oppgraderingen er ferdig, sjekk at disse aktivitetene fremdeles virker slik lærerne ønsker).<br/><strong style?\"color:red\">$a->text</strong><br/>'; // ORPHANED
 $string['restricted'] = 'Begrenset';
 $string['safemode'] = 'Sikkermodus';
 $string['safemodeerror'] = 'Moodle kan ha trøbbel når sikkermodus er på';

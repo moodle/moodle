@@ -11,11 +11,9 @@
 
 $string['closewindow'] = 'Isara ang bintanang ito';
 $string['continue'] = 'Ituloy';
-$string['doyouagree'] = 'Nabasa mo ba ang mga kundisyon at naintindihan mo ba ang mga ito?';
 $string['error'] = 'Error';
 $string['help'] = 'Tulong';
 $string['info'] = 'Impormasyon';
-$string['invalidemail'] = 'Hindi tamang address ng email';
 $string['language'] = 'Lengguwahe';
 $string['name'] = 'Pangalan';
 $string['next'] = 'Susunod';

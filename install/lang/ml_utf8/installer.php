@@ -12,7 +12,6 @@
 $string['check'] = 'പരിശോധിക്കുക';
 $string['closewindow'] = 'ഈ ജാലകം അടയ്ക്കുക';
 $string['continue'] = 'തുടരുക';
-$string['doyouagree'] = 'ഈ ഉപാധികള്‍ വായിച്ചു മനസ്സിലാക്കിയൊ?';
 $string['language'] = 'ഭാഷ';
 $string['password'] = 'പാസ്സ്‌വേര്‍ഡ്‌';
 $string['thischarset'] = 'UTF-8';

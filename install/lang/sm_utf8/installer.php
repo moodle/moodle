@@ -11,57 +11,22 @@
 
 $string['admindirerror'] = 'O le ala i le fa\'afoega (admin directory) o lo\'o tu\'uina mai e sese';
 $string['admindirname'] = 'Fa\'afoega';
-$string['admindirsetting'] = '    A very few webhosts use /admin as a special URL for you to access a 
-    control panel or something.  Unfortunately this conflicts with the 
-    standard location for the Moodle admin pages.  You can fix this by 
-    renaming the admin directory in your installation, and putting that 
-    new name here.  For example: <br/> <br /><b>moodleadmin</b><br /> <br />
-    This will fix admin links in Moodle.';
 $string['caution'] = 'Fa\'aeteetega';
-$string['chooselanguage'] = 'Filifili se gagana';
 $string['closewindow'] = 'Tapuni lenei itulau';
-$string['compatibilitysettings'] = 'Siakiina lau seti fa\'a PHP...';
 $string['configfilenotwritten'] = 'The installer script was not able to automatically create a config.php file containing your chosen settings, probably because the Moodle directory is not writeable. You can manually copy the following code into a file named config.php within the root directory of Moodle.';
 $string['configfilewritten'] = 'config.php ua fa\'amanuiaina lona amataga';
-$string['configurationcomplete'] = 'Ua uma ona faia le fa\'aleleia atili';
 $string['continue'] = 'Fa\'aauau';
 $string['database'] = 'Taula\'iga o fa\'amatalaga (Database)';
-$string['databasesettings'] = '    Now you need to configure the database where most Moodle data
-    will be stored.  This database must already have been created
-    and a username and password created to access it.<br/>
-    <br /> <br />
-       <b>Type:</b> mysql or postgres7<br />
-       <b>Host:</b> eg localhost or db.isp.com<br />
-       <b>Name:</b> database name, eg moodle<br />
-       <b>User:</b> your database username<br />
-       <b>Password:</b> your database password<br />
-       <b>Tables Prefix:</b> optional prefix to use for all table names';
 $string['dataroot'] = 'Ala atu i fa\'amaumauga';
 $string['datarooterror'] = 'O le \'Ala atu i fa\'amaumauga\' ua e tu\'uina mai e le o maua pe ua faia. E mafai ona e fa\'asa\'oina mai le ala pe amataina loa le tusiga o le ala.';
 $string['dbconnectionerror'] = 'E le o mafai ona fa\'afeso\'ota\'i atu i le Database ua tu\'uina mai. Fa\'amolemole siaki ia fa\'aupuga ma seti ole Database. ';
 $string['dbcreationerror'] = 'E sese le faiga o le Database. E le\'o mafai ona amatalia le igoa o le Database ua tu\'uina mai ma seti ua aumaia. ';
 $string['dbhost'] = 'Seva o lo\'o u\'uina fa\'amatalaga';
-$string['dbpass'] = 'Upu tatala';
 $string['dbprefix'] = 'Tables prefix';
 $string['dbtype'] = 'Ituaiga';
-$string['directorysettings'] = '<p>Fa\'amolemole fa\'amaoti ma fa\'amaonia mai le nofoaga o lo\'o i ai lenei Moodle.</p>
-
-<p><b>Tuatusi o le initaneti:</b>
-Fa\'amaoti mai le tuatusi e mafai ai ona maua i ai le Moodle.
-Afai e mafai ona mauaina le nofoaga o lau initaneti i ni auala eseese se tele (URLs) ona filifili lea o se auala e masani ona fa\'aaoga e au tamaiti a\'oga.  Aua ne\'i i ai ni trailing slash.</p>
-
-<p><b>Auala atu i le Moodle:</b>
-Fa\'amaoti lelei mai le auala atoa lava i le mea o lo\'o i ai le Moodle. Fa\'amutinoa le tusiga o mata\'itusi ina ia aua ne\'i sese le tusiga o Mata\'itusi Lapopo\'a ma Mata\'itusi Laiti.</p>
-
-<p><b>Data Directory:</b>
-You need a place where Moodle can save uploaded files.  This
-directory should be readable AND WRITEABLE by the web server user 
-(usually \'nobody\' or \'apache\'), but it should not be accessible 
-directly via the web.</p>';
 $string['dirroot'] = 'Auala atu i le Moodle';
 $string['dirrooterror'] = 'O le \'auala atu i le Moodle\' ua uma ona seti e foliga mai e sese - e le o mafai ona maua se fa\'atuga o le Moodle i le mea ua aumaia. O le laia o lo\'o i lalo ua uma lea ona toe fa\'afouina.';
 $string['download'] = 'Aumai mai le Initaneti';
-$string['doyouagree'] = 'Ua uma ona e faitaua ma malamalama i nei tulaga?';
 $string['error'] = 'Mea sese';
 $string['fail'] = 'Le fa\'amanuiaina';
 $string['fileuploads'] = 'Faila ua tu\'uina atu';
@@ -88,7 +53,6 @@ $string['gdversionhelp'] = '<p>Your server does not seem to have GD installed.</
 <p>Under Windows you can usually edit php.ini and uncomment the line referencing php_gd2.dll.</p>';
 $string['help'] = 'Fesoasoani';
 $string['installation'] = 'Fa\'atu/Install';
-$string['invalidemail'] = 'Sese lenei tuatusi i-meli';
 $string['language'] = 'Gagana';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'O le mea lea e tatau ona le i ai';

@@ -11,33 +11,17 @@
 
 $string['admindirerror'] = 'Le dossier d\'administration spécifié est incorrect';
 $string['admindirname'] = 'Dossier d\'administration';
-$string['admindirsetting'] = 'Quelques hébergeurs web utilisent le dossier « /admin » comme URL spéciale vous permettant d\'accéder à un tableau de bord ou autre chose. Ceci entre en collision avec l\'emplacement standard des pages d\'administration de Moodle. Vous pouvez corriger cela en renommant le dossier d\'administration de votre installation de Moodle, en inscrivant ici le nouveau nom, par exemple <br /> <br /><b>moodleadmin</b>.<br /> <br />Les liens vers l\'administration de Moodle seront ainsi corrigés.</p>';
 $string['caution'] = 'Attention';
-$string['chooselanguage'] = 'Choisissez une langue';
-$string['compatibilitysettings'] = 'Vérification de votre configuration PHP...';
 $string['configfilenotwritten'] = 'Le programme d\'installation n\'a pas pu créer automatiquement le fichier de configuration « config.php » contenant vos réglages, vraisemblablement parce que le dossier principal de Moodle n\'est pas accessible en écriture. Vous pouvez copier le code ci-dessous dans un fichier appelé « config.php », que vous placerez à l\'intérieur du dossier principal de Moodle (là où se trouve un fichier « config-dist.php »).';
 $string['configfilewritten'] = 'Le fichier « config.php » a été créé avec succès';
-$string['configurationcomplete'] = 'Configuration terminée';
 $string['database'] = 'Base de données';
-$string['databasesettings'] = 'La base de données dans laquelle sont enregistrées la plupart des données utilisées par Moodle doit maintenant être configurée. Cette base de données doit avoir déjà été créée sur le serveur, ainsi qu\'un nom d\'utilisateur et un mot de passe permettant d\'y accéder.<br /><br /> <br />
-<b>Type :</b> mysql ou postgres7<br />
-<b>Serveur hôte :</b> le plus souvent « localhost » ou par exemple « db.isp.com »<br />
-<b>Nom :</b> nom de la base de données, par exemple « moodle »<br />
-<b>Utilisateur :</b> le nom d\'utilisateur de la base de données<br />
-<b>Mot de passe :</b> le mot de passe de la base de données<br />
-<b>Préfixe des tables :</b> préfixe à utiliser pour les noms de toutes les tables (facultatif)';
 $string['dataroot'] = 'Dossier de données';
 $string['datarooterror'] = 'Le dossier de données indiqué n\'a pas pu être trouvé, ni créé. Veuillez corriger le paramètre ou créer manuellement le dossier.';
 $string['dbconnectionerror'] = 'Moodle n\'a pas pu se connecter à la base de données indiquée. Veuillez vérifier les paramètres de votre base de données';
 $string['dbcreationerror'] = 'Erreur lors de la création de la base de données. Impossible de créer la base de données avec les paramètres fournis';
 $string['dbhost'] = 'Serveur hôte';
-$string['dbpass'] = 'Mot de passe';
 $string['dbprefix'] = 'Préfixe des tables';
 $string['dbtype'] = 'Type';
-$string['directorysettings'] = '<p>Veuillez confirmer les emplacements de cette installation de Moodle.</p>
-<p><b>Adresse web :</b> veuillez indiquer l\'adresse web complète par laquelle on accédera à Moodle. Si votre site web est accessible par plusieurs URL, choisissez celle qui est la plus naturelle ou la plus évidente. Ne placez pas de barre oblique à la fin de l\'adresse.</p>
-<p><b>Dossier Moodle :</b> veuillez spécifier le chemin complet de cette installation de Moodle (« OS path »). Assurez-vous que la casse des caractères (majuscules/minuscules) est correcte.</p>
-<p><b>Dossier de données :</b> Moodle a besoin d\'un emplacement où enregistrer les fichiers déposés sur le site. Le serveur web (utilisateur dénommé habituellement « www », « apache » ou « nobody ») doit avoir accès à ce dossier en lecture et EN ÉCRITURE. Toutefois ce dossier ne devrait pas être accessible directement depuis le web.</p>';
 $string['dirroot'] = 'Dossier Moodle';
 $string['dirrooterror'] = 'Le dossier Moodle semble incorrect : aucune installation de Moodle ne se trouve dans ce dossier. Le dossier Moodle indiqué ci-dessous est vraisemblablement correct.';
 $string['download'] = 'Télécharger';

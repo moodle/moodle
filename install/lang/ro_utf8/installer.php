@@ -11,10 +11,8 @@
 
 $string['closewindow'] = 'Închide fereastra';
 $string['continue'] = 'Continua';
-$string['doyouagree'] = 'Ai citit aceste condiţii şi le-ai înţeles?';
 $string['error'] = 'Eroare';
 $string['help'] = 'Ajutor';
-$string['invalidemail'] = 'Adresă e-mail greşită';
 $string['language'] = 'Limba';
 $string['name'] = 'Nume';
 $string['ok'] = 'OK';

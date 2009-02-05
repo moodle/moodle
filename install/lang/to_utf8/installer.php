@@ -11,52 +11,22 @@
 
 $string['admindirerror'] = 'Koe \'etimini fakahinohino kuo fakapapau\'i \'oku tonu';
 $string['admindirname'] = '\'Etimini fakahinohino';
-$string['admindirsetting'] = '    A very few webhosts use /admin as a special URL for you to access a 
-    control panel or something.  Unfortunately this conflicts with the 
-    standard location for the Moodle admin pages.  You can fix this by 
-    renaming the admin directory in your installation, and putting that 
-    new name here.  For example: <br/> <br /><b>moodleadmin</b><br /> <br />
-    This will fix admin links in Moodle.';
 $string['caution'] = 'Fakatokanga';
-$string['chooselanguage'] = 'Fili ha lea';
 $string['closewindow'] = 'Tapuni e uinitou ko \'eni';
-$string['compatibilitysettings'] = 'Vakai\'i ho\'o setingi PHP  ...';
 $string['configfilenotwritten'] = 'Ne \'ikai ke lava \'ehe sikulipi fokotu\'u \'o fakatupu \'otometiki pe ha faile konifik.php \'aia \'oku \'iai ho\'osetingi neke fili, mahalo pe  koe\'uhi \'oku \'ikai ke lava\'otohi e fakamatala Muutolo. Teke lava pe \'o kopie ngaahi kouti ko \'eni ki ha faile kuo fakahingoa konifik.php \'i loto \'ihe tefito \'oe fakamatala \'oe Muutolo. ';
 $string['configfilewritten'] = 'Konifik.php kuo lava lelei hono fakatupu';
-$string['configurationcomplete'] = 'Kuo kakato e Konifikaleisoni';
 $string['continue'] = 'Hoko atu';
 $string['database'] = 'Tata-peisi';
-$string['databasesettings'] = '    \'Oku totonu keke fokotu\'utu\'u he taimi\'ni \'ae tatapeisi \'aia e tauhi ai e konga lahi \'oe ngaahi tata Muutolo.  Koe tatapeisi ko\'ekni, kuopau koha tatapeisi ne \'osi fokotu\'u pea \'iai foki moh ahingoa\'iusa mo ha paasiueeti ne fakatupu ke lava \'o huu \'aki ki ai.<br/>
-    <br /> <br />
-       <b>Taipe:</b> mysql or postgres7<br />
-       <b>Housi:</b> eg housilokolo pe db.isp.com<br />
-       <b>Name:</b> hingoa \'oe tatapeisi, eg muutolo<br />
-       <b>User:</b> ko ho\'o tatapeisi \'iusaneimi<br />
-       <b>Paasiueeti:</b> ko ho\'o tatapeisi paasiueeti<br />
-       <b>Tepile pulifiki:</b>koe puliifiki \'opisinolo ke ngaue\'aki ki he ngaahi tepile hingoa kotoa  ';
 $string['dataroot'] = 'Fakahinohino tata';
 $string['datarooterror'] = '\'Oku \'ikai ke ma\'u/\'ilo pe fakatupu e \'fakahinohino Tata\' \'oku ke faka\'ilonga\'i mai. Fakatonutonu e founga pee ko ho\'o fakatupu pe ia \'e koe \'ae fakahinohino.   ';
 $string['dbconnectionerror'] = '\'Oku \'ikai ke mau lava \'o fkahoko koe ki he tatapeisi kuo ke faka\'ilonga\'i mai. Kataki \'o vakai\'i ho\'o ngaahi setingi tatapeisi. ';
 $string['dbcreationerror'] = 'Fehalaaki \'ihe tatapeisi fakatupu. \'Oku \'ikai ke lava \'o fakatupu e hignoa tatapeisi ne \'omai \'aki e ngaahi setingi ne \'omai ';
 $string['dbhost'] = 'Seeva Housi';
-$string['dbpass'] = 'Paasi-ueeti';
 $string['dbprefix'] = 'Tepile pulifiki';
 $string['dbtype'] = 'Taipe';
-$string['directorysettings'] = '<p>Kataki \'o fakapapau\'i mai e tu\'u\'anga \'oe fokotu\'u Muutolo ko \'eni.</p>
-
-<p><b>Tu\'asila Uepi:</b>
-fakamahino\'i e tu\'asila kakato \'oe Uepi \'aia \'e \'ekisesi ai ki he Muutolo. Kapau \'oku lava e hu ki ho\'o Uepi saiti \'ihe malatipolo URLs pea ke fili\'i  \'a ee \'oku fakanatula tahaa \'a ee \'e ngaue \'aki \'e ho\'o fanauako. \'Oua e fakakau ai ha makohi fakatotolo.</p>
-
-<p><b>Fakahinohino Muutolo:</b>
-Fakamahino\'i e fakahinohino kakato \'oe founga ki he fokotu\'u ko \'eni. Fakapapau\'i \'oku tonu e \'apa/loua keisi.</p>
-
-<p><b>fakahinohino tata:</b>
-\'Oku fiema\'u ke \'iai ha feitu\'u \'e lava \'ehe Muutolo \'o seivi ai e ngaahi \'apulouti faile.  Koe fakahinohino ko \'eni \'oku totonu ke lava \'o lau MO LAVA\'OTOHI \'ehe \'iusa uepi seeva
-(angamaheni \'\'ikaihataha\' pee \'apache\'), ka \'oku totonu ke \'oua \'e lava \'o \'ekisesi hangatonu meihe Uepi.</p>';
 $string['dirroot'] = 'Mutolo fakahinohino';
 $string['dirrooterror'] = 'Hangehangee \'oku hala e setingi \'Fakahinohino Muutolo\' - \'oku \'ikai ke mau ma\'u ha fokotu\'u Muutolo \'iai. Koe mahu\'inga \'i lalo kuo teo-seti. ';
 $string['download'] = 'Tauni-louti';
-$string['doyouagree'] = 'Kuo ke lau pea ke mahino\'i e ngaahi e ngaahi  konitisini?';
 $string['error'] = 'Hala';
 $string['fail'] = 'Too';
 $string['fileuploads'] = '\'Apu-louti e faile';
@@ -79,7 +49,6 @@ $string['gdversionhelp'] = '<p>Ngalingali \'oku te\'ekiai ke fokotu\'u e GD \'i 
 <p>\'Ihe Uinitou, teke fa\'amalava pee \'o \'etita\'i php.ini mo to\'o e komeni \'oe laine fakahinohino php_gd2.dll.</p>';
 $string['help'] = 'Tokoni';
 $string['installation'] = 'Fokotu\'u';
-$string['invalidemail'] = 'Tu\'asila \'imeili hala';
 $string['language'] = 'Lea';
 $string['magicquotesruntime'] = 'Magic kuouti taimi lele';
 $string['magicquotesruntimeerror'] = '\'Oku totonu ke \'ofu eni';

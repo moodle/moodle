@@ -11,20 +11,15 @@
 
 $string['admindirerror'] = 'Khaanadda Maammulka ee  meesha la dhigey  waa khalad';
 $string['admindirname'] = 'Khaanad Maamul';
-$string['availablelangs'] = 'Boqshadaha luqadaha la heli karo';
 $string['caution'] = 'Taxaddar';
-$string['chooselanguage'] = 'Xolo luqad';
 $string['closewindow'] = 'Daaqaddan xidh';
 $string['configfilewritten'] = '\"config.php\" si guul leh ayaa loo sameeyey';
-$string['configurationcomplete'] = 'Isku duba-ridka waa la dhammeystirey';
 $string['continue'] = 'Sii wad';
 $string['database'] = '$a';
 $string['dataroot'] = 'Khaanadda \"data\"da';
-$string['doyouagree'] = 'Ma akhridey shuruudahan oo iyaga ma fahantey ?';
 $string['error'] = 'Cillad';
 $string['help'] = 'Gacan-siin';
 $string['info'] = 'Maclluumaad';
-$string['invalidemail'] = 'Cinwaanemail khaldan';
 $string['language'] = 'Luqad';
 $string['name'] = 'Magac';
 $string['next'] = 'Ka ku xiga';

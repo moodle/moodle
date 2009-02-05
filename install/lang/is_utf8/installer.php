@@ -10,7 +10,6 @@
 /// using strings defined in stringnames.txt (same dir)
 
 $string['admindirerror'] = 'Uppgefið \'admin\' skráarsafn er rangt';
-$string['availablelangs'] = 'Tiltækir tungumálapakkar';
 $string['bypassed'] = 'Stiklað yfir';
 $string['cannotcreatelangdir'] = 'Get ekki myndað lang skráarsafnið';
 $string['cannotcreatetempdir'] = 'Get ekki myndað tímabundið skráarsafn';
@@ -22,29 +21,18 @@ $string['cannotsavezipfile'] = 'Get ekki vistað ZIP skrá';
 $string['cannotunzipfile'] = 'Get ekki afþjappað skrá';
 $string['caution'] = 'Aðgát';
 $string['check'] = 'Athuga';
-$string['chooselanguage'] = 'Veldu tungumál';
 $string['chooselanguagehead'] = 'Tungumál valið';
 $string['chooselanguagesub'] = 'Veldu tungumál sem þú vilt nota við uppsetninguna. Síðar er hægt að velja tungumál á sjálfan vefinn.';
 $string['closewindow'] = 'Loka þessum glugga';
-$string['compatibilitysettings'] = 'Athuga stillingar á PHP ...';
 $string['compatibilitysettingshead'] = 'Stillingar á PHP athugaðar';
 $string['compatibilitysettingssub'] = 'Vefþjóninn verður að standast allar þessar prófanir til þess að tryggja að Moodle keyri án vandkvæða';
 $string['configfilenotwritten'] = 'Uppsetningarforritið gat ekki myndað config.php skránna sem hefur að geyma stillingar vefsins. Líklegast vegna þess að skrifheimild vantar á Moodle skráarsafnið. Þú getur leyst þetta með að búa til skránna config.php í rót vefins og afritað eftirfarandi kóða í hana.';
 $string['configfilewritten'] = 'config.php skráin hefur verið mynduð';
-$string['configurationcomplete'] = 'Stillingu lokið';
 $string['configurationcompletehead'] = 'Stillingu lokið';
 $string['configurationcompletesub'] = 'Moodle gerði tilraun til þess að vista uppsetningarskránna í rót Moodle skráarsafnins.';
 $string['continue'] = 'Áfram';
 $string['curlrecommended'] = 'Mælt er með innsetningu á Curl forritasafninu í því skyni að gera mögulega nettengingar Moodle vefja.';
 $string['database'] = 'Gagnagrunnur';
-$string['databasecreationsettings'] = 'Nú er komið að því að setja upp gagnagrunninn þar sem flest gögn sem tilheyra Moodle eru hýst. Uppsetningarforritið skilgreinir gagnagrunninn með neðangreindum stillingum:
-<br />
-<b>Tegund:</b> sjálfgefið gildi uppsetningarforrits er \"mysql\"<br />
-<b>Vefþjónn:</b> sjálfgefið gildi uppsetningarforrits er \"localhost\"<br />
-<b>Nafn:</b> nafn gagnagrunns, t.d moodle<br />
-<b>Notandi:</b> fixed to \"root\" by the installer<br />
-<b>Lykilorð:</b> lykilorðið að gagnagrunninum<br />
-<b>Forskeyti á töflur:</b> valkvæmt forskeyti á nöfn allra taflna';
 $string['databasecreationsettingssub'] = 'Nú er komið að því að setja upp gagnagrunninn þar sem flest gögn sem tilheyra Moodle eru hýst. Uppsetningarforritið skilgreinir gagnagrunninn með neðangreindum stillingum.
 <b>Tegund:</b> sjálfgefið gildi uppsetningarforrits er \"mysql\"<br />
 <b>Vefþjónn:</b> sjálfgefið gildi uppsetningarforrits er \"localhost\"<br />
@@ -52,14 +40,6 @@ $string['databasecreationsettingssub'] = 'Nú er komið að því að setja upp 
 <b>Notandi:</b> fixed to \"root\" by the installer<br />
 <b>Lykilorð:</b> lykilorðið að gagnagrunninum<br />
 <b>Forskeyti á töflur:</b> valkvæmt forskeyti á nöfn allra taflna';
-$string['databasesettings'] = 'Nú er komið að því að setja upp gagnagrunninn þar sem flest gögn sem tilheyra Moodle eru hýst. Gagnagrunnurinn verður að vera til staðar ásamt notendanafni og lykilorði sem veitir aðgang að honum.<br />
-<br /> <br />
-<b>Tegund:</b> mysql eða postgres7<br />
-<b>Vefþjónn:</b> þ.e. localhost eða db.isp.com<br />
-<b>Nafn:</b> nafn gagnagrunns, t.d. moodle<br />
-<b>Notandi:</b> notendanafn að gagnagrunni<br />
-<b>Lykilorð:</b> lykilorð að gagnagrunni<br />
-<b>Forskeyti á töflur:</b> valkvæmt forskeyti á töflur';
 $string['databasesettingshead'] = 'Nú er komið að því að setja upp gagnagrunninn þar sem flest gögn sem tilheyra Moodle eru hýst. Gagnagrunnurinn verður að vera til staðar ásamt notendanafni og lykilorði sem veitir aðgang að honum.';
 $string['databasesettingssub'] = '<b>Tegund:</b> mysql eða postgres7<br />
 <b>Vefþjónn:</b> þ.e. localhost eða db.isp.com<br />
@@ -72,18 +52,9 @@ $string['datarooterror'] = 'Gagnamappan sem þú tilgreindir fannst ekki eða ek
 $string['dbconnectionerror'] = 'Ekki náðist tenging við uppgefinn gagnagrunn. Vinsamlegast athugaðu hvort stillingar séu réttar.';
 $string['dbcreationerror'] = 'Villa við myndun á gagnagrunni. Gat ekki myndað gagnagrunn með uppgefnum stillingum';
 $string['dbhost'] = 'Vefþjónn';
-$string['dbpass'] = 'Lykilorð';
 $string['dbprefix'] = 'fortáknun taflna';
 $string['dbtype'] = 'Tegund';
 $string['dbwrongencoding'] = 'Kótun á uppgefnum gagnagrunni er af tegund ($a) sem ekki er mælt með. Betri kostur er að notast gagnagrunn með Unicode (UTF-8) kótun. Þú getur engu að síður haldið uppsetningunni áfram með því haka við \"Sleppa prófun á gagnagrunni\" hér að neðan, en mátt þá eiga von á vandamálum síðar.';
-$string['directorysettings'] = '<p><b>Vefslóð:</b>
-Gefðu upp fulla vefslóð að Moodle. Ef Moodle er aðgengilegt af fleiri en einni slóð skaltu skrá þá slóð sem líklegast er að nemendur muni nota. Ekki hafa skástrik í endanum.</p>
-
-<p><b>Moodle skráarsafnið:</b>
-Gefðu upp slóðina að skráarsafninu þar sem Moodle er vistað.</p>
-
-<p><b>Gagnamappa:</b>
-Moodle þarf á að halda skráarsafni þar sem gögn eru vistuð. Athugaðu að vefþjónninn verður að hafa bæði les- OG SKRIFHEIMILD á þetta skráarsafn (venjulega \'nobody\' eða \'apache\'). Skráarsafnið á hins vegar ekki að vera aðgengilegt beint í gegnum vefinn.</p>';
 $string['directorysettingshead'] = 'Vinsamlegast staðfestu staðsetningu á þessari Moodle uppsetningu';
 $string['directorysettingssub'] = '<b>Vefslóð:</b>
 Gefðu upp fulla vefslóð að Moodle. Ef Moodle er aðgengilegt af fleiri en einni slóð skaltu skrá þá slóð sem líklegast er að nemendur muni nota. Ekki hafa skástrik í endanum.
@@ -103,7 +74,6 @@ $string['downloadlanguagehead'] = 'Sækja tungumálapakka';
 $string['downloadlanguagenotneeded'] = 'Þú getur haldið áfram með uppsetninguna með sjálfgefnum tungumálapakka, \"$a\".';
 $string['downloadlanguagesub'] = 'Nú hefur þú kost á því að sækja tungumálapakka og halda uppsetningunni áfram á því tungumáli.<br /><br />
 Ef þú getur ekki sótt tungumálapakkann þá heldur uppsetningarferlið áfram á ensku. Eftir að uppsetningu lýkur getur þú sótt og sett upp önnur tungumál.';
-$string['doyouagree'] = 'Hefur þú lesið þessi skilyrði og samþykkir þú þau?';
 $string['environmenterrortodo'] = 'Þú verður að leysa úr öllum villuboðunum hér að ofan áður en haldið er áfram með innsetningu á þessari útgáfu af Moodle!';
 $string['environmentrecommendinstall'] = 'mælum við með að sé uppsett/virkt';
 $string['environmentrecommendversion'] = 'mælt er með útgáfu $a->needed en þú notast við útgáfu $a->current';
@@ -119,7 +89,6 @@ $string['help'] = 'Hjálp';
 $string['iconvrecommended'] = 'Mælt er með uppsetningu á ICONV safninu í því skyni að auka virkni vefsins, sérstaklega ef vefurinn styður við tungumál sem ekki eru af latneskum stofni (non-latin).';
 $string['info'] = 'Upplýsingar';
 $string['installation'] = 'Uppsetning';
-$string['invalidemail'] = 'Ógild tölvupóstfang';
 $string['invalidmd5'] = 'Ótækt md5';
 $string['langdownloaderror'] = 'Því miður tókst ekki að setja upp tungumálið $a. Uppsetning heldur áfram á ensku.';
 $string['langdownloadok'] = 'Tungumálið $a hefur verið sótt og sett upp. Innsetningarferlið heldur nú áfram á því máli.';
@@ -154,7 +123,6 @@ $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.3.0 
 (Ef þú notar útgáfu 5.0.x gætir þú hugsanlega breytt yfir í 4.4.x)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Til baka';
-$string['releasenoteslink'] = 'Allar frekari upplýsingar um þessa útgáfu af Moodle má finna <a target=\"_new\" href=\"$a\">hér</a>';
 $string['report'] = 'Skýrsla';
 $string['restricted'] = 'Aðgangur takmarkaður';
 $string['safemode'] = 'Safe Mode';

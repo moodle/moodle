@@ -12,11 +12,9 @@
 $string['check'] = 'Sjekk';
 $string['closewindow'] = 'Lukk dette vindauget';
 $string['continue'] = 'Hald fram';
-$string['doyouagree'] = 'Har du lest disse vilkåra og forstått dei?';
 $string['error'] = 'Feil';
 $string['help'] = 'Hjelp';
 $string['info'] = 'Informasjon';
-$string['invalidemail'] = 'Feil e-postadresse';
 $string['language'] = 'Språk';
 $string['name'] = 'Namn';
 $string['next'] = 'Neste';

@@ -11,16 +11,9 @@
 
 $string['admindirerror'] = 'Malî ang ibinigay na bugsok na pang-admin';
 $string['admindirname'] = 'Pang-Admin na Bugsok';
-$string['admindirsetting'] = 'Mayroong ilang webhost na ginagamit ang /admin bilang isang espesyal na URL para mapasok mo ang
-    kontrol panel o iba pa.  Nakakalungkot isipin pero sumasalungat ito sa 
-    istandard na lokasyon ng mga pang-admin na pahina ng Moodle.  Maaayos ninyo ito sa pamamagitan ng
-    pagpapalit ng pangalan ng pang-admin na bugsok sa iyong iniluklok, alalaong baga\'y ilagay ninyo
-    ang bagong pangalan na iyon dito.  Halimbawa: <br /> <br /><b>moodleadmin</b><br /> <br />
-    Maaayos nito ang mga pang-admin na link sa Moodle.';
 $string['admindirsettinghead'] = 'Itinatakda ang bugsok na pang-admin...';
 $string['admindirsettingsub'] = 'May ilang webhost na ginagamit ang /admin bilang isang espesyal na URL, halimbawa ay para makapasok sa isang kontrol panel.  Nguni\'t nakakagulo ito sa istandard na lokasyon ng mga pahinang pang-admin ng Moodle.  Malulutas ninyo ito sa pamamagitan ng pagbabago ng pangalan ng bugsok na pang-admin sa iniluklok ninyo, tapos ay isulat ang bagong pangalan dito.  Halimbawa:  <br /> <br /><b>moodleadmin</b><br /> <br />
 Maaayos nito ang mga link na pang-admin sa Moodle.';
-$string['availablelangs'] = 'Magagamit na mga pakete ng wika';
 $string['bypassed'] = 'Nilagpasan';
 $string['cannotcreatelangdir'] = 'Hindi makalikha ng lang bgsk.';
 $string['cannotcreatetempdir'] = 'Hindi makalikha ng temp bgsk.';
@@ -32,30 +25,19 @@ $string['cannotsavezipfile'] = 'Hindi maisilid ang sakong ZIP.';
 $string['cannotunzipfile'] = 'Hindi mai-unzip ang sako.';
 $string['caution'] = 'Mag-ingat';
 $string['check'] = 'Suriin';
-$string['chooselanguage'] = 'Pumilì ng wika';
 $string['chooselanguagehead'] = 'Pumilì ng wika';
 $string['chooselanguagesub'] = 'Pumili po ng wika para sa pagluluklok LAMANG.  Sa mga susunod na iskrin ay makakapili ka ng wika para sa site o tagagamit.';
 $string['closewindow'] = 'Isara ang bintanang ito';
-$string['compatibilitysettings'] = 'Sinusuri ang iyong kaayusan ng PHP...';
 $string['compatibilitysettingshead'] = 'Sinusuri ang iyong kaayusan ng PHP...';
 $string['compatibilitysettingssub'] = 'Kailangang pumasa ang server mo sa lahat ng pagsubok upang mapatakbo nang mahusay ang Moodle';
 $string['componentisuptodate'] = 'Bago ang piyesa.';
 $string['configfilenotwritten'] = 'Hindi nakalikha nang kusa ang iskrip na pangluklok ng sakong config.php na siyang naglalaman ng mga pinilì mong kaayusan.  Marahil ay dahil sa hindi masulatan ang bugsok ng Moodle.  Maaari mong kopyahin nang mano-mano ang sumusunod na code sa isang sako na nagngangalang config.php sa loob ng punong bugsok ng Moodle.';
 $string['configfilewritten'] = 'matagumpay na nalikha ang config.php';
-$string['configurationcomplete'] = 'Nakumpleto na ang pagsasaayos';
 $string['configurationcompletehead'] = 'Nakumpleto na ang pagsasaayos';
 $string['configurationcompletesub'] = 'Tinangka ng Moodle na isilid ang kaayusan mo sa isang sako sa root ng iniluklok mong Moodle.';
 $string['continue'] = 'Ituloy';
 $string['curlrecommended'] = 'Iminumungkahi ang pagluklok ng opsiyonal na aklatang Curl, upang mabuhay ang ilang gamit ng Pagne-network ng Moodle.';
 $string['database'] = 'Datosan';
-$string['databasecreationsettings'] = 'Ngayon ay kailangan mong isaayos ang kaayusan ng datosan kung saan iiimbakin ang karamihan sa datos ng Moodle.  Kusang lilikhain ang datosan na ito ng pangluklok na Moodle4Windows na may mga kaayusang itinatakda sa ibaba.<br />
-<br /> <br />
-<b>Uri:</b> ipinirmi ng pangluklok sa \"mysql\"<br />
-<b>Host:</b> ipinirmi ng pangluklok sa \"localhost\"<br />
-<b>Ngalan:</b> pangalan ng datosan, hal. moodle<br />
-<b>Tagagamit:</b> ipinirmi ng pangluklok sa \"root\"<br />
-<b>Kontrasenyas:</b> ang kontrasenyas ng datosan mo<br />
-<b>Unlapi ng Teybol:</b> opsiyonal na unlapi na gagamitin sa lahat ng pangalan ng teybol';
 $string['databasecreationsettingshead'] = 'Ngayon ay kailangan mo namang isaayos ang mga kaayusan ng datosan kung saan nalalagak ang karamihan sa datos ng Moodle.  Ang datosan na ito ay kusang lilikhain ng pangluklok, at itatakda nito ang sumusunod na kaayusan.';
 $string['databasecreationsettingssub'] = '<b>Uri:</b> ipinirmi ng pangluklok sa \"mysql\"<br />
 <b>Host:</b> ipinirmi ng pangluklok sa \"localhost\"<br />
@@ -63,16 +45,6 @@ $string['databasecreationsettingssub'] = '<b>Uri:</b> ipinirmi ng pangluklok sa 
 <b>Tagagamit:</b> ipinirmi ng pangluklok sa \"root\"<br />
 <b>Kontrasenyas:</b> ang kontrasenyas ng datosan mo<br />
 <b>Unlapi ng Teybol:</b> opsiyonal na unlapi na gagamitin sa lahat ng pangalan ng teybol';
-$string['databasesettings'] = 'Ngayon naman ay kailangan mong isaayos ang datosan kung saan iimbakin
-    ang karamihan sa datos ng Moodle.  Dapat ay nalikha na ang datosan na ito
-    at may bansag at kontrasenyas na upang mapasok ito.<br />
-    <br /> <br />
-       <b>Uri:</b> mysql o postgres7<br />
-       <b>Host:</b> eg localhost o db.isp.com<br />
-       <b>Pangalan:</b> pangalan ng datosan, eg moodle<br />
-       <b>Tagagamit:</b> ang iyong bansag para sa datosan<br />
-       <b>Kontrasenyas:</b> ang iyong kontrasenyas ng datosan<br />
-       <b>Unlapi ng mga Teybol:</b> opsiyonal na unlapi na gagamitin sa lahat ng pangalan ng teybol';
 $string['databasesettingshead'] = 'Ngayon naman ay kailangan mong isaayos ang datosan kung saan iimbakin
     ang karamihan sa datos ng Moodle.  Dapat ay nalikha na ang datosan na ito
     at may bansag at kontrasenyas na upang mapasok ito.';
@@ -122,30 +94,12 @@ $string['dataroot'] = 'Bugsok ng Datos';
 $string['datarooterror'] = 'Hindi matagpuan o malikha ang \'Bugsok ng Datos\' na ibinigay mo.  Alin sa dalawa, iwasto mo ang landas o lumikha ng bugsok nang mano-mano.';
 $string['dbconnectionerror'] = 'Hindi kami makakonekta sa ibinigay mong datosan.  Pakitsek ang kaayusan ng iyong datosan.';
 $string['dbcreationerror'] = 'Nagka-error sa paglikha ng datosan.  Hindi malikha ang ibinigay na pangalan ng datosan nang may mga ibinigay na  kaayusan';
-$string['dbpass'] = 'Kontrasenyas';
 $string['dbprefix'] = 'Unlapi ng mga teybol';
 $string['dbtype'] = 'Uri';
 $string['dbwrongencoding'] = 'Ang piniling datosan ay gumagana alinsunod sa hindi iminumungkahing encoding ($a).  Mas makabubuti na gamitin ang isa sa mga inencode sa Unicode (UTF-8) na datosan.  Magkagayunman, maaari mong lagpasan ang pagsubok na ito sa pamamagitan ng pagpili sa tsek ng \"Lagpasan ang Pagsubok ng DB Encoding\" sa ibaba, pero maaari kang makaranas ng mga problema sa hinaharap.';
 $string['dbwronghostserver'] = 'Kailangan mong sundin ang mga patakaran ng \"Host\" tulad ng ipinaliwanag sa itaas.';
 $string['dbwrongnlslang'] = 'Kailangang gamitin ng pangkapaligirang baryabol na NLS_LANG sa inyong web server ang AL32UTF8 charset.  Tingnan ang dokumentasyon ng PHP hinggil sa kung paano aayusin ang katangiang OCI8.';
 $string['dbwrongprefix'] = 'Kailangan mong sundin ang mga patakaran ng \"Tables Prefix\" tulad ng ipinaliwanag sa itaas.';
-$string['directorysettings'] = '<p>Pakikumpirma ang mga lokasyon ng iluluklok na Moodle.</p>
-
-<p><b>Web Address:</b>
-Ibigay ang buong web address kung saan papasukin ang Moodle.
-Kung ang web site mo ay mapapasok sa pamamagitan ng maraming URL piliin ang
-pinakaangkop para sa mga mag-aaral mo.  Huwag lalagyan ng 
-slash sa dulo.</p>
-
-<p><b>Bugsok ng Moodle:</b>
-Ibigay ang buong landas ng bugsok sa iluluklok na ito
-Tiyakin na ang malaki/maliit na titik ay wasto.</p>
-
-<p><b>Bugsok ng Datos:</b>
-Kailangan mo ng pook kung saan puwedeng magsilid ng inahon na sako ang Moodle.  Ang
-bugsok na ito ay dapat na nababasa AT NASUSULATAN ng tagagamit na web server 
-(kadalasan ay \'nobody\' o \'apache\'), pero hindi ito dapat mapasok nang
-direkta sa pamamagitan ng web.</p>';
 $string['directorysettingshead'] = 'Pakikumpirma ang mga lokasyon ng iluluklok na Moodle';
 $string['directorysettingssub'] = '<b>Web Address:</b>
 Ibigay ang buong web address kung saan papasukin ang Moodle.
@@ -174,7 +128,6 @@ $string['downloadlanguagehead'] = 'Ilusong ang pakete ng wika';
 $string['downloadlanguagenotneeded'] = 'Maaari mong ipagpatuloy ang proseso ng pagluluklok sa pamamagitan ng umiiral na pakete ng wika, na \"$a\".';
 $string['downloadlanguagesub'] = 'May opsiyon ka ngayon na maglusong ng pakete ng wika at ipagpatuloy ang proseso ng pagluluklok sa
 wikang ito.<br /><br />Kung hindi mo mailusong ang pakete ng wika, ang proseso ng pagluluklok ay magpapatuloy sa Ingles.(Kapag tapos na ang proseso ng pagluluklok, magkakaroon ka ng pagkakataon na maglusong at magluklok ng iba pang pakete ng wika.)';
-$string['doyouagree'] = 'Nabasa mo ba ang mga kondisyon at naunawan ang mga ito?';
 $string['environmenterrortodo'] = 'Kailangan mo munang lutasin ang lahat ng suliraning pangkapaligiran (mga error) na natuklasan sa itaas bago mo maituloy ang pagluklok ng bersiyon ng Moodle na ito!';
 $string['environmenthead'] = 'Sinusuri ang kapaligiran mo...';
 $string['environmentrecommendcustomcheck'] = 'Kapag nabigo sa pagsubok na ito, ibig sabihin ay maaaring may problema';
@@ -224,9 +177,7 @@ $string['help'] = 'Tulong';
 $string['iconvrecommended'] = 'Mahigpit na iminumungkahi ang pagluklok ng opsiyonal na ICONV library upang mapahusay ang paggana ng site, lalupa\'t kung sinusuportahan ng site mo ang mga di-latin na wika.';
 $string['info'] = 'Impormasyon';
 $string['installation'] = 'Pagluklok';
-$string['invalidemail'] = 'Di-tanggap na email address';
 $string['invalidmd5'] = 'Ditanggap na md5';
-$string['invalidurl'] = 'Di tanggap na url';
 $string['langdownloaderror'] = 'Ikinalulungkot namin na ang wikang \"$a\" ay hindi nailuklok. Ang kabuuan ng pagluluklok ay itutuloy sa Ingles.';
 $string['langdownloadok'] = 'Matagumpay na nailuklok ang wikang \"$a\".  Ang kabuuan ng pagluluklok ay itutuloy sa wikang ito.';
 $string['language'] = 'Wikà';
@@ -286,7 +237,6 @@ $string['phpversionhelp'] = '<p>Kinakailangan ng Moodle ang isang bersiyon ng PH
 $string['previous'] = 'Nakaraan';
 $string['qtyperqpwillberemoved'] = 'Habang nagpapanibago, ang mga uri ng tanong na RQP ay tatanggalin.  Hindi mo ginagamit ang mga uri ng tanong na ito, kaya hindi ka dapat magkaproblema.';
 $string['qtyperqpwillberemovedanyway'] = 'Habang nagpapanibago, ang mga uri ng tanong na RQP ay tatanggalin. May ilang tanong na RQP ka sa iyong datosan, at hindi gagana ang mga ito maliban na lamang kung iluklok mo muli ang koda mula sa http://moodle.org/mod/data/view.php?d=13&amp;rid=797 bago ka magpatuloy ng pagpapanibago.';
-$string['releasenoteslink'] = 'Para sa impormasyon tungkol sa bersiyon ng Moodle na ito, pakitingnan po ang online na <a target=\"_new\" href=\"$a\">Mga Talâ ng Lathala</a>';
 $string['remotedownloadnotallowed'] = 'Ang paglusong ng mga piyesa sa server mo ay hindi pinapahintulutan (ang allow_url_fopen ay pinatay).<br /><br />Kailangan mong ilusong ang 
  <a href=\"$a->url\">$a->url</a> sako nang mano-mano, kopyahin ito sa \"$a->dest\" ng iyong server at iunzip ito doon.';
 $string['report'] = 'Ulat';

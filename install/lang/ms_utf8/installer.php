@@ -11,10 +11,8 @@
 
 $string['closewindow'] = 'Tutup';
 $string['continue'] = 'Teruskan';
-$string['doyouagree'] = 'Apakah Anda telah membaca peraturan ini dan mengerti isinya?';
 $string['error'] = 'Ralat';
 $string['help'] = 'Bantuan';
-$string['invalidemail'] = 'Kesalahan pada alamat email';
 $string['language'] = 'Bahasa';
 $string['name'] = 'Nama';
 $string['next'] = 'Teruskan';

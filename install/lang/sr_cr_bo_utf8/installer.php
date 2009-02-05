@@ -11,10 +11,8 @@
 
 $string['closewindow'] = 'Затворите прозор';
 $string['continue'] = 'Наставак';
-$string['doyouagree'] = 'Да ли сте прочитали и разумјели ове услове?';
 $string['error'] = 'Грешка';
 $string['help'] = 'Помоћ';
-$string['invalidemail'] = 'Погрешна електронска адреса';
 $string['language'] = 'Језик';
 $string['name'] = 'Име';
 $string['next'] = 'Next';

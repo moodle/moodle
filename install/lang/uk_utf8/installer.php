@@ -11,10 +11,8 @@
 
 $string['closewindow'] = 'Закрити вікно';
 $string['continue'] = 'Продовжити';
-$string['doyouagree'] = ' Ви ознайомилися з умовами?';
 $string['error'] = 'Помилка';
 $string['help'] = 'Допомога';
-$string['invalidemail'] = 'Неправильний формат для e-mail';
 $string['language'] = 'Мова';
 $string['name'] = 'Назва';
 $string['next'] = 'Далі';

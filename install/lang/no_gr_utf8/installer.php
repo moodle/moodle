@@ -11,10 +11,8 @@
 
 $string['closewindow'] = 'Lukk dette vinduet';
 $string['continue'] = 'Fortsett';
-$string['doyouagree'] = 'Har du lest disse reglene og forstått dem?';
 $string['error'] = 'Feil';
 $string['help'] = 'Hjelp';
-$string['invalidemail'] = 'Feil e-postadresse';
 $string['language'] = 'Språk';
 $string['name'] = 'Navn';
 $string['next'] = 'Neste';

@@ -11,9 +11,7 @@
 
 $string['admindirerror']='Valitud administreerimiskataloog on vale';
 $string['admindirname']='Administreerimiskataloog';
-$string['admindirsetting']='Mõned vähesed veebihostid kasutavad spetsiaalset URL-i, et anda ligipääs juhtpaneelile. Kahjuks läheb see konflikti Moodle administreerimislehe standardse asukohaga. Sa saad seda viga parandada, kui nimetad oma administreerimiskataloogi ümber. Näiteks: <br /> <br /><b>moodleadmin</b><br /> <br /> See teeb administreerimislingid Moodle\'is korda.';
 $string['admindirsettinghead']='Kataloogi admin seadistamine ...';
-$string['availablelangs']='Saadaval keelepaketid';
 $string['cannotcreatelangdir']='Ei saa luua lang kataloogi';
 $string['cannotcreatetempdir']='Ei saa luua temp kataloogi';
 $string['cannotdownloadcomponents']='Ei saa alla tõmmata komponente.';
@@ -24,45 +22,25 @@ $string['cannotsavezipfile']='Ei saa salvestada ZIP faili.';
 $string['cannotunzipfile']='Ei saa lahti pakkida faili.';
 $string['caution']='Hoiatus';
 $string['check']='Kontrolli';
-$string['chooselanguage']='Vali keel';
 $string['chooselanguagehead']='Keele valik';
 $string['chooselanguagesub']='Palun vali keel, mida kasutatakse AINULT installeerimise käigus. Hiljem saab valida õpikeskkonna ja kasutajate keelt.';
 $string['closewindow']='Sule aken';
-$string['compatibilitysettings']='Kontrollin teie PHP sätteid ...';
 $string['compatibilitysettingshead']='PHP seadete kontrollimine...';
 $string['compatibilitysettingssub']='Sinu server peab läbima kõik need testid, et Moodle jookseks korralikult';
 $string['configfilenotwritten']='Installeerimisskript ei suutnud automaatselt tekitada config.php faili, mis sisaldaks sinu valitud seadistusi. Põhjus võib olla selles, et sinu Moodle kataloog ei ole kirjutatav. Sa võid käsitsi kopeerida järgneva koodi config.php nimelisse faili, mis asub Moodle juurkataloogis.';
 $string['configfilewritten']='config.php on edukalt loodud';
-$string['configurationcomplete']='Seadistamine lõpetatud';
 $string['configurationcompletehead']='Konfigureerimine lõpetatud';
 $string['configurationcompletesub']='Moodle tegi katse salvestada Sinu seadistuse Moodle juurkataloogis asuvasse faili.';
 $string['continue']='Jätka';
 $string['curlrecommended']='Fakultatiivse Curl teegi installeerimine on väga soovitatav, millega võimaldatakse Moodle võrgunduse funktsionaalsus.';
 $string['customcheck']='Muud kontrollid';
 $string['database']='Andmebaas';
-$string['databasecreationsettings']='Nüüd sa pead konfigureerima seadistuse andmebaasile, kus hoitakse enamikku Moodle andmetest. See andmebaas luuakse automaatselt Moodle4Windows poolt koos järgnevalt määratud seadistustega.<br />
-<br /> <br />
-<b>Tüüp:</b>installeerija määras \"mysql\"<br/>
-<b>Host:</b>installeerija määras \"localhost\"<br/>
-<b>Nimi:</b>andmebaasi nimi, näiteks moodle<br/>
-<b>Kasutaja:</b>installeerija määras \"root\"<br/>
-<b>Parool:</b>sinu andmebaasi parool<br/>
-<b>Tabelite eesliide:</b>valikuline eesliide, mida kasutada kõigi tabelite nimedes';
 $string['databasecreationsettingssub']='<b>Tüüp:</b> määratud \"mysql\" paigaldaja poolt<br />
        <b>Host:</b> määratud \"localhost\" paigaldaja poolt<br />
        <b>Nimi:</b> andmebaasi nimi, nt. moodle<br />
        <b>User:</b> määratud \"root\" paigaldaja poolt<br />
        <b>Parool:</b> Sinu andmebaasi parool<br />
        <b>Tabelite prefiks:</b> fakultatiivne prefiks kasutamaks tabeli nimetes';
-$string['databasesettings']='Nüüd pead sa konfigureerima admebaasi, kus hoitakse enamikku Moodle andmetest. See andmebaas peab olema juba loodud ning samuti kasutajanimi ja parool andmebaasile juurdepääsu saamiseks.
-br />
-<br /> <br />
-<b>Tüüp:</b> mysql või postgres7<br />
-<b>Host:</b> näiteks localhost või db.isp.com<br />
-<b>Nimi:</b> andmebaasi nimi, näiteks moodle<br />
-<b>Kasutaja:</b> sinu andmebaasi kasutajanimi<br />
-<b>Parool:</b> sinu andmebaasi parool<br />
-<b>Tabelite eesliide:</b> valikuline eesliide, mida kasutada kõigi tabelite nimedes';
 $string['databasesettingshead']='Nüüd on vaja seadistada andmebaas, kus enamus Moodle andmeid hakatakse hoidma. See andmebaas peab olema eelnevalt loodud ning ka konto, millel ligipääs antud andmebaasile.';
 $string['databasesettingssub']='<b>Tüüp:</b> mysql või postgres7<br />
 	<b>Host:</b> näiteks localhost või db.isp.com<br />
@@ -110,19 +88,8 @@ $string['datarooterror']='Sinu määratud andmete kataloogi ei suudetud leida eg
 $string['dbconnectionerror']='Me ei suutnud sinu määratud andmebaasi ühendada. Palun kontrolli oma andmebaasi seadistust.';
 $string['dbcreationerror']='Andmebaasi loomise viga. Ei suudetud luua andmebaasi nime olemasolevate seadistustega.';
 $string['dbhost']='Hosti server';
-$string['dbpass']='Parool';
 $string['dbprefix']='Tabeli eesliide';
 $string['dbtype']='Tüüp';
-$string['directorysettings']='<p>Palun kinnita Moodle installerimise asukoht.</p>
-<p><b>Veebiaadress:</b>
-Määra täispikk veebiaadress, kust saab Moodle\'ile juurdepääsu.
-Kui sinu veebileht on juurdepääsetav mitme URL\'i kaudu, siis kasuta seda, mis on sinu õppijate jaoks kõige kergem meeles pidada. Ära kasuta kurakriipsu. </p>
-<p><b>Moodle kataloog:</b>
-Määra selle installatsiooni kataloogi täistee.
-Tee kindlaks, et suured/väiketähed oleksid õiged.</p>
-<p><b>Andmete kataloog:</b>
-Sul on vaja kohta, kuhu Moodle salvestab üles laetud failid. See kataloog peaks olema loetav JA KIRJUTATAV veebiserveri kasutaja poolt (tavaliselt \'nobody\' või \'apache\'), kuid ei tohiks olla otse veebi kaudu ligipääsetav.
-</p>';
 $string['directorysettingshead']='Palun kinnita Moodle installatsiooni asukohta';
 $string['dirroot']='Moodle kataloog';
 $string['dirrooterror']='Moodle kataloogi seadistus näib olevat vigane -  me ei suuda sealt leida Moodle installatsiooni. Allpool olev väärtus on nullitud.';
@@ -131,7 +98,6 @@ $string['downloadedfilecheckfailed']='Alla laetud faili kontroll ebaõnnestus.';
 $string['downloadlanguagebutton']='Tõmba alla &quot;$a&quot; keelepakett';
 $string['downloadlanguagehead']='Tõmba alla keelepakett';
 $string['downloadlanguagesub']='Sul on praegu võimalus tõmmata alla keelepakk ja jätkata installeerimist vastavas keeles.<br /><br />Kui Sa oled mitte võimeline alla tõmbama keelepakki, siis installeerimine jätkub inglise keeles. (Niipea, kui installeerimine on lõppenud, on Sul võimalus alla tõmmata täiendavaid keelepakke.)';
-$string['doyouagree']='Kas olete lugenud ja mõistnud kõiki tingimusi?';
 $string['environmenterrortodo']='Sa pead lahendama kõik keskkonna probleemid (vead), mis leiti ülal, et hakata installeerima vastavat Moodle versiooni!';
 $string['environmenthead']='Keskkonna kontrollimine...';
 $string['environmentrecommendcustomcheck']='kui see test ebaõnnestub, siis see võib saada potentsiaalseks probleemiks';
@@ -162,7 +128,6 @@ $string['help']='Abi';
 $string['iconvrecommended']='Fakultatiivse ICONV teegi installeerimine on tungivalt soovitatav tõstmaks õpikeskkonna jõudlust, eriti kui õpikeskkond toetab mitte ladinatähistikuga keeli (näiteks eesti keelt).';
 $string['info']='Informatsioon';
 $string['installation']='Installeerimine';
-$string['invalidemail']='Vigane e-posti aadress';
 $string['invalidmd5']='Vigane md5'; // ORPHANED
 $string['langdownloaderror']='Kahjuks keelt \"$a\" ei paigaldatud. Paigaldamine jätkub inglise keeles.';
 $string['langdownloadok']='Keel \"$a\" paigaldati edukalt. Paigaldamisprotsess jätkub selles keeles.';
@@ -216,7 +181,6 @@ $string['phpversionhelp']='<p>Moodle vajab vähemalt PHP versiooni 4.1.0</p>
 <p>Sa pead oma PHP-d uuendama või kolima hosti, kus on uuem PHP versioon!</p>';
 $string['postgres7']='PostgreSQL (postgres7)';
 $string['previous']='Eelmine';
-$string['releasenoteslink']='Antud Moodle versiooni kohta informatsiooni palun vaata leheküljelt <a target=\"_new\" href=\"$a\">Väljalaske märkmed</a>';
 $string['remotedownloadnotallowed']='Komponentide alla tõmbamine ei ole Sinu serverisse lubatud (sest allow_url_fopen keelatud).<br /><br />Sa pead tõmbama alla faili <a href=\"$a->url\">$a->url</a> käsitsti, kopeerima \"$a->dest\" oma serveris ja sinna lahti pakkima.';
 $string['report']='Ülevaade';
 $string['restricted']='Piiratud';

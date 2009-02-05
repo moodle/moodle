@@ -10,17 +10,14 @@
 /// using strings defined in stringnames.txt (same dir)
 
 $string['caution'] = 'Kia t&#363;pato';
-$string['chooselanguage'] = 'T&#299;pako he reo';
 $string['closewindow'] = 'K&#257;tia i roro whakaata';
 $string['continue'] = 'Haere tonu';
 $string['database'] = 'Puna K&#333;rero';
 $string['dataroot'] = 'K&#333;paki H&#333;tuku';
 $string['dbhost'] = 'T&#363;mau Rorohiko Tuku';
-$string['dbpass'] = 'Kupu Whakauru';
 $string['dbtype'] = 'Momo';
 $string['dirroot'] = 'K&#333;paki Moodle';
 $string['download'] = 'Tuku Mai';
-$string['doyouagree'] = 'Kua p&#257;nui ng&#275;nei ture, ar&#257;, te whakam&#257;rama ki &#333;na tikanga?';
 $string['error'] = 'He hapa';
 $string['fail'] = 'K&#257;ore he P&#257;hi';
 $string['fileuploads'] = 'K&#333;nae Tuku Atu';
@@ -28,7 +25,6 @@ $string['fileuploadserror'] = 'Me whakak&#257;ngia t&#275;neki';
 $string['gdversion'] = 'Whakaaturanga GD ';
 $string['help'] = '&#256;whina';
 $string['installation'] = 'Whakauta';
-$string['invalidemail'] = 'Koremana ki t&#275;neki K&#257;inga Im&#275;ra';
 $string['language'] = 'Reo';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Me whakaweto t&#275;nei';
