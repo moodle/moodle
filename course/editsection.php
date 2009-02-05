@@ -50,7 +50,12 @@
         $stredit      = get_string('edit', '', " $sectionname");
         $strsummaryof = get_string('summaryof', '', " $sectionname");
     } else {
-        $sectionname  = get_string("name$course->format");
+    /// Look for section name into specific course format lang file
+        $sectionname  = get_string("name$course->format", "format_$course->format");
+        if ($sectionname == "[[name$course->format]]") {
+        /// Section name not in course format lang file, go to default moodle file
+            $sectionname = get_string("name$course->format");
+        }
         $stredit      = get_string('edit', '', " $sectionname $section->section");
         $strsummaryof = get_string('summaryof', '', " $sectionname $form->section");
     }
