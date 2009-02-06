@@ -172,7 +172,7 @@ class mnet_xmlrpc_client {
             }
 
         }
-        $this->requesttext = xmlrpc_encode_request($this->method, $this->params, array("encoding" => "utf-8"));
+        $this->requesttext = xmlrpc_encode_request($this->method, $this->params, array("encoding" => "utf-8", "escaping" => "markup"));
         $rq = $this->requesttext;
         $rq = mnet_sign_message($this->requesttext);
         $this->signedrequest = $rq;
