@@ -129,7 +129,7 @@ class mnet_xmlrpc_client {
             return false;
         }
 
-        $this->requesttext = xmlrpc_encode_request($this->method, $this->params, array("encoding" => "utf-8"));
+        $this->requesttext = xmlrpc_encode_request($this->method, $this->params, array("encoding" => "utf-8", "escaping" => "markup"));
         $this->signedrequest = mnet_sign_message($this->requesttext);
         $this->encryptedrequest = mnet_encrypt_message($this->signedrequest, $mnet_peer->public_key);
 
