@@ -138,7 +138,7 @@ if ($hassiteconfig) {
                 $ADMIN->add('filtersettings', $settings);
 
             } else if (file_exists("$CFG->dirroot/$filterfull/filterconfig.html")) {
-                $ADMIN->add('filtersettings', new admin_externalpage('filtersetting'.str_replace('/', '', $filterfull), $strfiltername, "$CFG->wwwroot/$CFG->admin/filter.php?filter=$filterfull", !in_array($filterfull, $activefilters)));
+                $ADMIN->add('filtersettings', new admin_externalpage('filtersetting'.str_replace('/', '', $filterfull), $strfiltername, "$CFG->wwwroot/$CFG->admin/filter.php?filter=$filterfull", 'moodle/site:config', !in_array($filterfull, $activefilters)));
             }
         }
     }
