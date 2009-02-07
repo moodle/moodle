@@ -2889,8 +2889,15 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
             $course = $SITE;
             $homelink  = '<div class="sitelink">'.
                '<a title="Moodle '. $CFG->release .'" href="http://moodle.org/">'.
-               '<img style="width:100px;height:30px" src="pix/moodlelogo.gif" alt="moodlelogo" /></a></div>';
+               '<img style="width:100px;height:30px" src="'.$CFG->wwwroot.'/pix/moodlelogo.gif" alt="moodlelogo" /></a></div>';
             $home  = true;
+
+        } else if ($course === 'upgrade') {
+            $home = false;
+            $loggedinas = '';
+            $homelink  = '<div class="sitelink">'.
+               '<a title="Moodle '. $CFG->target_release .'" href="http://docs.moodle.org/en/Administrator_documentation" onclick="this.target=\'_blank\'">'.
+               '<img style="width:100px;height:30px" src="'.$CFG->wwwroot.'/pix/moodlelogo.gif" alt="moodlelogo" /></a></div>';
 
         } else {
             $homelink = '<div class="homelink"><a '.$CFG->frametarget.' href="'.$CFG->wwwroot.

@@ -191,7 +191,7 @@ function install_print_header($config, $stagename, $heading, $stagetext) {
     }
 
     echo '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/install.php?css=1" />
-          <title>'.get_string('installation','install').' - Moodle '.$CFG->release.'</title>
+          <title>'.get_string('installation','install').' - Moodle '.$CFG->target_release.'</title>
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           <meta http-equiv="pragma" content="no-cache" />
           <meta http-equiv="expires" content="0" />';
@@ -247,7 +247,7 @@ function install_print_footer($config, $reload=false) {
     echo '</fieldset><fieldset id="nav_buttons">'.$first.$next.'</fieldset>';
 
     $homelink  = '<div class="sitelink">'.
-       '<a title="Moodle '. $CFG->release .'" href="http://docs.moodle.org/en/Administrator_documentation" onclick="this.target=\'_blank\'">'.
+       '<a title="Moodle '. $CFG->target_release .'" href="http://docs.moodle.org/en/Administrator_documentation" onclick="this.target=\'_blank\'">'.
        '<img style="width:100px;height:30px" src="pix/moodlelogo.gif" alt="moodlelogo" /></a></div>';
 
     echo '</form></div>';

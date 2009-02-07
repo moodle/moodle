@@ -133,7 +133,7 @@ require_once($CFG->libdir.'/xmlize.php');
 require_once($CFG->libdir.'/componentlib.class.php');
 
 require('version.php');
-$CFG->release = $release;
+$CFG->target_release = $release;
 
 $SESSION = new object();
 $SESSION->lang = $CFG->lang;

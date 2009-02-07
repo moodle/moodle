@@ -71,6 +71,7 @@
     $version = null;
     $release = null;
     require("$CFG->dirroot/version.php");       // defines $version and $release
+    $CFG->target_release = $release;            // used during installation and upgrades
 
     if (!$version or !$release) {
         print_error('withoutversion', 'debug'); // without version, stop
@@ -111,7 +112,7 @@
         if (empty($agreelicense)) {
             $strlicense = get_string('license');
             $navigation = build_navigation(array(array('name'=>$strlicense, 'link'=>null, 'type'=>'misc')));
-            print_header($strinstallation, $strinstallation, $navigation, "", "", false, "&nbsp;", "&nbsp;");
+            print_header($strinstallation.' - Moodle '.$CFG->target_release, $strinstallation, $navigation, "", "", false, "&nbsp;", "&nbsp;");
             print_heading("<a href=\"http://moodle.org\">Moodle</a> - Modular Object-Oriented Dynamic Learning Environment");
             print_heading(get_string('copyrightnotice'));
             $copyrightnotice = text_to_html(get_string('gpl'));
@@ -120,13 +121,13 @@
             echo "<br />";
             notice_yesno(get_string('doyouagree'), "index.php?agreelicense=1&lang=$CFG->lang",
                                                    "http://docs.moodle.org/en/License");
-            print_footer('none');
+            print_footer('upgrade');
             die;
         }
         if (empty($confirmrelease)) {
             $strcurrentrelease = get_string("currentrelease");
             $navigation = build_navigation(array(array('name'=>$strcurrentrelease, 'link'=>null, 'type'=>'misc')));
-            print_header($strinstallation, $strinstallation, $navigation, "", "", false, "&nbsp;", "&nbsp;");
+            print_header($strinstallation.' - Moodle '.$CFG->target_release, $strinstallation, $navigation, "", "", false, "&nbsp;", "&nbsp;");
             print_heading("Moodle $release");
             $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes');
             $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
@@ -134,19 +135,19 @@
 
             require_once($CFG->libdir.'/environmentlib.php');
             if (!check_moodle_environment($release, $environment_results, true)) {
-                print_upgrade_reload("index.php?agreelicense=1&lang=$CFG->lang");
+                print_upgrade_reload("index.php?agreelicense=1&amp;lang=$CFG->lang");
             } else {
                 notify(get_string('environmentok', 'admin'), 'notifysuccess');
-                print_continue("index.php?agreelicense=1&confirmrelease=1&lang=$CFG->lang");
+                print_continue("index.php?agreelicense=1&amp;confirmrelease=1&amp;lang=$CFG->lang");
             }
 
-            print_footer('none');
+            print_footer('upgrade');
             die;
         }
 
         $strdatabasesetup = get_string("databasesetup");
         $navigation = build_navigation(array(array('name'=>$strdatabasesetup, 'link'=>null, 'type'=>'misc')));
-        print_header($strinstallation, $strinstallation, $navigation, "", upgrade_get_javascript(), false, "&nbsp;", "&nbsp;");
+        print_header($strinstallation.' - Moodle '.$CFG->target_release, $strinstallation, $navigation, "", upgrade_get_javascript(), false, "&nbsp;", "&nbsp;");
 
         if (!$DB->setup_is_unicodedb()) {
             if (!$DB->change_db_encoding()) {
@@ -205,7 +206,7 @@
             print_header($strdatabasechecking, $stradministration, $navigation, "", "", false, "&nbsp;", "&nbsp;");
 
             notice_yesno(get_string('upgradesure', 'admin', $a->newversion), 'index.php?confirmupgrade=1', 'index.php');
-            print_footer('none');
+            print_footer('upgrade');
             exit;
 
         } else if (empty($confirmrelease)){
@@ -228,10 +229,10 @@
                     print_string('langpackwillbeupdated', 'admin');
                     print_box_end();
                 }
-                print_continue('index.php?confirmupgrade=1&confirmrelease=1');
+                print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1');
             }
 
-            print_footer('none');
+            print_footer('upgrade');
             die;
 
         } elseif (empty($confirmplugins)) {
@@ -323,7 +324,7 @@
         set_config('rolesactive', 1);
         set_config('adminsetuppending', 1);
         // we neeed this redirect to setup proper session
-        upgrade_finished("index.php?sessionstarted=1&lang=$CFG->lang");
+        upgrade_finished("index.php?sessionstarted=1&amp;lang=$CFG->lang");
     }
 
 /// make sure admin user is created - this is the last step because we need

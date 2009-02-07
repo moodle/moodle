@@ -760,7 +760,7 @@ function upgrade_started($preinstall=false) {
         if (!CLI_SCRIPT and !defined('HEADER_PRINTED')) {
             $strupgrade  = get_string('upgradingversion', 'admin');
 
-            print_header($strupgrade, $strupgrade,
+            print_header($strupgrade.' - Moodle '.$CFG->target_release, $strupgrade,
                 build_navigation(array(array('name' => $strupgrade, 'link' => null, 'type' => 'misc'))), '',
                 upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
         }
@@ -794,7 +794,7 @@ function upgrade_finished($continueurl=null) {
         ignore_user_abort(false);
         if ($continueurl) {
             print_continue($continueurl);
-            print_footer('none');
+            print_footer('upgrade');
             die;
         }
     }
