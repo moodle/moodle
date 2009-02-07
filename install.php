@@ -93,8 +93,8 @@ if (!empty($_POST)) {
     $config->stage    = INSTALL_WELCOME;
 
     $config->dbtype   = empty($distro->dbtype) ? '' : $distro->dbtype; // let distro skip dbtype selection
-    $config->dbhost   = 'localhost';
-    $config->dbuser   = '';
+    $config->dbhost   = empty($distro->dbhost) ? 'localhost' : $distro->dbhost; // let distros set dbhost
+    $config->dbuser   = empty($distro->dbuser) ? '' : $distro->dbuser; // let distros set dbuser
     $config->dbpass   = '';
     $config->dbname   = 'moodle';
     $config->prefix   = 'mdl_';
@@ -195,7 +195,7 @@ if ($config->stage == INSTALL_SAVE) {
     if (!$database->driver_installed()) {
         $config->stage = INSTALL_DATABASETYPE;
     } else {
-        $hint_database = install_db_validate($database, $config->dbhost, $config->dbuser, $config->dbpass, $config->dbname, $config->prefix, array('dbpersit'=>0, 'dbsocket'=>$config->dbsocket));
+        $hint_database = install_db_validate($database, $config->dbhost, $config->dbuser, $config->dbpass, $config->dbname, $config->prefix, array('dbpersit'=>0, 'dbsocket'=>$config->dbsocket), $distro);
 
         if ($hint_database === '') {
             $configphp = '<?php  /// Moodle Configuration File ' . "\r\n\r\n";
@@ -323,16 +323,19 @@ if ($config->stage == INSTALL_DATABASE) {
     $strdbsocket = get_string('databasesocket', 'install');
 
     echo '<div class="userinput">';
+
+    $disabled = empty($distro->dbhost) ? '' : 'disabled="disabled';
     echo '<div class="formrow"><label for="id_dbhost" class="formlabel">'.$strdbhost.'</label>';
-    echo '<input id="id_dbhost" name="dbhost" type="text" value="'.s($config->dbhost).'" size="30" class="forminput" />';
+    echo '<input id="id_dbhost" name="dbhost" '.$disabled.' type="text" value="'.s($config->dbhost).'" size="30" class="forminput" />';
     echo '</div>';
 
     echo '<div class="formrow"><label for="id_dbname" class="formlabel">'.$strdbname.'</label>';
     echo '<input id="id_dbname" name="dbname" type="text" value="'.s($config->dbname).'" size="30" class="forminput" />';
     echo '</div>';
 
+    $disabled = empty($distro->dbuser) ? '' : 'disabled="disabled';
     echo '<div class="formrow"><label for="id_dbuser" class="formlabel">'.$strdbuser.'</label>';
-    echo '<input id="id_dbuser" name="dbuser" type="text" value="'.s($config->dbuser).'" size="30" class="forminput" />';
+    echo '<input id="id_dbuser" name="dbuser" '.$disabled.' type="text" value="'.s($config->dbuser).'" size="30" class="forminput" />';
     echo '</div>';
 
     echo '<div class="formrow"><label for="id_dbpass" class="formlabel">'.$strdbpass.'</label>';
