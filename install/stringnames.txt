@@ -13,7 +13,6 @@ errorsinenvironment
 environmentsub2
 dataroot
 dirroot
-distribution
 environmentrequireinstall
 environmentrequireversion
 installation

@@ -1,9 +1,3 @@
-<?php
-install_print_header($config, get_string('distribution', 'install'),
-                              get_string('welcomep10', 'install', $distro),
-                              get_string('welcomep20', 'install', $distro));
-?>
-
 <p><?php print_string('welcomep30', 'install', $distro) ?></p>
 <ul>
   <li><?php p($distro->webname) ?> <?php p($distro->webversion) ?></li>
@@ -14,5 +8,3 @@ install_print_header($config, get_string('distribution', 'install'),
 <p><?php print_string('welcomep50', 'install', $distro) ?></p>
 <p><?php print_string('welcomep60', 'install', $distro) ?></p>
 <p><?php print_string('welcomep70', 'install', $distro) ?></p>
-
-<?php install_print_footer($config); ?>

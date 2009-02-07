@@ -5,13 +5,12 @@
  */
 
 define('INSTALL_WELCOME',       0);
-define('INSTALL_DISTRIBUTION',  1);
-define('INSTALL_ENVIRONMENT',   2);
-define('INSTALL_PATHS',         3);
-define('INSTALL_DOWNLOADLANG',  4);
-define('INSTALL_DATABASETYPE',  5);
-define('INSTALL_DATABASE',      6);
-define('INSTALL_SAVE',          7);
+define('INSTALL_ENVIRONMENT',   1);
+define('INSTALL_PATHS',         2);
+define('INSTALL_DOWNLOADLANG',  3);
+define('INSTALL_DATABASETYPE',  4);
+define('INSTALL_DATABASE',      5);
+define('INSTALL_SAVE',          6);
 
 /**
  *Tries to detect the right www root setting.
@@ -351,7 +350,7 @@ fieldset {
   width:95%;
 }
 
-.stage7 .stage {
+.stage6 .stage {
   font-weight: bold;
   color: red;
 }

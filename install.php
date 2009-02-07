@@ -42,13 +42,8 @@ require dirname(__FILE__).'/lib/installlib.php';
 
 // distro specific customisation
 $distro = null;
-if (file_exists('install/versions.php')) {
-    $a = null;
-    include('install/versions.php');
-    if ($a) {
-        $distro = $a;
-        unset($a);
-    }
+if (file_exists('install/distro.php')) {
+    include('install/distro.php');
 }
 
 $config = new stdClass();
@@ -67,9 +62,6 @@ if (!empty($_POST)) {
             $config->stage--;
         }
         if ($config->stage == INSTALL_ENVIRONMENT or $config->stage == INSTALL_DOWNLOADLANG) {
-            $config->stage--;
-        }
-        if (INSTALL_DISTRIBUTION and empty($distro)) {
             $config->stage--;
         }
     } else if (isset($_POST['next'])) {
@@ -479,17 +471,6 @@ if ($config->stage == INSTALL_ENVIRONMENT or $config->stage == INSTALL_PATHS) {
 
 
 
-if ($config->stage == INSTALL_DISTRIBUTION) {
-    if (!$distro) {
-        $config->stage = INSTALL_PATHS;
-    } else {
-        include('install/distribution.html');
-        die;
-    }
-}
-
-
-
 if ($config->stage == INSTALL_PATHS) {
     $paths = array('wwwroot'  => get_string('wwwroot', 'install'),
                    'dirroot'  => get_string('dirroot', 'install'),
@@ -550,9 +531,21 @@ if ($config->stage == INSTALL_PATHS) {
 
 
 $config->stage = INSTALL_WELCOME;
-install_print_header($config, get_string('language'),
-                              get_string('chooselanguagehead', 'install'),
-                              get_string('chooselanguagesub', 'install'));
+
+if ($distro) {
+    ob_start();
+    include('install/distribution.html');
+    $sub = ob_get_clean();
+
+    install_print_header($config, get_string('language'),
+                                  get_string('chooselanguagehead', 'install'),
+                                  $sub);
+    
+} else {
+    install_print_header($config, get_string('language'),
+                                  get_string('chooselanguagehead', 'install'),
+                                  get_string('chooselanguagesub', 'install'));
+}
 
 $languages = install_get_list_of_languages();
 echo '<div class="userinput">';
