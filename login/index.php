@@ -273,7 +273,12 @@ httpsrequired();
     }
 
     if (empty($frm->username) && $authsequence[0] != 'shibboleth') {  // See bug 5184
-        $frm->username = get_moodle_cookie() === 'nobody' ? '' : get_moodle_cookie();
+        if (!empty($_GET["username"])) {
+            $frm->username = $_GET["username"];
+        } else {
+            $frm->username = get_moodle_cookie() === 'nobody' ? '' : get_moodle_cookie();
+        }
+
         $frm->password = "";
     }
 
