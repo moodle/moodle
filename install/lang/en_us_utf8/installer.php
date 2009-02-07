@@ -10,6 +10,5 @@
 /// using strings defined in stringnames.txt (same dir)
 
 $string['thischarset'] = 'UTF-8';
-$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'English';
 ?>
