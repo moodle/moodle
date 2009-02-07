@@ -40,6 +40,17 @@ require dirname(__FILE__).'/lib/installlib.php';
 
 // TODO: add lang detection here if empty $_REQUEST['lang']
 
+// distro specific customisation
+$distro = null;
+if (file_exists('install/versions.php')) {
+    $a = null;
+    include('install/versions.php');
+    if ($a) {
+        $distro = $a;
+        unset($a);
+    }
+}
+
 $config = new stdClass();
 $config->lang = $lang;
 
@@ -53,6 +64,9 @@ if (!empty($_POST)) {
     if (isset($_POST['previous'])) {
         $config->stage--;
         if ($config->stage == INSTALL_ENVIRONMENT or $config->stage == INSTALL_DOWNLOADLANG) {
+            $config->stage--;
+        }
+        if (INSTALL_DISTRIBUTION and empty($distro)) {
             $config->stage--;
         }
     } else if (isset($_POST['next'])) {
@@ -443,8 +457,12 @@ if ($config->stage == INSTALL_ENVIRONMENT or $config->stage == INSTALL_PATHS) {
 
 
 if ($config->stage == INSTALL_DISTRIBUTION) {
-    // TODO: reimplement welcome.html support for win installer
-    $config->stage = INSTALL_PATHS;
+    if (!$distro) {
+        $config->stage = INSTALL_PATHS;
+    } else {
+        include('install/distribution.html');
+        die;
+    }
 }
 
 

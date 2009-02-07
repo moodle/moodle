@@ -193,6 +193,7 @@ directory must be readable AND WRITEABLE by the web server user
 directly via the web.';
 $string['dirroot'] = 'Moodle Directory';
 $string['dirrooterror'] = 'The \'Moodle Directory\' setting seems to be incorrect - we can\'t find a Moodle installation there. The value below has been reset.';
+$string['distribution'] = 'Distribution';
 $string['download'] = 'Download';
 $string['downloadlanguagebutton'] = 'Download the &quot;$a&quot; language pack';
 $string['downloadlanguagehead'] = 'Download language pack';
