@@ -63,6 +63,9 @@ if (!empty($_POST)) {
 
     if (isset($_POST['previous'])) {
         $config->stage--;
+        if (INSTALL_DATABASETYPE and !empty($distro->dbtype)) {
+            $config->stage--;
+        }
         if ($config->stage == INSTALL_ENVIRONMENT or $config->stage == INSTALL_DOWNLOADLANG) {
             $config->stage--;
         }
@@ -89,7 +92,7 @@ if (!empty($_POST)) {
 } else {
     $config->stage    = INSTALL_WELCOME;
 
-    $config->dbtype   = '';
+    $config->dbtype   = empty($distro->dbtype) ? '' : $distro->dbtype; // let distro packagings skip dbtype selection
     $config->dbhost   = 'localhost';
     $config->dbuser   = '';
     $config->dbpass   = '';
@@ -261,6 +264,50 @@ if ($config->stage == INSTALL_SAVE) {
 
 
 
+if ($config->stage == INSTALL_DOWNLOADLANG) {
+    if (empty($CFG->dataroot)) {
+        $config->stage = INSTALL_PATHS;
+
+    } else if (is_dataroot_insecure()) {
+        $hint_dataroot = get_string('pathsunsecuredataroot', 'install');
+        $config->stage = INSTALL_PATHS;
+
+    } else if (!is_writable($CFG->dataroot)) {
+        $hint_dataroot = get_string('pathsrodataroot', 'install');
+        $config->stage = INSTALL_PATHS;
+    }
+
+    if ($config->dirroot === '' or !file_exists($config->dirroot)) {
+        $hint_dirroot = get_string('pathswrongdirroot', 'install');
+        $config->stage = INSTALL_PATHS;
+    }
+
+    if ($config->admin === '' or !file_exists($config->dirroot.'/'.$config->admin.'/environment.xml')) {
+        $hint_admindir = get_string('pathswrongadmindir', 'install');
+        $config->stage = INSTALL_PATHS;
+    }
+}
+
+
+
+if ($config->stage == INSTALL_DOWNLOADLANG) {
+    // no need to download anything if en lang selected
+    if ($CFG->lang == 'en_utf8') {
+        $config->stage = INSTALL_DATABASETYPE;
+    }
+}
+
+
+
+if ($config->stage == INSTALL_DATABASETYPE) {
+    // skip db selection if distro package supports only one db
+    if (!empty($distro->dbtype)) {
+        $config->stage = INSTALL_DATABASE;
+    }
+}
+
+
+
 if ($config->stage == INSTALL_DATABASE) {
     $database = moodle_database::get_driver_instance($config->dbtype, 'native');
 
@@ -309,40 +356,6 @@ if ($config->stage == INSTALL_DATABASE) {
     echo '</div>';
     install_print_footer($config);
     die;
-}
-
-
-
-if ($config->stage == INSTALL_DOWNLOADLANG) {
-    if (empty($CFG->dataroot)) {
-        $config->stage = INSTALL_PATHS;
-
-    } else if (is_dataroot_insecure()) {
-        $hint_dataroot = get_string('pathsunsecuredataroot', 'install');
-        $config->stage = INSTALL_PATHS;
-
-    } else if (!is_writable($CFG->dataroot)) {
-        $hint_dataroot = get_string('pathsrodataroot', 'install');
-        $config->stage = INSTALL_PATHS;
-    }
-
-    if ($config->dirroot === '' or !file_exists($config->dirroot)) {
-        $hint_dirroot = get_string('pathswrongdirroot', 'install');
-        $config->stage = INSTALL_PATHS;
-    }
-
-    if ($config->admin === '' or !file_exists($config->dirroot.'/'.$config->admin.'/environment.xml')) {
-        $hint_admindir = get_string('pathswrongadmindir', 'install');
-        $config->stage = INSTALL_PATHS;
-    }
-}
-
-
-
-if ($config->stage == INSTALL_DOWNLOADLANG) {
-    if ($CFG->lang == 'en_utf8') {
-        $config->stage = INSTALL_DATABASETYPE;
-    }
 }
 
 
