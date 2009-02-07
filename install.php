@@ -381,6 +381,13 @@ if ($config->stage == INSTALL_DOWNLOADLANG) {
             } else {
                 $downloaderror = get_string($cd->get_error(), 'error');
             }
+        } else {
+            // install parent lang if defined
+            if ($parentlang = get_parent_language()) {
+                if ($cd = new component_installer('http://download.moodle.org', 'lang16', $parentlang.'.zip', 'languages.md5', 'lang')) {
+                    $cd->install();
+                }
+            }
         }
     }
 

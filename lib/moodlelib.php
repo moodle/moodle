@@ -5143,6 +5143,18 @@ function current_language() {
 }
 
 /**
+ * Returns parent language of current active language if defined
+ * @return string
+ */
+function get_parent_language() {
+    $parentlang = get_string('parentlanguage');
+    if ($parentlang === '[[parentlanguage]]' or strpos($parentlang, '<') !== false) {
+        return '';
+    }
+    return $parentlang;
+}
+
+/**
  * Prints out a translated string.
  *
  * Prints out a translated string using the return value from the {@link get_string()} function.
@@ -5441,7 +5453,7 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
                 if (eval($result) === FALSE) {
                     trigger_error('Lang error: '.$identifier.':'.$langfile, E_USER_NOTICE);
                 }
-                if (!empty($parentlang)) {   // found it!
+                if (!empty($parentlang) and strpos($parentlang, '<') === false) {   // found it!
 
                     //first, see if there's a local file for parent
                     $locallangfile = $location.$parentlang.'_local'.'/'.$module.'.php';
@@ -5726,7 +5738,7 @@ function get_list_of_countries() {
 
     if (!file_exists($CFG->dirroot .'/lang/'. $lang .'/countries.php') &&
         !file_exists($CFG->dataroot.'/lang/'. $lang .'/countries.php')) {
-        if ($parentlang = get_string('parentlanguage')) {
+        if ($parentlang = get_parent_language()) {
             if (file_exists($CFG->dirroot .'/lang/'. $parentlang .'/countries.php') ||
                 file_exists($CFG->dataroot.'/lang/'. $parentlang .'/countries.php')) {
                 $lang = $parentlang;
@@ -5813,7 +5825,7 @@ function get_list_of_pixnames($lang = '') {
     } else if (file_exists($CFG->dataroot .'/lang/'. $lang .'/pix.php')) {
         $path = $CFG->dataroot .'/lang/'. $lang .'/pix.php';
 
-    } else if ($parentlang = get_string('parentlanguage') and $parentlang != '[[parentlanguage]]') {
+    } else if ($parentlang = get_parent_language()) {
         return get_list_of_pixnames($parentlang); //return pixnames from parent language instead
     }
 
@@ -5879,7 +5891,7 @@ function get_list_of_currencies() {
     $lang = current_language();
 
     if (!file_exists($CFG->dataroot .'/lang/'. $lang .'/currencies.php')) {
-        if ($parentlang = get_string('parentlanguage')) {
+        if ($parentlang = get_parent_language()) {
             if (file_exists($CFG->dataroot .'/lang/'. $parentlang .'/currencies.php')) {
                 $lang = $parentlang;
             } else {
