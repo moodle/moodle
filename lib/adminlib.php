@@ -160,7 +160,7 @@ function upgrade_plugins($type, $dir, $return) {
                         $installfunction = $plugin->name.'_install';
                         if (function_exists($installfunction)) {
                             if (! $installfunction() ) {
-                                notify('Encountered a problem running install function for '.$module->name.'!');
+                                notify('Encountered a problem running install function for '.$plugin->name.'!');
                             }
                         }
                     }
