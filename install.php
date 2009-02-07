@@ -45,7 +45,7 @@ $config->lang = $lang;
 
 if (!empty($_POST)) {
     if (install_ini_get_bool('magic_quotes_gpc')) {
-        $_POST = array_map($_POST, 'stripslashes');
+        $_POST = array_map('stripslashes', $_POST);
     }
 
     $config->stage = (int)$_POST['stage'];
