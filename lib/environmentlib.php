@@ -198,9 +198,9 @@ function print_moodle_environment($result, $environment_results) {
                     if ($status) {
                         $stringtouse = 'environmentsettingok';
                     } else if ($environment_result->getLevel() == 'required') {
-                        $stringtouse = 'environmenmustfixsetting';
+                        $stringtouse = 'environmentmustfixsetting';
                     } else {
-                        $stringtouse = 'environmenshouldfixsetting';
+                        $stringtouse = 'environmentshouldfixsetting';
                     }
                 } else {
                     if ($environment_result->getLevel() == 'required') {
