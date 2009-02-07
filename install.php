@@ -92,7 +92,7 @@ if (!empty($_POST)) {
 } else {
     $config->stage    = INSTALL_WELCOME;
 
-    $config->dbtype   = empty($distro->dbtype) ? '' : $distro->dbtype; // let distro packagings skip dbtype selection
+    $config->dbtype   = empty($distro->dbtype) ? '' : $distro->dbtype; // let distro skip dbtype selection
     $config->dbhost   = 'localhost';
     $config->dbuser   = '';
     $config->dbpass   = '';
@@ -103,7 +103,7 @@ if (!empty($_POST)) {
     $config->dirroot  = dirname(__FILE__);
     $config->admin    = 'admin';
 
-    $config->dataroot = null; // initialised later after including libs
+    $config->dataroot = empty($distro->dataroot) ? null  : $distro->dataroot; // initialised later after including libs or by distro
 }
 
 /// Fake some settings so that we can use selected functions from moodlelib.php and weblib.php
