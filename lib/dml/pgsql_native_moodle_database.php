@@ -63,6 +63,15 @@ class pgsql_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Returns localised database configuration help.
+     * Note: can be used before connect()
+     * @return string
+     */
+    public function get_configuration_help() {
+        return get_string('nativepgsqlhelp', 'install');
+    }
+
+    /**
      * Returns localised database description
      * Note: can be used before connect()
      * @return string
@@ -103,6 +112,7 @@ class pgsql_native_moodle_database extends moodle_database {
         if (!empty($this->dboptions['dbsocket']) and ($this->dbhost === 'localhost' or $this->dbhost === '127.0.0.1')) {
             $connection = "user='$this->dbuser' password='$pass' dbname='$this->dbname'";
         } else {
+            $this->dboptions['dbsocket'] = 0;
             if (empty($this->dbname)) {
                 // probably old style socket connection - do not add port
                 $port = "";

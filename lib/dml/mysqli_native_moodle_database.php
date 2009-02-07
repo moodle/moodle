@@ -21,7 +21,7 @@ class mysqli_native_moodle_database extends moodle_database {
      * @throws dml_exception if error
      */
     /// TODO: Decide if this method should go to DDL instead of being here
-    public function create_database($dbhost, $dbuser, $dbpass, $dbname) {
+    public function create_database($dbhost, $dbuser, $dbpass, $dbname, array $dboptions=null) {
         ob_start();
         $conn = new mysqli($dbhost, $dbuser, $dbpass); /// Connect without db
         $dberr = ob_get_contents();
@@ -92,6 +92,15 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Returns localised database configuration help.
+     * Note: can be used before connect()
+     * @return string
+     */
+    public function get_configuration_help() {
+        return get_string('nativemysqlihelp', 'install');
+    }
+
+    /**
      * Returns localised database description
      * Note: can be used before connect()
      * @return string
@@ -119,6 +128,7 @@ class mysqli_native_moodle_database extends moodle_database {
         }
 
         $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
+        unset($this->dboptions['dbsocket']);
 
         ob_start();
         $this->mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname);

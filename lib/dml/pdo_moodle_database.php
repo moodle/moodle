@@ -84,7 +84,16 @@ abstract class pdo_moodle_database extends moodle_database {
      * @return string
      */
     public function get_name() {
-        return get_string($this->get_dbtype() . '_pdo', 'install');
+        return get_string('pdo'.$this->get_dbtype(), 'install');
+    }
+
+    /**
+     * Returns localised database configuration help.
+     * Note: can be used before connect()
+     * @return string
+     */
+    public function get_configuration_help() {
+        return get_string('pdo'.$this->get_dbtype().'help', 'install');
     }
 
     /**

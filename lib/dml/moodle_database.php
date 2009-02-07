@@ -50,14 +50,14 @@ abstract class moodle_database {
     protected $prefix;
 
     /**
-     * Non-moodle external database used.
-     */
-    protected $external;
-
-    /**
      * Database or driver specific options, such as sockets or TCPIP db connections
      */
     protected $dboptions;
+
+    /**
+     * Non-moodle external database used.
+     */
+    protected $external;
 
     /**
      * The database reads (performance counter).
@@ -163,6 +163,13 @@ abstract class moodle_database {
     public abstract function get_name();
 
     /**
+     * Returns localised database configuration help.
+     * Note: can be used before connect()
+     * @return string
+     */
+    public abstract function get_configuration_help();
+
+    /**
      * Returns localised database description
      * Note: can be used before connect()
      * @return string
@@ -171,12 +178,9 @@ abstract class moodle_database {
 
     /**
      * Returns db related part of config.php
-     * Note: can be used before connect()
-     * @return string
+     * @return object
      */
-    public function export_dbconfig($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
-        $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
-
+    public function export_dbconfig() {
         $cfg = new stdClass();
         $cfg->dbtype    = $this->get_dbtype();
         $cfg->dblibrary = $this->get_dblibrary();
@@ -234,7 +238,7 @@ abstract class moodle_database {
      *
      * @return bool success
      */
-    public function create_database($dbhost, $dbuser, $dbpass, $dbname) {
+    public function create_database($dbhost, $dbuser, $dbpass, $dbname, array $dboptions=null) {
         return false;
     }
 

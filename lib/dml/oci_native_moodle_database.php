@@ -63,6 +63,15 @@ class oci_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Returns localised database configuration help.
+     * Note: can be used before connect()
+     * @return string
+     */
+    public function get_configuration_help() {
+        return get_string('nativeocihelp', 'install');
+    }
+
+    /**
      * Returns localised database description
      * Note: can be used before connect()
      * @return string
@@ -101,6 +110,7 @@ class oci_native_moodle_database extends moodle_database {
         }
 
         $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
+        unset($this->dboptions['dbsocket']);
 
         $pass = addcslashes($this->dbpass, "'\\");
 

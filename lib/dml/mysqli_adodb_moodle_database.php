@@ -18,7 +18,7 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
      * @return bool success
      * @throws dml_exception if error
      */
-    public function create_database($dbhost, $dbuser, $dbpass, $dbname) {
+    public function create_database($dbhost, $dbuser, $dbpass, $dbname, array $dboptions=null) {
         $this->adodb->database = ''; // reset database name cached by ADODB. Trick from MDL-9609
         if ($this->adodb->Connect($dbhost, $dbuser, $dbpass)) { /// Try to connect without DB
             if ($this->adodb->Execute("CREATE DATABASE $dbname DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci")) {

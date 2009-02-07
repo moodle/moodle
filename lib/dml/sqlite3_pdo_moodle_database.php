@@ -58,7 +58,7 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
      *
      * @return bool success
      */
-    public function create_database($dbhost, $dbuser, $dbpass, $dbname) {
+    public function create_database($dbhost, $dbuser, $dbpass, $dbname, array $dboptions=null) {
         $this->dbhost = $dbhost;
         $this->dbuser = $dbuser;
         $this->dbpass = $dbpass;

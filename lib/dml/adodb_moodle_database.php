@@ -31,6 +31,16 @@ abstract class adodb_moodle_database extends moodle_database {
     }
 
     /**
+     * Returns localised database configuration help.
+     * Note: can be used before connect()
+     * @return string
+     */
+    public function get_configuration_help() {
+        $dbtype = $this->get_dbtype();
+        return get_string($dbtype.'help', 'install');
+    }
+
+    /**
      * Adodb preconnection routines, ususally sets up needed defines;
      */
     protected abstract function preconfigure_dbconnection();

@@ -5363,18 +5363,23 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
         }
     }
 
-    if (isset($CFG->running_installer)) {
-        $module = 'installer';
-        $filetocheck = 'installer.php';
-        $locations[] = $CFG->dirroot.'/install/lang/';
-        $locations[] = $CFG->dataroot.'/lang/';
-        $locations[] = $CFG->dirroot.'/lang/';
-        $defaultlang = 'en_utf8';
-    } else {
-        $locations[] = $CFG->dataroot.'/lang/';
-        $locations[] = $CFG->dirroot.'/lang/';
-        $locations[] = $CFG->dirroot.'/local/lang/';
+    if (!empty($CFG->running_installer) and $lang !== 'en_utf8') {
+        static $stringnames = null;
+        if (!$stringnames) {
+            $stringnames = file($CFG->dirroot.'/install/stringnames.txt');
+            $stringnames = array_map('trim', $stringnames);
+        }
+        if (array_search($identifier, $stringnames) !== false) {
+            $module = 'installer';
+            $filetocheck = 'installer.php';
+            $defaultlang = 'en_utf8';
+            $locations[] = $CFG->dirroot.'/install/lang/';
+        }
     }
+
+    $locations[] = $CFG->dataroot.'/lang/';
+    $locations[] = $CFG->dirroot.'/lang/';
+    $locations[] = $CFG->dirroot.'/local/lang/';
 
 /// Add extra places to look for strings for particular plugin types.
     $rules = places_to_search_for_lang_strings();

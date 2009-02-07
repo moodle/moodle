@@ -49,8 +49,9 @@ $string['check'] = 'Check';
 $string['checkingphpsettings']='Checking PHP Settings';
 $string['chooselanguage'] = 'Choose a language';
 $string['chooselanguagehead'] = 'Choose a language';
-$string['chooselanguagesub'] = 'Please choose a language for the installation ONLY. You will be able to choose site and user languages on a later screen.';
+$string['chooselanguagesub'] = 'Please choose a language for the installation. This language will also be used as the default language for the site, though it may be changed later.';
 $string['closewindow'] = 'Close this window';
+$string['compatibility'] = 'Compatibility';
 $string['compatibilitysettings'] = 'Checking your PHP settings ...';
 $string['compatibilitysettingshead'] = 'Checking your PHP settings ...';
 $string['compatibilitysettingssub'] = 'Your server should pass all these tests to make Moodle run properly';
@@ -96,9 +97,6 @@ $string['databasecreationsettingssub2'] = '<b>Type:</b> fixed to \"mysqli\" by t
        <b>User:</b> fixed to \"root\" by the installer<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> optional prefix to use for all table names';
-$string['databasehost']='Database host :';
-$string['databasename']='Database name : ';
-$string['databasepass']='Database password :';
 $string['databasesettings'] = 'Now you need to configure the database where most Moodle data
     will be stored.  This database must already have been created
     and a username and password created to access it.<br />
@@ -161,16 +159,10 @@ $string['databasesettingssub_postgres7'] = '<b>Type:</b> PostgreSQL<br />
        <b>User:</b> your database username<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> prefix to use for all table names (mandatory)';
-$string['databasesettingssub_sqlite3_pdo'] = '<b>Type:</b> SQLite 3 (PDO) <b><strong  class=\"errormsg\">Experimental! (not for use in production)</strong></b><br />
-       <b>Host:</b> path to the directory where the database file will be saved (use a full path); use localhost or leave blank to use Moodle data directory<br />
-       <b>Name:</b> database name, eg moodle (optional)<br />
-       <b>User:</b> your database username (optional)<br />
-       <b>Password:</b> your database password (optional)<br />
-       <b>Tables Prefix:</b> optional prefix to use for all table names<br />
-	   The name of the database file will be determined by the username, database name and password you entered above.';
 $string['databasesettingswillbecreated'] = '<b>Note:</b> The installer will try to create the database automatically if not exists.';
 $string['databasetype']='Database type :';
-$string['databaseuser']='Database user :';
+$string['databasetypehead'] = 'Choose database driver';
+$string['databasetypesub'] = 'Moodle supports several types of database servers. Please contact server administrator if you do not know which type to use.';
 $string['dataroot'] = 'Data Directory';
 $string['datarooterror'] = 'The \'Data Directory\' you specified could not be found or created.  Either correct the path or create that directory manually.';
 $string['datarootpublicerror'] = 'The \'Data Directory\' you specified is directly accessible via web, you must use different directory.';
@@ -231,6 +223,7 @@ $string['downloadlanguagepack']='Do you want to download language pack now(yes/n
 $string['downloadlanguagesub'] = 'You now have the option of downloading a language pack and continuing the installation process in this language.<br /><br />If you are unable to download the language pack, the installation process will continue in English. (Once the installation process is complete, you will have the opportunity to download and install additional language packs.)';
 $string['downloadsuccess'] = 'Language Pack Downloaded Successfuly';
 $string['doyouagree'] = 'Do you agree ? (yes/no):';
+$string['environment'] = 'Environment';
 $string['environmenterrortodo'] = 'You must solve all the environmental problems (errors) found above before proceeding to install this Moodle version!';
 $string['environmenthead'] = 'Checking your environment ...';
 $string['environmentrecommendcustomcheck'] = 'if this test fails, it indicates a potential problem';
@@ -240,9 +233,11 @@ $string['environmentrequirecustomcheck'] = 'this test must pass';
 $string['environmentrequireinstall'] = 'must be installed and enabled';
 $string['environmentrequireversion'] = 'version $a->needed is required and you are running $a->current';
 $string['environmentsub'] = 'We are checking if the various components of your system meet the system requirements';
+$string['environmentsub2'] = 'Each Moodle release has some minimum PHP version requirement and a number of mandatory PHP extensions.
+Full environment check is done before each install and upgrade. Please contact server administrator if you do not know how to install new version or enable PHP extensions.';
 $string['environmentxmlerror'] = 'Error reading environment data ($a->error_code)';
 $string['error'] = 'Error';
-$string['errorsinenvironment'] ='Errors in the environment!';
+$string['errorsinenvironment'] ='Environment check failed!';
 $string['fail'] = 'Fail';
 $string['fileuploads'] = 'File Uploads';
 $string['fileuploadserror'] = 'This should be on';
@@ -360,12 +355,30 @@ $string['ok'] = 'OK';
 $string['opensslrecommended'] = 'Installing the optional OpenSSL library is highly recommended -- it enables Moodle Networking functionality.';
 $string['pass'] = 'Pass';
 $string['password'] = 'Password';
+$string['pass'] = 'Pass';
+$string['paths'] = 'Paths';
+$string['pathshead'] = 'Confirm paths';
+$string['pathsrodataroot'] = 'Dataroot directory is not writable.';
+$string['pathssubwwwroot'] = 'Full web address where moodle will be accessed.
+It\'s not possible to access Moodle using multiple addresses.
+If your site has multiple public addresses you must setup permanent redirects on all of them except this one.
+If your site is accessible both from intranet and Internet use the public address here and setup DNS so that the inranet users may use the public adress too.';
+$string['pathssubdirroot'] = 'Full directory path to moodle installation. Change only if you need to use symbolic links.';
+$string['pathssubdataroot'] = 'You need a place where Moodle can save uploaded files. This directory should be readable AND WRITEABLE by the web server user
+(usually \'nobody\' or \'apache\'), but it must not be accessible directly via the web.';
+$string['pathssubadmindir'] = 'A very few webhosts use /admin as a special URL for you to access a
+control panel or something.  Unfortunately this conflicts with the standard location for the Moodle admin pages.  You can fix this by
+renaming the admin directory in your installation, and putting that  new name here.  For example: <em>moodleadmin</em>. This will fix admin links in Moodle.';
+$string['pathsunsecuredataroot'] = 'Dataroot location is not secure';
+$string['pathswrongdirroot'] = 'Incorrect dirroot localtion';
+$string['pathswrongadmindir'] = 'Admin directory does not exist';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the PGSQL extension so that it can communicate with PostgreSQL.  Please check your php.ini file or recompile PHP.';
 $string['php50restricted'] = 'PHP 5.0.x has a number of known problems, please upgrade to 5.1.x or downgrade to 4.3.x or 4.4.x';
 $string['php52versionerror'] = 'PHP version must be at least 5.2.4.';
 $string['php52versionhelp'] = '<p>Moodle requires a PHP version of at least 5.2.4.</p>
 <p>You are currently running version $a</p>
 <p>You must upgrade PHP or move to a host with a newer version of PHP!</p>';
+$string['phpextension'] = '$a PHP extension';
 $string['phpversion'] = 'PHP version';
 $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.3.0 or 5.1.0 (5.0.x has a number of known problems).</p>
 <p>You are currently running version $a</p>
@@ -380,6 +393,7 @@ $string['previous'] = 'Previous';
 $string['qtyperqpwillberemoved'] = 'During the upgrade, the RQP question type will be removed. You were not using this question type, so you should not experience any problems.';
 $string['qtyperqpwillberemovedanyway'] = 'During the upgrade, the RQP question type will be removed. You have some RQP questions in your database, and these will stop working unless you reinstall the code from http://moodle.org/mod/data/view.php?d=13&amp;rid=797 before continuing with the upgrade.';
 $string['releasenoteslink'] = 'For information about this version of Moodle, please see Release Notes at $a';
+$string['reload'] = 'Reload';
 $string['remotedownloaderror'] = 'Download of component to your server failed, please verify proxy settings, PHP cURL extension is highly recommended.<br /><br />You must download the <a href=\"$a->url\">$a->url</a> file manually, copy it to \"$a->dest\" in your server and unzip it there.';
 $string['remotedownloadnotallowed'] = 'Download of components to your server isn\'t allowed (allow_url_fopen is disabled).<br /><br />You must download the <a href=\"$a->url\">$a->url</a> file manually, copy it to \"$a->dest\" in your server and unzip it there.';
 $string['report'] = 'Report';

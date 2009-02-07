@@ -73,12 +73,9 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
 
     /**
      * Returns db related part of config.php
-     * Note: can be used before connect()
-     * @return string
+     * @return object
      */
-    public function export_dbconfig($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
-        $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
-
+    public function export_dbconfig() {
         $cfg = new stdClass();
         $cfg->dbtype     = $this->get_dbtype();
         $cfg->dblibrary  = $this->get_dblibrary();
