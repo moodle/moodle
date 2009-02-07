@@ -442,6 +442,13 @@ if ($config->stage == INSTALL_ENVIRONMENT or $config->stage == INSTALL_PATHS) {
 
 
 
+if ($config->stage == INSTALL_DISTRIBUTION) {
+    // TODO: reimplement welcome.html support for win installer
+    $config->stage = INSTALL_PATHS;
+}
+
+
+
 if ($config->stage == INSTALL_PATHS) {
     $paths = array('wwwroot'  => get_string('wwwroot', 'install'),
                    'dirroot'  => get_string('dirroot', 'install'),
@@ -509,7 +516,7 @@ install_print_header($config, get_string('language'),
 $languages = install_get_list_of_languages();
 echo '<div class="userinput">';
 echo '<div class="formrow"><label class="formlabel" for="langselect">'.get_string('language').'</label>';
-echo '<select id="langselect" name="lang" class="forminput">';
+echo '<select id="langselect" name="lang" class="forminput" onchange="this.form.submit()">';
 foreach ($languages as $name=>$value) {
     $selected = ($name == $CFG->lang) ? 'selected="selected"' : '';
     echo '<option value="'.s($name).'" '.$selected.'>'.$value.'</option>';

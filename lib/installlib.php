@@ -5,12 +5,13 @@
  */
 
 define('INSTALL_WELCOME',       0);
-define('INSTALL_ENVIRONMENT', 1);
-define('INSTALL_PATHS',         2);
-define('INSTALL_DOWNLOADLANG',  3);
-define('INSTALL_DATABASETYPE',  4);
-define('INSTALL_DATABASE',      5);
-define('INSTALL_SAVE',          6);
+define('INSTALL_DISTRIBUTION',  1);
+define('INSTALL_ENVIRONMENT',   2);
+define('INSTALL_PATHS',         3);
+define('INSTALL_DOWNLOADLANG',  4);
+define('INSTALL_DATABASETYPE',  5);
+define('INSTALL_DATABASE',      6);
+define('INSTALL_SAVE',          7);
 
 /**
  *Tries to detect the right www root setting.
@@ -211,15 +212,22 @@ function install_print_footer($config, $reload=false) {
     global $CFG;
 
     if ($config->stage > INSTALL_WELCOME) {
-        $first = '<input type="submit" name="previous" value="&laquo; '.s(get_string('previous')).'" />';
+        $first = '<input type="submit" id="previousbutton" name="previous" value="&laquo; '.s(get_string('previous')).'" />';
     } else {
-        $first = '';
+        $first = '<input type="submit" id="previousbutton" name="next" value="'.s(get_string('reload', 'admin')).'" />';
+        $first .= '<script type="text/javascript">
+//<![CDATA[
+    var first = document.getElementById("previousbutton");
+    first.style.visibility = "hidden";
+//]]>
+</script>
+';
     }
 
     if ($reload) {
-        $next = '<input type="submit" name="next" value="'.s(get_string('reload', 'admin')).'" />';
+        $next = '<input type="submit" id="nextbutton" name="next" value="'.s(get_string('reload', 'admin')).'" />';
     } else {
-        $next = '<input type="submit" name="next" value="'.s(get_string('next')).' &raquo;" />';
+        $next = '<input type="submit" id="nextbutton" name="next" value="'.s(get_string('next')).' &raquo;" />';
     }
 
     echo '</fieldset><fieldset id="nav_buttons">'.$first.$next.'</fieldset>';
@@ -329,7 +337,7 @@ fieldset {
   width:95%;
 }
 
-.stage6 .stage {
+.stage7 .stage {
   font-weight: bold;
   color: red;
 }
