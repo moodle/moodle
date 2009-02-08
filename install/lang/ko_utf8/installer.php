@@ -17,16 +17,30 @@ $string['cannotsavemd5file'] = 'md5 파일을 저장할 수 없음';
 $string['cannotsavezipfile'] = 'ZIP 파일을 저장할 수 없음';
 $string['cannotunzipfile'] = '압축된 파일을 풀 수 없음';
 $string['chooselanguagehead'] = '언어를 선택하시오';
-$string['chooselanguagesub'] = '설치할 때 쓸 언어를 선택하십시오. 이 후 화면에서는 사이트와 사용자들을 위한 여타의 언어팩들을 선택할 수 있습니다.';
+$string['chooselanguagesub'] = '설치 과정에서 사용할 언어를 선택하십시오. 선택한 언어는 사이트의 기본 언어로 사용할 수 있으며, 추후 다른 언어로 바꿀 수도 있습니다.';
 $string['dataroot'] = '데이타 경로';
 $string['dirroot'] = '무들 디렉토리';
 $string['environment'] = '환경';
 $string['environmentrequireinstall'] = '설치하거나 활성화해야만 함';
 $string['environmentrequireversion'] = '$a->needed 버전이 요구되는 데, 현재 $a->current 이 구동되고 있음';
+$string['environmentsub2'] = '개개의 무들 배포본은 필요로하는 최소한의 PHP 버전과 확장기능이 다릅니다. 각 판을 설치하거나 판올림하기 전에 완벽한 구동환경을 점검해야 합니다. 혹 여러분이 어떻게 새 판을 설치해야 할지 또 어떻게 PHP 확장 기능을 설치해야 할지 모르겠다면, 서버 관리자에게 문의하기 바랍니다.';
 $string['errorsinenvironment'] = '환경설정에 오류가 있습니다!';
 $string['installation'] = '설치';
 $string['language'] = '언어';
 $string['parentlanguage'] = 'ko';
+$string['paths'] = '경로';
+$string['pathshead'] = '경로 확인';
+$string['pathsrodataroot'] = 'Dataroot 디렉토리의 쓰기허가권이 없습니다.';
+$string['pathssubadmindir'] = '간혹 어떤 웹호스트 업체는 제어판 등을 제공하는 특별한 URL으로서 /admin을 사용합니다. 불행하게도 이것은 무들 관리페이지를 위한 표준 위치와 충돌을 일으킵니다. 설치과정에서 관리 디렉토리의 이름을 바꿈으로서 이 문제를 고칠수 있는 데, 다음의 예와 같이 새이름을 여기에 넣으면 됩니다. 예: <em>moodleadmin</em> 이렇게 하면 무들에서 관리자 링크문제가 해결됩니다.';
+$string['pathssubdataroot'] = '무들로 업로드된 파일을 저장할 수 있는 장소가 필요합니다. 이 디렉토리는 웹 서버의 사용자(보통 \"none\" 또는 \"apache\" )에 의해서 \'읽고쓰기 가능\' 권한을 보유하여야 합니다. 그러나 직접적으로 웹을 경유해서 접근할 수 있어서는 안됩니다.';
+$string['pathssubdirroot'] = '무들 설치를 위한 완전한 디렉토리 경로. 심볼릭 링크를 사용하기 위해 꼭 필요한 경우 변경';
+$string['pathssubwwwroot'] = '무들을 접속할 수 있는 전체 웹 주소. 다중 주소를 이용해서는 무들에 접속할 수 없음.
+만일 사이트가 복수의 공개 주소를 갖고 있는 경우, 여기에 입력한 주소 이외의 곳에서는 영구적인 redirect를 설정해 놓아야만 함.
+만약 여러분의 사이트를 인터넷과 인트라넷 모두에서 접속할 수 있게 하려면 여기에 공식적인 주소를 입력하고 DNS를 설정해서 인트라넷 사용자들도 공개 주소를 사용할 수 있게 해야할 것입니다.';
+$string['pathsunsecuredataroot'] = 'Dataroot 경로가 안전하지 않음';
+$string['pathswrongadmindir'] = '관리자 경로가 존재하지 않음';
+$string['pathswrongdirroot'] = '잘못된 dirroot 위치';
+$string['phpextension'] = '$a PHP 확장';
 $string['phpversion'] = 'php버젼';
 $string['reload'] = '다시 로딩';
 $string['thischarset'] = 'UTF-8';
@@ -37,7 +51,7 @@ $string['welcomep30'] = '<strong>$a->installername</strong> 의 이 릴리스는
 $string['welcomep40'] = '이 패키지는 <strong>무들 $a->moodlerelease ($a->moodleversion)</strong> 을 포함하고 있습니다.';
 $string['welcomep50'] = '이 패키지에 있는 모든 어플리케이션을 사용하는 것은 각각의 라이센스에의해 지배받습니다. 완전한<strong>$a->installername</strong> 패키지는
 <a href=\"http://www.opensource.org/docs/definition_plain.html\">공개 소스이며 </a> <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a> 라이선스에 의해 배포됩니다.';
-$string['welcomep60'] = '다음 페이지들은 당신의 컴퓨터에 <strong>무들</strong>을 설정하고 설치하는 길라잡이 역할을 할 것입니다. 기본 설정을 선택하거나 목적에 맞게 선택적으로 수정할 수 있습니다.';
+$string['welcomep60'] = '다음 화면들은 당신의 컴퓨터에 <strong>무들</strong>을 설정하고 설치하는 길라잡이 역할을 할 것입니다. 기본 설정을 선택하거나 목적에 맞게 선택적으로 수정할 수 있습니다.';
 $string['welcomep70'] = '<strong>무들</strong> 설정을 계속하기 위해서는 \"다음\" 버튼을 클릭하세요.';
 $string['wwwroot'] = '웹 주소';
 ?>
