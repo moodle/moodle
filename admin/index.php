@@ -250,13 +250,15 @@
             die();
 
         } else {
-        /// Upgrade current language pack if we can
-            if (empty($CFG->skiplangupgrade)) {
-                upgrade_language_pack();
-            }
 
         /// Launch main upgrade
             try {
+
+                // Upgrade current language pack if we can
+                if (empty($CFG->skiplangupgrade)) {
+                    upgrade_language_pack(false);
+                }
+
                 print_upgrade_part_start('moodle', false);
 
                 $result = xmldb_main_upgrade($CFG->version);

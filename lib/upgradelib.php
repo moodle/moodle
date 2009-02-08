@@ -892,7 +892,6 @@ function upgrade_get_javascript() {
 
 /**
  * Try to upgrade the given language pack (or current language)
- * If it doesn't work, fail silently and return false
  */
 function upgrade_language_pack($lang='') {
     global $CFG;
@@ -905,7 +904,8 @@ function upgrade_language_pack($lang='') {
         return true;  // Nothing to do
     }
 
-    notify(get_string('langimport', 'admin').': '.$lang.' ... ', 'notifysuccess');
+    upgrade_started(false);
+    print_heading(get_string('langimport', 'admin').': '.$lang);
 
     @mkdir ($CFG->dataroot.'/temp/');    //make it in case it's a fresh install, it might not be there
     @mkdir ($CFG->dataroot.'/lang/');
@@ -916,11 +916,15 @@ function upgrade_language_pack($lang='') {
         $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
 
         if ($status == COMPONENT_INSTALLED) {
-            debugging('Downloading successful: '.$lang);
             @unlink($CFG->dataroot.'/cache/languages');
-            return true;
+            if ($parentlang = get_parent_language($lang)) {
+                if ($cd = new component_installer('http://download.moodle.org', 'lang16', $parentlang.'.zip', 'languages.md5', 'lang')) {
+                    $cd->install();
+                }
+            }
+            notify(get_string('success'), 'notifysuccess');
         }
     }
 
-    return false;
+    print_upgrade_separator();
 }
