@@ -5159,7 +5159,7 @@ function get_parent_language($lang=null) {
     }
 
     $parentlang = get_string('parentlanguage');
-    if ($parentlang === '[[parentlanguage]]' or strpos($parentlang, '<') !== false) {
+    if ($parentlang === 'en_utf8' or $parentlang === '[[parentlanguage]]' or strpos($parentlang, '<') !== false) {
         $parentlang = '';
     }
 
