@@ -5144,13 +5144,31 @@ function current_language() {
 
 /**
  * Returns parent language of current active language if defined
+ * @param string $lang null means current language
  * @return string
  */
-function get_parent_language() {
+function get_parent_language($lang=null) {
+    global $COURSE, $SESSION;
+
+    //let's hack around the current language
+    if (!empty($lang)) {
+        $old_course_lang  = empty($COURSE->lang) ? '' : $COURSE->lang;
+        $old_session_lang = empty($SESSION->lang) ? '' : $SESSION->lang;
+        $COURSE->lang  = '';
+        $SESSION->lang = $lang;
+    }
+
     $parentlang = get_string('parentlanguage');
     if ($parentlang === '[[parentlanguage]]' or strpos($parentlang, '<') !== false) {
-        return '';
+        $parentlang = '';
     }
+
+    //let's hack around the current language
+    if (!empty($lang)) {
+        $COURSE->lang  = $old_course_lang;
+        $SESSION->lang = $old_session_lang;
+    }
+
     return $parentlang;
 }
 

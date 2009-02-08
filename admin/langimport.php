@@ -78,6 +78,12 @@
 
                             case COMPONENT_INSTALLED:
                                 $notice_ok[] = get_string('langpackinstalled','admin',$pack);
+                                if ($parentlang = get_parent_language($pack)) {
+                                    // install also parent pack if specified
+                                    if ($cd = new component_installer('http://download.moodle.org', 'lang16', $parentlang.'.zip', 'languages.md5', 'lang')) {
+                                        $cd->install();
+                                    }
+                                }
                             break;
 
                             case COMPONENT_UPTODATE:
