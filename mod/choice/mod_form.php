@@ -28,8 +28,8 @@ class mod_choice_mod_form extends moodleform_mod {
 
 //-------------------------------------------------------------------------------
         $repeatarray=array();
-        $repeatarray[] = &MoodleQuickForm::createElement('header', '', get_string('choice','choice').' {no}');
-        $repeatarray[] = &MoodleQuickForm::createElement('text', 'option', get_string('choice','choice'));
+        $repeatarray[] = &MoodleQuickForm::createElement('header', '', get_string('option','choice').' {no}');
+        $repeatarray[] = &MoodleQuickForm::createElement('text', 'option', get_string('option','choice'));
         $repeatarray[] = &MoodleQuickForm::createElement('text', 'limit', get_string('limit','choice'));
         $repeatarray[] = &MoodleQuickForm::createElement('hidden', 'optionid', 0);
 
