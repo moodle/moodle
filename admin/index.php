@@ -53,7 +53,8 @@
 /// Check settings in config.php
 
     $dirroot = dirname(realpath("../index.php"));
-    if (!empty($dirroot) and $dirroot != $CFG->dirroot) {
+    /// Check correct dirroot, ignoring slashes (though should be always forward slashes). MDL-18195
+    if (!empty($dirroot) and str_replace('\\', '/', $dirroot) != str_replace('\\', '/', $CFG->dirroot)) {
         print_error('fixsetting', 'debug', '', (object)array('current'=>$CFG->dirroot, 'found'=>$dirroot));
     }
 
