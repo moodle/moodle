@@ -12,7 +12,7 @@ $string['cannotfindadmin'] = 'Could not find an admin user!';
 $string['codingerror'] = 'Coding error detected, it must be fixed by a programmer: $a';
 $string['configmoodle'] = 'Moodle has not been configured yet. You need to edit config.php first.';
 $string['erroroccur'] = 'An error has occurred during this process';
-$string['fixsetting'] = 'Please fix your settings in config.php: <p>You have:</p> <p>\$CFG->dirroot = \"$a->current\";</p> <p>but it should be:</p> <p>\$CFG->dirroot = \"$a->found\"</p>';
+$string['fixsetting'] = 'Please fix your settings in config.php: <p>You have:</p> <p>\$CFG->dirroot = \'$a->current\';</p> <p>but it should be:</p> <p>\$CFG->dirroot = \'$a->found\';</p>';
 $string['invalideventdata'] = 'Incorrect eventadata submitted: $a';
 $string['invalidarraysize'] = 'Incorrect size of arrays in params of $a';
 $string['missingconfigversion'] = 'Config table does not contain version, can not continue, sorry.';
