@@ -379,21 +379,23 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
             }
             echo "</tr><tr>";
 
-            if ($choice->showunanswered && !empty($allresponses[0])) {
+            if ($choice->showunanswered) {
                 echo "<td class=\"col$count data\" >";
                 // added empty row so that when the next iteration is empty,
                 // we do not get <table></table> erro from w3c validator
                 // MDL-7861
                 echo "<table class=\"choiceresponse\"><tr><td></td></tr>";
-                foreach ($allresponses[0] as $user) {
-                    echo "<tr>";
-                    echo "<td class=\"picture\">";
-                    print_user_picture($user->id, $course->id, $user->picture);
-                    echo "</td><td class=\"fullname\">";
-                    echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">";
-                    echo fullname($user, $hascapfullnames);
-                    echo "</a>";
-                    echo "</td></tr>";
+                if (!empty($allresponses[0])) {
+                    foreach ($allresponses[0] as $user) {
+                        echo "<tr>";
+                        echo "<td class=\"picture\">";
+                        print_user_picture($user->id, $course->id, $user->picture);
+                        echo "</td><td class=\"fullname\">";
+                        echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">";
+                        echo fullname($user, $hascapfullnames);
+                        echo "</a>";
+                        echo "</td></tr>";
+                    }
                 }
                 echo "</table></td>";
             }
