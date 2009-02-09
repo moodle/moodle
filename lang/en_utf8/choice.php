@@ -51,5 +51,6 @@ $string['taken'] = 'Taken';
 $string['timerestrict'] = 'Restrict answering to this time period';
 $string['viewallresponses'] = 'View $a responses';
 $string['yourselection'] = 'Your selection';
+$string['choicesaved'] = 'Your choice has been saved';
 
 ?>
