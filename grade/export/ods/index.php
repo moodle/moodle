@@ -39,13 +39,7 @@ $context = get_context_instance(CONTEXT_COURSE, $id);
 require_capability('moodle/grade:export', $context);
 require_capability('gradeexport/ods:view', $context);
 
-
-$strgrades = get_string('grades', 'grades');
-$actionstr = get_string('modulename', 'gradeexport_ods');
-$navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course->id));
-
-print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
-print_grade_plugin_selector($id, 'export', 'ods');
+print_grade_page_head($COURSE->id, 'export', 'ods', get_string('exportto', 'grades') . ' ' . get_string('modulename', 'gradeexport_ods'));
 
 if (!empty($CFG->gradepublishing)) {
     $CFG->gradepublishing = has_capability('gradeexport/ods:publish', $context);

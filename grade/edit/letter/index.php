@@ -45,15 +45,7 @@ $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'letter', 'course
 $strgrades = get_string('grades');
 $pagename  = get_string('letters', 'grades');
 
-$navigation = grade_build_nav(__FILE__, $pagename, $courseid);
-
-/// Print header
-print_header_simple($strgrades.': '.$pagename, ': '.$strgrades, $navigation, '', '', true, '', navmenu($course));
-/// Print the plugin selector at the top
-print_grade_plugin_selector($courseid, 'edit', 'letter');
-
-$currenttab = 'lettersview';
-require('tabs.php');
+print_grade_page_head($courseid, 'letter', 'view', get_string('gradeletters', 'grades'));
 
 $letters = grade_get_letters($context);
 

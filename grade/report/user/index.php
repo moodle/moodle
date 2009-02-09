@@ -72,18 +72,6 @@ if (!isset($USER->grade_last_report)) {
 }
 $USER->grade_last_report[$course->id] = 'user';
 
-/// Build navigation
-$strgrades  = get_string('grades');
-$reportname = get_string('modulename', 'gradereport_user');
-
-$navigation = grade_build_nav(__FILE__, $reportname, $courseid);
-
-/// Print header
-print_header_simple($strgrades.': '.$reportname, ': '.$strgrades, $navigation,
-                    '', '', true, '', navmenu($course));
-
-/// Print the plugin selector at the top
-print_grade_plugin_selector($courseid, 'report', 'user');
 
 if ($access) {
 
@@ -92,29 +80,35 @@ if ($access) {
 
     if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all student reports
         /// Print graded user selector at the top
-        echo '<div id="graded_users_selector">';
-        print_graded_users_selector($course, 'report/user/index.php?id=' . $course->id, $userid);
-        echo '</div>';
-        echo "<p style = 'page-break-after: always;'></p>";
+        $user_selector = '<div id="graded_users_selector">';
+        $user_selector .= print_graded_users_selector($course, 'report/user/index.php?id=' . $course->id, $userid, true);
+        $user_selector .= '</div>';
+        $user_selector .= "<p style = 'page-break-after: always;'></p>";
 
         if ($userid === 0) {
             $gui = new graded_users_iterator($course);
             $gui->init();
+            // Add tabs
+            print_grade_page_head($courseid, 'report', 'user');
+
+            echo $user_selector.'<br />';
             while ($userdata = $gui->next_user()) {
                 $user = $userdata->user;
                 $report = new grade_report_user($courseid, $gpr, $context, $user->id);
                 print_heading(get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
+
                 if ($report->fill_table()) {
-                    echo $report->print_table(true);
+                    echo '<br />'.$report->print_table(true);
                 }
                 echo "<p style = 'page-break-after: always;'></p>";
             }
             $gui->close();
         } elseif ($userid) { // Only show one user's report
             $report = new grade_report_user($courseid, $gpr, $context, $userid);
-            print_heading(get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
+            print_grade_page_head($courseid, 'report', 'user', get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
+            echo $user_selector;
             if ($report->fill_table()) {
-                echo $report->print_table(true);
+                echo '<br />'.$report->print_table(true);
             }
         }
     } else { //Students will see just their own report
@@ -123,10 +117,11 @@ if ($access) {
         $report = new grade_report_user($courseid, $gpr, $context, $userid);
 
         // print the page
-        print_heading(get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
+        print_grade_page_head($courseid, 'report', 'user', get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
+        echo $user_selector;
 
         if ($report->fill_table()) {
-            echo $report->print_table(true);
+            echo '<br />'.$report->print_table(true);
         }
     }
 

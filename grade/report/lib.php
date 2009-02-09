@@ -162,6 +162,9 @@ abstract class grade_report {
         // roles to be displayed in the gradebook
         $this->gradebookroles = $CFG->gradebookroles;
 
+        // Set up link to preferences page
+        $this->preferences_page = $CFG->wwwroot.'/grade/report/grader/preferences.php?id='.$courseid;
+
         // init gtree in child class
     }
 
@@ -312,10 +315,11 @@ abstract class grade_report {
      * @param string HTML
      */
     protected function get_sort_arrow($direction='move', $sort_link=null) {
-        $matrix = array('up' => 'asc', 'down' => 'desc', 'move' => 'desc');
+        $matrix = array('up' => 'desc', 'down' => 'asc', 'move' => 'desc');
         $strsort = $this->get_lang_string('sort' . $matrix[$direction]);
+
         $arrow = print_arrow($direction, $strsort, true);
-        $html = '<a href="'.$sort_link .'">' . $arrow . '</a>';
+        $html = '<a href="'.$sort_link .'" alt="'.$strsort.'" title="'.$strsort.'">' . $arrow . '</a>';
         return $html;
     }
 }

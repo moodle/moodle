@@ -1,0 +1,20 @@
+/**
+ * Author: Robert Russo
+ */
+.grade-report-grader form {
+  text-align: left;
+}
+
+.grade-report-grader div.left_scroller {
+  margin-top: 40px;
+}
+
+.grade-report-grader div.right_scroller {
+  margin-top: 40px;
+  width: auto;
+  position: absolute;
+}
+
+.excludedfloater {
+  font-size: 7px;
+}

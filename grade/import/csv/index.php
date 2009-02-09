@@ -59,12 +59,7 @@ if (isset($CFG->CSV_DELIMITER)) {
     $csv_encode = '/\&\#44/';
 }
 
-$strgrades = get_string('grades', 'grades');
-$actionstr = get_string('csv', 'grades');
-$navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course->id));
-
-print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
-print_grade_plugin_selector($id, 'import', 'csv');
+print_grade_page_head($course->id, 'import', 'csv', get_string('importcsv', 'grades'));
 
 // set up import form
 $mform = new grade_import_form(null, array('includeseparator'=>!isset($CFG->CSV_DELIMITER), 'verbosescales'=>true));
@@ -379,7 +374,7 @@ if ($formdata = $mform->get_data()) {
                                 } else {
                                     $scale = $gradeitem->load_scale();
                                     $scales = explode(',', $scale->scale);
-                                    $scales = array_map('trim', $scales); //hack - trim whitespace around scale options 
+                                    $scales = array_map('trim', $scales); //hack - trim whitespace around scale options
                                     array_unshift($scales, '-'); // scales start at key 1
                                     $key = array_search($value, $scales);
                                     if ($key === false) {
@@ -396,7 +391,7 @@ if ($formdata = $mform->get_data()) {
                             } else {
                                 if ($value === '' or $value == '-') {
                                     $value = null; // no grade
-    
+
                                 } else if (!is_numeric($value)) {
                                 // non numeric grade value supplied, possibly mapped wrong column
                                     echo "<br/>t0 is $t0";

@@ -66,21 +66,7 @@ if ($data = $mform->get_data()) {
     exit;
 }
 
-$strgrades = get_string('grades');
-$strgraderreport = get_string('modulename', 'gradereport_grader');
-$strgradepreferences = get_string('gradepreferences', 'grades');
-
-$navigation = grade_build_nav(__FILE__, $strgradepreferences, $courseid);
-
-print_header_simple($strgrades.': '.$strgraderreport . ': ' . $strgradepreferences,': '.$strgradepreferences, $navigation,
-                    '', '', true, '', navmenu($course));
-
-/// Print the plugin selector at the top
-print_grade_plugin_selector($course->id, 'report', 'grader');
-
-// Add tabs
-$currenttab = 'preferences';
-include('tabs.php');
+print_grade_page_head($courseid, 'report', 'grader', get_string('preferences', 'gradereport_grader'), false, '', true);
 
 // If USER has admin capability, print a link to the site config page for this report
 if (has_capability('moodle/site:config', $systemcontext)) {

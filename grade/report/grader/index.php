@@ -60,13 +60,6 @@ if (!isset($USER->grade_last_report)) {
 }
 $USER->grade_last_report[$course->id] = 'grader';
 
-/// Build navigation
-
-$strgrades  = get_string('grades');
-$reportname = get_string('modulename', 'gradereport_grader');
-
-$navigation = grade_build_nav(__FILE__, $reportname, $courseid);
-
 /// Build editing on/off buttons
 
 if (!isset($USER->gradeediting)) {
@@ -113,40 +106,14 @@ if (!is_null($toggle) && !empty($toggle_type)) {
 //first make sure we have proper final grades - this must be done before constructing of the grade tree
 grade_regrade_final_grades($courseid);
 
-// Perform actions.
+// Perform actions
 if (!empty($target) && !empty($action) && confirm_sesskey()) {
     grade_report_grader::process_action($target, $action);
 }
 
-$bodytags = '';
+// Initialise the grader report object
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
 
-// Initialise the grader report object
-if (ajaxenabled() && $report->get_pref('enableajax')) {
-    require_once $CFG->dirroot.'/grade/report/grader/ajaxlib.php';
-
-    require_js(array('yui_yahoo',
-                     'yui_dom',
-                     'yui_event',
-                     'yui_json',
-                     'yui_connection',
-                     'yui_dragdrop',
-                     'yui_animation'));
-
-    if (debugging('', DEBUG_DEVELOPER)) {
-        require_js(array('yui_logger'));
-
-        $bodytags = 'onload = "javascript:
-        show_logger = function() {
-            var logreader = new YAHOO.widget.LogReader();
-            logreader.newestOnTop = false;
-            logreader.setTitle(\'Moodle Debug: YUI Log Console\');
-        };
-        show_logger();
-        "';
-    }
-    $report = new grade_report_grader_ajax($courseid, $gpr, $context, $page, $sortitemid);
-}
 
 /// processing posted grades & feedback here
 if ($data = data_submitted() and confirm_sesskey() and has_capability('moodle/grade:edit', $context)) {
@@ -167,18 +134,19 @@ $numusers = $report->get_numusers();
 $report->load_final_grades();
 
 /// Print header
-print_header_simple($strgrades.': '.$reportname, ': '.$strgrades, $navigation, '', '', true, $buttons, navmenu($course), false, $bodytags);
+$meta = '<!--[if IE]><link rel="stylesheet" type="text/css" href="styles_ie.css" />'.
+             '<![endif]--><!--[if IE 6]><link rel="stylesheet" type="text/css" href="styles_ie6.css"'.
+             '/><![endif]-->';
 
-/// Print the plugin selector at the top
-print_grade_plugin_selector($courseid, 'report', 'grader');
 
-// Add tabs
-$currenttab = 'graderreport';
-require('tabs.php');
+$reportname = get_string('modulename', 'gradereport_grader');
+
+print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $meta, $report->preferences_page, $buttons);
+
 
 echo $report->group_selector;
 echo '<div class="clearer"></div>';
-echo $report->get_toggles_html();
+// echo $report->get_toggles_html();
 
 //show warnings if any
 foreach($warnings as $warning) {
@@ -191,20 +159,16 @@ if (!empty($studentsperpage)) {
     print_paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
 }
 
-require_js('grade/report/grader/functions.js');
-
-$reporthtml = '<div id="grader_report_message"></div>' . "\n";
-$reporthtml .= '<table id="user-grades" class="gradestable flexible boxaligncenter generaltable">';
-$reporthtml .= '<thead>';
+$reporthtml = '<script src="functions.js" type="text/javascript"></script>';
+$reporthtml .= '<div class="gradeparent">';
+$reporthtml .= $report->get_studentnameshtml();
 $reporthtml .= $report->get_headerhtml();
 $reporthtml .= $report->get_iconshtml();
+$reporthtml .= $report->get_studentshtml();
 $reporthtml .= $report->get_rangehtml();
-$reporthtml .= "</thead>\n<tfoot>";
 $reporthtml .= $report->get_avghtml(true);
 $reporthtml .= $report->get_avghtml();
-$reporthtml .= "</tfoot>\n<tbody>";
-$reporthtml .= $report->get_studentshtml();
-$reporthtml .= "</tbody>\n</table>";
+$reporthtml .= "</tbody></table></div></div>";
 
 // print submit button
 if ($USER->gradeediting[$course->id] and !$report->get_pref('enableajax')) {

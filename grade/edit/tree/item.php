@@ -49,6 +49,8 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 }
 
+$heading = get_string('itemsedit', 'grades');
+
 if ($grade_item = grade_item::fetch(array('id'=>$id, 'courseid'=>$courseid))) {
     // redirect if outcomeid present
     if (!empty($grade_item->outcomeid) && !empty($CFG->enableoutcomes)) {
@@ -69,6 +71,7 @@ if ($grade_item = grade_item::fetch(array('id'=>$id, 'courseid'=>$courseid))) {
         $item->parentcategory = $parent_category->id;
     }
 } else {
+    $heading = get_string('newitem', 'grades');
     $grade_item = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual'), false);
     $item = $grade_item->get_record_data();
     $parent_category = grade_category::fetch_course_category($courseid);
@@ -159,15 +162,7 @@ if ($data = $mform->get_data()) {
     redirect($returnurl);
 }
 
-$strgrades       = get_string('grades');
-$strgraderreport = get_string('graderreport', 'grades');
-$stritemsedit    = get_string('itemsedit', 'grades');
-$stritem         = get_string('item', 'grades');
-
-$navigation = grade_build_nav(__FILE__, $stritem, array('courseid' => $courseid));
-
-
-print_header_simple($strgrades . ': ' . $strgraderreport, ': ' . $stritemsedit, $navigation, '', '', true, '', navmenu($course));
+print_grade_page_head($courseid, 'edittree', null, $heading);
 
 $mform->display();
 
