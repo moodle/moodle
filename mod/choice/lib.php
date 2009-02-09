@@ -328,8 +328,9 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
         $forcepublish = $choice->publish;
     }
 
-    if (!$allresponses) {
+    if (empty($allresponses)) {
         print_heading(get_string("nousersyet"));
+        return false;
     }
 
     $totalresponsecount = 0;
@@ -374,7 +375,7 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
             }
             echo "</tr><tr>";
 
-            if ($choice->showunanswered) {
+            if ($choice->showunanswered && !empty($allresponses[0])) {
                 echo "<td class=\"col$count data\" >";
                 // added empty row so that when the next iteration is empty,
                 // we do not get <table></table> erro from w3c validator
@@ -733,7 +734,9 @@ function choice_get_response_data($choice, $cm, $groupmode) {
             }
         }
     }
-
+    if (empty($allresponses[0])) {
+        unset($allresponses[0]);
+    }
     return $allresponses;
 }
 

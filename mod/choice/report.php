@@ -206,7 +206,7 @@
     choice_show_results($choice, $course, $cm, $users, $format); //show table with students responses.
 
    //now give links for downloading spreadsheets. 
-    if (has_capability('mod/choice:downloadresponses',$context)) {
+    if (!empty($users) && has_capability('mod/choice:downloadresponses',$context)) {
         echo "<br />\n";
         echo "<table class=\"downloadreport\"><tr>\n";
         echo "<td>";
