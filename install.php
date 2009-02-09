@@ -42,8 +42,11 @@ require dirname(__FILE__).'/lib/installlib.php';
 
 // distro specific customisation
 $distro = null;
-if (file_exists('install/distro.php')) {
-    include('install/distro.php');
+if (file_exists('install/distrolib.php')) {
+    require_once('install/distrolib.php');
+    if (function_exists('distro_get_config')) {
+        $distro = distro_get_config();
+    }
 }
 
 $config = new stdClass();
@@ -187,7 +190,10 @@ if ($config->stage == INSTALL_SAVE) {
     if (!$database->driver_installed()) {
         $config->stage = INSTALL_DATABASETYPE;
     } else {
-        $hint_database = install_db_validate($database, $config->dbhost, $config->dbuser, $config->dbpass, $config->dbname, $config->prefix, array('dbpersit'=>0, 'dbsocket'=>$config->dbsocket), $distro);
+        if (function_exists('distro_pre_create_db')) { /// Hook for distros needing to do something before DB creation
+            $distro = distro_pre_create_db($database, $config->dbhost, $config->dbuser, $config->dbpass, $config->dbname, $config->prefix, array('dbpersit'=>0, 'dbsocket'=>$config->dbsocket), $distro);
+        }
+        $hint_database = install_db_validate($database, $config->dbhost, $config->dbuser, $config->dbpass, $config->dbname, $config->prefix, array('dbpersit'=>0, 'dbsocket'=>$config->dbsocket));
 
         if ($hint_database === '') {
             $configphp = '<?php  /// Moodle Configuration File ' . "\r\n\r\n";

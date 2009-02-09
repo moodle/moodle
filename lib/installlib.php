@@ -56,21 +56,8 @@ function install_helpbutton($url, $title='') {
     echo "</a>\n";
 }
 
-function install_db_validate($database, $dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions, $distro) {
+function install_db_validate($database, $dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions) {
     // this is in function because we want the /install.php to parse in PHP4
-
-    if ($database->get_dbfamily() === 'mysql' and !empty($distro->setdbrootpassword) and $dbpass !== '') {
-        // distro hack - set root password
-        try {
-            if ($database->connect($dbhost, $dbuser, '', $dbname, $prefix, $dboptions)) {
-                $sql = "UPDATE user SET password=password(?) WHERE user='root'";
-                $params = array($dbpass);
-                $database->execute($sql, $params);
-                return '';
-            }
-        } catch (Exception $ignored) {
-        }
-    }
 
     try {
         try {
