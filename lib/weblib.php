@@ -1121,10 +1121,8 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
                    "\n//<![CDATA[\n".
                    'document.getElementById("noscript'.$formid.'").style.display = "none";'.
                    "\n//]]>\n".'</script>';
-        $output .= '</div>';
     }
-
-    $output .= '</form>';
+    $output .= '</div></form>';
 
     if ($return) {
         return $output;
