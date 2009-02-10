@@ -260,9 +260,7 @@ class edit_category_form extends moodleform {
 
         // hidden params
         $mform->addElement('hidden', 'id', 0);
-        $mform->addElement('hidden', 'grade_item_id', 0);
         $mform->setType('id', PARAM_INT);
-        $mform->setType('grade_item_id', PARAM_INT);
 
         $mform->addElement('hidden', 'courseid', 0);
         $mform->setType('courseid', PARAM_INT);
@@ -311,7 +309,6 @@ class edit_category_form extends moodleform {
         if ($id = $mform->getElementValue('id')) {
             $grade_category = grade_category::fetch(array('id'=>$id));
             $grade_item = $grade_category->load_grade_item();
-
 
             // remove agg coef if not used
             if ($grade_category->is_course_category()) {
@@ -376,8 +373,9 @@ class edit_category_form extends moodleform {
         }
 
 /// GRADE ITEM
-        if ($id = $mform->getElementValue('grade_item_id')) {
-            $grade_item = grade_item::fetch(array('id'=>$id));
+        if ($id = $mform->getElementValue('id')) {
+            $grade_category = grade_category::fetch(array('id'=>$id));
+            $grade_item = $grade_category->load_grade_item();
 
             if (!$grade_item->is_raw_used()) {
                 $mform->removeElement('grade_item_plusfactor');

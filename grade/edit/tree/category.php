@@ -30,7 +30,6 @@ require_once 'category_form.php';
 
 $courseid = required_param('courseid', PARAM_INT);
 $id       = optional_param('id', 0, PARAM_INT); // grade_category->id
-$grade_item_id       = optional_param('grade_item_id', 0, PARAM_INT); // grade_item->id
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
@@ -133,7 +132,6 @@ if ($mform->is_cancelled()) {
     // If the user leaves these fields empty during creation of a category, we let the default values take effect
     // Otherwise, we let the user-entered grade item values take effect
     $grade_item = $grade_category->load_grade_item();
-    $grade_item_id = $grade_item->id;
     $grade_item_copy = fullclone($grade_item);
     grade_item::set_properties($grade_item, $itemdata);
 
