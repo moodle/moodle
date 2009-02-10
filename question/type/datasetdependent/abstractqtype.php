@@ -270,13 +270,13 @@ class question_dataset_dependent_questiontype extends default_questiontype {
             case 'question': // coming from the first page, creating the second
                 if (empty($form->id)) { // for a new question $form->id is empty
                     $question = parent::save_question($question, $form, $course);
-                   //prepare the datasets using default $questionfromid
+                    //prepare the datasets using default $questionfromid
                     $this->preparedatasets($form);
-                   $form->id = $question->id;
-                   $this->save_dataset_definitions($form);
+                    $form->id = $question->id;
+                    $this->save_dataset_definitions($form);
                 } else if (!empty($form->makecopy)){
-                   $questionfromid =  $form->id ;
-                   $question = parent::save_question($question, $form, $course);
+                    $questionfromid =  $form->id ;
+                    $question = parent::save_question($question, $form, $course);
                     //prepare the datasets
                     $this->preparedatasets($form,$questionfromid);
                     $form->id = $question->id;
