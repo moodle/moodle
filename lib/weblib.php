@@ -2462,6 +2462,8 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         $pageclass .= ' drag';
     }
 
+    $pageclass .= ' ' . get_browser_version_classes();
+
     $pageclass .= ' dir-'.get_string('thisdirection');
 
     $pageclass .= ' lang-'.$currentlanguage;
