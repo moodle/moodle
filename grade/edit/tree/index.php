@@ -239,19 +239,20 @@ if ($form_key && $data = data_submitted()) {
             $param = $matches[1];
             $a->id = $matches[2];
 
-            if (!$DB->update_record('grade_categories', (object) array('id' => $matches[2], $param => $value))) {
-                print_error('errorupdatinggradecategoryaggregation', 'grades', $a);
-            }
+            $grade_category = grade_category::fetch(array('id'=>$a->id, 'courseid'=>$courseid));
+            $grade_category->$param = $value;
+
+            $grade_category->update();
 
         // Grade item text inputs
-        } elseif (preg_match('/(aggregationcoef|multfactor|plusfactor)_([0-9]*)/', $key, $matches)) {
+        } elseif (preg_match('/(grademax|aggregationcoef|multfactor|plusfactor)_([0-9]*)/', $key, $matches)) {
             $value = required_param($matches[0], PARAM_NUMBER);
             $param = $matches[1];
             $a->id = $matches[2];
+            $grade_item = grade_item::fetch(array('id'=>$a->id, 'courseid'=>$courseid));
+            $grade_item->$param = $value;
 
-            if (!$DB->update_record('grade_items', (object) array('id' => $matches[2], $param => $value))) {
-                print_error('errorupdatinggradeitemaggregationcoef', 'grades', $a);
-            }
+            $grade_item->update();
 
         // Grade item checkbox inputs
         } elseif (preg_match('/extracredit_original_([0-9]*)/', $key, $matches)) { // Sum extra credit checkbox
@@ -268,9 +269,10 @@ if ($form_key && $data = data_submitted()) {
                 continue;
             }
 
-            if (!$DB->update_record('grade_items', array('id' => $matches[1], 'aggregationcoef' => $newvalue))) {
-                print_error('errorupdatinggradeitemaggregationcoef', 'grades', $a);
-            }
+            $grade_item = grade_item::fetch(array('id'=>$a->id, 'courseid'=>$courseid));
+            $grade_item->aggregationcoef = $newvalue;
+
+            $grade_item->update();
 
         // Grade category checkbox inputs
         } elseif (preg_match('/aggregate(onlygraded|subcats|outcomes)_original_([0-9]*)/', $key, $matches)) {
@@ -287,9 +289,10 @@ if ($form_key && $data = data_submitted()) {
                 continue;
             }
 
-            if (!$DB->update_record('grade_categories', array('id' => $matches[2], 'aggregate'.$matches[1] => $newvalue))) {
-                print_error('errorupdatinggradecategoryaggregate'.$matches[1], 'grades', $a);
-            }
+            $grade_category = grade_category::fetch(array('id'=>$a->id, 'courseid'=>$courseid));
+            $grade_category->{'aggregate'.$matches[1]} = $newvalue;
+
+            $grade_category->update();
         }
     }
 }
