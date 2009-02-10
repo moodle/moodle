@@ -134,15 +134,8 @@ $numusers = $report->get_numusers();
 $report->load_final_grades();
 
 /// Print header
-$meta = '<!--[if IE]><link rel="stylesheet" type="text/css" href="styles_ie.css" />'.
-             '<![endif]--><!--[if IE 6]><link rel="stylesheet" type="text/css" href="styles_ie6.css"'.
-             '/><![endif]-->';
-
-
 $reportname = get_string('modulename', 'gradereport_grader');
-
-print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $meta, $report->preferences_page, $buttons);
-
+print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, null, $report->preferences_page, $buttons);
 
 echo $report->group_selector;
 echo '<div class="clearer"></div>';

@@ -738,3 +738,42 @@ padding: 0;
     white-space: nowrap;
     width: 2000px;
 }
+
+/* IE rules */
+.ie .right_scroller {
+  padding-bottom: 15px;
+  overflow-y: hidden;
+}
+
+.ie table#fixed_column th {
+    height: 40.5px;
+}
+
+.ie table#fixed_column tr.avg th {
+    height: 21px;
+}
+
+.ie div.left_scroller td {
+    height: 42px;
+}
+
+/* IE6 rules */
+
+.ie6 form {
+  text-align: left;
+}
+
+.ie6 div.left_scroller {
+  margin-top: 40px;
+}
+
+.ie6 div.right_scroller {
+  margin-top: 40px;
+  width: auto;
+  position: absolute;
+}
+
+.ie6 .excludedfloater {
+  font-size: 7px;
+}
+
