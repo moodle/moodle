@@ -6406,6 +6406,39 @@ function check_php_version($version='5.2.4') {
 }
 
 /**
+ * Returns one or several CSS class names that match the user's browser. These can be put
+ * in the body tag of the page to apply browser-specific rules without relying on CSS hacks
+ */
+function get_browser_version_classes() {
+    $classes = '';
+    if (check_browser_version("MSIE", "0")) {
+        $classes .= 'ie ';
+        if (check_browser_version("MSIE", 8)) {
+            $classes .= 'ie8 ';
+        } elseif (check_browser_version("MSIE", 7)) {
+            $classes .= 'ie7 ';
+        } elseif (check_browser_version("MSIE", 6)) {
+            $classes .= 'ie6 ';
+        }
+    } elseif (check_browser_version("Firefox", 0) || check_browser_version("Gecko", 0) || check_browser_version("Camino", 0)) {
+        $classes .= 'gecko ';
+
+        if (preg_match('/rv\:([1-2])\.([0-9])/', $_SERVER['HTTP_USER_AGENT'], $matches)) {
+            $classes .= "gecko{$matches[1]}{$matches[2]} ";
+        }
+
+    } elseif (check_browser_version("Safari", 0)) {
+        $classes .= 'safari ';
+
+    } elseif (check_browser_version("Opera", 0)) {
+        $classes .= 'opera ';
+
+    }
+
+    return $classes;
+}
+
+/**
  * This function makes the return value of ini_get consistent if you are
  * setting server directives through the .htaccess file in apache.
  * Current behavior for value set from php.ini On = 1, Off = [blank]
