@@ -621,14 +621,19 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
     }
 
     public function get_item_cell($item, $params) {
-        if ($item->gradetype == GRADE_TYPE_SCALE) {
+
+        // If the parent aggregation is Sum of Grades, this cannot be changed
+        $parent_cat = $item->get_parent_category();
+        if ($parent_cat->aggregation == GRADE_AGGREGATE_SUM) {
+            $grademax = format_float($item->grademax, $item->get_decimals());
+        } elseif ($item->gradetype == GRADE_TYPE_SCALE) {
             $scale = get_record('scale', 'id', $item->scaleid);
             $scale_items = explode(',', $scale->scale);
             $grademax = end($scale_items) . ' (' . count($scale_items) . ')';
         } elseif ($item->is_external_item()) {
             $grademax = format_float($item->grademax, $item->get_decimals());
         } else {
-            $grademax = '<input type="text" size="3" id="grademax'.$item->id.'" name="grademax'.$item->id.'" value="'.format_float($item->grademax, $item->get_decimals()).'" />';
+            $grademax = '<input type="text" size="3" id="grademax'.$item->id.'" name="grademax_'.$item->id.'" value="'.format_float($item->grademax, $item->get_decimals()).'" />';
         }
 
         return '<td class="cell">'.$grademax.'</td>';
@@ -805,7 +810,7 @@ class grade_edit_tree_column_multfactor extends grade_edit_tree_column {
     }
 
     public function get_item_cell($item, $params) {
-        $multfactor = '<input type="text" size="3" id="multfactor'.$item->id.'" name="multfactor'.$item->id.'" value="'.format_float($item->multfactor).'" />';
+        $multfactor = '<input type="text" size="3" id="multfactor'.$item->id.'" name="multfactor_'.$item->id.'" value="'.format_float($item->multfactor).'" />';
         return '<td class="cell">'.$multfactor.'</td>';
     }
 
