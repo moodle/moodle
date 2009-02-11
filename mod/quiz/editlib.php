@@ -802,7 +802,7 @@ function quiz_print_singlequestion_reordertool($question, $returnurl, $quiz){
  */
 
 function quiz_print_randomquestion_reordertool(&$question, &$pageurl, &$quiz){
-    global $DB;
+    global $DB, $QTYPES;
 
     // Load the category, and the number of available questions in it.
     if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
