@@ -19,7 +19,9 @@ installation
 language
 parentlanguage
 paths
+pathserrcreatedataroot
 pathsrodataroot
+pathsroparentdataroot
 pathshead
 pathssubwwwroot
 pathssubdirroot
