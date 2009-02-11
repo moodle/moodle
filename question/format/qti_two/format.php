@@ -245,7 +245,6 @@ function handle_questions_media(&$questions, $path, $courseid) {
         $path = $CFG->dataroot.'/'.$this->question_get_export_dir().'/'.$this->filename;
 
         // get the questions (from database) in this category
-        // $questions = get_records("question","category",$this->category->id);
         $questions = get_questions_category( $this->category );
 
         notify("Exporting ".count($questions)." questions.");
