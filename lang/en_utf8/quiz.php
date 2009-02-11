@@ -533,6 +533,7 @@ $string['quizcloses'] = 'Quiz closes';
 $string['quizcloseson'] = 'This quiz will close at $a';
 $string['quizisclosed'] = 'This quiz is closed';
 $string['quizisopen'] = 'This quiz is open';
+$string['quizisopenwillclose'] = 'Quiz open (closes $a)';
 $string['quiznavigation'] = 'Quiz navigation';
 $string['quiznotavailable'] = 'The quiz will not be available until $a';
 $string['quizopen'] = 'Open the quiz';
