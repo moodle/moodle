@@ -1,0 +1,35 @@
+# text strings to use in the API documentation
+doc.title=Flare API Documention
+doc.copyright=&#169; 2007-2008 Regents of the University of California
+
+# source folders from which to generate ASDoc documentation
+doc.source=flare.util,flare.animate,flare.physics,flare.query,flare.data,flare.vis,flare.flex
+
+# package-level documentation properties for use in the flare API documention
+doc.flare.animate=The flare.animate package provides classes for creating animated transitions.
+doc.flare.animate.interpolate=The flare.animate.interpolate package provides classes for interpolating object property values.
+doc.flare.data=The flare.data package provides classes for describing and importing external data sets.
+doc.flare.data.converters=The flare.data.converters package provides classes for converting data between external formats and ActionScript objects.
+doc.flare.display=The flare.display package provides classes for display objects that automatically redraw themselves as needed.
+doc.flare.flex=The flare.flex package provides classes for integrating Flare visualizations into Flex applications.
+doc.flare.physics=The flare.physics package provides classes for physical simulations involving particles&#44; springs&#44; and forces.
+doc.flare.query=The flare.query package provides classes for creating and processing SQL-style queries over ActionScript objects.
+doc.flare.query.methods=The flare.query.methods package provides convenience methods for writing queries and expressions.
+doc.flare.util=The flare.util package provides classes for manipulating common data types and accessing object properties in a generalized fashion.
+doc.flare.vis=The flare.vis package provides classes for creating interactive data visualizations.
+doc.flare.vis.axis=The flare.vis.axis package provides classes for presenting and animating axes in a data visualization.
+doc.flare.vis.controls=The flare.vis.controls package provides classes for interacting with data visualizations.
+doc.flare.vis.data=The flare.vis.data package provides classes for visually representing data elements as <code>DataSprite</code> instances.
+doc.flare.vis.data.render=The flare.vis.data.render package provides classes for customized rendering of <code>DataSprite</code> instances.
+doc.flare.vis.events=The flare.vis.events package provides classes for events issued in the flare.vis visualization framework.
+doc.flare.vis.legend=The flare.vis.legend package provides classes for presenting legends for data visualizations.
+doc.flare.vis.operator=The flare.vis.operator package provides classes for visualization operators for encoding and processing visualized data.
+doc.flare.vis.operator.distortion=The flare.vis.operator.distortion package provides classes for distorting the position and size of visualized data.
+doc.flare.vis.operator.filter=The flare.vis.operator.filter package provides classes for visually filtering items by setting their visibility.
+doc.flare.vis.operator.encoder=The flare.vis.operator.encoding package provides classes for visually encoding properties such as color&#44; shape&#44; and size.
+doc.flare.vis.operator.layout=The flare.vis.operator.layout package provides classes for calculating the spatial position of visualized data.
+doc.flare.vis.palette=The flare.vis.palette package provides classes for color&#44; shape&#44; and size palettes for visual encoding.
+doc.flare.vis.scale=The flare.vis.scale package provides classes for data scales such as linear&#44; logarithmic&#44; and ordinal scales.
+doc.flare.vis.util=The flare.vis.util package provides classes with utility functions for filtering and spanning tree generation.
+doc.flare.vis.util.graphics=The flare.vis.util.graphics package provides classes with utility functions for rendering and computational geometry.
+doc.flare.vis.util.heap=The flare.vis.util.heap package provides classes for a heap data structure.
