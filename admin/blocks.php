@@ -63,9 +63,6 @@
             print_error('blockdoesnotexist', 'error');
         }
 
-        if (!block_is_compatible($block->name)) {
-            $strblockname = $block->name;
-        }
         else {
             $blockobject = block_instance($block->name);
             $strblockname = $blockobject->get_title();
@@ -128,11 +125,6 @@
     $incompatible = array();
 
     foreach ($blocks as $block) {
-        if (!block_is_compatible($block->name)) {
-            notify('Block '. $block->name .' is not compatible with the current version of Moodle and needs to be updated by a programmer.');
-            $incompatible[] = $block;
-            continue;
-        }
         if (($blockobject = block_instance($block->name)) === false) {
             // Failed to load
             continue;
