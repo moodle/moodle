@@ -1616,10 +1616,37 @@ class admin_setting {
      * @param mixed $defaultsetting string or array depending on implementation
      */
     function admin_setting($name, $visiblename, $description, $defaultsetting) {
-        $this->name           = $name;
+        $this->parse_setting_name($name);
         $this->visiblename    = $visiblename;
         $this->description    = $description;
         $this->defaultsetting = $defaultsetting;
+    }
+
+    /**
+     * Set up $this->name and possibly $this->plugin based on whether $name looks
+     * like 'settingname' or 'plugin/settingname'. Also, do some sanity checking
+     * on the names, that is, output a developer debug warning if the name
+     * contains anything other than [a-zA-Z0-9_]+.
+     *
+     * @param string $name the setting name passed in to the constructor.
+     */
+    function parse_setting_name($name) {
+        $bits = explode('/', $name);
+        if (count($bits) > 2) {
+            print_error('invalidadminsettingname', '', '', $name);
+        }
+        $this->name = array_pop($bits);
+        if (!preg_match('/^[a-zA-Z0-9_]+$/', $this->name)) {
+            print_error('invalidadminsettingname', '', '', $name);
+        }
+        if (!empty($bits)) {
+            $this->plugin = array_pop($bits);
+            if ($this->plugin === 'moodle') {
+                $this->plugin = null;
+            } else if (!preg_match('/^[a-zA-Z0-9_]+$/', $this->plugin)) {
+                print_error('invalidadminsettingname', '', '', $name);
+            }
+        }
     }
 
     function get_full_name() {

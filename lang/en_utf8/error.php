@@ -51,6 +51,7 @@ $string['groupunknown'] = 'Group $a not associated to specified course';
 $string['guestnoeditprofile'] = 'The guest user cannot edit their profile';
 $string['guestnoeditprofileother'] = 'The guest user profile cannot be edited';
 $string['guestsarenotallowed'] = 'The guest user is not allowed to do this';
+$string['invalidadminsettingname'] = 'Invalid admin setting ($a)';
 $string['invalidcontext'] = 'Invalid context';
 $string['invalidcourse'] = 'Invalid course';
 $string['invalidcourseid'] = 'You are trying to use an invalid course ID ($a)';
