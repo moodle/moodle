@@ -85,8 +85,8 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
         }else{
             $disabled='';
         }
-        $randomusablequestions = $QTYPES['random']->get_usable_questions_from_category(
-                $category->id, $recurse, '0');
+        $randomusablequestions =
+                $QTYPES['random']->get_usable_questions_from_category($category->id, $recurse, '0');
         $maxrand = count($randomusablequestions);
         if ($maxrand > 0) {
             for ($i = 1;$i <= min(10, $maxrand); $i++) {
