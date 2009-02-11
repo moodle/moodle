@@ -575,7 +575,7 @@ abstract class question_bank_action_column_base extends question_bank_column_bas
     protected function print_icon($icon, $title, $url) {
         global $CFG;
         echo '<a title="' . $title . '" href="' . $url . '">
-                <img src="' . $CFG->pixpath . '/t/' . $icon . '" class="iconsmall" alt="' . $title . '" /></a>';
+                <img src="' . $CFG->pixpath . '/' . $icon . '" class="iconsmall" alt="' . $title . '" /></a>';
     }
 
     public function get_required_fields() {
@@ -600,9 +600,9 @@ class question_bank_edit_action_column extends question_bank_action_column_base 
     protected function display_content($question, $rowclasses) {
         if (question_has_capability_on($question, 'edit') ||
                 question_has_capability_on($question, 'move')) {
-            $this->print_icon('edit', $this->stredit, $this->qbank->edit_question_url($question->id));
+            $this->print_icon('t/edit.gif', $this->stredit, $this->qbank->edit_question_url($question->id));
         } else {
-            $this->print_icon('info', $this->strview, $this->qbank->edit_question_url($question->id));
+            $this->print_icon('i/info.gif', $this->strview, $this->qbank->edit_question_url($question->id));
         }
     }
 }

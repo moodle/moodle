@@ -32,6 +32,8 @@
 
 require_once("locallib.php");
 
+define('NUM_QS_TO_SHOW_IN_RANDOM', 3);
+
 /**
 * Delete a question from a quiz
 *
@@ -413,7 +415,6 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
                             src=\"$CFG->pixpath/t/down.gif\" class=\"iconsmall\"".
                             " alt=\"$strmovedown\" /></a>";
                 }
-            }else{
             }
             if ($allowdelete && question_has_capability_on($question, 'use',
                     $question->category)) { // remove from quiz, not question delete.
@@ -442,7 +443,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
             ?>
         <input type="submit" class="pointssubmitbutton" value="<?php echo $strsave; ?>" />
     </fieldset>
-<?php if(strcmp($question->qtype,'random')===0){
+<?php if ($question->qtype == 'random') {
     echo '<a href="'.$questionurl->out().'" class="configurerandomquestion">'.get_string("configurerandomquestion","quiz").'</a>';
 }
 
@@ -471,21 +472,17 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
 ?>
             <div class="questioncontentcontainer">
  <?php
-            //strcmp returns 0 if equal
-            if (strcmp($question->qtype,'random')===0){ // it is a random question
-                if(!$reordertool){
-                    quiz_print_randomquestion($question, $pageurl, $quiz,
-                            $quiz_qbanktool);
-                }else{
-                    quiz_print_randomquestion_reordertool($question,
-                            $pageurl, $quiz);
+            if ($question->qtype == 'random') { // it is a random question
+                if (!$reordertool) {
+                    quiz_print_randomquestion($question, $pageurl, $quiz, $quiz_qbanktool);
+                } else {
+                    quiz_print_randomquestion_reordertool($question, $pageurl, $quiz);
                 }
-            }else{ // it is a single question
-                if(!$reordertool){
-                    quiz_print_singlequestion($question, $questionurl, $quiz);
-                }else{
-                    quiz_print_singlequestion_reordertool($question,
-                            $questionurl, $quiz);
+            } else { // it is a single question
+                if (!$reordertool) {
+                    quiz_print_singlequestion($question, $returnurl, $quiz);
+                } else {
+                    quiz_print_singlequestion_reordertool($question, $returnurl, $quiz);
                 }
             }
                 ?>
@@ -668,79 +665,24 @@ function quiz_process_randomquestion_formdata(&$qcobject){
 
 
 /**
- * Print a simple question list of the questions in a question bank category.
- * Used for random question display in the edit tab of edit.php
- */
-function quiz_simple_question_list($pageurl, $categorylist, $numbertoshow=3,
-        $showhidden=false, $sortorderdecoded='qtype, name ASC',
-        $showquestiontext = true){
-    global $DB;
-
-    // hide-feature
-    $showhidden = $showhidden ? '' : " AND hidden = '0'";
-    $categorylist_array =  explode(',', $categorylist);
-    list($usql, $params) = $DB->get_in_or_equal($categorylist_array);
-
-    if (!$questions = $DB->get_records_select('question', "category $usql AND parent = '0' $showhidden",
-            $params, $sortorderdecoded, 'qtype,name,questiontext,questiontextformat', 0, $numbertoshow)) {
-    }
-    foreach ($questions as $question) {
-        echo "<li>";
-        quiz_question_tostring($question,true, $showquestiontext, false);
-        echo "</li>";
-    }
-}
-/**
  * Print a given single question in quiz for the edit tab of edit.php.
  * Meant to be used from quiz_print_question_list()
  * 
  * @param object $question A question object from the database questions table
- * @param object $questionurl The url of the question editing page as a moodle_url object
+ * @param object $returnurl The url to get back to this page, for example after editing.
  * @param object $quiz The quiz in the context of which the question is being displayed
  * 
  */
-function quiz_print_singlequestion(&$question, &$questionurl, &$quiz){
-    $stredit = get_string("edit");
-    $strview = get_string("view");
-
-    global $COURSE,$QTYPES,$CFG;
-    ?>
-    <div class="singlequestion">
-            <?php
-            $formatoptions = new stdClass;
-            $formatoptions->noclean = false;
-            $formatoptions->para = false;
-            $formatoptions->newlines = false;
-            if (question_has_capability_on($question, 'edit', $question->category)
-                    || question_has_capability_on($question, 'move',
-                    $question->category)) {
-               echo "<a title=\"$stredit\" href=\"".$questionurl->out()."\">".
-                        quiz_question_tostring($question,false).
-                        '<span class="editicon">'.
-                        "<img src=\"$CFG->pixpath/t/edit.gif\" alt=\"".
-                        get_string("edit")."\" /></span>".
-                        "</a>";
-            }
-            elseif (question_has_capability_on($question, 'view',
-                    $question->category)){
-               echo "<a title=\"$strview\" href=\"".
-                           $questionurl->out(false, array('id'=>$question->id))."\">".
-                        quiz_question_tostring($question,false).
-                        '<span class="editicon">'.
-                        "<img src=\"$CFG->pixpath/i/info.gif\" ".
-                        "alt=\"$strview\" /></span>".
-                        "</a>";
-            }else{
-                quiz_question_tostring($question,false,true,false);
-            }
-            echo '<span class="questiontype">';
-            $namestr = $QTYPES[$question->qtype]->menu_name();
-            print_question_icon($question);
-            echo " $namestr</span>";
-            echo '<span class="questionpreview">'.
-                    quiz_question_preview_button($quiz, $question).'</span>';
-            ?>
-    </div><?php
+function quiz_print_singlequestion($question, $returnurl, $quiz){
+    global $QTYPES;
+    echo '<div class="singlequestion">';
+    echo quiz_question_edit_button($quiz->cmid, $question, $returnurl, quiz_question_tostring($question) . ' ');
+    echo '<span class="questiontype">';
+    $namestr = $QTYPES[$question->qtype]->local_name();
+    print_question_icon($question);
+    echo " $namestr</span>";
+    echo '<span class="questionpreview">' . quiz_question_preview_button($quiz, $question, true) . '</span>';
+    echo "</div>\n";
 }
 /**
  * Print a given random question in quiz for the edit tab of edit.php.
@@ -752,7 +694,7 @@ function quiz_print_singlequestion(&$question, &$questionurl, &$quiz){
  * @param boolean $quiz_qbanktool Indicate to this function if the question bank window open 
  */
 function quiz_print_randomquestion(&$question, &$pageurl, &$quiz,$quiz_qbanktool){
-    global $DB, $THEME;
+    global $DB, $QTYPES, $THEME;
     check_theme_arrows();
     echo '<div class="quiz_randomquestion">';
 
@@ -763,77 +705,72 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz,$quiz_qbanktool
 
     echo '<div class="randomquestionfromcategory">';
     print_question_icon($question);
-    echo " ".get_string("xfromcategory",'quiz',get_string('random','quiz'))."</div>";
+    echo ' ' . get_string('xfromcategory', 'quiz', get_string('random', 'quiz')) . '</div>';
 
     $a = new stdClass;
     $a->arrow = $THEME->rarrow;
-    $strshowcategorycontents=get_string('showcategorycontents','quiz', $a);
+    $strshowcategorycontents = get_string('showcategorycontents', 'quiz', $a);
+
+    $openqbankurl = $pageurl->out(false, array('qbanktool' => 1,
+            'cat' => $category->id . ',' . $category->contextid));
+    $linkcategorycontents = ' <a href="' . $openqbankurl . '">' . $strshowcategorycontents . '</a>';
 
     echo '<div class="randomquestioncategory">';
-    echo '<a href="'.
-         $pageurl->out(false,array("qbanktool"=>1,
-         "cat"=>$category->id.','.$category->contextid)).
-         '" title="'.$strshowcategorycontents.'">'.$category->name.'</a>';
-    echo '<span class="questionpreview">'.
-        quiz_question_preview_button($quiz, $question).
-        '</span>';
+    echo '<a href="' . $openqbankurl . '" title="' . $strshowcategorycontents . '">' . $category->name . '</a>';
+    echo '<span class="questionpreview">' . quiz_question_preview_button($quiz, $question, true) . '</span>';
+    echo '</div>';
 
-    echo "</div>";
-
-    $questioncount=$DB->count_records_select('question',
-            "category IN ($category->id) AND parent = '0' ");
+    $questionids = $QTYPES['random']->get_usable_questions_from_category(
+            $category->id, $question->questiontext == '1', '0');
+    $questioncount = count($questionids);
 
     echo '<div class="randomquestionqlist">';
-    $randomquestionlistsize=3;
-    if(!$questioncount){
-        //No questions in category, give an error plus instructions
-        //error
+    if ($questioncount == 0) {
+        // No questions in category, give an error plus instructions
         echo '<span class="error">';
-        print_string("noquestionsnotinuse", "quiz");
+        print_string('noquestionsnotinuse', 'quiz');
         echo '</span>';
         echo '<br />';
 
-        //create link to open question bank
-        $linkcategorycontents=' <a href="'.
-            $pageurl->out(false,array("qbanktool"=>1,
-            "cat"=>$category->id.','.$category->contextid)).
-             '">'.$strshowcategorycontents.'</a>';
-
-        // embed the link into the string with instructions
+        // Embed the link into the string with instructions
         $a = new stdClass;
         $a->catname = '<strong>' . $category->name . '</strong>';
-        $a->link =  $linkcategorycontents;
+        $a->link = $linkcategorycontents;
         echo get_string('addnewquestionsqbank','quiz', $a);
 
-    }else{
-        //Category has questions, list a sample of them
-        echo "<ul>";
-        quiz_simple_question_list($pageurl, $question->category,
-                $randomquestionlistsize);
-        echo '<li class="totalquestionsinrandomqcategory">';
-        if ($questioncount>$randomquestionlistsize){
-            echo "... ";
+    } else {
+        // Category has questions
+
+        // Get a sample from the database,
+        $toshow = array_slice($questionids, 0, NUM_QS_TO_SHOW_IN_RANDOM);
+        $questionidstoshow = array();
+        foreach ($toshow as $a) {
+            $questionidstoshow[] = $a->id;
+        }
+        $questionstoshow = $DB->get_records_list('question', 'id', $questionidstoshow,
+                '', 'qtype,name,questiontext,questiontextformat');
+
+        // list them,
+        echo '<ul>';
+        foreach ($questionstoshow as $question) {
+            echo '<li>' . quiz_question_tostring($question, true) . '</li>';
         }
 
-        $a = new stdClass;
-        $a->arrow = $THEME->rarrow;
-        $strshowcategorycontents=get_string("showcategorycontents","quiz",$a);
-        print_string("totalquestionsinrandomqcategory","quiz",$questioncount);
-
-        echo ' <a href="'.
-         $pageurl->out(false,array("qbanktool"=>1,"cat"=>$category->id.','.$category->contextid)).
-         '">'.$strshowcategorycontents.'</a>';
-
-        echo "</li>";
-        echo "</ul>";
+        // and then display the total number.
+        echo '<li class="totalquestionsinrandomqcategory">';
+        if ($questioncount > NUM_QS_TO_SHOW_IN_RANDOM) {
+            echo '... ';
+        }
+        print_string('totalquestionsinrandomqcategory', 'quiz', $questioncount);
+        echo ' ' . $linkcategorycontents;
+        echo '</li>';
+        echo '</ul>';
     }
 
-    echo "</div>";
-
+    echo '</div>';
     echo '<div class="randomquestioncategorycount">';
-    echo "</div>";
-
-    echo "</div>";
+    echo '</div>';
+    echo '</div>';
 
 }
 
@@ -845,53 +782,15 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz,$quiz_qbanktool
  * @param object $questionurl The url of the question editing page as a moodle_url object
  * @param object $quiz The quiz in the context of which the question is being displayed
  */
-function quiz_print_singlequestion_reordertool(&$question, &$questionurl, &$quiz){
-    $stredit = get_string("edit");
-    $strview = get_string("view");
-
-    global $COURSE,$QTYPES, $CFG;
-    $reordercheckboxlabel='<label for="s'.$question->id.'">';
-    $reordercheckboxlabelclose='</label>';
-
-    ?>
-    <div class="singlequestion">
-            <?php
-            $formatoptions = new stdClass;
-            $formatoptions->noclean = false;
-            $formatoptions->para = false;
-            $formatoptions->newlines = false;
-            echo $reordercheckboxlabel;
-            print_question_icon($question);
-            echo "$reordercheckboxlabelclose ";
-            $questiontext=strip_tags(format_text($question->questiontext,
-                    FORMAT_MOODLE,$formatoptions, $COURSE->id));
-            $editstring="";
-            if (question_has_capability_on($question, 'edit', $question->category) || question_has_capability_on($question, 'move', $question->category)) {
-                echo "$reordercheckboxlabel ".
-                        quiz_question_tostring($question,false).
-                        $reordercheckboxlabelclose;
-                $editstring="<a title=\"$stredit\" href=\"".
-                        $questionurl->out(false, array('id'=>$question->id)).
-                        "\"><img src=\"$CFG->pixpath/t/edit.gif\" alt=\"".
-                        $stredit."\" /></a>";
-            } elseif (question_has_capability_on($question, 'view',
-                    $question->category)){
-                echo "$reordercheckboxlabel".
-                        quiz_question_tostring($question,false).
-                        "$reordercheckboxlabelclose";
-                $editstring="<a title=\"$strview\" href=\"".$questionurl->out(false,
-                        array('id'=>$question->id))."\">$questionstring <img
-                        src=\"$CFG->pixpath/i/info.gif\" alt=\"$strview\" /></a>";
-            }else{
-                echo "$reordercheckboxlabel".
-                quiz_question_tostring($question,false).
-                        "$reordercheckboxlabelclose";
-            }
-            echo '<span class="questionpreview">'.$editstring.
-                    quiz_question_preview_button($quiz, $question, false).
-                    '</span>';
-            ?>
-    </div><?php
+function quiz_print_singlequestion_reordertool($question, $returnurl, $quiz){
+    echo '<div class="singlequestion">';
+    echo '<label for="s' . $question->id . '">';
+    print_question_icon($question);
+    echo ' ' . quiz_question_tostring($question);
+    echo '</label>';
+    echo '<span class="questionpreview">' .
+            quiz_question_action_icons($quiz, $quiz->cmid, $question, $returnurl) . '</span>';
+    echo "</div>\n";
 }
 /**
  * Print a given random question in quiz for the reordertool tab of edit.php.
@@ -903,54 +802,43 @@ function quiz_print_singlequestion_reordertool(&$question, &$questionurl, &$quiz
  */
 
 function quiz_print_randomquestion_reordertool(&$question, &$pageurl, &$quiz){
-    global $CFG,$DB;
-    $stredit = get_string("edit");
-    $strview = get_string("view");
+    global $DB;
 
-    echo '<div class="quiz_randomquestion">';
-
+    // Load the category, and the number of available questions in it.
     if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
         notify('Random question category not found!');
         return;
     }
-    echo '<div class="randomquestionfromcategory">';
-    $url=$pageurl->out(false,array("qbanktool"=>1, "cat"=>$category->id.','.
-            $category->contextid));
-    $reordercheckboxlabel='<label for="s'.$question->id.'">';
-    $reordercheckboxlabelclose='</label>';
+    $questioncount = count($QTYPES['random']->get_usable_questions_from_category(
+            $category->id, $question->questiontext == '1', '0'));
 
+    $reordercheckboxlabel = '<label for="s'.$question->id.'">';
+    $reordercheckboxlabelclose = '</label>';
+
+    echo '<div class="quiz_randomquestion">';
+    echo '<div class="randomquestionfromcategory">';
     echo $reordercheckboxlabel;
     print_question_icon($question);
-    $questioncount=$DB->count_records_select('question',
-            "category IN ($category->id) AND parent = '0' ");
-    $randomquestionlistsize=3;
 
-    if(!$questioncount){
+    if ($questioncount == 0) {
         echo '<span class="error">';
-        print_string("empty", "quiz");
+        print_string('empty', 'quiz');
         echo '</span> ';
     }
 
-    print_string('random','quiz');
+    print_string('random', 'quiz');
     echo ": $reordercheckboxlabelclose</div>";
 
     echo '<div class="randomquestioncategory">';
-    echo '<!--<a href="'.
-            $pageurl->out(false,array("qbanktool"=>1, "cat"=>$category->id.','.
-            $category->contextid)).
-            '">-->'.$reordercheckboxlabel.$category->name.
-            $reordercheckboxlabelclose.'<!--</a>-->';
+    echo $reordercheckboxlabel . $category->name . $reordercheckboxlabelclose;
     echo '<span class="questionpreview">';
-    echo quiz_question_preview_button($quiz, $question,false);
-
+    echo quiz_question_preview_button($quiz, $question, false);
     echo '</span>';
     echo "</div>";
 
-
     echo '<div class="randomquestioncategorycount">';
-    echo "</div>";
-
-    echo "</div>";
+    echo '</div>';
+    echo '</div>';
 
 }
 /**
@@ -1015,9 +903,9 @@ class question_bank_add_to_quiz_action_column extends question_bank_action_colum
     protected function display_content($question, $rowclasses) {
         // for RTL languages: switch right and left arrows
         if (right_to_left()) {
-            $movearrow = 'removeright.gif';
+            $movearrow = 't/removeright.gif';
         } else {
-            $movearrow = 'moveleft.gif';
+            $movearrow = 't/moveleft.gif';
         }
         $this->print_icon($movearrow, $this->stradd, $this->qbank->add_to_quiz_url($question->id));
     }
