@@ -1288,15 +1288,15 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  * If parameter fixday = true (default), then take off leading
  * zero from %d, else mantain it.
  *
- * @uses HOURSECS
- * @param  int $date timestamp in GMT
- * @param string $format strftime format
- * @param float $timezone
- * @param bool $fixday If true (default) then the leading
- * zero from %d is removed. If false then the leading zero is mantained.
- * @return string
+ * @param int $date the timestamp in UTC, as obtained from the database.
+ * @param string $format strftime format. You should probably get this using
+ *      get_string('strftime...', 'langconfig');
+ * @param float $timezone by default, uses the user's time zone.
+ * @param bool $fixday If true (default) then the leading zero from %d is removed.
+ *      If false then the leading zero is mantained.
+ * @return string the formatted date/time.
  */
-function userdate($date, $format='', $timezone=99, $fixday = true) {
+function userdate($date, $format = '', $timezone = 99, $fixday = true) {
 
     global $CFG;
 
@@ -1306,7 +1306,7 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
     }
 
     if (empty($format)) {
-        $format = get_string('strftimedaydatetime');
+        $format = get_string('strftimedaydatetime', 'langconfig');
     }
 
     if (!empty($CFG->nofixday)) {  // Config.php can force %d not to be fixed.
