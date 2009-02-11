@@ -320,6 +320,47 @@ if ($config->stage == INSTALL_DATABASETYPE) {
 }
 
 
+if ($config->stage == INSTALL_DOWNLOADLANG) {
+    $downloaderror = '';
+
+/// Create necessary lang dir
+    if (!make_upload_directory('lang', false)) {
+        $downloaderror = get_string('cannotcreatelangdir', 'error');
+
+/// Download and install lang component
+    } else if ($cd = new component_installer('http://download.moodle.org', 'lang16', $CFG->lang.'.zip', 'languages.md5', 'lang')) {
+        if ($cd->install() == COMPONENT_ERROR) {
+            if ($cd->get_error() == 'remotedownloaderror') {
+                $a = new stdClass();
+                $a->url  = 'http://download.moodle.org/lang16/'.$INSTALL['language'].'.zip';
+                $a->dest = $CFG->dataroot.'/lang';
+                $downloaderror = get_string($cd->get_error(), 'error', $a);
+            } else {
+                $downloaderror = get_string($cd->get_error(), 'error');
+            }
+        } else {
+            // install parent lang if defined
+            if ($parentlang = get_parent_language()) {
+                if ($cd = new component_installer('http://download.moodle.org', 'lang16', $parentlang.'.zip', 'languages.md5', 'lang')) {
+                    $cd->install();
+                }
+            }
+        }
+    }
+
+    if ($downloaderror !== '') {
+        install_print_header($config, get_string('language'), get_string('langdownloaderror', 'install', $CFG->lang), $downloaderror);
+        install_print_footer($config);
+        die;
+    } else {
+        if (empty($distro->dbtype)) {
+            $config->stage = INSTALL_DATABASETYPE;
+        } else {
+            $config->stage = INSTALL_DATABASE;
+        }
+    }
+}
+
 
 if ($config->stage == INSTALL_DATABASE) {
     $database = moodle_database::get_driver_instance($config->dbtype, 'native');
@@ -373,46 +414,6 @@ if ($config->stage == INSTALL_DATABASE) {
     install_print_footer($config);
     die;
 }
-
-
-
-if ($config->stage == INSTALL_DOWNLOADLANG) {
-    $downloaderror = '';
-
-/// Create necessary lang dir
-    if (!make_upload_directory('lang', false)) {
-        $downloaderror = get_string('cannotcreatelangdir', 'error');
-
-/// Download and install lang component
-    } else if ($cd = new component_installer('http://download.moodle.org', 'lang16', $CFG->lang.'.zip', 'languages.md5', 'lang')) {
-        if ($cd->install() == COMPONENT_ERROR) {
-            if ($cd->get_error() == 'remotedownloaderror') {
-                $a = new stdClass();
-                $a->url  = 'http://download.moodle.org/lang16/'.$INSTALL['language'].'.zip';
-                $a->dest = $CFG->dataroot.'/lang';
-                $downloaderror = get_string($cd->get_error(), 'error', $a);
-            } else {
-                $downloaderror = get_string($cd->get_error(), 'error');
-            }
-        } else {
-            // install parent lang if defined
-            if ($parentlang = get_parent_language()) {
-                if ($cd = new component_installer('http://download.moodle.org', 'lang16', $parentlang.'.zip', 'languages.md5', 'lang')) {
-                    $cd->install();
-                }
-            }
-        }
-    }
-
-    if ($downloaderror !== '') {
-        install_print_header($config, get_string('language'), get_string('langdownloaderror', 'install', $CFG->lang), $downloaderror);
-        install_print_footer($config);
-        die;
-    } else {
-        $config->stage = INSTALL_DATABASETYPE;
-    }
-}
-
 
 
 if ($config->stage == INSTALL_DATABASETYPE) {
