@@ -79,7 +79,7 @@ class quiz {
     }
 
    /**
-     * Load some or all of the queestions for this quiz.
+     * Load some or all of the questions for this quiz.
      *
      * @param array $questionids question ids of the questions to load. null for all.
      */
