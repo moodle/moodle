@@ -7,6 +7,7 @@ class course_edit_form extends moodleform {
     function definition() {
         global $USER, $CFG;
 
+        $courseconfig = get_config('moodlecourse');
         $mform    =& $this->_form;
 
         $course   = $this->_customdata['course'];
@@ -66,7 +67,11 @@ class course_edit_form extends moodleform {
             $mform->addElement('hidden', 'category', null);
         }
         $mform->setHelpButton('category', array('coursecategory', get_string('category')));
-        $mform->setDefault('category', $category->id);
+        if (!empty($category->id)) {
+            $mform->setDefault('category', $category->id);
+        } else {
+            $mform->setDefault('category', $courseconfig->category);
+        }
         $mform->setType('category', PARAM_INT);
 
         $mform->addElement('text','fullname', get_string('fullname'),'maxlength="254" size="50"');
@@ -111,13 +116,13 @@ class course_edit_form extends moodleform {
         }
         $mform->addElement('select', 'format', get_string('format'), $formcourseformats);
         $mform->setHelpButton('format', array('courseformats', get_string('courseformats')), true);
-        $mform->setDefault('format', 'weeks');
+        $mform->setDefault('format', $courseconfig->format);
 
         for ($i=1; $i<=52; $i++) {
           $sectionmenu[$i] = "$i";
         }
         $mform->addElement('select', 'numsections', get_string('numberweeks'), $sectionmenu);
-        $mform->setDefault('numsections', 10);
+        $mform->setDefault('numsections', $courseconfig->numsections);
 
         $mform->addElement('date_selector', 'startdate', get_string('startdate'));
         $mform->setHelpButton('startdate', array('coursestartdate', get_string('startdate')), true);
@@ -128,24 +133,25 @@ class course_edit_form extends moodleform {
         $choices['1'] = get_string('hiddensectionsinvisible');
         $mform->addElement('select', 'hiddensections', get_string('hiddensections'), $choices);
         $mform->setHelpButton('hiddensections', array('coursehiddensections', get_string('hiddensections')), true);
-        $mform->setDefault('hiddensections', 0);
+        $mform->setDefault('hiddensections', $courseconfig->hiddensections);
 
         $options = range(0, 10);
         $mform->addElement('select', 'newsitems', get_string('newsitemsnumber'), $options);
         $mform->setHelpButton('newsitems', array('coursenewsitems', get_string('newsitemsnumber')), true);
-        $mform->setDefault('newsitems', 5);
+        $mform->setDefault('newsitems', $courseconfig->newsitems);
 
         $mform->addElement('selectyesno', 'showgrades', get_string('showgrades'));
         $mform->setHelpButton('showgrades', array('coursegrades', get_string('grades')), true);
-        $mform->setDefault('showgrades', 1);
+        $mform->setDefault('showgrades', $courseconfig->showgrades);
 
         $mform->addElement('selectyesno', 'showreports', get_string('showreports'));
         $mform->setHelpButton('showreports', array('coursereports', get_string('activityreport')), true);
-        $mform->setDefault('showreports', 0);
+        $mform->setDefault('showreports', $courseconfig->showreports);
 
         $choices = get_max_upload_sizes($CFG->maxbytes);
         $mform->addElement('select', 'maxbytes', get_string('maximumupload'), $choices);
         $mform->setHelpButton('maxbytes', array('courseuploadsize', get_string('maximumupload')), true);
+        $mform->setDefault('maxbytes', $courseconfig->maxbytes);
 
         if (!empty($CFG->allowcoursethemes)) {
             $themes=array();
@@ -160,7 +166,7 @@ class course_edit_form extends moodleform {
         if ($disable_meta === false) {
             $mform->addElement('select', 'metacourse', get_string('managemeta'), $meta);
             $mform->setHelpButton('metacourse', array('metacourse', get_string('metacourse')), true);
-            $mform->setDefault('metacourse', 0);
+            $mform->setDefault('metacourse', $courseconfig->metacourse);
         } else {
             // no metacourse element - we do not want to change it anyway!
             $mform->addElement('static', 'nometacourse', get_string('managemeta'),

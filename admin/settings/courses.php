@@ -13,6 +13,43 @@ if ($hassiteconfig
 
     $ADMIN->add('courses', new admin_enrolment_page());
 
+/// Course Default Settings Page
+/// NOTE: these settings must be applied after all other settings because they depend on them
+/// NOTE: these are a subset of the complete defaults available in 2.0
+    ///general course settings
+    $temp = new admin_settingpage('coursesettings', get_string('coursesettings'));
+    $temp->add(new admin_settings_coursecat_select('moodlecourse/category', get_string('category'), get_string('coursehelpcategory'), 1));
+    $courseformats = get_list_of_plugins('course/format');
+    $formcourseformats = array();
+    foreach ($courseformats as $courseformat) {
+        $formcourseformats["$courseformat"] = get_string("format$courseformat","format_$courseformat");
+        if ($formcourseformats["$courseformat"]=="[[format$courseformat]]") {
+            $formcourseformats["$courseformat"] = get_string("format$courseformat");
+        }
+    }
+    $temp->add(new admin_setting_configselect('moodlecourse/format', get_string('format'), get_string('coursehelpformat'), 'weeks',$formcourseformats));
+    for ($i=1; $i<=52; $i++) {
+        $sectionmenu[$i] = "$i";
+    }
+    $temp->add(new admin_setting_configselect('moodlecourse/numsections', get_string('numberweeks'), get_string('coursehelpnumberweeks'), 3,$sectionmenu));
+    $choices = array();
+    $choices['0'] = get_string('hiddensectionscollapsed');
+    $choices['1'] = get_string('hiddensectionsinvisible');
+    $temp->add(new admin_setting_configselect('moodlecourse/hiddensections', get_string('hiddensections'), get_string('coursehelphiddensections'), 0,$choices));
+    $options = range(0, 10);
+    $temp->add(new admin_setting_configselect('moodlecourse/newsitems', get_string('newsitemsnumber'), get_string('coursehelpnewsitemsnumber'), 5,$options));
+    $temp->add(new admin_setting_configselect('moodlecourse/showgrades', get_string('showgrades'), get_string('coursehelpshowgrades'), 1,array(0 => get_string('no'), 1 => get_string('yes'))));
+    $temp->add(new admin_setting_configselect('moodlecourse/showreports', get_string('showreports'), '', 0,array(0 => get_string('no'), 1 => get_string('yes'))));
+    if (isset($CFG->maxbytes)) {
+        $choices = get_max_upload_sizes($CFG->maxbytes);
+    } else {
+        $choices = get_max_upload_sizes();
+    }
+    $temp->add(new admin_setting_configselect('moodlecourse/maxbytes', get_string('maximumupload'), get_string('coursehelpmaximumupload'), key($choices), $choices));
+    $temp->add(new admin_setting_configselect('moodlecourse/metacourse', get_string('metacourse'), get_string('coursehelpmetacourse'), 0,array(0 => get_string('no'), 1 => get_string('yes'))));
+
+    $ADMIN->add('courses', $temp);
+
     // "courserequests" settingpage
     $temp = new admin_settingpage('courserequest', get_string('courserequest'));
     $temp->add(new admin_setting_configcheckbox('enablecourserequests', get_string('enablecourserequests', 'admin'), get_string('configenablecourserequests', 'admin'), 0));
