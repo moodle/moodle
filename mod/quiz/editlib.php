@@ -1204,7 +1204,7 @@ function quiz_print_status_bar($quiz){
     <?php
 
 // Current status of the quiz, with open an close dates as a tool tip.
-    $available = true;
+    $currentstatus = get_string('quizisopen', 'quiz');
     $dates = array();
     $timenow = time();
     if ($quiz->timeopen > 0) {
@@ -1212,28 +1212,23 @@ function quiz_print_status_bar($quiz){
             $dates[] = get_string('quizopenedon', 'quiz', userdate($quiz->timeopen));
         } else {
             $dates[] = get_string('quizwillopen', 'quiz', userdate($quiz->timeopen));
-            $available = false;
+            print_string('quizisclosed', 'quiz');
         }
     }
     if ($quiz->timeclose > 0) {
         if ($timenow > $quiz->timeclose) {
             $dates[] = get_string('quizclosed', 'quiz', userdate($quiz->timeclose));
-            $available = false;
+            print_string('quizisclosed', 'quiz');
         } else {
             $dates[] = get_string('quizcloseson', 'quiz', userdate($quiz->timeclose));
+            $currentstatus = get_string('quizisopenwillclose', 'quiz', userdate($quiz->timeclose, get_string('strftimedatetimeshort', 'langconfig')));
         }
     }
     if (empty($dates)) {
         $dates[] = get_string('alwaysavailable', 'quiz');
     }
-    $dates = implode('. ', $dates);
-    echo ' | <span class="quizopeningstatus" title="' . $dates . '">';
-    if ($available) {
-        print_string('quizisopen', 'quiz');
-    } else {
-        print_string('quizisclosed', 'quiz');
-    }
-    echo '</span>';
+    $dates = implode(', ', $dates);
+    echo ' | <span class="quizopeningstatus" title="' . $dates . '">' . $currentstatus . '</span>';
 
     // If questions are shuffled, notify the user about the
     // question order not making much sense
