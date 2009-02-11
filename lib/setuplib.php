@@ -327,7 +327,7 @@ function make_upload_directory($directory, $shownotices=true) {
     umask(0000);
 
     if (!file_exists($currdir)) {
-        if (!is_writable($currdir) or !mkdir($currdir, $CFG->directorypermissions)) {
+        if (!mkdir($currdir, $CFG->directorypermissions) or !is_writable($currdir)) {
             if ($shownotices) {
                 echo '<div class="notifyproblem" align="center">ERROR: You need to create the directory '.
                      $currdir .' with web server write access</div>'."<br />\n";
