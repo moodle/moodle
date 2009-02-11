@@ -54,7 +54,6 @@ if ($search) {
     $out = curl_exec($ch);
 
     $res = basicxml_xml_to_object($out);
-
     show_object($res->user,2,'auth');
 
     show_xml ($out);

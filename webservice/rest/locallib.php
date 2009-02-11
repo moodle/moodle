@@ -1,8 +1,31 @@
 <?php
 /**
+ * Moodle - Modular Object-Oriented Dynamic Learning Environment
+ *         http://moodle.com
  *
+ * LICENSE
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details:
+ *
+ *         http://www.gnu.org/copyleft/gpl.html
+ *
+ * @category  Moodle
+ * @package   webservice
+ * @copyright Copyright (c) 1999 onwards Martin Dougiamas     http://dougiamas.com
+ * @license   http://www.gnu.org/copyleft/gpl.html     GNU GPL License
+ */
+
+
+/**
  * Rest library
- *
  * @author Jerome Mouneyrac, Ferran Recio, David Castro Garcia
  */
 
@@ -77,10 +100,10 @@ function call_moodle_function ($rest_arguments) {
 }
 
 /**
- * TODO: remove/rewrite this funcion 
+ * TODO: remove/rewrite this function
  * Mock function waiting for token system implementation
- * @param <type> $token
- * @return <type> 
+ * @param int $token
+ * @return object|boolean
  */
 function mock_check_token($token) {
     //fake test
@@ -102,8 +125,8 @@ function mock_check_token($token) {
 /**
  *
  * @author Jerome Mouneyrac
- * @param <type> $description
- * @return <type>
+ * @param array $description
+ * @return array
  */
 function retrieve_params ($description) {
     $params = array();

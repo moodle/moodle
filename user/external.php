@@ -42,19 +42,51 @@ final class user_external extends moodle_external {
           $this->descriptions['tmp_update_user']   = array( 'params' => array('username'=> PARAM_ALPHANUM, 'mnethostid'=> PARAM_NUMBER),
                                                             'optionalparams' => array( 'newusername' => PARAM_ALPHANUM, 'firstname' => PARAM_ALPHANUM),
                                                             'return' => array('result' => PARAM_BOOL));
+
+          $this->descriptions['tmp_do_multiple_user_searches']   = array( 'params' => array(array('search'=> PARAM_RAW)),
+                                                                          'optionalparams' => array( ),
+                                                                          'return' => array('user' => array('id' => PARAM_RAW, 'auth' => PARAM_RAW, 'confirmed' => PARAM_RAW, 'username' => PARAM_RAW, 'idnumber' => PARAM_RAW,
+                                                                                  'firstname' => PARAM_RAW, 'lastname' => PARAM_RAW, 'email' => PARAM_RAW, 'emailstop' => PARAM_RAW,
+                                                                                  'lang' => PARAM_RAW, 'theme' => PARAM_RAW, 'timezone' => PARAM_RAW, 'mailformat' => PARAM_RAW)));
+
+
     }
 
+ /**
+     *
+     * @global object $USER
+     * @param array|struct $params
+     * @return array
+     */
+
+    static function tmp_do_multiple_user_searches($params) {
+        global $USER;
+        if (has_capability('moodle/user:viewdetails', get_context_instance(CONTEXT_SYSTEM))) {
+            $users = array();
+            foreach($params as $searchparams) {
+                $searchusers = get_users(true, $searchparams['search'], false, null, 'firstname ASC','', '', '', 1000, 'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat');
+                foreach ($searchusers as $user) {
+                    $users[] = $user;
+                }
+            }
+            return $users;
+        }
+        else {
+            throw new moodle_exception('wscouldnotvieweuser');
+        }
+    }
+    
     /**
      * Retrieve all user
-     * @param array $params
+     * @param array|struct $params - need to be define as struct for XMLRPC
      *  ->search string
      * @return object user
      */
     static function tmp_get_users($params) {
         global $USER;
         if (has_capability('moodle/user:viewdetails', get_context_instance(CONTEXT_SYSTEM))) {
-            return get_users(true, $params['search'], false, null, 'firstname ASC','', '', '', '', 'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat');
-
+           // return "toto";
+            return get_users(true, $params['search'], false, null, 'firstname ASC','', '', '', 1000, 'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat');
         }
         else {
             throw new moodle_exception('wscouldnotvieweuser');
@@ -63,7 +95,7 @@ final class user_external extends moodle_external {
 
     /**
      * Create a user
-     * @param array $params
+     * @param array|struct $params - need to be define as struct for XMLRPC
      *  ->firstname string
      *  ->lastname string
      *  ->email string
@@ -89,7 +121,7 @@ final class user_external extends moodle_external {
     /**
      * Delete a user
      * @global object $DB
-     * @param array $params
+     * @param array|struct $params - need to be define as struct for XMLRPC
      *  ->username      string
      *  ->mnethostid    integer
      * @return boolean true if success
@@ -109,12 +141,12 @@ final class user_external extends moodle_external {
     /**
      * Update some user information
      * @global object $DB
-     * @param array $params
+     * @param array|struct $params - need to be define as struct for XMLRPC
      *  ->username      string
      *  ->mnethostid    integer
      *  ->newusername   string
      *  ->firstname     string
-     * @return bool true if success
+     * @return string true if success
      */
     static function tmp_update_user($params) {
         global $DB,$USER;

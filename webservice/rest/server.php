@@ -1,7 +1,29 @@
 <?php
 /**
- * Created on 10/14/2008
+ * Moodle - Modular Object-Oriented Dynamic Learning Environment
+ *         http://moodle.com
  *
+ * LICENSE
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details:
+ *
+ *         http://www.gnu.org/copyleft/gpl.html
+ *
+ * @category  Moodle
+ * @package   webservice
+ * @copyright Copyright (c) 1999 onwards Martin Dougiamas     http://dougiamas.com
+ * @license   http://www.gnu.org/copyleft/gpl.html     GNU GPL License
+ */
+
+/**
  * REST Moodle server.
  *
  * NOTE: for this first implementation, REST requires implicit url encoded params.
@@ -13,16 +35,14 @@
  */
 
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
-require_once('locallib.php');
+require_once('lib.php');
 
 if (empty($CFG->enablewebservices)) {
     die;
 }
 
-//retrieve path and function name from the URL
-$rest_arguments = get_file_argument('server.php');
 
-header ("Content-type: text/xml");
-//TODO implement authentication (probably in the locallib.php)
-echo call_moodle_function($rest_arguments);
+$server = new rest_server();
+$server->run();
+
 ?>

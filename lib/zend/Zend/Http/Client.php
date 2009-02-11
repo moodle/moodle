@@ -306,6 +306,11 @@ class Zend_Http_Client
         foreach ($config as $k => $v)
             $this->config[strtolower($k)] = $v;
 
+        // Pass configuration options to the adapter if it exists
+        if ($this->adapter instanceof Zend_Http_Client_Adapter_Interface) {
+            $this->adapter->setConfig($config);
+        }
+        
         return $this;
     }
 
@@ -932,11 +937,11 @@ class Zend_Http_Client
         // Set the Accept-encoding header if not set - depending on whether
         // zlib is available or not.
         if (! isset($this->headers['accept-encoding'])) {
-        	if (function_exists('gzinflate')) {
-        		$headers[] = 'Accept-encoding: gzip, deflate';
-        	} else {
-        		$headers[] = 'Accept-encoding: identity';
-        	}
+            if (function_exists('gzinflate')) {
+                $headers[] = 'Accept-encoding: gzip, deflate';
+            } else {
+                $headers[] = 'Accept-encoding: identity';
+            }
         }
         
         // Set the Content-Type header
@@ -967,7 +972,7 @@ class Zend_Http_Client
 
         // Add all other user defined headers
         foreach ($this->headers as $header) {
-        	list($name, $value) = $header;
+            list($name, $value) = $header;
             if (is_array($value))
                 $value = implode(', ', $value);
 

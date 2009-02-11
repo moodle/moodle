@@ -1,7 +1,32 @@
 <?php
+/**
+ * Moodle - Modular Object-Oriented Dynamic Learning Environment
+ *         http://moodle.com
+ *
+ * LICENSE
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details:
+ *
+ *         http://www.gnu.org/copyleft/gpl.html
+ *
+ * @category  Moodle
+ * @package   webservice
+ * @copyright Copyright (c) 1999 onwards Martin Dougiamas     http://dougiamas.com
+ * @license   http://www.gnu.org/copyleft/gpl.html     GNU GPL License
+ */
+
+
 /*
  * Generate the Moodle WSDL file
- * This file is not use neither finish but will give you a base to start
+ * This file is not finish but will give you a base to start
  */
 
 require_once('../../config.php');
@@ -11,7 +36,7 @@ $wsdl = $wsdl_generator->generate_wsdl($token);
 echo $wsdl;
 
 /**
- * WORK IN PROGRESS - Generator not working yet
+ * WORK IN PROGRESS
  */
 class wsdl_generator {
 
@@ -322,6 +347,12 @@ EOF;
         switch ($moodleparam) {
             case PARAM_NUMBER:
                 return "integer";
+                break;
+            case PARAM_INT:
+                return "integer";
+                break;
+            case PARAM_BOOL:
+                return "boolean";
                 break;
             case PARAM_ALPHANUM:
                 return "string";

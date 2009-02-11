@@ -23,7 +23,8 @@ abstract class moodle_external {
 
      /**
      *
-     *  @param <type> $functionname
+     *  @param string $functionname
+     *  @return array
      */
     public function get_function_webservice_description($functionname) {
         if (key_exists($functionname, $this->descriptions)) {
@@ -36,7 +37,7 @@ abstract class moodle_external {
 
     /**
      *
-     * @return <type> 
+     * @return array
      */
     public function get_descriptions() {
         return $this->descriptions;

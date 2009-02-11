@@ -162,7 +162,7 @@ class Zend_Http_Response
         if (! is_array($headers)) {
             require_once 'Zend/Http/Exception.php';
             throw new Zend_Http_Exception('No valid headers were passed');
-	}
+    }
 
         foreach ($headers as $name => $value) {
             if (is_int($name))
@@ -536,10 +536,9 @@ class Zend_Http_Response
     {
         $parts = preg_split('|(?:\r?\n){2}|m', $response_str, 2);
         if (isset($parts[1])) { 
-        	return $parts[1];
-        } else {
-        	return '';
+            return $parts[1];
         }
+        return '';
     }
 
     /**
@@ -603,7 +602,7 @@ class Zend_Http_Response
                 'body: perhaps the zlib extension is not loaded?'); 
         }
 
-    	return gzuncompress($body);
+        return gzuncompress($body);
     }
 
     /**
