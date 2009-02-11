@@ -95,7 +95,7 @@ if (!empty($_POST)) {
     $config->prefix   = 'mdl_';
     $config->dbsocket = 0;
 
-    $config->dirroot  = dirname(__FILE__);
+    $config->dirroot  = str_replace('\\', '/', dirname(__FILE__)); // Fix for win32
     $config->admin    = 'admin';
 
     $config->dataroot = empty($distro->dataroot) ? null  : $distro->dataroot; // initialised later after including libs or by distro
@@ -104,7 +104,7 @@ if (!empty($_POST)) {
 /// Fake some settings so that we can use selected functions from moodlelib.php and weblib.php
 $CFG = new stdClass();
 $CFG->lang                 = $config->lang;
-$CFG->dirroot              = dirname(__FILE__);
+$CFG->dirroot              = str_replace('\\', '/', dirname(__FILE__)); // Fix for win32
 $CFG->libdir               = "$CFG->dirroot/lib";
 $CFG->wwwroot              = install_guess_wwwroot(); // can not be changed - ppl must use the real address when installing
 $CFG->httpswwwroot         = $CFG->wwwroot;
@@ -212,7 +212,9 @@ if ($config->stage == INSTALL_SAVE) {
             $configphp .= '$CFG->wwwroot   = '.var_export($CFG->wwwroot, true).";\r\n";
 
             if ($CFG->dirroot !== $config->dirroot) {
-                $configphp .= '$CFG->dirroot   = realpath('.var_export($config->dirroot, true).");\r\n"; // fix for sym links
+                $dirroot = str_replace('\\', '/', $config->dirroot); // win32 fix
+                $dirroot = rtrim($dirroot, '/');  // no trailing /
+                $configphp .= '$CFG->dirroot   = realpath('.var_export($dirroot, true).");\r\n"; // fix for sym links
             } else {
                 $dirroot = str_replace('\\', '/', $CFG->dirroot); // win32 fix
                 $dirroot = rtrim($dirroot, '/');  // no trailing /
