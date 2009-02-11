@@ -270,7 +270,22 @@ if ($config->stage == INSTALL_DOWNLOADLANG) {
         $hint_dataroot = get_string('pathsunsecuredataroot', 'install');
         $config->stage = INSTALL_PATHS;
 
-    } else if (!is_writable($CFG->dataroot)) {
+    } else if (!file_exists($CFG->dataroot)) {
+        $a = new stdClass();
+        $a->parent = dirname($CFG->dataroot);
+        $a->dataroot = $CFG->dataroot;
+        if (!is_writable(dirname($CFG->dataroot))) {
+            $hint_dataroot = get_string('pathsroparentdataroot', 'install', $a);
+            $config->stage = INSTALL_PATHS;
+        } else {
+            if (!make_upload_directory(false, false)) {
+                $hint_dataroot = get_string('pathserrcreatedataroot', 'install', $a);
+                $config->stage = INSTALL_PATHS;
+            }
+        }
+    }
+
+    if (empty($hint_dataroot) and !is_writable($CFG->dataroot)) {
         $hint_dataroot = get_string('pathsrodataroot', 'install');
         $config->stage = INSTALL_PATHS;
     }
