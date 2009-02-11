@@ -172,7 +172,7 @@ Make sure the upper/lower case is correct.</p>
 You need a place where Moodle can save uploaded files.  This
 directory should be readable AND WRITEABLE by the web server user 
 (usually \'nobody\' or \'apache\'), but it must not be accessible 
-directly via the web.</p>';
+directly via the web. The installer will try to create it if doesn\'t exist.</p>';
 $string['directorysettingshead'] = 'Please confirm the locations of this Moodle installation';
 $string['directorysettingssub'] = '<b>Web Address:</b>
 Specify the full web address where Moodle will be accessed.  
@@ -190,7 +190,7 @@ Make sure the upper/lower case is correct.
 You need a place where Moodle can save uploaded files.  This
 directory must be readable AND WRITEABLE by the web server user 
 (usually \'nobody\' or \'apache\'), but it must not be accessible 
-directly via the web.';
+directly via the web. The installer will try to create it if doesn\'t exist.';
 $string['dirroot'] = 'Moodle Directory';
 $string['dirrooterror'] = 'The \'Moodle Directory\' setting seems to be incorrect - we can\'t find a Moodle installation there. The value below has been reset.';
 $string['download'] = 'Download';
@@ -313,15 +313,17 @@ $string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
 $string['odbcextensionisnotpresentinphp'] = 'PHP has not been properly configured with the ODBC extension so that it can communicate with SQL*Server.  Please check your php.ini file or recompile PHP.';
 $string['pass'] = 'Pass';
 $string['paths'] = 'Paths';
+$string['pathserrcreatedataroot'] = 'Data Directory ($a->dataroot) cannot be created by the installer.';
 $string['pathshead'] = 'Confirm paths';
 $string['pathsrodataroot'] = 'Dataroot directory is not writable.';
+$string['pathsroparentdataroot'] = 'Parent directory ($a->parent) is not writeable. Data Directory ($a->dataroot) cannot be created by the installer.';
 $string['pathssubwwwroot'] = 'Full web address where moodle will be accessed.
 It\'s not possible to access Moodle using multiple addresses.
 If your site has multiple public addresses you must setup permanent redirects on all of them except this one.
 If your site is accessible both from intranet and Internet use the public address here and setup DNS so that the inranet users may use the public adress too.';
 $string['pathssubdirroot'] = 'Full directory path to moodle installation. Change only if you need to use symbolic links.';
 $string['pathssubdataroot'] = 'You need a place where Moodle can save uploaded files. This directory should be readable AND WRITEABLE by the web server user
-(usually \'nobody\' or \'apache\'), but it must not be accessible directly via the web.';
+(usually \'nobody\' or \'apache\'), but it must not be accessible directly via the web. The installer will try to create it if doesn\'t exist.';
 $string['pathssubadmindir'] = 'A very few webhosts use /admin as a special URL for you to access a
 control panel or something.  Unfortunately this conflicts with the standard location for the Moodle admin pages.  You can fix this by
 renaming the admin directory in your installation, and putting that  new name here.  For example: <em>moodleadmin</em>. This will fix admin links in Moodle.';
