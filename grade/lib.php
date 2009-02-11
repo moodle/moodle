@@ -355,7 +355,7 @@ function print_grade_plugin_selector($plugin_info, $return=false) {
  * @param string $preferences_page_url Unless false, the link to a preferences page to print in the second row of tabs next to the current link. If true, we are ON the preferences page
  * @return nothing or string if $return true
  */
-function grade_print_tabs($active_type, $active_plugin, $plugin_info, $return=false, $preferences_page_url=false) {
+function grade_print_tabs($active_type, $active_plugin, $plugin_info, $return=false) {
     global $CFG, $COURSE;
 
     if (!isset($currenttab)) {
@@ -396,14 +396,6 @@ function grade_print_tabs($active_type, $active_plugin, $plugin_info, $return=fa
                 $bottom_row[] = new tabobject($plugin['id'], $plugin['link'], $plugin['string']);
                 if ($plugin['id'] == $active_plugin) {
                     $inactive = array($plugin['id']);
-
-                    // Add preferences link if setup
-                    if ($preferences_page_url) {
-                        $bottom_row[] = new tabobject('preferences', $preferences_page_url, get_string('preferences'));
-                        if ($preferences_page_url === true) {
-                            $inactive = array('preferences');
-                        }
-                    }
                 }
             }
         }
@@ -437,7 +429,21 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
         'outcome' => get_string('outcomes', 'grades'),
         'letter' => get_string('letters', 'grades'),
         'export' => get_string('export', 'grades'),
-        'import' => get_string('import'));
+        'import' => get_string('import'),
+        'settings' => get_string('settings'));
+
+    // Settings tab first
+    if (has_capability('moodle/course:update', $context)) {
+        $url = $url_prefix.'edit/settings/index.php?id='.$courseid;
+
+        if ($active_type == 'settings' and $active_plugin == 'course') {
+            $active = $url;
+        }
+
+        $plugin_info['settings']['coursesettings'] = array('id' => 'coursesettings', 'link' => $url, 'string' => get_string('course'));
+        $count++;
+    }
+
 
 /// report plugins with its special structure
     if ($reports = get_list_of_plugins('grade/report', 'CVS')) {         // Get all installed reports
@@ -447,7 +453,9 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
             }
         }
     }
+
     $reportnames = array();
+
     if (!empty($reports)) {
         foreach ($reports as $plugin) {
             $url = $url_prefix.'report/'.$plugin.'/index.php?id='.$courseid;
@@ -455,6 +463,13 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
                 $active = $url;
             }
             $reportnames[$plugin] = array('id' => $plugin, 'link' => $url, 'string' => get_string('modulename', 'gradereport_'.$plugin));
+
+            // Add link to preferences tab if such a page exists
+            if (file_exists($CFG->dirroot . '/grade/report/'.$plugin.'/preferences.php')) {
+                $pref_url = $url_prefix.'report/'.$plugin.'/preferences.php?id='.$courseid;
+                $plugin_info['settings'][$plugin] = array('id' => $plugin, 'link' => $pref_url, 'string' => get_string('modulename', 'gradereport_'.$plugin));
+            }
+
             $count++;
         }
         asort($reportnames);
@@ -537,18 +552,6 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
             $count++;
         }
 
-        /**
-         * Moving to Course settings
-         *
-        if (has_capability('moodle/grade:manage', $context)) {
-            $url = $url_prefix.'edit/settings/index.php?id='.$courseid;
-            if ($active_type == 'edit' and $active_plugin == 'settings' ) {
-                $active = $url;
-            }
-            $plugin_info['edit'][] = array('id' => $plugin, 'link' => $url, 'string' => get_string('coursesettings', 'grades'));
-            $count++;
-        }
-        */
     }
 
 /// standard import plugins
