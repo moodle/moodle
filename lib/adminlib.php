@@ -4369,7 +4369,7 @@ function &admin_get_root($reload=false, $requirefulltree=true) {
         include($CFG->dirroot.'/'.$CFG->admin.'/settings/plugins.php');
 
         if (file_exists($CFG->dirroot.'/local/settings.php')) {
-            include_once($CFG->dirroot.'/local/settings.php');
+            include($CFG->dirroot.'/local/settings.php');
         }
     }
 
