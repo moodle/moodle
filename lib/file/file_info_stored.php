@@ -1,5 +1,9 @@
 <?php  //$Id$
 
+/**
+ * Represents an actual file or folder - a row in the file table -
+ * in the tree navigated by @see{file_browser}.
+ */
 class file_info_stored extends file_info {
     protected $lf;
     protected $urlbase;

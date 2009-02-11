@@ -11,7 +11,15 @@ require_once("$CFG->libdir/file/file_info_coursefile.php");
 require_once("$CFG->libdir/file/virtual_root_file.php");
 
 /**
- * Main interface for browsing of file tree (local files, areas, virtual files, etc.).
+ * This class provides the main entry point for other code wishing to get
+ * information about files.
+ *
+ * The whole file storage for a Moodle site can be seen as a huge virtual tree.
+ * The spine of the tree is the tree of contexts (system, course-categories,
+ * courses, modules, also users). Then, within each context, there may be any number of
+ * file areas, and a file area contains folders and files. The various file_info
+ * subclasses return info about the things in this tree. They should be obtained
+ * from an instance of this class.
  */
 class file_browser {
 

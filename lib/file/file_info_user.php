@@ -1,5 +1,8 @@
 <?php  //$Id$
 
+/**
+ * Represents a user context in the tree navigated by @see{file_browser}.
+ */
 class file_info_user extends file_info {
     protected $user;
 

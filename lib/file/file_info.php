@@ -1,5 +1,8 @@
 <?php  //$Id$
 
+/**
+ * Base class for things in the tree navigated by @see{file_browser}.
+ */
 abstract class file_info {
     protected $context;
     protected $browser;

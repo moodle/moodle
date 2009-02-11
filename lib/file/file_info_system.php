@@ -1,5 +1,8 @@
 <?php  //$Id$
 
+/**
+ * Represents the system context in the tree navigated by @see{file_browser}.
+ */
 class file_info_system extends file_info {
     public function __construct($browser) {
         parent::__construct($browser, get_context_instance(CONTEXT_SYSTEM));

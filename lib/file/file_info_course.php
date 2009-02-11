@@ -1,5 +1,8 @@
 <?php  //$Id$
 
+/**
+ * Represents a course context in the tree navigated by @see{file_browser}.
+ */
 class file_info_course extends file_info {
     protected $course;
 

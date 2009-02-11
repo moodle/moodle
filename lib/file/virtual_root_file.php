@@ -1,7 +1,8 @@
 <?php  //$Id$
 
 /**
- * Root directory in empty file area
+ * Represents the root directory of an empty file area in the tree navigated by
+ * @see{file_browser}.
  */
 class virtual_root_file {
     protected $contextid;

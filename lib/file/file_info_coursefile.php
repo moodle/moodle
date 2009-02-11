@@ -1,5 +1,8 @@
 <?php  //$Id$
 
+/**
+ * Subclass of file_info_stored for files in the course files area.
+ */
 class file_info_coursefile extends file_info_stored {
     public function __construct($browser, $context, $storedfile) {
         global $CFG;
