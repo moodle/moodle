@@ -133,9 +133,7 @@ function quiz_add_quiz_question($id, &$quiz, $page=0) {
     }
 
     // update question grades
-    $questionrecord = $DB->get_record('question', array('id' => $id));
-    $quiz->grades[$id]
-            = $questionrecord->defaultgrade;
+    $quiz->grades[$id] = $DB->get_field('question', 'defaultgrade', array('id' => $id));
     quiz_update_question_instance($quiz->grades[$id], $id, $quiz->instance);
 
     return true;
@@ -683,17 +681,8 @@ function quiz_simple_question_list($pageurl, $categorylist, $numbertoshow=3,
     $categorylist_array =  explode(',', $categorylist);
     list($usql, $params) = $DB->get_in_or_equal($categorylist_array);
 
-    if (!$questions = $DB->get_records_select('question',
-            "category $usql AND parent = '0' $showhidden",
-            $params, $sortorderdecoded, '*', 0, $numbertoshow)) {
-        // There are no questions on the requested page.
-        $page = 0;
-        if (!$questions = $DB->get_records_select('question',
-                "category $usql AND parent = '0' $showhidden",
-                $params, $sortorderdecoded, '*', 0, $numbertoshow)) {
-            // There are no questions at all
-            return;
-        }
+    if (!$questions = $DB->get_records_select('question', "category $usql AND parent = '0' $showhidden",
+            $params, $sortorderdecoded, 'qtype,name,questiontext,questiontextformat', 0, $numbertoshow)) {
     }
     foreach ($questions as $question) {
         echo "<li>";

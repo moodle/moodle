@@ -274,13 +274,13 @@ if ((optional_param('addrandom', false, PARAM_BOOL) OR $newrandomcategory)
     // Find existing random questions in this category that are
     // not used by any quiz.
     if ($existingquestions = $DB->get_records_sql(
-            "SELECT * FROM {question} q
+            "SELECT q.id,q.qtype FROM {question} q
             WHERE qtype = '" . RANDOM . "'
                 AND category = ?
                 AND " . $DB->sql_compare_text('questiontext') . " = ?
                 AND NOT EXISTS (SELECT * FROM {quiz_question_instances} WHERE question = q.id)
             ORDER BY id", array($category->id, $recurse))) {
-    // Take as many of these as needed.
+        // Take as many of these as needed.
         while (($existingquestion = array_shift($existingquestions))
                 and $randomcount > 0) {
             quiz_add_quiz_question($existingquestion->id, $quiz, $addonpage);
