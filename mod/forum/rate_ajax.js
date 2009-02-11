@@ -142,6 +142,11 @@ function rate_failure(o) {
  */
 function display_response(menu, response) {
 
+    /** Correct response, revert menu color if neeeded **/
+    if (menu.style.backgroundColor == 'red') {
+        menu.style.backgroundColor = null;
+    }
+
     /** Process ok response, displaying it **/
     var ratingsDiv  = YAHOO.util.Dom.getAncestorByTagName(menu, 'div');
     var ratingsSpan = YAHOO.util.Dom.getFirstChildBy(ratingsDiv, function(el){return YAHOO.util.Dom.hasClass(el,'forumpostratingtext');});
