@@ -661,12 +661,12 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null, $he
         $heading = $stractive_plugin;
     }
 
-    if ($CFG->grade_method == GRADE_NAVMETHOD_COMBO || $CFG->grade_method == GRADE_NAVMETHOD_DROPDOWN) {
+    if ($CFG->grade_navmethod == GRADE_NAVMETHOD_COMBO || $CFG->grade_navmethod == GRADE_NAVMETHOD_DROPDOWN) {
         $returnval .= print_grade_plugin_selector($plugin_info, $return);
     }
     $returnval .= print_heading($heading);
 
-    if ($CFG->grade_method == GRADE_NAVMETHOD_COMBO || $CFG->grade_method == GRADE_NAVMETHOD_TABS) {
+    if ($CFG->grade_navmethod == GRADE_NAVMETHOD_COMBO || $CFG->grade_navmethod == GRADE_NAVMETHOD_TABS) {
         $returnval .= grade_print_tabs($active_type, $active_plugin, $plugin_info, $return, $preferences_page_url);
     }
 
