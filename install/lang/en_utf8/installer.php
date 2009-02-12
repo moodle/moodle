@@ -29,13 +29,15 @@ $string['errorsinenvironment'] ='Environment check failed!';
 $string['installation'] = 'Installation';
 $string['language'] = 'Language';
 $string['paths'] = 'Paths';
+$string['pathserrcreatedataroot'] = 'Data Directory ($a->dataroot) cannot be created by the installer.';
 $string['pathshead'] = 'Confirm paths';
 $string['pathsrodataroot'] = 'Dataroot directory is not writable.';
+$string['pathsroparentdataroot'] = 'Parent directory ($a->parent) is not writeable. Data Directory ($a->dataroot) cannot be created by the installer.';
 $string['pathssubadmindir'] = 'A very few webhosts use /admin as a special URL for you to access a
 control panel or something.  Unfortunately this conflicts with the standard location for the Moodle admin pages.  You can fix this by
 renaming the admin directory in your installation, and putting that  new name here.  For example: <em>moodleadmin</em>. This will fix admin links in Moodle.';
 $string['pathssubdataroot'] = 'You need a place where Moodle can save uploaded files. This directory should be readable AND WRITEABLE by the web server user
-(usually \'nobody\' or \'apache\'), but it must not be accessible directly via the web.';
+(usually \'nobody\' or \'apache\'), but it must not be accessible directly via the web. The installer will try to create it if doesn\'t exist.';
 $string['pathssubdirroot'] = 'Full directory path to moodle installation. Change only if you need to use symbolic links.';
 $string['pathssubwwwroot'] = 'Full web address where moodle will be accessed.
 It\'s not possible to access Moodle using multiple addresses.
