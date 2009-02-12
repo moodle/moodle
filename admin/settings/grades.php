@@ -52,7 +52,8 @@ if (has_capability('moodle/grade:manage', $systemcontext)
                                                          '3' => '3',
                                                          '4' => '4',
                                                          '5' => '5')));
-
+        $temp->add(new admin_setting_configcheckbox('grade_shownavmenu', get_string('shownavmenu', 'grades'), get_string('configshownavmenu', 'grades'), 1));
+        $temp->add(new admin_setting_configcheckbox('grade_showtabs', get_string('showtabs', 'grades'), get_string('configshowtabs', 'grades'), 0));
         $temp->add(new admin_setting_special_gradeexport());
     }
     $ADMIN->add('grades', $temp);

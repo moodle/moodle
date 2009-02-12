@@ -173,7 +173,7 @@ if ($USER->gradeediting[$course->id] and !$report->get_pref('enableajax')) {
 }
 
 echo $reporthtml;
-var_dump($report->get_pref('enableajax'));
+
 // print submit button
 if ($USER->gradeediting[$course->id] && ($report->get_pref('showquickfeedback')
     ||

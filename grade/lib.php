@@ -615,6 +615,10 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
         }
     }
 
+    // Put settings last
+    $settings = $plugin_info['settings'];
+    unset($plugin_info['settings']);
+    $plugin_info['settings'] = $settings;
     return $plugin_info;
 }
 
@@ -657,9 +661,14 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null, $he
         $heading = $stractive_plugin;
     }
 
-    $returnval .= print_grade_plugin_selector($plugin_info, $return);
+    if ($CFG->grade_shownavmenu) {
+        $returnval .= print_grade_plugin_selector($plugin_info, $return);
+    }
     $returnval .= print_heading($heading);
-    $returnval .= grade_print_tabs($active_type, $active_plugin, $plugin_info, $return, $preferences_page_url);
+
+    if ($CFG->grade_showtabs) {
+        $returnval .= grade_print_tabs($active_type, $active_plugin, $plugin_info, $return, $preferences_page_url);
+    }
 
     if ($return) {
         return $returnval;
