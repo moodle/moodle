@@ -621,13 +621,14 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
     }
 
     public function get_item_cell($item, $params) {
+        global $DB;
 
         // If the parent aggregation is Sum of Grades, this cannot be changed
         $parent_cat = $item->get_parent_category();
         if ($parent_cat->aggregation == GRADE_AGGREGATE_SUM) {
             $grademax = format_float($item->grademax, $item->get_decimals());
         } elseif ($item->gradetype == GRADE_TYPE_SCALE) {
-            $scale = get_record('scale', 'id', $item->scaleid);
+            $scale = $DB->get_record('scale', array('id' => $item->scaleid));
             $scale_items = explode(',', $scale->scale);
             $grademax = end($scale_items) . ' (' . count($scale_items) . ')';
         } elseif ($item->is_external_item()) {
