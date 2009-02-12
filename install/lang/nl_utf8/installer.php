@@ -217,8 +217,8 @@ $string['pgsqlextensionisnotpresentinphp'] = 'PHP is niet juist geïnstalleerd m
 $string['php50restricted'] = 'PHP 5.0.x heeft een heel aantal bekende problemen. Upgrade naar 5.1.x of downgrade naar 4.3.x of 4.4.x';
 $string['phpversion'] = 'PHP-versie';
 $string['phpversionerror'] = 'PHP-versie moet minstens 4.1.0 zijn'; // ORPHANED
-$string['phpversionhelp'] = '<p>Moodle heeft minstens PHP-versie 4.1.0 nodig.</p> <p>De huidige versie op je server is $a</p>
-<p>Je moet PHP upgraden of verhuizen naar een host met een nieuwere versie van PHP!</p>';
+$string['phpversionhelp'] = '<p>Moodle heeft minstens PHP-versie 4.3.0 of 5.1.0 nodig (5.0.x heeft veel bekende problemen).</p> <p>De huidige versie op je server is $a</p>
+<p>Je moet PHP upgraden of verhuizen naar een host met een nieuwere versie van PHP!<br />(Als je 5.0.x draait, kun je ook downgraden naar versie 4.4.x)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres 7)';
 $string['previous'] = 'Vorige';
 $string['qtyperqpwillberemoved'] = 'Tijdens de upgrade zal het RQP vraagtype verwijderd worden. Je gebruikte deze vraag niet, dus je zult hier geen problemen mee krijgen.';
