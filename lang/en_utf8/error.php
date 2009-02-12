@@ -415,6 +415,7 @@ $string['storedfilenotcreated'] = 'Can not create file \"$a->contextid/$a->filea
 $string['storedfileproblem'] = 'Unknown exception related to local files ($a)';
 $string['tagnotfound'] = 'The specified tag was not found in the database';
 $string['tagdisabled'] = 'Tags are disabled!';
+$string['targetdatabasenotempty'] = 'The target database is not empty. Transfer aborted for safety reasons.';
 $string['themenotinstall'] = 'This theme is not installed!';
 $string['transactionvoid'] = 'Transaction cannot be voided because it has already been voided';
 $string['TODO'] = 'TODO';

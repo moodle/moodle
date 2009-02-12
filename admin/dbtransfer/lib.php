@@ -42,11 +42,11 @@ function dbtransfer_export_xml_database($description, $mdb) {
 }
 
 
-function dbtransfer_transfer_database($sourcedb, $targetdb) {
+function dbtransfer_transfer_database($sourcedb, $targetdb, $feedback = null) {
     @set_time_limit(0);
 
     session_get_instance()->write_close(); // release session
 
-    $var = new database_mover($sourcedb, $targetdb);
+    $var = new database_mover($sourcedb, $targetdb, true, $feedback);
     $var->export_database(null);
 }
