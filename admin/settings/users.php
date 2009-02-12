@@ -168,6 +168,8 @@ if ($hassiteconfig
                              'mycourses' => get_string('mycourses'))));
     }
 
+    $temp->add(new admin_setting_configcheckbox('allowuserswitchrolestheycantassign', get_string('allowuserswitchrolestheycantassign', 'admin'), get_string('configallowuserswitchrolestheycantassign', 'admin'), 0));
+
     $ADMIN->add('roles', $temp);
 
 } // end of speedup

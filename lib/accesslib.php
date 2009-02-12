@@ -4242,9 +4242,11 @@ function get_assignable_roles($context, $field='name', $rolenamedisplay=ROLENAME
 function get_assignable_roles_for_switchrole($context, $field='name', $rolenamedisplay=ROLENAME_ALIAS) {
     global $USER, $CFG;
 
-    if (!has_capability('moodle/role:assign', $context)) {
-        return array();
-    } 
+    if (!$CFG->allowuserswitchrolestheycantassign) { //config implemented for MDL-11313
+        if (!has_capability('moodle/role:assign', $context)) {
+            return array();
+        }
+    }
 
     $parents = get_parent_contexts($context);
     $parents[] = $context->id;
