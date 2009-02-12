@@ -7366,5 +7366,86 @@ EOT;
     }
 }
 
+/**
+ * Use this class from long operations where you want to output occasional information about
+ * what is going on, but don't know if, or in what format, the output should be.
+ */
+abstract class moodle_progress_trace {
+    /**
+     * Ouput an progress message in whatever format.
+     * @param string $message the message to output.
+     * @param integer $depth indent depth for this message.
+     */
+    abstract public function output($message, $depth = 0);
+
+    /**
+     * Called when the processing is finished.
+     */
+    public function finished() {
+        
+    }
+}
+
+/**
+ * This subclass of moodle_progress_trace does not ouput anything.
+ */
+class null_progress_trace extends moodle_progress_trace {
+    public function output($message, $depth = 0) {
+    }
+}
+
+/**
+ * This subclass of moodle_progress_trace outputs to plain text.
+ */
+class text_progress_trace extends moodle_progress_trace {
+    public function output($message, $depth = 0) {
+        echo str_repeat('  ', $depth), $message, "\n";
+        flush();
+    }
+}
+
+/**
+ * This subclass of moodle_progress_trace outputs as HTML.
+ */
+class html_progress_trace extends moodle_progress_trace {
+    public function output($message, $depth = 0) {
+        echo '<p>', str_repeat('&#160;&#160;', $depth), htmlspecialchars($message), "</p>\n";
+        flush();
+    }
+}
+
+class html_list_progress_trace extends moodle_progress_trace {
+    protected $currentdepth = -1;
+
+    public function output($message, $depth = 0) {
+        $samedepth = true;
+        while ($this->currentdepth > $depth) {
+            echo "</li>\n</ul>\n";
+            $this->currentdepth -= 1;
+            if ($this->currentdepth == $depth) {
+                echo '<li>';
+            }
+            $samedepth = false;
+        }
+        while ($this->currentdepth < $depth) {
+            echo "<ul>\n<li>";
+            $this->currentdepth += 1;
+            $samedepth = false;
+        }
+        if ($samedepth) {
+            echo "</li>\n<li>";
+        }
+        echo htmlspecialchars($message);
+        flush();
+    }
+
+    public function finished() {
+        while ($this->currentdepth >= 0) {
+            echo "</li>\n</ul>\n";
+            $this->currentdepth -= 1;
+        }
+    }
+}
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
