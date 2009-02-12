@@ -748,7 +748,7 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz,$quiz_qbanktool
             $questionidstoshow[] = $a->id;
         }
         $questionstoshow = $DB->get_records_list('question', 'id', $questionidstoshow,
-                '', 'qtype,name,questiontext,questiontextformat');
+                '', 'id,qtype,name,questiontext,questiontextformat');
 
         // list them,
         echo '<ul>';
