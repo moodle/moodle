@@ -63,7 +63,7 @@ if (!isset($USER->grade_last_report)) {
 $USER->grade_last_report[$course->id] = 'visual';
 
 $reportname = get_string('modulename', 'gradereport_visual');
-print_grade_page_head($COURSE->id, 'report', 'visual', $reportname, false, null, $report->preferences_page);
+print_grade_page_head($COURSE->id, 'report', 'visual', $reportname);
 
 /// Make and output the html for the report.
 $report->visualization_selector();
