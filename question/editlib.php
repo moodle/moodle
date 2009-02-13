@@ -382,6 +382,7 @@ abstract class question_bank_column_base {
  */
 class question_bank_checkbox_column extends question_bank_column_base {
     protected $strselect;
+    protected $firstrow = true;
 
     public function init() {
         $this->strselect = get_string('select', 'quiz');
@@ -402,8 +403,11 @@ class question_bank_checkbox_column extends question_bank_column_base {
     protected function display_content($question, $rowclasses) {
         echo '<input title="' . $this->strselect . '" type="checkbox" name="q' .
                 $question->id . '" id="checkq' . $question->id . '" value="1"/>';
-        print_js_call('question_bank.init_checkbox_column', array(get_string('selectall'),
-                get_string('deselectall'), 'checkq' . $question->id));
+        if ($this->firstrow) {
+            print_js_call('question_bank.init_checkbox_column', array(get_string('selectall'),
+                    get_string('deselectall'), 'checkq' . $question->id));
+            $this->firstrow = false;
+        }
     }
 
     public function get_required_fields() {
