@@ -67,11 +67,7 @@ class course_edit_form extends moodleform {
             $mform->addElement('hidden', 'category', null);
         }
         $mform->setHelpButton('category', array('coursecategory', get_string('category')));
-        if (!empty($category->id)) {
-            $mform->setDefault('category', $category->id);
-        } else {
-            $mform->setDefault('category', $courseconfig->category);
-        }
+        $mform->setDefault('category', $category->id);
         $mform->setType('category', PARAM_INT);
 
         $mform->addElement('text','fullname', get_string('fullname'),'maxlength="254" size="50"');
