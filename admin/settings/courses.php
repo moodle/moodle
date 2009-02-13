@@ -17,7 +17,6 @@ if ($hassiteconfig
 /// NOTE: these settings must be applied after all other settings because they depend on them
     ///main course settings
     $temp = new admin_settingpage('coursesettings', get_string('coursesettings'));
-    $temp->add(new admin_settings_coursecat_select('moodlecourse/category', get_string('category'), get_string('coursehelpcategory'), 1));
     $courseformats = get_list_of_plugins('course/format');
     $formcourseformats = array();
     foreach ($courseformats as $courseformat) {
@@ -30,7 +29,7 @@ if ($hassiteconfig
     for ($i=1; $i<=52; $i++) {
         $sectionmenu[$i] = "$i";
     }
-    $temp->add(new admin_setting_configselect('moodlecourse/numsections', get_string('numberweeks'), get_string('coursehelpnumberweeks'), 3,$sectionmenu));
+    $temp->add(new admin_setting_configselect('moodlecourse/numsections', get_string('numberweeks'), get_string('coursehelpnumberweeks'), 10,$sectionmenu));
     $choices = array();
     $choices['0'] = get_string('hiddensectionscollapsed');
     $choices['1'] = get_string('hiddensectionsinvisible');
