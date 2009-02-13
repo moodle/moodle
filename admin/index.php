@@ -290,6 +290,7 @@
 
                 require_once($CFG->libdir.'/environmentlib.php');
                 print_heading(get_string('environment', 'admin'));
+                remove_dir($CFG->dataroot . '/environment'); /// Always delete downloaded env. info to force use of the released one. MDL-9796
                 if (!check_moodle_environment($release, $environment_results, true)) {
                     if (empty($CFG->skiplangupgrade)) {
                         print_box_start('generalbox', 'notice'); // MDL-8330
