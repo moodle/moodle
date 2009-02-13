@@ -394,7 +394,7 @@ function question_category_isused($categoryid, $recursive = false) {
     global $DB;
 
     //Look at each question in the category
-    if ($questions = $DB->get_records('question', array('category'=>$categoryid))) {
+    if ($questions = $DB->get_records('question', array('category'=>$categoryid), '', 'id,qtype')) {
         foreach ($questions as $question) {
             if (count(question_list_instances($question->id))) {
                 return true;
@@ -488,7 +488,7 @@ function delete_question($questionid) {
     $DB->delete_records("question_sessions", array("questionid"=>$questionid));
 
     // Now recursively delete all child questions
-    if ($children = $DB->get_records('question', array('parent'=>$questionid))) {
+    if ($children = $DB->get_records('question', array('parent' => $questionid), '', 'id,qtype')) {
         foreach ($children as $child) {
             if ($child->id != $questionid) {
                 delete_question($child->id);
@@ -530,7 +530,7 @@ function question_delete_course($course, $feedback=true) {
 
             //Delete it completely (questions and category itself)
             //deleting questions
-            if ($questions = $DB->get_records("question", array("category"=>$category->id))) {
+            if ($questions = $DB->get_records('question', array('category' => $category->id), '', 'id,qtype')) {
                 foreach ($questions as $question) {
                     delete_question($question->id);
                 }
@@ -577,7 +577,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
             foreach ($categories as $category) {
 
                 // Deal with any questions in the category.
-                if ($questions = $DB->get_records('question', array('category'=>$category->id))) {
+                if ($questions = $DB->get_records('question', array('category' => $category->id), '', 'id,qtype')) {
 
                     // Try to delete each question.
                     foreach ($questions as $question) {
@@ -692,7 +692,7 @@ function question_delete_activity($cm, $feedback=true) {
 
             //Delete it completely (questions and category itself)
             //deleting questions
-            if ($questions = $DB->get_records("question", array("category"=>$category->id))) {
+            if ($questions = $DB->get_records('question', array('category' => $category->id), '', 'id,qtype')) {
                 foreach ($questions as $question) {
                     delete_question($question->id);
                 }
@@ -2555,7 +2555,7 @@ function question_has_capability_on($question, $cap, $cachecat = -1){
     }
     if (!is_object($question)){
         if (!isset($questions[$question])){
-            if (!$questions[$question] = $DB->get_record('question', array('id'=>$question))) {
+            if (!$questions[$question] = $DB->get_record('question', array('id'=>$question), '', 'id,category,createdby')) {
                 print_error('questiondoesnotexist', 'question');
             }
         }
