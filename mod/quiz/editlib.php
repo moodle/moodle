@@ -241,11 +241,11 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
         '<input type="submit" name="addnewpagesafterselected" value="'.
         get_string("addnewpagesafterselected","quiz").'"  '.
         $pagingdisabled.' /></div>';
-    $reordercontrols1.='<div class="quizdeleteselected">'.
-        '<input type="submit" name="quizdeleteselected" '.
-        'onclick="return confirm(\''.
-        get_string("areyousuredeleteselected","quiz").'\');" value="'.
-        get_string("deleteselected").'"  '.$disabled.' /></div>';
+    $reordercontrols1 .= '<div class="quizdeleteselected">' .
+        '<input type="submit" name="quizdeleteselected" ' .
+        'onclick="return confirm(\'' .
+        get_string('areyousureremoveselected', 'quiz') . '\');" value="' .
+        get_string('removeselected', 'quiz') . '"  ' . $disabled . ' /></div>';
 
     $a = '<input name="moveselectedonpagetop" type="text" size="2" '.
         $pagingdisabled.' />';
