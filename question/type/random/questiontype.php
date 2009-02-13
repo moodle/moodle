@@ -108,31 +108,22 @@ class random_qtype extends default_questiontype {
         return get_string('random', 'quiz') .' ('. $category->name .')';
     }
 
-    function save_question($question, $form, $course) {
+    function save_question_options($question) {
         global $DB;
-        // If the category is changing, set things up as default_questiontype::save_question expects.
-        list($formcategory, $unused) = explode(',', $form->category);
-        if (isset($question->id) && $formcategory != $question->category) {
-            $form->categorymoveto = $form->category;
-        }
-        $form->name = '';
-        $question = parent::save_question($question, $form, $course);
+
+        // No options, as such, but we set the parent field to the question's
+        // own id. Setting the parent field has the effect of hiding this
+        // question in various places.
+        $updateobject = new stdClass;
+        $updateobject->id = $question->id;
+        $updateobject->parent = $question->id;
+
+        // We also force the question name to be 'Random (categoryname)'.
         if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
             print_error('cannotretrieveqcat', 'question');
         }
-        $question->name = $this->question_name($category);
-        if (!$DB->set_field('question', 'name', $question->name, array('id' => $question->id))) {
-            print_error('cannotupdaterandomqname', 'question');
-        }
-        return $question;
-    }
-
-    function save_question_options($question) {
-        global $DB;
-        // No options, but we set the parent field to the question's own id.
-        // Setting the parent field has the effect of hiding this question in
-        // various places.
-        return ($DB->set_field('question', 'parent', $question->id, array('id' => $question->id)) ? true : false);
+        $updateobject->name = $this->question_name($category);
+        return $DB->update_record('question', $updateobject);
     }
 
     /**

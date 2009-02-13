@@ -173,7 +173,6 @@ class embedded_cloze_qtype extends default_questiontype {
             $question->id = $authorizedquestion->id;
         }
 
-
         $question->category = $authorizedquestion->category;
         $form->course = $course; // To pass the course object to
                                  // save_question_options, where it is
