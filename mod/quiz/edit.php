@@ -332,15 +332,15 @@ if ( (($addpage = optional_param('addpage', false, PARAM_INT)) OR
     $questions = explode(",", $quiz->questions);
 
     $pagebreakid='0';
-    if ($addpage > 0 and isset($questions[$addpage]) ) {
-        $questions=array_add_at($questions,$pagebreakid,$addpage);
+    if ($addpage > 0 && isset($questions[$addpage])) {
+        array_splice($questions, $addpage, 0, $pagebreakid);
         $significantchangemade = true;
     }
-    foreach($addpagesafterquestions as $key=>$questionid){
+    foreach($addpagesafterquestions as $key => $questionid){
         $addpage=array_search($questionid, $questions)+1;
-        if ($addpage > 0 and isset($questions[$addpage]) ) {
+        if ($addpage > 0 && isset($questions[$addpage])) {
             $pagebreakid='0';
-            $questions=array_add_at($questions,$pagebreakid,$addpage);
+            array_splice($questions, $addpage, 0, $pagebreakid);
             $significantchangemade = true;
         }
     }
@@ -503,13 +503,12 @@ if (optional_param('savechanges', false, PARAM_BOOL) and confirm_sesskey()) {
         $pagebreakpositions=array_keys($questions,0);
         //move to the end of the selected page
         $moveselectedpos=$pagebreakpositions[$moveselectedonpage-1];
-        //array_reverse($moveonpagequestions);
-        foreach($moveonpagequestions as $question){
-            $questions=array_add_at($questions,$question,$moveselectedpos);
+        foreach ($moveonpagequestions as $question) {
+            array_splice($questions, $moveselectedpos, 0, $question);
             //place the next one after this one:
             $moveselectedpos++;
         }
-        $quiz->questions=implode(",",$questions);
+        $quiz->questions = implode(",",$questions);
     }
     if($moveonpagequestions or $questions){
         if (!$DB->set_field('quiz', 'questions', $quiz->questions,
