@@ -32,6 +32,14 @@ class database_mover extends database_exporter {
     }
 
     /**
+     * How to use transactions during the transfer.
+     * @param string $mode 'pertable', 'allinone' or 'none'.
+     */
+    public function set_transaction_mode($mode) {
+        $this->importer->set_transaction_mode($mode);
+    }
+
+    /**
      * Callback function. Calls importer's begin_database_import callback method.
      *
      * @param float $version the version of the system which generating the data

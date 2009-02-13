@@ -35,6 +35,10 @@ class database_importer {
      * @see begin_database_import).
      */
     protected $check_schema;
+    /**
+     * How to use transactions.
+     */
+    protected $transactionmode = 'allinone';
 
     /**
      * Object constructor.
@@ -50,6 +54,17 @@ class database_importer {
         $this->manager      = $mdb->get_manager();
         $this->schema       = $this->manager->get_install_xml_schema();
         $this->check_schema = $check_schema;
+    }
+
+    /**
+     * How to use transactions during the import.
+     * @param string $mode 'pertable', 'allinone' or 'none'.
+     */
+    public function set_transaction_mode($mode) {
+        if (!in_array($mode, array('pertable', 'allinone', 'none'))) {
+            throw new coding_exception('Unknown transaction mode', $mode);
+        }
+        $this->transactionmode = $mode;
     }
 
     /**
@@ -89,7 +104,9 @@ class database_importer {
             }
             throw new dbtransfer_exception('importschemaexception', $details);
         }
-        $this->mdb->begin_sql();
+        if ($this->transactionmode == 'allinone') {
+            $this->mdb->begin_sql();
+        }
     }
 
     /**
@@ -104,6 +121,9 @@ class database_importer {
      * @return void
      */
     public function begin_table_import($tablename, $schemaHash) {
+        if ($this->transactionmode == 'pertable') {
+            $this->mdb->begin_sql();
+        }
         if (!$table = $this->schema->getTable($tablename)) {
             throw new dbtransfer_exception('unknowntableexception', $tablename);
         }
@@ -132,6 +152,9 @@ class database_importer {
                 return;
             }
         }
+        if ($this->transactionmode == 'pertable') {
+            $this->mdb->commit_sql();
+        }
     }
 
     /**
@@ -140,7 +163,9 @@ class database_importer {
      * @return void
      */
     public function finish_database_import() {
-        $this->mdb->commit_sql();
+        if ($this->transactionmode == 'allinone') {
+            $this->mdb->commit_sql();
+        }
     }
 
     /**
