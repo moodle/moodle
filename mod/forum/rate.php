@@ -47,7 +47,7 @@
         $scale_values = make_grades_menu($forum->scale);
 
         foreach ((array)$data as $postid => $rating) {
-            if ($postid == "id") {
+            if (!is_numeric($postid)) {
                 continue;
             }
 
