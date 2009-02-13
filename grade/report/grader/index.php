@@ -135,7 +135,7 @@ $report->load_final_grades();
 
 /// Print header
 $reportname = get_string('modulename', 'gradereport_grader');
-print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, null, $report->preferences_page, $buttons);
+print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, null, $buttons);
 
 echo $report->group_selector;
 echo '<div class="clearer"></div>';

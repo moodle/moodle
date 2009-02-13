@@ -191,7 +191,7 @@ class grade_scale extends grade_object {
     public function get_nearest_item($grade) {
         global $DB;
         // Obtain nearest scale item from average
-        $scales_array = $DB->get_records_list('scale', array('id' => $this->id));
+        $scales_array = $DB->get_records('scale', array('id' => $this->id));
         $scale = $scales_array[$this->id];
         $scales = explode(",", $scale->scale);
 
