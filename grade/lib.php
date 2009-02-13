@@ -550,7 +550,6 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
             $plugin_info['letter']['edit'] = array('id' => 'edit', 'link' => $url_edit, 'string' => get_string('edit'));
             $count++;
         }
-
     }
 
 /// standard import plugins
@@ -650,7 +649,7 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null, $he
     $navlinks = array();
     $first_link = '';
 
-    if ($active_type == 'settings') {
+    if ($active_type == 'settings' && $active_plugin != 'coursesettings') {
         $first_link = $plugin_info['report'][$active_plugin]['link'];
     } elseif ($active_type != 'report') {
         $first_link = $CFG->wwwroot.'/grade/index.php?id='.$COURSE->id;
