@@ -4863,3 +4863,100 @@ class admin_setting_managerepository extends admin_setting {
         return highlight($query, $output);
     }
 }
+
+class admin_setting_managewsprotocols extends admin_setting {
+    private $baseurl;
+    public function __construct() {
+        global $CFG;
+        parent::__construct('managewsprotocols', get_string('managewsprotocols', 'admin'), '', '');
+        $this->baseurl = $CFG->wwwroot . '/' . $CFG->admin . '/wsprotocols.php?sesskey=' . sesskey();
+    }
+
+    public function get_setting() {
+        return true;
+    }
+  
+    public function write_setting($data) {
+        $url = $this->baseurl . '&amp;new=' . $data;
+        return '';
+    }
+
+    public function output_html($data, $query='') {
+        global $CFG;
+     
+        $namestr = get_string('name');
+        $settingsstr = get_string('settings');
+        $hiddenstr = get_string('hiddenshow', 'repository');
+        require_once("../webservice/lib.php");
+        $protocols = webservice_lib::get_list_protocols();
+        $table = new StdClass;
+        $table->head = array($namestr, $hiddenstr);
+        $table->align = array('left', 'center');
+        $table->data = array();
+
+        foreach ($protocols as $i) {
+            $hidetitle = $i->get_protocolname() ? get_string('clicktohide', 'repository') : get_string('clicktoshow', 'repository');
+            $hiddenshow = ' <a href="' . $this->baseurl . '&amp;hide=' . $i->get_protocolname() . '">'
+                          .'<img src="' . $CFG->pixpath . '/i/' . ($i->get_enable() ? 'hide' : 'show') . '.gif"'
+                              .' alt="' . $hidetitle . '" '
+                              .' title="' . $hidetitle . '" />'
+                          .'</a>' . "\n";
+
+            $table->data[] = array($i->get_protocolname(), $hiddenshow);
+
+            //display a grey row if the type is defined as not visible
+            if (!$i->get_enable()){
+                $table->rowclass[] = 'dimmed_text';
+            } else{
+                $table->rowclass[] = '';
+            }
+        }
+        $output = print_table($table, true);
+
+        return highlight($query, $output);
+    }
+}
+
+class admin_setting_managewsusersettings extends admin_setting {
+    private $baseurl;
+    public function __construct() {
+        global $CFG;
+        parent::__construct('managewsusersettings', get_string('managewsusersettings', 'admin'), '', '');
+        $this->baseurl = $CFG->wwwroot . '/' . $CFG->admin . '/wsprotocols.php?sesskey=' . sesskey();
+    }
+
+    public function get_setting() {
+        return true;
+    }
+
+    public function write_setting($data) {
+        $url = $this->baseurl . '&amp;new=' . $data;
+        return '';
+    }
+
+    public function output_html($data, $query='') {
+        global $CFG;
+        $output = "";
+
+        //search all web service users
+        $users = get_users(true, '', false, null, 'firstname ASC','', '', '', 1000);
+
+        $table = new StdClass;
+        $table->head = array('username', 'whitelist');
+        $table->align = array('left', 'center');
+        $table->data = array();
+
+        foreach ($users as $user) {
+            if ( true) { //test if the users has has_capability('use_webservice')
+                $wsusersetting = ' <a href="' . $this->baseurl . '&amp;username=' . $user->username . '">'
+                . get_string("settings")
+                          .'</a>' . "\n";
+                $textfield = print_textfield('whitelist_'.$user->username, '', '', 50, 0, true);
+                $table->data[] = array($user->username, $wsusersetting);
+            }
+        }
+
+        $output .= print_table($table, true);
+        return highlight($query, $output);
+    }
+}

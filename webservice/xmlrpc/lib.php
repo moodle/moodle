@@ -27,16 +27,20 @@
  * XML-RPC server class
  */
 
-require_once('../lib.php');
+require_once($CFG->dirroot.'/webservice/lib.php');
 
 final class xmlrpc_server extends webservice_server {
 
     public function __construct() {
 
-        $this->set_protocolname("XML-RPC");
+        $this->set_protocolname("XMLRPC");
     }
   
     public function run() {
+        $enable = $this->get_enable();
+        if (empty($enable)) {
+            die;
+        }
         include "Zend/Loader.php";
         Zend_Loader::registerAutoload();
 

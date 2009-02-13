@@ -24,7 +24,7 @@
  */
 
 
-require_once('../lib.php');
+require_once($CFG->dirroot.'/webservice/lib.php');
 
 /*
  * AMF server class
@@ -41,6 +41,10 @@ final class amf_server extends webservice_server {
      * Run the AMF server
      */
     public function run() {
+        $enable = $this->get_enable();
+        if (empty($enable)) {
+            die;
+        }
         include "Zend/Loader.php";
         Zend_Loader::registerAutoload();
 

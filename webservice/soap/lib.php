@@ -28,12 +28,11 @@
  * SOAP server class
  */
 
-require_once('../lib.php');
+require_once($CFG->dirroot.'/webservice/lib.php');
 
 final class soap_server extends webservice_server {
 
     public function __construct() {
-
         $this->set_protocolname("Soap");
     }
 
@@ -43,6 +42,10 @@ final class soap_server extends webservice_server {
      * @global <type> $USER
      */
     public function run() {
+        $enable = $this->get_enable();
+        if (empty($enable)) {
+            die;
+        }
         global $CFG;
         // retrieve the token from the url
         // if the token doesn't exist, set a class containing only get_token()
@@ -73,12 +76,17 @@ final class soap_server extends webservice_server {
         }
     }
 
+  
     /**
      * Run Zend SOAP server
      * @global <type> $CFG
      * @global <type> $USER
      */
     public function zend_run() {
+         $enable = $this->get_enable();
+        if (empty($enable)) {
+            die;
+        }
         global $CFG;
         include "Zend/Loader.php";
         Zend_Loader::registerAutoload();
@@ -99,7 +107,7 @@ final class soap_server extends webservice_server {
         }
 
         if (empty($token)) {
-         
+
             if(isset($_GET['wsdl'])) {
                 $autodiscover = new Zend_Soap_AutoDiscover();
                 $autodiscover->setClass('ws_authentication');
@@ -126,7 +134,7 @@ final class soap_server extends webservice_server {
             }
             require_once(dirname(__FILE__) . '/../../'.$classpath.'/external.php');
 
-            /// run the server      
+            /// run the server
             if(isset($_GET['wsdl'])) {
                 $autodiscover = new Zend_Soap_AutoDiscover();
 

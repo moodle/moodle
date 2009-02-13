@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html     GNU GPL License
  */
 
-require_once('../lib.php');
+require_once($CFG->dirroot.'/webservice/lib.php');
 
 /*
  * Rest server class
@@ -39,6 +39,11 @@ final class rest_server extends webservice_server {
      * Run REST server
      */
     public function run() {
+         $enable = $this->get_enable();
+        if (empty($enable)) {
+            die;
+        }
+
         require_once('locallib.php');
         //retrieve path and function name from the URL
         $rest_arguments = get_file_argument('server.php');
@@ -51,6 +56,10 @@ final class rest_server extends webservice_server {
      * @global object $USER .
      */
     public function zend_run() {
+        $enable = $this->get_enable();
+        if (empty($enable)) {
+            die;
+        }
         include "Zend/Loader.php";
         Zend_Loader::registerAutoload();
 
