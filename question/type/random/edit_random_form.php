@@ -36,6 +36,10 @@ class question_edit_random_form extends question_edit_form {
 
         $mform->addElement('advcheckbox', 'questiontext', get_string("recurse", "quiz"), null, null, array(0, 1));
 
+        $mform->addElement('hidden', 'name');
+        $mform->setType('name', PARAM_ALPHA);
+        $mform->setDefault('name', '');
+
         // Standard fields at the end of the form.
         $mform->addElement('hidden', 'questiontextformat', 0);
         $mform->setType('questiontextformat', PARAM_INT);

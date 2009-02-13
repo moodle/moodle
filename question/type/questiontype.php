@@ -229,22 +229,28 @@ class default_questiontype {
     }
 
     /**
-    * Saves or updates a question after editing by a teacher
+    * Saves (creates or updates) a question.
     *
     * Given some question info and some data about the answers
     * this function parses, organises and saves the question
     * It is used by {@link question.php} when saving new data from
     * a form, and also by {@link import.php} when importing questions
     * This function in turn calls {@link save_question_options}
-    * to save question-type specific options
-    * @param object $question the question object which should be updated
-    * @param object $form the form submitted by the teacher
-    * @param object $course the course we are in
+    * to save question-type specific data.
+    *
+    * Whether we are saving a new question or updating an existing one can be
+    * determined by testing !empty($question->id). If it is not empty, we are updating.
+    *
+    * The question will be saved in category $form->category.
+    *
+    * @param object $question the question object which should be updated. For a new question will be mostly empty.
+    * @param object $form the object containing the information to save, as if from the question editing form.
+    * @param object $course not really used any more.
     * @return object On success, return the new question object. On failure,
     *       return an object as follows. If the error object has an errors field,
     *       display that as an error message. Otherwise, the editing form will be
     *       redisplayed with validation errors, from validation_errors field, which
-    *       is itself an object, shown next to the form fields.
+    *       is itself an object, shown next to the form fields. (I don't think this is accurate any more.)
     */
     function save_question($question, $form, $course) {
         global $USER;
@@ -253,15 +259,15 @@ class default_questiontype {
         // question types.
 
         // First, save the basic question itself
-        $question->name               = trim($form->name);
-        $question->questiontext       = trim($form->questiontext);
+        $question->name = trim($form->name);
+        $question->questiontext = trim($form->questiontext);
         $question->questiontextformat = $form->questiontextformat;
-        $question->parent             = isset($form->parent)? $form->parent : 0;
+        $question->parent = isset($form->parent) ? $form->parent : 0;
         $question->length = $this->actual_number_of_questions($question);
         $question->penalty = isset($form->penalty) ? $form->penalty : 0;
 
         if (empty($form->image)) {
-            $question->image = "";
+            $question->image = '';
         } else {
             $question->image = $form->image;
         }
@@ -287,33 +293,18 @@ class default_questiontype {
             $question->defaultgrade = $form->defaultgrade;
         }
 
-        if (!empty($question->id) && !empty($form->categorymoveto)) { // Question already exists
-            list($movetocategory, $movetocontextid) = explode(',', $form->categorymoveto);
-            if ($movetocategory != $question->category){
-                question_require_capability_on($question, 'move');
-                $question->category = $movetocategory;
-                //don't need to test add permission of category we are moving question to.
-                //Only categories that we have permission to add
-                //a question to will get through the form cleaning code for the select box.
-            }
-            // keep existing unique stamp code
-            $question->stamp = get_field('question', 'stamp', 'id', $question->id);
+        list($question->category) = explode(',', $form->category);
+
+        if (!empty($question->id)) {
+        /// Question already exists, update.
             $question->modifiedby = $USER->id;
             $question->timemodified = time();
             if (!update_record('question', $question)) {
                 error('Could not update question!');
             }
-        } else {         // Question is a new one
-            if (isset($form->categorymoveto)){
-                // Doing save as new question, and we have move rights.
-                list($question->category, $notused) = explode(',', $form->categorymoveto);
-                //don't need to test add permission of category we are moving question to.
-                //Only categories that we have permission to add
-                //a question to will get through the form cleaning code for the select box.
-            } else {
-                // Really a new question.
-                list($question->category, $notused) = explode(',', $form->category);
-            }
+
+        } else {
+        /// New question.
             // Set the unique code
             $question->stamp = make_unique_id_code();
             $question->createdby = $USER->id;
@@ -327,7 +318,6 @@ class default_questiontype {
         }
 
         // Now to save all the answers and type-specific options
-
         $form->id = $question->id;
         $form->qtype = $question->qtype;
         $form->category = $question->category;

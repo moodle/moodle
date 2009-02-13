@@ -17,14 +17,12 @@ require_once($CFG->libdir . '/formslib.php');
 $id = optional_param('id', 0, PARAM_INT); // question id
 $qtype = optional_param('qtype', '', PARAM_FILE);
 $categoryid = optional_param('category', 0, PARAM_INT);
-
 $cmid = optional_param('cmid', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
-$wizardnow =  optional_param('wizardnow', '', PARAM_ALPHA);
-$movecontext =  optional_param('movecontext', 0, PARAM_BOOL);//switch to make question
-                    //uneditable - form is displayed to edit category only
+$wizardnow = optional_param('wizardnow', '', PARAM_ALPHA);
+$movecontext = optional_param('movecontext', 0, PARAM_BOOL); // Switch to make
+        // question uneditable - form is displayed to edit category only
 $returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
-
 $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
 
 if ($movecontext && !$id){
@@ -45,12 +43,9 @@ if ($cmid){
 }
 $contexts = new question_edit_contexts($thiscontext);
 
-
 if (!$returnurl) {
     $returnurl = "{$CFG->wwwroot}/question/edit.php?courseid={$COURSE->id}";
 }
-
-
 
 if ($id) {
     if (!$question = get_record('question', 'id', $id)) {
@@ -113,7 +108,6 @@ if (!isset($QTYPES[$question->qtype])) {
 }
 $CFG->pagepath = 'question/type/' . $question->qtype;
 
-
 // Create the question editing form.
 if ($wizardnow!=='' && !$movecontext){
     if (!method_exists($QTYPES[$question->qtype], 'next_wizard_form')){
@@ -149,20 +143,39 @@ if ($mform->is_cancelled()){
     } else {
         redirect($returnurl);
     }
-} elseif ($fromform = $mform->get_data()){
-    $returnurl = new moodle_url($returnurl);
-    //select category that question has been saved in / moved to when we return to question bank
-    if (!empty($fromform->categorymoveto)){
-        $returnurl->param('category', $fromform->categorymoveto);
-    } else if (!empty($fromform->category)){
-        $returnurl->param('category', $fromform->category);
-    }
-    $returnurl = $returnurl->out();
+} elseif ($fromform = $mform->get_data()) {
+    /// If we are saving as a copy, break the connection to the old question.
     if (!empty($fromform->makecopy)) {
-        $question->id = 0;  // causes a new question to be created.
+        $question->id = 0;
         $question->hidden = 0; // Copies should not be hidden
     }
-    if ($movecontext){
+
+    /// Process the combination of usecurrentcat, categorymoveto and category form
+    /// fields, so the save_question method only has to consider $fromform->category
+    if (!empty($fromform->usecurrentcat)) {
+        // $fromform->category is the right category to save in.
+    } else {
+        if (!empty($fromform->categorymoveto)) {
+            $fromform->category = $fromform->categorymoveto;
+        } else {
+            // $fromform->category is the right category to save in.
+        }
+    }
+
+    /// If we are moving a question, check we have permission to move it from
+    /// whence it came. (Where we are moving to is validated by the form.)
+    list($newcatid) = explode(',', $fromform->category);
+    if (!empty($question->id) && $newcatid != $question->category) {
+        question_require_capability_on($question, 'move');
+    }
+
+    /// Ensure we redirect back to the category the question is being saved into.
+    $returnurl = new moodle_url($returnurl);
+    $returnurl->param('category', $fromform->category);
+    $returnurl = $returnurl->out();
+
+    /// Call the appropriate method.
+    if ($movecontext) {
         list($tocatid, $tocontextid) = explode(',', $fromform->categorymoveto);
         $tocontext = get_context_instance_by_id($tocontextid);
         require_capability('moodle/question:add', $tocontext);
