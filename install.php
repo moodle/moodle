@@ -448,7 +448,8 @@ if ($INSTALL['stage'] == ENVIRONMENT) {
     $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname']);
     error_reporting(7);  // Show errors
     if ($dbconnected) {
-    /// Execute environment check, printing results
+    /// Execute environment check, not printing results
+        @remove_dir($INSTALL['dataroot'] . '/environment'); /// Always delete downloaded env. info to force use of the released one. MDL-9796
         if (!check_moodle_environment($INSTALL['release'], $environment_results, false)) {
              $nextstage = ENVIRONMENT;
         }
@@ -907,6 +908,7 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
                     error_reporting(7);  // Show errors
                     if ($dbconnected) {
                     /// Execute environment check, printing results
+                        @remove_dir($INSTALL['dataroot'] . '/environment'); /// Always delete downloaded env. info to force use of the released one. MDL-9796
                         check_moodle_environment($INSTALL['release'], $environment_results, true);
                     } else {
                     /// We never should reach this because DB has been tested before arriving here
