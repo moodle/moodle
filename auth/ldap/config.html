@@ -59,6 +59,8 @@
         {$config->ntlmsso_enabled = 0; }
     if (!isset($config->ntlmsso_subnet))
         {$config->ntlmsso_subnet = ''; }
+    if (!isset($config->ntlmsso_ie_fastpath))
+        {$config->ntlmsso_ie_fastpath = 0; }
 
     $yesno = array( get_string('no'), get_string('yes') );
 
@@ -466,6 +468,17 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     </td>
     <td>
     <?php print_string('auth_ntlmsso_subnet','auth') ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><label for="menuntlmsso_ie_fastpath"><?php print_string('auth_ntlmsso_ie_fastpath_key','auth') ?></label></td>
+    <td>
+    <?php
+       choose_from_menu($yesno, 'ntlmsso_ie_fastpath', $config->ntlmsso_ie_fastpath, '0');
+    ?>
+    </td>
+    <td>
+    <?php print_string('auth_ntlmsso_ie_fastpath','auth') ?>
     </td>
 </tr>
 

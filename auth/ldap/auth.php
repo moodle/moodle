@@ -1793,7 +1793,17 @@ class auth_plugin_ldap extends auth_plugin_base {
             }
 
             // Now start the whole NTLM machinery.
-            redirect($CFG->wwwroot.'/auth/ldap/ntlmsso_attempt.php');
+            if(!empty($this->config->ntlmsso_ie_fastpath)) {
+                // Shortcut for IE browsers: skip the attempt page at all
+                if(check_browser_version('MSIE')) {
+                    $sesskey = sesskey();
+                    redirect($CFG->wwwroot.'/auth/ldap/ntlmsso_magic.php?sesskey='.$sesskey);
+                } else {
+                    redirect($CFG->httpswwwroot.'/login/index.php?authldap_skipntlmsso=1');
+                }
+            } else {
+                redirect($CFG->wwwroot.'/auth/ldap/ntlmsso_attempt.php');
+            }
         }
  
         // No NTLM SSO, Use the normal login page instead.
@@ -1994,6 +2004,8 @@ class auth_plugin_ldap extends auth_plugin_base {
             {$config->ntlmsso_enabled = 0; }
         if (!isset($config->ntlmsso_subnet))
             {$config->ntlmsso_subnet = ''; }
+        if (!isset($config->ntlmsso_ie_fastpath))
+            {$config->ntlmsso_ie_fastpath = 0; }
 
         // save settings
         set_config('host_url', $config->host_url, 'auth/ldap');
@@ -2026,6 +2038,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         set_config('removeuser', $config->removeuser, 'auth/ldap');
         set_config('ntlmsso_enabled', (int)$config->ntlmsso_enabled, 'auth/ldap');
         set_config('ntlmsso_subnet', $config->ntlmsso_subnet, 'auth/ldap');
+        set_config('ntlmsso_ie_fastpath', (int)$config->ntlmsso_ie_fastpath, 'auth/ldap');
 
         return true;
     }
