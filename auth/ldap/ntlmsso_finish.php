@@ -24,7 +24,13 @@ if (empty($authplugin->config->ntlmsso_enabled)) {
 // so we only worry about failure.
 if (!$authplugin->ntlmsso_finish()) {
     // Redirect to login, saying "don't try again!"
-    redirect($CFG->wwwroot . '/login/index.php?authldap_skipntlmsso=1', 
+    // Display the page header. This makes redirect respect the timeout we specify
+    // here (and not add 3 more secs).
+    $loginsite = get_string("loginsite");
+    $navlinks = array(array('name' => $loginsite, 'link' => null, 'type' => 'misc'));
+    $navigation = build_navigation($navlinks);
+    print_header("$site->fullname: $loginsite", $site->fullname, $navigation, '', '', true);
+    redirect($CFG->httpswwwroot . '/login/index.php?authldap_skipntlmsso=1', 
              get_string('ntlmsso_failed','auth'), 3);
 }
 ?>

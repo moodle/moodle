@@ -1769,16 +1769,45 @@ class auth_plugin_ldap extends auth_plugin_base {
      *
      */
     function loginpage_hook() {
-        global $CFG;
+        global $CFG, $SESSION;
+ 
+        if (($_SERVER['REQUEST_METHOD'] === 'GET'         // Only on initial GET of loginpage
+                || ($_SERVER['REQUEST_METHOD'] === 'POST'
+                   && (get_referer() != strip_querystring(qualified_me()))))
+                                                           // Or when POSTed from another place
+                                                           // See MDL-14071
+           && !empty($this->config->ntlmsso_enabled)     // SSO enabled
+           && !empty($this->config->ntlmsso_subnet)      // have a subnet to test for
+           && empty($_GET['authldap_skipntlmsso'])       // haven't failed it yet
+           && (isguestuser() || !isloggedin())           // guestuser or not-logged-in users
+            && address_in_subnet($_SERVER['REMOTE_ADDR'], $this->config->ntlmsso_subnet)) {
 
-        if ($_SERVER['REQUEST_METHOD'] === 'GET'    // Only on initial GET 
-                                                    // of loginpage
-            &&!empty($this->config->ntlmsso_enabled)// SSO enabled
-            && !empty($this->config->ntlmsso_subnet)// have a subnet to test for
-            && empty($_GET['authldap_skipntlmsso']) // haven't failed it yet
-            && (isguestuser() || !isloggedin())     // guestuser or not-logged-in users
-            && address_in_subnet($_SERVER['REMOTE_ADDR'],$this->config->ntlmsso_subnet)) {
-            redirect("{$CFG->wwwroot}/auth/ldap/ntlmsso_attempt.php");
+            // First, let's remember where we were trying to get to before we got here
+            if (empty($SESSION->wantsurl)) {
+                $SESSION->wantsurl = (array_key_exists('HTTP_REFERER', $_SERVER) &&
+                                      $_SERVER['HTTP_REFERER'] != $CFG->wwwroot &&
+                                      $_SERVER['HTTP_REFERER'] != $CFG->wwwroot.'/' &&
+                                      $_SERVER['HTTP_REFERER'] != $CFG->httpswwwroot.'/login/' &&
+                                      $_SERVER['HTTP_REFERER'] != $CFG->httpswwwroot.'/login/index.php')
+                    ? $_SERVER['HTTP_REFERER'] : NULL;
+            }
+
+            // Now start the whole NTLM machinery.
+            redirect($CFG->wwwroot.'/auth/ldap/ntlmsso_attempt.php');
+        }
+ 
+        // No NTLM SSO, Use the normal login page instead.
+
+        // If $SESSION->wantsurl is empty and we have a 'Referer:' header, the login
+        // page insists on redirecting us to that page after user validation. If
+        // we clicked on the redirect link at the ntlmsso_finish.php page instead
+        // of waiting for the redirection to happen, then we have a 'Referer:' header
+        // we don't want to use at all. As we can't get rid of it, just point
+        // $SESSION->wantsurl to $CFG->wwwroot (after all, we came from there).
+        if (empty($SESSION->wantsurl)
+            && (get_referer() == $CFG->httpswwwroot.'/auth/ldap/ntlmsso_finish.php')) {
+
+            $SESSION->wantsurl = $CFG->wwwroot;
         }
     }
 
@@ -1801,7 +1830,14 @@ class auth_plugin_ldap extends auth_plugin_base {
      */
     function ntlmsso_magic($sesskey) {
         if (isset($_SERVER['REMOTE_USER']) && !empty($_SERVER['REMOTE_USER'])) {
-            $username = $_SERVER['REMOTE_USER'];
+
+            // HTTP __headers__ seem to be sent in ISO-8859-1 encoding
+            // (according to my reading of RFC-1945, RFC-2616 and RFC-2617 and
+            // my local tests), so we need to convert the REMOTE_USER value
+            // (i.e., what we got from the HTTP WWW-Authenticate header) into UTF-8
+            $textlib = textlib_get_instance();
+            $username = $textlib->convert($_SERVER['REMOTE_USER'], 'iso-8859-1', 'utf-8');
+
             $username = substr(strrchr($username, '\\'), 1); //strip domain info
             $username = moodle_strtolower($username); //compatibility hack
             set_cache_flag('auth/ldap/ntlmsess', $sesskey, $username, AUTH_NTLMTIMEOUT);
