@@ -52,6 +52,11 @@
     define('CUSTOM_CHECK_FUNCTION_MISSING',     14);
     define('NO_PHP_SETTINGS_NAME_FOUND',        15);
 
+/// Define algorithm used to select the xml file
+    define('ENV_SELECT_NEWER',                   0); /// To select the newer file available to perform checks
+    define('ENV_SELECT_DATAROOT',                1); /// To enforce the use of the file under dataroot
+    define('ENV_SELECT_RELEASE',                 2); /// To enforce the use of the file under admin (release)
+
 /**
  * This function will perform the whole check, returning
  * true or false as final result. Also, he full array of
@@ -62,9 +67,10 @@
  * @param string version version to check.
  * @param array results array of results checked.
  * @param boolean true/false, whether to print the table or just return results array
+ * @param int one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use. Default ENV_SELECT_NEWER (BC)
  * @return boolean true/false, depending of results
  */
-function check_moodle_environment($version, &$environment_results, $print_table=true) {
+function check_moodle_environment($version, &$environment_results, $print_table=true, $env_select=ENV_SELECT_NEWER) {
 
     $status = true;
 
@@ -79,12 +85,12 @@ function check_moodle_environment($version, &$environment_results, $print_table=
 /// No cache exists, calculate everything
     } else {
     /// Get the more recent version before the requested
-        if (!$version = get_latest_version_available($version)) {
+        if (!$version = get_latest_version_available($version, $env_select)) {
             $status = false;
         }
 
     /// Perform all the checks
-        if (!($environment_results = environment_check($version)) && $status) {
+        if (!($environment_results = environment_check($version, $env_select)) && $status) {
             $status = false;
         }
 
@@ -318,9 +324,10 @@ function normalize_version($version) {
 
 /**
  * This function will load the environment.xml file and xmlize it
+ * @param int one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use. Default ENV_SELECT_NEWER (BC)
  * @return mixed the xmlized structure or false on error
  */
-function load_environment_xml() {
+function load_environment_xml($env_select=ENV_SELECT_NEWER) {
 
     global $CFG;
 
@@ -333,12 +340,26 @@ function load_environment_xml() {
 /// First of all, take a look inside $CFG->dataroot/environment/environment.xml
     $file = $CFG->dataroot.'/environment/environment.xml';
     $internalfile = $CFG->dirroot.'/'.$CFG->admin.'/environment.xml';
-    if (!is_file($file) || !is_readable($file) || filemtime($file) < filemtime($internalfile) ||
-        !$contents = file_get_contents($file)) {
-    /// Fallback to fixed $CFG->admin/environment.xml
-        if (!is_file($internalfile) || !is_readable($internalfile) || !$contents = file_get_contents($internalfile)) {
-            return false;
-        }
+    switch ($env_select) {
+        case ENV_SELECT_NEWER:
+            if (!is_file($file) || !is_readable($file) || filemtime($file) < filemtime($internalfile) ||
+                !$contents = file_get_contents($file)) {
+            /// Fallback to fixed $CFG->admin/environment.xml
+                if (!is_file($internalfile) || !is_readable($internalfile) || !$contents = file_get_contents($internalfile)) {
+                    return false;
+                }
+            }
+            break;
+        case ENV_SELECT_DATAROOT:
+            if (!is_file($file) || !is_readable($file) || !$contents = file_get_contents($file)) {
+                return false;
+            }
+            break;
+        case ENV_SELECT_RELEASE:
+            if (!is_file($internalfile) || !is_readable($internalfile) || !$contents = file_get_contents($internalfile)) {
+                return false;
+            }
+            break;
     }
 /// XML the whole file
     $data = xmlize($contents);
@@ -373,15 +394,16 @@ function get_list_of_environment_versions ($contents) {
  * This function will return the most recent version in the environment.xml
  * file previous or equal to the version requested
  * @param string version top version from which we start to look backwards
+ * @param int one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
  * @return string more recent version or false if not found
  */
-function get_latest_version_available ($version) {
+function get_latest_version_available ($version, $env_select) {
 
 /// Normalize the version requested
     $version = normalize_version($version);
 
 /// Load xml file
-    if (!$contents = load_environment_xml()) {
+    if (!$contents = load_environment_xml($env_select)) {
         return false;
     }
 
@@ -409,15 +431,16 @@ function get_latest_version_available ($version) {
 
 /**
  * This function will return the xmlized data belonging to one Moodle version
+ * @param int one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
  * @return mixed the xmlized structure or false on error
  */
-function get_environment_for_version($version) {
+function get_environment_for_version($version, $env_select) {
 
 /// Normalize the version requested
     $version = normalize_version($version);
 
 /// Load xml file
-    if (!$contents = load_environment_xml()) {
+    if (!$contents = load_environment_xml($env_select)) {
         return false;
     }
 
@@ -442,9 +465,10 @@ function get_environment_for_version($version) {
  * This function will check for everything (DB, PHP and PHP extensions for now)
  * returning an array of environment_result objects.
  * @param string $version xml version we are going to use to test this server
+ * @param int one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
  * @return array array of results encapsulated in one environment_result object
  */
-function environment_check($version) {
+function environment_check($version, $env_select) {
     global $CFG;
 
 /// Normalize the version requested
@@ -454,19 +478,19 @@ function environment_check($version) {
 
 /// Only run the moodle versions checker on upgrade, not on install
     if (!empty($CFG->version)) {
-        $results[] = environment_check_moodle($version);
+        $results[] = environment_check_moodle($version, $env_select);
     }
-    $results[] = environment_check_unicode($version);
-    $results[] = environment_check_database($version);
-    $results[] = environment_check_php($version);
+    $results[] = environment_check_unicode($version, $env_select);
+    $results[] = environment_check_database($version, $env_select);
+    $results[] = environment_check_php($version, $env_select);
 
-    $phpext_results = environment_check_php_extensions($version);
+    $phpext_results = environment_check_php_extensions($version, $env_select);
     $results = array_merge($results, $phpext_results);
 
-    $phpsetting_results = environment_check_php_settings($version);
+    $phpsetting_results = environment_check_php_settings($version, $env_select);
     $results = array_merge($results, $phpsetting_results);
 
-    $custom_results = environment_custom_checks($version);
+    $custom_results = environment_custom_checks($version, $env_select);
     $results = array_merge($results, $custom_results);
 
     return $results;
@@ -476,14 +500,15 @@ function environment_check($version) {
 /**
  * This function will check if php extensions requirements are satisfied
  * @param string $version xml version we are going to use to test this server
+ * @param int one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
  * @return array array of results encapsulated in one environment_result object
  */
-function environment_check_php_extensions($version) {
+function environment_check_php_extensions($version, $env_select) {
 
     $results = array();
 
 /// Get the enviroment version we need
-    if (!$data = get_environment_for_version($version)) {
+    if (!$data = get_environment_for_version($version, $env_select)) {
     /// Error. No version data found
         $result = new environment_results('php_extension');
         $result->setStatus(false);
@@ -534,14 +559,15 @@ function environment_check_php_extensions($version) {
 /**
  * This function will check if php extensions requirements are satisfied
  * @param string $version xml version we are going to use to test this server
+ * @param int one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
  * @return array array of results encapsulated in one environment_result object
  */
-function environment_check_php_settings($version) {
+function environment_check_php_settings($version, $env_select) {
 
     $results = array();
 
 /// Get the enviroment version we need
-    if (!$data = get_environment_for_version($version)) {
+    if (!$data = get_environment_for_version($version, $env_select)) {
     /// Error. No version data found
         $result = new environment_results('php_setting');
         $result->setStatus(false);
@@ -609,9 +635,10 @@ function environment_check_php_settings($version) {
 /**
  * This function will do the custom checks.
  * @param string $version xml version we are going to use to test this server.
+ * @param int one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
  * @return array array of results encapsulated in environment_result objects.
  */
-function environment_custom_checks($version) {
+function environment_custom_checks($version, $env_select) {
     global $CFG;
 
     $results = array();
@@ -621,7 +648,7 @@ function environment_custom_checks($version) {
     $current_version = normalize_version($release);
 
 /// Get the enviroment version we need
-    if (!$data = get_environment_for_version($version)) {
+    if (!$data = get_environment_for_version($version, $env_select)) {
     /// Error. No version data found - but this will already have been reported.
         return $results;
     }
@@ -695,14 +722,15 @@ function environment_custom_checks($version) {
 /**
  * This function will check if Moodle requirements are satisfied
  * @param string $version xml version we are going to use to test this server
+ * @param int one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
  * @return object results encapsulated in one environment_result object
  */
-function environment_check_moodle($version) {
+function environment_check_moodle($version, $env_select) {
 
     $result = new environment_results('moodle');
 
 /// Get the enviroment version we need
-    if (!$data = get_environment_for_version($version)) {
+    if (!$data = get_environment_for_version($version, $env_select)) {
     /// Error. No version data found
         $result->setStatus(false);
         $result->setErrorCode(NO_VERSION_DATA_FOUND);
@@ -736,14 +764,15 @@ function environment_check_moodle($version) {
 /**
  * This function will check if php requirements are satisfied
  * @param string $version xml version we are going to use to test this server
+ * @param int one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
  * @return object results encapsulated in one environment_result object
  */
-function environment_check_php($version) {
+function environment_check_php($version, $env_select) {
 
     $result = new environment_results('php');
 
 /// Get the enviroment version we need
-    if (!$data = get_environment_for_version($version)) {
+    if (!$data = get_environment_for_version($version, $env_select)) {
     /// Error. No version data found
         $result->setStatus(false);
         $result->setErrorCode(NO_VERSION_DATA_FOUND);
@@ -791,15 +820,16 @@ function environment_check_php($version) {
 /**
  * This function will check if unicode database requirements are satisfied
  * @param string $version xml version we are going to use to test this server
+ * @param int one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
  * @return object results encapsulated in one environment_result object
  */
-function environment_check_unicode($version) {
+function environment_check_unicode($version, $env_select) {
     global $DB;
 
     $result = new environment_results('unicode');
 
     /// Get the enviroment version we need
-    if (!$data = get_environment_for_version($version)) {
+    if (!$data = get_environment_for_version($version, $env_select)) {
     /// Error. No version data found
         $result->setStatus(false);
         $result->setErrorCode(NO_VERSION_DATA_FOUND);
@@ -835,9 +865,10 @@ function environment_check_unicode($version) {
 /**
  * This function will check if database requirements are satisfied
  * @param string $version xml version we are going to use to test this server
+ * @param int one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
  * @return object results encapsulated in one environment_result object
  */
-function environment_check_database($version) {
+function environment_check_database($version, $env_select) {
 
     global $DB;
 
@@ -846,7 +877,7 @@ function environment_check_database($version) {
     $vendors = array();  //Array of vendors in version
 
 /// Get the enviroment version we need
-    if (!$data = get_environment_for_version($version)) {
+    if (!$data = get_environment_for_version($version, $env_select)) {
     /// Error. No version data found
         $result->setStatus(false);
         $result->setErrorCode(NO_VERSION_DATA_FOUND);
