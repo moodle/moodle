@@ -135,7 +135,7 @@
             print_box($releasenoteslink, 'generalbox boxaligncenter boxwidthwide');
 
             require_once($CFG->libdir.'/environmentlib.php');
-            if (!check_moodle_environment($release, $environment_results, true)) {
+            if (!check_moodle_environment($release, $environment_results, true, ENV_SELECT_RELEASE)) {
                 print_upgrade_reload("index.php?agreelicense=1&amp;lang=$CFG->lang");
             } else {
                 notify(get_string('environmentok', 'admin'), 'notifysuccess');
@@ -221,7 +221,7 @@
 
             require_once($CFG->libdir.'/environmentlib.php');
             print_heading(get_string('environment', 'admin'));
-            if (!check_moodle_environment($release, $environment_results, true)) {
+            if (!check_moodle_environment($release, $environment_results, true, ENV_SELECT_RELEASE)) {
                 print_upgrade_reload('index.php?confirmupgrade=1');
             } else {
                 notify(get_string('environmentok', 'admin'), 'notifysuccess');

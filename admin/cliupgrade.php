@@ -488,8 +488,8 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     //check connection to database
 
     if ($dbconnected) {
-        /// Execute environment check, printing results
-        if (!check_moodle_environment($INSTALL['release'], $environment_results, false)) {
+        /// Execute environment check, not printing results
+        if (!check_moodle_environment($INSTALL['release'], $environment_results, false, ENV_SELECT_RELEASE)) {
             $errormsg = get_string('errorsinenvironment', 'install') . "\n";
         }
     } else {
@@ -904,7 +904,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
                 require_once($CFG->libdir.'/environmentlib.php');
 
                 console_write('environment', 'admin');
-                if (!check_moodle_environment($release, $environment_results, false)) {
+                if (!check_moodle_environment($release, $environment_results, false, ENV_SELECT_RELEASE)) {
                     // Print Environment Status
                     if ($verbose > CLI_NO) {
                         print_newline();
