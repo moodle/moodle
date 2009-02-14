@@ -59,12 +59,7 @@ if (isset($CFG->CSV_DELIMITER)) {
     $csv_encode = '/\&\#44/';
 }
 
-$strgrades = get_string('grades', 'grades');
-$actionstr = get_string('csv', 'grades');
-$navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course->id));
-
-print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
-print_grade_plugin_selector($id, 'import', 'csv');
+print_grade_page_head($course->id, 'import', 'csv', get_string('importcsv', 'grades'));
 
 // set up import form
 $mform = new grade_import_form(null, array('includeseparator'=>!isset($CFG->CSV_DELIMITER), 'verbosescales'=>true));
@@ -89,7 +84,7 @@ if ($id) {
 if ($importcode = optional_param('importcode', '', PARAM_FILE)) {
     $filename = $CFG->dataroot.'/temp/gradeimport/cvs/'.$USER->id.'/'.$importcode;
     $fp = fopen($filename, "r");
-    $header = split($csv_delimiter, fgets($fp,1024), PARAM_RAW);
+    $header = split($csv_delimiter, fgets($fp,4096), PARAM_RAW);
 }
 
 $mform2 = new grade_import_mapping_form(null, array('gradeitems'=>$gradeitems, 'header'=>$header));
@@ -128,7 +123,7 @@ if ($formdata = $mform->get_data()) {
     $fp = fopen($filename, "r");
 
     // --- get header (field names) ---
-    $header = split($csv_delimiter, fgets($fp,1024), PARAM_RAW);
+    $header = split($csv_delimiter, fgets($fp,4096), PARAM_RAW);
 
     // print some preview
     $numlines = 0; // 0 preview lines displayed
@@ -142,7 +137,7 @@ if ($formdata = $mform->get_data()) {
     }
     echo '</tr>';
     while (!feof ($fp) && $numlines <= $formdata->previewrows) {
-        $lines = split($csv_delimiter, fgets($fp,1024));
+        $lines = split($csv_delimiter, fgets($fp,4096));
         echo '<tr>';
         foreach ($lines as $line) {
             echo '<td>'.$line.'</td>';;
@@ -158,7 +153,7 @@ if ($formdata = $mform->get_data()) {
     $mform2->display();
 
 //} else if (($formdata = data_submitted()) && !empty($formdata->map)) {
- 
+
 // else if grade import mapping form is submitted
 } else if ($formdata = $mform2->get_data()) {
 
@@ -171,7 +166,7 @@ if ($formdata = $mform->get_data()) {
 
     if ($fp = fopen($filename, "r")) {
         // --- get header (field names) ---
-        $header = split($csv_delimiter, clean_param(fgets($fp,1024), PARAM_RAW));
+        $header = split($csv_delimiter, clean_param(fgets($fp,4096), PARAM_RAW));
 
         foreach ($header as $i => $h) {
             $h = trim($h); $header[$i] = $h; // remove whitespace
@@ -219,14 +214,14 @@ if ($formdata = $mform->get_data()) {
     if ($fp = fopen($filename, "r")) {
 
         // read the first line makes sure this doesn't get read again
-        $header = split($csv_delimiter, fgets($fp,1024));
+        $header = split($csv_delimiter, fgets($fp,4096));
 
         $newgradeitems = array(); // temporary array to keep track of what new headers are processed
         $status = true;
 
         while (!feof ($fp)) {
             // add something
-            $line = split($csv_delimiter, fgets($fp,1024));
+            $line = split($csv_delimiter, fgets($fp,4096));
 
             if(count($line) <= 1){
                 // there is no data on this line, move on
@@ -379,7 +374,7 @@ if ($formdata = $mform->get_data()) {
                                 } else {
                                     $scale = $gradeitem->load_scale();
                                     $scales = explode(',', $scale->scale);
-                                    $scales = array_map('trim', $scales); //hack - trim whitespace around scale options 
+                                    $scales = array_map('trim', $scales); //hack - trim whitespace around scale options
                                     array_unshift($scales, '-'); // scales start at key 1
                                     $key = array_search($value, $scales);
                                     if ($key === false) {
@@ -396,7 +391,7 @@ if ($formdata = $mform->get_data()) {
                             } else {
                                 if ($value === '' or $value == '-') {
                                     $value = null; // no grade
-    
+
                                 } else if (!is_numeric($value)) {
                                 // non numeric grade value supplied, possibly mapped wrong column
                                     echo "<br/>t0 is $t0";
