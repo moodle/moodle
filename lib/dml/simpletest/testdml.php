@@ -1761,6 +1761,14 @@ class dml_test extends UnitTestCase {
         }
     }
 
+    function test_sql_length() {
+        $DB = $this->tdb;
+        $this->assertEqual($DB->get_field_sql(
+                "SELECT ".$DB->sql_length("'aeiou'").$DB->sql_null_from_clause()), 5);
+        $this->assertEqual($DB->get_field_sql(
+                "SELECT ".$DB->sql_length("'áéíóú'").$DB->sql_null_from_clause()), 5);
+    }
+
     function test_sql_position() {
         $DB = $this->tdb;
         $this->assertEqual($DB->get_field_sql(
@@ -1959,6 +1967,7 @@ class moodle_database_for_testing extends moodle_database {
     protected function get_dbtype(){}
     protected function get_dblibrary(){}
     public function get_name(){}
+    public function get_configuration_help(){}
     public function get_configuration_hints(){}
     public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null){}
     public function get_server_info(){}
