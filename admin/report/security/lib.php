@@ -907,7 +907,7 @@ function report_security_check_courserole($detailed=false) {
         }
         $problems[] = get_string('check_courserole_anything', 'report_security', $a);
     }
-    $rs->close();
+    rs_close($rs);
 
     // risky caps in any level - usually very dangerous!!
     $inroles = implode(',', $roleids);
@@ -930,7 +930,7 @@ function report_security_check_courserole($detailed=false) {
         }
         $problems[] = get_string('check_courserole_risky', 'report_security', $a);
     }
-    $rs->close();
+    rs_close($rs);
 
     // course creator or administrator does not make any sense here!
     $inroles = implode(',', $roleids);
@@ -982,7 +982,7 @@ function report_security_check_riskadmin($detailed=false) {
     $result->status  = null;
     $result->link    = null;
 
-    $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, u.imagealt
+    $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email
               FROM {$CFG->prefix}role_capabilities rc
               JOIN {$CFG->prefix}role_assignments ra ON (ra.contextid = rc.contextid AND ra.roleid = rc.roleid)
               JOIN {$CFG->prefix}user u ON u.id = ra.userid
@@ -992,8 +992,10 @@ function report_security_check_riskadmin($detailed=false) {
                    AND rc.contextid = ".SYSCONTEXTID."";
 
     $admins = get_records_sql($sql);
+    $admincount = count($admins);
 
-    $sqlfrom = "FROM (SELECT rcx.*
+    $sqlunsup = "SELECT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, ra.contextid, ra.roleid
+                  FROM (SELECT rcx.*
                         FROM {$CFG->prefix}role_capabilities rcx
                        WHERE rcx.capability = 'moodle/site:doanything' AND rcx.permission = ".CAP_ALLOW.") rc,
                      {$CFG->prefix}context c,
@@ -1003,37 +1005,42 @@ function report_security_check_riskadmin($detailed=false) {
                WHERE c.id = rc.contextid
                      AND (sc.path = c.path OR sc.path LIKE ".sql_concat('c.path', "'/%'")." OR c.path LIKE ".sql_concat('sc.path', "'/%'").")
                      AND u.id = ra.userid AND u.deleted = 0
-                     AND ra.contextid = sc.id AND ra.roleid = rc.roleid AND ra.contextid <> ".SYSCONTEXTID."";
+                     AND ra.contextid = sc.id AND ra.roleid = rc.roleid AND ra.contextid <> ".SYSCONTEXTID."
+            GROUP BY u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, ra.contextid, ra.roleid
+            ORDER BY u.lastname, u.firstname";
 
-    $count = count_records_sql("SELECT COUNT(DISTINCT u.id) $sqlfrom");
+    $unsupcount = count_records_sql("SELECT COUNT('x') FROM ($sqlunsup) unsup");
 
-    if (!$count) {
+    if ($detailed) {
+        foreach ($admins as $uid=>$user) {
+            $url = "$CFG->wwwroot/user/view.php?id=$user->id";
+            $admins[$uid] = '<li><a href="'.$url.'">'.fullname($user).' ('.$user->email.')</a></li>';
+        }
+        $admins = '<ul>'.implode($admins).'</ul>';
+    }
+
+    if (!$unsupcount) {
         $result->status  = REPORT_SECURITY_OK;
-        $result->info = get_string('check_riskadmin_ok', 'report_security', count($admins));
+        $result->info = get_string('check_riskadmin_ok', 'report_security', count($admincount));
 
         if ($detailed) {
-            foreach ($admins as $uid=>$user) {
-                $admins[$uid] = fullname($user);
-            }
-            $admins = implode(', ', $admins);
             $result->details = get_string('check_riskadmin_detailsok', 'report_security', $admins);
         }
 
     } else {
         $result->status  = REPORT_SECURITY_WARNING;
-        $a = (object)array('admincount'=>count($admins), 'unsupcount'=>$count);
+        $a = (object)array('admincount'=>$admincount, 'unsupcount'=>$unsupcount);
         $result->info = get_string('check_riskadmin_warning', 'report_security', $a);
 
         if ($detailed) {
-            foreach ($admins as $uid=>$user) {
-                $admins[$uid] = fullname($user);
+            $rs = get_recordset_sql($sqlunsup);
+            $users = array();
+            while ($user = rs_fetch_next_record($rs)) {
+                $url = "$CFG->wwwroot/$CFG->admin/roles/assign.php?contextid=$user->contextid&amp;roleid=$user->roleid";
+                $users[] = '<li><a href="'.$url.'">'.fullname($user).' ('.$user->email.')</a></li>';
             }
-            $admins = implode(', ', $admins);
-            $users = get_records_sql("SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, u.imagealt $sqlfrom");
-            foreach ($users as $uid=>$user) {
-                $users[$uid] = fullname($user);
-            }
-            $users = implode(', ', $users);
+            rs_close($rs);
+            $users = '<ul>'.implode($users).'</ul>';
             $a = (object)array('admins'=>$admins, 'unsupported'=>$users);
             $result->details = get_string('check_riskadmin_detailswarning', 'report_security', $a);
         }

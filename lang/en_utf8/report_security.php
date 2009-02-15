@@ -119,9 +119,9 @@ $string['check_passwordpolicy_error'] = 'Password policy not set.';
 $string['check_passwordpolicy_name'] = 'Password policy';
 $string['check_passwordpolicy_ok'] = 'Password policy enabled.';
 
-$string['check_riskadmin_detailsok'] = '<p>Please verify the following list of administrators:</p><p>$a</p>';
-$string['check_riskadmin_detailswarning'] = '<p>Please verify the following list of administrators:</p><p>$a->admins</p>
-<p>It is recommended to assign administrator role in system context only. Following users have unsupported admin role assignments:</p><p>$a->unsupported</p>';
+$string['check_riskadmin_detailsok'] = '<p>Please verify the following list of system administrators:</p>$a';
+$string['check_riskadmin_detailswarning'] = '<p>Please verify the following list of system administrators:</p>$a->admins
+<p>It is recommended to assign administrator role in system context only. Following users have unsupported admin role assignments:</p>$a->unsupported';
 $string['check_riskadmin_name'] = 'Administrators';
 $string['check_riskadmin_ok'] = 'Found $a server administrator(s).';
 $string['check_riskadmin_warning'] = 'Found $a->admincount server administrators and $a->unsupcount unsupported admin role assignments.';
