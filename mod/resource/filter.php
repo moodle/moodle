@@ -43,7 +43,7 @@
                                      cm.visible =  1 AND
                                      r.id = cm.instance AND
                                      cm.course = ?
-                            ORDER BY CHAR_LENGTH(r.name) DESC, cm.section ASC";
+                            ORDER BY " . $DB->sql_length('r.name') . " DESC, cm.section ASC";
 
             if (!$resources = $DB->get_records_sql($resource_sql, array($courseid)) ){
                 $nothingtodo = true;
