@@ -141,7 +141,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                     if ($this->ldap_find_userdn($ldapconnection, $extusername)) {
                         $validuser = true;
                     }
-                    ldap_close($ldapconnection);
+                    $this->ldap_close();
                 }
 
                 // Shortcut here - SSO confirmed
@@ -156,19 +156,19 @@ class auth_plugin_ldap extends auth_plugin_base {
 
             //if ldap_user_dn is empty, user does not exist
             if (!$ldap_user_dn) {
-                ldap_close($ldapconnection);
+                $this->ldap_close();
                 return false;
             }
 
             // Try to bind with current username and password
             $ldap_login = @ldap_bind($ldapconnection, $ldap_user_dn, $extpassword);
-            ldap_close($ldapconnection);
+            $this->ldap_close();
             if ($ldap_login) {
                 return true;
             }
         }
         else {
-            @ldap_close($ldapconnection);
+            $this->ldap_close();
             print_error('auth_ldap_noconnect','auth','',$this->config->host_url);
         }
         return false;
@@ -242,7 +242,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             }
         }
 
-        @ldap_close($ldapconnection);
+        $this->ldap_close();
         return $result;
     }
 
@@ -383,7 +383,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             default:
                print_error('auth_ldap_unsupportedusertype','auth','',$this->config->user_type);
         }
-        ldap_close($ldapconnection);
+        $this->ldap_close();
         return $uadd;
 
     }
@@ -596,7 +596,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         $ldapconnection = $this->ldap_connect();
 
         if (!$ldapconnection) {
-            @ldap_close($ldapconnection);
+            $this->ldap_close();
             print get_string('auth_ldap_noconnect','auth',$this->config->host_url);
             exit;
         }
@@ -867,6 +867,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         } else {
             print "No users to be added\n";
         }
+        $this->ldap_close();
         return true;
     }
 
@@ -971,7 +972,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 error ('auth: ldap user_activate() does not support selected usertype:"'.$this->config->user_type.'" (..yet)');
         }
         $result = ldap_modify($ldapconnection, $userdn, $newinfo);
-        ldap_close($ldapconnection);
+        $this->ldap_close();
         return $result;
     }
 
@@ -1006,7 +1007,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 error ('auth: ldap user_disable() does not support selected usertype (..yet)');
         }
         $result = ldap_modify($ldapconnection, $userdn, $newinfo);
-        ldap_close($ldapconnection);
+        $this->ldap_close();
         return $result;
     }*/
 
@@ -1191,11 +1192,11 @@ class auth_plugin_ldap extends auth_plugin_base {
             }
         } else {
             error_log("ERROR:No user found in LDAP");
-            @ldap_close($ldapconnection);
+            $this->ldap_close();
             return false;
         }
 
-        @ldap_close($ldapconnection);
+        $this->ldap_close();
 
         return true;
 
@@ -1319,7 +1320,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
         }
 
-        @ldap_close($ldapconnection);
+        $this->ldap_close();
         return $result;
     }
 
@@ -1564,6 +1565,16 @@ class auth_plugin_ldap extends auth_plugin_base {
      * @return connection result
      */
     function ldap_connect($binddn='',$bindpwd='') {
+        // Cache ldap connections (they are expensive to set up
+        // and can drain the TCP/IP ressources on the server if we 
+        // are syncing a lot of users (as we try to open a new connection
+        // to get the user details). This is the least invasive way
+        // to reuse existing connections without greater code surgery.
+        if(!empty($this->ldapconnection)) {
+            $this->ldapconns++;
+            return $this->ldapconnection;
+        }
+
         //Select bind password, With empty values use
         //ldap_bind_* variables or anonymous bind if ldap_bind_* are empty
         if ($binddn == '' and $bindpwd == '') {
@@ -1610,6 +1621,10 @@ class auth_plugin_ldap extends auth_plugin_base {
             }
 
             if ($bindresult) {
+		// Set the connection counter so we can call PHP's ldap_close()
+		// when we call $this->ldap_close() for the last 'open' connection.
+                $this->ldapconns = 1;  
+                $this->ldapconnection = $connresult;
                 return $connresult;
             }
 
@@ -1619,6 +1634,18 @@ class auth_plugin_ldap extends auth_plugin_base {
         //If any of servers are alive we have already returned connection
         print_error('auth_ldap_noconnect_all','auth','', $debuginfo);
         return false;
+    }
+
+    /**
+     * disconnects from a ldap server
+     *
+     */
+    function ldap_close() {
+        $this->ldapconns--;
+        if($this->ldapconns == 0) {
+            @ldap_close($this->ldapconnection);
+            unset($this->ldapconnection);
+        }
     }
 
     /**
