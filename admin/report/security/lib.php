@@ -803,9 +803,9 @@ function report_security_check_defaultcourserole($detailed=false) {
     if ($anything_contexts = $DB->get_records_sql($sql, $params)) {
         foreach($anything_contexts as $contextid) {
             if ($contextid == SYSCONTEXTID) {
-                $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&roleid=$CFG->defaultcourseroleid";
+                $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&amp;roleid=$CFG->defaultcourseroleid";
             } else {
-                $a = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid&roleid=$CFG->defaultcourseroleid";
+                $a = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid&amp;roleid=$CFG->defaultcourseroleid";
             }
             $problems[] = get_string('check_defaultcourserole_anything', 'report_security', $a);
         }
@@ -823,9 +823,9 @@ function report_security_check_defaultcourserole($detailed=false) {
     if ($riskycontexts = $DB->get_records_sql($sql, $params)) {
         foreach($riskycontexts as $contextid=>$unused) {
             if ($contextid == SYSCONTEXTID) {
-                $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&roleid=$CFG->defaultcourseroleid";
+                $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&amp;roleid=$CFG->defaultcourseroleid";
             } else {
-                $a = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid&roleid=$CFG->defaultcourseroleid";
+                $a = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid&amp;roleid=$CFG->defaultcourseroleid";
             }
             $problems[] = get_string('check_defaultcourserole_risky', 'report_security', $a);
         }
@@ -919,9 +919,9 @@ function report_security_check_courserole($detailed=false) {
         $roleid    = $res->roleid;
         $contextid = $res->contextid;
         if ($contextid == SYSCONTEXTID) {
-            $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&roleid=$roleid";
+            $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&amp;roleid=$roleid";
         } else {
-            $a = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid&roleid=$roleid";
+            $a = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid&amp;roleid=$roleid";
         }
         $problems[] = get_string('check_courserole_anything', 'report_security', $a);
     }
@@ -943,9 +943,9 @@ function report_security_check_courserole($detailed=false) {
         $roleid    = $res->roleid;
         $contextid = $res->contextid;
         if ($contextid == SYSCONTEXTID) {
-            $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&roleid=$roleid";
+            $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&amp;roleid=$roleid";
         } else {
-            $a = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid&roleid=$roleid";
+            $a = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid&amp;roleid=$roleid";
         }
         $problems[] = get_string('check_courserole_risky', 'report_security', $a);
     }
@@ -961,7 +961,7 @@ function report_security_check_courserole($detailed=false) {
                    AND rc.roleid $inroles";
     if ($legacys = $DB->get_records_sql($sql, $params)) {
         foreach ($legacys as $roleid=>$unused) {
-            $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&roleid=$roleid";
+            $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&amp;roleid=$roleid";
             $problems[] = get_string('check_defaultcourserole_legacy', 'report_security', $a);
         }
     }
