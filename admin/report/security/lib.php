@@ -67,6 +67,21 @@ function report_security_get_issue_list() {
     );
 }
 
+function report_security_doc_link($issue, $name) {
+    global $CFG;
+
+    if (empty($CFG->docroot)) {
+        return $name;
+    }
+
+    $lang = str_replace('_utf8', '', current_language());
+
+    $str = "<a onclick=\"this.target='docspopup'\" href=\"$CFG->docroot/$lang/report/security/$issue\">";
+    $str .= "<img class=\"iconhelp\" src=\"$CFG->httpswwwroot/pix/docs.gif\" alt=\"\" />$name</a>";
+
+    return $str;
+}
+
 ///=============================================
 ///               Issue checks
 ///=============================================
