@@ -901,6 +901,19 @@ function report_security_check_courserole($detailed=false) {
 
     $roleids = array_keys($student_roles);
 
+    $sql = "SELECT DISTINCT rc.roleid
+              FROM {role_capabilities} rc
+             WHERE (rc.capability = :coursecreator OR rc.capability = :admin OR rc.capability = :teacher OR rc.capability = :editingteacher)
+                   AND rc.permission = ".CAP_ALLOW."";
+    $params = array('coursecreator'  => 'moodle/legacy:coursecreator',
+                    'admin'          => 'moodle/legacy:admin',
+                    'teacher'        => 'moodle/legacy:teacher',
+                    'editingteacher' => 'moodle/legacy:editingteacher');
+
+    $riskyroleids = $DB->get_records_sql($sql, $params);
+    $riskyroleids = array_keys($riskyroleids);
+
+
     // first test if do anything enabled - that would be really crazy!!!!!!
     list($inroles, $params) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'r0', true);
     $params = array_merge($params, array('doanything'=>'moodle/site:doanything', 'capallow'=>CAP_ALLOW));
@@ -927,43 +940,43 @@ function report_security_check_courserole($detailed=false) {
     }
     $rs->close();
 
-    // risky caps in any level - usually very dangerous!!
+    // any XSS legacy cap does not make any sense here!
     list($inroles, $params) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'r0', true);
-    $params = array_merge($params, array('capallow'=>CAP_ALLOW));
-    $sql = "SELECT rc.roleid, rc.contextid
-              FROM {role_capabilities} rc
-              JOIN {capabilities} cap ON cap.name = rc.capability
-             WHERE ".$DB->sql_bitand('cap.riskbitmask', (RISK_XSS | RISK_CONFIG | RISK_DATALOSS))." <> 0
-                   AND rc.permission = :capallow
-                   AND rc.roleid $inroles
-          GROUP BY rc.roleid, rc.contextid
-          ORDER BY rc.roleid, rc.contextid";
-    $rs = $DB->get_recordset_sql($sql, $params);
-    foreach($rs as $res) {
-        $roleid    = $res->roleid;
-        $contextid = $res->contextid;
-        if ($contextid == SYSCONTEXTID) {
-            $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&amp;roleid=$roleid";
-        } else {
-            $a = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid&amp;roleid=$roleid";
+    $sql = "SELECT DISTINCT c.id, c.shortname
+              FROM {course} c
+             WHERE c.defaultrole $inroles
+          ORDER BY c.sortorder";
+    if ($courses = $DB->get_records_sql($sql, $params)) {
+        foreach ($courses as $course) {
+            $a = (object)array('url'=>"$CFG->wwwroot/course/edit.php?id=$course->id", 'shortname'=>$course->shortname);
+            $problems[] = get_string('check_courserole_riskylegacy', 'report_security', $a);
         }
-        $problems[] = get_string('check_courserole_risky', 'report_security', $a);
     }
-    $rs->close();
 
-    // course creator or administrator does not make any sense here!
-    list($inroles, $params) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'r0', true);
-    $params = array_merge($params, array('capallow'=>CAP_ALLOW, 'creator'=>'moodle/legacy:coursecreator', 'admin'=>'moodle/legacy:admin'));
-    $sql = "SELECT DISTINCT rc.roleid
-              FROM {role_capabilities} rc
-             WHERE (rc.capability = :creator OR rc.capability = :admin)
-                   AND rc.permission = :capallow
-                   AND rc.roleid $inroles";
-    if ($legacys = $DB->get_records_sql($sql, $params)) {
-        foreach ($legacys as $roleid=>$unused) {
-            $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&amp;roleid=$roleid";
-            $problems[] = get_string('check_defaultcourserole_legacy', 'report_security', $a);
+    // risky caps in any level - usually very dangerous!!
+    if ($checkroles = array_diff($roleids, $riskyroleids)) {
+        list($inroles, $params) = $DB->get_in_or_equal($checkroles, SQL_PARAMS_NAMED, 'r0', true);
+        $params = array_merge($params, array('capallow'=>CAP_ALLOW));
+        $sql = "SELECT rc.roleid, rc.contextid
+                  FROM {role_capabilities} rc
+                  JOIN {capabilities} cap ON cap.name = rc.capability
+                 WHERE ".$DB->sql_bitand('cap.riskbitmask', (RISK_XSS | RISK_CONFIG | RISK_DATALOSS))." <> 0
+                       AND rc.permission = :capallow
+                       AND rc.roleid $inroles
+              GROUP BY rc.roleid, rc.contextid
+              ORDER BY rc.roleid, rc.contextid";
+        $rs = $DB->get_recordset_sql($sql, $params);
+        foreach($rs as $res) {
+            $roleid    = $res->roleid;
+            $contextid = $res->contextid;
+            if ($contextid == SYSCONTEXTID) {
+                $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&amp;roleid=$roleid";
+            } else {
+                $a = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid&amp;roleid=$roleid";
+            }
+            $problems[] = get_string('check_courserole_risky', 'report_security', $a);
         }
+        $rs->close();
     }
 
 
