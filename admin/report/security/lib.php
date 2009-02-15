@@ -886,6 +886,16 @@ function report_security_check_courserole($detailed=false) {
 
     $roleids = array_keys($student_roles);
 
+    $sql = "SELECT DISTINCT rc.roleid
+              FROM {$CFG->prefix}role_capabilities rc
+             WHERE (rc.capability = 'moodle/legacy:coursecreator' OR rc.capability = 'moodle/legacy:admin'
+                    OR rc.capability = 'moodle/legacy:teacher' OR rc.capability = 'moodle/legacy:editingteacher')
+                   AND rc.permission = ".CAP_ALLOW."";
+
+    $riskyroleids = get_records_sql($sql);
+    $riskyroleids = array_keys($riskyroleids);
+
+
     // first test if do anything enabled - that would be really crazy!!!!!!
     $inroles = implode(',', $roleids);
     $sql = "SELECT rc.roleid, rc.contextid
@@ -909,41 +919,42 @@ function report_security_check_courserole($detailed=false) {
     }
     rs_close($rs);
 
-    // risky caps in any level - usually very dangerous!!
-    $inroles = implode(',', $roleids);
-    $sql = "SELECT rc.roleid, rc.contextid
-              FROM {$CFG->prefix}role_capabilities rc
-              JOIN {$CFG->prefix}capabilities cap ON cap.name = rc.capability
-             WHERE ".sql_bitand('cap.riskbitmask', (RISK_XSS | RISK_CONFIG | RISK_DATALOSS))." <> 0
-                   AND rc.permission = ".CAP_ALLOW."
-                   AND rc.roleid IN ($inroles)
-          GROUP BY rc.roleid, rc.contextid
-          ORDER BY rc.roleid, rc.contextid";
-    $rs = get_recordset_sql($sql);
-    while ($res = rs_fetch_next_record($rs)) {
-        $roleid    = $res->roleid;
-        $contextid = $res->contextid;
-        if ($contextid == SYSCONTEXTID) {
-            $a = "$CFG->wwwroot/$CFG->admin/roles/manage.php?action=view&amp;roleid=$roleid";
-        } else {
-            $a = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid&amp;roleid=$roleid";
+    // any XSS legacy cap does not make any sense here!
+    $inroles = implode(',', $riskyroleids);
+    $sql = "SELECT DISTINCT c.id, c.shortname
+              FROM {$CFG->prefix}course c
+             WHERE c.defaultrole IN ($inroles)
+          ORDER BY c.sortorder";
+    if ($courses = get_records_sql($sql)) {
+        foreach ($courses as $course) {
+            $a = (object)array('url'=>"$CFG->wwwroot/course/edit.php?id=$course->id", 'shortname'=>$course->shortname);
+            $problems[] = get_string('check_courserole_riskylegacy', 'report_security', $a);
         }
-        $problems[] = get_string('check_courserole_risky', 'report_security', $a);
     }
-    rs_close($rs);
 
-    // course creator or administrator does not make any sense here!
-    $inroles = implode(',', $roleids);
-    $sql = "SELECT DISTINCT rc.roleid
-              FROM {$CFG->prefix}role_capabilities rc
-             WHERE (rc.capability = 'moodle/legacy:coursecreator' OR rc.capability = 'moodle/legacy:admin')
-                   AND rc.permission = ".CAP_ALLOW."
-                   AND rc.roleid IN ($inroles)";
-    if ($legacys = get_records_sql($sql)) {
-        foreach ($legacys as $roleid=>$unused) {
-            $a = "$CFG->wwwroot/$CFG->admin/roles/manage.php?action=view&amp;roleid=$roleid";
-            $problems[] = get_string('check_defaultcourserole_legacy', 'report_security', $a);
+    // risky caps in any level for roles not marked as risky yet - usually very dangerous!!
+    if ($checkroles = array_diff($roleids, $riskyroleids)) {
+        $inroles = implode(',', $checkroles);
+        $sql = "SELECT rc.roleid, rc.contextid
+                  FROM {$CFG->prefix}role_capabilities rc
+                  JOIN {$CFG->prefix}capabilities cap ON cap.name = rc.capability
+                 WHERE ".sql_bitand('cap.riskbitmask', (RISK_XSS | RISK_CONFIG | RISK_DATALOSS))." <> 0
+                       AND rc.permission = ".CAP_ALLOW."
+                       AND rc.roleid IN ($inroles)
+              GROUP BY rc.roleid, rc.contextid
+              ORDER BY rc.roleid, rc.contextid";
+        $rs = get_recordset_sql($sql);
+        while ($res = rs_fetch_next_record($rs)) {
+            $roleid    = $res->roleid;
+            $contextid = $res->contextid;
+            if ($contextid == SYSCONTEXTID) {
+                $a = "$CFG->wwwroot/$CFG->admin/roles/manage.php?action=view&amp;roleid=$roleid";
+            } else {
+                $a = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid&amp;roleid=$roleid";
+            }
+            $problems[] = get_string('check_courserole_risky', 'report_security', $a);
         }
+        rs_close($rs);
     }
 
 
