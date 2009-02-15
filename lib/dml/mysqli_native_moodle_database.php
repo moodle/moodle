@@ -881,6 +881,15 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Returns the SQL text to be used to calculate the length in characters of one expression.
+     * @param string fieldname or expression to calculate its length in characters.
+     * @return string the piece of SQL code to be used in the statement.
+     */
+    public function sql_length($fieldname) {
+        return ' CHAR_LENGTH(' . $fieldname . ')';
+    }
+
+    /**
      * Does this driver suppoer regex syntax when searching
      */
     public function sql_regex_supported() {
