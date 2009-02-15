@@ -977,6 +977,10 @@ function sql_order_by_text($fieldname, $numchars=32) {
     error('sql_order_by_text() not available anymore');
 }
 
+function sql_length($fieldname) {
+    error('sql_length() not available anymore');
+}
+
 function sql_concat_join($separator="' '", $elements=array()) {
     error('sql_concat_join() not available anymore');
 }
