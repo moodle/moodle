@@ -32,7 +32,7 @@ $string['check_courserole_anything'] = 'The \"doanything\" capability must not b
 $string['check_courserole_details'] = '<p>Each course has one default enrolment role specified. Please make sure no risky capabilities are allowed for this role.</p>
 <p>The only supported legacy type for the default course role is <em>Student</em>.</p>';
 $string['check_courserole_error'] = 'Incorrectly defined default course roles detected!';
-$string['check_courserole_legacy'] = 'Unsupported legacy type detected in the <a href=\"$a\">role</a>.';
+$string['check_courserole_riskylegacy'] = 'Risky legacy type detected in <a href=\"$a->url\">$a->shortname</a>.';
 $string['check_courserole_name'] = 'Default roles (courses)';
 $string['check_courserole_notyet'] = 'Used only default course role.';
 $string['check_courserole_ok'] = 'Default course role definitions is OK.';
@@ -42,7 +42,7 @@ $string['check_defaultcourserole_anything'] = 'The \"doanything\" capability mus
 $string['check_defaultcourserole_details'] = '<p>The default student role for course enrolment specifies the default role for courses. Please make sure no risky capabilities are allowed in this role.</p>
 <p>The only supported legacy type for default role is <em>Student</em>.</p>';
 $string['check_defaultcourserole_error'] = 'Incorrectly defined default course role \"$a\" detected!';
-$string['check_defaultcourserole_legacy'] = 'Unsupported legacy type detected.';
+$string['check_defaultcourserole_legacy'] = 'Risky legacy type detected.';
 $string['check_defaultcourserole_name'] = 'Default course role (global)';
 $string['check_defaultcourserole_notset'] = 'Default role is not set.';
 $string['check_defaultcourserole_ok'] = 'Site default role definition is OK.';
