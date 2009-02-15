@@ -2018,6 +2018,27 @@ function sql_order_by_text($fieldname, $numchars=32) {
     }
 }
 
+/**
+ * Returns the SQL text to be used to calculate the length in characters of one expression.
+ * @param string fieldname or expression to calculate its length in characters.
+ * @return string the piece of SQL code to be used in the statement.
+ */
+function sql_length($fieldname) {
+
+    global $CFG;
+
+    switch ($CFG->dbfamily) {
+        case 'mysql':
+            return 'CHAR_LENGTH(' . $fieldname . ')';
+            break;
+        case 'mssql':
+            return 'LEN(' . $fieldname . ')';
+            break;
+        default:
+            return 'LENGTH(' . $fieldname . ')';
+    }
+}
+
     /**
      * Returns the SQL for returning searching one string for the location of another.
      * @param string $needle the SQL expression that will be searched for.
