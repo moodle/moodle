@@ -398,8 +398,13 @@ function report_security_check_emailchangeconfirmation($detailed=false) {
     $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=sitepolicies\">".get_string('sitepolicies', 'admin').'</a>';
 
     if (empty($CFG->emailchangeconfirmation)) {
-        $result->status = REPORT_SECURITY_WARNING;
-        $result->info   = get_string('check_emailchangeconfirmation_error', 'report_security');
+        if (empty($CFG->allowemailaddresses)) {
+            $result->status = REPORT_SECURITY_WARNING;
+            $result->info   = get_string('check_emailchangeconfirmation_error', 'report_security');
+        } else {
+            $result->status = REPORT_SECURITY_INFO;
+            $result->info   = get_string('check_emailchangeconfirmation_info', 'report_security');
+        }
     } else {
         $result->status = REPORT_SECURITY_OK;
         $result->info   = get_string('check_emailchangeconfirmation_ok', 'report_security');

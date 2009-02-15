@@ -62,6 +62,7 @@ $string['check_displayerrors_ok'] = 'Displaying of PHP errors disabled.';
 
 $string['check_emailchangeconfirmation_details'] = '<p>It is recommended that an email confirmation step is required when users change their email address in their profile. If disabled, spammers may try to exploit the server to send spam.</p>';
 $string['check_emailchangeconfirmation_error'] = 'Users may enter any email address.';
+$string['check_emailchangeconfirmation_info'] = 'Users may enter email addresses from allowed domains only.';
 $string['check_emailchangeconfirmation_name'] = 'Email change confirmation';
 $string['check_emailchangeconfirmation_ok'] = 'Confirmation of change of email address in user profile.';
 
