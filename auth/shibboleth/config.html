@@ -70,7 +70,7 @@ urn:mace:organization2:providerID, Example Organization 2, /Shibboleth.sso/WAYF/
         }
         ?>
 </textarea>
-    <?
+    <?php
        if (isset($config->organization_selection) && empty($config->organization_selection) && isset($config->alt_login) && $config->alt_login == 'on') {
               echo '<br/><font color="red">';
               print_string("auth_shib_no_organizations_warning", "auth");
