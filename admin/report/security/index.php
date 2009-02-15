@@ -83,7 +83,7 @@ if ($issue and ($result = $issue(true))) {
 
     // print detail of one issue only
     $row = array();
-    $row[0] = $result->name;
+    $row[0] = report_security_doc_link($issue, $result->name);
     $row[1] = $statusarr[$result->status];
     $row[2] = $result->info;
     $row[3] = is_null($result->link) ? '&nbsp;' : $result->link;
