@@ -405,7 +405,7 @@ if ( !is_object($PHPCAS_CLIENT) ) {
                 $result[$key] = $ldapval;
             }
         }
-        @ldap_close($ldapconnection);
+        $this->ldap_close($ldapconnection);
         return $result;
     }
     /**
@@ -435,6 +435,16 @@ if ( !is_object($PHPCAS_CLIENT) ) {
      * @return connection result
      */
     function ldap_connect($binddn='',$bindpwd='') {
+        // Cache ldap connections (they are expensive to set up
+        // and can drain the TCP/IP ressources on the server if we 
+        // are syncing a lot of users (as we try to open a new connection
+        // to get the user details). This is the least invasive way
+        // to reuse existing connections without greater code surgery.
+        if(!empty($this->ldapconnection)) {
+            $this->ldapconns++;
+            return $this->ldapconnection;
+        }
+
         //Select bind password, With empty values use
         //ldap_bind_* variables or anonymous bind if ldap_bind_* are empty
         if ($binddn == '' and $bindpwd == '') {
@@ -469,6 +479,10 @@ if ( !is_object($PHPCAS_CLIENT) ) {
                 ldap_set_option($connresult, LDAP_OPT_DEREF, $this->config->opt_deref);
             }
             if ($bindresult) {
+                // Set the connection counter so we can call PHP's ldap_close()
+                // when we call $this->ldap_close() for the last 'open' connection.
+                $this->ldapconns = 1;  
+                $this->ldapconnection = $connresult;
                 return $connresult;
             }
             $debuginfo .= "<br/>Server: '$server' <br/> Connection: '$connresult'<br/> Bind result: '$bindresult'</br>";
@@ -477,6 +491,18 @@ if ( !is_object($PHPCAS_CLIENT) ) {
         print_error('auth_ldap_noconnect_all','auth',$this->config->user_type);
         return false;
     }
+    /**
+     * disconnects from a ldap server
+     *
+     */
+    function ldap_close() {
+        $this->ldapconns--;
+        if($this->ldapconns == 0) {
+            @ldap_close($this->ldapconnection);
+            unset($this->ldapconnection);
+        }
+    }
+
     /**
      * retuns user attribute mappings between moodle and ldap
      *
@@ -629,7 +655,7 @@ if ( !is_object($PHPCAS_CLIENT) ) {
         print "Connecting to ldap...\n";
         $ldapconnection = $this->ldap_connect();
         if (!$ldapconnection) {
-            @ldap_close($ldapconnection);
+            $this->ldap_close($ldapconnection);
             print get_string('auth_ldap_noconnect','auth',$this->config->host_url);
             exit;
         }
@@ -878,6 +904,7 @@ if ( !is_object($PHPCAS_CLIENT) ) {
         } else {
             print "No users to be added\n";
         }
+        $this->ldap_close();
         return true;
     }
     /**
@@ -1016,6 +1043,7 @@ if (!empty($this->config->attrcreators)) {
                 }
           }
         }
+        $this->ldap_close();
         return $result;
     }
    /**
@@ -1055,6 +1083,7 @@ if (!empty($this->config->attrcreators)) {
                 array_push($fresult, ($users[$i][$this->config->user_attribute][0]) );
             }
         }
+        $this->ldap_close();
         return $fresult;
     }
     /**
