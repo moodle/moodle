@@ -89,6 +89,10 @@ global $HTTPSPAGEREQUIRED;
         die;
     }
 
+/// sometimes default PHP settings are borked on shared hosting servers, I wonder why they have to do that??
+    @ini_set('precision', 14); // needed for upgrades and gradebook
+
+
 /// store settings from config.php in array in $CFG - we can use it later to detect problems and overrides
     $CFG->config_php_settings = (array)$CFG;
 
