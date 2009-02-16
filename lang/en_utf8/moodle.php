@@ -1687,8 +1687,7 @@ $string['weekshow'] = 'Show this week to $a';
 $string['welcometocourse'] = 'Welcome to $a';
 $string['welcometocoursetext'] = 'Welcome to $a->coursename!
 
-If you have not done so already, you should edit your profile page
-within the course so that we can learn more about you:
+If you have not done so already, you should edit your profile page so that we can learn more about you:
 
   $a->profileurl';
 $string['whattocallzip'] = 'What do you want to call the zip file?';
