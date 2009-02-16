@@ -699,6 +699,13 @@ $moodle_capabilities = array(
         )
     ),
 
+    'moodle/site:usewebservices' => array(
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS | RISK_CONFIG | RISK_DATALOSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array()
+    ),
+
     'moodle/course:viewscales' => array(
 
         'captype' => 'read',
