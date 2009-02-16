@@ -5,7 +5,7 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/lib/filelib.php');
 
 class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     protected $_helpbutton = '';
-    protected $_options    = array('subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>0);
+    protected $_options    = array('subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>-1);
 
     function MoodleQuickForm_filemanager($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
         global $CFG;
@@ -138,6 +138,8 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
 
     function toHtml() {
         global $CFG, $USER, $COURSE;
+        require_once("$CFG->dirroot/repository/lib.php");
+
         $strdelete  = get_string('confirmdeletefile', 'repository');
         $straddfile = get_string('add', 'repository');
 
