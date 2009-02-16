@@ -835,6 +835,10 @@ table.navbar {
   margin:0px;
   margin-left:0.5em;
 }
+.texrender {
+  border:0px;
+  vertical-align:middle;
+}
 
 
 /***
