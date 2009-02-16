@@ -2893,6 +2893,8 @@ function assignment_print_overview($courses, &$htmlarray) {
         return;
     }
 
+    $assignmentids = array();
+
     // Do assignment_base::isopen() here without loading the whole thing for speed
     foreach ($assignments as $key => $assignment) {
         $time = time();
@@ -2905,7 +2907,14 @@ function assignment_print_overview($courses, &$htmlarray) {
         }
         if (empty($isopen) || empty($assignment->timedue)) {
             unset($assignments[$key]);
+        }else{
+            $assignmentids[] = $assignment->id;
         }
+    }
+
+    if(empty($assignmentids)){
+        // no assigments to look at - we're done
+        return true;
     }
 
     $strduedate = get_string('duedate', 'assignment');
@@ -2916,6 +2925,31 @@ function assignment_print_overview($courses, &$htmlarray) {
     $strsubmitted = get_string('submitted', 'assignment');
     $strassignment = get_string('modulename', 'assignment');
     $strreviewed = get_string('reviewed','assignment');
+
+
+    // NOTE: we do all possible database work here *outside* of the loop to ensure this scales 
+    //
+    list($sqlassignmentids, $assignmentidparams) = $DB->get_in_or_equal($assignmentids);
+    
+    // build up and array of unmarked submissions indexed by assigment id/ userid
+    // for use where the user has grading rights on assigment
+    $rs = $DB->get_recordset_sql("SELECT id, assignment, userid 
+                            FROM {assignment_submissions}
+                            WHERE teacher = 0 AND timemarked = 0
+                            AND assignment $sqlassignmentids", $assignmentidparams);
+
+    $unmarkedsubmissions = array();
+    foreach ($rs as $rd) {
+        $unmarkedsubmissions[$rd->assignment][$rd->userid] = $rd->id;
+    }
+    $rs->close();
+
+
+    // get all user submissions, indexed by assigment id
+    $mysubmissions = $DB->get_records_sql("SELECT assignment, timemarked, teacher, grade
+                                      FROM {assignment_submissions}
+                                      WHERE userid = ? AND 
+                                      assignment $sqlassignmentids", array_merge(array($USER->id), $assignmentidparams));
 
     foreach ($assignments as $assignment) {
         $str = '<div class="assignment overview"><div class="name">'.$strassignment. ': '.
@@ -2933,14 +2967,9 @@ function assignment_print_overview($courses, &$htmlarray) {
 
             // count how many people can submit
             $submissions = 0; // init
-            if ($students = get_users_by_capability($context, 'mod/assignment:submit', '', '', '', '', 0, '', false)) {
-                 foreach ($students as $student) {
-                    if ($DB->record_exists_sql("SELECT id
-                                                  FROM {assignment_submissions}
-                                                 WHERE assignment = ? AND
-                                                       userid = ? AND
-                                                       teacher = 0 AND
-                                                       timemarked = 0", array($assignment->id, $student->id))) {
+            if ($students = get_users_by_capability($context, 'mod/assignment:submit', 'u.id', '', '', '', 0, '', false)) {
+                foreach($students as $student){
+                    if(isset($unmarkedsubmissions[$assignment->id][$student->id])){
                         $submissions++;
                     }
                 }
@@ -2950,12 +2979,10 @@ function assignment_print_overview($courses, &$htmlarray) {
                 $str .= get_string('submissionsnotgraded', 'assignment', $submissions);
             }
         } else {
-            $sql = "SELECT *
-                      FROM {assignment_submissions}
-                     WHERE userid = ?
-                       AND assignment = ?";
-            $params = array($USER->id, $assignment->id);
-            if ($submission = $DB->get_record_sql($sql, $params)) {
+            if(isset($mysubmissions[$assignment->id])){
+
+                $submission = $mysubmissions[$assignment->id];
+
                 if ($submission->teacher == 0 && $submission->timemarked == 0) {
                     $str .= $strsubmitted . ', ' . $strnotgradedyet;
                 } else if ($submission->grade <= 0) {
