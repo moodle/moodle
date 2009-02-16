@@ -120,7 +120,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
 
         $text         = $this->_values['text'];
         $format       = $this->_values['format'];
-        $itemid       = $this->_values['itemid'];
+        $draftitemid  = $this->_values['itemid'];
 
         // security - never ever allow guest/not logged in user to upload anything
         if (isguestuser() or !isloggedin()) {
@@ -131,24 +131,29 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         $str .= '<div>';
 
 
-    /// first print text area - TODO: add on-the-fly switching to tinymce, size configuration
-        $str .= '<div><textarea id="'.$id.'" name="'.$elname.'[text]" rows="15" cols="80" />';
-        $str .= s($text);
-        $str .= '</textarea></div>';
-
     /// format option - TODO: ajax conversion and switching
         $formats = array(FORMAT_MOODLE=>'Moodle', FORMAT_HTML=>'HTML', FORMAT_PLAIN=>'Plaintext', FORMAT_WIKI=>'Wiki'); // TODO: localise & switch to new formats plugins
 
         if (!isset($formats[$format])) {
-            $format = FORMAT_MOODLE;
+            $format = FORMAT_HTML; // TODO: some user pref
         }
+
+    /// print text area - TODO: add on-the-fly switching to tinymce, size configuration
+        $editorclass = 'form-textarea';
+        if ($format == FORMAT_HTML or $format == FORMAT_MOODLE) {
+            $editorclass = 'form-textarea-advanced';
+        }
+
+        $str .= '<div><textarea class="'.$editorclass.'" id="'.$id.'" name="'.$elname.'[text]" rows="15" cols="80">';
+        $str .= s($text);
+        $str .= '</textarea></div>';
 
         $str .= '<div>';
         if ($changeformat) {
             $str .= '<select name="'.$elname.'[format]">';
             foreach ($formats as $key=>$desc) {
                 $selected = ($format == $key) ? 'selected="selected"' : '';
-                $str .= '<option value="'.s($key).'">'.$desc.'</ option>';
+                $str .= '<option value="'.s($key).'" '.$selected.'>'.$desc.'</option>';
             }
             $str .= '</select>';
         } else {
@@ -157,20 +162,36 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         }
         $str .= '</div>';
 
-    /// embedded image files - TODO: hide if tinymce used because it has own image upload/manage dialog
         if ($maxfiles != 0 ) { // 0 means no files, -1 unlimited
             if (empty($draftitemid)) {
                 // no existing area info provided - let's use fresh new draft area
                 require_once("$CFG->libdir/filelib.php");
                 $this->setValue(array('itemid'=>file_get_new_draftitemid()));
-                $itemid = $this->_values['itemid'];
+                $draftitemid = $this->_values['itemid'];
             }
+            $str .= '<div><input type="hidden" name="'.$elname.'[itemid]" value="'.$draftitemid.'" /></div>';
 
-            $str .= '<div>';
-            $editorurl = "$CFG->wwwroot/files/draftfiles.php?itemid=$itemid&amp;subdirs=$subdirs&amp;maxbytes=$maxbytes";
-            $str .= '<input type="hidden" name="'.$elname.'[itemid]" value="'.$itemid.'" />';
+        /// embedded image files - TODO: hide on the fly when switching editors
+            $str .= '<div id="'.$id.'_filemanager">';
+            $editorurl = "$CFG->wwwroot/files/draftfiles.php?itemid=$draftitemid&amp;subdirs=$subdirs&amp;maxbytes=$maxbytes";
             $str .= '<object type="text/html" data="'.$editorurl.'" height="160" width="600" style="border:1px solid #000">Error</object>'; // TODO: localise, fix styles, etc.
             $str .= '</div>';
+
+       /// TODO: somehow pass 'itemid' to tinymce so that image chooser known where to look for and upload files,
+       //        also include list of expected file types handled by editor array('image', 'video', 'media')
+            // JS code by Dongsheng goes here
+
+      /// TODO: hide embedded file manager if tinymce used
+            if ($editorclass === 'form-textarea-advanced') {
+                $str .= '<script type="text/javascript">
+//<![CDATA[
+    var fileman = document.getElementById("'.$id.'_filemanager");
+    fileman.style.visibility = "hidden";
+    fileman.style.height = "0";
+//]]>
+</script>';
+
+            }
         }
 
 
