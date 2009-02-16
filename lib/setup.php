@@ -241,6 +241,11 @@ global $HTTPSPAGEREQUIRED;
 /// Turn on SQL logging if required
     if (!empty($CFG->logsql)) {
         $db->LogSQL();
+        // And override ADODB's default logging time
+        if (isset($CFG->logsqlmintime)) {
+            global $ADODB_PERF_MIN;
+            $ADODB_PERF_MIN = $CFG->logsqlmintime;
+        }
     }
 
 /// Prevent warnings from roles when upgrading with debug on
