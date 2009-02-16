@@ -4377,19 +4377,18 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='',
 /**
  * Print the specified user's avatar.
  *
- * If you pass a $user object that has id, picture, imagealt, firstname, lastname
- * you save a DB query.
- *
- * @param int $user takes a userid, or a userobj
- * @param int $courseid ?
- * @param boolean $picture Print the user picture?
- * @param int $size Size in pixels.  Special values are (true/1 = 100px) and (false/0 = 35px) for backward compatability
+ * @param mixed $user Should be a $user object with at least fields id, picture, imagealt, firstname, lastname
+ *      If any of these are missing, or if a userid is passed, the the database is queried. Avoid this
+ *      if at all possible, particularly for reports. It is very bad for performance.
+ * @param int $courseid The course id. Used when constructing the link to the user's profile.
+ * @param boolean $picture The picture to print. By default (or if NULL is passed) $user->picture is used.
+ * @param int $size Size in pixels. Special values are (true/1 = 100px) and (false/0 = 35px) for backward compatability
  * @param boolean $return If false print picture to current page, otherwise return the output as string
- * @param boolean $link Enclose printed image in a link to view specified course?
- * @param string $target link target attribute
- * @param boolean $alttext use username or userspecified text in image alt attribute
- * return string
- * @todo Finish documenting this function
+ * @param boolean $link enclose printed image in a link the user's profile (default true).
+ * @param string $target link target attribute. Makes the profile open in a popup window.
+ * @param boolean $alttext add non-blank alt-text to the image. (Default true, set to false for purely
+ *      decorative images, or where the username will be printed anyway.)
+ * @return string or nothing, depending on $return.
  */
 function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=false, $link=true, $target='', $alttext=true) {
     global $CFG;
