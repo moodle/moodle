@@ -734,7 +734,7 @@ function scorm_get_file_info($browser, $areas, $course, $cm, $context, $filearea
             }
             public function get_visible_name() {
                 if ($this->lf->get_filepath() === '/' and $this->lf->get_filename() === '.') {
-                    return $this->areavisiblename;
+                    return $this->topvisiblename;
                 }
                 return parent::get_visible_name();
             }

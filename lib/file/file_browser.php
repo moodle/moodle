@@ -7,6 +7,7 @@ require_once("$CFG->libdir/file/file_info_system.php");
 require_once("$CFG->libdir/file/file_info_user.php");
 require_once("$CFG->libdir/file/file_info_coursecat.php");
 require_once("$CFG->libdir/file/file_info_course.php");
+require_once("$CFG->libdir/file/file_info_coursesection.php");
 require_once("$CFG->libdir/file/file_info_coursefile.php");
 require_once("$CFG->libdir/file/virtual_root_file.php");
 
@@ -200,7 +201,7 @@ class file_browser {
                 return null;
             }
 
-            if (!is_null($filearea) and !in_array($filearea, array('course_intro', 'course_content', 'course_backup'))) {
+            if (!is_null($filearea) and !in_array($filearea, array('course_intro', 'course_content', 'course_section', 'course_backup'))) {
                 // file area does not exist, sorry
                 $filearea = null;
             }
@@ -208,13 +209,16 @@ class file_browser {
             $filepath = is_null($filepath) ? '/' : $filepath;
             $filename = is_null($filename) ? '.' : $filename;
 
-            if (is_null($filearea) or is_null($itemid)) {
+            if (is_null($filearea)) {
                 return new file_info_course($this, $context, $course);
 
             } else {
                 if ($filearea === 'course_intro') {
                     if (!has_capability('moodle/course:update', $context)) {
                         return null;
+                    }
+                    if (is_null($itemid)) {
+                        return new file_info_course($this, $context, $course);
                     }
 
                     $urlbase = $CFG->wwwroot.'/pluginfile.php';
@@ -228,9 +232,37 @@ class file_browser {
                     }
                     return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areacourseintro', 'repository'), false, true, true, false);
 
+                } else if ($filearea === 'course_section') {
+                    if (!has_capability('moodle/course:update', $context)) {
+                        return null;
+                    }
+                    $urlbase = $CFG->wwwroot.'/pluginfile.php';
+
+                    if (empty($itemid)) {
+                        // list all sections
+                        return new file_info_coursesection($this, $context, $course);
+                    }
+
+                    if (!$section = $DB->get_record('course_sections', array('course'=>$course->id, 'id'=>$itemid))) {
+                        return null; // does not exist
+                    }
+
+                    if (!$storedfile = $fs->get_file($context->id, $filearea, $itemid, $filepath, $filename)) {
+                        if ($filepath === '/' and $filename === '.') {
+                            $storedfile = new virtual_root_file($context->id, $filearea, $itemid);
+                        } else {
+                            // not found
+                            return null;
+                        }
+                    }
+                    return new file_info_stored($this, $context, $storedfile, $urlbase, $section->section, true, true, true, false);
+
                 } else if ($filearea == 'course_backup') {
                     if (!has_capability('moodle/site:backup', $context) and !has_capability('moodle/site:restore', $context)) {
                         return null;
+                    }
+                    if (is_null($itemid)) {
+                        return new file_info_course($this, $context, $course);
                     }
 
                     $urlbase = $CFG->wwwroot.'/pluginfile.php';
@@ -250,6 +282,9 @@ class file_browser {
                 } else if ($filearea == 'course_content') {
                     if (!has_capability('moodle/course:managefiles', $context)) {
                         return null;
+                    }
+                    if (is_null($itemid)) {
+                        return new file_info_course($this, $context, $course);
                     }
 
                     if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
@@ -335,13 +370,13 @@ class file_browser {
     /**
      * Returns content of local directory
      */
-    public function build_stored_file_children($context, $filearea, $itemid, $filepath, $urlbase, $areavisiblename, $itemidused, $readaccess, $writeaccess) {
+    public function build_stored_file_children($context, $filearea, $itemid, $filepath, $urlbase, $topvisiblename, $itemidused, $readaccess, $writeaccess) {
         $result = array();
         $fs = get_file_storage();
 
         $storedfiles = $fs->get_directory_files($context->id, $filearea, $itemid, $filepath, false, true, "filepath, filename");
         foreach ($storedfiles as $file) {
-            $result[] = new file_info_stored($this, $context, $file, $urlbase, $areavisiblename, $itemidused, $readaccess, $writeaccess, false);
+            $result[] = new file_info_stored($this, $context, $file, $urlbase, $topvisiblename, $itemidused, $readaccess, $writeaccess, false);
         }
 
         return $result;

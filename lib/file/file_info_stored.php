@@ -7,22 +7,22 @@
 class file_info_stored extends file_info {
     protected $lf;
     protected $urlbase;
-    protected $areavisiblename;
+    protected $topvisiblename;
     protected $itemidused;
     protected $readaccess;
     protected $writeaccess;
     protected $areaonly;
 
-    public function __construct($browser, $context, $storedfile, $urlbase, $areavisiblename, $itemidused, $readaccess, $writeaccess, $areaonly) {
+    public function __construct($browser, $context, $storedfile, $urlbase, $topvisiblename, $itemidused, $readaccess, $writeaccess, $areaonly) {
         parent::__construct($browser, $context);
 
-        $this->lf              = $storedfile;
-        $this->urlbase         = $urlbase;
-        $this->areavisiblename = $areavisiblename;
-        $this->itemidused      = $itemidused;
-        $this->readaccess      = $readaccess;
-        $this->writeaccess     = $writeaccess;
-        $this->areaonly        = $areaonly;
+        $this->lf             = $storedfile;
+        $this->urlbase        = $urlbase;
+        $this->topvisiblename = $topvisiblename;
+        $this->itemidused     = $itemidused;
+        $this->readaccess     = $readaccess;
+        $this->writeaccess    = $writeaccess;
+        $this->areaonly       = $areaonly;
     }
 
     public function get_params() {
@@ -45,13 +45,7 @@ class file_info_stored extends file_info {
             $dir = explode('/', $dir);
             $dir = array_pop($dir);
             if ($dir === '') {
-                if ($this->areaonly) {
-                    return $this->areavisiblename;
-                } else if ($this->itemidused) {
-                    return $this->lf->get_itemid();
-                } else {
-                    return $this->areavisiblename;
-                }
+                return $this->topvisiblename;
             } else {
                 return $dir;
             }
@@ -118,7 +112,7 @@ class file_info_stored extends file_info {
             return array();
         }
         return $this->browser->build_stored_file_children($this->context, $this->lf->get_filearea(), $this->lf->get_itemid(), $this->lf->get_filepath(),
-                                                          $this->urlbase, $this->areavisiblename, $this->itemidused, $this->readaccess, $this->writeaccess,
+                                                          $this->urlbase, $this->topvisiblename, $this->itemidused, $this->readaccess, $this->writeaccess,
                                                           $this->areaonly);
     }
 
@@ -127,9 +121,9 @@ class file_info_stored extends file_info {
             if ($this->areaonly) {
                 return null;
             } else if ($this->itemidused) {
-                return $this->browser->get_file_info($this->context, $this->lf->get_filearea(), $this->lf->get_itemid());
-            } else {
                 return $this->browser->get_file_info($this->context, $this->lf->get_filearea());
+            } else {
+                return $this->browser->get_file_info($this->context);
             }
         }
 

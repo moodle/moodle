@@ -35,22 +35,19 @@ class file_info_course extends file_info {
     public function get_children() {
         $children = array();
 
-        if (has_capability('moodle/course:update', $this->context)) {
-            if ($child = $this->browser->get_file_info($this->context, 'course_intro', 0)) {
-                $children[] = $child;
-            }
+        if ($child = $this->browser->get_file_info($this->context, 'course_intro', 0)) {
+            $children[] = $child;
+        }
+        if ($child = $this->browser->get_file_info($this->context, 'course_section')) {
+            $children[] = $child;
         }
 
-        if (has_capability('moodle/site:backup', $this->context) or has_capability('moodle/site:restorep', $this->context)) {
-            if ($child = $this->browser->get_file_info($this->context, 'course_backup', 0)) {
-                $children[] = $child;
-            }
+        if ($child = $this->browser->get_file_info($this->context, 'course_backup', 0)) {
+            $children[] = $child;
         }
 
-        if (has_capability('moodle/course:managefiles', $this->context)) {
-            if ($child = $this->browser->get_file_info($this->context, 'course_content', 0)) {
-                $children[] = $child;
-            }
+        if ($child = $this->browser->get_file_info($this->context, 'course_content', 0)) {
+            $children[] = $child;
         }
 
         $modinfo = get_fast_modinfo($this->course);

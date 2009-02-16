@@ -166,6 +166,18 @@ function get_draftarea_info($draftitemid) {
 }
 
 /**
+ * Returns draftitemid of given editor element.
+ * @param string $elname name of formlib editor element
+ * @return int 0 if not submitted yet
+ */
+function file_get_submitted_draftitemid($elname) {
+    if (!empty($_REQUEST[$elname]['itemid']) and confirm_sesskey()) {
+        return (int)$_REQUEST[$elname]['itemid'];
+    }
+    return 0;
+}
+
+/**
  * Converts absolute links in text and merges draft files to target area.
  * @param int $draftitemid
  * @param int $contextid

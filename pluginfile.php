@@ -141,6 +141,33 @@
             session_get_instance()->write_close(); // unlock session during fileserving
             send_stored_file($file, 60*60, 0, false); // TODO: change timeout?
 
+        } else if ($filearea === 'course_section') {
+            if ($CFG->forcelogin) {
+                require_login($course);
+            } else if ($course->id !== SITEID) {
+                require_login($course);
+            }
+
+            $sectionid = (int)array_shift($args);
+
+            if ($course->numsections < $sectionid) {
+                if (!has_capability('moodle/course:update', $context)) {
+                    // disable access to invisible sections if can not edit course
+                    // this is going to break some ugly hacks, but is necessary
+                    send_file_not_found();
+                }
+            }
+
+            $relativepath = '/'.implode('/', $args);
+            $fullpath = $context->id.'course_section'.$sectionid.$relativepath;
+
+            if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+                send_file_not_found();
+            }
+
+            session_get_instance()->write_close(); // unlock session during fileserving
+            send_stored_file($file, 60*60, 0, false); // TODO: change timeout?
+
         } else if ($filearea === 'user_profile') {
             $userid = (int)array_shift($args);
             $usercontext = get_context_instance(CONTEXT_USER, $userid);
