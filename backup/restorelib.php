@@ -98,7 +98,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             echo '<li>' . get_string('from') . ' ' . get_string('course');
         }
         $course = $DB->get_record('course', array('id'=>$restore->course_id), 'id,summary');
-        $coursesummary = restore_decode_content_links_worker($course->summary, $restore);
+        $coursesummary = backup_todb($course->summary); // Exception: Process FILEPHP (not available when restored) MDL-18222
+        $coursesummary = restore_decode_content_links_worker($coursesummary, $restore);
         if ($coursesummary != $course->summary) {
             $course->summary = $coursesummary;
             if (!$DB->update_record('course', $course)) {
@@ -749,7 +750,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $course->shortname = $course_header->course_shortname;
             $course->idnumber = $course_header->course_idnumber;
             $course->idnumber = ''; //$course_header->course_idnumber; // we don't want this at all.
-            $course->summary = backup_todb($course_header->course_summary);
+            $course->summary = $course_header->course_summary;
             $course->format = $course_header->course_format;
             $course->showgrades = $course_header->course_showgrades;
             $course->newsitems = $course_header->course_newsitems;
