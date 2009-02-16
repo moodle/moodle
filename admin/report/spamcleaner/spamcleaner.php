@@ -168,12 +168,12 @@ function search_spammers($keywords) {
 
     if ($MOODLE2) {   /// Moodle 2.0 or later has new DB stuff
         $sql = "SELECT * FROM {user} WHERE deleted = 0 AND id <> {$USER->id} AND $conditions";  // Exclude oneself
-        $sql2= "SELECT u.*, p.summary FROM {user} AS u, {post} AS p WHERE $conditions2 AND u.id=p.userid AND u.id <> {$USER->id}";
+        $sql2= "SELECT u.*, p.summary FROM {user} AS u, {post} AS p WHERE $conditions2 AND u.deleted = 0 AND u.id=p.userid AND u.id <> {$USER->id}";
         $spamusers_desc = $DB->get_recordset_sql($sql);
         $spamusers_blog = $DB->get_recordset_sql($sql2);
     } else {          /// Moodle 1.9.x or earlier
         $sql = "SELECT * FROM {$CFG->prefix}user WHERE deleted = 0 AND id <> {$USER->id} AND $conditions";  // Exclude oneself
-        $sql2= "SELECT u.*, p.summary FROM {$CFG->prefix}user AS u, {$CFG->prefix}post AS p WHERE $conditions2 AND u.id=p.userid AND u.id <> {$USER->id}";
+        $sql2= "SELECT u.*, p.summary FROM {$CFG->prefix}user AS u, {$CFG->prefix}post AS p WHERE $conditions2 AND u.deleted = 0 AND u.id=p.userid AND u.id <> {$USER->id}";
         $spamusers_desc = get_recordset_sql($sql);
         $spamusers_blog = get_recordset_sql($sql2);
     }
@@ -268,7 +268,6 @@ function print_user_entry($user, $keywords, $count) {
     $smalluserobject->lastname = $user->lastname;
 
     if (empty($SESSION->users_result[$user->id])) {
-        echo $user->id;
         $SESSION->users_result[$user->id] = $smalluserobject;
         $html = '<tr valign="top" id="row-'.$user->id.'" class="result-row">';
         $html .= '<td width="10">'.$count.'</td>';
