@@ -93,7 +93,7 @@ admin_externalpage_print_header();
 
 print_spamcleaner_javascript();
 
-print_box(get_string('spamcleanerintro', 'admin'));
+print_box(get_string('spamcleanerintro', 'report_spamcleaner'));
 
 print_box_start();     // The forms section at the top
 
@@ -104,14 +104,14 @@ print_box_start();     // The forms section at the top
 <form method="POST">
     <input type="text" name="keyword" id="keyword_el" value="<?php p($keyword) ?>" /> 
     <input type="hidden" name="sesskey" value="<?php echo sesskey();?>" />
-    <input type="submit" value="<?php echo get_string('spamsearch', 'admin')?>" />
+    <input type="submit" value="<?php echo get_string('spamsearch', 'report_spamcleaner')?>" />
 </form>
-<p><?php echo get_string('spameg', 'admin');?></p>
+<p><?php echo get_string('spameg', 'report_spamcleaner');?></p>
 
 <hr />
 
 <form method="POST">
-    <input type="submit" name="autodetect" value="<?php echo get_string('spamauto', 'admin');?>" />
+    <input type="submit" name="autodetect" value="<?php echo get_string('spamauto', 'report_spamcleaner');?>" />
 </form>
 
 
@@ -179,7 +179,7 @@ function search_spammers($keywords) {
     }
 
     $keywordlist = implode(', ', $keywords);
-    print_box(get_string('spamresult', 'admin').s($keywordlist)).' ...';
+    print_box(get_string('spamresult', 'report_spamcleaner').s($keywordlist)).' ...';
 
     print_user_list(array($spamusers_desc, $spamusers_blog), $keywords);
 
@@ -198,7 +198,7 @@ function print_user_list($users_rs, $keywords) {
         foreach ($users_rs as $rs){
             foreach ($rs as $user) {
                 if (!$count) {
-                    echo '<table border="1" width="100%" id="data-grid"><tr><th>&nbsp;</th><th>'.get_string('user','admin').'</th><th>'.get_string('spamdesc', 'admin').'</th><th>'.get_string('spamoperation', 'admin').'</th></tr>';
+                    echo '<table border="1" width="100%" id="data-grid"><tr><th>&nbsp;</th><th>'.get_string('user','admin').'</th><th>'.get_string('spamdesc', 'report_spamcleaner').'</th><th>'.get_string('spamoperation', 'report_spamcleaner').'</th></tr>';
                 }
                 $count++;
                 filter_user($user, $keywords, $count);
@@ -208,7 +208,7 @@ function print_user_list($users_rs, $keywords) {
         foreach ($users_rs as $rs) {
             while ($user = rs_fetch_next_record($rs)) {
                 if (!$count) {
-                    echo '<table border="1" width="100%" id="data-grid"><tr><th>&nbsp;</th><th>'.get_string('user','admin').'</th><th>'.get_string('spamdesc', 'admin').'</th><th>'.get_string('spamoperation', 'admin').'</th></tr>';
+                    echo '<table border="1" width="100%" id="data-grid"><tr><th>&nbsp;</th><th>'.get_string('user','admin').'</th><th>'.get_string('spamdesc', 'report_spamcleaner').'</th><th>'.get_string('spamoperation', 'report_spamcleaner').'</th></tr>';
                 }
                 $count++;
                 filter_user($user, $keywords, $count);
@@ -217,12 +217,12 @@ function print_user_list($users_rs, $keywords) {
     }
 
     if (!$count) {
-        echo get_string('spamcannotfinduser', 'admin');
+        echo get_string('spamcannotfinduser', 'report_spamcleaner');
 
     } else {
         echo '</table>';
         echo '<div class="mld-align">
-              <button id="removeall_btn">'.get_string('spamdeleteall', 'admin').'</button>
+              <button id="removeall_btn">'.get_string('spamdeleteall', 'report_spamcleaner').'</button>
               </div>';
     }
 }
@@ -233,7 +233,7 @@ function filter_user($user, $keywords, $count) {
         $image_search = true;
     }
     if (isset($user->summary)) {
-        $user->description = '<h3>'.get_string('spamfromblog', 'admin').'</h3>'.$user->summary;
+        $user->description = '<h3>'.get_string('spamfromblog', 'report_spamcleaner').'</h3>'.$user->summary;
         unset($user->summary);
     }
     if (preg_match('#<img.*src=[\"\']('.$CFG->pixpath.')#', $user->description, $matches)
@@ -315,7 +315,7 @@ var delall_cb = {
         try {
             var resp = YAHOO.lang.JSON.parse(o.responseText);
         } catch(e) {
-            alert('<?php echo get_string('spaminvalidresult', 'admin');?>');
+            alert('<?php echo get_string('spaminvalidresult', 'report_spamcleaner');?>');
             return;
         }
         if(resp == true){
@@ -325,7 +325,7 @@ var delall_cb = {
 }
 function init() {
     YAHOO.util.Event.addListener("removeall_btn", "click", function(){
-        var yes = confirm('<?php echo get_string('spamdeleteallconfirm', 'admin');?>');
+        var yes = confirm('<?php echo get_string('spamdeleteallconfirm', 'report_spamcleaner');?>');
         if(yes){
             var cObj = YAHOO.util.Connect.asyncRequest('POST', '<?php echo me();?>?delall=yes&sesskey=<?php echo $sesskey;?>', delall_cb); 
         }
@@ -336,7 +336,7 @@ var del_cb = {
         try {
             var resp = YAHOO.lang.JSON.parse(o.responseText);
         } catch(e) {
-            alert('<?php echo get_string('spaminvalidresult', 'admin');?>');
+            alert('<?php echo get_string('spaminvalidresult', 'report_spamcleaner');?>');
             return;
         }
         if(row) {
@@ -347,7 +347,7 @@ var del_cb = {
                 row.parentNode.removeChild(row);
                 row = null;
             } else {
-                alert('<?php echo get_string('spamcannotdelete', 'admin');?>');
+                alert('<?php echo get_string('spamcannotdelete', 'report_spamcleaner');?>');
             }
         }
     }
@@ -357,7 +357,7 @@ var ignore_cb = {
         try {
             var resp = YAHOO.lang.JSON.parse(o.responseText);
         } catch(e) {
-            alert('<?php echo get_string('spaminvalidresult', 'admin');?>');
+            alert('<?php echo get_string('spaminvalidresult', 'report_spamcleaner');?>');
             return;
         }
         if(row) {
@@ -372,7 +372,7 @@ var ignore_cb = {
     }
 }
 function del_user(obj, id) {
-    var yes = confirm('<?php echo get_string('spamdeleteconfirm', 'admin');?>');
+    var yes = confirm('<?php echo get_string('spamdeleteconfirm', 'report_spamcleaner');?>');
     if(yes){
         row = obj;
         var cObj = YAHOO.util.Connect.asyncRequest('POST', '<?php echo me();?>?del=yes&sesskey=<?php echo $sesskey;?>&id='+id, del_cb); 
