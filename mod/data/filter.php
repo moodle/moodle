@@ -39,7 +39,7 @@
                             'AND d.id = dr.dataid ' .
                             'AND dr.id = dc.recordid ' .
                             "AND df.type = 'text' " .
-                            'AND df.param1 = 1';
+                            "AND " . $DB->sql_compare_text('df.param1', 1) . " = '1'";
 
             if (!$datacontents = $DB->get_records_sql($sql, array($courseid))) {
                 return $text;
