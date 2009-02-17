@@ -32,6 +32,8 @@ $id            = required_param('id', PARAM_INT); // course id
 $separator     = optional_param('separator', '', PARAM_ALPHA);
 $verbosescales = optional_param('verbosescales', 1, PARAM_BOOL);
 
+define('GRADE_CSV_LINE_LENGTH', 4096);
+
 if (!$course = get_record('course', 'id', $id)) {
     print_error('nocourseid');
 }
@@ -84,7 +86,7 @@ if ($id) {
 if ($importcode = optional_param('importcode', '', PARAM_FILE)) {
     $filename = $CFG->dataroot.'/temp/gradeimport/cvs/'.$USER->id.'/'.$importcode;
     $fp = fopen($filename, "r");
-    $header = split($csv_delimiter, fgets($fp,4096), PARAM_RAW);
+    $header = split($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH), PARAM_RAW);
 }
 
 $mform2 = new grade_import_mapping_form(null, array('gradeitems'=>$gradeitems, 'header'=>$header));
@@ -123,7 +125,7 @@ if ($formdata = $mform->get_data()) {
     $fp = fopen($filename, "r");
 
     // --- get header (field names) ---
-    $header = split($csv_delimiter, fgets($fp,4096), PARAM_RAW);
+    $header = split($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH), PARAM_RAW);
 
     // print some preview
     $numlines = 0; // 0 preview lines displayed
@@ -137,7 +139,7 @@ if ($formdata = $mform->get_data()) {
     }
     echo '</tr>';
     while (!feof ($fp) && $numlines <= $formdata->previewrows) {
-        $lines = split($csv_delimiter, fgets($fp,4096));
+        $lines = split($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH));
         echo '<tr>';
         foreach ($lines as $line) {
             echo '<td>'.$line.'</td>';;
@@ -166,7 +168,7 @@ if ($formdata = $mform->get_data()) {
 
     if ($fp = fopen($filename, "r")) {
         // --- get header (field names) ---
-        $header = split($csv_delimiter, clean_param(fgets($fp,4096), PARAM_RAW));
+        $header = split($csv_delimiter, clean_param(fgets($fp,GRADE_CSV_LINE_LENGTH), PARAM_RAW));
 
         foreach ($header as $i => $h) {
             $h = trim($h); $header[$i] = $h; // remove whitespace
@@ -214,14 +216,14 @@ if ($formdata = $mform->get_data()) {
     if ($fp = fopen($filename, "r")) {
 
         // read the first line makes sure this doesn't get read again
-        $header = split($csv_delimiter, fgets($fp,4096));
+        $header = split($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH));
 
         $newgradeitems = array(); // temporary array to keep track of what new headers are processed
         $status = true;
 
         while (!feof ($fp)) {
             // add something
-            $line = split($csv_delimiter, fgets($fp,4096));
+            $line = split($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH));
 
             if(count($line) <= 1){
                 // there is no data on this line, move on
