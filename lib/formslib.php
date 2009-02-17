@@ -794,7 +794,8 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             $this->_pageparams = '';
         }
         //no 'name' atttribute for form in xhtml strict :
-        $attributes = array('action'=>$action, 'method'=>$method, 'id'=>'mform'.$formcounter) + $target;
+        $attributes = array('action'=>$action, 'method'=>$method,
+                'accept-charset'=>'utf-8', 'id'=>'mform'.$formcounter) + $target;
         $formcounter++;
         $this->updateAttributes($attributes);
 
