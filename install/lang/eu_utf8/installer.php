@@ -10,17 +10,11 @@
 /// using strings defined in stringnames.txt (same dir)
 
 $string['cannotcreatelangdir'] = 'Ezin da hizkuntza-direktorioa sortu';
-$string['cannotcreatelangdir'] = 'Ezin da hizkuntza-direktorioa sortu';
-$string['cannotdownloadcomponents'] = 'Ezin dira osagaiak jaitsi';
 $string['cannotdownloadcomponents'] = 'Ezin dira osagaiak jaitsi';
 $string['cannotdownloadzipfile'] = 'Ezin da ZIP fitxategia jaitsi';
-$string['cannotdownloadzipfile'] = 'Ezin da ZIP fitxategia jaitsi';
-$string['cannotfindcomponent'] = 'Ezin da osagaia aurkitu';
 $string['cannotfindcomponent'] = 'Ezin da osagaia aurkitu';
 $string['cannotsavemd5file'] = 'Ezin da Md5 fitxategia gorde.';
 $string['cannotsavezipfile'] = 'Ezin da ZIP fitxategia gorde.';
-$string['cannotsavezipfile'] = 'Ezin da ZIP fitxategia gorde.';
-$string['cannotunzipfile'] = 'Ezin da fitxategia deskonprimatu';
 $string['cannotunzipfile'] = 'Ezin da fitxategia deskonprimatu.';
 $string['chooselanguagehead'] = 'Hizkuntza aukeratu';
 $string['chooselanguagesub'] = 'Instalazio-prozesurako hizkuntza aukeratu, mesedez.';
