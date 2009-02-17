@@ -1993,9 +1993,7 @@ function user_accesstime_log($courseid=0) {
         $last->lastip     = getremoteaddr();
         $last->lastaccess = $timenow;
 
-        if (!$DB->update_record_raw('user', $last)) {
-            debugging('Error: Could not update global user lastaccess information', DEBUG_ALL);  // Don't throw an error
-        }
+        $DB->update_record_raw('user', $last);
     }
 
     if ($courseid == SITEID) {
@@ -2016,9 +2014,7 @@ function user_accesstime_log($courseid=0) {
             $last->userid     = $USER->id;
             $last->courseid   = $courseid;
             $last->timeaccess = $timenow;
-            if (!$DB->insert_record_raw('user_lastaccess', $last, false)) {
-                debugging('Error: Could not insert course user lastaccess information', DEBUG_ALL);  // Don't throw an error
-            }
+            $DB->insert_record_raw('user_lastaccess', $last, false);
 
         } else if ($timenow - $lastaccess <  LASTACCESS_UPDATE_SECS) {
             // no need to update now, it was updated recently in concurrent login ;-)
@@ -2027,9 +2023,7 @@ function user_accesstime_log($courseid=0) {
             // Update course lastaccess for next checks
             $USER->currentcourseaccess[$courseid] = $timenow;
 
-            if (!$DB->set_field('user_lastaccess', 'timeaccess', $timenow, array('userid'=>$USER->id, 'courseid'=>$courseid))) {
-                debugging('Error: Could not update course user lastacess information');  // Don't throw an error
-            }
+            $DB->set_field('user_lastaccess', 'timeaccess', $timenow, array('userid'=>$USER->id, 'courseid'=>$courseid));
         }
     }
 }
