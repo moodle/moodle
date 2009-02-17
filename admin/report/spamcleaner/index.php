@@ -1,7 +1,7 @@
 <?php
 
 /**
- * spamcleaner.php
+ * Spam Cleaner
  *
  * Helps an admin to clean up spam in Moodle
  *
