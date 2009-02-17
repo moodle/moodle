@@ -74,16 +74,20 @@ class generate_documentation extends XMLDBAction {
         $b .= '</p>';
         $this->output=$b;
         
-    /// Transform XML file and display it
-        $doc = new DOMDocument();
-        $xsl = new XSLTProcessor();
-        
-        $doc->load(dirname(__FILE__).'/xmldb.xsl');
-        $xsl->importStyleSheet($doc);
-        
-        $doc->load($path);                        
-        $this->output.=$xsl->transformToXML($doc);
-        $this->output.=$b;            
+        if(class_exists('XSLTProcessor')) {
+        /// Transform XML file and display it
+            $doc = new DOMDocument();
+            $xsl = new XSLTProcessor();
+            
+            $doc->load(dirname(__FILE__).'/xmldb.xsl');
+            $xsl->importStyleSheet($doc);
+            
+            $doc->load($path);
+            $this->output.=$xsl->transformToXML($doc);
+            $this->output.=$b;
+        } else {
+            $this->output.=get_string('extensionrequired','xmldb','xsl');
+        }
 
     /// Launch postaction if exists (leave this unmodified)
         if ($this->getPostAction() && $result) {

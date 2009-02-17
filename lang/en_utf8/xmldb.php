@@ -67,6 +67,7 @@ $string['edit_table'] = 'Edit Table';
 $string['edit_xml_file'] = 'Edit XML File';
 $string['enumvaluesincorrect'] = 'Incorrect values for enum field';
 $string['expected'] = 'Expected';
+$string['extensionrequired'] = 'Sorry - the PHP extension \'$a\' is required for this action. Please install the extension if you want to use this feature.';
 $string['field'] = 'Field';
 $string['fieldnameempty'] = 'Name field empty';
 $string['fields'] = 'Fields';
