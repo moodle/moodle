@@ -44,12 +44,8 @@ require_capability('gradereport/grader:view', $context);
 require('preferences_form.php');
 $mform = new grader_report_preferences_form('preferences.php', compact('course'));
 
-if ($mform->is_cancelled()){
-    redirect($CFG->wwwroot . '/grade/report/grader/index.php?id='.$courseid);
-}
-
 // If data submitted, then process and store.
-if ($data = $mform->get_data()) {
+if (!$mform->is_cancelled() && $data = $mform->get_data()) {
     foreach ($data as $preference => $value) {
         if (substr($preference, 0, 6) !== 'grade_') {
             continue;
@@ -65,6 +61,11 @@ if ($data = $mform->get_data()) {
     redirect($CFG->wwwroot . '/grade/report/grader/index.php?id='.$courseid); // message here breaks accessability and is sloooowww
     exit;
 }
+
+if ($mform->is_cancelled()){
+    redirect($CFG->wwwroot . '/grade/report/grader/index.php?id='.$courseid);
+}
+
 
 print_grade_page_head($courseid, 'preferences', 'grader', get_string('preferences', 'gradereport_grader'));
 

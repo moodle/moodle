@@ -69,24 +69,27 @@ if ($data = $mform->get_data()) {
             set_user_preference($preference, $value);
         }
     }
+
+    redirect($CFG->wwwroot . '/grade/report/visual/index.php?id='.$courseid); // message here breaks accessability and is sloooowww
+    exit;
 }
 
 /// If cancelled go back to report
 if ($mform->is_cancelled()){
     redirect($CFG->wwwroot . '/grade/report/visual/index.php?id='.$courseid);
 }
+$strvisualreport = get_string('modulename', 'gradereport_visual');
 
-print_grade_page_head($courseid, 'preferences', 'visual', get_string('preferences', 'gradereport_visual'));
+
+print_grade_page_head($COURSE->id, 'settings', 'visual', $strvisualreport . ' ' . get_string('preferences'));
 
 /// If USER has admin capability, print a link to the site config page for this report
 /// TODO: Add admin config page for this report
-/*
 if (has_capability('moodle/site:config', $systemcontext)) {
     echo '<div id="siteconfiglink"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=gradereportvisual">';
     echo get_string('changereportdefaults', 'grades');
     echo "</a></div>\n";
 }
-*/
 
 print_simple_box_start("center");
 
