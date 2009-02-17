@@ -131,20 +131,32 @@ function file_prepare_draftarea(&$draftitemid, $contextid, $filearea, $itemid, $
     }
 
     /// relink embedded files - editor can not handle @@PLUGINFILE@@ !
+    return file_convert_relative_pluginfiles($text, 'draftfile.php', "$usercontext->id/user_draft/$draftitemid/", $forcehttps);
+}
+
+/**
+ * Convert relative @@PLUGINFILE@@ into real absolute paths
+ * @param string $text
+ * @param string $file pluginfile.php, draftfile.php, etc
+ * @param string $pluginstub path 'contextid/area/itemid/'
+ * @param boot $forcehttps
+ * @return string text with absolute links
+ *
+ */
+function file_convert_relative_pluginfiles($text, $file, $pluginstub, $forcehttps=false) {
+    global $CFG;
 
     if ($CFG->slasharguments) {
-        $draftbase = "$CFG->wwwroot/draftfile.php/$usercontext->id/user_draft/$draftitemid/";
+        $draftbase = "$CFG->wwwroot/$file/$pluginstub";
     } else {
-        $draftbase = "$CFG->wwwroot/draftfile.php?file=/$usercontext->id/user_draft/$draftitemid/";
+        $draftbase = "$CFG->wwwroot/draftfile.php?file=/$pluginstub";
     }
 
     if ($forcehttps) {
         $draftbase = str_replace('http://', 'https://', $draftbase);
     }
 
-    $text = str_replace('@@PLUGINFILE@@/', $draftbase);
-
-    return $text;
+    return str_replace('@@PLUGINFILE@@/', $draftbase, $text);
 }
 
 /**
@@ -261,7 +273,7 @@ function file_convert_draftarea($draftitemid, $contextid, $filearea, $itemid, $s
         $draftbase = str_replace('http://', 'https://', $draftbase);
     }
 
-    $text = str_ireplace($draftbase, '@@PLUGINFILE@@/');
+    $text = str_ireplace($draftbase, '@@PLUGINFILE@@/', $text);
 
     return $text;
 }

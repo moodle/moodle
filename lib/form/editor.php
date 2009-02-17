@@ -158,6 +158,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $str .= '</select>';
         } else {
             // no changes of format allowed
+            $str .= '<input type="hidden" name="'.$elname.'[format]" value="'.s($formats[$format]).'" />';
             $str .= $formats[$format];
         }
         $str .= '</div>';
@@ -179,10 +180,10 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
 
        /// TODO: somehow pass 'itemid' to tinymce so that image chooser known where to look for and upload files,
        //        also include list of expected file types handled by editor array('image', 'video', 'media')
-            // JS code by Dongsheng goes here
+            // JS code by Dongsheng goes here - uncomment following block when finished
 
       /// TODO: hide embedded file manager if tinymce used
-            if ($editorclass === 'form-textarea-advanced') {
+/*            if ($editorclass === 'form-textarea-advanced') {
                 $str .= '<script type="text/javascript">
 //<![CDATA[
     var fileman = document.getElementById("'.$id.'_filemanager");
@@ -191,7 +192,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
 //]]>
 </script>';
 
-            }
+            }*/
         }
 
 

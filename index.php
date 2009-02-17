@@ -32,7 +32,8 @@
 
     require_once('config.php');
     require_once($CFG->dirroot .'/course/lib.php');
-    require_once($CFG->dirroot .'/lib/blocklib.php');
+    require_once($CFG->libdir .'/blocklib.php');
+    require_once($CFG->libdir .'/filelib.php');
 
     // Bounds for block widths
     // more flexible for theme designers taken from theme config.php
@@ -144,9 +145,12 @@
                 echo '</font></p>';
             }
 
-            $options = NULL;
-            $options->noclean = true;
-            echo format_text($section->summary, FORMAT_HTML, $options);
+            $context = get_context_instance(CONTEXT_COURSE, SITEID);
+            $summarytext = file_convert_relative_pluginfiles($section->summary, 'pluginfile.php', "$context->id/course_section/$section->id/");
+            $summaryformatoptions = new object();
+            $summaryformatoptions->noclean = true;
+
+            echo format_text($summarytext, FORMAT_HTML, $summaryformatoptions);
 
             if ($editing) {
                 $streditsummary = get_string('editsummary');

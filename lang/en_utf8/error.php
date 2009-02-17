@@ -152,7 +152,6 @@ $string['cannotupdateprofile'] = 'Error updating user record';
 $string['cannotupdatecustomprofile'] = 'Error updating user custom record';
 $string['cannotupdaterss'] = 'Cannot update RSS';
 $string['cannotupdatesecret'] = 'Error resetting user secret string';
-$string['cannotupdatesummary'] = 'Could not update the summary!';
 $string['cannotupdatesubcate'] = 'Could not update a child category!';
 $string['cannotupdatesubcourse'] = 'Could not update a child course!';
 $string['cannotuploadfile'] = 'Error processing upload file';

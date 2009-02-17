@@ -26,6 +26,7 @@
 //TODO (nfreear): Accessibility: evaluation, lang/en_utf8/moodle.php: $string['formatweekscss']
 
     require_once($CFG->libdir.'/ajax/ajaxlib.php');
+    require_once($CFG->libdir.'/filelib.php');
 
     $week = optional_param('week', -1, PARAM_INT);
 
@@ -123,8 +124,12 @@
         echo '<div class="content">';
         
         echo '<div class="summary">';
+
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        $summarytext = file_convert_relative_pluginfiles($thissection->summary, 'pluginfile.php', "$coursecontext->id/course_section/$thissection->id/");
+        $summaryformatoptions = new object();
         $summaryformatoptions->noclean = true;
-        echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
+        echo format_text($summarytext, FORMAT_HTML, $summaryformatoptions);
 
         if (isediting($course->id) && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
             echo '<p><a title="'.$streditsummary.'" '.
