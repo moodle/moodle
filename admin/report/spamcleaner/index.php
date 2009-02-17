@@ -33,8 +33,6 @@ require_once('../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 require_js(array('yui_dom-event', 'yui_connection', 'yui_json'));
-require_login();
-require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
 $keyword = optional_param('keyword', '', PARAM_RAW);
 $autodetect = optional_param('autodetect', '', PARAM_RAW);
@@ -44,7 +42,8 @@ $ignore = optional_param('ignore', '', PARAM_RAW);
 $reset = optional_param('reset', '', PARAM_RAW);
 $id = optional_param('id', '', PARAM_INT);
 
-$MOODLE2 = ($CFG->version > 2007101600);   /// Used to do some varying Moodle DB stuff later on
+require_login();
+admin_externalpage_setup('reportspamcleaner');
 
 // Implement some AJAX calls 
 
@@ -86,7 +85,6 @@ if (!empty($ignore)) {
 }
 
 
-admin_externalpage_setup('spamcleaner');
 admin_externalpage_print_header();
 
 // Print headers and things
@@ -145,17 +143,13 @@ echo '</div>';
 
 function search_spammers($keywords) {
 
-    global $CFG, $USER, $DB, $MOODLE2; 
+    global $CFG, $USER, $DB; 
 
     if (!is_array($keywords)) {
         $keywords = array($keywords);    // Make it into an array
     }
 
-    if ($MOODLE2) {
-         $like = $DB->sql_ilike();
-    } else {
-         $like = sql_ilike();
-    }
+    $like = sql_ilike();
 
     $keywordfull = array();
     foreach ($keywords as $keyword) {
@@ -166,17 +160,10 @@ function search_spammers($keywords) {
     $conditions = '( '.implode(' OR ', $keywordfull).' )';
     $conditions2 = '( '.implode(' OR ', $keywordfull2).' )';
 
-    if ($MOODLE2) {   /// Moodle 2.0 or later has new DB stuff
-        $sql = "SELECT * FROM {user} WHERE deleted = 0 AND id <> {$USER->id} AND $conditions";  // Exclude oneself
-        $sql2= "SELECT u.*, p.summary FROM {user} AS u, {post} AS p WHERE $conditions2 AND u.deleted = 0 AND u.id=p.userid AND u.id <> {$USER->id}";
-        $spamusers_desc = $DB->get_recordset_sql($sql);
-        $spamusers_blog = $DB->get_recordset_sql($sql2);
-    } else {          /// Moodle 1.9.x or earlier
-        $sql = "SELECT * FROM {$CFG->prefix}user WHERE deleted = 0 AND id <> {$USER->id} AND $conditions";  // Exclude oneself
-        $sql2= "SELECT u.*, p.summary FROM {$CFG->prefix}user AS u, {$CFG->prefix}post AS p WHERE $conditions2 AND u.deleted = 0 AND u.id=p.userid AND u.id <> {$USER->id}";
-        $spamusers_desc = get_recordset_sql($sql);
-        $spamusers_blog = get_recordset_sql($sql2);
-    }
+    $sql = "SELECT * FROM {$CFG->prefix}user WHERE deleted = 0 AND id <> {$USER->id} AND $conditions";  // Exclude oneself
+    $sql2= "SELECT u.*, p.summary FROM {$CFG->prefix}user AS u, {$CFG->prefix}post AS p WHERE $conditions2 AND u.deleted = 0 AND u.id=p.userid AND u.id <> {$USER->id}";
+    $spamusers_desc = get_recordset_sql($sql);
+    $spamusers_blog = get_recordset_sql($sql2);
 
     $keywordlist = implode(', ', $keywords);
     print_box(get_string('spamresult', 'report_spamcleaner').s($keywordlist)).' ...';
@@ -188,31 +175,19 @@ function search_spammers($keywords) {
 
 
 function print_user_list($users_rs, $keywords) {
-    global $CFG, $SESSION, $MOODLE2;
+    global $CFG, $SESSION;
 
     // reset session everytime this function is called
     $SESSION->users_result = array();
     $count = 0;
 
-    if ($MOODLE2) {   /// Moodle 2.0 or later has new DB stuff
-        foreach ($users_rs as $rs){
-            foreach ($rs as $user) {
-                if (!$count) {
-                    echo '<table border="1" width="100%" id="data-grid"><tr><th>&nbsp;</th><th>'.get_string('user','admin').'</th><th>'.get_string('spamdesc', 'report_spamcleaner').'</th><th>'.get_string('spamoperation', 'report_spamcleaner').'</th></tr>';
-                }
-                $count++;
-                filter_user($user, $keywords, $count);
+    foreach ($users_rs as $rs) {
+        while ($user = rs_fetch_next_record($rs)) {
+            if (!$count) {
+                echo '<table border="1" width="100%" id="data-grid"><tr><th>&nbsp;</th><th>'.get_string('user','admin').'</th><th>'.get_string('spamdesc', 'report_spamcleaner').'</th><th>'.get_string('spamoperation', 'report_spamcleaner').'</th></tr>';
             }
-        }
-    } else {
-        foreach ($users_rs as $rs) {
-            while ($user = rs_fetch_next_record($rs)) {
-                if (!$count) {
-                    echo '<table border="1" width="100%" id="data-grid"><tr><th>&nbsp;</th><th>'.get_string('user','admin').'</th><th>'.get_string('spamdesc', 'report_spamcleaner').'</th><th>'.get_string('spamoperation', 'report_spamcleaner').'</th></tr>';
-                }
-                $count++;
-                filter_user($user, $keywords, $count);
-            }
+            $count++;
+            filter_user($user, $keywords, $count);
         }
     }
 
