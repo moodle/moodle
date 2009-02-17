@@ -36,9 +36,7 @@ function groups_add_member($groupid, $userid) {
     $member->userid    = $userid;
     $member->timeadded = time();
 
-    if (!$DB->insert_record('groups_members', $member)) {
-        return false;
-    }
+    $DB->insert_record('groups_members', $member);
 
     //update group info
     $DB->set_field('groups', 'timemodified', $member->timeadded, array('id'=>$groupid));
@@ -69,9 +67,8 @@ function groups_remove_member($groupid, $userid) {
         return true;
     }
 
-    if (!$DB->delete_records('groups_members', array('groupid'=>$groupid, 'userid'=>$userid))) {
-        return false;
-    }
+    $DB->delete_records('groups_members', array('groupid'=>$groupid, 'userid'=>$userid));
+
     //update group info
     $DB->set_field('groups', 'timemodified', time(), array('id'=>$groupid));
 
@@ -99,19 +96,17 @@ function groups_create_group($data, $editform=false) {
     $data->name         = trim($data->name);
     $id = $DB->insert_record('groups', $data);
 
-    if ($id) {
-        $data->id = $id;
-        if ($editform) {
-            //update image
-            if (save_profile_image($id, $editform, 'groups')) {
-                $DB->set_field('groups', 'picture', 1, array('id'=>$id));
-            }
-            $data->picture = 1;
+    $data->id = $id;
+    if ($editform) {
+        //update image
+        if (save_profile_image($id, $editform, 'groups')) {
+            $DB->set_field('groups', 'picture', 1, array('id'=>$id));
         }
-
-        //trigger groups events
-        events_trigger('groups_group_created', $data);
+        $data->picture = 1;
     }
+
+    //trigger groups events
+    events_trigger('groups_group_created', $data);
 
     return $id;
 }
@@ -129,11 +124,9 @@ function groups_create_grouping($data) {
     $data->name         = trim($data->name);
     $id = $DB->insert_record('groupings', $data);
 
-    if ($id) {
-        //trigger groups events
-        $data->id = $id;
-        events_trigger('groups_grouping_created', $data);
-    }
+    //trigger groups events
+    $data->id = $id;
+    events_trigger('groups_grouping_created', $data);
 
     return $id;
 }
@@ -142,7 +135,7 @@ function groups_create_grouping($data) {
  * Update group
  * @param object $data group properties (with magic quotes)
  * @param object $um upload manager with group picture
- * @return boolean success
+ * @return boolean true or exception
  */
 function groups_update_group($data, $editform=false) {
     global $CFG, $DB;
@@ -150,39 +143,36 @@ function groups_update_group($data, $editform=false) {
 
     $data->timemodified = time();
     $data->name         = trim($data->name);
-    $result = $DB->update_record('groups', $data);
+    $DB->update_record('groups', $data);
 
-    if ($result) {
-        if ($editform) {
-            //update image
-            if (save_profile_image($data->id, $editform, 'groups')) {
-            $DB->set_field('groups', 'picture', 1, array('id'=>$data->id));
-                $data->picture = 1;
-            }
+    if ($editform) {
+        //update image
+        if (save_profile_image($data->id, $editform, 'groups')) {
+        $DB->set_field('groups', 'picture', 1, array('id'=>$data->id));
+            $data->picture = 1;
         }
-
-        //trigger groups events
-        events_trigger('groups_group_updated', $data);
     }
 
-    return $result;
+    //trigger groups events
+    events_trigger('groups_group_updated', $data);
+
+    return true;
 }
 
 /**
  * Update grouping
  * @param object $data grouping properties (with magic quotes)
- * @return boolean success
+ * @return boolean true or exception
  */
 function groups_update_grouping($data) {
     global $DB;
     $data->timemodified = time();
     $data->name         = trim($data->name);
-    $result = $DB->update_record('groupings', $data);
-    if ($result) {
-        //trigger groups events
-        events_trigger('groups_grouping_updated', $data);
-    }
-    return $result;
+    $DB->update_record('groupings', $data);
+    //trigger groups events
+    events_trigger('groups_grouping_updated', $data);
+
+    return true;
 }
 
 /**
@@ -214,13 +204,11 @@ function groups_delete_group($grouporid) {
     //then imge
     delete_profile_image($groupid, 'groups');
     //group itself last
-    $result = $DB->delete_records('groups', array('id'=>$groupid));
-    if ($result) {
-        //trigger groups events
-        events_trigger('groups_group_deleted', $group);
-    }
+    $DB->delete_records('groups', array('id'=>$groupid));
+    //trigger groups events
+    events_trigger('groups_group_deleted', $group);
 
-    return $result;
+    return true;
 }
 
 /**
@@ -248,14 +236,11 @@ function groups_delete_grouping($groupingorid) {
     // remove the groupingid from all course modules
     $DB->set_field('course_modules', 'groupingid', 0, array('groupingid'=>$groupingid));
     //group itself last
-    $result = $DB->delete_records('groupings', array('id'=>$groupingid));
+    $DB->delete_records('groupings', array('id'=>$groupingid));
+    //trigger groups events
+    events_trigger('groups_grouping_deleted', $grouping);
 
-    if ($result) {
-        //trigger groups events
-        events_trigger('groups_grouping_deleted', $grouping);
-    }
-
-    return $result;
+    return true;
 }
 
 /**
@@ -528,7 +513,7 @@ function groups_parse_name($format, $groupnumber) {
  * Assigns group into grouping
  * @param int groupingid
  * @param int groupid
- * @return bool success
+ * @return bool true or exception
  */
 function groups_assign_grouping($groupingid, $groupid) {
     global $DB;
@@ -540,7 +525,9 @@ function groups_assign_grouping($groupingid, $groupid) {
     $assign->groupingid = $groupingid;
     $assign->groupid    = $groupid;
     $assign->timeadded  = time();
-    return (bool)$DB->insert_record('groupings_groups', $assign);
+    $DB->insert_record('groupings_groups', $assign);
+
+    return true;
 }
 
 /**
@@ -551,8 +538,9 @@ function groups_assign_grouping($groupingid, $groupid) {
  */
 function groups_unassign_grouping($groupingid, $groupid) {
     global $DB;
+    $DB->delete_records('groupings_groups', array('groupingid'=>$groupingid, 'groupid'=>$groupid));
 
-    return $DB->delete_records('groupings_groups', array('groupingid'=>$groupingid, 'groupid'=>$groupid));
+    return true;
 }
 
 /**
