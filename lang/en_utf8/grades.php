@@ -123,6 +123,7 @@ $string['coursegradedisplayupdated'] = 'The course grade display type has been u
 $string['coursename'] = 'Course name';
 $string['coursescales'] = 'Course scales';
 $string['coursesettings'] = 'Course settings';
+$string['coursesettingsexplanation'] = 'Course settings determine how the gradebook appears for all participants in the course.';
 $string['coursetotal'] = 'Course total';
 $string['createcategory'] = 'Create category';
 $string['createcategoryerror'] = 'Could not create a new category';

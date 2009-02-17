@@ -440,7 +440,7 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
             $active = $url;
         }
 
-        $plugin_info['settings']['coursesettings'] = array('id' => 'coursesettings', 'link' => $url, 'string' => get_string('course'));
+        $plugin_info['settings'] = array('id' => 'coursesettings', 'link' => $url, 'string' => get_string('settings'));
         $count++;
     }
 
@@ -676,12 +676,20 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null, $he
         $active_type_link = $plugin_info[$active_type]['link'];
     }
 
-    $navlinks[] = array('name' => $stractive_type, 'link' => $active_type_link, 'type' => 'misc');
+    if (empty($plugin_info[$active_type]['id'])) {
+        $navlinks[] = array('name' => $stractive_type, 'link' => $active_type_link, 'type' => 'misc');
+    }
+
     $navlinks[] = array('name' => $stractive_plugin, 'link' => null, 'type' => 'misc');
 
     $navigation = build_navigation($navlinks);
 
-    $returnval = print_header_simple($strgrades . ': ' . $stractive_type, ': ' . $stractive_type . ': ' . $stractive_plugin, $navigation, '',
+    $title = ': ' . $stractive_plugin;
+    if (empty($plugin_info[$active_type]['id'])) {
+        $title = ': ' . $stractive_type . ': ' . $stractive_plugin;
+    }
+
+    $returnval = print_header_simple($strgrades . ': ' . $stractive_type, $title, $navigation, '',
             $bodytags, true, $buttons, navmenu($COURSE), false, '', $return);
 
     // Guess heading if not given explicitly

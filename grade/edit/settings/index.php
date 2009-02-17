@@ -76,6 +76,10 @@ if ($mform->is_cancelled()) {
 
 print_grade_page_head($courseid, 'settings', 'coursesettings', get_string('coursesettings', 'grades'));
 
+print_box_start('generalbox boxaligncenter boxwidthnormal centerpara');
+echo get_string('coursesettingsexplanation', 'grades');
+print_box_end();
+
 $mform->display();
 
 print_footer($course);
