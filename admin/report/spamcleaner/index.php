@@ -246,7 +246,7 @@ function print_user_entry($user, $keywords, $count) {
         $SESSION->users_result[$user->id] = $smalluserobject;
         $html = '<tr valign="top" id="row-'.$user->id.'" class="result-row">';
         $html .= '<td width="10">'.$count.'</td>';
-        $html .= '<td width="30%" align="left"><a href="'.$CFG->wwwroot."/user/view.php?course=1&amp;id=".$user->id.'" title="'.$user->username.'">'.fullname($user).'</a>';
+        $html .= '<td width="30%" align="left"><a href="'.$CFG->wwwroot."/user/view.php?course=1&amp;id=".$user->id.'" title="'.s($user->username).'">'.fullname($user).'</a>';
 
         $html .= "<ul>";
         $profile_set = array('city'=>true, 'country'=>true, 'email'=>true);
