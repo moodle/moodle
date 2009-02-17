@@ -242,16 +242,11 @@ function config_form($frm) {
 * @param    config  all the configuration data as entered by the admin
 */
 function process_config($config) {
-
-    $return = true;
-
     foreach ($config as $name => $value) {
-        if (!set_config($name, $value)) {
-            $return = false;
-        }
+        set_config($name, $value);
     }
 
-    return $return;
+    return true;
 }
 
 

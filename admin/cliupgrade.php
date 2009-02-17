@@ -971,9 +971,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
             notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
         }
     } else {
-        if (!set_config("version", $version)) {
-            console_write_error("A problem occurred inserting current version into databases",'',false);
-        }
+        set_config("version", $version);
     }
 
 

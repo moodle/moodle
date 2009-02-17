@@ -288,9 +288,7 @@
 /// Updated human-readable release version if necessary
 
     if ($release <> $CFG->release) {  // Update the release version
-        if (!set_config("release", $release)) {
-            print_error("cannotupdaterelease", 'debug');
-        }
+        set_config("release", $release);
     }
 
 /// upgrade all plugins types

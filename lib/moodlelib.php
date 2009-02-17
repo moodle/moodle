@@ -798,10 +798,12 @@ function unset_config($name, $plugin=NULL) {
 
     if (empty($plugin)) {
         unset($CFG->$name);
-        return $DB->delete_records('config', array('name'=>$name));
+        $DB->delete_records('config', array('name'=>$name));
     } else {
-        return $DB->delete_records('config_plugins', array('name'=>$name, 'plugin'=>$plugin));
+        $DB->delete_records('config_plugins', array('name'=>$name, 'plugin'=>$plugin));
     }
+
+    return true;
 }
 
 /**
@@ -812,10 +814,9 @@ function unset_config($name, $plugin=NULL) {
  */
 function unset_all_config_for_plugin($plugin) {
     global $DB;
-    $success = true;
-    $success = $success && $DB->delete_records('config_plugins', array('plugin' => $plugin));
-    $success = $success && $DB->delete_records_select('config', 'name LIKE ?', array($plugin . '_%'));
-    return $success;
+    $DB->delete_records('config_plugins', array('plugin' => $plugin));
+    $DB->delete_records_select('config', 'name LIKE ?', array($plugin . '_%'));
+    return true;
 }
 
 /**
@@ -906,7 +907,8 @@ function set_cache_flag($type, $name, $value, $expiry=NULL) {
     }
 
     if ($value === NULL) {
-        return unset_cache_flag($type,$name);
+        unset_cache_flag($type,$name);
+        return true;
     }
 
     if ($f = $DB->get_record('cache_flags', array('name'=>$name, 'flagtype'=>$type))) { // this is a potentail problem in DEBUG_DEVELOPER
@@ -916,7 +918,7 @@ function set_cache_flag($type, $name, $value, $expiry=NULL) {
         $f->value        = $value;
         $f->expiry       = $expiry;
         $f->timemodified = $timemodified;
-        return $DB->update_record('cache_flags', $f);
+        $DB->update_record('cache_flags', $f);
     } else {
         $f = new object();
         $f->flagtype     = $type;
@@ -924,8 +926,9 @@ function set_cache_flag($type, $name, $value, $expiry=NULL) {
         $f->value        = $value;
         $f->expiry       = $expiry;
         $f->timemodified = $timemodified;
-        return (bool)$DB->insert_record('cache_flags', $f);
+        $DB->insert_record('cache_flags', $f);
     }
+    return true;
 }
 
 /**
@@ -938,7 +941,8 @@ function set_cache_flag($type, $name, $value, $expiry=NULL) {
  */
 function unset_cache_flag($type, $name) {
     global $DB;
-    return $DB->delete_records('cache_flags', array('name'=>$name, 'flagtype'=>$type));
+    $DB->delete_records('cache_flags', array('name'=>$name, 'flagtype'=>$type));
+    return true;
 }
 
 /**
@@ -947,7 +951,8 @@ function unset_cache_flag($type, $name) {
  */
 function gc_cache_flags() {
     global $DB;
-    return $DB->delete_records_select('cache_flags', 'expiry < ?', array(time()));
+    $DB->delete_records_select('cache_flags', 'expiry < ?', array(time()));
+    return true;
 }
 
 /// FUNCTIONS FOR HANDLING USER PREFERENCES ////////////////////////////////////
@@ -1035,32 +1040,29 @@ function set_user_preference($name, $value, $otheruserid=NULL) {
 
     if ($nostore) {
         // no permanent storage for not-logged-in user and guest
-        $return = true;
 
     } else if ($preference = $DB->get_record('user_preferences', array('userid'=>$userid, 'name'=>$name))) {
         if ($preference->value === $value) {
             return true;
         }
-        $return = $DB->set_field('user_preferences', 'value', (string)$value, array('id'=>$preference->id));
+        $DB->set_field('user_preferences', 'value', (string)$value, array('id'=>$preference->id));
 
     } else {
         $preference = new object();
         $preference->userid = $userid;
         $preference->name   = $name;
         $preference->value  = (string)$value;
-        $return = $DB->insert_record('user_preferences', $preference);
+        $DB->insert_record('user_preferences', $preference);
     }
 
-    if ($return) {
-        mark_user_preferences_changed($userid);
-        // update value in USER session if needed
-        if ($userid == $USER->id) {
-            $USER->preference[$name] = (string)$value;
-            $USER->preference['_lastloaded'] = time();
-        }
+    mark_user_preferences_changed($userid);
+    // update value in USER session if needed
+    if ($userid == $USER->id) {
+        $USER->preference[$name] = (string)$value;
+        $USER->preference['_lastloaded'] = time();
     }
 
-    return $return;
+    return true;
 }
 
 /**
@@ -1075,11 +1077,10 @@ function set_user_preferences($prefarray, $otheruserid=NULL) {
         return false;
     }
 
-    $return = true;
     foreach ($prefarray as $name => $value) {
-        $return = (set_user_preference($name, $value, $otheruserid) && $return);
+        set_user_preference($name, $value, $otheruserid);
     }
-    return $return;
+    return true;
 }
 
 /**
@@ -1100,18 +1101,16 @@ function unset_user_preference($name, $otheruserid=NULL) {
     }
 
     //Then from DB
-    $return = $DB->delete_records('user_preferences', array('userid'=>$userid, 'name'=>$name));
+    $DB->delete_records('user_preferences', array('userid'=>$userid, 'name'=>$name));
 
-    if ($return) {
-        mark_user_preferences_changed($userid);
-        //Delete the preference from $USER if needed
-        if ($userid == $USER->id) {
-            unset($USER->preference[$name]);
-            $USER->preference['_lastloaded'] = time();
-        }
+    mark_user_preferences_changed($userid);
+    //Delete the preference from $USER if needed
+    if ($userid == $USER->id) {
+        unset($USER->preference[$name]);
+        $USER->preference['_lastloaded'] = time();
     }
 
-    return $return;
+    return true;
 }
 
 /**
@@ -2031,19 +2030,19 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
     if(!empty($CFG->enableavailability) and $cm) {
         // We cache conditional access in session
         if(!isset($SESSION->conditionaccessok)) {
-            $SESSION->conditionaccessok=array();
+            $SESSION->conditionaccessok = array();
         }
         // If you have been allowed into the module once then you are allowed
         // in for rest of session, no need to do conditional checks
-        if(!array_key_exists($cm->id,$SESSION->conditionaccessok)) {
+        if (!array_key_exists($cm->id, $SESSION->conditionaccessok)) {
             // Get condition info (does a query for the availability table)
             require_once($CFG->libdir.'/conditionlib.php');
-            $ci=new condition_info($cm,CONDITION_MISSING_EXTRATABLE);
+            $ci = new condition_info($cm, CONDITION_MISSING_EXTRATABLE);
             // Check condition for user (this will do a query if the availability
             // information depends on grade or completion information)
-            if($ci->is_available($junk) ||
+            if ($ci->is_available($junk) ||
                 has_capability('moodle/course:viewhiddenactivities', $COURSE->context)) {
-                $SESSION->conditionaccessok[$cm->id]=true;
+                $SESSION->conditionaccessok[$cm->id] = true;
             } else {
                 print_error('activityiscurrentlyhidden');
             }
@@ -2317,7 +2316,8 @@ function update_user_login_times() {
 
     $user->id = $USER->id;
 
-    return $DB->update_record('user', $user);
+    $DB->update_record('user', $user);
+    return true;
 }
 
 /**
@@ -2556,9 +2556,7 @@ function add_to_metacourse ($metacourseid, $courseid) {
         $rec = new object();
         $rec->parent_course = $metacourseid;
         $rec->child_course  = $courseid;
-        if (!$DB->insert_record('course_meta', $rec)) {
-            return false;
-        }
+        $DB->insert_record('course_meta', $rec);
         return sync_metacourse($metacourseid);
     }
     return true;
