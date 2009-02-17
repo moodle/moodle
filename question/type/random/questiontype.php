@@ -108,6 +108,13 @@ class random_qtype extends default_questiontype {
         return get_string('random', 'quiz') .' ('. $category->name .')';
     }
 
+    function save_question($question, $form, $course) {
+        $form->name = '';
+        // Name is not a required field for random questions, but parent::save_question
+        // Assumes that it is.
+        return parent::save_question($question, $form, $course);
+    }
+
     function save_question_options($question) {
         global $DB;
 
