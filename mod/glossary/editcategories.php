@@ -68,12 +68,9 @@
                 $cat->name = $name;
                 $cat->usedynalink = $usedynalink;
 
-                if ( !$DB->update_record("glossary_categories", $cat) ) {
-                    print_error('cannotupdatecategory');
-                    redirect("editcategories.php?id=$cm->id");
-                } else {
-                    add_to_log($course->id, "glossary", "edit category", "editcategories.php?id=$cm->id", $hook,$cm->id);
-                }
+                $DB->update_record("glossary_categories", $cat);
+                add_to_log($course->id, "glossary", "edit category", "editcategories.php?id=$cm->id", $hook,$cm->id);
+
             } else {
                 echo "<p style=\"text-align:center\">" . get_string("edit"). " " . get_string("category","glossary") . "<span style=\"font-size:1.5em\">";
 

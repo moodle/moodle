@@ -156,9 +156,7 @@
             if ($cattomove->parent != $moveto) {
                 $newparent = $DB->get_record('course_categories', array('id'=>$moveto));
                 require_capability('moodle/category:manage', get_category_or_system_context($moveto));
-                if (!move_category($cattomove, $newparent)) {
-                    print_error('cannotupdatecategory', '', '', format_string($cattomove->name));
-                }
+                move_category($cattomove, $newparent);
             }
         }
     }
@@ -174,12 +172,8 @@
         }
         require_capability('moodle/category:manage', get_category_or_system_context($tempcat->parent));
         if ($tempcat) {
-            if (!$DB->set_field('course_categories', 'visible', $visible, array('id'=>$tempcat->id))) {
-                print_error('cannotupdatecategory', '', '', format_string($tempcat->name));
-            }
-            if (!$DB->set_field('course', 'visible', $visible, array('category' => $tempcat->id))) {
-                print_error('cannotshowhidecoursesincategory', '', '', format_string($tempcat->name));
-            }
+            $DB->set_field('course_categories', 'visible', $visible, array('id'=>$tempcat->id));
+            $DB->set_field('course', 'visible', $visible, array('category' => $tempcat->id));
         }
     }
 

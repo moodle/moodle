@@ -64,9 +64,7 @@ if ($mform->is_cancelled()) {
             $parent_cat = $DB->get_record('course_categories', array('id' => $newcategory->parent));
             move_category($newcategory, $parent_cat);
         }
-        if (!$DB->update_record('course_categories', $newcategory)) {
-            print_error( "cannotupdatecategory", '', '', $newcategory->name);
-        }
+        $DB->update_record('course_categories', $newcategory);
         fix_course_sortorder();
 
     } else {

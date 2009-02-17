@@ -168,9 +168,7 @@
             $cm->indent = 0;
         }
 
-        if (!$DB->set_field('course_modules', 'indent', $cm->indent, array('id'=>$cm->id))) {
-            print_error('cannotupdatelevel');
-        }
+        $DB->set_field('course_modules', 'indent', $cm->indent, array('id'=>$cm->id));
 
         rebuild_course_cache($cm->course);
 

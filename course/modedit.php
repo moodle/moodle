@@ -298,9 +298,7 @@
                 condition_info::update_cm_from_form($cm,$fromform,true);
             }
 
-            if (!$DB->update_record('course_modules', $cm)) {
-                print_error('cannotupdatecoursemodule');
-            }
+            $DB->update_record('course_modules', $cm);
 
             if (!$updateinstancefunction($fromform, $mform)) {
                 print_error('cannotupdatemod', '', 'view.php?id=$course->id', $fromform->modulename);

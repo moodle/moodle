@@ -156,13 +156,9 @@ class profile_define_base {
 
         if (empty($data->id)) {
             unset($data->id);
-            if (!$data->id = $DB->insert_record('user_info_field', $data)) {
-                print_error('cannotcreatefield');
-            }
+            $data->id = $DB->insert_record('user_info_field', $data);
         } else {
-            if (!$DB->update_record('user_info_field', $data)) {
-                print_error('cannotupdatefield');
-            }
+            $DB->update_record('user_info_field', $data);
         }
     }
 
@@ -427,13 +423,9 @@ function profile_edit_category($id, $redirect) {
             if (empty($data->id)) {
                 unset($data->id);
                 $data->sortorder = $DB->count_records('user_info_category') + 1;
-                if (!$DB->insert_record('user_info_category', $data, false)) {
-                    print_error('cannotinsertcategory');
-                }
+                $DB->insert_record('user_info_category', $data, false);
             } else {
-                if (!$DB->update_record('user_info_category', $data)) {
-                    print_error('cannotupdatecategory');
-                }
+                $DB->update_record('user_info_category', $data);
             }
             profile_reorder_categories();
             redirect($redirect);

@@ -188,11 +188,9 @@ function glossary_comment_edit() {
         $updatedcomment->format       = $data->format;
         $updatedcomment->timemodified = time();
 
-        if (!$DB->update_record('glossary_comments', $updatedcomment)) {
-            print_error('cannotupdatecomment');
-        } else {
-            add_to_log($course->id, 'glossary', 'update comment', "comments.php?id=$cm->id&amp;eid=$entry->id", "$updatedcomment->id",$cm->id);
-        }
+        $DB->update_record('glossary_comments', $updatedcomment);
+        add_to_log($course->id, 'glossary', 'update comment', "comments.php?id=$cm->id&amp;eid=$entry->id", "$updatedcomment->id",$cm->id);
+
         redirect("comments.php?id=$cm->id&amp;eid=$entry->id");
 
     } else {

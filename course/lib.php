@@ -3281,10 +3281,7 @@ function category_delete_move($category, $newparentid, $showfeedback=true) {
 
     if ($children = $DB->get_records('course_categories', array('parent'=>$category->id), 'sortorder ASC')) {
         foreach ($children as $childcat) {
-            if (!move_category($childcat, $newparentcat)) {
-                notify("Error moving category $childcat->name");
-                return false;
-            }
+            move_category($childcat, $newparentcat);
         }
     }
 
@@ -3352,22 +3349,18 @@ function move_courses($courseids, $categoryid) {
  * Efficiently moves a category - NOTE that this can have
  * a huge impact access-control-wise...
  */
-function move_category ($category, $newparentcat) {
+function move_category($category, $newparentcat) {
     global $CFG, $DB;
 
     $context = get_context_instance(CONTEXT_COURSECAT, $category->id);
 
     if (empty($newparentcat->id)) {
-        if (!$DB->set_field('course_categories', 'parent', 0, array('id'=>$category->id))) {
-            return false;
-        }
+        $DB->set_field('course_categories', 'parent', 0, array('id'=>$category->id));
 
         $newparent = get_context_instance(CONTEXT_SYSTEM);
 
     } else {
-        if (!$DB->set_field('course_categories', 'parent', $newparentcat->id, array('id'=>$category->id))) {
-            return false;
-        }
+        $DB->set_field('course_categories', 'parent', $newparentcat->id, array('id'=>$category->id));
         $newparent = get_context_instance(CONTEXT_COURSECAT, $newparentcat->id);
     }
 
@@ -3378,8 +3371,6 @@ function move_category ($category, $newparentcat) {
 
     // and fix the sortorders
     fix_course_sortorder();
-
-    return true;
 }
 
 /**

@@ -584,9 +584,7 @@ function hotpot_add_chain(&$hotpot) {
                 print_error('cannotaddcoursemoduletosection');
             }
 
-            if (! $DB->set_field('course_modules', 'section', $sectionid, array("id"=>$hotpot->coursemodule))) {
-                print_error('cannotupdatecoursemodule');
-            }
+            $DB->set_field('course_modules', 'section', $sectionid, array("id"=>$hotpot->coursemodule));
 
             add_to_log($hotpot->course, "course", "add mod",
                 "../mod/$hotpot->modulename/view.php?id=$hotpot->coursemodule",
