@@ -37,27 +37,30 @@
 /////////////////////////////////////////////////////////////////////////////
 
 function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $align="middle", $alt='') {
-    if($alt==='') {
-        $alt=s($tex);
-    }
-    // Given the path to a picture file in a course, or a URL,
-    // this function includes the picture in the page.
     global $CFG;
 
-    $output = "";
-    $origtex = $tex;
+    if ($alt==='') {
+        $alt = s($tex);
+    }
+
+    // Work out any necessary inline style.
+    $rules = array();
     if ($align !== 'middle') {
-        $style = ' style="vertical-align:'.$align.';';
+        $rules[] = 'vertical-align:' . $align . ';';
+    }
+    if ($height) {
+        $rules[] = 'height:' . $height . 'px;';
+    }
+    if ($width) {
+        $rules[] = 'width:' . $width . 'px;';
+    }
+    if (!empty($rules)) {
+        $style = ' style="' . implode('', $rules) . '" ';
     } else {
         $style = '';
     }
-    if ($height) {
-        $style .= " height:{$height}px;";
-    }
-    if ($width) {
-        $style .= " width:{$width}px;";
-    }
-    $style .= '"';
+
+    // Prepare the title attribute.
     if ($tex) {
         $tex = str_replace('&','&amp;',$tex);
         $tex = str_replace('<','&lt;',$tex);
@@ -71,6 +74,9 @@ function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $a
         // code. 
         $title = "title=\"$tex\"";
     }
+
+    // Build the output.
+    $output = "";
     if ($imagefile) {
         if (!file_exists("$CFG->dataroot/filter/tex/$imagefile") && has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
           $output .= "<a href=\"$CFG->wwwroot/filter/tex/texdebug.php\">";
@@ -87,7 +93,7 @@ function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $a
         } else {
             $output .= "$CFG->wwwroot/filter/tex/pix.php?file=$imagefile";
         }
-        $output .= "\" $style />";
+        $output .= "\" $style/>";
         $output .= "</a>";
     } else {
         $output .= "Error: must pass URL or course";
