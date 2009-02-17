@@ -2856,22 +2856,20 @@ function create_user_record($username, $password, $auth='manual') {
     // or $user->lang is not an installed language
     $sitelangs = array_keys(get_list_of_languages());
     if (empty($newuser->lang) || !in_array($newuser->lang, $sitelangs)) {
-        $newuser -> lang = $CFG->lang;
+        $newuser->lang = $CFG->lang;
     }
     $newuser->confirmed = 1;
     $newuser->lastip = getremoteaddr();
     $newuser->timemodified = time();
     $newuser->mnethostid = $CFG->mnet_localhost_id;
 
-    if ($DB->insert_record('user', $newuser)) {
-        $user = get_complete_user_data('username', $newuser->username);
-        if(!empty($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'})){
-            set_user_preference('auth_forcepasswordchange', 1, $user->id);
-        }
-        update_internal_user_password($user, $password);
-        return $user;
+    $DB->insert_record('user', $newuser);
+    $user = get_complete_user_data('username', $newuser->username);
+    if(!empty($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'})){
+        set_user_preference('auth_forcepasswordchange', 1, $user->id);
     }
-    return false;
+    update_internal_user_password($user, $password);
+    return $user;
 }
 
 /**
@@ -2909,8 +2907,7 @@ function update_user_record($username, $authplugin) {
                 // nothing_ for this field. Thus it makes sense to let this value
                 // stand in until LDAP is giving a value for this field.
                 if (!(empty($value) && $lockval === 'unlockedifempty')) {
-                    $DB->set_field('user', $key, $value, 'username', $username)
-                        || error_log("Error updating $key for $username");
+                    $DB->set_field('user', $key, $value, 'username', $username);
                 }
             }
         }
@@ -2963,55 +2960,60 @@ function delete_user($user) {
     require_once($CFG->libdir.'/grouplib.php');
     require_once($CFG->libdir.'/gradelib.php');
 
+    // TODO: decide if this transaction is really needed
     $DB->begin_sql();
 
-    // delete all grades - backup is kept in grade_grades_history table
-    if ($grades = grade_grade::fetch_all(array('userid'=>$user->id))) {
-        foreach ($grades as $grade) {
-            $grade->delete('userdelete');
+    try {
+        // delete all grades - backup is kept in grade_grades_history table
+        if ($grades = grade_grade::fetch_all(array('userid'=>$user->id))) {
+            foreach ($grades as $grade) {
+                $grade->delete('userdelete');
+            }
         }
-    }
 
-    // remove from all groups
-    $DB->delete_records('groups_members', array('userid'=>$user->id));
+        // remove from all groups
+        $DB->delete_records('groups_members', array('userid'=>$user->id));
 
-    // unenrol from all roles in all contexts
-    role_unassign(0, $user->id); // this might be slow but it is really needed - modules might do some extra cleanup!
+        // unenrol from all roles in all contexts
+        role_unassign(0, $user->id); // this might be slow but it is really needed - modules might do some extra cleanup!
 
-    // now do a final accesslib cleanup - removes all role assingments in user context and context itself
-    delete_context(CONTEXT_USER, $user->id);
+        // now do a final accesslib cleanup - removes all role assingments in user context and context itself
+        delete_context(CONTEXT_USER, $user->id);
 
-    require_once($CFG->dirroot.'/tag/lib.php');
-    tag_set('user', $user->id, array());
+        require_once($CFG->dirroot.'/tag/lib.php');
+        tag_set('user', $user->id, array());
 
-    // workaround for bulk deletes of users with the same email address
-    $delname = "$user->email.".time();
-    while ($DB->record_exists('user', array('username'=>$delname))) { // no need to use mnethostid here
-        $delname++;
-    }
+        // workaround for bulk deletes of users with the same email address
+        $delname = "$user->email.".time();
+        while ($DB->record_exists('user', array('username'=>$delname))) { // no need to use mnethostid here
+            $delname++;
+        }
 
-    // mark internal user record as "deleted"
-    $updateuser = new object();
-    $updateuser->id           = $user->id;
-    $updateuser->deleted      = 1;
-    $updateuser->username     = $delname;         // Remember it just in case
-    $updateuser->email        = '';               // Clear this field to free it up
-    $updateuser->idnumber     = '';               // Clear this field to free it up
-    $updateuser->timemodified = time();
+        // mark internal user record as "deleted"
+        $updateuser = new object();
+        $updateuser->id           = $user->id;
+        $updateuser->deleted      = 1;
+        $updateuser->username     = $delname;         // Remember it just in case
+        $updateuser->email        = '';               // Clear this field to free it up
+        $updateuser->idnumber     = '';               // Clear this field to free it up
+        $updateuser->timemodified = time();
 
-    if ($DB->update_record('user', $updateuser)) {
+        $DB->update_record('user', $updateuser);
+
         $DB->commit_sql();
+
         // notify auth plugin - do not block the delete even when plugin fails
         $authplugin = get_auth_plugin($user->auth);
         $authplugin->user_delete($user);
 
         events_trigger('user_deleted', $user);
-        return true;
 
-    } else {
+    } catch (Exception $e) {
         $DB->rollback_sql();
-        return false;
+        throw $e;
     }
+
+    return true;
 }
 
 /**
@@ -3259,7 +3261,8 @@ function update_internal_user_password(&$user, $password) {
         $hashedpassword = hash_internal_user_password($password);
     }
 
-    return $DB->set_field('user', 'password',  $hashedpassword, array('id'=>$user->id));
+    $DB->set_field('user', 'password',  $hashedpassword, array('id'=>$user->id));
+    return true;
 }
 
 /**
@@ -3457,12 +3460,7 @@ function delete_course($courseorid, $showfeedback = true) {
         $result = false;
     }
 
-    if (!$DB->delete_records("course", array("id"=>$courseid))) {
-        if ($showfeedback) {
-            notify("An error occurred while deleting the main course record.");
-        }
-        $result = false;
-    }
+    $DB->delete_records("course", array("id"=>$courseid));
 
 /// Delete all roles and overiddes in the course context
     if (!delete_context(CONTEXT_COURSE, $courseid)) {
