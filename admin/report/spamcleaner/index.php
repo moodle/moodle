@@ -99,17 +99,21 @@ print_box_start();     // The forms section at the top
 
 <div class="mdl-align">
 
-<form method="POST">
+<form method="post" action="index.php">
+  <div>
     <input type="text" name="keyword" id="keyword_el" value="<?php p($keyword) ?>" /> 
     <input type="hidden" name="sesskey" value="<?php echo sesskey();?>" />
     <input type="submit" value="<?php echo get_string('spamsearch', 'report_spamcleaner')?>" />
+  </div>
 </form>
 <p><?php echo get_string('spameg', 'report_spamcleaner');?></p>
 
 <hr />
 
-<form method="POST">
+<form method="post"  action="index.php">
+  <div>
     <input type="submit" name="autodetect" value="<?php echo get_string('spamauto', 'report_spamcleaner');?>" />
+  </div>
 </form>
 
 
@@ -283,6 +287,7 @@ $sesskey = sesskey();
 ?>
 
 <script type="text/javascript">
+//<![CDATA[
 var row = null;
 var delall_cb = {
     success: function(o){
@@ -357,6 +362,7 @@ function ignore_user(obj, id) {
     var cObj = YAHOO.util.Connect.asyncRequest('POST', '<?php echo me();?>?ignore=yes&sesskey=<?php echo $sesskey;?>&id='+id, ignore_cb); 
 }
 YAHOO.util.Event.onDOMReady(init);
+//]]>
 </script>
 
 <?php 
