@@ -674,7 +674,7 @@ function html_is_blank($string) {
  * @param string $value the value to set (without magic quotes)
  * @param string $plugin (optional) the plugin scope
  * @uses $CFG
- * @return bool
+ * @return bool true or exception
  */
 function set_config($name, $value, $plugin=NULL) {
     global $CFG, $DB;
@@ -690,39 +690,39 @@ function set_config($name, $value, $plugin=NULL) {
         }
 
         if ($DB->get_field('config', 'name', array('name'=>$name))) {
-            if ($value===null) {
-                return $DB->delete_records('config', array('name'=>$name));
+            if ($value === null) {
+                $DB->delete_records('config', array('name'=>$name));
             } else {
-                return $DB->set_field('config', 'value', $value, array('name'=>$name));
+                $DB->set_field('config', 'value', $value, array('name'=>$name));
             }
         } else {
-            if ($value===null) {
-                return true;
+            if ($value !== null) {
+                $config = new object();
+                $config->name  = $name;
+                $config->value = $value;
+                $DB->insert_record('config', $config, false);
             }
-            $config = new object();
-            $config->name  = $name;
-            $config->value = $value;
-            return $DB->insert_record('config', $config, false);
         }
 
     } else { // plugin scope
         if ($id = $DB->get_field('config_plugins', 'id', array('name'=>$name, 'plugin'=>$plugin))) {
             if ($value===null) {
-                return $DB->delete_records('config_plugins', array('name'=>$name, 'plugin'=>$plugin));
+                $DB->delete_records('config_plugins', array('name'=>$name, 'plugin'=>$plugin));
             } else {
-                return $DB->set_field('config_plugins', 'value', $value, array('id'=>$id));
+                $DB->set_field('config_plugins', 'value', $value, array('id'=>$id));
             }
         } else {
-            if ($value===null) {
-                return true;
+            if ($value !== null) {
+                $config = new object();
+                $config->plugin = $plugin;
+                $config->name   = $name;
+                $config->value  = $value;
+                $DB->insert_record('config_plugins', $config, false);
             }
-            $config = new object();
-            $config->plugin = $plugin;
-            $config->name   = $name;
-            $config->value  = $value;
-            return $DB->insert_record('config_plugins', $config, false);
         }
     }
+
+    return true;
 }
 
 /**

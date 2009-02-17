@@ -78,21 +78,17 @@ if ($editform->is_cancelled()) {
     $success = true;
 
     if ($data->id) {
-        if (!groups_update_grouping($data)) {
-            print_error('cannotupdategroup');
-        }
+        groups_update_grouping($data);
 
     } else {
-        if (!groups_create_grouping($data)) {
-            print_error('cannotcreategroup');
-        }
+        groups_create_grouping($data);
     }
 
     redirect($returnurl);
 
 }
 
-$strgroupings     = get_string('groupings', 'group');
+$strgroupings    = get_string('groupings', 'group');
 $strparticipants = get_string('participants');
 
 if ($id) {

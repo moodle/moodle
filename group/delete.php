@@ -49,9 +49,7 @@ if ($confirm && data_submitted()) {
     }
     $DB->begin_sql();
     foreach($groupidarray as $groupid) {
-        if (!groups_delete_group($groupid)) {
-            print_error('erroreditgroup', 'group', $returnurl);
-        } 
+        groups_delete_group($groupid);
     }
     $DB->commit_sql();
     redirect($returnurl);

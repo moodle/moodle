@@ -32,9 +32,7 @@ if ($frm = data_submitted() and confirm_sesskey()) {
                 if (preg_match('/^lockconfig_(.+?)$/', $name, $matches)) {
                     $plugin = "auth/$auth";
                     $name   = $matches[1];
-                    if (!set_config($name, $value, $plugin)) {
-                        print_error("cannotsaveconfig", 'error', '', (object)array('name'=>$name, 'value'=>$value, 'plugin'=>$plugin));
-                    }
+                    set_config($name, $value, $plugin);
                 }
             }
             redirect($returnurl);

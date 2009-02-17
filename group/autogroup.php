@@ -190,10 +190,7 @@ if ($editform->is_cancelled()) {
                 $grouping = new object();
                 $grouping->courseid = $COURSE->id;
                 $grouping->name     = $groupingname;
-                if (!$grouping->id = groups_create_grouping($grouping)) {
-                    $error = 'Can not create grouping'; //should not happen
-                    $failed = true;
-                }
+                $grouping->id = groups_create_grouping($grouping);
                 $createdgrouping = $grouping->id;
             } else {
                 $grouping = groups_get_grouping($data->grouping);
@@ -210,11 +207,7 @@ if ($editform->is_cancelled()) {
             $newgroup = new object();
             $newgroup->courseid = $data->courseid;
             $newgroup->name     = $group['name'];
-            if (!$groupid = groups_create_group($newgroup)) {
-                $error = 'Can not create group!'; // should not happen
-                $failed = true;
-                break;
-            }
+            $groupid = groups_create_group($newgroup);
             $createdgroups[] = $groupid;
             foreach($group['members'] as $user) {
                 groups_add_member($groupid, $user->id);

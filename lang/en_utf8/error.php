@@ -114,7 +114,6 @@ $string['cannotsaveblock'] = 'Error saving block configuration';
 $string['cannotsavefile'] = 'Cannot save the file \"$a\"';
 $string['cannotsaveagreement'] = 'Could not save your agreement';
 $string['cannotsavecomment'] = 'Cannot save comment';
-$string['cannotsaveconfig'] = 'Problem saving config \"$a->name\" as \"$a->value\" for plugin \"$a->plugin\"';
 $string['cannotsavedata'] = 'Cannot save data';
 $string['cannotsavefile'] = 'Cannot save the file \"$a\"!';
 $string['cannotsavemd5file'] = 'Cannot save md5 file';

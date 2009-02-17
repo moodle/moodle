@@ -43,9 +43,7 @@ if (empty($CFG->enablegroupings)) {
     $members    = array(-1 => array()); //groups not in a grouping
     $groupingid = 0;
 } else {
-    if (!$groupings = $DB->get_records('groupings', array('courseid'=>$courseid), 'name')) {
-        $groupings = array();
-    }
+    $groupings = $DB->get_records('groupings', array('courseid'=>$courseid), 'name');
     $members = array();
     foreach ($groupings as $grouping) {
         $members[$grouping->id] = array();
@@ -54,9 +52,7 @@ if (empty($CFG->enablegroupings)) {
 }
 
 // Get all groups
-if (!$groups = $DB->get_records('groups', array('courseid'=>$courseid), 'name')) {
-    $groups = array();
-}
+$groups = $DB->get_records('groups', array('courseid'=>$courseid), 'name');
 
 $params = array('courseid'=>$courseid);
 if ($groupid) {
