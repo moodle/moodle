@@ -521,7 +521,7 @@ _client.print_footer = function() {
         }
     }
     // weather we use cache for this instance, this button will reload listing anyway
-    if(!_client.ds.nofresh) {
+    if(!_client.ds.norefresh) {
         var ccache = document.createElement('A');
         ccache.href = '###';
         ccache.innerHTML = '<img src="$CFG->pixpath/a/refresh.png" /> $strrefresh';
