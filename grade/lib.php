@@ -429,6 +429,7 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
         'letter' => get_string('letters', 'grades'),
         'export' => get_string('export', 'grades'),
         'import' => get_string('import'),
+        'preferences' => get_string('mypreferences', 'grades'),
         'settings' => get_string('settings'));
 
     // Settings tab first
@@ -466,7 +467,7 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
             // Add link to preferences tab if such a page exists
             if (file_exists($CFG->dirroot . '/grade/report/'.$plugin.'/preferences.php')) {
                 $pref_url = $url_prefix.'report/'.$plugin.'/preferences.php?id='.$courseid;
-                $plugin_info['settings'][$plugin] = array('id' => $plugin, 'link' => $pref_url, 'string' => get_string('modulename', 'gradereport_'.$plugin));
+                $plugin_info['preferences'][$plugin] = array('id' => $plugin, 'link' => $pref_url, 'string' => get_string('modulename', 'gradereport_'.$plugin));
             }
 
             $count++;
@@ -614,9 +615,19 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
     }
 
     // Put settings last
-    $settings = $plugin_info['settings'];
-    unset($plugin_info['settings']);
-    $plugin_info['settings'] = $settings;
+    if (!empty($plugin_info['settings'])) {
+        $settings = $plugin_info['settings'];
+        unset($plugin_info['settings']);
+        $plugin_info['settings'] = $settings;
+    }
+
+    // Put preferences last
+    if (!empty($plugin_info['preferences'])) {
+        $prefs = $plugin_info['preferences'];
+        unset($plugin_info['preferences']);
+        $plugin_info['preferences'] = $prefs;
+    }
+
     return $plugin_info;
 }
 

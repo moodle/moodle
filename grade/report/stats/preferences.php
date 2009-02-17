@@ -76,7 +76,7 @@ if ($mform->is_cancelled()){
     redirect($CFG->wwwroot . '/grade/report/stats/index.php?id='.$courseid);
 }
 
-print_grade_page_head($courseid, 'settings', 'stats', get_string('preferences', 'gradereport_stats'));
+print_grade_page_head($courseid, 'preferences', 'stats', get_string('preferences', 'gradereport_stats'));
 
 /// If USER has admin capability, print a link to the site config page for this report
 /// TODO: Add admin config page for this report

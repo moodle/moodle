@@ -585,8 +585,9 @@ class grade_category extends grade_object {
 
     /**
      * Internal function - aggregation maths.
+     * Must be public: used by grade_grade::get_hiding_affected()
      */
-    private function aggregate_values($grade_values, $items) {
+    public function aggregate_values($grade_values, $items) {
         switch ($this->aggregation) {
             case GRADE_AGGREGATE_MEDIAN: // Middle point value in the set: ignores frequencies
                 $num = count($grade_values);

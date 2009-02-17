@@ -118,7 +118,6 @@ if ($access) {
 
         // print the page
         print_grade_page_head($courseid, 'report', 'user', get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
-        echo $user_selector;
 
         if ($report->fill_table()) {
             echo '<br />'.$report->print_table(true);

@@ -30,6 +30,8 @@ $string['nogroup'] = 'No Group';
 $string['allgroups'] = 'All Groups';
 $string['printable'] = 'Printer Friendly Version';
 
+$string['preferences'] = 'Visual report preferences';
+
 /// settings
 $string['prefgeneral'] = 'General';
 $string['prefcalc'] = 'Calculations';

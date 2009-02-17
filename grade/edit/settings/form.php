@@ -32,13 +32,11 @@ require_once($CFG->libdir.'/formslib.php');
 class course_settings_form extends moodleform {
 
     function definition() {
-        global $USER, $CFG, $COURSE;
+        global $USER, $CFG;
 
         $mform =& $this->_form;
 
         $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-        $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
-
         $can_view_admin_links = false;
         if (has_capability('moodle/grade:manage', $systemcontext)) {
             $can_view_admin_links = true;
@@ -104,7 +102,7 @@ class course_settings_form extends moodleform {
         foreach($types as $type) {
             foreach (get_list_of_plugins('grade/'.$type) as $plugin) {
              // Include all the settings commands for this plugin if there are any
-                if (file_exists($CFG->dirroot.'/grade/'.$type.'/'.$plugin.'/lib.php') && has_capability('gradereport/'.$plugin.':view', $context)) {
+                if (file_exists($CFG->dirroot.'/grade/'.$type.'/'.$plugin.'/lib.php')) {
                     require_once($CFG->dirroot.'/grade/'.$type.'/'.$plugin.'/lib.php');
                     $functionname = 'grade_'.$type.'_'.$plugin.'_settings_definition';
                     if (function_exists($functionname)) {

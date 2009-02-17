@@ -24,6 +24,7 @@
 
 $string['modulename'] = 'Stats report';
 $string['stats:view'] = 'View course stats report';
+$string['preferences'] = 'Stats report preferences';
 
 $string['moredata']='Stats Report: More Data';
 

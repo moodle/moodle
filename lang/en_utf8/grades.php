@@ -347,6 +347,7 @@ $string['moveselectedto'] = 'Move selected items to:';
 $string['movingelement'] = 'Moving $a';
 $string['multfactor'] = 'Multiplicator';
 $string['multfactorhelp'] = 'Factor by which all grades for this grade item will be multiplied.';
+$string['mypreferences'] = 'My preferences';
 $string['myreportpreferences'] = 'My report preferences';
 $string['navmethod'] = 'Navigation method';
 $string['neverdeletehistory'] = 'Never delete history';
