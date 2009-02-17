@@ -12,8 +12,8 @@ $string['allowobjectembed'] = 'Allow EMBED and OBJECT tags';
 $string['allowrenames'] = 'Allow renames';
 $string['allowuserblockhiding'] = 'Allow users to hide blocks';
 $string['allowusermailcharset'] = 'Allow user to select character set';
+$string['allowuserswitchrolestheycantassign'] = 'Allow users without the assign roles capability to switch roles';
 $string['allowuserthemes'] = 'Allow user themes';
-$string['allowuserswitchrolestheycantassign'] = 'Allow users to switch to roles that they can\'t assign';
 $string['allowvisiblecoursesinhiddencategories'] = 'Allow visible courses in hidden categories';
 $string['antivirus'] = 'Anti-Virus';
 $string['appearance'] = 'Appearance';
@@ -64,6 +64,8 @@ $string['configallowoverride2'] = 'Select which role(s) can be overridden by eac
 $string['configallowunenroll'] = 'If this is set \'Yes\', then students are allowed to unenrol themselves from courses whenever they like. Otherwise they are not allowed, and this process will be solely controlled by the teachers and administrators.';
 $string['configallowuserblockhiding'] = 'Do you want to allow users to hide/show side blocks throughout this site?  This feature uses Javascript and cookies to remember the state of each collapsible block, and only affects the user\'s own view.';
 $string['configallowusermailcharset'] = 'Enabling this, every user in the site will be able to specify his own charset for email.';
+$string['configallowuserswitchrolestheycantassign'] = 'By default, moodle/role:assign is required for users to switch roles. Enabling this setting removes this requirement, and results in the roles available in the \"Switch role to\" dropdown menu being determined by settings in the \"Allow role assignments\" table only.
+It is recommended that the settings in the \"Allow role assignments\" table do not allow users to switch to a role with more capabilities than their existing role.';
 $string['configallowuserthemes'] = 'If you enable this, then users will be allowed to set their own themes.  User themes override site themes (but not course themes)';
 $string['configallusersaresitestudents'] = 'For activities on the front page of the site, should ALL users be considered as students?  If you answer \"Yes\", then any confirmed user account will be allowed to participate as a student in those activities.  If you answer \"No\", then only users who are already a participant in at least one course will be able to take part in those front page activities. Only admins and specially assigned teachers can act as teachers for these front page activities.';
 $string['configvisiblecourses'] = 'Display courses in hidden categories normally';
@@ -255,7 +257,6 @@ For example:  standard,orangewhite.';
 $string['configtimezone'] = 'You can set the default timezone here.  This is the only the DEFAULT timezone for displaying dates - each user can override this by setting their own in their profile. \"Server time\" here will make Moodle default to the server\'s operating system setting, but \"Server time\" in the user profile will make the user default to this timezone setting.  Cronjobs that depend on a time of day to run will use this timezone.';
 $string['configunzip'] = 'Indicate the location of your unzip program (Unix only, optional).  If specified, this will be used to unpack zip archives on the server.  If you leave this blank, then Moodle will use internal routines.';
 $string['configusetags'] = 'Should tags functionality across the site be enabled?';
-$string['configallowuserswitchrolestheycantassign'] = 'Allow users to switch to roles that they can\'t assign';
 $string['configvariables'] = 'Variables';
 $string['configverifychangedemail'] = 'Enables verification of changed email addresses using allowed and denied email domains settings. If this setting is disabled the domains are enforced only when creating new users.';
 $string['configwarning'] = 'Be careful modifying these settings - strange values could cause problems.';
