@@ -120,7 +120,7 @@
 
     // Start the form
     echo '<form id="responseform" method="post" action="', $attemptobj->processattempt_url(),
-            '" enctype="multipart/form-data">', "\n";
+            '" enctype="multipart/form-data" accept-charset="utf-8">', "\n";
     echo '<div>';
     print_js_call('init_quiz_form');
 
