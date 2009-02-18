@@ -124,6 +124,7 @@ $string['check_riskadmin_detailswarning'] = '<p>Please verify the following list
 <p>It is recommended to assign administrator role in system context only. Following users have unsupported admin role assignments:</p>$a->unsupported';
 $string['check_riskadmin_name'] = 'Administrators';
 $string['check_riskadmin_ok'] = 'Found $a server administrator(s).';
+$string['check_riskadmin_unassign'] = '<a href=\"$a->url\">$a->fullname ($a->email) review role assignment</a>';
 $string['check_riskadmin_warning'] = 'Found $a->admincount server administrators and $a->unsupcount unsupported admin role assignments.';
 
 $string['check_riskxss_details'] = '<p>RISK_XSS denotes all dangerous capabilities that only trusted users may use.</p>

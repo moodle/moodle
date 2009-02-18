@@ -1048,7 +1048,8 @@ function report_security_check_riskadmin($detailed=false) {
             $users = array();
             while ($user = rs_fetch_next_record($rs)) {
                 $url = "$CFG->wwwroot/$CFG->admin/roles/assign.php?contextid=$user->contextid&amp;roleid=$user->roleid";
-                $users[] = '<li><a href="'.$url.'">'.fullname($user).' ('.$user->email.')</a></li>';
+                $a = (object)array('fullname'=>fullname($user), 'url'=>$url, 'email'=>$user->email);
+                $users[] = '<li>'.get_string('check_riskadmin_unassign', 'report_security', $a).'</li>';
             }
             rs_close($rs);
             $users = '<ul>'.implode($users).'</ul>';
