@@ -41,7 +41,6 @@ try {
 } catch (moodle_exception $exception) {
     echo $exception;
 }
-echo $CFG->wwwroot."/webservice/soap/zend_soap_server.php?token=".$token."&classpath=user&wsdl";
 
 //2. test functions
 $client = new Zend_Soap_Client($CFG->wwwroot."/webservice/soap/zend_soap_server.php?token=".$token."&classpath=user&wsdl");
