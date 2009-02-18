@@ -21,10 +21,7 @@ class file_info_coursesection extends file_info {
 
     public function get_visible_name() {
         $format = $this->course->format;
-        $sectionsname = get_string("coursesections$format","format_$format"); // TODO: localise
-        if ($sectionsname === "[[coursesections$format]]") {
-            $sectionsname = get_string("coursesections$format", 'repository'); // TODO: localise
-        }
+        $sectionsname = get_string("coursesectionsummaries");
 
         return $sectionsname;
     }
