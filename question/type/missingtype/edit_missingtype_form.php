@@ -20,29 +20,8 @@ class question_edit_missingtype_form extends question_edit_form {
      */
     function definition_inner(&$mform) {
         $creategrades = get_grade_options();
-        $gradeoptions = $creategrades->gradeoptionsfull;
-        $repeated = array();
-        $repeated[] =& $mform->createElement('header', 'choicehdr', get_string('choiceno', 'qtype_multichoice', '{no}'));
-        $repeated[] =& $mform->createElement('text', 'answer', get_string('answer', 'quiz'));
-        $repeated[] =& $mform->createElement('select', 'fraction', get_string('grade'), $gradeoptions);
-        $repeated[] =& $mform->createElement('htmleditor', 'feedback', get_string('feedback', 'quiz'),
-                                array('course' => $this->coursefilesid));
-
-        if (isset($this->question->options)){
-            $countanswers = count($this->question->options->answers);
-        } else {
-            $countanswers = 0;
-        }
-        if ($this->question->formoptions->repeatelements){
-            $repeatsatstart = (QUESTION_NUMANS_START > ($countanswers + QUESTION_NUMANS_ADD))?
-                                QUESTION_NUMANS_START : ($countanswers + QUESTION_NUMANS_ADD);
-        } else {
-            $repeatsatstart = $countanswers;
-        }
-        $repeatedoptions = array();
-        $repeatedoptions['fraction']['default'] = 0;
-        $mform->setType('answer', PARAM_NOTAGS);
-        $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', QUESTION_NUMANS_ADD, get_string('addmorechoiceblanks', 'qtype_multichoice'));
+        $this->add_per_answer_fields($mform, get_string('choiceno', 'qtype_multichoice', '{no}'),
+                $creategrades->gradeoptionsfull);
     }
 
     function set_data($question) {

@@ -26,30 +26,8 @@ class question_edit_shortanswer_form extends question_edit_form {
         $mform->closeHeaderBefore('answersinstruct');
 
         $creategrades = get_grade_options();
-        $gradeoptions = $creategrades->gradeoptions;
-        $repeated = array();
-        $repeated[] =& $mform->createElement('header', 'answerhdr', get_string('answerno', 'qtype_shortanswer', '{no}'));
-        $repeated[] =& $mform->createElement('text', 'answer', get_string('answer', 'quiz'), array('size' => 54));
-        $repeated[] =& $mform->createElement('select', 'fraction', get_string('grade'), $gradeoptions);
-        $repeated[] =& $mform->createElement('htmleditor', 'feedback', get_string('feedback', 'quiz'),
-                                array('course' => $this->coursefilesid));
-
-        if (isset($this->question->options)){
-            $countanswers = count($this->question->options->answers);
-        } else {
-            $countanswers = 0;
-        }
-        if ($this->question->formoptions->repeatelements){
-            $repeatsatstart = (QUESTION_NUMANS_START > ($countanswers + QUESTION_NUMANS_ADD))?
-                                QUESTION_NUMANS_START : ($countanswers + QUESTION_NUMANS_ADD);
-        } else {
-            $repeatsatstart = $countanswers;
-        }
-        $repeatedoptions = array();
-        $mform->setType('answer', PARAM_RAW);
-        $repeatedoptions['fraction']['default'] = 0;
-        $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', QUESTION_NUMANS_ADD, get_string('addmoreanswerblanks', 'qtype_shortanswer'));
-
+        $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_shortanswer', '{no}'),
+                $creategrades->gradeoptions);
     }
 
     function set_data($question) {

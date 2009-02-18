@@ -19,6 +19,28 @@ class question_edit_calculated_form extends question_edit_form {
      * @var question_calculated_qtype
      */
     var $qtypeobj;
+
+    function get_per_answer_fields(&$mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
+        $repeated = parent::get_per_answer_fields(&$mform, $label, $gradeoptions, $repeatedoptions, $answersoption);
+        $mform->setType('answer', PARAM_NOTAGS);
+
+        $addrepeated = array();
+        $addrepeated[] =& $mform->createElement('text', 'tolerance', get_string('tolerance', 'qtype_calculated'));
+        $repeatedoptions['tolerance']['type'] = PARAM_NUMBER;
+        $repeatedoptions['tolerance']['default'] = 0.01;
+        $addrepeated[] =& $mform->createElement('select', 'tolerancetype', get_string('tolerancetype', 'quiz'), $this->qtypeobj->tolerance_types());
+
+        $addrepeated[] =&  $mform->createElement('select', 'correctanswerlength', get_string('correctanswershows', 'qtype_calculated'), range(0, 9));
+        $repeatedoptions['correctanswerlength']['default'] = 2;
+
+        $answerlengthformats = array('1' => get_string('decimalformat', 'quiz'), '2' => get_string('significantfiguresformat', 'quiz'));
+        $addrepeated[] =&  $mform->createElement('select', 'correctanswerformat', get_string('correctanswershowsformat', 'qtype_calculated'), $answerlengthformats);
+        array_splice($repeated, 3, 0, $addrepeated);
+        $repeated[1]->setLabel(get_string('correctanswerformula', 'quiz').'=');
+
+        return $repeated;
+    }
+
     /**
      * Add question-type specific form fields.
      *
@@ -37,43 +59,9 @@ class question_edit_calculated_form extends question_edit_form {
 
         $mform->insertElementBefore(    $mform->createElement('submit', $addfieldsname, $addstring),'listcategory');
 
-        $repeated = array();
-        $repeated[] =& $mform->createElement('header', 'answerhdr', get_string('answerhdr', 'qtype_calculated', '{no}'));
-
-        $repeated[] =& $mform->createElement('text', 'answer', get_string('correctanswerformula', 'quiz').'=', array('size' => 50));
-        $repeatedoptions['answer']['type'] = PARAM_NOTAGS;
-
         $creategrades = get_grade_options();
-        $gradeoptions = $creategrades->gradeoptions;
-        $repeated[] =& $mform->createElement('select', 'fraction', get_string('grade'), $gradeoptions);
-        $repeatedoptions['fraction']['default'] = 0;
-
-        $repeated[] =& $mform->createElement('text', 'tolerance', get_string('tolerance', 'qtype_calculated'));
-        $repeatedoptions['tolerance']['type'] = PARAM_NUMBER;
-        $repeatedoptions['tolerance']['default'] = 0.01;
-        $repeated[] =& $mform->createElement('select', 'tolerancetype', get_string('tolerancetype', 'quiz'), $this->qtypeobj->tolerance_types());
-
-        $repeated[] =&  $mform->createElement('select', 'correctanswerlength', get_string('correctanswershows', 'qtype_calculated'), range(0, 9));
-        $repeatedoptions['correctanswerlength']['default'] = 2;
-
-        $answerlengthformats = array('1' => get_string('decimalformat', 'quiz'), '2' => get_string('significantfiguresformat', 'quiz'));
-        $repeated[] =&  $mform->createElement('select', 'correctanswerformat', get_string('correctanswershowsformat', 'qtype_calculated'), $answerlengthformats);
-
-        $repeated[] =&  $mform->createElement('htmleditor', 'feedback', get_string('feedback', 'quiz'),
-                                array('course' => $this->coursefilesid));
-        $repeatedoptions['feedback']['type'] = PARAM_RAW;
-
-        if (isset($this->question->options)){
-            $count = count($this->question->options->answers);
-        } else {
-            $count = 0;
-        }
-        if ($this->question->formoptions->repeatelements){
-            $repeatsatstart = $count + 1;
-        } else {
-            $repeatsatstart = $count;
-        }
-        $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', 1, get_string('addmoreanswerblanks', 'qtype_calculated'));
+        $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculated', '{no}'),
+                $creategrades->gradeoptions, 1, 1);
 
         $repeated = array();
         $repeated[] =& $mform->createElement('header', 'unithdr', get_string('unithdr', 'qtype_numerical', '{no}'));

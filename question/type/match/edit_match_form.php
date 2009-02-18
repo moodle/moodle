@@ -13,6 +13,18 @@
  * match editing form definition.
  */
 class question_edit_match_form extends question_edit_form {
+
+    function get_per_answer_fields(&$mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
+        $repeated = array();
+        $repeated[] =& $mform->createElement('header', 'answerhdr', $label);
+        $repeated[] =& $mform->createElement('textarea', 'subquestions', get_string('question', 'quiz'), array('cols'=>40, 'rows'=>3));
+        $repeated[] =& $mform->createElement('text', 'subanswers', get_string('answer', 'quiz'), array('size'=>50));
+        $repeatedoptions['subquestions']['type'] = PARAM_RAW;
+        $repeatedoptions['subanswers']['type'] = PARAM_TEXT;
+        $answersoption = 'subquestions';
+        return $repeated;
+    }
+
     /**
      * Add question-type specific form fields.
      *
@@ -26,27 +38,7 @@ class question_edit_match_form extends question_edit_form {
         $mform->addElement('static', 'answersinstruct', get_string('choices', 'quiz'), get_string('filloutthreeqsandtwoas', 'qtype_match'));
         $mform->closeHeaderBefore('answersinstruct');
 
-        $repeated = array();
-        $repeated[] =& $mform->createElement('header', 'choicehdr', get_string('questionno', 'quiz', '{no}'));
-        $repeated[] =& $mform->createElement('textarea', 'subquestions', get_string('question', 'quiz'), array('cols'=>40, 'rows'=>3));
-        $repeated[] =& $mform->createElement('text', 'subanswers', get_string('answer', 'quiz'), array('size'=>50));
-
-        if (isset($this->question->options)){
-            $countsubquestions = count($this->question->options->subquestions);
-        } else {
-            $countsubquestions = 0;
-        }
-        if ($this->question->formoptions->repeatelements){
-            $repeatsatstart = (QUESTION_NUMANS_START > ($countsubquestions + QUESTION_NUMANS_ADD))?
-                                QUESTION_NUMANS_START : ($countsubquestions + QUESTION_NUMANS_ADD);
-        } else {
-            $repeatsatstart = $countsubquestions;
-        }
-        $mform->setType('subanswer', PARAM_TEXT);
-        $mform->setType('subquestion', PARAM_TEXT);
-
-        $this->repeat_elements($repeated, $repeatsatstart, array(), 'noanswers', 'addanswers', QUESTION_NUMANS_ADD, get_string('addmoreqblanks', 'qtype_match'));
-
+        $this->add_per_answer_fields($mform, get_string('questionno', 'quiz', '{no}'), 0);
     }
 
     function set_data($question) {
