@@ -89,8 +89,10 @@ $string['databasesettingssub_postgres7'] = '<b>סוג:</b> PostgreSQL<br />
 <b>שם משתמש:</b> שם משתמש מסד הנתונים שלך<br />
 <b>סיסמה:</b> סיסמת מסד הנתונים שלך<br />
 <b>תחילית הטבלאות:</b> תחילית רשות לכל שמות הטבלאות (אפשרי)';
+$string['databasesettingswillbecreated'] = '<b>הערה: </b> ההתקנה תנסה ליצור את מסד הנתונים אוטומטית אם הוא לא קיים.';
 $string['dataroot'] = 'ספריית הנתנים';
 $string['datarooterror'] = 'ספריית \"נתוני Moodle\" שציינת לא נמצאה או יכלה להיווצר. אנא תקן את נתיב זה או צור את ספרייה זו באופן ידני.';
+$string['datarootpublicerror'] = 'ספריית ה-\'Data Directory\' שציינת ניתנת לגישה ישירות מהרשת. אתה מוכרח להשתמש בספרייה אחרת.';
 $string['dbconnectionerror'] = 'לא הצלחנו להתחבר למסד הנתונים שציינת. אנא בדוק את הגדרות מסד הנתונים שלך.';
 $string['dbcreationerror'] = 'חלה שגיאה ביצירת מסד הנתונים. המערכת לא הצליחה ליצור את שם מסד הנתונים שציינת עם ההגדרות שסופקו.';
 $string['dbhost'] = 'שרת מארח';
@@ -214,6 +216,7 @@ $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'בכל אופן, אם האתר שלך משתמש ב שפות iso-8859-1 (latin)בלבד, אתה יכול להמשיך להתשמש בגרסת MySQL 4.1.12 המותקנת (או גירסה גבוהה יותר).';
 $string['mysql416required'] = 'היא הגירסה המינימלית הנדרשת ל Moodle 1.6 על-מנת להבטיח המרת כל הנתונים לתבנית UTF-8 בעתיד.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP לא הוגדר כהלכה עם הרחבת MySQL בכדי שהוא יוכל לתקשר עם MySQL. אנא בדוק את קובץ הגדרות הPHP שלך- php.ini או הדר את ה-PHP שלך.';
+$string['mysqliextensionisnotpresentinphp'] = 'PHP לא הוגדר נכון עם הרחבת ה-MYSQLi כך שהוא יוכל להתקשר עם MYSQL. אנא בדוק את הגדרות ה-php.ini שלך או הרץ את תוכנת ה-PHP שוב. MYSQLi לא זמינה עבור PHP4.';
 $string['name'] = 'שם';
 $string['next'] = 'הלאה';
 $string['oci8po'] = 'Oracle (oci8po)';
@@ -235,6 +238,12 @@ $string['phpversionhelp'] = '<p>גירסת PHP חייבת להיות לפחות 
 (במקרים של גרסת 5.0.x תוכל גם לרדת בגירסה ל- 4.4.x)
 </p>';
 $string['postgres7'] = 'PostgreSQL (postgres7';
+$string['postgresqlwarning'] = '<strong> הערה: </strong> 
+אם נתקלת בבעיות חיבור, תוכל להגדיר את שדה ה-Host Server כך:
+host=\'postgresql_host\' port=\'5432\' dbname=\'postgresql_database_name\' user=\'postgresql_user\' password=\'postgresql_user_password\'
+
+והשאר ריק את מסד הנתונים, המשתמש, והסיסמה. מידע נוסף ניתן לצפות כאן
+ <a href=\"http://docs.moodle.org/en/Installing_Postgres_for_PHP\">Moodle Docs</a>';
 $string['previous'] = 'קודם';
 $string['qtyperqpwillberemoved'] = 'במהלך השדרוג, סוג שאלת ה-RQP תוסר. לא השתמשת בסוג השאלה, כך שאינך אמור להיתקל בבעיות כלשהן.';
 $string['qtyperqpwillberemovedanyway'] = 'במהלך השדרוג, סוג שאלת ה-RQP תוסר. יש לך כמה שאלות RQP במסד הנתונים ,והם יופסקו לעבוד אלא אם כן תתקין מחדש את הקוד מ- http://moodle.org/mod/data/view.php?d=13&amp;rid=797 לפני שתמשיך עם השדרוג.';
