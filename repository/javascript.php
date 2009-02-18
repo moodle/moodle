@@ -583,6 +583,9 @@ _client.viewthumb = function(ds) {
         var title = document.createElement('div');
         title.id = 'grid-title-'+String(count);
         title.className = 'label';
+        if (list[k].shorttitle) {
+            list[k].title = list[k].shorttitle;
+        }
         title.innerHTML += '<a href="###"><span>'+list[k].title+"</span></a>";
         if(list[k].thumbnail_width){
             el.style.width = list[k].thumbnail_width+'px';
@@ -597,6 +600,12 @@ _client.viewthumb = function(ds) {
         }
         var img = document.createElement('img');
         img.src = list[k].thumbnail;
+        if(list[k].thumbnail_alt) {
+            img.alt = list[k].thumbnail_alt;
+        }
+        if(list[k].thumbnail_title) {
+            img.title = list[k].thumbnail_title;
+        }
         var link = document.createElement('A');
         link.href='###';
         link.id = 'img-id-'+String(count);
