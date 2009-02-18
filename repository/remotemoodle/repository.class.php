@@ -128,7 +128,7 @@ class repository_remotemoodle extends repository {
      * @return <type>
      */
     public function search($search_text) {
-        return $this->get_listing('', $search_text);
+        return $this->get_listing('', '', $search_text);
     }
 
     /**
@@ -152,7 +152,7 @@ class repository_remotemoodle extends repository {
      * @param <type> $search
      * @return <type>
      */
-    public function get_listing($encodedpath = '', $search = '') {
+    public function get_listing($encodedpath = '', $page = '', $search = '') {
         global $CFG, $DB, $USER;
 
         ///check that the host has a version >2.0

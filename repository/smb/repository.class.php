@@ -44,7 +44,7 @@ class repository_smb extends repository {
     public function global_search() {
         return false;
     }
-    public function get_listing($path='') {
+    public function get_listing($path='', $page = '') {
         global $CFG;
         $list = array();
         $ret  = array();

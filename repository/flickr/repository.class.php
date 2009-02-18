@@ -138,17 +138,17 @@ class repository_flickr extends repository {
     /**
      *
      * @param <type> $photos
-     * @param <type> $path
+     * @param <type> $page
      * @return <type>
      */
-    private function build_list($photos, $path = 1) {
+    private function build_list($photos, $page = 1) {
         $photos_url = $this->flickr->urls_getUserPhotos($this->nsid);
         $ret = array();
         $ret['manage'] = $photos_url;
         $ret['list']  = array();
         $ret['pages'] = $photos['pages'];
-        if($path <= $ret['pages']) {
-            $ret['page'] = $path;
+        if($page <= $ret['pages']) {
+            $ret['page'] = $page;
         } else {
             $ret['page'] = 1;
         }
@@ -187,19 +187,20 @@ class repository_flickr extends repository {
 
     /**
      *
-     * @param <type> $path
+     * @param string $path
+     * @param int $page
      * @return <type>
      */
-    public function get_listing($path = '1') {
+    public function get_listing($path = '', $page = '1') {
         $photos_url = $this->flickr->urls_getUserPhotos($this->nsid);
 
         $photos = $this->flickr->photos_search(array(
             'user_id'=>$this->nsid,
             'per_page'=>24,
-            'page'=>$path,
+            'page'=>$page,
             'extras'=>'original_format'
             ));
-        return $this->build_list($photos, $path);
+        return $this->build_list($photos, $page);
     }
 
     /**

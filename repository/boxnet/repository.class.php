@@ -172,7 +172,7 @@ class repository_boxnet extends repository {
      * @param <type> $path
      * @return <type>
      */
-    public function get_listing($path = '/'){
+    public function get_listing($path = '/', $page = ''){
         global $CFG;
         $list = array();
         $ret  = array();

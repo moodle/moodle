@@ -7,15 +7,16 @@
     require_once('lib.php');
 
 /// Parameters
-    $p     = optional_param('p', '', PARAM_RAW);              // page or path
+    $page  = optional_param('page', '', PARAM_RAW);           // page
     $env   = optional_param('env', 'filepicker', PARAM_ALPHA);// opened in editor or moodleform
     $file  = optional_param('file', '', PARAM_RAW);           // file to download
     $title = optional_param('title', '', PARAM_FILE);         // new file name
     $itemid = optional_param('itemid', '', PARAM_INT);
     $action = optional_param('action', '', PARAM_ALPHA);
-    $ctx_id  = optional_param('ctx_id', SITEID, PARAM_INT);   // context ID
-    $repo_id = optional_param('repo_id', 1, PARAM_INT);       // repository ID
-    $callback = optional_param('callback', '', PARAM_CLEANHTML);
+    $ctx_id = optional_param('ctx_id', SITEID, PARAM_INT);    // context ID
+    $repo_id   = optional_param('repo_id', 1, PARAM_INT);     // repository ID
+    $req_path  = optional_param('p', '', PARAM_RAW);          // path
+    $callback  = optional_param('callback', '', PARAM_CLEANHTML);
     $search_text = optional_param('s', '', PARAM_CLEANHTML);
 
 /// Headers to make it not cacheable
@@ -130,11 +131,7 @@ EOD;
         case 'list':
             if ($repo->check_login()) {
                 try {
-                    if (!empty($p)) {
-                        echo json_encode($repo->get_listing($p));
-                    } else {
-                        echo json_encode($repo->get_listing());
-                    }
+                    echo json_encode($repo->get_listing($req_path, $page));
                 } catch (repository_exception $e) {
                     $err = new stdclass;
                     $err->e = $e->getMessage();

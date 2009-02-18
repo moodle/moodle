@@ -50,7 +50,7 @@ class repository_upload extends repository {
      * @param <type> $search
      * @return <type>
      */
-    public function get_listing($path='', $search='') {
+    public function get_listing($path='', $page='') {
         global $CFG, $action;
         if($action=='upload'){
             return $this->info;

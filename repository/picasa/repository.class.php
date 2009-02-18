@@ -60,7 +60,7 @@ class repository_picasa extends repository {
         }
     }
 
-    public function get_listing($path='') {
+    public function get_listing($path='', $page = '') {
         $picasa = new google_picasa(new google_authsub($this->subauthtoken));
 
         $ret = array();

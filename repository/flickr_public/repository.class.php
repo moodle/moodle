@@ -183,33 +183,34 @@ class repository_flickr_public extends repository {
 
     /**
      *
-     * @param <type> $path
+     * @param string $path
+     * @param int $page
      * @return <type>
      */
-    public function get_listing($path = '1') {
+    public function get_listing($path = '', $page = 1) {
         $people = $this->flickr->people_findByEmail($this->flickr_account);
         $this->nsid = $people['nsid'];
-        $photos = $this->flickr->people_getPublicPhotos($people['nsid'], 'original_format', 24, $path);
+        $photos = $this->flickr->people_getPublicPhotos($people['nsid'], 'original_format', 24, $page);
         $ret = array();
 
-        return $this->build_list($photos, $path, $ret);
+        return $this->build_list($photos, $page, $ret);
     }
 
     /**
      *
      * @param <type> $photos
-     * @param <type> $path
+     * @param <type> $page
      * @return <type>
      */
-    private function build_list($photos, $path = 1, &$ret) {
+    private function build_list($photos, $page = 1, &$ret) {
         if (!empty($this->nsid)) {
             $photos_url = $this->flickr->urls_getUserPhotos($this->nsid);
             $ret['manage'] = $photos_url;
         }
         $ret['list']  = array();
         $ret['pages'] = $photos['pages'];
-        if (is_int($path) && $path <= $ret['pages']) {
-            $ret['page'] = $path;
+        if (is_int($page) && $page <= $ret['pages']) {
+            $ret['page'] = $page;
         } else {
             $ret['page'] = 1;
         }

@@ -161,7 +161,7 @@ var mdl_in_array = function(el, arr) {
 
 var active_instance = null;
 function repository_callback(id) {
-    active_instance.req(id, '', 0);
+    active_instance.req(id, '');
 }
 var repository_client_$suffix = (function() {
 // private static field
@@ -361,7 +361,7 @@ _client.print_instances = function() {
             link.onclick = function() {
                 var re = /repo-call-$suffix-(\d+)/i;
                 var id = this.id.match(re);
-                repository_client_$suffix.req(id[1], '', 0);
+                repository_client_$suffix.req(id[1], '');
             }
             link.innerHTML += ' '+repo.name;
             li.appendChild(link);
@@ -556,7 +556,7 @@ _client.print_footer = function() {
         logout.innerHTML = '<img src="$CFG->pixpath/a/logout.png" /> $strlogout';
         oDiv.appendChild(logout);
         logout.onclick = function() {
-            repository_client_$suffix.req(repository_client_$suffix.repositoryid, 1, 1);
+            repository_client_$suffix.logout(repository_client_$suffix.repositoryid, 1);
         }
     }
 }
@@ -823,9 +823,9 @@ _client.uploadcontrol = function() {
 }
 _client.paging_node = function(type, page) {
     if (page == _client.ds.page) {
-        str = '<a class="cur_page" onclick="repository_client_$suffix.'+type+'('+_client.repositoryid+', '+page+', 0)" href="###">';
+        str = '<a class="cur_page" onclick="repository_client_$suffix.'+type+'('+_client.repositoryid+', '+page+', '+page+')" href="###">';
     } else {
-        str = '<a onclick="repository_client_$suffix.'+type+'('+_client.repositoryid+', '+page+', 0)" href="###">';
+        str = '<a onclick="repository_client_$suffix.'+type+'('+_client.repositoryid+', '+page+', '+page+')" href="###">';
     }
     return str;
 }
@@ -869,12 +869,13 @@ _client.makepage = function(id) {
     }
     return str;
 }
-_client.search_paging = function(id, path) {
+_client.search_paging = function(id, path, page) {
     _client.viewbar.set('disabled', false);
     _client.loading('load');
     _client.repositoryid = id;
     var params = [];
     params['p'] = path;
+    params['page'] = page;
     params['env']=_client.env;
     params['action']='search';
     params['search_paging']='true';
@@ -908,7 +909,7 @@ _client.makepath = function() {
             el.path = _client.ds.path[i].path;
             el.on('contentReady', function() {
                 this.on('click', function() {
-                    repository_client_$suffix.req(this.id, this.path, 0);
+                    repository_client_$suffix.req(this.id, this.path);
                 })
             });
         }
@@ -972,15 +973,11 @@ _client.hide = function() {
     _client.viewfiles();
 }
 // request file list or login
-_client.req = function(id, path, logout) {
+_client.req = function(id, path, page) {
     _client.viewbar.set('disabled', false);
     _client.loading('load');
     _client.repositoryid = id;
-    if (logout == 1) {
-        action = 'logout';
-    } else {
-        action = 'list';
-    }
+    action = 'list';
     var params = [];
     params['p'] = path;
     params['env']=_client.env;
@@ -988,8 +985,17 @@ _client.req = function(id, path, logout) {
     params['sesskey']='$sesskey';
     params['ctx_id']=$context->id;
     params['repo_id']=id;
+    if (page) {
+        params['page']=page;
+    }
     params['accepted_types'] = _client.accepted_types;
     var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->httpswwwroot/repository/ws.php?action='+action, _client.req_cb, _client.postdata(params));
+}
+_client.logout = function(id) {
+    _client.repositoryid = id;
+    var params = [];
+    params['repo_id'] = id;
+    var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->httpswwwroot/repository/ws.php?action=logout', _client.req_cb, _client.postdata(params));
 }
 _client.search_form_cb = {
 success: function(o) {

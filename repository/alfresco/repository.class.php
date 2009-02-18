@@ -87,7 +87,7 @@ class repository_alfresco extends repository {
         return $result;
     }
 
-    public function get_listing($uuid = '', $search = '') {
+    public function get_listing($uuid = '', $path = '') {
         global $CFG;
 
         $ret = array();

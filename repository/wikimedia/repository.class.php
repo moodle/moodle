@@ -6,7 +6,7 @@ class repository_wikimedia extends repository {
         parent::__construct($repositoryid, $context, $options);
         $this->keyword = optional_param('wikimedia_keyword', '', PARAM_RAW);
     }
-    public function get_listing($path = '') {
+    public function get_listing($path = '', $page = '') {
         global $CFG;
         $client = new wikimedia; 
         $result = $client->search_images($this->keyword);

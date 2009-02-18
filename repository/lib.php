@@ -1535,7 +1535,7 @@ abstract class repository {
      * a folder name, or a identification of folder
      * @return array the list of files, including meta infomation
      */
-    abstract public function get_listing($parent = '/');
+    abstract public function get_listing($path = '/', $page='');
 
     /**
      * Search files in repository
