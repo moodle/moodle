@@ -1438,6 +1438,27 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2009012901);
     }
 
+    if ($result && $oldversion < 2009021800) {
+        // Converting format of grade conditions, if any exist, to percentages. 
+        $DB->execute("
+UPDATE {course_modules_availability} SET grademin=(
+    SELECT 100.0*({course_modules_availability}.grademin-gi.grademin)
+        /(gi.grademax-gi.grademin)        
+    FROM {grade_items} gi 
+    WHERE gi.id={course_modules_availability}.gradeitemid)
+WHERE gradeitemid IS NOT NULL AND grademin IS NOT NULL");
+        $DB->execute("
+UPDATE {course_modules_availability} SET grademax=(
+    SELECT 100.0*({course_modules_availability}.grademax-gi.grademin)
+        /(gi.grademax-gi.grademin)        
+    FROM {grade_items} gi 
+    WHERE gi.id={course_modules_availability}.gradeitemid)
+WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009021800);
+    }
+
     return $result;
 }
 

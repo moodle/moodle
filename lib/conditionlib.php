@@ -439,8 +439,9 @@ WHERE
      * @param bool $grabthelot If true, grabs all scores for current user on 
      *   this course, so that later ones come from cache
      * @param int $userid Set if requesting grade for a different user (does 
-     * not use cache)
-     * @return float Grade score, or false if user does not have a grade yet
+     *   not use cache)
+     * @return float Grade score as a percentage in range 0-100 (e.g. 100.0 
+     *   or 37.21), or false if user does not have a grade yet
      */
     private function get_cached_grade_score($gradeitemid,$grabthelot=false,$userid=0) {
         global $USER, $DB, $SESSION;
@@ -455,7 +456,7 @@ WHERE
                     // Get all grades for the current course
                     $rs=$DB->get_recordset_sql("
 SELECT
-    gi.id,gg.finalgrade 
+    gi.id,gg.finalgrade,gg.rawgrademin,gg.rawgrademax 
 FROM 
     {grade_items} gi
     LEFT JOIN {grade_grades} gg ON gi.id=gg.itemid AND gg.userid=?
@@ -464,8 +465,11 @@ WHERE
                     foreach($rs as $record) {
                         $SESSION->gradescorecache[$record->id]=
                             is_null($record->finalgrade)
+                                // No grade = false
                                 ? false 
-                                : $record->finalgrade;
+                                // Otherwise convert grade to percentage
+                                : (($record->finalgrade - $record->rawgrademin) * 100) /
+                                    ($record->rawgrademax - $record->rawgrademin);
 
                     }
                     $rs->close();
@@ -477,11 +481,14 @@ WHERE
                     }
                 } else {
                     // Just get current grade
-                    $score=$DB->get_field('grade_grades','finalgrade',array(
+                    $record = $DB->get_record('grade_grades', array(
                         'userid'=>$USER->id,'itemid'=>$gradeitemid));
-                    // Treat the case where row exists but is null, same as
-                    // case where row doesn't exist
-                    if(is_null($score)) {
+                    if ($record && !is_null($record->finalgrade)) {
+                        $score = (($record->finalgrade - $record->rawgrademin) * 100) /
+                            ($record->rawgrademax - $record->rawgrademin);
+                    } else {
+                        // Treat the case where row exists but is null, same as
+                        // case where row doesn't exist
                         $score=false;
                     }
                     $SESSION->gradescorecache[$gradeitemid]=$score;
@@ -490,9 +497,14 @@ WHERE
             return $SESSION->gradescorecache[$gradeitemid];
         } else {
             // Not the current user, so request the score individually
-            $score=$DB->get_field('grade_grades','finalgrade',array(
-                'userid'=>$userid,'itemid'=>$gradeitemid));
-            if($score===null) {
+            $record = $DB->get_record('grade_grades', array(
+                'userid'=>$userid, 'itemid'=>$gradeitemid));
+            if ($record && !is_null($record->finalgrade)) {
+                $score = (($record->finalgrade - $record->rawgrademin) * 100) /
+                    ($record->rawgrademax - $record->rawgrademin);
+            } else {
+                // Treat the case where row exists but is null, same as
+                // case where row doesn't exist
                 $score=false;
             }
             return $score;
