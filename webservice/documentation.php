@@ -45,11 +45,29 @@ function generate_documentation($protocol) {
         Every method has only one parameter which is an array.<br>
         <br>
         For example in PHP for this specific function:<br>
-        Moodle path: user<br>
+        Moodle path: <b>user</b><br>
         <b>tmp_delete_user</b>( string username, integer mnethostid,   )<br>
         You will call something like:<br>
         your_client->tmp_delete_user(array('username' => "username_to_delete",'mnethostid' => 1))<br>
         
+EOF;
+            break;
+        case "xmlrpc":
+            $documentation = <<<EOF
+        <H2>XMLRPC Manual</H2>
+        <b>1.</b> Call the method <b>authentication.tmp_get_token</b> on "<i>http://remotemoodle/webservice/xmlrpc/zend_xmlrpc_server.php</i>"<br>
+        Function parameter is an array: in PHP it would be array('username' => "wsuser", 'password' => "wspassword")<br>
+        Return value is a token (integer)<br>
+        <br>
+        <b>2.</b> Then call a moodle web service method on "<i>http://remotemoodle/webservice/xmlrpc/zend_xmlrpc_server.php?classpath=user&token=the_received_token</i>"<br>
+        Every method has only one parameter which is an array.<br>
+        <br>
+        For example in PHP for this specific function:<br>
+        Moodle path: <b>user</b><br>
+        <b>tmp_delete_user</b>( string username, integer mnethostid,   )<br>
+        You will call something like:<br>
+        your_client->call('user.tmp_delete_user', array(array('username' => "username_to_delete",'mnethostid' => 1)))<br>
+
 EOF;
             break;
         default:
