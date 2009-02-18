@@ -240,6 +240,56 @@ class question_edit_form extends moodleform {
         // By default, do nothing.
     }
 
+    /**
+     * Get the list of form elements to repeat, one for each answer.
+     * @param object $mform the form being built.
+     * @param $label the label to use for each option.
+     * @param $gradeoptions the possible grades for each answer.
+     * @param $repeatedoptions reference to array of repeated options to fill
+     * @param $answersoption reference to return the name of $question->options field holding an array of answers
+     * @return array of form fields.
+     */
+    function get_per_answer_fields(&$mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
+        $repeated = array();
+        $repeated[] =& $mform->createElement('header', 'answerhdr', $label);
+        $repeated[] =& $mform->createElement('text', 'answer', get_string('answer', 'quiz'), array('size' => 50));
+        $repeated[] =& $mform->createElement('select', 'fraction', get_string('grade'), $gradeoptions);
+        $repeated[] =& $mform->createElement('htmleditor', 'feedback', get_string('feedback', 'quiz'),
+                                array('course' => $this->coursefilesid));
+        $repeatedoptions['answer']['type'] = PARAM_RAW;
+        $repeatedoptions['fraction']['default'] = 0;
+        $answersoption = 'answers';
+        return $repeated;
+    }
+
+    /**
+     * Add a set of form fields, obtained from get_per_answer_fields, to the form,
+     * one for each existing answer, with some blanks for some new ones.
+     * @param object $mform the form being built.
+     * @param $label the label to use for each option.
+     * @param $gradeoptions the possible grades for each answer.
+     * @param $minoptions the minimum number of answer blanks to display. Default QUESTION_NUMANS_START.
+     * @param $addoptions the number of answer blanks to add. Default QUESTION_NUMANS_ADD.
+     */
+    function add_per_answer_fields(&$mform, $label, $gradeoptions, $minoptions = QUESTION_NUMANS_START, $addoptions = QUESTION_NUMANS_ADD) {
+        $answersoption = '';
+        $repeatedoptions = array();
+        $repeated = $this->get_per_answer_fields($mform, $label, $gradeoptions, $repeatedoptions, $answersoption);
+
+        if (isset($this->question->options)){
+            $countanswers = count($this->question->options->$answersoption);
+        } else {
+            $countanswers = 0;
+        }
+        if ($this->question->formoptions->repeatelements){
+            $repeatsatstart = max($minoptions, $countanswers + $addoptions);
+        } else {
+            $repeatsatstart = $countanswers;
+        }
+
+        $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', $addoptions, get_string('addmorechoiceblanks', 'qtype_multichoice'));
+    }
+
     function set_data($question) {
         global $QTYPES;
         $QTYPES[$question->qtype]->set_default_options($question);
