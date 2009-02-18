@@ -491,6 +491,12 @@ _client.viewfiles = function() {
         _client.viewthumb();
     }
 }
+_client.print_msg = function(msg) {
+    _client.print_header();
+    var panel = new YAHOO.util.Element('panel-$suffix');
+    panel.get('element').innerHTML += msg;
+    _client.print_footer();
+}
 _client.print_header = function() {
     var panel = new YAHOO.util.Element('panel-$suffix');
     var str = '<div id="fp-header-$suffix">';
@@ -1046,6 +1052,8 @@ success: function(o) {
      _client.ds = data;
      if(!data) {
          return;
+     }else if(data.msg){
+         _client.print_msg(data.msg);
      }else if(data.iframe) {
          _client.viewiframe();
      }else if(data.login) {
@@ -1116,6 +1124,8 @@ function openpicker_$suffix(params) {
         repository_client_$suffix.target = params.target;
         if(params.itemid){
             repository_client_$suffix.itemid = params.itemid;
+        } else if(tinyMCE && id2itemid[tinyMCE.selectedInstance.editorId]){
+            repository_client_$suffix.itemid = id2itemid[tinyMCE.selectedInstance.editorId];
         }
         repository_client_$suffix.instance = new repository_client_$suffix();
         repository_client_$suffix.instance.create_picker();

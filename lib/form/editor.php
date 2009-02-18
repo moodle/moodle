@@ -2,7 +2,6 @@
 
 require_once('HTML/QuickForm/element.php');
 
-
 //TODO:
 //  * locking
 //  * freezing
@@ -104,7 +103,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
     }
 
     function toHtml() {
-        global $CFG;
+        global $CFG, $COURSE;
 
         if ($this->_flagFrozen) {
             return $this->getFrozenHtml();
@@ -178,21 +177,36 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $str .= '<object type="text/html" data="'.$editorurl.'" height="160" width="600" style="border:1px solid #000">Error</object>'; // TODO: localise, fix styles, etc.
             $str .= '</div>';
 
-       /// TODO: somehow pass 'itemid' to tinymce so that image chooser known where to look for and upload files,
-       //        also include list of expected file types handled by editor array('image', 'video', 'media')
-            // JS code by Dongsheng goes here - uncomment following block when finished
+        require_once($CFG->dirroot.'/repository/lib.php');
+        if(empty($COURSE->context)) {
+            $ctx = get_context_instance(CONTEXT_SYSTEM);
+        } else {
+            $ctx = $COURSE->context;
+        }
+        $ret = repository_get_client($ctx, array('image', 'video', 'media'), '*');
 
-      /// TODO: hide embedded file manager if tinymce used
-/*            if ($editorclass === 'form-textarea-advanced') {
-                $str .= '<script type="text/javascript">
+        $suffix = $ret['suffix'];
+        $str .= $ret['css'].$ret['js'];
+        $str .= <<<EOD
+<script type="text/javascript">
+id2suffix['$id']='$suffix';
+id2itemid['$id']='$draftitemid';
+</script>
+EOD;
+
+        /// TODO: hide embedded file manager if tinymce used
+        if ($editorclass === 'form-textarea-advanced') {
+            $str .= <<<EOD
+<script type="text/javascript">
 //<![CDATA[
-    var fileman = document.getElementById("'.$id.'_filemanager");
-    fileman.style.visibility = "hidden";
-    fileman.style.height = "0";
+var fileman = document.getElementById("{$id}_filemanager");
+fileman.style.visibility = "hidden";
+fileman.style.height = "0";
 //]]>
-</script>';
+</script>
+EOD;
 
-            }*/
+            }
         }
 
 

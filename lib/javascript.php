@@ -29,6 +29,7 @@ setTimeout('fix_column_widths()', 20);
 <script type="text/javascript">
 //<![CDATA[
 var id2suffix = {};
+var id2itemid = {};
 <?php
 if (!empty($focus)) {
     if(($pos = strpos($focus, '.')) !== false) {
