@@ -233,6 +233,7 @@ function filter_phrases ($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsc
     }
 
     if (!empty($ignoretags)) {
+        $ignoretags = array_reverse($ignoretags); /// Reversed so "progressive" str_replace() will solve some nesting problems.
         $text = str_replace(array_keys($ignoretags),$ignoretags,$text);
     }
 
