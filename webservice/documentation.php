@@ -59,7 +59,7 @@ EOF;
         Function parameter is an array: in PHP it would be array('username' => "wsuser", 'password' => "wspassword")<br>
         Return value is a token (integer)<br>
         <br>
-        <b>2.</b> Then call a moodle web service method on "<i>http://remotemoodle/webservice/xmlrpc/zend_xmlrpc_server.php?classpath=user&token=the_received_token</i>"<br>
+        <b>2.</b> Then call a moodle web service method on "<i>http://remotemoodle/webservice/xmlrpc/zend_xmlrpc_server.php?classpath=the_moodle_path&token=the_received_token</i>"<br>
         Every method has only one parameter which is an array.<br>
         <br>
         For example in PHP for this specific function:<br>
