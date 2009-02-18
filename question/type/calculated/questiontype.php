@@ -122,7 +122,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         // Get old answers:
         global $CFG;
 
-        if (isset($question->answer) && !isset($question->asnwers)) {
+        if (isset($question->answer) && !isset($question->answers)) {
             $question->answers = $question->answer;
         }
 
