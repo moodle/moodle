@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
 /**
  * A base class for question editing forms.
  *

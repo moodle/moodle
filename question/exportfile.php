@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
     require_once(dirname(__FILE__) . '/../config.php');
     require_once($CFG->libdir . '/filelib.php');
 
