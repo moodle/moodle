@@ -2907,7 +2907,7 @@ function update_user_record($username, $authplugin) {
                 // nothing_ for this field. Thus it makes sense to let this value
                 // stand in until LDAP is giving a value for this field.
                 if (!(empty($value) && $lockval === 'unlockedifempty')) {
-                    $DB->set_field('user', $key, $value, 'username', $username);
+                    $DB->set_field('user', $key, $value, array('username'=>$username));
                 }
             }
         }
