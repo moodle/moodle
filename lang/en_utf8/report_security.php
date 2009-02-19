@@ -51,9 +51,9 @@ $string['check_defaultcourserole_risky'] = 'Risky capabilities detected in <a hr
 $string['check_defaultuserrole_details'] = '<p>All logged in users are given capabilities of the default user role. Please make sure no risky capabilities are allowed in this role.</p>
 <p>The only supported legacy type for the default user role is <em>Authenticated user</em>. The course view capability must not be enabled.</p>';
 $string['check_defaultuserrole_error'] = 'The default user role \"$a\" is incorrectly defined!';
-$string['check_defaultuserrole_name'] = 'Registered user role';
+$string['check_defaultuserrole_name'] = 'Default role for all users';
 $string['check_defaultuserrole_notset'] = 'Default role is not set.';
-$string['check_defaultuserrole_ok'] = 'Registered user role definition is OK.';
+$string['check_defaultuserrole_ok'] = 'Default role for all users definition is OK.';
 
 $string['check_displayerrors_details'] = '<p>Enabling the PHP setting <code>display_errors</code> is not recommended on production sites because error messages can reveal sensitive information about your server.</p>';
 $string['check_displayerrors_error'] = 'The PHP setting to display errors is enabled. It is recommended that this is disabled.';
