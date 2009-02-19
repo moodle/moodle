@@ -257,6 +257,6 @@ $string['wrongsourcebase'] = 'Falsche URL-Quelle';
 $string['wrongzipfilename'] = 'Falscher ZIP-Dateiname';
 $string['wwwroot'] = 'Web-Adresse';
 $string['wwwrooterror'] = 'Diese Web-Adresse scheint nicht gültig zu sein. Moodle ist nicht unter dieser Adresse installiert.';
-$string['xmlrpcrecommended'] = 'Die Installation der optionalen xmlrpc Erweiterung ist für die Moodle-Network Funktionen nützlich.';
+$string['xmlrpcrecommended'] = 'Die Installation der optionalen PHP-Erweiterung xmlrpc ist für die Moodle-Network Funktionen nötig.';
 $string['ziprequired'] = 'Die PHP-Erweiterung zip wird ab sofort von Moodle gefordert. Die Pakete info-ZIP oder PclZip werden nicht weiter eingesetzt.';
 ?>
