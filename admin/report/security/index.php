@@ -86,6 +86,8 @@ if ($issue and ($result = $issue(true))) {
     $row[2] = $result->info;
     $row[3] = is_null($result->link) ? '&nbsp;' : $result->link;
 
+    $CFG->pagepath = "report/security/$issue"; // help link in footer
+
     $table->data[] = $row;
 
     print_table($table);
