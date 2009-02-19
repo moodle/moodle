@@ -64,6 +64,7 @@ function repository_get_client($context, $accepted_filetypes = '*', $returnvalue
     $strdate      = get_string('date', 'repository').': ';
     $strerror     = get_string('error', 'repository');
     $strfilenotnull = get_string('filenotnull', 'repository');
+    $strfederatedsearch = get_string('federatedsearch', 'repository');
     $strrefresh   = get_string('refresh', 'repository');
     $strinvalidjson = get_string('invalidjson', 'repository');
     $strlistview  = get_string('listview', 'repository');
@@ -265,7 +266,7 @@ this.create_picker = function() {
     repo_list = new YAHOO.util.Element('repo-list-$suffix');
     repo_list.on('contentReady', function(e) {
         var searchbar = new YAHOO.util.Element('search-div-$suffix');
-        searchbar.get('element').innerHTML = '<input id="search-input-$suffix" /><button id="search-btn-$suffix">$strsearch</button>';
+        searchbar.get('element').innerHTML = '<input id="search-input-$suffix" /><button id="search-btn-$suffix">$strfederatedsearch</button>';
         var btn_search = new YAHOO.util.Element('search-btn-$suffix');
         var input_keyword = new YAHOO.util.Element('search-input-$suffix');
         btn_search.fnSearch = function(e) {

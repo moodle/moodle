@@ -41,6 +41,7 @@ $string['existingrepository'] = 'This repository already exists';
 $string['filename'] = 'Filename';
 $string['filenotnull'] = 'You must select a file to upload.';
 $string['filesaved'] = 'The file has been saved';
+$string['federatedsearch'] = 'Federated search';
 $string['getfile'] = 'Select this file';
 $string['hiddenshow'] = 'Hide/Show';
 $string['keyword'] = 'Keyword';
