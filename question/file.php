@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
       // This script fetches files from the dataroot/questionattempt directory
       // It is based on the top-level file.php
       //

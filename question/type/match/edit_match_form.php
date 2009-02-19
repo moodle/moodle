@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
 /**
  * Defines the editing form for the match question type.
  *
