@@ -51,9 +51,9 @@ $string['check_defaultcourserole_risky'] = 'Risky capabilities detected in <a hr
 $string['check_defaultuserrole_details'] = '<p>All logged in users are given capabilities of the default user role. Please make sure no risky capabilities are allowed in this role.</p>
 <p>The only supported legacy type for the default user role is <em>Authenticated user</em>. The course view capability must not be enabled.</p>';
 $string['check_defaultuserrole_error'] = 'The default user role \"$a\" is incorrectly defined!';
-$string['check_defaultuserrole_name'] = 'Registered user role';
+$string['check_defaultuserrole_name'] = 'Default role for all users';
 $string['check_defaultuserrole_notset'] = 'Default role is not set.';
-$string['check_defaultuserrole_ok'] = 'Registered user role definition is OK.';
+$string['check_defaultuserrole_ok'] = 'Default role for all users definition is OK.';
 
 $string['check_displayerrors_details'] = '<p>Enabling the PHP setting <code>display_errors</code> is not recommended on production sites because error messages can reveal sensitive information about your server.</p>';
 $string['check_displayerrors_error'] = 'The PHP setting to display errors is enabled. It is recommended that this is disabled.';
@@ -124,6 +124,7 @@ $string['check_riskadmin_detailswarning'] = '<p>Please verify the following list
 <p>It is recommended to assign administrator role in system context only. Following users have unsupported admin role assignments:</p>$a->unsupported';
 $string['check_riskadmin_name'] = 'Administrators';
 $string['check_riskadmin_ok'] = 'Found $a server administrator(s).';
+$string['check_riskadmin_unassign'] = '<a href=\"$a->url\">$a->fullname ($a->email) review role assignment</a>';
 $string['check_riskadmin_warning'] = 'Found $a->admincount server administrators and $a->unsupcount unsupported admin role assignments.';
 
 $string['check_riskxss_details'] = '<p>RISK_XSS denotes all dangerous capabilities that only trusted users may use.</p>
