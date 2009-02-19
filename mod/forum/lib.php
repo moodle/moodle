@@ -2348,7 +2348,11 @@ function forum_count_discussions($forum, $cm, $course) {
     if (empty($CFG->enablegroupings)) {
         $mygroups = $modinfo->groups[0];
     } else {
-        $mygroups = $modinfo->groups[$cm->groupingid];
+        if (array_key_exists($cm->groupingid, $modinfo->groups)) {
+            $mygroups = $modinfo->groups[$cm->groupingid];
+        } else {
+            $mygroups = false; // Will be set below
+        }
     }
 
     // add all groups posts
