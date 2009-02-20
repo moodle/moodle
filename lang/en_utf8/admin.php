@@ -539,6 +539,7 @@ $string['smartpix'] ='Smart pix search';
 $string['smtphosts'] = 'SMTP hosts';
 $string['smtppass'] = 'SMTP password';
 $string['smtpuser'] = 'SMTP username';
+$string['spamcleaner'] = 'Spam cleaner';
 $string['stats'] = 'Statistics';
 $string['statsfirstrun'] = 'Maximum processing interval';
 $string['statsmaxruntime'] = 'Maximum runtime';
