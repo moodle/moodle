@@ -24,7 +24,7 @@ $string['cannotsavemd5file'] = 'Non è possibile salvare il file md5.';
 $string['cannotsavezipfile'] = 'Non è possibile salvare file ZIP.';
 $string['cannotunzipfile'] = 'Non è possibile decomprimere il file.';
 $string['caution'] = 'Attenzione';
-$string['check'] = 'Controlla';
+$string['check'] = 'Verifica';
 $string['chooselanguagehead'] = 'Scegli la lingua';
 $string['chooselanguagesub'] = 'Scegliete la lingua da usare durante l\'installazione. La lingua usata nel sito e dagli utenti potrà essere modificata in seguito.';
 $string['closewindow'] = 'Chiudi questa finestra';
@@ -118,9 +118,9 @@ $string['directorysettingssub'] = '<b>Indirizzo web:</b> Specificate l\'indirizz
 <b>Cartella di Moodle</b> Specificate il percorso assoluto della cartella dove state installando Moodle. Accertatevi che il nome della cartella tenga conto di eventuali lettere maiuscole o minuscole.
 <br/>
 <br/>
-<b>Cartella dei dati:</b> E\' la cartella dove Moodle inserirà i file caricati dagli utenti. Il web server (in genere \'nobody\' o \'apache\') DEVE avere i permessi di lettura e di scrittura su questa cartella. In aggiunta, la cartella dati non deve essere direttamente accessibile via web.';
+<b>Cartella dei dati:</b> E\' la cartella dove Moodle inserirà i file caricati dagli utenti. Il web server (in genere \'nobody\' o \'apache\') DEVE avere i permessi di lettura e di scrittura su questa cartella. In aggiunta, la cartella dei dati non deve essere direttamente accessibile via web.';
 $string['dirroot'] = 'Cartella di Moodle';
-$string['dirrooterror'] = 'L\'impostazione \'Cartella di Moodle\' sembra essere scorretta - non è possibile trovare un\'installazione di Moodle nel percorso specificato. Il valore sotto è stato ripristinato.';
+$string['dirrooterror'] = 'L\'impostazione \'Cartella di Moodle\' sembra essere errata - non è possibile trovare l\'installazione di Moodle nel percorso specificato. Il valore sotto riportato è stato ripristinato.';
 $string['download'] = 'Download';
 $string['downloadedfilecheckfailed'] = 'Il controllo del file scaricato non è andato a buon fine.';
 $string['downloadlanguagebutton'] = 'Scarica il language pack \"$a\";';
@@ -154,7 +154,7 @@ $string['globalsquotes'] = 'Gestione non sicura delle Globals';
 $string['globalsquoteserror'] = 'Correggere le impostazioni PHP: disabilitare register_globals e/o abilitare magic_quotes_gpc';
 $string['globalsquoteshelp'] = '<p>La combinazione Magic quotes disabilitata e Register Globals abilitata è sconsigliata.</p>
 
-<p>L\'impostazione consigliata pe ril vostro php.ini è: <b>magic_quotes_gpc = On</b> e <b>register_globals = Off</b>
+<p>L\'impostazione consigliata per il vostro php.ini è: <b>magic_quotes_gpc = On</b> e <b>register_globals = Off</b>
 
 <p>Qualora non abbiate accesso al file php.ini, potreste aggiungere le seguenti linee in un file .htaccess da salvare nella Cartella di Moodle:</p>
 <blockquote><div>php_value magic_quotes_gpc On</div></blockquote>
@@ -227,9 +227,9 @@ $string['report'] = 'Report';
 $string['restricted'] = 'Ridotto';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle può avere problemi con il safe mode impostato a on';
-$string['safemodehelp'] = '<p>Moodle può avere diversi problemi con il paramentro safemode impostato a on, non ultima l\'impossibilità  di creare nuovi file.</p>
-<p>Safemode è normalmente abiltato da paranoici web server pubblici, se è cosi l\'unica soluzine è trovare un nuovo web server per il tuo sito di Moodle.</p>
-<p>È possibile a continuare l\'installazione se si vuole, ma aspettatevi alcuni problemi dopo.</p>';
+$string['safemodehelp'] = '<p>Moodle può avere diversi problemi con l\'impostazione Safe Mode ad on, non ultima l\'impossibilità  di creare nuovi file.</p>
+<p>Safe mode è normalmente abiltato da paranoici web server pubblici, se è cosi l\'unica soluzione è trovare un nuovo web server per il tuo sito di Moodle.</p>
+<p>È possibile a continuare l\'installazione se si vuole, ma aspettatevi alcuni problemi in seguito.</p>';
 $string['serverchecks'] = 'Controlli Server';
 $string['sessionautostart'] = 'Session Auto Start';
 $string['sessionautostarterror'] = 'Dovrebbe essere impostata ad off';

@@ -39,6 +39,8 @@ $string['configfilewritten'] = 'config.php se ha creado con éxito';
 $string['configurationcompletehead'] = 'Configuración completa';
 $string['configurationcompletesub'] = 'Moodle ha creado su fichero de configuración';
 $string['continue'] = 'Continuar';
+$string['ctyperecommended'] = 'Es muy recomendable instalar la extensión opcional ctype de PHP con el fin de mejorar el rendimiento del sitio, en especial si el sitio incluye idiomas no latinos.';
+$string['ctyperequired'] = 'Con el fin de mejorar el rendimiento del sitio y ofrecer compatibilidad multilingüe, Moodle requiere la extensión ctype de PHP.';
 $string['curlrecommended'] = 'Se recomienda encarecidamente instalar la librería opcional Curl a fin de posibilitar la funcionalidad de la Red Moodle.';
 $string['customcheck'] = 'Otras comprobaciones';
 $string['database'] = 'Base de datos';
@@ -237,6 +239,9 @@ $string['phpversionhelp'] = '<p>Moodle requiere una versión de PHP 4.1.0 o supe
 <p>Su versión es $a</p>
 <p>Debe actualizar PHP o acudir a otro servidor con una versión más reciente de PHP</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
+$string['postgresqlwarning'] = '<strong>Nota:</strong> Si experimenta problemas de conexión, puede intentar ajustar el campo Host Server como
+host=\'postgresql_host\' port=\'5432\' dbname=\'postgresql_database_name\' user=\'postgresql_user\' password=\'postgresql_user_password\'
+y dejar vacía los campos Base de datos, Usuario y Contraseña. Más información en <a href=\"http://docs.moodle.org/en/Installing_Postgres_for_PHP\">Moodle Docs</a>';
 $string['previous'] = 'Anterior';
 $string['qtyperqpwillberemoved'] = 'Durante la actualización, el tipo de pregunta RQP será eliminada. En el caso de que no estuviera utilizando este tipo de pregunta, no debería tener ningún problema.';
 $string['qtyperqpwillberemovedanyway'] = 'Durante la actualización, el tipo de pregunta RQP será eliminada. Usted tiene algunas preguntas RQP en su base de datos, y tales preguntas no pararán de funcionar a menos que reinstale el código desde http://moodle.org/mod/data/view.php?d=13&amp;rid=797  antes de continuar la actualización.';
