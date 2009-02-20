@@ -23,10 +23,26 @@ $string['dirroot'] = 'Cartella di Moodle';
 $string['environment'] = 'Ambiente';
 $string['environmentrequireinstall'] = 'è necessaria l\'installazione/abilitazione';
 $string['environmentrequireversion'] = 'è necessaria la versione $a->needed e la vostra versione attuale è $a->current';
+$string['environmentsub2'] = 'Ciascuna release di Moodle prevede come requisito minimo una certa versione del PHP assieme ad una serie di estensioni. Prima di una installazione o di un aggiornamento viene eseguita la verifica di questi requisiti minimi. Se non sapete come installare nuove versioni del PHP o le sue estensioni, contattate l\'amministratore del vostro server.';
 $string['errorsinenvironment'] = 'Ci sono problemi nel vostro ambiente';
 $string['installation'] = 'Installazione';
 $string['language'] = 'Lingua';
 $string['parentlanguage'] = '<< TRADUTTORI: Se la vostra lingua ha una \"Parent language\" che Moodle deve usare quando mancano stringhe nel vostro language pack, allora dovete specificare qui il suo codice. Se il campo viene lasciato vuoto verrà usato l\'inglese. Esempio: it>>';
+$string['paths'] = 'Percorsi';
+$string['pathserrcreatedataroot'] = 'Lo script di installazione non ha potuto creare la Cartella dei dati ($a->dataroot).';
+$string['pathshead'] = 'Conferma percorsi';
+$string['pathsrodataroot'] = 'La Cartella dei dati non è scrivibile.';
+$string['pathsroparentdataroot'] = 'La cartella superiore ($a->parent) non è scrivibile. Lo script di installazione non può creare la Cartella dei dati ($a->dataroot).';
+$string['pathssubadmindir'] = 'Alcuni web host utilizzano la cartella /admin come URL di accesso a pannelli di controllo od altre funzioni particolari. Tuttavia questo nome coincide con il nome della cartella che Moodle utilizza per i propri file di amministrazione. Per evitare conflitti, è possibile specificare un nome alternativo per la cartella Admin di Moodle. Ad esempio:<p><b>moodleadmin</b></p>
+Tutti i link che puntano ai file di amministrazione di Moodle terranno conto di questa variazione.';
+$string['pathssubdataroot'] = 'E\' necessario specificare una cartella dove Moodle inserirà i file caricati dagli utenti. Il web server (in genere \'nobody\' o \'apache\') DEVE avere i permessi di lettura e di scrittura su questa cartella. In aggiunta, la cartella dei dati NON DEVE essere direttamente accessibile via web. Se la Cartella dei dati non esiste, lo script di installazione tenterà di crearla.';
+$string['pathssubdirroot'] = 'Percorso assoluto della installazione Moodle. Modificatelo solamente se avete bisogno di usare link simbolici.';
+$string['pathssubwwwroot'] = 'Indirizzo web per accedere a questa installazione di Moodle. Non è possibile accedere a Moodle usando indirizzi multipli. Se il vpstro sito ha indirizzi web pubblici multipli, dovete configurare dei re-indirizzamenti permanenti su tutti gli altri indirizzi.
+Se il vostro sito è accessibile sia dalla Internet che dalla Intranet, allora usate l\'indirizzo Internet pubblico ed impostate il DNS in modo che anche gli utenti intranet possano accedere all\'indirizzo pubblico.';
+$string['pathsunsecuredataroot'] = 'La posizione della Cartella dei dati non è sicura';
+$string['pathswrongadmindir'] = 'La cartella Admin non esiste';
+$string['pathswrongdirroot'] = 'La posizione della cartella Dirroot è errata';
+$string['phpextension'] = '$a estensioni PHP';
 $string['phpversion'] = 'Versione PHP';
 $string['reload'] = 'Ricarica';
 $string['thischarset'] = 'UTF-8';
