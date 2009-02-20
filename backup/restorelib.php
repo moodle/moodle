@@ -1178,8 +1178,14 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                         $course_module->completionview=$mod->completionview;
                                         $course_module->completionexpected=$mod->completionexpected;
 
-                                        $course_module->availablefrom=$mod->availablefrom+$restore->course_startdateoffset;
-                                        $course_module->availableuntil=$mod->availableuntil+$restore->course_startdateoffset;
+                                        $course_module->availablefrom=$mod->availablefrom;
+                                        if($mod->availablefrom!=0) {
+                                            $course_module->availablefrom+=$restore->course_startdateoffset;
+                                        }
+                                        $course_module->availableuntil=$mod->availableuntil;
+                                        if($mod->availableuntil!=0) {
+                                            $course_module->availableuntil+=$restore->course_startdateoffset;
+                                        }
                                         $course_module->showavailability=$mod->showavailability;
 
                                         $newidmod = $DB->insert_record("course_modules", $course_module);
