@@ -178,9 +178,9 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
         //$db->debug = 3498723498237; // .. very large randomly-typed random value
 
         if ($local_scope) {
-            $outcome = get_records_select('grade_outcomes', 'shortname = "'. $csv_data[$imported_headers['outcome_shortname']] .'" and courseid = '. $courseid );
+            $outcome = get_records_select('grade_outcomes', 'shortname = \''. $csv_data[$imported_headers['outcome_shortname']] .'\' and courseid = '. $courseid );
         } else {
-            $outcome = get_records_select('grade_outcomes', 'shortname = "'. $csv_data[$imported_headers['outcome_shortname']] .'" and courseid is null');
+            $outcome = get_records_select('grade_outcomes', 'shortname = \''. $csv_data[$imported_headers['outcome_shortname']] .'\' and courseid is null');
         }
         //var_export($outcome);
 
