@@ -24,6 +24,10 @@ class block_activity_modules extends block_list {
             $course = get_record('course', 'id', $this->instance->pageid);
         }
 
+        if (empty($course)) {
+            return '';
+        }
+
         require_once($CFG->dirroot.'/course/lib.php');
 
         $modinfo = get_fast_modinfo($course);
