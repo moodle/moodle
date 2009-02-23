@@ -1076,7 +1076,7 @@ class question_bank_view {
 
     public function preview_question_url($questionid) {
         global $CFG;
-        return $CFG->wwwroot . '/question/preview.php?id=' . $questionid . '&amp;course=' . $this->course->id;
+        return $CFG->wwwroot . '/question/preview.php?id=' . $questionid . '&amp;courseid=' . $this->course->id;
     }
 
     /**
