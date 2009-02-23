@@ -220,7 +220,6 @@
             print_box($releasenoteslink);
 
             require_once($CFG->libdir.'/environmentlib.php');
-            print_heading(get_string('environment', 'admin'));
             if (!check_moodle_environment($release, $environment_results, true, ENV_SELECT_RELEASE)) {
                 print_upgrade_reload('index.php?confirmupgrade=1');
             } else {

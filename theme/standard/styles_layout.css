@@ -1381,6 +1381,9 @@ table.explainpermissions .cell {
 .environmentbox {
   margin-top: 1em;
 }
+.environmenttable .cell {
+  padding: 0.15em 0.5em;
+}
 
 .form-buttons {
   margin: 10px 0 0 13em;
