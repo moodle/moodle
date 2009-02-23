@@ -1302,6 +1302,9 @@ function data_get_ratings($recordid, $sort="u.firstname ASC") {
 // prints all comments + a text box for adding additional comment
 function data_print_comments($data, $record, $page=0, $mform=false) {
     global $CFG;
+    $cm = get_coursemodule_from_instance('data', $data->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $cancomment = has_capability('mod/data:comment', $context);
     echo '<a name="comments"></a>';
     if ($comments = get_records('data_comments','recordid',$record->id)) {
         foreach ($comments as $comment) {
@@ -1309,7 +1312,7 @@ function data_print_comments($data, $record, $page=0, $mform=false) {
         }
         echo '<br />';
     }
-    if (!isloggedin() or isguest()) {
+    if (!isloggedin() or isguest() or !$cancomment) {
         return;
     }
     $editor = optional_param('addcomment', 0, PARAM_BOOL);
