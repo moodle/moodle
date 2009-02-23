@@ -28,8 +28,8 @@
     }
 
     require_login($course->id, false, $cm);
-
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    require_capability('mod/data:comment', $context);
 
     if ($commentid) {
         if (! $comment = $DB->get_record('data_comments', array('id'=>$commentid))) {

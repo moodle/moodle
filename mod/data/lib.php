@@ -1433,6 +1433,9 @@ function data_get_ratings($recordid, $sort="u.firstname ASC") {
 function data_print_comments($data, $record, $page=0, $mform=false) {
     global $CFG, $DB;
 
+    $cm = get_coursemodule_from_instance('data', $data->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $cancomment = has_capability('mod/data:comment', $context);
     echo '<a name="comments"></a>';
 
     if ($comments = $DB->get_records('data_comments', array('recordid'=>$record->id))) {
@@ -1442,7 +1445,7 @@ function data_print_comments($data, $record, $page=0, $mform=false) {
         echo '<br />';
     }
 
-    if (!isloggedin() or isguest()) {
+    if (!isloggedin() or isguest() or !$cancomment) {
         return;
     }
 
