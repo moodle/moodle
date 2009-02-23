@@ -141,6 +141,7 @@ $string['dbmigratewarning2'] = '<b>Warning: You are about to start the database 
 $string['dbmigrateconnecerror'] = 'Could not connect to the database specified.';
 $string['dbmigrateencodingerror'] = 'The database specified has encoding $a rather than required UNICODE/UTF8.<br />Please specify another.';
 $string['dbmigratepostgres'] = 'It seems that you are using PostgreSQL as the database server. To continue the migration process you need to manually create a new database with encoding \"UNICODE\"(PostgreSQL 7) or \"UTF8\" (PostgreSQL 8) to store the migrated data. Please enter your new database connection settings below to continue:';
+$string['deleteuser'] = 'Delete user';
 $string['density'] = 'Density';
 $string['download'] = 'Download';
 $string['edithelpdocs'] = 'Edit help documents';
@@ -169,6 +170,7 @@ $string['helpupcominglookahead'] = 'How many days in the future does the calenda
 $string['helpupcomingmaxevents'] = 'How many (maximum) upcoming events are shown to users by default?';
 $string['helpweekenddays'] = 'Which days of the week are treated as \"weekend\" and shown with a different colour?';
 $string['iconvrecommended'] = 'Installing the optional ICONV library is highly recommended in order to improve site performance, particularly if your site is supporting non-latin languages.';
+$string['ignore'] = 'Ignore';
 $string['importlangreminder'] = 'The database migration process is commencing. You will need to <b>log in again</b> for the upgrade to take effect. Please install unicode language packs as soon as possible from Admin->Lang->Lang Import Utility <b>after</b> the database migration process is completed. ';
 $string['importtimezones'] = 'Update complete list of timezones';
 $string['importtimezonescount'] = '$a->count entries imported from $a->source';
@@ -235,6 +237,7 @@ $string['stickyblocksduplicatenotice'] = 'If any block you add here is already p
 $string['stickyblockspagetype'] = 'Page type to configure';
 $string['stickyblocksmymoodle'] = 'My moodle';
 $string['stickyblockscourseview'] = 'Course page';
+$string['spamcleaner'] = 'Spam cleaner';
 $string['releasenoteslink'] = 'For information about this version of Moodle, please see the online <a target=\"_new\" href=\"$a\">Release Notes</a>';
 $string['renameerrors'] = 'Errors in renames';
 $string['tabselectedtofront'] = 'On tables with tabs, should the row with the currently selected tag be placed at the front';
@@ -257,6 +260,7 @@ Once you do this you can not go back again. <br /><br />
 Are you sure you want to upgrade this server to this version?';
 $string['upgradingdata'] = 'Upgrading data';
 $string['upgradinglogs'] = 'Upgrading logs';
+$string['user'] = 'User';
 $string['userrenamed']   = 'User renamed';
 $string['useraccountupdated']   = 'User updated';
 $string['userscreated']  = 'Users created';
