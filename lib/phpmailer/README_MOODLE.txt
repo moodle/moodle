@@ -1,23 +1,9 @@
-Moodle-specific changes to phpmailer are tracked here.
+Description of PHPMailer 1.73 library import into Moodle
 
+Changes:
 
-  lib/phpmailer/class.phpmailer.php
-
-  Changed by: Vy-Shane Sin Fat <vy-shane AT moodle.com>
-  Date: 14 Feb 2007
-  Reason: http://tracker.moodle.org/browse/MDL-3681
-
-
-  lib/phpmailer/class.phpmailer.php
-
-  Changed by skodak
-  Date 12 Mar 2007
-  Reason: support for gb18030
-
-
-  lib/phpmailer/class.phpmailer.php
-
-  Changed by skodak
-  Date 15 Dec 2007
-  Reason: MDL-12596 - correct timezone in date
-  
+class.phpmailer.php
+ * Duplicate Message-IDs in Forum mail (MDL-3681)
+ * Support for gb18030 (MDL-5229)
+ * Correct timezone in date (MDL-12596)
+ * Backported fixes for CVE-2007-3215 (MDL-18348)
