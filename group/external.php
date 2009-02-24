@@ -20,41 +20,11 @@ require_once(dirname(dirname(__FILE__)) . '/lib/grouplib.php');
 final class group_external {
 
     /**
-     * Constructor - We set the description of this API in order to be access by Web service
-     */
-    /*
-    function __construct () {
-          $this->descriptions = array();
-
-
-          $this->descriptions['tmp_create_group']   = array( 'params' => array('groupname'=> PARAM_RAW, 'courseid'=> PARAM_INT),
-                                                            'optionalparams' => array( ),
-                                                            'return' => array('groupid' => PARAM_INT));
-
-          $this->descriptions['tmp_get_group']     = array( 'params' => array('groupid'=> PARAM_INT),
-                                                            'optionalparams' => array( ),
-                                                            'return' => array('group' => array('id' => PARAM_RAW, 'courseid' => PARAM_RAW,
-																		'name' => PARAM_RAW, 'enrolmentkey' => PARAM_RAW)));
-		  $this->descriptions['tmp_delete_group']     = array( 'params' => array('groupid'=> PARAM_INT),
-                                                            'optionalparams' => array( ),
-                                                            'return' => array('result' => PARAM_BOOL));
-
-          $this->descriptions['tmp_add_groupmember']   = array( 'params' => array('groupid'=> PARAM_INT, 'userid'=> PARAM_INT),
-                                                            'optionalparams' => array( ),
-                                                            'return' => array('result' => PARAM_BOOL));
-
-		  $this->descriptions['tmp_delete_groupmember']   = array( 'params' => array('groupid'=> PARAM_INT, 'userid'=> PARAM_INT),
-                                                            'optionalparams' => array( ),
-                                                            'return' => array('result' => PARAM_BOOL));
-
-    }*/
-
-    /**
      * Creates a group
      * @param array $params
-     *  ->courseid int
-     *  ->groupname string
-     * @return int userid
+     * @subparam string $params->groupname
+     * @subparam integer $params->courseid
+     * @return integer groupid
      */
     static function tmp_create_group($params) {
         global $USER;
@@ -75,9 +45,12 @@ final class group_external {
     /**
      * add a group member
      * @param array $params
-     *  ->groupid int
-     *  ->userid int
-     * @return boolean success
+     * @subparam integer $params->groupid
+     * @return array $group
+     * @subreturn integer $group->id
+     * @subreturn integer $group->courseid
+     * @subreturn string $group->name
+     * @subreturn string $group->enrolmentkey
      */
 	static function tmp_get_group($params){
 
@@ -94,6 +67,13 @@ final class group_external {
 
 	}
 
+
+    /**
+     *
+     * @param array $params
+     * @subparam integer $params->groupid
+     * @return boolean result
+     */
 	static function tmp_delete_group($params){
 
 		if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_SYSTEM))) {
@@ -106,9 +86,23 @@ final class group_external {
         }
 	}
 
+    /**
+     *
+     * @param array $params
+     * @subparam integer $params->groupid
+     * @subparam integer $params->userid
+     * @return boolean result
+     */
 	static function tmp_get_groupmember($params){
 	}
 
+    /**
+     *
+     * @param array $params
+     * @subparam integer $params->groupid
+     * @subparam integer $params->userid
+     * @return boolean result
+     */
 	static function tmp_add_groupmember($params){
 
 		if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_SYSTEM))) {
@@ -121,6 +115,13 @@ final class group_external {
         }
 	}
 
+    /**
+     *
+     * @param array $params
+     * @subparam integer $params->groupid
+     * @subparam integer $params->userid
+     * @return boolean result
+     */
 	static function tmp_delete_groupmember($params){
 		if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_SYSTEM))) {
 

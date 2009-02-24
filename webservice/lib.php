@@ -164,7 +164,7 @@ final class webservice_lib {
                             break;
                     }
 
-                    if (empty($description)) {
+                    if (empty($description[$method->getName()])) {
                         $description[$method->getName()] = array();
                     }
 
@@ -202,7 +202,7 @@ final class webservice_lib {
 
                         $otherparam = substr($matches[3][$i],strpos($matches[3][$i], $separator)+$separatorsize);
                         $parsingdesc = $description[$method->getName()];
-
+                        
                         if (!empty($parsingdesc) && array_key_exists($descriptiontype, $parsingdesc)){
                             $parsingdesc = $parsingdesc[$descriptiontype];
                         }
