@@ -1,3 +1,3 @@
 <?php
-$string['repositoryname'] = 'Youtube Repository';
-$string['search'] = 'Search';
+$string['repositoryname'] = 'Youtube videos';
+$string['search'] = 'Search videos';

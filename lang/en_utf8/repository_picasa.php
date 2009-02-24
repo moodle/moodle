@@ -1,3 +1,3 @@
 <?php
-$string['repositoryname'] = 'Picasa Web Album';
+$string['repositoryname'] = 'Picasa web album';
 ?>

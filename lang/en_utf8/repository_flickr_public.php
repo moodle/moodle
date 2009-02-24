@@ -1,7 +1,7 @@
 <?php // $Id$
-$string['apikey'] = 'API Key';
+$string['apikey'] = 'API key';
 $string['callbackurl'] = 'Callback URL';
-$string['configplugin'] = 'Flickr Public configuration';
+$string['configplugin'] = 'Flickr public configuration';
 $string['emailaddress'] = 'Email address';
 $string['fulltext'] = 'Full text';
 $string['information'] = '<div>Get <a href=\"http://www.flickr.com/services/api/keys/\">Flickr API Key</a> for your Moodle site. </div>';
@@ -10,7 +10,7 @@ $string['notitle'] = 'notitle';
 $string['nullphotolist'] = 'There are no photos in this account';
 $string['tag'] = 'Tag';
 $string['remember'] = 'Remember me';
-$string['repositoryname'] = 'Flickr Public';
+$string['repositoryname'] = 'Flickr public';
 $string['repositorydesc'] = 'Repository on flickr.com';
 $string['secret'] = 'Secret';
 $string['username'] = 'Flickr account email';

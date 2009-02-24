@@ -1,8 +1,13 @@
 <?php
-$string['apikey'] = 'API Key';
+$string['apikey'] = 'API key';
 $string['callbackurl'] = 'Callback URL';
-$string['callbackurltext'] = '<div>1. Get <a href=\"http://www.flickr.com/services/api/keys/\">Flickr API Key and Secret</a> for your Moodle site.<br/>2. Your callback URL is <strong>$a</strong><br/>3. Edit your <a href=\"http://www.flickr.com/services/api/keys/\">Flickr</a> key details and set the callback URL. </div>';
-$string['callbackwarning'] = '<div>1. Get <a href=\"http://www.flickr.com/services/api/keys/\">Flickr API Key and Secret</a> for your Moodle site.<br/>2. Your callback URL <strong>will be</strong> generated <strong>once</strong> you save these above information. Please click on Save button, then on <strong>Settings</strong> in order to check the generated callback URL.<br/>3. Edit your <a href=\"http://www.flickr.com/services/api/keys/\">Flickr</a> key details and set the callback URL.</div> ';
+$string['callbackurltext'] = '<ol>
+<li>Visit <a href=\"http://www.flickr.com/services/api/keys/\">Flickr API Keys</a> again.</li>
+<li>Make sure you set the callback URL for this Flickr key as <strong>$a</strong></li></ol>';
+$string['callbackwarning'] = '<ol>
+<li>Get a <a href=\"http://www.flickr.com/services/api/keys/\">Flickr API Key and Secret</a> from Flickr for this Moodle site.</li>
+<li>Enter those details here, then click Save and then Settings to come back to this page.  You will see that Moodle has generated a callback URL for you.</li>
+<li>Edit your <a href=\"http://www.flickr.com/services/api/keys/\">Flickr</a> key details again and set the callback URL.</li></ol>';
 $string['configplugin'] = 'Flickr configuration';
 $string['emailaddress'] = 'Email address';
 $string['invalidemail'] = 'Invalid email address for flickr';
