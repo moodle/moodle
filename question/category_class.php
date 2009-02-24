@@ -467,9 +467,13 @@ class question_category_object {
 
         // If the category name has changed, rename any random questions in that category.
         if ($oldcat->name != $cat->name) {
-            $randomqname = $QTYPES[RANDOM]->question_name($cat);
-            $DB->set_field('question', 'name', $randomqname, array('category' => $cat->id), 'qtype', RANDOM);
-            // Ignore errors here. It is not a big deal if the questions are not renamed.
+            $where = "qtype = 'random' AND category = ? AND " . $DB->sql_compare_text('questiontext') . " = ?";
+
+            $randomqname = $QTYPES[RANDOM]->question_name($cat, false);
+            $DB->set_field_select('question', 'name', $randomqname, $where, array($cat->id, '0'));
+
+            $randomqname = $QTYPES[RANDOM]->question_name($cat, true);
+            $DB->set_field_select('question', 'name', $randomqname, $where, array($cat->id, '1'));
         }
 
         // Then redirect to an appropriate place.

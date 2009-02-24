@@ -705,7 +705,13 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz,$quiz_qbanktool
 
     echo '<div class="randomquestionfromcategory">';
     print_question_icon($question);
-    echo ' ' . get_string('xfromcategory', 'quiz', get_string('random', 'quiz')) . '</div>';
+    print_random_option_icon($question);
+    if (!empty($question->questiontext)) {
+        $string = 'randomfromcategory';
+    } else {
+        $string = 'randomfromcategoryonly';
+    }
+    echo ' ' . get_string($string, 'quiz') . '</div>';
 
     $a = new stdClass;
     $a->arrow = $THEME->rarrow;
@@ -792,6 +798,7 @@ function quiz_print_singlequestion_reordertool($question, $returnurl, $quiz){
             quiz_question_action_icons($quiz, $quiz->cmid, $question, $returnurl) . '</span>';
     echo "</div>\n";
 }
+
 /**
  * Print a given random question in quiz for the reordertool tab of edit.php.
  * Meant to be used from quiz_print_question_list()
@@ -800,7 +807,6 @@ function quiz_print_singlequestion_reordertool($question, $returnurl, $quiz){
  * @param object $questionurl The url of the question editing page as a moodle_url object
  * @param object $quiz The quiz in the context of which the question is being displayed
  */
-
 function quiz_print_randomquestion_reordertool(&$question, &$pageurl, &$quiz){
     global $DB, $QTYPES;
 
@@ -819,6 +825,7 @@ function quiz_print_randomquestion_reordertool(&$question, &$pageurl, &$quiz){
     echo '<div class="randomquestionfromcategory">';
     echo $reordercheckboxlabel;
     print_question_icon($question);
+    print_random_option_icon($question);
 
     if ($questioncount == 0) {
         echo '<span class="error">';
@@ -841,6 +848,25 @@ function quiz_print_randomquestion_reordertool(&$question, &$pageurl, &$quiz){
     echo '</div>';
 
 }
+
+/**
+ * Print an icon to indicate the 'include subcategories' state of a random question.
+ * @param $question the random question.
+ */
+function print_random_option_icon($question) {
+    global $CFG;
+    if (!empty($question->questiontext)) {
+        $icon = 'withsubcat';
+        $tooltip = get_string('randomwithsubcat', 'quiz');
+    } else {
+        $icon = 'nosubcat';
+        $tooltip = get_string('randomnosubcat', 'quiz');
+    }
+    echo  '<img src="' . $CFG->pixpath . '/i/' . $icon . '.png" alt="' .
+            $tooltip . '" title="' . $tooltip . '" />';
+    
+}
+
 /**
  * Creates a textual representation of a question for display.
  * 

@@ -46,6 +46,7 @@ $string['categorycurrent'] = 'Current Category';
 $string['categorycurrentuse'] = 'Use This Category';
 $string['categorymoveto'] = 'Save in Category';
 $string['changepublishstatuscat'] = '<a href=\"$a->caturl\">Category \"$a->name\"</a> in course \"$a->coursename\" will have it\'s sharing status changed from <strong>$a->changefrom to $a->changeto</strong>.';
+$string['chooseqtypetoadd'] = 'Choose a question type to add';
 $string['clicktoflag'] = 'Click to flag this question';
 $string['clicktounflag'] = 'Click to un-flag this question';
 $string['cwrqpfs'] = 'Random questions selecting questions from sub categories.';

@@ -103,9 +103,17 @@ class random_qtype extends default_questiontype {
     /**
      * Random questions always get a question name that is Random (cateogryname).
      * This function is a centralised place to calculate that, given the category.
+     * @param object $category the category this question picks from. (Only $category->name is used.)
+     * @param boolean $includesubcategories whether this question also picks from subcategories.
+     * @return string the name this question should have.
      */
-    function question_name($category) {
-        return get_string('random', 'quiz') .' ('. $category->name .')';
+    function question_name($category, $includesubcategories) {
+        if ($includesubcategories) {
+            $string = 'randomqplusname';
+        } else {
+            $string = 'randomqname';
+        }
+        return get_string($string, 'qtype_random', $category->name);
     }
 
     function save_question($question, $form, $course) {
@@ -129,7 +137,7 @@ class random_qtype extends default_questiontype {
         if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
             print_error('cannotretrieveqcat', 'question');
         }
-        $updateobject->name = $this->question_name($category);
+        $updateobject->name = $this->question_name($category, !empty($question->questiontext));
         return $DB->update_record('question', $updateobject);
     }
 
