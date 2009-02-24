@@ -38,7 +38,7 @@
  */
 function call_moodle_function ($rest_arguments) {
     global $CFG, $USER;
-    
+        
 ///REST params conversion
     $functionname = substr($rest_arguments,strrpos($rest_arguments,"/")+1); //retrieve the function name (it's located after the last '/') in $rest_arguments
                                                                             //$rest_argument
@@ -75,12 +75,11 @@ function call_moodle_function ($rest_arguments) {
     }
 
 /// load the external class
-    require_once($CFG->dirroot.$apipath.'external.php');
-    $wsapi = new $classname();
-    $description = $wsapi->get_function_webservice_description($functionname); //retrieve the web service description for this function
+    $file = $CFG->dirroot.$apipath.'external.php';
+    $description = webservice_lib::generate_webservice_description($file, $classname);
 
 /// This following line is only REST protocol
-    $params = retrieve_params ($description); //retrieve the REST params
+    $params = retrieve_params ($description[$functionname]); //retrieve the REST params
 
 /// Generic part to any protocols
     if ($params === false) {
@@ -94,7 +93,7 @@ function call_moodle_function ($rest_arguments) {
     }
     
 ///Transform result into xml in order to send the REST response
-    $return =  mdl_conn_rest_object_to_xml ($res,key($description['return']));
+    $return =  mdl_conn_rest_object_to_xml ($res,key($description[$functionname]['return']));
 
 	return "<Result>$return</Result>";
 }
@@ -122,6 +121,34 @@ function mock_check_token($token) {
     }
 }
 
+  /**
+     * Convert into a Moodle type
+     * @param integer $param
+     * @return string
+     */
+    function convert_paramtype($param) {
+        switch ($param) {
+            case "integer":
+                return PARAM_NUMBER;
+                break;
+            case "integer":
+                return PARAM_INT;
+                break;
+            case "boolean":
+                return PARAM_BOOL;
+                break;
+            case "string":
+                return PARAM_ALPHANUM;
+                break;
+            case "object":
+                return PARAM_RAW;
+                break;
+            default:
+                return PARAM_RAW;
+                break;
+        }
+    }
+
 /**
  *
  * @author Jerome Mouneyrac
@@ -132,19 +159,20 @@ function retrieve_params ($description) {
     $params = array();
     //retrieve REST param matching the description (warning: PHP assign the first instanciation as the first position in the table)
     foreach ($description['params'] as $paramname => $paramtype) {
+        $paramtype = convert_paramtype($paramtype);
         $value = optional_param($paramname,null,$paramtype);
         if (!empty($value)) {
                 $params[$paramname] = $value;
         }
     }
     //retrieve REST optional params
-    foreach ($description['optionalparams'] as $paramname => $paramtype) {
+    foreach ($description['optional'] as $paramname => $paramtype) {
+        $paramtype = convert_paramtype($paramtype);
         $value = optional_param($paramname,null,$paramtype);
         if (!empty($value)) {
                 $params[$paramname] = $value;
         }
     }
-    
     return $params;
 }
 

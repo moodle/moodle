@@ -34,7 +34,7 @@ Zend_Loader::registerAutoload();
 
 
 //1. authentication
-$client = new Zend_Soap_Client($CFG->wwwroot."/webservice/soap/zend_soap_server.php?wsdl");
+$client = new Zend_Soap_Client($CFG->wwwroot."/webservice/soap/server.php?wsdl");
 try {
     $token = $client->tmp_get_token(array('username' => "wsuser", 'password' => "wspassword"));
     printLastRequestResponse($client);
@@ -43,7 +43,7 @@ try {
 }
 
 //2. test functions
-$client = new Zend_Soap_Client($CFG->wwwroot."/webservice/soap/zend_soap_server.php?token=".$token."&classpath=user&wsdl");
+$client = new Zend_Soap_Client($CFG->wwwroot."/webservice/soap/server.php?token=".$token."&classpath=user&wsdl");
 var_dump($client->tmp_get_users(array('search' => "admin")));
 printLastRequestResponse($client);
 var_dump($client->tmp_create_user(array('username' => "mockuser66",'firstname' => "firstname6",'lastname' => "lastname6",'email' => "mockuser6@mockuser6.com",'password' => "password6")));

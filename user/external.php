@@ -6,59 +6,38 @@
  *
  * @author Jerome Mouneyrac
  */
-require_once(dirname(dirname(__FILE__)) . '/lib/moodleexternal.php');
 require_once(dirname(dirname(__FILE__)) . '/user/lib.php');
 
 /**
  * WORK IN PROGRESS, DO NOT USE IT
  */
-final class user_external extends moodle_external {
+final class user_external {
 
     /**
-     * Constructor - We set the description of this API in order to be access by Web service
-     */
-    function __construct () {
-          $this->descriptions = array();
-       ///The desciption of the web service
-       ///
-       ///'wsparams' and 'return' are used to described the web services to the end user (can build WSDL file from these information)
-       ///
-       ///Note: web services param names have not importance. However 'paramorder' must match the function params order.
-       ///And all web services param names defined into 'wsparams' should be included into 'paramorder' (otherwise they will not be used)
-          $this->descriptions['tmp_create_user']   = array( 'params' => array('username'=> PARAM_RAW, 'firstname'=> PARAM_RAW, 'lastname'=> PARAM_RAW, 'email'=> PARAM_RAW, 'password'=> PARAM_RAW),
-                                                            'optionalparams' => array( ),
-                                                            'return' => array('userid' => PARAM_RAW));
-
-          $this->descriptions['tmp_get_users']     = array( 'params' => array('search'=> PARAM_ALPHANUM),
-                                                            'optionalparams' => array( ),
-                                                            'return' => array('user' => array('id' => PARAM_RAW, 'auth' => PARAM_RAW, 'confirmed' => PARAM_RAW, 'username' => PARAM_RAW, 'idnumber' => PARAM_RAW,
-                                                                                    'firstname' => PARAM_RAW, 'lastname' => PARAM_RAW, 'email' => PARAM_RAW, 'emailstop' => PARAM_RAW,
-                                                                                    'lang' => PARAM_RAW, 'theme' => PARAM_RAW, 'timezone' => PARAM_RAW, 'mailformat' => PARAM_RAW)));
-    
-          $this->descriptions['tmp_delete_user']   = array( 'params' => array('username'=> PARAM_ALPHANUM, 'mnethostid'=> PARAM_NUMBER),
-                                                            'optionalparams' => array( ),
-                                                            'return' => array('result' => PARAM_BOOL));
-
-          $this->descriptions['tmp_update_user']   = array( 'params' => array('username'=> PARAM_ALPHANUM, 'mnethostid'=> PARAM_NUMBER),
-                                                            'optionalparams' => array( 'newusername' => PARAM_ALPHANUM, 'firstname' => PARAM_ALPHANUM),
-                                                            'return' => array('result' => PARAM_BOOL));
-
-          $this->descriptions['tmp_do_multiple_user_searches']   = array( 'params' => array(array('search'=> PARAM_RAW)),
-                                                                          'optionalparams' => array( ),
-                                                                          'return' => array('user' => array('id' => PARAM_RAW, 'auth' => PARAM_RAW, 'confirmed' => PARAM_RAW, 'username' => PARAM_RAW, 'idnumber' => PARAM_RAW,
-                                                                                  'firstname' => PARAM_RAW, 'lastname' => PARAM_RAW, 'email' => PARAM_RAW, 'emailstop' => PARAM_RAW,
-                                                                                  'lang' => PARAM_RAW, 'theme' => PARAM_RAW, 'timezone' => PARAM_RAW, 'mailformat' => PARAM_RAW)));
-
-
-    }
-
- /**
-     *
+     * This docblock has a right syntax but it does not match the real function parameters - except @ param and @ return
+     * I just keep it for a while till we implement a real ws function using complex blockdoc syntax as this one
+     * Understand, this dockblock is a example...
      * @global object $USER
      * @param array|struct $params
-     * @return array
+     * @subparam string $params:searches->search - the string to search
+     * @subparam string $params:searches->search2 optional - the string to search
+     * @subparam string $params:searches->search3 - the string to search
+     * @subparam string $params:airport->planes:plane->company->employees:employee->name - name of a employee of a company of a plane of an airport
+     * @return array users  
+     * @subreturn integer $users:user->id
+     * @subreturn integer $users:user->auth
+     * @subreturn integer $users:user->confirmed
+     * @subreturn string $users:user->username
+     * @subreturn string $users:user->idnumber
+     * @subreturn string $users:user->firstname
+     * @subreturn string $users:user->lastname
+     * @subreturn string $users:user->email
+     * @subreturn string $users:user->emailstop
+     * @subreturn string $users:user->lang
+     * @subreturn string $users:user->theme
+     * @subreturn string $users:user->timezone
+     * @subreturn string $users:user->mailformat
      */
-
     static function tmp_do_multiple_user_searches($params) {
         global $USER;
         if (has_capability('moodle/user:viewdetails', get_context_instance(CONTEXT_SYSTEM))) {
@@ -79,11 +58,27 @@ final class user_external extends moodle_external {
     /**
      * Retrieve all user
      * @param array|struct $params - need to be define as struct for XMLRPC
-     *  ->search string
-     * @return object user
+     * @subparam string $params->search - the string to search
+     * @return object users 
+     * @subreturn integer $users:user->id
+     * @subreturn integer $users:user->auth
+     * @subreturn integer $users:user->confirmed
+     * @subreturn string $users:user->username
+     * @subreturn string $users:user->idnumber
+     * @subreturn string $users:user->firstname
+     * @subreturn string $users:user->lastname
+     * @subreturn string $users:user->email
+     * @subreturn string $users:user->emailstop
+     * @subreturn string $users:user->lang
+     * @subreturn string $users:user->theme
+     * @subreturn string $users:user->timezone
+     * @subreturn string $users:user->mailformat
      */
     static function tmp_get_users($params) {
         global $USER;
+
+        $params['search'] = clean_param($params['search'], PARAM_ALPHANUM);
+
         if (has_capability('moodle/user:viewdetails', get_context_instance(CONTEXT_SYSTEM))) {
            // return "toto";
             return get_users(true, $params['search'], false, null, 'firstname ASC','', '', '', 1000, 'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat');
@@ -96,10 +91,11 @@ final class user_external extends moodle_external {
     /**
      * Create a user
      * @param array|struct $params - need to be define as struct for XMLRPC
-     *  ->firstname string
-     *  ->lastname string
-     *  ->email string
-     *  ->password string
+     * @subparam string $params->username
+     * @subparam string $params->firstname
+     * @subparam string $params->lastname
+     * @subparam string $params->email
+     * @subparam string $params->password
      * @return integer id of new user
      */
     static function tmp_create_user($params) {
@@ -122,9 +118,9 @@ final class user_external extends moodle_external {
      * Delete a user
      * @global object $DB
      * @param array|struct $params - need to be define as struct for XMLRPC
-     *  ->username      string
-     *  ->mnethostid    integer
-     * @return boolean true if success
+     * @subparam string $params->username
+     * @subparam integer $params->mnethostid
+     * @return boolean result true if success
      */
     static function tmp_delete_user($params) {
         global $DB,$USER;
@@ -142,11 +138,11 @@ final class user_external extends moodle_external {
      * Update some user information
      * @global object $DB
      * @param array|struct $params - need to be define as struct for XMLRPC
-     *  ->username      string
-     *  ->mnethostid    integer
-     *  ->newusername   string
-     *  ->firstname     string
-     * @return string true if success
+     * @subparam string $params->username
+     * @subparam integer $params->mnethostid
+     * @subparam string $params->newusername
+     * @subparam string $params->firstname
+     * @return boolean result true if success
      */
     static function tmp_update_user($params) {
         global $DB,$USER;

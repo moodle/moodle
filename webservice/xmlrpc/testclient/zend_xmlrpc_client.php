@@ -33,12 +33,12 @@ Zend_Loader::registerAutoload();
  
 
 //1. authentication
-$client = new Zend_XmlRpc_Client($CFG->wwwroot."/webservice/xmlrpc/zend_xmlrpc_server.php");
+$client = new Zend_XmlRpc_Client($CFG->wwwroot."/webservice/xmlrpc/server.php");
 $token = $client->call('authentication.tmp_get_token', array(array('username' => "wsuser", 'password' => "wspassword")));
 var_dump($token);
 
 //2. test functions
-$client = new Zend_XmlRpc_Client($CFG->wwwroot."/webservice/xmlrpc/zend_xmlrpc_server.php?classpath=user&token=".$token);
+$client = new Zend_XmlRpc_Client($CFG->wwwroot."/webservice/xmlrpc/server.php?classpath=user&token=".$token);
 var_dump($users = $client->call('user.tmp_get_users', array(array('search' => "admin"))));
 print "<br/><br/>\n";
 var_dump($users = $client->call('user.tmp_create_user', array(array('username' => "mockuser66",'firstname' => "firstname6",'lastname' => "lastname6",'email' => "mockuser6@mockuser6.com",'password' => "password6"))));

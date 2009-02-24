@@ -39,7 +39,7 @@ final class rest_server extends webservice_server {
      * Run REST server
      */
     public function run() {
-         $enable = $this->get_enable();
+        $enable = $this->get_enable();
         if (empty($enable)) {
             die;
         }
@@ -49,47 +49,7 @@ final class rest_server extends webservice_server {
         $rest_arguments = get_file_argument('server.php');
         header ("Content-type: text/xml");
         echo call_moodle_function($rest_arguments);
-    }
-
-    /**
-     * Run Zend REST server
-     * @global object $USER .
-     */
-    public function zend_run() {
-        $enable = $this->get_enable();
-        if (empty($enable)) {
-            die;
-        }
-        include "Zend/Loader.php";
-        Zend_Loader::registerAutoload();
-
-        // retrieve the token from the url
-        // if the token doesn't exist, set a class containing only get_token()
-        $token = optional_param('token',null,PARAM_ALPHANUM);
-        if (empty($token)) {
-            $server = new Zend_Rest_Server();
-            $server->setClass("ws_authentication");
-            $server->handle();
-        } else { // if token exist, do the authentication here
-            /// TODO: following function will need to be modified
-            $user = webservice_lib::mock_check_token($token);
-            if (empty($user)) {
-                throw new moodle_exception('wrongidentification');
-            } else {
-                global $USER;
-                $USER = $user;
-            }
-
-            //retrieve the api name
-            $classpath = optional_param(classpath,null,PARAM_ALPHA);
-            require_once(dirname(__FILE__) . '/../../'.$classpath.'/external.php');
-
-            /// run the server
-            $server = new Zend_Rest_Server(); 
-            $server->setClass($classpath."_external"); 
-            $server->handle();
-        }
-    }
+    }  
 
 }
 

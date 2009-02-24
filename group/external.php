@@ -8,7 +8,6 @@
  * @author Ferran Recio
  */
 
-require_once(dirname(dirname(__FILE__)) . '/lib/moodleexternal.php');
 require_once(dirname(dirname(__FILE__)) . '/group/lib.php');
 require_once(dirname(dirname(__FILE__)) . '/lib/grouplib.php');
 
@@ -18,11 +17,12 @@ require_once(dirname(dirname(__FILE__)) . '/lib/grouplib.php');
  *
  * WORK IN PROGRESS, DO NOT USE IT
  */
-final class group_external extends moodle_external {
+final class group_external {
 
     /**
      * Constructor - We set the description of this API in order to be access by Web service
      */
+    /*
     function __construct () {
           $this->descriptions = array();
 
@@ -47,7 +47,7 @@ final class group_external extends moodle_external {
                                                             'optionalparams' => array( ),
                                                             'return' => array('result' => PARAM_BOOL));
 
-    }
+    }*/
 
     /**
      * Creates a group
@@ -72,6 +72,13 @@ final class group_external extends moodle_external {
         }
     }
 
+    /**
+     * add a group member
+     * @param array $params
+     *  ->groupid int
+     *  ->userid int
+     * @return boolean success
+     */
 	static function tmp_get_group($params){
 
 			// @TODO: any capability to check?

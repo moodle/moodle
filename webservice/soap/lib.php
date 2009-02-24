@@ -36,54 +36,14 @@ final class soap_server extends webservice_server {
         $this->set_protocolname("Soap");
     }
 
-    /**
-     * Run SOAP server
-     * @global <type> $CFG
-     * @global <type> $USER
-     */
-    public function run() {
-        $enable = $this->get_enable();
-        if (empty($enable)) {
-            die;
-        }
-        global $CFG;
-        // retrieve the token from the url
-        // if the token doesn't exist, set a class containing only get_token()
-        $token = optional_param('token',null,PARAM_ALPHANUM);
-        if (empty($token)) {
-            $server = new SoapServer($CFG->wwwroot."/webservice/soap/generatewsdl.php");
-            $server->setClass("ws_authentication");
-            $server->handle();
-        } else { // if token exist, do the authentication here
-            /// TODO: following function will need to be modified
-            $user = webservice_lib::mock_check_token($token);
-            if (empty($user)) {
-                throw new moodle_exception('wrongidentification');
-            } else {
-                /// TODO: probably change this
-                global $USER;
-                $USER = $user;
-            }
-
-            //retrieve the api name
-            $classpath = optional_param(classpath,null,PARAM_ALPHA);
-            require_once(dirname(__FILE__) . '/../../'.$classpath.'/external.php');
-
-            /// run the server
-            $server = new SoapServer($CFG->wwwroot."/webservice/soap/generatewsdl.php?token=".$token);
-            $server->setClass($classpath."_external"); //TODO: pass $user as parameter
-            $server->handle();
-        }
-    }
-
   
     /**
      * Run Zend SOAP server
      * @global <type> $CFG
      * @global <type> $USER
      */
-    public function zend_run() {
-         $enable = $this->get_enable();
+    public function run() {
+        $enable = $this->get_enable();
         if (empty($enable)) {
             die;
         }
@@ -114,7 +74,7 @@ final class soap_server extends webservice_server {
                 $autodiscover->handle();
             } else {
 
-                $soap = new Zend_Soap_Server($CFG->wwwroot."/webservice/soap/zend_soap_server.php?wsdl"); // this current file here
+                $soap = new Zend_Soap_Server($CFG->wwwroot."/webservice/soap/server.php?wsdl"); // this current file here
                 $soap->setClass('ws_authentication');
                 $soap->handle();
             }
@@ -139,11 +99,11 @@ final class soap_server extends webservice_server {
                 $autodiscover = new Zend_Soap_AutoDiscover();
 
                 //this is a hack, because there is a bug in Zend framework (http://framework.zend.com/issues/browse/ZF-5736)
-                $autodiscover->setUri($CFG->wwwroot."/webservice/soap/zend_soap_server.php/".$token."/".$classpath);
+                $autodiscover->setUri($CFG->wwwroot."/webservice/soap/server.php/".$token."/".$classpath);
                 $autodiscover->setClass($classpath."_external");
                 $autodiscover->handle();
             } else {
-                $soap = new Zend_Soap_Server($CFG->wwwroot."/webservice/soap/zend_soap_server.php?token=".$token."&classpath=".$classpath."&wsdl"); // this current file here
+                $soap = new Zend_Soap_Server($CFG->wwwroot."/webservice/soap/server.php?token=".$token."&classpath=".$classpath."&wsdl"); // this current file here
                 $soap->setClass($classpath."_external");
                 $soap->handle();
             }

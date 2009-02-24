@@ -41,7 +41,6 @@ if (empty($CFG->enablewebservices)) {
     die;
 }
 
-
 $server = new rest_server();
 $server->run();
 
