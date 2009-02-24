@@ -5163,21 +5163,21 @@ function update_tag_button($tagid) {
 }
 
 /**
- * Prints the editing button on a module "view" page
- *
- * @uses $CFG
- * @param    type description
- * @todo Finish documenting this function
+ * Prints the 'update this xxx' button that appears on module pages.
+ * @param $cmid the course_module id.
+ * @param $ignored not used any more. (Used to be courseid.)
+ * @param $string the module name - get_string('modulename', 'xxx')
+ * @return string the HTML for the button, if this user has permission to edit it, else an empty string.
  */
-function update_module_button($moduleid, $courseid, $string) {
+function update_module_button($cmid, $ignored, $string) {
     global $CFG, $USER;
 
-    if (has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_MODULE, $moduleid))) {
+    if (has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_MODULE, $cmid))) {
         $string = get_string('updatethis', '', $string);
 
         return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/course/mod.php\" onsubmit=\"this.target='{$CFG->framename}'; return true\">".//hack to allow edit on framed resources
                "<div>".
-               "<input type=\"hidden\" name=\"update\" value=\"$moduleid\" />".
+               "<input type=\"hidden\" name=\"update\" value=\"$cmid\" />".
                "<input type=\"hidden\" name=\"return\" value=\"true\" />".
                "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />".
                "<input type=\"submit\" value=\"$string\" /></div></form>";
