@@ -364,7 +364,9 @@ _client.print_instances = function() {
                 for(var cc in _client.repos){
                     var tmp_id = 'repo-call-$suffix-'+ _client.repos[cc].id;
                     var el = document.getElementById(tmp_id);
-                    el.style.background = 'transparent';
+                    if(el){
+                        el.style.background = 'transparent';
+                    }
                 }
                 this.style.background = '#CCC';
                 var re = /repo-call-$suffix-(\d+)/i;
