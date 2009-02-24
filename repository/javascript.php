@@ -360,6 +360,13 @@ _client.print_instances = function() {
             link.appendChild(icon);
             link.className = 'fp-repo-name';
             link.onclick = function() {
+                // highlight active repo
+                for(var cc in _client.repos){
+                    var tmp_id = 'repo-call-$suffix-'+ _client.repos[cc].id;
+                    var el = document.getElementById(tmp_id);
+                    el.style.background = 'transparent';
+                }
+                this.style.background = '#CCC';
                 var re = /repo-call-$suffix-(\d+)/i;
                 var id = this.id.match(re);
                 repository_client_$suffix.req(id[1], '');
