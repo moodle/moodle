@@ -4947,7 +4947,7 @@ class admin_setting_managewsusersettings extends admin_setting {
         $table->data = array();
 
         foreach ($users as $user) {
-            if (has_capability("moodle/site:usewebservice",get_system_context(), $user->id)) { //test if the users has has_capability('use_webservice')
+            if (has_capability("moodle/site:usewebservices",get_system_context(), $user->id)) { //test if the users has has_capability('use_webservice')
                 $wsusersetting = ' <a href="' . $this->baseurl . '&amp;username=' . $user->username . '">'
                 . get_string("settings")
                           .'</a>' . "\n";
