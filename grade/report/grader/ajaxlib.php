@@ -441,7 +441,7 @@ class grade_report_grader_ajax extends grade_report_grader {
      * @return string HTML
      */
     function get_avghtml($grouponly=false) {
-        return parent::get_avghtml();
+        return parent::get_avghtml($grouponly);
     }
 
     /**
