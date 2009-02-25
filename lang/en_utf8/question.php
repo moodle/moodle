@@ -2,6 +2,7 @@
 // question.php - created with Moodle 1.8 dev
 
 $string['adminreport'] = 'Report on possible problems in your question database.';
+$string['availableq'] = 'Available?';
 $string['badbase'] = 'Bad base before **: $a**';
 $string['broken'] = 'This is a \"broken link\", it points to a nonexistent file.';
 $string['byandon'] = 'by <em>$a->user</em> on <em>$a->time</em>';
@@ -12,6 +13,7 @@ $string['cannotcreaterelation'] = 'Unable to create relation to dataset $a[0] $a
 $string['cannotcreatepath'] = 'Cannot create path: $a';
 $string['cannotcopybackup'] = 'Could not copy backup file';
 $string['cannotdeletecate'] = 'You can\'t delete that category it is the default category for this context.';
+$string['cannotenable'] = 'Question type $a cannot be created directly.';
 $string['cannotfindcate'] = 'Could not find category record';
 $string['cannotinsertitem'] = 'Unable to insert dataset item $a[0] with $a[1] for $a[2]';
 $string['cannotinsert'] = 'Error: Unable to insert dataset item';
@@ -70,10 +72,12 @@ $string['createdmodifiedheader'] = 'Created / Last Saved';
 $string['defaultfor'] = 'Default for $a';
 $string['defaultinfofor'] = 'The default category for questions shared in context \'$a\'.';
 $string['deletecoursecategorywithquestions'] = 'There are questions in the question bank associated with this course category. If you proceed, they will be deleted. You may wish to move them first, using the question bank interface.';
+$string['disabled'] = 'Disabled';
 $string['disterror'] = 'The distribution $a caused problems';
 $string['donothing']= 'Don\'t copy or move files or change links.';
 $string['editingcategory'] = 'Editing a category';
 $string['editingquestion'] = 'Editing a question';
+$string['enabled'] = 'Enabled';
 $string['erroraccessingcontext'] = 'Cannot access context';
 $string['errordeletingquestionsfromcategory'] = 'Error deleting questions from category $a.';
 $string['errorduringpre'] = 'Error occurred during pre-processing!';

@@ -41,10 +41,34 @@
         }
     }
 
-    // Process any actions.
-    $delete  = optional_param('delete', '', PARAM_SAFEDIR);
-    $confirm = optional_param('confirm', '', PARAM_BOOL);
-    if (!empty($delete) and confirm_sesskey()) {
+    // Process actions =========================================================
+
+    // Disable.
+    if (($disable = optional_param('disable', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
+        if (!isset($QTYPES[$disable])) {
+            print_error('unknownquestiontype', 'question', admin_url('qtypes.php'), $disable);
+        }
+
+        set_config($disable . '_disabled', 1, 'question');
+        redirect(admin_url('qtypes.php'));
+    }
+
+    // Enable.
+    if (($enable = optional_param('enable', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
+        if (!isset($QTYPES[$enable])) {
+            print_error('unknownquestiontype', 'question', admin_url('qtypes.php'), $enable);
+        }
+
+        if (!$QTYPES[$enable]->menu_name()) {
+            print_error('cannotenable', 'question', admin_url('qtypes.php'), $enable);
+        }
+
+        unset_config($enable . '_disabled', 'question');
+        redirect(admin_url('qtypes.php'));
+    }
+
+    // Delete.
+    if ($delete = optional_param('delete', '', PARAM_SAFEDIR) && confirm_sesskey()) {
         // Check it is OK to delete this question type.
         if ($delete == 'missingtype') {
             print_error('cannotdeletemissingqtype', 'admin', admin_url('qtypes.php'));
@@ -64,7 +88,7 @@
         }
 
         // If not yet confirmed, display a confirmation message.
-        if (!$confirm) {
+        if (!optional_param('confirm', '', PARAM_BOOL)) {
             $qytpename = $QTYPES[$delete]->local_name();
             admin_externalpage_print_header();
             print_heading(get_string('deleteqtypeareyousure', 'admin', $qytpename));
@@ -85,12 +109,7 @@
         }
 
         // Then the tables themselves
-        if (!drop_plugin_tables($delete, $QTYPES[$delete]->plugin_dir() . '/db/install.xml', false)) {
-            
-        }
-
-        // Delete the capabilities that were defined by this module
-        capabilities_cleanup('qtype/' . $delete);
+        drop_plugin_tables($delete, $QTYPES[$delete]->plugin_dir() . '/db/install.xml', false);
 
         // Remove event handlers and dequeue pending events
         events_uninstall('qtype/' . $delete);
@@ -103,6 +122,8 @@
         exit;
     }
 
+    // End of process actions ==================================================
+
 /// Print the page heading.
     admin_externalpage_print_header();
     print_heading(get_string('manageqtypes', 'admin'));
@@ -112,13 +133,14 @@
     $table->define_columns(array('questiontype', 'numquestions', 'version', 'requires',
             'availableto', 'delete', 'settings'));
     $table->define_headers(array(get_string('questiontype', 'admin'), get_string('numquestions', 'admin'),
-            get_string('version'), get_string('requires', 'admin'), get_string('availableto', 'admin'),
+            get_string('version'), get_string('requires', 'admin'), get_string('availableq', 'question'),
             get_string('delete'), get_string('settings')));
     $table->set_attribute('id', 'qtypes');
     $table->set_attribute('class', 'generaltable generalbox boxaligncenter boxwidthwide');
     $table->setup();
 
 /// Add a row for each question type.
+    $createabletypes = question_type_menu();
     foreach ($QTYPES as $qtypename => $qtype) {
         $row = array();
 
@@ -165,33 +187,17 @@
             $row[] = '';
         }
 
-        // Who is allowed to create this question type.
-// TODO        $addcapability = 'qtype/' . $qtypename . ':add';
-        $addcapability = 'moodle/question:add';
-        $adderroles = get_roles_with_capability($addcapability, CAP_ALLOW, $systemcontext);
-        $hasoverrides = $DB->record_exists_select('role_capabilities',
-                'capability = ? AND contextid <> ?', array($addcapability, $systemcontext->id));
-        $rolelinks = array();
-        foreach ($adderroles as $role) {
-            $rolelinks[] = '<a href="' . admin_url('roles/manage.php?action=view&amp;roleid=' . $role->id) .
-                    '" title="' . get_string('editrole', 'role') . '">' . $role->name . '</a>';
+        // Are people allowed to create new questions of this type?
+        $rowclass = '';
+        if ($qtype->menu_name()) {
+            $createable = isset($createabletypes[$qtypename]);
+            $row[] = enable_disable_button($qtypename, $createable);
+            if (!$createable) {
+                $rowclass = 'dimmed_text';
+            }
+        } else {
+            $row[] = '';
         }
-        $rolelinks = implode(', ', $rolelinks);
-        if (!$rolelinks) {
-            $rolelinks = get_string('noroles', 'admin');
-        }
-        if ($hasoverrides) {
-            $a = new stdClass;
-            $a->roles = $rolelinks;
-            $a->exceptions = '<a href="' . admin_url('report/capability/index.php?capability=' .
-                     $addcapability) . '#report" title = "' . get_string('showdetails', 'admin') . '">' .
-                     get_string('exceptions', 'admin') . '</a>';
-            $rolelinks = get_string('roleswithexceptions', 'admin', $a) ;
-        }
-        if (empty($adderroles) && !$hasoverrides) {
-            $rolelinks = '<span class="disabled">' . $rolelinks . '</span>';
-        }
-        $row[] = $rolelinks;
 
         // Delete link, if available.
         if ($needed[$qtypename]) {
@@ -210,15 +216,36 @@
             $row[] = '';
         }
 
-        $table->add_data($row);
+        $table->add_data($row, $rowclass);
     }
 
-    $table->print_html();
+    $table->finish_output();
 
     admin_externalpage_print_footer();
 
 function admin_url($endbit) {
     global $CFG;
     return $CFG->wwwroot . '/' . $CFG->admin . '/' . $endbit;
+}
+
+function enable_disable_button($qtypename, $createable) {
+    global $CFG;
+    if ($createable) {
+        $action = 'disable';
+        $tip = get_string('disable');
+        $alt = get_string('enabled', 'question');
+        $icon = 'hide';
+    } else {
+        $action = 'enable';
+        $tip = get_string('enable');
+        $alt = get_string('disabled', 'question');
+        $icon = 'show';
+    }
+    $html = '<form action="' . admin_url('qtypes.php') . '" method="post"><div>';
+    $html .= '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
+    $html .= '<input type="image" name="' . $action . '" value="' . $qtypename .
+            '" src="' . $CFG->pixpath . '/i/' . $icon . '.gif" alt="' . $alt . '" title="' . $tip . '" />';
+    $html .= '</div></form>';
+    return $html;
 }
 ?>

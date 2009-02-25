@@ -169,10 +169,12 @@ function question_type_menu() {
     global $QTYPES;
     static $menu_options = null;
     if (is_null($menu_options)) {
+        $disbled = get_config('question');
         $menu_options = array();
         foreach ($QTYPES as $name => $qtype) {
             $menuname = $qtype->menu_name();
-            if ($menuname) {
+            $configname = $name . '_disabled';
+            if ($menuname && !isset($disbled->$configname)) {
                 $menu_options[$name] = $menuname;
             }
         }
