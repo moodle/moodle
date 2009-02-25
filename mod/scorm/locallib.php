@@ -319,7 +319,7 @@ function scorm_get_scoes($id,$organisation=false) {
 function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value) {
     $id = null;
     if ($track = get_record_select('scorm_scoes_track',"userid='$userid' AND scormid='$scormid' AND scoid='$scoid' AND attempt='$attempt' AND element='$element'")) {
-        $track->value = addslashes($value);
+        $track->value = addslashes_js($value);
         $track->timemodified = time();
         $id = update_record('scorm_scoes_track',$track);
     } else {
@@ -328,7 +328,7 @@ function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value) {
         $track->scoid = $scoid;
         $track->attempt = $attempt;
         $track->element = $element;
-        $track->value = addslashes($value);
+        $track->value = addslashes_js($value);
         $track->timemodified = time();
         $id = insert_record('scorm_scoes_track',$track);
     }

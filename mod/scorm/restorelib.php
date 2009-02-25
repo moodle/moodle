@@ -831,7 +831,7 @@
 
                 if ($result != $content) {
                     //Update record
-                    $scorm->summary = addslashes($result);
+                    $scorm->summary = addslashes_js($result);
                     $status = update_record("scorm",$scorm);
                     if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
