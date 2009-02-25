@@ -651,7 +651,7 @@ class question_bank_move_action_column extends question_bank_action_column_base 
 
     protected function display_content($question, $rowclasses) {
         if (question_has_capability_on($question, 'move')) {
-            $this->print_icon('move', $this->strmove, $this->qbank->move_question_url($question->id));
+            $this->print_icon('t/move.gif', $this->strmove, $this->qbank->move_question_url($question->id));
         }
     }
 }
@@ -676,9 +676,9 @@ class question_bank_delete_action_column extends question_bank_action_column_bas
     protected function display_content($question, $rowclasses) {
         if (question_has_capability_on($question, 'edit')) {
             if ($question->hidden) {
-                $this->print_icon('restore', $this->strrestore, $this->qbank->base_url()->out(false, array('unhide' => $question->id)));
+                $this->print_icon('t/restore.gif', $this->strrestore, $this->qbank->base_url()->out(false, array('unhide' => $question->id)));
             } else {
-                $this->print_icon('delete', $this->strdelete,
+                $this->print_icon('t/delete.gif', $this->strdelete,
                         $this->qbank->base_url()->out(false, array('deleteselected' => $question->id, 'q' . $question->id => 1)));
             }
         }
@@ -817,7 +817,7 @@ class question_bank_view {
         return $columns;
     }
 
-    protected function know_field_types() {
+    protected function known_field_types() {
         return array(
             new question_bank_checkbox_column($this),
             new question_bank_question_type_column($this),
@@ -834,7 +834,7 @@ class question_bank_view {
 
     protected function init_column_types() {
         $this->knowncolumntypes = array();
-        foreach ($this->know_field_types() as $col) {
+        foreach ($this->known_field_types() as $col) {
             $this->knowncolumntypes[$col->get_name()] = $col;
         }
     }
@@ -1156,15 +1156,12 @@ class question_bank_view {
         global $CFG;
 
     /// Get all the existing categories now
+        echo '<div class="choosecategory">';
         $catmenu = question_category_options($contexts, false, 0, true);
-
-        $strcategory = get_string('selectcategory', 'quiz');
-        $strshow = get_string('show', 'quiz');
-        $streditcats = get_string('editcategories', 'quiz');
-
         popup_form('edit.php?'.$pageurl->get_query_string().'&amp;category=',
                 $catmenu, 'catmenu', $current, '', '', '', false, 'self',
-                $strcategory);
+                get_string('selectacategory', 'question'));
+        echo "</div>\n";
     }
 
     protected function display_options($recurse = 1, $showhidden = false, $showquestiontext = false) {
@@ -1193,13 +1190,11 @@ class question_bank_view {
     }
 
     protected function create_new_question_form($category, $canadd) {
-        $qtypemenu = question_type_menu();
-        $straddquestions = get_string('addquestions', 'quiz');
+        global $CFG;
         echo '<div class="createnewquestion">';
         if ($canadd) {
-            popup_form($this->editquestionurl->out(false, array('category' => $category->id)) . '&amp;qtype=',
-                    $qtypemenu, 'addquestion', '', 'choose', '', '', false, 'self', $straddquestions);
-            helpbutton('questiontypes', $straddquestions, 'quiz');
+            create_new_question_button($category->id, $this->editquestionurl->params(),
+                    get_string('createnewquestion', 'question'));
         } else {
             print_string('nopermissionadd', 'question');
         }
@@ -1259,8 +1254,8 @@ class question_bank_view {
         echo '<fieldset class="invisiblefieldset" style="display: block;">';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo $pageurl->hidden_params_out();
-        echo '<div class="categoryquestionscontainer">';
 
+        echo '<div class="categoryquestionscontainer">';
         $this->start_table();
         $rowcount = 0;
         foreach ($questions as $question) {
@@ -1268,6 +1263,7 @@ class question_bank_view {
             $rowcount += 1;
         }
         $this->end_table();
+        echo "</div>\n";
 
         echo '<div class="categorypagingbarcontainer pagingbottom">';
         $paging = print_paging_bar($totalnumber, $page, $perpage, $pageurl, 'qpage', false, true);
@@ -1400,7 +1396,7 @@ class question_bank_view {
                         $checkforfiles = true;
                     }
                 }
-                $returnurl = $pageurl->out(false, array('category'=>"$tocategoryid,$contextid"));
+                $returnurl = $this->baseurl->out(false, array('category'=>"$tocategoryid,$contextid"));
                 if (!$checkforfiles){
                     if (!question_move_questions_to_category(implode(',', $questionids), $tocategory->id)) {
                         print_error('errormovingquestions', 'question', $returnurl, $questionids);
@@ -1439,7 +1435,7 @@ class question_bank_view {
                             }
                         }
                     }
-                    redirect($pageurl->out());
+                    redirect($this->baseurl->out());
                 } else {
                     print_error('invalidconfirm', 'question');
                 }
@@ -1452,7 +1448,7 @@ class question_bank_view {
             if(!$DB->set_field('question', 'hidden', 0, array('id', $unhide))) {
                 print_error('cannotunhidequestion', 'question');
             }
-            redirect($pageurl->out());
+            redirect($this->baseurl->out());
         }
     }
 
@@ -1821,4 +1817,85 @@ function require_login_in_context($contextorid = null){
         require_login();
     }
 }
+
+/**
+ * Print a form to let the user choose which question type to add.
+ * When the form is submitted, it goes to the question.php script.
+ * @param $hiddenparams hidden parameters to add to the form, in addition to
+ * the qtype radio buttons.
+ */
+function print_choose_qtype_to_add_form($hiddenparams) {
+    global $CFG, $QTYPES;
+    require_js(array('yui_yahoo','yui_dom','yui_event'));
+    require_js('question/qbank.js');
+    echo '<div id="chooseqtypehead" class="hd">' . "\n";
+    print_heading(get_string('chooseqtypetoadd', 'question'), '', 3);
+    echo "</div>\n";
+    echo '<div id="chooseqtype">' . "\n";
+    echo '<form action="' . $CFG->wwwroot . '/question/question.php" method="get"><div id="qtypeformdiv">' . "\n";
+    foreach ($hiddenparams as $name => $value) {
+        echo '<input type="hidden" name="' . s($name) . '" value="' . s($value) . '" />' . "\n";
+    }
+    echo "</div>\n";
+    $types = question_type_menu();
+    echo '<div class="qtypes">' . "\n";
+    echo '<div class="instruction">' . get_string('selectaqtypefordescription', 'question') . "</div>\n";
+    foreach ($types as $qtype => $localizedname) {
+        print_qtype_to_add_option($qtype, $localizedname);
+    }
+    echo "</div>\n";
+    echo '<div class="submitbuttons">' . "\n";
+    echo '<input type="submit" value="' . get_string('next') . '" id="chooseqtype_submit" />' . "\n";
+    echo '<input type="submit" id="chooseqtypecancel" name="addcancel" value="' . get_string('cancel') . '" />' . "\n";
+    echo "</div></form>\n";
+    echo "</div>\n";
+    print_js_call('qtype_chooser.init', array('chooseqtype'));
+}
+
+/**
+ * Private function used by the preceding one.
+ * @param $qtype the question type.
+ * @param $localizedname the localized name of this question type.
+ */
+function print_qtype_to_add_option($qtype, $localizedname) {
+    global $QTYPES;
+    echo '<div class="qtypeoption">' . "\n";
+    echo '<input type="radio" name="qtype" id="qtype_' . $qtype . '" value="' . $qtype . '" />';
+    echo '<label for="qtype_' . $qtype . '"><span class="qtypename">';
+    $fakequestion = new stdClass;
+    $fakequestion->qtype = $qtype;
+    print_question_icon($fakequestion);
+    echo $localizedname . '</span><span class="qtypesummary">' . get_string($qtype . 'summary', 'qtype_' . $qtype);
+    echo "</span></label>\n";
+    echo "</div>\n";
+}
+
+/**
+ * Print a button for creating a new question. This will open question/addquestion.php,
+ * which in turn goes to question/question.php before getting back to $params['returnurl']
+ * (by default the question bank screen).
+ *
+ * @param integer $categoryid The id of the category that the new question should be added to.
+ * @param array $params Other paramters to add to the URL. You need either $params['cmid'] or
+ *      $params['courseid'], and you should probably set $params['returnurl']
+ * @param string $caption the text to display on the button.
+ * @param string $tooltip a tooltip to add to the button (optional).
+ * @param boolean $disabled if true, the button will be disabled.
+ */
+function create_new_question_button($categoryid, $params, $caption, $tooltip = '', $disabled = false) {
+    global $CFG;
+    static $choiceformprinted = false;
+    $params['category'] = $categoryid;
+    print_single_button($CFG->wwwroot . '/question/addquestion.php', $params,
+            $caption,'get', '', false, $tooltip, $disabled);
+    helpbutton('questiontypes', get_string('createnewquestion', 'question'), 'question');
+    require_js(array('yui_yahoo','yui_dom','yui_event', 'yui_dragdrop', 'yui_container'));
+    if (!$choiceformprinted) {
+        echo '<div id="qtypechoicecontainer">';
+        print_choose_qtype_to_add_form(array());
+        echo "</div>\n";
+        $choiceformprinted = true;
+    }
+}
+
 ?>

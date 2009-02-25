@@ -9,5 +9,6 @@ $string['feedbackfalse'] = 'Feedback for the response \'False\'.';
 $string['feedbacktrue'] = 'Feedback for the response \'True\'.';
 $string['true'] = 'True';
 $string['truefalse'] = 'True/False';
+$string['truefalsesummary'] = 'A simple form of multiple choice question with just the two choices \'True\' and \'False\'.';
 
 ?>

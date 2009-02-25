@@ -1,10 +1,14 @@
 <?php
+$string['addingcalculated'] = 'Adding a Calculated question';
 $string['addmoreanswerblanks'] = 'Add another answer blank.';
 $string['addmoreunitblanks'] = 'Blanks for $a More Units';
 $string['answerhdr'] = 'Answer';
 $string['atleastoneanswer'] = 'You need to provide at least one answer.';
+$string['calculated'] = 'Calculated';
+$string['calculatedsummary'] = 'Calculated questions are like numerical questions but with the numbers used selected randomly from a set when the quiz is taken.';
 $string['correctanswershows'] = 'Correct answer shows';
 $string['correctanswershowsformat'] = 'Format';
+$string['editingcalculated'] = 'Editing a Calculated question';
 $string['existingcategory1'] = 'will use an already existing shared dataset';
 $string['keptcategory1'] = 'will use the same existing shared dataset as before';
 $string['keptlocal1'] = 'will use the same existing private dataset as before';

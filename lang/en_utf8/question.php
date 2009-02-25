@@ -49,6 +49,7 @@ $string['changepublishstatuscat'] = '<a href=\"$a->caturl\">Category \"$a->name\
 $string['chooseqtypetoadd'] = 'Choose a question type to add';
 $string['clicktoflag'] = 'Click to flag this question';
 $string['clicktounflag'] = 'Click to un-flag this question';
+$string['createnewquestion'] = 'Create a new question ...';
 $string['cwrqpfs'] = 'Random questions selecting questions from sub categories.';
 $string['cwrqpfsinfo'] = '<p>During the upgrade to Moodle 1.9 we will separate question categories into
 different contexts. Some question categories and questions on your site will have to have their sharing
@@ -161,6 +162,8 @@ $string['questionsrescuedfrominfo'] = 'These questions (some of which may be hid
 $string['questiontype'] = 'Question type';
 $string['questionuse'] = 'Use question in this activity';
 $string['saveflags'] = 'Save the state of the flags';
+$string['selectacategory'] = 'Select a category:';
+$string['selectaqtypefordescription'] = 'Select a question type to see its description.';
 $string['selectquestionsforbulk'] = 'Select questions for bulk actions';
 $string['shareincontext'] = 'Share in context for $a';
 $string['tofilecategory'] = 'Write category to file';

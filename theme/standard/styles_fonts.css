@@ -725,6 +725,17 @@ body#grade-index .grades .header {
  *** Question
  ***/
 
+#chooseqtype .instruction,
+#chooseqtype .qtypesummary {
+  font-size: 0.8em;
+}
+#chooseqtype .qtypename {
+  font-weight: bold;
+}
+#qtypechoicecontainer #chooseqtype .qtypename {
+  font-weight: normal;
+}
+
 .que .info h2 {
   font-size: 1.25em;
   font-weight: bold;

@@ -555,57 +555,30 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
  */
 function quiz_print_pagecontrols($quiz,$pageurl,$page, $hasattempts){
     global $CFG;
-    $strcreatenewquestion=get_string("createnewquestion",'quiz');
-    $strselectquestiontype=get_string("selectquestiontype",'quiz');
     echo '<div class="pagecontrols">';
-    // get the current context
+
+    // Get the current context
     $thiscontext = get_context_instance(CONTEXT_COURSE, $quiz->course);
     $contexts = new question_edit_contexts($thiscontext);
-    // get default category and turn its infor into a string that works in an url
+
+    // Get the default category.
     $defaultcategory = question_make_default_categories($contexts->all());
-    $categorystring = "$defaultcategory->id,$defaultcategory->contextid";
-    //create the url the question page will return to
-    $returnurl_addtoquiz=new moodle_url($pageurl->out(true),
-            array("addonpage"=>$page));
-    //create the url of the new question page to forward to. return url is given
-    //as a parameter and automatically urlencoded.
+
+    // Create the url the question page will return to
+    $returnurl_addtoquiz = new moodle_url($pageurl->out(true), array("addonpage" => $page));
+
+    // Print a button linking to the choose question type page.
     $newquestionparams = array('returnurl' => $returnurl_addtoquiz->out(false),
-            'cmid'=>$quiz->cmid, "appendqnumstring"=>"addquestion", "category"=>$categorystring);
-    $newquestionurl_object = new moodle_url("$CFG->wwwroot/question/question.php",
-            $newquestionparams);
-    $newquestionurl=$newquestionurl_object->out(false);
-    echo get_string("addquestion","quiz").": ";
+            'cmid' => $quiz->cmid, 'appendqnumstring' => 'addquestion');
+    create_new_question_button($defaultcategory->id, $newquestionparams, get_string('addaquestion', 'quiz'),
+            get_string('createquestionandadd', 'quiz'), $hasattempts);
+
     if ($hasattempts) {
         $disabled = 'disabled="disabled"';
     } else {
         $disabled = '';
     }
-    popup_form ($newquestionurl.'&amp;qtype=',
-                question_type_menu(),
-                "addquestion_$page",
-                "",
-                $strselectquestiontype,
-                "",
-                "",
-                false,
-                "self",
-                "",
-                null,
-                $strcreatenewquestion, $hasattempts);
-    helpbutton("questiontypes", $strcreatenewquestion, "quiz");
-    echo '<div class="adddescription">';
-    print_single_button($CFG->wwwroot."/question/question.php",
-            array("cmid"=>$quiz->cmid,
-                  "courseid"=>$quiz->course,
-                  "returnurl"=>$returnurl_addtoquiz->out(false),
-                  "appendqnumstring"=>"addquestion",
-                  "category"=>$categorystring,
-                  "qtype"=>"description"),
-            get_string("adddescriptionlabel","quiz"),'get', '_self', false, '',
-                    $hasattempts);
-    echo "\n</div>";
     ?>
-    <div class="addrandomquestion">
     <div class="singlebutton">
         <form class="randomquestionform" action="<?php echo $CFG->wwwroot; ?>/mod/quiz/addrandom.php" method="get">
             <div>
@@ -613,14 +586,12 @@ function quiz_print_pagecontrols($quiz,$pageurl,$page, $hasattempts){
                 <input type="hidden" name="cmid" value="<?php echo $quiz->cmid; ?>" />
                 <input type="hidden" name="courseid" value="<?php echo $quiz->course; ?>" />
                 <input type="hidden" name="returnurl" value="<?php echo urlencode($pageurl->out(true)); ?>" />
-                 <input type="submit" id="addrandomdialoglaunch_<?php echo $page; ?>" value="<?php echo get_string("addrandomquestion","quiz"); ?>" <?php echo " $disabled"; ?> />
-                 <!--<a href="#"  id="addrandomdialoglaunch_<?php echo $page; ?>">laa</a>-->
-                 <?php helpbutton('random', get_string('random', 'quiz'), 'quiz', true, false, '');
-                  ?>
+                <input type="submit" id="addrandomdialoglaunch_<?php echo $page; ?>" value="<?php echo get_string('addarandomquestion','quiz'); ?>" <?php echo " $disabled"; ?> />
+                <!--<a href="#"  id="addrandomdialoglaunch_<?php echo $page; ?>">laa</a>-->
             </div>
         </form>
     </div>
-    </div>
+    <?php helpbutton('random', get_string('random', 'quiz'), 'quiz', true, false, ''); ?>
     <?php
     echo "\n</div>";
 }
@@ -976,8 +947,8 @@ class question_bank_question_name_text_column extends question_bank_question_nam
 class quiz_question_bank_view extends question_bank_view {
     protected $quizhasattempts = false;
 
-    protected function know_field_types() {
-        $types = parent::know_field_types();
+    protected function known_field_types() {
+        $types = parent::known_field_types();
         $types[] = new question_bank_add_to_quiz_action_column($this);
         $types[] = new question_bank_question_name_text_column($this);
         return $types;

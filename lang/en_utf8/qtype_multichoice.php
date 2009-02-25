@@ -24,6 +24,7 @@ $string['fractionsaddwrong'] = 'The positive grades you have chosen do not add u
 $string['fractionsnomax'] = 'One of the choices should be 100%%, so that it is<br />possible to get a full grade for this question.<br />Do you want to go back and fix this question?';
 $string['incorrectfeedback'] = 'For any incorrect response';
 $string['multichoice'] = 'Multiple choice';
+$string['multichoicesummary'] = 'Allows the selection of a single or multiple responses from a pre-defined list.';
 $string['notenoughanswers'] = 'This type of question requires at least $a choices';
 $string['overallfeedback'] = 'Overall Feedback';
 $string['overallcorrectfeedback'] = 'Feedback for any correct response';

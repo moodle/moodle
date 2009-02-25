@@ -48,6 +48,10 @@ if (!$returnurl) {
     $returnurl = "{$CFG->wwwroot}/question/edit.php?courseid={$COURSE->id}";
 }
 
+if (optional_param('addcancel', false, PARAM_BOOL)) {
+    redirect($returnurl);
+}
+
 if ($id) {
     if (!$question = $DB->get_record('question', array('id' => $id))) {
         print_error('questiondoesnotexist', 'question', $returnurl);
@@ -228,7 +232,7 @@ if ($mform->is_cancelled()){
     }
 } else {
 
-    list($streditingquestion,) = $QTYPES[$question->qtype]->get_heading();
+    $streditingquestion = $QTYPES[$question->qtype]->get_heading();
     if ($cm !== null) {
         $strmodule = get_string('modulename', $cm->modname);
         $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $COURSE->id))

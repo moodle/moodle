@@ -2897,6 +2897,67 @@ body.notes .notesgroup {
   margin-top: 0;
 }
 
+#chooseqtypebox {
+  margin-top: 1em;
+}
+#chooseqtype h3 {
+  margin: 0 0 0.3em;
+}
+#chooseqtype .instruction {
+  display: none;
+}
+#chooseqtype .qtypeoption {
+  margin-bottom: 0.5em;
+}
+#chooseqtype .qtypename img {
+  padding: 0 0.3em;
+}
+#chooseqtype .qtypesummary {
+  display: block;
+  margin: 0 2em;
+}
+#chooseqtype .submitbuttons {
+  margin: 0.7em 0;
+  text-align: center;
+}
+
+#qtypechoicecontainer {
+  display: none;
+}
+body.jsenabled #qtypechoicecontainer {
+  display: block;
+}
+#qtypechoicecontainer #chooseqtype {
+  width: 30em;
+}
+#qtypechoicecontainer #chooseqtypehead h3 {
+  margin: 0;
+}
+#qtypechoicecontainer #chooseqtype .qtypes {
+  position: relative;
+  border-bottom: 1px solid grey;
+  padding: 0.24em 0;
+}
+#qtypechoicecontainer #chooseqtype .qtypeoption {
+  margin-bottom: 0;
+}
+#qtypechoicecontainer #chooseqtype .instruction,
+#qtypechoicecontainer #chooseqtype .qtypesummary {
+  display: none;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 60%;
+  margin: 0;
+  border-left: 1px solid grey;
+  padding: 0.3em 0.5em;
+}
+#qtypechoicecontainer #chooseqtype .instruction,
+#qtypechoicecontainer #chooseqtype .selected .qtypesummary {
+  display: block;
+}
+
 .que {
   text-align: left;
   margin: 0 auto 1.8em auto;
@@ -4831,50 +4892,34 @@ table.quizreviewsummary td.cell {
     z-index:999;
 }
 
-#mod-quiz-edit .quizpagedelete img{
+#mod-quiz-edit .quizpagedelete img {
     background-color:#d6d6d6;
     padding:0.5em;
 }
 
-#mod-quiz-edit .pagecontrols{
+#mod-quiz-edit .pagecontrols {
     clear:both;
     margin-left:0.5em;
     padding-top:0.5em;
 }
 
-#mod-quiz-edit .pagecontrols .singlebutton{
-    float:left;
+#mod-quiz-edit .pagecontrols .singlebutton {
+  float:left;
+  margin-left: 1em;
 }
-
-#mod-quiz-edit div.quizpage .pagecontent form#addquestion{
-    margin-right:1em;
-    -webkit-border-radius:0.2em;
-    border-radius:0.2em;
-    padding:0.3em;
-}
-
-#mod-quiz-edit div.quizpage .pagecontent form.randomquestionform{
-    padding-left:1em;
+#mod-quiz-edit .pagecontrols .helplink {
+  float:left;
 }
 
 #mod-quiz-edit div.quizpage .pagecontent form.randomquestionform div{
     /* it is a mystery why this has to be inline-table but
        otherwise the layout gets screwed, even if
        it is "inline" */
-    display:inline-table;
+    display: inline-table;
 }
 
 #mod-quiz-edit div.quizpage .pagecontent form.randomquestionform div input{
-    display:inline;
-}
-
-#mod-quiz-edit div.quizpage .pagecontent .adddescription{
-    clear:left;
-    margin-top:0.3em;
-}
-
-#mod-quiz-edit div.quizpage .pagecontent .addrandomquestion{
-    margin-top:0.3em;
+    display: inline;
 }
 
 /* a CSS class YUI container creates on the fly: */
@@ -5013,24 +5058,28 @@ table.quizreviewsummary td.cell {
 }
 
 /*start question bank*/
-
-/*TODO: below applies to also question bank, so when
-question bank is adapted to the new UI, add the appropriate
-css id's of question bank*/
+.questionbankwindow .choosecategory,
+.questionbankwindow .createnewquestion {
+  padding: 0.3em;
+}
+.questionbankwindow .createnewquestion .singlebutton {
+  display: inline;
+}
+.questionbankwindow #catmenu_jump {
+  display: block;
+}
 #mod-quiz-edit .questionbankwindow .createnewquestion select,
-#mod-quiz-edit .questionbankwindow  #catmenu select{
-    width:80%;
+#mod-quiz-edit .questionbankwindow #catmenu select,
+#mod-quiz-edit .questionbankwindow #menucategory {
+  width: 100%;
 }
-#mod-quiz-addrandom select {
-    width:100%;
-}
-#mod-quiz-edit table#categoryquestions{
+table#categoryquestions {
     width: 100%;
     overflow: hidden;
     table-layout: fixed;
 }
 
-#mod-quiz-edit table#categoryquestions td,#mod-quiz-edit table#categoryquestions th{
+table#categoryquestions td,#mod-quiz-edit table#categoryquestions th{
     overflow:hidden;
     white-space:nowrap;
 }
@@ -5051,7 +5100,7 @@ css id's of question bank*/
   text-align: center;
 }
 
-#mod-quiz-edit #categoryquestions .qtype {
+#categoryquestions .qtype {
   width: 24px;
   padding: 0;
 }
@@ -5059,8 +5108,8 @@ css id's of question bank*/
 #categoryquestions .questiontext p {
   margin: 0;
 }
-#mod-quiz-edit .categoryinfo{
-    padding:0.3em;
+.categoryinfo {
+    padding: 0.3em;
 }
 
 #mod-quiz-edit .paging{
@@ -5069,21 +5118,12 @@ css id's of question bank*/
     display:block;
 }
 
-#mod-quiz-edit .questionsortoptions{
-    margin-top:0.3em;
-}
-
 #mod-quiz-edit .pagingbottom{
     padding-bottom:0.3em;
 }
 
 #mod-quiz-edit div.questionbank form .invisiblefieldset{
     clear:both;
-}
-
-#mod-quiz-edit div.createnewquestion{
-    padding-top:0.3em;
-    clear:left;
 }
 
 #mod-quiz-edit .sideblock .content{
@@ -5095,25 +5135,21 @@ css id's of question bank*/
     margin-top:0.3em;
 }
 
-#mod-quiz-edit .questionbank .categoryselectallcontainer{
-    padding-bottom:0.5em;
-}
-
-#mod-quiz-edit .questionbank div.categoryquestionscontainer,
-#mod-quiz-edit .questionbank .categorysortopotionscontainer,
-#mod-quiz-edit .questionbank .categorypagingbarcontainer,
-#mod-quiz-edit .questionbank .categoryselectallcontainer{
+.questionbank div.categoryquestionscontainer,
+.questionbank .categorysortopotionscontainer,
+.questionbank .categorypagingbarcontainer,
+.questionbank .categoryselectallcontainer{
     padding-left:0.3em;
     padding-right:0.3em;
 }
 
-#mod-quiz-edit .noquestionsincategory{
+.noquestionsincategory{
     clear:both;
     padding-top:1em;
     padding-bottom:1em;
 }
 
-#mod-quiz-edit .modulespecificbuttonscontainer{
+.modulespecificbuttonscontainer{
     padding-left:0.3em;
     padding-right:0.3em;
 }

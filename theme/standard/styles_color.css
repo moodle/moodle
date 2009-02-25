@@ -809,6 +809,18 @@ table.message_search_results td {
  *** Question
  ***/
 
+#qtypechoicecontainer #chooseqtype .qtypes {
+  border-bottom-color: grey;
+}
+#qtypechoicecontainer #chooseqtype .selected {
+  background: #dddddd;
+}
+#qtypechoicecontainer #chooseqtype .instruction,
+#qtypechoicecontainer #chooseqtype .qtypesummary {
+  border-left-color: grey;
+  background-color: white;
+}
+
 .que {
     border-color: #DDD;
 }
