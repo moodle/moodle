@@ -362,7 +362,7 @@ function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value,$fo
     }
 
     if ($track = $DB->get_record('scorm_scoes_track',array('userid'=>$userid, 'scormid'=>$scormid, 'scoid'=>$scoid, 'attempt'=>$attempt, 'element'=>$element))) {
-        $track->value = addslashes($value);
+        $track->value = addslashes_js($value);
         $track->timemodified = time();
         $id = $DB->update_record('scorm_scoes_track',$track);
     } else {
@@ -371,7 +371,7 @@ function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value,$fo
         $track->scoid = $scoid;
         $track->attempt = $attempt;
         $track->element = $element;
-        $track->value = addslashes($value);
+        $track->value = addslashes_js($value);
         $track->timemodified = time();
         $id = $DB->insert_record('scorm_scoes_track',$track);
     }
