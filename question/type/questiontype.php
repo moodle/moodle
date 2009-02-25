@@ -58,18 +58,18 @@ class default_questiontype {
     }
 
     /**
+     * @return string the name of this pluginfor passing to get_string, set/get_config, etc.
+     */
+    function plugin_name() {
+        return 'qtype_' . $this->name();
+    }
+
+    /**
      * @return string the name of this question type in the user's language.
      * You should not need to override this method, the default behaviour should be fine.
      */
     function local_name() {
-        $name = $this->name();
-        $menu_name = get_string($name, 'qtype_' . $name);
-        if ($menu_name[0] == '[') {
-            // Legacy behavior, if the string was not in the proper qtype_name
-            // language file, look it up in the quiz one.
-            $menu_name = get_string($name, 'quiz');
-        }
-        return $menu_name;
+        return get_string($this->name(), $this->plugin_name());
     }
 
     /**
@@ -216,8 +216,8 @@ class default_questiontype {
      * @param string $wizardnow is '' for first page.
      */
     function display_question_editing_page(&$mform, $question, $wizardnow){
-        list($heading, $langmodule) = $this->get_heading(empty($question->id));
-        print_heading_with_help($heading, $this->name(), $langmodule);
+        $heading = $this->get_heading(empty($question->id));
+        print_heading_with_help($heading, $this->name(), $this->plugin_name());
         $permissionstrs = array();
         if (!empty($question->id)){
             if ($question->formoptions->canedit){
@@ -248,21 +248,12 @@ class default_questiontype {
      * @return array a string heading and the langmodule in which it was found.
      */
     function get_heading($adding = false){
-        $name = $this->name();
-        $langmodule = 'qtype_' . $name;
-        if (!$adding){
-            $strtoget = 'editing' . $name;
+        if ($adding) {
+            $prefix = 'adding';
         } else {
-            $strtoget = 'adding' . $name;
+            $prefix = 'editing';
         }
-        $strheading = get_string($strtoget, $langmodule);
-        if ($strheading[0] == '[') {
-            // Legacy behavior, if the string was not in the proper qtype_name
-            // language file, look it up in the quiz one.
-            $langmodule = 'quiz';
-            $strheading = get_string($strtoget, $langmodule);
-        }
-        return array($strheading, $langmodule);
+        return get_string($prefix . $this->name(), $this->plugin_name());
     }
 
     /**
@@ -1422,47 +1413,6 @@ class default_questiontype {
         return true;
     }
 
-
-    /**
-    * Includes configuration settings for the question type on the quiz admin
-    * page
-    *
-    * TODO: It makes no sense any longer to do the admin for question types
-    * from the quiz admin page. This should be changed.
-    * Returns an array of objects describing the options for the question type
-    * to be included on the quiz module admin page.
-    * Configuration options can be included by setting the following fields in
-    * the object:
-    * ->name           The name of the option within this question type.
-    *                  The full option name will be constructed as
-    *                  "quiz_{$this->name()}_$name", the human readable name
-    *                  will be displayed with get_string($name, 'quiz').
-    * ->code           The code to display the form element, help button, etc.
-    *                  i.e. the content for the central table cell. Be sure
-    *                  to name the element "quiz_{$this->name()}_$name" and
-    *                  set the value to $CFG->{"quiz_{$this->name()}_$name"}.
-    * ->help           Name of the string from the quiz module language file
-    *                  to be used for the help message in the third column of
-    *                  the table. An empty string (or the field not set)
-    *                  means to leave the box empty.
-    * Links to custom settings pages can be included by setting the following
-    * fields in the object:
-    * ->name           The name of the link text string.
-    *                  get_string($name, 'quiz') will be called.
-    * ->link           The filename part of the URL for the link. The full URL
-    *                  is contructed as
-    *                  "$CFG->wwwroot/question/type/{$this->name()}/$link?sesskey=$sesskey"
-    *                  [but with the relavant calls to the s and rawurlencode
-    *                  functions] where $sesskey is the sesskey for the user.
-    * @return array    Array of objects describing the configuration options to
-    *                  be included on the quiz module admin page.
-    */
-    function get_config_options() {
-        // No options by default
-
-        return false;
-    }
-
     /**
     * Returns true if the editing wizard is finished, false otherwise.
     *
@@ -1627,6 +1577,7 @@ class default_questiontype {
             }
         }
     }
+
     /**
      * @return the best link to pass to print_error.
      * @param $cmoptions as passed in from outside.

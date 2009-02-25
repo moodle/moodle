@@ -88,7 +88,7 @@ class random_qtype extends default_questiontype {
     }
 
     function display_question_editing_page(&$mform, $question, $wizardnow){
-        list($heading, $langmodule) = $this->get_heading(empty($question->id));
+        $heading = $this->get_heading(empty($question->id));
         print_heading_with_help($heading, $this->name(), $langmodule);
         $mform->display();
     }
