@@ -299,7 +299,7 @@ function print_graded_users_selector($course, $actionpage, $userid=null, $return
         $menu[0] .= " (" . (count($menu) - 1) . ")";
     }
 
-    return popup_form($CFG->wwwroot.'/grade/' . $actionpage . '&amp;userid=', $menu, 'choosegradeduser', $userid, 'choose', '', '',
+    return popup_form($CFG->wwwroot.'/grade/' . $actionpage . '&amp;userid=', $menu, 'choosegradeduser', $userid, null, '', '',
                         $return, 'self', get_string('selectalloroneuser', 'grades'));
 }
 

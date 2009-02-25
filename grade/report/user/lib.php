@@ -191,7 +191,7 @@ class grade_report_user extends grade_report {
     }
 
     private function fill_table_recursive(&$element) {
-        global $CFG;
+        global $CFG, $DB;
 
         $type = $element['type'];
         $depth = $element['depth'];
@@ -288,7 +288,7 @@ class grade_report_user extends grade_report {
                               FROM {grade_grades}
                              WHERE finalgrade > ?
                                    AND itemid = ?";
-                    $rank = $DB->count_records_sql($sql, array($grade_grade->finalgrade, $grade_item->id)) + 1;
+                    $rank = $DB->count_records_sql($sql, array($grade_grade->finalgrade, $grade_grade->grade_item->id)) + 1;
 
                     $data['rank']['class'] = $class;
                     $data['rank']['content'] = "$rank/".$this->get_numusers(false); // total course users
