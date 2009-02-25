@@ -39,7 +39,7 @@ $string['continue'] = 'Continua';
 $string['ctyperecommended'] = 'Es recomana instal·lar l\'extensió de PHP ctype a fi de millorar el rendiment del lloc, especialment si teniu usuaris que treballen amb idiomes no occidentals.';
 $string['ctyperequired'] = 'A hores d\'ara Moodle requereix l\'extensió de PHP ctype, a fi de millorar el rendiment del lloc i oferir compatibilitat amb diferents idiomes.';
 $string['curlrecommended'] = 'Es recomana instal·lar la biblioteca opcional Curl a fi d\'habilitar la funcionalitat de Moodle en Xarxa.';
-$string['curlrequired'] = 'L\'extensió de PHP cURL és ara necessària per a comunicar-se amb repositoris Moodle.';
+$string['curlrequired'] = 'L\'extensió de PHP cURL és ara necessària per a comunicar-se amb repositoris Moodle.'; // ORPHANED
 $string['customcheck'] = 'Altres comprovacions';
 $string['database'] = 'Base de dades';
 $string['databasecreationsettingshead'] = 'Ara cal configurar els paràmetres de la base de dades on s\'emmagatzemaran la majoria de dades de Moodle. L\'instal·lador crearà automàticament aquesta base de dades amb els paràmetres que especifiqueu aquí.';
@@ -101,6 +101,7 @@ $string['databasesettingssub_postgres7'] = '<b>Tipus:</b> PostgreSQL<br />
 $string['databasesettingswillbecreated'] = '<strong>Nota</strong >: l\'instal·lador intentarà crear automàticament la base de dades si no existeix.';
 $string['dataroot'] = 'Directori de dades';
 $string['datarooterror'] = 'No s\'ha pogut trobar o crear el directori de dades que heu especificat. Corregiu el camí o creeu el directori a mà.';
+$string['datarootpublicerror'] = 'El directori de dades que heu especificat és accessible directament per web. Utilitzeu una altra ubicació.';
 $string['dbconnectionerror'] = 'No es pot obrir la connexió amb la base de dades que heu especificat. Comproveu els paràmetres de la base de dades.';
 $string['dbcreationerror'] = 'Error en la creació de la base de dades. No s\'ha pogut crear la base de dades amb els paràmetres proporcionats.';
 $string['dbhost'] = 'Ordinador servidor';
@@ -222,11 +223,12 @@ $string['password'] = 'Contrasenya';
 $string['pgsqlextensionisnotpresentinphp'] = 'El PHP no s\'ha configurat correctament amb l\'extensió PGSQL de manera que pugui comunicar-se amb PostgreSQL. Reviseu el fitxer php.ini o recompileu el PHP.';
 $string['php50restricted'] = 'PHP 5.0 té alguns problemes coneguts. Actualitzeu-vos si us plau a 5.1.x o torneu a 4.3.x o 4.4.x';
 $string['phpversion'] = 'Versió PHP';
-$string['phpversionerror'] = 'La versió del PHP ha de ser com a mínim la 4.1.0'; // ORPHANED
+$string['phpversionerror'] = 'La versió del PHP ha de ser com a mínim la 4.1.0';
 $string['phpversionhelp'] = '<p>Moodle necessita la versió de PHP 4.1.0 o posterior.</p>
 <p>A hores d\'ara esteu utilitzant la versió $a.</p>
 <p>Us caldrà actualitzar el PHP o traslladar Moodle a un ordinador amb una versió de PHP més recent.</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
+$string['postgresqlwarning'] = '<strong>Nota:</strong> Si experimenteu problemes de connexió, podeu provar a deixar en blanc els camps de base de dades, usuari i contrasenya i definir el camp de servidor així: host=\'postgresql_host\' port=\'5432\' dbname=\'postgresql_database_name\' user=\'postgresql_user\' password=\'postgresql_user_password\'. Més informació en <a href=\"http://docs.moodle.org/en/Installing_Postgres_for_PHP\">Moodle Docs</a>';
 $string['previous'] = 'Anterior';
 $string['qtyperqpwillberemoved'] = 'Durant l\'actualització, el tipus de pregunta RPQ se suprimirà. No estàveu utilitzant aquest tipus de pregunta, de manera que no hauríeu d\'experimentar cap problema.';
 $string['qtyperqpwillberemovedanyway'] = 'Durant l\'actualització, el tipus de pregunta RPQ se suprimirà. Teniu algunes preguntes RQP en la base de dades que deixaran de funcionar si no reinstal·leu el codi de http://moodle.org/mod/data/view.php?d=13&amp;rid=797 abans de prosseguir l\'actualització.';
