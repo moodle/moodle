@@ -224,7 +224,12 @@ class repository_flickr_public extends repository {
                 } else {
                     $format = 'jpg';
                 }
-                $ret['list'][] = array('title'=>$p['title'].'.'.$format,'source'=>$p['id'],
+                $format = '.'.$format;
+                // append extensions to the files
+                if (substr($p['title'], strlen($p['title'])-strlen($format)) != $format) {
+                    $p['title'] .= $format; 
+                }
+                $ret['list'][] = array('title'=>$p['title'], 'source'=>$p['id'],
                     'id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'),
                     'date'=>'', 'size'=>'unknown', 'url'=>'http://www.flickr.com/photos/'.$p['owner'].'/'.$p['id']);
             }
