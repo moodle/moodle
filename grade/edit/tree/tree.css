@@ -104,11 +104,11 @@ img.icon {
 }
 
 .level1 {
-    background-color: #d0dbf3 !important;
+    background-color: #f3dfd0 !important;
     width: 10px;
 }
 .level2 {
-    background-color: #f3dfd0 !important;
+    background-color: #d0dbf3 !important;
     width: 10px;
 }
 .level3 {
@@ -116,7 +116,7 @@ img.icon {
     width: 10px;
 }
 .level4 {
-    background-color: #eae8be !important;
+    background-color: #f0f0aa !important;
     width: 10px;
 }
 .level5 {
@@ -128,6 +128,3 @@ img.icon {
     border:  1px solid #AAAAAA;
     width: 100%;
 }
-
-
-
