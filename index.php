@@ -200,7 +200,9 @@
                     if (!empty($USER->id)) {
                         $SESSION->fromdiscussion = $CFG->wwwroot;
                         if (forum_is_subscribed($USER->id, $newsforum)) {
-                            $subtext = get_string('unsubscribe', 'forum');
+                            if (!forum_is_forcesubscribed($newsforum)) {
+                                $subtext = get_string('unsubscribe', 'forum');
+                            }
                         } else {
                             $subtext = get_string('subscribe', 'forum');
                         }
