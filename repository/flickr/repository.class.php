@@ -187,7 +187,9 @@ class repository_flickr extends repository {
             'extras'=>'original_format',
             'text'=>$search_text
             ));
-        return $this->build_list($photos);
+        $ret = $this->build_list($photos);
+        $ret['list'] = array_filter($ret['list'], array($this, 'filter'));
+        return $ret;
     }
 
     /**

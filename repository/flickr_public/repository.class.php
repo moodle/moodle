@@ -178,7 +178,9 @@ class repository_flickr_public extends repository {
                 'text'=>$SESSION->{$this->sess_text}));
         }
         $ret = array();
-        return $this->build_list($photos, $page, $ret);
+        $ret = $this->build_list($photos, $page, $ret);
+        $ret['list'] = array_filter($ret['list'], array($this, 'filter'));
+        return $ret;
     }
 
     /**

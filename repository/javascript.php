@@ -276,6 +276,7 @@ this.create_picker = function() {
             params['s'] = keyword;
             params['env']=_client.env;
             params['action']='gsearch';
+            params['accepted_types'] = _client.accepted_types;
             params['sesskey']='$sesskey';
             params['ctx_id']=$context->id;
             _client.loading('load');
@@ -642,6 +643,7 @@ _client.viewthumb = function(ds) {
                         params['repo_id'] = _client.repositoryid;
                         params['ctx_id'] = $context->id;
                         params['sesskey']= '$sesskey';
+                        params['accepted_types'] = _client.accepted_types;
                         _client.loading('load');
                         var trans = YAHOO.util.Connect.asyncRequest('POST',
                                 '$CFG->httpswwwroot/repository/ws.php?action=list', _client.req_cb, _client.postdata(params));
@@ -745,6 +747,7 @@ _client.dynload = function (node, fnLoadComplete) {
     params['sesskey']='$sesskey';
     params['ctx_id']=$context->id;
     params['repo_id']=_client.repositoryid;
+    params['accepted_types'] = _client.accepted_types;
     var trans = YAHOO.util.Connect.asyncRequest('POST',
             '$CFG->httpswwwroot/repository/ws.php?action=list', callback, _client.postdata(params));
 }
@@ -887,6 +890,7 @@ _client.search_paging = function(id, path, page) {
     params['p'] = path;
     params['page'] = page;
     params['env']=_client.env;
+    params['accepted_types'] = _client.accepted_types;
     params['action']='search';
     params['search_paging']='true';
     params['sesskey']='$sesskey';
@@ -987,11 +991,9 @@ _client.req = function(id, path, page) {
     _client.viewbar.set('disabled', false);
     _client.loading('load');
     _client.repositoryid = id;
-    action = 'list';
     var params = [];
     params['p'] = path;
     params['env']=_client.env;
-    params['action']=action;
     params['sesskey']='$sesskey';
     params['ctx_id']=$context->id;
     params['repo_id']=id;
@@ -999,7 +1001,7 @@ _client.req = function(id, path, page) {
         params['page']=page;
     }
     params['accepted_types'] = _client.accepted_types;
-    var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->httpswwwroot/repository/ws.php?action='+action, _client.req_cb, _client.postdata(params));
+    var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->httpswwwroot/repository/ws.php?action=list', _client.req_cb, _client.postdata(params));
 }
 _client.logout = function(id) {
     _client.repositoryid = id;
@@ -1130,7 +1132,7 @@ $js .= "\r\n";
 $ft = new file_type_to_ext();
 $image_file_ext = json_encode($ft->get_file_ext(array('image')));
 $video_file_ext = json_encode($ft->get_file_ext(array('video')));
-$accpeted_file_ext = json_encode($ft->get_file_ext($accepted_filetypes));
+$accepted_file_ext = json_encode($ft->get_file_ext($accepted_filetypes));
 $js .= <<<EOD
 function openpicker_$suffix(params) {
     if(params.filetype) {
@@ -1142,7 +1144,7 @@ function openpicker_$suffix(params) {
             repository_client_$suffix.accepted_types = '*';
         }
     } else {
-        repository_client_$suffix.accepted_types = $accpeted_file_ext;
+        repository_client_$suffix.accepted_types = $accepted_file_ext;
     }
     if(!repository_client_$suffix.instance) {
         repository_client_$suffix.env = params.env;

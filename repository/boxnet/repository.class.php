@@ -162,7 +162,7 @@ class repository_boxnet extends repository {
                 }
             }
         }
-        $ret['list'] = $list;
+        $ret['list'] = array_filter($list, array($this, 'filter'));
         return $ret;
     }
 
@@ -181,7 +181,7 @@ class repository_boxnet extends repository {
         $ret['manage'] = 'http://www.box.net/files';
         $ret['path'] = array(array('name'=>'Root', 'path'=>0));
         if(!empty($tree)) {
-            $ret['list']   = array_filter($tree, array($this, 'filter'));
+            $ret['list'] = array_filter($tree, array($this, 'filter'));
         }
         return $ret;
     }
