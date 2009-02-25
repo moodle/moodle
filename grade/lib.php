@@ -238,7 +238,7 @@ function grade_get_formatted_grades() {
                                 }
                                 $all_categories["$cur_category"]["$instance->name"]['grade_against'] = $all_categories["$cur_category"]["$instance->name"]['scaled_max'];
                                 if (!isset($all_categories["$cur_category"]['stats']['weight'])) {
-                                    $weight = grade_get_category_weight($course->id, $cur_category);        
+                                    $weight = grade_get_category_weight($course->id, addslashes($cur_category));
                                     $all_categories["$cur_category"]['stats']['weight'] = $weight->weight;
                                 }
         
@@ -248,7 +248,7 @@ function grade_get_formatted_grades() {
                                 $all_categories["$cur_category"]["$instance->name"]['modname'] = $modname->name;
         
                                 // get bonus points and drop the x lowest                            
-                                $drop = get_record('grade_category', 'courseid', $course->id, 'name', $cur_category);
+                                $drop = get_record('grade_category', 'courseid', $course->id, 'name', addslashes($cur_category));
                                 $all_categories["$cur_category"]['stats']['drop'] = $drop->drop_x_lowest;
                                 $all_categories["$cur_category"]['stats']['bonus_points'] = $drop->bonus_points;
                             }
@@ -2324,7 +2324,7 @@ function grade_set_grade_weights() {
             $submitted_category = optional_param($form_catname);    
             if (is_numeric($submitted_category)) {
                 // see if there is a weight if so see if it needs to be updated
-                $weight = grade_get_category_weight($course->id, $category->name);
+                $weight = grade_get_category_weight($course->id, addslashes($category->name));
                 if ($weight) {
                     if ($weight->weight != $submitted_category)
                     {                        
