@@ -715,7 +715,7 @@ if(!$quiz_reordertool){
     // display category adding UI
     ?>
 <div id="randomquestiondialog">
-<div class="hd"><?php print_string("addrandomquestiontoquiz","quiz",$quizname); ?>
+<div class="hd"><?php print_string('addrandomquestiontoquiz', 'quiz', $quizname); ?>
 <span id="pagenumber"><!-- TODO: insert pagenumber here via javascript -->
 </span>
 </div>
