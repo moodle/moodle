@@ -166,7 +166,10 @@ class grade_report_grader_ajax extends grade_report_grader {
      * @return string
      */
     function get_studentrowhtml($user) {
-        global $CFG;
+        global $CFG, $USER;
+        $showuserimage = $this->get_pref('showuserimage');
+        $showuseridnumber = $this->get_pref('showuseridnumber');
+        $fixedstudents = empty($USER->screenreader) && $this->get_pref('fixedstudents');
         $studentrowhtml = '';
         $row_classes = array(' even ', ' odd ');
 
@@ -182,8 +185,23 @@ class grade_report_grader_ajax extends grade_report_grader {
 
         $columncount = 0;
         // Student name and link
+        $user_pic = null;
+        if ($showuserimage) {
+            $user_pic = '<div class="userpic">' . print_user_picture($user, $this->courseid, true, 0, true) . '</div>';
+        }
 
-        $studentrowhtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">';
+        if ($fixedstudents) {
+            $studentrowhtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">';
+        } else {
+            $studentrowhtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
+                          .'<th class="header c'.$columncount++.' user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
+                          .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
+                          .fullname($user).'</a></th>';
+
+            if ($showuseridnumber) {
+                $studentrowhtml .= '<th class="header c'.$columncount++.' useridnumber" onclick="set_row(this.parentNode.rowIndex);">'. $user->idnumber.'</th>';
+            }
+        }
 
         $columntabcount = 0;
         $feedback_tabindex_modifier = 1; // Used to offset the grade value at the beginning of each new column

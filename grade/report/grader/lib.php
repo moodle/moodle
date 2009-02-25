@@ -503,6 +503,36 @@ class grade_report_grader extends grade_report {
         global $CFG, $USER;
 
         $this->rowcount = 0;
+        $fixedstudents = empty($USER->screenreader) && $this->get_pref('fixedstudents');
+
+        if (!$fixedstudents) {
+            $strsortasc   = $this->get_lang_string('sortasc', 'grades');
+            $strsortdesc  = $this->get_lang_string('sortdesc', 'grades');
+            $strfirstname = $this->get_lang_string('firstname');
+            $strlastname  = $this->get_lang_string('lastname');
+            $showuseridnumber = $this->get_pref('showuseridnumber');
+
+            if ($this->sortitemid === 'lastname') {
+                if ($this->sortorder == 'ASC') {
+                    $lastarrow = print_arrow('up', $strsortasc, true);
+                } else {
+                    $lastarrow = print_arrow('down', $strsortdesc, true);
+                }
+            } else {
+                $lastarrow = '';
+            }
+
+            if ($this->sortitemid === 'firstname') {
+                if ($this->sortorder == 'ASC') {
+                    $firstarrow = print_arrow('up', $strsortasc, true);
+                } else {
+                    $firstarrow = print_arrow('down', $strsortdesc, true);
+                }
+            } else {
+                $firstarrow = '';
+            }
+
+        }
 
         // Prepare Table Headers
         $headerhtml = '';
@@ -519,7 +549,40 @@ class grade_report_grader extends grade_report {
                 // continue;
             }
 
-            $headerhtml .= '<tr class="heading_name_row">';
+            if ($fixedstudents) {
+                $headerhtml .= '<tr class="heading_name_row">';
+            } else {
+                $headerhtml .= '<tr class="heading r'.$this->rowcount++.'">';
+                if ($key == $numrows - 1) {
+                    $headerhtml .= '<th class="header c'.$columncount++.'" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=firstname">'
+                                . $strfirstname . '</a> '
+                                . $firstarrow. '/ <a href="'.$this->baseurl.'&amp;sortitemid=lastname">' . $strlastname . '</a>'. $lastarrow .'</th>';
+                    if ($showuseridnumber) {
+                        if ('idnumber' == $this->sortitemid) {
+                            if ($this->sortorder == 'ASC') {
+                                $idnumberarrow = print_arrow('up', $strsortasc, true);
+                            } else {
+                                $idnumberarrow = print_arrow('down', $strsortdesc, true);
+                            }
+                        } else {
+                            $idnumberarrow = '';
+                        }
+                        $headerhtml .= '<th class="header c'.$columncount++.' useridnumber" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=idnumber">'
+                                . get_string('idnumber') . '</a> ' . $idnumberarrow . '</th>';
+                    }
+                 } else {
+                    $colspan='';
+                    if ($showuseridnumber) {
+                        $colspan = 'colspan="2" ';
+                    }
+
+                    $headerhtml .= '<td '.$colspan.'class="cell c'.$columncount++.' topleft">&nbsp;</td>';
+
+                    if ($showuseridnumber) {
+                        $columncount++;
+                    }
+                }
+            }
 
 
             foreach ($row as $columnkey => $element) {
@@ -611,6 +674,9 @@ class grade_report_grader extends grade_report {
         $strgrade     = $this->get_lang_string('grade');
         $gradetabindex = 1;
         $numusers      = count($this->users);
+        $showuserimage = $this->get_pref('showuserimage');
+        $showuseridnumber = $this->get_pref('showuseridnumber');
+        $fixedstudents = empty($USER->screenreader) && $this->get_pref('fixedstudents');
 
         // Preload scale objects for items with a scaleid
         $scales_list = array();
@@ -648,7 +714,27 @@ class grade_report_grader extends grade_report {
             }
 
             $columncount = 0;
-            $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">';
+
+            if ($fixedstudents) {
+                $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">';
+            } else {
+                // Student name and link
+                $user_pic = null;
+                if ($showuserimage) {
+                    $user_pic = '<div class="userpic">' . print_user_picture($user, $this->courseid, null, 0, true) . '</div>';
+                }
+
+                $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
+                              .'<th class="header c'.$columncount++.' user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
+                              .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
+                              .fullname($user).'</a></th>';
+
+                if ($showuseridnumber) {
+                    $studentshtml .= '<th class="header c'.$columncount++.' useridnumber" onclick="set_row(this.parentNode.rowIndex);">'.
+                            $user->idnumber.'</a></th>';
+                }
+
+            }
 
             foreach ($this->gtree->items as $itemid=>$unused) {
                 $item =& $this->gtree->items[$itemid];
@@ -833,6 +919,7 @@ class grade_report_grader extends grade_report {
 
         $showuserimage = $this->get_pref('showuserimage');
         $showuseridnumber = $this->get_pref('showuseridnumber');
+        $fixedstudents = empty($USER->screenreader) && $this->get_pref('fixedstudents');
 
         $strsortasc   = $this->get_lang_string('sortasc', 'grades');
         $strsortdesc  = $this->get_lang_string('sortdesc', 'grades');
@@ -859,97 +946,101 @@ class grade_report_grader extends grade_report {
             $firstarrow = '';
         }
 
-        $row_classes = array(' even ', ' odd ');
+        if ($fixedstudents) {
+            $studentshtml .= '<div class="left_scroller">
+                <table id="fixed_column" class="fixed_grades_column">
+                    <tbody class="leftbody">';
 
-        $row_classes = array(' even ', ' odd ');
-
-        $studentshtml .= '<div class="left_scroller">
-            <table id="fixed_column" class="fixed_grades_column">
-                <tbody class="leftbody">';
-
-        $colspan = '';
-        if ($showuseridnumber) {
-            $colspan = 'colspan="2"';
-        }
-
-        $levels = count($this->gtree->levels) - 1;
-
-
-        for ($i = 0; $i < $levels; $i++) {
-            $studentshtml .= '
-                    <tr class="heading name_row">
-                        <td '.$colspan.' class="fixedcolumn cell c0 topleft"> </td>
-                    </tr>
-                    ';
-        }
-
-        $studentshtml .= '<tr class="heading"><th class="header c0" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=firstname">'
-                    . $strfirstname . '</a> '
-                    . $firstarrow. '/ <a href="'.$this->baseurl.'&amp;sortitemid=lastname">' . $strlastname . '</a>'. $lastarrow .'</th>';
-
-        if ($showuseridnumber) {
-            if ('idnumber' == $this->sortitemid) {
-                if ($this->sortorder == 'ASC') {
-                    $idnumberarrow = print_arrow('up', $strsortasc, true);
-                } else {
-                    $idnumberarrow = print_arrow('down', $strsortdesc, true);
-                }
-            } else {
-                $idnumberarrow = '';
-            }
-            $studentshtml .= '<th class="header c0 useridnumber" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=idnumber">'
-                    . get_string('idnumber') . '</a> ' . $idnumberarrow . '</th>';
-        }
-
-        $studentshtml .= '</tr>';
-
-        if ($USER->gradeediting[$this->courseid]) {
-            $studentshtml .= '<tr class="controls"><th class="header c0 controls" scope="row" '.$colspan.'>'.$this->get_lang_string('controls','grades').'</th></tr>';
-        }
-
-        foreach ($this->users as $userid => $user) {
-
-            $user_pic = null;
-            if ($showuserimage) {
-                $user_pic = '<div class="userpic">' . print_user_picture($user, $this->courseid, NULL, 0, true) . "</div>\n";
+            $colspan = '';
+            if ($showuseridnumber) {
+                $colspan = 'colspan="2"';
             }
 
-            $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
-                          .'<th class="header c0 user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
-                          .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
-                          .fullname($user)."</a></th>\n";
+            $levels = count($this->gtree->levels) - 1;
+
+
+            for ($i = 0; $i < $levels; $i++) {
+                $studentshtml .= '
+                        <tr class="heading name_row">
+                            <td '.$colspan.' class="fixedcolumn cell c0 topleft"> </td>
+                        </tr>
+                        ';
+            }
+
+            $studentshtml .= '<tr class="heading"><th class="header c0" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=firstname">'
+                        . $strfirstname . '</a> '
+                        . $firstarrow. '/ <a href="'.$this->baseurl.'&amp;sortitemid=lastname">' . $strlastname . '</a>'. $lastarrow .'</th>';
 
             if ($showuseridnumber) {
-                $studentshtml .= '<th class="header c0 useridnumber" onclick="set_row(this.parentNode.rowIndex);">'. $user->idnumber."</th>\n";
+                if ('idnumber' == $this->sortitemid) {
+                    if ($this->sortorder == 'ASC') {
+                        $idnumberarrow = print_arrow('up', $strsortasc, true);
+                    } else {
+                        $idnumberarrow = print_arrow('down', $strsortdesc, true);
+                    }
+                } else {
+                    $idnumberarrow = '';
+                }
+                $studentshtml .= '<th class="header c0 useridnumber" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=idnumber">'
+                        . get_string('idnumber') . '</a> ' . $idnumberarrow . '</th>';
             }
-            $studentshtml .= "</tr>\n";
+
+            $studentshtml .= '</tr>';
+
+            if ($USER->gradeediting[$this->courseid]) {
+                $studentshtml .= '<tr class="controls"><th class="header c0 controls" scope="row" '.$colspan.'>'.$this->get_lang_string('controls','grades').'</th></tr>';
+            }
+
+            $row_classes = array(' even ', ' odd ');
+
+            foreach ($this->users as $userid => $user) {
+
+                $user_pic = null;
+                if ($showuserimage) {
+                    $user_pic = '<div class="userpic">' . print_user_picture($user, $this->courseid, NULL, 0, true) . "</div>\n";
+                }
+
+                $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
+                              .'<th class="header c0 user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
+                              .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
+                              .fullname($user)."</a></th>\n";
+
+                if ($showuseridnumber) {
+                    $studentshtml .= '<th class="header c0 useridnumber" onclick="set_row(this.parentNode.rowIndex);">'. $user->idnumber."</th>\n";
+                }
+                $studentshtml .= "</tr>\n";
+            }
+
+            if ($this->get_pref('showranges')) {
+                $studentshtml .= '<tr class="range r'.$this->rowcount++.'">' . '<th class="header c0 range " '.$colspan.' scope="row">'.$this->get_lang_string('range','grades').'</th></tr>';
+            }
+
+            // Averages heading
+
+            $straverage_group = get_string('groupavg', 'grades');
+            $showaverages_group = $this->currentgroup && $this->get_pref('showgroups');
+            $straverage = get_string('overallaverage', 'grades');
+            $showaverages = $this->get_pref('showaverages');
+
+            if ($showaverages_group) {
+                $studentshtml .= '<tr class="groupavg r'.$this->rowcount++.'"><th class="header c0" '.$colspan.'scope="row">'.$straverage_group.'</th></tr>';
+            }
+
+            if ($showaverages) {
+                $studentshtml .= '<tr class="avg r'.$this->rowcount++.'"><th class="header c0" '.$colspan.'scope="row">'.$straverage.'</th></tr>';
+            }
+
+            $studentshtml .= '</tbody>
+                </table>
+            </div>
+            <div class="right_scroller">
+                <table id="user-grades" class="">
+                    <tbody class="righttest">';
+
+        } else {
+            $studentshtml .= '<table id="user-grades" class="gradestable flexible boxaligncenter generaltable">
+                                <tbody>';
         }
-
-        if ($this->get_pref('showranges')) {
-            $studentshtml .= '<tr class="range r'.$this->rowcount++.'">' . '<th class="header c0 range " '.$colspan.' scope="row">'.$this->get_lang_string('range','grades').'</th></tr>';
-        }
-
-        // Averages heading
-
-        $straverage_group = get_string('groupavg', 'grades');
-        $showaverages_group = $this->currentgroup && $this->get_pref('showgroups');
-        $straverage = get_string('overallaverage', 'grades');
-        $showaverages = $this->get_pref('showaverages');
-
-        if ($showaverages_group) {
-            $studentshtml .= '<tr class="groupavg r'.$this->rowcount++.'"><th class="header c0" '.$colspan.'scope="row">'.$straverage_group.'</th></tr>';
-        }
-
-        if ($showaverages) {
-            $studentshtml .= '<tr class="avg r'.$this->rowcount++.'"><th class="header c0" '.$colspan.'scope="row">'.$straverage.'</th></tr>';
-        }
-
-        $studentshtml .= '</tbody>
-            </table>
-        </div>
-        <div class="right_scroller">
-            <table id="user-grades" class="">
-                <tbody class="righttest">';
 
         return $studentshtml;
     }

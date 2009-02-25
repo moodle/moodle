@@ -78,10 +78,10 @@ if ($data = $mform->get_data()) {
 if ($mform->is_cancelled()){
     redirect($CFG->wwwroot . '/grade/report/visual/index.php?id='.$courseid);
 }
+
 $strvisualreport = get_string('modulename', 'gradereport_visual');
 
-
-print_grade_page_head($COURSE->id, 'settings', 'visual', $strvisualreport . ' ' . get_string('preferences'));
+print_grade_page_head($COURSE->id, 'preferences', 'visual', $strvisualreport . ' ' . get_string('preferences'));
 
 /// If USER has admin capability, print a link to the site config page for this report
 /// TODO: Add admin config page for this report

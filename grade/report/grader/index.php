@@ -156,8 +156,10 @@ if (!empty($studentsperpage)) {
     print_paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
 }
 
+
 $reporthtml = '<script src="functions.js" type="text/javascript"></script>';
 $reporthtml .= '<div class="gradeparent">';
+
 $reporthtml .= $report->get_studentnameshtml();
 $reporthtml .= $report->get_headerhtml();
 $reporthtml .= $report->get_iconshtml();
