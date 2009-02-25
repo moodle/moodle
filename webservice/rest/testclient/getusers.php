@@ -32,9 +32,6 @@ start_interface("List of Users");
 if ($search) {
     $data['search'] = $search;
 
-    var_dump($CFG->serverurl.'/user/tmp_get_users');
-
-
     //we are asking for a token
     $connectiondata['username'] = 'wsuser';
     $connectiondata['password'] = 'wspassword';

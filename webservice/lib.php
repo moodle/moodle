@@ -138,154 +138,99 @@ final class webservice_lib {
 
         foreach($reflection->getMethods() as $method){
 
-            if ($method->getName()!="get_function_webservice_description"
-                && $method->getName()!="get_descriptions" ) {
-                $docBlock = $method->getDocComment();
+            $docBlock = $method->getDocComment();
 
+            //retrieve the return and add it into the description if not array|object
+            preg_match_all('/@return\s+(\w+)\s+((?:\$)?\w+)/', $docBlock, $returnmatches);
 
-                //retrieve the return and add it into the description if not array|object
-                preg_match_all('/@return\s+(\w+)\s+((?:\$)?\w+)/', $docBlock, $returnmatches);
+            //retrieve the subparam and subreturn
+            preg_match_all('/\s*\*\s*@(subparam|subreturn)\s+(\w+)\s+(\$\w+(?::\w+|->\w+)+)((?:\s+(?:optional|required|multiple))*)/', $docBlock, $matches);
 
-                //retrieve the subparam and subreturn
-                preg_match_all('/\s*\*\s*@(subparam|subreturn)\s+(\w+)\s+(\$\w+(?::\w+|->\w+)+)((?:\s+(?:optional|required|multiple))*)/', $docBlock, $matches);
-
-                for($i=0;$i<sizeof($matches[1]);$i++){
-                    //   var_dump(strpos("optional", $matches[4][$i]));
-                    switch ($matches[1][$i]) {
-                        case "subparam":
-                            if (strpos($matches[4][$i], "optional")!==false) {
-                                $descriptiontype = "optional";
-                            } else {
-                                $descriptiontype = "params" ;
-                            }
-                            break;
-                        case "subreturn":
-                            $descriptiontype = "return";
-                            break;
-                    }
-
-                    if (empty($description[$method->getName()])) {
-                        $description[$method->getName()] = array();
-                    }
-
-                    if (strpos($returnmatches[1][0] ,"object")===false && strpos($returnmatches[1][0],"array")===false) {
-                        $description[$method->getName()]['return'] = array($returnmatches[2][0] => $returnmatches[1][0]);
-                    }
-
-                    if ($matches[1][$i] == "subparam" || $matches[1][$i] == "subreturn") {
-
-
-                        ///algorythm parts
-                        ///1. We compare the string to the description array
-                        ///   When we find a attribut that is not in the description, we retrieve all the rest of the string
-                        ///2. We create the missing part of the description array, starting from the end of the rest of the string
-                        ///3. We add the missing part to the description array
-
-                        ///Part 1.
-
-
-                        ///construct the description array
-                        if (strpos($matches[3][$i], "->")===false && strpos($matches[3][$i], ":")===false) {
-                            //no separator
-                            $otherparam = $matches[3][$i];
+            for($i=0;$i<sizeof($matches[1]);$i++){
+                //   var_dump(strpos("optional", $matches[4][$i]));
+                switch ($matches[1][$i]) {
+                    case "subparam":
+                        if (strpos($matches[4][$i], "optional")!==false) {
+                            $descriptiontype = "optional";
+                        } else {
+                            $descriptiontype = "params" ;
                         }
-                        else if (strpos($matches[3][$i], "->")===false || (strpos($matches[3][$i], ":")!==false && (strpos($matches[3][$i], ":") < strpos($matches[3][$i], "->")))) {
+                        break;
+                    case "subreturn":
+                        $descriptiontype = "return";
+                        break;
+                }
+
+                if (empty($description[$method->getName()])) {
+                    $description[$method->getName()] = array();
+                }
+
+                if (strpos($returnmatches[1][0] ,"object")===false && strpos($returnmatches[1][0],"array")===false) {
+                    $description[$method->getName()]['return'] = array($returnmatches[2][0] => $returnmatches[1][0]);
+                }
+
+                if ($matches[1][$i] == "subparam" || $matches[1][$i] == "subreturn") {
+
+
+                    ///algorythm parts
+                    ///1. We compare the string to the description array
+                    ///   When we find a attribut that is not in the description, we retrieve all the rest of the string
+                    ///2. We create the missing part of the description array, starting from the end of the rest of the string
+                    ///3. We add the missing part to the description array
+
+                    ///Part 1.
+
+
+                    ///construct the description array
+                    if (strpos($matches[3][$i], "->")===false && strpos($matches[3][$i], ":")===false) {
+                        //no separator
+                        $otherparam = $matches[3][$i];
+                    }
+                    else if (strpos($matches[3][$i], "->")===false || (strpos($matches[3][$i], ":")!==false && (strpos($matches[3][$i], ":") < strpos($matches[3][$i], "->")))) {
+                        $separator = ":";
+                        $separatorsize=1;
+
+                    } else {
+                        $separator = "->";
+                        $separatorsize=2;
+                    }
+
+                    $param = substr($matches[3][$i],1,strpos($matches[3][$i], $separator)-1);
+
+                    $otherparam = substr($matches[3][$i],strpos($matches[3][$i], $separator)+$separatorsize);
+                    $parsingdesc = $description[$method->getName()];
+
+                    if (!empty($parsingdesc) && array_key_exists($descriptiontype, $parsingdesc)){
+                        $parsingdesc = $parsingdesc[$descriptiontype];
+                    }
+                    $descriptionpath=array();
+
+                    $creationfinished = false;
+                    unset($type);
+
+                    while(!$creationfinished && (strpos($otherparam, ":") || strpos($otherparam, "->"))) {
+                        if (strpos($otherparam, "->")===false || (strpos($otherparam, ":")!==false && (strpos($otherparam, ":") < strpos($otherparam, "->")))) {
+                            $type = $separator;
+
                             $separator = ":";
                             $separatorsize=1;
-
                         } else {
+                            $type = $separator;
                             $separator = "->";
                             $separatorsize=2;
                         }
 
-                        $param = substr($matches[3][$i],1,strpos($matches[3][$i], $separator)-1);
+                        $param = substr($otherparam,0,strpos($otherparam, $separator));
 
-                        $otherparam = substr($matches[3][$i],strpos($matches[3][$i], $separator)+$separatorsize);
-                        $parsingdesc = $description[$method->getName()];
-                        
-                        if (!empty($parsingdesc) && array_key_exists($descriptiontype, $parsingdesc)){
-                            $parsingdesc = $parsingdesc[$descriptiontype];
-                        }
-                        $descriptionpath=array();
-
-                        $creationfinished = false;
-                        unset($type);
-
-                        while(!$creationfinished && (strpos($otherparam, ":") || strpos($otherparam, "->"))) {
-                            if (strpos($otherparam, "->")===false || (strpos($otherparam, ":")!==false && (strpos($otherparam, ":") < strpos($otherparam, "->")))) {
-                                $type = $separator;
-
-                                $separator = ":";
-                                $separatorsize=1;
-                            } else {
-                                $type = $separator;
-                                $separator = "->";
-                                $separatorsize=2;
-                            }
-
-                            $param = substr($otherparam,0,strpos($otherparam, $separator));
-
-                            $otherparam = substr($otherparam,strpos($otherparam, $separator)+$separatorsize);
+                        $otherparam = substr($otherparam,strpos($otherparam, $separator)+$separatorsize);
 
 
-                            if ($type==":") {
-                                if (!array_key_exists('multiple:'.$param, $parsingdesc)){
+                        if ($type==":") {
+                            if (!array_key_exists('multiple:'.$param, $parsingdesc)){
 
-                                    $desctoadd = webservice_lib::create_end_of_description(":".$param.$separator.$otherparam, $matches[2][$i]);
+                                $desctoadd = webservice_lib::create_end_of_description(":".$param.$separator.$otherparam, $matches[2][$i]);
 
-                                    if(empty($descriptionpath) ) {
-                                        if (empty($description[$method->getName()]) || !array_key_exists($descriptiontype, $description[$method->getName()])) {
-                                            $desctoadd = array($descriptiontype => $desctoadd);
-                                        }
-                                        $paramtoadd = $descriptiontype;
-                                    } else {
-                                        $paramtoadd = 'multiple:'.$param;
-                                    }
-                                    webservice_lib::add_end_of_description($paramtoadd, $desctoadd, $description[$method->getName()], $descriptionpath);
-                                    $creationfinished = true;
-                                } else {
-                                    if(empty($descriptionpath)) {
-                                        $descriptionpath[] = $descriptiontype;
-                                    }
-                                    $descriptionpath[] = 'multiple:'.$param;
-                                    $parsingdesc = $parsingdesc['multiple:'.$param];
-                                }
-                            } else {
-                                if (!array_key_exists($param, $parsingdesc)){
-
-                                    $desctoadd = webservice_lib::create_end_of_description("->".$param.$separator.$otherparam, $matches[2][$i]);
-
-                                    if(empty($descriptionpath)) {
-
-                                        if (empty($description[$method->getName()]) || !array_key_exists($descriptiontype, $description[$method->getName()])) {
-                                            $desctoadd = array($descriptiontype => $desctoadd);
-                                        }
-                                        $paramtoadd = $descriptiontype;
-
-                                    } else {
-                                        $paramtoadd = $param;
-                                    }
-                                    webservice_lib::add_end_of_description($paramtoadd, $desctoadd, $description[$method->getName()], $descriptionpath);
-
-                                    $creationfinished = true;
-                                } else {
-                                    if(empty($descriptionpath)) {
-                                        $descriptionpath[] = $descriptiontype;
-                                    }
-                                    $descriptionpath[] = $param;
-                                    $parsingdesc = $parsingdesc[$param];
-                                }
-                            }
-
-                        }
-
-                        if (!$creationfinished) {
-
-                            if (!empty($type) && $type==":") {
-
-                                $desctoadd = webservice_lib::create_end_of_description($separator.$otherparam, $matches[2][$i]);
-
-                                if(empty($descriptionpath)) {
+                                if(empty($descriptionpath) ) {
                                     if (empty($description[$method->getName()]) || !array_key_exists($descriptiontype, $description[$method->getName()])) {
                                         $desctoadd = array($descriptiontype => $desctoadd);
                                     }
@@ -293,11 +238,20 @@ final class webservice_lib {
                                 } else {
                                     $paramtoadd = 'multiple:'.$param;
                                 }
-
                                 webservice_lib::add_end_of_description($paramtoadd, $desctoadd, $description[$method->getName()], $descriptionpath);
-
+                                $creationfinished = true;
                             } else {
-                                $desctoadd = webservice_lib::create_end_of_description($separator.$otherparam, $matches[2][$i]);
+                                if(empty($descriptionpath)) {
+                                    $descriptionpath[] = $descriptiontype;
+                                }
+                                $descriptionpath[] = 'multiple:'.$param;
+                                $parsingdesc = $parsingdesc['multiple:'.$param];
+                            }
+                        } else {
+                            if (!array_key_exists($param, $parsingdesc)){
+
+                                $desctoadd = webservice_lib::create_end_of_description("->".$param.$separator.$otherparam, $matches[2][$i]);
+
                                 if(empty($descriptionpath)) {
 
                                     if (empty($description[$method->getName()]) || !array_key_exists($descriptiontype, $description[$method->getName()])) {
@@ -307,17 +261,56 @@ final class webservice_lib {
 
                                 } else {
                                     $paramtoadd = $param;
-
                                 }
                                 webservice_lib::add_end_of_description($paramtoadd, $desctoadd, $description[$method->getName()], $descriptionpath);
 
+                                $creationfinished = true;
+                            } else {
+                                if(empty($descriptionpath)) {
+                                    $descriptionpath[] = $descriptiontype;
+                                }
+                                $descriptionpath[] = $param;
+                                $parsingdesc = $parsingdesc[$param];
                             }
+                        }
+
+                    }
+
+                    if (!$creationfinished) {
+
+                        if (!empty($type) && $type==":") {
+
+                            $desctoadd = webservice_lib::create_end_of_description($separator.$otherparam, $matches[2][$i]);
+
+                            if(empty($descriptionpath)) {
+                                if (empty($description[$method->getName()]) || !array_key_exists($descriptiontype, $description[$method->getName()])) {
+                                    $desctoadd = array($descriptiontype => $desctoadd);
+                                }
+                                $paramtoadd = $descriptiontype;
+                            } else {
+                                $paramtoadd = 'multiple:'.$param;
+                            }
+
+                            webservice_lib::add_end_of_description($paramtoadd, $desctoadd, $description[$method->getName()], $descriptionpath);
+
+                        } else {
+                            $desctoadd = webservice_lib::create_end_of_description($separator.$otherparam, $matches[2][$i]);
+                            if(empty($descriptionpath)) {
+
+                                if (empty($description[$method->getName()]) || !array_key_exists($descriptiontype, $description[$method->getName()])) {
+                                    $desctoadd = array($descriptiontype => $desctoadd);
+                                }
+                                $paramtoadd = $descriptiontype;
+
+                            } else {
+                                $paramtoadd = $param;
+                            }
+                            webservice_lib::add_end_of_description($paramtoadd, $desctoadd, $description[$method->getName()], $descriptionpath);
                         }
                     }
                 }
             }
         }
-
         return $description;
     }
 

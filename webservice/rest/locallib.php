@@ -93,7 +93,14 @@ function call_moodle_function ($rest_arguments) {
     }
 
     ///Transform result into xml in order to send the REST response
-    $return =  mdl_conn_rest_object_to_xml ($res,key($description[$functionname]['return']));
+    $key = key($description[$functionname]['return']);
+
+    if (strpos($key,":")!==false) {
+        $key = substr($key, strpos($key,":")+1);
+    } else {
+        $key = 'return';
+    }
+    $return =  mdl_conn_rest_object_to_xml ($res,$key);
 
     return "<Result>$return</Result>";
 }

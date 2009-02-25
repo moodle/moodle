@@ -53,7 +53,7 @@ if ($groupid) {
 
     $res = basicxml_xml_to_object($out);
 
-	show_object($res->group);
+	show_object($res->return);
 
     show_xml ($out);
 } else {

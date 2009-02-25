@@ -21,7 +21,8 @@ $links = array( array('USERS'),
                 array('updateuser.php','update_user()'),
                 array('GROUPS'),
                 array('creategroup.php','create_group()'),
-                array('addgroupmember.php', 'add_groupmember()'));
+                array('addgroupmember.php', 'add_groupmember()'),
+                array('getgroup.php', 'get_group()'));
 
 echo '<ul>';
 foreach ($links as $link) {
