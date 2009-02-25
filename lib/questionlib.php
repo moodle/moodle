@@ -2555,7 +2555,7 @@ function question_has_capability_on($question, $cap, $cachecat = -1){
     }
     if (!is_object($question)){
         if (!isset($questions[$question])){
-            if (!$questions[$question] = $DB->get_record('question', array('id'=>$question), '', 'id,category,createdby')) {
+            if (!$questions[$question] = $DB->get_record('question', array('id'=>$question), 'id,category,createdby')) {
                 print_error('questiondoesnotexist', 'question');
             }
         }
