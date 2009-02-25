@@ -587,10 +587,10 @@ class flexible_table {
      * array corresponding to a column in the table. It puts the row elements in
      * the proper order.
      * @param $rowwithkeys array
-     *
+     * @param string $classname CSS class name to add to this row's tr tag.
      */
-    function add_data_keyed($rowwithkeys){
-        $this->add_data($this->get_row_from_keyed($rowwithkeys));
+    function add_data_keyed($rowwithkeys, $classname = ''){
+        $this->add_data($this->get_row_from_keyed($rowwithkeys), $classname);
     }
 
     /**
@@ -611,9 +611,10 @@ class flexible_table {
      * Can be used as before. print_html now calls finish_html to close table.
      *
      * @param array $row a numerically keyed row of data to add to the table.
+     * @param string $classname CSS class name to add to this row's tr tag.
      * @return boolean success.
      */
-    function add_data($row) {
+    function add_data($row, $classname = '') {
         if(!$this->setup) {
             return false;
         }
@@ -627,7 +628,7 @@ class flexible_table {
                 $this->exportclass->add_data($row);
             }
         } else {
-            $this->print_row($row);
+            $this->print_row($row, $classname);
         }
         return true;
     }
@@ -910,39 +911,44 @@ class flexible_table {
     /**
      * This function is not part of the public api.
      */
-    function print_row($row){
+    function print_row($row, $classname = '') {
         static $suppress_lastrow = NULL;
         static $oddeven = 1;
-        $colcount = count($this->columns);
-        $colbyindex = array_flip($this->columns);
-        echo '<tr class="r'.$oddeven.'">';
+        $rowclasses = array('r' . $oddeven);
+        $oddeven = $oddeven ? 0 : 1;
+
+        if ($classname) {
+            $rowclasses[] = $classname;
+        }
+
+        echo '<tr class="' . implode(' ', $rowclasses) . '">';
 
         // If we have a separator, print it
-        if($row === NULL && $colcount) {
+        if ($row === NULL && $colcount) {
+            $colcount = count($this->columns);
             echo '<td colspan="'.$colcount.'"><div class="tabledivider"></div></td>';
-        }
-        else {
-            foreach($row as $index => $data) {
+        } else {
+            $colbyindex = array_flip($this->columns);
+            foreach ($row as $index => $data) {
                 $column = $colbyindex[$index];
                 echo '<td class="cell c'.$index.$this->column_class[$column].'"'.$this->make_styles_string($this->column_style[$column]).'>';
-                if(empty($this->sess->collapse[$column])) {
-                    if($this->column_suppress[$column] && $suppress_lastrow !== NULL && $suppress_lastrow[$index] === $data) {
+                if (empty($this->sess->collapse[$column])) {
+                    if ($this->column_suppress[$column] && $suppress_lastrow !== NULL && $suppress_lastrow[$index] === $data) {
                         echo '&nbsp;';
-                    }
-                    else {
+                    } else {
                         echo $data;
                     }
-                }
-                else {
+                } else {
                     echo '&nbsp;';
                 }
                 echo '</td>';
             }
         }
+
         echo '</tr>';
-        $oddeven = $oddeven ? 0 : 1;
+
         $suppress_enabled = array_sum($this->column_suppress);
-        if($suppress_enabled) {
+        if ($suppress_enabled) {
             $suppress_lastrow = $row;
         }
     }
