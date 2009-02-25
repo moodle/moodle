@@ -129,6 +129,10 @@ img.grouppicture {
   border: 0;
 }
 
+img.uihint {
+  cursor: help;
+}
+
 #grouppicture {
   text-align: center;
 }

@@ -677,12 +677,7 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz,$quiz_qbanktool
     echo '<div class="randomquestionfromcategory">';
     print_question_icon($question);
     print_random_option_icon($question);
-    if (!empty($question->questiontext)) {
-        $string = 'randomfromcategory';
-    } else {
-        $string = 'randomfromcategoryonly';
-    }
-    echo ' ' . get_string($string, 'quiz') . '</div>';
+    echo ' ' . get_string('randomfromcategory', 'quiz') . '</div>';
 
     $a = new stdClass;
     $a->arrow = $THEME->rarrow;
@@ -834,7 +829,7 @@ function print_random_option_icon($question) {
         $tooltip = get_string('randomnosubcat', 'quiz');
     }
     echo  '<img src="' . $CFG->pixpath . '/i/' . $icon . '.png" alt="' .
-            $tooltip . '" title="' . $tooltip . '" />';
+            $tooltip . '" title="' . $tooltip . '" class="uihint" />';
     
 }
 
