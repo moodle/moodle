@@ -696,14 +696,11 @@ background-color: #f3ead8;
   color: #ff0000;
 }
 
-.grade-report-grader form .excludedfloater {
-  float: left;
-}
-
 .grade-report-grader .excludedfloater {
   font-weight: bold;
   color: #ff0000;
   font-size: 9px;
+  float: left;
 }
 
 .grade-report-grader span.gradepass {
