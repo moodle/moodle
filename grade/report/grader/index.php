@@ -27,6 +27,7 @@ require_once '../../../config.php';
 require_once $CFG->libdir.'/gradelib.php';
 require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/report/grader/lib.php';
+require_once $CFG->dirroot.'/grade/report/grader/ajaxlib.php';
 
 $courseid      = required_param('id', PARAM_INT);        // course id
 $page          = optional_param('page', 0, PARAM_INT);   // active page
@@ -113,7 +114,10 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
 
 // Initialise the grader report object
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
-
+if ($report->get_pref('enableajax')) {
+    $report = new grade_report_grader_ajax($courseid, $gpr, $context, $page, $sortitemid);
+    require_js(array('yui_yahoo', 'yui_dom', 'yui_event', 'yui_json', 'yui_connection', 'yui_dragdrop', 'yui_treeview', 'yui_element'));
+}
 
 /// processing posted grades & feedback here
 if ($data = data_submitted() and confirm_sesskey() and has_capability('moodle/grade:edit', $context)) {

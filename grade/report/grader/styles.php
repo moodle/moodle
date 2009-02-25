@@ -774,3 +774,10 @@ padding: 0;
   font-size: 7px;
 }
 
+.grade_icons img.ajax {
+    float: right;
+}
+
+.grade-report-grader table#user-grades td.ajax {
+    text-align: left;
+}

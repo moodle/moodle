@@ -35,20 +35,20 @@ require_once($CFG->dirroot . '/grade/report/grader/lib.php');
  * @package gradebook
  */
 class grade_report_grader_ajax extends grade_report_grader {
-    
+
     /**
      * An array of feedbacks, indexed by userid_itemid, used for JS caching
      * @var array $feedbacks
      */
     var $feedbacks = array();
-    
+
     /**
      * Length at which feedback will be truncated (to the nearest word) and an ellipsis be added.
      * TODO replace this by a report preference
      * @var int $feedback_trunc_length
      */
     var $feedback_trunc_length = 50;
-    
+
     /**
      * Self-incrementing variable, tracking the tabindex. Depending on the tabindex option ("all values, then feedbacks" is default)
      * Increments by one between each user for the gradevalues, and by 1 + usercount for the gradefeedback
@@ -67,7 +67,7 @@ class grade_report_grader_ajax extends grade_report_grader {
     function grade_report_grader_ajax($courseid, $gpr, $context, $page=null, $sortitemid=null) {
         parent::__construct($courseid, $gpr, $context, $page, $sortitemid);
     }
-    
+
     /**
      * Loads, stores and returns the array of scales used in this course.
      * @return array
@@ -78,20 +78,20 @@ class grade_report_grader_ajax extends grade_report_grader {
         if (empty($this->gtree->items)) {
             return false;
         }
-        
+
         if (!empty($this->scales_array)) {
             return $this->scales_array;
         }
 
         $scales_list = array();
         $scales_array = array();
-        
+
         foreach ($this->gtree->items as $item) {
             if (!empty($item->scaleid)) {
                 $scales_list[] = $item->scaleid;
             }
         }
-        
+
         if (!empty($scales_list)) {
             $scales_array = $DB->get_records_list('scale', 'id', $scales_list);
             $this->scales_array = $scales_array;
@@ -100,7 +100,7 @@ class grade_report_grader_ajax extends grade_report_grader {
             return null;
         }
     }
-    
+
     /**
      * Processes the data sent by the form (grades and feedbacks).
      * Caller is responsible for all access control checks
@@ -145,10 +145,10 @@ class grade_report_grader_ajax extends grade_report_grader {
         if (empty($this->users)) {
             print_error('nousersloaded', 'grades');
         }
-        
+
         $this->numusers = count($this->users);
 
-        $studentshtml = ''; 
+        $studentshtml = '';
 
         foreach ($this->users as $userid => $user) {
             $this->tabindex++;
@@ -157,8 +157,8 @@ class grade_report_grader_ajax extends grade_report_grader {
 
         return $studentshtml;
     }
-    
-    
+
+
     /**
      * Given a userid, and provided the gtree is correctly loaded, returns a complete HTML row for this user.
      *
@@ -167,8 +167,6 @@ class grade_report_grader_ajax extends grade_report_grader {
      */
     function get_studentrowhtml($user) {
         global $CFG;
-        $showuserimage = $this->get_pref('showuserimage');
-        $showuseridnumber = $this->get_pref('showuseridnumber');
         $studentrowhtml = '';
         $row_classes = array(' even ', ' odd ');
 
@@ -184,25 +182,14 @@ class grade_report_grader_ajax extends grade_report_grader {
 
         $columncount = 0;
         // Student name and link
-        $user_pic = null;
-        if ($showuserimage) {
-            $user_pic = '<div class="userpic">' . print_user_picture($user, $this->courseid, true, 0, true) . '</div>';
-        }
 
-        $studentrowhtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
-                      .'<th class="header c'.$columncount++.' user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
-                      .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
-                      .fullname($user).'</a></th>';
+        $studentrowhtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">';
 
-        if ($showuseridnumber) {
-            $studentrowhtml .= '<th class="header c'.$columncount++.' useridnumber" onclick="set_row(this.parentNode.rowIndex);">'. $user->idnumber.'</th>';
-        }
-        
         $columntabcount = 0;
         $feedback_tabindex_modifier = 1; // Used to offset the grade value at the beginning of each new column
 
         if ($this->get_pref('showquickfeedback')) {
-            $feedback_tabindex_modifier = 2; 
+            $feedback_tabindex_modifier = 2;
         }
 
         foreach ($this->gtree->items as $itemid=>$unused) {
@@ -216,7 +203,7 @@ class grade_report_grader_ajax extends grade_report_grader {
         return $studentrowhtml;
 
     }
-    
+
     /**
      * Retuns the HTML table cell for a user's grade for a grade_item
      *
@@ -231,10 +218,10 @@ class grade_report_grader_ajax extends grade_report_grader {
      */
     function get_gradecellhtml($user, $itemid, $columncount, $nexttabindex, $altered=array(), $unknown=array()) {
         global $CFG, $USER;
-        
+
         $strfeedback  = $this->get_lang_string("feedback");
         $strgrade     = $this->get_lang_string('grade');
-        
+
         // Preload scale objects for items with a scaleid
         $scales_array = $this->get_scales_array();
 
@@ -271,7 +258,7 @@ class grade_report_grader_ajax extends grade_report_grader {
         $eid = $this->gtree->get_grade_eid($grade);
         $element = array('eid'=>$eid, 'object'=>$grade, 'type'=>'grade');
 
-        $cellclasses = 'cell c'.$columncount++;
+        $cellclasses = 'ajax cell c'.$columncount++;
         if ($item->is_category_item()) {
             $cellclasses .= ' cat';
         }
@@ -295,6 +282,8 @@ class grade_report_grader_ajax extends grade_report_grader {
         // Do not show any icons if no grade (no record in DB to match)
         if (!$item->needsupdate and $USER->gradeediting[$this->courseid]) {
             $gradecellhtml .= $this->get_icons($element);
+            // Add a class to the icon so that it floats left
+            $gradecellhtml = str_replace('class="iconsmall"', 'class="iconsmall ajax"', $gradecellhtml);
         }
 
         $hidden = '';
@@ -302,7 +291,7 @@ class grade_report_grader_ajax extends grade_report_grader {
             $hidden = ' hidden ';
         }
 
-        $gradepass = ' gradefail '; 
+        $gradepass = ' gradefail ';
         if ($grade->is_passed($item)) {
             $gradepass = ' gradepass ';
         } elseif (is_null($grade->is_passed($item))) {
@@ -341,13 +330,13 @@ class grade_report_grader_ajax extends grade_report_grader {
                         $nogradestr = $this->get_lang_string('nooutcome', 'grades');
                     }
 
-                    $gradecellhtml .= '<select name="grade_'.$userid.'_'.$item->id.'" class="gradescale editable" ' 
+                    $gradecellhtml .= '<select name="grade_'.$userid.'_'.$item->id.'" class="gradescale editable" '
                                     . 'id="gradescale_'.$userid.'-i'.$item->id.'" tabindex="'.$nexttabindex.'">' . "\n";
                     $gradecellhtml .= '<option value="-1">' . $nogradestr . "</option>\n";
 
                     foreach ($scaleopt as $val => $label) {
                         $selected = '';
-                        
+
                         if ($val == $oldval) {
                             $selected = 'selected="selected"';
                         }
@@ -362,11 +351,11 @@ class grade_report_grader_ajax extends grade_report_grader {
 
                     // invalid grade if gradeval < 1
                     if ($gradeval < 1) {
-                        $gradecellhtml .= '<a tabindex="'.$nexttabindex .'" id="' . $anchor_id 
+                        $gradecellhtml .= '<a tabindex="'.$nexttabindex .'" id="' . $anchor_id
                                        . '"  class="gradevalue'.$hidden.$gradepass.'">-</a>';
                     } else {
                         //just in case somebody changes scale
-                        $gradeval = (int)bounded_number($grade->grade_item->grademin, $gradeval, $grade->grade_item->grademax); 
+                        $gradeval = (int)bounded_number($grade->grade_item->grademin, $gradeval, $grade->grade_item->grademax);
                         $gradecellhtml .= '<a tabindex="'.$nexttabindex .'" id="' . $anchor_id
                                        . '"  class="gradevalue'.$hidden.$gradepass.'">'.$scales[$gradeval-1].'</a>';
                     }
@@ -377,7 +366,7 @@ class grade_report_grader_ajax extends grade_report_grader {
             } else if ($item->gradetype != GRADE_TYPE_TEXT) { // Value type
                 $value = $gradeval;
                 if ($this->get_pref('quickgrading') and $grade->is_editable()) {
-                    $gradecellhtml .= '<a tabindex="'.$nexttabindex .'" id="' . $anchor_id 
+                    $gradecellhtml .= '<a tabindex="'.$nexttabindex .'" id="' . $anchor_id
                                    . '"  class="gradevalue'.$hidden.$gradepass.' editable">' .$value.'</a>';
                 } else {
                     $gradecellhtml .= '<a tabindex="'.$nexttabindex .'" id="' . $anchor_id . '"  class="gradevalue'
@@ -393,7 +382,7 @@ class grade_report_grader_ajax extends grade_report_grader {
                 }
                 $feedback = s($grade->feedback);
                 $anchor_id = "gradefeedback_$userid-i$itemid";
-                
+
                 if (empty($feedback)) {
                     $feedback = get_string('addfeedback', 'grades');
                     $gradecellhtml .= '<a ';
@@ -404,7 +393,7 @@ class grade_report_grader_ajax extends grade_report_grader {
                               ."CAPTIONFONTCLASS, 'caption', CAPTION, '$strfeedback');";
                     $gradecellhtml .= '<a onmouseover="'.s($overlib).'" onmouseout="return nd();" ';
                 }
-                
+
                 $feedback_tabindex = $nexttabindex + $this->numusers;
 
                 $short_feedback = shorten_text($feedback, $this->feedback_trunc_length);
@@ -462,7 +451,7 @@ class grade_report_grader_ajax extends grade_report_grader {
     function get_rangehtml() {
         return parent::get_rangehtml();
     }
-    
+
     /**
      * Builds and return the HTML row of ranges for each column (i.e. range).
      * @return string HTML
@@ -501,7 +490,7 @@ class grade_report_grader_ajax extends grade_report_grader {
     function process_action($target, $action) {
         return parent::process_action($target, $action);
     }
-    
+
     /**
      * Returns a valid JSON object with feedbacks indexed by userid and itemid.
      * Paging is taken into account: this needs to be reloaded at each new page (not page load, just page of data);
@@ -517,7 +506,7 @@ class grade_report_grader_ajax extends grade_report_grader {
     /**
      * Returns a json_encoded hash of itemid => decimalpoints preferences
      */
-    function getItemsDecimalPoints() { 
+    function getItemsDecimalPoints() {
         $decimals = array();
         foreach ($this->gtree->items as $itemid=>$item) {
             $decimals[$itemid] = $item->get_decimals();
