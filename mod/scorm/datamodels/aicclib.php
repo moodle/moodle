@@ -1,4 +1,5 @@
 <?php // $Id$
+
 function scorm_add_time($a, $b) {
     $aes = explode(':',$a);
     $bes = explode(':',$b);
@@ -98,7 +99,7 @@ function scorm_parse_aicc($scorm) {
         $cm = get_coursemodule_from_instance('scorm', $scorm->id);
         $scorm->cmid = $cm->id;
     }
-    $context = get_context_instance(COURSE_MODULE, $scorm->cmid);
+    $context = get_context_instance(CONTEXT_MODULE, $scorm->cmid);
 
     $fs = get_file_storage();
 
@@ -122,25 +123,29 @@ function scorm_parse_aicc($scorm) {
 
     foreach ($ids as $courseid => $id) {
         if (isset($id->crs)) {
-            $rows = $id->crs->get_content();
-            foreach ($rows as $row) {
-                if (preg_match("/^(.+)=(.+)$/",$row,$matches)) {
-                    switch (strtolower(trim($matches[1]))) {
-                        case 'course_id':
-                            $courses[$courseid]->id = trim($matches[2]);
-                        break;
-                        case 'course_title':
-                            $courses[$courseid]->title = trim($matches[2]);
-                        break;
-                        case 'version':
-                            $courses[$courseid]->version = 'AICC_'.trim($matches[2]);
-                        break;
+            $contents = $id->crs->get_content();
+            $rows = explode("\r\n", $contents);
+            if (is_array($rows)) {
+                foreach ($rows as $row) {
+                    if (preg_match("/^(.+)=(.+)$/",$row,$matches)) {
+                        switch (strtolower(trim($matches[1]))) {
+                            case 'course_id':
+                                $courses[$courseid]->id = trim($matches[2]);
+                            break;
+                            case 'course_title':
+                                $courses[$courseid]->title = trim($matches[2]);
+                            break;
+                            case 'version':
+                                $courses[$courseid]->version = 'AICC_'.trim($matches[2]);
+                            break;
+                        }
                     }
                 }
             }
         }
         if (isset($id->des)) {
-            $rows = $id->des->get_content();
+            $contents = $id->des->get_content();
+            $rows = explode("\r\n", $contents);
             $columns = scorm_get_aicc_columns($rows[0]);
             $regexp = scorm_forge_cols_regexp($columns->columns);
             for ($i=1;$i<count($rows);$i++) {
@@ -153,7 +158,8 @@ function scorm_parse_aicc($scorm) {
             }
         }
         if (isset($id->au)) {
-            $rows = $id->au->get_content();
+            $contents = $id->au->get_content();
+            $rows = explode("\r\n", $contents);
             $columns = scorm_get_aicc_columns($rows[0]);
             $regexp = scorm_forge_cols_regexp($columns->columns);
             for ($i=1;$i<count($rows);$i++) {
@@ -166,7 +172,8 @@ function scorm_parse_aicc($scorm) {
             }
         }
         if (isset($id->cst)) {
-            $rows = $id->cst->get_content();
+            $contents = $id->cst->get_content();
+            $rows = explode("\r\n", $contents);
             $columns = scorm_get_aicc_columns($rows[0],'block');
             $regexp = scorm_forge_cols_regexp($columns->columns,'(.+)?,');
             for ($i=1;$i<count($rows);$i++) {
@@ -180,7 +187,8 @@ function scorm_parse_aicc($scorm) {
             }
         }
         if (isset($id->ort)) {
-            $rows = $id->ort->get_content();
+            $contents = $id->ort->get_content();
+            $rows = explode("\r\n", $contents);
             $columns = scorm_get_aicc_columns($rows[0],'course_element');
             $regexp = scorm_forge_cols_regexp($columns->columns,'(.+)?,');
             for ($i=1;$i<count($rows);$i++) {
@@ -194,7 +202,8 @@ function scorm_parse_aicc($scorm) {
             }
         }
         if (isset($id->pre)) {
-            $rows = $id->pre->get_content();
+            $contents = $id->pre->get_content();
+            $rows = explode("\r\n", $contents);
             $columns = scorm_get_aicc_columns($rows[0],'structure_element');
             $regexp = scorm_forge_cols_regexp($columns->columns,'(.+),');
             for ($i=1;$i<count($rows);$i++) {
@@ -204,7 +213,8 @@ function scorm_parse_aicc($scorm) {
             }
         }
         if (isset($id->cmp)) {
-            $rows = $id->cmp->get_content();
+            $contents = $id->cmp->get_content();
+            $rows = explode("\r\n", $contents);
         }
     }
     //print_r($courses);

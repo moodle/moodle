@@ -409,7 +409,7 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
         $usertrack->timemodified = 0;
         foreach ($tracks as $track) {
             $element = $track->element;
-            $track->value = stripslashes_safe($track->value);
+            $track->value = stripslashes($track->value);
             $usertrack->{$element} = $track->value;
             switch ($element) {
                 case 'x.start.time':
