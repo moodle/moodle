@@ -1604,6 +1604,7 @@ $string['userprofilefor'] = 'User profile for $a';
 $string['users'] = 'Users';
 $string['usersnew'] = 'New users';
 $string['usersnoaccesssince'] = 'Inactive for more than';
+$string['userswithfiles'] = 'Users with files';
 $string['userzones'] = 'User zones';
 $string['usethiscourse'] = 'Use this course';
 $string['usingexistingcourse'] = 'Using existing course';
