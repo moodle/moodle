@@ -40,41 +40,12 @@ generate_functionlist();
  */
 function generate_documentation($protocol) {
     switch ($protocol) {
-        case "soap":
-            $documentation = <<<EOF
-        <H2>SOAP Manual</H2>
-        <b>1.</b> Call the method <b>tmp_get_token</b> on "<i>http://remotemoodle/webservice/soap/zend_soap_server.php?wsdl</i>"<br>
-        Function parameter is an array: in PHP it would be array('username' => "wsuser", 'password' => "wspassword")<br>
-        Return value is a token (integer)<br>
-        <br>
-        <b>2.</b> Then call a moodle web service method on "<i>http://remotemoodle/webservice/soap/zend_soap_server.php?token=the_received_token&classpath=the_moodle_path&wsdl</i>"<br>
-        Every method has only one parameter which is an array.<br>
-        <br>
-        For example in PHP for this specific function:<br>
-        Moodle path: <b>user</b><br>
-        <b>tmp_delete_user</b>( string username, integer mnethostid,   )<br>
-        You will call something like:<br>
-        your_client->tmp_delete_user(array('username' => "username_to_delete",'mnethostid' => 1))<br>
 
-EOF;
+        case "soap":
+            $documentation = get_string('soapdocumentation','webservice');
             break;
         case "xmlrpc":
-            $documentation = <<<EOF
-        <H2>XMLRPC Manual</H2>
-        <b>1.</b> Call the method <b>authentication.tmp_get_token</b> on "<i>http://remotemoodle/webservice/xmlrpc/zend_xmlrpc_server.php</i>"<br>
-        Function parameter is an array: in PHP it would be array('username' => "wsuser", 'password' => "wspassword")<br>
-        Return value is a token (integer)<br>
-        <br>
-        <b>2.</b> Then call a moodle web service method on "<i>http://remotemoodle/webservice/xmlrpc/zend_xmlrpc_server.php?classpath=the_moodle_path&token=the_received_token</i>"<br>
-        Every method has only one parameter which is an array.<br>
-        <br>
-        For example in PHP for this specific function:<br>
-        Moodle path: <b>user</b><br>
-        <b>tmp_delete_user</b>( string username, integer mnethostid,   )<br>
-        You will call something like:<br>
-        your_client->call('user.tmp_delete_user', array(array('username' => "username_to_delete",'mnethostid' => 1)))<br>
-
-EOF;
+            $documentation = get_string('xmlrpcdocumentation','webservice');
             break;
         default:
             break;
@@ -89,9 +60,7 @@ EOF;
  */
 function generate_functionlist () {
     global $CFG;
-    $documentation = <<<EOF
-        <H2>list of web service functions</H2>
-EOF;
+    $documentation = "<H2>".get_string('functionlist','webservice')."</H2>";
 
     //retrieve all external file
     $externalfiles = array();
@@ -106,9 +75,7 @@ EOF;
         $classpath = str_replace('/','_',$classpath); //convert all / into _
         $classname = $classpath."_external";
         $api = new $classname();
-        $documentation .= <<<EOF
-        <H3>Moodle path: {$classpath}</H3>
-EOF;
+        $documentation .= "<H3>".get_string('moodlepath','webservice').": ".$classpath."</H3>";
 
         $description = webservice_lib::generate_webservice_description($file, $classname);
 
