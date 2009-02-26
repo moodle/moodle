@@ -1860,8 +1860,9 @@ function print_choose_qtype_to_add_form($hiddenparams) {
 function print_qtype_to_add_option($qtype, $localizedname) {
     global $QTYPES;
     echo '<div class="qtypeoption">' . "\n";
+    echo '<label for="qtype_' . $qtype . '">';
     echo '<input type="radio" name="qtype" id="qtype_' . $qtype . '" value="' . $qtype . '" />';
-    echo '<label for="qtype_' . $qtype . '"><span class="qtypename">';
+    echo '<span class="qtypename">';
     $fakequestion = new stdClass;
     $fakequestion->qtype = $qtype;
     print_question_icon($fakequestion);
