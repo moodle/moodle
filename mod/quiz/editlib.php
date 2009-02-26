@@ -360,7 +360,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
                 /* Display question start */
 ?>
 <div class="question">
-    <div class="questioncontainer">
+    <div class="questioncontainer <?php echo $question->qtype; ?>">
         <div class="qnum">
         <?php
             $reordercheckbox="";

@@ -4858,6 +4858,9 @@ table.quizreviewsummary td.cell {
     white-space:nowrap;
     text-overflow:ellipsis;
 }
+#mod-quiz-edit div.editq div.question div.description div.content .questiontext {
+    max-width: 75%;
+}
 
 #mod-quiz-edit div.quizpage .pagecontent .pagestatus{
     -webkit-border-radius-bottomright:0.3em;
