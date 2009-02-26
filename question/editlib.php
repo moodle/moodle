@@ -1837,12 +1837,24 @@ function print_choose_qtype_to_add_form($hiddenparams) {
         echo '<input type="hidden" name="' . s($name) . '" value="' . s($value) . '" />' . "\n";
     }
     echo "</div>\n";
-    $types = question_type_menu();
     echo '<div class="qtypes">' . "\n";
     echo '<div class="instruction">' . get_string('selectaqtypefordescription', 'question') . "</div>\n";
+    echo '<div class="realqtypes">' . "\n";
+    $types = question_type_menu();
+    $fakeqtypes = array();
     foreach ($types as $qtype => $localizedname) {
+        if ($QTYPES[$qtype]->is_real_question_type()) {
+            print_qtype_to_add_option($qtype, $localizedname);
+        } else {
+            $fakeqtypes[$qtype] = $localizedname;
+        }
+    }
+    echo "</div>\n";
+    echo '<div class="fakeqtypes">' . "\n";
+    foreach ($fakeqtypes as $qtype => $localizedname) {
         print_qtype_to_add_option($qtype, $localizedname);
     }
+    echo "</div>\n";
     echo "</div>\n";
     echo '<div class="submitbuttons">' . "\n";
     echo '<input type="submit" value="' . get_string('next') . '" id="chooseqtype_submit" />' . "\n";

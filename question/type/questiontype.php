@@ -85,6 +85,15 @@ class default_questiontype {
     }
 
     /**
+     * @return boolean override this to return false if this is not really a
+     *      question type, for example the description question type is not
+     *      really a question type.
+     */
+    function is_real_question_type() {
+        return true;
+    }
+
+    /**
      * @return boolean true if this question type may require manual grading.
      */
     function is_manual_graded() {

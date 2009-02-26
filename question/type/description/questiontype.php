@@ -1,16 +1,33 @@
 <?php  // $Id$
 
-///////////////////
-/// DESCRIPTION ///
-///////////////////
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.org                                            //
+//                                                                       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
 
-/// QUESTION TYPE CLASS //////////////////
-
-//
-// The question type 'description' is not really a question type
-// and it therefore often sticks to some kind of odd behaviour
-//
 /**
+ * The description question type is not acutally a question, it is just a way
+ * to add some static content in the middle of a quiz, or other place that
+ * questions are used.
+ *
  * @package questionbank
  * @subpackage questiontypes
  */
@@ -18,6 +35,10 @@ class description_qtype extends default_questiontype {
 
     function name() {
         return 'description';
+    }
+
+    function is_real_question_type() {
+        return false;
     }
 
     function is_usable_by_random() {
@@ -32,12 +53,10 @@ class description_qtype extends default_questiontype {
     }
 
     function get_question_options(&$question) {
-        // No options to be restored for this question type
         return true;
     }
 
     function save_question_options($question) {
-        /// No options to be saved for this question type:
         return true;
     }
 
@@ -61,11 +80,6 @@ class description_qtype extends default_questiontype {
     }
 
     function actual_number_of_questions($question) {
-        /// Used for the feature number-of-questions-per-page
-        /// to determine the actual number of questions wrapped
-        /// by this question.
-        /// The question type description is not even a question
-        /// in itself so it will return ZERO!
         return 0;
     }
 
@@ -74,12 +88,7 @@ class description_qtype extends default_questiontype {
         $state->penalty = 0;
         return true;
     }
-
 }
-//// END OF CLASS ////
-
-//////////////////////////////////////////////////////////////////////////
-//// INITIATION - Without this line the question type is not in use... ///
-//////////////////////////////////////////////////////////////////////////
+// Register this question type with questionlib.php.
 question_register_questiontype(new description_qtype());
 ?>

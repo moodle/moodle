@@ -2916,6 +2916,9 @@ body.notes .notesgroup {
 #chooseqtype .instruction {
   display: none;
 }
+#chooseqtype .fakeqtypes {
+  border-top: 1px solid silver;
+}
 #chooseqtype .qtypeoption {
   margin-bottom: 0.5em;
 }
