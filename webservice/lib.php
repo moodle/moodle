@@ -123,11 +123,86 @@ final class webservice_lib {
     }
 
     /**
-     * Generate description array from the phpdoc
-     * TODO: works but it need serious refactoring
-     * @param <type> $file
-     * @param <type> $class
-     * @return <type>
+     * Generate web service description array from the phpdoc for a given class
+     * @param string $file the class file
+     * @param string $class the class name
+     * @return array description
+     *
+     *
+       -------
+       Example
+       -------
+     * Docnlock: @ subparam string $params:searches->search - the string to search
+     * $params is considered as the first element, searches the second, and search the terminal
+     * Except the terminal element, all other will be generated as an array 
+     * => left element are generated as an associative array.
+     * If the following character is ':' so the right element is a key named 'multiple:element_name'
+     * If the following character is '->' so the right element will be named 'element_name'
+     * Rule: If a key is named 'multiple:xxx' other key must be 'multiple:yyy'
+
+       Docblock of  mock_function
+       ---------------------------
+       @ param array|struct $params
+       @ subparam string $params:searches->search - the string to search
+       @ subparam string $params:searches->search2 optional - optional string to search
+       @ subparam string $params:searches->search3 - the string to search
+       @ subparam string $params:airport->planes:plane->company->employees:employee->name - name of a employee of a company of a plane of an airport
+       @ return array users
+       @ subreturn integer $users:user->id
+       @ subreturn integer $users:user->auth
+     
+       Generated description array
+       ---------------------------
+       description["mock_function"]=>
+              array(3) {
+                ["params"]=>
+                array(2) {
+                  ["multiple:searches"]=>
+                  array(2) {
+                    ["search"]=>
+                    string(6) "string"
+                    ["search3"]=>
+                    string(6) "string"
+                  }
+                  ["multiple:airport"]=>
+                  array(1) {
+                    ["planes"]=>
+                    array(1) {
+                      ["multiple:plane"]=>
+                      array(1) {
+                        ["company"]=>
+                        array(1) {
+                          ["employees"]=>
+                          array(1) {
+                            ["multiple:employee"]=>
+                            array(1) {
+                              ["name"]=>
+                              string(6) "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+                ["optional"]=>
+                array(1) {
+                  ["multiple:searches"]=>
+                  array(1) {
+                    ["search2"]=>
+                    string(6) "string"
+                  }
+                }
+                ["return"]=>
+                array(1) {
+                  ["multiple:user"]=>
+                  array(13) {
+                    ["id"]=>
+                    string(7) "integer"
+                    ["auth"]=>
+                    string(7) "integer"
+                  }
+                }
      */
     public static function generate_webservice_description($file, $class){
         require_once($file);
@@ -146,8 +221,10 @@ final class webservice_lib {
             //retrieve the subparam and subreturn
             preg_match_all('/\s*\*\s*@(subparam|subreturn)\s+(\w+)\s+(\$\w+(?::\w+|->\w+)+)((?:\s+(?:optional|required|multiple))*)/', $docBlock, $matches);
 
+        /// process every @subparam and @subreturn line of the docblock
             for($i=0;$i<sizeof($matches[1]);$i++){
-                //   var_dump(strpos("optional", $matches[4][$i]));
+
+            /// identify the description type of the docblock line: is it params, optional or return (first key of a description method array)
                 switch ($matches[1][$i]) {
                     case "subparam":
                         if (strpos($matches[4][$i], "optional")!==false) {
@@ -161,128 +238,84 @@ final class webservice_lib {
                         break;
                 }
 
+            /// init description[method]
                 if (empty($description[$method->getName()])) {
                     $description[$method->getName()] = array();
                 }
 
+            /// directly set description[method][return] if the return value is a primary type
                 if (strpos($returnmatches[1][0] ,"object")===false && strpos($returnmatches[1][0],"array")===false) {
                     $description[$method->getName()]['return'] = array($returnmatches[2][0] => $returnmatches[1][0]);
                 }
 
-                if ($matches[1][$i] == "subparam" || $matches[1][$i] == "subreturn") {
+
+                ///algorythm parts
+                ///1. We compare the string to the description array
+                ///   When we find a attribut that is not in the description, we retrieve all the rest of the string
+                ///2. We create the missing part of the description array, starting from the end of the rest of the string
+                ///3. We add the missing part to the description array
+
+                ///Part 1.
 
 
-                    ///algorythm parts
-                    ///1. We compare the string to the description array
-                    ///   When we find a attribut that is not in the description, we retrieve all the rest of the string
-                    ///2. We create the missing part of the description array, starting from the end of the rest of the string
-                    ///3. We add the missing part to the description array
+            /// extract the first part into $param (has to be $params in the case of @subparam, or anything in the case of $subreturn)
+            /// extract the second part
+                if (strpos($matches[3][$i], "->")===false || (strpos($matches[3][$i], ":")!==false && (strpos($matches[3][$i], ":") < strpos($matches[3][$i], "->")))) {
+                    $separator = ":";
+                    $separatorsize=1;
 
-                    ///Part 1.
+                } else {
+                    $separator = "->";
+                    $separatorsize=2;
+                }
+
+                $param = substr($matches[3][$i],1,strpos($matches[3][$i], $separator)-1); //first element/part/array
+                                                                                          //for example for the line @subparam string $params:students->student->name
+                                                                                          //    @params is the first element/part/array of this docnlock line
+                                                                                          //    students is the second element/part/array
+                                                                                          //    ...
+                                                                                          //    name is the terminal element, this element will be generated as String here
 
 
-                    ///construct the description array
-                    if (strpos($matches[3][$i], "->")===false && strpos($matches[3][$i], ":")===false) {
-                        //no separator
-                        $otherparam = $matches[3][$i];
-                    }
-                    else if (strpos($matches[3][$i], "->")===false || (strpos($matches[3][$i], ":")!==false && (strpos($matches[3][$i], ":") < strpos($matches[3][$i], "->")))) {
+                $otherparam = substr($matches[3][$i],strpos($matches[3][$i], $separator)+$separatorsize); //rest of the line
+                $parsingdesc = $description[$method->getName()]; //$pasingdesc is the current position of the algorythm into the description array
+                                                                 //it is used to check if a element already exist into the description array
+
+                if (!empty($parsingdesc) && array_key_exists($descriptiontype, $parsingdesc)){
+                    $parsingdesc = $parsingdesc[$descriptiontype];
+                }
+                $descriptionpath=array(); //we save in this variable the description path (e.g all keys to go deep into the description array)
+                                          //it will be used to know where to add a new part the description array
+
+                $creationfinished = false; //it's used to stop the algorythm when we find a new element that we can add to the descripitoin
+                unset($type);
+
+            /// try to extract the other elements and add them to the descripition id there are not already in the description
+                while(!$creationfinished && (strpos($otherparam, ":") || strpos($otherparam, "->"))) {
+                    if (strpos($otherparam, "->")===false || (strpos($otherparam, ":")!==false && (strpos($otherparam, ":") < strpos($otherparam, "->")))) {
+                        $type = $separator;
+
                         $separator = ":";
                         $separatorsize=1;
-
                     } else {
+                        $type = $separator;
                         $separator = "->";
                         $separatorsize=2;
                     }
 
-                    $param = substr($matches[3][$i],1,strpos($matches[3][$i], $separator)-1);
+                    $param = substr($otherparam,0,strpos($otherparam, $separator));
 
-                    $otherparam = substr($matches[3][$i],strpos($matches[3][$i], $separator)+$separatorsize);
-                    $parsingdesc = $description[$method->getName()];
-
-                    if (!empty($parsingdesc) && array_key_exists($descriptiontype, $parsingdesc)){
-                        $parsingdesc = $parsingdesc[$descriptiontype];
-                    }
-                    $descriptionpath=array();
-
-                    $creationfinished = false;
-                    unset($type);
-
-                    while(!$creationfinished && (strpos($otherparam, ":") || strpos($otherparam, "->"))) {
-                        if (strpos($otherparam, "->")===false || (strpos($otherparam, ":")!==false && (strpos($otherparam, ":") < strpos($otherparam, "->")))) {
-                            $type = $separator;
-
-                            $separator = ":";
-                            $separatorsize=1;
-                        } else {
-                            $type = $separator;
-                            $separator = "->";
-                            $separatorsize=2;
-                        }
-
-                        $param = substr($otherparam,0,strpos($otherparam, $separator));
-
-                        $otherparam = substr($otherparam,strpos($otherparam, $separator)+$separatorsize);
+                    $otherparam = substr($otherparam,strpos($otherparam, $separator)+$separatorsize);
 
 
-                        if ($type==":") {
-                            if (!array_key_exists('multiple:'.$param, $parsingdesc)){
+                    if ($type==":") {
+                        /// this element is not already in the description array yet and it is a non associative array
+                        /// we add it (and its sub structure) to the description array
+                        if (!array_key_exists('multiple:'.$param, $parsingdesc)){
 
-                                $desctoadd = webservice_lib::create_end_of_description(":".$param.$separator.$otherparam, $matches[2][$i]);
+                            $desctoadd = webservice_lib::create_end_of_descriptionline(":".$param.$separator.$otherparam, $matches[2][$i]);
 
-                                if(empty($descriptionpath) ) {
-                                    if (empty($description[$method->getName()]) || !array_key_exists($descriptiontype, $description[$method->getName()])) {
-                                        $desctoadd = array($descriptiontype => $desctoadd);
-                                    }
-                                    $paramtoadd = $descriptiontype;
-                                } else {
-                                    $paramtoadd = 'multiple:'.$param;
-                                }
-                                webservice_lib::add_end_of_description($paramtoadd, $desctoadd, $description[$method->getName()], $descriptionpath);
-                                $creationfinished = true;
-                            } else {
-                                if(empty($descriptionpath)) {
-                                    $descriptionpath[] = $descriptiontype;
-                                }
-                                $descriptionpath[] = 'multiple:'.$param;
-                                $parsingdesc = $parsingdesc['multiple:'.$param];
-                            }
-                        } else {
-                            if (!array_key_exists($param, $parsingdesc)){
-
-                                $desctoadd = webservice_lib::create_end_of_description("->".$param.$separator.$otherparam, $matches[2][$i]);
-
-                                if(empty($descriptionpath)) {
-
-                                    if (empty($description[$method->getName()]) || !array_key_exists($descriptiontype, $description[$method->getName()])) {
-                                        $desctoadd = array($descriptiontype => $desctoadd);
-                                    }
-                                    $paramtoadd = $descriptiontype;
-
-                                } else {
-                                    $paramtoadd = $param;
-                                }
-                                webservice_lib::add_end_of_description($paramtoadd, $desctoadd, $description[$method->getName()], $descriptionpath);
-
-                                $creationfinished = true;
-                            } else {
-                                if(empty($descriptionpath)) {
-                                    $descriptionpath[] = $descriptiontype;
-                                }
-                                $descriptionpath[] = $param;
-                                $parsingdesc = $parsingdesc[$param];
-                            }
-                        }
-
-                    }
-
-                    if (!$creationfinished) {
-
-                        if (!empty($type) && $type==":") {
-
-                            $desctoadd = webservice_lib::create_end_of_description($separator.$otherparam, $matches[2][$i]);
-
-                            if(empty($descriptionpath)) {
+                            if(empty($descriptionpath) ) {
                                 if (empty($description[$method->getName()]) || !array_key_exists($descriptiontype, $description[$method->getName()])) {
                                     $desctoadd = array($descriptiontype => $desctoadd);
                                 }
@@ -290,11 +323,23 @@ final class webservice_lib {
                             } else {
                                 $paramtoadd = 'multiple:'.$param;
                             }
-
                             webservice_lib::add_end_of_description($paramtoadd, $desctoadd, $description[$method->getName()], $descriptionpath);
-
+                            $creationfinished = true; // we do not want to keep going to parse this line,
+                                                      // neither add again the terminal element of the line to the descripiton
                         } else {
-                            $desctoadd = webservice_lib::create_end_of_description($separator.$otherparam, $matches[2][$i]);
+                            if(empty($descriptionpath)) {
+                                $descriptionpath[] = $descriptiontype;
+                            }
+                            $descriptionpath[] = 'multiple:'.$param;
+                            $parsingdesc = $parsingdesc['multiple:'.$param];
+                        }
+                    } else {
+                        /// this element is not in the description array yet and it is a associative array
+                        /// we add it (and its sub structure) to the description array
+                        if (!array_key_exists($param, $parsingdesc)){
+
+                            $desctoadd = webservice_lib::create_end_of_descriptionline("->".$param.$separator.$otherparam, $matches[2][$i]);
+
                             if(empty($descriptionpath)) {
 
                                 if (empty($description[$method->getName()]) || !array_key_exists($descriptiontype, $description[$method->getName()])) {
@@ -306,16 +351,64 @@ final class webservice_lib {
                                 $paramtoadd = $param;
                             }
                             webservice_lib::add_end_of_description($paramtoadd, $desctoadd, $description[$method->getName()], $descriptionpath);
+
+                            $creationfinished = true; // we do not want to keep going to parse this line,
+                                                      // neither add again the terminal element of the line to the descripiton
+                        } else {
+                            if(empty($descriptionpath)) {
+                                $descriptionpath[] = $descriptiontype;
+                            }
+                            $descriptionpath[] = $param;
+                            $parsingdesc = $parsingdesc[$param];
                         }
                     }
+
                 }
+            /// Add the "terminal" element of the line to the description array
+                if (!$creationfinished) {
+
+                    if (!empty($type) && $type==":") {
+
+                        $desctoadd = webservice_lib::create_end_of_descriptionline($separator.$otherparam, $matches[2][$i]);
+
+                        if(empty($descriptionpath)) {
+                            if (empty($description[$method->getName()]) || !array_key_exists($descriptiontype, $description[$method->getName()])) {
+                                $desctoadd = array($descriptiontype => $desctoadd);
+                            }
+                            $paramtoadd = $descriptiontype;
+                        } else {
+                            $paramtoadd = 'multiple:'.$param;
+                        }
+
+                        webservice_lib::add_end_of_description($paramtoadd, $desctoadd, $description[$method->getName()], $descriptionpath);
+
+                    } else {
+                        $desctoadd = webservice_lib::create_end_of_descriptionline($separator.$otherparam, $matches[2][$i]);
+                        if(empty($descriptionpath)) {
+
+                            if (empty($description[$method->getName()]) || !array_key_exists($descriptiontype, $description[$method->getName()])) {
+                                $desctoadd = array($descriptiontype => $desctoadd);
+                            }
+                            $paramtoadd = $descriptiontype;
+
+                        } else {
+                            $paramtoadd = $param;
+                        }
+                        webservice_lib::add_end_of_description($paramtoadd, $desctoadd, $description[$method->getName()], $descriptionpath);
+                    }
+                }
+
             }
         }
+        echo "<pre>";
+        var_dump($description);
+        echo "</pre>";
         return $description;
+
     }
 
     /**
-     * TODO: works but it needs refactoring
+     * Add a description part to the descripition array
      * @param <type> $param
      * @param <type> $desctoadd
      * @param <type> $descriptionlevel
@@ -344,12 +437,13 @@ final class webservice_lib {
 
 
     /**
-     * TODO: works but it needs refactoring
+     * We create a description part for the description array
+     * Structure explained in the "generate_webservice_description" dockblock
      * @param <type> $stringtoadd
      * @param <type> $type
      * @return <type>
      */
-    public static function create_end_of_description($stringtoadd, $type) {
+    public static function create_end_of_descriptionline($stringtoadd, $type) {
 
         if (strrpos($stringtoadd, "->")===false || (strrpos($stringtoadd, ":")!==false && (strrpos($stringtoadd, ":") > strrpos($stringtoadd, "->")))) {
             $separator = ":";
