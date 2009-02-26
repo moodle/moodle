@@ -232,7 +232,7 @@
         }
         $backup_users->close();
         //Gets the user data
-        $info[0][0] = get_string("userswithfiles");
+        $info[0][0] = get_string('userswithfiles', 'moodle');
         $info[0][1] = $count;
 
         return $info;

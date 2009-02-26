@@ -1649,6 +1649,7 @@ $string['userselectorautoselectunique'] = 'If only one user matches the search, 
 $string['userselectorsearchanywhere'] = 'Match the search text anywhere in the user\'s name';
 $string['usersnew'] = 'New users';
 $string['usersnoaccesssince'] = 'Inactive for more than';
+$string['userswithfiles'] = 'Users with files';
 $string['userzones'] = 'User zones';
 $string['usethiscourse'] = 'Use this course';
 $string['usingexistingcourse'] = 'Using existing course';
