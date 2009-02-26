@@ -400,9 +400,9 @@ final class webservice_lib {
 
             }
         }
-        echo "<pre>";
-        var_dump($description);
-        echo "</pre>";
+//        echo "<pre>";
+//        var_dump($description);
+//        echo "</pre>";
         return $description;
 
     }
