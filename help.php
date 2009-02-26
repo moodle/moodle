@@ -99,6 +99,9 @@ if (!empty($file)) {
                 if ($module == 'moodle' and ($file == 'index.html' or $file == 'mods.html')) {
                     include_help_for_each_module($file, $langs, $helpdir);
                 }
+                if ($module == 'question' and ($file == 'types.html')) {
+                    include_help_for_each_qtype();
+                }
 
                 // The remaining horrible hardcoded special cases should be delegated to modules somehow.
                 if ($module == 'moodle' and ($file == 'resource/types.html')) {  // RESOURCES
@@ -206,6 +209,28 @@ function include_help_for_each_module($file, $langs, $helpdir) {
             }
         }
     }
+}
+
+function include_help_for_each_qtype() {
+    global $CFG;
+    require_once($CFG->libdir . '/questionlib.php');
+    global $QTYPES;
+    $types = question_type_menu();
+    $fakeqtypes = array();
+    foreach ($types as $qtype => $localizedname) {
+        if ($QTYPES[$qtype]->is_real_question_type()) {
+            include_help_for_qtype($qtype, $localizedname);
+        } else {
+            $fakeqtypes[$qtype] = $localizedname;
+        }
+    }
+    foreach ($fakeqtypes as $qtype => $localizedname) {
+        include_help_for_qtype($qtype, $localizedname);
+    }
+}
+function include_help_for_qtype($qtype, $localizedname) {
+    echo '<h2>' . $localizedname . "</h2>\n\n";
+    echo '<p>' . get_string($qtype . 'summary', 'qtype_' . $qtype) . "</p>\n\n";
 }
 
 function include_help_for_each_resource($file, $langs, $helpdir) {

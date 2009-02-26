@@ -1901,7 +1901,7 @@ function create_new_question_button($categoryid, $params, $caption, $tooltip = '
     $params['category'] = $categoryid;
     print_single_button($CFG->wwwroot . '/question/addquestion.php', $params,
             $caption,'get', '', false, $tooltip, $disabled);
-    helpbutton('questiontypes', get_string('createnewquestion', 'question'), 'question');
+    helpbutton('types', get_string('createnewquestion', 'question'), 'question');
     require_js(array('yui_yahoo','yui_dom','yui_event', 'yui_dragdrop', 'yui_container'));
     if (!$choiceformprinted) {
         echo '<div id="qtypechoicecontainer">';
