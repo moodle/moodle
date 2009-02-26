@@ -61,6 +61,12 @@ if ($id) {
     $question = new stdClass;
     $question->category = $categoryid;
     $question->qtype = $qtype;
+
+    // Check that users are allowed to create this question type at the moment.
+    $allowedtypes = question_type_menu();
+    if (!isset($allowedtypes[$qtype])) {
+        print_error('cannotenable', 'question', $returnurl, $qtype);
+    }
 } else {
     print_error('notenoughdatatoeditaquestion', 'question', $returnurl);
 }
