@@ -8,9 +8,16 @@
     header("Pragma: no-cache");
 
     require_once('../../config.php');
+    include_once('lib.php');
     require_once('locallib.php');
     require_once('datamodels/aicclib.php');
-
+	
+    foreach ($_POST as $key => $value)
+		{
+			$tempkey = strtolower($key);
+			$_POST[$tempkey] = $value;
+	}
+    
     $command = required_param('command', PARAM_ALPHA);
     $sessionid = required_param('session_id', PARAM_ALPHANUM);
     $aiccdata = optional_param('aicc_data', '', PARAM_RAW);
@@ -55,7 +62,7 @@
                         $status = 'Running';
                     }
                     if ($status != 'Running') {
-                        echo "error=101\nerror_text=Terminated\n";
+                        echo "error=101\r\nerror_text=Terminated\r\n";
                     } else {
                         if ($usertrack=scorm_get_tracks($scoid,$USER->id,$attempt)) {
                             $userdata = $usertrack;
@@ -79,16 +86,16 @@
                             $userdata->max_time_allowed = isset($sco->max_time_allowed)?$sco->max_time_allowed:'';
                             $userdata->time_limit_action = isset($sco->time_limit_action)?$sco->time_limit_action:'';
 
-                            echo "error=0\nerror_text=Successful\naicc_data=";
-                            echo "[Core]\n";
-                            echo 'Student_ID = '.$userdata->student_id."\n";
-                            echo 'Student_Name = '.$userdata->student_name."\n";
+                            echo "error=0\r\nerror_text=Successful\r\naicc_data=";
+                            echo "[Core]\r\n";
+                            echo 'Student_ID='.$userdata->student_id."\r\n";
+                            echo 'Student_Name='.$userdata->student_name."\r\n";
                             if (isset($userdata->{'cmi.core.lesson_location'})) {
-                                echo 'Lesson_Location = '.$userdata->{'cmi.core.lesson_location'}."\n";
+                                echo 'Lesson_Location='.$userdata->{'cmi.core.lesson_location'}."\r\n";
                             } else {
-                                echo 'Lesson_Location = '."\n";
+                                echo 'Lesson_Location='."\r\n";
                             }
-                            echo 'Credit = '.$userdata->credit."\n";
+                            echo 'Credit='.$userdata->credit."\r\n";
                             if (isset($userdata->status)) {
                                 if ($userdata->status == '') {
                                     $userdata->entry = ', ab-initio';
@@ -101,10 +108,10 @@
                                 }
                             }
                             if (isset($userdata->{'cmi.core.lesson_status'})) {
-                                echo 'Lesson_Status = '.$userdata->{'cmi.core.lesson_status'}.$userdata->entry."\n";
+                                echo 'Lesson_Status='.$userdata->{'cmi.core.lesson_status'}.$userdata->entry."\r\n";
                                 $SESSION->scorm_lessonstatus = $userdata->{'cmi.core.lesson_status'};
                             } else {
-                                echo 'Lesson_Status = not attempted'.$userdata->entry."\n";
+                                echo 'Lesson_Status=not attempted'.$userdata->entry."\r\n";
                                 $SESSION->scorm_lessonstatus = 'not attempted';
                             }
                             if (isset($userdata->{'cmi.core.score.raw'})) {
@@ -116,27 +123,27 @@
                                         $min = ', '.$userdata->{'cmi.core.score.min'};
                                     }
                                 }
-                                echo 'Score = '.$userdata->{'cmi.core.score.raw'}.$max.$min."\n";
+                                echo 'Score='.$userdata->{'cmi.core.score.raw'}.$max.$min."\r\n";
                             } else {
-                                echo 'Score = '."\n";
+                                echo 'Score='."\r\n";
                             }
                             if (isset($userdata->{'cmi.core.total_time'})) {
-                                echo 'Time = '.$userdata->{'cmi.core.total_time'}."\n";
+                                echo 'Time='.$userdata->{'cmi.core.total_time'}."\r\n";
                             } else {
-                                echo 'Time = '.'00:00:00'."\n";
+                                echo 'Time='.'00:00:00'."\r\n";
                             }
-                            echo 'Lesson_Mode = '.$userdata->mode."\n";
+                            echo 'Lesson_Mode='.$userdata->mode."\r\n";
                             if (isset($userdata->{'cmi.suspend_data'})) {
-                                echo "[Core_Lesson]\n".rawurldecode($userdata->{'cmi.suspend_data'})."\n";
+                                echo "[Core_Lesson]\r\n".rawurldecode($userdata->{'cmi.suspend_data'})."\r\n";
                             } else {
-                                echo "[Core_Lesson]\n"."\n";
+                                echo "[Core_Lesson]\r\n";
                             }
-                            echo "[Core_Vendor]\n".$userdata->datafromlms."\n";
-                            echo "[Evaluation]\nCourse_ID = {".$userdata->course_id."}\n";
-                            echo "[Student_Data]\n";
-                            echo 'Mastery_Score = '.$userdata->mastery_score."\n";
-                            echo 'Max_Time_Allowed = '.$userdata->max_time_allowed."\n";
-                            echo 'Time_Limit_Action = '.$userdata->time_limit_action."\n";
+                            echo "[Core_Vendor]\r\n".$userdata->datafromlms."\r\n";
+                            echo "[Evaluation]\r\nCourse_ID = {".$userdata->course_id."}\r\n";
+                            echo "[Student_Data]\r\n";
+                            echo 'Mastery_Score='.$userdata->mastery_score."\r\n";
+                            echo 'Max_Time_Allowed='.$userdata->max_time_allowed."\r\n";
+                            echo 'Time_Limit_Action='.$userdata->time_limit_action."\r\n";
                         } else {
                             print_error('cannotfindsco', 'scorm');
                         }
@@ -145,7 +152,7 @@
                 case 'putparam':
                     if ($status == 'Running') {
                         if (! $cm = get_coursemodule_from_instance("scorm", $scorm->id, $scorm->course)) {
-                            echo "error=1\nerror_text=Unknown\n"; // No one must see this error message if not hacked
+                            echo "error=1\r\nerror_text=Unknown\r\n"; // No one must see this error message if not hacked
                         }
                         if (!empty($aiccdata) && has_capability('mod/scorm:savetrack', get_context_instance(CONTEXT_MODULE, $cm->id))) {
                             $initlessonstatus = 'not attempted';
@@ -160,7 +167,7 @@
                             $datamodel['time'] = 'cmi.core.session_time';
                             $datamodel['[core_lesson]'] = 'cmi.suspend_data';
                             $datamodel['[comments]'] = 'cmi.comments';
-                            $datarows = explode("\n",$aiccdata);
+                            $datarows = explode("\r\n",$aiccdata);
                             reset($datarows);
                             while ((list(,$datarow) = each($datarows)) !== false) {
                                 if (($equal = strpos($datarow, '=')) !== false) {
@@ -199,6 +206,7 @@
                                                 $value = '';
                                                 if (count($values) > 1) {
                                                     $value = trim(strtolower($values[1]));
+                                                    $value = $value[0];
                                                     if (isset($exites[$value])) {
                                                         $value = $exites[$value];
                                                     }
@@ -208,6 +216,7 @@
                                                     $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $subelement, $value);
                                                 }
                                                 $value = trim(strtolower($values[0]));
+                                                $value = $value[0];
                                                 if (isset($statuses[$value]) && ($mode == 'normal')) {
                                                     $value = $statuses[$value];
                                                     $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $element, $value);
@@ -229,7 +238,7 @@
 
                                                  $value = '';
                                                  if (is_numeric($values[0])) {
-                                                     $value = trim($values[0]);
+                                                     $value = trim($values[0]); 
                                                      $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $element, $value);
                                                  }
                                                  $score = $value;
@@ -244,10 +253,10 @@
                                         $element = $datamodel[strtolower(trim($datarow))];
                                         $value = '';
                                         while ((($datarow = current($datarows)) !== false) && (substr($datarow,0,1) != '[')) {
-                                            $value .= $datarow;
+                                            $value .= $datarow."\r\n";
                                             next($datarows);
                                         }
-                                        $value = rawurlencode($value);
+                                        $value = rawurlencode(stripslashes($value));
                                         $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $element, $value);
                                     }
                                 }
@@ -269,56 +278,56 @@
                                 }
                             }
                         }
-                        echo "error=0\nerror_text=Successful\n";
+                        echo "error=0\r\nerror_text=Successful\r\n";
                     } else if ($status == 'Terminated') {
-                        echo "error=1\nerror_text=Terminated\n";
+                        echo "error=1\r\nerror_text=Terminated\r\n";
                     } else {
-                        echo "error=1\nerror_text=Not Initialized\n";
+                        echo "error=1\r\nerror_text=Not Initialized\r\n";
                     }
                 break;
                 case 'putcomments':
                     if ($status == 'Running') {
-                        echo "error=0\nerror_text=Successful\n";
+                        echo "error=0\r\nerror_text=Successful\r\n";
                     } else if ($status == 'Terminated') {
-                        echo "error=1\nerror_text=Terminated\n";
+                        echo "error=1\r\nerror_text=Terminated\r\n";
                     } else {
-                        echo "error=1\nerror_text=Not Initialized\n";
+                        echo "error=1\r\nerror_text=Not Initialized\r\n";
                     }
                 break;
                 case 'putinteractions':
                     if ($status == 'Running') {
-                        echo "error=0\nerror_text=Successful\n";
+                        echo "error=0\r\nerror_text=Successful\r\n";
                     } else if ($status == 'Terminated') {
-                        echo "error=1\nerror_text=Terminated\n";
+                        echo "error=1\r\nerror_text=Terminated\r\n";
                     } else {
-                        echo "error=1\nerror_text=Not Initialized\n";
+                        echo "error=1\r\nerror_text=Not Initialized\r\n";
                     }
                 break;
                 case 'putobjectives':
                     if ($status == 'Running') {
-                        echo "error=0\nerror_text=Successful\n";
+                        echo "error=0\r\nerror_text=Successful\r\n";
                     } else if ($status == 'Terminated') {
-                        echo "error=1\nerror_text=Terminated\n";
+                        echo "error=1\r\nerror_text=Terminated\r\n";
                     } else {
-                        echo "error=1\nerror_text=Not Initialized\n";
+                        echo "error=1\r\nerror_text=Not Initialized\r\n";
                     }
                 break;
                 case 'putpath':
                     if ($status == 'Running') {
-                        echo "error=0\nerror_text=Successful\n";
+                        echo "error=0\r\nerror_text=Successful\r\n";
                     } else if ($status == 'Terminated') {
-                        echo "error=1\nerror_text=Terminated\n";
+                        echo "error=1\r\nerror_text=Terminated\r\n";
                     } else {
-                        echo "error=1\nerror_text=Not Initialized\n";
+                        echo "error=1\r\nerror_text=Not Initialized\r\n";
                     }
                 break;
                 case 'putperformance':
                     if ($status == 'Running') {
-                        echo "error=0\nerror_text=Successful\n";
+                        echo "error=0\r\nerror_text=Successful\r\n";
                     } else if ($status == 'Terminated') {
-                        echo "error=1\nerror_text=Terminated\n";
+                        echo "error=1\r\nerror_text=Terminated\r\n";
                     } else {
-                        echo "error=1\nerror_text=Not Initialized\n";
+                        echo "error=1\r\nerror_text=Not Initialized\r\n";
                     }
                 break;
                 case 'exitau':
@@ -342,23 +351,23 @@
                         }
                         $SESSION->scorm_status = 'Terminated';
                         $SESSION->scorm_session_time = '';
-                        echo "error=0\nerror_text=Successful\n";
+                        echo "error=0\r\nerror_text=Successful\r\n";
                     } else if ($status == 'Terminated') {
-                        echo "error=1\nerror_text=Terminated\n";
+                        echo "error=1\r\nerror_text=Terminated\r\n";
                     } else {
-                        echo "error=1\nerror_text=Not Initialized\n";
+                        echo "error=1\r\nerror_text=Not Initialized\r\n";
                     }
                 break;
                 default:
-                    echo "error=1\nerror_text=Invalid Command\n";
+                    echo "error=1\r\nerror_text=Invalid Command\r\n";
                 break;
             }
         }
     } else {
         if (empty($command)) {
-            echo "error=1\nerror_text=Invalid Command\n";
+            echo "error=1\r\nerror_text=Invalid Command\r\n";
         } else {
-            echo "error=3\nerror_text=Invalid Session ID\n";
+            echo "error=3\r\nerror_text=Invalid Session ID\r\n";
         }
     }
 ?>
