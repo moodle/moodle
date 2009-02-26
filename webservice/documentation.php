@@ -30,9 +30,40 @@
 require_once('../config.php');
 require_once('lib.php');
 $protocol = optional_param('protocol',"soap",PARAM_ALPHA);
+
+print_header(get_string('wspagetitle','webservice'), get_string('wspagetitle','webservice').":", true);
+check_webservices($protocol);
 generate_documentation($protocol);
 generate_functionlist();
+print_footer();
 
+
+function check_webservices($protocol){
+    global $CFG;
+
+    echo get_string('webservicesenable','webservice').": ";
+    if (empty($CFG->enablewebservices)) {
+        echo "<strong style=\"color:red\">".get_string('fail','webservice')."</strong>";
+    } else {
+        echo "<strong style=\"color:green\">".get_string('ok','webservice')."</strong>";
+    }
+    echo "<br/>";
+
+    foreach(webservice_lib::get_list_protocols() as $wsprotocol) {
+        if (strtolower($wsprotocol->get_protocolname()) == strtolower($protocol)) {
+            echo get_string('protocolenable','webservice',array($wsprotocol->get_protocolname())).": ";
+            if ( get_config($wsprotocol-> get_protocolname(), "enable")) {
+                echo "<strong style=\"color:green\">".get_string('ok','webservice')."</strong>";
+            } else {
+                echo "<strong style=\"color:red\">".get_string('fail','webservice')."</strong>";
+            }
+            echo "<br/>";
+            continue;
+        }
+    }
+
+    
+}
 
 /**
  *
@@ -51,6 +82,8 @@ function generate_documentation($protocol) {
             break;
     }
     echo $documentation;
+    echo "<strong style=\"color:orange\">".get_string('wsuserreminder','webservice')."</strong>";
+
 }
 
 
@@ -75,41 +108,54 @@ function generate_functionlist () {
         $classpath = str_replace('/','_',$classpath); //convert all / into _
         $classname = $classpath."_external";
         $api = new $classname();
-        $documentation .= "<H3>".get_string('moodlepath','webservice').": ".$classpath."</H3>";
+        $documentation .= "<H3><u>".get_string('moodlepath','webservice').": ".$classpath."</u></H3><ul>";
 
         $description = webservice_lib::generate_webservice_description($file, $classname);
 
         foreach ($description as $functionname => $functiondescription) {
             $documentation .= <<<EOF
-        <b>{$functionname}(</b>
+        <li><b>{$functionname}(</b>
 EOF;
             $arrayparams = array();
+            $comma="";
             foreach($functiondescription['params'] as $param => $type) {
-                $documentation .= <<<EOF
-        {$type} {$param},
-EOF;
-            }
-                $documentation .= <<<EOF
-        <b>)</b><br/>
-EOF;
-             foreach($functiondescription['params'] as $param => $type) {
 
-                 if (is_array($type)) {
-                     $arraytype = "<pre>".print_r($type, true)."</pre>";
-                      $documentation .= <<<EOF
+                $documentation .= <<<EOF
+                {$comma} {$type} {$param}
+EOF;
+                 if (empty($comma)) {
+                    $comma = ',';
+                }
+            }
+            $documentation .= <<<EOF
+        <b>)</b> :
+EOF;
+          foreach($functiondescription['return'] as $return => $type) {
+            $documentation .= <<<EOF
+            {$type} <br/>
+EOF;
+          }
+            foreach($functiondescription['params'] as $param => $type) {
+
+                if (is_array($type)) {
+                    $arraytype = "<pre>".print_r($type, true)."</pre>";
+                    $documentation .= <<<EOF
          <u>{$param}</u> : {$arraytype} <br>
 EOF;
-                 }
-               
-                 }
-            
+                }
+
             }
 
         }
-
-        echo $documentation;
-
+        $documentation .= <<<EOF
+        </ul>
+EOF;
+  
     }
+
+    echo $documentation;
+
+}
 
 
  /**
@@ -118,33 +164,33 @@ EOF;
  * @param <type> $directorypath
  * @return boolean result true if n
  */
-    function setListApiFiles( &$files, $directorypath )
-    {
-        if(is_dir($directorypath)){ //check that we are browsing a folder not a file
+function setListApiFiles( &$files, $directorypath )
+{
+    if(is_dir($directorypath)){ //check that we are browsing a folder not a file
 
-            if( $dh = opendir($directorypath))
+        if( $dh = opendir($directorypath))
+        {
+            while( false !== ($file = readdir($dh)))
             {
-                while( false !== ($file = readdir($dh)))
-                {
 
-                    if( $file == '.' || $file == '..') {   // Skip '.' and '..'
-                        continue;
-                    }
-                    $path = $directorypath . '/' . $file;
-                    ///browse the subfolder
-                    if( is_dir($path) ) {
-                        setListApiFiles($files, $path);
-                    }
-                    ///retrieve api.php file
-                    else if ($file == "external.php") {
-                        $files[] = $path;
-                    }
+                if( $file == '.' || $file == '..') {   // Skip '.' and '..'
+                    continue;
                 }
-                closedir($dh);
-
+                $path = $directorypath . '/' . $file;
+                ///browse the subfolder
+                if( is_dir($path) ) {
+                    setListApiFiles($files, $path);
+                }
+                ///retrieve api.php file
+                else if ($file == "external.php") {
+                    $files[] = $path;
+                }
             }
+            closedir($dh);
+
         }
     }
+}
 
 
-    ?>
+?>

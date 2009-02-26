@@ -43,14 +43,14 @@ final class group_external {
     }
 
     /**
-     * add a group member
+     * Get a group member
      * @param array $params
      * @subparam integer $params->groupid
-     * @return array $group
-     * @subreturn integer $group->id
-     * @subreturn integer $group->courseid
-     * @subreturn string $group->name
-     * @subreturn string $group->enrolmentkey
+     * @return array $return
+     * @subreturn integer $return->group->id
+     * @subreturn integer $return->group->courseid
+     * @subreturn string $return->group->name
+     * @subreturn string $return->group->enrolmentkey
      */
 	static function tmp_get_group($params){
 
@@ -97,7 +97,7 @@ final class group_external {
 	}
 
     /**
-     *
+     * Add a member to a group
      * @param array $params
      * @subparam integer $params->groupid
      * @subparam integer $params->userid

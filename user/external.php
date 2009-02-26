@@ -23,20 +23,20 @@ final class user_external {
      * @subparam string $params:searches->search2 optional - the string to search
      * @subparam string $params:searches->search3 - the string to search
      * @subparam string $params:airport->planes:plane->company->employees:employee->name - name of a employee of a company of a plane of an airport
-     * @return array users  
-     * @subreturn integer $users:user->id
-     * @subreturn integer $users:user->auth
-     * @subreturn integer $users:user->confirmed
-     * @subreturn string $users:user->username
-     * @subreturn string $users:user->idnumber
-     * @subreturn string $users:user->firstname
-     * @subreturn string $users:user->lastname
-     * @subreturn string $users:user->email
-     * @subreturn string $users:user->emailstop
-     * @subreturn string $users:user->lang
-     * @subreturn string $users:user->theme
-     * @subreturn string $users:user->timezone
-     * @subreturn string $users:user->mailformat
+     * @return array $return
+     * @subreturn integer $return:user->id
+     * @subreturn integer $return:user->auth
+     * @subreturn integer $return:user->confirmed
+     * @subreturn string $return:user->username
+     * @subreturn string $return:user->idnumber
+     * @subreturn string $return:user->firstname
+     * @subreturn string $return:user->lastname
+     * @subreturn string $return:user->email
+     * @subreturn string $return:user->emailstop
+     * @subreturn string $return:user->lang
+     * @subreturn string $return:user->theme
+     * @subreturn string $return:user->timezone
+     * @subreturn string $return:user->mailformat
      */
     static function tmp_do_multiple_user_searches($params) {
         global $USER;
@@ -59,20 +59,20 @@ final class user_external {
      * Retrieve all user
      * @param array|struct $params - need to be define as struct for XMLRPC
      * @subparam string $params->search - the string to search
-     * @return object users 
-     * @subreturn integer $users:user->id
-     * @subreturn integer $users:user->auth
-     * @subreturn integer $users:user->confirmed
-     * @subreturn string $users:user->username
-     * @subreturn string $users:user->idnumber
-     * @subreturn string $users:user->firstname
-     * @subreturn string $users:user->lastname
-     * @subreturn string $users:user->email
-     * @subreturn string $users:user->emailstop
-     * @subreturn string $users:user->lang
-     * @subreturn string $users:user->theme
-     * @subreturn string $users:user->timezone
-     * @subreturn string $users:user->mailformat
+     * @return array $return
+     * @subreturn integer $return:user->id
+     * @subreturn integer $return:user->auth
+     * @subreturn integer $return:user->confirmed
+     * @subreturn string $return:user->username
+     * @subreturn string $return:user->idnumber
+     * @subreturn string $return:user->firstname
+     * @subreturn string $return:user->lastname
+     * @subreturn string $return:user->email
+     * @subreturn string $return:user->emailstop
+     * @subreturn string $return:user->lang
+     * @subreturn string $return:user->theme
+     * @subreturn string $return:user->timezone
+     * @subreturn string $return:user->mailformat
      */
     static function tmp_get_users($params) {
         global $USER;
