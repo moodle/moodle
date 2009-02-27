@@ -62,6 +62,11 @@ function check_webservices($protocol){
         }
     }
 
+    //check debugging
+    if ($CFG->debugdisplay) {
+        echo "<strong style=\"color:red\">".get_string('debugdisplayon','webservice')."</strong>";
+    }
+
 
 }
 

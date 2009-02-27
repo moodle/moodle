@@ -36,4 +36,5 @@ $string['protocolenable'] = '$a[0] protocol enable';
 $string['ok'] = 'OK';
 $string['fail'] = 'FAIL';
 $string['wsuserreminder'] = 'Reminder: the Moodle administrator of this site needs to give you moodle/site:usewebservices capability.';
+$string['debugdisplayon'] = '\"Display debug messages\" is set On. The XMLRPC server will not work. The other web service servers could also return some problems. <br/>Alert the Moodle administrator to set it Off.';
 ?>

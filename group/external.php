@@ -21,7 +21,7 @@ final class group_external {
 
     /**
      * Creates a group
-     * @param array $params
+     * @param array|struct $params
      * @subparam string $params->groupname
      * @subparam integer $params->courseid
      * @return integer groupid
@@ -44,9 +44,9 @@ final class group_external {
 
     /**
      * Get a group member
-     * @param array $params
+     * @param array|struct $params
      * @subparam integer $params->groupid
-     * @return array $return
+     * @return object $return
      * @subreturn integer $return->group->id
      * @subreturn integer $return->group->courseid
      * @subreturn string $return->group->name
@@ -70,7 +70,7 @@ final class group_external {
 
     /**
      *
-     * @param array $params
+     * @param array|struct $params
      * @subparam integer $params->groupid
      * @return boolean result
      */
@@ -88,7 +88,7 @@ final class group_external {
 
     /**
      *
-     * @param array $params
+     * @param array|struct $params
      * @subparam integer $params->groupid
      * @subparam integer $params->userid
      * @return boolean result
@@ -98,7 +98,7 @@ final class group_external {
 
     /**
      * Add a member to a group
-     * @param array $params
+     * @param array|struct $params
      * @subparam integer $params->groupid
      * @subparam integer $params->userid
      * @return boolean result
@@ -117,7 +117,7 @@ final class group_external {
 
     /**
      *
-     * @param array $params
+     * @param array|struct $params
      * @subparam integer $params->groupid
      * @subparam integer $params->userid
      * @return boolean result

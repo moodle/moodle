@@ -23,7 +23,7 @@ final class user_external {
      * @subparam string $params:searches->search2 optional - the string to search
      * @subparam string $params:searches->search3 - the string to search
      * @subparam string $params:airport->planes:plane->company->employees:employee->name - name of a employee of a company of a plane of an airport
-     * @return array $return
+     * @return object $return
      * @subreturn integer $return:user->id
      * @subreturn integer $return:user->auth
      * @subreturn integer $return:user->confirmed
@@ -59,7 +59,7 @@ final class user_external {
      * Retrieve all user
      * @param array|struct $params - need to be define as struct for XMLRPC
      * @subparam string $params->search - the string to search
-     * @return array $return
+     * @return object $return
      * @subreturn integer $return:user->id
      * @subreturn integer $return:user->auth
      * @subreturn integer $return:user->confirmed
