@@ -62,7 +62,7 @@ function check_webservices($protocol){
         }
     }
 
-    
+
 }
 
 /**
@@ -123,18 +123,25 @@ EOF;
                 $documentation .= <<<EOF
                 {$comma} {$type} {$param}
 EOF;
-                 if (empty($comma)) {
+                if (empty($comma)) {
                     $comma = ',';
                 }
             }
             $documentation .= <<<EOF
         <b>)</b> :
 EOF;
-          foreach($functiondescription['return'] as $return => $type) {
-            $documentation .= <<<EOF
-            {$type} <br/>
+            foreach($functiondescription['return'] as $return => $type) {
+                $documentation .= <<<EOF
+                <i>
+                {$type}</i>
 EOF;
-          }
+                if (is_array($type)) {
+                    $arraytype = "<pre>".print_r($type, true)."</pre>";
+                    $documentation .= <<<EOF
+                <i> {$return}  {$arraytype} <br><br></i>
+EOF;
+                }
+            }
             foreach($functiondescription['params'] as $param => $type) {
 
                 if (is_array($type)) {
@@ -150,7 +157,7 @@ EOF;
         $documentation .= <<<EOF
         </ul>
 EOF;
-  
+
     }
 
     echo $documentation;
