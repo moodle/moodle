@@ -579,7 +579,7 @@ h2.headingblock {
 }
 #course-view .dimmed_text img {
   opacity:0.3;
-  filter: alpha(opacity='30'); 
+  filter: alpha(opacity='30');
 }
 
 /***
@@ -617,6 +617,9 @@ body#grade-index .grades .header {
 
 #grade-aggregation-help code {
     font-style: normal;
+}
+option.optionheader {
+    font-weight: bold;
 }
 
 /***

@@ -324,13 +324,17 @@ function print_grade_plugin_selector($plugin_info, $return=false) {
             continue;
         }
 
-        $menu[$plugin_type.'group'] = '--'.$plugin_info['strings'][$plugin_type];
+        $first_plugin = reset($plugins);
 
-        if (!empty($plugins['id'])) {
-            $menu[$plugins['link']] = $plugins['string'];
+        if (is_array($first_plugin)) {
+            $menu[$first_plugin['link'].'&amp;'] = '**header**'.get_string($plugin_type, 'grades');
         } else {
+            $menu[$plugins['link']] = '**header**'.$plugins['string'];
+        }
+
+        if (empty($plugins['id'])) {
             foreach ($plugins as $plugin) {
-                $menu[$plugin['link']] = $plugin['string'];
+                $menu[$plugin['link']] = '&nbsp;&nbsp;&nbsp;&nbsp;' . $plugin['string'];
                 $count++;
             }
         }
@@ -338,7 +342,13 @@ function print_grade_plugin_selector($plugin_info, $return=false) {
 
 /// finally print/return the popup form
     if ($count > 1) {
-        return popup_form('', $menu, 'choosepluginreport', '', get_string('chooseaction', 'grades'), '', '', $return, 'self');
+        $select = popup_form('', $menu, 'choosepluginreport', '', get_string('chooseaction', 'grades'), '', '', true, 'self');
+        $select = preg_replace('/\>\*\*header\*\*/', ' class="optionheader">', $select);
+        if ($return) {
+            return $select;
+        } else {
+            echo $select;
+        }
     } else {
         // only one option - no plugin selector needed
         return '';
