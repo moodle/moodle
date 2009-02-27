@@ -327,7 +327,7 @@ function print_grade_plugin_selector($plugin_info, $return=false) {
         $first_plugin = reset($plugins);
 
         if (is_array($first_plugin)) {
-            $menu[$first_plugin['link'].'&amp;'] = '**header**'.get_string($plugin_type, 'grades');
+            $menu[$first_plugin['link'].'&amp;'] = '**header**'.$plugin_info['strings'][$plugin_type];
         } else {
             $menu[$plugins['link']] = '**header**'.$plugins['string'];
         }
