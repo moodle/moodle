@@ -79,15 +79,9 @@ $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 $caneditsystemscales = has_capability('moodle/course:managescales', $systemcontext);
 
 if ($courseid) {
-    /// Print header
-    print_header_simple($strgrades.': '.$pagename, ': '.$strgrades, $navigation, '', '', true, '', navmenu($course));
-    /// Print the plugin selector at the top
-    print_grade_plugin_selector($courseid, 'edit', 'outcome');
+    print_grade_page_head($courseid, 'outcome', 'import', get_string('importoutcomes', 'grades'));
 
     $caneditcoursescales = has_capability('moodle/course:managescales', $context);
-
-    $currenttab = 'outcomes';
-    require('tabs.php');
 
 } else {
     admin_externalpage_print_header();

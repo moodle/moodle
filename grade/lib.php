@@ -377,7 +377,12 @@ function grade_print_tabs($active_type, $active_plugin, $plugin_info, $return=fa
 
         // If $plugins is actually the definition of a child-less parent link:
         if (!empty($plugins['id'])) {
-            $top_row[] = new tabobject($plugin_type, $plugins['link'], $plugins['string']);
+            $string = $plugins['string'];
+            if (!empty($plugin_info[$active_type]['parent'])) {
+                $string = $plugin_info[$active_type]['parent']['string'];
+            }
+
+            $top_row[] = new tabobject($plugin_type, $plugins['link'], $string);
             continue;
         }
 
@@ -502,10 +507,20 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
 
         if (has_capability('moodle/course:managescales', $context)) {
             $url = $url_prefix.'edit/scale/index.php?id='.$courseid;
+
             if ($active_type == 'scale' and is_null($active_plugin)) {
                 $active = $url;
             }
-            $plugin_info['scale'] = array('id' => 'scale', 'link' => $url, 'string' => get_string('scales'));
+
+            if ($active_type == 'scale' and $active_plugin == 'edit') {
+                $edit_url = $url_prefix.'edit/scale/edit.php?courseid='.$courseid.'&amp;id='.optional_param('id', 0, PARAM_INT);
+                $active = $edit_url;
+                $plugin_info['scale'] = array('id' => 'edit', 'link' => $edit_url, 'string' => get_string('edit'),
+                    'parent' => array('id' => 'scale', 'link' => $url, 'string' => get_string('scales')));
+            } else {
+                $plugin_info['scale'] = array('id' => 'scale', 'link' => $url, 'string' => get_string('scales'));
+            }
+
             $count++;
         }
 
@@ -530,6 +545,8 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
                 $active = $url_course;
             } elseif ($active_type == 'outcome' and $active_plugin == 'edit' ) {
                 $active = $url_edit;
+            } elseif ($active_type == 'outcome' and $active_plugin == 'import') {
+                $plugin_info['outcome']['import'] = array('id' => 'import', 'link' => null, 'string' => get_string('importoutcomes', 'grades'));
             }
 
             $count++;
@@ -602,6 +619,24 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
         $plugin_info['export']=$exportnames;
     }
 
+    // Key managers
+    if ($CFG->gradepublishing) {
+        $keymanager_url = $url_prefix.'export/keymanager.php?id='.$courseid;
+        $plugin_info['export']['keymanager'] = array('id' => 'keymanager', 'link' => $keymanager_url, 'string' => get_string('keymanager', 'grades'));
+        if ($active_type == 'export' and $active_plugin == 'keymanager' ) {
+            $active = $keymanager_url;
+        }
+        $count++;
+
+        $keymanager_url = $url_prefix.'import/keymanager.php?id='.$courseid;
+        $plugin_info['import']['keymanager'] = array('id' => 'keymanager', 'link' => $keymanager_url, 'string' => get_string('keymanager', 'grades'));
+        if ($active_type == 'import' and $active_plugin == 'keymanager' ) {
+            $active = $keymanager_url;
+        }
+        $count++;
+    }
+
+
     foreach ($plugin_info as $plugin_type => $plugins) {
         if (!empty($plugins['id']) && $active_plugin == $plugins['id']) {
             $plugin_info['strings']['active_plugin_str'] = $plugins['string'];
@@ -666,6 +701,10 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null, $he
         $first_link = $CFG->wwwroot.'/grade/index.php?id='.$COURSE->id;
     }
 
+    if ($active_type == 'preferences') {
+        $CFG->stylesheets[] = $CFG->wwwroot . '/grade/report/styles.css';
+    }
+
     $navlinks[] = array('name' => $strgrades,
                         'link' => $first_link,
                         'type' => 'misc');
@@ -674,6 +713,11 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null, $he
 
     if (!empty($plugin_info[$active_type]['link']) && $plugin_info[$active_type]['link'] != qualified_me()) {
         $active_type_link = $plugin_info[$active_type]['link'];
+    }
+
+    if (!empty($plugin_info[$active_type]['parent']['link'])) {
+        $active_type_link = $plugin_info[$active_type]['parent']['link'];
+        $navlinks[] = array('name' => $stractive_type, 'link' => $active_type_link, 'type' => 'misc');
     }
 
     if (empty($plugin_info[$active_type]['id'])) {
@@ -685,7 +729,7 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null, $he
     $navigation = build_navigation($navlinks);
 
     $title = ': ' . $stractive_plugin;
-    if (empty($plugin_info[$active_type]['id'])) {
+    if (empty($plugin_info[$active_type]['id']) || !empty($plugin_info[$active_type]['parent'])) {
         $title = ': ' . $stractive_type . ': ' . $stractive_plugin;
     }
 
