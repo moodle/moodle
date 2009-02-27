@@ -254,6 +254,8 @@ var filepicker = new YAHOO.widget.Panel('file-picker-$suffix', {
 // public method
 this.show = function() {
     filepicker.update_instances();
+    var panel = new YAHOO.util.Element('panel-$suffix');
+    panel.get('element').innerHTML = '';
     filepicker.show();
 }
 this.hide = function() {
