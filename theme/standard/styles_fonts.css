@@ -618,7 +618,7 @@ body#grade-index .grades .header {
 #grade-aggregation-help code {
     font-style: normal;
 }
-option.optionheader {
+#choosepluginreport_jump option.optionheader {
     font-weight: bold;
 }
 

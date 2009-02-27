@@ -334,7 +334,7 @@ function print_grade_plugin_selector($plugin_info, $return=false) {
 
         if (empty($plugins['id'])) {
             foreach ($plugins as $plugin) {
-                $menu[$plugin['link']] = '&nbsp;&nbsp;&nbsp;&nbsp;' . $plugin['string'];
+                $menu[$plugin['link']] = $plugin['string'];
                 $count++;
             }
         }

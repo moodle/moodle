@@ -2615,6 +2615,14 @@ div.allcoursegrades {
     margin-top: 7px;
 }
 
+#choosepluginreport_jump option {
+    margin-left: 20px;
+}
+
+#choosepluginreport_jump option.optionheader {
+    margin-left: 0px;
+}
+
 /***
  *** Login
  ***/
@@ -5015,7 +5023,7 @@ table.quizreviewsummary td.cell {
     margin-top:0.4em;
     position:relative;
     display:inline-block;
-    
+
 }
 
 #mod-quiz-edit .editq div.question div.content .randomquestioncategory a{
