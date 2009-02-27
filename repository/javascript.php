@@ -65,6 +65,7 @@ function repository_get_client($context, $accepted_filetypes = '*', $returnvalue
     $strerror     = get_string('error', 'repository');
     $strfilenotnull = get_string('filenotnull', 'repository');
     $strfederatedsearch = get_string('federatedsearch', 'repository');
+    $strhelp      = get_string('help');
     $strrefresh   = get_string('refresh', 'repository');
     $strinvalidjson = get_string('invalidjson', 'repository');
     $strlistview  = get_string('listview', 'repository');
@@ -570,6 +571,13 @@ _client.print_footer = function() {
             repository_client_$suffix.logout(repository_client_$suffix.repositoryid, 1);
         }
     }
+    if(_client.ds.help) {
+        var help = document.createElement('A');
+        help.href = _client.ds.help;
+        help.target = "_blank";
+        help.innerHTML = '<img src="$CFG->pixpath/a/help.png" /> $strhelp';
+        oDiv.appendChild(help);
+    }
 }
 _client.viewthumb = function(ds) {
     _client.viewmode = 0;
@@ -922,9 +930,12 @@ _client.makepath = function() {
             el.id = _client.repositoryid;
             el.path = _client.ds.path[i].path;
             el.on('contentReady', function() {
-                this.on('click', function() {
+                var path_link = document.getElementById(link.id);
+                path_link.id = this.id;
+                path_link.path = this.path
+                path_link.onclick = function() {
                     repository_client_$suffix.req(this.id, this.path);
-                })
+                }
             });
         }
     }
