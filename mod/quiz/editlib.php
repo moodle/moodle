@@ -35,35 +35,45 @@ require_once("locallib.php");
 define('NUM_QS_TO_SHOW_IN_RANDOM', 3);
 
 /**
-* Delete a question from a quiz
-*
-* Deletes a question or a pagebreak from a quiz by updating $quiz
-* as well as the quiz, quiz_question_instances
-* @return boolean         false if the question was not in the quiz
-* @param int $id          The id of the question to be deleted
-* @param object $quiz  The extended quiz object as used by edit.php
-*                         This is updated by this function
-*/
-function quiz_delete_quiz_question($id, &$quiz) {
+ * Remove a question from a quiz
+ * @param object $quiz the quiz object.
+ * @param int $questionid The id of the question to be deleted.
+ */
+function quiz_remove_question($quiz, $questionid) {
     global $DB;
-    // TODO: For the sake of safety check that this question can be deleted
-    // safely, i.e., that it is not already in use.
-    $questions = explode(",", $quiz->questions);
 
-    // only do something if this question exists
-    if (!isset($questions[$id])) {
-        return false;
+    $questionids = explode(',', $quiz->questions);
+    $key = array_search($questionid, $questionids);
+    if ($key === false) {
+        return;
     }
 
-    $question = $questions[$id];
-    unset($questions[$id]);
-    $quiz->questions = implode(",", $questions);
-    // save new questionlist in database
-    if (!$DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->instance))) {
-        print_error('cannotsavequestion', 'quiz');
+    unset($questionids[$key]);
+    $quiz->questions = implode(',', $questionids);
+    $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
+    $DB->delete_records('quiz_question_instances', array('quiz' => $quiz->instance, 'question' => $questionid));
+}
+
+/**
+ * Remove an empty page from the quiz layout. If that is not possible, do nothing.
+ * @param string $layout the existinng layout, $quiz->questions.
+ * @param integer $index the position into $layout where the empty page should be removed.
+ * @return the updated layout
+ */
+function quiz_delete_empty_page($layout, $index) {
+    $questionids = explode(',', $layout);
+
+    if ($index < -1 || $index >= count($questionids) - 1) {
+        return $layout;
     }
-    $DB->delete_records('quiz_question_instances', array('quiz' => $quiz->instance, 'question'=> $question));
-    return true;
+
+    if (($index >= 0 && $questionids[$index] != 0) || $questionids[$index + 1] != 0) {
+        return $layout; // This was not an empty page.
+    }
+
+    unset($questionids[$index + 1]);
+
+    return implode(',', $questionids);
 }
 
 /**
@@ -142,6 +152,53 @@ function quiz_add_quiz_question($id, &$quiz, $page=0) {
 }
 
 /**
+ * Add a page break after at particular position$.
+ * @param string $layout the existinng layout, $quiz->questions.
+ * @param integer $index the position into $layout where the empty page should be removed.
+ * @return the updated layout
+ */
+function quiz_add_page_break_at($layout, $index) {
+    $questionids = explode(',', $layout);
+    if ($index < 0 || $index >= count($questionids)) {
+        return $layout;
+    }
+
+    array_splice($questionids, $index, 0, '0');
+
+    return implode(',', $questionids);
+}
+
+/**
+ * Add a page break after a particular question.
+ * @param string $layout the existinng layout, $quiz->questions.
+ * @param integer $qustionid the question to add the page break after.
+ * @return the updated layout
+ */
+function quiz_add_page_break_after($layout, $questionid) {
+    $questionids = explode(',', $layout);
+    $key = array_search($questionid, $questionids);
+    if ($key === false || !$questionid) {
+        return $layout;
+    }
+
+    array_splice($questionids, $key + 1, 0, '0');
+
+    return implode(',', $questionids);
+}
+
+/**
+ * Update the database after $quiz->questions has been changed. For example,
+ * this deletes preview attempts and updates $quiz->sumgrades.
+ * @param $quiz the quiz object.
+ */
+function quiz_save_new_layout($quiz) {
+    global $DB;
+    $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
+    quiz_update_sumgrades($quiz);
+    quiz_delete_previews($quiz);
+}
+
+/**
 * Save changes to question instance
 *
 * Saves changes to the question grades in the quiz_question_instances table.
@@ -163,6 +220,52 @@ function quiz_update_question_instance($grade, $questionid, $quizid) {
         $instance->grade = $grade;
         return $DB->insert_record("quiz_question_instances", $instance);
     }
+}
+
+// Private function used by the following two.
+function _quiz_move_question($layout, $questionid, $shift) {
+    if (!$questionid || !($shift == 1 || $shift == -1)) {
+        return $layout;
+    }
+
+    $questionids = explode(',', $layout);
+    $key = array_search($questionid, $questionids);
+    if ($key === false) {
+        return $layout;
+    }
+
+    $otherkey = $key + $shift;
+    if ($otherkey < 0 || $otherkey >= count($questionids) - 1) {
+        return $layout;
+    }
+
+    $temp = $questionids[$otherkey];
+    $questionids[$otherkey] = $questionids[$key];
+    $questionids[$key] = $temp;
+
+    return implode(',', $questionids);
+}
+
+/**
+ * Move a particular question one space earlier in the $quiz->questions list.
+ * If that is not possible, do nothing.
+ * @param string $layout the existinng layout, $quiz->questions.
+ * @param integer $questionid the id of a question.
+ * @return the updated layout
+ */
+function quiz_move_question_up($layout, $questionid) {
+    return _quiz_move_question($layout, $questionid, -1);
+}
+
+/**
+ * Move a particular question one space later in the $quiz->questions list.
+ * If that is not possible, do nothing.
+ * @param string $layout the existinng layout, $quiz->questions.
+ * @param integer $questionid the id of a question.
+ * @return the updated layout
+ */
+function quiz_move_question_down($layout, $questionid) {
+    return _quiz_move_question($layout, $questionid, +1);
 }
 
 /**
@@ -319,30 +422,28 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
             $questions[$qnum]->qtype = 'missingtype';
         }
         $deletex="delete.gif";
-        if($qnum!=0 OR ($qnum==0&&!$pageopen)){
+        if ($qnum != 0 || ($qnum == 0 && !$pageopen)) {
             //this is either a question or a page break after another
             //        (no page is currently open)
-            if(!$pageopen){
+            if (!$pageopen) {
                 //if no page is open, start display of a page
                 $pagecount++;
                 echo  '<div class="quizpage"><span class="pagetitle">'.
                         get_string('page').'&nbsp;'.$pagecount.
                         '</span><div class="pagecontent">';
-                $pageopen=true;
+                $pageopen = true;
             }
-            if($qnum==0 && $i<$questiontotalcount){
-                //this is a consequent 0 (signaling empty page), tell
-                //        the user the page is empty
+            if ($qnum == 0  && $i < $questiontotalcount) {
+                // This is the second successive page break. Tell the user the page is empty.
                 echo '<div class="pagestatus">';
                 print_string("noquestionsonpage", "quiz");
                 echo '</div>';
-                if ($allowdelete && !$quiz->questionsperpage) { // remove from quiz, not question delete.
+                if ($allowdelete && !$quiz->questionsperpage) {
                     echo '<div class="quizpagedelete">';
-                    echo "<a title=\"".get_string("removeemptypage","quiz")."\" href=\"".
-                            $pageurl->out_action(array('deleteemptypage'=>$i)).
-                            "\"><img src=\"$CFG->pixpath/t/delete.gif\" ".
-                            "class=\"iconsmall\"".
-                            " alt=\"$strremove\" /></a>";
+                    echo '<a title="' . get_string('removeemptypage', 'quiz') . '" href="' .
+                            $pageurl->out_action(array('deleteemptypage' => $i - 1)) .
+                            '"><img src="' . $CFG->pixpath . '/t/delete.gif" ' .
+                            'class="iconsmall" alt="' . $strremove . '" /></a>';
                     echo '</div>';
                 }
             }
@@ -396,31 +497,31 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
             <div class="questioncontrols">
                 <?php
             if ($count != 0) {
-                if(!$hasattempts){
+                if (!$hasattempts) {
                     $upbuttonclass="";
-                    if (!($count < $lastindex-1)) {
+                    if ($count >= $lastindex - 1) {
                         $upbuttonclass="upwithoutdown";
                     }
                     echo "<a title=\"$strmoveup\" href=\"".
-                            $pageurl->out_action(array('up'=>$count))."\"><img
+                            $pageurl->out_action(array('up' => $question->id))."\"><img
                              src=\"$CFG->pixpath/t/up.gif\" class=\"iconsmall
                             $upbuttonclass\" alt=\"$strmoveup\" /></a>";
                 }
 
             }
-            if ($count < $lastindex-1) {
+            if ($count < $lastindex - 1) {
                 if(!$hasattempts){
                     echo "<a title=\"$strmovedown\" href=\"".
-                            $pageurl->out_action(array('down'=>$count))."\"><img
+                            $pageurl->out_action(array('down' => $question->id))."\"><img
                             src=\"$CFG->pixpath/t/down.gif\" class=\"iconsmall\"".
                             " alt=\"$strmovedown\" /></a>";
                 }
             }
-            if ($allowdelete && question_has_capability_on($question, 'use',
-                    $question->category)) { // remove from quiz, not question delete.
-                if(!$hasattempts){
+            if ($allowdelete && question_has_capability_on($question, 'use', $question->category)) {
+            // remove from quiz, not question delete.
+                if (!$hasattempts) {
                     echo "<a title=\"$strremove\" href=\"".
-                            $pageurl->out_action(array('delete'=>$count))."\">
+                            $pageurl->out_action(array('remove' => $question->id))."\">
                             <img src=\"$CFG->pixpath/t/delete.gif\" ".
                             "class=\"iconsmall\" alt=\"$strremove\" /></a>";
                 }
@@ -437,7 +538,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true,
     <?php echo $pageurl->hidden_params_out(); ?>
     <input type="hidden" name="savechanges" value="save" />
         <?php
-            echo '<input type="text" name="q'.$qnum.'" id="inputq'.$qnum.'" size="' . ($quiz->decimalpoints + 2) . '"
+            echo '<input type="text" name="g'.$qnum.'" id="inputq'.$qnum.'" size="' . ($quiz->decimalpoints + 2) . '"
                     value="'.(0 + $quiz->grades[$qnum]).
                     '" tabindex="'.($lastindex+$qno).'" />';
             ?>

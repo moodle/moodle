@@ -89,12 +89,7 @@ if (!$quizobj->is_preview_user() && $messages) {
 $accessmanager->do_password_check($quizobj->is_preview_user());
 
 /// Delete any previous preview attempts belonging to this user.
-if ($oldattempts = $DB->get_records_select('quiz_attempts', "quiz = ?
-        AND userid = ? AND preview = 1", array($quiz->id, $USER->id))) {
-    foreach ($oldattempts as $oldattempt) {
-        quiz_delete_attempt($oldattempt, $quiz);
-    }
-}
+quiz_delete_previews($quiz, $USER->id);
 
 /// Create the new attempt and initialize the question sessions
 $attempt = quiz_create_attempt($quiz, $attemptnumber, $lastattempt, time(), $quizobj->is_preview_user());

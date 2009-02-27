@@ -167,54 +167,43 @@ if (isset($quiz->instance) && empty($quiz->grades)) {  // Construct an array to 
     $quiz->grades = quiz_get_all_question_grades($quiz);
 }
 
-// SECTION: PROCESS COMMANDS //
-// If any edit action makes a significant change to the structure of the quiz,
-// then we will need to delete all preview attempts.
-$significantchangemade = false;
+// Process commands ============================================================
 
-if (($up = optional_param('up', false, PARAM_INT)) !== false && confirm_sesskey()) {
-/// Move the given question up a slot
-    $questions = explode(',', $quiz->questions);
-    if ($up > 0 && isset($questions[$up])) {
-        //$prevkey = ($questions[$up-1] == 0) ? $up-2 : $up-1;
-        $prevkey = $up-1;
-        $swap = $questions[$prevkey];
-        $questions[$prevkey] = $questions[$up];
-        $questions[$up] = $swap;
-        $quiz->questions = implode(',', $questions);
-        $quiz->questions = quiz_clean_layout($quiz->questions);
-        if (!$DB->set_field('quiz', 'questions', $quiz->questions,
-                array('id' => $quiz->instance))) {
-            print_error('cannotsavequestion', 'quiz');
-        }
-        $significantchangemade = true;
+// Get the list of question ids had their check-boxes ticked.
+$selectedquestionids = array();
+$params = (array) data_submitted();
+foreach ($params as $key => $value) {
+    if (preg_match('!^s([0-9]+)$!', $key, $matches)) {
+        $selectedquestionids[] = $matches[1];
     }
 }
 
-if (($down = optional_param('down', false, PARAM_INT)) !== false && confirm_sesskey()) {
-/// Move the given question down a slot
-    $questions = explode(',', $quiz->questions);
-    if ($down < count($questions)) {
-        //$nextkey = ($questions[$down+1] == 0) ? $down+2 : $down+1;
-        $nextkey = $down+1;
-        $swap = $questions[$nextkey];
-        $questions[$nextkey] = $questions[$down];
-        $questions[$down] = $swap;
-        $quiz->questions = implode(',', $questions);
-        $quiz->questions = quiz_clean_layout($quiz->questions);
-        if (!$DB->set_field('quiz', 'questions', $quiz->questions,
-                array('id' => $quiz->instance))) {
-            print_error('cannotsavequestion', 'quiz');
-        }
-        $significantchangemade = true;
-    }
+if (($up = optional_param('up', false, PARAM_INT)) && confirm_sesskey()) {
+    $quiz->questions = quiz_move_question_up($quiz->questions, $up);
+    quiz_save_new_layout($quiz);
+    redirect($thispageurl->out());
+}
+
+if (($down = optional_param('down', false, PARAM_INT)) && confirm_sesskey()) {
+    $quiz->questions = quiz_move_question_down($quiz->questions, $down);
+    quiz_save_new_layout($quiz);
+    redirect($thispageurl->out());
+}
+
+if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
+    // Re-paginate the quiz
+    $questionsperpage = optional_param('questionsperpage', $quiz->questionsperpage, PARAM_INT);
+    $quiz->questions = quiz_repaginate($quiz->questions, $questionsperpage );
+    quiz_save_new_layout($quiz);
 }
 
 if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sesskey()) {
 /// Add a single question to the current quiz
     $addonpage = optional_param('addonpage', 0, PARAM_INT);
     quiz_add_quiz_question($addquestion, $quiz, $addonpage);
-    $significantchangemade = true;
+    quiz_update_sumgrades($quiz);
+    quiz_delete_previews($quiz);
+    redirect($thispageurl->out());
 }
 
 if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
@@ -226,24 +215,20 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
             quiz_add_quiz_question($key, $quiz);
         }
     }
-    $significantchangemade = true;
+    quiz_update_sumgrades($quiz);
+    quiz_delete_previews($quiz);
+    redirect($thispageurl->out());
 }
 
-$qcobject = new question_category_object(
-    $pagevars['cpage'],
-    $thispageurl,
-    $contexts->having_one_edit_tab_cap('categories'),
-    $defaultcategoryid,
-    $defaultcategory,
-    null,
-    $contexts->having_cap('moodle/question:add'));
+$qcobject = new question_category_object($pagevars['cpage'], $thispageurl,
+        $contexts->having_one_edit_tab_cap('categories'), $defaultcategoryid,
+        $defaultcategory, null, $contexts->having_cap('moodle/question:add'));
 
 $newrandomcategory = false;
 $newquestioninfo = quiz_process_randomquestion_formdata($qcobject);
 if ($newquestioninfo) {
     $newrandomcategory = $newquestioninfo->newrandomcategory;
     if (!$newrandomcategory) {
-        print_r($newquestioninfo);
         print_error('cannotcreatecategory');
     } else {
         add_to_log($quiz->course, 'quiz', 'addcategory',
@@ -311,114 +296,48 @@ if ((optional_param('addrandom', false, PARAM_BOOL) || $newrandomcategory) && co
         }
     }
 
-    $significantchangemade = true;
+    quiz_update_sumgrades($quiz);
+    quiz_delete_previews($quiz);
+    redirect($thispageurl->out());
 }
 
-$addpagesafterquestions = array();
-if ($addnewpagesafterselected = optional_param('addnewpagesafterselected', null)) {
-    $rawgrades = (array) data_submitted();
-    foreach ($rawgrades as $key => $value) {
-        /// Parse input for question -> grades
-        if (preg_match('!^s([0-9]+)$!', $key, $matches)) {
-            $addpagesafterquestions[] = $matches[1];
-        }
+if (optional_param('addnewpagesafterselected', null) && !empty($selectedquestionids) && confirm_sesskey()) {
+    foreach ($selectedquestionids as $questionid) {
+        $quiz->questions = quiz_add_page_break_after($quiz->questions, $questionid);
     }
+    quiz_save_new_layout($quiz);
+    redirect($thispageurl->out());
 }
 
 $addpage = optional_param('addpage', false, PARAM_INT);
-if (($addpage || !empty($addpagesafterquestions)) && confirm_sesskey()) {
-/// Move the given question up a slot
-
-    $questions = explode(',', $quiz->questions);
-
-    $pagebreakid = '0';
-    if ($addpage > 0 && isset($questions[$addpage])) {
-        array_splice($questions, $addpage, 0, $pagebreakid);
-        $significantchangemade = true;
-    }
-    foreach ($addpagesafterquestions as $key => $questionid) {
-        $addpage = array_search($questionid, $questions)+1;
-        if ($addpage > 0 && isset($questions[$addpage])) {
-            $pagebreakid = '0';
-            array_splice($questions, $addpage, 0, $pagebreakid);
-            $significantchangemade = true;
-        }
-    }
-    $quiz->questions = implode(',', $questions);
-    $quiz->questions = quiz_clean_layout($quiz->questions);
-
-    if (!$DB->set_field('quiz', 'questions', $quiz->questions,
-            array('id' => $quiz->instance))) {
-        print_error('cannotsavequestion', 'quiz');
-    }
-}
-
-if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
-    // Re-paginate the quiz
-    $questionsperpage = optional_param('questionsperpage',
-            $quiz->questionsperpage, PARAM_INT);
-    $quiz->questions = quiz_repaginate($quiz->questions,
-            $questionsperpage );
-    if (!$DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id))) {
-        print_error('cannotsavelayout', 'quiz');
-    }
-    $significantchangemade = true;
+if ($addpage !== false && confirm_sesskey()) {
+    $quiz->questions = quiz_add_page_break_at($quiz->questions, $addpage);
+    quiz_save_new_layout($quiz);
+    redirect($thispageurl->out());
 }
 
 $deleteemptypage = optional_param('deleteemptypage', false, PARAM_INT);
 if (($deleteemptypage !== false) && confirm_sesskey()) {
-    $questions = explode(',', $quiz->questions);
-    if ($deleteemptypage>0) {
-        //it points to a value one too big due to the display logic
-        $deleteemptypage--;
-    }
-    if (((int)$questions[$deleteemptypage]) == 0) {
-        $questions = explode(',', $quiz->questions);
-        $endpart = array_slice($questions, $deleteemptypage + 1, null, true);
-        $beginpart = array_slice($questions, 0, $deleteemptypage, true);
-        $questions = array_merge($beginpart, $endpart);
-        $quiz->questions = implode(',', $questions);
-        $quiz->questions = quiz_clean_layout($quiz->questions);
-    }
-    if (!$DB->set_field('quiz', 'questions', $quiz->questions,
-            array('id' => $quiz->instance))) {
-        print_error('cannotsavequestion', 'quiz');
-    }
+    $quiz->questions = quiz_delete_empty_page($quiz->questions, $deleteemptypage);
+    quiz_save_new_layout($quiz);
+    redirect($thispageurl->out());
 }
 
-$deletequestions = array();
-if ($quizdeleteselected = optional_param('quizdeleteselected', false)) {
-    $rawgrades = (array) data_submitted();
-    foreach ($rawgrades as $key => $value) {
-        /// Parse input for question -> grades
-        if (preg_match('!^s([0-9]+)$!', $key, $matches)) {
-            $deletequestions[] = $matches[1];
-        }
-    }
+$remove = optional_param('remove', false, PARAM_INT);
+if (($remove = optional_param('remove', false, PARAM_INT)) && confirm_sesskey()) {
+    quiz_remove_question($quiz, $remove);
+    quiz_update_sumgrades($quiz);
+    quiz_delete_previews($quiz);
+    redirect($thispageurl->out());
 }
 
-$delete = optional_param('delete', false, PARAM_INT);
-if (($delete !== false || !empty($deletequestions)) && confirm_sesskey()) {
-
-    //was:     if ($delete > 0 ) {
-    if ($delete !==false) {
-        quiz_delete_quiz_question($delete, $quiz);
-        $significantchangemade = true;
+if (optional_param('quizdeleteselected', false, PARAM_BOOL) && !empty($selectedquestionids) && confirm_sesskey()) {
+    foreach ($selectedquestionids as $questionid) {
+        quiz_remove_question($quiz, $questionid);
     }
-    foreach ($deletequestions as $key => $questionid) {
-        $questions = explode(',', $quiz->questions);
-        $delete = array_search($questionid, $questions);
-        if ($delete !== false) {
-            quiz_delete_quiz_question($delete, $quiz);
-            $significantchangemade = true;
-        }
-    }
-    $quiz->questions = quiz_clean_layout($quiz->questions);
-
-    if (!$DB->set_field('quiz', 'questions', $quiz->questions,
-            array('id' => $quiz->instance))) {
-        print_error('cannotsavequestion', 'quiz');
-    }
+    quiz_update_sumgrades($quiz);
+    quiz_delete_previews($quiz);
+    redirect($thispageurl->out());
 }
 
 if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
@@ -436,7 +355,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     }
 
     foreach ($rawgrades as $key => $value) {
-        if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
+        if (preg_match('!^g([0-9]+)$!', $key, $matches)) {
             /// Parse input for question -> grades
             $key = $matches[1];
             $quiz->grades[$key] = $value;
@@ -453,28 +372,21 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
                 $value++;
             }
             $questions[$value] = $oldquestions[$key];
-
-        } else if (preg_match('!^s([0-9]+)$!', $key, $matches)) {
-            // Parse input for selected questions
-            // (add new pages after questions in quiz)
-            $key = $matches[1];
-            if ($moveselectedonpage) {
-                $moveonpagequestions[] = $key;
-            }
         }
     }
+
     // If ordering info was given, reorder the questions
     if ($questions) {
         ksort($questions);
         $quiz->questions = implode(',', $questions) . ',0';
         $quiz->questions = quiz_clean_layout($quiz->questions);
-
     }
+
     //get a list of questions to move, later to be added in the appropriate
     //place in the string
-    if ($moveonpagequestions) {
+    if ($moveselectedonpage) {
         $questions = explode(',', $quiz->questions);
-        foreach ($moveonpagequestions as $page => $question) {
+        foreach ($selectedquestionids as $page => $question) {
             //remove the questions from their original positions first
             while (($delpos = array_search($question, $questions)) !== FALSE) {
                 //in case there are multiple instances because of an error, remove all
@@ -499,14 +411,14 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         $pagebreakpositions = array_keys($questions, 0);
         //move to the end of the selected page
         $moveselectedpos = $pagebreakpositions[$moveselectedonpage - 1];
-        foreach ($moveonpagequestions as $question) {
+        foreach ($selectedquestionids as $question) {
             array_splice($questions, $moveselectedpos, 0, $question);
             //place the next one after this one:
             $moveselectedpos++;
         }
         $quiz->questions = implode(',', $questions);
     }
-    if ($moveonpagequestions || $questions) {
+    if ($moveselectedonpage || $questions) {
         if (!$DB->set_field('quiz', 'questions', $quiz->questions,
                 array('id' => $quiz->instance))) {
             print_error('cannotsavequestion', 'quiz');
@@ -520,24 +432,14 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         }
     }
 
-    $significantchangemade = true;
-}
-/// Delete any teacher preview attempts if the quiz has been modified
-if ($significantchangemade) {
-    $previewattempts = $DB->get_records_select('quiz_attempts',
-             'quiz = ? AND preview = 1', array($quiz->id));
-    if ($previewattempts) {
-        foreach ($previewattempts as $attempt) {
-            quiz_delete_attempt($attempt, $quiz);
-        }
-    }
     quiz_update_sumgrades($quiz);
+    quiz_delete_previews($quiz);
     redirect($thispageurl->out());
 }
 
 $questionbank->process_actions($thispageurl, $cm);
 
-/// all commands have been dealt with, now print the page
+// End of process commands =====================================================
 
 if (isset($quiz->instance) && $DB->record_exists_select('quiz_attempts',
         'quiz = ? AND preview = 0', array($quiz->instance))) {

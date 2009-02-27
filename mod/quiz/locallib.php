@@ -204,6 +204,24 @@ function quiz_delete_attempt($attempt, $quiz) {
     quiz_update_grades($quiz, $userid);
 }
 
+/**
+ * Delete all the preview attempts at a quiz, or possibly all the attempts belonging
+ * to one user.
+ * @param object $quiz the quiz object.
+ * @param integer $userid (optional) if given, only delete the previews belonging to this user.
+ */
+function quiz_delete_previews($quiz, $userid = null) {
+    global $DB;
+    $conditions = array('quiz' => $quiz->id, 'preview' => 1);
+    if (!empty($userid)) {
+        $conditions['userid'] = $userid;
+    }
+    $previewattempts = $DB->get_records('quiz_attempts', $conditions);
+    foreach ($previewattempts as $attempt) {
+        quiz_delete_attempt($attempt, $quiz);
+    }
+}
+
 /// Functions to do with quiz layout and pages ////////////////////////////////
 
 /**
@@ -298,7 +316,7 @@ function quiz_first_questionnumber($quizlayout, $pagelayout) {
  * @param boolean $shuffle Should the questions be reordered randomly?
  * @return string the new layout string
  */
-function quiz_repaginate($layout, $perpage, $shuffle=false) {
+function quiz_repaginate($layout, $perpage, $shuffle = false) {
     $layout = str_replace(',0', '', $layout); // remove existing page breaks
     $questions = explode(',', $layout);
     //remove empty pages from beginning
@@ -306,7 +324,6 @@ function quiz_repaginate($layout, $perpage, $shuffle=false) {
         array_shift($questions);
     }
     if ($shuffle) {
-        srand((float)microtime() * 1000000); // for php < 4.2
         shuffle($questions);
     }
     $i = 1;
