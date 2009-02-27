@@ -1535,7 +1535,8 @@ abstract class repository {
      * a folder name, or a identification of folder
      * @return array the list of files, including meta infomation
      */
-    abstract public function get_listing($path = '/', $page='');
+    public function get_listing($path = '', $page = '') {
+    }
 
     /**
      * Search files in repository
@@ -1572,7 +1573,6 @@ abstract class repository {
 
     /**
      * Show the login screen, if required
-     * This is an abstract function, it must be overriden.
      */
     public function print_login(){
         return $this->get_listing();
