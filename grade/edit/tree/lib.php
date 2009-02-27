@@ -590,11 +590,10 @@ class grade_edit_tree_column_weightorextracredit extends grade_edit_tree_column 
             throw new Exception('Array key (element) missing from 2nd param of grade_edit_tree_column_weightorextracredit::get_item_cell($item, $params)');
         }
 
-        $aggcoef_input = grade_edit_tree::get_weight_input($item);
         $html = '<td class="cell">';
 
-        if ($params['element']['type'] == 'categoryitem' || $params['element']['type'] == 'courseitem') {
-            $html .= $aggcoef_input;
+        if (!in_array($params['element']['object']->itemtype, array('courseitem', 'categoryitem', 'category'))) {
+            $html .= grade_edit_tree::get_weight_input($item);
         }
 
         return $html.'</td>';
