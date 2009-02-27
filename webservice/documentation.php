@@ -24,8 +24,8 @@
  */
 
 /**
- * This file generate a SOAP documentation in HTML
- * This documentation describe how to call Moodle SOAP Web Service
+ * This file generate a web service documentation in HTML
+ * This documentation describe how to call a Moodle Web Service
  */
 require_once('../config.php');
 require_once('lib.php');
@@ -37,7 +37,11 @@ generate_documentation($protocol);
 generate_functionlist();
 print_footer();
 
-
+/**
+ * Check if the Moodle site has the web service protocol enable
+ * @global object $CFG
+ * @param string $protocol
+ */
 function check_webservices($protocol){
     global $CFG;
 
@@ -71,8 +75,8 @@ function check_webservices($protocol){
 }
 
 /**
- *
- * @param <type> $protocol
+ * Generate documentation specific to a protocol
+ * @param string $protocol
  */
 function generate_documentation($protocol) {
     switch ($protocol) {
@@ -93,8 +97,8 @@ function generate_documentation($protocol) {
 
 
 /**
- *
- * @global <type> $CFG
+ * Generate web service function list
+ * @global object $CFG
  */
 function generate_functionlist () {
     global $CFG;
@@ -172,8 +176,8 @@ EOF;
 
  /**
  * Retrieve all external.php from Moodle
- * @param <type> $
- * @param <type> $directorypath
+ * @param array $files
+ * @param string $directorypath
  * @return boolean result true if n
  */
 function setListApiFiles( &$files, $directorypath )
