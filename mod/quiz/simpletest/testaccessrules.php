@@ -14,12 +14,14 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-class simple_rules_test extends FakeDBUnitTestCase {
+class simple_rules_test extends UnitTestCase {
     function test_num_attempts_access_rule() {
         $quiz = new stdClass;
         $quiz->attempts = 3;
         $quiz->questions = '';
-        $quizobj = new quiz($quiz, null, null);
+        $cm = new stdClass;
+        $cm->id = 0;
+        $quizobj = new quiz($quiz, $cm, null);
         $rule = new num_attempts_access_rule($quizobj, 0);
         $attempt = new stdClass;
 
@@ -42,13 +44,15 @@ class simple_rules_test extends FakeDBUnitTestCase {
     function test_ipaddress_access_rule() {
         $quiz = new stdClass;
         $attempt = new stdClass;
+        $cm = new stdClass;
+        $cm->id = 0;
 
         // Test the allowed case by getting the user's IP address. However, this
         // does not always work, for example using the mac install package on my laptop.
         $quiz->subnet = getremoteaddr();
         if (!empty($quiz->subnet)) {
             $quiz->questions = '';
-            $quizobj = new quiz($quiz, null, null);
+            $quizobj = new quiz($quiz, $cm, null);
             $rule = new ipaddress_access_rule($quizobj, 0);
             $this->assertFalse($rule->prevent_access());
             $this->assertFalse($rule->description());
@@ -59,7 +63,7 @@ class simple_rules_test extends FakeDBUnitTestCase {
 
         $quiz->subnet = '0.0.0.0';
         $quiz->questions = '';
-        $quizobj = new quiz($quiz, null, null);
+        $quizobj = new quiz($quiz, $cm, null);
         $rule = new ipaddress_access_rule($quizobj, 0);
         $this->assertTrue($rule->prevent_access());
         $this->assertFalse($rule->description());
@@ -72,7 +76,9 @@ class simple_rules_test extends FakeDBUnitTestCase {
         $quiz = new stdClass;
         $quiz->timelimit = 60;
         $quiz->questions = '';
-        $quizobj = new quiz($quiz, null, null);
+        $cm = new stdClass;
+        $cm->id = 0;
+        $quizobj = new quiz($quiz, $cm, null);
         $rule = new time_limit_access_rule($quizobj, 10000);
         $attempt = new stdClass;
 
@@ -89,13 +95,15 @@ class simple_rules_test extends FakeDBUnitTestCase {
     }
 }
 
-class open_close_date_access_rule_test extends FakeDBUnitTestCase {
+class open_close_date_access_rule_test extends UnitTestCase {
     function test_no_dates() {
         $quiz = new stdClass;
         $quiz->timeopen = 0;
         $quiz->timeclose = 0;
         $quiz->questions = '';
-        $quizobj = new quiz($quiz, null, null);
+        $cm = new stdClass;
+        $cm->id = 0;
+        $quizobj = new quiz($quiz, $cm, null);
         $attempt = new stdClass;
         $attempt->preview = 0;
 
@@ -120,7 +128,9 @@ class open_close_date_access_rule_test extends FakeDBUnitTestCase {
         $quiz->timeopen = 10000;
         $quiz->timeclose = 0;
         $quiz->questions = '';
-        $quizobj = new quiz($quiz, null, null);
+        $cm = new stdClass;
+        $cm->id = 0;
+        $quizobj = new quiz($quiz, $cm, null);
         $attempt = new stdClass;
         $attempt->preview = 0;
 
@@ -144,7 +154,9 @@ class open_close_date_access_rule_test extends FakeDBUnitTestCase {
         $quiz->timeopen = 0;
         $quiz->timeclose = 20000;
         $quiz->questions = '';
-        $quizobj = new quiz($quiz, null, null);
+        $cm = new stdClass;
+        $cm->id = 0;
+        $quizobj = new quiz($quiz, $cm, null);
         $attempt = new stdClass;
         $attempt->preview = 0;
 
@@ -174,7 +186,9 @@ class open_close_date_access_rule_test extends FakeDBUnitTestCase {
         $quiz->timeopen = 10000;
         $quiz->timeclose = 20000;
         $quiz->questions = '';
-        $quizobj = new quiz($quiz, null, null);
+        $cm = new stdClass;
+        $cm->id = 0;
+        $quizobj = new quiz($quiz, $cm, null);
         $attempt = new stdClass;
         $attempt->preview = 0;
 
@@ -211,7 +225,7 @@ class open_close_date_access_rule_test extends FakeDBUnitTestCase {
     }
 }
 
-class inter_attempt_delay_access_rule_test extends FakeDBUnitTestCase {
+class inter_attempt_delay_access_rule_test extends UnitTestCase {
     function test_just_first_delay() {
         $quiz = new stdClass;
         $quiz->attempts = 3;
@@ -219,7 +233,9 @@ class inter_attempt_delay_access_rule_test extends FakeDBUnitTestCase {
         $quiz->delay2 = 0;
         $quiz->timeclose = 0;
         $quiz->questions = '';
-        $quizobj = new quiz($quiz, null, null);
+        $cm = new stdClass;
+        $cm->id = 0;
+        $quizobj = new quiz($quiz, $cm, null);
         $attempt = new stdClass;
         $attempt->timefinish = 10000;
 
@@ -248,7 +264,9 @@ class inter_attempt_delay_access_rule_test extends FakeDBUnitTestCase {
         $quiz->delay2 = 1000;
         $quiz->timeclose = 0;
         $quiz->questions = '';
-        $quizobj = new quiz($quiz, null, null);
+        $cm = new stdClass;
+        $cm->id = 0;
+        $quizobj = new quiz($quiz, $cm, null);
         $attempt = new stdClass;
         $attempt->timefinish = 10000;
 
@@ -280,7 +298,9 @@ class inter_attempt_delay_access_rule_test extends FakeDBUnitTestCase {
         $quiz->delay2 = 1000;
         $quiz->timeclose = 0;
         $quiz->questions = '';
-        $quizobj = new quiz($quiz, null, null);
+        $cm = new stdClass;
+        $cm->id = 0;
+        $quizobj = new quiz($quiz, $cm, null);
         $attempt = new stdClass;
         $attempt->timefinish = 10000;
 
@@ -320,7 +340,9 @@ class inter_attempt_delay_access_rule_test extends FakeDBUnitTestCase {
         $quiz->delay2 = 1000;
         $quiz->timeclose = 15000;
         $quiz->questions = '';
-        $quizobj = new quiz($quiz, null, null);
+        $cm = new stdClass;
+        $cm->id = 0;
+        $quizobj = new quiz($quiz, $cm, null);
         $attempt = new stdClass;
         $attempt->timefinish = 13000;
 
@@ -361,12 +383,14 @@ class inter_attempt_delay_access_rule_test extends FakeDBUnitTestCase {
     }
 }
 
-class password_access_rule_test extends FakeDBUnitTestCase {
+class password_access_rule_test extends UnitTestCase {
     function test_password_access_rule() {
         $quiz = new stdClass;
         $quiz->password = 'frog';
         $quiz->questions = '';
-        $quizobj = new quiz($quiz, null, null);
+        $cm = new stdClass;
+        $cm->id = 0;
+        $quizobj = new quiz($quiz, $cm, null);
         $rule = new password_access_rule($quizobj, 0);
         $attempt = new stdClass;
 
@@ -388,7 +412,9 @@ class password_access_rule_test extends FakeDBUnitTestCase {
         $quiz->questions = '';
         $cm = new stdClass;
         $cm->id = 666;
-        $quizobj = new quiz($quiz, $cm, null, false);
+        $cm = new stdClass;
+        $cm->id = 0;
+        $quizobj = new quiz($quiz, $cm, null);
         $rule = new password_access_rule($quizobj, 0);
 
         $rule->clear_access_allowed(-1);
@@ -417,14 +443,16 @@ class password_access_rule_test extends FakeDBUnitTestCase {
     }
 }
 
-class securewindow_access_rule_test extends FakeDBUnitTestCase {
+class securewindow_access_rule_test extends UnitTestCase {
     // Nothing very testable in this class, just test that it obeys the general access rule contact.
 
     function test_securewindow_access_rule() {
         $quiz = new stdClass;
         $quiz->popup = 1;
         $quiz->questions = '';
-        $quizobj = new quiz($quiz, null, null);
+        $cm = new stdClass;
+        $cm->id = 0;
+        $quizobj = new quiz($quiz, $cm, null);
         $rule = new securewindow_access_rule($quizobj, 0);
         $attempt = new stdClass;
 
@@ -436,7 +464,4 @@ class securewindow_access_rule_test extends FakeDBUnitTestCase {
     }
 }
 
-class quiz_access_manager_test extends FakeDBUnitTestCase {
-    // TODO
-}
 ?>

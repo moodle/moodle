@@ -13,7 +13,7 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-class quiz_locallib_test extends FakeDBUnitTestCase {
+class quiz_locallib_test extends UnitTestCase {
     function test_quiz_questions_in_quiz() {
         $this->assertEqual(quiz_questions_in_quiz(''), '');
         $this->assertEqual(quiz_questions_in_quiz('0'), '');
