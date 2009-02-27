@@ -661,10 +661,11 @@ WHERE
     }
 
     public function inform_grade_changed($cm, $item, $grade, $deleted) {
-        // Bail out now if completion is not enabled for course-module, grade
-        // is not used to compute completion, or this is a different numbered
-        // grade
+        // Bail out now if completion is not enabled for course-module, it is enabled
+        // but is set to manual, grade is not used to compute completion, or this
+        // is a different numbered grade
         if (!$this->is_enabled($cm) ||
+            $cm->completion == COMPLETION_TRACKING_MANUAL ||
             is_null($cm->completiongradeitemnumber) ||
             $item->itemnumber != $cm->completiongradeitemnumber) {
 
