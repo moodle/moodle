@@ -71,7 +71,7 @@ function groups_get_group_by_name($courseid, $name) {
  */
 function groups_get_grouping_by_name($courseid, $name) {
     global $DB;
-    if ($groupings = $DB->get_records_select('groupings', array('courseid'=>$courseid, 'name'=>$name))) {
+    if ($groupings = $DB->get_records('groupings', array('courseid'=>$courseid, 'name'=>$name))) {
         return key($groupings);
     }
     return false;
