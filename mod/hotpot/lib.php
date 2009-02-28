@@ -212,7 +212,8 @@ function hotpot_update_instance(&$hotpot) {
         $hotpot->id = $hotpot->instance;
         if ($result = update_record('hotpot', $hotpot)) {
             hotpot_update_events($hotpot);
-            hotpot_grade_item_update(stripslashes_recursive($hotpot));
+            //hotpot_grade_item_update(stripslashes_recursive($hotpot));
+            hotpot_update_grades(stripslashes_recursive($hotpot));
         }
     } else {
         $result=  false;
@@ -1314,6 +1315,15 @@ function hotpot_grade_item_update($hotpot, $grades=null) {
 
     } else {
         $params['gradetype'] = GRADE_TYPE_NONE;
+        // Note: when adding a new activity, a gradeitem will *not*
+        // be created in the grade book if gradetype==GRADE_TYPE_NONE
+        // A gradeitem will be created later if gradetype changes to GRADE_TYPE_VALUE
+        // However, the gradeitem will *not* be deleted if the activity's
+        // gradetype changes back from GRADE_TYPE_VALUE to GRADE_TYPE_NONE
+        // Therefore, we give the user the ability to force the removal of empty gradeitems
+        if (! empty($hotpot->removegradeitem)) {
+            $params['deleted'] = true;
+        }
     }
     return grade_update('mod/hotpot', $hotpot->course, 'mod', 'hotpot', $hotpot->id, 0, $grades, $params);
 }

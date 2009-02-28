@@ -175,7 +175,7 @@ class mod_hotpot_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'shownextquiz', get_string('shownextquiz', 'hotpot'));
         $mform->setDefault('shownextquiz', get_user_preferences('hotpot_shownextquiz', HOTPOT_NO));
         $mform->setHelpButton('shownextquiz', array('shownextquiz', get_string('shownextquiz', 'hotpot'), 'hotpot'));
-        // $mform->setAdvanced('forceplugins');
+        // $mform->setAdvanced('shownextquiz');
 
 //-----------------------------------------------------------------------------------------------
         $mform->addElement('header', 'accesscontrolhdr', get_string('accesscontrol', 'lesson'));
@@ -206,7 +206,7 @@ class mod_hotpot_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'review', get_string('allowreview', 'quiz'));
         $mform->setDefault('review', get_user_preferences('hotpot_review', HOTPOT_YES));
         $mform->setHelpButton('review', array('review', get_string('allowreview', 'quiz'), 'quiz'));
-        // $mform->setAdvanced('forceplugins');
+        // $mform->setAdvanced('review');
 
 // Maximum number of attempts
         $options = array(
@@ -219,11 +219,17 @@ class mod_hotpot_mod_form extends moodleform_mod {
         $mform->addElement('select', 'attempts', get_string('attemptsallowed', 'quiz'), $options);
         $mform->setDefault('attempts', get_user_preferences('hotpot_attempts', 0)); // 0=unlimited
         $mform->setHelpButton('attempts', array('attempts', get_string('attemptsallowed', 'quiz'), 'quiz'));
-        // $mform->setAdvanced('forceplugins');
+        // $mform->setAdvanced('attempts');
 
 //-----------------------------------------------------------------------------------------------
         $mform->addElement('header', 'gradeshdr', get_string('grades', 'grades'));
 //-----------------------------------------------------------------------------------------------
+
+// Maximum grading method
+        $mform->addElement('select', 'grademethod', get_string('grademethod', 'quiz'), $HOTPOT_GRADEMETHOD);
+        $mform->setDefault('grademethod', get_user_preferences('hotpot_grademethod', HOTPOT_GRADEMETHOD_HIGHEST));
+        $mform->setHelpButton('grademethod', array('grademethod', get_string('grademethod', 'quiz'), 'quiz'));
+        // $mform->setAdvanced('grademethod');
 
 // Maximum grade
         $options = array();
@@ -234,13 +240,19 @@ class mod_hotpot_mod_form extends moodleform_mod {
         $mform->addElement('select', 'grade', get_string('maximumgrade'), $options);
         $mform->setDefault('grade', get_user_preferences('hotpot_grade', 100));
         $mform->setHelpButton('grade', array('maxgrade', get_string('maximumgrade'), 'quiz'));
-        // $mform->setAdvanced('forceplugins');
+        // $mform->setAdvanced('grade');
 
-// Maximum grading method
-        $mform->addElement('select', 'grademethod', get_string('grademethod', 'quiz'), $HOTPOT_GRADEMETHOD);
-        $mform->setDefault('grademethod', get_user_preferences('hotpot_grademethod', HOTPOT_GRADEMETHOD_HIGHEST));
-        $mform->setHelpButton('grademethod', array('grademethod', get_string('grademethod', 'quiz'), 'quiz'));
-        // $mform->setAdvanced('forceplugins');
+// Remove grade item
+        if (empty($this->_instance) || ! record_exists('grade_items', 'itemtype', 'mod', 'itemmodule', 'hotpot', 'iteminstance', $this->_instance)) {
+            $mform->addElement('hidden', 'removegradeitem', 0);
+        } else {
+            $mform->addElement('selectyesno', 'removegradeitem', get_string('removegradeitem', 'hotpot'));
+            $mform->setHelpButton('removegradeitem', array('removegradeitem', get_string('removegradeitem', 'hotpot'), 'hotpot'));
+            //$mform->setAdvanced('removegradeitem');
+            $mform->setType('removegradeitem', PARAM_INT);
+            // element is only available if grade==0
+            $mform->disabledIf('removegradeitem', 'grade', 'selected', 0);
+        }
 
 //-----------------------------------------------------------------------------------------------
         $mform->addElement('header', 'reportshdr', get_string('reports'));
@@ -250,7 +262,7 @@ class mod_hotpot_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'clickreporting', get_string('clickreporting', 'hotpot'));
         $mform->setDefault('clickreporting', get_user_preferences('hotpot_clickreporting', HOTPOT_NO));
         $mform->setHelpButton('clickreporting', array('clickreporting', get_string('clickreporting', 'hotpot'), 'hotpot'));
-        // $mform->setAdvanced('forceplugins');
+        // $mform->setAdvanced('clickreporting');
 
 //----------------------------------------------
         $this->standard_coursemodule_elements();
