@@ -45,7 +45,7 @@ if ($frm = data_submitted() and confirm_sesskey()) {
 $currentmembers = array();
 $potentialmembers  = array();
 
-if ($groups = $DB->get_records('groups', 'courseid', array($courseid=>'name'))) {
+if ($groups = $DB->get_records('groups', array('courseid'=>$courseid), 'name')) {
     if ($assignment = $DB->get_records('groupings_groups', array('groupingid'=>$grouping->id))) {
         foreach ($assignment as $ass) {
             $currentmembers[$ass->groupid] = $groups[$ass->groupid];
