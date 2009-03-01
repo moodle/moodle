@@ -46,7 +46,7 @@ class portfolio_export_exception extends portfolio_exception {
     * @param mixed $a language string data (optional, defaults to  null)
     */
     public function __construct($exporter, $errorcode, $module=null, $continue=null, $a=null) {
-        global $SCRIPT, $CFG;
+        global $CFG;
 
         if (!empty($exporter) && $exporter instanceof portfolio_exporter) {
             if (empty($continue)) {
@@ -55,9 +55,10 @@ class portfolio_export_exception extends portfolio_exception {
                     $continue = $exporter->get('caller')->get_return_url();
                 }
             }
-            if ($SCRIPT == "/$CFG->admin/cron.php") {
-                $exporter->process_stage_cleanup();
-            }
+            // this was previously only called if we were in cron,
+            // but I think if there's always an exception, we should clean up
+            // rather than force the user to resolve the export later.
+            $exporter->process_stage_cleanup();
         } else {
             global $SESSION;
             if (!empty($SESSION->portfolioexport)) {
