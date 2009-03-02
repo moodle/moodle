@@ -1026,7 +1026,7 @@ function tag_unset_flag($tagids) {
         $tagids = implode(',', $tagids);
     }
     $timemodified = time();
-    return $DB->execute("UPDATE {tag} tg SET tg.flag = 0, tg.timemodified = ? WHERE tg.id IN ($tagids)", array($timemodified));
+    return $DB->execute("UPDATE {tag} SET flag = 0, timemodified = ? WHERE id IN ($tagids)", array($timemodified));
 }
 
 ?>
