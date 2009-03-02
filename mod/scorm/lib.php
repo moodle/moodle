@@ -387,7 +387,7 @@ function scorm_cron () {
     }
 
     $timenow = time();
-    $updatetime = usergetmidnight($timenow, $sitetimezone) + ($CFG->scorm_updatetime * 3600);
+    $updatetime = usergetmidnight($timenow, $sitetimezone) + ($CFG->scorm_updatetimelast * 3600);
 
     if ($CFG->scorm_updatetimelast < $updatetime and $timenow > $updatetime) {
 
