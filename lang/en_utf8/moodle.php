@@ -1388,6 +1388,7 @@ $string['showrecent'] = 'Show recent activity';
 $string['showreports'] = 'Show activity reports';
 $string['showsettings'] = 'Show settings';
 $string['showtheselogs'] = 'Show these logs';
+$string['showthishelpinlanguage'] = 'Show this help in language: $a';
 $string['since'] = 'Since';
 $string['sincelast'] = 'since last login';
 $string['site'] = 'Site';
