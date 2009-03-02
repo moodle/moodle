@@ -417,9 +417,9 @@ class mysql_sql_generator extends sql_generator {
      */
     public static function getReservedWords() {
     /// This file contains the reserved words for MySQL databases
-    /// from http://dev.mysql.com/doc/refman/5.0/en/reserved-words.html
+    /// from http://dev.mysql.com/doc/refman/6.0/en/reserved-words.html
         $reserved_words = array (
-            'add', 'all', 'alter', 'analyze', 'and', 'as', 'asc',
+            'accessible', 'add', 'all', 'alter', 'analyze', 'and', 'as', 'asc',
             'asensitive', 'before', 'between', 'bigint', 'binary',
             'blob', 'both', 'by', 'call', 'cascade', 'case', 'change',
             'char', 'character', 'check', 'collate', 'column',
@@ -438,14 +438,14 @@ class mysql_sql_generator extends sql_generator {
             'infile', 'inner', 'inout', 'insensitive', 'insert', 'int', 'int1',
             'int2', 'int3', 'int4', 'int8', 'integer', 'interval', 'into', 'is',
             'iterate', 'join', 'key', 'keys', 'kill', 'leading', 'leave', 'left',
-            'like', 'limit', 'lines', 'load', 'localtime', 'localtimestamp',
-            'lock', 'long', 'longblob', 'longtext', 'loop', 'low_priority',
-            'match', 'mediumblob', 'mediumint', 'mediumtext',
+            'like', 'limit', 'linear', 'lines', 'load', 'localtime', 'localtimestamp',
+            'lock', 'long', 'longblob', 'longtext', 'loop', 'low_priority', 'master_heartbeat_period',
+            'master_ssl_verify_server_cert', 'match', 'mediumblob', 'mediumint', 'mediumtext',
             'middleint', 'minute_microsecond', 'minute_second',
             'mod', 'modifies', 'natural', 'not', 'no_write_to_binlog',
             'null', 'numeric', 'on', 'optimize', 'option', 'optionally',
-            'or', 'order', 'out', 'outer', 'outfile', 'precision', 'primary',
-            'procedure', 'purge', 'raid0', 'read', 'reads', 'real',
+            'or', 'order', 'out', 'outer', 'outfile', 'overwrite', 'precision', 'primary',
+            'procedure', 'purge', 'raid0', 'range', 'read', 'read_only', 'read_write', 'reads', 'real',
             'references', 'regexp', 'release', 'rename', 'repeat', 'replace',
             'require', 'restrict', 'return', 'revoke', 'right', 'rlike', 'schema',
             'schemas', 'second_microsecond', 'select', 'sensitive',
