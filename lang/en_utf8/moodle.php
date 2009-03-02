@@ -1423,6 +1423,7 @@ $string['showrecent'] = 'Show recent activity';
 $string['showreports'] = 'Show activity reports';
 $string['showsettings'] = 'Show settings';
 $string['showtheselogs'] = 'Show these logs';
+$string['showthishelpinlanguage'] = 'Show this help in language: $a';
 $string['showtopicfromothers'] = 'Show topic from others';
 $string['showweekfromothers'] = 'Show week from others';
 $string['since'] = 'Since';

@@ -161,7 +161,27 @@ if (!$helpfound) {
 
 // End of page.
 close_window_button();
-echo '<p class="helpindex"><a href="help.php?file=index.html">'. get_string('helpindex') .'</a></p>';
+echo '<p class="helpindex"><a href="help.php?file=index.html">'. get_string('helpindex') .'</a>';
+
+// Offer a link to the alternative help file language
+if (($helpfound) and (((current_language() != 'en_utf8') and $lang != 'en_utf8') or ($forcelang === 'en_utf8'))) {
+    $linklang = "{$CFG->wwwroot}/help.php?";
+    $linklang .= !empty($module)    ? "module=$module&amp;" : '';
+    $linklang .= !empty($file)      ? "file=$file&amp;" : '';
+    $linklang .= !empty($skiplocal) ? "skiplocal=$skiplocal&amp;" : '';
+
+    if (empty($forcelang) or $forcelang === current_language()) {
+        $nextlang = 'en_utf8';
+        $nextlangname = 'English';
+    } else {
+        $nextlang = current_language();
+        $nextlangname = get_string('thislanguage');
+    }
+
+    $linklang .= "forcelang=$nextlang";
+    echo "<br /><a href=\"$linklang\">" . get_string('showthishelpinlanguage', 'moodle', $nextlangname) . '</a>';
+}
+echo '</p>';
 
 $CFG->docroot = '';   // We don't want a doc link here
 print_footer('none');
