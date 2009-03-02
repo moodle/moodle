@@ -336,7 +336,7 @@ class XMLDBmysql extends XMLDBGenerator {
      */
     function getReservedWords() {
     /// This file contains the reserved words for MySQL databases
-    /// from http://dev.mysql.com/doc/refman/5.0/en/reserved-words.html
+    /// from http://dev.mysql.com/doc/refman/6.0/en/reserved-words.html
         $reserved_words = array (
             'accessible', 'add', 'all', 'alter', 'analyze', 'and', 'as', 'asc',
             'asensitive', 'before', 'between', 'bigint', 'binary',
