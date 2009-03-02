@@ -562,10 +562,10 @@ function getSequenceFromDB($xmldb_table) {
             'intersect', 'into', 'is', 'isnull', 'join', 'leading', 'left', 'like',
             'limit', 'localtime', 'localtimestamp', 'natural', 'new', 'not',
             'notnull', 'null', 'off', 'offset', 'old', 'on', 'only', 'or', 'order',
-            'outer', 'overlaps', 'placing', 'primary', 'references', 'right', 'select',
+            'outer', 'overlaps', 'placing', 'primary', 'references', 'returning', 'right', 'select',
             'session_user', 'similar', 'some', 'symmetric', 'table', 'then', 'to',
             'trailing', 'true', 'union', 'unique', 'user', 'using', 'verbose',
-            'when', 'where'
+            'when', 'where', 'with'
         );
         return $reserved_words;
     }
