@@ -30,8 +30,10 @@ function tag_print_cloud($nr_of_tags=150, $return=false) {
     }
 
     $tagkeys = array_keys($tagsincloud);
-    $firsttagkey = $tagkeys[0];
-    $maxcount = $tagsincloud[$firsttagkey]->count;
+    if (!empty($tagkeys)) {
+        $firsttagkey = $tagkeys[0];
+        $maxcount = $tagsincloud[$firsttagkey]->count;
+    }
 
     $etags = array();
 

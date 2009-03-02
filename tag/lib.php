@@ -992,13 +992,11 @@ function tag_set_flag($tagids) {
 function tag_unset_flag($tagids) {
     global $CFG;
 
-    require_capability('moodle/tag:manage', get_context_instance(CONTEXT_SYSTEM));
-
     if ( is_array($tagids) ) {
         $tagids = implode(',', $tagids);
     }
     $timemodified = time();
-    return execute_sql("UPDATE {$CFG->prefix}tag tg SET tg.flag = 0, tg.timemodified = $timemodified WHERE tg.id IN ($tagids)", false);
+    return execute_sql("UPDATE {$CFG->prefix}tag SET flag = 0, timemodified = $timemodified WHERE id IN ($tagids)", false);
 }
 
 ?>
