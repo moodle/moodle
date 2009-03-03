@@ -169,18 +169,101 @@ function question_type_menu() {
     global $QTYPES;
     static $menuoptions = null;
     if (is_null($menuoptions)) {
-        $disbled = get_config('question');
+        $config = get_config('question');
         $menuoptions = array();
         foreach ($QTYPES as $name => $qtype) {
+            // Get the name if this qtype is enabled.
             $menuname = $qtype->menu_name();
-            $configname = $name . '_disabled';
-            if ($menuname && !isset($disbled->$configname)) {
+            $enabledvar = $name . '_disabled';
+            if ($menuname && !isset($config->$enabledvar)) {
                 $menuoptions[$name] = $menuname;
             }
         }
-        asort($menuoptions, SORT_LOCALE_STRING);
+
+        $menuoptions = question_sort_qtype_array($menuoptions, $config);
     }
     return $menuoptions;
+}
+
+/**
+ * Sort an array of question type names according to the question type sort order stored in
+ * config_plugins. Entries for which there is no xxx_sortorder defined will go
+ * at the end, sorted according to asort($inarray, SORT_LOCALE_STRING).
+ * @param $inarray an array $qtype => $QTYPES[$qtype]->local_name().
+ * @param $config get_config('question'), if you happen to have it around, to save one DB query.
+ * @return array the sorted version of $inarray.
+ */
+function question_sort_qtype_array($inarray, $config = null) {
+    if (is_null($config)) {
+        $config = get_config('question');
+    }
+
+    $sortorder = array();
+    foreach ($inarray as $name => $notused) {
+        $sortvar = $name . '_sortorder';
+        if (isset($config->$sortvar)) {
+            $sortorder[$config->$sortvar] = $name;
+        }
+    }
+
+    ksort($sortorder);
+    $outarray = array();
+    foreach ($sortorder as $name) {
+        $outarray[$name] = $inarray[$name];
+        unset($inarray[$name]);
+    }
+    asort($inarray, SORT_LOCALE_STRING);
+    return array_merge($outarray, $inarray);
+}
+
+/**
+ * Move one question type in a list of question types. If you try to move one element
+ * off of the end, nothing will change.
+ * 
+ * @param array $sortedqtypes An array $qtype => anything.
+ * @param string $tomove one of the keys from $sortedqtypes
+ * @param integer $direction +1 or -1
+ * @return array an array $index => $qtype, with $index from 0 to n in order, and
+ *      the $qtypes in the same order as $sortedqtypes, except that $tomove will
+ *      have been moved one place.
+ */
+function question_reorder_qtypes($sortedqtypes, $tomove, $direction) {
+    $neworder = array_keys($sortedqtypes);
+    // Find the element to move.
+    $key = array_search($tomove, $neworder);
+    if ($key === false) {
+        return $neworder;
+    }
+    // Work out the other index.
+    $otherkey = $key + $direction;
+    if (!isset($neworder[$otherkey])) {
+        return $neworder;
+    }
+    // Do the swap.
+    $swap = $neworder[$otherkey];
+    $neworder[$otherkey] = $neworder[$key];
+    $neworder[$key] = $swap;
+    return $neworder;
+}
+
+/**
+ * Save a new question type order to the config_plugins table.
+ * @param $neworder An arra $index => $qtype. Indices should start at 0 and be in order.
+ * @param $config get_config('question'), if you happen to have it around, to save one DB query.
+ */
+function question_save_qtype_order($neworder, $config = null) {
+    global $DB;
+
+    if (is_null($config)) {
+        $config = get_config('question');
+    }
+
+    foreach ($neworder as $index => $qtype) {
+        $sortvar = $qtype . '_sortorder';
+        if (!isset($config->$sortvar) || $config->$sortvar != $index + 1) {
+            set_config($sortvar, $index + 1, 'question');
+        }
+    }
 }
 
 /// OTHER CLASSES /////////////////////////////////////////////////////////

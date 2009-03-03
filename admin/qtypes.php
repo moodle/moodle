@@ -14,7 +14,7 @@
 
     admin_externalpage_setup('manageqtypes');
 
-/// Get some data we will need.
+/// Get some data we will need - question counts and which types are needed.
     $counts = $DB->get_records_sql("
             SELECT qtype, COUNT(1) as numquestions, SUM(hidden) as numhidden
             FROM {question} GROUP BY qtype", array());
@@ -41,7 +41,15 @@
         }
     }
 
-    // Process actions =========================================================
+/// Work of the correct sort order.
+    $config = get_config('question');
+    $sortedqtypes = array();
+    foreach ($QTYPES as $qtypename => $qtype) {
+        $sortedqtypes[$qtypename] = $qtype->local_name();
+    }
+    $sortedqtypes = question_sort_qtype_array($sortedqtypes, $config);
+
+/// Process actions ============================================================
 
     // Disable.
     if (($disable = optional_param('disable', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
@@ -64,6 +72,28 @@
         }
 
         unset_config($enable . '_disabled', 'question');
+        redirect(admin_url('qtypes.php'));
+    }
+
+    // Move up in order.
+    if (($up = optional_param('up', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
+        if (!isset($QTYPES[$up])) {
+            print_error('unknownquestiontype', 'question', admin_url('qtypes.php'), $up);
+        }
+
+        $neworder = question_reorder_qtypes($sortedqtypes, $up, -1);
+        question_save_qtype_order($neworder, $config);
+        redirect(admin_url('qtypes.php'));
+    }
+
+    // Move down in order.
+    if (($down = optional_param('down', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
+        if (!isset($QTYPES[$down])) {
+            print_error('unknownquestiontype', 'question', admin_url('qtypes.php'), $down);
+        }
+
+        $neworder = question_reorder_qtypes($sortedqtypes, $down, +1);
+        question_save_qtype_order($neworder, $config);
         redirect(admin_url('qtypes.php'));
     }
 
@@ -107,6 +137,8 @@
         if (!unset_all_config_for_plugin('qtype_' . $delete)) {
             notify(get_string('errordeletingconfig', 'admin', 'qtype_' . $delete));
         }
+        unset_config($delete . '_disabled', 'question');
+        unset_config($delete . '_sortorder', 'question');
 
         // Then the tables themselves
         drop_plugin_tables($delete, $QTYPES[$delete]->plugin_dir() . '/db/install.xml', false);
@@ -141,14 +173,15 @@
 
 /// Add a row for each question type.
     $createabletypes = question_type_menu();
-    foreach ($QTYPES as $qtypename => $qtype) {
+    foreach ($sortedqtypes as $qtypename => $localname) {
+        $qtype = $QTYPES[$qtypename];
         $row = array();
 
         // Question icon and name.
         $fakequestion = new stdClass;
         $fakequestion->qtype = $qtypename;
         $icon = print_question_icon($fakequestion, true);
-        $row[] = $icon . ' ' . $qtype->local_name();
+        $row[] = $icon . ' ' . $localname;
 
         // Number of questions of this type.
         if ($counts[$qtypename]->numquestions + $counts[$qtypename]->numhidden > 0) {
@@ -191,13 +224,18 @@
         $rowclass = '';
         if ($qtype->menu_name()) {
             $createable = isset($createabletypes[$qtypename]);
-            $row[] = enable_disable_button($qtypename, $createable);
+            $icons = enable_disable_button($qtypename, $createable);
             if (!$createable) {
                 $rowclass = 'dimmed_text';
             }
         } else {
-            $row[] = '';
+            $icons = '<img src="' . $CFG->pixpath . '/spacer.gif" alt="" class="spacer" />';
         }
+
+        // Move icons.
+        $icons .= icon_html('up', $qtypename, 't/up.gif', get_string('up'), '');
+        $icons .= icon_html('down', $qtypename, 't/down.gif', get_string('down'), '');
+        $row[] = $icons;
 
         // Delete link, if available.
         if ($needed[$qtypename]) {
@@ -229,22 +267,22 @@ function admin_url($endbit) {
 }
 
 function enable_disable_button($qtypename, $createable) {
-    global $CFG;
     if ($createable) {
-        $action = 'disable';
-        $tip = get_string('disable');
-        $alt = get_string('enabled', 'question');
-        $icon = 'hide';
+        return icon_html('disable', $qtypename, 'i/hide.gif', get_string('enabled', 'question'), get_string('disable'));
     } else {
-        $action = 'enable';
-        $tip = get_string('enable');
-        $alt = get_string('disabled', 'question');
-        $icon = 'show';
+        return icon_html('enable', $qtypename, 'i/show.gif', get_string('disabled', 'question'), get_string('enable'));
     }
-    $html = '<form action="' . admin_url('qtypes.php') . '" method="post"><div>';
+}
+
+function icon_html($action, $qtypename, $icon, $alt, $tip) {
+    global $CFG;
+    if ($tip) {
+        $tip = 'title="' . $tip . '" ';
+    }
+    $html = ' <form action="' . admin_url('qtypes.php') . '" method="post"><div>';
     $html .= '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
     $html .= '<input type="image" name="' . $action . '" value="' . $qtypename .
-            '" src="' . $CFG->pixpath . '/i/' . $icon . '.gif" alt="' . $alt . '" title="' . $tip . '" />';
+            '" src="' . $CFG->pixpath . '/' . $icon . '" alt="' . $alt . '" ' . $tip . '/>';
     $html .= '</div></form>';
     return $html;
 }

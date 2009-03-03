@@ -1472,6 +1472,25 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2009021801);
     }
+
+    /// Add default sort order for question types.
+    if ($result && $oldversion < 2009030300) {
+        set_config('multichoice_sortorder', 1, 'question');
+        set_config('truefalse_sortorder', 2, 'question');
+        set_config('shortanswer_sortorder', 3, 'question');
+        set_config('numerical_sortorder', 4, 'question');
+        set_config('calculated_sortorder', 5, 'question');
+        set_config('essay_sortorder', 6, 'question');
+        set_config('match_sortorder', 7, 'question');
+        set_config('randomsamatch_sortorder', 8, 'question');
+        set_config('multianswer_sortorder', 9, 'question');
+        set_config('description_sortorder', 10, 'question');
+        set_config('random_sortorder', 11, 'question');
+        set_config('missingtype_sortorder', 12, 'question');
+
+        upgrade_main_savepoint($result, 2009030300);
+    }
+
     return $result;
 }
 
