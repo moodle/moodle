@@ -58,7 +58,8 @@ if(count($activities)==0) {
     print_error('err_noactivities','completion',$reportsurl);
 }
 
-$progress=$completion->get_progress_all($firstnamesort,$group,COMPLETION_REPORT_PAGE,$start);
+$progress=$completion->get_progress_all($firstnamesort,$group,
+    $csv ? 0 :COMPLETION_REPORT_PAGE,$csv ? 0 : $start);
 
 if($csv) {
     header('Content-Disposition: attachment; filename=progress.'.
