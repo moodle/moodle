@@ -213,7 +213,7 @@ class completion_info {
      * @return unknown
      */
     function internal_get_state($cm, $userid, $current) {
-        global $USER, $DB;
+        global $USER, $DB, $CFG;
 
         // Get user ID
         if (!$userid) {
@@ -236,6 +236,7 @@ class completion_info {
 
         // Check grade
         if (!is_null($cm->completiongradeitemnumber)) {
+            require_once($CFG->libdir.'/gradelib.php');
             $item = grade_item::fetch(array('courseid'=>$cm->course, 'itemtype'=>'mod',
                 'itemmodule'=>$cm->modname, 'iteminstance'=>$cm->instance,
                 'itemnumber'=>$cm->completiongradeitemnumber));
