@@ -34,7 +34,7 @@ function schedule_backup_cron() {
         //for info in backup_logs to unlock status as necessary
         $timetosee = 1800;   //Half an hour looking for activity
         $timeafter = time() - $timetosee;
-        $numofrec = $DB->count_records_select ("backup_log","time > ?", array($timeafter));
+        $numofrec = $DB->count_records_select ("backup_log","time > ? AND backuptype = ?", array($timeafter, 'scheduledbackup'));
         if (!$numofrec) {
             $timetoseemin = $timetosee/60;
             mtrace("    No activity in last ".$timetoseemin." minutes. Unlocking status");
@@ -257,13 +257,7 @@ function schedule_backup_log($starttime,$courseid,$message) {
     global $DB;
 
     if ($starttime) {
-        $log = new object();
-        $log->courseid = $courseid;
-        $log->time = time();
-        $log->laststarttime = $starttime;
-        $log->info = $message;
-
-        $DB->insert_record("backup_log", $log);
+        add_to_backup_log($starttime,$courseid,$message, 'scheduledbackup');
     }
 
 }

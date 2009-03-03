@@ -719,6 +719,16 @@
         backup_add_static_preferences($preferences);
         return $preferences;
     }
+    function add_to_backup_log($starttime,$courseid,$message, $backuptype) { 
+        global $DB;
+        $log = new object();
+        $log->courseid = $courseid;
+        $log->time = time();
+        $log->laststarttime = $starttime;
+        $log->info = $message;
+        $log->backuptype = $backuptype;
+        $DB->insert_record('backup_log', $log);
+    }
 
 
 ?>

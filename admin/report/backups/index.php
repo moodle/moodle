@@ -95,8 +95,8 @@
     /// First, me get all the distinct backups for that course in backup_log
         $executions = $DB->get_records_sql("SELECT DISTINCT laststarttime,laststarttime
                                               FROM {backup_log}
-                                             WHERE courseid = ?
-                                          ORDER BY laststarttime DESC", array($courseid));
+                                             WHERE courseid = ? AND backuptype = ?
+                                          ORDER BY laststarttime DESC", array($courseid,'scheduledbackup'));
 
     /// Iterate over backup executions
         if (!$executions) {
@@ -111,8 +111,8 @@
                 echo "</tr>";
                 $logs = $DB->get_records_sql("SELECT *
                                                 FROM {backup_log}
-                                               WHERE courseid = ? AND laststarttime = ?
-                                            ORDER BY id", array($courseid, $execution->laststarttime));
+                                               WHERE courseid = ? AND laststarttime = ? AND backuptype = ?
+                                            ORDER BY id", array($courseid, $execution->laststarttime,'scheduledbackup'));
                 if ($logs) {
                     foreach ($logs as $log) {
                         echo "<tr>";

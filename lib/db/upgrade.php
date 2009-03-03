@@ -1458,7 +1458,20 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2009021800);
     }
+    if ($result && $oldversion < 2009021801) {
+    /// Define field backuptype to be added to backup_log
+        $table = new XMLDBTable('backup_log');
+        $field = new XMLDBField('backuptype');
+        $field = new xmldb_field('backuptype', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, null, null, 'info');
+    /// Conditionally Launch add field backuptype and set all old records as 'scheduledbackup' records.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+            $DB->execute("UPDATE {backup_log} SET backuptype='scheduledbackup'");
+        }
 
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009021801);
+    }
     return $result;
 }
 
