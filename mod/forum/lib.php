@@ -1732,7 +1732,11 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
             $select[] = "(d.userid = {$USER->id} OR (d.timestart < $now AND (d.timeend = 0 OR d.timeend > $now)))";
         }
 
-        if ($forum->type == 'qanda') {
+        $cm = get_coursemodule_from_instance('forum', $forumid);
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+        if ($forum->type == 'qanda'
+            && !has_capability('mod/forum:viewqandawithoutposting', $context)) {
             if (!empty($forum->onlydiscussions)) {
                 $discussionsids = implode(',', $forum->onlydiscussions);
                 $select[] = "(d.id IN ($discussionsids) OR p.parent = 0)";
