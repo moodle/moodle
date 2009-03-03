@@ -2284,8 +2284,10 @@
                     if (!empty($object->backup)) {
                         $statusm = $onemodbackup($bf,$preferences,$instance);
                         if (!$statusm) {
+                            $errorstr = 'backup of '.$module.'-'.$object->name.' failed.';
+                            add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                             if (!defined('BACKUP_SILENTLY')) {
-                                notify('backup of '.$module.'-'.$object->name.' failed.');
+                                notify($errorstr);
                             }
                             $status = false;
                         }
@@ -2915,12 +2917,10 @@
         }
         $status = backup_delete_old_data();
         if (!$status) {
+            $errorstr = "An error occurred deleting old backup data";
+            add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
             if (!defined('BACKUP_SILENTLY')) {
-                notify ("An error occurred deleting old backup data");
-            }
-            else {
-                $errorstr = "An error occurred deleting old backup data";
-                return false;
+                notify ($errorstr);
             }
         }
 
@@ -2940,11 +2940,11 @@
             //Prints general info about backup to file
             if ($backup_file) {
                 if (!$status = backup_general_info($backup_file,$preferences)) {
+                    $errorstr = "An error occurred while backing up general info";
+                    add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while backing up general info");
-                    }
-                    else {
-                        $errorstr = "An error occurred while backing up general info";
+                        notify($errorstr);
+                    } else {
                         return false;
                     }
                 }
@@ -2958,11 +2958,11 @@
             //Prints course start (tag and general info)
             if ($status) {
                 if (!$status = backup_course_start($backup_file,$preferences)) {
+                    $errorstr = "An error occurred while backing up course start";
+                    add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while backing up course start");
-                    }
-                    else {
-                        $errorstr = "An error occurred while backing up course start";
+                        notify($errorstr);
+                    } else {
                         return false;
                     }
                 }
@@ -2973,11 +2973,11 @@
                     echo "<li>".get_string("metacourse").'</li>';
                 }
                 if (!$status = backup_course_metacourse($backup_file,$preferences)) {
+                    $errorstr = "An error occurred while backing up metacourse info";
+                    add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while backing up metacourse info");
-                    }
-                    else {
-                        $errorstr = "An error occurred while backing up metacourse info";
+                        notify($errorstr);
+                    } else {
                         return false;
                     }
                 }
@@ -2988,11 +2988,11 @@
             //Blocks information
             if ($status) {
                 if (!$status = backup_course_blocks($backup_file,$preferences)) {
+                    $errorstr = "An error occurred while backing up course blocks";
+                    add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while backing up course blocks");
-                    }
-                    else {
-                        $errorstr = "An error occurred while backing up course blocks";
+                        notify($errorstr);
+                    } else {
                         return false;
                     }
                 }
@@ -3003,11 +3003,11 @@
             //Section info
             if ($status) {
                 if (!$status = backup_course_sections($backup_file,$preferences)) {
+                    $errorstr = "An error occurred while backing up course sections";
+                    add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while backing up course sections");
-                    }
-                    else {
-                        $errorstr = "An error occurred while backing up course sections";
+                        notify($errorstr);
+                    } else {
                         return false;
                     }
                 }
@@ -3024,11 +3024,11 @@
                     echo "<li>".get_string("writinguserinfo").'</li>';
                 }
                 if (!$status = backup_user_info($backup_file,$preferences)) {
+                    $errorstr = "An error occurred while backing up user info";
+                    add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while backing up user info");
-                    }
-                    else {
-                        $errorstr = "An error occurred while backing up user info";
+                        notify($errorstr);
+                    } else {
                         return false;
                     }
                 }
@@ -3041,11 +3041,11 @@
                     echo "<li>".get_string("writingmessagesinfo").'</li>';
                 }
                 if (!$status = backup_messages($backup_file,$preferences)) {
+                    $errorstr = "An error occurred while backing up messages";
+                    add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while backing up messages");
-                    }
-                    else {
-                        $errorstr = "An error occurred while backing up messages";
+                        notify($errorstr);
+                    } else {
                         return false;
                     }
                 }
@@ -3058,11 +3058,11 @@
                     echo "<li>".get_string("writingblogsinfo").'</li>';
                 }
                 if (!$status = backup_blogs($backup_file,$preferences)) {
+                    $errorstr = "An error occurred while backing up blogs";
+                    add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while backing up blogs");
-                    }
-                    else {
-                        $errorstr = "An error occurred while backing up blogs";
+                        notify($errorstr);
+                    } else {
                         return false;
                     }
                 }
@@ -3076,11 +3076,11 @@
                 }
                 require_once($CFG->dirroot.'/question/backuplib.php');
                 if (!$status = backup_question_categories($backup_file, $preferences)) {
+                    $errorstr = "An error occurred while backing up quiz categories";
+                    add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while backing up quiz categories");
-                    }
-                    else {
-                        $errorstr = "An error occurred while backing up quiz categories";
+                        notify($errorstr);
+                    } else {
                         return false;
                     }
                 }
@@ -3093,11 +3093,11 @@
                         echo "<li>".get_string("writingloginfo").'</li>';
                     }
                     if (!$status = backup_log_info($backup_file,$preferences)) {
+                        $errorstr = "An error occurred while backing up log info";
+                        add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                         if (!defined('BACKUP_SILENTLY')) {
-                            notify("An error occurred while backing up log info");
-                        }
-                        else {
-                            $errorstr = "An error occurred while backing up log info";
+                            notify($errorstr);
+                        } else {
                             return false;
                         }
                     }
@@ -3110,11 +3110,11 @@
                     echo "<li>".get_string("writingscalesinfo").'</li>';
                 }
                 if (!$status = backup_scales_info($backup_file,$preferences)) {
+                    $errorstr = "An error occurred while backing up scales";
+                    add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while backing up scales");
-                    }
-                    else {
-                        $errorstr = "An error occurred while backing up scales";
+                        notify($errorstr);
+                    } else {
                         return false;
                     }
                 }
@@ -3126,11 +3126,11 @@
                     echo "<li>".get_string("writinggroupsinfo").'</li>';
                 }
                 if (!$status = backup_groups_info($backup_file,$preferences)) {
+                    $errostr = "An error occurred while backing up groups";
+                    add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while backing up groups");
-                    }
-                    else {
-                        $errostr = "An error occurred while backing up groups";
+                        notify($errostr);
+                    } else {
                         return false;
                     }
                 }
@@ -3142,11 +3142,11 @@
                     echo "<li>".get_string("writinggroupingsinfo").'</li>';
                 }
                 if (!$status = backup_groupings_info($backup_file,$preferences)) {
+                    $errorstr = "An error occurred while backing up groupings";
+                    add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while backing up groupings");
-                    }
-                    else {
-                        $errorstr = "An error occurred while backing up groupings";
+                        notify($errorstr);
+                    } else {
                         return false;
                     }
                 }
@@ -3158,11 +3158,11 @@
                     echo "<li>".get_string("writinggroupingsgroupsinfo").'</li>';
                 }
                 if (!$status = backup_groupings_groups_info($backup_file,$preferences)) {
+                    $errorstr = "An error occurred while backing up groupings groups";
+                    add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while backing up groupings groups");
-                    }
-                    else {
-                        $errorstr = "An error occurred while backing up groupings groups";
+                        notify($errorstr);
+                    } else {
                         return false;
                     }
                 }
@@ -3174,11 +3174,11 @@
                     echo "<li>".get_string("writingeventsinfo").'</li>';
                 }
                 if (!$status = backup_events_info($backup_file,$preferences)) {
+                    $errorstr = "An error occurred while backing up events";
+                    add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while backing up events");
-                    }
-                    else {
-                        $errorstr = "An error occurred while backing up events";
+                        notify($errorstr);
+                    } else {
                         return false;
                     }
                 }
@@ -3190,11 +3190,11 @@
                     echo "<li>".get_string("writinggradebookinfo").'</li>';
                 }
                 if (!$status = backup_gradebook_info($backup_file,$preferences)) {
+                    $errorstr = "An error occurred while backing up gradebook";
+                    add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while backing up gradebook");
-                    }
-                    else {
-                        $errorstr = "An error occurred while backing up gradebook";
+                        notify($errorstr);
+                    } else {
                         return false;
                     }
                 }
@@ -3217,11 +3217,11 @@
                     }
                     //Start modules tag
                     if (!$status = backup_modules_start ($backup_file,$preferences)) {
+                        $errorstr = "An error occurred while backing up module info";
+                        add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                         if (!defined('BACKUP_SILENTLY')) {
-                            notify("An error occurred while backing up module info");
-                        }
-                        else {
-                            $errorstr = "An error occurred while backing up module info";
+                            notify($errorstr);
+                        } else {
                             return false;
                         }
                     }
@@ -3236,11 +3236,11 @@
                                 echo "<li>".get_string("modulenameplural",$module->name).'</li>';
                             }
                             if (!$status = backup_module($backup_file,$preferences,$module->name)) {
+                                $errorstr = "An error occurred while backing up '$module->name'";
+                                add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                                 if (!defined('BACKUP_SILENTLY')) {
-                                    notify("An error occurred while backing up '$module->name'");
-                                }
-                                else {
-                                    $errorstr = "An error occurred while backing up '$module->name'";
+                                    notify($errorstr);
+                                } else {
                                     return false;
                                 }
                             }
@@ -3252,11 +3252,11 @@
                     }
                     //Close modules tag
                     if (!$status = backup_modules_end ($backup_file,$preferences)) {
+                        $errorstr = "An error occurred while finishing the module backups";
+                        add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                         if (!defined('BACKUP_SILENTLY')) {
-                            notify("An error occurred while finishing the module backups");
-                        }
-                        else {
-                            $errorstr = "An error occurred while finishing the module backups";
+                            notify($errorstr);
+                        } else {
                             return false;
                         }
                     }
@@ -3269,11 +3269,11 @@
             }
             if($status) {
                 if (!$status = backup_format_data($backup_file,$preferences)) {
+                    $errorstr = "An error occurred while backing up the course format data";
+                    add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while backing up the course format data");
-                    }
-                    else {
-                        $errorstr = "An error occurred while backing up the course format data";
+                        notify($errorstr);
+                    } else {
                         return false;
                     }
                 }
@@ -3282,11 +3282,11 @@
             //Prints course end
             if ($status) {
                 if (!$status = backup_course_end($backup_file,$preferences)) {
+                    $errorstr = "An error occurred while closing the course backup";
+                    add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while closing the course backup");
-                    }
-                    else {
-                        $errorstr = "An error occurred while closing the course backup";
+                        notify($errorstr);
+                    } else {
                         return false;
                     }
                 }
@@ -3309,11 +3309,11 @@
                     echo "<li>".get_string("copyinguserfiles").'</li>';
                 }
                 if (!$status = backup_copy_user_files ($preferences)) {
+                    $errorstr = "An error occurred while copying user files";
+                    add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while copying user files");
-                    }
-                    else {
-                        $errorstr = "An error occurred while copying user files";
+                        notify($errorstr);
+                    } else {
                         return false;
                     }
                 }
@@ -3327,11 +3327,11 @@
                     echo "<li>".get_string("copyingcoursefiles").'</li>';
                 }
                 if (!$status = backup_copy_course_files ($preferences)) {
+                    $errorstr = "An error occurred while copying course files";
+                    add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while copying course files");
-                    }
-                    else {
-                        $errorstr = "An error occurred while copying course files";
+                        notify($errorstr);
+                    } else {
                         return false;
                     }
                 }
@@ -3344,11 +3344,11 @@
                     echo "<li>".get_string("copyingsitefiles").'</li>';
                 }
                 if (!$status = backup_copy_site_files ($preferences)) {
+                    $errorstr = "An error occurred while copying site files";
+                    add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while copying site files");
-                    }
-                    else {
-                        $errorstr = "An error occurred while copying site files";
+                        notify($errorstr);
+                    } else {
                         return false;
                     }
                 }
@@ -3360,11 +3360,11 @@
                 echo "<li>".get_string("zippingbackup").'</li>';
             }
             if (!$status = backup_zip ($preferences)) {
+                $errorstr = "An error occurred while zipping the backup";
+                add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                 if (!defined('BACKUP_SILENTLY')) {
-                    notify("An error occurred while zipping the backup");
-                }
-                else {
-                    $errorstr = "An error occurred while zipping the backup";
+                    notify($errorstr);
+                } else {
                     return false;
                 }
             }
@@ -3376,11 +3376,11 @@
                 echo "<li>".get_string("copyingzipfile").'</li>';
             }
             if (!$status = copy_zip_to_course_dir ($preferences)) {
+                $errorstr = "An error occurred while copying the zip file to the course directory";
+                add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                 if (!defined('BACKUP_SILENTLY')) {
-                    notify("An error occurred while copying the zip file to the course directory");
-                }
-                else {
-                    $errorstr = "An error occurred while copying the zip file to the course directory";
+                    notify($errorstr);
+                } else {
                     return false;
                 }
             }
@@ -3392,11 +3392,11 @@
                 echo "<li>".get_string("cleaningtempdata").'</li>';
             }
             if (!$status = clean_temp_data ($preferences)) {
+                $errorstr = "An error occurred while cleaning up temporary data";
+                add_to_backup_log(time(),$preferences->backup_course,$errorstr,'manual');
                 if (!defined('BACKUP_SILENTLY')) {
-                    notify("An error occurred while cleaning up temporary data");
-                }
-                else {
-                    $errorstr = "An error occurred while cleaning up temporary data";
+                    notify($errorstr);
+                } else {
                     return false;
                 }
             }
