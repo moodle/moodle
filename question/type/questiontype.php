@@ -312,7 +312,6 @@ class default_questiontype {
             $question->timecreated = time();
             $question->timemodified = time();
             if (!$question->id = insert_record('question', $question)) {
-                print_object($question);
                 error('Could not insert new question!');
             }
         }
