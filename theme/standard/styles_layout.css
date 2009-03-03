@@ -2965,9 +2965,6 @@ body.jsenabled #qtypechoicecontainer {
 #qtypechoicecontainer #chooseqtype .qtypeoption {
   margin-bottom: 0;
 }
-#qtypechoicecontainer #chooseqtype .qtypeoption input {
-  display: none;
-}
 #qtypechoicecontainer #chooseqtype .instruction,
 #qtypechoicecontainer #chooseqtype .qtypesummary {
   display: none;
