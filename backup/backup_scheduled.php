@@ -58,7 +58,11 @@ function schedule_backup_cron() {
     //Delete old_entries from backup tables
     if ($status) {
         mtrace("    Deleting old data");
-        $status = backup_delete_old_data();
+        if (!backup_delete_old_data()) {;
+            $errorstr = "An error occurred deleting old backup data";
+            add_to_backup_log(time(),$preferences->backup_course,$errorstr,'scheduledbackup');
+            mtrace("    ".$errorstr);
+        }
     }
 
     //Now we get a list of courses in the server

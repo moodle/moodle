@@ -7497,7 +7497,13 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             if (!defined('RESTORE_SILENTLY')) {
                 echo "<li>".get_string("deletingolddata").'</li>';
             }
-            $status = backup_delete_old_data();
+            if (!backup_delete_old_data()) {;
+                $errorstr = "An error occurred deleting old data";
+                add_to_backup_log(time(),$preferences->backup_course,$errorstr,'restoreprecheck');
+                if (!defined('RESTORE_SILENTLY')) {
+                    notify($errorstr);
+                }
+            }
         }
 
         //Now copy he zip file to dataroot/temp/backup/backup_unique_code
