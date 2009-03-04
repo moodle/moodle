@@ -185,11 +185,8 @@
         $sql = "SELECT ra.userid, u.firstname, u.lastname, u.idnumber, COUNT(l.action) AS count
                   FROM {$CFG->prefix}role_assignments ra
                        JOIN {$CFG->prefix}user u           ON u.id = ra.userid
-                       LEFT OUTER JOIN {$CFG->prefix}log l ON l.userid = ra.userid
-                 WHERE ra.contextid $relatedcontexts AND ra.roleid = $roleid AND
-                       (l.id IS NULL OR
-                          (l.cmid = $instanceid AND l.time > $timefrom AND $actionsql)
-                       )";
+                       LEFT OUTER JOIN {$CFG->prefix}log l ON (l.userid = ra.userid AND l.cmid = $instanceid AND l.time > $timefrom AND $actionsql)
+                 WHERE ra.contextid $relatedcontexts AND ra.roleid = $roleid";
 
         if ($table->get_sql_where()) {
             $sql .= ' AND '.$table->get_sql_where(); //initial bar
@@ -204,11 +201,8 @@
         $countsql = "SELECT COUNT(DISTINCT(ra.userid))
                        FROM {$CFG->prefix}role_assignments ra
                             JOIN {$CFG->prefix}user u           ON u.id = ra.userid
-                            LEFT OUTER JOIN {$CFG->prefix}log l ON l.userid = ra.userid
-                      WHERE ra.contextid $relatedcontexts AND ra.roleid = $roleid AND
-                            (l.id IS NULL OR
-                               (l.cmid = $instanceid AND l.time > $timefrom AND $actionsql)
-                            )";
+                            LEFT OUTER JOIN {$CFG->prefix}log l ON (l.userid = ra.userid AND l.cmid = $instanceid AND l.time > $timefrom AND $actionsql)
+                      WHERE ra.contextid $relatedcontexts AND ra.roleid = $roleid";
 
         $totalcount = count_records_sql($countsql);
 
