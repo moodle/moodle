@@ -111,7 +111,7 @@ if(!(isset($dirroot) && isset($dataroot))) {
 // Split path - starts with theme name, then actual image path inside pix
 $path=get_file_argument_limited('smartpix.php');
 $match=array();
-if(!preg_match('|^/([a-z0-9_\-.]+)/([a-z0-9/_\-.]+)$|',$path,$match)) {
+if(!preg_match('|^/([a-zA-Z0-9_\-.]+)/([a-zA-Z0-9/_\-.]+)$|',$path,$match)) {
     error('Unexpected request format');
 }
 list($junk,$theme,$path)=$match;
