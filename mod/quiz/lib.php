@@ -126,11 +126,10 @@ function quiz_update_instance($quiz) {
     quiz_after_add_or_update($quiz);
 
     // Delete any previous preview attempts
-    $DB->delete_records('quiz_attempts', array('preview' => '1', 'quiz'=>$quiz->id));
+    quiz_delete_previews($quiz);
 
     return true;
 }
-
 
 function quiz_delete_instance($id) {
     global $DB;
@@ -138,54 +137,44 @@ function quiz_delete_instance($id) {
 /// this function will permanently delete the instance
 /// and any data that depends on it.
 
-    if (! $quiz = $DB->get_record("quiz", array("id"=>$id))) {
+    if (!$quiz = $DB->get_record('quiz', array('id' => $id))) {
         return false;
     }
 
-    $result = true;
+    quiz_delete_all_attempts($quiz);
 
-    if ($attempts = $DB->get_records("quiz_attempts", array("quiz"=>$quiz->id))) {
-        // TODO: this should use the delete_attempt($attempt->uniqueid) function in questionlib.php
-        // require_once($CFG->libdir.'/questionlib.php');
-        foreach ($attempts as $attempt) {
-            if (! $DB->delete_records("question_states", array("attempt"=>$attempt->uniqueid))) {
-                $result = false;
-            }
-            if (! $DB->delete_records("question_sessions", array("attemptid"=>$attempt->uniqueid))) {
-                $result = false;
-            }
-        }
-    }
-
-    $tables_to_purge = array(
-        'quiz_attempts' => 'quiz',
-        'quiz_grades' => 'quiz',
-        'quiz_question_instances' => 'quiz',
-        'quiz_feedback' => 'quizid',
-        'quiz' => 'id'
-    );
-    foreach ($tables_to_purge as $table => $keyfield) {
-        if (!$DB->delete_records($table, array($keyfield=>$quiz->id))) {
-            $result = false;
-        }
-    }
+    $DB->delete_records('quiz_question_instances', array('quiz' => $quiz->id));
+    $DB->delete_records('quiz_feedback', array('quizid' => $quiz->id));
 
     $pagetypes = page_import_types('mod/quiz/');
     foreach($pagetypes as $pagetype) {
-        if(!blocks_delete_all_on_page($pagetype, $quiz->id)) {
-            $result = false;
-        }
+        blocks_delete_all_on_page($pagetype, $quiz->id);
     }
 
-    if ($events = $DB->get_records('event', array("modulename"=>'quiz', "instance"=>$quiz->id))) {
-        foreach($events as $event) {
-            delete_event($event->id);
-        }
+    $events = $DB->get_records('event', array('modulename' => 'quiz', 'instance' => $quiz->id));
+    foreach($events as $event) {
+        delete_event($event->id);
     }
 
     quiz_grade_item_delete($quiz);
+    $DB->delete_records('quiz', array('id' => $quiz->id));
 
-    return $result;
+    return true;
+}
+
+/**
+ * Delete all the attempts belonging to a quiz.
+ * @param $quiz The quiz object.
+ */
+function quiz_delete_all_attempts($quiz) {
+    global $CFG, $DB;
+    require_once($CFG->libdir . '/questionlib.php');
+    $attempts = $DB->get_records('quiz_attempts', array('quiz' => $quiz->id));
+    foreach ($attempts as $attempt) {
+        delete_attempt($attempt->uniqueid);
+    }
+    $DB->delete_records('quiz_attempts', array('quiz' => $quiz->id));
+    $DB->delete_records('quiz_grades', array('quiz' => $quiz->id));
 }
 
 function quiz_user_outline($course, $user, $mod, $quiz) {
@@ -485,9 +474,9 @@ function quiz_grade_item_update($quiz, $grades=NULL) {
  */
 function quiz_grade_item_delete($quiz) {
     global $CFG;
-    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir . '/gradelib.php');
 
-    return grade_update('mod/quiz', $quiz->course, 'mod', 'quiz', $quiz->id, 0, NULL, array('deleted'=>1));
+    return grade_update('mod/quiz', $quiz->course, 'mod', 'quiz', $quiz->id, 0, NULL, array('deleted' => 1));
 }
 
 /**
@@ -541,13 +530,13 @@ function quiz_refresh_events($courseid = 0) {
         $event2 = NULL;
         $event2old = NULL;
 
-        if ($events = $DB->get_records_select('event', "modulename = 'quiz' AND instance = ? ORDER BY timestart", array($quiz->id))) {
+        if ($events = $DB->get_records('event', array('modulename' => 'quiz', 'instance' => $quiz->id), 'timestart')) {
             $event = array_shift($events);
             if (!empty($events)) {
                 $event2old = array_shift($events);
                 if (!empty($events)) {
                     foreach ($events as $badevent) {
-                        $DB->delete_records('event', array('id' => $badevent->id));
+                        delete_event($badevent->id);
                     }
                 }
             }
@@ -929,7 +918,7 @@ function quiz_after_add_or_update($quiz) {
     global $DB;
 
     // Save the feedback
-    $DB->delete_records('quiz_feedback', array('quizid'=>$quiz->id));
+    $DB->delete_records('quiz_feedback', array('quizid' => $quiz->id));
 
     for ($i = 0; $i <= $quiz->feedbackboundarycount; $i += 1) {
         $feedback = new stdClass;
@@ -1064,59 +1053,30 @@ function quiz_reset_gradebook($courseid, $type='') {
  * @return array status array
  */
 function quiz_reset_userdata($data) {
-    global $CFG, $QTYPES, $DB;
-
-    // TODO: this should use the delete_attempt($attempt->uniqueid) function in questionlib.php
-    // require_once($CFG->libdir.'/questionlib.php');
+    global $CFG, $DB;
+    require_once($CFG->libdir.'/questionlib.php');
 
     $componentstr = get_string('modulenameplural', 'quiz');
     $status = array();
 
     /// Delete attempts.
     if (!empty($data->reset_quiz_attempts)) {
-        $params = array($data->courseid);
-        $stateslistsql = "SELECT s.id
-                            FROM {question_states} s
-                                 INNER JOIN {quiz_attempts} qza ON s.attempt=qza.uniqueid
-                                 INNER JOIN {quiz} q ON qza.quiz=q.id
-                           WHERE q.course=?";
-
-        $attemptssql   = "SELECT a.uniqueid
-                            FROM {quiz_attempts} a, {quiz} q
-                           WHERE q.course=? AND a.quiz=q.id";
-
-        $quizessql     = "SELECT q.id
-                            FROM {quiz} q
-                           WHERE q.course=?";
-
-        if ($states = $DB->get_records_sql($stateslistsql, $params)) {
-            //TODO: not sure if this works
-            $stateslist = implode(',', array_keys($states));
-            foreach ($QTYPES as $qtype) {
-                $qtype->delete_states($stateslist);
-            }
+        $quizzes = $DB->get_records('quiz', array('course' => $data->courseid));
+        foreach ($quizzes as $quiz) {
+            quiz_delete_all_attempts($quiz);
         }
-
-        $DB->delete_records_select('question_states', "attempt IN ($attemptssql)", $params);
-        $DB->delete_records_select('question_sessions', "attemptid IN ($attemptssql)", $params);
-        $DB->delete_records_select('question_attempts', "id IN ($attemptssql)", $params);
 
         // remove all grades from gradebook
         if (empty($data->reset_gradebook_grades)) {
             quiz_reset_gradebook($data->courseid);
         }
-
-        $DB->delete_records_select('quiz_grades', "quiz IN ($quizessql)", $params);
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('gradesdeleted','quiz'), 'error'=>false);
-
-        $DB->delete_records_select('quiz_attempts', "quiz IN ($quizessql)", $params);
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('attemptsdeleted','quiz'), 'error'=>false);
+        $status[] = array('component' => $componentstr, 'item' => get_string('attemptsdeleted', 'quiz'), 'error' => false);
     }
 
     /// updating dates - shift may be negative too
     if ($data->timeshift) {
         shift_course_mod_dates('quiz', array('timeopen', 'timeclose'), $data->timeshift, $data->courseid);
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('openclosedatesupdated', 'quiz'), 'error'=>false);
+        $status[] = array('component' => $componentstr, 'item' => get_string('openclosedatesupdated', 'quiz'), 'error' => false);
     }
 
     return $status;
