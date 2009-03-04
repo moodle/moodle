@@ -1,4 +1,3 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <?php
 require_once('../../../config.php');
 require_once('../lib.php');
@@ -55,6 +54,7 @@ $str_title   = format_string($course->shortname) . ": ".format_string($chat->nam
 $str_inputarea = get_string('inputarea', 'chat');
 $str_userlist  = get_string('userlist',  'chat');
 ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
