@@ -188,11 +188,8 @@
         $sql = "SELECT ra.userid, u.firstname, u.lastname, u.idnumber, COUNT(l.action) AS count
                   FROM {role_assignments} ra
                        JOIN {user} u           ON u.id = ra.userid
-                       LEFT JOIN {log} l ON l.userid = ra.userid
-                 WHERE ra.contextid $relatedcontexts AND ra.roleid = :roleid AND
-                       (l.id IS NULL OR
-                          (l.cmid = :instanceid AND l.time > :timefrom AND $actionsql)
-                       )";
+                       LEFT JOIN {log} l ON (l.userid = ra.userid AND l.cmid = :instanceid AND l.time > :timefrom AND $actionsql)
+                 WHERE ra.contextid $relatedcontexts AND ra.roleid = :roleid";
         $params['roleid'] = $roleid;
         $params['instanceid'] = $instanceid;
         $params['timefrom'] = $timefrom;
@@ -210,11 +207,8 @@
         $countsql = "SELECT COUNT(DISTINCT(ra.userid))
                        FROM {role_assignments} ra
                             JOIN {user} u           ON u.id = ra.userid
-                            LEFT OUTER JOIN {log} l ON l.userid = ra.userid
-                      WHERE ra.contextid $relatedcontexts AND ra.roleid = :roleid AND
-                            (l.id IS NULL OR
-                               (l.cmid = :instanceid AND l.time > :timefrom AND $actionsql)
-                            )";
+                            LEFT OUTER JOIN {log} l ON (l.userid = ra.userid AND l.cmid = :instanceid AND l.time > :timefrom AND $actionsql)
+                      WHERE ra.contextid $relatedcontexts AND ra.roleid = :roleid";
 
         $totalcount = $DB->count_records_sql($countsql, $params);
 
