@@ -503,7 +503,7 @@ class grade_report_grader extends grade_report {
         global $CFG, $USER;
 
         $this->rowcount = 0;
-        $fixedstudents = empty($USER->screenreader) && $this->get_pref('fixedstudents');
+        $fixedstudents = empty($USER->screenreader) && $CFG->grade_report_fixedstudents;
 
         if (!$fixedstudents) {
             $strsortasc   = $this->get_lang_string('sortasc', 'grades');
@@ -676,7 +676,7 @@ class grade_report_grader extends grade_report {
         $numusers      = count($this->users);
         $showuserimage = $this->get_pref('showuserimage');
         $showuseridnumber = $this->get_pref('showuseridnumber');
-        $fixedstudents = empty($USER->screenreader) && $this->get_pref('fixedstudents');
+        $fixedstudents = empty($USER->screenreader) && $CFG->grade_report_fixedstudents;
 
         // Preload scale objects for items with a scaleid
         $scales_list = array();
@@ -919,7 +919,7 @@ class grade_report_grader extends grade_report {
 
         $showuserimage = $this->get_pref('showuserimage');
         $showuseridnumber = $this->get_pref('showuseridnumber');
-        $fixedstudents = empty($USER->screenreader) && $this->get_pref('fixedstudents');
+        $fixedstudents = empty($USER->screenreader) && $CFG->grade_report_fixedstudents;
 
         $strsortasc   = $this->get_lang_string('sortasc', 'grades');
         $strsortdesc  = $this->get_lang_string('sortdesc', 'grades');

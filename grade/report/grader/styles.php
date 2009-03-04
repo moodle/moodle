@@ -129,6 +129,7 @@
   border-style:solid;
 }
 
+
 .grade-report-grader table#user-grades tr.heading {
   border-width:0px 0px 0px 0px;
   border-style:solid;

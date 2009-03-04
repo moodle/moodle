@@ -246,7 +246,13 @@ if ($form_key && $data = data_submitted()) {
 
         // Grade item text inputs
         } elseif (preg_match('/(grademax|aggregationcoef|multfactor|plusfactor)_([0-9]*)/', $key, $matches)) {
-            $value = required_param($matches[0], PARAM_NUMBER);
+            $defaults = array('grademax' => 100, 'aggregationcoef' => 1, 'multfactor' => 1, 'plusfactor' => 0);
+
+            if (is_string($_POST[$matches[0]]) && strlen($_POST[$matches[0]]) < 1) {
+                $_POST[$matches[0]] = null;
+            }
+            $value = optional_param($matches[0], $defaults[$matches[1]], PARAM_NUMBER);
+
             $param = $matches[1];
             $a->id = $matches[2];
             $grade_item = grade_item::fetch(array('id'=>$a->id, 'courseid'=>$courseid));
