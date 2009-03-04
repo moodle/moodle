@@ -236,7 +236,7 @@ $string['sessionautostarterror'] = 'Dovrebbe essere impostata ad off';
 $string['sessionautostarthelp'] = '<p>Moodle richiede il supporto delle sessioni e non funziona senza.</p>
 <p>Le sessioni possono essere abilitate nel file php.ini ... cerca il parametro session.auto_start.</p>';
 $string['skipdbencodingtest'] = 'Salta il test della codifica del Database';
-$string['status'] = 'Status';
+$string['status'] = 'Stato';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Italiano';
