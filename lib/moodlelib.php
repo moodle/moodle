@@ -2298,6 +2298,11 @@ function over_bounce_threshold($user) {
     if (empty($CFG->handlebounces)) {
         return false;
     }
+
+    if (empty($user->id)) { /// No real (DB) user, nothing to do here.
+        return false;
+    }
+
     // set sensible defaults
     if (empty($CFG->minbounces)) {
         $CFG->minbounces = 10;
@@ -2321,6 +2326,11 @@ function over_bounce_threshold($user) {
  * @param $reset - will reset the count to 0
  */
 function set_send_count($user,$reset=false) {
+
+    if (empty($user->id)) { /// No real (DB) user, nothing to do here.
+        return;
+    }
+
     if ($pref = get_record('user_preferences','userid',$user->id,'name','email_send_count')) {
         $pref->value = (!empty($reset)) ? 0 : $pref->value+1;
         update_record('user_preferences',$pref);
