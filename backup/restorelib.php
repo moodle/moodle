@@ -7780,7 +7780,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
 
             if ($status = restore_open_html($restore,$course_header)){
-                echo "<li>Creating the Restorelog.html in the course backup folder</li>";
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo "<li>Creating the Restorelog.html in the course backup folder</li>";
+                }
             }
 
         } else {
