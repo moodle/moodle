@@ -57,7 +57,7 @@ function call_moodle_function ($rest_arguments) {
         } else {
             /// TODO: authentication + token generation need to be implemented
             if (optional_param('username',null,PARAM_ALPHANUM) == 'wsuser' && optional_param('password',null,PARAM_ALPHANUM) == 'wspassword') {
-                return '465465465468468464';
+                return '456';
             } else {
                 throw new moodle_exception('wrongusernamepassword');
             }
@@ -113,7 +113,7 @@ function call_moodle_function ($rest_arguments) {
  */
 function mock_check_token($token) {
     //fake test
-    if ($token == 465465465468468464) {
+    if ($token == 456) {
         ///retrieve the user
         global $DB;
         $user = $DB->get_record('user', array('username'=>'wsuser', 'mnethostid'=>1));

@@ -29,31 +29,86 @@
  */
 
 require_once('../../../config.php');
+require_once('../lib.php');
 include "Zend/Loader.php";
 Zend_Loader::registerAutoload();
 
+print_header('Soap test client', 'Soap test client'.":", true);
+if (!webservice_lib::display_webservices_availability("soap")) {
+    echo "<br/><br/>";
+    echo "Please fix the previous problem(s), the testing session has been interupted.";
+    print_footer();
+    exit();
+}
 
 //1. authentication
 $client = new Zend_Soap_Client($CFG->wwwroot."/webservice/soap/server.php?wsdl");
 try {
     $token = $client->tmp_get_token(array('username' => "wsuser", 'password' => "wspassword"));
-    printLastRequestResponse($client);
+    print "<pre>\n";
+    var_dump($token);
+    print "</pre>";
 } catch (moodle_exception $exception) {
     echo $exception;
 }
 
 //2. test functions
+//$client = new Zend_Http_Client($CFG->wwwroot."/webservice/soap/server.php?token=".$token."&classpath=user&wsdl", array(
+//    'maxredirects' => 0,
+//    'timeout'      => 30));
+//$response = $client->request();
+//$wsdl = $response->getBody();
+//varlog($wsdl,"user.wsdl", "w");
+
+
 $client = new Zend_Soap_Client($CFG->wwwroot."/webservice/soap/server.php?token=".$token."&classpath=user&wsdl");
+var_dump($CFG->wwwroot."/webservice/soap/server.php?token=".$token."&classpath=user&wsdl");
+print "<pre>\n";
 var_dump($client->tmp_get_users(array('search' => "admin")));
-printLastRequestResponse($client);
+print "</pre>";
+
+//$param = array('search' => "admin");
+//$expectedresult = array(array(  'id' => 2,
+//                                'auth' => 'manual',
+//                                'confirmed' => '1',
+//                                'username' => 'admin',
+//                                'idnumber' => '',
+//                                'firstname' => 'Admin',
+//                                'lastname' => 'HEAD',
+//                                'email' => 'jerome@moodle.com',
+//                                'emailstop' => '0',
+//                                'lang' => 'en_utf8',
+//                                'theme' => '',
+//                                'timezone' => '99',
+//                                'mailformat' => '1'));
+//$functionname = tmp_get_users;
+//call_soap_function($client,$functionname,$param,$expectedresult);
+
+print "<pre>\n";
 var_dump($client->tmp_create_user(array('username' => "mockuser66",'firstname' => "firstname6",'lastname' => "lastname6",'email' => "mockuser6@mockuser6.com",'password' => "password6")));
-printLastRequestResponse($client);
-var_dump($client->tmp_update_user(array('username' => "mockuser66",'mnethostid' => 1,'newusername' => "mockuser6b",'firstname' => "firstname6b")));
-printLastRequestResponse($client);
+print "</pre>";
+
+print "<pre>\n";
+var_dump($client->tmp_update_user(array('mnethostid' => 1,'username' => "mockuser66",'newusername' => "mockuser6b",'firstname' => "firstname6b")));
+print "</pre>";
+
+print "<pre>\n";
 var_dump($client->tmp_delete_user(array('username' => "mockuser6b",'mnethostid' => 1)));
-printLastRequestResponse($client);
+print "</pre>";
+
+print "<pre>\n";
 var_dump($client->tmp_do_multiple_user_searches(array(array('search' => "jerome"),array('search' => "mock"))));
-printLastRequestResponse($client);
+print "</pre>";
+
+
+print_footer();
+
+//function call_soap_function($client,$functionname,$param,$expectedresult) {
+//    print "<pre>\n";
+//    var_dump($client->$functionname($param));
+//    print "</pre>";
+//}
+
 
 function printLastRequestResponse($client) {
     print "<pre>\n";

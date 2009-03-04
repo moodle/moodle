@@ -32,47 +32,12 @@ require_once('lib.php');
 $protocol = optional_param('protocol',"soap",PARAM_ALPHA);
 
 print_header(get_string('wspagetitle','webservice'), get_string('wspagetitle','webservice').":", true);
-check_webservices($protocol);
+webservice_lib::display_webservices_availability($protocol);
 generate_documentation($protocol);
 generate_functionlist();
 print_footer();
 
-/**
- * Check if the Moodle site has the web service protocol enable
- * @global object $CFG
- * @param string $protocol
- */
-function check_webservices($protocol){
-    global $CFG;
 
-    echo get_string('webservicesenable','webservice').": ";
-    if (empty($CFG->enablewebservices)) {
-        echo "<strong style=\"color:red\">".get_string('fail','webservice')."</strong>";
-    } else {
-        echo "<strong style=\"color:green\">".get_string('ok','webservice')."</strong>";
-    }
-    echo "<br/>";
-
-    foreach(webservice_lib::get_list_protocols() as $wsprotocol) {
-        if (strtolower($wsprotocol->get_protocolname()) == strtolower($protocol)) {
-            echo get_string('protocolenable','webservice',array($wsprotocol->get_protocolname())).": ";
-            if ( get_config($wsprotocol-> get_protocolname(), "enable")) {
-                echo "<strong style=\"color:green\">".get_string('ok','webservice')."</strong>";
-            } else {
-                echo "<strong style=\"color:red\">".get_string('fail','webservice')."</strong>";
-            }
-            echo "<br/>";
-            continue;
-        }
-    }
-
-    //check debugging
-    if ($CFG->debugdisplay) {
-        echo "<strong style=\"color:red\">".get_string('debugdisplayon','webservice')."</strong>";
-    }
-
-
-}
 
 /**
  * Generate documentation specific to a protocol

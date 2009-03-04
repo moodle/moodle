@@ -70,7 +70,7 @@ final class webservice_lib {
      */
     public static function mock_check_token($token) {
         //fake test
-        if ($token == 465465465468468464) {
+        if ($token == 456) {
             ///retrieve the user
             global $DB;
             $user = $DB->get_record('user', array('username'=>'wsuser', 'mnethostid'=>1));
@@ -134,7 +134,7 @@ final class webservice_lib {
        -------
      * Docnlock: @ subparam string $params:searches->search - the string to search
      * $params is considered as the first element, searches the second, and search the terminal
-     * Except the terminal element, all other will be generated as an array 
+     * Except the terminal element, all other will be generated as an array
      * => left element are generated as an associative array.
      * If the following character is ':' so the right element is a key named 'multiple:element_name'
      * If the following character is '->' so the right element will be named 'element_name'
@@ -150,7 +150,7 @@ final class webservice_lib {
        @ return array users
        @ subreturn integer $users:user->id
        @ subreturn integer $users:user->auth
-     
+
        Generated description array
        ---------------------------
        description["mock_function"]=>
@@ -221,10 +221,10 @@ final class webservice_lib {
             //retrieve the subparam and subreturn
             preg_match_all('/\s*\*\s*@(subparam|subreturn)\s+(\w+)\s+(\$\w+(?::\w+|->\w+)+)((?:\s+(?:optional|required|multiple))*)/', $docBlock, $matches);
 
-        /// process every @subparam and @subreturn line of the docblock
+            /// process every @subparam and @subreturn line of the docblock
             for($i=0;$i<sizeof($matches[1]);$i++){
 
-            /// identify the description type of the docblock line: is it params, optional or return (first key of a description method array)
+                /// identify the description type of the docblock line: is it params, optional or return (first key of a description method array)
                 switch ($matches[1][$i]) {
                     case "subparam":
                         if (strpos($matches[4][$i], "optional")!==false) {
@@ -238,12 +238,12 @@ final class webservice_lib {
                         break;
                 }
 
-            /// init description[method]
+                /// init description[method]
                 if (empty($description[$method->getName()])) {
                     $description[$method->getName()] = array();
                 }
 
-            /// directly set description[method][return] if the return value is a primary type
+                /// directly set description[method][return] if the return value is a primary type
                 if (strpos($returnmatches[1][0] ,"object")===false && strpos($returnmatches[1][0],"array")===false) {
                     $description[$method->getName()]['return'] = array($returnmatches[2][0] => $returnmatches[1][0]);
                 }
@@ -258,8 +258,8 @@ final class webservice_lib {
                 ///Part 1.
 
 
-            /// extract the first part into $param (has to be $params in the case of @subparam, or anything in the case of $subreturn)
-            /// extract the second part
+                /// extract the first part into $param (has to be $params in the case of @subparam, or anything in the case of $subreturn)
+                /// extract the second part
                 if (strpos($matches[3][$i], "->")===false || (strpos($matches[3][$i], ":")!==false && (strpos($matches[3][$i], ":") < strpos($matches[3][$i], "->")))) {
                     $separator = ":";
                     $separatorsize=1;
@@ -270,27 +270,27 @@ final class webservice_lib {
                 }
 
                 $param = substr($matches[3][$i],1,strpos($matches[3][$i], $separator)-1); //first element/part/array
-                                                                                          //for example for the line @subparam string $params:students->student->name
-                                                                                          //    @params is the first element/part/array of this docnlock line
-                                                                                          //    students is the second element/part/array
-                                                                                          //    ...
-                                                                                          //    name is the terminal element, this element will be generated as String here
+                //for example for the line @subparam string $params:students->student->name
+                //    @params is the first element/part/array of this docnlock line
+                //    students is the second element/part/array
+                //    ...
+                //    name is the terminal element, this element will be generated as String here
 
 
                 $otherparam = substr($matches[3][$i],strpos($matches[3][$i], $separator)+$separatorsize); //rest of the line
                 $parsingdesc = $description[$method->getName()]; //$pasingdesc is the current position of the algorythm into the description array
-                                                                 //it is used to check if a element already exist into the description array
+                //it is used to check if a element already exist into the description array
 
                 if (!empty($parsingdesc) && array_key_exists($descriptiontype, $parsingdesc)){
                     $parsingdesc = $parsingdesc[$descriptiontype];
                 }
                 $descriptionpath=array(); //we save in this variable the description path (e.g all keys to go deep into the description array)
-                                          //it will be used to know where to add a new part the description array
+                //it will be used to know where to add a new part the description array
 
                 $creationfinished = false; //it's used to stop the algorythm when we find a new element that we can add to the descripitoin
                 unset($type);
 
-            /// try to extract the other elements and add them to the descripition id there are not already in the description
+                /// try to extract the other elements and add them to the descripition id there are not already in the description
                 while(!$creationfinished && (strpos($otherparam, ":") || strpos($otherparam, "->"))) {
                     if (strpos($otherparam, "->")===false || (strpos($otherparam, ":")!==false && (strpos($otherparam, ":") < strpos($otherparam, "->")))) {
                         $type = $separator;
@@ -325,7 +325,7 @@ final class webservice_lib {
                             }
                             webservice_lib::add_end_of_description($paramtoadd, $desctoadd, $description[$method->getName()], $descriptionpath);
                             $creationfinished = true; // we do not want to keep going to parse this line,
-                                                      // neither add again the terminal element of the line to the descripiton
+                            // neither add again the terminal element of the line to the descripiton
                         } else {
                             if(empty($descriptionpath)) {
                                 $descriptionpath[] = $descriptiontype;
@@ -353,7 +353,7 @@ final class webservice_lib {
                             webservice_lib::add_end_of_description($paramtoadd, $desctoadd, $description[$method->getName()], $descriptionpath);
 
                             $creationfinished = true; // we do not want to keep going to parse this line,
-                                                      // neither add again the terminal element of the line to the descripiton
+                            // neither add again the terminal element of the line to the descripiton
                         } else {
                             if(empty($descriptionpath)) {
                                 $descriptionpath[] = $descriptiontype;
@@ -364,7 +364,7 @@ final class webservice_lib {
                     }
 
                 }
-            /// Add the "terminal" element of the line to the description array
+                /// Add the "terminal" element of the line to the description array
                 if (!$creationfinished) {
 
                     if (!empty($type) && $type==":") {
@@ -400,9 +400,9 @@ final class webservice_lib {
 
             }
         }
-//        echo "<pre>";
-//        var_dump($description);
-//        echo "</pre>";
+        //        echo "<pre>";
+        //        var_dump($description);
+        //        echo "</pre>";
         return $description;
 
     }
@@ -481,6 +481,48 @@ final class webservice_lib {
 
     }
 
+    /**
+     * Check if the Moodle site has the web service protocol enable
+     * @global object $CFG
+     * @param string $protocol
+     */
+    function display_webservices_availability($protocol){
+        global $CFG;
+
+        $available = true;
+
+        echo get_string('webservicesenable','webservice').": ";
+        if (empty($CFG->enablewebservices)) {
+            echo "<strong style=\"color:red\">".get_string('fail','webservice')."</strong>";
+            $available = false;
+        } else {
+            echo "<strong style=\"color:green\">".get_string('ok','webservice')."</strong>";
+        }
+        echo "<br/>";
+
+        foreach(webservice_lib::get_list_protocols() as $wsprotocol) {
+            if (strtolower($wsprotocol->get_protocolname()) == strtolower($protocol)) {
+                echo get_string('protocolenable','webservice',array($wsprotocol->get_protocolname())).": ";
+                if ( get_config($wsprotocol-> get_protocolname(), "enable")) {
+                    echo "<strong style=\"color:green\">".get_string('ok','webservice')."</strong>";
+                } else {
+                    echo "<strong style=\"color:red\">".get_string('fail','webservice')."</strong>";
+                    $available = false;
+                }
+                echo "<br/>";
+                continue;
+            }
+        }
+
+        //check debugging
+        if ($CFG->debugdisplay) {
+            echo "<strong style=\"color:red\">".get_string('debugdisplayon','webservice')."</strong>";
+            $available = false;
+        }
+
+        return $available;
+    }
+
 }
 
 /**
@@ -528,7 +570,7 @@ class ws_authentication {
      */
     function tmp_get_token($params) {
         if ($params['username'] == 'wsuser' && $params['password'] == 'wspassword') {
-            return '465465465468468464';
+            return '456';
         } else {
             throw new moodle_exception('wrongusernamepassword');
         }
