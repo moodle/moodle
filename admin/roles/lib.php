@@ -585,7 +585,7 @@ class define_role_table_advanced extends capability_table_with_risks {
 
         if (!$this->roleid) {
             // Creating role
-            if ($this->legacyroles[$this->role->legacytype]) {
+            if (isset($this->legacyroles[$this->role->legacytype])) {
                 $legacycap = $this->legacyroles[$this->role->legacytype];
             } else {
                 $legacycap = '';
