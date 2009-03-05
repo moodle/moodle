@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="question/type/numerical/db" VERSION="20060812" COMMENT="XMLDB file for Moodle question/type/numerical">
+<XMLDB PATH="question/type/numerical/db" VERSION="20060812" COMMENT="XMLDB file for Moodle question/type/numerical"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
   <TABLES>
-    <TABLE NAME="question_numerical" COMMENT="Options for numerical questions" NEXT="question_numerical_units">
+    <TABLE NAME="question_numerical" COMMENT="Options for numerical questions." NEXT="question_numerical_units">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="question"/>
-        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="answer"/>
-        <FIELD NAME="answer" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="question" NEXT="tolerance"/>
-        <FIELD NAME="tolerance" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="0.0" SEQUENCE="false" ENUM="false" PREVIOUS="answer"/>
+        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Redundant, because of the answer field. Foreign key references question.id." PREVIOUS="id" NEXT="answer"/>
+        <FIELD NAME="answer" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Foreign key references question_answers.id." PREVIOUS="question" NEXT="tolerance"/>
+        <FIELD NAME="tolerance" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="0.0" SEQUENCE="false" ENUM="false" COMMENT="Allowed error when matching a response to this answer. I don't know why this is stored as a string." PREVIOUS="answer"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="question"/>
@@ -16,12 +19,12 @@
         <INDEX NAME="answer" UNIQUE="false" FIELDS="answer"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="question_numerical_units" COMMENT="Optional unit options for numerical questions" PREVIOUS="question_numerical">
+    <TABLE NAME="question_numerical_units" COMMENT="Optional unit options for numerical questions. This table is also used by the calculated question type." PREVIOUS="question_numerical">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="question"/>
-        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="multiplier"/>
-        <FIELD NAME="multiplier" TYPE="number" LENGTH="40" NOTNULL="true" UNSIGNED="false" DEFAULT="1.00000000000000000000" SEQUENCE="false" ENUM="false" DECIMALS="20" PREVIOUS="question" NEXT="unit"/>
-        <FIELD NAME="unit" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="multiplier"/>
+        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Foreign key references question.id" PREVIOUS="id" NEXT="multiplier"/>
+        <FIELD NAME="multiplier" TYPE="number" LENGTH="40" NOTNULL="true" UNSIGNED="false" DEFAULT="1.00000000000000000000" SEQUENCE="false" ENUM="false" DECIMALS="20" COMMENT="The multiplier for this unit. For example, if the first unit is (1.0, 'cm'), another unit might be (0.1, 'mm') or (100.0, 'm')." PREVIOUS="question" NEXT="unit"/>
+        <FIELD NAME="unit" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="The unit. For example 'm' or 'kg'." PREVIOUS="multiplier"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="question"/>
