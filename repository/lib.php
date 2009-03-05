@@ -1362,6 +1362,7 @@ abstract class repository {
     final public function delete() {
         global $DB;
         $DB->delete_records('repository_instances', array('id'=>$this->id));
+        $DB->delete_records('repository_instance_config', array('instanceid'=>$this->id));
         return true;
     }
 
