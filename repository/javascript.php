@@ -901,12 +901,11 @@ _client.search_paging = function(id, path, page) {
     params['page'] = page;
     params['env']=_client.env;
     params['accepted_types'] = _client.accepted_types;
-    params['action']='search';
     params['search_paging']='true';
     params['sesskey']='$sesskey';
     params['ctx_id']=$context->id;
     params['repo_id']=id;
-    var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->httpswwwroot/repository/ws.php?action='+action, _client.req_cb, _client.postdata(params));
+    var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->httpswwwroot/repository/ws.php?action=search', _client.req_cb, _client.postdata(params));
 }
 _client.makepath = function() {
     if(_client.viewmode == 1) {
