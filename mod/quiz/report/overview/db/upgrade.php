@@ -22,7 +22,6 @@ function xmldb_quizreport_overview_upgrade($oldversion) {
         $table->add_field('regraded', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
 
-
     /// Adding keys to table quiz_question_regrade
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
@@ -32,7 +31,22 @@ function xmldb_quizreport_overview_upgrade($oldversion) {
         }
     }
 
+    if ($result && $oldversion < 2009030500) {
+    /// Changing precision of field newgrade on table quiz_question_regrade to (12, 7).
+        $table = new xmldb_table('quiz_question_regrade');
+        $field = new xmldb_field('newgrade', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, null, null, null, 'attemptid');
 
+    /// Launch change of precision for field newgrade
+        $dbman->change_field_precision($table, $field);
+
+    /// Changing precision of field oldgrade on table quiz_question_regrade to (12, 7).
+        $table = new xmldb_table('quiz_question_regrade');
+        $field = new xmldb_field('oldgrade', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, null, null, null, 'newgrade');
+
+    /// Launch change of precision for field newgrade
+        $dbman->change_field_precision($table, $field);
+    }
+    
     return $result;
 }
 
