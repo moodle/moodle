@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
+<xsl:output omit-xml-declaration="yes"/>
+
 <!-- Top level: disclaimer/intro -->
 <xsl:template match="/">
   <p>This documentation is generated automatically from the XMLDB database
@@ -18,7 +20,7 @@
 
 <!-- Fields (if any): table with field, type, comment -->
 <xsl:template match="FIELDS[FIELD]">
-  <table class="generaltable boxaligncenter" style="margin:1em 0" cellspacing="1" cellpadding="5" width="100%"> 
+  <table class="generaltable boxaligncenter" style="margin:1em 0" cellspacing="1" cellpadding="5" width="100%">
     <tr>
       <th class="header c0" scope="col">Field</th>
       <th class="header c1" scope="col">Type</th>
@@ -38,18 +40,18 @@
   </tr>
 </xsl:template>
 
-<!-- Keys (if any): table with key, type, field(s), reference, and comment --> 
+<!-- Keys (if any): table with key, type, field(s), reference, and comment -->
 <xsl:template match="KEYS[KEY]">
   <h4>Keys</h4>
-  <table class="generaltable boxaligncenter" cellspacing="1" cellpadding="5" width="100%"> 
-    <tr>      
+  <table class="generaltable boxaligncenter" cellspacing="1" cellpadding="5" width="100%">
+    <tr>
       <th class="header c0" scope="col">Name</th>
       <th class="header c1" scope="col">Type</th>
       <th class="header c2" scope="col">Field(s)</th>
       <th class="header c3" scope="col">Reference</th>
-      <!-- If no keys have comments (which is usually sensible since it's 
-         completely obvious what they are) then the comment column is not 
-         included -->      
+      <!-- If no keys have comments (which is usually sensible since it's
+         completely obvious what they are) then the comment column is not
+         included -->
       <xsl:if test="*[normalize-space(@COMMENT)!='']">
         <th class="header c4 lastcol" scope="col">Description</th>
       </xsl:if>
@@ -72,14 +74,14 @@
     </td>
     <xsl:if test="../*[normalize-space(@COMMENT)!='']">
       <td class="cell c4 lastcol"><xsl:call-template name="display-comment"/></td>
-    </xsl:if>    
+    </xsl:if>
   </tr>
 </xsl:template>
 
 <!-- Indexes -->
 <xsl:template match="INDEXES[INDEX]">
   <h4>Indexes</h4>
-  <table class="generaltable boxaligncenter" cellspacing="1" cellpadding="5" width="100%"> 
+  <table class="generaltable boxaligncenter" cellspacing="1" cellpadding="5" width="100%">
     <tr>
       <th class="header c0" scope="col">Name</th>
       <th class="header c1" scope="col">Type</th>
@@ -106,7 +108,7 @@
     <td class="cell c2"><xsl:value-of select="@FIELDS"/></td>
     <xsl:if test="../*[normalize-space(@COMMENT)!='']">
       <td class="cell c4 lastcol"><xsl:call-template name="display-comment"/></td>
-    </xsl:if>    
+    </xsl:if>
   </tr>
 </xsl:template>
 
@@ -121,7 +123,7 @@
         <xsl:value-of select="@COMMENT"/>
       </xsl:otherwise>
     </xsl:choose>
-  </xsl:if> 
+  </xsl:if>
 </xsl:template>
 
 </xsl:stylesheet>
