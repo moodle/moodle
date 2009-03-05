@@ -6,10 +6,10 @@ require_once($CFG->libdir . '/adminlib.php');
 
 $CFG->pagepath = 'admin/managerepositories';
 
-$edit    = optional_param('edit', 0, PARAM_ALPHANUM);
+$edit    = optional_param('edit', 0, PARAM_FORMAT);
 $new     = optional_param('new', '', PARAM_FORMAT);
-$hide    = optional_param('hide', '', PARAM_ALPHANUM);
-$delete  = optional_param('delete', 0, PARAM_ALPHANUM);
+$hide    = optional_param('hide', '', PARAM_FORMAT);
+$delete  = optional_param('delete', 0, PARAM_FORMAT);
 $sure    = optional_param('sure', '', PARAM_ALPHA);
 $move    = optional_param('move', '', PARAM_ALPHANUM);
 $type    = optional_param('type', '', PARAM_ALPHANUM);
@@ -134,8 +134,11 @@ if (!empty($edit) || !empty($new)) {
     if (!confirm_sesskey()) {
         print_error('confirmsesskeybad', '', $baseurl);
     }
-    var_dump($hide);
     $repositorytype = repository::get_type_by_typename($hide);
+    if (empty($repositorytype)) {
+        print_error('invalidplugin', 'repository');
+
+    }
     $repositorytype->switch_and_update_visibility();
     $return = true;
 } else if (!empty($delete)) {
