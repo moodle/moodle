@@ -192,6 +192,10 @@ li form .invisiblefieldset {
     text-align: right;
 }
 
+.glossarypost .entryheader {
+    text-align: right;
+}
+
 h1, h2, h3, h4 {
     text-align: right;
     padding-left: 0px;
@@ -218,6 +222,11 @@ h1, h2, h3, h4 {
 
 .sideblock .footer {
     text-align: right;
+}
+
+.mod-lesson .skip {
+    left: 10em;
+    top: -1000em;
 }
 
 /* blocks */
@@ -255,6 +264,17 @@ h1.main, h2.main, h3.main, h4.main, h5.main, h6.main {
 
 .block_admin_tree .admintree {
     text-align: right;
+}
+
+/* online users block */
+.sideblock img.userpicture {
+  margin-right:inherit;
+  margin-left:4px;
+}
+
+.block_online_users .listentry div.user,
+.block_messages .listentry div.user {
+  float:right;
 }
 
 body#admin-blocks table.generaltable th.c0, body#admin-blocks table.generaltable td.c0, body#admin-filters table.generaltable th.c0, body#admin-filters table.generaltable td.c0, body#admin-modules table.generaltable th.c0, body#admin-modules table.generaltable td.c0, body#admin-auth table.generaltable th.c0, body#admin-auth table.generaltable td.c0 {
@@ -498,6 +518,12 @@ body#mod-quiz-report table#attempts .header {
     left:0.2em;
 }
 
+
+/* survey */
+#surveyform th {
+  text-align: right;
+}
+
 .logtable th {
     text-align: right;
 }
@@ -627,3 +653,16 @@ FORM.mform INPUT {
 	max-width: 100px;
 }
 
+.navigation option {
+  text-align:right;
+}
+
+#navmenupopup option,
+#navmenufooterpopup option {
+  padding: 2px 20px 2px 5px;
+  background-position: center right;
+}
+
+.grade-report-grader table#user-grades  th.user {
+  text-align:right;
+}
