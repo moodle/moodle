@@ -79,6 +79,7 @@ $string['saveas'] = 'Save as';
 $string['saved'] = 'Saved';
 $string['saving'] = 'Saving';
 $string['settings'] = 'Settings';
+$string['setupdefaultplugins'] = 'Setting up default repository plugins';
 $string['search'] = 'Search ';
 $string['searching'] = 'Search in ';
 $string['siteinstances'] = 'Repositories instances of the site';

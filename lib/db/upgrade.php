@@ -1472,7 +1472,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2009021801);
     }
-
     /// Add default sort order for question types.
     if ($result && $oldversion < 2009030300) {
         set_config('multichoice_sortorder', 1, 'question');
@@ -1489,6 +1488,13 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         set_config('missingtype_sortorder', 12, 'question');
 
         upgrade_main_savepoint($result, 2009030300);
+    }
+    if ($result && $oldversion < 2009030501) {
+    /// setup default repository plugins
+        require_once($CFG->dirroot . '/repository/lib.php');
+        repository_setup_default_plugins();
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009030501);
     }
 
     return $result;

@@ -205,9 +205,12 @@ class repository_type {
 
     /**
      * Create a repository type (the type name must not already exist)
+     * @param boolean throw exception?
+     * @return mixed return int if create successfully, return false if
+     *         any errors
      * @global object $DB
      */
-    public function create() {
+    public function create($silent = false) {
         global $DB;
 
         //check that $type has been set
@@ -227,7 +230,9 @@ class repository_type {
         if (!$existingtype) {
             //run init function
             if (!repository::static_function($this->_typename, 'plugin_init')) {
-                throw new repository_exception('cannotcreatetype', 'repository');
+                if (!$silent) {
+                    throw new repository_exception('cannotcreatetype', 'repository');
+                }
             }
 
             //create the type
@@ -235,7 +240,7 @@ class repository_type {
             $newtype->type = $this->_typename;
             $newtype->visible = $this->_visible;
             $newtype->sortorder = $this->_sortorder;
-            $DB->insert_record('repository', $newtype);
+            $plugin_id = $DB->insert_record('repository', $newtype);
 
             //save the options in DB
             $this->update_options();
@@ -249,9 +254,19 @@ class repository_type {
                 $instanceoptions['name'] = $this->_typename;
                 repository::static_function($this->_typename, 'create', $this->_typename, 0, get_system_context(), $instanceoptions);
             }
+            if(!empty($plugin_id)) {
+                // return plugin_id if create successfully
+                return $plugin_id;
+            } else {
+                return false;
+            }
 
         } else {
-            throw new repository_exception('existingrepository', 'repository');
+            if (!$silent) {
+                throw new repository_exception('existingrepository', 'repository');
+            }
+            // If plugin existed, return false, tell caller no new plugins were created.
+            return false;
         }
     }
 
@@ -1806,4 +1821,14 @@ final class repository_type_form extends moodleform {
     }
 }
 
-
+function repository_setup_default_plugins() {
+    //if the plugin type has no multiple instance (e.g. has no instance option name)
+    //repository_type::create will create an instance automatically
+    $local_plugin = new repository_type('local', array(), true);
+    $local_plugin_id = $local_plugin->create(true);
+    $upload_plugin = new repository_type('upload', array(), true);
+    $upload_plugin_id = $upload_plugin->create(true);
+    if (is_int($local_plugin_id) or is_int($upload_plugin_id)) {
+        print_box(get_string('setupdefaultplugins', 'repository'));
+    }
+}
