@@ -64,7 +64,6 @@ class moodle_list {
     var $parentitem = null;
     var $table;
     var $fieldnamesparent = 'parent';
-    var $sortby = 'parent, sortorder, name';
     /**
      * Records from db, only used in top level list.
      * @var array

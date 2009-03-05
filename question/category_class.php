@@ -28,6 +28,7 @@ class question_category_list extends moodle_list {
     public $lastlist = null;
 
     public $context = null;
+    public $sortby = 'parent, sortorder, name';
 
     public function question_category_list($type='ul', $attributes='', $editable = false, $pageurl=null, $page = 0, $pageparamname = 'page', $itemsperpage = 20, $context = null){
         parent::moodle_list('ul', '', $editable, $pageurl, $page, 'cpage', $itemsperpage);
