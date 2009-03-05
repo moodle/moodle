@@ -14,7 +14,7 @@ global $CFG;
 require_once($CFG->libdir . '/simpletestlib.php'); // Include the test libraries
 require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php'); // Include the code to test
 
-/** This class contains the test cases for the functions in editlib.php. */
+/** This class contains the test cases for the functions in reportlib.php. */
 class question_reportlib_test extends UnitTestCase {
     function test_quiz_report_index_by_keys() {
         $datum = array();
