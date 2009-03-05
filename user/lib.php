@@ -99,37 +99,42 @@
      *
      * @param assoc array or object $user
      *
-     * @return userid or thrown exceptions
+     * @return string or thrown exceptions
      */
     function tmp_create_user($user) {
         global $CFG, $DB;
-     ///WS: convert user array into an user object
+    /// WS: convert user array into an user object
         if (is_array($user))  {
             $user = (object) $user;
         }
 
-     ///check password and auth fields
-        if (!isset($user->password)) {
-            $user->password = '';
-        }
+    /// check auth fields
         if (!isset($user->auth)) {
             $user->auth = 'manual';
+        } else {
+    /// check that the auth value exists
+            $authplugin = get_directory_list($CFG->dirroot."/auth", '', false, true, false);
+            if (array_search($user->auth, $authplugin)===false) {
+                throw new moodle_exception('authnotexisting');
+            }
         }
 
-        $required = array('username','firstname','lastname','email');
+        $required = array('username','firstname','lastname','email', 'password');
         foreach ($required as $req) {
             if (!isset($user->{$req})) {
                 throw new moodle_exception('missingerequiredfield');
             }
         }
-
-        $record = create_user_record($user->username, $user->password, $user->auth);
+        $password = hash_internal_user_password($user->password);
+        $record = create_user_record($user->username, $password, $user->auth);
         if ($record) {
             $user->id = $record->id;
             if ($DB->update_record('user',$user)) {
                 return $record->id;
             } else {
+                //we could not update properly the newly created user, we need to delete it
                 $DB->delete_record('user',array('id' => $record->id));
+                throw new moodle_exception('couldnotcreateuser');
             }
         }
         throw new moodle_exception('couldnotcreateuser');
@@ -140,7 +145,8 @@
     /**
      * Update a user record from its id
      * Warning: no checks are done on the data!!!
-     * @param object $user 
+     * @param object $user
+     * @return boolean
      */
     function tmp_update_user($user) {
         global $DB;

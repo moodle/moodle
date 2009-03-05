@@ -85,29 +85,29 @@ print "</pre>";
 //call_soap_function($client,$functionname,$param,$expectedresult);
 
 print "<pre>\n";
-var_dump($client->tmp_create_user(array('username' => "mockuser66",'firstname' => "firstname6",'lastname' => "lastname6",'email' => "mockuser6@mockuser6.com",'password' => "password6")));
+var_dump($client->tmp_create_users(array(array('username' => "mockuser66",'firstname' => "firstname6",'lastname' => "lastname6",'email' => "mockuser6@mockuser6.com",'password' => "password6"))));
 print "</pre>";
 
 print "<pre>\n";
-var_dump($client->tmp_update_user(array('mnethostid' => 1,'username' => "mockuser66",'newusername' => "mockuser6b",'firstname' => "firstname6b")));
+var_dump($client->tmp_update_users(array(array('username' => "mockuser66",'newusername' => "mockuser6b",'firstname' => "firstname6b"))));
 print "</pre>";
 
 print "<pre>\n";
-var_dump($client->tmp_delete_user(array('username' => "mockuser6b",'mnethostid' => 1)));
+var_dump($client->tmp_delete_users(array(array('username' => "mockuser6b"))));
 print "</pre>";
 
-print "<pre>\n";
-var_dump($client->tmp_do_multiple_user_searches(array(array('search' => "jerome"),array('search' => "mock"))));
-print "</pre>";
+//print "<pre>\n";
+//var_dump($client->tmp_do_multiple_user_searches(array(array('search' => "jerome"),array('search' => "mock"))));
+//print "</pre>";
 
 
 print_footer();
 
-//function call_soap_function($client,$functionname,$param,$expectedresult) {
-//    print "<pre>\n";
-//    var_dump($client->$functionname($param));
-//    print "</pre>";
-//}
+function call_soap_function($client,$functionname,$param,$expectedresult) {
+    print "<pre>\n";
+    var_dump($client->$functionname($param));
+    print "</pre>";
+}
 
 
 function printLastRequestResponse($client) {

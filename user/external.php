@@ -1,60 +1,37 @@
 <?php
 /**
- * Created on 05/03/2008
+ * Moodle - Modular Object-Oriented Dynamic Learning Environment
+ *         http://moodle.com
  *
- * users webservice api
+ * LICENSE
  *
- * @author Jerome Mouneyrac
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details:
+ *
+ *         http://www.gnu.org/copyleft/gpl.html
+ *
+ * @category  Moodle
+ * @package   user
+ * @copyright Copyright (c) 1999 onwards Martin Dougiamas     http://dougiamas.com
+ * @license   http://www.gnu.org/copyleft/gpl.html     GNU GPL License
  */
 require_once(dirname(dirname(__FILE__)) . '/user/lib.php');
 
 /**
  * WORK IN PROGRESS, DO NOT USE IT
+ * users webservice api
+ *
+ * @author Jerome Mouneyrac
  */
 final class user_external {
 
-    /**
-     * This docblock has a right syntax but it does not match the real function parameters - except @ param and @ return
-     * I just keep it for a while till we implement a real ws function using complex blockdoc syntax as this one
-     * Understand, this dockblock is a example...
-     * @global object $USER
-     * @param array|struct $params
-     * @subparam string $params:searches->search - the string to search
-     * @subparam string $params:searches->search2 optional - the string to search
-     * @subparam string $params:searches->search3 - the string to search
-     * @subparam string $params:airport->planes:plane->company->employees:employee->name - name of a employee of a company of a plane of an airport
-     * @return object $return
-     * @subreturn integer $return:user->id
-     * @subreturn integer $return:user->auth
-     * @subreturn integer $return:user->confirmed
-     * @subreturn string $return:user->username
-     * @subreturn string $return:user->idnumber
-     * @subreturn string $return:user->firstname
-     * @subreturn string $return:user->lastname
-     * @subreturn string $return:user->email
-     * @subreturn string $return:user->emailstop
-     * @subreturn string $return:user->lang
-     * @subreturn string $return:user->theme
-     * @subreturn string $return:user->timezone
-     * @subreturn string $return:user->mailformat
-     */
-    static function tmp_do_multiple_user_searches($params) {
-        global $USER;
-        if (has_capability('moodle/user:viewdetails', get_context_instance(CONTEXT_SYSTEM))) {
-            $users = array();
-            foreach($params as $searchparams) {
-                $searchusers = get_users(true, $searchparams['search'], false, null, 'firstname ASC','', '', '', 1000, 'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat');
-                foreach ($searchusers as $user) {
-                    $users[] = $user;
-                }
-            }
-            return $users;
-        }
-        else {
-            throw new moodle_exception('wscouldnotvieweuser');
-        }
-    }
-    
     /**
      * Retrieve all user
      * @param array|struct $params - need to be define as struct for XMLRPC
@@ -80,87 +57,147 @@ final class user_external {
         $params['search'] = clean_param($params['search'], PARAM_ALPHANUM);
 
         if (has_capability('moodle/user:viewdetails', get_context_instance(CONTEXT_SYSTEM))) {
-           // return "toto";
-            return get_users(true, $params['search'], false, null, 'firstname ASC','', '', '', 1000, 'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat');
+            return get_users(true, $params['search'], false, null, 'firstname ASC','', '', '', 1000, 'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat, city, description, country');
         }
         else {
             throw new moodle_exception('wscouldnotvieweuser');
         }
     }
 
-    /**
-     * Create a user
+     /**
+     * Create multiple users
      * @param array|struct $params - need to be define as struct for XMLRPC
-     * @subparam string $params->username
-     * @subparam string $params->firstname
-     * @subparam string $params->lastname
-     * @subparam string $params->email
-     * @subparam string $params->password
-     * @return integer id of new user
+     * @subparam string $params:user->username
+     * @subparam string $params:user->firstname
+     * @subparam string $params:user->lastname
+     * @subparam string $params:user->email
+     * @subparam string $params:user->password
+     * @return array $return ids of new user
+     * @subreturn integer $return:id user id
      */
-    static function tmp_create_user($params) {
+    static function tmp_create_users($params) {
         global $USER;
         if (has_capability('moodle/user:create', get_context_instance(CONTEXT_SYSTEM))) {
-            $user = array();
-            $user['username'] = $params['username'];
-            $user['firstname'] = $params['firstname'];
-            $user['lastname'] = $params['lastname'];
-            $user['email'] = $params['email'];
-            $user['password'] = $params['password'];
-            return tmp_create_user($user);
+            $userids = array();
+            foreach ($params as $userparams) {
+
+                $user = array();
+                foreach (array_keys($userparams) as $key) {
+                    $user[$key]  = clean_param($userparams[$key], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('email', $userparams)) {
+                    $user['email'] =  clean_param($userparams['email'], PARAM_NOTAGS);
+                }
+
+                if (array_key_exists('description', $userparams)) {
+                    $user['description'] =  clean_param($userparams['description'], PARAM_TEXT);
+                }
+
+                try {
+                    $userids[$userparams['username']] = tmp_create_user($user);
+                }
+                catch (dml_write_exception $e) {
+                    throw new moodle_exception('wscouldnotcreateeuserindb');
+                }
+            }
+            return $userids;
         }
         else {
             throw new moodle_exception('wscouldnotcreateeuser');
-        }    
+        }
     }
 
-    /**
-     * Delete a user
+     /**
+     * Delete multiple users
      * @global object $DB
      * @param array|struct $params - need to be define as struct for XMLRPC
-     * @subparam string $params->username
-     * @subparam integer $params->mnethostid
+     * @subparam string $params:user->username
+     * @subparam integer $params:user->mnethostid
      * @return boolean result true if success
      */
-    static function tmp_delete_user($params) {
+    static function tmp_delete_users($params) {
         global $DB,$USER;
+        $deletionsuccessfull = true;
         if (has_capability('moodle/user:delete', get_context_instance(CONTEXT_SYSTEM))) {
-            $user = $DB->get_record('user', array('username'=>$params['username'], 'mnethostid'=>$params['mnethostid']));
-            return delete_user($user); //this function is in moodlelib.php
+            foreach ($params as $userparams) {
+
+                $username  = clean_param($userparams['username'], PARAM_ALPHANUMEXT);
+
+                $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>1));
+
+                if (empty($user)) {
+                    throw new moodle_exception('wscouldnotdeletenoexistinguser');
+                }
+
+                if (!delete_user($user)) {
+                    $deletionsuccessfull = false; //this function is in moodlelib.php
+                }
+            }
+            return $deletionsuccessfull;
         }
         else {
             throw new moodle_exception('wscouldnotdeleteuser');
         }
     }
 
-
-    /**
-     * Update some user information
+     /**
+     * Update some users information
      * @global object $DB
      * @param array|struct $params - need to be define as struct for XMLRPC
-     * @subparam string $params->username
-     * @subparam integer $params->mnethostid
-     * @subparam string $params->newusername
-     * @subparam string $params->firstname
+     * @subparam string $params:user->username
+     * @subparam integer $params:user->mnethostid
+     * @subparam string $params:user->newusername
+     * @subparam string $params:user->firstname
      * @return boolean result true if success
      */
-    static function tmp_update_user($params) {
+    static function tmp_update_users($params) {
         global $DB,$USER;
         if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM))) {
-            $user = $DB->get_record('user', array('username'=>$params['username'], 'mnethostid'=>$params['mnethostid']));
+            $updatesuccessfull = true;
 
-            if (!empty($params['newusername'])) {
-                $user->username = $params['newusername'];
+            foreach ($params as $userparams) {
+                if (array_key_exists('username', $userparams)) {
+                    $username =  clean_param($userparams['username'], PARAM_NOTAGS);
+                }
+
+                $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>1));
+
+                if (empty($user)) {
+                    throw new moodle_exception('wscouldnotupdatenoexistinguser');
+                }
+
+                foreach (array_keys($userparams) as $key) {
+                    $user->$key  = clean_param($userparams[$key], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('email', $userparams)) {
+                    $user->email =  clean_param($userparams['email'], PARAM_NOTAGS);
+                }
+
+                if (array_key_exists('description', $userparams)) {
+                    $user->description =  clean_param($userparams['description'], PARAM_TEXT);
+                }
+
+                if (array_key_exists('newusername', $userparams)) {
+                    $user->username =  clean_param($userparams['newusername'], PARAM_ALPHANUMEXT);
+                }
+
+                try {
+                    if( !tmp_update_user($user)) {
+                        $updatesuccessfull = false;
+                    }
+                }
+                catch (dml_write_exception $e) {
+                    throw new moodle_exception('wscouldnotupdateuserindb');
+                }
             }
-            if (!empty($params['firstname'])) {
-                $user->firstname = $params['firstname'];
-            }
-            return tmp_update_user($user);
+            return $updatesuccessfull;
         }
         else {
             throw new moodle_exception('wscouldnotupdateuser');
         }
-       
+
     }
 
 }

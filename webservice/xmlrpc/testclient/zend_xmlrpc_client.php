@@ -41,13 +41,13 @@ var_dump($token);
 $client = new Zend_XmlRpc_Client($CFG->wwwroot."/webservice/xmlrpc/server.php?classpath=user&token=".$token);
 var_dump($users = $client->call('user.tmp_get_users', array(array('search' => "admin"))));
 print "<br/><br/>\n";
-var_dump($users = $client->call('user.tmp_create_user', array(array('username' => "mockuser66",'firstname' => "firstname6",'lastname' => "lastname6",'email' => "mockuser6@mockuser6.com",'password' => "password6"))));
+var_dump($users = $client->call('user.tmp_create_users', array(array(array('firstname' => "firstname6",'username' => "mockuser66",'lastname' => "lastname6",'email' => "mockuser6@mockuser6.com",'password' => "password6")))));
 print "<br/><br/>\n";
-var_dump($users = $client->call('user.tmp_update_user', array(array('username' => "mockuser66",'mnethostid' => 1,'newusername' => "mockuser6b",'firstname' => "firstname6b"))));
+var_dump($users = $client->call('user.tmp_update_users', array(array(array('username' => "mockuser66",'newusername' => "mockuser6b",'firstname' => "firstname6b")))));
 print "<br/><br/>\n";
-var_dump($users = $client->call('user.tmp_delete_user', array(array('username' => "mockuser6b",'mnethostid' => 1))));
-print "<br/><br/>\n";
-var_dump($users = $client->call('user.tmp_do_multiple_user_searches', array(array(array('search' => "jerome"),array('search' => "admin")))));
-print "<br/><br/>\n";
+var_dump($users = $client->call('user.tmp_delete_users', array(array(array('username' => "mockuser6b")))));
+//print "<br/><br/>\n";
+//var_dump($users = $client->call('user.tmp_do_multiple_user_searches', array(array(array('search' => "jerome"),array('search' => "admin")))));
+//print "<br/><br/>\n";
 
 ?>
