@@ -85,7 +85,10 @@ qtype_chooser = {
         if (!document.getElementById('qtypechoicecontainer')) {
             return;
         }
-        qtype_chooser.container = new YAHOO.widget.Dialog('qtypechoicecontainer', {
+        var qtypechoicecontainer = document.getElementById('qtypechoicecontainer');
+        qtypechoicecontainer.parentNode.removeChild(qtypechoicecontainer);
+        document.body.appendChild(qtypechoicecontainer);
+        qtype_chooser.container = new YAHOO.widget.Dialog(qtypechoicecontainer, {
             constraintoviewport: true,
             visible: false,
             modal: true,
