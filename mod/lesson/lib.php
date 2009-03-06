@@ -427,6 +427,19 @@ function lesson_grade_item_update($lesson, $grades=NULL) {
     if ($grades  === 'reset') {
         $params['reset'] = true;
         $grades = NULL;
+    } else if (!empty($grades)) {
+        // Need to calculate raw grade (Note: $grades has many forms)
+        if (is_object($grades)) {
+            $grades = array($grades->userid => $grades);
+        } else if (array_key_exists('userid', $grades)) {
+            $grades = array($grades['userid'] => $grades);
+        }
+        foreach ($grades as $key => $grade) {
+            if (!is_array($grade)) {
+                $grades[$key] = $grade = (array) $grade;
+            }
+            $grades[$key]['rawgrade'] = ($grade['rawgrade'] * $lesson->grade / 100);
+        }
     }
 
     return grade_update('mod/lesson', $lesson->course, 'mod', 'lesson', $lesson->id, 0, $grades, $params);
