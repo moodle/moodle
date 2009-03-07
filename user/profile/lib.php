@@ -70,8 +70,22 @@ class profile_field_base {
             $this->edit_field_add($mform);
             $this->edit_field_set_default($mform);
             $this->edit_field_set_required($mform);
-            $this->edit_field_set_locked($mform);
         }
+    }
+
+    /**
+     * Tweaks the edit form
+     * @param   object   instance of the moodleform class
+     * $return  boolean
+     */
+    function edit_after_data(&$mform) {
+
+        if ($this->field->visible != PROFILE_VISIBLE_NONE
+          or has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM))) {
+            $this->edit_field_set_locked($mform);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -137,6 +151,9 @@ class profile_field_base {
      * @param   object   instance of the moodleform class
      */
     function edit_field_set_locked(&$mform) {
+        if (!$mform->elementExists($this->inputname)) {
+            return;
+        }
         if ($this->is_locked() and !has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             $mform->hardFreeze($this->inputname);
             $mform->setConstant($this->inputname, $this->data);
@@ -289,18 +306,19 @@ function profile_definition(&$mform) {
     }
 }
 
-function profile_definition_after_data(&$mform) {
+function profile_definition_after_data(&$mform, $userid) {
     global $CFG;
-/*
+
+    $userid = ($userid < 0) ? 0 : (int)$userid;
+
     if ($fields = get_records('user_info_field')) {
         foreach ($fields as $field) {
             require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
             $newfield = 'profile_field_'.$field->datatype;
-            $formfield = new $newfield($field->id);
-//TODO add: method into field class
-
+            $formfield = new $newfield($field->id, $userid);
+            $formfield->edit_after_data($mform);
         }
-    }*/
+    }
 }
 
 function profile_validation($usernew) {
