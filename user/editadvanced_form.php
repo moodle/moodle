@@ -107,7 +107,7 @@ class user_editadvanced_form extends moodleform {
         }
 
         /// Next the customisable profile fields
-        profile_definition_after_data($mform);
+        profile_definition_after_data($mform, $userid);
     }
 
     function validation($usernew, $files) {
