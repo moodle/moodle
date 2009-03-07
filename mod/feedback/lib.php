@@ -173,6 +173,132 @@ function feedback_user_outline($course, $user, $mod, $feedback) {
 }
 
 /**
+ * Returns all users who has completed a specified feedback since a given time
+ * many thanks to Manolescu Dorel, who contributed these two functions
+ */
+function feedback_get_recent_mod_activity(&$activities, &$index, $timemodified, $courseid, $cmid, $userid="", $groupid="")  {
+    global $CFG, $COURSE, $USER, $DB;
+
+    if ($COURSE->id == $courseid) {
+        $course = $COURSE;
+    } else {
+        $course = get_record('course', 'id', $courseid);
+    }
+
+    $modinfo =& get_fast_modinfo($course);
+
+    $cm = $modinfo->cms[$cmid];
+
+    if ($userid) {
+        $userselect = "AND u.id = $userid";
+    } else {
+        $userselect = "";
+    }
+
+    if ($groupid) {
+        $groupselect = "AND gm.groupid = $groupid";
+        $groupjoin   = "JOIN {$CFG->prefix}groups_members gm ON  gm.userid=u.id";
+    } else {
+        $groupselect = "";
+        $groupjoin   = "";
+    }
+    
+    if (!$feedbackitems = $DB->get_records_sql("SELECT fk . * , fc . * , u.firstname, u.lastname, u.email, u.picture
+                                            FROM {feedback_completed} fc
+                                                JOIN {feedback} fk ON fk.id = fc.feedback
+                                                JOIN {user} u ON u.id = fc.userid
+                                                $groupjoin
+                                            WHERE fc.timemodified > $timemodified AND fk.id = $cm->instance
+                                                $userselect $groupselect
+                                            ORDER BY fc.timemodified DESC")) {
+         return;
+    }
+
+
+    $cm_context      = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $accessallgroups = has_capability('moodle/site:accessallgroups', $cm_context);
+    $viewfullnames   = has_capability('moodle/site:viewfullnames', $cm_context);
+    $groupmode       = groups_get_activity_groupmode($cm, $course);
+
+    if (is_null($modinfo->groups)) {
+        $modinfo->groups = groups_get_user_groups($course->id); // load all my groups and cache it in modinfo
+    }
+
+    $aname = format_string($cm->name,true);
+    foreach ($feedbackitems as $feedbackitem) {
+        if ($feedbackitem->userid != $USER->id) {
+       
+            if ($groupmode == SEPARATEGROUPS and !$accessallgroups) { 
+                $usersgroups = groups_get_all_groups($course->id, $feedbackitem->userid, $cm->groupingid);
+                if (!is_array($usersgroups)) {
+                    continue;
+                }
+                $usersgroups = array_keys($usersgroups);
+                $interset = array_intersect($usersgroups, $modinfo->groups[$cm->id]);
+                if (empty($intersect)) {
+                    continue;
+                }
+            }
+       }
+
+        $tmpactivity = new object();
+
+        $tmpactivity->type      = 'feedback';
+        $tmpactivity->cmid      = $cm->id;
+        $tmpactivity->name      = $aname;
+        $tmpactivity->sectionnum= $cm->sectionnum;
+        $tmpactivity->timestamp = $feedbackitem->timemodified;
+        
+        $tmpactivity->content->feedbackid = $feedbackitem->id;
+        $tmpactivity->content->feedbackuserid = $feedbackitem->userid;
+        
+        $tmpactivity->user->userid   = $feedbackitem->userid;
+        $tmpactivity->user->fullname = fullname($feedbackitem, $viewfullnames);
+        $tmpactivity->user->picture  = $feedbackitem->picture;
+        
+        $activities[$index++] = $tmpactivity;
+    }
+
+  return;
+}
+
+/**
+ * Prints all users who has completed a specified feedback since a given time
+ * many thanks to Manolescu Dorel, who contributed these two functions
+ */
+function feedback_print_recent_mod_activity($activity, $courseid, $detail, $modnames) {
+    global $CFG;
+
+    echo '<table border="0" cellpadding="3" cellspacing="0" class="forum-recent">';
+
+    echo "<tr><td class=\"userpicture\" valign=\"top\">";
+    print_user_picture($activity->user->userid, $courseid, $activity->user->picture);
+    echo "</td><td>";
+
+    if ($detail) {
+        $modname = $modnames[$activity->type];
+        echo '<div class="title">';
+        echo "<img src=\"$CFG->modpixpath/{$activity->type}/icon.gif\" ".
+             "class=\"icon\" alt=\"$modname\" />";
+        echo "<a href=\"$CFG->wwwroot/mod/feedback/view.php?id={$activity->cmid}\">{$activity->name}</a>";
+        echo '</div>';
+    }
+	
+	echo '<div class="title">';
+    echo '</div>';
+	
+    echo '<div class="user">';
+    echo "<a href=\"$CFG->wwwroot/user/view.php?id={$activity->user->userid}&amp;course=$courseid\">"
+         ."{$activity->user->fullname}</a> - ".userdate($activity->timestamp);
+    echo '</div>';
+
+    echo "</td></tr></table>";
+
+    return;
+}
+
+
+/**
 * Print a detailed representation of what a  user has done with
 * a given particular instance of this module, for user activity reports.
 * @param object $course
