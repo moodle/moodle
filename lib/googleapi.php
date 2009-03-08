@@ -52,6 +52,18 @@ abstract class google_auth_request extends curl{
         return $ret;
     }
 
+    protected function multi($requests, $options = array()) {
+        if($this->token){
+            // Adds authorisation head to a request so that it can be authentcated
+            $this->setHeader('Authorization: '. $this->get_auth_header_name().'"'.$this->token.'"');
+        }
+
+        $ret = parent::multi($requests, $options);
+        // reset headers for next request
+        $this->header = array();
+        return $ret;
+    }
+
     public function get_sessiontoken(){
         return $this->token;
     }
@@ -190,7 +202,8 @@ class google_authsub extends google_auth_request {
  * http://code.google.com/apis/documents/docs/2.0/developers_guide_protocol.html
  */
 class google_docs {
-    const REALM            = 'http://docs.google.com/feeds/documents';
+    // need both docs and the spreadsheets realm
+    const REALM            = 'http://docs.google.com/feeds/ http://spreadsheets.google.com/feeds/';
     const DOCUMENTFEED_URL = 'http://docs.google.com/feeds/documents/private/full';
     const USER_PREF_NAME   = 'google_authsub_sesskey';
 
@@ -229,6 +242,7 @@ class google_docs {
      */
     #FIXME
     public function get_file_list($search = ''){
+        global $CFG;
         $url = google_docs::DOCUMENTFEED_URL;
 
         if($search){
@@ -238,14 +252,41 @@ class google_docs {
 
         $xml = new SimpleXMLElement($content);
 
+
+
         $files = array();
         foreach($xml->entry as $gdoc){
 
-            $files[] =  array( 'title' => "$gdoc->title",
-                'url'  =>  "{$gdoc->content['src']}",
-                'source' => "{$gdoc->content['src']}",
-                'date'   => usertime(strtotime($gdoc->updated)),
-            );
+            // there doesn't seem to to be cleaner way of getting the id/type 
+            // than spliting this..
+            if (preg_match('/^http:\/\/docs.google.com\/feeds\/documents\/private\/full\/([^%]*)%3A(.*)$/', $gdoc->id, $matches)){
+                $docid = $matches[2];
+
+                // FIXME: We're making hard-coded choices about format here. 
+                // If the repo api can support it, we could let the user 
+                // chose.
+                switch($matches[1]){
+                case 'document': 
+                    $title = $gdoc->title.'.rtf';
+                    $source = 'http://docs.google.com/feeds/download/documents/Export?docID='.$docid.'&exportFormat=rtf';
+                    break;
+                case 'presentation':
+                    $title = $gdoc->title.'.ppt';
+                    $source = 'http://docs.google.com/feeds/download/presentations/Export?docID='.$docid.'&exportFormat=ppt';
+                    break;
+                case 'spreadsheet':
+                    $title = $gdoc->title.'.xls';
+                    $source = 'http://spreadsheets.google.com/feeds/download/spreadsheets/Export?key='.$docid.'&fmcmd=4';
+                    break;
+                }
+
+                $files[] =  array( 'title' => $title, 
+                    'url' => "{$gdoc->link[0]->attributes()->href}",
+                    'source' => $source, 
+                    'date'   => usertime(strtotime($gdoc->updated)),
+                    'thumbnail' => $CFG->pixpath.'/f/'.mimeinfo('icon32', $title)
+                );
+            }
         }
 
         return $files;
