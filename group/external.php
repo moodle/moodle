@@ -21,29 +21,6 @@ require_once(dirname(dirname(__FILE__)) . '/lib/grouplib.php');
 final class group_external {
 
     /**
-     * Creates a group
-     * @param array|struct $params
-     * @subparam string $params->groupname
-     * @subparam integer $params->courseid
-     * @return integer groupid
-     */
-    static function tmp_create_group($params) {
-        global $USER;
-
-        if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_SYSTEM))) {
-            $group = new stdClass;
-            $group->courseid = $params['courseid'];
-            $group->name = $params['groupname'];
-
-            // @TODO: groups_create_group() does not check courseid
-            return groups_create_group($group, false);
-        }
-        else {
-            throw new moodle_exception('wscouldnotcreategroup');
-        }
-    }
-
-    /**
      * Create some groups
      * @param array|struct $params
      * @subparam string $params:group->groupname
@@ -105,50 +82,6 @@ final class group_external {
     }
 
     /**
-     * Get a group
-     * @param array|struct $params
-     * @subparam integer $params->groupid
-     * @return object $return
-     * @subreturn integer $return->group->id
-     * @subreturn integer $return->group->courseid
-     * @subreturn string $return->group->name
-     * @subreturn string $return->group->enrolmentkey
-     */
-    static function tmp_get_group($params){
-
-        // @TODO: any capability to check?
-        $group = groups_get_group($params['groupid']);
-
-        $ret = new StdClass();
-        $ret->id = $group->id;
-        $ret->courseid = $group->courseid;
-        $ret->name = $group->name;
-        $ret->enrolmentkey = $group->enrolmentkey;
-
-        return $ret;
-
-    }
-
-
-    /**
-     *
-     * @param array|struct $params
-     * @subparam integer $params->groupid
-     * @return boolean result
-     */
-    static function tmp_delete_group($params){
-
-        if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_SYSTEM))) {
-
-            // @TODO groups_add_member() does not check userid
-            return groups_delete_group($params['groupid']);
-        }
-        else {
-            throw new moodle_exception('wscouldnotdeletegroup');
-        }
-    }
-
-    /**
      * Delete some groups
      * @param array|struct $params
      * @subparam integer $params:groupid
@@ -171,32 +104,13 @@ final class group_external {
     }
 
     /**
-     *
+     * Return all internal members for a group id (do not return remotely registered user)
      * @param array|struct $params
-     * @subparam integer $params->groupid
-     * @subparam integer $params->userid
-     * @return boolean result
+     * @subparam integer $params:member->groupid
+     * @return array $return
+     * $subparam string $return:username
      */
-    static function tmp_get_groupmember($params){
-    }
-
-    /**
-     * Add a member to a group
-     * @param array|struct $params
-     * @subparam integer $params->groupid
-     * @subparam integer $params->userid
-     * @return boolean result
-     */
-    static function tmp_add_groupmember($params){
-
-        if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_SYSTEM))) {
-
-            // @TODO groups_add_member() does not check userid
-            return groups_add_member($params['groupid'], $params['userid']);
-        }
-        else {
-            throw new moodle_exception('wscouldnotaddgroupmember');
-        }
+    static function tmp_get_groupmembers($params){
     }
 
      /**
@@ -221,22 +135,6 @@ final class group_external {
         }
         else {
             throw new moodle_exception('wscouldnotaddgroupmembernopermission');
-        }
-    }
-
-    /**
-     *
-     * @param array|struct $params
-     * @subparam integer $params->groupid
-     * @subparam integer $params->userid
-     * @return boolean result
-     */
-    static function tmp_delete_groupmember($params){
-        if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_SYSTEM))) {
-
-            return groups_remove_member($params['groupid'], $params['userid']);
-        } else {
-            throw new moodle_exception('wscouldnotremovegroupmember');
         }
     }
 
