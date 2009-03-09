@@ -23,6 +23,10 @@
 function groups_add_member($groupid, $userid) {
     global $DB;
 
+    if (! $DB->record_exists('user', array('id'=>$userid))) {
+        throw new moodle_exception('useriddoesntexist');
+    }
+
     if (!groups_group_exists($groupid)) {
         return false;
     }
@@ -59,6 +63,10 @@ function groups_add_member($groupid, $userid) {
 function groups_remove_member($groupid, $userid) {
     global $DB;
 
+    if (! $DB->record_exists('user', array('id'=>$userid))) {
+        throw new moodle_exception('useriddoesntexist');
+    }
+
     if (!groups_group_exists($groupid)) {
         return false;
     }
@@ -90,6 +98,13 @@ function groups_remove_member($groupid, $userid) {
 function groups_create_group($data, $editform=false) {
     global $CFG, $DB;
     require_once("$CFG->libdir/gdlib.php");
+    
+    //check that courseid exists
+    $course = $DB->get_record('course',array('id' => $data->courseid));
+    if (empty($course)) {
+       throw new moodle_exception('coursedoesntexistcannotcreategroup'); 
+    }
+
 
     $data->timecreated  = time();
     $data->timemodified = $data->timecreated;
@@ -191,7 +206,7 @@ function groups_delete_group($grouporid) {
     } else {
         $groupid = $grouporid;
         if (!$group = $DB->get_record('groups', array('id'=>$groupid))) {
-            return false;
+            throw new moodle_exception('groupiddoesntexistcannotdelete');;
         }
     }
 
