@@ -842,6 +842,7 @@ table.message_search_results td {
   border-color: #DDD;
 }
 .que .incorrect {
+    background-color: #faa;
 }
 
 .que.multianswer .incorrect {
