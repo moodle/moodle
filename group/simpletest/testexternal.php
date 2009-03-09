@@ -40,7 +40,7 @@ require_once($CFG->dirroot . '/group/external.php');
 require_once(dirname(dirname(dirname(__FILE__))) . '/user/lib.php');
 
 class group_external_test extends UnitTestCase {
-    /*
+/*
     var $realDB;
     var $group;
     var $group2;
@@ -201,8 +201,8 @@ class group_external_test extends UnitTestCase {
      function testTmp_add_group_members2() {
         //the group id doesn't exist
         $params = array(array("groupid" => 6465465, "userid" => $this->userid3), array("groupid" => $this->group->id, "userid" => $this->userid4));
+        $this->expectException(new moodle_exception('cannotaddmembergroupiddoesntexist'));
         $result = group_external::tmp_add_groupmembers($params);
-        $this->assertEqual($result, false);
      }
 
      function testTmp_delete_group_members() {
@@ -215,8 +215,8 @@ class group_external_test extends UnitTestCase {
       function testTmp_delete_group_members2() {
          //the group id doesn't exist
         $params = array(array("groupid" => 6465465, "userid" => $this->userid1), array("groupid" => $this->group->id, "userid" => $this->userid2));
+        $this->expectException(new moodle_exception('cannotaddmembergroupiddoesntexist'));
         $result = group_external::tmp_delete_groupmembers($params);
-        $this->assertEqual($result, false);
      }
 
      function testTmp_delete_group_members3() {

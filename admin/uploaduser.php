@@ -686,9 +686,11 @@ if ($formdata = $mform->is_cancelled()) {
                 $gid   = $ccache[$shortname]->groups[$addgroup]->id;
                 $gname = $ccache[$shortname]->groups[$addgroup]->name;
 
-                if (groups_add_member($gid, $user->id)) {
-                    $upt->track('enrolments', get_string('addedtogroup', '', $gname));
-                } else {
+                try {
+                    if (groups_add_member($gid, $user->id)) {
+                        $upt->track('enrolments', get_string('addedtogroup', '', $gname));
+                    }
+                } catch (moodle_exception $e) {
                     $upt->track('enrolments', get_string('addedtogroupnot', '', $gname), 'error');
                     continue;
                 }

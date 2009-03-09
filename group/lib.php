@@ -28,7 +28,7 @@ function groups_add_member($groupid, $userid) {
     }
 
     if (!groups_group_exists($groupid)) {
-        return false;
+        throw new moodle_exception('cannotaddmembergroupiddoesntexist');
     }
 
     if (groups_is_member($groupid, $userid)) {
@@ -68,7 +68,7 @@ function groups_remove_member($groupid, $userid) {
     }
 
     if (!groups_group_exists($groupid)) {
-        return false;
+        throw new moodle_exception('cannotaddmembergroupiddoesntexist');
     }
 
     if (!groups_is_member($groupid, $userid)) {
