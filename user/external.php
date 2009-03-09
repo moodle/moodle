@@ -60,7 +60,7 @@ final class user_external {
             return get_users(true, $params['search'], false, null, 'firstname ASC','', '', '', 1000, 'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat, city, description, country');
         }
         else {
-            throw new moodle_exception('wscouldnotvieweuser');
+            throw new moodle_exception('wscouldnotvieweusernopermission');
         }
     }
 
@@ -104,7 +104,7 @@ final class user_external {
             return $userids;
         }
         else {
-            throw new moodle_exception('wscouldnotcreateeuser');
+            throw new moodle_exception('wscouldnotcreateeusernopermission');
         }
     }
 
@@ -137,7 +137,7 @@ final class user_external {
             return $deletionsuccessfull;
         }
         else {
-            throw new moodle_exception('wscouldnotdeleteuser');
+            throw new moodle_exception('wscouldnotdeleteusernopermission');
         }
     }
 
@@ -195,7 +195,7 @@ final class user_external {
             return $updatesuccessfull;
         }
         else {
-            throw new moodle_exception('wscouldnotupdateuser');
+            throw new moodle_exception('wscouldnotupdateusernopermission');
         }
 
     }

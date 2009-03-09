@@ -122,7 +122,7 @@
         $required = array('username','firstname','lastname','email', 'password');
         foreach ($required as $req) {
             if (!isset($user->{$req})) {
-                throw new moodle_exception('missingerequiredfield');
+                throw new moodle_exception('missingrequiredfield');
             }
         }
         $password = hash_internal_user_password($user->password);
@@ -134,10 +134,10 @@
             } else {
                 //we could not update properly the newly created user, we need to delete it
                 $DB->delete_record('user',array('id' => $record->id));
-                throw new moodle_exception('couldnotcreateuser');
+                throw new moodle_exception('usernotcreated');
             }
         }
-        throw new moodle_exception('couldnotcreateuser');
+        throw new moodle_exception('usernotcreated');
     }
 
     

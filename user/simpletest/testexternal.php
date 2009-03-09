@@ -26,13 +26,13 @@
 /**
  * Unit tests for (some of) user/external.php.
  * WARNING: DO NOT RUN THIS TEST ON A PRODUCTION SITE
- * => DO NOT UNCOMMENT THESE TEST FUNCTIONS EXCEPT IF U R DEV
+ * => DO NOT UNCOMMENT THESE TEST FUNCTIONS EXCEPT IF YOU ARE DEVELOPER
  * => NONE OF THESE TEST FUNCTIONS SHOULD BE UNCOMMENT BY DEFAULT
  * => THESE TEST FUNCTIONS ARE DEPENDENT BETWEEEN EACH OTHER
- * => THE FUNCTION ORDER CAN NOT BE CHANGE
+ * => THE FUNCTION ORDER MUST NOT BE CHANGED
  *
  *
- * THESE TEST NEED TO BE RUN AS ADMIN!!!
+ * THIS TEST NEEDS TO BE RUN AS ADMIN!!!
  * @author Jerome Mouneyrac
  */
 
@@ -90,7 +90,7 @@ class user_external_test extends UnitTestCase {
         $user = array();
         $user['username'] = 'mockuserfortestingY';
         $params[] = $user;
-        $this->expectException(new moodle_exception('missingerequiredfield'));
+        $this->expectException(new moodle_exception('missingrequiredfield'));
         $result = user_external::tmp_create_users($params);
 
     }
