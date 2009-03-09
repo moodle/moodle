@@ -167,7 +167,7 @@ $string['globalsquoteshelp'] = '<p>غیر فعال بون Magic Quotes GPC و ف
    <blockquote><div>php_value magic_quotes_gpc On</div></blockquote>
    <blockquote><div>php_value register_globals Off</div></blockquote>
 ';
-$string['help'] = 'راهنما';
+$string['help'] = 'راهنمایی';
 $string['info'] = 'توضیحات';
 $string['installation'] = 'در حال نصب';
 $string['langdownloaderror'] = 'متأسفانه زبان «{$a}» نصب نشد. فرآیند نصب به زبان انگلیسی ادامه خواهد یافت.';
