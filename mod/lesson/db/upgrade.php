@@ -47,10 +47,8 @@ function xmldb_lesson_upgrade($oldversion) {
 
     if ($result && $oldversion < 2008112601) {
         require_once($CFG->dirroot.'/mod/lesson/lib.php');
-        // too much debug output
-        $DB->set_debug(false);
-        lesson_update_grades();
-        $DB->set_debug(true);
+
+        lesson_upgrade_grades();
 
         upgrade_mod_savepoint($result, 2008112601, 'lesson');
     }
