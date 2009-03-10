@@ -1831,4 +1831,5 @@ function repository_setup_default_plugins() {
     if (is_int($local_plugin_id) or is_int($upload_plugin_id)) {
         print_box(get_string('setupdefaultplugins', 'repository'));
     }
+    return true;
 }

@@ -106,6 +106,7 @@ function get_plugin_types() {
                  'coursereport'  => 'course/report',
                  'report'        => $CFG->admin.'/report',
                  'portfolio'     => 'portfolio/type',
+                 'repository'    => 'repository',
 
         // following types a very ugly hacks - we should not make exceptions like this - all plugins should be equal;
         // these plugins may cause problems such as when wanting to uninstall them
