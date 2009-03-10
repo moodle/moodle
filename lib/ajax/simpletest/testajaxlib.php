@@ -45,14 +45,14 @@ require_once($CFG->libdir . '/ajax/ajaxlib.php');
 class ajax_test extends UnitTestCase {
     function test_ajax_get_lib() {
         global $CFG;
-        $cases = array(
-            'yui_yahoo' => $CFG->wwwroot . '/lib/yui/yahoo/yahoo-min.js',
-            'lib/javascript-static.js' => $CFG->wwwroot . '/lib/javascript-static.js',
-            $CFG->wwwroot . '/lib/javascript-static.js' => $CFG->wwwroot . '/lib/javascript-static.js',
-        );
-        foreach ($cases as $arg => $result) {
-            $this->assertEqual(ajax_get_lib($arg), $result);
-        }
+        $olddebug = $CFG->debug;
+        $CFG->debug = DEBUG_DEVELOPER;
+        $this->assertEqual(ajax_get_lib('yui_yahoo'), $CFG->wwwroot . '/lib/yui/yahoo/yahoo.js');
+        $CFG->debug = DEBUG_MINIMAL;
+        $this->assertEqual(ajax_get_lib('yui_yahoo'), $CFG->wwwroot . '/lib/yui/yahoo/yahoo-min.js');
+        $CFG->debug = $olddebug;
+        $this->assertEqual(ajax_get_lib('lib/javascript-static.js'), $CFG->wwwroot . '/lib/javascript-static.js');
+        $this->assertEqual(ajax_get_lib($CFG->wwwroot . '/lib/javascript-static.js'), $CFG->wwwroot . '/lib/javascript-static.js');
         $this->expectException();
         ajax_get_lib('a_file_that_does_not_exist.js');
     }
