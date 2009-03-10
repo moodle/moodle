@@ -1,15 +1,38 @@
-<?php
+<?php  // $Id$
+
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.org                                            //
+//                                                                       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+
 global $CFG;
-require_once "$CFG->libdir/form/group.php";
-require_once "$CFG->libdir/formslib.php";
+require_once($CFG->libdir . '/form/group.php');
+require_once($CFG->libdir . '/formslib.php');
 
 /**
  * Class for a group of elements used to input a date.
  *
  * Emulates moodle print_date_selector function
  *
- * @author Jamie Pratt <me@jamiep.org>
- * @access public
+ * @package formslib
  */
 class MoodleQuickForm_date_selector extends MoodleQuickForm_group
 {
@@ -22,15 +45,15 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
     * applydst => apply users daylight savings adjustment?
     * optional => if true, show a checkbox beside the date to turn it on (or off)
     */
-    var $_options = array('startyear'=>1970, 'stopyear'=>2020,
-                    'timezone'=>99, 'applydst'=>true, 'optional'=>false);
+    protected $_options = array('startyear' => 1970, 'stopyear' => 2020,
+            'timezone' => 99, 'applydst' => true, 'optional' => false);
 
    /**
     * These complement separators, they are appended to the resultant HTML
     * @access   private
     * @var      array
     */
-    var $_wrap = array('', '');
+    protected $_wrap = array('', '');
 
    /**
     * Class constructor
@@ -81,7 +104,7 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
         $this->_elements[] =& MoodleQuickForm::createElement('select', 'year', get_string('year', 'form'), $years, $this->getAttributes(), true);
         // If optional we add a checkbox which the user can use to turn if on
         if($this->_options['optional']) {
-            $this->_elements[] =& MoodleQuickForm::createElement('checkbox', 'off', null, get_string('disable'), $this->getAttributes(), true);
+            $this->_elements[] =& MoodleQuickForm::createElement('checkbox', 'enabled', null, get_string('enable'), $this->getAttributes(), true);
         }
         foreach ($this->_elements as $element){
             if (method_exists($element, 'setHiddenLabel')){
@@ -132,10 +155,10 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
                         'year' => $currentdate['year']);
                     // If optional, default to off, unless a date was provided
                      if($this->_options['optional']) {
-                        $value['off'] = ($requestvalue == 0) ? true : false;
+                        $value['enabled'] = $requestvalue != 0;
                     }
                 } else {
-                    $value['off'] = (isset($value['off'])) ? true : false;
+                    $value['enabled'] = isset($value['enabled']);
                 }
                 if (null !== $value){
                     $this->setValue($value);
@@ -143,7 +166,7 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
                 break;
             case 'createElement':
                 if($arg[2]['optional']) {
-                    $caller->disabledIf($arg[0], $arg[0].'[off]', 'checked');
+                    $caller->disabledIf($arg[0], $arg[0].'[enabled]');
                 }
                 return parent::onQuickFormEvent($event, $arg, $caller);
                 break;
@@ -193,16 +216,16 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
         if (count($valuearray)){
             if($this->_options['optional']) {
                 // If checkbox is on, the value is zero, so go no further
-                if(!empty($valuearray['off'])) {
-                    $value[$this->getName()]=0;
+                if(empty($valuearray['enabled'])) {
+                    $value[$this->getName()] = 0;
                     return $value;
                 }
             }
 
-            $value[$this->getName()]=make_timestamp($valuearray['year'],
+            $value[$this->getName()] = make_timestamp($valuearray['year'],
                                    $valuearray['month'],
                                    $valuearray['day'],
-                                   0,0,0,
+                                   0, 0, 0,
                                    $this->_options['timezone'],
                                    $this->_options['applydst']);
 
