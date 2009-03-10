@@ -924,7 +924,7 @@ class flexible_table {
         echo '<tr class="' . implode(' ', $rowclasses) . '">';
 
         // If we have a separator, print it
-        if ($row === NULL && $colcount) {
+        if ($row === NULL) {
             $colcount = count($this->columns);
             echo '<td colspan="'.$colcount.'"><div class="tabledivider"></div></td>';
         } else {
