@@ -3008,8 +3008,12 @@ class admin_setting_text_with_advanced extends admin_setting_configtext {
     public function output_html($data, $query='') {
         $default = $this->get_defaultsetting();
         $defaultinfo = array();
-        if (isset($this->choices[$default['value']])) {
-            $defaultinfo[] = $default['value'];
+        if (isset($default['value'])) {
+            if ($default['value'] === '') {
+                $defaultinfo[] = "''";
+            } else {
+                $defaultinfo[] = $default['value'];
+            }
         }
         if (!empty($default['fix'])) {
             $defaultinfo[] = get_string('advanced');
