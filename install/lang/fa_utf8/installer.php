@@ -31,6 +31,10 @@ $string['configfilewritten'] = 'config.php با موفقیت ایجاد شد';
 $string['configurationcompletehead'] = 'پیکربندی به اتمام رسید';
 $string['configurationcompletesub'] = 'مودل تلاش کرد که پیکربندی شما را در فایلی در محل نصب مودل شما ذخیره کند.';
 $string['continue'] = 'ادامه';
+$string['ctyperecommended'] = 'Installing the optional ctype PHP extension is highly recommended in order to improve site performance, particularly if your site is supporting non-latin languages.';
+$string['ctyperequired'] = 'The ctype PHP extension is now required by Moodle, in order to improve site performance and to offer multilingual compatibility.';
+$string['curlrecommended'] = 'Installing the optional cURL library is highly recommended in order to enable Moodle Networking functionality.';
+$string['customcheck'] = 'Other Checks';
 $string['database'] = 'پایگاه داده';
 $string['databasecreationsettingshead'] = 'حال باید تنظیمات پایگاه داده که قسمت عمده‌ای از اطلاعات مودل در آن نگهداری
 می‌شود را انجام دهید. این پایگاه داده به صورت خودکار توسط برنامهٔ نصب
@@ -130,8 +134,16 @@ $string['downloadlanguagebutton'] = 'دریافت بستهٔ زبانی «{$a}»
 $string['downloadlanguagehead'] = 'دریافت بستهٔ زبانی';
 $string['downloadlanguagenotneeded'] = 'فرآیند نصب را می‌توانید با استفاده از زبان پیش‌فرض ($a) ادامه دهید.';
 $string['downloadlanguagesub'] = 'هم‌اکنون می‌توانید یک بستهٔ زبانی دریافت کنید و فرآیند نصب را با این زبان ادامه دهید.<br /><br />اگر قادر به دریافت بستهٔ زبانی نیستید، فرآیند نصب به زبان انگلیسی ادامه خواهد یافت. (وقتی که مراحل نصب به اتمام رسید، امکان دریافت و نصب بسته‌های زبانی اضافی را خواهید داشت.)';
+$string['environmenterrortodo'] = 'قبل از ادامهٔ نصب این نسخهٔ مودل، باید مشکلات (خطاهای) محیطی پیدا شده را برطرف نمائید!';
 $string['environmenthead'] = 'بررسی محیط شما ...';
+$string['environmentrecommendcustomcheck'] = 'if this test fails, it indicates a potential problem';
+$string['environmentrecommendinstall'] = 'برای حصول بهترین نتیجه باید نصب و فعال باشد';
+$string['environmentrecommendversion'] = 'نسخهٔ $a->needed توصیه می‌شود و شما نسخهٔ $a->current را دارید';
+$string['environmentrequirecustomcheck'] = 'this test must pass';
+$string['environmentrequireinstall'] = 'باید نصب و فعال باشد';
+$string['environmentrequireversion'] = 'نسخهٔ $a->needed لازم است و شما نسخهٔ $a->current را دارید';
 $string['environmentsub'] = 'بررسی اینکه قسمت‌های مختلف سیستم شما شرایط لازم را داشته باشد';
+$string['environmentxmlerror'] = 'خطا در خواندن اطلاعات محیط ($a->error_code)';
 $string['error'] = 'خطا';
 $string['fail'] = 'ناموفق';
 $string['fileuploads'] = 'ارسال فایل';
@@ -167,7 +179,9 @@ $string['globalsquoteshelp'] = '<p>غیر فعال بون Magic Quotes GPC و ف
    <blockquote><div>php_value magic_quotes_gpc On</div></blockquote>
    <blockquote><div>php_value register_globals Off</div></blockquote>
 ';
+$string['globalswarning'] = '<p><strong>هشدار امنیتی!</strong></p><p>برای اینکه مودل درست کار کند، باید تغییرات به‌خصوصی را در تنظیمات فعلی PHP خود بدهید.</p><p>شما <em>باید</em> <code>register_globals=off</code> قرار دهید.</p><p>این تنظیم با ویرایش <code>php.ini</code> شما، پیکربندی Apache/IIS یا فایل <code dir=\"ltr\">.htaccess</code> کنترل می‌شود.</p>';
 $string['help'] = 'راهنمایی';
+$string['iconvrecommended'] = 'Installing the optional ICONV library is highly recommended in order to improve site performance, particularly if your site is supporting non-Latin languages.';
 $string['info'] = 'توضیحات';
 $string['installation'] = 'در حال نصب';
 $string['langdownloaderror'] = 'متأسفانه زبان «{$a}» نصب نشد. فرآیند نصب به زبان انگلیسی ادامه خواهد یافت.';
@@ -183,6 +197,7 @@ $string['magicquotesruntimehelp'] = '<p>Magic quotes runtime باید غیرفع
 با نام <span dir=\"ltr\">.htaccess</span> داخل دایرکتوری مودل خود قرار دهید:</p>
    <blockquote><div>php_value magic_quotes_runtime Off</div></blockquote>
 ';
+$string['mbstringrecommended'] = 'Installing the optional MBSTRING library is highly recommended in order to improve site performance, particularly if your site is supporting non-Latin languages.';
 $string['memorylimit'] = 'محدودیت حافظه';
 $string['memorylimiterror'] = 'حد حافظهٔ PHP واقعاً کم تعیین شده است ... ممکن است بعداً با مشکلاتی مواجه شوید.';
 $string['memorylimithelp'] = '<p>حد حافظهٔ PHP کارگزار شما هم‌اکنون $a  است.</p>
@@ -209,6 +224,8 @@ $string['mssql'] = 'SQL*Server (mssql)';
 $string['mssqlextensionisnotpresentinphp'] = 'PHP با افزونهٔ MSSQL به‌نحو مناسب پیکربندی نشده است تا بتواند با SQL*Server ارتباط برقرار کند. لطفاً فایل php.ini خود را بررسی نمائید یا PHP را مجدداً compile کنید.';
 $string['mssql_n'] = 'SQL*Server با پشتیبانی از UTF-8 (mssql_n)';
 $string['mysql'] = 'MySQL (mysql)';
+$string['mysql416bypassed'] = 'However, if your site is using iso-8859-1 (latin) languages ONLY, you may continue using your currently installed MySQL 4.1.12 (or higher).';
+$string['mysql416required'] = 'MySQL 4.1.16 is the minimum version required for Moodle 1.6 in order to guarantee that all data can be converted to UTF-8 in the future.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP با افزونهٔ MySQL به‌نحو مناسب پیکربندی نشده است تا بتواند با MySQL ارتباط برقرار کند. لطفاً فایل php.ini خود را بررسی نمائید یا PHP را مجدداً compile کنید.';
 $string['mysqli'] = 'MySQL اصلاح شده (mysqli)';
 $string['mysqliextensionisnotpresentinphp'] = 'PHP با افزونهٔ MySQLi به‌نحو مناسب پیکربندی نشده است تا بتواند با MySQL ارتباط برقرار کند. لطفاً فایل php.ini خود را بررسی نمائید یا PHP را مجدداً compile کنید. افزونهٔ MySQLi برای PHP 4 موجود نیست.';
@@ -219,9 +236,11 @@ $string['ociextensionisnotpresentinphp'] = 'PHP با افزونهٔ OCI8 به‌
 $string['odbcextensionisnotpresentinphp'] = 'PHP با افزونهٔ ODBC به‌نحو مناسب پیکربندی نشده است تا بتواند با SQL*Server ارتباط برقرار کند. لطفاً فایل php.ini خود را بررسی نمائید یا PHP را مجدداً compile کنید.';
 $string['odbc_mssql'] = 'SQL*Server از طریق ODBC (odbc_mssql)';
 $string['ok'] = 'تایید';
+$string['opensslrecommended'] = 'Installing the optional OpenSSL library is highly recommended -- it enables Moodle Networking functionality.';
 $string['pass'] = 'موفق';
 $string['password'] = 'رمز ورود';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP با افزونهٔ PGSQL به‌نحو مناسب پیکربندی نشده است تا بتواند با PostgreSQL ارتباط برقرار کند. لطفاً فایل php.ini خود را بررسی نمائید یا PHP را مجدداً compile کنید.';
+$string['php50restricted'] = 'PHP 5.0.x has a number of known problems, please upgrade to 5.1.x or downgrade to 4.3.x or 4.4.x';
 $string['phpversion'] = 'نسخهٔ PHP';
 $string['phpversionerror'] = 'نسخهٔ PHP باید حداقل 4.3.0 یا 5.1.0 باشد (<span dir=\"ltr\">5.0.x</span> مشکلات شناخته‌شده‌ای دارد).';
 $string['phpversionhelp'] = '<p>مودل نیاز به PHP نسخهٔ حداقل 4.3.0 یا 5.1.0 دارد (<span dir=\"ltr\">5.0.x</span> مشکلات شناخته‌شده‌ای دارد).</p>
@@ -233,6 +252,8 @@ $string['postgresqlwarning'] = '<strong>توجه:</strong> اگر با مشکل�
  host=\'postgresql_host\' port=\'5432\' dbname=\'postgresql_database_name\' user=\'postgresql_user\' password=\'postgresql_user_password\'
 تعیین نمائید و قسمت‌های پایگاه داده، کاربر و رمز اتصال را خالی بگذارید. اطلاعات بیشتر را می‌توانید در <a href=\"http://docs.moodle.org/en/Installing_Postgres_for_PHP\">مستندات مودل</a> بیابید.';
 $string['previous'] = 'قبلی';
+$string['qtyperqpwillberemoved'] = 'During the upgrade, the RQP question type will be removed. You were not using this question type, so you should not experience any problems.';
+$string['qtyperqpwillberemovedanyway'] = 'During the upgrade, the RQP question type will be removed. You have some RQP questions in your database, and these will stop working unless you reinstall the code from http://moodle.org/mod/data/view.php?d=13&amp;rid=797 before continuing with the upgrade.';
 $string['report'] = 'گزارش';
 $string['restricted'] = 'محدود';
 $string['safemode'] = 'Safe Mode';
@@ -244,6 +265,7 @@ $string['safemodehelp'] = '<p>مودل ممکن است مشکلات متعددی
 در نتیجه احتمالاً باید یک شرکت میزبانی وب جدید برای سایت مودل خود پیدا کنید.</p>
 
 <p>در صورت تمایل می‌توانید به نصب ادامه دهید، ولی منتظر بروز مشکلات در آینده باشید.</p>';
+$string['serverchecks'] = 'بررسی کارگزار';
 $string['sessionautostart'] = 'شروع خودکار session';
 $string['sessionautostarterror'] = 'باید غیرفعال باشد';
 $string['sessionautostarthelp'] = '<p>مودل نیازمند پشتیبانی شدن از session است و در غیر اینصورت کار نمی‌کند.</p>
@@ -254,6 +276,8 @@ $string['status'] = 'وضعیت';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'rtl';
 $string['thislanguage'] = 'فارسی';
+$string['unicoderecommended'] = 'Storing all your data in Unicode (UTF-8) is recommended. New installations should be performed into databases that have their default character set as Unicode.  If you are upgrading, you should perform the UTF-8 migration process (see the Admin page).';
+$string['unicoderequired'] = 'It is required that you store all your data in Unicode format (UTF-8). New installations must be performed into databases that have their default character set as Unicode.  If you are upgrading, you should perform the UTF-8 migration process (see the Admin page).';
 $string['user'] = 'کاربر';
 $string['welcomep10'] = '$a->installername (<span dir=\"ltr\">$a->installerversion</span>)';
 $string['welcomep20'] = 'دیدن این صفحه به معنی نصب و راه‌اندازی موفق بستهٔ
@@ -271,4 +295,6 @@ $string['welcomep60'] = 'صفحه‌های بعدی با مراحل ساده‌�
 $string['welcomep70'] = 'برای برپاسازی <strong>مودل</strong> بر روی دکمهٔ «بعدی» در پائین کلیک نمائید.';
 $string['wwwroot'] = 'آدرس وب';
 $string['wwwrooterror'] = '«آدرس وب» معتبر به نظر نمی‌رسد - به نظر نمی‌رسد که فایل‌های این مودل آنجا باشند. مقدار زیر مجدداً تنظیم شد.';
+$string['xmlrpcrecommended'] = 'Installing the optional xmlrpc extension is useful for Moodle Networking functionality.';
+$string['ziprequired'] = 'The Zip PHP extension is now required by Moodle, info-ZIP binaries or PclZip library are not used anymore.';
 ?>
