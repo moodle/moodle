@@ -604,7 +604,7 @@ class quiz_attempt extends quiz {
     public function get_question_score($questionid) {
         $options = $this->get_render_options($this->states[$questionid]);
         if ($options->scores) {
-            return quiz_format_grade($this->quiz, $this->states[$questionid]->last_graded->grade);
+            return quiz_format_question_grade($this->quiz, $this->states[$questionid]->last_graded->grade);
         } else {
             return '';
         }

@@ -116,13 +116,12 @@
 /// Work out some time-related things.
     $attempt = $attemptobj->get_attempt();
     $quiz = $attemptobj->get_quiz();
-    $timelimit = $quiz->timelimit * 60;
     $overtime = 0;
 
     if ($attempt->timefinish) {
         if ($timetaken = ($attempt->timefinish - $attempt->timestart)) {
-            if($timelimit && $timetaken > ($timelimit + 60)) {
-                $overtime = $timetaken - $timelimit;
+            if($quiz->timelimit && $timetaken > ($quiz->timelimit + 60)) {
+                $overtime = $timetaken - $quiz->timelimit;
                 $overtime = format_time($overtime);
             }
             $timetaken = format_time($timetaken);

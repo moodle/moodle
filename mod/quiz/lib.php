@@ -1,16 +1,40 @@
 <?php  // $Id$
-/**
-* Library of functions for the quiz module.
-*
-* This contains functions that are called also from outside the quiz module
-* Functions that are only called by the quiz module itself are in {@link locallib.php}
-* @author Martin Dougiamas and many others.
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package quiz
-*/
 
-require_once($CFG->libdir.'/pagelib.php');
-require_once($CFG->libdir.'/eventslib.php');
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.org                                            //
+//                                                                       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+
+/**
+ * Library of functions for the quiz module.
+ *
+ * This contains functions that are called also from outside the quiz module
+ * Functions that are only called by the quiz module itself are in {@link locallib.php}
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package quiz
+ */
+
+require_once($CFG->libdir . '/pagelib.php');
+require_once($CFG->libdir . '/eventslib.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////////////
 
@@ -18,11 +42,16 @@ require_once($CFG->libdir.'/eventslib.php');
  * Options determining how the grades from individual attempts are combined to give
  * the overall grade for a user
  */
-define("QUIZ_GRADEHIGHEST", "1");
-define("QUIZ_GRADEAVERAGE", "2");
-define("QUIZ_ATTEMPTFIRST", "3");
-define("QUIZ_ATTEMPTLAST",  "4");
+define('QUIZ_GRADEHIGHEST', 1);
+define('QUIZ_GRADEAVERAGE', 2);
+define('QUIZ_ATTEMPTFIRST', 3);
+define('QUIZ_ATTEMPTLAST', 4);
 /**#@-*/
+
+define('QUIZ_MAX_ATTEMPT_OPTION', 10);
+define('QUIZ_MAX_QPP_OPTION', 50);
+define('QUIZ_MAX_DECIMAL_OPTION', 5);
+define('QUIZ_MAX_Q_DECIMAL_OPTION', 7);
 
 /**#@+
  * The different review options are stored in the bits of $quiz->review
@@ -241,7 +270,7 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
             if ($attempt->timefinish == 0) {
                 print_string('unfinished');
             } else {
-                echo quiz_format_grade($quiz, $attempt->sumgrades).'/'.$quiz->sumgrades;
+                echo quiz_format_grade($quiz, $attempt->sumgrades) . '/' . quiz_format_grade($quiz, $quiz->sumgrades);
             }
             echo ' - '.userdate($attempt->timemodified).'<br />';
         }
@@ -328,6 +357,20 @@ function quiz_get_user_grades($quiz, $userid=0) {
  */
 function quiz_format_grade($quiz, $grade) {
     return format_float($grade, $quiz->decimalpoints);
+}
+
+/**
+ * Round a grade to to the correct number of decimal places, and format it for display.
+ *
+ * @param object $quiz The quiz table row, only $quiz->decimalpoints is used.
+ * @param float $grade The grade to round.
+ */
+function quiz_format_question_grade($quiz, $grade) {
+    if ($quiz->questiondecimalpoints == -1) {
+        return format_float($grade, $quiz->decimalpoints);
+    } else {
+        return format_float($grade, $quiz->questiondecimalpoints);
+    }
 }
 
 /**
@@ -733,21 +776,10 @@ function quiz_print_recent_mod_activity($activity, $courseid, $detail, $modnames
 function quiz_process_options(&$quiz) {
     $quiz->timemodified = time();
 
-    // Quiz open time.
-    if (empty($quiz->timeopen)) {
-        $quiz->preventlate = 0;
-    }
-
     // Quiz name.
     if (!empty($quiz->name)) {
         $quiz->name = trim($quiz->name);
     }
-
-    // Time limit. (Get rid of it if the checkbox was not ticked.)
-    if (empty($quiz->timelimitenable)) {
-        $quiz->timelimit = 0;
-    }
-    $quiz->timelimit = round($quiz->timelimit);
 
     // Password field - different in form to stop browsers that remember passwords
     // getting confused.
@@ -1233,4 +1265,3 @@ function quiz_get_extra_capabilities() {
     return $caps;
 }
 
-?>

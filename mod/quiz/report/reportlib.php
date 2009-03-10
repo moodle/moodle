@@ -162,11 +162,11 @@ function quiz_format_average_grade_for_questions($avggradebyq, $questions, $quiz
     foreach(array_keys($questions) as $questionid) {
         if (isset($avggradebyq[$questionid])){
             $grade = $avggradebyq[$questionid];
-            $grade = quiz_rescale_grade($grade, $quiz);
+            $grade = quiz_rescale_grade($grade, $quiz, 'question');
         } else {
             $grade = '--';
         }
-        $row['qsgrade'.$questionid]= $grade;
+        $row['qsgrade'.$questionid] = $grade;
     }
     return $row;
 }

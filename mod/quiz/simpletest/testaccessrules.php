@@ -74,7 +74,7 @@ class simple_rules_test extends UnitTestCase {
 
     function test_time_limit_access_rule() {
         $quiz = new stdClass;
-        $quiz->timelimit = 60;
+        $quiz->timelimit = 3600;
         $quiz->questions = '';
         $cm = new stdClass;
         $cm->id = 0;

@@ -26,5 +26,32 @@ class quiz_lib_test extends UnitTestCase {
         $quiz->sumgrades = '100.0000';
         $this->assertFalse(quiz_has_grades($quiz));
     }
+
+    function test_quiz_format_grade() {
+        $quiz = new stdClass;
+        $quiz->decimalpoints = 2;
+        $this->assertEqual(quiz_format_grade($quiz, 0.12345678), format_float(0.12, 2));
+        $this->assertEqual(quiz_format_grade($quiz, 0), format_float(0, 2));
+        $this->assertEqual(quiz_format_grade($quiz, 1.000000000000), format_float(1, 2));
+        $quiz->decimalpoints = 0;
+        $this->assertEqual(quiz_format_grade($quiz, 0.12345678), '0');
+    }
+
+    function test_quiz_format_question_grade() {
+        $quiz = new stdClass;
+        $quiz->decimalpoints = 2;
+        $quiz->questiondecimalpoints = 2;
+        $this->assertEqual(quiz_format_question_grade($quiz, 0.12345678), format_float(0.12, 2));
+        $this->assertEqual(quiz_format_question_grade($quiz, 0), format_float(0, 2));
+        $this->assertEqual(quiz_format_question_grade($quiz, 1.000000000000), format_float(1, 2));
+        $quiz->decimalpoints = 3;
+        $quiz->questiondecimalpoints = -1;
+        $this->assertEqual(quiz_format_question_grade($quiz, 0.12345678), format_float(0.123, 3));
+        $this->assertEqual(quiz_format_question_grade($quiz, 0), format_float(0, 3));
+        $this->assertEqual(quiz_format_question_grade($quiz, 1.000000000000), format_float(1, 3));
+        $quiz->questiondecimalpoints = 4;
+        $this->assertEqual(quiz_format_question_grade($quiz, 0.12345678), format_float(0.1235, 4));
+        $this->assertEqual(quiz_format_question_grade($quiz, 0), format_float(0, 4));
+        $this->assertEqual(quiz_format_question_grade($quiz, 1.000000000000), format_float(1, 4));
+    }
 }
-?>

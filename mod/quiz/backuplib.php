@@ -269,7 +269,8 @@
         fwrite ($bf,full_tag("GRADE",4,false,$quiz->grade));
         fwrite ($bf,full_tag("TIMECREATED",4,false,$quiz->timecreated));
         fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$quiz->timemodified));
-        fwrite ($bf,full_tag("TIMELIMIT",4,false,$quiz->timelimit));
+        fwrite ($bf,full_tag("TIMELIMIT",4,false,round($quiz->timelimit/60)));
+        fwrite ($bf,full_tag("TIMELIMITSECS",4,false,$quiz->timelimit));
         fwrite ($bf,full_tag("PASSWORD",4,false,$quiz->password));
         fwrite ($bf,full_tag("SUBNET",4,false,$quiz->subnet));
         fwrite ($bf,full_tag("POPUP",4,false,$quiz->popup));

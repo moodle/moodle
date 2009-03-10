@@ -12,10 +12,11 @@ class quiz_access_manager {
 
     /**
      * Create an instance for a particular quiz.
-     * @param object $quiz the quiz we will be controlling access to.
-     * @param integer $timenow the
-     * @param boolean $canpreview whether the current user has the
-     * @param boolean $ignoretimelimits
+     * @param object $quizobj An instance of the class quiz from attemptlib.php.
+     *      The quiz we will be controlling access to.
+     * @param integer $timenow The time to use as 'now'.
+     * @param boolean $canignoretimelimits Whether this user is exempt from time
+     *      limits (has_capability('mod/quiz:ignoretimelimits', ...)).
      */
     public function __construct($quizobj, $timenow, $canignoretimelimits) {
         $this->_quizobj = $quizobj;
@@ -668,10 +669,10 @@ class password_access_rule extends quiz_access_rule_base {
  */
 class time_limit_access_rule extends quiz_access_rule_base {
     public function description() {
-        return get_string('quiztimelimit', 'quiz', format_time($this->_quiz->timelimit * 60));
+        return get_string('quiztimelimit', 'quiz', format_time($this->_quiz->timelimit));
     }
     public function time_left($attempt, $timenow) {
-        return $attempt->timestart + $this->_quiz->timelimit*60 - $timenow;
+        return $attempt->timestart + $this->_quiz->timelimit - $timenow;
     }
 }
 

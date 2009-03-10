@@ -1753,7 +1753,7 @@ function question_apply_penalty_and_timelimit(&$question, &$state, $attempt, $cm
     // deal with timelimit
     if ($cmoptions->timelimit) {
         // We allow for 5% uncertainty in the following test
-        if ($state->timestamp - $attempt->timestart > $cmoptions->timelimit * 63) {
+        if ($state->timestamp - $attempt->timestart > $cmoptions->timelimit * 1.05) {
             $cm = get_coursemodule_from_instance('quiz', $cmoptions->id);
             if (!has_capability('mod/quiz:ignoretimelimits', get_context_instance(CONTEXT_MODULE, $cm->id),
                     $attempt->userid, false)) {
@@ -2007,12 +2007,25 @@ function question_hash($question) {
 
 /**
  * Round a grade to to the correct number of decimal places, and format it for display.
+ * If $cmoptions->questiondecimalpoints is set, that is used, otherwise
+ * else if $cmoptions->decimalpoints is used,
+ * otherwise a default of 2 is used, but this should not be relied upon, and generated a developer debug warning.
+ * However, if $cmoptions->questiondecimalpoints is -1, the means use $cmoptions->decimalpoints.
  *
- * @param object $cmoptions The modules settings, only ->decimalpoints is used.
+ * @param object $cmoptions The modules settings.
  * @param float $grade The grade to round.
  */
 function question_format_grade($cmoptions, $grade) {
-    return format_float($grade, $cmoptions->decimalpoints);
+    if (isset($cmoptions->questiondecimalpoints) && $cmoptions->questiondecimalpoints != -1) {
+        $decimalplaces = $cmoptions->questiondecimalpoints;
+    } else if (isset($cmoptions->decimalpoints)) {
+        $decimalplaces = $cmoptions->decimalpoints;
+    } else {
+        $decimalplaces = 2;
+        debugging('Code that leads to question_format_grade being called should set ' .
+                '$cmoptions->questiondecimalpoints or $cmoptions->decimalpoints', DEBUG_DEVELOPER);
+    }
+    return format_float($grade, $decimalplaces);
 }
 
 /**

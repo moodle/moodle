@@ -22,7 +22,7 @@
 
 function xmldb_quiz_upgrade($oldversion) {
     global $CFG, $DB;
-    
+
     $dbman = $DB->get_manager();
     $result = true;
 
@@ -77,7 +77,7 @@ function xmldb_quiz_upgrade($oldversion) {
 
         upgrade_mod_savepoint($result, 2008062001, 'quiz');
     }
-    
+
     if ($result && $oldversion < 2008072402) {
 
     /// Define field lastcron to be added to quiz_report
@@ -196,7 +196,7 @@ function xmldb_quiz_upgrade($oldversion) {
         // question type, this is now a no-op.
         upgrade_mod_savepoint($result, 2008082600, 'quiz');
     }
-    
+
     if ($result && $oldversion < 2008112101) {
 
     /// Define field lastcron to be added to quiz_report
@@ -207,7 +207,7 @@ function xmldb_quiz_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        
+
     /// quiz savepoint reached
         upgrade_mod_savepoint($result, 2008112101, 'quiz');
     }
@@ -227,7 +227,55 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009010700, 'quiz');
     }
 
+    if ($result && $oldversion < 2009030900) {
+    /// If there are no quiz settings set to advanced yet, the set up the default
+    /// advanced fields from Moodle 2.0.
+        $quizconfig = get_config('quiz');
+        $arealreadyadvanced = false;
+        foreach (array($quizconfig) as $name => $value) {
+            if (strpos($name, 'fix_') === 0 && !empty($value)) {
+                $arealreadyadvanced = true;
+                break;
+            }
+        }
+
+        if (!$arealreadyadvanced) {
+            set_config('fix_penaltyscheme', 1, 'quiz');
+            set_config('fix_attemptonlast', 1, 'quiz');
+            set_config('fix_questiondecimalpoints', 1, 'quiz');
+            set_config('fix_password', 1, 'quiz');
+            set_config('fix_subnet', 1, 'quiz');
+            set_config('fix_delay1', 1, 'quiz');
+            set_config('fix_delay2', 1, 'quiz');
+            set_config('fix_popup', 1, 'quiz');
+        }
+
+    /// quiz savepoint reached
+        upgrade_mod_savepoint($result, 2009030900, 'quiz');
+    }
+
+    if ($result && $oldversion < 2009031000) {
+    /// Add new questiondecimaldigits setting, separate form the overall decimaldigits one.
+        $table = new xmldb_table('quiz');
+        $field = new xmldb_field('questiondecimalpoints', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, '2', 'decimalpoints');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// quiz savepoint reached
+        upgrade_mod_savepoint($result, 2009031000, 'quiz');
+    }
+
+    if ($result && $oldversion < 2009031001) {
+    /// Convert quiz.timelimit from minutes to seconds.
+        $DB->execute('UPDATE {quiz} SET timelimit = timelimit * 60');
+        $default = get_config('quiz', 'timelimit');
+        set_config('timelimit', 60 * $default, 'quiz');
+
+    /// quiz savepoint reached
+        upgrade_mod_savepoint($result, 2009031001, 'quiz');
+    }
+
     return $result;
 }
 
-?>

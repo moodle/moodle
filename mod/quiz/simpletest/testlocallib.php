@@ -71,5 +71,19 @@ class quiz_locallib_test extends UnitTestCase {
         $this->assertEqual(quiz_clean_layout('1,0,2', true), '1,0,2,0');
         $this->assertEqual(quiz_clean_layout('0,1,0,0,2,0', true), '1,0,2,0');
     }
+
+    function test_quiz_rescale_grade() {
+        $quiz = new stdClass;
+        $quiz->decimalpoints = 2;
+        $quiz->questiondecimalpoints = 3;
+        $quiz->grade = 10;
+        $quiz->sumgrades = 10;
+        $this->assertEqual(quiz_rescale_grade(0.12345678, $quiz, false), 0.12345678);
+        $this->assertEqual(quiz_rescale_grade(0.12345678, $quiz, true), format_float(0.12, 2));
+        $this->assertEqual(quiz_rescale_grade(0.12345678, $quiz, 'question'), format_float(0.123, 3));
+        $quiz->sumgrades = 5;
+        $this->assertEqual(quiz_rescale_grade(0.12345678, $quiz, false), 0.24691356);
+        $this->assertEqual(quiz_rescale_grade(0.12345678, $quiz, true), format_float(0.25, 2));
+        $this->assertEqual(quiz_rescale_grade(0.12345678, $quiz, 'question'), format_float(0.247, 3));
+    }
 }
-?>

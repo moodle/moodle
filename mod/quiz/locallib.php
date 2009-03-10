@@ -1,4 +1,28 @@
 <?php  // $Id$
+
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.org                                            //
+//                                                                       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+
 /**
  * Library of functions used by the quiz module.
  *
@@ -8,10 +32,6 @@
  * the module-indpendent code for handling questions and which in turn
  * initialises all the questiontype classes.
  *
- * @author Martin Dougiamas and many others. This has recently been completely
- *         rewritten by Alex Smith, Julian Sedding and Gustav Delius as part of
- *         the Serving Mathematics project
- *         {@link http://maths.york.ac.uk/serving_maths}
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package quiz
  */
@@ -25,8 +45,8 @@ if (!defined('MOODLE_INTERNAL')) {
  */
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
 require_once($CFG->dirroot . '/mod/quiz/accessrules.php');
-require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
+require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->libdir  . '/eventslib.php');
 
 /// Constants ///////////////////////////////////////////////////////////////////
@@ -220,6 +240,15 @@ function quiz_delete_previews($quiz, $userid = null) {
     foreach ($previewattempts as $attempt) {
         quiz_delete_attempt($attempt, $quiz);
     }
+}
+
+/**
+ * @param integer $quizid The quiz id.
+ * @return boolean whether this quiz has any (non-preview) attempts.
+ */
+function quiz_has_attempts($quizid) {
+    global $DB;
+    return $DB->record_exists('quiz_attempts', array('quiz' => $quizid, 'preview' => 0));
 }
 
 /// Functions to do with quiz layout and pages ////////////////////////////////
@@ -440,13 +469,16 @@ function quiz_update_sumgrades($quiz) {
  * grade for this quiz.
  *
  * @param float $rawgrade the unadjusted grade, fof example $attempt->sumgrades
- * @param object $quiz the quiz object. Only the fields grade, sumgrades and decimalpoints are used.
+ * @param object $quiz the quiz object. Only the fields grade, sumgrades, decimalpoints and questiondecimalpoints are used.
+ * @param mixed $round false = don't round, true = round using quiz_format_grade, 'question' = round using quiz_format_question_grade.
  * @return float the rescaled grade.
  */
 function quiz_rescale_grade($rawgrade, $quiz, $round = true) {
     if ($quiz->sumgrades != 0) {
         $grade = $rawgrade * $quiz->grade / $quiz->sumgrades;
-        if ($round) {
+        if ($round === 'question') { // === really necessary here true == 'question' is true in PHP!
+            $grade = quiz_format_question_grade($quiz, $grade);
+        } else if ($round) {
             $grade = quiz_format_grade($quiz, $grade);
         }
     } else {
@@ -582,7 +614,7 @@ function quiz_save_best_grade($quiz, $userid = null, $attempts = array()) {
 
     // Calculate the best grade
     $bestgrade = quiz_calculate_best_grade($quiz, $attempts);
-    $bestgrade = quiz_rescale_grade($bestgrade, $quiz);
+    $bestgrade = quiz_rescale_grade($bestgrade, $quiz, false);
 
     // Save the best grade in the database
     if ($grade = $DB->get_record('quiz_grades', array('quiz' => $quiz->id, 'userid' => $userid))) {
@@ -1249,4 +1281,3 @@ function quiz_error($quiz, $errorcode, $a = null) {
     }
     print_error($errorcode, 'quiz', $CFG->wwwroot . '/mod/quiz/view.php?q=' . $quiz, $a);
 }
-?>
