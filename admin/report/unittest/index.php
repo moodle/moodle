@@ -22,7 +22,6 @@ $showpasses              = optional_param('showpasses', false, PARAM_BOOL);
 $showsearch              = optional_param('showsearch', false, PARAM_BOOL);
 
 admin_externalpage_setup('reportsimpletest', '', array('showpasses'=>$showpasses, 'showsearch'=>$showsearch));
-admin_externalpage_print_header();
 
 $langfile = 'simpletest';
 $unittest = true;
@@ -36,6 +35,13 @@ $strtitle = get_string('unittests', $langfile);
 unset($CFG->unittestprefix); // for now - until test_tables.php gets implemented
 
 if (!is_null($path)) {
+    // Turn off xmlstrictheaders during the unit test run.
+    $origxmlstrictheaders = !empty($CFG->xmlstrictheaders);
+    $CFG->xmlstrictheaders = false;
+    admin_externalpage_print_header();
+    $CFG->xmlstrictheaders = $origxmlstrictheaders;
+    unset($origxmlstrictheaders);
+
     // Create the group of tests.
     $test = new AutoGroupTest($showsearch);
 
@@ -85,6 +91,7 @@ if (!is_null($path)) {
     $formheader = get_string('retest', $langfile);
 } else {
     $displaypath = '';
+    admin_externalpage_print_header();
     $formheader = get_string('rununittests', $langfile);
 }
 // Print the form for adjusting options.
