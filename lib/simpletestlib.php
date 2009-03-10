@@ -37,7 +37,8 @@ function recurseFolders($path, $callback, $fileregexp = '/.*/', $exclude = false
 
     foreach ($files as $file) {
         $filepath = $path .'/'. $file;
-        if ($file == '.' || $file == '..') {
+        if (strpos($file, '.') === 0) {
+            /// Don't check hidden files.
             continue;
         } else if (is_dir($filepath)) {
             if (!in_array($filepath, $ignorefolders)) {
