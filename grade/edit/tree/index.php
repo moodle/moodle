@@ -354,7 +354,9 @@ if ($moving) {
         print_single_button('outcomeitem.php', array('courseid'=>$course->id), get_string('addoutcomeitem', 'grades'), 'get');
     }
 
+    echo "<br /></br />";
     print_single_button('index.php', array('id'=>$course->id, 'action'=>'synclegacy'), get_string('synclegacygrades', 'grades'), 'get');
+    helpbutton('synclegacygrades', get_string('synclegacygrades', 'grades'), 'grade');
 }
 
 echo '</div>';
