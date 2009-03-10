@@ -616,6 +616,11 @@ div.hide {
 .mform fieldset.felement {
   width: auto;
 }
+.mform ul.file-list{
+    padding:0;
+    margin:0;
+    list-style:none;
+}
 .mform fieldset legend {
   font-weight: bold;
   margin-left: 0.5em;

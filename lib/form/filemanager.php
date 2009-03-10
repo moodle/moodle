@@ -117,7 +117,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         }
         $files = $fs->get_directory_files($context->id, 'user_draft', $draftid, $directory->get_filepath());
         $parent = $directory->get_parent_directory();
-        $html .= '<ul id="draftfiles-'.$suffix.'">';
+        $html .= '<ul class="file-list" id="draftfiles-'.$suffix.'">';
         foreach ($files as $file) {
             $filename    = $file->get_filename();
             $filenameurl = rawurlencode($filename);
