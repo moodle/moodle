@@ -159,7 +159,9 @@ if ($moving) {
         print_single_button('outcomeitem.php', array('courseid'=>$course->id), get_string('addoutcomeitem', 'grades'), 'get');
     }
     //print_single_button('index.php', array('id'=>$course->id, 'action'=>'autosort'), get_string('autosort', 'grades'), 'get');
+    echo "<br /><br />";
     print_single_button('index.php', array('id'=>$course->id, 'action'=>'synclegacy'), get_string('synclegacygrades', 'grades'), 'get');
+    helpbutton('synclegacygrades', get_string('synclegacygrades', 'grades'), 'grade');
 }
 echo '</div>';
 print_footer($course);
@@ -258,7 +260,7 @@ function element_deletable($element) {
     }
 
     $grade_item = $element['object'];
-    
+
     if ($grade_item->itemtype != 'mod' or $grade_item->is_outcome_item() or $grade_item->gradetype == GRADE_TYPE_NONE) {
         return true;
     }
