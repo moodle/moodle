@@ -39,7 +39,7 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->libdir . '/moodlelib.php');
 require_once($CFG->libdir . '/ajax/ajaxlib.php');
 
-class ajaxlib_test extends FakeDBUnitTestCase {
+class ajaxlib_test extends UnitTestCase {
 
     var $user_agents = array(
             'MSIE' => array(
