@@ -312,7 +312,6 @@
             }
             if ($existinteraction) {
                 echo '<h3>'.get_string('interactions','scorm').'</h3>';
-                echo '<h3>'.get_string('interactions','scorm').'</h3>';
                 print_table($table);
             }
             
