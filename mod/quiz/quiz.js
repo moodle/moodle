@@ -74,9 +74,9 @@ quiz_timer = {
         quiz_timer.endtime = new Date().getTime() + timeleft*1000;
 
         // Get references to some bits of the DOM we need.
-        quiz_timer.timerouter = document.getElementById('quiz-timer'),
-        quiz_timer.timerdisplay = document.getElementById('quiz-time-left'),
-        quiz_timer.quizform = document.getElementById('responseform'),
+        quiz_timer.timerouter = document.getElementById('quiz-timer');
+        quiz_timer.timerdisplay = document.getElementById('quiz-time-left');
+        quiz_timer.quizform = document.getElementById('responseform');
 
         // Make the timer visible.
         quiz_timer.timerouter.style.display = 'block';
