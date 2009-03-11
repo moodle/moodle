@@ -491,8 +491,9 @@ _client.print_login = function() {
             str += '</p>';
         }
     }
+    var btn_label = _client.ds['login_btn_label']?_client.ds['login_btn_label']:'$strsubmit';
     if(!has_pop) {
-        str += '<p><input type="button" onclick="repository_client_$suffix.login()" value="$strsubmit" /></p>';
+        str += '<p><input type="button" onclick="repository_client_$suffix.login()" value="'+btn_label+'" /></p>';
     }
     str += '</div>';
     panel.get('element').innerHTML = str;

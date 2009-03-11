@@ -125,7 +125,9 @@ class repository_flickr_public extends repository {
             $email_field->id    = 'account';
             $email_field->type = 'text';
             $email_field->name = 'flickr_account';
+
             $ret['login'] = array($fulltext, $tag, $email_field);
+            $ret['login_btn_label'] = get_string('search');
             return $ret;
         }
     }
