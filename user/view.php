@@ -351,7 +351,14 @@
             print_row(get_string('courses').':', rtrim($courselisting,', '));
         }
     }
-
+    if (!isset($hiddenfields['firstaccess'])) {
+        if ($user->firstaccess) {
+            $datestring = userdate($user->firstaccess)."&nbsp; (".format_time(time() - $user->firstaccess).")";
+        } else {
+            $datestring = get_string("never");
+        }
+        print_row(get_string("firstaccess").":", $datestring);
+    }
     if (!isset($hiddenfields['lastaccess'])) {
         if ($user->lastaccess) {
             $datestring = userdate($user->lastaccess)."&nbsp; (".format_time(time() - $user->lastaccess).")";

@@ -161,6 +161,7 @@ if ($hassiteconfig
                              'yahooid' => get_string('yahooid'),
                              'aimid' => get_string('aimid'),
                              'msnid' => get_string('msnid'),
+                             'firstaccess' => get_string('firstaccess'),
                              'lastaccess' => get_string('lastaccess'),
                              'mycourses' => get_string('mycourses'))));
 
