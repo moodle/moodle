@@ -647,7 +647,7 @@ function writequestion( $question ) {
         }
         else {
             $expout .= "Question type $question->qtype is not supported\n";
-            notify( get_string('nohandler','qformat_gift',$question->qtype ) );
+            notify( get_string('nohandler','qformat_gift',get_string($question->qtype,'quiz') ) );
         }
     }
     // add empty line to delimit questions
