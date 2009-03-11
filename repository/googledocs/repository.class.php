@@ -122,6 +122,8 @@ class repository_googledocs extends repository {
         return $dir.$file;
      }
 
-
+     public function supported_filetypes() {
+        return array('document');
+     }
 }
 //Icon from: http://www.iconspedia.com/icon/google-2706.html
