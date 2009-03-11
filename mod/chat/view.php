@@ -57,8 +57,6 @@
         print_footer($course);
         exit;
 
-    } else {
-        require_capability('mod/chat:chat', $context);
     }
 
     add_to_log($course->id, 'chat', 'view', "view.php?id=$cm->id", $chat->id, $cm->id);
@@ -128,40 +126,45 @@
 
                 print_heading(format_string($chat->name));
 
-                /// Print the main part of the page
-                print_box_start('generalbox', 'enterlink');
-                // users with screenreader set, will only see 1 link, to the manual refresh page
-                // for better accessibility
-                if (!empty($USER->screenreader)) {
-                    $chattarget = "/mod/chat/gui_basic/index.php?id=$chat->id$groupparam";
-                } else {
-                    $chattarget = "/mod/chat/gui_$CFG->chat_method/index.php?id=$chat->id$groupparam";
-                }
+                if (has_capability('mod/chat:chat',$context)) {
+                    /// Print the main part of the page
+                    print_box_start('generalbox', 'enterlink');
+                    // users with screenreader set, will only see 1 link, to the manual refresh page
+                    // for better accessibility
+                    if (!empty($USER->screenreader)) {
+                        $chattarget = "/mod/chat/gui_basic/index.php?id=$chat->id$groupparam";
+                    } else {
+                        $chattarget = "/mod/chat/gui_$CFG->chat_method/index.php?id=$chat->id$groupparam"; 
+                    }
 
-                echo '<p>';
-                link_to_popup_window ($chattarget,
-                        "chat$course->id$chat->id$groupparam", "$strenterchat", 500, 700, get_string('modulename', 'chat'));
-                echo '</p>';
-
-                if ($CFG->enableajax) {
                     echo '<p>';
-                    link_to_popup_window ("/mod/chat/gui_ajax/index.php?id=$chat->id$groupparam",
-                        "chat$course->id$chat->id$groupparam", get_string('ajax_gui', 'message'), 500, 700, get_string('modulename', 'chat'));
+                    link_to_popup_window ($chattarget,
+                            "chat$course->id$chat->id$groupparam", "$strenterchat", 500, 700, get_string('modulename', 'chat'));
                     echo '</p>';
+
+                    if ($CFG->enableajax) {
+                        echo '<p>';
+                        link_to_popup_window ("/mod/chat/gui_ajax/index.php?id=$chat->id$groupparam",
+                            "chat$course->id$chat->id$groupparam", get_string('ajax_gui', 'message'), 500, 700, get_string('modulename', 'chat'));
+                        echo '</p>';
+                    }
+
+                    // if user is using screen reader, then there is no need to display this link again
+                    if ($CFG->chat_method == 'header_js' && empty($USER->screenreader)) {
+                        // show frame/js-less alternative
+                        echo '<p>(';
+                        link_to_popup_window ("/mod/chat/gui_basic/index.php?id=$chat->id$groupparam",
+                            "chat$course->id$chat->id$groupparam", get_string('noframesjs', 'message'), 500, 700, get_string('modulename', 'chat'));
+                        echo ')</p>';
+                    }
+
+                    print_box_end();
+
+                } else {
+                    print_box_start('generalbox', 'notallowenter');
+                    echo '<p>'.get_string('notallowenter', 'chat').'</p>';
+                    print_box_end();
                 }
-
-                // if user is using screen reader, then there is no need to display this link again
-                if ($CFG->chat_method == 'header_js' && empty($USER->screenreader)) {
-                    // show frame/js-less alternative
-
-                    echo '<p>(';
-                            link_to_popup_window ("/mod/chat/gui_basic/index.php?id=$chat->id$groupparam",
-                                "chat$course->id$chat->id$groupparam", get_string('noframesjs', 'message'), 500, 700, get_string('modulename', 'chat'));
-                            echo ')</p>';
-                }
-
-                print_box_end();
-
 
                 if ($chat->chattime and $chat->schedule) {  // A chat is scheduled
                     echo "<p class=\"nextchatsession\">$strnextsession: ".userdate($chat->chattime).' ('.usertimezone($USER->timezone).')</p>';

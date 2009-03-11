@@ -59,6 +59,7 @@ $string['normalkeepalive'] = 'KeepAlive';
 $string['normalstream'] = 'Stream';
 $string['notlogged'] = 'Not logged in!';
 $string['noscheduledsession'] = 'No scheduled session';
+$string['notallowenter'] = 'You are not allow to enter the chat room.';
 $string['oldping'] = 'Disconnect timeout';
 $string['pastchats'] = 'Past chat sessions';
 $string['refreshroom'] = 'Refresh room';
