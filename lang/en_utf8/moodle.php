@@ -1381,6 +1381,7 @@ $string['secondstotime604800'] = '1 Week';
 $string['secondstotime86400'] = '1 day';
 $string['secretalreadyused'] = 'Change password confirmation link was already used, password was not changed.';
 $string['secs'] = 'secs';
+$string['seconds'] = 'seconds';
 $string['section'] = 'Section';
 $string['sections'] = 'Sections';
 $string['seealsostats'] = 'See also: stats';
