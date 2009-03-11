@@ -44,10 +44,6 @@ foreach (scorm_get_popup_options_array() as $popupopt => $value) {
     }
 }
 
-if (!isset($CFG->scorm_updatetime)) {
-    set_config('scorm_updatetime','2');
-}
-
 if (!isset($CFG->scorm_advancedsettings)) {
     set_config('scorm_advancedsettings','0');
 }
