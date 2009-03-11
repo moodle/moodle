@@ -355,7 +355,7 @@ class quiz_overview_report extends quiz_default_report {
                     } else {
                         $header .=' ';
                     }
-                    $header .='--/'.quiz_rescale_grade($question->maxgrade, $quiz);
+                    $header .='--/'.quiz_rescale_grade($question->maxgrade, $quiz, 'question');
                     $headers[] = $header;
                  }
             }

@@ -216,12 +216,12 @@ class quiz_report_overview_table extends table_sql {
                 $stateforqinattempt = false;
             }
             if ($stateforqinattempt && question_state_is_graded($stateforqinattempt)) {
-                $grade = quiz_rescale_grade($stateforqinattempt->grade, $this->quiz);
+                $grade = quiz_rescale_grade($stateforqinattempt->grade, $this->quiz, 'question');
                 if (!$this->is_downloading()) {
                     if (isset($this->regradedqs[$attempt->attemptuniqueid][$questionid])){
                         $gradefromdb = $grade;
-                        $newgrade = quiz_rescale_grade($this->regradedqs[$attempt->attemptuniqueid][$questionid]->newgrade, $this->quiz);
-                        $oldgrade = quiz_rescale_grade($this->regradedqs[$attempt->attemptuniqueid][$questionid]->oldgrade, $this->quiz);
+                        $newgrade = quiz_rescale_grade($this->regradedqs[$attempt->attemptuniqueid][$questionid]->newgrade, $this->quiz, 'question');
+                        $oldgrade = quiz_rescale_grade($this->regradedqs[$attempt->attemptuniqueid][$questionid]->oldgrade, $this->quiz, 'question');
 
                         $grade = '<del>'.$oldgrade.'</del><br />'.
                                 $newgrade;
@@ -255,9 +255,9 @@ class quiz_report_overview_table extends table_sql {
     function col_feedbacktext($attempt){
         if ($attempt->timefinish) {
             if (!$this->is_downloading()) {
-                return quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $this->quiz), $this->quiz->id);
+                return quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $this->quiz, false), $this->quiz->id);
             } else {
-                return strip_tags(quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $this->quiz), $this->quiz->id));
+                return strip_tags(quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $this->quiz, false), $this->quiz->id));
             }
         } else {
             return '-';
