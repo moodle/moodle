@@ -606,6 +606,7 @@
                 $baseurl = 'view.php?d='.$data->id.'&amp;';
                 //send the advanced flag through the URL so it is remembered while paging.
                 $baseurl .= 'advanced='.$advanced.'&amp;';
+                $search && $baseurl .= 'filter=1&amp;';
                 //pass variable to allow determining whether or not we are paging through results.
                 $baseurl .= 'paging='.$paging.'&amp;';
 
