@@ -1318,7 +1318,7 @@ function data_print_comments($data, $record, $page=0, $mform=false) {
     $editor = optional_param('addcomment', 0, PARAM_BOOL);
     if (!$mform and !$editor) {
         echo '<div class="newcomment" style="text-align:center">';
-        echo '<a href="view.php?d='.$data->id.'&amp;page='.$page.'&amp;mode=single&amp;addcomment=1">'.get_string('addcomment', 'data').'</a>';
+        echo '<a href="view.php?d='.$data->id.'&amp;rid='.$record->id.'&amp;mode=single&amp;addcomment=1">'.get_string('addcomment', 'data').'</a>';
         echo '</div>';
     } else {
         if (!$mform) {
