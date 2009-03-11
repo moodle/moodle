@@ -4333,6 +4333,7 @@ body#mod-forum-search .introcontent {
   text-align: left;
   margin-top: 1.5em;
 }
+#mod-quiz-summary #quiz-timer,
 #mod-quiz-summary .submitbtns {
   margin-top: 1.5em;
 }
@@ -4344,10 +4345,11 @@ body#mod-forum-search .introcontent {
   height: 16px;
   vertical-align: middle;
 }
+#mod-quiz-summary #quiz-timer,
 #mod-quiz-attempt #quiz-timer {
-  display: none;
+    display: none;
 }
-#mod-quiz-attempt #quiz-time-left {
+#quiz-timer #quiz-time-left {
   font-weight: bold;
 }
 

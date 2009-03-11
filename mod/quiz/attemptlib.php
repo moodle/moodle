@@ -675,6 +675,11 @@ class quiz_attempt extends quiz {
         echo '</div>';
     }
 
+    public function get_timer_html() {
+        return '<div id="quiz-timer">' . get_string('timeleft', 'quiz') .
+                ' <span id="quiz-time-left"></span></div>';
+    }
+
     /**
      * Wrapper round print_question from lib/questionlib.php.
      *
@@ -968,8 +973,7 @@ class quiz_attempt_nav_panel extends quiz_nav_panel_base {
         $output = '';
         $output .= '<input type="submit" name="gotosummary" value="' .
                 get_string('endtest', 'quiz') . '" class="endtestlink" />';
-        $output .= '<div id="quiz-timer">' . get_string('timeleft', 'quiz') .
-                ' <span id="quiz-time-left"></span></div>';
+        $output .= $this->attemptobj->get_timer_html();
         return $output;
     }
 }

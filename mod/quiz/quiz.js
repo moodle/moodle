@@ -121,7 +121,7 @@ quiz_timer = {
         if (secondsleft < 0) {
             quiz_timer.stop();
             quiz_timer.set_displayed_time(quiz_timer.strtimeup);
-            document.getElementById('timeup').value = 1;
+            quiz_timer.quizform.elements.timeup.value = 1;
             if (quiz_timer.quizform.onsubmit) {
                 quiz_timer.quizform.onsubmit();
             }

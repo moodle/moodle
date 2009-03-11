@@ -102,6 +102,9 @@ foreach ($attemptobj->get_question_iterator() as $number => $question) {
 /// Print the summary table.
 print_table($table);
 
+/// countdown timer
+echo $attemptobj->get_timer_html();
+
 /// Finish attempt button.
 echo "<div class=\"submitbtns mdl-align\">\n";
 $options = array(
@@ -112,7 +115,7 @@ $options = array(
     'sesskey' => sesskey(),
 );
 print_single_button($attemptobj->processattempt_url(), $options, get_string('finishattempt', 'quiz'),
-        'post', '', false, '', false, get_string('confirmclose', 'quiz'));
+        'post', '', false, '', false, get_string('confirmclose', 'quiz'), 'responseform');
 echo "</div>\n";
 
 /// Finish the page
