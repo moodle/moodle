@@ -104,18 +104,21 @@ EOF;
             $documentation .= <<<EOF
         <b>)</b> :
 EOF;
-            foreach($functiondescription['return'] as $return => $type) {
-                $documentation .= <<<EOF
-                <i>
-                {$type}</i>
-EOF;
-                if (is_array($type)) {
-                    $arraytype = "<pre>".print_r($type, true)."</pre>";
+            if (array_key_exists('return', $functiondescription)) {
+                foreach($functiondescription['return'] as $return => $type) {
                     $documentation .= <<<EOF
+                <i>
+                    {$type}</i>
+EOF;
+                    if (is_array($type)) {
+                        $arraytype = "<pre>".print_r($type, true)."</pre>";
+                        $documentation .= <<<EOF
                 <i> {$return}  {$arraytype} <br><br></i>
 EOF;
+                    }
                 }
             }
+
             foreach($functiondescription['params'] as $param => $type) {
 
                 if (is_array($type)) {
