@@ -168,7 +168,7 @@ class quiz_report_responses_table extends table_sql {
                         'reviewquestion', $summary, 450, 650, get_string('reviewresponse', 'quiz'),
                         'none', true);
                     if (question_state_is_graded($stateforqinattempt)
-                                && ($question->maxgrade != 0)){
+                                && ($question->maxgrade > 0)){
                         $grade = $stateforqinattempt->grade
                                         / $question->maxgrade;
                         $qclass = question_get_feedback_class($grade);
@@ -193,9 +193,9 @@ class quiz_report_responses_table extends table_sql {
     function col_feedbacktext($attempt){
         if ($attempt->timefinish) {
             if (!$this->is_downloading()) {
-                return quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $this->quiz), $this->quiz->id);
+                return quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $this->quiz, false), $this->quiz->id);
             } else {
-                return strip_tags(quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $this->quiz), $this->quiz->id));
+                return strip_tags(quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $this->quiz, false), $this->quiz->id));
             }
         } else {
             return '-';

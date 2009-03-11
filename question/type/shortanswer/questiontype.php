@@ -309,7 +309,7 @@ class question_shortanswer_qtype extends default_questiontype {
             echo ' ';
             print_string('duplicateresponse', 'quiz');
         }
-        if (!empty($question->maxgrade) && $options->scores) {
+        if ($question->maxgrade > 0 && $options->scores) {
             if (question_state_is_graded($state->last_graded)) {
                 // Display the grading details from the last graded state
                 $grade = new stdClass;

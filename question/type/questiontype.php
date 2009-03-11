@@ -777,10 +777,9 @@ class default_questiontype {
 
     // ULPGC ecastro
     function get_fractional_grade(&$question, &$state) {
-        $maxgrade = $question->maxgrade;
         $grade = $state->grade;
-        if ($maxgrade) {
-            return (float)($grade/$maxgrade);
+        if ($question->maxgrade > 0) {
+            return (float)($grade / $question->maxgrade);
         } else {
             return (float)$grade;
         }
@@ -908,7 +907,7 @@ class default_questiontype {
         }
 
         $grade = '';
-        if ($question->maxgrade and $options->scores) {
+        if ($question->maxgrade > 0 && $options->scores) {
             if ($cmoptions->optionflags & QUESTION_ADAPTIVE) {
                 if ($isgraded) {
                     $grade = question_format_grade($cmoptions, $state->last_graded->grade).'/';
@@ -1148,7 +1147,7 @@ class default_questiontype {
             echo ' ';
             print_string('duplicateresponse', 'quiz');
         }
-        if (!empty($question->maxgrade) && $options->scores) {
+        if ($question->maxgrade > 0 && $options->scores) {
             if (question_state_is_graded($state->last_graded)) {
                 // Display the grading details from the last graded state
                 $grade = new stdClass;
