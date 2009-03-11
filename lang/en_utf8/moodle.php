@@ -653,6 +653,7 @@ $string['files'] = 'Files';
 $string['filesfolders'] = 'Files/folders';
 $string['filloutallfields'] = 'Please fill out all fields in this form';
 $string['findmorecourses'] = 'Find more courses...';
+$string['firstaccess'] = 'First access';
 $string['firstdayofweek'] = '0';
 $string['firstname'] = 'First name';
 $string['firsttime'] = 'Is this your first time here?';
