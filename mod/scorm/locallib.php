@@ -36,22 +36,6 @@ function scorm_get_popup_options_array(){
                  'status'=> isset($CFG->scorm_status) ? $CFG->scorm_status : 0);
 }
 
-$stdoptions = '';
-foreach (scorm_get_popup_options_array() as $popupopt => $value) {
-    $stdoptions .= $popupopt.'='.$value;
-    if ($popupopt != 'status') {
-        $stdoptions .= ',';
-    }
-}
-
-if (!isset($CFG->scorm_advancedsettings)) {
-    set_config('scorm_advancedsettings','0');
-}
-
-if (!isset($CFG->scorm_windowsettings)) {
-    set_config('scorm_windowsettings','0');
-}
-
 /// Local Library of functions for module scorm
 /**
  * Returns an array of the array of what grade options
