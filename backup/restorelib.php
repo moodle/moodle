@@ -9115,6 +9115,11 @@ WHERE
                 $oldinstance = backup_getid($restore->backup_unique_code,$table,$oldid);
             }
 
+            // new instance id not found (not restored module/block/user)... skip any assignment
+            if (!$oldinstance || empty($oldinstance->new_id)) {
+                continue;
+            }
+
             $newcontext = get_context_instance($contextlevel, $oldinstance->new_id);
             $assignment->contextid = $newcontext->id; // new context id
             // might already have same assignment
@@ -9143,6 +9148,11 @@ WHERE
                 $oldinstance->new_id = $restore->course_id;
             } else {
                 $oldinstance = backup_getid($restore->backup_unique_code,$table,$oldid);
+            }
+
+            // new instance id not found (not restored module/block/user)... skip any override
+            if (!$oldinstance || empty($oldinstance->new_id)) {
+                continue;
             }
 
             $newcontext = get_context_instance($contextlevel, $oldinstance->new_id);
