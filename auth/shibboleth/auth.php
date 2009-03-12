@@ -271,12 +271,17 @@ class auth_plugin_shibboleth extends auth_plugin_base {
         set_config('auth_instructions', $config->auth_instructions, 'auth/shibboleth');
         set_config('changepasswordurl', $config->changepasswordurl, 'auth/shibboleth');
         
+        // Overwrite alternative login URL if integrated WAYF is used
         if (isset($config->alt_login) && $config->alt_login == 'on'){
             set_config('alt_login',    $config->alt_login,    'auth/shibboleth');
             set_config('alternateloginurl', $CFG->wwwroot.'/auth/shibboleth/login.php');
         } else {
-            set_config('alt_login',    'off',    'auth/shibboleth');
-            set_config('alternateloginurl', '');
+            // Check if integrated WAYF was enabled and is now turned off
+            // If it was and only then, reset the Moodle alternate URL 
+            if ($this->config->alt_login == 'on'){
+                set_config('alt_login',    'off',    'auth/shibboleth');
+                set_config('alternateloginurl', '');
+            }
             $config->alt_login = 'off';
         }
         
