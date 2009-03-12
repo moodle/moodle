@@ -931,14 +931,16 @@ _client.makepath = function() {
             var el = new YAHOO.util.Element(link.id);
             el.id = _client.repositoryid;
             el.path = _client.ds.path[i].path;
+            el.link_id = link.id;
             el.on('contentReady', function() {
-                var path_link = document.getElementById(link.id);
+                var path_link = document.getElementById(this.link_id);
                 path_link.id = this.id;
-                path_link.path = this.path
+                path_link.path = this.path;
                 path_link.onclick = function() {
                     repository_client_$suffix.req(this.id, this.path);
                 }
             });
+            link = null;
         }
     }
 }
