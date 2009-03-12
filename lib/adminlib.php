@@ -4795,7 +4795,7 @@ function db_replace($search, $replace) {
             foreach ($columns as $column => $data) {
                 if (in_array($data->type, array('text','mediumtext','longtext','varchar'))) {  // Text stuff only
                     $db->debug = true;
-                    execute_sql("UPDATE $table SET $column = REPLACE($column, '$search', '$replace');");
+                    execute_sql("UPDATE $table SET $column = REPLACE($column, '$search', '$replace')");
                     $db->debug = false;
                 }
             }
