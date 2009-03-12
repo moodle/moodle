@@ -7432,37 +7432,57 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $this->temp .= htmlspecialchars(trim($this->content))."</".$tagName.">";
                 //If we've finished a mod, xmlize it an save to db
                 if (($this->level == 4) and ($tagName == "MOD")) {
-                    //Prepend XML standard header to info gathered
-                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
-                    //Call to xmlize for this portion of xml data (one MOD)
-                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                                  //Debug
-                    $data = xmlize($xml_data,0);
-                    //echo strftime ("%X",time())."<p>";                                                            //Debug
-                    //traverse_xmlize($data);                                                                     //Debug
-                    //print_object ($GLOBALS['traverse_array']);                                                  //Debug
-                    //$GLOBALS['traverse_array']="";                                                              //Debug
-                    //Now, save data to db. We'll use it later
-                    //Get id and modtype from data
-                    $mod_id = $data["MOD"]["#"]["ID"]["0"]["#"];
-                    $mod_type = $data["MOD"]["#"]["MODTYPE"]["0"]["#"];
-                    //Only if we've selected to restore it
-                    if  (!empty($this->preferences->mods[$mod_type]->restore)) {
-                        //Save to db
-                        $status = backup_putid($this->preferences->backup_unique_code,$mod_type,$mod_id,
-                                     null,$data);
-                        //echo "<p>id: ".$mod_id."-".$mod_type." len.: ".strlen($sla_mod_temp)." to_db: ".$status."<p>";   //Debug
-                        //Create returning info
-                        $ret_info = new object();
-                        $ret_info->id = $mod_id;
-                        $ret_info->modtype = $mod_type;
-                        $this->info[] = $ret_info;
+                    //Only process the module if efectively it has been selected for restore. MDL-18482
+                    if (empty($this->preferences->mods[$this->temp_mod_type]->granular)  // We don't care about per instance, i.e. restore all instances.
+                        or (array_key_exists($this->temp_mod_id, $this->preferences->mods[$this->temp_mod_type]->instances)
+                            and
+                            !empty($this->preferences->mods[$this->temp_mod_type]->instances[$this->temp_mod_id]->restore))) {
+
+                        //Prepend XML standard header to info gathered
+                        $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                        //Call to xmlize for this portion of xml data (one MOD)
+                        //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                                  //Debug
+                        $data = xmlize($xml_data,0);
+                        //echo strftime ("%X",time())."<p>";                                                            //Debug
+                        //traverse_xmlize($data);                                                                     //Debug
+                        //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                        //$GLOBALS['traverse_array']="";                                                              //Debug
+                        //Now, save data to db. We'll use it later
+                        //Get id and modtype from data
+                        $mod_id = $data["MOD"]["#"]["ID"]["0"]["#"];
+                        $mod_type = $data["MOD"]["#"]["MODTYPE"]["0"]["#"];
+                        //Only if we've selected to restore it
+                        if  (!empty($this->preferences->mods[$mod_type]->restore)) {
+                            //Save to db
+                            $status = backup_putid($this->preferences->backup_unique_code,$mod_type,$mod_id,
+                                         null,$data);
+                            //echo "<p>id: ".$mod_id."-".$mod_type." len.: ".strlen($sla_mod_temp)." to_db: ".$status."<p>";   //Debug
+                            //Create returning info
+                            $ret_info = new object();
+                            $ret_info->id = $mod_id;
+                            $ret_info->modtype = $mod_type;
+                            $this->info[] = $ret_info;
+                        }
+                    } else {
+                        debugging("Info: skipping $this->temp_mod_type activity with mod id: $this->temp_mod_id. Not selected for restore", DEBUG_DEVELOPER);
                     }
+                    //Reset current mod_type and mod_id
+                    unset($this->temp_mod_type);
+                    unset($this->temp_mod_id);
                     //Reset temp
                     unset($this->temp);
                 }
+
+            /// Grab current mod id and type when available
+                if ($this->level == 5) {
+                    if ($tagName == 'ID') {
+                        $this->temp_mod_id = trim($this->content);
+                    } else if ($tagName == 'MODTYPE') {
+                        $this->temp_mod_type = trim($this->content);
+                    }
+                }
+
             }
-
-
 
             //Stop parsing if todo = MODULES and tagName = MODULES (en of the tag, of course)
             //Speed up a lot (avoid parse all)
