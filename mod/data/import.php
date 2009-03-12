@@ -102,9 +102,22 @@
         $recordsadded = 0;
 
         if (!$records = data_get_records_csv($filename, $fielddelimiter, $fieldenclosure)) {
-            print_error('get_records_csv failed to read data from the uploaded file. Please check file for field name typos and formatting errors.');
+            print_error('csvfailed','data',"{$CFG->wwwroot}/mod/data/edit.php?d={$data->id}");
         } else {
             $fieldnames = array_shift($records);
+
+            // check the fieldnames are valid
+            $fields = $DB->get_records('data_fields', array('dataid'=>$data->id), '', 'name, id, type');
+            $errorfield = '';
+            foreach ($fieldnames as $name) {
+                if (!isset($fields[$name])) {
+                    $errorfield .= "'$name' ";
+                }
+            }
+
+            if (!empty($errorfield)) {
+                print_error('fieldnotmatched','data',"{$CFG->wwwroot}/mod/data/edit.php?d={$data->id}",$errorfield);
+            }
 
             foreach ($records as $record) {
                 if ($recordid = data_add_record($data, 0)) {  // add instance to data_record
@@ -194,6 +207,7 @@ function my_file_get_contents($filename, $use_include_path = 0) {
 // Perform a simple field count check for each record.
 function data_get_records_csv($filename, $fielddelimiter=',', $fieldenclosure="\n") {
     global $DB;
+
 
     if (empty($fielddelimiter)) {
         $fielddelimiter = ',';
