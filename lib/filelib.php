@@ -719,13 +719,16 @@ function mimeinfo($element, $filename) {
                 if (file_exists($CFG->dirroot.'/pix/f/'.$filename)) {
                     return $filename;
                 } else {
-                    return $CFG->pixpath.'/f/unknown-32.png';   // By default
+                    return 'unknown-32.png';
                 }
             } else {
                 return $mimeinfo['xxx'][$element];   // By default
             }
         }
     } else {
+        if ($element == 'icon32') {
+            return 'unknown-32.png';
+        }
         return $mimeinfo['xxx'][$element];   // By default
     }
 }
