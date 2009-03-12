@@ -49,7 +49,7 @@ final class amf_server extends webservice_server {
         Zend_Loader::registerAutoload();
 
         //retrieve the api name
-        $classpath = optional_param(classpath,'user',PARAM_ALPHA);
+        $classpath = optional_param('classpath','user',PARAM_ALPHA);
         require_once(dirname(__FILE__) . '/../../'.$classpath.'/external.php');
 
         /// run the Zend AMF server
