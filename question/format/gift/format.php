@@ -528,6 +528,7 @@ function repchar( $text, $format=0 ) {
     }
 
 function writequestion( $question ) {
+    global $QTYPES;
     // turns question into string
     // question reflects database fields for general question and specific to type
 
@@ -647,7 +648,7 @@ function writequestion( $question ) {
         }
         else {
             $expout .= "Question type $question->qtype is not supported\n";
-            notify( get_string('nohandler','qformat_gift',get_string($question->qtype,'quiz') ) );
+            notify( get_string('nohandler', 'qformat_gift', $QTYPES[$question->qtype]->local_name()) );
         }
     }
     // add empty line to delimit questions
