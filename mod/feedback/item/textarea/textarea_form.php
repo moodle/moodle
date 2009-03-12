@@ -15,7 +15,7 @@ class feedback_textarea_form extends feedback_item_form {
         $mform->addElement('header', 'general', get_string($this->type, 'feedback'));
         $this->requiredcheck = $mform->addElement('checkbox', 'required', get_string('required', 'feedback'));
         
-        $this->itemname = $mform->addElement('text', 'itemname', get_string('item_name', 'feedback'), array('size="40"','maxlength="255"'));
+        $this->itemname = $mform->addElement('text', 'itemname', get_string('item_name', 'feedback'), array('size="'.FEEDBACK_ITEM_NAME_TEXTBOX_SIZE.'"','maxlength="255"'));
         
         $this->selectwith = $mform->addElement('select',
                                             'itemwidth', 
