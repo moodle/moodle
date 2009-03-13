@@ -4305,12 +4305,15 @@ function _print_custom_corners_end($idbase) {
  * @return string / nothing depending on the $return paramter.
  */
 function print_single_button($link, $options, $label='OK', $method='get', $notusedanymore='',
-        $return=false, $tooltip='', $disabled = false, $jsconfirmmessage='') {
+        $return=false, $tooltip='', $disabled = false, $jsconfirmmessage='', $formid = '') {
     $output = '';
+    if ($formid) {
+        $formid = ' id="' . s($formid) . '"';
+    }
     $link = str_replace('"', '&quot;', $link); //basic XSS protection
     $output .= '<div class="singlebutton">';
     // taking target out, will need to add later target="'.$target.'"
-    $output .= '<form action="'. $link .'" method="'. $method .'">';
+    $output .= '<form action="'. $link .'" method="'. $method .'"' . $formid . '>';
     $output .= '<div>';
     if ($options) {
         foreach ($options as $name => $value) {
