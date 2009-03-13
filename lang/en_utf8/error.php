@@ -448,6 +448,7 @@ $string['urlnotdefinerss'] = 'URL not defined for RSS feed';
 $string['userautherror'] = 'Unknown auth plugin';
 $string['userauthunsupported'] = 'Auth plugin not supported here';
 $string['useriddoesntexist'] = 'User id doesn\'t exist';
+$string['userisnotaparticipant'] = 'The user is not a course participant';
 $string['useremailduplicate'] = 'Duplicate address';
 $string['usermustbemnet'] = 'Users in the MNET access control list must be remote MNET users';
 $string['usernotaddedadmin'] = 'Cannot delete admin accounts';

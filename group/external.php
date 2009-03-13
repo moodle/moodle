@@ -106,11 +106,22 @@ final class group_external {
     /**
      * Return all internal members for a group id (do not return remotely registered user)
      * @param array|struct $params
-     * @subparam integer $params:member->groupid
+     * @subparam integer $params:groupid
      * @return array $return
      * $subparam string $return:username
      */
     static function tmp_get_groupmembers($params){
+        if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_SYSTEM))) {
+            $members = array();
+            foreach ($params as $groupid) {
+                $groupmembers = groups_get_members($groupid);
+                $members[] = array("groupid" => $groupid, "members" => $groupmembers);
+            }
+            return $members;
+        }
+        else {
+            throw new moodle_exception('wscouldnotgetgroupnopermission');
+        }
     }
 
      /**
@@ -127,6 +138,10 @@ final class group_external {
             foreach($params as $member) {
                 $groupid = clean_param($member['groupid'], PARAM_INTEGER);
                 $userid = clean_param($member['userid'], PARAM_INTEGER);
+
+                //check that the user is participant of the course
+                
+
                 if (!groups_add_member($groupid, $userid)) {
                     $addmembersuccessfull = false;
                 }
@@ -147,7 +162,7 @@ final class group_external {
      */
     static function tmp_delete_groupmembers($params){
         if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_SYSTEM))) {
-             $addmembersuccessfull = true;
+            $addmembersuccessfull = true;
             foreach($params as $member) {
                 $groupid = clean_param($member['groupid'], PARAM_INTEGER);
                 $userid = clean_param($member['userid'], PARAM_INTEGER);

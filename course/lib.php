@@ -3565,4 +3565,41 @@ function update_course($data) {
     return false;
 }
 
+/**
+ * Return all course participant for a given course
+ * @global object $DB
+ * @param integer $courseid
+ * @return array of user
+ */
+function get_course_participants ($courseid) {
+    global $DB;
+    $users = get_users_by_capability(
+                        get_context_instance(CONTEXT_COURSE, $courseid),
+                        'moodle/course:view');
+    return $users;
+}
+
+
+/**
+ * Return true if the user is a participant for a given course
+ * @global object $DB
+ * @param integer $userid
+ * @param integer $courseid
+ * @return boolean
+ */
+function is_course_participant ($userid, $courseid) {
+    global $DB;
+    $users = get_users_by_capability(
+                        get_context_instance(CONTEXT_COURSE, $courseid),
+                        'moodle/course:view','u.id');
+    
+    foreach($users as $user) {
+        if ($user->id == $userid) {
+            return true;
+        }
+    }
+   
+    return false;
+}
+
 ?>

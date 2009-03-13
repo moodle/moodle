@@ -27,8 +27,14 @@ function groups_add_member($groupid, $userid) {
         throw new moodle_exception('useriddoesntexist');
     }
 
-    if (!groups_group_exists($groupid)) {
+    $group = $DB->get_record('groups', array('id'=>$groupid));
+    if (empty($group)) {
         throw new moodle_exception('cannotaddmembergroupiddoesntexist');
+    }
+
+    //check if the user a participant of the group course
+    if (!is_course_participant ($userid, $group->courseid)) {
+        throw new moodle_exception('userisnotaparticipant');
     }
 
     if (groups_is_member($groupid, $userid)) {
