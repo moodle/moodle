@@ -27,6 +27,7 @@ class feedback_item_numeric extends feedback_item_base {
 
         $item->presentation = empty($item->presentation) ? '' : $item->presentation;
         $item->name = empty($item->name) ? '' : $item->name;
+        $item->label = empty($item->label) ? '' : $item->label;
         
         $item->required = isset($item->required) ? $item->required : 0;
         if($item->required) {
@@ -34,6 +35,7 @@ class feedback_item_numeric extends feedback_item_base {
         }
 
         $item_form->itemname->setValue($item->name);
+        $item_form->itemlabel->setValue($item->label);
         
         $range_from_to = explode('|',$item->presentation);
         
@@ -89,7 +91,7 @@ class feedback_item_numeric extends feedback_item_base {
         if(isset($values->data) AND is_array($values->data)) {
             //echo '<table>';2
             // $itemnr++;
-            echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;' . $item->name .'</th></tr>';
+            echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;('. $item->label .') ' . $item->name .'</th></tr>';
             foreach($values->data as $value) {
                 echo '<tr><td colspan="2" valign="top" align="left">-&nbsp;&nbsp;' . number_format($value, 2, $this->sep_dec, $this->sep_thous) . '</td></tr>';
             }
@@ -108,7 +110,8 @@ class feedback_item_numeric extends feedback_item_base {
         $analysed_item = $this->get_analysed($item, $groupid, $courseid);
 
         $worksheet->setFormat("<l><f><ro2><vo><c:green>");
-        $worksheet->write_string($rowOffset, 0, $item->name);
+        $worksheet->write_string($rowOffset, 0, $item->label);
+        $worksheet->write_string($rowOffset, 1, $item->name);
         $data = $analysed_item->data;
         if(is_array($data)) {
             // $worksheet->setFormat("<l><ro2><vo>");
@@ -122,10 +125,10 @@ class feedback_item_numeric extends feedback_item_base {
         
             //mittelwert anzeigen
             $worksheet->setFormat("<l><f><ro2><vo><c:red>");
-            $worksheet->write_string($rowOffset, 1, get_string('average', 'feedback'));
+            $worksheet->write_string($rowOffset, 2, get_string('average', 'feedback'));
             
             $worksheet->setFormat("<l><f><vo>");
-            $worksheet->write_number($rowOffset + 1, 1, $analysed_item->avg);
+            $worksheet->write_number($rowOffset + 1, 2, $analysed_item->avg);
             $rowOffset++;
         }
         $rowOffset++;
@@ -150,6 +153,9 @@ class feedback_item_numeric extends feedback_item_base {
     ?>
         <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>">
             <?php 
+                if($edit OR $readonly) {
+                    echo '('.$item->label.') ';
+                }
                 echo format_text($item->name . $requiredmark, true, false, false);
                 switch(true) {
                     case ($range_from === '-' AND is_numeric($range_to)):

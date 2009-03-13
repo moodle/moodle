@@ -47,6 +47,7 @@
     $fstring->of = get_string('of', 'feedback');
     $fstring->modulenameplural = get_string('modulenameplural', 'feedback');
     $fstring->questions = get_string('questions', 'feedback');
+    $fstring->itemlabel = get_string('item_label', 'feedback');
     $fstring->question = get_string('question', 'feedback');
     $fstring->responses = get_string('responses', 'feedback');
     $fstring->idnumber = get_string('idnumber');
@@ -88,8 +89,9 @@
     $worksheet1->hideGridlines();
     $worksheet1->setHeader("&\"Arial," . $fstring->bold . "\"&14".$feedback->name);
     $worksheet1->setFooter($fstring->page." &P " . $fstring->of . " &N");
-    $worksheet1->setColumn(0, 0, 30);
-    $worksheet1->setColumn(1, 20, 15);
+    $worksheet1->setColumn(0, 0, 10);
+    $worksheet1->setColumn(1, 1, 30);
+    $worksheet1->setColumn(2, 20, 15);
     $worksheet1->setMargins_LR(0.10);
 
     $worksheet2->setLandscape();
@@ -118,8 +120,9 @@
     }
     
     $rowOffset1 += 2;
-    $worksheet1->write_string($rowOffset1, 0, $fstring->question);
-    $worksheet1->write_string($rowOffset1, 1, $fstring->responses);
+    $worksheet1->write_string($rowOffset1, 0, $fstring->itemlabel);
+    $worksheet1->write_string($rowOffset1, 1, $fstring->question);
+    $worksheet1->write_string($rowOffset1, 2, $fstring->responses);
     $rowOffset1++ ;
 
     if (empty($items)) {
@@ -171,30 +174,31 @@
         
         $worksheet->setFormat('<l><f><ru2>');
 
-        $worksheet->write_string($rowOffset, $colOffset, $fstring->idnumber);
+        $worksheet->write_string($rowOffset + 1, $colOffset, $fstring->idnumber);
         $colOffset++;
 
-        $worksheet->write_string($rowOffset, $colOffset, $fstring->username);
+        $worksheet->write_string($rowOffset + 1, $colOffset, $fstring->username);
         $colOffset++;
 
-        $worksheet->write_string($rowOffset, $colOffset, $fstring->fullname);
+        $worksheet->write_string($rowOffset + 1, $colOffset, $fstring->fullname);
         $colOffset++;
         
         foreach($items as $item) {
             $worksheet->setFormat('<l><f><ru2>');
             $worksheet->write_string($rowOffset, $colOffset, $item->name);
+            $worksheet->write_string($rowOffset + 1, $colOffset, $item->label);
             $colOffset++;
         }
 
         $worksheet->setFormat('<l><f><ru2>');
-        $worksheet->write_string($rowOffset, $colOffset, $fstring->courseid);
+        $worksheet->write_string($rowOffset + 1, $colOffset, $fstring->courseid);
         $colOffset++;
 
         $worksheet->setFormat('<l><f><ru2>');
-        $worksheet->write_string($rowOffset, $colOffset, $fstring->course);
+        $worksheet->write_string($rowOffset + 1, $colOffset, $fstring->course);
         $colOffset++;
 
-        return $rowOffset + 1;
+        return $rowOffset + 2;
     }
     
     function feedback_excelprint_detailed_items(&$worksheet, $completed, $items, $rowOffset) {

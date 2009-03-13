@@ -21,6 +21,7 @@ class feedback_item_multichoice extends feedback_item_base {
         
         $item->presentation = empty($item->presentation) ? '' : $item->presentation;
         $item->name = empty($item->name) ? '' : $item->name;
+        $item->label = empty($item->label) ? '' : $item->label;
 
         $info = $this->get_info($item);
 
@@ -30,6 +31,7 @@ class feedback_item_multichoice extends feedback_item_base {
         }
         
         $item_form->itemname->setValue($item->name);
+        $item_form->itemlabel->setValue($item->label);
         
         $item_form->selectadjust->setValue($info->horizontal);
         
@@ -148,7 +150,7 @@ class feedback_item_multichoice extends feedback_item_base {
         if($analysedItem) {
             // $itemnr++;
             $itemname = $analysedItem[1];
-            echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;' . $itemname .'</th></tr>';
+            echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;('. $item->label .') ' . $itemname .'</th></tr>';
             $analysedVals = $analysedItem[2];
             $pixnr = 0;
             foreach($analysedVals as $val) {
@@ -175,18 +177,19 @@ class feedback_item_multichoice extends feedback_item_base {
 
         $worksheet->setFormat("<l><f><ro2><vo><c:green>");
         //frage schreiben
-        $worksheet->write_string($rowOffset, 0, $analysed_item[1]);
+        $worksheet->write_string($rowOffset, 0, $item->label);
+        $worksheet->write_string($rowOffset, 1, $analysed_item[1]);
         if(is_array($data)) {
             for($i = 0; $i < sizeof($data); $i++) {
                 $aData = $data[$i];
                 
                 $worksheet->setFormat("<l><f><ro2><vo><c:blue>");
-                $worksheet->write_string($rowOffset, $i + 1, trim($aData->answertext));
+                $worksheet->write_string($rowOffset, $i + 2, trim($aData->answertext));
                 
                 $worksheet->setFormat("<l><vo>");
-                $worksheet->write_number($rowOffset + 1, $i + 1, $aData->answercount);
+                $worksheet->write_number($rowOffset + 1, $i + 2, $aData->answercount);
                 $worksheet->setFormat("<l><f><vo><pr>");
-                $worksheet->write_number($rowOffset + 2, $i + 1, $aData->quotient);
+                $worksheet->write_number($rowOffset + 2, $i + 2, $aData->quotient);
             }
         }
         $rowOffset +=3 ;
@@ -215,7 +218,11 @@ class feedback_item_multichoice extends feedback_item_base {
             }
             $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
             
-            echo '<td '.$highlight.' valign="top" align="'.$align.'">'.format_text($item->name.$requiredmark, true, false, false).'</td>';
+            echo '<td '.$highlight.' valign="top" align="'.$align.'">';
+            if($edit OR $readonly) {
+                echo '('.$item->label.') ';
+            }            
+            echo format_text($item->name.$requiredmark, true, false, false).'</td>';
             echo '<td valign="top" align="'.$align.'">';
         }else {
             if($highlightrequire AND $item->required AND intval($value) <= 0) {
@@ -225,7 +232,14 @@ class feedback_item_multichoice extends feedback_item_base {
             }
             $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
             ?>
-                <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>"><?php echo format_text($item->name . $requiredmark, true, false, false);?></td>
+                <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>">
+                <?php 
+                if($edit OR $readonly) {
+                    echo '('.$item->label.') ';
+                }
+                echo format_text($item->name . $requiredmark, true, false, false);
+                ?>
+                </td>
                 <td valign="top" align="<?php echo $align;?>">
             <?php
         }

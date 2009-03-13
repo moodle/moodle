@@ -26,6 +26,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         
         $item->presentation = empty($item->presentation) ? '' : $item->presentation;
         $item->name = empty($item->name) ? '' : $item->name;
+        $item->label = empty($item->label) ? '' : $item->label;
 
         $info = $this->get_info($item);
 
@@ -35,6 +36,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         }
         
         $item_form->itemname->setValue($item->name);
+        $item_form->itemlabel->setValue($item->label);
         
         $item_form->selectadjust->setValue($info->horizontal);
         
@@ -124,7 +126,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         if($analysedItem) {
             //echo '<table>';
             // $itemnr++;
-            echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;' . $analysedItem[1] .'</th></tr>';
+            echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;('. $item->label .') ' . $analysedItem[1] .'</th></tr>';
             $analysedVals = $analysedItem[2];
             $pixnr = 0;
             $avg = 0.0;
@@ -157,27 +159,28 @@ class feedback_item_multichoicerated extends feedback_item_base {
 
         $worksheet->setFormat("<l><f><ro2><vo><c:green>");
         //frage schreiben
-        $worksheet->write_string($rowOffset, 0, $analysed_item[1]);
+        $worksheet->write_string($rowOffset, 0, $item->label);
+        $worksheet->write_string($rowOffset, 1, $analysed_item[1]);
         if(is_array($data)) {
             $avg = 0.0;
             for($i = 0; $i < sizeof($data); $i++) {
                 $aData = $data[$i];
                 
                 $worksheet->setFormat("<l><f><ro2><vo><c:blue>");
-                $worksheet->write_string($rowOffset, $i + 1, trim($aData->answertext).' ('.$aData->value.')');
+                $worksheet->write_string($rowOffset, $i + 2, trim($aData->answertext).' ('.$aData->value.')');
                 
                 $worksheet->setFormat("<l><vo>");
-                $worksheet->write_number($rowOffset + 1, $i + 1, $aData->answercount);
+                $worksheet->write_number($rowOffset + 1, $i + 2, $aData->answercount);
                 //$worksheet->setFormat("<l><f><vo>");
                 //$worksheet->write_number($rowOffset + 2, $i + 1, $aData->avg);
                 $avg += $aData->avg;
             }
             //mittelwert anzeigen
             $worksheet->setFormat("<l><f><ro2><vo><c:red>");
-            $worksheet->write_string($rowOffset, sizeof($data) + 1, get_string('average', 'feedback'));
+            $worksheet->write_string($rowOffset, sizeof($data) + 2, get_string('average', 'feedback'));
             
             $worksheet->setFormat("<l><f><vo>");
-            $worksheet->write_number($rowOffset + 1, sizeof($data) + 1, $avg);
+            $worksheet->write_number($rowOffset + 1, sizeof($data) + 2, $avg);
         }
         $rowOffset +=2 ;
         return $rowOffset;
@@ -195,7 +198,14 @@ class feedback_item_multichoicerated extends feedback_item_base {
             $highlight = '';
         }
     ?>
-        <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>"><?php echo format_text($item->name . $requiredmark, true, false, false);?></td>
+        <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>">
+        <?php
+            if($edit OR $readonly) {
+                echo '('.$item->label.') ';
+            }
+            echo format_text($item->name . $requiredmark, true, false, false);
+        ?>
+        </td>
         <td valign="top" align="<?php echo $align;?>">
     <?php
         $index = 1;

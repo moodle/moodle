@@ -237,6 +237,18 @@ function xmldb_feedback_upgrade($oldversion) {
     if ($result && $oldversion < 2008073002) {
         $update_sql = "UPDATE {feedback_item} SET presentation = '-|-' WHERE presentation = '0|0' AND typ = 'numeric'";
         $result = $result && $DB->execute($update_sql);
+        
+        upgrade_mod_savepoint($result, 2008073002, 'feedback');
+    }
+    
+    if ($result && $oldversion < 2009031301) {
+        /// Define field label to be added to feedback_item
+        $table = new xmldb_table('feedback_item');
+        $field = new xmldb_field('label', XMLDB_TYPE_CHAR, '255', null, null, false, null, null, '', 'name');
+        /// Launch add field2
+        $dbman->add_field($table, $field);
+
+        upgrade_mod_savepoint($result, 2009031301, 'feedback');
     }
     
     return $result;

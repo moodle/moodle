@@ -24,6 +24,8 @@
     $moveitem = optional_param('moveitem', false, PARAM_INT);
     $movehere = optional_param('movehere', false, PARAM_INT);
     $switchitemrequired = optional_param('switchitemrequired', false, PARAM_INT);
+
+    $ME = strip_querystring($FULLME);//sometimes it is not correct set
     
     // $SESSION->feedback->current_tab = $do_show;
     $current_tab = $do_show;
@@ -63,6 +65,7 @@
     if($movehere && isset($SESSION->feedback->moving->movingitem)){
         $item = $DB->get_record('feedback_item', array('id'=>$SESSION->feedback->moving->movingitem));
         feedback_move_item($item, intval($movehere));
+        $moveitem = false;
     }
     if($moveitem){
         $item = $DB->get_record('feedback_item', array('id'=>$moveitem));

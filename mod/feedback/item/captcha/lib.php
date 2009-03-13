@@ -17,6 +17,7 @@ class feedback_item_captcha extends feedback_item_base {
 
         $item->presentation = empty($item->presentation) ? 3 : $item->presentation;
         $item->name = empty($item->name) ? '' : $item->name;
+        $item->label = empty($item->label) ? '' : $item->label;
         
         $item->required = isset($item->required) ? $item->required : 1;
         if($item->required) {
@@ -24,6 +25,7 @@ class feedback_item_captcha extends feedback_item_base {
         }
 
         $item_form->itemname->setValue($item->name);
+        $item_form->itemlabel->setValue($item->label);
         
         $item_form->select->setValue($item->presentation);
         return $item_form;
@@ -87,7 +89,12 @@ class feedback_item_captcha extends feedback_item_base {
         $requiredmark = ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
     ?>
         <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>">
-            <?php echo format_text($item->name . $requiredmark, true, false, false);?>
+        <?php
+            if($edit OR $readonly) {
+                echo '('.$item->label.') ';
+            }
+            echo format_text($item->name . $requiredmark, true, false, false);
+        ?>
             <img alt="<?php echo $this->type;?>" src="<?php echo $CFG->wwwroot.htmlspecialchars('/mod/feedback/item/captcha/print_captcha.php?id='.$cmid);?>" />
         </td>
         <td valign="top" align="<?php echo $align;?>">
@@ -95,7 +102,7 @@ class feedback_item_captcha extends feedback_item_base {
         if($readonly){
             // print_simple_box_start($align);
             print_box_start('generalbox boxalign'.$align);
-            echo $value?$value:'&nbsp;';
+            echo $value ? $value : '&nbsp;';
             // print_simple_box_end();
             print_box_end();
         }else {

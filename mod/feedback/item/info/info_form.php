@@ -6,6 +6,7 @@ class feedback_info_form extends feedback_item_form {
     var $type = "info";
     var $requiredcheck;
     var $itemname;
+    var $itemlabel;
     var $infotype;
     
     function definition() {
@@ -15,6 +16,7 @@ class feedback_info_form extends feedback_item_form {
         $this->requiredcheck = &$mform->addElement('hidden', 'required');
         
         $this->itemname = &$mform->addElement('text', 'itemname', get_string('item_name', 'feedback'), array('size="'.FEEDBACK_ITEM_NAME_TEXTBOX_SIZE.'"','maxlength="255"'));
+        $this->itemlabel = $mform->addElement('text', 'itemlabel', get_string('item_label', 'feedback'), array('size="'.FEEDBACK_ITEM_LABEL_TEXTBOX_SIZE.'"','maxlength="255"'));
         
         $options=array();
         $options[1]  = get_string('responsetime', 'feedback');

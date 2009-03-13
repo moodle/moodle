@@ -17,6 +17,7 @@ class feedback_item_textfield extends feedback_item_base {
         
         $item->presentation = empty($item->presentation) ? '' : $item->presentation;
         $item->name = empty($item->name) ? '' : $item->name;
+        $item->label = empty($item->label) ? '' : $item->label;
         
         $item->required = isset($item->required) ? $item->required : 0;
         if($item->required) {
@@ -24,6 +25,7 @@ class feedback_item_textfield extends feedback_item_base {
         }
 
         $item_form->itemname->setValue($item->name);
+        $item_form->itemlabel->setValue($item->label);
 
         $sizeAndLength = explode('|',$item->presentation);
         $itemsize = isset($sizeAndLength[0]) ? $sizeAndLength[0] : 30;
@@ -64,7 +66,7 @@ class feedback_item_textfield extends feedback_item_base {
         if($values) {
             //echo '<table>';2
             // $itemnr++;
-            echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;' . $item->name .'</th></tr>';
+            echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;('. $item->label .') ' . $item->name .'</th></tr>';
             foreach($values as $value) {
                 echo '<tr><td colspan="2" valign="top" align="left">-&nbsp;&nbsp;' . str_replace("\n", '<br />', $value->value) . '</td></tr>';
             }
@@ -77,15 +79,16 @@ class feedback_item_textfield extends feedback_item_base {
         $analysed_item = $this->get_analysed($item, $groupid, $courseid);
 
         $worksheet->setFormat("<l><f><ro2><vo><c:green>");
-        $worksheet->write_string($rowOffset, 0, $item->name);
+        $worksheet->write_string($rowOffset, 0, $item->label);
+        $worksheet->write_string($rowOffset, 1, $item->name);
         $data = $analysed_item->data;
         if(is_array($data)) {
             $worksheet->setFormat("<l><ro2><vo>");
-            $worksheet->write_string($rowOffset, 1, $data[0]);
+            $worksheet->write_string($rowOffset, 2, $data[0]);
             $rowOffset++;
             for($i = 1; $i < sizeof($data); $i++) {
                 $worksheet->setFormat("<l><vo>");
-                $worksheet->write_string($rowOffset, 1, $data[$i]);
+                $worksheet->write_string($rowOffset, 2, $data[$i]);
                 $rowOffset++;
             }
         }
@@ -104,7 +107,14 @@ class feedback_item_textfield extends feedback_item_base {
         }
         $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
     ?>
-        <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>"><?php echo format_text($item->name . $requiredmark, true, false, false);?></td>
+        <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>">
+        <?php
+            if($edit OR $readonly) {
+                echo '('.$item->label.') ';
+            }
+            echo format_text($item->name . $requiredmark, true, false, false);
+        ?>
+        </td>
         <td valign="top" align="<?php echo $align;?>">
     <?php
         if($readonly){
