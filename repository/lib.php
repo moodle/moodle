@@ -762,7 +762,10 @@ abstract class repository {
             $existingfile->delete();
         }
         if ($file = $fs->create_file_from_pathname($entry, $path)) {
-            $delete = unlink($path);
+            if (empty($CFG->repository_no_delete)) {
+                $delete = unlink($path);
+                unset($CFG->repository_no_delete);
+            }
             $ret = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
             if(!empty($ret)) {
                 return array('url'=>$ret->get_url(),
@@ -776,24 +779,6 @@ abstract class repository {
         } else {
             return null;
         }
-    }
-
-    public static function download_btn($repo_id, $ctx_id, $sesskey, $title, $src, $returnurl = '') {
-        global $CFG;
-        if (empty($returnurl)) {
-            $returnurl = get_referer();
-        }
-        $str  = '<form action="'.$CFG->httpswwwroot.'/repository/ws.php">';
-        $str .= '  <input type="hidden" name="sesskey" value="'.$sesskey.'" />';
-        $str .= '  <input type="hidden" name="ctx_id" value="'.$ctx_id.'" />';
-        $str .= '  <input type="hidden" name="repo_id" value="'.$repo_id.'" />';
-        $str .= '  <input type="hidden" name="file" value="'.$src.'" />';
-        $str .= '  <input type="hidden" name="action" value="download" />';
-        $str .= '  <input type="hidden" name="returnurl" value="'.$returnurl.'" />';
-        $str .= '  <input type="text" name="title" value="'.$title.'" />';
-        $str .= '  <input type="submit" value="Select it!" />';
-        $str .= '</form>';
-        return $str;
     }
 
     /**
@@ -1784,10 +1769,10 @@ final class repository_type_form extends moodleform {
 
         // let the plugin add its specific fields
         if (!$this->instance) {
-                $result = repository::static_function($this->plugin, 'type_config_form', $mform);
-            } else {
-                $classname = 'repository_' . $this->instance->get_typename();
-                $result = call_user_func(array($classname,'type_config_form'),$mform);
+            $result = repository::static_function($this->plugin, 'type_config_form', $mform);
+        } else {
+            $classname = 'repository_' . $this->instance->get_typename();
+            $result = call_user_func(array($classname, 'type_config_form'), $mform);
         }
 
         //add "enable course/user instances" checkboxes if multiple instances are allowed
