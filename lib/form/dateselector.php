@@ -179,6 +179,7 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
 
     function toHtml()
     {
+        form_init_date_js();
         include_once('HTML/QuickForm/Renderer/Default.php');
         $renderer =& new HTML_QuickForm_Renderer_Default();
         $renderer->setElementTemplate('{element}');

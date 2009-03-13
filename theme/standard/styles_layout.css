@@ -655,6 +655,19 @@ fieldset.fdate_selector label {
   width: auto;
 }
 
+#date_selector_calendar_panel .bd {
+    padding: 0;
+}
+
+#date_selector_calendar_panel .yui-calcontainer {
+    border: none;
+    float: none;
+}
+/* Prevent border-collapse:collapse from bleeding through in IE6, IE7 */
+#date_selector_calendar_panel.yui-overlay-hidden table {
+    *display:none;
+}
+
 .mform div.felement,  .mform fieldset.felement{
   display: block;
   float: left;
@@ -4333,7 +4346,6 @@ body#mod-forum-search .introcontent {
   text-align: left;
   margin-top: 1.5em;
 }
-#mod-quiz-summary #quiz-timer,
 #mod-quiz-summary .submitbtns {
   margin-top: 1.5em;
 }
@@ -4345,11 +4357,10 @@ body#mod-forum-search .introcontent {
   height: 16px;
   vertical-align: middle;
 }
-#mod-quiz-summary #quiz-timer,
 #mod-quiz-attempt #quiz-timer {
-    display: none;
+  display: none;
 }
-#quiz-timer #quiz-time-left {
+#mod-quiz-attempt #quiz-time-left {
   font-weight: bold;
 }
 

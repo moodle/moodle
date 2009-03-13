@@ -43,6 +43,19 @@ if ($CFG->debug >= DEBUG_ALL){
     PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, 'pear_handle_error');
 }
 
+function form_init_date_js() {
+    global $CFG;
+    static $done = false;
+    if (!$done) {
+        echo '<style type="text/css">';
+        echo '@import "' . $CFG->httpswwwroot . '/lib/yui/calendar/assets/skins/sam/calendar.css";';
+        echo '@import "' . $CFG->httpswwwroot . '/lib/yui/calendar/assets/skins/sam/container.css";';
+        echo '</style>';
+        require_js(array('yui_yahoo', 'yui_dom', 'yui_event', 'yui_calendar', 'yui_container'));
+        print_delayed_js_call(1, 'init_date_selectors', array(get_string('firstdayofweek')));
+        $done = true;
+    }
+}
 
 /**
  * Moodle specific wrapper that separates quickforms syntax from moodle code. You won't directly
