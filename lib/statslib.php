@@ -1171,9 +1171,9 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
         $param->sql = 'SELECT activity.courseid, activity.all_activity AS line1, enrolments.highest_enrolments AS line2,
                         activity.all_activity / enrolments.highest_enrolments as line3
                        FROM (
-                            SELECT courseid, (stat1+stat2) AS all_activity
+                            SELECT courseid, sum(stat1+stat2) AS all_activity
                               FROM {stats_'.$param->table.'}
-                             WHERE stattype=\'activity\' AND timeend >= '.$param->timeafter.' AND roleid = 0
+                             WHERE stattype=\'activity\' AND timeend >= '.$param->timeafter.' AND roleid = 0 GROUP BY courseid
                        ) activity
                        INNER JOIN
                             (
