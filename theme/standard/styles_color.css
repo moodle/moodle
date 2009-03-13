@@ -1192,11 +1192,15 @@ css id's of question bank*/
     background-color:#FFF;
 }
 #mod-quiz-edit div.question div.content div.questioncontrols{
-    background-color:#FFF;
+    background-color:#F9F9F9;
 }
 #mod-quiz-edit div.editq div.question div.content{
-    background-color:#fff;
+    background-color:#F9F9F9;
 }
+#mod-quiz-edit .reorder div.question div.content{
+    background-color:#F9F9F9;
+}
+
 #mod-quiz-edit .questionbankwindow div.header a{
     color:#FFF;
 }

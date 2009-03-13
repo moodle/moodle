@@ -4692,6 +4692,7 @@ table.quizreviewsummary td.cell {
     float:left;
     position:relative;
     margin-left:0.3em;
+    margin-bottom:0.2em;
     border-left:solid #777 thin;
     line-height:1.3em;
     -webkit-border-radius:0.6em;
@@ -4701,7 +4702,7 @@ table.quizreviewsummary td.cell {
     border-radius-bottomleft:0;
     border-radius-topleft:0;
     width:88%;
-    padding:0 0 0.5em;
+    padding:0.15em 0 0.3em;
 }
 
 #mod-quiz-edit div.question{
@@ -4756,7 +4757,6 @@ table.quizreviewsummary td.cell {
 #mod-quiz-edit .reorder div.question div.content{
     width:87%;
     float:left;
-    background-color:#fff;
     position:relative;
     -webkit-border-radius:0.3em;
     -webkit-border-radius-bottomleft:0;
@@ -4949,7 +4949,7 @@ table.quizreviewsummary td.cell {
 
 #mod-quiz-edit .quizpagedelete img {
     background-color:#d6d6d6;
-    padding:0.5em;
+    padding:0.6em;
 }
 
 #mod-quiz-edit .pagecontrols {
