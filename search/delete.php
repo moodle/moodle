@@ -20,25 +20,31 @@
     */
     require_once('../config.php');
 
-/// makes inclusions of the Zend Engine more reliable                               
-    $separator = (array_key_exists('WINDIR', $_SERVER)) ? ';' : ':' ;                   
-    ini_set('include_path', $CFG->dirroot.'/search'.$separator.ini_get('include_path'));
+    if (!defined('MOODLE_INTERNAL')) {
+        die('Direct access to this script is forbidden.');    ///  It must be included from the cron script
+    }
 
-    require_once("$CFG->dirroot/search/lib.php");
-    require_once("$CFG->dirroot/search/indexlib.php");    
+/// makes inclusions of the Zend Engine more reliable
+    ini_set('include_path', $CFG->dirroot.PATH_SEPARATOR.'search'.PATH_SEPARATOR.ini_get('include_path'));
+
+    require_once($CFG->dirroot.'/search/lib.php');
+    require_once($CFG->dirroot.'/search/indexlib.php');    
     
     
 /// checks global search activation
 
-    require_login();
+    // require_login();
 
     if (empty($CFG->enableglobalsearch)) {
         error(get_string('globalsearchdisabled', 'search'));
     }
     
+    /*
+    Obsolete with the MOODLE INTERNAL check
     if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
         error(get_string('beadmin', 'search'), "$CFG->wwwroot/login/index.php");
-    } //if
+    }
+    */
     
     try {
         $index = new Zend_Search_Lucene(SEARCH_INDEX_PATH);
