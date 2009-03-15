@@ -64,6 +64,19 @@ class profile_field_menu extends profile_field_base {
         $user->{$this->inputname} = $this->datakey;
     }
 
+    /**
+     * HardFreeze the field if locked.
+     * @param   object   instance of the moodleform class
+     */
+    function edit_field_set_locked(&$mform) {
+        if (!$mform->elementExists($this->inputname)) {
+            return;
+        }
+        if ($this->is_locked() and !has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM))) {
+            $mform->hardFreeze($this->inputname);
+            $mform->setConstant($this->inputname, $this->datakey);
+        }
+    }
 }
 
 ?>
