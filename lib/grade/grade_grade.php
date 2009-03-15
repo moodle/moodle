@@ -735,16 +735,17 @@ class grade_grade extends grade_object {
         $this->rawgrademax = grade_floatval($this->rawgrademax);
         return parent::update($source);
     }
-    
+
     /**
      * Used to notify the completion system (if necessary) that a user's grade
      * has changed, and clear up a possible score cache.
      * @param bool deleted True if grade was actually deleted
      */
     function notify_changed($deleted) {
+        global $USER, $SESSION, $CFG,$COURSE, $DB;
+
         // Grades may be cached in user session
-        global $USER,$SESSION;
-        if($USER->id==$this->userid) {
+        if ($USER->id == $this->userid) {
             unset($SESSION->gradescorecache[$this->itemid]);
         }
 
@@ -752,51 +753,51 @@ class grade_grade extends grade_object {
         // TODO There should be a proper way to determine when we are in restore
         // so that this hack looking for a $restore global is not needed.
         global $restore;
-        if(!empty($restore->backup_unique_code)) {
+        if (!empty($restore->backup_unique_code)) {
             return;
         }
-        global $CFG,$COURSE,$DB;
+
         require_once($CFG->libdir.'/completionlib.php');
-        
+
         // Bail out immediately if completion is not enabled for site (saves loading
         // grade item below)
-        if(!completion_info::is_enabled_for_site()) {
+        if (!completion_info::is_enabled_for_site()) {
             return;
         }
-        
+
         // Load information about grade item
         $this->load_grade_item();
-        
+
         // Only course-modules have completion data
-        if($this->grade_item->itemtype!='mod') {
+        if ($this->grade_item->itemtype!='mod') {
             return;
         }
-        
+
         // Use $COURSE if available otherwise get it via item fields
-        if(!empty($COURSE) && $COURSE->id==$this->grade_item->courseid) {
-            $course=$COURSE;
+        if(!empty($COURSE) && $COURSE->id == $this->grade_item->courseid) {
+            $course = $COURSE;
         } else {
-            $course=$DB->get_record('course',array('id',$this->grade_item->courseid));
+            $course = $DB->get_record('course', array('id'=>$this->grade_item->courseid));
         }
 
         // Bail out if completion is not enabled for course
-        $completion=new completion_info($course);
-        if(!$completion->is_enabled()) {
+        $completion = new completion_info($course);
+        if (!$completion->is_enabled()) {
             return;
         }
 
         // Get course-module
-        $cm=get_coursemodule_from_instance($this->grade_item->itemmodule,
-            $this->grade_item->iteminstance,$this->grade_item->courseid);
-        if(!$cm) {
-            debugging("Couldn't find course-module for module 
+        $cm = get_coursemodule_from_instance($this->grade_item->itemmodule,
+              $this->grade_item->iteminstance, $this->grade_item->courseid);
+        if (!$cm) {
+            debugging("Couldn't find course-module for module
                 '{$this->grade_item->itemmodule}', instance '{$this->grade_item->iteminstance}',
                 course '{$this->grade_item->courseid}'");
             return;
         }
 
         // Pass information on to completion system
-        $completion->inform_grade_changed($cm,$this->grade_item,$this,$deleted);
+        $completion->inform_grade_changed($cm, $this->grade_item, $this, $deleted);
      }
 }
 ?>
