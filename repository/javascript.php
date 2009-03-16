@@ -5,42 +5,6 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-require_once(dirname(dirname(__FILE__)).'/config.php');
-$yui     = optional_param('yui', 0, PARAM_RAW);              // page or path
-if (!empty($yui)) {
-    repository_get_yui();
-}
-function repository_get_yui() {
-    global $CFG;
-
-    $lifetime = '86400';
-
-    @header('Content-type: text/javascript'); 
-    @header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
-    @header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .'GMT');
-    @header('Cache-control: max-age='.$lifetime);
-    @header('Pragma: ');
-
-    $jslist = array(
-        'yahoo-dom-event/yahoo-dom-event.js',
-        'element/element-beta-min.js',
-        'treeview/treeview-min.js',
-        'dragdrop/dragdrop-min.js',
-        'container/container-min.js',
-        'resize/resize-min.js',
-        'layout/layout-min.js',
-        'connection/connection-min.js',
-        'json/json-min.js',
-        'button/button-min.js',
-        'selector/selector-beta-min.js'
-        );
-    foreach ($jslist as $js) {
-        echo "/* Included from lib/yui/$js */\n";
-        readfile($CFG->dirroot.'/lib/yui/'.$js);
-        echo "\n\n";
-    }
-    exit();
-}
 /**
  * Return javascript to create file picker to browse repositories
  * @global object $CFG
@@ -142,7 +106,22 @@ function repository_get_client($context, $accepted_filetypes = '*', $returnvalue
 <![endif]-->
 EOD;
 
-        $js = '<script type="text/javascript" src="'.$CFG->httpswwwroot.'/repository/javascript.php?yui=1"></script>';
+        require_js(array(
+            'yui_yahoo',
+            'yui_dom',
+            'yui_event',
+            'yui_element',
+            'yui_treeview',
+            'yui_dragdrop',
+            'yui_container',
+            'yui_resize',
+            'yui_layout',
+            'yui_connection',
+            'yui_json',
+            'yui_button',
+            'yui_selector'
+        ));
+        $js = '';
         $CFG->repo_yui_loaded = true;
     } else {
         $js = '';
