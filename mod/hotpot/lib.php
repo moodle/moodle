@@ -206,7 +206,7 @@ function hotpot_update_instance($hotpot) {
         $hotpot->id = $hotpot->instance;
         if ($result = $DB->update_record('hotpot', $hotpot)) {
             hotpot_update_events($hotpot);
-            hotpot_grade_item_update($hotpot);
+            hotpot_update_grades($hotpot);
         }
     } else {
         $result=  false;
