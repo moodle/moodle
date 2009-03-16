@@ -232,29 +232,15 @@ class course_edit_form extends moodleform {
         $mform->setHelpButton('enrollable', array('courseenrollable2', get_string('enrollable')), true);
         $mform->setDefault('enrollable', $courseconfig->enrollable);
 
-        $enroldatestartgrp = array();
-        $enroldatestartgrp[] = &MoodleQuickForm::createElement('date_selector', 'enrolstartdate');
-        $enroldatestartgrp[] = &MoodleQuickForm::createElement('checkbox', 'enrolstartdisabled', null, get_string('disable'));
-        $mform->addGroup($enroldatestartgrp, 'enrolstartdategrp', get_string('enrolstartdate'), ' ', false);
+        $mform->addElement('date_selector', 'enrolstartdate', get_string('enrolstartdate'), array('optional' => true));
         $mform->setDefault('enrolstartdate', 0);
-        $mform->setDefault('enrolstartdisabled', 1);
-        $mform->disabledIf('enrolstartdategrp', 'enrolstartdisabled', 'checked');
+        $mform->disabledIf('enrolstartdate', 'enrollable', 'neq', 2);
 
-        $enroldateendgrp = array();
-        $enroldateendgrp[] = &MoodleQuickForm::createElement('date_selector', 'enrolenddate');
-        $enroldateendgrp[] = &MoodleQuickForm::createElement('checkbox', 'enrolenddisabled', null, get_string('disable'));
-        $mform->addGroup($enroldateendgrp, 'enroldateendgrp', get_string('enrolenddate'), ' ', false);
+        $mform->addElement('date_selector', 'enrolenddate', get_string('enrolenddate'), array('optional' => true));
         $mform->setDefault('enrolenddate', 0);
-        $mform->setDefault('enrolenddisabled', 1);
-        $mform->disabledIf('enroldateendgrp', 'enrolenddisabled', 'checked');
+        $mform->disabledIf('enrolenddate', 'enrollable', 'neq', 2);
 
-        $periodmenu=array();
-        $periodmenu[0] = get_string('unlimited');
-        for ($i=1; $i<=365; $i++) {
-            $seconds = $i * 86400;
-            $periodmenu[$seconds] = get_string('numdays', '', $i);
-        }
-        $mform->addElement('select', 'enrolperiod', get_string('enrolperiod'), $periodmenu);
+        $mform->addElement('duration', 'enrolperiod', get_string('enrolperiod'), array('optional' => true, 'defaultunit' => 86400));
         $mform->setDefault('enrolperiod', $courseconfig->enrolperiod);
 
 
