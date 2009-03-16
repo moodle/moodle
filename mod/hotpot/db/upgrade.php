@@ -10,8 +10,20 @@ function xmldb_hotpot_upgrade($oldversion=0) {
 
 //===== 1.9.0 upgrade line ======//
 
+    if ($result && $oldversion < 2007101512) {
+        // save and disable setting to display debugging messages
+        $debug = $db->debug;
+        $db->debug = false;
+
+        notify('Fixing hotpot grades, this may take a while if there are many hotpots...', 'notifysuccess');
+        hotpot_fix_grades();
+
+        // restore $db->debug
+        $db->debug = $debug;
+    }
+
     // update hotpot grades from sites earlier than Moodle 1.9, 27th March 2008
-    if ($result && $oldversion < 2007101511) {
+    if ($result && $oldversion < 2007101513) {
 
         // ensure "hotpot_update_grades" function is available
         require_once $CFG->dirroot.'/mod/hotpot/lib.php';
@@ -22,18 +34,6 @@ function xmldb_hotpot_upgrade($oldversion=0) {
 
         notify('Processing hotpot grades, this may take a while if there are many hotpots...', 'notifysuccess');
         hotpot_update_grades();
-
-        // restore $db->debug
-        $db->debug = $debug;
-    }
-
-    if ($result && $oldversion < 2007101512) {
-        // save and disable setting to display debugging messages
-        $debug = $db->debug;
-        $db->debug = false;
-
-        notify('Fixing hotpot grades, this may take a while if there are many hotpots...', 'notifysuccess');
-        hotpot_fix_grades();
 
         // restore $db->debug
         $db->debug = $debug;
