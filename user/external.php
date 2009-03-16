@@ -81,17 +81,69 @@ final class user_external {
             $userids = array();
             foreach ($params as $userparams) {
 
-                $user = array();
-                foreach (array_keys($userparams) as $key) {
-                    $user[$key]  = clean_param($userparams[$key], PARAM_ALPHANUMEXT);
+                $user = new stdClass();
+                if (array_key_exists('email', $userparams)) {
+                    $user->email =  clean_param($userparams['email'], PARAM_NOTAGS);
                 }
 
-                if (array_key_exists('email', $userparams)) {
-                    $user['email'] =  clean_param($userparams['email'], PARAM_NOTAGS);
+                if (array_key_exists('password', $userparams)) {
+                    $user->password =  clean_param($userparams['password'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('idnumber', $userparams)) {
+                    $user->idnumber =  clean_param($userparams['idnumber'], PARAM_ALPHANUMEXT);
                 }
 
                 if (array_key_exists('description', $userparams)) {
-                    $user['description'] =  clean_param($userparams['description'], PARAM_TEXT);
+                    $user->description =  clean_param($userparams['description'], PARAM_TEXT);
+                }
+
+                if (array_key_exists('username', $userparams)) {
+                    $user->username =  clean_param($userparams['username'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('auth', $userparams)) {
+                    $user->auth =  clean_param($userparams['auth'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('confirmed', $userparams)) {
+                    $user->confirmed =  clean_param($userparams['confirmed'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('firstname', $userparams)) {
+                    $user->firstname =  clean_param($userparams['firstname'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('lastname', $userparams)) {
+                    $user->lastname =  clean_param($userparams['lastname'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('emailstop', $userparams)) {
+                    $user->emailstop =  clean_param($userparams['emailstop'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('lang', $userparams)) {
+                    $user->lang =  clean_param($userparams['lang'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('theme', $userparams)) {
+                    $user->theme =  clean_param($userparams['theme'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('timezone', $userparams)) {
+                    $user->timezone =  clean_param($userparams['timezone'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('city', $userparams)) {
+                    $user->city =  clean_param($userparams['city'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('country', $userparams)) {
+                    $user->country =  clean_param($userparams['country'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('mailformat', $userparams)) {
+                    $user->mailformat =  clean_param($userparams['mailformat'], PARAM_ALPHANUMEXT);
                 }
 
                 try {
@@ -113,7 +165,6 @@ final class user_external {
      * @global object $DB
      * @param array|struct $params - need to be define as struct for XMLRPC
      * @subparam string $params:user->username
-     * @subparam integer $params:user->mnethostid
      * @return boolean result true if success
      */
     static function tmp_delete_users($params) {
@@ -146,7 +197,6 @@ final class user_external {
      * @global object $DB
      * @param array|struct $params - need to be define as struct for XMLRPC
      * @subparam string $params:user->username
-     * @subparam integer $params:user->mnethostid
      * @subparam string $params:user->newusername
      * @subparam string $params:user->firstname
      * @return boolean result true if success
@@ -167,10 +217,6 @@ final class user_external {
                     throw new moodle_exception('wscouldnotupdatenoexistinguser');
                 }
 
-                foreach (array_keys($userparams) as $key) {
-                    $user->$key  = clean_param($userparams[$key], PARAM_ALPHANUMEXT);
-                }
-
                 if (array_key_exists('email', $userparams)) {
                     $user->email =  clean_param($userparams['email'], PARAM_NOTAGS);
                 }
@@ -181,6 +227,50 @@ final class user_external {
 
                 if (array_key_exists('newusername', $userparams)) {
                     $user->username =  clean_param($userparams['newusername'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('auth', $userparams)) {
+                    $user->auth =  clean_param($userparams['auth'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('confirmed', $userparams)) {
+                    $user->confirmed =  clean_param($userparams['confirmed'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('firstname', $userparams)) {
+                    $user->firstname =  clean_param($userparams['firstname'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('lastname', $userparams)) {
+                    $user->lastname =  clean_param($userparams['lastname'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('emailstop', $userparams)) {
+                    $user->emailstop =  clean_param($userparams['emailstop'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('lang', $userparams)) {
+                    $user->lang =  clean_param($userparams['lang'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('theme', $userparams)) {
+                    $user->theme =  clean_param($userparams['theme'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('timezone', $userparams)) {
+                    $user->timezone =  clean_param($userparams['timezone'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('city', $userparams)) {
+                    $user->city =  clean_param($userparams['city'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('country', $userparams)) {
+                    $user->country =  clean_param($userparams['country'], PARAM_ALPHANUMEXT);
+                }
+
+                if (array_key_exists('mailformat', $userparams)) {
+                    $user->mailformat =  clean_param($userparams['mailformat'], PARAM_ALPHANUMEXT);
                 }
 
                 try {
