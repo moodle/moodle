@@ -49,7 +49,7 @@ class user_external_test extends UnitTestCase {
 
     }
 /*
-    function testTmp_create_users() {
+    function test_create_users() {
         /// test that we create multiple users
         $params = array();
         for ($i=0;$i<2;$i=$i+1) {
@@ -61,7 +61,7 @@ class user_external_test extends UnitTestCase {
             $user['password'] = 'mockuserfortesting'.$i.'_password';
             $params[] = $user;
         }
-        $result = user_external::tmp_create_users($params);
+        $result = user_external::create_users($params);
         $this->assertEqual(sizeof($result), 2);
         //just test that value are integer and not null
         $this->assertIsA($result[key($result)], "integer");
@@ -81,7 +81,7 @@ class user_external_test extends UnitTestCase {
         $user['lang']='en_utf8';
         $user['auth']='manual';
         $params[] = $user;
-        $result = user_external::tmp_create_users($params);
+        $result = user_external::create_users($params);
         $this->assertEqual($result, true);
 
 
@@ -91,11 +91,11 @@ class user_external_test extends UnitTestCase {
         $user['username'] = 'mockuserfortestingY';
         $params[] = $user;
         $this->expectException(new moodle_exception('missingrequiredfield'));
-        $result = user_external::tmp_create_users($params);
+        $result = user_external::create_users($params);
 
     }
 
-    function testTmp_create_users_2() {
+    function test_create_users_2() {
         /// test we cannot create a user because the username already exist
         $params = array();
         $user = array();
@@ -107,12 +107,14 @@ class user_external_test extends UnitTestCase {
         $params[] = $user;
 
         $this->expectException(new moodle_exception('wscouldnotcreateeuserindb'));
-        $result = user_external::tmp_create_users($params);
+        $result = user_external::create_users($params);
     }
 
-    function testTmp_get_users() {
+    function test_get_users() {
         $params = array('search' => 'mockuserfortestingXX');
-        $users = user_external::tmp_get_users($params);
+
+        $users = user_external::get_users($params);
+       
         foreach ($users as $user) {
             $this->assertEqual($user->username, 'mockuserfortestingXX');
             $this->assertEqual($user->firstname, 'mockuserfortesting_firstname');
@@ -127,7 +129,7 @@ class user_external_test extends UnitTestCase {
 
     }
 
-    function testTmp_update_users() {
+    function test_update_users() {
         /// update several users with full information
         $params = array();
         $user = array();
@@ -156,7 +158,7 @@ class user_external_test extends UnitTestCase {
         $user['lang']='en_utf8';
         $user['auth']='manual';
         $params[] = $user;
-        $result = user_external::tmp_update_users($params);
+        $result = user_external::update_users($params);
         $this->assertEqual($result, true);
 
         /// Exception: update non existing user
@@ -166,22 +168,22 @@ class user_external_test extends UnitTestCase {
         $user['newusername'] = 'mockuserfortesting0Y';
         $params[] = $user;
         $this->expectException(new moodle_exception('wscouldnotupdatenoexistinguser')); //TODO catch the write exception
-        $result = user_external::tmp_update_users($params);
+        $result = user_external::update_users($params);
     }
 
-    function testTmp_update_users_2() {
+    function test_update_users_2() {
         /// update an existing user with an already existing username
         $params = array();
         $user = array();
         $user['username'] = 'mockuserfortesting0Y';
         $user['newusername'] = 'mockuserfortestingXY';
         $params[] = $user;
-      
+ 
         $this->expectException(new moodle_exception('wscouldnotupdateuserindb')); 
-        $result = user_external::tmp_update_users($params);
+        $result = user_external::update_users($params);
     }
 
-    function testTmp_delete_users() {
+    function test_delete_users() {
         /// we delete all previously created users
         $params = array();
         $user = array();
@@ -193,12 +195,12 @@ class user_external_test extends UnitTestCase {
         $user = array();
         $user['username'] = 'mockuserfortesting1';
         $params[] = $user;
-        $result = user_external::tmp_delete_users($params);
+        $result = user_external::delete_users($params);
         $this->assertEqual($result, true);
 
         /// try to delete them a new time, should return exception
         $this->expectException(new moodle_exception('wscouldnotdeletenoexistinguser')); 
-        $result = user_external::tmp_delete_users($params);
+        $result = user_external::delete_users($params);
     }
 */
 }

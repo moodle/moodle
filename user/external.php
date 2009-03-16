@@ -25,7 +25,6 @@
 require_once(dirname(dirname(__FILE__)) . '/user/lib.php');
 
 /**
- * WORK IN PROGRESS, DO NOT USE IT
  * users webservice api
  *
  * @author Jerome Mouneyrac
@@ -51,7 +50,7 @@ final class user_external {
      * @subreturn string $return:user->timezone
      * @subreturn string $return:user->mailformat
      */
-    static function tmp_get_users($params) {
+    static function get_users($params) {
         global $USER;
 
         $params['search'] = clean_param($params['search'], PARAM_ALPHANUM);
@@ -75,7 +74,7 @@ final class user_external {
      * @return array $return ids of new user
      * @subreturn integer $return:id user id
      */
-    static function tmp_create_users($params) {
+    static function create_users($params) {
         global $USER;
         if (has_capability('moodle/user:create', get_context_instance(CONTEXT_SYSTEM))) {
             $userids = array();
@@ -147,7 +146,7 @@ final class user_external {
                 }
 
                 try {
-                    $userids[$userparams['username']] = tmp_create_user($user);
+                    $userids[$userparams['username']] = create_user($user);
                 }
                 catch (dml_write_exception $e) {
                     throw new moodle_exception('wscouldnotcreateeuserindb');
@@ -167,7 +166,7 @@ final class user_external {
      * @subparam string $params:user->username
      * @return boolean result true if success
      */
-    static function tmp_delete_users($params) {
+    static function delete_users($params) {
         global $DB,$USER;
         $deletionsuccessfull = true;
         if (has_capability('moodle/user:delete', get_context_instance(CONTEXT_SYSTEM))) {
@@ -201,7 +200,7 @@ final class user_external {
      * @subparam string $params:user->firstname
      * @return boolean result true if success
      */
-    static function tmp_update_users($params) {
+    static function update_users($params) {
         global $DB,$USER;
         if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM))) {
             $updatesuccessfull = true;
@@ -274,7 +273,7 @@ final class user_external {
                 }
 
                 try {
-                    if( !tmp_update_user($user)) {
+                    if( !update_user($user)) {
                         $updatesuccessfull = false;
                     }
                 }

@@ -8,7 +8,7 @@
 */
 
 /**
-* DO NOT USE ANYTHING FROM THIS FILE - WORK IN PROGRESS
+* User library
 */
 
 /**
@@ -26,7 +26,7 @@
  *      ->lastinitial    string     ?
  * @return array|false Array of {@link $USER} objects. False is returned if an error is encountered.
  */
-function tmp_get_users($sort='firstname ASC', $recordsperpage=999999, $page=0, $fields='*', $selectioncriteria=NULL) {
+function get_users_2($sort='firstname ASC', $recordsperpage=999999, $page=0, $fields='*', $selectioncriteria=NULL) {
     global $DB;
 
     ///WS: convert array into an object
@@ -101,7 +101,7 @@ function tmp_get_users($sort='firstname ASC', $recordsperpage=999999, $page=0, $
  *
  * @return string or thrown exceptions
  */
-function tmp_create_user($user) {
+function create_user($user) {
     global $CFG, $DB;
     /// WS: convert user array into an user object
     if (is_array($user))  {
@@ -148,7 +148,7 @@ function tmp_create_user($user) {
 * @param object $user
 * @return boolean
 */
-function tmp_update_user($user) {
+function update_user($user) {
     global $DB;
 
     //check that the user exist

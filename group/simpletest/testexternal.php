@@ -82,13 +82,13 @@ class group_external_test extends UnitTestCase {
         $user->lastname = 'mockuserfortestingX_lastname';
         $user->email = 'mockuserfortestingX@moodle.com';
         $user->password = 'mockuserfortestingX_password';
-        $this->userid1 = tmp_create_user($user);
+        $this->userid1 = create_user($user);
         $user->username = 'mockuserfortestingXY';
         $user->firstname = 'mockuserfortestingY_firstname';
         $user->lastname = 'mockuserfortestingY_lastname';
         $user->email = 'mockuserfortestingY@moodle.com';
         $user->password = 'mockuserfortestingY_password';
-        $this->userid2 = tmp_create_user($user);
+        $this->userid2 = create_user($user);
 
         //create some more test users (not add yet to any group)
         $user = new stdClass();
@@ -97,14 +97,14 @@ class group_external_test extends UnitTestCase {
         $user->lastname = 'mockuserfortestingZ_lastname';
         $user->email = 'mockuserfortestingZ@moodle.com';
         $user->password = 'mockuserfortestingZ_password';
-        $this->userid3 = tmp_create_user($user);
+        $this->userid3 = create_user($user);
         $user = new stdClass();
         $user->username = 'mockuserfortestingZ2';
         $user->firstname = 'mockuserfortestingZ2_firstname';
         $user->lastname = 'mockuserfortestingZ2_lastname';
         $user->email = 'mockuserfortestingZ2@moodle.com';
         $user->password = 'mockuserfortestingZ2_password';
-        $this->userid4 = tmp_create_user($user);
+        $this->userid4 = create_user($user);
 
         //create a user, don't add it to a role or group
         $user = new stdClass();
@@ -113,7 +113,7 @@ class group_external_test extends UnitTestCase {
         $user->lastname = 'mockuserfortestingZ23_lastname';
         $user->email = 'mockuserfortestingZ23@moodle.com';
         $user->password = 'mockuserfortestingZ23_password';
-        $this->userid5 = tmp_create_user($user);
+        $this->userid5 = create_user($user);
 
         //we're creating a new test role with viewcourse capabilyt
         $this->context = $DB->get_record('context',array('contextlevel' => 50, 'instanceid' => $this->course->id));
@@ -175,14 +175,14 @@ class group_external_test extends UnitTestCase {
         delete_role($this->roleid);
     }
 
-    function testTmp_create_groups() {
+    function test_create_groups() {
         /// create two different groups
         $params = array();
         $group = array('groupname' => 'Create Unit Test Group 1', 'courseid' => $this->course->id);
         $params[] = $group;
         $group = array('groupname' => 'Create Unit Test Group 2', 'courseid' => $this->course->id);
         $params[] = $group;
-        $groupids = group_external::tmp_create_groups($params);
+        $groupids = group_external::create_groups($params);
         $this->assertEqual(sizeof($groupids), 2);
         $this->assertIsA($groupids[key($groupids)], "integer");
         $this->assertNotNull($groupids[key($groupids)]);
@@ -192,13 +192,13 @@ class group_external_test extends UnitTestCase {
         $group = array('groupname' => 'Create Unit Test Group 3', 'courseid' => 6544656);
         $params[] = $group;
         $this->expectException(new moodle_exception('coursedoesntexistcannotcreategroup'));
-        $groupids = group_external::tmp_create_groups($params);
+        $groupids = group_external::create_groups($params);
     }
 
-    function testTmp_get_groups() {
+    function test_get_groups() {
         /// retrieve the two groups
         $params = array($this->group->id, $this->group2->id);
-        $groups = group_external::tmp_get_groups($params);
+        $groups = group_external::get_groups($params);
         $this->assertEqual(sizeof($groups), 2);
         $group = $groups[key($groups)];
         next($groups);
@@ -211,76 +211,76 @@ class group_external_test extends UnitTestCase {
         $this->assertEqual($group2->name, $this->group2->name);
     }
 
-    function testTmp_add_group_members() {
+    function test_add_group_members() {
         //add the two members without group
         $params = array(array("groupid" => $this->group->id, "userid" => $this->userid3), array("groupid" => $this->group->id, "userid" => $this->userid4));
-        $result = group_external::tmp_add_groupmembers($params);
+        $result = group_external::add_groupmembers($params);
         $this->assertEqual($result, true);
 
         //add them a new time
         $params = array(array("groupid" => $this->group->id, "userid" => $this->userid3), array("groupid" => $this->group->id, "userid" => $this->userid4));
-        $result = group_external::tmp_add_groupmembers($params);
+        $result = group_external::add_groupmembers($params);
         $this->assertEqual($result, true);
 
         //One of the userid doesn't exist
         $params = array(array("groupid" => $this->group->id, "userid" => 654685), array("groupid" => $this->group->id, "userid" => $this->userid4));
         $this->expectException(new moodle_exception('useriddoesntexist'));
-        $result = group_external::tmp_add_groupmembers($params);
+        $result = group_external::add_groupmembers($params);
     }
 
-    function testTmp_add_group_members2() {
+    function test_add_group_members2() {
         //the group id doesn't exist
         $params = array(array("groupid" => 6465465, "userid" => $this->userid3), array("groupid" => $this->group->id, "userid" => $this->userid4));
         $this->expectException(new moodle_exception('cannotaddmembergroupiddoesntexist'));
-        $result = group_external::tmp_add_groupmembers($params);
+        $result = group_external::add_groupmembers($params);
     }
 
-    function testTmp_add_group_members3() {
+    function test_add_group_members3() {
         //the user is not a participant  
         $params = array(array("groupid" => $this->group->id, "userid" => $this->userid5));
         $this->expectException(new moodle_exception('userisnotaparticipant'));
-        $result = group_external::tmp_add_groupmembers($params);
+        $result = group_external::add_groupmembers($params);
        
     }
 
-    function testTmp_get_groupmembers() {
+    function test_get_groupmembers() {
         $params = array($this->group->id, $this->group2->id);
-        $groups = group_external::tmp_get_groupmembers($params);
+        $groups = group_external::get_groupmembers($params);
         $this->assertEqual(sizeof($groups), 2);
         $this->assertEqual(sizeof($groups[0]['members']), 2);
         $this->assertEqual(sizeof($groups[1]['members']), 1);      
     }
 
-    function testTmp_delete_group_members() {
+    function test_delete_group_members() {
         //One of the userid doesn't exist
         $params = array(array("groupid" => $this->group->id, "userid" => 654685), array("groupid" => $this->group->id, "userid" => $this->userid2));
         $this->expectException(new moodle_exception('useriddoesntexist'));
-        $result = group_external::tmp_delete_groupmembers($params);
+        $result = group_external::delete_groupmembers($params);
     }
 
-    function testTmp_delete_group_members2() {
+    function test_delete_group_members2() {
         //the group id doesn't exist
         $params = array(array("groupid" => 6465465, "userid" => $this->userid1), array("groupid" => $this->group->id, "userid" => $this->userid2));
         $this->expectException(new moodle_exception('cannotaddmembergroupiddoesntexist'));
-        $result = group_external::tmp_delete_groupmembers($params);
+        $result = group_external::delete_groupmembers($params);
     }
 
-    function testTmp_delete_group_members3() {
+    function test_delete_group_members3() {
         //delete members from group
         $params = array(array("groupid" => $this->group->id, "userid" => $this->userid1), array("groupid" => $this->group->id, "userid" => $this->userid2));
-        $result = group_external::tmp_delete_groupmembers($params);
+        $result = group_external::delete_groupmembers($params);
         $this->assertEqual($result, true);
     }
 
-    function testTmp_delete_groups() {
+    function test_delete_groups() {
         $params = array($this->group->id, $this->group2->id);
-        $result = group_external::tmp_delete_groups($params);
+        $result = group_external::delete_groups($params);
         $this->assertEqual($result, true);
 
         //Exception: delete same groups
         $params = array($this->group->id, $this->group2->id);
         $this->expectException(new moodle_exception('groupiddoesntexistcannotdelete'));
-        $result = group_external::tmp_delete_groups($params);
+        $result = group_external::delete_groups($params);
     }
 */
 }

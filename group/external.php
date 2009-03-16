@@ -16,7 +16,6 @@ require_once(dirname(dirname(__FILE__)) . '/lib/grouplib.php');
 /**
  * Group external api class
  *
- * WORK IN PROGRESS, DO NOT USE IT
  */
 final class group_external {
 
@@ -28,7 +27,7 @@ final class group_external {
      * @return array $return
      * @subparam integer $return:groupid
      */
-    static function tmp_create_groups($params) {
+    static function create_groups($params) {
         global $USER;
         $groupids = array();
 
@@ -58,7 +57,7 @@ final class group_external {
      * @subreturn string $return:group->name
      * @subreturn string $return:group->enrolmentkey
      */
-    static function tmp_get_groups($params){
+    static function get_groups($params){
 
         if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_SYSTEM))) {
 
@@ -87,7 +86,7 @@ final class group_external {
      * @subparam integer $params:groupid
      * @return boolean result
      */
-    static function tmp_delete_groups($params){
+    static function delete_groups($params){
 
         if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_SYSTEM))) {
             $deletionsuccessfull = true;
@@ -110,13 +109,12 @@ final class group_external {
      * @return array $return
      * $subparam string $return:username
      */
-    static function tmp_get_groupmembers($params){
+    static function get_groupmembers($params){
         if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_SYSTEM))) {
             $members = array();
             foreach ($params as $groupid) {
 
-                $groupmembers = groups_get_members($groupid);
-                varlog($groupmembers);
+                $groupmembers = groups_get_members(clean_param($groupid, PARAM_INTEGER));
                 $custommembers = array();
                 foreach ($groupmembers as $member) {
                     $custommember = new stdClass();
@@ -138,7 +136,6 @@ final class group_external {
                  
                 $members[] = array("groupid" => $groupid, "members" => $custommembers);
             }
-            varlog($members);
             return $members;
         }
         else {
@@ -153,7 +150,7 @@ final class group_external {
      * @subparam integer $params:member->userid
      * @return boolean result
      */
-    static function tmp_add_groupmembers($params){
+    static function add_groupmembers($params){
 
         if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_SYSTEM))) {
             $addmembersuccessfull = true;
@@ -179,7 +176,7 @@ final class group_external {
      * @subparam integer $params:member->userid
      * @return boolean result
      */
-    static function tmp_delete_groupmembers($params){
+    static function delete_groupmembers($params){
         if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_SYSTEM))) {
             $addmembersuccessfull = true;
             foreach($params as $member) {
