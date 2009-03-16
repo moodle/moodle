@@ -128,23 +128,11 @@ class repository_alfresco extends repository {
         global $CFG;
         $node = $this->sess->getNode($this->store, $uuid);
         $url = $this->get_url($node);
-        if (!file_exists($CFG->dataroot.'/repository/download')) {
-            mkdir($CFG->dataroot.'/repository/download/', 0777, true);
-        }
-        if(is_dir($CFG->dataroot.'/repository/download')) {
-            $dir = $CFG->dataroot.'/repository/download/';
-        }
-
-        if (empty($file)) {
-            $file = $uuid.'_'.time();
-        }
-        if (file_exists($dir.$file)) {
-            $file = uniqid('al_').$file;
-        }
-        $fp = fopen($dir.$file, 'w');
+        $path = $this->prepare_file($file);
+        $fp = fopen($path, 'w');
         $c = new curl;
         $c->download(array(array('url'=>$url, 'file'=>$fp)));
-        return $dir.$file;
+        return $path;
     }
 
     public function print_search() {

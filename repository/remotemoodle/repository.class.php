@@ -256,25 +256,13 @@ class repository_remotemoodle extends repository {
         $file = $services[1]; //filename
 
         ///create a temporary folder with a file
-        if (!file_exists($CFG->dataroot.'/temp/download')) {
-            mkdir($CFG->dataroot.'/temp/download/', 0777, true);
-        }
-        if (is_dir($CFG->dataroot.'/temp/download')) {
-            $dir = $CFG->dataroot.'/temp/download/';
-        }
-        if (empty($file)) {
-            $file = uniqid('repo').'_'.time().'.tmp';
-        }
-        if (file_exists($dir.$file)) {
-            $file = uniqid('m').$file;
-        }
-
+        $path = $this->prepare_file($file);
         ///fill the file with the content
-        $fp = fopen($dir.$file, 'w');
+        $fp = fopen($path, 'w');
         fwrite($fp,$content);
         fclose($fp);
 
-        return $dir.$file;
+        return $path;
 
     }
 

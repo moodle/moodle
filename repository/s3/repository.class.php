@@ -36,6 +36,7 @@ class repository_s3 extends repository {
                     );
                 $tree[] = $folder;
             }
+            echo_fb($tree);
         } else {
             $contents = $this->s->getBucket($path);
             foreach ($contents as $file) {
@@ -59,14 +60,9 @@ class repository_s3 extends repository {
         $arr = explode('/', $filepath);
         $bucket   = $arr[0];
         $filename = $arr[1];
-        if (!file_exists($CFG->dataroot.'/repository/download')) {
-            mkdir($CFG->dataroot.'/repository/download/', 0777, true);
-        }
-        if(is_dir($CFG->dataroot.'/repository/download')) {
-            $dir = $CFG->dataroot.'/repository/download/';
-        }
-        $this->s->getObject($bucket, $filename, $dir.$file);
-        return $dir.$file;
+        $path = $this->prepare_file($file);
+        $this->s->getObject($bucket, $filename, $path);
+        return $path;
     }
     // login 
     public function check_login() {

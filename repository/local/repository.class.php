@@ -98,18 +98,7 @@ class repository_local extends repository {
      */
     public function get_file($url, $file = '') {
         global $CFG;
-        if (!file_exists($CFG->dataroot.'/temp/download')) {
-            mkdir($CFG->dataroot.'/temp/download/', 0777, true);
-        }
-        if (is_dir($CFG->dataroot.'/temp/download')) {
-            $dir = $CFG->dataroot.'/temp/download/';
-        }
-        if (empty($file)) {
-            $file = uniqid('repo').'_'.time().'.tmp';
-        }
-        if (file_exists($dir.$file)) {
-            $file = uniqid('m').$file;
-        }
+        $path = $this->prepare_file($file);
 
         ///retrieve the file
         $fileparams = unserialize(base64_decode($url));
@@ -121,11 +110,11 @@ class repository_local extends repository {
         $fs = get_file_storage();
         $sf = $fs->get_file($contextid, $filearea, $itemid, $filepath, $filename);
         $contents = $sf->get_content();
-        $fp = fopen($dir.$file, 'w');
+        $fp = fopen($path, 'w');
         fwrite($fp,$contents);
         fclose($fp);
 
-        return $dir.$file;
+        return $path;
     }
 
     /**

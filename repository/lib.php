@@ -1147,16 +1147,11 @@ abstract class repository {
     }
 
     /**
-     * Download a file, this function can be overridden by
-     * subclass.
-     *
-     * @global object $CFG
-     * @param string $url the url of file
-     * @param string $file save location
-     * @return string the location of the file
-     * @see curl package
+     * Decide where to save the file, can be
+     * reused by sub class
+     * @param string filename
      */
-    public function get_file($url, $file = '') {
+    public function prepare_file($file) {
         global $CFG;
         if (!file_exists($CFG->dataroot.'/temp/download')) {
             mkdir($CFG->dataroot.'/temp/download/', 0777, true);
@@ -1170,12 +1165,29 @@ abstract class repository {
         if (file_exists($dir.$file)) {
             $file = uniqid('m').$file;
         }
-        $fp = fopen($dir.$file, 'w');
+        return $dir.$file;
+    }
+
+    /**
+     * Download a file, this function can be overridden by
+     * subclass.
+     *
+     * @global object $CFG
+     * @param string $url the url of file
+     * @param string $file save location
+     * @return string the location of the file
+     * @see curl package
+     */
+    public function get_file($url, $file = '') {
+        global $CFG;
+
+        $path = $this->prepare_file($file);
+        $fp = fopen($path, 'w');
         $c = new curl;
         $c->download(array(
                     array('url'=>$url, 'file'=>$fp)
                     ));
-        return $dir.$file;
+        return $path;
     }
 
     /**

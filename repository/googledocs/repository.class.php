@@ -99,27 +99,13 @@ class repository_googledocs extends repository {
 
     public function get_file($url, $file) {
         global $CFG;
+        $path = $this->prepare_file($file);
 
-
-        //FIXME: Why does every repo plugin.. do this mktemp file itself..
-
-        if (!file_exists($CFG->dataroot.'/repository/download')) {
-            mkdir($CFG->dataroot.'/repository/download/', 0777, true);
-        }
-
-        if(is_dir($CFG->dataroot.'/repository/download')) {
-            $dir = $CFG->dataroot.'/repository/download/';
-        }
-
-        if (empty($file)){
-            $file = time();
-        }
-
-        $fp = fopen($dir.$file, 'w');
+        $fp = fopen($path, 'w');
         $gdocs = new google_docs(new google_authsub($this->subauthtoken));
         $gdocs->download_file($url, $fp);
 
-        return $dir.$file;
+        return $path;
      }
 
      public function supported_filetypes() {

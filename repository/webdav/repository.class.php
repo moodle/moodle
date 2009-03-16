@@ -34,25 +34,13 @@ class repository_webdav extends repository {
     }
     public function get_file($url, $title) {
         global $CFG;
-        if (!file_exists($CFG->dataroot.'/temp/download')) {
-            mkdir($CFG->dataroot.'/temp/download/', 0777, true);
-        }
-        if (is_dir($CFG->dataroot.'/temp/download')) {
-            $dir = $CFG->dataroot.'/temp/download/';
-        }
-        if (empty($file)) {
-            $file = uniqid('repo').'_'.time().'.tmp';
-        }
-        if (file_exists($dir.$file)) {
-            $file = uniqid('m').$file;
-        }
-
+        $path = $this->prepare_file($title);
         $buffer = '';
         $this->wd->open();
         $this->wd->get($url, $buffer);
-        $fp = fopen($dir.$file, 'wb');
+        $fp = fopen($path, 'wb');
         fwrite($fp, $buffer);
-        return $dir.$file;
+        return $path;
     }
     public function global_search() {
         return false;

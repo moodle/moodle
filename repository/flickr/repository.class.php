@@ -236,25 +236,13 @@ class repository_flickr extends repository {
         } elseif(!empty($result[2])) {
             $url = $result[2]['source'];
         }
-        if (!file_exists($CFG->dataroot.'/repository/download')) {
-            mkdir($CFG->dataroot.'/repository/download/', 0777, true);
-        }
-        if(is_dir($CFG->dataroot.'/repository/download')) {
-            $dir = $CFG->dataroot.'/repository/download/';
-        }
-
-        if(empty($file)) {
-            $file = $photo_id.'_'.time().'.jpg';
-        }
-        if(file_exists($dir.$file)) {
-            $file = uniqid('m').$file;
-        }
-        $fp = fopen($dir.$file, 'w');
+        $path = $this->prepare_file($file);
+        $fp = fopen($path, 'w');
         $c = new curl;
         $c->download(array(
             array('url'=>$url, 'file'=>$fp)
         ));
-        return $dir.$file;
+        return $path;
     }
 
     /**
