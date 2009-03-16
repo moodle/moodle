@@ -47,6 +47,12 @@ class duration_form_element_test extends UnitTestCase {
         $this->element = null;
     }
 
+    function test_constructor() {
+        // Test trying to create with an invalid unit.
+        $this->expectException();
+        $this->element = new MoodleQuickForm_duration('testel', null, array('defaultunit' => 123));
+    }
+
     function test_get_units() {
         $units = $this->element->get_units();
         ksort($units);
@@ -64,6 +70,9 @@ class duration_form_element_test extends UnitTestCase {
         $this->assertEqual($this->element->seconds_to_unit(7200), array(2, 3600));
         $this->assertEqual($this->element->seconds_to_unit(86400), array(1, 86400));
         $this->assertEqual($this->element->seconds_to_unit(90000), array(25, 3600));
+
+        $this->element = new MoodleQuickForm_duration('testel', null, array('defaultunit' => 86400));
+        $this->assertEqual($this->element->seconds_to_unit(0), array(0, 86400)); // Zero minutes, for a nice default unit.
     }
 
     function test_exportValue() {

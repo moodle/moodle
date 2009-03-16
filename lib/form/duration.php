@@ -39,18 +39,20 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
     * Control the fieldnames for form elements
     * optional => if true, show a checkbox beside the element to turn it on (or off)
     */
-   protected $_options = array('optional' => false);
+   protected $_options = array('optional' => false, 'defaultunit' => 60);
 
    private $_units = null;
 
    /**
     * Class constructor
     *
-    * @access   public
-    * @param    string  Element's name
-    * @param    mixed   Label(s) for an element
-    * @param    array   Options to control the element's display
-    * @param    mixed   Either a typical HTML attribute string or an associative array
+    * @access public
+    * @param  string $elementName Element's name
+    * @param  mixed  $elementLabel Label(s) for an element
+    * @param  array  $options Options to control the element's display. Recognised values are
+    *       'optional' => true/false - whether to display an 'enabled' checkbox next to the element.
+    *       'defaultunit' => 1|60|3600|86400 - the default unit to display when the time is blank. If not specified, minutes is used.
+    * @param  mixed  $attributes Either a typical HTML attribute string or an associative array
     */
     function MoodleQuickForm_duration($elementName = null, $elementLabel = null, $options = array(), $attributes = null) {
         $this->HTML_QuickForm_element($elementName, $elementLabel, $attributes);
@@ -62,14 +64,13 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
         if (!is_array($options)) {
             $options = array();
         }
-        foreach ($options as $name => $value) {
-            if (isset($this->_options[$name])) {
-                if (is_array($value) && is_array($this->_options[$name])) {
-                    $this->_options[$name] = array_merge($this->_options[$name], $value);
-                } else {
-                    $this->_options[$name] = $value;
-                }
+        $this->_options['optional'] = !empty($options['optional']);
+        if (isset($options['defaultunit'])) {
+            if (!array_key_exists($options['defaultunit'], $this->get_units())) {
+                throw new coding_exception($options['defaultunit'] .
+                        ' is not a recognised unit in MoodleQuickForm_duration.');
             }
+            $this->_options['defaultunit'] = $options['defaultunit'];
         }
     }
 
@@ -95,7 +96,7 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
      */
     public function seconds_to_unit($seconds) {
         if ($seconds == 0) {
-            return array(0, 60);
+            return array(0, $this->_options['defaultunit']);
         }
         foreach ($this->get_units() as $unit => $notused) {
             if (fmod($seconds, $unit) == 0) {
