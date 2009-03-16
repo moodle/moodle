@@ -302,7 +302,7 @@
             echo "<tr>\n<td colspan=\"4\" style=\"text-align:center\">\n";
             echo "<br />";
             echo "<input type=\"button\" onclick=\"checkall()\" value=\"$strselectall\" />\n";
-            echo "<input type=\"button\" onclick=\"uncheckall()\" value=\"$strdeselectall\" />\n";
+            echo "<input type=\"button\" onclick=\"checknone()\" value=\"$strdeselectall\" />\n";
             choose_from_menu ($displaylist, "moveto", "", get_string("moveselectedcoursesto"), "javascript: getElementById('movecourses').submit()");
             echo "</td>\n</tr>\n";
             echo "</table>\n</form>";
