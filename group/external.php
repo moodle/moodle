@@ -114,9 +114,31 @@ final class group_external {
         if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_SYSTEM))) {
             $members = array();
             foreach ($params as $groupid) {
+
                 $groupmembers = groups_get_members($groupid);
-                $members[] = array("groupid" => $groupid, "members" => $groupmembers);
+                varlog($groupmembers);
+                $custommembers = array();
+                foreach ($groupmembers as $member) {
+                    $custommember = new stdClass();
+                    $custommember->username =  $member->username;
+                    $custommember->auth =  $member->auth;
+                    $custommember->confirmed =  $member->confirmed;
+                    $custommember->idnumber =  $member->idnumber;
+                    $custommember->firstname =  $member->firstname;
+                    $custommember->lastname =  $member->lastname;
+                    $custommember->email =  $member->email;
+                    $custommember->emailstop =  $member->emailstop;
+                    $custommember->lang =  $member->lang;
+                    $custommember->id =  $member->id;
+                    $custommember->theme =  $member->theme;
+                    $custommember->timezone =  $member->timezone;
+                    $custommember->mailformat =  $member->mailformat;
+                    $custommembers[] = $custommember;
+                }
+                 
+                $members[] = array("groupid" => $groupid, "members" => $custommembers);
             }
+            varlog($members);
             return $members;
         }
         else {
@@ -138,9 +160,6 @@ final class group_external {
             foreach($params as $member) {
                 $groupid = clean_param($member['groupid'], PARAM_INTEGER);
                 $userid = clean_param($member['userid'], PARAM_INTEGER);
-
-                //check that the user is participant of the course
-                
 
                 if (!groups_add_member($groupid, $userid)) {
                     $addmembersuccessfull = false;
