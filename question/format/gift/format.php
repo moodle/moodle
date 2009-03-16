@@ -531,6 +531,8 @@ function writequestion( $question ) {
     // turns question into string
     // question reflects database fields for general question and specific to type
 
+    global $QTYPES; 
+
     // initial string;
     $expout = "";
 
@@ -647,7 +649,8 @@ function writequestion( $question ) {
         }
         else {
             $expout .= "// $question->qtype is not supported by the GIFT format\n";
-            notify( get_string('nohandler','qformat_gift',get_string($question->qtype,'quiz') ) );
+            $menuname = $QTYPES[$question->qtype]->menu_name(); 
+            notify( get_string('nohandler','qformat_gift', $menuname ) );
         }
     }
     // add empty line to delimit questions
