@@ -371,6 +371,11 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
         return '';
     }
 
+    // store generated field ids (if form)
+    if ($form) {
+        $data->fieldids = array();
+    }
+
     // get all the fields for that database
     if ($fields = $DB->get_records('data_fields', array('dataid'=>$data->id), 'id')) {
 
@@ -397,7 +402,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
             if ($form) {   // Print forms instead of data
                 $fieldobj = data_get_field($field, $data);
                 $str .= $fieldobj->display_add_field($recordid);
-
+                $data->fieldids[] = $fieldobj->field->id;
             } else {           // Just print the tag
                 $str .= '[['.$field->name.']]';
             }

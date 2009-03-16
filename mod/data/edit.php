@@ -31,6 +31,7 @@
     $rid   = optional_param('rid', 0, PARAM_INT);    //record id
     $import   = optional_param('import', 0, PARAM_INT);    // show import form
     $cancel   = optional_param('cancel', '');    // cancel an add
+    $fieldids = optional_param('fieldids',''); // ids of fields being edited
     $mode ='addtemplate';    //define the mode for this page, only 1 mode available
 
     if ($id) {
@@ -143,8 +144,6 @@
 
     if ($datarecord = data_submitted() and confirm_sesskey()) {
 
-        $ignorenames = array('MAX_FILE_SIZE','sesskey','d','rid','saveandview','cancel');  // strings to be ignored in input data
-
         if ($rid) {                                          /// Update some records
 
             /// All student edits are marked unapproved by default
@@ -161,16 +160,15 @@
 
             /// Update all content
             $field = NULL;
-            foreach ($datarecord as $name => $value) {
-                if (!in_array($name, $ignorenames)) {
-                    $namearr = explode('_',$name);  // Second one is the field id
-                    if (empty($field->field) || ($namearr[1] != $field->field->id)) {  // Try to reuse classes
-                        $field = data_get_field_from_id($namearr[1], $data);
+            foreach ($fieldids as $fieldid) {
+                    $name = "field_$fieldid";
+                    $value = optional_param( $name,'' );
+                    if (empty($field->field) || ($fieldid != $field->field->id)) {  // Try to reuse classes
+                        $field = data_get_field_from_id($fieldid, $data);
                     }
                     if ($field) {
                         $field->update_content($rid, $value, $name);
                     }
-                }
             }
 
             add_to_log($course->id, 'data', 'update', "view.php?d=$data->id&amp;rid=$rid", $data->id, $cm->id);
@@ -196,16 +194,15 @@
 
             $emptyform = true;      // assume the worst
 
-            foreach ($datarecord as $name => $value) {
-                if (!in_array($name, $ignorenames)) {
-                    $namearr = explode('_', $name);  // Second one is the field id
-                    if (empty($field->field) || ($namearr[1] != $field->field->id)) {  // Try to reuse classes
-                        $field = data_get_field_from_id($namearr[1], $data);
-                    }
-                    if ($field->notemptyfield($value, $name)) {
-                        $emptyform = false;
-                        break;             // if anything has content, this form is not empty, so stop now!
-                    }
+            foreach ($fieldids as $fieldid) {
+                $name = "field_$fieldid";
+                $value = optional_param( $name,'' );
+                if (empty($field->field) || ($fieldid != $field->field->id)) {  // Try to reuse classes
+                    $field = data_get_field_from_id($fieldid, $data);
+                }
+                if ($field->notemptyfield($value, $name)) {
+                    $emptyform = false;
+                    break;             // if anything has content, this form is not empty, so stop now!
                 }
             }
 
@@ -224,17 +221,16 @@
                 }
 
                 //for each field in the add form, add it to the data_content.
-                foreach ($datarecord as $name => $value){
-                    if (!in_array($name, $ignorenames)) {
-                        $namearr = explode('_', $name);  // Second one is the field id
-                        if (empty($field->field) || ($namearr[1] != $field->field->id)) {  // Try to reuse classes
-                            $field = data_get_field_from_id($namearr[1], $data);
-                        }
-                        if ($field) {
-                            $field->update_content($recordid, $value, $name);
-                        }
+                foreach ($fieldids as $fieldid) {
+                    $name = "field_$fieldid";
+                    $value = optional_param( $name,'' );
+                    if (empty($field->field) || ($fieldid != $field->field->id)) {  // Try to reuse classes
+                        $field = data_get_field_from_id($fieldid, $data);
                     }
-                }
+                    if ($field) {
+                        $field->update_content($recordid, $value, $name);
+                    }
+                }  
 
                 add_to_log($course->id, 'data', 'add', "view.php?d=$data->id&amp;rid=$recordid", $data->id, $cm->id);
 
@@ -246,6 +242,8 @@
             }
         }
     }  // End of form processing
+
+
 
     /// Print the browsing interface
 
@@ -270,6 +268,9 @@
     if ($data->addtemplate){
         $possiblefields = $DB->get_records('data_fields', array('dataid'=>$data->id), 'id');
 
+        // keep a record of the fields used on the form
+        $data->fieldids = array();
+
         ///then we generate strings to replace
         foreach ($possiblefields as $eachfield){
             $field = data_get_field($eachfield, $data);
@@ -277,6 +278,7 @@
             $replacements[] = $field->display_add_field($rid);
             $patterns[]="[[".$field->field->name."#id]]";
             $replacements[] = 'field_'.$field->field->id;
+            $data->fieldids[] = $field->field->id;
         }
         $newtext = str_ireplace($patterns, $replacements, $data->{$mode});
 
@@ -294,6 +296,12 @@
     }
     echo '</div>';
     print_simple_box_end();
+
+    // add list of fields to form (MDL-18542)
+    foreach ($data->fieldids as $fieldid) {
+        echo "<input type=\"hidden\" name=\"fieldids[]\" value=\"$fieldid\" />\n";
+    }
+
     echo '</div></form>';
 
 
@@ -317,7 +325,7 @@
             helpbutton('importcsv', get_string('csvimport', 'data'), 'data', true, false);
             echo '</td><tr>';
             echo '<td align="right">'.get_string('fielddelimiter', 'data').':</td>';
-            echo '<td><input type="text" name="fielddelimiter" size="6" />';
+            echo '<td><input type="text" name="fielddelimiter" size="6" value=","/>';
             echo get_string('defaultfielddelimiter', 'data').'</td>';
             echo '</tr>';
             echo '<td align="right">'.get_string('fieldenclosure', 'data').':</td>';
