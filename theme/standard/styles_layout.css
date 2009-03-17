@@ -4645,15 +4645,15 @@ table.quizreviewsummary td.cell {
     padding-right:1em;
 }
 
-#mod-quiz-edit .statusdisplay{
-    clear:both;
-    display:block;
-    border:0.2em #FFF solid;
-    margin-bottom:0.3em;
-    margin-right:1em;
-    margin-top:0.3em;
-    padding:0.1em;
+#mod-quiz-edit .statusdisplay {
+    clear: both;
+    margin: 0.3em 1em 0.3em 0;
+    padding: 1px ; /* Stop margin collapse. */
 }
+#mod-quiz-edit .statusdisplay p {
+    margin: 0.4em;
+}
+
 #mod-quiz-edit div.quizpage{
     display:block;
     clear:both;
@@ -4835,7 +4835,7 @@ table.quizreviewsummary td.cell {
     border-radius:0.2em;
     border-radius-bottomleft:0;
     border-radius-topleft:0;
-    z-index:999;
+    z-index:900;
     display:block;
     margin:0;
 }
@@ -4934,7 +4934,7 @@ table.quizreviewsummary td.cell {
     position:absolute;
     right:0.3em;
     top:0;
-    z-index:999;
+    z-index:900;
     display:block;
     padding:0.2em;
 }
@@ -4949,7 +4949,7 @@ table.quizreviewsummary td.cell {
     top:0.2em;
     right:0.2em;
     display:inline;
-    z-index:999;
+    z-index:900;
 }
 
 #mod-quiz-edit .quizpagedelete img {
@@ -4987,13 +4987,6 @@ table.quizreviewsummary td.cell {
     width:90%;
 }
 
-#mod-quiz-edit #repaginatedialog .hd{
-    display:none;
-}
-
-#mod-quiz-edit div#randomquestiondialog{
-    display:none;
-}
 
 #mod-quiz-edit div#randomquestiondialog_c .mform,
 #mod-quiz-edit div#repaginatedialog .mform{
@@ -5219,13 +5212,13 @@ table#categoryquestions td,#mod-quiz-edit table#categoryquestions th{
     padding-top:1em;
 }
 
-#mod-quiz-edit #repaginatecommand{
-    display:none;
-}
 
 /* these will toggle if js is enabled */
+body #quizcontentsblock #repaginatedialog{
+    display: none;
+}
 body.jsenabled #quizcontentsblock #repaginatedialog{
-    display:none;
+    display: block;
 }
 body.jsenabled #quizcontentsblock #repaginatedialog .hd{
     display:block;

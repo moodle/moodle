@@ -1,56 +1,75 @@
-/** JavaScript for /mod/quiz/edit.php
- */
+/** JavaScript for /mod/quiz/edit.php */
+
+// Initialise everything on the quiz edit/order and paging page.
 var quiz_edit = {};
 function quiz_edit_init() {
-    YAHOO.util.Dom.setStyle('randomquestiondialog', 'display', 'block');
-    /* zIndex must be way above 99 to be above the active quiz tab*/
-    quiz_edit.randomquestiondialog = new YAHOO.widget.Dialog("randomquestiondialog",
-                {
-                  constraintoviewport : true,
-                  visible : false,
-                  modal:true,
-                  width : "100%",
-                  iframe:true,
-                  zIndex:1000,
-                  fixedcenter : true,
-                  close: true,
-                  draggable: true,
-                  dragOnly: true,
-                  postmethod: "form"
-                 } );
-    //show the dialog and depending on from which form (corresponding
-    // a specific quiz page) it was triggered, set the value of the form's
-    // rqpage input element to the form number
-    YAHOO.util.Event.addListener(quiz_edit_config.dialoglisteners, "click",
-           function(e){
-                this.show();
-                var rbutton = YAHOO.util.Event.getTarget(e);
-                var rbform = YAHOO.util.Dom.getAncestorByClassName(rbutton,"randomquestionform");
-                //this depends on the fact that the element hierarchy be:
-                // <form class="randomquestionform"><div>[input elements]</div></form>
-                var rbformelements = YAHOO.util.Dom.getChildren
-                (YAHOO.util.Dom.getFirstChild(rbform));
-                var rqpage=YAHOO.util.Dom.get("rform_qpage");
 
-                for (var i = 0; i < rbformelements.length; i++) {
-                    if(YAHOO.util.Dom.hasClass(rbformelements[i],"addonpage_formelement")){
-                          //why is this not rqpage.value.value, the first "value" being the element property
-                          // and the second the value of that property? I don't understand.
-                          rqpage.value=rbformelements[i].attributes.value.value;
-                    }
-                }
-                YAHOO.util.Event.stopEvent(e);
-            }, quiz_edit.randomquestiondialog,
-            quiz_edit.randomquestiondialog, true);
-
-    quiz_edit.randomquestiondialog.cfg.setProperty("keylisteners", [
-     new YAHOO.util.KeyListener(document,
-                                {keys:[27]},
-                                function(types, args, obj) { quiz_edit.randomquestiondialog.hide();
-    })
-    ]); 
-
+    // Add random question dialogue --------------------------------------------
+    
+    quiz_edit.randomquestiondialog = new YAHOO.widget.Dialog('randomquestiondialog', {
+            modal: true,
+            width: '100%',
+            iframe: true,
+            zIndex: 1000, // zIndex must be way above 99 to be above the active quiz tab
+            fixedcenter: true,
+            visible: false,
+            close: true,
+            constraintoviewport: true,
+            postmethod: 'form'
+    });
     quiz_edit.randomquestiondialog.render();
+
+    // Show the form on button click.
+    YAHOO.util.Event.addListener(quiz_edit_config.dialoglisteners, 'click', function(e) {
+        // Transfer the page number from the button form to the pop-up form.
+        var addrandombutton = YAHOO.util.Event.getTarget(e);
+        var addpagehidden = YAHOO.util.Dom.getElementsByClassName('addonpage_formelement', 'input', addrandombutton.form);
+        document.getElementById('rform_qpage').value = addpagehidden.value;
+
+        // Show the dialogue and stop the default action.
+        quiz_edit.randomquestiondialog.show();
+        YAHOO.util.Event.stopEvent(e);
+    });
+
+    // Make escape close the dialogue.
+    quiz_edit.randomquestiondialog.cfg.setProperty('keylisteners', [new YAHOO.util.KeyListener(
+            document, {keys:[27]}, function(types, args, obj) { quiz_edit.randomquestiondialog.hide();
+    })]);
+
+    // Make the form cancel button close the dialogue.
+    YAHOO.util.Event.addListener('id_cancel', 'click', function(e) {
+        quiz_edit.randomquestiondialog.hide();
+        YAHOO.util.Event.preventDefault(e);
+    });
+
+    // Repaginate dialogue -----------------------------------------------------
+    quiz_edit.repaginatedialog = new YAHOO.widget.Dialog('repaginatedialog', {
+            modal: true,
+            width: '30em',
+            iframe: true,
+            zIndex: 1000,
+            context: ['repaginatecommand', 'tr', 'br', ['beforeShow']],
+            visible: false,
+            close: true,
+            constraintoviewport: true,
+            postmethod: 'form'
+    });
+    quiz_edit.repaginatedialog.render();
+
+    // Show the form on button click.
+    YAHOO.util.Event.addListener('repaginatecommand', 'click', function() {
+        quiz_edit.repaginatedialog.show();
+    });
+
+    // Reposition the dialogue when the window resizes. For some reason this was not working automatically.
+    YAHOO.widget.Overlay.windowResizeEvent.subscribe(function() {
+      quiz_edit.repaginatedialog.cfg.setProperty('context', ['repaginatecommand', 'tr', 'br', ['beforeShow']]);
+    });
+
+    // Make escape close the dialogue.
+    quiz_edit.repaginatedialog.cfg.setProperty('keylisteners', [new YAHOO.util.KeyListener(
+            document, {keys:[27]}, function(types, args, obj) { quiz_edit.repaginatedialog.hide();
+    })]);
 
     // Nasty hack, remove once the YUI bug causing MDL-17594 is fixed.
     // https://sourceforge.net/tracker/index.php?func=detail&aid=2493426&group_id=165715&atid=836476
@@ -58,39 +77,9 @@ function quiz_edit_init() {
     if (elementcauseinglayoutproblem) {
         elementcauseinglayoutproblem.style.left = '0px';
     }
-
-    quiz_edit.repaginatedialog = new YAHOO.widget.Dialog("repaginatedialog",
-                {
-                  modal:true,
-                  width : "100%",
-                  iframe:true,
-                  zIndex:1000,
-                  fixedcenter : true,
-                  visible : false,
-                  close: true,
-                  draggable: true,
-                  dragOnly: true,
-                  constraintoviewport : true,
-                  postmethod: "form"
-                 } );
-    YAHOO.util.Event.addListener("repaginatecommand", "click",
-            function(e){
-                YAHOO.util.Dom.setStyle('repaginatedialog', 'display', 'block');
-                this.show();
-            }, quiz_edit.repaginatedialog,
-            quiz_edit.repaginatedialog, true);
-
-    quiz_edit.repaginatedialog.cfg.setProperty("keylisteners", [
-     new YAHOO.util.KeyListener(document,
-                                {keys:[27]},
-                                function(types, args, obj) { quiz_edit.repaginatedialog.hide();
-    })
-    ]); 
-
-    quiz_edit.repaginatedialog.render();
-
 }
 
+// Initialise everything on the quiz settings form.
 function quiz_settings_init() {
     var repaginatecheckbox = document.getElementById('id_repaginatenow');
     if (!repaginatecheckbox) {
@@ -108,7 +97,7 @@ function quiz_settings_init() {
     });
 }
 
-
+// Depending on which page this is, do the appropriate initialisation.
 function quiz_edit_generic_init() {
     switch (document.body.id) {
     case 'mod-quiz-edit':

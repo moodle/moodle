@@ -6,15 +6,15 @@ class question_category_edit_form_randomquestion extends moodleform {
 
     function definition() {
         global $CFG, $DB;
-        $mform    =& $this->_form;
+        $mform =& $this->_form;
 
-        $contexts   = $this->_customdata['contexts'];
-        $currentcat   = $this->_customdata['currentcat'];
+        $contexts = $this->_customdata['contexts'];
+        $currentcat = $this->_customdata['currentcat'];
 //--------------------------------------------------------------------------------
         $mform->addElement('header', 'categoryheader', get_string('createcategoryfornewrandomquestion', 'quiz'));
 
         $questioncategoryel = $mform->addElement('questioncategory', 'parent', get_string('parentcategory', 'quiz'),
-                    array('contexts'=>$contexts, 'top'=>true, 'currentcat'=>$currentcat, 'nochildrenof'=>$currentcat));
+                array('contexts'=>$contexts, 'top'=>true, 'currentcat'=>$currentcat, 'nochildrenof'=>$currentcat));
         $mform->setType('parent', PARAM_SEQUENCE);
         $mform->setHelpButton('parent', array('categoryparent', get_string('parent', 'quiz'), 'question'));
 
@@ -27,7 +27,7 @@ class question_category_edit_form_randomquestion extends moodleform {
         $mform->setType('info', PARAM_MULTILANG);
 
 //--------------------------------------------------------------------------------
-        $this->add_action_buttons(false, get_string('addrandomquestion', 'quiz'));
+        $this->add_action_buttons(true, get_string('addrandomquestion', 'quiz'));
 //--------------------------------------------------------------------------------
         $mform->addElement('hidden', 'id', 0);
         $mform->setType('id', PARAM_INT);
