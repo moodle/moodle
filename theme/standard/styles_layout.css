@@ -658,7 +658,6 @@ fieldset.fdate_selector label {
 #date_selector_calendar_panel .bd {
     padding: 0;
 }
-
 #date_selector_calendar_panel .yui-calcontainer {
     border: none;
     float: none;
@@ -666,6 +665,12 @@ fieldset.fdate_selector label {
 /* Prevent border-collapse:collapse from bleeding through in IE6, IE7 */
 #date_selector_calendar_panel.yui-overlay-hidden table {
     *display:none;
+}
+#date_selector_calendar_panel th.calhead {
+    padding-right: 2em;
+}
+#date_selector_calendar_panel a.container-close {
+    top: 10px;
 }
 
 .mform div.felement,  .mform fieldset.felement{
