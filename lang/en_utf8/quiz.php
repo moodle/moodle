@@ -435,6 +435,7 @@ $string['multiplier'] = 'Multiplier';
 $string['name'] = 'Name';
 $string['neverallononepage'] = 'Never, all questions on one page';
 $string['newattemptfail'] = 'Error: Could not start a new attempt at the quiz';
+$string['newpage'] = 'New page';
 $string['newpageevery'] = 'Automatically start a new page';
 $string['noanswers'] = 'No answers were selected!';
 $string['noattempts'] = 'No attempts have been made on this quiz';
