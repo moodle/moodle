@@ -21,9 +21,9 @@ function quiz_edit_init() {
     //show the dialog and depending on from which form (corresponding
     // a specific quiz page) it was triggered, set the value of the form's
     // rqpage input element to the form number
-    YAHOO.util.Event.addListener(this.dialoglisteners, "click",
+    YAHOO.util.Event.addListener(quiz_edit_config.dialoglisteners, "click",
            function(e){
-                   this.show();
+                this.show();
                 var rbutton = YAHOO.util.Event.getTarget(e);
                 var rbform = YAHOO.util.Dom.getAncestorByClassName(rbutton,"randomquestionform");
                 //this depends on the fact that the element hierarchy be:
@@ -91,5 +91,31 @@ function quiz_edit_init() {
 
 }
 
-YAHOO.util.Event.onDOMReady(quiz_edit_init, quiz_edit_config, true);
-YAHOO.util.Dom.setStyle('repaginatedialog', 'display', 'block');
+function quiz_settings_init() {
+    var repaginatecheckbox = document.getElementById('id_repaginatenow');
+    if (!repaginatecheckbox) {
+        // This checkbox does not appear on the create new quiz form.
+        return;
+    }
+    var qppselect = document.getElementById('id_questionsperpage');
+    var qppinitialvalue = qppselect.value;
+    YAHOO.util.Event.addListener([qppselect, 'id_shufflequestions'] , 'change', function() {
+        setTimeout(function() { // Annoyingly, this handler runs before the formlib disabledif code, hence the timeout.
+            if (!repaginatecheckbox.disabled) {
+                repaginatecheckbox.checked = qppselect.value != qppinitialvalue;
+            }
+        }, 50);
+    });
+}
+
+
+function quiz_edit_generic_init() {
+    switch (document.body.id) {
+    case 'mod-quiz-edit':
+        quiz_edit_init();
+        break;
+    case 'mod-quiz-mod':
+        quiz_settings_init();
+    }
+}
+YAHOO.util.Event.onDOMReady(quiz_edit_generic_init);

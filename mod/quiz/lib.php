@@ -118,9 +118,7 @@ function quiz_add_instance($quiz) {
     }
 
     // Try to store it in the database.
-    if (!$quiz->id = $DB->insert_record("quiz", $quiz)) {
-        return false;
-    }
+    $quiz->id = $DB->insert_record('quiz', $quiz);
 
     // Do the processing required after an add or an update.
     quiz_after_add_or_update($quiz);
@@ -136,8 +134,8 @@ function quiz_add_instance($quiz) {
  * @param object $quiz the data that came from the form.
  * @return mixed true on success, false or a string error message on failure.
  */
-function quiz_update_instance($quiz) {
-    global $DB;
+function quiz_update_instance($quiz, $mform) {
+    global $CFG, $DB;
 
     // Process the options from the form.
     $result = quiz_process_options($quiz);
@@ -145,11 +143,17 @@ function quiz_update_instance($quiz) {
         return $result;
     }
 
+    // Repaginate, if asked to.
+    if (!$quiz->shufflequestions && !empty($quiz->repaginatenow)) {
+        require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+        $quiz->questions = $DB->get_field('quiz', 'questions', array('id' => $quiz->instance));
+        $quiz->questions = quiz_repaginate($quiz->questions, $quiz->questionsperpage);
+    }
+    unset($quiz->repaginatenow);
+
     // Update the database.
     $quiz->id = $quiz->instance;
-    if (!$DB->update_record("quiz", $quiz)) {
-        return false;  // some error occurred
-    }
+    $DB->update_record('quiz', $quiz);
 
     // Do the processing required after an add or an update.
     quiz_after_add_or_update($quiz);

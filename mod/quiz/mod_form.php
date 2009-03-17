@@ -94,22 +94,34 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addElement('header', 'layouthdr', get_string('layout', 'quiz'));
 
     /// Shuffle questions.
-        $mform->addElement('selectyesno', 'shufflequestions', get_string('shufflequestions', 'quiz'));
+        $shuffleoptions = array(0 => get_string('asshownoneditscreen', 'quiz'), 1 => get_string('shuffledrandomly', 'quiz'));
+        $mform->addElement('select', 'shufflequestions', get_string('questionorder', 'quiz'), $shuffleoptions, array('id' => 'id_shufflequestions'));
         $mform->setHelpButton('shufflequestions', array('shufflequestions', get_string('shufflequestions','quiz'), 'quiz'));
         $mform->setAdvanced('shufflequestions', $quizconfig->fix_shufflequestions);
         $mform->setDefault('shufflequestions', $quizconfig->shufflequestions);
 
     /// Questions per page.
-        $perpage = array();
-        $perpage[0] = get_string('never');
-        $perpage[1] = get_string('aftereachquestion', 'quiz');
+        $pageoptions = array();
+        $pageoptions[0] = get_string('neverallononepage', 'quiz');
+        $pageoptions[1] = get_string('everyquestion', 'quiz');
         for ($i = 2; $i <= QUIZ_MAX_QPP_OPTION; ++$i) {
-            $perpage[$i] = get_string('afternquestions', 'quiz', $i);
+            $pageoptions[$i] = get_string('everynquestions', 'quiz', $i);
         }
-        $mform->addElement('select', 'questionsperpage', get_string('newpageevery', 'quiz'), $perpage);
-        $mform->setHelpButton('questionsperpage', array('questionsperpage', get_string('newpageevery', 'quiz'), 'quiz'));
-        $mform->setAdvanced('questionsperpage', $quizconfig->fix_questionsperpage);
+
+        $pagegroup = array();
+        $pagegroup[] = &$mform->createElement('select', 'questionsperpage', get_string('newpage', 'quiz'), $pageoptions, array('id' => 'id_questionsperpage'));
         $mform->setDefault('questionsperpage', $quizconfig->questionsperpage);
+
+        if (!empty($this->_cm)) {
+            $pagegroup[] = &$mform->createElement('checkbox', 'repaginatenow', '', get_string('repaginatenow', 'quiz'), array('id' => 'id_repaginatenow'));
+            $mform->disabledIf('repaginatenow', 'shufflequestions', 'eq', 1);
+            require_js(array('yui_yahoo', 'yui_dom', 'yui_event'));
+            require_js('mod/quiz/edit.js');
+        }
+
+        $mform->addGroup($pagegroup, 'questionsperpagegrp', get_string('newpage', 'quiz'), null, false);
+        $mform->setHelpButton('questionsperpagegrp', array('questionsperpage', get_string('newpageevery', 'quiz'), 'quiz'));
+        $mform->setAdvanced('questionsperpagegrp', $quizconfig->fix_questionsperpage);
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'interactionhdr', get_string('questionbehaviour', 'quiz'));
