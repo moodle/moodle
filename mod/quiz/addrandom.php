@@ -8,72 +8,72 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package quiz
  */
-    require_once("../../config.php");
-    require_once($CFG->dirroot.'/mod/quiz/editlib.php');
-    require_once($CFG->dirroot."/question/category_class.php");
+require_once("../../config.php");
+require_once($CFG->dirroot.'/mod/quiz/editlib.php');
+require_once($CFG->dirroot."/question/category_class.php");
 
-    list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) = question_edit_setup('editq', true);
+list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) = question_edit_setup('editq', true);
 
-    $defaultcategoryobj = question_make_default_categories($contexts->all());
-    $defaultcategoryid=$defaultcategoryobj->id;
-    $defaultcategorycontext=$defaultcategoryobj->contextid;
-    $defaultcategory="$defaultcategoryid,$defaultcategorycontext";
+$defaultcategoryobj = question_make_default_categories($contexts->all());
+$defaultcategoryid=$defaultcategoryobj->id;
+$defaultcategorycontext=$defaultcategoryobj->contextid;
+$defaultcategory="$defaultcategoryid,$defaultcategorycontext";
 
-    $qcobject = new question_category_object(
-        $pagevars['cpage'],
-        $thispageurl,
-        $contexts->having_one_edit_tab_cap('categories'),
-        $defaultcategoryid,
-        $defaultcategory,
-        null,
-        $contexts->having_cap('moodle/question:add'));
+$qcobject = new question_category_object(
+    $pagevars['cpage'],
+    $thispageurl,
+    $contexts->having_one_edit_tab_cap('categories'),
+    $defaultcategoryid,
+    $defaultcategory,
+    null,
+    $contexts->having_cap('moodle/question:add'));
 
-    //setting the second parameter of process_randomquestion_formdata to true causes it to redirect on success
-    //TODO: process if returns false?
-    $newquestioninfo=quiz_process_randomquestion_formdata($qcobject);
-    if($newquestioninfo){
-        $newrandomcategory=$newquestioninfo->newrandomcategory;
-        if (!$newrandomcategory){
-            print_r($newquestioninfo);
-            print_error("cannotcreatecategory");
-        }else{
-            add_to_log($quiz->course, 'quiz', 'addcategory',
-                    "view.php?id=$cm->id", "$newrandomcategory", $cm->id);
-            redirect($CFG->wwwroot."/mod/quiz/edit.php?cmid=$cmid&addonpage=$newquestioninfo->addonpage&addrandom=1&categoryid=$newquestioninfo->newrandomcategory&randomcount=1&sesskey=".sesskey());
-        }
+//setting the second parameter of process_randomquestion_formdata to true causes it to redirect on success
+//TODO: process if returns false?
+$newquestioninfo=quiz_process_randomquestion_formdata($qcobject);
+if($newquestioninfo){
+    $newrandomcategory=$newquestioninfo->newrandomcategory;
+    if (!$newrandomcategory){
+        print_r($newquestioninfo);
+        print_error("cannotcreatecategory");
+    }else{
+        add_to_log($quiz->course, 'quiz', 'addcategory',
+                "view.php?id=$cm->id", "$newrandomcategory", $cm->id);
+        redirect($CFG->wwwroot."/mod/quiz/edit.php?cmid=$cmid&addonpage=$newquestioninfo->addonpage&addrandom=1&categoryid=$newquestioninfo->newrandomcategory&randomcount=1&sesskey=".sesskey());
     }
-    //these params are only passed from page request to request while we stay on this page
-    //otherwise they would go in question_edit_setup
-    $quiz_page = optional_param('quiz_page', 0, PARAM_SEQUENCE);
-    $returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
+}
+//these params are only passed from page request to request while we stay on this page
+//otherwise they would go in question_edit_setup
+$quiz_page = optional_param('quiz_page', 0, PARAM_SEQUENCE);
+$returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 
-    $strquizzes = get_string('modulenameplural', 'quiz');
-    $strquiz = get_string('modulename', 'quiz');
-    $streditingquestions = get_string('editquestions', "quiz");
-    $streditingquiz = get_string('editinga', 'moodle', $strquiz);
+$strquizzes = get_string('modulenameplural', 'quiz');
+$strquiz = get_string('modulename', 'quiz');
+$streditingquestions = get_string('editquestions', "quiz");
+$streditingquiz = get_string('editinga', 'moodle', $strquiz);
 
-    // Get the course object and related bits.
-    if (! $course = $DB->get_record("course", array("id"=> $quiz->course))) {
-        print_error('invalidcourseid');
-    }
-    //you need mod/quiz:manage in addition to question capabilities to access this page.
-    require_capability('mod/quiz:manage', $contexts->lowest());
-    // Print basic page layout.
+// Get the course object and related bits.
+if (! $course = $DB->get_record("course", array("id"=> $quiz->course))) {
+    print_error('invalidcourseid');
+}
+//you need mod/quiz:manage in addition to question capabilities to access this page.
+require_capability('mod/quiz:manage', $contexts->lowest());
+// Print basic page layout.
 
-    $strupdatemodule = has_capability('moodle/course:manageactivities', $contexts->lowest())
-        ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
-        : "";
-    $navigation = build_navigation($streditingquiz, $cm);
-    print_header_simple($streditingquiz, '', $navigation, "", "", true, $strupdatemodule);
+$strupdatemodule = has_capability('moodle/course:manageactivities', $contexts->lowest())
+    ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
+    : "";
+$navigation = build_navigation($streditingquiz, $cm);
+print_header_simple($streditingquiz, '', $navigation, "", "", true, $strupdatemodule);
 
-    if (!$quizname = $DB->get_field($cm->modname, 'name', array('id'=> $cm->instance))) {
-                print_error('invalidcoursemodule');
-    }
+if (!$quizname = $DB->get_field($cm->modname, 'name', array('id'=> $cm->instance))) {
+            print_error('invalidcoursemodule');
+}
 
-    print_heading(get_string("addrandomquestiontoquiz","quiz",$quizname), 'left', 2);
+print_heading(get_string("addrandomquestiontoquiz","quiz",$quizname), 'left', 2);
 
-    $addonpage=optional_param("addonpage_form", 0, PARAM_SEQUENCE);
-    $qcobject->display_randomquestion_user_interface($addonpage);
+$addonpage=optional_param("addonpage_form", 0, PARAM_SEQUENCE);
+$qcobject->display_randomquestion_user_interface($addonpage);
 
-    print_footer($course);
+print_footer($course);
 ?>
