@@ -4,6 +4,12 @@ class repository_filesystem extends repository {
     public function __construct($repositoryid, $context = SITEID, $options = array()) {
         parent::__construct($repositoryid, $context, $options);
         $this->root_path = trim($this->root_path);
+        $this->block_list = array(
+            '/etc',
+            '/',
+            'c:\windows',
+            'c:/windows'
+            );
         if ($options['ajax']) {
             // if created from filepicker
             if (empty($this->root_path)) {
@@ -28,8 +34,27 @@ class repository_filesystem extends repository {
             }
         }
     }
+    public function security_check($path) {
+        $blocked = false;
+        foreach ($this->block_list as $item) {
+            if ($path == $item or $path == $item.'/') {
+                $blocked = true;
+                break;
+            }
+        }
+        return $blocked;
+    }
     public function get_listing($path = '', $page = '') {
         global $CFG;
+
+        if ($this->security_check($this->root_path)) {
+            $ret = array();
+            $ret['msg'] = get_string('blockedpath', 'repository_filesystem');
+            $ret['nosearch'] = true;
+            echo json_encode($ret);
+            exit;
+        }
+
         $list = array();
         $list['list'] = array();
         // process breacrumb trail
@@ -129,6 +154,13 @@ class repository_filesystem extends repository {
 
     public function instance_config_form(&$mform) {
         $mform->addElement('text', 'root_path', get_string('path', 'repository_filesystem'), array('value'=>'','size' => '40'));
+        $warning = get_string('donotusesysdir', 'repository_filesystem');
+        $warning .= '<ul>';
+        foreach ($this->block_list as $item) {
+            $warning .= '<li>'.$item.'</li>';
+        }
+        $warning .= '</ul>';
+        $mform->addElement('static', null, '',  $warning);
     }
 
     public static function get_type_option_names() {
