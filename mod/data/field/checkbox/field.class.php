@@ -49,7 +49,7 @@ class data_field_checkbox extends data_field_base {
             $str .= 'value="' . s($checkbox) . '" ';
 
             if (array_search($checkbox, $content) !== false) {
-                $str .= 'checked />';
+                $str .= 'checked="checked" />';
             } else {
                 $str .= '/>';
             }
