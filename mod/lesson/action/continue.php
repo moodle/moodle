@@ -122,7 +122,7 @@
                     $expectedanswer = str_replace('#####', '.*', $expectedanswer);
                 }
                 // see if user typed in any of the correct answers
-                if (lesson_iscorrect($pageid, $answer->jumpto) and ($lesson->custom && $answer->score > 0) ) {
+                if ((!$lesson->custom && lesson_iscorrect($pageid, $answer->jumpto)) or ($lesson->custom && $answer->score > 0) ) {
                     if (!$useregexp) { // we are using 'normal analysis', which ignores case
                         if (preg_match('/^'.$expectedanswer.'$/i',$useranswer)) {
                             $ismatch = true;

@@ -1472,7 +1472,7 @@ function lesson_grade($lesson, $ntries, $userid = 0) {
                     $earned += $essayinfo->score;
                     $nmanual++;
                     $manualpoints += $answers[$attempt->answerid]->score;
-                } else {
+                } else if (!empty($attempt->answerid)) {
                     $earned += $answers[$attempt->answerid]->score;
                 }
             } else {
