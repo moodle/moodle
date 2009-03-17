@@ -1845,7 +1845,7 @@ class PresetImporter {
         } else if (empty($newfields)) {
             error("New preset has no defined fields!");
         }
-        echo '<div class="overwritesettings"><label for="overwritesettings">'.get_string('overwritesettings', 'data').'</label>';
+        echo '<div class="overwritesettings"><label for="overwritesettings">'.get_string('overwritesettings', 'data');
         echo '<input id="overwritesettings" name="overwritesettings" type="checkbox" /></label></div>';
         echo '<input class="button" type="submit" value="'.$strcontinue.'" /></div></form></div>';
     }
