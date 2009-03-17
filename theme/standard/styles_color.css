@@ -1116,7 +1116,7 @@ table.quizreviewsummary td.cell {
   border :medium solid pink;
 }
 #mod-quiz-edit .statusdisplay{
-	background-color:#ffc;
+    background-color: #ffc;
 }
 #mod-quiz-edit div.quizpage span.pagetitle{
     color:#006;
