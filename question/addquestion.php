@@ -49,7 +49,7 @@ if (!$category = $DB->get_record('question_categories', array('id' => $categoryi
     print_error('categorydoesnotexist', 'question', $returnurl);
 }
 
-if ($cmid){
+if ($cmid) {
     list($module, $cm) = get_module_from_cmid($cmid);
     require_login($cm->course, false, $cm);
     $thiscontext = get_context_instance(CONTEXT_MODULE, $cmid);
@@ -79,7 +79,7 @@ if (!empty($appendqnumstring)) {
 $chooseqtype = get_string('chooseqtypetoadd', 'question');
 if ($cm !== null) {
     $navlinks = array();
-    if (stripos($returnurl, "$CFG->wwwroot/mod/{$cm->modname}/view.php")!== 0){
+    if (stripos($returnurl, "$CFG->wwwroot/mod/{$cm->modname}/view.php")!== 0) {
         //don't need this link if returnurl returns to view.php
         $navlinks[] = array('name' => get_string('editinga', 'moodle', get_string('modulename', $cm->modname)), 'link' => $returnurl, 'type' => 'title');
     }
@@ -101,6 +101,4 @@ print_choose_qtype_to_add_form($hiddenparams);
 print_box_end();
 
 print_footer($COURSE);
-
-
 ?>
