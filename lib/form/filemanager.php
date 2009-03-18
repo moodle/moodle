@@ -182,6 +182,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $str .= $repo_info['js'];
         $str .= <<<EOD
 <script type="text/javascript">
+//<![CDATA[
 var elitem = null;
 var rm_cb_$suffix = {
     success: function(o) {
@@ -216,6 +217,7 @@ function callpicker_$suffix() {
     var el=document.getElementById('$id');
     openpicker_$suffix({'env':'filemanager', 'target':el, 'itemid': $draftitemid, 'callback':uf_$suffix})
 }
+//]]>
 </script>
 <input value="$draftitemid" name="{$this->_attributes['name']}" type="hidden" />
 <div>
