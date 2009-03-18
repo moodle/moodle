@@ -239,7 +239,8 @@ class qformat_default {
 
         // check for errors before we continue
         if ($this->stoponerror and ($this->importerrors>0)) {
-            return false;
+            notify( get_string('importparseerror','quiz') );
+            return true;
         }
 
         // get list of valid answer grades
