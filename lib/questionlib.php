@@ -2353,8 +2353,8 @@ function question_make_default_categories($contexts) {
         } else {
             $category = question_get_default_category($context->id);
         }
-
-        if ($preferredlevels[$context->contextlevel] > $preferredness && has_capability('moodle/question:use', $context)) {
+        if ($preferredlevels[$context->contextlevel] > $preferredness &&
+                has_any_capability(array('moodle/question:usemine', 'moodle/question:useall'), $context)) {
             $toreturn = $category;
             $preferredness = $preferredlevels[$context->contextlevel];
         }
