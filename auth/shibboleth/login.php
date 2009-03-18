@@ -9,7 +9,7 @@
 /// Check for timed out sessions
     if (!empty($SESSION->has_timed_out)) {
         $session_has_timed_out = true;
-        unset($SESSION->has_timed_out);
+        $SESSION->has_timed_out = false;
     } else {
         $session_has_timed_out = false;
     }
@@ -20,7 +20,7 @@ httpsrequired();
 
 /// Define variables used in page
     if (!$site = get_site()) {
-        print_error('nosite');
+        error("No site found!");
     }
 
     if (empty($CFG->langmenu)) {
@@ -37,7 +37,7 @@ httpsrequired();
     $loginurl = (!empty($CFG->alternateloginurl)) ? $CFG->alternateloginurl : '';
 
 
-    if (get_moodle_cookie() == '') {
+    if (get_moodle_cookie() == '') {   
         set_moodle_cookie('nobody');   // To help search for cookies
     }
 

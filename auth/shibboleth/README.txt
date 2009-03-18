@@ -2,8 +2,8 @@ Shibboleth Authentication for Moodle
 -------------------------------------------------------------------------------
 
 Requirements:
-- Shibboleth target 1.1 or later. See documentation for your Shibboleth
-  federation on how to set up Shibboleth.
+- Shibboleth Service Provider 1.3 or newer. Recommended is 2.1 or newer.
+  See documentation for your Shibboleth federation on how to set up Shibboleth.
 
 Changes:
 - 11. 2004: Created by Markus Hagman
@@ -23,6 +23,8 @@ Changes:
 - 12. 2008: Shibboleth 2.x and Single Logout support added
 - 1.  2008: Added logout hook and moved Shibboleth config strings to utf8 auth 
             language files.
+- 3.  2009: Added various improvements and bug fixes reported by Ina Müller from
+            university Tuebingen and Peter Ellis of University of Washington
 
 Moodle Configuration with Dual login
 -------------------------------------------------------------------------------
@@ -42,7 +44,20 @@ Moodle Configuration with Dual login
    with something that fits your needs, e.g. 'require affiliation student'.
 
    For IIS you have protect the auth/shibboleth directory directly in the
-   RequestMap of the Shibboleth configuration file (shibboleth.xml). See
+   RequestMap of the Shibboleth configuration file (shibboleth.xml or 
+   shibboleth2.xml). 
+   
+--
+<Path name="moodle" requireSession="false" >
+   <Path name="auth/shibboleth/index.php" requireSession="true" >
+      <AccessControl>
+          ...
+      </AccessControl>
+   </Path>
+</Path> 
+--
+   
+   Also see:
    https://spaces.internet2.edu/display/SHIB2/NativeSPRequestMapper and
    https://spaces.internet2.edu/display/SHIB2/NativeSPAccessControl
 
@@ -274,10 +289,13 @@ Shibboleth installation). If everything worked well, you should see a Shibboleth
 page saying that you were successfully logged out and if you go back to Moodle 
 you also should be logged out from Moodle.
 
+Requirements:
+- PHP needs the Soap Extension, which maybe must installed manually:
+  More information is available here http://ch.php.net/soap
+- Logout only works with Shibboleth Service Provider 2.1 or higher
 
 Limitations:
-Single Logout is only supported with SAML2 and so far only with the Shibboleth 
-Service Provider 2.x. 
+Single Logout is only supported when SAML2 is used at the SP and the IdP.
 As of December 2008, the Shibboleth Identity Provider 2.1.1 does not yet support
 Single Logout (SLO). Therefore, the single logout feature cannot be used yet. 
 One of the reasons why SLO isn't supported yet is because there aren't many 

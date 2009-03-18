@@ -45,7 +45,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right">Moodle WAYF Service:</td>
+    <td align="right"><?php print_string("auth_shib_integrated_wayf", "auth") ?>:</td>
     <td>
         <input name="alt_login" type="checkbox" <?php 
         if ( isset($config->alt_login) and $config->alt_login == 'on' ){
@@ -53,17 +53,17 @@
             }
         ?> />
     </td>
-    <td>If you check this, Moodle will use its own WAYF service instead of the one configured for Shibboleth. Moodle will display a drop-down list on this alternative login page where the user has to select his Identity Provider.</td>
+    <td><?php print_string("auth_shib_integrated_wayf_description", "auth") ?></td>
 </tr>
 
 <tr valign="top">
-    <td align="right">Identity Providers:</td>
+    <td align="right"><?php print_string("auth_shib_idp_list", "auth") ?>:</td>
     <td>
         <textarea name="organization_selection" rows="10" cols="30" style="overflow: auto; white-space: nowrap;"
 ><?php 
         if (!isset($config->organization_selection)){
             echo  'urn:mace:organization1:providerID, Example Organization 1
-https://another.idp-id.com/shibboleth, Other Example Organization
+https://another.idp-id.com/shibboleth, Other Example Organization, /Shibboleth.sso/DS/SWITCHaai
 urn:mace:organization2:providerID, Example Organization 2, /Shibboleth.sso/WAYF/SWITCHaai';
         } else {
             echo $config->organization_selection;
@@ -78,13 +78,35 @@ urn:mace:organization2:providerID, Example Organization 2, /Shibboleth.sso/WAYF/
         }
     ?>
     </td>
-    <td>Provide a list of Identity Provider entityIDs to let the user choose from on the login page.
-On each line there must be a comma-separated tuple for entityID of the IdP (see the Shibboleth metadata file) and Name of IdP as it shall be displayed in the drow-down list.
-As an optional third parameter you can add the location of a Shibboleth session initiator that shall be used in case your Moodle installation is part of a multi federation setup.</td>
+    <td><?php print_string("auth_shib_idp_list_description", "auth") ?></td>
 </tr>
 
 <tr valign="top">
-    <td align="right">Authentication Method Name:</td>
+    <td align="right"><?php print_string("auth_shib_logout_url", "auth") ?>:</td>
+    <td>
+        <input name="logout_handler" type="text" size="30" value="<?php 
+        if ( isset($config->logout_handler) and !empty($config->logout_handler)){
+            echo $config->logout_handler;
+        }
+        ?>" />
+    </td>
+    <td><?php print_string("auth_shib_logout_url_description", "auth") ?></td>
+</tr>
+
+<tr valign="top">
+    <td align="right"><?php print_string("auth_shib_logout_return_url", "auth") ?>:</td>
+    <td>
+        <input name="logout_return_url" type="text" size="30" value="<?php 
+        if ( isset($config->logout_return_url) and !empty($config->logout_return_url)){
+            echo $config->logout_return_url;
+        }
+        ?>" />
+    </td>
+    <td><?php print_string("auth_shib_logout_return_url_description", "auth") ?></td>
+</tr>
+
+<tr valign="top">
+    <td align="right"><?php print_string("auth_shib_auth_method", "auth") ?>:</td>
     <td>
         <input name="login_name" type="text" size="30" value="<?php 
         if ( isset($config->login_name) and !empty($config->login_name)){
@@ -94,7 +116,7 @@ As an optional third parameter you can add the location of a Shibboleth session 
         }
         ?>" />
     </td>
-    <td>Provide a name for the Shibboleth authentication method that is familiar to your users. This could be the name of your Shibboleth federation, e.g. "SWITCHaai Login" or "InCommon Login" and so on.</td>
+    <td><?php print_string("auth_shib_auth_method_description", "auth") ?></td>
 </tr>
 
 <tr valign="top">
