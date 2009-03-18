@@ -22,7 +22,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-require '../../config.php';
+require_once '../../config.php';
 
 $courseid = required_param('id', PARAM_INT);
 

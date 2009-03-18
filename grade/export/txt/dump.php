@@ -24,7 +24,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 $nomoodlecookie = true; // session not used here
-require '../../../config.php';
+require_once '../../../config.php';
 
 $id = required_param('id', PARAM_INT); // course id
 if (!$course = get_record('course', 'id', $id)) {

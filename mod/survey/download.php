@@ -1,6 +1,6 @@
 <?php // $Id$
 
-    require ("../../config.php");
+    require_once ("../../config.php");
 
 // Check that all the parameters have been provided.
 

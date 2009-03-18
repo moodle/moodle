@@ -27,7 +27,7 @@
  * Compatibility redirection to reports
  */
 
-require '../config.php';
+require_once '../config.php';
 
 $id = required_param('id', PARAM_INT);
 redirect('report/index.php?id='.$id);
