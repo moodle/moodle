@@ -174,22 +174,39 @@ function quiz_delete_instance($id) {
     return $result;
 }
 
+/**
+ * Get the best current grade for a particular user in a quiz.
+ *
+ * @param object $quiz the quiz object.
+ * @param integer $userid the id of the user.
+ * @return float the user's current grade for this quiz.
+ */
+function quiz_get_best_grade($quiz, $userid) {
+    $grade = get_field('quiz_grades', 'grade', 'quiz', $quiz->id, 'userid', $userid);
+
+    // Need to detect errors/no result, without catching 0 scores.
+    if (is_numeric($grade)) {
+        return round($grade, $quiz->decimalpoints);
+    } else {
+        return NULL;
+    }
+}
+
 function quiz_user_outline($course, $user, $mod, $quiz) {
 /// Return a small object with summary information about what a
 /// user has done with a given particular instance of this module
 /// Used for user activity reports.
 /// $return->time = the time they did it
 /// $return->info = a short text description
-    if ($grade = get_record('quiz_grades', 'userid', $user->id, 'quiz', $quiz->id)) {
-
-        $result = new stdClass;
-        if ((float)$grade->grade) {
-            $result->info = get_string('grade').':&nbsp;'.round($grade->grade, $quiz->decimalpoints);
-        }
-        $result->time = $grade->timemodified;
-        return $result;
+    $grade = quiz_get_best_grade($quiz, $user->id);
+    if (is_null($grade)) {
+        return NULL;
     }
-    return NULL;
+
+    $result = new stdClass;
+    $result->info = get_string('grade') . ': ' . $grade . '/' . $quiz->grade;
+    $result->time = get_field('quiz_attempts', 'MAX(timefinish)', 'userid', $user->id, 'quiz', $quiz->id);
+    return $result;
 }
 
 function quiz_user_complete($course, $user, $mod, $quiz) {
@@ -197,7 +214,7 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
 /// a given particular instance of this module, for user activity reports.
 
     if ($attempts = get_records_select('quiz_attempts', "userid='$user->id' AND quiz='$quiz->id'", 'attempt ASC')) {
-        if ($quiz->grade  and $quiz->sumgrades && $grade = get_record('quiz_grades', 'userid', $user->id, 'quiz', $quiz->id)) {
+        if ($quiz->grade && $quiz->sumgrades && $grade = get_record('quiz_grades', 'userid', $user->id, 'quiz', $quiz->id)) {
             echo get_string('grade').': '.round($grade->grade, $quiz->decimalpoints).'/'.$quiz->grade.'<br />';
         }
         foreach ($attempts as $attempt) {

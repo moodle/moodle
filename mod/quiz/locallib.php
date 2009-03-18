@@ -294,24 +294,6 @@ function quiz_get_all_question_grades($quiz) {
 }
 
 /**
- * Get the best current grade for a particular user in a quiz.
- *
- * @param object $quiz the quiz object.
- * @param integer $userid the id of the user.
- * @return float the user's current grade for this quiz.
- */
-function quiz_get_best_grade($quiz, $userid) {
-    $grade = get_field('quiz_grades', 'grade', 'quiz', $quiz->id, 'userid', $userid);
-
-    // Need to detect errors/no result, without catching 0 scores.
-    if (is_numeric($grade)) {
-        return round($grade, $quiz->decimalpoints);
-    } else {
-        return NULL;
-    }
-}
-
-/**
  * Convert the raw grade stored in $attempt into a grade out of the maximum
  * grade for this quiz.
  *
