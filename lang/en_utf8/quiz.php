@@ -353,6 +353,7 @@ $string['nocommentsyet'] = 'No comments yet.';
 $string['noconnection'] = 'There is currently no connection to a web service that can process this question. Please contact your administrator';
 $string['nodataset'] = 'nothing - it is not a wild card';
 $string['noessayquestionsfound'] = 'No manually graded questions found';
+$string['nogradewarning'] = 'This quiz is not graded, so you cannot set overall feedback that differs by grade.';
 $string['nomatchinganswer'] = 'You must specify an answer matching the question \'$a\'.';
 $string['nominal'] = 'Nominal';
 $string['nomoreattempts'] = 'No more attempts are allowed';
