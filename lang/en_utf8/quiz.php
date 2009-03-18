@@ -368,6 +368,7 @@ $string['importingquestions'] = 'Importing $a questions from file';
 $string['importmax10error'] = 'There is an error in the question. You may not have more than ten answers';
 $string['importmaxerror'] = 'There is an error in the question. There are too many answers.';
 $string['importminerror'] = 'There is an error in the question. There are not enough answers for this question type';
+$string['importparseerror' ] = 'Error(s) found parsing the import file. No questions have been imported. To import any good questions try again setting \'Stop on error\' to \'No\'';
 $string['importquestions'] = 'Import questions from file';
 $string['incorrect'] = 'Incorrect';
 $string['indivresp'] = 'Responses of Individuals to Each Item';
