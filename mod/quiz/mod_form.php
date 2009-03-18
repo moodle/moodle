@@ -88,8 +88,6 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->setDefault('grademethod', $quizconfig->grademethod);
         $mform->disabledIf('grademethod', 'attempts', 'eq', 1);
 
-        $mform->addElement('hidden', 'grade', $quizconfig->maximumgrade);
-
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'layouthdr', get_string('layout', 'quiz'));
 
@@ -274,11 +272,23 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addElement('header', 'overallfeedbackhdr', get_string('overallfeedback', 'quiz'));
         $mform->setHelpButton('overallfeedbackhdr', array('overallfeedback', get_string('overallfeedback', 'quiz'), 'quiz'));
 
+        $mform->addElement('hidden', 'grade', $quizconfig->maximumgrade);
+        if (empty($this->_cm)) {
+            $needwarning = $quizconfig->maximumgrade == 0;
+        } else {
+            $needwarning = $DB->get_field('quiz', 'grade', array('id' => $this->_instance));
+        }
+        if ($needwarning) {
+            $mform->addElement('static', 'nogradewarning', '', get_string('nogradewarning', 'quiz'));
+        }
+
         $mform->addElement('static', 'gradeboundarystatic1', get_string('gradeboundary', 'quiz'), '100%');
 
-        $repeatarray=array();
+        $repeatarray = array();
         $repeatarray[] = &MoodleQuickForm::createElement('text', 'feedbacktext', get_string('feedback', 'quiz'), array('size' => 50));
+        $mform->setType('feedbacktext', PARAM_RAW);
         $repeatarray[] = &MoodleQuickForm::createElement('text', 'feedbackboundaries', get_string('gradeboundary', 'quiz'), array('size' => 10));
+        $mform->setType('feedbackboundaries', PARAM_NOTAGS);
 
         if (!empty($this->_instance)) {
             $this->_feedbacks = $DB->get_records('quiz_feedback', array('quizid'=>$this->_instance), 'mingrade DESC');
@@ -287,19 +297,23 @@ class mod_quiz_mod_form extends moodleform_mod {
         }
         $numfeedbacks = max(count($this->_feedbacks) * 1.5, 5);
 
-        $mform->setType('feedbacktext', PARAM_RAW);
-        $mform->setType('feedbackboundaries', PARAM_NOTAGS);
-
         $nextel=$this->repeat_elements($repeatarray, $numfeedbacks - 1,
                 array(), 'boundary_repeats', 'boundary_add_fields', 3,
                 get_string('addmoreoverallfeedbacks', 'quiz'), true);
 
-        //put some extra elements in before the button
+        // Put some extra elements in before the button
         $insertEl = &MoodleQuickForm::createElement('text', "feedbacktext[$nextel]", get_string('feedback', 'quiz'), array('size' => 50));
         $mform->insertElementBefore($insertEl, 'boundary_add_fields');
 
         $insertEl = &MoodleQuickForm::createElement('static', 'gradeboundarystatic2', get_string('gradeboundary', 'quiz'), '0%');
         $mform->insertElementBefore($insertEl, 'boundary_add_fields');
+
+        // Add the disabledif rules. We cannot do this using the $repeatoptions parameter to
+        // repeat_elements becuase we don't want to dissable the first feedbacktext.
+        for ($i = 0; $i < $nextel; $i++) {
+            $mform->disabledIf('feedbackboundaries[' . $i . ']', 'grade', 'eq', 0);
+            $mform->disabledIf('feedbacktext[' . ($i + 1) . ']', 'grade', 'eq', 0);
+        }
 
 //-------------------------------------------------------------------------------
         $features = new stdClass;
@@ -314,6 +328,10 @@ class mod_quiz_mod_form extends moodleform_mod {
     }
 
     function data_preprocessing(&$default_values){
+        if (isset($default_values['grade'])) {
+            $default_values['grade'] = $default_values['grade'] + 0; // Convert to a real number, so we don't get 0.0000.
+        }
+
         if (count($this->_feedbacks)) {
             $key = 0;
             foreach ($this->_feedbacks as $feedback){
@@ -400,12 +418,14 @@ class mod_quiz_mod_form extends moodleform_mod {
         $numboundaries = $i;
 
         // Check there is nothing in the remaining unused fields.
-        for ($i = $numboundaries; $i < count($data['feedbackboundaries'] ); $i += 1) {
-            if (!empty($data['feedbackboundaries'][$i] ) && trim($data['feedbackboundaries'][$i] ) != '') {
-                $errors["feedbackboundaries[$i]"] = get_string('feedbackerrorjunkinboundary', 'quiz', $i + 1);
+        if (!empty($data['feedbackboundaries'])) {
+            for ($i = $numboundaries; $i < count($data['feedbackboundaries']); $i += 1) {
+                if (!empty($data['feedbackboundaries'][$i] ) && trim($data['feedbackboundaries'][$i] ) != '') {
+                    $errors["feedbackboundaries[$i]"] = get_string('feedbackerrorjunkinboundary', 'quiz', $i + 1);
+                }
             }
         }
-        for ($i = $numboundaries + 1; $i < count($data['feedbacktext'] ); $i += 1) {
+        for ($i = $numboundaries + 1; $i < count($data['feedbacktext']); $i += 1) {
             if (!empty($data['feedbacktext'][$i] ) && trim($data['feedbacktext'][$i] ) != '') {
                 $errors["feedbacktext[$i]"] = get_string('feedbackerrorjunkinfeedback', 'quiz', $i + 1);
             }

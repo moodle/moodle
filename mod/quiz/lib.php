@@ -827,9 +827,11 @@ function quiz_process_options(&$quiz) {
         $numboundaries = $i;
 
         // Check there is nothing in the remaining unused fields.
-        for ($i = $numboundaries; $i < count($quiz->feedbackboundaries); $i += 1) {
-            if (!empty($quiz->feedbackboundaries[$i]) && trim($quiz->feedbackboundaries[$i]) != '') {
-                return get_string('feedbackerrorjunkinboundary', 'quiz', $i + 1);
+        if (!empty($quiz->feedbackboundaries)) {
+            for ($i = $numboundaries; $i < count($quiz->feedbackboundaries); $i += 1) {
+                if (!empty($quiz->feedbackboundaries[$i]) && trim($quiz->feedbackboundaries[$i]) != '') {
+                    return get_string('feedbackerrorjunkinboundary', 'quiz', $i + 1);
+                }
             }
         }
         for ($i = $numboundaries + 1; $i < count($quiz->feedbacktext); $i += 1) {
