@@ -1886,7 +1886,14 @@ function question_category_select_menu($contexts, $top = false, $currentcat = 0,
 * @return object The default category - the category in the course context
 */
 function question_make_default_categories($contexts) {
+    static $preferredlevels = array(
+        CONTEXT_COURSE => 4,
+        CONTEXT_MODULE => 3,
+        CONTEXT_COURSECAT => 2,
+        CONTEXT_SYSTEM => 1,
+    );
     $toreturn = null;
+    $preferredness = 0;
     // If it already exists, just return it.
     foreach ($contexts as $key => $context) {
         if (!$categoryrs = get_recordset_select("question_categories", "contextid = '{$context->id}'", 'sortorder, name', '*', '', 1)) {
@@ -1907,12 +1914,15 @@ function question_make_default_categories($contexts) {
                 }
             }
         }
-        if ($context->contextlevel == CONTEXT_COURSE){
-            $toreturn = clone($category);
+        if ($preferredlevels[$context->contextlevel] > $preferredness && has_capability('moodle/question:add', $context)) {
+            $toreturn = $category;
+            $preferredness = $preferredlevels[$context->contextlevel];
         }
     }
 
-
+    if (!is_null($toreturn)) {
+        $toreturn = clone($toreturn);
+    }
     return $toreturn;
 }
 
@@ -2156,7 +2166,6 @@ class context_to_string_translator{
     }
 
 }
-
 
 /**
  * Check capability on category
