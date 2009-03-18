@@ -2117,7 +2117,6 @@ function get_question_responses($question, $state) {
     return $r;
 }
 
-
 /**
 * Gets the response given by the user in a particular state
 *
@@ -2327,11 +2326,18 @@ function question_edit_url($context) {
 */
 function question_make_default_categories($contexts) {
     global $DB;
+    static $preferredlevels = array(
+        CONTEXT_COURSE => 4,
+        CONTEXT_MODULE => 3,
+        CONTEXT_COURSECAT => 2,
+        CONTEXT_SYSTEM => 1,
+    );
 
     $toreturn = null;
+    $preferredness = 0;
     // If it already exists, just return it.
     foreach ($contexts as $key => $context) {
-        if (!$exists = $DB->record_exists("question_categories", array('contextid'=>$context->id))){
+        if (!$exists = $DB->record_exists("question_categories", array('contextid'=>$context->id))) {
             // Otherwise, we need to make one
             $category = new stdClass;
             $contextname = print_context_name($context, false, true);
@@ -2348,12 +2354,15 @@ function question_make_default_categories($contexts) {
             $category = question_get_default_category($context->id);
         }
 
-        if ($context->contextlevel == CONTEXT_COURSE){
-            $toreturn = clone($category);
+        if ($preferredlevels[$context->contextlevel] > $preferredness && has_capability('moodle/question:use', $context)) {
+            $toreturn = $category;
+            $preferredness = $preferredlevels[$context->contextlevel];
         }
     }
 
-
+    if (!is_null($toreturn)) {
+        $toreturn = clone($toreturn);
+    }
     return $toreturn;
 }
 
