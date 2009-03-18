@@ -1914,7 +1914,7 @@ function question_make_default_categories($contexts) {
                 }
             }
         }
-        if ($preferredlevels[$context->contextlevel] > $preferredness && has_capability('moodle/question:add', $context)) {
+        if ($preferredlevels[$context->contextlevel] > $preferredness && has_capability('moodle/question:use', $context)) {
             $toreturn = $category;
             $preferredness = $preferredlevels[$context->contextlevel];
         }
