@@ -94,6 +94,18 @@ urn:mace:organization2:providerID, Example Organization 2, /Shibboleth.sso/WAYF/
 </tr>
 
 <tr valign="top">
+    <td align="right"><?php print_string("auth_shib_logout_return_url", "auth") ?>:</td>
+    <td>
+        <input name="logout_return_url" type="text" size="30" value="<?php 
+        if ( isset($config->logout_return_url) and !empty($config->logout_return_url)){
+            echo $config->logout_return_url;
+        }
+        ?>" />
+    </td>
+    <td><?php print_string("auth_shib_logout_return_url_description", "auth") ?></td>
+</tr>
+
+<tr valign="top">
     <td align="right"><?php print_string("auth_shib_auth_method", "auth") ?>:</td>
     <td>
         <input name="login_name" type="text" size="30" value="<?php 
