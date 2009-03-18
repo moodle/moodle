@@ -217,16 +217,16 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
 /// Used for user activity reports.
 /// $return->time = the time they did it
 /// $return->info = a short text description
-    if ($grade = $DB->get_record('quiz_grades', array('userid' => $user->id, 'quiz' => $quiz->id))) {
-        $result = new stdClass;
-        if ((float)$grade->grade) {
-            $result->info = get_string('grade').':&nbsp;'.quiz_format_grade($quiz, $grade->grade);
-        }
-        $result->time = $grade->timemodified;
-        return $result;
+    $grade = quiz_get_best_grade($quiz, $user->id);
+    if (is_null($grade)) {
+        return NULL;
     }
-    return NULL;
-}
+
+    $result = new stdClass;
+    $result->info = get_string('grade') . ': ' . $grade . '/' . $quiz->grade;
+    $result->time = get_field('quiz_attempts', 'MAX(timefinish)', 'userid', $user->id, 'quiz', $quiz->id);
+    return $result;
+    }
 
 /**
  * Is this a graded quiz? If this method returns true, you can assume that 
@@ -265,9 +265,9 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
 /// Print a detailed representation of what a  user has done with
 /// a given particular instance of this module, for user activity reports.
 
-    if ($attempts = $DB->get_records_select('quiz_attempts', "userid=? AND quiz=?",  array($user->id, $quiz->id), 'attempt ASC')) {
+    if ($attempts = $DB->get_records('quiz_attempts', array('userid' => $user->id, 'quiz' => $quiz->id), 'attempt')) {
         if (quiz_has_grades($quiz) && $grade = quiz_get_best_grade($quiz, $user->id)) {
-            echo get_string('grade') . ': ' . $grade . '/' . $quiz->grade . '<br />';
+            echo get_string('grade') . ': ' . $grade . '/' . quiz_format_grade($quiz, $quiz->grade) . '<br />';
         }
         foreach ($attempts as $attempt) {
             echo get_string('attempt', 'quiz').' '.$attempt->attempt.': ';
