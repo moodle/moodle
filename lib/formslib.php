@@ -746,15 +746,17 @@ class moodleform {
         $mform->addElement('hidden', $repeathiddenname, $repeats);
         //value not to be overridden by submitted value
         $mform->setConstants(array($repeathiddenname=>$repeats));
-        for ($i=0; $i<$repeats; $i++) {
+        $namecloned = array();
+        for ($i = 0; $i < $repeats; $i++) {
             foreach ($elementobjs as $elementobj){
                 $elementclone = fullclone($elementobj);
                 $name = $elementclone->getName();
-                if (!empty($name)){
+                $namecloned[] = $name;
+                if (!empty($name)) {
                     $elementclone->setName($name."[$i]");
                 }
-                if (is_a($elementclone, 'HTML_QuickForm_header')){
-                    $value=$elementclone->_text;
+                if (is_a($elementclone, 'HTML_QuickForm_header')) {
+                    $value = $elementclone->_text;
                     $elementclone->setValue(str_replace('{no}', ($i+1), $value));
 
                 } else {
@@ -785,6 +787,12 @@ class moodleform {
                             $mform->setHelpButton($realelementname, $params);
                             break;
                         case 'disabledif' :
+                            foreach ($namecloned as $num => $name){
+                                if ($params[0] == $name){
+                                    $params[0] = $params[0]."[$i]";
+                                    break;
+                                }
+                            }
                             $params = array_merge(array($realelementname), $params);
                             call_user_func_array(array(&$mform, 'disabledIf'), $params);
                             break;
