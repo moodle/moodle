@@ -68,6 +68,12 @@ class data_field_textarea extends data_field_base {
         $str .= '</div>';
         return $str;
     }
+
+    function list_add_field(&$fields) {
+        $fields[] = $this->field->id;
+        $fields[] = $this->field->id.'_content1';
+        return true; 
+    }
     
     
     function display_search_field($value = '') {
