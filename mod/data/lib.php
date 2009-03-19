@@ -178,6 +178,14 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         return $str;
     }
 
+
+// add the field ids to an existing array to track added form fields
+// override if anything with multiple fields (e.g. date)
+    function list_add_field( &$fields ) {
+        $fields[] = $this->field->id;
+        return true;
+    }
+
 // Print the relevant form element to define the attributes for this field
 // viewable by teachers only.
     function display_edit_field() {
@@ -378,7 +386,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
             if ($form) {   // Print forms instead of data
                 $fieldobj = data_get_field($field, $data);
                 $str .= $fieldobj->display_add_field($recordid);
-                $data->fieldids[] = $fieldobj->field->id;
+                $fieldobj->list_add_field( $data->fieldids );
             } else {           // Just print the tag
                 $str .= '[['.$field->name.']]';
             }
