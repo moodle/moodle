@@ -3978,6 +3978,10 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 //Iterate
                 $counter = 0;
                 foreach ($list as $dir) {
+                    //Avoid copying maintenance.html. MDL-18594
+                    if ($dir == 'maintenance.html') {
+                       continue;
+                    }
                     //Copy the dir to its new location
                     //Only if destination file/dir doesn exists
                     if (!file_exists($dest_dir."/".$dir)) {
