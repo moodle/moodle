@@ -52,17 +52,8 @@
                 } // it'll be greyed out but we want these by default anyway.
             }
             $course->allowedmods = $allowedmods;
-
-            if ($course->enrolstartdate){
-                $course->enrolstartdisabled = 0;
-            }
-
-            if ($course->enrolenddate) {
-                $course->enrolenddisabled = 0;
-            }
         }
     }
-
 
 /// first create the form
     $editform = new course_edit_form('edit.php', compact('course', 'category'));
@@ -84,14 +75,6 @@
 /// process data if submitted
 
         //preprocess data
-        if ($data->enrolstartdisabled){
-            $data->enrolstartdate = 0;
-        }
-
-        if ($data->enrolenddisabled) {
-            $data->enrolenddate = 0;
-        }
-
         $data->timemodified = time();
 
         if (empty($course)) {

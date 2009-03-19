@@ -464,10 +464,9 @@ class course_edit_form extends moodleform {
             }
         }
 
-        if (empty($data['enrolenddisabled'])){
-            if ($data['enrolenddate'] <= $data['enrolstartdate']){
-                $errors['enroldateendgrp'] = get_string('enrolenddaterror');
-            }
+        if (!empty($data['enrolstartdate']) && !empty($data['enrolenddate']) &&
+                $data['enrolenddate'] <= $data['enrolstartdate']){
+            $errors['enrolenddate'] = get_string('enrolenddaterror');
         }
 
         if (!empty($CFG->enrol_manual_usepasswordpolicy) and isset($data['enrolpassword']) and $data['enrolpassword'] != '') {
