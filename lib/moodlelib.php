@@ -4127,7 +4127,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     global $CFG, $FULLME, $MNETIDPJUMPURL;
     static $mnetjumps = array();
 
-    if (empty($user)) {
+    if (empty($user) || empty($user->email)) {
         return false;
     }
 
