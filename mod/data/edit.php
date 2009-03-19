@@ -139,7 +139,6 @@
     }
     include('tabs.php');
 
-
 /// Process incoming data for adding/updating records
 
     if ($datarecord = data_submitted() and confirm_sesskey()) {
@@ -161,14 +160,16 @@
             /// Update all content
             $field = NULL;
             foreach ($fieldids as $fieldid) {
-                    $name = "field_$fieldid";
-                    $value = optional_param( $name,'' );
-                    if (empty($field->field) || ($fieldid != $field->field->id)) {  // Try to reuse classes
-                        $field = data_get_field_from_id($fieldid, $data);
-                    }
-                    if ($field) {
-                        $field->update_content($rid, $value, $name);
-                    }
+                $bits = explode('_',$fieldid);
+                $justid = $bits[0];
+                $name = "field_$fieldid";
+                $value = optional_param( $name,'' );
+                if (empty($field->field) || ($justid != $field->field->id)) {  // Try to reuse classes
+                    $field = data_get_field_from_id($fieldid, $data);
+                }
+                if ($field) {
+                    $field->update_content($rid, $value, $name);
+                }
             }
 
             add_to_log($course->id, 'data', 'update', "view.php?d=$data->id&amp;rid=$rid", $data->id, $cm->id);
@@ -195,9 +196,11 @@
             $emptyform = true;      // assume the worst
 
             foreach ($fieldids as $fieldid) {
+                $bits = explode('_',$fieldid);
+                $justid = $bits[0];
                 $name = "field_$fieldid";
                 $value = optional_param( $name,'' );
-                if (empty($field->field) || ($fieldid != $field->field->id)) {  // Try to reuse classes
+                if (empty($field->field) || ($justid != $field->field->id)) {  // Try to reuse classes
                     $field = data_get_field_from_id($fieldid, $data);
                 }
                 if ($field->notemptyfield($value, $name)) {
@@ -205,7 +208,6 @@
                     break;             // if anything has content, this form is not empty, so stop now!
                 }
             }
-
             if ($emptyform){    //nothing gets written to database
                 notify(get_string('emptyaddform','data'));
             }
@@ -222,16 +224,17 @@
 
                 //for each field in the add form, add it to the data_content.
                 foreach ($fieldids as $fieldid) {
+                    $bits = explode('_',$fieldid);
+                    $justid = $bits[0];
                     $name = "field_$fieldid";
                     $value = optional_param( $name,'' );
-                    if (empty($field->field) || ($fieldid != $field->field->id)) {  // Try to reuse classes
+                    if (empty($field->field) || ($justid != $field->field->id)) {  // Try to reuse classes
                         $field = data_get_field_from_id($fieldid, $data);
                     }
                     if ($field) {
                         $field->update_content($recordid, $value, $name);
                     }
                 }  
-
                 add_to_log($course->id, 'data', 'add', "view.php?d=$data->id&amp;rid=$recordid", $data->id, $cm->id);
 
                 notify(get_string('entrysaved','data'));
@@ -278,7 +281,7 @@
             $replacements[] = $field->display_add_field($rid);
             $patterns[]="[[".$field->field->name."#id]]";
             $replacements[] = 'field_'.$field->field->id;
-            $data->fieldids[] = $field->field->id;
+            $field->list_add_field( $data->fieldids );
         }
         $newtext = str_ireplace($patterns, $replacements, $data->{$mode});
 
