@@ -5369,17 +5369,16 @@ function get_roles_on_exact_context($context) {
  *
  * The caller *must* check
  * - that this op is allowed
- * - that the requested role can be assigned in this ctx
- *   (hint, use get_assignable_roles_for_switchrole())
+ * - that the requested role can be switched to in this context (use get_switchable_roles)
  * - that the requested role is NOT $CFG->defaultuserroleid
  *
  * To "unswitch" pass 0 as the roleid.
  *
  * This function *will* modify $USER->access - beware
  *
- * @param integer $roleid
- * @param object $context
- * @return bool
+ * @param integer $roleid the role to switch to.
+ * @param object $context the context in which to perform the switch.
+ * @return bool success or failure.
  */
 function role_switch($roleid, $context) {
     global $USER;
