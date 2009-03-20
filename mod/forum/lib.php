@@ -5136,6 +5136,7 @@ function forum_print_posts_threaded($course, &$cm, $forum, $discussion, $parent,
                 }
             } else {
                 if (!forum_user_can_see_post($forum, $discussion, $post, NULL, $cm)) {
+                    echo "</div>\n";
                     continue;
                 }
                 $by = new object();
