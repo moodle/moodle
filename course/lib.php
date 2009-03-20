@@ -3455,6 +3455,31 @@ function save_local_role_names($courseid, $data) {
 function create_course($data) {
     global $CFG, $USER, $DB;
 
+    //check the categoryid
+    if (!empty($data->category) && !$data->category==0) {
+        $category = $DB->get_record('course_categories', array('id'=>$data->category));
+        if (empty($category)) {
+            throw new moodle_exception('noexistingcategory');
+        }
+    }
+
+    //check if the shortname already exist
+    if(!empty($data->shortname)) {
+        $course = $DB->get_record('course', array('shortname' => $data->shortname));
+        if (!empty($course)) {
+            throw new moodle_exception('shortnametaken');
+        }
+    }
+
+    //check if the id number already exist
+    if(!empty($data->idnumber)) {
+        $course = $DB->get_record('course', array('idnumber' => $data->idnumber));
+        if (!empty($course)) {
+            throw new moodle_exception('idnumbertaken');
+        }
+    }
+    
+
     // preprocess allowed mods
     $allowedmods = empty($data->allowedmods) ? array() : $data->allowedmods;
     unset($data->allowedmods);
@@ -3519,6 +3544,11 @@ function update_course($data) {
 
     $movecat = false;
     $oldcourse = $DB->get_record('course', array('id'=>$data->id)); // should not fail, already tested above
+    // check that course id exist
+    if (empty($oldcourse)) {
+       throw new moodle_exception('courseidnotfound');
+    }
+
     if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $oldcourse->category))
       or !has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $data->category))) {
         // can not move to new category, keep the old one
@@ -3600,6 +3630,21 @@ function is_course_participant ($userid, $courseid) {
     }
    
     return false;
+}
+
+function get_course_by_id ($id) {
+    global $DB;
+    return $DB->get_record('course', array('id' => $id));
+}
+
+function get_course_by_shortname ($shortname) {
+    global $DB;
+    return $DB->get_record('course', array('shortname' => $shortname));
+}
+
+function get_course_by_idnumber ($idnumber) {
+    global $DB;
+    return $DB->get_record('course', array('idnumber' => $idnumber));
 }
 
 ?>
