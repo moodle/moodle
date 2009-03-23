@@ -8,6 +8,7 @@
 * @author Michael Campanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
 * @date 2008/03/31
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @version Moodle 2.0
 *
 * document handling for lesson activity module
 * This file contains the mapping between a lesson page and it's indexable counterpart,
@@ -19,8 +20,8 @@
 /**
 * includes and requires
 */
-require_once("$CFG->dirroot/search/documents/document.php");
-require_once("$CFG->dirroot/mod/lesson/lib.php");
+require_once($CFG->dirroot.'/search/documents/document.php');
+require_once($CFG->dirroot.'/mod/lesson/lib.php');
 
 /** 
 * a class for representing searchable information
@@ -57,40 +58,49 @@ class LessonPageSearchDocument extends SearchDocument {
 * constructs a valid link to a chat content
 * @param int $lessonid the lesson module
 * @param int $itemid the id of a single page
+* @param string $itemtype the nature of the indexed object
 * @return a well formed link to lesson page
 */
 function lesson_make_link($lessonmoduleid, $itemid, $itemtype) {
     global $CFG;
 
     if ($itemtype == 'page'){
-        return "{$CFG->wwwroot}/mod/lesson/view.php?id={$lessonmoduleid}&amp;pageid={$itemid}";
+        return $CFG->wwwroot."/mod/lesson/view.php?id={$lessonmoduleid}&amp;pageid={$itemid}";
     }
     return $CFG->wwwroot.'/mod/lesson/view.php?id='.$lessonmoduleid;
 }
 
 /**
 * search standard API
+* @uses $DB
 *
 */
 function lesson_iterator() {
-    $lessons = get_records('lesson');
-    return $lessons;
+    global $DB;
+    
+    if ($lessons = $DB->get_records('lesson')){
+        return $lessons;
+    } else {
+        return array();
+    }
 }
 
 /**
 * search standard API
-* @param object $lesson a lesson instance (by ref)
+* @uses $DB
+* @param reference $lesson a lesson instance (by ref)
 * @return an array of searchable documents
 */
 function lesson_get_content_for_index(&$lesson) {
+    global $DB;
 
     $documents = array();
     if (!$lesson) return $documents;
     
-    $pages = get_records('lesson_pages', 'lessonid', $lesson->id);
+    $pages = $DB->get_records('lesson_pages', array('lessonid' => $lesson->id));
     if ($pages){
-        $coursemodule = get_field('modules', 'id', 'name', 'lesson');
-        $cm = get_record('course_modules', 'course', $lesson->course, 'module', $coursemodule, 'instance', $lesson->id);
+        $coursemodule = $DB->get_field('modules', 'id', array('name' => 'lesson'));
+        $cm = $DB->get_record('course_modules', array('course' => $lesson->course, 'module' => $coursemodule, 'instance' => $lesson->id));
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         foreach($pages as $aPage){
             $documents[] = new LessonPageSearchDocument(get_object_vars($aPage), $cm->id, $lesson->course, 'page', $context->id);
@@ -102,16 +112,18 @@ function lesson_get_content_for_index(&$lesson) {
 
 /**
 * returns a single lesson search document based on a lesson page id
+* @uses $DB
 * @param int $id an id for a single information item
 * @param string $itemtype the type of information
 */
 function lesson_single_document($id, $itemtype) {
+    global $DB;
 
     // only page is known yet
-    $page = get_record('lesson_pages', 'id', $id);
-    $lesson = get_record('lesson', 'id', $page->lessonid);
-    $coursemodule = get_field('modules', 'id', 'name', 'lesson');
-    $cm = get_record('course_modules', 'course', $lesson->course, 'module', $coursemodule, 'instance', $page->lessonid);
+    $page = $DB->get_record('lesson_pages', array('id' => $id));
+    $lesson = $DB->get_record('lesson', array('id' => $page->lessonid));
+    $coursemodule = $DB->get_field('modules', 'id', array('name' => 'lesson'));
+    $cm = $DB->get_record('course_modules', array('course' => $lesson->course, 'module' => $coursemodule, 'instance' => $page->lessonid));
     if ($cm){
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         $lesson->groupid = 0;
@@ -156,22 +168,19 @@ function lesson_db_names() {
 * @param object $user the user record denoting the user who searches
 * @param int $group_id the current group used by the user when searching
 * @param int $context_id the id of the context used when indexing
-* @uses CFG, USER
+* @uses $CFG, $USER, $DB
 * @return true if access is allowed, false elsewhere
 */
 function lesson_check_text_access($path, $itemtype, $this_id, $user, $group_id, $context_id){
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
     
     include_once("{$CFG->dirroot}/{$path}/lib.php");
 
     // get the lesson page
-    $page = get_record('lesson_pages', 'id', $this_id);
-    $lesson = get_record('lesson', 'id', $page->lessonid);
-    $context = get_record('context', 'id', $context_id);
-    $cm = get_record('course_modules', 'id', $context->instanceid);
-    // $lesson = get_record('lesson', 'id', $page->lessonid);
-    // $cm = get_coursemodule_from_instance('lesson', $page->lessonid, $lesson->course);
-    // $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $page = $DB->get_record('lesson_pages', array('id' => $this_id));
+    $lesson = $DB->get_record('lesson', array('id' => $page->lessonid));
+    $context = $DB->get_record('context', array('id' => $context_id));
+    $cm = $DB->get_record('course_modules', array('id' => $context->instanceid));
 
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)){
         if (!empty($CFG->search_access_debug)) echo "search reject : hidden lesson ";
@@ -210,7 +219,12 @@ function lesson_check_text_access($path, $itemtype, $this_id, $user, $group_id, 
 *
 */
 function lesson_link_post_processing($title){
-     return mb_convert_encoding($title, 'auto', 'UTF-8');
+    global $CFG;
+    
+    if ($CFG->block_search_utf8dir){
+        return mb_convert_encoding($title, 'UTF-8', 'auto');
+    }
+    return mb_convert_encoding($title, 'auto', 'UTF-8');
 }
 
 ?>

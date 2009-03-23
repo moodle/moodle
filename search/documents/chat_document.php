@@ -8,6 +8,7 @@
 * @author Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
 * @date 2008/03/31
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @version Moodle 2.0
 *
 * document handling for chat activity module
 * This file contains the mapping between a chat history and it's indexable counterpart,
@@ -20,8 +21,8 @@
 /**
 * includes and requires
 */
-require_once("$CFG->dirroot/search/documents/document.php");
-require_once("$CFG->dirroot/mod/chat/lib.php");
+require_once($CFG->dirroot.'/search/documents/document.php');
+require_once($CFG->dirroot.'/mod/chat/lib.php');
 
 /**
 * a class for representing searchable information
@@ -61,9 +62,9 @@ class ChatTrackSearchDocument extends SearchDocument {
 /**
 * constructs a valid link to a chat content
 * @param cm_id the chat course module
-* @param start the start time of the session
-* @param end th end time of the session
-* @uses CFG
+* @param int $start the start time of the session
+* @param int $end th end time of the session
+* @uses $CFG
 * @return a well formed link to session display
 */
 function chat_make_link($cm_id, $start, $end) {
@@ -79,22 +80,22 @@ function chat_make_link($cm_id, $start, $end) {
 * @param int $chat_id the database
 * @param int $fromtime
 * @param int $totime
-* @uses CFG
+* @uses $CFG, $DB
 * @return an array of objects representing the chat sessions.
 */
 function chat_get_session_tracks($chat_id, $fromtime = 0, $totime = 0) {
-    global $CFG;
+    global $CFG, $DB;
     
-    $chat = get_record('chat', 'id', $chat_id);
-    $course = get_record('course', 'id', $chat->course);
-    $coursemodule = get_field('modules', 'id', 'name', 'data');
-    $cm = get_record('course_modules', 'course', $course->id, 'module', $coursemodule, 'instance', $chat->id);
+    $chat = $DB->get_record('chat', array('id' => $chat_id));
+    $course = $DB->get_record('course', array('id' => $chat->course));
+    $coursemodule = $DB->get_field('modules', 'id', array('name' => 'data'));
+    $cm = $DB->get_record('course_modules', array('course' => $course->id, 'module' => $coursemodule, 'instance' => $chat->id));
     $groupmode = groupmode($course, $cm);
 
     $fromtimeclause = ($fromtime) ? "AND timestamp >= {$fromtime}" : ''; 
     $totimeclause = ($totime) ? "AND timestamp <= {$totime}" : ''; 
     $tracks = array();
-    $messages = get_records_select('chat_messages', "chatid = '{$chat_id}' $fromtimeclause $totimeclause", "timestamp DESC");
+    $messages = $DB->get_records_select('chat_messages', "chatid = ':chatid' :from :to", array('chatid' => $chat_id, 'from' => $fromtimeclause, 'to' => $totimeclause), 'timestamp DESC');
     if ($messages){
         // splits discussions against groups
         $groupedMessages = array();
@@ -150,22 +151,29 @@ function chat_get_session_tracks($chat_id, $fromtime = 0, $totime = 0) {
 
 /**
 * part of search engine API
+* @uses $DB
 *
 */
 function chat_iterator() {
-    $chatrooms = get_records('chat');
+    global $DB;
+    
+    $chatrooms = $DB->get_records('chat');
     return $chatrooms;
 }
 
 /**
 * part of search engine API
+* @uses $DB
+* @param reference $chat
 *
 */
 function chat_get_content_for_index(&$chat) {
+    global $DB;
+    
     $documents = array();
-    $course = get_record('course', 'id', $chat->course);
-    $coursemodule = get_field('modules', 'id', 'name', 'chat');
-    $cm = get_record('course_modules', 'course', $chat->course, 'module', $coursemodule, 'instance', $chat->id);
+    $course = $DB->get_record('course', array('id' => $chat->course));
+    $coursemodule = $DB->get_field('modules', 'id', array('name' => 'chat'));
+    $cm = $DB->get_record('course_modules', array('course' => $chat->course, 'module' => $coursemodule, 'instance' => $chat->id));
     if ($cm){
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
@@ -174,7 +182,7 @@ function chat_get_content_for_index(&$chat) {
         if ($sessionTracks){
             foreach($sessionTracks as $aTrackId => $aTrack) {
                 foreach($aTrack->sessionusers as $aUserId){
-                    $user = get_record('user', 'id', $aUserId);
+                    $user = $DB->get_record('user', array('id' => $aUserId));
                     $aTrack->authors = ($user) ? fullname($user) : '' ;
                     $documents[] = new ChatTrackSearchDocument(get_object_vars($aTrack), $chat->id, $cm->id, $chat->course, $aTrack->groupid, $context->id);
                 }
@@ -191,15 +199,18 @@ function chat_get_content_for_index(&$chat) {
 * - the chat id
 * - the timestamp when the session starts
 * - the timestamp when the session ends
+* @uses $DB
 * @param id the multipart chat session id
 * @param itemtype the type of information (session is the only type)
 */
 function chat_single_document($id, $itemtype) {
+    global $DB;
+    
     list($chat_id, $sessionstart, $sessionend) = split('-', $id);
-    $chat = get_record('chat', 'id', $chat_id);
-    $course = get_record('course', 'id', $chat->course);
-    $coursemodule = get_field('modules', 'id', 'name', 'chat');
-    $cm = get_record('course_modules', 'course', $course->id, 'module', $coursemodule, 'instance', $chat->id);
+    $chat = $DB->get_record('chat', array('id' => $chat_id));
+    $course = $DB->get_record('course', array('id' => $chat->course));
+    $coursemodule = $DB->get_field('modules', 'id', array('name' => 'chat'));
+    $cm = $DB->get_record('course_modules', array('course' => $course->id, 'module' => $coursemodule, 'instance' => $chat->id));
     if ($cm){
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
@@ -241,27 +252,25 @@ function chat_db_names() {
 * - user is legitimate in the surrounding context
 * - user may be guest and guest access is allowed to the module
 * - the function may perform local checks within the module information logic
-* @param path the access path to the module script code
-* @param itemtype the information subclassing (usefull for complex modules, defaults to 'standard')
-* @param this_id the item id within the information class denoted by entry_type. In chats, this id 
+* @param string $path the access path to the module script code
+* @param string $itemtype the information subclassing (usefull for complex modules, defaults to 'standard')
+* @param int $this_id the item id within the information class denoted by entry_type. In chats, this id 
 * points out a session history which is a close sequence of messages.
-* @param user the user record denoting the user who searches
-* @param group_id the current group used by the user when searching
-* @uses CFG
+* @param int $user the user record denoting the user who searches
+* @param int $group_id the current group used by the user when searching
+* @uses $CFG, $DB
 * @return true if access is allowed, false elsewhere
 */
 function chat_check_text_access($path, $itemtype, $this_id, $user, $group_id, $context_id){
-    global $CFG;
+    global $CFG, $DB;
     
     include_once("{$CFG->dirroot}/{$path}/lib.php");
 
     list($chat_id, $sessionstart, $sessionend) = split('-', $this_id);
     // get the chat session and all related stuff
-    $chat = get_record('chat', 'id', $chat_id);
-    $context = get_record('context', 'id', $context_id);
-    $cm = get_record('course_modules', 'id', $context->instanceid);
-    // $cm = get_coursemodule_from_instance('chat', $chat->id, $chat->course);
-    // $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $chat = $DB->get_record('chat', array('id' => $chat_id));
+    $context = $DB->get_record('context', array('id' => $context_id));
+    $cm = $DB->get_record('course_modules', array('id' => $context->instanceid));
 
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)){
         if (!empty($CFG->search_access_debug)) echo "search reject : hidden chat ";
@@ -270,7 +279,7 @@ function chat_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     
     //group consistency check : checks the following situations about groups
     // trap if user is not same group and groups are separated
-    $course = get_record('course', 'id', $chat->course);
+    $course = $DB->get_record('course', array('id' => $chat->course));
     if ((groupmode($course, $cm) == SEPARATEGROUPS) && !ismember($group_id) && !has_capability('moodle/site:accessallgroups', $context)){ 
         if (!empty($CFG->search_access_debug)) echo "search reject : chat element is in separated group ";
         return false;
@@ -289,11 +298,18 @@ function chat_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
 
 /**
 * this call back is called when displaying the link for some last post processing
+* @uses $CFG
+* @param string $title
 *
 */
 function chat_link_post_processing($title){
-     setLocale(LC_TIME, substr(current_language(), 0, 2));
-     $title = preg_replace('/TT_(.*)_TT/e', "userdate(\\1)", $title);
-     return mb_convert_encoding($title, 'UTF-8', 'auto');
+    global $CFG;
+    setLocale(LC_TIME, substr(current_language(), 0, 2));
+    $title = preg_replace('/TT_(.*)_TT/e', "userdate(\\1)", $title);
+    
+    if ($CFG->block_search_utf8dir){
+        return mb_convert_encoding($title, 'UTF-8', 'auto');
+    }
+    return mb_convert_encoding($title, 'auto', 'UTF-8');
 }
 ?>

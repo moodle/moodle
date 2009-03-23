@@ -8,6 +8,7 @@
 * @author Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
 * @date 2008/03/31
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @version revised for Moodle 2.0
 *
 * this is a format handler for getting text out of a proprietary binary format 
 * so it can be indexed by Lucene search engine
@@ -15,7 +16,8 @@
 
 /**
 * MS Word extractor
-* @param object $resource 
+* @param object $resource
+* @param string $directfile if the resource is given as a direct file path, use it as reference to the file
 * @uses $CFG
 */
 function get_text_for_indexing_doc(&$resource, $directfile = ''){
@@ -24,7 +26,12 @@ function get_text_for_indexing_doc(&$resource, $directfile = ''){
     // SECURITY : do not allow non admin execute anything on system !!
     if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) return;
 
-    $moodleroot = (@$CFG->block_search_usemoodleroot) ? "{$CFG->dirroot}/" : '' ;
+    // adds moodle root switch if none was defined
+    if (!isset($CFG->block_search_usemoodleroot)){
+        set_config('block_search_usemoodleroot', 1);
+    }
+
+    $moodleroot = ($CFG->block_search_usemoodleroot) ? "{$CFG->dirroot}/" : '' ;
 
     // just call pdftotext over stdout and capture the output
     if (!empty($CFG->block_search_word_to_text_cmd)){

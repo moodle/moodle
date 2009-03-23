@@ -8,6 +8,7 @@
 * @author Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
 * @date 2008/03/31
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @version Moodle 2.0
 *
 * document handling for data activity module
 * This file contains the mapping between a database object and it's indexable counterpart,
@@ -20,8 +21,8 @@
 /**
 * includes and requires
 */
-require_once("$CFG->dirroot/search/documents/document.php");
-require_once("$CFG->dirroot/mod/data/lib.php");
+require_once($CFG->dirroot.'/search/documents/document.php');
+require_once($CFG->dirroot.'/mod/data/lib.php');
 
 /**
 * a class for representing searchable information (data records)
@@ -33,6 +34,8 @@ class DataSearchDocument extends SearchDocument {
     * constructor
     */
     public function __construct(&$record, $course_id, $context_id) {
+        global $DB;
+        
         // generic information; required
         $doc->docid     = $record['id'];
         $doc->documenttype  = SEARCH_TYPE_DATA;
@@ -43,7 +46,7 @@ class DataSearchDocument extends SearchDocument {
         $doc->date      = $record['timemodified'];
         //remove '(ip.ip.ip.ip)' from data record author field
         if ($record['userid']){
-            $user = get_record('user', 'id', $record['userid']);
+            $user = $DB->get_record('user', array('id' => $record['userid']));
         }
         $doc->author = (isset($user)) ? $user->firstname.' '.$user->lastname : '' ;
         $doc->contents  = $record['content'];
@@ -91,9 +94,9 @@ class DataCommentSearchDocument extends SearchDocument {
 
 /**
 * constructs a valid link to a data record content
-* @param database_id the database reference
-* @param record_id the record reference
-* @uses CFG
+* @param int $database_id the database reference
+* @param int $record_id the record reference
+* @uses $CFG
 * @return a valid url top access the information as a string
 */
 function data_make_link($database_id, $record_id) {
@@ -104,28 +107,28 @@ function data_make_link($database_id, $record_id) {
 
 /**
 * fetches all the records for a given database
-* @param database_id the database
-* @param typematch a comma separated list of types that should be considered for searching or *
-* @uses CFG
+* @param int $database_id the database
+* @param string $typematch a comma separated list of types that should be considered for searching or *
+* @uses $CFG, $DB
 * @return an array of objects representing the data records.
 */
 function data_get_records($database_id, $typematch = '*') {
-    global $CFG;
+    global $CFG, $DB;
     
-    $fieldset = get_records('data_fields', 'dataid', $database_id);
+    $fieldset = $DB->get_records('data_fields', array('dataid' => $database_id));
     $query = "
         SELECT
            c.*
         FROM 
-            {data_content} as c,
-            {data_records} as r
+            {data_content} c,
+            {data_records} r
         WHERE
             c.recordid = r.id AND
-            r.dataid = {$database_id} 
+            r.dataid = ? 
         ORDER BY 
             c.fieldid
     ";
-    $data = get_records_sql($query);
+    $data = $DB->get_records_sql($query, array($database_id));
     $records = array();
     if ($data){
         foreach($data as $aDatum){
@@ -143,12 +146,12 @@ function data_get_records($database_id, $typematch = '*') {
 
 /**
 * fetches all the comments for a given database
-* @param database_id the database
-* @uses CFG
+* @param int $database_id the database
+* @uses $CFG, $DB
 * @return an array of objects representing the data record comments.
 */
 function data_get_comments($database_id) {
-    global $CFG;
+    global $CFG, $DB;
 
     $query = "
        SELECT
@@ -161,56 +164,63 @@ function data_get_comments($database_id) {
           c.modified,
           r.dataid
        FROM
-          {data_comments} as c,
-          {data_records} as r 
+          {data_comments} c,
+          {data_records} r 
        WHERE
-          c.recordid = r.id
+          c.recordid = r.id AND
+          r.dataid = ?
     ";
-    $comments = get_records_sql($query);
+    $comments = $DB->get_records_sql($query, array($database_id));
     return $comments;
 }
 
 
 /**
 * part of search engine API
+* @uses $DB
 *
 */
 function data_iterator() {
-    $databases = get_records('data');
+    global $DB;
+    
+    $databases = $DB->get_records('data');
     return $databases;
 }
 
 /**
 * part of search engine API
-* @param database the database instance
+* @uses $DB
+* @param reference $database the database instance
 * @return an array of searchable documents
 */
 function data_get_content_for_index(&$database) {
+    global $DB;
 
     $documents = array();
     $recordTitles = array();
-    $coursemodule = get_field('modules', 'id', 'name', 'data');
-    $cm = get_record('course_modules', 'course', $database->course, 'module', $coursemodule, 'instance', $database->id);
+    $coursemodule = $DB->get_field('modules', 'id', array('name' => 'data'));
+    $cm = $DB->get_record('course_modules', array('course' => $database->course, 'module' => $coursemodule, 'instance' => $database->id));
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     // getting records for indexing
     $records_content = data_get_records($database->id, 'text');
     if ($records_content){
-        foreach(array_keys($records_content) as $aRecordId) {
+        foreach(array_keys($records_content) as $arecordid) {
     
             // extract title as first record in order
-            $first = $records_content[$aRecordId]['_first'];
-            unset($records_content[$aRecordId]['_first']);
+            $first = $records_content[$arecordid]['_first'];
+            unset($records_content[$arecordid]['_first']);
     
             // concatenates all other texts
-            foreach($records_content[$aRecordId] as $aField){
-                $content = @$content.' '.$aField;
+            $content = '';
+            foreach($records_content[$arecordid] as $afield){
+                $content = @$content.' '.$afield;
             }
             if (strlen($content) > 0) {
                 unset($recordMetaData);
-                $recordMetaData = get_record('data_records', 'id', $aRecordId);
+                $recordMetaData = $DB->get_record('data_records', array('id' => $arecordid));
                 $recordMetaData->title = $first;
-                $recordTitles[$aRecordId] = $first;
+                $recordTitles[$arecordid] = $first;
                 $recordMetaData->content = $content;
                 $documents[] = new DataSearchDocument(get_object_vars($recordMetaData), $database->course, $context->id);
             } 
@@ -230,22 +240,24 @@ function data_get_content_for_index(&$database) {
 
 /**
 * returns a single data search document based on a data entry id
-* @param id the id of the record
-* @param the type of the information
+* @uses $DB
+* @param in $id the id of the record
+* @param string $itemtype the type of the information
 * @return a single searchable document
 */
 function data_single_document($id, $itemtype) {
+    global $DB;
 
     if ($itemtype == 'record'){
         // get main record
-        $recordMetaData = get_record('data_records', 'id', $id);
+        $recordMetaData = $DB->get_record('data_records', array('id' => $id));
         // get context
-        $record_course = get_field('data', 'course', 'id', $recordMetaData->dataid);
-        $coursemodule = get_field('modules', 'id', 'name', 'data');
-        $cm = get_record('course_modules', 'course', $record_course, 'module', $coursemodule, 'instance', $recordMetaData->dataid);
+        $record_course = $DB->get_field('data', 'course', array('id' => $recordMetaData->dataid));
+        $coursemodule = $DB->get_field('modules', 'id', array('name' => 'data'));
+        $cm = $DB->get_record('course_modules', array('course' => $record_course, 'module' => $coursemodule, 'instance' => $recordMetaData->dataid));
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         // compute text
-        $recordData = get_records_select('data_content', "recordid = $id AND type = 'text'", 'recordid');
+        $recordData = $DB->get_records_select('data_content', "recordid = ? AND type = 'text'", array($id), 'recordid');
         $accumulator = '';
         if ($recordData){
             $first = $recordData[0];
@@ -263,15 +275,15 @@ function data_single_document($id, $itemtype) {
         $documents[] = new DataSearchDocument(get_object_vars($recordMetaData), $record_course, $context->id);
     } elseif($itemtype == 'comment') {
         // get main records
-        $comment = get_record('data_comments', 'id', $id);
-        $record = get_record('data_records', 'id', $comment->recordid);
+        $comment = $DB->get_record('data_comments', array('id' => $id));
+        $record = $DB->get_record('data_records', array('id' => $comment->recordid));
         // get context
-        $record_course = get_field('data', 'course', 'id', $record->dataid);
-        $coursemodule = get_field('modules', 'id', 'name', 'data');
-        $cm = get_record('course_modules', 'course', $record_course, 'module', $coursemodule, 'instance', $recordMetaData->dataid);
+        $record_course = $DB->get_field('data', 'course', array('id' => $record->dataid));
+        $coursemodule = $DB->get_field('modules', 'id', array('name' => 'data'));
+        $cm = $DB->get_record('course_modules', array('course' => $record_course, 'module' => $coursemodule, 'instance' => $recordMetaData->dataid));
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         // add extra fields
-        $comment->title = get_field('search_document', 'title', 'docid', $record->id, 'itemtype', 'record');
+        $comment->title = $DB->get_field('search_document', 'title', array('docid' => $record->id, 'itemtype' => 'record'));
         $comment->dataid = $record->dataid;
         $comment->groupid = $record->groupid;
         // make document
@@ -311,44 +323,42 @@ function data_db_names() {
 * - user is legitimate in the surrounding context
 * - user may be guest and guest access is allowed to the module
 * - the function may perform local checks within the module information logic
-* @param path the access path to the module script code
-* @param itemtype the information subclassing (usefull for complex modules, defaults to 'standard')
-* @param this_id the item id within the information class denoted by itemtype. In databases, this id 
+* @param string $path the access path to the module script code
+* @param string $itemtype the information subclassing (usefull for complex modules, defaults to 'standard')
+* @param int $this_id the item id within the information class denoted by itemtype. In databases, this id 
 * points out an indexed data record page.
-* @param user the user record denoting the user who searches
-* @param group_id the current group used by the user when searching
-* @uses CFG
+* @param object $user the user record denoting the user who searches
+* @param int $group_id the current group used by the user when searching
+* @uses $CFG, $DB
 * @return true if access is allowed, false elsewhere
 */
 function data_check_text_access($path, $itemtype, $this_id, $user, $group_id, $context_id){
-    global $CFG;
+    global $CFG, $DB;
     
     // get the database object and all related stuff
     if ($itemtype == 'record'){
-        $record = get_record('data_records', 'id', $this_id);
+        $record = $DB->get_record('data_records', array('id' => $this_id));
     }
     elseif($itemtype == 'comment'){
-        $comment = get_record('data_comments', 'id', $this_id);
-        $record = get_record('data_records', 'id', $comment->recordid);
+        $comment = $DB->get_record('data_comments', array('id' => $this_id));
+        $record = $DB->get_record('data_records', array('id' => $comment->recordid));
     }
     else{
       // we do not know what type of information is required
       return false;
     }
-    $data = get_record('data', 'id', $record->dataid);
-    $context = get_record('context', 'id', $context_id);
-    $cm = get_record('course_modules', 'id', $context->instanceid);
-    // $cm = get_coursemodule_from_instance('data', $data->id, $data->course);
-    // $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $data = $DB->get_record('data', array('id' => $record->dataid));
+    $context = $DB->get_record('context', array('id' => $context_id));
+    $cm = $DB->get_record('course_modules', array('id' => $context->instanceid));
 
-    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
+    if (!$cm->visible && !has_capability('moodle/course:viewhiddenactivities', $context)) {
         if (!empty($CFG->search_access_debug)) echo "search reject : hidden database ";
         return false;
     }
     
     //group consistency check : checks the following situations about groups
     // trap if user is not same group and groups are separated
-    $course = get_record('course', 'id', $data->course);
+    $course = $DB->get_record('course', 'id', $data->course);
     if ((groupmode($course, $cm) == SEPARATEGROUPS) && !ismember($group_id) && !has_capability('moodle/site:accessallgroups', $context)){ 
         if (!empty($CFG->search_access_debug)) echo "search reject : separated group owned resource ";
         return false;
@@ -366,7 +376,7 @@ function data_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     //approval check
     // trap if unapproved and has not approval capabilities
     // TODO : report a potential capability lack of : mod/data:approve
-    $approval = get_field('data_records', 'approved', 'id', $record->id);
+    $approval = $DB->get_field('data_records', 'approved', array('id' => $record->id));
     if (!$approval && !has_capability('mod/data:manageentries', $context)){
         if (!empty($CFG->search_access_debug)) echo "search reject : unapproved resource ";
         return false;
@@ -375,7 +385,7 @@ function data_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     //minimum records to view check
     // trap if too few records
     // TODO : report a potential capability lack of : mod/data:viewhiddenentries
-    $recordsAmount = count_records('data_records', 'dataid', $data->id);
+    $recordsAmount = $DB->count_records('data_records', array('dataid' => $data->id));
     if ($data->requiredentriestoview > $recordsAmount && !has_capability('mod/data:manageentries', $context)) {
         if (!empty($CFG->search_access_debug)) echo "search reject : not enough records to view ";
         return false;
@@ -404,7 +414,12 @@ function data_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
 * @param string $title
 */
 function data_link_post_processing($title){
-    return mb_convert_encoding($title, 'UTF-8', 'auto');
+    global $CFG;
+    
+    if ($CFG->block_search_utf8dir){
+        return mb_convert_encoding($title, 'UTF-8', 'auto');
+    }
+    return mb_convert_encoding($title, 'auto', 'UTF-8');
 }
 
 ?>

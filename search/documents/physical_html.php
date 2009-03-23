@@ -8,6 +8,7 @@
 * @author Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
 * @date 2008/03/31
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @version revised for Moodle 2.0
 *
 * this is a format handler for getting text out of a standard html format 
 * so it can be indexed by Lucene search engine

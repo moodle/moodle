@@ -17,7 +17,7 @@
 *
 */
 abstract class SearchDocument extends Zend_Search_Lucene_Document {
-    public function __construct(&$doc, &$data, $course_id, $group_id, $user_id, $path) {
+    public function __construct(&$doc, &$data, $course_id, $group_id, $user_id, $path, $additional_keyset = null) {
          //document identification and indexing
          $this->addField(Zend_Search_Lucene_Field::Keyword('docid', $doc->docid));
          //document type : the name of the Moodle element that manages it
@@ -59,6 +59,16 @@ abstract class SearchDocument extends Zend_Search_Lucene_Document {
          // of multiple capabilities in their code. This possibility should be left open here.
          $this->addField(Zend_Search_Lucene_Field::UnIndexed('capabilities', $caps));
          */
+         
+         /*
+         // Additional key set allows a module to ask for extensible criteria based search
+         // depending on the module internal needs.
+         */
+         if (!empty($additional_keyset)){
+            foreach($additional_keyset as $keyname => $keyvalue){
+                $this->addField(Zend_Search_Lucene_Field::Keyword($keyname, $keyvalue)); 
+            }            
+         }
     }
 }
 

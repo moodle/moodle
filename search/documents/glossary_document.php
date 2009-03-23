@@ -8,6 +8,7 @@
 * @author Michael Campanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
 * @date 2008/03/31
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @version Moodle 2.0
 *
 * document handling for glossary activity module
 * This file contains a mapping between a glossary entry and it's indexable counterpart,
@@ -20,7 +21,7 @@
 /**
 * includes and requires
 */
-require_once("$CFG->dirroot/search/documents/document.php");
+require_once($CFG->dirroot.'/search/documents/document.php');
 
 /**
 * a class for representing searchable information
@@ -33,6 +34,8 @@ class GlossarySearchDocument extends SearchDocument {
     *
     */
     public function __construct(&$entry, $course_id, $context_id) {
+        global $DB; 
+        
         // generic information; required
         $doc->docid     = $entry['id'];
         $doc->documenttype  = SEARCH_TYPE_GLOSSARY;
@@ -43,7 +46,7 @@ class GlossarySearchDocument extends SearchDocument {
         $doc->date      = $entry['timecreated'];
 
         if ($entry['userid'])
-            $user = get_record('user', 'id', $entry['userid']);
+            $user = $DB->get_record('user', array('id' => $entry['userid']));
         $doc->author    = ($user ) ? $user->firstname.' '.$user->lastname : '' ;
         $doc->contents  = strip_tags($entry['definition']);
         $doc->url       = glossary_make_link($entry['id']);
@@ -64,8 +67,11 @@ class GlossaryCommentSearchDocument extends SearchDocument {
     
     /**
     * document constructor
+    * @uses $DB
     */
     public function __construct(&$entry, $glossary_id, $course_id, $context_id) {
+        global $DB;
+        
         // generic information; required
         $doc->docid     = $entry['id'];
         $doc->documenttype  = SEARCH_TYPE_GLOSSARY;
@@ -76,7 +82,7 @@ class GlossaryCommentSearchDocument extends SearchDocument {
         $doc->date      = $entry['timemodified'];
 
         if ($entry['userid'])
-            $user = get_record('user', 'id', $entry['userid']);
+            $user = $DB->get_record('user', array('id' => $entry['userid']));
         $doc->author    = ($user ) ? $user->firstname.' '.$user->lastname : '' ;
         $doc->contents  = strip_tags($entry['entrycomment']);
         $doc->url       = glossary_make_link($entry['entryid']);
@@ -85,13 +91,14 @@ class GlossaryCommentSearchDocument extends SearchDocument {
         $data->glossary = $glossary_id;
         
         // construct the parent class
-        parent::__construct($doc, $data, $course_id, -1, $entry['userid'], PATH_FOR_SEARCH_TYPE_GLOSSARY);
+        parent::__construct($doc, $data, $course_id, -1, $entry['userid'], 'mod/'.SEARCH_TYPE_GLOSSARY);
     } 
 }
   
 /**
 * constructs valid access links to information
-* @param entry_id the id of the glossary entry
+* @uses $CFG
+* @param int $entry_id the id of the glossary entry
 * @return a full featured link element as a string
 */
 function glossary_make_link($entry_id) {
@@ -104,7 +111,7 @@ function glossary_make_link($entry_id) {
     // Suggestion : bounce on popup within the glossarie's showentry page
     // preserve glossary pop-up, be careful where you place your ' and "s
     //this function is meant to return a url that is placed between href='[url here]'
-    return "$CFG->wwwroot/mod/glossary/showentry.php?eid=$entry_id' onclick='return openpopup(\"/mod/glossary/showentry.php?eid=$entry_id\", \"entry\", DEFAULT_POPUP_SETTINGS, 0);";
+    return "$CFG->wwwroot/mod/glossary/showentry.php?eid=$entry_id' onclick='return openpopup(\"/mod/glossary/showentry.php?eid={$entry_id}\", \"entry\", DEFAULT_POPUP_SETTINGS, 0);";
 } 
 
 /**
@@ -112,27 +119,30 @@ function glossary_make_link($entry_id) {
 *
 */
 function glossary_iterator() {
-     $glossaries = get_records('glossary');
-     return $glossaries;
+    global $DB;
+    
+    $glossaries = $DB->get_records('glossary');
+    return $glossaries;
 }
 
 /**
 * part of search engine API
-* @glossary a glossary instance
+* @uses $DB
+* @param object $glossary a glossary instance
 * @return an array of searchable documents
 */
 function glossary_get_content_for_index(&$glossary) {
     global $DB;
 
     // get context
-    $coursemodule = get_field('modules', 'id', 'name', 'glossary');
-    $cm = get_record('course_modules', 'course', $glossary->course, 'module', $coursemodule, 'instance', $glossary->id);
+    $coursemodule = $DB->get_field('modules', 'id', array('name' => 'glossary'));
+    $cm = $DB->get_record('course_modules', array('course' => $glossary->course, 'module' => $coursemodule, 'instance' => $glossary->id));
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $documents = array();
     $entryIds = array();
     // index entries
-    $entries = get_records('glossary_entries', 'glossaryid', $glossary->id);
+    $entries = $DB->get_records('glossary_entries', array('glossaryid' => $glossary->id));
     if ($entries){
         foreach($entries as $entry) {
             $concepts[$entry->id] = $entry->concept;
@@ -160,21 +170,24 @@ function glossary_get_content_for_index(&$glossary) {
 
 /**
 * part of search engine API
-* @param id the glossary entry identifier
-* @itemtype the type of information
+* @uses $DB
+* @param int $id the glossary entry identifier
+* @param string $itemtype the type of information
 * @return a single search document based on a glossary entry
 */
 function glossary_single_document($id, $itemtype) {
+    global $DB;
+    
     if ($itemtype == 'standard'){
-        $entry = get_record('glossary_entries', 'id', $id);
+        $entry = $DB->get_record('glossary_entries', array('id' => $id));
     }
     elseif ($itemtype == 'comment'){
-        $comment = get_record('glossary_comments', 'id', $id);
-        $entry = get_record('glossary_entries', 'id', $comment->entryid);
+        $comment = $DB->get_record('glossary_comments', array('id' => $id));
+        $entry = $DB->get_record('glossary_entries', array('id' => $comment->entryid));
     }
-    $glossary_course = get_field('glossary', 'course', 'id', $entry->glossaryid);
-    $coursemodule = get_field('modules', 'id', 'name', 'glossary');
-    $cm = get_record('course_modules', 'course', $glossary_course, 'module', $coursemodule, 'instance', $entry->glossaryid);
+    $glossary_course = $DB->get_field('glossary', 'course', array('id' => $entry->glossaryid));
+    $coursemodule = $DB->get_field('modules', 'id', array('name' => 'glossary'));
+    $cm = $DB->get_record('course_modules', array('course' => $glossary_course, 'module' => $coursemodule, 'instance' => $entry->glossaryid));
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     if ($itemtype == 'standard'){
         return new GlossarySearchDocument(get_object_vars($entry), $glossary_course, $context->id);
@@ -214,6 +227,7 @@ function glossary_db_names() {
 * - user is legitimate in the surrounding context
 * - user may be guest and guest access is allowed to the module
 * - the function may perform local checks within the module information logic
+* @uses $CFG, $DB
 * @param string $path the access path to the module script code
 * @param string $itemtype the information subclassing (usefull for complex modules, defaults to 'standard')
 * @param int $this_id the item id within the information class denoted by itemtype. In glossaries, this id 
@@ -224,15 +238,13 @@ function glossary_db_names() {
 * @return true if access is allowed, false elsewhere
 */
 function glossary_check_text_access($path, $itemtype, $this_id, $user, $group_id, $context_id){
-    global $CFG;
+    global $CFG, $DB;
     
     // get the glossary object and all related stuff
-    $entry = get_record('glossary_entries', 'id', $this_id);
-    $glossary = get_record('glossary', 'id', $entry->glossaryid);
-    $context = get_record('context', 'id', $context_id);
-    $cm = get_record('course_modules', 'id', $context->instanceid);
-    // $cm = get_coursemodule_from_instance('glossary', $glossary->id, $glossary->course);
-    // $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $entry = $DB->get_record('glossary_entries', array('id' => $this_id));
+    $glossary = $DB->get_record('glossary', array('id' => $entry->glossaryid));
+    $context = $DB->get_record('context', array('id' => $context_id));
+    $cm = $DB->get_record('course_modules', array('id' => $context->instanceid));
 
     if (!$cm->visible && !has_capability('moodle/course:viewhiddenactivities', $context)) {
         return false;
@@ -251,6 +263,11 @@ function glossary_check_text_access($path, $itemtype, $this_id, $user, $group_id
 * @param string $title
 */
 function glossary_link_post_processing($title){
+    global $CFG;
+    
+    if ($CFG->block_search_utf8dir){
+        return mb_convert_encoding($title, 'UTF-8', 'auto');
+    }
     return mb_convert_encoding($title, 'auto', 'UTF-8');
 }
 

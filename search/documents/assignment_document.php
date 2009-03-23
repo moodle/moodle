@@ -8,6 +8,7 @@
 * @author Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
 * @date 2008/03/31
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @version Moodle 2.0
 *
 * document handling for assignment activity module
 *
@@ -16,8 +17,8 @@
 /**
 * includes and requires
 */
-require_once("$CFG->dirroot/search/documents/document.php");
-require_once("$CFG->dirroot/mod/assignment/lib.php");
+require_once($CFG->dirroot.'/search/documents/document.php');
+require_once($CFG->dirroot.'/mod/assignment/lib.php');
 
 /**
 * a class for representing searchable information
@@ -71,24 +72,30 @@ function assignment_make_link($cm_id, $itemtype, $owner) {
 
 /**
 * part of search engine API
+* @uses $DB
 *
 */
 function assignment_iterator() {
-    $assignments = get_records('assignment');
-    return $assignments;
+    global $DB;
+    
+    if ($assignments = $DB->get_records('assignment'))
+        return $assignments;
+    else
+        return array();
 }
 
 /**
 * part of search engine API
+* @uses $CFG, $DB
 *
 */
 function assignment_get_content_for_index(&$assignment) {
-    global $CFG;
+    global $CFG, $DB;
     
     $documents = array();
-    $course = get_record('course', 'id', $assignment->course);
-    $coursemodule = get_field('modules', 'id', 'name', 'assignment');
-    $cm = get_record('course_modules', 'course', $assignment->course, 'module', $coursemodule, 'instance', $assignment->id);
+    $course = $DB->get_record('course', array('id' => $assignment->course));
+    $coursemodule = $DB->get_field('modules', 'id', array('name' => 'assignment'));
+    $cm = $DB->get_record('course_modules', array('course' => $assignment->course, 'module' => $coursemodule, 'instance' => $assignment->id));
     if ($cm){
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -99,7 +106,7 @@ function assignment_get_content_for_index(&$assignment) {
         $submissions = assignment_get_all_submissions($assignment);
         if ($submissions){
             foreach($submissions as $submission){
-                $owner = get_record('user', 'id', $submission->userid);
+                $owner = $DB->get_record('user', array('id' => $submission->userid));
                 $submission->authors = fullname($owner);
                 $submission->assignmenttype = $assignment->assignmenttype;
                 $submission->date = $submission->timemodified;
@@ -154,16 +161,17 @@ function assignment_get_content_for_index(&$assignment) {
 
 /**
 * get text from a physical file in an assignment submission 
+* @uses $CFG, $DB
 * @param object $submission a submission for which to fetch some representative text
 * @param object $assignment the relevant assignment as a context
 * @param object $cm the corresponding coursemodule
 * @param string $path a file from which to fetch some representative text
 * @param int $contextid the moodle context if needed
-* @param documents the array of documents, by ref, where to add the new document.
+* @param array $documents the array of documents, by ref, where to add the new document.
 * @return a search document when unique or false.
 */
 function assignment_get_physical_file(&$submission, &$assignment, &$cm, $path, $context_id, &$documents = null){
-    global $CFG;
+    global $CFG, $DB;
     
     $fileparts = pathinfo($path);
     // cannot index unknown or masked types
@@ -185,7 +193,7 @@ function assignment_get_physical_file(&$submission, &$assignment, &$cm, $path, $
         $submission->description = $function_name(null, $path);
         
         // get authors
-        $user = get_record('user', 'id', $submission->userid);
+        $user = $DB->get_record('user', array('id' => $submission->userid));
         $submission->authors = fullname($user);
         
         // we need a real id on file
@@ -209,24 +217,27 @@ function assignment_get_physical_file(&$submission, &$assignment, &$cm, $path, $
 
 /**
 * returns a single data search document based on an assignment
+* @uses $DB
 * @param string $id the id of the searchable item
 * @param string $itemtype the type of information
 */
 function assignment_single_document($id, $itemtype) {
+    global $DB;
+
     if ($itemtype == 'requirement'){
-        if (!$assignment = get_record('assignment', 'id', $id)){
+        if (!$assignment = $DB->get_record('assignment', 'id', $id)){
             return null;
         }
     } elseif ($itemtype == 'submission') {
-        if ($submission = get_record('assignment_submissions', 'id', $id)){
-            $assignment = get_record('assignment', 'id', $submission->assignment);
+        if ($submission = $DB->get_record('assignment_submissions', array('id' => $id))){
+            $assignment = $DB->get_record('assignment', array('id' => $submission->assignment));
         } else {
             return null;
         }
     }
-    $course = get_record('course', 'id', $assignment->course);
-    $coursemodule = get_field('modules', 'id', 'name', 'assignment');
-    $cm = get_record('course_modules', 'course', $course->id, 'module', $coursemodule, 'instance', $assignment->id);
+    $course = $DB->get_record('course', array('id' => $assignment->course));
+    $coursemodule = $DB->get_field('modules', 'id', array('name' => 'assignment'));
+    $cm = $DB->get_record('course_modules', array('course' => $course->id, 'module' => $coursemodule, 'instance' => $assignment->id));
     if ($cm){
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
@@ -273,29 +284,29 @@ function assignment_db_names() {
 * - user is legitimate in the surrounding context
 * - user may be guest and guest access is allowed to the module
 * - the function may perform local checks within the module information logic
-* @param path the access path to the module script code
-* @param itemtype the information subclassing (usefull for complex modules, defaults to 'standard')
-* @param this_id the item id within the information class denoted by entry_type. In chats, this id 
+* @uses $CFG, $USER, $DB
+* @param string $path the access path to the module script code
+* @param string $itemtype the information subclassing (usefull for complex modules, defaults to 'standard')
+* @param int $this_id the item id within the information class denoted by entry_type. In chats, this id 
 * points out a session history which is a close sequence of messages.
-* @param user the user record denoting the user who searches
-* @param group_id the current group used by the user when searching
-* @uses CFG
+* @param int $user the user record denoting the user who searches
+* @param int $group_id the current group used by the user when searching
 * @return true if access is allowed, false elsewhere
 */
 function assignment_check_text_access($path, $itemtype, $this_id, $user, $group_id, $context_id){
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
     
     include_once("{$CFG->dirroot}/{$path}/lib.php");
 
     // get the chat session and all related stuff
     if ($itemtype == 'description'){
-        $assignment = get_record('assignment', 'id', $this_id);
+        $assignment = $DB->get_record('assignment', array('id' => $this_id));
     } elseif ($itemtype == 'submitted'){
-        $submission = get_record('assignment_submissions', 'id', $this_id);
-        $assignment = get_record('assignment', 'id', $submission->assignment);
+        $submission = $DB->get_record('assignment_submissions', array('id' => $this_id));
+        $assignment = $DB->get_record('assignment', array('id' => $submission->assignment));
     }
-    $context = get_record('context', 'id', $context_id);
-    $cm = get_record('course_modules', 'id', $context->instanceid);
+    $context = $DB->get_record('context', array('id' => $context_id));
+    $cm = $DB->get_record('course_modules', array('id' => $context->instanceid));
 
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)){
         if (!empty($CFG->search_access_debug)) echo "search reject : hidden assignment ";
@@ -342,6 +353,7 @@ function assignment_check_text_access($path, $itemtype, $this_id, $user, $group_
 *
 */
 function assignment_link_post_processing($title){
+    global $CFG;
 
      if (!function_exists('search_assignment_getstring')){
          function search_assignment_getstring($matches){
@@ -349,7 +361,11 @@ function assignment_link_post_processing($title){
          }
      }
 
-     $title = preg_replace_callback('/^(description|submitted)/', 'search_assignment_getstring', $title);
-     return mb_convert_encoding($title, 'auto', 'UTF-8');
+    $title = preg_replace_callback('/^(description|submitted)/', 'search_assignment_getstring', $title);
+    
+    if ($CFG->block_search_utf8dir){
+        return mb_convert_encoding($title, 'UTF-8', 'auto');
+    }
+    return mb_convert_encoding($title, 'auto', 'UTF-8');
 }
 ?>
