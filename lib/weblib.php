@@ -2074,7 +2074,7 @@ function html_to_text($html) {
     $result = $h2t->get_text();
 
     // html2text does not fix HTML entities so handle those here.
-    $result = html_entity_decode($result, ENT_NOQUOTES, 'UTF-8');
+    $result = trim(html_entity_decode($result, ENT_NOQUOTES, 'UTF-8'));
 
     return $result;
 }
