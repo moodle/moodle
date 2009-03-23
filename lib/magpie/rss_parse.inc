@@ -592,8 +592,8 @@ if (!function_exists('array_change_key_case')) {
 
 
 	function array_change_key_case($array,$case=CASE_LOWER) {
-       if ($case=CASE_LOWER) $cmd=strtolower;
-       elseif ($case=CASE_UPPER) $cmd=strtoupper;
+       if ($case == CASE_LOWER) $cmd=strtolower;
+       elseif ($case == CASE_UPPER) $cmd=strtoupper;
        foreach($array as $key=>$value) {
                $output[$cmd($key)]=$value;
        }
