@@ -1894,6 +1894,12 @@ class grade_item extends grade_object {
         }
     }
 
+    /**
+     * Returns a string representing the range of grademin - grademax for this grade item.
+     * @param int $rangesdisplaytype
+     * @param int $rangesdecimalpoints
+     * @return string
+     */
     function get_formatted_range($rangesdisplaytype=null, $rangesdecimalpoints=null) {
 
         global $USER;
