@@ -56,7 +56,6 @@
  * Advanced use
  * - load_all_capabilities()
  * - reload_all_capabilities()
- * - $ACCESS global
  * - has_capability_in_accessdata()
  * - is_siteadmin()
  * - get_user_access_sitewide()
@@ -74,8 +73,8 @@
  * Access control data is held in the "accessdata" array
  * which - for the logged-in user, will be in $USER->access
  *
- * For other users can be generated and passed around (but see
- * the $ACCESS global).
+ * For other users can be generated and passed around (but may also be cached
+ * against userid in $ACCESSLIB_PRIVATE->accessdatabyuser.
  *
  * $accessdata is a multidimensional array, holding
  * role assignments (RAs), role-capabilities-perm sets
@@ -111,7 +110,7 @@
  *
  * For the logged-in user, accessdata is long-lived.
  *
- * On each pageload we load $DIRTYPATHS which lists
+ * On each pageload we load $ACCESSLIB_PRIVATE->dirtycontexts which lists
  * context paths affected by changes. Any check at-or-below
  * a dirty context will trigger a transparent reload of accessdata.
  *
@@ -162,12 +161,53 @@ define('ROLENAME_BOTH', 2);    // Both, like this:  Role alias (Original)
 define('ROLENAME_ORIGINALANDSHORT', 3); // the name as defined in the role definition and the shortname in brackets
 define('ROLENAME_ALIAS_RAW', 4);   // the name as defined by a role alias, in raw form suitable for editing
 
-$context_cache    = array();    // Cache of all used context objects for performance (by level and instance)
-$context_cache_id = array();    // Index to above cache by id
+// Although this looks like a global variable, it isn't really. It is just a private
+// implementation detail to accesslib that MUST NOT be used elsewhere. It is used to
+// cache various bits of data between function calls for performance reasons. Sadly,
+// a PHP global variale is the only way to impleemnt this, withough rewriting everything
+// as methods of a class, instead of functions.
+$ACCESSLIB_PRIVATE = new stdClass;
+$ACCESSLIB_PRIVATE->contexts = array(); // Cache of context objects by level and instance
+$ACCESSLIB_PRIVATE->contextsbyid = array(); // Cache of context objects by id
+$ACCESSLIB_PRIVATE->systemcontext = null; // Used in get_system_context
+$ACCESSLIB_PRIVATE->dirtycontexts = null; // Dirty contexts cache
+$ACCESSLIB_PRIVATE->accessdatabyuser = array(); // Holds the $accessdata structure for users other than $USER
+$ACCESSLIB_PRIVATE->roledefinitions = array(); // role definitions cache - helps a lot with mem usage in cron
+$ACCESSLIB_PRIVATE->croncache = array(); // Used in get_role_access
+$ACCESSLIB_PRIVATE->preloadedcourses = array(); // Used in preload_course_contexts.
+$ACCESSLIB_PRIVATE->capabilitynames = null; // Used in is_valid_capability (only in developer debug mode)
 
-$DIRTYCONTEXTS = null; // dirty contexts cache
-$ACCESS = array(); // cache of caps for cron user switching and has_capability for other users (==not $USER)
-$RDEFS = array(); // role definitions cache - helps a lot with mem usage in cron
+/**
+ * This method should ONLY BE USED BY UNIT TESTS. It clears all of
+ * accesslib's private caches. You need to do this before setting up test data,
+ * and also at the end fo the tests.
+ */
+function accesslib_clear_all_caches_for_unit_testing() {
+    global $UNITTEST, $USER, $ACCESSLIB_PRIVATE;
+    if (empty($UNITTEST->running)) {
+        throw new coding_exception('You must not call clear_all_caches outside of unit tests.');
+    }
+    $ACCESSLIB_PRIVATE->contexts = array();
+    $ACCESSLIB_PRIVATE->contextsbyid = array();
+    $ACCESSLIB_PRIVATE->systemcontext = null;
+    $ACCESSLIB_PRIVATE->dirtycontexts = null;
+    $ACCESSLIB_PRIVATE->accessdatabyuser = array();
+    $ACCESSLIB_PRIVATE->roledefinitions = array();
+    $ACCESSLIB_PRIVATE->croncache = array();
+    $ACCESSLIB_PRIVATE->preloadedcourses = array();
+    $ACCESSLIB_PRIVATE->capabilitynames = null;
+
+    unset($USER->access);
+}
+
+/**
+ * Private function. Add a context object to accesslib's caches.
+ */
+function cache_context($context) {
+    global $ACCESSLIB_PRIVATE;
+    $ACCESSLIB_PRIVATE->contexts[$context->contextlevel][$context->instanceid] = $context;
+    $ACCESSLIB_PRIVATE->contextsbyid[$context->id] = $context;
+}
 
 function get_role_context_caps($roleid, $context) {
     global $DB;
@@ -243,19 +283,19 @@ function get_role_access($roleid, $accessdata=NULL) {
 
     // we need extra caching in CLI scripts and cron
     if (CLI_SCRIPT) {
-        static $cron_cache = array();
+        global $ACCESSLIB_PRIVATE;
 
-        if (!isset($cron_cache[$roleid])) {
-            $cron_cache[$roleid] = array();
+        if (!isset($ACCESSLIB_PRIVATE->croncache[$roleid])) {
+            $ACCESSLIB_PRIVATE->croncache[$roleid] = array();
             if ($rs = $DB->get_recordset_sql($sql, $params)) {
                 foreach ($rs as $rd) {
-                    $cron_cache[$roleid][] = $rd;
+                    $ACCESSLIB_PRIVATE->croncache[$roleid][] = $rd;
                 }
                 $rs->close();
             }
         }
 
-        foreach ($cron_cache[$roleid] as $rd) {
+        foreach ($ACCESSLIB_PRIVATE->croncache[$roleid] as $rd) {
             $k = "{$rd->path}:{$roleid}";
             $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
         }
@@ -351,7 +391,7 @@ function get_guest_role() {
  * @return bool
  */
 function has_capability($capability, $context, $userid=NULL, $doanything=true) {
-    global $USER, $ACCESS, $CFG, $DIRTYCONTEXTS, $DB, $SCRIPT;
+    global $USER, $CFG, $DB, $SCRIPT, $ACCESSLIB_PRIVATE;
 
     if (empty($CFG->rolesactive)) {
         if ($SCRIPT === "/$CFG->admin/index.php" or $SCRIPT === "/$CFG->admin/cliupgrade.php") {
@@ -397,44 +437,44 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
     if (CLI_SCRIPT && !isset($USER->access)) {
         // In cron, some modules setup a 'fake' $USER,
         // ensure we load the appropriate accessdata.
-        if (isset($ACCESS[$userid])) {
-            $DIRTYCONTEXTS = NULL; //load fresh dirty contexts
+        if (isset($ACCESSLIB_PRIVATE->accessdatabyuser[$userid])) {
+            $ACCESSLIB_PRIVATE->dirtycontexts = NULL; //load fresh dirty contexts
         } else {
             load_user_accessdata($userid);
-            $DIRTYCONTEXTS = array();
+            $ACCESSLIB_PRIVATE->dirtycontexts = array();
         }
-        $USER->access = $ACCESS[$userid];
+        $USER->access = $ACCESSLIB_PRIVATE->accessdatabyuser[$userid];
 
     } else if ($USER->id == $userid && !isset($USER->access)) {
         // caps not loaded yet - better to load them to keep BC with 1.8
         // not-logged-in user or $USER object set up manually first time here
         load_all_capabilities();
-        $ACCESS = array(); // reset the cache for other users too, the dirty contexts are empty now
-        $RDEFS = array();
+        $ACCESSLIB_PRIVATE->accessdatabyuser = array(); // reset the cache for other users too, the dirty contexts are empty now
+        $ACCESSLIB_PRIVATE->roledefinitions = array();
     }
 
     // Load dirty contexts list if needed
-    if (!isset($DIRTYCONTEXTS)) {
+    if (!isset($ACCESSLIB_PRIVATE->dirtycontexts)) {
         if (isset($USER->access['time'])) {
-            $DIRTYCONTEXTS = get_dirty_contexts($USER->access['time']);
+            $ACCESSLIB_PRIVATE->dirtycontexts = get_dirty_contexts($USER->access['time']);
         }
         else {
-            $DIRTYCONTEXTS = array();
+            $ACCESSLIB_PRIVATE->dirtycontexts = array();
         }
     }
 
     // Careful check for staleness...
-    if (count($DIRTYCONTEXTS) !== 0 and is_contextpath_dirty($contexts, $DIRTYCONTEXTS)) {
+    if (count($ACCESSLIB_PRIVATE->dirtycontexts) !== 0 and is_contextpath_dirty($contexts, $ACCESSLIB_PRIVATE->dirtycontexts)) {
         // reload all capabilities - preserving loginas, roleswitches, etc
         // and then cleanup any marks of dirtyness... at least from our short
         // term memory! :-)
-        $ACCESS = array();
-        $RDEFS = array();
+        $ACCESSLIB_PRIVATE->accessdatabyuser = array();
+        $ACCESSLIB_PRIVATE->roledefinitions = array();
 
         if (CLI_SCRIPT) {
             load_user_accessdata($userid);
-            $USER->access = $ACCESS[$userid];
-            $DIRTYCONTEXTS = array();
+            $USER->access = $ACCESSLIB_PRIVATE->accessdatabyuser[$userid];
+            $ACCESSLIB_PRIVATE->dirtycontexts = array();
 
         } else {
             reload_all_capabilities();
@@ -468,21 +508,21 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
         return has_capability_in_accessdata($capability, $context, $USER->access, $doanything);
     }
 
-    if (!isset($ACCESS[$userid])) {
+    if (!isset($ACCESSLIB_PRIVATE->accessdatabyuser[$userid])) {
         load_user_accessdata($userid);
     }
     if ($context->contextlevel <= CONTEXT_COURSE) {
         // Course and above are always preloaded
-        return has_capability_in_accessdata($capability, $context, $ACCESS[$userid], $doanything);
+        return has_capability_in_accessdata($capability, $context, $ACCESSLIB_PRIVATE->accessdatabyuser[$userid], $doanything);
     }
     // Load accessdata for below-the-course contexts as needed
-    if (!path_inaccessdata($context->path, $ACCESS[$userid])) {
+    if (!path_inaccessdata($context->path, $ACCESSLIB_PRIVATE->accessdatabyuser[$userid])) {
         // error_log("loading access for context {$context->path} for $capability at {$context->contextlevel} {$context->id}");
         // $bt = debug_backtrace();
         // error_log("bt {$bt[0]['file']} {$bt[0]['line']}");
-        load_subcontext($userid, $context, $ACCESS[$userid]);
+        load_subcontext($userid, $context, $ACCESSLIB_PRIVATE->accessdatabyuser[$userid]);
     }
-    return has_capability_in_accessdata($capability, $context, $ACCESS[$userid], $doanything);
+    return has_capability_in_accessdata($capability, $context, $ACCESSLIB_PRIVATE->accessdatabyuser[$userid], $doanything);
 }
 
 /**
@@ -1539,7 +1579,7 @@ function get_role_access_bycontext($roleid, $context, $accessdata=NULL) {
 
 /**
  * Load accessdata for a user
- * into the $ACCESS global
+ * into the $ACCESSLIB_PRIVATE->accessdatabyuser global
  *
  * Used by has_capability() - but feel free
  * to call it if you are about to run a BIG
@@ -1547,7 +1587,7 @@ function get_role_access_bycontext($roleid, $context, $accessdata=NULL) {
  *
  */
 function load_user_accessdata($userid) {
-    global $ACCESS,$CFG;
+    global $CFG, $ACCESSLIB_PRIVATE;
 
     $base = '/'.SYSCONTEXTID;
 
@@ -1581,30 +1621,30 @@ function load_user_accessdata($userid) {
     // for dirty timestamps in cron
     $accessdata['time'] = time();
 
-    $ACCESS[$userid] = $accessdata;
-    compact_rdefs($ACCESS[$userid]['rdef']);
+    $ACCESSLIB_PRIVATE->accessdatabyuser[$userid] = $accessdata;
+    compact_rdefs($ACCESSLIB_PRIVATE->accessdatabyuser[$userid]['rdef']);
 
-    return true;
+    return $ACCESSLIB_PRIVATE->accessdatabyuser[$userid];
 }
 
 /**
- * Use shared copy of role definistions stored in $RDEFS;
+ * Use shared copy of role definistions stored in $ACCESSLIB_PRIVATE->roledefinitions;
  * @param array $rdefs array of role definitions in contexts
  */
 function compact_rdefs(&$rdefs) {
-    global $RDEFS;
+    global $ACCESSLIB_PRIVATE;
 
     /*
      * This is a basic sharing only, we could also
      * use md5 sums of values. The main purpose is to
-     * reduce mem in cron jobs - many users in $ACCESS array.
+     * reduce mem in cron jobs - many users in $ACCESSLIB_PRIVATE->accessdatabyuser array.
      */
 
     foreach ($rdefs as $key => $value) {
-        if (!array_key_exists($key, $RDEFS)) {
-            $RDEFS[$key] = $rdefs[$key];
+        if (!array_key_exists($key, $ACCESSLIB_PRIVATE->roledefinitions)) {
+            $ACCESSLIB_PRIVATE->roledefinitions[$key] = $rdefs[$key];
         }
-        $rdefs[$key] =& $RDEFS[$key];
+        $rdefs[$key] =& $ACCESSLIB_PRIVATE->roledefinitions[$key];
     }
 }
 
@@ -1616,7 +1656,7 @@ function compact_rdefs(&$rdefs) {
  *
  */
 function load_all_capabilities() {
-    global $USER, $CFG, $DIRTYCONTEXTS;
+    global $USER, $CFG, $ACCESSLIB_PRIVATE;
 
     // roles not installed yet - we are in the middle of installation
     if (empty($CFG->rolesactive)) {
@@ -1674,7 +1714,7 @@ function load_all_capabilities() {
 
     // Timestamp to read dirty context timestamps later
     $USER->access['time'] = time();
-    $DIRTYCONTEXTS = array();
+    $ACCESSLIB_PRIVATE->dirtycontexts = array();
 
     // Clear to force a refresh
     unset($USER->mycourses);
@@ -2098,19 +2138,17 @@ function create_context($contextlevel, $instanceid) {
  * @return mixed system context or null
  */
 function get_system_context($cache=true) {
-    global $DB;
-
-    static $cached = null;
+    global $DB, $ACCESSLIB_PRIVATE;
     if ($cache and defined('SYSCONTEXTID')) {
-        if (is_null($cached)) {
-            $cached = new object();
-            $cached->id           = SYSCONTEXTID;
-            $cached->contextlevel = CONTEXT_SYSTEM;
-            $cached->instanceid   = 0;
-            $cached->path         = '/'.SYSCONTEXTID;
-            $cached->depth        = 1;
+        if (is_null($ACCESSLIB_PRIVATE->systemcontext)) {
+            $ACCESSLIB_PRIVATE->systemcontext = new object();
+            $ACCESSLIB_PRIVATE->systemcontext->id           = SYSCONTEXTID;
+            $ACCESSLIB_PRIVATE->systemcontext->contextlevel = CONTEXT_SYSTEM;
+            $ACCESSLIB_PRIVATE->systemcontext->instanceid   = 0;
+            $ACCESSLIB_PRIVATE->systemcontext->path         = '/'.SYSCONTEXTID;
+            $ACCESSLIB_PRIVATE->systemcontext->depth        = 1;
         }
-        return $cached;
+        return $ACCESSLIB_PRIVATE->systemcontext;
     }
     try {
         // TODO: can not use get_record() because we do not know if query failed :-(
@@ -2153,8 +2191,8 @@ function get_system_context($cache=true) {
         define('SYSCONTEXTID', $context->id);
     }
 
-    $cached = $context;
-    return $cached;
+    $ACCESSLIB_PRIVATE->systemcontext = $context;
+    return $ACCESSLIB_PRIVATE->systemcontext;
 }
 
 /**
@@ -2166,7 +2204,7 @@ function get_system_context($cache=true) {
  * @return bool properly deleted
  */
 function delete_context($contextlevel, $instanceid) {
-    global $context_cache, $context_cache_id, $DB;
+    global $DB, $ACCESSLIB_PRIVATE;
 
     // do not use get_context_instance(), because the related object might not exist,
     // or the context does not exist yet and it would be created now
@@ -2182,8 +2220,8 @@ function delete_context($contextlevel, $instanceid) {
         }
 
         // purge static context cache if entry present
-        unset($context_cache[$contextlevel][$instanceid]);
-        unset($context_cache_id[$context->id]);
+        unset($ACCESSLIB_PRIVATE->contexts[$contextlevel][$instanceid]);
+        unset($ACCESSLIB_PRIVATE->contextsbyid[$context->id]);
 
         return $result;
     } else {
@@ -2346,11 +2384,11 @@ function cleanup_contexts() {
  * @return void
  */
 function preload_course_contexts($courseid) {
-    global $context_cache, $context_cache_id, $DB;
+    global $DB, $ACCESSLIB_PRIVATE;
 
     // Users can call this multiple times without doing any harm
-    static $preloadedcourses = array();
-    if (array_key_exists($courseid, $preloadedcourses)) {
+    global $ACCESSLIB_PRIVATE;
+    if (array_key_exists($courseid, $ACCESSLIB_PRIVATE->preloadedcourses)) {
         return;
     }
 
@@ -2376,11 +2414,10 @@ function preload_course_contexts($courseid) {
 
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach($rs as $context) {
-        $context_cache[$context->contextlevel][$context->instanceid] = $context;
-        $context_cache_id[$context->id] = $context;
+        cache_context($context);
     }
     $rs->close();
-    $preloadedcourses[$courseid] = true;
+    $ACCESSLIB_PRIVATE->preloadedcourses[$courseid] = true;
 }
 
 /**
@@ -2393,7 +2430,7 @@ function preload_course_contexts($courseid) {
  */
 function get_context_instance($contextlevel, $instance=0) {
 
-    global $context_cache, $context_cache_id, $DB;
+    global $DB, $ACCESSLIB_PRIVATE;
     static $allowed_contexts = array(CONTEXT_SYSTEM, CONTEXT_USER, CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_GROUP, CONTEXT_MODULE, CONTEXT_BLOCK);
 
     if ($contextlevel === 'clearcache') {
@@ -2418,8 +2455,8 @@ function get_context_instance($contextlevel, $instance=0) {
 
     if (!is_array($instance)) {
     /// Check the cache
-        if (isset($context_cache[$contextlevel][$instance])) {  // Already cached
-            return $context_cache[$contextlevel][$instance];
+        if (isset($ACCESSLIB_PRIVATE->contexts[$contextlevel][$instance])) {  // Already cached
+            return $ACCESSLIB_PRIVATE->contexts[$contextlevel][$instance];
         }
 
     /// Get it from the database, or create it
@@ -2429,8 +2466,7 @@ function get_context_instance($contextlevel, $instance=0) {
 
     /// Only add to cache if context isn't empty.
         if (!empty($context)) {
-            $context_cache[$contextlevel][$instance] = $context;    // Cache it for later
-            $context_cache_id[$context->id]          = $context;    // Cache it for later
+            cache_context($context);
         }
 
         return $context;
@@ -2443,8 +2479,8 @@ function get_context_instance($contextlevel, $instance=0) {
 
     foreach ($instances as $key=>$instance) {
     /// Check the cache first
-        if (isset($context_cache[$contextlevel][$instance])) {  // Already cached
-            $result[$instance] = $context_cache[$contextlevel][$instance];
+        if (isset($ACCESSLIB_PRIVATE->contexts[$contextlevel][$instance])) {  // Already cached
+            $result[$instance] = $ACCESSLIB_PRIVATE->contexts[$contextlevel][$instance];
             unset($instances[$key]);
             continue;
         }
@@ -2469,8 +2505,7 @@ function get_context_instance($contextlevel, $instance=0) {
             }
 
             if (!empty($context)) {
-                $context_cache[$contextlevel][$instance] = $context;    // Cache it for later
-                $context_cache_id[$context->id] = $context;             // Cache it for later
+                cache_context($context);
             }
 
             $result[$instance] = $context;
@@ -2487,19 +2522,18 @@ function get_context_instance($contextlevel, $instance=0) {
  * @return mixed object or array of the context object.
  */
 function get_context_instance_by_id($id) {
-    global $context_cache, $context_cache_id, $DB;
+    global $DB, $ACCESSLIB_PRIVATE;
 
     if ($id == SYSCONTEXTID) {
         return get_system_context();
     }
 
-    if (isset($context_cache_id[$id])) {  // Already cached
-        return $context_cache_id[$id];
+    if (isset($ACCESSLIB_PRIVATE->contextsbyid[$id])) {  // Already cached
+        return $ACCESSLIB_PRIVATE->contextsbyid[$id];
     }
 
-    if ($context = $DB->get_record('context', array('id'=>$id))) {   // Update the cache and return
-        $context_cache[$context->contextlevel][$context->instanceid] = $context;
-        $context_cache_id[$context->id] = $context;
+    if ($context = $DB->get_record('context', array('id'=>$id))) {
+        cache_context($context);
         return $context;
     }
 
@@ -3740,7 +3774,7 @@ function get_sorted_contexts($select, $params = array()) {
  */
 function get_child_contexts($context) {
 
-    global $CFG, $context_cache, $DB;
+    global $DB, $ACCESSLIB_PRIVATE;
 
     // We *MUST* populate the context_cache as the callers
     // will probably ask for the full record anyway soon after
@@ -3784,13 +3818,9 @@ function get_child_contexts($context) {
                        JOIN {block_pinned} b ON (ctx.instanceid=b.blockid AND ctx.contextlevel=".CONTEXT_BLOCK.")
                       WHERE b.pagetype='course-view'";
             $params = array("{$context->path}/%", $context->instanceid);
-            $records = array();
-            if ($rs = $DB->get_recordset_sql($sql, $params)) {
-                foreach ($rs as $rec) {
-                    $records[$rec->id] = $rec;
-                    $context_cache[$rec->contextlevel][$rec->instanceid] = $rec;
-                }
-                $rs->close();
+            $records = $DB->get_recordset_sql($sql, $params);
+            foreach ($records as $rec) {
+                cache_context($rec);
             }
             return $records;
         break;
@@ -3804,13 +3834,9 @@ function get_child_contexts($context) {
                       WHERE ctx.path LIKE ?
                             AND ctx.contextlevel IN (".CONTEXT_COURSECAT.",".CONTEXT_COURSE.")";
             $params = array("{$context->path}/%");
-            $records = array();
-            if ($rs = $DB->get_recordset_sql($sql, $params)) {
-                foreach ($rs as $rec) {
-                    $records[$rec->id] = $rec;
-                    $context_cache[$rec->contextlevel][$rec->instanceid] = $rec;
-                }
-                $rs->close();
+            $records = $DB->get_recordset_sql($sql, $params);
+            foreach ($records as $rec) {
+                cache_context($rec);
             }
             return $records;
         break;
@@ -3857,15 +3883,15 @@ function get_related_contexts_string($context) {
  * @param bool $cached
  * @return book true if capability exists
  */
-function is_valid_capability($capabilityname, $cached=true) {
-    static $capsnames = null; // one request per page only
+function is_valid_capability($capabilityname, $cached = true) {
+    global $ACCESSLIB_PRIVATE; // one request per page only
 
-    if (is_null($capsnames) or !$cached) {
+    if (is_null($ACCESSLIB_PRIVATE->capabilitynames) or !$cached) {
         global $DB;
-        $capsnames = $DB->get_records_menu('capabilities', null, '', 'name, 1');
+        $ACCESSLIB_PRIVATE->capabilitynames = $DB->get_records_menu('capabilities', null, '', 'name, 1');
     }
 
-    return array_key_exists($capabilityname, $capsnames);
+    return array_key_exists($capabilityname, $ACCESSLIB_PRIVATE->capabilitynames);
 }
 
 /**
@@ -5802,10 +5828,9 @@ function build_context_path($force=false) {
     $DB->execute($sql);
 
     // reset static course cache - it might have incorrect cached data
-    global $context_cache, $context_cache_id;
-    $context_cache    = array();
-    $context_cache_id = array();
-
+    global $ACCESSLIB_PRIVATE;
+    $ACCESSLIB_PRIVATE->contexts = array();
+    $ACCESSLIB_PRIVATE->contextsbyid = array();
 }
 
 /**
@@ -5919,7 +5944,7 @@ function get_dirty_contexts($time) {
  * @param string $path context path
  */
 function mark_context_dirty($path) {
-    global $CFG, $DIRTYCONTEXTS;
+    global $CFG, $ACCESSLIB_PRIVATE;
 
     if (empty($CFG->rolesactive)) {
         return;
@@ -5928,8 +5953,8 @@ function mark_context_dirty($path) {
     // only if it is a non-empty string
     if (is_string($path) && $path !== '') {
         set_cache_flag('accesslib/dirtycontexts', $path, 1, time()+$CFG->sessiontimeout);
-        if (isset($DIRTYCONTEXTS)) {
-            $DIRTYCONTEXTS[$path] = 1;
+        if (isset($ACCESSLIB_PRIVATE->dirtycontexts)) {
+            $ACCESSLIB_PRIVATE->dirtycontexts[$path] = 1;
         }
     }
 }
