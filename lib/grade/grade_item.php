@@ -247,7 +247,6 @@ class grade_item extends grade_object {
      * In addition to update() as defined in grade_object, handle the grade_outcome and grade_scale objects.
      * Force regrading if necessary, rounds the float numbers using php function,
      * the reason is we need to compare the db value with computed number to skip regrading if possible.
-     * Also sets aggregationcoef to 1 if unset: 0 would negate it in the mean
      * @param string $source from where was the object inserted (mod/forum, manual, etc.)
      * @return boolean success
      */
@@ -268,10 +267,6 @@ class grade_item extends grade_object {
         }
 
         $this->timemodified = time();
-
-        if (is_null($this->aggregationcoef)) {
-            $this->aggregationcoef = 1;
-        }
 
         $this->grademin        = grade_floatval($this->grademin);
         $this->grademax        = grade_floatval($this->grademax);
