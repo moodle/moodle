@@ -67,7 +67,7 @@
         // Handles the case of another Moodle site linking into a page on this site
         //TODO: move weblink into own auth plugin
         include($CFG->dirroot.'/login/weblinkauth.php');
-        if (function_exists(weblink_auth)) {
+        if (function_exists('weblink_auth')) {
             $user = weblink_auth($SESSION->wantsurl);
         }
         if ($user) {

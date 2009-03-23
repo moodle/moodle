@@ -736,7 +736,7 @@ class resource_file extends resource_base {
 
         if (!empty($this->resource->reference) && file_exists($CFG->dirroot ."/mod/resource/type/file/externserverfile.php")) {
             include $CFG->dirroot ."/mod/resource/type/file/externserverfile.php";
-            if (function_exists(extern_server_file)) {
+            if (function_exists('extern_server_file')) {
                 return extern_server_file($this->resource->reference);
             }
         }
