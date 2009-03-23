@@ -10,7 +10,7 @@ class repository_filesystem extends repository {
             'c:\windows',
             'c:/windows'
             );
-        if ($options['ajax']) {
+        if (!empty($options['ajax'])) {
             // if created from filepicker
             if (empty($this->root_path)) {
                 $ret = array();
