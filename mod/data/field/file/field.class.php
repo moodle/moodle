@@ -70,12 +70,6 @@ class data_field_file extends data_field_base {
         return $str;
     }
 
-    function list_add_field(&$fields) {
-        $fields[] = $this->field->id.'_filename';
-        $fields[] = $this->field->id.'_file';
-        return true;
-    } 
-
     function display_search_field($value = '') {
         return '<input type="text" size="16" name="f_'.$this->field->id.'" value="'.$value.'" />';
     }

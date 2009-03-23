@@ -53,14 +53,7 @@ class data_field_date extends data_field_base {
 
         return $str;
     }
-
-    function list_add_field(&$fields) {
-        $fields[] = $this->field->id.'_day';
-        $fields[] = $this->field->id.'_month';
-        $fields[] = $this->field->id.'_year';
-        return true;
-    }
-
+    
     //Enable the following three functions once core API issues have been addressed.
     function display_search_field($value=0) {
         return false;
@@ -88,11 +81,14 @@ class data_field_date extends data_field_base {
     }
 
     function update_content($recordid, $value, $name='') {
+
         $names = explode('_',$name);
         $name = $names[2];          // day month or year
+
         $this->$name = $value;
 
         if ($this->day and $this->month and $this->year) {  // All of them have been collected now
+
             $content = new object;
             $content->fieldid = $this->field->id;
             $content->recordid = $recordid;

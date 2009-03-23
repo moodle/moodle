@@ -166,24 +166,11 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
             $content = '';
         }
 
-        // beware get_field returns false for new, empty records MDL-18567
-        if ($content===false) {
-            $content='';
-        }
-
         $str = '<div title="'.s($this->field->description).'">';
         $str .= '<input style="width:300px;" type="text" name="field_'.$this->field->id.'" id="field_'.$this->field->id.'" value="'.s($content).'" />';
         $str .= '</div>';
 
         return $str;
-    }
-
-
-// add the field ids to an existing array to track added form fields
-// override if anything with multiple fields (e.g. date)
-    function list_add_field( &$fields ) {
-        $fields[] = $this->field->id;
-        return true;
     }
 
 // Print the relevant form element to define the attributes for this field
@@ -355,11 +342,6 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
         return '';
     }
 
-    // store generated field ids (if form)
-    if ($form) {
-        $data->fieldids = array();
-    }
-
     // get all the fields for that database
     if ($fields = get_records('data_fields', 'dataid', $data->id, 'id')) {
 
@@ -386,7 +368,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
             if ($form) {   // Print forms instead of data
                 $fieldobj = data_get_field($field, $data);
                 $str .= $fieldobj->display_add_field($recordid);
-                $fieldobj->list_add_field( $data->fieldids );
+
             } else {           // Just print the tag
                 $str .= '[['.$field->name.']]';
             }
@@ -1336,7 +1318,7 @@ function data_print_comments($data, $record, $page=0, $mform=false) {
     $editor = optional_param('addcomment', 0, PARAM_BOOL);
     if (!$mform and !$editor) {
         echo '<div class="newcomment" style="text-align:center">';
-        echo '<a href="view.php?d='.$data->id.'&amp;rid='.$record->id.'&amp;mode=single&amp;addcomment=1">'.get_string('addcomment', 'data').'</a>';
+        echo '<a href="view.php?d='.$data->id.'&amp;page='.$page.'&amp;mode=single&amp;addcomment=1">'.get_string('addcomment', 'data').'</a>';
         echo '</div>';
     } else {
         if (!$mform) {
@@ -1853,7 +1835,7 @@ class PresetImporter {
         } else if (empty($newfields)) {
             error("New preset has no defined fields!");
         }
-        echo '<div class="overwritesettings"><label for="overwritesettings">'.get_string('overwritesettings', 'data');
+        echo '<div class="overwritesettings"><label for="overwritesettings">'.get_string('overwritesettings', 'data').'</label>';
         echo '<input id="overwritesettings" name="overwritesettings" type="checkbox" /></label></div>';
         echo '<input class="button" type="submit" value="'.$strcontinue.'" /></div></form></div>';
     }
