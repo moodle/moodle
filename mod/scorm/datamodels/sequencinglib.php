@@ -1628,7 +1628,7 @@ function scorm_seq_choice_sequencing($sco,$userid,$seq){
 	$sib = scorm_get_siblings($seq->currentactivity);
 	$pos = array_search($sib, $sco);
 
-	if (pos !== false){
+	if ($pos !== false){
 
 		$siblings = array_slice($sib, 0, $pos-1);
 
@@ -1853,9 +1853,9 @@ function scorm_seq_choice_flow_tree ($constrained, $traverse, $seq){
 		}
 		else{
 			$i=0;
-			while(i < sizeof($avchildren)){
-				if ($avchildren [i]->id == $constrained->id){
-					$seq->nextactivity = $avchildren [i+1];
+			while($i < sizeof($avchildren)){
+				if ($avchildren [$i]->id == $constrained->id){
+					$seq->nextactivity = $avchildren [$i+1];
 					return $seq;
 				}
 				else{
@@ -1880,8 +1880,8 @@ function scorm_seq_choice_flow_tree ($constrained, $traverse, $seq){
 		else{
 			$i=sizeof($avchildren)-1;
 			while($i >=0){
-				if ($avchildren [i]->id == $constrained->id){
-					$seq->nextactivity = $avchildren [i-1];
+				if ($avchildren [$i]->id == $constrained->id){
+					$seq->nextactivity = $avchildren [$i-1];
 					return $seq;
 				}
 				else{
@@ -2069,7 +2069,7 @@ function scorm_select_children_process($scoid,$userid){
 							$i = ($res->value)-1;
 							$children = scorm_get_children ($sco);
 
-							while (i>=0){
+							while ($i>=0){
 								$pos = array_rand($children);
 								array_push($childlist,$children [$pos]);
 								array_splice($children,$pos,1);
@@ -2113,7 +2113,7 @@ function scorm_randomize_children_process($scoid,$userid){
 							$i = sizeof($res)-1;
 							$children = $res->value;
 
-							while (i>=0){
+							while ($i>=0){
 								$pos = array_rand($children);
 								array_push($childlist,$children [$pos]);
 								array_splice($children,$pos,1);
