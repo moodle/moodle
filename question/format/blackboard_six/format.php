@@ -40,6 +40,7 @@ class qformat_blackboard_six extends qformat_default {
     function clean_temp_dir($dir='') {
         // for now we will just say everything happened okay note 
         // that a mess may be piling up in $CFG->dataroot/temp/bbquiz_import
+        // TODO return true at top of the function renders all the following code useless
         return true;
         
         if ($dir == '') {
@@ -158,10 +159,10 @@ class qformat_blackboard_six extends qformat_default {
         $ext = substr($this->realfilename, strpos($this->realfilename,'.'), strlen($this->realfilename)-1);      
         if ($ext=='.dat') {
             if (!is_readable($filename)) {
-                print_error('filenotreadable', 'error');	
-            }		
+                print_error('filenotreadable', 'error');    
+            }       
             return file($filename);
-        }	  
+        }     
         
         $unique_code = time();
         $temp_dir = $CFG->dataroot."/temp/bbquiz_import/".$unique_code;
@@ -184,7 +185,6 @@ class qformat_blackboard_six extends qformat_default {
                             } else {
                                 return $filearray;
                             }
-                            return false;        
                         }
                     }
                     else {
