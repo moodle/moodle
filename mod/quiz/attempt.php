@@ -57,13 +57,10 @@
     }
     $accessmanager->do_password_check($attemptobj->is_preview_user());
 
-/// Log continuation of the attempt, but only if some time has passed.
-    if ((time() - $attemptobj->get_attempt()->timemodified) > QUIZ_CONTINUE_ATTEMPT_LOG_INTERVAL) {
-    /// This action used to be 'continue attempt' but the database field has only 15 characters.
-        add_to_log($attemptobj->get_courseid(), 'quiz', 'continue attemp',
-                'review.php?attempt=' . $attemptobj->get_attemptid(),
-                $attemptobj->get_quizid(), $attemptobj->get_cmid());
-    }
+/// This action used to be 'continue attempt' but the database field has only 15 characters.
+    add_to_log($attemptobj->get_courseid(), 'quiz', 'continue attemp',
+            'review.php?attempt=' . $attemptobj->get_attemptid(),
+            $attemptobj->get_quizid(), $attemptobj->get_cmid());
 
 /// Get the list of questions needed by this page.
     $questionids = $attemptobj->get_question_ids($page);

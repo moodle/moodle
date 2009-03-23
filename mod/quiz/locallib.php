@@ -62,12 +62,6 @@ define('QUIZ_STATE_TEACHERACCESS', 'teacheraccess'); // State only relevant if y
 /**#@-*/
 
 /**
- * We don't log every single hit on attempt.php, only significant ones like starting and
- * ending an attempt, and periodically during the attempt, as defined by this constant. (10 mins)
- */
-define('QUIZ_CONTINUE_ATTEMPT_LOG_INTERVAL', '600');
-
-/**
  * We show the countdown timer if there is less than this amount of time left before the
  * the quiz close date. (1 hour)
  */
