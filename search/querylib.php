@@ -7,7 +7,6 @@
 * @subpackage search_engine
 * @author Michael Champanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
 * @date 2008/03/31
-* @version prepared for 2.0
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 */
 
