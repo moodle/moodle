@@ -16,3 +16,14 @@ Fixes not reported upstream yet.
 
 skodak
 16 October 2006
+=============================================================
+Bug fix - see MDL-18644
+
+Bug in function array_change_key_case(), using assignment (=) instead of
+equality (==).
+
+Reported upstream as bug #2705796
+
+David Mudrak (mudrd8mz)
+=============================================================
+
