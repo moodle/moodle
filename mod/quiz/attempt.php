@@ -206,12 +206,8 @@
                            "$quiz->id", $cm->id);
         }
     } else {
-        // log continuation of attempt only if some time has lapsed
-        if (($timestamp - $attempt->timemodified) > 600) { // 10 minutes have elapsed
-             add_to_log($course->id, 'quiz', 'continue attemp', // this action used to be called 'continue attempt' but the database field has only 15 characters
-                           "review.php?attempt=$attempt->id",
-                           "$quiz->id", $cm->id);
-        }
+         add_to_log($course->id, 'quiz', 'continue attemp', // this action used to be called 'continue attempt' but the database field has only 15 characters
+                       'review.php?attempt=' . $attempt->id, $quiz->id, $cm->id);
     }
     if (!$attempt->timestart) { // shouldn't really happen, just for robustness
         debugging('timestart was not set for this attempt. That should be impossible.', DEBUG_DEVELOPER);
@@ -380,9 +376,7 @@
                     $CFG->wwwroot . '/mod/quiz/attempt.php?q=' . $quiz->id . $pagebit);
         }
 
-        add_to_log($course->id, 'quiz', 'close attempt',
-                           "review.php?attempt=$attempt->id",
-                           "$quiz->id", $cm->id);
+        add_to_log($course->id, 'quiz', 'close attempt', 'review.php?attempt=' . $attempt->id, $quiz->id, $cm->id);
     }
 
 /// Update the quiz attempt and the overall grade for the quiz
