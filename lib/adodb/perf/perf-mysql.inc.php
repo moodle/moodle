@@ -269,7 +269,6 @@ class perf_mysql extends adodb_perf{
 			if (isset($_SESSION['INNODB_HIT_PCT'])) return $_SESSION['INNODB_HIT_PCT'];
 			return 0;
 		}
-		return 0;
 	}
 	
 	function GetKeyHitRatio()
