@@ -108,7 +108,7 @@ function importmodifiedaikenstyle($filename) {
             // make entry followed by '.'
             $line[1]='.';
         }
-        elseif ( ($responses AND $answer_found) OR (count(outlines)<=1) ) {
+        elseif ( ($responses AND $answer_found) OR (count($outlines)<=1) ) {
         // we have found responses and an answer and the current line is not an answer
             switch ($line[0]) {
                 case 1:

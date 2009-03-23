@@ -657,7 +657,7 @@ class CASClient
    */
   function setCacheTimesForAuthRequest($n)
     {
-      $this->_cache_times_for_auth_recheck = n;
+      $this->_cache_times_for_auth_recheck = $n;
     }
 
   /**

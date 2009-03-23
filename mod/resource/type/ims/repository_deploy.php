@@ -244,7 +244,7 @@
                 $moresubmanifests = ims_extract_submanifests($submanifest['#']);
             /// Add them to results array
                 if (!empty($moresubmanifests)) {
-                    $submanifest_object->childs = moresubmanifests;
+                    $submanifest_object->childs = $moresubmanifests;
                 }
             /// Add submanifest object to results array
                 $submanifests[] = $submanifest_object;
