@@ -150,6 +150,194 @@ class CheckSpecifiedFieldsExpectation extends SimpleExpectation {
     }
 }
 
+/**
+ * This class lets you write unit tests that access a separate set of test
+ * tables with a different prefix. Only those tables you explicitly ask to
+ * be created will be.
+ */
+class UnitTestCaseUsingDatabase extends UnitTestCase {
+    private $realdb;
+    protected $testdb;
+    private $tables = array();
+
+    /**
+     * In the constructor, record the max(id) of each test table into a csv file.
+     * If this file already exists, it means that a previous run of unit tests
+     * did not complete, and has left data undeleted in the DB. This data is then
+     * deleted and the file is retained. Otherwise it is created.
+     * @throws moodle_exception if CSV file cannot be created
+     */
+    public function __construct($label = false) {
+        global $DB, $CFG;
+
+        if (empty($CFG->unittestprefix)) {
+            throw new coding_exception('You cannot use UnitTestCaseUsingDatabase unless you set $CFG->unittestprefix.');
+        }
+        parent::UnitTestCase($label);
+
+        $this->realdb = $DB;
+        $this->testdb = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
+        $this->testdb->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->unittestprefix);
+    }
+
+    /**
+     * Switch to using the test database for all queries until further notice.
+     * You must remember to switch back using revert_to_real_db() before the end of the test.
+     */
+    protected function switch_to_test_db() {
+        global $DB;
+        if ($DB === $this->testdb) {
+            debugging('switch_to_test_db called when the test DB was already selected. This suggest you are doing something wrong and dangerous. Please review your code immediately.', DEBUG_DEVELOPER);
+        }
+        $DB = $this->testdb;
+    }
+
+    /**
+     * Revert to using the test database for all future queries.
+     */
+    protected function revert_to_real_db() {
+        global $DB;
+        if ($DB !== $this->testdb) {
+            debugging('revert_to_real_db called when the test DB was already selected. This suggest you are doing something wrong and dangerous. Please review your code immediately.', DEBUG_DEVELOPER);
+        }
+        $DB = $this->realdb;
+    }
+
+    /**
+     * Check that the user has not forgotten to clean anything up, and if they
+     * have, display a rude message and clean it up for them.
+     */
+    private function emergency_clean_up() {
+        global $DB;
+
+        // Check that they did not forget to drop any test tables.
+        if (!empty($this->tables)) {
+            debugging('You did not clean up all your test tables in your UnitTestCaseUsingDatabase. Tables remaining: ' .
+                    implode(', ', array_keys($this->tables)), DEBUG_DEVELOPER);
+        }
+        foreach ($this->tables as $tablename => $notused) {
+            $this->drop_test_table($tablename);
+        }
+
+        // Check that they did not forget to switch page to the real DB.
+        if ($DB !== $this->realdb) {
+            debugging('You did not switch back to the real database in your UnitTestCaseUsingDatabase.', DEBUG_DEVELOPER);
+            $this->revert_to_real_db();
+        }
+    }
+
+    public function tearDown() {
+        $this->emergency_clean_up();
+        parent::tearDown();
+    }
+
+    public function __destruct() {
+        $this->emergency_clean_up();
+    }
+
+    /**
+     * Create a test table just like a real one, getting getting the definition from
+     * the specified install.xml file.
+     * @param string $tablename the name of the test table.
+     * @param string $installxmlfile the install.xml file in which this table is defined.
+     *      $CFG->dirroot . '/' will be prepended, and '/db/install.xml' appended,
+     *      so you need only specify, for example, 'mod/quiz'.
+     */
+    protected function create_test_table($tablename, $installxmlfile) {
+        global $CFG;
+        if (isset($this->tables[$tablename])) {
+            debugging('You are attempting to create test table ' . $tablename . 'again. It already exists. Please review your code immediately.', DEBUG_DEVELOPER);
+            return;
+        }
+        $dbman = $this->testdb->get_manager();
+        $dbman->install_one_table_from_xmldb_file($CFG->dirroot . '/' . $installxmlfile . '/db/install.xml', $tablename);
+        $this->tables[$tablename] = 1;
+    }
+
+    /**
+     * Convenience method for calling create_test_table repeatedly.
+     * @param array $tablenames an array of table names.
+     * @param string $installxmlfile the install.xml file in which this table is defined.
+     *      $CFG->dirroot . '/' will be prepended, and '/db/install.xml' appended,
+     *      so you need only specify, for example, 'mod/quiz'.
+     */
+    protected function create_test_tables($tablenames, $installxmlfile) {
+        foreach ($tablenames as $tablename) {
+            $this->create_test_table($tablename, $installxmlfile);
+        }
+    }
+
+    /**
+     * Drop a test table.
+     * @param $tablename the name of the test table.
+     */
+    protected function drop_test_table($tablename) {
+        if (!isset($this->tables[$tablename])) {
+            debugging('You are attempting to drop test table ' . $tablename . ' but it does not exist. Please review your code immediately.', DEBUG_DEVELOPER);
+            return;
+        }
+        $dbman = $this->testdb->get_manager();
+        $table = new xmldb_table($tablename);
+        $dbman->drop_table($table);
+        unset($this->tables[$tablename]);
+    }
+
+    /**
+     * Convenience method for calling drop_test_table repeatedly.
+     * @param array $tablenames an array of table names.
+     */
+    protected function drop_test_tables($tablenames) {
+        foreach ($tablenames as $tablename) {
+            $this->drop_test_table($tablename);
+        }
+    }
+
+    /**
+     * Load a table with some rows of data. A typical call would look like:
+     *
+     * $config = $this->load_test_data('config_plugins',
+     *         array('plugin', 'name', 'value'), array(
+     *         array('frog', 'numlegs', 2),
+     *         array('frog', 'sound', 'croak'),
+     *         array('frog', 'action', 'jump'),
+     * ));
+     *
+     * @param string $table the table name.
+     * @param array $cols the columns to fill.
+     * @param array $data the data to load.
+     * @return array $objects corresponding to $data.
+     */
+    protected function load_test_data($table, array $cols, array $data) {
+        $results = array();
+        foreach ($data as $rowid => $row) {
+            $obj = new stdClass;
+            foreach ($cols as $key => $colname) {
+                $obj->$colname = $row[$key];
+            }
+            $obj->id = $this->testdb->insert_record($table, $obj);
+            $results[$rowid] = $obj;
+        }
+        return $results;
+    }
+
+    /**
+     * Clean up data loaded with load_test_data. The call corresponding to the
+     * example load above would be:
+     *
+     * $this->delete_test_data('config_plugins', $config);
+     *
+     * @param string $table the table name.
+     * @param array $rows the rows to delete. Actually, only $rows[$key]->id is used.
+     */
+    protected function delete_test_data($table, array $rows) {
+        $ids = array();
+        foreach ($rows as $row) {
+            $ids[] = $row->id;
+        }
+        $this->testdb->delete_records_list($table, 'id', $ids);
+    }
+}
+
 class FakeDBUnitTestCase extends UnitTestCase {
     public $tables = array();
     public $pkfile;

@@ -595,17 +595,18 @@ class TestSuite {
         for ($i = 0, $count = count($this->_test_cases); $i < $count; $i++) {
             if (is_string($this->_test_cases[$i])) {
                 $class = $this->_test_cases[$i];
-                $test = &new $class();
-                // moodle hack start
+                // moodle hack start - need to do this before the constructor call, because of FakeDBUnitTestCase.
                 global $CFG;
-                if (empty($CFG->unittestprefix)) {
-                    if ($test instanceof FakeDBUnitTestCase) {
-                        // do not execute this test because test tables not present!
-                        unset($test);
-                        continue;
-                    }
+                if (is_subclass_of($class, 'FakeDBUnitTestCase')) {
+                    // Do not execute this test because the test tables system no longer works.
+                    continue;
+                }
+                if (is_subclass_of($class, 'UnitTestCaseUsingDatabase') && empty($CFG->unittestprefix)) {
+                    // Do not execute this test because $CFG->unittestprefix is not set, but it will be required.
+                    continue;
                 }
                 // moodle hack end
+                $test = &new $class();
                 $test->run($reporter);
                 unset($test);
             } else {

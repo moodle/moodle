@@ -16,6 +16,10 @@ require_once($CFG->libdir.'/simpletestlib.php');
 require_once('ex_simple_test.php');
 require_once('ex_reporter.php');
 
+// Always run the unit tests in developer debug mode.
+$CFG->debug = DEBUG_DEVELOPER;
+error_reporting($CFG->debug);
+
 // page parameters
 $path                    = optional_param('path', null, PARAM_PATH);
 $showpasses              = optional_param('showpasses', false, PARAM_BOOL);
@@ -31,8 +35,6 @@ $UNITTEST = new object();
 
 // Print the header.
 $strtitle = get_string('unittests', $langfile);
-
-unset($CFG->unittestprefix); // for now - until test_tables.php gets implemented
 
 if (!is_null($path)) {
     // Turn off xmlstrictheaders during the unit test run.
