@@ -1,60 +1,57 @@
 <?php
-/**
-* Global Search Engine for Moodle
-*
-* @package search
-* @category core
-* @subpackage search_engine
-* @author Michael Champanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
-* @date 2008/03/31
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-*
-* This file serves as a splash-screen (entry page) to the indexer script -
-* it is in place to prevent accidental reindexing which can lead to a loss
-* of time, amongst other things.
-*/
-
-/**
-* includes and requires
-*/
-require_once('../config.php');
-require_once("{$CFG->dirroot}/search/lib.php");
-
-/// makes inclusions of the Zend Engine more reliable
-$separator = (array_key_exists('WINDIR', $_SERVER)) ? ';' : ':' ;
-ini_set('include_path', $CFG->dirroot.'\search'.$separator.ini_get('include_path'));
-
-/// check global search is enabled
-
+    /**
+    * Global Search Engine for Moodle
+    *
+    * @package search
+    * @category core
+    * @subpackage search_engine
+    * @author Michael Champanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+    * @date 2008/03/31
+    * @version prepared for 2.0
+    * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+    *
+    * This file serves as a splash-screen (entry page) to the indexer script -
+    * it is in place to prevent accidental reindexing which can lead to a loss
+    * of time, amongst other things.
+    */
+    
+    /**
+    * includes and requires
+    */
+    require_once('../config.php');
+    
+    /// makes inclusions of the Zend Engine more reliable
+    ini_set('include_path', $CFG->dirroot.PATH_SEPARATOR.'search'.PATH_SEPARATOR.ini_get('include_path'));
+    
+    require_once($CFG->dirroot.'/search/lib.php');
+    
+    /// check global search is enabled 
+    
     require_login();
-
+    
     if (empty($CFG->enableglobalsearch)) {
         print_error('globalsearchdisabled', 'search');
     }
-
+    
     if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
         print_error('beadmin', 'search', get_login_url());
     }
 
     require_once("$CFG->dirroot/search/indexlib.php");
     $indexinfo = new IndexInfo();
-
+    
     if ($indexinfo->valid()) {
         $strsearch = get_string('search', 'search');
         $strquery  = get_string('stats');
-
+        
+        // print page header
         $navlinks[] = array('name' => $strsearch, 'link' => "index.php", 'type' => 'misc');
         $navlinks[] = array('name' => $strquery, 'link' => "stats.php", 'type' => 'misc');
         $navlinks[] = array('name' => get_string('runindexer','search'), 'link' => null, 'type' => 'misc');
-        // if ($CFG->version <= 2007021541){ // 1.8 branch stable timestamp NOT RELIABLE
-        if (!function_exists('build_navigation')){ // 1.8 branch stable timestamp
-            $navigation = '';
-        } else {
-            $navigation = build_navigation($navlinks);
-        }
+        $navigation = build_navigation($navlinks);
         $site = get_site();
         print_header("$strsearch", "$site->fullname" , $navigation, "", "", true, "&nbsp;", navmenu($site));
-
+     
         mtrace("<pre>The data directory ($indexinfo->path) contains $indexinfo->filecount files, and\n"
               ."there are ".$indexinfo->dbcount." records in the <em>block_search_documents</em> table.\n"
               ."\n"
@@ -70,8 +67,7 @@ ini_set('include_path', $CFG->dirroot.'\search'.$separator.ini_get('include_path
               ."<a href='indexer.php?areyousure=yes'>Continue indexing</a> or <a href='index.php'>Back to query page</a>."
               ."</pre>");
         print_footer();
-    }
-    else {
+    } else {
         header('Location: indexer.php?areyousure=yes');
     }
 ?>

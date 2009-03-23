@@ -8,6 +8,7 @@
 * @subpackage search_engine
 * @author Michael Champanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
 * @date 2008/03/31
+* @version prepared for 2.0
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
 * Searcheable types
@@ -25,9 +26,11 @@ define('SEARCH_TYPE_DATA', 'data');
 define('SEARCH_TYPE_CHAT', 'chat');
 define('SEARCH_TYPE_LESSON', 'lesson');
 define('SEARCH_TYPE_ASSIGNMENT', 'assignment');
+define('SEARCH_TYPE_LABEL', 'label');
 
 define('SEARCH_EXTRAS', 'user');
 define('SEARCH_TYPE_USER', 'user');
 define('PATH_FOR_SEARCH_TYPE_USER', 'user');
+define('TYPE_FOR_SEARCH_TYPE_USER', 'core');
 
 ?>

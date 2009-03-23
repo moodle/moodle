@@ -7,6 +7,7 @@
 * @subpackage search_engine
 * @author Michael Champanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
 * @date 2008/03/31
+* @version prepared for 2.0
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 * 
 * Index info class
@@ -19,8 +20,8 @@
 /**
 * includes and requires
 */
-require_once("$CFG->dirroot/search/lib.php");
-require_once("$CFG->dirroot/search/Zend/Search/Lucene.php");
+require_once($CFG->dirroot.'/search/lib.php');
+require_once($CFG->dirroot.'/search/Zend/Search/Lucene.php');
 
 /**
 * main class for searchable information in the Lucene index 
@@ -67,8 +68,6 @@ class IndexInfo {
         //get all the current tables in moodle
         $admin_tables = $DB->get_tables();
         
-        //TODO: use new IndexDBControl class for database checks?
-        
         //check if our search table exists
         if (in_array(SEARCH_DATABASE_TABLE, $admin_tables)) {
             //retrieve database information if it does
@@ -78,14 +77,14 @@ class IndexInfo {
             $this->dbcount = $DB->count_records(SEARCH_DATABASE_TABLE);
             
             //individual document types
-            // $types = search_get_document_types();
-            $types = search_collect_searchables(true, false);
-            sort($types);
+            $types = search_collect_searchables(false, false);
+            asort($types);
             
-            foreach($types as $type) {
-                $c = $DB->count_records(SEARCH_DATABASE_TABLE, array('doctype'=>$type));
-                $this->types[$type] = (int)$c;
+            foreach(array_keys($types) as $type) {
+                $c = $DB->count_records(SEARCH_DATABASE_TABLE, array('doctype' => $type));
+                $types[$type]->records = (int)$c;
             }
+            $this->types = $types;
         } else {
             $this->dbcount = 0;
             $this->types = array();
@@ -178,14 +177,13 @@ class IndexDBControl {
     /**
     * does the table exist?
     * @deprecated
-    * @uses CFG, db
+    * @uses $CFG, $DB
     */
     public function checkTableExists() {
         global $CFG, $DB;
         
-        $table = SEARCH_DATABASE_TABLE;
         $tables = $DB->get_tables();
-        if (in_array($table, $tables)) {
+        if (in_array(SEARCH_DATABASE_TABLE, $tables)) {
             return true;
         } 
         else {
@@ -194,9 +192,34 @@ class IndexDBControl {
     } //checkTableExists
 
     /**
+    * NEVER USED
+    *
+    * is our database setup valid?
+    * @uses db, CFG
+    * @deprecated Database is installed at install and should not be dropped out
+    *
+    public function checkDB() {
+        global $CFG, $db;
+        
+        $sqlfile = "{$CFG->dirroot}/search/db/$CFG->dbtype.sql";
+        $ret = false;
+        if ($this->checkTableExists()) {
+            execute_sql('drop table '.SEARCH_DATABASE_TABLE, false);
+        }
+
+        //turn output buffering on - to hide modify_database() output
+        ob_start(); 
+        $ret = modify_database($sqlfile, '', false);
+
+        //chuck the buffer and resume normal operation
+        ob_end_clean(); 
+        return $ret;
+    } //checkDB */
+
+    /**
     * add a document record to the table
     * @param document must be a Lucene SearchDocument instance
-    * @uses db, CFG
+    * @uses $CFG, $DB
     */
     public function addDocument($document=null) {
         global $DB, $CFG;
@@ -206,7 +229,6 @@ class IndexDBControl {
         }
                 
         // object to insert into db
-        $doc = new object();
         $doc->doctype   = $document->doctype;
         $doc->docid     = $document->docid;
         $doc->itemtype  = $document->itemtype;
@@ -218,7 +240,8 @@ class IndexDBControl {
         $doc->groupid   = $document->group_id;
         
         //insert summary into db
-        $id = $DB->insert_record(SEARCH_DATABASE_TABLE, $doc);
+        $table = SEARCH_DATABASE_TABLE;
+        $id = $DB->insert_record($table, $doc);
         
         return $id;
     } 
@@ -226,12 +249,13 @@ class IndexDBControl {
     /**
     * remove a document record from the index
     * @param document must be a Lucene document instance, or at least a dbid enveloppe
-    * @uses db
+    * @uses $DB
     */
     public function delDocument($document) {
         global $DB;
         
-        delete_records(SEARCH_DATABASE_TABLE, 'id', $document->dbid);
+        $table = SEARCH_DATABASE_TABLE;
+        $DB->delete_records($table, array('id' => $document->dbid));
     }
 } 
 

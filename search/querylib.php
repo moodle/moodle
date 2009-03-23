@@ -7,13 +7,14 @@
 * @subpackage search_engine
 * @author Michael Champanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
 * @date 2008/03/31
+* @version prepared for 2.0
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 */
 
 /**
 * includes and requires
 */
-require_once("{$CFG->dirroot}/search/Zend/Search/Lucene.php");
+require_once($CFG->dirroot.'/search/Zend/Search/Lucene.php');
 
 define('DEFAULT_POPUP_SETTINGS', "\"menubar=0,location=0,scrollbars,resizable,width=600,height=450\"");
 
@@ -68,17 +69,17 @@ private $mode,
         $last_term = $this->fetch('search_last_term');
 
         //if this query is different from the last, clear out the last one
-        if ($id != false and $last_term != $id) {
+        if ($id != false && $last_term != $id) {
             $this->clear($last_term);
         } 
 
         //store the new query if id and object are passed in
-        if ($object and $id) {
+        if ($object && $id) {
             $this->store('search_last_term', $id);
             $this->store($id, $object);
             return true;
         //otherwise return the stored results
-        } else if ($id and $this->exists($id)) {
+        } else if ($id && $this->exists($id)) {
             return $this->fetch($id);
         } 
     } 
@@ -220,14 +221,18 @@ class SearchQuery {
     private function process_results($all=false) {
         global $USER;
 
-        $term = mb_convert_case($this->term, MB_CASE_LOWER, 'UTF-8');
+        // unneeded since changing the default Zend Lexer
+        // $term = mb_convert_case($this->term, MB_CASE_LOWER, 'UTF-8');
+        $term = $this->term;
         $page = optional_param('page', 1, PARAM_INT);
         
         //experimental - return more results
-        $strip_arr = array('author:', 'title:', '+', '-', 'doctype:');
-        $stripped_term = str_replace($strip_arr, '', $term);
+        // $strip_arr = array('author:', 'title:', '+', '-', 'doctype:');
+        // $stripped_term = str_replace($strip_arr, '', $term);
 
-        $hits = $this->index->find($term." title:".$stripped_term." author:".$stripped_term);
+        // $search_string = $term." title:".$stripped_term." author:".$stripped_term;
+        $search_string = $term;
+        $hits = $this->index->find($search_string);
         //--
 
         $hitcount = count($hits);
@@ -297,7 +302,7 @@ class SearchQuery {
     private function get_results() {
         $cache = new SearchCache();
 
-        if ($this->cache and $cache->can_cache()) {
+        if ($this->cache && $cache->can_cache()) {
             if (!($resultdocs = $cache->cache($this->term))) {
                 $resultdocs = $this->process_results();
                 //cache the results so we don't have to compute this on every page-load
@@ -382,7 +387,7 @@ class SearchQuery {
     * // TODO reorder parameters more consistently
     */
     private function can_display(&$user, $this_id, $doctype, $course_id, $group_id, $path, $item_type, $context_id, &$searchables) {
-        global $CFG;
+        global $CFG, $DB;
        
       /**
       * course related checks
@@ -397,14 +402,14 @@ class SearchQuery {
         $unenroled = !in_array($course_id, array_keys($myCourses));
         
         // if guests are allowed, logged guest can see
-        $isallowedguest = (isguest()) ? get_field('course', 'guest', 'id', $course_id) : false ;
+        $isallowedguest = (isguest()) ? $DB->get_field('course', 'guest', array('id' => $course_id)) : false ;
         
         if ($unenroled && !$isallowedguest){
             return false;
         }
         
         // if user is enrolled or is allowed user and course is hidden, can he see it ?
-        $visibility = get_field('course', 'visible', 'id', $course_id);
+        $visibility = $DB->get_field('course', 'visible', array('id' => $course_id));
         if ($visibility <= 0){
             if (!has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course_id))){
                 return false;
@@ -425,7 +430,7 @@ class SearchQuery {
         if ($searchable_instance->location == 'internal'){
             include_once "{$CFG->dirroot}/search/documents/{$doctype}_document.php";
         } else {
-            include_once "{$CFG->dirroot}/{$searchable_instance->location}/$doctype/search_document.php";
+            include_once "{$CFG->dirroot}/{$searchable_instance->location}/{$doctype}/search_document.php";
         }
         $access_check_function = "{$doctype}_check_text_access";
         
