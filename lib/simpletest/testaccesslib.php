@@ -12,8 +12,7 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
-class accesslib_test extends FakeDBUnitTestCase {
-
+class accesslib_test extends UnitTestCaseUsingDatabase {
     function test_get_parent_contexts() {
         $context = get_context_instance(CONTEXT_SYSTEM);
         $this->assertEqual(get_parent_contexts($context), array());
@@ -41,11 +40,43 @@ class accesslib_test extends FakeDBUnitTestCase {
     }
 
     function test_get_users_by_capability() {
-        global $DB;
+        global $CFG;
         // Warning, this method assumes that the standard roles are set up with
         // the standard definitions.
+        $tablenames = array('capabilities' , 'context', 'role', 'role_capabilities',
+                'role_allow_assign', 'role_allow_override', 'role_assignments', 'role_context_levels',
+                'user', 'groups_members', 'cache_flags', 'events_handlers', 'user_lastaccess', 'course');
+        $this->create_test_tables($tablenames, 'lib');
 
-        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        accesslib_clear_all_caches_for_unit_testing();
+        $this->switch_to_test_db();
+
+        $course = new object();
+        $course->category = 0;
+        $this->testdb->insert_record('course', $course);
+        $syscontext = get_system_context(false);
+
+    /// Install the roles system.
+        $adminrole          = create_role(get_string('administrator'), 'admin',
+                                          get_string('administratordescription'), 'moodle/legacy:admin');
+        $coursecreatorrole  = create_role(get_string('coursecreators'), 'coursecreator',
+                                          get_string('coursecreatorsdescription'), 'moodle/legacy:coursecreator');
+        $editteacherrole    = create_role(get_string('defaultcourseteacher'), 'editingteacher',
+                                          get_string('defaultcourseteacherdescription'), 'moodle/legacy:editingteacher');
+        $noneditteacherrole = create_role(get_string('noneditingteacher'), 'teacher',
+                                          get_string('noneditingteacherdescription'), 'moodle/legacy:teacher');
+        $studentrole        = create_role(get_string('defaultcoursestudent'), 'student',
+                                          get_string('defaultcoursestudentdescription'), 'moodle/legacy:student');
+        $guestrole          = create_role(get_string('guest'), 'guest',
+                                          get_string('guestdescription'), 'moodle/legacy:guest');
+        $userrole           = create_role(get_string('authenticateduser'), 'user',
+                                          get_string('authenticateduserdescription'), 'moodle/legacy:user');
+
+        /// Now is the correct moment to install capabilities - after creation of legacy roles, but before assigning of roles
+        assign_capability('moodle/site:doanything', CAP_ALLOW, $adminrole, $syscontext->id);
+        update_capabilities('moodle');
+        update_capabilities('mod/forum');
+        update_capabilities('mod/quiz');
 
         // Create some nested contexts. instanceid does not matter for this. Just
         // ensure we don't violate any unique keys by using an unlikely number.
@@ -56,13 +87,13 @@ class accesslib_test extends FakeDBUnitTestCase {
            2 => array(50, 666, '', 3),
            3 => array(70, 666, '', 4),
         ));
-        $contexts[0] = $systemcontext;
+        $contexts[0] = $syscontext;
         $contexts[1]->path = $contexts[0]->path . '/' . $contexts[1]->id;
-        $DB->set_field('context', 'path', $contexts[1]->path, array('id' => $contexts[1]->id));
+        $this->testdb->set_field('context', 'path', $contexts[1]->path, array('id' => $contexts[1]->id));
         $contexts[2]->path = $contexts[1]->path . '/' . $contexts[2]->id;
-        $DB->set_field('context', 'path', $contexts[2]->path, array('id' => $contexts[2]->id));
+        $this->testdb->set_field('context', 'path', $contexts[2]->path, array('id' => $contexts[2]->id));
         $contexts[3]->path = $contexts[2]->path . '/' . $contexts[3]->id;
-        $DB->set_field('context', 'path', $contexts[3]->path, array('id' => $contexts[3]->id));
+        $this->testdb->set_field('context', 'path', $contexts[3]->path, array('id' => $contexts[3]->id));
 
         // Now make some test users.
         $users = $this->load_test_data('user',
@@ -77,11 +108,11 @@ class accesslib_test extends FakeDBUnitTestCase {
         ));
 
         // Get some of the standard roles.
-        $admin = $DB->get_record('role', array('shortname' => 'admin'));
-        $creator = $DB->get_record('role', array('shortname' => 'coursecreator'));
-        $teacher = $DB->get_record('role', array('shortname' => 'editingteacher'));
-        $student = $DB->get_record('role', array('shortname' => 'student'));
-        $authuser = $DB->get_record('role', array('shortname' => 'user'));
+        $admin = $this->testdb->get_record('role', array('shortname' => 'admin'));
+        $creator = $this->testdb->get_record('role', array('shortname' => 'coursecreator'));
+        $teacher = $this->testdb->get_record('role', array('shortname' => 'editingteacher'));
+        $student = $this->testdb->get_record('role', array('shortname' => 'student'));
+        $authuser = $this->testdb->get_record('role', array('shortname' => 'user'));
 
         // And some role assignments.
         $ras = $this->load_test_data('role_assignments',
@@ -163,8 +194,6 @@ class accesslib_test extends FakeDBUnitTestCase {
                 array('mod/forum:startdiscussion',  $student->id,  $contexts[3]->id, CAP_ALLOW),
                 array('mod/forum:viewrating',       $authuser->id, $contexts[1]->id, CAP_PROHIBIT),
                 array('mod/forum:createattachment', $authuser->id, $contexts[3]->id, CAP_PREVENT),
-//                array('mod/forum:startdiscussion', $student->id, $contexts[1]->id, CAP_PROHIBIT),
-//                array('mod/forum:startdiscussion', $student->id, $contexts[3]->id, CAP_ALLOW),
         ));
 
         // Now test the overridden cases.
@@ -214,12 +243,9 @@ class accesslib_test extends FakeDBUnitTestCase {
                 get_users_by_capability($contexts[3], array('mod/quiz:attempt', 'mod/quiz:reviewmyattempts'), '', '', '', '', '', '', false)));
 
         // Clean up everything we added.
-        unset($contexts[0]);
-        $this->delete_test_data('role_capabilities', $rcs);
-        $this->delete_test_data('groups_members', $gms);
-        $this->delete_test_data('role_assignments', $ras);
-        $this->delete_test_data('user', $users);
-        $this->delete_test_data('context', $contexts);
+        $this->revert_to_real_db();
+        $this->drop_test_tables($tablenames);
+        accesslib_clear_all_caches_for_unit_testing();
     }
 }
 ?>
