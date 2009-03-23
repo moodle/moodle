@@ -90,8 +90,7 @@ if ($userid == 0) {
     $accessdata = get_role_access($guestrole->id);
     $accessdata['ra'][$systempath] = array($guestrole->id);
 } else {
-    load_user_accessdata($userid);
-    $accessdata = $ACCESS[$userid];
+    $accessdata = load_user_accessdata($userid);
 }
 if ($context->contextlevel > CONTEXT_COURSE && !path_inaccessdata($context->path, $accessdata)) {
     load_subcontext($userid, $context, $accessdata);
