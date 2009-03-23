@@ -240,14 +240,14 @@ class grade_report_visual extends grade_report {
             $this->users = $DB->get_records_sql($sql, $params);
         } else {
             $sql = "SELECT u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
-                      FROM {$CFG->prefix}user u
-                           JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
+                      FROM {user) u
+                           JOIN {role_assignments} ra ON u.id = ra.userid
                            $this->groupsql
                      WHERE ra.roleid in ($this->gradebookroles)
                            $this->groupwheresql
                            AND ra.contextid ".get_related_contexts_string($this->context);
 
-            $this->users = get_records_sql($sql);
+            $this->users = $DB->get_records_sql($sql);
         }
 
         if (empty($this->users)) {
@@ -290,8 +290,8 @@ class grade_report_visual extends grade_report {
         } else {
             /// please note that we must fetch all grade_grades fields if we want to contruct grade_grade object from it!
             $sql = "SELECT g.*
-                  FROM {$CFG->prefix}grade_items gi,
-                       {$CFG->prefix}grade_grades g
+                  FROM {grade_items} gi,
+                       {grade_grades} g
                  WHERE g.itemid = gi.id AND gi.courseid = {$this->courseid} {$this->userselect}";
 
             $grades = get_records_sql($sql);

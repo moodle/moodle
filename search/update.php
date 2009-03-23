@@ -83,7 +83,7 @@
                                     docid,
                                     itemtype
                                 FROM
-                                    {$CFG->prefix}{$table}
+                                    {" . $table . "}
                                 WHERE
                                     doctype = ?
                                     $itemtypes
@@ -96,7 +96,7 @@
                                     id,
                                     {$values[0]} as docid
                                 FROM
-                                    {$CFG->prefix}{$values[1]}
+                                    {" . $values[1] . "}
                                 WHERE
                                     {$values[3]} > {$indexdate} AND
                                     id IN ('{$docIdList}')

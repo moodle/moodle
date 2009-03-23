@@ -1135,24 +1135,24 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
                            ctx.id AS ctxid, ctx.path AS ctxpath,
                            ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel,
                            cc.path AS categorypath
-                    FROM {$CFG->prefix}course c
-                    JOIN {$CFG->prefix}course_categories cc
+                    FROM {course} c
+                    JOIN {course_categories} cc
                       ON c.category=cc.id
-                    JOIN {$CFG->prefix}context ctx
+                    JOIN {context} ctx
                       ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
-                    JOIN {$CFG->prefix}role_assignments ra
+                    JOIN {role_assignments} ra
                       ON (ra.contextid=ctx.id AND ra.userid=:userid)
                     UNION
                     SELECT c.id,
                            ctx.id AS ctxid, ctx.path AS ctxpath,
                            ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel,
                            cc.path AS categorypath
-                    FROM {$CFG->prefix}course c
-                    JOIN {$CFG->prefix}course_categories cc
+                    FROM {course} c
+                    JOIN {course_categories} cc
                       ON c.category=cc.id
-                    JOIN {$CFG->prefix}context ctx
+                    JOIN {context} ctx
                       ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
-                    JOIN {$CFG->prefix}role_capabilities rc
+                    JOIN {role_capabilities} rc
                       ON (rc.contextid=ctx.id AND (rc.capability=:cap $capany)) ";
 
         if (!empty($catclause)) { /// If we have found the right in categories, add child courses here too
@@ -1162,10 +1162,10 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
                            ctx.id AS ctxid, ctx.path AS ctxpath,
                            ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel,
                            cc.path AS categorypath
-                    FROM {$CFG->prefix}course c
-                    JOIN {$CFG->prefix}course_categories cc
+                    FROM {course} c
+                    JOIN {course_categories} cc
                       ON c.category=cc.id
-                    JOIN {$CFG->prefix}context ctx
+                    JOIN {context} ctx
                       ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
                     $catclause";
         }
@@ -1173,7 +1173,7 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
     /// Close the inline_view and join with courses table to get requested $coursefields
         $sql .= "
                 ) inline_view
-                INNER JOIN {$CFG->prefix}course c
+                INNER JOIN {course} c
                     ON inline_view.id = c.id";
 
     /// To keep cross-db we need to strip any prefix in the ORDER BY clause for queries using UNION

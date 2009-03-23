@@ -75,7 +75,7 @@
                                     id,
                                     {$values[0]}
                                 FROM
-                                    {$CFG->prefix}{$values[1]}
+                                    {" . $values[1] . "}
                                     $where
                             ";
                             $docIds = get_records_sql($query);
@@ -87,7 +87,7 @@
                                     id,
                                     docid
                                 FROM
-                                    {$CFG->prefix}{$table}
+                                    {" . $table . "}
                                 WHERE
                                     doctype = '{$mod->name}' AND
                                     $itemtypes

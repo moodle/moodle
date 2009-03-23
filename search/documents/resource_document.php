@@ -88,7 +88,7 @@ function resource_get_content_for_index(&$notneeded) {
             id as trueid,
             r.*
         FROM 
-            {$CFG->prefix}resource as r
+            {resource} as r
         WHERE 
             alltext != '' AND 
             alltext != ' ' AND 
@@ -125,9 +125,9 @@ function resource_get_content_for_index(&$notneeded) {
                r.type as type,
                r.timemodified as timemodified
             FROM 
-                {$CFG->prefix}resource as r,
-                {$CFG->prefix}course_modules as cm,
-                {$CFG->prefix}modules as m
+                {resource} as r,
+                {course_modules} as cm,
+                {modules} as m
             WHERE 
                r.type = 'file' AND
                cm.instance = r.id AND
@@ -237,9 +237,9 @@ function resource_single_document($id, $itemtype) {
            r.type as type,
            r.timemodified as timemodified
         FROM 
-            {$CFG->prefix}resource as r,
-            {$CFG->prefix}course_modules as cm,
-            {$CFG->prefix}modules as m
+            {resource} as r,
+            {course_modules} as cm,
+            {modules} as m
         WHERE 
             cm.instance = r.id AND
             cm.course = r.course AND

@@ -247,11 +247,11 @@ class grade_report_stats extends grade_report {
         } else {
             /// please note that we must fetch all grade_grades fields if we want to contruct grade_grade object from it!
             $sql = "SELECT g.*
-                  FROM {$CFG->prefix}grade_items gi,
-                       {$CFG->prefix}grade_grades g
+                  FROM {grade_items} gi,
+                       {grade_grades} g
                  WHERE g.itemid = gi.id AND gi.courseid = {$this->courseid} {$this->userselect}";
 
-            $grades = get_records_sql($sql);
+            $grades = $DB->get_records_sql($sql);
         }
 
         $userids = array_keys($this->users);

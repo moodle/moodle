@@ -88,7 +88,7 @@
                                     docid,
                                     itemtype
                                 FROM
-                                    {$CFG->prefix}{$table}
+                                    {" . $table . "}
                                 WHERE
                                     doctype = ?
                                     $itemtypes
@@ -100,7 +100,7 @@
                                 SELECT id,
                                     {$values[0]} as docid
                                 FROM
-                                    {$CFG->prefix}{$values[1]}
+                                    {" . $values[1] . "
                                 WHERE
                                     id NOT IN ('{$docIdList}') and
                                     {$values[2]} > {$indexdate}

@@ -193,13 +193,13 @@ function forum_get_discussions_fast($forum_id) {
             u.firstname, 
             u.lastname
         FROM 
-            {$CFG->prefix}forum_discussions d
+            {forum_discussions} d
         JOIN 
-            {$CFG->prefix}forum_posts p 
+            {forum_posts} p 
         ON 
             p.discussion = d.id
         JOIN 
-            {$CFG->prefix}user u 
+            {user} u 
         ON 
             p.userid = u.id
         WHERE 
@@ -235,13 +235,13 @@ function forum_get_child_posts_fast($parent, $forum_id) {
             u.firstname, 
             u.lastname
         FROM 
-            {$CFG->prefix}forum_discussions d
+            {forum_discussions} d
         JOIN 
-            {$CFG->prefix}forum_posts p 
+            {forum_posts} p 
         ON 
             p.discussion = d.id
         JOIN 
-            {$CFG->prefix}user u 
+            {user} u 
         ON 
             p.userid = u.id
         WHERE 

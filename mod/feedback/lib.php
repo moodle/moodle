@@ -197,7 +197,7 @@ function feedback_get_recent_mod_activity(&$activities, &$index, $timemodified, 
 
     if ($groupid) {
         $groupselect = "AND gm.groupid = $groupid";
-        $groupjoin   = "JOIN {$CFG->prefix}groups_members gm ON  gm.userid=u.id";
+        $groupjoin   = "JOIN {groups_members} gm ON  gm.userid=u.id";
     } else {
         $groupselect = "";
         $groupjoin   = "";
