@@ -4337,52 +4337,57 @@ function get_assignable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $with
 }
 
 /**
- * Gets a list of roles that this user can assign in this context, for the switchrole menu
+ * Gets a list of roles that this user can switch to in a context, for the switchrole menu.
+ * This function just process the contents of the role_allow_switch table. You also need to
+ * test the moodle/role:switchroles to see if the user is allowed to switch in the first place.
  *
- * @param object $context the context.
+ * @param object $context a context.
  * @return an array $roleid => $rolename.
  */
-function get_assignable_roles_for_switchrole($context) {
+function get_switchable_roles($context) {
     global $USER, $DB;
 
-    if (!has_capability('moodle/role:assign', $context)) {
-        return array();
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+
+    $params = array();
+    $extrajoins = '';
+    $extrawhere = '';
+    if (!has_capability('moodle/site:doanything', $systemcontext)) {
+        // Admins are allowed to switch to any role with 'moodle/course:view' in the
+        // role definition, and without 'moodle/site:doanything' anywhere.
+        // Others are subject to the additional constraint that the switch-to role must be allowed by
+        // 'role_allow_switch' for some role they have assigned in this context or any parent.
+        $parents = get_parent_contexts($context);
+        $parents[] = $context->id;
+        $contexts = implode(',' , $parents);
+
+        $extrajoins = "JOIN {role_allow_switch} ras ON ras.allowswitch = rc.roleid
+        JOIN {role_assignments} ra ON ra.roleid = ras.roleid";
+        $extrawhere = "AND ra.userid = :userid
+          AND ra.contextid IN ($contexts)";
+        $params['userid'] = $USER->id;
     }
 
-    $parents = get_parent_contexts($context);
-    $parents[] = $context->id;
-    $contexts = implode(',' , $parents);
+    $query = "
+        SELECT r.id, r.name
+        FROM (
+            SELECT DISTINCT rc.roleid
+            FROM {role_capabilities} rc
+            $extrajoins
+            WHERE rc.capability = :viewcap
+              AND rc.contextid = :syscontextid
+              $extrawhere
+              AND NOT EXISTS (
+                 SELECT 1 FROM {role_capabilities} irc WHERE irc.roleid = rc.roleid AND
+                     irc.capability = :anythingcap)
+        ) idlist
+        JOIN {role} r ON r.id = idlist.roleid
+        ORDER BY r.sortorder";
+    $params['syscontextid'] = $systemcontext->id;
+    $params['viewcap'] = 'moodle/course:view';
+    $params['anythingcap'] = 'moodle/site:doanything';
 
-    $raafrom  = "{role_allow_assign} raa,";
-    $raawhere = "AND raa.roleid = ra.roleid AND r.id = raa.allowassign";
-    if (has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
-        // show all roles allowed in this context to admins
-        $raafrom  = "";
-        $raawhere = "";
-    }
-
-    if (!$roles = $DB->get_records_sql("
-            SELECT ro.*
-              FROM {role} ro
-              JOIN (SELECT DISTINCT r.id
-                      FROM {role} r,
-                           {role_assignments} ra,
-                           $raafrom
-                           {role_capabilities} rc
-                     WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
-                           $raawhere
-                           AND r.id = rc.roleid AND rc.capability = :viewcap AND rc.capability <> :anythingcap
-                   ) inline_view ON ro.id = inline_view.id
-          ORDER BY ro.sortorder ASC",
-            array('userid'=>$USER->id, 'viewcap'=>'moodle/course:view',
-                  'anythingcap'=>'moodle/site:doanything'))) {
-        return array();
-    }
-
-    $rolenames = array();
-    foreach ($roles as $role) {
-        $rolenames[$role->id] = $role->name;
-    }
+    $rolenames = $DB->get_records_sql_menu($query, $params);
     return role_fix_names($rolenames, $context, ROLENAME_ALIAS);
 }
 

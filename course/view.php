@@ -57,7 +57,7 @@
         has_capability('moodle/role:switchroles', $context)) {
         // is this role assignable in this context?
         // inquiring minds want to know...
-        $aroles = get_assignable_roles($context);
+        $aroles = get_switchable_roles($context);
         if (is_array($aroles) && isset($aroles[$switchrole])) {
             role_switch($switchrole, $context);
             // Double check that this role is allowed here

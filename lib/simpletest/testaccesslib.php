@@ -40,9 +40,6 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
     }
 
     function test_get_users_by_capability() {
-        global $CFG;
-        // Warning, this method assumes that the standard roles are set up with
-        // the standard definitions.
         $tablenames = array('capabilities' , 'context', 'role', 'role_capabilities',
                 'role_allow_assign', 'role_allow_override', 'role_assignments', 'role_context_levels',
                 'user', 'groups_members', 'cache_flags', 'events_handlers', 'user_lastaccess', 'course');
@@ -241,6 +238,97 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
                 array($users['s1']->id, $users['s2']->id)),
                 array_map(create_function('$o', 'return $o->id;'),
                 get_users_by_capability($contexts[3], array('mod/quiz:attempt', 'mod/quiz:reviewmyattempts'), '', '', '', '', '', '', false)));
+
+        // Clean up everything we added.
+        $this->revert_to_real_db();
+        $this->drop_test_tables($tablenames);
+        accesslib_clear_all_caches_for_unit_testing();
+    }
+
+    function test_get_switchable_roles() {
+        global $USER;
+
+        $tablenames = array('role' , 'role_capabilities', 'role_assignments', 'role_allow_switch',
+                'capabilities', 'context', 'role_names');
+        $this->create_test_tables($tablenames, 'lib');
+
+        $this->switch_to_test_db();
+        $saveduserid = $USER->id;
+
+        // Ensure SYSCONTEXTID is set.
+        get_context_instance(CONTEXT_SYSTEM);
+
+        $contexts = $this->load_test_data('context',
+                 array('contextlevel', 'instanceid', 'path', 'depth'), array(
+        'sys' => array(CONTEXT_SYSTEM,     0, '/' . SYSCONTEXTID, 1),
+        'cat' => array(CONTEXT_COURSECAT, 66, '/' . SYSCONTEXTID . '/' . (SYSCONTEXTID + 1), 2),
+        'cou' => array(CONTEXT_COURSE,   666, '/' . SYSCONTEXTID . '/' . (SYSCONTEXTID + 1) . '/' . (SYSCONTEXTID + 2), 3),
+        'fp'  => array(CONTEXT_COURSE,   SITEID, '/' . SYSCONTEXTID . '/' . SITEID, 2)));
+        $this->testdb->set_field('context', 'id', SYSCONTEXTID, array('id' => $contexts['sys']->id));
+        $this->testdb->set_field('context', 'id', SYSCONTEXTID + 1, array('id' => $contexts['cat']->id));
+        $this->testdb->set_field('context', 'id', SYSCONTEXTID + 2, array('id' => $contexts['cou']->id));
+        $syscontext = $contexts['sys'];
+        $syscontext->id = SYSCONTEXTID;
+        $context = $contexts['cou'];
+        $context->id = SYSCONTEXTID + 2;
+
+        $this->load_test_data('capabilities',
+                array('name'), array(
+                array('moodle/site:doanything'),
+                array('moodle/course:view')));
+
+        $roles = $this->load_test_data('role',
+                   array( 'name', 'shortname', 'description', 'sortorder'), array(
+        'admin' => array('admin',     'admin',    'not null',          1),
+        'r1' =>    array(   'r1',        'r1',    'not null',          2),
+        'r2' =>    array(   'r2',        'r2',    'not null',          3),
+        'funny' => array('funny',     'funny',    'not null',          4)));
+        $adminid = $roles['admin']->id;
+        $r1id = $roles['r1']->id;
+        $r2id = $roles['r2']->id;
+        $funnyid = $roles['funny']->id; // strange role to test that roles with 'moodle/site:doanything' and 'moodle/course:view' are not returned.
+
+        $this->load_test_data('role_capabilities',
+                array('roleid',             'capability', 'contextid', 'permission'), array(
+                array($adminid, 'moodle/site:doanything', SYSCONTEXTID, CAP_ALLOW),
+                array(   $r1id,     'moodle/course:view', SYSCONTEXTID + 1, CAP_ALLOW),
+                array(   $r2id,     'moodle/course:view', SYSCONTEXTID, CAP_ALLOW),
+                array($funnyid, 'moodle/site:doanything', SYSCONTEXTID, CAP_ALLOW),
+                array($funnyid,     'moodle/course:view', SYSCONTEXTID, CAP_ALLOW)));
+
+        $this->load_test_data('role_assignments',
+                array('userid', 'contextid',   'roleid'), array(
+                array(      1, SYSCONTEXTID,   $adminid),
+                array(      2, SYSCONTEXTID + 1 , $r1id),
+                array(      3, SYSCONTEXTID + 2 , $r2id)));
+
+        $this->load_test_data('role_allow_switch',
+                array('roleid', 'allowswitch'), array(
+                array(  $r1id ,        $r2id),
+                array(  $r2id ,        $r1id),
+                array(  $r2id ,        $r2id),
+                array(  $r2id ,     $funnyid)));
+
+        // Admin should be able to switch to any role with 'moodle/course:view' in any context.
+        $this->switch_global_user_id(1);
+        accesslib_clear_all_caches_for_unit_testing();
+        $this->assert(new ArraysHaveSameValuesExpectation(array($r2id)), array_keys(get_switchable_roles($syscontext)));
+        $this->assert(new ArraysHaveSameValuesExpectation(array($r2id)), array_keys(get_switchable_roles($context)));
+        $this->revert_global_user_id();
+
+        // r1 should be able to switch to r2, but this user only has r1 in $context, not $syscontext.
+        $this->switch_global_user_id(2);
+        accesslib_clear_all_caches_for_unit_testing();
+        $this->assert(new ArraysHaveSameValuesExpectation(array()), array_keys(get_switchable_roles($syscontext)));
+        $this->assert(new ArraysHaveSameValuesExpectation(array($r2id)), array_keys(get_switchable_roles($context)));
+        $this->revert_global_user_id();
+
+        // The table says r2 should be able to switch to all of r1, r2 and funny, however, only r2 passes the tests on which roles can be returnd..
+        $this->switch_global_user_id(3);
+        accesslib_clear_all_caches_for_unit_testing();
+        $this->assert(new ArraysHaveSameValuesExpectation(array()), array_keys(get_switchable_roles($syscontext)));
+        $this->assert(new ArraysHaveSameValuesExpectation(array($r2id)), array_keys(get_switchable_roles($context)));
+        $this->revert_global_user_id();
 
         // Clean up everything we added.
         $this->revert_to_real_db();

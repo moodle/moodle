@@ -158,23 +158,21 @@ class CheckSpecifiedFieldsExpectation extends SimpleExpectation {
 class UnitTestCaseUsingDatabase extends UnitTestCase {
     private $realdb;
     protected $testdb;
+    private $realuserid = null;
     private $tables = array();
 
-    /**
-     * In the constructor, record the max(id) of each test table into a csv file.
-     * If this file already exists, it means that a previous run of unit tests
-     * did not complete, and has left data undeleted in the DB. This data is then
-     * deleted and the file is retained. Otherwise it is created.
-     * @throws moodle_exception if CSV file cannot be created
-     */
     public function __construct($label = false) {
         global $DB, $CFG;
 
+        // Complain if we get this far and $CFG->unittestprefix is not set.
         if (empty($CFG->unittestprefix)) {
             throw new coding_exception('You cannot use UnitTestCaseUsingDatabase unless you set $CFG->unittestprefix.');
         }
+
+        // Only do this after the above text.
         parent::UnitTestCase($label);
 
+        // Create the test DB instance.
         $this->realdb = $DB;
         $this->testdb = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
         $this->testdb->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->unittestprefix);
@@ -204,11 +202,42 @@ class UnitTestCaseUsingDatabase extends UnitTestCase {
     }
 
     /**
+     * Switch $USER->id to a test value.
+     * You must remember to switch back using revert_global_user_id() before the end of the test.
+     *
+     * It might be worth making this method do more robuse $USER switching in future,
+     * however, this is sufficient for my needs at present.
+     */
+    protected function switch_global_user_id($userid) {
+        global $USER;
+        if (!is_null($this->realuserid)) {
+            debugging('switch_global_user_id called when $USER->id was already switched to a different value. This suggest you are doing something wrong and dangerous. Please review your code immediately.', DEBUG_DEVELOPER);
+        } else {
+            $this->realuserid = $USER->id;
+        }
+        $USER->id = $userid;
+    }
+
+    /**
+     * Revert $USER->id to the real value.
+     */
+    protected function revert_global_user_id() {
+        global $USER;
+        if (is_null($this->realuserid)) {
+            debugging('revert_global_user_id called without switch_global_user_id having been called first. This suggest you are doing something wrong and dangerous. Please review your code immediately.', DEBUG_DEVELOPER);
+        } else {
+            $USER->id = $this->realuserid;
+            $this->realuserid = null;
+        }
+    }
+
+    /**
      * Check that the user has not forgotten to clean anything up, and if they
      * have, display a rude message and clean it up for them.
      */
     private function emergency_clean_up() {
         global $DB;
+        $cleanmore = false;
 
         // Check that they did not forget to drop any test tables.
         if (!empty($this->tables)) {
@@ -221,8 +250,20 @@ class UnitTestCaseUsingDatabase extends UnitTestCase {
 
         // Check that they did not forget to switch page to the real DB.
         if ($DB !== $this->realdb) {
-            debugging('You did not switch back to the real database in your UnitTestCaseUsingDatabase.', DEBUG_DEVELOPER);
+            debugging('You did not switch back to the real database using revert_to_real_db in your UnitTestCaseUsingDatabase.', DEBUG_DEVELOPER);
             $this->revert_to_real_db();
+            $cleanmore = true;
+        }
+
+        // Check for forgetting to call revert_global_user_id.
+        if (!is_null($this->realuserid)) {
+            debugging('You did not switch back to the real $USER->id using revert_global_user_id in your UnitTestCaseUsingDatabase.', DEBUG_DEVELOPER);
+            $this->revert_global_user_id();
+            $cleanmore = true;
+        }
+
+        if ($cleanmore) {
+            accesslib_clear_all_caches_for_unit_testing();
         }
     }
 

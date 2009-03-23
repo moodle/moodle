@@ -5099,7 +5099,7 @@ function switchroles_form($courseid) {
     }
 
     if (has_capability('moodle/role:switchroles', $context)) {
-        if (!$roles = get_assignable_roles_for_switchrole($context)) {
+        if (!$roles = get_switchable_roles($context)) {
             return '';   // Nothing to show!
         }
         // unset default user role - it would not work

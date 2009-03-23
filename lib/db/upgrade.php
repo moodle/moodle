@@ -1497,6 +1497,44 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009030501);
     }
 
+    /// MDL-18132 replace the use a new Role allow switch settings page, instead of
+    /// $CFG->allowuserswitchrolestheycantassign
+    if ($result && $oldversion < 2009032000) {
+    /// First create the new table.
+            $table = new xmldb_table('role_allow_switch');
+
+    /// Adding fields to table role_allow_switch
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('roleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('allowswitch', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table role_allow_switch
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('roleid', XMLDB_KEY_FOREIGN, array('roleid'), 'role', array('id'));
+        $table->add_key('allowswitch', XMLDB_KEY_FOREIGN, array('allowswitch'), 'role', array('id'));
+
+    /// Adding indexes to table role_allow_switch
+        $table->add_index('roleid-allowoverride', XMLDB_INDEX_UNIQUE, array('roleid', 'allowswitch'));
+
+    /// Conditionally launch create table for role_allow_switch
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009032000);
+    }
+    if ($result && $oldversion < 2009032001) {
+    /// Copy from role_allow_assign into the new table.
+        $DB->execute('INSERT INTO {role_allow_switch} SELECT * FROM {role_allow_assign}');
+
+    /// Unset the config variable used in 1.9.
+        unset_config('allowuserswitchrolestheycantassign');
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009032001);
+    }
+    
     return $result;
 }
 
