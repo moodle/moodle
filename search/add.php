@@ -7,38 +7,51 @@
     * @subpackage search_engine
     * @author Michael Champanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
     * @date 2008/03/31
+    * @version prepared for 2.0
     * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
     *
     * Asynchronous adder for new indexable contents
     *
     * Major chages in this review is passing the xxxx_db_names return to
     * multiple arity to handle multiple document types modules
+    * 
+    * changes are in implementing new $DB access
     */
 
     /**
     * includes and requires
     */
     require_once('../config.php');
-    require_once("$CFG->dirroot/search/lib.php");
-    require_once("$CFG->dirroot/search/indexlib.php");
+
+    if (!defined('MOODLE_INTERNAL')) {
+        die('Direct access to this script is forbidden.');    ///  It must be included from the cron script
+    }
+
+    global $DB;
 
 /// makes inclusions of the Zend Engine more reliable
-    $separator = (array_key_exists('WINDIR', $_SERVER)) ? ';' : ':' ;
-    ini_set('include_path', $CFG->dirroot.'/search'.$separator.ini_get('include_path'));
+    ini_set('include_path', $CFG->dirroot.PATH_SEPARATOR.'search'.PATH_SEPARATOR.ini_get('include_path'));
+
+    require_once($CFG->dirroot.'/search/lib.php');
+    require_once($CFG->dirroot.'/search/indexlib.php');
+
 
 /// checks global search activation
 
-    require_login();
+    // require_login();
 
     if (empty($CFG->enableglobalsearch)) {
         print_error('globalsearchdisabled', 'search');
     }
 
+    /*
+    Obsolete with the MOODLE INTERNAL check
     if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
         print_error('beadmin', 'search', get_login_url());
     }
+    */
 
-/// check for php5 (lib.php)
+/// check index
 
     try {
         $index = new Zend_Search_Lucene(SEARCH_INDEX_PATH);
@@ -50,17 +63,16 @@
     $addition_count = 0;
     $startindextime = time();
 
-    $indexdate = $CFG->search_indexer_run_date;
+    $indexdate = @$CFG->search_indexer_run_date;
 
     mtrace('Starting index update (additions)...');
     mtrace('Index size before: '.$CFG->search_index_size."\n");
 
 /// get all modules
-    if ($mods = get_records_select('modules')) {
+    if ($mods = search_collect_searchables(false, true)){
 
 /// append virtual modules onto array
 
-    $mods = array_merge($mods, search_get_additional_modules());
         foreach ($mods as $mod) {
             //build include file and function names
             $class_file = $CFG->dirroot.'/search/documents/'.$mod->name.'_document.php';
@@ -88,25 +100,29 @@
                                     docid,
                                     itemtype
                                 FROM
-                                    {" . $table . "}
+                                    {{$table}}
                                 WHERE
                                     doctype = ?
                                     $itemtypes
                             ";
                             $docIds = $DB->get_records_sql_menu($query, array($mod->name));
-                            $docIdList = ($docIds) ? implode("','", array_keys($docIds)) : '' ;
 
-                            $query =  "
-                                SELECT id,
-                                    {$values[0]} as docid
-                                FROM
-                                    {" . $values[1] . "
-                                WHERE
-                                    id NOT IN ('{$docIdList}') and
-                                    {$values[2]} > {$indexdate}
-                                    $where
-                            ";
-                            $records = get_records_sql($query);
+                            if (!empty($docIds)){
+                                list($usql, $params) = $DB->get_in_or_equal(array_keys('$docIds'), SQL_PARAMS_QM, 'param0000', false); // negative IN
+                                $query =  "
+                                    SELECT id,
+                                        $values[0] as docid
+                                    FROM
+                                        {{$values[1]}}
+                                    WHERE
+                                        id $uslq AND
+                                        $values[2] > $indexdate
+                                        $where
+                                ";
+                                $records = $DB->get_records_sql($query, $params);
+                            } else {
+                                $records = array();
+                            }
 
                             // foreach record, build a module specific search document using the get_document function
                             if (is_array($records)) {
@@ -149,8 +165,8 @@
 
 /// update index date and size
 
-    set_config("search_indexer_run_date", $startindextime);
-    set_config("search_index_size", (int)$CFG->search_index_size + (int)$addition_count);
+    set_config('search_indexer_run_date', $startindextime);
+    set_config('search_index_size', (int)$CFG->search_index_size + (int)$addition_count);
 
 /// print some additional info
 
