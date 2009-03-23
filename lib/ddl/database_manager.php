@@ -381,12 +381,11 @@ class database_manager {
     }
 
     /**
-     * This function will load one entire XMLDB file and call install_from_xmldb_structure.
-     *
-     * @param $file full path to the XML file to be used
-     * @return void
+     * Load an install.xml file, checking that it exists, and that the structure is OK.
+     * @param string $file the full path to the XMLDB file.
+     * @return xmldb_file the loaded file.
      */
-    public function install_from_xmldb_file($file) {
+    private function load_xmldb_file($file) {
         $xmldb_file = new xmldb_file($file);
 
         if (!$xmldb_file->fileExists()) {
@@ -404,9 +403,39 @@ class database_manager {
             throw new ddl_exception('ddlxmlfileerror', null, 'not loaded??');
         }
 
+        return $xmldb_file;
+    }
+
+    /**
+     * This function will load one entire XMLDB file and call install_from_xmldb_structure.
+     *
+     * @param $file full path to the XML file to be used
+     * @return void
+     */
+    public function install_from_xmldb_file($file) {
+        $xmldb_file = $this->load_xmldb_file($file);
+        $xmldb_structure = $xmldb_file->getStructure();
+        $this->install_from_xmldb_structure($xmldb_structure);
+    }
+
+    /**
+     * This function will load one entire XMLDB file and call install_from_xmldb_structure.
+     *
+     * @param $file full path to the XML file to be used
+     * @param $tablename the name of the table.
+     */
+    public function install_one_table_from_xmldb_file($file, $tablename) {
+        $xmldb_file = $this->load_xmldb_file($file);
         $xmldb_structure = $xmldb_file->getStructure();
 
-        $this->install_from_xmldb_structure($xmldb_file->getStructure());
+        $targettable = $xmldb_structure->getTable($tablename);
+        if (is_null($targettable)) {
+            throw new ddl_exception('ddlunknowntable', null, 'The table ' . $tablename . ' is not defined in file ' . $file);
+        }
+
+        $tempstructure = new xmldb_structure('temp');
+        $tempstructure->addTable($targettable);
+        $this->install_from_xmldb_structure($tempstructure);
     }
 
     /**
