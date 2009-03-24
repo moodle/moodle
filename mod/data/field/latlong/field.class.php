@@ -65,12 +65,6 @@ class data_field_latlong extends data_field_base {
         return $str;
     }
 
-    function list_add_field( &$fields ) {
-        $fields[] = $this->field->id.'_0';
-        $fields[] = $this->field->id.'_1';
-        return true;
-    }
-
     function display_search_field($value = '') {
         global $CFG, $DB;
         $lats = $DB->get_records_sql_menu('SELECT id, content FROM {data_content} WHERE fieldid=? GROUP BY content ORDER BY content', array($this->field->id));
