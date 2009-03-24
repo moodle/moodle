@@ -224,7 +224,7 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
 
     $result = new stdClass;
     $result->info = get_string('grade') . ': ' . $grade . '/' . $quiz->grade;
-    $result->time = get_field('quiz_attempts', 'MAX(timefinish)', 'userid', $user->id, 'quiz', $quiz->id);
+    $result->time = $DB->get_field('quiz_attempts', 'MAX(timefinish)', array('userid' => $user->id, 'quiz' => $quiz->id));
     return $result;
     }
 
