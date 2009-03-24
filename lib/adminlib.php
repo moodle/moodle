@@ -4472,11 +4472,7 @@ function admin_write_settings($formdata) {
             $adminroot->errors[$fullname]->id    = $setting->get_id();
             $adminroot->errors[$fullname]->error = $error;
         }
-        // $SITE didn't update synchronously, and we shouldn't
-        // update in this loop (expensive to do this). $SITE will
-        // be updated at the end of this function, see MDL-17966
-        // if ($original !== serialize($setting->get_setting())) {
-        if ($original !== serialize($data[$fullname])) {
+        if ($original !== serialize($setting->get_setting())) {
             $count++;
             $callbackfunction = $setting->updatedcallback;
             if (function_exists($callbackfunction)) {
