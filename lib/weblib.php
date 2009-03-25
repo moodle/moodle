@@ -4761,10 +4761,11 @@ function print_png($url, $sizex, $sizey, $return, $parameters='alt=""') {
  *     <li>$table->cellspacing  - Spacing between cells
  *     <li>$table->class - class attribute to put on the table
  *     <li>$table->id - id attribute to put on the table.
- *     <li>$table->rowclass[] - classes to add to particular rows.
+ *     <li>$table->rowclass[] - classes to add to particular rows. (space-separated string)
+ *     <li>$table->colclass[] - classes to add to every cell in a particular colummn. (space-separated string)
  *     <li>$table->summary - Description of the contents for screen readers.
  *     <li>$table->headspan can be used to make a heading span multiple columns.
- *     <li>$table->rotateheaders - Causes the contents of the heading cells to be rotated 90%.
+ *     <li>$table->rotateheaders - Causes the contents of the heading cells to be rotated 90 degrees.
  * </ul>
  * @param bool $return whether to return an output string or echo now
  * @return boolean or $string
@@ -4842,7 +4843,7 @@ function print_table($table, $return=false) {
         $keys = array_keys($table->head);
         $lastkey = end($keys);
         foreach ($table->head as $key => $heading) {
-
+            $classes = array('header', 'c' . $key);
             if (!isset($size[$key])) {
                 $size[$key] = '';
             }
@@ -4855,9 +4856,10 @@ function print_table($table, $return=false) {
                 $colspan = '';
             }
             if ($key == $lastkey) {
-                $extraclass = ' lastcol';
-            } else {
-                $extraclass = '';
+                $classes[] = 'lastcol';
+            }
+            if (isset($table->colclasses[$key])) {
+                $classes[] = $table->colclasses[$key];
             }
             if ($table->rotateheaders) {
                 $wrapperstart = '<span>';
@@ -4868,7 +4870,7 @@ function print_table($table, $return=false) {
             }
 
             $output .= '<th style="'. $align[$key].$size[$key] .
-                    ';white-space:nowrap;" class="header c'.$key.$extraclass.'" scope="col"' . $colspan . '>'.
+                    ';white-space:nowrap;" class="'.implode(' ', $classes).'" scope="col"' . $colspan . '>'.
                     $wrapperstart . $heading . $wrapperend . '</th>';
         }
         $output .= '</tr>'."\n";
@@ -4890,9 +4892,10 @@ function print_table($table, $return=false) {
             if ($row == 'hr' and $countcols) {
                 $output .= '<td colspan="'. $countcols .'"><div class="tabledivider"></div></td>';
             } else {  /// it's a normal row of data
-                $keys2=array_keys($row);
+                $keys2 = array_keys($row);
                 $lastkey = end($keys2);
                 foreach ($row as $key => $item) {
+                    $classes = array('cell', 'c' . $key);
                     if (!isset($size[$key])) {
                         $size[$key] = '';
                     }
@@ -4903,11 +4906,12 @@ function print_table($table, $return=false) {
                         $wrap[$key] = '';
                     }
                     if ($key == $lastkey) {
-                      $extraclass = ' lastcol';
-                    } else {
-                      $extraclass = '';
+                        $classes[] = 'lastcol';
                     }
-                    $output .= '<td style="'. $align[$key].$size[$key].$wrap[$key] .'" class="cell c'.$key.$extraclass.'">'. $item .'</td>';
+                    if (isset($table->colclasses[$key])) {
+                        $classes[] = $table->colclasses[$key];
+                    }
+                    $output .= '<td style="'. $align[$key].$size[$key].$wrap[$key] .'" class="'.implode(' ', $classes).'">'. $item .'</td>';
                 }
             }
             $output .= '</tr>'."\n";

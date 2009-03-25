@@ -11,6 +11,7 @@ $string['allowed'] = 'Allowed';
 $string['allowoverride'] = 'Allow role overrides';
 $string['allowroletoassign'] = 'Allow users with role $a->fromrole to assign the role $a->targetrole';
 $string['allowroletooverride'] = 'Allow users with role $a->fromrole to override the role $a->targetrole';
+$string['allowroletoswitch'] = 'Allow users with role $a->fromrole to switch roles to the role $a->targetrole';
 $string['allowswitch'] = 'Allow role switches';
 $string['allsiteusers'] = 'All site users';
 $string['assignanotherrole'] = 'Assign another role';

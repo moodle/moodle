@@ -24,12 +24,9 @@
 ///////////////////////////////////////////////////////////////////////////
 
 /**
- * this page defines what roles can access (grant user that role and override that roles'
- * capabilities in different context. For example, we can say that Teachers can only grant
- * student role or modify student role's capabilities. Note that you need both the right
- * capability moodle/role:assign or moodle/role:manage and this database table roles_deny_grant
- * to be able to grant roles. If a user has moodle/role:manage at site level assignment
- * then he can modify the roles_allow_assign table via this interface.
+ * this page defines what roles can do things with other roles. For example
+ * which roles can assign which other roles, or which roles can switch to
+ * which other roles.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package roles

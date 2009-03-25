@@ -1251,8 +1251,8 @@ class existing_role_holders_site_admin extends existing_role_holders {
 }
 
 /**
- * Base class to hold all the code shared between the role allow assign/override/switch
- * pages.
+ * Base class for managing the data in the grid of checkboxes on the role allow
+ * allow/overrides/switch editing pages (allow.php).
  */
 abstract class role_allow_role_page {
     protected $tablename;
@@ -1260,6 +1260,10 @@ abstract class role_allow_role_page {
     protected $roles;
     protected $allowed = null;
 
+    /**
+     * @param string $tablename the table where our data is stored.
+     * @param string $targetcolname the name of the target role id column.
+     */
     public function __construct($tablename, $targetcolname) {
         $this->tablename = $tablename;
         $this->targetcolname = $targetcolname;
@@ -1267,7 +1271,7 @@ abstract class role_allow_role_page {
     }
 
     /**
-     * Load all the roles we will need information about.
+     * Load information about all the roles we will need information about.
      */
     protected function load_required_roles() {
     /// Get all roles
@@ -1278,7 +1282,9 @@ abstract class role_allow_role_page {
     /**
      * Update the data with the new settings submitted by the user.
      */
-    public function process_submission() {    /// Delete all records, then add back the ones that should be allowed.
+    public function process_submission() {
+        global $DB;
+    /// Delete all records, then add back the ones that should be allowed.
         $DB->delete_records($this->tablename);
         foreach ($this->roles as $fromroleid => $notused) {
             foreach ($this->roles as $targetroleid => $alsonotused) {
@@ -1291,11 +1297,14 @@ abstract class role_allow_role_page {
 
     /**
      * Set one allow in the database.
-     * @param $fromroleid
-     * @param $targetroleid
+     * @param integer $fromroleid
+     * @param integer $targetroleid
      */
     protected abstract function set_allow($fromroleid, $targetroleid);
 
+    /**
+     * Load the current allows from the database.
+     */
     public function load_current_settings() {
         global $DB;
     /// Load the current settings
@@ -1310,34 +1319,57 @@ abstract class role_allow_role_page {
         }
     }
 
+    /**
+     * @param integer $targetroleid a role id.
+     * @return boolean whether the user should be allowed to select this role as a
+     * target role.
+     */
+    protected function is_allowed_target($targetroleid) {
+        return true;
+    }
+
+    /**
+     * @return object a $table structure that can be passed to print_table, containing
+     * one cell for each checkbox. 
+     */
     public function get_table() {
         $table = new stdClass;
         $table->tablealign = 'center';
         $table->cellpadding = 5;
         $table->cellspacing = 0;
         $table->width = '90%';
-        $table->align[] = 'left';
+        $table->align = array('left');
         $table->rotateheaders = true;
         $table->head = array('&#xa0;');
-    
+        $table->colclasses = array('');
+
     /// Add role name headers.
         foreach ($this->roles as $targetrole) {
             $table->head[] = $targetrole->localname;
             $table->align[] = 'left';
+            if ($this->is_allowed_target($targetrole->id)) {
+                $table->colclasses[] = '';
+            } else {
+                $table->colclasses[] = 'dimmed_text';
+            }
         }
-    
+
     /// Now the rest of the table.
         foreach ($this->roles as $fromrole) {
             $row = array($fromrole->localname);
             foreach ($this->roles as $targetrole) {
+                $checked = '';
+                $disabled = '';
                 if ($this->allowed[$fromrole->id][$targetrole->id]) {
                     $checked = ' checked="checked"';
-                } else {
-                    $checked = '';
+                }
+                if (!$this->is_allowed_target($targetrole->id)) {
+                    $disabled = ' disabled="disabled"';
                 }
                 $name = 's_' . $fromrole->id . '_' . $targetrole->id;
                 $tooltip = $this->get_cell_tooltip($fromrole, $targetrole);
-                $row[] = '<input type="checkbox" name="' . $name . '" id="' . $name . '" title="' . $tooltip . '" value="1"' . $checked . ' />' .
+                $row[] = '<input type="checkbox" name="' . $name . '" id="' . $name .
+                        '" title="' . $tooltip . '" value="1"' . $checked . $disabled . ' />' .
                         '<label for="' . $name . '" class="accesshide">' . $tooltip . '</label>';
             }
             $table->data[] = $row;
@@ -1346,9 +1378,16 @@ abstract class role_allow_role_page {
         return $table;
     }
 
+    /**
+     * Snippet of text displayed above the table, telling the admin what to do.
+     * @return unknown_type
+     */
     public abstract function get_intro_text();
 }
 
+/**
+ * Subclass of role_allow_role_page for the Allow assigns tab.
+ */
 class role_allow_assign_page extends role_allow_role_page {
     public function __construct() {
         parent::__construct('role_allow_assign', 'allowassign');
@@ -1370,6 +1409,9 @@ class role_allow_assign_page extends role_allow_role_page {
     }
 }
 
+/**
+ * Subclass of role_allow_role_page for the Allow overrides tab.
+ */
 class role_allow_override_page extends role_allow_role_page {
     public function __construct() {
         parent::__construct('role_allow_override', 'allowoverride');
@@ -1388,6 +1430,41 @@ class role_allow_override_page extends role_allow_role_page {
 
     public function get_intro_text() {
         return get_string('configallowoverride2', 'admin');
+    }
+}
+
+/**
+ * Subclass of role_allow_role_page for the Allow switches tab.
+ */
+class role_allow_switch_page extends role_allow_role_page {
+    protected $allowedtargetroles;
+
+    public function __construct() {
+        parent::__construct('role_allow_switch', 'allowswitch');
+    }
+
+    protected function load_required_roles() {
+        parent::load_required_roles();
+        $this->allowedtargetroles = get_allowed_switchable_roles();
+    }
+
+    protected function set_allow($fromroleid, $targetroleid) {
+        allow_switch($fromroleid, $targetroleid);
+    }
+
+    protected function is_allowed_target($targetroleid) {
+        return isset($this->allowedtargetroles[$targetroleid]);
+    }
+
+    protected function get_cell_tooltip($fromrole, $targetrole) {
+        $a = new stdClass;
+        $a->fromrole = $fromrole->localname;
+        $a->targetrole = $targetrole->localname;
+        return get_string('allowroletoswitch', 'role', $a);
+    }
+
+    public function get_intro_text() {
+        return get_string('configallowswitch', 'admin');
     }
 }
 

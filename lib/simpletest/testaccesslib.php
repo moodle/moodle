@@ -253,7 +253,6 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
         $this->create_test_tables($tablenames, 'lib');
 
         $this->switch_to_test_db();
-        $saveduserid = $USER->id;
 
         // Ensure SYSCONTEXTID is set.
         get_context_instance(CONTEXT_SYSTEM);
@@ -334,6 +333,29 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
         $this->revert_to_real_db();
         $this->drop_test_tables($tablenames);
         accesslib_clear_all_caches_for_unit_testing();
+    }
+
+    function test_get_allowed_switchable_roles() {
+        $this->create_test_table('role_capabilities', 'lib');
+
+        $this->load_test_data('role_capabilities',
+                array('roleid',            'capability', 'contextid', 'permission'), array(
+                array(      1, 'moodle/forum:replypost', SYSCONTEXTID, CAP_ALLOW),
+                array(      2,     'moodle/course:view', SYSCONTEXTID, CAP_ALLOW),
+                array(      3, 'moodle/site:doanything', SYSCONTEXTID, CAP_ALLOW),
+                array(      4, 'moodle/site:doanything', SYSCONTEXTID, CAP_ALLOW),
+                array(      4,     'moodle/course:view', SYSCONTEXTID, CAP_ALLOW),
+                array(      5,     'moodle/course:view', SYSCONTEXTID, CAP_ALLOW),
+                array(      5, 'moodle/site:doanything', SYSCONTEXTID, CAP_PREVENT),
+                array(      6,     'moodle/course:view', SYSCONTEXTID, CAP_PREVENT),
+                ));
+        
+        $this->switch_to_test_db();
+
+        $this->assert(new ArraysHaveSameValuesExpectation(array(2, 5)), array_keys(get_allowed_switchable_roles()));
+
+        $this->revert_to_real_db();
+        $this->drop_test_table('role_capabilities');
     }
 }
 ?>

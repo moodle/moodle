@@ -184,21 +184,24 @@ function xmldb_main_install() {
     role_assign($guestrole, $guest->id, 0, $syscontext->id);
     role_assign($adminrole, $admin->id, 0, $syscontext->id);
 
-    /// Insert the correct records for legacy roles
-    allow_assign($coursecreatorrole, $noneditteacherrole);
-    allow_assign($coursecreatorrole, $editteacherrole);
-    allow_assign($coursecreatorrole, $studentrole);
-    allow_assign($coursecreatorrole, $guestrole);
+    /// Default allow assign/override/switch.
+    $defaultallows = array(
+        $coursecreatorrole => $noneditteacherrole,
+        $coursecreatorrole => $editteacherrole,
+        $coursecreatorrole => $studentrole,
+        $coursecreatorrole => $guestrole,
 
-    allow_assign($editteacherrole, $noneditteacherrole);
-    allow_assign($editteacherrole, $studentrole);
-    allow_assign($editteacherrole, $guestrole);
+        $editteacherrole => $noneditteacherrole,
+        $editteacherrole => $studentrole,
+        $editteacherrole => $guestrole,
+    );
 
-    /// Set up default allow override matrix
-    //See MDL-15841   TODO FOR MOODLE 2.0  XXX
-    //allow_override($editteacherrole, $noneditteacherrole);
-    //allow_override($editteacherrole, $studentrole);
-    //allow_override($editteacherrole, $guestrole);
+    foreach ($defaultallows as $fromroleid => $toroleid) {
+        allow_assign($fromroleid, $toroleid);
+        allow_override($fromroleid, $toroleid); // There is a rant about this in MDL-15841.
+        allow_switch($fromroleid, $toroleid);
+    }
+    allow_switch($noneditteacherrole, $studentrole);
 
     /// Set up the context levels where you can assign each role.
     set_role_contextlevels($adminrole,          get_default_contextlevels('admin'));

@@ -4221,7 +4221,7 @@ function get_user_roles($context, $userid=0, $checkparentcontexts=true, $order='
 }
 
 /**
- * Creates a record in the allow_override table
+ * Creates a record in the role_allow_override table
  * @param int sroleid - source roleid
  * @param int troleid - target roleid
  * @return int - id or false
@@ -4232,11 +4232,11 @@ function allow_override($sroleid, $troleid) {
     $record = new object();
     $record->roleid        = $sroleid;
     $record->allowoverride = $troleid;
-    return $DB->insert_record('role_allow_override', $record);
+    $DB->insert_record('role_allow_override', $record);
 }
 
 /**
- * Creates a record in the allow_assign table
+ * Creates a record in the role_allow_assign table
  * @param int sroleid - source roleid
  * @param int troleid - target roleid
  * @return int - id or false
@@ -4247,7 +4247,22 @@ function allow_assign($fromroleid, $targetroleid) {
     $record = new object;
     $record->roleid      = $fromroleid;
     $record->allowassign = $targetroleid;
-    return $DB->insert_record('role_allow_assign', $record);
+    $DB->insert_record('role_allow_assign', $record);
+}
+
+/**
+ * Creates a record in the role_allow_switch table
+ * @param int sroleid - source roleid
+ * @param int troleid - target roleid
+ * @return int - id or false
+ */
+function allow_switch($fromroleid, $targetroleid) {
+    global $DB;
+
+    $record = new object;
+    $record->roleid      = $fromroleid;
+    $record->allowswitch = $targetroleid;
+    $DB->insert_record('role_allow_switch', $record);
 }
 
 /**
@@ -4364,7 +4379,7 @@ function get_switchable_roles($context) {
         $extrajoins = "JOIN {role_allow_switch} ras ON ras.allowswitch = rc.roleid
         JOIN {role_assignments} ra ON ra.roleid = ras.roleid";
         $extrawhere = "AND ra.userid = :userid
-          AND ra.contextid IN ($contexts)";
+              AND ra.contextid IN ($contexts)";
         $params['userid'] = $USER->id;
     }
 
@@ -4375,11 +4390,12 @@ function get_switchable_roles($context) {
             FROM {role_capabilities} rc
             $extrajoins
             WHERE rc.capability = :viewcap
+              AND rc.permission = " . CAP_ALLOW . "
               AND rc.contextid = :syscontextid
               $extrawhere
               AND NOT EXISTS (
                  SELECT 1 FROM {role_capabilities} irc WHERE irc.roleid = rc.roleid AND
-                     irc.capability = :anythingcap)
+                     irc.capability = :anythingcap AND irc.permission = " . CAP_ALLOW . ")
         ) idlist
         JOIN {role} r ON r.id = idlist.roleid
         ORDER BY r.sortorder";
@@ -4389,6 +4405,34 @@ function get_switchable_roles($context) {
 
     $rolenames = $DB->get_records_sql_menu($query, $params);
     return role_fix_names($rolenames, $context, ROLENAME_ALIAS);
+}
+
+/**
+ * Get an array of role ids that might possibly be the target of a switchrole.
+ * Our policy is that you cannot switch to a role with moodle/site:doanything
+ * and you can only switch to a role with moodle/course:view. This method returns
+ * a list of those role ids.
+ *
+ * @return an array whose keys are the allowed role ids.
+ */
+function get_allowed_switchable_roles() {
+    global $DB;
+
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+
+    $query = "
+        SELECT DISTINCT rc.roleid, 1
+        FROM {role_capabilities} rc
+        WHERE rc.capability = :viewcap
+          AND rc.permission = " . CAP_ALLOW . "
+          AND rc.contextid = :syscontextid
+          AND NOT EXISTS (
+             SELECT 1 FROM {role_capabilities} irc WHERE irc.roleid = rc.roleid AND
+                 irc.capability = :anythingcap AND irc.permission = " . CAP_ALLOW . ")";
+    $params = array('syscontextid' => $systemcontext->id,
+            'viewcap' => 'moodle/course:view', 'anythingcap' => 'moodle/site:doanything');
+
+    return $DB->get_records_sql_menu($query, $params);
 }
 
 /**
