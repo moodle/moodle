@@ -39,17 +39,30 @@
     require_once($CFG->libdir . '/adminlib.php');
     require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
 
-    admin_externalpage_setup('defineroles', '', array(), $CFG->wwwroot . '/' . $CFG->admin . '/roles/allowassign.php');
+    $mode = required_param('mode', PARAM_ACTION);
+    $classformode = array(
+        'assign' => 'role_allow_assign_page',
+        'override' => 'role_allow_override_page',
+        'switch' => 'role_allow_switch_page'
+    );
+    if (!isset($classformode[$mode])) {
+        print_error('invalidmode', '', '', $mode);
+    }
+
+    $baseurl = $CFG->wwwroot . '/' . $CFG->admin . '/roles/allow.php?mode=' . $mode;
+    admin_externalpage_setup('defineroles', '', array(), $baseurl);
     require_login();
 
-    $controller = new role_allow_assign_page();
-    require_capability('moodle/role:manage', $controller->get_context());
+    $syscontext = get_context_instance(CONTEXT_SYSTEM);
+    require_capability('moodle/role:manage', $syscontext);
+
+    $controller = new $classformode[$mode]();
 
     if (optional_param('submit', false, PARAM_BOOL) && data_submitted() && confirm_sesskey()) {
         $controller->process_submission();
-        mark_context_dirty($this->systemcontext->path);
-        add_to_log(SITEID, 'role', 'edit allow assign', 'admin/roles/allowassign.php', '', '', $USER->id);
-        redirect($CFG->wwwroot . '/' . $CFG->admin . '/roles/allowassign.php');
+        mark_context_dirty($syscontext->path);
+        add_to_log(SITEID, 'role', 'edit allow ' . $mode, str_replace($CFG->wwwroot . '/', '', $baseurl), '', '', $USER->id);
+        redirect($baseurl);
     }
 
     $controller->load_current_settings();
@@ -57,14 +70,14 @@
 /// Display the editing form.
     admin_externalpage_print_header();
 
-    $currenttab='allowassign';
+    $currenttab = $mode;
     require_once('managetabs.php');
 
     $table = $controller->get_table();
 
-    print_simple_box(get_string('configallowassign', 'admin'), 'center');
+    print_simple_box($controller->get_intro_text(), 'center');
 
-    echo '<form action="allowassign.php" method="post">';
+    echo '<form action="' . $baseurl . '" method="post">';
     echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
     print_table($table);
     echo '<div class="buttons"><input type="submit" name="submit" value="'.get_string('savechanges').'"/>';

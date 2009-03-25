@@ -1115,8 +1115,7 @@ body#admin-modules table.generaltable td.c0
 #admin-qtypes #qtypes img.spacer {
   width: 16px;
 }
-#admin-roles-allowassign .buttons,
-#admin-roles-allowoverride .buttons,
+#admin-roles-allow .buttons,
 #admin-roles-manage .buttons,
 #admin-roles-define .buttons,
 #admin-roles-override .buttons {

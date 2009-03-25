@@ -35,13 +35,10 @@
     }
 
     $toprow = array();
-
     $toprow[] = new tabobject('manage', $CFG->wwwroot.'/'.$CFG->admin.'/roles/manage.php', get_string('manageroles', 'role'));
-
-    $toprow[] = new tabobject('allowassign', $CFG->wwwroot.'/'.$CFG->admin.'/roles/allowassign.php', get_string('allowassign', 'role'));
-
-    $toprow[] = new tabobject('allowoverride', $CFG->wwwroot.'/'.$CFG->admin.'/roles/allowoverride.php', get_string('allowoverride', 'role'));
-
+    $toprow[] = new tabobject('assign', $CFG->wwwroot.'/'.$CFG->admin.'/roles/allow.php?mode=assign', get_string('allowassign', 'role'));
+    $toprow[] = new tabobject('override', $CFG->wwwroot.'/'.$CFG->admin.'/roles/allow.php?mode=override', get_string('allowoverride', 'role'));
+    $toprow[] = new tabobject('switch', $CFG->wwwroot.'/'.$CFG->admin.'/roles/allow.php?mode=switch', get_string('allowswitch', 'role'));
     $tabs = array($toprow);
 
     print_tabs($tabs, $currenttab);

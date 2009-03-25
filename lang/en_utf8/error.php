@@ -277,6 +277,7 @@ $string['invalidipformat'] = 'Invalid IP address format';
 $string['invalidlegacy'] = 'Incorrect legacy role definition for type: $a';
 $string['invalidkey'] = 'Incorrect key';
 $string['invalidmd5'] = 'Invalid md5';
+$string['invalidmode'] = 'Invalid mode ($a)';
 $string['invalidmodule'] = 'Invalid module';
 $string['invalidmoduleid'] = 'Invalid module ID: $a';
 $string['invalidmodulename'] = 'Invalid module name: $a';

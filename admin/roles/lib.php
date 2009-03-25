@@ -1257,22 +1257,13 @@ class existing_role_holders_site_admin extends existing_role_holders {
 abstract class role_allow_role_page {
     protected $tablename;
     protected $targetcolname;
-    protected $systemcontext;
     protected $roles;
     protected $allowed = null;
 
     public function __construct($tablename, $targetcolname) {
         $this->tablename = $tablename;
         $this->targetcolname = $targetcolname;
-        $this->systemcontext = get_context_instance(CONTEXT_SYSTEM);
         $this->load_required_roles();
-    }
-
-    /**
-     * @return object the context we need. (The system context.)
-     */
-    public function get_context() {
-        return $this->systemcontext;
     }
 
     /**
@@ -1281,7 +1272,7 @@ abstract class role_allow_role_page {
     protected function load_required_roles() {
     /// Get all roles
         $this->roles = get_all_roles();
-        role_fix_names($this->roles, $this->systemcontext, ROLENAME_ORIGINAL);
+        role_fix_names($this->roles, get_context_instance(CONTEXT_SYSTEM), ROLENAME_ORIGINAL);
     }
 
     /**
@@ -1354,6 +1345,8 @@ abstract class role_allow_role_page {
 
         return $table;
     }
+
+    public abstract function get_intro_text();
 }
 
 class role_allow_assign_page extends role_allow_role_page {
@@ -1370,6 +1363,31 @@ class role_allow_assign_page extends role_allow_role_page {
         $a->fromrole = $fromrole->localname;
         $a->targetrole = $targetrole->localname;
         return get_string('allowroletoassign', 'role', $a);
+    }
+
+    public function get_intro_text() {
+        return get_string('configallowassign', 'admin');
+    }
+}
+
+class role_allow_override_page extends role_allow_role_page {
+    public function __construct() {
+        parent::__construct('role_allow_override', 'allowoverride');
+    }
+
+    protected function set_allow($fromroleid, $targetroleid) {
+        allow_override($fromroleid, $targetroleid);
+    }
+
+    protected function get_cell_tooltip($fromrole, $targetrole) {
+        $a = new stdClass;
+        $a->fromrole = $fromrole->localname;
+        $a->targetrole = $targetrole->localname;
+        return get_string('allowroletooverride', 'role', $a);
+    }
+
+    public function get_intro_text() {
+        return get_string('configallowoverride2', 'admin');
     }
 }
 
