@@ -4277,11 +4277,11 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
         /// And convert some strings
             $mail->FromName = $textlib->convert($mail->FromName, 'utf-8', $mail->CharSet); //From Name
             foreach ($mail->ReplyTo as $key => $rt) {                                      //ReplyTo Names
-                $mail->ReplyTo[$key][1] = $textlib->convert($rt, 'utf-8', $mail->CharSet);
+                $mail->ReplyTo[$key][1] = $textlib->convert($rt[1], 'utf-8', $mail->CharSet);
             }
             $mail->Subject = $textlib->convert($mail->Subject, 'utf-8', $mail->CharSet);   //Subject
             foreach ($mail->to as $key => $to) {
-                $mail->to[$key][1] = $textlib->convert($to, 'utf-8', $mail->CharSet);      //To Names
+                $mail->to[$key][1] = $textlib->convert($to[1], 'utf-8', $mail->CharSet);      //To Names
             }
             $mail->Body = $textlib->convert($mail->Body, 'utf-8', $mail->CharSet);         //Body
             $mail->AltBody = $textlib->convert($mail->AltBody, 'utf-8', $mail->CharSet);   //Subject
