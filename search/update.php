@@ -28,7 +28,7 @@
     global $DB;
 
 /// makes inclusions of the Zend Engine more reliable                               
-    ini_set('include_path', $CFG->dirroot.PATH_SEPARATOR.'search'.PATH_SEPARATOR.ini_get('include_path'));
+    ini_set('include_path', $CFG->dirroot.DIRECTORY_SEPARATOR.'search'.PATH_SEPARATOR.ini_get('include_path'));
 
     require_once($CFG->dirroot.'/search/lib.php');
     require_once($CFG->dirroot.'/search/indexlib.php');
