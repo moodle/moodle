@@ -1250,4 +1250,127 @@ class existing_role_holders_site_admin extends existing_role_holders {
     }
 }
 
+/**
+ * Base class to hold all the code shared between the role allow assign/override/switch
+ * pages.
+ */
+abstract class role_allow_role_page {
+    protected $tablename;
+    protected $targetcolname;
+    protected $systemcontext;
+    protected $roles;
+    protected $allowed = null;
+
+    public function __construct($tablename, $targetcolname) {
+        $this->tablename = $tablename;
+        $this->targetcolname = $targetcolname;
+        $this->systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        $this->load_required_roles();
+    }
+
+    /**
+     * @return object the context we need. (The system context.)
+     */
+    public function get_context() {
+        return $this->systemcontext;
+    }
+
+    /**
+     * Load all the roles we will need information about.
+     */
+    protected function load_required_roles() {
+    /// Get all roles
+        $this->roles = get_all_roles();
+        role_fix_names($this->roles, $this->systemcontext, ROLENAME_ORIGINAL);
+    }
+
+    /**
+     * Update the data with the new settings submitted by the user.
+     */
+    public function process_submission() {    /// Delete all records, then add back the ones that should be allowed.
+        $DB->delete_records($this->tablename);
+        foreach ($this->roles as $fromroleid => $notused) {
+            foreach ($this->roles as $targetroleid => $alsonotused) {
+                if (optional_param('s_' . $fromroleid . '_' . $targetroleid, false, PARAM_BOOL)) {
+                    $this->set_allow($fromroleid, $targetroleid);
+                }
+            }
+        }
+    }
+
+    /**
+     * Set one allow in the database.
+     * @param $fromroleid
+     * @param $targetroleid
+     */
+    protected abstract function set_allow($fromroleid, $targetroleid);
+
+    public function load_current_settings() {
+        global $DB;
+    /// Load the current settings
+        $this->allowed = array();
+        foreach ($this->roles as $role) {
+            // Make an array $role->id => false. This is probalby too clever for its own good.
+            $this->allowed[$role->id] = array_combine(array_keys($this->roles), array_fill(0, count($this->roles), false));
+        }
+        $rs = $DB->get_recordset($this->tablename);
+        foreach ($rs as $allow) {
+            $this->allowed[$allow->roleid][$allow->{$this->targetcolname}] = true;
+        }
+    }
+
+    public function get_table() {
+        $table = new stdClass;
+        $table->tablealign = 'center';
+        $table->cellpadding = 5;
+        $table->cellspacing = 0;
+        $table->width = '90%';
+        $table->align[] = 'left';
+        $table->rotateheaders = true;
+        $table->head = array('&#xa0;');
+    
+    /// Add role name headers.
+        foreach ($this->roles as $targetrole) {
+            $table->head[] = $targetrole->localname;
+            $table->align[] = 'left';
+        }
+    
+    /// Now the rest of the table.
+        foreach ($this->roles as $fromrole) {
+            $row = array($fromrole->localname);
+            foreach ($this->roles as $targetrole) {
+                if ($this->allowed[$fromrole->id][$targetrole->id]) {
+                    $checked = ' checked="checked"';
+                } else {
+                    $checked = '';
+                }
+                $name = 's_' . $fromrole->id . '_' . $targetrole->id;
+                $tooltip = $this->get_cell_tooltip($fromrole, $targetrole);
+                $row[] = '<input type="checkbox" name="' . $name . '" id="' . $name . '" title="' . $tooltip . '" value="1"' . $checked . ' />' .
+                        '<label for="' . $name . '" class="accesshide">' . $tooltip . '</label>';
+            }
+            $table->data[] = $row;
+        }
+
+        return $table;
+    }
+}
+
+class role_allow_assign_page extends role_allow_role_page {
+    public function __construct() {
+        parent::__construct('role_allow_assign', 'allowassign');
+    }
+
+    protected function set_allow($fromroleid, $targetroleid) {
+        allow_assign($fromroleid, $targetroleid);
+    }
+
+    protected function get_cell_tooltip($fromrole, $targetrole) {
+        $a = new stdClass;
+        $a->fromrole = $fromrole->localname;
+        $a->targetrole = $targetrole->localname;
+        return get_string('allowroletoassign', 'role', $a);
+    }
+}
+
 ?>

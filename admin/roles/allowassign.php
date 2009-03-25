@@ -35,86 +35,32 @@
  * @package roles
  *//** */
 
-    require_once('../../config.php');
-    require_once($CFG->libdir.'/adminlib.php');
+    require_once(dirname(__FILE__) . '/../../config.php');
+    require_once($CFG->libdir . '/adminlib.php');
+    require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
 
+    admin_externalpage_setup('defineroles', '', array(), $CFG->wwwroot . '/' . $CFG->admin . '/roles/allowassign.php');
     require_login();
-    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-    require_capability('moodle/role:manage', $systemcontext);
 
-/// Get all roles
-    $roles = get_all_roles();
-    role_fix_names($roles, $systemcontext, ROLENAME_ORIGINAL);
+    $controller = new role_allow_assign_page();
+    require_capability('moodle/role:manage', $controller->get_context());
 
-/// Process form submission
     if (optional_param('submit', false, PARAM_BOOL) && data_submitted() && confirm_sesskey()) {
-    /// Delete all records, then add back the ones that should be allowed.
-        $DB->delete_records('role_allow_assign');
-        foreach ($roles as $fromroleid => $notused) {
-            foreach ($roles as $targetroleid => $alsonotused) {
-                if (optional_param('s_' . $fromroleid . '_' . $targetroleid, false, PARAM_BOOL)) {
-                    allow_assign($fromroleid, $targetroleid);
-                }
-            }
-        }
-
-    /// Updated allowassigns sitewide, so force a premissions refresh, and redirect.
-        mark_context_dirty($systemcontext->path);
+        $controller->process_submission();
+        mark_context_dirty($this->systemcontext->path);
         add_to_log(SITEID, 'role', 'edit allow assign', 'admin/roles/allowassign.php', '', '', $USER->id);
         redirect($CFG->wwwroot . '/' . $CFG->admin . '/roles/allowassign.php');
     }
 
-/// Load the current settings
-    $allowed = array();
-    foreach ($roles as $role) {
-        // Make an array $role->id => false. This is probalby too clever for its own good.1
-        $allowed[$role->id] = array_combine(array_keys($roles), array_fill(0, count($roles), false));
-    }
-    $raas = $DB->get_recordset('role_allow_assign');
-    foreach ($raas as $raa) {
-        $allowed[$raa->roleid][$raa->allowassign] = true;
-    }
+    $controller->load_current_settings();
 
 /// Display the editing form.
-    admin_externalpage_setup('defineroles', '', array(), $CFG->wwwroot . '/' . $CFG->admin . '/roles/allowassign.php');
     admin_externalpage_print_header();
 
     $currenttab='allowassign';
     require_once('managetabs.php');
 
-    $table->tablealign = 'center';
-    $table->cellpadding = 5;
-    $table->cellspacing = 0;
-    $table->width = '90%';
-    $table->align[] = 'left';
-    $table->rotateheaders = true;
-    $table->head = array('&#xa0;');
-
-/// Add role name headers.
-    foreach ($roles as $targetrole) {
-        $table->head[] = $targetrole->localname;
-        $table->align[] = 'left';
-    }
-
-/// Now the rest of the table.
-    foreach ($roles as $fromrole) {
-        $row = array($fromrole->localname);
-        $a = new stdClass;
-        $a->fromrole = $fromrole->localname;
-        foreach ($roles as $targetrole) {
-            if ($allowed[$fromrole->id][$targetrole->id]) {
-                $checked = ' checked="checked"';
-            } else {
-                $checked = '';
-            }
-            $a->targetrole = $targetrole->localname;
-            $name = 's_' . $fromrole->id . '_' . $targetrole->id;
-            $tooltip = get_string('allowroletoassign', 'role', $a);
-            $row[] = '<input type="checkbox" name="' . $name . '" id="' . $name . '" title="' . $tooltip . '" value="1"' . $checked . ' />' .
-                    '<label for="' . $name . '" class="accesshide">' . $tooltip . '</label>';
-        }
-        $table->data[] = $row;
-    }
+    $table = $controller->get_table();
 
     print_simple_box(get_string('configallowassign', 'admin'), 'center');
 
