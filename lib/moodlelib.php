@@ -3588,7 +3588,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
     }
 
 /// Give local code a chance to delete its references to this course.
-    require_once('locallib.php');
+    require_once($CFG->libdir.'/locallib.php');
     notify_local_delete_course($courseid, $showfeedback);
 
 /// Delete course blocks
