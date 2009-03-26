@@ -363,7 +363,11 @@ class problem_000008 extends problem_base {
         }
         $oldmemlimit = get_real_size($oldmemlimit);
         //now lets change the memory limit to something unique below 128M==134217728
-        @ini_set('memory_limit', 134217720);
+        if (empty($CFG->memorylimit)) {
+            raise_memory_limit('128M');
+        } else {
+            raise_memory_limit($CFG->memorylimit);
+        }
         $testmemlimit = get_real_size(@ini_get('memory_limit'));
         //verify the change had any effect at all
         if ($oldmemlimit == $testmemlimit) {
@@ -374,7 +378,7 @@ class problem_000008 extends problem_base {
                 return false;
             }
         }
-        @ini_set('memory_limit', $oldmemlimit);
+        reduce_memory_limit($oldmemlimit);
         return false;
     }
     function severity() {
