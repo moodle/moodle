@@ -2247,8 +2247,8 @@ class admin_setting_special_selectsetup extends admin_setting_configselect {
  */
 class admin_setting_sitesetselect extends admin_setting_configselect {
     public function get_setting() {
-        global $SITE;
-        $_site = get_record('course', 'id', $SITE->id); 
+        global $SITE, $DB;
+        $_site = $DB->get_record('course', array('id'=>$SITE->id)); 
         return $_site->{$this->name};
     }
 
@@ -2357,8 +2357,8 @@ class admin_setting_courselist_frontpage extends admin_setting {
  */
 class admin_setting_sitesetcheckbox extends admin_setting_configcheckbox {
     public function get_setting() {
-        global $SITE;
-        $_site = get_record('course', 'id', $SITE->id); 
+        global $SITE, $DB;
+        $_site = $DB->get_record('course', array('id'=>$SITE->id)); 
         return $_site->{$this->name};
     }
 
@@ -2378,8 +2378,8 @@ class admin_setting_sitesetcheckbox extends admin_setting_configcheckbox {
  */
 class admin_setting_sitesettext extends admin_setting_configtext {
     public function get_setting() {
-        global $SITE;
-        $_site = get_record('course', 'id', $SITE->id); 
+        global $SITE, $DB;
+        $_site = $DB->get_record('course', array('id'=>$SITE->id)); 
         return $_site->{$this->name};
     }
 
@@ -2420,8 +2420,8 @@ class admin_setting_special_frontpagedesc extends admin_setting {
     }
 
     public function get_setting() {
-        global $SITE;
-        $_site = get_record('course', 'id', $SITE->id); 
+        global $SITE, $DB;
+        $_site = $DB->get_record('course', array('id'=>$SITE->id)); 
         return $_site->{$this->name};
     }
 
