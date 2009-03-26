@@ -425,6 +425,23 @@
         }
     }
 
+/// Run the auth cron, if any
+/// before enrolments because it might add users that will be needed in enrol plugins
+    $auths = get_enabled_auth_plugins();
+
+    mtrace("Running auth crons if required...");
+    foreach ($auths as $auth) {
+        $authplugin = get_auth_plugin($auth);
+        if (method_exists($authplugin, 'cron')) {
+            mtrace("Running cron for auth/$auth...");
+            $authplugin->cron();
+            if (!empty($authplugin->log)) {
+                mtrace($authplugin->log);
+            }
+        }
+        unset($authplugin);
+    }
+
 /// Run the enrolment cron, if any
     if (!($plugins = explode(',', $CFG->enrol_plugins_enabled))) {
         $plugins = array($CFG->enrol);
@@ -439,22 +456,6 @@
             mtrace($enrol->log);
         }
         unset($enrol);
-    }
-
-/// Run the auth cron, if any
-    $auths = get_enabled_auth_plugins();
-
-    mtrace("Running auth crons if required...");
-    foreach ($auths as $auth) {
-        $authplugin = get_auth_plugin($auth);
-        if (method_exists($authplugin, 'cron')) {
-            mtrace("Running cron for auth/$auth...");
-            $authplugin->cron();
-            if (!empty($authplugin->log)) {
-                mtrace($authplugin->log);
-            }
-        }
-        unset($authplugin);
     }
 
     if (!empty($CFG->enablestats) and empty($CFG->disablestatsprocessing)) {
