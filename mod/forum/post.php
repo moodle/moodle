@@ -496,10 +496,16 @@
         $subscribe = !empty($USER->autosubscribe);
     }
 
+    $draftid_editor = file_get_submitted_draftitemid('message');
+    $currenttext = file_prepare_draftarea($draftid_editor, $modcontext->id, 'forum_post', empty($post->id) ? null : $post->id, true, $post->message);
     $mform_post->set_data(array(        'attachments'=>$draftitemid,
                                         'general'=>$heading,
                                         'subject'=>$post->subject,
-                                        'message'=>$post->message,
+                                        'message'=>array(
+                                            'text'=>$currenttext,
+                                            'format'=>empty($post->format) ? FORMAT_HTML : $post->format, //TODO: add some better default
+                                            'itemid'=>$draftid_editor
+                                        ),
                                         'subscribe'=>$subscribe?1:0,
                                         'mailnow'=>!empty($post->mailnow),
                                         'userid'=>$post->userid,
@@ -536,7 +542,10 @@
             $errordestination = $SESSION->fromurl;
         }
 
-        trusttext_after_edit($fromform->message, $modcontext);
+        trusttext_after_edit($fromform->message['text'], $modcontext);
+        $fromform->format  = $fromform->message['format'];
+        $fromform->itemid  = $fromform->message['itemid'];
+        $fromform->message = $fromform->message['text'];
 
         if ($fromform->edit) {           // Updating a post
             unset($fromform->groupid);

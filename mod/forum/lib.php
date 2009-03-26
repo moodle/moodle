@@ -2968,8 +2968,11 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     static $strpruneheading, $displaymode;
     static $strmarkread, $strmarkunread;
 
+    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+
     $post->course = $course->id;
     $post->forum  = $forum->id;
+    $post->message = file_convert_relative_pluginfiles($post->message, 'pluginfile.php', "$modcontext->id/forum_post/$post->id/");
 
     // caching
     if (!isset($cm->cache)) {
@@ -2978,7 +2981,6 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
 
     if (!isset($cm->cache->caps)) {
         $cm->cache->caps = array();
-        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         $cm->cache->caps['mod/forum:viewdiscussion']   = has_capability('mod/forum:viewdiscussion', $modcontext);
         $cm->cache->caps['moodle/site:viewfullnames']  = has_capability('moodle/site:viewfullnames', $modcontext);
         $cm->cache->caps['mod/forum:editanypost']      = has_capability('mod/forum:editanypost', $modcontext);
@@ -4149,9 +4151,11 @@ function forum_add_attachment($post, $forum, $cm, $mform=null, &$message=null) {
 function forum_add_new_post($post, $mform, &$message) {
     global $USER, $CFG, $DB;
 
+    $message = $post->message;
     $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion));
     $forum      = $DB->get_record('forum', array('id' => $discussion->forum));
     $cm         = get_coursemodule_from_instance('forum', $forum->id);
+    $context    = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $post->created    = $post->modified = time();
     $post->mailed     = "0";
@@ -4162,6 +4166,8 @@ function forum_add_new_post($post, $mform, &$message) {
         return false;
     }
 
+    $message = file_convert_draftarea($post->itemid, $context->id, 'forum_post', $post->id, true, $message);
+    $DB->set_field('forum_posts', 'message', $message, array('id'=>$post->id));
     forum_add_attachment($post, $forum, $cm, $mform, $message);
 
     // Update discussion modified date
@@ -4184,6 +4190,7 @@ function forum_update_post($post, $mform, &$message) {
     $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion));
     $forum      = $DB->get_record('forum', array('id' => $discussion->forum));
     $cm         = get_coursemodule_from_instance('forum', $forum->id);
+    $context    = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $post->modified = time();
 
@@ -4199,6 +4206,8 @@ function forum_update_post($post, $mform, &$message) {
         $discussion->timestart = $post->timestart;
         $discussion->timeend   = $post->timeend;
     }
+    $post->message = file_convert_draftarea($post->itemid, $context->id, 'forum_post', $post->id, true, $post->message);
+    $DB->set_field('forum_posts', 'message', $post->message, array('id'=>$post->id));
 
     if (!$DB->update_record('forum_discussions', $discussion)) {
         return false;
@@ -4227,6 +4236,7 @@ function forum_add_discussion($discussion, $mform=null, &$message=null) {
 
     $forum = $DB->get_record('forum', array('id'=>$discussion->forum));
     $cm    = get_coursemodule_from_instance('forum', $forum->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $post = new object();
     $post->discussion  = 0;
@@ -4246,6 +4256,9 @@ function forum_add_discussion($discussion, $mform=null, &$message=null) {
     if (! $post->id = $DB->insert_record("forum_posts", $post) ) {
         return 0;
     }
+
+    $text = file_convert_draftarea($discussion->itemid, $context->id, 'forum_post', $post->id, true, $post->message);
+    $DB->set_field('forum_posts', 'message', $text, array('id'=>$post->id));
 
     // Now do the main entry for the discussion, linking to this first post
 
@@ -5260,8 +5273,8 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
     } else {
         $ownpost = false;
     }
+    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
     if ($canreply === NULL) {
-        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         $reply = forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext);
     } else {
         $reply = $canreply;
