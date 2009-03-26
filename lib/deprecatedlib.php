@@ -709,7 +709,7 @@ function change_field_default($table, $field) {
 function rename_field($table, $field, $newname) {
     global $DB;
     debugging('Deprecated ddllib function used!');
-    $DB->get_manager()->rename_field($table, $field);
+    $DB->get_manager()->rename_field($table, $field, $newname);
     return true;
 }
 
