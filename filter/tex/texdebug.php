@@ -1,9 +1,7 @@
-<?PHP // $Id$
+<?php // $Id$
       // This function fetches math. images from the data directory
       // If not, it obtains the corresponding TeX expression from the cache_tex db table
       // and uses mimeTeX to create the image file
-
-    $nomoodlecookie = true;     // Because it interferes with caching
 
     require_once("../../config.php");
     require( 'latex.php' );
@@ -23,6 +21,9 @@
     $param = null;
     $param->action = optional_param( 'action','',PARAM_ALPHA );
     $param->tex = optional_param( 'tex','' );
+
+    require_login();
+    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM), $USER->id); /// Required cap to run this. MDL-18552
 
     $query = urldecode($_SERVER['QUERY_STRING']);
     error_reporting(E_ALL);
