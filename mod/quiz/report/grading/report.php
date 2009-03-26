@@ -37,8 +37,6 @@ class quiz_grading_report extends quiz_default_report {
         }
 
         // grade question specific parameters
-        $gradeungraded  = optional_param('gradeungraded', 0, PARAM_INT);
-
         if ($userid    = optional_param('userid', 0, PARAM_INT)){
             $viewoptions += array('userid'=>$userid);
         }
@@ -444,7 +442,7 @@ class quiz_grading_report extends quiz_default_report {
 
         list($usql, $u_params) = $DB->get_in_or_equal(array_keys($this->users));
         if ($gradenextungraded || $gradeungraded) { // get ungraded attempts
-            $where = "WHERE u.id $usql AND qs.event IN (".QUESTION_EVENTS_GRADED.")";
+            $where = "WHERE u.id $usql AND qs.event NOT IN (".QUESTION_EVENTS_GRADED.")";
             $params = array_merge($params, $u_params);
         } else if ($userid) { // get all the attempts for a specific user
             $where = 'WHERE u.id=?';
