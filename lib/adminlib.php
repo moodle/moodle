@@ -2381,7 +2381,7 @@ class admin_setting_sitesetcheckbox extends admin_setting_configcheckbox {
 class admin_setting_sitesettext extends admin_setting_configtext {
     public function get_setting() {
         $site = get_site();
-        return $site->{$this->name};
+        return $site->{$this->name} != '' ? $site->{$this->name} : NULL;
     }
 
     public function validate($data) {
