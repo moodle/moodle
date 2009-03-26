@@ -430,7 +430,7 @@ final class webservice_lib {
                 $descriptionlevel = $desctoadd;
             }
         } else {
-            webservice_lib::add_end_of_description($param, $desctoadd, &$descriptionlevel[$descriptionpath[$level]], $descriptionpath, $level+1);
+            webservice_lib::add_end_of_description($param, $desctoadd, $descriptionlevel[$descriptionpath[$level]], $descriptionpath, $level+1);
         }
 
     }
