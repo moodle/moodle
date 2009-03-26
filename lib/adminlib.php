@@ -2764,8 +2764,9 @@ class admin_setting_courselist_frontpage extends admin_setting {
  */
 class admin_setting_sitesetcheckbox extends admin_setting_configcheckbox {
     function get_setting() {
-        $site = get_site();
-        return $site->{$this->name};
+        global $SITE;
+        $_site = get_record('course', 'id', $SITE->id); 
+        return $_site->{$this->name};
     }
 
     function write_setting($data) {
@@ -2783,8 +2784,9 @@ class admin_setting_sitesetcheckbox extends admin_setting_configcheckbox {
  */
 class admin_setting_sitesettext extends admin_setting_configtext {
     function get_setting() {
-        $site = get_site();
-        return $site->{$this->name} != '' ? $site->{$this->name} : NULL;
+        global $SITE;
+        $_site = get_record('course', 'id', $SITE->id); 
+        return $_site->{$this->name};
     }
 
     function validate($data) {
@@ -2823,8 +2825,9 @@ class admin_setting_special_frontpagedesc extends admin_setting {
     }
 
     function get_setting() {
-        $site = get_site();
-        return $site->{$this->name};
+        global $SITE;
+        $_site = get_record('course', 'id', $SITE->id); 
+        return $_site->{$this->name};
     }
 
     function write_setting($data) {
