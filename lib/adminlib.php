@@ -2247,8 +2247,9 @@ class admin_setting_special_selectsetup extends admin_setting_configselect {
  */
 class admin_setting_sitesetselect extends admin_setting_configselect {
     public function get_setting() {
-        $site = get_site();
-        return $site->{$this->name};
+        global $SITE;
+        $_site = get_record('course', 'id', $SITE->id); 
+        return $_site->{$this->name};
     }
 
     public function write_setting($data) {
