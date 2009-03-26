@@ -5363,7 +5363,6 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
     } else {
         $locations[] = $CFG->dataroot.'/lang/';
         $locations[] = $CFG->dirroot.'/lang/';
-        $locations[] = $CFG->dirroot.'/local/lang/';
     }
 
 /// Add extra places to look for strings for particular plugin types.
@@ -5380,7 +5379,9 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
             $type = substr($module, 0, $dividerpos + 1);
             $plugin = substr($module, $dividerpos + 1);
         }
-        if (!empty($rules[$type])) {
+        if ($module == 'local') {
+            $locations[] = $CFG->dirroot . '/local/lang/';
+        } if (!empty($rules[$type])) {
             foreach ($rules[$type] as $location) {
                 $locations[] = $CFG->dirroot . "/$location/$plugin/lang/";
             }
