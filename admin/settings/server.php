@@ -233,6 +233,14 @@ $ADMIN->add('server', new admin_externalpage('phpinfo', get_string('phpinfo'), "
 
 // "performance" settingpage
 $temp = new admin_settingpage('performance', get_string('performance', 'admin'));
+
+$temp->add(new admin_setting_special_selectsetup('memorylimit', get_string('memorylimit', 'admin'),
+                                          get_string('configmemorylimit', 'admin'), '128M',
+                                          array( '64M' => '64M',
+                                                 '128M' => '128M',
+                                                 '256M' => '256M',
+                                                 '1024M' => '1024M'
+                                             )));
 $temp->add(new admin_setting_special_selectsetup('cachetype', get_string('cachetype', 'admin'),
                                           get_string('configcachetype', 'admin'), '',
                                           array( '' => get_string('none'),

@@ -547,9 +547,12 @@
             mtrace($debuginfo.'Required function check failed (see backup_required_functions)');
             return false;
         }
-
         @ini_set("max_execution_time","3000");
-        raise_memory_limit("192M");
+        if (empty($CFG->memorylimit)) {
+            raise_memory_limit('128M');
+        } else {
+            raise_memory_limit($CFG->memorylimit);
+        }
 
         if (!$backup_unique_code = restore_precheck($destinationcourse,$pathtofile,$errorstr,true)) {
             mtrace($debuginfo.'Failed restore_precheck (error was '.$errorstr.')');
