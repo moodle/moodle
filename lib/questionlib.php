@@ -1828,7 +1828,11 @@ function get_question_image($question) {
 function question_print_comment_fields($question, $state, $prefix, $cmoptions, $caption = '') {
     global $QTYPES;
     $idprefix = preg_replace('/[^-_a-zA-Z0-9]/', '', $prefix);
-    if (!question_state_is_graded($state) && $QTYPES[$question->qtype]->is_question_manual_graded($question, $attempt->layout)) {
+    $otherquestionsinuse = '';
+    if (!empty($cmoptions->questions)) {
+        $otherquestionsinuse = $cmoptions->questions;
+    }
+    if (!question_state_is_graded($state) && $QTYPES[$question->qtype]->is_question_manual_graded($question, $otherquestionsinuse)) {
         $grade = '';
     } else {
         $grade = question_format_grade($cmoptions, $state->last_graded->grade);
