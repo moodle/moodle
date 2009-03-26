@@ -1032,7 +1032,7 @@ function report_security_check_riskadmin($detailed=false) {
 
     if (!$unsupcount) {
         $result->status  = REPORT_SECURITY_OK;
-        $result->info = get_string('check_riskadmin_ok', 'report_security', count($admincount));
+        $result->info = get_string('check_riskadmin_ok', 'report_security', $admincount);
 
         if ($detailed) {
             $result->details = get_string('check_riskadmin_detailsok', 'report_security', $admins);
