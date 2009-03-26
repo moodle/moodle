@@ -3,8 +3,6 @@
       // If not, it obtains the corresponding TeX expression from the cache_tex db table
       // and uses mimeTeX to create the image file
 
-    define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
-
     require_once("../../config.php");
 
     if (empty($CFG->textfilters)) {
@@ -22,6 +20,9 @@
 
     $action = optional_param('action', '', PARAM_ALPHA);
     $texexp = optional_param('tex', '', PARAM_RAW);
+
+    require_login();
+    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM), $USER->id); /// Required cap to run this. MDL-18552
 
     $query = urldecode($_SERVER['QUERY_STRING']);
     error_reporting(E_ALL);
