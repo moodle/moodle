@@ -1,9 +1,7 @@
-<?PHP // $Id$
+<?php // $Id$
       // This function fetches math. images from the data directory
       // If not, it obtains the corresponding TeX expression from the cache_tex db table
       // and uses mimeTeX to create the image file
-
-    $nomoodlecookie = true;     // Because it interferes with caching
 
     require_once("../../config.php");
 
@@ -18,6 +16,11 @@
 
     $CFG->texfilterdir = "filter/tex";
     $CFG->teximagedir = "filter/tex";
+
+    require_login();
+    if (!isadmin()) {
+        error('Sorry, but you do not currently have permissions to do that');
+    }
 
     $query = urldecode($_SERVER['QUERY_STRING']);
     error_reporting(E_ALL);
