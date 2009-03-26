@@ -2656,12 +2656,12 @@ class admin_setting_special_selectsetup extends admin_setting_configselect {
  */
 class admin_setting_sitesetselect extends admin_setting_configselect {
     function get_setting() {
-        global $SITE;
-        $_site = get_record('course', 'id', $SITE->id); 
-        return $_site->{$this->name};
+        $site = get_site();
+        return $site->{$this->name};
     }
 
     function write_setting($data) {
+        global $SITE;
         if (!in_array($data, array_keys($this->choices))) {
             return get_string('errorsetting', 'admin');
         }
@@ -2670,6 +2670,8 @@ class admin_setting_sitesetselect extends admin_setting_configselect {
         $temp                 = $this->name;
         $record->$temp        = $data;
         $record->timemodified = time();
+        // update $SITE
+        $SITE->{$this->name} = $data;
         return (update_record('course', $record) ? '' : get_string('errorsetting', 'admin'));
     }
 }
@@ -2764,16 +2766,18 @@ class admin_setting_courselist_frontpage extends admin_setting {
  */
 class admin_setting_sitesetcheckbox extends admin_setting_configcheckbox {
     function get_setting() {
-        global $SITE;
-        $_site = get_record('course', 'id', $SITE->id); 
-        return $_site->{$this->name};
+        $site = get_site();
+        return $site->{$this->name};
     }
 
     function write_setting($data) {
+        global $SITE;
         $record = new object();
         $record->id            = SITEID;
         $record->{$this->name} = ($data == '1' ? 1 : 0);
         $record->timemodified  = time();
+        // update $SITE
+        $SITE->{$this->name} = $data;
         return (update_record('course', $record) ? '' : get_string('errorsetting', 'admin'));
     }
 }
@@ -2784,9 +2788,8 @@ class admin_setting_sitesetcheckbox extends admin_setting_configcheckbox {
  */
 class admin_setting_sitesettext extends admin_setting_configtext {
     function get_setting() {
-        global $SITE;
-        $_site = get_record('course', 'id', $SITE->id); 
-        return $_site->{$this->name};
+        $site = get_site();
+        return $site->{$this->name};
     }
 
     function validate($data) {
@@ -2802,6 +2805,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
     }
 
     function write_setting($data) {
+        global $SITE;
         $data = trim($data);
         $validated = $this->validate($data); 
         if ($validated !== true) {
@@ -2812,6 +2816,8 @@ class admin_setting_sitesettext extends admin_setting_configtext {
         $record->id            = SITEID;
         $record->{$this->name} = addslashes($data);
         $record->timemodified  = time();
+        // update $SITE
+        $SITE->{$this->name} = $data;
         return (update_record('course', $record) ? '' : get_string('dbupdatefailed', 'error'));
     }
 }
@@ -2825,16 +2831,17 @@ class admin_setting_special_frontpagedesc extends admin_setting {
     }
 
     function get_setting() {
-        global $SITE;
-        $_site = get_record('course', 'id', $SITE->id); 
-        return $_site->{$this->name};
+        $site = get_site();
+        return $site->{$this->name};
     }
 
     function write_setting($data) {
+        global $SITE;
         $record = new object();
         $record->id            = SITEID;
         $record->{$this->name} = addslashes($data);
         $record->timemodified  = time();
+        $SITE->{$this->name} = $data;
         return (update_record('course', $record) ? '' : get_string('errorsetting', 'admin'));
     }
 
