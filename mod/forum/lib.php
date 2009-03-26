@@ -2379,7 +2379,7 @@ function forum_count_discussions($forum, $cm, $course) {
 
     $sql = "SELECT COUNT(d.id)
               FROM {forum_discussions} d
-             WHERE d.groupid IN ($mygroups) AND d.forum = ?
+             WHERE d.groupid $mygroups_sql AND d.forum = ?
                    $timedsql";
 
     return $DB->get_field_sql($sql, $params);
