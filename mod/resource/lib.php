@@ -550,7 +550,7 @@ function resource_get_types() {
             $type->modclass = MOD_CLASS_RESOURCE;
             $type->name = $resourcetype;
             $type->type = "resource&amp;type=$resourcetype";
-            $type->typestr = get_string("resourcetype$resourcetype", 'resource');
+            $type->typestr = resource_get_name($resourcetype);
             $types[] = $type;
         }
     }
@@ -680,6 +680,21 @@ function resource_reset_userdata($data) {
  */
 function resource_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
+}
+
+/**
+ * Returns the full name of the given resource type.  The name can
+ * either be set at the resource type level or at the resource module
+ * level.
+ *
+ * @param string $type shortname (or directory name) of the resource type
+ */
+function resource_get_name($type) {
+    $name = get_string("resourcetype$type", "resource_$type");
+    if (substr($name, 0, 2) === '[[') {
+        $name = get_string("resourcetype$type", 'resource');
+    }
+    return $name;
 }
 
 ?>
