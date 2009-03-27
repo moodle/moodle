@@ -68,7 +68,7 @@
 
         if (empty($b)) {
             if (empty($a)) {
-                $navigation = build_navigation('', $cm);
+                $navigation = build_navigation($strreport, $cm);
                 print_header("$course->shortname: ".format_string($scorm->name), $course->fullname,$navigation,
                              '', '', true);
             } else {

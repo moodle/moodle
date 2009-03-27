@@ -42,16 +42,6 @@
     $strscorms = get_string("modulenameplural", "scorm");
     $strscorm  = get_string("modulename", "scorm");
 
-    if ($course->id != SITEID) { 
-        
-        if ($scorms = get_all_instances_in_course('scorm', $course)) {
-            // The module SCORM activity with the least id is the course  
-            $firstscorm = current($scorms);
-            if (!(($course->format == 'scorm') && ($firstscorm->id == $scorm->id))) {
-                $navlinks[] = array('name' => $strscorms, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-            }       
-        }
-    }
     $pagetitle = strip_tags($course->shortname.': '.format_string($scorm->name));
 
     add_to_log($course->id, 'scorm', 'pre-view', 'view.php?id='.$cm->id, "$scorm->id", $cm->id);
@@ -64,8 +54,7 @@
     // Print the page header
     //
     $navlinks = array();
-    $navlinks[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-    $navigation = build_navigation($navlinks);
+    $navigation = build_navigation($navlinks,$cm);
     
     print_header($pagetitle, $course->fullname, $navigation,
                  '', '', true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
