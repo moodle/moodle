@@ -73,77 +73,7 @@ class course_external_test extends UnitTestCase {
         $course->shortname = "TestCourseForCourse";
         $course->idnumber = 123456789;
         $course = create_course($course);
-        $this->course = $course;
-
-
-        /// create two students
-        //        $user = new stdClass();
-        //        $user->username = 'mockuserfortestingXX';
-        //        $user->firstname = 'mockuserfortestingX_firstname';
-        //        $user->lastname = 'mockuserfortestingX_lastname';
-        //        $user->email = 'mockuserfortestingX@moodle.com';
-        //        $user->password = 'mockuserfortestingX_password';
-        //        $this->userid1 = create_user($user);
-        //        $user->username = 'mockuserfortestingXY';
-        //        $user->firstname = 'mockuserfortestingY_firstname';
-        //        $user->lastname = 'mockuserfortestingY_lastname';
-        //        $user->email = 'mockuserfortestingY@moodle.com';
-        //        $user->password = 'mockuserfortestingY_password';
-        //        $this->userid2 = create_user($user);
-        //
-        //        //create some more test users (not add yet to any group)
-        //        $user = new stdClass();
-        //        $user->username = 'mockuserfortestingZ';
-        //        $user->firstname = 'mockuserfortestingZ_firstname';
-        //        $user->lastname = 'mockuserfortestingZ_lastname';
-        //        $user->email = 'mockuserfortestingZ@moodle.com';
-        //        $user->password = 'mockuserfortestingZ_password';
-        //        $this->userid3 = create_user($user);
-        //        $user = new stdClass();
-        //        $user->username = 'mockuserfortestingZ2';
-        //        $user->firstname = 'mockuserfortestingZ2_firstname';
-        //        $user->lastname = 'mockuserfortestingZ2_lastname';
-        //        $user->email = 'mockuserfortestingZ2@moodle.com';
-        //        $user->password = 'mockuserfortestingZ2_password';
-        //        $this->userid4 = create_user($user);
-
-        //        //create a user, don't add it to a role or group
-        //        $user = new stdClass();
-        //        $user->username = 'mockuserfortestingZ23';
-        //        $user->firstname = 'mockuserfortestingZ23_firstname';
-        //        $user->lastname = 'mockuserfortestingZ23_lastname';
-        //        $user->email = 'mockuserfortestingZ23@moodle.com';
-        //        $user->password = 'mockuserfortestingZ23_password';
-        //        $this->userid5 = create_user($user);
-
-        //        //we're creating a new test role with viewcourse capabilyt
-        //        $this->context = $DB->get_record('context',array('contextlevel' => 50, 'instanceid' => $this->course->id));
-        //        $this->roleid = create_role('testrole', 'testrole', 'testrole');
-        //        assign_capability('moodle/course:view', CAP_ALLOW, $this->roleid, $this->context->id);
-        //
-        //        //assign the students to this role
-        //        role_assign($this->roleid, $this->userid1, null, $this->context->id);
-        //        role_assign($this->roleid, $this->userid2, null, $this->context->id);
-        //        role_assign($this->roleid, $this->userid3, null, $this->context->id);
-        //        role_assign($this->roleid, $this->userid4, null, $this->context->id);
-
-        /// create a group with these two students
-        //        $this->group = new stdClass();
-        //        $this->group->courseid = $this->course->id;
-        //        $this->group->name = "Unit Test group";
-        //        $this->group->id = groups_create_group( $this->group, false);
-        //
-        //        /// create a group with one of these students
-        //        $this->group2 = new stdClass();
-        //        $this->group2->courseid = $this->course->id;
-        //        $this->group2->name = "Unit Test group 2";
-        //        $this->group2->id = groups_create_group( $this->group2, false);
-        //
-        //
-        //        //add the two students as member of the group
-        //        groups_add_member($this->group->id, $this->userid1);
-        //        groups_add_member($this->group->id, $this->userid2);
-        //        groups_add_member($this->group2->id, $this->userid1);
+        $this->course = $course; 
 
     }
 
@@ -155,25 +85,6 @@ class course_external_test extends UnitTestCase {
 
         /// delete the category
         $DB->delete_records('course_categories',array('id' =>  $this->categoryid));
-
-        //        /// delete the two students
-        //        $user = $DB->get_record('user', array('username'=>'mockuserfortestingXX', 'mnethostid'=>1));
-        //        delete_user($user);
-        //        $user = $DB->get_record('user', array('username'=>'mockuserfortestingXY', 'mnethostid'=>1));
-        //        delete_user($user);
-        //
-        //        /// delete other test users
-        //        $user = $DB->get_record('user', array('username'=>'mockuserfortestingZ', 'mnethostid'=>1));
-        //        delete_user($user);
-        //        $user = $DB->get_record('user', array('username'=>'mockuserfortestingZ2', 'mnethostid'=>1));
-        //        delete_user($user);
-
-        //        //delete the user without group
-        //        $user = $DB->get_record('user', array('username'=>'mockuserfortestingZ23', 'mnethostid'=>1));
-        //        delete_user($user);
-
-        //        //delete role
-        //        delete_role($this->roleid);
     }
 
     function test_create_courses() {
@@ -304,9 +215,6 @@ class course_external_test extends UnitTestCase {
         $this->assertEqual($coursetotest->numsections, $this->course->numsections);
         $this->assertEqual($coursetotest->startdate, $this->course->startdate);
         $this->assertEqual($coursetotest->category, $this->course->category);
-
-
-
     }
 
     function test_delete_courses() {
@@ -368,10 +276,14 @@ class course_external_test extends UnitTestCase {
 
     }
 
-    function test_get_course_activities() {
-    }
-
-    function test_get_course_resources() {
+    function test_get_course_modules() {
+        //create two different modules
+//        $mod = new stdClass();
+//        $mod->course = $this->course->id;
+//        $mod->module = 6;
+//        $mod->instance = 1;
+//        $mod->section = 1;
+       
     }
 */
 }
