@@ -44,7 +44,7 @@ class mod_resource_mod_form extends moodleform_mod {
         // summary should be optional again MDL-9485
         //$mform->addRule('summary', get_string('required'), 'required', null, 'client');
 
-        $mform->addElement('header', 'typedesc', get_string('resourcetype'.$type,'resource'));
+        $mform->addElement('header', 'typedesc', resource_get_name($type));
         $this->_resinstance->setup_elements($mform);
 
         $this->standard_coursemodule_elements(array('groups'=>false, 'groupmembersonly'=>true, 'gradecat'=>false));
