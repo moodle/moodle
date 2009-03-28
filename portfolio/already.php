@@ -4,7 +4,10 @@ require_once(dirname(dirname(__FILE__)) . '/config.php');
 if (empty($CFG->enableportfolios)) {
     print_error('disabled', 'portfolio');
 }
+
 require_once($CFG->libdir . '/portfoliolib.php');
+
+require_login();
 
 $dataid = 0;
 $currentinfo = null;

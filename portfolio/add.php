@@ -10,6 +10,8 @@ require_once($CFG->libdir . '/formslib.php');
 
 $cancel = optional_param('cancel', 0, PARAM_RAW);
 
+require_login();
+
 $exporter = null;
 $dataid = 0;
 
