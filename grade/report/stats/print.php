@@ -32,7 +32,7 @@ require_once $CFG->libdir.'/gradelib.php';
 require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/report/stats/lib.php';
 
-$courseid = required_param('id');
+$courseid = required_param('id', PARAM_INT);
 
 $reportname = get_string('modulename', 'gradereport_stats');
 
