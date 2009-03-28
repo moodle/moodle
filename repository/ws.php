@@ -84,8 +84,8 @@
 
 /// Get repository instance information
     $sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instances} i '.
-           'WHERE i.id='.$repo_id.' AND i.typeid=r.id';
-    if (!$repository = $DB->get_record_sql($sql)) {
+           'WHERE i.id=? AND i.typeid=r.id';
+    if (!$repository = $DB->get_record_sql($sql, array($repo_id))) {
         $err = new stdclass;
         $err->e = get_string('invalidrepositoryid', 'repository');
         die(json_encode($err));
