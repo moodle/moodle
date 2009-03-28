@@ -1,7 +1,14 @@
 <?php
 require_once(dirname(dirname(dirname(dirname(__FILE__)))). '/config.php');
+
+if (empty($CFG->enableportfolios)) {
+    print_error('disabled', 'portfolio');
+}
+
 require_once($CFG->libdir . '/portfoliolib.php');
 require_once($CFG->dirroot . '/mnet/lib.php');
+
+require_login();
 
 if (!$landed = optional_param('landed', false, PARAM_BOOL)) {
     $id = required_param('id', PARAM_INT);

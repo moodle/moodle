@@ -1,9 +1,16 @@
 <?php
 
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
+
+if (empty($CFG->enableportfolios)) {
+    print_error('disabled', 'portfolio');
+}
+
 require_once($CFG->libdir.'/portfoliolib.php');
 require_js(array('yui_yahoo', 'yui_dom'));
 $id = required_param('id', PARAM_INT);
+
+require_login();
 
 $exporter = portfolio_exporter::rewaken_object($id);
 $exporter->verify_rewaken();
