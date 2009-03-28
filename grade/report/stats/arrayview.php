@@ -32,8 +32,10 @@
 
 require_once '../../../config.php';
 
-$rawdata = required_param('data');
-$courseid = required_param('id');
+// TODO: this file must be removed or completely rewritten before 2.0 get's released
+
+$rawdata = required_param('data'); // TODO: we can not display ANYTHING on moodle pages like this!!!
+$courseid = required_param('id', PARAM_INT);
 
 $data = explode('"', stripslashes(base64_decode(strtr($rawdata, '-_,', '+/='))));
 $context = get_context_instance(CONTEXT_COURSE, $courseid);
