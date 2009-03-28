@@ -43,12 +43,12 @@ require_once '../../../config.php';
 require_once $CFG->dirroot.'/grade/report/visual/lib.php';
 require_once $CFG->libdir.'/phpxml/xml.php';
 
-$visname = required_param('visid');
-$courseid = required_param('id');
+$visname  = required_param('visid', PARAM_ACTION);
+$courseid = required_param('id', PARAM_INT);
 
 /// basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-        print_error('nocourseid');
+    print_error('nocourseid');
 }
 require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
