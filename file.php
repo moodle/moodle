@@ -8,12 +8,6 @@
       //              file.php/courseid/dir/dir/dir/filename.ext?forcedownload=1 (download instead of inline)
       //              file.php/courseid/dir (returns index.html from dir)
       // Workaround:  file.php?file=/courseid/dir/dir/dir/filename.ext
-      // Test:        file.php/testslasharguments
-
-
-      //TODO: Blog attachments do not have access control implemented - anybody can read them!
-      //      It might be better to move the code to separate file because the access
-      //      control is quite complex - see bolg/index.php
 
     require_once('config.php');
     require_once('lib/filelib.php');
