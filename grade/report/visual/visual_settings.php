@@ -28,6 +28,9 @@
  * visualizations classes found in ./visualizations
  */
 
+// TODO: This needs to be replaced by web service user keys
+
+
 /// Get a session id from the URI request and make a cookie
 /// for it temparaly. This is needed as the flex application will
 /// not have the users oringal cookie and only the session information
