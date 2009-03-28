@@ -182,7 +182,7 @@ function feedback_get_recent_mod_activity(&$activities, &$index, $timemodified, 
     if ($COURSE->id == $courseid) {
         $course = $COURSE;
     } else {
-        $course = get_record('course', 'id', $courseid);
+        $course = $DB->get_record('course', array('id'=>$courseid));
     }
 
     $modinfo =& get_fast_modinfo($course);
