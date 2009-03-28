@@ -36,13 +36,7 @@ $courseid = required_param('id', PARAM_INT);
 
 
 /// Make sure they can even access this course
-if(isset($DB) && !is_null($DB)) {
-    $course = $DB->get_record('course', array('id' => $courseid));
-} else {
-    $course = get_record('course', 'id', $courseid);
-}
-
-if (!$course) {
+if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
 

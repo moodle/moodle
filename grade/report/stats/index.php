@@ -34,14 +34,12 @@ require_once $CFG->libdir.'/gradelib.php';
 require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/report/stats/lib.php';
 
-$courseid = required_param('id');
+$courseid = required_param('id', PARAM_INT);
 $toggle = optional_param('toggle', NULL, PARAM_INT);
 $toggle_type = optional_param('toggle_type', 0, PARAM_ALPHANUM);
 
 /// basic access checks
-$course = $DB->get_record('course', array('id' => $courseid));
-
-if (!$course) {
+if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
 

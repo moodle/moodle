@@ -36,17 +36,11 @@ $courseid = required_param('id', PARAM_INT);
 
 
 /// Make sure they can even access this course
-if(isset($DB) && !is_null($DB)) {
-    $course = $DB->get_record('course', array('id' => $courseid));
-} else {
-    $course = get_record('course', 'id', $courseid);
+if (!$course = $DB->get_record('course', array('id' => $courseid))) {
+        print_error('nocourseid');
 }
 
-if (!$course) {
-    print_error('nocourseid');
-}
-
-require_login($course->id);
+require_login($course);
 
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);

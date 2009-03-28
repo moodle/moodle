@@ -47,12 +47,7 @@ $courseid = required_param('id');
 $visid = optional_param('visid');
 
 /// basic access checks
-if(isset($DB) && !is_null($DB)) {
-    $course = $DB->get_record('course', array('id' => $courseid));
-} else {
-    $course = get_record('course', 'id', $courseid);
-}
-if (!$course) {
+if (!$course = $DB->get_record('course', array('id' => $courseid))) {
         print_error('nocourseid');
 }
 require_login($course);

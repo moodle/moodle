@@ -194,13 +194,9 @@ class grade_report_stats extends grade_report {
             $this->users = array();
             $this->userselect_params = array();
         } else {
-            if(isset($DB) && !is_null($DB)) {
-                list($usql, $params) = $DB->get_in_or_equal(array_keys($this->users));
-                $this->userselect = "AND g.userid $usql";
-                $this->userselect_params = $params;
-            }else{
-                $this->userselect = 'AND g.userid in ('.implode(',', array_keys($this->users)).')';
-            }
+            list($usql, $params) = $DB->get_in_or_equal(array_keys($this->users));
+            $this->userselect = "AND g.userid $usql";
+            $this->userselect_params = $params;
         }
 
         return $this->users;
@@ -234,25 +230,15 @@ class grade_report_stats extends grade_report {
 
         $params = array();
 
-        if(isset($DB) && !is_null($DB)) {
-            $params = array_merge(array($this->courseid), $this->userselect_params);
+        $params = array_merge(array($this->courseid), $this->userselect_params);
 
-            /// please note that we must fetch all grade_grades fields if we want to contruct grade_grade object from it!
-            $sql = "SELECT g.*
-                  FROM {grade_items} gi,
-                       {grade_grades} g
-                 WHERE g.itemid = gi.id AND gi.courseid = ? {$this->userselect}";
+        /// please note that we must fetch all grade_grades fields if we want to contruct grade_grade object from it!
+        $sql = "SELECT g.*
+              FROM {grade_items} gi,
+                   {grade_grades} g
+             WHERE g.itemid = gi.id AND gi.courseid = ? {$this->userselect}";
 
-            $grades = $DB->get_records_sql($sql, $params);
-        } else {
-            /// please note that we must fetch all grade_grades fields if we want to contruct grade_grade object from it!
-            $sql = "SELECT g.*
-                  FROM {grade_items} gi,
-                       {grade_grades} g
-                 WHERE g.itemid = gi.id AND gi.courseid = {$this->courseid} {$this->userselect}";
-
-            $grades = $DB->get_records_sql($sql);
-        }
+        $grades = $DB->get_records_sql($sql, $params);
 
         $userids = array_keys($this->users);
 

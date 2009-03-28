@@ -70,19 +70,15 @@ class grade_distribution_bar extends visualization {
             $options[$groupkey] = grade_report_visual::truncate($group->name);
         }
         $options[0] = 'All Groups';
-        
-        if(isset($DB) && !is_null($DB)) {
-            $course = $DB->get_record('course', array('id' => required_param('id')));
-        } else {
-            $course = get_record('course', 'id', required_param('id'));
-        }
-        if (!$course) {
+
+// TODO: move the required_param elsewhere!!
+        if (!$course = $DB->get_record('course', array('id' => required_param('id', PARAM_INT)))) {
             print_error('nocourseid');
         }
         
         $active = groups_get_course_group($course, true);
         
-        if(!$active) {
+        if (!$active) {
             $active = 0;
         }
 
