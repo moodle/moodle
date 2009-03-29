@@ -652,7 +652,7 @@ function feedback_get_receivemail_users($cmid, $groups = false) {
     }
 
     //description of the call below: get_users_by_capability($context, $capability, $fields='', $sort='', $limitfrom='', $limitnum='', $groups='', $exceptions='', $doanything=true)
-    return get_users_by_capability($context, 'mod/feedback:receivemail', '', 'lastname', '', '', $groups, '', true);
+    return get_users_by_capability($context, 'mod/feedback:receivemail', '', 'lastname', '', '', $groups, '', false);
 }
 
 ////////////////////////////////////////////////
