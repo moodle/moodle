@@ -1694,6 +1694,19 @@ function get_html_head_contributions(&$questionlist, &$questions, &$states) {
 }
 
 /**
+ * Like @see{get_html_head_contributions} but for the editing page
+ * question/question.php.
+ *
+ * @param $question A question object. Only $question->qtype is used.
+ * @return string some HTML code that can go inside the head tag.
+ */
+function get_editing_head_contributions($question) {
+    global $QTYPES;
+    $contributions = $QTYPES[$question->qtype]->get_editing_head_contributions();
+    return implode("\n", array_unique($contributions));
+}
+
+/**
  * Prints a question
  *
  * Simply calls the question type specific print_question() method.

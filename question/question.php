@@ -219,6 +219,7 @@ if ($mform->is_cancelled()){
 } else {
 
     list($streditingquestion,) = $QTYPES[$question->qtype]->get_heading();
+    $headtags = get_editing_head_contributions($question);
     if ($cm !== null) {
         $strmodule = get_string('modulename', $cm->modname);
         $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $COURSE->id))
@@ -236,7 +237,7 @@ if ($mform->is_cancelled()){
         }
         $navlinks[] = array('name' => $streditingquestion, 'link' => '', 'type' => 'title');
         $navigation = build_navigation($navlinks);
-        print_header_simple($streditingquestion, '', $navigation, "", "", true, $strupdatemodule);
+        print_header_simple($streditingquestion, '', $navigation, '', $headtags, true, $strupdatemodule);
 
     } else {
         $navlinks = array();
@@ -245,7 +246,7 @@ if ($mform->is_cancelled()){
         $strediting = '<a href="edit.php?courseid='.$COURSE->id.'">'.
                 get_string("editquestions", "quiz").'</a> -> '.$streditingquestion;
         $navigation = build_navigation($navlinks);
-        print_header_simple($streditingquestion, '', $navigation);
+        print_header_simple($streditingquestion, '', $navigation, '', $headtags);
     }
 
 
