@@ -8342,11 +8342,7 @@ function get_plugin_name($plugin, $type='mod') {
             }
             break;
         case 'filter':
-            $plugin_name = trim(get_string('filtername', $plugin));
-            if (empty($plugin_name) or ($plugin_name == '[[filtername]]')) {
-                $textlib = textlib_get_instance();
-                $plugin_name = $textlib->strtotitle($plugin);
-            }
+            $plugin_name = filter_get_name('filter', $plugin);
             break;
         default:
             $plugin_name = $plugin;

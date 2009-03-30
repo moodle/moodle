@@ -119,35 +119,19 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
     } else {
         $activefilters = explode(',', $CFG->textfilters);
     }
-    $filterlocations = array('mod','filter');
-    foreach ($filterlocations as $filterlocation) {
-        $filters = get_list_of_plugins($filterlocation);
-
-        $filterbyname = array();
-
-        foreach ($filters as $filter) {
-            $strfiltername = get_string('filtername', $filter);
-            // Deal with filters which are lacking the language string
-            if ($strfiltername == '[[filtername]]') {
-                $textlib = textlib_get_instance();
-                $strfiltername = $textlib->strtotitle($filter);
+    $filternames = filter_get_all_installed();
+    foreach ($filternames as $filterpath => $strfiltername) {
+        if (file_exists("$CFG->dirroot/$filterpath/filtersettings.php")) {
+            $settings = new admin_settingpage('filtersetting'.str_replace('/', '', $filterpath),
+                    $strfiltername, 'moodle/site:config', !in_array($filterpath, $activefilters));
+            if ($ADMIN->fulltree) {
+                include("$CFG->dirroot/$filterpath/filtersettings.php");
             }
-            $filterbyname[$strfiltername] = "$filterlocation/$filter";
-        }
-        ksort($filterbyname);
-
-        foreach ($filterbyname as $strfiltername=>$filterfull) {
-            if (file_exists("$CFG->dirroot/$filterfull/filtersettings.php")) {
-                $settings = new admin_settingpage('filtersetting'.str_replace('/', '', $filterfull), $strfiltername, 'moodle/site:config', !in_array($filterfull, $activefilters));
-                if ($ADMIN->fulltree) {
-                    include("$CFG->dirroot/$filterfull/filtersettings.php");
-                }
-                $ADMIN->add('filtersettings', $settings);
-            }
+            $ADMIN->add('filtersettings', $settings);
         }
     }
 
-    $catname =get_string('portfolios', 'portfolio');
+    $catname = get_string('portfolios', 'portfolio');
     $manage = get_string('manageportfolios', 'portfolio');
     $url = "$CFG->wwwroot/$CFG->admin/portfolio.php";
 

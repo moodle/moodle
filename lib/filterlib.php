@@ -56,7 +56,7 @@ abstract class filter_base {
 /// Define one exclusive separator that we'll use in the temp saved tags
 /// keys. It must be something rare enough to avoid having matches with
 /// filterobjects. MDL-18165
-define ('EXCL_SEPARATOR', '-%-');
+define('EXCL_SEPARATOR', '-%-');
 
 /**
  * This is just a little object to define a phrase and some instructions 
@@ -97,6 +97,62 @@ class filterobject {
 }
 
 /**
+ * Look up the name of this filter in the most appropriate location.
+ * If $filterlocation = 'mod' then does get_string('filtername', $filter);
+ * else if $filterlocation = 'filter' then does get_string('filtername', 'filter_' . $filter);
+ * with a fallback to get_string('filtername', $filter) for backwards compatibility.
+ * These are the only two options supported at the moment.
+ * @param string $filterlocation 'filter' or 'mod'.
+ * @param string $filter the folder name where the filter lives.
+ * @return string the human-readable name for this filter.
+ */
+function filter_get_name($filterlocation, $filter) {
+    switch ($filterlocation) {
+        case 'filter':
+            $strfiltername = get_string('filtername', 'filter_' . $filter);
+            if (substr($strfiltername, 0, 2) != '[[') {
+                // found a valid string.
+                return $strfiltername;
+            }
+            // Fall through to try the legacy location.
+
+        case 'mod':
+            $strfiltername = get_string('filtername', $filter);
+            if (substr($strfiltername, 0, 2) == '[[') {
+                $strfiltername .= ' (' . $filterlocation . '/' . $filter . ')';
+            }
+            return $strfiltername;
+
+        default:
+            throw new coding_exception('Unknown filter location ' . $filterlocation);
+    }
+}
+
+/**
+ * Get the names of all the filters installed in this Moodle.
+ * @return array path => filter name from the appropriate lang file. e.g.
+ * array('mod/glossary' => 'Glossary Auto-linking', 'filter/tex' => 'TeX Notation');
+ * sorted in alphabetical order of name.
+ */
+function filter_get_all_installed() {
+    global $CFG;
+    $filternames = array();
+    $filterlocations = array('mod', 'filter');
+    foreach ($filterlocations as $filterlocation) {
+        $filters = get_list_of_plugins($filterlocation);
+        foreach ($filters as $filter) {
+            $path = $filterlocation . '/' . $filter;
+            if (is_readable($CFG->dirroot . '/' . $path . '/filter.php')) {
+                $strfiltername = filter_get_name($filterlocation, $filter);
+                $filternames[$path] = $strfiltername;
+            }
+        }
+    }
+    asort($filternames, SORT_LOCALE_STRING);
+    return $filternames;
+}
+
+/**
  * Process phrases intelligently found within a HTML text (such as adding links)
  *
  * param  text             the text that we are filtering
@@ -104,7 +160,7 @@ class filterobject {
  * param  ignoretagsopen   an array of opening tags that we should ignore while filtering
  * param  ignoretagsclose  an array of corresponding closing tags
  **/
-function filter_phrases ($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsclose=NULL) {
+function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsclose=NULL) {
 
     global $CFG;
 
@@ -296,10 +352,7 @@ function filter_phrases ($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsc
 
 
     return $text;
-
 }
-
-
 
 function filter_remove_duplicates($linkarray) {
 

@@ -3720,18 +3720,15 @@ class admin_setting_managefilters extends admin_setting {
             return true;
         }
 
+        $filternames = filter_get_all_installed();
         $textlib = textlib_get_instance();
-        $filterlocations = array('mod','filter');
-        foreach ($filterlocations as $filterlocation) {
-            $plugins = get_list_of_plugins($filterlocation);
-            foreach ($plugins as $plugin) {
-                if (strpos($plugin, $query) !== false) {
-                    return true;
-                }
-                $name = get_string('filtername', $plugin);
-                if (strpos($textlib->strtolower($name), $query) !== false) {
-                    return true;
-                }
+        foreach ($filternames as $path => $strfiltername) {
+            if (strpos($textlib->strtolower($strfiltername), $query) !== false) {
+                return true;
+            }
+            list($type, $filter) = explode('/', $path);
+            if (strpos($filter, $query) !== false) {
+                return true;
             }
         }
         return false;
@@ -3752,25 +3749,12 @@ class admin_setting_managefilters extends admin_setting {
         // get a list of possible filters (and translate name if possible)
         // note filters can be in the dedicated filters area OR in their
         // associated modules
-        $installedfilters = array();
+        $installedfilters = filter_get_all_installed();
         $filtersettings_new = array();
-        $filterlocations = array('mod','filter');
-        foreach ($filterlocations as $filterlocation) {
-            $plugins = get_list_of_plugins($filterlocation);
-            foreach ($plugins as $plugin) {
-                $pluginpath = "$CFG->dirroot/$filterlocation/$plugin/filter.php";
-                $settingspath_new = "$CFG->dirroot/$filterlocation/$plugin/filtersettings.php";
-                if (is_readable($pluginpath)) {
-                    $name = trim(get_string("filtername", $plugin));
-                    if (empty($name) or ($name == '[[filtername]]')) {
-                        $textlib = textlib_get_instance();
-                        $name = $textlib->strtotitle($plugin);
-                    }
-                    $installedfilters["$filterlocation/$plugin"] = $name;
-                    if (is_readable($settingspath_new)) {
-                        $filtersettings_new[] = "$filterlocation/$plugin";
-                    }
-                }
+        foreach ($installedfilters as $path => $strfiltername) {
+            $settingspath_new = $CFG->dirroot . '/' . $path . '/filtersettings.php';
+            if (is_readable($settingspath_new)) {
+                $filtersettings_new[] = $path;
             }
         }
 
@@ -3790,8 +3774,8 @@ class admin_setting_managefilters extends admin_setting {
             }
         }
 
-        // construct the display array with installed filters
-        // at the top in the right order
+        // Get the list of all filters, and pull the active filters
+        // to the top.
         $displayfilters = array();
         foreach ($activefilters as $activefilter) {
             $name = $installedfilters[$activefilter];
