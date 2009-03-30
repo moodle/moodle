@@ -97,6 +97,7 @@ $string['rawdetails'] = 'Raw attempt details';
 $string['regrade'] = 'Regrade';
 $string['regradecheck'] = 'Do you really want to regrade &quot;$a&quot;?';
 $string['regraderequired'] = 'Regrade required';
+$string['removegradeitem'] = 'Remove grade item';
 $string['reportanswers'] = 'Answers';
 $string['reportattemptfinish'] = 'Att. finish';
 $string['reportattemptnumber'] = 'Attempt';
