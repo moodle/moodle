@@ -700,10 +700,10 @@
             return false;
         }
         @ini_set("max_execution_time","3000");
-        if (empty($CFG->memorylimit)) {
+        if (empty($CFG->extramemorylimit)) {
             raise_memory_limit('128M');
         } else {
-            raise_memory_limit($CFG->memorylimit);
+            raise_memory_limit($CFG->extramemorylimit);
         }
 
         if (!$backup_unique_code = restore_precheck($destinationcourse,$pathtofile,$errorstr,true)) {
