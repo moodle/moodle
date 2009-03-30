@@ -5278,11 +5278,45 @@ class string_manager {
             'portfolio_' => array('portfolio/type'),
             '' => array('mod')
         );
+        $this->restore_extra_locations_from_session();
         if ($runninginstaller) {
             $stringnames = file($dirroot . '/install/stringnames.txt');
             $this->installstrings = array_map('trim', $stringnames);
             $this->parentlangfile = 'installer.php';
         }
+    }
+
+    protected function restore_extra_locations_from_session() {
+        global $SESSION;
+        if (!empty($SESSION->extralangsearchlocations)) {
+            foreach ($SESSION->extralangsearchlocations as $plugintype => $path) {
+                $this->register_plugin_type($plugintype, $path);
+            }
+        }
+    }
+
+    /**
+     * Register a new type of plugin with the string_manager class. A typical usage might be
+     * string_manager::instance()->register_plugin_type('mymodreport', 'mod/mymod/report');
+     * This should never be needed for standard plugin types. It is intended for third-party
+     * plugins that in turn want to register a sub-plugin type.
+     *
+     * @param string $plugintype a new type of plugin
+     * @param string $path the path where plugins of this type live.
+     */
+    public function register_plugin_type($plugintype, $path) {
+        global $SESSION;
+        $key = $plugintype . '_';
+        if (isset($this->searchplacesbyplugintype[$key]) && $path == reset($this->searchplacesbyplugintype[$key])) {
+            // Nothing to do.
+            return;
+        }
+        $this->searchplacesbyplugintype[$key] = array($path);
+        // We store all registered extra plugin types in the session in order to
+        // allow links to help files to work. I cannot think of a better way to
+        // make this information available to help.php. Putting it in the URL
+        // would be insecure.
+        $SESSION->extralangsearchlocations[$plugintype] = $path;
     }
 
     protected function fix_deprecated_module_name($module) {
