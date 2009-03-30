@@ -243,7 +243,7 @@ $ADMIN->add('server', new admin_externalpage('phpinfo', get_string('phpinfo'), "
 // "performance" settingpage
 $temp = new admin_settingpage('performance', get_string('performance', 'admin'));
 
-$temp->add(new admin_setting_configselect('memorylimit', get_string('memorylimit', 'admin'),
+$temp->add(new admin_setting_configselect('extramemorylimit', get_string('memorylimit', 'admin'),
                                           get_string('configmemorylimit', 'admin'), '128M',
                                           // if this option is set to 0, default 128M will be used
                                           array( '64M' => '64M',
