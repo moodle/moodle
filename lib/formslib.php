@@ -28,6 +28,8 @@ require_once 'HTML/QuickForm/Renderer/Tableless.php';
 require_once $CFG->libdir.'/filelib.php';
 require_once $CFG->libdir.'/uploadlib.php'; // TODO: remove
 
+define('EDITOR_UNLIMITED_FILES', -1);
+
 /**
  * Callback called when PEAR throws an error
  *

@@ -23,7 +23,8 @@ class mod_forum_post_form extends moodleform {
         $mform->addRule('subject', get_string('required'), 'required', null, 'client');
         $mform->addRule('subject', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
-        $mform->addElement('editor', 'message', get_string('message', 'forum'), array('maxfiles'=>-1, 'filearea'=>'forum_post'));
+        $mform->addElement('editor', 'message', get_string('message', 'forum'),
+                array('maxfiles' => EDITOR_UNLIMITED_FILES, 'filearea' => 'forum_post'));
         $mform->setType('message', PARAM_RAW);
         $mform->addRule('message', get_string('required'), 'required', null, 'client');
         $mform->setHelpButton('message', array('reading', 'writing', 'questions', 'richtext2'), false, 'editorhelpbutton');
