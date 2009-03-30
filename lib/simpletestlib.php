@@ -154,6 +154,12 @@ class CheckSpecifiedFieldsExpectation extends SimpleExpectation {
  * This class lets you write unit tests that access a separate set of test
  * tables with a different prefix. Only those tables you explicitly ask to
  * be created will be.
+ *
+ * This class has failities for flipping $USER->id.
+ *
+ * The tear-down method for this class should automatically revert any changes
+ * you make during test set-up using the metods defined here. That is, it will
+ * drop tables for you automatically and revert to the real $DB and $USER->id.
  */
 class UnitTestCaseUsingDatabase extends UnitTestCase {
     private $realdb;
@@ -180,7 +186,6 @@ class UnitTestCaseUsingDatabase extends UnitTestCase {
 
     /**
      * Switch to using the test database for all queries until further notice.
-     * You must remember to switch back using revert_to_real_db() before the end of the test.
      */
     protected function switch_to_test_db() {
         global $DB;
@@ -203,7 +208,6 @@ class UnitTestCaseUsingDatabase extends UnitTestCase {
 
     /**
      * Switch $USER->id to a test value.
-     * You must remember to switch back using revert_global_user_id() before the end of the test.
      *
      * It might be worth making this method do more robuse $USER switching in future,
      * however, this is sufficient for my needs at present.
@@ -235,29 +239,23 @@ class UnitTestCaseUsingDatabase extends UnitTestCase {
      * Check that the user has not forgotten to clean anything up, and if they
      * have, display a rude message and clean it up for them.
      */
-    private function emergency_clean_up() {
+    private function automatic_clean_up() {
         global $DB;
         $cleanmore = false;
 
-        // Check that they did not forget to drop any test tables.
-        if (!empty($this->tables)) {
-            debugging('You did not clean up all your test tables in your UnitTestCaseUsingDatabase. Tables remaining: ' .
-                    implode(', ', array_keys($this->tables)), DEBUG_DEVELOPER);
-        }
+        // Drop any test tables that were created.
         foreach ($this->tables as $tablename => $notused) {
             $this->drop_test_table($tablename);
         }
 
-        // Check that they did not forget to switch page to the real DB.
+        // Switch back to the real DB if necessary.
         if ($DB !== $this->realdb) {
-            debugging('You did not switch back to the real database using revert_to_real_db in your UnitTestCaseUsingDatabase.', DEBUG_DEVELOPER);
             $this->revert_to_real_db();
             $cleanmore = true;
         }
 
-        // Check for forgetting to call revert_global_user_id.
+        // revert_global_user_id if necessary.
         if (!is_null($this->realuserid)) {
-            debugging('You did not switch back to the real $USER->id using revert_global_user_id in your UnitTestCaseUsingDatabase.', DEBUG_DEVELOPER);
             $this->revert_global_user_id();
             $cleanmore = true;
         }
@@ -268,12 +266,13 @@ class UnitTestCaseUsingDatabase extends UnitTestCase {
     }
 
     public function tearDown() {
-        $this->emergency_clean_up();
+        $this->automatic_clean_up();
         parent::tearDown();
     }
 
     public function __destruct() {
-        $this->emergency_clean_up();
+        // Should not be necessary thanks to tearDown, but no harm in belt and braces.
+        $this->automatic_clean_up();
     }
 
     /**

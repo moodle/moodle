@@ -238,11 +238,6 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
                 array($users['s1']->id, $users['s2']->id)),
                 array_map(create_function('$o', 'return $o->id;'),
                 get_users_by_capability($contexts[3], array('mod/quiz:attempt', 'mod/quiz:reviewmyattempts'), '', '', '', '', '', '', false)));
-
-        // Clean up everything we added.
-        $this->revert_to_real_db();
-        $this->drop_test_tables($tablenames);
-        accesslib_clear_all_caches_for_unit_testing();
     }
 
     function test_get_switchable_roles() {
@@ -327,12 +322,6 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
         accesslib_clear_all_caches_for_unit_testing();
         $this->assert(new ArraysHaveSameValuesExpectation(array()), array_keys(get_switchable_roles($syscontext)));
         $this->assert(new ArraysHaveSameValuesExpectation(array($r2id)), array_keys(get_switchable_roles($context)));
-        $this->revert_global_user_id();
-
-        // Clean up everything we added.
-        $this->revert_to_real_db();
-        $this->drop_test_tables($tablenames);
-        accesslib_clear_all_caches_for_unit_testing();
     }
 
     function test_get_allowed_switchable_roles() {
@@ -353,9 +342,6 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
         $this->switch_to_test_db();
 
         $this->assert(new ArraysHaveSameValuesExpectation(array(2, 5)), array_keys(get_allowed_switchable_roles()));
-
-        $this->revert_to_real_db();
-        $this->drop_test_table('role_capabilities');
     }
 }
 ?>
