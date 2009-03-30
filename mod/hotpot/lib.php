@@ -1738,10 +1738,10 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 			$param_url = "/{$tagopen}param{$space}name=$quote(?:movie|src|url)$quote{$space}value=$quote($filepath)$quote.*?$tagclose/is";
 
 			// pattern to match <a> tags which link to multimedia files
-			$link_url = "/{$tagopen}a{$space}href=$quote($filepath)$quote.*?$tagclose.*?$tagreopen\/A$tagclose/is";
+			$link_url = "/{$tagopen}a{$space}href=$quote($filepath)$quote.*?$tagclose.*?$tagreopen\/a$tagclose/is";
 
 			// extract <object> tags
-			preg_match_all("/{$tagopen}object\s.*?{$tagclose}(.*?){$tagreopen}\/object{$tagclose}/is", $this->html, $objects);
+			preg_match_all("/{$tagopen}object.*?{$tagclose}(.*?){$tagreopen}\/object{$tagclose}/is", $this->html, $objects);
 
 			$i_max = count($objects[0]);
 			for ($i=0; $i<$i_max; $i++) {
