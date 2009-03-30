@@ -589,6 +589,7 @@ The new password was automatically generated - you might like to
 <a href=\"$a->link\">change your password</a> to something easier to remember.';
 $string['enable'] = 'Enable';
 $string['encryptedcode'] = 'Encrypted code';
+$string['english'] = 'English';
 $string['enroldate'] = 'Date range';
 $string['enroldetails'] = 'Enrolment details';
 $string['enrolenddate'] = 'End date';

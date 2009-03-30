@@ -26,6 +26,8 @@
 /**
  * Unit tests for (some of) ../moodlelib.php.
  *
+ * Note, tests for get_string are in the separate file testgetstring.php.
+ *
  * @copyright &copy; 2006 The Open University
  * @author T.J.Hunt@open.ac.uk
  * @author nicolas@moodle.com
@@ -67,12 +69,6 @@ class moodlelib_test extends UnitTestCase {
                                 'Debian Linux' => 'Opera/9.01 (X11; Linux i686; U; en)')
             )
         );
-
-    function setUp() {
-    }
-
-    function tearDown() {
-    }
 
     function test_cleanremoteaddr() {
         //IPv4

@@ -5206,64 +5206,309 @@ function get_parent_language($lang=null) {
  * within translation strings
  */
 function print_string($identifier, $module='', $a=NULL) {
-    echo get_string($identifier, $module, $a);
+    echo string_manager::instance()->get_string($identifier, $module, $a);
 }
 
 /**
- * fix up the optional data in get_string()/print_string() etc
- * ensure possible sprintf() format characters are escaped correctly
- * needs to handle arbitrary strings and objects
- * @param mixed $a An object, string or number that can be used
- * @return mixed the supplied parameter 'cleaned'
+ * Singleton class for managing the search for language strings.
+ *
+ * Not that performance of this class is important. If you decide to change
+ * this class, please use the lib/simpletest/getstringperformancetester.php
+ * script to make sure your changes do not cause a performance problem.
  */
-function clean_getstring_data( $a ) {
-    if (is_string($a)) {
-        return str_replace( '%','%%',$a );
-    }
-    elseif (is_object($a)) {
-        $a_vars = get_object_vars( $a );
-        $new_a_vars = array();
-        foreach ($a_vars as $fname => $a_var) {
-            $new_a_vars[$fname] = clean_getstring_data( $a_var );
+class string_manager {
+    private $parentlangs = array('en_utf8' => NULL);
+    private $searchpathsformodule = array();
+    private $strings = array();
+    private $nonpluginfiles = array('moodle' => 1, 'langconfig' => 1);
+    private $langconfigstrs = array('alphabet' => 1, 'backupnameformat' => 1, 'decsep' => 1,
+                'firstdayofweek' => 1, 'listsep' => 1, 'locale' => 1, 'localewin' => 1,
+                'localewincharset' => 1, 'oldcharset' => 1, 'parentlanguage' => 1,
+                'strftimedate' => 1, 'strftimedateshort' => 1, 'strftimedatefullshort' => 1,
+                'strftimedatetime' => 1, 'strftimedaydate' => 1, 'strftimedaydatetime' => 1,
+                'strftimedayshort' => 1, 'strftimedaytime' => 1, 'strftimemonthyear' => 1,
+                'strftimerecent' => 1, 'strftimerecentfull' => 1, 'strftimetime' => 1,
+                'thischarset' => 1, 'thisdirection' => 1, 'thislanguage' => 1,
+                'strftimedatetimeshort' => 1, 'thousandssep' => 1);
+    private $searchplacesbyplugintype;
+    private $dirroot;
+    private $corelocations;
+    private $installstrings = NULL;
+    private $parentlangfile = 'langconfig.php';
+    private $logtofile = false;
+    private static $singletoninstance = NULL;
+
+    public static function instance() {
+        if (is_null(self::$singletoninstance)) {
+            global $CFG;
+            self::$singletoninstance = new self($CFG->dirroot, $CFG->dataroot, $CFG->admin, isset($CFG->running_installer));
+            // Uncomment the followign line to log every call to get_string
+            // to a file in $CFG->dataroot/temp/getstringlog/...
+            // self::$singletoninstance->start_logging();
         }
-        return (object)$new_a_vars;
+        return self::$singletoninstance;
     }
-    else {
-        return $a;
+
+    // Some of our arrays need $CFG.
+    protected function __construct($dirroot, $dataroot, $admin, $runninginstaller) {
+        $this->dirroot = $dirroot;
+        $this->corelocations = array(
+            $dirroot . '/lang/' => '',
+            $dataroot . '/lang/' => '',
+        );
+        $this->searchplacesbyplugintype = array(
+            'assignment_' => array('mod/assignment/type'),
+            'auth_' => array('auth'),
+            'block_' => array('blocks'),
+            'datafield_' => array('mod/data/field'),
+            'datapreset_' => array('mod/data/preset'),
+            'enrol_' => array('enrol'),
+            'filter_' => array('filter'),
+            'format_' => array('course/format'),
+            'quiz_' => array('mod/quiz/report'),
+            'qtype_' => array('question/type'),
+            'qformat_' => array('question/format'),
+            'report_' => array($admin.'/report', 'course/report'),
+            'repository_'=>array('repository'),
+            'resource_' => array('mod/resource/type'),
+            'gradereport_' => array('grade/report'),
+            'gradeimport_' => array('grade/import'),
+            'gradeexport_' => array('grade/export'),
+            'profilefield_' => array('user/profile/field'),
+            'portfolio_' => array('portfolio/type'),
+            '' => array('mod')
+        );
+        if ($runninginstaller) {
+            $stringnames = file($dirroot . '/install/stringnames.txt');
+            $this->installstrings = array_map('trim', $stringnames);
+            $this->parentlangfile = 'installer.php';
+        }
     }
-}
 
-/**
- * @return array places to look for lang strings based on the prefix to the
- * module name. For example qtype_ in question/type. Used by get_string and
- * help.php.
- */
-function places_to_search_for_lang_strings() {
-    global $CFG;
+    protected function fix_deprecated_module_name($module) {
+        debugging('The module name you passed to get_string is the deprecated format ' .
+                'like mod/mymod or block/myblock. The correct form looks like mymod, or block_myblock.' , DEBUG_DEVELOPER);
+        $modulepath = split('/', $module);
 
-    return array(
-        '__exceptions' => array('moodle', 'langconfig'),
-        'assignment_' => array('mod/assignment/type'),
-        'auth_' => array('auth'),
-        'block_' => array('blocks'),
-        'datafield_' => array('mod/data/field'),
-        'datapreset_' => array('mod/data/preset'),
-        'enrol_' => array('enrol'),
-        'filter_' => array('filter'),
-        'format_' => array('course/format'),
-        'quiz_' => array('mod/quiz/report'),
-        'qtype_' => array('question/type'),
-        'qformat_' => array('question/format'),
-        'report_' => array($CFG->admin.'/report', 'course/report'),
-        'repository_'=>array('repository'),
-        'resource_' => array('mod/resource/type'),
-        'gradereport_' => array('grade/report'),
-        'gradeimport_' => array('grade/import'),
-        'gradeexport_' => array('grade/export'),
-        'profilefield_' => array('user/profile/field'),
-        'portfolio_' => array('portfolio/type'),
-        '' => array('mod')
-    );
+        switch ($modulepath[0]) {
+            case 'mod':
+                return $modulepath[1];
+            case 'blocks':
+            case 'block':
+                return 'block_'.$modulepath[1];
+            case 'enrol':
+                return 'enrol_'.$modulepath[1];
+            case 'format':
+                return 'format_'.$modulepath[1];
+            case 'grade':
+                return 'grade'.$modulepath[1].'_'.$modulepath[2];
+            default:
+                return $module;
+        }
+    }
+
+    protected function locations_to_search($module) {
+        if (isset($this->searchpathsformodule[$module])) {
+            return $this->searchpathsformodule[$module];
+        }
+
+        $locations = $this->corelocations;
+
+        if (!array_key_exists($module, $this->nonpluginfiles)) {
+            foreach ($locations as $location => $ignored) {
+                $locations[$location] = $module . '/';
+            }
+            if ($module == 'local') {
+                $locations[$this->dirroot . '/local/lang/'] = 'local/';
+            } else {
+                list($type, $plugin) = $this->parse_module_name($module);
+                if (isset($this->searchplacesbyplugintype[$type])) {
+                    foreach ($this->searchplacesbyplugintype[$type] as $location) {
+                        $locations[$this->dirroot . "/$location/$plugin/lang/"] = $plugin . '/';
+                    }
+                }
+            }
+        }
+
+        $this->searchpathsformodule[$module] = $locations;
+        return $locations;
+    }
+
+    protected function parse_module_name($module) {
+        $dividerpos = strpos($module, '_');
+        if ($dividerpos === false) {
+            $type = '';
+            $plugin = $module;
+        } else {
+            $type = substr($module, 0, $dividerpos + 1);
+            $plugin = substr($module, $dividerpos + 1);
+        }
+        return array($type, $plugin);
+    }
+
+    protected function add_extra_locations($locations, $extralocations) {
+        // This is an old, deprecated mechanism that predates the
+        // places_to_search_for_lang_strings mechanism that comes later in
+        // this function. So tell people who use it to change.
+        debugging('The fourth, $extralocations parameter to get_string is deprecated. ' .
+                'See http://docs.moodle.org/en/Development:Places_to_search_for_lang_strings ' .
+                'for a better way to package language strings with your plugin.', DEBUG_DEVELOPER);
+        if (is_array($extralocations)) {
+            $locations = array_merge($locations, $extralocations);
+        } else if (is_string($extralocations)) {
+            $locations[] = $extralocations;
+        } else {
+            debugging('Bad lang path provided');
+        }
+        return $locations;
+    }
+
+    protected function get_parent_language($lang) {
+        if (array_key_exists($lang, $this->parentlangs)) {
+            return $this->parentlangs[$lang];
+        }
+        $parent = 'en_utf8'; // Will be used if nothing is specified explicitly.
+        foreach ($this->corelocations as $location => $ignored) {
+            foreach (array('_local', '') as $suffix) {
+                $file = $location . $lang . $suffix . '/' . $this->parentlangfile;
+                if ($result = $this->get_string_from_file('parentlanguage', $file, NULL)) {
+                    $parent = $result;
+                    break 2;
+                }
+            }
+        }
+        $this->parentlangs[$lang] = $parent;
+        return $parent;
+    }
+
+    protected function load_lang_file($langfile) {
+        if (isset($this->strings[$langfile])) {
+            return $this->strings[$langfile];
+        }
+        $string = array();
+        if (file_exists($langfile)) {
+            include($langfile);
+        }
+        $this->strings[$langfile] = $string;
+        return $string;
+    }
+
+    protected function get_string_from_file($identifier, $langfile, $a) {
+        $string = &$this->load_lang_file($langfile);
+        if (!isset($string[$identifier])) {
+            return false;
+        }
+        $result = $string[$identifier];
+        // Skip the eval if we can - slight performance win. Pity there are 3
+        // different problem characters, so we have to use preg_match,
+        // rather than a faster str... function.
+        if (!preg_match('/[%$\\\\]/', $result)) {
+            return $result;
+        }
+        // Moodle used to use $code = '$result = sprintf("' . $result . ')";' for no good reason,
+        // (it had done that since revision 1.1 of moodllib.php if you check CVS). However, this
+        // meant you had to double up '%' chars in $a first. We now skip that. However, lang strings
+        // still contain %% as a result, so we need to fix those.
+        $result = str_replace('%%', '%', $result);
+        $code = '$result = "' . $result . '";';
+        if (eval($code) === FALSE) { // Means parse error.
+            debugging('Parse error while trying to load string "'.$identifier.'" from file "' . $langfile . '".', DEBUG_DEVELOPER);
+        }
+        return $result;
+    }
+
+    public function find_help_file($file, $module, $forcelang, $skiplocal) {
+        if ($forcelang) {
+            $langs = array($forcelang, 'en_utf8');
+        } else {
+            $langs = array();
+            for ($lang = current_language(); $lang; $lang = $this->get_parent_language($lang)) {
+                $langs[] = $lang;
+            }
+        }
+
+        $locations = $this->locations_to_search($module);
+
+        if ($skiplocal) {
+            $localsuffices = array('');
+        } else {
+            $localsuffices = array('_local', '');
+        }
+
+        foreach ($langs as $lang) {
+            foreach ($locations as $location => $locationsuffix) {
+                foreach ($localsuffices as $localsuffix) {
+                    $filepath = $location . $lang . $localsuffix . '/help/' . $locationsuffix . $file;
+                    // Now, try to include the help text from this file, if we can.
+                    if (file_exists_and_readable($filepath)) {
+                        return array($filepath, $lang);
+                    }
+                }
+            }
+        }
+
+        return array('', '');
+    }
+
+    private function start_logging() {
+        $this->logtofile = true;
+    }
+
+    private function log_get_string_call($identifier, $module, $a) {
+        global $CFG;
+        if ($this->logtofile === true) {
+            $logdir = $CFG->dataroot . '/temp/getstringlog';
+            $filename = strtr(str_replace($CFG->wwwroot . '/', '', qualified_me()), ':/', '__') . '_get_string.log.php';
+            @mkdir($logdir, $CFG->directorypermissions, true);
+            $this->logtofile = fopen("$logdir/$filename", 'w');
+            fwrite($this->logtofile, "<?php\n// Sequence of get_string calls for page " . qualified_me() . "\n");
+        }
+        fwrite($this->logtofile, "get_string('$identifier', '$module', " . var_export($a, true) . ");\n");
+    }
+
+    public function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
+        if ($this->logtofile) {
+            $this->log_get_string_call($identifier, $module, $a);
+        }
+
+    /// Preprocess the arguments.
+        if ($module == '') {
+            $module = 'moodle';
+        }
+
+        if ($module == 'moodle' && array_key_exists($identifier, $this->langconfigstrs)) {
+            $module = 'langconfig';
+        }
+
+        if (strpos($module, '/') !== false) {
+            $module = $this->fix_deprecated_module_name($module);
+        }
+
+        $locations = $this->locations_to_search($module);
+
+        if (!is_null($this->installstrings) && in_array($identifier, $this->installstrings)) {
+            $module = 'installer';
+            array_unshift($locations, $this->dirroot . '/install/lang/');
+        }
+
+        if ($extralocations) {
+            $locations = $this->add_extra_locations($locations, $extralocations);
+        }
+
+    /// Now do the search.
+        for ($lang = current_language(); $lang; $lang = $this->get_parent_language($lang)) {
+            foreach ($locations as $location => $ignored) {
+                foreach (array('_local', '') as $suffix) {
+                    $file = $location . $lang . $suffix . '/' . $module . '.php';
+                    if ($result = $this->get_string_from_file($identifier, $file, $a)) {
+                        return $result;
+                    }
+                }
+            }
+        }
+
+        return '[[' . $identifier . ']]'; // Last resort.
+    }
 }
 
 /**
@@ -5311,7 +5556,6 @@ or
  * As a last resort, should the identifier fail to map to a string
  * the returned string will be [[ $identifier ]]
  *
- * @uses $CFG
  * @param string $identifier The key identifier for the localized string
  * @param string $module The module where the key identifier is stored,
  *      usually expressed as the filename in the language pack without the
@@ -5327,264 +5571,7 @@ or
  * @return string The localized string.
  */
 function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
-    global $CFG;
-
-/// originally these special strings were stored in moodle.php now we are only in langconfig.php
-    $langconfigstrs = array('alphabet', 'backupnameformat', 'decsep', 'firstdayofweek', 'listsep', 'locale',
-                            'localewin', 'localewincharset', 'oldcharset', 'parentlanguage',
-                            'strftimedate', 'strftimedateshort', 'strftimedatefullshort', 'strftimedatetime',
-                            'strftimedaydate', 'strftimedaydatetime', 'strftimedayshort', 'strftimedaytime',
-                            'strftimemonthyear', 'strftimerecent', 'strftimerecentfull', 'strftimetime',
-                            'thischarset', 'thisdirection', 'thislanguage', 'strftimedatetimeshort', 'thousandssep');
-
-    $filetocheck = 'langconfig.php';
-    $defaultlang = 'en_utf8';
-    if (in_array($identifier, $langconfigstrs)) {
-        $module = 'langconfig';  //This strings are under langconfig.php for 1.6 lang packs
-    }
-
-    $lang = current_language();
-
-    if ($module == '') {
-        $module = 'moodle';
-    }
-
-/// If the "module" is actually a pathname, then automatically derive the proper module name
-    if (strpos($module, '/') !== false) {
-        $modulepath = split('/', $module);
-
-        switch ($modulepath[0]) {
-
-            case 'mod':
-                $module = $modulepath[1];
-            break;
-
-            case 'blocks':
-            case 'block':
-                $module = 'block_'.$modulepath[1];
-            break;
-
-            case 'enrol':
-                $module = 'enrol_'.$modulepath[1];
-            break;
-
-            case 'format':
-                $module = 'format_'.$modulepath[1];
-            break;
-
-            case 'grade':
-                $module = 'grade'.$modulepath[1].'_'.$modulepath[2];
-            break;
-        }
-    }
-
-/// if $a happens to have % in it, double it so sprintf() doesn't break
-    if ($a) {
-        $a = clean_getstring_data( $a );
-    }
-
-/// Define the two or three major locations of language strings for this module
-    $locations = array();
-
-    if (!empty($extralocations)) {
-        // This is an old, deprecated mechanism that predates the
-        // places_to_search_for_lang_strings mechanism that comes later in
-        // this function. So tell people who use it to change.
-        debugging('The fourth, $extralocations parameter to get_string is deprecated. ' .
-                'See http://docs.moodle.org/en/Development:Places_to_search_for_lang_strings ' .
-                'for a better way to package language strings with your plugin.', DEBUG_DEVELOPER);
-        if (is_array($extralocations)) {
-            $locations += $extralocations;
-        } else if (is_string($extralocations)) {
-            $locations[] = $extralocations;
-        } else {
-            debugging('Bad lang path provided');
-        }
-    }
-
-    if (!empty($CFG->running_installer) and $lang !== 'en_utf8') {
-        static $stringnames = null;
-        if (!$stringnames) {
-            $stringnames = file($CFG->dirroot.'/install/stringnames.txt');
-            $stringnames = array_map('trim', $stringnames);
-        }
-        if (array_search($identifier, $stringnames) !== false) {
-            $module = 'installer';
-            $filetocheck = 'installer.php';
-            $defaultlang = 'en_utf8';
-            $locations[] = $CFG->dirroot.'/install/lang/';
-        }
-    }
-
-    $locations[] = $CFG->dataroot.'/lang/';
-    $locations[] = $CFG->dirroot.'/lang/';
-    $locations[] = $CFG->dirroot.'/local/lang/';
-
-/// Add extra places to look for strings for particular plugin types.
-    $rules = places_to_search_for_lang_strings();
-    $exceptions = $rules['__exceptions'];
-    unset($rules['__exceptions']);
-
-    if (!in_array($module, $exceptions)) {
-        $dividerpos = strpos($module, '_');
-        if ($dividerpos === false) {
-            $type = '';
-            $plugin = $module;
-        } else {
-            $type = substr($module, 0, $dividerpos + 1);
-            $plugin = substr($module, $dividerpos + 1);
-        }
-        if (!empty($rules[$type])) {
-            foreach ($rules[$type] as $location) {
-                $locations[] = $CFG->dirroot . "/$location/$plugin/lang/";
-            }
-        }
-    }
-
-/// First check all the normal locations for the string in the current language
-    $resultstring = '';
-    foreach ($locations as $location) {
-        $locallangfile = $location.$lang.'_local'.'/'.$module.'.php';    //first, see if there's a local file
-        if (file_exists($locallangfile)) {
-            if ($result = get_string_from_file($identifier, $locallangfile, "\$resultstring")) {
-                if (eval($result) === FALSE) {
-                    trigger_error('Lang error: '.$identifier.':'.$locallangfile, E_USER_NOTICE);
-                }
-                return $resultstring;
-            }
-        }
-        //if local directory not found, or particular string does not exist in local direcotry
-        $langfile = $location.$lang.'/'.$module.'.php';
-        if (file_exists($langfile)) {
-            if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
-                if (eval($result) === FALSE) {
-                    trigger_error('Lang error: '.$identifier.':'.$langfile, E_USER_NOTICE);
-                }
-                return $resultstring;
-            }
-       }
-    }
-
-/// If the preferred language was English (utf8) we can abort now
-/// saving some checks beacuse it's the only "root" lang
-    if ($lang == 'en_utf8') {
-        return '[['. $identifier .']]';
-    }
-
-/// Is a parent language defined?  If so, try to find this string in a parent language file
-
-    foreach ($locations as $location) {
-        $langfile = $location.$lang.'/'.$filetocheck;
-        if (file_exists($langfile)) {
-            if ($result = get_string_from_file('parentlanguage', $langfile, "\$parentlang")) {
-                if (eval($result) === FALSE) {
-                    trigger_error('Lang error: '.$identifier.':'.$langfile, E_USER_NOTICE);
-                }
-                if (!empty($parentlang) and strpos($parentlang, '<') === false) {   // found it!
-
-                    //first, see if there's a local file for parent
-                    $locallangfile = $location.$parentlang.'_local'.'/'.$module.'.php';
-                    if (file_exists($locallangfile)) {
-                        if ($result = get_string_from_file($identifier, $locallangfile, "\$resultstring")) {
-                            if (eval($result) === FALSE) {
-                                trigger_error('Lang error: '.$identifier.':'.$locallangfile, E_USER_NOTICE);
-                            }
-                            return $resultstring;
-                        }
-                    }
-
-                    //if local directory not found, or particular string does not exist in local direcotry
-                    $langfile = $location.$parentlang.'/'.$module.'.php';
-                    if (file_exists($langfile)) {
-                        if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
-                            eval($result);
-                            return $resultstring;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-/// Our only remaining option is to try English
-
-    foreach ($locations as $location) {
-        $locallangfile = $location.$defaultlang.'_local/'.$module.'.php';    //first, see if there's a local file
-        if (file_exists($locallangfile)) {
-            if ($result = get_string_from_file($identifier, $locallangfile, "\$resultstring")) {
-                eval($result);
-                return $resultstring;
-            }
-        }
-
-        //if local_en not found, or string not found in local_en
-        $langfile = $location.$defaultlang.'/'.$module.'.php';
-
-        if (file_exists($langfile)) {
-            if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
-                eval($result);
-                return $resultstring;
-            }
-        }
-    }
-
-/// And, because under 1.6 en is defined as en_utf8 child, me must try
-/// if it hasn't been queried before.
-    if ($defaultlang  == 'en') {
-        $defaultlang = 'en_utf8';
-        foreach ($locations as $location) {
-            $locallangfile = $location.$defaultlang.'_local/'.$module.'.php';    //first, see if there's a local file
-            if (file_exists($locallangfile)) {
-                if ($result = get_string_from_file($identifier, $locallangfile, "\$resultstring")) {
-                    eval($result);
-                    return $resultstring;
-                }
-            }
-
-            //if local_en not found, or string not found in local_en
-            $langfile = $location.$defaultlang.'/'.$module.'.php';
-
-            if (file_exists($langfile)) {
-                if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
-                    eval($result);
-                    return $resultstring;
-                }
-            }
-        }
-    }
-
-    return '[['.$identifier.']]';  // Last resort
-}
-
-/**
- * This function is only used from {@link get_string()}.
- *
- * @internal Only used from get_string, not meant to be public API
- * @param string $identifier ?
- * @param string $langfile ?
- * @param string $destination ?
- * @return string|false ?
- * @staticvar array $strings Localized strings
- * @access private
- * @todo Finish documenting this function.
- */
-function get_string_from_file($identifier, $langfile, $destination) {
-
-    static $strings;    // Keep the strings cached in memory.
-
-    if (empty($strings[$langfile])) {
-        $string = array();
-        include ($langfile);
-        $strings[$langfile] = $string;
-    } else {
-        $string = &$strings[$langfile];
-    }
-
-    if (!isset ($string[$identifier])) {
-        return false;
-    }
-
-    return $destination .'= sprintf("'. $string[$identifier] .'");';
+    return string_manager::instance()->get_string($identifier, $module, $a, $extralocations);
 }
 
 /**
@@ -5592,13 +5579,12 @@ function get_string_from_file($identifier, $langfile, $destination) {
  *
  * @param array $array An array of strings
  * @param string $module The language module that these strings can be found in.
- * @return string
+ * @return array and array of translated strings.
  */
 function get_strings($array, $module='') {
-
-   $string = NULL;
+   $string = new stdClass;
    foreach ($array as $item) {
-       $string->$item = get_string($item, $module);
+       $string->$item = string_manager::instance()->get_string($item, $module);
    }
    return $string;
 }

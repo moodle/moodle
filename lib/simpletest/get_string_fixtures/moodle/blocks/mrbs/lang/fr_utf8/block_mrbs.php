@@ -1,0 +1,3 @@
+<?php
+$string['yes'] = 'Oui';
+?>
