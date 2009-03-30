@@ -187,31 +187,6 @@ class dml_test extends UnitTestCase {
         $this->assertTrue(count($DB->get_tables()) == $original_count + 1);
     }
 
-    public function testEnums() {
-        $DB = $this->tdb;
-        $dbman = $this->tdb->get_manager();
-
-        $table = $this->get_test_table();
-        $tablename = $table->getName();
-
-        $table->add_field('enumfield', XMLDB_TYPE_CHAR, '255', null, null, null, XMLDB_ENUM, array('test','test2','test3'),null);
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
-
-        $columns = $DB->get_columns($tablename);
-
-        $enumfield = $columns['enumfield'];
-        $this->assertEqual('enumfield', $enumfield->name);
-        $this->assertEqual('enum', $enumfield->type);
-        $this->assertEqual(3, count($enumfield->enums));
-        $this->assertEqual('test', $enumfield->enums[0]);
-        $this->assertEqual('test2', $enumfield->enums[1]);
-        $this->assertEqual('test3', $enumfield->enums[2]);
-
-    }
-
     public function testDefaults() {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
