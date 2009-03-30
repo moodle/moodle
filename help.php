@@ -103,7 +103,7 @@ echo '<p class="helpindex"><a href="help.php?file=index.html">'. get_string('hel
 
 // Offer a link to the alternative help file language
 $currentlang = current_language();
-if ($helpfound && ($foundlang != 'en_utf8' || ($forcelang == 'en_utf8' && current_language() != 'en_utf8'))) {
+if ($file && $helpfound && ($foundlang != 'en_utf8' || ($forcelang == 'en_utf8' && current_language() != 'en_utf8'))) {
     $url = new moodle_url();
     if ($foundlang != 'en_utf8') {
         $url->param('forcelang', 'en_utf8');

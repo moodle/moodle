@@ -5948,13 +5948,6 @@ function helpbutton($page, $title, $module='moodle', $image=true, $linktext=fals
         debugging('Warning: it\'s not recommended to use $text parameter in helpbutton ($page=' . $page . ', $module=' . $module . ') function', DEBUG_DEVELOPER);
     }
 
-    // fix for MDL-7734
-    if (!empty($COURSE->lang)) {
-        $forcelang = $COURSE->lang;
-    } else {
-        $forcelang = '';
-    }
-
     // Catch references to the old text.html and emoticons.html help files that
     // were renamed in MDL-13233.
     if (in_array($page, array('text', 'emoticons', 'richtext'))) {
@@ -5996,14 +5989,17 @@ function helpbutton($page, $title, $module='moodle', $image=true, $linktext=fals
 
     // fix for MDL-7734
     if ($text) {
-        $url = '/help.php?module='. $module .'&amp;text='. s(urlencode($text).'&amp;forcelang='.$forcelang);
+        $url = '/help.php?text='. s(urlencode($text));
     } else {
-        $url = '/help.php?module='. $module .'&amp;file='. $page .'.html&amp;forcelang='.$forcelang;
+        $url = '/help.php?module='. $module .'&amp;file='. $page .'.html';
+        // fix for MDL-7734
+        if (!empty($COURSE->lang)) {
+            $url .= '&amp;forcelang=' . $COURSE->lang;
+        }
     }
 
-    $link = '<span class="helplink">'.
-            link_to_popup_window ($url, 'popup', $linkobject, 400, 500, $tooltip, 'none', true).
-            '</span>';
+    $link = '<span class="helplink">' . link_to_popup_window($url, 'popup',
+            $linkobject, 400, 500, $tooltip, 'none', true) . '</span>';
 
     if ($return) {
         return $link;
