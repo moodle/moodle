@@ -1534,7 +1534,14 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2009032001);
     }
-    
+
+    if ($result && $oldversion < 2009033100) {
+        require_once("$CFG->dirroot/filter/tex/lib.php");
+        filter_tex_updatedcallback(null);
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009033100);
+    }
+
     return $result;
 }
 

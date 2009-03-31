@@ -137,16 +137,6 @@ class tex_filter extends filter_base {
             $text = str_replace($matches[0][$i],$replacement,$text);
         }
 
-        // TeX blacklist. MDL-18552
-        $tex_blacklist = array(
-            'include','def','command','loop','repeat','open','toks','output',
-            'input','catcode','name','^^',
-            '\every','\errhelp','\errorstopmode','\scrollmode','\nonstopmode',
-            '\batchmode','\read','\write','csname','\newhelp','\uppercase',
-            '\lowercase','\relax','\aftergroup',
-            '\afterassignment','\expandafter','\noexpand','\special'
-        );
-
         // <tex> TeX expression </tex>
         // or <tex alt="My alternative text to be used instead of the TeX form"> TeX expression </tex>
         // or $$ TeX expression $$
@@ -169,19 +159,6 @@ class tex_filter extends filter_base {
               $align = "text-top";
               $texexp = preg_replace('/^align=top /','',$texexp);
             }
-        /// Check $texexp against blacklist (whitelisting could be more complete but also harder to maintain). MDL-18552
-            $invalidcommands = array();
-            foreach($tex_blacklist as $command) {
-                if (stristr($texexp, $command)) { /// Found invalid command. Annotate.
-                    $invalidcommands[] = $command;
-                }
-            }
-            if (!empty($invalidcommands)) { /// Invalid commands found. Output error and continue with next TeX element
-                $invalidstr = get_string('invalidtexcommand', 'error', implode(', ', $invalidcommands));
-                $text = str_replace( $matches[0][$i], $invalidstr, $text);
-                continue;
-            }
-        /// Everything is ok, let's process the expression
             $md5 = md5($texexp);
             if (! $texcache = $DB->get_record("cache_filters", array("filter"=>"tex", "md5key"=>$md5))) {
                 $texcache->filter = 'tex';

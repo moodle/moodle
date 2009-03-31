@@ -34,8 +34,22 @@ function tex_filter_get_executable($debug=false) {
     print_error('mimetexisnotexist', 'error');
 }
 
+function tex_sanitize_formula($texexp) {
+    /// Check $texexp against blacklist (whitelisting could be more complete but also harder to maintain)
+    $tex_blacklist = array(
+        'include','def','command','loop','repeat','open','toks','output',
+        'input','catcode','name','^^',
+        '\every','\errhelp','\errorstopmode','\scrollmode','\nonstopmode',
+        '\batchmode','\read','\write','csname','\newhelp','\uppercase',
+        '\lowercase','\relax','\aftergroup',
+        '\afterassignment','\expandafter','\noexpand','\special'
+    );
+
+    return  str_ireplace($tex_blacklist, 'forbiddenkeyword', $texexp);
+}
 
 function tex_filter_get_cmd($pathname, $texexp) {
+    $texexp = tex_sanitize_formula($texexp);
     $texexp = escapeshellarg($texexp);
     $executable = tex_filter_get_executable(false);
 
