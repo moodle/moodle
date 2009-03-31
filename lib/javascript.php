@@ -33,31 +33,32 @@ setTimeout('fix_column_widths()', 20);
 </script>
 <script type="text/javascript">
 //<![CDATA[
-function openpopup(url,name,options,fullscreen) {
-  fullurl = "<?php echo $CFG->httpswwwroot ?>" + url;
-  windowobj = window.open(fullurl,name,options);
-  if (fullscreen) {
-     windowobj.moveTo(0,0);
-     windowobj.resizeTo(screen.availWidth,screen.availHeight);
-  }
-  windowobj.focus();
-  return false;
+function openpopup(url, name, options, fullscreen) {
+    var fullurl = "<?php echo $CFG->httpswwwroot ?>" + url;
+    var windowobj = window.open(fullurl, name, options);
+    if (!windowobj) {
+        return true;
+    }
+    if (fullscreen) {
+        windowobj.moveTo(0, 0);
+        windowobj.resizeTo(screen.availWidth, screen.availHeight);
+    }
+    windowobj.focus();
+    return false;
 }
 
 function uncheckall() {
-  void(d=document);
-  void(el=d.getElementsByTagName('INPUT'));
-  for(i=0;i<el.length;i++) {
-    void(el[i].checked=0);
-  }
+    var inputs = document.getElementsByTagName('input');
+    for(var i = 0; i < inputs.length; i++) {
+        inputs[i].checked = false;
+    }
 }
 
 function checkall() {
-  void(d=document);
-  void(el=d.getElementsByTagName('INPUT'));
-  for(i=0;i<el.length;i++) {
-    void(el[i].checked=1);
-  }
+    var inputs = document.getElementsByTagName('input');
+    for(var i = 0; i < inputs.length; i++) {
+        inputs[i].checked = true;
+    }
 }
 
 function inserttext(text) {
