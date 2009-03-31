@@ -3106,6 +3106,13 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101542);
     }
 
+    if ($result && $oldversion < 2007101545.01) {
+        require_once("$CFG->dirroot/filter/tex/lib.php");
+        filter_tex_updatedcallback(null);
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2007101545.01);
+    }
+
     return $result;
 }
 
