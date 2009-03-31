@@ -38,7 +38,7 @@
 
 //require_once("debugging.php");
 
-    ini_set('include_path', $CFG->dirroot.DIRECTORY_SEPARATOR.'search'.DIRECTORY_SEPARATOR.PATH_SEPARATOR.ini_get('include_path'));
+    ini_set('include_path', $CFG->dirroot.DIRECTORY_SEPARATOR.'search'.PATH_SEPARATOR.ini_get('include_path'));
 
 /// only administrators can index the moodle installation, because access to all pages is required
 
