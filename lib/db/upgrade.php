@@ -85,6 +85,11 @@ function xmldb_main_upgrade($oldversion=0) {
         $db->debug = true;
     }
 
+    if ($result && $oldversion < 2006101071) {
+        require_once("$CFG->dirroot/filter/tex/lib.php");
+        filter_tex_updatedcallback(null);
+    }
+
     return $result;
 }
 
