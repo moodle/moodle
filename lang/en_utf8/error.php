@@ -33,7 +33,6 @@ $string['invalidcourse'] = 'Invalid course';
 $string['invalidfieldname'] = '\"$a\" is not a valid field name';
 $string['invalidfiletype'] = '\"$a\" is not a valid file type';
 $string['invalidmd5'] = 'Invalid md5';
-$string['invalidtexcommand'] = 'Forbidden TeX command ($a)';
 $string['invalidxmlfile'] = '\"$a\" is not a valid XML file';
 $string['missingfield'] = 'Field \"$a\" is missing';
 $string['missingrequiredfield'] = 'Some required field is missing';

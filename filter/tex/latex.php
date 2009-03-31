@@ -44,9 +44,11 @@
          * @return string the latex document
          */
         function construct_latex_document( $formula, $fontsize=12 ) {
-            // $fontsize don't affects to formula's size. $density can change size
-
             global $CFG;
+
+            $formula = tex_sanitize_formula($formula);
+
+            // $fontsize don't affects to formula's size. $density can change size
             $doc =  "\\documentclass[{$fontsize}pt]{article}\n"; 
             $doc .=  $CFG->filter_tex_latexpreamble;
             $doc .= "\\pagestyle{empty}\n";

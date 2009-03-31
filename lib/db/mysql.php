@@ -2003,6 +2003,12 @@ function main_upgrade($oldversion=0) {
         notify('...update complete. Remember to update your language packs to get the most recent country names definitions and codes.  This is especially important for sites with users from Congo (now CD), Timor (now TL), Kosovo (now RS), Wales (now GB), Serbia (RS) and Montenegro (ME).  Users based in Montenegro (ME) will need to manually update their profile.', 'notifysuccess');
         $db->debug = true;
     }
+
+    if ($result && $oldversion < 2006050591) {
+        require_once("$CFG->dirroot/filter/tex/lib.php");
+        filter_tex_updatedcallback(null);
+    }
+
     return $result;
 }
 

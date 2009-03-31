@@ -14,6 +14,8 @@
         }
     }
 
+    require_once($CFG->dirroot.'/filter/tex/lib.php');
+
     $CFG->texfilterdir = "filter/tex";
     $CFG->teximagedir = "filter/tex";
 
@@ -114,6 +116,7 @@
             }
             $commandpath = "";
             $cmd = "";
+            $texexp = tex_sanitize_formula($texexp);
             $texexp = escapeshellarg($texexp);
             switch (PHP_OS) {
                 case "Linux":
