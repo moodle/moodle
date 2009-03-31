@@ -33,7 +33,8 @@ final class xmlrpc_server extends webservice_server {
 
     public function __construct() {
 
-        $this->set_protocolname("XMLRPC");
+        $this->set_protocolname("XML-RPC");
+        $this->set_protocolid("xmlrpc");
     }
   
     public function run() {

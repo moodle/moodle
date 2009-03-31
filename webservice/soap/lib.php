@@ -34,6 +34,7 @@ final class soap_server extends webservice_server {
 
     public function __construct() {
         $this->set_protocolname("Soap");
+        $this->set_protocolid("soap");
     }
 
   

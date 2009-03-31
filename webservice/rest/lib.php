@@ -33,6 +33,7 @@ final class rest_server extends webservice_server {
     public function __construct() {
 
         $this->set_protocolname("Rest");
+        $this->set_protocolid("rest");
     }
 
     /**

@@ -35,6 +35,7 @@ final class amf_server extends webservice_server {
     public function __construct() {
         //set web service proctol name
         $this->set_protocolname("Amf");
+        $this->set_protocolid("amf");
     }
 
     /**
@@ -54,12 +55,33 @@ final class amf_server extends webservice_server {
 
         /// run the Zend AMF server
         $server = new Zend_Amf_Server();
+        $debugmode = get_config($this->get_protocolid(),'debug');
+        if (!empty($debugmode)) {
+            $server->setProduction(false);
+        } else {
+            $server->setProduction(true);
+        }
         $server->setClass($classpath."_external");
         $response = $server->handle();
         echo $response;
     }
+
+    /**
+     * Names of the server settings
+     * @return array
+     */
+    public static function get_setting_names() {
+        return array('debug');
+    }
+
+    public function settings_form(&$mform) {
+        $debug = get_config($this->get_protocolid(), 'debug');
+        $debug = true;
+        if (empty($debug)) {
+            $debug = false;
+        }
+        $mform->addElement('checkbox', 'debug', get_string('amfdebug', 'webservice'));
+    }
 }
-
-
 
 ?>

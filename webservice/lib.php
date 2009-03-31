@@ -400,9 +400,9 @@ final class webservice_lib {
 
             }
         }
-//                echo "<pre>";
-//                var_dump($description);
-//                echo "</pre>";
+        //                echo "<pre>";
+        //                var_dump($description);
+        //                echo "</pre>";
         return $description;
 
     }
@@ -501,9 +501,9 @@ final class webservice_lib {
         echo "<br/>";
 
         foreach(webservice_lib::get_list_protocols() as $wsprotocol) {
-            if (strtolower($wsprotocol->get_protocolname()) == strtolower($protocol)) {
-                echo get_string('protocolenable','webservice',array($wsprotocol->get_protocolname())).": ";
-                if ( get_config($wsprotocol-> get_protocolname(), "enable")) {
+            if (strtolower($wsprotocol->get_protocolid()) == strtolower($protocol)) {
+                echo get_string('protocolenable','webservice',array($wsprotocol->get_protocolid())).": ";
+                if ( get_config($wsprotocol-> get_protocolid(), "enable")) {
                     echo "<strong style=\"color:green\">".get_string('ok','webservice')."</strong>";
                 } else {
                     echo "<strong style=\"color:red\">".get_string('fail','webservice')."</strong>";
@@ -536,6 +536,12 @@ abstract class webservice_server {
      */
     private $protocolname;
 
+    /**
+     * Web Service Protocol id (eg. soap, rest, xmlrpc...)
+     * @var String
+     */
+    private $protocolid;
+
     public function __construct() {
     }
 
@@ -545,16 +551,35 @@ abstract class webservice_server {
         return $this->protocolname;
     }
 
+    public function get_protocolid() {
+        return $this->protocolid;
+    }
+
     public function set_protocolname($protocolname) {
         $this->protocolname = $protocolname;
     }
 
+    public function set_protocolid($protocolid) {
+        $this->protocolid = $protocolid;
+    }
+
     public function get_enable() {
-        return get_config($this->get_protocolname(), "enable");
+        return get_config($this->get_protocolid(), "enable");
     }
 
     public function set_enable($enable) {
-        set_config("enable", $enable, $this->get_protocolname());
+        set_config("enable", $enable, $this->get_protocolid());
+    }
+
+    /**
+     * Names of the server settings
+     * @return array
+     */
+    public static function get_setting_names() {
+        return array();
+    }
+
+    public function settings_form(&$mform) {
     }
 
 }
@@ -591,8 +616,6 @@ final class wsuser_form extends moodleform {
         $this->username = $this->_customdata['username'];
         $mform =& $this->_form;
 
-        $strrequired = get_string('required');
-
         $mform->addElement('hidden', 'username', $this->username);
         $param = new stdClass();
         $param->username = $this->username;
@@ -600,6 +623,41 @@ final class wsuser_form extends moodleform {
 
         $mform->addElement('text', 'ipwhitelist', get_string('ipwhitelist', 'admin'), array('value'=>get_user_preferences("ipwhitelist", "", $wsuser->id),'size' => '40'));
         $mform->addElement('static', null, '',  get_string('ipwhitelistdesc','admin', $param));
+
+        $this->add_action_buttons(true, get_string('savechanges','admin'));
+    }
+}
+
+/**
+ * Form for web service server settings (administration)
+ */
+final class wssettings_form extends moodleform {
+    protected $settings;
+
+    /**
+     * Definition of the moodleform
+     */
+    public function definition() {
+        global $DB,$CFG;
+        $settings = $this->_customdata['settings'];
+        $mform =& $this->_form;
+
+        $mform->addElement('hidden', 'settings', $settings);
+        $param = new stdClass();
+
+        require_once($CFG->dirroot . '/webservice/'. $settings . '/lib.php');
+        $servername = $settings.'_server';
+        $server = new $servername();
+        $server->settings_form($mform);
+
+        // set the data if we have some.
+        $data = array();
+        $option_names = $server->get_setting_names();
+        foreach ($option_names as $config) {
+            $data[$config] = get_config($settings, $config);
+        }
+        $this->set_data($data);
+
 
         $this->add_action_buttons(true, get_string('savechanges','admin'));
     }

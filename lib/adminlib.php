@@ -4886,19 +4886,27 @@ class admin_setting_managewsprotocols extends admin_setting {
         require_once("../webservice/lib.php");
         $protocols = webservice_lib::get_list_protocols();
         $table = new StdClass;
-        $table->head = array($namestr, $hiddenstr);
-        $table->align = array('left', 'center');
+        $table->head = array($namestr, $hiddenstr, $settingsstr);
+        $table->align = array('left', 'center', 'center');
         $table->data = array();
 
         foreach ($protocols as $i) {
-            $hidetitle = $i->get_protocolname() ? get_string('clicktohide', 'repository') : get_string('clicktoshow', 'repository');
-            $hiddenshow = ' <a href="' . $this->baseurl . '&amp;hide=' . $i->get_protocolname() . '">'
+            $hidetitle = $i->get_protocolid() ? get_string('clicktohide', 'repository') : get_string('clicktoshow', 'repository');
+            $hiddenshow = ' <a href="' . $this->baseurl . '&amp;hide=' . $i->get_protocolid() . '">'
                           .'<img src="' . $CFG->pixpath . '/i/' . ($i->get_enable() ? 'hide' : 'show') . '.gif"'
                               .' alt="' . $hidetitle . '" '
                               .' title="' . $hidetitle . '" />'
                           .'</a>' . "\n";
 
-            $table->data[] = array($i->get_protocolname(), $hiddenshow);
+            $settingnames = $i->get_setting_names();
+            if (!empty($settingnames)) {
+                $settingsshow = ' <a href="' . $this->baseurl . '&amp;settings=' . $i->get_protocolid() . '">'
+                          .$settingsstr
+                          .'</a>' . "\n";
+            } else {
+                $settingsshow = "";
+            }
+            $table->data[] = array($i->get_protocolname(), $hiddenshow, $settingsshow);
 
             //display a grey row if the type is defined as not visible
             if (!$i->get_enable()){
