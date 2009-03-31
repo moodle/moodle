@@ -19,6 +19,7 @@
     // disable moodle specific debug messages
     disable_debugging();
 
+    require_once($CFG->dirroot.'/filter/tex/lib.php');
     require_once($CFG->libdir.'/filelib.php');
 
     $CFG->texfilterdir     = 'filter/tex';
@@ -54,6 +55,7 @@
             $texexp = str_replace('&gt;','>',$texexp);
             $texexp = preg_replace('!\r\n?!',' ',$texexp);
             $texexp = '\Large ' . $texexp;
+            $texexp = tex_sanitize_formula($texexp);
             $texexp = escapeshellarg($texexp);
 
             if ((PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows")) {

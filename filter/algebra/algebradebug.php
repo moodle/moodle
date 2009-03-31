@@ -16,6 +16,8 @@
         }
     }
 
+    require_once($CFG->dirroot.'/filter/tex/lib.php');
+
     $CFG->texfilterdir = "filter/tex";
     $CFG->algebrafilterdir = "filter/algebra";
     $CFG->algebraimagedir = "filter/algebra";
@@ -233,6 +235,7 @@ function tex2image($texexp, $md5, $return=false) {
         } 
         $commandpath = "";
         $cmd = "";
+        $texexp = tex_sanitize_formula($texexp);
         $texexp = escapeshellarg($texexp);
         switch (PHP_OS) {
             case "Linux":

@@ -6,6 +6,7 @@
     $nomoodlecookie = true;     // Because it interferes with caching
 
     require_once("../../config.php");
+    require_once($CFG->dirroot.'/filter/tex/lib.php');
 
     if (empty($CFG->textfilters)) {
         error ('Filter not enabled!');
@@ -32,6 +33,7 @@
             make_upload_directory($CFG->teximagedir);
         }
         $pathname = "$CFG->dataroot/$CFG->teximagedir/$image";
+        $texexp = tex_sanitize_formula($texexp);
         $texexp = escapeshellarg($texexp);
 
         switch (PHP_OS) {

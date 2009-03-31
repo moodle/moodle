@@ -4,7 +4,6 @@
       // and uses mimeTeX to create the image file
 
     require_once("../../config.php");
-    require( 'latex.php' );
 
     if (empty($CFG->textfilters)) {
         error ('Filter not enabled!');
@@ -14,6 +13,9 @@
             error ('Filter not enabled!');
         }
     }
+
+    require_once($CFG->dirroot.'/filter/tex/lib.php');
+    require_once($CFG->dirroot.'/filter/tex/latex.php');
 
     $CFG->texfilterdir = "filter/tex";
     $CFG->teximagedir = "filter/tex";
@@ -141,6 +143,7 @@
             }
             $commandpath = "";
             $cmd = "";
+            $texexp = tex_sanitize_formula($texexp);
             $texexp = escapeshellarg($texexp);
             switch (PHP_OS) {
                 case "Linux":
