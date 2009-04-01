@@ -738,7 +738,7 @@ class default_questiontype {
     }
 
     // Used by the following function, so that it only returns results once per quiz page.
-    private $htmlheadalreadydone = false;
+    var $htmlheadalreadydone = false; // no private in 1.9 yet!
     /**
      * If this question type requires extra CSS or JavaScript to function,
      * then this method will return an array of <link ...> tags that reference
@@ -796,7 +796,7 @@ class default_questiontype {
      *
      * @return array as required by get_html_head_contributions or get_editing_head_contributions.
      */
-    protected function find_standard_scripts_and_css() {
+    function find_standard_scripts_and_css() {
         $plugindir = $this->plugin_dir();
         $baseurl = $this->plugin_baseurl();
 
