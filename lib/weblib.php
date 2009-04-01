@@ -113,21 +113,16 @@ $ALLOWED_PROTOCOLS = array('http', 'https', 'ftp', 'news', 'mailto', 'rtsp', 'te
  * This function is very similar to {@link p()}
  *
  * @param string $var the string potentially containing HTML characters
- * @param boolean $strip to decide if we want to strip slashes or no. Default to false.
- *                true should be used to print data from forms and false for data from DB.
+ * @param boolean $obsolete no longer used.
  * @return string
  */
-function s($var, $strip=false) {
+function s($var, $obsolete = false) {
 
     if ($var == '0') {  // for integer 0, boolean false, string '0'
         return '0';
     }
 
-    if ($strip) {
-        return preg_replace("/&amp;(#\d+);/i", "&$1;", htmlspecialchars($var));
-    } else {
-        return preg_replace("/&amp;(#\d+);/i", "&$1;", htmlspecialchars($var));
-    }
+    return auto_translate_content(preg_replace("/&amp;(#\d+);/i", "&$1;", htmlspecialchars($var)));
 }
 
 /**
@@ -137,12 +132,11 @@ function s($var, $strip=false) {
  * This function is very similar to {@link s()}
  *
  * @param string $var the string potentially containing HTML characters
- * @param boolean $strip to decide if we want to strip slashes or no. Default to false.
- *                true should be used to print data from forms and false for data from DB.
+ * @param boolean $obsolete no longer used.
  * @return string
  */
-function p($var, $strip=false) {
-    echo s($var, $strip);
+function p($var, $obsolete = false) {
+    echo s($var, $obsolete);
 }
 
 /**
@@ -1378,6 +1372,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             }
             break;
     }
+    $text = auto_translate_content($text);
 
     if (empty($options->nocache) and !empty($CFG->cachetext) and $CFG->currenttextiscacheable) {
         if (CLI_SCRIPT) {
@@ -1506,6 +1501,7 @@ function format_string ($string, $striplinks=true, $courseid=NULL ) {
         }
         $string = clean_text($string);
     }
+    $string = auto_translate_content($string);
 
     //Store to cache
     $strcache[$md5] = $string;

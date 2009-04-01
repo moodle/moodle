@@ -14,6 +14,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $item->set_updatedcallback('reset_text_filters_cache');
     $temp->add($item);
     $temp->add(new admin_setting_configcheckbox('experimentalsplitrestore', get_string('experimentalsplitrestore', 'admin'), get_string('configexperimentalsplitrestore', 'admin'), 0));
+    $temp->add(new admin_setting_configselect('autotranslatetolang', get_string('autotranslate', 'autotranslate'), get_string('configautotranslate', 'autotranslate'), 'null', auto_translate_target_languages()));
 
     $ADMIN->add('experimental', $temp);
 

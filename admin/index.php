@@ -323,6 +323,7 @@
     if (empty($CFG->rolesactive)) {
         set_config('rolesactive', 1);
         set_config('adminsetuppending', 1);
+        unset_config('autotranslatetolang');
         // we neeed this redirect to setup proper session
         upgrade_finished("index.php?sessionstarted=1&amp;lang=$CFG->lang");
     }

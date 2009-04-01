@@ -5535,6 +5535,9 @@ class string_manager {
                 foreach (array('_local', '') as $suffix) {
                     $file = $location . $lang . $suffix . '/' . $module . '.php';
                     if ($result = $this->get_string_from_file($identifier, $file, $a)) {
+                        if (!is_untranslatable_string($identifier, $module)) {
+                            $result = auto_translate_content($result);
+                        }
                         return $result;
                     }
                 }
