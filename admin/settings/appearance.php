@@ -88,6 +88,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     $temp = new admin_settingpage('mymoodle', get_string('mymoodle', 'admin'));
     $temp->add(new admin_setting_configcheckbox('mymoodleredirect', get_string('mymoodleredirect', 'admin'), get_string('configmymoodleredirect', 'admin'), 0));
+    $temp->add(new admin_setting_configtext('mycoursesperpage', get_string('mycoursesperpage', 'admin'), get_string('configmycoursesperpage', 'admin'), 21, PARAM_INT));
     $ADMIN->add('appearance', $temp);
 
     // new CFG variable for coursemanager (what roles to display)
