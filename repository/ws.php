@@ -105,7 +105,7 @@
         }
     } else {
         $err = new stdclass;
-        $err->e = get_string('invalidplugin', 'repository');
+        $err->e = get_string('invalidplugin', 'repository', $type);
         die(json_encode($err));
     }
 
