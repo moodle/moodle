@@ -65,7 +65,7 @@ function auto_translate_target_languages() {
     if (!is_null($list)) {
         return $list;
     }
-    $codes = array('null', 'cs_ps', 'en_nz_pl');
+    $codes = array('null', 'cs_ps', 'en_nz_pl', 'en_uk_pl');
     $list = array();
     foreach ($codes as $code) {
         $name = get_string('targetlang_' . $code, 'autotranslate');
@@ -204,6 +204,29 @@ class en_nz_pl_auto_translator extends word_by_word_translator {
                 'Z2UiO2k6MztzOjU6Im5pbmphIjtpOjQ7czo1OiJhbmdyeSI7aTo1O3M6Njoi' .
                 'ZmllcmNlIjtpOjY7czo2OiJjb2ZmZWUiO2k6NztzOjc6ImNhZmZpbmUiO2k6' .
                 'ODtzOjY6Im1haGFyYSI7fQ=='));
+            $this->librarylen = count($this->library);
+        }
+    }
+    public function translate_word($word) {
+        $len = strlen($word);
+        if ($len == 0) {
+            return '';
+        }
+        $this->ensure_library_loaded();
+        return $this->library[($len - 1) % $this->librarylen];
+    }
+}
+
+class en_uk_pl_auto_translator extends word_by_word_translator {
+    private $library = null;
+    private $librarylen;
+    private function ensure_library_loaded() {
+        if (is_null($this->library)) {
+            $this->library = unserialize(base64_decode(
+                'YTo5OntpOjA7czo0OiJjb29sIjtpOjE7czoyOiJ0aCI7aToyO3M6NToiY3Jh' .
+                'enkiO2k6MztzOjc6ImJhc3Nvb24iO2k6NDtzOjEzOiJjb250cmFiYXNzb29u' .
+                'IjtpOjU7czoxMzoiZ28gKHRoZSBnYW1lKSI7aTo2O3M6ODoicXVpei1tYW4i' .
+                'O2k6NztzOjM6Im1hZCI7aTo4O3M6NDoicnRmbSI7fQ=='));
             $this->librarylen = count($this->library);
         }
     }
