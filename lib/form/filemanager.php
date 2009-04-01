@@ -161,7 +161,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         if (empty($draftitemid)) {
             // no existing area info provided - let's use fresh new draft area
             require_once("$CFG->libdir/filelib.php");
-            $this->setValue(file_get_new_draftitemid());
+            $this->setValue(file_get_unused_draft_itemid());
             $draftitemid = $this->getValue();
         }
 

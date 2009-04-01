@@ -2972,7 +2972,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
 
     $post->course = $course->id;
     $post->forum  = $forum->id;
-    $post->message = file_convert_relative_pluginfiles($post->message, 'pluginfile.php', "$modcontext->id/forum_post/$post->id/");
+    $post->message = file_rewrite_pluginfile_urls($post->message, 'pluginfile.php', $modcontext->id, 'forum_post', $post->id);
 
     // caching
     if (!isset($cm->cache)) {
@@ -4136,9 +4136,9 @@ function forum_add_attachment($post, $forum, $cm, $mform=null, &$message=null) {
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    $info = get_draftarea_info($post->attachments);
+    $info = file_get_draft_area_info($post->attachments);
     $present = ($info['filecount']>0) ? '1' : '';
-    file_convert_draftarea($post->attachments, $context->id, 'forum_attachment', $post->id, false);
+    file_save_draft_area_files($post->attachments, $context->id, 'forum_attachment', $post->id, false);
 
     $DB->set_field('forum_posts', 'attachment', $present, array('id'=>$post->id));
 
@@ -4165,8 +4165,7 @@ function forum_add_new_post($post, $mform, &$message) {
     if (! $post->id = $DB->insert_record("forum_posts", $post)) {
         return false;
     }
-
-    $message = file_convert_draftarea($post->itemid, $context->id, 'forum_post', $post->id, true, $message);
+    $message = file_save_draft_area_files($post->itemid, $context->id, 'forum_post', $post->id, true, $message);
     $DB->set_field('forum_posts', 'message', $message, array('id'=>$post->id));
     forum_add_attachment($post, $forum, $cm, $mform, $message);
 
@@ -4206,7 +4205,7 @@ function forum_update_post($post, $mform, &$message) {
         $discussion->timestart = $post->timestart;
         $discussion->timeend   = $post->timeend;
     }
-    $post->message = file_convert_draftarea($post->itemid, $context->id, 'forum_post', $post->id, true, $post->message);
+    $post->message = file_save_draft_area_files($post->itemid, $context->id, 'forum_post', $post->id, true, $post->message);
     $DB->set_field('forum_posts', 'message', $post->message, array('id'=>$post->id));
 
     if (!$DB->update_record('forum_discussions', $discussion)) {
@@ -4257,7 +4256,7 @@ function forum_add_discussion($discussion, $mform=null, &$message=null) {
         return 0;
     }
 
-    $text = file_convert_draftarea($discussion->itemid, $context->id, 'forum_post', $post->id, true, $post->message);
+    $text = file_save_draft_area_files($discussion->itemid, $context->id, 'forum_post', $post->id, true, $post->message);
     $DB->set_field('forum_posts', 'message', $text, array('id'=>$post->id));
 
     // Now do the main entry for the discussion, linking to this first post

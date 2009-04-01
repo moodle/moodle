@@ -13,8 +13,6 @@
     $name    = optional_param('name', '', PARAM_CLEAN);
     $confirm = optional_param('confirm', 0, PARAM_INT);
     $groupid = optional_param('groupid', null, PARAM_INT);
-    $draftitemid = optional_param('attachments', 0, PARAM_INT);
-
 
     //these page_params will be passed as hidden variables later in the form.
     $page_params = array('reply'=>$reply, 'forum'=>$forum, 'edit'=>$edit);
@@ -459,7 +457,8 @@
 
     $mform_post = new mod_forum_post_form('post.php', array('course'=>$course, 'cm'=>$cm, 'coursecontext'=>$coursecontext, 'modcontext'=>$modcontext, 'forum'=>$forum, 'post'=>$post));
 
-    file_prepare_draftarea($draftitemid, $modcontext->id, 'forum_attachment', empty($post->id)?null:$post->id , false);
+    $draftitemid = file_get_submitted_draft_itemid('attachments');
+    file_prepare_draft_area($draftitemid, $modcontext->id, 'forum_attachment', empty($post->id)?null:$post->id , false);
 
     //load data into form NOW!
 
@@ -496,8 +495,8 @@
         $subscribe = !empty($USER->autosubscribe);
     }
 
-    $draftid_editor = file_get_submitted_draftitemid('message');
-    $currenttext = file_prepare_draftarea($draftid_editor, $modcontext->id, 'forum_post', empty($post->id) ? null : $post->id, true, $post->message);
+    $draftid_editor = file_get_submitted_draft_itemid('message');
+    $currenttext = file_prepare_draft_area($draftid_editor, $modcontext->id, 'forum_post', empty($post->id) ? null : $post->id, true, $post->message);
     $mform_post->set_data(array(        'attachments'=>$draftitemid,
                                         'general'=>$heading,
                                         'subject'=>$post->subject,

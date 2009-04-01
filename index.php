@@ -146,7 +146,7 @@
             }
 
             $context = get_context_instance(CONTEXT_COURSE, SITEID);
-            $summarytext = file_convert_relative_pluginfiles($section->summary, 'pluginfile.php', "$context->id/course_section/$section->id/");
+            $summarytext = file_rewrite_pluginfile_urls($section->summary, 'pluginfile.php', $context->id, 'course_section', $section->id);
             $summaryformatoptions = new object();
             $summaryformatoptions->noclean = true;
 

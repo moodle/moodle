@@ -20,8 +20,8 @@
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     require_capability('moodle/course:update', $context);
 
-    $draftitemid = file_get_submitted_draftitemid('summary');
-    $currenttext = file_prepare_draftarea($draftitemid, $context->id, 'course_section', $section->id, true, $section->summary);
+    $draftitemid = file_get_submitted_draft_itemid('summary');
+    $currenttext = file_prepare_draft_area($draftitemid, $context->id, 'course_section', $section->id, true, $section->summary);
     
     $mform = new editsection_form(null, $course);
     $data = array('id'=>$section->id, 'summary'=>array('text'=>$currenttext, 'format'=>FORMAT_HTML, 'itemid'=>$draftitemid));
@@ -33,7 +33,7 @@
 
     } else if ($data = $mform->get_data()) {
 
-        $text = file_convert_draftarea($data->summary['itemid'], $context->id, 'course_section', $section->id, true, $data->summary['text']);
+        $text = file_save_draft_area_files($data->summary['itemid'], $context->id, 'course_section', $section->id, true, $data->summary['text']);
         $DB->set_field("course_sections", "summary", $text, array("id"=>$section->id));
         add_to_log($course->id, "course", "editsection", "editsection.php?id=$section->id", "$section->section");
         redirect("view.php?id=$course->id");

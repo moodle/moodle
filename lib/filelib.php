@@ -1,6 +1,37 @@
 <?php //$Id$
 
-define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7'); //unique string constant
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.org                                            //
+//                                                                       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+
+/**
+ * Functions for file handling.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package files
+ */
+
+/** @var string unique string constant. */
+define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7');
 
 require_once("$CFG->libdir/file/file_exceptions.php");
 require_once("$CFG->libdir/file/file_storage.php");
@@ -70,10 +101,10 @@ function get_file_url($path, $options=null, $type='coursefile') {
 }
 
 /**
- * Returns empty user upload draft area information
- * @return int draftareaid
+ * @return int an available draft itemid that can be used to create a new draft
+ * file area.
  */
-function file_get_new_draftitemid() {
+function file_get_unused_draft_itemid() {
     global $DB, $USER;
 
     if (isguestuser() or !isloggedin()) {
@@ -94,17 +125,19 @@ function file_get_new_draftitemid() {
 }
 
 /**
- * Creates new draft area if not exists yet and copies files there
- * @param int &$draftitemid
- * @param int $contextid
- * @param string $filearea
- * @param int $itemid (null menas no existing files yet)
- * @param bool subdirs allow directory structure
- * @param string $text usually html text with embedded links to draft area
- * @param boolean $forcehttps force https
- * @return string text with relative links starting with @@PLUGINFILE@@
+ * Initialise a draft file area from a real one by copying the files. A draft
+ * area will be created if one does not already exist. Normally you should
+ * get $draftitemid by calling file_get_submitted_draft_itemid('elementname');
+ * @param int &$draftitemid the id of the draft area to use, or 0 to create a new one, in which case this parameter is updated.
+ * @param integer $contextid This parameter and the next two identify the file area to copy files from.
+ * @param string $filearea helps indentify the file area.
+ * @param integer $itemid helps identify the file area. Can be null if there are no files yet.
+ * @param boolean $subdirs allow directory structure within the file area.
+ * @param string $text some html content that needs to have embedded links rewritten to point to the draft area.
+ * @param boolean $forcehttps force https urls.
+ * @return string if $text was passed in, the rewritten $text is returned. Otherwise NULL.
  */
-function file_prepare_draftarea(&$draftitemid, $contextid, $filearea, $itemid, $subdirs=false, $text=null, $forcehttps=false) {
+function file_prepare_draft_area(&$draftitemid, $contextid, $filearea, $itemid, $subdirs=false, $text=null, $forcehttps=false) {
     global $CFG, $USER;
 
     $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
@@ -112,7 +145,7 @@ function file_prepare_draftarea(&$draftitemid, $contextid, $filearea, $itemid, $
 
     if (empty($draftitemid)) {
         // create a new area and copy existing files into
-        $draftitemid = file_get_new_draftitemid();
+        $draftitemid = file_get_unused_draft_itemid();
         $file_record = array('contextid'=>$usercontext->id, 'filearea'=>'user_draft', 'itemid'=>$draftitemid);
         if (!is_null($itemid) and $files = $fs->get_area_files($contextid, $filearea, $itemid)) {
             foreach ($files as $file) {
@@ -130,77 +163,89 @@ function file_prepare_draftarea(&$draftitemid, $contextid, $filearea, $itemid, $
         return null;
     }
 
-    /// relink embedded files - editor can not handle @@PLUGINFILE@@ !
-    return file_convert_relative_pluginfiles($text, 'draftfile.php', "$usercontext->id/user_draft/$draftitemid/", $forcehttps);
+    // relink embedded files - editor can not handle @@PLUGINFILE@@ !
+    return file_rewrite_pluginfile_urls($text, 'draftfile.php', $usercontext->id, 'user_draft', $draftitemid, $forcehttps);
 }
 
 /**
- * Convert relative @@PLUGINFILE@@ into real absolute paths
- * @param string $text
- * @param string $file pluginfile.php, draftfile.php, etc
- * @param string $pluginstub path 'contextid/area/itemid/'
- * @param boot $forcehttps
- * @return string text with absolute links
- *
+ * Convert encoded URLs in $text from the @@PLUGINFILE@@/... form to an actual URL.
+ * @param string $text The content that may contain ULRs in need of rewriting.
+ * @param string $file The script that should be used to serve these files. pluginfile.php, draftfile.php, etc.
+ * @param integer $contextid This parameter and the next two identify the file area to use.
+ * @param string $filearea helps indentify the file area.
+ * @param integer $itemid helps identify the file area.
+ * @param boot $forcehttps if we should output a https URL.
+ * @return string the processed text.
  */
-function file_convert_relative_pluginfiles($text, $file, $pluginstub, $forcehttps=false) {
+function file_rewrite_pluginfile_urls($text, $file, $contextid, $filearea, $itemid, $forcehttps=false) {
     global $CFG;
 
-    if ($CFG->slasharguments) {
-        $draftbase = "$CFG->wwwroot/$file/$pluginstub";
-    } else {
-        $draftbase = "$CFG->wwwroot/draftfile.php?file=/$pluginstub";
+    if (!$CFG->slasharguments) {
+        $file = $file . '?file=';
     }
+
+    $baseurl = "$CFG->wwwroot/$file/$contextid/$filearea/$itemid/";
 
     if ($forcehttps) {
-        $draftbase = str_replace('http://', 'https://', $draftbase);
+        $baseurl = str_replace('http://', 'https://', $baseurl);
     }
 
-    return str_replace('@@PLUGINFILE@@/', $draftbase, $text);
+    return str_replace('@@PLUGINFILE@@/', $baseurl, $text);
 }
 
 /**
- * Returns information about files in draft area
- * @param <type> $draftitemid 
- * @return array TODO: count=>n
+ * Returns information about files in a draft area.
+ * @param integer $draftitemid the draft area item id.
+ * @return array with the following entries:
+ *      'filecount' => number of files in the draft area.
+ * (more information will be added as needed).
  */
-function get_draftarea_info($draftitemid) {
-
+function file_get_draft_area_info($draftitemid) {
     global $CFG, $USER;
 
     $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
     $fs = get_file_storage();
 
-    // number of files
+    $results = array();
+
+    // The number of files
     $draftfiles = $fs->get_area_files($usercontext->id, 'user_draft', $draftitemid, 'id', false);
+    $results['filecount'] = $draftfiles;
 
-    return array('filecount'=>count($draftfiles));
+    return $results;
 }
 
 /**
- * Returns draftitemid of given editor element.
- * @param string $elname name of formlib editor element
- * @return int 0 if not submitted yet
+ * Returns draft area itemid for a given element.
+ * @param string $elname name of formlib editor element, or a hidden form field that stores the draft area item id, etc.
+ * @return inteter the itemid, or 0 if there is not one yet.
  */
-function file_get_submitted_draftitemid($elname) {
-    if (!empty($_REQUEST[$elname]['itemid']) and confirm_sesskey()) {
-        return (int)$_REQUEST[$elname]['itemid'];
+function file_get_submitted_draft_itemid($elname) {
+    $param = optional_param($elname, 0, PARAM_INT);
+    if ($param) {
+        confirm_sesskey();
     }
-    return 0;
+    if (is_array($param)) {
+        $param = $param['itemid'];
+    }
+    return $param;
 }
 
 /**
- * Converts absolute links in text and merges draft files to target area.
- * @param int $draftitemid
- * @param int $contextid
- * @param string $filearea
- * @param int $itemid
- * @param bool subdirs allow directory structure
- * @param string $text usually html text with embedded links to draft area
- * @param boolean $forcehttps force https
- * @return string text with relative links starting with @@PLUGINFILE@@
+ * Saves files from a draft file area to a real one (merging the list of files).
+ * Can rewrite URLs in some content at the same time if desired.
+ * @param int $draftitemid the id of the draft area to use. Normally obtained
+ *      from file_get_submitted_draft_itemid('elementname') or similar.
+ * @param integer $contextid This parameter and the next two identify the file area to save to.
+ * @param string $filearea helps indentify the file area.
+ * @param integer $itemid helps identify the file area.
+ * @param boolean $subdirs allow directory structure within the file area.
+ * @param string $text some html content that needs to have embedded links rewritten
+ *      to the @@PLUGINFILE@@ form for saving in the database.
+ * @param boolean $forcehttps force https urls.
+ * @return string if $text was passed in, the rewritten $text is returned. Otherwise NULL.
  */
-function file_convert_draftarea($draftitemid, $contextid, $filearea, $itemid, $subdirs=false, $text=null, $forcehttps=false) {
+function file_save_draft_area_files($draftitemid, $contextid, $filearea, $itemid, $subdirs=false, $text=null, $forcehttps=false) {
     global $CFG, $USER;
 
     $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
@@ -261,8 +306,7 @@ function file_convert_draftarea($draftitemid, $contextid, $filearea, $itemid, $s
         return null;
     }
 
-    /// relink embedded files if text submitted - no absolute links allowed in database!
-
+    // relink embedded files if text submitted - no absolute links allowed in database!
     if ($CFG->slasharguments) {
         $draftbase = "$CFG->wwwroot/draftfile.php/$usercontext->id/user_draft/$draftitemid/";
     } else {

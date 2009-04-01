@@ -157,7 +157,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $str .= '</select>';
         } else {
             // no changes of format allowed
-            $str .= '<input type="hidden" name="'.$elname.'[format]" value="'.s($formats[$format]).'" />';
+            $str .= '<input type="hidden" name="'.$elname.'[format]" value="' . $format . '" />';
             $str .= $formats[$format];
         }
         $str .= '</div>';
@@ -166,7 +166,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             if (empty($draftitemid)) {
                 // no existing area info provided - let's use fresh new draft area
                 require_once("$CFG->libdir/filelib.php");
-                $this->setValue(array('itemid'=>file_get_new_draftitemid()));
+                $this->setValue(array('itemid'=>file_get_unused_draft_itemid()));
                 $draftitemid = $this->_values['itemid'];
             }
             $str .= '<div><input type="hidden" name="'.$elname.'[itemid]" value="'.$draftitemid.'" /></div>';
