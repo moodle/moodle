@@ -135,7 +135,6 @@ if (!empty($edit) || !empty($new)) {
         print_error('confirmsesskeybad', '', $baseurl);
     }
     $repositorytype = repository::get_type_by_typename($hide);
-    $repositorytype = '';
     if (empty($repositorytype)) {
         print_error('invalidplugin', 'repository', '', $hide);
     }
