@@ -5319,6 +5319,17 @@ class string_manager {
         $SESSION->extralangsearchlocations[$plugintype] = $path;
     }
 
+    /**
+     * This returns an array of all the types of plugin that may have language
+     * strings. 
+     * The array keys are the lang file prefix, like qtype_, and the value is
+     * an array of paths relative to $CFG->dirroot.
+     * @return array as described above.
+     */
+    public function get_registered_plugin_types() {
+        return fullclone($this->searchplacesbyplugintype);
+    }
+
     protected function fix_deprecated_module_name($module) {
         debugging('The module name you passed to get_string is the deprecated format ' .
                 'like mod/mymod or block/myblock. The correct form looks like mymod, or block_myblock.' , DEBUG_DEVELOPER);
@@ -5382,8 +5393,8 @@ class string_manager {
 
     protected function add_extra_locations($locations, $extralocations) {
         // This is an old, deprecated mechanism that predates the
-        // places_to_search_for_lang_strings mechanism that comes later in
-        // this function. So tell people who use it to change.
+        // current mechanism that lets plugins include their lang strings in the
+        // plugin folder. So tell people who use it to change.
         debugging('The fourth, $extralocations parameter to get_string is deprecated. ' .
                 'See http://docs.moodle.org/en/Development:Places_to_search_for_lang_strings ' .
                 'for a better way to package language strings with your plugin.', DEBUG_DEVELOPER);

@@ -1186,7 +1186,7 @@ function lang_standard_locations() {
 function lang_extra_locations() {
     global $CFG;
     $files = array();
-    $places = places_to_search_for_lang_strings();
+    $places = string_manager::instance()->get_registered_plugin_types();
     foreach ($places as $prefix => $directories) {
         if ($prefix != '__exceptions') {
             foreach ($directories as $directory) {
@@ -1288,7 +1288,7 @@ function lang_help_standard_locations() {
 function lang_help_extra_locations() {
     global $CFG;
     $files = array();
-    $places = places_to_search_for_lang_strings();
+    $places = string_manager::instance()->get_registered_plugin_types();
     foreach ($places as $prefix => $directories) {
         if ($prefix != '__exceptions') {
             foreach ($directories as $directory) {
