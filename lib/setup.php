@@ -158,7 +158,6 @@ global $SCRIPT;
     require_once($CFG->libdir .'/eventslib.php');       // Events functions
     require_once($CFG->libdir .'/grouplib.php');        // Groups functions
     require_once($CFG->libdir .'/sessionlib.php');      // All session and cookie related stuff
-    require_once($CFG->libdir .'/autotranslatelib.php');// Other general-purpose functions
 
     //point pear include path to moodles lib/pear so that includes and requires will search there for files before anywhere else
     //the problem is that we need specific version of quickforms and hacked excel files :-(

@@ -122,7 +122,7 @@ function s($var, $obsolete = false) {
         return '0';
     }
 
-    return auto_translate_content(preg_replace("/&amp;(#\d+);/i", "&$1;", htmlspecialchars($var)));
+    return preg_replace("/&amp;(#\d+);/i", "&$1;", htmlspecialchars($var));
 }
 
 /**
@@ -1372,7 +1372,6 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             }
             break;
     }
-    $text = auto_translate_content($text);
 
     if (empty($options->nocache) and !empty($CFG->cachetext) and $CFG->currenttextiscacheable) {
         if (CLI_SCRIPT) {
@@ -1501,7 +1500,6 @@ function format_string ($string, $striplinks=true, $courseid=NULL ) {
         }
         $string = clean_text($string);
     }
-    $string = auto_translate_content($string);
 
     //Store to cache
     $strcache[$md5] = $string;
