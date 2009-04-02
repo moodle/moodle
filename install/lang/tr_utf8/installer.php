@@ -35,6 +35,8 @@ $string['configfilewritten'] = 'config.php dosyası başarıyla oluşturuldu';
 $string['configurationcompletehead'] = 'Yapılandırma tamamlandı';
 $string['configurationcompletesub'] = 'Ana moodle dizine yapılandırma dosyasının kaydedilmesi için girişimde bulunuldu.';
 $string['continue'] = 'Devam';
+$string['ctyperecommended'] = 'Site başarımını arttırmak için, özellikle siteniz Latince kökenli olmayan dilleri destekliyorsa, seçimli ctype PHP uzantısını yüklemek önemle tavsiye edilir.';
+$string['ctyperequired'] = 'Site başarımını arttırmak ve çok dilli uyumluluk sunmak için ctype PHP uzantısı gereklidir.';
 $string['curlrecommended'] = 'Moodle Ağının işlevsel bir şekilde çalışması için isteğe bağlı Curl kütüphanesinin kurulması şiddetle tavsiye edilir.';
 $string['curlrequired'] = 'cURL PHP eklentisi, Moodle kaynakları ile iletişim kurulabilmesi için gereklidir.';
 $string['customcheck'] = 'Diğer Kontroller';
@@ -174,8 +176,9 @@ $string['globalsquoteshelp'] = '<p>Pasifleştirilmiş Magic Quotes GPC ve etkinl
 <blockquote>php_value magic_quotes_gpc On</blockquote>
 <blockquote>php_value register_globals Off</blockquote>
 </p>';
+$string['globalswarning'] = '<p><strong>GÜVENLİK UYARISI!</strong></p><p> Moodle\'ın düzgün çalışması için <br /> mevcut PHP ayarlarında belli değişiklikler yapmanız gerekir.</p><p><code>register_globals=off</code> olarak ayarlanmalı.</p><p> Bu ayar code>php.ini</code>, Apache/IIS <br />yapılandırmanı ya da <code>.htaccess</code> dosyanı düzenleyerek kontrol edilir.</p>';
 $string['help'] = 'Yardım';
-$string['iconvrecommended'] = 'Sitenizde latin olmayan dilleri kullanıyorsanız isteğe bağlı ICONV kütüphanesinin kurulması site performansını arttırmak için şiddetle tavsiye edilir.';
+$string['iconvrecommended'] = 'Sitenizde latince kökenli olmayan dilleri kullanıyorsanız isteğe bağlı ICONV kütüphanesinin kurulması site performansını arttırmak için şiddetle tavsiye edilir.';
 $string['info'] = 'Bilgi';
 $string['installation'] = 'Kurulum';
 $string['invalidmd5'] = 'Geçersiz md5';
