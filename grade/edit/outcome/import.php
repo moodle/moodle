@@ -116,6 +116,8 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
     $optional_headers = array('outcome_description'=>2, 'scale_description' => 5);
     $imported_headers = array(); // will later be initialized with the values found in the file
 
+    $fatal_error = false;
+
     // data should be separated by a ';'.  *NOT* by a comma!  TODO: version 2.0
     // or whenever we can depend on PHP5, set the second parameter (8192) to 0 (unlimited line length) : the database can store over 128k per line.
     while ( $csv_data = fgetcsv($handle, 8192, ';', '"')) { // if the line is over 8k, it won't work...
@@ -141,6 +143,7 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
             }
             if ($error) {
                 print_box(get_string('importoutcomenofile', 'grades', $line));
+                $fatal_error = true;
                 break;
             }
 
@@ -156,6 +159,7 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
         // headers.  If not, processing stops.
         if ( count($csv_data) != count($file_headers) ) {
             print_box(get_string('importoutcomenofile', 'grades', $line));
+            $fatal_error = true;
             //print_box(var_export($csv_data, true) ."<br />". var_export($header, true));
             break;
         }
@@ -164,12 +168,17 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
         foreach ($headers as $header => $position) {
             if ($csv_data[$imported_headers[$header]] == '') {
                 print_box(get_string('importoutcomenofile', 'grades', $line));
+                $fatal_error = true;
                 break;
             }
         }
 
         //var_dump($csv_data);
 
+        // MDL-17273 errors in csv are not preventing import from happening. We break from the while loop here
+        if ($fatal_error) {
+            break;
+        }
         $params = array($csv_data[$imported_headers['outcome_shortname']]);
         $wheresql = 'shortname = ? ';
 
