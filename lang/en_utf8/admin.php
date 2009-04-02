@@ -191,6 +191,7 @@ $string['configminpasswordlength'] = 'Passwords must be at least these many char
 $string['configminpasswordlower'] = 'Passwords must have at least these many lower case letters.';
 $string['configminpasswordnonalphanum'] = 'Passwords must have at least these many non-alphanumeric characters.';
 $string['configminpasswordupper'] = 'Passwords must have at least these many upper case letters.';
+$string['configmycoursesperpage'] = 'Maximum number of courses to display in any list of a user\'s own courses';
 $string['configmymoodleredirect'] = 'This setting forces redirects to /my on login for non-admins and replaces the top level site navigation with /my';
 $string['confignodefaultuserrolelists'] = 'This setting prevents all users from being returned from the database from deprecated calls of get_course_user, etc., for the site course if the default role provides that access. Check this, if you suffer a performance hit.';
 $string['confignonmetacoursesyncroleids'] = 'By default all role assignments from child courses are synchronised to metacourses. Roles that are selected here will not be included in the synchronisation process.';
@@ -572,6 +573,7 @@ $string['multilangupgrade'] = 'Multilang upgrade';
 $string['multilangupgradeinfo'] = 'The multilang filter syntax was changed in 1.8, &lt;lang&gt; tag is not supported any more. <br /><br />Example: &lt;span lang=\"en\" class=\"multilang\">Hello!&lt;/span&gt;&lt;span lang=\"es\" class=\"multilang\">Hola!&lt;/span&gt;<br /><br /><strong>Do you want to upgrade the syntax in all existing texts now?</strong>';
 $string['multilangupgradenotice'] = 'Your site is probably using old multilang syntax, <a href=\"multilangupgrade.php\">multilang upgrade</a> is recommended.';
 $string['mustenablestats'] = 'Stats have not yet been enabled on this site.';
+$string['mycoursesperpage'] = 'Number of courses';
 $string['mymoodle'] = 'My Moodle';
 $string['mymoodleredirect'] = 'Force users to use My Moodle';
 $string['mysql416bypassed'] = 'However, if your site is using iso-8859-1 (latin) languages ONLY, you may continue using your currently installed MySQL 4.1.12 (or higher).';
