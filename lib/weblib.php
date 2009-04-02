@@ -1957,7 +1957,13 @@ function html_to_text($html) {
 
     require_once($CFG->libdir .'/html2text.php');
 
-    return html2text($html);
+    $h2t = new html2text($html);
+    $result = $h2t->get_text();
+
+    // html2text does not fix HTML entities so handle those here.
+    $result = html_entity_decode($result, ENT_NOQUOTES, 'UTF-8');
+
+    return $result;
 }
 
 /**
