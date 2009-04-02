@@ -76,7 +76,7 @@ if (!$category = $DB->get_record('question_categories', array('id' => $question-
     print_error('categorydoesnotexist', 'question', $returnurl);
 }
 
-//permissions
+// Check permissions
 $question->formoptions = new stdClass;
 
 $categorycontext = get_context_instance_by_id($category->contextid);
