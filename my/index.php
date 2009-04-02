@@ -61,7 +61,8 @@
     
     // limits the number of courses showing up
     $courses_limit = 21;
-    if (!empty($CFG->mycoursesperpage) && is_int($CFG->mycoursesperpage)) {
+    $CFG->mycoursesperpage = (int)$CFG->mycoursesperpage;
+    if (!empty($CFG->mycoursesperpage)) {
         $courses_limit = $CFG->mycoursesperpage;
     }
     $courses = get_my_courses($USER->id, 'visible DESC,sortorder ASC', '*', false, $courses_limit);
