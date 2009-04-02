@@ -405,6 +405,12 @@ class moodleform_mod extends moodleform {
             $items=grade_item::fetch_all(array('courseid'=>$COURSE->id));
             $items=$items ? $items : array();
             foreach($items as $id=>$item) {
+                // Do not include grades for current item
+                if (!empty($this->_cm) && $this->_cm->instance == $item->iteminstance
+                    && $this->_cm->modname == $item->itemmodule
+                    && $item->itemtype == 'mod') {
+                    continue;
+                }
                 $gradeoptions[$id]=$item->get_name();
             }
             asort($gradeoptions);
@@ -442,7 +448,10 @@ class moodleform_mod extends moodleform {
                 $completionoptions=array();
                 $modinfo=get_fast_modinfo($COURSE);
                 foreach($modinfo->cms as $id=>$cm) {
-                    if($cm->completion) {
+                    // Add each course-module if it:
+                    // (a) has completion turned on
+                    // (b) is not the same as current course-module
+                    if ($cm->completion && (empty($this->_cm) || $this->_cm->id != $id)) {
                         $completionoptions[$id]=$cm->name;
                     }
                 }
