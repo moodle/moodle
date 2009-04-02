@@ -1007,9 +1007,16 @@ function get_array_of_activities($courseid) {
         require_once($CFG->libdir.'/conditionlib.php');
     }
 
+    $course = $DB->get_record('course', array('id'=>$courseid));
+
+    if (empty($course)) {
+        throw new moodle_exception('courseidnotfound');
+    }
+
     $mod = array();
 
-    if (!$rawmods = get_course_mods($courseid)) {
+    $rawmods = get_course_mods($courseid);
+    if (empty($rawmods)) {
         return $mod; // always return array
     }
 

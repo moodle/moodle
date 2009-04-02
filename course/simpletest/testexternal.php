@@ -245,7 +245,7 @@ class course_external_test extends UnitTestCase {
         $course['startdate'] = mktime();
         $course['fullname'] = "Test course for Course 2 update";
         $course['shortname'] = "TestCourseForCourse2update";
-        $course['idnumber'] = 8005007;
+        $course['idnumber'] = 8005008;
         $params[] = $course;
         $result = course_external::update_courses($params);
         $this->assertEqual($result, true);
@@ -277,13 +277,56 @@ class course_external_test extends UnitTestCase {
     }
 
     function test_get_course_modules() {
-        //create two different modules
-//        $mod = new stdClass();
-//        $mod->course = $this->course->id;
-//        $mod->module = 6;
-//        $mod->instance = 1;
-//        $mod->section = 1;
-       
+        global $DB;
+
+
+        //add two chat activities to the course
+        $chat = new stdClass();
+        $chat->course = $this->course->id;
+        $chat->name = "chat to delete";
+        $chat->intro = "introduction";
+        $chat->keepdays = 0;
+        $chat->studentlogs = 0;
+        $chat->chattime = 0;
+        $chat->schedule = 0;
+        $chat->timemodified = 0 ;
+        $chatid = chat_add_instance($chat);
+        $chat->name = "chat to delete 2";
+        $chat->intro = "introduction 2";
+        $chatid2 = chat_add_instance($chat);
+
+        $coursemoduleid = $DB->insert_record('course_modules',array('course' => $this->course->id,
+                                                  'module' => 2,
+                                                  'instance' => $chatid,
+                                                  'section' =>0));
+        $coursemoduleid2 = $DB->insert_record('course_modules',array('course' => $this->course->id,
+                                                  'module' => 2,
+                                                  'instance' => $chatid2,
+                                                  'section' =>0));
+        $section = $DB->get_record('course_sections',array('course' => $this->course->id));
+        $section->sequence = $coursemoduleid.",".$coursemoduleid2;
+        $DB->update_record('course_sections', $section);
+
+
+        $params = array();
+        $course = array();
+        $course["id"] = $this->course->id;
+        $params[] = $course;
+        $activities = course_external::get_course_modules($params);
+        
+        $activities = course_external::get_course_activities($params);
+        varlog($activities);
+        chat_delete_instance($chatid);
+        chat_delete_instance($chatid2);
+        $DB->delete_records('course_modules',array('course' => $this->course->id,
+                                                  'module' => 2,
+                                                  'instance' => $chatid,
+                                                  'section' =>0));
+        $DB->delete_records('course_modules',array('course' => $this->course->id,
+                                                  'module' => 2,
+                                                  'instance' => $chatid2,
+                                                  'section' =>0));
+
     }
 */
 }
