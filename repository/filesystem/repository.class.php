@@ -1,15 +1,15 @@
 <?php // $Id$
 
 class repository_filesystem extends repository {
+    public static $block_list = array(
+        '/etc',
+        '/',
+        'c:\windows',
+        'c:/windows'
+        );
     public function __construct($repositoryid, $context = SITEID, $options = array()) {
         parent::__construct($repositoryid, $context, $options);
         $this->root_path = trim($this->root_path);
-        $this->block_list = array(
-            '/etc',
-            '/',
-            'c:\windows',
-            'c:/windows'
-            );
         if (!empty($options['ajax'])) {
             // if created from filepicker
             if (empty($this->root_path)) {
@@ -36,7 +36,7 @@ class repository_filesystem extends repository {
     }
     public function security_check($path) {
         $blocked = false;
-        foreach ($this->block_list as $item) {
+        foreach (self::$block_list as $item) {
             if ($path == $item or $path == $item.'/') {
                 $blocked = true;
                 break;
@@ -156,7 +156,7 @@ class repository_filesystem extends repository {
         $mform->addElement('text', 'root_path', get_string('path', 'repository_filesystem'), array('value'=>'','size' => '40'));
         $warning = get_string('donotusesysdir', 'repository_filesystem');
         $warning .= '<ul>';
-        foreach ($this->block_list as $item) {
+        foreach (self::$block_list as $item) {
             $warning .= '<li>'.$item.'</li>';
         }
         $warning .= '</ul>';
