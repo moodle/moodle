@@ -3581,18 +3581,25 @@ function fetch_context_capabilities($context) {
             $cm = $DB->get_record('course_modules', array('id'=>$context->instanceid));
             $module = $DB->get_record('modules', array('id'=>$cm->module));
 
-            $extra = "";
             $modfile = "$CFG->dirroot/mod/$module->name/lib.php";
             if (file_exists($modfile)) {
                 include_once($modfile);
                 $modfunction = $module->name.'_get_extra_capabilities';
                 if (function_exists($modfunction)) {
-                    if ($extracaps = $modfunction()) {
-                        list($extra, $params) = $DB->get_in_or_equal($extracaps, SQL_PARAMS_NAMED, 'cap0');
-                        $extra = "OR name $extra";
-                    }
+                    $extracaps = $modfunction();        
                 }
             }
+            if(empty($extracaps)) {
+                $extracaps = array();
+            }
+
+            // All modules allow viewhiddenactivities. This is so you can hide
+            // the module then override to allow specific roles to see it.
+            // The actual check is in course page so not module-specific
+            $extracaps[]="moodle/course:viewhiddenactivities";
+            list($extra, $params) = $DB->get_in_or_equal(
+                $extracaps, SQL_PARAMS_NAMED, 'cap0');
+            $extra = "OR name $extra";
 
             $SQL = "SELECT *
                       FROM {capabilities}

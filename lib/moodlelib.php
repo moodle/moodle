@@ -2025,6 +2025,11 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
             print_error('nocontext');
         }
     }
+    if (!empty($cm) && !isset($cm->context)) {
+        if ( ! $cm->context = get_context_instance(CONTEXT_MODULE, $cm->id) ) {
+            print_error('nocontext');
+        }
+    }
 
     // Conditional activity access control
     if(!empty($CFG->enableavailability) and $cm) {
@@ -2041,7 +2046,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
             // Check condition for user (this will do a query if the availability
             // information depends on grade or completion information)
             if ($ci->is_available($junk) ||
-                has_capability('moodle/course:viewhiddenactivities', $COURSE->context)) {
+                has_capability('moodle/course:viewhiddenactivities', $cm->context)) {
                 $SESSION->conditionaccessok[$cm->id] = true;
             } else {
                 print_error('activityiscurrentlyhidden');
@@ -2052,7 +2057,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
     if ($COURSE->id == SITEID) {
         /// Eliminate hidden site activities straight away
         if (!empty($cm) && !$cm->visible
-            && !has_capability('moodle/course:viewhiddenactivities', $COURSE->context)) {
+            && !has_capability('moodle/course:viewhiddenactivities', $cm->context)) {
             redirect($CFG->wwwroot, get_string('activityiscurrentlyhidden'));
         }
         user_accesstime_log($COURSE->id); /// Access granted, update lastaccess times
@@ -2144,7 +2149,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
 
         /// Make sure they can read this activity too, if specified
 
-            if (!empty($cm) and !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $COURSE->context)) {
+            if (!empty($cm) and !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $cm->context)) {
                 redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
             }
             user_accesstime_log($COURSE->id); /// Access granted, update lastaccess times
