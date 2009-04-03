@@ -247,7 +247,7 @@ class edit_key_save extends XMLDBAction {
             print_header("$site->shortname: XMLDB", "$site->fullname", $navigation);
 
             notice ('<p>' .implode(', ', $errors) . '</p>
-                     <p>' . $tempkey->readableInfo(),
+                     <p>' . $tempkey->readableInfo() . '</p>',
                     'index.php?action=edit_key&amp;key=' .$key->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)));
             die; /// re-die :-P
         }

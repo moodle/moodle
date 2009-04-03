@@ -126,7 +126,7 @@ class edit_sentence_save extends XMLDBAction {
             $navigation = build_navigation($navlinks);
             print_header("$site->shortname: XMLDB", "$site->fullname", $navigation);
             notice ('<p>' .implode(', ', $errors) . '</p>
-                     <p>' . s($sentence),
+                     <p>' . s($sentence) . '</p>',
                     'index.php?action=edit_sentence&amp;sentence=' .$sentenceparam . '&amp;statement=' . urlencode($statementparam) . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)));
             die; /// re-die :-P
         }

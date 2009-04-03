@@ -289,7 +289,7 @@ class edit_field_save extends XMLDBAction {
             $navigation = build_navigation($navlinks);
             print_header("$site->shortname: XMLDB", "$site->fullname", $navigation);
             notice ('<p>' .implode(', ', $errors) . '</p>
-                     <p>' . $tempfield->readableInfo(),
+                     <p>' . $tempfield->readableInfo() . '</p>',
                     'index.php?action=edit_field&amp;field=' .$field->getName() . '&amp;table=' . $table->getName()
                     . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)));
             die; /// re-die :-P
