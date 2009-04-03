@@ -13,6 +13,9 @@ class repository_webdav extends repository {
     public function __construct($repositoryid, $context = SITEID, $options = array()) {
         parent::__construct($repositoryid, $context, $options);
         $this->wd = new webdav_client();
+        if (empty($this->webdav_server)) {
+            return;
+        }
         $this->wd->set_server($this->webdav_server);
         if (empty($this->webdav_port)) {
             $this->wd->set_port(80);
