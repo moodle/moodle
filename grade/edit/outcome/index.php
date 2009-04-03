@@ -46,6 +46,9 @@ if ($courseid) {
     }
 
 } else {
+    if (empty($CFG->enableoutcomes)) {
+        redirect('../../../');
+    }
     require_once $CFG->libdir.'/adminlib.php';
     admin_externalpage_setup('outcomes');
 }
