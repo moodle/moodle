@@ -201,7 +201,7 @@ class UnitTestCaseUsingDatabase extends UnitTestCase {
     protected function revert_to_real_db() {
         global $DB;
         if ($DB !== $this->testdb) {
-            debugging('revert_to_real_db called when the test DB was already selected. This suggest you are doing something wrong and dangerous. Please review your code immediately.', DEBUG_DEVELOPER);
+            debugging('revert_to_real_db called when the test DB was not already selected. This suggest you are doing something wrong and dangerous. Please review your code immediately.', DEBUG_DEVELOPER);
         }
         $DB = $this->realdb;
     }
