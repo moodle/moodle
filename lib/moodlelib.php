@@ -5541,7 +5541,7 @@ class string_manager {
 
         if (!is_null($this->installstrings) && in_array($identifier, $this->installstrings)) {
             $module = 'installer';
-            array_unshift($locations, $this->dirroot . '/install/lang/');
+            $locations = array_merge(array($this->dirroot . '/install/lang/' => ''), $locations); 
         }
 
         if ($extralocations) {
