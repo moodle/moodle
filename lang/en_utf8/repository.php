@@ -28,6 +28,7 @@ $string['confirmremove'] = 'Are you sure you want to remove this repository plug
 $string['create'] = 'Create';
 $string['createrepository'] = 'Create a repository instance';
 $string['createinstance'] = 'Create a repository instance';
+$string['createxxinstance'] = 'Create \"$a\" instance';
 $string['date'] = 'Date';
 $string['deleterepository'] = 'Delete this repository';
 $string['deleted'] = 'Repository deleted';
