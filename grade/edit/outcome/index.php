@@ -46,6 +46,9 @@ if ($courseid) {
     }
 
 } else {
+    if (empty($CFG->enableoutcomes)) {
+        redirect('../../../');
+    }
     require_once $CFG->libdir.'/adminlib.php';
     admin_externalpage_setup('outcomes');
 }
@@ -103,11 +106,11 @@ switch ($action) {
 
         if(!$deleteconfirmed){
             print_header(get_string('outcomedelete', 'grades'));
-            notice_yesno(get_string('outcomeconfirmdelete', 'grades', $outcome->fullname), 
+            notice_yesno(get_string('outcomeconfirmdelete', 'grades', $outcome->fullname),
                     "index.php?id={$courseid}", "index.php?id={$courseid}",
-                    array('outcomeid' => $outcome->id, 
-                        'action'=> 'delete', 
-                        'sesskey' =>  $USER->sesskey, 
+                    array('outcomeid' => $outcome->id,
+                        'action'=> 'delete',
+                        'sesskey' =>  $USER->sesskey,
                         'deleteconfirmed'=> 1)
                     );
             print_footer();
@@ -180,7 +183,7 @@ if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
                         " src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"$strdelete\" /></a> ";
         }
         $line[] = $buttons;
-        
+
         $data[] = $line;
     }
     $table = new object();
@@ -196,7 +199,7 @@ if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
 
 if ($outcomes = grade_outcome::fetch_all_global()) {
 
-    $return = print_heading($strstandardoutcome, '', 2, 'main', true); 
+    $return = print_heading($strstandardoutcome, '', 2, 'main', true);
     $data = array();
     foreach($outcomes as $outcome) {
         $line = array();
