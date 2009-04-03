@@ -2085,7 +2085,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
 
         /// Make sure they can read this activity too, if specified
 
-            if (!empty($cm) and !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $cm->context)) {
+            if (!empty($cm) && !$cm->visible && !has_capability('moodle/course:viewhiddenactivities', $cm->context)) {
                 redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
             }
             user_accesstime_log($COURSE->id); /// Access granted, update lastaccess times
