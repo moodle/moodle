@@ -387,6 +387,7 @@ function resource_get_coursemodule_info($coursemodule) {
 
        require_once($CFG->libdir.'/filelib.php');
 
+       $customicon = $CFG->dirroot.'/mod/resource/type/'.$resource->type.'/icon.gif';
        if ($resource->type == 'file') {
            $icon = mimeinfo("icon", $resource->reference);
            if ($icon != 'unknown.gif') {
@@ -396,6 +397,8 @@ function resource_get_coursemodule_info($coursemodule) {
            }
        } else if ($resource->type == 'directory') {
            $info->icon ="f/folder.gif";
+       } else if (file_exists($customicon)) {
+           $info->icon ='mod/resource/type/'.$resource->type.'/icon.gif';
        }
    }
 

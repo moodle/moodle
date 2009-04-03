@@ -1483,8 +1483,13 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             } else { // Normal activity
                 $instancename = format_string($modinfo->cms[$modnumber]->name, true,  $course->id);
 
-                if (!empty($modinfo->cms[$modnumber]->icon)) {
-                    $icon = "$CFG->pixpath/".$modinfo->cms[$modnumber]->icon;
+                $customicon = $modinfo->cms[$modnumber]->icon;
+                if (!empty($customicon)) {
+                    if (substr($customicon, 0, 4) === 'mod/') {
+                        $icon = "$CFG->modpixpath/".substr($customicon, 4);
+                    } else {
+                        $icon = "$CFG->pixpath/".$customicon;
+                    }
                 } else {
                     $icon = "$CFG->modpixpath/$mod->modname/icon.gif";
                 }
@@ -1492,8 +1497,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 //Accessibility: for files get description via icon.
                 $altname = '';
                 if ('resource'==$mod->modname) {
-                    if (!empty($modinfo->cms[$modnumber]->icon)) {
-                        $possaltname = $modinfo->cms[$modnumber]->icon;
+                    if (!empty($customicon)) {
+                        $possaltname = $customicon;
 
                         $mimetype = mimeinfo_from_icon('type', $possaltname);
                         $altname = get_mimetype_description($mimetype);
