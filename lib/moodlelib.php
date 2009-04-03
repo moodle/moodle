@@ -3414,6 +3414,9 @@ function check_password_policy($password, &$errmsg) {
     if (preg_match_all('/[^[:upper:][:lower:][:digit:]]/u', $password, $matches) < $CFG->minpasswordnonalphanum) {
         $errmsg .= '<div>'. get_string('errorminpasswordnonalphanum', 'auth', $CFG->minpasswordnonalphanum) .'</div>';
     }
+    if (!check_consecutive_identical_characters($password, $CFG->maxconsecutiveidentchars)) {
+        $errmsg .= '<div>'. get_string('errormaxconsecutiveidentchars', 'auth', $CFG->maxconsecutiveidentchars) .'</div>';
+    }
 
     if ($errmsg == '') {
         return true;
@@ -8395,6 +8398,41 @@ function get_site_identifier() {
     }
     // Return it.
     return $CFG->siteidentifier;
+}
+
+/**
+ * Check whether the given password has no more than the specified
+ * number of consecutive identical characters.
+ *
+ * @param string $password   password to be checked agains the password policy
+ * @param integer $maxchars  maximum number of consecutive identical characters
+ */
+function check_consecutive_identical_characters($password, $maxchars) {
+
+    if ($maxchars < 1) {
+        return true; // 0 is to disable this check
+    }
+    if (strlen($password) <= $maxchars) {
+        return true; // too short to fail this test
+    }
+
+    $previouschar = '';
+    $consecutivecount = 1;
+    foreach (str_split($password) as $char) {
+        if ($char != $previouschar) {
+            $consecutivecount = 1;
+        }
+        else {
+            $consecutivecount++;
+            if ($consecutivecount > $maxchars) {
+                return false; // check failed already
+            }
+        }
+
+        $previouschar = $char;
+    }
+
+    return true;
 }
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:

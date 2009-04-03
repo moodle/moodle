@@ -380,6 +380,7 @@ $string['changepasswordhelp'] = 'Here you can specify a location at which your u
 $string['chooseauthmethod'] = 'Choose an authentication method';
 $string['createpasswordifneeded'] = 'Create password if needed';
 $string['errorpasswordupdate'] = 'Error updating password, password not changed';
+$string['errormaxconsecutiveidentchars'] = 'Passwords must have at most $a consecutive identical characters.';
 $string['errorminpasswordlength'] = 'Passwords must be at least $a characters long.';
 $string['errorminpassworddigits'] = 'Passwords must have at least $a digit(s).';
 $string['errorminpasswordlower'] = 'Passwords must have at least $a lower case letter(s).';
