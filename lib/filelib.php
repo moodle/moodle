@@ -946,7 +946,7 @@ function put_records_csv($file, $records, $table = NULL) {
  * @param $location the path to remove.
  */
 function fulldelete($location) {
-    if (is_dir($location)) {
+    if (is_dir($location) and !is_link($location)) {
         $currdir = opendir($location);
         while (false !== ($file = readdir($currdir))) {
             if ($file <> ".." && $file <> ".") {
