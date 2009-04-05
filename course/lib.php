@@ -14,7 +14,9 @@ define('FRONTPAGECOURSELIST',     '1');
 define('FRONTPAGECATEGORYNAMES',  '2');
 define('FRONTPAGETOPICONLY',      '3');
 define('FRONTPAGECATEGORYCOMBO',  '4');
-define('FRONTPAGECOURSELIMIT',    200);         // maximum number of courses displayed on the frontpage
+if (!defined('FRONTPAGECOURSELIMIT')) {
+    define('FRONTPAGECOURSELIMIT',    200);     // maximum number of courses displayed on the frontpage
+}
 define('EXCELROWS', 65535);
 define('FIRSTUSEDEXCELROW', 3);
 
