@@ -111,7 +111,9 @@ class course_reset_form extends moodleform {
                 if (file_exists($modfile)) {
                     @include_once($modfile);
                     if (function_exists($mod_reset_course_form_defaults)) {
-                        $defaults = $defaults + $mod_reset_course_form_defaults($COURSE);
+                        if ($moddefs = $mod_reset_course_form_defaults($COURSE)) {
+                            $defaults = $defaults + $moddefs;
+                        }
                     }
                 }
             }
