@@ -422,6 +422,9 @@ class grade_category extends grade_object {
             $items = get_records_sql($sql);
         }
 
+        // needed mostly for SUM agg type
+        $this->auto_update_max($items);
+
         if ($userid) {
             $usersql = "AND g.userid=$userid";
         } else {
@@ -686,6 +689,50 @@ class grade_category extends grade_object {
     }
 
     /**
+     * Some aggregation tpyes may update max grade
+     * @param array $items sub items
+     * @return void
+     */
+    function auto_update_max($items) {
+        if ($this->aggregation != GRADE_AGGREGATE_SUM) {
+            // not needed at all
+            return;
+        }
+
+        if (!$items) {
+            if ($this->grade_item->grademax != 0 or $this->grade_item->gradetype != GRADE_TYPE_VALUE) {
+                $this->grade_item->grademax  = 0;
+                $this->grade_item->grademin  = 0;
+                $this->grade_item->gradetype = GRADE_TYPE_VALUE;
+                $this->grade_item->update('aggregation');
+            }
+            return;
+        }
+
+        $max = 0;
+
+        //find max grade
+        foreach ($items as $item) {
+            if ($item->aggregationcoef > 0) {
+                // extra credit from this activity - does not affect total
+                continue;
+            }
+            if ($item->gradetype == GRADE_TYPE_VALUE) {
+                $max += $item->grademax;
+            } else if ($item->gradetype == GRADE_TYPE_SCALE) {
+                $max += $item->grademax - 1; // scales min is 1
+            }
+        }
+
+        if ($this->grade_item->grademax != $max or $this->grade_item->grademin != 0 or $this->grade_item->gradetype != GRADE_TYPE_VALUE){
+            $this->grade_item->grademax  = $max;
+            $this->grade_item->grademin  = 0;
+            $this->grade_item->gradetype = GRADE_TYPE_VALUE;
+            $this->grade_item->update('aggregation');
+        }
+    }
+
+    /**
      * internal function for category grades summing
      *
      * @param object $grade
@@ -717,28 +764,6 @@ class grade_category extends grade_object {
                     $grade_values[$itemid] = 0;
                 }
             }
-        }
-
-        $max = 0;
-
-        //find max grade
-        foreach ($items as $item) {
-            if ($item->aggregationcoef > 0) {
-                // extra credit from this activity - does not affect total
-                continue;
-            }
-            if ($item->gradetype == GRADE_TYPE_VALUE) {
-                $max += $item->grademax;
-            } else if ($item->gradetype == GRADE_TYPE_SCALE) {
-                $max += $item->grademax - 1; // scales min is 1
-            }
-        }
-
-        if ($this->grade_item->grademax != $max or $this->grade_item->grademin != 0 or $this->grade_item->gradetype != GRADE_TYPE_VALUE){
-            $this->grade_item->grademax = $max;
-            $this->grade_item->grademin = 0;
-            $this->grade_item->gradetype = GRADE_TYPE_VALUE;
-            $this->grade_item->update('aggregation');
         }
 
         $this->apply_limit_rules($grade_values);
