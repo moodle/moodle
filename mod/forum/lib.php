@@ -4928,20 +4928,20 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
 
     // retrieve objects (yuk)
     if (is_numeric($forum)) {
-        debugging('missinf full forum', DEBUG_DEVELOPER);
+        debugging('missing full forum', DEBUG_DEVELOPER);
         if (!$forum = $DB->get_record('forum',array('id'=>$forum))) {
             return false;
         }
     }
 
     if (is_numeric($discussion)) {
-        debugging('missinf full discussion', DEBUG_DEVELOPER);
+        debugging('missing full discussion', DEBUG_DEVELOPER);
         if (!$discussion = $DB->get_record('forum_discussions',array('id'=>$discussion))) {
             return false;
         }
     }
     if (is_numeric($post)) {
-        debugging('missinf full post', DEBUG_DEVELOPER);
+        debugging('missing full post', DEBUG_DEVELOPER);
         if (!$post = $DB->get_record('forum_posts',array('id'=>$post))) {
             return false;
         }
