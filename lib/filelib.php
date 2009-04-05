@@ -493,7 +493,7 @@ if (!function_exists('file_get_contents')) {
  * @param $location the path to remove.
  */
 function fulldelete($location) {
-    if (is_dir($location)) {
+    if (is_dir($location) and !is_link($location)) {
         $currdir = opendir($location);
         while (false !== ($file = readdir($currdir))) {
             if ($file <> ".." && $file <> ".") {
