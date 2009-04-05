@@ -365,7 +365,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
 
         if ($update) {
             $newdata->id = $data->id;
-            $newdata->{$template} = $str;
+            $newdata->{$template} = addslashes($str);
             if (!update_record('data', $newdata)) {
                 notify('Error updating template');
             } else {
