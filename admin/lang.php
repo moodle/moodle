@@ -1188,20 +1188,18 @@ function lang_extra_locations() {
     $files = array();
     $places = string_manager::instance()->get_registered_plugin_types();
     foreach ($places as $prefix => $directories) {
-        if ($prefix != '__exceptions') {
-            foreach ($directories as $directory) {
-                foreach (get_list_of_plugins($directory) as $plugin) {
-                    $enlangdirlocation = $CFG->dirroot.'/'.$directory.'/'.$plugin.'/lang/en_utf8';
-                    foreach (get_directory_list($enlangdirlocation, '', false) as $file) {
-                        if ((substr($file, -4) == ".php") && ($file != "langconfig.php")) {
-                            $fullpath = $enlangdirlocation.'/'.$file;
-                            $files[$fullpath] = array(
-                                'filename' => $file,
-                                'location' => $directory,
-                                'plugin' => $plugin,
-                                'prefix' => $prefix,
-                            );
-                        }
+        foreach ($directories as $directory) {
+            foreach (get_list_of_plugins($directory) as $plugin) {
+                $enlangdirlocation = $CFG->dirroot.'/'.$directory.'/'.$plugin.'/lang/en_utf8';
+                foreach (get_directory_list($enlangdirlocation, '', false) as $file) {
+                    if ((substr($file, -4) == ".php") && ($file != "langconfig.php")) {
+                        $fullpath = $enlangdirlocation.'/'.$file;
+                        $files[$fullpath] = array(
+                            'filename' => $file,
+                            'location' => $directory,
+                            'plugin' => $plugin,
+                            'prefix' => $prefix,
+                        );
                     }
                 }
             }
@@ -1290,20 +1288,18 @@ function lang_help_extra_locations() {
     $files = array();
     $places = string_manager::instance()->get_registered_plugin_types();
     foreach ($places as $prefix => $directories) {
-        if ($prefix != '__exceptions') {
-            foreach ($directories as $directory) {
-                foreach (get_list_of_plugins($directory) as $plugin) {
-                    $enlangdirlocation = $CFG->dirroot.'/'.$directory.'/'.$plugin.'/lang/en_utf8/help';
-                    foreach (get_directory_list($enlangdirlocation, 'CVS') as $file) {
-                        if ((substr($file, -5) == '.html') || (substr($file, -4) == '.txt' )) {
-                            $fullpath = $enlangdirlocation.'/'.$file;
-                            $files[$fullpath] = array(
-                                'filename' => $file,
-                                'location' => $directory,
-                                'plugin' => $plugin,
-                                'prefix' => $prefix,
-                            );
-                        }
+        foreach ($directories as $directory) {
+            foreach (get_list_of_plugins($directory) as $plugin) {
+                $enlangdirlocation = $CFG->dirroot.'/'.$directory.'/'.$plugin.'/lang/en_utf8/help';
+                foreach (get_directory_list($enlangdirlocation, 'CVS') as $file) {
+                    if ((substr($file, -5) == '.html') || (substr($file, -4) == '.txt' )) {
+                        $fullpath = $enlangdirlocation.'/'.$file;
+                        $files[$fullpath] = array(
+                            'filename' => $file,
+                            'location' => $directory,
+                            'plugin' => $plugin,
+                            'prefix' => $prefix,
+                        );
                     }
                 }
             }
