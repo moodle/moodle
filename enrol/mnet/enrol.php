@@ -151,7 +151,7 @@ class enrolment_plugin_mnet {
 
 
             if (!empty($CFG->enrol_mnet_allowed_courses)) {
-                $where .=  " OR co.id in ('{$CFG->enrol_mnet_allowed_courses}') ";
+                $where .=  " OR co.id in ({$CFG->enrol_mnet_allowed_courses}) ";
             }
 
             $where .= ')';
