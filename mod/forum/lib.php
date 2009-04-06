@@ -5448,21 +5448,21 @@ function forum_add_user_default_subscriptions($userid, $context) {
     switch ($context->contextlevel) {
 
         case CONTEXT_SYSTEM:   // For the whole site
-             if ($courses = get_records('course')) {
-                 foreach ($courses as $course) {
-                     $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
-                     forum_add_user_default_subscriptions($userid, $subcontext);
-                 }
+             $rs = get_recordset('course', '', '', '', 'id');
+             while ($course = rs_fetch_next_record($rs)) {
+                 $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                 forum_add_user_default_subscriptions($userid, $subcontext);
              }
+             rs_close($rs);
              break;
 
         case CONTEXT_COURSECAT:   // For a whole category
-             if ($courses = get_records('course', 'category', $context->instanceid)) {
-                 foreach ($courses as $course) {
-                     $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
-                     forum_add_user_default_subscriptions($userid, $subcontext);
-                 }
-             }
+            $rs = get_recordset('course', 'category', $context->instanceid, '', 'id');
+            while ($course = rs_fetch_next_record($rs)) {
+                $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                forum_add_user_default_subscriptions($userid, $subcontext);
+            }
+            rs_close($rs);
              if ($categories = get_records('course_categories', 'parent', $context->instanceid)) {
                  foreach ($categories as $category) {
                      $subcontext = get_context_instance(CONTEXT_COURSECAT, $category->id);

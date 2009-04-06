@@ -160,12 +160,35 @@ define('ROLENAME_BOTH', 2);    // Both, like this:  Role alias (Original)
 
 require_once($CFG->dirroot.'/group/lib.php');
 
+if (!defined('MAX_CONTEXT_CACHE_SIZE')) { 
+    define('MAX_CONTEXT_CACHE_SIZE', 5000);
+}
+
 $context_cache    = array();    // Cache of all used context objects for performance (by level and instance)
 $context_cache_id = array();    // Index to above cache by id
 
 $DIRTYCONTEXTS = null; // dirty contexts cache
 $ACCESS = array(); // cache of caps for cron user switching and has_capability for other users (==not $USER)
 $RDEFS = array(); // role definitions cache - helps a lot with mem usage in cron
+
+/**
+ * Adds a context to the cache.
+ * @param object $context Context object to be cached
+ */
+function cache_context($context) {
+    global $context_cache, $context_cache_id;
+
+    // If there are too many items in the cache already, remove items until
+    // there is space
+    while (count($context_cache_id) >= MAX_CONTEXT_CACHE_SIZE) {
+        $first = array_shift($context_cache_id);
+        unset($context_cache[$first->contextlevel][$first->instanceid]);
+    }
+
+    // Add this context to the cache
+    $context_cache_id[$context->id] = $context;
+    $context_cache[$context->contextlevel][$context->instanceid] = $context;
+}
 
 function get_role_context_caps($roleid, $context) {
     //this is really slow!!!! - do not use above course context level!
@@ -2462,8 +2485,7 @@ function preload_course_contexts($courseid) {
 
     $rs = get_recordset_sql($sql);
     while($context = rs_fetch_next_record($rs)) {
-        $context_cache[$context->contextlevel][$context->instanceid] = $context;
-        $context_cache_id[$context->id] = $context;
+        cache_context($context);
     }
     rs_close($rs);
     $preloadedcourses[$courseid] = true;
@@ -2515,8 +2537,7 @@ function get_context_instance($contextlevel, $instance=0) {
 
     /// Only add to cache if context isn't empty.
         if (!empty($context)) {
-            $context_cache[$contextlevel][$instance] = $context;    // Cache it for later
-            $context_cache_id[$context->id]          = $context;    // Cache it for later
+            cache_context($context);
         }
 
         return $context;
@@ -2559,8 +2580,7 @@ function get_context_instance($contextlevel, $instance=0) {
             }
 
             if (!empty($context)) {
-                $context_cache[$contextlevel][$instance] = $context;    // Cache it for later
-                $context_cache_id[$context->id] = $context;             // Cache it for later
+                cache_context($context);
             }
 
             $result[$instance] = $context;
@@ -2589,8 +2609,7 @@ function get_context_instance_by_id($id) {
     }
 
     if ($context = get_record('context', 'id', $id)) {   // Update the cache and return
-        $context_cache[$context->contextlevel][$context->instanceid] = $context;
-        $context_cache_id[$context->id] = $context;
+        cache_context($context);
         return $context;
     }
 
