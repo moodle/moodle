@@ -465,14 +465,14 @@ class enrolment_plugin_mnet {
                 // sanitise strings for DB NOTE - these are not sane
                 // for printing, so we'll use a different object
                 $dbcourse = clone($course);
-                $dbcourse->cat_name        = addslashes($dbcourse->cat_name);
+                $dbcourse->cat_name        = addslashes(substr($dbcourse->cat_name,0,255));
                 $dbcourse->cat_description = addslashes($dbcourse->cat_description);
-                $dbcourse->fullname        = addslashes($dbcourse->fullname);
-                $dbcourse->shortname       = addslashes($dbcourse->shortname);
-                $dbcourse->idnumber        = addslashes($dbcourse->idnumber);
+                $dbcourse->fullname        = addslashes(substr($dbcourse->fullname,0,254));
+                $dbcourse->shortname       = addslashes(substr($dbcourse->shortname,0,15));
+                $dbcourse->idnumber        = addslashes(substr($dbcourse->idnumber,0,100));
                 $dbcourse->summary         = addslashes($dbcourse->summary);
-                $dbcourse->currency        = addslashes($dbcourse->currency);
-                $dbcourse->defaultrolename = addslashes($dbcourse->defaultrolename);
+                $dbcourse->currency        = addslashes(substr($dbcourse->currency,0,3));
+                $dbcourse->defaultrolename = addslashes(substr($dbcourse->defaultrolename,0,255));
 
                 // insert or update
                 if (empty($cachedcourses[$course->remoteid])) {
