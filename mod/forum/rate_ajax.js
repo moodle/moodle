@@ -71,7 +71,7 @@ function prevent_form_submission(e) {
 /**
  * This function performs the communication with the server
  * in order to send new rates and receive feedback about that.
- * It's the action thrown by all the menu listeners defined above
+ * It is the action thrown by all the menu listeners defined above
  */
 function perform_rate(e, menu) {
 
@@ -114,7 +114,7 @@ function rate_success(o) {
 
     /** Process error response **/
     if (response.status != 'Ok') {
-        display_error(menu, reponse);
+        display_error(menu, response);
     } else {
         display_response(menu, response);
     }
