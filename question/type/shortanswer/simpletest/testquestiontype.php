@@ -66,6 +66,9 @@ class question_shortanswer_qtype_test extends UnitTestCase {
         $this->assertFalse($this->qtype->compare_string_with_wildcard('a', '[a-z]', false));
         $this->assertTrue($this->qtype->compare_string_with_wildcard('[a-z]', '[a-z]', false));
         $this->assertTrue($this->qtype->compare_string_with_wildcard('\{}/', '\{}/', true));
+
+        // See http://moodle.org/mod/forum/discuss.php?d=120557
+        $this->assertTrue($this->qtype->compare_string_with_wildcard('ITÁLIE', 'Itálie', true));
     }
 
     function test_check_response() {
