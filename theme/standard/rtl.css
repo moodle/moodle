@@ -47,11 +47,6 @@ body, td, li, div {
     padding-right: 0px;
 }
 
-.navbar {
-    margin-left: 5px;
-    margin-right: 0px;
-}
-
 /* login window */
 
 .loginbox.twocolumns .signuppanel {
@@ -357,6 +352,10 @@ body#mod-quiz-report table#attempts .header {
 	float: right;
 }
 
+#mod-quiz-mod #reviewoptionshdr .fitemtitle {
+    text-align: right;
+}
+
 #mod-quiz-edit div.sideblock{
     float:left;
 }
@@ -551,85 +550,58 @@ form.mform .fitemtitle {
 	for tabs support
    ======================== */
 
-.tabrow0 {
-    PADDING-BOTTOM: 2.75em;
+.tabrow0 a span {
+  background: transparent url(pix/tab/right.gif) no-repeat right top !important;
 }
 
-/* IE6 requires overflow: auto. IE7 requires overflow: hidden.
-   exploit IE's "star html selector bug" to apply to IE6 ONLY */
-.tabrow0 {
-	#overflow: hidden; /* for IE7. to eliminate extra scroll bars . the # hides from firefox */
-    * html overflow: auto; /* for IE6 only **** */
+.tabrow0 a {
+  background: transparent url(pix/tab/left.gif) no-repeat left top !important;
 }
 
-.tabrow0  LI {
-    float: right;
-    MARGIN: 0px;
-    width: 130px;
-    BACKGROUND: url(pix/tab/rtlbg.gif) no-repeat right top;
-	overflow: hidden; /* for IE7. to prevent long titles from 'falling' 3cm down */
+.tabrow0 a:hover {
+  background-image: transparent url(pix/tab/left_hover.gif) no-repeat left top !important;
 }
 
-.tabrow0 A SPAN {
-    padding: 10px 0px 0.35em 0px;
-    BACKGROUND: none;
+.tabrow0 a:hover span {
+  background-image: transparent url(pix/tab/right_hover.gif) no-repeat right top !important;
 }
 
-.tabrow0 A {
-    PADDING-LEFT: 0px !important;
-    MARGIN: 0px;
-    BACKGROUND-IMAGE: none;
+.tabrow1 li a {
+  background: none !important;
 }
 
-.tabrow0 A:hover,
-.tabrow0 A:hover span,
-.tabrow0 .here A:hover,
-.tabrow0 .here A:hover span {
-    BACKGROUND-IMAGE: none
+.tabrow0 a span {
+  padding-left: 0px !important;
+  padding-right: 14px !important;
+  #padding-left: 14px !important;   /* IE only. The # hides from firefox */
+  #padding-right: 0px !important;   /* IE only. The # hides from firefox */
 }
 
-.tabrow0 .here A:link,
-.tabrow0 .here A:visited {
-	/* has to override styles.css 'position:relative', otherwise the active tab title disappears on IE6/7 */
-    position: static;
-}
-.tabrow0 ul a {
-    PADDING-LEFT: 0px;
+* html body .tabrow0 a {            /* IE6 only. Exploit IE's "star html selector bug" to apply to IE6 ONLY */
+  #display: inline-block !important;
+  #padding: 8px 0 0 13px !important;
 }
 
-div.tabrow1 {
-/* without that, IE will leave a short line floating, when there's ho secondary menu */
-	#right: 0px;   /* IE only */
-	#width: 800px; /* IE only */
+.tabrow0 div,
+.tabrow0 ul {                       /* IE7 only. The # hides from firefox. The following rule will override this for IE6 */
+  #top: 2.6em !important;
 }
 
-UL.tabrow1 {
-    right: 0px;
-    width: 800px;
-
-/* must have absolute width here, otherwise IE makes a total mess */
-	min-width: 100%;
+* html body .tabrow0 div,
+* html body .tabrow0 ul {           /* IE6 only. Exploit IE's "star html selector bug" to apply to IE6 ONLY */
+  top: 4.2em !important;
 }
 
-UL.tabrow1  li {
-    float: right;
-}
+@media all and (min-width: 0px) {   /* Opera only */
+    .tabrow0 a {
+        padding-right: 14px;
+        padding-left: 0;
+    }
 
-.tabtree {
-	/* give some space below the tabs row (when there's a secondary row) on firefox */
-	margin-bottom:15px;
-
-	/* has to override 'height:100%' in styles_ie6.css, otherwise it causes a huge height in quiz report overview, e.g.: moodle/mod/quiz/report.php?q=14&mode=overview */
-    height: auto !important;
-}
-
-.tabtree * {
-    width: auto;
-}
-
-/* notify-problem line gets covered by secondary tabs line (tabrow1), add some height to the line **** */
-.notifyproblem {
-	line-height: 40px;
+    .tabrow0 a span {
+    padding-left: 14px !important;
+    padding-right: 0 !important;
+    }
 }
 
 /* ========================
