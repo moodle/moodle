@@ -13,7 +13,9 @@
     $page        = optional_param('page', 0, PARAM_INT);     // which page to show
     $search      = optional_param('search', '');             // search string
 
-
+    $strforums = get_string('modulenameplural', 'forum');
+    $strforum = get_string('modulename', 'forum');
+        
 
     if ($id) {
 
@@ -31,11 +33,9 @@
         // fix for MDL-6926
         require_course_login($course, true, $cm);
 
-        $strforums = get_string("modulenameplural", "forum");
-        $strforum = get_string("modulename", "forum");
         $buttontext = update_module_button($cm->id, $course->id, $strforum);
 
-    } else if ($f) {
+        } else if ($f) {
 
         if (! $forum = get_record("forum", "id", $f)) {
             error("Forum ID was incorrect or no longer exists");
@@ -44,21 +44,22 @@
             error("Forum is misconfigured - don't know what course it's from");
         }
 
-        if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-            $buttontext = update_module_button($cm->id, $course->id, $strforum);
-        } else {
+        if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
             $cm->id = 0;
             $cm->visible = 1;
             $cm->course = $course->id;
             $buttontext = "";
-        }
-
+        } 
         // move require_course_login here to use forced language for course
         // fix for MDL-6926
         require_course_login($course, true, $cm);
+        $strforums = get_string('modulenameplural', 'forum');
+        $strforum = get_string('modulename', 'forum');
+        
+        if (!$cm->id == 0) {
+            $buttontext = update_module_button($cm->id, $course->id, $strforum);
+        } 
 
-        $strforums = get_string("modulenameplural", "forum");
-        $strforum = get_string("modulename", "forum");
 
     } else {
         error('Must specify a course module or a forum ID');
@@ -81,7 +82,7 @@
 
 /// Some capability checks.
     if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
-        notice(get_string("activityiscurrentlyhidden"));
+        notice(get_string('activityiscurrentlyhidden'));
     }
     
     if (!has_capability('mod/forum:viewdiscussion', $context)) {
@@ -130,7 +131,7 @@
         if (forum_is_forcesubscribed($forum->id)) {
             $streveryoneisnowsubscribed = get_string('everyoneisnowsubscribed', 'forum');
             $strallowchoice = get_string('allowchoice', 'forum');
-            echo '<span class="helplink">' . get_string("forcessubscribe", 'forum') . '</span><br />';
+            echo '<span class="helplink">' . get_string('forcessubscribe', 'forum') . '</span><br />';
             helpbutton("subscription", $strallowchoice, "forum");
             echo '&nbsp;<span class="helplink">';
             if (has_capability('moodle/course:manageactivities', $context)) {
@@ -145,10 +146,10 @@
             echo $strsubscriptionsoff;
             helpbutton("subscription", $strsubscriptionsoff, "forum");
         } else {
-            $streveryonecannowchoose = get_string("everyonecannowchoose", "forum");
-            $strforcesubscribe = get_string("forcesubscribe", "forum");
-            $strshowsubscribers = get_string("showsubscribers", "forum");
-            echo '<span class="helplink">' . get_string("allowsallsubscribe", 'forum') . '</span><br />';
+            $streveryonecannowchoose = get_string('everyonecannowchoose', 'forum');
+            $strforcesubscribe = get_string('forcesubscribe', 'forum');
+            $strshowsubscribers = get_string('showsubscribers', 'forum');
+            echo '<span class="helplink">' . get_string('allowsallsubscribe', 'forum') . '</span><br />';
             helpbutton("subscription", $strforcesubscribe, "forum");
             echo '&nbsp;';
             if (has_capability('moodle/course:manageactivities', $context)) {
@@ -160,11 +161,11 @@
             }
 
             if (forum_is_subscribed($USER->id, $forum->id)) {
-                $subtexttitle = get_string("subscribestop", "forum");
-                $subtext = get_string("unsubscribe", "forum");
+                $subtexttitle = get_string('subscribestop', 'forum');
+                $subtext = get_string('unsubscribe', 'forum');
             } else {
-                $subtexttitle = get_string("subscribestart", "forum");
-                $subtext = get_string("subscribe", "forum");
+                $subtexttitle = get_string('subscribestart', 'forum');
+                $subtext = get_string('subscribe', 'forum');
             }
             echo "<br />";
             echo "<span class=\"helplink\"><a title=\"$subtexttitle\" href=\"subscribe.php?id=$forum->id\">$subtext</a></span>";
@@ -191,9 +192,9 @@
         $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds && $forum->rsstype and $forum->rssarticles) {
 
         if ($forum->rsstype == 1) {
-            $tooltiptext = get_string("rsssubscriberssdiscussions","forum",format_string($forum->name));
+            $tooltiptext = get_string('rsssubscriberssdiscussions', 'forum', format_string($forum->name));
         } else {
-            $tooltiptext = get_string("rsssubscriberssposts","forum",format_string($forum->name));
+            $tooltiptext = get_string('rsssubscriberssposts', 'forum', format_string($forum->name));
         }
         if (empty($USER->id)) {
             $userid = 0;
@@ -251,7 +252,7 @@
             }
             echo '<p align="center">';
             if (forum_user_can_post_discussion($forum)) {
-                print_string("allowsdiscussions", "forum");
+                print_string('allowsdiscussions', 'forum');
             } else {
                 echo '&nbsp;';
             }
