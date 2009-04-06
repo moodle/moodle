@@ -161,6 +161,11 @@ define('ROLENAME_BOTH', 2);    // Both, like this:  Role alias (Original)
 define('ROLENAME_ORIGINALANDSHORT', 3); // the name as defined in the role definition and the shortname in brackets
 define('ROLENAME_ALIAS_RAW', 4);   // the name as defined by a role alias, in raw form suitable for editing
 
+// size limit for context cache
+if (!defined('MAX_CONTEXT_CACHE_SIZE')) { 
+    define('MAX_CONTEXT_CACHE_SIZE', 5000);
+}
+
 // Although this looks like a global variable, it isn't really. It is just a private
 // implementation detail to accesslib that MUST NOT be used elsewhere. It is used to
 // cache various bits of data between function calls for performance reasons. Sadly,
@@ -205,6 +210,14 @@ function accesslib_clear_all_caches_for_unit_testing() {
  */
 function cache_context($context) {
     global $ACCESSLIB_PRIVATE;
+
+    // If there are too many items in the cache already, remove items until
+    // there is space
+    while (count($ACCESSLIB_PRIVATE->contextsbyid) >= MAX_CONTEXT_CACHE_SIZE) {
+        $first = array_shift($ACCESSLIB_PRIVATE->contextsbyid);
+        unset($ACCESSLIB_PRIVATE->contexts[$first->contextlevel][$first->instanceid]);
+    }
+
     $ACCESSLIB_PRIVATE->contexts[$context->contextlevel][$context->instanceid] = $context;
     $ACCESSLIB_PRIVATE->contextsbyid[$context->id] = $context;
 }
