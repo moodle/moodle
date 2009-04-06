@@ -64,6 +64,8 @@ class mnet_remote_client extends mnet_peer {
                 $newkey = clean_param($temp->public_key, PARAM_PEM);
                 if(!empty($newkey)) {
                     $this->public_key = $newkey;
+                    $this->updateparams->public_key = $newkey;
+                    $this->commit();
                     return true;
                 }
             }
