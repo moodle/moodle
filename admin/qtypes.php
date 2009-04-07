@@ -119,10 +119,10 @@
 
         // If not yet confirmed, display a confirmation message.
         if (!optional_param('confirm', '', PARAM_BOOL)) {
-            $qytpename = $QTYPES[$delete]->local_name();
+            $qtypename = $QTYPES[$delete]->local_name();
             admin_externalpage_print_header();
-            print_heading(get_string('deleteqtypeareyousure', 'admin', $qytpename));
-            notice_yesno(get_string('deleteqtypeareyousuremessage', 'admin', $qytpename),
+            print_heading(get_string('deleteqtypeareyousure', 'admin', $qtypename));
+            notice_yesno(get_string('deleteqtypeareyousuremessage', 'admin', $qtypename),
                     admin_url('qtypes.php?delete=' . $delete . '&amp;confirm=1&amp;sesskey=' . sesskey()),
                     admin_url('qtypes.php'), NULL, NULL, 'post', 'get');
             admin_externalpage_print_footer();
