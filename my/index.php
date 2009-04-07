@@ -61,7 +61,6 @@
     
     // limits the number of courses showing up
     $courses_limit = 21;
-    $CFG->mycoursesperpage = (int)$CFG->mycoursesperpage;
     if (!empty($CFG->mycoursesperpage)) {
         $courses_limit = $CFG->mycoursesperpage;
     }
