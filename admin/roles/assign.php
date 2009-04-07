@@ -395,6 +395,12 @@
             notify($msg);
             print_simple_box_end();
         }
+		
+		//Back to Assign Roles button
+		echo "<br/>";
+		echo "<div class='continuebutton'>";
+		print_single_button('assign.php', array('contextid' => $contextid), get_string('assignrolesin', 'role', print_context_name($context)));
+		echo "</div>";
 
     } else {   // Print overview table
 
@@ -429,7 +435,8 @@
                 $rolehodlernames[$roleid] = '';
             }
         }
-
+		
+		
         // Print overview table
         $table->tablealign = 'center';
         $table->cellpadding = 5;
@@ -452,10 +459,14 @@
             }
             $table->data[] = $row;
         }
-
         print_table($table);
+		
+	   //Continue to Course Button
+	   echo "<br/>";
+	   echo "<div class='continuebutton'>";
+	   print_single_button($CFG->wwwroot.'/course/view.php', array('id' => $courseid), get_string('continuetocourse'));
+	   echo "</div>";
     }
-
+	
     print_footer($course);
-
 ?>
