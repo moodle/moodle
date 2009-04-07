@@ -98,7 +98,7 @@
     }
 
     // Delete.
-    if ($delete = optional_param('delete', '', PARAM_SAFEDIR) && confirm_sesskey()) {
+    if (($delete = optional_param('delete', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
         // Check it is OK to delete this question type.
         if ($delete == 'missingtype') {
             print_error('cannotdeletemissingqtype', 'admin', admin_url('qtypes.php'));
