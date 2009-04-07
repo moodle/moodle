@@ -592,7 +592,7 @@ form.mform .fitemtitle {
   top: 4.2em !important;
 }
 
-@media all and (min-width: 0px) {   /* Opera only */
+@media all and (min-width: 0px) {   /* Opera only, the floating # will hide this from Safari */
     .tabrow0 a {
         padding-right: 14px;
         padding-left: 0;
@@ -602,7 +602,10 @@ form.mform .fitemtitle {
     padding-left: 14px !important;
     padding-right: 0 !important;
     }
+    #
 }
+
+
 
 /* ========================
 	overrides styles_ie6 
