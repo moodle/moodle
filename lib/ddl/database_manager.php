@@ -432,6 +432,8 @@ class database_manager {
         if (is_null($targettable)) {
             throw new ddl_exception('ddlunknowntable', null, 'The table ' . $tablename . ' is not defined in file ' . $file);
         }
+        $targettable->setNext(NULL);
+        $targettable->setPrevious(NULL);
 
         $tempstructure = new xmldb_structure('temp');
         $tempstructure->addTable($targettable);
