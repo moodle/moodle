@@ -64,7 +64,6 @@
 
 /// The main overview in the middle of the page
     $courses_limit = 21;
-    $CFG->mycoursesperpage = (int)$CFG->mycoursesperpage;
     if (!empty($CFG->mycoursesperpage)) {
         $courses_limit = $CFG->mycoursesperpage;
     }
