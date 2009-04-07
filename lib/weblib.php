@@ -959,7 +959,6 @@ function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $retur
  */
 function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose', $help='', $helptext='', $return=false,
     $targetwindow='self', $selectlabel='', $optionsextra=NULL, $submitvalue='', $disabled=false, $showbutton=false) {
-
     global $CFG, $SESSION;
     static $go, $choose;   /// Locally cached, in case there's lots on a page
 
@@ -980,7 +979,7 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
         $nothing = $choose.'...';
     }
     if ($disabled) {
-        $disabled = 'disabled="disabled"';
+        $disabled = ' disabled="disabled"';
     } else {
         $disabled = '';
     }
@@ -1019,7 +1018,7 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
           $formid.'\').jump.selectedIndex].value;"';
     }
 
-    $output .= '<div style="white-space:nowrap">'.$selectlabel.$button.'<select id="'.$formid.'_jump" name="jump"'.$javascript.'>'."\n";
+    $output .= '<div style="white-space:nowrap">'.$selectlabel.$button.'<select id="'.$formid.'_jump" name="jump"'.$javascript.$disabled.'>'."\n";
 
     if ($nothing != '') {
         $selectlabeloption = '';
