@@ -38,6 +38,9 @@
 //
 // For further documentation, visit http://docs.moodle.org/en/DDL_functions
 
+/// Add required library.
+require_once($CFG->libdir.'/xmlize.php');
+
 /// Add required XMLDB constants
 require_once($CFG->libdir.'/xmldb/xmldb_constants.php');
 
