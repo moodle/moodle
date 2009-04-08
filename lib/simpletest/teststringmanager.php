@@ -75,6 +75,8 @@ $string['locallyoverridden'] = 'Not used';
 $string['hello'] = 'Hello \'world\'!';
 $string['hellox'] = 'Hello $a!';
 $string['results'] = 'Dear $a->firstname $a->lastname,\n\nOn test \"$a->testname\" you scored $a->grade%% which earns you \$100.';
+$string['emptyen'] = '';
+$string['emptyfr'] = 'This string is defined as \'\' in the fr lang pack';
 
 .../moodle/lang/en_utf8_local/moodle.php:
 $string['locallyoverridden'] = 'Should see this';
@@ -91,6 +93,7 @@ $string['parentlanguage'] = 'es_mx_utf8';
 .../moodledata/lang/fr_utf8/test.php
 $string['hello'] = 'Bonjour tout le monde!';
 $string['hellox'] = 'Bonjour $a!';
+$string['emptyfr'] = '';
 
 .../moodledata/lang/fr_ca_utf8/test.php
 $string['hello'] = 'Bonjour Québec!';
@@ -242,7 +245,19 @@ class string_manager_test extends UnitTestCase {
                 'hello' => "Hello 'world'!",
                 'hellox' => 'Hello $a!',
                 'results' => 'Dear $a->firstname $a->lastname,\n\nOn test \"$a->testname\" you scored $a->grade%% which earns you \$100.',
+                'emptyen' => '',
+                'emptyfr' => 'This string is defined as \'\' in the fr lang pack'
         ));
+    }
+
+    public function test_get_string_from_file_empty() {
+        // From the shared fixture:
+        //.../moodle/lang/en_utf8/test.php:
+        //$string['emptyen'] = '';
+        // ...
+        $this->assertIdentical($this->stringmanager->get_string_from_file(
+                'emptyen', $this->basedir . 'moodle/lang/en_utf8/test.php', NULL),
+                '');
     }
 
     public function test_get_string_from_file_simple() {
@@ -289,6 +304,7 @@ class string_manager_test extends UnitTestCase {
         $this->assertEqual($this->stringmanager->get_string('hellox', 'test', 'Tim'), 'Hello Tim!');
         $this->assertEqual($this->stringmanager->get_string('yes', 'block_mrbs'), 'Yes');
         $this->assertEqual($this->stringmanager->get_string('stringnotdefinedanywhere'), '[[stringnotdefinedanywhere]]');
+        $this->assertEqual($this->stringmanager->get_string('emptyen', 'test'), '');
     }
 
     public function test_non_default_no_parent() {
@@ -299,6 +315,7 @@ class string_manager_test extends UnitTestCase {
         $this->assertEqual($this->stringmanager->get_string('hellox', 'test', 'Jean-Paul'), 'Bonjour Jean-Paul!');
         $this->assertEqual($this->stringmanager->get_string('yes', 'block_mrbs'), 'Oui');
         $this->assertEqual($this->stringmanager->get_string('stringnotdefinedanywhere'), '[[stringnotdefinedanywhere]]');
+        $this->assertEqual($this->stringmanager->get_string('emptyfr', 'test'), '');
     }
 
     public function test_lang_with_parent() {
@@ -310,6 +327,7 @@ class string_manager_test extends UnitTestCase {
         $this->assertEqual($this->stringmanager->get_string('yes', 'block_mrbs'), 'Oui');
         $this->assertEqual($this->stringmanager->get_string('stringnotdefinedanywhere'), '[[stringnotdefinedanywhere]]');
     }
+
 }
 
 ?>

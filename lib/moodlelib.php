@@ -5553,7 +5553,8 @@ class string_manager {
             foreach ($locations as $location => $ignored) {
                 foreach (array('_local', '') as $suffix) {
                     $file = $location . $lang . $suffix . '/' . $module . '.php';
-                    if ($result = $this->get_string_from_file($identifier, $file, $a)) {
+                    $result = $this->get_string_from_file($identifier, $file, $a);
+                    if ($result !== false) {
                         return $result;
                     }
                 }
