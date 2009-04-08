@@ -7186,7 +7186,13 @@ function console_write_error($identifier, $module='install', $use_string_lib=tru
     die; die; die;
 }
 
-
+/**
+ * To use this class.
+ * - construct
+ * - call create (or use the 3rd param to the constructor)
+ * - call update or update_full repeatedly
+ * - 
+ */
 class progress_bar {
     private $html_id;
     private $percent;
@@ -7305,14 +7311,16 @@ EOT;
         $one = $curtime - $this->lastcall->time;
         $this->percent = $pt;
         $percent = $pt - $this->lastcall->pt;
-        if($percent != 0)
+        if ($percent != 0) {
             $left = ($one / $percent) - $consume;
-        else
+        } else {
             return null;
-        if($left < 0)
+        }
+        if($left < 0) {
             return 0;
-        else
+        } else {
             return $left;
+        }
     }
     /**
       * Update progress bar according percent
