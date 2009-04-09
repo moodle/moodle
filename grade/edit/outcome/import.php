@@ -142,7 +142,10 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
                 }
             }
             if ($error) {
-                print_box(get_string('importoutcomenofile', 'grades', $line));
+                print_box_start('generalbox importoutcomenofile');
+                echo get_string('importoutcomenofile', 'grades', $line);
+                echo print_single_button($CFG->wwwroot.'/grade/edit/outcome/index.php', array('id'=> $courseid), get_string('back'), 'get', '_self', true);
+                print_box_end();
                 $fatal_error = true;
                 break;
             }
@@ -158,7 +161,10 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
         // sanity check #2: every line must have the same number of columns as there are
         // headers.  If not, processing stops.
         if ( count($csv_data) != count($file_headers) ) {
-            print_box(get_string('importoutcomenofile', 'grades', $line));
+            print_box_start('generalbox importoutcomenofile');
+            echo get_string('importoutcomenofile', 'grades', $line);
+            echo print_single_button($CFG->wwwroot.'/grade/edit/outcome/index.php', array('id'=> $courseid), get_string('back'), 'get', '_self', true);
+            print_box_end();
             $fatal_error = true;
             //print_box(var_export($csv_data, true) ."<br />". var_export($header, true));
             break;
@@ -167,7 +173,10 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
         // sanity check #3: all required fields must be present on the current line.
         foreach ($headers as $header => $position) {
             if ($csv_data[$imported_headers[$header]] == '') {
-                print_box(get_string('importoutcomenofile', 'grades', $line));
+                print_box_start('generalbox importoutcomenofile');
+                echo get_string('importoutcomenofile', 'grades', $line);
+                echo print_single_button($CFG->wwwroot.'/grade/edit/outcome/index.php', array('id'=> $courseid), get_string('back'), 'get', '_self', true);
+                print_box_end();
                 $fatal_error = true;
                 break;
             }
