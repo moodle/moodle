@@ -144,8 +144,7 @@
         $currentgroup  = NULL;
     }
 
-    $isseparategroups = ($course->groupmode == SEPARATEGROUPS and $course->groupmodeforce and
-                         !has_capability('moodle/site:accessallgroups', $context));
+    $isseparategroups = ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context));
 
     if ($isseparategroups and (!$currentgroup) ) {
         $navlinks = array();
