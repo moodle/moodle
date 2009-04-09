@@ -384,8 +384,7 @@
     }
 
 /// Printing groups
-    $isseparategroups = ($course->groupmode == SEPARATEGROUPS and $course->groupmodeforce and
-                             !has_capability('moodle/site:accessallgroups', $coursecontext));
+    $isseparategroups = ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $coursecontext));
     if (!$isseparategroups){
         if ($usergroups = groups_get_all_groups($course->id, $user->id)){
             $groupstr = '';
