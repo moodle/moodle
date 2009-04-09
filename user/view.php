@@ -384,14 +384,16 @@
     }
 
 /// Printing groups
-    $isseparategroups = ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $coursecontext));
-    if (!$isseparategroups){
-        if ($usergroups = groups_get_all_groups($course->id, $user->id)){
-            $groupstr = '';
-            foreach ($usergroups as $group){
-                $groupstr .= ' <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$group->id.'">'.format_string($group->name).'</a>,';
+    if (!isset($hiddenfields['groups'])) {
+        $isseparategroups = ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $coursecontext));
+        if (!$isseparategroups){
+            if ($usergroups = groups_get_all_groups($course->id, $user->id)){
+                $groupstr = '';
+                foreach ($usergroups as $group){
+                    $groupstr .= ' <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$group->id.'">'.format_string($group->name).'</a>,';
+                }
+                print_row(get_string("group").":", rtrim($groupstr, ', '));
             }
-            print_row(get_string("group").":", rtrim($groupstr, ', '));
         }
     }
 /// End of printing groups
