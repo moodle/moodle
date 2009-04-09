@@ -359,7 +359,7 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     if ($groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', $context)) {
-        $allowedgroups = groups_get_all_groups($course->id, 0);
+        $allowedgroups = groups_get_all_groups($course->id, 0, $course->defaultgroupingid);
         // detect changes related to groups and fix active group
         if (!empty($SESSION->activegroup[$course->id][VISIBLEGROUPS][0])) {
             if (!array_key_exists($SESSION->activegroup[$course->id][VISIBLEGROUPS][0], $allowedgroups)) {
@@ -375,7 +375,7 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
         }
 
     } else {
-        $allowedgroups = groups_get_all_groups($course->id, $USER->id);
+        $allowedgroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid);
         // detect changes related to groups and fix active group
         if (isset($SESSION->activegroup[$course->id][SEPARATEGROUPS][0])) {
             if ($SESSION->activegroup[$course->id][SEPARATEGROUPS][0] == 0) {
@@ -561,7 +561,7 @@ function groups_get_course_group($course, $update=false) {
         if ($groupmode == 'aag') {
             $SESSION->activegroup[$course->id][$groupmode][0] = 0; // all groups by default if user has accessallgroups
 
-        } else if ($usergroups = groups_get_all_groups($course->id, $USER->id, 0)) {
+        } else if ($usergroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid)) {
             $fistgroup = reset($usergroups);
             $SESSION->activegroup[$course->id][$groupmode][0] = $fistgroup->id;
 
@@ -585,9 +585,9 @@ function groups_get_course_group($course, $update=false) {
         } else {
             // first make list of allowed groups
             if ($groupmode == VISIBLEGROUPS or $groupmode == 'aag') {
-                $allowedgroups = groups_get_all_groups($course->id, 0, 0);
+                $allowedgroups = groups_get_all_groups($course->id, 0, $course->defaultgroupingid);
             } else {
-                $allowedgroups = groups_get_all_groups($course->id, $USER->id, 0);
+                $allowedgroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid);
             }
 
             if ($allowedgroups and array_key_exists($changegroup, $allowedgroups)) {
