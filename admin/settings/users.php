@@ -163,7 +163,8 @@ if ($hassiteconfig
                              'msnid' => get_string('msnid'),
                              'firstaccess' => get_string('firstaccess'),
                              'lastaccess' => get_string('lastaccess'),
-                             'mycourses' => get_string('mycourses'))));
+                             'mycourses' => get_string('mycourses'),
+                             'groups' => get_string('groups'))));
 
         $temp->add(new admin_setting_configmulticheckbox('extrauserselectorfields',
                 get_string('extrauserselectorfields', 'admin'), get_string('configextrauserselectorfields', 'admin'), array('email' => '1'),
