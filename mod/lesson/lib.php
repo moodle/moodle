@@ -672,4 +672,12 @@ function lesson_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
 }
 
+/**
+ * Tells if files in moddata are trusted and can be served without XSS protection.
+ * @return bool true if file can be submitted by teacher only (trusted), false otherwise
+ */
+function resource_is_moddata_trusted() {
+    return true;
+}
+
 ?>

@@ -2661,4 +2661,13 @@ function hotpot_reset_course_form_definition(&$mform) {
 function hotpot_reset_course_form_defaults($course) {
     return array('reset_hotpot_deleteallattempts' => 1);
 }
+
+/**
+ * Tells if files in moddata are trusted and can be served without XSS protection.
+ * @return bool true if file can be submitted by teacher only (trusted), false otherwise
+ */
+function hotpot_is_moddata_trusted() {
+    return true;
+}
+
 ?>

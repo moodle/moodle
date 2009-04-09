@@ -697,4 +697,12 @@ function resource_get_name($type) {
     return $name;
 }
 
+/**
+ * Tells if files in moddata are trusted and can be served without XSS protection.
+ * @return bool true if file can be submitted by teacher only (trusted), false otherwise
+ */
+function resource_is_moddata_trusted() {
+    return true;
+}
+
 ?>
