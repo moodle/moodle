@@ -2227,6 +2227,11 @@ div.allcoursegrades {
     text-align: right;
     padding: 4px 0px 5px 0px;
 }
+
+.importoutcomenofile .singlebutton {
+    text-align: center;
+    margin-top: 5px;
+}
 /* gradebook edit tree */
 
 .grade-edit-tree .gradetreebox {
