@@ -60,56 +60,12 @@ class testable_string_manager extends string_manager {
     }
 }
 
-/*
-These tests use a shared fixture comprising language files in 
-./get_string_fixtures/moodle, which the test class treats as $CFG->dirroot and
-./get_string_fixtures/moodledata, which the test class treats as $CFG->dataroot.
-
-The files we have, and their contents, are
-
-.../moodle/lang/en_utf8/moodle.php:
-$string['test'] = 'Test';
-$string['locallyoverridden'] = 'Not used';
-
-.../moodle/lang/en_utf8/test.php:
-$string['hello'] = 'Hello \'world\'!';
-$string['hellox'] = 'Hello $a!';
-$string['results'] = 'Dear $a->firstname $a->lastname,\n\nOn test \"$a->testname\" you scored $a->grade%% which earns you \$100.';
-$string['emptyen'] = '';
-$string['emptyfr'] = 'This string is defined as \'\' in the fr lang pack';
-
-.../moodle/lang/en_utf8_local/moodle.php:
-$string['locallyoverridden'] = 'Should see this';
-
-.../moodledata/lang/fr_ca_utf8/langconfig.php
-$string['parentlanguage'] = 'fr_utf8';
-
-.../moodledata/lang/es_ar_utf8/langconfig.php
-$string['parentlanguage'] = 'es_utf8';
-
-.../moodle/lang/es_ar_utf8_local/langconfig.php
-$string['parentlanguage'] = 'es_mx_utf8';
-
-.../moodledata/lang/fr_utf8/test.php
-$string['hello'] = 'Bonjour tout le monde!';
-$string['hellox'] = 'Bonjour $a!';
-$string['emptyfr'] = '';
-
-.../moodledata/lang/fr_ca_utf8/test.php
-$string['hello'] = 'Bonjour Québec!';
-
-.../moodle/blocks/mrbs/lang/en_utf8/block_mrbs.php:
-$string['yes'] = 'Yes';
-
-.../moodle/blocks/mrbs/lang/fr_utf8/block_mrbs.php:
-$string['yes'] = 'Oui';
-
-*/
-
 class string_manager_test extends UnitTestCase {
     protected $originallang;
+    protected $workspace = 'temp/get_string_fixtures'; // Path inside $CFG->dataroot where we work.
     protected $basedir;
     protected $stringmanager;
+    protected $fileswritten = array();
 
     public function setUp() {
         global $CFG, $SESSION;
@@ -118,9 +74,11 @@ class string_manager_test extends UnitTestCase {
         } else {
             $this->originallang = null;
         }
-        $this->basedir = $CFG->libdir . '/simpletest/get_string_fixtures/';
+        $this->basedir = $CFG->dataroot . '/' . $this->workspace . '/';
         $this->stringmanager = new testable_string_manager($this->basedir . 'moodle',
                 $this->basedir . 'moodledata', 'adminpath', false);
+        make_upload_directory($this->workspace . '/' . 'moodle');
+        make_upload_directory($this->workspace . '/' . 'moodledata');
     }
 
     public function tearDown() {
@@ -130,6 +88,31 @@ class string_manager_test extends UnitTestCase {
         } else {
             $SESSION->lang = $this->originallang;
         }
+        foreach ($this->fileswritten as $path) {
+            unlink($path);
+        }
+        $this->fileswritten = array();
+    }
+
+    /**
+     * Write a teest language file under $this->basedir
+     * @param string $path e.g. 'moodle/lang/en_htf8/test.php' or 'moodledata/lang/fr_utf8/test/php'.
+     * @param array $strings the strings to store in the file.
+     */
+    protected function write_lang_file($path, $strings) {
+        $contents = "<?php\n";
+        foreach ($strings as $key => $string) {
+            $string = str_replace("'", "\'", $string);
+            if (substr($string, -1) == '\\') {
+                $string .= '\\';
+            }
+            $contents .= "\$string['$key'] = '" . $string . "';\n";
+        }
+        $contents .= "?>\n";
+        make_upload_directory($this->workspace . '/' . dirname($path));
+        $path = $this->basedir . $path;
+        file_put_contents($path, $contents);
+        $this->fileswritten[] = $path;
     }
 
     public function test_locations_to_search_moodle() {
@@ -214,78 +197,80 @@ class string_manager_test extends UnitTestCase {
     }
 
     public function test_get_parent_language_normal() {
-        // This is a standard case with parent language defined in
-        // moodledata/lang/fr_ca_utf8/langconfig.php. From the shared fixture:
-        //
-        //.../moodledata/lang/fr_ca_utf8/langconfig.php
-        //$string['parentlanguage'] = 'fr_utf8';
+        // Setup fixture.
+        $this->write_lang_file('moodledata/lang/fr_ca_utf8/langconfig.php', array(
+            'parentlanguage' => 'fr_utf8',
+        ));
+        // Exercise SUT.
         $this->assertEqual($this->stringmanager->get_parent_language('fr_ca_utf8'), 'fr_utf8');
     }
 
     public function test_get_parent_language_local_override() {
-        // This is an artificial case where the parent from moodledata/lang/es_ar_utf8 is overridden by
-        // a custom file in moodle/lang/es_ar_utf8_local. From the shared fixture:
-        //
-        //.../moodledata/lang/es_ar_utf8/langconfig.php
-        //$string['parentlanguage'] = 'es_utf8';
-        //
-        //.../moodle/lang/es_ar_utf8_local/langconfig.php
-        //$string['parentlanguage'] = 'es_mx_utf8';
+        // Setup fixture.
+        $this->write_lang_file('moodledata/lang/es_ar_utf8/langconfig.php', array(
+            'parentlanguage' => 'es_utf8',
+        ));
+        $this->write_lang_file('moodle/lang/es_ar_utf8_local/langconfig.php', array(
+            'parentlanguage' => 'es_mx_utf8',
+        ));
+        // Exercise SUT.
         $this->assertEqual($this->stringmanager->get_parent_language('es_ar_utf8'), 'es_mx_utf8');
     }
 
     public function test_load_lang_file() {
-        // From, the shared fixture:
-        //
-        //.../moodle/lang/en_utf8/test.php:
-        //$string['hello'] = 'Hello \'world\'!';
-        //$string['hellox'] = 'Hello $a!';
-        //$string['results'] = 'Dear $a->firstname $a->lastname,\n\nOn test \"$a->testname\" you scored $a->grade%% which earns you \$100.';
+        // Setup fixture.
+        $this->write_lang_file('moodle/lang/en_utf8/test.php', array(
+            'hello' => 'Hello \'world\'!',
+            'hellox' => 'Hello $a!',
+            'results' => 'Dear $a->firstname $a->lastname,\n\nOn test \"$a->testname\" you scored $a->grade%% which earns you \$100.',
+        ));
+        // Exercise SUT.
         $this->assertEqual($this->stringmanager->load_lang_file($this->basedir . 'moodle/lang/en_utf8/test.php'), array(
                 'hello' => "Hello 'world'!",
                 'hellox' => 'Hello $a!',
                 'results' => 'Dear $a->firstname $a->lastname,\n\nOn test \"$a->testname\" you scored $a->grade%% which earns you \$100.',
-                'emptyen' => '',
-                'emptyfr' => 'This string is defined as \'\' in the fr lang pack'
         ));
     }
 
     public function test_get_string_from_file_empty() {
-        // From the shared fixture:
-        //.../moodle/lang/en_utf8/test.php:
-        //$string['emptyen'] = '';
-        // ...
+        // Setup fixture.
+        $this->write_lang_file('moodle/lang/en_utf8/test.php', array(
+            'emptyen' => '',
+        ));
+        // Exercise SUT.
         $this->assertIdentical($this->stringmanager->get_string_from_file(
                 'emptyen', $this->basedir . 'moodle/lang/en_utf8/test.php', NULL),
                 '');
     }
 
     public function test_get_string_from_file_simple() {
-        // From the shared fixture:
-        //.../moodle/lang/en_utf8/test.php:
-        //$string['hello'] = 'Hello \'world\'!';
-        // ...
+        // Setup fixture.
+        $this->write_lang_file('moodle/lang/en_utf8/test.php', array(
+            'hello' => 'Hello \'world\'!',
+        ));
+        // Exercise SUT.
         $this->assertEqual($this->stringmanager->get_string_from_file(
                 'hello', $this->basedir . 'moodle/lang/en_utf8/test.php', NULL),
                 "Hello 'world'!");
     }
 
     public function test_get_string_from_file_simple_interp_with_special_chars() {
-        // From the shared fixture:
-        //.../moodle/lang/en_utf8/test.php:
-        // ...
-        //$string['hellox'] = 'Hello $a!';
-        // ...
+        // Setup fixture.
+        $this->write_lang_file('moodle/lang/en_utf8/test.php', array(
+            'hellox' => 'Hello $a!',
+        ));
+        // Exercise SUT.
         $this->assertEqual($this->stringmanager->get_string_from_file(
                 'hellox', $this->basedir . 'moodle/lang/en_utf8/test.php', 'Fred. $100 = 100%'),
                 "Hello Fred. $100 = 100%!");
     }
 
     public function test_get_string_from_file_complex_interp() {
-        // From the shared fixture:
-        //.../moodle/lang/en_utf8/test.php:
-        // ...
-        //$string['results'] = 'Dear $a->firstname $a->lastname,\n\nOn test \"$a->testname\" you scored $a->grade%% which earns you \$100.';
+        // Setup fixture.
+        $this->write_lang_file('moodle/lang/en_utf8/test.php', array(
+            'results' => 'Dear $a->firstname $a->lastname,\n\nOn test \"$a->testname\" you scored $a->grade%% which earns you \$100.',
+        ));
+        // Exercise SUT.
         $a = new stdClass;
         $a->firstname = 'Tim';
         $a->lastname = 'Hunt';
@@ -297,8 +282,22 @@ class string_manager_test extends UnitTestCase {
     }
 
     public function test_default_lang() {
+        // Setup fixture.
+        $this->write_lang_file('moodle/lang/en_utf8/moodle.php', array(
+            'test' => 'Test',
+        ));
+        $this->write_lang_file('moodle/lang/en_utf8/test.php', array(
+            'hello' => 'Hello \'world\'!',
+            'hellox' => 'Hello $a!',
+            'results' => 'Dear $a->firstname $a->lastname,\n\nOn test \"$a->testname\" you scored $a->grade%% which earns you \$100.',
+            'emptyen' => '',
+        ));
+        $this->write_lang_file('moodle/blocks/mrbs/lang/en_utf8/block_mrbs.php', array(
+            'yes' => 'Yes',
+        ));
         global $SESSION;
         $SESSION->lang = 'en_utf8';
+        // Exercise SUT.
         $this->assertEqual($this->stringmanager->get_string('test'), 'Test');
         $this->assertEqual($this->stringmanager->get_string('hello', 'test'), "Hello 'world'!");
         $this->assertEqual($this->stringmanager->get_string('hellox', 'test', 'Tim'), 'Hello Tim!');
@@ -308,8 +307,21 @@ class string_manager_test extends UnitTestCase {
     }
 
     public function test_non_default_no_parent() {
+        // Setup fixture.
+        $this->write_lang_file('moodle/lang/en_utf8/moodle.php', array(
+            'test' => 'Test',
+        ));
+        $this->write_lang_file('moodle/lang/fr_utf8/test.php', array(
+            'hello' => 'Bonjour tout le monde!',
+            'hellox' => 'Bonjour $a!',
+            'emptyfr' => '',
+        ));
+        $this->write_lang_file('moodle/blocks/mrbs/lang/fr_utf8/block_mrbs.php', array(
+            'yes' => 'Oui',
+        ));
         global $SESSION;
         $SESSION->lang = 'fr_utf8';
+        // Exercise SUT.
         $this->assertEqual($this->stringmanager->get_string('test'), 'Test');
         $this->assertEqual($this->stringmanager->get_string('hello', 'test'), 'Bonjour tout le monde!');
         $this->assertEqual($this->stringmanager->get_string('hellox', 'test', 'Jean-Paul'), 'Bonjour Jean-Paul!');
@@ -319,8 +331,27 @@ class string_manager_test extends UnitTestCase {
     }
 
     public function test_lang_with_parent() {
+        // Setup fixture.
+        $this->write_lang_file('moodledata/lang/fr_ca_utf8/langconfig.php', array(
+            'parentlanguage' => 'fr_utf8',
+        ));
+        $this->write_lang_file('moodle/lang/en_utf8/moodle.php', array(
+            'test' => 'Test',
+        ));
+        $this->write_lang_file('moodle/lang/fr_utf8/test.php', array(
+            'hello' => 'Bonjour tout le monde!',
+            'hellox' => 'Bonjour $a!',
+            'emptyfr' => '',
+        ));
+        $this->write_lang_file('moodle/blocks/mrbs/lang/fr_utf8/block_mrbs.php', array(
+            'yes' => 'Oui',
+        ));
+        $this->write_lang_file('moodledata/lang/fr_ca_utf8/test.php', array(
+            'hello' => 'Bonjour Québec!',
+        ));
         global $SESSION;
         $SESSION->lang = 'fr_ca_utf8';
+        // Exercise SUT.
         $this->assertEqual($this->stringmanager->get_string('test'), 'Test');
         $this->assertEqual($this->stringmanager->get_string('hello', 'test'), 'Bonjour Québec!');
         $this->assertEqual($this->stringmanager->get_string('hellox', 'test', 'Jean-Paul'), 'Bonjour Jean-Paul!');
