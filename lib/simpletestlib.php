@@ -142,7 +142,7 @@ class CheckSpecifiedFieldsExpectation extends SimpleExpectation {
             } else if (is_null($value) && is_null($actual->$key)) {
                 // OK
             } else {
-                $mismatches[] = $key;
+                $mismatches[] = $key . ' (expected [' . $value . '] got [' . $actual->$key . '].';
             }
         }
         return 'Actual object does not have all the same fields with the same values as the expected object (' .
