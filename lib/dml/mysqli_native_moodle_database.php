@@ -905,6 +905,10 @@ class mysqli_native_moodle_database extends moodle_database {
         return $positivematch ? 'REGEXP' : 'NOT REGEXP';
     }
 
+    public function sql_cast_2signed($fieldname) {
+        return ' CAST(' . $fieldname . ' AS SIGNED) ';
+    }
+
 /// session locking
     public function session_lock_supported() {
         return true;

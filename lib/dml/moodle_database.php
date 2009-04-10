@@ -1519,6 +1519,19 @@ abstract class moodle_database {
     }
 
     /**
+     * Returns the SQL to be used in order to an UNSIGNED INTEGER column to SIGNED.
+     *
+     * (Only MySQL needs this. MySQL things that 1 * -1 = 18446744073709551615
+     * if the 1 comes from an unsigned column).
+     *
+     * @param string fieldname the name of the field to be cast
+     * @return string the piece of SQL code to be used in your statement.
+     */
+    public function sql_cast_2signed($fieldname) {
+        return ' ' . $fieldname . ' ';
+    }
+
+    /**
      * Returns the SQL text to be used to compare one TEXT (clob) column with
      * one varchar column, because some RDBMS doesn't support such direct
      * comparisons.

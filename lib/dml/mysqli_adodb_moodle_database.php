@@ -291,6 +291,10 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
         return $positivematch ? 'REGEXP' : 'NOT REGEXP';
     }
 
+    public function sql_cast_2signed($fieldname) {
+        return ' CAST(' . $fieldname . ' AS SIGNED) ';
+    }
+
     /**
      * Import a record into a table, id field is required.
      * Basic safety checks only. Lobs are supported.
