@@ -715,12 +715,11 @@
             fwrite ($bf,full_tag("ENROLENDDATE",3,false,$course->enrolenddate));
             fwrite ($bf,full_tag("ENROLPERIOD",3,false,$course->enrolperiod));
             fwrite ($bf,full_tag("ENABLECOMPLETION",3,false,$course->enablecompletion));
-            
-            /// write local course overrides here?
-            write_role_overrides_xml($bf, $context, 3);
-            /// write role_assign code here
-            write_role_assignments_xml($bf, $preferences, $context, 3);
-            //Print header end
+
+            // Write role assigns, overrides, etc.
+            write_per_context_data($bf, $preferences, $context, 3);
+
+            // Print header end
             fwrite ($bf,end_tag("HEADER",2,true));
         } else {
            $status = false;
@@ -1073,10 +1072,11 @@
                             $status = $blockobj->instance_backup($bf, $preferences);
                             fwrite ($bf,end_tag('INSTANCEDATA',4,true));
                         }
+
+                        // Write role assigns, overrides, etc.
                         $context = get_context_instance(CONTEXT_BLOCK, $instance->id);
-                        write_role_overrides_xml($bf, $context, 4);
-                        /// write role_assign code here
-                        write_role_assignments_xml($bf, $preferences, $context, 4);
+                        write_per_context_data($bf, $preferences, $context, 4);
+
                         //End Block
                         fwrite ($bf,end_tag('BLOCK',3,true));
                     }
@@ -1233,10 +1233,9 @@
                fwrite ($bf,full_tag("AVAILABLEUNTIL",6,false,$course_module->availableuntil));
                fwrite ($bf,full_tag("SHOWAVAILABILITY",6,false,$course_module->showavailability));
 
-               // get all the role_capabilities overrides in this mod
-               write_role_overrides_xml($bf, $context, 6);
-               /// write role_assign code here
-               write_role_assignments_xml($bf, $preferences, $context, 6);               
+               // Write role assigns, overrides, etc.
+               write_per_context_data($bf, $preferences, $context, 6);
+
                // write completion data if enabled and user data enabled
                require_once($CFG->libdir.'/completionlib.php');
                $completion=new completion_info($course);
@@ -1460,11 +1459,10 @@
                     fwrite ($bf,end_tag("USER_PREFERENCES",4,true));
                 }
 
+                // Write role assigns, overrides, etc.
                 $context = get_context_instance(CONTEXT_USER, $user->old_id);
+                write_per_context_data($bf, $preferences, $context, 4);
 
-                write_role_overrides_xml($bf, $context, 4);
-                /// write role_assign code here
-                write_role_assignments_xml($bf, $preferences, $context, 4);
                 //End User tag
                 fwrite ($bf,end_tag("USER",3,true));
                 //Do some output
@@ -2815,6 +2813,14 @@
         }
 
         return $roles;
+    }
+
+    /**
+     * Writes out all of the data that should appear for every context.
+     */
+    function write_per_context_data($bf, $preferences, $context, $startlevel) {
+        write_role_overrides_xml($bf, $context, $startlevel);
+        write_role_assignments_xml($bf, $preferences, $context, $startlevel);
     }
 
     /**

@@ -8682,7 +8682,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
          // try to restore roles even when restore is going to fail - teachers might have
          // at least some role assigned - this is not correct though
         $status = restore_create_roles($restore, $xml_file) && $status;
-        $status = restore_roles_settings($restore, $xml_file) && $status;
+        $status = restore_roles_and_filter_settings($restore, $xml_file) && $status;
 
         //Now if all is OK, update:
         //   - course modinfo field
@@ -8696,7 +8696,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $course = $DB->get_record("course", array("id"=>$restore->course_id));
             fix_course_sortorder();
             // Check if the user has course update capability in the newly restored course
-            // there is no need to load his capabilities again, because restore_roles_settings
+            // there is no need to load his capabilities again, because restore_roles_and_filter_settings
             // would have loaded it anyway, if there is any assignments.
             // fix for MDL-6831
             $newcontext = get_context_instance(CONTEXT_COURSE, $restore->course_id);
@@ -8992,7 +8992,7 @@ WHERE
      * in course/user/block/mod level, it passed through
      * the xml file again
      */
-    function restore_roles_settings($restore, $xmlfile) {
+    function restore_roles_and_filter_settings($restore, $xmlfile) {
         // data pulls from course, mod, user, and blocks
 
         /*******************************************************
