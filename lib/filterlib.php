@@ -587,6 +587,23 @@ function filter_get_local_config($filter, $contextid) {
 }
 
 /**
+ * This function is for use by backup. Gets all the filter information specific
+ * to one context.
+ * @return array with two elements. The first element is an array of objects with
+ *      fields filter and active. These come from the filter_active table. The
+ *      second element is an array of objects with fields filter, name and value
+ *      from the filter_config table.
+ */
+function filter_get_all_local_settings($contextid) {
+    global $DB;
+    $context = get_context_instance(CONTEXT_SYSTEM);
+    return array(
+        $DB->get_records('filter_active', array('contextid' => $contextid), 'filter', 'filter,active'),
+        $DB->get_records('filter_config', array('contextid' => $contextid), 'filter,name', 'filter,name,value'),
+    );
+}
+
+/**
  * Get the list of active filters, in the order that they should be used
  * for a particular context, along with any local configuration variables.
  *
@@ -668,6 +685,16 @@ function filter_has_global_settings($filter) {
     global $CFG;
     $settingspath = $CFG->dirroot . '/' . $filter . '/filtersettings.php';
     return is_readable($settingspath);
+}
+
+/**
+ * Certain types of context (block and user) may not have local filter settings.
+ * the function checks a context to see whether it may have local config.
+ * @param object $context a context.
+ * @return boolean whether this context may have local filter settings.
+ */
+function filter_context_may_have_filter_settings($context) {
+    return $context->contextlevel != CONTEXT_BLOCK && $context->contextlevel != CONTEXT_USER;
 }
 
 /**

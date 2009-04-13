@@ -5678,6 +5678,39 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         }
                     }
                 } /// ends role_overrides
+
+                if ($this->tree[4] == "FILTERACTIVES") {
+                    if ($this->level == 6) {
+                        switch ($tagName) {
+                            case "FILTER":
+                                $this->info->tempfilter = $this->getContents();
+                            break;
+                            case "ACTIVE":
+                                $this->info->filteractives[$this->info->tempfilter] = $this->getContents();
+                            break;
+                        }
+                    }
+                } /// ends FILTERACTIVES
+
+                if ($this->tree[4] == "FILTERCONFIGS") {
+                    if ($this->level == 6) {
+                        switch ($tagName) {
+                            case "FILTER":
+                                $this->info->tempfilter = $this->getContents();
+                            break;
+                            case "NAME":
+                                $this->info->tempname = $this->getContents();
+                            break;
+                            case "VALUE":
+                                $fc = new stdClass;
+                                $fc->filter = $this->info->tempfilter;
+                                $fc->name = $this->info->tempfilter;
+                                $fc->value = $this->getContents();
+                                $this->info->filterconfigs[] = $fc;
+                            break;
+                        }
+                    }
+                } /// ends FILTERCONFIGS
             }
 
             //Stop parsing if todo = COURSE_HEADER and tagName = HEADER (en of the tag, of course)
@@ -6122,6 +6155,40 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         }
                     }
                 } /// ends role_overrides
+
+
+                if (isset($this->tree[7]) && $this->tree[7] == "FILTERACTIVES") {
+                    if ($this->level == 9) {
+                        switch ($tagName) {
+                            case "FILTER":
+                                $this->info->tempfilter = $this->getContents();
+                            break;
+                            case "ACTIVE":
+                                $this->info->filteractives[$this->info->tempfilter] = $this->getContents();
+                            break;
+                        }
+                    }
+                } /// ends FILTERACTIVES
+
+                if (isset($this->tree[7]) && $this->tree[7] == "FILTERCONFIGS") {
+                    if ($this->level == 9) {
+                        switch ($tagName) {
+                            case "FILTER":
+                                $this->info->tempfilter = $this->getContents();
+                            break;
+                            case "NAME":
+                                $this->info->tempname = $this->getContents();
+                            break;
+                            case "VALUE":
+                                $fc = new stdClass;
+                                $fc->filter = $this->info->tempfilter;
+                                $fc->name = $this->info->tempfilter;
+                                $fc->value = $this->getContents();
+                                $this->info->filteractives[]->filter = $fc;
+                            break;
+                        }
+                    }
+                } /// ends FILTERCONFIGS
 
                 if (isset($this->tree[7]) && $this->tree[7] == "COMPLETIONDATA") {
                     if($this->level == 8) {
@@ -9032,6 +9099,9 @@ WHERE
             }
         }
 
+        // Per-context filter settings.
+        restore_write_local_filter_settings($restore, $course, $newcoursecontext);
+
         /*******************************************************
          * Restoring role assignments/overrdies                *
          * from module level assignments                       *
@@ -9058,6 +9128,8 @@ WHERE
                             restore_write_roleoverrides($restore, $modoverride->overrides, $newmodcontext, $oldroleid);
                         }
                     }
+                    // Per-context filter settings.
+                    restore_write_local_filter_settings($restore, $mod, $newmodcontext);
                 }
             }
         }
@@ -9185,6 +9257,39 @@ WHERE
             assign_capability($override->capability, $override->permission, $override->roleid, $override->contextid);
         }
     }
+
+    /**
+     * Write any per-context filter settings from the backup XML to the DB.
+     * @param object $restore the restore we are part of.
+     * @param object $data sata loaded from the XML.
+     * @param object $newmodcontext the restored context object.
+     */
+    function restore_write_local_filter_settings($restore, $data, $newcontext) {
+        if (filter_context_may_have_filter_settings($newcontext)) {
+            return;
+        }
+
+        $installedfilters = filter_get_all_installed();
+
+        if (!isset($data->filteractives)) {
+            $data->filteractives = array();
+        }
+        foreach ($data->filteractives as $filter => $state) {
+            if (isset($installedfilters[$filter])) {
+                filter_set_local_state($filter, $newcontext->id, $state);
+            }
+        }
+
+        if (!isset($data->filterconfigs)) {
+            $data->filterconfigs = array();
+        }
+        foreach ($data->filterconfigs as $fc) {
+            if (isset($installedfilters[$fc->filter])) {
+                filter_set_local_config($fc->filter, $newcontext->id, $fc->name, $fc->value);
+            }
+        }
+    }
+
     //write activity date changes to the html log file, and update date values in the the xml array
     function restore_log_date_changes($recordtype, &$restore, &$xml, $TAGS, $NAMETAG='NAME') {
 

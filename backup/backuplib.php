@@ -2821,6 +2821,7 @@
     function write_per_context_data($bf, $preferences, $context, $startlevel) {
         write_role_overrides_xml($bf, $context, $startlevel);
         write_role_assignments_xml($bf, $preferences, $context, $startlevel);
+        write_local_filter_settings($bf, $preferences, $context, $startlevel);
     }
 
     /**
@@ -2900,6 +2901,36 @@
         fwrite ($bf, end_tag("ROLES_ASSIGNMENTS", $startlevel, true));
     }
 
+    /**
+     * Write any local filter settings for this context to the backup file.
+     * They comprise On/off filter_active.active overrides, and any filter_config
+     * records for this contextid.
+     */
+    function write_local_filter_settings($bf, $preferences, $context, $startlevel) {
+        if (!filter_context_may_have_filter_settings($context)) {
+            return;
+        }
+        list($actives, $configs) = filter_get_all_local_settings($context->id);
+
+        fwrite($bf, start_tag("FILTERACTIVES", $startlevel, true));
+        foreach ($actives as $active) {
+            fwrite($bf, start_tag("FILTERACTIVE", $startlevel + 1, true));
+            fwrite($bf, full_tag("FILTER", $startlevel + 2, false, $active->filter));
+            fwrite($bf, full_tag("ACTIVE", $startlevel + 2, false, $active->active));
+            fwrite($bf, end_tag("FILTERACTIVE", $startlevel + 1, true));
+        }
+        fwrite($bf, end_tag("FILTERACTIVES", $startlevel, true));
+
+        fwrite($bf, start_tag("FILTERCONFIGS", $startlevel, true));
+        foreach ($configs as $config) {
+            fwrite($bf, start_tag("FILTERCONFIG", $startlevel + 1, true));
+            fwrite($bf, full_tag("FILTER", $startlevel + 2, false, $config->filter));
+            fwrite($bf, full_tag("NAME", $startlevel + 2, false, $config->name));
+            fwrite($bf, full_tag("VALUE", $startlevel + 2, false, $config->value));
+            fwrite($bf, end_tag("FILTERCONFIG", $startlevel + 1, true));
+        }
+        fwrite($bf, end_tag("FILTERCONFIGS", $startlevel, true));
+    }
 
     function backup_execute(&$preferences, &$errorstr) {
         global $CFG, $DB;
