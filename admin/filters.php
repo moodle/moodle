@@ -64,8 +64,16 @@
     case 'setstate':
         if ($newstate = optional_param('newstate', '', PARAM_INTEGER)) {
             filter_set_global_state($filterpath, $newstate);
+            if ($newstate == TEXTFILTER_DISABLED) {
+                filter_set_applies_to_strings($filterpath, false);
+            }
             unset($newfilters[$filterpath]);
         }
+        break;
+
+    case 'setapplyto':
+        $applytostrings = optional_param('stringstoo', false, PARAM_BOOL);
+        filter_set_applies_to_strings($filterpath, $applytostrings);
         break;
 
     case 'down':

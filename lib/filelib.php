@@ -1529,12 +1529,10 @@ function file_modify_html_header($text) {
         $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />'."\n";
     }
 
-    $filters = explode(",", $CFG->textfilters);
-    if (in_array('filter/mediaplugin', $filters)) {
+    $ufo = '';
+    if (filter_is_enabled('filter/mediaplugin')) {
         // this script is needed by most media filter plugins.
         $ufo = get_require_js_code(array($CFG->wwwroot . '/lib/ufo.js'));
-    } else {
-        $ufo = '';
     }
 
     preg_match('/\<head\>|\<HEAD\>/', $text, $matches);

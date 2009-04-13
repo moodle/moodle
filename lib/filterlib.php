@@ -32,10 +32,7 @@ class filter_manager {
     protected static $singletoninstance;
 
     protected function __construct() {
-        global $CFG;
-        if (!empty($CFG->filterall) && !empty($CFG->stringfilters)) {
-            $stringfilternames = explode(',', $CFG->stringfilters);
-        }
+        $stringfilternames = filter_get_string_filters();
     }
 
     /**
@@ -438,6 +435,69 @@ function filter_set_global_state($filter, $state, $sortorder = false) {
         $DB->insert_record('filter_active', $rec);
     } else {
         $DB->update_record('filter_active', $rec);
+    }
+}
+
+/**
+ * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ * @return boolean is this filter allowed to be used on this site. That is, the
+ *      admin has set the global 'active' setting to On, or Off, but available.
+ */
+function filter_is_enabled($filter) {
+    return array_key_exists($filter, filter_get_globally_enabled());
+}
+
+/**
+ * Return a list of all the filters that may be in use somewhere.
+ * @return array where the keys and values are both the filter name, like 'filter/tex'.
+ */
+function filter_get_globally_enabled() {
+    static $enabledfilters = null;
+    if (is_null($enabledfilters)) {
+        $filters = filter_get_global_states();
+        $enabledfilters = array();
+        foreach ($filters as $filter => $filerinfo) {
+            if ($filerinfo->active != TEXTFILTER_DISABLED) {
+                $enabledfilters[$filter] = $filter;
+            }
+        }
+    }
+    return $enabledfilters;
+}
+
+/**
+ * Return the names of the filters that should also be applied to strings
+ * (when they are enabled).
+ * @return array where the keys and values are both the filter name, like 'filter/tex'.
+ */
+function filter_get_string_filters() {
+    global $CFG;
+    $stringfilters = array();
+    if (!empty($CFG->filterall) && !empty($CFG->stringfilters)) {
+        $stringfilters = explode(',', $CFG->stringfilters);
+        $stringfilters = array_combine($stringfilters, $stringfilters);
+    }
+    return $stringfilters;
+}
+
+/**
+ * Sets whether a particular active filter should be applied to all strings by
+ * format_string, or just used by format_text.
+ * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ * @param boolean $applytostrings if true, this filter will apply to format_string
+ *      and format_text, when it is enabled.
+ */
+function filter_set_applies_to_strings($filter, $applytostrings) {
+    $stringfilters = filter_get_string_filters();
+    $numstringfilters = count($stringfilters);
+    if ($applytostrings) {
+        $stringfilters[$filter] = $filter;
+    } else {
+        unset($stringfilters[$filter]);
+    }
+    if (count($stringfilters) != $numstringfilters) {
+        set_config('stringfilters', implode(',', $stringfilters));
+        set_config('filterall', !empty($stringfilters));
     }
 }
 

@@ -3747,16 +3747,19 @@ class admin_setting_managefilters extends admin_setting {
                 '<img src="' . $CFG->pixpath . '/t/' . $icon . '.gif" alt="' . $straction . '" /></a> ';
     }
 
-    protected function get_table_row($filterinfo, $isfirstrow, $islastactive) {
+    protected function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings) {
         global $CFG;
         $row = array();
         $filter = $filterinfo->filter;
 
+        // Filter name
         $row[] = $this->filternames[$filter];
 
+        // Disable/off/on
         $row[] = popup_form($this->action_url($filter, 'setstate') . '&amp;newstate=', $this->activechoices,
                 'active' . basename($filter), $filterinfo->active, '', '', '', true, 'self', '', NULL, get_string('save'));
 
+        // Re-order
         $updown = '';
         $spacer = '<img src="' . $CFG->pixpath . '/spacer.gif" class="iconsmall" alt="" /> ';
         if ($filterinfo->active != TEXTFILTER_DISABLED) {
@@ -3773,9 +3776,12 @@ class admin_setting_managefilters extends admin_setting {
         }
         $row[] = $updown;
 
-        $row[] = 'TODO Apply to col';
+        // Apply to strings.
+        $row[] = popup_form($this->action_url($filter, 'setapplyto') . '&amp;stringstoo=', $this->applytochoices,
+                'applyto' . basename($filter), $applytostrings, '', '', '', true, 'self', '', NULL, get_string('save'),
+                $filterinfo->active == TEXTFILTER_DISABLED);
 
-        // settings link (if defined)
+        // Settings link, if required
         $settings = '';
         if (filter_has_global_settings($filter)) {
             $settings = '<a href="' . $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=filtersetting' .
@@ -3795,8 +3801,8 @@ class admin_setting_managefilters extends admin_setting {
             TEXTFILTER_ON => get_string('on', 'filters'),
         );
         $this->applytochoices = array(
-            1 => get_string('content', 'filters'),
-            3 => get_string('contentandheadings', 'filters'),
+            0 => get_string('content', 'filters'),
+            1 => get_string('contentandheadings', 'filters'),
         );
         $this->strup = get_string('up');
         $this->strdown = get_string('down');
@@ -3810,6 +3816,7 @@ class admin_setting_managefilters extends admin_setting {
         foreach ($filters as $filter => $notused) {
             unset($newfilters[$filter]);
         }
+        $stringfilters = filter_get_string_filters();
 
         $return = print_heading(get_string('actfilterhdr', 'filters'), '', 3, 'main', true);
         $return .= print_box_start('generalbox filtersui', '', true);
@@ -3818,7 +3825,7 @@ class admin_setting_managefilters extends admin_setting {
         $table->head  = array(get_string('filter'), get_string('isactive', 'filters'),
                 get_string('order'), get_string('applyto', 'filters'), $this->strsettings);
         $table->align = array('left', 'left', 'center', 'left', 'left');
-        $table->width = '90%';
+        $table->width = '100%';
         $table->data  = array();
 
         $lastactive = null;
@@ -3831,7 +3838,8 @@ class admin_setting_managefilters extends admin_setting {
         // iterate through filters adding to display table
         $firstrow = true;
         foreach ($filters as $filter => $filterinfo) {
-            $row = $this->get_table_row($filterinfo, $firstrow, $filter == $lastactive);
+            $applytostrings = isset($stringfilters[$filter]) && $filterinfo->active != TEXTFILTER_DISABLED;
+            $row = $this->get_table_row($filterinfo, $firstrow, $filter == $lastactive, $applytostrings);
             $table->data[] = $row;
             if ($filterinfo->active == TEXTFILTER_DISABLED) {
                 $table->rowclass[] = 'dimmed_text';
@@ -3844,13 +3852,14 @@ class admin_setting_managefilters extends admin_setting {
             $filterinfo = new stdClass;
             $filterinfo->filter = $filter;
             $filterinfo->active = TEXTFILTER_DISABLED;
-            $row = $this->get_table_row($filterinfo, $firstrow, $filter == $lastactive);
+            $row = $this->get_table_row($filterinfo, false, false, false);
             $table->data[] = $row;
             $table->rowclass[] = 'dimmed_text';
         }
 
         $return .= print_table($table, true);
-        $return .= get_string('tablenosave', 'filters');
+        $return .= '<p class="filtersettingnote">' . get_string('tablenosave', 'filters') . '</p>';
+        $return .= '<p class="filtersettingnote">' . get_string('filterallwarning', 'filters') . '</p>';
         $return .= print_box_end(true);
         return highlight($query, $return);
     }

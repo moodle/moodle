@@ -44,6 +44,8 @@ class filter_active_global_test extends UnitTestCaseUsingDatabase {
     private $syscontextid;
 
     public function setUp() {
+        parent::setUp();
+
         // Make sure accesslib has cached a sensible system context object
         // before we switch to the test DB.
         $this->syscontextid = get_context_instance(CONTEXT_SYSTEM)->id;
@@ -239,6 +241,8 @@ class filter_active_global_test extends UnitTestCaseUsingDatabase {
  */
 class filter_active_local_test extends UnitTestCaseUsingDatabase {
     public function setUp() {
+        parent::setUp();
+
         // Create the table we need and switch to test DB.
         $this->create_test_table('filter_active', 'lib');
         $this->switch_to_test_db();
@@ -311,6 +315,8 @@ class filter_active_local_test extends UnitTestCaseUsingDatabase {
  */
 class filter_config_test extends UnitTestCaseUsingDatabase {
     public function setUp() {
+        parent::setUp();
+
         // Create the table we need and switch to test DB.
         $this->create_test_table('filter_config', 'lib');
         $this->switch_to_test_db();
@@ -363,6 +369,8 @@ class filter_get_active_in_context_test extends UnitTestCaseUsingDatabase {
     private $childcontext2;
 
     public function setUp() {
+        parent::setUp();
+
         // Make sure accesslib has cached a sensible system context object
         // before we switch to the test DB.
         $this->syscontext = get_context_instance(CONTEXT_SYSTEM);
@@ -493,17 +501,16 @@ class filter_get_active_in_context_test extends UnitTestCaseUsingDatabase {
 }
 
 class filter_delete_all_data_test extends UnitTestCaseUsingDatabase {
-    private $syscontext;
-    private $childcontext;
-    private $childcontext2;
-
     public function setUp() {
+        parent::setUp();
+
         // Create the table we need and switch to test DB.
         $this->create_test_tables(array('filter_active', 'filter_config', 'config', 'config_plugins'), 'lib');
         $this->switch_to_test_db();
     }
 
     public function test_filter_delete_all_data_filter() {
+        // Setup fixture.
         $syscontext = get_context_instance(CONTEXT_SYSTEM);
         filter_set_global_state('filter/name', TEXTFILTER_ON);
         filter_set_global_state('filter/other', TEXTFILTER_ON);
@@ -511,7 +518,9 @@ class filter_delete_all_data_test extends UnitTestCaseUsingDatabase {
         filter_set_local_config('filter/other', $syscontext->id, 'settingname', 'Other value');
         set_config('configname', 'A config value', 'filter_name');
         set_config('configname', 'Other config value', 'filter_other');
+        // Exercise SUT.
         filter_delete_all_data('filter/name');
+        // Validate.
         $this->assertEqual(1, $this->testdb->count_records('filter_active'));
         $this->assertTrue($this->testdb->record_exists('filter_active', array('filter' => 'filter/other')));
         $this->assertEqual(1, $this->testdb->count_records('filter_config'));
@@ -520,6 +529,67 @@ class filter_delete_all_data_test extends UnitTestCaseUsingDatabase {
         $expectedconfig->configname = 'Other config value';
         $this->assertEqual($expectedconfig, get_config('filter_other'));
         $this->assertFalse(get_config('filter_name'));
+    }
+}
+
+class filter_filter_set_applies_to_strings extends UnitTestCaseUsingDatabase {
+    protected $origcfgstringfilters;
+    protected $origcfgfilterall;
+
+    public function setUp() {
+        global $CFG;
+        parent::setUp();
+
+        // Create the table we need and switch to test DB.
+        $this->create_test_table('config', 'lib');
+        $this->switch_to_test_db();
+
+        // Store original $CFG;
+        $this->origcfgstringfilters = $CFG->stringfilters;
+        $this->origcfgfilterall = $CFG->filterall;
+    }
+
+    public function tearDown() {
+        $CFG->stringfilters = $this->origcfgstringfilters;
+        $CFG->filterall = $this->origcfgfilterall;
+
+        parent::tearDown();
+    }
+
+    public function test_set() {
+        global $CFG;
+        // Setup fixture.
+        $CFG->filterall = 0;
+        $CFG->stringfilters = '';
+        // Exercise SUT.
+        filter_set_applies_to_strings('filter/name', true);
+        // Validate.
+        $this->assertEqual('filter/name', $CFG->stringfilters);
+        $this->assertTrue($CFG->filterall);
+    }
+
+    public function test_unset_to_empty() {
+        global $CFG;
+        // Setup fixture.
+        $CFG->filterall = 1;
+        $CFG->stringfilters = 'filter/name';
+        // Exercise SUT.
+        filter_set_applies_to_strings('filter/name', false);
+        // Validate.
+        $this->assertEqual('', $CFG->stringfilters);
+        $this->assertFalse($CFG->filterall);
+    }
+
+    public function test_unset_multi() {
+        global $CFG;
+        // Setup fixture.
+        $CFG->filterall = 1;
+        $CFG->stringfilters = 'filter/name,filter/other';
+        // Exercise SUT.
+        filter_set_applies_to_strings('filter/name', false);
+        // Validate.
+        $this->assertEqual('filter/other', $CFG->stringfilters);
+        $this->assertTrue($CFG->filterall);
     }
 }
 ?>

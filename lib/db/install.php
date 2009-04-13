@@ -41,24 +41,25 @@ function xmldb_main_install() {
 /// create default course category
     $cat = get_course_category();
 
-
-    $defaults = array('rolesactive'           => '0',         // marks fully set up system
-                      'auth'                  => 'email',
-                      'auth_pop3mailbox'      => 'INBOX',
-                      'enrol'                 => 'manual',
-                      'enrol_plugins_enabled' => 'manual',
-                      'style'                 => 'default',
-                      'template'              => 'default',
-                      'theme'                 => 'standardwhite',
-                      'filter_multilang_converted' => 1,
-                      'siteidentifier'        => random_string(32).$_SERVER['HTTP_HOST'],
-                      'backup_version'        => 2008111700,
-                      'backup_release'        => '2.0 dev',
-                      'blocks_version'        => 2007081300, // might be removed soon
-                      'mnet_dispatcher_mode'  => 'off',
-                      'sessiontimeout'        => 7200,       // must be present during roles installation
-
-                     );
+    $defaults = array(
+        'rolesactive'           => '0', // marks fully set up system
+        'auth'                  => 'email',
+        'auth_pop3mailbox'      => 'INBOX',
+        'enrol'                 => 'manual',
+        'enrol_plugins_enabled' => 'manual',
+        'style'                 => 'default',
+        'template'              => 'default',
+        'theme'                 => 'standardwhite',
+        'filter_multilang_converted' => 1,
+        'siteidentifier'        => random_string(32).$_SERVER['HTTP_HOST'],
+        'backup_version'        => 2008111700,
+        'backup_release'        => '2.0 dev',
+        'blocks_version'        => 2007081300, // might be removed soon
+        'mnet_dispatcher_mode'  => 'off',
+        'sessiontimeout'        => 7200, // must be present during roles installation
+        'stringfilters'         => '', // These two are managed in a strange way by the filters
+        'filterall'             => 0, // setting page, so have to be initialised here.
+    );
     foreach($defaults as $key => $value) {
         set_config($key, $value);
     }

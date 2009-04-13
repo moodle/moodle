@@ -77,36 +77,37 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
     // "filtersettings" settingpage
     $temp = new admin_settingpage('managefilters', get_string('filtersettings', 'admin'));
     if ($ADMIN->fulltree) {
+        $cachetimes = array(
+            604800 => get_string('numdays','',7),
+            86400 => get_string('numdays','',1),
+            43200 => get_string('numhours','',12),
+            10800 => get_string('numhours','',3),
+            7200 => get_string('numhours','',2),
+            3600 => get_string('numhours','',1),
+            2700 => get_string('numminutes','',45),
+            1800 => get_string('numminutes','',30),
+            900 => get_string('numminutes','',15),
+            600 => get_string('numminutes','',10),
+            540 => get_string('numminutes','',9),
+            480 => get_string('numminutes','',8),
+            420 => get_string('numminutes','',7),
+            360 => get_string('numminutes','',6),
+            300 => get_string('numminutes','',5),
+            240 => get_string('numminutes','',4),
+            180 => get_string('numminutes','',3),
+            120 => get_string('numminutes','',2),
+            60 => get_string('numminutes','',1),
+            30 => get_string('numseconds','',30),
+            0 => get_string('no')
+        );
         $items = array();
         $items[] = new admin_setting_managefilters();
         $items[] = new admin_setting_heading('managefilterscommonheading', get_string('commonsettings', 'admin'), '');
-        $items[] = new admin_setting_configselect('cachetext', get_string('cachetext', 'admin'), get_string('configcachetext', 'admin'), 60, array(604800 => get_string('numdays','',7),
-                                                                                                                                               86400 => get_string('numdays','',1),
-                                                                                                                                               43200 => get_string('numhours','',12),
-                                                                                                                                               10800 => get_string('numhours','',3),
-                                                                                                                                               7200 => get_string('numhours','',2),
-                                                                                                                                               3600 => get_string('numhours','',1),
-                                                                                                                                               2700 => get_string('numminutes','',45),
-                                                                                                                                               1800 => get_string('numminutes','',30),
-                                                                                                                                               900 => get_string('numminutes','',15),
-                                                                                                                                               600 => get_string('numminutes','',10),
-                                                                                                                                               540 => get_string('numminutes','',9),
-                                                                                                                                               480 => get_string('numminutes','',8),
-                                                                                                                                               420 => get_string('numminutes','',7),
-                                                                                                                                               360 => get_string('numminutes','',6),
-                                                                                                                                               300 => get_string('numminutes','',5),
-                                                                                                                                               240 => get_string('numminutes','',4),
-                                                                                                                                               180 => get_string('numminutes','',3),
-                                                                                                                                               120 => get_string('numminutes','',2),
-                                                                                                                                               60 => get_string('numminutes','',1),
-                                                                                                                                               30 => get_string('numseconds','',30),
-                                                                                                                                               0 => get_string('no')));
-        $items[] = new admin_setting_configselect('filteruploadedfiles', get_string('filteruploadedfiles', 'admin'), get_string('configfilteruploadedfiles', 'admin'), 0, array('0' => get_string('none'),
-                                                                                                                                                                                '1' => get_string('allfiles'),
-                                                                                                                                                                                '2' => get_string('htmlfilesonly')));
+        $items[] = new admin_setting_configselect('cachetext', get_string('cachetext', 'admin'), get_string('configcachetext', 'admin'), 60, $cachetimes);
+        $items[] = new admin_setting_configselect('filteruploadedfiles', get_string('filteruploadedfiles', 'admin'), get_string('configfilteruploadedfiles', 'admin'), 0,
+                array('0' => get_string('none'), '1' => get_string('allfiles'), '2' => get_string('htmlfilesonly')));
         $items[] = new admin_setting_configcheckbox('filtermatchoneperpage', get_string('filtermatchoneperpage', 'admin'), get_string('configfiltermatchoneperpage', 'admin'), 0);
         $items[] = new admin_setting_configcheckbox('filtermatchonepertext', get_string('filtermatchonepertext', 'admin'), get_string('configfiltermatchonepertext', 'admin'), 0);
-        $items[] = new admin_setting_configcheckbox('filterall', get_string('filterall', 'admin'), get_string('configfilterall', 'admin'), 0);
         foreach ($items as $item) {
             $item->set_updatedcallback('reset_text_filters_cache');
             $temp->add($item);
@@ -114,16 +115,12 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
     }
     $ADMIN->add('filtersettings', $temp);
 
-    if (empty($CFG->textfilters)) {
-        $activefilters = array();
-    } else {
-        $activefilters = explode(',', $CFG->textfilters);
-    }
+    $activefilters = filter_get_globally_enabled();
     $filternames = filter_get_all_installed();
     foreach ($filternames as $filterpath => $strfiltername) {
         if (file_exists("$CFG->dirroot/$filterpath/filtersettings.php")) {
             $settings = new admin_settingpage('filtersetting'.str_replace('/', '', $filterpath),
-                    $strfiltername, 'moodle/site:config', !in_array($filterpath, $activefilters));
+                    $strfiltername, 'moodle/site:config', !isset($activefilters[$filterpath]));
             if ($ADMIN->fulltree) {
                 include("$CFG->dirroot/$filterpath/filtersettings.php");
             }

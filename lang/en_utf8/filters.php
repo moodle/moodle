@@ -21,6 +21,7 @@ $string['datelabelisbetween'] = '$a->label is between $a->after and $a->before';
 $string['disabled'] = 'Disabled';
 $string['doesnotcontain'] = 'doesn\'t contain';
 $string['endswith'] = 'ends with';
+$string['filterallwarning'] = 'Applying filters to headings as well as content can greatly increase the load on your server. Please use that \'Apply to\' settings sparingly. The main use is with the multilang filter.';
 $string['firstaccess'] = 'First access';
 $string['globalrolelabel'] = '$a->label is $a->value';
 $string['isactive'] = 'Active?';
