@@ -7967,6 +7967,16 @@ function get_performance_info() {
     $info['html'] .= '<span class="included">Included '.$info['includecount'].' files</span> ';
     $info['txt']  .= 'includecount: '.$info['includecount'].' ';
 
+    $filtermanager = filter_manager::instance();
+    if (method_exists($filtermanager, 'get_performance_summary')) {
+        list($filterinfo, $nicenames) = $filtermanager->get_performance_summary();
+        $info = array_merge($filterinfo, $info);
+        foreach ($filterinfo as $key => $value) {
+            $info['html'] .= "<span class='$key'>$nicenames[$key]: $value </span> ";
+            $info['txt'] .= "$key: $value ";
+        }
+    }
+
     if (!empty($PERF->logwrites)) {
         $info['logwrites'] = $PERF->logwrites;
         $info['html'] .= '<span class="logwrites">Log DB writes '.$info['logwrites'].'</span> ';

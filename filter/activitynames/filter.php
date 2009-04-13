@@ -3,14 +3,10 @@
     //activities when its name (title) is found inside every Moodle text
     //It's based in the glosssary filter by Williams Castillo
     //Modifications by stronk7.
-class activitynames_filter extends filter_base {
+class activitynames_filter extends moodle_text_filter {
     // Trivial-cache - keyed on $cachedcourseid
     static $activitylist = null;
     static $cachedcourseid;
-
-    function __construct($courseid, $format, $options){
-        parent::__construct($courseid, $format, $options);
-    }
 
     function filter($text) {
         global $CFG, $COURSE, $DB;

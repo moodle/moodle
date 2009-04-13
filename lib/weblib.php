@@ -1253,27 +1253,17 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         $courseid = $COURSE->id;
     }
 
-    // if filter plugin is OOP format, add it to filter list and append hash
-    // value to $hashstr
-    if (!empty($CFG->textfilters)) {
-        require_once($CFG->libdir.'/filterlib.php');
-        $textfilters = explode(',', $CFG->textfilters);
-        foreach ($textfilters as $textfilter) {
-            if (is_readable($CFG->dirroot .'/'. $textfilter .'/filter.php')) {
-                include_once($CFG->dirroot .'/'. $textfilter .'/filter.php');
-                $text_filter = basename($textfilter).'_filter';
-                if (class_exists($text_filter)) {
-                    $obj = new $text_filter($courseid, $format, $options);
-                    filter_base::addfilter($text_filter, $obj);
-                    $hashstr .= $obj->hash();
-                }
-            }
-        }
+    if ($options->filter) {
+        $filtermanager = filter_manager::instance();
+    } else {
+        $filtermanager = new null_filter_manager();
     }
+    $context = get_context_instance(CONTEXT_SYSTEM); // TODO change, once we have $PAGE->context.
+
     if (!empty($CFG->cachetext) and empty($options->nocache)) {
-        $hashstr .= $text.'-'.(int)$courseid.'-'.current_language().'-'.(int)$format.(int)$options->trusttext.(int)$options->noclean.(int)$options->smiley.(int)$options->filter.(int)$options->para.(int)$options->newlines;
-        // for debug filtering system
-        // $hashstr .= time();
+        $hashstr .= $text.'-'.$filtermanager->text_filtering_hash($context, $courseid).'-'.(int)$courseid.'-'.current_language().'-'.
+                (int)$format.(int)$options->trusttext.(int)$options->noclean.(int)$options->smiley.
+                (int)$options->filter.(int)$options->para.(int)$options->newlines;
 
         $time = time() - $CFG->cachetext;
         $md5key = md5($hashstr);
@@ -1316,8 +1306,6 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         $text = trusttext_strip($text);
     }
 
-    $CFG->currenttextiscacheable = true;   // Default status - can be changed by any filter
-
     switch ($format) {
         case FORMAT_HTML:
             if ($options->smiley) {
@@ -1326,9 +1314,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             if (!$options->noclean) {
                 $text = clean_text($text, FORMAT_HTML);
             }
-            if ($options->filter) {
-                $text = filter_base::do_filter($text, $courseid);
-            }
+            $text = $filtermanager->filter_text($text, $context, $courseid);
             break;
 
         case FORMAT_PLAIN:
@@ -1354,10 +1340,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             if (!$options->noclean) {
                 $text = clean_text($text, FORMAT_HTML);
             }
-
-            if ($options->filter) {
-                $text = filter_base::do_filter($text, $courseid);
-            }
+            $text = $filtermanager->filter_text($text, $context, $courseid);
             break;
 
         default:  // FORMAT_MOODLE or anything else
@@ -1365,14 +1348,20 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             if (!$options->noclean) {
                 $text = clean_text($text, FORMAT_HTML);
             }
-
-            if ($options->filter) {
-                $text = filter_base::do_filter($text, $courseid);
-            }
+            $text = $filtermanager->filter_text($text, $context, $courseid);
             break;
     }
 
-    if (empty($options->nocache) and !empty($CFG->cachetext) and $CFG->currenttextiscacheable) {
+    // Warn people that we have removed this old mechanism, just in case they
+    // were stupid enough to rely on it.
+    if (isset($CFG->currenttextiscacheable)) {
+        debugging('Once upon a time, Moodle had a truly evil use of global variables ' .
+                'called $CFG->currenttextiscacheable. The good news is that this no ' .
+                'longer exists. The bad news is that you seem to be using a filter that '.
+                'relies on it. Please seek out and destroy that filter code.', DEBUG_DEVELOPER);
+    }
+
+    if (empty($options->nocache) and !empty($CFG->cachetext)) {
         if (CLI_SCRIPT) {
             // special static cron cache - no need to store it in db if its not already there
             if (count($croncache) > 150) {
@@ -1457,7 +1446,7 @@ function reset_text_filters_cache() {
  *  @param int     $courseid   Current course as filters can, potentially, use it
  *  @return string
  */
-function format_string ($string, $striplinks=true, $courseid=NULL ) {
+function format_string($string, $striplinks=true, $courseid=NULL ) {
 
     global $CFG, $COURSE;
 
@@ -1485,7 +1474,8 @@ function format_string ($string, $striplinks=true, $courseid=NULL ) {
     $string = preg_replace("/\&(?![a-zA-Z0-9#]{1,8};)/", "&amp;", $string);
 
     if (!empty($CFG->filterall)) {
-        $string = filter_string($string, $courseid);
+        $context = get_context_instance(CONTEXT_SYSTEM); // TODO change, once we have $PAGE->context.
+        $string = filter_manager::instance()->filter_string($string, $context, $courseid);
     }
 
     // If the site requires it, strip ALL tags from this string
@@ -1551,16 +1541,11 @@ function format_text_email($text, $format) {
 
 /**
  * Given some text in HTML format, this function will pass it
- * through any filters that have been defined in $CFG->textfilterx
- * The variable defines a filepath to a file containing the
- * filter function.  The file must contain a variable called
- * $textfilter_function which contains the name of the function
- * with $courseid and $text parameters
+ * through any filters that have been configured for this context.
  *
  * @param string $text The text to be passed through format filters
- * @param int $courseid ?
- * @return string
- * @todo Finish documenting this function
+ * @param int $courseid The current course.
+ * @return string the filtered string.
  */
 function filter_text($text, $courseid=NULL) {
     global $CFG, $COURSE;
@@ -1569,85 +1554,9 @@ function filter_text($text, $courseid=NULL) {
         $courseid = $COURSE->id;       // (copied from format_text)
     }
 
-    if (!empty($CFG->textfilters)) {
-        require_once($CFG->libdir.'/filterlib.php');
-        $textfilters = explode(',', $CFG->textfilters);
-        foreach ($textfilters as $textfilter) {
-            if (is_readable($CFG->dirroot .'/'. $textfilter .'/filter.php')) {
-                include_once($CFG->dirroot .'/'. $textfilter .'/filter.php');
-                $functionname = basename($textfilter).'_filter';
-                if (function_exists($functionname)) {
-                    $text = $functionname($courseid, $text);
-                }
-            }
-        }
-    }
+    $context = get_context_instance(CONTEXT_SYSTEM); // TODO change, once we have $PAGE->context.
 
-    /// <nolink> tags removed for XHTML compatibility
-    $text = str_replace('<nolink>', '', $text);
-    $text = str_replace('</nolink>', '', $text);
-
-    return $text;
-}
-
-
-/**
- * Given a string (short text) in HTML format, this function will pass it
- * through any filters that have been defined in $CFG->stringfilters
- * The variable defines a filepath to a file containing the
- * filter function.  The file must contain a variable called
- * $textfilter_function which contains the name of the function
- * with $courseid and $text parameters
- *
- * @param string $string The text to be passed through format filters
- * @param int $courseid The id of a course
- * @return string
- */
-function filter_string($string, $courseid=NULL) {
-    global $CFG, $COURSE;
-
-    if (empty($CFG->textfilters)) {             // All filters are disabled anyway so quit
-        return $string;
-    }
-
-    if (empty($courseid)) {
-        $courseid = $COURSE->id;
-    }
-
-    require_once($CFG->libdir.'/filterlib.php');
-
-    if (isset($CFG->stringfilters)) {               // We have a predefined list to use, great!
-        if (empty($CFG->stringfilters)) {                    // but it's blank, so finish now
-            return $string;
-        }
-        $stringfilters = explode(',', $CFG->stringfilters);  // ..use the list we have
-
-    } else {                                        // Otherwise try to derive a list from textfilters
-        if (strpos($CFG->textfilters, 'filter/multilang') !== false) {  // Multilang is here
-            $stringfilters = array('filter/multilang');       // Let's use just that
-            $CFG->stringfilters = 'filter/multilang';         // Save it for next time through
-        } else {
-            $CFG->stringfilters = '';                         // Save the result and return
-            return $string;
-        }
-    }
-
-
-    foreach ($stringfilters as $stringfilter) {
-        if (is_readable($CFG->dirroot .'/'. $stringfilter .'/filter.php')) {
-            include_once($CFG->dirroot .'/'. $stringfilter .'/filter.php');
-            $functionname = basename($stringfilter).'_filter';
-            if (function_exists($functionname)) {
-                $string = $functionname($courseid, $string);
-            }
-        }
-    }
-
-    /// <nolink> tags removed for XHTML compatibility
-    $string = str_replace('<nolink>', '', $string);
-    $string = str_replace('</nolink>', '', $string);
-
-    return $string;
+    return filter_manager::instance()->filter_text($text, $context, $courseid);
 }
 
 /**
@@ -1698,6 +1607,7 @@ function trusttext_mark($text) {
         return $text;
     }
 }
+
 function trusttext_after_edit(&$text, $context) {
     if (has_capability('moodle/site:trustcontent', $context)) {
         $text = trusttext_strip($text);

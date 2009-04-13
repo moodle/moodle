@@ -17,12 +17,8 @@
 
 require_once($CFG->libdir.'/filelib.php');
 
-class mediaplugin_filter extends filter_base {
-    private $eolas_fix_applied;
-    function __construct($courseid, $format, $options) {
-        parent::__construct($courseid, $format, $options);
-        $this->eolas_fix_applied = false;
-    }
+class mediaplugin_filter extends moodle_text_filter {
+    private $eolas_fix_applied = false;
     function filter($text) {
         global $CFG;
         // You should never modify parameters passed to a method or function, it's BAD practice. Create a copy instead.

@@ -36,11 +36,7 @@
 // Following new syntax is not compatible with old one:
 //   <span lang="XX" class="multilang">one lang</span><span lang="YY" class="multilang">another language</span>
 
-class multilang_filter extends filter_base {
-    function __construct($courseid, $format, $options) {
-        parent::__construct($courseid, $format, $options);
-    }
-
+class multilang_filter extends moodle_text_filter {
     function filter($text) {
         global $CFG;
 

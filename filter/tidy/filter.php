@@ -11,11 +11,7 @@
 // If you want to know what you can set in $tidyoptions and what their default
 // values are, see http://php.net/manual/en/function.tidy-get-config.php.
       
-class tidy_filter extends filter_base {
-    function __construct($courseid, $format, $options) {
-        parent::__construct($courseid, $format, $options);
-    }
-
+class tidy_filter extends moodle_text_filter {
     /**
     * @author Hannes Gassert <hannes at mediagonal dot ch>
     * @param        string         text to be filtered

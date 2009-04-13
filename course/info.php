@@ -53,8 +53,7 @@
 
     print_box_start('generalbox info');
 
-    echo filter_text(text_to_html($course->summary),$course->id);
-
+    echo format_text($course->summary, FORMAT_MOODLE, NULL, $course->id);
 
     if ($managerroles = get_config('', 'coursemanager')) {
         $coursemanagerroles = split(',', $managerroles);

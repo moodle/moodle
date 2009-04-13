@@ -3,10 +3,7 @@
       // hides them using the Moodle obfuscate_text function. 
       // Original code by Mike Churchward
 
-class emailprotect_filter extends filter_base {
-    function __construct($courseid, $format, $options) {
-        parent::__construct($courseid, $format, $options);
-    }
+class emailprotect_filter extends moodle_text_filter {
     function filter($text) {
     /// Do a quick check using stripos to avoid unnecessary work
         if (strpos($text, '@') === false) {

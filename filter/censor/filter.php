@@ -11,10 +11,7 @@
 
 /// This is the filtering class. It accepts the courseid and 
 /// options to be filtered (In HTML form).
-class censor_filter extends filter_base {
-    function __construct($courseid, $format, $options) {
-        parent::__construct($courseid, $format, $options);
-    }
+class censor_filter extends moodle_text_filter {
     private function _canseecensor() {
         $cansee = false;
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID);

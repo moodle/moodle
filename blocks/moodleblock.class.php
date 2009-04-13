@@ -380,7 +380,7 @@ class block_base {
         }
 
         //Accesssibility: added H2 (was in, weblib.php: print_side_block)
-        $title .= '<h2>'.filter_text($this->title).'</h2>';
+        $title .= '<h2>'.format_string($this->title).'</h2>';
 
         if ($this->edit_controls !== NULL) {
             $title .= $this->edit_controls;

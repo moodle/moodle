@@ -101,10 +101,7 @@ function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $a
     return $output;
 }
 
-class tex_filter extends filter_base {
-    function __construct($courseid, $format, $options) {
-        parent::__construct($courseid, $format, $options);
-    }
+class tex_filter extends moodle_text_filter {
     function filter ($text) {
 
         global $CFG, $DB;

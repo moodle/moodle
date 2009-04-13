@@ -9,56 +9,253 @@ define('TEXTFILTER_INHERIT', 0);
 define('TEXTFILTER_OFF', -1);
 define('TEXTFILTER_DISABLED', -9999);
 
-abstract class filter_base {
-    public static $filters = array();
-    protected $courseid;
-    protected $format;
-    protected $options;
+/**
+ * Class to manage the filtering of strings. It is intended that this class is
+ * only used by weblib.php. Client code should probably be using the
+ * format_text and format_string functions.
+ *
+ * This class is a singleton.
+ */
+class filter_manager {
+    /** This list of active filters, by context, for filtering content.
+     * An array contextid => array of filter objects. */
+    protected $textfilters = array();
 
-    public function __construct($courseid, $format, $options) {
-        $this->courseid = $courseid;
-        $this->format   = $format;
-        $this->options  = $options;
-    }
+    /** This list of active filters, by context, for filtering strings.
+     * An array contextid => array of filter objects. */
+    protected $stringfilters = array();
 
-    public static function addfilter($classname, $obj) {
-        if (empty(self::$filters[$classname])) {
-            self::$filters[$classname] = $obj;
-            return true;
-        } else {
-            return false;
-        }
-    }
+    /** Exploded version of $CFG->stringfilters. */
+    protected $stringfilternames = array();
 
-    public static function do_filter($text, $courseid = null) {
+    /** Holds the singleton instance. */
+    protected static $singletoninstance;
+
+    protected function __construct() {
         global $CFG;
-
-        foreach (self::$filters as $n=>$obj) {
-            $text = $obj->filter($text); 
+        if (!empty($CFG->filterall) && !empty($CFG->stringfilters)) {
+            $stringfilternames = explode(',', $CFG->stringfilters);
         }
+    }
 
-        // back compatable with old filter plugins
-        if (isset($CFG->textfilters)) {
-            $textfilters = explode(',', $CFG->textfilters);
-            foreach ($textfilters as $v) {
-                $text_filter = basename($v).'_filter';
-                if (empty(self::$filters[$text_filter]) && is_readable($CFG->dirroot .'/'. $v .'/filter.php')) {
-                    include_once($CFG->dirroot .'/'. $v .'/filter.php');
-                    if (function_exists($text_filter)) {
-                        $text = $text_filter($courseid, $text);
-                    }
-                }
+    /**
+     * @return the singleton instance.
+     */
+    public static function instance() {
+        if (is_null(self::$singletoninstance)) {
+            global $CFG;
+            if (!empty($CFG->perfdebug)) {
+                self::$singletoninstance = new performance_measuring_filter_manager();
+            } else {
+                self::$singletoninstance = new self();
             }
         }
+        return self::$singletoninstance;
+    }
+
+    /** Load all the filters required by this context. */
+    protected function load_filters($context, $courseid) {
+        $filters = filter_get_active_in_context($context);
+        $this->textfilters[$context->id] = array();
+        $this->stringfilters[$context->id] = array();
+        foreach ($filters as $filtername => $localconfig) {
+            $filter = $this->make_filter_object($filtername, $context, $courseid, $localconfig);
+            if (is_null($filter)) {
+                continue;
+            }
+            $this->textfilters[$context->id][] = $filter;
+            if (in_array($filtername, $this->stringfilternames)) {
+                $this->stringfilters[$context->id][] = $filter;
+            }
+        }
+    }
+
+    /**
+     * Factory method for creating a filter.
+     * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+     * @param $context context object.
+     * @param $courseid course if.
+     * @param $localconfig array of local configuration variables for this filter.
+     * @return moodle_text_filter The filter, or null, if this type of filter is
+     *      not recognised or could not be created.
+     */
+    protected function make_filter_object($filtername, $context, $courseid, $localconfig) {
+        global $CFG;
+        $path = $CFG->dirroot .'/'. $filtername .'/filter.php';
+        if (!is_readable($path)) {
+            return null;
+        }
+        include_once($path);
+
+        $filterclassname = basename($filtername) . '_filter';
+        if (class_exists($filterclassname)) {
+            return new $filterclassname($courseid, $context, $localconfig);
+        }
+
+        $legacyfunctionname = basename($filtername) . '_filter';
+        if (function_exists($legacyfunctionname)) {
+            return new legacy_filter($legacyfunctionname, $courseid, $context, $localconfig);
+        }
+
+        return null;
+    }
+
+    protected function apply_filter_chain($text, $filterchain) {
+        foreach ($filterchain as $filter) {
+            $text = $filter->filter($text);
+        }
         return $text;
+    }
+
+    protected function get_text_filters($context, $courseid) {
+        if (!isset($this->textfilters[$context->id])) {
+            $this->load_filters($context, $courseid);
+        }
+        return $this->textfilters[$context->id];
+    }
+
+    protected function get_string_filters($context, $courseid) {
+        if (!isset($this->stringfilters[$context->id])) {
+            $this->load_filters($context, $courseid);
+        }
+        return $this->stringfilters[$context->id];
+    }
+
+    public function filter_text($text, $context, $courseid) {
+        $text = $this->apply_filter_chain($text, $this->get_text_filters($context, $courseid));
+        /// <nolink> tags removed for XHTML compatibility
+        $text = str_replace(array('<nolink>', '</nolink>'), '', $text);
+        return $text;
+    }
+
+    public function filter_string($string, $context, $courseid) {
+        return $this->apply_filter_chain($string, $this->get_string_filters($context, $courseid));
+    }
+
+    public function text_filtering_hash($context, $courseid) {
+        $filters = $this->get_text_filters($context, $courseid);
+        $hashes = array();
+        foreach ($filters as $filter) {
+            $hashes[] = $filter->hash();
+        }
+        return implode('-', $hashes);
+    }
+}
+
+/**
+ * Filter manager subclass that does nothing. Having this simplifies the logic
+ * of format_text, etc.
+ */
+class null_filter_manager {
+    public function filter_text($text, $context, $courseid) {
+        return $text;
+    }
+
+    public function filter_string($string, $context, $courseid) {
+        return $text;
+    }
+
+    public function text_filtering_hash() {
+        return '';
+    }
+}
+
+/**
+ * Filter manager subclass that tacks how much work it does.
+ */
+class performance_measuring_filter_manager extends filter_manager {
+    protected $filterscreated = 0;
+    protected $textsfiltered = 0;
+    protected $stringsfiltered = 0;
+
+    protected function make_filter_object($filtername, $context, $courseid, $localconfig) {
+        $this->filterscreated++;
+        return parent::make_filter_object($filtername, $context, $courseid, $localconfig);
+    }
+
+    public function filter_text($text, $context, $courseid) {
+        $this->textsfiltered++;
+        return parent::filter_text($text, $context, $courseid);
+    }
+
+    public function filter_string($string, $context, $courseid) {
+        $this->stringsfiltered++;
+        return parent::filter_string($string, $context, $courseid);
+    }
+
+    public function get_performance_summary() {
+        return array(array(
+            'contextswithfilters' => count($this->textfilters),
+            'filterscreated' => $this->filterscreated,
+            'textsfiltered' => $this->textsfiltered,
+            'stringsfiltered' => $this->stringsfiltered,
+        ), array(
+            'contextswithfilters' => 'Contexts for which filters were loaded',
+            'filterscreated' => 'Filters created',
+            'textsfiltered' => 'Pieces of content filtered',
+            'stringsfiltered' => 'Strings filtered',
+        ));
+    }
+}
+
+/**
+ * Base class for text filters. You just need to override this class and
+ * implement the filter method.
+ */
+abstract class moodle_text_filter {
+    /** The course we are in. */
+    protected $courseid;
+    /** The context we are in. */
+    protected $context;
+    /** Any local configuration for this filter in this context. */
+    protected $localconfig;
+
+    /**
+     * Set any context-specific configuration for this filter.
+     * @param object $context The current course id.
+     * @param object $context The current context.
+     * @param array $config Any context-specific configuration for this filter.
+     */
+    public function __construct($courseid, $context, array $localconfig) {
+        $this->courseid = $courseid;
+        $this->context = $context;
+        $this->localconfig = $localconfig;
     }
 
     public function hash() {
         return __CLASS__;
     }
 
-    // filter plugin must overwrite this function to filter
-    abstract function filter($text);
+    /**
+     * Override this funciton to actually implement the filtering.
+     * @param $text some HTML content.
+     * @return the HTML content after the filtering has been applied.
+     */
+    public abstract function filter($text);
+}
+
+/**
+ * moodle_text_filter implementation that encapsulates an old-style filter that
+ * only defines a function, not a class.
+ */
+class legacy_filter extends moodle_text_filter {
+    protected $filterfunction;
+
+    /**
+     * Set any context-specific configuration for this filter.
+     * @param string $filterfunction
+     * @param object $context The current course id.
+     * @param object $context The current context.
+     * @param array $config Any context-specific configuration for this filter.
+     */
+    public function __construct($filterfunction, $courseid, $context, array $localconfig) {
+        parent::__construct($courseid, $context, $localconfig);
+        $this->filterfunction = $filterfunction;
+    }
+
+    public function filter($text) {
+        return call_user_func($this->filterfunction, $this->courseid, $text);
+    }
 }
 
 /// Define one exclusive separator that we'll use in the temp saved tags

@@ -84,10 +84,7 @@ function string_file_picture_algebra($imagefile, $tex= "", $height="", $width=""
   return $output;
 }
 
-class algebra_filter extends filter_base {
-    function __construct($courseid, $format, $options){
-        parent::__construct($courseid, $format, $options);
-    }
+class algebra_filter extends moodle_text_filter {
     function filter($text){
         global $CFG, $DB;
 
