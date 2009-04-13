@@ -35,6 +35,15 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.'); // It must be included from a Moodle page
 }
 
+if (!isset($availablefilters)) {
+    $availablefilters  = array();
+    if (in_array($context->contextlevel, array(CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_MODULE)) &&
+            !($context->contextlevel == CONTEXT_COURSE && $context->instanceid == SITEID) &&
+            has_capability('moodle/filter:manage', $context)) {
+        $availablefilters = filter_get_available_in_context($context);
+    }
+}
+
 $navlinks = array();
 if ($currenttab != 'update') {
     switch ($context->contextlevel) {
@@ -202,6 +211,11 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything ex
                 get_string('checkpermissions', 'role'));
     }
 
+    if (!empty($availablefilters)) {
+        $toprow[] = new tabobject('filters',
+                $CFG->wwwroot.'/filter/manage.php?contextid=' . $context->id,
+                get_string('filters', 'admin'));
+    }
 }
 
 /// Here other core tabs should go (always calling tabs.php files)
@@ -211,7 +225,7 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything ex
 
 /// Finally, we support adding some 'on-the-fly' tabs here
 /// All the logic to decide what to show must be self-cointained in the tabs file
-    if (isset($CFG->extratabs) && !empty($CFG->extratabs)) {
+    if (!empty($CFG->extratabs)) {
         if ($extratabs = explode(',', $CFG->extratabs)) {
             asort($extratabs);
             foreach($extratabs as $extratab) {
