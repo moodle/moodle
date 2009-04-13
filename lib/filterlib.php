@@ -167,8 +167,9 @@ function filter_get_all_installed() {
  * @param integer $sortorder (optional) a position in the sortorder to place this filter.
  *      If not given defaults to:
  *      No change in order if we are updating an exsiting record, and not changing to or from TEXTFILTER_DISABLED.
- *      Just after the last currently active filter for a change to TEXTFILTER_ON or TEXTFILTER_OFF
- *      Just after the very last filter for a change to TEXTFILTER_DISABLED
+ *      Just after the last currently active filter when adding an unknown filter
+ *          in state TEXTFILTER_ON or TEXTFILTER_OFF, or enabling/diabling an exsisting filter.
+ *      Just after the very last filter when adding an unknown filter in state TEXTFILTER_DISABLED
  */
 function filter_set_global_state($filter, $state, $sortorder = false) {
     global $DB;
@@ -203,7 +204,7 @@ function filter_set_global_state($filter, $state, $sortorder = false) {
 
     // Automatic sort order.
     if ($sortorder === false) {
-        if ($state == TEXTFILTER_DISABLED) {
+        if ($state == TEXTFILTER_DISABLED && $insert) {
             $prevmaxsortorder = $DB->get_field('filter_active', 'MAX(sortorder)', array());
         } else {
             $prevmaxsortorder = $DB->get_field_select('filter_active', 'MAX(sortorder)', 'active <> ?', array(TEXTFILTER_DISABLED));
@@ -341,7 +342,7 @@ function filter_get_local_config($filter, $contextid) {
  *      empty array. So, an example return value for this function might be
  *      array('filter/tex' => array(), 'mod/glossary' => array('glossaryid', 123))
  */
-function get_active_filters($context) {
+function filter_get_active_in_context($context) {
     global $DB;
     $contextids = str_replace('/', ',', trim($context->path, '/'));
 

@@ -215,7 +215,7 @@ class filter_active_global_test extends UnitTestCaseUsingDatabase {
         // Exercise SUT.
         filter_set_global_state('filter/1', TEXTFILTER_DISABLED);
         // Validate.
-        $this->assert_global_sort_order(array('filter/2', 'filter/3', 'filter/1'));
+        $this->assert_global_sort_order(array('filter/2', 'filter/1', 'filter/3'));
     }
 }
 
@@ -342,7 +342,7 @@ class filter_config_test extends UnitTestCaseUsingDatabase {
     }
 }
 
-class get_active_filters_test extends UnitTestCaseUsingDatabase {
+class filter_get_active_in_context_test extends UnitTestCaseUsingDatabase {
     private $syscontext;
     private $childcontext;
     private $childcontext2;
@@ -387,7 +387,7 @@ class get_active_filters_test extends UnitTestCaseUsingDatabase {
         // Setup fixture.
         filter_set_global_state('filter/name', TEXTFILTER_ON);
         // Exercise SUT.
-        $filters = get_active_filters($this->syscontext);
+        $filters = filter_get_active_in_context($this->syscontext);
         // Validate.
         $this->assert_filter_list(array('filter/name'), $filters);
         // Check no config returned correctly.
@@ -398,7 +398,7 @@ class get_active_filters_test extends UnitTestCaseUsingDatabase {
         // Setup fixture.
         filter_set_global_state('filter/name', TEXTFILTER_OFF);
         // Exercise SUT.
-        $filters = get_active_filters($this->childcontext2);
+        $filters = filter_get_active_in_context($this->childcontext2);
         // Validate.
         $this->assert_filter_list(array(), $filters);
     }
@@ -408,7 +408,7 @@ class get_active_filters_test extends UnitTestCaseUsingDatabase {
         filter_set_global_state('filter/name', TEXTFILTER_OFF);
         filter_set_local_state('filter/name', $this->childcontext->id, TEXTFILTER_ON);
         // Exercise SUT.
-        $filters = get_active_filters($this->childcontext2);
+        $filters = filter_get_active_in_context($this->childcontext2);
         // Validate.
         $this->assert_filter_list(array('filter/name'), $filters);
     }
@@ -418,7 +418,7 @@ class get_active_filters_test extends UnitTestCaseUsingDatabase {
         filter_set_global_state('filter/name', TEXTFILTER_ON);
         filter_set_local_state('filter/name', $this->childcontext->id, TEXTFILTER_OFF);
         // Exercise SUT.
-        $filters = get_active_filters($this->childcontext2);
+        $filters = filter_get_active_in_context($this->childcontext2);
         // Validate.
         $this->assert_filter_list(array(), $filters);
     }
@@ -428,7 +428,7 @@ class get_active_filters_test extends UnitTestCaseUsingDatabase {
         filter_set_global_state('filter/name', TEXTFILTER_DISABLED);
         filter_set_local_state('filter/name', $this->childcontext->id, TEXTFILTER_ON);
         // Exercise SUT.
-        $filters = get_active_filters($this->syscontext);
+        $filters = filter_get_active_in_context($this->syscontext);
         // Validate.
         $this->assert_filter_list(array(), $filters);
     }
@@ -438,7 +438,7 @@ class get_active_filters_test extends UnitTestCaseUsingDatabase {
         filter_set_global_state('filter/name', TEXTFILTER_ON);
         filter_set_local_config('filter/name', $this->childcontext->id, 'settingname', 'A value');
         // Exercise SUT.
-        $filters = get_active_filters($this->childcontext);
+        $filters = filter_get_active_in_context($this->childcontext);
         // Validate.
         $this->assertEqual(array('settingname' => 'A value'), $filters['filter/name']);
     }
@@ -449,7 +449,7 @@ class get_active_filters_test extends UnitTestCaseUsingDatabase {
         filter_set_local_config('filter/name', $this->childcontext->id, 'settingname', 'A value');
         filter_set_local_config('filter/name', $this->childcontext->id, 'anothersettingname', 'Another value');
         // Exercise SUT.
-        $filters = get_active_filters($this->childcontext);
+        $filters = filter_get_active_in_context($this->childcontext);
         // Validate.
         $this->assertEqual(array('settingname' => 'A value', 'anothersettingname' => 'Another value'), $filters['filter/name']);
     }
@@ -460,7 +460,7 @@ class get_active_filters_test extends UnitTestCaseUsingDatabase {
         filter_set_local_config('filter/name', $this->childcontext->id, 'settingname', 'A value');
         filter_set_local_config('filter/name', $this->childcontext2->id, 'anothersettingname', 'Another value');
         // Exercise SUT.
-        $filters = get_active_filters($this->childcontext2);
+        $filters = filter_get_active_in_context($this->childcontext2);
         // Validate.
         $this->assertEqual(array('anothersettingname' => 'Another value'), $filters['filter/name']);
     }
@@ -471,7 +471,7 @@ class get_active_filters_test extends UnitTestCaseUsingDatabase {
         filter_set_local_config('filter/name', $this->childcontext->id, 'settingname', 'A value');
         filter_set_local_config('filter/other', $this->childcontext->id, 'anothersettingname', 'Another value');
         // Exercise SUT.
-        $filters = get_active_filters($this->childcontext);
+        $filters = filter_get_active_in_context($this->childcontext);
         // Validate.
         $this->assertEqual(array('settingname' => 'A value'), $filters['filter/name']);
     }
