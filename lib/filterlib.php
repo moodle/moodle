@@ -1,6 +1,13 @@
 <?php // $Id$
       // Contains special functions that are particularly useful to filters
 
+/**
+ * The states a filter can be in, stored in the filter_active table.
+ */
+define('TEXTFILTER_ON', 1);
+define('TEXTFILTER_OFF', -1);
+define('TEXTFILTER_DISABLED', -9999);
+
 abstract class filter_base {
     public static $filters = array();
     protected $courseid;
@@ -150,6 +157,89 @@ function filter_get_all_installed() {
     }
     asort($filternames, SORT_LOCALE_STRING);
     return $filternames;
+}
+
+/**
+ * Set the global activated state for a text filter.
+ * @param $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ * @param $state One of the values TEXTFILTER_ON, TEXTFILTER_OFF or TEXTFILTER_DISABLED.
+ * @param $sortorder (optional) a position in the sortorder to place this filter.
+ *      If not given defaults to:
+ *      No change in order if we are updating an exsiting record, and not changing to or from TEXTFILTER_DISABLED.
+ *      Just after the last currently active filter for a change to TEXTFILTER_ON or TEXTFILTER_OFF
+ *      Just after the very last filter for a change to TEXTFILTER_DISABLED
+ */
+function filter_set_global_state($filter, $state, $sortorder = false) {
+    global $DB;
+
+    // Check requested state is valid.
+    if (!in_array($state, array(TEXTFILTER_ON, TEXTFILTER_OFF, TEXTFILTER_DISABLED))) {
+        throw new coding_exception("Illegal option '$state' passed to filter_set_global_state. ' .
+                'Must be one of TEXTFILTER_ON, TEXTFILTER_OFF or TEXTFILTER_DISABLED.");
+    }
+
+    // Check sortorder is valid.
+    if ($sortorder !== false) {
+        if ($sortorder < 1 || $sortorder > $DB->get_field('filter_active', 'MAX(sortorder)', array()) + 1) {
+            throw new coding_exception("Invalid sort order passed to filter_set_global_state.");
+        }
+    }
+
+    // See if there is an existing record.
+    $syscontext = get_context_instance(CONTEXT_SYSTEM);
+    $rec = $DB->get_record('filter_active', array('filter' => $filter, 'contextid' => $syscontext->id));
+    if (empty($rec)) {
+        $insert = true;
+        $rec = new stdClass;
+        $rec->filter = $filter;
+        $rec->contextid = $syscontext->id;
+    } else {
+        $insert = false;
+        if ($sortorder === false && !($rec->active == TEXTFILTER_DISABLED xor $state == TEXTFILTER_DISABLED)) {
+            $sortorder = $rec->sortorder;
+        }
+    }
+
+    // Automatic sort order.
+    if ($sortorder === false) {
+        if ($state == TEXTFILTER_DISABLED) {
+            $prevmaxsortorder = $DB->get_field('filter_active', 'MAX(sortorder)', array());
+        } else {
+            $prevmaxsortorder = $DB->get_field_select('filter_active', 'MAX(sortorder)', 'active <> ?', array(TEXTFILTER_DISABLED));
+        }
+        if (empty($prevmaxsortorder)) {
+            $sortorder = 1;
+        } else {
+            $sortorder = $prevmaxsortorder + 1;
+            if (!$insert && $state == TEXTFILTER_DISABLED) {
+                $sortorder = $prevmaxsortorder;
+            }
+        }
+    }
+
+    // Move any existing records out of the way of the sortorder.
+    if ($insert) {
+        $DB->execute('UPDATE {filter_active} SET sortorder = sortorder + 1 WHERE sortorder >= ?', array($sortorder));
+    } else if ($sortorder != $rec->sortorder) {
+        $sparesortorder = $DB->get_field('filter_active', 'MIN(sortorder)', array()) - 1;
+        $DB->set_field('filter_active', 'sortorder', $sparesortorder, array('filter' => $filter, 'contextid' => $syscontext->id));
+        if ($sortorder < $rec->sortorder) {
+            $DB->execute('UPDATE {filter_active} SET sortorder = sortorder + 1 WHERE sortorder >= ? AND sortorder < ?',
+                    array($sortorder, $rec->sortorder));
+        } else if ($sortorder > $rec->sortorder) {
+            $DB->execute('UPDATE {filter_active} SET sortorder = sortorder - 1 WHERE sortorder <= ? AND sortorder > ?',
+                    array($sortorder, $rec->sortorder));
+        }
+    }
+
+    // Insert/update the new record.
+    $rec->active = $state;
+    $rec->sortorder = $sortorder;
+    if ($insert) {
+        $DB->insert_record('filter_active', $rec);
+    } else {
+        $DB->update_record('filter_active', $rec);
+    }
 }
 
 /**

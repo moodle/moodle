@@ -1599,6 +1599,30 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009040301);
     }
 
+    if ($result && $oldversion < 2009040302) {
+    /// Transfer current settings from $CFG->textfilters
+        $disabledfilters = filter_get_all_installed();
+        if (empty($CFG->textfilters)) {
+            $activefilters = array();
+        } else {
+            $activefilters = explode(',', $CFG->textfilters);
+        }
+        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $sortorder = 1;
+        foreach ($activefilters as $filter) {
+            filter_set_global_state($filter, TEXTFILTER_ON, $sortorder);
+            $sortorder += 1;
+            unset($disabledfilters[$filter]);
+        }
+        foreach ($disabledfilters as $filter => $notused) {
+            filter_set_global_state($filter, TEXTFILTER_DISABLED, $sortorder);
+            $sortorder += 1;
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009040302);
+    }
+
     return $result;
 }
 
