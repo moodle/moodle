@@ -222,6 +222,7 @@ $string['fieldrequired'] = '\"$a\" is a required field';
 $string['filenotfound'] = 'Sorry, the requested file could not be found';
 $string['filenotreadable'] = 'File is not readable';
 $string['filemismatch'] = 'Non-core file name mismatch. The file \"$a->current\" should be $a->file';
+$string['filterdoesnothavelocalconfig'] = 'The filter $a does not allow local configuration.';
 $string['filternotinstalled'] = 'Filter $a is not currently installed';
 $string['filternotactive'] = 'Filter $a is not currently active';
 $string['forumblockingtoomanyposts'] = 'You have exceeded the posting threshold set for this forum';

@@ -34,6 +34,7 @@ require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 $contextid = required_param('contextid',PARAM_INT);
+$forfilter = optional_param('filter', '', PARAM_SAFEPATH);
 
 if (!$context = get_context_instance_by_id($contextid)) {
     print_error('wrongcontextid', 'error');
@@ -46,6 +47,7 @@ if (!in_array($context->contextlevel, array(CONTEXT_COURSECAT, CONTEXT_COURSE, C
 
 $isfrontpage = $context->contextlevel == CONTEXT_COURSE && $context->instanceid == SITEID;
 $contextname = print_context_name($context);
+$baseurl = $CFG->wwwroot . '/filter/manage.php?contextid=' . $context->id;
 
 if ($context->contextlevel == CONTEXT_COURSECAT) {
     $course = clone($SITE);
@@ -70,8 +72,25 @@ if (!$isfrontpage && empty($availablefilters)) {
     print_error('nofiltersenabled', 'error');
 }
 
+// If we are handling local settings for a particular filter, start processing.
+if ($forfilter) {
+    if (!filter_has_local_settings($forfilter)) {
+        print_error('filterdoesnothavelocalconfig', 'error', $forfilter);
+    }
+    require_once($CFG->dirroot . '/filter/local_settings_form.php');
+    require_once($CFG->dirroot . '/' . $forfilter . '/filterlocalsettings.php');
+    $formname = basename($forfilter) . '_filter_local_settings_form';
+    $settingsform = new $formname($CFG->wwwroot . '/filter/manage.php', $forfilter, $context);
+    if ($settingsform->is_cancelled()) {
+        redirect($baseurl);
+    } else if ($data = $settingsform->get_data()) {
+        $settingsform->save_changes($data);
+        redirect($baseurl);
+    }
+}
+
 /// Process any form submission.
-if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
+if ($forfilter == '' && optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     foreach ($availablefilters as $filter => $filterinfo) {
         $newstate = optional_param(str_replace('/', '_', $filter), false, PARAM_INT);
         if ($newstate !== false && $newstate != $filterinfo->localstate) {
@@ -86,7 +105,14 @@ $assignableroles = get_assignable_roles($context, ROLENAME_BOTH);
 $overridableroles = get_overridable_roles($context, ROLENAME_BOTH);
 
 /// Work out an appropriate page title.
-$title = get_string('filtersettingsfor', 'filters', $contextname);
+if ($forfilter) {
+    $a = new stdClass;
+    $a->filter = filter_get_name($forfilter);
+    $a->context = $contextname;
+    $title = get_string('filtersettingsforin', 'filters', $a);
+} else {
+    $title = get_string('filtersettingsin', 'filters', $contextname);
+}
 $straction = get_string('filters', 'admin'); // Used by tabs.php
 
 /// Print the header and tabs
@@ -103,6 +129,10 @@ print_heading_with_help($title, 'localfiltersettings');
 
 if (empty($availablefilters)) {
     echo '<p class="centerpara">' . get_string('nofiltersenabled', 'filters') . "</p>\n";
+} else if ($forfilter) {
+    $current = filter_get_local_config($forfilter, $contextid);
+    $settingsform->set_data((object) $current);
+    $settingsform->display();
 } else {
     $settingscol = false;
     foreach ($availablefilters as $filter => $notused) {
@@ -122,7 +152,7 @@ if (empty($availablefilters)) {
         TEXTFILTER_ON => $stron,
     );
 
-    echo '<form action="' . $CFG->wwwroot . '/filter/manage.php?contextid=' . $context->id . '" method="post">';
+    echo '<form action="' . $baseurl . '" method="post">';
     echo "\n<div>\n";
     echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
 
@@ -131,7 +161,7 @@ if (empty($availablefilters)) {
     $table->align = array('left', 'left');
     if ($settingscol) {
         $table->head[] = $strsettings;
-        $table->align = 'left';
+        $table->align[] = 'left';
     }
     $table->width = ' ';
     $table->data = array();
@@ -156,8 +186,7 @@ if (empty($availablefilters)) {
         if ($settingscol) {
             $settings = '';
             if ($filterinfo->hassettings) {
-                $settings = '<a href="' . $CFG->wwwroot . '/filter/settings.php?contextid=' .
-                        $context->id . '&amp;filter=' . $filter . '">' . $strsettings . '</a>';
+                $settings = '<a href="' . $baseurl . '&amp;filter=' . $filter . '">' . $strsettings . '</a>';
             }
             $row[] = $settings;
         }

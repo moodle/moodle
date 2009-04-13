@@ -61,7 +61,7 @@ class filter_manager {
     protected static $singletoninstance;
 
     protected function __construct() {
-        $stringfilternames = filter_get_string_filters();
+        $this->stringfilternames = filter_get_string_filters();
     }
 
     /**
@@ -603,6 +603,17 @@ function filter_set_local_config($filter, $contextid, $name, $value) {
 }
 
 /**
+ * Remove a particular local config variable for a filter in a context.
+ * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ * @param integer $contextid The id of the context to get the local config for.
+ * @param string $name the setting name.
+ */
+function filter_unset_local_config($filter, $contextid, $name) {
+    global $DB;
+    $DB->delete_records('filter_config', array('filter' => $filter, 'contextid' => $contextid, 'name' => $name));
+}
+
+/**
  * Get local config variables for a filter in a context. Normally (when your
  * filter is running) you don't need to call this, becuase the config is fetched
  * for you automatically. You only need this, for example, when you are getting
@@ -764,8 +775,8 @@ function filter_has_global_settings($filter) {
  */
 function filter_has_local_settings($filter) {
     global $CFG;
-    // TODO
-    return false;
+    $settingspath = $CFG->dirroot . '/' . $filter . '/filterlocalsettings.php';
+    return is_readable($settingspath);
 }
 
 /**
