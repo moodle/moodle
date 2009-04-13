@@ -300,6 +300,17 @@ $moodle_capabilities = array(
         )
     ),
 
+    // Permission to manage filter setting overrides in subcontexts.
+    'moodle/filter:manage' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW,
+        )
+    ),
 
     'moodle/user:create' => array(
 

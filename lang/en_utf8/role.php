@@ -103,6 +103,7 @@ $string['explainpermissionsinfo'] = '<p>To use this table:</p><ol><li>First look
 $string['explainpermissionsdoanything'] = 'Note that this user has the moodle/site:doanything capability, so even though the table above shows that has_capability will return false, this user will actually be deemed to have the capability $a in most circumstances.';
 $string['extusers'] = 'Existing users';
 $string['extusersmatching'] = 'Existing users matching \'$a\'';
+$string['filter:manage'] = 'Manage local filter settings';
 $string['globalrole'] = 'System role';
 $string['globalroleswarning'] = 'WARNING! Any roles you assign from this page will apply to the assigned users throughout the entire system, including the front page and all the courses.';
 $string['gotoassignroles'] = 'Go to Assign roles for this $a->contextlevel';
