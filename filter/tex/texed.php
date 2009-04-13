@@ -8,13 +8,8 @@
     require_once("../../config.php");
     require_once($CFG->dirroot.'/filter/tex/lib.php');
 
-    if (empty($CFG->textfilters)) {
+    if (!filter_is_enabled('filter/tex')) {
         error ('Filter not enabled!');
-    } else {
-        $filters = explode(',', $CFG->textfilters);
-        if (array_search('filter/tex', $filters) === FALSE) {
-            error ('Filter not enabled!');
-        }
     }
 
     error_reporting(E_ALL);

@@ -7,13 +7,8 @@ define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
 
     require_once('../../config.php');
 
-    if (empty($CFG->textfilters)) {
+    if (!filter_is_enabled('filter/tex')) {
         error ('Filter not enabled!');
-    } else {
-        $filters = explode(',', $CFG->textfilters);
-        if (array_search('filter/tex', $filters) === FALSE) {
-            error ('Filter not enabled!');
-        }
     }
 
     // disable moodle specific debug messages

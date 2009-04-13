@@ -226,11 +226,7 @@ function report_security_check_mediafilterswf($detailed=false) {
     $result->status  = null;
     $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=filtersettingfiltermediaplugin\">".get_string('filtersettings', 'admin').'</a>';
 
-    if (!empty($CFG->textfilters)) {
-        $activefilters = explode(',', $CFG->textfilters);
-    } else {
-        $activefilters = array();
-    }
+    $activefilters = filters_get_globally_enabled();
 
     if (array_search('filter/mediaplugin', $activefilters) !== false and !empty($CFG->filter_mediaplugin_enable_swf)) {
         $result->status = REPORT_SECURITY_CRITICAL;

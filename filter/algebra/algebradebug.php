@@ -7,13 +7,8 @@
 
     require_once("../../config.php");
 
-    if (empty($CFG->textfilters)) {
+    if (!filter_is_enabled('filter/algebra')) {
         error ('Filter not enabled!');
-    } else {
-        $filters = explode(',', $CFG->textfilters);
-        if (array_search('filter/algebra', $filters) === FALSE) {
-            error ('Filter not enabled!');
-        }
     }
 
     require_once($CFG->libdir.'/filelib.php');
