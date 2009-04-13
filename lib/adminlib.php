@@ -3697,179 +3697,41 @@ class admin_setting_manageauths extends admin_setting {
 /**
  * Special class for filter administration.
  */
-class admin_setting_managefilters extends admin_setting {
+class admin_page_managefilters extends admin_externalpage {
     public function __construct() {
-        parent::__construct('filtersui', get_string('filtersettings', 'admin'), '', '');
+        global $CFG;
+        parent::__construct('managefilters', get_string('filtersettings', 'admin'), "$CFG->wwwroot/$CFG->admin/filters.php");
     }
 
-    public function get_setting() {
-        return true;
-    }
-
-    public function get_defaultsetting() {
-        return true;
-    }
-
-    public function write_setting($data) {
-        // do not write any settings. Instead all our UI submits to admin/filters.php
-        // which makes and changes, then redirects back.
-        return '';
-    }
-
-    public function is_related($query) {
-        if (parent::is_related($query)) {
-            return true;
+    public function search($query) {
+        global $CFG;
+        if ($result = parent::search($query)) {
+            return $result;
         }
 
+        $found = false;
         $filternames = filter_get_all_installed();
         $textlib = textlib_get_instance();
         foreach ($filternames as $path => $strfiltername) {
             if (strpos($textlib->strtolower($strfiltername), $query) !== false) {
-                return true;
+                $found = true;
+                break;
             }
             list($type, $filter) = explode('/', $path);
             if (strpos($filter, $query) !== false) {
-                return true;
+                $found = true;
+                break;
             }
         }
-        return false;
-    }
 
-    protected function action_url($filterpath, $action) {
-        global $CFG;
-        return $CFG->wwwroot . '/' . $CFG->admin . '/filters.php?sesskey=' . sesskey() .
-                '&amp;filterpath=' . urlencode($filterpath) . '&amp;action=' . $action;
-    }
-
-    protected function action_icon($url, $icon, $straction) {
-        global $CFG;
-        return '<a href="' . $url . '" title="' . $straction . '">' .
-                '<img src="' . $CFG->pixpath . '/t/' . $icon . '.gif" alt="' . $straction . '" /></a> ';
-    }
-
-    protected function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings) {
-        global $CFG;
-        $row = array();
-        $filter = $filterinfo->filter;
-
-        // Filter name
-        if (!empty($this->filternames[$filter])) {
-            $row[] = $this->filternames[$filter];
+        if ($found) {
+            $result = new stdClass;
+            $result->page = $this;
+            $result->settings = array();
+            return array($this->name => $result);
         } else {
-            $row[] = '<span class="error">' . get_string('filemissing', '', $filter) . '</span>';
+            return array();
         }
-
-        // Disable/off/on
-        $row[] = popup_form($this->action_url($filter, 'setstate') . '&amp;newstate=', $this->activechoices,
-                'active' . basename($filter), $filterinfo->active, '', '', '', true, 'self', '', NULL, get_string('save'));
-
-        // Re-order
-        $updown = '';
-        $spacer = '<img src="' . $CFG->pixpath . '/spacer.gif" class="iconsmall" alt="" /> ';
-        if ($filterinfo->active != TEXTFILTER_DISABLED) {
-            if (!$isfirstrow) {
-                $updown .= $this->action_icon($this->action_url($filter, 'up'), 'up', $this->strup);
-            } else {
-                $updown .= $spacer;
-            }
-            if (!$islastactive) {
-                $updown .= $this->action_icon($this->action_url($filter, 'down'), 'down', $this->strdown);
-            } else {
-                $updown .= $spacer;
-            }
-        }
-        $row[] = $updown;
-
-        // Apply to strings.
-        $row[] = popup_form($this->action_url($filter, 'setapplyto') . '&amp;stringstoo=', $this->applytochoices,
-                'applyto' . basename($filter), $applytostrings, '', '', '', true, 'self', '', NULL, get_string('save'),
-                $filterinfo->active == TEXTFILTER_DISABLED);
-
-        // Settings link, if required
-        $settings = '';
-        if (filter_has_global_settings($filter)) {
-            $settings = '<a href="' . $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=filtersetting' .
-                    str_replace('/', '',$filter) . '">' . $this->strsettings . '</a>';
-        }
-        $row[] = $settings;
-
-        // Delete
-        $row[] = '<a href="' . $this->action_url($filter, 'delete') . '">' . $this->strdelete . '</a>';
-
-        return $row;
-    }
-
-    public function output_html($data, $query='') {
-        global $CFG;
-
-        $this->activechoices = array(
-            TEXTFILTER_DISABLED => get_string('disabled', 'filters'),
-            TEXTFILTER_OFF => get_string('offbutavailable', 'filters'),
-            TEXTFILTER_ON => get_string('on', 'filters'),
-        );
-        $this->applytochoices = array(
-            0 => get_string('content', 'filters'),
-            1 => get_string('contentandheadings', 'filters'),
-        );
-        $this->strup = get_string('up');
-        $this->strdown = get_string('down');
-        $this->strsettings = get_string('settings');
-        $this->strdelete = get_string('delete');
-
-        $filters = filter_get_global_states();
-
-        // In case any new filters have been installed, but not put in the table yet.
-        $this->filternames = filter_get_all_installed();
-        $newfilters = $this->filternames;
-        foreach ($filters as $filter => $notused) {
-            unset($newfilters[$filter]);
-        }
-        $stringfilters = filter_get_string_filters();
-
-        $return = print_heading(get_string('actfilterhdr', 'filters'), '', 3, 'main', true);
-        $return .= print_box_start('generalbox filtersui', '', true);
-
-        $table = new object();
-        $table->head  = array(get_string('filter'), get_string('isactive', 'filters'),
-                get_string('order'), get_string('applyto', 'filters'), $this->strsettings, $this->strdelete);
-        $table->align = array('left', 'left', 'center', 'left', 'left');
-        $table->width = '100%';
-        $table->data  = array();
-
-        $lastactive = null;
-        foreach ($filters as $filter => $filterinfo) {
-            if ($filterinfo->active != TEXTFILTER_DISABLED) {
-                $lastactive = $filter;
-            }
-        }
-
-        // iterate through filters adding to display table
-        $firstrow = true;
-        foreach ($filters as $filter => $filterinfo) {
-            $applytostrings = isset($stringfilters[$filter]) && $filterinfo->active != TEXTFILTER_DISABLED;
-            $row = $this->get_table_row($filterinfo, $firstrow, $filter == $lastactive, $applytostrings);
-            $table->data[] = $row;
-            if ($filterinfo->active == TEXTFILTER_DISABLED) {
-                $table->rowclass[] = 'dimmed_text';
-            } else {
-                $table->rowclass[] = '';
-            }
-            $firstrow = false;
-        }
-        foreach ($newfilters as $filter => $filtername) {
-            $filterinfo = new stdClass;
-            $filterinfo->filter = $filter;
-            $filterinfo->active = TEXTFILTER_DISABLED;
-            $row = $this->get_table_row($filterinfo, false, false, false);
-            $table->data[] = $row;
-            $table->rowclass[] = 'dimmed_text';
-        }
-
-        $return .= print_table($table, true);
-        $return .= '<p class="filtersettingnote">' . get_string('tablenosave', 'filters') . '</p>';
-        $return .= '<p class="filtersettingnote">' . get_string('filterallwarning', 'filters') . '</p>';
-        $return .= print_box_end(true);
-        return highlight($query, $return);
     }
 }
 

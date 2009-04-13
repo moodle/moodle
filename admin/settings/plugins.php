@@ -74,8 +74,11 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
 
 
     $ADMIN->add('modules', new admin_category('filtersettings', get_string('managefilters')));
+
+    $ADMIN->add('filtersettings', new admin_page_managefilters());
+
     // "filtersettings" settingpage
-    $temp = new admin_settingpage('managefilters', get_string('filtersettings', 'admin'));
+    $temp = new admin_settingpage('commonfiltersettings', get_string('commonfiltersettings', 'admin'));
     if ($ADMIN->fulltree) {
         $cachetimes = array(
             604800 => get_string('numdays','',7),
@@ -101,8 +104,6 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
             0 => get_string('no')
         );
         $items = array();
-        $items[] = new admin_setting_managefilters();
-        $items[] = new admin_setting_heading('managefilterscommonheading', get_string('commonsettings', 'admin'), '');
         $items[] = new admin_setting_configselect('cachetext', get_string('cachetext', 'admin'), get_string('configcachetext', 'admin'), 60, $cachetimes);
         $items[] = new admin_setting_configselect('filteruploadedfiles', get_string('filteruploadedfiles', 'admin'), get_string('configfilteruploadedfiles', 'admin'), 0,
                 array('0' => get_string('none'), '1' => get_string('allfiles'), '2' => get_string('htmlfilesonly')));
