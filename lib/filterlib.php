@@ -650,6 +650,46 @@ function filter_get_active_in_context($context) {
 }
 
 /**
+ * List all of the filters that are available in this context, and what the
+ * local and interited states of that filter are.
+ * @param object $context a context that is not the system context.
+ * @return array an array with filter names, for example 'filter/tex' or
+ *      'mod/glossary' as keys. and and the values are objects with fields:
+ *      ->filter filter name, same as the key.
+ *      ->localstate TEXTFILTER_ON/OFF/INHERIT
+ *      ->inheritedstate TEXTFILTER_ON/OFF - the state that will be used if localstate is set to TEXTFILTER_INHERIT.
+ */
+function filter_get_available_in_context($context) {
+    global $DB;
+
+    // The complex logic is working out the active state in the parent context,
+    // so strip the current context from the list.
+    $contextids = explode('/', trim($context->path, '/'));
+    array_pop($contextids);
+    $contextids = implode(',', $contextids);
+    if (empty($contextids)) {
+        throw new coding_exception('filter_get_available_in_context cannot be called with the system context.');
+    }
+
+    // The following SQL is tricky, in the same way at the SQL in filter_get_active_in_context.
+    return $DB->get_records_sql(
+        "SELECT parent_states.filter,
+                CASE WHEN fa.active IS NULL THEN " . TEXTFILTER_INHERIT . "
+                ELSE fa.active END AS localstate,
+             parent_states.inheritedstate
+         FROM (SELECT f.filter,
+                    CASE WHEN MAX(f.active * ctx.depth) > -MIN(f.active * ctx.depth) THEN " . TEXTFILTER_ON . "
+                    ELSE " . TEXTFILTER_OFF . " END AS inheritedstate
+             FROM {filter_active} f
+             JOIN {context} ctx ON f.contextid = ctx.id
+             WHERE ctx.id IN ($contextids)
+             GROUP BY filter
+             HAVING MIN(f.active) > " . TEXTFILTER_DISABLED . "
+             ORDER BY MAX(f.sortorder)) parent_states
+         LEFT JOIN {filter_active} fa ON fa.filter = parent_states.filter AND fa.contextid = $context->id");
+}
+
+/**
  * This function is for use by the filter administration page.
  * @return array 'filtername' => object with fields 'filter' (=filtername), 'active' and 'sortorder'
  */

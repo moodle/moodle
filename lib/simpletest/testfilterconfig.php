@@ -363,7 +363,7 @@ class filter_config_test extends UnitTestCaseUsingDatabase {
     }
 }
 
-class filter_get_active_in_context_test extends UnitTestCaseUsingDatabase {
+class filter_get_active_available_in_context_test extends UnitTestCaseUsingDatabase {
     private $syscontext;
     private $childcontext;
     private $childcontext2;
@@ -497,6 +497,53 @@ class filter_get_active_in_context_test extends UnitTestCaseUsingDatabase {
         $filters = filter_get_active_in_context($this->childcontext);
         // Validate.
         $this->assertEqual(array('settingname' => 'A value'), $filters['filter/name']);
+    }
+
+    protected function assert_one_available_filter($filter, $localstate, $inheritedstate, $filters) {
+        $this->assertEqual(1, count($filters), 'More than one record returned %s.');
+        $rec = $filters[$filter];
+        $expectedrec = new stdClass;
+        $expectedrec->filter = $filter;
+        $expectedrec->localstate = $localstate;
+        $expectedrec->inheritedstate = $inheritedstate;
+        $this->assert(new CheckSpecifiedFieldsExpectation($expectedrec), $rec);
+    }
+
+    public function test_available_in_context_localoverride() {
+        // Setup fixture.
+        filter_set_global_state('filter/name', TEXTFILTER_ON);
+        filter_set_local_state('filter/name', $this->childcontext->id, TEXTFILTER_OFF);
+        // Exercise SUT.
+        $filters = filter_get_available_in_context($this->childcontext);
+        // Validate.
+        $this->assert_one_available_filter('filter/name', TEXTFILTER_OFF, TEXTFILTER_ON, $filters);
+    }
+
+    public function test_available_in_context_nolocaloverride() {
+        // Setup fixture.
+        filter_set_global_state('filter/name', TEXTFILTER_ON);
+        filter_set_local_state('filter/name', $this->childcontext->id, TEXTFILTER_OFF);
+        // Exercise SUT.
+        $filters = filter_get_available_in_context($this->childcontext2);
+        // Validate.
+        $this->assert_one_available_filter('filter/name', TEXTFILTER_INHERIT, TEXTFILTER_OFF, $filters);
+    }
+
+    public function test_available_in_context_disabled_not_returned() {
+        // Setup fixture.
+        filter_set_global_state('filter/name', TEXTFILTER_DISABLED);
+        filter_set_local_state('filter/name', $this->childcontext->id, TEXTFILTER_ON);
+        // Exercise SUT.
+        $filters = filter_get_available_in_context($this->childcontext);
+        // Validate.
+        $this->assertEqual(array(), $filters);
+    }
+
+    public function test_available_in_context_exception_with_syscontext() {
+        // Set expectation.
+        $this->expectException();
+        // Exercise SUT.
+        filter_get_available_in_context($this->syscontext);
     }
 }
 
