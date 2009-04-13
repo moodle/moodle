@@ -341,4 +341,140 @@ class filter_config_test extends UnitTestCaseUsingDatabase {
         $this->assertEqual(array('setting1' => 'An arbitrary value', 'setting2' => 'Another arbitrary value'), $config);
     }
 }
+
+class get_active_filters_test extends UnitTestCaseUsingDatabase {
+    private $syscontext;
+    private $childcontext;
+    private $childcontext2;
+
+    public function setUp() {
+        // Make sure accesslib has cached a sensible system context object
+        // before we switch to the test DB.
+        $this->syscontext = get_context_instance(CONTEXT_SYSTEM);
+
+        // Create the table we need and switch to test DB.
+        $this->create_test_tables(array('filter_active', 'filter_config', 'context'), 'lib');
+        $this->switch_to_test_db();
+
+        // Set up systcontext in the test database.
+        $this->testdb->insert_record('context', $this->syscontext);
+        $this->syscontext->id = 1;
+
+        // Set up a child context.
+        $this->childcontext = new stdClass;
+        $this->childcontext->contextlevel = CONTEXT_COURSECAT;
+        $this->childcontext->instanceid = 1;
+        $this->childcontext->depth = 2;
+        $this->childcontext->path = '/1/2';
+        $this->testdb->insert_record('context', $this->childcontext);
+        $this->childcontext->id = 2;
+
+        // Set up a grandchild context.
+        $this->childcontext2 = new stdClass;
+        $this->childcontext2->contextlevel = CONTEXT_COURSE;
+        $this->childcontext2->instanceid = 2;
+        $this->childcontext2->depth = 3;
+        $this->childcontext2->path = '/1/2/3';
+        $this->testdb->insert_record('context', $this->childcontext2);
+        $this->childcontext2->id = 3;
+    }
+
+    private function assert_filter_list($expectedfilters, $filters) {
+        $this->assert(new ArraysHaveSameValuesExpectation($expectedfilters), array_keys($filters));
+    }
+
+    public function test_globally_on_is_returned() {
+        // Setup fixture.
+        filter_set_global_state('filter/name', TEXTFILTER_ON);
+        // Exercise SUT.
+        $filters = get_active_filters($this->syscontext);
+        // Validate.
+        $this->assert_filter_list(array('filter/name'), $filters);
+        // Check no config returned correctly.
+        $this->assertEqual(array(), $filters['filter/name']);
+    }
+
+    public function test_globally_off_not_returned() {
+        // Setup fixture.
+        filter_set_global_state('filter/name', TEXTFILTER_OFF);
+        // Exercise SUT.
+        $filters = get_active_filters($this->childcontext2);
+        // Validate.
+        $this->assert_filter_list(array(), $filters);
+    }
+
+    public function test_globally_off_overridden() {
+        // Setup fixture.
+        filter_set_global_state('filter/name', TEXTFILTER_OFF);
+        filter_set_local_state('filter/name', $this->childcontext->id, TEXTFILTER_ON);
+        // Exercise SUT.
+        $filters = get_active_filters($this->childcontext2);
+        // Validate.
+        $this->assert_filter_list(array('filter/name'), $filters);
+    }
+
+    public function test_globally_on_overridden() {
+        // Setup fixture.
+        filter_set_global_state('filter/name', TEXTFILTER_ON);
+        filter_set_local_state('filter/name', $this->childcontext->id, TEXTFILTER_OFF);
+        // Exercise SUT.
+        $filters = get_active_filters($this->childcontext2);
+        // Validate.
+        $this->assert_filter_list(array(), $filters);
+    }
+
+    public function test_globally_disabled_not_overridden() {
+        // Setup fixture.
+        filter_set_global_state('filter/name', TEXTFILTER_DISABLED);
+        filter_set_local_state('filter/name', $this->childcontext->id, TEXTFILTER_ON);
+        // Exercise SUT.
+        $filters = get_active_filters($this->syscontext);
+        // Validate.
+        $this->assert_filter_list(array(), $filters);
+    }
+
+    public function test_single_config_returned() {
+        // Setup fixture.
+        filter_set_global_state('filter/name', TEXTFILTER_ON);
+        filter_set_local_config('filter/name', $this->childcontext->id, 'settingname', 'A value');
+        // Exercise SUT.
+        $filters = get_active_filters($this->childcontext);
+        // Validate.
+        $this->assertEqual(array('settingname' => 'A value'), $filters['filter/name']);
+    }
+
+    public function test_multi_config_returned() {
+        // Setup fixture.
+        filter_set_global_state('filter/name', TEXTFILTER_ON);
+        filter_set_local_config('filter/name', $this->childcontext->id, 'settingname', 'A value');
+        filter_set_local_config('filter/name', $this->childcontext->id, 'anothersettingname', 'Another value');
+        // Exercise SUT.
+        $filters = get_active_filters($this->childcontext);
+        // Validate.
+        $this->assertEqual(array('settingname' => 'A value', 'anothersettingname' => 'Another value'), $filters['filter/name']);
+    }
+
+    public function test_config_from_other_context_not_returned() {
+        // Setup fixture.
+        filter_set_global_state('filter/name', TEXTFILTER_ON);
+        filter_set_local_config('filter/name', $this->childcontext->id, 'settingname', 'A value');
+        filter_set_local_config('filter/name', $this->childcontext2->id, 'anothersettingname', 'Another value');
+        // Exercise SUT.
+        $filters = get_active_filters($this->childcontext2);
+        // Validate.
+        $this->assertEqual(array('anothersettingname' => 'Another value'), $filters['filter/name']);
+    }
+
+    public function test_config_from_other_filter_not_returned() {
+        // Setup fixture.
+        filter_set_global_state('filter/name', TEXTFILTER_ON);
+        filter_set_local_config('filter/name', $this->childcontext->id, 'settingname', 'A value');
+        filter_set_local_config('filter/other', $this->childcontext->id, 'anothersettingname', 'Another value');
+        // Exercise SUT.
+        $filters = get_active_filters($this->childcontext);
+        // Validate.
+        $this->assertEqual(array('settingname' => 'A value'), $filters['filter/name']);
+    }
+}
+
 ?>

@@ -329,6 +329,53 @@ function filter_get_local_config($filter, $contextid) {
 }
 
 /**
+ * Get the list of active filters, in the order that they should be used
+ * for a particular context, along with any local configuration variables.
+ *
+ * @param object $context a context
+ *
+ * @return array an array where the keys are the filter names, for example
+ *      'filter/tex' or 'mod/glossary' and the values are any local
+ *      configuration for that filter, as an array of name => value pairs
+ *      from the filter_config table. In a lot of cases, this will be an
+ *      empty array. So, an example return value for this function might be
+ *      array('filter/tex' => array(), 'mod/glossary' => array('glossaryid', 123))
+ */
+function get_active_filters($context) {
+    global $DB;
+    $contextids = str_replace('/', ',', trim($context->path, '/'));
+
+    // The following SQL is tricky. It is explained on
+    // http://docs.moodle.org/en/Development:Filter_enable/disable_by_context
+    $rs = $DB->get_recordset_sql(
+        "SELECT active.filter, fc.name, fc.value
+         FROM (SELECT f.filter
+             FROM {filter_active} f
+             JOIN {context} ctx ON f.contextid = ctx.id
+             WHERE ctx.id IN ($contextids)
+             GROUP BY filter
+             HAVING MAX(f.active * ctx.depth) > -MIN(f.active * ctx.depth)
+             ORDER BY MAX(f.sortorder)) active
+         LEFT JOIN {filter_config} fc ON fc.filter = active.filter
+         WHERE fc.contextid = $context->id OR fc.contextid IS NULL");
+
+    // Masssage the data into the specified format to return.
+    $filters = array();
+    foreach ($rs as $row) {
+        if (!isset($filters[$row->filter])) {
+            $filters[$row->filter] = array();
+        }
+        if (!is_null($row->name)) {
+            $filters[$row->filter][$row->name] = $row->value;
+        }
+    }
+
+    $rs->close();
+
+    return $filters;
+}
+
+/**
  * Process phrases intelligently found within a HTML text (such as adding links)
  *
  * param  text             the text that we are filtering
