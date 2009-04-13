@@ -8372,7 +8372,7 @@ function get_plugin_name($plugin, $type='mod') {
             }
             break;
         case 'filter':
-            $plugin_name = filter_get_name('filter', $plugin);
+            $plugin_name = filter_get_name('filter/' . $plugin);
             break;
         default:
             $plugin_name = $plugin;

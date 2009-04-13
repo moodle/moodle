@@ -1,5 +1,34 @@
 <?php // $Id$
-      // Contains special functions that are particularly useful to filters
+
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.org                                            //
+//                                                                       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+
+/**
+ * Library functions for managing text filter plugins.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package moodlecore
+ */
 
 /**
  * The states a filter can be in, stored in the filter_active table.
@@ -308,8 +337,9 @@ class filterobject {
  * @param string $filter the folder name where the filter lives.
  * @return string the human-readable name for this filter.
  */
-function filter_get_name($filterlocation, $filter) {
-    switch ($filterlocation) {
+function filter_get_name($filter) {
+    list($type, $filter) = explode('/', $filter);
+    switch ($type) {
         case 'filter':
             $strfiltername = get_string('filtername', 'filter_' . $filter);
             if (substr($strfiltername, 0, 2) != '[[') {
@@ -321,12 +351,12 @@ function filter_get_name($filterlocation, $filter) {
         case 'mod':
             $strfiltername = get_string('filtername', $filter);
             if (substr($strfiltername, 0, 2) == '[[') {
-                $strfiltername .= ' (' . $filterlocation . '/' . $filter . ')';
+                $strfiltername .= ' (' . $type . '/' . $filter . ')';
             }
             return $strfiltername;
 
         default:
-            throw new coding_exception('Unknown filter location ' . $filterlocation);
+            throw new coding_exception('Unknown filter type ' . $type);
     }
 }
 
@@ -345,7 +375,7 @@ function filter_get_all_installed() {
         foreach ($filters as $filter) {
             $path = $filterlocation . '/' . $filter;
             if (is_readable($CFG->dirroot . '/' . $path . '/filter.php')) {
-                $strfiltername = filter_get_name($filterlocation, $filter);
+                $strfiltername = filter_get_name($path);
                 $filternames[$path] = $strfiltername;
             }
         }
@@ -724,6 +754,18 @@ function filter_has_global_settings($filter) {
     global $CFG;
     $settingspath = $CFG->dirroot . '/' . $filter . '/filtersettings.php';
     return is_readable($settingspath);
+}
+
+/**
+ * Does this filter have local (per-context) settings?
+ *
+ * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ * @return boolean Whether there should be a 'Settings' link on the manage filters in context page.
+ */
+function filter_has_local_settings($filter) {
+    global $CFG;
+    // TODO
+    return false;
 }
 
 /**

@@ -1115,6 +1115,7 @@ body#admin-modules table.generaltable td.c0
 #admin-qtypes #qtypes img.spacer {
   width: 16px;
 }
+#filter-manage .buttons,
 #admin-roles-allow .buttons,
 #admin-roles-manage .buttons,
 #admin-roles-define .buttons,
@@ -1183,6 +1184,7 @@ body#admin-modules table.generaltable td.c0
 #admin-roles-define .mform {
   width: 100%;
 }
+#filter-manage .backlink,
 #admin-roles-manage .backlink,
 #admin-roles-define .backlink,
 #admin-roles-explain .backlink,
