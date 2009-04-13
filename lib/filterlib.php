@@ -663,16 +663,17 @@ function filter_get_active_in_context($context) {
 
     // The following SQL is tricky. It is explained on
     // http://docs.moodle.org/en/Development:Filter_enable/disable_by_context
-    $rs = $DB->get_recordset_sql(
-        "SELECT active.filter, fc.name, fc.value
+    $sql = "SELECT active.filter, fc.name, fc.value
          FROM (SELECT f.filter
              FROM {filter_active} f
              JOIN {context} ctx ON f.contextid = ctx.id
              WHERE ctx.id IN ($contextids)
              GROUP BY filter
-             HAVING MAX(f.active * ctx.depth) > -MIN(f.active * ctx.depth)
+             HAVING MAX(f.active * " . $DB->sql_cast_2signed('ctx.depth') .
+                    ") > -MIN(f.active * " . $DB->sql_cast_2signed('ctx.depth') . ")
              ORDER BY MAX(f.sortorder)) active
-         LEFT JOIN {filter_config} fc ON fc.filter = active.filter AND fc.contextid = $context->id");
+         LEFT JOIN {filter_config} fc ON fc.filter = active.filter AND fc.contextid = $context->id";
+    $rs = $DB->get_recordset_sql($sql);
 
     // Masssage the data into the specified format to return.
     $filters = array();
@@ -713,13 +714,13 @@ function filter_get_available_in_context($context) {
     }
 
     // The following SQL is tricky, in the same way at the SQL in filter_get_active_in_context.
-    return $DB->get_records_sql(
-        "SELECT parent_states.filter,
+    $sql = "SELECT parent_states.filter,
                 CASE WHEN fa.active IS NULL THEN " . TEXTFILTER_INHERIT . "
                 ELSE fa.active END AS localstate,
              parent_states.inheritedstate
          FROM (SELECT f.filter,
-                    CASE WHEN MAX(f.active * ctx.depth) > -MIN(f.active * ctx.depth) THEN " . TEXTFILTER_ON . "
+                    CASE WHEN MAX(f.active * " . $DB->sql_cast_2signed('ctx.depth') .
+                            ") > -MIN(f.active * " . $DB->sql_cast_2signed('ctx.depth') . ") THEN " . TEXTFILTER_ON . "
                     ELSE " . TEXTFILTER_OFF . " END AS inheritedstate
              FROM {filter_active} f
              JOIN {context} ctx ON f.contextid = ctx.id
@@ -727,7 +728,8 @@ function filter_get_available_in_context($context) {
              GROUP BY filter
              HAVING MIN(f.active) > " . TEXTFILTER_DISABLED . "
              ORDER BY MAX(f.sortorder)) parent_states
-         LEFT JOIN {filter_active} fa ON fa.filter = parent_states.filter AND fa.contextid = $context->id");
+         LEFT JOIN {filter_active} fa ON fa.filter = parent_states.filter AND fa.contextid = $context->id";
+    return $DB->get_records_sql($sql);
 }
 
 /**
