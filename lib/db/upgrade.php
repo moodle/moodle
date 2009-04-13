@@ -1623,6 +1623,23 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009040302);
     }
 
+    if ($result && $oldversion < 2009040600) {
+    /// Ensure that $CFG->stringfilters is set.
+        if (empty($CFG->stringfilters)) {
+            if (!empty($CFG->filterall)) {
+                set_config('stringfilters', $CFG->textfilters);
+            } else {
+                set_config('stringfilters', '');
+            }
+        }
+
+        set_config('filterall', !empty($CFG->stringfilters));
+        unset_config('textfilters');
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009040600);
+    }
+
     return $result;
 }
 
