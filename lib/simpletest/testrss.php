@@ -17,9 +17,9 @@ class moodlesimplepie_test extends UnitTestCase {
     var $testurl = 'http://download.moodle.org/unittest/rsstest.xml';
 
     function test_getfeed(){
-        $feed = new Moodle_Simplepie($this->testurl);
+        $feed = new moodle_simplepie($this->testurl);
 
-        $this->assertIsA($feed, 'Moodle_SimplePie');
+        $this->assertIsA($feed, 'moodle_simplepie');
 
         $this->assertFalse($feed->error());
 
@@ -68,7 +68,7 @@ EOD;
     }
 
     function test_failfeed(){
-        $feed = new Moodle_Simplepie('http://111xxxxxxxxxxxxxmoodle.org/');
+        $feed = new moodle_simplepie('http://111xxxxxxxxxxxxxmoodle.org/');
 
         $this->assertTrue($feed->error());
     }

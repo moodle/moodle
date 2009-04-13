@@ -42,13 +42,13 @@ require_once($CFG->libdir.'/simplepie/simplepie.inc');
  * curl functions/proxy config  for making http
  * requests.
  */
-class Moodle_SimplePie extends SimplePie
+class moodle_simplepie extends SimplePie
 {
     function __construct($feed_url = null){
         global $CFG;
 
         // Use the Moodle class for http requests
-        $this->file_class = 'Moodle_SimplePie_File';
+        $this->file_class = 'moodle_simplepie_file';
 
         // Use sensible cache directory
         $cachedir = $CFG->dataroot.'/cache/simplepie/';
@@ -69,7 +69,7 @@ class Moodle_SimplePie extends SimplePie
  * http requests. By using the moodle curl class
  * we ensure that the correct proxy configuration is used.
  */
-class Moodle_SimplePie_File extends SimplePie_File
+class moodle_simplepie_file extends SimplePie_File
 {
 
     /**
@@ -77,7 +77,7 @@ class Moodle_SimplePie_File extends SimplePie_File
      * been modifed to add in use the Moodle curl class rather than php curl
      * functions.
      */
-    function Moodle_SimplePie_File($url, $timeout = 10, $redirects = 5, $headers = null, $useragent = null, $force_fsockopen = false)
+    function moodle_simplepie_file($url, $timeout = 10, $redirects = 5, $headers = null, $useragent = null, $force_fsockopen = false)
     {
         $this->url = $url;
         $this->method = SIMPLEPIE_FILE_SOURCE_REMOTE | SIMPLEPIE_FILE_SOURCE_CURL;
