@@ -9009,11 +9009,12 @@ WHERE
             $isimport = false; // course restore with role assignments
         }
 
+        $newcoursecontext = restore_get_new_context($restore, 'course', CONTEXT_COURSE, $course->course_id);
         if (!empty($course->roleassignments) && !$isimport) {
             $courseassignments = $course->roleassignments;
 
             foreach ($courseassignments as $oldroleid => $courseassignment) {
-                restore_write_roleassignments($restore, $courseassignment->assignments, "course", CONTEXT_COURSE, $course->course_id, $oldroleid);
+                restore_write_roleassignments($restore, $courseassignment->assignments, $newcoursecontext, $oldroleid);
             }
         }
         /*****************************************************
@@ -9026,7 +9027,7 @@ WHERE
                 // if not importing into exiting course, or creating new role, we are ok
                 // local course overrides to be respected (i.e. restored course overrides ignored)
                 if ($restore->restoreto != 1 || empty($restore->rolesmapping[$oldroleid])) {
-                    restore_write_roleoverrides($restore, $courseoverride->overrides, "course", CONTEXT_COURSE, $course->course_id, $oldroleid);
+                    restore_write_roleoverrides($restore, $courseoverride->overrides, $newcoursecontext, $oldroleid);
                 }
             }
         }
@@ -9045,15 +9046,16 @@ WHERE
         foreach ($secs as $section) {
             if (isset($section->mods)) {
                 foreach ($section->mods as $modid=>$mod) {
+                    $newmodcontext = restore_get_new_context($restore, 'course_modules', CONTEXT_MODULE, $modid);
                     if (isset($mod->roleassignments) && !$isimport) {
                         foreach ($mod->roleassignments as $oldroleid=>$modassignment) {
-                            restore_write_roleassignments($restore, $modassignment->assignments, "course_modules", CONTEXT_MODULE, $modid, $oldroleid);
+                            restore_write_roleassignments($restore, $modassignment->assignments, $newmodcontext, $oldroleid);
                         }
                     }
                     // role overrides always applies, in import or backup/restore
                     if (isset($mod->roleoverrides)) {
                         foreach ($mod->roleoverrides as $oldroleid=>$modoverride) {
-                            restore_write_roleoverrides($restore, $modoverride->overrides, "course_modules", CONTEXT_MODULE, $modid, $oldroleid);
+                            restore_write_roleoverrides($restore, $modoverride->overrides, $newmodcontext, $oldroleid);
                         }
                     }
                 }
@@ -9072,16 +9074,17 @@ WHERE
             $blocks = restore_read_xml_blocks($restore, $xmlfile);
             if (isset($blocks->instances)) {
                 foreach ($blocks->instances as $instance) {
+                    $newblockcontext = restore_get_new_context($restore, 'block_instance', CONTEXT_BLOCK, $instance->id);
                     if (isset($instance->roleassignments) && !$isimport) {
                         foreach ($instance->roleassignments as $oldroleid=>$blockassignment) {
-                            restore_write_roleassignments($restore, $blockassignment->assignments, "block_instance", CONTEXT_BLOCK, $instance->id, $oldroleid);
+                            restore_write_roleassignments($restore, $blockassignment->assignments, $newblockcontext, $oldroleid);
 
                         }
                     }
                     // likewise block overrides should always be restored like mods
                     if (isset($instance->roleoverrides)) {
                         foreach ($instance->roleoverrides as $oldroleid=>$blockoverride) {
-                            restore_write_roleoverrides($restore, $blockoverride->overrides, "block_instance", CONTEXT_BLOCK, $instance->id, $oldroleid);
+                            restore_write_roleoverrides($restore, $blockoverride->overrides, $newblockcontext, $oldroleid);
                         }
                     }
                 }
@@ -9099,14 +9102,15 @@ WHERE
             //For each user, take its info from backup_ids
             foreach ($info->users as $userid) {
                 $rec = backup_getid($restore->backup_unique_code,"user",$userid);
+                $newusercontext = restore_get_new_context($restore, 'user', CONTEXT_USER, $userid);
                 if (isset($rec->info->roleassignments)) {
                     foreach ($rec->info->roleassignments as $oldroleid=>$userassignment) {
-                       restore_write_roleassignments($restore, $userassignment->assignments, "user", CONTEXT_USER, $userid, $oldroleid);
+                       restore_write_roleassignments($restore, $userassignment->assignments, $newusercontext, $oldroleid);
                     }
                 }
                 if (isset($rec->info->roleoverrides)) {
                     foreach ($rec->info->roleoverrides as $oldroleid=>$useroverride) {
-                       restore_write_roleoverrides($restore, $useroverride->overrides, "user", CONTEXT_USER, $userid, $oldroleid);
+                       restore_write_roleoverrides($restore, $useroverride->overrides, $newusercontext, $oldroleid);
                     }
                 }
             }
@@ -9115,8 +9119,30 @@ WHERE
         return true;
     }
 
+    /**
+     * Get the context object from the site we are restoring to that corresponds
+     * to a particular context on the site we backed up from.
+     * @return object the restored context.
+     */
+    function restore_get_new_context($restore, $table, $contextlevel, $oldid) {
+        // hack to make the correct contextid for course level imports
+        if ($contextlevel == CONTEXT_COURSE) {
+            $oldinstance->new_id = $restore->course_id;
+        } else {
+            $oldinstance = backup_getid($restore->backup_unique_code,$table,$oldid);
+        }
+
+        // new instance id not found (not restored module/block/user)... skip any assignment
+        if (!$oldinstance || empty($oldinstance->new_id)) {
+            continue;
+        }
+
+        $newcontext = get_context_instance($contextlevel, $oldinstance->new_id);
+        return $newcontext;
+    }
+
     // auxillary function to write role assignments read from xml to db
-    function restore_write_roleassignments($restore, $assignments, $table, $contextlevel, $oldid, $oldroleid) {
+    function restore_write_roleassignments($restore, $assignments, $newcontext, $oldroleid) {
 
         $role = backup_getid($restore->backup_unique_code, "role", $oldroleid);
 
@@ -9132,19 +9158,6 @@ WHERE
             $assignment->modifierid = !empty($oldmodifier->new_id) ? $oldmodifier->new_id : 0; // new modifier id here
             $assignment->roleid = $role->new_id; // restored new role id
 
-            // hack to make the correct contextid for course level imports
-            if ($contextlevel == CONTEXT_COURSE) {
-                $oldinstance->new_id = $restore->course_id;
-            } else {
-                $oldinstance = backup_getid($restore->backup_unique_code,$table,$oldid);
-            }
-
-            // new instance id not found (not restored module/block/user)... skip any assignment
-            if (!$oldinstance || empty($oldinstance->new_id)) {
-                continue;
-            }
-
-            $newcontext = get_context_instance($contextlevel, $oldinstance->new_id);
             $assignment->contextid = $newcontext->id; // new context id
             // might already have same assignment
             role_assign($assignment->roleid, $assignment->userid, 0, $assignment->contextid, $assignment->timestart, $assignment->timeend, $assignment->hidden, $assignment->enrol, $assignment->timemodified);
@@ -9153,7 +9166,7 @@ WHERE
     }
 
     // auxillary function to write role assignments read from xml to db
-    function restore_write_roleoverrides($restore, $overrides, $table, $contextlevel, $oldid, $oldroleid) {
+    function restore_write_roleoverrides($restore, $overrides, $newcontext, $oldroleid) {
 
         // it is possible to have an override not relevant to this course context.
         // should be ignored(?)
@@ -9167,19 +9180,6 @@ WHERE
             $override->modifierid = !empty($oldmodifier->new_id)?$oldmodifier->new_id:0; // new modifier id here
             $override->roleid = $role->new_id; // restored new role id
 
-            // hack to make the correct contextid for course level imports
-            if ($contextlevel == CONTEXT_COURSE) {
-                $oldinstance->new_id = $restore->course_id;
-            } else {
-                $oldinstance = backup_getid($restore->backup_unique_code,$table,$oldid);
-            }
-
-            // new instance id not found (not restored module/block/user)... skip any override
-            if (!$oldinstance || empty($oldinstance->new_id)) {
-                continue;
-            }
-
-            $newcontext = get_context_instance($contextlevel, $oldinstance->new_id);
             $override->contextid = $newcontext->id; // new context id
             // use assign capability instead so we can add context to context_rel
             assign_capability($override->capability, $override->permission, $override->roleid, $override->contextid);
