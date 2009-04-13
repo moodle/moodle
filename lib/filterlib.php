@@ -161,9 +161,9 @@ function filter_get_all_installed() {
 
 /**
  * Set the global activated state for a text filter.
- * @param $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
- * @param $state One of the values TEXTFILTER_ON, TEXTFILTER_OFF or TEXTFILTER_DISABLED.
- * @param $sortorder (optional) a position in the sortorder to place this filter.
+ * @param string$filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ * @param integer $state One of the values TEXTFILTER_ON, TEXTFILTER_OFF or TEXTFILTER_DISABLED.
+ * @param integer $sortorder (optional) a position in the sortorder to place this filter.
  *      If not given defaults to:
  *      No change in order if we are updating an exsiting record, and not changing to or from TEXTFILTER_DISABLED.
  *      Just after the last currently active filter for a change to TEXTFILTER_ON or TEXTFILTER_OFF
@@ -240,6 +240,48 @@ function filter_set_global_state($filter, $state, $sortorder = false) {
     } else {
         $DB->update_record('filter_active', $rec);
     }
+}
+
+/**
+ * Set a particular local config variable for a filter in a context.
+ * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ * @param integer $contextid The ID of the context to get the local config for.
+ * @param string $name the setting name.
+ * @param string $value the corresponding value.
+ */
+function filter_set_local_config($filter, $contextid, $name, $value) {
+    global $DB;
+    $rec = $DB->get_record('filter_config', array('filter' => $filter, 'contextid' => $contextid, 'name' => $name));
+    $insert = false;
+    if (empty($rec)) {
+        $insert = true;
+        $rec = new stdClass;
+        $rec->filter = $filter;
+        $rec->contextid = $contextid;
+        $rec->name = $name;
+    }
+
+    $rec->value = $value;
+
+    if ($insert) {
+        $DB->insert_record('filter_config', $rec);
+    } else {
+        $DB->update_record('filter_config', $rec);
+    }
+}
+
+/**
+ * Get local config variables for a filter in a context. Normally (when your
+ * filter is running) you don't need to call this, becuase the config is fetched
+ * for you automatically. You only need this, for example, when you are getting
+ * the config so you can show the user an editing from.
+ * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ * @param integer $contextid The ID of the context to get the local config for.
+ * @return array of name => value pairs.
+ */
+function filter_get_local_config($filter, $contextid) {
+    global $DB;
+    return $DB->get_records_menu('filter_config', array('filter' => $filter, 'contextid' => $contextid), '', 'name,value');
 }
 
 /**
