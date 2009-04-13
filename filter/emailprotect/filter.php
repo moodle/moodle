@@ -8,10 +8,6 @@ class emailprotect_filter extends filter_base {
         parent::__construct($courseid, $format, $options);
     }
     function filter($text) {
-        if (!empty($CFG->formatstring)) {
-            return $text;
-        }
-                                                
     /// Do a quick check using stripos to avoid unnecessary work
         if (strpos($text, '@') === false) {
             return $text;
