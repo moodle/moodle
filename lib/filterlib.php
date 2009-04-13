@@ -5,6 +5,7 @@
  * The states a filter can be in, stored in the filter_active table.
  */
 define('TEXTFILTER_ON', 1);
+define('TEXTFILTER_INHERIT', 0);
 define('TEXTFILTER_OFF', -1);
 define('TEXTFILTER_DISABLED', -9999);
 
@@ -161,7 +162,7 @@ function filter_get_all_installed() {
 
 /**
  * Set the global activated state for a text filter.
- * @param string$filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
  * @param integer $state One of the values TEXTFILTER_ON, TEXTFILTER_OFF or TEXTFILTER_DISABLED.
  * @param integer $sortorder (optional) a position in the sortorder to place this filter.
  *      If not given defaults to:
@@ -174,8 +175,8 @@ function filter_set_global_state($filter, $state, $sortorder = false) {
 
     // Check requested state is valid.
     if (!in_array($state, array(TEXTFILTER_ON, TEXTFILTER_OFF, TEXTFILTER_DISABLED))) {
-        throw new coding_exception("Illegal option '$state' passed to filter_set_global_state. ' .
-                'Must be one of TEXTFILTER_ON, TEXTFILTER_OFF or TEXTFILTER_DISABLED.");
+        throw new coding_exception("Illegal option '$state' passed to filter_set_global_state. " .
+                "Must be one of TEXTFILTER_ON, TEXTFILTER_OFF or TEXTFILTER_DISABLED.");
     }
 
     // Check sortorder is valid.
@@ -243,9 +244,52 @@ function filter_set_global_state($filter, $state, $sortorder = false) {
 }
 
 /**
+ * Set the local activated state for a text filter.
+ * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ * @param integer $contextid The id of the context to get the local config for.
+ * @param integer $state One of the values TEXTFILTER_ON, TEXTFILTER_OFF or TEXTFILTER_INHERIT.
+ */
+function filter_set_local_state($filter, $contextid, $state) {
+    global $DB;
+
+    // Check requested state is valid.
+    if (!in_array($state, array(TEXTFILTER_ON, TEXTFILTER_OFF, TEXTFILTER_INHERIT))) {
+        throw new coding_exception("Illegal option '$state' passed to filter_set_local_state. " .
+                "Must be one of TEXTFILTER_ON, TEXTFILTER_OFF or TEXTFILTER_INHERIT.");
+    }
+
+    if ($contextid == get_context_instance(CONTEXT_SYSTEM)->id) {
+        throw new coding_exception('You cannot use filter_set_local_state ' .
+                'with $contextid equal to the system context id.');
+    }
+
+    if ($state == TEXTFILTER_INHERIT) {
+        $DB->delete_records('filter_active', array('filter' => $filter, 'contextid' => $contextid));
+        return;
+    }
+
+    $rec = $DB->get_record('filter_active', array('filter' => $filter, 'contextid' => $contextid));
+    $insert = false;
+    if (empty($rec)) {
+        $insert = true;
+        $rec = new stdClass;
+        $rec->filter = $filter;
+        $rec->contextid = $contextid;
+    }
+
+    $rec->active = $state;
+
+    if ($insert) {
+        $DB->insert_record('filter_active', $rec);
+    } else {
+        $DB->update_record('filter_active', $rec);
+    }
+}
+
+/**
  * Set a particular local config variable for a filter in a context.
  * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
- * @param integer $contextid The ID of the context to get the local config for.
+ * @param integer $contextid The id of the context to get the local config for.
  * @param string $name the setting name.
  * @param string $value the corresponding value.
  */

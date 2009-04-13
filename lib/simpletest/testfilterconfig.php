@@ -38,9 +38,9 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->libdir . '/filterlib.php');
 
 /**
- * Test functions that use just the filter_active table.
+ * Test functions that affect filter_active table with contextid = $syscontextid.
  */
-class filter_active_test extends UnitTestCaseUsingDatabase {
+class filter_active_global_test extends UnitTestCaseUsingDatabase {
     private $syscontextid;
 
     public function setUp() {
@@ -216,6 +216,78 @@ class filter_active_test extends UnitTestCaseUsingDatabase {
         filter_set_global_state('filter/1', TEXTFILTER_DISABLED);
         // Validate.
         $this->assert_global_sort_order(array('filter/2', 'filter/3', 'filter/1'));
+    }
+}
+
+/**
+ * Test functions that affect filter_active table with contextid = $syscontextid.
+ */
+class filter_active_local_test extends UnitTestCaseUsingDatabase {
+    public function setUp() {
+        // Create the table we need and switch to test DB.
+        $this->create_test_table('filter_active', 'lib');
+        $this->switch_to_test_db();
+    }
+
+    private function assert_only_one_local_setting($filter, $contextid, $state) {
+        $recs = $this->testdb->get_records('filter_active');
+        $this->assertEqual(1, count($recs), 'More than one record returned %s.');
+        $rec = reset($recs);
+        $expectedrec = new stdClass;
+        $expectedrec->filter = $filter;
+        $expectedrec->contextid = $contextid;
+        $expectedrec->active = $state;
+        $this->assert(new CheckSpecifiedFieldsExpectation($expectedrec), $rec);
+    }
+
+    private function assert_no_local_setting() {
+        $this->assertEqual(0, $this->testdb->count_records('filter_active'));
+    }
+
+    public function test_local_on() {
+        // Exercise SUT.
+        filter_set_local_state('filter/name', 123, TEXTFILTER_ON);
+        // Validate.
+        $this->assert_only_one_local_setting('filter/name', 123, TEXTFILTER_ON);
+    }
+
+    public function test_local_off() {
+        // Exercise SUT.
+        filter_set_local_state('filter/name', 123, TEXTFILTER_OFF);
+        // Validate.
+        $this->assert_only_one_local_setting('filter/name', 123, TEXTFILTER_OFF);
+    }
+
+    public function test_local_inherit() {
+        global $DB;
+        // Exercise SUT.
+        filter_set_local_state('filter/name', 123, TEXTFILTER_INHERIT);
+        // Validate.
+        $this->assert_no_local_setting();
+    }
+
+    public function test_local_invalid_state_throws_exception() {
+        // Set expectation.
+        $this->expectException();
+        // Exercise SUT.
+        filter_set_local_state('filter/name', 123, -9999);
+    }
+
+    public function test_throws_exception_when_setting_global() {
+        // Set expectation.
+        $this->expectException();
+        // Exercise SUT.
+        filter_set_local_state('filter/name', get_context_instance(CONTEXT_SYSTEM)->id, TEXTFILTER_INHERIT);
+    }
+
+    public function test_local_inherit_deletes_existing() {
+        global $DB;
+        // Setup fixture.
+        filter_set_local_state('filter/name', 123, TEXTFILTER_INHERIT);
+        // Exercise SUT.
+        filter_set_local_state('filter/name', 123, TEXTFILTER_INHERIT);
+        // Validate.
+        $this->assert_no_local_setting();
     }
 }
 
