@@ -95,7 +95,12 @@
         break;
 
     case 'delete':
-        $filtername = $fitlernames[$filterpath];
+        if (!empty($filternames[$filterpath])) {
+            $filtername = $filternames[$filterpath];
+        } else {
+            $filtername = $filterpath;
+        }
+
         if (substr($filterpath, 0, 4) == 'mod/') {
             $mod = basename($filterpath);
             $a = new stdClass;
@@ -109,9 +114,9 @@
             $title = get_string('deletefilterareyousure', 'admin', $filtername);
             print_header($title, $title);
             print_heading($title);
-            notice_yesno(get_string('deletefilterareyousuremessage', 'admin', $filtername),
-                    admin_url('filters.php?action=delete&amp;filterpath=' . $delete . '&amp;confirm=1&amp;sesskey=' . sesskey()),
-                    $returnurl, NULL, NULL, 'post', 'get');
+            notice_yesno(get_string('deletefilterareyousuremessage', 'admin', $filtername), $CFG->wwwroot . '/' . $CFG->admin .
+                    '/filters.php?action=delete&amp;filterpath=' . $filterpath . '&amp;confirm=1&amp;sesskey=' . sesskey(),
+                    "$CFG->wwwroot/$CFG->admin/settings.php", NULL, array('section' => 'managefilters'), 'post', 'get');
             print_footer('empty');
             exit;
         }
@@ -125,11 +130,11 @@
         filter_delete_all_data($filterpath);
 
         $a = new stdClass;
-        $a->fitler = $filtername;
-        $a->directory = $filterparth;
+        $a->filter = $filtername;
+        $a->directory = $filterpath;
         print_box(get_string('deletefilterfiles', 'admin', $a), 'generalbox', 'notice');
         print_continue($returnurl);
-        admin_externalpage_print_footer();
+        print_footer('empty');
         exit;
     }
 

@@ -3753,7 +3753,11 @@ class admin_setting_managefilters extends admin_setting {
         $filter = $filterinfo->filter;
 
         // Filter name
-        $row[] = $this->filternames[$filter];
+        if (!empty($this->filternames[$filter])) {
+            $row[] = $this->filternames[$filter];
+        } else {
+            $row[] = '<span class="error">' . get_string('filemissing', '', $filter) . '</span>';
+        }
 
         // Disable/off/on
         $row[] = popup_form($this->action_url($filter, 'setstate') . '&amp;newstate=', $this->activechoices,
@@ -3789,6 +3793,9 @@ class admin_setting_managefilters extends admin_setting {
         }
         $row[] = $settings;
 
+        // Delete
+        $row[] = '<a href="' . $this->action_url($filter, 'delete') . '">' . $this->strdelete . '</a>';
+
         return $row;
     }
 
@@ -3807,6 +3814,7 @@ class admin_setting_managefilters extends admin_setting {
         $this->strup = get_string('up');
         $this->strdown = get_string('down');
         $this->strsettings = get_string('settings');
+        $this->strdelete = get_string('delete');
 
         $filters = filter_get_global_states();
 
@@ -3823,7 +3831,7 @@ class admin_setting_managefilters extends admin_setting {
 
         $table = new object();
         $table->head  = array(get_string('filter'), get_string('isactive', 'filters'),
-                get_string('order'), get_string('applyto', 'filters'), $this->strsettings);
+                get_string('order'), get_string('applyto', 'filters'), $this->strsettings, $this->strdelete);
         $table->align = array('left', 'left', 'center', 'left', 'left');
         $table->width = '100%';
         $table->data  = array();
