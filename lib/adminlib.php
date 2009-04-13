@@ -3711,7 +3711,8 @@ class admin_setting_managefilters extends admin_setting {
     }
 
     public function write_setting($data) {
-        // do not write any setting
+        // do not write any settings. Instead all our UI submits to admin/filters.php
+        // which makes and changes, then redirects back.
         return '';
     }
 
@@ -3734,119 +3735,120 @@ class admin_setting_managefilters extends admin_setting {
         return false;
     }
 
+    protected function action_url($filterpath, $action) {
+        global $CFG;
+        return $CFG->wwwroot . '/' . $CFG->admin . '/filters.php?sesskey=' . sesskey() .
+                '&amp;filterpath=' . urlencode($filterpath) . '&amp;action=' . $action;
+    }
+
+    protected function action_icon($url, $icon, $straction) {
+        global $CFG;
+        return '<a href="' . $url . '" title="' . $straction . '">' .
+                '<img src="' . $CFG->pixpath . '/t/' . $icon . '.gif" alt="' . $straction . '" /></a> ';
+    }
+
+    protected function get_table_row($filterinfo, $isfirstrow, $islastactive) {
+        global $CFG;
+        $row = array();
+        $filter = $filterinfo->filter;
+
+        $row[] = $this->filternames[$filter];
+
+        $row[] = popup_form($this->action_url($filter, 'setstate') . '&amp;newstate=', $this->activechoices,
+                'active' . basename($filter), $filterinfo->active, '', '', '', true, 'self', '', NULL, get_string('save'));
+
+        $updown = '';
+        $spacer = '<img src="' . $CFG->pixpath . '/spacer.gif" class="iconsmall" alt="" /> ';
+        if ($filterinfo->active != TEXTFILTER_DISABLED) {
+            if (!$isfirstrow) {
+                $updown .= $this->action_icon($this->action_url($filter, 'up'), 'up', $this->strup);
+            } else {
+                $updown .= $spacer;
+            }
+            if (!$islastactive) {
+                $updown .= $this->action_icon($this->action_url($filter, 'down'), 'down', $this->strdown);
+            } else {
+                $updown .= $spacer;
+            }
+        }
+        $row[] = $updown;
+
+        $row[] = 'TODO Apply to col';
+
+        // settings link (if defined)
+        $settings = '';
+        if (filter_has_global_settings($filter)) {
+            $settings = '<a href="' . $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=filtersetting' .
+                    str_replace('/', '',$filter) . '">' . $this->strsettings . '</a>';
+        }
+        $row[] = $settings;
+
+        return $row;
+    }
+
     public function output_html($data, $query='') {
         global $CFG;
 
-        $strname     = get_string('name');
-        $strhide     = get_string('disable');
-        $strshow     = get_string('enable');
-        $strhideshow = "$strhide/$strshow";
-        $strsettings = get_string('settings');
-        $strup       = get_string('up');
-        $strdown     = get_string('down');
-        $strupdown   = "$strup/$strdown";
+        $this->activechoices = array(
+            TEXTFILTER_DISABLED => get_string('disabled', 'filters'),
+            TEXTFILTER_OFF => get_string('offbutavailable', 'filters'),
+            TEXTFILTER_ON => get_string('on', 'filters'),
+        );
+        $this->applytochoices = array(
+            1 => get_string('content', 'filters'),
+            3 => get_string('contentandheadings', 'filters'),
+        );
+        $this->strup = get_string('up');
+        $this->strdown = get_string('down');
+        $this->strsettings = get_string('settings');
 
-        // get a list of possible filters (and translate name if possible)
-        // note filters can be in the dedicated filters area OR in their
-        // associated modules
-        $installedfilters = filter_get_all_installed();
-        $filtersettings_new = array();
-        foreach ($installedfilters as $path => $strfiltername) {
-            $settingspath_new = $CFG->dirroot . '/' . $path . '/filtersettings.php';
-            if (is_readable($settingspath_new)) {
-                $filtersettings_new[] = $path;
-            }
-        }
+        $filters = filter_get_global_states();
 
-        // get all the currently selected filters
-        if (!empty($CFG->textfilters)) {
-            $oldactivefilters = explode(',', $CFG->textfilters);
-            $oldactivefilters = array_unique($oldactivefilters);
-        } else {
-            $oldactivefilters = array();
-        }
-
-        // take this opportunity to clean up filters
-        $activefilters = array();
-        foreach ($oldactivefilters as $oldactivefilter) {
-            if (!empty($oldactivefilter) and array_key_exists($oldactivefilter, $installedfilters)) {
-                $activefilters[] = $oldactivefilter;
-            }
-        }
-
-        // Get the list of all filters, and pull the active filters
-        // to the top.
-        $displayfilters = array();
-        foreach ($activefilters as $activefilter) {
-            $name = $installedfilters[$activefilter];
-            $displayfilters[$activefilter] = $name;
-        }
-        foreach ($installedfilters as $key => $filter) {
-            if (!array_key_exists($key, $displayfilters)) {
-                $displayfilters[$key] = $filter;
-            }
+        // In case any new filters have been installed, but not put in the table yet.
+        $this->filternames = filter_get_all_installed();
+        $newfilters = $this->filternames;
+        foreach ($filters as $filter => $notused) {
+            unset($newfilters[$filter]);
         }
 
         $return = print_heading(get_string('actfilterhdr', 'filters'), '', 3, 'main', true);
         $return .= print_box_start('generalbox filtersui', '', true);
 
         $table = new object();
-        $table->head  = array($strname, $strhideshow, $strupdown, $strsettings);
-        $table->align = array('left', 'center', 'center', 'center');
+        $table->head  = array(get_string('filter'), get_string('isactive', 'filters'),
+                get_string('order'), get_string('applyto', 'filters'), $this->strsettings);
+        $table->align = array('left', 'left', 'center', 'left', 'left');
         $table->width = '90%';
         $table->data  = array();
 
-        $filtersurl = "$CFG->wwwroot/$CFG->admin/filters.php?sesskey=".sesskey();
-        $imgurl     = "$CFG->pixpath/t";
+        $lastactive = null;
+        foreach ($filters as $filter => $filterinfo) {
+            if ($filterinfo->active != TEXTFILTER_DISABLED) {
+                $lastactive = $filter;
+            }
+        }
 
         // iterate through filters adding to display table
-        $updowncount = 1;
-        $activefilterscount = count($activefilters);
-        foreach ($displayfilters as $path => $name) {
-            $upath = urlencode($path);
-            // get hide/show link
-            if (in_array($path, $activefilters)) {
-                $hideshow = "<a href=\"$filtersurl&amp;action=hide&amp;filterpath=$upath\">";
-                $hideshow .= "<img src=\"{$CFG->pixpath}/i/hide.gif\" class=\"icon\" alt=\"$strhide\" /></a>";
-                $hidden = false;
-                $displayname = "<span>$name</span>";
+        $firstrow = true;
+        foreach ($filters as $filter => $filterinfo) {
+            $row = $this->get_table_row($filterinfo, $firstrow, $filter == $lastactive);
+            $table->data[] = $row;
+            if ($filterinfo->active == TEXTFILTER_DISABLED) {
+                $table->rowclass[] = 'dimmed_text';
+            } else {
+                $table->rowclass[] = '';
             }
-            else {
-                $hideshow = "<a href=\"$filtersurl&amp;action=show&amp;filterpath=$upath\">";
-                $hideshow .= "<img src=\"{$CFG->pixpath}/i/show.gif\" class=\"icon\" alt=\"$strshow\" /></a>";
-                $hidden = true;
-                $displayname = "<span class=\"dimmed_text\">$name</span>";
-            }
-
-            // get up/down link (only if not hidden)
-            $updown = '';
-            if (!$hidden) {
-                if ($updowncount>1) {
-                    $updown .= "<a href=\"$filtersurl&amp;action=up&amp;filterpath=$upath\">";
-                    $updown .= "<img src=\"$imgurl/up.gif\" alt=\"$strup\" /></a>&nbsp;";
-                }
-                else {
-                    $updown .= "<img src=\"$CFG->pixpath/spacer.gif\" class=\"icon\" alt=\"\" />&nbsp;";
-                }
-                if ($updowncount<$activefilterscount) {
-                    $updown .= "<a href=\"$filtersurl&amp;action=down&amp;filterpath=$upath\">";
-                    $updown .= "<img src=\"$imgurl/down.gif\" alt=\"$strdown\" /></a>";
-                }
-                else {
-                    $updown .= "<img src=\"$CFG->pixpath/spacer.gif\" class=\"icon\" alt=\"\" />";
-                }
-                ++$updowncount;
-            }
-
-            // settings link (if defined)
-            $settings = '';
-            if (in_array($path, $filtersettings_new)) {
-                $settings = "<a href=\"settings.php?section=filtersetting".str_replace('/', '',$path)."\">$strsettings</a>";
-            }
-
-            // write data into the table object
-            $table->data[] = array($displayname, $hideshow, $updown, $settings);
+            $firstrow = false;
         }
+        foreach ($newfilters as $filter => $filtername) {
+            $filterinfo = new stdClass;
+            $filterinfo->filter = $filter;
+            $filterinfo->active = TEXTFILTER_DISABLED;
+            $row = $this->get_table_row($filterinfo, $firstrow, $filter == $lastactive);
+            $table->data[] = $row;
+            $table->rowclass[] = 'dimmed_text';
+        }
+
         $return .= print_table($table, true);
         $return .= get_string('tablenosave', 'filters');
         $return .= print_box_end(true);

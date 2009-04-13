@@ -574,6 +574,43 @@ function filter_get_active_in_context($context) {
 }
 
 /**
+ * This function is for use by the filter administration page.
+ * @return array 'filtername' => object with fields 'filter' (=filtername), 'active' and 'sortorder'
+ */
+function filter_get_global_states() {
+    global $DB;
+    $context = get_context_instance(CONTEXT_SYSTEM);
+    return $DB->get_records('filter_active', array('contextid' => $context->id), 'sortorder', 'filter,active,sortorder');
+}
+
+/**
+ * Delete all the data in the database relating to a filter, prior to deleting it.
+ * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ */
+function filter_delete_all_data($filter) {
+    global $DB;
+    if (substr($filter, 0, 7) == 'filter/') {
+        unset_all_config_for_plugin('filter_' . basename($filter));
+    }
+    $DB->delete_records('filter_active', array('filter' => $filter));
+    $DB->delete_records('filter_config', array('filter' => $filter));
+}
+
+/**
+ * Does this filter have a global settings page in the admin tree?
+ * (The settings page for a filter must be called, for example,
+ * filtersettingfiltertex or filtersettingmodglossay.)
+ *
+ * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
+ * @return boolean Whether there should be a 'Settings' link on the config page.
+ */
+function filter_has_global_settings($filter) {
+    global $CFG;
+    $settingspath = $CFG->dirroot . '/' . $filter . '/filtersettings.php';
+    return is_readable($settingspath);
+}
+
+/**
  * Process phrases intelligently found within a HTML text (such as adding links)
  *
  * param  text             the text that we are filtering

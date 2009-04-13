@@ -1,12 +1,44 @@
 <?php // $Id$
 
-    require_once('../config.php');
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.org                                            //
+//                                                                       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
 
-    $action     = optional_param('action', '', PARAM_ACTION);
+/**
+ * Processes actions from the admin_setting_managefilters object (defined in
+ * adminlib.php).
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package administration
+ *//** */
+
+    require_once(dirname(__FILE__) . '/../config.php');
+
+    $action = optional_param('action', '', PARAM_ACTION);
     $filterpath = optional_param('filterpath', '', PARAM_PATH);
 
     require_login();
-    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+    require_capability('moodle/site:config', $systemcontext);
 
     $returnurl = "$CFG->wwwroot/$CFG->admin/settings.php?section=managefilters";
 
@@ -14,89 +46,90 @@
         redirect($returnurl);
     }
 
-    // get a list of installed filters
-    $installedfilters = array();
-    $filterlocations = array('mod','filter');
-    foreach ($filterlocations as $filterlocation) {
-        $plugins = get_list_of_plugins($filterlocation);
-        foreach ($plugins as $plugin) {
-            $pluginpath = "$CFG->dirroot/$filterlocation/$plugin/filter.php";
-            if (is_readable($pluginpath)) {
-                $installedfilters["$filterlocation/$plugin"] = "$filterlocation/$plugin";
-            }
-        }
+    $filters = filter_get_global_states();
+
+    // In case any new filters have been installed, but not put in the table yet.
+    $fitlernames = filter_get_all_installed();
+    $newfilters = $fitlernames;
+    foreach ($filters as $filter => $notused) {
+        unset($newfilters[$filter]);
     }
 
-    // get all the currently selected filters
-    if (!empty($CFG->textfilters)) {
-        $activefilters = explode(',', $CFG->textfilters);
-    } else {
-        $activefilters = array();
+    if (!isset($filters[$filterpath]) && !isset($newfilters[$filterpath])) {
+        throw new moodle_exception('filternotinstalled', 'error', $returnurl, $filterpath);
     }
-
-    //======================
-    // Process Actions
-    //======================
 
     switch ($action) {
 
-    case 'hide':
-        $key=array_search($filterpath, $activefilters);
-        // check filterpath is valid
-        if ($key===false) {
-            break;
-        }
-        // just delete it
-        unset($activefilters[$key]);
-        break;
-
-    case 'show':
-        // check filterpath is valid
-        if (!array_key_exists($filterpath, $installedfilters)) {
-            print_error('filternotinstalled', 'error', $url, $filterpath);
-        } elseif (array_search($filterpath,$activefilters)) {
-            // filterpath is already active - doubleclick??
-        } else {
-            // add it to installed filters
-            $activefilters[] = $filterpath;
-            $activefilters = array_unique($activefilters);
+    case 'setstate':
+        if ($newstate = optional_param('newstate', '', PARAM_INTEGER)) {
+            filter_set_global_state($filterpath, $newstate);
+            unset($newfilters[$filterpath]);
         }
         break;
 
     case 'down':
-        $key=array_search($filterpath, $activefilters);
-        // check filterpath is valid
-        if ($key===false) {
-            print_error("filternotactive", 'error', $url, $filterpath );
-        } elseif ($key>=(count($activefilters)-1)) {
-            // cannot be moved any further down - doubleclick??
-        } else {
-            // swap with $key+1
-            $fsave = $activefilters[$key];
-            $activefilters[$key] = $activefilters[$key+1];
-            $activefilters[$key+1] = $fsave;
+        if (isset($filters[$filterpath])) {
+            $oldpos = $filters[$filterpath]->sortorder;
+            if ($oldpos <= count($filters)) {
+                filter_set_global_state($filterpath, $filters[$filterpath]->active, $oldpos + 1);
+            }
         }
         break;
 
     case 'up':
-        $key=array_search($filterpath, $activefilters);
-        // check filterpath is valid
-        if ($key===false) {
-            print_error("filternotactive", 'error', $url, $filterpath );
-        } elseif ($key<1) {
-            //cannot be moved any further up - doubleclick??
-        } else {
-            // swap with $key-1
-            $fsave = $activefilters[$key];
-            $activefilters[$key] = $activefilters[$key-1];
-            $activefilters[$key-1] = $fsave;
+        if (isset($filters[$filterpath])) {
+            $oldpos = $filters[$filterpath]->sortorder;
+            if ($oldpos >= 1) {
+                filter_set_global_state($filterpath, $filters[$filterpath]->active, $oldpos - 1);
+            }
         }
         break;
+
+    case 'delete':
+        $filtername = $fitlernames[$filterpath];
+        if (substr($filterpath, 0, 4) == 'mod/') {
+            $mod = basename($filterpath);
+            $a = new stdClass;
+            $a->filter = $filtername;
+            $a->module = get_string('modulename', $mod);
+            print_error('cannotdeletemodfilter', 'admin', admin_url('qtypes.php'), $a);
+        }
+
+        // If not yet confirmed, display a confirmation message.
+        if (!optional_param('confirm', '', PARAM_BOOL)) {
+            $title = get_string('deletefilterareyousure', 'admin', $filtername);
+            print_header($title, $title);
+            print_heading($title);
+            notice_yesno(get_string('deletefilterareyousuremessage', 'admin', $filtername),
+                    admin_url('filters.php?action=delete&amp;filterpath=' . $delete . '&amp;confirm=1&amp;sesskey=' . sesskey()),
+                    $returnurl, NULL, NULL, 'post', 'get');
+            print_footer('empty');
+            exit;
+        }
+
+        // Do the deletion.
+        $title = get_string('deletingfilter', 'admin', $filtername);
+        print_header($title, $title);
+        print_heading($title);
+
+        // Delete all data for this plugin.
+        filter_delete_all_data($filterpath);
+
+        $a = new stdClass;
+        $a->fitler = $filtername;
+        $a->directory = $filterparth;
+        print_box(get_string('deletefilterfiles', 'admin', $a), 'generalbox', 'notice');
+        print_continue($returnurl);
+        admin_externalpage_print_footer();
+        exit;
     }
 
-    // save, reset cache and return
-    set_config('textfilters', implode(',', $activefilters));
+    // Add any missing filters to the DB table.
+    foreach ($newfilters as $filter => $notused) {
+        filter_set_global_state($filter, TEXTFILTER_DISABLED);
+    }
+
+    // Reset caches and return
     reset_text_filters_cache();
     redirect($returnurl);
-
-?>

@@ -217,6 +217,21 @@ class filter_active_global_test extends UnitTestCaseUsingDatabase {
         // Validate.
         $this->assert_global_sort_order(array('filter/2', 'filter/1', 'filter/3'));
     }
+
+    public function test_filter_get_global_states() {
+        // Setup fixture.
+        filter_set_global_state('filter/1', TEXTFILTER_ON);
+        filter_set_global_state('filter/2', TEXTFILTER_OFF);
+        filter_set_global_state('filter/3', TEXTFILTER_DISABLED);
+        // Exercise SUT.
+        $filters = filter_get_global_states();
+        // Validate.
+        $this->assertEqual(array(
+            'filter/1' => (object) array('filter' => 'filter/1', 'active' => TEXTFILTER_ON, 'sortorder' => 1),
+            'filter/2' => (object) array('filter' => 'filter/2', 'active' => TEXTFILTER_OFF, 'sortorder' => 2),
+            'filter/3' => (object) array('filter' => 'filter/3', 'active' => TEXTFILTER_DISABLED, 'sortorder' => 3)
+        ), $filters);
+    }
 }
 
 /**
@@ -477,4 +492,34 @@ class filter_get_active_in_context_test extends UnitTestCaseUsingDatabase {
     }
 }
 
+class filter_delete_all_data_test extends UnitTestCaseUsingDatabase {
+    private $syscontext;
+    private $childcontext;
+    private $childcontext2;
+
+    public function setUp() {
+        // Create the table we need and switch to test DB.
+        $this->create_test_tables(array('filter_active', 'filter_config', 'config', 'config_plugins'), 'lib');
+        $this->switch_to_test_db();
+    }
+
+    public function test_filter_delete_all_data_filter() {
+        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        filter_set_global_state('filter/name', TEXTFILTER_ON);
+        filter_set_global_state('filter/other', TEXTFILTER_ON);
+        filter_set_local_config('filter/name', $syscontext->id, 'settingname', 'A value');
+        filter_set_local_config('filter/other', $syscontext->id, 'settingname', 'Other value');
+        set_config('configname', 'A config value', 'filter_name');
+        set_config('configname', 'Other config value', 'filter_other');
+        filter_delete_all_data('filter/name');
+        $this->assertEqual(1, $this->testdb->count_records('filter_active'));
+        $this->assertTrue($this->testdb->record_exists('filter_active', array('filter' => 'filter/other')));
+        $this->assertEqual(1, $this->testdb->count_records('filter_config'));
+        $this->assertTrue($this->testdb->record_exists('filter_config', array('filter' => 'filter/other')));
+        $expectedconfig = new stdClass;
+        $expectedconfig->configname = 'Other config value';
+        $this->assertEqual($expectedconfig, get_config('filter_other'));
+        $this->assertFalse(get_config('filter_name'));
+    }
+}
 ?>
