@@ -1524,6 +1524,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2009032000);
     }
+
     if ($result && $oldversion < 2009032001) {
     /// Copy from role_allow_assign into the new table.
         $DB->execute('INSERT INTO {role_allow_switch} SELECT * FROM {role_allow_assign}');
@@ -1540,6 +1541,62 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         filter_tex_updatedcallback(null);
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2009033100);
+    }
+
+    if ($result && $oldversion < 2009040300) {
+
+    /// Define table filter_active to be created
+        $table = new xmldb_table('filter_active');
+
+    /// Adding fields to table filter_active
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('filter', XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('active', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('sortorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+
+    /// Adding keys to table filter_active
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+
+    /// Adding indexes to table filter_active
+        $table->add_index('contextid-filter', XMLDB_INDEX_UNIQUE, array('contextid', 'filter'));
+
+    /// Conditionally launch create table for filter_active
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009040300);
+    }
+
+    if ($result && $oldversion < 2009040301) {
+
+    /// Define table filter_config to be created
+        $table = new xmldb_table('filter_config');
+
+    /// Adding fields to table filter_config
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('filter', XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('value', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
+
+    /// Adding keys to table filter_config
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+
+    /// Adding indexes to table filter_config
+        $table->add_index('contextid-filter-name', XMLDB_INDEX_UNIQUE, array('contextid', 'filter', 'name'));
+
+    /// Conditionally launch create table for filter_config
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009040301);
     }
 
     return $result;
