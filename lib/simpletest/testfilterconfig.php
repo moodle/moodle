@@ -57,10 +57,12 @@ class filter_active_test extends UnitTestCaseUsingDatabase {
         $recs = $this->testdb->get_records('filter_active');
         $this->assertEqual(1, count($recs), 'More than one record returned %s.');
         $rec = reset($recs);
-        $this->assertEqual($rec->filter, $filter);
-        $this->assertEqual($rec->contextid, $this->syscontextid);
-        $this->assertEqual($rec->active, $state);
-        $this->assertEqual($rec->sortorder, 1);
+        $expectedrec = new stdClass;
+        $expectedrec->filter = $filter;
+        $expectedrec->contextid = $this->syscontextid;
+        $expectedrec->active = $state;
+        $expectedrec->sortorder = 1;
+        $this->assert(new CheckSpecifiedFieldsExpectation($expectedrec), $rec);
     }
 
     private function assert_global_sort_order($filters) {
@@ -231,10 +233,12 @@ class filter_config_test extends UnitTestCaseUsingDatabase {
         $recs = $this->testdb->get_records('filter_config');
         $this->assertEqual(1, count($recs), 'More than one record returned %s.');
         $rec = reset($recs);
-        $this->assertEqual($rec->filter, $filter);
-        $this->assertEqual($rec->contextid, $context);
-        $this->assertEqual($rec->name, $name);
-        $this->assertEqual($rec->value, $value);
+        $expectedrec = new stdClass;
+        $expectedrec->filter = $filter;
+        $expectedrec->contextid = $context;
+        $expectedrec->name = $name;
+        $expectedrec->value = $value;
+        $this->assert(new CheckSpecifiedFieldsExpectation($expectedrec), $rec);
     }
 
     public function test_set_new_config() {
