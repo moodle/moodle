@@ -631,8 +631,7 @@ function filter_get_active_in_context($context) {
              GROUP BY filter
              HAVING MAX(f.active * ctx.depth) > -MIN(f.active * ctx.depth)
              ORDER BY MAX(f.sortorder)) active
-         LEFT JOIN {filter_config} fc ON fc.filter = active.filter
-         WHERE fc.contextid = $context->id OR fc.contextid IS NULL");
+         LEFT JOIN {filter_config} fc ON fc.filter = active.filter AND fc.contextid = $context->id");
 
     // Masssage the data into the specified format to return.
     $filters = array();
