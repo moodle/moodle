@@ -97,6 +97,7 @@ $string['configcourserequestnotify'] = 'Type username of user to be notified whe
 $string['configcourserequestnotify2'] = 'Users who will be notified when a course is requested. Only users who can approve course requests are listed here.';
 $string['configcoursesperpage'] = 'Enter the number of courses to be display per page in a course listing.';
 $string['configcreatornewroleid'] = 'This role is automatically assigned to creators in new courses they created. This role is not assigned if creator already has needed capabilities in parent context.';
+$string['configcurlcache'] = 'Time-to-live for cURL cache, in seconds.';
 $string['configdbsessions'] = 'If enabled, this setting will use the database to store information about current sessions.  This is especially useful for large/busy sites or sites built on cluster of servers.  For most sites this should probably be left disabled so that the server disk is used instead.  Note that changing this setting now will log out all current users (including you). If you are using MySQL please make sure that \'max_allowed_packet\' in my.cnf (or my.ini) is at least 4M.';
 $string['configdebug'] = 'If you turn this on, then PHP\'s error_reporting will be increased so that more warnings are printed.  This is only useful for developers.';
 $string['configdebugdisplay'] = 'Set to on, the error reporting will go to the HTML page. This is practical, but breaks XHTML, JS, cookies and HTTP headers in general. Set to off, it will send the output to your server logs, allowing better debugging. The PHP setting error_log controls which log this goes to.';
@@ -304,6 +305,7 @@ $string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</
 $string['ctyperecommended'] = 'Installing the optional ctype PHP extension is highly recommended in order to improve site performance, particularly if your site is supporting non-latin languages.';
 $string['ctyperequired'] = 'The ctype PHP extension is now required by Moodle, in order to improve site performance and to offer multilingual compatibility.';
 $string['csvdelimiter'] = 'CSV delimiter';
+$string['curlcache'] = 'cURL cache TTL';
 $string['curlrecommended'] = 'Installing the optional cURL library is highly recommended in order to enable Moodle Networking functionality.';
 $string['curlrequired'] = 'The cURL PHP extension is now required by Moodle, in order to commnunicate with Moodle repositories.';
 $string['customcheck'] = 'Other Checks';

@@ -29,16 +29,16 @@ class boxclient {
     public function __construct($api_key, $auth_token = '', $debug = false) {
         $this->api_key    = $api_key;
         $this->auth_token = $auth_token;
-        $this->debug = $debug;
+        if (!empty($debug)) {
+            $this->debug = true;
+        } else {
+            $this->debug = false;
+        }
     }
     // Setup for Functions
     function makeRequest($method, $params = array()) {
         $this->_clearErrors();
-        if($this->debug){
-            $c = new curl(array('debug'=>true, 'cache'=>true));
-        } else {
-            $c = new curl(array('debug'=>false, 'cache'=>true));
-        }
+        $c = new curl(array('debug'=>$this->debug, 'cache'=>true, 'module_cache'=>'repository'));
         try {
             if ($method == 'upload'){
                 $request = $this->_box_api_upload_url.'/'.
@@ -91,11 +91,7 @@ class boxclient {
     //              'password'=>'xxx'));
     //
     function getAuthToken($ticket, $username, $password) {
-        if($this->debug){
-            $c = new curl(array('debug'=>true));
-        } else {
-            $c = new curl(array('debug'=>false));
-        }
+        $c = new curl(array('debug'=>$this->debug));
         $c->setopt(array('CURLOPT_FOLLOWLOCATION'=>0));
         $param =  array(
             'login_form1'=>'',
@@ -133,11 +129,7 @@ class boxclient {
         $params['action']     = 'get_account_tree';
         $params['onelevel']   = 1;
         $params['params[]']   = 'nozip';
-        if($this->debug){
-            $c = new curl(array('debug'=>true, 'cache'=>true));
-        } else {
-            $c = new curl(array('debug'=>false, 'cache'=>true));
-        }
+        $c = new curl(array('debug'=>$this->debug, 'cache'=>true, 'module_cache'=>'repository'));
         try {
             $args = array();
             $xml = $c->get($this->_box_api_url, $params);

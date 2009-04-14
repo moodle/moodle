@@ -29,7 +29,7 @@ class repository_youtube extends repository {
     private function _get_collection($keyword, $start, $max, $sort) {
         $list = array();
         $this->feed_url = 'http://gdata.youtube.com/feeds/api/videos?vq=' . urlencode($keyword) . '&format=5&start-index=' . $start . '&max-results=' .$max . '&orderby=' . $sort;
-        $c = new curl(array('cache'=>true));
+        $c = new curl(array('cache'=>true, 'module_cache'=>'repository'));
         $content = $c->get($this->feed_url);
 		$xml = simplexml_load_string($content);
         $media = $xml->entry->children('http://search.yahoo.com/mrss/');

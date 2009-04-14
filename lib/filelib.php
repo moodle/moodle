@@ -1626,7 +1626,11 @@ class curl {
         }
         if (!empty($options['cache'])) {
             if (class_exists('curl_cache')) {
-                $this->cache = new curl_cache;
+                if (!empty($options['module_cache'])) {
+                    $this->cache = new curl_cache($options['module_cache']);
+                } else {
+                    $this->cache = new curl_cache('misc');
+                }
             }
         }
         if (!empty($CFG->proxyhost)) {
@@ -2007,32 +2011,50 @@ class curl {
 /**
  * This class is used by cURL class, use case:
  *
- * $CFG->repository_cache_expire = 120;
- * $c = new curl(array('cache'=>true));
+ * $CFG->repositorycacheexpire = 120;
+ * $CFG->curlcache = 120;
+ *
+ * $c = new curl(array('cache'=>true), 'module_cache'=>'repository');
  * $ret = $c->get('http://www.google.com');
  *
  */
 class curl_cache {
     public $dir = '';
-    function __construct(){
+    /**
+     *
+     * @global $CFG
+     * @param string @module, which module is using curl_cache
+     *
+     */
+    function __construct($module){
         global $CFG;
-        if (!file_exists($CFG->dataroot.'/cache/repository/')) {
-            mkdir($CFG->dataroot.'/cache/repository/', 0777, true);
+        if (!empty($module)) {
+            $this->dir = $CFG->dataroot.'/cache/'.$module.'/';
+        } else {
+            $this->dir = $CFG->dataroot.'/cache/misc/';
         }
-        if(is_dir($CFG->dataroot.'/cache/repository/')) {
-            $this->dir = $CFG->dataroot.'/cache/repository/';
+        if (!file_exists($this->dir)) {
+            mkdir($this->dir, 0700, true);
         }
-        if (empty($CFG->repository_cache_expire)) {
-            $CFG->repository_cache_expire = 120;
+        if ($module == 'repository') {
+            if (empty($CFG->repositorycacheexpire)) {
+                $CFG->repositorycacheexpire = 120;
+            }
+            $this->ttl = $CFG->repositorycacheexpire;
+        } else {
+            if (empty($CFG->curlcache)) {
+                $CFG->curlcache = 120;
+            }
+            $this->ttl = $CFG->curlcache;
         }
     }
     public function get($param){
         global $CFG, $USER;
-        $this->cleanup($CFG->repository_cache_expire);
+        $this->cleanup($this->ttl);
         $filename = 'u'.$USER->id.'_'.md5(serialize($param));
         if(file_exists($this->dir.$filename)) {
             $lasttime = filemtime($this->dir.$filename);
-            if(time()-$lasttime > $CFG->repository_cache_expire)
+            if(time()-$lasttime > $this->ttl)
             {
                 return false;
             } else {

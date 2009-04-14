@@ -76,7 +76,7 @@
             break;
 
         case 'ccache':      // Clean cache
-            $cache = new curl_cache;
+            $cache = new curl_cache('repository');
             $cache->refresh();
             $action = 'list';
             break;

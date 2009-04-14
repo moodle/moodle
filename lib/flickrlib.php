@@ -65,7 +65,7 @@ class phpFlickr {
         //Find the PHP version and store it for future reference
         $this->php_version = explode("-", phpversion());
         $this->php_version = explode(".", $this->php_version[0]);
-        $this->curl = new curl(array('cache'=>true));
+        $this->curl = new curl(array('cache'=>true, 'module_cache'=>'repository'));
     }
 
     function request ($command, $args = array())

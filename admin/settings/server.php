@@ -257,6 +257,8 @@ $temp->add(new admin_setting_configtext('rcachettl', get_string('rcachettl', 'ad
                                         get_string('configrcachettl', 'admin'), 10));
 $temp->add(new admin_setting_configtext('intcachemax', get_string('intcachemax', 'admin'),
                                         get_string('configintcachemax', 'admin'), 10));
+$temp->add(new admin_setting_configtext('curlcache', get_string('curlcache', 'admin'),
+                                        get_string('configcurlcache', 'admin'), 120, PARAM_INT));
 $temp->add(new admin_setting_configtext('memcachedhosts', get_string('memcachedhosts', 'admin'),
                                         get_string('configmemcachedhosts', 'admin'), ''));
 $temp->add(new admin_setting_configselect('memcachedpconn', get_string('memcachedpconn', 'admin'),
