@@ -210,7 +210,7 @@ function file_get_draft_area_info($draftitemid) {
 
     // The number of files
     $draftfiles = $fs->get_area_files($usercontext->id, 'user_draft', $draftitemid, 'id', false);
-    $results['filecount'] = $draftfiles;
+    $results['filecount'] = count($draftfiles);
 
     return $results;
 }
