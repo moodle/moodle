@@ -1,0 +1,110 @@
+<?php
+
+    print_container_end(); // content container
+
+    print_container_start(false, '', 'footer');
+
+?>
+
+<div id="footer-b" class="clearfix">
+	<div id="footer-l">
+		<div id="footer-r">
+			<div id="footer-m" class="clearfix">
+	
+				<div id="footer-logo">
+					<a href="http://moodle.org" target="_blank"><img src="<?php echo $CFG->themewww .'/'. current_theme() ?>/images/logo.jpg" title="Moodle <?php echo $CFG->release ?>"</a>
+				</div>
+
+				<div id="footer-helplink">
+					<?php echo page_doc_link(get_string('moodledocslink')); ?>
+				</div>
+
+				<div id="footer-loggedinas">
+					<?php echo $loggedinas; ?>
+				</div>
+			
+			</div>
+		</div>
+	</div>
+</div>
+
+<?php
+
+    if ($navigation and false) { ?>
+    <div class="navbar clearfix">
+        <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
+        <div class="menu"><?php echo $menu; ?></div>
+    </div>
+		}
+
+
+    if (!empty($performanceinfo)) {
+        echo $performanceinfo;
+    }
+
+    if (debugging()) { ?>
+        <div class="validators"><ul>
+          <li><a href="http://validator.w3.org/check?verbose=1&amp;ss=1&amp;uri=<?php echo urlencode(qualified_me()) ?>">Validate HTML</a></li>
+          <li><a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=-1&amp;url1=<?php echo urlencode(qualified_me()) ?>">Section 508 Check</a></li>
+          <li><a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=0&amp;warnp2n3e=1&amp;url1=<?php echo urlencode(qualified_me()) ?>">WCAG 1 (2,3) Check</a></li>
+        </ul></div>
+<?php }
+
+    print_container_end();
+?>							
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div> <!-- end #page -->
+
+<script type="text/javascript" charset="utf-8">
+/* <![CDATA[ */
+    var CSSClass={};CSSClass.is=function(e,c){if(typeof e=="string")e=document.getElementById(e);var classes=e.className;if(!classes)return false;if(classes==c)return true;return e.className.search("\\b"+c+"\\b")!=-1;};CSSClass.add=function(e,c){if(typeof e=="string")e=document.getElementById(e);if(CSSClass.is(e,c))return;if(e.className)c=" "+c;e.className+=c;};CSSClass.remove=function(e,c){if(typeof e=="string")e=document.getElementById(e);e.className=e.className.replace(new RegExp("\\b"+c+"\\b\\s*","g"),"");};
+    
+    var jsscript = {
+        
+        corrections: function () {
+            
+            // check for layouttabel and add haslayouttable class to body
+            function setbodytag () {
+                var bd = document.getElementsByTagName('body')[0];
+                if (bd) {
+                    var tagname = 'nolayouttable';
+                    if (document.getElementById('middle-column')) {
+                        var lc = document.getElementById('left-column');
+                        var rc = document.getElementById('right-column');
+                        if ( lc && rc ) {
+                            tagname = 'haslayouttable rightandleftcolumn';
+                        } else if (lc) {
+                            tagname = 'haslayouttable onlyleftcolumn';
+                        } else if (rc) {
+                            tagname = 'haslayouttable onlyrightcolumn';
+                        } else {
+                            tagname = 'haslayouttable onlymiddlecolumn';
+                        }
+                    }
+                    CSSClass.add(bd, tagname);
+                } else {
+                    setTimeout(function() { setbodytag() }, 10);
+                }
+            };
+            
+            setbodytag();
+        },
+        
+        init: function() {
+            jsscript.corrections();
+        }
+    };
+    
+    jsscript.init();
+/* ]]> */
+</script>
+
+</body>
+</html>
