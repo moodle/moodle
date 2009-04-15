@@ -1,13 +1,34 @@
-<?php //$Id$
+<?php // $Id$
+
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.org                                            //
+//                                                                       //
+// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
 
 /**
- * This file contains the parent class for moodle pages, page_base, 
+ * This file contains the moodle_page class. s, page_base, 
  * as well as the page_course subclass.
  * A page is defined by its page type (ie. course, blog, activity) and its page id
  * (courseid, blogid, activity id, etc).
  *
- * @author Jon Papaioannou
- * @version  $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package pages
  */
