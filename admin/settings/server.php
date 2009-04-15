@@ -240,6 +240,7 @@ $temp->add(new admin_setting_configselect('extramemorylimit', get_string('extram
                                           array( '64M' => '64M',
                                                  '128M' => '128M',
                                                  '256M' => '256M',
+                                                 '512M' => '512M',
                                                  '1024M' => '1024M'
                                              )));
 $temp->add(new admin_setting_special_selectsetup('cachetype', get_string('cachetype', 'admin'),
