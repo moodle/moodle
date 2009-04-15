@@ -498,7 +498,9 @@
         global $CFG,$SESSION,$USER, $DB; // is there such a thing on cron? I guess so..
         global $restore; // ick
 
-        define('RESTORE_SILENTLY',true); // don't output all the stuff to us.
+        if (!defined('RESTORE_SILENTLY')) {
+            define('RESTORE_SILENTLY',true); // don't output all the stuff to us.
+        }
 
         $debuginfo = 'import_backup_file_silently: ';
         $cleanupafter = false;
@@ -618,7 +620,9 @@
     */
     function backup_course_silently($courseid, $prefs, &$errorstring) {
         global $CFG, $preferences, $DB; // global preferences here because something else wants it :(
-        define('BACKUP_SILENTLY', 1);
+        if (!defined('BACKUP_SILENTLY')) {
+            define('BACKUP_SILENTLY', 1);
+        }
         if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
             debugging("Couldn't find course with id $courseid in backup_course_silently");
             return false;
