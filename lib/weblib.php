@@ -1473,7 +1473,7 @@ function format_string($string, $striplinks=true, $courseid=NULL ) {
     // First replace all ampersands not followed by html entity code
     $string = preg_replace("/\&(?![a-zA-Z0-9#]{1,8};)/", "&amp;", $string);
 
-    if (!empty($CFG->filterall)) {
+    if (!empty($CFG->filterall) && $CFG->version >= 2009040600) { // Avoid errors during the upgrade to the new system.
         $context = get_context_instance(CONTEXT_SYSTEM); // TODO change, once we have $PAGE->context.
         $string = filter_manager::instance()->filter_string($string, $context, $courseid);
     }
