@@ -117,7 +117,13 @@
         print_heading($heading);
 
         if ($data->fulldelete) {
-            category_delete_full($deletecat, true);
+            $deletedcourses = category_delete_full($deletecat, true);
+            
+            foreach($deletedcourses as $course) {
+                notify(get_string('coursedeleted', '', $course->shortname), 'notifysuccess');
+            }
+            notify(get_string('coursecategorydeleted', '', format_string($deletecat->name)), 'notifysuccess');
+            
         } else {
             category_delete_move($deletecat, $data->newparent, true);
         }

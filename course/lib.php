@@ -3239,8 +3239,9 @@ function course_allowed_module($course,$mod) {
 
 /**
  * Recursively delete category including all subcategories and courses.
- * @param object $ccategory
- * @return bool status
+ * @param object $category
+ * @param boolean $showfeedback display some notices
+ * @return array return deleted courses
  */
 function category_delete_full($category, $showfeedback=true) {
     global $CFG, $DB;
@@ -3249,28 +3250,24 @@ function category_delete_full($category, $showfeedback=true) {
 
     if ($children = $DB->get_records('course_categories', array('parent'=>$category->id), 'sortorder ASC')) {
         foreach ($children as $childcat) {
-            if (!category_delete_full($childcat, $showfeedback)) {
-                notify("Error deleting category $childcat->name");
-                return false;
-            }
+            category_delete_full($childcat, $showfeedback);
         }
     }
 
+    $deletedcourses = array();
     if ($courses = $DB->get_records('course', array('category'=>$category->id), 'sortorder ASC')) {
         foreach ($courses as $course) {
             if (!delete_course($course, false)) {
-                notify("Error deleting course $course->shortname");
-                return false;
+                throw new moodle_exception('cannotdeletecategorycourse','','',$course->shortname);
             }
-            notify(get_string('coursedeleted', '', $course->shortname), 'notifysuccess');
+            $deletedcourses[] = $course;
         }
     }
 
     // now delete anything that may depend on course category context
     grade_course_category_delete($category->id, 0, $showfeedback);
     if (!question_delete_course_category($category, 0, $showfeedback)) {
-        notify(get_string('errordeletingquestionsfromcategory', 'question', $category), 'notifysuccess');
-        return false;
+        throw new moodle_exception('cannotdeletecategoryquestions','','',$category->name);
     }
 
     // finally delete the category and it's context
@@ -3279,9 +3276,7 @@ function category_delete_full($category, $showfeedback=true) {
 
     events_trigger('course_category_deleted', $category);
 
-    notify(get_string('coursecategorydeleted', '', format_string($category->name)), 'notifysuccess');
-
-    return true;
+    return $deletedcourses; 
 }
 
 /**
