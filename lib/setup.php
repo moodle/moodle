@@ -10,9 +10,37 @@
  * @package moodlecore
  */
 
-////// DOCUMENTATION IN PHPDOC FORMAT FOR MOODLE GLOBALS AND COMMON OBJECT TYPES /////////////
 /**
- * $USER is a global instance of a typical $user record.
+ * Holds the core settings that affect how Moodle works. Some of its fields
+ * are set in config.php, and the rest are loaded from the config table.
+ *
+ * Some typical settings in the $CFG global:
+ *  - $CFG->wwwroot - Path to moodle index directory in url format.
+ *  - $CFG->dataroot - Path to moodle index directory on server's filesystem.
+ *  - $CFG->libdir  - Path to moodle's library folder on server's filesystem.
+ *
+ * @global object $CFG
+ */
+global $CFG;
+
+/**
+ * Database connection. Used for all access to the database.
+ * @global moodle_database $DB
+ */
+global $DB;
+
+/**
+ * Moodle's wrapper round PHP's $_SESSION.
+ *
+ * @global object $SESSION
+ */
+global $SESSION;
+
+/**
+ * Holds the user table record for the current user. Will be the 'guest'
+ * user record for people who are not logged in.
+ *
+ * $USER is stored in the session.
  *
  * Items found in the user record:
  *  - $USER->emailstop - Does the user want email sent to them?
@@ -25,39 +53,16 @@
  *  - $USER->secret - The user's ?.
  *  - $USER->lang - The user's language choice.
  *
- * @global object(user) $USER
+ * @global object $USER
  */
 global $USER;
+
 /**
- * This global variable is read in from the 'config' table.
- *
- * Some typical settings in the $CFG global:
- *  - $CFG->wwwroot - Path to moodle index directory in url format.
- *  - $CFG->dataroot - Path to moodle index directory on server's filesystem.
- *  - $CFG->libdir  - Path to moodle's library folder on server's filesystem.
- *
- * @global object(cfg) $CFG
- */
-global $CFG;
-/**
- * Definition of session type
- * @global object(session) $SESSION
- */
-global $SESSION;
-/**
- * Definition of shared memory cache
- */
-global $MCACHE;
-/**
- * Definition of course type
- * @global object(course) $COURSE
+ * The current course. An alias for $PAGE->course.
+ * @global object $COURSE
  */
 global $COURSE;
-/**
- * Database instances
- * @global object(mdb) $DB
- */
-global $DB;
+
 /**
  * $THEME is a global that defines the site theme.
  *
@@ -65,25 +70,34 @@ global $DB;
  *  - $THEME->cellheading - Cell colors.
  *  - $THEME->cellheading2 - Alternate cell colors.
  *
- * @global object(theme) $THEME
+ * @global object $THEME
  */
 global $THEME;
 
 /**
- * HTTPSPAGEREQUIRED is a global to define if the page being displayed must run under HTTPS.
+ * Shared memory cache.
+ * @global object $MCACHE
+ */
+global $MCACHE;
+
+/**
+ * A global to define if the page being displayed must run under HTTPS.
  *
- * It's primary goal is to allow 100% HTTPS pages when $CFG->loginhttps is enabled. Default to false.
- * It's enabled only by the httpsrequired() function and used in some pages to update some URLs
+ * Its primary goal is to allow 100% HTTPS pages when $CFG->loginhttps is enabled. Default to false.
+ * Its enabled only by the httpsrequired() function and used in some pages to update some URLs
 */
 global $HTTPSPAGEREQUIRED;
 
 /** Full script path including all params, slash arguments, scheme and host.*/
 global $FULLME;
+
 /** Script path including query string and slash arguments without host. */
 global $ME;
+
 /** $FULLME without slasharguments and query string.*/
 global $FULLSCRIPT;
-/** Relative moodle script path "/course/view.php" */
+
+/** Relative moodle script path '/course/view.php' */
 global $SCRIPT;
 
     if (!isset($CFG->wwwroot)) {
