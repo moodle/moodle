@@ -28,7 +28,7 @@ require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/report/lib.php'; // for preferences
 require_once $CFG->dirroot.'/grade/edit/tree/lib.php';
 
-require_js(array('yui_yahoo', 'yui_dom', 'yui_event', 'yui_json', 'yui_connection', 'yui_dragdrop', 'yui_treeview', 'yui_element',
+require_js(array('yui_yahoo', 'yui_dom', 'yui_event', 'yui_json', 'yui_connection', 'yui_dragdrop', 'yui_treeview', 'yui_element', 'yui_container','yui_animation',
             $CFG->wwwroot.'/grade/edit/tree/functions.js'));
 
 $courseid        = required_param('id', PARAM_INT);

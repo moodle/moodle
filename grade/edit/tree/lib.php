@@ -239,7 +239,7 @@ class grade_edit_tree {
                     $width_style = ' style="width:auto;" ';
                 }
 
-                $html .= '<table cellpadding="5" class="generaltable" '.$width_style.'>
+                $html .= '<table id="grade_edit_tree_table" cellpadding="5" class="generaltable" '.$width_style.'>
                             <tr>';
 
                 foreach ($this->columns as $column) {
@@ -259,9 +259,14 @@ class grade_edit_tree {
             }
 
             $levelclass = " level$level ";
+            
+            $courseclass = '';
+            if ($level == 1) {
+                $courseclass = 'coursecategory';
+            }
 
             $html .= '
-                    <tr class="category '.$dimmed.$rowclasses.'">
+                    <tr class="'.$courseclass.' category '.$dimmed.$rowclasses.'">
                       <th scope="row" title="'.$object->stripped_name.'" class="cell rowspan '.$levelclass.'" rowspan="'.($row_count+1+$row_count_offset).'"></th>';
 
             foreach ($this->columns as $column) {
@@ -282,11 +287,14 @@ class grade_edit_tree {
             $item = grade_item::fetch(array('id' => $object->id));
             $element['type'] = 'item';
             $element['object'] = $item;
-
-            // Determine aggregation coef element
+            
+            $categoryitemclass = '';
+            if ($item->itemtype == 'category') {
+                $categoryitemclass = 'categoryitem';
+            }
 
             $dimmed = ($item->hidden) ? " dimmed_text " : "";
-            $html .= '<tr class="item'.$dimmed.$rowclasses.'">';
+            $html .= '<tr class="'.$categoryitemclass.' item'.$dimmed.$rowclasses.'">';
 
             foreach ($this->columns as $column) {
                 if (!($this->moving && $column->hide_when_moving) && !$column->is_hidden($mode)) {
