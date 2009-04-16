@@ -37,13 +37,13 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->dirroot . '/question/type/questiontype.php');
 
 class default_questiontype_test extends UnitTestCase {
-    protected $qtype;
+    var $qtype;
 
-    public function setUp() {
+    function setUp() {
         $this->qtype = new default_questiontype();
     }
 
-    public function tearDown() {
+    function tearDown() {
         $this->qtype = null;
     }
 
