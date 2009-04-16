@@ -1092,7 +1092,7 @@ function get_array_of_activities($courseid) {
  */
 function &get_fast_modinfo(&$course, $userid=0) {
     global $CFG, $USER, $DB;
-    if(!empty($CFG->enableavailability)) {
+    if (!empty($CFG->enableavailability)) {
         require_once($CFG->libdir.'/conditionlib.php');
     }
 
