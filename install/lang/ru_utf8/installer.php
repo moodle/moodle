@@ -11,6 +11,8 @@
 
 $string['admindirerror'] = 'Указанный каталог администратора неверен';
 $string['admindirname'] = 'Каталог администратора';
+$string['cannotcreatelangdir'] = 'Невозможно создать языковую папку';
+$string['cannotcreatetempdir'] = 'Невозможно создать временную папку';
 $string['caution'] = 'Предупреждение';
 $string['check'] = 'Отметить';
 $string['closewindow'] = 'Закрыть окно';
@@ -29,6 +31,7 @@ $string['gdversion'] = 'GD версия';
 $string['help'] = 'Помощь';
 $string['info'] = 'Информация';
 $string['installation'] = 'Установка';
+$string['invalidmd5'] = 'Неверный хеш md5';
 $string['language'] = 'Язык';
 $string['memorylimit'] = 'Предел памяти';
 $string['moodledocslink'] = 'Документация Moodle для этой страницы';
