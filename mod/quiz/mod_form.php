@@ -276,7 +276,8 @@ class mod_quiz_mod_form extends moodleform_mod {
         if (empty($this->_cm)) {
             $needwarning = $quizconfig->maximumgrade == 0;
         } else {
-            $needwarning = $DB->get_field('quiz', 'grade', array('id' => $this->_instance));
+            $quizgrade = $DB->get_field('quiz', 'grade', array('id' => $this->_instance));
+            $needwarning = $quizgrade == 0;
         }
         if ($needwarning) {
             $mform->addElement('static', 'nogradewarning', '', get_string('nogradewarning', 'quiz'));
