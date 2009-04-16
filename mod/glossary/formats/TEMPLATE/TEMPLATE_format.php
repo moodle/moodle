@@ -76,7 +76,7 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='',
 
         //Use this function to show the definition 
         //Comments: Configuration not supported
-        glossary_print_entry_definition($entry);
+        glossary_print_entry_definition($entry, $glossary, $cm);
 
         //Line separator to show this template fine. :-)
         echo "<br />\n";

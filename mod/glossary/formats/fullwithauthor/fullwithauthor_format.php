@@ -41,7 +41,7 @@ function glossary_show_entry_fullwithauthor($course, $cm, $glossary, $entry, $mo
         echo '<td class="left">&nbsp;</td>';
         echo '<td colspan="2" class="entry">';
 
-        glossary_print_entry_definition($entry);
+        glossary_print_entry_definition($entry, $glossary, $cm);
 
         echo '</td></tr>';
         echo '<tr valign="top">';

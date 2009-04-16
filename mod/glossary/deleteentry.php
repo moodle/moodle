@@ -61,9 +61,7 @@
 
             $entry->glossaryid       = $entry->sourceglossaryid;
             $entry->sourceglossaryid = 0;
-            if (!$DB->update_record('glossary_entries', $entry)) {
-                print_error('cantupdateglossary', 'glossary');
-            }
+            $DB->update_record('glossary_entries', $entry);
 
             // move attachments too
             $fs = get_file_storage();

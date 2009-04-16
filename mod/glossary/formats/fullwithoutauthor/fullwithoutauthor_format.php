@@ -29,7 +29,7 @@ function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, 
         echo '<tr valign="top">';
         echo '<td width="100%" colspan="2" class="entry">';
 
-        glossary_print_entry_definition($entry);
+        glossary_print_entry_definition($entry, $glossary, $cm);
 
         echo '</td></tr>';
         echo '<tr valign="top"><td colspan="2" class="entrylowersection">';

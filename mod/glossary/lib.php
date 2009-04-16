@@ -628,7 +628,7 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $mode='',$hook=''
                 $return = $functionname($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
             } else if ($printview) {
                 //If the glossary_print_entry_XXXX function doesn't exist, print default (old) print format
-                $return = glossary_print_entry_default($entry);
+                $return = glossary_print_entry_default($entry, $glossary, $cm);
             }
         }
     }
@@ -636,7 +636,7 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $mode='',$hook=''
 }
 
  //Default (old) print format used if custom function doesn't exist in format
-function glossary_print_entry_default ($entry) {
+function glossary_print_entry_default ($entry, $glossary, $cm) {
     echo '<h3>'. strip_tags($entry->concept) . ': </h3>';
 
     $definition = $entry->definition;
@@ -658,6 +658,9 @@ function glossary_print_entry_default ($entry) {
         $definition = trusttext_strip($definition); //make 100% sure TRUSTTEXT marker was not created
     }
 
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $definition = file_rewrite_pluginfile_urls($definition, 'pluginfile.php', $context->id, 'glossary_entry', $entry->id);
+    
     $options = new object();
     $options->para = false;
     $options->trusttext = true;
@@ -679,7 +682,7 @@ function  glossary_print_entry_concept($entry) {
     echo $text;
 }
 
-function glossary_print_entry_definition($entry) {
+function glossary_print_entry_definition($entry, $glossary, $cm) {
     global $DB;
 
     $definition = $entry->definition;
@@ -715,6 +718,9 @@ function glossary_print_entry_definition($entry) {
         $definition = trusttext_strip($definition); //make 100% sure TRUSTTEXT marker was not created
     }
 
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $definition = file_rewrite_pluginfile_urls($definition, 'pluginfile.php', $context->id, 'glossary_entry', $entry->id);
+    
     $text = format_text($definition, $entry->format, $options);
     
     // Stop excluding concepts from autolinking
@@ -1123,7 +1129,7 @@ function glossary_pluginfile($course, $cminfo, $context, $filearea, $args) {
         // finally send the file
         send_stored_file($file, $lifetime, 0);
 
-    } else if ($filearea === 'glossary_attachment') {
+    } else if ($filearea === 'glossary_attachment' or $filearea === 'glossary_entry') {
         $entryid = (int)array_shift($args);
 
         if (!$entry = $DB->get_record('glossary_entries', array('id'=>$entryid))) {
@@ -2434,5 +2440,3 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
         return sha1(serialize($this->entry));
     }
 }
-
-?>

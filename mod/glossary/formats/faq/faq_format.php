@@ -30,7 +30,7 @@ function glossary_show_entry_faq($course, $cm, $glossary, $entry, $mode="", $hoo
         echo '<td colspan="2" class="entry">';
         echo '<b>'.get_string('answer','glossary').':</b> ';
 
-        glossary_print_entry_definition($entry);
+        glossary_print_entry_definition($entry, $glossary, $cm);
 
         echo '</td></tr>';
         echo '<tr valign="top"><td colspan="3" class="entrylowersection">';

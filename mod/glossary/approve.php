@@ -31,11 +31,8 @@
     $newentry->approved     = 1;
     $newentry->timemodified = time(); // wee need this date here to speed up recent activity, TODO: use timestamp in approved field instead in 2.0
 
-    if (! $DB->update_record("glossary_entries", $newentry)) {
-        print_error('cantupdateglossary', 'glossary');
-    } else {
-        add_to_log($course->id, "glossary", "approve entry", "showentry.php?id=$cm->id&amp;eid=$eid", "$eid",$cm->id);
-    }
+    $DB->update_record("glossary_entries", $newentry);
+    add_to_log($course->id, "glossary", "approve entry", "showentry.php?id=$cm->id&amp;eid=$eid", "$eid",$cm->id);
     redirect("view.php?id=$cm->id&amp;mode=$mode&amp;hook=$hook",get_string("entryapproved","glossary"),1);
     die;
 ?>

@@ -51,7 +51,7 @@ function glossary_print_entry_entrylist($course, $cm, $glossary, $entry, $mode='
     echo '<b>';
     glossary_print_entry_concept($entry);
     echo ':</b> ';
-    glossary_print_entry_definition($entry);
+    glossary_print_entry_definition($entry, $glossary, $cm);
     $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, false, false, false);
     echo '</td>';
     echo '</tr>';

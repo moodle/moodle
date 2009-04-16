@@ -12,7 +12,7 @@ function glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode='
     echo '<div class="concept">';
     glossary_print_entry_concept($entry);
     echo ':</div> ';
-    glossary_print_entry_definition($entry);
+    glossary_print_entry_definition($entry, $glossary, $cm);
     $entry->alias = '';
     echo '</td></tr>';
    

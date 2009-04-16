@@ -48,7 +48,7 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
             }
             glossary_print_entry_attachment($entry, $cm, null,$align,false);
         }
-        glossary_print_entry_definition($entry);
+        glossary_print_entry_definition($entry, $glossary, $cm);
 
         if ($printicons or $ratings or $aliases) {
             echo '</td></tr>';

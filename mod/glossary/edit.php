@@ -4,8 +4,6 @@ require_once('../../config.php');
 require_once('lib.php');
 require_once('edit_form.php');
 
-global $CFG, $USER;
-
 $cmid = required_param('cmid', PARAM_INT);            // Course Module ID
 $id   = optional_param('id', 0, PARAM_INT);           // EntryID
 
@@ -17,7 +15,7 @@ if (!$course = $DB->get_record('course', array('id'=>$cm->course))) {
     print_error('coursemisconf');
 }
 
-require_login($course->id, false, $cm);
+require_login($course, false, $cm);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -54,13 +52,24 @@ if ($id) { // if entry is specified
         // TODO: this fetches cats from both main and secondary glossary :-(
         $entry->categories = array_values($categoriesarr);
     }
-    $entry->cmid = $cm->id;
 
 } else { // new entry
     require_capability('mod/glossary:write', $context);
     $entry = new object();
-    $entry->cmid = $cm->id;
+    $entry->id         = null;
+    $entry->definition = '';
+    $entry->format     = FORMAT_HTML; // TODO: better default value
 }
+
+$entry->cmid = $cm->id;
+
+$draftid_editor = file_get_submitted_draft_itemid('entry');
+$currenttext = file_prepare_draft_area($draftid_editor, $context->id, 'glossary_entry', $entry->id, true, $entry->definition);
+$entry->entry = array('text'=>$currenttext, 'format'=>$entry->format, 'itemid'=>$draftid_editor);
+
+$draftitemid = file_get_submitted_draft_itemid('attachments');
+file_prepare_draft_area($draftitemid, $context->id, 'glossary_attachment', $entry->id , false);
+$entry->attachements = $draftitemid;
 
 // set form initial data
 $mform->set_data($entry);
@@ -74,8 +83,6 @@ if ($mform->is_cancelled()){
     }
 
 } else if ($data = $mform->get_data()) {
-    trusttext_after_edit($data->definition, $context);
-
     $timenow = time();
 
     if (empty($entry->id)) {
@@ -88,8 +95,8 @@ if ($mform->is_cancelled()){
     }
 
     $entry->concept       = trim($data->concept);
-    $entry->definition    = $data->definition;
-    $entry->format        = $data->format;
+    $entry->definition    = '';          // updated later
+    $entry->format        = FORMAT_HTML; // updated later
     $entry->timemodified  = $timenow;
     $entry->approved      = 0;
     $entry->usedynalink   = isset($data->usedynalink) ?   $data->usedynalink : 0;
@@ -102,42 +109,33 @@ if ($mform->is_cancelled()){
 
     if (empty($entry->id)) {
         //new entry
-        if ($entry->id = $DB->insert_record('glossary_entries', $entry)) {
-            add_to_log($course->id, "glossary", "add entry",
-                       "view.php?id=$cm->id&amp;mode=entry&amp;hook=$enty->id", $entry->id, $cm->id);
-        } else {
-            print_error('cantinsertent', 'glossary');
-        }
-        //refetch complete entry
-        $entry = $DB->get_record('glossary_entries', array('id'=>$entry->id));
+        $entry->id = $DB->insert_record('glossary_entries', $entry);
+        add_to_log($course->id, "glossary", "add entry",
+                   "view.php?id=$cm->id&amp;mode=entry&amp;hook=$enty->id", $entry->id, $cm->id);
 
     } else {
         //existing entry
-        if ($DB->update_record('glossary_entries', $entry)) {
-            add_to_log($course->id, "glossary", "update entry",
-                       "view.php?id=$cm->id&amp;mode=entry&amp;hook=$entry->id",
-                       $entry->id, $cm->id);
-        } else {
-            print_error('cantupdateglossary', 'glossary');
-        }
-    }
-
-    // save attachment
-    $filename = $mform->get_new_filename('attachment');
-
-    if ($filename !== false) {
-        $filearea = 'glossary_attachment';
-        $fs = get_file_storage();
-
-        $fs->delete_area_files($context->id, $filearea, $entry->id);
-
-        if ($mform->save_stored_file('attachment', $context->id, $filearea, $entry->id, '/', $filename, true, $USER->id)) {
-            $entry->attachment = '1';
-        } else {
-            $entry->attachment = '';
-        }
         $DB->update_record('glossary_entries', $entry);
+        add_to_log($course->id, "glossary", "update entry",
+                   "view.php?id=$cm->id&amp;mode=entry&amp;hook=$entry->id",
+                   $entry->id, $cm->id);
     }
+
+    // save and relink embedded images
+    $entry->format     = $data->entry['format'];
+    $entry->definition = file_save_draft_area_files($draftid_editor, $context->id, 'glossary_entry', $entry->id, true, $data->entry['text']);
+    trusttext_after_edit($entry->definition, $context);
+
+    // save attachments
+    $info = file_get_draft_area_info($draftitemid);
+    $entry->attachment = ($info['filecount']>0) ? '1' : '';
+    file_save_draft_area_files($draftitemid, $context->id, 'glossary_attachment', $entry->id, false);
+
+    // store the final values
+    $DB->update_record('glossary_entries', $entry);
+
+    //refetch complete entry
+    $entry = $DB->get_record('glossary_entries', array('id'=>$entry->id));
 
     // update entry categories
     $DB->delete_records('glossary_entries_categories', array('entryid'=>$entry->id));

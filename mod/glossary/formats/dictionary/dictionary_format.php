@@ -12,7 +12,7 @@ function glossary_show_entry_dictionary($course, $cm, $glossary, $entry, $mode='
     echo '<div class="concept">';
     glossary_print_entry_concept($entry);
     echo ':</div> ';
-    glossary_print_entry_definition($entry);
+    glossary_print_entry_definition($entry, $glossary, $cm);
     echo '</td></tr>';
     echo '<tr valign="top"><td class="entrylowersection">';
     $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases);
