@@ -81,7 +81,7 @@ cap_table_filter = {
     },
 
     filter: function() {
-        var filtertext = cap_table_filter.input.value;
+        var filtertext = cap_table_filter.input.value.toLowerCase();
         cap_table_filter.button.disabled = filtertext == '';
         var rows =  cap_table_filter.table.getElementsByTagName('tr');
         var lastheading = null;
@@ -98,7 +98,7 @@ cap_table_filter = {
             if (YAHOO.util.Dom.hasClass(row, 'rolecap')) {
                 var capcell = YAHOO.util.Dom.getElementsByClassName('name', 'th', row)[0];
                 var capname = capcell.innerText || capcell.textContent;
-                if (capname.indexOf(filtertext) >= 0) {
+                if (capname.toLowerCase().indexOf(filtertext) >= 0) {
                     cap_table_filter.set_visible(row, true);
                     capssincelastheading += 1;
                 } else {
