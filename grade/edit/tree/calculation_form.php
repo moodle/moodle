@@ -90,7 +90,7 @@ class edit_calculation_form extends moodleform {
         // check the calculation formula
         if ($data['calculation'] != '') {
             $grade_item = grade_item::fetch(array('id'=>$data['id'], 'courseid'=>$data['courseid']));
-            $calculation = calc_formula::unlocalize($data['calculation']);
+            $calculation = calc_formula::unlocalize(stripslashes($data['calculation']));
             $result = $grade_item->validate_formula($calculation);
             if ($result !== true) {
                 $errors['calculation'] = $result;

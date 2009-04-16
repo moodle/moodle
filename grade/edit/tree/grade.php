@@ -153,7 +153,7 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 
 // form processing
-} else if ($data = $mform->get_data()) {
+} else if ($data = $mform->get_data(false)) {
     $old_grade_grade = new grade_grade(array('userid'=>$data->userid, 'itemid'=>$grade_item->id), true); //might not exist yet
 
     // fix no grade for scales

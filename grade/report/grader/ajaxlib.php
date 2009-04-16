@@ -184,15 +184,16 @@ class grade_report_grader_ajax extends grade_report_grader {
         }
 
         $columncount = 0;
-        // Student name and link
-        $user_pic = null;
-        if ($showuserimage) {
-            $user_pic = '<div class="userpic">' . print_user_picture($user, $this->courseid, true, 0, true) . '</div>';
-        }
 
         if ($fixedstudents) {
             $studentrowhtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">';
         } else {
+            // Student name and link
+            $user_pic = null;
+            if ($showuserimage) {
+                $user_pic = '<div class="userpic">' . print_user_picture($user, $this->courseid, true, 0, true) . '</div>';
+            }
+
             $studentrowhtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
                           .'<th class="header c'.$columncount++.' user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
                           .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
@@ -276,7 +277,7 @@ class grade_report_grader_ajax extends grade_report_grader {
         $eid = $this->gtree->get_grade_eid($grade);
         $element = array('eid'=>$eid, 'object'=>$grade, 'type'=>'grade');
 
-        $cellclasses = 'ajax cell c'.$columncount++;
+        $cellclasses = 'grade ajax cell c'.$columncount++;
         if ($item->is_category_item()) {
             $cellclasses .= ' cat';
         }
@@ -291,7 +292,15 @@ class grade_report_grader_ajax extends grade_report_grader {
             $cellclasses .= ' excluded';
         }
 
-        $gradecellhtml .= "<td id=\"gradecell_u$userid-i$itemid\" class=\"$cellclasses\">";
+        $grade_title = '&lt;div class=&quot;fullname&quot;&gt;'.fullname($user).'&lt;/div&gt;';
+        $grade_title .= '&lt;div class=&quot;itemname&quot;&gt;'.$item->get_name(true).'&lt;/div&gt;';
+
+        if (!empty($grade->feedback) && !$USER->gradeediting[$this->courseid]) {
+            $grade_title .= '&lt;div class=&quot;feedback&quot;&gt;'
+                         .wordwrap(trim(format_string($grade->feedback, $grade->feedbackformat)), 34, '&lt;br/ &gt;') . '&lt;/div&gt;';
+        }
+
+        $gradecellhtml .= "<td id=\"gradecell_u$userid-i$itemid\" class=\"$cellclasses\" title=\"$grade_title\">";
 
         if ($grade->is_excluded()) {
             $gradecellhtml .= get_string('excluded', 'grades') . ' ';
@@ -401,15 +410,9 @@ class grade_report_grader_ajax extends grade_report_grader {
                 $feedback = s($grade->feedback);
                 $anchor_id = "gradefeedback_$userid-i$itemid";
 
+                $gradecellhtml .= '<a ';
                 if (empty($feedback)) {
                     $feedback = get_string('addfeedback', 'grades');
-                    $gradecellhtml .= '<a ';
-                } else {
-                    $overlib = '';
-                    $full_feedback = addslashes_js(trim(format_string($grade->feedback, $grade->feedbackformat)));
-                    $overlib = "return overlib('$full_feedback', BORDER, 0, FGCLASS, 'feedback', "
-                              ."CAPTIONFONTCLASS, 'caption', CAPTION, '$strfeedback');";
-                    $gradecellhtml .= '<a onmouseover="'.s($overlib).'" onmouseout="return nd();" ';
                 }
 
                 $feedback_tabindex = $nexttabindex + $this->numusers;
@@ -422,15 +425,6 @@ class grade_report_grader_ajax extends grade_report_grader {
 
         } else { // Not editing
             $gradedisplaytype = $item->get_displaytype();
-
-            // If feedback present, surround grade with feedback tooltip: Open span here
-            if (!empty($grade->feedback)) {
-                $overlib = '';
-                $feedback = addslashes_js(trim(format_string($grade->feedback, $grade->feedbackformat)));
-                $overlib = "return overlib('$feedback', BORDER, 0, FGCLASS, 'feedback', "
-                          ."CAPTIONFONTCLASS, 'caption', CAPTION, '$strfeedback');";
-                $gradecellhtml .= '<span onmouseover="'.s($overlib).'" onmouseout="return nd();">';
-            }
 
             if ($item->needsupdate) {
                 $gradecellhtml .= '<span class="gradingerror'.$hidden.$gradepass.'">'.get_string('error').'</span>';

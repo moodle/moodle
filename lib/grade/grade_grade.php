@@ -623,7 +623,7 @@ class grade_grade extends grade_object {
                             foreach ($dependson[$do] as $itemid) {
                                 if (array_key_exists($itemid, $altered)) {
                                     $values[$itemid] = $altered[$itemid];
-                                } else {
+                                } elseif (!empty($values[$itemid])) {
                                     $values[$itemid] = $grade_grades[$itemid]->finalgrade;
                                 }
                             }
@@ -668,9 +668,7 @@ class grade_grade extends grade_object {
                             // recalculate the rawgrade back to requested range
                             $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $grade_items[$do]->grademin, $grade_items[$do]->grademax);
 
-                            if (!is_null($finalgrade)) {
-                                $finalgrade = bounded_number($grade_items[$do]->grademin, $finalgrade, $grade_items[$do]->grademax);
-                            }
+                            $finalgrade = $grade_items[$do]->bounded_grade($finalgrade);
 
                             $altered[$do] = $finalgrade;
                             unset($todo[$key]);

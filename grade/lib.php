@@ -693,7 +693,7 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
  *
  * @return string HTML code or nothing if $return == false
  */
-function print_grade_page_head($courseid, $active_type, $active_plugin=null, $heading = false, $return=false, $bodytags='', $buttons=false) {
+function print_grade_page_head($courseid, $active_type, $active_plugin=null, $heading = false, $return=false, $bodytags='', $buttons=false, $extracss=array()) {
     global $CFG, $COURSE;
     $strgrades = get_string('grades');
     $plugin_info = grade_get_plugin_info($courseid, $active_type, $active_plugin);
@@ -713,6 +713,10 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null, $he
 
     if ($active_type == 'preferences') {
         $CFG->stylesheets[] = $CFG->wwwroot . '/grade/report/styles.css';
+    }
+
+    foreach ($extracss as $css_url) {
+        $CFG->stylesheets[] = $css_url;
     }
 
     $navlinks[] = array('name' => $strgrades,
@@ -1264,7 +1268,6 @@ class grade_structure {
         }
 
         $object = $element['object'];
-        $overlib = '';
 
         switch ($element['type']) {
             case 'item':
@@ -1295,9 +1298,6 @@ class grade_structure {
                 $url = $gpr->add_url_params($url);
                 if (!empty($object->feedback)) {
                     $feedback = addslashes_js(trim(format_string($object->feedback, $object->feedbackformat)));
-                    $function = "return overlib('$feedback', BORDER, 0, FGCLASS, 'feedback', "
-                              ."CAPTIONFONTCLASS, 'caption', CAPTION, '$strfeedback');";
-                    $overlib = 'onmouseover="'.s($function).'" onmouseout="return nd();"';
                 }
                 break;
 
@@ -1306,7 +1306,7 @@ class grade_structure {
         }
 
         if ($url) {
-            return '<a href="'.$url.'" class="edit"><img '.$overlib.' src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$stredit.'" title="'.$stredit.'"/></a>';
+            return '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$stredit.'" title="'.$stredit.'"/></a>';
 
         } else {
             return '';

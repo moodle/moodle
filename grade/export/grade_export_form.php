@@ -47,7 +47,6 @@ class grade_export_form extends moodleform {
         if (!empty($features['updategradesonly'])) {
             $mform->addElement('advcheckbox', 'updatedgradesonly', get_string('updatedgradesonly', 'grades'));
         }
-
         /// selections for decimal points and format, MDL-11667, defaults to site settings, if set
         //$default_gradedisplaytype = $CFG->grade_export_displaytype;
         $options = array(GRADE_DISPLAY_TYPE_REAL       => get_string('real', 'grades'),

@@ -39,7 +39,6 @@ $aggregationtype = optional_param('aggregationtype', null, PARAM_INT);
 $showadvanced    = optional_param('showadvanced', -1, PARAM_BOOL); // sticky editting mode
 
 /// Make sure they can even access this course
-
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
@@ -88,13 +87,14 @@ if (has_capability('moodle/grade:manage', $context)) {
 }
 
 // Change category aggregation if requested
-if (!is_null($category) && !is_null($aggregationtype)) {
+if (!is_null($category) && !is_null($aggregationtype) && confirm_sesskey()) {
     if (!$grade_category = grade_category::fetch(array('id'=>$category, 'courseid'=>$courseid))) {
         error('Incorrect category id!');
     }
     $data->aggregation = $aggregationtype;
     grade_category::set_properties($grade_category, $data);
     $grade_category->update();
+    grade_regrade_final_grades($courseid);
 }
 
 //first make sure we have proper final grades - we need it for locking changes
@@ -129,7 +129,7 @@ $grade_edit_tree = new grade_edit_tree($gtree, $moving, $gpr);
 
 switch ($action) {
     case 'delete':
-        if ($eid) {
+        if ($eid && confirm_sesskey()) {
             if (!$grade_edit_tree->element_deletable($element)) {
                 // no deleting of external activities - they would be recreated anyway!
                 // exception is activity without grading or misconfigured activities
@@ -189,6 +189,7 @@ switch ($action) {
     case 'moveselect':
         if ($eid and confirm_sesskey()) {
             $grade_edit_tree->moving = $eid;
+            $moving=true;
         }
         break;
 
@@ -219,7 +220,7 @@ $form_key = optional_param('sesskey', null, PARAM_ALPHANUM);
 
 if ($form_key && $data = data_submitted()) {
     // Perform bulk actions first
-    if (!empty($data->bulkmove)) {
+    if (!empty($data->bulkmove) && confirm_sesskey()) {
         $elements = array();
 
         foreach ($data as $key => $value) {
@@ -234,7 +235,7 @@ if ($form_key && $data = data_submitted()) {
     // Category and item field updates
     foreach ($data as $key => $value) {
         // Grade category text inputs
-        if (preg_match('/(aggregation|droplow|keephigh)_([0-9]*)/', $key, $matches)) {
+        if (preg_match('/(aggregation|droplow|keephigh)_([0-9]*)/', $key, $matches) && confirm_sesskey()) {
             $value = required_param($matches[0], PARAM_INT);
             $param = $matches[1];
             $a->id = $matches[2];
@@ -243,9 +244,10 @@ if ($form_key && $data = data_submitted()) {
             $grade_category->$param = $value;
 
             $grade_category->update();
+            grade_regrade_final_grades($courseid);
 
         // Grade item text inputs
-        } elseif (preg_match('/(grademax|aggregationcoef|multfactor|plusfactor)_([0-9]*)/', $key, $matches)) {
+        } elseif (preg_match('/(grademax|aggregationcoef|multfactor|plusfactor)_([0-9]*)/', $key, $matches) && confirm_sesskey()) {
             $defaults = array('grademax' => 100, 'aggregationcoef' => 1, 'multfactor' => 1, 'plusfactor' => 0);
 
             if (is_string($_POST[$matches[0]]) && strlen($_POST[$matches[0]]) < 1) {
@@ -259,14 +261,14 @@ if ($form_key && $data = data_submitted()) {
             $grade_item->$param = $value;
 
             $grade_item->update();
+            grade_regrade_final_grades($courseid);
 
         // Grade item checkbox inputs
-        } elseif (preg_match('/extracredit_original_([0-9]*)/', $key, $matches)) { // Sum extra credit checkbox
+        } elseif (preg_match('/extracredit_original_([0-9]*)/', $key, $matches) && confirm_sesskey()) { // Sum extra credit checkbox
             $extracredit = optional_param("extracredit_{$matches[1]}", null, PARAM_BOOL);
             $original_value = required_param($matches[0], PARAM_BOOL);
             $a->id = $matches[1];
             $newvalue = null;
-
             if ($original_value == 1 && is_null($extracredit)) {
                 $newvalue = 0;
             } elseif ($original_value == 0 && $extracredit == 1) {
@@ -279,9 +281,10 @@ if ($form_key && $data = data_submitted()) {
             $grade_item->aggregationcoef = $newvalue;
 
             $grade_item->update();
+            grade_regrade_final_grades($courseid);
 
         // Grade category checkbox inputs
-        } elseif (preg_match('/aggregate(onlygraded|subcats|outcomes)_original_([0-9]*)/', $key, $matches)) {
+        } elseif (preg_match('/aggregate(onlygraded|subcats|outcomes)_original_([0-9]*)/', $key, $matches) && confirm_sesskey()) {
             $setting = optional_param('aggregate'.$matches[1].'_'.$matches[2], null, PARAM_BOOL);
             $original_value = required_param($matches[0], PARAM_BOOL);
             $a->id = $matches[2];
@@ -299,6 +302,7 @@ if ($form_key && $data = data_submitted()) {
             $grade_category->{'aggregate'.$matches[1]} = $newvalue;
 
             $grade_category->update();
+            grade_regrade_final_grades($courseid);
         }
     }
 }
@@ -354,7 +358,8 @@ if ($moving) {
         print_single_button('outcomeitem.php', array('courseid'=>$course->id), get_string('addoutcomeitem', 'grades'), 'get');
     }
 
-    echo "<br /></br />";
+    //print_single_button('index.php', array('id'=>$course->id, 'action'=>'autosort'), get_string('autosort', 'grades'), 'get');
+    echo "<br /><br />";
     print_single_button('index.php', array('id'=>$course->id, 'action'=>'synclegacy'), get_string('synclegacygrades', 'grades'), 'get');
     helpbutton('synclegacygrades', get_string('synclegacygrades', 'grades'), 'grade');
 }

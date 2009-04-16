@@ -49,6 +49,8 @@ class grade_report_user extends grade_report {
      */
     public $table;
 
+    var $gtree;
+
     /**
      * Flat structure similar to grade tree
      */
@@ -99,6 +101,7 @@ class grade_report_user extends grade_report {
         $this->showrank        = grade_get_setting($this->courseid, 'report_user_showrank', $CFG->grade_report_user_showrank);
         $this->showpercentage  = grade_get_setting($this->courseid, 'report_user_showpercentage', $CFG->grade_report_user_showpercentage);
         $this->showhiddenitems = grade_get_setting($this->courseid, 'report_user_showhiddenitems', $CFG->grade_report_user_showhiddenitems);
+
         $this->showrange = true;
 
         $this->switch = grade_get_setting($this->courseid, 'aggregationposition', $CFG->grade_aggregationposition);
@@ -203,6 +206,12 @@ class grade_report_user extends grade_report {
         $excluded = '';
         $class = '';
 
+        // If this is a hidden grade item, hide it completely from the user. showhiddenitems: 0 = hide all, 1 = show only hidden until, 2 = show all
+        if ($grade_object->is_hidden() && !$this->canviewhidden && (
+                $this->showhiddenitems == 0 ||
+                ($this->showhiddenitems == 1 && !$grade_object->is_hiddenuntil()))) {
+            return false;
+        }
 
         if ($type == 'category') {
             $this->evenodd[$depth] = (($this->evenodd[$depth] + 1) % 2);
@@ -223,6 +232,13 @@ class grade_report_user extends grade_report {
             if ($grade_grade->grade_item->is_hidden()) {
                 $hidden = ' hidden';
             }
+
+            // If this is a hidden grade item, hide it completely from the user. showhiddenitems: 0 = hide all, 1 = show only hidden until, 2 = show all
+            if ($grade_grade->is_hidden() && !$this->canviewhidden && (
+                    $this->showhiddenitems == 0 ||
+                    ($this->showhiddenitems == 1 && !$grade_grade->is_hiddenuntil()))) {
+                // return false;
+            } else {
 
             /// Excluded Item
             if ($grade_grade->is_excluded()) {
@@ -255,6 +271,9 @@ class grade_report_user extends grade_report {
                 $data['grade']['class'] = $class;
                 $data['grade']['content'] = get_string('submittedon', 'grades', userdate($grade_grade->get_datesubmitted(), get_string('strftimedatetimeshort')));
 
+                } elseif ($grade_grade->is_hidden()) {
+                    $data['grade']['class'] = $class.' hidden';
+                    $data['grade']['content'] = '-';
             } else {
                 $data['grade']['class'] = $class;
                 $data['grade']['content'] = grade_format_gradevalue($gradeval, $grade_grade->grade_item, true);
@@ -265,6 +284,9 @@ class grade_report_user extends grade_report {
                 if ($grade_grade->grade_item->needsupdate) {
                     $data['percentage']['class'] = $class.' gradingerror';
                     $data['percentage']['content'] = get_string('error');
+                    } elseif ($grade_grade->is_hidden()) {
+                        $data['percentage']['class'] = $class.' hidden';
+                        $data['percentage']['content'] = '-';
                 } else {
                     $data['percentage']['class'] = $class;
                     $data['percentage']['content'] = grade_format_gradevalue($gradeval, $grade_grade->grade_item, true, GRADE_DISPLAY_TYPE_PERCENTAGE);
@@ -277,6 +299,9 @@ class grade_report_user extends grade_report {
                 if ($grade_grade->grade_item->needsupdate) {
                     $data['rank']['class'] = $class.' gradingerror';
                     $data['rank']['content'] = get_string('error');
+                    } elseif ($grade_grade->is_hidden()) {
+                        $data['rank']['class'] = $class.' hidden';
+                        $data['rank']['content'] = '-';
                 } else if (is_null($gradeval)) {
                     // no grade, no rank
                     $data['rank']['class'] = $class;
@@ -310,6 +335,7 @@ class grade_report_user extends grade_report {
                 $data['range']['class'] = $class;
                 $data['range']['content'] = $grade_grade->grade_item->get_formatted_range();
             }
+        }
         }
 
         /// Category
@@ -395,10 +421,9 @@ class grade_report_user extends grade_report {
      * @var array $data
      * @return bool Success or Failure (array of errors).
      */
-    public function process_data($data) {
+    function process_data($data) {
     }
-
-    public function process_action($target, $action) {
+    function process_action($target, $action) {
     }
 }
 

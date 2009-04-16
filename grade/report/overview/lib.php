@@ -225,10 +225,9 @@ class grade_report_overview extends grade_report {
      * @var array $data
      * @return bool Success or Failure (array of errors).
      */
-    public function process_data($data) {
+    function process_data($data) {
     }
-
-    public function process_action($target, $action) {
+    function process_action($target, $action) {
     }
 }
 

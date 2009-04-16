@@ -91,6 +91,8 @@ class grade_report_grader extends grade_report {
      * */
     public $canviewhidden;
 
+    var $preferences_page=false;
+
     /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
@@ -208,10 +210,13 @@ class grade_report_grader extends grade_report {
                 // Warn if the grade is out of bounds.
                 if (is_null($finalgrade)) {
                     // ok
-                } else if ($finalgrade < $grade_item->grademin) {
+                } else {
+                    $bounded = $grade_item->bounded_grade($finalgrade);
+                    if ($bounded > $finalgrade) {
                     $errorstr = 'lessthanmin';
-                } else if ($finalgrade > $grade_item->grademax) {
-                    $errorstr = 'morethanmax';
+                    } else if ($bounded < $finalgrade) {
+                    	$errorstr = 'morethanmax';
+                	}
                 }
                 if ($errorstr) {
                     $user = $DB->get_record('user', array('id' => $userid), 'id, firstname, lastname');
@@ -227,7 +232,7 @@ class grade_report_grader extends grade_report {
                 if (empty($trimmed)) {
                      $feedback = NULL;
                 } else {
-                     $feedback = $postedvalue;
+                     $feedback = stripslashes($postedvalue);
                 }
             }
 
@@ -541,7 +546,6 @@ class grade_report_grader extends grade_report {
 
         $columns_to_unset = array();
 
-
         foreach ($this->gtree->get_levels() as $key=>$row) {
             $columncount = 0;
             if ($key == 0) {
@@ -618,7 +622,7 @@ class grade_report_grader extends grade_report {
                 }
 // Element is a category
                 else if ($type == 'category') {
-                    $headerhtml .= '<th class="header '. $columnclass.' category'.$catlevel.'" '.$colspan.' scope="col">'
+                    $headerhtml .= '<th class=" '. $columnclass.' category'.$catlevel.'" '.$colspan.' scope="col">'
                                 . shorten_text($element['object']->get_name());
                     $headerhtml .= $this->get_collapsing_icon($element);
 
@@ -650,7 +654,7 @@ class grade_report_grader extends grade_report {
                     }
 
                     $headerlink = $this->gtree->get_element_header($element, true, $this->get_pref('showactivityicons'), false);
-                    $headerhtml .= '<th class="header '.$columnclass.' '.$type.$catlevel.$hidden.'" scope="col" onclick="set_col(this.cellIndex)">'
+                    $headerhtml .= '<th class=" '.$columnclass.' '.$type.$catlevel.$hidden.'" scope="col" onclick="set_col(this.cellIndex)">'
                                 . shorten_text($headerlink) . $arrow;
                     $headerhtml .= '</th>';
                 }
@@ -714,7 +718,6 @@ class grade_report_grader extends grade_report {
             }
 
             $columncount = 0;
-
             if ($fixedstudents) {
                 $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">';
             } else {
@@ -725,12 +728,12 @@ class grade_report_grader extends grade_report {
                 }
 
                 $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
-                              .'<th class="header c'.$columncount++.' user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
+                              .'<th class="c'.$columncount++.' user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
                               .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
                               .fullname($user).'</a></th>';
 
                 if ($showuseridnumber) {
-                    $studentshtml .= '<th class="header c'.$columncount++.' useridnumber" onclick="set_row(this.parentNode.rowIndex);">'.
+                    $studentshtml .= '<th class="c'.$columncount++.' useridnumber" onclick="set_row(this.parentNode.rowIndex);">'.
                             $user->idnumber.'</a></th>';
                 }
 
@@ -767,7 +770,7 @@ class grade_report_grader extends grade_report {
                 $eid = $this->gtree->get_grade_eid($grade);
                 $element = array('eid'=>$eid, 'object'=>$grade, 'type'=>'grade');
 
-                $cellclasses = 'cell c'.$columncount++;
+                $cellclasses = 'grade cell c'.$columncount++;
                 if ($item->is_category_item()) {
                     $cellclasses .= ' cat';
                 }
@@ -782,7 +785,17 @@ class grade_report_grader extends grade_report {
                     // $cellclasses .= ' excluded';
                 }
 
-                $studentshtml .= '<td class="'.$cellclasses.'">';
+                $grade_title = '&lt;div class=&quot;fullname&quot;&gt;'.fullname($user).'&lt;/div&gt;';
+                $grade_title .= '&lt;div class=&quot;itemname&quot;&gt;'.$item->get_name(true).'&lt;/div&gt;';
+
+                if (!empty($grade->feedback) && !$USER->gradeediting[$this->courseid]) {
+                    $grade_title .= '&lt;div class=&quot;feedback&quot;&gt;'
+                                 .wordwrap(trim(format_string($grade->feedback, $grade->feedbackformat)), 34, '&lt;br/ &gt;') . '&lt;/div&gt;';
+                } else {
+
+                }
+
+                $studentshtml .= '<td class="'.$cellclasses.'" title="'.$grade_title.'">';
 
                 if ($grade->is_excluded()) {
                     $studentshtml .= '<span class="excludedfloater">'.get_string('excluded', 'grades') . '</span> ';
@@ -847,7 +860,7 @@ class grade_report_grader extends grade_report {
                             if ($gradeval < 1) {
                                 $studentshtml .= '<span class="gradevalue'.$hidden.$gradepass.'">-</span>';
                             } else {
-                                $gradeval = (int)bounded_number($grade->grade_item->grademin, $gradeval, $grade->grade_item->grademax); //just in case somebody changes scale
+                                $gradeval = $grade->grade_item->bounded_grade($gradeval); //just in case somebody changes scale
                                 $studentshtml .= '<span class="gradevalue'.$hidden.$gradepass.'">'.$scales[$gradeval-1].'</span>';
                             }
                         } else {
@@ -881,13 +894,6 @@ class grade_report_grader extends grade_report {
                     $gradedisplaytype = $item->get_displaytype();
 
                     // If feedback present, surround grade with feedback tooltip: Open span here
-                    if (!empty($grade->feedback)) {
-                        $overlib = '';
-                        $feedback = addslashes_js(trim(format_string($grade->feedback, $grade->feedbackformat)));
-                        $overlib = "return overlib('$feedback', BORDER, 0, FGCLASS, 'feedback', "
-                                  ."CAPTIONFONTCLASS, 'caption', CAPTION, '$strfeedback');";
-                        $studentshtml .= '<span onmouseover="'.s($overlib).'" onmouseout="return nd();">';
-                    }
 
                     if ($item->needsupdate) {
                         $studentshtml .= '<span class="gradingerror'.$hidden.$gradepass.'">'.get_string('error').'</span>';
@@ -1001,7 +1007,7 @@ class grade_report_grader extends grade_report {
                 }
 
                 $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
-                              .'<th class="header c0 user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
+                              .'<th class="c0 user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
                               .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
                               .fullname($user)."</a></th>\n";
 
@@ -1134,6 +1140,15 @@ class grade_report_grader extends grade_report {
 
             $ungraded_counts = $DB->get_records_sql($SQL, $params);
 
+            $fixedstudents = empty($USER->screenreader) && $CFG->grade_report_fixedstudents;
+            if (!$fixedstudents) {
+                $colspan='';
+                if ($this->get_pref('showuseridnumber')) {
+                    $colspan = 'colspan="2" ';
+                }
+                $avghtml .= '<th class="header c0 range "'.$colspan.' scope="row">'.$straverage.'</th>';
+            }
+
             foreach ($this->gtree->items as $itemid=>$unused) {
                 $item =& $this->gtree->items[$itemid];
 
@@ -1205,16 +1220,24 @@ class grade_report_grader extends grade_report {
      * @return string HTML
      */
     public function get_rangehtml() {
-        global $USER;
+        global $CFG, $USER;
 
-        $scalehtml = '';
+        $rangehtml = '';
         if ($this->get_pref('showranges')) {
             $rangesdisplaytype   = $this->get_pref('rangesdisplaytype');
             $rangesdecimalpoints = $this->get_pref('rangesdecimalpoints');
 
             $columncount=0;
-            $scalehtml = '<tr class="range r'.$this->rowcount++.' heading">';
+            $rangehtml = '<tr class="range r'.$this->rowcount++.' heading">';
 
+            $fixedstudents = empty($USER->screenreader) && $CFG->grade_report_fixedstudents;
+            if (!$fixedstudents) {
+                $colspan='';
+                if ($this->get_pref('showuseridnumber')) {
+                    $colspan = 'colspan="2" ';
+                }
+                $rangehtml .= '<th class="header c0 range "'.$colspan.' scope="row">'.$this->get_lang_string('range','grades').'</th>';
+            }
 
             foreach ($this->gtree->items as $itemid=>$unused) {
                 $item =& $this->gtree->items[$itemid];
@@ -1227,12 +1250,12 @@ class grade_report_grader extends grade_report {
 
                 $formatted_range = $item->get_formatted_range($rangesdisplaytype, $rangesdecimalpoints);
 
-                $scalehtml .= '<th class="header c'.$columncount++.' range"><span class="rangevalues'.$hidden.'">'. $formatted_range .'</span></th>';
+                $rangehtml .= '<th class="header c'.$columncount++.' range"><span class="rangevalues'.$hidden.'">'. $formatted_range .'</span></th>';
 
             }
-            $scalehtml .= '</tr>';
+            $rangehtml .= '</tr>';
         }
-        return $scalehtml;
+        return $rangehtml;
     }
 
     /**

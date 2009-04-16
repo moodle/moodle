@@ -114,9 +114,9 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
 
 // Initialise the grader report object
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
+require_js(array('yui_yahoo', 'yui_dom', 'yui_event', 'yui_container', 'yui_connection', 'yui_dragdrop', 'yui_element', 'yui_json'));
 if ($report->get_pref('enableajax')) {
     $report = new grade_report_grader_ajax($courseid, $gpr, $context, $page, $sortitemid);
-    require_js(array('yui_yahoo', 'yui_dom', 'yui_event', 'yui_json', 'yui_connection', 'yui_dragdrop', 'yui_treeview', 'yui_element'));
 }
 
 /// processing posted grades & feedback here
@@ -139,7 +139,7 @@ $report->load_final_grades();
 
 /// Print header
 $reportname = get_string('modulename', 'gradereport_grader');
-print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, null, $buttons);
+print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, null, $buttons, array($CFG->wwwroot . '/lib/yui/container/assets/skins/sam/container.css'));
 
 echo $report->group_selector;
 echo '<div class="clearer"></div>';
@@ -156,10 +156,8 @@ if (!empty($studentsperpage)) {
     print_paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
 }
 
-
 $reporthtml = '<script src="functions.js" type="text/javascript"></script>';
 $reporthtml .= '<div class="gradeparent">';
-
 $reporthtml .= $report->get_studentnameshtml();
 $reporthtml .= $report->get_headerhtml();
 $reporthtml .= $report->get_iconshtml();
@@ -197,6 +195,26 @@ if (!empty($studentsperpage) && $studentsperpage >= 20) {
 if ($report->get_pref('enableajax')) {
     require_once 'ajax.php';
 }
+
+// Print YUI tooltip code
+?>
+<script type="text/javascript">
+
+YAHOO.namespace("graderreport");
+
+YAHOO.graderreport.init = function() {
+    // Get all <td> with class grade
+    var cells = YAHOO.util.Dom.getElementsByClassName('grade', 'td');
+    YAHOO.graderreport.tooltips = new Array(cells.length);
+
+    for (var i = 0; i < cells.length; i++) {
+        YAHOO.graderreport.tooltips[i] = new YAHOO.widget.Tooltip("tt"+i, { context: cells[i], autodismissdelay: 10000000 });
+    }
+};
+YAHOO.util.Event.onDOMReady(YAHOO.graderreport.init);
+
+</script>
+<?php
 
 print_footer($course);
 

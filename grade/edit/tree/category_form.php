@@ -27,6 +27,7 @@ require_once $CFG->libdir.'/formslib.php';
 
 class edit_category_form extends moodleform {
     private $aggregation_options = array();
+    private $allaggoptions;
 
     function definition() {
         global $CFG, $COURSE, $DB;
@@ -42,6 +43,8 @@ class edit_category_form extends moodleform {
                                            GRADE_AGGREGATE_MODE            =>get_string('aggregatemode', 'grades'),
                                            GRADE_AGGREGATE_SUM             =>get_string('aggregatesum', 'grades'));
 
+        $this->allaggoptions = array_keys($this->aggregation_options);
+
         // visible elements
         $mform->addElement('header', 'headercategory', get_string('gradecategory', 'grades'));
         $mform->addElement('text', 'fullname', get_string('categoryname', 'grades'));
@@ -49,6 +52,7 @@ class edit_category_form extends moodleform {
 
         $mform->addElement('select', 'aggregation', get_string('aggregation', 'grades'), $this->aggregation_options);
         $mform->setHelpButton('aggregation', array('aggregation', get_string('aggregation', 'grades'), 'grade'));
+
         if ((int)$CFG->grade_aggregation_flag & 2) {
             $mform->setAdvanced('aggregation');
         }
@@ -56,6 +60,7 @@ class edit_category_form extends moodleform {
         $mform->addElement('checkbox', 'aggregateonlygraded', get_string('aggregateonlygraded', 'grades'));
         $mform->setHelpButton('aggregateonlygraded', array('aggregateonlygraded', get_string('aggregateonlygraded', 'grades'),'grade'), true);
         $mform->disabledIf('aggregateonlygraded', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
+
         if ((int)$CFG->grade_aggregateonlygraded_flag & 2) {
             $mform->setAdvanced('aggregateonlygraded');
         }
@@ -73,11 +78,13 @@ class edit_category_form extends moodleform {
 
         $mform->addElement('advcheckbox', 'aggregatesubcats', get_string('aggregatesubcats', 'grades'));
         $mform->setHelpButton('aggregatesubcats', array('aggregatesubcats', get_string('aggregatesubcats', 'grades'), 'grade'), true);
+
         if ((int)$CFG->grade_aggregatesubcats_flag & 2) {
             $mform->setAdvanced('aggregatesubcats');
         }
 
         $options = array(0 => get_string('none'));
+
         for ($i=1; $i<=20; $i++) {
             $options[$i] = $i;
         }
@@ -187,6 +194,7 @@ class edit_category_form extends moodleform {
         $mform->setHelpButton('grade_item_decimals', array('decimalpoints', get_string('decimalpoints', 'grades'), 'grade'), true);
         $mform->setDefault('grade_item_decimals', -1);
         $mform->disabledIf('grade_item_decimals', 'grade_item_display', 'eq', GRADE_DISPLAY_TYPE_LETTER);
+
         if ($default_gradedisplaytype == GRADE_DISPLAY_TYPE_LETTER) {
             $mform->disabledIf('grade_item_decimals', 'grade_item_display', "eq", GRADE_DISPLAY_TYPE_DEFAULT);
         }
@@ -200,7 +208,7 @@ class edit_category_form extends moodleform {
         $mform->disabledIf('grade_item_hidden', 'grade_item_hiddenuntil[off]', 'notchecked');
 
         /// locking
-        $mform->addElement('advcheckbox', 'grade_item_locked', get_string('locked', 'grades'));
+        $mform->addElement('checkbox', 'grade_item_locked', get_string('locked', 'grades'));
         $mform->setHelpButton('grade_item_locked', array('locked', get_string('locked', 'grades'), 'grade'));
 
         $mform->addElement('date_time_selector', 'grade_item_locktime', get_string('locktime', 'grades'), array('optional'=>true));
@@ -212,7 +220,6 @@ class edit_category_form extends moodleform {
 
         $options = array();
         $default = '';
-        $coefstring = '';
         $categories = grade_category::fetch_all(array('courseid'=>$COURSE->id));
 
         foreach ($categories as $cat) {
@@ -221,28 +228,11 @@ class edit_category_form extends moodleform {
             if ($cat->is_course_category()) {
                 $default = $cat->id;
             }
-            if ($cat->is_aggregationcoef_used()) {
-                if ($cat->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
-                    $coefstring = ($coefstring=='' or $coefstring=='aggregationcoefweight') ? 'aggregationcoefweight' : 'aggregationcoef';
-
-                } else if ($cat->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
-                    $coefstring = ($coefstring=='' or $coefstring=='aggregationcoefextra') ? 'aggregationcoefextra' : 'aggregationcoef';
-
-                } else {
-                    $coefstring = 'aggregationcoef';
-                }
-            } else {
-                $mform->disabledIf('grade_item_aggregationcoef', 'parentcategory', 'eq', $cat->id);
-            }
         }
+
         if (count($categories) > 1) {
             $mform->addElement('select', 'parentcategory', get_string('parentcategory', 'grades'), $options);
             $mform->addElement('static', 'currentparentaggregation', get_string('currentparentaggregation', 'grades'));
-        }
-
-        if ($coefstring !== '') {
-            $mform->addElement('text', 'grade_item_aggregationcoef', get_string($coefstring, 'grades'));
-            $mform->setHelpButton('grade_item_aggregationcoef', array('aggregationcoefweight', get_string('aggregationcoef', 'grades'), 'grade'), true);
         }
 
 /// user preferences
@@ -282,6 +272,7 @@ class edit_category_form extends moodleform {
         $mform =& $this->_form;
 
         $somecat = new grade_category();
+
         foreach ($somecat->forceable as $property) {
             if ((int)$CFG->{"grade_{$property}_flag"} & 1) {
                 if ($mform->elementExists($property)) {
@@ -306,9 +297,13 @@ class edit_category_form extends moodleform {
             }
         }
 
+        $current_aggregation = null;
+
         if ($id = $mform->getElementValue('id')) {
             $grade_category = grade_category::fetch(array('id'=>$id));
             $grade_item = $grade_category->load_grade_item();
+
+            $current_aggregation = $grade_category->aggregation;
 
             // remove agg coef if not used
             if ($grade_category->is_course_category()) {
@@ -365,7 +360,22 @@ class edit_category_form extends moodleform {
             if ($grade_category->is_course_category() && $mform->getElementValue('fullname') == '?') {
                 $mform->setDefault('fullname', '');
             }
+            // remove unwanted aggregation options
+            if ($mform->elementExists('aggregation')) {
+                $agg_el =& $mform->getElement('aggregation');
+                $visible = explode(',', $CFG->grade_aggregations_visible);
+                if (!is_null($current_aggregation)) {
+                    // current type is always visible
+                    $visible[] = $current_aggregation;
+                }
+                foreach ($this->allaggoptions as $type) {
+                    if (!in_array($type, $visible) && $grade_category->aggregation != $type) {
+                        $agg_el->removeOption($type);
+                    }
+                }
+            }
         }
+
 
         // no parent header for course category
         if (!$mform->elementExists('aggregationcoef') and !$mform->elementExists('parentcategory')) {
@@ -376,6 +386,8 @@ class edit_category_form extends moodleform {
         if ($id = $mform->getElementValue('id')) {
             $grade_category = grade_category::fetch(array('id'=>$id));
             $grade_item = $grade_category->load_grade_item();
+
+            $mform->setDefault('grade_item_hidden', (int) $grade_item->hidden);
 
             if (!$grade_item->is_raw_used()) {
                 $mform->removeElement('grade_item_plusfactor');
@@ -428,23 +440,19 @@ class edit_category_form extends moodleform {
                         $mform->removeElement('grade_item_aggregationcoef');
                     }
                 } else {
-                    //fix label if needed
-                    $agg_el =& $mform->getElement('grade_item_aggregationcoef');
-                    $aggcoef = '';
-                    if ($parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
-                        $aggcoef = 'aggregationcoefweight';
 
-                    } else if ($parent_category->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
-                        $aggcoef = 'aggregationcoefextra';
+                    $coefstring = $grade_item->get_coefstring();
 
-                    } else if ($parent_category->aggregation == GRADE_AGGREGATE_SUM) {
-                        $aggcoef = 'aggregationcoefextrasum';
+                    if ($coefstring == 'aggregationcoefextrasum') {
+                        // advcheckbox is not compatible with disabledIf!
+                        $element =& $mform->createElement('checkbox', 'grade_item_aggregationcoef', get_string($coefstring, 'grades'));
+                    } else {
+                        $element =& $mform->createElement('text', 'grade_item_aggregationcoef', get_string($coefstring, 'grades'));
                     }
-
-                    if ($aggcoef !== '') {
-                        $agg_el->setLabel(get_string($aggcoef, 'grades'));
-                        $mform->setHelpButton('grade_item_aggregationcoef', array($aggcoef, get_string($aggcoef, 'grades'), 'grade'), true);
-                    }
+                    $mform->insertElementBefore($element, 'parentcategory');
+                    $mform->setDefault('grade_item_aggregationcoef', (int) $grade_item->aggregationcoef); // must be cast to int, otherwise "0" counts as true :S
+                    $mform->setHelpButton('grade_item_aggregationcoef', array($coefstring, get_string($coefstring, 'grades'), 'grade'), true);
+                    $mform->disabledIf('grade_item_aggregationcoef', 'grade_item_parentcategory', 'eq', $parent_category->id);
                 }
             }
 

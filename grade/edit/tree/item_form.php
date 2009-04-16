@@ -153,40 +153,14 @@ class edit_item_form extends moodleform {
         foreach ($categories as $cat) {
             $cat->apply_forced_settings();
             $options[$cat->id] = $cat->get_name();
+
             if ($cat->is_course_category()) {
                 $default = $cat->id;
-            }
-
-            if ($cat->is_aggregationcoef_used()) {
-                if ($cat->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
-                    $coefstring = ($coefstring=='' or $coefstring=='aggregationcoefweight') ? 'aggregationcoefweight' : 'aggregationcoef';
-
-                } else if ($cat->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
-                    $coefstring = ($coefstring=='' or $coefstring=='aggregationcoefextra') ? 'aggregationcoefextra' : 'aggregationcoef';
-
-                } else if ($cat->aggregation == GRADE_AGGREGATE_SUM) {
-                    $coefstring = ($coefstring=='' or $coefstring=='aggregationcoefextrasum') ? 'aggregationcoefextrasum' : 'aggregationcoef';
-
-                } else {
-                    $coefstring = 'aggregationcoef';
-                }
-            } else {
-                $mform->disabledIf('aggregationcoef', 'parentcategory', 'eq', $cat->id);
             }
         }
 
         if (count($categories) > 1) {
             $mform->addElement('select', 'parentcategory', get_string('gradecategory', 'grades'), $options);
-        }
-
-        if ($coefstring !== '') {
-            if ($coefstring == 'aggregationcoefextrasum') {
-                // advcheckbox is not compatible with disabledIf!
-                $mform->addElement('checkbox', 'aggregationcoef', get_string($coefstring, 'grades'));
-            } else {
-                $mform->addElement('text', 'aggregationcoef', get_string($coefstring, 'grades'));
-            }
-            $mform->setHelpButton('aggregationcoef', array($coefstring, get_string($coefstring, 'grades'), 'grade'), true);
         }
 
 /// hidden params
@@ -278,23 +252,26 @@ class edit_item_form extends moodleform {
                         $mform->removeElement('aggregationcoef');
                     }
                 } else {
-                    //fix label if needed
-                    $agg_el =& $mform->getElement('aggregationcoef');
-                    $aggcoef = '';
-                    if ($parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
-                        $aggcoef = 'aggregationcoefweight';
-
-                    } else if ($parent_category->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
-                        $aggcoef = 'aggregationcoefextra';
-
-                    } else if ($parent_category->aggregation == GRADE_AGGREGATE_SUM) {
-                        $aggcoef = 'aggregationcoefextrasum';
+                    if ($grade_item->is_category_item()) {
+                        $parent_category = $parent_category->get_parent_category();
+                        $coefstring = $parent_category->get_grade_item()->get_coefstring();
+                    } else {
+                        $parent_category->apply_forced_settings();
+                        $coefstring = $grade_item->get_coefstring();
                     }
 
-                    if ($aggcoef !== '') {
-                        $agg_el->setLabel(get_string($aggcoef, 'grades'));
-                        $mform->setHelpButton('aggregationcoef', array($aggcoef, get_string($aggcoef, 'grades'), 'grade'), true);
+                    if ($coefstring !== '') {
+                        if ($coefstring == 'aggregationcoefextrasum') {
+                            // advcheckbox is not compatible with disabledIf!
+                            $element =& $mform->createElement('checkbox', 'aggregationcoef', get_string($coefstring, 'grades'));
+                        } else {
+                            $element =& $mform->createElement('text', 'aggregationcoef', get_string($coefstring, 'grades'));
+                        }
+                        $mform->insertElementBefore($element, 'parentcategory');
+                        $mform->setHelpButton('aggregationcoef', array($coefstring, get_string($coefstring, 'grades'), 'grade'), true);
                     }
+
+                    $mform->disabledIf('aggregationcoef', 'parentcategory', 'eq', $parent_category->id);
                 }
             }
 

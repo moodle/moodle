@@ -144,6 +144,11 @@ class grade_category extends grade_object {
     public $forceable = array('aggregation', 'keephigh', 'droplow', 'aggregateonlygraded', 'aggregateoutcomes', 'aggregatesubcats');
 
     /**
+     * String representing the aggregation coefficient. Variable is used as cache.
+     */
+    var $coefstring = null;
+
+    /**
      * Builds this category's path string based on its parents (if any) and its own id number.
      * This is typically done just before inserting this object in the DB for the first time,
      * or when a new parent is added or changed. It is a recursive function: once the calling
@@ -572,11 +577,7 @@ class grade_category extends grade_object {
         // recalculate the grade back to requested range
         $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $this->grade_item->grademin, $this->grade_item->grademax);
 
-        if (is_null($finalgrade)) {
-            $grade->finalgrade = null;
-        } else {
-            $grade->finalgrade = (float)bounded_number($this->grade_item->grademin, $finalgrade, $this->grade_item->grademax);
-        }
+        $grade->finalgrade = $this->grade_item->bounded_grade($finalgrade);
 
         // update in db if changed
         if (grade_floats_different($grade->finalgrade, $oldfinalgrade)) {
@@ -750,6 +751,10 @@ class grade_category extends grade_object {
      * @return boolean (just plain return;)
      */
     private function sum_grades(&$grade, $oldfinalgrade, $items, $grade_values, $excluded) {
+        if (empty($items)) {
+            return null;
+        }
+
         // ungraded and exluded items are not used in aggregation
         foreach ($grade_values as $itemid=>$v) {
             if (is_null($v)) {
@@ -771,7 +776,7 @@ class grade_category extends grade_object {
         $this->apply_limit_rules($grade_values);
 
         $sum = array_sum($grade_values);
-        $grade->finalgrade = bounded_number($this->grade_item->grademin, $sum, $this->grade_item->grademax);
+        $grade->finalgrade = $this->grade_item->bounded_grade($sum);
 
         // update in db if changed
         if (grade_floats_different($grade->finalgrade, $oldfinalgrade)) {
@@ -810,6 +815,52 @@ class grade_category extends grade_object {
              or $this->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN
              or $this->aggregation == GRADE_AGGREGATE_SUM);
 
+    }
+
+    /**
+     * Recursive function to find which weight/extra credit field to use in the grade item form. Inherits from a parent category
+     * if that category has aggregatesubcats set to true.
+     * @param string $coefstring
+     * @return string $coefstring
+     */
+    public function get_coefstring($first=true) {
+        if (!is_null($this->coefstring)) {
+            return $this->coefstring;
+        }
+
+        $overriding_coefstring = null;
+
+        // Stop recursing upwards if this category aggregates subcats or has no parent
+        if (!$first && !$this->aggregatesubcats) {
+            if ($parent_category = $this->get_parent_category()) {
+                return $parent_category->get_coefstring(false);
+            } else {
+                return null;
+            }
+        } elseif ($first) {
+            if (!$this->aggregatesubcats) {
+                if ($parent_category = $this->get_parent_category()) {
+                    $overriding_coefstring = $parent_category->get_coefstring(false);
+                }
+            }
+        }
+
+        // If an overriding coefstring has trickled down from one of the parent categories, return it. Otherwise, return self.
+        if (!is_null($overriding_coefstring)) {
+            return $overriding_coefstring;
+        }
+
+        // No parent category is overriding this category's aggregation, return its string
+        if ($this->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
+            $this->coefstring = 'aggregationcoefweight';
+        } else if ($this->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
+            $this->coefstring = 'aggregationcoefextra';
+        } else if ($this->aggregation == GRADE_AGGREGATE_SUM) {
+            $this->coefstring = 'aggregationcoefextrasum';
+        } else {
+            $this->coefstring = 'aggregationcoef';
+        }
+        return $this->coefstring;
     }
 
     /**
