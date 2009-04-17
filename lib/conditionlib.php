@@ -17,7 +17,7 @@ define('CONDITION_MISSING_EXTRATABLE',1);
 define('CONDITION_MISSING_EVERYTHING',2);
 
 class condition_info {
-    private $cm,$gotdata;
+    private $cm, $gotdata;
 
     /**
      * Constructs with course-module details.
@@ -35,42 +35,42 @@ class condition_info {
      * @return condition_info Object which can retrieve information about the
      *   activity
      */
-    public function __construct($cm,$expectingmissing=CONDITION_MISSING_NOTHING,
+    public function __construct($cm, $expectingmissing=CONDITION_MISSING_NOTHING,
         $loaddata=true) {
         global $DB;
 
         // Check ID as otherwise we can't do the other queries
-        if(empty($cm->id)) {
+        if (empty($cm->id)) {
             throw new coding_exception("Invalid parameters; course-module ID not included");
         }
 
         // If not loading data, don't do anything else
-        if(!$loaddata) {
-            $this->cm=(object)array('id'=>$cm->id);
-            $this->gotdata=false;
+        if (!$loaddata) {
+            $this->cm = (object)array('id'=>$cm->id);
+            $this->gotdata = false;
             return;
         }
 
         // Missing basic data from course_modules
-        if(!isset($cm->availablefrom) || !isset($cm->availableuntil) || 
+        if (!isset($cm->availablefrom) || !isset($cm->availableuntil) || 
             !isset($cm->showavailability) || !isset($cm->course)) {
-            if($expectingmissing<CONDITION_MISSING_EVERYTHING) {
+            if ($expectingmissing<CONDITION_MISSING_EVERYTHING) {
                 debugging('Performance warning: condition_info constructor is 
                     faster if you pass in $cm with at least basic fields 
                     (availablefrom,availableuntil,showavailability,course). 
                     [This warning can be disabled, see phpdoc.]',
                     DEBUG_DEVELOPER);
             }
-            $cm=$DB->get_record('course_modules',array('id'=>$cm->id),
+            $cm = $DB->get_record('course_modules',array('id'=>$cm->id),
                 'id,course,availablefrom,availableuntil,showavailability');
         }
 
-        $this->cm=clone($cm);
-        $this->gotdata=true;
+        $this->cm = clone($cm);
+        $this->gotdata = true;
 
         // Missing extra data
-        if(!isset($cm->conditionsgrade) || !isset($cm->conditionscompletion)) {
-            if($expectingmissing<CONDITION_MISSING_EXTRATABLE) {
+        if (!isset($cm->conditionsgrade) || !isset($cm->conditionscompletion)) {
+            if ($expectingmissing<CONDITION_MISSING_EXTRATABLE) {
                 debugging('Performance warning: condition_info constructor is 
                     faster if you pass in a $cm from get_fast_modinfo.
                     [This warning can be disabled, see phpdoc.]',
@@ -88,18 +88,18 @@ class condition_info {
      * @param object &$cm Moodle course-module data object
      */
     public static function fill_availability_conditions(&$cm) {
-        if(empty($cm->id)) {
+        if (empty($cm->id)) {
             throw new coding_exception("Invalid parameters; course-module ID not included");
         }
 
         // Does nothing if the variables are already present
-        if(!isset($cm->conditionsgrade) ||
+        if (!isset($cm->conditionsgrade) ||
             !isset($cm->conditionscompletion)) {
             $cm->conditionsgrade=array();
             $cm->conditionscompletion=array();
 
-            global $DB,$CFG;
-            $conditions=$DB->get_records_sql($sql="
+            global $DB, $CFG;
+            $conditions = $DB->get_records_sql($sql="
 SELECT 
     cma.id as cmaid, gi.*,cma.sourcecmid,cma.requiredcompletion,cma.gradeitemid,
     cma.grademin as conditiongrademin, cma.grademax as conditiongrademax
@@ -108,21 +108,21 @@ FROM
     LEFT JOIN {grade_items} gi ON gi.id=cma.gradeitemid
 WHERE
     coursemoduleid=?",array($cm->id));
-            foreach($conditions as $condition) {
-                if(!is_null($condition->sourcecmid)) {
-                    $cm->conditionscompletion[$condition->sourcecmid]=
+            foreach ($conditions as $condition) {
+                if (!is_null($condition->sourcecmid)) {
+                    $cm->conditionscompletion[$condition->sourcecmid] =
                         $condition->requiredcompletion;
-                } else {                    
-                    $minmax=new stdClass;
-                    $minmax->min=$condition->conditiongrademin;
-                    $minmax->max=$condition->conditiongrademax;
-                    $minmax->name=self::get_grade_name($condition);
-                    $cm->conditionsgrade[$condition->gradeitemid]=$minmax;
+                } else {
+                    $minmax = new stdClass;
+                    $minmax->min = $condition->conditiongrademin;
+                    $minmax->max = $condition->conditiongrademax;
+                    $minmax->name = self::get_grade_name($condition);
+                    $cm->conditionsgrade[$condition->gradeitemid] = $minmax;
                 }
             }
         }
     }
-    
+
     /**
      * Obtains the name of a grade item.
      * @param object $gradeitemobj Object from get_record on grade_items table,
@@ -131,10 +131,10 @@ WHERE
      */
     private static function get_grade_name($gradeitemobj) {
         global $CFG;
-        if(isset($gradeitemobj->id)) {
+        if (isset($gradeitemobj->id)) {
             require_once($CFG->libdir.'/gradelib.php');
-            $item=new grade_item;
-            grade_object::set_properties($item,$gradeitemobj);    
+            $item = new grade_item;
+            grade_object::set_properties($item, $gradeitemobj);    
             return $item->get_name();
         } else {
             return '!missing'; // Ooops, missing grade
@@ -156,16 +156,16 @@ WHERE
      * @param int $cmid ID of other module
      * @param int $requiredcompletion COMPLETION_xx constant
      */
-    public function add_completion_condition($cmid,$requiredcompletion) {
+    public function add_completion_condition($cmid, $requiredcompletion) {
         // Add to DB
         global $DB;
         $DB->insert_record('course_modules_availability',
             (object)array('coursemoduleid'=>$this->cm->id,
-                'sourcecmid'=>$cmid,'requiredcompletion'=>$requiredcompletion),
+                'sourcecmid'=>$cmid, 'requiredcompletion'=>$requiredcompletion),
             false);
 
         // Store in memory too
-        $this->cm->conditionscompletion[$cmid]=$requiredcompletion;
+        $this->cm->conditionscompletion[$cmid] = $requiredcompletion;
     }
 
     /**
@@ -177,26 +177,26 @@ WHERE
      *   memory version may be out of date (this has performance consequences,
      *   so don't do it unless it really needs updating)
      */
-    public function add_grade_condition($gradeitemid,$min,$max,$updateinmemory=false) {
+    public function add_grade_condition($gradeitemid, $min, $max, $updateinmemory=false) {
         // Normalise nulls
-        if($min==='') {
-            $min=null;
+        if ($min==='') {
+            $min = null;
         }
-        if($max==='') {
-            $max=null;
+        if ($max==='') {
+            $max = null;
         }
         // Add to DB
         global $DB;
         $DB->insert_record('course_modules_availability',
             (object)array('coursemoduleid'=>$this->cm->id,
-                'gradeitemid'=>$gradeitemid,'grademin'=>$min,'grademax'=>$max),
+                'gradeitemid'=>$gradeitemid, 'grademin'=>$min, 'grademax'=>$max),
             false);
 
         // Store in memory too
-        if($updateinmemory) {
+        if ($updateinmemory) {
             $this->cm->conditionsgrade[$gradeitemid]=(object)array(
-                'min'=>$min,'max'=>$max);
-            $this->cm->conditionsgrade[$gradeitemid]->name=
+                'min'=>$min, 'max'=>$max);
+            $this->cm->conditionsgrade[$gradeitemid]->name =
                 self::get_grade_name($DB->get_record('grade_items',
                     array('id'=>$gradeitemid)));
         }
@@ -212,8 +212,8 @@ WHERE
             array('coursemoduleid'=>$this->cm->id));
 
         // And from memory
-        $this->cm->conditionsgrade=array();
-        $this->cm->conditionscompletion=array();
+        $this->cm->conditionsgrade = array();
+        $this->cm->conditionscompletion = array();
     }
 
     /**
@@ -227,59 +227,59 @@ WHERE
      * @throws coding_exception If data wasn't loaded
      */
     public function get_full_information($modinfo=null) {
-        $this->require_data();                
-        global $COURSE,$DB;
+        $this->require_data();
+        global $COURSE, $DB;
 
-        $information='';
+        $information = '';
 
         // Completion conditions
         if(count($this->cm->conditionscompletion)>0) {
-            if($this->cm->course==$COURSE->id) {
-                $course=$COURSE;
+            if ($this->cm->course==$COURSE->id) {
+                $course = $COURSE;
             } else {
-                $course=$DB->get_record('course',array('id'=>$this->cm->course),'id,enablecompletion,modinfo');
+                $course = $DB->get_record('course',array('id'=>$this->cm->course),'id,enablecompletion,modinfo');
             }
-            foreach($this->cm->conditionscompletion as $cmid=>$expectedcompletion) {
-                if(!$modinfo) {
-                    $modinfo=get_fast_modinfo($course);
+            foreach ($this->cm->conditionscompletion as $cmid=>$expectedcompletion) {
+                if (!$modinfo) {
+                    $modinfo = get_fast_modinfo($course);
                 }
-                $information.=get_string(
+                $information .= get_string(
                     'requires_completion_'.$expectedcompletion,
-                    'condition',$modinfo->cms[$cmid]->name).' ';
+                    'condition', $modinfo->cms[$cmid]->name).' ';
             }
         }
 
         // Grade conditions
-        if(count($this->cm->conditionsgrade)>0) {
-            foreach($this->cm->conditionsgrade as $gradeitemid=>$minmax) {
+        if (count($this->cm->conditionsgrade)>0) {
+            foreach ($this->cm->conditionsgrade as $gradeitemid=>$minmax) {
                 // String depends on type of requirement. We are coy about
                 // the actual numbers, in case grades aren't released to
                 // students.
-                if(is_null($minmax->min) && is_null($minmax->max)) {
-                    $string='any';
-                } else if(is_null($minmax->max)) {
-                    $string='min';
-                } else if(is_null($minmax->min)) {
-                    $string='max';
+                if (is_null($minmax->min) && is_null($minmax->max)) {
+                    $string = 'any';
+                } else if (is_null($minmax->max)) {
+                    $string = 'min';
+                } else if (is_null($minmax->min)) {
+                    $string = 'max';
                 } else {
-                    $string='range';
+                    $string = 'range';
                 }
-                $information.=get_string('requires_grade_'.$string,'condition',$minmax->name).' ';
+                $information .= get_string('requires_grade_'.$string, 'condition', $minmax->name).' ';
             }
         }
 
         // Dates
-        if($this->cm->availablefrom) {
-            $information.=get_string('requires_date','condition',userdate(
-                $this->cm->availablefrom,get_string('strftimedate','langconfig')));
+        if ($this->cm->availablefrom) {
+            $information .= get_string('requires_date', 'condition', userdate(
+                $this->cm->availablefrom, get_string('strftimedate', 'langconfig')));
         }
 
-        if($this->cm->availableuntil) {
-            $information.=get_string('requires_date_before','condition',userdate(
-                $this->cm->availableuntil,get_string('strftimedate','langconfig')));
+        if ($this->cm->availableuntil) {
+            $information .= get_string('requires_date_before', 'condition', userdate(
+                $this->cm->availableuntil, get_string('strftimedate', 'langconfig')));
         }
 
-        $information=trim($information);
+        $information = trim($information);
         return $information;
     }
 
@@ -305,50 +305,50 @@ WHERE
      * @return bool True if this item is available to the user, false otherwise
      * @throws coding_exception If data wasn't loaded
      */
-    public function is_available(&$information,$grabthelot=false,$userid=0,$modinfo=null) {
-        $this->require_data();                
+    public function is_available(&$information, $grabthelot=false, $userid=0, $modinfo=null) {
+        $this->require_data();
         global $COURSE,$DB;
 
-        $available=true;
-        $information='';
+        $available = true;
+        $information = '';
 
         // Check each completion condition
         if(count($this->cm->conditionscompletion)>0) {
-            if($this->cm->course==$COURSE->id) {
-                $course=$COURSE;
+            if ($this->cm->course==$COURSE->id) {
+                $course = $COURSE;
             } else {
-                $course=$DB->get_record('course',array('id'=>$this->cm->course),'id,enablecompletion,modinfo');
+                $course = $DB->get_record('course',array('id'=>$this->cm->course),'id,enablecompletion,modinfo');
             }
 
-            $completion=new completion_info($course);
-            foreach($this->cm->conditionscompletion as $cmid=>$expectedcompletion) {
+            $completion = new completion_info($course);
+            foreach ($this->cm->conditionscompletion as $cmid=>$expectedcompletion) {
                 // The completion system caches its own data
-                $completiondata=$completion->get_data((object)array('id'=>$cmid),
-                    $grabthelot,$userid,$modinfo);
+                $completiondata = $completion->get_data((object)array('id'=>$cmid),
+                    $grabthelot, $userid, $modinfo);
 
-                $thisisok=true;
-                if($expectedcompletion==COMPLETION_COMPLETE) {
+                $thisisok = true;
+                if ($expectedcompletion==COMPLETION_COMPLETE) {
                     // 'Complete' also allows the pass, fail states
-                    switch($completiondata->completionstate) {
+                    switch ($completiondata->completionstate) {
                         case COMPLETION_COMPLETE:
                         case COMPLETION_COMPLETE_FAIL:
                         case COMPLETION_COMPLETE_PASS:
                             break;
                         default:
-                            $thisisok=false;
+                            $thisisok = false;
                     }
                 } else {
                     // Other values require exact match
-                    if($completiondata->completionstate!=$expectedcompletion) {
-                        $thisisok=false;
+                    if ($completiondata->completionstate!=$expectedcompletion) {
+                        $thisisok = false;
                     }
                 }
-                if(!$thisisok) {
-                    $available=false;
-                    if(!$modinfo) {
-                        $modinfo=get_fast_modinfo($course);
+                if (!$thisisok) {
+                    $available = false;
+                    if (!$modinfo) {
+                        $modinfo = get_fast_modinfo($course);
                     }
-                    $information.=get_string(
+                    $information .= get_string(
                         'requires_completion_'.$expectedcompletion,
                         'condition',$modinfo->cms[$cmid]->name).' ';
                 }
@@ -356,43 +356,43 @@ WHERE
         }
 
         // Check each grade condition
-        if(count($this->cm->conditionsgrade)>0) {
-            foreach($this->cm->conditionsgrade as $gradeitemid=>$minmax) {
-                $score=$this->get_cached_grade_score($gradeitemid,$grabthelot,$userid);
-                if($score===false ||
+        if (count($this->cm->conditionsgrade)>0) {
+            foreach ($this->cm->conditionsgrade as $gradeitemid=>$minmax) {
+                $score = $this->get_cached_grade_score($gradeitemid, $grabthelot, $userid);
+                if ($score===false ||
                     (!is_null($minmax->min) && $score<$minmax->min) || 
                     (!is_null($minmax->max) && $score>=$minmax->max)) {
                     // Grade fail
-                    $available=false;
+                    $available = false;
                     // String depends on type of requirement. We are coy about
                     // the actual numbers, in case grades aren't released to
                     // students.
-                    if(is_null($minmax->min) && is_null($minmax->max)) {
-                        $string='any';
-                    } else if(is_null($minmax->max)) {
-                        $string='min';
-                    } else if(is_null($minmax->min)) {
-                        $string='max';
+                    if (is_null($minmax->min) && is_null($minmax->max)) {
+                        $string = 'any';
+                    } else if (is_null($minmax->max)) {
+                        $string = 'min';
+                    } else if (is_null($minmax->min)) {
+                        $string = 'max';
                     } else {
-                        $string='range';
+                        $string = 'range';
                     }
-                    $information.=get_string('requires_grade_'.$string,'condition',$minmax->name).' ';
+                    $information .= get_string('requires_grade_'.$string, 'condition', $minmax->name).' ';
                 }
             }
         }
 
         // Test dates
-        if($this->cm->availablefrom) {
-            if(time() < $this->cm->availablefrom) {
-                $available=false;
-                $information.=get_string('requires_date','condition',userdate(
-                    $this->cm->availablefrom,get_string('strftimedate','langconfig')));
+        if ($this->cm->availablefrom) {
+            if (time() < $this->cm->availablefrom) {
+                $available = false;
+                $information .= get_string('requires_date', 'condition', userdate(
+                    $this->cm->availablefrom, get_string('strftimedate','langconfig')));
             }
         }
 
-        if($this->cm->availableuntil) {
-            if(time() >= $this->cm->availableuntil) {
-                $available=false;
+        if ($this->cm->availableuntil) {
+            if (time() >= $this->cm->availableuntil) {
+                $available = false;
                 // But we don't display any information about this case. This is
                 // because the only reason to set a 'disappear' date is usually
                 // to get rid of outdated information/clutter in which case there
@@ -424,7 +424,7 @@ WHERE
      * @throws coding_exception If data wasn't loaded
      */
     private function require_data() {
-        if(!$this->gotdata) {
+        if (!$this->gotdata) {
             throw new coding_exception('Error: cannot call when info was '.
                 'constructed without data');
         }
@@ -443,27 +443,27 @@ WHERE
      * @return float Grade score as a percentage in range 0-100 (e.g. 100.0 
      *   or 37.21), or false if user does not have a grade yet
      */
-    private function get_cached_grade_score($gradeitemid,$grabthelot=false,$userid=0) {
+    private function get_cached_grade_score($gradeitemid, $grabthelot=false, $userid=0) {
         global $USER, $DB, $SESSION;
-        if($userid==0 || $userid=$USER->id) {
+        if ($userid==0 || $userid=$USER->id) {
             // For current user, go via cache in session
-            if(empty($SESSION->gradescorecache) || $SESSION->gradescorecacheuserid!=$USER->id) {
-                $SESSION->gradescorecache=array();
-                $SESSION->gradescorecacheuserid=$USER->id;
+            if (empty($SESSION->gradescorecache) || $SESSION->gradescorecacheuserid!=$USER->id) {
+                $SESSION->gradescorecache = array();
+                $SESSION->gradescorecacheuserid = $USER->id;
             } 
-            if(!array_key_exists($gradeitemid,$SESSION->gradescorecache)) {
-                if($grabthelot) {
+            if (!array_key_exists($gradeitemid, $SESSION->gradescorecache)) {
+                if ($grabthelot) {
                     // Get all grades for the current course
-                    $rs=$DB->get_recordset_sql("
+                    $rs = $DB->get_recordset_sql("
 SELECT
     gi.id,gg.finalgrade,gg.rawgrademin,gg.rawgrademax 
 FROM 
     {grade_items} gi
     LEFT JOIN {grade_grades} gg ON gi.id=gg.itemid AND gg.userid=?
 WHERE
-    gi.courseid=?",array($USER->id,$this->cm->course));
-                    foreach($rs as $record) {
-                        $SESSION->gradescorecache[$record->id]=
+    gi.courseid=?", array($USER->id, $this->cm->course));
+                    foreach ($rs as $record) {
+                        $SESSION->gradescorecache[$record->id] =
                             is_null($record->finalgrade)
                                 // No grade = false
                                 ? false 
@@ -476,20 +476,20 @@ WHERE
                     // And if it's still not set, well it doesn't exist (eg
                     // maybe the user set it as a condition, then deleted the
                     // grade item) so we call it false
-                    if(!array_key_exists($gradeitemid,$SESSION->gradescorecache)) {
-                        $SESSION->gradescorecache[$gradeitemid]=false;
+                    if (!array_key_exists($gradeitemid, $SESSION->gradescorecache)) {
+                        $SESSION->gradescorecache[$gradeitemid] = false;
                     }
                 } else {
                     // Just get current grade
                     $record = $DB->get_record('grade_grades', array(
-                        'userid'=>$USER->id,'itemid'=>$gradeitemid));
+                        'userid'=>$USER->id, 'itemid'=>$gradeitemid));
                     if ($record && !is_null($record->finalgrade)) {
                         $score = (($record->finalgrade - $record->rawgrademin) * 100) /
                             ($record->rawgrademax - $record->rawgrademin);
                     } else {
                         // Treat the case where row exists but is null, same as
                         // case where row doesn't exist
-                        $score=false;
+                        $score = false;
                     }
                     $SESSION->gradescorecache[$gradeitemid]=$score;
                 }
@@ -505,7 +505,7 @@ WHERE
             } else {
                 // Treat the case where row exists but is null, same as
                 // case where row doesn't exist
-                $score=false;
+                $score = false;
             }
             return $score;
         }
@@ -526,18 +526,18 @@ WHERE
      * @param unknown_type $fromform
      * @param unknown_type $wipefirst
      */
-    public static function update_cm_from_form($cm,$fromform,$wipefirst=true) {
-        $ci=new condition_info($cm,CONDITION_MISSING_EVERYTHING,false);
-        if($wipefirst) {
+    public static function update_cm_from_form($cm, $fromform, $wipefirst=true) {
+        $ci=new condition_info($cm, CONDITION_MISSING_EVERYTHING, false);
+        if ($wipefirst) {
             $ci->wipe_conditions();
         }
-        foreach($fromform->conditiongradegroup as $record) {
+        foreach ($fromform->conditiongradegroup as $record) {
             if($record['conditiongradeitemid']) {
                 $ci->add_grade_condition($record['conditiongradeitemid'],
                     $record['conditiongrademin'],$record['conditiongrademax']);
             }
         }
-        if(isset($fromform->conditioncompletiongroup)) {
+        if(isset ($fromform->conditioncompletiongroup)) {
             foreach($fromform->conditioncompletiongroup as $record) {
                 if($record['conditionsourcecmid']) {
                     $ci->add_completion_condition($record['conditionsourcecmid'],
@@ -554,7 +554,7 @@ WHERE
      * @param object $cm Moodle course-module
      * @return bool True if this is used in a condition, false otherwise
      */
-    public static function completion_value_used_as_condition($course,$cm) {
+    public static function completion_value_used_as_condition($course, $cm) {
         // Have we already worked out a list of required completion values
         // for this course? If so just use that
         static $affected = array();
@@ -568,7 +568,7 @@ WHERE
                 }
             }
         }
-        return array_key_exists($cm->id,$affected[$course->id]);
+        return array_key_exists($cm->id, $affected[$course->id]);
     }
 }
 ?>
