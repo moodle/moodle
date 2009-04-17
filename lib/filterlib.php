@@ -746,13 +746,23 @@ function filter_get_global_states() {
  * Delete all the data in the database relating to a filter, prior to deleting it.
  * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
  */
-function filter_delete_all_data($filter) {
+function filter_delete_all_for_filter($filter) {
     global $DB;
     if (substr($filter, 0, 7) == 'filter/') {
         unset_all_config_for_plugin('filter_' . basename($filter));
     }
     $DB->delete_records('filter_active', array('filter' => $filter));
     $DB->delete_records('filter_config', array('filter' => $filter));
+}
+
+/**
+ * Delete all the data in the database relating to a context, used when contexts are deleted.
+ * @param integer $contextid The id of the context being deleted.
+ */
+function filter_delete_all_for_context($contextid) {
+    global $DB;
+    $DB->delete_records('filter_active', array('contextid' => $contextid));
+    $DB->delete_records('filter_config', array('contextid' => $contextid));
 }
 
 /**

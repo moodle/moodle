@@ -547,26 +547,29 @@ class filter_get_active_available_in_context_test extends UnitTestCaseUsingDatab
     }
 }
 
-class filter_delete_all_data_test extends UnitTestCaseUsingDatabase {
+class filter_delete_config_test extends UnitTestCaseUsingDatabase {
+    protected $syscontext;
+
     public function setUp() {
         parent::setUp();
+
+        $this->syscontext = get_context_instance(CONTEXT_SYSTEM);
 
         // Create the table we need and switch to test DB.
         $this->create_test_tables(array('filter_active', 'filter_config', 'config', 'config_plugins'), 'lib');
         $this->switch_to_test_db();
     }
 
-    public function test_filter_delete_all_data_filter() {
+    public function test_filter_delete_all_for_filter() {
         // Setup fixture.
-        $syscontext = get_context_instance(CONTEXT_SYSTEM);
         filter_set_global_state('filter/name', TEXTFILTER_ON);
         filter_set_global_state('filter/other', TEXTFILTER_ON);
-        filter_set_local_config('filter/name', $syscontext->id, 'settingname', 'A value');
-        filter_set_local_config('filter/other', $syscontext->id, 'settingname', 'Other value');
+        filter_set_local_config('filter/name', $this->syscontext->id, 'settingname', 'A value');
+        filter_set_local_config('filter/other', $this->syscontext->id, 'settingname', 'Other value');
         set_config('configname', 'A config value', 'filter_name');
         set_config('configname', 'Other config value', 'filter_other');
         // Exercise SUT.
-        filter_delete_all_data('filter/name');
+        filter_delete_all_for_filter('filter/name');
         // Validate.
         $this->assertEqual(1, $this->testdb->count_records('filter_active'));
         $this->assertTrue($this->testdb->record_exists('filter_active', array('filter' => 'filter/other')));
@@ -576,6 +579,22 @@ class filter_delete_all_data_test extends UnitTestCaseUsingDatabase {
         $expectedconfig->configname = 'Other config value';
         $this->assertEqual($expectedconfig, get_config('filter_other'));
         $this->assertFalse(get_config('filter_name'));
+    }
+
+    public function test_filter_delete_all_for_context() {
+        // Setup fixture.
+        filter_set_global_state('filter/name', TEXTFILTER_ON);
+        filter_set_local_state('filter/name', 123, TEXTFILTER_OFF);
+        filter_set_local_config('filter/name', 123, 'settingname', 'A value');
+        filter_set_local_config('filter/other', 123, 'settingname', 'Other value');
+        filter_set_local_config('filter/other', 122, 'settingname', 'Other value');
+        // Exercise SUT.
+        filter_delete_all_for_context(123);
+        // Validate.
+        $this->assertEqual(1, $this->testdb->count_records('filter_active'));
+        $this->assertTrue($this->testdb->record_exists('filter_active', array('contextid' => $this->syscontext->id)));
+        $this->assertEqual(1, $this->testdb->count_records('filter_config'));
+        $this->assertTrue($this->testdb->record_exists('filter_config', array('filter' => 'filter/other')));
     }
 }
 

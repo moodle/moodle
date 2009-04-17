@@ -2236,6 +2236,8 @@ function delete_context($contextlevel, $instanceid) {
         unset($ACCESSLIB_PRIVATE->contexts[$contextlevel][$instanceid]);
         unset($ACCESSLIB_PRIVATE->contextsbyid[$context->id]);
 
+        filter_delete_all_for_context($context->id);
+
         return $result;
     } else {
 

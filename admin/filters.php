@@ -112,7 +112,7 @@
             $a = new stdClass;
             $a->filter = $filtername;
             $a->module = get_string('modulename', $mod);
-            print_error('cannotdeletemodfilter', 'admin', admin_url('qtypes.php'), $a);
+            print_error('cannotdeletemodfilter', 'admin', $returnurl, $a);
         }
 
         // If not yet confirmed, display a confirmation message.
@@ -120,8 +120,8 @@
             $title = get_string('deletefilterareyousure', 'admin', $filtername);
             admin_externalpage_print_header();
             print_heading($title);
-            notice_yesno(get_string('deletefilterareyousuremessage', 'admin', $filtername), $CFG->wwwroot . '/' . $CFG->admin .
-                    '/filters.php?action=delete&amp;filterpath=' . $filterpath . '&amp;confirm=1&amp;sesskey=' . sesskey(),
+            notice_yesno(get_string('deletefilterareyousuremessage', 'admin', $filtername), $returnurl . 
+                    '?action=delete&amp;filterpath=' . $filterpath . '&amp;confirm=1&amp;sesskey=' . sesskey(),
                     $returnurl, NULL, NULL, 'post', 'get');
             admin_externalpage_print_footer();
             exit;
@@ -133,7 +133,7 @@
         print_heading($title);
 
         // Delete all data for this plugin.
-        filter_delete_all_data($filterpath);
+        filter_delete_all_for_filter($filterpath);
 
         $a = new stdClass;
         $a->filter = $filtername;
@@ -274,15 +274,19 @@ function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings)
             $filterinfo->active == TEXTFILTER_DISABLED);
 
     // Settings link, if required
-    $settings = '';
     if (filter_has_global_settings($filter)) {
-        $settings = '<a href="' . $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=filtersetting' .
+        $row[] = '<a href="' . $CFG->wwwroot . '/' . $CFG->admin . '/settings.php?section=filtersetting' .
                 str_replace('/', '',$filter) . '">' . get_string('settings') . '</a>';
+    } else {
+        $row[] = '';
     }
-    $row[] = $settings;
 
     // Delete
-    $row[] = '<a href="' . action_url($filter, 'delete') . '">' . get_string('delete') . '</a>';
+    if (substr($filter, 0, 4) != 'mod/') {
+        $row[] = '<a href="' . action_url($filter, 'delete') . '">' . get_string('delete') . '</a>';
+    } else {
+        $row[] = '';
+    }
 
     return $row;
 }
