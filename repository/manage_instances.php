@@ -71,9 +71,6 @@
 /// Create navigation links
     $navlinks = array();
     if (!empty($course)) {
-        $navlinks[] = array('name' => $course->shortname,
-                'link' => "$CFG->wwwroot/course/view.php?id=$course->id",
-                'type' => 'misc');
         $navlinks[] = array('name' => $pagename,
                 'link' => null,
                 'type' => 'misc');
