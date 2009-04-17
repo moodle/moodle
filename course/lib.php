@@ -1527,17 +1527,17 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
                 // We may be displaying this just in order to show information
                 // about visibility, without the actual link
-                if($mod->uservisible) {
+                if ($mod->uservisible) {
                     // Display normal module link
-                    if($mod->visible) {
-                        $linkcss='';
-                        $accesstext='';
+                    if ($mod->visible) {
+                        $linkcss = '';
+                        $accesstext  ='';
                     } else {
                         $linkcss = ' class="dimmed" ';
-                        $accesstext='<span class="accesshide">'.
+                        $accesstext = '<span class="accesshide">'.
                             get_string('hiddenfromstudents').': </span>';
                     }
-                        
+
                     echo '<a '.$linkcss.' '.$extra.
                          ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.                         
                          '<img src="'.$icon.'" class="activityicon" alt="" /> '.
