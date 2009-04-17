@@ -1379,17 +1379,23 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         $newcacheitem->timemodified = time();
         if ($oldcacheitem) {                               // See bug 4677 for discussion
             $newcacheitem->id = $oldcacheitem->id;
-            @$DB->update_record('cache_text', $newcacheitem);   // Update existing record in the cache table
-                                                           // It's unlikely that the cron cache cleaner could have
-                                                           // deleted this entry in the meantime, as it allows
-                                                           // some extra time to cover these cases.
+            try {
+                $DB->update_record('cache_text', $newcacheitem);   // Update existing record in the cache table
+            } catch (dml_exception $e) {
+               // It's unlikely that the cron cache cleaner could have
+               // deleted this entry in the meantime, as it allows
+               // some extra time to cover these cases.
+            }
         } else {
-            @$DB->insert_record('cache_text', $newcacheitem);   // Insert a new record in the cache table
-                                                           // Again, it's possible that another user has caused this
-                                                           // record to be created already in the time that it took
-                                                           // to traverse this function.  That's OK too, as the
-                                                           // call above handles duplicate entries, and eventually
-                                                           // the cron cleaner will delete them.
+            try {
+                $DB->insert_record('cache_text', $newcacheitem);   // Insert a new record in the cache table
+            } catch (dml_exception $e) {
+               // Again, it's possible that another user has caused this
+               // record to be created already in the time that it took
+               // to traverse this function.  That's OK too, as the
+               // call above handles duplicate entries, and eventually
+               // the cron cleaner will delete them.
+            }
         }
     }
 
