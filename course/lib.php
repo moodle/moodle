@@ -1584,48 +1584,48 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             }
 
             // Completion
-            $completioninfo=new completion_info($course);
-            $completion=$hidecompletion
+            $completioninfo = new completion_info($course);
+            $completion = $hidecompletion
                 ? COMPLETION_TRACKING_NONE
                 : $completioninfo->is_enabled($mod);
-            if($completion!=COMPLETION_TRACKING_NONE && isloggedin() && 
+            if ($completion!=COMPLETION_TRACKING_NONE && isloggedin() && 
                 !isguestuser() && $mod->uservisible) {
-               $completiondata=$completioninfo->get_data($mod,true);
-                $completionicon='';
-                if($isediting) {
-                    switch($completion) {
+                $completiondata = $completioninfo->get_data($mod,true);
+                $completionicon = '';
+                if ($isediting) {
+                    switch ($completion) {
                         case COMPLETION_TRACKING_MANUAL :
-                            $completionicon='manual-enabled'; break;
+                            $completionicon = 'manual-enabled'; break;
                         case COMPLETION_TRACKING_AUTOMATIC :
-                            $completionicon='auto-enabled'; break;
+                            $completionicon = 'auto-enabled'; break;
                         default: // wtf
                     }
-                } else if($completion==COMPLETION_TRACKING_MANUAL) {
+                } else if ($completion==COMPLETION_TRACKING_MANUAL) {
                     switch($completiondata->completionstate) {
                         case COMPLETION_INCOMPLETE:
-                            $completionicon='manual-n'; break;
+                            $completionicon = 'manual-n'; break;
                         case COMPLETION_COMPLETE:
-                            $completionicon='manual-y'; break;
+                            $completionicon = 'manual-y'; break;
                     }
                 } else { // Automatic
                     switch($completiondata->completionstate) {
                         case COMPLETION_INCOMPLETE:
-                            $completionicon='auto-n'; break;
+                            $completionicon = 'auto-n'; break;
                         case COMPLETION_COMPLETE:
-                            $completionicon='auto-y'; break;
+                            $completionicon = 'auto-y'; break;
                         case COMPLETION_COMPLETE_PASS:
-                            $completionicon='auto-pass'; break;
+                            $completionicon = 'auto-pass'; break;
                         case COMPLETION_COMPLETE_FAIL:
-                            $completionicon='auto-fail'; break;
+                            $completionicon = 'auto-fail'; break;
                     }
                 }
-                if($completionicon) {
+                if ($completionicon) {
                     static $shownhelp=false;
-                    $imgsrc=$CFG->pixpath.'/i/completion-'.$completionicon.'.gif';
-                    $imgalt=get_string('completion-alt-'.$completionicon,'completion');
-                    if($completion==COMPLETION_TRACKING_MANUAL && !$isediting) {
-                        $imgtitle=get_string('completion-title-'.$completionicon,'completion');
-                        $newstate=
+                    $imgsrc = $CFG->pixpath.'/i/completion-'.$completionicon.'.gif';
+                    $imgalt = get_string('completion-alt-'.$completionicon,'completion');
+                    if ($completion==COMPLETION_TRACKING_MANUAL && !$isediting) {
+                        $imgtitle = get_string('completion-title-'.$completionicon,'completion');
+                        $newstate =
                             $completiondata->completionstate==COMPLETION_COMPLETE
                             ? COMPLETION_INCOMPLETE
                             : COMPLETION_COMPLETE;
@@ -1645,7 +1645,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 <form class='togglecompletion$extraclass' method='post' action='togglecompletion.php'><div>";
                         if(!$shownhelp && !$isediting) {
                             helpbutton('completionicons',get_string('completionicons','completion'),'completion');
-                            $shownhelp=true;
+                            $shownhelp = true;
                         }
                         echo "
 <input type='hidden' name='id' value='{$mod->id}' />
@@ -1655,9 +1655,9 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     } else {
                         // In auto mode, or when editing, the icon is just an image
                         echo "<span class='autocompletion'>";
-                        if(!$shownhelp && !$isediting) {
+                        if (!$shownhelp && !$isediting) {
                             helpbutton('completionicons',get_string('completionicons','completion'),'completion');
-                            $shownhelp=true;
+                            $shownhelp = true;
                         }
                         echo "<img src='$imgsrc' alt='$imgalt' title='$imgalt' /></span>";
                     }
@@ -1666,11 +1666,11 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
             // Show availability information (for someone who isn't allowed to 
             // see the activity itself, or for staff)
-            if(!$mod->uservisible) {
+            if (!$mod->uservisible) {
                 echo '<div class="availabilityinfo">'.$mod->availableinfo.'</div>';
-            } else if($isediting && !empty($CFG->enableavailability)) {
+            } else if ($isediting && !empty($CFG->enableavailability)) {
                 $ci = new condition_info($mod);
-                $fullinfo=$ci->get_full_information();
+                $fullinfo = $ci->get_full_information();
                 if($fullinfo) {
                     echo '<div class="availabilityinfo">'.get_string($mod->showavailability 
                         ? 'userrestriction_visible'
