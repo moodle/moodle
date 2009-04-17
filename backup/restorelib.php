@@ -3741,6 +3741,11 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //    - $@FILEPHP@$ ---|------------> $CFG->wwwroot/file.php/courseid (slasharguments on)
     //                     |------------> $CFG->wwwroot/file.php?file=/courseid (slasharguments off)
     //
+    //    - $@SLASH@$ --|---------------> / (slasharguments on)
+    //                  |---------------> %2F (slasharguments off)
+    //
+    //    - $@FORCEDOWNLOAD@$ --|-------> ?forcedownload=1 (slasharguments on)
+    //                          |-------> &amp;forcedownload=1(slasharguments off)
     //Note: Inter-activities linking is being implemented as a final
     //step in the restore execution, because we need to have it
     //finished to know all the oldid, newid equivaleces
@@ -3763,6 +3768,15 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         $search = array ("$@FILEPHP@$");
         $replace = array(get_file_url($restore->course_id));
         $result = str_replace($search,$replace,$content);
+
+        //Now $@SLASH@$ and $@FORCEDOWNLOAD@$ MDL-18799
+        $search = array('$@SLASH@$', '$@FORCEDOWNLOAD@$');
+        if ($CFG->slasharguments) {
+            $replace = array('/', '?forcedownload=1');
+        } else {
+            $replace = array('%2F', '&amp;forcedownload=1');
+        }
+        $result = str_replace($search, $replace, $result);
 
         if ($result != $content && debugging()) {                                  //Debug
             if (!defined('RESTORE_SILENTLY')) {
