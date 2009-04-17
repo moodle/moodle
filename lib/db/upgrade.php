@@ -1640,6 +1640,16 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009040600);
     }
 
+    if ($result && $oldversion < 2009041700) {
+    /// To ensure the UI remains consistent with no behaviour change, any
+    /// 'until' date in an activity condition should have 1 second subtracted
+    /// (to go from 0:00 on the following day to 23:59 on the previous one).
+        $DB->execute('UPDATE {course_modules} SET availableuntil = availableuntil - 1 WHERE availableuntil <> 0');
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009041700);
+    }
+
     return $result;
 }
 

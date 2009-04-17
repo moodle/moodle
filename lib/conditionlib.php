@@ -269,14 +269,17 @@ WHERE
         }
 
         // Dates
-        if ($this->cm->availablefrom) {
-            $information .= get_string('requires_date', 'condition', userdate(
-                $this->cm->availablefrom, get_string('strftimedate', 'langconfig')));
-        }
-
-        if ($this->cm->availableuntil) {
-            $information .= get_string('requires_date_before', 'condition', userdate(
-                $this->cm->availableuntil, get_string('strftimedate', 'langconfig')));
+        if ($this->cm->availablefrom && $this->cm->availableuntil) {
+            $information .= get_string('requires_date_both', 'condition',
+                (object)array(
+                    'from' => self::show_time($this->cm->availablefrom, false),
+                    'until' => self::show_time($this->cm->availableuntil, true)));
+        } else if ($this->cm->availablefrom) {
+            $information .= get_string('requires_date', 'condition',
+                self::show_time($this->cm->availablefrom, false));
+        } else if ($this->cm->availableuntil) {
+            $information .= get_string('requires_date_before', 'condition',
+                self::show_time($this->cm->availableuntil, true));
         }
 
         $information = trim($information);
@@ -385,8 +388,9 @@ WHERE
         if ($this->cm->availablefrom) {
             if (time() < $this->cm->availablefrom) {
                 $available = false;
-                $information .= get_string('requires_date', 'condition', userdate(
-                    $this->cm->availablefrom, get_string('strftimedate','langconfig')));
+
+                $information .= get_string('requires_date', 'condition',
+                    self::show_time($this->cm->availablefrom, false));
             }
         }
 
@@ -407,6 +411,32 @@ WHERE
 
         $information=trim($information);
         return $available;
+    }
+
+    /**
+     * Shows a time either as a date (if it falls exactly on the day) or 
+     * a full date and time, according to user's timezone.
+     * @param int $time Time
+     * @param bool $until True if this date should be treated as the second of
+     *   an inclusive pair - if so the time will be shown unless date is 23:59:59.
+     *   Without this the date shows for 0:00:00.
+     * @return string Date
+     */
+    private function show_time($time, $until) {
+        // Break down the time into fields
+        $userdate = usergetdate($time);
+
+        // Handle the 'inclusive' second date
+        if($until) {
+            $dateonly = $userdate['hours']==23 && $userdate['minutes']==59 &&
+                $userdate['seconds']==59;
+        } else {
+            $dateonly = $userdate['hours']==0 && $userdate['minutes']==0 &&
+                $userdate['seconds']==0;
+        }
+
+        return userdate($time, get_string(
+            $dateonly ? 'strftimedate' : 'strftimedatetime', 'langconfig'));
     }
 
     /**
