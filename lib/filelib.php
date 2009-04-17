@@ -39,6 +39,13 @@ require_once("$CFG->libdir/file/file_browser.php");
 
 require_once("$CFG->libdir/packer/zip_packer.php");
 
+/**
+ * Given a physical path to a file, returns the URL through which it can be reached in Moodle.
+ * @param string $path Physical path to a file
+ * @param array $options associative array of GET variables to append to the URL
+ * @param string $type (questionfile|rssfile|user|usergroup|httpscoursefile|coursefile)
+ * @return string URL to file
+ */
 function get_file_url($path, $options=null, $type='coursefile') {
     global $CFG, $HTTPSPAGEREQUIRED;
 
@@ -101,7 +108,7 @@ function get_file_url($path, $options=null, $type='coursefile') {
 }
 
 /**
- * @return int an available draft itemid that can be used to create a new draft
+ * @return int a random but available draft itemid that can be used to create a new draft
  * file area.
  */
 function file_get_unused_draft_itemid() {
@@ -2048,6 +2055,10 @@ class curl_cache {
             $this->ttl = $CFG->curlcache;
         }
     }
+    
+    /**
+     * TODO Document
+     */
     public function get($param){
         global $CFG, $USER;
         $this->cleanup($this->ttl);
@@ -2066,6 +2077,10 @@ class curl_cache {
         }
         return false;
     }
+    
+    /**
+     * TODO Document
+     */
     public function set($param, $val){
         global $CFG, $USER;
         $filename = 'u'.$USER->id.'_'.md5(serialize($param));
@@ -2073,6 +2088,10 @@ class curl_cache {
         fwrite($fp, serialize($val));
         fclose($fp);
     }
+    
+    /**
+     * TODO Document
+     */
     public function cleanup($expire){
         if($dir = opendir($this->dir)){
             while (false !== ($file = readdir($dir))) {
@@ -2103,6 +2122,10 @@ class curl_cache {
         }
     }
 }
+
+/**
+ * TODO Document
+ */
 class file_type_to_ext {
     public function __construct($file = '') {
         global $CFG;
@@ -2114,6 +2137,10 @@ class file_type_to_ext {
         $this->tree = array();
         $this->result = array();
     }
+    
+    /**
+     * TODO Document
+     */
     private function _browse_nodes($parent, $types) {
         $key = (string)$parent['TEXT'];
         if(isset($parent->node)) {
@@ -2129,6 +2156,10 @@ class file_type_to_ext {
             $this->tree[] = $key;
         }
     }
+    
+    /**
+     * TODO Document
+     */
     private function _select_nodes($parent){
         if(isset($parent->node)) {
             foreach($parent->node as $v){
@@ -2139,6 +2170,10 @@ class file_type_to_ext {
         }
     }
 
+    
+    /**
+     * TODO Document
+     */
     public function get_file_ext($types) {
         $this->result = array();
         if ((is_array($types) && in_array('*', $types)) ||
