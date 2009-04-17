@@ -829,7 +829,7 @@ abstract class repository {
     }
 
     /**
-     * Return the user arborescence in a format to be returned by the function get_listing
+     * Return the user files tree in a format to be returned by the function get_listing
      * @global <type> $CFG
      * @param <type> $search
      * @return <type>
@@ -1486,10 +1486,11 @@ abstract class repository {
         $accepted_types = optional_param('accepted_types', '', PARAM_RAW);
         $ft = new file_type_to_ext;
         $ext = $ft->get_file_ext($this->supported_filetypes());
-        if (isset($value->children)) {
+        if (isset($value['children'])) {
             $pass = true;
-            if (!empty($value->children)) {
-                $value->children = array_filter($value->children, array($this, 'filter'));
+            if (!empty($value['children'])) {
+                echo_fb($value);
+                $value['children'] = array_filter($value['children'], array($this, 'filter'));
             }
         } else {
             if ($accepted_types == '*' or empty($accepted_types)
