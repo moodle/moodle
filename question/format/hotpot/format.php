@@ -47,7 +47,9 @@ class qformat_hotpot extends qformat_default {
 
         // get import file name
         global $params;
-        if (isset($params) && !empty($params->choosefile)) {
+        if (! empty($this->realfilename)) {
+            $filename = $this->realfilename;
+        } else if (isset($params) && !empty($params->choosefile)) {
             // course file (Moodle >=1.6+)
             $filename = $params->choosefile;
         } else {
