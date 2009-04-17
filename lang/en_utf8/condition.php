@@ -32,6 +32,6 @@ $string['requires_grade_range']='Not available unless you get a particular score
 $string['showavailability']='Before activity is available';
 $string['showavailability_show']='Show activity greyed-out, with restriction information';
 $string['showavailability_hide']='Hide activity entirely';
-$string['userrestriction_visible']='Activity conditionally restricted: &lsquo;$a&rsquo;';
-$string['userrestriction_hidden']='Activity conditionally restricted (completely hidden, no message): &lsquo;$a&rsquo;';
+$string['userrestriction_visible']='Restricted: &lsquo;$a&rsquo;';
+$string['userrestriction_hidden']='Restricted (completely hidden, no message): &lsquo;$a&rsquo;';
 ?>

@@ -1454,6 +1454,27 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
             }
 
+            // In some cases the activity is visible to user, but it is 
+            // dimmed. This is done if viewhiddenactivities is true and if:
+            // 1. the activity is not visible, or
+            // 2. the activity has dates set which do not include current, or
+            // 3. the activity has any other conditions set (regardless of whether
+            //    current user meets them)
+            $canviewhidden = has_capability(
+                'moodle/course:viewhiddenactivities',
+                get_context_instance(CONTEXT_MODULE, $mod->id));
+            $accessiblebutdim = false;
+            if ($canviewhidden) {
+                $accessiblebutdim = !$mod->visible;
+                if (!empty($CFG->enableavailability)) {
+                    $accessiblebutdim = $accessiblebutdim ||
+                        $mod->availablefrom > time() ||
+                        ($mod->availableuntil && $mod->availableuntil < time()) ||
+                        count($mod->conditionsgrade) > 0 || 
+                        count($mod->conditionscompletion) > 0;
+                }
+            }
+
             echo '<li class="activity '.$mod->modname.'" id="module-'.$modnumber.'">';  // Unique ID
             if ($ismoving) {
                 echo '<a title="'.$strmovefull.'"'.
@@ -1473,12 +1494,12 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             }
 
             if ($mod->modname == "label") {
-                if (!$mod->visible || !$mod->uservisible) {
+                if ($accessiblebutdim || !$mod->uservisible) {
                     echo '<div class="dimmed_text"><span class="accesshide">'.
                         get_string('hiddenfromstudents').'</span>';
                 }
                 echo format_text($extra, FORMAT_HTML, $labelformatoptions);
-                if (!$mod->visible || !$mod->uservisible) {
+                if ($accessiblebutdim || !$mod->uservisible) {
                     echo "</div>";
                 }
                 if (!empty($CFG->enablegroupings) && !empty($mod->groupingid) && has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
@@ -1529,7 +1550,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 // about visibility, without the actual link
                 if ($mod->uservisible) {
                     // Display normal module link
-                    if ($mod->visible) {
+                    if (!$accessiblebutdim) {
                         $linkcss = '';
                         $accesstext  ='';
                     } else {
@@ -1668,7 +1689,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             // see the activity itself, or for staff)
             if (!$mod->uservisible) {
                 echo '<div class="availabilityinfo">'.$mod->availableinfo.'</div>';
-            } else if ($isediting && !empty($CFG->enableavailability)) {
+            } else if ($canviewhidden && !empty($CFG->enableavailability)) {
                 $ci = new condition_info($mod);
                 $fullinfo = $ci->get_full_information();
                 if($fullinfo) {
