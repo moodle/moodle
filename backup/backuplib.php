@@ -2348,14 +2348,22 @@
             //We are in manual backups so global preferences must exist!!
             $mypreferences = $preferences;
         }
-
         //First, we check for every call to file.php inside the course
         $search = array($CFG->wwwroot.'/file.php/'.$mypreferences->backup_course,
-                        $CFG->wwwroot.'/file.php?file=/'.$mypreferences->backup_course);
+                        $CFG->wwwroot.'/file.php?file=/'.$mypreferences->backup_course,
+                        $CFG->wwwroot.'/file.php?file=%2f'.$mypreferences->backup_course,
+                        $CFG->wwwroot.'/file.php?file=%2F'.$mypreferences->backup_course);
 
-        $replace = array('$@FILEPHP@$','$@FILEPHP@$');
+        $replace = array('$@FILEPHP@$', '$@FILEPHP@$', '$@FILEPHP@$', '$@FILEPHP@$');
 
         $result = str_replace($search,$replace,$content);
+
+        // Now we look for any '$@FILEPHP@$' URLs, replacing:
+        //     - slashes and %2F by $@SLASH@$
+        //     - &forcedownload=1 &amp;forcedownload=1 and ?forcedownload=1 by $@FORCEDOWNLOAD@$
+        // This way, backup contents will be neutral and independent of slasharguments configuration. MDL-18799
+        $search = '/(\$@FILEPHP@\$)((?:(?:\/|%2f|%2F))(?:(?:\([-;:@#&=\pL0-9\$~_.+!*\',]*?\))|[-;:@#&=\pL0-9\$~_.+!*\',]|%[a-fA-F0-9]{2}|\/)*)?(\?(?:(?:(?:\([-;:@#&=\pL0-9\$~_.+!*\',]*?\))|[-;:@#&=?\pL0-9\$~_.+!*\',]|%[a-fA-F0-9]{2}|\/)*))?(?<![,.;])/';
+        $result = preg_replace_callback($search, 'backup_process_filephp_uses', $result);
 
         foreach ($mypreferences->mods as $name => $info) {
         /// We only include the corresponding backuplib.php if it hasn't been included before
@@ -2413,6 +2421,21 @@
         if ($result != $content) {
             debugging('<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />');
         }
+
+        return $result;
+    }
+
+    /**
+     * Callback preg_replace function used by backup_encode_absolute_links()
+     * to process $@FILEPHP@$ URLs to get slasharguments independent URLs
+     */
+    function backup_process_filephp_uses($matches) {
+
+        // Replace slashes (plain and encoded) and forcedownload=1 parameter
+        $search = array('/', '%2f', '%2F', '?forcedownload=1', '&forcedownload=1', '&amp;forcedownload=1');
+        $replace = array('$@SLASH@$', '$@SLASH@$', '$@SLASH@$', '$@FORCEDOWNLOAD@$', '$@FORCEDOWNLOAD@$', '$@FORCEDOWNLOAD@$');
+
+        $result = $matches[1] . (isset($matches[2]) ? str_replace($search, $replace, $matches[2]) : '') . (isset($matches[3]) ? str_replace($search, $replace, $matches[3]) : '');
 
         return $result;
     }
