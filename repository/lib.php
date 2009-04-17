@@ -1489,7 +1489,6 @@ abstract class repository {
         if (isset($value['children'])) {
             $pass = true;
             if (!empty($value['children'])) {
-                echo_fb($value);
                 $value['children'] = array_filter($value['children'], array($this, 'filter'));
             }
         } else {
