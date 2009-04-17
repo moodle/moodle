@@ -69,7 +69,7 @@ $entry->entry = array('text'=>$currenttext, 'format'=>$entry->format, 'itemid'=>
 
 $draftitemid = file_get_submitted_draft_itemid('attachments');
 file_prepare_draft_area($draftitemid, $context->id, 'glossary_attachment', $entry->id , false);
-$entry->attachements = $draftitemid;
+$entry->attachments = $draftitemid;
 
 // set form initial data
 $mform->set_data($entry);
