@@ -120,7 +120,7 @@
             $title = get_string('deletefilterareyousure', 'admin', $filtername);
             admin_externalpage_print_header();
             print_heading($title);
-            notice_yesno(get_string('deletefilterareyousuremessage', 'admin', $filtername), $returnurl . 
+            notice_yesno(get_string('deletefilterareyousuremessage', 'admin', $filtername), $returnurl .
                     '?action=delete&amp;filterpath=' . $filterpath . '&amp;confirm=1&amp;sesskey=' . sesskey(),
                     $returnurl, NULL, NULL, 'post', 'get');
             admin_externalpage_print_footer();
