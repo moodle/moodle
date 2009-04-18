@@ -63,7 +63,10 @@ class file_info_course extends file_info {
 
         return $children;
     }
-
+    
+    /**
+     * TODO error checking if get_parent_contextid() returns false
+     */
     public function get_parent() {
         $pcid = get_parent_contextid($this->context);
         $parent = get_context_instance_by_id($pcid);
