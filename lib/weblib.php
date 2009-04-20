@@ -1552,20 +1552,6 @@ function filter_text($text, $courseid=NULL) {
 }
 
 /**
- * Is the text marked as trusted?
- *
- * @param string $text text to be searched for TRUSTTEXT marker
- * @return boolean
- */
-function trusttext_present($text) {
-    if (strpos($text, TRUSTTEXT) !== FALSE) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-/**
  * Legacy function, used for cleaning of old forum and glossary text only.
  * @param string $text text that may contain TRUSTTEXT marker
  * @return text without any TRUSTTEXT marker
@@ -1579,54 +1565,6 @@ function trusttext_strip($text) {
         if (strcmp($orig, $text) === 0) {
             return $text;
         }
-    }
-}
-
-/**
- * Mark text as trusted, such text may contain any HTML tags because the
- * normal text cleaning will be bypassed.
- * Please make sure that the text comes from trusted user before storing
- * it into database!
- */
-function trusttext_mark($text) {
-//TODO: delete
-    global $CFG;
-    if (!empty($CFG->enabletrusttext) and (strpos($text, TRUSTTEXT) === FALSE)) {
-        return TRUSTTEXT.$text;
-    } else {
-        return $text;
-    }
-}
-
-function trusttext_after_edit(&$text, $context) {
-//TODO: delete
-    if (has_capability('moodle/site:trustcontent', $context)) {
-        $text = trusttext_strip($text);
-        $text = trusttext_mark($text);
-    } else {
-        $text = trusttext_strip($text);
-    }
-}
-
-function trusttext_prepare_edit(&$text, &$format, $usehtmleditor, $context) {
-    global $CFG;
-//TODO: delete
-    $options = new object();
-    $options->smiley = false;
-    $options->filter = false;
-    if (!empty($CFG->enabletrusttext)
-         and has_capability('moodle/site:trustcontent', $context)
-         and trusttext_present($text)) {
-        $options->noclean = true;
-    } else {
-        $options->noclean = false;
-    }
-    $text = trusttext_strip($text);
-    if ($usehtmleditor) {
-        $text = format_text($text, $format, $options);
-        $format = FORMAT_HTML;
-    } else if (!$options->noclean){
-        $text = clean_text($text, $format);
     }
 }
 
@@ -1651,7 +1589,7 @@ function trusttext_pre_edit($object, $field, $context) {
 }
 
 /**
- * Is user trusted to enter no dangerous XSS in this context?
+ * Is urrent user trusted to enter no dangerous XSS in this context?
  * Please note the user must be in fact trusted everywhere on this server!!
  * @param $context
  * @return bool true if user trusted
