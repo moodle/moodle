@@ -16,7 +16,7 @@
         print_error('coursemisconf', 'assignment');
     }
 
-    require_login($course->id, false, $cm);
+    require_login($course, false, $cm);
 
     if (has_capability('mod/assignment:grade', get_context_instance(CONTEXT_MODULE, $cm->id))) {
         redirect('submissions.php?id='.$cm->id);

@@ -44,8 +44,8 @@
             //Now, build the ASSIGNMENT record structure
             $assignment->course = $restore->course_id;
             $assignment->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
-            $assignment->description = backup_todb($info['MOD']['#']['DESCRIPTION']['0']['#']);
-            $assignment->format = backup_todb($info['MOD']['#']['FORMAT']['0']['#']);
+            $assignment->intro = backup_todb($info['MOD']['#']['DESCRIPTION']['0']['#']);
+            $assignment->introformat = backup_todb($info['MOD']['#']['FORMAT']['0']['#']);
             $assignment->resubmit = backup_todb($info['MOD']['#']['RESUBMIT']['0']['#']);
             $assignment->preventlate = backup_todb($info['MOD']['#']['PREVENTLATE']['0']['#']);
             $assignment->emailteachers = backup_todb($info['MOD']['#']['EMAILTEACHERS']['0']['#']);
@@ -372,7 +372,7 @@
         $status = true;
 
         //Convert assignment->description
-        if ($records = $DB->get_records_sql ("SELECT a.id, a.description, a.format
+        if ($records = $DB->get_records_sql ("SELECT a.id, a.intro, a.introformat
                                                 FROM {assignment} a, {backup_ids} b
                                                WHERE a.course = ? AND
                                                a.format = ".FORMAT_WIKI. " AND
@@ -381,11 +381,11 @@
                                                b.new_id = a.id", array($restore->course_id, $restore->backup_unique_code))) {
             foreach ($records as $record) {
                 //Rebuild wiki links
-                $record->description = restore_decode_wiki_content($record->description, $restore);
+                $record->intro = restore_decode_wiki_content($record->intro, $restore);
                 //Convert to Markdown
                 $wtm = new WikiToMarkdown();
-                $record->description = $wtm->convert($record->description, $restore->course_id);
-                $record->format = FORMAT_MARKDOWN;
+                $record->intro = $wtm->convert($record->intro, $restore->course_id);
+                $record->introformat = FORMAT_MARKDOWN;
                 $status = $DB->update_record('assignment', $record);
                 //Do some output
                 $i++;

@@ -132,6 +132,32 @@ function xmldb_assignment_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2008081900, 'assignment');
     }
 
+    if ($result && $oldversion < 2009042000) {
+
+    /// Rename field description on table assignment to intro
+        $table = new xmldb_table('assignment');
+        $field = new xmldb_field('description', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null, 'name');
+
+    /// Launch rename field description
+        $dbman->rename_field($table, $field, 'intro');
+
+    /// assignment savepoint reached
+        upgrade_mod_savepoint($result, 2009042000, 'assignment');
+    }
+
+    if ($result && $oldversion < 2009042001) {
+
+    /// Rename field format on table assignment to introformat
+        $table = new xmldb_table('assignment');
+        $field = new xmldb_field('format', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'description');
+
+    /// Launch rename field format
+        $dbman->rename_field($table, $field, 'introformat');
+
+    /// assignment savepoint reached
+        upgrade_mod_savepoint($result, 2009042001, 'assignment');
+    }
+
     return $result;
 }
 

@@ -55,8 +55,8 @@
         fwrite ($bf,full_tag("ID",4,false,$assignment->id));
         fwrite ($bf,full_tag("MODTYPE",4,false,"assignment"));
         fwrite ($bf,full_tag("NAME",4,false,$assignment->name));
-        fwrite ($bf,full_tag("DESCRIPTION",4,false,$assignment->description));
-        fwrite ($bf,full_tag("FORMAT",4,false,$assignment->format));
+        fwrite ($bf,full_tag("DESCRIPTION",4,false,$assignment->intro));
+        fwrite ($bf,full_tag("FORMAT",4,false,$assignment->introformat));
         fwrite ($bf,full_tag("RESUBMIT",4,false,$assignment->resubmit));
         fwrite ($bf,full_tag("PREVENTLATE",4,false,$assignment->preventlate));
         fwrite ($bf,full_tag("EMAILTEACHERS",4,false,$assignment->emailteachers));

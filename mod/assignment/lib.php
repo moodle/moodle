@@ -162,7 +162,7 @@ class assignment_base {
         print_simple_box_start('center', '', '', 0, 'generalbox', 'intro');
         $formatoptions = new stdClass;
         $formatoptions->noclean = true;
-        echo format_text($this->assignment->description, $this->assignment->format, $formatoptions);
+        echo format_text($this->assignment->intro, $this->assignment->introformat, $formatoptions);
         print_simple_box_end();
     }
 
@@ -358,7 +358,7 @@ class assignment_base {
             if ($assignment->timedue) {
                 $event = new object();
                 $event->name        = $assignment->name;
-                $event->description = $assignment->description;
+                $event->description = $assignment->intro;
                 $event->courseid    = $assignment->course;
                 $event->groupid     = 0;
                 $event->userid      = 0;
@@ -447,14 +447,14 @@ class assignment_base {
             if ($event->id = $DB->get_field('event', 'id', array('modulename'=>'assignment', 'instance'=>$assignment->id))) {
 
                 $event->name        = $assignment->name;
-                $event->description = $assignment->description;
+                $event->description = $assignment->intro;
                 $event->timestart   = $assignment->timedue;
 
                 update_event($event);
             } else {
                 $event = new object();
                 $event->name        = $assignment->name;
-                $event->description = $assignment->description;
+                $event->description = $assignment->intro;
                 $event->courseid    = $assignment->course;
                 $event->groupid     = 0;
                 $event->userid      = 0;
@@ -2431,7 +2431,7 @@ function assignment_refresh_events($courseid = 0) {
     foreach ($assignments as $assignment) {
         $event = NULL;
         $event->name        = $assignment->name;
-        $event->description = $assignment->description;
+        $event->description = $assignment->intro;
         $event->timestart   = $assignment->timedue;
 
         if ($event->id = $DB->get_field('event', 'id', array('modulename'=>'assignment', 'instance'=>$assignment->id))) {

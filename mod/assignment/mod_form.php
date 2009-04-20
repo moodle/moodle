@@ -39,10 +39,10 @@ class mod_assignment_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
 
-        $mform->addElement('htmleditor', 'description', get_string('description', 'assignment'));
-        $mform->setType('description', PARAM_RAW);
-        $mform->setHelpButton('description', array('writing', 'questions', 'richtext2'), false, 'editorhelpbutton');
-        $mform->addRule('description', get_string('required'), 'required', null, 'client');
+        $mform->addElement('htmleditor', 'intro', get_string('description', 'assignment'));
+        $mform->setType('intro', PARAM_RAW);
+        $mform->setHelpButton('intro', array('writing', 'questions', 'richtext2'), false, 'editorhelpbutton');
+        $mform->addRule('intro', get_string('required'), 'required', null, 'client');
 
         $mform->addElement('modgrade', 'grade', get_string('grade'));
         $mform->setDefault('grade', 100);
