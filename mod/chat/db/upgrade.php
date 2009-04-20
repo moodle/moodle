@@ -71,6 +71,19 @@ function xmldb_chat_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009010600, 'chat');
     }
 
+    if ($result && $oldversion < 2009042000) {
+
+    /// Define field introformat to be added to chat
+        $table = new xmldb_table('chat');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'intro');
+
+    /// Launch add field introformat
+        $dbman->add_field($table, $field);
+
+    /// chat savepoint reached
+        upgrade_mod_savepoint($result, 2009042000, 'chat');
+    }
+    
     return $result;
 }
 
