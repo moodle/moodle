@@ -37,12 +37,15 @@ function tex_filter_get_executable($debug=false) {
 function tex_sanitize_formula($texexp) {
     /// Check $texexp against blacklist (whitelisting could be more complete but also harder to maintain)
     $tex_blacklist = array(
-        'include','def','command','loop','repeat','open','toks','output',
+        'include','command','loop','repeat','open','toks','output',
         'input','catcode','name','^^',
+        '\def','\edef','\gdef','\xdef',
         '\every','\errhelp','\errorstopmode','\scrollmode','\nonstopmode',
         '\batchmode','\read','\write','csname','\newhelp','\uppercase',
         '\lowercase','\relax','\aftergroup',
-        '\afterassignment','\expandafter','\noexpand','\special'
+        '\afterassignment','\expandafter','\noexpand','\special',
+        '\let', '\futurelet','\else','\fi','\chardef','\makeatletter','\afterground',
+        '\noexpand','\line','\mathcode','\item','\section','\mbox','\declarerobustcommand'
     );
 
     return  str_ireplace($tex_blacklist, 'forbiddenkeyword', $texexp);
