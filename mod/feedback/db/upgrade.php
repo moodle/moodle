@@ -268,12 +268,10 @@ function xmldb_feedback_upgrade($oldversion) {
 
     /// Define field introformat to be added to feedback
         $table = new xmldb_table('feedback');
-        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'intro');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'intro');
 
-    /// Conditionally launch add field introformat
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
+    /// Launch add field introformat
+        $dbman->add_field($table, $field);
 
     /// feedback savepoint reached
         upgrade_mod_savepoint($result, 2009042001, 'feedback');

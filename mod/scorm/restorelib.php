@@ -75,7 +75,7 @@
             } else {
                 $scorm->skipview = backup_todb($info['MOD']['#']['SKIPVIEW']['0']['#']);
             }
-            $scorm->summary = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
+            $scorm->intro = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
             $scorm->hidebrowse = backup_todb($info['MOD']['#']['HIDEBROWSE']['0']['#']);
             $scorm->hidetoc = backup_todb($info['MOD']['#']['HIDETOC']['0']['#']);
             $scorm->hidenav = backup_todb($info['MOD']['#']['HIDENAV']['0']['#']);
@@ -808,18 +808,18 @@
         global $CFG;
         $status = true;
 
-        if ($scorms = $DB->get_records('scorm', array('course'=>$restore->course_id), '', "id,summary")) {
+        if ($scorms = $DB->get_records('scorm', array('course'=>$restore->course_id), '', "id,intro")) {
 
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
             foreach ($scorms as $scorm) {
                 //Increment counter
                 $i++;
-                $content = $scorm->summary;
+                $content = $scorm->intro;
                 $result = restore_decode_content_links_worker($content,$restore);
 
                 if ($result != $content) {
                     //Update record
-                    $scorm->summary = $result;
+                    $scorm->intro = $result;
                     $status = $DB->update_record("scorm",$scorm);
                     if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {

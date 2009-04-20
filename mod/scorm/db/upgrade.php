@@ -400,6 +400,32 @@ function xmldb_scorm_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2008090310, 'scorm');
     }
 
+    if ($result && $oldversion < 2009042000) {
+
+    /// Rename field summary on table scorm to intro
+        $table = new xmldb_table('scorm');
+        $field = new xmldb_field('summary', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null, 'reference');
+
+    /// Launch rename field summary
+        $dbman->rename_field($table, $field, 'intro');
+
+    /// scorm savepoint reached
+        upgrade_mod_savepoint($result, 2009042000, 'scorm');
+    }
+
+    if ($result && $oldversion < 2009042001) {
+
+    /// Define field introformat to be added to scorm
+        $table = new xmldb_table('scorm');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'intro');
+
+    /// Launch add field introformat
+        $dbman->add_field($table, $field);
+
+    /// scorm savepoint reached
+        upgrade_mod_savepoint($result, 2009042001, 'scorm');
+    }
+
     return $result;
 }
 

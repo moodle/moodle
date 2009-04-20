@@ -700,7 +700,8 @@ function scorm_course_format_display($user,$course) {
             }
             $colspan = ' colspan="2"';
         }
-        $headertext .= '</td></tr><tr><td'.$colspan.'>'.format_text(get_string('summary').':<br />'.$scorm->summary).'</td></tr></table>';
+        $options = (object)array('noclean'=>true);
+        $headertext .= '</td></tr><tr><td'.$colspan.'>'.get_string('summary').':<br />'.format_text($scorm->intro, $scorm->introformat, $options).'</td></tr></table>';
         print_simple_box($headertext,'','100%');
         scorm_view_display($user, $scorm, 'view.php?id='.$course->id, $cm, '100%');
     } else {

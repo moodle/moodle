@@ -30,10 +30,10 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
 
 // Summary
-        $mform->addElement('htmleditor', 'summary', get_string('summary'));
-        $mform->setType('summary', PARAM_RAW);
-        $mform->addRule('summary', get_string('required'), 'required', null, 'client');
-        $mform->setHelpButton('summary', array('writing', 'questions', 'richtext2'), false, 'editorhelpbutton');
+        $mform->addElement('htmleditor', 'intro', get_string('summary'));
+        $mform->setType('intro', PARAM_RAW);
+        $mform->addRule('intro', get_string('required'), 'required', null, 'client');
+        $mform->setHelpButton('intro', array('writing', 'questions', 'richtext2'), false, 'editorhelpbutton');
 
 // Scorm types
         $options = array(SCORM_TYPE_LOCAL => get_string('typelocal', 'scorm'));

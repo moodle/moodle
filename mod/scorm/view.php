@@ -75,7 +75,8 @@
     if($scorm->displayattemptstatus == 1) {
         $attemptstatus = scorm_get_attempt_status($USER,$scorm);
     }
-    print_simple_box(format_text($scorm->summary).$attemptstatus, 'center', '70%', '', 5, 'generalbox', 'intro');
+    $options = (object)array('noclean'=>true);
+    print_simple_box(format_text($scorm->intro, $scorm->introformat, $options).$attemptstatus, 'center', '70%', '', 5, 'generalbox', 'intro');
     
     $scormopen = true;
     $timenow = time();

@@ -80,14 +80,15 @@
             $report = scorm_grade_user($scorm, $USER->id);
             $reportshow = get_string('score','scorm').": ".$report;
         }
+        $options = (object)array('noclean'=>true);
         if (!$scorm->visible) {
            //Show dimmed if the mod is hidden
            $table->data[] = array ($tt, "<a class=\"dimmed\" href=\"view.php?id=$scorm->coursemodule\">".format_string($scorm->name)."</a>",
-                                   format_text($scorm->summary), $reportshow);
+                                   format_text($scorm->intro, $scorm->introformat, $options), $reportshow);
         } else {
            //Show normal if the mod is visible
            $table->data[] = array ($tt, "<a href=\"view.php?id=$scorm->coursemodule\">".format_string($scorm->name)."</a>",
-                                   format_text($scorm->summary), $reportshow);
+                                   format_text($scorm->intro, $scorm->introformat, $options), $reportshow);
         }
     }
 

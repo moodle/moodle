@@ -194,7 +194,7 @@ function xmldb_glossary_upgrade($oldversion) {
 
     /// Define field introformat to be added to glossary
         $table = new xmldb_table('glossary');
-        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'intro');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'intro');
 
     /// Conditionally launch add field introformat
         if (!$dbman->field_exists($table, $field)) {
