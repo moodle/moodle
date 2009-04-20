@@ -80,7 +80,8 @@
 
         } else {
 
-            print_box(format_text($survey->intro), 'generalbox', 'intro');
+            $options = (object)array('noclean'=>true);
+            print_box(format_text($survey->intro, $survey->introformat, $options), 'generalbox', 'intro');
             print_spacer(30);
 
             $questions = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions));
