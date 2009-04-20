@@ -745,6 +745,7 @@ repository_client.print_footer = function(client_id) {
             params['sesskey']=moodle_cfg.sesskey;
             params['ctx_id']=fp_config.contextid;
             params['repo_id']=fs.repo_id;
+            params['client_id']=client_id;
             repository_client.loading(client_id, 'load');
             var trans = YAHOO.util.Connect.asyncRequest('POST',
                     moodle_cfg.wwwroot+'/repository/ws.php?action=ccache', repository_client.req_cb, repository_client.postdata(params));
