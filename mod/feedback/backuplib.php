@@ -58,7 +58,7 @@
       fwrite ($bf,full_tag("MODTYPE",4,false,"feedback"));
       fwrite ($bf,full_tag("VERSION",4,false,1)); //version 1 steht fuer die neue Version
       fwrite ($bf,full_tag("NAME",4,false,$feedback->name));
-      fwrite ($bf,full_tag("SUMMARY",4,false,$feedback->summary));
+      fwrite ($bf,full_tag("SUMMARY",4,false,$feedback->intro));
       fwrite ($bf,full_tag("ANONYMOUS",4,false,$feedback->anonymous));
       fwrite ($bf,full_tag("EMAILNOTIFICATION",4,false,$feedback->email_notification));
       fwrite ($bf,full_tag("MULTIPLESUBMIT",4,false,$feedback->multiple_submit));

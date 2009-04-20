@@ -454,7 +454,7 @@ function feedback_set_events($feedback) {
     if($feedback->timeopen > 0) {
         $event = NULL;
         $event->name          = get_string('start', 'feedback').' '.$feedback->name;
-        $event->description = $feedback->summary;
+        $event->description = $feedback->intro;
         $event->courseid     = $feedback->course;
         $event->groupid      = 0;
         $event->userid        = 0;
@@ -476,7 +476,7 @@ function feedback_set_events($feedback) {
     if($feedback->timeclose > 0) {
         $event = NULL;
         $event->name          = get_string('stop', 'feedback').' '.$feedback->name;
-        $event->description = $feedback->summary;
+        $event->description = $feedback->intro;
         $event->courseid     = $feedback->course;
         $event->groupid      = 0;
         $event->userid        = 0;

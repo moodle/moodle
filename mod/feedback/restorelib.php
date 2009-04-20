@@ -49,7 +49,7 @@
             //Now, build the feedback record structure
             $feedback->course = $restore->course_id;
             $feedback->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
-            $feedback->summary = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
+            $feedback->intro = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
             $feedback->anonymous = backup_todb($info['MOD']['#']['ANONYMOUS']['0']['#']);
             $feedback->email_notification = backup_todb($info['MOD']['#']['EMAILNOTIFICATION']['0']['#']);
             $feedback->multiple_submit = backup_todb($info['MOD']['#']['MULTIPLESUBMIT']['0']['#']);
@@ -69,7 +69,7 @@
             if($feedback->timeopen > 0) {
                 $event = NULL;
                 $event->name          = get_string('start', 'feedback').' '.$feedback->name;
-                $event->description = $feedback->summary;
+                $event->description = $feedback->intro;
                 $event->courseid     = $feedback->course;
                 $event->groupid      = 0;
                 $event->userid        = 0;
@@ -91,7 +91,7 @@
             if($feedback->timeclose > 0) {
                 $event = NULL;
                 $event->name          = get_string('stop', 'feedback').' '.$feedback->name;
-                $event->description = $feedback->summary;
+                $event->description = $feedback->intro;
                 $event->courseid     = $feedback->course;
                 $event->groupid      = 0;
                 $event->userid        = 0;

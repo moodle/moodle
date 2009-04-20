@@ -123,10 +123,10 @@
                 }
                 $currentsection = $data->section;
             }
-            $row = array ($printsection, $link, format_text($data->intro, FORMAT_MOODLE, $options), $numrecords, $numunapprovedrecords);
+            $row = array ($printsection, $link, format_text($data->intro, $data->introformat, $options), $numrecords, $numunapprovedrecords);
 
         } else {
-            $row = array ($link, format_text($data->intro, FORMAT_MOODLE, $options), $numrecords, $numunapprovedrecords);
+            $row = array ($link, format_text($data->intro, $data->introformat, $options), $numrecords, $numunapprovedrecords);
         }
 
         if ($rss) {

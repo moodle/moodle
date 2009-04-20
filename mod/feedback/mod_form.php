@@ -24,9 +24,9 @@ class mod_feedback_mod_form extends moodleform_mod {
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
 
-        $mform->addElement('htmleditor', 'summary', get_string("description", "feedback"), array('rows' => 20));
-        $mform->setType('summary', PARAM_RAW);
-        $mform->addRule('summary', null, 'required', null, 'client');
+        $mform->addElement('htmleditor', 'intro', get_string("description", "feedback"), array('rows' => 20));
+        $mform->setType('intro', PARAM_RAW);
+        $mform->addRule('intro', null, 'required', null, 'client');
 
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'timinghdr', get_string('timing', 'form'));

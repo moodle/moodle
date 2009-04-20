@@ -149,7 +149,7 @@ function xmldb_assignment_upgrade($oldversion) {
 
     /// Rename field format on table assignment to introformat
         $table = new xmldb_table('assignment');
-        $field = new xmldb_field('format', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'description');
+        $field = new xmldb_field('format', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'intro');
 
     /// Launch rename field format
         $dbman->rename_field($table, $field, 'introformat');

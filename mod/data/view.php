@@ -316,7 +316,7 @@
     if ($data->intro and empty($page) and empty($record) and $mode != 'single') {
         $options = new object();
         $options->noclean = true;
-        print_box(format_text($data->intro, FORMAT_MOODLE, $options), 'generalbox', 'intro');
+        print_box(format_text($data->intro, $data->introformat, $options), 'generalbox', 'intro');
     }
 
 /// Delete any requested records

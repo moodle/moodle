@@ -250,7 +250,33 @@ function xmldb_feedback_upgrade($oldversion) {
 
         upgrade_mod_savepoint($result, 2009031301, 'feedback');
     }
-    
+
+    if ($result && $oldversion < 2009042000) {
+
+    /// Rename field summary on table feedback to intro
+        $table = new xmldb_table('feedback');
+        $field = new xmldb_field('summary', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null, 'name');
+
+    /// Launch rename field summary
+        $dbman->rename_field($table, $field, 'intro');
+
+    /// feedback savepoint reached
+        upgrade_mod_savepoint($result, 2009042000, 'feedback');
+    }
+
+    if ($result && $oldversion < 2009042001) {
+
+    /// Define field introformat to be added to feedback
+        $table = new xmldb_table('feedback');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'intro');
+
+    /// Launch add field introformat
+        $dbman->add_field($table, $field);
+
+    /// feedback savepoint reached
+        upgrade_mod_savepoint($result, 2009042001, 'feedback');
+    }
+
     return $result;
 }
 

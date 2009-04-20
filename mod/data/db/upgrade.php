@@ -167,6 +167,19 @@ function xmldb_data_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2008112700, 'data');
     }
 
+    if ($result && $oldversion < 2009042000) {
+
+    /// Define field introformat to be added to data
+        $table = new xmldb_table('data');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'intro');
+
+    /// Launch add field introformat
+        $dbman->add_field($table, $field);
+
+    /// data savepoint reached
+        upgrade_mod_savepoint($result, 2009042000, 'data');
+    }
+
     return $result;
 }
 

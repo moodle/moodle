@@ -116,7 +116,8 @@
 
     // print_simple_box_start('center', '80%');
     print_box_start('generalbox boxaligncenter boxwidthwide');
-    echo format_text($feedback->summary);
+    $options = (object)array('noclean'=>true);
+    echo format_text($feedback->intro, $feedback->introformat, $options);
     // print_simple_box_end();
     print_box_end();
     
