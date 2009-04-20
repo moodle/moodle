@@ -34,8 +34,6 @@ class file_browser {
      * @return object file_info object or null if not found or access not allowed
      */
     public function get_file_info($context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
-        global $USER, $CFG, $DB, $COURSE;
-
         switch ($context->contextlevel) {
             case CONTEXT_SYSTEM:
                 return $this->get_file_info_system($context, $filearea, $itemid, $filepath, $filename);
