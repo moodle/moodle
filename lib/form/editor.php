@@ -183,14 +183,14 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         } else {
             $ctx = $COURSE->context;
         }
-        $ret = repository_get_client($ctx, array('image', 'video', 'media'), '*');
+        $client_id = uniqid();
+        $ret = repository_get_client($ctx, $client_id, array('image', 'video', 'media'), '*');
 
-        $suffix = $ret['suffix'];
         $str .= $ret['css'].$ret['js'];
         $str .= <<<EOD
 <script type="text/javascript">
-id2suffix['$id']='$suffix';
-id2itemid['$id']='$draftitemid';
+id2clientid['$id'] = '$client_id';
+id2itemid['$id']   = '$draftitemid';
 </script>
 EOD;
 

@@ -8,6 +8,7 @@
 
 /// Parameters
     $page  = optional_param('page', '', PARAM_RAW);           // page
+    $client_id = optional_param('client_id', SITEID, PARAM_RAW);    // client ID
     $env   = optional_param('env', 'filepicker', PARAM_ALPHA);// opened in editor or moodleform
     $file  = optional_param('file', '', PARAM_RAW);           // file to download
     $title = optional_param('title', '', PARAM_FILE);         // new file name
@@ -22,10 +23,11 @@
 /// Headers to make it not cacheable
     header("Cache-Control: no-cache, must-revalidate");
     header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+    $err = new stdclass;
+    $err->client_id = $client_id;
 
 /// Check permissions
     if (! (isloggedin() && repository::check_context($ctx_id)) ) {
-        $err = new stdclass;
         $err->e = get_string('nopermissiontoaccess', 'repository');
         die(json_encode($err));
     }
@@ -50,7 +52,6 @@
                 }
                 exit;
             } catch (repository_exception $e) {
-                $err = new stdclass;
                 $err->e = $e->getMessage();
                 die(json_encode($err));
             }
@@ -66,17 +67,18 @@
                         $tmp = array_merge($list, $ret['list']);
                         $list = $tmp;
                     } catch (repository_exception $e) {
-                        $err = new stdclass;
                         $err->e = $e->getMessage();
                         die(json_encode($err));
                     }
                 }
             }
-            die(json_encode(array('list'=>$list)));
+            $listing = array('list'=>$list);
+            $listing['client_id'] = $client_id;
+            die(json_encode($listing));
             break;
 
         case 'ccache':      // Clean cache
-            $cache = new curl_cache('repository');
+            $cache = new curl_cache;
             $cache->refresh();
             $action = 'list';
             break;
@@ -86,7 +88,6 @@
     $sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instances} i '.
            'WHERE i.id=? AND i.typeid=r.id';
     if (!$repository = $DB->get_record_sql($sql, array($repo_id))) {
-        $err = new stdclass;
         $err->e = get_string('invalidrepositoryid', 'repository');
         die(json_encode($err));
     } else {
@@ -99,12 +100,10 @@
         try {
             $repo = new $classname($repo_id, $ctx_id, array('ajax'=>true, 'name'=>$repository->name));
         } catch (repository_exception $e){
-            $err = new stdclass;
             $err->e = $e->getMessage();
             die(json_encode($err));
         }
     } else {
-        $err = new stdclass;
         $err->e = get_string('invalidplugin', 'repository', $type);
         die(json_encode($err));
     }
@@ -114,6 +113,8 @@
         // the callback url should be something like this:
         // http://xx.moodle.com/repository/ws.php?callback=yes&repo_id=1&sid=xxx
         // sid is the attached auth token from external source
+        echo_fb($client_id);
+        echo_fb($repo_id);
         $js  =<<<EOD
 <html><head><script type="text/javascript">
     window.opener.repository_callback($repo_id);
@@ -131,9 +132,11 @@ EOD;
         case 'list':
             if ($repo->check_login()) {
                 try {
-                    echo json_encode($repo->get_listing($req_path, $page));
+                    $listing = $repo->get_listing($req_path, $page);
+                    $listing['client_id'] = $client_id;
+                    $listing['repo_id'] = $repo_id;
+                    echo json_encode($listing);
                 } catch (repository_exception $e) {
-                    $err = new stdclass;
                     $err->e = $e->getMessage();
                     die(json_encode($err));
                 }
@@ -143,15 +146,19 @@ EOD;
             }
         case 'login':
             try {
-                echo json_encode($repo->print_login());
+                $listing = $repo->print_login();
+                $listing['client_id'] = $client_id;
+                $listing['repo_id'] = $repo_id;
+                echo json_encode($listing);
             } catch (repository_exception $e){
-                $err = new stdclass;
                 $err->e = $e->getMessage();
                 die(json_encode($err));
             }
             break;
         case 'logout':
-            echo json_encode($repo->logout());
+            $logout = $repo->logout();
+            $logout['client_id'] = $client_id;
+            echo json_encode($logout);
             break;
         case 'searchform':
             $repo->print_search();
@@ -159,10 +166,11 @@ EOD;
         case 'search':
             try {
                 $search_result = $repo->search($search_text);
-                $search_result['search_result'] = true;
+                $search_result['search_result'] = 'test';
+                $search_result['client_id'] = $client_id;
+                $search_result['repo_id'] = $repo_id;
                 echo json_encode($search_result);
             } catch (repository_exception $e) {
-                $err = new stdclass;
                 $err->e = $e->getMessage();
                 die(json_encode($err));
             }
@@ -174,9 +182,10 @@ EOD;
             }
             try {
                 if (preg_match('#(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)#', $path)) {
-                    echo json_encode(array('url'=>$path, 'id'=>$path, 'file'=>$path));
+                    echo json_encode(array('client_id'=>$client_id, 'url'=>$path, 'id'=>$path, 'file'=>$path));
                 } else {
                     $info = repository::move_to_filepool($path, $title, $itemid);
+                    $info['client_id'] = $client_id;
                     if ($env == 'filepicker' || $env == 'filemanager'){
                         echo json_encode($info);
                     } else if ($env == 'editor') {
@@ -184,20 +193,19 @@ EOD;
                     }
                 }
             } catch (repository_exception $e){
-                $err = new stdclass;
                 $err->e = $e->getMessage();
                 die(json_encode($err));
             } catch (Exception $e) {
-                $err = new stdclass;
                 $err->e = $e->getMessage();
                 die(json_encode($err));
             }
             break;
         case 'upload':
             try {
-                echo json_encode($repo->get_listing());
+                $upload = $repo->get_listing();
+                $upload['client_id'] = $client_id;
+                echo json_encode($upload);
             } catch (repository_exception $e){
-                $err = new stdclass;
                 $err->e = $e->getMessage();
                 die(json_encode($err));
             }

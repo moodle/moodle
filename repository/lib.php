@@ -42,7 +42,6 @@ require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once(dirname(dirname(__FILE__)) . '/lib/filelib.php');
 require_once(dirname(dirname(__FILE__)) . '/lib/formslib.php');
 // File picker javascript code
-require_once(dirname(dirname(__FILE__)) . '/repository/javascript.php');
 
 /**
  * A repository_type is a repository plug-in. It can be Box.net, Flick-r, ...
@@ -1829,4 +1828,175 @@ function repository_setup_default_plugins() {
         print_box(get_string('setupdefaultplugins', 'repository'));
     }
     return true;
+}
+/**
+ * Return javascript to create file picker to browse repositories
+ * @global object $CFG
+ * @global object $USER
+ * @param object $context the context
+ * @param string $id unique id for every file picker
+ * @param string $accepted_filetypes
+ * @param string $returnvalue the return value of file picker
+ * @return array
+ */
+function repository_get_client($context, $id = '',  $accepted_filetypes = '*', $returnvalue = '*') {
+    global $CFG, $USER;
+
+    $ft = new file_type_to_ext();
+    $image_file_ext = json_encode($ft->get_file_ext(array('image')));
+    $video_file_ext = json_encode($ft->get_file_ext(array('video')));
+    $accepted_file_ext = json_encode($ft->get_file_ext($accepted_filetypes));
+
+    $css = '';
+    $js  = '';
+    if (!isset($CFG->filepickerjsloaded)) {
+        $css .= <<<EOD
+<style type="text/css">
+@import "$CFG->httpswwwroot/lib/yui/resize/assets/skins/sam/resize.css";
+@import "$CFG->httpswwwroot/lib/yui/container/assets/skins/sam/container.css";
+@import "$CFG->httpswwwroot/lib/yui/layout/assets/skins/sam/layout.css";
+@import "$CFG->httpswwwroot/lib/yui/button/assets/skins/sam/button.css";
+@import "$CFG->httpswwwroot/lib/yui/assets/skins/sam/treeview.css";
+</style>
+<style type="text/css">
+.file-picker{font-size:12px;}
+.file-picker strong{background:#FFFFCC}
+.file-picker a{color: #336699}
+.file-picker a:hover{background:#003366;color:white}
+.fp-panel{padding:0;margin:0; text-align:left;}
+.fp-login-form{text-align:center}
+.fp-searchbar{float:right}
+.fp-viewbar{width:300px;float:left}
+.fp-toolbar{padding: .8em;background: #FFFFCC;color:white;text-align:center}
+.fp-toolbar a{padding: 0 .5em}
+.fp-list{list-style-type:none;padding:0;float:left;width:100%;margin:0;}
+.fp-list li{border-bottom:1px dotted gray;margin-bottom: 1em;}
+.fp-repo-name{display:block;padding: .5em;margin-bottom: .5em}
+.fp-pathbar{margin: .4em;border-bottom: 1px dotted gray;}
+.fp-pathbar a{padding: .4em;}
+.fp-rename-form{text-align:center}
+.fp-rename-form p{margin: 1em;}
+.fp-upload-form{margin: 2em 0;text-align:center}
+.fp-upload-btn a{cursor: default;background: white;border:1px solid gray;color:black;padding: .5em}
+.fp-upload-btn a:hover {background: grey;color:white}
+.fp-paging{margin:1em .5em; clear:both;text-align:center;line-height: 2.5em;}
+.fp-paging a{padding: .5em;border: 1px solid #CCC}
+.fp-paging a.cur_page{border: 1px solid blue}
+.fp-popup{text-align:center}
+.fp-grid{float:left;text-align:center;}
+.fp-grid div{overflow: hidden}
+.fp-grid p{margin:0;padding:0;background: #FFFFCC}
+.fp-grid .label{height:48px;text-align:center}
+.fp-grid span{color:gray}
+</style>
+
+<!--[if IE 6]>
+    <style type="text/css">
+    /* Fix for IE6 */
+    .yui-skin-sam .yui-panel .hd{
+
+    }
+    </style>
+<![endif]-->
+EOD;
+
+        require_js(array(
+            'yui_yahoo',
+            'yui_dom',
+            'yui_event',
+            'yui_element',
+            'yui_treeview',
+            'yui_dragdrop',
+            'yui_container',
+            'yui_resize',
+            'yui_layout',
+            'yui_connection',
+            'yui_json',
+            'yui_button',
+            'yui_selector',
+            'repository/repository.js'
+        ));
+        $lang = array();
+        $lang['title'] = get_string('title', 'repository');
+        $lang['preview'] = get_string('preview', 'repository');
+        $lang['add']     = get_string('add', 'repository');
+        $lang['back']      = get_string('back', 'repository');
+        $lang['cancel']    = get_string('cancel');
+        $lang['close']     = get_string('close', 'repository');
+        $lang['ccache']    = get_string('cleancache', 'repository');
+        $lang['copying']   = get_string('copying', 'repository');
+        $lang['downbtn']   = get_string('getfile', 'repository');
+        $lang['download']  = get_string('downloadsucc', 'repository');
+        $lang['date']      = get_string('date', 'repository').': ';
+        $lang['error']     = get_string('error', 'repository');
+        $lang['filenotnull'] = get_string('filenotnull', 'repository');
+        $lang['federatedsearch'] = get_string('federatedsearch', 'repository');
+        $lang['help']      = get_string('help');
+        $lang['refresh']   = get_string('refresh', 'repository');
+        $lang['invalidjson'] = get_string('invalidjson', 'repository');
+        $lang['listview']  = get_string('listview', 'repository');
+        $lang['login']     = get_string('login', 'repository');
+        $lang['logout']    = get_string('logout', 'repository');
+        $lang['loading']   = get_string('loading', 'repository');
+        $lang['thumbview'] = get_string('thumbview', 'repository');
+        $lang['title']     = get_string('title', 'repository');
+        $lang['noresult']  = get_string('noresult', 'repository');
+        $lang['mgr']       = get_string('manageurl', 'repository');
+        $lang['noenter']   = get_string('noenter', 'repository');
+        $lang['save']      = get_string('save', 'repository');
+        $lang['saveas']    = get_string('saveas', 'repository').': ';
+        $lang['saved']     = get_string('saved', 'repository');
+        $lang['saving']    = get_string('saving', 'repository');
+        $lang['size']      = get_string('size', 'repository').': ';
+        $lang['sync']      = get_string('sync', 'repository');
+        $lang['search']    = get_string('search', 'repository');
+        $lang['searching'] = get_string('searching', 'repository');
+        $lang['submit']    = get_string('submit', 'repository');
+        $lang['preview']   = get_string('preview', 'repository');
+        $lang['popup']     = get_string('popup', 'repository');
+        $lang['upload']    = get_string('upload', 'repository').'...';
+        $lang['uploading'] = get_string('uploading', 'repository');
+        // XXX fp_lang includes language strings
+        $js .= print_js_config($lang, 'fp_lang', true);
+
+        $options = array();
+        $context = get_system_context();
+        $options['contextid'] = $context->id;
+        // XXX fp_config includes filepicker options, including contextid
+        $js .= print_js_config($options, 'fp_config', true);
+
+        $accepted_file_ext = json_encode($ft->get_file_ext($accepted_filetypes));
+        $js .= <<<EOD
+<script>
+        file_extensions.image = $image_file_ext;
+        file_extensions.media = $video_file_ext;
+</script>
+EOD;
+
+        $CFG->filepickerjsloaded = true;
+    } else {
+        // if yui and repository javascript libs are loaded
+        $js = '';
+    }
+
+    // print instances listing
+    $user_context = get_context_instance(CONTEXT_USER, $USER->id);
+    if (is_array($accepted_filetypes) && in_array('*', $accepted_filetypes)) {
+        $accepted_filetypes = '*';
+    }
+    $repos = repository::get_instances(array($user_context, $context, get_system_context()), null, true, null, $accepted_filetypes, $returnvalue);
+    $js .= <<<EOD
+<script>
+    repository_listing['$id'] = {};
+EOD;
+    foreach ($repos as $repo) {
+        $info = $repo->ajax_info();
+        $js .= "\r\n";
+        $js .= 'repository_listing[\''.$id.'\'][\''.$info->id.'\']='.json_encode($repo->ajax_info()).';';
+        $js .= "\n";
+    }
+    $js .= "\r\n";
+    $js .= "</script>";
+
+    return array('css'=>$css, 'js'=>$js);
 }

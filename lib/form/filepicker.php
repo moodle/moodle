@@ -72,8 +72,8 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         } else {
             $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
         }
-        $repository_info = repository_get_client($context, $this->filetypes, $this->returnvalue);
-        $suffix = $repository_info['suffix'];
+        $client_id = uniqid();
+        $repository_info = repository_get_client($context, $client_id, $this->filetypes, $this->returnvalue);
 
         $id     = $this->_attributes['id'];
         $elname = $this->_attributes['name'];
@@ -83,21 +83,21 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
 
         $str .= <<<EOD
 <script type="text/javascript">
-function updatefile_$suffix(obj) {
-    document.getElementById('repo_info_$suffix').innerHTML = obj['file'];
+function updatefile(client_id, obj) {
+    document.getElementById('repo_info_'+client_id).innerHTML = obj['file'];
 }
-function callpicker_$suffix() {
+function callpicker(client_id, id) {
     document.body.className += ' yui-skin-sam';
     var picker = document.createElement('DIV');
-    picker.id = 'file-picker-$suffix';
+    picker.id = 'file-picker-'+client_id;
     picker.className = 'file-picker';
     document.body.appendChild(picker);
-    var el=document.getElementById('$id');
-    openpicker_$suffix({'env':'filepicker', 'target':el, 'callback':updatefile_$suffix})
+    var el=document.getElementById(id);
+    open_filepicker({'env':'filepicker', 'target':el, 'callback':updatefile})
 }
 </script>
 EOD;
-        $str .= '<input value="'.get_string('openpicker', 'repository').'" type="button" onclick=\'callpicker_'.$suffix.'()\' />'.'<span id="repo_info_'.$suffix.'" class="notifysuccess">'.$currentfile.'</span>'.$repository_info['css'].$repository_info['js'];
+        $str .= '<input value="'.get_string('openpicker', 'repository').'" type="button" onclick="callpicker(\''+$client_id+'\', \''+$id+'\')" />'.'<span id="repo_info_'.$client_id.'" class="notifysuccess">'.$currentfile.'</span>'.$repository_info['css'].$repository_info['js'];
         return $str;
     }
 

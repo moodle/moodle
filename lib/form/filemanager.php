@@ -171,57 +171,67 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
             $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
         }
 
-        $repo_info = repository_get_client($context, $this->filetypes, $this->returnvalue);
-        $suffix = $repo_info['suffix'];
+        $client_id = uniqid();
+        $repo_info = repository_get_client($context, $client_id, $this->filetypes, $this->returnvalue);
 
-        $html = $this->_get_draftfiles($draftitemid, $suffix);
+        $html = $this->_get_draftfiles($draftitemid, $client_id);
 
         $str = $this->_getTabs();
         $str .= $html;
         $str .= $repo_info['css'];
         $str .= $repo_info['js'];
-        $str .= <<<EOD
+        if (empty($CFG->filemanagerjsloaded)) {
+            $str .= <<<EOD
 <script type="text/javascript">
 //<![CDATA[
 var elitem = null;
-var rm_cb_$suffix = {
+var rm_cb = {
     success: function(o) {
         if(o.responseText && o.responseText == 200){
             elitem.parentNode.removeChild(elitem);
         }
     }
 }
-function rm_$suffix(id, name, context) {
+function rm(id, name, context) {
     if (confirm('$strdelete')) {
         var trans = YAHOO.util.Connect.asyncRequest('POST',
             '{$CFG->httpswwwroot}/repository/ws.php?action=delete&itemid='+id,
-                rm_cb_$suffix,
+                rm_cb,
                 'title='+name
                 );
         elitem = context.parentNode;
     }
 }
-function uf_$suffix(obj) {
-    var list = document.getElementById('draftfiles-$suffix');
+function uf(obj) {
+    var list = document.getElementById('draftfiles-'+obj.client_id);
     var html = '<li><a href="'+obj['url']+'"><img src="'+obj['icon']+'" class="icon" /> '+obj['file']+'</a> ';
-    html += '<a href="###" onclick=\'rm_$suffix('+obj['id']+', "'+obj['file']+'", this)\'><img src="{$CFG->pixpath}/t/delete.gif" class="iconsmall" /></a>';;
+    html += '<a href="###" onclick=\'rm('+obj['id']+', "'+obj['file']+'", this)\'><img src="{$CFG->pixpath}/t/delete.gif" class="iconsmall" /></a>';;
     html += '</li>';
     list.innerHTML += html;
 }
-function callpicker_$suffix() {
+function callpicker(el_id, client_id, itemid) {
     document.body.className += ' yui-skin-sam';
     var picker = document.createElement('DIV');
-    picker.id = 'file-picker-$suffix';
+    picker.id = 'file-picker-'+client_id;
     picker.className = 'file-picker';
     document.body.appendChild(picker);
-    var el=document.getElementById('$id');
-    openpicker_$suffix({'env':'filemanager', 'target':el, 'itemid': $draftitemid, 'callback':uf_$suffix})
+    var el=document.getElementById(el_id);
+    var obj = {};
+    obj.env = 'filemanager';
+    obj.itemid = itemid;
+    obj.target = el;
+    obj.callback = uf;
+    var fp = open_filepicker(client_id, obj);
 }
 //]]>
 </script>
+EOD;
+            $CFG->filemanagerjsloaded = true;
+        }
+        $str .= <<<EOD
 <input value="$draftitemid" name="{$this->_attributes['name']}" type="hidden" />
 <div>
-    <input value="$straddfile" onclick="callpicker_$suffix()" type="button" />
+    <input value="$straddfile" onclick="callpicker('$id', '$client_id', '$draftitemid')" type="button" />
 </div>
 EOD;
         return $str;

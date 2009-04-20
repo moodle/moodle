@@ -4932,13 +4932,14 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         } else {
             $ctx = $COURSE->context;
         }
-        $ret = repository_get_client($ctx, array('image', 'video', 'media'), '*');
+        $client_id = uniqid();
+        $ret = repository_get_client($ctx, $client_id, array('image', 'video', 'media'), '*');
+
         $str .= $ret['css'].$ret['js'];
-        $suffix = $ret['suffix'];
         $str .= '<div class="textareaicons">';
         $str .= '<script type="text/javascript">
 //<![CDATA[
-id2suffix[\''.$id.'\']=\''.$suffix.'\';
+id2clientid[\''.$id.'\']=\''.$client_id.'\';
 mce_saveOnSubmit(\''.addslashes_js($id).'\');
 document.write(\''.addslashes_js($str_toggle).'\');
 document.write(\''.addslashes_js(editorshortcutshelpbutton()).'\');
