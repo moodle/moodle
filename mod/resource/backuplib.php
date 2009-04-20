@@ -51,7 +51,7 @@
         fwrite ($bf,full_tag("NAME",4,false,$resource->name));
         fwrite ($bf,full_tag("TYPE",4,false,$resource->type));
         fwrite ($bf,full_tag("REFERENCE",4,false,$resource->reference));
-        fwrite ($bf,full_tag("SUMMARY",4,false,$resource->summary));
+        fwrite ($bf,full_tag("SUMMARY",4,false,$resource->intro));
         fwrite ($bf,full_tag("ALLTEXT",4,false,$resource->alltext));
         fwrite ($bf,full_tag("POPUP",4,false,$resource->popup));
         fwrite ($bf,full_tag("OPTIONS",4,false,$resource->options));

@@ -28,6 +28,35 @@ function xmldb_resource_upgrade($oldversion) {
 
 //===== 1.9.0 upgrade line ======//
 
+    if ($result && $oldversion < 2009042000) {
+
+    /// Rename field summary on table resource to intro
+        $table = new xmldb_table('resource');
+        $field = new xmldb_field('summary', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'reference');
+
+    /// Launch rename field summary
+        $dbman->rename_field($table, $field, 'intro');
+
+    /// resource savepoint reached
+        upgrade_mod_savepoint($result, 2009042000, 'resource');
+    }
+
+    if ($result && $oldversion < 2009042001) {
+
+    /// Define field introformat to be added to resource
+        $table = new xmldb_table('resource');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'intro');
+
+    /// Launch add field introformat
+        $dbman->add_field($table, $field);
+
+    /// set format to current
+        $DB->set_field('resource', 'introformat', FORMAT_MOODLE, array());
+
+    /// resource savepoint reached
+        upgrade_mod_savepoint($result, 2009042001, 'resource');
+    }
+
     return $result;
 }
 

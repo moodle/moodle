@@ -90,8 +90,8 @@ function display() {
             navmenu($course, $cm));
 
 
-    if (trim(strip_tags($resource->summary))) {
-        print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center");
+    if (trim(strip_tags($resource->intro))) {
+        print_simple_box(format_text($resource->intro, $resource->introformat, $formatoptions, $course->id), "center");
         print_spacer(10,10);
     }
 

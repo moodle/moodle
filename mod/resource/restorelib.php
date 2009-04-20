@@ -37,7 +37,7 @@
             $resource->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
             $resource->type = $info['MOD']['#']['TYPE']['0']['#'];
             $resource->reference = backup_todb($info['MOD']['#']['REFERENCE']['0']['#']);
-            $resource->summary = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
+            $resource->intro = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
             $resource->alltext = backup_todb($info['MOD']['#']['ALLTEXT']['0']['#']);
             $resource->popup = backup_todb($info['MOD']['#']['POPUP']['0']['#']);
             $resource->options = backup_todb($info['MOD']['#']['OPTIONS']['0']['#']);
@@ -203,14 +203,14 @@
         global $CFG, $DB;
         $status = true;
 
-        if ($resources = $DB->get_records('resource', array('course'=>$restore->course_id), '', "id, alltext, summary, reference")) {
+        if ($resources = $DB->get_records('resource', array('course'=>$restore->course_id), '', "id, alltext, intro, reference")) {
 
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
             foreach ($resources as $resource) {
                 //Increment counter
                 $i++;
                 $content1 = $resource->alltext;
-                $content2 = $resource->summary;
+                $content2 = $resource->intro;
                 $content3 = $resource->reference;
                 $result1 = restore_decode_content_links_worker($content1,$restore);
                 $result2 = restore_decode_content_links_worker($content2,$restore);
@@ -219,7 +219,7 @@
                 if ($result1 != $content1 || $result2 != $content2 ||  $result3 != $content3) {
                     //Update record
                     $resource->alltext = $result1;
-                    $resource->summary = $result2;
+                    $resource->intro = $result2;
                     $resource->reference = $result3;
                     $status = $DB->update_record("resource",$resource);
                     if (debugging()) {

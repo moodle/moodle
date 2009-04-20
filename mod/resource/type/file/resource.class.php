@@ -364,8 +364,8 @@ class resource_file extends resource_base {
             echo "\n-->\n";
             echo '</script>';
 
-            if (trim(strip_tags($resource->summary))) {
-                print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions), "center");
+            if (trim(strip_tags($resource->intro))) {
+                print_simple_box(format_text($resource->intro, $resource->introformat, $formatoptions, $course->id), "center");
             }
 
             $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$cm->id}\" "
@@ -427,7 +427,7 @@ class resource_file extends resource_base {
                          function resizeEmbeddedHtml() {
                              //calculate new embedded html height size
                         ';
-                if (!empty($resource->summary)) {
+                if (!empty($resource->intro)) {
                     echo'    objectheight =  YAHOO.util.Dom.getViewportHeight() - 230;
                         ';
                 }
@@ -449,9 +449,9 @@ class resource_file extends resource_base {
                       </script>
                 ';
 
-            ///print the summary
-                if (!empty($resource->summary)) {
-                    print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center");
+            ///print the intro
+                if (!empty($resource->intro)) {
+                    print_simple_box(format_text($resource->intro, $resource->introformat, $formatoptions, $course->id), "center");
                 }
                 echo "</body></html>";
                 exit;
@@ -491,7 +491,8 @@ class resource_file extends resource_base {
 
             $options = new object();
             $options->para = false;
-            echo '<div class="summary">'.format_text($resource->summary, FORMAT_HTML, $options).'</div>';
+            $options->noclean = true;
+            echo '<div class="summary">'.format_text($resource->intro, $resource->introformat, $options).'</div>';
             if (!empty($localpath)) {  // Show some help
                 echo '<div class="mdl-right helplink">';
                 link_to_popup_window ('/mod/resource/type/file/localpath.php', get_string('localfile', 'resource'),
@@ -704,8 +705,8 @@ class resource_file extends resource_base {
                 echo '</div>';
             }
 
-            if (trim($resource->summary)) {
-                print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center");
+            if (trim($resource->intro)) {
+                print_simple_box(format_text($resource->intro, $resource->introformat, $formatoptions, $course->id), "center");
             }
 
             if ($inpopup) {

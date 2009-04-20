@@ -434,8 +434,8 @@ class resource_ims extends resource_base {
             echo "\n-->\n";
             echo '</script>';
 
-            if (trim(strip_tags($resource->summary))) {
-                print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions), "center");
+            if (trim(strip_tags($resource->intro))) {
+                print_simple_box(format_text($resource->intro, $resource->introformat, $formatoptions, $course->id), "center");
             }
 
             $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$cm->id}\" target=\"resource{$resource->id}\" onclick=\"return openpopup('/mod/resource/view.php?inpopup=true&amp;id={$cm->id}', 'resource{$resource->id}','{$resource->popup}');\">".format_string($resource->name,true)."</a>";

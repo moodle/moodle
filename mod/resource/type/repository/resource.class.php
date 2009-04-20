@@ -313,9 +313,9 @@ function display() {
         echo "\n-->\n";
         echo '</script>';
 
-        if (trim(strip_tags($resource->summary))) {
+        if (trim(strip_tags($resource->intro))) {
             $formatoptions->noclean = true;
-            print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions), "center");
+            print_simple_box(format_text($resource->intro, $resource->introformat, $formatoptions, $course->id), "center");
         }
 
         $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$cm->id}\" target=\"resource{$resource->id}\" onclick=\"return openpopup('/mod/resource/view.php?inpopup=true&amp;id={$cm->id}', 'resource{$resource->id}','{$resource->popup}');\">".format_string($resource->name,true)."</a>";
@@ -365,7 +365,7 @@ function display() {
         print_header($pagetitle, $course->fullname, $navigation, "", "", true,
                 update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
 
-        echo '<div class="summary">'.format_text($resource->summary, FORMAT_HTML, $formatoptions).'</div>';
+        echo '<div class="summary">'.format_text($resource->intro, $resource->introformat, $formatoptions).'</div>';
         if (!empty($localpath)) {  // Show some help
             echo '<div class="mdl-right helplink">';
             link_to_popup_window ('/mod/resource/type/file/localpath.php', get_string('localfile', 'resource'), get_string('localfilehelp','resource'), 400, 500, get_string('localfilehelp', 'resource'));
