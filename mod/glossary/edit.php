@@ -43,8 +43,10 @@ if ($id) { // if entry is specified
         }
     }
 
+    // clean up text before edit if needed
+    $entry = trusttext_pre_edit($entry, 'definition', $context);
+
     //prepare extra data
-    trusttext_prepare_edit($entry->definition, $entry->format, can_use_html_editor(), $context);
     if ($aliases = $DB->get_records_menu("glossary_alias", array("entryid"=>$id), '', 'id, alias')) {
         $entry->aliases = implode("\n", $aliases) . "\n";
     }
@@ -56,16 +58,16 @@ if ($id) { // if entry is specified
 } else { // new entry
     require_capability('mod/glossary:write', $context);
     $entry = new object();
-    $entry->id         = null;
-    $entry->definition = '';
-    $entry->format     = FORMAT_HTML; // TODO: better default value
+    $entry->id               = null;
+    $entry->definition       = '';
+    $entry->definitionformat = FORMAT_HTML; // TODO: better default value
 }
 
 $entry->cmid = $cm->id;
 
 $draftid_editor = file_get_submitted_draft_itemid('entry');
 $currenttext = file_prepare_draft_area($draftid_editor, $context->id, 'glossary_entry', $entry->id, true, $entry->definition);
-$entry->entry = array('text'=>$currenttext, 'format'=>$entry->format, 'itemid'=>$draftid_editor);
+$entry->entry = array('text'=>$currenttext, 'format'=>$entry->definitionformat, 'itemid'=>$draftid_editor);
 
 $draftitemid = file_get_submitted_draft_itemid('attachments');
 file_prepare_draft_area($draftitemid, $context->id, 'glossary_attachment', $entry->id , false);
@@ -94,14 +96,15 @@ if ($mform->is_cancelled()){
         $entry->teacherentry     = has_capability('mod/glossary:manageentries', $context);
     }
 
-    $entry->concept       = trim($data->concept);
-    $entry->definition    = '';          // updated later
-    $entry->format        = FORMAT_HTML; // updated later
-    $entry->timemodified  = $timenow;
-    $entry->approved      = 0;
-    $entry->usedynalink   = isset($data->usedynalink) ?   $data->usedynalink : 0;
-    $entry->casesensitive = isset($data->casesensitive) ? $data->casesensitive : 0;
-    $entry->fullmatch     = isset($data->fullmatch) ?     $data->fullmatch : 0;
+    $entry->concept          = trim($data->concept);
+    $entry->definition       = '';          // updated later
+    $entry->definitionformat = FORMAT_HTML; // updated later
+    $entry->definitiontrust  = trusttext_trusted($context);
+    $entry->timemodified     = $timenow;
+    $entry->approved         = 0;
+    $entry->usedynalink      = isset($data->usedynalink) ?   $data->usedynalink : 0;
+    $entry->casesensitive    = isset($data->casesensitive) ? $data->casesensitive : 0;
+    $entry->fullmatch        = isset($data->fullmatch) ?     $data->fullmatch : 0;
 
     if ($glossary->defaultapproval or has_capability('mod/glossary:approve', $context)) {
         $entry->approved = 1;
@@ -122,9 +125,8 @@ if ($mform->is_cancelled()){
     }
 
     // save and relink embedded images
-    $entry->format     = $data->entry['format'];
-    $entry->definition = file_save_draft_area_files($draftid_editor, $context->id, 'glossary_entry', $entry->id, true, $data->entry['text']);
-    trusttext_after_edit($entry->definition, $context);
+    $entry->definitionformat = $data->entry['format'];
+    $entry->definition       = file_save_draft_area_files($draftid_editor, $context->id, 'glossary_entry', $entry->id, true, $data->entry['text']);
 
     // save attachments
     $info = file_get_draft_area_info($draftitemid);

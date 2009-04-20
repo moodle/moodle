@@ -60,14 +60,13 @@ function glossary_comment_add() {
     }
 
     if ($data = $mform->get_data()) {
-        trusttext_after_edit($data->entrycomment, $context);
-
         $newcomment = new object();
-        $newcomment->entryid      = $entry->id;
-        $newcomment->entrycomment = $data->entrycomment;
-        $newcomment->format       = $data->format;
-        $newcomment->timemodified = time();
-        $newcomment->userid       = $USER->id;
+        $newcomment->entryid            = $entry->id;
+        $newcomment->entrycomment       = $data->entrycomment;
+        $newcomment->entrycommentformat = $data->entrycommentformat;
+        $newcomment->entrycommenttrust  = trusttext_trusted($context);
+        $newcomment->timemodified       = time();
+        $newcomment->userid             = $USER->id;
 
         if (!$newcomment->id = $DB->insert_record('glossary_comments', $newcomment)) {
             print_error('cannotinsertcomment');
@@ -175,18 +174,20 @@ function glossary_comment_edit() {
         print_error('cannoteditcommentexpired');
     }
 
+    // clean up existing text if needed
+    $comment = trusttext_pre_edit($comment, 'entrycomment', $context);
+
     $mform = new mod_glossary_comment_form();
-    trusttext_prepare_edit($comment->entrycomment, $comment->format, can_use_html_editor(), $context);
-    $mform->set_data(array('cid'=>$cid, 'action'=>'edit', 'entrycomment'=>$comment->entrycomment, 'format'=>$comment->format));
+    $mform->set_data(array('cid'=>$cid, 'action'=>'edit', 'entrycomment'=>$comment->entrycomment, 'entrycommentformat'=>$comment->entrycommentformat));
 
     if ($data = $mform->get_data()) {
-        trusttext_after_edit($data->entrycomment, $context);
 
         $updatedcomment = new object();
-        $updatedcomment->id           = $cid;
-        $updatedcomment->entrycomment = $data->entrycomment;
-        $updatedcomment->format       = $data->format;
-        $updatedcomment->timemodified = time();
+        $updatedcomment->id                 = $cid;
+        $updatedcomment->entrycomment       = $data->entrycomment;
+        $updatedcomment->entrycommentformat = $data->entrycommentformat;
+        $updatedcomment->entrycommenttrust  = trusttext_trusted($context);
+        $updatedcomment->timemodified       = time();
 
         $DB->update_record('glossary_comments', $updatedcomment);
         add_to_log($course->id, 'glossary', 'update comment', "comments.php?id=$cm->id&amp;eid=$entry->id", "$updatedcomment->id",$cm->id);
@@ -220,7 +221,7 @@ function glossary_comment_print_header($course, $cm, $glossary, $entry, $action)
 
     $strglossary   = get_string('modulename', 'glossary');
     $strcomments   = get_string('comments', 'glossary');
-    
+
     $navlinks = array();
     $navlinks[] = array('name' => $strcomments, 'link' => "comments.php?id=$cm->id&amp;eid=$entry->id", 'type' => 'title');
     $navlinks[] = array('name' => $straction, 'link' => '', 'type' => 'action');

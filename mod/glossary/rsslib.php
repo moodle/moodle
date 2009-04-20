@@ -138,7 +138,7 @@
 
         $items = array();
 
-        $params = array('gid'=>$glossary->id, 'newsince'=>$newsince); 
+        $params = array('gid'=>$glossary->id, 'newsince'=>$newsince);
 
         if ($newsince) {
             $newsince = "AND e.timecreated > :newsince";
@@ -146,12 +146,13 @@
             $newsince = "";
         }
 
-        if ($recs = $DB->get_records_sql ("SELECT e.id AS entryid, 
-                                                  e.concept AS entryconcept, 
-                                                  e.definition AS entrydefinition, 
-                                                  e.format AS entryformat, 
-                                                  e.timecreated AS entrytimecreated, 
-                                                  u.id AS userid, 
+        if ($recs = $DB->get_records_sql ("SELECT e.id AS entryid,
+                                                  e.concept AS entryconcept,
+                                                  e.definition AS entrydefinition,
+                                                  e.definitionformat AS entryformat,
+                                                  e.definitiontrust AS entrytrust,
+                                                  e.timecreated AS entrytimecreated,
+                                                  u.id AS userid,
                                                   u.firstname AS userfirstname,
                                                   u.lastname AS userlastname
                                              FROM {glossary_entries} e,
@@ -169,7 +170,7 @@
             $articlesleft = $glossary->rssarticles;
 
             $formatoptions = new object;
-            $formatoptions->trusttext = true;
+            $formatoptions->trusted = $comment->entrytrust;
 
             foreach ($recs as $rec) {
                 $item = new object();
@@ -198,7 +199,7 @@
 
         $items = array();
 
-        $params = array('gid'=>$glossary->id, 'newsince'=>$newsince); 
+        $params = array('gid'=>$glossary->id, 'newsince'=>$newsince);
 
         if ($newsince) {
             $newsince = "AND e.timecreated > :newsince";
@@ -209,7 +210,8 @@
         if ($recs = $DB->get_records_sql ("SELECT e.id AS entryid,
                                                   e.concept AS entryconcept,
                                                   e.definition AS entrydefinition,
-                                                  e.format AS entryformat,
+                                                  e.definitionformat AS entryformat,
+                                                  e.definitiontrust AS entrytrust,
                                                   e.timecreated AS entrytimecreated,
                                                   u.id AS userid,
                                                   u.firstname AS userfirstname,
@@ -230,7 +232,7 @@
             $articlesleft = $glossary->rssarticles;
 
             $formatoptions = new object;
-            $formatoptions->trusttext = true;
+            $formatoptions->trusted = $comment->entrytrust;
 
             foreach ($recs as $rec) {
                 $item = new object();

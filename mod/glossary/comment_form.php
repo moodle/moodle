@@ -9,11 +9,11 @@ class mod_glossary_comment_form extends moodleform {
         // visible elements
         $mform->addElement('htmleditor', 'entrycomment',get_string('comment', 'glossary'));
         $mform->addRule('entrycomment', get_string('required'), 'required', null, 'client');
-        $mform->setType('entrycomment', PARAM_RAW); // processed by trusttext or cleaned before the display
+        $mform->setType('entrycomment', PARAM_RAW); // processed by trust text or cleaned before the display
         $mform->setHelpButton('entrycomment', array('writing', 'richtext2'), false, 'editorhelpbutton');
 
-        $mform->addElement('format', 'format', get_string('format'));
-        $mform->setHelpButton('format', array('textformat', get_string('helpformatting')));
+        $mform->addElement('format', 'entrycommentformat', get_string('format'));
+        $mform->setHelpButton('entrycommentformat', array('textformat', get_string('helpformatting')));
 
         // hidden optional params
         $mform->addElement('hidden', 'cid', 0);

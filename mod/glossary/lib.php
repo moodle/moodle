@@ -641,30 +641,15 @@ function glossary_print_entry_default ($entry, $glossary, $cm) {
 
     $definition = $entry->definition;
 
-    // always detect and strip TRUSTTEXT marker before processing and add+strip it afterwards!
-    if (trusttext_present($definition)) {
-        $ttpresent = true;
-        $definition = trusttext_strip($definition);
-    } else {
-        $ttpresent = false;
-    }
-
     $definition = '<span class="nolink">' . strip_tags($definition) . '</span>';
-
-    // reconstruct the TRUSTTEXT properly after processing
-    if ($ttpresent) {
-        $definition = trusttext_mark($definition);
-    } else {
-        $definition = trusttext_strip($definition); //make 100% sure TRUSTTEXT marker was not created
-    }
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     $definition = file_rewrite_pluginfile_urls($definition, 'pluginfile.php', $context->id, 'glossary_entry', $entry->id);
-    
+
     $options = new object();
     $options->para = false;
-    $options->trusttext = true;
-    $definition = format_text($definition, $entry->format, $options);
+    $options->trusted = $entry->definitiontrust;
+    $definition = format_text($definition, $entry->definitionformat, $options);
     echo ($definition);
     echo '<br /><br />';
 }
@@ -687,14 +672,6 @@ function glossary_print_entry_definition($entry, $glossary, $cm) {
 
     $definition = $entry->definition;
 
-    // always detect and strip TRUSTTEXT marker before processing and add+strip it afterwards!
-    if (trusttext_present($definition)) {
-        $ttpresent = true;
-        $definition = trusttext_strip($definition);
-    } else {
-        $ttpresent = false;
-    }
-
     global $GLOSSARY_EXCLUDECONCEPTS;
 
     //Calculate all the strings to be no-linked
@@ -709,23 +686,16 @@ function glossary_print_entry_definition($entry, $glossary, $cm) {
 
     $options = new object();
     $options->para = false;
-    $options->trusttext = true;
-
-    // reconstruct the TRUSTTEXT properly after processing
-    if ($ttpresent) {
-        $definition = trusttext_mark($definition);
-    } else {
-        $definition = trusttext_strip($definition); //make 100% sure TRUSTTEXT marker was not created
-    }
+    $options->trusted = $entry->definitiontrust;
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     $definition = file_rewrite_pluginfile_urls($definition, 'pluginfile.php', $context->id, 'glossary_entry', $entry->id);
-    
-    $text = format_text($definition, $entry->format, $options);
-    
+
+    $text = format_text($definition, $entry->definitionformat, $options);
+
     // Stop excluding concepts from autolinking
     unset($GLOSSARY_EXCLUDECONCEPTS);
-    
+
     if (!empty($entry->highlight)) {
         $text = highlight($entry->highlight, $text);
     }
@@ -863,14 +833,14 @@ function glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode
     }
 }
 
-function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook,$printicons,$ratings,$aliases=true) {
+function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases=true) {
 
     if ($aliases) {
         $aliases = glossary_print_entry_aliases($course, $cm, $glossary, $entry, $mode, $hook,'html');
     }
     $icons   = '';
     $return   = '';
-    if ( $printicons ) {
+    if ($printicons) {
         $icons   = glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,'html');
     }
     if ($aliases || $icons || $ratings) {
@@ -907,10 +877,10 @@ function glossary_print_entry_attachment($entry, $cm, $format=NULL, $align="righ
     }
 }
 
-function  glossary_print_entry_approval($cm, $entry, $mode,$align="right",$insidetable=true) {
+function  glossary_print_entry_approval($cm, $entry, $mode, $align="right", $insidetable=true) {
     global $CFG;
 
-    if ( $mode == 'approval' and !$entry->approved ) {
+    if ($mode == 'approval' and !$entry->approved) {
         if ($insidetable) {
             echo '<table class="glossaryapproval" align="'.$align.'"><tr><td align="'.$align.'">';
         }
@@ -1472,8 +1442,8 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     echo '</td><td class="entry">';
 
     $options = new object();
-    $options->trusttext = true;
-    echo format_text($comment->entrycomment, $comment->format, $options);
+    $options->trusted = $comment->entrycommenttrust;
+    echo format_text($comment->entrycomment, $comment->entrycommentformat, $options);
 
     echo '<div class="icons commands">';
 
@@ -1593,7 +1563,7 @@ function glossary_generate_export_csv($entries, $aliases, $categories) {
     foreach ($entries as $entry) {
         $thisaliasesentry = array();
         $thiscategoriesentry = array();
-        $thiscsventry = array($entry->concept, nl2br(trusttext_strip($entry->definition)));
+        $thiscsventry = array($entry->concept, nl2br($entry->definition));
 
         if (array_key_exists($entry->id, $aliases) && is_array($aliases[$entry->id])) {
             $thiscount = count($aliases[$entry->id]);
@@ -1681,8 +1651,8 @@ function glossary_generate_export_file($glossary, $hook = "", $hook = 0) {
                 if ( $entry->approved and $permissiongranted ) {
                     $co .= glossary_start_tag("ENTRY",3,true);
                     $co .= glossary_full_tag("CONCEPT",4,false,trim($entry->concept));
-                    $co .= glossary_full_tag("DEFINITION",4,false,trusttext_strip($entry->definition));
-                    $co .= glossary_full_tag("FORMAT",4,false,$entry->format);
+                    $co .= glossary_full_tag("DEFINITION",4,false,$entry->definition);
+                    $co .= glossary_full_tag("FORMAT",4,false,$entry->definitionformat);
                     $co .= glossary_full_tag("USEDYNALINK",4,false,$entry->usedynalink);
                     $co .= glossary_full_tag("CASESENSITIVE",4,false,$entry->casesensitive);
                     $co .= glossary_full_tag("FULLMATCH",4,false,$entry->fullmatch);

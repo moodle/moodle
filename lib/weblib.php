@@ -1227,12 +1227,16 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         return ''; // no need to do any filters and cleaning
     }
 
-    if (!isset($options->trusttext)) {
-        $options->trusttext = false;
+    if (!isset($options->trusted)) {
+        $options->trusted = false;
     }
-
     if (!isset($options->noclean)) {
-        $options->noclean=false;
+        if ($options->trusted and trusttext_active()) {
+            // no cleaning if text trusted and noclean not specified
+            $options->noclean=true;
+        } else {
+            $options->noclean=false;
+        }
     }
     if (!isset($options->nocache)) {
         $options->nocache=false;
@@ -1262,7 +1266,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 
     if (!empty($CFG->cachetext) and empty($options->nocache)) {
         $hashstr .= $text.'-'.$filtermanager->text_filtering_hash($context, $courseid).'-'.(int)$courseid.'-'.current_language().'-'.
-                (int)$format.(int)$options->trusttext.(int)$options->noclean.(int)$options->smiley.
+                (int)$format.(int)$options->trusted.(int)$options->noclean.(int)$options->smiley.
                 (int)$options->filter.(int)$options->para.(int)$options->newlines;
 
         $time = time() - $CFG->cachetext;
@@ -1286,24 +1290,6 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
                 return $oldcacheitem->formattedtext;
             }
         }
-    }
-
-    // trusttext overrides the noclean option!
-    if ($options->trusttext) {
-        if (trusttext_present($text)) {
-            $text = trusttext_strip($text);
-            if (!empty($CFG->enabletrusttext)) {
-                $options->noclean = true;
-            } else {
-                $options->noclean = false;
-            }
-        } else {
-            $options->noclean = false;
-        }
-    } else if (!debugging('', DEBUG_DEVELOPER)) {
-        // strip any forgotten trusttext in non-developer mode
-        // do not forget to disable text cache when debugging trusttext!!
-        $text = trusttext_strip($text);
     }
 
     switch ($format) {
@@ -1580,10 +1566,7 @@ function trusttext_present($text) {
 }
 
 /**
- * This funtion MUST be called before the cleaning or any other
- * function that modifies the data! We do not know the origin of trusttext
- * in database, if it gets there in tweaked form we must not convert it
- * to supported form!!!
+ * Legacy function, used for cleaning of old forum and glossary text only.
  * @param string $text text that may contain TRUSTTEXT marker
  * @return text without any TRUSTTEXT marker
  */
@@ -1592,7 +1575,7 @@ function trusttext_strip($text) {
 
     while (true) { //removing nested TRUSTTEXT
         $orig = $text;
-        $text = str_replace(TRUSTTEXT, '', $text);
+        $text = str_replace('#####TRUSTTEXT#####', '', $text);
         if (strcmp($orig, $text) === 0) {
             return $text;
         }
@@ -1606,6 +1589,7 @@ function trusttext_strip($text) {
  * it into database!
  */
 function trusttext_mark($text) {
+//TODO: delete
     global $CFG;
     if (!empty($CFG->enabletrusttext) and (strpos($text, TRUSTTEXT) === FALSE)) {
         return TRUSTTEXT.$text;
@@ -1615,6 +1599,7 @@ function trusttext_mark($text) {
 }
 
 function trusttext_after_edit(&$text, $context) {
+//TODO: delete
     if (has_capability('moodle/site:trustcontent', $context)) {
         $text = trusttext_strip($text);
         $text = trusttext_mark($text);
@@ -1625,7 +1610,7 @@ function trusttext_after_edit(&$text, $context) {
 
 function trusttext_prepare_edit(&$text, &$format, $usehtmleditor, $context) {
     global $CFG;
-
+//TODO: delete
     $options = new object();
     $options->smiley = false;
     $options->filter = false;
@@ -1643,6 +1628,47 @@ function trusttext_prepare_edit(&$text, &$format, $usehtmleditor, $context) {
     } else if (!$options->noclean){
         $text = clean_text($text, $format);
     }
+}
+
+/**
+ * Must be called before editing of all texts
+ * with trust flag. Removes all XSS nasties
+ * from texts stored in database if needed.
+ * @param object $object data object with xxx, xxxformat and xxxtrust fields
+ * @param string $field name of text field
+ * @param object $context active context
+ * @return object updated $object
+ */
+function trusttext_pre_edit($object, $field, $context) {
+    $trustfield  = $field.'trust';
+    $formatfield = $field.'format'; 
+    
+    if (!$object->$trustfield or !trusttext_trusted($context)) {
+        $object->$field = clean_text($object->$field, $object->$formatfield);
+    }
+
+    return $object;
+}
+
+/**
+ * Is user trusted to enter no dangerous XSS in this context?
+ * Please note the user must be in fact trusted everywhere on this server!!
+ * @param $context
+ * @return bool true if user trusted
+ */
+function trusttext_trusted($context) {
+    return (trusttext_active() and has_capability('moodle/site:trustcontent', $context)); 
+}
+
+/**
+ * Is trusttext feature active?
+ * @param $context
+ * @return bool
+ */
+function trusttext_active() {
+    global $CFG;
+
+    return !empty($CFG->enabletrusttext); 
 }
 
 /**

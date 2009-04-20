@@ -11,8 +11,8 @@
     //                        |                                                       |
     //                  glossary_entries --------------------------------glossary_entries_categories
     //         (UL,pk->id, fk->glossaryid, files)         |               (UL, pk->categoryid,entryid)
-    //                        |                           |             
-    //                        |                           |--------------------glossary_ratings 
+    //                        |                           |
+    //                        |                           |--------------------glossary_ratings
     //                        |                           |               (UL, pk->id, pk->entryid)
     //                  glossary_comments                 |
     //              (UL,pk->id, fk->entryid)              |---------------------glossary_alias
@@ -47,11 +47,11 @@
 
     function glossary_backup_one_mod($bf,$preferences,$glossary) {
         global $CFG, $DB;
-    
+
         if (is_numeric($glossary)) {
             $glossary = $DB->get_record('glossary', array('id'=>$glossary));
         }
-    
+
         $status = true;
 
         //Start mod
@@ -159,9 +159,9 @@
 
         $glossary_entries = $DB->get_records("glossary_entries", array("glossaryid"=>$glossary),"id");
         //If there is entries
-        if ($glossary_entries) {            
+        if ($glossary_entries) {
             $dumped_entries = 0;
-            
+
             //Iterate over each entry
             foreach ($glossary_entries as $glo_ent) {
                 //Start entry
@@ -178,7 +178,7 @@
                     fwrite ($bf,full_tag("USERID",6,false,$glo_ent->userid));
                     fwrite ($bf,full_tag("CONCEPT",6,false,trim($glo_ent->concept)));
                     fwrite ($bf,full_tag("DEFINITION",6,false,$glo_ent->definition));
-                    fwrite ($bf,full_tag("FORMAT",6,false,$glo_ent->format));
+                    fwrite ($bf,full_tag("FORMAT",6,false,$glo_ent->definitionformat));
                     fwrite ($bf,full_tag("ATTACHMENT",6,false,$glo_ent->attachment));
                     fwrite ($bf,full_tag("SOURCEGLOSSARYID",6,false,$glo_ent->sourceglossaryid));
                     fwrite ($bf,full_tag("USEDYNALINK",6,false,$glo_ent->usedynalink));
@@ -227,10 +227,10 @@
                 fwrite ($bf,full_tag("ID",8,false,$comment->id));
                 fwrite ($bf,full_tag("USERID",8,false,$comment->userid));
                 fwrite ($bf,full_tag("ENTRYCOMMENT",8,false,$comment->entrycomment));
-                fwrite ($bf,full_tag("FORMAT",8,false,$comment->format));
+                fwrite ($bf,full_tag("FORMAT",8,false,$comment->entrycommentformat));
                 fwrite ($bf,full_tag("TIMEMODIFIED",8,false,$comment->timemodified));
 
-                $status =fwrite ($bf,end_tag("COMMENT",7,true));        
+                $status =fwrite ($bf,end_tag("COMMENT",7,true));
             }
             $status =fwrite ($bf,end_tag("COMMENTS",6,true));
         }
@@ -260,7 +260,7 @@
         }
         return $status;
     }
-   
+
     //Backup glossary_alias contents (executed from backup_glossary_entries)
     function backup_glossary_aliases ($bf,$preferences,$entryid) {
         global $CFG, $DB;
@@ -275,7 +275,7 @@
 
                 fwrite ($bf,full_tag("ALIAS_TEXT",8,false,trim($alias->alias)));
 
-                $status =fwrite ($bf,end_tag("ALIAS",7,true));        
+                $status =fwrite ($bf,end_tag("ALIAS",7,true));
             }
             $status =fwrite ($bf,end_tag("ALIASES",6,true));
         }
@@ -309,7 +309,7 @@
         if ($status) {
             //Calculate moddata/glossary dir
             $glo_dir_from = $CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/glossary";
-            //Only if it exists !! 
+            //Only if it exists !!
             if (is_dir($glo_dir_from."/".$glossary."/".$entry)) {
                 $status = backup_copy_file($glo_dir_from."/".$glossary."/".$entry,
                                            $glo_dir_to."/".$glossary."/".$entry);
@@ -396,7 +396,7 @@
                                         FROM {glossary} a
                                        WHERE a.course = ?", array($course));
     }
-   
+
     //Returns an array of glossary_answers id
     function glossary_entries_ids_by_course ($course) {
         global $DB;

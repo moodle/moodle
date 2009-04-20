@@ -1,6 +1,6 @@
 <?php  //$Id$
 
-// This file keeps track of upgrades to 
+// This file keeps track of upgrades to
 // the glossary module
 //
 // Sometimes, changes between versions involve
@@ -60,7 +60,7 @@ function xmldb_glossary_upgrade($oldversion) {
                 if ($entry->sourceglossaryid and !is_readable($filepath)) {
                     //eh - try the second possible location
                     $filepath = "$CFG->dataroot/$entry->course/$CFG->moddata/glossary/$entry->sourceglossaryid/$entry->id/$entry->attachment";
-                    
+
                 }
                 if (!is_readable($filepath)) {
                     //file missing??
@@ -98,6 +98,96 @@ function xmldb_glossary_upgrade($oldversion) {
         }
 
         upgrade_mod_savepoint($result, 2008081900, 'glossary');
+    }
+
+    if ($result && $oldversion < 2009042000) {
+
+    /// Rename field definitionformat on table glossary_entries to NEWNAMEGOESHERE
+        $table = new xmldb_table('glossary_entries');
+        $field = new xmldb_field('format', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'definition');
+
+    /// Launch rename field definitionformat
+        $dbman->rename_field($table, $field, 'definitionformat');
+
+    /// glossary savepoint reached
+        upgrade_mod_savepoint($result, 2009042000, 'glossary');
+    }
+
+    if ($result && $oldversion < 2009042001) {
+
+    /// Define field definitiontrust to be added to glossary_entries
+        $table = new xmldb_table('glossary_entries');
+        $field = new xmldb_field('definitiontrust', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'definitionformat');
+
+    /// Launch add field definitiontrust
+        $dbman->add_field($table, $field);
+
+    /// glossary savepoint reached
+        upgrade_mod_savepoint($result, 2009042001, 'glossary');
+    }
+
+    if ($result && $oldversion < 2009042002) {
+
+    /// Rename field format on table glossary_comments to NEWNAMEGOESHERE
+        $table = new xmldb_table('glossary_comments');
+        $field = new xmldb_field('format', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'entrycomment');
+
+    /// Launch rename field format
+        $dbman->rename_field($table, $field, 'entrycommentformat');
+
+    /// glossary savepoint reached
+        upgrade_mod_savepoint($result, 2009042002, 'glossary');
+    }
+
+    if ($result && $oldversion < 2009042003) {
+
+    /// Define field entrycommenttrust to be added to glossary_comments
+        $table = new xmldb_table('glossary_comments');
+        $field = new xmldb_field('entrycommenttrust', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'entrycommentformat');
+
+    /// Conditionally launch add field entrycommenttrust
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// glossary savepoint reached
+        upgrade_mod_savepoint($result, 2009042003, 'glossary');
+    }
+
+    if ($result && $oldversion < 2009042004) {
+        $trustmark = '#####TRUSTTEXT#####';
+        $rs = $DB->get_recordset_sql("SELECT * FROM {glossary_entries} WHERE definition LIKE '$trustmark%'");
+        foreach ($rs as $entry) {
+            if (strpos($entry->definition, $trustmark) !== 0) {
+                // probably lowercase in some DBs
+                continue;
+            }
+            $entry->definition      = trusttext_strip($entry->definition);
+            $entry->definitiontrust = 1;
+            $DB->update_record('glossary_entries', $entry);
+        }
+        $rs->close();
+
+    /// glossary savepoint reached
+        upgrade_mod_savepoint($result, 2009042004, 'glossary');
+    }
+
+    if ($result && $oldversion < 2009042005) {
+        $trustmark = '#####TRUSTTEXT#####';
+        $rs = $DB->get_recordset_sql("SELECT * FROM {glossary_comments} WHERE entrycomment LIKE '$trustmark%'");
+        foreach ($rs as $comment) {
+            if (strpos($comment->entrycomment, $trustmark) !== 0) {
+                // probably lowercase in some DBs
+                continue;
+            }
+            $comment->entrycomment      = trusttext_strip($comment->entrycomment);
+            $comment->entrycommenttrust = 1;
+            $DB->update_record('glossary_comments', $comment);
+        }
+        $rs->close();
+
+    /// glossary savepoint reached
+        upgrade_mod_savepoint($result, 2009042005, 'glossary');
     }
 
     return $result;

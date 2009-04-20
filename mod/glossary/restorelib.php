@@ -163,7 +163,7 @@
             $entry->userid = backup_todb($ent_info['#']['USERID']['0']['#']);
             $entry->concept = backup_todb(trim($ent_info['#']['CONCEPT']['0']['#']));
             $entry->definition = backup_todb($ent_info['#']['DEFINITION']['0']['#']);
-            $entry->format = backup_todb($ent_info['#']['FORMAT']['0']['#']);
+            $entry->definitionformat = backup_todb($ent_info['#']['FORMAT']['0']['#']);
             $entry->attachment = backup_todb($ent_info['#']['ATTACHMENT']['0']['#']);
             $entry->sourceglossaryid = backup_todb($ent_info['#']['SOURCEGLOSSARYID']['0']['#']);
             $entry->usedynalink = backup_todb($ent_info['#']['USEDYNALINK']['0']['#']);
@@ -250,7 +250,7 @@
                 $comment->entrycomment = backup_todb($com_info['#']['ENTRYCOMMENT']['0']['#']);
             }
             $comment->timemodified = backup_todb($com_info['#']['TIMEMODIFIED']['0']['#']);
-            $comment->format = backup_todb($com_info['#']['FORMAT']['0']['#']);
+            $comment->entrycommentformat = backup_todb($com_info['#']['FORMAT']['0']['#']);
 
             //We have to recode the userid field
             $user = backup_getid($restore->backup_unique_code,"user",$comment->userid);
@@ -527,13 +527,13 @@
     //glossary_decode_content_links_caller() function in each module
     //in the restore process
     function glossary_decode_content_links ($content,$restore) {
-            
+
         global $CFG;
-            
+
         $result = $content;
-                
+
         //Link to the list of glossarys
-                
+
         $searchstring='/\$@(GLOSSARYINDEX)\*([0-9]+)@\$/';
         //We look for it
         preg_match_all($searchstring,$content,$foundset);
@@ -550,7 +550,7 @@
                 if($rec->new_id) {
                     //Now replace it
                     $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/glossary/index.php?id='.$rec->new_id,$result);
-                } else { 
+                } else {
                     //It's a foreign link so leave it as original
                     $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/glossary/index.php?id='.$old_id,$result);
                 }
@@ -593,7 +593,7 @@
     function glossary_decode_content_links_caller($restore) {
         global $CFG, $DB;
         $status = true;
-        
+
         //Process every glossary ENTRY in the course
         if ($entries = $DB->get_records_sql("SELECT e.id, e.definition
                                                FROM {glossary_entries} e,
@@ -691,7 +691,7 @@
                 //Convert to Markdown
                 $wtm = new WikiToMarkdown();
                 $record->entrycomment = $wtm->convert($record->entrycomment, $restore->course_id);
-                $record->format = FORMAT_MARKDOWN;
+                $record->entrycommentformat = FORMAT_MARKDOWN;
                 $status = $DB->update_record('glossary_comments', $record);
                 //Do some output
                 $i++;
@@ -725,7 +725,7 @@
                 //Convert to Markdown
                 $wtm = new WikiToMarkdown();
                 $record->definition = $wtm->convert($record->definition, $restore->course_id);
-                $record->format = FORMAT_MARKDOWN;
+                $record->entrycommentformat = FORMAT_MARKDOWN;
                 $status = $DB->update_record('glossary_entries', $record);
                 //Do some output
                 $i++;
@@ -741,7 +741,7 @@
             }
 
         }
-        
+
         return $status;
     }
 
