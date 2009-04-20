@@ -141,7 +141,7 @@
                     $sd->name     = $forum->name;
                     $sd->intro    = $forum->intro;
                     $sd->assessed = $forum->assessed;
-                    $sd->format   = $defaultformat;
+                    $sd->messageformat = $defaultformat;
                     $sd->mailnow  = false;
                     //Insert dicussion/post data
                     $sdid = forum_add_discussion($sd, $sd->intro, $forum);
@@ -470,7 +470,7 @@
             $post->mailed = backup_todb($pos_info['#']['MAILED']['0']['#']);
             $post->subject = backup_todb($pos_info['#']['SUBJECT']['0']['#']);
             $post->message = backup_todb($pos_info['#']['MESSAGE']['0']['#']);
-            $post->format = backup_todb($pos_info['#']['FORMAT']['0']['#']);
+            $post->messageformat = backup_todb($pos_info['#']['FORMAT']['0']['#']);
             $post->attachment = backup_todb($pos_info['#']['ATTACHMENT']['0']['#']);
             $post->totalscore = backup_todb($pos_info['#']['TOTALSCORE']['0']['#']);
             $post->mailnow = backup_todb($pos_info['#']['MAILNOW']['0']['#']);
@@ -665,7 +665,7 @@
         $status = true;
 
         //Convert forum_posts->message
-        if ($records = $DB->get_records_sql("SELECT p.id, p.message, p.format
+        if ($records = $DB->get_records_sql("SELECT p.id, p.message, p.messageformat
                                                FROM {forum_posts} p,
                                                     {forum_discussions} d,
                                                     {forum} f,
@@ -673,7 +673,7 @@
                                               WHERE d.id = p.discussion AND
                                                     f.id = d.forum AND
                                                     f.course = ? AND
-                                                    p.format = ".FORMAT_WIKI. " AND
+                                                    p.messageformat = ".FORMAT_WIKI. " AND
                                                     b.backup_code = ? AND
                                                     b.table_name = 'forum_posts' AND
                                                     b.new_id = p.id", array($restore->course_id, $restore->backup_unique_code))) {
@@ -683,7 +683,7 @@
                 //Convert to Markdown
                 $wtm = new WikiToMarkdown();
                 $record->message = $wtm->convert($record->message, $restore->course_id);
-                $record->format = FORMAT_MARKDOWN;
+                $record->messageformat = FORMAT_MARKDOWN;
                 $status = $DB->update_record('forum_posts', $record);
                 //Do some output
                 $i++;

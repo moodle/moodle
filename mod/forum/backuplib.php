@@ -267,7 +267,7 @@
                 fwrite ($bf,full_tag("MAILED",8,false,$for_pos->mailed));
                 fwrite ($bf,full_tag("SUBJECT",8,false,$for_pos->subject));
                 fwrite ($bf,full_tag("MESSAGE",8,false,$for_pos->message));
-                fwrite ($bf,full_tag("FORMAT",8,false,$for_pos->format));
+                fwrite ($bf,full_tag("FORMAT",8,false,$for_pos->messageformat));
                 fwrite ($bf,full_tag("ATTACHMENT",8,false,$for_pos->attachment));
                 fwrite ($bf,full_tag("TOTALSCORE",8,false,$for_pos->totalscore));
                 fwrite ($bf,full_tag("MAILNOW",8,false,$for_pos->mailnow));

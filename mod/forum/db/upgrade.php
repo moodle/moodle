@@ -176,8 +176,51 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2008090800, 'forum');
     }
 
+    if ($result && $oldversion < 2009042000) {
 
+    /// Rename field format on table forum_posts to messageformat
+        $table = new xmldb_table('forum_posts');
+        $field = new xmldb_field('format', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, null, null, '0', 'message');
 
+    /// Launch rename field format
+        $dbman->rename_field($table, $field, 'messageformat');
+
+    /// forum savepoint reached
+        upgrade_mod_savepoint($result, 2009042000, 'forum');
+    }
+
+    if ($result && $oldversion < 2009042001) {
+
+    /// Define field messagetrust to be added to forum_posts
+        $table = new xmldb_table('forum_posts');
+        $field = new xmldb_field('messagetrust', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'messageformat');
+
+    /// Launch add field messagetrust
+        $dbman->add_field($table, $field);
+
+    /// forum savepoint reached
+        upgrade_mod_savepoint($result, 2009042001, 'forum');
+    }
+    
+    if ($result && $oldversion < 2009042002) {
+        $trustmark = '#####TRUSTTEXT#####';
+        $rs = $DB->get_recordset_sql("SELECT * FROM {forum_posts} WHERE message LIKE '$trustmark%'");
+        foreach ($rs as $post) {
+            if (strpos($post->entrycomment, $trustmark) !== 0) {
+                // probably lowercase in some DBs
+                continue;
+            }
+            $post->message      = trusttext_strip($post->message);
+            $post->messagetrust = 1;
+            $DB->update_record('forum_posts', $post);
+        }
+        $rs->close();
+
+    /// forum savepoint reached
+        upgrade_mod_savepoint($result, 2009042002, 'forum');
+    }
+    
+    
     return $result;
 }
 

@@ -212,9 +212,9 @@
         $missing_terms = "";
 
         $options = new object();
-        $options->trusttext = true;
+        $options->trusted = $post->messagetrust;
         $message = highlight($strippedsearch,
-                        format_text($post->message, $post->format, $options, $course->id),
+                        format_text($post->message, $post->messageformat, $options, $course->id),
                         0, '<fgw9sdpq4>', '</fgw9sdpq4>');
 
         foreach ($searchterms as $searchterm) {

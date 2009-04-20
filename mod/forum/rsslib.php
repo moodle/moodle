@@ -166,7 +166,8 @@
                                              u.lastname AS userlastname,
                                              p.message AS postmessage,
                                              p.created AS postcreated,
-                                             p.format AS postformat
+                                             p.messageformat AS postformat,
+                                             p.messagetrust AS posttrust
                                       FROM {forum_discussions} d,
                                            {forum_posts} p,
                                            {user} u
@@ -181,7 +182,7 @@
             $user = NULL;
 
             $formatoptions = new object;
-            $formatoptions->trusttext = true;
+            $formatoptions->trusted = $rec->posttrust;
 
             foreach ($recs as $rec) {
                 unset($item);
@@ -222,7 +223,8 @@
                                              p.subject AS postsubject,
                                              p.message AS postmessage,
                                              p.created AS postcreated,
-                                             p.format AS postformat
+                                             p.messageformat AS postformat,
+                                             p.messagetrust AS posttrust
                                       FROM {forum_discussions} d,
                                            {forum_posts} p,
                                            {user} u
@@ -235,7 +237,7 @@
             $user = NULL;
 
             $formatoptions = new object;
-            $formatoptions->trusttext = true;
+            $formatoptions->trusted = $rec->posttrust;
 
             foreach ($recs as $rec) {
                 unset($item);

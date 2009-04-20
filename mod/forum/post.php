@@ -98,13 +98,15 @@
         // Load up the $post variable.
 
         $post = new object();
-        $post->course     = $course->id;
-        $post->forum      = $forum->id;
-        $post->discussion = 0;           // ie discussion # not defined yet
-        $post->parent     = 0;
-        $post->subject    = '';
-        $post->userid     = $USER->id;
-        $post->message    = '';
+        $post->course        = $course->id;
+        $post->forum         = $forum->id;
+        $post->discussion    = 0;           // ie discussion # not defined yet
+        $post->parent        = 0;
+        $post->subject       = '';
+        $post->userid        = $USER->id;
+        $post->message       = '';
+        $post->messageformat = FORMAT_HTML; // TODO: better default
+        $post->messagetrust  = 0; 
 
         if (isset($groupid)) {
             $post->groupid = $groupid;
@@ -226,7 +228,7 @@
         $post->forum  = $forum->id;
         $post->groupid = ($discussion->groupid == -1) ? 0 : $discussion->groupid;
 
-        trusttext_prepare_edit($post->message, $post->format, can_use_html_editor(), $modcontext);
+        $post = trusttext_pre_edit($post, 'message', $modcontext);
 
         unset($SESSION->fromdiscussion);
 
@@ -464,7 +466,7 @@
 
     if ($USER->id != $post->userid) {   // Not the original author, so add a message to the end
         $data->date = userdate($post->modified);
-        if ($post->format == FORMAT_HTML) {
+        if ($post->messageformat == FORMAT_HTML) {
             $data->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$USER->id.'&course='.$post->course.'">'.
                            fullname($USER).'</a>';
             $post->message .= '<p>(<span class="edited">'.get_string('editedby', 'forum', $data).'</span>)</p>';
@@ -502,7 +504,7 @@
                                         'subject'=>$post->subject,
                                         'message'=>array(
                                             'text'=>$currenttext,
-                                            'format'=>empty($post->format) ? FORMAT_HTML : $post->format, //TODO: add some better default
+                                            'format'=>empty($post->messageformat) ? FORMAT_HTML : $post->messageformat, //TODO: add some better default
                                             'itemid'=>$draftid_editor
                                         ),
                                         'subscribe'=>$subscribe?1:0,
@@ -541,10 +543,10 @@
             $errordestination = $SESSION->fromurl;
         }
 
-        trusttext_after_edit($fromform->message['text'], $modcontext);
-        $fromform->format  = $fromform->message['format'];
-        $fromform->itemid  = $fromform->message['itemid'];
-        $fromform->message = $fromform->message['text'];
+        $fromform->itemid        = $fromform->message['itemid'];
+        $fromform->message       = $fromform->message['text'];
+        $fromform->messageformat = $fromform->message['format'];
+        $fromform->messagetrust  = trusttext_trusted($modcontext);
 
         if ($fromform->edit) {           // Updating a post
             unset($fromform->groupid);
@@ -611,7 +613,7 @@
         } else if ($fromform->discussion) { // Adding a new post to an existing discussion
             unset($fromform->groupid);
             $message = '';
-            $addpost=$fromform;
+            $addpost = $fromform;
             $addpost->forum=$forum->id;
             if ($fromform->id = forum_add_new_post($addpost, $mform_post, $message)) {
 

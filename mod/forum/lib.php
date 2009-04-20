@@ -58,14 +58,14 @@ function forum_add_instance($forum) {
 
     if ($forum->type == 'single') {  // Create related discussion.
         $discussion = new object();
-        $discussion->course   = $forum->course;
-        $discussion->forum    = $forum->id;
-        $discussion->name     = $forum->name;
-        $discussion->intro    = $forum->intro;
-        $discussion->assessed = $forum->assessed;
-        $discussion->format   = $forum->format;
-        $discussion->mailnow  = false;
-        $discussion->groupid  = -1;
+        $discussion->course        = $forum->course;
+        $discussion->forum         = $forum->id;
+        $discussion->name          = $forum->name;
+        $discussion->intro         = $forum->intro;
+        $discussion->assessed      = $forum->assessed;
+        $discussion->messageformat = $forum->messageformat;
+        $discussion->mailnow       = false;
+        $discussion->groupid       = -1;
 
         $message = '';
 
@@ -132,14 +132,14 @@ function forum_update_instance($forum) {
             } else {
                 // try to recover by creating initial discussion - MDL-16262
                 $discussion = new object();
-                $discussion->course   = $forum->course;
-                $discussion->forum    = $forum->id;
-                $discussion->name     = $forum->name;
-                $discussion->intro    = $forum->intro;
-                $discussion->assessed = $forum->assessed;
-                $discussion->format   = $forum->type;
-                $discussion->mailnow  = false;
-                $discussion->groupid  = -1;
+                $discussion->course          = $forum->course;
+                $discussion->forum           = $forum->id;
+                $discussion->name            = $forum->name;
+                $discussion->intro           = $forum->intro;
+                $discussion->assessed        = $forum->assessed;
+                $discussion->messageformat   = $forum->messageformat;
+                $discussion->mailnow         = false;
+                $discussion->groupid         = -1;
 
                 forum_add_discussion($discussion, null, $message);
 
@@ -959,7 +959,7 @@ function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfro
     }
     $posttext .= "\n".$strbynameondate."\n";
     $posttext .= "---------------------------------------------------------------------\n";
-    $posttext .= format_text_email(trusttext_strip($post->message), $post->format);
+    $posttext .= format_text_email($post->message, $post->messageformat);
     $posttext .= "\n\n";
     $posttext .= forum_print_attachments($post, $cm, "text");
 
@@ -2856,7 +2856,7 @@ function forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfro
     // format the post body
     $options = new object();
     $options->para = true;
-    $formattedtext = format_text(trusttext_strip($post->message), $post->format, $options, $course->id);
+    $formattedtext = format_text($post->message, $post->messageformat, $options, $course->id);
 
     $output = '<table border="0" cellpadding="3" cellspacing="0" class="forumpost">';
 
@@ -3122,11 +3122,11 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     }
 
     $options = new object();
-    $options->para      = false;
-    $options->trusttext = true;
+    $options->para    = false;
+    $options->trusted = $post->messagetrust;
     if ($link and (strlen(strip_tags($post->message)) > $CFG->forum_longpost)) {
         // Print shortened version
-        echo format_text(forum_shorten_post($post->message), $post->format, $options, $course->id);
+        echo format_text(forum_shorten_post($post->message), $post->messageformat, $options, $course->id);
         $numwords = count_words(strip_tags($post->message));
         echo '<div class="posting"><a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'">';
         echo get_string('readtherest', 'forum');
@@ -3135,9 +3135,9 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         // Print whole message
         echo '<div class="posting">';
         if ($highlight) {
-            echo highlight($highlight, format_text($post->message, $post->format, $options, $course->id));
+            echo highlight($highlight, format_text($post->message, $post->messageformat, $options, $course->id));
         } else {
-            echo format_text($post->message, $post->format, $options, $course->id);
+            echo format_text($post->message, $post->messageformat, $options, $course->id);
         }
         echo '</div>';
         echo $attachedimages;
@@ -4238,19 +4238,20 @@ function forum_add_discussion($discussion, $mform=null, &$message=null) {
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $post = new object();
-    $post->discussion  = 0;
-    $post->parent      = 0;
-    $post->userid      = $USER->id;
-    $post->created     = $timenow;
-    $post->modified    = $timenow;
-    $post->mailed      = 0;
-    $post->subject     = $discussion->name;
-    $post->message     = $discussion->intro;
-    $post->attachments = $discussion->attachments;
-    $post->forum       = $forum->id;     // speedup
-    $post->course      = $forum->course; // speedup
-    $post->format      = $discussion->format;
-    $post->mailnow     = $discussion->mailnow;
+    $post->discussion    = 0;
+    $post->parent        = 0;
+    $post->userid        = $USER->id;
+    $post->created       = $timenow;
+    $post->modified      = $timenow;
+    $post->mailed        = 0;
+    $post->subject       = $discussion->name;
+    $post->message       = $discussion->intro;
+    $post->messageformat = $discussion->messageformat;
+    $post->messagetrust  = $discussion->messagetrust;
+    $post->attachments   = $discussion->attachments;
+    $post->forum         = $forum->id;     // speedup
+    $post->course        = $forum->course; // speedup
+    $post->mailnow       = $discussion->mailnow;
 
     if (! $post->id = $DB->insert_record("forum_posts", $post) ) {
         return 0;
@@ -7425,7 +7426,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         // format the post body
         $options = new object();
         $options->para = true;
-        $formattedtext = format_text(trusttext_strip($post->message), $post->format, $options, $this->get('course')->id);
+        $formattedtext = format_text($post->message, $post->messageformat, $options, $this->get('course')->id);
 
         $output = '<table border="0" cellpadding="3" cellspacing="0" class="forumpost">';
 
