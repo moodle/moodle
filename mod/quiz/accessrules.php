@@ -623,7 +623,7 @@ class password_access_rule extends quiz_access_rule_base {
         if (trim(strip_tags($this->_quiz->intro))) {
             $formatoptions = new stdClass;
             $formatoptions->noclean = true;
-            $output .= print_box(format_text($this->_quiz->intro, FORMAT_MOODLE, $formatoptions),
+            $output .= print_box(format_text($this->_quiz->intro, $this->_quiz->introformat, $formatoptions),
                     'generalbox', 'intro', true);
         }
         $output .= print_box_start('generalbox', 'passwordbox', true);

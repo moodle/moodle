@@ -233,6 +233,14 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009042003, 'forum');
     }
 
+    if ($result && $oldversion < 2009042004) {
+    /// set format to current
+        $DB->set_field('forum', 'introformat', FORMAT_MOODLE, array());
+
+    /// quiz savepoint reached
+        upgrade_mod_savepoint($result, 2009042004, 'forum');
+    }
+
     return $result;
 }
 

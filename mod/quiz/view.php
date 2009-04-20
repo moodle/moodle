@@ -97,7 +97,8 @@
     if (trim(strip_tags($quiz->intro))) {
         $formatoptions->noclean = true;
         $formatoptions->para    = false;
-        print_box(format_text($quiz->intro, FORMAT_MOODLE, $formatoptions), 'generalbox', 'intro');
+        $formatoptions->noclean = true;
+        print_box(format_text($quiz->intro, $quiz->introformat, $formatoptions), 'generalbox', 'intro');
     }
 
 /// Display information about this quiz.
