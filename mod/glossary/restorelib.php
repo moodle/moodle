@@ -673,7 +673,7 @@
         $status = true;
 
         //Convert glossary_comments->entrycomment
-        if ($records = $DB->get_records_sql("SELECT c.id, c.entrycomment, c.format
+        if ($records = $DB->get_records_sql("SELECT c.id, c.entrycomment, c.entrycommentformat
                                                FROM {glossary_comments} c,
                                                     {glossary_entries} e,
                                                     {glossary} g,
@@ -681,7 +681,7 @@
                                               WHERE e.id = c.entryid AND
                                                     g.id = e.glossaryid AND
                                                     g.course = ? AND
-                                                    c.format = ".FORMAT_WIKI. " AND
+                                                    c.entrycommentformat = ".FORMAT_WIKI. " AND
                                                     b.backup_code = ? AND
                                                     b.table_name = 'glossary_comments' AND
                                                     b.new_id = c.id", array($restore->course_id, $restore->backup_unique_code))) {
@@ -709,13 +709,13 @@
         }
 
         //Convert glossary_entries->definition
-        if ($records = $DB->get_records_sql("SELECT e.id, e.definition, e.format
+        if ($records = $DB->get_records_sql("SELECT e.id, e.definition, e.definitionformat
                                                FROM {glossary_entries} e,
                                                     {glossary} g,
                                                     {backup_ids} b
                                               WHERE g.id = e.glossaryid AND
                                                     g.course = ? AND
-                                                    e.format = ".FORMAT_WIKI. " AND
+                                                    e.definitionformat = ".FORMAT_WIKI. " AND
                                                     b.backup_code = ? AND
                                                     b.table_name = 'glossary_entries' AND
                                                     b.new_id = e.id", array($restore->course_id, $restore->backup_unique_code))) {
@@ -725,7 +725,7 @@
                 //Convert to Markdown
                 $wtm = new WikiToMarkdown();
                 $record->definition = $wtm->convert($record->definition, $restore->course_id);
-                $record->entrycommentformat = FORMAT_MARKDOWN;
+                $record->definitionformat = FORMAT_MARKDOWN;
                 $status = $DB->update_record('glossary_entries', $record);
                 //Do some output
                 $i++;
