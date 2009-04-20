@@ -60,8 +60,8 @@
         fwrite ($bf,full_tag("ID",4,false,$choice->id));
         fwrite ($bf,full_tag("MODTYPE",4,false,"choice"));
         fwrite ($bf,full_tag("NAME",4,false,$choice->name));
-        fwrite ($bf,full_tag("TEXT",4,false,$choice->text));
-        fwrite ($bf,full_tag("FORMAT",4,false,$choice->format));
+        fwrite ($bf,full_tag("TEXT",4,false,$choice->intro));
+        fwrite ($bf,full_tag("FORMAT",4,false,$choice->introformat));
         fwrite ($bf,full_tag("PUBLISH",4,false,$choice->publish));
         fwrite ($bf,full_tag("SHOWRESULTS",4,false,$choice->showresults));
         fwrite ($bf,full_tag("DISPLAY",4,false,$choice->display));

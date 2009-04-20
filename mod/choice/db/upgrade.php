@@ -28,6 +28,32 @@ function xmldb_choice_upgrade($oldversion) {
 
 //===== 1.9.0 upgrade line ======//
 
+    if ($result && $oldversion < 2009042000) {
+
+    /// Rename field text on table choice to NEWNAMEGOESHERE
+        $table = new xmldb_table('choice');
+        $field = new xmldb_field('text', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null, 'name');
+
+    /// Launch rename field text
+        $dbman->rename_field($table, $field, 'intro');
+
+    /// choice savepoint reached
+        upgrade_mod_savepoint($result, 2009042000, 'choice');
+    }
+
+    if ($result && $oldversion < 2009042001) {
+
+    /// Rename field format on table choice to NEWNAMEGOESHERE
+        $table = new xmldb_table('choice');
+        $field = new xmldb_field('format', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'text');
+
+    /// Launch rename field format
+        $dbman->rename_field($table, $field, 'introformat');
+
+    /// choice savepoint reached
+        upgrade_mod_savepoint($result, 2009042001, 'choice');
+    }
+
     return $result;
 }
 

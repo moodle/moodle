@@ -19,12 +19,12 @@ class mod_choice_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
 
-        $mform->addElement('htmleditor', 'text', get_string('choicetext', 'choice'));
-        $mform->setType('text', PARAM_RAW);
-        $mform->addRule('text', null, 'required', null, 'client');
-        $mform->setHelpButton('text', array('writing', 'questions', 'richtext2'), false, 'editorhelpbutton');
+        $mform->addElement('htmleditor', 'intro', get_string('choicetext', 'choice'));
+        $mform->setType('intro', PARAM_RAW);
+        $mform->addRule('intro', null, 'required', null, 'client');
+        $mform->setHelpButton('intro', array('writing', 'questions', 'richtext2'), false, 'editorhelpbutton');
 
-        $mform->addElement('format', 'format', get_string('format'));
+        $mform->addElement('format', 'introformat', get_string('format'));
 
 //-------------------------------------------------------------------------------
         $repeatarray=array();

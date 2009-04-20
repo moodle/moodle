@@ -49,8 +49,8 @@
             //Now, build the CHOICE record structure
             $choice->course = $restore->course_id;
             $choice->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
-            $choice->text = backup_todb($info['MOD']['#']['TEXT']['0']['#']);
-            $choice->format = backup_todb($info['MOD']['#']['FORMAT']['0']['#']);
+            $choice->intro = backup_todb($info['MOD']['#']['TEXT']['0']['#']);
+            $choice->introformat = backup_todb($info['MOD']['#']['FORMAT']['0']['#']);
             $choice->publish = backup_todb($info['MOD']['#']['PUBLISH']['0']['#']);
             $choice->showresults = isset($info['MOD']['#']['SHOWRESULTS']['0']['#'])?backup_todb($info['MOD']['#']['SHOWRESULTS']['0']['#']):'';
             $choice->display = backup_todb($info['MOD']['#']['DISPLAY']['0']['#']);
@@ -376,7 +376,7 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
         $status = true;
 
         //Convert choice->text
-        if ($records = $DB->get_records_sql("SELECT c.id, c.text, c.format
+        if ($records = $DB->get_records_sql("SELECT c.id, c.intro, c.introformat
                                                FROM {choice} c, {backup_ids} b
                                               WHERE c.course = ? AND
                                                     c.format = ".FORMAT_WIKI. " AND
@@ -385,11 +385,11 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
                                                     b.new_id = c.id", array($restore->course_id, $restore->backup_unique_code))) {
             foreach ($records as $record) {
                 //Rebuild wiki links
-                $record->text = restore_decode_wiki_content($record->text, $restore);
+                $record->intro = restore_decode_wiki_content($record->intro, $restore);
                 //Convert to Markdown
                 $wtm = new WikiToMarkdown();
-                $record->text = $wtm->convert($record->text, $restore->course_id);
-                $record->format = FORMAT_MARKDOWN;
+                $record->intro = $wtm->convert($record->intro, $restore->course_id);
+                $record->introformat = FORMAT_MARKDOWN;
                 $status = $DB->update_record('choice', $record);
                 //Do some output
                 $i++;

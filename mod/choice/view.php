@@ -78,8 +78,9 @@
 
     echo '<div class="clearer"></div>';
 
-    if ($choice->text) {
-        print_box(format_text($choice->text, $choice->format), 'generalbox', 'intro');
+    if ($choice->intro) {
+        $options = (object)array('noclean'=>true);
+        print_box(format_text($choice->intro, $choice->introformat, $options), 'generalbox', 'intro');
     }
 
     $current = false;  // Initialise for later
