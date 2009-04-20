@@ -28,7 +28,7 @@ if (data_submitted() and $confirm and confirm_sesskey()) {
     print_continue($return);
     print_footer();
     die;
-    
+
 } else {
     $a = $DB->count_records('forum_subscriptions', array('userid'=>$USER->id));
 

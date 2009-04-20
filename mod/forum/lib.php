@@ -2672,7 +2672,7 @@ function forum_get_user_discussions($courseid, $userid, $groupid=0) {
 }
 
 /**
- * Get the list of potential subscribers to a forum. 
+ * Get the list of potential subscribers to a forum.
  *
  * @param object $forumcontext the forum context.
  * @param integer $groupid the id of a group, or 0 for all groups.

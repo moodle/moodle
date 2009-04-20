@@ -106,7 +106,7 @@
         $post->userid        = $USER->id;
         $post->message       = '';
         $post->messageformat = FORMAT_HTML; // TODO: better default
-        $post->messagetrust  = 0; 
+        $post->messagetrust  = 0;
 
         if (isset($groupid)) {
             $post->groupid = $groupid;
@@ -134,7 +134,7 @@
             print_error('invalidcoursemodule');
         }
 
-        // call course_setup to use forced language, MDL-6926 
+        // call course_setup to use forced language, MDL-6926
         course_setup($course->id);
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);

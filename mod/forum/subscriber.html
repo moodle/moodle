@@ -17,13 +17,13 @@
                   onFocus="getElementById('subscriberform').add.disabled=true;
                            getElementById('subscriberform').remove.disabled=false;
                            getElementById('subscriberform').addselect.selectedIndex=-1;">
-          <?php 
+          <?php
               foreach ($subscribers as $subscriber) {
                   $fullname = fullname($subscriber, true);
                   echo "<option value=\"$subscriber->id\">".$fullname.", ".$subscriber->email."</option>\n";
               }
           ?>
-          
+
           </select></td>
       <td valign="top">
         <br />

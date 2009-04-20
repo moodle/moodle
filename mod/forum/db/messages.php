@@ -29,7 +29,7 @@
 $messageproviders = array (
 
 /// Ordinary single forum posts
-    'posts' => array ( 
+    'posts' => array (
     ),
 
 /// Digests

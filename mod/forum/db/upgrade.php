@@ -201,7 +201,7 @@ function xmldb_forum_upgrade($oldversion) {
     /// forum savepoint reached
         upgrade_mod_savepoint($result, 2009042001, 'forum');
     }
-    
+
     if ($result && $oldversion < 2009042002) {
         $trustmark = '#####TRUSTTEXT#####';
         $rs = $DB->get_recordset_sql("SELECT * FROM {forum_posts} WHERE message LIKE '$trustmark%'");
@@ -219,8 +219,8 @@ function xmldb_forum_upgrade($oldversion) {
     /// forum savepoint reached
         upgrade_mod_savepoint($result, 2009042002, 'forum');
     }
-    
-    
+
+
     return $result;
 }
 

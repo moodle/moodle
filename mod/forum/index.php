@@ -116,19 +116,19 @@
             $learningforums[$forum->id] = $forum;
         }
     }
-                                        
+
     /// Do course wide subscribe/unsubscribe
     if (!is_null($subscribe) and !isguestuser() and !isguest()) {
         foreach ($modinfo->instances['forum'] as $forumid=>$cm) {
             $forum = $forums[$forumid];
-            $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id); 
+            $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
             $cansub = false;
 
             if (has_capability('mod/forum:viewdiscussion', $modcontext)) {
                 $cansub = true;
             }
             if ($cansub && $cm->visible == 0 &&
-                !has_capability('mod/forum:managesubscriptions', $modcontext)) 
+                !has_capability('mod/forum:managesubscriptions', $modcontext))
             {
                 $cansub = false;
             }
