@@ -2033,7 +2033,7 @@ class curl_cache {
      * @param string @module, which module is using curl_cache
      *
      */
-    function __construct($module){
+    function __construct($module = 'repository'){
         global $CFG;
         if (!empty($module)) {
             $this->dir = $CFG->dataroot.'/cache/'.$module.'/';
