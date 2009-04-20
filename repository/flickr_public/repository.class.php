@@ -85,10 +85,6 @@ class repository_flickr_public extends repository {
             $SESSION->{$this->sess_account} = $account;
             $SESSION->{$this->sess_tag}  = $tag;
             $SESSION->{$this->sess_text} = $fulltext;
-            $response = $this->search($fulltext);
-            $response['search_result'] = true;
-            echo json_encode($response);
-            exit;
         }
     }
 
@@ -128,6 +124,7 @@ class repository_flickr_public extends repository {
 
             $ret['login'] = array($fulltext, $tag, $email_field);
             $ret['login_btn_label'] = get_string('search');
+            $ret['login_search_form'] = true;
             return $ret;
         }
     }
