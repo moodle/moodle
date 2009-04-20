@@ -26,7 +26,7 @@ class repository_upload extends repository {
         parent::__construct($repositoryid, $context, $options);
         $itemid = optional_param('itemid', '', PARAM_INT);
         if($action=='upload'){
-            $filepath = '/'.uniqid().'/';
+            $filepath = '/';
             $this->info = repository::store_to_filepool('repo_upload_file', 'user_draft', $filepath, $itemid);
         }
     }
