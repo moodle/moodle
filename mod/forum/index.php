@@ -193,7 +193,7 @@
                 }
             }
 
-            $forum->intro = shorten_text(trim(format_text($forum->intro, FORMAT_HTML, $introoptions)), $CFG->forum_shortpost);
+            $forum->intro = shorten_text(trim(format_text($forum->intro, $forum->introformat, $introoptions)), $CFG->forum_shortpost);
             $forumname = format_string($forum->name, true);;
 
             if ($cm->visible) {
@@ -316,7 +316,7 @@
                 }
 
                 $introoptions->para=false;
-                $forum->intro = shorten_text(trim(format_text($forum->intro, FORMAT_HTML, $introoptions)), $CFG->forum_shortpost);
+                $forum->intro = shorten_text(trim(format_text($forum->intro, $forum->introformat, $introoptions)), $CFG->forum_shortpost);
 
                 if ($cm->sectionnum != $currentsection) {
                     $printsection = $cm->sectionnum;

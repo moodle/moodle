@@ -190,6 +190,21 @@ function xmldb_glossary_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009042005, 'glossary');
     }
 
+    if ($result && $oldversion < 2009042006) {
+
+    /// Define field introformat to be added to glossary
+        $table = new xmldb_table('glossary');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'intro');
+
+    /// Conditionally launch add field introformat
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// glossary savepoint reached
+        upgrade_mod_savepoint($result, 2009042006, 'glossary');
+    }
+
     return $result;
 }
 

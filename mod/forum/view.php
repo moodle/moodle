@@ -234,7 +234,8 @@
             if (!empty($forum->intro)) {
                 $options = new stdclass;
                 $options->para = false;
-                print_box(format_text($forum->intro, FORMAT_MOODLE, $options), 'generalbox', 'intro');
+                $options->noclean = true;
+                print_box(format_text($forum->intro, $forum->introformat, $options), 'generalbox', 'intro');
             }
             echo '<p class="mdl-align">';
             if (forum_user_can_post_discussion($forum, null, -1, $cm)) {
@@ -262,7 +263,8 @@
             if (!empty($forum->intro)) {
                 $options = new stdclass;
                 $options->para = false;
-                print_box(format_text($forum->intro, FORMAT_MOODLE, $options), 'generalbox', 'intro');
+                $options->noclean = true;
+                print_box(format_text($forum->intro, $forum->introformat, $options), 'generalbox', 'intro');
             }
             echo '<br />';
             if (!empty($showall)) {
