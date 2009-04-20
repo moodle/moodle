@@ -44,7 +44,7 @@
             //Now, build the wiki record structure
             $wiki->course = $restore->course_id;
             $wiki->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
-            $wiki->summary = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
+            $wiki->intro = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
             $wiki->pagename = backup_todb($info['MOD']['#']['PAGENAME']['0']['#']);
             $wiki->wtype = backup_todb($info['MOD']['#']['WTYPE']['0']['#']);
             $wiki->ewikiprinttitle = backup_todb($info['MOD']['#']['EWIKIPRINTTITLE']['0']['#']);

@@ -21,10 +21,10 @@ class mod_wiki_mod_form extends moodleform_mod {
         $mform->setType('name', PARAM_NOTAGS);
         $mform->addRule('name', null, 'required', null, 'client');
 
-        $mform->addElement('htmleditor', 'summary', get_string('summary'));
-        $mform->setType('summary', PARAM_RAW);
-        $mform->setHelpButton('summary', array('writing', 'questions', 'richtext2'), false, 'editorhelpbutton');
-        $mform->addRule('summary', get_string('required'), 'required', null, 'client');
+        $mform->addElement('htmleditor', 'intro', get_string('summary'));
+        $mform->setType('intro', PARAM_RAW);
+        $mform->setHelpButton('intro', array('writing', 'questions', 'richtext2'), false, 'editorhelpbutton');
+        $mform->addRule('intro', get_string('required'), 'required', null, 'client');
 
         if (!$wikihasentries){
             asort($WIKI_TYPES);

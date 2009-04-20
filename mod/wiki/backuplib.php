@@ -55,7 +55,7 @@
         fwrite ($bf,full_tag("ID",4,false,$wiki->id));
         fwrite ($bf,full_tag("MODTYPE",4,false,"wiki"));
         fwrite ($bf,full_tag("NAME",4,false,$wiki->name));
-        fwrite ($bf,full_tag("SUMMARY",4,false,$wiki->summary));
+        fwrite ($bf,full_tag("SUMMARY",4,false,$wiki->intro));
         fwrite ($bf,full_tag("PAGENAME",4,false,$wiki->pagename));
         fwrite ($bf,full_tag("WTYPE",4,false,$wiki->wtype));
         fwrite ($bf,full_tag("EWIKIPRINTTITLE",4,false,$wiki->ewikiprinttitle));

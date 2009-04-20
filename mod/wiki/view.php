@@ -345,9 +345,10 @@
     <div id="wiki-view" class="mwiki">
     ';
 
-    if($wiki_entry && $ewiki_title==$wiki_entry->pagename && !empty($wiki->summary)) {
-      if (trim(strip_tags($wiki->summary))) {
-          print_box(format_text($wiki->summary, FORMAT_MOODLE), 'generalbox', 'intro');
+    if($wiki_entry && $ewiki_title==$wiki_entry->pagename && !empty($wiki->intro)) {
+      if (trim(strip_tags($wiki->intro))) {
+          $options = (object)array('noclean'=>true);
+          print_box(format_text($wiki->intro, $wiki->introformat, $options), 'generalbox', 'intro');
       }
     }
 
