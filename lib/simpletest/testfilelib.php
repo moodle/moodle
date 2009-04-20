@@ -166,30 +166,35 @@ class file_info_test extends UnitTestCase {
             // Most likely the result of an aborted unit test: the test user was not correctly deleted
             $this->user->id = $DB->get_field('user', 'id', array('username' => $this->user->username));
         }
+        // Assign user to course
+        role_assign(5, $this->user->id, 0, get_context_instance(CONTEXT_COURSE, $this->course->id)->id);
 
         // Create a module
         $module = new stdClass();
-        $module->description = 'Assignment used for testing filelib API';
-        $module->assignmenttype = 'online';
-        $module->timedue = time();
-        $module->grade = 100;
+        $module->intro = 'Forum used for testing filelib API';
+        $module->type = 'general';
+        $module->forcesubscribe = 1;
+        $module->format = 1;
+        $module->name = 'Test Forum'; 
+        $module->module = $DB->get_field('modules', 'id', array('name' => 'forum'));
+        $module->modulename = 'forum';
+        $module->add = 'forum';
+        $module->cmidnumber = '';
         $module->course = $this->course->id;
-        $module->name = 'Test Assignment'; 
+
+        $module->instance = forum_add_instance($module, '');
+        
         $this->section = get_course_section(1, $this->course->id);
         $module->section = $this->section->id;
-        $module->module = $DB->get_field('modules', 'id', array('name' => 'assignment'));
-        $module->modulename = 'assignment';
-        $module->add = 'assignment';
-        $module->cmidnumber = '';
         $module->coursemodule = add_course_module($module);
 
         add_mod_to_section($module);
 
         $module->cmidnumber = set_coursemodule_idnumber($module->coursemodule, '');
+
         rebuild_course_cache($this->course->id);
-        $module_instance = $DB->get_field('course_modules', 'instance', array('id' => $module->coursemodule));
-        $this->module= $DB->get_record('assignment', array('id' => $module_instance));
-        $this->module->instance = $module_instance;
+        $this->module= $DB->get_record('forum', array('id' => $module->instance));
+        $this->module->instance = $module->instance;
 
         // Update local copy of course
         $this->course = $DB->get_record('course', array('id' => $this->course->id));
@@ -275,8 +280,10 @@ class test_file_info_course extends file_info_test {
     }
 
     public function test_get_children() {
+        global $DB;
+
         $children = $this->fileinfo->get_children();
-        $this->assertEqual(4, count($children));
+        $this->assertEqual(5, count($children));
         
         $this->assertEqual('Course introduction', $children[0]->get_visible_name());
         $this->assertEqual('', $children[0]->get_url());
@@ -293,6 +300,11 @@ class test_file_info_course extends file_info_test {
         $this->assertEqual('Course files', $children[3]->get_visible_name());
         $this->assertEqual('', $children[3]->get_url());
         $this->assertEqual('file_info_coursefile', get_class($children[3]));
+
+        $fb = new file_browser();
+        $context = get_context_instance(CONTEXT_MODULE, $DB->get_field('course_modules', 'id', array('instance' => $this->module->instance)));
+        $fim = $fb->get_file_info($context);
+        $this->assertEqual($fim, $children[4]);
     }
 
     public function test_get_parent() {
@@ -300,5 +312,58 @@ class test_file_info_course extends file_info_test {
         $fic = new file_info_coursecat(new file_browser(), $context, $this->coursecat);
         $parent = $this->fileinfo->get_parent();
         $this->assertEqual($parent, $fic); 
+    }
+}
+
+class test_file_info_user extends file_info_test {
+    private $fileinfo;
+
+    public function setup() {
+        parent::setup();
+        $context = get_context_instance(CONTEXT_USER, $this->user->id);
+        $this->fileinfo = new file_info_user(new file_browser(), $context, $this->user);
+    }
+    
+    public function test_get_parent() {
+        $context = get_context_instance(CONTEXT_SYSTEM);
+        $fic = new file_info_system(new file_browser(), $context);
+        $parent = $this->fileinfo->get_parent();
+        $this->assertEqual($parent, $fic); 
+    }
+    
+    public function test_get_children() {
+        $children = $this->fileinfo->get_children();
+        $this->assertEqual(2, count($children));
+        
+        $this->assertEqual('Personal', $children[0]->get_visible_name());
+        $this->assertEqual('', $children[0]->get_url());
+        $this->assertEqual('file_info_stored', get_class($children[0]));
+        
+        $this->assertEqual('Profile', $children[1]->get_visible_name());
+        $this->assertEqual('', $children[1]->get_url());
+        $this->assertEqual('file_info_stored', get_class($children[1]));
+    }
+}
+
+class test_file_info_module extends file_info_test {
+    private $fileinfo;
+
+    public function setup() {
+        global $DB;
+        parent::setup();
+        $context = get_context_instance(CONTEXT_MODULE, $DB->get_field('course_modules', 'id', array('instance' => $this->module->instance)));
+        $this->fileinfo = new file_info_module(new file_browser(), $this->course, $this->module->instance, $context, array());
+    }
+
+    public function test_get_parent() {
+        $context = get_context_instance(CONTEXT_COURSE, $this->course->id);
+        $fic = new file_info_course(new file_browser(), $context, $this->course);
+        $parent = $this->fileinfo->get_parent();
+        $this->assertEqual($parent, $fic); 
+    }
+    
+    public function test_get_children() {
+        $children = $this->fileinfo->get_children();
+        $this->assertEqual(0, count($children));
     }
 }
