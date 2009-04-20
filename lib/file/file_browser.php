@@ -36,19 +36,76 @@ class file_browser {
     public function get_file_info($context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
         global $USER, $CFG, $DB, $COURSE;
 
-        if (empty($context->contextlevel)) {
-            throw new exception('incompletecontextobject');
-        } elseif ($contextname = $this->get_context_name($context->contextlevel)) {
-            $function_name = "get_file_info_$contextname";
+        switch ($context->contextlevel) {
+            case CONTEXT_SYSTEM:
+                return $this->get_file_info_system($context, $filearea, $itemid, $filepath, $filename);
+            case CONTEXT_USER:
+                return $this->get_file_info_user($context, $filearea, $itemid, $filepath, $filename);
+            case CONTEXT_COURSECAT:
+                return $this->get_file_info_coursecat($context, $filearea, $itemid, $filepath, $filename);
+            case CONTEXT_COURSE:
+                return $this->get_file_info_course($context, $filearea, $itemid, $filepath, $filename);
+            case CONTEXT_MODULE:
+                return $this->get_file_info_module($context, $filearea, $itemid, $filepath, $filename);
+        }
 
-            if (method_exists($this, $function_name)) {
-                return $this->$function_name($context, $filearea, $itemid, $filepath, $filename);
-            } else {
-                throw new exception('undefinedmethod');
+        return null;
+    }
+
+    /**
+     * Returns content of local directory
+     */
+    public function build_stored_file_children($context, $filearea, $itemid, $filepath, $urlbase, $topvisiblename, $itemidused, $readaccess, $writeaccess) {
+        $result = array();
+        $fs = get_file_storage();
+
+        $storedfiles = $fs->get_directory_files($context->id, $filearea, $itemid, $filepath, false, true, "filepath, filename");
+        foreach ($storedfiles as $file) {
+            $result[] = new file_info_stored($this, $context, $file, $urlbase, $topvisiblename, $itemidused, $readaccess, $writeaccess, false);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns content of coursefiles directory
+     */
+    public function build_coursefile_children($context, $filepath) {
+        $result = array();
+        $fs = get_file_storage();
+
+        $storedfiles = $fs->get_directory_files($context->id, 'course_content', 0, $filepath, false, true, "filepath, filename");
+        foreach ($storedfiles as $file) {
+            $result[] = new file_info_coursefile($this, $context, $file);
+        }
+
+        return $result;
+    }
+
+    public function encodepath($urlbase, $path, $forcedownload=false, $https=false) {
+        global $CFG;
+
+        if ($CFG->slasharguments) {
+            $parts = explode('/', $path);
+            $parts = array_map('rawurlencode', $parts);
+            $path  = implode('/', $parts);
+            $return = $urlbase.$path;
+            if ($forcedownload) {
+                $return .= '?forcedownload=1';
             }
         } else {
-            throw new exception('invalidcontext');
+            $path = rawurlencode($path);
+            $return = $urlbase.'?file='.$path;
+            if ($forcedownload) {
+                $return .= '&amp;forcedownload=1';
+            }
         }
+
+        if ($https) {
+            $return = str_replace('http://', 'https://', $return);
+        }
+
+        return $return;
     }
 
     /**
@@ -57,7 +114,7 @@ class file_browser {
      * @param string $filearea
      * @return file_info_system
      */
-    public function get_file_info_system($context, $filearea=null) {
+    private function get_file_info_system($context, $filearea=null) {
         if (is_null($filearea)) {
             return new file_info_system($this);
         }
@@ -72,7 +129,7 @@ class file_browser {
      * @param string $filearea
      * @return file_info_system
      */
-    public function get_file_info_user($context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
+    private function get_file_info_user($context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
         global $USER, $DB;
         if ($context->instanceid == $USER->id) {
             $user = $USER;
@@ -135,7 +192,7 @@ class file_browser {
         return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areauserpersonal', 'repository'), false, true, true, false);
     }
 
-    public function get_file_info_user_profile($user, $context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
+    private function get_file_info_user_profile($user, $context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
         global $USER, $CFG;
 
         $fs = get_file_storage();
@@ -170,8 +227,9 @@ class file_browser {
         return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areauserprofile', 'repository'), false, true, true, false);
     }
 
-    public function get_file_info_user_draft($user, $context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
+    private function get_file_info_user_draft($user, $context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
         global $USER, $CFG;
+
         $fs = get_file_storage();
 
         // access control: only my files
@@ -199,7 +257,7 @@ class file_browser {
         return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areauserdraft', 'repository'), true, true, true, true);
     }
 
-    public function get_file_info_coursecat($context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
+    private function get_file_info_coursecat($context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
         global $DB, $CFG;
 
         $fs = get_file_storage();
@@ -245,7 +303,7 @@ class file_browser {
         return null;
     }
 
-    public function get_file_info_course($context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
+    private function get_file_info_course($context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
         global $DB, $COURSE;
 
         if ($context->instanceid == $COURSE->id) {
@@ -279,7 +337,7 @@ class file_browser {
         return null;
     }
 
-    public function get_file_info_course_intro($course, $context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
+    private function get_file_info_course_intro($course, $context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
         global $CFG;
 
         $fs = get_file_storage();
@@ -304,7 +362,7 @@ class file_browser {
 
     }
 
-    public function get_file_info_course_section($course, $context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
+    private function get_file_info_course_section($course, $context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
         global $CFG, $DB;
 
         $fs = get_file_storage();
@@ -335,7 +393,7 @@ class file_browser {
 
     }
 
-    public function get_file_info_course_backup($course, $context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
+    private function get_file_info_course_backup($course, $context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
         global $CFG;
 
         $fs = get_file_storage();
@@ -363,7 +421,7 @@ class file_browser {
 
     }
 
-    public function get_file_info_course_content($course, $context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
+    private function get_file_info_course_content($course, $context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
         $fs = get_file_storage();
 
         if (!has_capability('moodle/course:managefiles', $context)) {
@@ -385,7 +443,7 @@ class file_browser {
         return new file_info_coursefile($this, $context, $storedfile);
     }
 
-    public function get_file_info_module($context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
+    private function get_file_info_module($context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
         global $COURSE, $DB, $CFG;
 
         $fs = get_file_storage();
@@ -453,78 +511,5 @@ class file_browser {
         }
 
         return null;
-    }
-
-    /**
-     * Returns content of local directory
-     */
-    public function build_stored_file_children($context, $filearea, $itemid, $filepath, $urlbase, $topvisiblename, $itemidused, $readaccess, $writeaccess) {
-        $result = array();
-        $fs = get_file_storage();
-
-        $storedfiles = $fs->get_directory_files($context->id, $filearea, $itemid, $filepath, false, true, "filepath, filename");
-        foreach ($storedfiles as $file) {
-            $result[] = new file_info_stored($this, $context, $file, $urlbase, $topvisiblename, $itemidused, $readaccess, $writeaccess, false);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Returns content of coursefiles directory
-     */
-    public function build_coursefile_children($context, $filepath) {
-        $result = array();
-        $fs = get_file_storage();
-
-        $storedfiles = $fs->get_directory_files($context->id, 'course_content', 0, $filepath, false, true, "filepath, filename");
-        foreach ($storedfiles as $file) {
-            $result[] = new file_info_coursefile($this, $context, $file);
-        }
-
-        return $result;
-    }
-
-    public function encodepath($urlbase, $path, $forcedownload=false, $https=false) {
-        global $CFG;
-
-        if ($CFG->slasharguments) {
-            $parts = explode('/', $path);
-            $parts = array_map('rawurlencode', $parts);
-            $path  = implode('/', $parts);
-            $return = $urlbase.$path;
-            if ($forcedownload) {
-                $return .= '?forcedownload=1';
-            }
-        } else {
-            $path = rawurlencode($path);
-            $return = $urlbase.'?file='.$path;
-            if ($forcedownload) {
-                $return .= '&amp;forcedownload=1';
-            }
-        }
-
-        if ($https) {
-            $return = str_replace('http://', 'https://', $return);
-        }
-
-        return $return;
-    }
-
-    private function get_context_name($contextlevel) {
-        switch ($contextlevel) {
-            case CONTEXT_SYSTEM:
-                return 'system';
-            case CONTEXT_USER:
-                return 'user';
-            case CONTEXT_COURSECAT:
-                return 'coursecat';
-            case CONTEXT_COURSE:
-                return 'course';
-            case CONTEXT_MODULE:
-                return 'module';
-        }
-
-        return false;
     }
 }
