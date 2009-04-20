@@ -77,6 +77,7 @@ if ($mform->is_cancelled()) {
         }
         $newcategory->context = get_context_instance(CONTEXT_COURSECAT, $newcategory->id);
         mark_context_dirty($newcategory->context->path);
+        fix_course_sortorder(); // Required to build course_categories.depth and .path.
     }
     redirect('category.php?id='.$newcategory->id.'&categoryedit=on');
 }
