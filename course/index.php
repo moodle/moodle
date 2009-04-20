@@ -153,6 +153,7 @@
         }
         $tempcat->context = get_context_instance(CONTEXT_COURSECAT, $tempcat->id);
         mark_context_dirty('/'.SYSCONTEXTID);
+        fix_course_sortorder(); // Required to build course_categories.depth and .path.
     }
 
 /// Move a category to a new parent if required

@@ -1221,6 +1221,7 @@ function get_course_category($catid=0) {
             // make sure category context exists
             get_context_instance(CONTEXT_COURSECAT, $catid);
             mark_context_dirty('/'.SYSCONTEXTID);
+            fix_course_sortorder(); // Required to build course_categories.depth and .path.
             $category = $DB->get_record('course_categories', array('id'=>$catid));
         }
     }
