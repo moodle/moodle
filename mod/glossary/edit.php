@@ -114,7 +114,7 @@ if ($mform->is_cancelled()){
         //new entry
         $entry->id = $DB->insert_record('glossary_entries', $entry);
         add_to_log($course->id, "glossary", "add entry",
-                   "view.php?id=$cm->id&amp;mode=entry&amp;hook=$enty->id", $entry->id, $cm->id);
+                   "view.php?id=$cm->id&amp;mode=entry&amp;hook=$entry->id", $entry->id, $cm->id);
 
     } else {
         //existing entry
