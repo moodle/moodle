@@ -286,7 +286,7 @@ class UnitTestCaseUsingDatabase extends UnitTestCase {
     protected function create_test_table($tablename, $installxmlfile) {
         global $CFG;
         if (isset($this->tables[$tablename])) {
-            debugging('You are attempting to create test table ' . $tablename . 'again. It already exists. Please review your code immediately.', DEBUG_DEVELOPER);
+            debugging('You are attempting to create test table ' . $tablename . ' again. It already exists. Please review your code immediately.', DEBUG_DEVELOPER);
             return;
         }
         $dbman = $this->testdb->get_manager();
