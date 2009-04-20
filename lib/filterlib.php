@@ -725,7 +725,7 @@ function filter_get_available_in_context($context) {
              FROM {filter_active} f
              JOIN {context} ctx ON f.contextid = ctx.id
              WHERE ctx.id IN ($contextids)
-             GROUP BY filter
+             GROUP BY f.filter
              HAVING MIN(f.active) > " . TEXTFILTER_DISABLED . "
              ORDER BY MAX(f.sortorder)) parent_states
          LEFT JOIN {filter_active} fa ON fa.filter = parent_states.filter AND fa.contextid = $context->id";
