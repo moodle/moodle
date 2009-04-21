@@ -7,19 +7,16 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
-/**
- *
- */
 class repository_upload extends repository {
 
     /**
      *
-     * @global <type> $SESSION
-     * @global <type> $action
-     * @global <type> $CFG
-     * @param <type> $repositoryid
-     * @param <type> $context
-     * @param <type> $options
+     * @global object $SESSION
+     * @global string $action
+     * @global object $CFG
+     * @param int $repositoryid
+     * @param object $context
+     * @param array $options
      */
     public function __construct($repositoryid, $context = SITEID, $options = array()){
         global $SESSION, $action, $CFG;
@@ -33,9 +30,9 @@ class repository_upload extends repository {
 
     /**
      *
-     * @global <type> $SESSION
-     * @param <type> $ajax
-     * @return <type>
+     * @global object $SESSION
+     * @param boolean $ajax
+     * @return mixed
      */
     public function print_login($ajax = true) {
         global $SESSION;
@@ -44,11 +41,11 @@ class repository_upload extends repository {
 
     /**
      *
-     * @global <type> $CFG
-     * @global <type> $action
-     * @param <type> $path
-     * @param <type> $search
-     * @return <type>
+     * @global object $CFG
+     * @global string $action
+     * @param mixed $path
+     * @param string $search
+     * @return array
      */
     public function get_listing($path='', $page='') {
         global $CFG, $action;
@@ -69,22 +66,7 @@ class repository_upload extends repository {
 
     /**
      *
-     */
-    public function print_listing() {
-         // will be used in non-javascript file picker
-    }
-
-    /**
-     *
-     * @return <type>
-     */
-    public function print_search() {
-        return true;
-    }
-
-    /**
-     *
-     * @return <type>
+     * @return string
      */
     public function get_name(){
         return get_string('repositoryname', 'repository_upload');;

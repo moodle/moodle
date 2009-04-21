@@ -251,12 +251,13 @@ class repository_flickr_public extends repository {
      * @return <type>
      */
     public function print_search() {
-        echo '<input type="hidden" name="repo_id" value="'.$this->id.'" />';
-        echo '<input type="hidden" name="ctx_id" value="'.$this->context->id.'" />';
-        echo '<input type="hidden" name="seekey" value="'.sesskey().'" />';
-        echo '<label>'.get_string('fulltext', 'repository_flickr_public').': </label><br/><input name="s" value="" /><br/>';
-        echo '<label>'.get_string('tag', 'repository_flickr_public').'</label><br /><input type="text" name="tag" /><br />';
-        return true;
+        $str = '';
+        $str .= '<input type="hidden" name="repo_id" value="'.$this->id.'" />';
+        $str .= '<input type="hidden" name="ctx_id" value="'.$this->context->id.'" />';
+        $str .= '<input type="hidden" name="seekey" value="'.sesskey().'" />';
+        $str .= '<label>'.get_string('fulltext', 'repository_flickr_public').': </label><br/><input name="s" value="" /><br/>';
+        $str .= '<label>'.get_string('tag', 'repository_flickr_public').'</label><br /><input type="text" name="tag" /><br />';
+        return $str;
     }
 
     /**

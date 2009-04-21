@@ -159,7 +159,9 @@ EOD;
             echo json_encode($logout);
             break;
         case 'searchform':
-            $repo->print_search();
+            $search_form['form'] = $repo->print_search();
+            $search_form['client_id'] = $client_id;
+            echo json_encode($search_form);
             break;
         case 'search':
             try {

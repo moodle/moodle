@@ -135,21 +135,21 @@ class repository_alfresco extends repository {
         return $path;
     }
 
-    public function print_search() {
-        parent::print_search();
-        echo '<label>Space: </label><br /><select name="space">';
+    public function print_search($client_id) {
+        $str = parent::print_search($client_id);
+        $str .= '<label>Space: </label><br /><select name="space">';
         foreach ($this->sess->stores as $v) {	
-            echo '<option ';
+            $str .= '<option ';
             if ($v->__toString() === 'workspace://SpacesStore') {
-                echo 'selected ';
+                $str .= 'selected ';
             }
-            echo 'value="';
-            echo $v->__toString().'">';
-            echo $v->__toString();
-            echo '</option>';
+            $str .= 'value="';
+            $str .= $v->__toString().'">';
+            $str .= $v->__toString();
+            $str .= '</option>';
         }
-        echo '</select>';
-        return true;
+        $str .= '</select>';
+        return $str;
     }
 
     public function search($search_text) {

@@ -196,11 +196,7 @@ repository_client.req = function(client_id, id, path, page) {
 
 repository_client.req_cb = {
     success: function(o){
-         try {
-             var data = YAHOO.lang.JSON.parse(o.responseText);
-         } catch(e) {
-             alert(fp_lang.invalidjson+' - |req_cb| -'+repository_client.stripHTML(o.responseText));
-         };
+         var data = repository_client.parse_json(o.responseText, 'req_cb');    
          var repo = repository_client.fp[data.client_id];
          var panel = new YAHOO.util.Element('panel-'+data.client_id);
          if(data && data.e) {
@@ -373,12 +369,7 @@ repository_client.view_as_list = function(client_id, data) {
     tree.dynload = function (node, fnLoadComplete) {
         var callback = {
             success: function(o) {
-                 try {
-                     var json = YAHOO.lang.JSON.parse(o.responseText);
-                 } catch(e) {
-                     alert(fp_lang.invalidjson+' - |dynload| -'+repository_client.stripHTML(o.responseText));
-                     return;
-                 }
+                 var json = repository_client.parse_json(o.responseText, 'dynload');    
                  for(k in json.list) {
                      repository_client.buildtree(json.client_id, json.list[k], node);
                  }
@@ -565,7 +556,6 @@ repository_client.path = function(client_id) {
                 path_link.path = this.path;
                 path_link.client_id = this.client_id;
                 path_link.onclick = function() {
-                    alert('test');
                     repository_client.req(this.client_id, this.id, this.path);
                 }
             });
@@ -700,20 +690,6 @@ repository_client.view_as_icons = function(client_id, data) {
     container.appendChild(panel);
     repository_client.print_footer(client_id);
 }
-repository_client.create_upload_form = function(client_id) {
-    var str = '';
-    var fs = repository_client.fp[client_id].fs;
-    if(fs.upload) {
-        str += '<div id="'+fs.upload.id+'_div" class="fp-upload-form">';
-        str += '<form id="'+fs.upload.id+'" onsubmit="return false">';
-        str += '<label for="'+fs.upload.id+'-file">'+fs.upload.label+': </label>';
-        str += '<input type="file" id="'+fs.upload.id+'-file" name="repo_upload_file" />';
-        str += '<p class="fp-upload-btn"><a href="###" onclick="return repository_client.upload(\''+client_id+'\');">'+fp_lang.upload+'</a></p>';
-        str += '</form>';
-        str += '</div>';
-    }
-    return str;
-}
 repository_client.print_footer = function(client_id) {
     var fs = this.fp[client_id].fs;
     var panel = document.getElementById('panel-'+client_id);
@@ -730,7 +706,7 @@ repository_client.print_footer = function(client_id) {
         search.innerHTML = '<img src="'+moodle_cfg.pixpath+'/a/search.png" /> '+fp_lang.search;
         oDiv.appendChild(search);
         search.onclick = function() {
-            repository_client.search_form(client_id,repository_client.repositoryid);
+            repository_client.search_form(client_id, fs.repo_id);
         }
     }
     // weather we use cache for this instance, this button will reload listing anyway
@@ -836,11 +812,7 @@ repository_client.download = function(client_id, repo_id) {
 }
 repository_client.download_cb = {
     success: function(o) {
-         try {
-             var data = YAHOO.lang.JSON.parse(o.responseText);
-         } catch(e) {
-             alert(fp_lang.invalidjson+' - |download_cb| -'+repository_client.stripHTML(o.responseText));
-         }
+         var data = repository_client.parse_json(o.responseText, 'download_cb');    
          var panel = new YAHOO.util.Element('panel-'+data.client_id);
          if(data && data.e) {
              panel.get('element').innerHTML = data.e;
@@ -864,14 +836,83 @@ repository_client.end = function(client_id, obj) {
 repository_client.viewfiles = function() {
     alert('Not available yet.');
 }
+repository_client.create_upload_form = function(client_id) {
+    var str = '';
+    var fs = repository_client.fp[client_id].fs;
+    if(fs.upload) {
+        var id = fs.upload.id+'_'+client_id;
+        str += '<div id="'+id+'_div" class="fp-upload-form">';
+        str += '<form id="'+id+'" onsubmit="return false">';
+        str += '<label for="'+id+'_file">'+fs.upload.label+': </label>';
+        str += '<input type="file" id="'+id+'_file" name="repo_upload_file" />';
+        str += '<p class="fp-upload-btn"><a href="###" onclick="return repository_client.upload(\''+client_id+'\');">'+fp_lang.upload+'</a></p>';
+        str += '</form>';
+        str += '</div>';
+    }
+    return str;
+}
+repository_client.upload = function(client_id) {
+    var fp = repository_client.fp[client_id];
+    var u = repository_client.fp[client_id].fs;
+    var id = u.upload.id+'_'+client_id;
+    var aform = document.getElementById(id);
+    var parent = document.getElementById(id+'_div');
+    var d = document.getElementById(id+'_file');
+    if(d.value!='' && d.value!=null) {
+        var container = document.createElement('DIV');
+        container.id = id+'_loading';
+        container.style.textAlign='center';
+        var img = document.createElement('IMG');
+        img.src = moodle_cfg.pixpath+'/i/progressbar.gif';
+        var para = document.createElement('p');
+        para.innerHTML = fp_lang.uploading;
+        container.appendChild(para);
+        container.appendChild(img);
+        parent.appendChild(container);
+        YAHOO.util.Connect.setForm(aform, true, true);
+
+        var trans = YAHOO.util.Connect.asyncRequest('POST',
+                moodle_cfg.wwwroot+'/repository/ws.php?action=upload&itemid='+fp.itemid
+                    +'&sesskey='+moodle_cfg.sesskey
+                    +'&ctx_id='+fp_config.contextid
+                    +'&repo_id='+u.repo_id
+                    +'&client_id='+client_id,
+                repository_client.upload_cb);
+    }else{
+        alert(fp_lang.filenotnull);
+    }
+}
+repository_client.upload_cb = {
+upload: function(o) {
+        var ret = repository_client.parse_json(o.responseText, 'upload');    
+        client_id = ret.client_id;
+        if(ret && ret.e) {
+            var panel = new YAHOO.util.Element('panel-'+client_id);
+            panel.get('element').innerHTML = ret.e;
+            return;
+        }
+        if(ret) {
+            alert(fp_lang.saved);
+            repository_client.end(client_id, ret);
+        }
+    }
+}
+repository_client.parse_json = function(txt, source) {
+    try {
+        var ret = YAHOO.lang.JSON.parse(txt);
+    } catch(e) {
+        alert(fp_lang.invalidjson+' - |'+source+'| -'+this.stripHTML(txt));
+    }
+    return ret;
+}
 repository_client.search_form = function(client_id, id) {
     var fp = repository_client.fp[client_id];
     var params = [];
     params['env']=fp.env;
     params['sesskey']=moodle_cfg.sesskey;
-    params['client_id'] = client_id;
+    params['client_id']=client_id;
     params['ctx_id']=fp_config.contextid;
-    params['repo_id']=fp.fs.id;
+    params['repo_id']=id;
     var trans = YAHOO.util.Connect.asyncRequest('POST',
             moodle_cfg.wwwroot+'/repository/ws.php?action=searchform',
             repository_client.search_form_cb,
@@ -879,8 +920,9 @@ repository_client.search_form = function(client_id, id) {
 }
 repository_client.search_form_cb = {
 success: function(o) {
+     var data = repository_client.parse_json(o.responseText, 'search_form_cb');
      var el = document.getElementById('fp-search-dlg');
-     var _r = repository_client;
+     var fp = repository_client.fp[data.client_id];
      if(el) {
          el.innerHTML = '';
      } else {
@@ -889,18 +931,31 @@ success: function(o) {
      }
      var div1 = document.createElement('DIV');
      div1.className = 'hd';
-     div1.innerHTML = fp_lang.searching+"\"" + _r.repos[_r.repositoryid].name + '"';
+     div1.innerHTML = fp_lang.searching+"\"" + repository_listing[data.client_id][fp.fs.repo_id].name + '"';
      var div2 = document.createElement('DIV');
      div2.className = 'bd';
      var sform = document.createElement('FORM');
      sform.method = 'POST';
      sform.id = "fp-search-form";
-     sform.action = '$CFG->httpswwwroot/repository/ws.php?action=search';
-     sform.innerHTML = o.responseText;
+     sform.action = moodle_cfg.wwwroot+'/repository/ws.php?action=search';
+     sform.innerHTML = data['form'];
      div2.appendChild(sform);
      el.appendChild(div1);
      el.appendChild(div2);
      document.body.appendChild(el);
+     var dlg_handler = function() {
+         var client_id=dlg_handler.client_id;
+         repository_client.fp[client_id].viewbar.set('disabled', false);
+         repository_client.loading(client_id, 'load');
+         YAHOO.util.Connect.setForm('fp-search-form', false, false);
+         this.cancel();
+         var url = moodle_cfg.wwwroot+'/repository/ws.php?action=search&env='+dlg_handler.env
+                +'&client_id='+client_id;
+         var trans = YAHOO.util.Connect.asyncRequest('POST', url,
+             repository_client.req_cb);
+     }
+     dlg_handler.client_id = data.client_id;
+     dlg_handler.env = fp.env;
      var dlg = new YAHOO.widget.Dialog("fp-search-dlg",{
         postmethod: 'async',
         draggable: true,
@@ -910,14 +965,12 @@ success: function(o) {
         visible : false,
         constraintoviewport : true,
         buttons : [
-            { text:fp_lang.submit,handler: function() {
-               repository_client.viewbar.set('disabled', false); repository_client.loading('load');
-                YAHOO.util.Connect.setForm('fp-search-form', false, false);
-                this.cancel();
-                var trans = YAHOO.util.Connect.asyncRequest('POST',
-                    '$CFG->httpswwwroot/repository/ws.php?action=search&env='+repository_client.env, repository_client.req_cb);
-                },isDefault:true},
-            {text:fp_lang.cancel,handler:function() {this.cancel()}}
+        {
+            text:fp_lang.submit,
+            handler: dlg_handler,
+            isDefault:true
+        },
+        {text:fp_lang.cancel,handler:function(){this.cancel()}}
         ]
     });
     dlg.render();
