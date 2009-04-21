@@ -113,8 +113,6 @@
         // the callback url should be something like this:
         // http://xx.moodle.com/repository/ws.php?callback=yes&repo_id=1&sid=xxx
         // sid is the attached auth token from external source
-        echo_fb($client_id);
-        echo_fb($repo_id);
         $js  =<<<EOD
 <html><head><script type="text/javascript">
     window.opener.repository_callback($repo_id);
