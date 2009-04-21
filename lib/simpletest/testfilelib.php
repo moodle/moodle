@@ -28,8 +28,163 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once($CFG->libdir.'/filelib.php');
+require_once($CFG->libdir.'/file/file_browser.php');
+require_once($CFG->libdir.'/file/file_info_course.php');
 
-class filelib_test extends UnitTestCase {
+require_once($CFG->dirroot.'/user/lib.php');
+require_once($CFG->dirroot.'/mod/forum/lib.php');
+
+/**
+ * Parent class used only for setup() and teardown() methods, to create and cleanup test data
+ */
+class filelib_test extends UnitTestCaseUsingDatabase {
+    protected $course;
+    protected $section;
+    protected $coursecat;
+    protected $user;
+    protected $module;
+
+    /**
+     * Setup the DB fixture data
+     */
+    public function setup() {
+        parent::setUp();
+        $tables = array('block_instance', 'cache_flags', 'capabilities', 'context', 'context_temp',
+                        'course', 'course_modules', 'course_categories', 'course_sections','files',
+                        'files_cleanup', 'grade_items', 'grade_categories', 'groups', 'groups_members',
+                        'modules', 'role', 'role_names', 'role_context_levels', 'role_assignments',
+                        'role_capabilities', 'user');
+        $this->create_test_tables($tables, 'lib');
+        $this->create_test_table('forum', 'mod/forum');
+        $this->switch_to_test_db();
+
+        global $DB, $CFG;
+        // Insert needed capabilities
+        $DB->insert_record('capabilities', 
+            array('id' => 45, 'name' => 'moodle/course:update', 'cattype' => 'write', 'contextlevel' => 50, 'component' => 'moodle', 'riskbitmask' => 4));
+        $DB->insert_record('capabilities', 
+            array('id' => 14, 'name' => 'moodle/site:backup', 'cattype' => 'write', 'contextlevel' => 50, 'component' => 'moodle', 'riskbitmask' => 28));
+        $DB->insert_record('capabilities', 
+            array('id' => 17, 'name' => 'moodle/site:restore', 'cattype' => 'write', 'contextlevel' => 50, 'component' => 'moodle', 'riskbitmask' => 28));
+        $DB->insert_record('capabilities', 
+            array('id' => 52, 'name' => 'moodle/course:managefiles', 'cattype' => 'write', 'contextlevel' => 50, 'component' => 'moodle', 'riskbitmask' => 4));
+        $DB->insert_record('capabilities', 
+            array('id' => 73, 'name' => 'moodle/user:editownprofile', 'cattype' => 'write', 'contextlevel' => 10, 'component' => 'moodle', 'riskbitmask' => 16));
+        
+        // Insert system context
+        $DB->insert_record('context', array('id' => 1, 'contextlevel' => 10, 'instanceid' => 0, 'path' => '/1', 'depth' => 1));
+        $DB->insert_record('context', array('id' => 2, 'contextlevel' => 50, 'instanceid' => 1, 'path' => '/1/2', 'depth' => 2));
+        
+        // Insert site course
+        $DB->insert_record('course', array('category' => 0, 'sortorder' => 1, 'fullname' => 'Test site', 'shortname' => 'test', 'format' => 'site', 'modinfo' => 'a:0:{}'));
+
+        // User and capability stuff (stolen from testaccesslib.php)
+        $syscontext = get_system_context(false);
+        $adminrole  = create_role(get_string('administrator'), 'admin', get_string('administratordescription'), 'moodle/legacy:admin');
+
+        /// Now is the correct moment to install capabilities - after creation of legacy roles, but before assigning of roles
+        assign_capability('moodle/site:doanything', CAP_ALLOW, $adminrole, $syscontext->id);
+        update_capabilities('moodle');
+        update_capabilities('mod/forum');
+        
+        $contexts = $this->load_test_data('context',
+                array('contextlevel', 'instanceid', 'path', 'depth'), array(
+           1 => array(40, 666, '', 2)));
+        $contexts[0] = $syscontext;
+        $contexts[1]->path = $contexts[0]->path . '/' . $contexts[1]->id;
+        $this->testdb->set_field('context', 'path', $contexts[1]->path, array('id' => $contexts[1]->id));
+        $users = $this->load_test_data('user',
+                 array('username', 'confirmed', 'deleted'), array(
+        'a' =>   array('a',         1,           0)));
+        $admin = $this->testdb->get_record('role', array('shortname' => 'admin'));
+        $ras = $this->load_test_data('role_assignments', array('userid', 'roleid', 'contextid'), array( 'a' =>  array($users['a']->id, $admin->id, $contexts[0]->id)));
+
+        $this->switch_global_user_id(1);
+        accesslib_clear_all_caches_for_unit_testing();
+        
+        // Create a coursecat
+        $newcategory = new stdClass();
+        $newcategory->name = 'test category';
+        $newcategory->sortorder = 999;
+        if (!$newcategory->id = $DB->insert_record('course_categories', $newcategory)) {
+            print_error('cannotcreatecategory', '', '', format_string($newcategory->name));
+        } 
+
+        $newcategory->context = get_context_instance(CONTEXT_COURSECAT, $newcategory->id);
+        mark_context_dirty($newcategory->context->path);
+        fix_course_sortorder(); // Required to build course_categories.depth and .path.
+        $this->coursecat = $DB->get_record('course_categories', array('id' => $newcategory->id));
+
+        // Create a course
+        $coursedata = new stdClass();
+        $coursedata->category = $newcategory->id;
+        $coursedata->shortname = 'testcourse'; 
+        $coursedata->fullname = 'Test Course';
+        
+        try {
+            $this->course = create_course($coursedata);
+        } catch (moodle_exception $e) {
+            // Most likely the result of an aborted unit test: the test course was not correctly deleted
+            $this->course = $DB->get_record('course', array('shortname' => $coursedata->shortname));
+        }
+
+        // Create a user
+        $this->user = new stdClass();
+        $this->user->username = 'testuser09987654321';
+        $this->user->password = 'password';
+        $this->user->firstname = 'TestUser';
+        $this->user->lastname = 'TestUser';
+        $this->user->email = 'fakeemail@fake.org';
+        try {
+            $this->user->id = create_user($this->user);
+        } catch (moodle_exception $e) {
+            // Most likely the result of an aborted unit test: the test user was not correctly deleted
+            $this->user->id = $DB->get_field('user', 'id', array('username' => $this->user->username));
+        }
+        // Assign user to course
+        // role_assign(5, $this->user->id, 0, get_context_instance(CONTEXT_COURSE, $this->course->id)->id);
+
+        // Create a module
+        $module = new stdClass();
+        $module->intro = 'Forum used for testing filelib API';
+        $module->type = 'general';
+        $module->forcesubscribe = 1;
+        $module->format = 1;
+        $module->name = 'Test Forum'; 
+        $module->module = $DB->get_field('modules', 'id', array('name' => 'forum'));
+        $module->modulename = 'forum';
+        $module->add = 'forum';
+        $module->cmidnumber = '';
+        $module->course = $this->course->id;
+
+        $module->instance = forum_add_instance($module, '');
+        
+        $this->section = get_course_section(1, $this->course->id);
+        $module->section = $this->section->id;
+        $module->coursemodule = add_course_module($module);
+
+        add_mod_to_section($module);
+
+        $module->cmidnumber = set_coursemodule_idnumber($module->coursemodule, '');
+
+        rebuild_course_cache($this->course->id);
+        $this->module= $DB->get_record('forum', array('id' => $module->instance));
+        $this->module->instance = $module->instance;
+
+        // Update local copy of course
+        $this->course = $DB->get_record('course', array('id' => $this->course->id));
+    }
+    
+    public function teardown() {
+        parent::tearDown();
+    }
+    
+    public function createFiles() {
+
+    }
+}
+
+class filelib_public_api_test extends filelib_test {
     public function test_get_file_url() {
         global $CFG, $HTTPSPAGEREQUIRED;
 
@@ -83,15 +238,16 @@ class filelib_test extends UnitTestCase {
         $path = 'rela89èà7(##&$tive/path/to /indéx.html#anchor1';
         $this->assertEqual($CFG->wwwroot.'/file.php/rela89%C3%A8%C3%A07%28##%26%24tive/path/to%20/ind%C3%A9x.html#anchor1', get_file_url($path));
     }
+
 }
 
-require_once($CFG->libdir.'/file/file_browser.php');
 /**
  * Tests for file_browser class
  * @note This class is barely testable. Only one of the methods doesn't make direct calls to complex global functions.
  *       I suggest a rethink of the design, and a jolly good refactoring.
  */
-class file_browser_test extends UnitTestCase {
+
+class file_browser_test extends filelib_test {
 
     public function test_encodepath() {
         global $CFG;
@@ -113,114 +269,7 @@ class file_browser_test extends UnitTestCase {
     }
 }
 
-class file_info_test extends UnitTestCase {
-    protected $course;
-    protected $section;
-    protected $coursecat;
-    protected $user;
-    protected $module;
-
-    /**
-     * Setup the DB fixture data
-     */
-    public function setup() {
-        global $DB, $CFG;
-        // Create a coursecat
-        $newcategory = new stdClass();
-        $newcategory->name = 'test category';
-        $newcategory->sortorder = 999;
-        if (!$newcategory->id = $DB->insert_record('course_categories', $newcategory)) {
-            print_error('cannotcreatecategory', '', '', format_string($newcategory->name));
-        } 
-        $newcategory->context = get_context_instance(CONTEXT_COURSECAT, $newcategory->id);
-        mark_context_dirty($newcategory->context->path);
-        fix_course_sortorder(); // Required to build course_categories.depth and .path.
-        $this->coursecat = $DB->get_record('course_categories', array('id' => $newcategory->id));
-
-        // Create a course
-        $coursedata = new stdClass();
-        $coursedata->category = $newcategory->id;
-        $coursedata->shortname = 'testcourse'; 
-        $coursedata->fullname = 'Test Course';
-        
-        try {
-            $this->course = create_course($coursedata);
-        } catch (moodle_exception $e) {
-            // Most likely the result of an aborted unit test: the test course was not correctly deleted
-            $this->course = $DB->get_record('course', array('shortname' => $coursedata->shortname));
-        }
-        
-        $this->coursecat->coursecount++;
-
-        // Create a user
-        require_once($CFG->dirroot.'/user/lib.php');
-        $this->user = new stdClass();
-        $this->user->username = 'testuser09987654321';
-        $this->user->password = 'password';
-        $this->user->firstname = 'TestUser';
-        $this->user->lastname = 'TestUser';
-        $this->user->email = 'fakeemail@fake.org';
-        try {
-            $this->user->id = create_user($this->user);
-        } catch (moodle_exception $e) {
-            // Most likely the result of an aborted unit test: the test user was not correctly deleted
-            $this->user->id = $DB->get_field('user', 'id', array('username' => $this->user->username));
-        }
-        // Assign user to course
-        role_assign(5, $this->user->id, 0, get_context_instance(CONTEXT_COURSE, $this->course->id)->id);
-
-        // Create a module
-        $module = new stdClass();
-        $module->intro = 'Forum used for testing filelib API';
-        $module->type = 'general';
-        $module->forcesubscribe = 1;
-        $module->format = 1;
-        $module->name = 'Test Forum'; 
-        $module->module = $DB->get_field('modules', 'id', array('name' => 'forum'));
-        $module->modulename = 'forum';
-        $module->add = 'forum';
-        $module->cmidnumber = '';
-        $module->course = $this->course->id;
-
-        $module->instance = forum_add_instance($module, '');
-        
-        $this->section = get_course_section(1, $this->course->id);
-        $module->section = $this->section->id;
-        $module->coursemodule = add_course_module($module);
-
-        add_mod_to_section($module);
-
-        $module->cmidnumber = set_coursemodule_idnumber($module->coursemodule, '');
-
-        rebuild_course_cache($this->course->id);
-        $this->module= $DB->get_record('forum', array('id' => $module->instance));
-        $this->module->instance = $module->instance;
-
-        // Update local copy of course
-        $this->course = $DB->get_record('course', array('id' => $this->course->id));
-    }
-    
-    public function teardown() {
-        global $DB;
-
-        // Delete module
-        delete_course_module($this->module->instance);
-
-        // Delete course
-        delete_course($this->course, false);
-
-        // Delete category
-        $DB->delete_records('course_categories', array('id' => $this->coursecat->id));
-
-        // Delete user
-        delete_user($this->user);
-    }
-
-}
-
-require_once($CFG->libdir.'/file/file_info_course.php');
-
-class test_file_info_system extends file_info_test {
+class test_file_info_system extends filelib_test {
     public function test_get_children() {
         $context = get_context_instance(CONTEXT_SYSTEM);
 
@@ -240,7 +289,7 @@ class test_file_info_system extends file_info_test {
     }
 }
 
-class test_file_info_coursecat extends file_info_test {
+class test_file_info_coursecat extends filelib_test {
     private $fileinfo;
 
     public function setup() {
@@ -253,6 +302,7 @@ class test_file_info_coursecat extends file_info_test {
         $children = $this->fileinfo->get_children();
         $this->assertEqual(2, count($children));
         
+        // Not sure but I think there should be two children: a file_info_stored object and a file_info_course object.
         $this->assertEqual('Category introduction', $children[0]->get_visible_name());
         $this->assertEqual('', $children[0]->get_url());
         $this->assertEqual('file_info_stored', get_class($children[0]));
@@ -270,7 +320,7 @@ class test_file_info_coursecat extends file_info_test {
     }
 }
 
-class test_file_info_course extends file_info_test {
+class test_file_info_course extends filelib_test {
     private $fileinfo;
 
     public function setup() {
@@ -283,8 +333,8 @@ class test_file_info_course extends file_info_test {
         global $DB;
 
         $children = $this->fileinfo->get_children();
-        $this->assertEqual(5, count($children));
-        
+        $this->assertEqual(4, count($children));
+
         $this->assertEqual('Course introduction', $children[0]->get_visible_name());
         $this->assertEqual('', $children[0]->get_url());
         $this->assertEqual('file_info_stored', get_class($children[0]));
@@ -301,10 +351,6 @@ class test_file_info_course extends file_info_test {
         $this->assertEqual('', $children[3]->get_url());
         $this->assertEqual('file_info_coursefile', get_class($children[3]));
 
-        $fb = new file_browser();
-        $context = get_context_instance(CONTEXT_MODULE, $DB->get_field('course_modules', 'id', array('instance' => $this->module->instance)));
-        $fim = $fb->get_file_info($context);
-        $this->assertEqual($fim, $children[4]);
     }
 
     public function test_get_parent() {
@@ -315,7 +361,7 @@ class test_file_info_course extends file_info_test {
     }
 }
 
-class test_file_info_user extends file_info_test {
+class test_file_info_user extends filelib_test {
     private $fileinfo;
 
     public function setup() {
@@ -345,7 +391,7 @@ class test_file_info_user extends file_info_test {
     }
 }
 
-class test_file_info_module extends file_info_test {
+class test_file_info_module extends filelib_test {
     private $fileinfo;
 
     public function setup() {
