@@ -121,7 +121,7 @@
 
         $view->name = $assignment->name;
         $view->submitted = $submitted;
-        $view->description = format_text( $assignment->intro, $assignment->introformat, $formatoptions );
+        $view->description = format_module_intro('assignment', $assignment, $assignment->coursemodule);
         $view->editlink = $editlink;
         $view->submissiontext = $submissiontext;
         $view->submissiondate = $submissiondate;
