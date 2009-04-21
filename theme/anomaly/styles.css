@@ -1,6 +1,6 @@
 
 /* Core */
-	
+
 body {
   padding:0;
   margin:0;
@@ -277,7 +277,7 @@ h2.headingblock {
 /* Modules */
 
 #mod-forum-search #wrapper-br {
-	padding-bottom: 21px;
+  padding-bottom: 21px;
 }
 
 #mod-forum-search .generalbox {
