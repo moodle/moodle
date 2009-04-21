@@ -17,8 +17,7 @@ class mod_glossary_entry_form extends moodleform {
         $mform->setType('concept', PARAM_TEXT);
         $mform->addRule('concept', null, 'required', null, 'client');
 
-        $mform->addElement('editor', 'entry', get_string('definition', 'glossary'),
-                           array('maxfiles' => EDITOR_UNLIMITED_FILES, 'filearea' => 'glossary_entry'));
+        $mform->addElement('editor', 'entry', get_string('definition', 'glossary'), array('maxfiles' => EDITOR_UNLIMITED_FILES));
         $mform->setType('entry', PARAM_RAW);
         $mform->addRule('entry', get_string('required'), 'required', null, 'client');
         $mform->setHelpButton('entry', array('reading', 'writing', 'questions', 'richtext2'), false, 'editorhelpbutton');

@@ -70,7 +70,7 @@ class moodleform_mod extends moodleform {
         $this->_features->outcomes          = (!empty($CFG->enableoutcomes) and plugin_supports('mod', $this->_modname, FEATURE_GRADE_OUTCOMES, true));
         $this->_features->hasgrades         = plugin_supports('mod', $this->_modname, FEATURE_GRADE_HAS_GRADE, false);
         $this->_features->idnumber          = plugin_supports('mod', $this->_modname, FEATURE_IDNUMBER, true);
-        $this->_features->introeditor       = plugin_supports('mod', $this->_modname, FEATURE_MODEDIT_INTRO_EDITOR, true);
+        $this->_features->introeditor       = plugin_supports('mod', $this->_modname, FEATURE_MOD_INTRO, true);
         $this->_features->defaultcompletion = plugin_supports('mod', $this->_modname, FEATURE_MODEDIT_DEFAULT_COMPLETION, true);
 
         $this->_features->gradecat          = ($this->_features->outcomes or $this->_features->hasgrades);
@@ -572,6 +572,22 @@ class moodleform_mod extends moodleform {
         $mform->setType('return', PARAM_BOOL);
     }
 
+    function add_intro_editor($required=false, $customlabel=null) {
+        if (!$this->_features->introeditor) {
+            // intro editor not supported in this module
+            return;
+        }
+
+        $mform = $this->_form;
+        $label = is_null($customlabel) ? get_string('moduleintro') : $customlabel;
+
+        $mform->addElement('editor', 'introeditor', $label, array('maxfiles'=>EDITOR_UNLIMITED_FILES));
+        $mform->setType('introeditor', PARAM_RAW); // no XSS prevention here, users must be trusted
+        if ($required) {
+            $mform->addRule('introeditor', get_string('required'), 'required', null, 'client');
+        }
+    }
+
     /**
      * Overriding formslib's add_action_buttons() method, to add an extra submit "save changes and return" button.
      *
@@ -589,7 +605,7 @@ class moodleform_mod extends moodleform {
             $submit2label = get_string('savechangesandreturntocourse');
         }
 
-        $mform =& $this->_form;
+        $mform = $this->_form;
 
         // elements in a row need a group
         $buttonarray = array();

@@ -318,7 +318,7 @@ define('FEATURE_GROUPINGS', 'groupings');
 define('FEATURE_GROUPMEMBERSONLY', 'groupmembersonly');
 
 /** True if module supports intro editor */
-define('FEATURE_MODEDIT_INTRO_EDITOR', 'modedit_intro_editor');
+define('FEATURE_MOD_INTRO', 'mod_intro');
 /** True if module has default completion */
 define('FEATURE_MODEDIT_DEFAULT_COMPLETION', 'modedit_default_completion');
 

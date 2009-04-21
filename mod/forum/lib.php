@@ -240,7 +240,7 @@ function forum_supports($feature) {
         case FEATURE_GROUPS:                  return true;
         case FEATURE_GROUPINGS:               return true;
         case FEATURE_GROUPMEMBERSONLY:        return true;
-        case FEATURE_MODEDIT_INTRO_EDITOR:    return true;
+        case FEATURE_MOD_INTRO:               return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
         case FEATURE_COMPLETION_HAS_RULES:    return true;
         case FEATURE_GRADE_HAS_GRADE:         return true;
@@ -4062,22 +4062,6 @@ function forum_pluginfile($course, $cminfo, $context, $filearea, $args) {
 
     if (!$cminfo->uservisible) {
         return false;
-    }
-
-    if ($filearea === 'forum_intro') {
-        // all users may access it
-        $relativepath = '/'.implode('/', $args);
-        $fullpath = $context->id.'forum_intro0'.$relativepath;
-
-        $fs = get_file_storage();
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-            return false;
-        }
-
-        $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
-
-        // finally send the file
-        send_stored_file($file, $lifetime, 0);
     }
 
     $fileareas = array('forum_attachment', 'forum_post');

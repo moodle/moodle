@@ -160,9 +160,7 @@ class assignment_base {
      */
     function view_intro() {
         print_simple_box_start('center', '', '', 0, 'generalbox', 'intro');
-        $formatoptions = new stdClass;
-        $formatoptions->noclean = true;
-        echo format_text($this->assignment->intro, $this->assignment->introformat, $formatoptions);
+        echo format_module_intro('assignment', $this->assignment, $this->cm->id);
         print_simple_box_end();
     }
 
@@ -358,7 +356,7 @@ class assignment_base {
             if ($assignment->timedue) {
                 $event = new object();
                 $event->name        = $assignment->name;
-                $event->description = $assignment->intro;
+                $event->description = format_module_intro('assignment', $assignment, $assignment->coursemodule);
                 $event->courseid    = $assignment->course;
                 $event->groupid     = 0;
                 $event->userid      = 0;
@@ -447,14 +445,14 @@ class assignment_base {
             if ($event->id = $DB->get_field('event', 'id', array('modulename'=>'assignment', 'instance'=>$assignment->id))) {
 
                 $event->name        = $assignment->name;
-                $event->description = $assignment->intro;
+                $event->description = format_module_intro('assignment', $assignment, $assignment->coursemodule);
                 $event->timestart   = $assignment->timedue;
 
                 update_event($event);
             } else {
                 $event = new object();
                 $event->name        = $assignment->name;
-                $event->description = $assignment->intro;
+                $event->description = format_module_intro('assignment', $assignment, $assignment->coursemodule);
                 $event->courseid    = $assignment->course;
                 $event->groupid     = 0;
                 $event->userid      = 0;
@@ -2429,9 +2427,10 @@ function assignment_refresh_events($courseid = 0) {
     $moduleid = $DB->get_field('modules', 'id', array('name'=>'assignment'));
 
     foreach ($assignments as $assignment) {
+        $cm = get_coursemodule_from_id('assignment', $assignment->id);
         $event = NULL;
         $event->name        = $assignment->name;
-        $event->description = $assignment->intro;
+        $event->description = format_module_intro('assignment', $assignment, $cm->id);
         $event->timestart   = $assignment->timedue;
 
         if ($event->id = $DB->get_field('event', 'id', array('modulename'=>'assignment', 'instance'=>$assignment->id))) {
@@ -3241,7 +3240,7 @@ function assignment_supports($feature) {
         case FEATURE_GROUPS:                  return true;
         case FEATURE_GROUPINGS:               return true;
         case FEATURE_GROUPMEMBERSONLY:        return true;
-        case FEATURE_MODEDIT_INTRO_EDITOR:    return true;
+        case FEATURE_MOD_INTRO:               return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
         case FEATURE_GRADE_HAS_GRADE:         return true;
         case FEATURE_GRADE_OUTCOMES:          return true;

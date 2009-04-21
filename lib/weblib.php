@@ -1550,6 +1550,19 @@ function filter_text($text, $courseid=NULL) {
 
     return filter_manager::instance()->filter_text($text, $context, $courseid);
 }
+/**
+ * Formats activity intro text
+ * @param string $module name of module
+ * @param object $activity instance of activity
+ * @param int $cmid course module id
+ * @return text
+ */
+function format_module_intro($module, $activity, $cmid) {
+    $options = (object)array('noclean'=>true);
+    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+    $intro = file_rewrite_pluginfile_urls($activity->intro, 'pluginfile.php', $context->id, $module.'_intro', 0);
+    return format_text($intro, $activity->introformat, $options);
+}
 
 /**
  * Legacy function, used for cleaning of old forum and glossary text only.

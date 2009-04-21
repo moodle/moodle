@@ -53,6 +53,12 @@
         $form->add              = $add;
         $form->return           = 0; //must be false if this is an add, go back to course view on cancel
 
+        if (plugin_supports('mod', $form->modulename, FEATURE_MOD_INTRO, true)) {
+            $draftid_editor = file_get_submitted_draft_itemid('introeditor');
+            file_prepare_draft_area($draftid_editor, null, null, null);
+            $form->introeditor = array('text'=>'', 'format'=>FORMAT_HTML, 'itemid'=>$draftid_editor); // TODO: add better default
+        }
+
         // Turn off default grouping for modules that don't provide group mode
         if ($add=='resource' || $add=='glossary' || $add=='label') {
             $form->groupingid = 0;
@@ -128,6 +134,12 @@
             $form->availablefrom      = $cm->availablefrom;
             $form->availableuntil     = $cm->availableuntil;
             $form->showavailability   = $cm->showavailability;
+        }
+
+        if (plugin_supports('mod', $form->modulename, FEATURE_MOD_INTRO, true)) {
+            $draftid_editor = file_get_submitted_draft_itemid('introeditor');
+            $currentintro = file_prepare_draft_area($draftid_editor, $context->id, $form->modulename.'_intro', 0, true, $form->intro);
+            $form->introeditor = array('text'=>$currentintro, 'format'=>$form->introformat, 'itemid'=>$draftid_editor);
         }
 
         if ($items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$form->modulename,
@@ -306,6 +318,17 @@
 
             $DB->update_record('course_modules', $cm);
 
+            $modcontext = get_context_instance(CONTEXT_MODULE, $fromform->coursemodule);
+    
+            // update embedded links and save files
+            if (plugin_supports('mod', $fromform->modulename, FEATURE_MOD_INTRO, true)) {
+                $fromform->intro = file_save_draft_area_files($fromform->introeditor['itemid'], $modcontext->id,
+                                                              $fromform->modulename.'_intro', 0,
+                                                              true, $fromform->introeditor['text']);
+                $fromform->introformat = $fromform->introeditor['format'];
+                unset($fromform->introeditor);
+            }
+            
             if (!$updateinstancefunction($fromform, $mform)) {
                 print_error('cannotupdatemod', '', 'view.php?id=$course->id', $fromform->modulename);
             }
@@ -367,6 +390,17 @@
                 print_error('cannotaddcoursemodule');
             }
 
+            $modcontext = get_context_instance(CONTEXT_MODULE, $fromform->coursemodule);
+    
+            // update embedded links and save files
+            if (plugin_supports('mod', $fromform->modulename, FEATURE_MOD_INTRO, true)) {
+                $fromform->intro = file_save_draft_area_files($fromform->introeditor['itemid'], $modcontext->id,
+                                                              $fromform->modulename.'_intro', 0,
+                                                              true, $fromform->introeditor['text']);
+                $fromform->introformat = $fromform->introeditor['format'];
+                unset($fromform->introeditor);
+            }
+
             $returnfromfunc = $addinstancefunction($fromform, $mform);
 
             if (!$returnfromfunc or !is_number($returnfromfunc)) {
@@ -409,9 +443,8 @@
             }
 
             // Set up conditions
-            if($CFG->enableavailability) {
-                condition_info::update_cm_from_form(
-                    (object)array('id'=>$fromform->coursemodule),$fromform,false);
+            if ($CFG->enableavailability) {
+                condition_info::update_cm_from_form((object)array('id'=>$fromform->coursemodule), $fromform, false);
             }
 
             add_to_log($course->id, "course", "add mod",

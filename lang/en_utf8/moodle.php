@@ -1010,6 +1010,7 @@ $string['missingusername'] = 'Missing username';
 $string['modified'] = 'Modified';
 $string['moduledeleteconfirm'] = 'You are about to completely delete the module \'$a\'.  This will completely delete everything in the database associated with this activity module.  Are you SURE you want to continue?';
 $string['moduledeletefiles'] = 'All data associated with the module \'$a->module\' has been deleted from the database.  To complete the deletion (and prevent the module re-installing itself), you should now delete this directory from your server: $a->directory';
+$string['moduleintro'] = 'Description';
 $string['modulesetup'] = 'Setting up module tables';
 $string['modulesuccess'] = '$a tables have been set up correctly';
 $string['moodledocs'] = 'Moodle Docs';

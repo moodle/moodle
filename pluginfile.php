@@ -226,16 +226,40 @@
         $cminfo = $modinfo->cms[$context->instanceid];
         $modname = $cminfo->modname;
         $libfile = "$CFG->dirroot/mod/$modname/lib.php";
-        if (file_exists($libfile)) {
-            require_once($libfile);
-            $filefunction = $modname.'_pluginfile';
-            if (function_exists($filefunction)) {
-                if ($filefunction($course, $cminfo, $context, $filearea, $args) !== false) {
-                    die;
-                }
+        if (!file_exists($libfile)) {
+            send_file_not_found();
+        }
+
+        require_once($libfile);
+        if ($filearea === $modname.'_intro') {
+            if (!plugin_supports('mod', $modname, FEATURE_MOD_INTRO, true)) {
+                send_file_not_found();
+            }
+            if (!$cminfo->uservisible) {
+                send_file_not_found();
+            }
+            // all users may access it
+            $itemid = (int)array_shift($args);
+            $relativepath = '/'.implode('/', $args);
+            $fullpath = $context->id.$filearea.'0'.$relativepath;
+            
+            $fs = get_file_storage();
+            if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+                send_file_not_found();
+            }
+            
+            $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
+    
+            // finally send the file
+            send_stored_file($file, $lifetime, 0);
+        }
+
+        $filefunction = $modname.'_pluginfile';
+        if (function_exists($filefunction)) {
+            if ($filefunction($course, $cminfo, $context, $filearea, $args) !== false) {
+                die;
             }
         }
-        send_file_not_found();
 
     } else if ($context->contextlevel == CONTEXT_BLOCK) {
         //not supported yet

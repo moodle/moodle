@@ -1084,22 +1084,7 @@ function glossary_pluginfile($course, $cminfo, $context, $filearea, $args) {
         return false;
     }
 
-    if ($filearea === 'glossary_intro') {
-        // all users may access it
-        $relativepath = '/'.implode('/', $args);
-        $fullpath = $context->id.'glossary_intro0'.$relativepath;
-
-        $fs = get_file_storage();
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-            return false;
-        }
-
-        $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
-
-        // finally send the file
-        send_stored_file($file, $lifetime, 0);
-
-    } else if ($filearea === 'glossary_attachment' or $filearea === 'glossary_entry') {
+    if ($filearea === 'glossary_attachment' or $filearea === 'glossary_entry') {
         $entryid = (int)array_shift($args);
 
         if (!$entry = $DB->get_record('glossary_entries', array('id'=>$entryid))) {
@@ -2277,7 +2262,7 @@ function glossary_supports($feature) {
         case FEATURE_GROUPS:                  return false;
         case FEATURE_GROUPINGS:               return false;
         case FEATURE_GROUPMEMBERSONLY:        return true;
-        case FEATURE_MODEDIT_INTRO_EDITOR:    return true;
+        case FEATURE_MOD_INTRO:               return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
         case FEATURE_GRADE_HAS_GRADE:         return true;
         case FEATURE_GRADE_OUTCOMES:          return true;
