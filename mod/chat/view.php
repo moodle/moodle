@@ -173,8 +173,7 @@
                 }
 
                 if ($chat->intro) {
-                    $options = (object)array('noclean'=>true);
-                    print_box(format_text($chat->intro, $chat->introformat, $options), 'generalbox', 'intro');
+                    print_box(format_module_intro('chat', $chat, $cm->id), 'generalbox', 'intro');
                 }
 
                 chat_delete_old_users();

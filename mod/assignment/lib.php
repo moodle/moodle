@@ -2428,7 +2428,7 @@ function assignment_refresh_events($courseid = 0) {
 
     foreach ($assignments as $assignment) {
         $cm = get_coursemodule_from_id('assignment', $assignment->id);
-        $event = NULL;
+        $event = new object();
         $event->name        = $assignment->name;
         $event->description = format_module_intro('assignment', $assignment, $cm->id);
         $event->timestart   = $assignment->timedue;

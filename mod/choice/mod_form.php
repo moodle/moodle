@@ -19,21 +19,16 @@ class mod_choice_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
 
-        $mform->addElement('htmleditor', 'intro', get_string('choicetext', 'choice'));
-        $mform->setType('intro', PARAM_RAW);
-        $mform->addRule('intro', null, 'required', null, 'client');
-        $mform->setHelpButton('intro', array('writing', 'questions', 'richtext2'), false, 'editorhelpbutton');
-
-        $mform->addElement('format', 'introformat', get_string('format'));
+        $this->add_intro_editor(true, get_string('chatintro', 'chat'));
 
 //-------------------------------------------------------------------------------
-        $repeatarray=array();
+        $repeatarray = array();
         $repeatarray[] = &MoodleQuickForm::createElement('header', '', get_string('option','choice').' {no}');
         $repeatarray[] = &MoodleQuickForm::createElement('text', 'option', get_string('option','choice'));
         $repeatarray[] = &MoodleQuickForm::createElement('text', 'limit', get_string('limit','choice'));
         $repeatarray[] = &MoodleQuickForm::createElement('hidden', 'optionid', 0);
 
-        $menuoptions=array();
+        $menuoptions = array();
         $menuoptions[0] = get_string('disable');
         $menuoptions[1] = get_string('enable');
         $mform->addElement('header', 'timerestricthdr', get_string('limit', 'choice'));

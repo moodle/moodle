@@ -79,7 +79,7 @@ function chat_add_instance($chat) {
 
         $event = NULL;
         $event->name        = $chat->name;
-        $event->description = $chat->intro;
+        $event->description = format_module_intro('chat', $chat, $chat->coursemodule);
         $event->courseid    = $chat->course;
         $event->groupid     = 0;
         $event->userid      = 0;
@@ -113,7 +113,7 @@ function chat_update_instance($chat) {
         if ($event->id = $DB->get_field('event', 'id', array('modulename'=>'chat', 'instance'=>$chat->id))) {
 
             $event->name        = $chat->name;
-            $event->description = $chat->intro;
+            $event->description = format_module_intro('chat', $chat, $chat->coursemodule);
             $event->timestart   = $chat->chattime;
 
             update_event($event);
@@ -399,9 +399,10 @@ function chat_refresh_events($courseid = 0) {
     $moduleid = $DB->get_field('modules', 'id', array('name'=>'chat'));
 
     foreach ($chats as $chat) {
-        $event = NULL;
+        $cm = get_coursemodule_from_id('chat', $chat->id);
+        $event = new object();
         $event->name        = $chat->name;
-        $event->description = $chat->intro;
+        $event->description = format_module_intro('chat', $chat, $cm->id);
         $event->timestart   = $chat->chattime;
 
         if ($event->id = $DB->get_field('event', 'id', array('modulename'=>'chat', 'instance'=>$chat->id))) {
@@ -600,8 +601,6 @@ function chat_update_chat_times($chatid=0) {
     }
 
     foreach ($chats as $chat) {
-        unset($chat->name);
-        unset($chat->intro);
         switch ($chat->schedule) {
             case 1: // Single event - turn off schedule and disable
                     $chat->chattime = 0;

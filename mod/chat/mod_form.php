@@ -4,8 +4,7 @@ require_once ($CFG->dirroot.'/course/moodleform_mod.php');
 class mod_chat_mod_form extends moodleform_mod {
 
     function definition() {
-        global $CFG, $DB;
-        $mform    =& $this->_form;
+        $mform = $this->_form;
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -18,10 +17,7 @@ class mod_chat_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
 
-        $mform->addElement('htmleditor', 'intro', get_string('chatintro', 'chat'));
-        $mform->setType('intro', PARAM_RAW);
-        $mform->setHelpButton('intro', array('writing', 'questions', 'richtext2'), false, 'editorhelpbutton');
-        $mform->addRule('intro', get_string('required'), 'required', null, 'client');
+        $this->add_intro_editor(true, get_string('chatintro', 'chat'));
 
         $mform->addElement('date_time_selector', 'chattime', get_string('chattime', 'chat'));
 
@@ -55,4 +51,3 @@ class mod_chat_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 }
-?>
