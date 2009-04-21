@@ -119,7 +119,7 @@ class repository_type {
 
     /**
      * repository_type constructor
-     * @global <type> $CFG
+     * @global object $CFG
      * @param integer $typename
      * @param array $typeoptions
      * @param boolean $visible
@@ -381,7 +381,7 @@ class repository_type {
     /**
      * 1. Switch the visibility OFF if it's ON, and ON if it's OFF.
      * 2. Update the type
-     * @return <type>
+     * @return boolean
      */
     public function switch_and_update_visibility() {
         $this->_visible = !$this->_visible;
@@ -686,13 +686,13 @@ abstract class repository {
 
     /**
      * call a static function
-     * @global <type> $CFG
-     * @param <type> $plugin
-     * @param <type> $function
+     * @global object $CFG
+     * @param string $plugin
+     * @param string $function
      * @param type $nocallablereturnvalue default value if function not found
      *             it's mostly used when you don't want to display an error but
      *             return a boolean
-     * @return <type>
+     * @return mixed
      */
     public static function static_function($plugin, $function) {
         global $CFG;
@@ -829,9 +829,9 @@ abstract class repository {
 
     /**
      * Return the user files tree in a format to be returned by the function get_listing
-     * @global <type> $CFG
-     * @param <type> $search
-     * @return <type>
+     * @global object $CFG
+     * @param string $search
+     * @return array
      */
     public static function get_user_file_tree($search = ""){
         global $CFG;
@@ -874,10 +874,10 @@ abstract class repository {
 
     /**
      *
-     * @param <type> $filearea
-     * @param <type> $path
-     * @param <type> $visiblename
-     * @return <type>
+     * @param string $filearea
+     * @param string $path
+     * @param string $visiblename
+     * @return array
      */
     public static function encode_path($filearea, $path, $visiblename) {
         return array('path'=>serialize(array($filearea, $path)), 'name'=>$visiblename);
@@ -1138,7 +1138,7 @@ abstract class repository {
 
     /**
      * Return the name of the repository class
-     * @return <type>
+     * @return string
      */
     public function __toString() {
         return 'Repository class: '.__CLASS__;
@@ -1189,41 +1189,6 @@ abstract class repository {
     }
 
     /**
-     * Print a list or return formatted string, can be overridden by subclass
-     *
-     * @param string $list
-     * @param boolean $print false, return html, otherwise, print it directly
-     * @return <type>
-     */
-    public function print_listing($listing = array(), $print=true) {
-        if (empty($listing)) {
-            $listing = $this->get_listing();
-        }
-        if (empty($listing)) {
-            $str = '';
-        } else {
-            $count = 0;
-            $str = '<table>';
-            foreach ($listing as $v) {
-                $str .= '<tr id="entry_'.$count.'">';
-                $str .= '<td><input type="checkbox" /></td>';
-                $str .= '<td>'.$v['name'].'</td>';
-                $str .= '<td>'.$v['size'].'</td>';
-                $str .= '<td>'.$v['date'].'</td>';
-                $str .= '</tr>';
-                $count++;
-            }
-            $str .= '</table>';
-        }
-        if ($print) {
-            echo $str;
-            return null;
-        } else {
-            return $str;
-        }
-    }
-
-    /**
      * Return is the instance is visible
      * (is the type visible ? is the context enable ?)
      * @return boolean
@@ -1244,8 +1209,8 @@ abstract class repository {
 
     /**
      * Return the name of this instance, can be overridden.
-     * @global <type> $DB
-     * @return <type>
+     * @global object $DB
+     * @return string
      */
     public function get_name() {
         global $DB;
@@ -1310,7 +1275,7 @@ abstract class repository {
      * @param integer $userid the user id
      * @param object $context the context
      * @param array $params the options for this instance
-     * @return <type>
+     * @return mixed
      */
     final public static function create($type, $userid, $context, $params, $readonly=0) {
         global $CFG, $DB;
@@ -1351,7 +1316,7 @@ abstract class repository {
     /**
      * delete a repository instance
      * @global object $DB
-     * @return <type>
+     * @return mixed
      */
     final public function delete() {
         global $DB;
@@ -1364,7 +1329,7 @@ abstract class repository {
      * Hide/Show a repository
      * @global object $DB
      * @param string $hide
-     * @return <type>
+     * @return boolean
      */
     final public function hide($hide = 'toggle') {
         global $DB;
@@ -1460,7 +1425,7 @@ abstract class repository {
     /**
      * Get settings for repository instance
      * @global object $DB
-     * @param <type> $config
+     * @param string $config
      * @return array Settings
      */
     public function get_option($config = '') {
@@ -1508,38 +1473,7 @@ abstract class repository {
     /**
      * Given a path, and perhaps a search, get a list of files.
      *
-     * The format of the returned array must be:
-     * array(
-     *   'path' => (string) path for the current folder
-     *   'dynload' => (bool) use dynamic loading,
-     *   'manage' => (string) link to file manager,
-     *   'nologin' => (bool) requires login,
-     *   'nosearch' => (bool) no search link,
-     *   'upload' => array( // upload manager
-     *     'name' => (string) label of the form element,
-     *     'id' => (string) id of the form element
-     *   ),
-     *   'list' => array(
-     *     array( // file
-     *       'title' => (string) file name,
-     *       'date' => (string) file last modification time, usually userdate(...),
-     *       'size' => (int) file size,
-     *       'thumbnail' => (string) url to thumbnail for the file,
-     *       'source' => plugin-dependent unique path to the file (id, url, path, etc.),
-     *       'url'=> the accessible url of file
-     *     ),
-     *     array( // folder - same as file, but no 'source'.
-     *       'title' => (string) folder name,
-     *       'path' => (string) path to this folder
-     *       'date' => (string) folder last modification time, usually userdate(...),
-     *       'size' => 0,
-     *       'thumbnail' => (string) url to thumbnail for the folder,
-     *       'children' => array( // an empty folder needs to have 'children' defined, but empty.
-     *         // content (files and folders)
-     *       )
-     *     ),
-     *   )
-     * )
+     * See details on http://docs.moodle.org/en/Development:Repository_plugins
      *
      * @param string $parent The parent path, this parameter can
      * a folder name, or a identification of folder
@@ -1611,7 +1545,7 @@ abstract class repository {
 
     /**
      * Defines operations that happen occasionally on cron
-     * @return <type>
+     * @return boolean
      */
     public function cron() {
         return true;
@@ -1684,7 +1618,7 @@ final class repository_instance_form extends moodleform {
 
     /**
      * TODO: write comment
-     * @global <type> $CFG
+     * @global object $CFG
      */
     public function definition() {
         global $CFG;
@@ -1735,9 +1669,9 @@ final class repository_instance_form extends moodleform {
 
     /**
      * TODO: write comment
-     * @global <type> $DB
-     * @param <type> $data
-     * @return <type>
+     * @global object $DB
+     * @param mixed $data
+     * @return mixed
      */
     public function validation($data) {
         global $DB;
@@ -1892,12 +1826,10 @@ function repository_get_client($context, $id = '',  $accepted_filetypes = '*', $
 </style>
 
 <!--[if IE 6]>
-    <style type="text/css">
-    /* Fix for IE6 */
-    .yui-skin-sam .yui-panel .hd{
-
-    }
-    </style>
+<style type="text/css">
+/* Fix for IE6 */
+.yui-skin-sam .yui-panel .hd{}
+</style>
 <![endif]-->
 EOD;
 
@@ -1957,20 +1889,20 @@ EOD;
         $lang['popup']     = get_string('popup', 'repository');
         $lang['upload']    = get_string('upload', 'repository').'...';
         $lang['uploading'] = get_string('uploading', 'repository');
-        // XXX fp_lang includes language strings
+        // fp_lang includes language strings
         $js .= print_js_config($lang, 'fp_lang', true);
 
         $options = array();
         $context = get_system_context();
         $options['contextid'] = $context->id;
-        // XXX fp_config includes filepicker options, including contextid
+        // fp_config includes filepicker options
         $js .= print_js_config($options, 'fp_config', true);
 
         $accepted_file_ext = json_encode($ft->get_file_ext($accepted_filetypes));
         $js .= <<<EOD
 <script>
-        file_extensions.image = $image_file_ext;
-        file_extensions.media = $video_file_ext;
+file_extensions.image = $image_file_ext;
+file_extensions.media = $video_file_ext;
 </script>
 EOD;
 
@@ -1986,9 +1918,11 @@ EOD;
         $accepted_filetypes = '*';
     }
     $repos = repository::get_instances(array($user_context, $context, get_system_context()), null, true, null, $accepted_filetypes, $returnvalue);
+
+    // print repository instances listing
     $js .= <<<EOD
 <script>
-    repository_listing['$id'] = {};
+repository_listing['$id'] = {};
 EOD;
     foreach ($repos as $repo) {
         $info = $repo->ajax_info();
