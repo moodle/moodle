@@ -135,4 +135,23 @@ function lable_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
 }
 
+/**
+ * @param string $feature FEATURE_xx constant for requested feature
+ * @return mixed True if module supports feature, null if doesn't know
+ */
+function label_supports($feature) {
+    switch($feature) {
+        case FEATURE_IDNUMBER:                return false;
+        case FEATURE_GROUPS:                  return false;
+        case FEATURE_GROUPINGS:               return false;
+        case FEATURE_GROUPMEMBERSONLY:        return true;
+        case FEATURE_MODEDIT_INTRO_EDITOR:    return false;
+        case FEATURE_COMPLETION_TRACKS_VIEWS: return false;
+        case FEATURE_GRADE_HAS_GRADE:         return false;
+        case FEATURE_GRADE_OUTCOMES:          return false;
+
+        default: return null;
+    }
+}
+
 ?>

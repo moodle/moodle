@@ -300,11 +300,27 @@ define ('PASSWORD_NONALPHANUM', '.,;:!?_-+/*@#&$');
 
 /** True if module can provide a grade */
 define('FEATURE_GRADE_HAS_GRADE', 'grade_has_grade');
+/** True if module supports outcomes */
+define('FEATURE_GRADE_OUTCOMES', 'outcomes');
+
 /** True if module has code to track whether somebody viewed it */
 define('FEATURE_COMPLETION_TRACKS_VIEWS', 'completion_tracks_views');
 /** True if module has custom completion rules */
 define('FEATURE_COMPLETION_HAS_RULES', 'completion_has_rules');
 
+/** True if module supports outcomes */
+define('FEATURE_IDNUMBER', 'idnumber');
+/** True if module supports groups */
+define('FEATURE_GROUPS', 'groups');
+/** True if module supports groupings */
+define('FEATURE_GROUPINGS', 'groupings');
+/** True if module supports groupmembersonly */
+define('FEATURE_GROUPMEMBERSONLY', 'groupmembersonly');
+
+/** True if module supports intro editor */
+define('FEATURE_MODEDIT_INTRO_EDITOR', 'modedit_intro_editor');
+/** True if module has default completion */
+define('FEATURE_MODEDIT_DEFAULT_COMPLETION', 'modedit_default_completion');
 
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////

@@ -62,7 +62,7 @@ class mod_data_mod_form extends moodleform_mod {
         $mform->disabledIf('scale', 'assessed');
 
 
-        $this->standard_coursemodule_elements(array('groups'=>true, 'groupings'=>true, 'groupmembersonly'=>true));
+        $this->standard_coursemodule_elements();
 
 //-------------------------------------------------------------------------------
         // buttons

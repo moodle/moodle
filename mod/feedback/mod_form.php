@@ -85,13 +85,7 @@ class mod_feedback_mod_form extends moodleform_mod {
         $mform->addElement('htmleditor', 'page_after_submit', get_string("page_after_submit", "feedback"), array('rows' => 20));
         $mform->setType('page_after_submit', PARAM_RAW);
         //-------------------------------------------------------------------------------
-        $features = new stdClass;
-        $features->groups = true;
-        $features->groupings = true;
-        $features->groupmembersonly = true;
-        $features->gradecat = false;
-        $features->idnumber = false;
-        $this->standard_coursemodule_elements($features);
+        $this->standard_coursemodule_elements();
         //-------------------------------------------------------------------------------
         // buttons
         $this->add_action_buttons();

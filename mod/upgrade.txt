@@ -12,11 +12,11 @@ required changes in code:
 * completely rewrite file handling
 * rewrite backup/restore
 * rewrite trusstext support - new db table columns needed
+* migrade all module features from mod_edit.php form to lib.php/modulename_supports() function
 
 optional - no changes needed in older code:
 * portfolio support
 * course completion tracking support
-* lib.php/xxx_supports() may describe module features and capabilities
 
 
 

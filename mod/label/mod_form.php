@@ -12,9 +12,7 @@ class mod_label_mod_form extends moodleform_mod {
         $mform->addRule('content', get_string('required'), 'required', null, 'client');
         $mform->setHelpButton('content', array('questions', 'richtext2'), false, 'editorhelpbutton');
 
-        $features = array('groups'=>false, 'groupings'=>false, 'groupmembersonly'=>true,
-                          'outcomes'=>false, 'gradecat'=>false, 'idnumber'=>false);
-        $this->standard_coursemodule_elements($features);
+        $this->standard_coursemodule_elements();
 
 //-------------------------------------------------------------------------------
 // buttons

@@ -1,10 +1,7 @@
 <?php  //$Id$
 require_once ($CFG->libdir.'/formslib.php');
-if(!empty($CFG->enablecompletion)) {
+if (!empty($CFG->enablecompletion) or !empty($CFG->enableavailability)) {
     require_once($CFG->libdir.'/completionlib.php');
-}
-if(!empty($CFG->enableavailability)) {
-    require_once($CFG->libdir.'/conditionlib.php');
 }
 
 /**
@@ -20,36 +17,63 @@ class moodleform_mod extends moodleform {
      *
      * @var mixed
      */
-    var $_instance;
+    protected $_instance;
     /**
      * Section of course that module instance will be put in or is in.
      * This is always the section number itself (column 'section' from 'course_sections' table).
      *
      * @var mixed
      */
-    var $_section;
+    protected $_section;
     /**
      * Coursemodle record of the module that is being updated. Will be null if this is an 'add' form and not an
      * update one.
       *
      * @var mixed
      */
-    var $_cm;
+    protected $_cm;
     /**
      * List of modform features
      */
-    var $_features;
-    
+    protected $_features;
     /**
      * @var array Custom completion-rule elements, if enabled
      */
-    var $_customcompletionelements;
+    protected $_customcompletionelements;
+    /**
+     * @var string name of module
+     */
+    protected $_modname;
 
     function moodleform_mod($instance, $section, $cm) {
         $this->_instance = $instance;
         $this->_section = $section;
         $this->_cm = $cm;
+        // Guess module name
+        $matches = array();
+        if (!preg_match('/^mod_([^_]+)_mod_form$/', get_class($this), $matches)) {
+            debugging('Use $modname parameter or rename form to mod_xx_mod_form, where xx is name of your module');
+            print_error('unknownmodulename');
+        }
+        $this->_modname = $matches[1];
+        $this->init_features();
         parent::moodleform('modedit.php');
+    }
+
+    protected function init_features() {
+        global $CFG;
+
+        $this->_features = new object();
+        $this->_features->groups            = plugin_supports('mod', $this->_modname, FEATURE_GROUPS, true);
+        $this->_features->groupings         = plugin_supports('mod', $this->_modname, FEATURE_GROUPINGS, false);
+        $this->_features->groupmembersonly  = plugin_supports('mod', $this->_modname, FEATURE_GROUPMEMBERSONLY, false);
+        $this->_features->outcomes          = (!empty($CFG->enableoutcomes) and plugin_supports('mod', $this->_modname, FEATURE_GRADE_OUTCOMES, true));
+        $this->_features->hasgrades         = plugin_supports('mod', $this->_modname, FEATURE_GRADE_HAS_GRADE, false);
+        $this->_features->idnumber          = plugin_supports('mod', $this->_modname, FEATURE_IDNUMBER, true);
+        $this->_features->introeditor       = plugin_supports('mod', $this->_modname, FEATURE_MODEDIT_INTRO_EDITOR, true);
+        $this->_features->defaultcompletion = plugin_supports('mod', $this->_modname, FEATURE_MODEDIT_DEFAULT_COMPLETION, true);
+
+        $this->_features->gradecat          = ($this->_features->outcomes or $this->_features->hasgrades);
     }
 
     /**
@@ -276,70 +300,13 @@ class moodleform_mod extends moodleform {
 
     /**
      * Adds all the standard elements to a form to edit the settings for an activity module.
-     *
-     * @param mixed $features array or object describing supported features - groups, groupings, groupmembersonly, etc.
-     * @param string $modname Name of module e.g. 'label'
      */
-    function standard_coursemodule_elements($features=null, $modname=null){
+    function standard_coursemodule_elements(){
         global $COURSE, $CFG, $DB;
         $mform =& $this->_form;
 
-        // Guess module name if not supplied
-        if (!$modname) {
-            $matches=array();
-            if (!preg_match('/^mod_([^_]+)_mod_form$/', $this->_formname, $matches)) {
-                debugging('Use $modname parameter or rename form to mod_xx_mod_form, where xx is name of your module');
-                print_error('unknownmodulename');
-            }
-            $modname=$matches[1];
-        }
-
-        // deal with legacy $supportgroups param
-        if ($features === true or $features === false) {
-            $groupmode = $features;
-            $this->_features = new object();
-            $this->_features->groups = $groupmode;
-
-        } else if (is_array($features)) {
-            $this->_features = (object)$features;
-
-        } else if (empty($features)) {
-            $this->_features = new object();
-
-        } else {
-            $this->_features = $features;
-        }
-
-        if (!isset($this->_features->groups)) {
-            $this->_features->groups = true;
-        }
-
-        if (!isset($this->_features->groupings)) {
-            $this->_features->groupings = false;
-        }
-
-        if (!isset($this->_features->groupmembersonly)) {
-            $this->_features->groupmembersonly = false;
-        }
-
-        if (!isset($this->_features->outcomes)) {
-            $this->_features->outcomes = true;
-        }
-
-        if (!isset($this->_features->gradecat)) {
-            $this->_features->gradecat = true;
-        }
-
-        if (!isset($this->_features->idnumber)) {
-            $this->_features->idnumber = true;
-        }
-        
-        if (!isset($this->_features->defaultcompletion)) {
-            $this->_features->defaultcompletion = true;
-        }
-
         $outcomesused = false;
-        if (!empty($CFG->enableoutcomes) and $this->_features->outcomes) {
+        if ($this->_features->outcomes) {
             if ($outcomes = grade_outcome::fetch_all_available($COURSE->id)) {
                 $outcomesused = true;
                 $mform->addElement('header', 'modoutcomes', get_string('outcomes', 'grades'));
@@ -401,9 +368,9 @@ class moodleform_mod extends moodleform {
             $mform->setHelpButton('availableuntil', array('conditiondates', get_string('help_conditiondates', 'condition'), 'condition'));
 
             // Conditions based on grades
-            $gradeoptions=array();
-            $items=grade_item::fetch_all(array('courseid'=>$COURSE->id));
-            $items=$items ? $items : array();
+            $gradeoptions = array();
+            $items = grade_item::fetch_all(array('courseid'=>$COURSE->id));
+            $items = $items ? $items : array();
             foreach($items as $id=>$item) {
                 // Do not include grades for current item
                 if (!empty($this->_cm) && $this->_cm->instance == $item->iteminstance
@@ -411,12 +378,12 @@ class moodleform_mod extends moodleform {
                     && $item->itemtype == 'mod') {
                     continue;
                 }
-                $gradeoptions[$id]=$item->get_name();
+                $gradeoptions[$id] = $item->get_name();
             }
             asort($gradeoptions);
-            $gradeoptions=array(0=>get_string('none','condition'))+$gradeoptions;
+            $gradeoptions = array(0=>get_string('none','condition'))+$gradeoptions;
 
-            $grouparray=array();
+            $grouparray = array();
             $grouparray[] =& $mform->createElement('select','conditiongradeitemid','',$gradeoptions);
             $grouparray[] =& $mform->createElement('static', '', '',' '.get_string('grade_atleast','condition').' ');
             $grouparray[] =& $mform->createElement('text', 'conditiongrademin','',array('size'=>3));
@@ -431,22 +398,22 @@ class moodleform_mod extends moodleform {
             // Get version with condition info and store it so we don't ask
             // twice
             if(!empty($this->_cm)) {           
-                $ci = new condition_info($this->_cm,CONDITION_MISSING_EXTRATABLE);
-                $this->_cm=$ci->get_full_course_module();
-                $count=count($this->_cm->conditionsgrade)+1;
+                $ci = new condition_info($this->_cm, CONDITION_MISSING_EXTRATABLE);
+                $this->_cm = $ci->get_full_course_module();
+                $count = count($this->_cm->conditionsgrade)+1;
             } else {
-                $count=1;
+                $count = 1;
             }
 
-            $this->repeat_elements(array($group),$count,array(),'conditiongraderepeats','conditiongradeadds',2,
-                get_string('addgrades','condition'),true);
+            $this->repeat_elements(array($group), $count, array(), 'conditiongraderepeats', 'conditiongradeadds', 2,
+                                   get_string('addgrades', 'condition'), true);
             $mform->setHelpButton('conditiongradegroup[0]', array('gradecondition', get_string('help_gradecondition', 'condition'), 'condition'));
 
             // Conditions based on completion
             $completion = new completion_info($COURSE);
             if ($completion->is_enabled()) {
-                $completionoptions=array();
-                $modinfo=get_fast_modinfo($COURSE);
+                $completionoptions = array();
+                $modinfo = get_fast_modinfo($COURSE);
                 foreach($modinfo->cms as $id=>$cm) {
                     // Add each course-module if it:
                     // (a) has completion turned on
@@ -456,7 +423,7 @@ class moodleform_mod extends moodleform {
                     }
                 }
                 asort($completionoptions);
-                $completionoptions=array(0=>get_string('none','condition'))+$completionoptions;
+                $completionoptions = array(0=>get_string('none','condition'))+$completionoptions;
 
                 $completionvalues=array(
                     COMPLETION_COMPLETE=>get_string('completion_complete','condition'),
@@ -464,13 +431,13 @@ class moodleform_mod extends moodleform {
                     COMPLETION_COMPLETE_PASS=>get_string('completion_pass','condition'),
                     COMPLETION_COMPLETE_FAIL=>get_string('completion_fail','condition'));
 
-                $grouparray=array();        
+                $grouparray = array();        
                 $grouparray[] =& $mform->createElement('select','conditionsourcecmid','',$completionoptions);
                 $grouparray[] =& $mform->createElement('select','conditionrequiredcompletion','',$completionvalues);
                 $group = $mform->createElement('group','conditioncompletiongroup', 
                     get_string('completioncondition', 'condition'),$grouparray);
 
-                $count=empty($this->_cm) ? 1 : count($this->_cm->conditionscompletion)+1;
+                $count = empty($this->_cm) ? 1 : count($this->_cm->conditionscompletion)+1;
                 $this->repeat_elements(array($group),$count,array(),
                     'conditioncompletionrepeats','conditioncompletionadds',2,
                     get_string('addcompletions','condition'),true);

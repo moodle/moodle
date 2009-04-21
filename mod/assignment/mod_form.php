@@ -60,16 +60,10 @@ class mod_assignment_mod_form extends moodleform_mod {
         $mform->addElement('header', 'typedesc', get_string('type'.$type,'assignment'));
         $assignmentinstance->setup_elements($mform);
 
-        $features = new stdClass;
-        $features->groups = true;
-        $features->groupings = true;
-        $features->groupmembersonly = true;
-        $this->standard_coursemodule_elements($features);
+        $this->standard_coursemodule_elements();
 
         $this->add_action_buttons();
     }
 
-
-
 }
-?>
+
