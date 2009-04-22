@@ -13,6 +13,7 @@ required changes in code:
 * rewrite backup/restore
 * rewrite trusstext support - new db table columns needed
 * migrade all module features from mod_edit.php form to lib.php/modulename_supports() function
+* implement new gradebook support (legacy 1.8.x grading not supported anymore)
 
 optional - no changes needed in older code:
 * portfolio support

@@ -157,10 +157,6 @@ switch ($action) {
         //TODO: implement autosorting based on order of mods on course page, categories first, manual items last
         break;
 
-    case 'synclegacy':
-        grade_grab_legacy_grades($course->id);
-        redirect($returnurl);
-
     case 'move':
         if ($eid and confirm_sesskey()) {
             $moveafter = required_param('moveafter', PARAM_ALPHANUM);
@@ -361,9 +357,6 @@ if ($moving) {
     }
 
     //print_single_button('index.php', array('id'=>$course->id, 'action'=>'autosort'), get_string('autosort', 'grades'), 'get');
-    echo "<br /><br />";
-    print_single_button('index.php', array('id'=>$course->id, 'action'=>'synclegacy'), get_string('synclegacygrades', 'grades'), 'get');
-    helpbutton('synclegacygrades', get_string('synclegacygrades', 'grades'), 'grade');
 }
 
 echo '</div>';
