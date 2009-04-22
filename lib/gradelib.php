@@ -871,7 +871,7 @@ function grade_force_full_regrading($courseid) {
 function grade_force_site_regrading() {
     global $CFG;
     $sql = "UPDATE {$CFG->prefix}grade_items SET needsupdate=1";
-    execute_sql($sql);
+    execute_sql($sql, false);
 }
 
 /**
