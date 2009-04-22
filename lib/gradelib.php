@@ -706,7 +706,7 @@ function grade_format_gradevalue_real($value, $grade_item, $decimals, $localized
             return get_string('error');
         }
 
-        $value = (int)bounded_number($grade_item->grademin, $value, $grade_item->grademax);
+        $value = $grade_item->bounded_grade($value);
         return format_string($scale->scale_items[$value-1]);
 
     } else {
@@ -720,7 +720,7 @@ function grade_format_gradevalue_percentage($value, $grade_item, $decimals, $loc
     if ($min == $max) {
         return '';
     }
-    $value = bounded_number($min, $value, $max);
+    $value = $grade_item->bounded_grade($value);
     $percentage = (($value-$min)*100)/($max-$min);
     return format_float($percentage, $decimals, $localized).' %';
 }
@@ -729,6 +729,10 @@ function grade_format_gradevalue_letter($value, $grade_item) {
     $context = get_context_instance(CONTEXT_COURSE, $grade_item->courseid);
     if (!$letters = grade_get_letters($context)) {
         return ''; // no letters??
+    }
+
+    if (is_null($value)) {
+        return '-';
     }
 
     $value = grade_grade::standardise_score($value, $grade_item->grademin, $grade_item->grademax, 0, 100);
@@ -859,6 +863,15 @@ function grade_verify_idnumber($idnumber, $courseid, $grade_item=null, $cm=null)
  */
 function grade_force_full_regrading($courseid) {
     set_field('grade_items', 'needsupdate', 1, 'courseid', $courseid);
+}
+
+/**
+ * Forces regrading of all site grades - usualy when chanign site setings
+ */
+function grade_force_site_regrading() {
+    global $CFG;
+    $sql = "UPDATE {$CFG->prefix}grade_items SET needsupdate=1";
+    execute_sql($sql);
 }
 
 /**
@@ -1069,7 +1082,7 @@ function grade_update_mod_grades($modinstance, $userid=0) {
 
     $fullmod = $CFG->dirroot.'/mod/'.$modinstance->modname;
     if (!file_exists($fullmod.'/lib.php')) {
-        debugging('missing lib.php file in module');
+        debugging('missing lib.php file in module ' . $modinstance->modname);
         return false;
     }
     include_once($fullmod.'/lib.php');

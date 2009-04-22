@@ -3495,6 +3495,35 @@ class admin_setting_special_coursemanager extends admin_setting_configmulticheck
     }
 }
 
+class admin_setting_special_gradelimiting extends admin_setting_configcheckbox {
+    function admin_setting_special_gradelimiting() {
+        parent::admin_setting_configcheckbox('unlimitedgrades', get_string('unlimitedgrades', 'grades'),
+                                                  get_string('configunlimitedgrades', 'grades'), '0', '1', '0');
+    }
+
+    function regrade_all() {
+        global $CFG;
+        require_once("$CFG->libdir/gradelib.php");
+        grade_force_site_regrading();
+    }
+
+    function write_setting($data) {
+        $previous = $this->get_setting();
+
+        if ($previous === null) {
+            if ($data) {
+                $this->regrade_all();
+            }
+        } else {
+            if ($data != $previous) {
+                $this->regrade_all();
+            }
+        }
+        return ($this->config_write($this->name, $data) ? '' : get_string('errorsetting', 'admin'));
+    }
+
+}
+
 /**
  * Primary grade export plugin - has state tracking.
  */
