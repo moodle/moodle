@@ -88,7 +88,7 @@ class grade_edit_tree {
      *
      * @return string HTML
      */
-    public function build_html_tree($element, $totals, $parents=array(), &$categories=array(), $level=0, &$row_count=0) {
+    public function build_html_tree($element, $totals, $parents, &$categories, $level, &$row_count) {
         global $CFG, $COURSE, $USER;
 
         $object = $element['object'];

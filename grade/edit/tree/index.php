@@ -316,7 +316,9 @@ echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 
 // Build up an array of categories for move drop-down (by reference)
 $categories = array();
-echo $grade_edit_tree->build_html_tree($gtree->top_element, true, array(), $categories);
+$level      = 0;
+$row_count  = 0;
+echo $grade_edit_tree->build_html_tree($gtree->top_element, true, array(), $categories, $level, $row_count);
 
 echo '<div id="gradetreesubmit">';
 if (!$moving) {
