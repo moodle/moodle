@@ -1176,7 +1176,7 @@ class grade_item extends grade_object {
 
         } else if ($this->is_category_item()) {
             if ($fulltotal) {
-                $category = $this->get_parent_category();
+                $category = $this->load_parent_category();
                 $a = new stdClass();
                 $a->category = $category->get_name();
                 return get_string('categorytotalfull', 'grades', $a);
@@ -1950,9 +1950,9 @@ class grade_item extends grade_object {
      * grade item.
      */
     function get_coefstring() {
-        $parent_category = $this->get_parent_category();
+        $parent_category = $this->load_parent_category();
         if ($this->is_category_item()) {
-            $parent_category = $parent_category->get_parent_category();
+            $parent_category = $parent_category->load_parent_category();
         }
 
         if ($parent_category->is_aggregationcoef_used()) {

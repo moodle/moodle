@@ -826,14 +826,14 @@ class grade_category extends grade_object {
 
         // Stop recursing upwards if this category aggregates subcats or has no parent
         if (!$first && !$this->aggregatesubcats) {
-            if ($parent_category = $this->get_parent_category()) {
+            if ($parent_category = $this->load_parent_category()) {
                 return $parent_category->get_coefstring(false);
             } else {
                 return null;
             }
         } elseif ($first) {
             if (!$this->aggregatesubcats) {
-                if ($parent_category = $this->get_parent_category()) {
+                if ($parent_category = $this->load_parent_category()) {
                     $overriding_coefstring = $parent_category->get_coefstring(false);
                 }
             }
