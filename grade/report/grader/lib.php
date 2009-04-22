@@ -85,6 +85,8 @@ class grade_report_grader extends grade_report {
      * */
     var $canviewhidden;
 
+    var $preferences_page=false;
+
     /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
@@ -201,10 +203,13 @@ class grade_report_grader extends grade_report {
                 // Warn if the grade is out of bounds.
                 if (is_null($finalgrade)) {
                     // ok
-                } else if ($finalgrade < $grade_item->grademin) {
-                    $errorstr = 'lessthanmin';
-                } else if ($finalgrade > $grade_item->grademax) {
-                    $errorstr = 'morethanmax';
+                } else {
+                    $bounded = $grade_item->bounded_grade($finalgrade);
+                    if ($bounded > $finalgrade) {
+                        $errorstr = 'lessthanmin';
+                    } else if ($bounded < $finalgrade) {
+                        $errorstr = 'morethanmax';
+                    }
                 }
                 if ($errorstr) {
                     $user = get_record('user', 'id', $userid, '', '', '', '', 'id, firstname, lastname');
@@ -489,38 +494,44 @@ class grade_report_grader extends grade_report {
     function get_headerhtml() {
         global $CFG, $USER;
 
-        $strsortasc   = $this->get_lang_string('sortasc', 'grades');
-        $strsortdesc  = $this->get_lang_string('sortdesc', 'grades');
-        $strfirstname = $this->get_lang_string('firstname');
-        $strlastname  = $this->get_lang_string('lastname');
-        $showuseridnumber = $this->get_pref('showuseridnumber');
+        $this->rowcount = 0;
+        $fixedstudents = empty($USER->screenreader) && $CFG->grade_report_fixedstudents;
 
-        if ($this->sortitemid === 'lastname') {
-            if ($this->sortorder == 'ASC') {
-                $lastarrow = print_arrow('up', $strsortasc, true);
+        if (!$fixedstudents) {
+            $strsortasc   = $this->get_lang_string('sortasc', 'grades');
+            $strsortdesc  = $this->get_lang_string('sortdesc', 'grades');
+            $strfirstname = $this->get_lang_string('firstname');
+            $strlastname  = $this->get_lang_string('lastname');
+            $showuseridnumber = $this->get_pref('showuseridnumber');
+
+            if ($this->sortitemid === 'lastname') {
+                if ($this->sortorder == 'ASC') {
+                    $lastarrow = print_arrow('up', $strsortasc, true);
+                } else {
+                    $lastarrow = print_arrow('down', $strsortdesc, true);
+                }
             } else {
-                $lastarrow = print_arrow('down', $strsortdesc, true);
+                $lastarrow = '';
             }
-        } else {
-            $lastarrow = '';
+
+            if ($this->sortitemid === 'firstname') {
+                if ($this->sortorder == 'ASC') {
+                    $firstarrow = print_arrow('up', $strsortasc, true);
+                } else {
+                    $firstarrow = print_arrow('down', $strsortdesc, true);
+                }
+            } else {
+                $firstarrow = '';
+            }
+
         }
 
-        if ($this->sortitemid === 'firstname') {
-            if ($this->sortorder == 'ASC') {
-                $firstarrow = print_arrow('up', $strsortasc, true);
-            } else {
-                $firstarrow = print_arrow('down', $strsortdesc, true);
-            }
-        } else {
-            $firstarrow = '';
-        }
         // Prepare Table Headers
         $headerhtml = '';
 
         $numrows = count($this->gtree->levels);
 
         $columns_to_unset = array();
-
 
         foreach ($this->gtree->levels as $key=>$row) {
             $columncount = 0;
@@ -529,37 +540,41 @@ class grade_report_grader extends grade_report {
                 // continue;
             }
 
-            $headerhtml .= '<tr class="heading r'.$this->rowcount++.'">';
-
-            if ($key == $numrows - 1) {
-                $headerhtml .= '<th class="header c'.$columncount++.'" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=firstname">'
-                            . $strfirstname . '</a> '
-                            . $firstarrow. '/ <a href="'.$this->baseurl.'&amp;sortitemid=lastname">' . $strlastname . '</a>'. $lastarrow .'</th>';
-                if ($showuseridnumber) {
-                    if ('idnumber' == $this->sortitemid) {
-                        if ($this->sortorder == 'ASC') {
-                            $idnumberarrow = print_arrow('up', $strsortasc, true);
+            if ($fixedstudents) {
+                $headerhtml .= '<tr class="heading_name_row">';
+            } else {
+                $headerhtml .= '<tr class="heading r'.$this->rowcount++.'">';
+                if ($key == $numrows - 1) {
+                    $headerhtml .= '<th class=" c'.$columncount++.'" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=firstname">'
+                                . $strfirstname . '</a> '
+                                . $firstarrow. '/ <a href="'.$this->baseurl.'&amp;sortitemid=lastname">' . $strlastname . '</a>'. $lastarrow .'</th>';
+                    if ($showuseridnumber) {
+                        if ('idnumber' == $this->sortitemid) {
+                            if ($this->sortorder == 'ASC') {
+                                $idnumberarrow = print_arrow('up', $strsortasc, true);
+                            } else {
+                                $idnumberarrow = print_arrow('down', $strsortdesc, true);
+                            }
                         } else {
-                            $idnumberarrow = print_arrow('down', $strsortdesc, true);
+                            $idnumberarrow = '';
                         }
-                    } else {
-                        $idnumberarrow = '';
+                        $headerhtml .= '<th class=" c'.$columncount++.' useridnumber" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=idnumber">'
+                                . get_string('idnumber') . '</a> ' . $idnumberarrow . '</th>';
                     }
-                    $headerhtml .= '<th class="header c'.$columncount++.' useridnumber" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=idnumber">'
-                            . get_string('idnumber') . '</a> ' . $idnumberarrow . '</th>';
-                }
-             } else {
-                $colspan='';
-                if ($showuseridnumber) {
-                    $colspan = 'colspan="2" ';
-                }
+                 } else {
+                    $colspan='';
+                    if ($showuseridnumber) {
+                        $colspan = 'colspan="2" ';
+                    }
 
-                $headerhtml .= '<td '.$colspan.'class="cell c'.$columncount++.' topleft">&nbsp;</td>';
+                    $headerhtml .= '<td '.$colspan.'class="cell c'.$columncount++.' topleft">&nbsp;</td>';
 
-                if ($showuseridnumber) {
-                    $columncount++;
+                    if ($showuseridnumber) {
+                        $columncount++;
+                    }
                 }
             }
+
 
             foreach ($row as $columnkey => $element) {
                 $sort_link = '';
@@ -594,7 +609,7 @@ class grade_report_grader extends grade_report {
                 }
 // Element is a category
                 else if ($type == 'category') {
-                    $headerhtml .= '<th class="header '. $columnclass.' category'.$catlevel.'" '.$colspan.' scope="col">'
+                    $headerhtml .= '<th class=" '. $columnclass.' category'.$catlevel.'" '.$colspan.' scope="col">'
                                 . shorten_text($element['object']->get_name());
                     $headerhtml .= $this->get_collapsing_icon($element);
 
@@ -626,7 +641,7 @@ class grade_report_grader extends grade_report {
                     }
 
                     $headerlink = $this->gtree->get_element_header($element, true, $this->get_pref('showactivityicons'), false);
-                    $headerhtml .= '<th class="header '.$columnclass.' '.$type.$catlevel.$hidden.'" scope="col" onclick="set_col(this.cellIndex)">'
+                    $headerhtml .= '<th class=" '.$columnclass.' '.$type.$catlevel.$hidden.'" scope="col" onclick="set_col(this.cellIndex)">'
                                 . shorten_text($headerlink) . $arrow;
                     $headerhtml .= '</th>';
                 }
@@ -649,9 +664,10 @@ class grade_report_grader extends grade_report {
         $strfeedback  = $this->get_lang_string("feedback");
         $strgrade     = $this->get_lang_string('grade');
         $gradetabindex = 1;
+        $numusers      = count($this->users);
         $showuserimage = $this->get_pref('showuserimage');
         $showuseridnumber = $this->get_pref('showuseridnumber');
-        $numusers      = count($this->users);
+        $fixedstudents = empty($USER->screenreader) && $CFG->grade_report_fixedstudents;
 
         // Preload scale objects for items with a scaleid
         $scales_list = '';
@@ -690,20 +706,25 @@ class grade_report_grader extends grade_report {
             }
 
             $columncount = 0;
-            // Student name and link
-            $user_pic = null;
-            if ($showuserimage) {
-                $user_pic = '<div class="userpic">' . print_user_picture($user, $this->courseid, NULL, 0, true) . '</div>';
-            }
+            if ($fixedstudents) {
+                $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">';
+            } else {
+                // Student name and link
+                $user_pic = null;
+                if ($showuserimage) {
+                    $user_pic = '<div class="userpic">' . print_user_picture($user, $this->courseid, null, 0, true) . '</div>';
+                }
 
-            $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
-                          .'<th class="header c'.$columncount++.' user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
-                          .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
-                          .fullname($user).'</a></th>';
+                $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
+                              .'<th class="c'.$columncount++.' user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
+                              .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
+                              .fullname($user).'</a></th>';
 
-            if ($showuseridnumber) {
-                $studentshtml .= '<th class="header c'.$columncount++.' useridnumber" onclick="set_row(this.parentNode.rowIndex);">'.
-                        $user->idnumber.'</th>';
+                if ($showuseridnumber) {
+                    $studentshtml .= '<th class="c'.$columncount++.' useridnumber" onclick="set_row(this.parentNode.rowIndex);">'.
+                            $user->idnumber.'</a></th>';
+                }
+
             }
 
             foreach ($this->gtree->items as $itemid=>$unused) {
@@ -737,7 +758,7 @@ class grade_report_grader extends grade_report {
                 $eid = $this->gtree->get_grade_eid($grade);
                 $element = array('eid'=>$eid, 'object'=>$grade, 'type'=>'grade');
 
-                $cellclasses = 'cell c'.$columncount++;
+                $cellclasses = 'grade cell c'.$columncount++;
                 if ($item->is_category_item()) {
                     $cellclasses .= ' cat';
                 }
@@ -749,13 +770,23 @@ class grade_report_grader extends grade_report {
                 }
 
                 if ($grade->is_excluded()) {
-                    $cellclasses .= ' excluded';
+                    // $cellclasses .= ' excluded';
                 }
 
-                $studentshtml .= '<td class="'.$cellclasses.'">';
+                $grade_title = '&lt;div class=&quot;fullname&quot;&gt;'.fullname($user).'&lt;/div&gt;';
+                $grade_title .= '&lt;div class=&quot;itemname&quot;&gt;'.$item->get_name(true).'&lt;/div&gt;';
+
+                if (!empty($grade->feedback) && !$USER->gradeediting[$this->courseid]) {
+                    $grade_title .= '&lt;div class=&quot;feedback&quot;&gt;'
+                                 .wordwrap(trim(format_string($grade->feedback, $grade->feedbackformat)), 34, '&lt;br/ &gt;') . '&lt;/div&gt;';
+                } else {
+
+                }
+
+                $studentshtml .= '<td class="'.$cellclasses.'" title="'.$grade_title.'">';
 
                 if ($grade->is_excluded()) {
-                    $studentshtml .= get_string('excluded', 'grades') . ' ';
+                    $studentshtml .= '<span class="excludedfloater">'.get_string('excluded', 'grades') . '</span> ';
                 }
 
                 // Do not show any icons if no grade (no record in DB to match)
@@ -817,7 +848,7 @@ class grade_report_grader extends grade_report {
                             if ($gradeval < 1) {
                                 $studentshtml .= '<span class="gradevalue'.$hidden.$gradepass.'">-</span>';
                             } else {
-                                $gradeval = (int)bounded_number($grade->grade_item->grademin, $gradeval, $grade->grade_item->grademax); //just in case somebody changes scale
+                                $gradeval = $grade->grade_item->bounded_grade($gradeval); //just in case somebody changes scale
                                 $studentshtml .= '<span class="gradevalue'.$hidden.$gradepass.'">'.$scales[$gradeval-1].'</span>';
                             }
                         } else {
@@ -839,9 +870,7 @@ class grade_report_grader extends grade_report {
 
                     // If quickfeedback is on, print an input element
                     if ($this->get_pref('showquickfeedback') and $grade->is_editable()) {
-                        if ($this->get_pref('quickgrading')) {
-                            $studentshtml .= '<br />';
-                        }
+
                         $studentshtml .= '<input type="hidden" name="oldfeedback_'
                                       .$userid.'_'.$item->id.'" value="' . s($grade->feedback) . '" />';
                         $studentshtml .= '<input class="quickfeedback" tabindex="' . $tabindices[$item->id]['feedback']
@@ -853,13 +882,6 @@ class grade_report_grader extends grade_report {
                     $gradedisplaytype = $item->get_displaytype();
 
                     // If feedback present, surround grade with feedback tooltip: Open span here
-                    if (!empty($grade->feedback)) {
-                        $overlib = '';
-                        $feedback = addslashes_js(trim(format_string($grade->feedback, $grade->feedbackformat)));
-                        $overlib = "return overlib('$feedback', BORDER, 0, FGCLASS, 'feedback', "
-                                  ."CAPTIONFONTCLASS, 'caption', CAPTION, '$strfeedback');";
-                        $studentshtml .= '<span onmouseover="'.s($overlib).'" onmouseout="return nd();">';
-                    }
 
                     if ($item->needsupdate) {
                         $studentshtml .= '<span class="gradingerror'.$hidden.$gradepass.'">'.get_string('error').'</span>';
@@ -885,6 +907,138 @@ class grade_report_grader extends grade_report {
         return $studentshtml;
     }
 
+    function get_studentnameshtml() {
+        global $CFG, $USER;
+        $studentshtml = '';
+
+        $showuserimage = $this->get_pref('showuserimage');
+        $showuseridnumber = $this->get_pref('showuseridnumber');
+        $fixedstudents = empty($USER->screenreader) && $CFG->grade_report_fixedstudents;
+
+        $strsortasc   = $this->get_lang_string('sortasc', 'grades');
+        $strsortdesc  = $this->get_lang_string('sortdesc', 'grades');
+        $strfirstname = $this->get_lang_string('firstname');
+        $strlastname  = $this->get_lang_string('lastname');
+
+        if ($this->sortitemid === 'lastname') {
+            if ($this->sortorder == 'ASC') {
+                $lastarrow = print_arrow('up', $strsortasc, true);
+            } else {
+                $lastarrow = print_arrow('down', $strsortdesc, true);
+            }
+        } else {
+            $lastarrow = '';
+        }
+
+        if ($this->sortitemid === 'firstname') {
+            if ($this->sortorder == 'ASC') {
+                $firstarrow = print_arrow('up', $strsortasc, true);
+            } else {
+                $firstarrow = print_arrow('down', $strsortdesc, true);
+            }
+        } else {
+            $firstarrow = '';
+        }
+
+        if ($fixedstudents) {
+            $studentshtml .= '<div class="left_scroller">
+                <table id="fixed_column" class="fixed_grades_column">
+                    <tbody class="leftbody">';
+
+            $colspan = '';
+            if ($showuseridnumber) {
+                $colspan = 'colspan="2"';
+            }
+
+            $levels = count($this->gtree->levels) - 1;
+
+
+            for ($i = 0; $i < $levels; $i++) {
+                $studentshtml .= '
+                        <tr class="heading name_row">
+                            <td '.$colspan.' class="fixedcolumn cell c0 topleft"> </td>
+                        </tr>
+                        ';
+            }
+
+            $studentshtml .= '<tr class="heading"><th class="header c0" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=firstname">'
+                        . $strfirstname . '</a> '
+                        . $firstarrow. '/ <a href="'.$this->baseurl.'&amp;sortitemid=lastname">' . $strlastname . '</a>'. $lastarrow .'</th>';
+
+            if ($showuseridnumber) {
+                if ('idnumber' == $this->sortitemid) {
+                    if ($this->sortorder == 'ASC') {
+                        $idnumberarrow = print_arrow('up', $strsortasc, true);
+                    } else {
+                        $idnumberarrow = print_arrow('down', $strsortdesc, true);
+                    }
+                } else {
+                    $idnumberarrow = '';
+                }
+                $studentshtml .= '<th class="header c0 useridnumber" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=idnumber">'
+                        . get_string('idnumber') . '</a> ' . $idnumberarrow . '</th>';
+            }
+
+            $studentshtml .= '</tr>';
+
+            if ($USER->gradeediting[$this->courseid]) {
+                $studentshtml .= '<tr class="controls"><th class="header c0 controls" scope="row" '.$colspan.'>'.$this->get_lang_string('controls','grades').'</th></tr>';
+            }
+
+            $row_classes = array(' even ', ' odd ');
+
+            foreach ($this->users as $userid => $user) {
+
+                $user_pic = null;
+                if ($showuserimage) {
+                    $user_pic = '<div class="userpic">' . print_user_picture($user, $this->courseid, NULL, 0, true) . "</div>\n";
+                }
+
+                $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
+                              .'<th class="c0 user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
+                              .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
+                              .fullname($user)."</a></th>\n";
+
+                if ($showuseridnumber) {
+                    $studentshtml .= '<th class="header c0 useridnumber" onclick="set_row(this.parentNode.rowIndex);">'. $user->idnumber."</th>\n";
+                }
+                $studentshtml .= "</tr>\n";
+            }
+
+            if ($this->get_pref('showranges')) {
+                $studentshtml .= '<tr class="range r'.$this->rowcount++.'">' . '<th class="header c0 range " '.$colspan.' scope="row">'.$this->get_lang_string('range','grades').'</th></tr>';
+            }
+
+            // Averages heading
+
+            $straverage_group = get_string('groupavg', 'grades');
+            $showaverages_group = $this->currentgroup && $this->get_pref('showgroups');
+            $straverage = get_string('overallaverage', 'grades');
+            $showaverages = $this->get_pref('showaverages');
+
+            if ($showaverages_group) {
+                $studentshtml .= '<tr class="groupavg r'.$this->rowcount++.'"><th class="header c0" '.$colspan.'scope="row">'.$straverage_group.'</th></tr>';
+            }
+
+            if ($showaverages) {
+                $studentshtml .= '<tr class="avg r'.$this->rowcount++.'"><th class="header c0" '.$colspan.'scope="row">'.$straverage.'</th></tr>';
+            }
+
+            $studentshtml .= '</tbody>
+                </table>
+            </div>
+            <div class="right_scroller">
+                <table id="user-grades" class="">
+                    <tbody class="righttest">';
+
+        } else {
+            $studentshtml .= '<table id="user-grades" class="gradestable flexible boxaligncenter generaltable">
+                                <tbody>';
+        }
+
+        return $studentshtml;
+    }
+
     /**
      * Builds and return the HTML row of column totals.
      * @param  bool $grouponly Whether to return only group averages or all averages.
@@ -903,7 +1057,6 @@ class grade_report_grader extends grade_report {
         $averagesdecimalpoints = $this->get_pref('averagesdecimalpoints');
         $meanselection         = $this->get_pref('meanselection');
         $shownumberofgrades    = $this->get_pref('shownumberofgrades');
-        $showuseridnumber      = $this->get_pref('showuseridnumber');
 
         $avghtml = '';
         $avgcssclass = 'avg';
@@ -950,16 +1103,8 @@ class grade_report_grader extends grade_report {
             }
 
             $columncount=0;
-            $colspan='';
-            if ($showuseridnumber) {
-                $colspan = 'colspan="2" ';
-            }
 
-            $avghtml = '<tr class="' . $avgcssclass . ' r'.$this->rowcount++.'"><th class="header c0" '.$colspan.'scope="row">'.$straverage.'</th>';
-
-            if ($showuseridnumber) {
-                $columncount++;
-            }
+            $avghtml = '<tr class="' . $avgcssclass . ' r'.$this->rowcount++.'">';
 
             // MDL-10875 Empty grades must be evaluated as grademin, NOT always 0
             // This query returns a count of ungraded grades (NULL finalgrade OR no matching record in grade_grades table)
@@ -977,6 +1122,15 @@ class grade_report_grader extends grade_report {
                   GROUP BY gi.id";
 
             $ungraded_counts = get_records_sql($SQL);
+
+            $fixedstudents = empty($USER->screenreader) && $CFG->grade_report_fixedstudents;
+            if (!$fixedstudents) {
+                $colspan='';
+                if ($this->get_pref('showuseridnumber')) {
+                    $colspan = 'colspan="2" ';
+                }
+                $avghtml .= '<th class="header c0 range "'.$colspan.' scope="row">'.$straverage.'</th>';
+            }
 
             foreach ($this->gtree->items as $itemid=>$unused) {
                 $item =& $this->gtree->items[$itemid];
@@ -1049,25 +1203,23 @@ class grade_report_grader extends grade_report {
      * @return string HTML
      */
     function get_rangehtml() {
-        global $USER;
-        $showuseridnumber      = $this->get_pref('showuseridnumber');
+        global $USER, $CFG;
 
-        $scalehtml = '';
+        $rangehtml = '';
         if ($this->get_pref('showranges')) {
             $rangesdisplaytype   = $this->get_pref('rangesdisplaytype');
             $rangesdecimalpoints = $this->get_pref('rangesdecimalpoints');
 
             $columncount=0;
-            $colspan='';
-            if ($showuseridnumber) {
-                $colspan = 'colspan="2" ';
-            }
+            $rangehtml = '<tr class="range r'.$this->rowcount++.' heading">';
 
-            $scalehtml = '<tr class="r'.$this->rowcount++.'">'
-                       . '<th class="header c0 range" '.$colspan.'scope="row">'.$this->get_lang_string('range','grades').'</th>';
-
-            if ($showuseridnumber) {
-                $columncount++;
+            $fixedstudents = empty($USER->screenreader) && $CFG->grade_report_fixedstudents;
+            if (!$fixedstudents) {
+                $colspan='';
+                if ($this->get_pref('showuseridnumber')) {
+                    $colspan = 'colspan="2" ';
+                }
+                $rangehtml .= '<th class="header c0 range "'.$colspan.' scope="row">'.$this->get_lang_string('range','grades').'</th>';
             }
 
             foreach ($this->gtree->items as $itemid=>$unused) {
@@ -1081,12 +1233,12 @@ class grade_report_grader extends grade_report {
 
                 $formatted_range = $item->get_formatted_range($rangesdisplaytype, $rangesdecimalpoints);
 
-                $scalehtml .= '<th class="header c'.$columncount++.' range"><span class="rangevalues'.$hidden.'">'. $formatted_range .'</span></th>';
+                $rangehtml .= '<th class="header c'.$columncount++.' range"><span class="rangevalues'.$hidden.'">'. $formatted_range .'</span></th>';
 
             }
-            $scalehtml .= '</tr>';
+            $rangehtml .= '</tr>';
         }
-        return $scalehtml;
+        return $rangehtml;
     }
 
     /**
@@ -1099,15 +1251,9 @@ class grade_report_grader extends grade_report {
         $iconshtml = '';
         if ($USER->gradeediting[$this->courseid]) {
 
-            $colspan='';
-            if ($this->get_pref('showuseridnumber')) {
-                $colspan = 'colspan="2" ';
-            }
+            $iconshtml = '<tr class="controls">';
 
-            $iconshtml = '<tr class="r'.$this->rowcount++.'">'
-                       . '<th class="header c0 range" scope="row" '.$colspan.'>'.$this->get_lang_string('controls','grades').'</th>';
-
-            $columncount = 1;
+            $columncount = 0;
             foreach ($this->gtree->items as $itemid=>$unused) {
                 // emulate grade element
                 $item =& $this->gtree->items[$itemid];
@@ -1115,7 +1261,7 @@ class grade_report_grader extends grade_report {
                 $eid = $this->gtree->get_item_eid($item);
                 $element = $this->gtree->locate_element($eid);
 
-                $iconshtml .= '<td class="cell c'.$columncount++.' icons">' . $this->get_icons($element) . '</td>';
+                $iconshtml .= '<td class="controls cell c'.$columncount++.' icons">' . $this->get_icons($element) . '</td>';
             }
             $iconshtml .= '</tr>';
         }
@@ -1138,7 +1284,12 @@ class grade_report_grader extends grade_report {
         }
 
         // Init all icons
-        $edit_icon             = $this->gtree->get_edit_icon($element, $this->gpr);
+        $edit_icon = '';
+
+        if ($element['type'] != 'categoryitem' && $element['type'] != 'courseitem') {
+            $edit_icon             = $this->gtree->get_edit_icon($element, $this->gpr);
+        }
+
         $edit_calculation_icon = '';
         $show_hide_icon        = '';
         $lock_unlock_icon      = '';
@@ -1182,7 +1333,7 @@ class grade_report_grader extends grade_report {
 
             if (in_array($element['object']->id, $this->collapsed['aggregatesonly'])) {
                 $expand_contract = 'switch_plus';
-            } elseif (in_array($element['object']->id, $this->collapsed['gradesonly'])) {
+            } elseif (!empty($this->collapsed['gradesonly']) && in_array($element['object']->id, $this->collapsed['gradesonly'])) {
                 $expand_contract = 'switch_whole';
             }
             $url = $this->gpr->get_return_url(null, array('target'=>$element['eid'], 'action'=>$expand_contract, 'sesskey'=>sesskey()));
