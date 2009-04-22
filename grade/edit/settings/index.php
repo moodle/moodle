@@ -74,10 +74,11 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 }
 
-/// Print header
-print_header_simple($strgrades.': '.$pagename, ': '.$strgrades, $navigation, '', '', true, '', navmenu($course));
-/// Print the plugin selector at the top
-print_grade_plugin_selector($courseid, 'edit', 'settings');
+print_grade_page_head($courseid, 'settings', 'coursesettings', get_string('coursesettings', 'grades'));
+
+print_box_start('generalbox boxaligncenter boxwidthnormal centerpara');
+echo get_string('coursesettingsexplanation', 'grades');
+print_box_end();
 
 $mform->display();
 

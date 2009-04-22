@@ -2209,7 +2209,6 @@ body#doc-contents ul {
   display: inline;
   padding: 5px;
 }
-
 /* outcomes edit */
 
 .grade-edit-outcome .buttons {
@@ -2300,6 +2299,14 @@ div.allcoursegrades {
 #grade-aggregation-help code {
     display: block;
     margin-top: 7px;
+}
+
+#choosepluginreport_jump option {
+    margin-left: 20px;
+}
+
+#choosepluginreport_jump option.optionheader {
+    margin-left: 0px;
 }
 
 /***

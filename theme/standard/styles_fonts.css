@@ -296,11 +296,11 @@ body#admin-index .copyright {
     font-style: normal;
 }
 
-.plugincompattable { 
+.plugincompattable {
     text-align: left;
 }
 
-.plugincheckwrapper { 
+.plugincheckwrapper {
     text-align: center;
 }
 
@@ -586,6 +586,9 @@ body#grade-index .grades .header {
     font-style: normal;
 }
 
+#choosepluginreport_jump option.optionheader {
+    font-weight: bold;
+}
 /***
  *** Login
  ***/

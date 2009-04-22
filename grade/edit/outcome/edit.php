@@ -32,9 +32,12 @@ $courseid = optional_param('courseid', 0, PARAM_INT);
 $id       = optional_param('id', 0, PARAM_INT);
 
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+$heading = null;
 
 // a bit complex access control :-O
 if ($id) {
+    $heading = get_string('editoutcome', 'grades');
+
     /// editing existing outcome
     if (!$outcome_rec = get_record('grade_outcomes', 'id', $id)) {
         error('Incorrect outcome id');
@@ -61,6 +64,7 @@ if ($id) {
     }
 
 } else if ($courseid){
+    $heading = get_string('addoutcome', 'grades');
     /// adding new outcome from course
     if (!$course = get_record('course', 'id', $courseid)) {
         print_error('nocourseid');
@@ -119,14 +123,8 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 }
 
-$strgrades       = get_string('grades');
-$strgraderreport = get_string('graderreport', 'grades');
-$stroutcomeedit  = get_string('outcome', 'grades');
-
 if ($courseid) {
-    $navigation = grade_build_nav(__FILE__, $stroutcomeedit, array('courseid' => $courseid));
-    print_header_simple($strgrades.': '.$strgraderreport, ': '.$stroutcomeedit, $navigation, '', '', true, '', navmenu($course));
-
+    print_grade_page_head($courseid, 'outcome', 'edit', $heading);
 } else {
     require_once $CFG->libdir.'/adminlib.php';
     admin_externalpage_setup('outcomes');

@@ -79,15 +79,10 @@ $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 $caneditsystemscales = has_capability('moodle/course:managescales', $systemcontext);
 
 if ($courseid) {
-    /// Print header
-    print_header_simple($strgrades.': '.$pagename, ': '.$strgrades, $navigation, '', '', true, '', navmenu($course));
-    /// Print the plugin selector at the top
-    print_grade_plugin_selector($courseid, 'edit', 'outcome');
+
+    print_grade_page_head($courseid, 'outcome', 'import', get_string('importoutcomes', 'grades'));
 
     $caneditcoursescales = has_capability('moodle/course:managescales', $context);
-
-    $currenttab = 'outcomes';
-    require('tabs.php');
 
 } else {
     admin_externalpage_print_header();
@@ -208,7 +203,7 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
             print_box(get_string('importskippedoutcome', 'grades', $csv_data[$imported_headers['outcome_shortname']]));
             continue;
         }
-
+        break;
         // new outcome will be added, search for compatible existing scale...
         $scale = get_records_select('scale', 'name ="'. $csv_data[$imported_headers['scale_name']] .'" and scale ="'. $csv_data[$imported_headers['scale_items']] .'" and (courseid = '. $courseid .' or courseid = 0)');
 

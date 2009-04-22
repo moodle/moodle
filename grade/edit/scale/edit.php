@@ -32,9 +32,12 @@ $courseid = optional_param('courseid', 0, PARAM_INT);
 $id       = optional_param('id', 0, PARAM_INT);
 
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+$heading = '';
 
 // a bit complex access control :-O
 if ($id) {
+    $heading = get_string('editscale', 'grades');
+
     /// editing existing scale
     if (!$scale_rec = get_record('scale', 'id', $id)) {
         error('Incorrect scale id');
@@ -61,6 +64,7 @@ if ($id) {
     }
 
 } else if ($courseid){
+    $heading = get_string('addscale', 'grades');
     /// adding new scale from course
     if (!$course = get_record('course', 'id', $courseid)) {
         print_error('nocourseid');
@@ -112,21 +116,15 @@ if ($mform->is_cancelled()) {
         }
         $scale->update();
     }
-
     redirect($returnurl);
 }
 
-$strgrades       = get_string('grades');
-$strgraderreport = get_string('graderreport', 'grades');
-$strscaleedit    = get_string('scale');
-
 if ($courseid) {
-    $navigation = grade_build_nav(__FILE__, $strscaleedit, $courseid);
-    print_header_simple($strgrades.': '.$strgraderreport, ': '.$strscaleedit, $navigation, '', '', true, '', navmenu($course));
+    print_grade_page_head($course->id, 'scale', 'edit', $heading);
 
 } else {
     require_once $CFG->libdir.'/adminlib.php';
-    admin_externalpage_setup('outcomes');
+    admin_externalpage_setup('scales');
     admin_externalpage_print_header();
 }
 

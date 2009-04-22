@@ -67,18 +67,6 @@ if (!isset($USER->grade_last_report)) {
 }
 $USER->grade_last_report[$course->id] = 'overview';
 
-/// Build navigation
-$strgrades  = get_string('grades');
-$reportname = get_string('modulename', 'gradereport_overview');
-
-$navigation = grade_build_nav(__FILE__, $reportname, $course->id);
-
-/// Print header
-print_header_simple($strgrades.': '.$reportname, ': '.$strgrades, $navigation,
-                    '', '', true, '', navmenu($course));
-
-/// Print the plugin selector at the top
-print_grade_plugin_selector($course->id, 'report', 'overview');
 
 if ($access) {
 
@@ -87,9 +75,7 @@ if ($access) {
 
     // Create a report instance
     $report = new grade_report_overview($userid, $gpr, $context);
-
-    // print the page
-    print_heading(get_string('modulename', 'gradereport_overview'). ' - '.fullname($report->user));
+    print_grade_page_head($courseid, 'report', 'overview', get_string('modulename', 'gradereport_overview'). ' - '.fullname($report->user));
 
     if ($report->fill_table()) {
         echo $report->print_table(true);
@@ -97,6 +83,15 @@ if ($access) {
 
 } else {
     // no access to grades!
+    /// Print header
+    /// Build navigation
+    $strgrades  = get_string('grades');
+    $reportname = get_string('modulename', 'gradereport_overview');
+
+    $navigation = grade_build_nav(__FILE__, $reportname, $course->id);
+    print_header_simple($strgrades.': '.$reportname, ': '.$strgrades, $navigation,
+                        '', '', true, '', navmenu($course));
+
     echo "Can not view grades."; //TODO: localize
 }
 print_footer($course);

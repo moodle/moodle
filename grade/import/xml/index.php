@@ -41,7 +41,6 @@ require_capability('gradeimport/xml:view', $context);
 // print header
 $strgrades = get_string('grades', 'grades');
 $actionstr = get_string('modulename', 'gradeimport_xml');
-$navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course->id));
 
 if (!empty($CFG->gradepublishing)) {
     $CFG->gradepublishing = has_capability('gradeimport/xml:publish', $context);
@@ -60,8 +59,8 @@ if ($data = $mform->get_data()) {
     }
 
     if ($text = $mform->get_file_content('userfile')) {
-        print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
-        print_grade_plugin_selector($id, 'import', 'xml');
+
+        print_grade_page_head($COURSE->id, 'import', 'xml', get_string('importxml', 'grades'));
 
         $error = '';
         $importcode = import_xml_grades($text, $course, $error);
@@ -84,8 +83,7 @@ if ($data = $mform->get_data()) {
             $data->key = create_user_key('grade/import', $USER->id, $course->id, $data->iprestriction, $data->validuntil);
         }
 
-        print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
-        print_grade_plugin_selector($id, 'import', 'xml');
+        print_grade_page_head($COURSE->id, 'import', 'xml', get_string('importxml', 'grades'));
 
         echo '<div class="gradeexportlink">';
         $link = $CFG->wwwroot.'/grade/import/xml/fetch.php?id='.$id.'&amp;feedback='.(int)($data->feedback).'&amp;url='.urlencode($data->url).'&amp;key='.$data->key;
@@ -96,8 +94,7 @@ if ($data = $mform->get_data()) {
     }
 }
 
-print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
-print_grade_plugin_selector($id, 'import', 'xml');
+print_grade_page_head($COURSE->id, 'import', 'xml', get_string('importxml', 'grades'));
 
 $mform->display();
 

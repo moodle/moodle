@@ -47,12 +47,6 @@ if ($courseid) {
 /// return tracking object
 $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'scale', 'courseid'=>$courseid));
 
-
-$strgrades = get_string('grades');
-$pagename  = get_string('scales');
-
-$navigation = grade_build_nav(__FILE__, $pagename, array('courseid' => $courseid));
-
 $strscale          = get_string('scale');
 $strstandardscale  = get_string('scalesstandard');
 $strcustomscales   = get_string('scalescustom');
@@ -88,18 +82,17 @@ switch ($action) {
         break;
 }
 
-if ($courseid) {
-    /// Print header
-    print_header_simple($strgrades.': '.$pagename, ': '.$strgrades, $navigation, '', '', true, '', navmenu($course));
-    /// Print the plugin selector at the top
-    print_grade_plugin_selector($courseid, 'edit', 'scale');
-
-} else {
+if (!$courseid) {
     admin_externalpage_print_header();
 }
 
+$table = null;
+$table2 = null;
+$heading = '';
+
 if ($courseid and $scales = grade_scale::fetch_all_local($courseid)) {
-    print_heading($strcustomscales);
+    $heading = $strcustomscales;
+
     $data = array();
     foreach($scales as $scale) {
         $line = array();
@@ -123,11 +116,11 @@ if ($courseid and $scales = grade_scale::fetch_all_local($courseid)) {
     $table->align = array('left', 'center', 'center');
     $table->width = '90%';
     $table->data  = $data;
-    print_table($table);
 }
 
 if ($scales = grade_scale::fetch_all_global()) {
-    print_heading($strstandardscale);
+    $heading = $strstandardscale;
+
     $data = array();
     foreach($scales as $scale) {
         $line = array();
@@ -148,14 +141,22 @@ if ($scales = grade_scale::fetch_all_global()) {
         $line[] = $buttons;
         $data[] = $line;
     }
-    $table->head  = array($strscale, $strused, $stredit);
-    $table->size  = array('70%', '20%', '10%');
-    $table->align = array('left', 'center', 'center');
-    $table->width = '90%';
-    $table->data  = $data;
-    print_table($table);
+    $table2->head  = array($strscale, $strused, $stredit);
+    $table2->size  = array('70%', '20%', '10%');
+    $table2->align = array('left', 'center', 'center');
+    $table2->width = '90%';
+    $table2->data  = $data;
 }
 
+
+if ($courseid) {
+    print_grade_page_head($courseid, 'scale', null, get_string('coursescales', 'grades'));
+}
+
+print_heading($strcustomscales, '', 3, 'main');
+print_table($table);
+print_heading($strstandardscale, '', 3, 'main');
+print_table($table2);
 echo '<div class="buttons">';
 print_single_button('edit.php', array('courseid'=>$courseid), $srtcreatenewscale);
 echo '</div>';

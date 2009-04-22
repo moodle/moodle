@@ -125,15 +125,8 @@ $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 $caneditsystemscales = has_capability('moodle/course:managescales', $systemcontext);
 
 if ($courseid) {
-    /// Print header
-    print_header_simple($strgrades.': '.$pagename, ': '.$strgrades, $navigation, '', '', true, '', navmenu($course));
-    /// Print the plugin selector at the top
-    print_grade_plugin_selector($courseid, 'edit', 'outcome');
 
     $caneditcoursescales = has_capability('moodle/course:managescales', $context);
-
-    $currenttab = 'outcomes';
-    require('tabs.php');
 
 } else {
     admin_externalpage_print_header();
@@ -142,10 +135,10 @@ if ($courseid) {
 
 
 $outcomes_tables = array();
+$heading = get_string('outcomes', 'grades');
 
 if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
-
-    $return = print_heading($strcustomoutcomes, '', 2, 'main', true);
+    $return = print_heading($strcustomoutcomes, '', 3, 'main', true);
     $data = array();
     foreach($outcomes as $outcome) {
         $line = array();
@@ -251,6 +244,11 @@ if ($outcomes = grade_outcome::fetch_all_global()) {
     $table->data  = $data;
     $return .= print_table($table, true);
     $outcomes_tables[] = $return;
+}
+
+if ($courseid) {
+    /// Print header
+    print_grade_page_head($courseid, 'outcome', 'edit', $heading);
 }
 
 foreach($outcomes_tables as $table) {

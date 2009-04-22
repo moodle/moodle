@@ -61,12 +61,8 @@ if (isset($CFG->CSV_DELIMITER)) {
     $csv_encode = '/\&\#44/';
 }
 
-$strgrades = get_string('grades', 'grades');
 $actionstr = get_string('csv', 'grades');
-$navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course->id));
-
-print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
-print_grade_plugin_selector($id, 'import', 'csv');
+print_grade_page_head($course->id, 'import', 'csv');
 
 // set up import form
 $mform = new grade_import_form(null, array('includeseparator'=>!isset($CFG->CSV_DELIMITER), 'verbosescales'=>true));
