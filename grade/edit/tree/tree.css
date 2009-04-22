@@ -1,0 +1,130 @@
+.gradetreebox {
+    font-size: 0.8em;
+}
+
+.gradetreebox input, .gradetreebox select {
+    font-size: 85%;
+}
+.gradetreebox tr.category td {
+    background-color: #DDDDDD;
+}
+.gradetreebox tr.category th {
+    background-color: #DDDDDD;
+}
+.gradetreebox tr.category td.name {
+    border-left: 0px;
+}
+
+.gradetreebox .category td.name h4 {
+    display: inline;
+}
+
+.gradetreebox td.name, .gradetreebox td.range, .gradetreebox td.actions   {
+    white-space: nowrap;
+}
+
+.gradetreebox th.actions {
+    width: 80px;
+}
+
+.child {
+    background-image: url(img/ln.gif);
+}
+
+.hidden {
+    display: none;
+}
+.shown {
+}
+
+img.iconsmall {
+    margin-left: 4px;
+}
+
+img.icon {
+    margin-right: 5px;
+}
+
+.grade-edit-tree .gradetreebox  {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    padding-bottom: 15px;
+    width: auto;
+}
+
+.gradetreebox table {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.buttons {
+    margin: 20px;
+    text-align: center;
+    width: 100%;
+}
+
+.buttons .singlebutton {
+    display: inline;
+    padding: 5px;
+}
+
+#gradetreesubmit {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+
+}
+
+.gradetreebox span.actionlink {
+ color: blue;
+}
+
+.gradetreebox span.actionlink:hover {
+ text-decoration: underline;
+ cursor: pointer;
+}
+
+.gradetreebox td.colspan {
+    border-left: 1px solid #AAAAAA;
+    border-bottom: 1px solid #AAAAAA;
+    border-top: none;
+    background-color: #DDDDDD;
+}
+
+.gradetreebox tr.category th.rowspan {
+    border-color: #AAAAAA;
+    border-bottom: 0px;
+    border-top: 0px;
+    border-right: 0px !important;
+}
+
+.gradetreebox tr.category th.rowspan:hover {
+    background-color: #EEEEEE !important;
+}
+
+.level1 {
+    background-color: #f3dfd0 !important;
+    width: 10px;
+}
+.level2 {
+    background-color: #d0dbf3 !important;
+    width: 10px;
+}
+.level3 {
+    background-color: #d0f3d6 !important;
+    width: 10px;
+}
+.level4 {
+    background-color: #f0f0aa !important;
+    width: 10px;
+}
+.level5 {
+    background-color: #ebdef6 !important;
+    width: 10px;
+}
+
+.gradetreebox table.generaltable {
+    border:  1px solid #AAAAAA;
+    width: 100%;
+}
