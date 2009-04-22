@@ -254,7 +254,8 @@ class edit_item_form extends moodleform {
                 } else {
                     if ($grade_item->is_category_item()) {
                         $parent_category = $parent_category->get_parent_category();
-                        $coefstring = $parent_category->get_grade_item()->get_coefstring();
+                        $parent_item = $parent_category->get_grade_item();
+                        $coefstring = $parent_item->get_coefstring();
                     } else {
                         $parent_category->apply_forced_settings();
                         $coefstring = $grade_item->get_coefstring();
