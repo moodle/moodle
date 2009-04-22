@@ -40,10 +40,6 @@ function display() {
     $subdir = optional_param('subdir','', PARAM_PATH);
     $resource->reference = clean_param($resource->reference, PARAM_PATH);
 
-    $formatoptions = new object();
-    $formatoptions->noclean = true;
-    $formatoptions->para = false; // MDL-12061, <p> in html editor breaks xhtml strict
-
     add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
 
     if ($resource->reference) {
@@ -91,7 +87,7 @@ function display() {
 
 
     if (trim(strip_tags($resource->intro))) {
-        print_simple_box(format_text($resource->intro, $resource->introformat, $formatoptions, $course->id), "center");
+        print_simple_box(format_module_intro('resource', $resource, $cm->id), "center");
         print_spacer(10,10);
     }
 

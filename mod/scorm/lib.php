@@ -774,17 +774,7 @@ function scorm_pluginfile($course, $cminfo, $context, $filearea, $args) {
 
     $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
 
-    if ($filearea === 'scorm_intro') {
-        // all users may access it
-        $relativepath = '/'.implode('/', $args);
-        $fullpath = $context->id.'scorm_intro0'.$relativepath;
-
-        $fs = get_file_storage();
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-            return false;
-        }
-
-    } else if ($filearea === 'scorm_content') {
+    if ($filearea === 'scorm_content') {
         $revision = (int)array_shift($args); // prevents caching problems - ignored here
         $relativepath = '/'.implode('/', $args);
         $fullpath = $context->id.'scorm_content0'.$relativepath;

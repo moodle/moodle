@@ -347,8 +347,7 @@
 
     if($wiki_entry && $ewiki_title==$wiki_entry->pagename && !empty($wiki->intro)) {
       if (trim(strip_tags($wiki->intro))) {
-          $options = (object)array('noclean'=>true);
-          print_box(format_text($wiki->intro, $wiki->introformat, $options), 'generalbox', 'intro');
+          print_box(format_module_intro('wiki', $wiki, $cm->id), 'generalbox', 'intro');
       }
     }
 

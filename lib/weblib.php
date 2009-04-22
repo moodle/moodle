@@ -1558,10 +1558,12 @@ function filter_text($text, $courseid=NULL) {
  * @return text
  */
 function format_module_intro($module, $activity, $cmid) {
-    $options = (object)array('noclean'=>true);
+    global $CFG;
+    require_once("$CFG->libdir/filelib.php");
+    $options = (object)array('noclean'=>true, 'para'=>false);
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
     $intro = file_rewrite_pluginfile_urls($activity->intro, 'pluginfile.php', $context->id, $module.'_intro', 0);
-    return format_text($intro, $activity->introformat, $options);
+    return trim(format_text($intro, $activity->introformat, $options));
 }
 
 /**

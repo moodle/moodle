@@ -28,8 +28,6 @@ class mod_resource_mod_form extends moodleform_mod {
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
-//        $mform->addElement('static', 'statictype', get_string('assignmenttype', 'assignment'), get_string('type'.$type,'assignment'));
-
         $mform->addElement('text', 'name', get_string('name'), array('size'=>'48'));
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
@@ -38,11 +36,7 @@ class mod_resource_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
 
-        $mform->addElement('htmleditor', 'intro', get_string('summary'));
-        $mform->setType('intro', PARAM_RAW);
-        $mform->setHelpButton('intro', array('summary', get_string('summary'), 'resource'));
-        // summary should be optional again MDL-9485
-        //$mform->addRule('summary', get_string('required'), 'required', null, 'client');
+        $this->add_intro_editor(false);
 
         $mform->addElement('header', 'typedesc', resource_get_name($type));
         $this->_resinstance->setup_elements($mform);

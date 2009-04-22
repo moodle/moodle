@@ -69,7 +69,7 @@
 
         $timmod = '<span class="smallinfo">'.userdate($wiki->timemodified).'</span>';
         $options = (object)array('noclean'=>true);
-        $summary = '<div class="smallinfo">'.format_text($wiki->intro, $wiki->introformat, $options).'</div>';
+        $summary = '<div class="smallinfo">'.format_module_intro('wiki', $wiki, $wiki->coursemodule).'</div>';
 
         $site = get_site();
         switch ($wiki->wtype) {

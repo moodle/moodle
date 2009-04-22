@@ -72,11 +72,10 @@
     // Print the main part of the page
     print_heading(format_string($scorm->name));
     $attemptstatus = '';
-    if($scorm->displayattemptstatus == 1) {
+    if ($scorm->displayattemptstatus == 1) {
         $attemptstatus = scorm_get_attempt_status($USER,$scorm);
     }
-    $options = (object)array('noclean'=>true);
-    print_simple_box(format_text($scorm->intro, $scorm->introformat, $options).$attemptstatus, 'center', '70%', '', 5, 'generalbox', 'intro');
+    print_simple_box(format_module_intro('scorm', $scorm, $cm->id).$attemptstatus, 'center', '70%', '', 5, 'generalbox', 'intro');
     
     $scormopen = true;
     $timenow = time();

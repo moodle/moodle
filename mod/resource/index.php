@@ -47,8 +47,6 @@
     }
 
     $currentsection = "";
-    $options->para = false;
-    $options->noclean = true;
     foreach ($resources as $resource) {
         if ($course->format == "weeks" or $course->format == "topics") {
             $printsection = "";
@@ -72,12 +70,12 @@
         if (!$resource->visible) {      // Show dimmed if the mod is hidden
             $table->data[] = array ($printsection, 
                     "<a class=\"dimmed\" $extra href=\"view.php?id=$resource->coursemodule\">".format_string($resource->name,true)."</a>",
-                    format_text($resource->intro, $resource->introformat, $options) );
+                    format_module_intro('resource', $resource, $resource->coursemodule));
 
         } else {                        //Show normal if the mod is visible
             $table->data[] = array ($printsection, 
                     "<a $extra href=\"view.php?id=$resource->coursemodule\">".format_string($resource->name,true)."</a>",
-                    format_text($resource->intro, $resource->introformat, $options) );
+                    format_module_intro('resource', $resource, $resource->coursemodule));
         }
     }
 

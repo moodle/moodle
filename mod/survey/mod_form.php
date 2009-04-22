@@ -4,8 +4,8 @@ require_once ($CFG->dirroot.'/course/moodleform_mod.php');
 class mod_survey_mod_form extends moodleform_mod {
 
     function definition() {
-
         global $CFG, $DB;
+
         $mform =& $this->_form;
 
         $strrequired = get_string('required');
@@ -33,9 +33,7 @@ class mod_survey_mod_form extends moodleform_mod {
         $mform->addRule('template', $strrequired, 'required', null, 'client');
         $mform->setHelpButton('template', array('surveys', get_string('helpsurveys', 'survey')));
 
-
-        $mform->addElement('textarea', 'intro', get_string('customintro', 'survey'), 'wrap="virtual" rows="20" cols="75"');
-        $mform->setType('intro', PARAM_RAW);
+        $this->add_intro_editor(false, get_string('customintro', 'survey'));
 
         $this->standard_coursemodule_elements();
 

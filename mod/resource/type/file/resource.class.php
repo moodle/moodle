@@ -223,9 +223,6 @@ class resource_file extends resource_base {
         $mimetype = mimeinfo("type", $resource->reference);
         $pagetitle = strip_tags($course->shortname.': '.format_string($resource->name));
 
-        $formatoptions = new object();
-        $formatoptions->noclean = true;
-
         if ($resource->options != "forcedownload") { // TODO nicolasconnault 14-03-07: This option should be renamed "embed"
             if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
                 $resourcetype = "image";
@@ -365,7 +362,7 @@ class resource_file extends resource_base {
             echo '</script>';
 
             if (trim(strip_tags($resource->intro))) {
-                print_simple_box(format_text($resource->intro, $resource->introformat, $formatoptions, $course->id), "center");
+                print_simple_box(format_module_intro('resource', $resource, $cm->id), "center");
             }
 
             $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$cm->id}\" "
@@ -451,7 +448,7 @@ class resource_file extends resource_base {
 
             ///print the intro
                 if (!empty($resource->intro)) {
-                    print_simple_box(format_text($resource->intro, $resource->introformat, $formatoptions, $course->id), "center");
+                    print_simple_box(format_module_intro('resource', $resource, $cm->id), "center");
                 }
                 echo "</body></html>";
                 exit;
@@ -489,10 +486,7 @@ class resource_file extends resource_base {
             print_header($pagetitle, $course->fullname, $navigation,
                     "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
 
-            $options = new object();
-            $options->para = false;
-            $options->noclean = true;
-            echo '<div class="summary">'.format_text($resource->intro, $resource->introformat, $options).'</div>';
+            echo '<div class="summary">'.format_module_intro('resource', $resource, $cm->id).'</div>';
             if (!empty($localpath)) {  // Show some help
                 echo '<div class="mdl-right helplink">';
                 link_to_popup_window ('/mod/resource/type/file/localpath.php', get_string('localfile', 'resource'),
@@ -706,7 +700,7 @@ class resource_file extends resource_base {
             }
 
             if (trim($resource->intro)) {
-                print_simple_box(format_text($resource->intro, $resource->introformat, $formatoptions, $course->id), "center");
+                print_simple_box(format_module_intro('resource', $resource, $cm->id), "center");
             }
 
             if ($inpopup) {
