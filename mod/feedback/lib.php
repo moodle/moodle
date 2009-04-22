@@ -323,10 +323,6 @@ function feedback_cron () {
     return true;
 }
 
-function feedback_grades($feedbackid) {
-    return NULL;
-}
-
 function feedback_get_participants($feedbackid) {
     return false;
 }
