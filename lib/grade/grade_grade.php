@@ -436,7 +436,7 @@ class grade_grade extends grade_object {
             return $this->hidden == 1 or ($this->hidden != 0 and $this->hidden > time());
         } else {
             return $this->hidden == 1 or ($this->hidden != 0 and $this->hidden > time()) or $this->grade_item->is_hidden();
-        } 
+        }
     }
 
     /**
@@ -622,7 +622,7 @@ class grade_grade extends grade_object {
                             foreach ($dependson[$do] as $itemid) {
                                 if (array_key_exists($itemid, $altered)) {
                                     $values[$itemid] = $altered[$itemid];
-                                } else {
+                                } elseif (!empty($values[$itemid])) {
                                     $values[$itemid] = $grade_grades[$itemid]->finalgrade;
                                 }
                             }
@@ -667,9 +667,7 @@ class grade_grade extends grade_object {
                             // recalculate the rawgrade back to requested range
                             $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $grade_items[$do]->grademin, $grade_items[$do]->grademax);
 
-                            if (!is_null($finalgrade)) {
-                                $finalgrade = bounded_number($grade_items[$do]->grademin, $finalgrade, $grade_items[$do]->grademax);
-                            }
+                            $finalgrade = $grade_items[$do]->bounded_grade($finalgrade);
 
                             $altered[$do] = $finalgrade;
                             unset($todo[$key]);
@@ -716,8 +714,8 @@ class grade_grade extends grade_object {
     }
 
     function insert($source=null) {
-        // TODO: dategraded hack - do not update times, they are used for submission and grading  
-        //$this->timecreated = $this->timemodified = time(); 
+        // TODO: dategraded hack - do not update times, they are used for submission and grading
+        //$this->timecreated = $this->timemodified = time();
         return parent::insert($source);
     }
 
