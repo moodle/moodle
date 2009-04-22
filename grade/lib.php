@@ -301,38 +301,276 @@ function print_graded_users_selector($course, $actionpage, $userid=null, $return
  * @param boolean $return return as string
  * @return nothing or string if $return true
  */
-function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $return=false) {
+function print_grade_plugin_selector($plugin_info, $return=false) {
     global $CFG;
-
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
     $menu = array();
     $count = 0;
     $active = '';
 
+    foreach ($plugin_info as $plugin_type => $plugins) {
+        if ($plugin_type == 'strings') {
+            continue;
+        }
+
+        $first_plugin = reset($plugins);
+
+        if (is_array($first_plugin)) {
+            $menu[$first_plugin['link'].'&amp;'] = '**header**'.$plugin_info['strings'][$plugin_type];
+        } else {
+            $menu[$plugins['link']] = '**header**'.$plugins['string'];
+        }
+
+        if (empty($plugins['id'])) {
+            foreach ($plugins as $plugin) {
+                $menu[$plugin['link']] = $plugin['string'];
+                $count++;
+            }
+        }
+    }
+
+/// finally print/return the popup form
+    if ($count > 1) {
+        $select = popup_form('', $menu, 'choosepluginreport', '', get_string('chooseaction', 'grades'), '', '', true, 'self');
+        $select = preg_replace('/\>\*\*header\*\*/', ' class="optionheader">', $select);
+        if ($return) {
+            return $select;
+        } else {
+            echo $select;
+        }
+    } else {
+        // only one option - no plugin selector needed
+        return '';
+    }
+}
+
+/**
+ * Print grading plugin selection tab-based navigation.
+ *
+ * @param int $courseid id of course
+ * @param string $active_type type of plugin on current page - import, export, report or edit
+ * @param string $active_plugin active plugin type - grader, user, cvs, ...
+ * @param boolean $return return as string
+ * @return nothing or string if $return true
+ */
+function grade_print_tabs($active_type, $active_plugin, $plugin_info, $return=false) {
+    global $CFG, $COURSE;
+
+    if (!isset($currenttab)) {
+        $currenttab = '';
+    }
+
+    $tabs = array();
+    $top_row  = array();
+    $bottom_row = array();
+    $inactive = array($active_plugin);
+    $activated = array();
+
+    $count = 0;
+    $active = '';
+
+    foreach ($plugin_info as $plugin_type => $plugins) {
+        if ($plugin_type == 'strings') {
+            continue;
+        }
+
+        // If $plugins is actually the definition of a child-less parent link:
+        if (!empty($plugins['id'])) {
+            $string = $plugins['string'];
+            if (!empty($plugin_info[$active_type]['parent'])) {
+                $string = $plugin_info[$active_type]['parent']['string'];
+            }
+
+            $top_row[] = new tabobject($plugin_type, $plugins['link'], $string);
+            continue;
+        }
+
+        $first_plugin = reset($plugins);
+        $url = $first_plugin['link'];
+
+        if ($plugin_type == 'report') {
+            $url = $CFG->wwwroot.'/grade/report/index.php?id='.$COURSE->id;
+        }
+
+        $top_row[] = new tabobject($plugin_type, $url, $plugin_info['strings'][$plugin_type]);
+
+        if ($active_type == $plugin_type) {
+            foreach ($plugins as $plugin) {
+                $bottom_row[] = new tabobject($plugin['id'], $plugin['link'], $plugin['string']);
+                if ($plugin['id'] == $active_plugin) {
+                    $inactive = array($plugin['id']);
+                }
+            }
+        }
+    }
+
+    $tabs[] = $top_row;
+    $tabs[] = $bottom_row;
+
+    if ($return) {
+        return print_tabs($tabs, $active_type, $inactive, $activated, true);
+    } else {
+        print_tabs($tabs, $active_type, $inactive, $activated);
+    }
+}
+
+function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
+    global $CFG;
+
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+
+    $plugin_info = array();
+    $count = 0;
+    $active = '';
+    $url_prefix = $CFG->wwwroot . '/grade/';
+
+    // Language strings
+    $plugin_info['strings'] = array(
+        'report' => get_string('view'),
+        'edittree' => get_string('edittree', 'grades'),
+        'scale' => get_string('scales'),
+        'outcome' => get_string('outcomes', 'grades'),
+        'letter' => get_string('letters', 'grades'),
+        'export' => get_string('export', 'grades'),
+        'import' => get_string('import'),
+        'preferences' => get_string('mypreferences', 'grades'),
+        'settings' => get_string('settings'));
+
+    // Settings tab first
+    if (has_capability('moodle/course:update', $context)) {
+        $url = $url_prefix.'edit/settings/index.php?id='.$courseid;
+
+        if ($active_type == 'settings' and $active_plugin == 'course') {
+            $active = $url;
+        }
+
+        $plugin_info['settings'] = array('id' => 'coursesettings', 'link' => $url, 'string' => get_string('settings'));
+        $count++;
+    }
+
+
 /// report plugins with its special structure
     if ($reports = get_list_of_plugins('grade/report', 'CVS')) {         // Get all installed reports
         foreach ($reports as $key => $plugin) {                      // Remove ones we can't see
+            // Outcomes are a special core plugin depending on $CFG->enableoutcomes
+            if ($plugin == 'outcomes' && empty($CFG->enableoutcomes)) {
+                unset($reports[$key]);
+            }
             if (!has_capability('gradereport/'.$plugin.':view', $context)) {
                 unset($reports[$key]);
             }
         }
     }
+
     $reportnames = array();
+
     if (!empty($reports)) {
         foreach ($reports as $plugin) {
-            $url = 'report/'.$plugin.'/index.php?id='.$courseid;
+            $url = $url_prefix.'report/'.$plugin.'/index.php?id='.$courseid;
             if ($active_type == 'report' and $active_plugin == $plugin ) {
                 $active = $url;
             }
-            $reportnames[$url] = get_string('modulename', 'gradereport_'.$plugin);
+            $reportnames[$plugin] = array('id' => $plugin, 'link' => $url, 'string' => get_string('modulename', 'gradereport_'.$plugin));
+
+            // Add link to preferences tab if such a page exists
+            if (file_exists($CFG->dirroot . '/grade/report/'.$plugin.'/preferences.php')) {
+                $pref_url = $url_prefix.'report/'.$plugin.'/preferences.php?id='.$courseid;
+                $plugin_info['preferences'][$plugin] = array('id' => $plugin, 'link' => $pref_url, 'string' => get_string('modulename', 'gradereport_'.$plugin));
+            }
+
             $count++;
         }
         asort($reportnames);
     }
     if (!empty($reportnames)) {
-        $menu['reportgroup']='--'.get_string('view');
-        $menu = $menu+$reportnames;
+        $plugin_info['report']=$reportnames;
+    }
+
+/// editing scripts - not real plugins
+    if (has_capability('moodle/grade:manage', $context)
+      or has_capability('moodle/grade:manageletters', $context)
+      or has_capability('moodle/course:managescales', $context)
+      or has_capability('moodle/course:update', $context)) {
+
+        if (has_capability('moodle/grade:manage', $context)) {
+            $url = $url_prefix.'edit/tree/index.php?sesskey='.sesskey().'&amp;showadvanced=0&amp;id='.$courseid;
+            $url_adv = $url_prefix.'edit/tree/index.php?sesskey='.sesskey().'&amp;showadvanced=1&amp;id='.$courseid;
+
+            if ($active_type == 'edittree' and $active_plugin == 'simpleview') {
+                $active = $url;
+            } elseif ($active_type == 'edittree' and $active_plugin == 'fullview') {
+                $active = $url_adv;
+            }
+
+            $plugin_info['edittree'] = array();
+            $plugin_info['edittree']['simpleview'] = array('id' => 'simpleview', 'link' => $url, 'string' => get_string('simpleview', 'grades'));
+            $plugin_info['edittree']['fullview'] = array('id' => 'fullview', 'link' => $url_adv, 'string' => get_string('fullview', 'grades'));
+            $count++;
+        }
+
+        if (has_capability('moodle/course:managescales', $context)) {
+            $url = $url_prefix.'edit/scale/index.php?id='.$courseid;
+
+            if ($active_type == 'scale' and is_null($active_plugin)) {
+                $active = $url;
+            }
+
+            if ($active_type == 'scale' and $active_plugin == 'edit') {
+                $edit_url = $url_prefix.'edit/scale/edit.php?courseid='.$courseid.'&amp;id='.optional_param('id', 0, PARAM_INT);
+                $active = $edit_url;
+                $plugin_info['scale'] = array('id' => 'edit', 'link' => $edit_url, 'string' => get_string('edit'),
+                    'parent' => array('id' => 'scale', 'link' => $url, 'string' => get_string('scales')));
+            } else {
+                $plugin_info['scale'] = array('id' => 'scale', 'link' => $url, 'string' => get_string('scales'));
+            }
+
+            $count++;
+        }
+
+        if (!empty($CFG->enableoutcomes) && (has_capability('moodle/grade:manage', $context) or
+                                             has_capability('moodle/course:update', $context))) {
+
+            $url_course = $url_prefix.'edit/outcome/course.php?id='.$courseid;
+            $url_edit = $url_prefix.'edit/outcome/index.php?id='.$courseid;
+
+            $plugin_info['outcome'] = array();
+
+            if (has_capability('moodle/course:update', $context)) {  // Default to course assignment
+                $plugin_info['outcome']['course'] = array('id' => 'course', 'link' => $url_course, 'string' => get_string('outcomescourse', 'grades'));
+                $plugin_info['outcome']['edit'] = array('id' => 'edit', 'link' => $url_edit, 'string' => get_string('editoutcomes', 'grades'));
+            } else {
+                $plugin_info['outcome'] = array('id' => 'edit', 'link' => $url_course, 'string' => get_string('outcomescourse', 'grades'));
+            }
+
+            if ($active_type == 'outcome' and is_null($active_plugin)) {
+                $active = $url_edit;
+            } elseif ($active_type == 'outcome' and $active_plugin == 'course' ) {
+                $active = $url_course;
+            } elseif ($active_type == 'outcome' and $active_plugin == 'edit' ) {
+                $active = $url_edit;
+            } elseif ($active_type == 'outcome' and $active_plugin == 'import') {
+                $plugin_info['outcome']['import'] = array('id' => 'import', 'link' => null, 'string' => get_string('importoutcomes', 'grades'));
+            }
+
+            $count++;
+        }
+
+        if (has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:manageletters', $context)) {
+            $course_context = get_context_instance(CONTEXT_COURSE, $courseid);
+            $url = $url_prefix.'edit/letter/index.php?id='.$courseid;
+            $url_edit = $url_prefix.'edit/letter/edit.php?id='.$course_context->id;
+
+            if ($active_type == 'letter' and $active_plugin == 'view' ) {
+                $active = $url;
+            } elseif ($active_type == 'letter' and $active_plugin == 'edit' ) {
+                $active = $url_edit;
+            }
+
+            $plugin_info['letter'] = array();
+            $plugin_info['letter']['view'] = array('id' => 'view', 'link' => $url, 'string' => get_string('view'));
+            $plugin_info['letter']['edit'] = array('id' => 'edit', 'link' => $url_edit, 'string' => get_string('edit'));
+            $count++;
+        }
     }
 
 /// standard import plugins
@@ -346,18 +584,17 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
     $importnames = array();
     if (!empty($imports)) {
         foreach ($imports as $plugin) {
-            $url = 'import/'.$plugin.'/index.php?id='.$courseid;
+            $url = $url_prefix.'import/'.$plugin.'/index.php?id='.$courseid;
             if ($active_type == 'import' and $active_plugin == $plugin ) {
                 $active = $url;
             }
-            $importnames[$url] = get_string('modulename', 'gradeimport_'.$plugin);
+            $importnames[$plugin] = array('id' => $plugin, 'link' => $url, 'string' => get_string('modulename', 'gradeimport_'.$plugin));
             $count++;
         }
         asort($importnames);
     }
     if (!empty($importnames)) {
-        $menu['importgroup']='--'.get_string('importfrom', 'grades');
-        $menu = $menu+$importnames;
+        $plugin_info['import']=$importnames;
     }
 
 /// standard export plugins
@@ -371,86 +608,157 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
     $exportnames = array();
     if (!empty($exports)) {
         foreach ($exports as $plugin) {
-            $url = 'export/'.$plugin.'/index.php?id='.$courseid;
+            $url = $url_prefix.'export/'.$plugin.'/index.php?id='.$courseid;
             if ($active_type == 'export' and $active_plugin == $plugin ) {
                 $active = $url;
             }
-            $exportnames[$url] = get_string('modulename', 'gradeexport_'.$plugin);
+            $exportnames[$plugin] = array('id' => $plugin, 'link' => $url, 'string' => get_string('modulename', 'gradeexport_'.$plugin));
             $count++;
         }
         asort($exportnames);
     }
+
     if (!empty($exportnames)) {
-        $menu['exportgroup']='--'.get_string('exportto', 'grades');
-        $menu = $menu+$exportnames;
+        $plugin_info['export']=$exportnames;
     }
 
-/// editing scripts - not real plugins
-    if (has_capability('moodle/grade:manage', $context)
-      or has_capability('moodle/grade:manageletters', $context)
-      or has_capability('moodle/course:managescales', $context)
-      or has_capability('moodle/course:update', $context)) {
-        $menu['edit']='--'.get_string('edit');
-
-        if (has_capability('moodle/grade:manage', $context)) {
-            $url = 'edit/tree/index.php?id='.$courseid;
-            if ($active_type == 'edit' and $active_plugin == 'tree' ) {
-                $active = $url;
-            }
-            $menu[$url] = get_string('edittree', 'grades');
-            $count++;
+    // Key managers
+    if ($CFG->gradepublishing) {
+        $keymanager_url = $url_prefix.'export/keymanager.php?id='.$courseid;
+        $plugin_info['export']['keymanager'] = array('id' => 'keymanager', 'link' => $keymanager_url, 'string' => get_string('keymanager', 'grades'));
+        if ($active_type == 'export' and $active_plugin == 'keymanager' ) {
+            $active = $keymanager_url;
         }
+        $count++;
 
-        if (has_capability('moodle/course:managescales', $context)) {
-            $url = 'edit/scale/index.php?id='.$courseid;
-            if ($active_type == 'edit' and $active_plugin == 'scale' ) {
-                $active = $url;
-            }
-            $menu[$url] = get_string('scales');
-            $count++;
+        $keymanager_url = $url_prefix.'import/keymanager.php?id='.$courseid;
+        $plugin_info['import']['keymanager'] = array('id' => 'keymanager', 'link' => $keymanager_url, 'string' => get_string('keymanager', 'grades'));
+        if ($active_type == 'import' and $active_plugin == 'keymanager' ) {
+            $active = $keymanager_url;
         }
-
-        if (!empty($CFG->enableoutcomes) && (has_capability('moodle/grade:manage', $context) or
-                                             has_capability('moodle/course:update', $context))) {
-            if (has_capability('moodle/course:update', $context)) {  // Default to course assignment
-                $url = 'edit/outcome/course.php?id='.$courseid;
-            } else {
-                $url = 'edit/outcome/index.php?id='.$courseid;
-            }
-            if ($active_type == 'edit' and $active_plugin == 'outcome' ) {
-                $active = $url;
-            }
-            $menu[$url] = get_string('outcomes', 'grades');
-            $count++;
-        }
-
-        if (has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:manageletters', $context)) {
-            $url = 'edit/letter/index.php?id='.$courseid;
-            if ($active_type == 'edit' and $active_plugin == 'letter' ) {
-                $active = $url;
-            }
-            $menu[$url] = get_string('letters', 'grades');
-            $count++;
-        }
-
-        if (has_capability('moodle/grade:manage', $context)) {
-            $url = 'edit/settings/index.php?id='.$courseid;
-            if ($active_type == 'edit' and $active_plugin == 'settings' ) {
-                $active = $url;
-            }
-            $menu[$url] = get_string('coursesettings', 'grades');
-            $count++;
-        }
-
+        $count++;
     }
 
-/// finally print/return the popup form
-    if ($count > 1) {
-        return popup_form($CFG->wwwroot.'/grade/', $menu, 'choosepluginreport', '',
-                get_string('chooseaction', 'grades'), '', '', $return, 'self');
-    } else {
-        // only one option - no plugin selector needed
-        return '';
+
+    foreach ($plugin_info as $plugin_type => $plugins) {
+        if (!empty($plugins['id']) && $active_plugin == $plugins['id']) {
+            $plugin_info['strings']['active_plugin_str'] = $plugins['string'];
+            break;
+        }
+        foreach ($plugins as $plugin) {
+            if ($active_plugin == $plugin['id']) {
+                $plugin_info['strings']['active_plugin_str'] = $plugin['string'];
+            }
+        }
+    }
+
+    // Put settings last
+    if (!empty($plugin_info['settings'])) {
+        $settings = $plugin_info['settings'];
+        unset($plugin_info['settings']);
+        $plugin_info['settings'] = $settings;
+    }
+
+    // Put preferences last
+    if (!empty($plugin_info['preferences'])) {
+        $prefs = $plugin_info['preferences'];
+        unset($plugin_info['preferences']);
+        $plugin_info['preferences'] = $prefs;
+    }
+
+    return $plugin_info;
+}
+
+/**
+ * Prints the page headers, breadcrumb trail, page heading, (optional) dropdown navigation menu and
+ * (optional) navigation tabs for any gradebook page. All gradebook pages MUST use these functions
+ * in favour of the usual print_header(), print_header_simple(), print_heading() etc.
+ * !IMPORTANT! Use of tabs.php file in gradebook pages is forbidden unless tabs are switched off at
+ * the site level for the gradebook ($CFG->grade_navmethod = GRADE_NAVMETHOD_DROPDOWN).
+ *
+ * @param int $courseid
+ * @param string $active_type The type of the current page (report, settings, import, export, scales, outcomes, letters)
+ * @param string $active_plugin The plugin of the current page (grader, fullview etc...)
+ * @param string $heading The heading of the page. Tries to guess if none is given
+ * @param boolean $return Whether to return (true) or echo (false) the HTML generated by this function
+ * @param string $bodytags Additional attributes that will be added to the <body> tag
+ * @param string $buttons Additional buttons to display on the page
+ *
+ * @return string HTML code or nothing if $return == false
+ */
+function print_grade_page_head($courseid, $active_type, $active_plugin=null, $heading = false, $return=false, $bodytags='', $buttons=false, $extracss=array()) {
+    global $CFG, $COURSE;
+    $strgrades = get_string('grades');
+    $plugin_info = grade_get_plugin_info($courseid, $active_type, $active_plugin);
+
+    // Determine the string of the active plugin
+    $stractive_plugin = ($active_plugin) ? $plugin_info['strings']['active_plugin_str'] : $heading;
+    $stractive_type = $plugin_info['strings'][$active_type];
+
+    $navlinks = array();
+    $first_link = '';
+
+    if ($active_type == 'settings' && $active_plugin != 'coursesettings') {
+        $first_link = $plugin_info['report'][$active_plugin]['link'];
+    } elseif ($active_type != 'report') {
+        $first_link = $CFG->wwwroot.'/grade/index.php?id='.$COURSE->id;
+    }
+
+    if ($active_type == 'preferences') {
+        $CFG->stylesheets[] = $CFG->wwwroot . '/grade/report/styles.css';
+    }
+
+    foreach ($extracss as $css_url) {
+        $CFG->stylesheets[] = $css_url;
+    }
+
+    $navlinks[] = array('name' => $strgrades,
+                        'link' => $first_link,
+                        'type' => 'misc');
+
+    $active_type_link = '';
+
+    if (!empty($plugin_info[$active_type]['link']) && $plugin_info[$active_type]['link'] != qualified_me()) {
+        $active_type_link = $plugin_info[$active_type]['link'];
+    }
+
+    if (!empty($plugin_info[$active_type]['parent']['link'])) {
+        $active_type_link = $plugin_info[$active_type]['parent']['link'];
+        $navlinks[] = array('name' => $stractive_type, 'link' => $active_type_link, 'type' => 'misc');
+    }
+
+    if (empty($plugin_info[$active_type]['id'])) {
+        $navlinks[] = array('name' => $stractive_type, 'link' => $active_type_link, 'type' => 'misc');
+    }
+
+    $navlinks[] = array('name' => $stractive_plugin, 'link' => null, 'type' => 'misc');
+
+    $navigation = build_navigation($navlinks);
+
+    $title = ': ' . $stractive_plugin;
+    if (empty($plugin_info[$active_type]['id']) || !empty($plugin_info[$active_type]['parent'])) {
+        $title = ': ' . $stractive_type . ': ' . $stractive_plugin;
+    }
+
+    $returnval = print_header_simple($strgrades . ': ' . $stractive_type, $title, $navigation, '',
+            $bodytags, true, $buttons, navmenu($COURSE), false, '', $return);
+
+    // Guess heading if not given explicitly
+    if (!$heading) {
+        $heading = $stractive_plugin;
+    }
+
+    if ($CFG->grade_navmethod == GRADE_NAVMETHOD_COMBO || $CFG->grade_navmethod == GRADE_NAVMETHOD_DROPDOWN) {
+        $returnval .= print_grade_plugin_selector($plugin_info, $return);
+    }
+    $returnval .= print_heading($heading);
+
+    if ($CFG->grade_navmethod == GRADE_NAVMETHOD_COMBO || $CFG->grade_navmethod == GRADE_NAVMETHOD_TABS) {
+        $returnval .= grade_print_tabs($active_type, $active_plugin, $plugin_info, $return);
+    }
+
+    if ($return) {
+        return $returnval;
     }
 }
 
@@ -783,38 +1091,42 @@ class grade_structure {
             case 'courseitem':
             case 'categoryitem':
                 if ($element['object']->is_calculated()) {
-                    return '<img src="'.$CFG->pixpath.'/i/calc.gif" class="icon itemicon" alt="'.get_string('calculation', 'grades').'"/>';
+                    $strcalc = get_string('calculatedgrade', 'grades');
+                    return '<img src="'.$CFG->pixpath.'/i/calc.gif" class="icon itemicon" title="'.$strcalc.'" alt="'.$strcalc.'"/>';
 
                 } else if (($element['object']->is_course_item() or $element['object']->is_category_item())
                   and ($element['object']->gradetype == GRADE_TYPE_SCALE or $element['object']->gradetype == GRADE_TYPE_VALUE)) {
                     if ($category = $element['object']->get_item_category()) {
                         switch ($category->aggregation) {
-                            case GRADE_AGGREGATE_MEAN:
                             case GRADE_AGGREGATE_MEDIAN:
+                            case GRADE_AGGREGATE_MEDIAN:
+                                return '<img src="'.$CFG->pixpath.'/i/agg_sum.gif" class="icon itemicon" alt="'.get_string('aggregation', 'grades').'"/>';
                             case GRADE_AGGREGATE_WEIGHTED_MEAN:
                             case GRADE_AGGREGATE_WEIGHTED_MEAN2:
                             case GRADE_AGGREGATE_EXTRACREDIT_MEAN:
                                 return '<img src="'.$CFG->pixpath.'/i/agg_mean.gif" class="icon itemicon" alt="'.get_string('aggregation', 'grades').'"/>';
                             case GRADE_AGGREGATE_SUM:
-                                return '<img src="'.$CFG->pixpath.'/i/agg_sum.gif" class="icon itemicon" alt="'.get_string('aggregation', 'grades').'"/>';
                         }
                     }
 
                 } else if ($element['object']->itemtype == 'mod') {
-                    return '<img src="'.$CFG->modpixpath.'/'.$element['object']->itemmodule.'/icon.gif" class="icon itemicon" alt="'
-                           .get_string('modulename', $element['object']->itemmodule).'"/>';
+                    $strmodname = get_string('modulename', $element['object']->itemmodule);
+                    return '<img src="'.$CFG->modpixpath.'/'.$element['object']->itemmodule.'/icon.gif" class="icon itemicon" title="' .$strmodname.'" alt="' .$strmodname.'"/>';
 
                 } else if ($element['object']->itemtype == 'manual') {
                     if ($element['object']->is_outcome_item()) {
-                        return '<img src="'.$CFG->pixpath.'/i/outcomes.gif" class="icon itemicon" alt="'.get_string('outcome', 'grades').'"/>';
+                        $stroutcome = get_string('outcome', 'grades');
+                        return '<img src="'.$CFG->pixpath.'/i/outcomes.gif" class="icon itemicon" title="'.$stroutcome.'" alt="'.$stroutcome.'"/>';
                     } else {
-                        return '<img src="'.$CFG->pixpath.'/t/manual_item.gif" class="icon itemicon" alt="'.get_string('manualitem', 'grades').'"/>';
+                        $strmanual = get_string('manualitem', 'grades');
+                        return '<img src="'.$CFG->pixpath.'/t/manual_item.gif" class="icon itemicon" title="'.$strmanual.'" alt="'.$strmanual.'"/>';
                     }
                 }
                 break;
 
             case 'category':
-                return '<img src="'.$CFG->pixpath.'/f/folder.gif" class="icon itemicon" alt="'.get_string('category', 'grades').'"/>';
+                $strcat = get_string('category', 'grades');
+                return '<img src="'.$CFG->pixpath.'/f/folder.gif" class="icon itemicon" title="'.$strcat.'" alt="'.$strcat.'" />';
         }
 
         if ($spacerifnone) {
@@ -841,8 +1153,7 @@ class grade_structure {
             $header .= $this->get_element_icon($element, $spacerifnone);
         }
 
-        $title = $element['object']->get_name();
-        $header .= $title;
+        $header .= $element['object']->get_name();
 
         if ($element['type'] != 'item' and $element['type'] != 'categoryitem' and $element['type'] != 'courseitem') {
             return $header;
@@ -855,6 +1166,8 @@ class grade_structure {
         if ($withlink and $itemtype=='mod' and $iteminstance and $itemmodule) {
             if ($cm = get_coursemodule_from_instance($itemmodule, $iteminstance, $this->courseid)) {
 
+                $a->name = get_string('modulename', $element['object']->itemmodule);
+                $title = get_string('linktoactivity', 'grades', $a);
                 $dir = $CFG->dirroot.'/mod/'.$itemmodule;
 
                 if (file_exists($dir.'/grade.php')) {
@@ -946,7 +1259,6 @@ class grade_structure {
         }
 
         $object = $element['object'];
-        $overlib = '';
 
         switch ($element['type']) {
             case 'item':
@@ -977,9 +1289,6 @@ class grade_structure {
                 $url = $gpr->add_url_params($url);
                 if (!empty($object->feedback)) {
                     $feedback = addslashes_js(trim(format_string($object->feedback, $object->feedbackformat)));
-                    $function = "return overlib('$feedback', BORDER, 0, FGCLASS, 'feedback', "
-                              ."CAPTIONFONTCLASS, 'caption', CAPTION, '$strfeedback');";
-                    $overlib = 'onmouseover="'.s($function).'" onmouseout="return nd();"';
                 }
                 break;
 
@@ -988,7 +1297,7 @@ class grade_structure {
         }
 
         if ($url) {
-            return '<a href="'.$url.'"><img '.$overlib.' src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$stredit.'" title="'.$stredit.'"/></a>';
+            return '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$stredit.'" title="'.$stredit.'"/></a>';
 
         } else {
             return '';
