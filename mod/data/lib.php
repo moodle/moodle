@@ -2482,22 +2482,7 @@ function data_pluginfile($course, $cminfo, $context, $filearea, $args) {
         return false;
     }
 
-    if ($filearea === 'data_intro') {
-        // all users may access it
-        $relativepath = '/'.implode('/', $args);
-        $fullpath = $context->id.'data_intro0'.$relativepath;
-
-        $fs = get_file_storage();
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-            return false;
-        }
-
-        $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
-
-        // finally send the file
-        send_stored_file($file, $lifetime, 0);
-
-    } else if ($filearea === 'data_content') {
+    if ($filearea === 'data_content') {
         $contentid = (int)array_shift($args);
 
         if (!$content = $DB->get_record('data_content', array('id'=>$contentid))) {
