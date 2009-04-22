@@ -1157,6 +1157,35 @@ function grade_update_mod_grades($modinstance, $userid=0) {
 }
 
 /**
+ * Returns list of currently used mods with legacy grading in course
+ * @param $courseid int
+ * @return array of modname=>modulenamestring mods with legacy grading
+ */
+function grade_get_legacy_modules($courseid) {
+    global $CFG;
+
+    $mods = get_course_mods($courseid);
+    $legacy = array();
+
+    foreach ($mods as $mod) {
+        $modname = $mod->modname;
+
+        $modlib = "$CFG->dirroot/mod/$modname/lib.php";
+        if (!$modlib) {
+            continue;
+        }
+        include_once($modlib);
+        $gradefunc = $modname.'_grades';
+        if (!function_exists($gradefunc)) {
+            continue;
+        }
+        $legacy[$modname] = get_string('modulename', $modname);
+    }
+
+    return $legacy;
+}
+
+/**
  * Get and update/create grade item for legacy modules.
  */
 function grade_get_legacy_grade_item($modinstance, $grademax, $scaleid) {

@@ -92,18 +92,6 @@ function lams_cron () {
   return true;
 }
 
-function lams_grades($lamsid) {
-/// Must return an array of grades for a given instance of this module,
-/// indexed by user.  It also returns a maximum allowed grade.
-///
-///    $return->grades = array of grades;
-///    $return->maxgrade = maximum allowed grade;
-///
-///    return $return;
-
-  return NULL;
-}
-
 function lams_get_participants($lamsid) {
 //Must return an array of user records (all data) who are participants
 //for a given instance of lams. Must include every user involved

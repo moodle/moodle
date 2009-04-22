@@ -237,13 +237,6 @@ function wiki_cron () {
     return $result;
 }
 
-function wiki_grades($wikiid) {
-/// Must return an array of grades for a given instance of this module,
-/// indexed by user.  It also returns a maximum allowed grade.
-
-    return NULL;
-}
-
 function wiki_get_participants($wikiid) {
 //Returns the users with data in one wiki
 //(users with records in wiki_pages and wiki_entries)
