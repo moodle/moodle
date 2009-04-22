@@ -54,8 +54,14 @@ if (has_capability('moodle/grade:manage', $systemcontext)
                                                          '3' => '3',
                                                          '4' => '4',
                                                          '5' => '5')));
+        $temp->add(new admin_setting_configselect('grade_navmethod', get_string('navmethod', 'grades'), null, 0,
+                                                  array(GRADE_NAVMETHOD_DROPDOWN => get_string('dropdown', 'grades'),
+                                                        GRADE_NAVMETHOD_TABS => get_string('tabs', 'grades'),
+                                                        GRADE_NAVMETHOD_COMBO => get_string('combo', 'grades'))));
 
         $temp->add(new admin_setting_special_gradeexport());
+
+        $temp->add(new admin_setting_special_gradelimiting());
     }
     $ADMIN->add('grades', $temp);
 
@@ -76,8 +82,16 @@ if (has_capability('moodle/grade:manage', $systemcontext)
                          GRADE_AGGREGATE_MAX             =>get_string('aggregatemax', 'grades'),
                          GRADE_AGGREGATE_MODE            =>get_string('aggregatemode', 'grades'),
                          GRADE_AGGREGATE_SUM             =>get_string('aggregatesum', 'grades'));
+
+        $defaultvisible = array(GRADE_AGGREGATE_MEAN, GRADE_AGGREGATE_WEIGHTED_MEAN, GRADE_AGGREGATE_WEIGHTED_MEAN2,
+                                GRADE_AGGREGATE_EXTRACREDIT_MEAN, GRADE_AGGREGATE_MEDIAN, GRADE_AGGREGATE_MIN,
+                                GRADE_AGGREGATE_MAX, GRADE_AGGREGATE_MODE, GRADE_AGGREGATE_SUM);
+
         $defaults = array('value'=>GRADE_AGGREGATE_WEIGHTED_MEAN2, 'forced'=>false, 'adv'=>false);
         $temp->add(new admin_setting_gradecat_combo('grade_aggregation', get_string('aggregation', 'grades'), get_string('aggregationhelp', 'grades'), $defaults, $options));
+
+        $temp->add(new admin_setting_configmultiselect('grade_aggregations_visible', get_string('aggregationsvisible', 'grades'),
+                                                       get_string('aggregationsvisiblehelp', 'grades'), $defaultvisible, $options));
 
         $options = array(0 => get_string('no'), 1 => get_string('yes'));
 
