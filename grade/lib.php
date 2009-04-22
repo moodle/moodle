@@ -1106,6 +1106,7 @@ class grade_structure {
                             case GRADE_AGGREGATE_EXTRACREDIT_MEAN:
                                 return '<img src="'.$CFG->pixpath.'/i/agg_mean.gif" class="icon itemicon" alt="'.get_string('aggregation', 'grades').'"/>';
                             case GRADE_AGGREGATE_SUM:
+                                return '<img src="'.$CFG->pixpath.'/i/agg_sum.gif" class="icon itemicon" alt="'.get_string('aggregation', 'grades').'"/>';
                         }
                     }
 
