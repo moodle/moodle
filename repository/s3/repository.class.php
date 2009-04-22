@@ -36,7 +36,6 @@ class repository_s3 extends repository {
                     );
                 $tree[] = $folder;
             }
-            echo_fb($tree);
         } else {
             $contents = $this->s->getBucket($path);
             foreach ($contents as $file) {
