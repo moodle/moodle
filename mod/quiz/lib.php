@@ -573,6 +573,7 @@ function quiz_refresh_events($courseid = 0) {
     $moduleid = $DB->get_field('modules', 'id', array('name' => 'quiz'));
 
     foreach ($quizzes as $quiz) {
+        $cm = get_coursemodule_from_id('quiz', $quiz->id);
         $event = NULL;
         $event2 = NULL;
         $event2old = NULL;
@@ -590,7 +591,7 @@ function quiz_refresh_events($courseid = 0) {
         }
 
         $event->name        = $quiz->name;
-        $event->description = $quiz->intro;
+        $event->description = format_module_intro('quiz', $quiz, $cm->id);
         $event->courseid    = $quiz->course;
         $event->groupid     = 0;
         $event->userid      = 0;

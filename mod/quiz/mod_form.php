@@ -54,9 +54,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
 
     /// Introduction.
-        $mform->addElement('htmleditor', 'intro', get_string('introduction', 'quiz'));
-        $mform->setType('intro', PARAM_RAW);
-        $mform->setHelpButton('intro', array('richtext2', get_string('helprichtext')));
+        $this->add_intro_editor(false, get_string('introduction', 'quiz'));
 
     /// Open and close dates.
         $mform->addElement('date_time_selector', 'timeopen', get_string('quizopen', 'quiz'), array('optional' => true));

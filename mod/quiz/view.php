@@ -95,10 +95,7 @@
 /// Print quiz name and description
     print_heading(format_string($quiz->name));
     if (trim(strip_tags($quiz->intro))) {
-        $formatoptions->noclean = true;
-        $formatoptions->para    = false;
-        $formatoptions->noclean = true;
-        print_box(format_text($quiz->intro, $quiz->introformat, $formatoptions), 'generalbox', 'intro');
+        print_box(format_module_intro('quiz', $quiz, $cm->id), 'generalbox', 'intro');
     }
 
 /// Display information about this quiz.

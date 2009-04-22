@@ -621,10 +621,8 @@ class password_access_rule extends quiz_access_rule_base {
             print_header('', '', '', 'quizpassword');
         }
         if (trim(strip_tags($this->_quiz->intro))) {
-            $formatoptions = new stdClass;
-            $formatoptions->noclean = true;
-            $output .= print_box(format_text($this->_quiz->intro, $this->_quiz->introformat, $formatoptions),
-                    'generalbox', 'intro', true);
+            $cm = get_coursemodule_from_id('quiz', $this->_quiz->id);
+            $output .= print_box(format_module_intro('quiz', $this->_quiz, $cm->id), 'generalbox', 'intro', true);
         }
         $output .= print_box_start('generalbox', 'passwordbox', true);
 
