@@ -148,7 +148,7 @@ class repository_boxnet extends repository {
             $filedates = $tree['file_date'];
             $fileicon  = $tree['thumbnail'];
             foreach ($filenames as $n=>$v){
-                if(strstr($v, $search_text) !== false) {
+                if(strstr(strtolower($v), strtolower($search_text)) !== false) {
                     $list[] = array('title'=>$v, 
                             'size'=>$filesizes[$n],
                             'date'=>$filedates[$n],
