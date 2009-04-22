@@ -166,7 +166,7 @@ EOD;
         case 'search':
             try {
                 $search_result = $repo->search($search_text);
-                $search_result['search_result'] = 'test';
+                $search_result['search_result'] = true;
                 $search_result['client_id'] = $client_id;
                 $search_result['repo_id'] = $repo_id;
                 echo json_encode($search_result);
