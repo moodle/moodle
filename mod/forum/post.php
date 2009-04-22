@@ -802,10 +802,8 @@
             }
         }
     } else {
-        $forum->intro = trim($forum->intro);
         if (!empty($forum->intro)) {
-            $options = (object)array('noclean'=>true);
-            print_box(format_text($forum->intro, $forum->introformat, $options), 'generalbox', 'intro');
+            print_box(format_module_intro('forum', $forum, $cm->id), 'generalbox', 'intro');
         }
     }
 

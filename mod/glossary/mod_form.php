@@ -19,10 +19,7 @@ class mod_glossary_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
 
-        $mform->addElement('htmleditor', 'intro', get_string('description'));
-        $mform->setType('intro', PARAM_RAW);
-        $mform->addRule('intro', get_string('required'), 'required', null, 'client');
-        $mform->setHelpButton('intro', array('writing', 'questions', 'text2'), false, 'editorhelpbutton');
+        $this->add_intro_editor(true);
 
         $mform->addElement('text', 'entbypage', get_string('entbypage', 'glossary'));
         $mform->setDefault('entbypage', 10);

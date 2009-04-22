@@ -322,11 +322,8 @@
     }
 
 /// Info box
-    if ( $glossary->intro && $showcommonelements ) {
-        $options = new stdclass;
-        $options->para = false;
-        $options->noclean = true;
-        print_box(format_text($glossary->intro, $glossary->introformat, $options), 'generalbox', 'intro');
+    if ($glossary->intro && $showcommonelements) {
+        print_box(format_module_intro('glossary', $glossary, $cm->id), 'generalbox', 'intro');
     }
 
 /// Search box

@@ -153,9 +153,6 @@
 
     /// First, let's process the general forums and build up a display
 
-    $introoptions = new object();
-    $introoptions->para = false;
-
     if ($generalforums) {
         foreach ($generalforums as $forum) {
             $cm      = $modinfo->instances['forum'][$forum->id];
@@ -193,7 +190,7 @@
                 }
             }
 
-            $forum->intro = shorten_text(trim(format_text($forum->intro, $forum->introformat, $introoptions)), $CFG->forum_shortpost);
+            $forum->intro = shorten_text(format_module_intro('forum', $forum, $cm->id), $CFG->forum_shortpost);
             $forumname = format_string($forum->name, true);;
 
             if ($cm->visible) {
@@ -315,8 +312,7 @@
                     }
                 }
 
-                $introoptions->para=false;
-                $forum->intro = shorten_text(trim(format_text($forum->intro, $forum->introformat, $introoptions)), $CFG->forum_shortpost);
+                $forum->intro = shorten_text(format_module_intro('forum', $forum, $cm->id), $CFG->forum_shortpost);
 
                 if ($cm->sectionnum != $currentsection) {
                     $printsection = $cm->sectionnum;

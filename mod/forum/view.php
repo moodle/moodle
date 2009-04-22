@@ -203,8 +203,6 @@
         notify(get_string('qandanotify','forum'));
     }
 
-    $forum->intro = trim($forum->intro);
-
     switch ($forum->type) {
         case 'single':
             if (! $discussion = $DB->get_record("forum_discussions", array("forum" => $forum->id))) {
@@ -232,10 +230,7 @@
 
         case 'eachuser':
             if (!empty($forum->intro)) {
-                $options = new stdclass;
-                $options->para = false;
-                $options->noclean = true;
-                print_box(format_text($forum->intro, $forum->introformat, $options), 'generalbox', 'intro');
+                print_box(format_module_intro('forum', $forum, $cm->id), 'generalbox', 'intro');
             }
             echo '<p class="mdl-align">';
             if (forum_user_can_post_discussion($forum, null, -1, $cm)) {
@@ -261,10 +256,7 @@
 
         default:
             if (!empty($forum->intro)) {
-                $options = new stdclass;
-                $options->para = false;
-                $options->noclean = true;
-                print_box(format_text($forum->intro, $forum->introformat, $options), 'generalbox', 'intro');
+                print_box(format_module_intro('forum', $forum, $cm->id), 'generalbox', 'intro');
             }
             echo '<br />';
             if (!empty($showall)) {

@@ -108,7 +108,7 @@
                     //First all rss feeds common headers
                     $header = rss_standard_header(format_string($glossary->name,true),
                                                   $CFG->wwwroot."/mod/glossary/view.php?g=".$glossary->id,
-                                                  format_string($glossary->intro,true));
+                                                  format_string($glossary->intro,true)); //TODO: fix format
                     //Now all the rss items
                     if (!empty($header)) {
                         $articles = rss_add_items($items);

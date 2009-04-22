@@ -27,12 +27,7 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->setHelpButton('type', array('forumtype', get_string('forumtype', 'forum'), 'forum'));
         $mform->setDefault('type', 'general');
 
-        $mform->addElement('htmleditor', 'intro', get_string('forumintro', 'forum'));
-        $mform->setType('intro', PARAM_RAW);
-        $mform->addRule('intro', get_string('required'), 'required', null, 'client');
-        $mform->setHelpButton('intro', array('writing', 'questions', 'richtext2'), false, 'editorhelpbutton');
-
-        $mform->addElement('format', 'introformat', get_string('format'));
+        $this->add_intro_editor(true, get_string('forumintro', 'forum'));
 
         $options = array();
         $options[0] = get_string('no');
@@ -148,7 +143,7 @@ class mod_forum_mod_form extends moodleform_mod {
 
     }
 
-    function definition_after_data(){
+    function definition_after_data() {
         parent::definition_after_data();
         $mform     =& $this->_form;
         $type      =& $mform->getElement('type');
@@ -156,13 +151,13 @@ class mod_forum_mod_form extends moodleform_mod {
 
         //we don't want to have these appear as possible selections in the form but
         //we want the form to display them if they are set.
-        if ($typevalue[0]=='news'){
+        if ($typevalue[0]=='news') {
             $type->addOption(get_string('namenews', 'forum'), 'news');
             $type->setHelpButton(array('forumtypenews', get_string('forumtype', 'forum'), 'forum'));
             $type->freeze();
             $type->setPersistantFreeze(true);
         }
-        if ($typevalue[0]=='social'){
+        if ($typevalue[0]=='social') {
             $type->addOption(get_string('namesocial', 'forum'), 'social');
             $type->freeze();
             $type->setPersistantFreeze(true);
@@ -170,12 +165,12 @@ class mod_forum_mod_form extends moodleform_mod {
 
     }
 
-    function data_preprocessing(&$default_values){
-        if (empty($default_values['scale'])){
+    function data_preprocessing(&$default_values) {
+        if (empty($default_values['scale'])) {
             $default_values['assessed'] = 0;
         }
 
-        if (empty($default_values['assessed'])){
+        if (empty($default_values['assessed'])) {
             $default_values['ratingtime'] = 0;
         } else {
             $default_values['ratingtime']=
@@ -187,17 +182,17 @@ class mod_forum_mod_form extends moodleform_mod {
         // numbers to be 1, this will not apply unless checkbox is ticked.
         $default_values['completiondiscussionsenabled']=
             !empty($default_values['completiondiscussions']) ? 1 : 0;
-        if(empty($default_values['completiondiscussions'])) {
+        if (empty($default_values['completiondiscussions'])) {
             $default_values['completiondiscussions']=1;
         }
         $default_values['completionrepliesenabled']=
             !empty($default_values['completionreplies']) ? 1 : 0;
-        if(empty($default_values['completionreplies'])) {
+        if (empty($default_values['completionreplies'])) {
             $default_values['completionreplies']=1;
         }
         $default_values['completionpostsenabled']=
             !empty($default_values['completionposts']) ? 1 : 0;
-        if(empty($default_values['completionposts'])) {
+        if (empty($default_values['completionposts'])) {
             $default_values['completionposts']=1;
         }
     }
@@ -239,20 +234,20 @@ class mod_forum_mod_form extends moodleform_mod {
     }
 
     function get_data() {
-        $data=parent::get_data();
-        if(!$data) {
+        $data = parent::get_data();
+        if (!$data) {
             return false;
         }
         // Turn off completion settings if the checkboxes aren't ticked
-        $autocompletion=!empty($data->completion) && $data->completion==COMPLETION_TRACKING_AUTOMATIC;
-        if(empty($data->completiondiscussionsenabled) || !$autocompletion) {
-            $data->completiondiscussions=0;
+        $autocompletion = !empty($data->completion) && $data->completion==COMPLETION_TRACKING_AUTOMATIC;
+        if (empty($data->completiondiscussionsenabled) || !$autocompletion) {
+            $data->completiondiscussions = 0;
         }
-        if(empty($data->completionrepliesenabled) || !$autocompletion) {
-            $data->completionreplies=0;
+        if (empty($data->completionrepliesenabled) || !$autocompletion) {
+            $data->completionreplies = 0;
         }
-        if(empty($data->completionpostsenabled) || !$autocompletion) {
-            $data->completionposts=0;
+        if (empty($data->completionpostsenabled) || !$autocompletion) {
+            $data->completionposts = 0;
         }
         return $data;
     }
