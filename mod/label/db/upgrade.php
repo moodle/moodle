@@ -34,6 +34,32 @@ function xmldb_label_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2007101510, 'label');
     }
 
+    if ($result && $oldversion < 2009042200) {
+
+    /// Rename field content on table label to intro
+        $table = new xmldb_table('label');
+        $field = new xmldb_field('content', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null, 'name');
+
+    /// Launch rename field content
+        $dbman->rename_field($table, $field, 'intro');
+
+    /// label savepoint reached
+        upgrade_mod_savepoint($result, 2009042200, 'label');
+    }
+
+    if ($result && $oldversion < 2009042201) {
+
+    /// Define field introformat to be added to label
+        $table = new xmldb_table('label');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, null, null, null, null, '4', 'intro');
+
+    /// Launch add field introformat
+        $dbman->add_field($table, $field);
+
+    /// label savepoint reached
+        upgrade_mod_savepoint($result, 2009042201, 'label');
+    }
+
     return $result;
 }
 

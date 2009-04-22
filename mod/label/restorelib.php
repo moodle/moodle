@@ -35,7 +35,7 @@
             //Now, build the LABEL record structure
             $label->course = $restore->course_id;
             $label->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
-            $label->content = backup_todb($info['MOD']['#']['CONTENT']['0']['#']);
+            $label->intro = backup_todb($info['MOD']['#']['CONTENT']['0']['#']);
             $label->timemodified = $info['MOD']['#']['TIMEMODIFIED']['0']['#'];
  
             //The structure is equal to the db, so insert the label
@@ -71,12 +71,12 @@
             foreach ($labels as $label) {
                 //Increment counter
                 $i++;
-                $content = $label->content;
+                $content = $label->intro;
                 $result = restore_decode_content_links_worker($content,$restore);
 
                 if ($result != $content) {
                     //Update record
-                    $label->content = $result;
+                    $label->intro = $result;
                     $status = $DB->update_record("label", $label);
                     if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {

@@ -4,6 +4,7 @@
 
     require_once("../config.php");
     require_once("lib.php");
+    require_once($CFG->libdir.'/filelib.php');
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->libdir.'/completionlib.php');
     require_once($CFG->libdir.'/conditionlib.php');

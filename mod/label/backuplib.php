@@ -48,7 +48,7 @@
         fwrite ($bf,full_tag("ID",4,false,$label->id));
         fwrite ($bf,full_tag("MODTYPE",4,false,"label"));
         fwrite ($bf,full_tag("NAME",4,false,$label->name));
-        fwrite ($bf,full_tag("CONTENT",4,false,$label->content));
+        fwrite ($bf,full_tag("CONTENT",4,false,$label->intro));
         fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$label->timemodified));
         //End mod
         $status = fwrite ($bf,end_tag("MOD",3,true));

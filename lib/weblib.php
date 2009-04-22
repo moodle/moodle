@@ -1555,12 +1555,13 @@ function filter_text($text, $courseid=NULL) {
  * @param string $module name of module
  * @param object $activity instance of activity
  * @param int $cmid course module id
+ * @param bool $filter filter resulting html text
  * @return text
  */
-function format_module_intro($module, $activity, $cmid) {
+function format_module_intro($module, $activity, $cmid, $filter=true) {
     global $CFG;
     require_once("$CFG->libdir/filelib.php");
-    $options = (object)array('noclean'=>true, 'para'=>false);
+    $options = (object)array('noclean'=>true, 'para'=>false, 'filter'=>false);
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
     $intro = file_rewrite_pluginfile_urls($activity->intro, 'pluginfile.php', $context->id, $module.'_intro', 0);
     return trim(format_text($intro, $activity->introformat, $options));

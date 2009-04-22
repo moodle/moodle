@@ -8,7 +8,7 @@ define("LABEL_MAX_NAME_LENGTH", 50);
 function get_label_name($label) {
     $textlib = textlib_get_instance();
 
-    $name = strip_tags(format_string($label->content,true));
+    $name = strip_tags(format_string($label->intro,true));
     if ($textlib->strlen($name) > LABEL_MAX_NAME_LENGTH) {
         $name = $textlib->substr($name, 0, LABEL_MAX_NAME_LENGTH)."...";
     }
@@ -84,15 +84,16 @@ function label_get_participants($labelid) {
 function label_get_coursemodule_info($coursemodule) {
     global $DB;
 
-    if ($label = $DB->get_record('label', array('id'=>$coursemodule->instance), 'id, content, name')) {
+    if ($label = $DB->get_record('label', array('id'=>$coursemodule->instance), 'id, name, intro, introformat')) {
         if (empty($label->name)) {
             // label name missing, fix it
             $label->name = "label{$label->id}";
             $DB->set_field('label', 'name', $label->name, array('id'=>$label->id));
         }
         $info = new object();
-        $info->extra = urlencode($label->content);
-        $info->name = urlencode($label->name);
+        // no filtering hre because this info is cached and filtered later
+        $info->extra = urlencode(format_module_intro('label', $label, $coursemodule->id, false));
+        $info->name  = urlencode($label->name);
         return $info;
     } else {
         return null;
@@ -145,7 +146,7 @@ function label_supports($feature) {
         case FEATURE_GROUPS:                  return false;
         case FEATURE_GROUPINGS:               return false;
         case FEATURE_GROUPMEMBERSONLY:        return true;
-        case FEATURE_MOD_INTRO:    return false;
+        case FEATURE_MOD_INTRO:               return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return false;
         case FEATURE_GRADE_HAS_GRADE:         return false;
         case FEATURE_GRADE_OUTCOMES:          return false;
