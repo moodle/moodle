@@ -24,7 +24,6 @@ $string['allsubscribe'] = 'Subscribe to all forums';
 $string['allunsubscribe'] = 'Unsubscribe from all forums';
 $string['alreadyfirstpost'] = 'This is already the first post in the discussion';
 $string['anyfile'] = 'Any file';
-$string['areaintro'] = 'Forum introduction';
 $string['attachment'] = 'Attachment';
 $string['attachments'] = 'Attachments';
 $string['attachmentnopost'] = 'You cannot export attachments without a post id';

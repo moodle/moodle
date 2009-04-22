@@ -15,7 +15,6 @@ $string['allowprintview'] = 'Allow print view';
 $string['allowratings'] = 'Allow entries to be rated?';
 $string['answer'] = 'Answer';
 $string['approve'] = 'Approve';
-$string['areaintro'] = 'Glossary introduction';
 $string['areyousuredelete'] = 'Are you sure you want to delete this entry?';
 $string['areyousuredeletecomment'] = 'Are you sure you want to delete this comment?';
 $string['areyousureexport'] = 'Are you sure you want to export this entry to';

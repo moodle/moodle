@@ -2466,9 +2466,6 @@ function data_get_exportdata($dataid, $fields, $selectedfields) {
  */
 function data_get_file_areas($course, $cm, $context) {
     $areas = array();
-    if (has_capability('moodle/course:managefiles', $context)) {
-        $areas['data_intro'] = get_string('areaintro', 'data');
-    }
     return $areas;
 }
 

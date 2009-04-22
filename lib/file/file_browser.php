@@ -474,8 +474,17 @@ class file_browser {
         if (function_exists($fileinfofunction)) {
             $areas = $fileinfofunction($course, $cm, $context);
         } else {
+            $areas = array();
+        }
+        if (!isset($areas[$modname.'_intro'])
+          and plugin_supports('mod', $modname, FEATURE_MOD_INTRO, true)
+          and has_capability('moodle/course:managefiles', $context)) {
+            $areas[$modname.'_intro'] = get_string('moduleintro');
+        }
+        if (empty($areas)) {
             return null;
         }
+
         if (is_null($filearea) or is_null($itemid)) {
             return new file_info_module($this, $course, $cm, $context, $areas);
 

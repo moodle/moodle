@@ -690,7 +690,6 @@ function scorm_get_extra_capabilities() {
 function scorm_get_file_areas($course, $cm, $context) {
     $areas = array();
     if (has_capability('moodle/course:managefiles', $context)) {
-        $areas['scorm_intro']   = get_string('areaintro', 'scorm');
         $areas['scorm_content'] = get_string('areacontent', 'scorm');
         $areas['scorm_package'] = get_string('areapackage', 'scorm');
     }

@@ -4048,9 +4048,6 @@ function forum_print_attachments($post, $cm, $type) {
  */
 function forum_get_file_areas($course, $cm, $context) {
     $areas = array();
-    if (has_capability('moodle/course:managefiles', $context)) {
-        $areas['forum_intro'] = get_string('areaintro', 'forum');
-    }
     return $areas;
 }
 

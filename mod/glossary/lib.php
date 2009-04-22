@@ -1068,9 +1068,6 @@ function glossary_print_attachments($entry, $cm, $type=NULL, $align="left") {
  */
 function glossary_get_file_areas($course, $cm, $context) {
     $areas = array();
-    if (has_capability('moodle/course:managefiles', $context)) {
-        $areas['glossary_intro'] = get_string('areaintro', 'glossary');
-    }
     return $areas;
 }
 

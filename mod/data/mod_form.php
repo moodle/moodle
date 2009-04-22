@@ -69,7 +69,7 @@ class mod_data_mod_form extends moodleform_mod {
     function data_preprocessing(&$default_values){
         if (empty($default_values['scale'])){
             $default_values['assessed'] = 0;
-        }        
+        }
     }
 
 }

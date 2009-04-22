@@ -3,7 +3,7 @@ require_once ($CFG->dirroot.'/course/moodleform_mod.php');
 require_once ($CFG->dirroot.'/mod/hotpot/lib.php');
 
 $HOTPOT_TEXTSOURCE = array(
-    HOTPOT_TEXTSOURCE_QUIZ => get_string('textsourcequiz', 'hotpot'), 
+    HOTPOT_TEXTSOURCE_QUIZ => get_string('textsourcequiz', 'hotpot'),
     HOTPOT_TEXTSOURCE_FILENAME => get_string('textsourcefilename', 'hotpot'),
     HOTPOT_TEXTSOURCE_FILEPATH => get_string('textsourcefilepath', 'hotpot'),
     HOTPOT_TEXTSOURCE_SPECIFIC => get_string('textsourcespecific', 'hotpot')

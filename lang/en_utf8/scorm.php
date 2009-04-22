@@ -9,7 +9,6 @@ $string['apidebugmask'] = 'API debug capture mask (simple regex on &lt;username&
 $string['allowtypeexternal'] = 'Enable external package type';
 $string['allowtypeimsrepository'] = 'Enable IMS package type';
 $string['allowtypelocalsync'] = 'Enable downloaded package type';
-$string['areaintro'] = 'Introduction files';
 $string['areacontent'] = 'Content files';
 $string['areapackage'] = 'Package file';
 $string['asset'] = 'Asset';

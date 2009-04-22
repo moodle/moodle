@@ -84,7 +84,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addElement('select', 'grademethod', get_string('grademethod', 'scorm'), scorm_get_grade_method_array());
         $mform->setHelpButton('grademethod', array('grademethod', get_string('grademethod', 'scorm'),'scorm'));
         $mform->setDefault('grademethod', $cfg_scorm->grademethod);
-        
+
 // Maximum Grade
         for ($i=0; $i<=100; $i++) {
           $grades[$i] = "$i";
@@ -100,17 +100,17 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addElement('select', 'maxattempt', get_string('maximumattempts', 'scorm'), scorm_get_attempts_array());
         $mform->setHelpButton('maxattempt', array('maxattempt',get_string('maximumattempts', 'scorm'), 'scorm'));
         $mform->setDefault('maxattempt', $cfg_scorm->maxattempts);
-        
+
 // Display attempt status
         $mform->addElement('selectyesno', 'displayattemptstatus', get_string('displayattemptstatus', 'scorm'));
         $mform->setHelpButton('displayattemptstatus', array('displayattemptstatus',get_string('displayattemptstatus', 'scorm'), 'scorm'));
         $mform->setDefault('displayattemptstatus', $cfg_scorm->displayattemptstatus);
-        
+
 // Display course structure
         $mform->addElement('selectyesno', 'displaycoursestructure', get_string('displaycoursestructure', 'scorm'));
         $mform->setHelpButton('displaycoursestructure', array('displaycoursestructure',get_string('displaycoursestructure', 'scorm'), 'scorm'));
         $mform->setDefault('displaycoursestructure', $cfg_scorm->displaycoursestructure);
-        
+
 // Force completed
         $mform->addElement('selectyesno', 'forcecompleted', get_string('forcecompleted', 'scorm'));
         $mform->setHelpButton('forcecompleted', array('forcecompleted',get_string('forcecompleted', 'scorm'), 'scorm'));
@@ -122,13 +122,13 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->setHelpButton('forcenewattempt', array('forcenewattempt',get_string('forcenewattempt', 'scorm'), 'scorm'));
         $mform->setDefault('forcenewattempt', $cfg_scorm->forcenewattempt);
         $mform->setAdvanced('forcenewattempt');
-        
+
 // Last attempt lock - lock the enter button after the last available attempt has been made
         $mform->addElement('selectyesno', 'lastattemptlock', get_string('lastattemptlock', 'scorm'));
         $mform->setHelpButton('lastattemptlock', array('lastattemptlock',get_string('lastattemptlock', 'scorm'), 'scorm'));
         $mform->setDefault('lastattemptlock', $cfg_scorm->lastattemptlock);
         $mform->setAdvanced('lastattemptlock');
-        
+
 // What Grade
         $mform->addElement('select', 'whatgrade', get_string('whatgrade', 'scorm'),  scorm_get_what_grade_array());
         $mform->disabledIf('whatgrade', 'maxattempt','eq',1);
@@ -155,7 +155,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->setDefault('enddisabled', 1);
         $mform->disabledIf('dateendgrp', 'enddisabled', 'checked');
 */
-        
+
 // Stage Size
         $mform->addElement('static', '', '' ,'<hr />');
         $mform->addElement('static', 'stagesize', get_string('stagesize','scorm'));

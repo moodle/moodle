@@ -28,7 +28,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 /**
  * Settings form for the quiz module.
- * 
+ *
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package quiz
  */
