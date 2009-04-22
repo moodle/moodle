@@ -468,7 +468,7 @@ class grade_edit_tree_column_category extends grade_edit_tree_column {
     var $forced;
     var $advanced;
 
-    function __construct($name) {
+    function grade_edit_tree_column_category($name) {
         global $CFG;
         $this->forced = (int)$CFG->{"grade_$name"."_flag"} & 1;
         $this->advanced = (int)$CFG->{"grade_$name"."_flag"} & 2;
@@ -496,7 +496,7 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
     var $deepest_level = 1;
     var $hide_when_moving = false;
 
-    function __construct($params) {
+    function grade_edit_tree_column_name($params) {
         if (empty($params['deepest_level'])) {
             throw new Exception('Tried to instantiate a grade_edit_tree_column_name object without the "deepest_level" param!');
         }
@@ -535,8 +535,8 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
 
 class grade_edit_tree_column_aggregation extends grade_edit_tree_column_category {
 
-    function __construct($params) {
-        parent::__construct('aggregation');
+    function grade_edit_tree_column_aggregation($params) {
+        parent::grade_edit_tree_column_category('aggregation');
     }
 
     function get_header_cell() {
@@ -697,8 +697,8 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
 
 class grade_edit_tree_column_aggregateonlygraded extends grade_edit_tree_column_category {
 
-    function __construct($params) {
-        parent::__construct('aggregateonlygraded');
+    function grade_edit_tree_column_aggregateonlygraded($params) {
+        parent::grade_edit_tree_column_category('aggregateonlygraded');
     }
 
     function get_header_cell() {
@@ -725,8 +725,8 @@ class grade_edit_tree_column_aggregateonlygraded extends grade_edit_tree_column_
 
 class grade_edit_tree_column_aggregatesubcats extends grade_edit_tree_column_category {
 
-    function __construct($params) {
-        parent::__construct('aggregatesubcats');
+    function grade_edit_tree_column_aggregatesubcats($params) {
+        parent::grade_edit_tree_column_category('aggregatesubcats');
     }
 
     function get_header_cell() {
@@ -754,8 +754,8 @@ class grade_edit_tree_column_aggregatesubcats extends grade_edit_tree_column_cat
 
 class grade_edit_tree_column_aggregateoutcomes extends grade_edit_tree_column_category {
 
-    function __construct($params) {
-        parent::__construct('aggregateoutcomes');
+    function grade_edit_tree_column_aggregateoutcomes($params) {
+        parent::grade_edit_tree_column_category('aggregateoutcomes');
     }
 
     function get_header_cell() {
@@ -792,8 +792,8 @@ class grade_edit_tree_column_aggregateoutcomes extends grade_edit_tree_column_ca
 
 class grade_edit_tree_column_droplow extends grade_edit_tree_column_category {
 
-    function __construct($params) {
-        parent::__construct('droplow');
+    function grade_edit_tree_column_droplow($params) {
+        parent::grade_edit_tree_column_category('droplow');
     }
 
     function get_header_cell() {
@@ -817,8 +817,8 @@ class grade_edit_tree_column_droplow extends grade_edit_tree_column_category {
 
 class grade_edit_tree_column_keephigh extends grade_edit_tree_column_category {
 
-    function __construct($params) {
-        parent::__construct('keephigh');
+    function grade_edit_tree_column_keephigh($params) {
+        parent::grade_edit_tree_column_category('keephigh');
     }
 
     function get_header_cell() {
@@ -842,7 +842,7 @@ class grade_edit_tree_column_keephigh extends grade_edit_tree_column_category {
 
 class grade_edit_tree_column_multfactor extends grade_edit_tree_column {
 
-    function __construct($params) {
+    function grade_edit_tree_column_multfactor($params) {
 
     }
 
@@ -899,7 +899,7 @@ class grade_edit_tree_column_plusfactor extends grade_edit_tree_column {
 
 class grade_edit_tree_column_actions extends grade_edit_tree_column {
 
-    function __construct($params) {
+    function grade_edit_tree_column_actions($params) {
 
     }
 
