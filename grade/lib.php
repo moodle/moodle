@@ -326,11 +326,7 @@ function print_grade_plugin_selector($plugin_info, $return=false) {
 
         $first_plugin = reset($plugins);
 
-        if (is_array($first_plugin)) {
-            $menu[$first_plugin['link'].'&amp;'] = '**header**'.$plugin_info['strings'][$plugin_type];
-        } else {
-            $menu[$plugins['link']] = '**header**'.$plugins['string'];
-        }
+        $menu[$first_plugin['link'].'&amp;'] = '--'.$plugin_info['strings'][$plugin_type];
 
         if (empty($plugins['id'])) {
             foreach ($plugins as $plugin) {
@@ -343,7 +339,6 @@ function print_grade_plugin_selector($plugin_info, $return=false) {
 /// finally print/return the popup form
     if ($count > 1) {
         $select = popup_form('', $menu, 'choosepluginreport', '', get_string('chooseaction', 'grades'), '', '', true, 'self');
-        $select = preg_replace('/\>\*\*header\*\*/', ' class="optionheader">', $select);
         if ($return) {
             return $select;
         } else {
@@ -455,7 +450,8 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
             $active = $url;
         }
 
-        $plugin_info['settings'] = array('id' => 'coursesettings', 'link' => $url, 'string' => get_string('settings'));
+        $plugin_info['settings'] = array();
+        $plugin_info['settings']['course'] = array('id' => 'coursesettings', 'link' => $url, 'string' => get_string('course'));
         $count++;
     }
 
@@ -522,13 +518,15 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
                 $active = $url;
             }
 
+            $plugin_info['scale'] = array();
+
             if ($active_type == 'scale' and $active_plugin == 'edit') {
                 $edit_url = $url_prefix.'edit/scale/edit.php?courseid='.$courseid.'&amp;id='.optional_param('id', 0, PARAM_INT);
                 $active = $edit_url;
-                $plugin_info['scale'] = array('id' => 'edit', 'link' => $edit_url, 'string' => get_string('edit'),
+                $plugin_info['scale']['view'] = array('id' => 'edit', 'link' => $edit_url, 'string' => get_string('edit'),
                     'parent' => array('id' => 'scale', 'link' => $url, 'string' => get_string('scales')));
             } else {
-                $plugin_info['scale'] = array('id' => 'scale', 'link' => $url, 'string' => get_string('scales'));
+                $plugin_info['scale']['view'] = array('id' => 'scale', 'link' => $url, 'string' => get_string('view'));
             }
 
             $count++;

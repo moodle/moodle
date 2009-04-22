@@ -2654,14 +2654,6 @@ div.allcoursegrades {
     margin-top: 7px;
 }
 
-#choosepluginreport_jump option {
-    margin-left: 20px;
-}
-
-#choosepluginreport_jump option.optionheader {
-    margin-left: 0px;
-}
-
 /***
  *** Login
  ***/
