@@ -239,7 +239,6 @@
                 send_file_not_found();
             }
             // all users may access it
-            $itemid = (int)array_shift($args);
             $relativepath = '/'.implode('/', $args);
             $fullpath = $context->id.$filearea.'0'.$relativepath;
             

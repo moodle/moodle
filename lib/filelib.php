@@ -191,7 +191,11 @@ function file_rewrite_pluginfile_urls($text, $file, $contextid, $filearea, $item
         $file = $file . '?file=';
     }
 
-    $baseurl = "$CFG->wwwroot/$file/$contextid/$filearea/$itemid/";
+    $baseurl = "$CFG->wwwroot/$file/$contextid/$filearea/";
+
+    if ($itemid !== null) {
+        $baseurl .= "$itemid/";
+    }
 
     if ($forcehttps) {
         $baseurl = str_replace('http://', 'https://', $baseurl);
