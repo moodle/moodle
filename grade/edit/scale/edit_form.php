@@ -143,7 +143,7 @@ class edit_scale_form extends moodleform {
 
             $options = explode(',', $data['scale']);
             if (count($options) < 2) {
-                $errors['scale'] = get_string('error');
+                $errors['scale'] = get_string('badlyformattedscale', 'grades');
             }
         }
 
