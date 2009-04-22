@@ -1,4 +1,6 @@
 <?php
+require_once($CFG->libdir.'/boxlib.php');
+
 /**
  * repository_boxnet class
  * This is a subclass of repository class
@@ -7,21 +9,15 @@
  * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-
-require_once($CFG->libdir.'/boxlib.php');
-
-/**
- *
- */
 class repository_boxnet extends repository {
     private $box;
 
     /**
      * Constructor
-     * @global <type> $SESSION
-     * @param <type> $repositoryid
-     * @param <type> $context
-     * @param <type> $options
+     * @global object $SESSION
+     * @param int $repositoryid
+     * @param object $context
+     * @param array $options
      */
     public function __construct($repositoryid, $context = SITEID, $options = array()) {
         global $SESSION;
@@ -55,8 +51,8 @@ class repository_boxnet extends repository {
 
     /**
      *
-     * @global <type> $SESSION
-     * @return <type>
+     * @global object $SESSION
+     * @return boolean
      */
     public function check_login() {
         global $SESSION;
@@ -65,8 +61,8 @@ class repository_boxnet extends repository {
 
     /**
      *
-     * @global <type> $SESSION
-     * @return <type>
+     * @global object $SESSION
+     * @return string
      */
     public function logout() {
         global $SESSION;
@@ -76,8 +72,8 @@ class repository_boxnet extends repository {
 
     /**
      *
-     * @param <type> $options
-     * @return <type>
+     * @param array $options
+     * @return mixed
      */
     public function set_option($options = array()) {
         if (!empty($options['api_key'])) {
@@ -90,8 +86,8 @@ class repository_boxnet extends repository {
 
     /**
      *
-     * @param <type> $config
-     * @return <type>
+     * @param string $config
+     * @return mixed
      */
     public function get_option($config = '') {
         if($config==='api_key') {
@@ -105,8 +101,8 @@ class repository_boxnet extends repository {
 
     /**
      *
-     * @global <type> $SESSION
-     * @return <type>
+     * @global object $SESSION
+     * @return boolean
      */
     public function global_search() {
         global $SESSION;
@@ -119,8 +115,8 @@ class repository_boxnet extends repository {
 
     /**
      *
-     * @global <type> $DB
-     * @return <type>
+     * @global object $DB
+     * @return object
      */
     public function get_login() {
         global $DB;
@@ -136,9 +132,9 @@ class repository_boxnet extends repository {
 
     /**
      *
-     * @global <type> $CFG
-     * @param <type> $search_text
-     * @return <type>
+     * @global object $CFG
+     * @param string $search_text
+     * @return mixed
      */
     public function search($search_text) {
         global $CFG;
@@ -168,9 +164,9 @@ class repository_boxnet extends repository {
 
     /**
      *
-     * @global <type> $CFG
-     * @param <type> $path
-     * @return <type>
+     * @global object $CFG
+     * @param string $path
+     * @return mixed
      */
     public function get_listing($path = '/', $page = ''){
         global $CFG;
@@ -188,7 +184,7 @@ class repository_boxnet extends repository {
 
     /**
      *
-     * @return <type>
+     * @return array
      */
     public function print_login(){
         $t = $this->box->getTicket();
@@ -217,7 +213,7 @@ class repository_boxnet extends repository {
 
     /**
      * Names of the plugin settings
-     * @return <type>
+     * @return array
      */
     public static function get_type_option_names() {
         return array('api_key');
@@ -225,7 +221,7 @@ class repository_boxnet extends repository {
 
     /**
      * Add Plugin settings input to Moodle form
-     * @param <type> $
+     * @param object $mform
      */
     public function type_config_form(&$mform) {
         $public_account = get_config('boxnet', 'public_account');
