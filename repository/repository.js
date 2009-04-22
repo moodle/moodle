@@ -465,6 +465,8 @@ repository_client.select_file = function(oldname, url, icon, client_id, repo_id)
     header.style.display = 'none';
     var footer = document.getElementById('fp-footer-'+client_id);
     footer.style.display = 'none';
+    var pathbar = document.getElementById('path-'+client_id);
+    pathbar.style.display = 'none';
     var panel = new YAHOO.util.Element('panel-'+client_id);
     var html = '<div class="fp-rename-form">';
     html += '<p><img src="'+icon+'" /></p>';
@@ -548,26 +550,20 @@ repository_client.path = function(client_id) {
             var link = document.createElement('A');
             link.href = "###";
             link.innerHTML = fs.path[i].name;
-            link.id = 'path-'+i+'-el';
+            link.id = 'path-'+client_id+'-'+fs.repo_id;
+            link.path=fs.path[i].path;
+            link.onclick = function() {
+                var re = new RegExp("path-(\\w+)-(\\d+)", "i");
+                var result = this.id.match(re);
+                var client_id = result[1];
+                var repo_id = result[2];
+                repository_client.loading(client_id, 'load');
+                repository_client.req(client_id, repo_id, this.path);
+            }
             var sep = document.createElement('SPAN');
             sep.innerHTML = '/';
             oDiv.appendChild(link);
             oDiv.appendChild(sep);
-            var el = new YAHOO.util.Element(link.id);
-            el.id = fs.repo_id;
-            el.path = fs.path[i].path;
-            el.link_id = link.id;
-            el.client_id = client_id;
-            el.on('contentReady', function() {
-                var path_link = document.getElementById(this.link_id);
-                path_link.id = this.id;
-                path_link.path = this.path;
-                path_link.client_id = this.client_id;
-                path_link.onclick = function() {
-                    repository_client.req(this.client_id, this.id, this.path);
-                }
-            });
-            link = null;
         }
     }
 }
@@ -593,7 +589,7 @@ repository_client.view_as_icons = function(client_id, data) {
         // from viewfiles
         list = repository_client.fp[client_id].fs.list;
     }else{
-        //
+        // from callback
         list = data;
     }
     var fp = repository_client.fp[client_id];
