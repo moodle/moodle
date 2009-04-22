@@ -315,8 +315,7 @@ class grade_edit_tree {
      */
     function get_weight_input($item, $type) {
         if (!is_object($item) || get_class($item) !== 'grade_item') {
-            throw new Exception('grade_edit_tree::get_weight_input($item) was given a variable that is not of the required type (grade_item object)');
-            return false;
+            error('grade_edit_tree::get_weight_input($item) was given a variable that is not of the required type (grade_item object)');
         }
 
         if ($item->is_course_item()) {
@@ -498,7 +497,7 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
 
     function grade_edit_tree_column_name($params) {
         if (empty($params['deepest_level'])) {
-            throw new Exception('Tried to instantiate a grade_edit_tree_column_name object without the "deepest_level" param!');
+            error('Tried to instantiate a grade_edit_tree_column_name object without the "deepest_level" param!');
         }
 
         $this->deepest_level = $params['deepest_level'];
@@ -510,7 +509,7 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
 
     function get_category_cell($category, $levelclass, $params) {
         if (empty($params['name']) || empty($params['level'])) {
-            throw new Exception('Array key (name or level) missing from 3rd param of grade_edit_tree_column_name::get_category_cell($category, $levelclass, $params)');
+            error('Array key (name or level) missing from 3rd param of grade_edit_tree_column_name::get_category_cell($category, $levelclass, $params)');
         }
 
         return '<td class="cell name '.$levelclass.'" colspan="'.(($this->deepest_level +1) - $params['level']).'"><h4>' . $params['name'] . "</h4></td>\n";
@@ -520,7 +519,7 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
         global $CFG;
 
         if (empty($params['element']) || empty($params['name']) || empty($params['level'])) {
-            throw new Exception('Array key (name, level or element) missing from 2nd param of grade_edit_tree_column_name::get_item_cell($item, $params)');
+            error('Array key (name, level or element) missing from 2nd param of grade_edit_tree_column_name::get_item_cell($item, $params)');
         }
 
         $name = $params['name'];
@@ -546,7 +545,7 @@ class grade_edit_tree_column_aggregation extends grade_edit_tree_column_category
     function get_category_cell($category, $levelclass, $params) {
         global $CFG;
         if (empty($params['id'])) {
-            throw new Exception('Array key (id) missing from 3rd param of grade_edit_tree_column_aggregation::get_category_cell($category, $levelclass, $params)');
+            error('Array key (id) missing from 3rd param of grade_edit_tree_column_aggregation::get_category_cell($category, $levelclass, $params)');
         }
 
         $options = array(GRADE_AGGREGATE_MEAN             => get_string('aggregatemean', 'grades'),
@@ -597,7 +596,7 @@ class grade_edit_tree_column_extracredit extends grade_edit_tree_column {
 
     function get_item_cell($item, $params) {
         if (empty($params['element'])) {
-            throw new Exception('Array key (element) missing from 2nd param of grade_edit_tree_column_weightorextracredit::get_item_cell($item, $params)');
+            error('Array key (element) missing from 2nd param of grade_edit_tree_column_weightorextracredit::get_item_cell($item, $params)');
         }
 
         $html = '<td class="cell">';
@@ -634,7 +633,7 @@ class grade_edit_tree_column_weight extends grade_edit_tree_column {
 
     function get_item_cell($item, $params) {
         if (empty($params['element'])) {
-            throw new Exception('Array key (element) missing from 2nd param of grade_edit_tree_column_weightorextracredit::get_item_cell($item, $params)');
+            error('Array key (element) missing from 2nd param of grade_edit_tree_column_weightorextracredit::get_item_cell($item, $params)');
         }
 
         $html = '<td class="cell">';
@@ -910,7 +909,7 @@ class grade_edit_tree_column_actions extends grade_edit_tree_column {
     function get_category_cell($category, $levelclass, $params) {
 
         if (empty($params['actions'])) {
-            throw new Exception('Array key (actions) missing from 3rd param of grade_edit_tree_column_actions::get_category_actions($category, $levelclass, $params)');
+            error('Array key (actions) missing from 3rd param of grade_edit_tree_column_actions::get_category_actions($category, $levelclass, $params)');
         }
 
         return '<td class="cell actions '.$levelclass.'">' . $params['actions'] . '</td>';
@@ -918,7 +917,7 @@ class grade_edit_tree_column_actions extends grade_edit_tree_column {
 
     function get_item_cell($item, $params) {
         if (empty($params['actions'])) {
-            throw new Exception('Array key (actions) missing from 2nd param of grade_edit_tree_column_actions::get_item_cell($item, $params)');
+            error('Array key (actions) missing from 2nd param of grade_edit_tree_column_actions::get_item_cell($item, $params)');
         }
         return '<td class="cell actions">' . $params['actions'] . '</td>';
     }
@@ -937,7 +936,7 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
     function get_category_cell($category, $levelclass, $params) {
 
         if (empty($params['eid'])) {
-            throw new Exception('Array key (eid) missing from 3rd param of grade_edit_tree_column_select::get_category_cell($category, $levelclass, $params)');
+            error('Array key (eid) missing from 3rd param of grade_edit_tree_column_select::get_category_cell($category, $levelclass, $params)');
         }
 
         return '<td class="cell last  '.$levelclass.'" style="text-align: center">
@@ -948,7 +947,7 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
 
     function get_item_cell($item, $params) {
         if (empty($params['itemtype']) || empty($params['eid'])) {
-            throw new Exception('Array key (itemtype or eid) missing from 2nd param of grade_edit_tree_column_select::get_item_cell($item, $params)');
+            error('Array key (itemtype or eid) missing from 2nd param of grade_edit_tree_column_select::get_item_cell($item, $params)');
         }
         $itemselect = '';
 
