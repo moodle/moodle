@@ -457,15 +457,20 @@ function feedback_set_events($feedback) {
     // adding the feedback to the eventtable (I have seen this at quiz-module)
     $DB->delete_records('event', array('modulename'=>'feedback', 'instance'=>$feedback->id));
 
+    if (!isset($feedback->coursemodule)) {
+        $cm = get_coursemodule_from_id('feedback', $feedback->id);
+        $feedback->coursemodule = $cm->id;
+    }
+
     // the open-event
     if($feedback->timeopen > 0) {
         $event = NULL;
-        $event->name          = get_string('start', 'feedback').' '.$feedback->name;
-        $event->description = $feedback->intro;
+        $event->name         = get_string('start', 'feedback').' '.$feedback->name;
+        $event->description  = format_module_intro('feedback', $feedback, $feedback->coursemodule);
         $event->courseid     = $feedback->course;
         $event->groupid      = 0;
-        $event->userid        = 0;
-        $event->modulename  = 'feedback';
+        $event->userid       = 0;
+        $event->modulename   = 'feedback';
         $event->instance     = $feedback->id;
         $event->eventtype    = 'open';
         $event->timestart    = $feedback->timeopen;
@@ -482,12 +487,12 @@ function feedback_set_events($feedback) {
     // the close-event
     if($feedback->timeclose > 0) {
         $event = NULL;
-        $event->name          = get_string('stop', 'feedback').' '.$feedback->name;
-        $event->description = $feedback->intro;
+        $event->name         = get_string('stop', 'feedback').' '.$feedback->name;
+        $event->description  = format_module_intro('feedback', $feedback, $feedback->coursemodule);
         $event->courseid     = $feedback->course;
         $event->groupid      = 0;
-        $event->userid        = 0;
-        $event->modulename  = 'feedback';
+        $event->userid       = 0;
+        $event->modulename   = 'feedback';
         $event->instance     = $feedback->id;
         $event->eventtype    = 'close';
         $event->timestart    = $feedback->timeclose;

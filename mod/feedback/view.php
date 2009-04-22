@@ -16,18 +16,16 @@
     // $SESSION->feedback->current_tab = 'view';
     $current_tab = 'view';
 
-    if ($id) {
-        if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-            print_error('invalidcoursemodule');
-        }
-     
-        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-            print_error('coursemisconf');
-        }
-     
-        if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-            print_error('invalidcoursemodule');
-        }
+    if (! $cm = get_coursemodule_from_id('feedback', $id)) {
+        print_error('invalidcoursemodule');
+    }
+ 
+    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
+        print_error('coursemisconf');
+    }
+ 
+    if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
+        print_error('invalidcoursemodule');
     }
 
     $capabilities = feedback_load_capabilities($cm->id);
@@ -117,7 +115,7 @@
     // print_simple_box_start('center', '80%');
     print_box_start('generalbox boxaligncenter boxwidthwide');
     $options = (object)array('noclean'=>true);
-    echo format_text($feedback->intro, $feedback->introformat, $options);
+    echo format_module_intro('feedback', $feedback, $cm->id);
     // print_simple_box_end();
     print_box_end();
     
