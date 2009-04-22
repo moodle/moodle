@@ -210,7 +210,7 @@ repository_client.req_cb = {
          }else if(data.msg){
              repository_client.print_msg(data.msg);
          }else if(data.iframe) {
-             repository_client.viewiframe();
+             repository_client.view_iframe(data.client_id);
          }else if(data.login) {
              repository_client.print_login(data.client_id, data);
          }else if(data.list) {
@@ -221,6 +221,11 @@ repository_client.req_cb = {
              }
          }
      }
+}
+repository_client.view_iframe = function(client_id) {
+    var fs = repository_client.fp[client_id].fs;
+    var panel = new YAHOO.util.Element('panel-'+client_id);
+    panel.get('element').innerHTML = "<iframe frameborder=\"0\" width=\"98%\" height=\"400px\" src=\""+fs.iframe+"\" />";
 }
 repository_client.req_search_results = function(client_id, id, path, page) {
     this.fp[client_id].viewbar.set('disabled', false);
@@ -355,7 +360,10 @@ repository_client.view_as_list = function(client_id, data) {
         // click button
         client_id = data;
         list = repository_client.fp[client_id].fs.list;
-    } else {
+    } else if(!data) {
+        // from viewfiles
+        list = repository_client.fp[client_id].fs.list;
+    }else{
         // from callback 
         list = data;
     }
@@ -464,7 +472,7 @@ repository_client.select_file = function(oldname, url, icon, client_id, repo_id)
     html += '<input type="text" id="newname-'+client_id+'" value="'+oldname+'" /></p>';
     html += '<p><input type="hidden" id="fileurl-'+client_id+'" value="'+url+'" />';
     html += '<input type="button" onclick="repository_client.download(\''+client_id+'\', \''+repo_id+'\')" value="'+fp_lang.downbtn+'" />';
-    html += '<input type="button" onclick="repository_client.viewfiles()" value="'+fp_lang.cancel+'" /></p>';
+    html += '<input type="button" onclick="repository_client.viewfiles(\''+client_id+'\')" value="'+fp_lang.cancel+'" /></p>';
     html += '</div>';
     panel.get('element').innerHTML += html;
     var tree = document.getElementById('treediv-'+client_id);
@@ -578,9 +586,14 @@ repository_client.view_as_icons = function(client_id, data) {
     var list = null;
     if (typeof client_id == 'object') {
         // click button
+        alert('from button');
         client_id = data;
         list = repository_client.fp[client_id].fs.list;
-    } else {
+    } else if(!data) {
+        // from viewfiles
+        list = repository_client.fp[client_id].fs.list;
+    }else{
+        //
         list = data;
     }
     var fp = repository_client.fp[client_id];
@@ -831,10 +844,15 @@ repository_client.end = function(client_id, obj) {
     }
     fp.formcallback(obj);
     fp.hide();
-    repository_client.viewfiles();
+    repository_client.viewfiles(client_id);
 }
-repository_client.viewfiles = function() {
-    alert('Not available yet.');
+repository_client.viewfiles = function(client_id) {
+     var repo = repository_client.fp[client_id];
+    if(repo.view_status) {
+        repository_client.view_as_list(client_id);
+    } else {
+        repository_client.view_as_icons(client_id);
+    }
 }
 repository_client.create_upload_form = function(client_id) {
     var str = '';
