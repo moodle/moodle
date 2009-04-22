@@ -2,7 +2,7 @@
 function set_row(idx) {
     var table = document.getElementById('user-grades');
     var rowsize = table.rows[idx].cells.length;
-    for (var i = 1; i < rowsize; i++) {
+    for (var i = 0; i < rowsize; i++) {
         if (table.rows[idx].cells[i]) {
             if (table.rows[idx].cells[i].className.search(/hmarked/) != -1) {
                 table.rows[idx].cells[i].className = table.rows[idx].cells[i].className.replace(' hmarked', '');
