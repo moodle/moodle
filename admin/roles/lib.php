@@ -714,11 +714,11 @@ class define_role_table_advanced extends capability_table_with_risks {
             }
             $checked = '';
             if ($this->permissions[$capability->name] == $perm) {
-                $checked = ' checked="checked"';
+                $checked = 'checked="checked" ';
             }
             echo '<td class="' . $permname . $extraclass . '">';
             echo '<label><input type="radio" name="' . $capability->name .
-                    '" value="' . $perm . '"' . $checked . ' /> ';
+                    '" value="' . $perm . '" ' . $checked . '/> ';
             echo '<span class="note">' . $strperm . '</span>';
             echo '</label></td>';
         }
@@ -754,7 +754,7 @@ class define_role_table_basic extends define_role_table_advanced {
             }
             echo '<input type="hidden" name="' . $capability->name . '" value="' . CAP_INHERIT . '" />';
             echo '<label><input type="checkbox" name="' . $capability->name .
-                    '" value="' . CAP_ALLOW . '"' . $checked . ' /> ' . $this->strallow . '</label>';
+                    '" value="' . CAP_ALLOW . '" ' . $checked . '/> ' . $this->strallow . '</label>';
         } else {
             echo '<input type="hidden" name="' . $capability->name . '" value="' . $perm . '" />';
             echo $this->strperms[$permname] . '<span class="note">' . $this->stradvmessage . '</span>';
@@ -875,11 +875,11 @@ class override_permissions_table_advanced extends capability_table_with_risks {
             }
             $checked = '';
             if ($this->permissions[$capability->name] == $perm) {
-                $checked = ' checked="checked"';
+                $checked = 'checked="checked" ';
             }
             echo '<td class="' . $permname . $extraclass . '">';
             echo '<label><input type="radio" name="' . $capability->name .
-                    '" value="' . $perm . '"' . $checked . $disabled . ' /> ';
+                    '" value="' . $perm . '" ' . $checked . $disabled . '/> ';
             if ($perm == CAP_INHERIT) {
                 $inherited = $this->parentpermissions[$capability->name];
                 if ($inherited == CAP_INHERIT) {
@@ -1361,15 +1361,15 @@ abstract class role_allow_role_page {
                 $checked = '';
                 $disabled = '';
                 if ($this->allowed[$fromrole->id][$targetrole->id]) {
-                    $checked = ' checked="checked"';
+                    $checked = 'checked="checked" ';
                 }
                 if (!$this->is_allowed_target($targetrole->id)) {
-                    $disabled = ' disabled="disabled"';
+                    $disabled = 'disabled="disabled" ';
                 }
                 $name = 's_' . $fromrole->id . '_' . $targetrole->id;
                 $tooltip = $this->get_cell_tooltip($fromrole, $targetrole);
                 $row[] = '<input type="checkbox" name="' . $name . '" id="' . $name .
-                        '" title="' . $tooltip . '" value="1"' . $checked . $disabled . ' />' .
+                        '" title="' . $tooltip . '" value="1" ' . $checked . $disabled . '/>' .
                         '<label for="' . $name . '" class="accesshide">' . $tooltip . '</label>';
             }
             $table->data[] = $row;
