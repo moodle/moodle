@@ -408,5 +408,6 @@ class test_file_info_module extends filelib_test {
     public function test_get_children() {
         $children = $this->fileinfo->get_children();
         $this->assertEqual(0, count($children));
+        $this->assertEqual(0, count($children));
     }
 }
