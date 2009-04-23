@@ -176,11 +176,15 @@ EOD;
             }
             break;
         case 'download':
-            $path = $repo->get_file($file, $title);
-            if (empty($itemid)) {
-                $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
-            }
             try {
+                $path = $repo->get_file($file, $title);
+                if ($path === false) {
+                    $err->e = get_string('cannotdownload', 'repository');
+                    die(json_encode($err));
+                }
+                if (empty($itemid)) {
+                    $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
+                }
                 if (preg_match('#(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)#', $path)) {
                     echo json_encode(array('client_id'=>$client_id, 'url'=>$path, 'id'=>$path, 'file'=>$path));
                 } else {

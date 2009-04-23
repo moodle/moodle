@@ -15,6 +15,7 @@ $string['back'] = '&lt; Back';
 $string['cacheexpire'] = 'Cache expire';
 $string['cachecleared'] = 'Cached files are removed';
 $string['cannotinitplugin'] = 'Call plugin_init failed';
+$string['cannotdownload'] = 'Cannot download this file';
 $string['clicktohide'] = 'Click here to hide';
 $string['clicktoshow'] = 'Click here to show';
 $string['close'] = 'Close';
