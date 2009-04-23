@@ -266,10 +266,11 @@ class graded_users_iterator {
  * @param string $actionpage The page receiving the data from the popoup form
  * @param int $userid   id of the currently selected user (or 'all' if they are all selected)
  * @param int $groupid id of requested group, 0 means all
+ * @param int $includeall bool include all option
  * @param bool $return If true, will return the HTML, otherwise, will print directly
  * @return null
  */
-function print_graded_users_selector($course, $actionpage, $userid=null, $groupid=0, $return=false) {
+function print_graded_users_selector($course, $actionpage, $userid=0, $groupid=0, $includeall=true, $return=false) {
     global $CFG, $USER;
 
     if (is_null($userid)) {
@@ -283,7 +284,7 @@ function print_graded_users_selector($course, $actionpage, $userid=null, $groupi
     $gui = new graded_users_iterator($course, null, $groupid);
     $gui->init();
 
-    if ($userid !== 0) {
+    if ($includeall) {
         $menu[0] = get_string('allusers', 'grades');
     }
 
@@ -296,7 +297,7 @@ function print_graded_users_selector($course, $actionpage, $userid=null, $groupi
 
     $gui->close();
 
-    if ($userid !== 0) {
+    if ($includeall) {
         $menu[0] .= " (" . (count($menu) - 1) . ")";
     }
 
