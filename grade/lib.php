@@ -671,6 +671,13 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
         $plugin_info['preferences'] = $prefs;
     }
 
+    // Check import and export caps
+    if (!has_capability('moodle/grade:export', $context)) {
+        unset($plugin_info['export']);
+    }
+    if (!has_capability('moodle/grade:import', $context)) {
+        unset($plugin_info['import']);
+    }
     return $plugin_info;
 }
 
