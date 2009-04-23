@@ -238,13 +238,10 @@ class filelib_public_api_test extends filelib_test {
         $path = 'rela89èà7(##&$tive/path/to /indéx.html#anchor1';
         $this->assertEqual($CFG->wwwroot.'/file.php/rela89%C3%A8%C3%A07%28##%26%24tive/path/to%20/ind%C3%A9x.html#anchor1', get_file_url($path));
     }
-
 }
 
 /**
  * Tests for file_browser class
- * @note This class is barely testable. Only one of the methods doesn't make direct calls to complex global functions.
- *       I suggest a rethink of the design, and a jolly good refactoring.
  */
 
 class file_browser_test extends filelib_test {
