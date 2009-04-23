@@ -99,11 +99,11 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
 
     /// Print graded user selector at the top
     $user_selector = '<div id="graded_users_selector">';
-    $user_selector .= print_graded_users_selector($course, 'report/user/index.php?id=' . $course->id, $userid, $currentgroup, true);
+    $user_selector .= print_graded_users_selector($course, 'report/user/index.php?id=' . $course->id, $userid, $currentgroup, true, true);
     $user_selector .= '</div>';
     $user_selector .= "<p style = 'page-break-after: always;'></p>";
 
-    if ($userid === 0) {
+    if (empty($userid)) {
         $gui = new graded_users_iterator($course, null, $currentgroup);
         $gui->init();
         // Add tabs
@@ -122,7 +122,7 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
             echo "<p style = 'page-break-after: always;'></p>";
         }
         $gui->close();
-    } elseif ($userid) { // Only show one user's report
+    } else { // Only show one user's report
         $report = new grade_report_user($courseid, $gpr, $context, $userid);
         print_grade_page_head($courseid, 'report', 'user', get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
         groups_print_course_menu($course, $gpr->get_return_url('index.php?id='.$courseid, array('userid'=>0)));
@@ -130,10 +130,11 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
         echo $user_selector;
 
         if ($currentgroup and !groups_is_member($currentgroup, $userid)) {
-            error('User not member of current group.'); //TODO: localize
-        }
-        if ($report->fill_table()) {
-            echo '<br />'.$report->print_table(true);
+            notify(get_string('groupusernotmember', 'error'));
+        } else {
+            if ($report->fill_table()) {
+                echo '<br />'.$report->print_table(true);
+            }
         }
     }
 } else { //Students will see just their own report

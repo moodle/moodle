@@ -48,6 +48,7 @@ $string['groupalready'] = 'User already belongs to group $a';
 $string['groupexistforcourse'] = 'Group \"$a\" already exists for this course';
 $string['groupnotaddederror'] = 'Group \"$a\" not added';
 $string['groupunknown'] = 'Group $a not associated to specified course';
+$string['groupusernotmember'] = 'User is not member of this group.';
 $string['guestnoeditprofile'] = 'The guest user cannot edit their profile';
 $string['guestnoeditprofileother'] = 'The guest user profile cannot be edited';
 $string['guestsarenotallowed'] = 'The guest user is not allowed to do this';

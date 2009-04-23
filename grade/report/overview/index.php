@@ -27,7 +27,7 @@ require_once $CFG->libdir.'/gradelib.php';
 require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/report/overview/lib.php';
 
-$courseid = optional_param('id', $COURSE->id, PARAM_INT);
+$courseid = required_param('id', PARAM_INT);
 $userid   = optional_param('userid', $USER->id, PARAM_INT);
 
 /// basic access checks
@@ -36,26 +36,35 @@ if (!$course = get_record('course', 'id', $courseid)) {
 }
 require_login($course);
 
-if (!$user = get_complete_user_data('id', $userid)) {
-    error("Incorrect userid");
-}
-
-$context     = get_context_instance(CONTEXT_COURSE, $course->id);
-$usercontext = get_context_instance(CONTEXT_USER, $user->id);
+$context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('gradereport/overview:view', $context);
 
-$access = true;
-if (has_capability('moodle/grade:viewall', $context)) {
-    //ok - can view all course grades
-
-} else if ($user->id == $USER->id and has_capability('moodle/grade:view', $context) and $course->showgrades) {
-    //ok - can view own grades
-
-} else if (has_capability('moodle/grade:viewall', $usercontext) and $course->showgrades) {
-    // ok - can view grades of this user- parent most probably
+if (empty($userid)) {
+    require_capability('moodle/grade:viewall', $context);
 
 } else {
-    $access = false;
+    if (!get_complete_user_data('id', $userid) or isguestuser($userid)) {
+        error("Incorrect userid");
+    }
+}
+
+$access = false;
+if (has_capability('moodle/grade:viewall', $context)) {
+    //ok - can view all course grades
+    $access = true;
+
+} else if ($userid == $USER->id and has_capability('moodle/grade:view', $context) and $course->showgrades) {
+    //ok - can view own grades
+    $access = true;
+
+} else if (has_capability('moodle/grade:viewall', get_context_instance(CONTEXT_USER, $userid)) and $course->showgrades) {
+    // ok - can view grades of this user- parent most probably
+    $access = true;
+}
+
+if (!$access) {
+    // no access to grades!
+    error("Can not view grades.", $CFG->wwwroot.'/course/view.php?id='.$courseid); //TODO: localize
 }
 
 /// return tracking object
@@ -67,33 +76,67 @@ if (!isset($USER->grade_last_report)) {
 }
 $USER->grade_last_report[$course->id] = 'overview';
 
+//first make sure we have proper final grades - this must be done before constructing of the grade tree
+grade_regrade_final_grades($courseid);
 
-if ($access) {
+if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all student reports
+    $groupmode    = groups_get_course_groupmode($course);   // Groups are being used
+    $currentgroup = groups_get_course_group($course, true);
 
-    //first make sure we have proper final grades - this must be done before constructing of the grade tree
-    grade_regrade_final_grades($course->id);
+    if (!$currentgroup) {      // To make some other functions work better later
+        $currentgroup = NULL;
+    }
+
+    $isseparategroups = ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context));
+
+    if ($isseparategroups and (!$currentgroup)) {
+        print_grade_page_head($courseid, 'report', 'overview', get_string('modulename', 'gradereport_overview'));
+        print_heading(get_string("notingroup"));
+        print_footer($course);
+        exit;
+    }
+
+    /// Print graded user selector at the top
+    $user_selector = '<div id="graded_users_selector">';
+    $user_selector .= print_graded_users_selector($course, 'report/overview/index.php?id=' . $course->id, $userid, $currentgroup, false, true);
+    $user_selector .= '</div>';
+    $user_selector .= "<p style = 'page-break-after: always;'></p>";
+
+    if (empty($userid)) {
+        // Add tabs
+        print_grade_page_head($courseid, 'report', 'overview');
+        groups_print_course_menu($course, $gpr->get_return_url('index.php?id='.$courseid, array('userid'=>0)));
+        echo $user_selector.'<br />';
+        // do not list all users
+
+    } else { // Only show one user's report
+        $report = new grade_report_overview($userid, $gpr, $context);
+        print_grade_page_head($courseid, 'report', 'overview', get_string('modulename', 'gradereport_overview'). ' - '.fullname($report->user));
+        groups_print_course_menu($course, $gpr->get_return_url('index.php?id='.$courseid, array('userid'=>0)));
+
+        echo $user_selector;
+
+        if ($currentgroup and !groups_is_member($currentgroup, $userid)) {
+            notify(get_string('groupusernotmember', 'error'));
+        } else {
+            if ($report->fill_table()) {
+                echo '<br />'.$report->print_table(true);
+            }
+        }
+    }
+} else { //Students will see just their own report
 
     // Create a report instance
     $report = new grade_report_overview($userid, $gpr, $context);
+
+    // print the page
     print_grade_page_head($courseid, 'report', 'overview', get_string('modulename', 'gradereport_overview'). ' - '.fullname($report->user));
 
     if ($report->fill_table()) {
-        echo $report->print_table(true);
+        echo '<br />'.$report->print_table(true);
     }
-
-} else {
-    // no access to grades!
-    /// Print header
-    /// Build navigation
-    $strgrades  = get_string('grades');
-    $reportname = get_string('modulename', 'gradereport_overview');
-
-    $navigation = grade_build_nav(__FILE__, $reportname, $course->id);
-    print_header_simple($strgrades.': '.$reportname, ': '.$strgrades, $navigation,
-                        '', '', true, '', navmenu($course));
-
-    echo "Can not view grades."; //TODO: localize
 }
+
 print_footer($course);
 
 ?>
