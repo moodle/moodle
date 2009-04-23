@@ -373,7 +373,7 @@ class grade_report_user extends grade_report {
 
         /// Build table structure
         $html = "
-            <table cellspacing='0' cellpadding='0' class='boxaligncenter generaltable' id='user-grade'>
+            <table cellspacing='0' cellpadding='0' class='boxaligncenter generaltable user-grade'>
             <thead>
                 <tr>
                     <th class=\"header\" colspan='$maxspan'>".$this->tableheaders[0]."</th>\n";
