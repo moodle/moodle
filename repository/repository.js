@@ -251,16 +251,17 @@ repository_client.print_login = function(id, data) {
     var str = '<div class="fp-login-form">';
     var has_pop = false;
     this.fp[id].login = login;
+    str +='<table width="100%">';
     for(var k in login) {
+        str +='<tr>';
         if(login[k].type=='popup') {
-            str += '<p class="fp-popup">'+fp_lang.popup+'</p>';
+            str += '<td colspan="2"><p class="fp-popup">'+fp_lang.popup+'</p>';
             str += '<p class="fp-popup"><button onclick="repository_client.popup(\''+id+'\', \''+login[k].url+'\')">'+fp_lang.login+'</button>';
-            str += '</p>';
+            str += '</p></td>';
             has_pop = true;
         }else if(login[k].type=='textarea') {
-            str += '<p><textarea id="'+login[k].id+'" name="'+login[k].name+'"></textarea></p>';
+            str += '<td colspan="2"><p><textarea id="'+login[k].id+'" name="'+login[k].name+'"></textarea></p></td>';
         }else{
-            str += '<p>';
             var label_id = '';
             var field_id = '';
             var field_value = '';
@@ -269,15 +270,16 @@ repository_client.print_login = function(id, data) {
                 field_id = ' id="'+login[k].id+'"';
             }
             if (login[k].label) {
-                str += '<label'+label_id+'>'+login[k].label+'</label>&nbsp;';
+                str += '<td align="right"><label'+label_id+'>'+login[k].label+'</label>&nbsp;</td>';
             }
             if(login[k].value) {
                 field_value = ' value="'+login[k].value+'"';
             }
-            str += '<input type="'+login[k].type+'"'+' name="'+login[k].name+'"'+field_id+field_value+' />';
-            str += '</p>';
+            str += '<td align="left"><input type="'+login[k].type+'"'+' name="'+login[k].name+'"'+field_id+field_value+' /></td>';
         }
+        str +='</tr>';
     }
+    str +='</table>';
     var btn_label = login['login_btn_label']?login['login_btn_label']:fp_lang.submit;
     if (data['login_search_form']) {
         str += '<p><input type="button" onclick="repository_client.search(\''+id+'\', \''+data.repo_id+'\')" value="'+btn_label+'" /></p>';
