@@ -96,8 +96,8 @@ $item->plusfactor      = format_float($item->plusfactor, 4);
 
 if (empty($parent_category)) {
     $item->aggregationcoef = 0;
-} else if ($parent_category->aggregation == GRADE_AGGREGATE_SUM) {
-    $item->aggregationcoef = $item->aggregationcoef > 0 ? 1 : 0;
+} else if ($parent_category->aggregation == GRADE_AGGREGATE_SUM or $parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN2) {
+    $item->aggregationcoef = $item->aggregationcoef == 0 ? 0 : 1;
 } else {
     $item->aggregationcoef = format_float($item->aggregationcoef, 4);
 }

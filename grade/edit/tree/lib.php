@@ -575,7 +575,7 @@ class grade_edit_tree_column_aggregation extends grade_edit_tree_column_category
         }
 
         $script = "window.location='index.php?id={$params['id']}&amp;category={$category->id}&amp;aggregationtype='+this.value+'&amp;sesskey=" . sesskey()."';";
-        $aggregation = choose_from_menu($options, 'aggregation_'.$category->id, $category->aggregation, get_string('choose'), $script, 0, true);
+        $aggregation = choose_from_menu($options, 'aggregation_'.$category->id, $category->aggregation, null, $script, 0, true);
 
         if ($this->forced) {
             $aggregation = $options[$category->aggregation];
