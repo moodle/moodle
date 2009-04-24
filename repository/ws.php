@@ -156,6 +156,7 @@ EOD;
         case 'logout':
             $logout = $repo->logout();
             $logout['client_id'] = $client_id;
+            $logout['repo_id'] = $repo_id;
             echo json_encode($logout);
             break;
         case 'searchform':
