@@ -952,7 +952,7 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
         $itemselect = '';
 
         if ($params['itemtype'] != 'course' && $params['itemtype'] != 'category') {
-            $itemselect = '<input class="itemselect" type="checkbox" name="select_'.$params['eid'].'" />';
+            $itemselect = '<input class="itemselect" type="checkbox" name="select_'.$params['eid'].'" onchange="toggleCategorySelector();"/>';
         }
         return '<td class="cell last selection">' . $itemselect . '</td>';
     }

@@ -12,6 +12,8 @@ function togglecheckboxes(eid, value) {
         }
     }
 
+    toggleCategorySelector();
+
 }
 
 function toggle_advanced_columns() {
@@ -25,4 +27,19 @@ function toggle_advanced_columns() {
     for (var i = 0; i < shownAdvEls.length; i++) {
         YAHOO.util.Dom.replaceClass(shownAdvEls[i], "advancedshown", "advanced");
     }
+}
+
+/**
+ * Check if any of the grade item checkboxes is ticked. If yes, enable the dropdown. Otherwise, disable it
+ */
+function toggleCategorySelector() {
+    var itemboxes = YAHOO.util.Dom.getElementsByClassName('itemselect');
+    for (var i = 0; i < itemboxes.length; i++) {
+        if (itemboxes[i].checked) {
+            document.getElementById('menumoveafter').disabled = false;
+            return true;
+        }
+    }
+    document.getElementById('menumoveafter').disabled = 'disabled';
+
 }
