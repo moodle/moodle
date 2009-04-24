@@ -77,14 +77,22 @@ class repository_flickr_public extends repository {
 
         $account  = optional_param('flickr_account', '', PARAM_RAW);
         $fulltext = optional_param('flickr_fulltext', '', PARAM_RAW);
+        if (empty($fulltext)) {
+            $fulltext = optional_param('s', '', PARAM_RAW);
+        }
         $tag      = optional_param('flickr_tag', '', PARAM_RAW);
+        $license  = optional_param('flickr_license', '', PARAM_RAW);
+
         $this->sess_account = 'flickr_public_'.$this->id.'_account';
         $this->sess_tag     = 'flickr_public_'.$this->id.'_tag';
         $this->sess_text    = 'flickr_public_'.$this->id.'_text';
-        if (!empty($account) or !empty($fulltext) or !empty($tag)) {
-            $SESSION->{$this->sess_account} = $account;
+        $this->sess_license = 'flickr_public_'.$this->id.'_license';
+
+        if (!empty($account) or !empty($fulltext) or !empty($tag) or !empty($license)) {
             $SESSION->{$this->sess_tag}  = $tag;
             $SESSION->{$this->sess_text} = $fulltext;
+            $SESSION->{$this->sess_account} = $account;
+            $SESSION->{$this->sess_license} = $license;
         }
     }
 
@@ -122,7 +130,26 @@ class repository_flickr_public extends repository {
             $email_field->type = 'text';
             $email_field->name = 'flickr_account';
 
-            $ret['login'] = array($fulltext, $tag, $email_field);
+            $license = new stdclass;
+            $license->label = get_string('license', 'repository_flickr_public').': ';
+            $license->id    = 'flickr_license_type';
+            $license->type  = 'radio';
+            $license->name  = 'flickr_license';
+            // all -> all licenses
+            // cc  -> creative commons
+            // ccc -> reeative commons commercial
+            $license->value = implode('|', array('all', 1, 2, 3, 4, 5, 6));
+            $license->value_label = implode('|', array(
+                get_string('all', 'repository_flickr_public'),
+                get_string('by-nc-sa', 'repository_flickr_public'),
+                get_string('by-nc', 'repository_flickr_public'),
+                get_string('by-nc-nd', 'repository_flickr_public'),
+                get_string('by', 'repository_flickr_public'),
+                get_string('by-sa', 'repository_flickr_public'),
+                get_string('by-nd', 'repository_flickr_public')
+            ));
+
+            $ret['login'] = array($fulltext, $tag, $email_field, $license);
             $ret['login_btn_label'] = get_string('search');
             $ret['login_search_form'] = true;
             return $ret;
@@ -166,17 +193,34 @@ class repository_flickr_public extends repository {
             $page = 1;
         }
         if (!empty($SESSION->{$this->sess_tag}) or !empty($SESSION->{$this->sess_text}) 
-            or !empty($SESSION->{$this->sess_account}) 
-            or !empty($this->nsid)) {
-
-            $photos = $this->flickr->photos_search(array(
-                'tags'=>$SESSION->{$this->sess_tag},
-                'page'=>$page,
-                'per_page'=>24,
-                'user_id'=>$this->nsid,
-                'text'=>$SESSION->{$this->sess_text}));
+            or !empty($SESSION->{$this->sess_account}) or !empty($this->nsid))
+        {
+            if ( empty($SESSION->{$this->sess_license}) or $SESSION->{$this->sess_license}=='all') {
+                $photos = $this->flickr->photos_search(array(
+                    'tags'=>$SESSION->{$this->sess_tag},
+                    'page'=>$page,
+                    'per_page'=>24,
+                    'user_id'=>$this->nsid,
+                    'text'=>$SESSION->{$this->sess_text}
+                    )
+                );
+            } else {
+                $photos = $this->flickr->photos_search(array(
+                    'tags'=>$SESSION->{$this->sess_tag},
+                    'page'=>$page,
+                    'per_page'=>24,
+                    'user_id'=>$this->nsid,
+                    'license'=>$SESSION->{$this->sess_license},
+                    'text'=>$SESSION->{$this->sess_text}
+                    )
+                );
+            }
         }
         $ret = array();
+        if (empty($photos)) {
+            $ret['list'] = array();
+            return $ret;
+        }
         $ret = $this->build_list($photos, $page, $ret);
         $ret['list'] = array_filter($ret['list'], array($this, 'filter'));
         return $ret;

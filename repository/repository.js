@@ -275,12 +275,23 @@ repository_client.print_login = function(id, data) {
             if(login[k].value) {
                 field_value = ' value="'+login[k].value+'"';
             }
-            str += '<td align="left"><input type="'+login[k].type+'"'+' name="'+login[k].name+'"'+field_id+field_value+' /></td>';
+            if(login[k].type=='radio'){
+                var list = login[k].value.split('|');
+                var labels = login[k].value_label.split('|');
+                str += '<td align="left">';
+                for(var item in list) {
+                    str +='<input type="'+login[k].type+'"'+' name="'+login[k].name+'"'+
+                        field_id+' value="'+list[item]+'" />'+labels[item]+'<br />'; 
+                }
+                str += '</td>';
+            }else{
+                str += '<td align="left"><input type="'+login[k].type+'"'+' name="'+login[k].name+'"'+field_value+' /></td>';
+            }
         }
         str +='</tr>';
     }
     str +='</table>';
-    var btn_label = login['login_btn_label']?login['login_btn_label']:fp_lang.submit;
+    var btn_label = data['login_btn_label']?data['login_btn_label']:fp_lang.submit;
     if (data['login_search_form']) {
         str += '<p><input type="button" onclick="repository_client.search(\''+id+'\', \''+data.repo_id+'\')" value="'+btn_label+'" /></p>';
     } else {
@@ -324,6 +335,13 @@ repository_client.search = function(id, repo_id) {
             params[data[k].name] = '';
             if(el.type == 'checkbox') {
                 params[data[k].name] = el.checked;
+            } else if(el.type == 'radio') {
+                var tmp = document.getElementsByName(data[k].name);
+                for(var i in tmp) {
+                    if (tmp[i].checked) {
+                        params[data[k].name] = tmp[i].value;
+                    }
+                }
             } else {
                 params[data[k].name] = el.value;
             }
@@ -468,7 +486,9 @@ repository_client.select_file = function(oldname, url, icon, client_id, repo_id)
     var footer = document.getElementById('fp-footer-'+client_id);
     footer.style.display = 'none';
     var pathbar = document.getElementById('path-'+client_id);
-    pathbar.style.display = 'none';
+    if(pathbar){
+        pathbar.style.display = 'none';
+    }
     var panel = new YAHOO.util.Element('panel-'+client_id);
     var html = '<div class="fp-rename-form">';
     html += '<p><img src="'+icon+'" /></p>';
@@ -583,7 +603,6 @@ repository_client.view_as_icons = function(client_id, data) {
     var list = null;
     if (typeof client_id == 'object') {
         // click button
-        alert('from button');
         client_id = data;
         list = repository_client.fp[client_id].fs.list;
     } else if(!data) {
