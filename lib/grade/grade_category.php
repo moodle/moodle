@@ -642,19 +642,23 @@ class grade_category extends grade_object {
                 }
                 break;
 
-            case GRADE_AGGREGATE_WEIGHTED_MEAN2: // Weighted average of all existing final grades, weight is the range of grade (ususally grademax)
+            case GRADE_AGGREGATE_WEIGHTED_MEAN2:
+                // Weighted average of all existing final grades with optional extra credit flag,
+                // weight is the range of grade (ususally grademax)
                 $weightsum = 0;
-                $sum       = 0;
+                $sum       = null;
                 foreach($grade_values as $itemid=>$grade_value) {
                     $weight = $items[$itemid]->grademax - $items[$itemid]->grademin;
                     if ($weight <= 0) {
                         continue;
                     }
-                    $weightsum += $weight;
-                    $sum       += $weight * $grade_value;
+                    if ($items[$itemid]->aggregationcoef == 0) {
+                        $weightsum += $weight;
+                    }
+                    $sum += $weight * $grade_value;
                 }
                 if ($weightsum == 0) {
-                    $agg_grade = null;
+                    $agg_grade = $sum; // only extra credits
                 } else {
                     $agg_grade = $sum / $weightsum;
                 }
@@ -662,7 +666,7 @@ class grade_category extends grade_object {
 
             case GRADE_AGGREGATE_EXTRACREDIT_MEAN: // special average
                 $num = 0;
-                $sum = 0;
+                $sum = null;
                 foreach($grade_values as $itemid=>$grade_value) {
                     if ($items[$itemid]->aggregationcoef == 0) {
                         $num += 1;
@@ -806,6 +810,7 @@ class grade_category extends grade_object {
      */
     function is_aggregationcoef_used() {
         return ($this->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN
+             or $this->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN2
              or $this->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN
              or $this->aggregation == GRADE_AGGREGATE_SUM);
 
@@ -847,6 +852,8 @@ class grade_category extends grade_object {
         // No parent category is overriding this category's aggregation, return its string
         if ($this->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
             $this->coefstring = 'aggregationcoefweight';
+        } else if ($this->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN2) {
+            $this->coefstring = 'aggregationcoefextrasum';
         } else if ($this->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
             $this->coefstring = 'aggregationcoefextra';
         } else if ($this->aggregation == GRADE_AGGREGATE_SUM) {

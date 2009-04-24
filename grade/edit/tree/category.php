@@ -58,7 +58,13 @@ if ($id) {
     // set parent
     $category->parentcategory = $grade_category->parent;
     $grade_item = $grade_category->load_grade_item();
-    foreach ($grade_item as $key => $value) {
+    // nomalize coef values if needed
+    if ($parent_category = $grade_category->get_parent_category()) {
+        if ($parent_category->aggregation == GRADE_AGGREGATE_SUM or $parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN2) {
+            $grade_item->aggregationcoef = $grade_item->aggregationcoef == 0 ? 0 : 1;
+        }
+    }
+    foreach ($grade_item->get_record_data() as $key => $value) {
         $category->{"grade_item_$key"} = $value;
     }
 
