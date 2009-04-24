@@ -325,7 +325,8 @@ if (!$moving) {
     echo '<input class="advanced" type="submit" value="'.get_string('savechanges').'" />';
 }
 
-if (!$moving) {
+// We don't print a bulk move menu if there are no other categories than course category
+if (!$moving && count($categories) > 1) {
     echo '<br /><br />';
     echo '<input type="hidden" name="bulkmove" value="0" id="bulkmoveinput" />';
     echo get_string('moveselectedto', 'grades') . ' ';
