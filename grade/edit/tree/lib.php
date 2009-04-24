@@ -259,7 +259,7 @@ class grade_edit_tree {
             }
 
             $levelclass = " level$level ";
-            
+
             $courseclass = '';
             if ($level == 1) {
                 $courseclass = 'coursecategory';
@@ -287,7 +287,7 @@ class grade_edit_tree {
             $item = grade_item::fetch(array('id' => $object->id));
             $element['type'] = 'item';
             $element['object'] = $item;
-            
+
             $categoryitemclass = '';
             if ($item->itemtype == 'category') {
                 $categoryitemclass = 'categoryitem';
@@ -962,7 +962,7 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
         $itemselect = '';
 
         if ($params['itemtype'] != 'course' && $params['itemtype'] != 'category') {
-            $itemselect = '<input class="itemselect" type="checkbox" name="select_'.$params['eid'].'" />';
+            $itemselect = '<input class="itemselect" type="checkbox" name="select_'.$params['eid'].'" onchange="toggleCategorySelector();"/>';
         }
         return '<td class="cell last selection">' . $itemselect . '</td>';
     }

@@ -12,6 +12,8 @@ function togglecheckboxes(eid, value) {
         }
     }
 
+    toggleCategorySelector();
+
 }
 
 function toggle_advanced_columns() {
@@ -25,6 +27,19 @@ function toggle_advanced_columns() {
     for (var i = 0; i < shownAdvEls.length; i++) {
         YAHOO.util.Dom.replaceClass(shownAdvEls[i], "advancedshown", "advanced");
     }
+}
+
+/**
+ * Check if any of the grade item checkboxes is ticked. If yes, enable the dropdown. Otherwise, disable it
+ */
+function toggleCategorySelector() {
+    var itemboxes = YAHOO.util.Dom.getElementsByClassName('itemselect');
+    for (var i = 0; i < itemboxes.length; i++) {
+        if (itemboxes[i].checked) {
+            document.getElementById('menumoveafter').disabled = false;
+            return true;
+    }
+    document.getElementById('menumoveafter').disabled = 'disabled';
 }
 
 YAHOO.namespace('grade_edit_tree');
@@ -45,13 +60,13 @@ YAHOO.namespace('grade_edit_tree');
             var category_rows = edit_tree_table.getElementsByClassName('category', 'tr');
 
             new YAHOO.util.DDTarget('grade_edit_tree_table');
-            
+
             for (i = 0; i < item_rows.length; i++) {
                 if (!Dom.hasClass(item_rows[i],'categoryitem')) {
                     new gretree.DDList(item_rows[i]);
                 }
             }
-            
+
             for (i = 0; i < category_rows.length; i++) {
                 if (!Dom.hasClass(category_rows[i],'coursecategory')) {
                     // Find the cell that spans rows for this category
@@ -64,7 +79,7 @@ YAHOO.namespace('grade_edit_tree');
                         rows[j] = lastRow;
                         lastRow = lastRow.nextSibling;
                     }
-                    
+
                     new gretree.DDList(rows);
                 }
             }
@@ -94,7 +109,7 @@ YAHOO.namespace('grade_edit_tree');
     };
 
     gretree.DDList = function(id, sGroup, config) {
-        
+
         gretree.DDList.superclass.constructor.call(this, id, sGroup, config);
         this.logger =  this.logger || YAHOO;
         var el = this.getDragEl();
@@ -152,7 +167,7 @@ YAHOO.namespace('grade_edit_tree');
                 var pt = DDM.interactionInfo.point;
 
                 // The region occupied by the source element at the time of the drop
-                var region = DDM.interactionInfo.sourceRegion; 
+                var region = DDM.interactionInfo.sourceRegion;
 
                 // Check to see if we are over the source element's location. We will append to the bottom of the list once we are sure it was a drop in the negative space
                 if (!region.intersect(pt)) {

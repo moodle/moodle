@@ -326,7 +326,7 @@ if (!$moving) {
     echo '<input type="hidden" name="bulkmove" value="0" id="bulkmoveinput" />';
     echo get_string('moveselectedto', 'grades') . ' ';
     echo choose_from_menu($categories, 'moveafter', '', 'choose',
-            'document.getElementById(\'bulkmoveinput\').value=1;document.getElementById(\'gradetreeform\').submit()', 0, true);
+            'document.getElementById(\'bulkmoveinput\').value=1;document.getElementById(\'gradetreeform\').submit()', 0, true, true);
     echo '<div id="noscriptgradetreeform" style="display: inline;">
             <input type="submit" value="'.get_string('go').'" />
           </div>
