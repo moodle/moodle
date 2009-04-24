@@ -2041,11 +2041,11 @@ function xmldb_main_upgrade($oldversion=0) {
         execute_sql($sql, true);
 
     /// convert old aggregation constants if needed
-        for ($i=0; $i<=12; $i=$i+2) {
+        /*for ($i=0; $i<=12; $i=$i+2) {
             $j = $i+1;
             $sql = "UPDATE {$CFG->prefix}grade_categories SET aggregation = $i, aggregateonlygraded = 1 WHERE aggregation = $j";
             execute_sql($sql, true);
-        }
+        }*/ // not needed anymore - breaks upgrade now
 
         upgrade_main_savepoint($result, 2007090503);
     }
@@ -3111,6 +3111,24 @@ function xmldb_main_upgrade($oldversion=0) {
         filter_tex_updatedcallback(null);
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2007101545.01);
+    }
+
+    if ($result && $oldversion < 2007101546.02) {
+        if (empty($CFG->gradebook_latest195_upgrade)) {
+            require_once($CFG->libdir.'/gradelib.php'); // we need constants only
+            // reset current coef for simple mean items - it may contain some rubbish ;-)
+            $sql = "UPDATE {$CFG->prefix}grade_items
+                       SET aggregationcoef = 0
+                     WHERE categoryid IN (SELECT gc.id
+                                            FROM {$CFG->prefix}grade_categories gc
+                                           WHERE gc.aggregation = ".GRADE_AGGREGATE_WEIGHTED_MEAN2.")";
+            $result = execute_sql($sql);
+        } else {
+            // direct upgrade from 1.8.x - no need to reset coef, because it is already ok
+            unset_config('gradebook_latest195_upgrade');
+        }
+
+        upgrade_main_savepoint($result, 2007101546.02);
     }
 
     return $result;

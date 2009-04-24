@@ -242,11 +242,6 @@ function upgrade_18_gradebook($courseid) {
         }
 
         $newitems[$olditem->id] = $item;
-
-        if ($olditem->extra_credit and $categories[$olditem->category]->aggregation != GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
-            $categories[$olditem->category]->aggregation = GRADE_AGGREGATE_EXTRACREDIT_MEAN;
-            update_record('grade_categories', $categories[$olditem->category]);
-        }
     }
     unset($olditems);
 
@@ -264,6 +259,9 @@ function upgrade_18_gradebook($courseid) {
             insert_record('grade_grades', $grade);
         }
     }
+
+    // flag indicating new 1.9.5 upgrade routine
+    set_config('gradebook_latest195_upgrade', 1);
 
     return true;
 }
