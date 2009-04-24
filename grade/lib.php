@@ -283,9 +283,12 @@ function print_graded_users_selector($course, $actionpage, $userid=0, $groupid=0
 
     $gui = new graded_users_iterator($course, null, $groupid);
     $gui->init();
+    
 
+    $label = get_string('selectauser', 'grades');
     if ($includeall) {
         $menu[0] = get_string('allusers', 'grades');
+        $label = get_string('selectalloroneuser', 'grades');
     }
 
     $nextuser = $gui->next_user();
@@ -302,7 +305,7 @@ function print_graded_users_selector($course, $actionpage, $userid=0, $groupid=0
     }
 
     return popup_form($CFG->wwwroot.'/grade/' . $actionpage . '&amp;userid=', $menu, 'choosegradeduser', $userid, null, '', '',
-                        $return, 'self', get_string('selectalloroneuser', 'grades'));
+                        $return, 'self', $label);
 }
 
 /**

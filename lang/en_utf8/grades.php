@@ -475,6 +475,7 @@ $string['scalestandardhelp'] = 'A standard scale is one that is available site-w
 $string['seeallcoursegrades'] = 'See all course grades';
 $string['selectdestination'] = 'Select destination of $a';
 $string['selectalloroneuser'] = 'Select all or one user';
+$string['selectauser'] = 'Select a user';
 $string['septab'] = 'Tab';
 $string['sepcomma'] = 'Comma';
 $string['separator'] = 'Separator';
