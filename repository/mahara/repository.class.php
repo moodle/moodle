@@ -54,10 +54,19 @@ class repository_mahara extends repository {
         $pf= array();
         $pf['name']        = 'remoterep'; // Name & Description go in lang file
         $pf['apiversion']  = 1;
-        $pf['methods']     = array('get_folder_files_for_moodle', 'get_file');
+        $pf['methods']     = array('get_folder_files', 'get_file');
 
         return array($pf);
     }
+
+  /**
+     *
+     * @return <type>
+     */
+    public function check_login() {
+        return !empty($this->token);
+    }
+
 
     /**
      * Display the file listing - no login required
@@ -66,8 +75,27 @@ class repository_mahara extends repository {
      * @return <type>
      */
     public function print_login($ajax = true) {
-        global $SESSION;
-        return $this->get_listing();
+        global $SESSION, $CFG, $DB;
+        //jump to the peer to create a session
+        //     varlog("hey du bateau");
+        require_once($CFG->dirroot . '/mnet/lib.php');
+        $this->ensure_environment();
+        //require_login();
+        //require_once($CFG->dirroot . '/mnet/xmlrpc/client.php');
+        $mnetauth = get_auth_plugin('mnet');
+        $host = $DB->get_record('mnet_host',array('id' => $this->options['peer'])); //need to retrieve the host url
+        //  varlog($host);
+        $url = $mnetauth->start_jump_session($host->id, '/repository/ws.php?callback=yes&repo_id=112', true);
+        varlog($url);
+        $this->token = false;
+        //         redirect($url);
+        $ret = array();
+        $popup_btn = new stdclass;
+        $popup_btn->type = 'popup';
+        $popup_btn->url = $url;
+        $ret['login'] = array($popup_btn);
+        return $ret;
+
     }
 
     /**
@@ -102,7 +130,7 @@ class repository_mahara extends repository {
      */
     public function get_listing($path = null, $page = '', $search = '') {
         global $CFG, $DB, $USER;
-        varlog($path);
+        // varlog($path);
         ///check that Mahara has a good version
         ///We also check that the "get file list" method has been activated (if it is not
         ///the method will not be returned by the system method system/listMethods)
@@ -119,8 +147,8 @@ class repository_mahara extends repository {
 
         ///check that the peer host exists into the database
         if (empty($host)) {
-           echo json_encode(array('e'=>get_string('error').' 9011: '.get_string('hostnotfound','repository_mahara')));
-           exit;
+            echo json_encode(array('e'=>get_string('error').' 9011: '.get_string('hostnotfound','repository_mahara')));
+            exit;
         }
 
         $mnet_peer = new mnet_peer();
@@ -129,16 +157,16 @@ class repository_mahara extends repository {
         $client->set_method('system/listMethods');
         $client->send($mnet_peer);
         $services = $client->response;
-      
-        if (array_key_exists('repository/mahara/repository.class.php/get_folder_files_for_moodle', $services) === false) {
-             varlog($services);
+
+        if (array_key_exists('repository/mahara/repository.class.php/get_folder_files', $services) === false) {
+            // varlog($services);
             echo json_encode(array('e'=>get_string('connectionfailure','repository_mahara')));
             exit;
         }
- 
+
 
         ///connect to the remote moodle and retrieve the list of files
-        $client->set_method('repository/mahara/repository.class.php/get_folder_files_for_moodle');
+        $client->set_method('repository/mahara/repository.class.php/get_folder_files');
         $client->add_param($USER->username);
         $client->add_param($path);
         $client->add_param($search);
@@ -156,25 +184,32 @@ class repository_mahara extends repository {
         $services = $client->response;
         $newpath = $services[0];
         $filesandfolders = $services[1];
-        varlog("Here is the return value:");
-        varlog($filesandfolders);
+        // varlog("Here is the return value:");
+        // varlog($filesandfolders);
         ///display error message if we could retrieve the list or if nothing were returned
         if (empty($filesandfolders)) {
             echo json_encode(array('e'=>get_string('failtoretrievelist','repository_mahara')));
             exit;
         }
 
-       
+
         $list = array();
         if (!empty($filesandfolders['files'])) {
-        foreach ($filesandfolders['files'] as $file) {
-            $list[] = array( 'title'=>$file['title'], 'date'=>$file['mtime'], 'size'=>'10MB', 'source'=>$file['id'], 'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo('icon32', $file['title']));
-        }
+            foreach ($filesandfolders['files'] as $file) {
+                if ($file['artefacttype'] == 'image') {
+                    //$thumbnail = base64_decode($file['thumbnail']);
+                    //varlog("http://jerome.moodle.com/git/mahara/htdocs/artefact/file/download.php?file=".$file['id']."&size=70x55");
+                    $thumbnail = "http://jerome.moodle.com/git/mahara/htdocs/artefact/file/download.php?file=".$file['id']."&size=70x55";
+                } else {
+                    $thumbnail = $CFG->pixpath .'/f/'. mimeinfo('icon32', $file['title']);
+                }
+                $list[] = array( 'title'=>$file['title'], 'date'=>$file['mtime'], 'size'=>'10MB', 'source'=>$file['id'], 'thumbnail' => $thumbnail);
+            }
         }
         if (!empty($filesandfolders['folders'])) {
-        foreach ($filesandfolders['folders'] as $folder) {
-            $list[] =  array('path'=>$folder['id'], 'title'=>$folder['title'], 'date'=>$folder['mtime'], 'size'=>'0', 'children'=>array(), 'thumbnail' => $CFG->pixpath .'/f/folder.gif');
-        }
+            foreach ($filesandfolders['folders'] as $folder) {
+                $list[] =  array('path'=>$folder['id'], 'title'=>$folder['title'], 'date'=>$folder['mtime'], 'size'=>'0', 'children'=>array(), 'thumbnail' => $CFG->pixpath .'/f/folder.gif');
+            }
         }
 
         $filepickerlisting = array(
@@ -182,9 +217,9 @@ class repository_mahara extends repository {
             'dynload' => 1,
             'nosearch' => 1,
             'list'=> $list,
-                );
+        );
 
-                 varlog($filepickerlisting);
+        //  varlog($filepickerlisting);
 
         return $filepickerlisting;
     }
@@ -226,8 +261,8 @@ class repository_mahara extends repository {
         }
 
         $services = $client->response; //service contains the file content in the first case of the array,
-                                       //and the filename in the second
-       
+        //and the filename in the second
+
 
         //the content has been encoded in base64, need to decode it
         $content = base64_decode($services[0]);
@@ -276,7 +311,7 @@ class repository_mahara extends repository {
                                     h.deleted = 0 AND
                                     a.name = ? AND
                                     h.name <> ?',
-                        array($CFG->mnet_localhost_id, 'mahara', 'All Hosts'));
+            array($CFG->mnet_localhost_id, 'mahara', 'All Hosts'));
         $peers = array();
         foreach($hosts as $host) {
             $peers[$host->id] = $host->name;
