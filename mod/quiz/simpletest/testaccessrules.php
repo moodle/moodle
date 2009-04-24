@@ -400,47 +400,6 @@ class password_access_rule_test extends UnitTestCase {
         $this->assertFalse($rule->is_finished(0, $attempt));
         $this->assertFalse($rule->time_left($attempt, 1));
     }
-
-    function test_do_password_check() {
-        $reqpwregex = '/' . preg_quote(get_string('requirepasswordmessage', 'quiz')) . '/';
-        $pwerrregex = '/' . preg_quote(get_string('passworderror', 'quiz')) . '/';
-
-        $quiz = new stdClass;
-        $quiz->id = -1; // So as not to interfere with any real quizzes.
-        $quiz->intro = 'SOME INTRO TEXT';
-        $quiz->password = 'frog';
-        $quiz->questions = '';
-        $cm = new stdClass;
-        $cm->id = 666;
-        $cm = new stdClass;
-        $cm->id = 0;
-        $quizobj = new quiz($quiz, $cm, null);
-        $rule = new password_access_rule($quizobj, 0);
-
-        $rule->clear_access_allowed(-1);
-        $_POST['cancelpassword'] = false;
-        $_POST['quizpassword'] = '';
-        $html = $rule->do_password_check(false, null, true);
-        $this->assertPattern($reqpwregex, $html);
-        $this->assertPattern('/SOME INTRO TEXT/', $html);
-        $this->assertNoPattern($pwerrregex, $html);
-
-        $_POST['quizpassword'] = 'toad';
-        $html = $rule->do_password_check(false, null, true);
-        $this->assertPattern($reqpwregex, $html);
-        $this->assertPattern($pwerrregex, $html);
-
-        $_POST['quizpassword'] = 'frog';
-        $this->assertNull($rule->do_password_check(false, null, true));
-
-        // Check that once you are in, the password isn't checked again.
-        $_POST['quizpassword'] = 'newt';
-        $this->assertNull($rule->do_password_check(false, null, true));
-
-        $rule->clear_access_allowed(-1);
-        $html = $rule->do_password_check(false, null, true);
-        $this->assertPattern($reqpwregex, $html);
-    }
 }
 
 class securewindow_access_rule_test extends UnitTestCase {
