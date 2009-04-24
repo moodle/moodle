@@ -151,7 +151,6 @@ var repository_client = (function(){
                                 }
                             }
                             this.style.background = '#CCC';
-                            repository_client.loading(client_id, 'load');
                             repository_client.req(client_id, repo_id, '');
                         }
                         li.appendChild(link);
@@ -178,6 +177,7 @@ var repository_client = (function(){
 // public static method
 // may be called outside yui
 repository_client.req = function(client_id, id, path, page) {
+    repository_client.loading(client_id, 'load');
     this.fp[client_id].viewbar.set('disabled', false);
     var r = repository_client.fp[client_id];
     var params = [];
@@ -559,7 +559,6 @@ repository_client.path = function(client_id) {
                 var result = this.id.match(re);
                 var client_id = result[1];
                 var repo_id = result[2];
-                repository_client.loading(client_id, 'load');
                 repository_client.req(client_id, repo_id, this.path);
             }
             var sep = document.createElement('SPAN');
