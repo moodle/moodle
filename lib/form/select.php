@@ -92,6 +92,8 @@ class MoodleQuickForm_select extends HTML_QuickForm_select{
         foreach ($this->_options as $key=>$option){
             if ($option['attr']['value']==$value){
                 unset($this->_options[$key]);
+                // we must reindex the options because the ugly code in quickforms' select.php expects that keys are 0,1,2,3... !?!?
+                $this->_options = array_merge($this->_options);
                 return;
             }
         }
