@@ -526,6 +526,7 @@ text-align:left;
 vertical-align:middle;
 }
 
+/*
 .grade-report-grader .yui-overlay {
     background-color: #FFEE69;
     border-color: #D4C237 #A6982B #A6982B;
@@ -535,6 +536,7 @@ vertical-align:middle;
     padding: 2px 5px;
     font-size: 0.7em;
 }
+*/
 
 .grade-report-grader .yui-overlay .fullname {
     color: #5F3E00;
@@ -547,3 +549,24 @@ vertical-align:middle;
 .grade-report-grader .yui-overlay .feedback {
     color: #5F595E;
 }
+/* .grade-report-grader table#user-grades td */
+/* .grader-report-grader table#user-grades td .yui-panel div.hd { */
+#tooltipPanel {
+  text-align: left;
+}
+
+
+<?php include($CFG->dirroot.'/lib/yui/container/assets/skins/sam/container.css') ?>
+.yui-skin-sam .yui-panel .hd{padding:0 10px;font-size:93%;line-height:2;*line-height:1.9;font-weight:bold;color:#000;background:url(<?php echo $CFG->wwwroot."/lib/yui" ?>/assets/skins/sam/sprite.png) repeat-x 0 -200px;}
+.yui-skin-sam .container-close{border-color: #45c;position:absolute;top:5px;right:6px;width:25px;height:15px;background:url(<?php echo $CFG->wwwroot."/lib/yui" ?>/assets/skins/sam/sprite.png) no-repeat 0 -300px;cursor:pointer;}
+.yui-skin-sam .yui-simple-dialog .bd .yui-icon{background:url(<?php echo $CFG->wwwroot."/lib/yui" ?>/assets/skins/sam/sprite.png) no-repeat 0 0;width:16px;height:16px;margin-right:10px;float:left;}
+
+.grade-report-grader .yui-overlay a.container-close {
+  margin-top: -3px;
+}
+
+#hiddentooltiproot, .tooltipDiv {
+  display: none;
+}
+
+
