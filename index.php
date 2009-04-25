@@ -103,7 +103,7 @@
                                             BLOCK_R_MAX_WIDTH);
 
     print_header($SITE->fullname, $SITE->fullname, 'home', '',
-                 '<meta name="description" content="'. s(strip_tags($SITE->summary)) .'" />',
+                 '<meta name="description" content="'. strip_tags(format_text($SITE->summary, FORMAT_HTML)) .'" />',
                  true, '', user_login_string($SITE).$langmenu);
 
 ?>
