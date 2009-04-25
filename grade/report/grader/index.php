@@ -139,7 +139,8 @@ $report->load_final_grades();
 
 /// Print header
 $reportname = get_string('modulename', 'gradereport_grader');
-print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, null, $buttons, array($CFG->wwwroot . '/lib/yui/container/assets/skins/sam/container.css'));
+// Matt - removed stylesheet
+print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, null, $buttons);
 
 echo $report->group_selector;
 echo '<div class="clearer"></div>';
@@ -191,6 +192,7 @@ if (!empty($studentsperpage) && $studentsperpage >= 20) {
     print_paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
 }
 
+echo '<div id="hiddentooltiproot">tooltip panel</div>';
 // Print AJAX code
 if ($report->get_pref('enableajax')) {
     require_once 'ajax.php';
@@ -202,16 +204,124 @@ if ($report->get_pref('enableajax')) {
 
 YAHOO.namespace("graderreport");
 
-YAHOO.graderreport.init = function() {
-    // Get all <td> with class grade
-    var cells = YAHOO.util.Dom.getElementsByClassName('grade', 'td');
-    YAHOO.graderreport.tooltips = new Array(cells.length);
+function init() {
+    // attach event listener to the table for mouseover and mouseout
+    var table = document.getElementById('user-grades');
+    YAHOO.util.Event.on(table, 'mouseover', YAHOO.graderreport.mouseoverHandler);
+    YAHOO.util.Event.on(table, 'mouseout', YAHOO.graderreport.mouseoutHandler);
 
-    for (var i = 0; i < cells.length; i++) {
-        YAHOO.graderreport.tooltips[i] = new YAHOO.widget.Tooltip("tt"+i, { context: cells[i], autodismissdelay: 10000000 });
+    // Make single panel that can be dynamically re-rendered wit the right data.
+    YAHOO.graderreport.panelEl = new YAHOO.widget.Panel("tooltipPanel", {
+
+        draggable: false,
+        visible: false,
+        close: false,
+        preventcontextoverlap: true
+
+    });
+
+    YAHOO.graderreport.panelEl.render(table);
+
+    document.body.className += ' yui-skin-sam';
+
+}
+
+YAHOO.graderreport.mouseoverHandler = function (e) {
+
+    var tempNode = '';
+    var searchString = '';
+    var tooltipNode = '';
+
+    // get the element that we just moved the mouse over
+    var elTarget = YAHOO.util.Event.getTarget(e);
+
+
+    // if it was part of the yui panel, we don't want to redraw yet
+    searchString = /fullname|itemname|feedback/;
+    if (elTarget.className.search(searchString) > -1) {
+        return false;
     }
-};
-YAHOO.util.Event.onDOMReady(YAHOO.graderreport.init);
+
+    // move up until we are in the actual cell, not any other child div or span
+    while (elTarget.id != 'user-grades') {
+        if(elTarget.nodeName.toUpperCase() == "TD") {
+            break;
+        } else {
+            elTarget = elTarget.parentNode;
+        }
+    }
+
+    // only make a tooltip for cells with grades
+    if (elTarget.className.search('grade cell') > -1) {
+
+        // each time we go over a new cell, we need to put it's tooltip into a div to stop it from
+        // popping up on top of the panel. Still looking for a way to set the header differently
+        if (elTarget.childNodes.length == 1) {
+
+            tempNode = document.createElement("div");
+            tempNode.className = "tooltipDiv";
+            tempNode.innerHTML = elTarget.title;
+            elTarget.appendChild(tempNode);
+            elTarget.title = null;
+        }
+
+        tooltipNode = elTarget.childNodes[1];
+
+        YAHOO.graderreport.panelEl.setBody(tooltipNode.innerHTML);
+        YAHOO.graderreport.panelEl.render(elTarget);
+        YAHOO.graderreport.panelEl.show()
+    }
+}
+
+// only hide the overlay if the mouse has not moved over it
+YAHOO.graderreport.mouseoutHandler = function (e) {
+
+    var classVar = '';
+    var newTargetClass = '';
+    var elTarget = YAHOO.util.Event.getTarget(e);
+    var newTarget = YAHOO.util.Event.getRelatedTarget(e);
+
+    // deals with an error if the mouseout event is over the lower scrollbar
+    try {
+        classVar = newTarget.className;
+    } catch (err) {
+        YAHOO.graderreport.panelEl.hide()
+        return false;
+    }
+
+    // if we are over any part of the panel, do not hide
+    // do this by walking up the DOM till we reach table level, looking for panel tag
+    while ((typeof(newTarget.id)) == 'undefined' || (newTarget.id != 'user-grades')) {
+
+        try {
+            newTargetClass = newTarget.className;
+        } catch (err) {
+            // we've gone over the scrollbar
+            YAHOO.graderreport.panelEl.hide()
+            return false;
+        }
+
+        if (newTargetClass.search('yui-panel') > -1) {
+            // we're in the panel so don't hide it
+            return false;
+        }
+
+        if (newTarget.nodeName.toUpperCase() == "HTML") {
+            // we missed the user-grades table altogether by moving down off screen to read a long one
+            YAHOO.graderreport.panelEl.hide()
+            break;
+        }
+
+        newTarget = newTarget.parentNode;
+    }
+
+    // no panel so far and we went up to the
+    YAHOO.graderreport.panelEl.hide()
+
+}
+
+
+YAHOO.util.Event.onDOMReady(init);
 
 </script>
 <?php
