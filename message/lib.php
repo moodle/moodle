@@ -1023,6 +1023,32 @@ function message_print_contactlist_user($contact, $incontactlist = true){
     echo '</tr>';
 }
 
+ /**
+  * Moves unread messages from message table to message_read for a given from user
+  * @param object $userid       User id
+  * @return boolean success
+  */
+function message_move_userfrom_unread2read($userid) {
+
+    global $DB;
+
+    // move all unread messages from message table to messasge_read
+    if ($messages = $DB->get_records_select('message', 'useridfrom = ?', array($userid), 'timecreated')) {
+        foreach ($messages as $message) {
+            $message->timeread = 0; //the message was never read
+            $messageid = $message->id;
+            unset($message->id);
+            if ($DB->insert_record('message_read', $message)) {
+                $DB->delete_records('message', array('id' => $messageid));
+                $DB->delete_records('message_working', array('unreadmessageid' => $messageid));
+            } else {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 function message_get_popup_messages($destuserid, $fromuserid=NULL){
     global $DB;
     

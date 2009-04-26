@@ -2989,6 +2989,7 @@ function delete_user($user) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/grouplib.php');
     require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->dirroot.'/message/lib.php');
 
     // TODO: decide if this transaction is really needed
     $DB->begin_sql();
@@ -3000,6 +3001,9 @@ function delete_user($user) {
                 $grade->delete('userdelete');
             }
         }
+
+        //move unread messages from this user to read
+        message_move_userfrom_unread2read($user->id);
 
         // remove from all groups
         $DB->delete_records('groups_members', array('userid'=>$user->id));

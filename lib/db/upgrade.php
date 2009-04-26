@@ -1651,6 +1651,22 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009041700);
     }
 
+    if ($result && $oldversion < 2009042600) {
+    /// Deleting orphaned messages from deleted users.
+        require_once($CFG->dirroot.'/message/lib.php');
+    /// Detect deleted users with messages sent(useridfrom) and not read
+        if ($deletedusers = $DB->get_records_sql('SELECT DISTINCT u.id
+                                                    FROM {user} u
+                                                    JOIN {message} m ON m.useridfrom = u.id
+                                                   WHERE u.deleted = ?', array(1))) {
+            foreach ($deletedusers as $deleteduser) {
+                message_move_userfrom_unread2read($deleteduser->id); // move messages
+            }
+        }
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042600);
+    }
+
     return $result;
 }
 
