@@ -2,11 +2,9 @@
 
 require_once($CFG->dirroot.'/tag/lib.php');
 require_once($CFG->libdir . '/filelib.php');
-require_once($CFG->libdir . '/magpie/rss_cache.inc');
 
 define('FLICKR_DEV_KEY', '4fddbdd7ff2376beec54d7f6afad425e');
 define('DEFAULT_NUMBER_OF_PHOTOS', 6);
-define('FLICKR_CACHE_EXPIRATION', 1800);
 
 class block_tag_flickr extends block_base {
 
@@ -29,7 +27,7 @@ class block_tag_flickr extends block_base {
 
     function preferred_width() {
         return 170;
-    } 
+    }
 
     function get_content() {
 
@@ -40,7 +38,7 @@ class block_tag_flickr extends block_base {
         }
 
         $tagid = optional_param('id', 0, PARAM_INT);   // tag id - for backware compatibility
-        $tag = optional_param('tag', '', PARAM_TAG); // tag 
+        $tag = optional_param('tag', '', PARAM_TAG); // tag
 
         if ($tag) {
             $tagobject = tag_get('name', $tag);
@@ -104,7 +102,7 @@ class block_tag_flickr extends block_base {
             $response = $this->fetch_request($request);
 
             $search = unserialize($response);
-            $photos = array_values($search['photos']['photo']);  
+            $photos = array_values($search['photos']['photo']);
         }
 
 
@@ -126,33 +124,11 @@ class block_tag_flickr extends block_base {
     }
 
     function fetch_request($request){
-        global $CFG;
+        $c =  new curl(array('cache' => true, 'module_cache'=> 'tag_flickr'));
 
-        make_upload_directory('/cache/flickr');
+        $response = $c->get($request);
 
-        $cache = new RSSCache($CFG->dataroot . '/cache/flickr', FLICKR_CACHE_EXPIRATION);
-        $cache_status = $cache->check_cache( $request);
-
-        if ( $cache_status == 'HIT' ) {
-            $cached_response = $cache->get( $request );
-
-            return $cached_response;
-        }
-
-        if ( $cache_status == 'STALE' ) {
-            $cached_response = $cache->get( $request );
-        }
-
-        $response = download_file_content($request);
-
-        if(empty($response)){
-            $response = $cached_response;
-        }
-        else{
-            $cache->set($request, $response);    
-        }
-
-        return $response;        
+        return $response;
     }
 
     function build_photo_url ($photo, $size='medium') {
@@ -179,7 +155,7 @@ class block_tag_flickr extends block_base {
             $url = 'http://farm' . $photo['farm'] . '.static.flickr.com/' . $photo['server'] . '/' . $photo['id'] . '_' . $photo['secret'] . $sizes[$size] . '.jpg';
         }
         return $url;
-    }    
+    }
 }
 
 ?>

@@ -2,12 +2,10 @@
 
 require_once($CFG->dirroot.'/tag/lib.php');
 require_once($CFG->libdir . '/filelib.php');
-require_once($CFG->libdir . '/magpie/rss_cache.inc');
 require_once($CFG->libdir . '/phpxml/xml.php');
 
 define('YOUTUBE_DEV_KEY', 'Dlp6qqRbI28');
 define('DEFAULT_NUMBER_OF_VIDEOS', 5);
-define('YOUTUBE_CACHE_EXPIRATION', 1800);
 
 class block_tag_youtube extends block_base {
 
@@ -30,7 +28,7 @@ class block_tag_youtube extends block_base {
 
     function preferred_width() {
         return 140;
-    } 
+    }
 
     function get_content() {
 
@@ -79,7 +77,7 @@ class block_tag_youtube extends block_base {
     function get_videos_by_tag(){
 
         $tagid = optional_param('id', 0, PARAM_INT);   // tag id - for backware compatibility
-        $tag = optional_param('tag', '', PARAM_TAG); // tag 
+        $tag = optional_param('tag', '', PARAM_TAG); // tag
 
         if ($tag) {
             $tagobject = tag_get('name', $tag);
@@ -110,7 +108,7 @@ class block_tag_youtube extends block_base {
     function get_videos_by_tag_and_category(){
 
         $tagid = optional_param('id', 0, PARAM_INT);   // tag id - for backware compatibility
-        $tag = optional_param('tag', '', PARAM_TAG); // tag 
+        $tag = optional_param('tag', '', PARAM_TAG); // tag
 
         if ($tag) {
             $tagobject = tag_get('name', $tag);
@@ -140,33 +138,9 @@ class block_tag_youtube extends block_base {
     }
 
     function fetch_request($request){
+        $c =  new curl(array('cache' => true, 'module_cache'=>'tag_youtube'));
 
-        global $CFG;
-
-        make_upload_directory('/cache/youtube');
-
-        $cache = new RSSCache($CFG->dataroot . '/cache/youtube',YOUTUBE_CACHE_EXPIRATION);
-        $cache_status = $cache->check_cache( $request);
-
-        if ( $cache_status == 'HIT' ) {
-            $cached_response = $cache->get( $request );
-
-            $xmlobj = XML_unserialize($cached_response);
-            return $this->render_video_list($xmlobj);
-        }
-
-        if ( $cache_status == 'STALE' ) {
-            $cached_response = $cache->get( $request );
-        }
-
-        $response = download_file_content($request);
-
-        if(empty($response)){
-            $response = $cached_response;
-        }
-        else{
-            $cache->set($request, $response);
-        }
+        $response = $c->get($request);
 
         $xmlobj = XML_unserialize($response);
         return $this->render_video_list($xmlobj);
@@ -189,9 +163,9 @@ class block_tag_youtube extends block_base {
                 $text .= format_time($video['length_seconds']);
                 $text .= "</div></li>\n";
             }
-        } else { 
+        } else {
             // if youtube is offline, or for whatever reason the previous
-            // call doesn't work... 
+            // call doesn't work...
             //add_to_log(SITEID, 'blocks/tag_youtube', 'problem in getting videos off youtube');
         }
         $text .= "</ul><div class=\"clearer\"></div>\n";
