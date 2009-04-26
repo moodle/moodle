@@ -20,10 +20,23 @@
         error("User ID 1 was incorrect");
     }
 
+    if ($user1->deleted) {
+        print_header();
+        print_heading(get_string('userdeleted').': '.$userid1);
+        print_footer();
+        die;
+    }
+
     if (has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM))) {             // Able to see any discussion
         $userid2 = optional_param('user2', $USER->id, PARAM_INT);
         if (! $user2 = get_record("user", "id", $userid2)) {  // Check
             error("User ID 2 was incorrect");
+        }
+        if ($user2->deleted) {
+            print_header();
+            print_heading(get_string('userdeleted').': '.$userid2);
+            print_footer();
+            die;
         }
     } else {
         $userid2 = $USER->id;    // Can only see messages involving yourself

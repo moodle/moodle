@@ -3131,6 +3131,22 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101546.02);
     }
 
+    if ($result && $oldversion < 2007101546.03) {
+    /// Deleting orphaned messages from deleted users.
+        require_once($CFG->dirroot.'/message/lib.php');
+    /// Detect deleted users with messages sent(useridfrom) and not read
+        if ($deletedusers = get_records_sql("SELECT DISTINCT u.id
+                                           FROM {$CFG->prefix}user u
+                                           JOIN {$CFG->prefix}message m ON m.useridfrom = u.id
+                                          WHERE u.deleted = 1")) {
+            foreach ($deletedusers as $deleteduser) {
+                message_move_userfrom_unread2read($deleteduser->id); // move messages
+            }
+        }
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2007101546.03);
+    }
+
     return $result;
 }
 

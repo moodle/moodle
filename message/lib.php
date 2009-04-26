@@ -1064,4 +1064,28 @@ function message_print_contactlist_user($contact, $incontactlist = true){
     echo '</tr>';
 }
 
+ /**
+  * Moves unread messages from message table to message_read for a given from user
+  * @param object $userid       User id
+  * @return boolean success
+  */
+function message_move_userfrom_unread2read($userid) {
+
+    // move all unread messages from message table to messasge_read
+    if ($messages = get_records_select('message', "useridfrom = $userid", 'timecreated')) {
+        foreach ($messages as $message) {
+            $message->timeread = 0; //the message was never read
+            $message = addslashes_object($message);
+            $messageid = $message->id;
+            unset($message->id);
+            if (insert_record('message_read', $message)) {
+                delete_records('message', 'id', $messageid);
+            } else {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 ?>
