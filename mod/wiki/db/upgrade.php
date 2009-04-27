@@ -54,6 +54,20 @@ function xmldb_wiki_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009042001, 'wiki');
     }
 
+/// Dropping all enums/check contraints from core. MDL-18577
+    if ($result && $oldversion < 2009042700) {
+
+    /// Changing list of values (enum) of field wtype on table wiki to none
+        $table = new xmldb_table('wiki');
+        $field = new xmldb_field('wtype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'group', 'pagename');
+
+    /// Launch change of list of values for field wtype
+        $dbman->change_field_enum($table, $field);
+
+    /// wiki savepoint reached
+        upgrade_mod_savepoint($result, 2009042700, 'wiki');
+    }
+
     return $result;
 }
 

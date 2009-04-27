@@ -1667,6 +1667,41 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009042600);
     }
 
+    /// Dropping all enums/check contraints from core. MDL-18577
+    if ($result && $oldversion < 2009042700) {
+
+    /// Changing list of values (enum) of field stattype on table stats_daily to none
+        $table = new xmldb_table('stats_daily');
+        $field = new xmldb_field('stattype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'activity', 'roleid');
+
+    /// Launch change of list of values for field stattype
+        $dbman->change_field_enum($table, $field);
+
+    /// Changing list of values (enum) of field stattype on table stats_weekly to none
+        $table = new xmldb_table('stats_weekly');
+        $field = new xmldb_field('stattype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'activity', 'roleid');
+
+    /// Launch change of list of values for field stattype
+        $dbman->change_field_enum($table, $field);
+
+    /// Changing list of values (enum) of field stattype on table stats_monthly to none
+        $table = new xmldb_table('stats_monthly');
+        $field = new xmldb_field('stattype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'activity', 'roleid');
+
+    /// Launch change of list of values for field stattype
+        $dbman->change_field_enum($table, $field);
+
+    /// Changing list of values (enum) of field publishstate on table post to none
+        $table = new xmldb_table('post');
+        $field = new xmldb_field('publishstate', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'draft', 'attachment');
+
+    /// Launch change of list of values for field publishstate
+        $dbman->change_field_enum($table, $field);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042700);
+    }
+
     return $result;
 }
 

@@ -468,6 +468,14 @@ class database_manager {
             throw new ddl_exception('ddltablealreadyexists', $xmldb_table->getName());
         }
 
+    /// Iterate over all fields in table, finding any attempt to add one field with enum info, throw exception
+        $xmldb_fields = $xmldb_table->getFields();
+        foreach ($xmldb_fields as $xmldb_field) {
+            if ($xmldb_field->getEnum()) {
+                throw new ddl_exception('ddlunsupportedenums', $xmldb_table->getName() . '->' . $xmldb_field->getName());
+            }
+        }
+
         if (!$sqlarr = $this->generator->getCreateTableSQL($xmldb_table)) {
             throw new ddl_exception('ddlunknownerror', null, 'table create sql not generated');
         }
@@ -491,6 +499,14 @@ class database_manager {
     /// Check table doesn't exist
         if ($this->table_exists($xmldb_table, true)) {
             $this->drop_temp_table($xmldb_table);
+        }
+
+    /// Iterate over all fields in table, finding any attempt to add one field with enum info, throw exception
+        $xmldb_fields = $xmldb_table->getFields();
+        foreach ($xmldb_fields as $xmldb_field) {
+            if ($xmldb_field->getEnum()) {
+                throw new ddl_exception('ddlunsupportedenums', $xmldb_table->getName() . '->' . $xmldb_field->getName());
+            }
         }
 
         if (!$sqlarr = $this->generator->getCreateTempTableSQL($xmldb_table)) {
@@ -581,6 +597,11 @@ class database_manager {
         if ($xmldb_field->getNotNull() && $this->generator->getDefaultValue($xmldb_field) === NULL && $this->mdb->count_records($xmldb_table->getName())) {
             throw new ddl_exception('ddlunknownerror', null, 'Field ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
                       ' cannot be added. Not null fields added to non empty tables require default value. Create skipped');
+        }
+
+    /// Detect any attempt to add one field with enum info, throw exception
+        if ($xmldb_field->getEnum()) {
+            throw new ddl_exception('ddlunsupportedenums', $xmldb_table->getName() . '->' . $xmldb_field->getName());
         }
 
         if (!$sqlarr = $this->generator->getAddFieldSQL($xmldb_table, $xmldb_field)) {
@@ -689,11 +710,7 @@ class database_manager {
 
     /// If enum is defined, we're going to create it, check it doesn't exist.
         if ($xmldb_field->getEnum()) {
-            if ($this->check_constraint_exists($xmldb_table, $xmldb_field)) {
-                debugging('Enum for ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
-                          ' already exists. Create skipped', DEBUG_DEVELOPER);
-                return; //Enum exists, nothing to do
-            }
+            throw new ddl_exception('ddlunsupportedenums', $xmldb_table->getName() . '->' . $xmldb_field->getName());
         } else { /// Else, we're going to drop it, check it exists
             if (!$this->check_constraint_exists($xmldb_table, $xmldb_field)) {
                 debugging('Enum for ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .

@@ -241,6 +241,20 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009042004, 'forum');
     }
 
+    /// Dropping all enums/check contraints from core. MDL-18577
+    if ($result && $oldversion < 2009042700) {
+
+    /// Changing list of values (enum) of field type on table forum to none
+        $table = new xmldb_table('forum');
+        $field = new xmldb_field('type', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'general', 'course');
+
+    /// Launch change of list of values for field type
+        $dbman->change_field_enum($table, $field);
+
+    /// forum savepoint reached
+        upgrade_mod_savepoint($result, 2009042700, 'forum');
+    }
+
     return $result;
 }
 

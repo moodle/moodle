@@ -74,6 +74,17 @@ function xmldb_enrol_authorize_upgrade($oldversion) {
         $dbman->add_index($table, $index);
     }
 
+    /// Dropping all enums/check contraints from core. MDL-18577
+    if ($result && $oldversion < 2009042700) {
+
+    /// Changing list of values (enum) of field paymentmethod on table enrol_authorize to none
+        $table = new xmldb_table('enrol_authorize');
+        $field = new xmldb_field('paymentmethod', XMLDB_TYPE_CHAR, '6', null, XMLDB_NOTNULL, null, null, null, 'cc', 'id');
+
+    /// Launch change of list of values for field paymentmethod
+        $dbman->change_field_enum($table, $field);
+    }
+
     return $result;
 }
 
