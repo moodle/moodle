@@ -731,7 +731,7 @@ class grade_category extends grade_object {
             if ($item->gradetype == GRADE_TYPE_VALUE) {
                 $max += $item->grademax;
             } else if ($item->gradetype == GRADE_TYPE_SCALE) {
-                $max += $item->grademax - 1; // scales min is 1
+                $max += $item->grademax; // 0 = nograde, 1 = first scale item, 2 = second scale item
             }
         }
 
