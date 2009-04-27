@@ -201,6 +201,7 @@ if ($formdata = $mform->get_data()) {
                 $maperrors[$j] = true;
             } else {
                 // collision
+                fclose($fp);
                 unlink($filename); // needs to be uploaded again, sorry
                 error('mapping collision detected, 2 fields maps to the same grade item '.$j);
             }
@@ -488,6 +489,7 @@ if ($formdata = $mform->get_data()) {
             grade_import_commit($course->id, $importcode);
         }
         // temporary file can go now
+        fclose($fp);
         unlink($filename);
     } else {
         error ('import file '.$filename.' not readable');
