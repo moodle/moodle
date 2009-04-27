@@ -205,7 +205,7 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
         }
         break;
         // new outcome will be added, search for compatible existing scale...
-        $scale = get_records_select('scale', 'name ="'. $csv_data[$imported_headers['scale_name']] .'" and scale ="'. $csv_data[$imported_headers['scale_items']] .'" and (courseid = '. $courseid .' or courseid = 0)');
+        $scale = get_records_select('scale', 'name =\''. $csv_data[$imported_headers['scale_name']] .'\' and scale =\''. $csv_data[$imported_headers['scale_items']] .'\' and (courseid = '. $courseid .' or courseid = 0)');
 
         if ($scale) {
             // already exists in the right scope: use it.
