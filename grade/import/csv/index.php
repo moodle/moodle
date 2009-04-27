@@ -43,6 +43,9 @@ $context = get_context_instance(CONTEXT_COURSE, $id);
 require_capability('moodle/grade:import', $context);
 require_capability('gradeimport/csv:view', $context);
 
+$separatemode = (groups_get_course_groupmode($COURSE) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context));
+$currentgroup = groups_get_course_group($course);
+
 // sort out delimiter
 if (isset($CFG->CSV_DELIMITER)) {
     $csv_delimiter = '\\' . $CFG->CSV_DELIMITER;
@@ -421,6 +424,14 @@ if ($formdata = $mform->get_data()) {
                 break;
             }
 
+            if ($separatemode and !groups_is_member($currentgroup, $studentid)) {
+                // not allowed to import into this group, abort
+                $status = false;
+                import_cleanup($importcode);
+                notify('user not member of current group, can not update!');
+                break;
+            }
+
             // insert results of this students into buffer
             if ($status and !empty($newgrades)) {
 
@@ -482,6 +493,9 @@ if ($formdata = $mform->get_data()) {
     }
 
 } else {
+    groups_print_course_menu($course, 'index.php?id='.$id);
+    echo '<div class="clearer"></div>';
+
     // display the standard upload file form
     $mform->display();
 }
