@@ -200,6 +200,7 @@ if ($formdata = $mform->get_data()) {
                 $maperrors[$j] = true;
             } else {
                 // collision
+                fclose($fp);
                 unlink($filename); // needs to be uploaded again, sorry
                 print_error('cannotmapfield', '', '', $j);
             }
@@ -487,6 +488,7 @@ if ($formdata = $mform->get_data()) {
             grade_import_commit($course->id, $importcode);
         }
         // temporary file can go now
+        fclose($fp);
         unlink($filename);
     } else {
         print_error('cannotreadfil');
