@@ -62,6 +62,7 @@ $string['calculationadd'] = 'Add calculation';
 $string['calculationedit'] = 'Edit calculation';
 $string['calculationview'] = 'View calculation';
 $string['calculationsaved'] = 'Calculation saved';
+$string['cannotaccessgroup'] = 'Can not access grades of selected group, sorry.';
 $string['categories'] = 'Categories';
 $string['categoriesanditems'] = 'Categories and items';
 $string['categoriesedit'] = 'Edit categories and items';
