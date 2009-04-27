@@ -3147,6 +3147,11 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101546.03);
     }
 
+    if ($result && $oldversion < 2007101546.04) {
+        // force full regrading - the max grade for sum aggregation was not correct when scales involved
+        set_field('grade_items', 'needsupdate', 1, 'needsupdate', 0);
+    }
+
     return $result;
 }
 
