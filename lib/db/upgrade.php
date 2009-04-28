@@ -1527,7 +1527,8 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     if ($result && $oldversion < 2009032001) {
     /// Copy from role_allow_assign into the new table.
-        $DB->execute('INSERT INTO {role_allow_switch} SELECT * FROM {role_allow_assign}');
+        $DB->execute('INSERT INTO {role_allow_switch} (roleid, allowswitch)
+                SELECT roleid, allowassign FROM {role_allow_assign}');
 
     /// Unset the config variable used in 1.9.
         unset_config('allowuserswitchrolestheycantassign');
