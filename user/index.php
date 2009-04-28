@@ -445,7 +445,7 @@
     if (!empty($search)) {
         $LIKE = sql_ilike();
         $fullname  = sql_fullname('u.firstname','u.lastname');
-        $wheresearch .= ' AND ('. $fullname .' '. $LIKE .'\'%'. $search .'%\' OR email '. $LIKE .'\'%'. $search .'%\' OR idnumber '.$LIKE.' \'%'.$search.'%\') ';
+        $wheresearch .= ' AND ('. $fullname .' '. $LIKE .' \'%'. $search .'%\' OR email '. $LIKE .' \'%'. $search .'%\' OR idnumber '.$LIKE.' \'%'.$search.'%\') ';
 
     }
 
