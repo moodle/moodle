@@ -325,7 +325,7 @@
             if (plugin_supports('mod', $fromform->modulename, FEATURE_MOD_INTRO, true)) {
                 $fromform->intro = file_save_draft_area_files($fromform->introeditor['itemid'], $modcontext->id,
                                                               $fromform->modulename.'_intro', 0,
-                                                              true, $fromform->introeditor['text']);
+                                                              array('subdirs'=>true), $fromform->introeditor['text']);
                 $fromform->introformat = $fromform->introeditor['format'];
                 unset($fromform->introeditor);
             }
@@ -397,7 +397,7 @@
             if (plugin_supports('mod', $fromform->modulename, FEATURE_MOD_INTRO, true)) {
                 $fromform->intro = file_save_draft_area_files($fromform->introeditor['itemid'], $modcontext->id,
                                                               $fromform->modulename.'_intro', 0,
-                                                              true, $fromform->introeditor['text']);
+                                                              array('subdirs'=>true), $fromform->introeditor['text']);
                 $fromform->introformat = $fromform->introeditor['format'];
                 unset($fromform->introeditor);
             }

@@ -248,19 +248,30 @@ function file_get_submitted_draft_itemid($elname) {
  * @param int $draftitemid the id of the draft area to use. Normally obtained
  *      from file_get_submitted_draft_itemid('elementname') or similar.
  * @param integer $contextid This parameter and the next two identify the file area to save to.
- * @param string $filearea helps indentify the file area.
- * @param integer $itemid helps identify the file area.
- * @param boolean $subdirs allow directory structure within the file area.
+ * @param string $filearea indentifies the file area.
+ * @param integer $itemid helps identifies the file area.
+ * @param array $optionss area options (subdirs=>false, maxfiles=-1, maxbytes=0)
  * @param string $text some html content that needs to have embedded links rewritten
  *      to the @@PLUGINFILE@@ form for saving in the database.
  * @param boolean $forcehttps force https urls.
  * @return string if $text was passed in, the rewritten $text is returned. Otherwise NULL.
  */
-function file_save_draft_area_files($draftitemid, $contextid, $filearea, $itemid, $subdirs=false, $text=null, $forcehttps=false) {
+function file_save_draft_area_files($draftitemid, $contextid, $filearea, $itemid, array $options=null, $text=null, $forcehttps=false) {
     global $CFG, $USER;
 
     $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
     $fs = get_file_storage();
+
+    $options = (array)$options;
+    if (!isset($options['subdirs'])) {
+        $options['subdirs'] = false;
+    }
+    if (!isset($options['maxfiles'])) {
+        $options['maxfiles'] = -1; // unlimited
+    }
+    if (!isset($options['maxbytes'])) {
+        $options['maxbytes'] = 0; // unlimited
+    }
 
     $draftfiles = $fs->get_area_files($usercontext->id, 'user_draft', $draftitemid, 'id');
     $oldfiles   = $fs->get_area_files($contextid, $filearea, $itemid, 'id');
@@ -270,12 +281,25 @@ function file_save_draft_area_files($draftitemid, $contextid, $filearea, $itemid
         $fs->delete_area_files($contextid, $filearea, $itemid);
 
     } else if (count($oldfiles) < 2) {
+        $filecount = 0;
         // there were no files before - one file means root dir only ;-)
-        $fs->delete_area_files($contextid, $filearea, $itemid);
         $file_record = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid);
         foreach ($draftfiles as $file) {
-            if (!$subdirs and $file->get_filepath() !== '/') {
+            if (!$options['subdirs']) {
+                if ($file->get_filepath() !== '/' or $file->is_directory()) {
+                    continue;
+                }
+            }
+            if ($options['maxbytes'] and $options['maxbytes'] < $file->get_filesize()) {
+                // oversized file - should not get here at all
                 continue;
+            }
+            if ($options['maxfiles'] != -1 and $options['maxfiles'] <= $filecount) {
+                // more files - should not get here at all
+                break;
+            }
+            if (!$file->is_directory()) {
+                $filecount++;
             }
             $fs->create_file_from_storedfile($file_record, $file);
         }
@@ -283,30 +307,46 @@ function file_save_draft_area_files($draftitemid, $contextid, $filearea, $itemid
     } else {
         // we have to merge old and new files - we want to keep file ids for files that were not changed
         $file_record = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid);
-        foreach ($draftfiles as $file) {
-            if (!$subdirs and $file->get_filepath() !== '/') {
-                continue;
-            }
-            $newhash = sha1($contextid.$filearea.$itemid.$file->get_filepath().$file->get_filename());
-            if (isset($oldfiles[$newhash])) {
-                $oldfile = $oldfiles[$newhash];
-                unset($oldfiles[$newhash]); // do not delete afterwards
 
+        $newhashes = array();
+        foreach ($draftfiles as $file) {
+            $newhash = sha1($contextid.$filearea.$itemid.$file->get_filepath().$file->get_filename());
+            $newhashes[$newhash] = $file;
+        }
+        $filecount = 0;
+        foreach ($oldfiles as $file) {
+            $oldhash = $file->get_pathnamehash();
+            if (isset($newhashes[$oldhash])) {
                 if (!$file->is_directory()) {
-                    if ($file->get_contenthash() === $oldfile->get_contenthash()) {
-                        // file was not changed at all
-                        continue;
-                    } else {
-                        // file changed, delete the original
-                        $oldfile->delete();
-                    }
+                    $filecount++;
+                }
+                // unchanged file already there
+                unset($newhashes[$oldhash]);
+            } else {
+                // delete files not needed any more
+                $file->delete();
+            }
+        }
+
+        // now add new files
+        foreach ($newhashes as $file) {
+            if (!$options['subdirs']) {
+                if ($file->get_filepath() !== '/' or $file->is_directory()) {
+                    continue;
                 }
             }
+            if ($options['maxbytes'] and $options['maxbytes'] < $file->get_filesize()) {
+                // oversized file - should not get here at all
+                continue;
+            }
+            if ($options['maxfiles'] != -1 and $options['maxfiles'] <= $filecount) {
+                // more files - should not get here at all
+                break;
+            }
+            if (!$file->is_directory()) {
+                $filecount++;
+            }
             $fs->create_file_from_storedfile($file_record, $file);
-        }
-        // cleanup deleted files and dirs
-        foreach ($oldfiles as $file) {
-            $file->delete();
         }
     }
 
@@ -339,28 +379,28 @@ function file_save_draft_area_files($draftitemid, $contextid, $filearea, $itemid
  * @return error description string, '' if ok
  */
 function file_get_upload_error($errorcode) {
-    
+
     switch ($errorcode) {
     case 0: // UPLOAD_ERR_OK - no error
         $errmessage = '';
         break;
-        
+
     case 1: // UPLOAD_ERR_INI_SIZE
         $errmessage = get_string('uploadserverlimit');
         break;
-        
+
     case 2: // UPLOAD_ERR_FORM_SIZE
         $errmessage = get_string('uploadformlimit');
         break;
-        
+
     case 3: // UPLOAD_ERR_PARTIAL
         $errmessage = get_string('uploadpartialfile');
         break;
-        
+
     case 4: // UPLOAD_ERR_NO_FILE
         $errmessage = get_string('uploadnofilefound');
         break;
-        
+
     // Note: there is no error with a value of 5
 
     case 6: // UPLOAD_ERR_NO_TMP_DIR
@@ -2059,7 +2099,7 @@ class curl_cache {
             $this->ttl = $CFG->curlcache;
         }
     }
-    
+
     /**
      * TODO Document
      */
@@ -2081,7 +2121,7 @@ class curl_cache {
         }
         return false;
     }
-    
+
     /**
      * TODO Document
      */
@@ -2092,7 +2132,7 @@ class curl_cache {
         fwrite($fp, serialize($val));
         fclose($fp);
     }
-    
+
     /**
      * TODO Document
      */
@@ -2141,7 +2181,7 @@ class file_type_to_ext {
         $this->tree = array();
         $this->result = array();
     }
-    
+
     /**
      * TODO Document
      */
@@ -2160,7 +2200,7 @@ class file_type_to_ext {
             $this->tree[] = $key;
         }
     }
-    
+
     /**
      * TODO Document
      */
@@ -2174,7 +2214,7 @@ class file_type_to_ext {
         }
     }
 
-    
+
     /**
      * TODO Document
      */

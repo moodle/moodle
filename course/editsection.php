@@ -33,7 +33,7 @@
 
     } else if ($data = $mform->get_data()) {
 
-        $text = file_save_draft_area_files($data->summary['itemid'], $context->id, 'course_section', $section->id, true, $data->summary['text']);
+        $text = file_save_draft_area_files($data->summary['itemid'], $context->id, 'course_section', $section->id, array('subdirs'=>true), $data->summary['text']);
         $DB->set_field("course_sections", "summary", $text, array("id"=>$section->id));
         add_to_log($course->id, "course", "editsection", "editsection.php?id=$section->id", "$section->section");
         redirect("view.php?id=$course->id");

@@ -126,12 +126,12 @@ if ($mform->is_cancelled()){
 
     // save and relink embedded images
     $entry->definitionformat = $data->entry['format'];
-    $entry->definition       = file_save_draft_area_files($draftid_editor, $context->id, 'glossary_entry', $entry->id, true, $data->entry['text']);
+    $entry->definition       = file_save_draft_area_files($draftid_editor, $context->id, 'glossary_entry', $entry->id, array('subdirs'=>true), $data->entry['text']);
 
     // save attachments
     $info = file_get_draft_area_info($draftitemid);
     $entry->attachment = ($info['filecount']>0) ? '1' : '';
-    file_save_draft_area_files($draftitemid, $context->id, 'glossary_attachment', $entry->id, false);
+    file_save_draft_area_files($draftitemid, $context->id, 'glossary_attachment', $entry->id);
 
     // store the final values
     $DB->update_record('glossary_entries', $entry);
