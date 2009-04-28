@@ -64,7 +64,9 @@ class repository_mahara extends repository {
      * @return <type>
      */
     public function check_login() {
-        return !empty($this->token);
+        //check session
+        global $SESSION;
+        return !empty($SESSION->loginmahara);
     }
 
 
@@ -77,25 +79,22 @@ class repository_mahara extends repository {
     public function print_login($ajax = true) {
         global $SESSION, $CFG, $DB;
         //jump to the peer to create a session
-        //     varlog("hey du bateau");
         require_once($CFG->dirroot . '/mnet/lib.php');
         $this->ensure_environment();
-        //require_login();
-        //require_once($CFG->dirroot . '/mnet/xmlrpc/client.php');
+
         $mnetauth = get_auth_plugin('mnet');
         $host = $DB->get_record('mnet_host',array('id' => $this->options['peer'])); //need to retrieve the host url
-        //  varlog($host);
-        $url = $mnetauth->start_jump_session($host->id, '/repository/ws.php?callback=yes&repo_id=112', true);
-        varlog($url);
-        $this->token = false;
-        //         redirect($url);
+        $url = $mnetauth->start_jump_session($host->id, '/repository/ws.php?callback=yes&repo_id='.$this->id, true);
+
+        //set session
+        $SESSION->loginmahara = true;
+       
         $ret = array();
         $popup_btn = new stdclass;
         $popup_btn->type = 'popup';
         $popup_btn->url = $url;
         $ret['login'] = array($popup_btn);
         return $ret;
-
     }
 
     /**
@@ -130,7 +129,7 @@ class repository_mahara extends repository {
      */
     public function get_listing($path = null, $page = '', $search = '') {
         global $CFG, $DB, $USER;
-        // varlog($path);
+
         ///check that Mahara has a good version
         ///We also check that the "get file list" method has been activated (if it is not
         ///the method will not be returned by the system method system/listMethods)
@@ -159,7 +158,6 @@ class repository_mahara extends repository {
         $services = $client->response;
 
         if (array_key_exists('repository/mahara/repository.class.php/get_folder_files', $services) === false) {
-            // varlog($services);
             echo json_encode(array('e'=>get_string('connectionfailure','repository_mahara')));
             exit;
         }
@@ -184,8 +182,7 @@ class repository_mahara extends repository {
         $services = $client->response;
         $newpath = $services[0];
         $filesandfolders = $services[1];
-        // varlog("Here is the return value:");
-        // varlog($filesandfolders);
+
         ///display error message if we could retrieve the list or if nothing were returned
         if (empty($filesandfolders)) {
             echo json_encode(array('e'=>get_string('failtoretrievelist','repository_mahara')));
@@ -197,9 +194,7 @@ class repository_mahara extends repository {
         if (!empty($filesandfolders['files'])) {
             foreach ($filesandfolders['files'] as $file) {
                 if ($file['artefacttype'] == 'image') {
-                    //$thumbnail = base64_decode($file['thumbnail']);
-                    //varlog("http://jerome.moodle.com/git/mahara/htdocs/artefact/file/download.php?file=".$file['id']."&size=70x55");
-                    $thumbnail = "http://jerome.moodle.com/git/mahara/htdocs/artefact/file/download.php?file=".$file['id']."&size=70x55";
+                    $thumbnail = $host->wwwroot."/artefact/file/download.php?file=".$file['id']."&size=70x55";
                 } else {
                     $thumbnail = $CFG->pixpath .'/f/'. mimeinfo('icon32', $file['title']);
                 }
@@ -218,8 +213,6 @@ class repository_mahara extends repository {
             'nosearch' => 1,
             'list'=> $list,
         );
-
-        //  varlog($filepickerlisting);
 
         return $filepickerlisting;
     }
