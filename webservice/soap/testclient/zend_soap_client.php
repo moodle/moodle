@@ -44,7 +44,7 @@ if (!webservice_lib::display_webservices_availability("soap")) {
 //1. authentication
 $client = new Zend_Soap_Client($CFG->wwwroot."/webservice/soap/server.php?wsdl");
 try {
-    $token = $client->tmp_get_token(array('username' => "wsuser", 'password' => "wspassword"));
+    $token = $client->get_token(array('username' => "wsuser", 'password' => "wspassword"));
     print "<pre>\n";
     var_dump($token);
     print "</pre>";
@@ -64,7 +64,7 @@ try {
 $client = new Zend_Soap_Client($CFG->wwwroot."/webservice/soap/server.php?token=".$token."&classpath=user&wsdl");
 var_dump($CFG->wwwroot."/webservice/soap/server.php?token=".$token."&classpath=user&wsdl");
 print "<pre>\n";
-var_dump($client->tmp_get_users(array('search' => "admin")));
+var_dump($client->get_users(array('search' => "admin")));
 print "</pre>";
 
 //$param = array('search' => "admin");
@@ -85,15 +85,15 @@ print "</pre>";
 //call_soap_function($client,$functionname,$param,$expectedresult);
 
 print "<pre>\n";
-var_dump($client->tmp_create_users(array(array('username' => "mockuser66",'firstname' => "firstname6",'lastname' => "lastname6",'email' => "mockuser6@mockuser6.com",'password' => "password6"))));
+var_dump($client->create_users(array(array('username' => "mockuser66",'firstname' => "firstname6",'lastname' => "lastname6",'email' => "mockuser6@mockuser6.com",'password' => "password6"))));
 print "</pre>";
 
 print "<pre>\n";
-var_dump($client->tmp_update_users(array(array('username' => "mockuser66",'newusername' => "mockuser6b",'firstname' => "firstname6b"))));
+var_dump($client->update_users(array(array('username' => "mockuser66",'newusername' => "mockuser6b",'firstname' => "firstname6b"))));
 print "</pre>";
 
 print "<pre>\n";
-var_dump($client->tmp_delete_users(array(array('username' => "mockuser6b"))));
+var_dump($client->delete_users(array(array('username' => "mockuser6b"))));
 print "</pre>";
 
 //print "<pre>\n";

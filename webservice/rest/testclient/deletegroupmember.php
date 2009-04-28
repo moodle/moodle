@@ -31,14 +31,14 @@ start_interface("Delete group member from a group");
 
 if ($groupid && $userid) {
 
-    var_dump($CFG->serverurl.'/group/tmp_delete_groupmember');
+    var_dump($CFG->serverurl.'/group/delete_groupmember');
 
 
     //we are asking for a token
     $connectiondata['username'] = 'wsuser';
     $connectiondata['password'] = 'wspassword';
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/user/tmp_get_token');
+    curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/user/get_token');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_POSTFIELDS, format_postdata($connectiondata));
@@ -49,7 +49,7 @@ if ($groupid && $userid) {
 	$data['userid'] = $userid;
 
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/group/tmp_delete_groupmember');
+    curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/group/delete_groupmember');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_POSTFIELDS, format_postdata($data));

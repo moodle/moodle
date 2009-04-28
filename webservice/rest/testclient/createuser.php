@@ -25,14 +25,14 @@ var_dump($data);
 $connectiondata['username'] = 'wsuser';
 $connectiondata['password'] = 'wspassword';
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/user/tmp_get_token');
+curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/user/get_token');
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, format_postdata($connectiondata));
 $token = curl_exec($ch);
 $data['token'] = $token;
 
-curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/user/tmp_create_user');
+curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/user/create_user');
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, format_postdata($data));

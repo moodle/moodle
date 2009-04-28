@@ -52,7 +52,7 @@ function call_moodle_function ($rest_arguments) {
     /// TODO: this use a fake token => need to implement token generation
     $token = optional_param('token',null,PARAM_ALPHANUM);
     if (empty($token)) {
-        if ($functionname != 'tmp_get_token') {
+        if ($functionname != 'get_token') {
             throw new moodle_exception('identifyfirst');
         } else {
             /// TODO: authentication + token generation need to be implemented

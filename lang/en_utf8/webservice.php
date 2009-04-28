@@ -1,6 +1,6 @@
 <?php // $Id$
 $string['soapdocumentation'] = '<H2>SOAP Manual</H2>
-        <b>1.</b> Call the method <b>tmp_get_token</b> on \"<i>http://remotemoodle/webservice/soap/server.php?wsdl</i>\"<br>
+        <b>1.</b> Call the method <b>get_token</b> on \"<i>http://remotemoodle/webservice/soap/server.php?wsdl</i>\"<br>
         The function parameter is an array: in PHP it would be array(\"username\" => \"wsuser\", \"password\" => \"wspassword\")<br>
         Return value is a token (integer)<br>
         <br>
@@ -14,7 +14,7 @@ $string['soapdocumentation'] = '<H2>SOAP Manual</H2>
         your_client->tmp_delete_user(array(\"username\" => \"username_to_delete\",\"mnethostid\" => 1))<br><br>
 ';
 $string['xmlrpcdocumentation'] = '<H2>XMLRPC Manual</H2>
-        <b>1.</b> Call the method <b>authentication.tmp_get_token</b> on \"<i>http://remotemoodle/webservice/xmlrpc/server.php</i>\"<br>
+        <b>1.</b> Call the method <b>authentication.get_token</b> on \"<i>http://remotemoodle/webservice/xmlrpc/server.php</i>\"<br>
         The function parameter is an array: in PHP it would be array(\"username\" => \"wsuser\", \"password\" => \"wspassword\")<br>
         Return value is a token (integer)<br>
         <br>

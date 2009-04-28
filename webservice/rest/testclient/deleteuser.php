@@ -35,7 +35,7 @@ if ($username) {
     $connectiondata['username'] = 'wsuser';
     $connectiondata['password'] = 'wspassword';
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/user/tmp_get_token');
+    curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/user/get_token');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_POSTFIELDS, format_postdata($connectiondata));
@@ -46,7 +46,7 @@ if ($username) {
     $data['mnethostid'] = $mnethostid;
 
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/user/tmp_delete_user');
+    curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/user/delete_user');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_POSTFIELDS, format_postdata($data));

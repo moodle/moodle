@@ -32,14 +32,14 @@ start_interface("Create Group");
 
 if ($groupname && $courseid) {
 
-    var_dump($CFG->serverurl.'/group/tmp_create_group');
+    var_dump($CFG->serverurl.'/group/create_group');
 
 
     //we are asking for a token
     $connectiondata['username'] = 'wsuser';
     $connectiondata['password'] = 'wspassword';
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/user/tmp_get_token');
+    curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/user/get_token');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_POSTFIELDS, format_postdata($connectiondata));
@@ -50,7 +50,7 @@ if ($groupname && $courseid) {
 	$data['courseid'] = $courseid;
 
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/group/tmp_create_group');
+    curl_setopt($ch, CURLOPT_URL, $CFG->serverurl.'/group/create_group');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_POSTFIELDS, format_postdata($data));

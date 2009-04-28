@@ -593,7 +593,7 @@ class ws_authentication {
      * @param array|struct $params
      * @return integer
      */
-    function tmp_get_token($params) {
+    function get_token($params) {
         if ($params['username'] == 'wsuser' && $params['password'] == 'wspassword') {
             return '456';
         } else {
