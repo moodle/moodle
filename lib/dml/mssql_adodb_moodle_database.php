@@ -201,6 +201,11 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
                 continue;
             }
             $column = $columns[$field];
+
+            if (is_bool($value)) { /// Always, convert boolean to int
+                $value = (int)$value;
+            }
+
             if ($column->meta_type == 'B') { /// BLOBs (IMAGE) columns need to be updated apart
                 if (!is_null($value)) {      /// If value not null, add it to the list of BLOBs to update later
                     $blobs[$field] = $value;
@@ -211,9 +216,6 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
                 if (is_numeric($value)) {           /// and is numeric value
                     $value = (string)$value;        /// cast to string
                 }
-
-            } else if (is_bool($value)) {
-                $value = (int)$value; // prevent "false" problems
 
             } else if ($value === '') {
                 if ($column->meta_type == 'I' or $column->meta_type == 'F' or $column->meta_type == 'N') {
@@ -269,6 +271,11 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
         }
 
     /// Arrived here, normal update (without BLOBs)
+
+        if (is_bool($newvalue)) { /// Always, convert boolean to int
+            $newvalue = (int)$newvalue;
+        }
+
         if (is_null($newvalue)) {
             $newfield = "$newfield = NULL";
         } else {
@@ -276,9 +283,6 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
                 if (is_numeric($newvalue)) {        /// and is numeric value
                     $newvalue = (string)$newvalue;  /// cast to string in PHP
                 }
-
-            } else if (is_bool($newvalue)) {
-                $newvalue = (int)$newvalue; // prevent "false" problems
 
             } else if ($newvalue === '') {
                 if ($column->meta_type == 'I' or $column->meta_type == 'F' or $column->meta_type == 'N') {
@@ -289,7 +293,8 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
             $newfield = "$newfield = ?";
             array_unshift($params, $newvalue); // add as first param
         }
-        $sql = "UPDATE {$this->prefix}$table SET $newfield WHERE $select";
+        $select = !empty($select) ? "WHERE $select" : '';
+        $sql = "UPDATE {$this->prefix}$table SET $newfield $select";
 
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $rs = $this->adodb->Execute($sql, $params);
@@ -327,6 +332,11 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
                 continue;
             }
             $column = $columns[$field];
+
+            if (is_bool($value)) { /// Always, convert boolean to int
+                $value = (int)$value;
+            }
+
             if ($column->meta_type == 'B') { /// BLOBs (IMAGE) columns need to be updated apart
                 if (!is_null($value)) {      /// If value not null, add it to the list of BLOBs to update later
                     $blobs[$field] = $value;
@@ -337,9 +347,6 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
                 if (is_numeric($value)) {           /// and is numeric value
                     $value = (string)$value;        /// cast to string
                 }
-
-            } else if (is_bool($value)) {
-                $value = (int)$value; // prevent "false" problems
 
             } else if ($value === '') {
                 if ($column->meta_type == 'I' or $column->meta_type == 'F' or $column->meta_type == 'N') {
