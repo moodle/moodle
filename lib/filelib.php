@@ -108,6 +108,168 @@ function get_file_url($path, $options=null, $type='coursefile') {
 }
 
 /**
+ * Prepares standardised text field fro editing with Editor formslib element
+ * @param object $data $database entry field
+ * @param string $field name of data field
+ * @param array $options various options
+ * @param object $context context, required for existing data
+ * @param string $filearea file area name
+ * @param int $itemid item id, required if item exists
+ * @return object modified data object
+ */
+function file_prepare_standard_editor($data, $field, array $options, $context=null, $filearea=null, $itemid=null) {
+    $options = (array)$options;
+    if (!isset($options['trusttext'])) {
+        $options['trusttext'] = false;
+    }
+    if (!isset($options['forcehttps'])) {
+        $options['forcehttps'] = false;
+    }
+    if (!isset($options['subdirs'])) {
+        $options['subdirs'] = false;
+    }
+
+    if (empty($data->id) or empty($context)) {
+        $contextid = null;
+        $data->id = null;
+        if (!isset($data->{$field})) {
+            $data->{$field} = '';
+        }
+        if (!isset($data->{$field.'format'})) {
+            $data->{$field.'format'} = FORMAT_HTML; // TODO: use better default
+        }
+        $data->{$field} = clean_text($data->{$field}, $data->{$field.'format'});
+
+    } else {
+        if ($options['trusttext']) {
+            if (!isset($data->{$field.'trust'})) {
+                $data->{$field.'trust'} = 0;
+            }
+            $data = trusttext_pre_edit($data, $field, $context);
+        } else {
+            $data->{$field} = clean_text($data->{$field}, $data->{$field.'format'});
+        }
+        $contextid = $context->id;
+    }
+
+    $draftid_editor = file_get_submitted_draft_itemid($field);
+    $currenttext = file_prepare_draft_area($draftid_editor, $contextid, $filearea, $data->id, $options['subdirs'], $data->{$field}, $options['forcehttps']);
+    $data->{'editor_'.$field} = array('text'=>$currenttext, 'format'=>$data->{$field.'format'}, 'itemid'=>$draftid_editor);
+
+    return $data;
+}
+
+/**
+ * Prepares editing with File manager formslib element
+ * @param object $data $database entry field
+ * @param string $field name of data field
+ * @param array $options various options
+ * @param object $context context, required for existing data
+ * @param string $filearea file area name
+ * @param int $itemid item id, required if item exists
+ * @return object modified data object
+ */
+function file_postupdate_standard_editor($data, $field, array $options, $context, $filearea, $itemid) {
+    $options = (array)$options;
+    if (!isset($options['trusttext'])) {
+        $options['trusttext'] = false;
+    }
+    if (!isset($options['forcehttps'])) {
+        $options['forcehttps'] = false;
+    }
+    if (!isset($options['subdirs'])) {
+        $options['subdirs'] = false;
+    }
+    if (!isset($options['maxfiles'])) {
+        $options['maxfiles'] = -1; // unlimited
+    }
+    if (!isset($options['maxbytes'])) {
+        $options['maxbytes'] = 0; // unlimited
+    }
+
+    if ($options['trusttext']) {
+        $data->definitiontrust = trusttext_trusted($context);
+    } else {
+        $data->definitiontrust = 0;
+    }
+
+    $editor = $data->{'editor_'.$field};
+
+    $data->{$field} = file_save_draft_area_files($editor['itemid'], $context->id, $filearea, $itemid, $options, $editor['text'], $options['forcehttps']);
+    $data->{$field.'format'} = $editor['format'];
+
+    return $data;
+}
+
+/**
+ * Saves text and files modified by Editor formslib element
+ * @param object $data $database entry field
+ * @param string $field name of data field
+ * @param array $options various options
+ * @param object $context context - must already exist
+ * @param string $filearea file area name
+ * @param int $itemid must already exist, usually means data is in db
+ * @return object modified data obejct
+ */
+function file_prepare_standard_filemanager($data, $field, array $options, $context=null, $filearea=null, $itemid=null) {
+    $options = (array)$options;
+    if (!isset($options['subdirs'])) {
+        $options['subdirs'] = false;
+    }
+    if (empty($data->id) or empty($context)) {
+        $data->id = null;
+        $contextid = null;
+    } else {
+        $contextid = $context->id;
+    }
+
+    $draftid_editor = file_get_submitted_draft_itemid('filemanager_'.$field);
+    file_prepare_draft_area($draftid_editor, $contextid, $filearea, $data->id, $options['subdirs']);
+    $data->{'filemanager_'.$field} = $draftid_editor;
+
+    return $data;
+}
+
+/**
+ * Saves files modified by File manager formslib element
+ * @param object $data $database entry field
+ * @param string $field name of data field
+ * @param array $options various options
+ * @param object $context context - must already exist
+ * @param string $filearea file area name
+ * @param int $itemid must already exist, usually means data is in db
+ * @return object modified data obejct
+ */
+function file_postupdate_standard_filemanager($data, $field, array $options, $context, $filearea, $itemid) {
+    $options = (array)$options;
+    if (!isset($options['subdirs'])) {
+        $options['subdirs'] = false;
+    }
+    if (!isset($options['maxfiles'])) {
+        $options['maxfiles'] = -1; // unlimited
+    }
+    if (!isset($options['maxbytes'])) {
+        $options['maxbytes'] = 0; // unlimited
+    }
+
+    if (empty($data->{'filemanager_'.$field})) {
+        $data->$field = '';
+
+    } else {
+        file_save_draft_area_files($data->{'filemanager_'.$field}, $context->id, $filearea, $data->id, $options);
+        $fs = get_file_storage();
+
+        if ($fs->get_area_files($context->id, $filearea, $itemid)) {
+            $data->$field = '1'; // TODO: this is an ugly hack
+        } else {
+            $data->$field = '';
+        }
+    }
+
+    return $data;
+}
+
+/**
  * @return int a random but available draft itemid that can be used to create a new draft
  * file area.
  */

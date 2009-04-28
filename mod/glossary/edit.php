@@ -43,9 +43,6 @@ if ($id) { // if entry is specified
         }
     }
 
-    // clean up text before edit if needed
-    $entry = trusttext_pre_edit($entry, 'definition', $context);
-
     //prepare extra data
     if ($aliases = $DB->get_records_menu("glossary_alias", array("entryid"=>$id), '', 'id, alias')) {
         $entry->aliases = implode("\n", $aliases) . "\n";
@@ -58,20 +55,19 @@ if ($id) { // if entry is specified
 } else { // new entry
     require_capability('mod/glossary:write', $context);
     $entry = new object();
-    $entry->id               = null;
-    $entry->definition       = '';
-    $entry->definitionformat = FORMAT_HTML; // TODO: better default value
+    $entry->id = null;
 }
 
+$maxfiles = 99;                // TODO: add some setting
+$maxbytes = $course->maxbytes; // TODO: add some setting
+
+$definitionoptions = array('trusttext'=>true, 'subdirs'=>false, 'maxfiles'=>$maxfiles, 'maxbytes'=>$maxbytes);
+$attachmentoptions = array('subdirs'=>false, 'maxfiles'=>$maxfiles, 'maxbytes'=>$maxbytes);
+
+$entry = file_prepare_standard_editor($entry, 'definition', $definitionoptions, $context, 'glossary_entry', $entry->id);
+$entry = file_prepare_standard_filemanager($entry, 'attachment', $attachmentoptions, $context, 'glossary_attachment', $entry->id);
+
 $entry->cmid = $cm->id;
-
-$draftid_editor = file_get_submitted_draft_itemid('entry');
-$currenttext = file_prepare_draft_area($draftid_editor, $context->id, 'glossary_entry', $entry->id, true, $entry->definition);
-$entry->entry = array('text'=>$currenttext, 'format'=>$entry->definitionformat, 'itemid'=>$draftid_editor);
-
-$draftitemid = file_get_submitted_draft_itemid('attachments');
-file_prepare_draft_area($draftitemid, $context->id, 'glossary_attachment', $entry->id , false);
-$entry->attachments = $draftitemid;
 
 // set form initial data
 $mform->set_data($entry);
@@ -84,8 +80,13 @@ if ($mform->is_cancelled()){
         redirect("view.php?id=$cm->id");
     }
 
-} else if ($data = $mform->get_data()) {
+} else if ($entry = $mform->get_data()) {
     $timenow = time();
+
+    $categories = empty($entry->categories) ? array() : $entry->categories;
+    unset($entry->categories);
+    $aliases = trim($entry->aliases);
+    unset($entry->aliases);
 
     if (empty($entry->id)) {
         $entry->glossaryid       = $glossary->id;
@@ -96,15 +97,15 @@ if ($mform->is_cancelled()){
         $entry->teacherentry     = has_capability('mod/glossary:manageentries', $context);
     }
 
-    $entry->concept          = trim($data->concept);
+    $entry->concept          = trim($entry->concept);
     $entry->definition       = '';          // updated later
     $entry->definitionformat = FORMAT_HTML; // updated later
-    $entry->definitiontrust  = trusttext_trusted($context);
+    $entry->definitiontrust  = 0;           // updated later
     $entry->timemodified     = $timenow;
     $entry->approved         = 0;
-    $entry->usedynalink      = isset($data->usedynalink) ?   $data->usedynalink : 0;
-    $entry->casesensitive    = isset($data->casesensitive) ? $data->casesensitive : 0;
-    $entry->fullmatch        = isset($data->fullmatch) ?     $data->fullmatch : 0;
+    $entry->usedynalink      = isset($entry->usedynalink) ?   $entry->usedynalink : 0;
+    $entry->casesensitive    = isset($entry->casesensitive) ? $entry->casesensitive : 0;
+    $entry->fullmatch        = isset($entry->fullmatch) ?     $entry->fullmatch : 0;
 
     if ($glossary->defaultapproval or has_capability('mod/glossary:approve', $context)) {
         $entry->approved = 1;
@@ -124,16 +125,11 @@ if ($mform->is_cancelled()){
                    $entry->id, $cm->id);
     }
 
-    // save and relink embedded images
-    $entry->definitionformat = $data->entry['format'];
-    $entry->definition       = file_save_draft_area_files($draftid_editor, $context->id, 'glossary_entry', $entry->id, array('subdirs'=>true), $data->entry['text']);
+    // save and relink embedded images and save attachments
+    $entry = file_postupdate_standard_editor($entry, 'definition', $definitionoptions, $context, 'glossary_entry', $entry->id);
+    $entry = file_postupdate_standard_filemanager($entry, 'attachment', $attachmentoptions, $context, 'glossary_attachment', $entry->id);
 
-    // save attachments
-    $info = file_get_draft_area_info($draftitemid);
-    $entry->attachment = ($info['filecount']>0) ? '1' : '';
-    file_save_draft_area_files($draftitemid, $context->id, 'glossary_attachment', $entry->id);
-
-    // store the final values
+    // store the updated value values
     $DB->update_record('glossary_entries', $entry);
 
     //refetch complete entry
@@ -142,8 +138,8 @@ if ($mform->is_cancelled()){
     // update entry categories
     $DB->delete_records('glossary_entries_categories', array('entryid'=>$entry->id));
     // TODO: this deletes cats from both both main and secondary glossary :-(
-    if (!empty($data->categories) and array_search(0, $data->categories) === false) {
-        foreach ($data->categories as $catid) {
+    if (!empty($categories) and array_search(0, $categories) === false) {
+        foreach ($categories as $catid) {
             $newcategory = new object();
             $newcategory->entryid    = $entry->id;
             $newcategory->categoryid = $catid;
@@ -153,7 +149,6 @@ if ($mform->is_cancelled()){
 
     // update aliases
     $DB->delete_records('glossary_alias', array('entryid'=>$entry->id));
-    $aliases = trim($data->aliases);
     if ($aliases !== '') {
         $aliases = explode("\n", $aliases);
         foreach ($aliases as $alias) {
