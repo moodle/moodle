@@ -13,7 +13,7 @@
  */
 
 var repository_listing = {};
-var active_instances = {};
+var cached_client_id = {};
 var file_extensions = {};
 // repository_client has static functions
 var repository_client = (function(){
@@ -803,13 +803,12 @@ repository_client.stripHTML = function(str){
     return ret;
 }
 repository_client.popup = function(client_id, url) {
-    repository_client.win = window.open(url,'repo_auth', 'location=0,status=0,scrollbars=0,width=500,height=300');
-    repository_client.win.client_id = client_id;
-    return false;
+    window.open(url,'repo_auth', 'location=0,status=0,scrollbars=0,width=500,height=300');
+    cached_client_id = client_id;
+    return true;
 }
 function repository_callback(id) {
-    repository_client.req(repository_client.win.client_id, id, '');
-    repository_client.win = null;
+    repository_client.req(cached_client_id, id, '');
 }
 repository_client.logout = function(client_id, repo_id) {
     var params = [];
