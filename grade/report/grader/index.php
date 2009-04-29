@@ -246,9 +246,20 @@ YAHOO.graderreport.mouseoverHandler = function (e) {
     if (elTarget.className.search('grade cell') > -1) {
 
         // each time we go over a new cell, we need to put it's tooltip into a div to stop it from
-        // popping up on top of the panel. Still looking for a way to set the header differently
-        if (elTarget.childNodes.length == 1) {
+        // popping up on top of the panel.
 
+        // don't do anything if we have already made the tooltip div
+        var makeTooltip = true
+        for (var k=0; k < elTarget.childNodes.length; k++) {
+            if (typeof(elTarget.childNodes[k].className) != 'undefined') {
+                if (elTarget.childNodes[k].className.search('tooltipDiv') > -1) {
+                    makeTooltip =  false;
+                }
+            }
+        }
+
+        // if need to, make the tooltip div and append it to the cell
+        if (makeTooltip) {
             tempNode = document.createElement("div");
             tempNode.className = "tooltipDiv";
             tempNode.innerHTML = elTarget.title;
@@ -256,8 +267,17 @@ YAHOO.graderreport.mouseoverHandler = function (e) {
             elTarget.title = null;
         }
 
-        tooltipNode = elTarget.childNodes[1];
-
+        // Get the tooltip div
+        elChildren = elTarget.childNodes;
+        for (var m=0; m < elChildren.length; m++) {
+            if (typeof(elChildren[m].className) != 'undefined') {
+                if (elChildren[m].className.search('tooltipDiv') > -1) {
+                    tooltipNode = elChildren[m];
+                    break;
+                }
+            }
+        }
+        //build and show the tooltip
         YAHOO.graderreport.panelEl.setBody(tooltipNode.innerHTML);
         YAHOO.graderreport.panelEl.render(elTarget);
         YAHOO.graderreport.panelEl.show()
@@ -268,8 +288,8 @@ YAHOO.graderreport.mouseoverHandler = function (e) {
 YAHOO.graderreport.mouseoutHandler = function (e) {
 
     var classVar = '';
+    var searchString = '';
     var newTargetClass = '';
-    var elTarget = YAHOO.util.Event.getTarget(e);
     var newTarget = YAHOO.util.Event.getRelatedTarget(e);
 
     // deals with an error if the mouseout event is over the lower scrollbar
@@ -282,17 +302,17 @@ YAHOO.graderreport.mouseoutHandler = function (e) {
 
     // if we are over any part of the panel, do not hide
     // do this by walking up the DOM till we reach table level, looking for panel tag
-    while ((typeof(newTarget.id)) == 'undefined' || (newTarget.id != 'user-grades')) {
+    while ((typeof(newTarget.id) == 'undefined') || (newTarget.id != 'user-grades')) {
 
         try {
             newTargetClass = newTarget.className;
         } catch (err) {
-            // we've gone over the scrollbar
+            // we've gone over the scrollbar again
             YAHOO.graderreport.panelEl.hide()
             return false;
         }
-
-        if (newTargetClass.search('yui-panel') > -1) {
+        searchString = /yui-panel|grade cell/;
+        if (newTargetClass.search(searchString) > -1) {
             // we're in the panel so don't hide it
             return false;
         }
