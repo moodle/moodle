@@ -92,6 +92,15 @@ class mediaplugin_filter extends moodle_text_filter {
             $newtext = preg_replace_callback($search, 'mediaplugin_filter_youtube_callback', $newtext);
         }
 
+        if ($CFG->filter_mediaplugin_enable_img) {
+            $search = '/<a.*?href="([^<]+\.jpg)"[^>]*>(.*?)<\/a>/is';
+            $newtext = preg_replace_callback($search, 'mediaplugin_filter_img_callback', $newtext);
+            $search = '/<a.*?href="([^<]+\.png)"[^>]*>(.*?)<\/a>/is';
+            $newtext = preg_replace_callback($search, 'mediaplugin_filter_img_callback', $newtext);
+            $search = '/<a.*?href="([^<]+\.gif)"[^>]*>(.*?)<\/a>/is';
+            $newtext = preg_replace_callback($search, 'mediaplugin_filter_img_callback', $newtext);
+        }
+
         if (empty($newtext) or $newtext === $text) {
             // error or not filtered
             unset($newtext);
@@ -228,6 +237,16 @@ function mediaplugin_filter_youtube_callback($link, $autostart=false) {
            '<param name="wmode" value="transparent" />'.
            '<param name="allowFullScreen" value="true" />'.
            '</object>';
+}
+
+/**
+ * Change links to images into embedded images
+ */
+function mediaplugin_filter_img_callback($link, $autostart=false) {
+    $url = addslashes_js($link[1]);
+    $info = addslashes_js($link[2]);
+
+    return '<img class="mediaplugin mediaplugin_img" alt="" title="'.$info.'" src="'.$url.'" />';
 }
 
 /**

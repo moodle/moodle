@@ -560,6 +560,7 @@ $string['mediapluginrm'] = 'Enable .rm filter';
 $string['mediapluginrpm'] = 'Enable .rpm filter';
 $string['mediapluginswf'] = 'Enable .swf filter';
 $string['mediapluginyoutube'] = 'Enable YouTube links filter';
+$string['mediapluginimg'] = 'Enable auto-embedding of linked images';
 $string['mediapluginswfnote'] = 'As a default security measure, normal users should not be allowed to embed swf flash files.';
 $string['mediapluginwmv'] = 'Enable .wmv filter';
 $string['memcachedhosts'] = 'memcached hosts';
