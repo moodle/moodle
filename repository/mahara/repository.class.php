@@ -54,7 +54,7 @@ class repository_mahara extends repository {
         $pf= array();
         $pf['name']        = 'remoterep'; // Name & Description go in lang file
         $pf['apiversion']  = 1;
-        $pf['methods']     = array('get_folder_files', 'get_file');
+        $pf['methods']     = array('get_folder_files', 'get_file', 'search_folders_and_files');
 
         return array($pf);
     }
@@ -157,18 +157,26 @@ class repository_mahara extends repository {
         $client->send($mnet_peer);
         $services = $client->response;
 
-        if (array_key_exists('repository/mahara/repository.class.php/get_folder_files', $services) === false) {
+        if (empty($search)) {
+            $methodname = 'get_folder_files';
+        } else {
+            $methodname = 'search_folders_and_files';
+        }
+
+        if (array_key_exists('repository/mahara/repository.class.php/'.$methodname, $services) === false) {
             echo json_encode(array('e'=>get_string('connectionfailure','repository_mahara')));
             exit;
         }
 
-
         ///connect to the remote moodle and retrieve the list of files
-        $client->set_method('repository/mahara/repository.class.php/get_folder_files');
+        $client->set_method('repository/mahara/repository.class.php/'.$methodname);
         $client->add_param($USER->username);
-        $client->add_param($path);
-        $client->add_param($search);
-
+        if (empty($search)) {
+             $client->add_param($path);
+        } else {
+             $client->add_param($search);
+        }
+       
         ///call the method and manage host error
         if (!$client->send($mnet_peer)) {
             $message =" ";
@@ -180,8 +188,13 @@ class repository_mahara extends repository {
         }
 
         $services = $client->response;
-        $newpath = $services[0];
-        $filesandfolders = $services[1];
+        if (empty($search)) {
+             $newpath = $services[0];
+            $filesandfolders = $services[1];
+        } else {
+            $newpath = '';
+            $filesandfolders = $services;
+        }
 
         ///display error message if we could retrieve the list or if nothing were returned
         if (empty($filesandfolders)) {
@@ -210,7 +223,7 @@ class repository_mahara extends repository {
         $filepickerlisting = array(
             'path' => $newpath,
             'dynload' => 1,
-            'nosearch' => 1,
+            'nosearch' => 0,
             'list'=> $list,
         );
 
