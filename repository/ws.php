@@ -187,7 +187,17 @@ EOD;
                     $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
                 }
                 if (preg_match('#(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)#', $path)) {
-                    echo json_encode(array('client_id'=>$client_id, 'url'=>$path, 'id'=>$path, 'file'=>$path));
+                    echo json_encode(array(
+                                /* File picker need to know this is a link
+                                 * in order to attach title to url
+                                 */
+                                'type'=>'link',
+                                'client_id'=>$client_id,
+                                'url'=>$path,
+                                'id'=>$path,
+                                'file'=>$path
+                                )
+                            );
                 } else {
                     $info = repository::move_to_filepool($path, $title, $itemid);
                     $info['client_id'] = $client_id;

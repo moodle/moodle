@@ -15,6 +15,8 @@
 var repository_listing = {};
 var cached_client_id = {};
 var file_extensions = {};
+/* when selected a file, filename will be cached in this varible */
+var new_filename = '';
 // repository_client has static functions
 var repository_client = (function(){
     // private static field
@@ -493,12 +495,14 @@ repository_client.select_file = function(oldname, url, icon, client_id, repo_id)
     var html = '<div class="fp-rename-form">';
     html += '<p><img src="'+icon+'" /></p>';
     html += '<p><label for="newname-'+client_id+'">'+fp_lang.saveas+'</label>';
-    html += '<input type="text" id="newname-'+client_id+'" value="'+oldname+'" /></p>';
+    html += '<input type="text" id="newname-'+client_id+'" value="" /></p>';
     html += '<p><input type="hidden" id="fileurl-'+client_id+'" value="'+url+'" />';
     html += '<input type="button" onclick="repository_client.download(\''+client_id+'\', \''+repo_id+'\')" value="'+fp_lang.downbtn+'" />';
     html += '<input type="button" onclick="repository_client.viewfiles(\''+client_id+'\')" value="'+fp_lang.cancel+'" /></p>';
     html += '</div>';
     panel.get('element').innerHTML += html;
+    /* to deal with double quote, single quote, we need to use javascript change value */
+    document.getElementById('newname-'+client_id).value = oldname;
     var tree = document.getElementById('treediv-'+client_id);
     if(tree){
         tree.style.display = 'none';
@@ -695,7 +699,7 @@ repository_client.view_as_icons = function(client_id, data) {
         } else {
             var el_title = new YAHOO.util.Element(title.id);
             var file = new YAHOO.util.Element(link.id);
-            el_title.title = file.title = list[k].title;
+            el_title.filename = file.filename = list[k].title;
             el_title.value = file.value = list[k].source;
             el_title.icon = file.icon  = list[k].thumbnail;
             if(fp.fs.repo_id) {
@@ -705,12 +709,12 @@ repository_client.view_as_icons = function(client_id, data) {
             }
             file.on('contentReady', function() {
                 this.on('click', function() {
-                    repository_client.select_file(this.title, this.value, this.icon, client_id, this.repo_id);
+                    repository_client.select_file(this.filename, this.value, this.icon, client_id, this.repo_id);
                 });
             });
             el_title.on('contentReady', function() {
                 this.on('click', function() {
-                    repository_client.select_file(this.title, this.value, this.icon, client_id, this.repo_id);
+                    repository_client.select_file(this.filename, this.value, this.icon, client_id, this.repo_id);
                 });
             });
         }
@@ -820,6 +824,7 @@ repository_client.logout = function(client_id, repo_id) {
 repository_client.download = function(client_id, repo_id) {
     var fp = repository_client.fp[client_id];
     var title = document.getElementById('newname-'+client_id).value;
+    new_filename = title;
     var file = document.getElementById('fileurl-'+client_id).value;
     repository_client.loading(client_id, 'download', title);
     var params = [];
@@ -854,7 +859,11 @@ repository_client.end = function(client_id, obj) {
     if(fp.env=='filepicker') {
         fp.target.value = obj['id'];
     }else if(fp.env=='editor'){
-        fp.target.value = obj['url'];
+        if (obj['type'] == 'link') {
+            fp.target.value = obj['url']+'#'+new_filename;
+        } else {
+            fp.target.value = obj['url'];
+        }
         fp.target.onchange();
     }
     fp.formcallback(obj);

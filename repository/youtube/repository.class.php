@@ -11,7 +11,7 @@ class repository_youtube extends repository {
     public function __construct($repositoryid, $context = SITEID, $options = array()) {
         $options['keyword'] = optional_param('youtube_keyword', '', PARAM_RAW);
         $options['start'] =1;
-        $options['max'] = 25;
+        $options['max'] = 27;
         $options['sort'] = 'relevance';
         parent::__construct($repositoryid, $context, $options);
     }
@@ -49,7 +49,7 @@ class repository_youtube extends repository {
                 'thumbnail_height'=>120,
                 'size'=>'',
                 'date'=>'',
-                'source'=>$source.'#'.$title
+                'source'=>$source
             );
         } 
         return $list;
