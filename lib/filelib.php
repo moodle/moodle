@@ -154,7 +154,7 @@ function file_prepare_standard_editor($data, $field, array $options, $context=nu
 
     $draftid_editor = file_get_submitted_draft_itemid($field);
     $currenttext = file_prepare_draft_area($draftid_editor, $contextid, $filearea, $data->id, $options['subdirs'], $data->{$field}, $options['forcehttps']);
-    $data->{'editor_'.$field} = array('text'=>$currenttext, 'format'=>$data->{$field.'format'}, 'itemid'=>$draftid_editor);
+    $data->{$field.'_editor'} = array('text'=>$currenttext, 'format'=>$data->{$field.'format'}, 'itemid'=>$draftid_editor);
 
     return $data;
 }
@@ -181,7 +181,7 @@ function file_postupdate_standard_editor($data, $field, array $options, $context
         $options['subdirs'] = false;
     }
     if (!isset($options['maxfiles'])) {
-        $options['maxfiles'] = -1; // unlimited
+        $options['maxfiles'] = 0; // no files by default
     }
     if (!isset($options['maxbytes'])) {
         $options['maxbytes'] = 0; // unlimited
@@ -193,7 +193,7 @@ function file_postupdate_standard_editor($data, $field, array $options, $context
         $data->definitiontrust = 0;
     }
 
-    $editor = $data->{'editor_'.$field};
+    $editor = $data->{$field.'_editor'};
 
     $data->{$field} = file_save_draft_area_files($editor['itemid'], $context->id, $filearea, $itemid, $options, $editor['text'], $options['forcehttps']);
     $data->{$field.'format'} = $editor['format'];
@@ -223,9 +223,9 @@ function file_prepare_standard_filemanager($data, $field, array $options, $conte
         $contextid = $context->id;
     }
 
-    $draftid_editor = file_get_submitted_draft_itemid('filemanager_'.$field);
+    $draftid_editor = file_get_submitted_draft_itemid($field.'_filemanager');
     file_prepare_draft_area($draftid_editor, $contextid, $filearea, $data->id, $options['subdirs']);
-    $data->{'filemanager_'.$field} = $draftid_editor;
+    $data->{$field.'_filemanager'} = $draftid_editor;
 
     return $data;
 }
@@ -252,11 +252,11 @@ function file_postupdate_standard_filemanager($data, $field, array $options, $co
         $options['maxbytes'] = 0; // unlimited
     }
 
-    if (empty($data->{'filemanager_'.$field})) {
+    if (empty($data->{$field.'_filemanager'})) {
         $data->$field = '';
 
     } else {
-        file_save_draft_area_files($data->{'filemanager_'.$field}, $context->id, $filearea, $data->id, $options);
+        file_save_draft_area_files($data->{$field.'_filemanager'}, $context->id, $filearea, $data->id, $options);
         $fs = get_file_storage();
 
         if ($fs->get_area_files($context->id, $filearea, $itemid)) {
@@ -277,7 +277,7 @@ function file_get_unused_draft_itemid() {
     global $DB, $USER;
 
     if (isguestuser() or !isloggedin()) {
-        // guests and not-logged-in users can not be allowed to upload anything!
+        // guests and not-logged-in users can not be allowed to upload anything!!!!!!
         print_error('noguest');
     }
 

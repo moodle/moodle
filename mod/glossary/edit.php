@@ -27,8 +27,6 @@ if (!$glossary = $DB->get_record('glossary', array('id'=>$cm->instance))) {
     print_error('invalidid', 'glossary');
 }
 
-$mform = new mod_glossary_entry_form(null, compact('cm', 'glossary'));
-
 if ($id) { // if entry is specified
     if (!$entry = $DB->get_record('glossary_entries', array('id'=>$id, 'glossaryid'=>$glossary->id))) {
         print_error('invalidentry');
@@ -69,9 +67,9 @@ $entry = file_prepare_standard_filemanager($entry, 'attachment', $attachmentopti
 
 $entry->cmid = $cm->id;
 
-// set form initial data
-$mform->set_data($entry);
-
+// create form and set initial data
+$mform = new mod_glossary_entry_form(null, array('current'=>$entry, 'cm'=>$cm, 'glossary'=>$glossary,
+                                                 'definitionoptions'=>$definitionoptions, 'attachmentoptions'=>$attachmentoptions));
 
 if ($mform->is_cancelled()){
     if ($id){

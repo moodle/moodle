@@ -6,9 +6,13 @@ class mod_glossary_entry_form extends moodleform {
     function definition() {
         global $CFG, $DB;
 
-        $mform    = $this->_form;
-        $glossary = $this->_customdata['glossary'];
-        $cm       = $this->_customdata['cm'];
+        $mform = $this->_form;
+
+        $currententry      = $this->_customdata['current'];
+        $glossary          = $this->_customdata['glossary'];
+        $cm                = $this->_customdata['cm'];
+        $definitionoptions = $this->_customdata['definitionoptions'];
+        $attachmentoptions = $this->_customdata['attachmentoptions'];
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -17,10 +21,9 @@ class mod_glossary_entry_form extends moodleform {
         $mform->setType('concept', PARAM_TEXT);
         $mform->addRule('concept', null, 'required', null, 'client');
 
-        $mform->addElement('editor', 'editor_definition', get_string('definition', 'glossary'), array('maxfiles' => EDITOR_UNLIMITED_FILES));
-        $mform->setType('editor_definition', PARAM_RAW);
-        $mform->addRule('editor_definition', get_string('required'), 'required', null, 'client');
-        $mform->setHelpButton('editor_definition', array('reading', 'writing', 'questions', 'richtext2'), false, 'editorhelpbutton');
+        $mform->addElement('editor', 'definition_editor', get_string('definition', 'glossary'), $definitionoptions);
+        $mform->setType('definition_editor', PARAM_RAW);
+        $mform->addRule('definition_editor', get_string('required'), 'required', null, 'client');
 
         if ($categories = $DB->get_records_menu('glossary_categories', array('glossaryid'=>$glossary->id), 'name ASC', 'id, name')){
             $categories = array(0 => get_string('notcategorised', 'glossary')) + $categories;
@@ -33,14 +36,8 @@ class mod_glossary_entry_form extends moodleform {
         $mform->setType('aliases', PARAM_TEXT);
         $mform->setHelpButton('aliases', array('aliases2', strip_tags(get_string('aliases', 'glossary')), 'glossary'));
 
-        $mform->addElement('filemanager', 'filemanager_attachment', get_string('attachment', 'glossary'),
-            array('subdirs'=>0,
-//                  'maxbytes'=>$glossary->maxbytes,
-//                  'maxfiles'=>-1,
-                  'filetypes'=>'*',
-                  'returnvalue'=>'ref_id'
-            ));
-        $mform->setHelpButton('filemanager_attachment', array('attachment2', get_string('attachment', 'glossary'), 'glossary'));
+        $mform->addElement('filemanager', 'attachment_filemanager', get_string('attachment', 'glossary'), $attachmentoptions);
+        $mform->setHelpButton('attachment_filemanager', array('attachment2', get_string('attachment', 'glossary'), 'glossary'));
 
         if (!$glossary->usedynalink) {
             $mform->addElement('hidden', 'usedynalink',   $CFG->glossary_linkentries);
@@ -71,6 +68,9 @@ class mod_glossary_entry_form extends moodleform {
 
 //-------------------------------------------------------------------------------
         $this->add_action_buttons();
+
+//-------------------------------------------------------------------------------
+        $this->set_data($currententry);
     }
 
     function validation($data, $files) {
