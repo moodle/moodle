@@ -302,9 +302,6 @@ class edit_category_form extends moodleform {
                 if ($mform->elementExists('parentcategory')) {
                     $mform->removeElement('parentcategory');
                 }
-                if ($mform->elementExists('grade_item_aggregationcoef')) {
-                    $mform->removeElement('grade_item_aggregationcoef');
-                }
                 if ($mform->elementExists('currentparentaggregation')) {
                     $mform->removeElement('currentparentaggregation');
                 }
@@ -389,30 +386,15 @@ class edit_category_form extends moodleform {
                 $mform->removeElement('grade_item_display');
                 $mform->removeElement('grade_item_decimals');
                 $mform->hardFreeze('grade_item_scaleid');
-
-            } else {
-                if ($grade_item->is_external_item()) {
-                    // following items are set up from modules and should not be overrided by user
-                    $mform->hardFreeze('grade_item_itemname,grade_item_idnumber,grade_item_gradetype,grade_item_grademax,grade_item_grademin,grade_item_scaleid');
-                    //$mform->removeElement('calculation');
-                }
             }
 
             //remove the aggregation coef element if not needed
             if ($grade_item->is_course_item()) {
-                if ($mform->elementExists('grade_item_parentcategory')) {
-                    $mform->removeElement('grade_item_parentcategory');
-                }
                 if ($mform->elementExists('grade_item_aggregationcoef')) {
                     $mform->removeElement('grade_item_aggregationcoef');
                 }
 
             } else {
-                // if we wanted to change parent of existing item - we would have to verify there are no circular references in parents!!!
-                if ($mform->elementExists('grade_item_parentcategory')) {
-                    $mform->hardFreeze('grade_item_parentcategory');
-                }
-
                 if ($grade_item->is_category_item()) {
                     $category = $grade_item->get_item_category();
                     $parent_category = $category->get_parent_category();
@@ -439,7 +421,6 @@ class edit_category_form extends moodleform {
                     $mform->insertElementBefore($element, 'parentcategory');
                     $mform->setDefault('grade_item_aggregationcoef', (int) $grade_item->aggregationcoef); // must be cast to int, otherwise "0" counts as true :S
                     $mform->setHelpButton('grade_item_aggregationcoef', array($coefstring, get_string($coefstring, 'grades'), 'grade'), true);
-                    $mform->disabledIf('grade_item_aggregationcoef', 'grade_item_parentcategory', 'eq', $parent_category->id);
                 }
             }
         }
