@@ -728,9 +728,9 @@ class grade_category extends grade_object {
                 continue;
             }
             if ($item->gradetype == GRADE_TYPE_VALUE) {
-                $maxes[] = $item->grademax;
+                $maxes[$item->id] = $item->grademax;
             } else if ($item->gradetype == GRADE_TYPE_SCALE) {
-                $maxes[] = $item->grademax; // 0 = nograde, 1 = first scale item, 2 = second scale item
+                $maxes[$item->id] = $item->grademax; // 0 = nograde, 1 = first scale item, 2 = second scale item
             }
         }
         // apply droplow and keephigh
