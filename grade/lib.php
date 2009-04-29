@@ -104,7 +104,7 @@ class graded_users_iterator {
             $ofields = ", u.$this->sortfield1 AS usrt1";
             $order   = "usrt1 $this->sortorder1";
             if (!empty($this->sortfield2)) {
-                $ofields .= ", u.$this->sortfield1 AS usrt2";
+                $ofields .= ", u.$this->sortfield2 AS usrt2";
                 $order   .= ", usrt2 $this->sortorder2";
             }
             if ($this->sortfield1 != 'id' and $this->sortfield2 != 'id') {
