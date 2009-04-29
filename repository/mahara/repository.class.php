@@ -127,7 +127,7 @@ class repository_mahara extends repository {
      * @param <type> $search
      * @return <type>
      */
-    public function get_listing($path = null, $page = '', $search = '') {
+    public function get_listing($path = null, $page = 1, $search = '') {
         global $CFG, $DB, $USER;
 
         ///check that Mahara has a good version
@@ -204,6 +204,11 @@ class repository_mahara extends repository {
 
 
         $list = array();
+         if (!empty($filesandfolders['folders'])) {
+            foreach ($filesandfolders['folders'] as $folder) {
+                $list[] =  array('path'=>$folder['id'], 'title'=>$folder['title'], 'date'=>$folder['mtime'], 'size'=>'0', 'children'=>array(), 'thumbnail' => $CFG->pixpath .'/f/folder.gif');
+            }
+        }
         if (!empty($filesandfolders['files'])) {
             foreach ($filesandfolders['files'] as $file) {
                 if ($file['artefacttype'] == 'image') {
@@ -211,20 +216,17 @@ class repository_mahara extends repository {
                 } else {
                     $thumbnail = $CFG->pixpath .'/f/'. mimeinfo('icon32', $file['title']);
                 }
-                $list[] = array( 'title'=>$file['title'], 'date'=>$file['mtime'], 'size'=>'10MB', 'source'=>$file['id'], 'thumbnail' => $thumbnail);
+                $list[] = array( 'title'=>$file['title'], 'date'=>$file['mtime'], 'source'=>$file['id'], 'thumbnail' => $thumbnail);
             }
         }
-        if (!empty($filesandfolders['folders'])) {
-            foreach ($filesandfolders['folders'] as $folder) {
-                $list[] =  array('path'=>$folder['id'], 'title'=>$folder['title'], 'date'=>$folder['mtime'], 'size'=>'0', 'children'=>array(), 'thumbnail' => $CFG->pixpath .'/f/folder.gif');
-            }
-        }
+       
 
         $filepickerlisting = array(
             'path' => $newpath,
             'dynload' => 1,
             'nosearch' => 0,
             'list'=> $list,
+            'manage'=> $host->wwwroot.'/artefact/file/'
         );
 
         return $filepickerlisting;
