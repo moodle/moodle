@@ -192,8 +192,9 @@ abstract class grade_export {
 
     /**
      * Prints preview of exported grades on screen as a feedback mechanism
+     * @param bool $require_user_idnumber true means skip users without idnumber
      */
-    public function display_preview() {
+    public function display_preview($require_user_idnumber=false) {
 
         print_heading(get_string('previewrows', 'grades'));
 
@@ -225,9 +226,10 @@ abstract class grade_export {
                 break;
             }
             $user = $userdata->user;
-            // if (empty($user->idnumber)) {   // Not sure why this was here, ccommented out for MDL-13722
-            //     continue;
-            // }
+            if ($require_user_idnumber and empty($user->idnumber)) {
+                // some exports require user idnumber
+                continue;
+            }
 
             $gradeupdated = false; // if no grade is update at all for this user, do not display this row
             $rowstr = '';
