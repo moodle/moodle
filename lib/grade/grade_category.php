@@ -720,22 +720,25 @@ class grade_category extends grade_object {
             return;
         }
 
-        $max = 0;
-
-        //find max grade
+        //find max grade possible
+        $maxes = array();
         foreach ($items as $item) {
             if ($item->aggregationcoef > 0) {
                 // extra credit from this activity - does not affect total
                 continue;
             }
             if ($item->gradetype == GRADE_TYPE_VALUE) {
-                $max += $item->grademax;
+                $maxes[] = $item->grademax;
             } else if ($item->gradetype == GRADE_TYPE_SCALE) {
-                $max += $item->grademax; // 0 = nograde, 1 = first scale item, 2 = second scale item
+                $maxes[] = $item->grademax; // 0 = nograde, 1 = first scale item, 2 = second scale item
             }
         }
+        // apply droplow and keephigh
+        $this->apply_limit_rules($maxes);
+        $max = array_sum($maxes);
 
-        if ($this->grade_item->grademax != $max or $this->grade_item->grademin != 0 or $this->grade_item->gradetype != GRADE_TYPE_VALUE){
+        // update db if anything changed
+        if ($this->grade_item->grademax != $max or $this->grade_item->grademin != 0 or $this->grade_item->gradetype != GRADE_TYPE_VALUE) {
             $this->grade_item->grademax  = $max;
             $this->grade_item->grademin  = 0;
             $this->grade_item->gradetype = GRADE_TYPE_VALUE;
@@ -800,6 +803,10 @@ class grade_category extends grade_object {
         arsort($grade_values, SORT_NUMERIC);
         if (!empty($this->droplow)) {
             for ($i = 0; $i < $this->droplow; $i++) {
+                if (empty($grade_values)) {
+                    // nothing to remove
+                    return;
+                }
                 array_pop($grade_values);
             }
         } elseif (!empty($this->keephigh)) {
