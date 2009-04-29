@@ -855,6 +855,9 @@ class grade_edit_tree_column_multfactor extends grade_edit_tree_column {
     }
 
     function get_item_cell($item, $params) {
+        if (!$item->is_raw_used()) {
+            return '<td class="cell">&nbsp;</td>';
+        }
         $multfactor = '<input type="text" size="3" id="multfactor'.$item->id.'" name="multfactor_'.$item->id.'" value="'.format_float($item->multfactor).'" />';
         return '<td class="cell">'.$multfactor.'</td>';
     }
@@ -881,6 +884,9 @@ class grade_edit_tree_column_plusfactor extends grade_edit_tree_column {
     }
 
     function get_item_cell($item, $params) {
+        if (!$item->is_raw_used()) {
+            return '<td class="cell">&nbsp;</td>';
+        }
         $plusfactor = '<input type="text" size="3" id="plusfactor_'.$item->id.'" name="plusfactor_'.$item->id.'" value="'.format_float($item->plusfactor).'" />';
         return '<td class="cell">'.$plusfactor.'</td>';
 
