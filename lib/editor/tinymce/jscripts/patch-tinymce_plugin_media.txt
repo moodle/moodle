@@ -11,7 +11,9 @@ diff -u -r1.3 media.js
  
 +        var is_youtube = repo_hook(f.src.value);
 +        if (is_youtube) {
-+            h = '<a href="'+f.src.value+'">youtube video</a>';
++            var re = new RegExp("v\/(.+)\#(.+)", "i");
++            var result = f.src.value.match(re);
++            h = '<a href="'+f.src.value+'">'+result[2]+'</a>';
 +        }
 +
  		ed.execCommand('mceInsertContent', false, h);

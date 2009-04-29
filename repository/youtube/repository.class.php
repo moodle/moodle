@@ -49,7 +49,7 @@ class repository_youtube extends repository {
                 'thumbnail_height'=>120,
                 'size'=>'',
                 'date'=>'',
-                'source'=>$source
+                'source'=>$source.'#'.$title
             );
         } 
         return $list;
