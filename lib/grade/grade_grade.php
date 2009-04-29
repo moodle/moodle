@@ -650,7 +650,7 @@ class grade_grade extends grade_object {
                             }
 
                             // limit and sort
-                            $grade_category->apply_limit_rules($values);
+                            $grade_category->apply_limit_rules($values, $grade_items);
                             asort($values, SORT_NUMERIC);
 
                             // let's see we have still enough grades to do any statistics

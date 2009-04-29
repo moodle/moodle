@@ -3147,8 +3147,10 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101546.03);
     }
 
-    if ($result && $oldversion < 2007101546.04) {
-        // force full regrading - the max grade for sum aggregation was not correct when scales involved
+    if ($result && $oldversion < 2007101546.05) {
+        // force full regrading - the max grade for sum aggregation was not correct when scales involved,
+        //                        extra credit grade is not dropped anymore in aggregations if drop low or keep high specified
+        //                        sum aggragetion respects drop low and keep high when calculation max value
         set_field('grade_items', 'needsupdate', 1, 'needsupdate', 0);
     }
 
