@@ -123,6 +123,7 @@ class edit_category_form extends moodleform {
         $mform->addElement('select', 'grade_item_gradetype', get_string('gradetype', 'grades'), $options);
         $mform->setHelpButton('grade_item_gradetype', array('gradetype', get_string('gradetype', 'grades'), 'grade'), true);
         $mform->setDefault('grade_item_gradetype', GRADE_TYPE_VALUE);
+        $mform->disabledIf('grade_item_gradetype', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
 
         //$mform->addElement('text', 'calculation', get_string('calculation', 'grades'));
         //$mform->disabledIf('calculation', 'gradetype', 'eq', GRADE_TYPE_TEXT);
@@ -137,31 +138,22 @@ class edit_category_form extends moodleform {
         $mform->addElement('select', 'grade_item_scaleid', get_string('scale'), $options);
         $mform->setHelpButton('grade_item_scaleid', array('scaleid', get_string('scaleid', 'grades'), 'grade'), true);
         $mform->disabledIf('grade_item_scaleid', 'grade_item_gradetype', 'noteq', GRADE_TYPE_SCALE);
+        $mform->disabledIf('grade_item_scaleid', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
 
         $mform->addElement('text', 'grade_item_grademax', get_string('grademax', 'grades'));
         $mform->setHelpButton('grade_item_grademax', array('grademax', get_string('grademax', 'grades'), 'grade'), true);
         $mform->disabledIf('grade_item_grademax', 'grade_item_gradetype', 'noteq', GRADE_TYPE_VALUE);
-
+        $mform->disabledIf('grade_item_grademax', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
+        
         $mform->addElement('text', 'grade_item_grademin', get_string('grademin', 'grades'));
         $mform->setHelpButton('grade_item_grademin', array('grademin', get_string('grademin', 'grades'), 'grade'), true);
         $mform->disabledIf('grade_item_grademin', 'grade_item_gradetype', 'noteq', GRADE_TYPE_VALUE);
-
+        $mform->disabledIf('grade_item_grademin', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
+        
         $mform->addElement('text', 'grade_item_gradepass', get_string('gradepass', 'grades'));
         $mform->setHelpButton('grade_item_gradepass', array('gradepass', get_string('gradepass', 'grades'), 'grade'), true);
         $mform->disabledIf('grade_item_gradepass', 'grade_item_gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('grade_item_gradepass', 'grade_item_gradetype', 'eq', GRADE_TYPE_TEXT);
-
-        $mform->addElement('text', 'grade_item_multfactor', get_string('multfactor', 'grades'));
-        $mform->setHelpButton('grade_item_multfactor', array('multfactor', get_string('multfactor', 'grades'), 'grade'), true);
-        $mform->setAdvanced('grade_item_multfactor');
-        $mform->disabledIf('grade_item_multfactor', 'grade_item_gradetype', 'eq', GRADE_TYPE_NONE);
-        $mform->disabledIf('grade_item_multfactor', 'grade_item_gradetype', 'eq', GRADE_TYPE_TEXT);
-
-        $mform->addElement('text', 'grade_item_plusfactor', get_string('plusfactor', 'grades'));
-        $mform->setHelpButton('grade_item_plusfactor', array('plusfactor', get_string('plusfactor', 'grades'), 'grade'), true);
-        $mform->setAdvanced('grade_item_plusfactor');
-        $mform->disabledIf('grade_item_plusfactor', 'grade_item_gradetype', 'eq', GRADE_TYPE_NONE);
-        $mform->disabledIf('grade_item_plusfactor', 'grade_item_gradetype', 'eq', GRADE_TYPE_TEXT);
 
         /// grade display prefs
         $default_gradedisplaytype = grade_get_setting($COURSE->id, 'displaytype', $CFG->grade_displaytype);
@@ -389,11 +381,6 @@ class edit_category_form extends moodleform {
 
             $mform->setDefault('grade_item_hidden', (int) $grade_item->hidden);
 
-            if (!$grade_item->is_raw_used()) {
-                $mform->removeElement('grade_item_plusfactor');
-                $mform->removeElement('grade_item_multfactor');
-            }
-
             if ($grade_item->is_outcome_item()) {
                 // we have to prevent incompatible modifications of outcomes if outcomes disabled
                 $mform->removeElement('grade_item_grademax');
@@ -455,28 +442,6 @@ class edit_category_form extends moodleform {
                     $mform->disabledIf('grade_item_aggregationcoef', 'grade_item_parentcategory', 'eq', $parent_category->id);
                 }
             }
-
-            if ($category = $grade_item->get_item_category()) {
-                if ($category->aggregation == GRADE_AGGREGATE_SUM) {
-                    if ($mform->elementExists('grade_item_gradetype')) {
-                        $mform->hardFreeze('grade_item_gradetype');
-                    }
-                    if ($mform->elementExists('grade_item_grademin')) {
-                        $mform->hardFreeze('grade_item_grademin');
-                    }
-                    if ($mform->elementExists('grade_item_grademax')) {
-                        $mform->hardFreeze('grade_item_grademax');
-                    }
-                    if ($mform->elementExists('grade_item_scaleid')) {
-                        $mform->removeElement('grade_item_scaleid');
-                    }
-                }
-            }
-
-        } else {
-            // all new items are manual, children of course category
-            $mform->removeElement('grade_item_plusfactor');
-            $mform->removeElement('grade_item_multfactor');
         }
     }
 }
