@@ -248,23 +248,61 @@ class grade_category_test extends grade_test {
     }
 
     function test_grade_category_apply_limit_rules() {
-        $category = new grade_category();
-        $grades = array(5.374, 9.4743, 2.5474, 7.3754);
+        $items[$this->grade_items[0]->id] = new grade_item($this->grade_items[0], false);
+        $items[$this->grade_items[1]->id] = new grade_item($this->grade_items[1], false);
+        $items[$this->grade_items[2]->id] = new grade_item($this->grade_items[2], false);
+        $items[$this->grade_items[4]->id] = new grade_item($this->grade_items[4], false);
 
+        $category = new grade_category();
         $category->droplow = 2;
-        $category->apply_limit_rules($grades);
-        sort($grades, SORT_NUMERIC);
-        $this->assertEqual(array(7.3754, 9.4743), $grades);
+        $grades = array($this->grade_items[0]->id=>5.374,
+                        $this->grade_items[1]->id=>9.4743,
+                        $this->grade_items[2]->id=>2.5474,
+                        $this->grade_items[4]->id=>7.3754);
+        $category->apply_limit_rules($grades, $items);
+        $this->assertEqual(count($grades), 2);
+        $this->assertEqual($grades[$this->grade_items[1]->id], 9.4743);
+        $this->assertEqual($grades[$this->grade_items[4]->id], 7.3754);
 
         $category = new grade_category();
-        $grades = array(5.374, 9.4743, 2.5474, 7.3754);
-
         $category->keephigh = 1;
         $category->droplow = 0;
-        $category->apply_limit_rules($grades);
+        $grades = array($this->grade_items[0]->id=>5.374,
+                        $this->grade_items[1]->id=>9.4743,
+                        $this->grade_items[2]->id=>2.5474,
+                        $this->grade_items[4]->id=>7.3754);
+        $category->apply_limit_rules($grades, $items);
         $this->assertEqual(count($grades), 1);
         $grade = reset($grades);
         $this->assertEqual(9.4743, $grade);
+
+        $category = new grade_category();
+        $category->droplow     = 2;
+        $category->aggregation = GRADE_AGGREGATE_SUM;
+        $items[$this->grade_items[2]->id]->aggregationcoef = 1;
+        $grades = array($this->grade_items[0]->id=>5.374,
+                        $this->grade_items[1]->id=>9.4743,
+                        $this->grade_items[2]->id=>2.5474,
+                        $this->grade_items[4]->id=>7.3754);
+
+        $category->apply_limit_rules($grades, $items);
+        $this->assertEqual(count($grades), 2);
+        $this->assertEqual($grades[$this->grade_items[1]->id], 9.4743);
+        $this->assertEqual($grades[$this->grade_items[2]->id], 2.5474);
+
+        $category = new grade_category();
+        $category->keephigh = 1;
+        $category->droplow = 0;
+        $category->aggregation = GRADE_AGGREGATE_SUM;
+        $items[$this->grade_items[2]->id]->aggregationcoef = 1;
+        $grades = array($this->grade_items[0]->id=>5.374,
+                        $this->grade_items[1]->id=>9.4743,
+                        $this->grade_items[2]->id=>2.5474,
+                        $this->grade_items[4]->id=>7.3754);
+        $category->apply_limit_rules($grades, $items);
+        $this->assertEqual(count($grades), 2);
+        $this->assertEqual($grades[$this->grade_items[1]->id], 9.4743);
+        $this->assertEqual($grades[$this->grade_items[2]->id], 2.5474);
     }
 
     /**

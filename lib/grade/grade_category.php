@@ -558,7 +558,7 @@ class grade_category extends grade_object {
         }
 
         // limit and sort
-        $this->apply_limit_rules($grade_values);
+        $this->apply_limit_rules($grade_values, $items);
         asort($grade_values, SORT_NUMERIC);
 
         // let's see we have still enough grades to do any statistics
@@ -734,7 +734,7 @@ class grade_category extends grade_object {
             }
         }
         // apply droplow and keephigh
-        $this->apply_limit_rules($maxes);
+        $this->apply_limit_rules($maxes, $items);
         $max = array_sum($maxes);
 
         // update db if anything changed
@@ -780,7 +780,7 @@ class grade_category extends grade_object {
             }
         }
 
-        $this->apply_limit_rules($grade_values);
+        $this->apply_limit_rules($grade_values, $items);
 
         $sum = array_sum($grade_values);
         $grade->finalgrade = $this->grade_item->bounded_grade($sum);
@@ -796,26 +796,44 @@ class grade_category extends grade_object {
     /**
      * Given an array of grade values (numerical indices), applies droplow or keephigh
      * rules to limit the final array.
-     * @param array $grade_values
+     * @param array $grade_values itemid=>$grade_value float
+     * @param array $items grade titem objects
      * @return array Limited grades.
      */
-    public function apply_limit_rules(&$grade_values) {
-        arsort($grade_values, SORT_NUMERIC);
+    public function apply_limit_rules(&$grade_values, $items) {
+        $extraused = $this->is_extracredit_used();
+
         if (!empty($this->droplow)) {
-            for ($i = 0; $i < $this->droplow; $i++) {
-                if (empty($grade_values)) {
-                    // nothing to remove
-                    return;
+            asort($grade_values, SORT_NUMERIC);
+            $dropped = 0;
+            foreach ($grade_values as $itemid=>$value) {
+                if ($dropped < $this->droplow) {
+                    if ($extraused and $items[$itemid]->aggregationcoef > 0) {
+                        // no drop low for extra credits
+                    } else {
+                        unset($grade_values[$itemid]);
+                        $dropped++;
+                    }
+                } else {
+                    // we have dropped enough
+                    break;
                 }
-                array_pop($grade_values);
             }
-        } elseif (!empty($this->keephigh)) {
-            while (count($grade_values) > $this->keephigh) {
-                array_pop($grade_values);
+
+        } else if (!empty($this->keephigh)) {
+            arsort($grade_values, SORT_NUMERIC);
+            $kept = 0;
+            foreach ($grade_values as $itemid=>$value) {
+                if ($extraused and $items[$itemid]->aggregationcoef > 0) {
+                    // we keep all extra credits
+                } else if ($kept < $this->keephigh) {
+                    $kept++;
+                } else {
+                    unset($grade_values[$itemid]);
+                }
             }
         }
     }
-
 
     /**
      * Returns true if category uses special aggregation coeficient
