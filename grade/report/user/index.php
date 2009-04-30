@@ -43,7 +43,7 @@ if (empty($userid)) {
     require_capability('moodle/grade:viewall', $context);
 
 } else {
-    if (!get_complete_user_data('id', $userid) or isguestuser($userid)) {
+    if (!get_record('user', 'id', $userid, 'deleted', 0) or isguestuser($userid)) {
         error("Incorrect userid");
     }
 }
