@@ -186,7 +186,7 @@ class HTML_QuickForm_Renderer_Tableless extends HTML_QuickForm_Renderer_Default
             } else {
                 $id = $element->getName();
             }
-            if (!empty($id)) {
+            if (!empty($id) and !$element->isFrozen()) { // moodle hack
                 $html = str_replace('<label', '<label for="' . $id . '"', $html);
                 $element_html = preg_replace('#name="' . $id . '#',
                                              'id="' . $id . '" name="' . $id . '',
