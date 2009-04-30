@@ -206,8 +206,8 @@ class grade_report_user extends grade_report {
         $excluded = '';
         $class = '';
 
-        // If this is a hidden grade item, hide it completely from the user. showhiddenitems: 0 = hide all, 1 = show only hidden until, 2 = show all
-        if ($grade_object->is_hidden() && !$this->canviewhidden && (
+        // If this is a hidden grade category, hide it completely from the user. showhiddenitems: 0 = hide all, 1 = show only hidden until, 2 = show all
+        if ($type == 'category' && $grade_object->is_hidden() && !$this->canviewhidden && (
                 $this->showhiddenitems == 0 ||
                 ($this->showhiddenitems == 1 && !$grade_object->is_hiddenuntil()))) {
             return false;
