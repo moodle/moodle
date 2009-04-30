@@ -109,6 +109,12 @@ abstract class grade_report {
     public $currentgroup;
 
     /**
+     * Current course group mode
+     * @var int $groupmode
+     */
+    var $groupmode;
+
+    /**
      * A HTML select element used to select the current group.
      * @var string $group_selector
      */
@@ -298,13 +304,15 @@ abstract class grade_report {
      */
     protected function setup_groups() {
         /// find out current groups mode
-        $this->group_selector = groups_print_course_menu($this->course, $this->pbarurl, true);
-        $this->currentgroup   = groups_get_course_group($this->course);
+        if ($this->groupmode = groups_get_course_groupmode($this->course)) {
+            $this->group_selector = groups_print_course_menu($this->course, $this->pbarurl, true);
+            $this->currentgroup   = groups_get_course_group($this->course);
 
-        if ($this->currentgroup) {
-            $this->groupsql             = " JOIN {groups_members} gm ON gm.userid = u.id ";
-            $this->groupwheresql        = " AND gm.groupid = :gr_grpid ";
-            $this->groupwheresql_params = array('gr_grpid'=>$this->currentgroup);
+            if ($this->currentgroup) {
+                $this->groupsql             = " JOIN {groups_members} gm ON gm.userid = u.id ";
+                $this->groupwheresql        = " AND gm.groupid = :gr_grpid ";
+                $this->groupwheresql_params = array('gr_grpid'=>$this->currentgroup);
+            }
         }
     }
 

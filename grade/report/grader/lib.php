@@ -144,10 +144,7 @@ class grade_report_grader extends grade_report {
 
         $this->pbarurl = 'index.php?id='.$this->courseid.$perpage.'&amp;';
 
-        // Setup groups if requested
-        if ($this->get_pref('showgroups')) {
-            $this->setup_groups();
-        }
+        $this->setup_groups();
 
         $this->setup_sortitemid();
     }
@@ -428,12 +425,6 @@ class grade_report_grader extends grade_report {
 
         if ($this->canviewhidden) {
             $html .= $this->print_toggle('averages', true);
-        }
-
-        if (has_capability('moodle/grade:viewall', $this->context)
-         and has_capability('moodle/site:accessallgroups', $this->context)
-         and ($course_has_groups = true)) { // TODO replace that last condition with proper check
-            $html .= $this->print_toggle('groups', true);
         }
 
         $html .= $this->print_toggle('ranges', true);
@@ -1024,10 +1015,10 @@ class grade_report_grader extends grade_report {
             // Averages heading
 
             $straverage_group = get_string('groupavg', 'grades');
-            $showaverages_group = $this->currentgroup && $this->get_pref('showgroups');
             $straverage = get_string('overallaverage', 'grades');
             $showaverages = $this->get_pref('showaverages');
-
+            $showaverages_group = $this->currentgroup && $showaverages;
+            
             if ($showaverages_group) {
                 $studentshtml .= '<tr class="groupavg r'.$this->rowcount++.'"><th class="header c0" '.$colspan.'scope="row">'.$straverage_group.'</th></tr>';
             }
@@ -1075,7 +1066,7 @@ class grade_report_grader extends grade_report {
 
         if ($grouponly) {
             $straverage = get_string('groupavg', 'grades');
-            $showaverages = $this->currentgroup && $this->get_pref('showgroups');
+            $showaverages = $this->currentgroup && $this->get_pref('showaverages');
             $groupsql = $this->groupsql;
             $groupwheresql = $this->groupwheresql;
             $groupwheresql_params = $this->groupwheresql_params;
