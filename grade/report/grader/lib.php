@@ -1075,6 +1075,21 @@ class grade_report_grader extends grade_report {
     }
 
     /**
+     * Closes all open elements
+     */
+    public function get_endhtml() {
+        global $CFG, $USER;
+
+        $fixedstudents = empty($USER->screenreader) && $CFG->grade_report_fixedstudents;
+
+        if ($fixedstudents) {
+            return "</tbody></table></div>";
+        } else {
+            return "</tbody></table>";
+        }
+    }
+
+    /**
      * Builds and return the HTML row of column totals.
      * @param  bool $grouponly Whether to return only group averages or all averages.
      * @return string HTML

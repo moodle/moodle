@@ -166,7 +166,8 @@ $reporthtml .= $report->get_studentshtml();
 $reporthtml .= $report->get_rangehtml();
 $reporthtml .= $report->get_avghtml(true);
 $reporthtml .= $report->get_avghtml();
-$reporthtml .= "</tbody></table></div></div>";
+$reporthtml .= $report->get_endhtml();
+$reporthtml .= '</div>';
 
 // print submit button
 if ($USER->gradeediting[$course->id] and !$report->get_pref('enableajax')) {
