@@ -322,7 +322,7 @@ class grade_report {
         $strsort = $this->get_lang_string('sort' . $matrix[$direction]);
 
         $arrow = print_arrow($direction, $strsort, true);
-        $html = '<a href="'.$sort_link .'" alt="'.$strsort.'" title="'.$strsort.'">' . $arrow . '</a>';
+        $html = '<a href="'.$sort_link .'" title="'.$strsort.'">' . $arrow . '</a>';
         return $html;
     }
 }
