@@ -174,6 +174,7 @@ $string['errornocalculationallowed'] = 'Calculations are not allowed for this it
 $string['errornocategorisedid'] = 'Could not get an uncategorised id!';
 $string['errornocourse'] = 'Could not get course information';
 $string['errorreprintheadersnonnumeric'] = 'Received non-numeric value for reprint-headers';
+$string['errorsavegrade'] = 'Could not save grade, sorry.';
 $string['errorupdatinggradecategoryaggregateonlygraded'] = 'Error updating the \"Aggregate only graded items\" setting of of grade category ID $a->id';
 $string['errorupdatinggradecategoryaggregateoutcomes'] = 'Error updating the \"Aggregate outcomes\" setting of of grade category ID $a->id';
 $string['errorupdatinggradecategoryaggregatesubcats'] = 'Error updating the \"Aggregate sub-categories\" setting of of grade category ID $a->id';
