@@ -363,6 +363,13 @@ class edit_category_form extends moodleform {
                     }
                 }
             }
+
+        } else {
+            // adding new category
+
+            if ($mform->elementExists('currentparentaggregation')) {
+                $mform->removeElement('currentparentaggregation');
+            }
         }
 
 
