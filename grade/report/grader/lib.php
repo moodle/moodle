@@ -650,6 +650,7 @@ class grade_report_grader extends grade_report {
 
             $headerhtml .= '</tr>';
         }
+
         return $headerhtml;
     }
 
@@ -1246,12 +1247,24 @@ class grade_report_grader extends grade_report {
      * @return string HTML
      */
     function get_iconshtml() {
-        global $USER;
+        global $USER, $CFG;
 
         $iconshtml = '';
         if ($USER->gradeediting[$this->courseid]) {
 
             $iconshtml = '<tr class="controls">';
+
+            $fixedstudents = empty($USER->screenreader) && $CFG->grade_report_fixedstudents;
+            $showuseridnumber = $this->get_pref('showuseridnumber');
+
+            $colspan = '';
+            if ($showuseridnumber) {
+                $colspan = 'colspan="2"';
+            }
+
+            if (!$fixedstudents) {
+                $iconshtml .= '<th class="header c0 controls" scope="row" '.$colspan.'>'.$this->get_lang_string('controls','grades').'</th>';
+            }
 
             $columncount = 0;
             foreach ($this->gtree->items as $itemid=>$unused) {
