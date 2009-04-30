@@ -835,40 +835,40 @@ abstract class repository {
      */
     public static function get_user_file_tree($search = ""){
         global $CFG;
-     $ret = array();
-            $ret['nologin'] = true;
-            $ret['manage'] = $CFG->wwwroot .'/files/index.php'; // temporary
-            $browser = get_file_browser();
-            $itemid = null;
-            $filename = null;
-            $filearea = null;
-            $path = '/';
-            $ret['dynload'] = false;
+        $ret = array();
+        $ret['nologin'] = true;
+        $ret['manage'] = $CFG->wwwroot .'/files/index.php'; // temporary
+        $browser = get_file_browser();
+        $itemid = null;
+        $filename = null;
+        $filearea = null;
+        $path = '/';
+        $ret['dynload'] = false;
 
-            if ($fileinfo = $browser->get_file_info(get_system_context(), $filearea, $itemid, $path, $filename)) {
+        if ($fileinfo = $browser->get_file_info(get_system_context(), $filearea, $itemid, $path, $filename)) {
 
-                $ret['path'] = array();
-                $params = $fileinfo->get_params();
-                $filearea = $params['filearea'];
-                $ret['path'][] = repository::encode_path($filearea, $path, $fileinfo->get_visible_name());
-                if ($fileinfo->is_directory()) {
-                    $level = $fileinfo->get_parent();
-                    while ($level) {
-                        $params = $level->get_params();
-                        $ret['path'][] = repository::encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
-                        $level = $level->get_parent();
-                    }
+            $ret['path'] = array();
+            $params = $fileinfo->get_params();
+            $filearea = $params['filearea'];
+            $ret['path'][] = repository::encode_path($filearea, $path, $fileinfo->get_visible_name());
+            if ($fileinfo->is_directory()) {
+                $level = $fileinfo->get_parent();
+                while ($level) {
+                    $params = $level->get_params();
+                    $ret['path'][] = repository::encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
+                    $level = $level->get_parent();
                 }
-                $filecount = repository::build_tree($fileinfo, $search, $ret['dynload'], $ret['list']);
-                $ret['path'] = array_reverse($ret['path']);
             }
+            $filecount = repository::build_tree($fileinfo, $search, $ret['dynload'], $ret['list']);
+            $ret['path'] = array_reverse($ret['path']);
+        }
 
-            if (empty($ret['list'])) {
-                //exit(mnet_server_fault(9016, get_string('emptyfilelist', 'repository_local')));
-                throw new Exception('emptyfilelist');
-            } else {
-                return $ret;
-            }
+        if (empty($ret['list'])) {
+            //exit(mnet_server_fault(9016, get_string('emptyfilelist', 'repository_local')));
+            throw new Exception('emptyfilelist');
+        } else {
+            return $ret;
+        }
 
     }
 
@@ -923,7 +923,7 @@ abstract class repository {
                     'size' => 0,
                     'date' => $filedate,
                     'path' => array_reverse($path),
-                    'thumbnail' => $CFG->pixpath .'/f/folder.gif'
+                    'thumbnail' => $CFG->pixpath .'/f/folder-32.png'
                 );
 
                 //if ($dynamicmode && $child->is_writable()) {
@@ -943,8 +943,7 @@ abstract class repository {
                 //}
 
                 //Uncomment this following line if you wanna display all directory ()even empty
-                //if (!$search || $_filecount || (stristr($tmp['title'], $search) !== false)) {
-                if ($_filecount) {
+                if (!$search || $_filecount || (stristr($tmp['title'], $search) !== false)) {
                     $filecount += $_filecount;
                     $list[] = $tmp;
                 }
@@ -1802,7 +1801,7 @@ function repository_get_client($context, $id = '',  $accepted_filetypes = '*', $
 .fp-login-form{text-align:center}
 .fp-searchbar{float:right}
 .fp-viewbar{width:300px;float:left}
-.fp-toolbar{padding: .8em;background: #FFFFCC;color:white;text-align:center}
+.fp-toolbar{padding: .8em;background: #FFFFCC;color:white;text-align:center;margin: 3px}
 .fp-toolbar a{padding: 0 .5em}
 .fp-list{list-style-type:none;padding:0;float:left;width:100%;margin:0;}
 .fp-list li{border-bottom:1px dotted gray;margin-bottom: 1em;}
@@ -1847,7 +1846,7 @@ EOD;
             'yui_json',
             'yui_button',
             'yui_selector',
-            'repository/repository.js'
+            'repository/repository.src.js'
         ));
         $lang = array();
         $lang['title'] = get_string('title', 'repository');

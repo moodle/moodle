@@ -73,6 +73,7 @@
                 }
             }
             $listing = array('list'=>$list);
+            $listing['gsearch'] = true;
             $listing['client_id'] = $client_id;
             die(json_encode($listing));
             break;

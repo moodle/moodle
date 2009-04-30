@@ -147,6 +147,10 @@ var repository_client = (function(){
                     var r = repository_client.fp[data.client_id];
                     r.view_staus = 0;
                     r.fs = data.list;
+                    if (data.gsearch) {
+                        // will be used to hide header and footer
+                        r.gsearch = true;
+                    }
                     if(r.view_staus) {
                         repository_client.view_as_list(data.client_id, data.list);
                     } else {
@@ -808,6 +812,11 @@ repository_client.print_footer = function(client_id) {
     panel.appendChild(footer);
     // add repository manage buttons here
     var oDiv = document.getElementById('repo-tb-'+client_id);
+    if(this.fp[client_id].gsearch) {
+        // reset
+        this.fp[client_id].gsearch='';
+        return;
+    }
     if(!fs.nosearch) {
         var search = document.createElement('A');
         search.href = '###';
