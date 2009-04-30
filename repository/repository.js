@@ -111,10 +111,62 @@ var repository_client = (function(){
             this.print_listing();
             this.filepicker.render();
         }
+        this.init_search = function() {
+            var searchbar = document.getElementById('search-div-'+this.client_id);
+            searchbar.innerHTML = '<input id="search-input-'+this.client_id+'" /><button id="search-btn-'+this.client_id+'">'+fp_lang.federatedsearch+'</button>';
+            var search_btn = new YAHOO.util.Element('search-btn-'+this.client_id);
+            search_btn.client_id = this.client_id;
+            var input_keyword = new YAHOO.util.Element('search-input-'+this.client_id);
+            input_keyword.client_id = this.client_id;
+            search_btn.fnSearch = function(e) {
+                var el = new YAHOO.util.Element('search-input-'+this.client_id)
+                var keyword = el.get('value');
+                var r = repository_client.fp[this.client_id];
+                var params = [];
+                params['s'] = keyword;
+                params['env']=r.env;
+                params['accepted_types'] = r.accepted_types;
+                params['sesskey']=moodle_cfg.sesskey;
+                params['ctx_id']=fp_config.contextid;
+                params['client_id']=this.client_id;
+                repository_client.loading(this.client_id, 'load');
+                var trans = YAHOO.util.Connect.asyncRequest('POST',
+                    moodle_cfg.wwwroot+'/repository/ws.php?action=gsearch', this.search_cb, repository_client.postdata(params));
+            }
+            search_btn.on('contentReady', function() {
+                search_btn.on('click', this.fnSearch, this.input_keyword);
+            });
+            search_btn.search_cb={
+                success: function(o) {
+                    var data = repository_client.parse_json(o.responseText, 'global_search_cb');
+                    var panel = new YAHOO.util.Element('panel-'+data.client_id);
+                    if(!data.list || data.list.length<1){
+                        panel.get('element').innerHTML = fp_lang.noresult;
+                        return;
+                    }
+                    var r = repository_client.fp[data.client_id];
+                    r.view_staus = 0;
+                    r.fs = data.list;
+                    if(r.view_staus) {
+                        repository_client.view_as_list(data.client_id, data.list);
+                    } else {
+                        repository_client.view_as_icons(data.client_id, data.list);
+                    }
+                    var el = new YAHOO.util.Element('search-input-'+data.client_id)
+                    el.set('value', '');
+                }
+            }
+            input_keyword.on('contentReady', function() {
+                var scope = document.getElementById('search-input-'+this.client_id);
+                var k1 = new YAHOO.util.KeyListener(scope, {keys:13}, {fn:function(){this.fnSearch()},scope:search_btn, correctScope: true});
+                k1.enable();
+            });
+        }
         this.print_listing = function() {
             var container = new YAHOO.util.Element('repo-list-'+this.client_id);
             container.set('innerHTML', '');
             container.on('contentReady', function() {
+                this.init_search();    
                 for(var i in repository_listing[this.client_id]) {
                     var repo = repository_listing[this.client_id][i];
                     var support = false;
@@ -164,6 +216,7 @@ var repository_client = (function(){
                     }
                 }
             }, this, true);
+
         }
         this.show = function(){
             this.print_listing();
@@ -253,7 +306,11 @@ repository_client.req_search_results = function(client_id, id, path, page) {
 repository_client.print_login = function(id, data) {
     var login = data.login;
     var panel = new YAHOO.util.Element('panel-'+id);
-    var str = '<div class="fp-login-form" onkeypress="repository_client.login_keypress(event)">';
+    var action = 'login';
+    if (data['login_search_form']) {
+        action='search';
+    }
+    var str = '<div class="fp-login-form" onkeypress="repository_client.login_keypress(event,\''+action+'\')">';
     var has_pop = false;
     this.fp[id].login = login;
     str +='<table width="100%">';
@@ -333,11 +390,15 @@ repository_client.login = function(id, repo_id) {
     var trans = YAHOO.util.Connect.asyncRequest('POST',
             moodle_cfg.wwwroot+'/repository/ws.php?action=sign', this.req_cb, this.postdata(params));
 }
-repository_client.login_keypress = function(evt) {
+repository_client.login_keypress = function(evt,action) {
     evt = (evt) ? evt : ((window.event) ? window.event : "")
     var key = evt.keyCode?evt.keyCode:evt.which;
     if(key == 13 || key == 10){
-        repository_client.search(cached_id, cached_repo_id);
+        if(action=='search'){
+            repository_client.search(cached_id, cached_repo_id);
+        } else {
+            repository_client.login(cached_id, cached_repo_id);
+        }
     }
 }
 repository_client.search = function(id, repo_id) {
@@ -716,9 +777,11 @@ repository_client.view_as_icons = function(client_id, data) {
             el_title.icon = file.icon  = list[k].thumbnail;
             if(fp.fs.repo_id) {
                 el_title.repo_id = file.repo_id = fp.fs.repo_id;
+            }else if(list[k].repo_id) {
+                el_title.repo_id = file.repo_id = list[k].repo_id;
             }else{
                 el_title.repo_id = file.repo_id = '';
-            }
+            }     
             file.on('contentReady', function() {
                 this.on('click', function() {
                     repository_client.select_file(this.filename, this.value, this.icon, client_id, this.repo_id);
