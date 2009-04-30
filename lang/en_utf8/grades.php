@@ -175,6 +175,7 @@ $string['errornocalculationallowed'] = 'Calculations are not allowed for this it
 $string['errornocategorisedid'] = 'Could not get an uncategorised id!';
 $string['errornocourse'] = 'Could not get course information';
 $string['errorreprintheadersnonnumeric'] = 'Received non-numeric value for reprint-headers';
+$string['errorsavegrade'] = 'Could not save grade, sorry.';
 $string['exceptions'] = 'Exceptions';
 $string['excluded'] = 'Excluded';
 $string['excludedhelp'] = 'If -excluded- is switched on, this grade will be excluded from any aggregation performed by any parent grade item or category.';
