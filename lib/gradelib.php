@@ -1164,7 +1164,9 @@ function grade_update_mod_grades($modinstance, $userid=0) {
 function grade_get_legacy_modules($courseid) {
     global $CFG;
 
-    $mods = get_course_mods($courseid);
+    if (!$mods = get_course_mods($courseid)) {
+        return array();
+    }
     $legacy = array();
 
     foreach ($mods as $mod) {
