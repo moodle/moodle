@@ -3154,6 +3154,11 @@ function xmldb_main_upgrade($oldversion=0) {
         set_field('grade_items', 'needsupdate', 1, 'needsupdate', 0);
     }
 
+    if ($result && $oldversion < 2007101546.06) {
+        unset_config('grade_report_showgroups');
+        upgrade_main_savepoint($result, 2007101546.06);
+    }
+
     return $result;
 }
 
