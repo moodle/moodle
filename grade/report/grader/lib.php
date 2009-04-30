@@ -159,6 +159,20 @@ class grade_report_grader extends grade_report {
         global $DB;
         $warnings = array();
 
+        $separategroups = false;
+        $mygroups       = array();
+        if ($this->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $this->context)) {
+            $separategroups = true;
+            $mygroups = groups_get_user_groups($this->course->id);
+            $mygroups = $mygroups[0]; // ignore groupings
+            // reorder the groups fro better perf bellow
+            $current = array_search($this->currentgroup, $mygroups);
+            if ($current !== false) {
+                unset($mygroups[$current]);
+                array_unshift($mygroups, $this->currentgroup);
+            }
+        }
+
         // always initialize all arrays
         $queue = array();
         foreach ($data as $varname => $postedvalue) {
@@ -230,6 +244,24 @@ class grade_report_grader extends grade_report {
                      $feedback = NULL;
                 } else {
                      $feedback = stripslashes($postedvalue);
+                }
+            }
+
+            // group access control
+            if ($separategroups) {
+                // note: we can not use $this->currentgroup because it would fail badly
+                //       when having two browser windows each with different group
+                $sharinggroup = false;
+                foreach($mygroups as $groupid) {
+                    if (groups_is_member($groupid, $userid)) {
+                        $sharinggroup = true;
+                        break;
+                    }
+                }
+                if (!$sharinggroup) {
+                    // either group membership changed or somebedy is hacking grades of other group
+                    $warnings[] = get_string('errorsavegrade', 'grades');
+                    continue;
                 }
             }
 
