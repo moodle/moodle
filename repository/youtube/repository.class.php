@@ -21,8 +21,9 @@ class repository_youtube extends repository {
     }
 
     public function search($search_text) {
-        $ret = array();
-        $ret['list'] = $this->_get_collection($search_text, $this->start, $this->max, $this->sort);
+        $ret  = array();
+        $ret['nologin'] = true;
+        $ret['list'] = $this->_get_collection($this->keyword, $this->start, $this->max, $this->sort);
         return $ret;
     }
 
@@ -62,30 +63,25 @@ class repository_youtube extends repository {
         return false;
     }
     public function get_listing($path='', $page = '') {
-        global $CFG;
-        $list = array();
         $ret  = array();
         $ret['nologin'] = true;
-        $ret['path'] = array(array('name'=>'Root', 'path'=>0));
         $ret['list'] = $this->_get_collection($this->keyword, $this->start, $this->max, $this->sort);
         return $ret;
     }
 
     public function print_login($ajax = true) {
-        if ($ajax) {
-            $ret = array();
-            $search = new stdclass;
-            $search->type = 'text';
-            $search->id   = 'youtube_search';
-            $search->name = 'youtube_keyword';
-            $search->label = get_string('search', 'repository_youtube').': ';
-            $ret['login'] = array($search);
-            return $ret;
-        }
+        $ret = array();
+        $search = new stdclass;
+        $search->type = 'text';
+        $search->id   = 'youtube_search';
+        $search->name = 'youtube_keyword';
+        $search->label = get_string('search', 'repository_youtube').': ';
+        $ret['login'] = array($search);
+        $ret['login_btn_label'] = get_string('search');
+        $ret['login_search_form'] = true;
+        return $ret;
     }
     public function supported_return_value() {
-        // return 'link';
-        // return 'ref_id';
         return 'link';
     }
     public function supported_filetypes() {
