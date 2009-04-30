@@ -17,6 +17,9 @@ var cached_client_id = {};
 var file_extensions = {};
 /* when selected a file, filename will be cached in this varible */
 var new_filename = '';
+// will be used by login form
+var cached_id;
+var cached_repo_id;
 // repository_client has static functions
 var repository_client = (function(){
     // private static field
@@ -250,7 +253,7 @@ repository_client.req_search_results = function(client_id, id, path, page) {
 repository_client.print_login = function(id, data) {
     var login = data.login;
     var panel = new YAHOO.util.Element('panel-'+id);
-    var str = '<div class="fp-login-form">';
+    var str = '<div class="fp-login-form" onkeypress="repository_client.login_keypress(event)">';
     var has_pop = false;
     this.fp[id].login = login;
     str +='<table width="100%">';
@@ -303,6 +306,8 @@ repository_client.print_login = function(id, data) {
     }
     str += '</div>';
     panel.get('element').innerHTML = str;
+    cached_id=id;
+    cached_repo_id=data.repo_id;
 }
 repository_client.login = function(id, repo_id) {
     var params = [];
@@ -327,6 +332,13 @@ repository_client.login = function(id, repo_id) {
     this.loading(id, 'load');
     var trans = YAHOO.util.Connect.asyncRequest('POST',
             moodle_cfg.wwwroot+'/repository/ws.php?action=sign', this.req_cb, this.postdata(params));
+}
+repository_client.login_keypress = function(evt) {
+    evt = (evt) ? evt : ((window.event) ? window.event : "")
+    var key = evt.keyCode?evt.keyCode:evt.which;
+    if(key == 13 || key == 10){
+        repository_client.search(cached_id, cached_repo_id);
+    }
 }
 repository_client.search = function(id, repo_id) {
     var params = [];
