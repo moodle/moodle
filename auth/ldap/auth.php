@@ -1807,7 +1807,7 @@ class auth_plugin_ldap extends auth_plugin_base {
            && !empty($this->config->ntlmsso_subnet)      // have a subnet to test for
            && empty($_GET['authldap_skipntlmsso'])       // haven't failed it yet
            && (isguestuser() || !isloggedin())           // guestuser or not-logged-in users
-            && address_in_subnet($_SERVER['REMOTE_ADDR'], $this->config->ntlmsso_subnet)) {
+            && address_in_subnet(getremoteaddr(), $this->config->ntlmsso_subnet)) {
 
             // First, let's remember where we were trying to get to before we got here
             if (empty($SESSION->wantsurl)) {

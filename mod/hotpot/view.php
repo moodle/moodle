@@ -58,7 +58,7 @@
         if (!hotpot_is_visible($cm)) {
             $error = get_string("activityiscurrentlyhidden");
         // check network address
-        } else if ($hotpot->subnet && !address_in_subnet($_SERVER['REMOTE_ADDR'], $hotpot->subnet)) {
+        } else if ($hotpot->subnet && !address_in_subnet(getremoteaddr(), $hotpot->subnet)) {
             $error = get_string("subneterror", "quiz");
         // check number of attempts
         } else if ($hotpot->attempts && $hotpot->attempts <= $DB->count_records_select('hotpot_attempts', 'hotpot=? AND userid=?', array($hotpot->id, $USER->id), 'COUNT(DISTINCT clickreportid)')) { 
