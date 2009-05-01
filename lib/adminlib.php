@@ -4698,9 +4698,24 @@ class admin_setting_managerepository extends admin_setting {
             //display edit link only if you can config the type or if it has multiple instances (e.g. has instance config)
             $typeoptionnames = repository::static_function($i->get_typename(), 'get_type_option_names');
             $instanceoptionnames = repository::static_function($i->get_typename(), 'get_instance_option_names');
+
             if ( !empty($typeoptionnames) || !empty($instanceoptionnames)) {
+                
+                //calculate number of instances in order to display them for the Moodle administrator
+                if (!empty($instanceoptionnames)) {
+                    $admininstancenumber = count(repository::static_function($i->get_typename(), 'get_instances', array(get_context_instance(CONTEXT_SYSTEM)),null,false,$i->get_typename()));
+                    $admininstancenumbertext =   " <br/> ". $admininstancenumber .
+                                        " " . get_string('instancesforadmin', 'repository');
+                    $instancenumber =  count(repository::static_function($i->get_typename(), 'get_instances', array(),null,false,$i->get_typename())) - $admininstancenumber;
+                    $instancenumbertext =  "<br/>" . $instancenumber .
+                                        " " . get_string('instancesforothers', 'repository');
+                } else {
+                    $admininstancenumbertext = "";
+                    $instancenumbertext = "";
+                }
+
                 $settings .= '<a href="' . $this->baseurl . '&amp;edit=' . $i->get_typename() . '">'
-                              . $settingsstr .'</a>' . "\n";
+                              . $settingsstr .'</a>' . $admininstancenumbertext . $instancenumbertext . "\n";
             }
             $delete = '<a href="' . $this->baseurl . '&amp;delete=' .  $i->get_typename() . '">'
                         . $deletestr . '</a>' . "\n";
