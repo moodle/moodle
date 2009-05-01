@@ -2161,17 +2161,25 @@ class admin_setting_users_with_capability extends admin_setting_configmultiselec
      * @param array $defaultsetting array of usernames
      * @param string $capability string capability name.
      */
-    public function __construct($name, $visiblename, $description, $defaultsetting, $capability) {
+    function __construct($name, $visiblename, $description, $defaultsetting, $capability) {
+        $this->capability = $capability;
+        parent::__construct($name, $visiblename, $description, $defaultsetting, NULL);
+    }
+
+    function load_choices() {
+        if (is_array($this->choices)) {
+            return true;
+        }
         $users = get_users_by_capability(get_context_instance(CONTEXT_SYSTEM),
-                $capability, 'u.id,u.username,u.firstname,u.lastname', 'u.lastname,u.firstname');
-        $choices = array(
+                $this->capability, 'u.id,u.username,u.firstname,u.lastname', 'u.lastname,u.firstname');
+        $this->choices = array(
             '$@NONE@$' => get_string('nobody'),
-            '$@ALL@$' => get_string('everyonewhocan', 'admin', get_capability_string($capability)),
+            '$@ALL@$' => get_string('everyonewhocan', 'admin', get_capability_string($this->capability)),
         );
         foreach ($users as $user) {
-            $choices[$user->username] = fullname($user);
+            $this->choices[$user->username] = fullname($user);
         }
-        parent::__construct($name, $visiblename, $description, $defaultsetting, $choices);
+        return true;
     }
 
     public function get_defaultsetting() {
