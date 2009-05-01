@@ -92,7 +92,7 @@ class mediaplugin_filter extends moodle_text_filter {
             $newtext = preg_replace_callback($search, 'mediaplugin_filter_youtube_callback', $newtext);
         }
 
-        if ($CFG->filter_mediaplugin_enable_img) {
+        if (!empty($CFG->filter_mediaplugin_enable_img)) {
             $search = '/<a.*?href="([^<]+\.jpg)"[^>]*>(.*?)<\/a>/is';
             $newtext = preg_replace_callback($search, 'mediaplugin_filter_img_callback', $newtext);
             $search = '/<a.*?href="([^<]+\.png)"[^>]*>(.*?)<\/a>/is';
