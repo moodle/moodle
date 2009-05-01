@@ -440,7 +440,8 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
             $newfield = "$newfield = ?";
             array_unshift($params, $newvalue); // add as first param
         }
-        $sql = "UPDATE {$this->prefix}$table SET $newfield WHERE $select";
+        $select = !empty($select) ? "WHERE $select" : '';
+        $sql = "UPDATE {$this->prefix}$table SET $newfield $select";
 
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $rs = $rs = $this->adodb->Execute($sql, $params);
