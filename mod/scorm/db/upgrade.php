@@ -32,7 +32,7 @@ function xmldb_scorm_upgrade($oldversion) {
     if ($result && $oldversion < 2008073000) {
         $table = new xmldb_table('scorm');
         $field = new xmldb_field('whatgrade');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'grademethod');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'grademethod');
 
         /// Launch add field whatgrade
         if (!$dbman->field_exists($table,$field)) {
@@ -46,7 +46,7 @@ function xmldb_scorm_upgrade($oldversion) {
 
     /// Define field scormtype to be added to scorm
         $table = new xmldb_table('scorm');
-        $field = new xmldb_field('scormtype', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, null, 'local', 'name');
+        $field = new xmldb_field('scormtype', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, 'local', 'name');
 
     /// Launch add field scormtype
         $dbman->add_field($table, $field);
@@ -59,7 +59,7 @@ function xmldb_scorm_upgrade($oldversion) {
 
     /// Define field sha1hash to be added to scorm
         $table = new xmldb_table('scorm');
-        $field = new xmldb_field('sha1hash', XMLDB_TYPE_CHAR, '40', null, null, null, null, null, null, 'updatefreq');
+        $field = new xmldb_field('sha1hash', XMLDB_TYPE_CHAR, '40', null, null, null, null, 'updatefreq');
 
     /// Launch add field sha1hash
         $dbman->add_field($table, $field);
@@ -72,7 +72,7 @@ function xmldb_scorm_upgrade($oldversion) {
 
     /// Define field revision to be added to scorm
         $table = new xmldb_table('scorm');
-        $field = new xmldb_field('revision', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'md5hash');
+        $field = new xmldb_field('revision', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'md5hash');
 
     /// Launch add field revision
         $dbman->add_field($table, $field);
@@ -236,23 +236,23 @@ function xmldb_scorm_upgrade($oldversion) {
 
     /// Define new fields forcecompleted, forcenewattempt, displayattemptstatus, and displaycoursestructure to be added to scorm
         $table = new xmldb_table('scorm');
-        $field = new xmldb_field('forcecompleted', XMLDB_TYPE_INTEGER, '1', null, null, null, null, null, '0', 'maxattempt');
+        $field = new xmldb_field('forcecompleted', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'maxattempt');
         if (!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
-        $field = new xmldb_field('forcenewattempt', XMLDB_TYPE_INTEGER, '1', null, null, null, null, null, '0', 'forcecompleted');
+        $field = new xmldb_field('forcenewattempt', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'forcecompleted');
         if (!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
-        $field = new xmldb_field('lastattemptlock', XMLDB_TYPE_INTEGER, '1', null, null, null, null, null, '0', 'forcenewattempt');
+        $field = new xmldb_field('lastattemptlock', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'forcenewattempt');
         if (!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
-        $field = new xmldb_field('displayattemptstatus', XMLDB_TYPE_INTEGER, '1', null, null, null, null, null, '1', 'lastattemptlock');
+        $field = new xmldb_field('displayattemptstatus', XMLDB_TYPE_INTEGER, '1', null, null, null, '1', 'lastattemptlock');
         if (!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
-        $field = new xmldb_field('displaycoursestructure', XMLDB_TYPE_INTEGER, '1', null, null, null, null, null, '1', 'displayattemptstatus');
+        $field = new xmldb_field('displaycoursestructure', XMLDB_TYPE_INTEGER, '1', null, null, null, '1', 'displayattemptstatus');
         if (!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
@@ -337,11 +337,11 @@ function xmldb_scorm_upgrade($oldversion) {
 
     if ($result && $oldversion < 2008090308) {
         $table = new xmldb_table('scorm');
-        $field = new xmldb_field('timeopen', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'height');
+        $field = new xmldb_field('timeopen', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'height');
         if (!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
-        $field = new xmldb_field('timeclose', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'timeopen');
+        $field = new xmldb_field('timeclose', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'timeopen');
         if (!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
@@ -404,7 +404,7 @@ function xmldb_scorm_upgrade($oldversion) {
 
     /// Rename field summary on table scorm to intro
         $table = new xmldb_table('scorm');
-        $field = new xmldb_field('summary', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null, 'reference');
+        $field = new xmldb_field('summary', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'reference');
 
     /// Launch rename field summary
         $dbman->rename_field($table, $field, 'intro');
@@ -417,7 +417,7 @@ function xmldb_scorm_upgrade($oldversion) {
 
     /// Define field introformat to be added to scorm
         $table = new xmldb_table('scorm');
-        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'intro');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
 
     /// Launch add field introformat
         $dbman->add_field($table, $field);

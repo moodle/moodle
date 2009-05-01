@@ -37,7 +37,7 @@ function xmldb_lesson_upgrade($oldversion) {
     /// Rename lesson->usegrademax to lesson->usemaxgrade. Some old sites can have it incorrect. MDL-13177
         if ($dbman->field_exists($table, $field) && !$dbman->field_exists($table, $field2)) {
         /// Set field specs
-            $field->set_attributes(XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, null, null, '0', 'ongoing');
+            $field->set_attributes(XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, '0', 'ongoing');
         /// Launch rename field usegrademax to usemaxgrade
             $dbman->rename_field($table, $field, 'usemaxgrade');
         }

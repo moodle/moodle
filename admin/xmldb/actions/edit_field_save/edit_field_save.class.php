@@ -49,8 +49,6 @@ class edit_field_save extends XMLDBAction {
             'binaryincorrectlength' => 'xmldb',
             'numberincorrectdecimals' => 'xmldb',
             'floatincorrectdecimals' => 'xmldb',
-            'enumvaluesincorrect' => 'xmldb',
-            'wronglengthforenum' => 'xmldb',
             'defaultincorrect' => 'xmldb',
             'administration' => ''
         ));
@@ -96,9 +94,6 @@ class edit_field_save extends XMLDBAction {
         $unsigned   = optional_param('unsigned', false, PARAM_BOOL);
         $notnull    = optional_param('notnull', false, PARAM_BOOL);
         $sequence   = optional_param('sequence', false, PARAM_BOOL);
-        $enum       = optional_param('enum', false, PARAM_BOOL);
-        $enumvalues = optional_param('enumvalues', 0, PARAM_CLEAN);
-        $enumvalues = trim($enumvalues);
         $default    = optional_param('default', NULL, PARAM_PATH);
         $default    = trim($default);
 
@@ -114,20 +109,13 @@ class edit_field_save extends XMLDBAction {
         if ($sequence) {
             $unsigned = true;
             $notnull  = true;
-            $enum     = false;
             $default  = NULL;
         }
         if ($type != XMLDB_TYPE_NUMBER && $type != XMLDB_TYPE_FLOAT) {
             $decimals = NULL;
         }
-        if ($type != XMLDB_TYPE_CHAR && $type != XMLDB_TYPE_TEXT) {
-            $enum = false;
-        }
         if ($type == XMLDB_TYPE_BINARY) {
             $default = NULL;
-        }
-        if (!$enum) {
-            $enumvalues = NULL;
         }
         if ($default === '') {
             $default = NULL;
@@ -232,43 +220,6 @@ class edit_field_save extends XMLDBAction {
                 $errors[] = $this->str['binaryincorrectlength'];
             }
         }
-    /// Enum checks
-        if ($enum) {
-            $enumerr = false;
-            $enumarr = explode(',',$enumvalues);
-            $maxlength = 0;
-            if ($enumarr) {
-                foreach ($enumarr as $key => $enumelement) {
-                /// Clear some spaces
-                    $enumarr[$key] = trim($enumelement);
-                    $enumelement = trim($enumelement);
-                /// Calculate needed length
-                    $le = strlen(str_replace("'", '', $enumelement));
-                    if ($le > $maxlength) {
-                        $maxlength = $le;
-                    }
-                /// Skip if under error
-                    if ($enumerr) {
-                        continue;
-                    }
-                /// Look for quoted strings
-                    if (substr($enumelement, 0, 1) != "'" ||
-                        substr($enumelement, -1, 1) != "'") {
-                        $enumerr = true;
-                    }
-                }
-            } else {
-                $enumerr = true;
-            }
-            if ($enumerr) {
-                $errors[] = $this->str['enumvaluesincorrect'];
-            } else {
-                $enumvalues = $enumarr;
-            }
-            if ($length < $maxlength) {
-                $errors[] = $this->str['wronglengthforenum'];
-            }
-        }
 
         if (!empty($errors)) {
             $tempfield = new xmldb_field($name);
@@ -278,8 +229,6 @@ class edit_field_save extends XMLDBAction {
             $tempfield->setUnsigned($unsigned);
             $tempfield->setNotNull($notnull);
             $tempfield->setSequence($sequence);
-            $tempfield->setEnum($enum);
-            $tempfield->setEnumValues($enumvalues);
             $tempfield->setDefault($default);
         /// Prepare the output
             $site = get_site();
@@ -323,8 +272,6 @@ class edit_field_save extends XMLDBAction {
             $field->setUnsigned($unsigned);
             $field->setNotNull($notnull);
             $field->setSequence($sequence);
-            $field->setEnum($enum);
-            $field->setEnumValues($enumvalues);
             $field->setDefault($default);
 
         /// If the hash has changed from the old one, change the version

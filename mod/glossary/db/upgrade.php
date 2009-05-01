@@ -102,9 +102,9 @@ function xmldb_glossary_upgrade($oldversion) {
 
     if ($result && $oldversion < 2009042000) {
 
-    /// Rename field definitionformat on table glossary_entries to NEWNAMEGOESHERE
+    /// Rename field definitionformat on table glossary_entries to definitionformat
         $table = new xmldb_table('glossary_entries');
-        $field = new xmldb_field('format', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'definition');
+        $field = new xmldb_field('format', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'definition');
 
     /// Launch rename field definitionformat
         $dbman->rename_field($table, $field, 'definitionformat');
@@ -117,7 +117,7 @@ function xmldb_glossary_upgrade($oldversion) {
 
     /// Define field definitiontrust to be added to glossary_entries
         $table = new xmldb_table('glossary_entries');
-        $field = new xmldb_field('definitiontrust', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'definitionformat');
+        $field = new xmldb_field('definitiontrust', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'definitionformat');
 
     /// Launch add field definitiontrust
         $dbman->add_field($table, $field);
@@ -130,7 +130,7 @@ function xmldb_glossary_upgrade($oldversion) {
 
     /// Rename field format on table glossary_comments to NEWNAMEGOESHERE
         $table = new xmldb_table('glossary_comments');
-        $field = new xmldb_field('format', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'entrycomment');
+        $field = new xmldb_field('format', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'entrycomment');
 
     /// Launch rename field format
         $dbman->rename_field($table, $field, 'entrycommentformat');
@@ -143,7 +143,7 @@ function xmldb_glossary_upgrade($oldversion) {
 
     /// Define field entrycommenttrust to be added to glossary_comments
         $table = new xmldb_table('glossary_comments');
-        $field = new xmldb_field('entrycommenttrust', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'entrycommentformat');
+        $field = new xmldb_field('entrycommenttrust', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'entrycommentformat');
 
     /// Conditionally launch add field entrycommenttrust
         if (!$dbman->field_exists($table, $field)) {
@@ -194,7 +194,7 @@ function xmldb_glossary_upgrade($oldversion) {
 
     /// Define field introformat to be added to glossary
         $table = new xmldb_table('glossary');
-        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'intro');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
 
     /// Conditionally launch add field introformat
         if (!$dbman->field_exists($table, $field)) {

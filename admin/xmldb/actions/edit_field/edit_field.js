@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -34,19 +34,16 @@
     /// Get the required fields
         var typeField         = document.getElementById('menutype');
         var sequenceField     = document.getElementById('menusequence');
-        var enumField         = document.getElementById('menuenum');
 
     /// Register the rest of events
         if (typeField.addEventListener) {
         /// Standard
             typeField.addEventListener('change', transformForm, false);
             sequenceField.addEventListener('change', transformForm, false);
-            enumField.addEventListener('change', transformForm, false);
         } else {
         /// IE 5.5
             typeField.attachEvent('onchange', transformForm);
             sequenceField.attachEvent('onchange', transformForm);
-            enumField.attachEvent('onchange', transformForm);
         }
     }
 
@@ -62,8 +59,6 @@ function transformForm(event) {
     var unsignedField     = document.getElementById('menuunsigned');
     var notnullField      = document.getElementById('menunotnull');
     var sequenceField     = document.getElementById('menusequence');
-    var enumField         = document.getElementById('menuenum');
-    var enumvaluesField   = document.getElementById('enumvalues');
     var defaultField      = document.getElementById('default');
 
     var lengthTip         = document.getElementById('lengthtip');
@@ -74,15 +69,7 @@ function transformForm(event) {
     unsignedField.disabled = false;
     notnullField.disabled = false;
     sequenceField.disabled = false;
-    enumField.disabled = false;
-    enumvaluesField.disabled = false;
     defaultField.disabled = false;
-
-/// Based on enum, disable some items
-    if (enumField.value == '0') {
-        enumvaluesField.disabled = true;
-        enumvaluesField.value = '';
-    };
 
 /// Based on sequence, disable some items
     if (sequenceField.value == '1') {
@@ -92,10 +79,6 @@ function transformForm(event) {
         notnullField.value = '1';
         defaultField.disabled = true;
         defaultField.value = '';
-        enumField.disabled = true;
-        enumField.value = '0';
-        enumvaluesField.disabled = true;
-        enumvaluesField.value = '';
     }
 
 
@@ -106,26 +89,14 @@ function transformForm(event) {
             decimalsTip.innerHTML = '';
             decimalsField.disabled = true;
             decimalsField.value = '';
-            enumField.disabled = true;
-            enumField.value = '0';
-            enumvaluesField.disabled = true;
-            enumvaluesField.value = '';
             break;
         case '2':  // XMLDB_TYPE_NUMBER
             lengthTip.innerHTML = ' 1...20';
             decimalsTip.innerHTML = ' 0...length or empty';
-            enumField.disabled = true;
-            enumField.value = '0';
-            enumvaluesField.disabled = true;
-            enumvaluesField.value = '';
             break;
         case '3':  // XMLDB_TYPE_FLOAT
             lengthTip.innerHTML = ' 1...20 or empty';
             decimalsTip.innerHTML = ' 0...length or empty';
-            enumField.disabled = true;
-            enumField.value = '0';
-            enumvaluesField.disabled = true;
-            enumvaluesField.value = '';
             break;
         case '4':  // XMLDB_TYPE_CHAR
             lengthTip.innerHTML = ' 1...255';
@@ -158,10 +129,6 @@ function transformForm(event) {
             unsignedField.value = '0';
             sequenceField.disabled = true;
             sequenceField.value = '0';
-            enumField.disabled = true;
-            enumField.value = '0';
-            enumvaluesField.disabled = true;
-            enumvaluesField.value = '';
             defaultField.disabled = true;
             defaultField.value = '';
             break;
@@ -176,10 +143,6 @@ function transformForm(event) {
             unsignedField.value = '0';
             sequenceField.disabled = true;
             sequenceField.value = '0';
-            enumField.disabled = true;
-            enumField.value = '0';
-            enumvaluesField.disabled = true;
-            enumvaluesField.value = '';
             defaultField.disabled = true;
             defaultField.value = '';
             break;

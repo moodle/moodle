@@ -37,15 +37,15 @@ function xmldb_main_upgrade($oldversion) {
         $table = new xmldb_table('upgrade_log');
 
     /// Adding fields to table upgrade_log
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('type', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('plugin', XMLDB_TYPE_CHAR, '100', null, null, null, null, null, null);
-        $table->add_field('version', XMLDB_TYPE_CHAR, '100', null, null, null, null, null, null);
-        $table->add_field('info', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('details', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
-        $table->add_field('backtrace', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('type', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('plugin', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+        $table->add_field('version', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+        $table->add_field('info', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('details', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
+        $table->add_field('backtrace', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
 
     /// Adding keys to table upgrade_log
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -141,7 +141,7 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Changing precision of field idnumber on table user to (255)
         $table = new xmldb_table('user');
-        $field = new xmldb_field('idnumber', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null, 'password');
+        $field = new xmldb_field('idnumber', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'password');
 
     /// Launch change of precision for field idnumber
         $dbman->change_field_precision($table, $field);
@@ -168,7 +168,7 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($result && $oldversion < 2008051203) {
         $table = new xmldb_table('mnet_enrol_course');
-        $field = new xmldb_field('sortorder', XMLDB_TYPE_INTEGER, '10', true, true, null, false, false, 0);
+        $field = new xmldb_field('sortorder', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
         $dbman->change_field_precision($table, $field);
         upgrade_main_savepoint($result, 2008051203);
     }
@@ -181,7 +181,7 @@ function xmldb_main_upgrade($oldversion) {
         // add field
         $field = new xmldb_field('tiuserid');
         if (!$dbman->field_exists($table, $field)) {
-            $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, 0, 'itemid');
+            $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'itemid');
             $dbman->add_field($table, $field);
         }
         // modify index
@@ -219,10 +219,10 @@ function xmldb_main_upgrade($oldversion) {
         $table = new xmldb_table('portfolio_instance');
 
     /// Adding fields to table portfolio_instance
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('plugin', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('visible', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '1');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('plugin', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('visible', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1');
 
     /// Adding keys to table portfolio_instance
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -235,10 +235,10 @@ function xmldb_main_upgrade($oldversion) {
         $table = new xmldb_table('portfolio_instance_config');
 
     /// Adding fields to table portfolio_instance_config
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('instance', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('value', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('instance', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('value', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
 
     /// Adding keys to table portfolio_instance_config
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -256,11 +256,11 @@ function xmldb_main_upgrade($oldversion) {
         $table = new xmldb_table('portfolio_instance_user');
 
     /// Adding fields to table portfolio_instance_user
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('instance', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('value', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+        $table->add_field('instance', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('value', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
 
     /// Adding keys to table portfolio_instance_user
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -279,8 +279,8 @@ function xmldb_main_upgrade($oldversion) {
     if ($result && $oldversion < 2008072400) {
     /// Create the database tables for message_processors
         $table = new xmldb_table('message_processors');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('name', XMLDB_TYPE_CHAR, '166', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '166', null, XMLDB_NOTNULL, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
@@ -291,21 +291,21 @@ function xmldb_main_upgrade($oldversion) {
 
     /// fields to rename
         $field = new xmldb_field('message');
-        $field->set_attributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, null);
+        $field->set_attributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null);
         $dbman->rename_field($table, $field, 'fullmessage');
         $field = new xmldb_field('format');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, null, null, null, null, '0', null);
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, null, null, '0', null);
         $dbman->rename_field($table, $field, 'fullmessageformat');
 
     /// new message fields
         $field = new xmldb_field('subject');
-        $field->set_attributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, null);
+        $field->set_attributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null);
         $dbman->add_field($table, $field);
         $field = new xmldb_field('fullmessagehtml');
-        $field->set_attributes(XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null, null);
+        $field->set_attributes(XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null);
         $dbman->add_field($table, $field);
         $field = new xmldb_field('smallmessage');
-        $field->set_attributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, null);
+        $field->set_attributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null);
         $dbman->add_field($table, $field);
 
 
@@ -317,29 +317,29 @@ function xmldb_main_upgrade($oldversion) {
 
     /// fields to rename
         $field = new xmldb_field('message');
-        $field->set_attributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, null);
+        $field->set_attributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null);
         $dbman->rename_field($table, $field, 'fullmessage');
         $field = new xmldb_field('format');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, null, null, null, null, '0', null);
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, null, null, '0', null);
         $dbman->rename_field($table, $field, 'fullmessageformat');
 
 
     /// new message fields
         $field = new xmldb_field('subject');
-        $field->set_attributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, null);
+        $field->set_attributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null);
         $dbman->add_field($table, $field);
         $field = new xmldb_field('fullmessagehtml');
-        $field->set_attributes(XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null, null);
+        $field->set_attributes(XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null);
         $dbman->add_field($table, $field);
         $field = new xmldb_field('smallmessage');
-        $field->set_attributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, null);
+        $field->set_attributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null);
         $dbman->add_field($table, $field);
 
     /// new table
         $table = new xmldb_table('message_working');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('unreadmessageid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('processorid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('unreadmessageid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('processorid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
@@ -352,7 +352,7 @@ function xmldb_main_upgrade($oldversion) {
     /// Define field enablecompletion to be added to course
         $table = new xmldb_table('course');
         $field = new xmldb_field('enablecompletion');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'defaultrole');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'defaultrole');
 
     /// Launch add field enablecompletion
         if (!$dbman->field_exists($table,$field)) {
@@ -362,7 +362,7 @@ function xmldb_main_upgrade($oldversion) {
     /// Define field completion to be added to course_modules
         $table = new xmldb_table('course_modules');
         $field = new xmldb_field('completion');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'groupmembersonly');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'groupmembersonly');
 
     /// Launch add field completion
         if (!$dbman->field_exists($table,$field)) {
@@ -371,7 +371,7 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Define field completiongradeitemnumber to be added to course_modules
         $field = new xmldb_field('completiongradeitemnumber');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null, 'completion');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, 'completion');
 
     /// Launch add field completiongradeitemnumber
         if (!$dbman->field_exists($table,$field)) {
@@ -380,7 +380,7 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Define field completionview to be added to course_modules
         $field = new xmldb_field('completionview');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'completiongradeitemnumber');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'completiongradeitemnumber');
 
     /// Launch add field completionview
         if (!$dbman->field_exists($table,$field)) {
@@ -389,7 +389,7 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Define field completionexpected to be added to course_modules
         $field = new xmldb_field('completionexpected');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'completionview');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'completionview');
 
     /// Launch add field completionexpected
         if (!$dbman->field_exists($table,$field)) {
@@ -401,12 +401,12 @@ function xmldb_main_upgrade($oldversion) {
         if (!$dbman->table_exists($table)) {
 
         /// Adding fields to table course_modules_completion
-            $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-            $table->add_field('coursemoduleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-            $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-            $table->add_field('completionstate', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-            $table->add_field('viewed', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, null, null, null);
-            $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+            $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+            $table->add_field('coursemoduleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+            $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+            $table->add_field('completionstate', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+            $table->add_field('viewed', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, null);
+            $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
 
         /// Adding keys to table course_modules_completion
             $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -429,13 +429,13 @@ function xmldb_main_upgrade($oldversion) {
         $table = new xmldb_table('portfolio_log');
 
     /// Adding fields to table portfolio_log
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('time', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('portfolio', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('caller_class', XMLDB_TYPE_CHAR, '150', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('caller_file', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('caller_sha1', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('time', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('portfolio', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('caller_class', XMLDB_TYPE_CHAR, '150', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('caller_file', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('caller_sha1', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
 
     /// Adding keys to table portfolio_log
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -462,10 +462,10 @@ function xmldb_main_upgrade($oldversion) {
         $table = new xmldb_table('message_providers');
 
     /// Adding fields to table message_providers
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('name', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('component', XMLDB_TYPE_CHAR, '200', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('capability', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('component', XMLDB_TYPE_CHAR, '200', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('capability', XMLDB_TYPE_CHAR, '255', null, null, null, null);
 
     /// Adding keys to table message_providers
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -484,20 +484,20 @@ function xmldb_main_upgrade($oldversion) {
         $table = new xmldb_table('files');
 
     /// Adding fields to table files
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('contenthash', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('pathnamehash', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('filearea', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('filepath', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('filename', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-        $table->add_field('filesize', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('mimetype', XMLDB_TYPE_CHAR, '100', null, null, null, null, null, null);
-        $table->add_field('status', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('contenthash', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('pathnamehash', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('filearea', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('filepath', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('filename', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('filesize', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('mimetype', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+        $table->add_field('status', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
 
     /// Adding keys to table files
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -521,8 +521,8 @@ function xmldb_main_upgrade($oldversion) {
         $table = new xmldb_table('files_cleanup');
 
     /// Adding fields to table files_cleanup
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('contenthash', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('contenthash', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null);
 
     /// Adding keys to table files_cleanup
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -556,7 +556,7 @@ function xmldb_main_upgrade($oldversion) {
         $table = new xmldb_table('mnet_application');
         $field = new xmldb_field('sso_jump_url');
         if (!$dbman->field_exists($table, $field)) {
-            $field->set_attributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+            $field->set_attributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
             $dbman->add_field($table, $field);
             $result = $DB->set_field('mnet_application', 'sso_jump_url', '/auth/mnet/jump.php', array('name' => 'moodle'));
             $result = $result && $DB->set_field('mnet_application', 'sso_jump_url', '/auth/xmlrpc/jump.php', array('name' => 'mahara'));
@@ -572,8 +572,8 @@ function xmldb_main_upgrade($oldversion) {
         $table = new xmldb_table('portfolio_tempdata');
 
     /// Adding fields to table portfolio_tempdata
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('data', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('data', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
 
     /// Adding keys to table portfolio_tempdata
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -592,7 +592,7 @@ function xmldb_main_upgrade($oldversion) {
         $DB->delete_records('portfolio_tempdata'); // there shouldnt' be any, and it will cause problems with this upgrade.
     /// Define field expirytime to be added to portfolio_tempdata
         $table = new xmldb_table('portfolio_tempdata');
-        $field = new xmldb_field('expirytime', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'data');
+        $field = new xmldb_field('expirytime', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, 'data');
 
     /// Conditionally launch add field expirytime
         if (!$dbman->field_exists($table, $field)) {
@@ -606,49 +606,49 @@ function xmldb_main_upgrade($oldversion) {
 /// Changing the type of all the columns that the question bank uses to store grades to be NUMBER(12, 7).
     if ($result && $oldversion < 2008081500) {
         $table = new xmldb_table('question');
-        $field = new xmldb_field('defaultgrade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, null, null, 'generalfeedback');
+        $field = new xmldb_field('defaultgrade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'generalfeedback');
         $dbman->change_field_type($table, $field);
         upgrade_main_savepoint($result, 2008081500);
     }
 
     if ($result && $oldversion < 2008081501) {
         $table = new xmldb_table('question');
-        $field = new xmldb_field('penalty', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, null, null, 'defaultgrade');
+        $field = new xmldb_field('penalty', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'defaultgrade');
         $dbman->change_field_type($table, $field);
         upgrade_main_savepoint($result, 2008081501);
     }
 
     if ($result && $oldversion < 2008081502) {
         $table = new xmldb_table('question_answers');
-        $field = new xmldb_field('fraction', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, null, null, 'answer');
+        $field = new xmldb_field('fraction', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'answer');
         $dbman->change_field_type($table, $field);
         upgrade_main_savepoint($result, 2008081502);
     }
 
     if ($result && $oldversion < 2008081503) {
         $table = new xmldb_table('question_sessions');
-        $field = new xmldb_field('sumpenalty', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, null, null, 'newgraded');
+        $field = new xmldb_field('sumpenalty', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'newgraded');
         $dbman->change_field_type($table, $field);
         upgrade_main_savepoint($result, 2008081503);
     }
 
     if ($result && $oldversion < 2008081504) {
         $table = new xmldb_table('question_states');
-        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, null, null, 'event');
+        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'event');
         $dbman->change_field_type($table, $field);
         upgrade_main_savepoint($result, 2008081504);
     }
 
     if ($result && $oldversion < 2008081505) {
         $table = new xmldb_table('question_states');
-        $field = new xmldb_field('raw_grade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, null, null, 'grade');
+        $field = new xmldb_field('raw_grade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'grade');
         $dbman->change_field_type($table, $field);
         upgrade_main_savepoint($result, 2008081505);
     }
 
     if ($result && $oldversion < 2008081506) {
         $table = new xmldb_table('question_states');
-        $field = new xmldb_field('penalty', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, null, null, 'raw_grade');
+        $field = new xmldb_field('penalty', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'raw_grade');
         $dbman->change_field_type($table, $field);
         upgrade_main_savepoint($result, 2008081506);
     }
@@ -665,7 +665,7 @@ function xmldb_main_upgrade($oldversion) {
     if ($result && $oldversion < 2008081900) {
     /// Define field userid to be added to portfolio_tempdata
         $table = new xmldb_table('portfolio_tempdata');
-        $field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null, 'expirytime');
+        $field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, 'expirytime');
 
     /// Conditionally launch add field userid
         if (!$dbman->field_exists($table, $field)) {
@@ -675,7 +675,7 @@ function xmldb_main_upgrade($oldversion) {
     /// now change it to be notnull
 
     /// Changing nullability of field userid on table portfolio_tempdata to not null
-        $field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'expirytime');
+        $field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, 'expirytime');
 
     /// Launch change of nullability for field userid
         $dbman->change_field_notnull($table, $field);
@@ -703,10 +703,10 @@ function xmldb_main_upgrade($oldversion) {
         $table = new xmldb_table('repository');
 
     /// Adding fields to table repository
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('type', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('visible', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, null, null, '1');
-        $table->add_field('sortorder', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('type', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('visible', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, '1');
+        $table->add_field('sortorder', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
 
     /// Adding keys to table repository
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -719,15 +719,15 @@ function xmldb_main_upgrade($oldversion) {
         $table = new xmldb_table('repository_instances');
 
     /// Adding fields to table repository_instances
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('typeid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('username', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
-        $table->add_field('password', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
-        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('typeid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('username', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('password', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
 
     /// Adding keys to table repository_instances
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -741,10 +741,10 @@ function xmldb_main_upgrade($oldversion) {
         $table = new xmldb_table('repository_instance_config');
 
     /// Adding fields to table repository_instance_config
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('instanceid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('value', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('instanceid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('value', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
 
     /// Adding keys to table repository_instance_config
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -764,7 +764,7 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Define field flagged to be added to question_sessions
         $table = new xmldb_table('question_sessions');
-        $field = new xmldb_field('flagged', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, null, null, '0', 'manualcomment');
+        $field = new xmldb_field('flagged', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'manualcomment');
 
     /// Conditionally launch add field flagged
         if (!$dbman->field_exists($table, $field)) {
@@ -779,7 +779,7 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Changing precision of field parent_type on table mnet_rpc to (20)
         $table = new xmldb_table('mnet_rpc');
-        $field = new xmldb_field('parent_type', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, null, 'xmlrpc_path');
+        $field = new xmldb_field('parent_type', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, 'xmlrpc_path');
 
     /// Launch change of precision for field parent_type
         $dbman->change_field_precision($table, $field);
@@ -864,7 +864,7 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Define field readonly to be added to repository_instances
         $table = new xmldb_table('repository_instances');
-        $field = new xmldb_field('readonly', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'timemodified');
+        $field = new xmldb_field('readonly', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'timemodified');
 
     /// Conditionally launch add field readonly
         if (!$dbman->field_exists($table, $field)) {
@@ -886,7 +886,7 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Changing the default of field lang on table user to en_utf8
         $table = new xmldb_table('user');
-        $field = new xmldb_field('lang', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, 'en_utf8', 'country');
+        $field = new xmldb_field('lang', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, 'en_utf8', 'country');
 
     /// Launch change of default for field lang
         $dbman->change_field_default($table, $field);
@@ -912,9 +912,9 @@ function xmldb_main_upgrade($oldversion) {
         $table = new xmldb_table('role_context_levels');
 
     /// Adding fields to table role_context_levels
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('roleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('contextlevel', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('roleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('contextlevel', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
 
     /// Adding keys to table role_context_levels
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1092,7 +1092,7 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Changing precision of field shortname on table course_request to (100)
         $table = new xmldb_table('course_request');
-        $field = new xmldb_field('shortname', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, null, null, 'fullname');
+        $field = new xmldb_field('shortname', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'fullname');
 
     /// Launch change of precision for field shortname
         $dbman->change_field_precision($table, $field);
@@ -1124,7 +1124,7 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Changing precision of field shortname on table mnet_enrol_course to (100)
         $table = new xmldb_table('mnet_enrol_course');
-        $field = new xmldb_field('shortname', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, null, null, 'fullname');
+        $field = new xmldb_field('shortname', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'fullname');
 
     /// Launch change of precision for field shortname
         $dbman->change_field_precision($table, $field);
@@ -1137,7 +1137,7 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Define field availablefrom to be added to course_modules
         $table = new xmldb_table('course_modules');
-        $field = new xmldb_field('availablefrom', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'completionexpected');
+        $field = new xmldb_field('availablefrom', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'completionexpected');
 
     /// Conditionally launch add field availablefrom
         if (!$dbman->field_exists($table, $field)) {
@@ -1145,7 +1145,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
     /// Define field availableuntil to be added to course_modules
-        $field = new xmldb_field('availableuntil', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'availablefrom');
+        $field = new xmldb_field('availableuntil', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'availablefrom');
 
     /// Conditionally launch add field availableuntil
         if (!$dbman->field_exists($table, $field)) {
@@ -1153,7 +1153,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
     /// Define field showavailability to be added to course_modules
-        $field = new xmldb_field('showavailability', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'availableuntil');
+        $field = new xmldb_field('showavailability', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'availableuntil');
 
     /// Conditionally launch add field showavailability
         if (!$dbman->field_exists($table, $field)) {
@@ -1164,13 +1164,13 @@ function xmldb_main_upgrade($oldversion) {
         $table = new xmldb_table('course_modules_availability');
 
     /// Adding fields to table course_modules_availability
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('coursemoduleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('sourcecmid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-        $table->add_field('requiredcompletion', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, null, null, null);
-        $table->add_field('gradeitemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-        $table->add_field('grademin', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null);
-        $table->add_field('grademax', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('coursemoduleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('sourcecmid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('requiredcompletion', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('gradeitemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('grademin', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null);
+        $table->add_field('grademax', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null);
 
     /// Adding keys to table course_modules_availability
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1224,7 +1224,7 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Changing precision of field ip on table log to (45)
         $table = new xmldb_table('log');
-        $field = new xmldb_field('ip', XMLDB_TYPE_CHAR, '45', null, XMLDB_NOTNULL, null, null, null, null, 'userid');
+        $field = new xmldb_field('ip', XMLDB_TYPE_CHAR, '45', null, XMLDB_NOTNULL, null, null, 'userid');
 
     /// Launch change of precision for field ip
         $dbman->change_field_precision($table, $field);
@@ -1237,7 +1237,7 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Changing precision of field lastip on table user to (45)
         $table = new xmldb_table('user');
-        $field = new xmldb_field('lastip', XMLDB_TYPE_CHAR, '45', null, XMLDB_NOTNULL, null, null, null, null, 'currentlogin');
+        $field = new xmldb_field('lastip', XMLDB_TYPE_CHAR, '45', null, XMLDB_NOTNULL, null, null, 'currentlogin');
 
     /// Launch change of precision for field lastip
         $dbman->change_field_precision($table, $field);
@@ -1250,7 +1250,7 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Changing precision of field ip_address on table mnet_host to (45)
         $table = new xmldb_table('mnet_host');
-        $field = new xmldb_field('ip_address', XMLDB_TYPE_CHAR, '45', null, XMLDB_NOTNULL, null, null, null, null, 'wwwroot');
+        $field = new xmldb_field('ip_address', XMLDB_TYPE_CHAR, '45', null, XMLDB_NOTNULL, null, null, 'wwwroot');
 
     /// Launch change of precision for field ip_address
         $dbman->change_field_precision($table, $field);
@@ -1263,7 +1263,7 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Changing precision of field ip on table mnet_log to (45)
         $table = new xmldb_table('mnet_log');
-        $field = new xmldb_field('ip', XMLDB_TYPE_CHAR, '45', null, XMLDB_NOTNULL, null, null, null, null, 'userid');
+        $field = new xmldb_field('ip', XMLDB_TYPE_CHAR, '45', null, XMLDB_NOTNULL, null, null, 'userid');
 
     /// Launch change of precision for field ip
         $dbman->change_field_precision($table, $field);
@@ -1291,7 +1291,7 @@ function xmldb_main_upgrade($oldversion) {
     /// Changing nullability of field configdata on table block_instance to null
         $table = new xmldb_table('block_instance');
         $field = new xmldb_field('configdata');
-        $field->set_attributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'visible');
+        $field->set_attributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'visible');
 
     /// Launch change of nullability for field configdata
         $dbman->change_field_notnull($table, $field);
@@ -1333,13 +1333,13 @@ function xmldb_main_upgrade($oldversion) {
         $table = new xmldb_table('config_log');
 
     /// Adding fields to table config_log
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('plugin', XMLDB_TYPE_CHAR, '100', null, null, null, null, null, null);
-        $table->add_field('name', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('value', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
-        $table->add_field('oldvalue', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('plugin', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('value', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
+        $table->add_field('oldvalue', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
 
     /// Adding keys to table config_log
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1377,15 +1377,15 @@ function xmldb_main_upgrade($oldversion) {
         $table = new xmldb_table('sessions');
 
     /// Adding fields to table sessions
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('state', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('sid', XMLDB_TYPE_CHAR, '128', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('sessdata', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
-        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('firstip', XMLDB_TYPE_CHAR, '45', null, null, null, null, null, null);
-        $table->add_field('lastip', XMLDB_TYPE_CHAR, '45', null, null, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('state', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('sid', XMLDB_TYPE_CHAR, '128', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('sessdata', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('firstip', XMLDB_TYPE_CHAR, '45', null, null, null, null);
+        $table->add_field('lastip', XMLDB_TYPE_CHAR, '45', null, null, null, null);
 
     /// Adding keys to table sessions
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1411,15 +1411,15 @@ function xmldb_main_upgrade($oldversion) {
         $table = new xmldb_table('upgrade_log');
 
     /// Adding fields to table upgrade_log
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('type', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('plugin', XMLDB_TYPE_CHAR, '100', null, null, null, null, null, null);
-        $table->add_field('version', XMLDB_TYPE_CHAR, '100', null, null, null, null, null, null);
-        $table->add_field('info', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('details', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
-        $table->add_field('backtrace', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('type', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('plugin', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+        $table->add_field('version', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+        $table->add_field('info', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('details', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
+        $table->add_field('backtrace', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
 
     /// Adding keys to table upgrade_log
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1462,7 +1462,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     /// Define field backuptype to be added to backup_log
         $table = new XMLDBTable('backup_log');
         $field = new XMLDBField('backuptype');
-        $field = new xmldb_field('backuptype', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, null, null, 'info');
+        $field = new xmldb_field('backuptype', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, 'info');
     /// Conditionally Launch add field backuptype and set all old records as 'scheduledbackup' records.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
@@ -1504,9 +1504,9 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $table = new xmldb_table('role_allow_switch');
 
     /// Adding fields to table role_allow_switch
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('roleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('allowswitch', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('roleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('allowswitch', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
 
     /// Adding keys to table role_allow_switch
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1550,11 +1550,11 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table = new xmldb_table('filter_active');
 
     /// Adding fields to table filter_active
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('filter', XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('active', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('sortorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('filter', XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('active', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('sortorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
 
     /// Adding keys to table filter_active
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1578,11 +1578,11 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table = new xmldb_table('filter_config');
 
     /// Adding fields to table filter_config
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('filter', XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('value', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('filter', XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('value', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
 
     /// Adding keys to table filter_config
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1673,31 +1673,31 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     /// Changing list of values (enum) of field stattype on table stats_daily to none
         $table = new xmldb_table('stats_daily');
-        $field = new xmldb_field('stattype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'activity', 'roleid');
+        $field = new xmldb_field('stattype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'activity', 'roleid');
 
     /// Launch change of list of values for field stattype
-        $dbman->change_field_enum($table, $field);
+        $dbman->drop_enum_from_field($table, $field);
 
     /// Changing list of values (enum) of field stattype on table stats_weekly to none
         $table = new xmldb_table('stats_weekly');
-        $field = new xmldb_field('stattype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'activity', 'roleid');
+        $field = new xmldb_field('stattype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'activity', 'roleid');
 
     /// Launch change of list of values for field stattype
-        $dbman->change_field_enum($table, $field);
+        $dbman->drop_enum_from_field($table, $field);
 
     /// Changing list of values (enum) of field stattype on table stats_monthly to none
         $table = new xmldb_table('stats_monthly');
-        $field = new xmldb_field('stattype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'activity', 'roleid');
+        $field = new xmldb_field('stattype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'activity', 'roleid');
 
     /// Launch change of list of values for field stattype
-        $dbman->change_field_enum($table, $field);
+        $dbman->drop_enum_from_field($table, $field);
 
     /// Changing list of values (enum) of field publishstate on table post to none
         $table = new xmldb_table('post');
-        $field = new xmldb_field('publishstate', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'draft', 'attachment');
+        $field = new xmldb_field('publishstate', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'draft', 'attachment');
 
     /// Launch change of list of values for field publishstate
-        $dbman->change_field_enum($table, $field);
+        $dbman->drop_enum_from_field($table, $field);
 
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2009042700);

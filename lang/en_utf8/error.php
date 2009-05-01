@@ -195,7 +195,6 @@ $string['ddlfieldnotexist'] = 'Field \"$a->fieldname\" does not exist in table \
 $string['ddltablealreadyexists'] = 'Table \"$a\" already exists';
 $string['ddltablenotexist'] = 'Table \"$a\" does not exist';
 $string['ddlunknownerror'] = 'Unknown DDL library error';
-$string['ddlunsupportedenums'] = 'Field \"$a\" contains enum info. Enums support has been dropped in Moodle 2.0. Please modify your code to avoid them completely. If you are already using them, please use \$dbman->change_field_enum(\$table, \$field); in your upgrade scripts to drop them ASAP';
 $string['ddlxmlfileerror'] = 'XML database file errors found';
 $string['dmlreadexception'] = 'Error reading from database';
 $string['dmlwriteexception'] = 'Error writing to database';

@@ -34,25 +34,21 @@ class xmldb_field extends xmldb_object {
     var $notnull;
     var $default;
     var $sequence;
-    var $enum;
-    var $enumvalues;
     var $decimals;
 
     /**
      * Creates one new xmldb_field
      */
-    function __construct($name, $type=null, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
+    function __construct($name, $type=null, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $default=null, $previous=null) {
         $this->type = NULL;
         $this->length = NULL;
         $this->unsigned = true;
         $this->notnull = false;
         $this->default = NULL;
         $this->sequence = false;
-        $this->enum = false;
-        $this->enumvalues = NULL;
         $this->decimals = NULL;
         parent::__construct($name);
-        $this->set_attributes($type, $precision, $unsigned, $notnull, $sequence, $enum, $enumvalues, $default, $previous);
+        $this->set_attributes($type, $precision, $unsigned, $notnull, $sequence, $default, $previous);
     }
 
 /// TODO: Delete for 2.1 (deprecated in 2.0).
@@ -61,8 +57,11 @@ class xmldb_field extends xmldb_object {
     function setAttributes($type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
 
         debugging('XMLDBField->setAttributes() has been deprecated in Moodle 2.0. Will be out in Moodle 2.1. Please use xmldb_field->set_attributes() instead.', DEBUG_DEVELOPER);
+        if ($enum) {
+            debugging('Also, ENUMs support has been dropped in Moodle 2.0. Your fields specs are incorrect because you are trying to introduce one new ENUM. Created DB estructures will ignore that.');
+        }
 
-        return $this->set_attributes($type, $precision, $unsigned, $notnull, $sequence, $enum, $enumvalues, $default, $previous);
+        return $this->set_attributes($type, $precision, $unsigned, $notnull, $sequence, $default, $previous);
     }
 /// Deprecated API ends here
 
@@ -74,11 +73,9 @@ class xmldb_field extends xmldb_object {
      * @param string unsigned XMLDB_UNSIGNED or null (or false)
      * @param string notnull XMLDB_NOTNULL or null (or false)
      * @param string sequence XMLDB_SEQUENCE or null (or false)
-     * @param string enum XMLDB_ENUM or null (or false)
-     * @param array enumvalues an array of possible values if XMLDB_ENUM is set
      * @param string default meaningful default o null (or false)
      */
-    function set_attributes($type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
+    function set_attributes($type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $default=null, $previous=null) {
         $this->type = $type;
     /// Try to split the precision into length and decimals and apply
     /// each one as needed
@@ -93,18 +90,6 @@ class xmldb_field extends xmldb_object {
         $this->unsigned = !empty($unsigned) ? true : false;
         $this->notnull = !empty($notnull) ? true : false;
         $this->sequence = !empty($sequence) ? true : false;
-        $this->enum = !empty($enum) ? true : false;
-    /// Accept both quoted and non-quoted vales (quoting them)a
-        if (is_array($enumvalues)) {
-            $this->enumvalues = array();
-            foreach ($enumvalues as $value) {
-            /// trim each value quotes
-                $value = trim($value, "'");
-            /// add them back
-                $value = "'" . $value . "'";
-                $this->enumvalues[] = $value;
-            }
-        }
         $this->setDefault($default);
 
         $this->previous = $previous;
@@ -150,20 +135,6 @@ class xmldb_field extends xmldb_object {
      */
     function getSequence() {
         return $this->sequence;
-    }
-
-    /**
-     * Get the enum
-     */
-    function getEnum() {
-        return $this->enum;
-    }
-
-    /**
-     * Get the enumvalues
-     */
-    function getEnumValues() {
-        return $this->enumvalues;
     }
 
     /**
@@ -216,29 +187,6 @@ class xmldb_field extends xmldb_object {
     }
 
     /**
-     * Set the field enum
-     */
-    function setEnum($enum=true) {
-        $this->enum = $enum;
-    }
-
-    /**
-     * Set the field enumvalues, quoting unquoted values
-     */
-    function setEnumValues($enumvalues) {
-        if (is_array($enumvalues)) {
-            $this->enumvalues = array();
-            foreach ($enumvalues as $value) {
-            /// trim each value quotes
-                $value = trim($value, "'");
-            /// add them back
-                $value = "'" . $value . "'";
-                $this->enumvalues[] = $value;
-            }
-        }
-    }
-
-    /**
      * Set the field default
      */
     function setDefault($default) {
@@ -265,8 +213,7 @@ class xmldb_field extends xmldb_object {
     /// $GLOBALS['traverse_array']="";              //Debug
 
     /// Process table attributes (name, type, length, unsigned,
-    /// notnull, sequence, enum, enumvalues, decimals, comment,
-    /// previous, next)
+    /// notnull, sequence, decimals, comment, previous, next)
         if (isset($xmlarr['@']['NAME'])) {
             $this->name = trim($xmlarr['@']['NAME']);
         } else {
@@ -366,62 +313,6 @@ class xmldb_field extends xmldb_object {
 
         if (isset($xmlarr['@']['DEFAULT'])) {
             $this->setDefault(trim($xmlarr['@']['DEFAULT']));
-        }
-
-        if (isset($xmlarr['@']['ENUM'])) {
-            $enum = strtolower(trim($xmlarr['@']['ENUM']));
-            if ($enum == 'true') {
-                $this->enum = true;
-            } else if ($enum == 'false') {
-                $this->enum = false;
-            } else {
-                $this->errormsg = 'Incorrect ENUM attribute (true/false allowed)';
-                $this->debug($this->errormsg);
-                $result = false;
-            }
-        }
-
-        if (isset($xmlarr['@']['ENUMVALUES'])) {
-            $enumvalues = trim($xmlarr['@']['ENUMVALUES']);
-            if (!$this->enum) {
-                $this->errormsg = 'Wrong ENUMVALUES attribute (not ENUM)';
-                $this->debug($this->errormsg);
-                $result = false;
-                $this->enumvalues = $enumvalues;
-            } else {
-            /// Check we have a valid list (comma separated of quoted values)
-                $enumarr = explode(',',$enumvalues);
-                if ($enumarr) {
-                    foreach ($enumarr as $key => $enumelement) {
-                    /// Clear some spaces
-                        $enumarr[$key] = trim($enumelement);
-                        $enumelement = trim($enumelement);
-                    /// Skip if under error
-                        if (!$result) {
-                            continue;
-                        }
-                    /// Look for quoted strings
-                        if (substr($enumelement, 0, 1) != "'" ||
-                            substr($enumelement, -1, 1) != "'") {
-                            $this->errormsg = 'Incorrect ENUMVALUES attribute (some value is not properly quoted)';
-                            $this->debug($this->errormsg);
-                            $result = false;
-                        }
-                    }
-                } else {
-                    $this->errormsg = 'Incorrect ENUMVALUES attribute (comma separated of quoted values)';
-                    $this->debug($this->errormsg);
-                    $result = false;
-                }
-            }
-        } else if ($this->enum) {
-            $this->errormsg = 'Incorrect ENUMVALUES attribute (field is not declared as ENUM)';
-            $this->debug($this->errormsg);
-            $result = false;
-        }
-    /// Finally, set the value
-        if ($this->enum) {
-            $this->enumvalues = $enumarr;
         }
 
         $decimals = NULL;
@@ -555,9 +446,6 @@ class xmldb_field extends xmldb_object {
             $key = $this->name . $this->type . $this->length .
                    $this->unsigned . $this->notnull . $this->sequence .
                    $this->decimals . $this->comment;
-            if ($this->enum) {
-                $key .= implode(', ',$this->enumvalues);
-            }
             $this->hash = md5($key);
         }
     }
@@ -602,15 +490,6 @@ class xmldb_field extends xmldb_object {
             $sequence = 'false';
         }
         $o.= ' SEQUENCE="' . $sequence . '"';
-        if ($this->enum) {
-            $enum = 'true';
-        } else {
-            $enum = 'false';
-        }
-        $o.= ' ENUM="' . $enum . '"';
-        if ($this->enum) {
-            $o.= ' ENUMVALUES="' . implode(', ', $this->enumvalues) . '"';
-        }
         if ($this->decimals !== NULL) {
             $o.= ' DECIMALS="' . $this->decimals . '"';
         }
@@ -745,11 +624,6 @@ class xmldb_field extends xmldb_object {
         /// Sequence fields are always unsigned
             $this->unsigned = true;
         }
-    /// Calculate the enum and enumvalues field
-        if ($adofield->type == 'enum') {
-            $this->enum = true;
-            $this->enumvalues = $adofield->enums;
-        }
     /// Some more fields
         $this->loaded = true;
         $this->changed = true;
@@ -823,20 +697,6 @@ class xmldb_field extends xmldb_object {
         } else {
             $result .= 'null, ';
         }
-    /// Enum
-        $enum = $this->getEnum();
-        if (!empty($enum)) {
-            $result .= 'XMLDB_ENUM' . ', ';
-        } else {
-            $result .= 'null, ';
-        }
-    /// Enumvalues
-        $enumvalues = $this->getEnumValues();
-        if (!empty($enumvalues)) {
-            $result .= 'array(' . implode(', ', $enumvalues) . '), ';
-        } else {
-            $result .= 'null, ';
-        }
     /// Default
         $default =  $this->getDefault();
         if ($default !== null && !$this->getSequence()) {
@@ -883,10 +743,6 @@ class xmldb_field extends xmldb_object {
         if ($this->type == XMLDB_TYPE_TEXT ||
             $this->type == XMLDB_TYPE_BINARY) {
                 $o .= ' (' . $this->length . ')';
-        }
-    /// enum
-        if ($this->enum) {
-            $o .= ' enum(' . implode(', ', $this->enumvalues) . ')';
         }
     /// unsigned
         if ($this->type == XMLDB_TYPE_INTEGER ||

@@ -34,9 +34,9 @@ function xmldb_quiz_upgrade($oldversion) {
         $table = new xmldb_table('quiz_report');
 
     /// Adding fields to table quiz_report
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
-        $table->add_field('displayorder', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('displayorder', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
 
     /// Adding keys to table quiz_report
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -82,7 +82,7 @@ function xmldb_quiz_upgrade($oldversion) {
 
     /// Define field lastcron to be added to quiz_report
         $table = new xmldb_table('quiz_report');
-        $field = new xmldb_field('lastcron', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'displayorder');
+        $field = new xmldb_field('lastcron', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'displayorder');
 
     /// Conditionally launch add field lastcron
         if (!$dbman->field_exists($table, $field)) {
@@ -90,7 +90,7 @@ function xmldb_quiz_upgrade($oldversion) {
         }
 
     /// Define field cron to be added to quiz_report
-        $field = new xmldb_field('cron', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'lastcron');
+        $field = new xmldb_field('cron', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'lastcron');
 
     /// Conditionally launch add field cron
         if (!$dbman->field_exists($table, $field)) {
@@ -123,49 +123,49 @@ function xmldb_quiz_upgrade($oldversion) {
     /// Changing the type of all the columns that store grades to be NUMBER(10, 5) or similar.
     if ($result && $oldversion < 2008081501) {
         $table = new xmldb_table('quiz');
-        $field = new xmldb_field('sumgrades', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null, 'questions');
+        $field = new xmldb_field('sumgrades', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, 'questions');
         $dbman->change_field_type($table, $field);
         upgrade_mod_savepoint($result, 2008081501, 'quiz');
     }
 
     if ($result && $oldversion < 2008081502) {
         $table = new xmldb_table('quiz');
-        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null, 'sumgrades');
+        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, 'sumgrades');
         $dbman->change_field_type($table, $field);
         upgrade_mod_savepoint($result, 2008081502, 'quiz');
     }
 
     if ($result && $oldversion < 2008081503) {
         $table = new xmldb_table('quiz_attempts');
-        $field = new xmldb_field('sumgrades', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null, 'attempt');
+        $field = new xmldb_field('sumgrades', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, 'attempt');
         $dbman->change_field_type($table, $field);
         upgrade_mod_savepoint($result, 2008081503, 'quiz');
     }
 
     if ($result && $oldversion < 2008081504) {
         $table = new xmldb_table('quiz_feedback');
-        $field = new xmldb_field('mingrade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null, 'feedbacktext');
+        $field = new xmldb_field('mingrade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, 'feedbacktext');
         $dbman->change_field_type($table, $field);
         upgrade_mod_savepoint($result, 2008081504, 'quiz');
     }
 
     if ($result && $oldversion < 2008081505) {
         $table = new xmldb_table('quiz_feedback');
-        $field = new xmldb_field('maxgrade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null, 'mingrade');
+        $field = new xmldb_field('maxgrade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, 'mingrade');
         $dbman->change_field_type($table, $field);
         upgrade_mod_savepoint($result, 2008081505, 'quiz');
     }
 
     if ($result && $oldversion < 2008081506) {
         $table = new xmldb_table('quiz_grades');
-        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null, 'userid');
+        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, 'userid');
         $dbman->change_field_type($table, $field);
         upgrade_mod_savepoint($result, 2008081506, 'quiz');
     }
 
     if ($result && $oldversion < 2008081507) {
         $table = new xmldb_table('quiz_question_instances');
-        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, null, null, 'question');
+        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'question');
         $dbman->change_field_type($table, $field);
         upgrade_mod_savepoint($result, 2008081507, 'quiz');
     }
@@ -201,7 +201,7 @@ function xmldb_quiz_upgrade($oldversion) {
 
     /// Define field lastcron to be added to quiz_report
         $table = new xmldb_table('quiz_report');
-        $field = new xmldb_field('capability', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null, 'cron');
+        $field = new xmldb_field('capability', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'cron');
 
     /// Conditionally launch add field lastcron
         if (!$dbman->field_exists($table, $field)) {
@@ -216,7 +216,7 @@ function xmldb_quiz_upgrade($oldversion) {
 
     /// Define field showuserpicture to be added to quiz
         $table = new xmldb_table('quiz');
-        $field = new xmldb_field('showuserpicture', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, '0', 'delay2');
+        $field = new xmldb_field('showuserpicture', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'delay2');
 
     /// Conditionally launch add field showuserpicture
         if (!$dbman->field_exists($table, $field)) {
@@ -257,7 +257,7 @@ function xmldb_quiz_upgrade($oldversion) {
     if ($result && $oldversion < 2009031000) {
     /// Add new questiondecimaldigits setting, separate form the overall decimaldigits one.
         $table = new xmldb_table('quiz');
-        $field = new xmldb_field('questiondecimalpoints', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, '2', 'decimalpoints');
+        $field = new xmldb_field('questiondecimalpoints', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '2', 'decimalpoints');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -280,7 +280,7 @@ function xmldb_quiz_upgrade($oldversion) {
 
     /// Define field introformat to be added to quiz
         $table = new xmldb_table('quiz');
-        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'intro');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
 
     /// Launch add field introformat
         $dbman->add_field($table, $field);

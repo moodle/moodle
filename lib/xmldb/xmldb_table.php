@@ -700,8 +700,11 @@ class xmldb_table extends xmldb_object {
     function addFieldInfo($name, $type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
 
         debugging('XMLDBTable->addFieldInfo() has been deprecated in Moodle 2.0. Will be out in Moodle 2.1. Please use xmldb_table->add_field() instead', DEBUG_DEVELOPER);
+        if ($enum) {
+            debugging('Also, ENUMs support has been dropped in Moodle 2.0. Your fields specs are incorrect because you are trying to introduce one new ENUM. Created DB estructures will ignore that.');
+        }
 
-        return $this->add_field($name, $type, $precision, $unsigned, $notnull, $sequence, $enum, $enumvalues, $default, $previous);
+        return $this->add_field($name, $type, $precision, $unsigned, $notnull, $sequence, $default, $previous);
 
     }
 /// Deprecated API ends here
@@ -716,13 +719,11 @@ class xmldb_table extends xmldb_object {
      * @param string unsigned XMLDB_UNSIGNED or null (or false)
      * @param string notnull XMLDB_NOTNULL or null (or false)
      * @param string sequence XMLDB_SEQUENCE or null (or false)
-     * @param string enum XMLDB_ENUM or null (or false)
-     * @param array enumvalues an array of possible values if XMLDB_ENUM is set
      * @param string default meaningful default o null (or false)
      * @param string previous name of the previous field in the table or null (or false)
      */
-    function add_field($name, $type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
-        $field = new xmldb_field($name, $type, $precision, $unsigned, $notnull, $sequence, $enum, $enumvalues, $default);
+    function add_field($name, $type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $default=null, $previous=null) {
+        $field = new xmldb_field($name, $type, $precision, $unsigned, $notnull, $sequence, $default);
         $this->addField($field, $previous);
 
         return $field;

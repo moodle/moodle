@@ -32,7 +32,7 @@ function xmldb_survey_upgrade($oldversion) {
 
     /// Define field introformat to be added to survey
         $table = new xmldb_table('survey');
-        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'intro');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
 
     /// Conditionally launch add field introformat
         $dbman->add_field($table, $field);

@@ -155,16 +155,6 @@ class edit_field extends XMLDBAction {
         $sequenceoptions = array (0 => $this->str['no'], 1 => 'auto-numbered');
         $o.= '      <tr valign="top"><td><label for="menusequence" accesskey="s">Sequence:</label></td>';
         $o.= '        <td colspan="2">' . choose_from_menu($sequenceoptions, 'sequence', $field->getSequence(), '', '', '', true) . '</td></tr>';
-    /// xmldb_field Enum and enumvalues
-        $enumoptions = array (0 => $this->str['no'], 1 => $this->str['yes']);
-        $o.= '      <tr valign="top"><td><label for="menuenum" accesskey="s">Enum:</label></td>';
-        $o.= '        <td>' . choose_from_menu($enumoptions, 'enum', $field->getEnum(), '', '', '', true) . '</td>';
-        if (is_array($field->getEnumValues())) {
-            $enumvalues = implode(', ', $field->getEnumValues());
-        } else {
-            $enumvalues = '';
-        }
-        $o.= '            <td><textarea name="enumvalues" rows="3" cols="70" id="enumvalues">' . s($enumvalues) . '</textarea></td></tr>';
     /// xmldb_field Default
         $o.= '      <tr valign="top"><td><label for="default" accesskey="d">Default:</label></td>';
         $o.= '        <td colspan="2"><input type="text" name="default" size="30" maxlength="80" id="default" value="' . s($field->getDefault()) . '" /></td></tr>';

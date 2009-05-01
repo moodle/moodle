@@ -468,14 +468,6 @@ class database_manager {
             throw new ddl_exception('ddltablealreadyexists', $xmldb_table->getName());
         }
 
-    /// Iterate over all fields in table, finding any attempt to add one field with enum info, throw exception
-        $xmldb_fields = $xmldb_table->getFields();
-        foreach ($xmldb_fields as $xmldb_field) {
-            if ($xmldb_field->getEnum()) {
-                throw new ddl_exception('ddlunsupportedenums', $xmldb_table->getName() . '->' . $xmldb_field->getName());
-            }
-        }
-
         if (!$sqlarr = $this->generator->getCreateTableSQL($xmldb_table)) {
             throw new ddl_exception('ddlunknownerror', null, 'table create sql not generated');
         }
@@ -499,14 +491,6 @@ class database_manager {
     /// Check table doesn't exist
         if ($this->table_exists($xmldb_table, true)) {
             $this->drop_temp_table($xmldb_table);
-        }
-
-    /// Iterate over all fields in table, finding any attempt to add one field with enum info, throw exception
-        $xmldb_fields = $xmldb_table->getFields();
-        foreach ($xmldb_fields as $xmldb_field) {
-            if ($xmldb_field->getEnum()) {
-                throw new ddl_exception('ddlunsupportedenums', $xmldb_table->getName() . '->' . $xmldb_field->getName());
-            }
         }
 
         if (!$sqlarr = $this->generator->getCreateTempTableSQL($xmldb_table)) {
@@ -599,11 +583,6 @@ class database_manager {
                       ' cannot be added. Not null fields added to non empty tables require default value. Create skipped');
         }
 
-    /// Detect any attempt to add one field with enum info, throw exception
-        if ($xmldb_field->getEnum()) {
-            throw new ddl_exception('ddlunsupportedenums', $xmldb_table->getName() . '->' . $xmldb_field->getName());
-        }
-
         if (!$sqlarr = $this->generator->getAddFieldSQL($xmldb_table, $xmldb_field)) {
             throw new ddl_exception('ddlunknownerror', null, 'addfield sql not generated');
         }
@@ -693,13 +672,15 @@ class database_manager {
     }
 
     /**
-     * This function will change the enum status of the field in the table passed as arguments
+     * This function will drop the existing enum of the field in the table passed as arguments
+     *
+     * TODO: Moodle 2.1 - Drop drop_enum_from_field()
      *
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_field field object (full specs are required)
      * @return void
      */
-    public function change_field_enum(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
+    public function drop_enum_from_field(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
         if (!$this->table_exists($xmldb_table)) {
             throw new ddl_table_missing_exception($xmldb_table->getName());
         }
@@ -708,18 +689,13 @@ class database_manager {
             throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
         }
 
-    /// If enum is defined, we're going to create it, check it doesn't exist.
-        if ($xmldb_field->getEnum()) {
-            throw new ddl_exception('ddlunsupportedenums', $xmldb_table->getName() . '->' . $xmldb_field->getName());
-        } else { /// Else, we're going to drop it, check it exists
-            if (!$this->check_constraint_exists($xmldb_table, $xmldb_field)) {
-                debugging('Enum for ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
-                          ' does not exist. Delete skipped', DEBUG_DEVELOPER);
-                return; //Enum does not exist, nothing to delete
-            }
+        if (!$this->check_constraint_exists($xmldb_table, $xmldb_field)) {
+            debugging('Enum for ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
+                      ' does not exist. Delete skipped', DEBUG_DEVELOPER);
+            return; //Enum does not exist, nothing to delete
         }
 
-        if (!$sqlarr = $this->generator->getModifyEnumSQL($xmldb_table, $xmldb_field)) {
+        if (!$sqlarr = $this->generator->getDropEnumSQL($xmldb_table, $xmldb_field)) {
             return; //Empty array = nothing to do = no error
         }
 

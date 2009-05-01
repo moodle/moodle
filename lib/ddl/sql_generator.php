@@ -79,9 +79,6 @@ abstract class sql_generator {
     public $sequence_name_small = false; //Different name for small (4byte) sequences or false if same
     public $sequence_only = false; //To avoid to output the rest of the field specs, leaving only the name and the sequence_name publiciable
 
-    public $enum_inline_code = true; //Does the generator need to add inline code in the column definition
-    public $enum_extra_code = true; //Does the generator need to add extra code to generate code for the enums in the table
-
     public $add_table_comments  = true;  // Does the generator need to add code for table comments
 
     public $add_after_clause = false; // Does the generator need to add the after clause for fields
@@ -288,15 +285,6 @@ abstract class sql_generator {
                 }
             }
         }
-    /// Add enum extra code if needed
-        if ($this->enum_extra_code) {
-        /// Iterate over fields looking for enums
-            foreach ($xmldb_fields as $xmldb_field) {
-                if ($xmldb_field->getEnum()) {
-                    $table .= "\n" . $this->getEnumExtraSQL($xmldb_table, $xmldb_field) . ',';
-                }
-            }
-        }
     /// Table footer, trim the latest comma
         $table = trim($table,',');
         $table .= "\n)";
@@ -434,13 +422,8 @@ abstract class sql_generator {
         $field = $this->getEncQuoted($xmldb_field->getName());
     /// The type and length only if we don't want to skip it
         if (!$skip_type_clause) {
-        /// The type and length (if the field isn't enum)
-            if (!$xmldb_field->getEnum() || $this->enum_inline_code == false) {
-                $field .= ' ' . $this->getTypeSQL($xmldb_field->getType(), $xmldb_field->getLength(), $xmldb_field->getDecimals());
-            } else {
-            /// call to custom function
-                $field .= ' ' . $this->getEnumSQL($xmldb_field);
-            }
+        /// The type and length
+            $field .= ' ' . $this->getTypeSQL($xmldb_field->getType(), $xmldb_field->getLength(), $xmldb_field->getDecimals());
         }
     /// The unsigned if supported
         if ($this->unsigned_allowed && ($xmldb_field->getType() == XMLDB_TYPE_INTEGER ||
@@ -651,14 +634,6 @@ abstract class sql_generator {
         }
         $results[] = $altertable;
 
-    /// If the DB has extra enum code
-        if ($this->enum_extra_code) {
-        /// If it's enum add the extra code
-            if ($xmldb_field->getEnum()) {
-                $results[] = 'ALTER TABLE ' . $tablename . ' ADD ' . $this->getEnumExtraSQL($xmldb_table, $xmldb_field);
-            }
-        }
-
         return $results;
     }
 
@@ -709,27 +684,6 @@ abstract class sql_generator {
 
     /// Build the standard alter table modify
         $results[] = $alter;
-
-        return $results;
-    }
-
-    /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to modify the enum of the field in the table
-     */
-    public function getModifyEnumSQL($xmldb_table, $xmldb_field) {
-
-        $results = array();
-
-    /// Get the quoted name of the table and field
-        $tablename = $this->getTableName($xmldb_table);
-        $fieldname = $this->getEncQuoted($xmldb_field->getName());
-
-    /// Decide if we are going to create or to drop the enum (based exclusively in the values passed!)
-        if (!$xmldb_field->getEnum()) {
-            $results = $this->getDropEnumSQL($xmldb_table, $xmldb_field); //Drop
-        } else {
-            $results = $this->getCreateEnumSQL($xmldb_table, $xmldb_field); //Create/modify
-        }
 
         return $results;
     }
@@ -1181,20 +1135,6 @@ abstract class sql_generator {
     public abstract function getTypeSQL($xmldb_type, $xmldb_length=null, $xmldb_decimals=null);
 
     /**
-     * Given one XMLDB Field, return its enum SQL to be added inline with the column definition
-     */
-    public function getEnumSQL($xmldb_field) {
-        return '';
-    }
-
-    /**
-     * Returns the code needed to create one enum for the xmldb_table and xmldb_field passes
-     */
-    public function getEnumExtraSQL($xmldb_table, $xmldb_field) {
-        return '';
-    }
-
-    /**
      * Returns the code (array of statements) needed to execute extra statements on field rename
      */
     public function getRenameFieldExtraSQL($xmldb_table, $xmldb_field) {
@@ -1231,14 +1171,10 @@ abstract class sql_generator {
     /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its enum
      * (usually invoked from getModifyEnumSQL()
+     *
+     * TODO: Moodle 2.1 - Drop getDropEnumSQL()
      */
     public abstract function getDropEnumSQL($xmldb_table, $xmldb_field);
-
-    /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to add its enum
-     * (usually invoked from getModifyEnumSQL()
-     */
-    public abstract function getCreateEnumSQL($xmldb_table, $xmldb_field);
 
     /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its default

@@ -18,7 +18,7 @@ function xmldb_quizreport_statistics_upgrade($oldversion) {
 
     /// Define field s to be added to quiz_question_statistics
         $table = new xmldb_table('quiz_question_statistics');
-        $field = new xmldb_field('s', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'subquestion');
+        $field = new xmldb_field('s', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'subquestion');
 
     /// Conditionally launch add field s
         if (!$dbman->field_exists($table, $field)) {
@@ -30,7 +30,7 @@ function xmldb_quizreport_statistics_upgrade($oldversion) {
 
     /// Define field maxgrade to be added to quiz_question_statistics
         $table = new xmldb_table('quiz_question_statistics');
-        $field = new xmldb_field('maxgrade', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null, 'subquestions');
+        $field = new xmldb_field('maxgrade', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, 'subquestions');
 
     /// Conditionally launch add field maxgrade
         if (!$dbman->field_exists($table, $field)) {
@@ -43,7 +43,7 @@ function xmldb_quizreport_statistics_upgrade($oldversion) {
 
     /// Define field positions to be added to quiz_question_statistics
         $table = new xmldb_table('quiz_question_statistics');
-        $field = new xmldb_field('positions', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null, 'maxgrade');
+        $field = new xmldb_field('positions', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'maxgrade');
 
     /// Conditionally launch add field positions
         if (!$dbman->field_exists($table, $field)) {
@@ -55,7 +55,7 @@ function xmldb_quizreport_statistics_upgrade($oldversion) {
     if ($result && $oldversion < 2008081500) {
     /// Changing type of field maxgrade on table quiz_question_statistics to number
         $table = new xmldb_table('quiz_question_statistics');
-        $field = new xmldb_field('maxgrade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, null, null, 'subquestions');
+        $field = new xmldb_field('maxgrade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'subquestions');
 
     /// Launch change of type for field maxgrade
         $dbman->change_field_type($table, $field);
@@ -67,13 +67,13 @@ function xmldb_quizreport_statistics_upgrade($oldversion) {
         $table = new xmldb_table('quiz_question_response_stats');
 
     /// Adding fields to table quiz_question_response_stats
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('quizstatisticsid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('questionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('anssubqid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-        $table->add_field('response', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
-        $table->add_field('rcount', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-        $table->add_field('credit', XMLDB_TYPE_NUMBER, '15, 5', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('quizstatisticsid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('questionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('anssubqid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('response', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
+        $table->add_field('rcount', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('credit', XMLDB_TYPE_NUMBER, '15, 5', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
 
     /// Adding keys to table quiz_question_response_stats
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -101,7 +101,7 @@ function xmldb_quizreport_statistics_upgrade($oldversion) {
             }
     
         /// Define field subqid to be added to quiz_question_response_stats
-            $field = new xmldb_field('subqid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'questionid');
+            $field = new xmldb_field('subqid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, 'questionid');
     
         /// Conditionally launch add field subqid
             if (!$dbman->field_exists($table, $field)) {
@@ -109,7 +109,7 @@ function xmldb_quizreport_statistics_upgrade($oldversion) {
             }
     
         /// Define field aid to be added to quiz_question_response_stats
-            $field = new xmldb_field('aid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'subqid');
+            $field = new xmldb_field('aid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, 'subqid');
     
         /// Conditionally launch add field aid
             if (!$dbman->field_exists($table, $field)) {
@@ -126,7 +126,7 @@ function xmldb_quizreport_statistics_upgrade($oldversion) {
         /// Define field anssubqid to be dropped from quiz_question_response_stats
             $table = new xmldb_table('quiz_question_statistics');
         /// Define field subqid to be added to quiz_question_response_stats
-            $field = new xmldb_field('negcovar', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'effectiveweight');
+            $field = new xmldb_field('negcovar', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'effectiveweight');
     
         /// Conditionally launch add field subqid
             if (!$dbman->field_exists($table, $field)) {

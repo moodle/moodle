@@ -32,7 +32,7 @@ function xmldb_wiki_upgrade($oldversion) {
 
     /// Rename field summary on table wiki to intro
         $table = new xmldb_table('wiki');
-        $field = new xmldb_field('summary', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null, 'name');
+        $field = new xmldb_field('summary', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'name');
 
     /// Launch rename field summary
         $dbman->rename_field($table, $field, 'intro');
@@ -45,7 +45,7 @@ function xmldb_wiki_upgrade($oldversion) {
 
     /// Define field introformat to be added to wiki
         $table = new xmldb_table('wiki');
-        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'intro');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
 
     /// Launch add field introformat
         $dbman->add_field($table, $field);
@@ -59,10 +59,10 @@ function xmldb_wiki_upgrade($oldversion) {
 
     /// Changing list of values (enum) of field wtype on table wiki to none
         $table = new xmldb_table('wiki');
-        $field = new xmldb_field('wtype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'group', 'pagename');
+        $field = new xmldb_field('wtype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'group', 'pagename');
 
     /// Launch change of list of values for field wtype
-        $dbman->change_field_enum($table, $field);
+        $dbman->drop_enum_from_field($table, $field);
 
     /// wiki savepoint reached
         upgrade_mod_savepoint($result, 2009042700, 'wiki');

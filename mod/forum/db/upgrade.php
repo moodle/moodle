@@ -67,7 +67,7 @@ function xmldb_forum_upgrade($oldversion) {
     /// Define field completiondiscussions to be added to forum
         $table = new xmldb_table('forum');
         $field = new xmldb_field('completiondiscussions');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '9', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'blockperiod');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '9', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'blockperiod');
 
     /// Launch add field completiondiscussions
         if(!$dbman->field_exists($table,$field)) {
@@ -75,7 +75,7 @@ function xmldb_forum_upgrade($oldversion) {
         }
 
         $field = new xmldb_field('completionreplies');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '9', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'completiondiscussions');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '9', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'completiondiscussions');
 
     /// Launch add field completionreplies
         if(!$dbman->field_exists($table,$field)) {
@@ -84,7 +84,7 @@ function xmldb_forum_upgrade($oldversion) {
 
     /// Define field completionposts to be added to forum
         $field = new xmldb_field('completionposts');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '9', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'completionreplies');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '9', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'completionreplies');
 
     /// Launch add field completionposts
         if(!$dbman->field_exists($table,$field)) {
@@ -165,7 +165,7 @@ function xmldb_forum_upgrade($oldversion) {
 
     /// Define field maxattachments to be added to forum
         $table = new xmldb_table('forum');
-        $field = new xmldb_field('maxattachments', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '1', 'maxbytes');
+        $field = new xmldb_field('maxattachments', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'maxbytes');
 
     /// Conditionally launch add field maxattachments
         if (!$dbman->field_exists($table, $field)) {
@@ -180,7 +180,7 @@ function xmldb_forum_upgrade($oldversion) {
 
     /// Rename field format on table forum_posts to messageformat
         $table = new xmldb_table('forum_posts');
-        $field = new xmldb_field('format', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, null, null, '0', 'message');
+        $field = new xmldb_field('format', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'message');
 
     /// Launch rename field format
         $dbman->rename_field($table, $field, 'messageformat');
@@ -193,7 +193,7 @@ function xmldb_forum_upgrade($oldversion) {
 
     /// Define field messagetrust to be added to forum_posts
         $table = new xmldb_table('forum_posts');
-        $field = new xmldb_field('messagetrust', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'messageformat');
+        $field = new xmldb_field('messagetrust', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'messageformat');
 
     /// Launch add field messagetrust
         $dbman->add_field($table, $field);
@@ -224,7 +224,7 @@ function xmldb_forum_upgrade($oldversion) {
 
     /// Define field introformat to be added to forum
         $table = new xmldb_table('forum');
-        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'intro');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
 
     /// Launch add field introformat
         $dbman->add_field($table, $field);
@@ -246,10 +246,10 @@ function xmldb_forum_upgrade($oldversion) {
 
     /// Changing list of values (enum) of field type on table forum to none
         $table = new xmldb_table('forum');
-        $field = new xmldb_field('type', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'general', 'course');
+        $field = new xmldb_field('type', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'general', 'course');
 
     /// Launch change of list of values for field type
-        $dbman->change_field_enum($table, $field);
+        $dbman->drop_enum_from_field($table, $field);
 
     /// forum savepoint reached
         upgrade_mod_savepoint($result, 2009042700, 'forum');

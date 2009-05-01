@@ -32,7 +32,7 @@ function xmldb_choice_upgrade($oldversion) {
 
     /// Rename field text on table choice to NEWNAMEGOESHERE
         $table = new xmldb_table('choice');
-        $field = new xmldb_field('text', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null, 'name');
+        $field = new xmldb_field('text', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'name');
 
     /// Launch rename field text
         $dbman->rename_field($table, $field, 'intro');
@@ -45,7 +45,7 @@ function xmldb_choice_upgrade($oldversion) {
 
     /// Rename field format on table choice to NEWNAMEGOESHERE
         $table = new xmldb_table('choice');
-        $field = new xmldb_field('format', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'intro');
+        $field = new xmldb_field('format', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
 
     /// Launch rename field format
         $dbman->rename_field($table, $field, 'introformat');
