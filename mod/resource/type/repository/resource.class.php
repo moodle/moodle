@@ -510,7 +510,7 @@ function set_encrypted_parameter() {
             return extern_server_file($this->resource->reference);
         }
     }
-    return md5($_SERVER['REMOTE_ADDR'].$CFG->resource_secretphrase);
+    return md5(getremoteaddr().$CFG->resource_secretphrase);
 }
 
 

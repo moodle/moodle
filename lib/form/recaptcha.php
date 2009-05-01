@@ -129,7 +129,7 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
         global $CFG;
         require_once $CFG->libdir . '/recaptchalib.php';
         $response = recaptcha_check_answer($CFG->recaptchaprivatekey,
-                                           $_SERVER['REMOTE_ADDR'],
+                                           getremoteaddr(),
                                            $challenge_field,
                                            $response_field,
                                            $this->_https);

@@ -736,7 +736,7 @@ class resource_file extends resource_base {
                 return extern_server_file($this->resource->reference);
             }
         }
-        return md5($_SERVER['REMOTE_ADDR'].$CFG->resource_secretphrase);
+        return md5(getremoteaddr().$CFG->resource_secretphrase);
     }
 
     function setup_preprocessing(&$defaults){
