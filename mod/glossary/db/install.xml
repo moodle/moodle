@@ -6,32 +6,32 @@
   <TABLES>
     <TABLE NAME="glossary" COMMENT="all glossaries" NEXT="glossary_entries">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="course" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="introformat"/>
-        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="intro" NEXT="allowduplicatedentries"/>
-        <FIELD NAME="allowduplicatedentries" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="introformat" NEXT="displayformat"/>
-        <FIELD NAME="displayformat" TYPE="char" LENGTH="50" NOTNULL="true" DEFAULT="dictionary" SEQUENCE="false" ENUM="false" PREVIOUS="allowduplicatedentries" NEXT="mainglossary"/>
-        <FIELD NAME="mainglossary" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="displayformat" NEXT="showspecial"/>
-        <FIELD NAME="showspecial" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="mainglossary" NEXT="showalphabet"/>
-        <FIELD NAME="showalphabet" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="showspecial" NEXT="showall"/>
-        <FIELD NAME="showall" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="showalphabet" NEXT="allowcomments"/>
-        <FIELD NAME="allowcomments" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="showall" NEXT="allowprintview"/>
-        <FIELD NAME="allowprintview" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="allowcomments" NEXT="usedynalink"/>
-        <FIELD NAME="usedynalink" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="allowprintview" NEXT="defaultapproval"/>
-        <FIELD NAME="defaultapproval" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="usedynalink" NEXT="globalglossary"/>
-        <FIELD NAME="globalglossary" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="defaultapproval" NEXT="entbypage"/>
-        <FIELD NAME="entbypage" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="10" SEQUENCE="false" ENUM="false" PREVIOUS="globalglossary" NEXT="editalways"/>
-        <FIELD NAME="editalways" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="entbypage" NEXT="rsstype"/>
-        <FIELD NAME="rsstype" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="editalways" NEXT="rssarticles"/>
-        <FIELD NAME="rssarticles" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="rsstype" NEXT="assessed"/>
-        <FIELD NAME="assessed" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="rssarticles" NEXT="assesstimestart"/>
-        <FIELD NAME="assesstimestart" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="assessed" NEXT="assesstimefinish"/>
-        <FIELD NAME="assesstimefinish" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="assesstimestart" NEXT="scale"/>
-        <FIELD NAME="scale" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="assesstimefinish" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="scale" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timecreated"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="intro"/>
+        <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="allowduplicatedentries"/>
+        <FIELD NAME="allowduplicatedentries" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="introformat" NEXT="displayformat"/>
+        <FIELD NAME="displayformat" TYPE="char" LENGTH="50" NOTNULL="true" DEFAULT="dictionary" SEQUENCE="false" PREVIOUS="allowduplicatedentries" NEXT="mainglossary"/>
+        <FIELD NAME="mainglossary" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="displayformat" NEXT="showspecial"/>
+        <FIELD NAME="showspecial" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="mainglossary" NEXT="showalphabet"/>
+        <FIELD NAME="showalphabet" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="showspecial" NEXT="showall"/>
+        <FIELD NAME="showall" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="showalphabet" NEXT="allowcomments"/>
+        <FIELD NAME="allowcomments" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="showall" NEXT="allowprintview"/>
+        <FIELD NAME="allowprintview" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="allowcomments" NEXT="usedynalink"/>
+        <FIELD NAME="usedynalink" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="allowprintview" NEXT="defaultapproval"/>
+        <FIELD NAME="defaultapproval" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="usedynalink" NEXT="globalglossary"/>
+        <FIELD NAME="globalglossary" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="defaultapproval" NEXT="entbypage"/>
+        <FIELD NAME="entbypage" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="10" SEQUENCE="false" PREVIOUS="globalglossary" NEXT="editalways"/>
+        <FIELD NAME="editalways" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="entbypage" NEXT="rsstype"/>
+        <FIELD NAME="rsstype" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="editalways" NEXT="rssarticles"/>
+        <FIELD NAME="rssarticles" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="rsstype" NEXT="assessed"/>
+        <FIELD NAME="assessed" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="rssarticles" NEXT="assesstimestart"/>
+        <FIELD NAME="assesstimestart" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessed" NEXT="assesstimefinish"/>
+        <FIELD NAME="assesstimefinish" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assesstimestart" NEXT="scale"/>
+        <FIELD NAME="scale" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="assesstimefinish" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="scale" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -42,22 +42,22 @@
     </TABLE>
     <TABLE NAME="glossary_entries" COMMENT="all glossary entries" PREVIOUS="glossary" NEXT="glossary_alias">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="glossaryid"/>
-        <FIELD NAME="glossaryid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="glossaryid" NEXT="concept"/>
-        <FIELD NAME="concept" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="definition"/>
-        <FIELD NAME="definition" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="concept" NEXT="definitionformat"/>
-        <FIELD NAME="definitionformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="definition" NEXT="definitiontrust"/>
-        <FIELD NAME="definitiontrust" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="definitionformat" NEXT="attachment"/>
-        <FIELD NAME="attachment" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="definitiontrust" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="attachment" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timecreated" NEXT="teacherentry"/>
-        <FIELD NAME="teacherentry" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timemodified" NEXT="sourceglossaryid"/>
-        <FIELD NAME="sourceglossaryid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="teacherentry" NEXT="usedynalink"/>
-        <FIELD NAME="usedynalink" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="sourceglossaryid" NEXT="casesensitive"/>
-        <FIELD NAME="casesensitive" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="usedynalink" NEXT="fullmatch"/>
-        <FIELD NAME="fullmatch" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="casesensitive" NEXT="approved"/>
-        <FIELD NAME="approved" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="fullmatch"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="glossaryid"/>
+        <FIELD NAME="glossaryid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="glossaryid" NEXT="concept"/>
+        <FIELD NAME="concept" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="definition"/>
+        <FIELD NAME="definition" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="concept" NEXT="definitionformat"/>
+        <FIELD NAME="definitionformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="definition" NEXT="definitiontrust"/>
+        <FIELD NAME="definitiontrust" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="definitionformat" NEXT="attachment"/>
+        <FIELD NAME="attachment" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="definitiontrust" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="attachment" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="teacherentry"/>
+        <FIELD NAME="teacherentry" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timemodified" NEXT="sourceglossaryid"/>
+        <FIELD NAME="sourceglossaryid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="teacherentry" NEXT="usedynalink"/>
+        <FIELD NAME="usedynalink" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="sourceglossaryid" NEXT="casesensitive"/>
+        <FIELD NAME="casesensitive" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="usedynalink" NEXT="fullmatch"/>
+        <FIELD NAME="fullmatch" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="casesensitive" NEXT="approved"/>
+        <FIELD NAME="approved" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="fullmatch"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="glossaryid"/>
@@ -70,9 +70,9 @@
     </TABLE>
     <TABLE NAME="glossary_alias" COMMENT="entries alias" PREVIOUS="glossary_entries" NEXT="glossary_categories">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="entryid"/>
-        <FIELD NAME="entryid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="alias"/>
-        <FIELD NAME="alias" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="entryid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="entryid"/>
+        <FIELD NAME="entryid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="alias"/>
+        <FIELD NAME="alias" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="entryid"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="entryid"/>
@@ -81,10 +81,10 @@
     </TABLE>
     <TABLE NAME="glossary_categories" COMMENT="all categories for glossary entries" PREVIOUS="glossary_alias" NEXT="glossary_entries_categories">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="glossaryid"/>
-        <FIELD NAME="glossaryid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="glossaryid" NEXT="usedynalink"/>
-        <FIELD NAME="usedynalink" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="name"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="glossaryid"/>
+        <FIELD NAME="glossaryid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="glossaryid" NEXT="usedynalink"/>
+        <FIELD NAME="usedynalink" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="glossaryid"/>
@@ -93,9 +93,9 @@
     </TABLE>
     <TABLE NAME="glossary_entries_categories" COMMENT="categories of each glossary entry" PREVIOUS="glossary_categories" NEXT="glossary_comments">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="categoryid"/>
-        <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="entryid"/>
-        <FIELD NAME="entryid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="categoryid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="categoryid"/>
+        <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="entryid"/>
+        <FIELD NAME="entryid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="categoryid"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="categoryid"/>
@@ -105,13 +105,13 @@
     </TABLE>
     <TABLE NAME="glossary_comments" COMMENT="comments on glossary entries" PREVIOUS="glossary_entries_categories" NEXT="glossary_formats">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="entryid"/>
-        <FIELD NAME="entryid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="entryid" NEXT="entrycomment"/>
-        <FIELD NAME="entrycomment" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="entrycommentformat"/>
-        <FIELD NAME="entrycommentformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="entrycomment" NEXT="entrycommenttrust"/>
-        <FIELD NAME="entrycommenttrust" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="entrycommentformat" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="entrycommenttrust"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="entryid"/>
+        <FIELD NAME="entryid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="entryid" NEXT="entrycomment"/>
+        <FIELD NAME="entrycomment" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="entrycommentformat"/>
+        <FIELD NAME="entrycommentformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="entrycomment" NEXT="entrycommenttrust"/>
+        <FIELD NAME="entrycommenttrust" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="entrycommentformat" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="entrycommenttrust"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="entryid"/>
@@ -123,15 +123,15 @@
     </TABLE>
     <TABLE NAME="glossary_formats" COMMENT="Setting of the display formats" PREVIOUS="glossary_comments" NEXT="glossary_ratings">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="popupformatname"/>
-        <FIELD NAME="popupformatname" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="visible"/>
-        <FIELD NAME="visible" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="popupformatname" NEXT="showgroup"/>
-        <FIELD NAME="showgroup" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="visible" NEXT="defaultmode"/>
-        <FIELD NAME="defaultmode" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="showgroup" NEXT="defaulthook"/>
-        <FIELD NAME="defaulthook" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="defaultmode" NEXT="sortkey"/>
-        <FIELD NAME="sortkey" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="defaulthook" NEXT="sortorder"/>
-        <FIELD NAME="sortorder" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="sortkey"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="popupformatname"/>
+        <FIELD NAME="popupformatname" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="visible"/>
+        <FIELD NAME="visible" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="popupformatname" NEXT="showgroup"/>
+        <FIELD NAME="showgroup" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="visible" NEXT="defaultmode"/>
+        <FIELD NAME="defaultmode" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="showgroup" NEXT="defaulthook"/>
+        <FIELD NAME="defaulthook" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="defaultmode" NEXT="sortkey"/>
+        <FIELD NAME="sortkey" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="defaulthook" NEXT="sortorder"/>
+        <FIELD NAME="sortorder" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="sortkey"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -139,11 +139,11 @@
     </TABLE>
     <TABLE NAME="glossary_ratings" COMMENT="Contains user ratings for entries" PREVIOUS="glossary_formats">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="entryid"/>
-        <FIELD NAME="entryid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="time"/>
-        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="entryid" NEXT="rating"/>
-        <FIELD NAME="rating" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="time"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="entryid"/>
+        <FIELD NAME="entryid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="time"/>
+        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="entryid" NEXT="rating"/>
+        <FIELD NAME="rating" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="time"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="entryid"/>

@@ -6,9 +6,9 @@
   <TABLES>
     <TABLE NAME="portfolio_mahara_queue" COMMENT="maps mahara tokens to transfer ids">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="transferid"/>
-        <FIELD NAME="transferid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="fk to portfolio_tempdata.id" PREVIOUS="id" NEXT="token"/>
-        <FIELD NAME="token" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="the token mahara sent us to use for this transfer." PREVIOUS="transferid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="transferid"/>
+        <FIELD NAME="transferid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="fk to portfolio_tempdata.id" PREVIOUS="id" NEXT="token"/>
+        <FIELD NAME="token" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="the token mahara sent us to use for this transfer." PREVIOUS="transferid"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="transferfk"/>

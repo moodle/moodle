@@ -6,40 +6,40 @@
   <TABLES>
     <TABLE NAME="scorm" COMMENT="each table is one SCORM module and its configuration" NEXT="scorm_scoes">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="course" NEXT="scormtype"/>
-        <FIELD NAME="scormtype" TYPE="char" LENGTH="50" NOTNULL="true" DEFAULT="local" SEQUENCE="false" ENUM="false" COMMENT="local, external or repository" PREVIOUS="name" NEXT="reference"/>
-        <FIELD NAME="reference" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="scormtype" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="reference" NEXT="introformat"/>
-        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="intro" NEXT="version"/>
-        <FIELD NAME="version" TYPE="char" LENGTH="9" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="introformat" NEXT="maxgrade"/>
-        <FIELD NAME="maxgrade" TYPE="float" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="version" NEXT="grademethod"/>
-        <FIELD NAME="grademethod" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="maxgrade" NEXT="whatgrade"/>
-        <FIELD NAME="whatgrade" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="grademethod" NEXT="maxattempt"/>
-        <FIELD NAME="maxattempt" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="whatgrade" NEXT="forcecompleted"/>
-        <FIELD NAME="forcecompleted" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="maxattempt" NEXT="forcenewattempt"/>
-        <FIELD NAME="forcenewattempt" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="forcecompleted" NEXT="lastattemptlock"/>
-        <FIELD NAME="lastattemptlock" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="forcenewattempt" NEXT="displayattemptstatus"/>
-        <FIELD NAME="displayattemptstatus" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="lastattemptlock" NEXT="displaycoursestructure"/>
-        <FIELD NAME="displaycoursestructure" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="displayattemptstatus" NEXT="updatefreq"/>
-        <FIELD NAME="updatefreq" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Define when the package must be automatically update" PREVIOUS="displaycoursestructure" NEXT="sha1hash"/>
-        <FIELD NAME="sha1hash" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="pacakge content or ext path hash" PREVIOUS="updatefreq" NEXT="md5hash"/>
-        <FIELD NAME="md5hash" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="MD5 Hash of package file" PREVIOUS="sha1hash" NEXT="revision"/>
-        <FIELD NAME="revision" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="revison number" PREVIOUS="md5hash" NEXT="launch"/>
-        <FIELD NAME="launch" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="revision" NEXT="skipview"/>
-        <FIELD NAME="skipview" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="launch" NEXT="hidebrowse"/>
-        <FIELD NAME="hidebrowse" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="skipview" NEXT="hidetoc"/>
-        <FIELD NAME="hidetoc" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="hidebrowse" NEXT="hidenav"/>
-        <FIELD NAME="hidenav" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="hidetoc" NEXT="auto"/>
-        <FIELD NAME="auto" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="hidenav" NEXT="popup"/>
-        <FIELD NAME="popup" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="auto" NEXT="options"/>
-        <FIELD NAME="options" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="popup" NEXT="width"/>
-        <FIELD NAME="width" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="100" SEQUENCE="false" ENUM="false" PREVIOUS="options" NEXT="height"/>
-        <FIELD NAME="height" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="600" SEQUENCE="false" ENUM="false" PREVIOUS="width" NEXT="timeopen"/>
-        <FIELD NAME="timeopen" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="height" NEXT="timeclose"/>
-        <FIELD NAME="timeclose" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timeopen" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timeclose"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="scormtype"/>
+        <FIELD NAME="scormtype" TYPE="char" LENGTH="50" NOTNULL="true" DEFAULT="local" SEQUENCE="false" COMMENT="local, external or repository" PREVIOUS="name" NEXT="reference"/>
+        <FIELD NAME="reference" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="scormtype" NEXT="intro"/>
+        <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="reference" NEXT="introformat"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="version"/>
+        <FIELD NAME="version" TYPE="char" LENGTH="9" NOTNULL="true" SEQUENCE="false" PREVIOUS="introformat" NEXT="maxgrade"/>
+        <FIELD NAME="maxgrade" TYPE="float" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="version" NEXT="grademethod"/>
+        <FIELD NAME="grademethod" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="maxgrade" NEXT="whatgrade"/>
+        <FIELD NAME="whatgrade" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="grademethod" NEXT="maxattempt"/>
+        <FIELD NAME="maxattempt" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" PREVIOUS="whatgrade" NEXT="forcecompleted"/>
+        <FIELD NAME="forcecompleted" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" PREVIOUS="maxattempt" NEXT="forcenewattempt"/>
+        <FIELD NAME="forcenewattempt" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="forcecompleted" NEXT="lastattemptlock"/>
+        <FIELD NAME="lastattemptlock" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="forcenewattempt" NEXT="displayattemptstatus"/>
+        <FIELD NAME="displayattemptstatus" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" PREVIOUS="lastattemptlock" NEXT="displaycoursestructure"/>
+        <FIELD NAME="displaycoursestructure" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" PREVIOUS="displayattemptstatus" NEXT="updatefreq"/>
+        <FIELD NAME="updatefreq" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Define when the package must be automatically update" PREVIOUS="displaycoursestructure" NEXT="sha1hash"/>
+        <FIELD NAME="sha1hash" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="pacakge content or ext path hash" PREVIOUS="updatefreq" NEXT="md5hash"/>
+        <FIELD NAME="md5hash" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="MD5 Hash of package file" PREVIOUS="sha1hash" NEXT="revision"/>
+        <FIELD NAME="revision" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="revison number" PREVIOUS="md5hash" NEXT="launch"/>
+        <FIELD NAME="launch" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="revision" NEXT="skipview"/>
+        <FIELD NAME="skipview" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="launch" NEXT="hidebrowse"/>
+        <FIELD NAME="hidebrowse" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="skipview" NEXT="hidetoc"/>
+        <FIELD NAME="hidetoc" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="hidebrowse" NEXT="hidenav"/>
+        <FIELD NAME="hidenav" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="hidetoc" NEXT="auto"/>
+        <FIELD NAME="auto" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="hidenav" NEXT="popup"/>
+        <FIELD NAME="popup" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="auto" NEXT="options"/>
+        <FIELD NAME="options" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="popup" NEXT="width"/>
+        <FIELD NAME="width" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="100" SEQUENCE="false" PREVIOUS="options" NEXT="height"/>
+        <FIELD NAME="height" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="600" SEQUENCE="false" PREVIOUS="width" NEXT="timeopen"/>
+        <FIELD NAME="timeopen" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="height" NEXT="timeclose"/>
+        <FIELD NAME="timeclose" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timeopen" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timeclose"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -50,15 +50,15 @@
     </TABLE>
     <TABLE NAME="scorm_scoes" COMMENT="each SCO part of the SCORM module" PREVIOUS="scorm" NEXT="scorm_scoes_data">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="scorm"/>
-        <FIELD NAME="scorm" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="manifest"/>
-        <FIELD NAME="manifest" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="scorm" NEXT="organization"/>
-        <FIELD NAME="organization" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="manifest" NEXT="parent"/>
-        <FIELD NAME="parent" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="organization" NEXT="identifier"/>
-        <FIELD NAME="identifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="parent" NEXT="launch"/>
-        <FIELD NAME="launch" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="identifier" NEXT="scormtype"/>
-        <FIELD NAME="scormtype" TYPE="char" LENGTH="5" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="launch" NEXT="title"/>
-        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="scormtype"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="scorm"/>
+        <FIELD NAME="scorm" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="manifest"/>
+        <FIELD NAME="manifest" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="scorm" NEXT="organization"/>
+        <FIELD NAME="organization" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="manifest" NEXT="parent"/>
+        <FIELD NAME="parent" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="organization" NEXT="identifier"/>
+        <FIELD NAME="identifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="parent" NEXT="launch"/>
+        <FIELD NAME="launch" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="identifier" NEXT="scormtype"/>
+        <FIELD NAME="scormtype" TYPE="char" LENGTH="5" NOTNULL="true" SEQUENCE="false" PREVIOUS="launch" NEXT="title"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="scormtype"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scorm"/>
@@ -67,10 +67,10 @@
     </TABLE>
     <TABLE NAME="scorm_scoes_data" COMMENT="Contains variable data get from packages" PREVIOUS="scorm_scoes" NEXT="scorm_scoes_track">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="scoid"/>
-        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="scoid" NEXT="value"/>
-        <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="scoid"/>
+        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="scoid" NEXT="value"/>
+        <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scorm_scoes_data_scoid"/>
@@ -79,14 +79,14 @@
     </TABLE>
     <TABLE NAME="scorm_scoes_track" COMMENT="to track SCOes" PREVIOUS="scorm_scoes_data" NEXT="scorm_seq_objective">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="scormid"/>
-        <FIELD NAME="scormid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="scoid"/>
-        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="scormid" NEXT="attempt"/>
-        <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="scoid" NEXT="element"/>
-        <FIELD NAME="element" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="attempt" NEXT="value"/>
-        <FIELD NAME="value" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="element" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="value"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="scormid"/>
+        <FIELD NAME="scormid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="scoid"/>
+        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="scormid" NEXT="attempt"/>
+        <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="scoid" NEXT="element"/>
+        <FIELD NAME="element" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="attempt" NEXT="value"/>
+        <FIELD NAME="value" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" PREVIOUS="element" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="value"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scormid"/>
@@ -101,12 +101,12 @@
     </TABLE>
     <TABLE NAME="scorm_seq_objective" COMMENT="SCORM2004 objective description" PREVIOUS="scorm_scoes_track" NEXT="scorm_seq_mapinfo">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="scoid"/>
-        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="primaryobj"/>
-        <FIELD NAME="primaryobj" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="scoid" NEXT="objectiveid"/>
-        <FIELD NAME="objectiveid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="primaryobj" NEXT="satisfiedbymeasure"/>
-        <FIELD NAME="satisfiedbymeasure" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="objectiveid" NEXT="minnormalizedmeasure"/>
-        <FIELD NAME="minnormalizedmeasure" TYPE="float" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0.0000" SEQUENCE="false" ENUM="false" DECIMALS="4" PREVIOUS="satisfiedbymeasure"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="scoid"/>
+        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="primaryobj"/>
+        <FIELD NAME="primaryobj" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="scoid" NEXT="objectiveid"/>
+        <FIELD NAME="objectiveid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="primaryobj" NEXT="satisfiedbymeasure"/>
+        <FIELD NAME="satisfiedbymeasure" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" PREVIOUS="objectiveid" NEXT="minnormalizedmeasure"/>
+        <FIELD NAME="minnormalizedmeasure" TYPE="float" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0.0000" SEQUENCE="false" DECIMALS="4" PREVIOUS="satisfiedbymeasure"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scorm_objective_uniq"/>
@@ -116,14 +116,14 @@
     </TABLE>
     <TABLE NAME="scorm_seq_mapinfo" COMMENT="SCORM2004 objective mapinfo description" PREVIOUS="scorm_seq_objective" NEXT="scorm_seq_ruleconds">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="scoid"/>
-        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="objectiveid"/>
-        <FIELD NAME="objectiveid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="scoid" NEXT="targetobjectiveid"/>
-        <FIELD NAME="targetobjectiveid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="objectiveid" NEXT="readsatisfiedstatus"/>
-        <FIELD NAME="readsatisfiedstatus" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="targetobjectiveid" NEXT="readnormalizedmeasure"/>
-        <FIELD NAME="readnormalizedmeasure" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="readsatisfiedstatus" NEXT="writesatisfiedstatus"/>
-        <FIELD NAME="writesatisfiedstatus" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="readnormalizedmeasure" NEXT="writenormalizedmeasure"/>
-        <FIELD NAME="writenormalizedmeasure" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="writesatisfiedstatus"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="scoid"/>
+        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="objectiveid"/>
+        <FIELD NAME="objectiveid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="scoid" NEXT="targetobjectiveid"/>
+        <FIELD NAME="targetobjectiveid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="objectiveid" NEXT="readsatisfiedstatus"/>
+        <FIELD NAME="readsatisfiedstatus" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" PREVIOUS="targetobjectiveid" NEXT="readnormalizedmeasure"/>
+        <FIELD NAME="readnormalizedmeasure" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" PREVIOUS="readsatisfiedstatus" NEXT="writesatisfiedstatus"/>
+        <FIELD NAME="writesatisfiedstatus" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="readnormalizedmeasure" NEXT="writenormalizedmeasure"/>
+        <FIELD NAME="writenormalizedmeasure" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="writesatisfiedstatus"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scorm_mapinfo_uniq"/>
@@ -134,11 +134,11 @@
     </TABLE>
     <TABLE NAME="scorm_seq_ruleconds" COMMENT="SCORM2004 rule conditions" PREVIOUS="scorm_seq_mapinfo" NEXT="scorm_seq_rulecond">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="scoid"/>
-        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="conditioncombination"/>
-        <FIELD NAME="conditioncombination" TYPE="char" LENGTH="3" NOTNULL="true" DEFAULT="all" SEQUENCE="false" ENUM="false" PREVIOUS="scoid" NEXT="ruletype"/>
-        <FIELD NAME="ruletype" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="conditioncombination" NEXT="action"/>
-        <FIELD NAME="action" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="ruletype"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="scoid"/>
+        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="conditioncombination"/>
+        <FIELD NAME="conditioncombination" TYPE="char" LENGTH="3" NOTNULL="true" DEFAULT="all" SEQUENCE="false" PREVIOUS="scoid" NEXT="ruletype"/>
+        <FIELD NAME="ruletype" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="conditioncombination" NEXT="action"/>
+        <FIELD NAME="action" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false" PREVIOUS="ruletype"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scorm_ruleconds_un"/>
@@ -148,13 +148,13 @@
     </TABLE>
     <TABLE NAME="scorm_seq_rulecond" COMMENT="SCORM2004 rule condition" PREVIOUS="scorm_seq_ruleconds" NEXT="scorm_seq_rolluprule">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="scoid"/>
-        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="ruleconditionsid"/>
-        <FIELD NAME="ruleconditionsid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="scoid" NEXT="refrencedobjective"/>
-        <FIELD NAME="refrencedobjective" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="ruleconditionsid" NEXT="measurethreshold"/>
-        <FIELD NAME="measurethreshold" TYPE="float" LENGTH="11" NOTNULL="true" UNSIGNED="false" DEFAULT="0.0000" SEQUENCE="false" ENUM="false" DECIMALS="4" PREVIOUS="refrencedobjective" NEXT="operator"/>
-        <FIELD NAME="operator" TYPE="char" LENGTH="5" NOTNULL="true" DEFAULT="noOp" SEQUENCE="false" ENUM="false" PREVIOUS="measurethreshold" NEXT="cond"/>
-        <FIELD NAME="cond" TYPE="char" LENGTH="30" NOTNULL="true" DEFAULT="always" SEQUENCE="false" ENUM="false" PREVIOUS="operator"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="scoid"/>
+        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="ruleconditionsid"/>
+        <FIELD NAME="ruleconditionsid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="scoid" NEXT="refrencedobjective"/>
+        <FIELD NAME="refrencedobjective" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="ruleconditionsid" NEXT="measurethreshold"/>
+        <FIELD NAME="measurethreshold" TYPE="float" LENGTH="11" NOTNULL="true" UNSIGNED="false" DEFAULT="0.0000" SEQUENCE="false" DECIMALS="4" PREVIOUS="refrencedobjective" NEXT="operator"/>
+        <FIELD NAME="operator" TYPE="char" LENGTH="5" NOTNULL="true" DEFAULT="noOp" SEQUENCE="false" PREVIOUS="measurethreshold" NEXT="cond"/>
+        <FIELD NAME="cond" TYPE="char" LENGTH="30" NOTNULL="true" DEFAULT="always" SEQUENCE="false" PREVIOUS="operator"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scorm_rulecond_uniq"/>
@@ -165,13 +165,13 @@
     </TABLE>
     <TABLE NAME="scorm_seq_rolluprule" COMMENT="SCORM2004 sequencing rule" PREVIOUS="scorm_seq_rulecond" NEXT="scorm_seq_rolluprulecond">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="scoid"/>
-        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="childactivityset"/>
-        <FIELD NAME="childactivityset" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="scoid" NEXT="minimumcount"/>
-        <FIELD NAME="minimumcount" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="childactivityset" NEXT="minimumpercent"/>
-        <FIELD NAME="minimumpercent" TYPE="float" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0.0000" SEQUENCE="false" ENUM="false" DECIMALS="4" PREVIOUS="minimumcount" NEXT="conditioncombination"/>
-        <FIELD NAME="conditioncombination" TYPE="char" LENGTH="3" NOTNULL="true" DEFAULT="all" SEQUENCE="false" ENUM="false" PREVIOUS="minimumpercent" NEXT="action"/>
-        <FIELD NAME="action" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="conditioncombination"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="scoid"/>
+        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="childactivityset"/>
+        <FIELD NAME="childactivityset" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false" PREVIOUS="scoid" NEXT="minimumcount"/>
+        <FIELD NAME="minimumcount" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="childactivityset" NEXT="minimumpercent"/>
+        <FIELD NAME="minimumpercent" TYPE="float" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0.0000" SEQUENCE="false" DECIMALS="4" PREVIOUS="minimumcount" NEXT="conditioncombination"/>
+        <FIELD NAME="conditioncombination" TYPE="char" LENGTH="3" NOTNULL="true" DEFAULT="all" SEQUENCE="false" PREVIOUS="minimumpercent" NEXT="action"/>
+        <FIELD NAME="action" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false" PREVIOUS="conditioncombination"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scorm_rolluprule_uniq"/>
@@ -181,11 +181,11 @@
     </TABLE>
     <TABLE NAME="scorm_seq_rolluprulecond" COMMENT="SCORM2004 sequencing rule" PREVIOUS="scorm_seq_rolluprule">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="scoid"/>
-        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="rollupruleid"/>
-        <FIELD NAME="rollupruleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="scoid" NEXT="operator"/>
-        <FIELD NAME="operator" TYPE="char" LENGTH="5" NOTNULL="true" DEFAULT="noOp" SEQUENCE="false" ENUM="false" PREVIOUS="rollupruleid" NEXT="cond"/>
-        <FIELD NAME="cond" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="operator"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="scoid"/>
+        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="rollupruleid"/>
+        <FIELD NAME="rollupruleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="scoid" NEXT="operator"/>
+        <FIELD NAME="operator" TYPE="char" LENGTH="5" NOTNULL="true" DEFAULT="noOp" SEQUENCE="false" PREVIOUS="rollupruleid" NEXT="cond"/>
+        <FIELD NAME="cond" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false" PREVIOUS="operator"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scorm_rulluprulecond_uniq"/>

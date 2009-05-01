@@ -3,10 +3,10 @@
   <TABLES>
     <TABLE NAME="question_match" COMMENT="Defines fixed matching questions" NEXT="question_match_sub">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="question"/>
-        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="subquestions"/>
-        <FIELD NAME="subquestions" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="question" NEXT="shuffleanswers"/>
-        <FIELD NAME="shuffleanswers" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="subquestions"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="question"/>
+        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="subquestions"/>
+        <FIELD NAME="subquestions" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="question" NEXT="shuffleanswers"/>
+        <FIELD NAME="shuffleanswers" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" PREVIOUS="subquestions"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="question"/>
@@ -15,11 +15,11 @@
     </TABLE>
     <TABLE NAME="question_match_sub" COMMENT="Defines the subquestions that make up a matching question" PREVIOUS="question_match">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="code"/>
-        <FIELD NAME="code" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Should this point to parent question_match-&amp;gt;id ?" PREVIOUS="id" NEXT="question"/>
-        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="code" NEXT="questiontext"/>
-        <FIELD NAME="questiontext" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="question" NEXT="answertext"/>
-        <FIELD NAME="answertext" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="questiontext"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="code"/>
+        <FIELD NAME="code" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Should this point to parent question_match-&amp;gt;id ?" PREVIOUS="id" NEXT="question"/>
+        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="code" NEXT="questiontext"/>
+        <FIELD NAME="questiontext" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="question" NEXT="answertext"/>
+        <FIELD NAME="answertext" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="questiontext"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="question"/>
