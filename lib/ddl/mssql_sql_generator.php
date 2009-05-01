@@ -193,17 +193,6 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * Returns the code needed to create one enum for the xmldb_table and xmldb_field passes
-     */
-    public function getEnumExtraSQL($xmldb_table, $xmldb_field) {
-
-        $sql = 'CONSTRAINT ' . $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'ck');
-        $sql.= ' CHECK (' . $this->getEncQuoted($xmldb_field->getName()) . ' IN (' . implode(', ', $xmldb_field->getEnumValues()) . '))';
-
-        return $sql;
-    }
-
-    /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop the field from the table
      * MSSQL overwrites the standard sentence because it needs to do some extra work dropping the default and
      * check constraints
@@ -252,35 +241,8 @@ class mssql_sql_generator extends sql_generator {
             return array();
         }
 
-    /// Drop the check constraint if exists
-        if ($xmldb_field->getEnum()) {
-            $results = array_merge($results, $this->getDropEnumSQL($xmldb_table, $xmldb_field));
-        }
-
     /// Call to standard (parent) getRenameFieldSQL() function
         $results = array_merge($results, parent::getRenameFieldSQL($xmldb_table, $xmldb_field, $newname));
-
-        return $results;
-    }
-
-    /**
-     * Returns the code (array of statements) needed to execute extra statements on field rename
-     */
-    public function getRenameFieldExtraSQL($xmldb_table, $xmldb_field, $newname) {
-
-        $results = array();
-
-    /// If the field is enum, drop and re-create the check constraint
-        if ($xmldb_field->getEnum()) {
-        /// Drop the current enum (not needed, it has been dropped before for msqql (in getRenameFieldSQL)
-            //$results = array_merge($results, $this->getDropEnumSQL($xmldb_table, $xmldb_field));
-        /// Change field name (over a clone to avoid some potential problems later)
-            $new_xmldb_field = clone($xmldb_field);
-            $new_xmldb_field->setName($newname);
-
-        /// Recreate the enum
-            $results = array_merge($results, $this->getCreateEnumSQL($xmldb_table, $new_xmldb_field));
-        }
 
         return $results;
     }
@@ -305,11 +267,6 @@ class mssql_sql_generator extends sql_generator {
             foreach ($constraints as $constraint) {
             /// Drop the old constraint
                 $results[] = 'ALTER TABLE ' . $newtablename . ' DROP CONSTRAINT ' . $constraint->name;
-            /// Calculate the new constraint name
-                $newconstraintname = str_replace($oldconstraintprefix, $newconstraintprefix, $constraint->name);
-            /// Add the new constraint
-                $results[] = 'ALTER TABLE ' . $newtablename . ' ADD CONSTRAINT ' . $newconstraintname .
-                             ' CHECK ' . $constraint->description;
             }
         }
 
@@ -398,18 +355,10 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to create its enum
-     * (usually invoked from getModifyEnumSQL()
-     */
-    public function getCreateEnumSQL($xmldb_table, $xmldb_field) {
-    /// All we have to do is to create the check constraint
-        return array('ALTER TABLE ' . $this->getTableName($xmldb_table) .
-                     ' ADD ' . $this->getEnumExtraSQL($xmldb_table, $xmldb_field));
-    }
-
-    /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its enum
      * (usually invoked from getModifyEnumSQL()
+     *
+     * TODO: Moodle 2.1 - drop in Moodle 2.1
      */
     public function getDropEnumSQL($xmldb_table, $xmldb_field) {
     /// Let's introspect to know the real name of the check constraint
@@ -498,6 +447,8 @@ class mssql_sql_generator extends sql_generator {
      * order to return only the check constraints belonging to one field.
      * Each element contains the name of the constraint and its description
      * If no check constraints are found, returns an empty array
+     *
+     * TODO: Moodle 2.1 - drop in Moodle 2.1
      */
     public function getCheckConstraintsFromDB($xmldb_table, $xmldb_field = null) {
         

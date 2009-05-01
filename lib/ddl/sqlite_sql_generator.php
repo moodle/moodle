@@ -369,15 +369,6 @@ class sqlite_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDB Field, return its enum SQL
-     */
-    public function getEnumSQL($xmldb_field) {
-        // Enum values are between /*LISTSTART*/ and /*LISTEND*/ so that
-        // get_columns can easily find them
-        return 'enum CHECK (' . $this->getEncQuoted($xmldb_field->getName()) . ' IN (/*LISTSTART*/' . implode(',', $xmldb_field->getEnumValues()) . '/*LISTEND*/))';
-    }
-
-    /**
      * Returns the code (in array) needed to add one comment to the table
      */
     function getCommentSQL ($xmldb_table) {
@@ -391,6 +382,8 @@ class sqlite_sql_generator extends sql_generator {
      * order to return only the check constraints belonging to one field.
      * Each element contains the name of the constraint and its description
      * If no check constraints are found, returns an empty array.
+     *
+     * TODO: Moodle 2.1 - drop in Moodle 2.1
      */
     public function getCheckConstraintsFromDB($xmldb_table, $xmldb_field = null) {
         $tablename = $xmldb_table->getName($xmldb_table);

@@ -1179,6 +1179,8 @@ abstract class sql_generator {
     /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its default
      * (usually invoked from getModifyDefaultSQL()
+     *
+     * TODO: Moodle 2.1 - Drop getDropDefaultSQL()
      */
     public abstract function getDropDefaultSQL($xmldb_table, $xmldb_field);
 
@@ -1186,6 +1188,8 @@ abstract class sql_generator {
      * Given one xmldb_table and one optional xmldb_field, return one array with all the check
      * constrainst found for that table (or field). Must exist for each DB supported.
      * (usually invoked from find_check_constraint_name)
+     *
+     * TODO: Moodle 2.1 - Drop getCheckConstraintsFromDB
      */
     public abstract function getCheckConstraintsFromDB($xmldb_table, $xmldb_field=null);
 

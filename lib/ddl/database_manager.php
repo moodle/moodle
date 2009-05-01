@@ -214,6 +214,8 @@ class database_manager {
      * to 1 "enum-like" constraint. So, if more than one is returned, only the first one will be
      * retrieved by this funcion.
      *
+     * TODO: Moodle 2.1 - Drop find_check_constraint_name()
+     *
      * @param xmldb_table the table to be searched
      * @param xmldb_field the field to be searched
      * @return string check constraint name or false

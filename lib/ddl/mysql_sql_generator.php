@@ -264,10 +264,17 @@ class mysql_sql_generator extends sql_generator {
     /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its enum
      * (usually invoked from getModifyEnumSQL()
+     *
+     * TODO: Moodle 2.1 - drop in Moodle 2.1
      */
     public function getDropEnumSQL($xmldb_table, $xmldb_field) {
-    /// For MySQL, just alter the field
-        return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
+    /// Let's introspect to know if there is one enum
+        if ($check_constraints = $this->getCheckConstraintsFromDB($xmldb_table, $xmldb_field)) {
+        /// For MySQL, just alter the field
+            return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
+        } else {
+            return array(); /// Enum not found. Nothing to do
+        }
     }
 
     /**
@@ -311,13 +318,6 @@ class mysql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDB Field, return its enum SQL
-     */
-    public function getEnumSQL($xmldb_field) {
-        return 'enum(' . implode(', ', $xmldb_field->getEnumValues()) . ')';
-    }
-
-    /**
      * Returns the code (in array) needed to add one comment to the table
      */
     function getCommentSQL ($xmldb_table) {
@@ -339,13 +339,15 @@ class mysql_sql_generator extends sql_generator {
      * If no check constraints are found, returns an empty array
      * MySQL doesn't have check constraints in this implementation, but
      * we return them based on the enum fields in the table
+     *
+     * TODO: Moodle 2.1 - drop in Moodle 2.1
      */
     public function getCheckConstraintsFromDB($xmldb_table, $xmldb_field = null) {
 
         $tablename = $xmldb_table->getName($xmldb_table);
 
     /// Fetch all the columns in the table
-        if (!$columns = $this->mdb->get_columns($tablename)) {
+        if (!$columns = $this->mdb->get_columns($tablename, false)) {
             return array();
         }
 
