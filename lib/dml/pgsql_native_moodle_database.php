@@ -958,6 +958,7 @@ class pgsql_native_moodle_database extends moodle_database {
      * @throws dml_exception if error
      */
     public function set_field_select($table, $newfield, $newvalue, $select, array $params=null) {
+
         if ($select) {
             $select = "WHERE $select";
         }
@@ -966,6 +967,21 @@ class pgsql_native_moodle_database extends moodle_database {
         }
         list($select, $params, $type) = $this->fix_sql_params($select, $params);
         $i = count($params)+1;
+
+    /// Get column metadata
+        $columns = $this->get_columns($table);
+        $column = $columns[$newfield];
+
+        if ($column->meta_type == 'B') { /// If the column is a BLOB
+        /// Update BYTEA and return
+            $newvalue = pg_escape_bytea($this->pgsql, $newvalue);
+            $sql = "UPDATE {$this->prefix}$table SET $newfield = '$newvalue'::bytea $select";
+            $this->query_start($sql, NULL, SQL_QUERY_UPDATE);
+            $result = pg_query_params($this->pgsql, $sql, $params);
+            $this->query_end($result);
+            pg_free_result($result);
+            return true;
+        }
 
         if (is_bool($newvalue)) {
             $newvalue = (int)$newvalue; // prevent "false" problems
