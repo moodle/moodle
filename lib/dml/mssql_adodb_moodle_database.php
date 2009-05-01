@@ -268,6 +268,7 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
             $this->query_start('--adodb-UpdateBlob', null, SQL_QUERY_UPDATE);
             $result = $this->adodb->UpdateBlob($this->prefix.$table, $newfield, $newvalue, $select);
             $this->query_end($result);
+            return true;
         }
 
     /// Arrived here, normal update (without BLOBs)
