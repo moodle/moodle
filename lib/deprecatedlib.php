@@ -694,8 +694,8 @@ function change_field_notnull($table, $field) {
 
 function change_field_enum($table, $field) {
     global $DB;
-    debugging('Deprecated ddllib function used!');
-    $DB->get_manager()->change_field_enum($table, $field);
+    debugging('Deprecated ddllib function used! Only dropping of enums is allowed.');
+    $DB->get_manager()->drop_enum_from_field($table, $field);
     return true;
 }
 
