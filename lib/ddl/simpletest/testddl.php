@@ -29,28 +29,27 @@ class ddl_test extends UnitTestCase {
         $dbman = $this->tdb->get_manager();
 
         $table = new xmldb_table('test_table0');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('type', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM,
-                          array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general');
-        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null);
-        $table->add_field('intro', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('logo', XMLDB_TYPE_BINARY, 'big', null, XMLDB_NOTNULL, null, null, null);
-        $table->add_field('assessed', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('assesstimestart', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('assesstimefinish', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('scale', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('maxbytes', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('forcesubscribe', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('trackingtype', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '1');
-        $table->add_field('rsstype', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('rssarticles', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('grade', XMLDB_TYPE_NUMBER, '20,0', XMLDB_UNSIGNED, null, null, null, null, null);
-        $table->add_field('percent', XMLDB_TYPE_NUMBER, '5,2', null, null, null, null, null, null);
-        $table->add_field('warnafter', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('blockafter', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('blockperiod', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('type', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'general');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null);
+        $table->add_field('intro', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('logo', XMLDB_TYPE_BINARY, 'big', null, XMLDB_NOTNULL, null);
+        $table->add_field('assessed', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('assesstimestart', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('assesstimefinish', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('scale', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('maxbytes', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('forcesubscribe', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('trackingtype', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1');
+        $table->add_field('rsstype', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('rssarticles', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('grade', XMLDB_TYPE_NUMBER, '20,0', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('percent', XMLDB_TYPE_NUMBER, '5,2', null, null, null, null);
+        $table->add_field('warnafter', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('blockafter', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('blockperiod', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('type-name', XMLDB_KEY_UNIQUE, array('type', 'name'));
         $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
@@ -61,13 +60,13 @@ class ddl_test extends UnitTestCase {
 
         // Second, smaller table
         $table = new xmldb_table ('test_table1');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, null, null, null, null, 'Moodle');
-        $table->add_field('secondname', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('intro', XMLDB_TYPE_TEXT, 'medium', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('avatar', XMLDB_TYPE_BINARY, 'medium', null, null, null, null, null, null);
-        $table->add_field('grade', XMLDB_TYPE_NUMBER, '20,10', null, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, null, null, 'Moodle');
+        $table->add_field('secondname', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('intro', XMLDB_TYPE_TEXT, 'medium', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('avatar', XMLDB_TYPE_BINARY, 'medium', null, null, null, null);
+        $table->add_field('grade', XMLDB_TYPE_NUMBER, '20,10', null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->setComment("This is a test'n drop table. You can drop it safely");
 
@@ -182,8 +181,8 @@ class ddl_test extends UnitTestCase {
         $dbman = $this->tdb->get_manager();
 
         $table = new xmldb_table('test_table_cust0');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
@@ -191,12 +190,12 @@ class ddl_test extends UnitTestCase {
 
         /// Create a new field with complex specs (enums are good candidates)
         $field = new xmldb_field('type1');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, $enums, 'general', 'course');
+        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'general', 'course');
         $dbman->add_field($table, $field);
         $this->assertTrue($dbman->field_exists($table, 'type1'));
 
         $field = new xmldb_field('type2');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, null, null, XMLDB_ENUM, $enums, 'general', 'course');
+        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, null, null, 'general', 'course');
         $dbman->add_field($table, $field);
         $this->assertTrue($dbman->field_exists($table, 'type2'));
 
@@ -257,7 +256,7 @@ class ddl_test extends UnitTestCase {
         $table = $this->create_deftable('test_table0');
         /// Create a new field with complex specs (enums are good candidates)
         $field = new xmldb_field('onenumber');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '6', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, 0, 'type');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '6', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'type');
         $dbman->add_field($table, $field);
         $this->assertTrue($dbman->field_exists($table, 'onenumber'));
 
@@ -286,8 +285,8 @@ class ddl_test extends UnitTestCase {
         $dbman = $this->tdb->get_manager();
 
         $table = new xmldb_table('test_table_cust0');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('onenumber', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('onenumber', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
@@ -296,42 +295,42 @@ class ddl_test extends UnitTestCase {
         $DB->insert_record('test_table_cust0', $record);
 
         $field = new xmldb_field('onenumber');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, '0');
+        $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, '0');
         $dbman->change_field_type($table, $field);
 
         $columns = $DB->get_columns('test_table_cust0');
         $this->assertEqual($columns['onenumber']->meta_type, 'C');
 
         $field = new xmldb_field('onenumber');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $dbman->change_field_type($table, $field);
 
         $columns = $DB->get_columns('test_table_cust0');
         $this->assertEqual($columns['onenumber']->meta_type, 'I');
 
         $field = new xmldb_field('onenumber');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, "test'n drop");
+        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, "test'n drop");
         $dbman->change_field_type($table, $field);
 
         $columns = $DB->get_columns('test_table_cust0');
         $this->assertEqual($columns['onenumber']->meta_type, 'C');
 
         $field = new xmldb_field('onenumber');
-        $field->set_attributes(XMLDB_TYPE_FLOAT, '20,10', XMLDB_UNSIGNED, null, null, null, null, null);
+        $field->set_attributes(XMLDB_TYPE_FLOAT, '20,10', XMLDB_UNSIGNED, null, null, null);
         $dbman->change_field_type($table, $field);
 
         $columns = $DB->get_columns('test_table_cust0');
         $this->assertEqual($columns['onenumber']->meta_type, 'N');
 
         $field = new xmldb_field('onenumber');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'test');
+        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'test');
         $dbman->change_field_type($table, $field);
 
         $columns = $DB->get_columns('test_table_cust0');
         $this->assertEqual($columns['onenumber']->meta_type, 'C');
 
         $field = new xmldb_field('onenumber');
-        $field->set_attributes(XMLDB_TYPE_NUMBER, '20,10', XMLDB_UNSIGNED, null, null, null, null, null);
+        $field->set_attributes(XMLDB_TYPE_NUMBER, '20,10', XMLDB_UNSIGNED, null, null, null);
         $dbman->change_field_type($table, $field);
 
         $columns = $DB->get_columns('test_table_cust0');
@@ -346,19 +345,19 @@ class ddl_test extends UnitTestCase {
 
         $table = $this->create_deftable('test_table1');
         $field = new xmldb_field('intro');
-        $field->set_attributes(XMLDB_TYPE_TEXT, 'big', null, XMLDB_NOTNULL, null, null, null, null);
+        $field->set_attributes(XMLDB_TYPE_TEXT, 'big', null, XMLDB_NOTNULL, null, null);
         $dbman->change_field_precision($table, $field);
 
         $field = new xmldb_field('secondname');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, null);
+        $field->set_attributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null);
         $dbman->change_field_precision($table, $field);
 
         $field = new xmldb_field('grade');
-        $field->set_attributes(XMLDB_TYPE_NUMBER, '10,2', null, null, null, null, null, null);
+        $field->set_attributes(XMLDB_TYPE_NUMBER, '10,2', null, null, null, null);
         $dbman->change_field_precision($table, $field);
 
         $field = new xmldb_field('course');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '5', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '5', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $dbman->change_field_precision($table, $field);
 
     }
@@ -369,11 +368,11 @@ class ddl_test extends UnitTestCase {
 
         $table = $this->create_deftable('test_table1');
         $field = new xmldb_field('grade');
-        $field->set_attributes(XMLDB_TYPE_NUMBER, '10,2', XMLDB_UNSIGNED, null, null, null, null, null);
+        $field->set_attributes(XMLDB_TYPE_NUMBER, '10,2', XMLDB_UNSIGNED, null, null, null);
         $dbman->change_field_unsigned($table, $field);
 
         $field = new xmldb_field('grade');
-        $field->set_attributes(XMLDB_TYPE_NUMBER, '10,2', null, null, null, null, null, null);
+        $field->set_attributes(XMLDB_TYPE_NUMBER, '10,2', null, null, null, null);
         $dbman->change_field_unsigned($table, $field);
     }
 
@@ -382,8 +381,8 @@ class ddl_test extends UnitTestCase {
         $dbman = $this->tdb->get_manager();
 
         $table = new xmldb_table('test_table_cust0');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
@@ -400,7 +399,7 @@ class ddl_test extends UnitTestCase {
         $this->assertFalse($result);
 
         $field = new xmldb_field('name');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, null);
+        $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, null, null, null);
         $dbman->change_field_notnull($table, $field);
 
         $this->assertTrue($DB->insert_record('test_table_cust0', $record, false));
@@ -409,7 +408,7 @@ class ddl_test extends UnitTestCase {
         $DB->delete_records('test_table_cust0');
 
         $field = new xmldb_field('name');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, null);
+        $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null);
         $dbman->change_field_notnull($table, $field);
 
         ob_start(); // hide debug warning
@@ -429,14 +428,14 @@ class ddl_test extends UnitTestCase {
         $dbman = $this->tdb->get_manager();
 
         $table = new xmldb_table('test_table_cust0');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('number', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, 'Moodle');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('number', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, 'Moodle');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
         $field = new xmldb_field('name');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, 'Moodle2');
+        $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, 'Moodle2');
         $dbman->change_field_default($table, $field);
 
         $record = new object();
@@ -448,7 +447,7 @@ class ddl_test extends UnitTestCase {
 
 
         $field = new xmldb_field('number');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, 666);
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 666);
         $dbman->change_field_default($table, $field);
 
         $record = new object();
@@ -466,9 +465,9 @@ class ddl_test extends UnitTestCase {
         $dbman = $this->tdb->get_manager();
 
         $table = new xmldb_table('test_table_cust0');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('number', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, 'Moodle');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('number', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, 'Moodle');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
@@ -593,16 +592,16 @@ class ddl_test extends UnitTestCase {
         $dbman = $this->tdb->get_manager();
 
         $table = new xmldb_table('test_table_cust0');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('type', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general'), 'general');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('type', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'general');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
         // Removing an enum value
         $field = new xmldb_field('type');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null);
-        $dbman->change_field_enum($table, $field);
+        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null);
+        $dbman->drop_enum_from_field($table, $field);
 
         $record = new object();
         $record->course = 666;
@@ -611,8 +610,8 @@ class ddl_test extends UnitTestCase {
 
         // Adding an enum value
         $field = new xmldb_field('type');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
-        $dbman->change_field_enum($table, $field);
+        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'general', 'course');
+        $dbman->drop_enum_from_field($table, $field);
 
         $record = new object();
         $record->course = 666;
@@ -636,8 +635,7 @@ class ddl_test extends UnitTestCase {
 
         $table = $this->create_deftable('test_table0');
         $field = new xmldb_field('type');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM,
-                array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
+        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'general', 'course');
 
         $dbman->rename_field($table, $field, 'newfieldname');
 
@@ -844,8 +842,8 @@ class ddl_test extends UnitTestCase {
         $dbman = $DB->get_manager();
 
         $table = new xmldb_table('testtable');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
         $this->tables[$table->getName()] = $table;

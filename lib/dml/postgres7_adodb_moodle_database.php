@@ -124,6 +124,10 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
         foreach ($columns as $column) {
             // colum names must be lowercase
             $column->meta_type = substr($this->adodb->MetaType($column), 0 ,1); // only 1 character
+            // Let's fix the wrong meta type retrieved because of default blobSize=100 in AdoDB
+            if ($column->type == 'varchar' && $column->meta_type == 'X') {
+                $column->meta_type = 'C';
+            }
             if ($column->has_default) {
                 if ($pos = strpos($column->default_value, '::')) {
                     if (strpos($column->default_value, "'") === 0) {
