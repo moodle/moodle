@@ -19,7 +19,7 @@ if (!defined('ADODB_DIR')) die();
 /*
 	MSSQL has moved most performance info to Performance Monitor
 */
-class perf_mssql extends adodb_perf{
+class perf_mssqlnative extends adodb_perf{
 	var $sql1 = 'cast(sql1 as text)';
 	var $createTableSQL = "CREATE TABLE adodb_logsql (
 		  created datetime NOT NULL,
@@ -65,13 +65,13 @@ class perf_mssql extends adodb_perf{
 	);
 	
 	
-	function perf_mssql(&$conn)
+	function perf_mssqlnative(&$conn)
 	{
 		if ($conn->dataProvider == 'odbc') {
 			$this->sql1 = 'sql1';
 			//$this->explain = false;
 		}
-		$this->conn = $conn;
+		$this->conn =& $conn;
 	}
 	
 	function Explain($sql,$partial=false)
@@ -96,7 +96,7 @@ class perf_mssql extends adodb_perf{
 		
 		$save = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-		$rs = $this->conn->Execute($sql);
+		$rs =& $this->conn->Execute($sql);
 		//adodb_printr($rs);
 		$ADODB_FETCH_MODE = $save;
 		if ($rs) {

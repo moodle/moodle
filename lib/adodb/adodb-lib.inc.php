@@ -10,7 +10,7 @@ global $ADODB_INCLUDED_LIB;
 $ADODB_INCLUDED_LIB = 1;
 
 /* 
- @version V5.04a 25 Mar 2008  (c) 2000-2008 John Lim (jlim\@natsoft.com.my). All rights reserved.
+ @version V5.06 16 Oct 2008  (c) 2000-2009 John Lim (jlim\@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -147,7 +147,7 @@ function _adodb_replace(&$zthis, $table, $fieldArray, $keyCol, $autoQuote, $has_
 			if ($v === null) {
 				$v = 'NULL';
 				$fieldArray[$k] = $v;
-			} else if ($autoQuote && !is_numeric($v) /*and strncmp($v,"'",1) !== 0 -- sql injection risk*/ and strcasecmp($v,$zthis->null2null)!=0) {
+			} else if ($autoQuote && /*!is_numeric($v) /*and strncmp($v,"'",1) !== 0 -- sql injection risk*/ strcasecmp($v,$zthis->null2null)!=0) {
 				$v = $zthis->qstr($v);
 				$fieldArray[$k] = $v;
 			}
@@ -159,7 +159,7 @@ function _adodb_replace(&$zthis, $table, $fieldArray, $keyCol, $autoQuote, $has_
 			} else
 				$uSet .= ",$k=$v";
 		}
-		 
+		
 		$where = false;
 		foreach ($keyCol as $v) {
 			if (isset($fieldArray[$v])) {
@@ -542,7 +542,7 @@ function _adodb_pageexecute_all_rows(&$zthis, $sql, $nrows, $page,
 	return $rsreturn;
 }
 
-// Ivï¿½n Oliva version
+// Iván Oliva version
 function _adodb_pageexecute_no_last_page(&$zthis, $sql, $nrows, $page, $inputarr=false, $secs2cache=0) 
 {
 
@@ -999,15 +999,15 @@ function _adodb_column_sql(&$zthis, $action, $type, $fname, $fnameq, $arrFields,
 
 		case "T":
 			$val = $zthis->DBTimeStamp($arrFields[$fname]);
-            break;
-
-        case "F": //Floating point number       // Moodle added
+			break;
+			
+		case "F": //Floating point number       // Moodle added
 		case "N":
 		    $val = $arrFields[$fname];
 			if (!is_numeric($val)) $val = str_replace(',', '.', (float)$val);
 		    break;
 
-        case "L": //Integer field suitable for storing booleans (0 or 1)     // Moodle added
+		case "L": //Integer field suitable for storing booleans (0 or 1)     // Moodle added
 		case "I":
 		case "R":
 		    $val = $arrFields[$fname];
@@ -1055,11 +1055,13 @@ function _adodb_debug_execute(&$zthis, $sql, $inputarr)
 			$ss = '<code>'.htmlspecialchars($ss).'</code>';
 		}
 		if ($zthis->debug === -1)
-			ADOConnection::outp( "<br />\n($dbt): ".htmlspecialchars($sqlTxt)." &nbsp; $ss\n<br />\n",false);
-		else 
-			ADOConnection::outp( "<hr />\n($dbt): ".htmlspecialchars($sqlTxt)." &nbsp; $ss\n<hr />\n",false);
+			ADOConnection::outp( "<br />\n($dbt): ".htmlspecialchars($sqlTxt)." &nbsp; $ss\n<br />\n",false); /// Moodle XHTML
+		else if ($zthis->debug !== -99)
+			ADOConnection::outp( "<hr />\n($dbt): ".htmlspecialchars($sqlTxt)." &nbsp; $ss\n<hr />\n",false); /// Moodle XHTML
 	} else {
-		ADOConnection::outp("-----\n($dbt): ".$sqlTxt."\n-----\n",false);
+		$ss = "\n   ".$ss;
+		if ($zthis->debug !== -99)
+			ADOConnection::outp("-----<hr />\n($dbt): ".$sqlTxt." $ss\n-----<hr />\n",false); /// Moodle XHTML
 	}
 
 	$qID = $zthis->_query($sql,$inputarr);
@@ -1070,10 +1072,21 @@ function _adodb_debug_execute(&$zthis, $sql, $inputarr)
 	*/
 	if ($zthis->databaseType == 'mssql') { 
 	// ErrorNo is a slow function call in mssql, and not reliable in PHP 4.0.6
+	
 		if($emsg = $zthis->ErrorMsg()) {
-			if ($err = $zthis->ErrorNo()) ADOConnection::outp($err.': '.$emsg);
+			if ($err = $zthis->ErrorNo()) {
+				if ($zthis->debug === -99) 
+					ADOConnection::outp( "<hr />\n($dbt): ".htmlspecialchars($sqlTxt)." &nbsp; $ss\n<hr />\n",false); /// Moodle XHTML
+		
+				ADOConnection::outp($err.': '.$emsg);
+			}
 		}
 	} else if (!$qID) {
+	
+		if ($zthis->debug === -99) 
+				if ($inBrowser) ADOConnection::outp( "<hr />\n($dbt): ".htmlspecialchars($sqlTxt)." &nbsp; $ss\n<hr />\n",false); /// Moodle XHTML
+				else ADOConnection::outp("-----<hr />\n($dbt): ".$sqlTxt."$ss\n-----<hr />\n",false);
+				
 		ADOConnection::outp($zthis->ErrorNo() .': '. $zthis->ErrorMsg());
 	}
 	
@@ -1082,20 +1095,18 @@ function _adodb_debug_execute(&$zthis, $sql, $inputarr)
 }
 
 # pretty print the debug_backtrace function
-function _adodb_backtrace($printOrArr=true,$levels=9999,$skippy=0)
+function _adodb_backtrace($printOrArr=true,$levels=9999,$skippy=0,$ishtml=null)
 {
 	if (!function_exists('debug_backtrace')) return '';
 	 
-	$html =  (isset($_SERVER['HTTP_USER_AGENT']));
-// moodle change start - see readme_moodle.txt
-	$fmt =  ($html) ? "</font><font color=\"#808080\" size=\"-1\"> %% line %4d, file: <a href=\"file:/%s\">%s</a></font>" : "%% line %4d, file: %s";
-// moodle change end
+	if ($ishtml === null) $html =  (isset($_SERVER['HTTP_USER_AGENT']));
+	else $html = $ishtml;
+	
+	$fmt =  ($html) ? "</font><font color=#808080 size=-1> %% line %4d, file: <a href=\"file:/%s\">%s</a></font>" : "%% line %4d, file: %s";
 
 	$MAXSTRLEN = 128;
 
-// moodle change start - see readme_moodle.txt
-	$s = ($html) ? '<pre align="left">' : '';
-// moodle change end
+	$s = ($html) ? '<pre align=left>' : '';
 	
 	if (is_array($printOrArr)) $traceArr = $printOrArr;
 	else $traceArr = debug_backtrace();
@@ -1121,7 +1132,7 @@ function _adodb_backtrace($printOrArr=true,$levels=9999,$skippy=0)
 			else if (is_bool($v)) $args[] = $v ? 'true' : 'false';
 			else {
 				$v = (string) @$v;
-				$str = htmlspecialchars(substr($v,0,$MAXSTRLEN));
+				$str = htmlspecialchars(str_replace(array("\r","\n"),' ',substr($v,0,$MAXSTRLEN)));
 				if (strlen($v) > $MAXSTRLEN) $str .= '...';
 				$args[] = $str;
 			}

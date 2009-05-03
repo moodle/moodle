@@ -1,6 +1,6 @@
 <?php
 /* 
-V5.04a 25 Mar 2008   (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
+V5.08 6 Apr 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -16,11 +16,14 @@ V5.04a 25 Mar 2008   (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights re
 if (!defined('ADODB_DIR')) die();
 
 class perf_oci8 extends ADODB_perf{
+
+	var $noShowIxora = 15; // if the sql for suspicious sql is taking too long, then disable ixora
 	
 	var $tablesSQL = "select segment_name as \"tablename\", sum(bytes)/1024 as \"size_in_k\",tablespace_name as \"tablespace\",count(*) \"extents\" from sys.user_extents 
 	   group by segment_name,tablespace_name";
 	 
 	var $version;
+	
 	var $createTableSQL = "CREATE TABLE adodb_logsql (
 		  created date NOT NULL,
 		  sql0 varchar(250) NOT NULL,
@@ -68,6 +71,7 @@ AND    b.name = 'sorts (memory)'",
 		"select value from v\$sysstat where name='physical writes'"),
 	
 	'Data Cache',
+	
 		'data cache buffers' => array( 'DATAC',
 		"select a.value/b.value  from v\$parameter a, v\$parameter b 
 			where a.name = 'db_cache_size' and b.name= 'db_block_size'",
@@ -75,8 +79,15 @@ AND    b.name = 'sorts (memory)'",
 		'data cache blocksize' => array('DATAC',
 			"select value from v\$parameter where name='db_block_size'",
 			'' ),			
+	
 	'Memory Pools',
-		'data cache size' => array('DATAC',
+		'SGA Max Size' => array( 'DATAC',
+		"select value from v\$parameter where name = 'sga_max_size'",
+			'The sga_max_size is the maximum value to which sga_target can be set.' ),
+	'SGA target' => array( 'DATAC',
+		"select value from v\$parameter where name = 'sga_target'",
+			'If sga_target is defined then data cache, shared, java and large pool size can be 0. This is because all these pools are consolidated into one sga_target.' ),
+	'data cache size' => array('DATAC',
 			"select value from v\$parameter where name = 'db_cache_size'",
 			'db_cache_size' ),
 		'shared pool size' => array('DATAC',
@@ -430,7 +441,11 @@ order by
 		if (isset($_GET['sql'])) return $this->_SuspiciousSQL($numsql);
 		
 		$s = '';
+		$timer = time();
 		$s .= $this->_SuspiciousSQL($numsql);
+		$timer = time() - $timer;
+		
+		if ($timer > $this->noShowIxora) return $s;
 		$s .= '<p>';
 		
 		$save = $ADODB_CACHE_MODE;
@@ -502,7 +517,11 @@ order by
 		}
 		
 		$s = '';		
+		$timer = time();
 		$s .= $this->_ExpensiveSQL($numsql);
+		$timer = time() - $timer;
+		if ($timer > $this->noShowIxora) return $s;
+		
 		$s .= '<p>';
 		$save = $ADODB_CACHE_MODE;
 		$ADODB_CACHE_MODE = ADODB_FETCH_NUM;
@@ -536,11 +555,12 @@ BEGIN
 	LOOP
 	  cnt := cnt + 1;
 	  DELETE FROM $perf_table WHERE ROWID=rec.rr;
-	  IF cnt = 10000 THEN
+	  IF cnt = 1000 THEN
 	  	COMMIT;
 		cnt := 0;
 	  END IF;
 	END LOOP;
+	commit;
 END;";
 
 		$ok = $this->conn->Execute($sql);

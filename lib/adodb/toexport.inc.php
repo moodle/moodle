@@ -1,7 +1,7 @@
 <?php
 
 /** 
- * @version V4.93 10 Oct 2006 (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
+ * @version V4.93 10 Oct 2006 (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -73,9 +73,10 @@ function _adodb_export(&$rs,$sep,$sepreplace,$fp=false,$addtitles=true,$quote = 
 	if ($addtitles) {
 		$fieldTypes = $rs->FieldTypesArray();
 		reset($fieldTypes);
+		$i = 0;
 		while(list(,$o) = each($fieldTypes)) {
-			if (!$o) $v = '';
-			else $v = $o->name;
+		
+			$v = ($o) ? $o->name : 'Field'.($i++);
 			if ($escquote) $v = str_replace($quote,$escquotequote,$v);
 			$v = strip_tags(str_replace("\n", $replaceNewLine, str_replace("\r\n",$replaceNewLine,str_replace($sep,$sepreplace,$v))));
 			$elements[] = $v;

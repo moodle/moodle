@@ -8,7 +8,7 @@ $ADODB_INCLUDED_CSV = 1;
 
 /* 
 
-  V5.04a 25 Mar 2008   (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
+  V5.08 6 Apr 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -287,7 +287,7 @@ $ADODB_INCLUDED_CSV = 1;
 			fclose($fd);
 			
 			if ($ok) {
-				chmod($tmpname,0644);
+				@chmod($tmpname,0644);
 				// the tricky moment
 				@unlink($filename);
 				if (!@rename($tmpname,$filename)) {
@@ -305,7 +305,7 @@ $ADODB_INCLUDED_CSV = 1;
 			if (fwrite( $fd, $contents )) $ok = true;
 			else $ok = false;
 			fclose($fd);
-			chmod($filename,0644);
+			@chmod($filename,0644);
 		}else {
 			fclose($fd);
 			if ($debug)ADOConnection::outp( " Failed acquiring lock for $filename<br>\n");

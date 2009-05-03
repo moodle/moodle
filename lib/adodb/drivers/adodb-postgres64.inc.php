@@ -1,6 +1,6 @@
 <?php
 /*
- V5.04a 25 Mar 2008   (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
+ V5.08 6 Apr 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -236,6 +236,8 @@ select viewname,'V' from pg_views where viewname like $mask";
 	// if magic quotes disabled, use pg_escape_string()
 	function qstr($s,$magic_quotes=false)
 	{
+		if (is_bool($s)) return $s ? 'true' : 'false';
+		 
 		if (!$magic_quotes) {
 			if (ADODB_PHPVER >= 0x5200) {
 				return  "'".pg_escape_string($this->_connectionID,$s)."'";
@@ -713,7 +715,7 @@ WHERE (c2.relname=\'%s\' or c2.relname=lower(\'%s\'))';
 	
 
 	// returns queryID or false
-	function _query($sql,$inputarr)
+	function _query($sql,$inputarr=false)
 	{
 		$this->_errorMsg = false;
 		if ($inputarr) {
@@ -943,6 +945,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 	
 	function _decode($blob)
 	{
+		if ($blob === NULL) return NULL;
 		eval('$realblob="'.adodb_str_replace(array('"','$'),array('\"','\$'),$blob).'";');
 		return $realblob;	
 	}

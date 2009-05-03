@@ -1,6 +1,6 @@
 <?php
 /* 
-V5.04a 25 Mar 2008   (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
+V5.08 6 Apr 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -70,7 +70,8 @@ class ADODB_ado extends ADOConnection {
 		 } else {
 		 	$argDatabasename = '';
 		 	if ($argDBorProvider) $argProvider = $argDBorProvider;
-			else $argProvider = 'MSDASQL';
+			else if (stripos($argHostname,'PROVIDER') === false) /* full conn string is not in $argHostname */ 
+				$argProvider = 'MSDASQL';
 		}
 		
 		
@@ -117,6 +118,7 @@ class ADODB_ado extends ADOConnection {
 		$dbc->CursorLocation = $this->_cursor_location;
 		return  $dbc->State > 0;
 		} catch (exception $e) {
+			if ($this->debug);echo "<pre>",$argHostname,"\n",$e,"</pre>\n";
 		}
 		
 		return false;
@@ -244,13 +246,28 @@ class ADODB_ado extends ADOConnection {
 			$oCmd->CommandText = $sql;
 			$oCmd->CommandType = 1;
 
-			foreach($inputarr as $val) {
+			while(list(, $val) = each($inputarr)) {
+				$type = gettype($val);
+				$len=strlen($val);
+				if ($type == 'boolean')
+					$this->adoParameterType = 11;
+				else if ($type == 'integer')
+					$this->adoParameterType = 3;
+				else if ($type == 'double')
+					$this->adoParameterType = 5;
+				elseif ($type == 'string')
+					$this->adoParameterType = 202;
+				else if (($val === null) || (!defined($val)))
+					$len=1;
+				else
+					$this->adoParameterType = 130;
+				
 				// name, type, direction 1 = input, len,
-				$this->adoParameterType = 130;
-				$p = $oCmd->CreateParameter('name',$this->adoParameterType,1,strlen($val),$val);
-				//print $p->Type.' '.$p->value;
+        		$p = $oCmd->CreateParameter('name',$this->adoParameterType,1,$len,$val);
+
 				$oCmd->Parameters->Append($p);
 			}
+			
 			$p = false;
 			$rs = $oCmd->Execute();
 			$e = $dbc->Errors;
@@ -375,6 +392,8 @@ class ADORecordSet_ado extends ADORecordSet {
 		
 		$o= new ADOFieldObject();
 		$rs = $this->_queryID;
+		if (!$rs) return false;
+		
 		$f = $rs->Fields($fieldOffset);
 		$o->name = $f->Name;
 		$t = $f->Type;
@@ -406,8 +425,12 @@ class ADORecordSet_ado extends ADORecordSet {
 	function _initrs()
 	{
 		$rs = $this->_queryID;
-		$this->_numOfRows = $rs->RecordCount;
 		
+		try {
+			$this->_numOfRows = $rs->RecordCount;
+		} catch (Exception $e) {
+			$this->_numOfRows = -1;
+		}
 		$f = $rs->Fields;
 		$this->_numOfFields = $f->Count;
 	}
@@ -669,7 +692,10 @@ class ADORecordSet_ado extends ADORecordSet {
 
 	function _close() {
 		$this->_flds = false;
+		try {
 		@$this->_queryID->Close();// by Pete Dishman (peterd@telephonetics.co.uk)
+		} catch (Exception $e) {
+		}
 		$this->_queryID = false;	
 	}
 

@@ -1,6 +1,6 @@
 <?php
 /* 
-V5.04a 25 Mar 2008   (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
+V5.08 6 Apr 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -158,6 +158,7 @@ class ADODB_pdo extends ADOConnection {
 			case 'mysql':
 			case 'pgsql':
 			case 'mssql':
+			case 'sqlite':
 				include_once(ADODB_DIR.'/drivers/adodb-pdo_'.$this->dsnType.'.inc.php');
 				break;
 			}
@@ -172,6 +173,15 @@ class ADODB_pdo extends ADOConnection {
 		}
 		$this->_driver = new ADODB_pdo_base();
 		return false;
+	}
+	
+	function Concat() 
+	{
+		$args = func_get_args();
+		if(method_exists($this->_driver, 'Concat')) 
+			return call_user_func_array(array($this->_driver, 'Concat'), $args); 
+		
+		return call_user_func_array(array($this,'parent::Concat'), $args); 
 	}
 	
 	// returns true or false
@@ -216,6 +226,10 @@ class ADODB_pdo extends ADOConnection {
 		else $obj->bindParam($name, $var);
 	}
 	
+	function OffsetDate($dayFraction,$date=false)
+    {   
+        return $this->_driver->OffsetDate($dayFraction,$date);
+    }
 	
 	function ErrorMsg()
 	{
@@ -248,8 +262,19 @@ class ADODB_pdo extends ADOConnection {
 		return $err;
 	}
 
+	function SetTransactionMode($transaction_mode) 
+	{
+		if(method_exists($this->_driver, 'SetTransactionMode')) 
+			return $this->_driver->SetTransactionMode($transaction_mode); 
+		
+		return parent::SetTransactionMode($seqname); 
+	}
+
 	function BeginTrans()
 	{	
+		if(method_exists($this->_driver, 'BeginTrans')) 
+			return $this->_driver->BeginTrans(); 
+		
 		if (!$this->hasTransactions) return false;
 		if ($this->transOff) return true; 
 		$this->transCnt += 1;
@@ -260,6 +285,9 @@ class ADODB_pdo extends ADOConnection {
 	
 	function CommitTrans($ok=true) 
 	{ 
+		if(method_exists($this->_driver, 'CommitTrans')) 
+			return $this->_driver->CommitTrans($ok); 
+		
 		if (!$this->hasTransactions) return false;
 		if ($this->transOff) return true; 
 		if (!$ok) return $this->RollbackTrans();
@@ -273,6 +301,9 @@ class ADODB_pdo extends ADOConnection {
 	
 	function RollbackTrans()
 	{
+		if(method_exists($this->_driver, 'RollbackTrans')) 
+			return $this->_driver->RollbackTrans(); 
+		
 		if (!$this->hasTransactions) return false;
 		if ($this->transOff) return true; 
 		if ($this->transCnt) $this->transCnt -= 1;
@@ -299,6 +330,30 @@ class ADODB_pdo extends ADOConnection {
 		return $obj;
 	}
 	
+	function CreateSequence($seqname='adodbseq',$startID=1)
+	{
+		if(method_exists($this->_driver, 'CreateSequence')) 
+			return $this->_driver->CreateSequence($seqname, $startID); 
+		
+		return parent::CreateSequence($seqname, $startID); 
+	}
+	
+	function DropSequence($seqname='adodbseq')
+	{
+		if(method_exists($this->_driver, 'DropSequence')) 
+			return $this->_driver->DropSequence($seqname); 
+		
+		return parent::DropSequence($seqname); 
+	}
+
+	function GenID($seqname='adodbseq',$startID=1)
+	{
+		if(method_exists($this->_driver, 'GenID')) 
+			return $this->_driver->GenID($seqname, $startID); 
+		
+		return parent::GenID($seqname, $startID); 
+	}
+
 	
 	/* returns queryID or false */
 	function _query($sql,$inputarr=false) 

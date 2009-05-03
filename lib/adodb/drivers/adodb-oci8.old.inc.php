@@ -1,7 +1,7 @@
 <?php
 /*
 
-  version V5.06 16 Oct 2008  (c) 2000-2009 John Lim. All rights reserved.
+  version V5.04 13 Feb 2008  (c) 2000-2008 John Lim. All rights reserved.
 
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
@@ -81,7 +81,7 @@ class ADODB_oci8 extends ADOConnection {
 	var $leftOuter = '';  // oracle wierdness, $col = $value (+) for LEFT OUTER, $col (+)= $value for RIGHT OUTER
 	var $session_sharing_force_blob = false; // alter session on updateblob if set to true 
 	var $firstrows = true; // enable first rows optimization on SelectLimit()
-	var $selectOffsetAlg1 = 1000; // when to use 1st algorithm of selectlimit.
+	var $selectOffsetAlg1 = 100; // when to use 1st algorithm of selectlimit.
 	var $NLS_DATE_FORMAT = 'YYYY-MM-DD';  // To include time, use 'RRRR-MM-DD HH24:MI:SS'
 	var $dateformat = 'YYYY-MM-DD'; // DBDate format
  	var $useDBDateFormatForTextInput=false;
@@ -184,7 +184,7 @@ NATSOFT.DOMAIN =
 	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename,$mode=0)
 	{
 		if (!function_exists('OCIPLogon')) return null;
-		#adodb_backtrace(); 
+		
 		
         $this->_errorMsg = false;
 		$this->_errorCode = false;
@@ -199,11 +199,6 @@ NATSOFT.DOMAIN =
 			 	} else {
 					$argHostport = empty($this->port)?  "1521" : $this->port;
 	   			}
-				
-				if (strncasecmp($argDatabasename,'SID=',4) == 0) {
-					$argDatabasename = substr($argDatabasename,4);
-					$this->connectSID = true;
-				}
 				
 				if ($this->connectSID) {
 					$argDatabasename="(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=".$argHostname
@@ -277,10 +272,10 @@ NATSOFT.DOMAIN =
 	}
 	
 	// format and return date string in database date format
-	function DBDate($d,$isfld=false)
+	function DBDate($d)
 	{
 		if (empty($d) && $d !== 0) return 'null';
-		if ($isfld) return 'TO_DATE('.$d.",'".$this->dateformat."')";
+		
 		if (is_string($d)) $d = ADORecordSet::UnixDate($d);
 		return "TO_DATE(".adodb_date($this->fmtDate,$d).",'".$this->dateformat."')";
 	}
@@ -302,10 +297,9 @@ NATSOFT.DOMAIN =
 	}
 	
 	// format and return date string in database timestamp format
-	function DBTimeStamp($ts,$isfld=false)
+	function DBTimeStamp($ts)
 	{
 		if (empty($ts) && $ts !== 0) return 'null';
-		if ($isfld) return 'TO_DATE(substr('.$ts.",1,19),'RRRR-MM-DD, HH24:MI:SS')";
 		if (is_string($ts)) $ts = ADORecordSet::UnixTimeStamp($ts);
 		return 'TO_DATE('.adodb_date("'Y-m-d H:i:s'",$ts).",'RRRR-MM-DD, HH24:MI:SS')";
 	}
@@ -405,10 +399,8 @@ NATSOFT.DOMAIN =
 		$this->autoCommit = false;
 		$this->_commit = OCI_DEFAULT;
 		
-		if ($this->_transmode) $ok = $this->Execute("SET TRANSACTION ".$this->_transmode);
-		else $ok = true;
-		
-		return $ok ? true : false;
+		if ($this->_transmode) $this->Execute("SET TRANSACTION ".$this->_transmode);
+		return true;
 	}
 	
 	function CommitTrans($ok=true) 
@@ -581,7 +573,7 @@ NATSOFT.DOMAIN =
 				$sql = preg_replace('/^[ \t\n]*select/i','SELECT /*+FIRST_ROWS*/',$sql);
 		}
 		
-		if ($offset == -1 || ($offset < $this->selectOffsetAlg1 && 0 < $nrows && $nrows < 1000)) {
+		if ($offset < $this->selectOffsetAlg1 && 0 < $nrows && $nrows < 1000) {
 			if ($nrows > 0) {	
 				if ($offset > 0) $nrows += $offset;
 				//$inputarr['adodb_rownum'] = $nrows;
@@ -603,14 +595,14 @@ NATSOFT.DOMAIN =
 			
 			 // Let Oracle return the name of the columns
 			$q_fields = "SELECT * FROM (".$sql.") WHERE NULL = NULL";
-		
+			 
 			$false = false;
 			if (! $stmt_arr = $this->Prepare($q_fields)) {
 				return $false;
 			}
 			$stmt = $stmt_arr[1];
 			 
-			if (is_array($inputarr)) {
+			 if (is_array($inputarr)) {
 			 	foreach($inputarr as $k => $v) {
 					if (is_array($v)) {
 						if (sizeof($v) == 2) // suggested by g.giunta@libero.
@@ -624,7 +616,6 @@ NATSOFT.DOMAIN =
 							$bindarr[$k] = $v;
 						} else { 				// dynamic sql, so rebind every time
 							OCIBindByName($stmt,":$k",$inputarr[$k],$len);
-							
 						}
 					}
 				}
@@ -643,17 +634,16 @@ NATSOFT.DOMAIN =
 			
 			 OCIFreeStatement($stmt); 
 			 $fields = implode(',', $cols);
-			 if ($nrows <= 0) $nrows = 999999999999;
-			 else $nrows += $offset;
+			 $nrows += $offset;
 			 $offset += 1; // in Oracle rownum starts at 1
 			
 			if ($this->databaseType == 'oci8po') {
-					 $sql = "SELECT /*+ FIRST_ROWS */ $fields FROM".
+					 $sql = "SELECT $fields FROM".
 					  "(SELECT rownum as adodb_rownum, $fields FROM".
 					  " ($sql) WHERE rownum <= ?".
 					  ") WHERE adodb_rownum >= ?";
 				} else {
-					 $sql = "SELECT /*+ FIRST_ROWS */ $fields FROM".
+					 $sql = "SELECT $fields FROM".
 					  "(SELECT rownum as adodb_rownum, $fields FROM".
 					  " ($sql) WHERE rownum <= :adodb_nrows".
 					  ") WHERE adodb_rownum >= :adodb_offset";
@@ -720,7 +710,7 @@ NATSOFT.DOMAIN =
 	}
 	
 	/**
-	* Usage:  store file pointed to by $val in a blob
+	* Usage:  store file pointed to by $var in a blob
 	*/
 	function UpdateBlobFile($table,$column,$val,$where,$blobtype='BLOB')
 	{
@@ -767,7 +757,6 @@ NATSOFT.DOMAIN =
 			
 			$element0 = reset($inputarr);
 			
-			if (!$this->_bindInputArray) {
 			# is_object check because oci8 descriptors can be passed in
 			if (is_array($element0) && !is_object(reset($element0))) {
 				if (is_string($sql))
@@ -780,41 +769,8 @@ NATSOFT.DOMAIN =
 					if (!$ret) return $ret;
 				}
 			} else {
-				$sqlarr = explode(':',$sql);
-				$sql = '';
-				$lastnomatch = -2;
-				#var_dump($sqlarr);echo "<hr>";var_dump($inputarr);echo"<hr>";
-				foreach($sqlarr as $k => $str) {
-						if ($k == 0) { $sql = $str; continue; }
-						// we need $lastnomatch because of the following datetime, 
-						// eg. '10:10:01', which causes code to think that there is bind param :10 and :1
-						$ok = preg_match('/^([0-9]*)/', $str, $arr); 
-			
-						if (!$ok) $sql .= $str;
-						else {
-							$at = $arr[1];
-							if (isset($inputarr[$at]) || is_null($inputarr[$at])) {
-								if ((strlen($at) == strlen($str) && $k < sizeof($arr)-1)) {
-									$sql .= ':'.$str;
-									$lastnomatch = $k;
-								} else if ($lastnomatch == $k-1) {
-									$sql .= ':'.$str;
-								} else {
-									if (is_null($inputarr[$at])) $sql .= 'null';
-									else $sql .= $this->qstr($inputarr[$at]);
-									$sql .= substr($str, strlen($at));
-								}
-							} else {
-								$sql .= ':'.$str;
-							}
-							
-						}
-					}
-					$inputarr = false;
-				}
+				$ret = $this->_Execute($sql,$inputarr);
 			}
-			$ret = $this->_Execute($sql,$inputarr);
-			
 			
 		} else {
 			$ret = $this->_Execute($sql,false);
@@ -955,7 +911,7 @@ NATSOFT.DOMAIN =
 			if ($isOutput == false) {
 				$var = $this->BlobEncode($var);
 				$tmp->WriteTemporary($var);
-				$this->_refLOBs[$numlob]['VAR'] = &$var;
+				$this->_refLOBs[$numlob]['VAR'] = $var;
 				if ($this->debug) {
 					ADOConnection::outp("<b>Bind</b>: LOB has been written to temp");
 				}
@@ -1020,7 +976,7 @@ NATSOFT.DOMAIN =
 		  $db->bind($stmt,1); $db->bind($stmt,2); $db->bind($stmt,3); 
 		  $db->execute($stmt);
 	*/ 
-	function _query($sql,$inputarr=false)
+	function _query($sql,$inputarr)
 	{
 		if (is_array($sql)) { // is prepared sql
 			$stmt = $sql[1];
@@ -1128,32 +1084,6 @@ NATSOFT.DOMAIN =
 					// ociclose -- no because it could be used in a LOB?
                     return true;
             }
-		}
-		return false;
-	}
-	
-	// From Oracle Whitepaper: PHP Scalability and High Availability
-	function IsConnectionError($err)
-	{
-		switch($err) {
-			case 378: /* buffer pool param incorrect */
-			case 602: /* core dump */
-			case 603: /* fatal error */
-			case 609: /* attach failed */
-			case 1012: /* not logged in */
-			case 1033: /* init or shutdown in progress */
-			case 1043: /* Oracle not available */
-			case 1089: /* immediate shutdown in progress */
-			case 1090: /* shutdown in progress */
-			case 1092: /* instance terminated */
-			case 3113: /* disconnect */
-			case 3114: /* not connected */
-			case 3122: /* closing window */
-			case 3135: /* lost contact */
-			case 12153: /* TNS: not connected */
-			case 27146: /* fatal or instance terminated */
-			case 28511: /* Lost RPC */
-			return true;
 		}
 		return false;
 	}

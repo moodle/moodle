@@ -1,4 +1,4 @@
-Description of ADODB V5.04a library import into Moodle
+Description of ADODB V5.08 library import into Moodle
 
 Removed:
  * contrib/
@@ -13,20 +13,12 @@ Added:
  * index.html - prevent directory browsing on misconfigured servers
  * readme_moodle.txt - this file ;-)
 
-Our changes:
+Our changes: /// Look for "moodle" in adodb code
  * adodb-lib.inc.php - added support for "F" and "L" types in  _adodb_column_sql()
  * adodb-lib.inc.php - modify some debug output to be correct XHTML. MDL-12378.
        Reported to ADOdb at: http://phplens.com/lens/lensforum/msgs.php?id=17133
        Once fixed by adodb guys, we'll return to their official distro.
- * drivers/adodb-mysqli.inc.php - fixed problem with driver not detecting enums
-       in the MetaColumns() function. MDL-14215.
-       Reported to ADOdb at: http://phplens.com/lens/lensforum/msgs.php?id=17383
-       Once fixed by adodb guys, we'll return to their official distro.
- * drivers/adodb-mssql.ic.php - fixed problem with insert statements using placeholders
-       not able to return the Insert_ID() at all. MDL-14886.
-       Reported to ADOdb at: http://phplens.com/lens/lensforum/msgs.php?id=17068
-       Once fixed by adodb guys, we'll return to their official distro.
- 
+
 skodak, iarenaza, moodler, stronk7
 
 $Id$

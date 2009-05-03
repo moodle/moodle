@@ -1,6 +1,6 @@
 <?php
 /* 
-V5.04a 25 Mar 2008   (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
+V5.08 6 Apr 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -70,9 +70,9 @@ function adodb_log_sql(&$connx,$sql,$inputarr)
 {
     $perf_table = adodb_perf::table();
 	$connx->fnExecute = false;
-	$t0 = microtime();
+	$a0 = microtime(true);
 	$rs = $connx->Execute($sql,$inputarr);
-	$t1 = microtime();
+	$a1 = microtime(true);
 
 	if (!empty($connx->_logsql) && (empty($connx->_logsqlErrors) || !$rs)) {
 	global $ADODB_LOG_CONN;
@@ -90,12 +90,6 @@ function adodb_log_sql(&$connx,$sql,$inputarr)
 		
 		$conn->_logsql = false; // disable logsql error simulation
 		$dbT = $conn->databaseType;
-		
-		$a0 = split(' ',$t0);
-		$a0 = (float)$a0[1]+(float)$a0[0];
-		
-		$a1 = split(' ',$t1);
-		$a1 = (float)$a1[1]+(float)$a1[0];
 		
 		$time = $a1 - $a0;
 	
@@ -117,9 +111,9 @@ function adodb_log_sql(&$connx,$sql,$inputarr)
 		}
 		if (isset($_SERVER['HTTP_HOST'])) {
 			$tracer .= '<br>'.$_SERVER['HTTP_HOST'];
-			if (isset($_SERVER['PHP_SELF'])) $tracer .= $_SERVER['PHP_SELF'];
+			if (isset($_SERVER['PHP_SELF'])) $tracer .= htmlspecialchars($_SERVER['PHP_SELF']);
 		} else 
-			if (isset($_SERVER['PHP_SELF'])) $tracer .= '<br>'.$_SERVER['PHP_SELF'];
+			if (isset($_SERVER['PHP_SELF'])) $tracer .= '<br>'.htmlspecialchars($_SERVER['PHP_SELF']);
 		//$tracer .= (string) adodb_backtrace(false);
 		
 		$tracer = (string) substr($tracer,0,500);
@@ -264,7 +258,7 @@ processes 69293
 
 */
 		// Algorithm is taken from
-		// http://msdn.microsoft.com/library/default.asp?url=/library/en-us/wmisdk/wmi/example__obtaining_raw_performance_data.asp
+		// http://social.technet.microsoft.com/Forums/en-US/winservergen/thread/414b0e1b-499c-411e-8a02-6a12e339c0f1/
 		if (strncmp(PHP_OS,'WIN',3)==0) {
 			if (PHP_VERSION == '5.0.0') return false;
 			if (PHP_VERSION == '5.0.1') return false;
@@ -272,14 +266,33 @@ processes 69293
 			if (PHP_VERSION == '5.0.3') return false;
 			if (PHP_VERSION == '4.3.10') return false; # see http://bugs.php.net/bug.php?id=31737
 			
-			@$c = new COM("WinMgmts:{impersonationLevel=impersonate}!Win32_PerfRawData_PerfOS_Processor.Name='_Total'");
-			if (!$c) return false;
+			static $FAIL = false;
+			if ($FAIL) return false;
 			
-			$info[0] = $c->PercentProcessorTime;
-			$info[1] = 0;
-			$info[2] = 0;
-			$info[3] = $c->TimeStamp_Sys100NS;
-			//print_r($info);
+			$objName = "winmgmts:{impersonationLevel=impersonate}!\\\\.\\root\\CIMV2";	
+			$myQuery = "SELECT * FROM Win32_PerfFormattedData_PerfOS_Processor WHERE Name = '_Total'";
+			
+			try {
+				@$objWMIService = new COM($objName);
+				if (!$objWMIService) {
+					$FAIL = true;
+					return false;
+				}
+		
+				$info[0] = -1;
+				$info[1] = 0;
+				$info[2] = 0;
+				$info[3] = 0;
+				foreach($objWMIService->ExecQuery($myQuery) as $objItem)  {
+						$info[0] = $objItem->PercentProcessorTime();
+				}
+			
+			} catch(Exception $e) {
+				$FAIL = true;
+				echo $e->getMessage();
+				return false;
+			}
+			
 			return $info;
 		}
 		
@@ -342,27 +355,26 @@ Committed_AS:   348732 kB
 	{
 		$info = $this->_CPULoad();
 		if (!$info) return false;
-			
-		if (empty($this->_lastLoad)) {
-			sleep(1);
-			$this->_lastLoad = $info;
-			$info = $this->_CPULoad();
-		}
 		
-		$last = $this->_lastLoad;
-		$this->_lastLoad = $info;
-		
-		$d_user = $info[0] - $last[0];
-		$d_nice = $info[1] - $last[1];
-		$d_system = $info[2] - $last[2];
-		$d_idle = $info[3] - $last[3];
-		
-		//printf("Delta - User: %f  Nice: %f  System: %f  Idle: %f<br>",$d_user,$d_nice,$d_system,$d_idle);
-
 		if (strncmp(PHP_OS,'WIN',3)==0) {
-			if ($d_idle < 1) $d_idle = 1;
-			return 100*(1-$d_user/$d_idle);
+			return (integer) $info[0];
 		}else {
+			if (empty($this->_lastLoad)) {
+				sleep(1);
+				$this->_lastLoad = $info;
+				$info = $this->_CPULoad();
+			}
+			
+			$last = $this->_lastLoad;
+			$this->_lastLoad = $info;
+			
+			$d_user = $info[0] - $last[0];
+			$d_nice = $info[1] - $last[1];
+			$d_system = $info[2] - $last[2];
+			$d_idle = $info[3] - $last[3];
+			
+			//printf("Delta - User: %f  Nice: %f  System: %f  Idle: %f<br>",$d_user,$d_nice,$d_system,$d_idle);
+		
 			$total=$d_user+$d_nice+$d_system+$d_idle;
 			if ($total<1) $total=1;
 			return 100*($d_user+$d_nice+$d_system)/$total; 
@@ -727,8 +739,9 @@ Committed_AS:   348732 kB
 			echo $this->CheckMemory();		
 			break;
 		case 'poll':
+			$self = htmlspecialchars($_SERVER['PHP_SELF']);
 			echo "<iframe width=720 height=80% 
-				src=\"{$_SERVER['PHP_SELF']}?do=poll2&hidem=1\"></iframe>";
+				src=\"{$self}?do=poll2&hidem=1\"></iframe>";
 			break;
 		case 'poll2':
 			echo "<pre>";
@@ -751,7 +764,7 @@ Committed_AS:   348732 kB
 			echo $this->Tables(); break;
 		}
 		global $ADODB_vers;
-		echo "<p><div class='mdl-align'><font size=1>$ADODB_vers Sponsored by <a href=http://phplens.com/>phpLens</a></font></div>";
+		echo "<p><div align=center><font size=1>$ADODB_vers Sponsored by <a href=http://phplens.com/>phpLens</a></font></div>";
 	}
 	
 	/*
@@ -905,7 +918,7 @@ Committed_AS:   348732 kB
 	{
 	
 		
-		$PHP_SELF = $_SERVER['PHP_SELF'];
+		$PHP_SELF = htmlspecialchars($_SERVER['PHP_SELF']);
 		$sql = isset($_REQUEST['sql']) ? $_REQUEST['sql'] : '';
 
 		if (isset($_SESSION['phplens_sqlrows'])) $rows = $_SESSION['phplens_sqlrows'];

@@ -1,6 +1,6 @@
 <?php
 /*
-  V5.04a 25 Mar 2008   (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
+  V5.08 6 Apr 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence. See License.txt.
@@ -45,16 +45,39 @@ class ADODB_odbtp extends ADOConnection{
 
 	function ErrorMsg()
 	{
+		if ($this->_errorMsg !== false) return $this->_errorMsg;
 		if (empty($this->_connectionID)) return @odbtp_last_error();
 		return @odbtp_last_error($this->_connectionID);
 	}
 
 	function ErrorNo()
 	{
+		if ($this->_errorCode !== false) return $this->_errorCode;
 		if (empty($this->_connectionID)) return @odbtp_last_error_state();
 			return @odbtp_last_error_state($this->_connectionID);
 	}
-
+/*
+	function DBDate($d,$isfld=false)
+	{
+		if (empty($d) && $d !== 0) return 'null';
+		if ($isfld) return "convert(date, $d, 120)";
+		
+		if (is_string($d)) $d = ADORecordSet::UnixDate($d);
+		$d = adodb_date($this->fmtDate,$d);
+		return "convert(date, $d, 120)"; 
+	}
+	
+	function DBTimeStamp($d,$isfld=false)
+	{
+		if (empty($d) && $d !== 0) return 'null';
+		if ($isfld) return "convert(datetime, $d, 120)";
+		
+		if (is_string($d)) $d = ADORecordSet::UnixDate($d);
+		$d = adodb_date($this->fmtDate,$d);
+		return "convert(datetime, $d, 120)"; 
+	}
+*/
+	
 	function _insertid()
 	{
 	// SCOPE_IDENTITY()
@@ -437,6 +460,10 @@ class ADODB_odbtp extends ADOConnection{
 	function Prepare($sql)
 	{
 		if (! $this->_bindInputArray) return $sql; // no binding
+		
+        $this->_errorMsg = false;
+		$this->_errorCode = false;
+		
 		$stmt = @odbtp_prepare($sql,$this->_connectionID);
 		if (!$stmt) {
 		//	print "Prepare Error for ($sql) ".$this->ErrorMsg()."<br>";
@@ -449,6 +476,9 @@ class ADODB_odbtp extends ADOConnection{
 	{
 		if (!$this->_canPrepareSP) return $sql; // Can't prepare procedures
 
+        $this->_errorMsg = false;
+		$this->_errorCode = false;
+		
 		$stmt = @odbtp_prepare_proc($sql,$this->_connectionID);
 		if (!$stmt) return false;
 		return array($sql,$stmt);
@@ -511,6 +541,56 @@ class ADODB_odbtp extends ADOConnection{
 		return @odbtp_execute( $stmt ) != false;
 	}
 
+	function MetaIndexes($table,$primary=false)
+	{
+		switch ( $this->odbc_driver) {
+			case ODB_DRIVER_MSSQL:
+				return $this->MetaIndexes_mssql($table, $primary);
+			default:
+				return array();
+		}
+	}
+	
+	function MetaIndexes_mssql($table,$primary=false)
+	{
+		$table = strtolower($this->qstr($table));
+
+		$sql = "SELECT i.name AS ind_name, C.name AS col_name, USER_NAME(O.uid) AS Owner, c.colid, k.Keyno, 
+			CASE WHEN I.indid BETWEEN 1 AND 254 AND (I.status & 2048 = 2048 OR I.Status = 16402 AND O.XType = 'V') THEN 1 ELSE 0 END AS IsPK,
+			CASE WHEN I.status & 2 = 2 THEN 1 ELSE 0 END AS IsUnique
+			FROM dbo.sysobjects o INNER JOIN dbo.sysindexes I ON o.id = i.id 
+			INNER JOIN dbo.sysindexkeys K ON I.id = K.id AND I.Indid = K.Indid 
+			INNER JOIN dbo.syscolumns c ON K.id = C.id AND K.colid = C.Colid
+			WHERE LEFT(i.name, 8) <> '_WA_Sys_' AND o.status >= 0 AND lower(O.Name) = $table
+			ORDER BY O.name, I.Name, K.keyno";
+
+		global $ADODB_FETCH_MODE;
+		$save = $ADODB_FETCH_MODE;
+        $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+        if ($this->fetchMode !== FALSE) {
+        	$savem = $this->SetFetchMode(FALSE);
+        }
+        
+        $rs = $this->Execute($sql);
+        if (isset($savem)) {
+        	$this->SetFetchMode($savem);
+        }
+        $ADODB_FETCH_MODE = $save;
+
+        if (!is_object($rs)) {
+        	return FALSE;
+        }
+
+		$indexes = array();
+		while ($row = $rs->FetchRow()) {
+			if ($primary && !$row[5]) continue;
+			
+            $indexes[$row[0]]['unique'] = $row[6];
+            $indexes[$row[0]]['columns'][] = $row[1];
+    	}
+        return $indexes;
+	}
+	
 	function IfNull( $field, $ifNull )
 	{
 		switch( $this->odbc_driver ) {
@@ -526,6 +606,9 @@ class ADODB_odbtp extends ADOConnection{
 	{
 	global $php_errormsg;
 	
+        $this->_errorMsg = false;
+		$this->_errorCode = false;
+		
  		if ($inputarr) {
 			if (is_array($sql)) {
 				$stmtid = $sql[1];
@@ -537,10 +620,20 @@ class ADODB_odbtp extends ADOConnection{
 				}
 			}
 			$num_params = @odbtp_num_params( $stmtid );
+			/*
 			for( $param = 1; $param <= $num_params; $param++ ) {
 				@odbtp_input( $stmtid, $param );
 				@odbtp_set( $stmtid, $param, $inputarr[$param-1] );
+			}*/
+			
+			$param = 1;
+			foreach($inputarr as $v) {
+				@odbtp_input( $stmtid, $param );
+				@odbtp_set( $stmtid, $param, $v );
+				$param += 1;
+				if ($param > $num_params) break;
 			}
+			
 			if (!@odbtp_execute($stmtid) ) {
 				return false;
 			}

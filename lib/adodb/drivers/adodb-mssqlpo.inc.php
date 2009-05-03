@@ -1,6 +1,6 @@
 <?php
 /**
-* @version V5.04a 25 Mar 2008  (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
+* @version V5.06 16 Oct 2008  (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
 * Released under both BSD license and Lesser GPL library license.
 * Whenever there is any discrepancy between the two licenses,
 * the BSD license will take precedence.
@@ -45,7 +45,7 @@ class ADODB_mssqlpo extends ADODB_mssql {
 		return array($sql,$stmt);
 	}
 	
-	function _query($sql,$inputarr)
+	function _query($sql,$inputarr=false)
 	{
 		if (is_string($sql)) $sql = str_replace('||','+',$sql);
 		return ADODB_mssql::_query($sql,$inputarr);

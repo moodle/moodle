@@ -10,13 +10,47 @@
  
 */
 
+/*
+In ADOdb, named quotes for MS SQL Server use ". From the MSSQL Docs:
+
+	Note Delimiters are for identifiers only. Delimiters cannot be used for keywords, 
+	whether or not they are marked as reserved in SQL Server.
+	
+	Quoted identifiers are delimited by double quotation marks ("):
+	SELECT * FROM "Blanks in Table Name"
+	
+	Bracketed identifiers are delimited by brackets ([ ]):
+	SELECT * FROM [Blanks In Table Name]
+	
+	Quoted identifiers are valid only when the QUOTED_IDENTIFIER option is set to ON. By default, 
+	the Microsoft OLE DB Provider for SQL Server and SQL Server ODBC driver set QUOTED_IDENTIFIER ON 
+	when they connect. 
+	
+	In Transact-SQL, the option can be set at various levels using SET QUOTED_IDENTIFIER, 
+	the quoted identifier option of sp_dboption, or the user options option of sp_configure.
+	
+	When SET ANSI_DEFAULTS is ON, SET QUOTED_IDENTIFIER is enabled.
+	
+	Syntax
+	
+		SET QUOTED_IDENTIFIER { ON | OFF }
+
+
+*/
+
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
 
-class ADODB2_sybase extends ADODB_DataDict {
-	var $databaseType = 'sybase';
-	
+class ADODB2_mssqlnative extends ADODB_DataDict {
+	var $databaseType = 'mssqlnative';
 	var $dropIndex = 'DROP INDEX %2$s.%1$s';
+	var $renameTable = "EXEC sp_rename '%s','%s'";
+	var $renameColumn = "EXEC sp_rename '%s.%s','%s'";
+
+	var $typeX = 'TEXT';  ## Alternatively, set it to VARCHAR(4000)
+	var $typeXL = 'TEXT';
+	
+	//var $alterCol = ' ALTER COLUMN ';
 	
 	function MetaType($t,$len=-1,$fieldobj=false)
 	{
@@ -28,7 +62,7 @@ class ADODB2_sybase extends ADODB_DataDict {
 		
 		$len = -1; // mysql max_length is not accurate
 		switch (strtoupper($t)) {
-
+		case 'R':
 		case 'INT': 
 		case 'INTEGER': return  'I';
 		case 'BIT':
@@ -45,10 +79,10 @@ class ADODB2_sybase extends ADODB_DataDict {
 	function ActualType($meta)
 	{
 		switch(strtoupper($meta)) {
+
 		case 'C': return 'VARCHAR';
-		case 'XL':
-		case 'X': return 'TEXT';
-		
+		case 'XL': return (isset($this)) ? $this->typeXL : 'TEXT';
+		case 'X': return (isset($this)) ? $this->typeX : 'TEXT'; ## could be varchar(8000), but we want compat with oracle
 		case 'C2': return 'NVARCHAR';
 		case 'X2': return 'NTEXT';
 		
@@ -58,6 +92,7 @@ class ADODB2_sybase extends ADODB_DataDict {
 		case 'T': return 'DATETIME';
 		case 'L': return 'BIT';
 		
+		case 'R':		
 		case 'I': return 'INT'; 
 		case 'I1': return 'TINYINT';
 		case 'I2': return 'SMALLINT';
@@ -86,6 +121,7 @@ class ADODB2_sybase extends ADODB_DataDict {
 		return $sql;
 	}
 	
+	/*
 	function AlterColumnSQL($tabname, $flds)
 	{
 		$tabname = $this->TableName ($tabname);
@@ -97,13 +133,15 @@ class ADODB2_sybase extends ADODB_DataDict {
 
 		return $sql;
 	}
+	*/
 	
 	function DropColumnSQL($tabname, $flds)
 	{
-		$tabname = $this->TableName($tabname);
-		if (!is_array($flds)) $flds = explode(',',$flds);
+		$tabname = $this->TableName ($tabname);
+		if (!is_array($flds))
+			$flds = explode(',',$flds);
 		$f = array();
-		$s = "ALTER TABLE $tabname";
+		$s = 'ALTER TABLE ' . $tabname;
 		foreach($flds as $v) {
 			$f[] = "\n$this->dropCol ".$this->NameQuote($v);
 		}
@@ -117,7 +155,7 @@ class ADODB2_sybase extends ADODB_DataDict {
 	{	
 		$suffix = '';
 		if (strlen($fdefault)) $suffix .= " DEFAULT $fdefault";
-		if ($fautoinc) $suffix .= ' DEFAULT AUTOINCREMENT';
+		if ($fautoinc) $suffix .= ' IDENTITY(1,1)';
 		if ($fnotnull) $suffix .= ' NOT NULL';
 		else if ($suffix == '') $suffix .= ' NULL';
 		if ($fconstraint) $suffix .= ' '.$fconstraint;
@@ -219,10 +257,26 @@ CREATE TABLE
 		
 		if ( isset($idxoptions[$this->upperName]) )
 			$s .= $idxoptions[$this->upperName];
+		
 
 		$sql[] = $s;
 		
 		return $sql;
+	}
+	
+	
+	function _GetSize($ftype, $ty, $fsize, $fprec)
+	{
+		switch ($ftype) {
+		case 'INT':
+		case 'SMALLINT':
+		case 'TINYINT':
+		case 'BIGINT':
+			return $ftype;
+		}
+    	if ($ty == 'T') return $ftype;
+    	return parent::_GetSize($ftype, $ty, $fsize, $fprec);    
+
 	}
 }
 ?>

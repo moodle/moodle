@@ -1,6 +1,6 @@
 <?php
 /* 
-V5.04a 25 Mar 2008   (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
+V5.08 6 Apr 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -221,11 +221,27 @@ class ADODB_ado extends ADOConnection {
 			$oCmd->CommandText = $sql;
 			$oCmd->CommandType = 1;
 
-			foreach($inputarr as $val) {
+      // Map by http://msdn.microsoft.com/library/default.asp?url=/library/en-us/ado270/htm/mdmthcreateparam.asp
+      // Check issue http://bugs.php.net/bug.php?id=40664 !!!
+			while(list(, $val) = each($inputarr)) {
+				$type = gettype($val);
+				$len=strlen($val);
+				if ($type == 'boolean')
+					$this->adoParameterType = 11;
+				else if ($type == 'integer')
+					$this->adoParameterType = 3;
+				else if ($type == 'double')
+					$this->adoParameterType = 5;
+				elseif ($type == 'string')
+					$this->adoParameterType = 202;
+				else if (($val === null) || (!defined($val)))
+					$len=1;
+				else
+					$this->adoParameterType = 130;
+				
 				// name, type, direction 1 = input, len,
-				$this->adoParameterType = 130;
-				$p = $oCmd->CreateParameter('name',$this->adoParameterType,1,strlen($val),$val);
-				//print $p->Type.' '.$p->value;
+        		$p = $oCmd->CreateParameter('name',$this->adoParameterType,1,$len,$val);
+
 				$oCmd->Parameters->Append($p);
 			}
 			$p = false;

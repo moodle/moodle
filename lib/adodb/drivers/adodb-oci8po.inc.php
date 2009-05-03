@@ -1,6 +1,6 @@
 <?php
 /*
-V5.04a 25 Mar 2008   (c) 2000-2008 John Lim. All rights reserved.
+V5.08 6 Apr 2009   (c) 2000-2009 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -50,7 +50,7 @@ class ADODB_oci8po extends ADODB_oci8 {
 	}
 	
 	// emulate handling of parameters ? ?, replacing with :bind0 :bind1
-	function _query($sql,$inputarr)
+	function _query($sql,$inputarr=false)
 	{
 		if (is_array($inputarr)) {
 			$i = 0;
@@ -102,7 +102,8 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 	{
 		 $fld = new ADOFieldObject;
  		 $fieldOffset += 1;
-		 $fld->name = strtolower(OCIcolumnname($this->_queryID, $fieldOffset));
+		 $fld->name = OCIcolumnname($this->_queryID, $fieldOffset);
+		 if (ADODB_ASSOC_CASE == 0) $fld->name = strtolower($fld->name);
 		 $fld->type = OCIcolumntype($this->_queryID, $fieldOffset);
 		 $fld->max_length = OCIcolumnsize($this->_queryID, $fieldOffset);
 		 if ($fld->type == 'NUMBER') {

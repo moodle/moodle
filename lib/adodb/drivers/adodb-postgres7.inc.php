@@ -1,6 +1,6 @@
 <?php
 /*
- V5.04a 25 Mar 2008   (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
+ V5.08 6 Apr 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -56,9 +56,58 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 	}
  	*/
 
-
-	// from  Edward Jaramilla, improved version - works on pg 7.4
+	/*
+		I discovered that the MetaForeignKeys method no longer worked for Postgres 8.3.
+		I went ahead and modified it to work for both 8.2 and 8.3. 
+		Please feel free to include this change in your next release of adodb.
+		 William Kolodny [William.Kolodny#gt-t.net]
+	*/
 	function MetaForeignKeys($table, $owner=false, $upper=false)
+	{
+	  $sql="
+	  SELECT fum.ftblname AS lookup_table, split_part(fum.rf, ')'::text, 1) AS lookup_field,
+	     fum.ltable AS dep_table, split_part(fum.lf, ')'::text, 1) AS dep_field
+	  FROM (
+	  SELECT fee.ltable, fee.ftblname, fee.consrc, split_part(fee.consrc,'('::text, 2) AS lf, 
+	    split_part(fee.consrc, '('::text, 3) AS rf
+	  FROM (
+	      SELECT foo.relname AS ltable, foo.ftblname,
+	          pg_get_constraintdef(foo.oid) AS consrc
+	      FROM (
+	          SELECT c.oid, c.conname AS name, t.relname, ft.relname AS ftblname
+	          FROM pg_constraint c 
+	          JOIN pg_class t ON (t.oid = c.conrelid) 
+	          JOIN pg_class ft ON (ft.oid = c.confrelid)
+	          JOIN pg_namespace nft ON (nft.oid = ft.relnamespace)
+	          LEFT JOIN pg_description ds ON (ds.objoid = c.oid)
+	          JOIN pg_namespace n ON (n.oid = t.relnamespace)
+	          WHERE c.contype = 'f'::\"char\"
+	          ORDER BY t.relname, n.nspname, c.conname, c.oid
+	          ) foo
+	      ) fee) fum
+	  WHERE fum.ltable='".strtolower($table)."'
+	  ORDER BY fum.ftblname, fum.ltable, split_part(fum.lf, ')'::text, 1)
+	  ";
+	  $rs = $this->Execute($sql);
+	
+	  if (!$rs || $rs->EOF) return false;
+	
+	  $a = array();
+	  while (!$rs->EOF) {
+	    if ($upper) {
+	      $a[strtoupper($rs->Fields('lookup_table'))][] = strtoupper(str_replace('"','',$rs->Fields('dep_field').'='.$rs->Fields('lookup_field')));
+	    } else {
+	      $a[$rs->Fields('lookup_table')][] = str_replace('"','',$rs->Fields('dep_field').'='.$rs->Fields('lookup_field'));
+	    }
+		$rs->MoveNext();
+	  }
+	
+	  return $a;
+	
+	}
+	
+	// from  Edward Jaramilla, improved version - works on pg 7.4
+	function _old_MetaForeignKeys($table, $owner=false, $upper=false)
 	{
 		$sql = 'SELECT t.tgargs as args
 		FROM
@@ -91,7 +140,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		return $a;
 	}
 
-	function _query($sql,$inputarr)
+	function _query($sql,$inputarr=false)
 	{
 		if (! $this->_bindInputArray) {
 			// We don't have native support for parameterized queries, so let's emulate it at the parent

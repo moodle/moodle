@@ -1,6 +1,6 @@
 <?php
 /*
-V5.04a 25 Mar 2008   (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
+V5.08 6 Apr 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -491,8 +491,9 @@ class ADODB_mysqli extends ADOConnection {
 	       $table = "$owner.$table";
 	    }
 	    $a_create_table = $this->getRow(sprintf('SHOW CREATE TABLE %s', $table));
-		if ($associative) $create_sql = $a_create_table["Create Table"];
-	    else $create_sql  = $a_create_table[1];
+		if ($associative) {
+			$create_sql = isset($a_create_table["Create Table"]) ? $a_create_table["Create Table"] : $a_create_table["Create View"];
+	    } else $create_sql  = $a_create_table[1];
 	
 	    $matches = array();
 	
@@ -508,8 +509,11 @@ class ADODB_mysqli extends ADOConnection {
 	            $ref_table = strtoupper($ref_table);
 	        }
 	
-	        $foreign_keys[$ref_table] = array();
-	        $num_fields               = count($my_field);
+	        // see https://sourceforge.net/tracker/index.php?func=detail&aid=2287278&group_id=42718&atid=433976
+			if (!isset($foreign_keys[$ref_table])) {
+				$foreign_keys[$ref_table] = array();
+			}
+	        $num_fields = count($my_field);
 	        for ( $j = 0;  $j < $num_fields;  $j ++ ) {
 	            if ( $associative ) {
 	                $foreign_keys[$ref_table][$ref_field[$j]] = $my_field[$j];
@@ -558,8 +562,8 @@ class ADODB_mysqli extends ADOConnection {
 				$fld->type = $query_array[1];
 				$arr = explode(",",$query_array[2]);
 				$fld->enums = $arr;
-				$fld->max_length = max(array_map("strlen",explode(",",$query_array[2]))) - 2; // PHP >= 4.0.6
-				$fld->max_length = ($fld->max_length == 0 ? 1 : $fld->max_length);
+				$zlen = max(array_map("strlen",$arr)) - 2; // PHP >= 4.0.6
+				$fld->max_length = ($zlen > 0) ? $zlen : 1;
 			} else {
 				$fld->type = $type;
 				$fld->max_length = -1;
@@ -632,7 +636,6 @@ class ADODB_mysqli extends ADOConnection {
 	function Prepare($sql)
 	{
 		return $sql;
-		
 		$stmt = $this->_connectionID->prepare($sql);
 		if (!$stmt) {
 			echo $this->ErrorMsg();
@@ -646,8 +649,18 @@ class ADODB_mysqli extends ADOConnection {
 	function _query($sql, $inputarr)
 	{
 	global $ADODB_COUNTRECS;
-		
+		// Move to the next recordset, or return false if there is none. In a stored proc
+		// call, mysqli_next_result returns true for the last "recordset", but mysqli_store_result
+		// returns false. I think this is because the last "recordset" is actually just the
+		// return value of the stored proc (ie the number of rows affected).
+		// Commented out for reasons of performance. You should retrieve every recordset yourself.
+		//	if (!mysqli_next_result($this->connection->_connectionID))	return false;
+	
 		if (is_array($sql)) {
+		
+			// Prepare() not supported because mysqli_stmt_execute does not return a recordset, but
+			// returns as bound variables.
+		
 			$stmt = $sql[1];
 			$a = '';
 			foreach($inputarr as $k => $v) {
@@ -658,16 +671,28 @@ class ADODB_mysqli extends ADOConnection {
 			
 			$fnarr = array_merge( array($stmt,$a) , $inputarr);
 			$ret = call_user_func_array('mysqli_stmt_bind_param',$fnarr);
-
 			$ret = mysqli_stmt_execute($stmt);
 			return $ret;
 		}
+		
+		/*
 		if (!$mysql_res =  mysqli_query($this->_connectionID, $sql, ($ADODB_COUNTRECS) ? MYSQLI_STORE_RESULT : MYSQLI_USE_RESULT)) {
 		    if ($this->debug) ADOConnection::outp("Query: " . $sql . " failed. " . $this->ErrorMsg());
 		    return false;
 		}
 		
 		return $mysql_res;
+		*/
+		
+		if( $rs = mysqli_multi_query($this->_connectionID, $sql.';') )//Contributed by "Geisel Sierote" <geisel#4up.com.br>
+		{
+			$rs = ($ADODB_COUNTRECS) ? @mysqli_store_result( $this->_connectionID ) : @mysqli_use_result( $this->_connectionID );
+			return $rs ? $rs : true; // mysqli_more_results( $this->_connectionID )
+		} else {
+			if($this->debug)
+			ADOConnection::outp("Query: " . $sql . " failed. " . $this->ErrorMsg());
+			return false;
+		}
 	}
 
 	/*	Returns: the last error message from previous database operation	*/	
@@ -821,9 +846,10 @@ class ADORecordSet_mysqli extends ADORecordSet{
 	{	
 		$fieldnr = $fieldOffset;
 		if ($fieldOffset != -1) {
-		  $fieldOffset = mysqli_field_seek($this->_queryID, $fieldnr);
+		  $fieldOffset = @mysqli_field_seek($this->_queryID, $fieldnr);
 		}
-		$o = mysqli_fetch_field($this->_queryID);
+		$o = @mysqli_fetch_field($this->_queryID);
+		if (!$o) return false;
 		/* Properties of an ADOFieldObject as set by MetaColumns */
 		$o->primary_key = $o->flags & MYSQLI_PRI_KEY_FLAG;
 		$o->not_null = $o->flags & MYSQLI_NOT_NULL_FLAG;
@@ -872,6 +898,33 @@ class ADORecordSet_mysqli extends ADORecordSet{
 	  return true;
 	}
 		
+		
+	function NextRecordSet()
+	{
+	global $ADODB_COUNTRECS;
+	
+		mysqli_free_result($this->_queryID);
+		$this->_queryID = -1;
+		// Move to the next recordset, or return false if there is none. In a stored proc
+		// call, mysqli_next_result returns true for the last "recordset", but mysqli_store_result
+		// returns false. I think this is because the last "recordset" is actually just the
+		// return value of the stored proc (ie the number of rows affected).
+		if(!mysqli_next_result($this->connection->_connectionID)) {
+		return false;
+		}
+		// CD: There is no $this->_connectionID variable, at least in the ADO version I'm using
+		$this->_queryID = ($ADODB_COUNTRECS) ? @mysqli_store_result( $this->connection->_connectionID )
+						: @mysqli_use_result( $this->connection->_connectionID );
+		if(!$this->_queryID) {
+			return false;
+		}
+		$this->_inited = false;
+		$this->bind = false;
+		$this->_currentRow = -1;
+		$this->Init();
+		return true;
+	}
+
 	// 10% speedup to move MoveNext to child class
 	// This is the only implementation that works now (23-10-2003).
 	// Other functions return no or the wrong results.
