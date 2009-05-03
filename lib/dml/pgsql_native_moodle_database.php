@@ -290,7 +290,7 @@ class pgsql_native_moodle_database extends moodle_database {
                     continue;
                 }
                 $columns = explode(',', $matches[4]);
-                $columns = array_map('trim', $columns);
+                $columns = array_map(array($this, 'trim_quotes'), $columns);
                 $indexes[$matches[2]] = array('unique'=>!empty($matches[1]),
                                               'columns'=>$columns);
             }
@@ -1154,5 +1154,17 @@ class pgsql_native_moodle_database extends moodle_database {
 
         pg_free_result($result);
         return true;
+    }
+
+    /**
+     * Helper function trimming (whitespace + quotes) any string
+     * needed because PG uses to enclose with double quotes some
+     * fields in indexes definition and others
+     *
+     * @param string $str string to apply whitespace + quotes trim
+     * @return string trimmed string
+     */
+    private function trim_quotes($str) {
+        return trim(trim($str), "'\"");
     }
 }
