@@ -750,7 +750,7 @@ class test extends XMLDBAction {
             $tests['drop foreign key'] = $test;
         }
 
-    /// 36th test. Adding one complex field and forcing creation of enum/fk manually (to test dropping latter)
+    /// 36th test. Adding one complex field and forcing creation of enum/ck manually (to test dropping latter)
     /// TODO: Drop this test in Moodle 2.1
         if ($test->status) {
         /// Create a new field with complex specs (enums are good candidates)
@@ -780,10 +780,58 @@ class test extends XMLDBAction {
                 $test->status = false;
                 $test->error = $DB->get_last_error() . "\n" . $e;
             }
-            $tests['add field with enum manually'] = $test;
+            $tests['add field with enum/ck manually'] = $test;
         }
 
-    /// 37th test. Dropping the enum from one field
+    /// 37th test. Dropping one field containing enum/ck
+    /// TODO: Drop this test in Moodle 2.1
+        if ($test->status) {
+            $test = new stdClass;
+            $test->sql = $gen->getDropFieldSQL($table, $field);
+            $field = new xmldb_field('type');
+            try {
+                $dbman->drop_field($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
+                $test->error = $DB->get_last_error() . "\n" . $e;
+            }
+            $tests['drop field with enum/ck'] = $test;
+        }
+
+    /// 38th test. Adding one complex field and forcing creation of enum/ck manually (to test dropping latter)
+    /// TODO: Drop this test in Moodle 2.1
+        if ($test->status) {
+        /// Create a new field with complex specs (enums are good candidates)
+            $field = new xmldb_field('type');
+            $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'general', 'course');
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $test->sql = $gen->getAddFieldSQL($table, $field);
+            try {
+                $dbman->add_field($table, $field, false, false);
+                $test->status = true;
+            /// Now, let's add one enum/check manually, because XMLDB stuff hasn't support for that
+            /// anymore. We are dropping enums support, but need to check dropping them until Moodle 2.1.
+                switch ($dbfamily) {
+                    case 'mysql':
+                        $create_enum = "ALTER TABLE {anothertest} MODIFY COLUMN type enum('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda') NOT NULL DEFAULT 'general'";
+                        break;
+                    case 'mssql':
+                    case 'oracle':
+                    case 'postgres':
+                        $create_enum = "ALTER TABLE {anothertest} ADD CONSTRAINT xmldb_ck CHECK (type IN ('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'))";
+                        break;
+                }
+                $test->sql[] = $create_enum;
+                $DB->execute($create_enum); /// Create the enum/check. Not the best way but works for this needed test
+            } catch (moodle_exception $e) {
+                $test->status = false;
+                $test->error = $DB->get_last_error() . "\n" . $e;
+            }
+            $tests['add field with enum/ck manually again'] = $test;
+        }
+    /// 39th test. Dropping the enum from one field
     /// TODO: Drop this test in Moodle 2.1
         if ($test->status) {
         /// Get SQL code and execute it
@@ -798,10 +846,10 @@ class test extends XMLDBAction {
                 $test->status = false;
                 $test->error = $DB->get_last_error() . "\n" . $e;
             }
-            $tests['drop enumlist from field containing enum'] = $test;
+            $tests['drop enum/ck from field containing enum'] = $test;
         }
 
-    /// 38th test. Drop enum from field not containing enum
+    /// 40th test. Drop enum from field not containing enum
     /// TODO: Drop this test in Moodle 2.1
         if ($test->status) {
         /// Drop enum from field not containing enum
@@ -817,10 +865,10 @@ class test extends XMLDBAction {
                 $test->status = false;
                 $test->error = $DB->get_last_error() . "\n" . $e;
             }
-            $tests['drop enum from field not containing enum'] = $test;
+            $tests['drop enum/ck from field not containing enum'] = $test;
         }
 
-    /// 39th test. Renaming one index
+    /// 41th test. Renaming one index
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -839,7 +887,7 @@ class test extends XMLDBAction {
             $test->status = true; // ignore errors here
         }
 
-    /// 40th test. Renaming one key
+    /// 42th test. Renaming one key
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -864,7 +912,7 @@ class test extends XMLDBAction {
             $test->status = true; // ignore errors here
         }
 
-    /// 41th test. Renaming one field
+    /// 43th test. Renaming one field
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -882,7 +930,7 @@ class test extends XMLDBAction {
             $tests['rename field'] = $test;
         }
 
-    /// 42th test. Renaming one table
+    /// 44th test. Renaming one table
         if ($test->status) {
         /// Get SQL code and execute it
             $test = new stdClass;
@@ -898,7 +946,7 @@ class test extends XMLDBAction {
             $tests['rename table'] = $test;
         }
 
-    /// 43th test. Getting the PK sequence name for one table
+    /// 45th test. Getting the PK sequence name for one table
         if ($test->status) {
             $table->setName('newnameforthetable');
             $test = new stdClass;
@@ -915,7 +963,7 @@ class test extends XMLDBAction {
             $tests['find sequence name'] = $test;
         }
 
-    /// 44th test. Inserting TEXT contents
+    /// 46th test. Inserting TEXT contents
         $textlib = textlib_get_instance();
         if ($test->status) {
             $test = new stdClass;
@@ -954,7 +1002,7 @@ class test extends XMLDBAction {
             $tests['insert record '. $textlen . ' cc. (text)'] = $test;
         }
 
-    /// 45th test. Inserting BINARY contents
+    /// 47th test. Inserting BINARY contents
         if ($test->status) {
             $test = new stdClass;
             $test->status = false;
@@ -983,7 +1031,7 @@ class test extends XMLDBAction {
             $tests['insert record '. $textlen . ' bytes (binary)'] = $test;
         }
 
-    /// 46th test. $DB->update_record with TEXT and BINARY contents
+    /// 48th test. $DB->update_record with TEXT and BINARY contents
         if ($test->status) {
             $test = new stdClass;
             $test->status = false;
@@ -1023,7 +1071,7 @@ class test extends XMLDBAction {
             $tests['update record '. $textlen . ' cc. (text) and ' . $imglen . ' bytes (binary)'] = $test;
         }
 
-    /// 47th test. $DB->set_field with TEXT contents
+    /// 49th test. $DB->set_field with TEXT contents
         if ($test->status) {
             $test = new stdClass;
             $test->status = false;
@@ -1053,7 +1101,7 @@ class test extends XMLDBAction {
             $tests['set field '. $textlen . ' cc. (text)'] = $test;
         }
 
-    /// 48th test. $DB->set_field with BINARY contents
+    /// 50th test. $DB->set_field with BINARY contents
         if ($test->status) {
             $test = new stdClass;
             $test->status = false;
