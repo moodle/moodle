@@ -1102,11 +1102,11 @@ function _adodb_backtrace($printOrArr=true,$levels=9999,$skippy=0,$ishtml=null)
 	if ($ishtml === null) $html =  (isset($_SERVER['HTTP_USER_AGENT']));
 	else $html = $ishtml;
 	
-	$fmt =  ($html) ? "</font><font color=#808080 size=-1> %% line %4d, file: <a href=\"file:/%s\">%s</a></font>" : "%% line %4d, file: %s";
+	$fmt =  ($html) ? "</font><font color=\"#808080\" size=\"-1\"> %% line %4d, file: <a href=\"file:/%s\">%s</a></font>" : "%% line %4d, file: %s"; /// Moodle XHTML
 
 	$MAXSTRLEN = 128;
 
-	$s = ($html) ? '<pre align=left>' : '';
+	$s = ($html) ? '<pre align="left">' : ''; /// Moodle XHTML
 	
 	if (is_array($printOrArr)) $traceArr = $printOrArr;
 	else $traceArr = debug_backtrace();
