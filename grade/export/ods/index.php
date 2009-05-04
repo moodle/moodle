@@ -47,9 +47,17 @@ if (!empty($CFG->gradepublishing)) {
 
 $mform = new grade_export_form(null, array('publishing' => true));
 
+$groupmode    = groups_get_course_groupmode($course);   // Groups are being used
+$currentgroup = groups_get_course_group($course, true);
+if ($groupmode == SEPARATEGROUPS and !$currentgroup and !has_capability('moodle/site:accessallgroups', $context)) {
+    print_heading(get_string("notingroup"));
+    print_footer($course);
+    die;    
+}
+
 // process post information
 if ($data = $mform->get_data()) {
-    $export = new grade_export_ods($course, groups_get_course_group($course), '', false, false, $data->display, $data->decimals);
+    $export = new grade_export_ods($course, $currentgroup, '', false, false, $data->display, $data->decimals);
 
     // print the grades on screen for feedbacks
     $export->process_form($data);
