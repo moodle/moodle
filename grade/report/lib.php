@@ -305,8 +305,12 @@ abstract class grade_report {
     protected function setup_groups() {
         /// find out current groups mode
         if ($this->groupmode = groups_get_course_groupmode($this->course)) {
+            $this->currentgroup = groups_get_course_group($this->course, true);
             $this->group_selector = groups_print_course_menu($this->course, $this->pbarurl, true);
-            $this->currentgroup   = groups_get_course_group($this->course);
+
+            if ($this->groupmode == SEPARATEGROUPS and !$this->currentgroup and !has_capability('moodle/site:accessallgroups', $this->context)) {
+                $this->currentgroup = -2; // means can not accesss any groups at all
+            }
 
             if ($this->currentgroup) {
                 $this->groupsql             = " JOIN {groups_members} gm ON gm.userid = u.id ";

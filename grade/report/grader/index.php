@@ -112,11 +112,20 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
     grade_report_grader::process_action($target, $action);
 }
 
+$reportname = get_string('modulename', 'gradereport_grader');
 // Initialise the grader report object
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
 require_js(array('yui_yahoo', 'yui_dom', 'yui_event', 'yui_container', 'yui_connection', 'yui_dragdrop', 'yui_element', 'yui_json'));
 if ($report->get_pref('enableajax')) {
     $report = new grade_report_grader_ajax($courseid, $gpr, $context, $page, $sortitemid);
+}
+
+// make sure separate group does not prevent view
+if ($report->currentgroup == -2) {
+    print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, null, $buttons);
+    print_heading(get_string("notingroup"));
+    print_footer($course);
+    exit;
 }
 
 /// processing posted grades & feedback here
@@ -138,8 +147,6 @@ $numusers = $report->get_numusers();
 $report->load_final_grades();
 
 /// Print header
-$reportname = get_string('modulename', 'gradereport_grader');
-// Matt - removed stylesheet
 print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, null, $buttons);
 
 echo $report->group_selector;
