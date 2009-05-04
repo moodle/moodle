@@ -91,17 +91,16 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
     $isseparategroups = ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context));
 
     if ($isseparategroups and (!$currentgroup)) {
-        print_grade_page_head($courseid, 'report', 'user', get_string('modulename', 'gradereport_user'));
-        print_heading(get_string("notingroup"));
-        print_footer($course);
-        exit;
+        // no separate group access, can view only self
+        $userid = $USER->id;
+        $user_selector = '';
+    } else {
+        /// Print graded user selector at the top
+        $user_selector = '<div id="graded_users_selector">';
+        $user_selector .= print_graded_users_selector($course, 'report/user/index.php?id=' . $course->id, $userid, $currentgroup, true, true);
+        $user_selector .= '</div>';
+        $user_selector .= "<p style = 'page-break-after: always;'></p>";
     }
-
-    /// Print graded user selector at the top
-    $user_selector = '<div id="graded_users_selector">';
-    $user_selector .= print_graded_users_selector($course, 'report/user/index.php?id=' . $course->id, $userid, $currentgroup, true, true);
-    $user_selector .= '</div>';
-    $user_selector .= "<p style = 'page-break-after: always;'></p>";
 
     if (empty($userid)) {
         $gui = new graded_users_iterator($course, null, $currentgroup);
