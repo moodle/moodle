@@ -3204,30 +3204,30 @@ function get_section_name($format) {
 
 /**
  * Can the current user delete this course?
+ * Course creators have exception,
+ * 1 day after the creation they can sill delete the course.
  * @param int $courseid
  * @return boolean
- *
- * Exception here to fix MDL-7796.
- *
- * FIXME
- *   Course creators who can manage activities in the course
- *   shoule be allowed to delete the course. We do it this
- *   way because we need a quick fix to bring the functionality
- *   in line with what we had pre-roles. We can't give the
- *   default course creator role moodle/course:delete at
- *   CONTEXT_SYSTEM level because this will allow them to
- *   delete any course in the site. So we hard code this here
- *   for now.
- *
- * @author vyshane AT gmail.com
  */
 function can_delete_course($courseid) {
+    global $USER;
 
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
-    return ( has_capability('moodle/course:delete', $context)
-             || (has_capability('moodle/legacy:coursecreator', $context)
-             && has_capability('moodle/course:manageactivities', $context)) );
+    if (has_capability('moodle/course:delete', $context)) {
+        return true;
+    }
+
+    // hack: now try to find out if creator created this course recently (1 day)
+    if (!has_capability('moodle/course:create', $context)) {
+        return false;
+    }
+
+    $since = time() - 60*60*24;
+
+    $select = "module = 'course' AND action = 'new' AND userid = $USER->id AND url='view.php?id=$courseid' AND time > $since";
+
+    return record_exists_select('log', $select);
 }
 
 /**
