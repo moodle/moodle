@@ -25,7 +25,7 @@
 
 
 /*
- * Zend Rest sclient
+ * Zend Soap sclient
  */
 
 require_once('../../../config.php');
@@ -33,7 +33,12 @@ require_once('../lib.php');
 include "Zend/Loader.php";
 Zend_Loader::registerAutoload();
 
+///Display Moodle page header
 print_header('Soap test client', 'Soap test client'.":", true);
+
+/// check that webservices are enable into your Moodle
+/// WARNING: it makes sens here only because this client runs on the same machine as the 
+///          server, if you change the WSDL url, please comment the following if statement
 if (!webservice_lib::display_webservices_availability("soap")) {
     echo "<br/><br/>";
     echo "Please fix the previous problem(s), the testing session has been interupted.";
@@ -41,75 +46,97 @@ if (!webservice_lib::display_webservices_availability("soap")) {
     exit();
 }
 
-//1. authentication
+/// authenticate => get a conversation token from the server
+/// You need a wsuser/wspassword user in the remote Moodle
 $client = new Zend_Soap_Client($CFG->wwwroot."/webservice/soap/server.php?wsdl");
 try {
     $token = $client->get_token(array('username' => "wsuser", 'password' => "wspassword"));
     print "<pre>\n";
-    var_dump($token);
+     print "<br><br><strong>Token: </strong>".$token;
     print "</pre>";
-} catch (moodle_exception $exception) {
-    echo $exception;
+} catch (exception $exception) {
+    print "<br><br><strong>An exception occured during authentication: \n</strong>";
+    print "<pre>\n";
+    print $exception;
+    print "</pre>";
+    printLastRequestResponse($client);
 }
 
-//2. test functions
-//$client = new Zend_Http_Client($CFG->wwwroot."/webservice/soap/server.php?token=".$token."&classpath=user&wsdl", array(
-//    'maxredirects' => 0,
-//    'timeout'      => 30));
-//$response = $client->request();
-//$wsdl = $response->getBody();
-//varlog($wsdl,"user.wsdl", "w");
+/// Following some code in order to print the WSDL into the end of the source code page
+/// Change the classpath to get specific service
+/*
+    $client = new Zend_Http_Client($CFG->wwwroot."/webservice/soap/server.php?token=".$token."&classpath=user&wsdl", array(
+        'maxredirects' => 0,
+        'timeout'      => 30));
+    $response = $client->request();
+    $wsdl = $response->getBody();
+    print $wsdl;
+    exit();
+ *
+ */
+ 
 
-
+/// build the Zend SOAP client from the remote WSDL
 $client = new Zend_Soap_Client($CFG->wwwroot."/webservice/soap/server.php?token=".$token."&classpath=user&wsdl");
-var_dump($CFG->wwwroot."/webservice/soap/server.php?token=".$token."&classpath=user&wsdl");
+print "<br><br><strong>You are accessing the WSDL: </strong>";
+print "<br><br>".$CFG->wwwroot."/webservice/soap/server.php?token=".$token."&classpath=user&wsdl<br>";
+
+/// Get any user with string "admin"
+print "<br><br><strong>Get users:</strong>";
 print "<pre>\n";
-var_dump($client->get_users(array('search' => "admin")));
+try {
+    var_dump($client->get_users(array('search' => "admin")));
+} catch (exception $exception) {
+    print $exception;
+    print "<br><br><strong>An exception occured: \n</strong>";
+    printLastRequestResponse($client);
+}
 print "</pre>";
 
-//$param = array('search' => "admin");
-//$expectedresult = array(array(  'id' => 2,
-//                                'auth' => 'manual',
-//                                'confirmed' => '1',
-//                                'username' => 'admin',
-//                                'idnumber' => '',
-//                                'firstname' => 'Admin',
-//                                'lastname' => 'HEAD',
-//                                'email' => 'jerome@moodle.com',
-//                                'emailstop' => '0',
-//                                'lang' => 'en_utf8',
-//                                'theme' => '',
-//                                'timezone' => '99',
-//                                'mailformat' => '1'));
-//$functionname = tmp_get_users;
-//call_soap_function($client,$functionname,$param,$expectedresult);
-
+/// Create a user with "mockuser66" username
+print "<br><br><strong>Create user:</strong>";
 print "<pre>\n";
-var_dump($client->create_users(array(array('username' => "mockuser66",'firstname' => "firstname6",'lastname' => "lastname6",'email' => "mockuser6@mockuser6.com",'password' => "password6"))));
+try {
+    var_dump($client->create_users(array(array('username' => "mockuser66",'firstname' => "firstname6",'lastname' => "lastname6",'email' => "mockuser6@mockuser6.com",'password' => "password6"))));
+} catch (exception $exception) {
+    print $exception;
+    print "<br><br><strong>An exception occured: \n</strong>";
+    printLastRequestResponse($client);
+}
 print "</pre>";
 
+/// Update this user
+print "<br><br><strong>Update user:</strong>";
 print "<pre>\n";
-var_dump($client->update_users(array(array('username' => "mockuser66",'newusername' => "mockuser6b",'firstname' => "firstname6b"))));
+try {
+    var_dump($client->update_users(array(array('username' => "mockuser66",'newusername' => "mockuser6b",'firstname' => "firstname6b"))));
+} catch (exception $exception) {
+    print $exception;
+    print "<br><br><strong>An exception occured: \n</strong>";
+    printLastRequestResponse($client);
+}
 print "</pre>";
 
+/// Delete this user
+print "<br><br><strong>Delete user:</strong>";
 print "<pre>\n";
-var_dump($client->delete_users(array(array('username' => "mockuser6b"))));
+try {
+    var_dump($client->delete_users(array(array('username' => "mockuser6b"))));
+} catch (exception $exception) {
+    print $exception;
+    print "<br><br><strong>An exception occured: \n</strong>";
+    printLastRequestResponse($client);
+}
 print "</pre>";
 
-//print "<pre>\n";
-//var_dump($client->tmp_do_multiple_user_searches(array(array('search' => "jerome"),array('search' => "mock"))));
-//print "</pre>";
-
-
+/// Display Moodle page footer
 print_footer();
 
-function call_soap_function($client,$functionname,$param,$expectedresult) {
-    print "<pre>\n";
-    var_dump($client->$functionname($param));
-    print "</pre>";
-}
 
-
+/**
+ * Display the last request
+ * @param <type> $client
+ */
 function printLastRequestResponse($client) {
     print "<pre>\n";
     print "Request :\n".htmlspecialchars($client->__getLastRequest()) ."\n";
