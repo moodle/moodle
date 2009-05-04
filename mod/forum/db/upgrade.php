@@ -83,6 +83,9 @@ function xmldb_forum_upgrade($oldversion=0) {
         }
     }
 
+    if ($result && $oldversion < 2007101513) {
+        delete_records('forum_ratings', 'post', 0); /// Clean existing wrong rates. MDL-18227
+    }
 
     return $result;
 }
