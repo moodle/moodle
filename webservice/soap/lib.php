@@ -77,6 +77,7 @@ final class soap_server extends webservice_server {
 
                 $soap = new Zend_Soap_Server($CFG->wwwroot."/webservice/soap/server.php?wsdl"); // this current file here
                 $soap->setClass('ws_authentication');
+                $soap->registerFaultException(moodle_exception);
                 $soap->handle();
             }
         } else { // if token exist, do the authentication here
