@@ -1125,8 +1125,6 @@ function groups_members_join_sql($groupid=false) {
         $sql = "AND gm.groupid = '$groupid' ";
     }
     return $sql;
-    //return ' INNER JOIN '.$CFG->prefix.'role_assignments ra ON u.id=ra.userid'.
-    //       ' INNER JOIN '.$CFG->prefix.'context c ON ra.contextid=c.id AND c.contextlevel='.CONTEXT_GROUP.' AND c.instanceid='.$groupid;
 }
 
 /**

@@ -55,9 +55,6 @@ if ($currenttab != 'update') {
             }
             break;
 
-        case CONTEXT_GROUP:
-            break;
-
         case CONTEXT_MODULE:
             // get module type?
             if (!$cm = get_record('course_modules','id',$context->instanceid)) {
