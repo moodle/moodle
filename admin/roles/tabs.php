@@ -99,9 +99,6 @@ if ($currenttab != 'update') {
             }
             break;
 
-        case CONTEXT_GROUP:
-            break;
-
         case CONTEXT_MODULE:
             if (!$cm = get_coursemodule_from_id('', $context->instanceid)) {
                 print_error('invalidcoursemodule', 'error');
