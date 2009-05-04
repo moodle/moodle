@@ -290,6 +290,7 @@ repository_client.view_iframe = function(client_id) {
     panel.get('element').innerHTML = "<iframe frameborder=\"0\" width=\"98%\" height=\"400px\" src=\""+fs.iframe+"\" />";
 }
 repository_client.req_search_results = function(client_id, id, path, page) {
+    repository_client.loading(client_id, 'load');
     this.fp[client_id].viewbar.set('disabled', false);
     var r = repository_client.fp[client_id];
     var params = [];
@@ -596,27 +597,40 @@ repository_client.paging = function(client_id, id) {
         } else {
             var action = 'req_search_results';
         }
-        str += this.get_page_btn(client_id, action, 1)+'1</a>';
+        // print the first element anyway
+        str += this.get_page_btn(client_id, action, 1)+'1</a> ';
 
-        if (fs.page+2>=fs.pages) {
+        var span = 5;
+        var ex = (span-1)/2;
+
+        if (fs.page+ex>=fs.pages) {
             var max = fs.pages;
         } else {
-            var max = fs.page+2;
+            if (fs.page<span) {
+                var max = span;
+            } else {
+                var max = fs.page+ex;
+            }
         }
-        if (fs.page-2 >= 3) {
+
+        // won't display upper boundary
+        if (fs.page >= span) {
             str += ' ... ';
-            for(var i=fs.page-2; i<max; i++) {
+            for(var i=fs.page-ex; i<max; i++) {
                 str += this.get_page_btn(client_id, action, i);
                 str += String(i);
                 str += '</a> ';
             }
         } else {
+            // this very first elements
             for(var i = 2; i < max; i++) {
                 str += this.get_page_btn(client_id, action, i);
                 str += String(i);
                 str += '</a> ';
             }
         }
+
+        // won't display upper boundary
         if (max==fs.pages) {
             str += this.get_page_btn(client_id, action, fs.pages)+fs.pages+'</a>';
         } else {
