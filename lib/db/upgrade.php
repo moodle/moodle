@@ -1460,8 +1460,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     }
     if ($result && $oldversion < 2009021801) {
     /// Define field backuptype to be added to backup_log
-        $table = new XMLDBTable('backup_log');
-        $field = new XMLDBField('backuptype');
+        $table = new xmldb_table('backup_log');
         $field = new xmldb_field('backuptype', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, 'info');
     /// Conditionally Launch add field backuptype and set all old records as 'scheduledbackup' records.
         if (!$dbman->field_exists($table, $field)) {
