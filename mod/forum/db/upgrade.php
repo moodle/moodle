@@ -255,6 +255,15 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009042700, 'forum');
     }
 
+    if ($result && $oldversion < 2009050400) {
+
+    /// Clean existing wrong rates. MDL-18227
+        $DB->delete_records('forum_ratings', array('post' => 0));
+
+    /// forum savepoint reached
+        upgrade_mod_savepoint($result, 2009050400, 'forum');
+    }
+
     return $result;
 }
 
