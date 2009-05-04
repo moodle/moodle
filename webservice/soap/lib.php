@@ -107,6 +107,7 @@ final class soap_server extends webservice_server {
             } else {
                 $soap = new Zend_Soap_Server($CFG->wwwroot."/webservice/soap/server.php?token=".$token."&classpath=".$classpath."&wsdl"); // this current file here
                 $soap->setClass($classpath."_external");
+                $soap->registerFaultException(moodle_exception);
                 $soap->handle();
             }
         }
