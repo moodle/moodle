@@ -59,12 +59,6 @@ class grader_report_preferences_form extends moodleform {
 
         // Initialise the preferences arrays with grade:manage capabilities
         if (has_capability('moodle/grade:manage', $context)) {
-            $preferences['prefgeneral'] = array(
-                          'aggregationview'     => array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*',
-                                                         GRADE_REPORT_AGGREGATION_VIEW_FULL => get_string('fullmode', 'grades'),
-                                                         GRADE_REPORT_AGGREGATION_VIEW_AGGREGATES_ONLY => get_string('aggregatesonly', 'grades'),
-                                                         GRADE_REPORT_AGGREGATION_VIEW_GRADES_ONLY => get_string('gradesonly', 'grades')));
-
 
             $preferences['prefshow'] = array();
             $preferences['prefshow']['showcalculations']  = $checkbox_default;

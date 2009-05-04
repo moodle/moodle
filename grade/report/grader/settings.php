@@ -42,12 +42,6 @@ $settings->add(new admin_setting_configcheckbox('grade_report_showquickfeedback'
 $settings->add(new admin_setting_configcheckbox('grade_report_fixedstudents', get_string('fixedstudents', 'grades'),
                                             get_string('configfixedstudents', 'grades'), 0));
 
-$settings->add(new admin_setting_configselect('grade_report_aggregationview', get_string('aggregationview', 'grades'),
-                                          get_string('configaggregationview', 'grades'), GRADE_REPORT_AGGREGATION_VIEW_FULL,
-                                          array(GRADE_REPORT_AGGREGATION_VIEW_FULL => get_string('full', 'grades'),
-                                                GRADE_REPORT_AGGREGATION_VIEW_AGGREGATES_ONLY => get_string('aggregatesonly', 'grades'),
-                                                GRADE_REPORT_AGGREGATION_VIEW_GRADES_ONLY => get_string('gradesonly', 'grades'))));
-
 $settings->add(new admin_setting_configselect('grade_report_meanselection', get_string('meanselection', 'grades'),
                                           get_string('configmeanselection', 'grades'), GRADE_REPORT_MEAN_GRADED,
                                           array(GRADE_REPORT_MEAN_ALL => get_string('meanall', 'grades'),

@@ -1039,7 +1039,7 @@ class grade_report_grader extends grade_report {
             $straverage = get_string('overallaverage', 'grades');
             $showaverages = $this->get_pref('showaverages');
             $showaverages_group = $this->currentgroup && $showaverages;
-            
+
             if ($showaverages_group) {
                 $studentshtml .= '<tr class="groupavg r'.$this->rowcount++.'"><th class="header c0" '.$colspan.'scope="row">'.$straverage_group.'</th></tr>';
             }
@@ -1380,7 +1380,6 @@ class grade_report_grader extends grade_report {
             $strswitch_whole = $this->get_lang_string('fullmode', 'grades');
 
             $expand_contract = 'switch_minus'; // Default: expanded
-            // $this->get_pref('aggregationview', $element['object']->id) == GRADE_REPORT_AGGREGATION_VIEW_COMPACT
 
             if (in_array($element['object']->id, $this->collapsed['aggregatesonly'])) {
                 $expand_contract = 'switch_plus';
