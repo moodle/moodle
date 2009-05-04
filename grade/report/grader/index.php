@@ -114,8 +114,17 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
     grade_report_grader::process_action($target, $action);
 }
 
+$reportname = get_string('modulename', 'gradereport_grader');
 // Initialise the grader report object
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
+
+// make sure separate group does not prevent view
+if ($report->currentgroup == -2) {
+    print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, null, $buttons);
+    print_heading(get_string("notingroup"));
+    print_footer($course);
+    exit;
+}
 
 /// processing posted grades & feedback here
 if ($data = data_submitted() and confirm_sesskey() and has_capability('moodle/grade:edit', $context)) {
@@ -136,8 +145,6 @@ $numusers = $report->get_numusers();
 $report->load_final_grades();
 
 /// Print header
-$reportname = get_string('modulename', 'gradereport_grader');
-// Matt - removed stylesheet
 print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, null, $buttons);
 
 echo $report->group_selector;
