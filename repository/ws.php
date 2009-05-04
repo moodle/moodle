@@ -114,10 +114,17 @@
         // the callback url should be something like this:
         // http://xx.moodle.com/repository/ws.php?callback=yes&repo_id=1&sid=xxx
         // sid is the attached auth token from external source
+        // If Moodle is working on HTTPS mode, then we are not allowed to access
+        // parent window, in this case, we need to alert user to refresh the repository
+        // manually.
         $js  =<<<EOD
 <html><head><script type="text/javascript">
+if(window.opener){
     window.opener.repository_callback($repo_id);
     window.close();
+} else {
+    alert("If parent window is on HTTPS, then we are not allowed to access window.opener object, so we cannot refresh the repository for you automatically, but we already got your session, just go back to file picker and select the repository again, it should work now.");
+}
 </script><body></body></html>
 EOD;
         echo $js;
