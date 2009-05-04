@@ -69,8 +69,10 @@ class repository_filesystem extends repository {
             $parts = explode('/', $path);
             if (count($parts) > 1) {
                 foreach ($parts as $part) {
-                    $trail .= ('/'.$part);
-                    $list['path'][] = array('name'=>$part, 'path'=>$trail);
+                    if (!empty($part)) {
+                        $trail .= ('/'.$part);
+                        $list['path'][] = array('name'=>$part, 'path'=>$trail);
+                    }
                 }
             } else {
                 $list['path'][] = array('name'=>$path, 'path'=>$path);
