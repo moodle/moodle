@@ -209,6 +209,7 @@ if ($report->get_pref('enableajax')) {
 // Print YUI tooltip code
 ?>
 <script type="text/javascript">
+//<![CDATA[
 
 YAHOO.namespace("graderreport");
 
@@ -351,7 +352,7 @@ YAHOO.graderreport.mouseoutHandler = function (e) {
 
 
 YAHOO.util.Event.onDOMReady(init);
-
+//]]>
 </script>
 <?php
 
