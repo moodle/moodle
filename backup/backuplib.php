@@ -2339,6 +2339,12 @@
             $includedfiles = array();
         }
 
+        //Check if we support unicode modifiers in regular expressions. Cache it.
+        static $unicoderegexp;
+        if (!isset($unicoderegexp)) {
+            $unicoderegexp = @preg_match('/\pL/u', 'a'); // This will fail silenty, returning false,
+        }                                                // if regexp libraries don't support unicode
+
         //Check if preferences is ok. If it isn't set, we are
         //in a scheduled_backup to we are able to get a copy
         //from CFG->backup_preferences
@@ -2362,7 +2368,12 @@
         //     - slashes and %2F by $@SLASH@$
         //     - &forcedownload=1 &amp;forcedownload=1 and ?forcedownload=1 by $@FORCEDOWNLOAD@$
         // This way, backup contents will be neutral and independent of slasharguments configuration. MDL-18799
-        $search = '/(\$@FILEPHP@\$)((?:(?:\/|%2f|%2F))(?:(?:\([-;:@#&=\pL0-9\$~_.+!*\',]*?\))|[-;:@#&=\pL0-9\$~_.+!*\',]|%[a-fA-F0-9]{2}|\/)*)?(\?(?:(?:(?:\([-;:@#&=\pL0-9\$~_.+!*\',]*?\))|[-;:@#&=?\pL0-9\$~_.+!*\',]|%[a-fA-F0-9]{2}|\/)*))?(?<![,.;])/';
+        // Based in $unicoderegexp, decide the regular expression to use
+        if ($unicoderegexp) { //We can use unicode modifiers
+            $search = '/(\$@FILEPHP@\$)((?:(?:\/|%2f|%2F))(?:(?:\([-;:@#&=\pL0-9\$~_.+!*\',]*?\))|[-;:@#&=\pL0-9\$~_.+!*\',]|%[a-fA-F0-9]{2}|\/)*)?(\?(?:(?:(?:\([-;:@#&=\pL0-9\$~_.+!*\',]*?\))|[-;:@#&=?\pL0-9\$~_.+!*\',]|%[a-fA-F0-9]{2}|\/)*))?(?<![,.;])/';
+        } else { //We cannot ue unicode modifiers
+            $search = '/(\$@FILEPHP@\$)((?:(?:\/|%2f|%2F))(?:(?:\([-;:@#&=a-zA-Z0-9\$~_.+!*\',]*?\))|[-;:@#&=a-zA-Z0-9\$~_.+!*\',]|%[a-fA-F0-9]{2}|\/)*)?(\?(?:(?:(?:\([-;:@#&=a-zA-Z0-9\$~_.+!*\',]*?\))|[-;:@#&=?a-zA-Z0-9\$~_.+!*\',]|%[a-fA-F0-9]{2}|\/)*))?(?<![,.;])/';
+        }
         $result = preg_replace_callback($search, 'backup_process_filephp_uses', $result);
 
         foreach ($mypreferences->mods as $name => $info) {
