@@ -575,7 +575,9 @@ function book_save_objects($chapters, $bookid, $pageid='0') {
     
     // nothing fancy, just save them all in order
     foreach ($chapters as $chapter) {
-        $chapter->id = $DB->insert_record('book_chapters', $chapter);
+        if (!$chapter->id = $DB->insert_record('book_chapters', $chapter)) {
+            print_error('cannotupdatebook', 'lesson');
+        }
     }
     return true;
 }
