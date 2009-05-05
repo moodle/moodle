@@ -557,9 +557,7 @@ function lesson_save_objects($branchtables, $lessonid, $after) {
         // insert the answers
         foreach ($branchtable->answers as $answer) {
             $answer->pageid = $id;
-            if(!$DB->insert_record('lesson_answers', $answer)) {
-                print_error('cannotinsertanswer', 'lesson');
-            }
+            $DB->insert_record('lesson_answers', $answer);
         }
         
         $prevpageid = $id;

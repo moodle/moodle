@@ -131,9 +131,6 @@
                         $newanswer->score = clean_param($form->score[$i], PARAM_INT);
                     }
                     $newanswerid = $DB->insert_record("lesson_answers", $newanswer);
-                    if (!$newanswerid) {
-                        print_error('cannotinsertanswer', 'lesson');
-                    }
                 }
             } else {
                  if ($form->qtype == LESSON_MATCHING) {

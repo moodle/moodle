@@ -47,8 +47,6 @@
     $newanswer->pageid = $newpageid;
     $newanswer->timecreated = $timenow;
     $newanswer->jumpto = LESSON_NEXTPAGE;
-    if(!$newanswerid = $DB->insert_record("lesson_answers", $newanswer)) {
-        print_error('cannotinsertanswer', 'lesson');
-    }
+    $newanswerid = $DB->insert_record("lesson_answers", $newanswer);
     lesson_set_message(get_string('addedendofcluster', 'lesson'), 'notifysuccess');
     redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");

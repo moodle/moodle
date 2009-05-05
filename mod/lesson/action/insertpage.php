@@ -140,9 +140,6 @@
             $newanswer->score = clean_param($form->score[0], PARAM_INT);
         }
         $newanswerid = $DB->insert_record("lesson_answers", $newanswer);
-        if (!$newanswerid) {
-            print_error('cannotinsertanswer', 'lesson');
-        }
     } else {
         if ($form->qtype == LESSON_MATCHING) {
             // need to add two to offset correct response and wrong response
@@ -166,9 +163,6 @@
                     }
                 }
                 $newanswerid = $DB->insert_record("lesson_answers", $newanswer);
-                if (!$newanswerid) {
-                    print_error('cannotinsertanswer', 'lesson');
-                }
             } else {
                 if ($form->qtype == LESSON_MATCHING) {
                     if ($i < 2) {
@@ -176,9 +170,6 @@
                         $newanswer->pageid = $newpageid;
                         $newanswer->timecreated = $timenow;
                         $newanswerid = $DB->insert_record("lesson_answers", $newanswer);
-                        if (!$newanswerid) {
-                            print_error('cannotinsertanswer', 'lesson');
-                        }
                     }
                 } else {
                     break;

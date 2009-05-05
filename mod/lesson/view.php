@@ -345,12 +345,8 @@
                 } else {
                     $retries = 0;
                 }
-                if (!$DB->delete_records('lesson_attempts', array('userid' => $USER->id, 'lessonid' => $lesson->id, 'retry' => $retries))) {
-                    print_error('cannotdeleteattempt', 'lesson');
-                }
-                if (!$DB->delete_records('lesson_branch', array('userid' => $USER->id, 'lessonid' => $lesson->id, 'retry' => $retries))) {
-                    print_error('cannotdeletebranch', 'lesson');
-                }
+                $DB->delete_records('lesson_attempts', array('userid' => $USER->id, 'lessonid' => $lesson->id, 'retry' => $retries));
+                $DB->delete_records('lesson_branch', array('userid' => $USER->id, 'lessonid' => $lesson->id, 'retry' => $retries));
             }
         }
         
@@ -903,16 +899,12 @@
                         }
                         $oldgrade = end($grades);
                         $grade->id = $oldgrade->id;
-                        if (!$update = $DB->update_record("lesson_grades", $grade)) {
-                            print_error('cannotupdategrade', 'lesson');
-                        }
+                        $DB->update_record("lesson_grades", $grade);
                     } else {
                         $newgradeid = $DB->insert_record("lesson_grades", $grade);
                     }
                 } else {
-                    if (!$DB->delete_records("lesson_attempts", array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $ntries))) {
-                        print_error('cannotdeleteattempt', 'lesson');
-                    }
+                    $DB->delete_records("lesson_attempts", array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $ntries));
                 }
             } else {
                 if ($lesson->timed) {
@@ -923,9 +915,7 @@
                         $grade->grade = 0;
                         $grade->completed = time();
                         if (!$lesson->practice) {
-                            if (!$newgradeid = $DB->insert_record("lesson_grades", $grade)) {
-                                print_error('cannotinsertgrade', 'lesson');
-                            }
+                            $newgradeid = $DB->insert_record("lesson_grades", $grade);
                         }
                         echo get_string("eolstudentoutoftimenoanswers", "lesson");
                     }

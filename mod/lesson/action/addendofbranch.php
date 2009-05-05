@@ -56,9 +56,7 @@
         $newanswer->pageid = $newpageid;
         $newanswer->timecreated = $timenow;
         $newanswer->jumpto = $btpageid;
-        if(!$newanswerid = $DB->insert_record("lesson_answers", $newanswer)) {
-            print_error('cannotinsertanswer', 'lesson');
-        }
+        $newanswerid = $DB->insert_record("lesson_answers", $newanswer);
         
         lesson_set_message(get_string('addedanendofbranch', 'lesson'), 'notifysuccess');
     } else {
