@@ -913,11 +913,6 @@ class grade_report_grader extends grade_report {
                     } else {
                         $studentshtml .= '<span class="gradevalue'.$hidden.$gradepass.'">'.grade_format_gradevalue($gradeval, $item, true, $gradedisplaytype, null).'</span>';
                     }
-
-                    // Close feedback span
-                    if (!empty($grade->feedback)) {
-                        $studentshtml .= '</span>';
-                    }
                 }
 
                 if (!empty($this->gradeserror[$item->id][$userid])) {
