@@ -907,9 +907,7 @@
                             print_error('cannotupdategrade', 'lesson');
                         }
                     } else {
-                        if (!$newgradeid = $DB->insert_record("lesson_grades", $grade)) {
-                            print_error('cannotinsertgrade', 'lesson');
-                        }
+                        $newgradeid = $DB->insert_record("lesson_grades", $grade);
                     }
                 } else {
                     if (!$DB->delete_records("lesson_attempts", array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $ntries))) {

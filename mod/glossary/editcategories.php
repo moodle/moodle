@@ -156,13 +156,8 @@
                 $cat->usedynalink = $usedynalink;
                 $cat->glossaryid = $glossary->id;
 
-                if ( ! $cat->id = $DB->insert_record("glossary_categories", $cat) ) {
-                    print_error('cannotinsertcategory');
-
-                    redirect("editcategories.php?id=$cm->id");
-                } else {
-                    add_to_log($course->id, "glossary", "add category", "editcategories.php?id=$cm->id", $cat->id,$cm->id);
-                }
+                $cat->id = $DB->insert_record("glossary_categories", $cat);
+                add_to_log($course->id, "glossary", "add category", "editcategories.php?id=$cm->id", $cat->id,$cm->id);
             }
         } else {
             echo "<p style=\"text-align:center\">" . get_string("add"). " " . get_string("category","glossary"). "</p>";

@@ -66,9 +66,7 @@
         if ($answers = $DB->get_records_select("lesson_answers", "pageid = :pageid", $params)) {
             foreach ($answers as $answer) {
                 if ($answer->id != clean_param($form->answerid[0], PARAM_INT)) {
-                    if (!$DB->delete_records("lesson_answers", array("id" => $answer->id))) {
-                        print_error('cannotdeleteanswer', 'lesson');
-                    }
+                    $DB->delete_records("lesson_answers", array("id" => $answer->id));
                 }
             }
         }        
@@ -142,9 +140,7 @@
                     if ($i >= 2) {
                         if ($form->answerid[$i]) {
                             // need to delete blanked out answer
-                            if (!$DB->delete_records("lesson_answers", array("id" => clean_param($form->answerid[$i], PARAM_INT)))) {
-                                print_error('cannotdeleteanswer', 'lesson');
-                            }
+                            $DB->delete_records("lesson_answers", array("id" => clean_param($form->answerid[$i], PARAM_INT)));
                         }
                     } else {
                         $oldanswer = new stdClass;
@@ -165,9 +161,7 @@
                     }                        
                 } elseif (!empty($form->answerid[$i])) {
                     // need to delete blanked out answer
-                    if (!$DB->delete_records("lesson_answers", array("id" => clean_param($form->answerid[$i], PARAM_INT)))) {
-                        print_error('cannotdeleteanswer', 'lesson');
-                    }
+                    $DB->delete_records("lesson_answers", array("id" => clean_param($form->answerid[$i], PARAM_INT)));
                 }
             }
         }

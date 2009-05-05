@@ -56,7 +56,6 @@ $string['cannotdeleteattempt'] = 'Error: could not delete old attempts';
 $string['cannotdeletebranch'] = 'Error: could not delete old seen branches';
 $string['cannotinsertanswer'] = 'Cannot insert answer record';
 $string['cannotinserthighscore'] = 'Insert of new high score Failed!';
-$string['cannotinsertgrade'] = 'Cannot insert grade';
 $string['cannotinsertpage'] = 'Cannot insert new page';
 $string['cannotinserttimer'] = 'Error: could not insert row into lesson_timer table';
 $string['cannotupdateanswer'] = 'Update page: answer not updated';
