@@ -30,9 +30,9 @@ switch ($action) {
 function glossary_comment_add() {
     global $USER, $DB;
 
-    $eid = optional_param('eid', 0, PARAM_INT); // Entry ID
+    $entryid = optional_param('entryid', 0, PARAM_INT); // Entry ID
 
-    if (!$entry = $DB->get_record('glossary_entries', array('id'=>$eid))) {
+    if (!$entry = $DB->get_record('glossary_entries', array('id'=>$entryid))) {
         print_error('invalidentry');
     }
     if (!$glossary = $DB->get_record('glossary', array('id'=>$entry->glossaryid))) {
@@ -45,34 +45,37 @@ function glossary_comment_add() {
         print_error('coursemisconf');
     }
 
-    require_login($course->id, false, $cm);
+    require_login($course, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     /// Both the configuration and capability must allow comments
     if (!$glossary->allowcomments or !has_capability('mod/glossary:comment', $context)) {
         print_error('nopermissiontocomment');
     }
 
-    $mform = new mod_glossary_comment_form();
-    $mform->set_data(array('eid'=>$eid, 'action'=>'add'));
+    $commentoptions = array('trusttext'=>true, 'maxfiles'=>0);
+
+    $comment = new object();
+    $comment->id      = null;
+    $comment->action  = 'edit';
+    $comment->entryid = $entry->id;
+
+    $comment = file_prepare_standard_editor($comment, 'entrycomment', $commentoptions, $context);
+
+    $mform = new mod_glossary_comment_form(array('current'=>$comment, 'commentoptions'=>$commentoptions));
 
     if ($mform->is_cancelled()) {
         redirect("comments.php?id=$cm->id&amp;eid=$entry->id");
     }
 
-    if ($data = $mform->get_data()) {
-        $newcomment = new object();
-        $newcomment->entryid            = $entry->id;
-        $newcomment->entrycomment       = $data->entrycomment;
-        $newcomment->entrycommentformat = $data->entrycommentformat;
-        $newcomment->entrycommenttrust  = trusttext_trusted($context);
-        $newcomment->timemodified       = time();
-        $newcomment->userid             = $USER->id;
+    if ($newcomment = $mform->get_data()) {
 
-        if (!$newcomment->id = $DB->insert_record('glossary_comments', $newcomment)) {
-            print_error('cannotinsertcomment');
-        } else {
-            add_to_log($course->id, 'glossary', 'add comment', "comments.php?id=$cm->id&amp;eid=$entry->id", "$newcomment->id", $cm->id);
-        }
+        $newcomment = file_postupdate_standard_editor($newcomment, 'entrycomment', $newcommentoptions, $context);//no files - can be used before insert
+        $newcomment->timemodified = time();
+        $newcomment->userid       = $USER->id;
+
+        $newcomment->id = $DB->insert_record('glossary_comments', $newcomment);
+
+        add_to_log($course->id, 'glossary', 'add comment', "comments.php?id=$cm->id&amp;eid=$entry->id", "$newcomment->id", $cm->id);
         redirect("comments.php?id=$cm->id&amp;eid=$entry->id");
 
     } else {
@@ -89,10 +92,10 @@ function glossary_comment_add() {
 function glossary_comment_delete() {
     global $USER, $DB;
 
-    $cid     = optional_param('cid', 0, PARAM_INT);      // Comment ID
+    $id      = optional_param('id', 0, PARAM_INT);      // Comment ID
     $confirm = optional_param('confirm', 0, PARAM_BOOL); // delete confirmation
 
-    if (!$comment = $DB->get_record('glossary_comments', array('id'=>$cid))) {
+    if (!$comment = $DB->get_record('glossary_comments', array('id'=>$id))) {
         print_error('invalidcomment');
     }
     if (!$entry = $DB->get_record('glossary_entries', array('id'=>$comment->entryid))) {
@@ -108,7 +111,7 @@ function glossary_comment_delete() {
         print_error('coursemisconf');
     }
 
-    require_login($course->id, false, $cm);
+    require_login($course, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (($comment->userid <> $USER->id) and !has_capability('mod/glossary:managecomments', $context)) {
         print_error('nopermissiontodelcomment', 'glossary');
@@ -118,15 +121,15 @@ function glossary_comment_delete() {
     }
 
     if (data_submitted() and $confirm) {
-        $DB->delete_records('glossary_comments', array('id'=>$cid));
+        $DB->delete_records('glossary_comments', array('id'=>$id));
         add_to_log($course->id, 'glossary', 'delete comment', "comments.php?id=$cm->id&amp;eid=$entry->id", "$comment->id",$cm->id);
         redirect("comments.php?id=$cm->id&amp;eid=$entry->id");
 
     } else {
         $linkyes    = 'comment.php';
-        $optionsyes = array('action'=>'delete', 'cid'=>$cid, 'confirm'=>1);
+        $optionsyes = array('action'=>'delete', 'id'=>$id, 'confirm'=>1);
         $linkno     = 'comments.php';
-        $optionsno  = array('id'=>$cm->id, 'eid'=>$entry->id);
+        $optionsno  = array('id'=>$cm->id, 'entryid'=>$entry->id);
         $strdeletewarning = get_string('areyousuredeletecomment','glossary');
 
         glossary_comment_print_header($course, $cm, $glossary, $entry, 'delete');
@@ -143,9 +146,9 @@ function glossary_comment_delete() {
 function glossary_comment_edit() {
     global $CFG, $USER, $DB;
 
-    $cid = optional_param('cid', 0, PARAM_INT); // Comment ID
+    $id = optional_param('id', 0, PARAM_INT); // Comment ID
 
-    if (!$comment = $DB->get_record('glossary_comments', array('id'=>$cid))) {
+    if (!$comment = $DB->get_record('glossary_comments', array('id'=>$id))) {
         print_error('invalidcomment');
     }
     if (!$entry = $DB->get_record('glossary_entries', array('id'=>$comment->entryid))) {
@@ -161,7 +164,7 @@ function glossary_comment_edit() {
         print_error('coursemisconf');
     }
 
-    require_login($course->id, false, $cm);
+    require_login($course, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (!$glossary->allowcomments and !has_capability('mod/glossary:managecomments', $context)) {
         print_error('nopermissiontodelinglossary', 'glossary');
@@ -174,20 +177,17 @@ function glossary_comment_edit() {
         print_error('cannoteditcommentexpired');
     }
 
-    // clean up existing text if needed
-    $comment = trusttext_pre_edit($comment, 'entrycomment', $context);
+    $commentoptions = array('trusttext'=>true, 'maxfiles'=>0);
 
-    $mform = new mod_glossary_comment_form();
-    $mform->set_data(array('cid'=>$cid, 'action'=>'edit', 'entrycomment'=>$comment->entrycomment, 'entrycommentformat'=>$comment->entrycommentformat));
+    $comment->action  = 'edit';
+    $comment = file_prepare_standard_editor($comment, 'entrycomment', $commentoptions, $context);
 
-    if ($data = $mform->get_data()) {
+    $mform = new mod_glossary_comment_form(array('current'=>$comment, 'commentoptions'=>$commentoptions));
 
-        $updatedcomment = new object();
-        $updatedcomment->id                 = $cid;
-        $updatedcomment->entrycomment       = $data->entrycomment;
-        $updatedcomment->entrycommentformat = $data->entrycommentformat;
-        $updatedcomment->entrycommenttrust  = trusttext_trusted($context);
-        $updatedcomment->timemodified       = time();
+    if ($updatedcomment = $mform->get_data()) {
+
+        $updatedcomment = file_postupdate_standard_editor($updatedcomment, 'entrycomment', $commentoptions, $context);
+        $updatedcomment->timemodified = time();
 
         $DB->update_record('glossary_comments', $updatedcomment);
         add_to_log($course->id, 'glossary', 'update comment', "comments.php?id=$cm->id&amp;eid=$entry->id", "$updatedcomment->id",$cm->id);

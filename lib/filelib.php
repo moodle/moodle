@@ -128,6 +128,9 @@ function file_prepare_standard_editor($data, $field, array $options, $context=nu
     if (!isset($options['subdirs'])) {
         $options['subdirs'] = false;
     }
+    if (!isset($options['maxfiles'])) {
+        $options['maxfiles'] = 0; // no files by default
+    }
 
     if (empty($data->id) or empty($context)) {
         $contextid = null;
@@ -152,9 +155,13 @@ function file_prepare_standard_editor($data, $field, array $options, $context=nu
         $contextid = $context->id;
     }
 
-    $draftid_editor = file_get_submitted_draft_itemid($field);
-    $currenttext = file_prepare_draft_area($draftid_editor, $contextid, $filearea, $data->id, $options['subdirs'], $data->{$field}, $options['forcehttps']);
-    $data->{$field.'_editor'} = array('text'=>$currenttext, 'format'=>$data->{$field.'format'}, 'itemid'=>$draftid_editor);
+    if ($options['maxfiles'] != 0) {
+        $draftid_editor = file_get_submitted_draft_itemid($field);
+        $currenttext = file_prepare_draft_area($draftid_editor, $contextid, $filearea, $data->id, $options['subdirs'], $data->{$field}, $options['forcehttps']);
+        $data->{$field.'_editor'} = array('text'=>$currenttext, 'format'=>$data->{$field.'format'}, 'itemid'=>$draftid_editor);
+    } else {
+        $data->{$field.'_editor'} = array('text'=>$data->{$field}, 'format'=>$data->{$field.'format'}, 0);
+    }
 
     return $data;
 }
@@ -169,7 +176,7 @@ function file_prepare_standard_editor($data, $field, array $options, $context=nu
  * @param int $itemid item id, required if item exists
  * @return object modified data object
  */
-function file_postupdate_standard_editor($data, $field, array $options, $context, $filearea, $itemid) {
+function file_postupdate_standard_editor($data, $field, array $options, $context, $filearea=null, $itemid=null) {
     $options = (array)$options;
     if (!isset($options['trusttext'])) {
         $options['trusttext'] = false;
@@ -195,7 +202,11 @@ function file_postupdate_standard_editor($data, $field, array $options, $context
 
     $editor = $data->{$field.'_editor'};
 
-    $data->{$field} = file_save_draft_area_files($editor['itemid'], $context->id, $filearea, $itemid, $options, $editor['text'], $options['forcehttps']);
+    if ($options['maxfiles'] != 0 or is_null($filearea) or is_null($itemid)) {
+        $data->{$field} = file_save_draft_area_files($editor['itemid'], $context->id, $filearea, $itemid, $options, $editor['text'], $options['forcehttps']);
+    } else {
+        $data->{$field} = $editor['text'];
+    }
     $data->{$field.'format'} = $editor['format'];
 
     return $data;

@@ -84,7 +84,6 @@ $string['cannotimport'] = 'Import error';
 $string['cannotimportgrade'] = 'Grade import error';
 $string['cannotimportformat'] = 'Sorry, importing this format is not yet implemented!';
 $string['cannotinsertcategory'] = 'Weird error. The category was not inserted.';
-$string['cannotinsertcomment'] = 'Could not insert this new comment';
 $string['cannotinsertgrade'] = 'Cannot insert grade item without course id!';
 $string['cannotinsertrate'] = 'Could not insert a new rating ($a->id = $a->rating)';
 $string['cannotinsertrecord'] = 'Could not insert new record ID $a';
