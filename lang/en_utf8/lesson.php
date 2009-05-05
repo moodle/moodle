@@ -51,7 +51,6 @@ $string['cannotfindanswer'] = 'Error: could not find answer';
 $string['cannotfindgrade'] = 'Error: could not find grades';
 $string['cannotfindrecords'] = 'Error: could not find lesson records';
 $string['cannotfinduser'] =  'Error: could not find users';
-$string['cannotinsertanswer'] = 'Cannot insert answer record';
 $string['cannotinserthighscore'] = 'Insert of new high score Failed!';
 $string['cannotinsertpage'] = 'Cannot insert new page';
 $string['cannotinserttimer'] = 'Error: could not insert row into lesson_timer table';
