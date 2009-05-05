@@ -326,9 +326,7 @@
             $startlesson->starttime = time();
             $startlesson->lessontime = time();
             
-            if (!$DB->insert_record('lesson_timer', $startlesson)) {
-                print_error('cannotinserttimer', 'lesson');
-            }
+            $DB->insert_record('lesson_timer', $startlesson);
             if ($lesson->timed) {
                 lesson_set_message(get_string('maxtimewarning', 'lesson', $lesson->maxtime), 'center');
             }

@@ -543,15 +543,11 @@ function lesson_save_objects($branchtables, $lessonid, $after) {
         $branchtable->page->prevpageid = $prevpageid;
         
         // insert the page
-        if(!$id = $DB->insert_record('lesson_pages', $branchtable->page)) {
-            print_error('cannotinsertpage', 'lesson');
-        }
+        $id = $DB->insert_record('lesson_pages', $branchtable->page);
     
         // update the link of the page previous to the one we just updated
         if ($prevpageid != 0) {  // if not the first page
-            if (!$DB->set_field("lesson_pages", "nextpageid", $id, array("id" => $prevpageid))) {
-                print_error('cannotupdatepage', 'lesson');
-            }
+            $DB->set_field("lesson_pages", "nextpageid", $id, array("id" => $prevpageid));
         }
 
         // insert the answers
@@ -565,9 +561,7 @@ function lesson_save_objects($branchtables, $lessonid, $after) {
     
     // all done with inserts.  Now check to update our last page (this is when we import between two lesson pages)
     if ($nextpageid != 0) {  // if the next page is not the end of lesson
-        if (!$DB->set_field("lesson_pages", "prevpageid", $id, array("id" => $nextpageid))) {
-            print_error('cannotupdatepage', 'lesson');
-        }
+        $DB->set_field("lesson_pages", "prevpageid", $id, array("id" => $nextpageid));
     }
     
     return true;
@@ -581,9 +575,7 @@ function book_save_objects($chapters, $bookid, $pageid='0') {
     
     // nothing fancy, just save them all in order
     foreach ($chapters as $chapter) {
-        if (!$chapter->id = $DB->insert_record('book_chapters', $chapter)) {
-            print_error('cannotupdatebook', 'lesson');
-        }
+        $chapter->id = $DB->insert_record('book_chapters', $chapter);
     }
     return true;
 }

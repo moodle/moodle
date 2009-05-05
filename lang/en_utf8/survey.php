@@ -61,7 +61,6 @@ $string['attlsname'] = 'ATTLS (20 item version)';
 $string['cannotfindsurveytmpt'] = 'No survey templates found!';
 $string['cannotfindquestion'] = 'Question doesn\'t exist';
 $string['cannotfindanswer'] = 'There are no answers for this survey yet.';
-$string['cannotinsertanswer'] = 'Encountered a problem trying to store your results. Sorry.';
 $string['ciq1'] = 'At what moment in class were you most engaged as a learner?';
 $string['ciq1short'] = 'Most engaged';
 $string['ciq2'] = 'At what moment in class were you most distanced as a learner?';

@@ -70,9 +70,7 @@
                 }
             }
         }        
-        if (!$DB->update_record("lesson_answers", $oldanswer)) {
-            print_error('cannotupdateanswer', 'lesson');
-        }
+        $DB->update_record("lesson_answers", $oldanswer);
     } else {
         // it's an "ordinary" page
         if ($page->qtype == LESSON_MATCHING) {
@@ -105,9 +103,7 @@
                     if (isset($form->score[$i])) {
                         $oldanswer->score = clean_param($form->score[$i], PARAM_INT);
                     }
-                    if (!$DB->update_record("lesson_answers", $oldanswer)) {
-                        print_error('cannotupdateanswer', 'lesson');
-                    }
+                    $DB->update_record("lesson_answers", $oldanswer);
                 } else {
                     // it's a new answer
                     $newanswer = new stdClass; // need to clear id if more than one new answer is ben added
@@ -152,9 +148,7 @@
                                             $form->responseeditor[$i] * LESSON_RESPONSE_EDITOR;
                         $oldanswer->timemodified = $timenow;
                         $oldanswer->answer = NULL;
-                        if (!$DB->update_record("lesson_answers", $oldanswer)) {
-                            print_error('cannotupdateanswer', 'lesson');
-                        }
+                        $DB->update_record("lesson_answers", $oldanswer);
                     }                        
                 } elseif (!empty($form->answerid[$i])) {
                     // need to delete blanked out answer

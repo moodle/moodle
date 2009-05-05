@@ -84,9 +84,7 @@
             $newdata->answer2 = "";
         }
 
-        if (! $DB->insert_record("survey_answers", $newdata)) {
-            print_error('cannotinsertanswer', 'survey');
-        }
+        $DB->insert_record("survey_answers", $newdata);
     }
 
 // Print the page and finish up.

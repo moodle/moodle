@@ -93,13 +93,9 @@ class qformat_default {
                         $newpage->prevpageid = $pageid;
                         $newpage->nextpageid = $page->nextpageid;
                         // insert the page and reset $pageid
-                        if (!$newpageid = $DB->insert_record("lesson_pages", $newpage)) {
-                            print_error('cannotinsertpage', 'lesson');
-                        }
+                        $newpageid = $DB->insert_record("lesson_pages", $newpage);
                         // update the linked list
-                        if (!$DB->set_field("lesson_pages", "nextpageid", $newpageid, array("id" => $pageid))) {
-                            print_error('cannotupdateanswer', 'lesson');
-                        }
+                        $DB->set_field("lesson_pages", "nextpageid", $newpageid, array("id" => $pageid));
 
                     } else {
                         // new page is the first page
@@ -110,21 +106,13 @@ class qformat_default {
                             $newpage->prevpageid = 0; // this is a first page
                             $newpage->nextpageid = 0; // this is the only page
                             $newpageid = $DB->insert_record("lesson_pages", $newpage);
-                            if (!$newpageid) {
-                                print_error('cannotinsertpage', 'lesson');
-                            }
                         } else {
                             // there are existing pages put this at the start
                             $newpage->prevpageid = 0; // this is a first page
                             $newpage->nextpageid = $page->id;
                             $newpageid = $DB->insert_record("lesson_pages", $newpage);
-                            if (!$newpageid) {
-                                print_error('cannotinsertpage', 'lesson');
-                            }
                             // update the linked list
-                            if (!$DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $page->id))) {
-                                print_error('cannotupdatelink', 'lesson');
-                            }
+                            $DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $page->id));
                         }
                     }
                     // reset $pageid and put the page ID in $question, used in save_question_option()

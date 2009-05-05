@@ -35,9 +35,7 @@
     $newpage->timecreated = $timenow;
     $newpage->title = get_string("clustertitle", "lesson");
     $newpage->contents = get_string("clustertitle", "lesson");
-    if (!$newpageid = $DB->insert_record("lesson_pages", $newpage)) {
-        print_error('cannotinsertpage', 'lesson');
-    }
+    $newpageid = $DB->insert_record("lesson_pages", $newpage);
     // update the linked list...
     if ($pageid != 0) {
         if (!$DB->set_field("lesson_pages", "nextpageid", $newpageid, array("id" => $pageid))) {

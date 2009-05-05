@@ -47,18 +47,11 @@
         $newpage->contents = trim($form->contents);
         $newpage->title = $newpage->title;
         $newpageid = $DB->insert_record("lesson_pages", $newpage);
-        if (!$newpageid) {
-            print_error('cannotinsertpage', 'lesson');
-        }
         // update the linked list (point the previous page to this new one)
-        if (!$DB->set_field("lesson_pages", "nextpageid", $newpageid, array("id" => $newpage->prevpageid))) {
-            print_error('cannotupdatelink', 'lesson');
-        }
+        $DB->set_field("lesson_pages", "nextpageid", $newpageid, array("id" => $newpage->prevpageid));
         if ($page->nextpageid) {
             // new page is not the last page
-            if (!$DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $page->nextpageid))) {
-                print_error('cannotupdatelink', 'lesson');
-            }
+            $DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $page->nextpageid));
         }
     } else {
         // new page is the first page
@@ -90,9 +83,6 @@
             $newpage->contents = trim($form->contents);
             $newpage->title = $newpage->title;
             $newpageid = $DB->insert_record("lesson_pages", $newpage);
-            if (!$newpageid) {
-                print_error('cannotinsertpage', 'lesson');
-            }
         } else {
             // there are existing pages put this at the start
             $newpage->lessonid = $lesson->id;
