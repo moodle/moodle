@@ -83,6 +83,14 @@ class moodle_page {
 
     protected $_othereditingcaps = array();
 
+    /**
+     * This is simply to improve backwards compatability. If old code relies on
+     * a page class that implements print_header, or complex logic in
+     * user_allowed_editing then we stash an instance of that other class here,
+     * and delegate to it in certani situations.
+     */
+    protected $_legacypageobject = null;
+
 /// Getter methods =============================================================
 /// Due to the __get magic below, you normally do not call these as $PAGE->get_x
 /// methods, but instead use the $PAGE->x syntax.
@@ -232,6 +240,9 @@ class moodle_page {
      * @return boolean does the user have permission to see this page in editing mode.
      */
     public function user_allowed_editing() {
+        if ($this->_legacypageobject) {
+            return $this->_legacypageobject->user_allowed_editing();
+        }
         return has_any_capability($this->all_editing_caps(), $this->_context);
     }
 
@@ -664,6 +675,38 @@ class moodle_page {
         debugging('Call to deprecated method moodle_page::url_get_full. Use $this->url->out() instead.');
         return $this->url->out($extraparams);
     }
+
+    /**
+     * @deprecated since Moodle 2.0 - just a backwards compatibility hook.
+     */
+    function set_legacy_page_object($pageobject) {
+        return $this->_legacypageobject = $pageobject;
+    }
+
+    /**
+     * @deprecated since Moodle 2.0 - page objects should no longer be doing print_header.
+     * @param $_,...
+     */
+    function print_header($_) {
+        if (is_null($this->_legacypageobject)) {
+            throw new coding_exception('You have called print_header on $PAGE when there is not a legacy page class present.');
+        }
+        debugging('You should not longer be doing print_header via a page class.', DEBUG_DEVELOPER);
+        $args = func_get_args();
+        call_user_func_array(array($this->_legacypageobject, 'print_header'), $args);
+    }
+
+    /**
+     * @deprecated since Moodle 2.0
+     * @return the 'page id'. This concept no longer exists.
+     */
+    function get_id() {
+        debugging('Call to deprecated method moodle_page::get_id(). It should not be necessary any more.', DEBUG_DEVELOPER);
+        if (!is_null($this->_legacypageobject)) {
+            return $this->_legacypageobject->get_id();
+        }
+        return 0;
+    }
 }
 
 /** Stub implementation of the blocks_manager, to stop things from breaking too badly. */
@@ -679,7 +722,7 @@ class blocks_manager {
 
 /**
  * @deprecated since Moodle 2.0
- * Load any page_base subclasses from the pagelib.php library in a particular folder.
+ * Not needed any more.
  * @param $path the folder path
  * @return array an array of page types.
  */
@@ -690,6 +733,8 @@ function page_import_types($path) {
 
 /**
  * @deprecated since Moodle 2.0
+ * Do not use this any more. The global $PAGE is automatically created for you.
+ * If you need custom behaviour, you should just set properties of that object.
  * @param integer $instance legacy page instance id.
  * @return the global $PAGE object.
  */
@@ -698,11 +743,13 @@ function page_create_instance($instance) {
 }
 
 /**
- * Factory function page_create_object(). Called with a pagetype identifier and possibly with
- * its numeric ID. Returns a fully constructed page_base subclass you can work with.
+ * @deprecated since Moodle 2.0
+ * Do not use this any more. The global $PAGE is automatically created for you.
+ * If you need custom behaviour, you should just set properties of that object.
  */
 function page_create_object($type, $id = NULL) {
     global $CFG, $PAGE, $SITE;
+    debugging('Call to deprecated function page_create_object.', DEBUG_DEVELOPER);
 
     $data = new stdClass;
     $data->pagetype = $type;
@@ -711,9 +758,6 @@ function page_create_object($type, $id = NULL) {
     $classname = page_map_class($type);
     $legacypage = new $classname;
     $legacypage->init_quick($data);
-    // $PAGE->set_pagetype($type);
-    // $PAGE->set_url(str_replace($CFG->wwwroot . '/', '', $legacypage->url_get_full_()));
-    // return $PAGE;
 
     $course = $PAGE->course;
     if ($course->id != $SITE->id) {
@@ -731,23 +775,25 @@ function page_create_object($type, $id = NULL) {
             $legacypage->set_course($SITE);
         }
     }
-    return $legacypage;
+    $legacypage->set_pagetype($type);
+    $legacypage->set_url(str_replace($CFG->wwwroot . '/', '', $legacypage->url_get_full()));
+
+    $PAGE->set_pagetype($type);
+    $PAGE->set_legacy_page_object($legacypage);
+    return $PAGE;
 }
 
 /**
- * Function page_map_class() is the way for your code to define its own page subclasses and let Moodle recognize them.
- * Use it to associate the textual identifier of your Page with the actual class name that has to be instantiated.
+ * @deprecated since Moodle 2.0
+ * You should not be writing page subclasses any more. Just set properties on the
+ * global $PAGE object to control its behaviour.
  */
 function page_map_class($type, $classname = NULL) {
     global $CFG;
 
-    static $mappings = NULL;
-
-    if ($mappings === NULL) {
-        $mappings = array(
-            PAGE_COURSE_VIEW => 'page_course',
-        );
-    }
+    static $mappings = array(
+        PAGE_COURSE_VIEW => 'page_course',
+    );
 
     if (!empty($type) && !empty($classname)) {
         $mappings[$type] = $classname;
@@ -765,11 +811,10 @@ function page_map_class($type, $classname = NULL) {
 }
 
 /**
+ * @deprecated since Moodle 2.0
  * Parent class from which all Moodle page classes derive
  *
- * @author Jon Papaioannou
  * @package pages
- * @todo This parent class is very messy still. Please for the moment ignore it and move on to the derived class page_course to see the comments there.
  */
 class page_base extends moodle_page {
     /**
@@ -820,13 +865,12 @@ class page_base extends moodle_page {
 }
 
 /**
+ * @deprecated since Moodle 2.0
  * Class that models the behavior of a moodle course
  *
- * @author Jon Papaioannou
  * @package pages
  */
 class page_course extends page_base {
-
     // Do any validation of the officially recognized bits of the data and forward to parent.
     // Do NOT load up "expensive" resouces (e.g. SQL data) here!
     function init_quick($data) {
@@ -949,14 +993,14 @@ class page_course extends page_base {
 }
 
 /**
+ * @deprecated since Moodle 2.0
  * Class that models the common parts of all activity modules
  *
- * @author Jon Papaioannou
  * @package pages
  */
 class page_generic_activity extends page_base {
-    var $activityname   = NULL;
-    var $modulerecord   = NULL;
+    var $activityname = NULL;
+    var $modulerecord = NULL;
     var $activityrecord = NULL;
 
     function init_full() {
