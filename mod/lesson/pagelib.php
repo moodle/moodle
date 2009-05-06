@@ -73,12 +73,12 @@ class page_lesson extends page_generic_activity {
             print_error('invalidpageid', 'lesson');
         }
         if (empty($title)) {
-            $title = "{$this->courserecord->shortname}: $activityname";
+            $title = "{$this->course->shortname}: $activityname";
         }
         
     /// Build the buttons
         if (has_capability('mod/lesson:edit', $context)) {
-            $buttons = '<span class="edit_buttons">'.update_module_button($this->modulerecord->id, $this->courserecord->id, get_string('modulename', 'lesson'));
+            $buttons = '<span class="edit_buttons">'.update_module_button($this->modulerecord->id, $this->course->id, get_string('modulename', 'lesson'));
 
             if (!empty($this->lessonpageid) and $this->lessonpageid != LESSON_EOL) {
                 $buttons .= '<form '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/mod/lesson/lesson.php">'.
@@ -125,13 +125,13 @@ class page_lesson extends page_generic_activity {
         // }
 
         $navigation = build_navigation($morenavlinks, $this->modulerecord);
-        print_header($title, $this->courserecord->fullname, $navigation, '', $meta, true, $buttons, navmenu($this->courserecord, $this->modulerecord));
+        print_header($title, $this->course->fullname, $navigation, '', $meta, true, $buttons, navmenu($this->course, $this->modulerecord));
 
         if (has_capability('mod/lesson:manage', $context)) {
             print_heading_with_help($activityname, 'overview', 'lesson');
 
             // Rename our objects for the sake of the tab code
-            list($cm, $course, $lesson, $currenttab) = array(&$this->modulerecord, &$this->courserecord, &$this->activityrecord, 'view');
+            list($cm, $course, $lesson, $currenttab) = array(&$this->modulerecord, &$this->course, &$this->activityrecord, 'view');
             include($CFG->dirroot.'/mod/lesson/tabs.php');
         } else {
             print_heading($activityname);

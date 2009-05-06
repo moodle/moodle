@@ -46,7 +46,7 @@ if (empty($USER->id)) {
 } else {
     $PAGE = page_create_object($pagetype, $USER->id);
 }
-$PAGE->courseid     = $courseid;
+$PAGE->set_course($course);
 $PAGE->filtertype   = $filtertype;
 $PAGE->filterselect = $filterselect;
 $PAGE->tagid        = $tagid;

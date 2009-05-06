@@ -195,12 +195,20 @@ class moodle_page {
 
 /// Deperecated fields and methods for backwards compatibility =================
     /**
-     * @deprecated since Moodle 2.0 - use $PAGE->pagetype instaed.
+     * @deprecated since Moodle 2.0 - use $PAGE->pagetype instead.
      * @return string page type.
      */
     public function get_type() {
         debugging('Call to deprecated method moodle_page::get_type. Please use $PAGE->pagetype instead.');
         return $this->get_pagetype();
+    }
+    /**
+     * @deprecated since Moodle 2.0 - use $PAGE->course instead.
+     * @return object course.
+     */
+    public function get_courserecord() {
+        debugging('Call to deprecated method moodle_page::get_courserecord. Please use $PAGE->course instead.');
+        return $this->get_course();
     }
 }
 
@@ -463,11 +471,6 @@ class page_base extends moodle_page {
  */
 class page_course extends page_base {
 
-    // Any data we might need to store specifically about ourself should be declared here.
-    // After init_full() is called for the first time, ALL of these variables should be
-    // initialized correctly and ready for use.
-    var $courserecord = NULL;
-
     // Do any validation of the officially recognized bits of the data and forward to parent.
     // Do NOT load up "expensive" resouces (e.g. SQL data) here!
     function init_quick($data) {
@@ -489,15 +492,6 @@ class page_course extends page_base {
         }
         if (empty($this->id)) {
             $this->id = 0; // avoid db errors
-        }
-        if ($this->id == $COURSE->id) {
-            $this->courserecord = $COURSE;
-        } else {
-            $this->courserecord = $DB->get_record('course', array('id'=>$this->id));
-        }
-
-        if(empty($this->courserecord) && !defined('ADMIN_STICKYBLOCKS')) {
-            print_error('cannotinitpage', 'debug', '', (object)array('name'=>'course', 'id'=>$this->id));
         }
 
         $this->context = get_context_instance(CONTEXT_COURSE, $this->id);
@@ -569,7 +563,7 @@ class page_course extends page_base {
 
         $this->init_full();
         $replacements = array(
-            '%fullname%' => $this->courserecord->fullname
+            '%fullname%' => $this->course->fullname
         );
         foreach($replacements as $search => $replace) {
             $title = str_replace($search, $replace, $title);
@@ -585,9 +579,9 @@ class page_course extends page_base {
 
         // The "Editing On" button will be appearing only in the "main" course screen
         // (i.e., no breadcrumbs other than the default one added inside this function)
-        $buttons = switchroles_form($this->courserecord->id);
+        $buttons = switchroles_form($this->course->id);
         if ($this->user_allowed_editing()) {
-            $buttons .= update_course_icon($this->courserecord->id );
+            $buttons .= update_course_icon($this->course->id );
         }
         $buttons = empty($morenavlinks) ? $buttons : '&nbsp;';
 
@@ -596,8 +590,8 @@ class page_course extends page_base {
             $buttons = ($buttons == '&nbsp;') ? $extrabuttons : $buttons.$extrabuttons;
         }
 
-        print_header($title, $this->courserecord->fullname, $navigation,
-                     '', $meta, true, $buttons, user_login_string($this->courserecord, $USER), false, $bodytags);
+        print_header($title, $this->course->fullname, $navigation,
+                     '', $meta, true, $buttons, user_login_string($this->course, $USER), false, $bodytags);
     }
 
     // SELF-REPORTING SECTION
@@ -614,7 +608,7 @@ class page_course extends page_base {
             return parent::get_format_name();
         }
         // This needs to reflect the path hierarchy under Moodle root.
-        return 'course-view-'.$this->courserecord->format;
+        return 'course-view-'.$this->course->format;
     }
 
     // This should return a fully qualified path to the URL which is responsible for displaying us.
@@ -681,7 +675,7 @@ class page_course extends page_base {
         }
         // It's a normal course, so do it according to the course format
         else {
-            $pageformat = $this->courserecord->format;
+            $pageformat = $this->course->format;
             if (!empty($CFG->{'defaultblocks_'. $pageformat})) {
                 $blocknames = $CFG->{'defaultblocks_'. $pageformat};
             }
@@ -731,7 +725,6 @@ class page_course extends page_base {
  */
 class page_generic_activity extends page_base {
     var $activityname   = NULL;
-    var $courserecord   = NULL;
     var $modulerecord   = NULL;
     var $activityrecord = NULL;
 
@@ -746,10 +739,6 @@ class page_generic_activity extends page_base {
         }
         if (!$this->modulerecord = get_coursemodule_from_instance($this->activityname, $this->id)) {
             print_error('cannotinitpager', 'debug', '', (object)array('name'=>$this->activityname, 'id'=>$this->id));
-        }
-        $this->courserecord = $DB->get_record('course', array('id'=>$this->modulerecord->course));
-        if(empty($this->courserecord)) {
-            print_error('invalidcourseid');
         }
         $this->activityrecord = $DB->get_record($this->activityname, array('id'=>$this->id));
         if(empty($this->activityrecord)) {
@@ -800,7 +789,7 @@ class page_generic_activity extends page_base {
         }
 
         if (empty($morenavlinks) && $this->user_allowed_editing()) {
-            $buttons = '<table><tr><td>'.update_module_button($this->modulerecord->id, $this->courserecord->id, get_string('modulename', $this->activityname)).'</td>';
+            $buttons = '<table><tr><td>'.update_module_button($this->modulerecord->id, $this->course->id, get_string('modulename', $this->activityname)).'</td>';
             if (!empty($CFG->showblocksonmodpages)) {
                 $buttons .= '<td><form '.$CFG->frametarget.' method="get" action="view.php"><div>'.
                     '<input type="hidden" name="id" value="'.$this->modulerecord->id.'" />'.
@@ -816,7 +805,7 @@ class page_generic_activity extends page_base {
             $morenavlinks = array();
         }
         $navigation = build_navigation($morenavlinks, $this->modulerecord);
-        print_header($title, $this->courserecord->fullname, $navigation, '', $meta, true, $buttons, navmenu($this->courserecord, $this->modulerecord), false, $bodytags);
+        print_header($title, $this->course->fullname, $navigation, '', $meta, true, $buttons, navmenu($this->course, $this->modulerecord), false, $bodytags);
     }
 }
 

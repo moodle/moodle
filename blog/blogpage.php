@@ -13,8 +13,6 @@ define('PAGE_BLOG_VIEW', 'blog-view');
 class page_blog extends page_base {
 
     var $editing = false;
-    var $courserecord = NULL;
-    var $courseid = NULL;
     var $filtertype = NULL;
     var $filterselect = NULL;
     var $tagid = NULL;
@@ -55,11 +53,6 @@ class page_blog extends page_base {
 
         if ($this->courseid == 0 || $this->courseid == 1 || !is_numeric($this->courseid) ) {
             $this->courseid = '';
-            $courserecord = NULL;
-        } else {
-            if (! ($courserecord = $DB->get_record('course', array('id'=>$this->courseid))) ) {
-                print_error('invalidcourseid', 'error', '',  $this->courseid);
-            }
         }
         $this->full_init_done = true;
     }
@@ -111,8 +104,8 @@ class page_blog extends page_base {
             return $array;
         }
 
-        if (!empty($this->courseid)) {
-            $array['courseid'] = $this->courseid;
+        if (!empty($this->course->id)) {
+            $array['courseid'] = $this->course->id;
         }
         if (!empty($this->filtertype)) {
             $array['filtertype'] = $this->filtertype;
