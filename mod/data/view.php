@@ -22,11 +22,9 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-    require_once('../../config.php');
-    require_once('lib.php');
-    require_once("$CFG->libdir/rsslib.php");
-
-    require_once('pagelib.php');
+    require_once(dirname(__FILE__) . '/../../config.php');
+    require_once($CFG->dirroot . '/mod/data/lib.php');
+    require_once($CFG->libdir . '/rsslib.php');
 
 /// One of these is necessary!
     $id = optional_param('id', 0, PARAM_INT);  // course module id
@@ -255,7 +253,6 @@
 
 
 // Initialize $PAGE, compute blocks
-    $PAGE = page_create_instance($data->id);
     $PAGE->set_url('mod/data/view.php', array('id' => $cm->id));
     $pageblocks = blocks_setup($PAGE);
     $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
@@ -278,10 +275,20 @@
         $meta .= '<script type="text/javascript" src="'.$CFG->wwwroot.'/mod/data/js.php?d='.$data->id.'"></script>';
     }
 
-
 /// Print the page header
-    $PAGE->print_header($course->shortname.': %fullname%', '', $meta);
+    $title = $course->shortname.': ' . format_string($data->name);
 
+    $buttons = '<table><tr><td>'.update_module_button($cm->id, $course->id, get_string('modulename', 'data')).'</td>';
+    if ($PAGE->user_allowed_editing() && !empty($CFG->showblocksonmodpages)) {
+        $buttons .= '<td><form '.$CFG->frametarget.' method="get" action="view.php"><div>'.
+            '<input type="hidden" name="id" value="'.$cm->id.'" />'.
+            '<input type="hidden" name="edit" value="'.($PAGE->user_is_editing()?'off':'on').'" />'.
+            '<input type="submit" value="'.get_string($PAGE->user_is_editing()?'blockseditoff':'blocksediton').'" /></div></form></td>';
+    }
+    $buttons .= '</tr></table>';
+
+    $navigation = build_navigation(array(), $cm);
+    print_header($title, $course->fullname, $navigation, '', '', true, $buttons, navmenu($course, $cm));
 
 /// If we have blocks, then print the left side here
     if (!empty($CFG->showblocksonmodpages)) {
