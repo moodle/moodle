@@ -443,7 +443,6 @@ function upgrade_plugins_modules($startcallback, $endcallback) {
 function upgrade_plugins_blocks($startcallback, $endcallback) {
     global $CFG, $DB;
 
-    require_once($CFG->libdir.'/blocklib.php');
     require_once($CFG->dirroot.'/blocks/moodleblock.class.php');
 
     $blocktitles   = array(); // we do not want duplicate titles

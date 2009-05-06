@@ -81,11 +81,8 @@ class resource_base {
     * Display the resource with the course blocks.
     */
     function display_course_blocks_start() {
-
         global $CFG, $USER, $THEME;
 
-        require_once($CFG->libdir.'/blocklib.php');
-        require_once($CFG->libdir.'/pagelib.php');
         require_once($CFG->dirroot.'/course/lib.php'); //required by some blocks
 
         $PAGE = page_create_object(PAGE_COURSE_VIEW, $this->course->id);

@@ -430,7 +430,6 @@
             include_once("$CFG->dirroot/backup/backup_scheduled.php");
             include_once("$CFG->dirroot/backup/backuplib.php");
             include_once("$CFG->dirroot/backup/lib.php");
-            require_once ("$CFG->libdir/blocklib.php");
             mtrace("Running backups if required...");
     
             if (! schedule_backup_cron()) {

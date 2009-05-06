@@ -10,7 +10,6 @@
     require_once("lib.php");
     require_once("restorelib.php");
     require_once("bb/restore_bb.php");
-    require_once("$CFG->libdir/blocklib.php");
     require_once("$CFG->libdir/wiki_to_markdown.php" );
     require_once("$CFG->libdir/adminlib.php");
 

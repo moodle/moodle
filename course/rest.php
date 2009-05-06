@@ -3,9 +3,6 @@
 
 require_once('../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
-require_once($CFG->libdir .'/pagelib.php');
-require_once($CFG->libdir .'/blocklib.php');
-
 
 // Initialise ALL the incoming parameters here, up front.
 $courseid   = required_param('courseId', PARAM_INT);

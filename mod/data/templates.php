@@ -24,7 +24,6 @@
 
     require_once('../../config.php');
     require_once('lib.php');
-    require_once($CFG->libdir.'/blocklib.php');
 
     $id    = optional_param('id', 0, PARAM_INT);  // course module id
     $d     = optional_param('d', 0, PARAM_INT);   // database id

@@ -171,12 +171,15 @@ global $SCRIPT;
 
 /// Load up standard libraries
     require_once($CFG->libdir .'/textlib.class.php');   // Functions to handle multibyte strings
+    require_once($CFG->libdir .'/filterlib.php');       // Functions for filtering test as it is output
+    require_once($CFG->libdir .'/ajax/ajaxlib.php');    // Functions for managing our use of JavaScript and YUI
     require_once($CFG->libdir .'/weblib.php');          // Functions for producing HTML
     require_once($CFG->libdir .'/dmllib.php');          // Database access
     require_once($CFG->libdir .'/datalib.php');         // Legacy lib with a big-mix of functions.
     require_once($CFG->libdir .'/accesslib.php');       // Access control functions
     require_once($CFG->libdir .'/deprecatedlib.php');   // Deprecated functions included for backward compatibility
     require_once($CFG->libdir .'/moodlelib.php');       // Other general-purpose functions
+    require_once($CFG->libdir .'/blocklib.php');        // Library for controlling blocks
     require_once($CFG->libdir .'/eventslib.php');       // Events functions
     require_once($CFG->libdir .'/grouplib.php');        // Groups functions
     require_once($CFG->libdir .'/sessionlib.php');      // All session and cookie related stuff

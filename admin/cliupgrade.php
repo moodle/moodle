@@ -992,7 +992,6 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
     /// Check all blocks and load (or upgrade them if necessary)
     /// first old *.php update and then the new upgrade.php script
-    require_once("$CFG->dirroot/lib/blocklib.php");
     if ( $verbose > CLI_NO ) {
         print_heading(get_string('upgradingblocksplugin','install'),'',1);
     }
@@ -1053,7 +1052,6 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     /// Set up the site
     if (! $site = get_site()) {
         // We are about to create the site "course"
-        require_once($CFG->libdir.'/blocklib.php');
 
         if ( ( $interactive == CLI_FULL ) || ($interactive == CLI_SEMI && ( (!isset($INSTALL['sitefullname'])) || (!isset($INSTALL['siteshortname'])) || (!isset($INSTALL['sitesummary'])) || (!isset($INSTALL['sitenewsitems'])) )) ) {
             console_write('siteinfo');

@@ -32,7 +32,6 @@
 
     require_once('config.php');
     require_once($CFG->dirroot .'/course/lib.php');
-    require_once($CFG->libdir .'/blocklib.php');
     require_once($CFG->libdir .'/filelib.php');
 
     // Bounds for block widths

@@ -4,8 +4,6 @@
 
     require_once('../config.php');
     require_once('lib.php');
-    require_once($CFG->libdir.'/blocklib.php');
-    require_once($CFG->libdir.'/ajax/ajaxlib.php');
     require_once($CFG->dirroot.'/mod/forum/lib.php');
 
     $id          = optional_param('id', 0, PARAM_INT);

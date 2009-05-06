@@ -11,7 +11,6 @@
     require_once($CFG->dirroot.'/mod/lesson/locallib.php');
     require_once($CFG->dirroot.'/mod/lesson/lib.php');
     require_once($CFG->dirroot.'/mod/lesson/pagelib.php');
-    require_once($CFG->libdir.'/blocklib.php');
 
     $id      = required_param('id', PARAM_INT);             // Course Module ID
     $pageid  = optional_param('pageid', NULL, PARAM_INT);   // Lesson Page ID

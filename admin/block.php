@@ -4,7 +4,6 @@
 
     require_once('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
-    require_once($CFG->libdir.'/blocklib.php');
 
     $blockid = required_param('block', PARAM_INT);
 

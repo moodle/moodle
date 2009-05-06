@@ -3611,7 +3611,6 @@ function remove_course_contents($courseid, $showfeedback=true) {
                 notify($strdeleted .' block_instance_old');
             }
 
-            require_once($CFG->libdir.'/blocklib.php');
             foreach ($blocks as $block) {  /// Delete any associated contexts for this block
 
                 delete_context(CONTEXT_BLOCK, $block->id);

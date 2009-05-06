@@ -38,11 +38,6 @@
  * @package moodlecore
  */
 
-/// We are going to uses filterlib functions here
-require_once("$CFG->libdir/filterlib.php");
-
-require_once("$CFG->libdir/ajax/ajaxlib.php");
-
 /// Constants
 
 /// Define text formatting types ... eventually we can add Wiki, BBcode etc

@@ -24,8 +24,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 /**
- * Tests for the parts of ../filterlib.php that handle creating filter objects,
- * and using them to filter strings.
+ * Tests for the moodle_page class in ../pagelib.php.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore

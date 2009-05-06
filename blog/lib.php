@@ -3,8 +3,6 @@
     /**
      * Library of functions and constants for blog
      */
-    require_once($CFG->libdir .'/blocklib.php');
-    require_once($CFG->libdir .'/pagelib.php');
     require_once($CFG->dirroot .'/blog/rsslib.php');
     require_once($CFG->dirroot .'/blog/blogpage.php');
     require_once($CFG->dirroot.'/tag/lib.php');

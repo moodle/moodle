@@ -3,7 +3,6 @@
 /// This page prints a particular instance of quiz
 
     require_once(dirname(__FILE__) . '/../../config.php');
-    require_once($CFG->libdir.'/blocklib.php');
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/mod/quiz/locallib.php');
     require_once($CFG->dirroot.'/mod/quiz/pagelib.php');

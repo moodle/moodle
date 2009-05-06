@@ -3893,9 +3893,7 @@ class admin_setting_manageportfolio extends admin_setting {
  */
 function admin_externalpage_setup($section, $extrabutton = '',
         $extraurlparams = array(), $actualurl = '') {
-
     global $CFG, $PAGE, $USER;
-    require_once($CFG->libdir.'/blocklib.php');
 
     if ($site = get_site()) {
         require_login();

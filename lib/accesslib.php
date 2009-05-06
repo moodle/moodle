@@ -129,8 +129,6 @@
  * @package roles
  */
 
-require_once $CFG->dirroot.'/lib/blocklib.php';
-
 // permission definitions
 define('CAP_INHERIT', 0);
 define('CAP_ALLOW', 1);

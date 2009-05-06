@@ -9,7 +9,6 @@
     confirm_sesskey();
 
     require_once($CFG->dirroot.'/mod/lesson/pagelib.php');
-    require_once($CFG->libdir.'/blocklib.php');
 
     // left menu code
     // check to see if the user can see the left menu

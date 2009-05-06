@@ -24,7 +24,6 @@
 
     require_once('../../config.php');
     require_once('lib.php');
-    require_once($CFG->libdir.'/blocklib.php');
     require_once("$CFG->libdir/rsslib.php");
 
     require_once('pagelib.php');

@@ -31,8 +31,6 @@
  *//** */
 
     require_once(dirname(__FILE__) . '/../config.php');
-    require_once($CFG->libdir . '/pagelib.php');
-    require_once($CFG->libdir . '/blocklib.php');
     require_once($CFG->libdir . '/adminlib.php');
     require_once($CFG->dirroot . '/course/lib.php');
     require_once($CFG->dirroot . '/course/request_form.php');
