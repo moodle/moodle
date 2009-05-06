@@ -94,7 +94,7 @@ function blocks_get_missing(&$page, &$pageblocks) {
 
     $missingblocks = array();
     $allblocks = blocks_get_record();
-    $pageformat = $page->get_format_name();
+    $pageformat = $page->pagetype;
 
     if(!empty($allblocks)) {
         foreach($allblocks as $block) {
@@ -117,7 +117,7 @@ function blocks_remove_inappropriate($page) {
         return;
     }
 
-    if(($pageformat = $page->get_format_name()) == NULL) {
+    if(($pageformat = $page->pagetype) == NULL) {
         return;
     }
 
@@ -325,10 +325,10 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
     include_once($CFG->dirroot.'/my/pagelib.php');
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $COURSE->id);
-    $myownblogpage = (isset($page->filtertype) && isset($page->filterselect) && $page->type=='blog-view' && $page->filtertype=='user' && $page->filterselect == $USER->id);
+    $myownblogpage = (isset($page->filtertype) && isset($page->filterselect) && $page->pagetype=='blog-view' && $page->filtertype=='user' && $page->filterselect == $USER->id);
 
     $managecourseblocks = has_capability('moodle/site:manageblocks', $coursecontext);
-    $editmymoodle = $page->type == PAGE_MY_MOODLE && has_capability('moodle/my:manageblocks', $coursecontext);
+    $editmymoodle = $page->pagetype == PAGE_MY_MOODLE && has_capability('moodle/my:manageblocks', $coursecontext);
 
     if ($page->blocks_default_position() == $position &&
         $page->user_is_editing() &&

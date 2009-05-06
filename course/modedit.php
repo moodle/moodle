@@ -80,12 +80,13 @@
             $pageheading = get_string('addinganew', 'moodle', $fullmodulename);
         }
 
-        $CFG->pagepath = 'mod/'.$module->name;
+        $pagepath = 'mod-' . $module->name . '-';
         if (!empty($type)) {
-            $CFG->pagepath .= '/'.$type;
+            $pagepath .= $type;
         } else {
-            $CFG->pagepath .= '/mod';
+            $pagepath .= 'mod';
         }
+        $PAGE->set_pagetype($pagepath);
 
         $navlinksinstancename = '';
 

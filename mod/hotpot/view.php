@@ -264,11 +264,8 @@
     // insert hot-potatoes.js
     $hp->insert_script(HOTPOT_JS);
     // get Moodle pageid and pageclass
-    $pageid = '';
-    $pageclass = '';
-    if (function_exists('page_id_and_class')) {
-        page_id_and_class($pageid, $pageclass);
-    }
+    $pageid = $PAGE->pagetype;
+
     // extract first <head> tag
     $head = '';
     $pattern = '|<head([^>]*)>(.*?)</head>|is';

@@ -17,15 +17,6 @@ class page_blog extends page_base {
     var $filterselect = NULL;
     var $tagid = NULL;
 
-    // we have no format type, use 'blog'
-    //I think it's a bug, but if this is left the default NULL value then pages can
-    //fail to load completely
-    function get_format_name() {
-        global $CFG;
-        require_once($CFG->dirroot .'/blog/lib.php');
-        return PAGE_BLOG_VIEW;
-    }
-
     // Do any validation of the officially recognized bits of the data and forward to parent.
     // Do NOT load up "expensive" resouces (e.g. SQL data) here!
     function init_quick($data) {

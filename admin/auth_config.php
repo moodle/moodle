@@ -8,7 +8,7 @@ require_once $CFG->libdir.'/adminlib.php';
 
 $auth = required_param('auth', PARAM_SAFEDIR);
 
-$CFG->pagepath = 'auth/' . $auth;
+$PAGE->set_pagetype('auth-' . $auth);
 
 admin_externalpage_setup('authsetting'.$auth);
 

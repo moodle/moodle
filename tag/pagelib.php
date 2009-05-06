@@ -51,12 +51,8 @@ class page_tag extends page_base {
         return $instance->position;
     }
 
-    function get_format_name() {
-        return TAG_FORMAT;
-    }
-    
     //-----------  printing funtions -----------
-    
+
     function print_header() {
 
         global $USER, $CFG;

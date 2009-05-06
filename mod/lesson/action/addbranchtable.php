@@ -7,8 +7,6 @@
  * @package lesson
  **/
 
-    $CFG->pagepath = 'mod/lesson/addbranchtable';
-    
     // first get the preceeding page
     $pageid = required_param('pageid', PARAM_INT);
     

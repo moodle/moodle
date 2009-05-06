@@ -56,6 +56,8 @@ class moodle_page {
 
     protected $_pagetype = null;
 
+    protected $_legacyclass = null;
+
     /**
      * @return integer one of the STATE_... constants. You should not normally need
      * to use this in your code. It is indended for internal use by this class
@@ -102,8 +104,8 @@ class moodle_page {
      * @return string e.g. 'my-index' or 'mod-quiz-attempt'. Same as the id attribute on <body>.
      */
     public function get_pagetype() {
-        if (is_null($this->_pagetype)) {
-            throw new coding_exception('$PAGE->pagetype accessed before it was known.');
+        if (is_null($this->_pagetype) || isset($CFG->pagepath)) {
+            $this->initialise_default_pagetype();
         }
         return $this->_pagetype;
     }
@@ -193,7 +195,46 @@ class moodle_page {
         }
     }
 
+    /**
+     * Sets ->pagetype from the script name. For example, if the script that was
+     * run is mod/quiz/view.php, ->pagetype will be set to 'mod-quiz-view'.
+     * @param string $script the path to the script that should be used to
+     * initialise ->pagetype. If not passed the $SCRIPT global will be used.
+     * If legacy code has set $CFG->pagepath that will be used instead, and a
+     * developer warning issued.
+     */
+    protected function initialise_default_pagetype($script = '') {
+        global $CFG, $SCRIPT;
+
+        if (isset($CFG->pagepath)) {
+            debugging('Some code appears to have set $CFG->pagepath. That was a horrible deprecated thing. ' .
+                    'Don\'t do it! Try calling $PAGE->set_pagetype() instead.');
+            $script = $CFG->pagepath;
+            unset($CFG->pagepath);
+        }
+
+        if (empty($script)) {
+            $script = ltrim($SCRIPT, '/');
+            $len = strlen($CFG->admin);
+            if (substr($script, 0, $len) == $CFG->admin) {
+                $script = 'admin' . substr($script, $len);
+            }
+        }
+
+        $path = str_replace('.php', '', $script);
+        if (substr($path, -1) == '/') {
+            $path .= 'index';
+        }
+
+        if (empty($path) || $path == 'index') {
+            $this->_pagetype = 'site-index';
+        } else {
+            $this->_pagetype = str_replace('/', '-', $path);
+        }
+    }
+
 /// Deperecated fields and methods for backwards compatibility =================
+
     /**
      * @deprecated since Moodle 2.0 - use $PAGE->pagetype instead.
      * @return string page type.
@@ -202,6 +243,15 @@ class moodle_page {
         debugging('Call to deprecated method moodle_page::get_type. Please use $PAGE->pagetype instead.');
         return $this->get_pagetype();
     }
+
+    /**
+     * @deprecated since Moodle 2.0 - use $PAGE->pagetype instead.
+     * @return string this is what page_id_and_class used to return via the $getclass parameter.
+     */
+    function get_format_name() {
+        return $this->get_pagetype();
+    }
+
     /**
      * @deprecated since Moodle 2.0 - use $PAGE->course instead.
      * @return object course.
@@ -209,6 +259,25 @@ class moodle_page {
     public function get_courserecord() {
         debugging('Call to deprecated method moodle_page::get_courserecord. Please use $PAGE->course instead.');
         return $this->get_course();
+    }
+
+    /**
+     * @deprecated since Moodle 2.0
+     * @return string this is what page_id_and_class used to return via the $getclass parameter.
+     */
+    public function get_legacyclass() {
+        if (is_null($this->_legacyclass)) {
+            $pagetype = $this->pagetype;
+            if ($pagetype == 'site-index') {
+                $this->_legacyclass = 'course';
+            } else if (substr($pagetype, 0, 6) == 'admin-') {
+                $this->_legacyclass = 'admin';
+            } else {
+                $this->_legacyclass = substr($pagetype, 0, strrpos($pagetype, '-'));
+            }
+        }
+        debugging('Call to deprecated method moodle_page::get_legacyclass.');
+        return $this->_legacyclass;
     }
 }
 
@@ -220,17 +289,16 @@ class moodle_page {
  */
 function page_import_types($path) {
     global $CFG;
-
     debugging('Call to deprecated function page_import_types.', DEBUG_DEVELOPER);
 }
 
 /**
- * Factory function page_create_object(). Called with a numeric ID for a page, it autodetects
- * the page type, constructs the correct object and returns it.
+ * @deprecated since Moodle 2.0
+ * @param integer $instance legacy page instance id.
+ * @return the global $PAGE object.
  */
 function page_create_instance($instance) {
-    page_id_and_class($id, $class);
-    return page_create_object($id, $instance);
+    return page_create_object($PAGE->pagetype, $instance);
 }
 
 /**
@@ -309,31 +377,7 @@ class page_base extends moodle_page {
      */
     var $full_init_done = false;
 
-    /**
-     * The class attribute that Moodle has to assign to the BODY tag for this page.
-     * @var string $body_class
-     */
-    var $body_class     = NULL;
-
-    /**
-     * The id attribute that Moodle has to assign to the BODY tag for this page.
-     * @var string $body_id
-     */
-    var $body_id        = NULL;
-
 /// Class Functions
-
-    // CONSTRUCTION
-
-    // A whole battery of functions to allow standardized-name constructors in all versions of PHP.
-    // The constructor is actually called construct()
-    function __construct() {
-        $this->construct();
-    }
-
-    function construct() {
-        page_id_and_class($this->body_id, $this->body_class);
-    }
 
     // USER-RELATED THINGS
 
@@ -430,11 +474,6 @@ class page_base extends moodle_page {
         return $this->id;
     }
 
-    // "Sensible default" case here. Take it from the body id.
-    function get_format_name() {
-        return $this->body_id;
-    }
-
     // Initialize the data members of the parent class
     function init_quick($data) {
         $this->type = $data->pagetype;
@@ -503,7 +542,6 @@ class page_course extends page_base {
     // this is a _very_ expensive check - so cache it during execution
     //
     function user_allowed_editing() {
-
         $this->init_full();
 
         if (isset($this->_user_allowed_editing)) {
@@ -511,7 +549,7 @@ class page_course extends page_base {
         }
 
         if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM))
-            && defined('ADMIN_STICKYBLOCKS')) {
+                && defined('ADMIN_STICKYBLOCKS')) {
             $this->_user_allowed_editing = true;
             return true;
         }
@@ -585,21 +623,6 @@ class page_course extends page_base {
     }
 
     // SELF-REPORTING SECTION
-
-    // This is like the "category" of a page of this "type". For example, if the type is PAGE_COURSE_VIEW
-    // the format_name is the actual name of the course format. If the type were PAGE_ACTIVITY_VIEW, then
-    // the format_name might be that activity's name etc.
-    function get_format_name() {
-        $this->init_full();
-        if (defined('ADMIN_STICKYBLOCKS')) {
-            return PAGE_COURSE_VIEW;
-        }
-        if($this->id == SITEID) {
-            return parent::get_format_name();
-        }
-        // This needs to reflect the path hierarchy under Moodle root.
-        return 'course-view-'.$this->course->format;
-    }
 
     // This should return a fully qualified path to the URL which is responsible for displaying us.
     function url_get_path() {

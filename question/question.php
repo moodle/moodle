@@ -115,7 +115,7 @@ if ($id) {
 if (!isset($QTYPES[$question->qtype])) {
     print_error('unknownquestiontype', 'question', $returnurl, $question->qtype);
 }
-$CFG->pagepath = 'question/type/' . $question->qtype;
+$PAGE->set_pagetype('question-type-' . $question->qtype);
 
 // Create the question editing form.
 if ($wizardnow!=='' && !$movecontext){

@@ -12,6 +12,9 @@
     $loginguest  = optional_param('loginguest', 0, PARAM_BOOL); // determines whether visitors are logged in as guest automatically
     $testcookies = optional_param('testcookies', 0, PARAM_BOOL); // request cookie test
 
+    $context = get_context_instance(CONTEXT_SYSTEM);
+    $PAGE->set_context($context);
+
     //initialize variables
     $errormsg = '';
     $errorcode = 0;
@@ -159,7 +162,7 @@
             }
 
         /// Go to my-moodle page instead of homepage if mymoodleredirect enabled
-            if (!has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM)) and !empty($CFG->mymoodleredirect) and !isguest()) {
+            if (!has_capability('moodle/site:config', $context) and !empty($CFG->mymoodleredirect) and !isguest()) {
                 if ($urltogo == $CFG->wwwroot or $urltogo == $CFG->wwwroot.'/' or $urltogo == $CFG->wwwroot.'/index.php') {
                     $urltogo = $CFG->wwwroot.'/my/';
                 }

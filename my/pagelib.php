@@ -5,8 +5,7 @@ require_once($CFG->libdir.'/pagelib.php');
 class page_my_moodle extends page_base {
 
     function user_allowed_editing() {
-        page_id_and_class($id,$class);
-        if ($id == PAGE_MY_MOODLE) {
+        if ($PAGE->pagetype == PAGE_MY_MOODLE) {
             return true;
         } else if (has_capability('moodle/my:manageblocks', get_context_instance(CONTEXT_SYSTEM)) && defined('ADMIN_STICKYBLOCKS')) {
             return true;
@@ -58,8 +57,7 @@ class page_my_moodle extends page_base {
     
     function url_get_path() {
         global $CFG;
-        page_id_and_class($id,$class);
-        if ($id == PAGE_MY_MOODLE) {
+        if ($PAGE->pagetype == PAGE_MY_MOODLE) {
             return $CFG->wwwroot.'/my/index.php';
         } elseif (defined('ADMIN_STICKYBLOCKS')){
             return $CFG->wwwroot.'/'.$CFG->admin.'/stickyblocks.php';
@@ -89,10 +87,6 @@ class page_my_moodle extends page_base {
             return BLOCK_POS_LEFT;
         }
         return $instance->position;
-    }
-
-    function get_format_name() {
-        return MY_MOODLE_FORMAT;
     }
 }
 

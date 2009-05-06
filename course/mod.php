@@ -63,7 +63,7 @@
             $strdeletecheck = get_string('deletecheck', '', $fullmodulename);
             $strdeletecheckfull = get_string('deletecheckfull', '', "$fullmodulename '$cm->name'");
 
-            $CFG->pagepath = 'mod/'.$cm->modname.'/delete';
+            $PAGE->set_pagetype('mod-' . $cm->modname . '-delete');
 
             print_header_simple($strdeletecheck, '', build_navigation(array(array('name'=>$strdeletecheck, 'link'=>'', 'type'=>'misc'))));
 

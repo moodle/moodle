@@ -2327,7 +2327,8 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     // Create class and id for this page
 
-    page_id_and_class($pageid, $pageclass);
+    $pageid = $PAGE->pagetype;
+    $pageclass = $PAGE->legacyclass;
 
     $pageclass .= ' course-'.$COURSE->id;
 
@@ -6493,39 +6494,16 @@ function print_side_block_end($attributes = array(), $title='') {
 
 }
 
-
+/**
+ * @deprecated since Moodle 2.0 - use $PAGE->pagetype instead of the .
+ * @param string $getid used to return $PAGE->pagetype.
+ * @param string $getclass used to return $PAGE->legacyclass.
+ */
 function page_id_and_class(&$getid, &$getclass) {
-    // Create class and id for this page
-    global $CFG, $SCRIPT;
-
-    static $class = NULL;
-    static $id    = NULL;
-
-    if (empty($CFG->pagepath)) {
-        $CFG->pagepath = ltrim($SCRIPT, '/');
-    }
-
-    if (empty($class) || empty($id)) {
-        $path = str_replace('.php', '', $CFG->pagepath);
-        if (substr($path, -1) == '/') {
-            $path .= 'index';
-        }
-        if (empty($path) || $path == 'index') {
-            $id    = 'site-index';
-            $class = 'course';
-        } else if (substr($path, 0, 5) == 'admin') {
-            $id    = str_replace('/', '-', $path);
-            $class = 'admin';
-        } else {
-            $id    = str_replace('/', '-', $path);
-            $class = explode('-', $id);
-            array_pop($class);
-            $class = implode('-', $class);
-        }
-    }
-
-    $getid    = $id;
-    $getclass = $class;
+    global $PAGE;
+    debugging('Call to deprecated function page_id_and_class. Please use $PAGE->pagetype instead.', DEBUG_DEVELOPER);
+    $getid = $PAGE->pagetype;
+    $getclass = $PAGE->legacyclass;
 }
 
 /**

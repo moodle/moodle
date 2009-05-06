@@ -6,8 +6,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/
-    $CFG->pagepath = 'mod/lesson/addpage';
-    
     // first get the preceeding page
     $pageid = required_param('pageid', PARAM_INT);
     $qtype = optional_param('qtype', LESSON_MULTICHOICE, PARAM_INT);

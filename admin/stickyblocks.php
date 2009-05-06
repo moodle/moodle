@@ -40,7 +40,7 @@
         define('ADMIN_STICKYBLOCKS',$pt);
 
         $PAGE = page_create_object($pt, SITEID);
-        $blocks = blocks_setup($PAGE,BLOCKS_PINNED_TRUE);
+        $blocks = blocks_setup($PAGE, BLOCKS_PINNED_TRUE);
         $blocks_preferred_width = bounded_number(180, blocks_preferred_width($blocks[BLOCK_POS_LEFT]), 210);
 
         $navlinks = array(array('name' => get_string('administration'),
