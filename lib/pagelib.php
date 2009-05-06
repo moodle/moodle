@@ -836,6 +836,18 @@ class moodle_page {
     }
 
     /**
+     * @deprecated since Moodle 2.0
+     * @return the 'page id'. This concept no longer exists.
+     */
+    function get_pageid() {
+        debugging('Call to deprecated method moodle_page::get_pageid(). It should not be necessary any more.', DEBUG_DEVELOPER);
+        if (!is_null($this->_legacypageobject)) {
+            return $this->_legacypageobject->get_id();
+        }
+        return 0;
+    }
+
+    /**
      * @deprecated since Moodle 2.0 - user $PAGE->cm instead.
      * @return $this->cm;
      */
@@ -891,6 +903,9 @@ function page_create_object($type, $id = NULL) {
     $data->pageid = $id;
 
     $classname = page_map_class($type);
+    if (!$classname) {
+        return $PAGE;
+    }
     $legacypage = new $classname;
     $legacypage->init_quick($data);
 
@@ -938,10 +953,10 @@ function page_map_class($type, $classname = NULL) {
 
     if (!isset($mappings[$type])) {
         debugging('Page class mapping requested for unknown type: '.$type);
-    }
-
-    if (empty($classname) && !class_exists($mappings[$type])) {
+        return null;
+    } else if (empty($classname) && !class_exists($mappings[$type])) {
         debugging('Page class mapping for id "'.$type.'" exists but class "'.$mappings[$type].'" is not defined');
+        return null;
     }
 
     return $mappings[$type];

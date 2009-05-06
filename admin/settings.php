@@ -5,24 +5,25 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/blocklib.php');
 require_once($CFG->dirroot.'/'.$CFG->admin.'/pagelib.php');
 
-$section      = required_param('section', PARAM_SAFEDIR);
-$return       = optional_param('return','', PARAM_ALPHA);
+$section = required_param('section', PARAM_SAFEDIR);
+$return = optional_param('return','', PARAM_ALPHA);
 $adminediting = optional_param('adminedit', -1, PARAM_BOOL);
 
 /// no guest autologin
 require_login(0, false);
 $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 $PAGE->set_url($CFG->admin . '/settings.php', array('section' => $section));
+$PAGE->set_pagetype('admin-setting-' . $section);
 
 $adminroot = admin_get_root(); // need all settings
-$page      = $adminroot->locate($section);
+$settingspage = $adminroot->locate($section, true);
 
-if (empty($page) or !($page instanceof admin_settingpage)) {
+if (empty($settingspage) or !($settingspage instanceof admin_settingpage)) {
     print_error('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
     die;
 }
 
-if (!($page->check_access())) {
+if (!($settingspage->check_access())) {
     print_error('accessdenied', 'admin');
     die;
 }
@@ -40,7 +41,7 @@ if ($data = data_submitted() and confirm_sesskey()) {
 
     if (empty($adminroot->errors)) {
         switch ($return) {
-            case 'site':  redirect("$CFG->wwwroot/");
+            case 'site': redirect("$CFG->wwwroot/");
             case 'admin': redirect("$CFG->wwwroot/$CFG->admin/");
         }
     } else {
@@ -48,25 +49,17 @@ if ($data = data_submitted() and confirm_sesskey()) {
         $firsterror = reset($adminroot->errors);
         $focus = $firsterror->id;
     }
-    $adminroot =& admin_get_root(true); //reload tree
-    $page      =& $adminroot->locate($section);
+    $adminroot = admin_get_root(true); //reload tree
+    $settingspage = $adminroot->locate($section);
 }
-
-/// very hacky page setup
-page_map_class(PAGE_ADMIN, 'page_admin');
-$PAGE = page_create_object(PAGE_ADMIN, 0); // there must be any constant id number
-$PAGE->set_pagetype('admin-setting-' . $section);
-$PAGE->init_extra($section);
 
 if ($PAGE->user_allowed_editing() && $adminediting != -1) {
     $USER->editing = $adminediting;
 }
 
-
 /// print header stuff ------------------------------------------------------------
-
 if (empty($SITE->fullname)) {
-    print_header($page->visiblename, $page->visiblename, '', $focus);
+    print_header($settingspage->visiblename, $settingspage->visiblename, '', $focus);
     print_simple_box(get_string('configintrosite', 'admin'), 'center', '50%');
 
     if ($errormsg !== '') {
@@ -80,11 +73,11 @@ if (empty($SITE->fullname)) {
 
     echo '<form action="settings.php" method="post" id="adminsettings">';
     echo '<div class="settingsform clearfix">';
-    echo '<input type="hidden" name="section" value="'.$PAGE->section.'" />';
+    $PAGE->url->hidden_params_out();
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<input type="hidden" name="return" value="'.$return.'" />';
 
-    echo $page->output_html();
+    echo $settingspage->output_html();
 
     echo '<div class="form-buttons"><input class="form-submit" type="submit" value="'.get_string('savechanges','admin').'" /></div>';
 
@@ -94,12 +87,30 @@ if (empty($SITE->fullname)) {
 } else {
     $pageblocks = blocks_setup($PAGE);
 
-    $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
-                                            BLOCK_L_MAX_WIDTH);
-    $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
-                                            BLOCK_R_MAX_WIDTH);
+    $preferred_width_left = blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]);
+    $preferred_width_right = blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]);
 
-    $PAGE->print_header($focus);
+    // The search page currently doesn't handle block editing
+    if ($PAGE->user_allowed_editing()) {
+        $options = $PAGE->url->params();
+        if ($PAGE->user_is_editing()) {
+            $caption = get_string('blockseditoff');
+            $options['adminedit'] = 'off';
+        } else {
+            $caption = get_string('blocksediton');
+            $options['adminedit'] = 'on';
+        }
+        $buttons = print_single_button($PAGE->url->out(false), $options, $caption, 'get', '', true);
+    }
+
+    $visiblepathtosection = array_reverse($settingspage->visiblepath);
+    $navlinks = array();
+    foreach ($visiblepathtosection as $element) {
+        $navlinks[] = array('name' => $element, 'link' => null, 'type' => 'misc');
+    }
+    $navigation = build_navigation($navlinks);
+
+    print_header("$SITE->shortname: " . implode(": ",$visiblepathtosection), $SITE->fullname, $navigation, $focus, '', true, $buttons, '');
 
     echo '<table id="layout-table"><tr>';
     $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
@@ -128,12 +139,12 @@ if (empty($SITE->fullname)) {
 
     echo '<form action="settings.php" method="post" id="adminsettings">';
     echo '<div class="settingsform clearfix">';
-    echo '<input type="hidden" name="section" value="'.$PAGE->section.'" />';
+    $PAGE->url->hidden_params_out();
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<input type="hidden" name="return" value="'.$return.'" />';
-    print_heading($page->visiblename);
+    print_heading($settingspage->visiblename);
 
-    echo $page->output_html();
+    echo $settingspage->output_html();
 
     echo '<div class="form-buttons"><input class="form-submit" type="submit" value="'.get_string('savechanges','admin').'" /></div>';
 

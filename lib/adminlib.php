@@ -3896,7 +3896,6 @@ function admin_externalpage_setup($section, $extrabutton = '',
 
     global $CFG, $PAGE, $USER;
     require_once($CFG->libdir.'/blocklib.php');
-    require_once($CFG->dirroot.'/'.$CFG->admin.'/pagelib.php');
 
     if ($site = get_site()) {
         require_login();
@@ -3905,18 +3904,15 @@ function admin_externalpage_setup($section, $extrabutton = '',
         die;
     }
 
-    page_map_class(PAGE_ADMIN, 'page_admin');
-    $PAGE = page_create_object(PAGE_ADMIN, 0); // there must be any constant id number
-    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
-    // $PAGE->set_extra_button($extrabutton); TODO
-
     $adminroot = admin_get_root(false, false); // settings not required for external pages
     $extpage = $adminroot->locate($section);
+
+    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+    // $PAGE->set_extra_button($extrabutton); TODO
 
     if (!$actualurl) {
         $actualurl = $extpage->url;
     }
-    $PAGE->set_pagetype(null);
     $PAGE->set_url(str_replace($CFG->wwwroot . '/', '', $actualurl),
             array_merge($extraurlparams, array('section' => $section)));
 
@@ -3954,14 +3950,37 @@ function admin_externalpage_print_header($focus='') {
     if (!empty($SITE->fullname) and !empty($SITE->shortname)) {
         $pageblocks = blocks_setup($PAGE);
 
-        $preferred_width_left = bounded_number(BLOCK_L_MIN_WIDTH,
-                                               blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
-                                               BLOCK_L_MAX_WIDTH);
-        $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH,
-                                               blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
-                                               BLOCK_R_MAX_WIDTH);
+        $preferred_width_left = blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]);
+        $preferred_width_right = blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]);
 
-        $PAGE->print_header($focus);
+        $adminroot = admin_get_root(false, false); //settings not required - only pages
+
+        // fetch the path parameter
+        $section = $PAGE->url->param('section');
+        $current = $adminroot->locate($section, true);
+        $visiblepathtosection = array_reverse($current->visiblepath);
+
+        // The search page currently doesn't handle block editing
+        if ($PAGE->user_allowed_editing()) {
+            $options = $PAGE->url->params();
+            if ($PAGE->user_is_editing()) {
+                $caption = get_string('blockseditoff');
+                $options['adminedit'] = 'off';
+            } else {
+                $caption = get_string('blocksediton');
+                $options['adminedit'] = 'on';
+            }
+            $buttons = print_single_button($PAGE->url->out(false), $options, $caption, 'get', '', true);
+        }
+
+        $navlinks = array();
+        foreach ($visiblepathtosection as $element) {
+            $navlinks[] = array('name' => $element, 'link' => null, 'type' => 'misc');
+        }
+        $navigation = build_navigation($navlinks);
+
+        print_header("$SITE->shortname: " . implode(": ",$visiblepathtosection), $SITE->fullname, $navigation, $focus, '', true, $buttons, '');
+
         echo '<table id="layout-table" summary=""><tr>';
 
         $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
@@ -4015,12 +4034,8 @@ function admin_externalpage_print_footer() {
 
     if (!empty($SITE->fullname)) {
         $pageblocks = blocks_setup($PAGE);
-        $preferred_width_left = bounded_number(BLOCK_L_MIN_WIDTH,
-                                               blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
-                                               BLOCK_L_MAX_WIDTH);
-        $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH,
-                                                blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
-                                                BLOCK_R_MAX_WIDTH);
+        $preferred_width_left = blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]);
+        $preferred_width_right = blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]);
 
         $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
         foreach ($lt as $column) {

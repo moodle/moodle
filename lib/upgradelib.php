@@ -566,7 +566,6 @@ function upgrade_plugins_blocks($startcallback, $endcallback) {
 
     // Finally, if we are in the first_install of BLOCKS setup frontpage and admin page blocks
     if ($first_install) {
-        require_once($CFG->dirroot.'/'.$CFG->admin.'/pagelib.php');
         //Iterate over each course - there should be only site course here now
         if ($courses = $DB->get_records('course')) {
             foreach ($courses as $course) {
@@ -575,8 +574,8 @@ function upgrade_plugins_blocks($startcallback, $endcallback) {
             }
         }
 
-        page_map_class(PAGE_ADMIN, 'page_admin');
-        $page = page_create_object(PAGE_ADMIN, 0); // there must be some id number
+        $page = new moodle_page();
+        $page->set_pagetype('admin');
         blocks_repopulate_page($page);
     }
 }

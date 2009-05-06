@@ -461,7 +461,9 @@ class block_base {
         if (($this->instance->pagetype == $PAGE->pagetype) and $this->instance->pageid == $PAGE->id) {
             $page = $PAGE;
         } else {
-            $page = page_create_object($this->instance->pagetype, $this->instance->pageid);
+            $page = new moodle_page();
+            $page->set_pagetype($this->instance->pagetype);
+            $page->pageid = $this->instance->pageid;
         }
         $script = $page->url->out(array('instanceid' => $this->instance->id, 'sesskey' => sesskey()));
 

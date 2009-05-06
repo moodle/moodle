@@ -3,7 +3,6 @@
 require_once('../config.php');
 require_once('lib.php');
 require_once('locallib.php');
-require_once('pagelib.php');
 require_once($CFG->dirroot.'/lib/weblib.php');
 require_once($CFG->dirroot.'/blog/lib.php');
 
@@ -31,20 +30,29 @@ if (empty($tag)) {
     redirect($CFG->wwwroot.'/tag/search.php');
 }
 
-
-//create a new page_tag object, defined in pagelib.php
-$PAGE = page_create_object(PAGE_TAG_INDEX, $tag->id);
 $PAGE->set_url('tag/index.php', array('id' => $tag->id));
+$PAGE->set_subpage($tag->id);
 $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
 $pageblocks = blocks_setup($PAGE,BLOCKS_PINNED_BOTH);
-$PAGE->tag_object = $tag;
 
 if (($edit != -1) and $PAGE->user_allowed_editing()) {
     $USER->editing = $edit;
 }
 
+$tagname = tag_display_name($tag);
 
-$PAGE->print_header();
+$navlinks = array();
+$navlinks[] = array('name' => get_string('tags', 'tag'), 'link' => "{$CFG->wwwroot}/tag/search.php", 'type' => '');
+$navlinks[] = array('name' => $tagname, 'link' => '', 'type' => '');
+
+$navigation = build_navigation($navlinks);
+$title = get_string('tag', 'tag') .' - '. $tagname;
+
+$button = '';
+if ($PAGE->user_allowed_editing() ) {
+    $button = update_tag_button($tag->id);
+}
+print_header_simple($title, '', $navigation, '', '', '', $button);
 
 // Manage all tags links
 $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
