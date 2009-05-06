@@ -223,60 +223,60 @@ function qualified_me() {
     return $FULLME;
 }
 
-
 /**
  * Class for creating and manipulating urls.
  *
  * See short write up here http://docs.moodle.org/en/Development:lib/weblib.php_moodle_url
  */
 class moodle_url {
-    var $scheme = '';// e.g. http
-    var $host = '';
-    var $port = '';
-    var $user = '';
-    var $pass = '';
-    var $path = '';
-    var $fragment = '';
-    var $params = array(); //associative array of query string params
+    protected $scheme = ''; // e.g. http
+    protected $host = '';
+    protected $port = '';
+    protected $user = '';
+    protected $pass = '';
+    protected $path = '';
+    protected $fragment = '';
+    protected $params = array(); // Associative array of query string params
 
     /**
      * Pass no arguments to create a url that refers to this page. Use empty string to create empty url.
      *
      * @param string $url url default null means use this page url with no query string
-     *                      empty string means empty url.
-     *                      if you pass any other type of url it will be parsed into it's bits, including query string
-     * @param array $params these params override anything in the query string where params have the same name.
+     *      empty string means empty url. If you pass any other type of url it will
+     *      be parsed into it's bits, including query string
+     * @param array $params these params override anything in the query string
+     *      where params have the same name.
      */
-    function moodle_url($url = null, $params = array()){
+    public function __construct($url = null, $params = array()) {
         global $ME;
-        if ($url !== ''){
-            if ($url === null){
+        if ($url !== '') {
+            if ($url === null) {
                 $url = $ME;
             }
             $parts = parse_url($url);
-            if ($parts === FALSE){
+            if ($parts === FALSE) {
                 print_error('invalidurl');
             }
-            if (isset($parts['query'])){
+            if (isset($parts['query'])) {
                 parse_str(str_replace('&amp;', '&', $parts['query']), $this->params);
             }
             unset($parts['query']);
-            foreach ($parts as $key => $value){
+            foreach ($parts as $key => $value) {
                 $this->$key = $value;
             }
             $this->params($params);
         }
     }
+
     /**
      * Add an array of params to the params for this page. The added params override existing ones if they
      * have the same name.
      *
-     * @param array $params  Defaults to null. If null then return value of
-     * param 'name'.
+     * @param array $params Defaults to null. If null then return value of param 'name'.
      * @return array params for url.
      */
-    function params($params = null){
-        if (!is_null($params)){
+    public function params($params = null) {
+        if (!is_null($params)) {
             return $this->params = $params + $this->params;
         } else {
             return $this->params;
@@ -290,10 +290,10 @@ class moodle_url {
      * @param string $arg2
      * @param string $arg3
      */
-    function remove_params(){
-        if ($thisargs = func_get_args()){
-            foreach ($thisargs as $arg){
-                if (isset($this->params[$arg])){
+    public function remove_params() {
+        if ($thisargs = func_get_args()) {
+            foreach ($thisargs as $arg) {
+                if (isset($this->params[$arg])) {
                     unset($this->params[$arg]);
                 }
             }
@@ -307,40 +307,45 @@ class moodle_url {
      * have the same name.
      *
      * @param string $paramname name
-     * @param string $param value. Defaults to null. If null then return value
-     * of param 'name'
+     * @param string $param value. Defaults to null. If null then return value of param 'name'
      */
-    function param($paramname, $param = null){
-        if (!is_null($param)){
+    public function param($paramname, $param = null) {
+        if (!is_null($param)) {
             $this->params = array($paramname => $param) + $this->params;
         } else {
             return $this->params[$paramname];
         }
     }
 
-
-    function get_query_string($overrideparams = array()){
+    /**
+     * Get the params as as a query string.
+     * @param array $overrideparams params to add to the output params, these
+     *      override existing ones with the same name.
+     * @return string query string that can be added to a url.
+     */
+    public function get_query_string($overrideparams = array()) {
         $arr = array();
         $params = $overrideparams + $this->params;
-        foreach ($params as $key => $val){
+        foreach ($params as $key => $val) {
            $arr[] = urlencode($key)."=".urlencode($val);
         }
         return implode($arr, "&amp;");
     }
+
     /**
      * Outputs params as hidden form elements.
      *
      * @param  array $exclude params to ignore
      * @param integer $indent indentation
      * @param array $overrideparams params to add to the output params, these
-     * override existing ones with the same name.
+     *      override existing ones with the same name.
      * @return string html for form elements.
      */
-    function hidden_params_out($exclude = array(), $indent = 0, $overrideparams=array()){
+    public function hidden_params_out($exclude = array(), $indent = 0, $overrideparams=array()) {
         $tabindent = str_repeat("\t", $indent);
         $str = '';
         $params = $overrideparams + $this->params;
-        foreach ($params as $key => $val){
+        foreach ($params as $key => $val) {
             if (FALSE === array_search($key, $exclude)) {
                 $val = s($val);
                 $str.= "$tabindent<input type=\"hidden\" name=\"$key\" value=\"$val\" />\n";
@@ -348,6 +353,7 @@ class moodle_url {
         }
         return $str;
     }
+
     /**
      * Output url
      *
@@ -355,25 +361,26 @@ class moodle_url {
      * @param array $overrideparams params to add to the output url, these override existing ones with the same name.
      * @return string url
      */
-    function out($noquerystring = false, $overrideparams = array()) {
+    public function out($noquerystring = false, $overrideparams = array()) {
         $uri = $this->scheme ? $this->scheme.':'.((strtolower($this->scheme) == 'mailto') ? '':'//'): '';
         $uri .= $this->user ? $this->user.($this->pass? ':'.$this->pass:'').'@':'';
         $uri .= $this->host ? $this->host : '';
         $uri .= $this->port ? ':'.$this->port : '';
         $uri .= $this->path ? $this->path : '';
-        if (!$noquerystring){
+        if (!$noquerystring) {
             $uri .= (count($this->params)||count($overrideparams)) ? '?'.$this->get_query_string($overrideparams) : '';
         }
         $uri .= $this->fragment ? '#'.$this->fragment : '';
         return $uri;
     }
+
     /**
      * Output action url with sesskey
      *
      * @param boolean $noquerystring whether to output page params as a query string in the url.
      * @return string url
      */
-    function out_action($overrideparams = array()) {
+    public function out_action($overrideparams = array()) {
         $overrideparams = array('sesskey'=> sesskey()) + $overrideparams;
         return $this->out(false, $overrideparams);
     }
