@@ -8,8 +8,6 @@
  **/
     confirm_sesskey();
 
-    require_once($CFG->dirroot.'/mod/lesson/pagelib.php');
-
     // left menu code
     // check to see if the user can see the left menu
     if (!has_capability('mod/lesson:manage', $context)) {
@@ -789,16 +787,15 @@
         lesson_set_message('('.get_string("maximumnumberofattemptsreached", "lesson").')');
     }
 
-    $PAGE = page_create_object('mod-lesson-view', $lesson->id);
     $PAGE->set_url('mod/lesson/view.php', array('id' => $cm->id, 'pageid' => $page->id));
-    $PAGE->set_lessonpageid($page->id);
+    $PAGE->set_subpage($page->id);
     $pageblocks = blocks_setup($PAGE);
 
     $leftcolumnwidth  = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
     $rightcolumnwidth = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 210);
 
 /// Print the header, heading and tabs
-    $PAGE->print_header();
+    lesson_print_header($cm, $course, $lesson, 'view', true, $page->id);
 
     include(dirname(__FILE__).'/continue.html');
 ?>

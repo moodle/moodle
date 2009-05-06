@@ -109,12 +109,6 @@ function lesson_delete_instance($id) {
             delete_event($event->id);
         }
     }
-    $pagetypes = page_import_types('mod/lesson/');
-    foreach ($pagetypes as $pagetype) {
-        if (!blocks_delete_all_on_page($pagetype, $lesson->id)) {
-            $result = false;
-        }
-    }
 
     lesson_grade_item_delete($lesson);
 

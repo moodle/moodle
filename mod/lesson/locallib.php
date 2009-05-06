@@ -215,48 +215,82 @@ if (!defined("LESSON_RESPONSE_EDITOR")) {
 /**
  * Print the standard header for lesson module
  *
- * @uses $CFG
- * @uses $USER
+ * This will also print up to three
+ * buttons in the breadcrumb, lesson heading
+ * lesson tabs, lesson notifications and perhaps
+ * a popup with a media file.
+ *
  * @param object $cm Course module record object
- * @param object $course Couse record object
- * @param object $lesson Lesson module record object
+ * @param object $course Course record object
+ * @param object $lesson Lesson record object
  * @param string $currenttab Current tab for the lesson tabs
- * @return boolean
+ * @param boolean $extraeditbuttons Show the extra edit buttons next to the 'Update this lesson' button.
+ * @param integer $lessonpageid if $extraeditbuttons is true then you must pass the page id here.
  **/
-function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
-    global $CFG, $USER;
+function lesson_print_header($cm, $course, $lesson, $currenttab = '', $extraeditbuttons = false, $lessonpageid = NULL) {
+    global $CFG, $PAGE;
 
-    $strlesson = get_string('modulename', 'lesson');
-    $strname   = format_string($lesson->name, true, $course->id);
-
+    // Note: MDL-19010 there will be further changes to printing header and blocks.
+    // The code will be much nicer than this eventually.
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $activityname = format_string($lesson->name, true, $course->id);
+    $strlesson = get_string('modulename', 'lesson');
 
+    if (empty($title)) {
+        $title = "{$course->shortname}: $activityname";
+    }
+
+/// Build the buttons
     if (has_capability('mod/lesson:edit', $context)) {
-        $button = update_module_button($cm->id, $course->id, $strlesson);
+        $buttons = update_module_button($cm->id, $course->id, $strlesson);
+        if ($extraeditbuttons) {
+            if ($lessonpageid === NULL) {
+                print_error('invalidpageid', 'lesson');
+            }
+            if (!empty($lessonpageid) and $lessonpageid != LESSON_EOL) {
+                $buttons .= '<form '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/mod/lesson/lesson.php">'.
+                            '<input type="hidden" name="id" value="'.$cm->id.'" />'.
+                            '<input type="hidden" name="action" value="editpage" />'.
+                            '<input type="hidden" name="redirect" value="navigation" />'.
+                            '<input type="hidden" name="pageid" value="'.$lessonpageid.'" />'.
+                            '<input type="submit" value="'.get_string('editpagecontent', 'lesson').'" />'.
+                            '</form>';
+
+                if (!empty($CFG->showblocksonmodpages) and $PAGE->user_allowed_editing()) {
+                    if ($PAGE->user_is_editing()) {
+                        $onoff = 'off';
+                    } else {
+                        $onoff = 'on';
+                    }
+                    $buttons .= '<form '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/mod/lesson/view.php">'.
+                                '<input type="hidden" name="id" value="'.$cm->id.'" />'.
+                                '<input type="hidden" name="pageid" value="'.$lessonpageid.'" />'.
+                                '<input type="hidden" name="edit" value="'.$onoff.'" />'.
+                                '<input type="submit" value="'.get_string("blocksedit$onoff").'" />
+                                </form>';
+                }
+            }
+            $buttons = '<span class="edit_buttons">' . $buttons  .'</span>';
+        }
     } else {
-        $button = '';
+        $buttons = '&nbsp;';
     }
 
 /// Header setup
-    $navigation = build_navigation('', $cm);
-    
-/// Print header, heading, tabs and messages
-    print_header("$course->shortname: $strname", $course->fullname, $navigation,
-                  '', '', true, $button, navmenu($course, $cm));
+    $navigation = build_navigation(array(), $cm);
+    print_header($title, $course->fullname, $navigation, '', '', true, $buttons, navmenu($course, $cm));
 
     if (has_capability('mod/lesson:manage', $context)) {
-        print_heading_with_help($strname, "overview", "lesson");
+        print_heading_with_help($activityname, 'overview', 'lesson');
 
         if (!empty($currenttab)) {
             include($CFG->dirroot.'/mod/lesson/tabs.php');
         }
     } else {
-        print_heading($strname);
+        print_heading($activityname);
     }
 
     lesson_print_messages();
-
-    return true;
 }
 
 /**
@@ -436,10 +470,10 @@ function lesson_print_time_remaining($starttime, $maxtime, $return = false) {
  **/
 function lesson_print_page_actions($cmid, $page, $printmove, $printaddpage = false, $return = false) {
     global $CFG;
-    
+
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
     $actions = array();
-    
+
     if (has_capability('mod/lesson:edit', $context)) {
         if ($printmove) {
             $actions[] = "<a title=\"".get_string('move')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;action=move&amp;pageid=$page->id\">
@@ -450,10 +484,10 @@ function lesson_print_page_actions($cmid, $page, $printmove, $printaddpage = fal
         
         $actions[] = "<a title=\"".get_string('preview')."\" href=\"$CFG->wwwroot/mod/lesson/view.php?id=$cmid&amp;pageid=$page->id\">
                       <img src=\"$CFG->pixpath/t/preview.gif\" class=\"iconsmall\" alt=\"".get_string('preview')."\" /></a>\n";
-        
+
         $actions[] = "<a title=\"".get_string('delete')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;sesskey=".sesskey()."&amp;action=confirmdelete&amp;pageid=$page->id\">
                       <img src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"".get_string('delete')."\" /></a>\n";
-        
+
         if ($printaddpage) {
             // Add page drop-down
             $options = array();
@@ -464,13 +498,13 @@ function lesson_print_page_actions($cmid, $page, $printmove, $printaddpage = fal
             $options['addpage']                                = get_string('question', 'lesson');
             // Base url
             $common = "$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;pageid=$page->id&amp;action=";
-        
+
             $actions[] = popup_form($common, $options, "addpage_$page->id", '', get_string('addpage', 'lesson').'...', '', '', true);
         }
     }
-    
+
     $actions = implode(' ', $actions);
-    
+
     if ($return) {
         return $actions;
     } else {

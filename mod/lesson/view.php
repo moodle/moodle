@@ -7,10 +7,9 @@
  * @package lesson
  **/
 
-    require_once('../../config.php');
+    require_once(dirname(__FILE__) . '/../../config.php');
     require_once($CFG->dirroot.'/mod/lesson/locallib.php');
     require_once($CFG->dirroot.'/mod/lesson/lib.php');
-    require_once($CFG->dirroot.'/mod/lesson/pagelib.php');
 
     $id      = required_param('id', PARAM_INT);             // Course Module ID
     $pageid  = optional_param('pageid', NULL, PARAM_INT);   // Lesson Page ID
@@ -499,9 +498,8 @@
             }
         }
 
-        $PAGE = page_create_instance($lesson->id);
         $PAGE->set_url('mod/lesson/view.php', array('id' => $cm->id, 'pageid' => $page->id));
-        $PAGE->set_lessonpageid($page->id);
+        $PAGE->set_subpage($page->id);
         $pageblocks = blocks_setup($PAGE);
 
         $leftcolumnwidth  = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
@@ -512,7 +510,7 @@
         }
 
     /// Print the page header, heading and tabs
-        $PAGE->print_header();
+        lesson_print_header($cm, $course, $lesson, 'view', 'true', $page->id);
 
         if ($attemptflag) {
             print_heading(get_string('attempt', 'lesson', $retries + 1));
