@@ -808,17 +808,17 @@ class grade_report_grader extends grade_report {
                     // $cellclasses .= ' excluded';
                 }
 
-                $grade_title = '&lt;div class=&quot;fullname&quot;&gt;'.fullname($user).'&lt;/div&gt;';
-                $grade_title .= '&lt;div class=&quot;itemname&quot;&gt;'.$item->get_name(true).'&lt;/div&gt;';
+                $grade_title = '<div class="fullname">'.fullname($user).'</div>';
+                $grade_title .= '<div class="itemname">'.$item->get_name(true).'</div>';
 
                 if (!empty($grade->feedback) && !$USER->gradeediting[$this->courseid]) {
-                    $grade_title .= '&lt;div class=&quot;feedback&quot;&gt;'
-                                 .wordwrap(trim(format_string($grade->feedback, $grade->feedbackformat)), 34, '&lt;br/ &gt;') . '&lt;/div&gt;';
+                    $grade_title .= '<div class="feedback">'
+                                 .wordwrap(trim(format_string($grade->feedback, $grade->feedbackformat)), 34, '<br/ >') . '</div>';
                 } else {
 
                 }
 
-                $studentshtml .= '<td class="'.$cellclasses.'" title="'.$grade_title.'">';
+                $studentshtml .= '<td class="'.$cellclasses.'" title="'.s($grade_title).'">';
 
                 if ($grade->is_excluded()) {
                     $studentshtml .= '<span class="excludedfloater">'.get_string('excluded', 'grades') . '</span> ';
