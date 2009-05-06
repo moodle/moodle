@@ -435,16 +435,6 @@ class page_base extends moodle_page {
         return $this->body_id;
     }
 
-    // Returns $this->body_class
-    function get_body_class() {
-        return $this->body_class;
-    }
-
-    // Returns $this->body_id
-    function get_body_id() {
-        return $this->body_id;
-    }
-
     // Initialize the data members of the parent class
     function init_quick($data) {
         $this->type = $data->pagetype;
