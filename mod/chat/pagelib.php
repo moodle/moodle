@@ -24,10 +24,6 @@ class page_chat extends page_generic_activity {
         $this->activityname = 'chat';
         parent::init_quick($data);
     }
-
-    function get_type() {
-        return PAGE_CHAT_VIEW;
-    }
 }
 
 ?>

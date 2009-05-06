@@ -166,6 +166,20 @@ class moodle_page_test extends UnitTestCase {
         // Validate
         $this->assert(new CheckSpecifiedFieldsExpectation($context), $this->testpage->context);
     }
+
+    public function test_cant_get_pagetype_before_set() {
+        // Set expectation.
+        $this->expectException();
+        // Exercise SUT
+        $this->testpage->pagetype;
+    }
+
+    public function test_set_pagetype() {
+        // Exercise SUT
+        $this->testpage->set_pagetype('a-page-type');
+        // Validate
+        $this->assertEqual('a-page-type', $this->testpage->pagetype);
+    }
 }
 
 /**

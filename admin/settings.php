@@ -11,6 +11,7 @@ $adminediting = optional_param('adminedit', -1, PARAM_BOOL);
 
 /// no guest autologin
 require_login(0, false);
+$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 
 $adminroot = admin_get_root(); // need all settings
 $page      = $adminroot->locate($section);

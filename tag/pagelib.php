@@ -9,10 +9,6 @@ define('TAG_FORMAT', 'tag');
 class page_tag extends page_base {
 
     var $tag_object = NULL;
-    
-    function get_type() {
-        return PAGE_TAG_INDEX;
-    }
 
     function user_allowed_editing() {
         $systemcontext = get_context_instance(CONTEXT_SYSTEM);

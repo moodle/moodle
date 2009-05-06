@@ -4,10 +4,6 @@ require_once($CFG->libdir.'/pagelib.php');
 
 class page_my_moodle extends page_base {
 
-    function get_type() {
-        return PAGE_MY_MOODLE;
-    }
-
     function user_allowed_editing() {
         page_id_and_class($id,$class);
         if ($id == PAGE_MY_MOODLE) {

@@ -31,10 +31,6 @@ class page_data extends page_generic_activity {
     function print_header($title, $morenavlinks = NULL, $meta) {
         parent::print_header($title, $morenavlinks, '', $meta);
     }
-
-    function get_type() {
-        return PAGE_DATA_VIEW;
-    }
 }
 
 ?>

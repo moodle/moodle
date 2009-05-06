@@ -3904,6 +3904,13 @@ function admin_externalpage_setup($section, $extrabutton='', $extraurlparams=arr
         die;
     }
 
+    page_map_class(PAGE_ADMIN, 'page_admin');
+    $PAGE = page_create_object(PAGE_ADMIN, 0); // there must be any constant id number
+    $PAGE->init_extra($section); // hack alert!
+    $PAGE->set_extra_button($extrabutton);
+    $PAGE->set_extra_url_params($extraurlparams, $actualurl);
+    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+
     $adminroot = admin_get_root(false, false); // settings not required for external pages
     $extpage = $adminroot->locate($section);
 
@@ -3917,12 +3924,6 @@ function admin_externalpage_setup($section, $extrabutton='', $extraurlparams=arr
         print_error('accessdenied', 'admin');
         die;
     }
-
-    page_map_class(PAGE_ADMIN, 'page_admin');
-    $PAGE = page_create_object(PAGE_ADMIN, 0); // there must be any constant id number
-    $PAGE->init_extra($section); // hack alert!
-    $PAGE->set_extra_button($extrabutton);
-    $PAGE->set_extra_url_params($extraurlparams, $actualurl);
 
     $adminediting = optional_param('adminedit', -1, PARAM_BOOL);
 

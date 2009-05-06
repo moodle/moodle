@@ -19,13 +19,6 @@ class page_blog extends page_base {
     var $filterselect = NULL;
     var $tagid = NULL;
 
-    // Mandatory; should return our identifier.
-    function get_type() {
-        global $CFG;
-        require_once($CFG->dirroot .'/blog/lib.php');
-        return PAGE_BLOG_VIEW;
-    }
-
     // we have no format type, use 'blog'
     //I think it's a bug, but if this is left the default NULL value then pages can
     //fail to load completely
@@ -154,8 +147,8 @@ class page_blog extends page_base {
         $this->init_full();
 
         // It's a normal blog page
-        if (!empty($CFG->{'defaultblocks_'. $this->get_type()})) {
-            $blocknames = $CFG->{'defaultblocks_'. $this->get_type()};
+        if (!empty($CFG->{'defaultblocks_'. $this->pagetype})) {
+            $blocknames = $CFG->{'defaultblocks_'. $this->pagetype};
         } else {
             /// Failsafe - in case nothing was defined.
             $blocknames = 'admin,calendar_month,online_users,blog_menu';

@@ -645,13 +645,13 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
                 $sql = "SELECT 1, MAX(weight) + 1 AS nextfree
                           FROM {block_pinned}
                          WHERE pagetype = ? AND position = ?";
-                $params = array($page->get_type(), $newpos);
+                $params = array($page->pagetype, $newpos);
 
             } else {
                 $sql = "SELECT 1, MAX(weight) + 1 AS nextfree
                           FROM {block_instance}
                          WHERE pageid = ? AND pagetype = ? AND position = ?";
-                $params = array($page->get_id(), $page->get_type(), $newpos);
+                $params = array($page->get_id(), $page->pagetype, $newpos);
             }
             $weight = $DB->get_record_sql($sql, $params);
 
@@ -660,7 +660,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
             if (empty($pinned)) {
                 $newinstance->pageid = $page->get_id();
             }
-            $newinstance->pagetype   = $page->get_type();
+            $newinstance->pagetype   = $page->pagetype;
             $newinstance->position   = $newpos;
             $newinstance->weight     = empty($weight->nextfree) ? 0 : $weight->nextfree;
             $newinstance->visible    = 1;
@@ -835,7 +835,7 @@ function blocks_get_pinned($page) {
     }
 
     $select = "pagetype = ?";
-    $params = array($page->get_type());
+    $params = array($page->pagetype);
 
      if ($visible) {
         $select .= " AND visible = 1";
@@ -902,8 +902,8 @@ function blocks_get_by_page_pinned($page) {
 function blocks_get_by_page($page) {
     global $DB;
 
-    $blocks = $DB->get_records_select('block_instance', "pageid = ? AND pagetype = ?", array($page->get_id(), $page->get_type()),
-                                      'position, weight');
+    $blocks = $DB->get_records_select('block_instance', "pageid = ? AND pagetype = ?",
+            array($page->get_id(), $page->pagetype), 'position, weight');
 
     $positions = $page->blocks_get_positions();
     $arr = array();
@@ -1002,7 +1002,7 @@ function blocks_repopulate_page($page) {
     // indexed and the indexes match, so we can work straight away... but CAREFULLY!
 
     // Ready to start creating block instances, but first drop any existing ones
-    blocks_delete_all_on_page($page->get_type(), $page->get_id());
+    blocks_delete_all_on_page($page->pagetype, $page->get_id());
 
     // Here we slyly count $posblocks and NOT $positions. This can actually make a difference
     // if the textual representation has undefined slots in the end. So we only work with as many
@@ -1016,7 +1016,7 @@ function blocks_repopulate_page($page) {
             $newinstance = new stdClass;
             $newinstance->blockid    = $idforname[$blockname];
             $newinstance->pageid     = $page->get_id();
-            $newinstance->pagetype   = $page->get_type();
+            $newinstance->pagetype   = $page->pagetype;
             $newinstance->position   = $position;
             $newinstance->weight     = $weight;
             $newinstance->visible    = 1;

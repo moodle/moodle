@@ -140,10 +140,6 @@ class page_lesson extends page_generic_activity {
         lesson_print_messages();
     }
 
-    function get_type() {
-        return PAGE_LESSON_VIEW;
-    }
-
     function blocks_get_positions() {
         return array(BLOCK_POS_LEFT, BLOCK_POS_RIGHT);
     }

@@ -54,6 +54,8 @@ class moodle_page {
 
     protected $_context = null;
 
+    protected $_pagetype = null;
+
     /**
      * @return integer one of the STATE_... constants. You should not normally need
      * to use this in your code. It is indended for internal use by this class
@@ -94,6 +96,16 @@ class moodle_page {
             throw new coding_exception('$PAGE->context accessed before it was known.');
         }
         return $this->_context;
+    }
+
+    /**
+     * @return string e.g. 'my-index' or 'mod-quiz-attempt'. Same as the id attribute on <body>.
+     */
+    public function get_pagetype() {
+        if (is_null($this->_pagetype)) {
+            throw new coding_exception('$PAGE->pagetype accessed before it was known.');
+        }
+        return $this->_pagetype;
     }
 
     /**
@@ -158,6 +170,18 @@ class moodle_page {
     }
 
     /**
+     * @param string $pagetype e.g. 'my-index' or 'mod-quiz-attempt'. Normally
+     * you do not need to set this manually, it is automatically created from the
+     * script name. However, on some pages this is overridden. For example, the
+     * page type for coures/view.php includes the course format, for example
+     * 'coures-view-weeks'. This gets used as the id attribute on <body> and
+     * also for determining which blocks are displayed.
+     */
+    public function set_pagetype($pagetype) {
+        $this->_pagetype = $pagetype;
+    }
+
+    /**
      * PHP overloading magic to make the $PAGE->course syntax work.
      */
     public function __get($field) {
@@ -167,6 +191,16 @@ class moodle_page {
         } else {
             throw new coding_exception('Unknown field ' . $field . ' of $PAGE.');
         }
+    }
+
+/// Deperecated fields and methods for backwards compatibility =================
+    /**
+     * @deprecated since Moodle 2.0 - use $PAGE->pagetype instaed.
+     * @return string page type.
+     */
+    public function get_type() {
+        debugging('Call to deprecated method moodle_page::get_type. Please use $PAGE->pagetype instead.');
+        return $this->get_pagetype();
     }
 }
 
@@ -203,17 +237,11 @@ function page_create_object($type, $id = NULL) {
     $data->pageid   = $id;
 
     $classname = page_map_class($type);
-
     $object = new $classname;
-    // TODO: subclassing check here
-
-    if ($object->get_type() !== $type) {
-        // Somehow somewhere someone made a mistake
-        debugging('Page object\'s type ('. $object->get_type() .') does not match requested type ('. $type .')');
-    }
 
     $object->init_quick($data);
     $object->set_course($PAGE->course);
+    $object->set_pagetype($type);
     return $object;
 }
 
@@ -387,14 +415,6 @@ class page_base extends moodle_page {
         }
 
         return $path;
-    }
-
-    // This forces implementers to actually hardwire their page identification constant in the class.
-    // Good thing, if you ask me. That way we can later auto-detect "installed" page types by querying
-    // the classes themselves in the future.
-    function get_type() {
-        trigger_error('Page class does not implement method <strong>get_type()</strong>', E_USER_ERROR);
-        return NULL;
     }
 
     // Simple stuff, do not override this.
@@ -581,12 +601,6 @@ class page_course extends page_base {
     }
 
     // SELF-REPORTING SECTION
-
-    // This is hardwired here so the factory function page_create_object() can be sure there was no mistake.
-    // Also, it doubles as a way to let others inquire about our type.
-    function get_type() {
-        return PAGE_COURSE_VIEW;
-    }
 
     // This is like the "category" of a page of this "type". For example, if the type is PAGE_COURSE_VIEW
     // the format_name is the actual name of the course format. If the type were PAGE_ACTIVITY_VIEW, then

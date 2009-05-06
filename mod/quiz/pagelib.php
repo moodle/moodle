@@ -25,10 +25,6 @@ class page_quiz extends page_generic_activity {
         $this->activityname = 'quiz';
         parent::init_quick($data);
     }
-
-    function get_type() {
-        return PAGE_QUIZ_VIEW;
-    }
 }
 
 ?>

@@ -151,10 +151,6 @@ class page_admin extends page_base {
 
         print_header("$SITE->shortname: " . implode(": ",$this->visiblepathtosection), $SITE->fullname, $navigation, $focus, '', true, $buttons, '');
     }
-
-    function get_type() {
-        return PAGE_ADMIN;
-    }
 }
 
 ?>
