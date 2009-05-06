@@ -125,6 +125,18 @@ class moodle_page {
         return implode(' ', array_keys($this->_bodyclasses));
     }
 
+    /**
+     * PHP overloading magic to make the $PAGE->course syntax work.
+     */
+    public function __get($field) {
+        $getmethod = 'get_' . $field;
+        if (method_exists($this, $getmethod)) {
+            return $this->$getmethod();
+        } else {
+            throw new coding_exception('Unknown field ' . $field . ' of $PAGE.');
+        }
+    }
+
 /// Setter methods =============================================================
 
     /**
@@ -215,14 +227,11 @@ class moodle_page {
     }
 
     /**
-     * PHP overloading magic to make the $PAGE->course syntax work.
+     * @param array $classes this utility method calls add_body_class for each array element.
      */
-    public function __get($field) {
-        $getmethod = 'get_' . $field;
-        if (method_exists($this, $getmethod)) {
-            return $this->$getmethod();
-        } else {
-            throw new coding_exception('Unknown field ' . $field . ' of $PAGE.');
+    public function add_body_classes($classes) {
+        foreach ($classes as $class) {
+            $this->add_body_class($class);
         }
     }
 
@@ -268,6 +277,8 @@ class moodle_page {
     }
 
     protected function initialise_standard_body_classes() {
+        global $CFG;
+
         $pagetype = $this->pagetype;
         if ($pagetype == 'site-index') {
             $this->_legacyclass = 'course';
@@ -279,9 +290,11 @@ class moodle_page {
         $this->add_body_class($this->_legacyclass);
 
         $this->add_body_class('course-' . $this->_course->id);
-        $this->add_body_class(get_browser_version_classes());
+        $this->add_body_classes(get_browser_version_classes());
         $this->add_body_class('dir-' . get_string('thisdirection'));
         $this->add_body_class('lang-' . current_language());
+
+        $this->add_body_class($this->url_to_class_name($CFG->wwwroot));
 
         if (!isloggedin()) {
             $this->add_body_class('notloggedin');
@@ -294,6 +307,21 @@ class moodle_page {
         if (!empty($CFG->blocksdrag)) {
             $this->add_body_class('drag');
         }
+    }
+
+    protected function url_to_class_name($url) {
+        $bits = parse_url($url);
+        $class = str_replace('.', '-', $bits['host']);
+        if (!empty($bits['port'])) {
+            $class .= '--' . $bits['port'];
+        }
+        if (!empty($bits['path'])) {
+            $path = trim($bits['path'], '/');
+            if ($path) {
+                $class .= '--' . str_replace('/', '-', $path);
+            }
+        }
+        return $class;
     }
 
 /// Deprecated fields and methods for backwards compatibility ==================

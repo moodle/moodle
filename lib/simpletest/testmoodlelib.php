@@ -205,25 +205,25 @@ class moodlelib_test extends UnitTestCase {
 
     function test_get_browser_version_classes() {
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Safari']['2.0']['Mac OS X'];
-        $this->assertEqual('safari ', get_browser_version_classes());
+        $this->assertEqual(array('safari'), get_browser_version_classes());
 
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Opera']['9.0']['Windows XP'];
-        $this->assertEqual('opera ', get_browser_version_classes());
+        $this->assertEqual(array('opera'), get_browser_version_classes());
 
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['MSIE']['6.0']['Windows XP SP2'];
-        $this->assertEqual('ie ie6 ', get_browser_version_classes());
+        $this->assertEqual(array('ie', 'ie6'), get_browser_version_classes());
 
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['MSIE']['7.0']['Windows XP SP2'];
-        $this->assertEqual('ie ie7 ', get_browser_version_classes());
+        $this->assertEqual(array('ie', 'ie7'), get_browser_version_classes());
 
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['MSIE']['8.0']['Windows Vista'];
-        $this->assertEqual('ie ie8 ', get_browser_version_classes());
+        $this->assertEqual(array('ie', 'ie8'), get_browser_version_classes());
 
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Firefox']['2.0']['Windows XP'];
-        $this->assertEqual('gecko gecko18 ', get_browser_version_classes());
+        $this->assertEqual(array('gecko', 'gecko18'), get_browser_version_classes());
 
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Firefox']['3.0.6']['SUSE'];
-        $this->assertEqual('gecko gecko19 ', get_browser_version_classes());
+        $this->assertEqual(array('gecko', 'gecko19'), get_browser_version_classes());
     }
 
     function test_optional_param()

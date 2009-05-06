@@ -41,6 +41,9 @@ class testable_moodle_page extends moodle_page {
     public function initialise_default_pagetype($script = '') {
         parent::initialise_default_pagetype($script);
     }
+    public function url_to_class_name($url) {
+        return parent::url_to_class_name($url);
+    }
 }
 
 /**
@@ -211,12 +214,18 @@ class moodle_page_test extends UnitTestCase {
         $this->assertEqual('aclassname', $this->testpage->bodyclasses);
     }
 
-    public function test_get_body_classes_double() {
+    public function test_get_body_classes() {
         // Exercise SUT
-        $this->testpage->add_body_class('aclassname');
-        $this->testpage->add_body_class('anotherclassname');
+        $this->testpage->add_body_classes(array('aclassname', 'anotherclassname'));
         // Validate
         $this->assertEqual('aclassname anotherclassname', $this->testpage->bodyclasses);
+    }
+
+    public function test_url_to_class_name() {
+        $this->assertEqual('example-com', $this->testpage->url_to_class_name('http://example.com'));
+        $this->assertEqual('example-com--80', $this->testpage->url_to_class_name('http://example.com:80'));
+        $this->assertEqual('example-com--moodle', $this->testpage->url_to_class_name('https://example.com/moodle'));
+        $this->assertEqual('example-com--8080--nested-moodle', $this->testpage->url_to_class_name('https://example.com:8080/nested/moodle'));
     }
 }
 
