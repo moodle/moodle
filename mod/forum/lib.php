@@ -3629,19 +3629,26 @@ function forum_get_ratings_count($postid, $scale, $ratings=NULL) {
     }
 
     $count = count($ratings);
-    $maxgradeidx = max(array_keys($scale)); // For numerical grades, the index is the same as the real grade value {0..n}
-                                            // and $scale looks like Array( 0 => '0/n', 1 => '1/n', ..., n => 'n/n' )
-                                            // For scales, the index is the order of the scale item {1..n}
-                                            // and $scale looks like Array( 1 => 'poor', 2 => 'weak', 3 => 'good' )
     if (! array_key_exists(0, $scale)) {
         $scaleused = true;
     } else {
         $scaleused = false;
     }
 
-    if (($count == 0) && ($scaleused)) {    // If no rating given yet and we use a scale
-        return get_string('noratinggiven', 'forum');
-    } elseif ($count > $maxgradeidx) {      // The count exceeds the max grade
+    if ($count == 0) {
+        if ($scaleused) {    // If no rating given yet and we use a scale
+            return get_string('noratinggiven', 'forum');
+        } else {
+            return '';
+        }
+    }
+
+    $maxgradeidx = max(array_keys($scale)); // For numerical grades, the index is the same as the real grade value {0..n}
+                                            // and $scale looks like Array( 0 => '0/n', 1 => '1/n', ..., n => 'n/n' )
+                                            // For scales, the index is the order of the scale item {1..n}
+                                            // and $scale looks like Array( 1 => 'poor', 2 => 'weak', 3 => 'good' )
+
+    if ($count > $maxgradeidx) {      // The count exceeds the max grade
         $a = new stdClass();
         $a->count = $count;
         $a->grade = $scale[$maxgradeidx];
@@ -3672,7 +3679,6 @@ function forum_get_ratings_max($postid, $scale, $ratings=NULL) {
     }
 
     $count = count($ratings);
-    $max = max($ratings);
 
     if ($count == 0 ) {
         return "";
@@ -3682,8 +3688,9 @@ function forum_get_ratings_max($postid, $scale, $ratings=NULL) {
         return $scale[$rating];
 
     } else {
+        $max = max($ratings);
 
-     if (isset($scale[$max])) {
+        if (isset($scale[$max])) {
             return $scale[$max]." ($count)";
         } else {
             return "$max ($count)";    // Should never happen, hopefully
@@ -3708,7 +3715,6 @@ function forum_get_ratings_min($postid, $scale,  $ratings=NULL) {
     }
 
     $count = count($ratings);
-    $min = min($ratings);
 
     if ($count == 0 ) {
         return "";
@@ -3718,6 +3724,7 @@ function forum_get_ratings_min($postid, $scale,  $ratings=NULL) {
         return $scale[$rating]; //this works for min
 
     } else {
+        $min = min($ratings);
 
         if (isset($scale[$min])) {
             return $scale[$min]." ($count)";
