@@ -86,8 +86,8 @@
         $langmenu = popup_form($CFG->wwwroot .'/index.php?lang=', $langs, 'chooselang', $currlang, '', '', '', true, 'self', $langlabel);
     }
 
-    $PAGE = page_create_object(PAGE_COURSE_VIEW, SITEID);
     $PAGE->set_pagetype('site-index');
+    $PAGE->set_course($SITE);
     $PAGE->set_other_editing_capability('moodle/course:manageactivities');
     $PAGE->set_url('');
     $PAGE->set_docs_path('');

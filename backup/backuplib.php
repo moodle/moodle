@@ -1037,7 +1037,7 @@
         fwrite ($bf,start_tag('BLOCKS',2,true));
 
         foreach($pages as $page) {
-            if ($instances = blocks_get_by_page($page)) {
+            if ($instances = array()) { // TODO fix.
                 //Iterate over every block
                 foreach ($instances as $position) {
                     foreach ($position as $instance) {

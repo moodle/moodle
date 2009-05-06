@@ -305,6 +305,13 @@ class moodle_page {
     }
 
     /**
+     * @return boolean does the user have permission to edit blocks on this page.
+     */
+    public function user_can_edit_blocks() {
+        return has_capability($this->_blockseditingcap, $this->_context);
+    }
+
+    /**
      * @return boolean does the user have permission to see this page in editing mode.
      */
     public function user_allowed_editing() {

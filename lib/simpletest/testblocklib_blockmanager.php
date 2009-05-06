@@ -40,13 +40,17 @@ require_once($CFG->libdir . '/blocklib.php');
 /** Test-specific subclass to make some protected things public. */
 class testable_block_manager extends block_manager {
     public function mark_loaded() {
-        $this->blocksbyregion = array();
+        $this->birecordsbyregion = array();
     }
     public function get_loaded_blocks() {
-        return $this->blocksbyregion;
+        return $this->birecordsbyregion;
     }
     public function matching_page_type_patterns($pagetype) {
         return parent::matching_page_type_patterns($pagetype);
+    }
+}
+class block_ablocktype extends block_base {
+    public function init() {
     }
 }
 
@@ -194,7 +198,7 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
         $i = 0;
         foreach ($blockarray as $block) {
             $blocktype = $types[$i];
-            $this->assertEqual($blocktype, $block->blockname, "Block types do not match at postition $i %s.");
+            $this->assertEqual($blocktype, $block->name(), "Block types do not match at postition $i %s.");
             $i++;
         }
     }
