@@ -1,13 +1,12 @@
 <?PHP // $Id$
 
     require_once('../config.php');
-    require_once($CFG->dirroot.'/my/pagelib.php');
     require_once($CFG->dirroot.'/lib/pagelib.php');
 
     $pt  = optional_param('pt', null, PARAM_SAFEDIR); //alhanumeric and -
 
-    $pagetypes = array(PAGE_MY_MOODLE => array('id' => PAGE_MY_MOODLE,
-                                              'lib' => '/my/pagelib.php',
+    $pagetypes = array('my-index' => array('id' => 'my-index',
+                                              'lib' => '/lib/pagelib.php',
                                               'name' => get_string('mymoodle','admin')),
                        PAGE_COURSE_VIEW => array('id' => PAGE_COURSE_VIEW,
                                                 'lib' => '/lib/pagelib.php',

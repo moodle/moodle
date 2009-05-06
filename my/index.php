@@ -2,27 +2,25 @@
 
     // this is the 'my moodle' page
 
-    require_once('../config.php');
+    require_once(dirname(__FILE__) . '/../config.php');
     require_once($CFG->dirroot.'/course/lib.php');
-    require_once('pagelib.php');
 
     require_login();
 
-    $mymoodlestr = get_string('mymoodle','my');
+    $strmymoodle = get_string('mymoodle','my');
 
     if (isguest()) {
-        print_header($mymoodlestr);
-        notice_yesno(get_string('noguest', 'my').'<br /><br />'.get_string('liketologin'),
-                     get_login_url(), $CFG->wwwroot);
+        print_header($strmymoodle);
+        notice_yesno(get_string('noguest', 'my') . '<br /><br />' .
+                get_string('liketologin'), get_login_url(), $CFG->wwwroot);
         print_footer();
-        die();
+        die;
     }
 
-
-    $edit        = optional_param('edit', -1, PARAM_BOOL);
+    $edit = optional_param('edit', -1, PARAM_BOOL);
     $blockaction = optional_param('blockaction', '', PARAM_ALPHA);
 
-    $PAGE = page_create_instance($USER->id);
+    $PAGE->set_context(get_context_instance(CONTEXT_USER, $USER->id));
     $PAGE->set_url('my/index.php');
     $PAGE->set_blocks_editing_capability('moodle/my:manageblocks');
 
@@ -32,7 +30,22 @@
         $USER->editing = $edit;
     }
 
-    $PAGE->print_header($mymoodlestr);
+    $button = update_mymoodle_icon($USER->id);
+    $header = $SITE->shortname . ': ' . $strmymoodle;
+    $navigation = build_navigation($strmymoodle);
+    $loggedinas = user_login_string();
+
+    if (empty($CFG->langmenu)) {
+        $langmenu = '';
+    } else {
+        $currlang = current_language();
+        $langs = get_list_of_languages();
+        $langlabel = get_accesshide(get_string('language'));
+        $langmenu = popup_form($CFG->wwwroot . '/my/index.php?lang=', $langs,
+                'chooselang', $currlang, '', '', '', true, 'self', $langlabel);
+    }
+
+    print_header($strmymoodle, $header, $navigation, '', '', true, $button, $loggedinas . $langmenu);
 
     echo '<table id="layout-table">';
     echo '<tr valign="top">';

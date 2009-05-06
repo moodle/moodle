@@ -718,26 +718,8 @@ function blocks_print_group($page, $blockmanager, $position) {
         }
     } // End foreach
 
-    //  Check if
-    //    we are on the default position/side AND
-    //    we're editing the page AND
-    //    (
-    //      we have the capability to manage blocks OR
-    //      we are in myMoodle page AND have the capibility to manage myMoodle blocks
-    //    )
-
-    // for constant PAGE_MY_MOODLE
-    include_once($CFG->dirroot.'/my/pagelib.php');
-
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $COURSE->id);
-    $myownblogpage = (isset($page->filtertype) && isset($page->filterselect) && $page->pagetype=='blog-view' && $page->filtertype=='user' && $page->filterselect == $USER->id);
-
-    $managecourseblocks = has_capability('moodle/site:manageblocks', $coursecontext);
-    $editmymoodle = $page->pagetype == PAGE_MY_MOODLE && has_capability('moodle/my:manageblocks', $coursecontext);
-
-    if ($page->blocks->get_default_region() == $position && $page->user_is_editing() &&
-            ($managecourseblocks || $editmymoodle || $myownblogpage || defined('ADMIN_STICKYBLOCKS'))) {
-
+    if ($page->blocks->get_default_region() == $position &&
+            $page->user_is_editing() && $page->user_can_edit_blocks()) {
         blocks_print_adminblock($page, $blockmanager);
     }
 }
