@@ -15,22 +15,14 @@ class block_participants extends block_list {
             return $this->content;
         }
 
-        // the following 3 lines is need to pass _self_test();
-        if (empty($this->instance->pageid)) {
-            return '';
-        }
-        
         $this->content = new object();
         $this->content->items = array();
         $this->content->icons = array();
         $this->content->footer = '';
-        
+
         /// MDL-13252 Always get the course context or else the context may be incorrect in the user/index.php
-        if (!$currentcontext = get_context_instance(CONTEXT_COURSE, $COURSE->id)) {
-            $this->content = '';
-            return $this->content;
-        }
-        
+        $currentcontext = $this->page->context;
+
         if ($COURSE->id == SITEID) {
             if (!has_capability('moodle/site:viewparticipants', get_context_instance(CONTEXT_SYSTEM))) {
                 $this->content = '';

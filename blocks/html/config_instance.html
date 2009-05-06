@@ -2,7 +2,7 @@
     $usehtmleditor = can_use_html_editor();
 
     $text = isset($this->config->text) ? $this->config->text : '';
-    if (empty($this->instance->pinned) and $this->instance->pagetype !== 'course-view') {
+    if (!$this->content_is_trusted()) {
         $text = clean_text($text, FORMAT_HTML);
     }
 ?>

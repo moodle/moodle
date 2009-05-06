@@ -76,23 +76,6 @@ $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_widt
 $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
                                         BLOCK_R_MAX_WIDTH);
 
-// Display the blocks and allow blocklib to handle any block action requested
-$pageblocks = blocks_get_by_page($PAGE);
-
-if ($editing) {
-    if (!empty($blockaction) && confirm_sesskey()) {
-        if (!empty($blockid)) {
-            blocks_execute_action($PAGE, $pageblocks, strtolower($blockaction), intval($blockid));
-        } else if (!empty($instanceid)) {
-            $instance = blocks_find_instance($instanceid, $pageblocks);
-            blocks_execute_action($PAGE, $pageblocks, strtolower($blockaction), $instance);
-        }
-        // This re-query could be eliminated by judicious programming in blocks_execute_action(),
-        // but I'm not sure if it's worth the complexity increase...
-        $pageblocks = blocks_get_by_page($PAGE);
-    }
-}
-
 if (!empty($tagid)) {
     $taginstance = $DB->get_record('tag', array('id'=>$tagid));
 } elseif (!empty($tag)) {

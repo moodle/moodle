@@ -96,6 +96,7 @@
             }
         }
 
+        // TODO
         if (empty($this->instance->pinned)) {
             $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
         } else {
@@ -103,9 +104,9 @@
         }
 
         if (has_capability('block/rss_client:createsharedfeeds', $context)
-                    || has_capability('block/rss_client:createprivatefeeds', $context)) {
+                || has_capability('block/rss_client:createprivatefeeds', $context)) {
 
-            $page = page_create_object($this->instance->pagetype, $this->instance->pageid);
+            $page = $this->page;
             //if ($page->user_allowed_editing()) { // for SUBMITTERS_ALL_ACCOUNT_HOLDERS we're going to run into trouble later if we show it and then they don't have write access to the page.
             if (isset($this->config)) {
                 // This instance is configured - show Add/Edit feeds link.

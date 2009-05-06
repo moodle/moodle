@@ -18,15 +18,7 @@ class block_activity_modules extends block_list {
         $this->content->icons = array();
         $this->content->footer = '';
 
-        if ($COURSE->id == $this->instance->pageid) {
-            $course = $COURSE;
-        } else {
-            $course = $DB->get_record('course', array('id'=>$this->instance->pageid));
-        }
-
-        if (empty($course)) {
-            return '';
-        }
+        $course = $this->page->course;
 
         require_once($CFG->dirroot.'/course/lib.php');
 
@@ -44,7 +36,7 @@ class block_activity_modules extends block_list {
 
         foreach ($modfullnames as $modname => $modfullname) {
             if ($modname != 'label') {
-                $this->content->items[] = '<a href="'.$CFG->wwwroot.'/mod/'.$modname.'/index.php?id='.$this->instance->pageid.'">'.$modfullname.'</a>';
+                $this->content->items[] = '<a href="'.$CFG->wwwroot.'/mod/'.$modname.'/index.php?id='.$course->id.'">'.$modfullname.'</a>';
                 $this->content->icons[] = '<img src="'.$CFG->modpixpath.'/'.$modname.'/icon.gif" class="icon" alt="" />';
             }
         }

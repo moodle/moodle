@@ -26,14 +26,8 @@ class block_site_main_menu extends block_list {
             return $this->content;
         }
 
-        if ($COURSE->id == $this->instance->pageid) {
-            $course = $COURSE;
-        } else {
-            $course = $DB->get_record('course', array('id'=>$this->instance->pageid));
-        }
-
+        $course = $this->page->course;
         require_once($CFG->dirroot.'/course/lib.php');
-
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         $isediting = $PAGE->user_is_editing() && has_capability('moodle/course:manageactivities', $context);
         $modinfo = get_fast_modinfo($course);
@@ -67,12 +61,11 @@ class block_site_main_menu extends block_list {
             return $this->content;
         }
 
-
 /// slow & hacky editing mode
-        $ismoving = ismoving($this->instance->pageid);
-        $section  = get_course_section(0, $this->instance->pageid);
+        $ismoving = ismoving($course->id);
+        $section  = get_course_section(0, $course->id);
 
-        get_all_mods($this->instance->pageid, $mods, $modnames, $modnamesplural, $modnamesused);
+        get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
 
         $groupbuttons = $course->groupmode;
         $groupbuttonslink = (!$course->groupmodeforce);
@@ -121,7 +114,7 @@ class block_site_main_menu extends block_list {
                         $this->content->icons[] = '';
                     }
                     $instancename = $modinfo->cms[$modnumber]->name;
-                    $instancename = format_string($instancename, true, $this->instance->pageid);
+                    $instancename = format_string($instancename, true, $course->id);
                     $linkcss = $mod->visible ? '' : ' class="dimmed" ';
                     if (!empty($modinfo->cms[$modnumber]->extra)) {
                         $extra = $modinfo->cms[$modnumber]->extra;

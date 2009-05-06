@@ -11,7 +11,7 @@ class block_section_links extends block_base {
         global $DB;
 
         parent::instance_config($instance);
-        $course = $DB->get_record('course', array('id'=>$this->instance->pageid));
+        $course = $this->page->course;
         if (isset($course->format)) {
             if ($course->format == 'topics') {
                 $this->title = get_string('topics', 'block_section_links');
@@ -44,11 +44,7 @@ class block_section_links extends block_base {
             return $this->content;
         }
 
-        if ($this->instance->pageid == $COURSE->id) {
-            $course = $COURSE;
-        } else {
-            $course = $DB->get_record('course', array('id'=>$this->instance->pageid));
-        }
+        $course = $this->page->course;
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
         if ($course->format == 'weeks' or $course->format == 'weekscss') {
@@ -70,10 +66,10 @@ class block_section_links extends block_base {
         }
 
         if (!empty($USER->id)) {
-            $display = $DB->get_field('course_display', 'display', array('course'=>$this->instance->pageid, 'userid'=>$USER->id));
+            $display = $DB->get_field('course_display', 'display', array('course'=>$this->page->course->id, 'userid'=>$USER->id));
         }
         if (!empty($display)) {
-            $link = $CFG->wwwroot.'/course/view.php?id='.$this->instance->pageid.'&amp;'.$sectionname.'=';
+            $link = $CFG->wwwroot.'/course/view.php?id='.$this->page->course->id.'&amp;'.$sectionname.'=';
         } else {
             $link = '#section-';
         }

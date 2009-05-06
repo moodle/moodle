@@ -39,12 +39,6 @@ class block_blog_menu extends block_base {
 
         $this->content = new stdClass;
         $this->content->footer = '';
-        if (empty($this->instance) /*|| empty($CFG->blog_version)*/) {
-            // Either we're being asked for content without
-            // an associated instance of the Blog module has never been installed.
-            $this->content->text = $output;
-            return $this->content;
-        }
 
         //if ( blog_isLoggedIn() && !isguest() ) {
             $courseviewlink = '';

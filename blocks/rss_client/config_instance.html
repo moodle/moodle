@@ -4,7 +4,7 @@ require_once($CFG->libdir .'/rsslib.php');
 $id = optional_param('id', SITEID, PARAM_INT);
 
 //create a page object for url_get_full()
-$page = page_create_object($this->instance->pagetype, $this->instance->pageid);
+$page = $this->page;
 
 
 /// Print tabs at top
@@ -93,6 +93,7 @@ print_box_start();
                     print $checkbox . $feedtitle .'<br />'."\n";
                 }
             } else {
+                // TODO
                 if (empty($this->instance->pinned)) {
                     $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
                 } else {
@@ -173,6 +174,7 @@ print_box_start();
 } else {
   global $act, $url, $rssid, $preferredtitle, $shared;
   print '</div></form></div>';   // Closes off page form
+  // TODO
   if (empty($this->instance->pinned)) {
     $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
   } else {

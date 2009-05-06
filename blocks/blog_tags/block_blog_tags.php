@@ -60,11 +60,6 @@ class block_blog_tags extends block_base {
             return $this->content;
         }
 
-        if (empty($this->instance)) {
-            $this->content = '';
-            return $this->content;
-        }
-
         $this->content = new stdClass;
         $this->content->text = '';
         $this->content->footer = '';
@@ -140,11 +135,7 @@ class block_blog_tags extends block_base {
 
                     case BLOG_COURSE_LEVEL:
                         $filtertype = 'course';
-                        if (isset($COURSE->id)) {
-                            $filterselect = $COURSE->id;
-                        } else {
-                            $filterselect = $this->instance->pageid;
-                        }
+                        $filterselect = $COURSE->id;
                     break;
 
                     default:

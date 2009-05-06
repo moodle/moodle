@@ -37,6 +37,7 @@ class block_online_users extends block_base {
         // Get context so we can check capabilities.
         $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
 
+        // TODO
         if (empty($this->instance->pinned)) {
             $blockcontext = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
         } else {

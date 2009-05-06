@@ -20,7 +20,7 @@ class block_messages extends block_base {
         $this->content = new stdClass;
         $this->content->text = '';
         $this->content->footer = '';
-        
+
         if (empty($this->instance) or empty($USER->id) or isguest() or empty($CFG->messaging)) {
             return $this->content;
         }

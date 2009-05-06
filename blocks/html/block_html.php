@@ -24,7 +24,7 @@ class block_html extends block_base {
             return $this->content;
         }
 
-        if (!empty($this->instance->pinned) or $this->instance->pagetype === 'course-view') {
+        if ($this->content_is_trusted()) {
             // fancy html allowed only on course page and in pinned blocks for security reasons
             $filteropt = new stdClass;
             $filteropt->noclean = true;
@@ -39,6 +39,10 @@ class block_html extends block_base {
         unset($filteropt); // memory footprint
 
         return $this->content;
+    }
+
+    function content_is_trusted() {
+        return in_array($this->page->context->contextlevel, array(CONTEXT_COURSE, CONTEXT_COURSECAT, CONTEXT_SYSTEM));
     }
 
     /**

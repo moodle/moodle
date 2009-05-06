@@ -7,8 +7,7 @@ class block_course_summary extends block_base {
     }
 
     function specialization() {
-        global $COURSE;
-        if($this->instance->pagetype == PAGE_COURSE_VIEW && $COURSE->id != SITEID) {
+        if($this->page->pagetype == PAGE_COURSE_VIEW && $PAGE->course->id != SITEID) {
             $this->title = get_string('coursesummary', 'block_course_summary');
         }
     }

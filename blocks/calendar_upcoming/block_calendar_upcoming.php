@@ -22,7 +22,6 @@ class block_calendar_upcoming extends block_base {
         $this->content->text = '';
 
         if (empty($this->instance)) { // Overrides: use no course at all
-        
             $courseshown = false;
             $filtercourse = array();
             $this->content->footer = '';

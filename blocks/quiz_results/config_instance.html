@@ -1,12 +1,12 @@
 <table cellpadding="9" cellspacing="0">
-<?php if($this->instance->pagetype != 'mod-quiz-view') { ?>
+<?php if ($this->page->activityname != 'quiz') { ?>
 <tr valign="top">
     <td align="right">
         <?php print_string('config_select_quiz', 'block_quiz_results') ?>
     </td>
     <td>
         <?php
-            $quizzes = $DB->get_records('quiz', array('course'=>$this->instance->pageid), '', 'id, name');
+            $quizzes = $DB->get_records('quiz', array('course' => $this->page->course->id), '', 'id, name');
             if(empty($quizzes)) {
                 echo '<strong>'.get_string('config_no_quizzes_in_course', 'block_quiz_results').'</strong>';
                 echo '<p><input type="hidden" name="quizid" value="0" /></p>';
@@ -21,7 +21,7 @@
         ?>
     </td>
 </tr>
-<?php } // end if($this->instance->pagetype != PAGE_QUIZ_VIEW) ?>
+<?php } // end if in quiz ?>
 <tr valign="top">
     <td align="right">
         <?php print_string('config_show_best', 'block_quiz_results') ?>

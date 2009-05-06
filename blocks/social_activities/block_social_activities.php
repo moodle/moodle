@@ -26,11 +26,7 @@ class block_social_activities extends block_list {
             return $this->content;
         }
 
-        if ($COURSE->id == $this->instance->pageid) {
-            $course = $COURSE;
-        } else {
-            $course = $DB->get_record('course', array('id'=>$this->instance->pageid));
-        }
+        $course = $this->page->course;
 
         require_once($CFG->dirroot.'/course/lib.php');
 
@@ -69,15 +65,15 @@ class block_social_activities extends block_list {
 
 
 /// slow & hacky editing mode
-        $ismoving = ismoving($this->instance->pageid);
-        $sections = get_all_sections($this->instance->pageid);
+        $ismoving = ismoving($course->id);
+        $sections = get_all_sections($course->id);
 
         if(!empty($sections) && isset($sections[0])) {
             $section = $sections[0];
         }
 
         if (!empty($section)) {
-            get_all_mods($this->instance->pageid, $mods, $modnames, $modnamesplural, $modnamesused);
+            get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
         }
 
         $groupbuttons = $course->groupmode;
@@ -127,7 +123,7 @@ class block_social_activities extends block_list {
                         $this->content->icons[] = '';
                     }
                     $instancename = $modinfo->cms[$modnumber]->name;
-                    $instancename = format_string($instancename, true, $this->instance->pageid);
+                    $instancename = format_string($instancename, true, $course->id);
                     $linkcss = $mod->visible ? '' : ' class="dimmed" ';
                     if (!empty($modinfo->cms[$modnumber]->extra)) {
                         $extra = $modinfo->cms[$modnumber]->extra;

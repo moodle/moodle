@@ -5,7 +5,7 @@
 global $USER;
 $tabs = $row = array();
 
-
+// TODO
 if (empty($this->instance->pinned)) {
     $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
 } else {

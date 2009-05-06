@@ -72,6 +72,12 @@ class block_base {
     var $instance      = NULL;
 
     /**
+     * The page that this block is appearing on.
+     * @var moodle_page
+     */
+    public $page       = NULL;
+
+    /**
      * An object containing the instance configuration information for the current instance of this block.
      * @var stdObject $config
      */
@@ -297,12 +303,13 @@ class block_base {
      */
     function is_empty() {
 
+        // TODO
         if (empty($this->instance->pinned)) {
             $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
         } else {
             $context = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
         }
-        
+
         if ( !has_capability('moodle/block:view', $context) ) {
             return true;
         }
@@ -400,29 +407,22 @@ class block_base {
      */
     function _add_edit_controls($options) {
         global $CFG, $USER, $PAGE;
-        
+
+        // TODO
         if (empty($this->instance->pinned)) {
             $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
         } else {
             $context = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
         }
-        
+
         // context for site or course, i.e. participant list etc
         // check to see if user can edit site or course blocks.
         // blocks can appear on other pages such as mod and blog pages...
 
-        switch ($this->instance->pagetype) {
-            case 'course-view':
-                if (!has_capability('moodle/site:manageblocks', $context)) {
-                    return null;
-                }
-            break;
-            default:
-            
-            break;  
+        if (!$this->page->user_can_edit_blocks()) {
+            return null;
         }
-        
-        
+
         if (!isset($this->str)) {
             $this->str->delete    = get_string('delete');
             $this->str->moveup    = get_string('moveup');
@@ -454,24 +454,12 @@ class block_base {
             $title = $this->str->show;
         }
 
-        if (empty($this->instance->pageid)) {
-            $this->instance->pageid = 0;
-        }
-
-        if (($this->instance->pagetype == $PAGE->pagetype) and $this->instance->pageid == $PAGE->id) {
-            $page = $PAGE;
-        } else {
-            $page = new moodle_page();
-            $page->set_pagetype($this->instance->pagetype);
-            $page->pageid = $this->instance->pageid;
-        }
+        $page = $this->page;
         $script = $page->url->out(array('instanceid' => $this->instance->id, 'sesskey' => sesskey()));
 
-        if (empty($this->instance->pinned)) {
-            $movebuttons .= '<a class="icon roles" title="'. $this->str->assignroles .'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">' .
-                            '<img src="'.$CFG->pixpath.'/i/roles.gif" alt="'.$this->str->assignroles.'" /></a>';
-        }
-     
+        $movebuttons .= '<a class="icon roles" title="'. $this->str->assignroles .'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">' .
+                        '<img src="'.$CFG->pixpath.'/i/roles.gif" alt="'.$this->str->assignroles.'" /></a>';
+
         if ($this->user_can_edit()) {
             $movebuttons .= '<a class="icon hide" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
                             '<img src="'. $CFG->pixpath.$icon .'" alt="'.$title.'" /></a>';
@@ -643,7 +631,7 @@ class block_base {
      * @param block $instance
      * @todo add additional documentation to further explain the format of instance and config
      */
-    function _load_instance($instance) {
+    function _load_instance($instance, $page) {
         if (!empty($instance->configdata)) {
             $this->config = unserialize(base64_decode($instance->configdata));
         }
@@ -653,6 +641,7 @@ class block_base {
         // so it won't work correctly. Thus it's commented out.
         // unset($instance->configdata);
         $this->instance = $instance;
+        $this->page = $page;
         $this->specialization();
     }
 
@@ -812,12 +801,13 @@ class block_list extends block_base {
 
     function is_empty() {
 
+        // TODO
         if (empty($this->instance->pinned)) {
             $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
         } else {
             $context = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
         }
-        
+
         if ( !has_capability('moodle/block:view', $context) ) {
             return true;
         }

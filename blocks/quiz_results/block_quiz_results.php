@@ -32,37 +32,33 @@ class block_quiz_results extends block_base {
             return $this->content;
         }
 
-        if($this->instance->pagetype == 'course-view') {
-            // We need to see if we are monitoring a quiz 
-            $quizid   = empty($this->config->quizid) ? 0 : $this->config->quizid;
-            $courseid = $this->instance->pageid;
-        }
-        else {
-            // Assuming we are displayed in the quiz view page
-            $quizid    = $this->instance->pageid;
-
-            // A trick to take advantage of instance config and save queries
-            if (empty($this->config->courseid)) {
-                $modrecord = $DB->get_record('modules', array('name'=>'quiz'));
-                $cmrecord  = $DB->get_record('course_modules', array('module'=>$modrecord->id, 'instance'=>$quizid));
-                $this->config->courseid = intval($cmrecord->course);
-                $this->instance_config_commit();
+        if ($this->page->activityname == 'quiz') {
+            $quiz = $this->page->activityrecord;
+            $quizid = $quiz->id;
+            $courseid = $this->page->course->id;
+            $inquiz = true;
+        } else if (!empty($this->config->quizid)) {
+            $quizid = $this->config->quizid;
+            $quiz = $DB->get_record('quiz', array('id' => $quizid));
+            if (empty($quiz)) {
+                $this->content->text = get_string('error_emptyquizrecord', 'block_quiz_results');
+                return $this->content;
             }
-            $courseid = $this->config->courseid;
+            $courseid = $quiz->course;
+            $inquiz = false;
+        } else {
+            $quizid = 0;
         }
 
-        $context = get_context_instance(CONTEXT_COURSE, $courseid);
-
+        $context = $this->page->context;
 
         if (empty($quizid)) {
             $this->content->text = get_string('error_emptyquizid', 'block_quiz_results');
             return $this->content;
         }
 
-        // Get the quiz record
-        $quiz = $DB->get_record('quiz', array('id' => $quizid));
-        if (empty($quiz)) {
-            $this->content->text = get_string('error_emptyquizrecord', 'block_quiz_results');
+        if (empty($this->config->showbest) && empty($this->config->showworst)) {
+            $this->content->text = get_string('configuredtoshownothing', 'block_quiz_results');
             return $this->content;
         }
 
@@ -75,20 +71,23 @@ class block_quiz_results extends block_base {
             return $this->content;
         }
 
-        if (empty($this->config->showbest) && empty($this->config->showworst)) {
-            $this->content->text = get_string('configuredtoshownothing', 'block_quiz_results');
-            return $this->content;
-        }
-
         $groupmode = NOGROUPS;
         $best      = array();
         $worst     = array();
 
-        $nameformat = intval(empty($this->config->nameformat)  ? B_QUIZRESULTS_NAME_FORMAT_FULL : $this->config->nameformat);
+        if (!empty($this->config->nameformat)) {
+            $nameformat = $this->config->nameformat;
+        } else {
+            $nameformat = B_QUIZRESULTS_NAME_FORMAT_FULL;
+        }
 
-        if(!empty($this->config->usegroups)) {
-            $groupmode = groups_get_activity_groupmode(
-                    get_coursemodule_from_instance('quiz', $quizid, $courseid), $courseid);
+        if (!empty($this->config->usegroups)) {
+            if ($inquiz) {
+                $cm = $this->page->cm;
+            } else {
+                $cm = get_coursemodule_from_instance('quiz', $quizid, $courseid);
+            }
+            $groupmode = groups_get_activity_groupmode($cm);
         }
 
         if (has_capability('moodle/site:accessallgroups', $context) && $groupmode == SEPARATEGROUPS) {
@@ -96,7 +95,7 @@ class block_quiz_results extends block_base {
             $groupmode = VISIBLEGROUPS;
         }
 
-        switch($groupmode) {
+        switch ($groupmode) {
             case VISIBLEGROUPS:
             // Display group-mode results
             $groups = groups_get_all_groups($courseid);
@@ -110,7 +109,7 @@ class block_quiz_results extends block_base {
             // Find out all the userids which have a submitted grade
             $userids = array();
             $gradeforuser = array();
-            foreach($grades as $grade) {
+            foreach ($grades as $grade) {
                 $userids[] = $grade->userid;
                 $gradeforuser[$grade->userid] = (float)$grade->grade;
             }
@@ -152,14 +151,14 @@ class block_quiz_results extends block_base {
             // Collect all the group results we are going to use in $best and $worst
             $remaining = $numbest;
             $groupgrade = end($groupgrades);
-            while($remaining--) {
+            while ($remaining--) {
                 $best[key($groupgrades)] = $groupgrade['average'];
                 $groupgrade = prev($groupgrades);
             }
 
             $remaining = $numworst;
             $groupgrade = reset($groupgrades);
-            while($remaining--) {
+            while ($remaining--) {
                 $worst[key($groupgrades)] = $groupgrade['average'];
                 $groupgrade = next($groupgrades);
             }
@@ -167,7 +166,7 @@ class block_quiz_results extends block_base {
             // Ready for output!
             $gradeformat = intval(empty($this->config->gradeformat) ? B_QUIZRESULTS_GRADE_FORMAT_PCT : $this->config->gradeformat);
 
-            if($this->instance->pagetype != 'mod-quiz-view') {
+            if (!$inquiz) {
                 // Don't show header and link to the quiz if we ARE at the quiz...
                 $this->content->text .= '<h1><a href="'.$CFG->wwwroot.'/mod/quiz/view.php?q='.$quizid.'">'.$quiz->name.'</a></h1>';
             }
@@ -319,7 +318,7 @@ class block_quiz_results extends block_base {
 
             $gradeformat = intval(empty($this->config->gradeformat) ? B_QUIZRESULTS_GRADE_FORMAT_PCT : $this->config->gradeformat);
 
-            if($this->instance->pagetype != 'mod-quiz-view') {
+            if(!$inquiz) {
                 // Don't show header and link to the quiz if we ARE at the quiz...
                 $this->content->text .= '<h1><a href="'.$CFG->wwwroot.'/mod/quiz/view.php?q='.$quizid.'">'.$quiz->name.'</a></h1>';
             }
