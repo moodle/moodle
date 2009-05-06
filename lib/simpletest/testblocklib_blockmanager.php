@@ -40,14 +40,20 @@ require_once($CFG->libdir . '/blocklib.php');
 /** Test-specific subclass to make some protected things public. */
 class testable_block_manager extends block_manager {
     public function mark_loaded() {
-        parent::mark_loaded();
+        $this->blocksbyregion = array();
+    }
+    public function get_loaded_blocks() {
+        return $this->blocksbyregion;
+    }
+    public function matching_page_type_patterns($pagetype) {
+        return parent::matching_page_type_patterns($pagetype);
     }
 }
 
 /**
  * Test functions that don't need to touch the database.
  */
-class moodle_page_test extends UnitTestCase {
+class moodle_block_manager_test extends UnitTestCase {
     protected $testpage;
     protected $blockmanager;
 
@@ -125,6 +131,226 @@ class moodle_page_test extends UnitTestCase {
         $this->blockmanager->set_default_region('too-late');
     }
 
+    public function test_matching_page_type_patterns() {
+        $this->assert(new ArraysHaveSameValuesExpectation(
+                array('site-index', 'site-index-*', 'site-*', '*')),
+                $this->blockmanager->matching_page_type_patterns('site-index'));
+
+        $this->assert(new ArraysHaveSameValuesExpectation(
+                array('mod-quiz-report-overview', 'mod-quiz-report-overview-*', 'mod-quiz-report-*', 'mod-quiz-*', 'mod-*', '*')),
+                $this->blockmanager->matching_page_type_patterns('mod-quiz-report-overview'));
+
+        $this->assert(new ArraysHaveSameValuesExpectation(
+                array('mod-forum-view', 'mod-*-view', 'mod-forum-view-*', 'mod-forum-*', 'mod-*', '*')),
+                $this->blockmanager->matching_page_type_patterns('mod-forum-view'));
+
+        $this->assert(new ArraysHaveSameValuesExpectation(
+                array('mod-forum-index', 'mod-*-index', 'mod-forum-index-*', 'mod-forum-*', 'mod-*', '*')),
+                $this->blockmanager->matching_page_type_patterns('mod-forum-index'));
+    }
 }
 
+/**
+ * Test methods that load and save data from block_instances and block_positions.
+ */
+class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase {
+
+    public function setUp() {
+        parent::setUp();
+        $this->create_test_tables(array('block', 'block_instances', 'block_positions'), 'lib');
+        $this->switch_to_test_db();
+    }
+
+    public function tearDown() {
+        parent::tearDown();
+    }
+
+    protected function get_a_page_and_block_manager($regions, $context, $pagetype, $subpage = '') {
+        $page = new moodle_page;
+        $page->set_context($context);
+        $page->set_pagetype($pagetype);
+        $page->set_subpage($subpage);
+
+        $blockmanager = new testable_block_manager($page);
+        $blockmanager->add_regions($regions);
+        $blockmanager->set_default_region($regions[0]);
+
+        return array($page, $blockmanager);
+    }
+
+    protected function get_a_known_block_type() {
+        global $DB;
+        $block = new stdClass;
+        $block->name = 'ablocktype';
+        $this->testdb->insert_record('block', $block);
+        return $block->name;
+    }
+
+    protected function assertContainsBlocksOfType($typearray, $blockarray) {
+        if (!$this->assertEqual(count($typearray), count($blockarray), "Blocks array contains the wrong number of elements %s.")) {
+            return;
+        }
+        $types = array_values($typearray);
+        $i = 0;
+        foreach ($blockarray as $block) {
+            $blocktype = $types[$i];
+            $this->assertEqual($blocktype, $block->blockname, "Block types do not match at postition $i %s.");
+            $i++;
+        }
+    }
+
+    public function test_empty_initially() {
+        // Set up fixture.
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array('a-region'),
+                get_context_instance(CONTEXT_SYSTEM), 'page-type');
+        // Exercise SUT.
+        $blockmanager->load_blocks();
+        // Validate.
+        $blocks = $blockmanager->get_loaded_blocks();
+        $this->assertEqual(array('a-region' => array()), $blocks);
+    }
+
+    public function test_adding_and_retrieving_one_block() {
+        // Set up fixture.
+        $regionname = 'a-region';
+        $blockname = $this->get_a_known_block_type();
+
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+                get_context_instance(CONTEXT_SYSTEM), 'page-type');
+
+        // Exercise SUT.
+        $blockmanager->add_block($blockname, $regionname, 0, false);
+        $blockmanager->load_blocks();
+        // Validate.
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+        $this->assertContainsBlocksOfType(array($blockname), $blocks);
+    }
+
+    public function test_adding_and_retrieving_two_blocks() {
+        // Set up fixture.
+        $regionname = 'a-region';
+        $blockname = $this->get_a_known_block_type();
+
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+                get_context_instance(CONTEXT_SYSTEM), 'page-type');
+
+        // Exercise SUT.
+        $blockmanager->add_block($blockname, $regionname, 0, false);
+        $blockmanager->add_block($blockname, $regionname, 1, false);
+        $blockmanager->load_blocks();
+        // Validate.
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+        $this->assertContainsBlocksOfType(array($blockname, $blockname), $blocks);
+    }
+
+    public function test_block_not_included_in_different_context() {
+        // Set up fixture.
+        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $fakecontext = new stdClass;
+        $fakecontext->id = $syscontext->id + 1;
+        $regionname = 'a-region';
+        $blockname = $this->get_a_known_block_type();
+
+        list($addpage, $addbm) = $this->get_a_page_and_block_manager(array($regionname), $fakecontext, 'page-type');
+        list($viewpage, $viewbm) = $this->get_a_page_and_block_manager(array($regionname), $syscontext, 'page-type');
+
+        $addbm->add_block($blockname, $regionname, 0, false);
+
+        // Exercise SUT.
+        $viewbm->load_blocks();
+        // Validate.
+        $blocks = $viewbm->get_blocks_for_region($regionname);
+        $this->assertContainsBlocksOfType(array(), $blocks);
+    }
+
+    public function test_block_included_in_sub_context() {
+        // Set up fixture.
+        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $childcontext = new stdClass;
+        $childcontext->id = $syscontext->id + 1;
+        $childcontext->path = '/' . $syscontext->id . '/' . $childcontext->id;
+        $regionname = 'a-region';
+        $blockname = $this->get_a_known_block_type();
+
+        list($addpage, $addbm) = $this->get_a_page_and_block_manager(array($regionname), $syscontext, 'page-type');
+        list($viewpage, $viewbm) = $this->get_a_page_and_block_manager(array($regionname), $childcontext, 'page-type');
+
+        $addbm->add_block($blockname, $regionname, 0, true);
+
+        // Exercise SUT.
+        $viewbm->load_blocks();
+        // Validate.
+        $blocks = $viewbm->get_blocks_for_region($regionname);
+        $this->assertContainsBlocksOfType(array($blockname), $blocks);
+    }
+
+    public function test_block_not_included_on_different_page_type() {
+        // Set up fixture.
+        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $regionname = 'a-region';
+        $blockname = $this->get_a_known_block_type();
+
+        list($addpage, $addbm) = $this->get_a_page_and_block_manager(array($regionname), $syscontext, 'page-type');
+        list($viewpage, $viewbm) = $this->get_a_page_and_block_manager(array($regionname), $syscontext, 'other-page-type');
+
+        $addbm->add_block($blockname, $regionname, 0, true);
+
+        // Exercise SUT.
+        $viewbm->load_blocks();
+        // Validate.
+        $blocks = $viewbm->get_blocks_for_region($regionname);
+        $this->assertContainsBlocksOfType(array(), $blocks);
+    }
+
+    public function test_block_not_included_on_different_sub_page() {
+        // Set up fixture.
+        $regionname = 'a-region';
+        $blockname = $this->get_a_known_block_type();
+
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+                get_context_instance(CONTEXT_SYSTEM), 'page-type', 'sub-page');
+
+        $blockmanager->add_block($blockname, $regionname, 0, true, $page->pagetype, 'other-sub-page');
+
+        // Exercise SUT.
+        $blockmanager->load_blocks();
+        // Validate.
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+        $this->assertContainsBlocksOfType(array(), $blocks);
+    }
+
+    public function test_block_included_with_explicit_sub_page() {
+        // Set up fixture.
+        $regionname = 'a-region';
+        $blockname = $this->get_a_known_block_type();
+
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+                get_context_instance(CONTEXT_SYSTEM), 'page-type', 'sub-page');
+
+        $blockmanager->add_block($blockname, $regionname, 0, true, $page->pagetype, $page->subpage);
+
+        // Exercise SUT.
+        $blockmanager->load_blocks();
+        // Validate.
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+        $this->assertContainsBlocksOfType(array($blockname), $blocks);
+    }
+
+    public function test_block_included_with_page_type_pattern() {
+        // Set up fixture.
+        $regionname = 'a-region';
+        $blockname = $this->get_a_known_block_type();
+
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+                get_context_instance(CONTEXT_SYSTEM), 'page-type', 'sub-page');
+
+        $blockmanager->add_block($blockname, $regionname, 0, true, 'page-*', $page->subpage);
+
+        // Exercise SUT.
+        $blockmanager->load_blocks();
+        // Validate.
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+        $this->assertContainsBlocksOfType(array($blockname), $blocks);
+    }
+}
 ?>

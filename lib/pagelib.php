@@ -88,7 +88,7 @@ class moodle_page {
 
     protected $_pagetype = null;
 
-    protected $_subpage = null;
+    protected $_subpage = '';
 
     protected $_docspath = null;
 
@@ -328,12 +328,7 @@ class moodle_page {
         }
 
         if ($state == self::STATE_PRINTING_HEADER) {
-            if (!$this->_course) {
-                global $SITE;
-                $this->set_course($SITE);
-            }
-
-            $this->initialise_standard_body_classes();
+            $this->starting_output();
         }
 
         $this->_state = $state;
@@ -448,7 +443,11 @@ class moodle_page {
      *      and pagetype, uniquely identifies this page.
      */
     public function set_subpage($subpage) {
-        $this->_subpage = $subpage;
+        if (empty($subpage)) {
+            $this->_subpage = '';
+        } else {
+            $this->_subpage = $subpage;
+        }
     }
 
     /**
@@ -549,6 +548,21 @@ class moodle_page {
 
 /// Initialisation methods =====================================================
 /// These set various things up in a default way.
+
+    /**
+     * This method is called when the page first moves out of the STATE_BEFORE_HEADER
+     * state. This is our last change to initialise things.
+     */
+    protected function starting_output() {
+        if (!$this->_course) {
+            global $SITE;
+            $this->set_course($SITE);
+        }
+
+        $this->initialise_standard_body_classes();
+
+        $this->blocks->load_blocks();
+    }
 
     /**
      * Sets ->pagetype from the script name. For example, if the script that was

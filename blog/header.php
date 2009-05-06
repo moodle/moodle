@@ -91,7 +91,6 @@ if ($editing) {
         // but I'm not sure if it's worth the complexity increase...
         $pageblocks = blocks_get_by_page($PAGE);
     }
-    $missingblocks = blocks_get_missing($PAGE, $pageblocks);
 }
 
 if (!empty($tagid)) {

@@ -3245,6 +3245,20 @@ function theme_setup($theme = '', $params=NULL) {
         $CFG->stylesheets[] = $CFG->themewww.'/standard/rtl.css'.$paramstring;
         $CFG->stylesheets[] = $CFG->themewww.'/'.$theme.'/rtl.css'.$paramstring;
     }
+
+    /// Set up the block regions.
+    if (!empty($THEME->blockregions)) {
+        $PAGE->blocks->add_regions($THEME->blockregions);
+    } else {
+        // Support legacy themes by supplying a sensible default.
+        $PAGE->blocks->add_regions(array('side-pre', 'side-post'));
+    }
+    if (!empty($THEME->defaultblockregion)) {
+        $PAGE->blocks->set_default_region($THEME->defaultblockregion);
+    } else {
+        // Support legacy themes by supplying a sensible default.
+        $PAGE->blocks->set_default_region('side-post');
+    }
 }
 
 

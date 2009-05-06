@@ -167,4 +167,15 @@ $THEME->custompix = false;
 /// use &lt; &gt; &raquo; - these are confusing for blind users.
 ////////////////////////////////////////////////////////////////////////////////
 
+
+$THEME->blockregions = array('side-pre', 'side-post');
+$THEME->defaultblockregion = 'side-post';
+/// Areas where blocks may appear on any page that uses this theme. For each
+/// region you list in $THEME->blockregions you must call blocks_print_group
+/// with that region id somewhere in header.html or footer.html.
+/// defaultblockregion is the region where new blocks will be added, and
+/// where any blocks in unrecognised regions will be shown. (Suppose someone
+/// added a block when anther theme was selected).
+////////////////////////////////////////////////////////////////////////////////
+
 ?>

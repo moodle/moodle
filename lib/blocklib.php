@@ -55,20 +55,20 @@ require_once($CFG->libdir.'/pagelib.php');
  * responsibility to ensure that those fields do not subsequently change.
  */
 class block_manager {
-    /**#@+ Tracks the where we are in the generation of the page. */
-    const STATE_BLOCKS_NOT_LOADED = 0;
-    const STATE_BLOCKS_LOADED = 1;
-    /**#@-*/
 
 /// Field declarations =========================================================
-
-    protected $loaded = self::STATE_BLOCKS_NOT_LOADED;
 
     protected $page;
 
     protected $regions = array();
 
     protected $defaultregion;
+
+    protected $allblocks = null; // Will be get_records('blocks');
+
+    protected $addableblocks = null; // Will be a subset of $allblocks.
+
+    protected $blocksbyregion = null; // Will be an array region-name => array(block_instances);
 
 /// Constructor ================================================================
 
@@ -101,6 +101,86 @@ class block_manager {
         return $this->defaultregion;
     }
 
+    /**
+     * The list of block types that may be added to this page.
+     * @return array block id => record from block table.
+     */
+    public function get_addable_blocks() {
+        $this->check_is_loaded();
+
+        if (!is_null($this->addableblocks)) {
+            return $this->addableblocks;
+        }
+
+        // Lazy load.
+        $this->addableblocks = array();
+
+        $allblocks = blocks_get_record();
+        if (empty($allblocks)) {
+            return $this->addableblocks;
+        }
+
+        $pageformat = $page->pagetype;
+        foreach($allblocks as $block) {
+            if ($block->visible &&
+                    ($block->multiple || !$this->is_block_present($block->id)) &&
+                    blocks_name_allowed_in_format($block->name, $pageformat)) {
+                $this->addableblocks[$block->id] = $block;
+            }
+        }
+
+        return $this->addableblocks;
+    }
+
+    public function is_block_present($blocktypeid) {
+        // TODO
+    }
+
+    /**
+     * @param string $blockname the name of ta type of block.
+     * @param boolean $includeinvisible if false (default) only check 'visible' blocks, that is, blocks enabled by the admin.
+     * @return boolean true if this block in installed.
+     */
+    public function is_known_block_type($blockname, $includeinvisible = false) {
+        $blocks = $this->get_installed_blocks();
+        foreach ($blocks as $block) {
+            if ($block->name == $blockname && ($includeinvisible || $block->visible)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param string $region a region name
+     * @return boolean true if this retion exists on this page.
+     */
+    public function is_known_region($region) {
+        return array_key_exists($region, $this->regions);
+    }
+
+    /**
+     * @param $region a block region that exists on this page.
+     * @return array of block instances.
+     */
+    public function get_blocks_for_region($region) {
+        $this->check_is_loaded();
+        $this->check_region_is_known($region);
+        return $this->blocksbyregion[$region];
+    }
+
+    /**
+     * Get the list of all installed blocks.
+     * @return array contents of the block table.
+     */
+    public function get_installed_blocks() {
+        global $DB;
+        if (is_null($this->allblocks)) {
+            $this->allblocks = $DB->get_records('block');
+        }
+        return $this->allblocks;
+    }
+
 /// Setter methods =============================================================
 
     /**
@@ -129,26 +209,191 @@ class block_manager {
      */
     public function set_default_region($defaultregion) {
         $this->check_not_yet_loaded();
-        if (!array_key_exists($defaultregion, $this->regions)) {
-            throw new coding_exception('Trying to set an unknown block region as the default.');
-        }
+        $this->check_region_is_known($defaultregion);
         $this->defaultregion = $defaultregion;
+    }
+
+/// Actions ====================================================================
+
+    /**
+     * This method actually loads the blocks for our page from the database.
+     */
+    public function load_blocks($includeinvisible = NULL) {
+        global $DB;
+        $this->check_not_yet_loaded();
+
+        if (is_null($includeinvisible)) {
+            $includeinvisible = $this->page->user_is_editing();
+        }
+        if ($includeinvisible) {
+            $visiblecheck = 'AND (bp.visible = 1 OR bp.visible IS NULL)';
+        } else {
+            $visiblecheck = '';
+        }
+
+        $context = $this->page->context;
+        $contexttest = 'bi.contextid = :contextid2';
+        $parentcontextparams = array();
+        $parentcontextids = get_parent_contexts($context);
+        if ($parentcontextids) {
+            list($parentcontexttest, $parentcontextparams) =
+                    $DB->get_in_or_equal($parentcontextids, SQL_PARAMS_NAMED, 'parentcontext0000');
+            $contexttest = "($contexttest OR (bi.showinsubcontexts = 1 AND bi.contextid $parentcontexttest))";
+        }
+
+        $pagetypepatterns = $this->matching_page_type_patterns($this->page->pagetype);
+        list($pagetypepatterntest, $pagetypepatternparams) =
+                $DB->get_in_or_equal($pagetypepatterns, SQL_PARAMS_NAMED, 'pagetypepatterntest0000');
+
+        $params = array(
+            'subpage1' => $this->page->subpage,
+            'subpage2' => $this->page->subpage,
+            'contextid1' => $context->id,
+            'contextid2' => $context->id,
+            'pagetype' => $this->page->pagetype,
+        );
+        $sql = "SELECT
+                    bi.id,
+                    bi.blockname,
+                    bi.contextid,
+                    bi.showinsubcontexts,
+                    bi.pagetypepattern,
+                    bi.subpagepattern,
+                    bp.visible,
+                    COALESCE(bp.region, bi.defaultregion) AS region,
+                    COALESCE(bp.weight, bi.defaultweight) AS weight,
+                    bi.configdata
+
+                FROM {block_instances} bi
+                JOIN {block} b ON bi.blockname = b.name
+                LEFT JOIN {block_positions} bp ON bp.blockinstanceid = bi.id
+                                                  AND bp.contextid = :contextid1
+                                                  AND bp.pagetype = :pagetype
+                                                  AND bp.subpage = :subpage1
+
+                WHERE
+                $contexttest
+                AND bi.pagetypepattern $pagetypepatterntest
+                AND (bi.subpagepattern IS NULL OR bi.subpagepattern = :subpage2)
+                $visiblecheck
+                AND b.visible = 1
+
+                ORDER BY
+                    COALESCE(bp.region, bi.defaultregion),
+                    COALESCE(bp.weight, bi.defaultweight),
+                    bi.id";
+        $blockinstances = $DB->get_recordset_sql($sql, $params + $parentcontextparams + $pagetypepatternparams);
+
+        $this->blocksbyregion = array();
+        foreach ($this->regions as $region => $notused) {
+            $this->blocksbyregion[$region] = array();
+        }
+        $unknown = array();
+
+        foreach ($blockinstances as $bi) {
+            if ($this->is_known_region($bi->region)) {
+                $this->blocksbyregion[$bi->region][] = $bi;
+            } else {
+                $unknown[] = $bi;
+            }
+        }
+        $this->blocksbyregion[$this->defaultregion] = array_merge($this->blocksbyregion[$this->defaultregion], $unknown);
+    }
+
+    /**
+     * Add a block to the current page, or related pages. The block is added to
+     * context $this->page->contextid. If $pagetypepattern $subpagepattern
+     * @param string $blockname The type of block to add.
+     * @param string $region the block region on this page to add the block to.
+     * @param integer $weight determines the order where this block appears in the region.
+     * @param boolean $showinsubcontexts whether this block appears in subcontexts, or just the current context.
+     * @param string|null $pagetypepattern which page types this block should appear on. Defaults to just the current page type.
+     * @param string|null $subpagepattern which subpage this block should appear on. NULL = any (the default), otherwise only the specified subpage.
+     */
+    public function add_block($blockname, $region, $weight, $showinsubcontexts, $pagetypepattern = NULL, $subpagepattern = NULL) {
+        global $DB;
+        $this->check_known_block_type($blockname);
+        $this->check_region_is_known($region);
+
+        if (empty($pagetypepattern)) {
+            $pagetypepattern = $this->page->pagetype;
+        }
+
+        $blockinstance = new stdClass;
+        $blockinstance->blockname = $blockname;
+        $blockinstance->contextid = $this->page->context->id;
+        $blockinstance->showinsubcontexts = !empty($showinsubcontexts);
+        $blockinstance->pagetypepattern = $pagetypepattern;
+        $blockinstance->subpagepattern = $subpagepattern;
+        $blockinstance->defaultregion = $region;
+        $blockinstance->defaultweight = $weight;
+        $blockinstance->configdata = '';
+        $DB->insert_record('block_instances', $blockinstance);
     }
 
 /// Inner workings =============================================================
 
+    /**
+     * Given a specific page type, return all the page type patterns that might
+     * match it.
+     * @param string $pagetype for example 'course-view-weeks' or 'mod-quiz-view'.
+     * @return array an array of all the page type patterns that might match this page type.
+     */
+    protected function matching_page_type_patterns($pagetype) {
+        $patterns = array($pagetype, '*');
+        $bits = explode('-', $pagetype);
+        if (count($bits) == 3 && $bits[0] == 'mod') {
+            if ($bits[2] == 'view') {
+                $patterns[] = 'mod-*-view';
+            } else if ($bits[2] == 'index') {
+                $patterns[] = 'mod-*-index';
+            }
+        }
+        while (count($bits) > 0) {
+            $patterns[] = implode('-', $bits) . '-*';
+            array_pop($bits);
+        }
+        return $patterns;
+    }
+
     protected function check_not_yet_loaded() {
-        if ($this->loaded) {
+        if (!is_null($this->blocksbyregion)) {
             throw new coding_exception('block_manager has already loaded the blocks, to it is too late to change things that might affect which blocks are visible.');
         }
     }
 
-    protected function mark_loaded() {
-        $this->loaded = self::STATE_BLOCKS_LOADED;
+    protected function check_is_loaded() {
+        if (is_null($this->blocksbyregion)) {
+            throw new coding_exception('block_manager has not yet loaded the blocks, to it is too soon to request the information you asked for.');
+        }
+    }
+
+    protected function check_known_block_type($blockname, $includeinvisible = false) {
+        if (!$this->is_known_block_type($blockname, $includeinvisible)) {
+            if ($this->is_known_block_type($blockname, true)) {
+                throw new coding_exception('Unknown block type ' . $blockname);
+            } else {
+                throw new coding_exception('Block type ' . $blockname . ' has been disabled by the administrator.');
+            }
+        }
+    }
+
+    protected function check_region_is_known($region) {
+        if (!$this->is_known_region($region)) {
+            throw new coding_exception('Trying to reference an unknown block region ' . $region);
+        }
     }
 }
 
-//This function retrieves a method-defined property of a class WITHOUT instantiating an object
+/// Helper functions for working with block classes ============================
+
+/**
+ * Call a class method (one that does not requrie a block instance) on a block class.
+ * @param string $blockname the name of the block.
+ * @param string $method the method name.
+ * @param array $param parameters to pass to the method.
+ * @return mixed whatever the method returns.
+ */
 function block_method_result($blockname, $method, $param = NULL) {
     if(!block_load_class($blockname)) {
         return NULL;
@@ -156,7 +401,12 @@ function block_method_result($blockname, $method, $param = NULL) {
     return call_user_func(array('block_'.$blockname, $method), $param);
 }
 
-//This function creates a new object of the specified block class
+/**
+ * Creates a new object of the specified block class.
+ * @param string $blockname the name of the block.
+ * @param $instance block_instances DB table row (optional).
+ * @return block_base the requested block instance.
+ */
 function block_instance($blockname, $instance = NULL) {
     if(!block_load_class($blockname)) {
         return false;
@@ -169,8 +419,11 @@ function block_instance($blockname, $instance = NULL) {
     return $retval;
 }
 
-//This function loads the necessary class files for a block
-//Whenever you want to load a block, use this first
+/**
+ * Load the block class for a particular type of block.
+ * @param string $blockname the name of the block.
+ * @return boolean success or failure.
+ */
 function block_load_class($blockname) {
     global $CFG;
 
@@ -190,26 +443,18 @@ function block_load_class($blockname) {
     return class_exists($classname);
 }
 
-// This function returns an array with the IDs of any blocks that you can add to your page.
-// Parameters are passed by reference for speed; they are not modified at all.
+/// Functions that have been deprecated by block_manager =======================
+
+/**
+ * @deprecated since Moodle 2.0 - use $page->blocks->get
+ * This function returns an array with the IDs of any blocks that you can add to your page.
+ * Parameters are passed by reference for speed; they are not modified at all.
+ * @param $page the page object.
+ * @param $pageblocks Not used.
+ * @return array of block type ids.
+ */
 function blocks_get_missing(&$page, &$pageblocks) {
-
-    $missingblocks = array();
-    $allblocks = blocks_get_record();
-    $pageformat = $page->pagetype;
-
-    if(!empty($allblocks)) {
-        foreach($allblocks as $block) {
-            if($block->visible && (!blocks_find_block($block->id, $pageblocks) || $block->multiple)) {
-                // And if it's applicable for display in this format...
-                if(blocks_name_allowed_in_format($block->name, $pageformat)) {
-                    // ...add it to the missing blocks
-                    $missingblocks[] = $block->id;
-                }
-            }
-        }
-    }
-    return $missingblocks;
+    return array_keys($page->blocks->get_addable_blocks());
 }
 
 function blocks_remove_inappropriate($page) {
@@ -475,20 +720,22 @@ function blocks_preferred_width(&$instances) {
     return $width;
 }
 
-function blocks_get_record($blockid = NULL, $invalidate = false) {
-    global $DB;
-
-    static $cache = NULL;
-
-    if($invalidate || empty($cache)) {
-        $cache = $DB->get_records('block');
+/**
+ * Get the block record for a particulr blockid.
+ * @param $blockid block type id. If null, an array of all block types is returned.
+ * @param $notusedanymore No longer used.
+ * @return array|object row from block table, or all rows.
+ */
+function blocks_get_record($blockid = NULL, $notusedanymore = false) {
+    global $PAGE;
+    $blocks = $PAGE->blocks->get_installed_blocks();
+    if ($blockid === NULL) {
+        return $blocks;
+    } else if (isset($blocks[$blockid])) {
+        return $blocks[$blockid];
+    } else {
+        return false;
     }
-
-    if($blockid === NULL) {
-        return $cache;
-    }
-
-    return (isset($cache[$blockid])? $cache[$blockid] : false);
 }
 
 function blocks_find_block($blockid, $blocksarray) {
@@ -1021,7 +1268,7 @@ function blocks_get_by_page($page) {
 function blocks_print_adminblock(&$page, &$pageblocks) {
     global $USER;
 
-    $missingblocks = blocks_get_missing($page, $pageblocks);
+    $missingblocks = array_keys($page->blocks->get_addable_blocks());
 
     if (!empty($missingblocks)) {
         $strblocks = '<div class="title"><h2>';
