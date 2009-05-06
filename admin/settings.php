@@ -54,8 +54,8 @@ if ($data = data_submitted() and confirm_sesskey()) {
 /// very hacky page setup
 page_map_class(PAGE_ADMIN, 'page_admin');
 $PAGE = page_create_object(PAGE_ADMIN, 0); // there must be any constant id number
-$PAGE->init_extra($section);
 $PAGE->set_pagetype('admin-setting-' . $section);
+$PAGE->init_extra($section);
 
 if (!isset($USER->adminediting)) {
     $USER->adminediting = false;

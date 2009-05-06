@@ -220,14 +220,16 @@ class moodle_page {
             throw new coding_exception('Cannot call moodle_page::set_course after output has been started.');
         }
 
+        if (!empty($this->_course->id) && $this->_course->id != $course->id) {
+            $this->_categories = null;
+        }
+
         $this->_course = clone($course);
         $COURSE = $this->_course;
 
         if (!$this->_context) {
             $this->set_context(get_context_instance(CONTEXT_COURSE, $this->_course->id));
         }
-
-        $this->_categories = null;
 
         moodle_setlocale();
         theme_setup();
@@ -353,6 +355,24 @@ class moodle_page {
         $this->add_body_class('lang-' . current_language());
 
         $this->add_body_class($this->url_to_class_name($CFG->wwwroot));
+
+        if ($CFG->allowcategorythemes) {
+            $this->ensure_category_loaded();
+            foreach ($this->_categories as $catid => $notused) {
+                $this->add_body_class('category-' . $catid);
+            }
+        } else {
+            $catid = 0;
+            if (is_array($this->_categories)) {
+                $catids = array_keys($this->_categories);
+                $catid = reset($catids);
+            } else if (!empty($this->_course->category)) {
+                $catid = $this->_course->category;
+            }
+            if ($catid) {
+                $this->add_body_class('category-' . $catid);
+            }
+        }
 
         if (!isloggedin()) {
             $this->add_body_class('notloggedin');
@@ -490,7 +510,7 @@ function page_create_instance($instance) {
  * its numeric ID. Returns a fully constructed page_base subclass you can work with.
  */
 function page_create_object($type, $id = NULL) {
-    global $CFG, $PAGE;
+    global $CFG, $PAGE, $SITE;
 
     $data = new stdClass;
     $data->pagetype = $type;
@@ -498,9 +518,23 @@ function page_create_object($type, $id = NULL) {
 
     $classname = page_map_class($type);
     $object = new $classname;
-
     $object->init_quick($data);
-    $object->set_course($PAGE->course);
+    $course = $PAGE->course;
+    if ($course->id != $SITE->id) {
+        $object->set_course($course);
+    } else {
+        try {
+            $category = $PAGE->category;
+        } catch (coding_exception $e) {
+            // Was not set before, so no need to try to set it again.
+            $category = false;
+        }
+        if ($category) {
+            $object->set_category_by_id($category->id);
+        } else {
+            $object->set_course($SITE);
+        }
+    }
     //$object->set_pagetype($type);
     return $object;
 }

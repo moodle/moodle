@@ -144,6 +144,16 @@ class moodle_page_test extends UnitTestCase {
         $this->testpage->set_category_by_id(123);
     }
 
+    public function test_categories_array_empty_for_front_page() {
+        // Setup fixture
+        $course = $this->create_a_course();
+        $course->category = 0;
+        $this->testpage->set_context(new stdClass); // Avoid trying to set the context.
+        $this->testpage->set_course($course);
+        // Exercise SUT and validate.
+        $this->assertEqual(array(), $this->testpage->categories);
+    }
+
     public function test_set_state_normal_path() {
         $this->assertEqual(moodle_page::STATE_BEFORE_HEADER, $this->testpage->state);
 
