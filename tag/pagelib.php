@@ -31,10 +31,6 @@ class page_tag extends page_base {
         }
         print_header_simple($title, '', $navigation, '', '', '', $button);
     }    
-    
-    function print_footer() {
-        print_footer();
-    }
 }
 
 page_map_class(PAGE_TAG_INDEX, 'page_tag');

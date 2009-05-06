@@ -175,6 +175,5 @@ if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing(
 /// Finish the page
 echo '</tr></table>';
 
-$PAGE->print_footer();
-
+print_footer();
 ?>
