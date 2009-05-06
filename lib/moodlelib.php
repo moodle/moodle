@@ -6556,18 +6556,38 @@ function unzip_file ($zipfile, $destination = '', $showstatus = true) {
 
     } else {                     // Use external unzip program
 
+        require_once("$CFG->libdir/filelib.php");
+
+        do {
+            $temppath = "$CFG->dataroot/temp/unzip/".random_string(10);
+        } while (file_exists($temppath));
+        if (!check_dir_exists($temppath, true, true)) {
+            return false;
+        }
+
         $separator = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? ' &' : ' ;';
         $redirection = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? '' : ' 2>&1';
 
         $command = 'cd '.escapeshellarg($zippath).$separator.
                     escapeshellarg($CFG->unzip).' -o '.
                     escapeshellarg(cleardoubleslashes("$zippath/$zipfilename")).' -d '.
-                    escapeshellarg($destpath).$redirection;
+                    escapeshellarg($temppath).$redirection;
         //All converted to backslashes in WIN
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             $command = str_replace('/','\\',$command);
         }
         Exec($command,$list);
+        if (is_array($list)) {
+            foreach ($list as $linenum=>$line) {
+                 // hide full paths - will not work on win32
+                $line = str_replace($temppath, $destpath, $line);
+                $line =  str_replace($CFG->dataroot, '', $line);
+                $list[$linenum] = $line;
+            }
+        }
+
+        unzip_process_temp_dir($temppath, $destpath);
+        fulldelete($temppath);
     }
 
     //Display some info about the unzip execution
@@ -6576,6 +6596,55 @@ function unzip_file ($zipfile, $destination = '', $showstatus = true) {
     }
 
     return true;
+}
+
+/**
+ * Sanitize temporary unzipped files and move to target dir.
+ * @param string $temppath path to temporary dir with unzip output
+ * @param string $destpath destination path
+ * @return void
+ */
+function unzip_process_temp_dir($temppath, $destpath) {
+    global $CFG;
+
+    $filepermissions = ($CFG->directorypermissions & 0666); // strip execute flags
+
+    if (check_dir_exists($destpath, true, true)) {
+        $currdir = opendir($temppath);
+        while (false !== ($file = readdir($currdir))) {
+            if ($file <> ".." && $file <> ".") {
+                $fullfile = "$temppath/$file";
+                if (is_link($fullfile)) {
+                    //somebody tries to sneak in symbolik link - no way!
+                    continue;
+                }
+                $cleanfile = clean_param($file, PARAM_FILE); // no dangerous chars
+                if ($cleanfile === '') {
+                    // invalid file name
+                    continue;
+                }
+                if ($cleanfile !== $file and file_exists("$temppath/$cleanfile")) {
+                    // eh, weird chars collision detected
+                    continue;
+                }
+                $descfile = "$destpath/$cleanfile";
+                if (is_dir($fullfile)) {
+                    // recurse into subdirs
+                    unzip_process_temp_dir($fullfile, $descfile);
+                }
+                if (is_file($fullfile)) {
+                    // rename and move the file
+                    if (file_exists($descfile)) {
+                        //override existing files
+                        unlink($descfile);
+                    }
+                    rename($fullfile, $descfile);
+                    chmod($descfile, $filepermissions);
+                }
+            }
+        }
+        closedir($currdir);
+    }
 }
 
 function unzip_cleanfilename ($p_event, &$p_header) {
