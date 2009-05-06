@@ -198,6 +198,26 @@ class moodle_page_test extends UnitTestCase {
         // Validate
         $this->assertEqual('site-index', $this->testpage->pagetype);
     }
+
+    public function test_get_body_classes_empty() {
+        // Validate
+        $this->assertEqual('', $this->testpage->bodyclasses);
+    }
+
+    public function test_get_body_classes_single() {
+        // Exercise SUT
+        $this->testpage->add_body_class('aclassname');
+        // Validate
+        $this->assertEqual('aclassname', $this->testpage->bodyclasses);
+    }
+
+    public function test_get_body_classes_double() {
+        // Exercise SUT
+        $this->testpage->add_body_class('aclassname');
+        $this->testpage->add_body_class('anotherclassname');
+        // Validate
+        $this->assertEqual('aclassname anotherclassname', $this->testpage->bodyclasses);
+    }
 }
 
 /**

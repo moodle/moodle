@@ -2326,30 +2326,8 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     $title = str_replace('"', '&quot;', $title);
 
     // Create class and id for this page
-
     $pageid = $PAGE->pagetype;
-    $pageclass = $PAGE->legacyclass;
-
-    $pageclass .= ' course-'.$COURSE->id;
-
-    if (!isloggedin()) {
-        $pageclass .= ' notloggedin';
-    }
-
-    if (!empty($USER->editing)) {
-        $pageclass .= ' editing';
-    }
-
-    if (!empty($CFG->blocksdrag)) {
-        $pageclass .= ' drag';
-    }
-
-    $pageclass .= ' ' . get_browser_version_classes();
-
-    $pageclass .= ' dir-'.get_string('thisdirection');
-
-    $pageclass .= ' lang-'.$currentlanguage;
-
+    $pageclass = $PAGE->bodyclasses;
     $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
 
     require_once($CFG->libdir .'/editor/htmlEditor.class.php');

@@ -48,15 +48,23 @@ class moodle_page {
     const STATE_DONE = 4;
     /**#@-*/
 
+/// Field declarations =========================================================
+
     protected $_state = self::STATE_BEFORE_HEADER;
 
     protected $_course = null;
 
     protected $_context = null;
 
+    protected $_bodyclasses = array();
+
     protected $_pagetype = null;
 
     protected $_legacyclass = null;
+
+/// Getter methods =============================================================
+/// Due to the __get magic below, you normally do not call these as get_x methods,
+/// but instead use the $PAGE->x syntax.
 
     /**
      * @return integer one of the STATE_... constants. You should not normally need
@@ -111,6 +119,15 @@ class moodle_page {
     }
 
     /**
+     * @return string the class names to put on the body element in the HTML.
+     */
+    public function get_bodyclasses() {
+        return implode(' ', array_keys($this->_bodyclasses));
+    }
+
+/// Setter methods =============================================================
+
+    /**
      * Set the state. The state must be one of that STATE_... constants, and
      * the state is only allowed to advance one step at a time.
      * @param integer $state the new state.
@@ -121,9 +138,13 @@ class moodle_page {
                     $this->_state . ' and state ' . $state . ' was requestsed.');
         }
 
-        if ($state == self::STATE_PRINTING_HEADER && !$this->_course) {
-            global $SITE;
-            $this->set_course($SITE);
+        if ($state == self::STATE_PRINTING_HEADER) {
+            if (!$this->_course) {
+                global $SITE;
+                $this->set_course($SITE);
+            }
+
+            $this->initialise_standard_body_classes();
         }
 
         $this->_state = $state;
@@ -184,6 +205,16 @@ class moodle_page {
     }
 
     /**
+     * @param string $class add this class name ot the class attribute on the body tag.
+     */
+    public function add_body_class($class) {
+        if ($this->_state > self::STATE_BEFORE_HEADER) {
+            throw new coding_exception('Cannot call moodle_page::add_body_class after output has been started.');
+        }
+        $this->_bodyclasses[$class] = 1;
+    }
+
+    /**
      * PHP overloading magic to make the $PAGE->course syntax work.
      */
     public function __get($field) {
@@ -194,6 +225,9 @@ class moodle_page {
             throw new coding_exception('Unknown field ' . $field . ' of $PAGE.');
         }
     }
+
+/// Initialisation methods =====================================================
+/// These set various things up in a default way.
 
     /**
      * Sets ->pagetype from the script name. For example, if the script that was
@@ -233,7 +267,36 @@ class moodle_page {
         }
     }
 
-/// Deperecated fields and methods for backwards compatibility =================
+    protected function initialise_standard_body_classes() {
+        $pagetype = $this->pagetype;
+        if ($pagetype == 'site-index') {
+            $this->_legacyclass = 'course';
+        } else if (substr($pagetype, 0, 6) == 'admin-') {
+            $this->_legacyclass = 'admin';
+        } else {
+            $this->_legacyclass = substr($pagetype, 0, strrpos($pagetype, '-'));
+        }
+        $this->add_body_class($this->_legacyclass);
+
+        $this->add_body_class('course-' . $this->_course->id);
+        $this->add_body_class(get_browser_version_classes());
+        $this->add_body_class('dir-' . get_string('thisdirection'));
+        $this->add_body_class('lang-' . current_language());
+
+        if (!isloggedin()) {
+            $this->add_body_class('notloggedin');
+        }
+
+        if (!empty($USER->editing)) {
+            $this->add_body_class('editing');
+        }
+
+        if (!empty($CFG->blocksdrag)) {
+            $this->add_body_class('drag');
+        }
+    }
+
+/// Deprecated fields and methods for backwards compatibility ==================
 
     /**
      * @deprecated since Moodle 2.0 - use $PAGE->pagetype instead.
@@ -267,14 +330,7 @@ class moodle_page {
      */
     public function get_legacyclass() {
         if (is_null($this->_legacyclass)) {
-            $pagetype = $this->pagetype;
-            if ($pagetype == 'site-index') {
-                $this->_legacyclass = 'course';
-            } else if (substr($pagetype, 0, 6) == 'admin-') {
-                $this->_legacyclass = 'admin';
-            } else {
-                $this->_legacyclass = substr($pagetype, 0, strrpos($pagetype, '-'));
-            }
+            $this->initialise_standard_body_classes();
         }
         debugging('Call to deprecated method moodle_page::get_legacyclass.');
         return $this->_legacyclass;
