@@ -88,8 +88,7 @@ if ($issue and ($result = $issue(true))) {
     $row[2] = $result->info;
     $row[3] = is_null($result->link) ? '&nbsp;' : $result->link;
 
-    $PAGE->set_pagetype('admin-report-security-' . $issue); // help link in footer
-    // TODO, that should probably be changed to $PAGE->set_docs_link().
+    $PAGE->set_docs_path('admin/report/security/' . $issue);
 
     $table->data[] = $row;
 

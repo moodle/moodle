@@ -257,6 +257,20 @@ class moodle_page_test extends UnitTestCase {
         $this->assertEqual('example-com--moodle', $this->testpage->url_to_class_name('https://example.com/moodle'));
         $this->assertEqual('example-com--8080--nested-moodle', $this->testpage->url_to_class_name('https://example.com:8080/nested/moodle'));
     }
+
+    public function test_set_docs_path() {
+        // Exercise SUT
+        $this->testpage->set_docs_path('a/file/path');
+        // Validate
+        $this->assertEqual('a/file/path', $this->testpage->docspath);
+    }
+
+    public function test_docs_path_defaults_from_pagetype() {
+        // Exercise SUT
+        $this->testpage->set_pagetype('a-page-type');
+        // Validate
+        $this->assertEqual('a/page/type', $this->testpage->docspath);
+    }
 }
 
 /**

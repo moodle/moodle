@@ -71,6 +71,8 @@ class moodle_page {
 
     protected $_pagetype = null;
 
+    protected $_docspath = null;
+
     protected $_legacyclass = null;
 
 /// Getter methods =============================================================
@@ -158,6 +160,17 @@ class moodle_page {
      */
     public function get_bodyclasses() {
         return implode(' ', array_keys($this->_bodyclasses));
+    }
+
+    /**
+     * @return string the class names to put on the body element in the HTML.
+     */
+    public function get_docspath() {
+        if (is_string($this->_docspath)) {
+            return $this->_docspath;
+        } else {
+            return str_replace('-', '/', $this->pagetype);
+        }
     }
 
     /**
@@ -293,6 +306,17 @@ class moodle_page {
         $this->set_course($SITE);
         $this->load_category($categoryid);
         $this->set_context(get_context_instance(CONTEXT_COURSECAT, $categoryid));
+    }
+
+    /**
+     * Set a different path to use for the 'Moodle docs for this page' link.
+     * By default, it uses the pagetype, which is normally the same as the
+     * script name. So, for example, for mod/quiz/attempt.php, pagetype is
+     * mod-quiz-attempt, and so docspath is mod/quiz/attempt.
+     * @param string $path the path to use at the end of the moodle docs URL.
+     */
+    public function set_docs_path($path) {
+        $this->_docspath = $path;
     }
 
 /// Initialisation methods =====================================================

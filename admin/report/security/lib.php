@@ -74,12 +74,8 @@ function report_security_doc_link($issue, $name) {
         return $name;
     }
 
-    $lang = str_replace('_utf8', '', current_language());
-
-    $str = "<a onclick=\"this.target='docspopup'\" href=\"$CFG->docroot/$lang/report/security/$issue\">";
-    $str .= "<img class=\"iconhelp\" src=\"$CFG->httpswwwroot/pix/docs.gif\" alt=\"\" />$name</a>";
-
-    return $str;
+    return '<a onclick="this.target=\'docspopup\'" href="' . get_docs_url('report/security/') . $issue . '">'
+            . '<img class="iconhelp" src="' . $CFG->httpswwwroot . '/pix/docs.gif" alt="" />' . $name . '</a>';
 }
 
 ///=============================================

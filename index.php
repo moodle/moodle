@@ -87,7 +87,8 @@
         $langmenu = popup_form($CFG->wwwroot .'/index.php?lang=', $langs, 'chooselang', $currlang, '', '', '', true, 'self', $langlabel);
     }
 
-    $PAGE       = page_create_object(PAGE_COURSE_VIEW, SITEID);
+    $PAGE = page_create_object(PAGE_COURSE_VIEW, SITEID);
+    $PAGE->set_docs_path('');
     $pageblocks = blocks_setup($PAGE);
     $editing    = $PAGE->user_is_editing();
     $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),

@@ -6664,33 +6664,21 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
  * Returns a string containing a link to the user documentation for the current
  * page. Also contains an icon by default. Shown to teachers and admin only.
  *
- * @param string $text      The text to be displayed for the link
- * @param string $iconpath  The path to the icon to be displayed
+ * @param string $text The text to be displayed for the link
+ * @param string $iconpath The path to the icon to be displayed
  */
 function page_doc_link($text='', $iconpath='') {
-    global $SCRIPT, $COURSE, $CFG;
+    global $CFG, $PAGE;
 
-    if (empty($CFG->docroot) or empty($CFG->rolesactive)) {
+    if (empty($CFG->docroot) || empty($CFG->rolesactive)) {
+        return '';
+    }
+    if (!has_capability('moodle/site:doclinks', $PAGE->context)) {
         return '';
     }
 
-    if (empty($COURSE->id)) {
-        $context = get_context_instance(CONTEXT_SYSTEM);
-    } else {
-        $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
-    }
-
-    if (!has_capability('moodle/site:doclinks', $context)) {
-        return '';
-    }
-
-    if (empty($CFG->pagepath)) {
-        $CFG->pagepath = ltrim($SCRIPT, '/');
-    }
-
-    $path = str_replace('.php', '', $CFG->pagepath);
-
-    if (empty($path)) {   // Not for home page
+    $path = $PAGE->docspath;
+    if (!$path) {
         return '';
     }
     return doc_link($path, $text, $iconpath);
@@ -6698,8 +6686,7 @@ function page_doc_link($text='', $iconpath='') {
 
 /**
  * @param string $path the end of the URL.
- * @return The start of a MoodleDocs URL in the user's language.
- *      E.g. http://docs.moodle.org/en/
+ * @return The MoodleDocs URL in the user's language. for example http://docs.moodle.org/en/$path
  */
 function get_docs_url($path) {
     global $CFG;
@@ -6710,10 +6697,9 @@ function get_docs_url($path) {
  * Returns a string containing a link to the user documentation.
  * Also contains an icon by default. Shown to teachers and admin only.
  *
- * @param string $path      The page link after doc root and language, no
- *                              leading slash.
- * @param string $text      The text to be displayed for the link
- * @param string $iconpath  The path to the icon to be displayed
+ * @param string $path The page link after doc root and language, no leading slash.
+ * @param string $text The text to be displayed for the link
+ * @param string $iconpath The path to the icon to be displayed
  */
 function doc_link($path='', $text='', $iconpath='') {
     global $CFG;
