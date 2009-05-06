@@ -57,6 +57,7 @@
         print_error('wrongcontextid', 'error');
     }
     $isfrontpage = $context->contextlevel == CONTEXT_COURSE && $context->instanceid == SITEID;
+    $PAGE->set_context($context);
     $contextname = print_context_name($context);
 
     $inmeta = 0;

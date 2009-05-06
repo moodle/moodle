@@ -124,6 +124,26 @@ class moodle_page_test extends UnitTestCase {
         $this->testpage->set_course($course);
     }
 
+    public function test_cannot_set_category_once_output_started() {
+        // Setup fixture
+        $this->testpage->set_state(moodle_page::STATE_PRINTING_HEADER);
+        // Set expectation.
+        $this->expectException();
+        // Exercise SUT
+        $this->testpage->set_category_by_id(123);
+    }
+
+    public function test_cannot_set_category_once_course_set() {
+        // Setup fixture
+        $course = $this->create_a_course();
+        $this->testpage->set_context(new stdClass); // Avoid trying to set the context.
+        $this->testpage->set_course($course);
+        // Set expectation.
+        $this->expectException();
+        // Exercise SUT
+        $this->testpage->set_category_by_id(123);
+    }
+
     public function test_set_state_normal_path() {
         $this->assertEqual(moodle_page::STATE_BEFORE_HEADER, $this->testpage->state);
 
@@ -230,14 +250,15 @@ class moodle_page_test extends UnitTestCase {
 }
 
 /**
- * Test functions that affect filter_active table with contextid = $syscontextid.
+ * Test functions that rely on the context table.
  */
-class moodle_page_with_db_test extends UnitTestCaseUsingDatabase {
+class moodle_page_with_context_table_test extends UnitTestCaseUsingDatabase {
     protected $testpage;
     protected $originalcourse;
 
     public function setUp() {
         global $COURSE;
+        parent::setUp();
         $this->originalcourse = $COURSE;
         $this->testpage = new moodle_page();
         $this->create_test_table('context', 'lib');
@@ -248,6 +269,7 @@ class moodle_page_with_db_test extends UnitTestCaseUsingDatabase {
         global $COURSE;
         $this->testpage = NULL;
         $COURSE = $this->originalcourse;
+        parent::tearDown();
     }
 
     /** Creates an object with all the fields you would expect a $course object to have. */
@@ -281,4 +303,90 @@ class moodle_page_with_db_test extends UnitTestCaseUsingDatabase {
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedcontext), $this->testpage->context);
     }
 }
+
+/**
+ * Test functions that rely on the context table.
+ */
+class moodle_page_categories_test extends UnitTestCaseUsingDatabase {
+    protected $testpage;
+    protected $originalcourse;
+
+    public function setUp() {
+        global $COURSE, $SITE;
+        parent::setUp();
+        $this->originalcourse = $COURSE;
+        $this->testpage = new moodle_page();
+        $this->create_test_tables(array('course_categories', 'context'), 'lib');
+        $this->switch_to_test_db();
+
+        $context = new stdClass;
+        $context->contextlevel = CONTEXT_COURSE;
+        $context->instanceid = $SITE->id;
+        $context->path = 'not initialised';
+        $context->depth = '-1';
+        $this->testdb->insert_record('context', $context);
+    }
+
+    public function tearDown() {
+        global $COURSE;
+        $this->testpage = NULL;
+        $COURSE = $this->originalcourse;
+        parent::tearDown();
+    }
+
+    /** Creates an object with all the fields you would expect a $course object to have. */
+    protected function create_a_category_with_context($parentid = 0) {
+        if ($parentid) {
+            $parent = $this->testdb->get_record('course_categories', array('id' => $parentid));
+        } else {
+            $parent = new stdClass;
+            $parent->depth = 0;
+            $parent->path = '';
+        }
+        $cat = new stdClass;
+        $cat->name = 'Anonymous test category';
+        $cat->description = '';
+        $cat->parent = $parentid;
+        $cat->depth = $parent->depth + 1;
+        $cat->id = $this->testdb->insert_record('course_categories', $cat);
+        $cat->path = $parent->path . '/' . $cat->id;
+        $this->testdb->set_field('course_categories', 'path', $cat->path, array('id' => $cat->id));
+
+        $context = new stdClass;
+        $context->contextlevel = CONTEXT_COURSECAT;
+        $context->instanceid = $cat->id;
+        $context->path = 'not initialised';
+        $context->depth = '-1';
+        $this->testdb->insert_record('context', $context);
+
+        return $cat;
+    }
+
+    public function test_set_category_top_level() {
+        // Setup fixture
+        $cat = $this->create_a_category_with_context();
+        // Exercise SUT
+        $this->testpage->set_category_by_id($cat->id);
+        // Validate
+        $this->assert(new CheckSpecifiedFieldsExpectation($cat), $this->testpage->category);
+        $expectedcontext = new stdClass; // Test it sets the context.
+        $expectedcontext->contextlevel = CONTEXT_COURSECAT;
+        $expectedcontext->instanceid = $cat->id;
+        $this->assert(new CheckSpecifiedFieldsExpectation($expectedcontext), $this->testpage->context);
+    }
+
+    public function test_set_nested_categories() {
+        // Setup fixture
+        $topcat = $this->create_a_category_with_context();
+        $subcat = $this->create_a_category_with_context($topcat->id);
+        // Exercise SUT
+        $this->testpage->set_category_by_id($subcat->id);
+        // Validate
+        $categories = $this->testpage->categories;
+        $this->assertEqual(2, count($categories));
+        $this->assert(new CheckSpecifiedFieldsExpectation($topcat), array_pop($categories));
+        $this->assert(new CheckSpecifiedFieldsExpectation($subcat), array_pop($categories));
+    }
+}
+
 ?>

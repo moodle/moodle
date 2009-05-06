@@ -29,13 +29,10 @@
         print_error("unknowcategory");
     }
 
-    if (!$context = get_context_instance(CONTEXT_COURSECAT, $id)) {
-        print_error("unknowcategory");
-    }
+    $PAGE->set_category_by_id($id);
+    $context = $PAGE->context;
+    $category = $PAGE->category;
 
-    if (!$category = $DB->get_record("course_categories", array("id"=>$id))) {
-        print_error("unknowcategory");
-    }
     if (!$category->visible) {
         require_capability('moodle/category:viewhiddencategories', $context);
     }

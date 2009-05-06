@@ -1914,7 +1914,7 @@ function get_login_url($loginguest=false) {
  *             in order to keep redirects working properly. MDL-14495
  */
 function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsurltome=true) {
-    global $CFG, $SESSION, $USER, $COURSE, $FULLME, $PAGE, $DB;
+    global $CFG, $SESSION, $USER, $COURSE, $FULLME, $PAGE, $SITE, $DB;
 
 /// setup global $COURSE, themes, language and locale
     if (!empty($courseorid)) {

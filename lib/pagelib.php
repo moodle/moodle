@@ -56,6 +56,17 @@ class moodle_page {
 
     protected $_context = null;
 
+    /**
+     * This holds any categories that $_course belongs to, starting with the
+     * particular category it belongs to, and working out through any parent
+     * categories to the top level. These are loaded progressively, if neaded.
+     * There are three states. $_categories = null initially when nothing is
+     * loaded; $_categories = array($id => $cat, $parentid => null) when we have
+     * loaded $_course->category, but not any parents; and a complete array once
+     * everything is loaded.
+     */
+    protected $_categories = null;
+
     protected $_bodyclasses = array();
 
     protected $_pagetype = null;
@@ -96,6 +107,30 @@ class moodle_page {
             return $SITE;
         }
         return $this->_course;
+    }
+
+    /**
+     * @return mixed the category that the page course belongs to. If there isn't one
+     * (that is, if this is the front page course) returns null.
+     */
+    public function get_category() {
+        $this->ensure_category_loaded();
+        if (!empty($this->_categories)) {
+            return reset($this->_categories);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @return array an array of all the categories the page course belongs to,
+     * starting with the immediately containing category, and working out to
+     * the top-level category. This may be the empty array if we are in the
+     * front page course.
+     */
+    public function get_categories() {
+        $this->ensure_categories_loaded();
+        return $this->_categories;
     }
 
     /**
@@ -175,7 +210,7 @@ class moodle_page {
      * @param object the course to set as the global course.
      */
     public function set_course($course) {
-        global $COURSE, $SITE;
+        global $COURSE;
 
         if (empty($course->id)) {
             throw new coding_exception('$course passed to moodle_page::set_course does not look like a proper course object.');
@@ -191,6 +226,8 @@ class moodle_page {
         if (!$this->_context) {
             $this->set_context(get_context_instance(CONTEXT_COURSE, $this->_course->id));
         }
+
+        $this->_categories = null;
 
         moodle_setlocale();
         theme_setup();
@@ -233,6 +270,27 @@ class moodle_page {
         foreach ($classes as $class) {
             $this->add_body_class($class);
         }
+    }
+
+    /**
+     * Set the course category this page belongs to manually. This automatically
+     * sets $PAGE->course to be the site coures. You cannot use this method if
+     * you have already set $PAGE->course - in that case, the category must be
+     * the one that the course belongs to. This also automatically sets the
+     * page context to the category context.
+     * @param integer $categoryid The id of the category to set.
+     */
+    public function set_category_by_id($categoryid) {
+        global $SITE, $DB;
+        if (!is_null($this->_course)) {
+            throw new coding_exception('Attempt to manually set the course category when the course has been set. This is not allowed.');
+        }
+        if (is_array($this->_categories)) {
+            throw new coding_exception('Course category has already been set. You are not allowed to change it.');
+        }
+        $this->set_course($SITE);
+        $this->load_category($categoryid);
+        $this->set_context(get_context_instance(CONTEXT_COURSECAT, $categoryid));
     }
 
 /// Initialisation methods =====================================================
@@ -306,6 +364,48 @@ class moodle_page {
 
         if (!empty($CFG->blocksdrag)) {
             $this->add_body_class('drag');
+        }
+    }
+
+    protected function ensure_category_loaded() {
+        if (is_array($this->_categories)) {
+            return; // Already done.
+        }
+        if (is_null($this->_course)) {
+            throw new coding_exception('Attempt to get the course category for this page before the course was set.');
+        }
+        if ($this->_course->category == 0) {
+            $this->_categories = array();
+        } else {
+            $this->load_category($this->_course->category);
+        }
+    }
+
+    protected function load_category($categoryid) {
+        global $DB;
+        $category = $DB->get_record('course_categories', array('id' => $categoryid));
+        if (!$category) {
+            throw new moodle_exception('unknowncategory');
+        }
+        $this->_categories[$category->id] = $category;
+        $parentcategoryids = explode('/', trim($category->path, '/'));
+        array_pop($parentcategoryids);
+        foreach (array_reverse($parentcategoryids) as $catid) {
+            $this->_categories[$catid] = null;
+        }
+    }
+
+    protected function ensure_categories_loaded() {
+        global $DB;
+        $this->ensure_category_loaded();
+        if (!is_null(end($this->_categories))) {
+            return; // Already done.
+        }
+        $idstoload = array_keys($this->_categories);
+        array_shift($idstoload);
+        $categories = $DB->get_records_list('course_categories', 'id', $idstoload);
+        foreach ($idstoload as $catid) {
+            $this->_categories[$catid] = $categories[$catid];
         }
     }
 
