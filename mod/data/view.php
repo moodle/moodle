@@ -307,7 +307,7 @@
         $sortcontent = $sortfield->get_sort_field();
         $sortcontentfull = $sortfield->get_sort_sql('c.'.$sortcontent);
 
-        $what = ' DISTINCT r.id, r.approved, r.userid, u.firstname, u.lastname, c.'.$sortcontent.', '.$sortcontentfull.' AS _order ';
+        $what = ' DISTINCT r.id, r.approved, r.userid, u.firstname, u.lastname, '.sql_compare_text($sortcontentfull).' AS _order ';
         $count = ' COUNT(DISTINCT c.recordid) ';
         $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r,'.$CFG->prefix.'data_content c1, '.$CFG->prefix.'user u ';
         $where =  'WHERE c.recordid = r.id
@@ -370,27 +370,6 @@
     if ($record) {     // We need to just show one, so where is it in context?
         $nowperpage = 1;
         $mode = 'single';
-
-#  Following code needs testing to make it work
-#        if ($sort) {   // We need to search by that field
-#            if ($content = get_field('data_content', 'content', 'recordid', $record->id, 'fieldid', $sort)) {
-#                $content = addslashes($content);
-#                if ($order == 'ASC') {
-#                    $lessthan = " AND $sortcontentfull < '$content'
-#                                   OR ($sortcontentfull = '$content' AND r.id < '$record->id') ";
-#                } else {
-#                    $lessthan = " AND $sortcontentfull > '$content'
-#                                   OR ($sortcontentfull = '$content' AND r.id < '$record->id') ";
-#                }
-#            } else {   // Failed to find data (shouldn't happen), so fall back to something easy
-#                $lessthan = " r.id < '$record->id' ";
-#            }
-#        } else {
-#            $lessthan = " r.id < '$record->id' ";
-#        }
-#        $sqlindex = 'SELECT COUNT(DISTINCT c.recordid) '.$fromsql.$lessthan.$sortorder;
-#        $page = count_records_sql($sqlindex);
-
 
         $allrecords = get_records_sql($sqlselect);      // Kludgey but accurate at least!
         $page = 0;
