@@ -1184,6 +1184,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
     /// Changes to modinfo mean we need to rebuild course cache
+        require_once($CFG->dirroot . '/course/lib.php');
         rebuild_course_cache(0,true);
 
     /// For developer upgrades, turn on the conditional activities and completion
