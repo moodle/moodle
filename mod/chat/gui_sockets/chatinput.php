@@ -15,7 +15,7 @@
     $USER = $DB->get_record('user', array('id'=>$chatuser->userid));
 
     //Setup course, lang and theme
-    course_setup($chatuser->course);
+    $PAGE->set_course($DB->get_record('course', array('id' => $chatuser->course)));
 
     ob_start();
     ?>

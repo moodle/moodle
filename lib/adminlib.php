@@ -4152,7 +4152,7 @@ function admin_apply_default_settings($node=NULL, $unconditional=true) {
  * @return int number of changed settings
  */
 function admin_write_settings($formdata) {
-    global $CFG, $SITE, $COURSE, $DB;
+    global $CFG, $SITE, $PAGE, $DB;
 
     $olddbsessions = !empty($CFG->dbsessions);
     $formdata = (array)$formdata;
@@ -4193,7 +4193,7 @@ function admin_write_settings($formdata) {
 
     // now update $SITE - it might have been changed
     $SITE = $DB->get_record('course', array('id'=>$SITE->id));
-    course_setup($SITE);
+    $PAGE->set_course($SITE);
 
     // now reload all settings - some of them might depend on the changed
     admin_get_root(true);

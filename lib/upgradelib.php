@@ -745,7 +745,7 @@ function upgrade_log($type, $plugin, $info, $details=null, $backtrace=null) {
  * The upgrade is finished at the end of script or after timeout.
  */
 function upgrade_started($preinstall=false) {
-    global $CFG, $DB;
+    global $CFG, $DB, $PAGE;
 
     static $started = false;
 
@@ -757,7 +757,7 @@ function upgrade_started($preinstall=false) {
         upgrade_set_timeout(120);
 
     } else {
-        if (!CLI_SCRIPT and !defined('HEADER_PRINTED')) {
+        if (!CLI_SCRIPT and !$PAGE->headerprinted) {
             $strupgrade  = get_string('upgradingversion', 'admin');
 
             print_header($strupgrade.' - Moodle '.$CFG->target_release, $strupgrade,

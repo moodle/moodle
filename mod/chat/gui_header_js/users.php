@@ -13,7 +13,7 @@
     }
 
     //Get the minimal course
-    if (!$course = $DB->get_record('course', array('id'=>$chatuser->course), 'id,theme,lang')) {
+    if (!$course = $DB->get_record('course', array('id'=>$chatuser->course))) {
         print_error('invalidcourseid');
     }
 
@@ -24,7 +24,7 @@
     $USER->description = '';
 
     //Setup course, lang and theme
-    course_setup($course);
+    $PAGE->set_course($course);
 
     $courseid = $chatuser->course;
 

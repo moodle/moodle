@@ -852,7 +852,7 @@ function session_unloginas() {
  * @return void
  */
 function cron_setup_user($user=null, $course=null) {
-    global $CFG, $SITE;
+    global $CFG, $SITE, $PAGE;
 
     static $cronuser    = null;
     static $cronsession = null;
@@ -882,9 +882,9 @@ function cron_setup_user($user=null, $course=null) {
     }
 
     if ($course) {
-        course_setup($course);
+        $PAGE->set_course($course);
     } else {
-        course_setup($SITE);
+        $PAGE->set_course($SITE);
     }
 
     // TODO: it should be possible to improve perf by caching some limited number of users here ;-)

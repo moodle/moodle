@@ -26,7 +26,7 @@
     require_login();
     if (has_capability('moodle/user:viewuseractivitiesreport', $personalcontext) and !has_capability('moodle/course:view', $coursecontext)) {
         // do not require parents to be enrolled in courses ;-)
-        course_setup($course);
+        $PAGE->set_course($course);
     } else {
         require_login($course);
     }

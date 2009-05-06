@@ -30,7 +30,7 @@
     $USER = $DB->get_record('user', array('id'=>$chatuser->userid));
 
     //Setup course, lang and theme
-    course_setup($chatuser->course);
+    $PAGE->set_course($course);
 
     ob_start();
     ?>

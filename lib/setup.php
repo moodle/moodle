@@ -58,6 +58,14 @@ global $SESSION;
 global $USER;
 
 /**
+ * A central store of information about the current page we are
+ * generating in response to the user's request.
+ *
+ * @global moodle_page $PAGE
+ */
+global $PAGE;
+
+/**
  * The current course. An alias for $PAGE->course.
  * @global object $COURSE
  */
@@ -262,6 +270,9 @@ global $SCRIPT;
     if (!defined('SYSCONTEXTID')) {
         get_system_context();
     }
+
+/// Create the $PAGE global.
+    $PAGE = new moodle_page();
 
 /// Set error reporting back to normal
     if ($originaldatabasedebug == -1) {
@@ -491,8 +502,11 @@ global $SCRIPT;
         }
     }
 
-    // set default locale and themes - might be changed again later from require_login()
-    course_setup();
+    // We used to call moodle_setlocale() and theme_setup() here, even though they
+    // would be called again from require_login or $PAGE->set_course. As an experiment
+    // I am going to try removing those calls. With luck it will help us find and
+    // fix a few bugs where scripts do not initialise thigns properly, wihtout causing
+    // too much grief.
 
     if (!empty($CFG->guestloginbutton)) {
         if ($CFG->theme == 'standard' or $CFG->theme == 'standardwhite') {    // Temporary measure to help with XHTML validation

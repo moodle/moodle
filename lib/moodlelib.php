@@ -1865,37 +1865,6 @@ function dayofweek($day, $month, $year) {
 /// USER AUTHENTICATION AND LOGIN ////////////////////////////////////////
 
 /**
- * Setup all global $CFG course variables, set locale and also themes
- * This function can be used on pages that do not require login instead of require_login()
- *
- * @param mixed $courseorid id of the course or course object
- */
-function course_setup($courseorid=0) {
-    global $COURSE, $SITE, $DB;
-
-/// Redefine global $COURSE if needed
-    if (empty($courseorid)) {
-        // no change in global $COURSE - for backwards compatibiltiy
-        // if require_rogin() used after require_login($courseid);
-    } else if (is_object($courseorid)) {
-        $COURSE = clone($courseorid);
-    } else {
-        if ($courseorid == SITEID) {
-            $COURSE = clone($SITE);
-        } else {
-            if (!$COURSE = $DB->get_record('course', array('id'=>$courseorid))) {
-                print_error('invalidcourseid');
-            }
-        }
-    }
-
-/// set locale and themes
-    moodle_setlocale();
-    theme_setup();
-
-}
-
-/**
  * Returns full login url.
  *
  * @param bool $loginguest add login guest param
@@ -1945,10 +1914,22 @@ function get_login_url($loginguest=false) {
  *             in order to keep redirects working properly. MDL-14495
  */
 function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsurltome=true) {
-    global $CFG, $SESSION, $USER, $COURSE, $FULLME;
+    global $CFG, $SESSION, $USER, $COURSE, $FULLME, $PAGE, $DB;
 
 /// setup global $COURSE, themes, language and locale
-    course_setup($courseorid);
+    if (!empty($courseorid)) {
+        if (is_object($courseorid)) {
+            $course = $courseorid;
+        } else if ($courseorid == SITEID) {
+            $course = clone($SITE);
+        } else {
+            $course = $DB->get_record('course', array('id' => $courseorid));
+            if (!$course) {
+                throw new moodle_exception('invalidcourseid');
+            }
+        }
+        $PAGE->set_course($course);
+    }
 
 /// If the user is not even logged in yet then make sure they are
     if (!isloggedin()) {

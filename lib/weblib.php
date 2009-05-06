@@ -609,9 +609,9 @@ function close_window_button($name='closewindow', $return=false, $reloadopener =
  *      to reload the parent window before this one closes.
  */
 function close_window($delay = 0, $reloadopener = false) {
-    global $THEME;
+    global $THEME, $PAGE;
 
-    if (!defined('HEADER_PRINTED')) {
+    if (!$PAGE->headerprinted) {
         print_header(get_string('closewindow'));
     } else {
         print_container_end_all(false, $THEME->open_header_containers);
@@ -2134,12 +2134,14 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
                        $meta='', $cache=true, $button='&nbsp;', $menu='',
                        $usexml=false, $bodytags='', $return=false) {
 
-    global $USER, $CFG, $THEME, $SESSION, $ME, $SITE, $COURSE;
+    global $USER, $CFG, $THEME, $SESSION, $ME, $SITE, $COURSE, $PAGE;
 
     if (gettype($navigation) == 'string' && strlen($navigation) != 0 && $navigation != 'home') {
         debugging("print_header() was sent a string as 3rd ($navigation) parameter. "
                 . "This is deprecated in favour of an array built by build_navigation(). Please upgrade your code.", DEBUG_DEVELOPER);
     }
+
+    $PAGE->set_state(moodle_page::STATE_PRINTING_HEADER);
 
     $heading = format_string($heading); // Fix for MDL-8582
 
@@ -2152,14 +2154,6 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
             return;
         }
     }
-
-/// This makes sure that the header is never repeated twice on a page
-    if (defined('HEADER_PRINTED')) {
-        debugging('print_header() was called more than once - this should not happen.  Please check the code for this page closely. Note: print_error() and redirect() are now safe to call after print_header().');
-        return;
-    }
-    define('HEADER_PRINTED', 'true');
-
 
 /// Add the required stylesheets
     $stylesheetshtml = '';
@@ -2389,6 +2383,8 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     // Add in any extra JavaScript libraries that occurred during the header
     $output .= require_js('', 2);
     $output .= print_js_call('moodle_initialise_body', array(), true);
+
+    $PAGE->set_state(moodle_page::STATE_IN_BODY);
 
     if ($return) {
         return $output;
@@ -2741,12 +2737,14 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
  * @return mixed string or void
  */
 function print_footer($course=NULL, $usercourse=NULL, $return=false) {
-    global $USER, $CFG, $THEME, $COURSE, $SITE;
+    global $USER, $CFG, $THEME, $COURSE, $SITE, $PAGE;
 
     if (defined('ADMIN_EXT_HEADER_PRINTED') and !defined('ADMIN_EXT_FOOTER_PRINTED')) {
         admin_externalpage_print_footer();
         return;
     }
+
+    $PAGE->set_state(moodle_page::STATE_PRINTING_FOOTER);
 
 /// Course links or special footer
     if ($course) {
@@ -2845,6 +2843,8 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
     include($CFG->footer);
     $output = ob_get_contents();
     ob_end_clean();
+
+    $PAGE->set_state(moodle_page::STATE_DONE);
 
     if ($return) {
         return $output;
@@ -3000,35 +3000,35 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
     header('Expires: ' . gmdate("D, d M Y H:i:s", time() + $lifetime) . ' GMT');
     header('Cache-Control: max-age='. $lifetime);
     header('Pragma: ');
-    header('Content-type: text/css');  // Correct MIME type
+    header('Content-type: text/css'); // Correct MIME type
 
     $DEFAULT_SHEET_LIST = array('styles_layout', 'styles_fonts', 'styles_color');
 
     if (empty($themename)) {
-        $themename = current_theme();  // So we have something.  Normally not needed.
+        $themename = current_theme(); // So we have something.  Normally not needed.
     } else {
         $themename = clean_param($themename, PARAM_SAFEDIR);
     }
 
-    if (!empty($forceconfig)) {        // Page wants to use the config from this theme instead
+    theme_setup($themename);
+
+    if (!empty($forceconfig)) { // Page wants to use the config from this theme instead
         unset($THEME);
         include($CFG->themedir.'/'.$forceconfig.'/'.'config.php');
     }
 
 /// If this is the standard theme calling us, then find out what sheets we need
-
     if ($themename == 'standard') {
         if (!isset($THEME->standardsheets) or $THEME->standardsheets === true) { // Use all the sheets we have
             $THEME->sheets = $DEFAULT_SHEET_LIST;
-        } else if (empty($THEME->standardsheets)) {                              // We can stop right now!
+        } else if (empty($THEME->standardsheets)) { // We can stop right now!
             echo "/***** Nothing required from this stylesheet by main theme *****/\n\n";
             exit;
-        } else {                                                                 // Use the provided subset only
+        } else { // Use the provided subset only
             $THEME->sheets = $THEME->standardsheets;
         }
 
 /// If we are a parent theme, then check for parent definitions
-
     } else if (!empty($THEME->parent) && $themename == $THEME->parent) {
         if (!isset($THEME->parentsheets) or $THEME->parentsheets === true) {     // Use all the sheets we have
             $THEME->sheets = $DEFAULT_SHEET_LIST;
@@ -3041,7 +3041,6 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
     }
 
 /// Work out the last modified date for this theme
-
     foreach ($THEME->sheets as $sheet) {
         if (file_exists($CFG->themedir.'/'.$themename.'/'.$sheet.'.css')) {
             $sheetmodified = filemtime($CFG->themedir.'/'.$themename.'/'.$sheet.'.css');
@@ -3050,7 +3049,6 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
             }
         }
     }
-
 
 /// Get a list of all the files we want to include
     $files = array();
@@ -3159,10 +3157,10 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
 function theme_setup($theme = '', $params=NULL) {
 /// Sets up global variables related to themes
 
-    global $CFG, $THEME, $SESSION, $USER, $HTTPSPAGEREQUIRED;
+    global $CFG, $THEME, $SESSION, $USER, $HTTPSPAGEREQUIRED, $PAGE;
 
 /// Do not mess with THEME if header already printed - this would break all the extra stuff in global $THEME from print_header()!!
-    if (defined('HEADER_PRINTED')) {
+    if ($PAGE->headerprinted) {
         return;
     }
 
@@ -3192,7 +3190,6 @@ function theme_setup($theme = '', $params=NULL) {
     if (!empty($THEME->langsheets)) {
         $params[] = 'lang='.current_language();
     }
-
 
 /// Convert params to string
     if ($params) {
@@ -5597,7 +5594,7 @@ function print_error($errorcode, $module='error', $link='', $a=NULL) {
  * Internal function - do not use directly!!
  */
 function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debuginfo=null, $showerrordebugwarning=false) {
-    global $CFG, $SESSION, $THEME, $DB;
+    global $CFG, $SESSION, $THEME, $DB, $PAGE;
 
     if ($DB) {
         //if you enable db debugging and exception is thrown, the print footer prints a lot of rubbish
@@ -5639,7 +5636,7 @@ function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debugi
         $errordocroot = 'http://docs.moodle.org';
     }
 
-    if (! defined('HEADER_PRINTED')) {
+    if (!$PAGE->headerprinted) {
         //header not yet printed
         @header('HTTP/1.0 404 Not Found');
         print_header(get_string('error'));
@@ -5949,7 +5946,7 @@ function editorshortcutshelpbutton() {
  * @todo Finish documenting this function
  */
 function notice ($message, $link='', $course=NULL) {
-    global $CFG, $SITE, $THEME, $COURSE;
+    global $CFG, $SITE, $THEME, $COURSE, $PAGE;
 
     $message = clean_text($message);   // In case nasties are in here
 
@@ -5959,7 +5956,7 @@ function notice ($message, $link='', $course=NULL) {
         die;
     }
 
-    if (! defined('HEADER_PRINTED')) {
+    if (!$PAGE->headerprinted) {
         //header not yet printed
         print_header(get_string('notice'));
     } else {
@@ -6015,7 +6012,7 @@ function notice_yesno ($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno
  *      echo "<script type='text/javascript'>alert('Redirect $url');</script>";
  */
 function redirect($url, $message='', $delay=-1) {
-    global $CFG, $THEME, $SESSION;
+    global $CFG, $THEME, $SESSION, $PAGE;
 
     if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
        $url = $SESSION->sid_process_url($url);
@@ -6045,7 +6042,7 @@ function redirect($url, $message='', $delay=-1) {
     }
 
 /// when no message and header printed yet, try to redirect
-    if (empty($message) and !defined('HEADER_PRINTED')) {
+    if (empty($message) and !$PAGE->headerprinted) {
 
         // Technically, HTTP/1.1 requires Location: header to contain
         // the absolute path. (In practice browsers accept relative
@@ -6084,7 +6081,7 @@ function redirect($url, $message='', $delay=-1) {
     if ($delay == -1) {
         $delay = 3;  // if no delay specified wait 3 seconds
     }
-    if (! defined('HEADER_PRINTED')) {
+    if (!$PAGE->headerprinted) {
         // this type of redirect might not be working in some browsers - such as lynx :-(
         print_header('', '', '', '', $errorprinted ? '' : ('<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />'));
         $delay += 3; // double redirect prevention, it was sometimes breaking upgrades before 1.7

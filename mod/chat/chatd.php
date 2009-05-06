@@ -225,13 +225,12 @@ class ChatDaemon {
     }
 
     function get_user_window($sessionid) {
-
-        global $CFG;
+        global $CFG, $PAGE;
 
         static $str;
 
         $info = &$this->sets_info[$sessionid];
-        course_setup($info['course'], $info['user']);
+        $PAGE->set_course($info['course']);
 
         $timenow = time();
 
@@ -702,6 +701,8 @@ EOD;
     }
 
     function message_broadcast($message, $sender) {
+        global $PAGE;
+
         if(empty($this->conn_sets)) {
             return true;
         }
@@ -718,7 +719,7 @@ EOD;
             {
 
                 // Simply give them the message
-                course_setup($info['course'], $info['user']);
+                $PAGE->set_course($info['course']);
                 $output = chat_format_message_manually($message, $info['courseid'], $sender, $info['user']);
                 $this->trace('Delivering message "'.$output->text.'" to '.$this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL]);
 

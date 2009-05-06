@@ -13,7 +13,7 @@ if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error('invalidcourseid');
 }
 
-course_setup($course); // we should not require login here
+$PAGE->set_course($course); // we should not require login here
 
 if ($id != SITEID and !empty($CFG->allowcoursethemes) and !empty($course->theme) and !empty($THEME->chameleonteachereditenabled)) {
     if (!has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $id))) {

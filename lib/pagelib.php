@@ -33,6 +33,118 @@
  */
 
 /**
+ * $PAGE is a central store of information about the current page we are
+ * generating in response to the user's request. It does not do very much itself
+ * except keep track of information, however, it serves as the access point to
+ * some more significant components like $PAGE->theme, $PAGE->requires,
+ * $PAGE->blocks, etc.
+ */
+class moodle_page {
+    /**#@+ Tracks the where we are in the generation of the page. */
+    const STATE_BEFORE_HEADER = 0;
+    const STATE_PRINTING_HEADER = 1;
+    const STATE_IN_BODY = 2;
+    const STATE_PRINTING_FOOTER = 3;
+    const STATE_DONE = 4;
+    /**#@-*/
+
+    protected $_state = self::STATE_BEFORE_HEADER;
+
+    protected $_course = null;
+
+    /**
+     * @return integer one of the STATE_... constants. You should not normally need
+     * to use this in your code. It is indended for internal use by this class
+     * and its friends like print_header, to check that everything is working as
+     * expected. Also accessible as $PAGE->state.
+     */
+    public function get_state() {
+        return $this->_state;
+    }
+
+    /**
+     * @return boolean has the header already been printed? Also accessible as
+     * $PAGE->headerprinted.
+     */
+    public function get_headerprinted() {
+        return $this->_state >= self::STATE_IN_BODY;
+    }
+
+    /**
+     * @return object the current course that we are inside - a row from the
+     * course table. (Also available as $COURSE global.) If we are not inside
+     * an actual course, this will be the site course. You can also access this
+     * as $PAGE->course.
+     */
+    public function get_course() {
+        global $SITE;
+        if (is_null($this->_course)) {
+            return $SITE;
+        }
+        return $this->_course;
+    }
+
+    /**
+     * Set the state. The state must be one of that STATE_... constants, and
+     * the state is only allowed to advance one step at a time.
+     * @param integer $state the new state.
+     */
+    public function set_state($state) {
+        if ($state != $this->_state + 1 || $state > self::STATE_DONE) {
+            throw new coding_exception('Invalid state passed to moodle_page::set_state. We are in state ' .
+                    $this->_state . ' and state ' . $state . ' was requestsed.');
+        }
+
+        if ($state == self::STATE_PRINTING_HEADER && !$this->_course) {
+            global $SITE;
+            $this->set_course($SITE);
+        }
+
+        $this->_state = $state;
+    }
+
+    /**
+     * Set the current course. This sets both $PAGE->course and $COURSE. It also
+     * sets the right theme and locale.
+     *
+     * Normally you don't need to call this function yourself, require_login will
+     * call it for you if you pass a $course to it. You can use this function
+     * on pages that do need to call require_login().
+     *
+     * @param object the course to set as the global course.
+     */
+    public function set_course($course) {
+        global $COURSE, $SITE;
+
+        if (empty($course->id)) {
+            throw new coding_exception('$course passed to moodle_page::set_course does not look like a proper course object.');
+        }
+
+        if ($this->_state > self::STATE_BEFORE_HEADER) {
+            throw new coding_exception('Cannot call moodle_page::set_course after output has been started.');
+        }
+
+        $this->_course = clone($course);
+        $COURSE = $this->_course;
+
+        moodle_setlocale();
+        theme_setup();
+    }
+
+    /**
+     * PHP overloading magic to make the $PAGE->course syntax work.
+     */
+    public function __get($field) {
+        $getmethod = 'get_' . $field;
+        if (method_exists($this, $getmethod)) {
+            return $this->$getmethod();
+        } else {
+            throw new coding_exception('Unknown field ' . $field . ' of $PAGE.');
+        }
+    }
+}
+
+/**
  * @deprecated since Moodle 2.0
  * Load any page_base subclasses from the pagelib.php library in a particular folder.
  * @param $path the folder path
@@ -58,7 +170,7 @@ function page_create_instance($instance) {
  * its numeric ID. Returns a fully constructed page_base subclass you can work with.
  */
 function page_create_object($type, $id = NULL) {
-    global $CFG;
+    global $CFG, $PAGE;
 
     $data = new stdClass;
     $data->pagetype = $type;
@@ -75,6 +187,7 @@ function page_create_object($type, $id = NULL) {
     }
 
     $object->init_quick($data);
+    $object->set_course($PAGE->course);
     return $object;
 }
 
@@ -115,7 +228,7 @@ function page_map_class($type, $classname = NULL) {
  * @package pages
  * @todo This parent class is very messy still. Please for the moment ignore it and move on to the derived class page_course to see the comments there.
  */
-class page_base {
+class page_base extends moodle_page {
     /**
      * The string identifier for the type of page being described.
      * @var string $type

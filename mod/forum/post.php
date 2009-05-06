@@ -134,8 +134,8 @@
             print_error('invalidcoursemodule');
         }
 
-        // call course_setup to use forced language, MDL-6926
-        course_setup($course->id);
+        // Ensure lang, theme, etc. is set up properly. MDL-6926
+        $PAGE->set_course($course);
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         $modcontext    = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -441,7 +441,7 @@
         print_error('invalidcoursemodule');
     }
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-    require_login($course->id, false, $cm);
+    require_login($course, false, $cm);
 
     if (isguestuser()) {
         // just in case
@@ -452,9 +452,6 @@
         $forum->maxattachments = 3;
     }
 
-    // setup course variable to force form language
-    // fix for MDL-6926
-    course_setup($course->id);
     require_once('post_form.php');
 
     $mform_post = new mod_forum_post_form('post.php', array('course'=>$course, 'cm'=>$cm, 'coursecontext'=>$coursecontext, 'modcontext'=>$modcontext, 'forum'=>$forum, 'post'=>$post));
