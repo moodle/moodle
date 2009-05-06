@@ -573,6 +573,7 @@ class moodle_page {
      * state. This is our last change to initialise things.
      */
     protected function starting_output() {
+        global $CFG;
         if (!$this->_course) {
             global $SITE;
             $this->set_course($SITE);
@@ -580,7 +581,9 @@ class moodle_page {
 
         $this->initialise_standard_body_classes();
 
-        $this->blocks->load_blocks();
+        if ($CFG->version >= 2009050619) {
+            $this->blocks->load_blocks();
+        }
     }
 
     /**
