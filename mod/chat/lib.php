@@ -1,7 +1,6 @@
 <?php  // $Id$
 
 /// Library of functions and constants for module chat
-require_once($CFG->libdir.'/pagelib.php');
 require_once($CFG->libdir.'/portfoliolib.php');
 
 $CFG->chat_ajax_debug  = false;
@@ -149,13 +148,6 @@ function chat_delete_instance($id) {
     }
     if (! $DB->delete_records('chat_users', array('chatid'=>$chat->id))) {
         $result = false;
-    }
-
-    $pagetypes = page_import_types('mod/chat/');
-    foreach($pagetypes as $pagetype) {
-        if(!blocks_delete_all_on_page($pagetype, $chat->id)) {
-            $result = false;
-        }
     }
 
     if (! $DB->delete_records('event', array('modulename'=>'chat', 'instance'=>$chat->id))) {

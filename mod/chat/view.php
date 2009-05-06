@@ -2,9 +2,8 @@
 
 /// This page prints a particular instance of chat
 
-    require_once('../../config.php');
-    require_once('lib.php');
-    require_once('pagelib.php');
+    require_once(dirname(__FILE__) . '/../../config.php');
+    require_once($CFG->dirroot . '/mod/chat/lib.php');
 
     $id   = optional_param('id', 0, PARAM_INT);
     $c    = optional_param('c', 0, PARAM_INT);
@@ -61,14 +60,11 @@
     add_to_log($course->id, 'chat', 'view', "view.php?id=$cm->id", $chat->id, $cm->id);
 
 // Initialize $PAGE, compute blocks
-
-    $PAGE = page_create_instance($chat->id);
     $PAGE->set_url('mod/chat/view.php', array('id' => $cm->id));
     $pageblocks = blocks_setup($PAGE);
     $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
 
 /// Print the page header
-
     $strenterchat    = get_string('enterchat', 'chat');
     $stridle         = get_string('idle', 'chat');
     $strcurrentusers = get_string('currentusers', 'chat');
@@ -78,7 +74,19 @@
         $USER->editing = $edit;
     }
 
-    $PAGE->print_header($course->shortname.': %fullname%');
+    $title = $course->shortname . ': ' . format_string($chat->name);
+
+    $buttons = '<table><tr><td>'.update_module_button($cm->id, $course->id, get_string('modulename', 'chat')).'</td>';
+    if ($PAGE->user_allowed_editing() && !empty($CFG->showblocksonmodpages)) {
+        $buttons .= '<td><form '.$CFG->frametarget.' method="get" action="view.php"><div>'.
+                '<input type="hidden" name="id" value="'.$cm->id.'" />'.
+                '<input type="hidden" name="edit" value="'.($PAGE->user_is_editing()?'off':'on').'" />'.
+                '<input type="submit" value="'.get_string($PAGE->user_is_editing()?'blockseditoff':'blocksediton').'" /></div></form></td>';
+    }
+    $buttons .= '</tr></table>';
+
+    $navigation = build_navigation(array(), $cm);
+    print_header($title, $course->fullname, $navigation, '', '', true, $buttons, navmenu($course, $cm));
 
     echo '<table id="layout-table"><tr>';
 

@@ -902,6 +902,7 @@ function page_import_types($path) {
  * @return the global $PAGE object.
  */
 function page_create_instance($instance) {
+    global $PAGE;
     return page_create_object($PAGE->pagetype, $instance);
 }
 
