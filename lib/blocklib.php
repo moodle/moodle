@@ -55,6 +55,7 @@ require_once($CFG->libdir.'/pagelib.php');
  * responsibility to ensure that those fields do not subsequently change.
  *
  * The implements ArrayAccess is a horrible backwards_compatibility thing.
+ * TODO explain!
  */
 class block_manager implements ArrayAccess {
 
@@ -602,8 +603,8 @@ function blocks_remove_inappropriate($page) {
         return;
     }
 
-    foreach($blockmanager as $position) {
-        foreach($position as $instance) {
+    foreach($blockmanager as $region) {
+        foreach($region as $instance) {
             $block = blocks_get_record($instance->blockid);
             if(!blocks_name_allowed_in_format($block->name, $pageformat)) {
                blocks_delete_instance($instance);
@@ -670,18 +671,18 @@ function blocks_delete_instance($instance,$pinned=false) {
 // Accepts an array of block instances and checks to see if any of them have content to display
 // (causing them to calculate their content in the process). Returns true or false. Parameter passed
 // by reference for speed; the array is actually not modified.
-function blocks_have_content(&$blockmanager, $position) {
+function blocks_have_content(&$blockmanager, $region) {
     // TODO deprecate
-    $content = $blockmanager->get_content_for_region($position);
+    $content = $blockmanager->get_content_for_region($region);
     return !empty($content);
 }
 
 // This function prints one group of blocks in a page
-function blocks_print_group($page, $blockmanager, $position) {
+function blocks_print_group($page, $blockmanager, $region) {
     global $COURSE, $CFG, $USER;
 
     $isediting = $page->user_is_editing();
-    $groupblocks = $blockmanager->get_blocks_for_region($position);
+    $groupblocks = $blockmanager->get_blocks_for_region($region);
 
     foreach($groupblocks as $instance) {
         if (($isediting && empty($instance->pinned))) {
@@ -708,7 +709,7 @@ function blocks_print_group($page, $blockmanager, $position) {
         } else {
             global $COURSE;
             if(!empty($COURSE->javascriptportal)) {
-                 $COURSE->javascriptportal->currentblocksection = $position;
+                 $COURSE->javascriptportal->currentblocksection = $region;
             }
             $instance->_print_block();
         }
@@ -718,7 +719,7 @@ function blocks_print_group($page, $blockmanager, $position) {
         }
     } // End foreach
 
-    if ($page->blocks->get_default_region() == $position &&
+    if ($page->blocks->get_default_region() == $region &&
             $page->user_is_editing() && $page->user_can_edit_blocks()) {
         blocks_print_adminblock($page, $blockmanager);
     }
@@ -1185,11 +1186,11 @@ function blocks_get_pinned($page) {
 
     $blocks = $DB->get_records_select('block_pinned_old', $select, $params, 'position, weight');
 
-    $positions = $page->blocks->get_regions();
+    $regions = $page->blocks->get_regions();
     $arr = array();
 
-    foreach($positions as $key => $position) {
-        $arr[$position] = array();
+    foreach($regions as $key => $region) {
+        $arr[$region] = array();
     }
 
     if(empty($blocks)) {
@@ -1247,10 +1248,10 @@ function blocks_get_by_page($page) {
     $blocks = $DB->get_records_select('block_instance_old', "pageid = ? AND ? LIKE (" . $DB->sql_concat('pagetype', "'%'") . ")",
             array($page->get_id(), $page->pagetype), 'position, weight');
 
-    $positions = $page->blocks->get_regions();
+    $regions = $page->blocks->get_regions();
     $arr = array();
-    foreach($positions as $key => $position) {
-        $arr[$position] = array();
+    foreach($regions as $key => $region) {
+        $arr[$region] = array();
     }
 
     if(empty($blocks)) {
@@ -1347,7 +1348,7 @@ function blocks_repopulate_page($page) {
         $blocknames = $page->blocks_get_default();
     }
 
-    $positions = $page->blocks->get_regions();
+    $regions = $page->blocks->get_regions();
     $posblocks = explode(':', $blocknames);
 
     // Now one array holds the names of the positions, and the other one holds the blocks
@@ -1357,12 +1358,12 @@ function blocks_repopulate_page($page) {
     // Ready to start creating block instances, but first drop any existing ones
     blocks_delete_all_on_page($page->pagetype, $page->get_id());
 
-    // Here we slyly count $posblocks and NOT $positions. This can actually make a difference
+    // Here we slyly count $posblocks and NOT $regions. This can actually make a difference
     // if the textual representation has undefined slots in the end. So we only work with as many
     // positions were retrieved, not with all the page says it has available.
     $numpositions = count($posblocks);
     for($i = 0; $i < $numpositions; ++$i) {
-        $position = $positions[$i];
+        $region = $regions[$i];
         $blocknames = explode(',', $posblocks[$i]);
         $weight = 0;
         foreach($blocknames as $blockname) {
@@ -1370,7 +1371,7 @@ function blocks_repopulate_page($page) {
             $newinstance->blockid    = $idforname[$blockname];
             $newinstance->pageid     = $page->get_id();
             $newinstance->pagetype   = $page->pagetype;
-            $newinstance->position   = $position;
+            $newinstance->position   = $region;
             $newinstance->weight     = $weight;
             $newinstance->visible    = 1;
             $newinstance->configdata = '';
