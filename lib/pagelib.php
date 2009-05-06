@@ -88,6 +88,8 @@ class moodle_page {
 
     protected $_pagetype = null;
 
+    protected $_subpage = null;
+
     protected $_docspath = null;
 
     protected $_legacyclass = null;
@@ -222,6 +224,13 @@ class moodle_page {
             $this->initialise_default_pagetype();
         }
         return $this->_pagetype;
+    }
+
+    /**
+     * @return string|null The subpage identifier, if any.
+     */
+    public function get_subpage() {
+        return $this->_subpage;
     }
 
     /**
@@ -424,6 +433,16 @@ class moodle_page {
      */
     public function set_pagetype($pagetype) {
         $this->_pagetype = $pagetype;
+    }
+
+    /**
+     * If context->id and pagetype are not enough to uniquely identify this page,
+     * then you can set a subpage id as well. For example, the tags page sets
+     * @param string $subpage an arbitrary identifier that, along with context->id
+     *      and pagetype, uniquely identifies this page.
+     */
+    public function set_subpage($subpage) {
+        $this->_subpage = $subpage;
     }
 
     /**

@@ -314,6 +314,13 @@ class moodle_page_test extends UnitTestCase {
         // Validate
         $this->assertEqual('a-page-type', $this->testpage->pagetype);
     }
+
+    public function test_set_subpage() {
+        // Exercise SUT
+        $this->testpage->set_subpage('somestring');
+        // Validate
+        $this->assertEqual('somestring', $this->testpage->subpage);
+    }
 }
 
 /**
