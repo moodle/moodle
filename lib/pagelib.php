@@ -24,48 +24,30 @@
 ///////////////////////////////////////////////////////////////////////////
 
 /**
- * This file contains the moodle_page class. s, page_base, 
- * as well as the page_course subclass.
- * A page is defined by its page type (ie. course, blog, activity) and its page id
- * (courseid, blogid, activity id, etc).
+ * This file contains the moodle_page class. There is normally a single instance
+ * of this class in the $PAGE global variable. This class is a central reporitory
+ * of information about the page we are building up to send back to the user.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package pages
  */
 
+/**
+ * @deprecated since Moodle 2.0
+ * Load any page_base subclasses from the pagelib.php library in a particular folder.
+ * @param $path the folder path
+ * @return array an array of page types.
+ */
 function page_import_types($path) {
     global $CFG;
 
-    static $types = array();
-
-    if(substr($path, -1) != '/') {
-        $path .= '/';
-    }
-
-    $path = clean_param($path, PARAM_PATH);
-
-    if(isset($types[$path])) {
-        return $types[$path];
-    }
-
-    $file = $CFG->dirroot.'/'.$path.'pagelib.php';
-
-    if(is_file($file)) {
-        require($file);
-        if(!isset($DEFINEDPAGES)) {
-            print_error('nopageclass', 'debug', '', $page);
-        }
-        return $types[$path] = $DEFINEDPAGES;
-    }
-
-    return false;
+    debugging('Call to deprecated function page_import_types.', DEBUG_DEVELOPER);
 }
 
 /**
  * Factory function page_create_object(). Called with a numeric ID for a page, it autodetects
  * the page type, constructs the correct object and returns it.
  */
-
 function page_create_instance($instance) {
     page_id_and_class($id, $class);
     return page_create_object($id, $instance);
@@ -75,7 +57,6 @@ function page_create_instance($instance) {
  * Factory function page_create_object(). Called with a pagetype identifier and possibly with
  * its numeric ID. Returns a fully constructed page_base subclass you can work with.
  */
-
 function page_create_object($type, $id = NULL) {
     global $CFG;
 
@@ -101,12 +82,11 @@ function page_create_object($type, $id = NULL) {
  * Function page_map_class() is the way for your code to define its own page subclasses and let Moodle recognize them.
  * Use it to associate the textual identifier of your Page with the actual class name that has to be instantiated.
  */
-
 function page_map_class($type, $classname = NULL) {
     global $CFG;
 
     static $mappings = NULL;
-    
+
     if ($mappings === NULL) {
         $mappings = array(
             PAGE_COURSE_VIEW => 'page_course'
@@ -135,7 +115,6 @@ function page_map_class($type, $classname = NULL) {
  * @package pages
  * @todo This parent class is very messy still. Please for the moment ignore it and move on to the derived class page_course to see the comments there.
  */
-
 class page_base {
     /**
      * The string identifier for the type of page being described.
@@ -259,7 +238,7 @@ class page_base {
         if(empty($params)) {
             return $path;
         }
-        
+
         $first = true;
 
         foreach($params as $var => $value) {
@@ -323,7 +302,6 @@ class page_base {
  * @author Jon Papaioannou
  * @package pages
  */
-
 class page_course extends page_base {
 
     // Any data we might need to store specifically about ourself should be declared here.
@@ -437,9 +415,9 @@ class page_course extends page_base {
         foreach($replacements as $search => $replace) {
             $title = str_replace($search, $replace, $title);
         }
-    
+
         $navlinks = array();
-        
+
         if(!empty($morenavlinks)) {
             $navlinks = array_merge($navlinks, $morenavlinks);
         }
@@ -535,7 +513,7 @@ class page_course extends page_base {
     // colons (:) to delimit between block positions in the page. See blocks_get_positions() for additional info.
     function blocks_get_default() {
         global $CFG;
-        
+
         $this->init_full();
 
         if($this->id == SITEID) {
@@ -571,7 +549,7 @@ class page_course extends page_base {
                 }
             }
         }
-        
+
         return $blocknames;
     }
 
@@ -598,7 +576,6 @@ class page_course extends page_base {
  * @author Jon Papaioannou
  * @package pages
  */
-
 class page_generic_activity extends page_base {
     var $activityname   = NULL;
     var $courserecord   = NULL;
@@ -632,7 +609,7 @@ class page_generic_activity extends page_base {
         $this->init_full();
         // Yu: I think this is wrong, should be checking manageactivities instead
         //return has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_COURSE, $this->modulerecord->course));
-        return has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_MODULE, $this->modulerecord->id));         
+        return has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_MODULE, $this->modulerecord->id));
     }
 
     function user_is_editing() {
@@ -657,10 +634,10 @@ class page_generic_activity extends page_base {
     function blocks_default_position() {
         return BLOCK_POS_LEFT;
     }
-    
+
     function print_header($title, $morenavlinks = NULL, $bodytags = '', $meta = '') {
         global $USER, $CFG;
-    
+
         $this->init_full();
         $replacements = array(
             '%fullname%' => format_string($this->activityrecord->name)
@@ -668,7 +645,7 @@ class page_generic_activity extends page_base {
         foreach ($replacements as $search => $replace) {
             $title = str_replace($search, $replace, $title);
         }
-    
+
         if (empty($morenavlinks) && $this->user_allowed_editing()) {
             $buttons = '<table><tr><td>'.update_module_button($this->modulerecord->id, $this->courserecord->id, get_string('modulename', $this->activityname)).'</td>';
             if (!empty($CFG->showblocksonmodpages)) {
@@ -681,14 +658,13 @@ class page_generic_activity extends page_base {
         } else {
             $buttons = '&nbsp;';
         }
-        
+
         if (empty($morenavlinks)) {
             $morenavlinks = array();
         }
         $navigation = build_navigation($morenavlinks, $this->modulerecord);
         print_header($title, $this->courserecord->fullname, $navigation, '', $meta, true, $buttons, navmenu($this->courserecord, $this->modulerecord), false, $bodytags);
     }
-    
 }
 
 ?>
