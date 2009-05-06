@@ -3908,7 +3908,7 @@ function admin_externalpage_setup($section, $extrabutton = '',
     page_map_class(PAGE_ADMIN, 'page_admin');
     $PAGE = page_create_object(PAGE_ADMIN, 0); // there must be any constant id number
     $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
-    $PAGE->set_extra_button($extrabutton);
+    // $PAGE->set_extra_button($extrabutton); TODO
 
     $adminroot = admin_get_root(false, false); // settings not required for external pages
     $extpage = $adminroot->locate($section);
@@ -3916,6 +3916,7 @@ function admin_externalpage_setup($section, $extrabutton = '',
     if (!$actualurl) {
         $actualurl = $extpage->url;
     }
+    $PAGE->set_pagetype(null);
     $PAGE->set_url(str_replace($CFG->wwwroot . '/', '', $actualurl),
             array_merge($extraurlparams, array('section' => $section)));
 

@@ -54,6 +54,23 @@ class moodle_page {
 
     protected $_course = null;
 
+    /**
+     * If this page belongs to a module, this is the row from the course_modules
+     * table, as fetched by get_coursemodule_from_id or get_coursemodule_from_instance,
+     * so the extra modname and name fields are present.
+     */
+    protected $_cm = null;
+
+    /**
+     * If $_cm is not null, then this will hold the corresponding row from the
+     * modname table. For example, if $_cm->modname is 'quiz', this will be a
+     * row from the quiz table.
+     */
+    protected $_module = null;
+
+    /**
+     * The context that this page belongs to.
+     */
     protected $_context = null;
 
     /**
@@ -125,6 +142,42 @@ class moodle_page {
             return $SITE;
         }
         return $this->_course;
+    }
+
+    /**
+     * @return object the course_module that this page belongs to. Will be null
+     * if this page is not within a module. This is a full cm object, as loaded
+     * by get_coursemodule_from_id or get_coursemodule_from_instance,
+     * so the extra modname and name fields are present.
+     */
+    public function get_cm() {
+        return $this->_cm;
+    }
+
+    /**
+     * @return object the course_module that this page belongs to. Will be null
+     * if this page is not within a module. This is a full cm object, as loaded
+     * by get_coursemodule_from_id or get_coursemodule_from_instance,
+     * so the extra modname and name fields are present.
+     */
+    public function get_activityrecord() {
+        if (is_null($this->_module) && !is_null($this->_cm)) {
+            $this->load_activity_record();
+        }
+        return $this->_module;
+    }
+
+    /**
+     * @return object the course_module that this page belongs to. Will be null
+     * if this page is not within a module. This is a full cm object, as loaded
+     * by get_coursemodule_from_id or get_coursemodule_from_instance,
+     * so the extra modname and name fields are present.
+     */
+    public function get_activityname() {
+        if (is_null($this->_cm)) {
+            return null;
+        }
+        return $this->_cm->modname;
     }
 
     /**
@@ -318,6 +371,50 @@ class moodle_page {
     }
 
     /**
+     * The course module that this page belongs to (if it does belong to one).
+     *
+     * @param objcet $cm a full cm objcet obtained from get_coursemodule_from_id or get_coursemodule_from_instance.
+     */
+    public function set_cm($cm, $course = null, $module = null) {
+        if (!isset($cm->name) || !isset($cm->modname)) {
+            throw new coding_exception('The $cm you set on $PAGE must have been obtained with get_coursemodule_from_id or get_coursemodule_from_instance. That is, the ->name and -> modname fields must be present and correct.');
+        }
+        $this->_cm = $cm;
+        if (!$this->_context) {
+            $this->set_context(get_context_instance(CONTEXT_MODULE, $cm->id));
+        }
+        if (!$this->_course || $this->_course->id != $cm->course) {
+            if (!$course) {
+                global $DB;
+                $course = $DB->get_record('course', array('id' => $cm->course));
+            }
+            if ($course->id != $cm->course) {
+                throw new coding_exception('The course you passed to $PAGE->set_cm does not seem to correspond to the $cm.');
+            }
+            $this->set_course($course);
+        }
+        if ($module) {
+            $this->set_activity_record($module);
+        }
+    }
+
+    /**
+     * @param $module a row from the main database table for the module that this
+     * page belongs to. For example, if ->cm is a forum, then you can pass the
+     * corresponding row from the forum table here if you have it (saves a database
+     * query sometimes).
+     */
+    public function set_activity_record($module) {
+        if (is_null($this->_cm)) {
+            throw new coding_exception('You cannot call $PAGE->set_activity_record until after $PAGE->cm has been set.');
+        }
+        if ($module->id != $this->_cm->instance || $module->course != $this->_course->id) {
+            throw new coding_exception('The activity record your are trying to set does not seem to correspond to the cm that has been set.');
+        }
+        $this->_module = $module;
+    }
+
+    /**
      * @param string $pagetype e.g. 'my-index' or 'mod-quiz-attempt'. Normally
      * you do not need to set this manually, it is automatically created from the
      * script name. However, on some pages this is overridden. For example, the
@@ -395,6 +492,9 @@ class moodle_page {
         $this->_url = new moodle_url($CFG->wwwroot . '/' . $url, $params);
         if (is_null($this->_pagetype)) {
             $this->initialise_default_pagetype($url);
+        }
+        if (!is_null($this->_legacypageobject)) {
+            $this->_legacypageobject->set_url($url, $params);
         }
     }
 
@@ -512,6 +612,14 @@ class moodle_page {
         if (!empty($CFG->blocksdrag)) {
             $this->add_body_class('drag');
         }
+    }
+
+    protected function load_activity_record() {
+        global $DB;
+        if (is_null($this->_cm)) {
+            return;
+        }
+        $this->_module = $DB->get_record($this->_cm->modname, array('id' => $this->_cm->instance));
     }
 
     protected function ensure_category_loaded() {
@@ -707,6 +815,14 @@ class moodle_page {
         }
         return 0;
     }
+
+    /**
+     * @deprecated since Moodle 2.0 - user $PAGE->cm instead.
+     * @return $this->cm;
+     */
+    function get_modulerecord() {
+        return $this->cm;
+    }
 }
 
 /** Stub implementation of the blocks_manager, to stop things from breaking too badly. */
@@ -748,12 +864,12 @@ function page_create_instance($instance) {
  * If you need custom behaviour, you should just set properties of that object.
  */
 function page_create_object($type, $id = NULL) {
-    global $CFG, $PAGE, $SITE;
+    global $CFG, $PAGE, $SITE, $ME;
     debugging('Call to deprecated function page_create_object.', DEBUG_DEVELOPER);
 
     $data = new stdClass;
     $data->pagetype = $type;
-    $data->pageid   = $id;
+    $data->pageid = $id;
 
     $classname = page_map_class($type);
     $legacypage = new $classname;
@@ -776,7 +892,9 @@ function page_create_object($type, $id = NULL) {
         }
     }
     $legacypage->set_pagetype($type);
-    $legacypage->set_url(str_replace($CFG->wwwroot . '/', '', $legacypage->url_get_full()));
+
+    $legacypage->set_url($ME);
+    $PAGE->set_url(str_replace($CFG->wwwroot . '/', '', $legacypage->url_get_full()));
 
     $PAGE->set_pagetype($type);
     $PAGE->set_legacy_page_object($legacypage);
@@ -818,35 +936,16 @@ function page_map_class($type, $classname = NULL) {
  */
 class page_base extends moodle_page {
     /**
-     * The string identifier for the type of page being described.
-     * @var string $type
-     */
-    var $type           = NULL;
-
-    /**
      * The numeric identifier of the page being described.
      * @var int $id
      */
     var $id             = NULL;
 
-    /**
-     * Class bool to determine if the instance's full initialization has been completed.
-     * @var boolean $full_init_done
-     */
-    var $full_init_done = false;
-
 /// Class Functions
 
     // HTML OUTPUT SECTION
 
-    // We have absolutely no idea what derived pages are all about
-    function print_header($title, $morenavlinks=NULL) {
-        trigger_error('Page class does not implement method <strong>print_header()</strong>', E_USER_WARNING);
-        return;
-    }
-
     // SELF-REPORTING SECTION
-
 
     // Simple stuff, do not override this.
     function get_id() {
@@ -855,12 +954,10 @@ class page_base extends moodle_page {
 
     // Initialize the data members of the parent class
     function init_quick($data) {
-        $this->type = $data->pagetype;
         $this->id   = $data->pageid;
     }
 
     function init_full() {
-        $this->full_init_done = true;
     }
 }
 
@@ -871,39 +968,6 @@ class page_base extends moodle_page {
  * @package pages
  */
 class page_course extends page_base {
-    // Do any validation of the officially recognized bits of the data and forward to parent.
-    // Do NOT load up "expensive" resouces (e.g. SQL data) here!
-    function init_quick($data) {
-        if(empty($data->pageid) && !defined('ADMIN_STICKYBLOCKS')) {
-            print_error('cannotinitpage', 'debug', '', (object)array('name'=>'course', 'id'=>'?'));
-        }
-        parent::init_quick($data);
-    }
-
-    // Here you should load up all heavy-duty data for your page. Basically everything that
-    // does not NEED to be loaded for the class to make basic decisions should NOT be loaded
-    // in init_quick() and instead deferred here. Of course this function had better recognize
-    // $this->full_init_done to prevent wasteful multiple-time data retrieval.
-    function init_full() {
-        global $COURSE, $DB;
-
-        if($this->full_init_done) {
-            return;
-        }
-        if (empty($this->id)) {
-            $this->id = 0; // avoid db errors
-        }
-
-        $this->context = get_context_instance(CONTEXT_COURSE, $this->id);
-
-        // Preload - ensures that the context cache is populated
-        // in one DB query...
-        $this->childcontexts = get_child_contexts($this->context);
-
-        // Mark we're done
-        $this->full_init_done = true;
-    }
-
     // HTML OUTPUT SECTION
 
     // This function prints out the common part of the page's header.
@@ -999,29 +1063,6 @@ class page_course extends page_base {
  * @package pages
  */
 class page_generic_activity extends page_base {
-    var $activityname = NULL;
-    var $modulerecord = NULL;
-    var $activityrecord = NULL;
-
-    function init_full() {
-        global $DB;
-
-        if($this->full_init_done) {
-            return;
-        }
-        if(empty($this->activityname)) {
-            print_error('noactivityname', 'debug');
-        }
-        if (!$this->modulerecord = get_coursemodule_from_instance($this->activityname, $this->id)) {
-            print_error('cannotinitpager', 'debug', '', (object)array('name'=>$this->activityname, 'id'=>$this->id));
-        }
-        $this->activityrecord = $DB->get_record($this->activityname, array('id'=>$this->id));
-        if(empty($this->activityrecord)) {
-            print_error('cannotinitpager', 'debug', '', (object)array('name'=>$this->activityname, 'id'=>$this->id));
-        }
-        $this->full_init_done = true;
-    }
-
     function print_header($title, $morenavlinks = NULL, $bodytags = '', $meta = '') {
         global $USER, $CFG;
 

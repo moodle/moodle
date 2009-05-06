@@ -457,6 +457,207 @@ class moodle_page_categories_test extends UnitTestCaseUsingDatabase {
 }
 
 /**
+ * Test functions that rely on the context table.
+ */
+class moodle_page_cm_test extends UnitTestCaseUsingDatabase {
+    protected $testpage;
+    protected $originalcourse;
+
+    public function setUp() {
+        global $COURSE, $SITE;
+        parent::setUp();
+        $this->originalcourse = $COURSE;
+        $this->testpage = new moodle_page();
+        $this->create_test_tables(array('course', 'context'), 'lib');
+        $this->create_test_table('forum', 'mod/forum');
+        $this->switch_to_test_db();
+
+        $context = new stdClass;
+        $context->contextlevel = CONTEXT_COURSE;
+        $context->instanceid = $SITE->id;
+        $context->path = 'not initialised';
+        $context->depth = '-1';
+        $this->testdb->insert_record('context', $context);
+    }
+
+    public function tearDown() {
+        global $COURSE;
+        $this->testpage = NULL;
+        $COURSE = $this->originalcourse;
+        parent::tearDown();
+    }
+
+    /** Creates an object with all the fields you would expect a $course object to have. */
+    protected function create_a_forum_with_context() {
+        $course = new stdClass;
+        $course->category = 2;
+        $course->fullname = 'Anonymous test course';
+        $course->shortname = 'ANON';
+        $course->summary = '';
+        $course->id = $this->testdb->insert_record('course', $course);
+
+        $forum = new stdClass;
+        $forum->course = $course->id;
+        $forum->name = 'Anonymouse test forum';
+        $forum->intro = '';
+        $forum->id = $this->testdb->insert_record('forum', $forum);
+
+        $cm = new stdClass;
+        $cm->id = -1;
+        $cm->course = $course->id;
+        $cm->instance = $forum->id;
+        $cm->modname = 'forum';
+        $cm->name = $forum->name;
+
+        $context = new stdClass;
+        $context->contextlevel = CONTEXT_MODULE;
+        $context->instanceid = $cm->id;
+        $context->path = 'not initialised';
+        $context->depth = '-1';
+        $this->testdb->insert_record('context', $context);
+
+        return array($cm, $course, $forum);
+    }
+
+    public function test_cm_null_initially() {
+        // Validate
+        $this->assertNull($this->testpage->cm);
+    }
+
+    public function test_set_cm() {
+        // Setup fixture
+        list($cm) = $this->create_a_forum_with_context();
+        // Exercise SUT
+        $this->testpage->set_cm($cm);
+        // Validate
+        $this->assert(new CheckSpecifiedFieldsExpectation($cm), $this->testpage->cm);
+    }
+
+    public function test_cannot_set_cm_without_name() {
+        // Setup fixture
+        list($cm) = $this->create_a_forum_with_context();
+        // Set expectation
+        $this->expectException();
+        // Exercise SUT
+        unset($cm->name);
+        $this->testpage->set_cm($cm);
+    }
+
+    public function test_cannot_set_cm_without_modname() {
+        // Setup fixture
+        list($cm) = $this->create_a_forum_with_context();
+        // Set expectation
+        $this->expectException();
+        // Exercise SUT
+        unset($cm->modname);
+        $this->testpage->set_cm($cm);
+    }
+
+    public function test_cannot_set_activity_record_before_cm() {
+        // Setup fixture
+        list($cm, $course, $forum) = $this->create_a_forum_with_context();
+        // Set expectation
+        $this->expectException();
+        // Exercise SUT
+        $this->testpage->set_activity_record($forum);
+    }
+
+    public function test_setting_cm_sets_context() {
+        // Setup fixture
+        list($cm) = $this->create_a_forum_with_context();
+        // Exercise SUT
+        $this->testpage->set_cm($cm);
+        // Validate
+        $expectedcontext = new stdClass;
+        $expectedcontext->contextlevel = CONTEXT_MODULE;
+        $expectedcontext->instanceid = $cm->id;
+        $this->assert(new CheckSpecifiedFieldsExpectation($expectedcontext), $this->testpage->context);
+    }
+
+    public function test_activity_record_loaded_if_not_set() {
+        // Setup fixture
+        list($cm, $course, $forum) = $this->create_a_forum_with_context();
+        // Exercise SUT
+        $this->testpage->set_cm($cm);
+        // Validate
+        $this->assert(new CheckSpecifiedFieldsExpectation($forum), $this->testpage->activityrecord);
+    }
+
+    public function test_set_activity_record() {
+        // Setup fixture
+        list($cm, $course, $forum) = $this->create_a_forum_with_context();
+        $this->testpage->set_cm($cm);
+        // Exercise SUT
+        $this->testpage->set_activity_record($forum);
+        // Validate
+        $this->assert(new CheckSpecifiedFieldsExpectation($forum), $this->testpage->activityrecord);
+    }
+
+    public function test_cannot_set_inconsistent_activity_record_course() {
+        // Setup fixture
+        list($cm, $course, $forum) = $this->create_a_forum_with_context();
+        $this->testpage->set_cm($cm);
+        // Set expectation
+        $this->expectException();
+        // Exercise SUT
+        $forum->course = -1;
+        $this->testpage->set_activity_record($forum);
+    }
+
+    public function test_cannot_set_inconsistent_activity_record_instance() {
+        // Setup fixture
+        list($cm, $course, $forum) = $this->create_a_forum_with_context();
+        $this->testpage->set_cm($cm);
+        // Set expectation
+        $this->expectException();
+        // Exercise SUT
+        $forum->id = -1;
+        $this->testpage->set_activity_record($forum);
+    }
+
+    public function test_settin_cm_sets_course() {
+        // Setup fixture
+        list($cm, $course) = $this->create_a_forum_with_context();
+        // Exercise SUT
+        $this->testpage->set_cm($cm);
+        // Validate
+        $this->assert(new CheckSpecifiedFieldsExpectation($course), $this->testpage->course);
+    }
+
+    public function test_set_cm_with_course_and_activity_no_db() {
+        // Setup fixture
+        list($cm, $course, $forum) = $this->create_a_forum_with_context();
+        $this->drop_test_table('forum');
+        $this->drop_test_table('course');
+        // Exercise SUT
+        $this->testpage->set_cm($cm, $course, $forum);
+        // Validate
+        $this->assert(new CheckSpecifiedFieldsExpectation($cm), $this->testpage->cm);
+        $this->assert(new CheckSpecifiedFieldsExpectation($course), $this->testpage->course);
+        $this->assert(new CheckSpecifiedFieldsExpectation($forum), $this->testpage->activityrecord);
+    }
+
+    public function test_cannot_set_cm_with_inconsistent_course() {
+        // Setup fixture
+        list($cm, $course, $forum) = $this->create_a_forum_with_context();
+        // Set expectation
+        $this->expectException();
+        // Exercise SUT
+        $cm->course = -1;
+        $this->testpage->set_cm($cm, $course);
+    }
+
+    public function test_get_activity_name() {
+        // Setup fixture
+        list($cm, $course, $forum) = $this->create_a_forum_with_context();
+        // Exercise SUT
+        $this->testpage->set_cm($cm, $course, $forum);
+        // Validate
+        $this->assertEqual('forum', $this->testpage->activityname);
+    }
+}
+
+/**
  * Test functions that affect filter_active table with contextid = $syscontextid.
  */
 class moodle_page_editing_test extends UnitTestCase {
