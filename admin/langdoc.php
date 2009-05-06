@@ -112,7 +112,7 @@
             for ($a=0; $a < count($pathparts)-1 ; $a++) {
                 $checkpath .= "/".$pathparts[$a];
                 if(!file_exists($checkpath)){
-                     if(!mkdir($checkpath)){
+                     if(!mkdir($checkpath, $CFG->directorypermissions)){
                          echo ("Cannot create directory: $checkpath");
                      }    
                 }    

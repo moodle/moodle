@@ -90,7 +90,7 @@
 
     if (!file_exists($index_path)) {
         mtrace("Data directory ($index_path) does not exist, attempting to create.");
-        if (!mkdir($index_path)) {
+        if (!mkdir($index_path, $CFG->directorypermissions)) {
             search_pexit("Error creating data directory at: $index_path. Please correct.");
         } 
         else {

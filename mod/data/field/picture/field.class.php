@@ -159,7 +159,7 @@ class data_field_picture extends data_field_file {
             return;
         }
         if (!file_exists($datalocation.'/thumb')) {
-            mkdir($datalocation.'/thumb', 0777);
+            mkdir($datalocation.'/thumb', $CFG->directorypermissions);
             // robertall: Why hardcode 0777??
         }
         $thumbnaillocation = $datalocation.'/thumb/'.$content->content;

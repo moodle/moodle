@@ -74,7 +74,7 @@ function blackboard_convert($dir){
 
         // Copy the Blackboard course files into the moodle course_files structure
         $subdirs = get_subdirs($dir."/");
-        mkdir("$dir/course_files");
+        mkdir("$dir/course_files", $CFG->directorypermissions);
         foreach ($subdirs as $subdir){
             rename($subdir, "course_files/$subdir");
         }
