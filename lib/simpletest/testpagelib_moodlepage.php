@@ -35,7 +35,9 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once($CFG->libdir . '/pagelib.php');
+require_once($CFG->libdir . '/blocklib.php');
 
+/** Test-specific subclass to make some protected things public. */
 class testable_moodle_page extends moodle_page {
     public function initialise_default_pagetype($script = null) {
         parent::initialise_default_pagetype($script);
@@ -49,7 +51,7 @@ class testable_moodle_page extends moodle_page {
 }
 
 /**
- * Test functions that affect filter_active table with contextid = $syscontextid.
+ * Test functions that don't need to touch the database.
  */
 class moodle_page_test extends UnitTestCase {
     protected $testpage;
