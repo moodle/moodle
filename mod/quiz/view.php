@@ -71,6 +71,8 @@
     }
     require_js(array('yui_yahoo', 'yui_event'));
 
+    // Note: MDL-19010 there will be further changes to printing header and blocks.
+    // The code will be much nicer than this eventually.
     $title = $course->shortname . ': ' . format_string($quiz->name);
 
     $buttons = '<table><tr><td>'.update_module_button($cm->id, $course->id, get_string('modulename', 'quiz')).'</td>';

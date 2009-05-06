@@ -83,12 +83,13 @@ if (empty($SITE->fullname)) {
     echo '</form>';
 
 } else {
+    // Note: MDL-19010 there will be further changes to printing header and blocks.
+    // The code will be much nicer than this eventually.
     $pageblocks = blocks_setup($PAGE);
 
     $preferred_width_left = blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]);
     $preferred_width_right = blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]);
 
-    // The search page currently doesn't handle block editing
     if ($PAGE->user_allowed_editing()) {
         $options = $PAGE->url->params();
         if ($PAGE->user_is_editing()) {

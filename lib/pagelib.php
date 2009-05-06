@@ -115,6 +115,7 @@ class moodle_page {
 /// methods, but instead use the $PAGE->x syntax.
 
     /**
+     * Please do not call this method directly, use the ->state syntax. @see __get().
      * @return integer one of the STATE_... constants. You should not normally need
      * to use this in your code. It is indended for internal use by this class
      * and its friends like print_header, to check that everything is working as
@@ -125,18 +126,18 @@ class moodle_page {
     }
 
     /**
-     * @return boolean has the header already been printed? Also accessible as
-     * $PAGE->headerprinted.
+     * Please do not call this method directly, use the ->headerprinted syntax. @see __get().
+     * @return boolean has the header already been printed?
      */
     public function get_headerprinted() {
         return $this->_state >= self::STATE_IN_BODY;
     }
 
     /**
+     * Please do not call this method directly, use the ->course syntax. @see __get().
      * @return object the current course that we are inside - a row from the
      * course table. (Also available as $COURSE global.) If we are not inside
-     * an actual course, this will be the site course. You can also access this
-     * as $PAGE->course.
+     * an actual course, this will be the site course.
      */
     public function get_course() {
         global $SITE;
@@ -147,6 +148,7 @@ class moodle_page {
     }
 
     /**
+     * Please do not call this method directly, use the ->cm syntax. @see __get().
      * @return object the course_module that this page belongs to. Will be null
      * if this page is not within a module. This is a full cm object, as loaded
      * by get_coursemodule_from_id or get_coursemodule_from_instance,
@@ -157,10 +159,10 @@ class moodle_page {
     }
 
     /**
-     * @return object the course_module that this page belongs to. Will be null
-     * if this page is not within a module. This is a full cm object, as loaded
-     * by get_coursemodule_from_id or get_coursemodule_from_instance,
-     * so the extra modname and name fields are present.
+     * Please do not call this method directly, use the ->activityrecord syntax. @see __get().
+     * @return object the row from the activities own database table (for example
+     * the forum or quiz table) that this page belongs to. Will be null
+     * if this page is not within a module.
      */
     public function get_activityrecord() {
         if (is_null($this->_module) && !is_null($this->_cm)) {
@@ -170,10 +172,9 @@ class moodle_page {
     }
 
     /**
-     * @return object the course_module that this page belongs to. Will be null
-     * if this page is not within a module. This is a full cm object, as loaded
-     * by get_coursemodule_from_id or get_coursemodule_from_instance,
-     * so the extra modname and name fields are present.
+     * Please do not call this method directly, use the ->activityname syntax. @see __get().
+     * @return string|null the The type of activity we are in, for example 'forum' or 'quiz'.
+     * Will be null if this page is not within a module.
      */
     public function get_activityname() {
         if (is_null($this->_cm)) {
@@ -183,6 +184,7 @@ class moodle_page {
     }
 
     /**
+     * Please do not call this method directly, use the ->category syntax. @see __get().
      * @return mixed the category that the page course belongs to. If there isn't one
      * (that is, if this is the front page course) returns null.
      */
@@ -196,6 +198,7 @@ class moodle_page {
     }
 
     /**
+     * Please do not call this method directly, use the ->categories syntax. @see __get().
      * @return array an array of all the categories the page course belongs to,
      * starting with the immediately containing category, and working out to
      * the top-level category. This may be the empty array if we are in the
@@ -207,6 +210,7 @@ class moodle_page {
     }
 
     /**
+     * Please do not call this method directly, use the ->context syntax. @see __get().
      * @return object the main context to which this page belongs.
      */
     public function get_context() {
@@ -217,6 +221,7 @@ class moodle_page {
     }
 
     /**
+     * Please do not call this method directly, use the ->pagetype syntax. @see __get().
      * @return string e.g. 'my-index' or 'mod-quiz-attempt'. Same as the id attribute on <body>.
      */
     public function get_pagetype() {
@@ -227,6 +232,7 @@ class moodle_page {
     }
 
     /**
+     * Please do not call this method directly, use the ->subpage syntax. @see __get().
      * @return string|null The subpage identifier, if any.
      */
     public function get_subpage() {
@@ -234,6 +240,7 @@ class moodle_page {
     }
 
     /**
+     * Please do not call this method directly, use the ->bodyclasses syntax. @see __get().
      * @return string the class names to put on the body element in the HTML.
      */
     public function get_bodyclasses() {
@@ -241,7 +248,8 @@ class moodle_page {
     }
 
     /**
-     * @return string the class names to put on the body element in the HTML.
+     * Please do not call this method directly, use the ->docspath syntax. @see __get().
+     * @return string the path to the Moodle docs for this page.
      */
     public function get_docspath() {
         if (is_string($this->_docspath)) {
@@ -252,6 +260,7 @@ class moodle_page {
     }
 
     /**
+     * Please do not call this method directly, use the ->url syntax. @see __get().
      * @return moodle_url the clean URL required to load the current page. (You
      * should normally use this in preference to $ME or $FULLME.)
      */
@@ -265,6 +274,7 @@ class moodle_page {
     }
 
     /**
+     * Please do not call this method directly, use the ->blocks syntax. @see __get().
      * @return blocks_manager the blocks manager object for this page.
      */
     public function get_blocks() {
@@ -281,7 +291,9 @@ class moodle_page {
     }
 
     /**
-     * PHP overloading magic to make the $PAGE->course syntax work.
+     * PHP overloading magic to make the $PAGE->course syntax work by redirecting
+     * it to the corresponding $PAGE->get_course() method if there is one, and
+     * throwing an exception if not.
      */
     public function __get($field) {
         $getmethod = 'get_' . $field;

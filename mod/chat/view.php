@@ -61,6 +61,9 @@
 
 // Initialize $PAGE, compute blocks
     $PAGE->set_url('mod/chat/view.php', array('id' => $cm->id));
+
+    // Note: MDL-19010 there will be further changes to printing header and blocks.
+    // The code will be much nicer than this eventually.
     $pageblocks = blocks_setup($PAGE);
     $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
 

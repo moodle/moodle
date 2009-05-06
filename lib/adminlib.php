@@ -3946,6 +3946,8 @@ function admin_externalpage_print_header($focus='') {
     define('ADMIN_EXT_HEADER_PRINTED', 'true');
 
     if (!empty($SITE->fullname) and !empty($SITE->shortname)) {
+        // Note: MDL-19010 there will be further changes to printing header and blocks.
+        // The code will be much nicer than this eventually.
         $pageblocks = blocks_setup($PAGE);
 
         $preferred_width_left = blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]);
@@ -3958,7 +3960,6 @@ function admin_externalpage_print_header($focus='') {
         $current = $adminroot->locate($section, true);
         $visiblepathtosection = array_reverse($current->visiblepath);
 
-        // The search page currently doesn't handle block editing
         if ($PAGE->user_allowed_editing()) {
             $options = $PAGE->url->params();
             if ($PAGE->user_is_editing()) {

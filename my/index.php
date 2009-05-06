@@ -24,6 +24,8 @@
     $PAGE->set_url('my/index.php');
     $PAGE->set_blocks_editing_capability('moodle/my:manageblocks');
 
+    // Note: MDL-19010 there will be further changes to printing header and blocks.
+    // The code will be much nicer than this eventually.
     $pageblocks = blocks_setup($PAGE,BLOCKS_PINNED_BOTH);
 
     if (($edit != -1) and $PAGE->user_allowed_editing()) {
