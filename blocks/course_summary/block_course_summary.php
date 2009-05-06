@@ -14,7 +14,7 @@ class block_course_summary extends block_base {
     }
 
     function get_content() {
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $PAGE;
 
         if($this->content !== NULL) {
             return $this->content;
@@ -28,7 +28,7 @@ class block_course_summary extends block_base {
         $options = new object();
         $options->noclean = true;    // Don't clean Javascripts etc
         $this->content->text = format_text($COURSE->summary, FORMAT_HTML, $options);
-        if (isediting($COURSE->id)) { // ?? courseid param not there??
+        if ($PAGE->user_is_editing()) {
             if($COURSE->id == SITEID) {
                 $editpage = $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=frontpagesettings';
             } else {

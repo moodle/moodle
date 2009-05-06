@@ -39,9 +39,9 @@
 
     if (update_category_button($category->id)) {
         if ($categoryedit !== -1) {
-            $USER->categoryediting = $categoryedit;
+            $USER->editing = $categoryedit;
         }
-        $editingon = !empty($USER->categoryediting);
+        $editingon = $PAGE->user_is_editing();
         $navbaritem = update_category_button($category->id); // Must call this again after updating the state.
     } else {
         $navbaritem = print_course_search('', true, 'navbar');

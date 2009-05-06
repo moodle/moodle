@@ -58,16 +58,8 @@ $PAGE = page_create_object(PAGE_ADMIN, 0); // there must be any constant id numb
 $PAGE->set_pagetype('admin-setting-' . $section);
 $PAGE->init_extra($section);
 
-if (!isset($USER->adminediting)) {
-    $USER->adminediting = false;
-}
-
-if ($PAGE->user_allowed_editing()) {
-    if ($adminediting == 1) {
-        $USER->adminediting = true;
-    } elseif ($adminediting == 0) {
-        $USER->adminediting = false;
-    }
+if ($PAGE->user_allowed_editing() && $adminediting != -1) {
+    $USER->editing = $adminediting;
 }
 
 

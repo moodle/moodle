@@ -29,10 +29,9 @@ if (empty($CFG->bloglevel)) {
 
 $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
-
 // change block edit staus if not guest and logged in
 if (isloggedin() and !isguest() and $edit != -1) {
-    $SESSION->blog_editing_enabled = $edit;
+    $USER->editing = $edit;
 }
 
 if (empty($filtertype)) {

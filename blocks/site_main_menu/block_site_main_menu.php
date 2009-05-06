@@ -11,7 +11,7 @@ class block_site_main_menu extends block_list {
     }
 
     function get_content() {
-        global $USER, $CFG, $COURSE, $DB;
+        global $USER, $CFG, $COURSE, $DB, $PAGE;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -35,8 +35,8 @@ class block_site_main_menu extends block_list {
         require_once($CFG->dirroot.'/course/lib.php');
 
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        $isediting = isediting($this->instance->pageid) && has_capability('moodle/course:manageactivities', $context);
-        $modinfo =& get_fast_modinfo($course);
+        $isediting = $PAGE->user_is_editing() && has_capability('moodle/course:manageactivities', $context);
+        $modinfo = get_fast_modinfo($course);
 
 /// extra fast view mode
         if (!$isediting) {

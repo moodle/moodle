@@ -211,6 +211,25 @@ class moodle_page {
         }
     }
 
+/// Other information getting methods ==========================================
+
+    /**
+     * @return boolean should the current user see this page in editing mode.
+     * That is, are they allowed to edit this page, and are they currently in
+     * editing mode.
+     */
+    public function user_is_editing() {
+        global $USER;
+        return !empty($USER->editing) && $this->user_allowed_editing();
+    }
+
+    /**
+     * @return boolean does the user have permission to see this page in editing mode.
+     */
+    public function user_allowed_editing() {
+        return true; // TODO
+    }
+
 /// Setter methods =============================================================
 
     /**
@@ -738,20 +757,6 @@ class page_base extends moodle_page {
 
 /// Class Functions
 
-    // USER-RELATED THINGS
-
-    // By default, no user is editing anything and none CAN edit anything. Developers
-    // will have to override these settings to let Moodle know when it should grant
-    // editing rights to the user viewing the page.
-    function user_allowed_editing() {
-        trigger_error('Page class does not implement method <strong>user_allowed_editing()</strong>', E_USER_WARNING);
-        return false;
-    }
-    function user_is_editing() {
-        trigger_error('Page class does not implement method <strong>user_is_editing()</strong>', E_USER_WARNING);
-        return false;
-    }
-
     // HTML OUTPUT SECTION
 
     // We have absolutely no idea what derived pages are all about
@@ -858,15 +863,6 @@ class page_course extends page_base {
                 return true;
             }
         }
-    }
-
-    // Is the user actually editing this course page or "sticky page" right now?
-    function user_is_editing() {
-        if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM)) && defined('ADMIN_STICKYBLOCKS')) {
-            //always in edit mode on sticky page
-            return true;
-        }
-        return isediting($this->id);
     }
 
     // HTML OUTPUT SECTION
@@ -992,11 +988,6 @@ class page_generic_activity extends page_base {
         // Yu: I think this is wrong, should be checking manageactivities instead
         //return has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_COURSE, $this->modulerecord->course));
         return has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_MODULE, $this->modulerecord->id));
-    }
-
-    function user_is_editing() {
-        $this->init_full();
-        return isediting($this->modulerecord->course);
     }
 
     function print_header($title, $morenavlinks = NULL, $bodytags = '', $meta = '') {

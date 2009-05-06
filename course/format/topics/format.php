@@ -125,7 +125,7 @@
     $section = 0;
     $thissection = $sections[$section];
 
-    if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
+    if ($thissection->summary or $thissection->sequence or $PAGE->user_is_editing()) {
 
         // Note, no need for a 'left side' cell or DIV.
         // Note, 'right side' is BEFORE content.
@@ -141,7 +141,7 @@
         $summaryformatoptions->noclean = true;
         echo format_text($summarytext, FORMAT_HTML, $summaryformatoptions);
 
-        if (isediting($course->id) && has_capability('moodle/course:update', $coursecontext)) {
+        if ($PAGE->user_is_editing() && has_capability('moodle/course:update', $coursecontext)) {
             echo '<a title="'.$streditsummary.'" '.
                  ' href="editsection.php?id='.$thissection->id.'"><img src="'.$CFG->pixpath.'/t/edit.gif" '.
                  ' class="icon edit" alt="'.$streditsummary.'" /></a>';
@@ -150,7 +150,7 @@
         
         print_section($course, $thissection, $mods, $modnamesused);
 
-        if (isediting($course->id)) {
+        if ($PAGE->user_is_editing()) {
             print_section_add_menus($course, $section, $modnames);
         }
 
@@ -227,7 +227,7 @@
                      '<img src="'.$CFG->pixpath.'/i/one.gif" class="icon" alt="'.$strshowonlytopic.'" /></a><br />';
             }
 
-            if (isediting($course->id) && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
+            if ($PAGE->user_is_editing() && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
 
 		if ($course->marker == $section) {  // Show the "light globe" on/off
                	    echo '<a href="view.php?id='.$course->id.'&amp;marker=0&amp;sesskey='.sesskey().'#section-'.$section.'" title="'.$strmarkedthistopic.'">'.'<img src="'.$CFG->pixpath.'/i/marked.gif" alt="'.$strmarkedthistopic.'" /></a><br />';
@@ -266,7 +266,7 @@
 		   echo '&nbsp;';
  	   	}
 
-                if (isediting($course->id) && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                if ($PAGE->user_is_editing() && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
                     echo ' <a title="'.$streditsummary.'" href="editsection.php?id='.$thissection->id.'">'.
                          '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon edit" alt="'.$streditsummary.'" /></a><br /><br />';
                 }
@@ -274,7 +274,7 @@
 
                 print_section($course, $thissection, $mods, $modnamesused);
 
-                if (isediting($course->id)) {
+                if ($PAGE->user_is_editing()) {
                     print_section_add_menus($course, $section, $modnames);
                 }
             }

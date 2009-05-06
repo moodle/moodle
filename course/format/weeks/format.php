@@ -115,7 +115,7 @@
     $section = 0;
     $thissection = $sections[$section];
 
-    if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
+    if ($thissection->summary or $thissection->sequence or $PAGE->user_is_editing()) {
 
         // Note, 'right side' is BEFORE content.
         echo '<li id="section-0" class="section main" >';
@@ -131,7 +131,7 @@
         $summaryformatoptions->noclean = true;
         echo format_text($summarytext, FORMAT_HTML, $summaryformatoptions);
 
-        if (isediting($course->id) && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
+        if ($PAGE->user_is_editing() && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
             echo '<p><a title="'.$streditsummary.'" '.
                  ' href="editsection.php?id='.$thissection->id.'"><img src="'.$CFG->pixpath.'/t/edit.gif" '.
                  ' class="icon edit" alt="'.$streditsummary.'" /></a></p>';
@@ -140,7 +140,7 @@
         
         print_section($course, $thissection, $mods, $modnamesused);
 
-        if (isediting($course->id)) {
+        if ($PAGE->user_is_editing()) {
             print_section_add_menus($course, $section, $modnames);
         }
 
@@ -223,7 +223,7 @@
                      '<img src="'.$CFG->pixpath.'/i/one.gif" class="icon wkone" alt="'.$strshowonlyweek.'" /></a><br />';
             }
 
-            if (isediting($course->id) && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
+            if ($PAGE->user_is_editing() && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
                 if ($thissection->visible) {        // Show the hide/show eye
                     echo '<a href="view.php?id='.$course->id.'&amp;hide='.$section.'&amp;sesskey='.sesskey().'#section-'.$section.'" title="'.$strweekhide.'">'.
                          '<img src="'.$CFG->pixpath.'/i/hide.gif" class="icon hide" alt="'.$strweekhide.'" /></a><br />';
@@ -256,7 +256,7 @@
                 $summaryformatoptions->noclean = true;
                 echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
 
-                if (isediting($course->id) && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                if ($PAGE->user_is_editing() && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
                     echo ' <a title="'.$streditsummary.'" href="editsection.php?id='.$thissection->id.'">'.
                          '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon edit" alt="'.$streditsummary.'" /></a><br /><br />';
                 }
@@ -264,7 +264,7 @@
 
                 print_section($course, $thissection, $mods, $modnamesused);
 
-                if (isediting($course->id)) {
+                if ($PAGE->user_is_editing()) {
                     print_section_add_menus($course, $section, $modnames);
                 }
             }

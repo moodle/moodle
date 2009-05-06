@@ -13,14 +13,6 @@ class page_my_moodle extends page_base {
         return false;
     }
 
-    function user_is_editing() {
-        global $USER;
-        if (has_capability('moodle/my:manageblocks', get_context_instance(CONTEXT_SYSTEM)) && defined('ADMIN_STICKYBLOCKS')) {
-            return true;
-        }
-        return (!empty($USER->editing));
-    }
-
     function print_header($title) {
 
         global $USER, $CFG;

@@ -54,17 +54,6 @@
 
 
     /**
-     * Adaptation of isediting in moodlelib.php for blog module
-     * @return bool
-     */
-    function blog_isediting() {
-        global $SESSION;
-
-        return !empty($SESSION->blog_editing_enabled);
-    }
-
-
-    /**
      *  This function is in lib and not in BlogInfo because entries being searched
      *   might be found in any number of blogs rather than just one.
      *

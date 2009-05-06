@@ -26,9 +26,9 @@
 
     if (update_category_button()) {
         if ($categoryedit !== -1) {
-            $USER->categoryediting = $categoryedit;
+            $USER->editing = $categoryedit;
         }
-        $adminediting = !empty($USER->categoryediting);
+        $adminediting = $PAGE->user_is_editing();
     } else {
         $adminediting = false;
     }

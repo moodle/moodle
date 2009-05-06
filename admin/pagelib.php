@@ -31,12 +31,6 @@ class page_admin extends page_base {
         return has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM));
     }
 
-    // has to be fixed. i know there's a "proper" way to do this
-    function user_is_editing() {
-        global $USER;
-        return $USER->adminediting;
-    }
-
     /**
      * Use this to pass extra HTML that is added after the turn blocks editing on/off button.
      *

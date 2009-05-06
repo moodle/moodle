@@ -8,7 +8,7 @@ class block_admin extends block_list {
 
     function get_content() {
 
-        global $CFG, $USER, $SITE, $COURSE, $DB;
+        global $CFG, $USER, $SITE, $COURSE, $DB, $PAGE;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -57,7 +57,7 @@ class block_admin extends block_list {
 
         if ($course->id !== SITEID and has_capability('moodle/course:update', $context)) {
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/edit.gif" class="icon" alt="" />';
-            if (isediting($this->instance->pageid)) {
+            if ($PAGE->user_is_editing()) {
                 $this->content->items[]='<a href="view.php?id='.$this->instance->pageid.'&amp;edit=off&amp;sesskey='.sesskey().'">'.get_string('turneditingoff').'</a>';
             } else {
                 $this->content->items[]='<a href="view.php?id='.$this->instance->pageid.'&amp;edit=on&amp;sesskey='.sesskey().'">'.get_string('turneditingon').'</a>';

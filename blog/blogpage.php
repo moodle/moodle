@@ -56,18 +56,6 @@ class page_blog extends page_base {
         return false;
     }
 
-    // Also, admins are considered to have "always on" editing (I wanted to avoid duplicating
-    // the code that turns editing on/off here; you can roll your own or copy course/view.php).
-    function user_is_editing() {
-        global $SESSION;
-
-        if (isloggedin() && !isguest()) {
-            $this->editing = !empty($SESSION->blog_editing_enabled);
-            return $this->editing;
-        }
-        return false;
-    }
-
     //over-ride parent method's print_header because blog already passes more than just the title along
     function print_header($pageTitle='', $pageHeading='', $pageNavigation='', $pageFocus='', $pageMeta='') {
         global $USER;
@@ -82,18 +70,18 @@ class page_blog extends page_base {
 
     /////////// Blog page specific functions
     function get_extra_header_string() {
-        global $SESSION, $CFG, $USER;
+        global $CFG, $USER;
 
         $editformstring = '';
         if ($this->user_allowed_editing()) {
-            if (!empty($SESSION->blog_editing_enabled)) {
+            if ($this->user_is_editing()) {
                 $editingString = get_string('turneditingoff');
             } else {
                 $editingString = get_string('turneditingon');
             }
 
             $params = $this->url->params();
-            $params['edit'] = empty($SESSION->blog_editing_enabled) ? 1 : 0;
+            $params['edit'] = $this->user_is_editing() ? 0 : 1;
             $paramstring = '';
             foreach ($params as $key=>$val) {
                 $paramstring .= '<input type="hidden" name="'.$key.'" value="'.s($val).'" />';

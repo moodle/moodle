@@ -2628,6 +2628,7 @@ function isguestuser($user=NULL) {
 }
 
 /**
+ * @deprecated since Moodle 2.0 - use $PAGE->user_is_editing() instead.
  * Determines if the currently logged in user is in editing mode.
  * Note: originally this function had $userid parameter - it was not usable anyway
  *
@@ -2635,14 +2636,9 @@ function isguestuser($user=NULL) {
  * @return bool
  */
 function isediting() {
-    global $USER, $PAGE;
-
-    if (empty($USER->editing)) {
-        return false;
-    } elseif (is_object($PAGE) && method_exists($PAGE,'user_allowed_editing')) {
-        return $PAGE->user_allowed_editing();
-    }
-    return true;//false;
+    global $PAGE;
+    debugging('call to deprecated function isediting(). Please use $PAGE->user_is_editing() instead', DEBUG_DEVELOPER);
+    return $PAGE->user_is_editing();
 }
 
 /**

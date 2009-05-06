@@ -665,7 +665,7 @@ function scorm_get_last_attempt($scormid, $userid) {
 }
 
 function scorm_course_format_display($user,$course) {
-    global $CFG, $DB;
+    global $CFG, $DB, $PAGE;
 
     $strupdate = get_string('update');
     $strmodule = get_string('modulename','scorm');
@@ -681,7 +681,7 @@ function scorm_course_format_display($user,$course) {
         $colspan = '';
         $headertext = '<table width="100%"><tr><td class="title">'.get_string('name').': <b>'.format_string($scorm->name).'</b>';
         if (has_capability('moodle/course:manageactivities', $context)) {
-            if (isediting($course->id)) {
+            if ($PAGE->user_is_editing()) {
                 // Display update icon
                 $path = $CFG->wwwroot.'/course';
                 $headertext .= '<span class="commands">'.

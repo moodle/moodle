@@ -1367,7 +1367,7 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
  * Prints a section full of activity modules
  */
 function print_section($course, $section, $mods, $modnamesused, $absolute=false, $width="100%", $hidecompletion=false) {
-    global $CFG, $USER, $DB;
+    global $CFG, $USER, $DB, $PAGE;
 
     static $initialised;
 
@@ -1385,7 +1385,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     if (!isset($initialised)) {
         $groupbuttons     = ($course->groupmode or (!$course->groupmodeforce));
         $groupbuttonslink = (!$course->groupmodeforce);
-        $isediting        = isediting($course->id);
+        $isediting        = $PAGE->user_is_editing();
         $ismoving         = $isediting && ismoving($course->id);
         if ($ismoving) {
             $strmovehere  = get_string("movehere");
@@ -2181,7 +2181,7 @@ function print_course_request_buttons($systemcontext) {
  *      to see it.
  */
 function update_category_button($categoryid = 0) {
-    global $CFG, $USER;
+    global $CFG, $PAGE;
 
     // Check permissions.
     $context = get_category_or_system_context($categoryid);
@@ -2190,7 +2190,7 @@ function update_category_button($categoryid = 0) {
     }
 
     // Work out the appropriate action.
-    if (!empty($USER->categoryediting)) {
+    if ($PAGE->user_is_editing()) {
         $label = get_string('turneditingoff');
         $edit = 'off';
     } else {

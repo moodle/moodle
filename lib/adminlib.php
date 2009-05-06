@@ -3931,17 +3931,8 @@ function admin_externalpage_setup($section, $extrabutton = '',
     }
 
     $adminediting = optional_param('adminedit', -1, PARAM_BOOL);
-
-    if (!isset($USER->adminediting)) {
-        $USER->adminediting = false;
-    }
-
-    if ($PAGE->user_allowed_editing()) {
-        if ($adminediting == 1) {
-            $USER->adminediting = true;
-        } elseif ($adminediting == 0) {
-            $USER->adminediting = false;
-        }
+    if ($PAGE->user_allowed_editing() && $adminediting != -1) {
+        $USER->editing = $adminediting;
     }
 }
 

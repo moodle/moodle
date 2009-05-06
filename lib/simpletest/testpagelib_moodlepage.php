@@ -453,4 +453,39 @@ class moodle_page_categories_test extends UnitTestCaseUsingDatabase {
     }
 }
 
+/**
+ * Test functions that affect filter_active table with contextid = $syscontextid.
+ */
+class moodle_page_editing_test extends UnitTestCase {
+    protected $testpage;
+    protected $originaluserediting;
+
+    public function setUp() {
+        global $USER;
+        $this->originaluserediting = !empty($USER->editing);
+        $this->testpage = new testable_moodle_page();
+    }
+
+    public function tearDown() {
+        global $USER;
+        $this->testpage = NULL;
+        $USER->editing = $this->originaluserediting;
+    }
+
+    public function test_user_is_editing_on() {
+        // Setup fixture
+        global $USER;
+        $USER->editing = true;
+        // Validate
+        $this->assertTrue($this->testpage->user_is_editing());
+    }
+
+    public function test_user_is_editing_off() {
+        // Setup fixture
+        global $USER;
+        $USER->editing = false;
+        // Validate
+        $this->assertFalse($this->testpage->user_is_editing());
+    }
+}
 ?>

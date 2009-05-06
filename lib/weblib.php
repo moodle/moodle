@@ -5091,11 +5091,11 @@ function update_module_button($cmid, $ignored, $string) {
  */
 
 function update_categories_search_button($search,$page,$perpage) {
-    global $CFG, $USER;
+    global $CFG, $PAGE;
 
     // not sure if this capability is the best  here
     if (has_capability('moodle/category:manage', get_context_instance(CONTEXT_SYSTEM))) {
-        if (!empty($USER->categoryediting)) {
+        if ($PAGE->user_is_editing()) {
             $string = get_string("turneditingoff");
             $edit = "off";
             $perpage = 30;

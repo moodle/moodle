@@ -15,12 +15,6 @@ class page_tag extends page_base {
         return has_capability('moodle/tag:editblocks', $systemcontext);        
     }
 
-    function user_is_editing() {
-        global $USER;
-
-        return (!empty($USER->editing));
-    }
-
     //-----------  printing funtions -----------
 
     function print_header() {
