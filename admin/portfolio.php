@@ -4,9 +4,6 @@ require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->libdir . '/portfoliolib.php');
 require_once($CFG->libdir . '/adminlib.php');
 
-
-$CFG->pagepath = 'admin/manageportfolio';
-
 $edit    = optional_param('edit', 0, PARAM_INT);
 $new     = optional_param('new', '', PARAM_FORMAT);
 $hide    = optional_param('hide', 0, PARAM_INT);
@@ -42,7 +39,9 @@ if (!empty($edit) || !empty($new)) {
         $plugin = $new;
         $instance = null;
     }
-    $CFG->pagepath = 'admin/manageportfolio/' . $plugin;
+
+    $PAGE->set_pagetype('admin-portfolio-' . $plugin);
+
     // display the edit form for this instance
     $mform = new portfolio_admin_form('', array('plugin' => $plugin, 'instance' => $instance));
     // end setup, begin output

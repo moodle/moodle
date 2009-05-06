@@ -55,7 +55,7 @@ if ($data = data_submitted() and confirm_sesskey()) {
 page_map_class(PAGE_ADMIN, 'page_admin');
 $PAGE = page_create_object(PAGE_ADMIN, 0); // there must be any constant id number
 $PAGE->init_extra($section);
-$CFG->pagepath = 'admin/setting/'.$section;
+$PAGE->set_pagetype('admin-setting-' . $section);
 
 if (!isset($USER->adminediting)) {
     $USER->adminediting = false;

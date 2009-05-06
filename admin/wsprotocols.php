@@ -4,8 +4,6 @@ require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
 require_once($CFG->libdir . '/adminlib.php');
 
-$CFG->pagepath = 'admin/managewsprotocols';
-
 $hide    = optional_param('hide', '', PARAM_ALPHANUM);
 $username    = optional_param('username', '', PARAM_ALPHANUM);
 $settings    = optional_param('settings', '', PARAM_ALPHANUM);

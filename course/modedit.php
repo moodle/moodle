@@ -185,12 +185,13 @@
 
         $navlinksinstancename = array('name' => format_string($form->name, true), 'link' => "$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id", 'type' => 'activityinstance');
 
-        $CFG->pagepath = 'mod/'.$module->name;
+        $pagetype = 'mod-' . $module->name . '-';
         if (!empty($type)) {
-            $CFG->pagepath .= '/'.$type;
+            $pagetype .= $type;
         } else {
-            $CFG->pagepath .= '/mod';
+            $pagetype .= 'mod';
         }
+        $PAGE->set_pagetype($pagetype);
     } else {
         print_error('invalidaction');
     }

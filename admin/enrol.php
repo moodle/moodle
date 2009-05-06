@@ -8,8 +8,6 @@
     $enrol        = optional_param('enrol', $CFG->enrol, PARAM_SAFEDIR);
     $savesettings = optional_param('savesettings', 0, PARAM_BOOL);
 
-    $CFG->pagepath = 'enrol';
-
     admin_externalpage_setup('enrolment');
 
     if (!isset($CFG->sendcoursewelcomemessage)) {

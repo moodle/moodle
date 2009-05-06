@@ -63,8 +63,8 @@ class moodle_page {
     protected $_legacyclass = null;
 
 /// Getter methods =============================================================
-/// Due to the __get magic below, you normally do not call these as get_x methods,
-/// but instead use the $PAGE->x syntax.
+/// Due to the __get magic below, you normally do not call these as $PAGE->get_x
+/// methods, but instead use the $PAGE->x syntax.
 
     /**
      * @return integer one of the STATE_... constants. You should not normally need

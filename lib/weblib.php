@@ -6490,7 +6490,7 @@ function page_id_and_class(&$getid, &$getclass) {
 function print_maintenance_message () {
     global $CFG, $SITE;
 
-    $CFG->pagepath = "index.php";
+    $PAGE->set_pagetype('maintenance-message');
     print_header(strip_tags($SITE->fullname), $SITE->fullname, 'home');
     print_box_start();
     print_heading(get_string('sitemaintenance', 'admin'));

@@ -8,8 +8,7 @@
     admin_externalpage_setup('enrolment');
 
     $enrol = required_param('enrol', PARAM_ALPHA);
-    $CFG->pagepath = 'enrol/' . $enrol;
-
+    $PAGE->set_pagetype('admin-enrol-' . $enrol);
 
     require_once("$CFG->dirroot/enrol/enrol.class.php");   /// Open the factory class
 

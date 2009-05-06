@@ -4,8 +4,6 @@ require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->dirroot . '/repository/lib.php');
 require_once($CFG->libdir . '/adminlib.php');
 
-$CFG->pagepath = 'admin/managerepositories';
-
 $edit    = optional_param('edit', 0, PARAM_FORMAT);
 $new     = optional_param('new', '', PARAM_FORMAT);
 $hide    = optional_param('hide', '', PARAM_FORMAT);
@@ -48,7 +46,7 @@ if (!empty($edit) || !empty($new)) {
         $typeid = $new;
         $repositorytype = null;
     }
-    $CFG->pagepath = 'admin/managerepository/' . $plugin;
+    $PAGE->set_pagetype('admin-repository-' . $plugin);
     // display the edit form for this instance
     $mform = new repository_type_form('', array('plugin' => $plugin, 'instance' => $repositorytype));
     $fromform = $mform->get_data();
