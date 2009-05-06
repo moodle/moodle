@@ -75,6 +75,8 @@ class moodle_page {
 
     protected $_legacyclass = null;
 
+    protected $_url = null;
+
 /// Getter methods =============================================================
 /// Due to the __get magic below, you normally do not call these as $PAGE->get_x
 /// methods, but instead use the $PAGE->x syntax.
@@ -171,6 +173,18 @@ class moodle_page {
         } else {
             return str_replace('-', '/', $this->pagetype);
         }
+    }
+
+    /**
+     * @return moodle_url the clean URL required to load the current page. (You
+     * should normally use this in preference to $ME or $FULLME.)
+     */
+    public function get_url() {
+        if (is_null($this->_url)) {
+            debugging('This page did no call $PAGE->set_url(...). Realying on a guess.', DEBUG_DEVELOPER);
+            return new moodle_url($ME);
+        }
+        return $this->_url;
     }
 
     /**
@@ -317,6 +331,24 @@ class moodle_page {
      */
     public function set_docs_path($path) {
         $this->_docspath = $path;
+    }
+
+    /**
+     * You should call this method from every page to set the cleaned-up URL
+     * that should be used to return to this page. Used, for example, by the
+     * blocks editing UI to know where to return the user after an action.
+     * For example, course/view.php does:
+     *      $id = optional_param('id', 0, PARAM_INT);
+     *      $PAGE->set_url('course/view.php', array('id' => $id));
+     * @param string $url a URL, relative to $CFG->wwwroot.
+     * @param array $params paramters to add ot the URL.
+     */
+    public function set_url($url, $params = array()) {
+        global $CFG;
+        $this->_url = new moodle_url($CFG->wwwroot . '/' . $url, $params);
+        if (is_null($this->_pagetype)) {
+            $this->initialise_default_pagetype($url);
+        }
     }
 
 /// Initialisation methods =====================================================

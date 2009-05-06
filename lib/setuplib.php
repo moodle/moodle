@@ -103,45 +103,107 @@ function setup_validate_php_configuration() {
 }
 
 /**
- * Initialises $FULLME and friends.
- * @return void
+ * Initialises $FULLME and friends. Private function. Should only be called from
+ * setup.php.
  */
 function initialise_fullme() {
     global $CFG, $FULLME, $ME, $SCRIPT, $FULLSCRIPT;
 
+    // Detect common config error.
     if (substr($CFG->wwwroot, -1) == '/') {
         print_error('wwwrootslash', 'error');
     }
 
-    $url = parse_url($CFG->wwwroot);
-    if (!isset($url['path'])) {
-        $url['path'] = '';
-    }
-    $url['path'] .= '/';
-
     if (CLI_SCRIPT) {
-        // urls do not make much sense in CLI scripts
-        $backtrace = debug_backtrace();
-        $topfile = array_pop($backtrace);
-        $topfile = realpath($topfile['file']);
-        $dirroot = realpath($CFG->dirroot);
-
-        if (strpos($topfile, $dirroot) !== 0) {
-            $SCRIPT = $FULLSCRIPT = $FULLME = $ME = null;
-        } else {
-            $relme = substr($topfile, strlen($dirroot));
-            $relme = str_replace('\\', '/', $relme); // Win fix
-            $SCRIPT = $FULLSCRIPT = $FULLME = $ME = $relme;
-        }
-
+        initialise_fullme_cli();
         return;
     }
 
+    $wwwroot = parse_url($CFG->wwwroot);
+    if (!isset($wwwroot['path'])) {
+        $wwwroot['path'] = '';
+    }
+    $wwwroot['path'] .= '/';
+
+    $rurl = setup_get_remote_url();
+
+    // Check that URL is under $CFG->wwwroot.
+    if (strpos($rurl['path'], $wwwroot['path']) === 0) {
+        $SCRIPT = substr($rurl['path'], strlen($wwwroot['path'])-1);
+    } else {
+        // Probably some weird external script
+        $SCRIPT = $FULLSCRIPT = $FULLME = $ME = null;
+        return;
+    }
+
+    // $CFG->sslproxy specifies if external SSL appliance is used
+    // (That is, the Moodle server uses http, with an external box translating everything to https).
+    if (empty($CFG->sslproxy)) {
+        if ($rurl['scheme'] == 'http' and $wwwroot['scheme'] == 'https') {
+            print_error('sslonlyaccess', 'error');
+        }
+    }
+
+    // $CFG->reverseproxy specifies if reverse proxy server used.
+    // Used in load balancing scenarios.
+    // Do not abuse this to try to solve lan/wan access problems!!!!!
+    if (empty($CFG->reverseproxy)) {
+        if (($rurl['host'] != $wwwroot['host']) or
+                (!empty($wwwroot['port']) and $rurl['port'] != $wwwroot['port'])) {
+            print_error('wwwrootmismatch', 'error', '', $CFG->wwwroot);
+        }
+    }
+
+    // hopefully this will stop all those "clever" admins trying to set up moodle
+    // with two different addresses in intranet and Internet
+    if (!empty($CFG->reverseproxy) && $rurl['host'] == $wwwroot['host']) {
+        print_error('reverseproxyabused', 'error');
+    }
+
+    $hostandport = $rurl['scheme'] . '://' . $wwwroot['host'];
+    if (!empty($wwwroot['port'])) {
+        $hostandport .= ':'.$wwwroot['port'];
+    }
+
+    $FULLSCRIPT = $hostandport . $rurl['path'];
+    $FULLME = $hostandport . $rurl['fullpath'];
+    $ME = $rurl['fullpath'];
+    $rurl['path'] = $rurl['fullpath'];
+}
+
+/**
+ * Initialises $FULLME and friends for command line scripts.
+ * This is a private method for use by initialise_fullme.
+ */
+function initialise_fullme_cli() {
+    // Urls do not make much sense in CLI scripts
+    $backtrace = debug_backtrace();
+    $topfile = array_pop($backtrace);
+    $topfile = realpath($topfile['file']);
+    $dirroot = realpath($CFG->dirroot);
+
+    if (strpos($topfile, $dirroot) !== 0) {
+        // Probably some weird external script
+        $SCRIPT = $FULLSCRIPT = $FULLME = $ME = null;
+    } else {
+        $relativefile = substr($topfile, strlen($dirroot));
+        $relativefile = str_replace('\\', '/', $relativefile); // Win fix
+        $SCRIPT = $FULLSCRIPT = $relativefile;
+        $FULLME = $ME = null;
+    }
+}
+
+/**
+ * Get the URL that PHP/the web server thinks it is serving. Private function
+ * used by initialise_fullme. In your code, use $PAGE->url, $SCRIPT, etc.
+ * @return array in the same format that parse_url returns, with the addition of
+ *      a 'fullpath' element, which includes any slasharguments path.
+ */
+function setup_get_remote_url() {
     $rurl = array();
-    $hostport = explode(':', $_SERVER['HTTP_HOST']);
-    $rurl['host'] = reset($hostport);
+    list($rurl['host']) = explode(':', $_SERVER['HTTP_HOST']);
     $rurl['port'] = $_SERVER['SERVER_PORT'];
-    $rurl['path'] = $_SERVER['SCRIPT_NAME']; // script path without slash arguments
+    $rurl['path'] = $_SERVER['SCRIPT_NAME']; // Script path without slash arguments
 
     if (stripos($_SERVER['SERVER_SOFTWARE'], 'apache') !== false) {
         //Apache server
@@ -168,45 +230,9 @@ function initialise_fullme() {
         $_SERVER['REQUEST_URI'] = $rurl['fullpath']; // extra IIS compatibility
 
     } else {
-        print_error('unsupportedwebserver', 'error', '', $_SERVER['SERVER_SOFTWARE']);
+        throw new moodle_exception('unsupportedwebserver', 'error', '', $_SERVER['SERVER_SOFTWARE']);
     }
-
-    if (strpos($rurl['path'], $url['path']) === 0) {
-        $SCRIPT = substr($rurl['path'], strlen($url['path'])-1);
-    } else {
-        // probably some weird external script
-        $SCRIPT = $FULLSCRIPT = $FULLME = $ME = null;
-        return;
-    }
-
-    // $CFG->sslproxy specifies if external SSL apliance is used (server using http, ext box translating everything to https)
-    if (empty($CFG->sslproxy)) {
-        if ($rurl['scheme'] == 'http' and $url['scheme'] == 'https') {
-            print_error('sslonlyaccess', 'error');
-        }
-    }
-
-    // $CFG->reverseproxy specifies if reverse proxy server used - used in advanced load balancing setups only!
-    // this is not supposed to solve lan/wan access problems!!!!!
-    if (empty($CFG->reverseproxy)) {
-        if (($rurl['host'] != $url['host']) or (!empty($url['port']) and $rurl['port'] != $url['port'])) {
-            print_error('wwwrootmismatch', 'error', '', $CFG->wwwroot);
-        }
-    } else {
-        if ($rurl['host'] == $url['host']) {
-            // hopefully this will stop all those "clever" admins trying to set up moodle with two different addresses in intranet and Internet
-            print_error('reverseproxyabused', 'error');
-        }
-    }
-
-    $FULLME     = $rurl['scheme'].'://'.$url['host'];
-    if (!empty($url['port'])) {
-        $FULLME .= ':'.$url['port'];
-    }
-    $FULLSCRIPT = $FULLME.$rurl['path'];
-    $FULLME     = $FULLME.$rurl['fullpath'];
-    $ME         = $rurl['fullpath'];
-
+    return $rurl;
 }
 
 /**

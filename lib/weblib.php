@@ -241,21 +241,38 @@ class moodle_url {
     /**
      * Pass no arguments to create a url that refers to this page. Use empty string to create empty url.
      *
-     * @param string $url url default null means use this page url with no query string
-     *      empty string means empty url. If you pass any other type of url it will
-     *      be parsed into it's bits, including query string
+     * @param mixed $url a number of different forms are accespted:
+     *      null - create a URL that is the same as the URL used to load this page, but with no query string
+     *      '' - and empty URL
+     *      string - a URL, will be parsed into it's bits, including query string
+     *      array - as returned from the PHP function parse_url
+     *      moodle_url - make a copy of another moodle_url
      * @param array $params these params override anything in the query string
      *      where params have the same name.
      */
     public function __construct($url = null, $params = array()) {
-        global $ME;
-        if ($url !== '') {
+        if ($url === '') {
+            // Leave URL blank.
+        } else if (is_a($url, 'moodle_url')) {
+            $this->scheme = $url->scheme;
+            $this->host = $url->host;
+            $this->port = $url->port;
+            $this->user = $url->user;
+            $this->pass = $url->pass;
+            $this->path = $url->pass;
+            $this->fragment = $url->fragment;
+            $this->params = $url->params;
+        } else {
             if ($url === null) {
+                global $ME;
                 $url = $ME;
             }
-            $parts = parse_url($url);
+            if (is_string($url)) {
+                $url = parse_url($url);
+            }
+            $parts = $url;
             if ($parts === FALSE) {
-                print_error('invalidurl');
+                throw new moodle_exception('invalidurl');
             }
             if (isset($parts['query'])) {
                 parse_str(str_replace('&amp;', '&', $parts['query']), $this->params);
@@ -264,8 +281,8 @@ class moodle_url {
             foreach ($parts as $key => $value) {
                 $this->$key = $value;
             }
-            $this->params($params);
         }
+        $this->params($params);
     }
 
     /**
@@ -284,21 +301,25 @@ class moodle_url {
     }
 
     /**
-     * Remove all params if no arguments passed. Or else remove param $arg1, $arg2, etc.
+     * Remove all params if no arguments passed. Remove selected params if
+     * arguments are passed. Can be called as either remove_params('param1', 'param2')
+     * or remove_params(array('param1', 'param2')).
      *
-     * @param string $arg1
-     * @param string $arg2
-     * @param string $arg3
+     * @param mixed $params either an array of param names, or a string param name,
+     * @param string $params,... any number of additional param names.
      */
-    public function remove_params() {
-        if ($thisargs = func_get_args()) {
-            foreach ($thisargs as $arg) {
-                if (isset($this->params[$arg])) {
-                    unset($this->params[$arg]);
-                }
-            }
-        } else { // no args
+    public function remove_params($params) {
+        if (empty($params)) {
             $this->params = array();
+            return;
+        }
+        if (!is_array($params)) {
+            $params = func_get_args();
+        }
+        foreach ($params as $param) {
+            if (isset($this->params[$param])) {
+                unset($this->params[$param]);
+            }
         }
     }
 

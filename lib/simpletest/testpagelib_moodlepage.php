@@ -271,6 +271,46 @@ class moodle_page_test extends UnitTestCase {
         // Validate
         $this->assertEqual('a/page/type', $this->testpage->docspath);
     }
+
+    public function test_set_url_root() {
+        global $CFG;
+        // Exercise SUT
+        $this->testpage->set_url('');
+        // Validate
+        $this->assertEqual($CFG->wwwroot . '/', $this->testpage->url->out());
+    }
+
+    public function test_set_url_one_param() {
+        global $CFG;
+        // Exercise SUT
+        $this->testpage->set_url('mod/quiz/attempt.php', array('attempt' => 123));
+        // Validate
+        $this->assertEqual($CFG->wwwroot . '/mod/quiz/attempt.php?attempt=123', $this->testpage->url->out());
+    }
+
+    public function test_set_url_two_params() {
+        global $CFG;
+        // Exercise SUT
+        $this->testpage->set_url('mod/quiz/attempt.php', array('attempt' => 123, 'page' => 7));
+        // Validate
+        $this->assertEqual($CFG->wwwroot . '/mod/quiz/attempt.php?attempt=123&amp;page=7', $this->testpage->url->out());
+    }
+
+    public function test_set_url_sets_page_type() {
+        // Exercise SUT
+        $this->testpage->set_url('mod/quiz/attempt.php', array('attempt' => 123, 'page' => 7));
+        // Validate
+        $this->assertEqual('mod-quiz-attempt', $this->testpage->pagetype);
+    }
+
+    public function test_set_url_does_not_change_explicit_page_type() {
+        // Setup fixture
+        $this->testpage->set_pagetype('a-page-type');
+        // Exercise SUT
+        $this->testpage->set_url('mod/quiz/attempt.php', array('attempt' => 123, 'page' => 7));
+        // Validate
+        $this->assertEqual('a-page-type', $this->testpage->pagetype);
+    }
 }
 
 /**
