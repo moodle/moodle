@@ -541,8 +541,9 @@
         }
 
         $fromform->itemid        = $fromform->message['itemid'];
-        $fromform->message       = $fromform->message['text'];
         $fromform->messageformat = $fromform->message['format'];
+        $fromform->message       = $fromform->message['text'];
+        // WARNING: the $fromform->message array has been overwritten, do not use it anymore!
         $fromform->messagetrust  = trusttext_trusted($modcontext);
 
         if ($fromform->edit) {           // Updating a post
