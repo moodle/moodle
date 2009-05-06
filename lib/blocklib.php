@@ -132,21 +132,21 @@ function blocks_remove_inappropriate($page) {
 }
 
 function blocks_name_allowed_in_format($name, $pageformat) {
-
-    $accept  = NULL;
-    $depth   = -1;
-    if ($formats = block_method_result($name, 'applicable_formats')) {
-        foreach($formats as $format => $allowed) {
-            $thisformat = '^'.str_replace('*', '[^-]*', $format).'.*$';
-            if(ereg($thisformat, $pageformat)) {
-                if(($scount = substr_count($format, '-')) > $depth) {
-                    $depth  = $scount;
-                    $accept = $allowed;
-                }
-            }
+    $accept = NULL;
+    $maxdepth = -1;
+    $formats = block_method_result($name, 'applicable_formats');
+    if (!$formats) {
+        $formats = array();
+    }
+    foreach ($formats as $format => $allowed) {
+        $formatregex = '/^'.str_replace('*', '[^-]*', $format).'.*$/';
+        $depth = substr_count($format, '-');
+        if (preg_match($formatregex, $pageformat) && $depth > $maxdepth) {
+            $maxdepth = $depth;
+            $accept = $allowed;
         }
     }
-    if($accept === NULL) {
+    if ($accept === NULL) {
         $accept = !empty($formats['all']);
     }
     return $accept;
