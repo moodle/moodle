@@ -131,6 +131,7 @@ $string['importsuccess'] = 'The preset has been successfully applied.';
 $string['insufficiententries'] = 'more entries needed to view this database';
 $string['intro'] = 'Introduction';
 $string['invalidfieldname'] = 'Please choose another name for this field';
+$string['invalidrate'] = 'Invalid database rate ($a)';
 $string['invalidurl'] = 'The URL you just entered is not valid';
 $string['jstemplate'] = 'Javascript template';
 $string['latitude'] = 'Latitude';
