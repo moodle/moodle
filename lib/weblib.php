@@ -1216,8 +1216,7 @@ function format_text_menu() {
  * @todo Finish documenting this function
  */
 function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL) {
-
-    global $CFG, $COURSE, $DB;
+    global $CFG, $COURSE, $DB, $PAGE;
 
     static $croncache = array();
 
@@ -1262,7 +1261,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
     } else {
         $filtermanager = new null_filter_manager();
     }
-    $context = get_context_instance(CONTEXT_SYSTEM); // TODO change, once we have $PAGE->context.
+    $context = $PAGE->context;
 
     if (!empty($CFG->cachetext) and empty($options->nocache)) {
         $hashstr .= $text.'-'.$filtermanager->text_filtering_hash($context, $courseid).'-'.(int)$courseid.'-'.current_language().'-'.
@@ -1439,8 +1438,7 @@ function reset_text_filters_cache() {
  *  @return string
  */
 function format_string($string, $striplinks=true, $courseid=NULL ) {
-
-    global $CFG, $COURSE;
+    global $CFG, $COURSE, $PAGE;
 
     //We'll use a in-memory cache here to speed up repeated strings
     static $strcache = false;
@@ -1466,7 +1464,7 @@ function format_string($string, $striplinks=true, $courseid=NULL ) {
     $string = preg_replace("/\&(?![a-zA-Z0-9#]{1,8};)/", "&amp;", $string);
 
     if (!empty($CFG->filterall) && $CFG->version >= 2009040600) { // Avoid errors during the upgrade to the new system.
-        $context = get_context_instance(CONTEXT_SYSTEM); // TODO change, once we have $PAGE->context.
+        $context = $PAGE->context;
         $string = filter_manager::instance()->filter_string($string, $context, $courseid);
     }
 
@@ -1540,13 +1538,13 @@ function format_text_email($text, $format) {
  * @return string the filtered string.
  */
 function filter_text($text, $courseid=NULL) {
-    global $CFG, $COURSE;
+    global $CFG, $COURSE, $PAGE;
 
     if (empty($courseid)) {
         $courseid = $COURSE->id;       // (copied from format_text)
     }
 
-    $context = get_context_instance(CONTEXT_SYSTEM); // TODO change, once we have $PAGE->context.
+    $context = $PAGE->context;
 
     return filter_manager::instance()->filter_text($text, $context, $courseid);
 }
