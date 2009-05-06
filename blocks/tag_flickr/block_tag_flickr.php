@@ -31,7 +31,7 @@ class block_tag_flickr extends block_base {
 
     function get_content() {
 
-        global $CFG, $USER, $PAGE;
+        global $CFG, $USER;
 
         if ($this->content !== NULL) {
             return $this->content;

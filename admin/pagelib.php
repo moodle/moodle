@@ -121,11 +121,6 @@ class page_admin extends page_base {
         return $instance->position;
     }
 
-    // does anything need to be done here?
-    function init_quick($data) {
-        parent::init_quick($data);
-    }
-
     function print_header($section = '', $focus='') {
         global $USER, $CFG, $SITE;
 
