@@ -126,7 +126,7 @@ function readdata($file, $courseid, $modname) {
     $path_parts = pathinfo($zipfile);
     $dirname = substr($zipfile, 0, strpos($zipfile, '.'.$path_parts['extension'])); // take off the extension
     if (!file_exists($base.$dirname)) {
-        mkdir($base.$dirname);
+        mkdir($base.$dirname, $CFG->directorypermissions);
     }
 
     // move our uploaded file to temp/lesson
@@ -204,7 +204,7 @@ function extract_data($pages, $courseid, $lessonname, $modname) {
     while(true) {
         if (!file_exists($imagedir.'/'.$lessonname.$i)) {
             // ok doesnt exist so make the directory and update our paths
-            mkdir($imagedir.'/'.$lessonname.$i);
+            mkdir($imagedir.'/'.$lessonname.$i, $CFG->directorypermissions);
             $imagedir = $imagedir.'/'.$lessonname.$i;
             $imagelink = $imagelink.'/'.$lessonname.$i;
             break;
@@ -575,9 +575,7 @@ function book_save_objects($chapters, $bookid, $pageid='0') {
     
     // nothing fancy, just save them all in order
     foreach ($chapters as $chapter) {
-        if (!$chapter->id = $DB->insert_record('book_chapters', $chapter)) {
-            print_error('cannotupdatebook', 'lesson');
-        }
+        $chapter->id = $DB->insert_record('book_chapters', $chapter);
     }
     return true;
 }
