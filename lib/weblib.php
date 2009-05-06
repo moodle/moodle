@@ -308,7 +308,7 @@ class moodle_url {
      * @param mixed $params either an array of param names, or a string param name,
      * @param string $params,... any number of additional param names.
      */
-    public function remove_params($params) {
+    public function remove_params($params = NULL) {
         if (empty($params)) {
             $this->params = array();
             return;
