@@ -79,6 +79,10 @@ class moodle_page {
 
     protected $_blocks = null;
 
+    protected $_blockseditingcap = 'moodle/site:manageblocks';
+
+    protected $_othereditingcaps = array();
+
 /// Getter methods =============================================================
 /// Due to the __get magic below, you normally do not call these as $PAGE->get_x
 /// methods, but instead use the $PAGE->x syntax.
@@ -227,7 +231,7 @@ class moodle_page {
      * @return boolean does the user have permission to see this page in editing mode.
      */
     public function user_allowed_editing() {
-        return true; // TODO
+        return has_any_capability($this->all_editing_caps(), $this->_context);
     }
 
 /// Setter methods =============================================================
@@ -382,6 +386,30 @@ class moodle_page {
         }
     }
 
+    /**
+     * Set the capability that allows users to edit blocks on this page. Normally
+     * the default of 'moodle/site:manageblocks' is used, but a few pages like
+     * the My Moodle page need to use a different capability like 'moodle/my:manageblocks'.
+     * @param string $capability a capability.
+     */
+    public function set_blocks_editing_capability($capability) {
+        $this->_blockseditingcap = $capability;
+    }
+
+    /**
+     * Some pages let you turn editing on for reasons other than editing blocks.
+     * If that is the case, you can pass other capabilitise that let the user
+     * edit this page here.
+     * @param string|array $capability either a capability, or an array of capabilities.
+     */
+    public function set_other_editing_capability($capability) {
+        if (is_array($capability)) {
+            $this->_othereditingcaps = array_unique($this->_othereditingcaps + $capability);
+        } else {
+            $this->_othereditingcaps[] = $capability;
+        }
+    }
+
 /// Initialisation methods =====================================================
 /// These set various things up in a default way.
 
@@ -529,6 +557,12 @@ class moodle_page {
             }
         }
         return $class;
+    }
+
+    protected function all_editing_caps() {
+        $caps = $this->_othereditingcaps;
+        $caps[] = $this->_blockseditingcap;
+        return $caps;
     }
 
 /// Deprecated fields and methods for backwards compatibility ==================

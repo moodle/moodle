@@ -44,6 +44,9 @@ class testable_moodle_page extends moodle_page {
     public function url_to_class_name($url) {
         return parent::url_to_class_name($url);
     }
+    public function all_editing_caps() {
+        return parent::all_editing_caps();
+    }
 }
 
 /**
@@ -464,6 +467,7 @@ class moodle_page_editing_test extends UnitTestCase {
         global $USER;
         $this->originaluserediting = !empty($USER->editing);
         $this->testpage = new testable_moodle_page();
+        $this->testpage->set_context(get_context_instance(CONTEXT_SYSTEM));
     }
 
     public function tearDown() {
@@ -472,6 +476,8 @@ class moodle_page_editing_test extends UnitTestCase {
         $USER->editing = $this->originaluserediting;
     }
 
+    // We are relying on the fact that unit tests are alwyas run by admin, to
+    // ensure the user_allows_editing call returns true.
     public function test_user_is_editing_on() {
         // Setup fixture
         global $USER;
@@ -480,12 +486,44 @@ class moodle_page_editing_test extends UnitTestCase {
         $this->assertTrue($this->testpage->user_is_editing());
     }
 
+    // We are relying on the fact that unit tests are alwyas run by admin, to
+    // ensure the user_allows_editing call returns true.
     public function test_user_is_editing_off() {
         // Setup fixture
         global $USER;
         $USER->editing = false;
         // Validate
         $this->assertFalse($this->testpage->user_is_editing());
+    }
+
+    public function test_default_editing_capabilities() {
+        // Validate
+        $this->assertEqual(array('moodle/site:manageblocks'), $this->testpage->all_editing_caps());
+    }
+
+    public function test_other_block_editing_cap() {
+        // Exercise SUT
+        $this->testpage->set_blocks_editing_capability('moodle/my:manageblocks');
+        // Validate
+        $this->assertEqual(array('moodle/my:manageblocks'), $this->testpage->all_editing_caps());
+    }
+
+    public function test_other_editing_cap() {
+        // Exercise SUT
+        $this->testpage->set_other_editing_capability('moodle/course:manageactivities');
+        // Validate
+        $actualcaps = $this->testpage->all_editing_caps();
+        $expectedcaps = array('moodle/course:manageactivities', 'moodle/site:manageblocks');
+        $this->assert(new ArraysHaveSameValuesExpectation($expectedcaps), $actualcaps);
+    }
+
+    public function test_other_editing_caps() {
+        // Exercise SUT
+        $this->testpage->set_other_editing_capability(array('moodle/course:manageactivities', 'moodle/site:other'));
+        // Validate
+        $actualcaps = $this->testpage->all_editing_caps();
+        $expectedcaps = array('moodle/course:manageactivities', 'moodle/site:other', 'moodle/site:manageblocks');
+        $this->assert(new ArraysHaveSameValuesExpectation($expectedcaps), $actualcaps);
     }
 }
 ?>
