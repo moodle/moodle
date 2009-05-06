@@ -48,14 +48,6 @@ class page_blog extends page_base {
         $this->full_init_done = true;
     }
 
-    // For this test page, only admins are going to be allowed editing (for simplicity).
-    function user_allowed_editing() {
-        if (isloggedin() && !isguest()) {
-            return true;
-        }
-        return false;
-    }
-
     //over-ride parent method's print_header because blog already passes more than just the title along
     function print_header($pageTitle='', $pageHeading='', $pageNavigation='', $pageFocus='', $pageMeta='') {
         global $CFG, $USER;

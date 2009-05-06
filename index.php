@@ -89,6 +89,7 @@
 
     $PAGE = page_create_object(PAGE_COURSE_VIEW, SITEID);
     $PAGE->set_pagetype('site-index');
+    $PAGE->set_other_editing_capability('moodle/course:manageactivities');
     $PAGE->set_url('');
     $PAGE->set_docs_path('');
     $pageblocks = blocks_setup($PAGE);

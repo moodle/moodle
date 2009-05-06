@@ -457,7 +457,8 @@ class block_base {
         if (empty($this->instance->pageid)) {
             $this->instance->pageid = 0;
         }
-        if (!empty($PAGE->type) and ($this->instance->pagetype == $PAGE->type) and $this->instance->pageid == $PAGE->id) {
+
+        if (($this->instance->pagetype == $PAGE->pagetype) and $this->instance->pageid == $PAGE->id) {
             $page = $PAGE;
         } else {
             $page = page_create_object($this->instance->pagetype, $this->instance->pageid);

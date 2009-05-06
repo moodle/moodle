@@ -188,6 +188,7 @@ class moodle_page {
     public function get_url() {
         if (is_null($this->_url)) {
             debugging('This page did no call $PAGE->set_url(...). Realying on a guess.', DEBUG_DEVELOPER);
+            global $ME;
             return new moodle_url($ME);
         }
         return new moodle_url($this->_url); // Return a clone for safety.
@@ -745,7 +746,6 @@ function page_map_class($type, $classname = NULL) {
     if ($mappings === NULL) {
         $mappings = array(
             PAGE_COURSE_VIEW => 'page_course',
-            'site-index' => 'page_course'
         );
     }
 
@@ -858,46 +858,6 @@ class page_course extends page_base {
 
         // Mark we're done
         $this->full_init_done = true;
-    }
-
-    // USER-RELATED THINGS
-
-    // Can user edit the course page or "sticky page"?
-    // This is also about editting of blocks BUT mainly activities in course page layout, see
-    // update_course_icon() has very similar checks - it must use the same capabilities
-    //
-    // this is a _very_ expensive check - so cache it during execution
-    //
-    function user_allowed_editing() {
-        $this->init_full();
-
-        if (isset($this->_user_allowed_editing)) {
-            return $this->_user_allowed_editing;
-        }
-
-        if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM))
-                && defined('ADMIN_STICKYBLOCKS')) {
-            $this->_user_allowed_editing = true;
-            return true;
-        }
-        if (has_capability('moodle/course:manageactivities', $this->context)) {
-            $this->_user_allowed_editing = true;
-            return true;
-        }
-
-        // Exhaustive (and expensive!) checks to see if the user
-        // has editing abilities to a specific module/block/group...
-        // This code would benefit from the ability to check specifically
-        // for overrides.
-        foreach ($this->childcontexts as $cc) {
-            if (($cc->contextlevel == CONTEXT_MODULE &&
-                 has_capability('moodle/course:manageactivities', $cc)) ||
-                ($cc->contextlevel == CONTEXT_BLOCK &&
-                 has_capability('moodle/site:manageblocks', $cc))) {
-                $this->_user_allowed_editing = true;
-                return true;
-            }
-        }
     }
 
     // HTML OUTPUT SECTION
@@ -1018,13 +978,6 @@ class page_generic_activity extends page_base {
         $this->full_init_done = true;
     }
 
-    function user_allowed_editing() {
-        $this->init_full();
-        // Yu: I think this is wrong, should be checking manageactivities instead
-        //return has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_COURSE, $this->modulerecord->course));
-        return has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_MODULE, $this->modulerecord->id));
-    }
-
     function print_header($title, $morenavlinks = NULL, $bodytags = '', $meta = '') {
         global $USER, $CFG;
 
@@ -1036,18 +989,14 @@ class page_generic_activity extends page_base {
             $title = str_replace($search, $replace, $title);
         }
 
-        if (empty($morenavlinks) && $this->user_allowed_editing()) {
-            $buttons = '<table><tr><td>'.update_module_button($this->modulerecord->id, $this->course->id, get_string('modulename', $this->activityname)).'</td>';
-            if (!empty($CFG->showblocksonmodpages)) {
-                $buttons .= '<td><form '.$CFG->frametarget.' method="get" action="view.php"><div>'.
-                    '<input type="hidden" name="id" value="'.$this->modulerecord->id.'" />'.
-                    '<input type="hidden" name="edit" value="'.($this->user_is_editing()?'off':'on').'" />'.
-                    '<input type="submit" value="'.get_string($this->user_is_editing()?'blockseditoff':'blocksediton').'" /></div></form></td>';
-            }
-            $buttons .= '</tr></table>';
-        } else {
-            $buttons = '&nbsp;';
+        $buttons = '<table><tr><td>'.update_module_button($this->modulerecord->id, $this->course->id, get_string('modulename', $this->activityname)).'</td>';
+        if ($this->user_allowed_editing() && !empty($CFG->showblocksonmodpages)) {
+            $buttons .= '<td><form '.$CFG->frametarget.' method="get" action="view.php"><div>'.
+                '<input type="hidden" name="id" value="'.$this->modulerecord->id.'" />'.
+                '<input type="hidden" name="edit" value="'.($this->user_is_editing()?'off':'on').'" />'.
+                '<input type="submit" value="'.get_string($this->user_is_editing()?'blockseditoff':'blocksediton').'" /></div></form></td>';
         }
+        $buttons .= '</tr></table>';
 
         if (empty($morenavlinks)) {
             $morenavlinks = array();

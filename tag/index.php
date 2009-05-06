@@ -35,6 +35,7 @@ if (empty($tag)) {
 //create a new page_tag object, defined in pagelib.php
 $PAGE = page_create_object(PAGE_TAG_INDEX, $tag->id);
 $PAGE->set_url('tag/index.php', array('id' => $tag->id));
+$PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
 $pageblocks = blocks_setup($PAGE,BLOCKS_PINNED_BOTH);
 $PAGE->tag_object = $tag;
 

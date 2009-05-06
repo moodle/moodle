@@ -25,6 +25,7 @@
 
     $PAGE = page_create_instance($USER->id);
     $PAGE->set_url('my/index.php');
+    $PAGE->set_blocks_editing_capability('moodle/my:manageblocks');
 
     $pageblocks = blocks_setup($PAGE,BLOCKS_PINNED_BOTH);
 

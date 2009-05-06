@@ -10,11 +10,6 @@ class page_tag extends page_base {
 
     var $tag_object = NULL;
 
-    function user_allowed_editing() {
-        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-        return has_capability('moodle/tag:editblocks', $systemcontext);        
-    }
-
     //-----------  printing funtions -----------
 
     function print_header() {

@@ -64,6 +64,7 @@ if (!empty($tagid)) {
     $array['tagid'] = $tagid;
 }
 $PAGE->set_url('blog/index.php', $array);
+$PAGE->set_blocks_editing_capability('moodle/blog:create');
 $PAGE->init_full(); //init the BlogInfo object and the courserecord object
 
 $editing = false;

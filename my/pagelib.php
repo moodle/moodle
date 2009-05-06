@@ -4,15 +4,6 @@ require_once($CFG->libdir.'/pagelib.php');
 
 class page_my_moodle extends page_base {
 
-    function user_allowed_editing() {
-        if ($PAGE->pagetype == PAGE_MY_MOODLE) {
-            return true;
-        } else if (has_capability('moodle/my:manageblocks', get_context_instance(CONTEXT_SYSTEM)) && defined('ADMIN_STICKYBLOCKS')) {
-            return true;
-        }
-        return false;
-    }
-
     function print_header($title) {
 
         global $USER, $CFG;

@@ -21,16 +21,6 @@ page_map_class(PAGE_ADMIN, 'page_admin');
 class page_admin extends page_base {
     var $extrabutton = '';
 
-    function _legacy_blocks_get_default() {
-        return 'admin_tree,admin_bookmarks';
-    }
-
-    // seems reasonable that the only people that can edit blocks on the admin pages
-    // are the admins... but maybe we want a role for this?
-    function user_allowed_editing() {
-        return has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM));
-    }
-
     /**
      * Use this to pass extra HTML that is added after the turn blocks editing on/off button.
      *
