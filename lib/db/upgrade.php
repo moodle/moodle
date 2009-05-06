@@ -1702,6 +1702,14 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009042700);
     }
 
+    if ($result && $oldversion < 2009042800) {
+    /// Site front page blocks need to be moved due to page name change.
+        $DB->set_field('block_instance', 'pagetype', 'site-index', array('pagetype' => 'course-view', 'pageid' => SITEID));
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042800);
+    }
+
     if ($result && $oldversion < 2009043000) {
         unset_config('grade_report_showgroups');
         upgrade_main_savepoint($result, 2009043000);

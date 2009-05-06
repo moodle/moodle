@@ -1929,6 +1929,10 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
             }
         }
         $PAGE->set_course($course);
+    } else {
+        // If $PAGE->course, and hence $PAGE->context, have not already been set
+        // up properly, set them up now.
+        $PAGE->set_course($PAGE->course);
     }
 
 /// If the user is not even logged in yet then make sure they are

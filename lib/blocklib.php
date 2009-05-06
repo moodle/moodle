@@ -902,7 +902,7 @@ function blocks_get_by_page_pinned($page) {
 function blocks_get_by_page($page) {
     global $DB;
 
-    $blocks = $DB->get_records_select('block_instance', "pageid = ? AND pagetype = ?",
+    $blocks = $DB->get_records_select('block_instance', "pageid = ? AND ? LIKE (" . $DB->sql_concat('pagetype', "'%'") . ")",
             array($page->get_id(), $page->pagetype), 'position, weight');
 
     $positions = $page->blocks_get_positions();

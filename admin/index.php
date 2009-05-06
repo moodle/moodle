@@ -189,6 +189,7 @@
 /// and upgrade if possible.
 
     $stradministration = get_string('administration');
+    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 
     if (empty($CFG->version)) {
         print_error('missingconfigversion', 'debug');

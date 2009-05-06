@@ -11,7 +11,6 @@
 
 
     admin_externalpage_setup('mnetenrol');
-    $PAGE->set_pagetype('admin-mnet');
 
     require_once("$CFG->dirroot/enrol/enrol.class.php");   /// Open the factory class
     $enrolment = enrolment_factory::factory('mnet');

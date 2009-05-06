@@ -317,7 +317,7 @@ function page_create_object($type, $id = NULL) {
 
     $object->init_quick($data);
     $object->set_course($PAGE->course);
-    $object->set_pagetype($type);
+    //$object->set_pagetype($type);
     return $object;
 }
 

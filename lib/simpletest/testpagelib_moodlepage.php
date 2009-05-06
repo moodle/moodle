@@ -37,6 +37,12 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->libdir . '/pagelib.php');
 
+class testable_moodle_page extends moodle_page {
+    public function initialise_default_pagetype($script = '') {
+        parent::initialise_default_pagetype($script);
+    }
+}
+
 /**
  * Test functions that affect filter_active table with contextid = $syscontextid.
  */
@@ -47,7 +53,7 @@ class moodle_page_test extends UnitTestCase {
     public function setUp() {
         global $COURSE;
         $this->originalcourse = $COURSE;
-        $this->testpage = new moodle_page();
+        $this->testpage = new testable_moodle_page();
     }
 
     public function tearDown() {
@@ -167,11 +173,9 @@ class moodle_page_test extends UnitTestCase {
         $this->assert(new CheckSpecifiedFieldsExpectation($context), $this->testpage->context);
     }
 
-    public function test_cant_get_pagetype_before_set() {
-        // Set expectation.
-        $this->expectException();
-        // Exercise SUT
-        $this->testpage->pagetype;
+    public function test_pagetype_defaults_to_script() {
+        // Exercise SUT and validate
+        $this->assertEqual('admin-report-unittest-index', $this->testpage->pagetype);
     }
 
     public function test_set_pagetype() {
@@ -179,6 +183,20 @@ class moodle_page_test extends UnitTestCase {
         $this->testpage->set_pagetype('a-page-type');
         // Validate
         $this->assertEqual('a-page-type', $this->testpage->pagetype);
+    }
+
+    public function test_initialise_default_pagetype() {
+        // Exercise SUT
+        $this->testpage->initialise_default_pagetype('admin/report/unittest/index.php');
+        // Validate
+        $this->assertEqual('admin-report-unittest-index', $this->testpage->pagetype);
+    }
+
+    public function test_initialise_default_pagetype_fp() {
+        // Exercise SUT
+        $this->testpage->initialise_default_pagetype('index.php');
+        // Validate
+        $this->assertEqual('site-index', $this->testpage->pagetype);
     }
 }
 
