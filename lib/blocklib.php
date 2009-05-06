@@ -276,7 +276,7 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
             $obj = $instance->obj;
         }
 
-        $editalways = $page->edit_always();
+        $editalways = false;
 
 
         if (($isediting  && empty($instance->pinned)) || !empty($editalways)) {
@@ -827,13 +827,6 @@ function blocks_get_pinned($page) {
     global $DB;
 
     $visible = true;
-
-    if (method_exists($page,'edit_always')) {
-        if ($page->edit_always()) {
-            $visible = false;
-        }
-    }
-
     $select = "pagetype = ?";
     $params = array($page->pagetype);
 

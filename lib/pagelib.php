@@ -777,14 +777,7 @@ class page_base extends moodle_page {
     function init_full() {
         $this->full_init_done = true;
     }
-
-
-    // is this  page always editable, regardless of anything else?
-    function edit_always() {
-        return (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM)) &&  defined('ADMIN_STICKYBLOCKS'));
-    }
 }
-
 
 /**
  * Class that models the behavior of a moodle course
