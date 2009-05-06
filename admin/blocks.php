@@ -83,7 +83,7 @@
             }
 
             // First delete instances and then block
-            $instances = $DB->get_records('block_instance', array('blockid'=>$block->id));
+            $instances = $DB->get_records('block_instance_old', array('blockid'=>$block->id));
             if(!empty($instances)) {
                 foreach($instances as $instance) {
                     blocks_delete_instance($instance);
@@ -169,8 +169,8 @@
         // MDL-11167, blocks can be placed on mymoodle, or the blogs page
         // and it should not show up on course search page
 
-        $totalcount = $DB->count_records('block_instance', array('blockid'=>$blockid));
-        $count      = $DB->count_records('block_instance', array('blockid'=>$blockid, 'pagetype'=>'course-view'));
+        $totalcount = $DB->count_records('block_instance_old', array('blockid'=>$blockid));
+        $count      = $DB->count_records('block_instance_old', array('blockid'=>$blockid, 'pagetype'=>'course-view'));
 
         if ($count>0) {
             $blocklist = "<a href=\"{$CFG->wwwroot}/course/search.php?blocklist=$blockid&amp;sesskey=".sesskey()."\" ";

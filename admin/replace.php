@@ -43,7 +43,7 @@ print_simple_box_end();
 /// Try to replace some well-known serialised contents (html blocks)
 notify('Replacing in html blocks...');
 $sql = "SELECT bi.*
-          FROM {block_instance} bi
+          FROM {block_instance_old} bi
           JOIN {block} b ON b.id = bi.blockid
          WHERE b.name = 'html'";
 if ($instances = $DB->get_records_sql($sql)) {

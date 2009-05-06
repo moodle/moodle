@@ -164,19 +164,19 @@ function blocks_delete_instance($instance,$pinned=false) {
     }
 
     if (!empty($pinned)) {
-         $DB->delete_records('block_pinned', array('id'=>$instance->id));
+         $DB->delete_records('block_pinned_old', array('id'=>$instance->id));
         // And now, decrement the weight of all blocks after this one
-        $sql = "UPDATE {block_pinned}
+        $sql = "UPDATE {block_pinned_old}
                    SET weight = weight - 1
                  WHERE pagetype = ? AND position = ? AND weight > ?";
         $params = array($instance->pagetype, $instance->position, $instance->weight);
         $DB->execute($sql, $params);
     } else {
         // Now kill the db record;
-        $DB->delete_records('block_instance', array('id'=>$instance->id));
+        $DB->delete_records('block_instance_old', array('oldid'=>$instance->id));
         delete_context(CONTEXT_BLOCK, $instance->id);
         // And now, decrement the weight of all blocks after this one
-        $sql = "UPDATE {block_instance}
+        $sql = "UPDATE {block_instance_old}
                    SET weight = weight - 1
                  WHERE pagetype = ? AND pageid = ?
                        AND position = ? AND weight > ?";
@@ -514,9 +514,9 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
             }
             $instance->visible = ($instance->visible) ? 0 : 1;
             if (!empty($pinned)) {
-                $DB->update_record('block_pinned', $instance);
+                $DB->update_record('block_pinned_old', $instance);
             } else {
-                $DB->update_record('block_instance', $instance);
+                $DB->update_record('block_instance_old', $instance);
             }
         break;
         case 'delete':
@@ -549,16 +549,16 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
                 if(!empty($other)) {
                     ++$other->weight;
                     if (!empty($pinned)) {
-                        $DB->update_record('block_pinned', $other);
+                        $DB->update_record('block_pinned_old', $other);
                     } else {
-                        $DB->update_record('block_instance', $other);
+                        $DB->update_record('block_instance_old', $other);
                     }
                 }
                 --$instance->weight;
                 if (!empty($pinned)) {
-                    $DB->update_record('block_pinned', $instance);
+                    $DB->update_record('block_pinned_old', $instance);
                 } else {
-                    $DB->update_record('block_instance', $instance);
+                    $DB->update_record('block_instance_old', $instance);
                 }
             }
         break;
@@ -586,16 +586,16 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
                 if(!empty($other)) {
                     --$other->weight;
                     if (!empty($pinned)) {
-                        $DB->update_record('block_pinned', $other);
+                        $DB->update_record('block_pinned_old', $other);
                     } else {
-                        $DB->update_record('block_instance', $other);
+                        $DB->update_record('block_instance_old', $other);
                     }
                 }
                 ++$instance->weight;
                 if (!empty($pinned)) {
-                    $DB->update_record('block_pinned', $instance);
+                    $DB->update_record('block_pinned_old', $instance);
                 } else {
-                    $DB->update_record('block_instance', $instance);
+                    $DB->update_record('block_instance_old', $instance);
                 }
             }
         break;
@@ -643,13 +643,13 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
             $newpos = $page->blocks->get_default_position();
             if (!empty($pinned)) {
                 $sql = "SELECT 1, MAX(weight) + 1 AS nextfree
-                          FROM {block_pinned}
+                          FROM {block_pinned_old}
                          WHERE pagetype = ? AND position = ?";
                 $params = array($page->pagetype, $newpos);
 
             } else {
                 $sql = "SELECT 1, MAX(weight) + 1 AS nextfree
-                          FROM {block_instance}
+                          FROM {block_instance_old}
                          WHERE pageid = ? AND pagetype = ? AND position = ?";
                 $params = array($page->get_id(), $page->pagetype, $newpos);
             }
@@ -666,9 +666,9 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
             $newinstance->visible    = 1;
             $newinstance->configdata = '';
             if (!empty($pinned)) {
-                $newinstance->id = $DB->insert_record('block_pinned', $newinstance);
+                $newinstance->id = $DB->insert_record('block_pinned_old', $newinstance);
             } else {
-                $newinstance->id = $DB->insert_record('block_instance', $newinstance);
+                $newinstance->id = $DB->insert_record('block_instance_old', $newinstance);
             }
 
             // If the new instance was created, allow it to do additional setup
@@ -719,13 +719,13 @@ function blocks_execute_repositioning(&$instance, $newpos, $newweight, $pinned=f
 
     // Close the weight gap we 'll leave behind
     if (!empty($pinned)) {
-        $sql = "UPDATE {block_instance}
+        $sql = "UPDATE {block_instance_old}
                    SET weight = weight - 1
                  WHERE pagetype = ? AND position = ? AND weight > ?";
         $params = array($instance->pagetype, $instance->position, $instance->weight);
 
     } else {
-        $sql = "UPDATE {block_instance}
+        $sql = "UPDATE {block_instance_old}
                    SET weight = weight - 1
                  WHERE pagetype = ? AND pageid = ?
                        AND position = ? AND weight > ?";
@@ -737,9 +737,9 @@ function blocks_execute_repositioning(&$instance, $newpos, $newweight, $pinned=f
     $instance->weight   = $newweight;
 
     if (!empty($pinned)) {
-        $DB->update_record('block_pinned', $instance);
+        $DB->update_record('block_pinned_old', $instance);
     } else {
-        $DB->update_record('block_instance', $instance);
+        $DB->update_record('block_instance_old', $instance);
     }
 }
 
@@ -773,12 +773,12 @@ function blocks_move_block($page, &$instance, $destpos, $destweight=NULL, $pinne
     // First we close the gap that will be left behind when we take out the
     // block from it's current column.
     if ($pinned) {
-        $closegapsql = "UPDATE {block_instance}
+        $closegapsql = "UPDATE {block_instance_old}
                            SET weight = weight - 1
                          WHERE weight > ? AND position = ? AND pagetype = ?";
         $params = array($instance->weight, $instance->position, $instance->pagetype);
     } else {
-        $closegapsql = "UPDATE {block_instance}
+        $closegapsql = "UPDATE {block_instance_old}
                            SET weight = weight - 1
                          WHERE weight > ? AND position = ?
                                AND pagetype = ? AND pageid = ?";
@@ -790,12 +790,12 @@ function blocks_move_block($page, &$instance, $destpos, $destweight=NULL, $pinne
 
     // Now let's make space for the block being moved.
     if ($pinned) {
-        $opengapsql = "UPDATE {block_instance}
+        $opengapsql = "UPDATE {block_instance_old}
                            SET weight = weight + 1
                          WHERE weight >= ? AND position = ? AND pagetype = ?";
         $params = array($destweight, $destpos, $instance->pagetype);
     } else {
-        $opengapsql = "UPDATE {block_instance}
+        $opengapsql = "UPDATE {block_instance_old}
                           SET weight = weight + 1
                         WHERE weight >= ? AND position = ?
                               AND pagetype = ? AND pageid = ?";
@@ -810,9 +810,9 @@ function blocks_move_block($page, &$instance, $destpos, $destweight=NULL, $pinne
     $instance->weight   = $destweight;
 
     if ($pinned) {
-        $table = 'block_pinned';
+        $table = 'block_pinned_old';
     } else {
-        $table = 'block_instance';
+        $table = 'block_instance_old';
     }
     return $DB->update_record($table, $instance);
 }
@@ -834,7 +834,7 @@ function blocks_get_pinned($page) {
         $select .= " AND visible = 1";
      }
 
-    $blocks = $DB->get_records_select('block_pinned', $select, $params, 'position, weight');
+    $blocks = $DB->get_records_select('block_pinned_old', $select, $params, 'position, weight');
 
     $positions = $page->blocks->get_positions();
     $arr = array();
@@ -895,7 +895,7 @@ function blocks_get_by_page_pinned($page) {
 function blocks_get_by_page($page) {
     global $DB;
 
-    $blocks = $DB->get_records_select('block_instance', "pageid = ? AND ? LIKE (" . $DB->sql_concat('pagetype', "'%'") . ")",
+    $blocks = $DB->get_records_select('block_instance_old', "pageid = ? AND ? LIKE (" . $DB->sql_concat('pagetype', "'%'") . ")",
             array($page->get_id(), $page->pagetype), 'position, weight');
 
     $positions = $page->blocks->get_positions();
@@ -954,12 +954,12 @@ function blocks_print_adminblock(&$page, &$pageblocks) {
  */
 function blocks_delete_all_on_page($pagetype, $pageid) {
     global $DB;
-    if ($instances = $DB->get_records('block_instance', array('pageid' => $pageid, 'pagetype' => $pagetype))) {
+    if ($instances = $DB->get_records('block_instance_old', array('pageid' => $pageid, 'pagetype' => $pagetype))) {
         foreach ($instances as $instance) {
             delete_context(CONTEXT_BLOCK, $instance->id); // Ingore any failures here.
         }
     }
-    return $DB->delete_records('block_instance', array('pageid' => $pageid, 'pagetype' => $pagetype));
+    return $DB->delete_records('block_instance_old', array('pageid' => $pageid, 'pagetype' => $pagetype));
 }
 
 // Dispite what this function is called, it seems to be mostly used to populate
@@ -1017,7 +1017,7 @@ function blocks_repopulate_page($page) {
 
             if(!empty($newinstance->blockid)) {
                 // Only add block if it was recognized
-                $DB->insert_record('block_instance', $newinstance);
+                $DB->insert_record('block_instance_old', $newinstance);
                 ++$weight;
             }
         }

@@ -117,7 +117,7 @@
     // get list of courses containing blocks if required
     if (!empty($blocklist) and confirm_sesskey()) {
         $blockid = $blocklist;
-        if (!$blocks = $DB->get_records('block_instance', array('blockid'=>$blockid))) {
+        if (!$blocks = $DB->get_records('block_instance_old', array('blockid'=>$blockid))) {
             print_error('blockcannotread', '', '',  $blockid);
         }
 

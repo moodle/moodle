@@ -39,12 +39,12 @@
                 $newblock->position = 'r';
                 $newblock->weight   = 0;
                 $newblock->visible  = 1;
-                $DB->insert_record('block_instance', $newblock);
+                $DB->insert_record('block_instance_old', $newblock);
 
                 // add blog_tags menu
                 $newblock -> blockid = $tagsblock->id;
                 $newblock -> weight  = 1;
-                $DB->insert_record('block_instance', $newblock);
+                $DB->insert_record('block_instance_old', $newblock);
 
                 // finally we set the page size pref
                 set_user_preference('blogpagesize', 10);

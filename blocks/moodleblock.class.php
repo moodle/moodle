@@ -728,11 +728,13 @@ class block_base {
 
         $data = $data;
         $this->config = $data;
-        $table = 'block_instance';
+        $table = 'block_instance_old';
+        $field = 'oldid';
         if (!empty($pinned)) {
-            $table = 'block_pinned';
+            $table = 'block_pinned_old';
+            $field = 'id';
         }
-        return $DB->set_field($table, 'configdata', base64_encode(serialize($data)), array('id'=>$this->instance->id));
+        return $DB->set_field($table, 'configdata', base64_encode(serialize($data)), array($field => $this->instance->id));
     }
 
     /**
@@ -743,11 +745,13 @@ class block_base {
     function instance_config_commit($pinned=false) {
         global $DB;
 
-        $table = 'block_instance';
+        $table = 'block_instance_old';
+        $field = 'oldid';
         if (!empty($pinned)) {
-            $table = 'block_pinned';
+            $table = 'block_pinned_old';
+            $field = 'id';
         }
-        return $DB->set_field($table, 'configdata', base64_encode(serialize($this->config)), array('id'=>$this->instance->id));
+        return $DB->set_field($table, 'configdata', base64_encode(serialize($this->config)), array($field => $this->instance->id));
     }
 
      /**

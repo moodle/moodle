@@ -140,7 +140,7 @@ h4 {
 }
 
 #site-index .subscribelink,
-#course-view .subscribelink {
+.course-view .subscribelink {
   font-size: 0.8em;
 }
 
@@ -487,26 +487,26 @@ table.minicalendar {
 /***
  *** Course
  ***/
-#course-view .section {
+.course-view .section {
   font-size:0.95em;
   line-height:1.2em;
 }
 
-#course-view .section .activity {
+.course-view .section .activity {
   padding:0.2em 0;
 }
 
-#course-view .section .activity a {
+.course-view .section .activity a {
   line-height:1em;
 }
 
-#course-view .section .weekdates {
+.course-view .section .weekdates {
   margin: 0;
   font-weight: normal;
   font-size: 1em;
 }
 
-#course-view .section .left {
+.course-view .section .left {
   font-weight:bold;
 }
 
@@ -569,15 +569,15 @@ h2.headingblock {
   color: #666666;
 }
 
-#course-view .availabilityinfo {
+.course-view .availabilityinfo {
   font-size:0.85em;
   color:#aaa;
 }
-#course-view .availabilityinfo strong {
+.course-view .availabilityinfo strong {
   font-weight:normal;
   color:black;
 }
-#course-view .dimmed_text img {
+.course-view .dimmed_text img {
   opacity:0.3;
   filter: alpha(opacity='30');
 }

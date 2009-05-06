@@ -2826,13 +2826,13 @@
 
         // add all roles assigned at block context
         if ($courseblocks = $DB->get_records_sql("SELECT *
-                                                    FROM {block_instance}
+                                                    FROM {block_instance_old}
                                                    WHERE pagetype = '".PAGE_COURSE_VIEW."'
                                                          AND pageid = ?", array($preferences->backup_course))) {
 
             foreach ($courseblocks as $courseblock) {
 
-                $context = get_context_instance(CONTEXT_BLOCK, $courseblock->id);
+                $context = get_context_instance(CONTEXT_BLOCK, $courseblock->oldid);
                 $contexts[$context->id] = $context;
             }
         }

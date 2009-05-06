@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20090403" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20090501" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2156,7 +2156,7 @@
         <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="backup_courses" REFFIELDS="courseid" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="block" COMMENT="contains all installed blocks" PREVIOUS="backup_log" NEXT="block_pinned">
+    <TABLE NAME="block" COMMENT="contains all installed blocks" PREVIOUS="backup_log" NEXT="block_instances">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="version"/>
@@ -2169,43 +2169,48 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
-    </TABLE>
-    <TABLE NAME="block_pinned" COMMENT="to pin blocks" PREVIOUS="block" NEXT="block_instance">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="blockid"/>
-        <FIELD NAME="blockid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="pagetype"/>
-        <FIELD NAME="pagetype" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" PREVIOUS="blockid" NEXT="position"/>
-        <FIELD NAME="position" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="pagetype" NEXT="weight"/>
-        <FIELD NAME="weight" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="position" NEXT="visible"/>
-        <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="weight" NEXT="configdata"/>
-        <FIELD NAME="configdata" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="visible"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="blockid"/>
-        <KEY NAME="blockid" TYPE="foreign" FIELDS="blockid" REFTABLE="block" REFFIELDS="id" PREVIOUS="primary"/>
-      </KEYS>
       <INDEXES>
-        <INDEX NAME="pagetype" UNIQUE="false" FIELDS="pagetype"/>
+        <INDEX NAME="name" UNIQUE="true" FIELDS="name"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="block_instance" COMMENT="to store block instances in pages" PREVIOUS="block_pinned">
+    <TABLE NAME="block_instances" COMMENT="This table stores block instances. The type of block this is is given by the block name column. The places this block instance appears is controlled by the contextid, showinsubcontexts, pagetypepattern and subpagepattern fields. Where the block appears on the page (by default) is controlled by the defaultposition and defaultweight columns. The block's own configuration is stored serialized in configdata." PREVIOUS="block" NEXT="block_positions">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="blockid"/>
-        <FIELD NAME="blockid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="pageid"/>
-        <FIELD NAME="pageid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="blockid" NEXT="pagetype"/>
-        <FIELD NAME="pagetype" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" PREVIOUS="pageid" NEXT="position"/>
-        <FIELD NAME="position" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="pagetype" NEXT="weight"/>
-        <FIELD NAME="weight" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="position" NEXT="visible"/>
-        <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="weight" NEXT="configdata"/>
-        <FIELD NAME="configdata" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="visible"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="blockname"/>
+        <FIELD NAME="blockname" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="The type of block this is. Foreign key, references block.name." PREVIOUS="id" NEXT="contextid"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The context within which this block appears. Foreign key, references context.id." PREVIOUS="blockname" NEXT="showinsubcontexts"/>
+        <FIELD NAME="showinsubcontexts" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" COMMENT="If 1, this block appears on all matching pages in subcontexts of this contextid, as well in contextid." PREVIOUS="contextid" NEXT="pagetypepattern"/>
+        <FIELD NAME="pagetypepattern" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="The types of page this block appears on. Either an exact page type like mod-quiz-view, or a pattern like mod-quiz-* or course-view-*. Note that course-view-* will match course-view." PREVIOUS="showinsubcontexts" NEXT="subpagepattern"/>
+        <FIELD NAME="subpagepattern" TYPE="char" LENGTH="16" NOTNULL="false" SEQUENCE="false" COMMENT="Further restrictions on where this block appears. In some places, e.g. during a quiz or lesson attempt, different pages have different subpage ids. If this field is not null, the block only appears on that particular subpage." PREVIOUS="pagetypepattern" NEXT="defaultregion"/>
+        <FIELD NAME="defaultregion" TYPE="char" LENGTH="16" NOTNULL="true" SEQUENCE="false" COMMENT="Which block region this block should appear in on each page, in the absence of a specific position in the block_positions table." PREVIOUS="subpagepattern" NEXT="defaultweight"/>
+        <FIELD NAME="defaultweight" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" COMMENT="Used to order the blocks within a block region. Again, may be overridden by the block_positions table for a specific page where this block appears." PREVIOUS="defaultregion" NEXT="configdata"/>
+        <FIELD NAME="configdata" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="A serialized blob of configuration data for this block instance." PREVIOUS="defaultweight"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="blockid"/>
-        <KEY NAME="blockid" TYPE="foreign" FIELDS="blockid" REFTABLE="block" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="contextid"/>
+        <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="pageid" UNIQUE="false" FIELDS="pageid" NEXT="pagetype"/>
-        <INDEX NAME="pagetype" UNIQUE="false" FIELDS="pagetype" PREVIOUS="pageid"/>
+        <INDEX NAME="contextid-showinsubcontexts-pagetypepattern-subpagepattern" UNIQUE="false" FIELDS="contextid, showinsubcontexts, pagetypepattern, subpagepattern"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_positions" COMMENT="Stores the position of a sticky block_instance on a another page than the one where it was added." PREVIOUS="block_instances">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="blockinstanceid"/>
+        <FIELD NAME="blockinstanceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The block_instance this position relates to." PREVIOUS="id" NEXT="contextid"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="With pagetype and subpage, defines the page we are setting the position for." PREVIOUS="blockinstanceid" NEXT="pagetype"/>
+        <FIELD NAME="pagetype" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="With contextid and subpage, defines the page we are setting the position for." PREVIOUS="contextid" NEXT="subpage"/>
+        <FIELD NAME="subpage" TYPE="char" LENGTH="16" NOTNULL="true" SEQUENCE="false" COMMENT="With contextid and pagetype, defines the page we are setting the position for." PREVIOUS="pagetype" NEXT="visible"/>
+        <FIELD NAME="visible" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" COMMENT="Whether this block instance is visible on this page." PREVIOUS="subpage" NEXT="region"/>
+        <FIELD NAME="region" TYPE="char" LENGTH="16" NOTNULL="true" SEQUENCE="false" COMMENT="Which block region on this page this block should appear in." PREVIOUS="visible" NEXT="weight"/>
+        <FIELD NAME="weight" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" COMMENT="Used to order the blocks within a block region." PREVIOUS="region"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="blockinstanceid"/>
+        <KEY NAME="blockinstanceid" TYPE="foreign" FIELDS="blockinstanceid" REFTABLE="block_instances" REFFIELDS="id" PREVIOUS="primary" NEXT="contextid"/>
+        <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id" PREVIOUS="blockinstanceid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="blockinstanceid-contextid-pagetype-subpage" UNIQUE="true" FIELDS="blockinstanceid, contextid, pagetype, subpage"/>
       </INDEXES>
     </TABLE>
   </TABLES>

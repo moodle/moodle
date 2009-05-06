@@ -2094,14 +2094,14 @@ function create_context($contextlevel, $instanceid) {
             // Only non-pinned & course-page based
             $sql = "SELECT ctx.path, ctx.depth
                       FROM {context}        ctx
-                      JOIN {block_instance} bi
+                      JOIN {block_instance_old} bi
                            ON (bi.pageid=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
-                     WHERE bi.id=? AND bi.pagetype='course-view'";
+                     WHERE bi.oldid=? AND bi.pagetype='course-view'";
             $params = array($instanceid);
             if ($p = $DB->get_record_sql($sql, $params)) {
                 $basepath  = $p->path;
                 $basedepth = $p->depth;
-            } else if ($bi = $DB->get_record('block_instance', array('id'=>$instanceid))) {
+            } else if ($bi = $DB->get_record('block_instance_old', array('oldid'=>$instanceid))) {
                 if ($bi->pagetype != 'course-view') {
                     // ok - not a course block
                 } else if ($parent = get_context_instance(CONTEXT_COURSE, $bi->pageid)) {
@@ -2295,8 +2295,8 @@ function create_contexts($contextlevel=null, $buildpaths=true) {
 
     if (empty($contextlevel) or $contextlevel == CONTEXT_BLOCK) {
         $sql = "INSERT INTO {context} (contextlevel, instanceid)
-                SELECT ".CONTEXT_BLOCK.", bi.id
-                  FROM {block_instance} bi
+                SELECT ".CONTEXT_BLOCK.", bi.oldid
+                  FROM {block_instance_old} bi
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {context} cx
                                     WHERE bi.id = cx.instanceid AND cx.contextlevel=".CONTEXT_BLOCK.")";
@@ -2359,8 +2359,8 @@ function cleanup_contexts() {
               SELECT c.contextlevel,
                      c.instanceid
                 FROM {context} c
-                LEFT OUTER JOIN {block_instance} t
-                     ON c.instanceid = t.id
+                LEFT OUTER JOIN {block_instance_old} t
+                     ON c.instanceid = t.oldid
                WHERE t.id IS NULL AND c.contextlevel = ".CONTEXT_BLOCK."
            ";
     if ($rs = $DB->get_recordset_sql($sql)) {
@@ -2408,8 +2408,8 @@ function preload_course_contexts($courseid) {
          UNION ALL
 
             SELECT x.instanceid, x.id, x.contextlevel, x.path, x.depth
-              FROM {block_instance} bi
-              JOIN {context} x ON x.instanceid=bi.id
+              FROM {block_instance_old} bi
+              JOIN {context} x ON x.instanceid=bi.oldid
              WHERE bi.pageid=? AND bi.pagetype='course-view'
                    AND x.contextlevel=".CONTEXT_BLOCK."
 
@@ -3427,7 +3427,7 @@ function print_context_name($context, $withprefix = true, $short = false) {
             break;
 
         case CONTEXT_BLOCK: // not necessarily 1 to 1 to course
-            if ($blockinstance = $DB->get_record('block_instance', array('id'=>$context->instanceid))) {
+            if ($blockinstance = $DB->get_record('block_instance_old', array('oldid'=>$context->instanceid))) {
                 if ($block = $DB->get_record('block', array('id'=>$blockinstance->blockid))) {
                     global $CFG;
                     require_once("$CFG->dirroot/blocks/moodleblock.class.php");
@@ -3608,7 +3608,7 @@ function fetch_context_capabilities($context) {
         break;
 
         case CONTEXT_BLOCK: // block caps
-            $cb = $DB->get_record('block_instance', array('id'=>$context->instanceid));
+            $cb = $DB->get_record('block_instance_old', array('oldid'=>$context->instanceid));
             $block = $DB->get_record('block', array('id'=>$cb->blockid));
 
             $extra = "";
@@ -3755,7 +3755,7 @@ function get_sorted_contexts($select, $params = array()) {
             LEFT JOIN {course_categories} cat ON ctx.contextlevel = 40 AND cat.id = ctx.instanceid
             LEFT JOIN {course} c ON ctx.contextlevel = 50 AND c.id = ctx.instanceid
             LEFT JOIN {course_modules} cm ON ctx.contextlevel = 70 AND cm.id = ctx.instanceid
-            LEFT JOIN {block_instance} bi ON ctx.contextlevel = 80 AND bi.id = ctx.instanceid
+            LEFT JOIN {block_instance_old} bi ON ctx.contextlevel = 80 AND bi.oldid = ctx.instanceid
             $select
             ORDER BY ctx.contextlevel, bi.position, COALESCE(cat.sortorder, c.sortorder, cm.section, bi.weight), u.lastname, u.firstname, cm.id
             ", $params);
@@ -5825,7 +5825,7 @@ function build_context_path($force=false) {
     $sql = "INSERT INTO {context_temp} (id, path, depth)
             SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
               FROM {context} ctx
-              JOIN {block_instance} bi ON ctx.instanceid = bi.id
+              JOIN {block_instance_old} bi ON ctx.instanceid = bi.oldid
               JOIN {context} pctx ON bi.pageid=pctx.instanceid
              WHERE ctx.contextlevel=".CONTEXT_BLOCK."
                    AND pctx.contextlevel=".CONTEXT_COURSE."
@@ -5844,8 +5844,8 @@ function build_context_path($force=false) {
                SET depth=2, path=".$DB->sql_concat("'$base/'", 'id')."
              WHERE contextlevel=".CONTEXT_BLOCK."
                    AND EXISTS (SELECT 'x'
-                                 FROM {block_instance} bi
-                                WHERE bi.id = {context}.instanceid
+                                 FROM {block_instance_old} bi
+                                WHERE bi.oldid = {context}.instanceid
                                       AND bi.pagetype!='course-view')
                    $emptyclause ";
     $DB->execute($sql);

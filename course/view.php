@@ -93,6 +93,7 @@
 
     $PAGE = page_create_object(PAGE_COURSE_VIEW, $course->id);
     $PAGE->set_url('course/view.php', array('id' => $course->id));
+    $PAGE->set_pagetype('course-view-' . $course->format);
     $PAGE->set_other_editing_capability('moodle/course:manageactivities');
     $pageblocks = blocks_setup($PAGE, BLOCKS_PINNED_BOTH);
 

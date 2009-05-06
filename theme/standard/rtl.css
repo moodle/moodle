@@ -534,7 +534,7 @@ form.mform .fitemtitle {
 	margin-left: 0px;
 }
 
-#course-view .section td.right {
+.course-view .section td.right {
     border-left-width: 1px;
     border-left-style: solid;
     border-right-width: 0px;

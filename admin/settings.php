@@ -3,7 +3,6 @@
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/blocklib.php');
-require_once($CFG->dirroot.'/'.$CFG->admin.'/pagelib.php');
 
 $section = required_param('section', PARAM_SAFEDIR);
 $return = optional_param('return','', PARAM_ALPHA);

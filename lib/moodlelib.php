@@ -3603,12 +3603,12 @@ function remove_course_contents($courseid, $showfeedback=true) {
 /// Delete course blocks
 
     if ($blocks = $DB->get_records_sql("SELECT *
-                                          FROM {block_instance}
+                                          FROM {block_instance_old}
                                          WHERE pagetype = '".PAGE_COURSE_VIEW."'
                                                AND pageid = ?", array($course->id))) {
-        if ($DB->delete_records('block_instance', array('pagetype'=>PAGE_COURSE_VIEW, 'pageid'=>$course->id))) {
+        if ($DB->delete_records('block_instance_old', array('pagetype'=>PAGE_COURSE_VIEW, 'pageid'=>$course->id))) {
             if ($showfeedback) {
-                notify($strdeleted .' block_instance');
+                notify($strdeleted .' block_instance_old');
             }
 
             require_once($CFG->libdir.'/blocklib.php');

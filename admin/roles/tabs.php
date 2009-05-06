@@ -118,7 +118,7 @@ if ($currenttab != 'update') {
             break;
 
         case CONTEXT_BLOCK:
-            if ($blockinstance = $DB->get_record('block_instance', array('id'=>$context->instanceid))) {
+            if ($blockinstance = $DB->get_record('block_instance_old', array('oldid'=>$context->instanceid))) {
                 if ($block = $DB->get_record('block', array('id'=>$blockinstance->blockid))) {
                     $blockname = print_context_name($context);
 

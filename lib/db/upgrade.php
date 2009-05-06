@@ -1710,6 +1710,396 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009042800);
     }
 
+    if ($result && $oldversion < 2009042801) {
+
+    /// Define table block_instance to be renamed to block_instance_old
+        $table = new xmldb_table('block_instance');
+
+    /// Launch rename table for block_instance
+        $dbman->rename_table($table, 'block_instances');
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042801);
+    }
+
+    if ($result && $oldversion < 2009042802) {
+
+    /// Define table block_instance to be renamed to block_instance_old
+        $table = new xmldb_table('block_pinned');
+
+    /// Launch rename table for block_instance
+        $dbman->rename_table($table, 'block_pinned_old');
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042802);
+    }
+
+    if ($result && $oldversion < 2009042803) {
+
+    /// Define table block_instance_old to be created
+        $table = new xmldb_table('block_instance_old');
+
+    /// Adding fields to table block_instance_old
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('oldid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('blockid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('pageid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('pagetype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('region', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('weight', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('visible', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('configdata', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
+
+    /// Adding keys to table block_instance_old
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('blockid', XMLDB_KEY_FOREIGN, array('blockid'), 'block', array('id'));
+
+    /// Adding indexes to table block_instance_old
+        $table->add_index('pageid', XMLDB_INDEX_NOTUNIQUE, array('pageid'));
+        $table->add_index('pagetype', XMLDB_INDEX_NOTUNIQUE, array('pagetype'));
+
+    /// Conditionally launch create table for block_instance_old
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042803);
+    }
+
+    if ($result && $oldversion < 2009042804) {
+    /// Copy current blocks data from block_instances to block_instance_old
+        $DB->execute('INSERT INTO {block_instance_old} (oldid, blockid, pageid, pagetype, position, weight, visible, configdata)
+            SELECT id, blockid, pageid, pagetype, position, weight, visible, configdata FROM {block_instances} ORDER BY id');
+
+        upgrade_main_savepoint($result, 2009042804);
+    }
+
+    if ($result && $oldversion < 2009042805) {
+
+    /// Define field multiple to be dropped from block
+        $table = new xmldb_table('block');
+        $field = new xmldb_field('multiple');
+
+    /// Conditionally launch drop field multiple
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042805);
+    }
+
+    if ($result && $oldversion < 2009042806) {
+        $table = new xmldb_table('block_instances');
+
+    /// Rename field weight on table block_instances to defaultweight
+        $field = new xmldb_field('weight', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, null, null, '0', 'position');
+        $dbman->rename_field($table, $field, 'defaultweight');
+
+    /// Rename field position on table block_instances to defaultregion
+        $field = new xmldb_field('position', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, null, 'pagetype');
+        $dbman->rename_field($table, $field, 'defaultregion');
+
+        /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042806);
+    }
+
+    if ($result && $oldversion < 2009042807) {
+
+    /// Changing precision of field defaultregion on table block_instances to (16)
+        $table = new xmldb_table('block_instances');
+        $field = new xmldb_field('defaultregion', XMLDB_TYPE_CHAR, '16', null, XMLDB_NOTNULL, null, null, null, null, 'subpagepattern');
+
+    /// Launch change of precision for field defaultregion
+        $dbman->change_field_precision($table, $field);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042807);
+    }
+
+    if ($result && $oldversion < 2009042808) {
+    /// Change regions to the new notation
+        $DB->set_field('block_instances', 'defaultregion', 'side-pre', array('defaultregion' => 'l'));
+        $DB->set_field('block_instances', 'defaultregion', 'side-post', array('defaultregion' => 'r'));
+        $DB->set_field('block_instances', 'defaultregion', 'course-view-top', array('defaultregion' => 'c'));
+        // This third one is a custom value from contrib/patches/center_blocks_position_patch and the
+        // flex page course format. Hopefully this new value is an adequate alternative.
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042808);
+    }
+
+    if ($result && $oldversion < 2009042809) {
+
+    /// Define key blockname (unique) to be added to block
+        $table = new xmldb_table('block');
+        $key = new xmldb_key('blockname', XMLDB_KEY_UNIQUE, array('name'));
+
+    /// Launch add key blockname
+        $dbman->add_key($table, $key);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042809);
+    }
+
+    if ($result && $oldversion < 2009042810) {
+        $table = new xmldb_table('block_instances');
+
+    /// Define field blockname to be added to block_instances
+        $field = new xmldb_field('blockname', XMLDB_TYPE_CHAR, '40', null, null, null, null, null, null, 'blockid');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define field contextid to be added to block_instances
+        $field = new xmldb_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null, 'blockname');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define field showinsubcontexts to be added to block_instances
+        $field = new xmldb_field('showinsubcontexts', XMLDB_TYPE_INTEGER, '4', null, null, null, null, null, null, 'contextid');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define field subpagepattern to be added to block_instances
+        $field = new xmldb_field('subpagepattern', XMLDB_TYPE_CHAR, '16', null, null, null, null, null, null, 'pagetype');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042810);
+    }
+
+    if ($result && $oldversion < 2009042811) {
+        $table = new xmldb_table('block_instances');
+
+    /// Fill in blockname from blockid
+        $DB->execute("UPDATE {block_instances} SET blockname = (SELECT name FROM {block} WHERE id = blockid)");
+
+    /// Set showinsubcontexts = 0 for all rows.
+        $DB->execute("UPDATE {block_instances} SET showinsubcontexts = 0");
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042811);
+    }
+
+    if ($result && $oldversion < 2009042812) {
+
+    /// Rename field pagetype on table block_instances to pagetypepattern
+        $table = new xmldb_table('block_instances');
+        $field = new xmldb_field('pagetype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, null, 'pageid');
+
+    /// Launch rename field pagetype
+        $dbman->rename_field($table, $field, 'pagetypepattern');
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042812);
+    }
+
+    if ($result && $oldversion < 2009042813) {
+    /// fill in contextid and subpage, and update pagetypepattern from pagetype and pageid
+
+    /// site-index
+        $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
+        $DB->execute("UPDATE {block_instances} SET (contextid, pagetypepattern, subpagepattern) =
+                (" . $frontpagecontext->id . ", 'site-index', NULL) WHERE pagetypepattern = 'site-index'");
+
+    /// course-view
+        $DB->execute("UPDATE {block_instances} SET (contextid, pagetypepattern, subpagepattern) =
+                ((
+                    SELECT {context}.id
+                    FROM {context}
+                    JOIN {course} ON instanceid = {course}.id AND contextlevel = " . CONTEXT_COURSE . "
+                    WHERE {course}.id = pageid
+                ), 'course-view-*', NULL) WHERE pagetypepattern = 'course-view'");
+
+    /// admin
+        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $DB->execute("UPDATE {block_instances} SET (contextid, pagetypepattern, subpagepattern) =
+                (" . $syscontext->id . ", 'admin-*', NULL) WHERE pagetypepattern = 'admin'");
+
+    /// my-index
+        $DB->execute("UPDATE {block_instances} SET (contextid, pagetypepattern, subpagepattern) =
+                ((
+                    SELECT {context}.id
+                    FROM {context}
+                    JOIN {user} ON instanceid = {user}.id AND contextlevel = " . CONTEXT_USER . "
+                    WHERE {user}.id = pageid
+                ), 'my-index', NULL) WHERE pagetypepattern = 'my-index'");
+
+    /// tag-index
+        $DB->execute("UPDATE {block_instances} SET (contextid, pagetypepattern, subpagepattern) =
+                (" . $syscontext->id . ", 'tag-index', pageid) WHERE pagetypepattern = 'tag-index'");
+
+    /// blog-view
+        $DB->execute("UPDATE {block_instances} SET (contextid, pagetypepattern, subpagepattern) =
+                ((
+                    SELECT {context}.id
+                    FROM {context}
+                    JOIN {user} ON instanceid = {user}.id AND contextlevel = " . CONTEXT_USER . "
+                    WHERE {user}.id = pageid
+                ), 'blog-index', NULL) WHERE pagetypepattern = 'blog-view'");
+
+    /// mod-xxx-view
+        $moduleswithblocks = array('chat', 'data', 'lesson', 'quiz', 'dimdim', 'game', 'wiki', 'oublog');
+        foreach ($moduleswithblocks as $modname) {
+            if (!$dbman->table_exists($modname)) {
+                continue;
+            }
+            $DB->execute("UPDATE {block_instances} SET (contextid, pagetypepattern, subpagepattern) =
+                    ((
+                        SELECT {context}.id
+                        FROM {context}
+                        JOIN {course_modules} ON instanceid = {course_modules}.id AND contextlevel = " . CONTEXT_MODULE . "
+                        JOIN {modules} ON {modules}.id = {course_modules}.module AND {modules}.name = '$modname'
+                        JOIN {{$modname}} ON {course_modules}.instance = {{$modname}}.id
+                        WHERE {{$modname}}.id = pageid
+                    ), 'blog-index', NULL) WHERE pagetypepattern = 'blog-view'");
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042813);
+    }
+
+    if ($result && $oldversion < 2009042814) {
+    /// fill in any missing contextids with a dummy value, so we can add the not-null constraint.
+        $DB->execute("UPDATE {block_instances} SET contextid = -1 WHERE contextid IS NULL");
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042814);
+    }
+
+    if ($result && $oldversion < 2009042815) {
+        $table = new xmldb_table('block_instances');
+
+    /// Changing nullability of field blockname on table block_instances to not null
+        $field = new xmldb_field('blockname', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null, null, null, 'id');
+        $dbman->change_field_notnull($table, $field);
+
+    /// Changing nullability of field contextid on table block_instances to not null
+        $field = new xmldb_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'blockname');
+        $dbman->change_field_notnull($table, $field);
+
+    /// Changing nullability of field showinsubcontexts on table block_instances to not null
+        $field = new xmldb_field('showinsubcontexts', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, null, 'contextid');
+        $dbman->change_field_notnull($table, $field);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042815);
+    }
+
+    if ($result && $oldversion < 2009042816) {
+    /// Add exiting sticky blocks.
+        $blocks = $DB->get_records('block');
+        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $newregions = array(
+            'l' => 'side-pre',
+            'r' => 'side-post',
+            'c' => 'course-view-top',
+        );
+        $stickyblocks = $DB->get_recordset('block_pinned_old');
+        foreach ($stickyblocks as $stickyblock) {
+            $newblock = stdClass;
+            $newblock->blockname = $blocks[$stickyblock]->name;
+            $newblock->contextid = $syscontext->id;
+            $newblock->showinsubcontexts = 1;
+            switch ($stickyblock->pagetype) {
+                case 'course-view':
+                    $newblock->pagetypepattern = 'course-view-*';
+                    break;
+                default:
+                    $newblock->pagetypepattern = $stickyblock->pagetype;
+            }
+            $newblock->defaultregion = $newregions[$stickyblock->position];
+            $newblock->defaultweight = $stickyblock->weight;
+            $newblock->configdata = $stickyblock->configdata;
+            $DB->insert_record('block_instances', $newblock);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042816);
+    }
+
+    if ($result && $oldversion < 2009042817) {
+
+    /// Define table block_positions to be created
+        $table = new xmldb_table('block_positions');
+
+    /// Adding fields to table block_positions
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('blockinstanceid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('pagetype', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('subpage', XMLDB_TYPE_CHAR, '16', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('visible', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, '1');
+        $table->add_field('region', XMLDB_TYPE_CHAR, '16', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('weight', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table block_positions
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('blockinstanceid', XMLDB_KEY_FOREIGN, array('blockinstanceid'), 'block_instances', array('id'));
+        $table->add_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+
+    /// Adding indexes to table block_positions
+        $table->add_index('blockinstanceid-contextid-pagetype-subpage', XMLDB_INDEX_UNIQUE, array('blockinstanceid', 'contextid', 'pagetype', 'subpage'));
+
+    /// Conditionally launch create table for block_positions
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042817);
+    }
+
+    if ($result && $oldversion < 2009042818) {
+    /// And block instances with visible = 0, copy that information to block_positions
+        $DB->execute("INSERT INTO {block_positions} (blockinstanceid, contextid, pagetype, subpage, visible, region, weight)
+                SELECT id, contextid,
+                CASE WHEN pagetypepattern = 'course-view-*' THEN
+                        (SELECT " . $DB->sql_concat("'course-view-'", 'format') . "
+                        FROM {course}
+                        JOIN {context} ON {course}.id = {context}.instanceid
+                        WHERE {context}.id = contextid)
+                    ELSE pagetypepattern END,
+                CASE WHEN subpagepattern IS NULL THEN ''
+                    ELSE subpagepattern END,
+                0, defaultregion, defaultweight
+                FROM {block_instances} WHERE visible = 0 AND pagetypepattern <> 'admin-*'");
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042818);
+    }
+
+    if ($result && $oldversion < 2009042819) {
+        $table = new xmldb_table('block_instances');
+
+    /// Define field blockid to be dropped from block_instances
+        $field = new xmldb_field('blockid');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+    /// Define field pageid to be dropped from block_instances
+        $field = new xmldb_field('pageid');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+    /// Define field visible to be dropped from block_instances
+        $field = new xmldb_field('visible');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009042819);
+    }
+
     if ($result && $oldversion < 2009043000) {
         unset_config('grade_report_showgroups');
         upgrade_main_savepoint($result, 2009043000);

@@ -653,55 +653,55 @@ table.minicalendar {
   border-color:#DDDDDD;
 }
 
-#course-view .weeks .section,
-#course-view .topics .section,
-#course-view .section td {
+.course-view .weeks .section,
+.course-view .topics .section,
+.course-view .section td {
   border-color:#DDDDDD;
 }
 
 /* .content should match the body background, sides are white. */
-#course-view .weeks .content ,
-#course-view .topics .content,
-#course-view .weeks .section,
-#course-view .topics .section {
+.course-view .weeks .content ,
+.course-view .topics .content,
+.course-view .weeks .section,
+.course-view .topics .section {
   background: #FAFAFA;
 }
 
-#course-view .section td.side {
+.course-view .section td.side {
   background: #FFFFFF;
 }
 
-#course-view .section .side {
+.course-view .section .side {
 }
 
-#course-view .section .left {
+.course-view .section .left {
 }
 
-#course-view .section .right {
+.course-view .section .right {
 }
 
-#course-view .weeks .current,
-#course-view .topics .current,
-#course-view .current td.side {
+.course-view .weeks .current,
+.course-view .topics .current,
+.course-view .current td.side {
   background: #FFD991;
 }
 
-#course-view .weeks .hidden,
-#course-view .topics .hidden,
-#course-view .hidden td.side {
+.course-view .weeks .hidden,
+.course-view .topics .hidden,
+.course-view .hidden td.side {
   background: #DDDDDD;
 }
 
 
-#course-view .section .spacer {
+.course-view .section .spacer {
 }
 
-#course-view .section .weekdates {
+.course-view .section .weekdates {
   color: #777777;
 }
 
-#course-view .weeks .weekdates ,
-#course-view .topics .weekdates {
+.course-view .weeks .weekdates ,
+.course-view .topics .weekdates {
   color: #333333;
 }
 
