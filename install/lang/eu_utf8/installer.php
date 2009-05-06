@@ -36,6 +36,10 @@ $string['configfilewritten'] = 'config.php arrakastaz sortu da';
 $string['configurationcompletehead'] = 'Ezarpen osatua';
 $string['configurationcompletesub'] = 'Moodle-k ezarpen-fitxategia sortu du';
 $string['continue'] = 'Jarraitu';
+$string['ctyperecommended'] = 'Gomendagarria da oso PHP ctype aukerako luzapena instalatzea gunearen errendimendua hobetzeko, batez ere guneak hizkuntza ez latindarrak baditu.';
+$string['ctyperequired'] = 'Moodle-k orain PHP ctype luzapena behar du, gunearen errendimendua hobetzeko eta hizkuntz anitzeko bateragarritasuna eskaini ahal izateko.';
+$string['curlrecommended'] = 'Gomendagarria da oso cURl liburutegia instalatzea Moodle Sareak funtzionatzeko.';
+$string['curlrequired'] = 'Moodle-k orain cURL PHP luzapena behar du, Moodle biltegiekin harremanetan jartzeko.';
 $string['customcheck'] = 'Beste konprobazio batzuk';
 $string['database'] = 'Datu-basea';
 $string['databasecreationsettingshead'] = 'Orain Moodle-ren datu gehienak bilduko dituen datu-basearen ezarpenak zehaztu behar dituzu. Instalatzaileak, beherago zehaztutako ezarpenen arabera, datu-basea sortuko du.';
@@ -53,13 +57,14 @@ $string['databasesettingssub'] = '<b>Mota:</b> mysql edo postgres7<br />
 <b>Taulen aurrizkia:</b> taula guztietan erabiltzeko aukerazko aurrizkia';
 $string['dataroot'] = 'Datu-direktorioa';
 $string['datarooterror'] = '\'Datu-direktorioa\' ezin izan da sortu edo aurkitu. Bidea zuzendu edo direktorioa eskuz sortu.';
+$string['datarootpublicerror'] = 'Zehaztutako \'Datu-direktoriora\' web bidez ailega daiteke, beste direktorio bat erabili behar duzu.';
 $string['dbconnectionerror'] = 'Datu-basearekiko konexio-errorea. Mesedez, datu-basearen ezarpenak aztertu.';
 $string['dbcreationerror'] = 'Errorea datu-basea sortzean. Ezin izan da datu-basea sortu emandako izen eta ezarpenekin';
 $string['dbhost'] = 'Zerbitzaria';
 $string['dbprefix'] = 'Taulen aurrizkia';
 $string['dbtype'] = 'Mota';
 $string['dbwrongencoding'] = 'Aukeratutako datu-basea aholkatzen ez den kodifikazio baten menpean egikaritzen ari da ($a). Horren ordez, Unicode (UTF-8) kodifikazioko datu-basea erabiltzea komenigarria da. Edozein kasutan, proba hau kontuan hartu nahi ez baduzu \"DBaren kodifikazio-proba kontuan ez izan\" aukera dezakezu, etorkizunean arazorik izan zenezakeen arren.';
-$string['directorysettingshead'] = 'Zure instalazioaren kokapen hauek baieztatu, mesedez';
+$string['directorysettingshead'] = 'Mesedez, baieztatu zure instalazioaren kokapenak';
 $string['directorysettingssub'] = '<b>Web helbidea:</b>
 Moodlera sartzeko web helbide osoa zehaztu.
 Zure webgunera URL ezberdinetatik sartzea badago,
@@ -79,11 +84,12 @@ $string['dirrooterror'] = '\'Moodle-ren direktorioa\' zuzena ez dela dirudi. Ezi
 $string['download'] = 'Jaitsi';
 $string['downloadedfilecheckfailed'] = 'Jaitsitako fitxategiaren konprobazioak kale egin du.';
 $string['downloadlanguagebutton'] = '\"$a\" hizkuntza-paketea jaitsi';
-$string['downloadlanguagehead'] = 'Hizkuntza-paketea jaitsi';
+$string['downloadlanguagehead'] = 'Jaitsi hizkuntza-paketea';
 $string['downloadlanguagenotneeded'] = 'Instalazio-prozesua lehenetsitako hizkuntzaz jarrai dezakezu, \"$a\".';
 $string['downloadlanguagesub'] = 'Orain zure hizkuntza-paketea jaisteko eta hizkuntza horretan instalazioarekin jarraitzeko aukera daukazu.<br /><br />Jaitsiera eskuragarri ez balitz, prozesuak ingelesez jarraituko luke (instalazioa burututakoan, beste hizkuntzak jaitsi eta instalatu ahal izango dituzu).';
 $string['environmenterrortodo'] = 'Moodle-ren bertsio hau instalatu aurretik goian aurkitutako inguru-arazo (errore) guztiak zuzendu behar dituzu.';
-$string['environmenthead'] = 'Zure ingurunea konprobatzen...';
+$string['environmenthead'] = 'Zure ingurunea egiaztatzen...';
+$string['environmentrecommendcustomcheck'] = 'honek kale egiten badu, ustezko arazo bat dagoela adierazten du.';
 $string['environmentrecommendinstall'] = 'gomendagarria da instalatuta/gaituta egotea';
 $string['environmentrecommendversion'] = '$a->needed bertsioa gomendatzen da eta zu $a->current ari zara egikaritzen';
 $string['environmentrequirecustomcheck'] = 'test hau pasatu beharra dago';
@@ -119,6 +125,7 @@ $string['globalsquoteshelp'] = '<p>Ez da aholkatzen Magic Quotes GPC indargabetz
 <blockquote>php_value magic_quotes_gpc On</blockquote>
 <blockquote>php_value register_globals Off</blockquote>
 </p>';
+$string['globalswarning'] = '<p><strong>SEGURTASUN-ALERTA!</strong></p><p> Egoki aritzeko, Moodle-k hainbat aldaketa <br />behar ditu zure PHP ezarpenetan.</p><p><code>register_globals=off</code> ezarri <em>behar</em> duzu.</p><p>Ezarpen hau zure <code>php.ini</code> editatuta kontrolatzen da, Apache/IIS <br />konfigurazioa edo <code>.htaccess</code> fitxategia.</p>';
 $string['help'] = 'Laguntza';
 $string['iconvrecommended'] = 'ICONV aukerako liburutegia instalatzea gomendagarria da  oso gunearen errendimendua hobetzeko, batez ere zure guneak latindarrak ez diren hizkuntzak erabiltzen baditu.';
 $string['info'] = 'Informazioa';
@@ -175,7 +182,10 @@ $string['phpversionerror'] = 'PHP bertsioak 4.1.0 edo geroagokoa izan behar du';
 $string['phpversionhelp'] = '<p>Moodle-k PHP 4.1.0 edo geroagoko bertsioa behar du.</p>
 <p>Zure bertsioa: $a</p>
 <p>PHP eguneratu edo PHP bertsio berriagoa duen zerbitzari batera jo</p>';
+$string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Aurrekoa';
+$string['qtyperqpwillberemoved'] = 'Eguneratzean RQP motako galderak ezabatu egingo dira. Ez baduzu erabiltzen galdera-mota hori, ez duzu inongo arazorik izango.';
+$string['qtyperqpwillberemovedanyway'] = 'Eguneratzean RQP motako galderak ezabatu egingo dira. Zure datu-basean badira hainbat RQP galdera eta eguneraketarekin jarraitu aurretik kodea http://moodle.org/mod/data/view.php?d=13&amp;rid=797-tik berrinstalatzen ez baduzu ez dute aurrerantzean funtzionatuko.';
 $string['remotedownloadnotallowed'] = 'Osagaiak ezin dira zure zerbitzarira jaitsi (allow_url_fopen ez dago aktibatuta).<br /><br /><a href=\"$a->url\">$a->url</a> fitxategia eskuz jaitsi eta \"$a->dest\" kokapenean kopiatu behar duzu.';
 $string['report'] = 'Txostena';
 $string['restricted'] = 'Baimena behar da';
