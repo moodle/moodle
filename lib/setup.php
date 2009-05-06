@@ -275,7 +275,12 @@ global $SCRIPT;
     }
 
 /// Create the $PAGE global.
-    $PAGE = new moodle_page();
+    if (!empty($CFG->moodlepageclass)) {
+        $classname = $CFG->moodlepageclass;
+    } else {
+        $classname = 'moodle_page';
+    }
+    $PAGE = new $classname();
 
 /// Set error reporting back to normal
     if ($originaldatabasedebug == -1) {

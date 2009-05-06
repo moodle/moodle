@@ -45,6 +45,109 @@ define('BLOCKS_PINNED_BOTH',2);
 
 require_once($CFG->libdir.'/pagelib.php');
 
+/**
+ * This class keeps track of the block that should appear on a moodle_page.
+ * The page to work with as passed to the constructor.
+ * The only fields of moodle_page that is uses are ->context, ->pagetype and
+ * ->subpage, so instead of passing a full moodle_page object, you may also
+ * pass a stdClass object with those three fields. These field values are read
+ * only at the point that the load_blocks() method is called. It is the caller's
+ * responsibility to ensure that those fields do not subsequently change.
+ */
+class block_manager {
+    /**#@+ Tracks the where we are in the generation of the page. */
+    const STATE_BLOCKS_NOT_LOADED = 0;
+    const STATE_BLOCKS_LOADED = 1;
+    /**#@-*/
+
+/// Field declarations =========================================================
+
+    protected $loaded = self::STATE_BLOCKS_NOT_LOADED;
+
+    protected $page;
+
+    protected $regions = array();
+
+    protected $defaultregion;
+
+/// Constructor ================================================================
+
+    /**
+     * Constructor.
+     * @param object $page the moodle_page object object we are managing the blocks for,
+     * or a reasonable faxilimily. (See the comment at the top of this classe
+     * and http://en.wikipedia.org/wiki/Duck_typing)
+     */
+    public function __construct($page) {
+        $this->page = $page;
+    }
+
+/// Getter methods =============================================================
+
+    /**
+     * @return array the internal names of the regions on this page where block may appear.
+     */
+    public function get_regions() {
+        return array_keys($this->regions);
+    }
+
+    /**
+     * @return string the internal names of the region where new blocks are added
+     * by default, and where any blocks from an unrecognised region are shown.
+     * (Imagine that blocks were added with one theme selected, then you switched
+     * to a theme with different block positions.)
+     */
+    public function get_default_region() {
+        return $this->defaultregion;
+    }
+
+/// Setter methods =============================================================
+
+    /**
+     * @param string $region add a named region where blocks may appear on the
+     * current page. This is an internal name, like 'side-pre', not a string to
+     * display in the UI.
+     */
+    public function add_region($region) {
+        $this->check_not_yet_loaded();
+        $this->regions[$region] = 1;
+    }
+
+    /**
+     * @param array $regions this utility method calls add_region for each array element.
+     */
+    public function add_regions($regions) {
+        foreach ($regions as $region) {
+            $this->add_region($region);
+        }
+    }
+
+    /**
+     * @param string $defaultregion the internal names of the region where new
+     * blocks should be added by default, and where any blocks from an
+     * unrecognised region are shown.
+     */
+    public function set_default_region($defaultregion) {
+        $this->check_not_yet_loaded();
+        if (!array_key_exists($defaultregion, $this->regions)) {
+            throw new coding_exception('Trying to set an unknown block region as the default.');
+        }
+        $this->defaultregion = $defaultregion;
+    }
+
+/// Inner workings =============================================================
+
+    protected function check_not_yet_loaded() {
+        if ($this->loaded) {
+            throw new coding_exception('block_manager has already loaded the blocks, to it is too late to change things that might affect which blocks are visible.');
+        }
+    }
+
+    protected function mark_loaded() {
+        $this->loaded = self::STATE_BLOCKS_LOADED;
+    }
+}
+
 //This function retrieves a method-defined property of a class WITHOUT instantiating an object
 function block_method_result($blockname, $method, $param = NULL) {
     if(!block_load_class($blockname)) {
@@ -329,7 +432,7 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
     $managecourseblocks = has_capability('moodle/site:manageblocks', $coursecontext);
     $editmymoodle = $page->pagetype == PAGE_MY_MOODLE && has_capability('moodle/my:manageblocks', $coursecontext);
 
-    if ($page->blocks->get_default_position() == $position &&
+    if ($page->blocks->get_default_region() == $position &&
         $page->user_is_editing() &&
         ($managecourseblocks || $editmymoodle || $myownblogpage || defined('ADMIN_STICKYBLOCKS'))) {
 
@@ -639,7 +742,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
                 break;
             }
 
-            $newpos = $page->blocks->get_default_position();
+            $newpos = $page->blocks->get_default_region();
             if (!empty($pinned)) {
                 $sql = "SELECT 1, MAX(weight) + 1 AS nextfree
                           FROM {block_pinned_old}
@@ -835,7 +938,7 @@ function blocks_get_pinned($page) {
 
     $blocks = $DB->get_records_select('block_pinned_old', $select, $params, 'position, weight');
 
-    $positions = $page->blocks->get_positions();
+    $positions = $page->blocks->get_regions();
     $arr = array();
 
     foreach($positions as $key => $position) {
@@ -897,7 +1000,7 @@ function blocks_get_by_page($page) {
     $blocks = $DB->get_records_select('block_instance_old', "pageid = ? AND ? LIKE (" . $DB->sql_concat('pagetype', "'%'") . ")",
             array($page->get_id(), $page->pagetype), 'position, weight');
 
-    $positions = $page->blocks->get_positions();
+    $positions = $page->blocks->get_regions();
     $arr = array();
     foreach($positions as $key => $position) {
         $arr[$position] = array();
@@ -986,7 +1089,7 @@ function blocks_repopulate_page($page) {
         $blocknames = $page->blocks_get_default();
     }
 
-    $positions = $page->blocks->get_positions();
+    $positions = $page->blocks->get_regions();
     $posblocks = explode(':', $blocknames);
 
     // Now one array holds the names of the positions, and the other one holds the blocks

@@ -268,8 +268,14 @@ class moodle_page {
      * @return blocks_manager the blocks manager object for this page.
      */
     public function get_blocks() {
+        global $CFG;
         if (is_null($this->_blocks)) {
-            $this->_blocks = new blocks_manager();
+            if (!empty($CFG->blockmanagerclass)) {
+                $classname = $CFG->blockmanagerclass;
+            } else {
+                $classname = 'block_manager';
+            }
+            $this->_blocks = new $classname($this);
         }
         return $this->_blocks;
     }
@@ -745,21 +751,21 @@ class moodle_page {
     }
 
     /**
-     * @deprecated since Moodle 2.0 - use $PAGE->blocks->get_positions() instead
+     * @deprecated since Moodle 2.0 - use $PAGE->blocks->get_regions() instead
      * @return string the places on this page where blocks can go.
      */
     function blocks_get_positions() {
-        debugging('Call to deprecated method moodle_page::blocks_get_positions. Use $PAGE->blocks->get_positions() instead.');
-        return $this->blocks->get_positions();
+        debugging('Call to deprecated method moodle_page::blocks_get_positions. Use $PAGE->blocks->get_regions() instead.');
+        return $this->blocks->get_regions();
     }
 
     /**
-     * @deprecated since Moodle 2.0 - use $PAGE->blocks->get_default_position() instead
+     * @deprecated since Moodle 2.0 - use $PAGE->blocks->get_default_region() instead
      * @return string the default place for blocks on this page.
      */
     function blocks_default_position() {
-        debugging('Call to deprecated method moodle_page::blocks_default_position. Use $PAGE->blocks->get_default_position() instead.');
-        return $this->blocks->get_default_position();
+        debugging('Call to deprecated method moodle_page::blocks_default_position. Use $PAGE->blocks->get_default_region() instead.');
+        return $this->blocks->get_default_region();
     }
 
     /**
@@ -853,17 +859,6 @@ class moodle_page {
      */
     function get_modulerecord() {
         return $this->cm;
-    }
-}
-
-/** Stub implementation of the blocks_manager, to stop things from breaking too badly. */
-class blocks_manager {
-    public function get_positions() {
-        return array(BLOCK_POS_LEFT, BLOCK_POS_RIGHT);
-    }
-
-    public function get_default_position() {
-        return BLOCK_POS_RIGHT;
     }
 }
 

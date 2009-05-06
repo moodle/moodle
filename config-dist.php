@@ -167,6 +167,13 @@ $CFG->admin = 'admin';
 // These blocks are used when no other default setting is found.
 //      $CFG->defaultblocks = 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
 //
+// You can specify a different class to be created for the $PAGE global, and to
+// compute which blocks appear on each page. However, I cannot think of any good
+// reason why you would need to change that. It just felt wrong to hard-code the
+// the class name. You are stronly advised not to use these to settings unless
+// you are absolutely sure you know what you are doing.
+//      $CFG->moodlepageclass = 'moodle_page';
+//      $CFG->blockmanagerclass = 'block_manager';
 //
 // Seconds for files to remain in caches. Decrease this if you are worried
 // about students being served outdated versions of uploaded files.
