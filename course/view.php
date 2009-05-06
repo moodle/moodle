@@ -89,7 +89,6 @@
         $course->format = 'weeks';  // Default format is weeks
     }
 
-    $PAGE = page_create_object(PAGE_COURSE_VIEW, $course->id);
     $PAGE->set_url('course/view.php', array('id' => $course->id));
     $PAGE->set_pagetype('course-view-' . $course->format);
     $PAGE->set_other_editing_capability('moodle/course:manageactivities');
@@ -193,8 +192,18 @@
 
     $CFG->blocksdrag = $useajax;   // this will add a new class to the header so we can style differently
 
+    // The "Editing On" button will be appearing only in the "main" course screen
+    // (i.e., no breadcrumbs other than the default one added inside this function)
+    $buttons = switchroles_form($course->id);
+    if ($PAGE->user_allowed_editing()) {
+        $buttons .= update_course_icon($course->id );
+    }
 
-    $PAGE->print_header(get_string('course').': %fullname%', NULL, '', $bodytags);
+    $title = get_string('course') . ': ' . $course->fullname;
+    $navigation = build_navigation(array());
+    print_header($title, $course->fullname, $navigation, '', '', true,
+                 $buttons, user_login_string($course, $USER), false, $bodytags);
+
     $completion=new completion_info($course);
     if($completion->is_enabled() && ajaxenabled()) {
         require_js(array('yui_yahoo','yui_event','yui_connection','yui_dom'));

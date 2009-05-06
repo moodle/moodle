@@ -1,8 +1,9 @@
 <?php  // $Id$
 
-    require_once("../../config.php");
-    require_once("lib.php");
-    require_once("$CFG->libdir/rsslib.php");
+    require_once(dirname(__FILE__) . '/../../config.php');
+    require_once($CFG->dirroot . '/course/lib.php');
+    require_once($CFG->dirroot . '/mod/forum/lib.php');
+    require_once($CFG->libdir . '/rsslib.php');
 
     $id = optional_param('id', 0, PARAM_INT);                   // Course id
     $subscribe = optional_param('subscribe', null, PARAM_INT);  // Subscribe/Unsubscribe all forums

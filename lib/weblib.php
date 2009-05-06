@@ -5138,8 +5138,8 @@ function update_categories_search_button($search,$page,$perpage) {
  * @todo Finish documenting this function
  */
 function navmenu($course, $cm=NULL, $targetwindow='self') {
-
     global $CFG, $THEME, $USER, $DB;
+    require_once($CFG->dirroot . '/course/lib.php'); // Required for get_fast_modinfo
 
     if (empty($THEME->navmenuwidth)) {
         $width = 50;

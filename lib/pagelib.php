@@ -1018,46 +1018,6 @@ class page_base extends moodle_page {
  * @package pages
  */
 class page_course extends page_base {
-    // HTML OUTPUT SECTION
-
-    // This function prints out the common part of the page's header.
-    // You should NEVER print the header "by hand" in other code.
-    function print_header($title, $morenavlinks=NULL, $meta='', $bodytags='', $extrabuttons='') {
-        global $USER, $CFG;
-
-        $this->init_full();
-        $replacements = array(
-            '%fullname%' => $this->course->fullname
-        );
-        foreach($replacements as $search => $replace) {
-            $title = str_replace($search, $replace, $title);
-        }
-
-        $navlinks = array();
-
-        if(!empty($morenavlinks)) {
-            $navlinks = array_merge($navlinks, $morenavlinks);
-        }
-
-        $navigation = build_navigation($navlinks);
-
-        // The "Editing On" button will be appearing only in the "main" course screen
-        // (i.e., no breadcrumbs other than the default one added inside this function)
-        $buttons = switchroles_form($this->course->id);
-        if ($this->user_allowed_editing()) {
-            $buttons .= update_course_icon($this->course->id );
-        }
-        $buttons = empty($morenavlinks) ? $buttons : '&nbsp;';
-
-        // Add any extra buttons requested (by the resource module, for example)
-        if ($extrabuttons != '') {
-            $buttons = ($buttons == '&nbsp;') ? $extrabuttons : $buttons.$extrabuttons;
-        }
-
-        print_header($title, $this->course->fullname, $navigation,
-                     '', $meta, true, $buttons, user_login_string($this->course, $USER), false, $bodytags);
-    }
-
     // SELF-REPORTING SECTION
 
     // When we are creating a new page, use the data at your disposal to provide a textual representation of the
