@@ -7,7 +7,7 @@ class block_calendar_upcoming extends block_base {
     }
 
     function get_content() {
-        global $USER, $CFG, $SESSION, $COURSE;
+        global $USER, $CFG, $SESSION;
         $cal_m = optional_param( 'cal_m', 0, PARAM_INT );
         $cal_y = optional_param( 'cal_y', 0, PARAM_INT );
 
@@ -17,7 +17,7 @@ class block_calendar_upcoming extends block_base {
             return $this->content;
         }
         // Reset the session variables
-        calendar_session_vars($COURSE);
+        calendar_session_vars($this->page->course);
         $this->content = new stdClass;
         $this->content->text = '';
 
@@ -27,7 +27,7 @@ class block_calendar_upcoming extends block_base {
             $this->content->footer = '';
 
         } else {
-            $courseshown = $COURSE->id;
+            $courseshown = $this->page->course->id;
             $this->content->footer = '<br /><a href="'.$CFG->wwwroot.
                                      '/calendar/view.php?view=upcoming&amp;course='.$courseshown.'">'.
                                       get_string('gotocalendar', 'calendar').'</a>...';
@@ -47,7 +47,7 @@ class block_calendar_upcoming extends block_base {
                 calendar_set_referring_course(0);
             } else {
                 // Forcibly filter events to include only those from the particular course we are in.
-                $filtercourse    = array($courseshown => $COURSE);
+                $filtercourse    = array($courseshown => $this->page->course);
                 $groupeventsfrom = array($courseshown => 1);
             }
         }

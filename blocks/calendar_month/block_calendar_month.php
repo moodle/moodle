@@ -11,7 +11,7 @@ class block_calendar_month extends block_base {
     }
 
     function get_content() {
-        global $USER, $CFG, $SESSION, $COURSE;
+        global $USER, $CFG, $SESSION;
         $cal_m = optional_param( 'cal_m', 0, PARAM_INT );
         $cal_y = optional_param( 'cal_y', 0, PARAM_INT );
 
@@ -21,7 +21,7 @@ class block_calendar_month extends block_base {
             return $this->content;
         }
         // Reset the session variables
-        calendar_session_vars($COURSE);
+        calendar_session_vars($this->page->course);
         
         $this->content = new stdClass;
         $this->content->text = '';
@@ -30,7 +30,7 @@ class block_calendar_month extends block_base {
         // [pj] To me it looks like this if would never be needed, but Penny added it 
         // when committing the /my/ stuff. Reminder to discuss and learn what it's about.
         // It definitely needs SOME comment here!
-        $courseshown = $COURSE->id;
+        $courseshown = $this->page->course->id;
 
         if ($courseshown == SITEID) {
             // Being displayed at site level. This will cause the filter to fall back to auto-detecting
@@ -42,9 +42,9 @@ class block_calendar_month extends block_base {
 
         } else {
             //MDL-14693: fix calendar on resource page
-            $courseshown =  optional_param( 'id', $COURSE->id, PARAM_INT );
+            $courseshown =  optional_param( 'id', $this->page->course->id, PARAM_INT );
             // Forcibly filter events to include only those from the particular course we are in.
-            $filtercourse    = array($courseshown => $COURSE);
+            $filtercourse    = array($courseshown => $this->page->course);
             $groupeventsfrom = array($courseshown => 1);
         }
 
@@ -52,9 +52,9 @@ class block_calendar_month extends block_base {
         calendar_set_referring_course($courseshown);
 
         // MDL-9059, set to show this course when admins go into a course, then unset it.
-        if ($COURSE->id != SITEID && !isset($SESSION->cal_courses_shown[$COURSE->id]) && has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_SYSTEM))) {
+        if ($this->page->course->id != SITEID && !isset($SESSION->cal_courses_shown[$this->page->course->id]) && has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_SYSTEM))) {
             $courseset = true;
-            $SESSION->cal_courses_shown[$COURSE->id] = $COURSE;
+            $SESSION->cal_courses_shown[$this->page->course->id] = $this->page->course;
         }
     
         // Be VERY careful with the format for default courses arguments!
@@ -73,13 +73,13 @@ class block_calendar_month extends block_base {
             $this->content->text .= calendar_top_controls('course', array('id' => $courseshown, 'm' => $cal_m, 'y' => $cal_y));
             $this->content->text .= calendar_get_mini($courses, $group, $user, $cal_m, $cal_y);
             $this->content->text .= '<h3 class="eventskey">'.get_string('eventskey', 'calendar').'</h3>';
-            $this->content->text .= '<div class="filters">'.calendar_filter_controls('course', '', $COURSE).'</div>';
+            $this->content->text .= '<div class="filters">'.calendar_filter_controls('course', '', $this->page->course).'</div>';
             
         }
         
         // MDL-9059, unset this so that it doesn't stay in session
         if (!empty($courseset)) {
-            unset($SESSION->cal_courses_shown[$COURSE->id]);
+            unset($SESSION->cal_courses_shown[$this->page->course->id]);
         }
 
         return $this->content;

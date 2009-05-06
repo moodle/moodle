@@ -14,7 +14,7 @@ class block_online_users extends block_base {
     function has_config() {return true;}
 
     function get_content() {
-        global $USER, $CFG, $COURSE, $DB;
+        global $USER, $CFG, $DB;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -35,7 +35,7 @@ class block_online_users extends block_base {
         $timefrom = 100 * floor((time()-$timetoshowusers) / 100); // Round to nearest 100 seconds for better query cache
 
         // Get context so we can check capabilities.
-        $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+        $context = $this->page->context;
 
         // TODO
         if (empty($this->instance->pinned)) {
@@ -45,12 +45,12 @@ class block_online_users extends block_base {
         }
 
         //Calculate if we are in separate groups
-        $isseparategroups = ($COURSE->groupmode == SEPARATEGROUPS
-                             && $COURSE->groupmodeforce
+        $isseparategroups = ($this->page->course->groupmode == SEPARATEGROUPS
+                             && $this->page->course->groupmodeforce
                              && !has_capability('moodle/site:accessallgroups', $context));
 
         //Get the user current group
-        $currentgroup = $isseparategroups ? groups_get_course_group($COURSE) : NULL;
+        $currentgroup = $isseparategroups ? groups_get_course_group($this->page->course) : NULL;
 
         $groupmembers = "";
         $groupselect  = "";
@@ -65,7 +65,7 @@ class block_online_users extends block_base {
             $params['currentgroup'] = $currentgroup;
         }
 
-        if ($COURSE->id == SITEID) {  // Site-level
+        if ($this->page->course->id == SITEID) {  // Site-level
             $sql = "SELECT u.id, u.username, u.firstname, u.lastname, u.picture, MAX(u.lastaccess) AS lastaccess
                       FROM {user} u $groupmembers
                      WHERE u.lastaccess > $timefrom
@@ -103,7 +103,7 @@ class block_online_users extends block_base {
                            $groupselect $rawhere
                   GROUP BY u.id";
 
-            $params['courseid'] = $COURSE->id;
+            $params['courseid'] = $this->page->course->id;
         }
 
         //Calculate minutes
@@ -151,12 +151,12 @@ class block_online_users extends block_base {
                 $this->content->text .= '<li class="listentry">';
                 $timeago = format_time(time() - $user->lastaccess); //bruno to calculate correctly on frontpage
                 if ($user->username == 'guest') {
-                    $this->content->text .= '<div class="user">'.print_user_picture($user->id, $COURSE->id, $user->picture, 16, true, false, '', false);
+                    $this->content->text .= '<div class="user">'.print_user_picture($user->id, $this->page->course->id, $user->picture, 16, true, false, '', false);
                     $this->content->text .= get_string('guestuser').'</div>';
 
                 } else {
-                    $this->content->text .= '<div class="user"><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$COURSE->id.'" title="'.$timeago.'">';
-                    $this->content->text .= print_user_picture($user->id, $COURSE->id, $user->picture, 16, true, false, '', false);
+                    $this->content->text .= '<div class="user"><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->page->course->id.'" title="'.$timeago.'">';
+                    $this->content->text .= print_user_picture($user->id, $this->page->course->id, $user->picture, 16, true, false, '', false);
                     $this->content->text .= $user->fullname.'</a></div>';
                 }
                 if ($canshowicon and ($USER->id != $user->id) and  $user->username != 'guest') {  // Only when logged in and messaging active etc

@@ -7,7 +7,7 @@ class block_news_items extends block_base {
     }
 
     function get_content() {
-        global $CFG, $USER, $COURSE;
+        global $CFG, $USER;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -22,17 +22,17 @@ class block_news_items extends block_base {
         }
 
 
-        if ($COURSE->newsitems) {   // Create a nice listing of recent postings
+        if ($this->page->course->newsitems) {   // Create a nice listing of recent postings
 
             require_once($CFG->dirroot.'/mod/forum/lib.php');   // We'll need this
 
             $text = '';
 
-            if (!$forum = forum_get_course_forum($COURSE->id, 'news')) {
+            if (!$forum = forum_get_course_forum($this->page->course->id, 'news')) {
                 return '';
             }
 
-            $modinfo = get_fast_modinfo($COURSE);
+            $modinfo = get_fast_modinfo($this->page->course);
             if (empty($modinfo->instances['forum'][$forum->id])) {
                 return '';
             }
@@ -58,7 +58,7 @@ class block_news_items extends block_base {
         /// Get all the recent discussions we're allowed to see
 
             if (! $discussions = forum_get_discussions($cm, 'p.modified DESC', false, 
-                                                       $currentgroup, $COURSE->newsitems) ) {
+                                                       $currentgroup, $this->page->course->newsitems) ) {
                 $text .= '('.get_string('nonews', 'forum').')';
                 $this->content->text = $text;
                 return $this->content;
@@ -107,7 +107,7 @@ class block_news_items extends block_base {
                 } else {
                     $userid = $USER->id;
                 }
-                $this->content->footer .= '<br />'.rss_get_link($COURSE->id, $userid, 'forum', $forum->id, $tooltiptext);
+                $this->content->footer .= '<br />'.rss_get_link($this->page->course->id, $userid, 'forum', $forum->id, $tooltiptext);
             }
 
         }

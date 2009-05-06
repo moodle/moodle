@@ -29,7 +29,7 @@ class block_admin_bookmarks extends block_base {
 
     function get_content() {
 
-        global $CFG, $USER, $PAGE;
+        global $CFG, $USER;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -62,12 +62,13 @@ class block_admin_bookmarks extends block_base {
             $bookmarks = array();
         }
 
-        if (isset($PAGE->section) and $PAGE->section == 'search'){
+        // TODO
+        if (isset($this->page->section) and $this->page->section == 'search'){
             // the search page can't be properly bookmarked at present
             $this->content->footer = '';
-        } else if (($section = (isset($PAGE->section) ? $PAGE->section : '')) && (in_array($section, $bookmarks))) {
+        } else if (($section = (isset($this->page->section) ? $this->page->section : '')) && (in_array($section, $bookmarks))) {
             $this->content->footer = '<a href="' . $CFG->wwwroot . '/blocks/admin_bookmarks/delete.php?section=' . $section . '&amp;sesskey='.sesskey().'">' . get_string('unbookmarkthispage','admin') . '</a>';
-        } else if ($section = (isset($PAGE->section) ? $PAGE->section : '')) {
+        } else if ($section = (isset($this->page->section) ? $this->page->section : '')) {
             $this->content->footer = '<a href="' . $CFG->wwwroot . '/blocks/admin_bookmarks/create.php?section=' . $section . '&amp;sesskey='.sesskey().'">' . get_string('bookmarkthispage','admin') . '</a>';
         } else {
             $this->content->footer = '';

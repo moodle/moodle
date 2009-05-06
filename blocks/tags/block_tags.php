@@ -38,7 +38,7 @@ class block_tags extends block_base {
 
     function get_content() {
 
-        global $CFG, $SITE, $COURSE, $USER, $SCRIPT;
+        global $CFG, $SITE, $USER, $SCRIPT;
 
         if (empty($CFG->usetags)) {
             $this->content->text = '';
@@ -79,10 +79,10 @@ class block_tags extends block_base {
             $isguest = has_capability('moodle/legacy:guest', $systemcontext, $USER->id, false);
             $loggedin = isloggedin() && !$isguest;
             $coursepage = $canedit = false;
-            $coursepage = (isset($COURSE->id) && $COURSE->id != SITEID);
+            $coursepage = (isset($this->page->course->id) && $this->page->course->id != SITEID);
             $mymoodlepage = ($SCRIPT == '/my/index.php') ? true : false;
-            $sitepage = (isset($COURSE->id) && $COURSE->id == SITEID && !$mymoodlepage);
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+            $sitepage = (isset($this->page->course->id) && $this->page->course->id == SITEID && !$mymoodlepage);
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $this->page->course->id);
             if ($coursepage) {
                 $canedit =  has_capability('moodle/tag:create', $systemcontext);
             }
@@ -111,9 +111,9 @@ class block_tags extends block_base {
                 }
             }
             if ($coursepage) {
-                $coursetags = coursetag_print_cloud(coursetag_get_tags($COURSE->id, 0, '', $numoftags, $sort), true);
+                $coursetags = coursetag_print_cloud(coursetag_get_tags($this->page->course->id, 0, '', $numoftags, $sort), true);
                 if (!$coursetags) $coursetags = get_string('notagsyet', $tagslang);
-                $courseflag = '&amp;courseid='.$COURSE->id;
+                $courseflag = '&amp;courseid='.$this->page->course->id;
             }
             if ($mymoodlepage) {
                 $mytags = coursetag_print_cloud(coursetag_get_tags(0, $USER->id, 'default', $numoftags, $sort), true);
@@ -236,7 +236,7 @@ class block_tags extends block_base {
                         <form action="{$CFG->wwwroot}/tag/coursetags_add.php" method="post" id="coursetag"
                                 onsubmit="return ctags_checkinput(this.coursetag_new_tag.value)">
                             <div style="display: none;">
-                                <input type="hidden" name="entryid" value="$COURSE->id" />
+                                <input type="hidden" name="entryid" value="$this->page->course->id" />
                                 <input type="hidden" name="userid" value="$USER->id" />
                                 <input type="hidden" name="sesskey" value="$sesskey" />
                             </div>
@@ -266,7 +266,7 @@ EOT;
                     // add the edit link
                     $this->content->footer .= '
                         <div>
-                        <a href="'.$CFG->wwwroot.'/tag/coursetags_edit.php?courseid='.$COURSE->id.'"
+                        <a href="'.$CFG->wwwroot.'/tag/coursetags_edit.php?courseid='.$this->page->course->id.'"
                         title="'.get_string('edittags', $tagslang).'">'.get_string('edittags', $tagslang).'</a>
                         </div>';
                 }

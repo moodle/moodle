@@ -406,7 +406,7 @@ class block_base {
      * @todo complete documenting this function. Define $options.
      */
     function _add_edit_controls($options) {
-        global $CFG, $USER, $PAGE;
+        global $CFG, $USER;
 
         // TODO
         if (empty($this->instance->pinned)) {

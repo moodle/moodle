@@ -7,7 +7,7 @@ class block_activity_modules extends block_list {
     }
 
     function get_content() {
-        global $CFG, $COURSE, $DB;
+        global $CFG, $DB;
 
         if($this->content !== NULL) {
             return $this->content;

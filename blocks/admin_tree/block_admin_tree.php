@@ -10,13 +10,13 @@ class block_admin_tree extends block_base {
     var $destination;
 
     function init() {
-        global $PAGE;
         $this->title = get_string('administrationsite');
         $this->version = 2007101509;
         $this->currentdepth = 0;
         $this->divcounter = 1;
         $this->tempcontent = '';
-        $this->section = (isset($PAGE->section) ? $PAGE->section : '');
+        // TODO
+        $this->section = (isset($this->page->section) ? $this->page->section : '');
         $this->pathtosection = array();
         $this->expandnodes = array();
     }

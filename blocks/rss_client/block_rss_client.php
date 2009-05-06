@@ -43,10 +43,10 @@
     }
 
     function get_content() {
-        global $CFG, $editing, $COURSE, $USER;
+        global $CFG, $editing, $USER;
 
-        if (!empty($COURSE)) {
-            $this->courseid = $COURSE->id;
+        if (!empty($this->page->course)) {
+            $this->courseid = $this->page->course->id;
         }
 
     /// When displaying feeds in block, we double $CFG->block_rss_client_timeout

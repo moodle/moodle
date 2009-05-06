@@ -13,8 +13,8 @@ class block_glossary_random extends block_base {
     }
 
     function specialization() {
-        global $CFG, $COURSE, $DB;
-        $this->course = $COURSE;
+        global $CFG, $DB;
+        $this->course = $this->page->course;
 
         // load userdefined title and make sure it's never empty
         if (empty($this->config->title)) {
@@ -152,7 +152,7 @@ class block_glossary_random extends block_base {
     }
 
     function get_content() {
-        global $USER, $CFG, $COURSE, $DB;
+        global $USER, $CFG, $DB;
 
         if (empty($this->config->glossary)) {
             $this->content->text   = get_string('notyetconfigured','block_glossary_random');
@@ -162,11 +162,7 @@ class block_glossary_random extends block_base {
 
         $glossaryid = $this->config->glossary;
 
-        if ($this->course->id == $COURSE->id) {
-            $course = $COURSE;
-        } else {
-            $course = $DB->get_record('course', array('id'=>$this->course->id)); 
-        }
+        $course = $this->page->course;
 
         require_once($CFG->dirroot.'/course/lib.php');
         $modinfo = get_fast_modinfo($course);

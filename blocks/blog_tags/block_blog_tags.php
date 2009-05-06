@@ -39,7 +39,7 @@ class block_blog_tags extends block_base {
     }
 
     function get_content() {
-        global $CFG, $SITE, $COURSE, $USER, $DB;
+        global $CFG, $SITE, $USER, $DB;
 
         if (empty($CFG->usetags) || empty($CFG->bloglevel)) {
             $this->content->text = '';
@@ -130,18 +130,18 @@ class block_blog_tags extends block_base {
 
                     case BLOG_GROUP_LEVEL:
                         $filtertype = 'group';
-                        $filterselect = groups_get_course_group($COURSE);
+                        $filterselect = groups_get_course_group($this->page->course);
                     break;
 
                     case BLOG_COURSE_LEVEL:
                         $filtertype = 'course';
-                        $filterselect = $COURSE->id;
+                        $filterselect = $this->page->course->id;
                     break;
 
                     default:
-                        if (isset($COURSE->id) && $COURSE->id != SITEID) {
+                        if ($this->page->course->id != SITEID) {
                             $filtertype = 'course';
-                            $filterselect = $COURSE->id;
+                            $filterselect = $this->page->course->id;
                         } else {
                             $filtertype = 'site';
                             $filterselect = SITEID;

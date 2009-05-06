@@ -11,7 +11,7 @@ class block_blog_menu extends block_base {
     }
 
     function get_content() {
-        global $CFG, $USER, $COURSE;
+        global $CFG, $USER;
 
         if (empty($CFG->bloglevel)) {
             $this->content->text = '';
@@ -47,10 +47,10 @@ class block_blog_menu extends block_base {
 
             $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
-            if ($COURSE->id != SITEID) {
+            if ($this->page->course->id != SITEID) {
 
                 $incoursecontext = true;
-                $curcontext = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+                $curcontext = get_context_instance(CONTEXT_COURSE, $this->page->course->id);
             } else {
                 $incoursecontext = false;
                 $curcontext = $sitecontext;
@@ -63,10 +63,10 @@ class block_blog_menu extends block_base {
             if ( (isloggedin() && !isguest()) && $incoursecontext
                     && $CFG->bloglevel >= BLOG_COURSE_LEVEL && $canviewblogs) {
 
-                $coursearg = '&amp;courseid='.$COURSE->id;
+                $coursearg = '&amp;courseid='.$this->page->course->id;
                 // a course is specified
 
-                $courseviewlink = '<li><a href="'. $CFG->wwwroot .'/blog/index.php?filtertype=course&amp;filterselect='. $COURSE->id .'">';
+                $courseviewlink = '<li><a href="'. $CFG->wwwroot .'/blog/index.php?filtertype=course&amp;filterselect='. $this->page->course->id .'">';
                 $courseviewlink .= get_string('viewcourseentries', 'blog') ."</a></li>\n";
             }
 

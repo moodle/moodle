@@ -28,7 +28,7 @@ class block_section_links extends block_base {
     }
 
     function get_content() {
-        global $CFG, $USER, $COURSE, $DB;
+        global $CFG, $USER, $DB;
 
         $highlight = 0;
 

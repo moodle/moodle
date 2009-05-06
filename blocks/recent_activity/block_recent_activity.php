@@ -7,8 +7,6 @@ class block_recent_activity extends block_base {
     }
 
     function get_content() {
-        global $COURSE;
-
         if ($this->content !== NULL) {
             return $this->content;
         }
@@ -24,7 +22,7 @@ class block_recent_activity extends block_base {
 
         // Slightly hacky way to do it but...
         ob_start();
-        print_recent_activity($COURSE);
+        print_recent_activity($this->page->course);
         $this->content->text = ob_get_contents();
         ob_end_clean();
 
