@@ -89,6 +89,7 @@ class resource_base {
         require_once($CFG->dirroot.'/course/lib.php'); //required by some blocks
 
         $PAGE = page_create_object(PAGE_COURSE_VIEW, $this->course->id);
+        $PAGE->set_url('mod/resource/view.php', array('id' => $this->cm->id));
         $this->PAGE = $PAGE;
         $pageblocks = blocks_setup($PAGE);
 

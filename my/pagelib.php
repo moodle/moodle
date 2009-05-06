@@ -54,25 +54,7 @@ class page_my_moodle extends page_base {
         print_header($title, $header,$navigation,'','',true, $button, $loggedinas.$langmenu);
 
     }
-    
-    function url_get_path() {
-        global $CFG;
-        if ($PAGE->pagetype == PAGE_MY_MOODLE) {
-            return $CFG->wwwroot.'/my/index.php';
-        } elseif (defined('ADMIN_STICKYBLOCKS')){
-            return $CFG->wwwroot.'/'.$CFG->admin.'/stickyblocks.php';
-        }
-    }
-
-    function url_get_parameters() {
-        if (defined('ADMIN_STICKYBLOCKS')) {
-            return array('pt' => ADMIN_STICKYBLOCKS);
-        } else {
-            return array();
-        }
-    }
 }
-
 
 define('PAGE_MY_MOODLE',   'my-index');
 define('MY_MOODLE_FORMAT', 'my'); //doing this so we don't run into problems with applicable formats.

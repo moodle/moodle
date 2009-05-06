@@ -462,7 +462,7 @@ class block_base {
         } else {
             $page = page_create_object($this->instance->pagetype, $this->instance->pageid);
         }
-        $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => sesskey()));
+        $script = $page->url->out(array('instanceid' => $this->instance->id, 'sesskey' => sesskey()));
 
         if (empty($this->instance->pinned)) {
             $movebuttons .= '<a class="icon roles" title="'. $this->str->assignroles .'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">' .

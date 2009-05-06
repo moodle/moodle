@@ -259,7 +259,7 @@ class moodle_url {
             $this->port = $url->port;
             $this->user = $url->user;
             $this->pass = $url->pass;
-            $this->path = $url->pass;
+            $this->path = $url->path;
             $this->fragment = $url->fragment;
             $this->params = $url->params;
         } else {

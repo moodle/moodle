@@ -109,7 +109,7 @@
             //if ($page->user_allowed_editing()) { // for SUBMITTERS_ALL_ACCOUNT_HOLDERS we're going to run into trouble later if we show it and then they don't have write access to the page.
             if (isset($this->config)) {
                 // This instance is configured - show Add/Edit feeds link.
-                $script = $page->url_get_full(
+                $script = $page->url->out(
                                     array('instanceid' => $this->instance->id,
                                           'sesskey' => sesskey(),
                                           'blockaction' => 'config',
@@ -121,7 +121,7 @@
             } else {
                 // This instance has not been configured yet - show configure link?
                 if (has_capability('block/rss_client:manageanyfeeds', $context)) {
-                    $script = $page->url_get_full(
+                    $script = $page->url->out(
                                     array('instanceid' => $this->instance->id,
                                           'sesskey' => sesskey(),
                                           'blockaction' => 'config',

@@ -256,7 +256,8 @@
 
 
 // Initialize $PAGE, compute blocks
-    $PAGE       = page_create_instance($data->id);
+    $PAGE = page_create_instance($data->id);
+    $PAGE->set_url('mod/data/view.php', array('id' => $cm->id));
     $pageblocks = blocks_setup($PAGE);
     $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
 

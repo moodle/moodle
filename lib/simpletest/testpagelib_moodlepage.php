@@ -38,7 +38,7 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->libdir . '/pagelib.php');
 
 class testable_moodle_page extends moodle_page {
-    public function initialise_default_pagetype($script = '') {
+    public function initialise_default_pagetype($script = null) {
         parent::initialise_default_pagetype($script);
     }
     public function url_to_class_name($url) {

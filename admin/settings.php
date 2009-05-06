@@ -12,6 +12,7 @@ $adminediting = optional_param('adminedit', -1, PARAM_BOOL);
 /// no guest autologin
 require_login(0, false);
 $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_url($CFG->admin . '/settings.php', array('section' => $section));
 
 $adminroot = admin_get_root(); // need all settings
 $page      = $adminroot->locate($section);
@@ -106,7 +107,7 @@ if (empty($SITE->fullname)) {
     $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
                                             BLOCK_R_MAX_WIDTH);
 
-    $PAGE->print_header('', $focus);
+    $PAGE->print_header($focus);
 
     echo '<table id="layout-table"><tr>';
     $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;

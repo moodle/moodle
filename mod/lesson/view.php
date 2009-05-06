@@ -465,9 +465,7 @@
         // update the clock
         if (!has_capability('mod/lesson:manage', $context)) {
             $timer->lessontime = time();
-            if (!$DB->update_record('lesson_timer', $timer)) {
-                print_error('cannotupdatetimer', 'lesson');
-            }
+            $DB->update_record('lesson_timer', $timer);
         }
 
          ///  This is the warning msg for teachers to inform them that cluster and unseen does not work while logged in as a teacher
@@ -503,6 +501,7 @@
         }
 
         $PAGE = page_create_instance($lesson->id);
+        $PAGE->set_url('mod/lesson/view.php', array('id' => $cm->id, 'pageid' => $page->id));
         $PAGE->set_lessonpageid($page->id);
         $pageblocks = blocks_setup($PAGE);
 
@@ -838,9 +837,7 @@
             }
             $timer->lessontime = time();
             
-            if (!$DB->update_record("lesson_timer", $timer)) {
-                print_error('cannotupdatetimer', 'lesson');
-            }
+            $DB->update_record("lesson_timer", $timer);
         }
         
         add_to_log($course->id, "lesson", "end", "view.php?id=$cm->id", "$lesson->id", $cm->id);

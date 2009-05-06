@@ -21,19 +21,6 @@ class page_tag extends page_base {
         return (!empty($USER->editing));
     }
 
-    
-    function url_get_path() {
-        global $CFG;
-        return $CFG->wwwroot.'/tag/index.php';
-
-    }
-
-    function url_get_parameters() {
-        $param = array();
-        $param['id'] = $this->id;
-        return $param;
-    }
-
     //-----------  printing funtions -----------
 
     function print_header() {

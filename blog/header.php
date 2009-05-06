@@ -50,7 +50,20 @@ $PAGE->set_course($course);
 $PAGE->filtertype   = $filtertype;
 $PAGE->filterselect = $filterselect;
 $PAGE->tagid        = $tagid;
-
+$array = array();
+if (!empty($course->id)) {
+    $array['courseid'] = $course->id;
+}
+if (!empty($filtertype)) {
+    $array['filtertype'] = $filtertype;
+}
+if (!empty($filterselect)) {
+    $array['filterselect'] = $filterselect;
+}
+if (!empty($tagid)) {
+    $array['tagid'] = $tagid;
+}
+$PAGE->set_url('blog/index.php', $array);
 $PAGE->init_full(); //init the BlogInfo object and the courserecord object
 
 $editing = false;

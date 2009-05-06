@@ -791,6 +791,7 @@
     }
 
     $PAGE = page_create_object('mod-lesson-view', $lesson->id);
+    $PAGE->set_url('mod/lesson/view.php', array('id' => $cm->id, 'pageid' => $page->id));
     $PAGE->set_lessonpageid($page->id);
     $pageblocks = blocks_setup($PAGE);
 

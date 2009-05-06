@@ -19,8 +19,6 @@
     $marker      = optional_param('marker',-1 , PARAM_INT);
     $switchrole  = optional_param('switchrole',-1, PARAM_INT);
 
-
-
     if (empty($id) && empty($name) && empty($idnumber)) {
         print_error('unspecifycourseid', 'error');
     }
@@ -94,6 +92,7 @@
     }
 
     $PAGE = page_create_object(PAGE_COURSE_VIEW, $course->id);
+    $PAGE->set_url('course/view.php', array('id' => $course->id));
     $pageblocks = blocks_setup($PAGE, BLOCKS_PINNED_BOTH);
 
     if ($reset_user_allowed_editing) {

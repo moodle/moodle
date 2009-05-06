@@ -77,6 +77,8 @@ class moodle_page {
 
     protected $_url = null;
 
+    protected $_blocks = null;
+
 /// Getter methods =============================================================
 /// Due to the __get magic below, you normally do not call these as $PAGE->get_x
 /// methods, but instead use the $PAGE->x syntax.
@@ -184,7 +186,17 @@ class moodle_page {
             debugging('This page did no call $PAGE->set_url(...). Realying on a guess.', DEBUG_DEVELOPER);
             return new moodle_url($ME);
         }
-        return $this->_url;
+        return new moodle_url($this->_url); // Return a clone for safety.
+    }
+
+    /**
+     * @return blocks_manager the blocks manager object for this page.
+     */
+    public function get_blocks() {
+        if (is_null($this->_blocks)) {
+            $this->_blocks = new blocks_manager();
+        }
+        return $this->_blocks;
     }
 
     /**
@@ -362,7 +374,7 @@ class moodle_page {
      * If legacy code has set $CFG->pagepath that will be used instead, and a
      * developer warning issued.
      */
-    protected function initialise_default_pagetype($script = '') {
+    protected function initialise_default_pagetype($script = null) {
         global $CFG, $SCRIPT;
 
         if (isset($CFG->pagepath)) {
@@ -372,7 +384,7 @@ class moodle_page {
             unset($CFG->pagepath);
         }
 
-        if (empty($script)) {
+        if (is_null($script)) {
             $script = ltrim($SCRIPT, '/');
             $len = strlen($CFG->admin);
             if (substr($script, 0, $len) == $CFG->admin) {
@@ -541,21 +553,21 @@ class moodle_page {
     }
 
     /**
-     * @deprecated since Moodle 2.0
+     * @deprecated since Moodle 2.0 - use $PAGE->blocks->get_positions() instead
      * @return string the places on this page where blocks can go.
      */
     function blocks_get_positions() {
         debugging('Call to deprecated method moodle_page::blocks_get_positions. Use $PAGE->blocks->get_positions() instead.');
-        return $PAGE->blocks->get_positions();
+        return $this->blocks->get_positions();
     }
 
     /**
-     * @deprecated since Moodle 2.0
+     * @deprecated since Moodle 2.0 - use $PAGE->blocks->get_default_position() instead
      * @return string the default place for blocks on this page.
      */
     function blocks_default_position() {
         debugging('Call to deprecated method moodle_page::blocks_default_position. Use $PAGE->blocks->get_default_position() instead.');
-        return $PAGE->blocks->get_default_position();
+        return $this->blocks->get_default_position();
     }
 
     /**
@@ -570,6 +582,44 @@ class moodle_page {
      */
     function blocks_move_position(&$instance, $move) {
         debugging('Call to deprecated method moodle_page::blocks_move_position. This method has no function any more.');
+    }
+
+    /**
+     * @deprecated since Moodle 2.0 - use $this->url->params() instead.
+     * @return array URL parameters for this page.
+     */
+    function url_get_parameters() {
+        debugging('Call to deprecated method moodle_page::url_get_parameters. Use $this->url->params() instead.');
+        return $this->url->params();
+    }
+
+    /**
+     * @deprecated since Moodle 2.0 - use $this->url->params() instead.
+     * @return string URL for this page without parameters.
+     */
+    function url_get_path() {
+        debugging('Call to deprecated method moodle_page::url_get_path. Use $this->url->out(false) instead.');
+        return $this->url->out(false);
+    }
+
+    /**
+     * @deprecated since Moodle 2.0 - use $this->url->out() instead.
+     * @return string full URL for this page.
+     */
+    function url_get_full($extraparams = array()) {
+        debugging('Call to deprecated method moodle_page::url_get_full. Use $this->url->out() instead.');
+        return $this->url->out($extraparams);
+    }
+}
+
+/** Stub implementation of the blocks_manager, to stop things from breaking too badly. */
+class blocks_manager {
+    public function get_positions() {
+        return array(BLOCK_POS_LEFT, BLOCK_POS_RIGHT);
+    }
+
+    public function get_default_position() {
+        return BLOCK_POS_RIGHT;
     }
 }
 
@@ -605,11 +655,15 @@ function page_create_object($type, $id = NULL) {
     $data->pageid   = $id;
 
     $classname = page_map_class($type);
-    $object = new $classname;
-    $object->init_quick($data);
+    $legacypage = new $classname;
+    $legacypage->init_quick($data);
+    // $PAGE->set_pagetype($type);
+    // $PAGE->set_url(str_replace($CFG->wwwroot . '/', '', $legacypage->url_get_full_()));
+    // return $PAGE;
+
     $course = $PAGE->course;
     if ($course->id != $SITE->id) {
-        $object->set_course($course);
+        $legacypage->set_course($course);
     } else {
         try {
             $category = $PAGE->category;
@@ -618,13 +672,12 @@ function page_create_object($type, $id = NULL) {
             $category = false;
         }
         if ($category) {
-            $object->set_category_by_id($category->id);
+            $legacypage->set_category_by_id($category->id);
         } else {
-            $object->set_course($SITE);
+            $legacypage->set_course($SITE);
         }
     }
-    //$object->set_pagetype($type);
-    return $object;
+    return $legacypage;
 }
 
 /**
@@ -709,45 +762,6 @@ class page_base extends moodle_page {
 
     // SELF-REPORTING SECTION
 
-    // Derived classes HAVE to define their "home url"
-    function url_get_path() {
-        trigger_error('Page class does not implement method <strong>url_get_path()</strong>', E_USER_WARNING);
-        return NULL;
-    }
-
-    // It's not always required to pass any arguments to the home url, so this doesn't trigger any errors (sensible default)
-    function url_get_parameters() {
-        return array();
-    }
-
-    // This should actually NEVER be overridden unless you have GOOD reason. Works fine as it is.
-    function url_get_full($extraparams = array()) {
-        $path = $this->url_get_path();
-        if(empty($path)) {
-            return NULL;
-        }
-
-        $params = $this->url_get_parameters();
-        if (!empty($params)) {
-            $params = array_merge($params, $extraparams);
-        } else {
-            $params = $extraparams;
-        }
-
-        if(empty($params)) {
-            return $path;
-        }
-
-        $first = true;
-
-        foreach($params as $var => $value) {
-            $path .= $first? '?' : '&amp;';
-            $path .= $var .'='. urlencode($value);
-            $first = false;
-        }
-
-        return $path;
-    }
 
     // Simple stuff, do not override this.
     function get_id() {
@@ -904,37 +918,9 @@ class page_course extends page_base {
 
     // SELF-REPORTING SECTION
 
-    // This should return a fully qualified path to the URL which is responsible for displaying us.
-    function url_get_path() {
-        global $CFG;
-        if (defined('ADMIN_STICKYBLOCKS')) {
-            return $CFG->wwwroot.'/'.$CFG->admin.'/stickyblocks.php';
-        }
-        if($this->id == SITEID) {
-            return $CFG->wwwroot .'/index.php';
-        }
-        else {
-            return $CFG->wwwroot .'/course/view.php';
-        }
-    }
-
-    // This should return an associative array of any GET/POST parameters that are needed by the URL
-    // which displays us to make it work. If none are needed, return an empty array.
-    function url_get_parameters() {
-        if (defined('ADMIN_STICKYBLOCKS')) {
-            return array('pt' => ADMIN_STICKYBLOCKS);
-        }
-        if($this->id == SITEID) {
-            return array();
-        }
-        else {
-            return array('id' => $this->id);
-        }
-    }
-
     // When we are creating a new page, use the data at your disposal to provide a textual representation of the
     // blocks that are going to get added to this new page. Delimit block names with commas (,) and use double
-    // colons (:) to delimit between block positions in the page. See blocks_get_positions() for additional info.
+    // colons (:) to delimit between block positions in the page.
     function _legacy_blocks_get_default() {
         global $CFG;
 
@@ -1018,24 +1004,6 @@ class page_generic_activity extends page_base {
     function user_is_editing() {
         $this->init_full();
         return isediting($this->modulerecord->course);
-    }
-
-    function url_get_path() {
-        global $CFG;
-        return $CFG->wwwroot .'/mod/'.$this->activityname.'/view.php';
-    }
-
-    function url_get_parameters() {
-        $this->init_full();
-        return array('id' => $this->modulerecord->id);
-    }
-
-    function blocks_get_positions() {
-        return array(BLOCK_POS_LEFT);
-    }
-
-    function blocks_default_position() {
-        return BLOCK_POS_LEFT;
     }
 
     function print_header($title, $morenavlinks = NULL, $bodytags = '', $meta = '') {

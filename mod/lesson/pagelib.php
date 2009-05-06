@@ -141,16 +141,6 @@ class page_lesson extends page_generic_activity {
     }
 
     /**
-     * Needed to add the ID of the current lesson page
-     *
-     * @return array
-     **/
-    function url_get_parameters() {
-        $this->init_full();
-        return array('id' => $this->modulerecord->id, 'pageid' => $this->lessonpageid);;
-    }
-
-    /**
      * Set the current lesson page ID
      *
      * @return void

@@ -80,36 +80,6 @@ class page_blog extends page_base {
         print_header($pageTitle, $pageHeading, $pageNavigation, $pageFocus, $pageMeta, true, $extraheader );
     }
 
-    // This should point to the script that displays us
-    function url_get_path() {
-        global $CFG;
-
-        return $CFG->wwwroot .'/blog/index.php';
-    }
-
-    function url_get_parameters() {
-        
-        $array = array();
-        if (!$this->full_init_done) {
-            $array['userid'] = $this->id;
-            return $array;
-        }
-
-        if (!empty($this->course->id)) {
-            $array['courseid'] = $this->course->id;
-        }
-        if (!empty($this->filtertype)) {
-            $array['filtertype'] = $this->filtertype;
-        }
-        if (!empty($this->filterselect)) {
-            $array['filterselect'] = $this->filterselect;
-        }
-        if (!empty($this->tagid)) {
-            $array['tagid'] = $this->tagid;  
-        }
-        return $array;
-    }
-
     /////////// Blog page specific functions
     function get_extra_header_string() {
         global $SESSION, $CFG, $USER;
@@ -122,14 +92,14 @@ class page_blog extends page_base {
                 $editingString = get_string('turneditingon');
             }
 
-            $params = $this->url_get_parameters();
+            $params = $this->url->params();
             $params['edit'] = empty($SESSION->blog_editing_enabled) ? 1 : 0;
             $paramstring = '';
             foreach ($params as $key=>$val) {
                 $paramstring .= '<input type="hidden" name="'.$key.'" value="'.s($val).'" />';
             }
 
-            $editformstring = '<form '.$CFG->frametarget.' method="get" action="'.$this->url_get_path().'"><div>'
+            $editformstring = '<form '.$CFG->frametarget.' method="get" action="'.$this->url->out(false).'"><div>'
                              .$paramstring.'<input type="submit" value="'.$editingString.'" /></div></form>';
         }
 

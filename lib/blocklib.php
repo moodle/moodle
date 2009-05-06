@@ -330,7 +330,7 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
     $managecourseblocks = has_capability('moodle/site:manageblocks', $coursecontext);
     $editmymoodle = $page->pagetype == PAGE_MY_MOODLE && has_capability('moodle/my:manageblocks', $coursecontext);
 
-    if ($page->blocks_default_position() == $position &&
+    if ($page->blocks->get_default_position() == $position &&
         $page->user_is_editing() &&
         ($managecourseblocks || $editmymoodle || $myownblogpage || defined('ADMIN_STICKYBLOCKS'))) {
 
@@ -473,7 +473,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
             );
 
             // To this data, add anything the page itself needs to display
-            $hiddendata = array_merge($hiddendata, $page->url_get_parameters());
+            $hiddendata = $page->url->params($hiddendata);
 
             if ($data = data_submitted()) {
                 $remove = array_keys($hiddendata);
@@ -493,7 +493,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
                 echo '<div class="block-config" id="'.$block->name.'">';   /// Make CSS easier
 
                 print_heading($strheading);
-                echo '<form method="post" name="block-config" action="'. $page->url_get_path() .'">';
+                echo '<form method="post" name="block-config" action="'. $page->url->out(false) .'">';
                 echo '<p>';
                 foreach($hiddendata as $name => $val) {
                     echo '<input type="hidden" name="'. $name .'" value="'. $val .'" />';
@@ -640,7 +640,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
                 break;
             }
 
-            $newpos = $page->blocks_default_position();
+            $newpos = $page->blocks->get_default_position();
             if (!empty($pinned)) {
                 $sql = "SELECT 1, MAX(weight) + 1 AS nextfree
                           FROM {block_pinned}
@@ -682,7 +682,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
 
     if ($redirect) {
         // In order to prevent accidental duplicate actions, redirect to a page with a clean url
-        redirect($page->url_get_full());
+        redirect($page->url->out());
     }
 }
 
@@ -843,7 +843,7 @@ function blocks_get_pinned($page) {
 
     $blocks = $DB->get_records_select('block_pinned', $select, $params, 'position, weight');
 
-    $positions = $page->blocks_get_positions();
+    $positions = $page->blocks->get_positions();
     $arr = array();
 
     foreach($positions as $key => $position) {
@@ -905,7 +905,7 @@ function blocks_get_by_page($page) {
     $blocks = $DB->get_records_select('block_instance', "pageid = ? AND ? LIKE (" . $DB->sql_concat('pagetype', "'%'") . ")",
             array($page->get_id(), $page->pagetype), 'position, weight');
 
-    $positions = $page->blocks_get_positions();
+    $positions = $page->blocks->get_positions();
     $arr = array();
     foreach($positions as $key => $position) {
         $arr[$position] = array();
@@ -946,7 +946,7 @@ function blocks_print_adminblock(&$page, &$pageblocks) {
         }
         asort($menu);
 
-        $target = $page->url_get_full(array('sesskey' => sesskey(), 'blockaction' => 'add'));
+        $target = $page->url->out(array('sesskey' => sesskey(), 'blockaction' => 'add'));
         $content = popup_form($target.'&amp;blockid=', $menu, 'add_block', '', $stradd .'...', '', '', true);
         print_side_block($strblocks, $content, NULL, NULL, NULL, array('class' => 'block_adminblock'));
     }
@@ -994,7 +994,7 @@ function blocks_repopulate_page($page) {
         $blocknames = $page->blocks_get_default();
     }
 
-    $positions = $page->blocks_get_positions();
+    $positions = $page->blocks->get_positions();
     $posblocks = explode(':', $blocknames);
 
     // Now one array holds the names of the positions, and the other one holds the blocks

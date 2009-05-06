@@ -103,9 +103,9 @@ print_box_start();
                 if (has_capability('block/rss_client:createprivatefeeds', $context)
                         || has_capability('block/rss_client:createsharedfeeds', $context)) {
 
-                    $addrsspage = $page->url_get_full(array('instanceid' => $this->instance->id, 
+                    $addrsspage = $page->url->out(array('instanceid' => $this->instance->id,
                                                             'sesskey' => sesskey(),
-                                                            'blockaction' => 'config', 
+                                                            'blockaction' => 'config',
                                                             'currentaction' => 'managefeeds',
                                                             'id' => $id));
                     print '&nbsp;<a href="'.$addrsspage.'">'. get_string('editnewsfeeds', 'block_rss_client') .'</a><br />';

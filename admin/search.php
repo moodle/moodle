@@ -7,13 +7,14 @@ require_once($CFG->libdir.'/adminlib.php');
 
 $query = trim(optional_param('query', '', PARAM_NOTAGS));  // Search string
 
+$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 $adminroot = admin_get_root(); // need all settings here
 $adminroot->search = $query; // So we can reference it in search boxes later in this invocation
 $statusmsg = '';
 $errormsg  = '';
 $focus = '';
 
-admin_externalpage_setup('search'); // now hidden page
+admin_externalpage_setup('search', '', array('query' => $query)); // now hidden page
 
 // now we'll deal with the case that the admin has submitted the form with changed settings
 if ($data = data_submitted() and confirm_sesskey()) {

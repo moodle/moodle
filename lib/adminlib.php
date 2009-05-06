@@ -3891,7 +3891,8 @@ class admin_setting_manageportfolio extends admin_setting {
  * @param string $actualurl if the actual page being viewed is not the normal one for this
  *      page (e.g. admin/roles/allowassin.php, instead of admin/roles/manage.php, you can pass the alternate URL here.
  */
-function admin_externalpage_setup($section, $extrabutton='', $extraurlparams=array(), $actualurl='') {
+function admin_externalpage_setup($section, $extrabutton = '',
+        $extraurlparams = array(), $actualurl = '') {
 
     global $CFG, $PAGE, $USER;
     require_once($CFG->libdir.'/blocklib.php');
@@ -3907,12 +3908,16 @@ function admin_externalpage_setup($section, $extrabutton='', $extraurlparams=arr
     page_map_class(PAGE_ADMIN, 'page_admin');
     $PAGE = page_create_object(PAGE_ADMIN, 0); // there must be any constant id number
     $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
-    $PAGE->init_extra($section); // hack alert!
     $PAGE->set_extra_button($extrabutton);
-    $PAGE->set_extra_url_params($extraurlparams, $actualurl);
 
     $adminroot = admin_get_root(false, false); // settings not required for external pages
     $extpage = $adminroot->locate($section);
+
+    if (!$actualurl) {
+        $actualurl = $extpage->url;
+    }
+    $PAGE->set_url(str_replace($CFG->wwwroot . '/', '', $actualurl),
+            array_merge($extraurlparams, array('section' => $section)));
 
     if (empty($extpage) or !($extpage instanceof admin_externalpage)) {
         print_error('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
@@ -3964,7 +3969,7 @@ function admin_externalpage_print_header($focus='') {
                                                blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
                                                BLOCK_R_MAX_WIDTH);
 
-        $PAGE->print_header('', $focus);
+        $PAGE->print_header($focus);
         echo '<table id="layout-table" summary=""><tr>';
 
         $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;

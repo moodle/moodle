@@ -6,7 +6,7 @@
     require_once($CFG->libdir.'/blocklib.php');
     require_once($CFG->dirroot.'/course/lib.php');
     require_once('pagelib.php');
-    
+
     require_login();
 
     $mymoodlestr = get_string('mymoodle','my');
@@ -24,6 +24,7 @@
     $blockaction = optional_param('blockaction', '', PARAM_ALPHA);
 
     $PAGE = page_create_instance($USER->id);
+    $PAGE->set_url('my/index.php');
 
     $pageblocks = blocks_setup($PAGE,BLOCKS_PINNED_BOTH);
 

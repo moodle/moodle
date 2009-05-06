@@ -88,9 +88,11 @@
     }
 
     $PAGE = page_create_object(PAGE_COURSE_VIEW, SITEID);
+    $PAGE->set_pagetype('site-index');
+    $PAGE->set_url('');
     $PAGE->set_docs_path('');
     $pageblocks = blocks_setup($PAGE);
-    $editing    = $PAGE->user_is_editing();
+    $editing = $PAGE->user_is_editing();
     $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
                                             BLOCK_L_MAX_WIDTH);
     $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),

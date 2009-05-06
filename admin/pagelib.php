@@ -19,35 +19,9 @@ define('BLOCK_R_MAX_WIDTH', $rmax);
 page_map_class(PAGE_ADMIN, 'page_admin');
 
 class page_admin extends page_base {
-
-    var $section = '';
-    var $visiblepathtosection;
-    var $extraurlparams = array();
     var $extrabutton = '';
-    var $url = '';
 
-    // hack alert!
-    // this function works around the inability to store the section name
-    // in default block, maybe we should "improve" the blocks a bit?
-    function init_extra($section) {
-        global $CFG;
-
-        if($this->full_init_done) {
-            return;
-        }
-
-        $adminroot = admin_get_root(false, false); //settings not required - only pages
-
-        // fetch the path parameter
-        $this->section = $section;
-        $current = $adminroot->locate($section, true);
-        $this->visiblepathtosection = array_reverse($current->visiblepath);
-
-        // all done
-        $this->full_init_done = true;
-    }
-
-    function blocks_get_default() {
+    function _legacy_blocks_get_default() {
         return 'admin_tree,admin_bookmarks';
     }
 
@@ -63,22 +37,6 @@ class page_admin extends page_base {
         return $USER->adminediting;
     }
 
-    function url_get_path() {
-        global $CFG;
-        if (!empty($this->url)) {
-            return $this->url;
-        }
-
-        $adminroot = admin_get_root(false, false); //settings not required - only pages
-
-        $root = $adminroot->locate($this->section);
-        if ($root instanceof admin_externalpage) {
-            return $root->url;
-        } else {
-            return ($CFG->wwwroot . '/' . $CFG->admin . '/settings.php');
-        }
-    }
-
     /**
      * Use this to pass extra HTML that is added after the turn blocks editing on/off button.
      *
@@ -88,31 +46,19 @@ class page_admin extends page_base {
         $this->extrabutton = $extrabutton;
     }
 
-    /**
-     * Use this to pass extra URL parameters that, for example, the blocks editing controls need to reload the current page accurately.
-     *
-     * @param array $extraurlparams paramname => value array.
-     */
-    function set_extra_url_params($extraurlparams, $actualurl = '') {
-        $this->extraurlparams = $extraurlparams;
-        if (!empty($actualurl)) {
-            $this->url = $actualurl;
-        }
-    }
-
-    function url_get_parameters() {  // only handles parameters relevant to the admin pagetype
-        return array_merge($this->extraurlparams, array('section' => $this->section));
-    }
-
-    function print_header($section = '', $focus='') {
+    function print_header($focus='') {
         global $USER, $CFG, $SITE;
 
-        $this->init_full($section); // we're trusting that init_full() has already been called by now; it should have.
-                                    // if not, print_header() has to be called with a $section parameter
+        $adminroot = admin_get_root(false, false); //settings not required - only pages
+
+        // fetch the path parameter
+        $section = $this->url->param('section');
+        $current = $adminroot->locate($section, true);
+        $visiblepathtosection = array_reverse($current->visiblepath);
 
         // The search page currently doesn't handle block editing
-        if ($this->section != 'search' and $this->user_allowed_editing()) {
-            $options = $this->url_get_parameters();
+        if ($this->user_allowed_editing()) {
+            $options = $this->url->params();
             if ($this->user_is_editing()) {
                 $caption = get_string('blockseditoff');
                 $options['adminedit'] = 'off';
@@ -120,19 +66,17 @@ class page_admin extends page_base {
                 $caption = get_string('blocksediton');
                 $options['adminedit'] = 'on';
             }
-            $buttons = print_single_button($this->url_get_path(), $options, $caption, 'get', '', true);
-        } else {
-            $buttons = '&nbsp;';
+            $buttons = print_single_button($this->url->out(false), $options, $caption, 'get', '', true);
         }
         $buttons .= $this->extrabutton;
 
         $navlinks = array();
-        foreach ($this->visiblepathtosection as $element) {
+        foreach ($visiblepathtosection as $element) {
             $navlinks[] = array('name' => $element, 'link' => null, 'type' => 'misc');
         }
         $navigation = build_navigation($navlinks);
 
-        print_header("$SITE->shortname: " . implode(": ",$this->visiblepathtosection), $SITE->fullname, $navigation, $focus, '', true, $buttons, '');
+        print_header("$SITE->shortname: " . implode(": ",$visiblepathtosection), $SITE->fullname, $navigation, $focus, '', true, $buttons, '');
     }
 }
 

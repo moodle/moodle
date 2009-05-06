@@ -13,12 +13,12 @@ if (empty($this->instance->pinned)) {
 }
 
 if (has_capability('moodle/site:manageblocks', $context)) {
-    $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => sesskey(), 'blockaction' => 'config', 'currentaction' => 'configblock', 'id' => $id, 'section' => 'rss'));
+    $script = $page->url->out(array('instanceid' => $this->instance->id, 'sesskey' => sesskey(), 'blockaction' => 'config', 'currentaction' => 'configblock', 'id' => $id, 'section' => 'rss'));
     $row[] = new tabobject('configblock', $script,
                 get_string('configblock', 'block_rss_client'));
 }
 
-$script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => sesskey(), 'blockaction' => 'config', 'currentaction' => 'managefeeds', 'id' => $id, 'section' => 'rss'));
+$script = $page->url->out(array('instanceid' => $this->instance->id, 'sesskey' => sesskey(), 'blockaction' => 'config', 'currentaction' => 'managefeeds', 'id' => $id, 'section' => 'rss'));
 $row[] = new tabobject('managefeeds', $script,
             get_string('managefeeds', 'block_rss_client'));
 
