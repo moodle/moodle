@@ -635,6 +635,12 @@ class moodle_page {
             $this->add_body_class('cmid-' . $this->_cm->id);
         }
 
+        $this->add_body_class('context-' . $this->context->id);
+
+        if (!empty($this->_cm)) {
+            $this->add_body_class('cmid-' . $this->_cm->id);
+        }
+
         if ($CFG->allowcategorythemes) {
             $this->ensure_category_loaded();
             foreach ($this->_categories as $catid => $notused) {
