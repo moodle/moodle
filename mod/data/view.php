@@ -484,7 +484,7 @@
             $sortcontent = $sortfield->get_sort_field();
             $sortcontentfull = $sortfield->get_sort_sql('c.'.$sortcontent);
 
-            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, c.'.$sortcontent.', '.$sortcontentfull.' AS _order ';
+            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, '.sql_compare_text($sortcontentfull).' AS _order ';
             $count = ' COUNT(DISTINCT c.recordid) ';
             $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r,'.$CFG->prefix.'data_content cs, '.$CFG->prefix.'user u ';
             $where =  'WHERE c.recordid = r.id
