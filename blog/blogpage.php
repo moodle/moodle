@@ -110,48 +110,6 @@ class page_blog extends page_base {
         return $array;
     }
 
-
-    // Having defined all identifiers we need, here we declare which block positions we are
-    // going to support.
-    function blocks_get_positions() {
-        return array(BLOCK_POS_LEFT, BLOCK_POS_RIGHT);
-    }
-
-    // When a new block is created in this page, which position should it go to?
-    function blocks_default_position() {
-        return BLOCK_POS_RIGHT;
-    }
-
-    // When we are creating a new page, use the data at your disposal to provide a textual representation of the
-    // blocks that are going to get added to this new page. Delimit block names with commas (,) and use double
-    // colons (:) to delimit between block positions in the page. See blocks_get_positions() for additional info.
-    function blocks_get_default() {
-        global $CFG;
-
-        $this->init_full();
-
-        // It's a normal blog page
-        if (!empty($CFG->{'defaultblocks_'. $this->pagetype})) {
-            $blocknames = $CFG->{'defaultblocks_'. $this->pagetype};
-        } else {
-            /// Failsafe - in case nothing was defined.
-            $blocknames = 'admin,calendar_month,online_users,blog_menu';
-        }
-
-        return $blocknames;
-    }
-
-    // And finally, a little block move logic. Given a block's previous position and where
-    // we want to move it to, return its new position. Pretty self-documenting.
-    function blocks_move_position(&$instance, $move) {
-        if ($instance->position == BLOCK_POS_LEFT && $move == BLOCK_MOVE_RIGHT) {
-            return BLOCK_POS_RIGHT;
-        } else if ($instance->position == BLOCK_POS_RIGHT && $move == BLOCK_MOVE_LEFT) {
-            return BLOCK_POS_LEFT;
-        }
-        return $instance->position;
-    }
-
     /////////// Blog page specific functions
     function get_extra_header_string() {
         global $SESSION, $CFG, $USER;

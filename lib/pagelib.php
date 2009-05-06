@@ -539,6 +539,38 @@ class moodle_page {
         debugging('Call to deprecated method moodle_page::get_legacyclass.');
         return $this->_legacyclass;
     }
+
+    /**
+     * @deprecated since Moodle 2.0
+     * @return string the places on this page where blocks can go.
+     */
+    function blocks_get_positions() {
+        debugging('Call to deprecated method moodle_page::blocks_get_positions. Use $PAGE->blocks->get_positions() instead.');
+        return $PAGE->blocks->get_positions();
+    }
+
+    /**
+     * @deprecated since Moodle 2.0
+     * @return string the default place for blocks on this page.
+     */
+    function blocks_default_position() {
+        debugging('Call to deprecated method moodle_page::blocks_default_position. Use $PAGE->blocks->get_default_position() instead.');
+        return $PAGE->blocks->get_default_position();
+    }
+
+    /**
+     * @deprecated since Moodle 2.0 - no longer used.
+     */
+    function blocks_get_default() {
+        debugging('Call to deprecated method moodle_page::blocks_get_default. This method has no function any more.');
+    }
+
+    /**
+     * @deprecated since Moodle 2.0 - no longer used.
+     */
+    function blocks_move_position(&$instance, $move) {
+        debugging('Call to deprecated method moodle_page::blocks_move_position. This method has no function any more.');
+    }
 }
 
 /**
@@ -673,32 +705,6 @@ class page_base extends moodle_page {
     function print_header($title, $morenavlinks=NULL) {
         trigger_error('Page class does not implement method <strong>print_header()</strong>', E_USER_WARNING);
         return;
-    }
-
-    // BLOCKS RELATED SECTION
-
-    // By default, pages don't have any blocks. Override this in your derived class if you need blocks.
-    function blocks_get_positions() {
-        return array();
-    }
-
-    // Thus there is no default block position. If you override the above you should override this one too.
-    // Because this makes sense only if blocks_get_positions() is overridden and because these two should
-    // be overridden as a group or not at all, this one issues a warning. The sneaky part is that this warning
-    // will only be seen if you override blocks_get_positions() but NOT blocks_default_position().
-    function blocks_default_position() {
-        trigger_error('Page class does not implement method <strong>blocks_default_position()</strong>', E_USER_WARNING);
-        return NULL;
-    }
-
-    // If you don't override this, newly constructed pages of this kind won't have any blocks.
-    function blocks_get_default() {
-        return '';
-    }
-
-    // If you don't override this, your blocks will not be able to change positions
-    function blocks_move_position(&$instance, $move) {
-        return $instance->position;
     }
 
     // SELF-REPORTING SECTION
@@ -926,26 +932,10 @@ class page_course extends page_base {
         }
     }
 
-    // BLOCKS RELATED SECTION
-
-    // Which are the positions in this page which support blocks? Return an array containing their identifiers.
-    // BE CAREFUL, ORDER DOES MATTER! In textual representations, lists of blocks in a page use the ':' character
-    // to delimit different positions in the page. The part before the first ':' in such a representation will map
-    // directly to the first item of the array you return here, the second to the next one and so on. This way,
-    // you can add more positions in the future without interfering with legacy textual representations.
-    function blocks_get_positions() {
-        return array(BLOCK_POS_LEFT, BLOCK_POS_RIGHT);
-    }
-
-    // When a new block is created in this page, which position should it go to?
-    function blocks_default_position() {
-        return BLOCK_POS_RIGHT;
-    }
-
     // When we are creating a new page, use the data at your disposal to provide a textual representation of the
     // blocks that are going to get added to this new page. Delimit block names with commas (,) and use double
     // colons (:) to delimit between block positions in the page. See blocks_get_positions() for additional info.
-    function blocks_get_default() {
+    function _legacy_blocks_get_default() {
         global $CFG;
 
         $this->init_full();
@@ -985,22 +975,6 @@ class page_course extends page_base {
         }
 
         return $blocknames;
-    }
-
-    // Given an instance of a block in this page and the direction in which we want to move it, where is
-    // it going to go? Return the identifier of the instance's new position. This allows us to tell blocklib
-    // how we want the blocks to move around in this page in an arbitrarily complex way. If the move as given
-    // does not make sense, make sure to return the instance's original position.
-    //
-    // Since this is going to get called a LOT, pass the instance by reference purely for speed. Do **NOT**
-    // modify its data in any way, this will actually confuse blocklib!!!
-    function blocks_move_position(&$instance, $move) {
-        if($instance->position == BLOCK_POS_LEFT && $move == BLOCK_MOVE_RIGHT) {
-            return BLOCK_POS_RIGHT;
-        } else if ($instance->position == BLOCK_POS_RIGHT && $move == BLOCK_MOVE_LEFT) {
-            return BLOCK_POS_LEFT;
-        }
-        return $instance->position;
     }
 }
 

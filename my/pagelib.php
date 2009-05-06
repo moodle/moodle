@@ -71,23 +71,6 @@ class page_my_moodle extends page_base {
             return array();
         }
     }
-       
-    function blocks_default_position() {
-        return BLOCK_POS_LEFT;
-    }
-
-    function blocks_get_positions() {
-        return array(BLOCK_POS_LEFT, BLOCK_POS_RIGHT);
-    }
-
-    function blocks_move_position(&$instance, $move) {
-        if($instance->position == BLOCK_POS_LEFT && $move == BLOCK_MOVE_RIGHT) {
-            return BLOCK_POS_RIGHT;
-        } else if ($instance->position == BLOCK_POS_RIGHT && $move == BLOCK_MOVE_LEFT) {
-            return BLOCK_POS_LEFT;
-        }
-        return $instance->position;
-    }
 }
 
 
