@@ -131,6 +131,7 @@ $string['importedcategories'] = 'Imported categories';
 $string['importedentries'] = 'Imported entries';
 $string['importentries'] = 'Import entries';
 $string['importentriesfromxml'] = 'Import entries from XML file';
+$string['invalidrate'] = 'Invalid glossary rate ($a)';
 $string['isglobal'] = 'Is this glossary global?';
 $string['linkcategory'] = 'Automatically link this category';
 $string['linking'] = 'Auto-linking';
