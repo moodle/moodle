@@ -1311,6 +1311,17 @@ function blocks_delete_all_on_page($pagetype, $pageid) {
     return $DB->delete_records('block_instance_old', array('pageid' => $pageid, 'pagetype' => $pagetype));
 }
 
+function blocks_delete_all_for_context($contextid) {
+    global $DB;
+    $instances = $DB->get_recordset('block_instances', array('contextid' => $contextid));
+    foreach ($instances as $instance) {
+        delete_context(CONTEXT_BLOCK, $instance->id);
+    }
+    $instances->close();
+    $DB->delete_records('block_instances', array('contextid' => $contextid));
+    $DB->delete_records('block_positions', array('contextid' => $contextid));
+}
+
 // Dispite what this function is called, it seems to be mostly used to populate
 // the default blocks when a new course (or whatever) is created.
 function blocks_repopulate_page($page) {

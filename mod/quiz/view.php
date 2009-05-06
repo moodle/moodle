@@ -5,7 +5,6 @@
     require_once(dirname(__FILE__) . '/../../config.php');
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/mod/quiz/locallib.php');
-    require_once($CFG->dirroot.'/mod/quiz/pagelib.php');
 
     $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or
     $q = optional_param('q',  0, PARAM_INT);  // quiz ID
@@ -56,7 +55,6 @@
     add_to_log($course->id, "quiz", "view", "view.php?id=$cm->id", $quiz->id, $cm->id);
 
 /// Initialize $PAGE, compute blocks
-    $PAGE = page_create_instance($quiz->id);
     $PAGE->set_url('mod/quiz/view.php', array('id' => $cm->id));
     $pageblocks = blocks_setup($PAGE);
     $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
@@ -72,7 +70,20 @@
         $bodytags = 'onload="popupchecker(\'' . get_string('popupblockerwarning', 'quiz') . '\');"';
     }
     require_js(array('yui_yahoo', 'yui_event'));
-    $PAGE->print_header($course->shortname.': %fullname%','',$bodytags);
+
+    $title = $course->shortname . ': ' . format_string($quiz->name);
+
+    $buttons = '<table><tr><td>'.update_module_button($cm->id, $course->id, get_string('modulename', 'quiz')).'</td>';
+    if ($PAGE->user_allowed_editing() && !empty($CFG->showblocksonmodpages)) {
+        $buttons .= '<td><form '.$CFG->frametarget.' method="get" action="view.php"><div>'.
+            '<input type="hidden" name="id" value="'.$cm->id.'" />'.
+            '<input type="hidden" name="edit" value="'.($PAGE->user_is_editing()?'off':'on').'" />'.
+            '<input type="submit" value="'.get_string($PAGE->user_is_editing()?'blockseditoff':'blocksediton').'" /></div></form></td>';
+    }
+    $buttons .= '</tr></table>';
+
+    $navigation = build_navigation(array(), $cm);
+    print_header($title, $course->fullname, $navigation, '', '', true, $buttons, navmenu($course, $cm), false, $bodytags);
 
 /// Print any blocks on the left of the page.
     echo '<table id="layout-table"><tr>';

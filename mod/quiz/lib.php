@@ -33,7 +33,6 @@
  * @package quiz
  */
 
-require_once($CFG->libdir . '/pagelib.php');
 require_once($CFG->libdir . '/eventslib.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////////////
@@ -178,11 +177,6 @@ function quiz_delete_instance($id) {
 
     $DB->delete_records('quiz_question_instances', array('quiz' => $quiz->id));
     $DB->delete_records('quiz_feedback', array('quizid' => $quiz->id));
-
-    $pagetypes = page_import_types('mod/quiz/');
-    foreach($pagetypes as $pagetype) {
-        blocks_delete_all_on_page($pagetype, $quiz->id);
-    }
 
     $events = $DB->get_records('event', array('modulename' => 'quiz', 'instance' => $quiz->id));
     foreach($events as $event) {
