@@ -710,7 +710,8 @@ function page_map_class($type, $classname = NULL) {
 
     if ($mappings === NULL) {
         $mappings = array(
-            PAGE_COURSE_VIEW => 'page_course'
+            PAGE_COURSE_VIEW => 'page_course',
+            'site-index' => 'page_course'
         );
     }
 
