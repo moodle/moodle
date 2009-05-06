@@ -58,22 +58,11 @@ class page_blog extends page_base {
 
     //over-ride parent method's print_header because blog already passes more than just the title along
     function print_header($pageTitle='', $pageHeading='', $pageNavigation='', $pageFocus='', $pageMeta='') {
-        global $USER;
+        global $CFG, $USER;
 
         $this->init_full();
         $extraheader = '';
-        if (!empty($USER) && !empty($USER->id)) {
-            $extraheader = $this->get_extra_header_string();
-        }
-        print_header($pageTitle, $pageHeading, $pageNavigation, $pageFocus, $pageMeta, true, $extraheader );
-    }
-
-    /////////// Blog page specific functions
-    function get_extra_header_string() {
-        global $CFG, $USER;
-
-        $editformstring = '';
-        if ($this->user_allowed_editing()) {
+        if (!empty($USER) && !empty($USER->id) && $this->user_allowed_editing()) {
             if ($this->user_is_editing()) {
                 $editingString = get_string('turneditingoff');
             } else {
@@ -87,11 +76,10 @@ class page_blog extends page_base {
                 $paramstring .= '<input type="hidden" name="'.$key.'" value="'.s($val).'" />';
             }
 
-            $editformstring = '<form '.$CFG->frametarget.' method="get" action="'.$this->url->out(false).'"><div>'
+            $extraheader = '<form '.$CFG->frametarget.' method="get" action="'.$this->url->out(false).'"><div>'
                              .$paramstring.'<input type="submit" value="'.$editingString.'" /></div></form>';
         }
-
-        return $editformstring;
+        print_header($pageTitle, $pageHeading, $pageNavigation, $pageFocus, $pageMeta, true, $extraheader );
     }
 }
 ?>
