@@ -1109,7 +1109,7 @@ class grade_structure {
             case 'categoryitem':
                 if ($element['object']->is_calculated()) {
                     $strcalc = get_string('calculatedgrade', 'grades');
-                    return '<img src="'.$CFG->pixpath.'/i/calc.gif" class="icon itemicon" title="'.$strcalc.'" alt="'.$strcalc.'"/>';
+                    return '<img src="'.$CFG->pixpath.'/i/calc.gif" class="icon itemicon" title="'.s($strcalc).'" alt="'.s($strcalc).'"/>';
 
                 } else if (($element['object']->is_course_item() or $element['object']->is_category_item())
                   and ($element['object']->gradetype == GRADE_TYPE_SCALE or $element['object']->gradetype == GRADE_TYPE_VALUE)) {
@@ -1121,31 +1121,31 @@ class grade_structure {
                             case GRADE_AGGREGATE_WEIGHTED_MEAN2:
                             case GRADE_AGGREGATE_EXTRACREDIT_MEAN:
                                 $stragg = get_string('aggregation', 'grades');
-                                return '<img src="'.$CFG->pixpath.'/i/agg_mean.gif" class="icon itemicon" title="'.$stragg.'" alt="'.$stragg.'"/>';
+                                return '<img src="'.$CFG->pixpath.'/i/agg_mean.gif" class="icon itemicon" title="'.s($stragg).'" alt="'.s($stragg).'"/>';
                             case GRADE_AGGREGATE_SUM:
                                 $stragg = get_string('aggregation', 'grades');
-                                return '<img src="'.$CFG->pixpath.'/i/agg_sum.gif" class="icon itemicon" title="'.$stragg.'" alt="'.$stragg.'"/>';
+                                return '<img src="'.$CFG->pixpath.'/i/agg_sum.gif" class="icon itemicon" title="'.s($stragg).'" alt="'.s($stragg).'"/>';
                         }
                     }
 
                 } else if ($element['object']->itemtype == 'mod') {
                     $strmodname = get_string('modulename', $element['object']->itemmodule);
-                    return '<img src="'.$CFG->modpixpath.'/'.$element['object']->itemmodule.'/icon.gif" class="icon itemicon" title="' .$strmodname.'" alt="' .$strmodname.'"/>';
+                    return '<img src="'.$CFG->modpixpath.'/'.$element['object']->itemmodule.'/icon.gif" class="icon itemicon" title="' .s($strmodname).'" alt="' .s($strmodname).'"/>';
 
                 } else if ($element['object']->itemtype == 'manual') {
                     if ($element['object']->is_outcome_item()) {
                         $stroutcome = get_string('outcome', 'grades');
-                        return '<img src="'.$CFG->pixpath.'/i/outcomes.gif" class="icon itemicon" title="'.$stroutcome.'" alt="'.$stroutcome.'"/>';
+                        return '<img src="'.$CFG->pixpath.'/i/outcomes.gif" class="icon itemicon" title="'.s($stroutcome).'" alt="'.s($stroutcome).'"/>';
                     } else {
                         $strmanual = get_string('manualitem', 'grades');
-                        return '<img src="'.$CFG->pixpath.'/t/manual_item.gif" class="icon itemicon" title="'.$strmanual.'" alt="'.$strmanual.'"/>';
+                        return '<img src="'.$CFG->pixpath.'/t/manual_item.gif" class="icon itemicon" title="'.s($strmanual).'" alt="'.s($strmanual).'"/>';
                     }
                 }
                 break;
 
             case 'category':
                 $strcat = get_string('category', 'grades');
-                return '<img src="'.$CFG->pixpath.'/f/folder.gif" class="icon itemicon" title="'.$strcat.'" alt="'.$strcat.'" />';
+                return '<img src="'.$CFG->pixpath.'/f/folder.gif" class="icon itemicon" title="'.s($strcat).'" alt="'.s($strcat).'" />';
         }
 
         if ($spacerifnone) {
@@ -1195,7 +1195,7 @@ class grade_structure {
                     $url = $CFG->wwwroot.'/mod/'.$itemmodule.'/view.php?id='.$cm->id;
                 }
 
-                $header = '<a href="'.$url.'" title="'.$title.'">'.$header.'</a>';
+                $header = '<a href="'.$url.'" title="'.s($title).'">'.$header.'</a>';
             }
         }
 
@@ -1316,7 +1316,7 @@ class grade_structure {
         }
 
         if ($url) {
-            return '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$stredit.'" title="'.$stredit.'"/></a>';
+            return '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.s($stredit).'" title="'.s($stredit).'"/></a>';
 
         } else {
             return '';
@@ -1351,13 +1351,13 @@ class grade_structure {
             $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=show&amp;sesskey='.sesskey()
                      . '&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
-            $action  = '<a href="'.$url.'" class="hide"><img alt="'.$strshow.'" src="'.$CFG->pixpath.'/t/'.$icon.'.gif" class="iconsmall" title="'.$tooltip.'"/></a>';
+            $action  = '<a href="'.$url.'" class="hide"><img alt="'.s($strshow).'" src="'.$CFG->pixpath.'/t/'.$icon.'.gif" class="iconsmall" title="'.s($tooltip).'"/></a>';
 
         } else {
             $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=hide&amp;sesskey='.sesskey()
                      . '&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
-            $action  = '<a href="'.$url.'" class="hide"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.$strhide.'" title="'.$strhide.'"/></a>';
+            $action  = '<a href="'.$url.'" class="hide"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.s($strhide).'" title="'.s($strhide).'"/></a>';
         }
         return $action;
     }
@@ -1379,7 +1379,7 @@ class grade_structure {
             $strparamobj = new stdClass();
             $strparamobj->itemname = $element['object']->grade_item->itemname;
             $strnonunlockable = get_string('nonunlockableverbose', 'grades', $strparamobj);
-            $action  = '<img src="'.$CFG->pixpath.'/t/unlock_gray.gif" alt="'.$strnonunlockable.'" class="iconsmall" title="'.$strnonunlockable.'"/>';
+            $action  = '<img src="'.$CFG->pixpath.'/t/unlock_gray.gif" alt="'.s($strnonunlockable).'" class="iconsmall" title="'.s($strnonunlockable).'"/>';
         } elseif ($element['object']->is_locked()) {
             $icon = 'unlock';
             $tooltip = $strunlock;
@@ -1395,7 +1395,7 @@ class grade_structure {
             $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=unlock&amp;sesskey='.sesskey()
                      . '&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
-            $action  = '<a href="'.$url.'" class="lock"><img src="'.$CFG->pixpath.'/t/'.$icon.'.gif" alt="'.$strunlock.'" class="iconsmall" title="'.$tooltip.'"/></a>';
+            $action  = '<a href="'.$url.'" class="lock"><img src="'.$CFG->pixpath.'/t/'.$icon.'.gif" alt="'.s($strunlock).'" class="iconsmall" title="'.s($tooltip).'"/></a>';
 
         } else {
             if (!has_capability('moodle/grade:manage', $this->context) and !has_capability('moodle/grade:lock', $this->context)) {
@@ -1404,8 +1404,8 @@ class grade_structure {
             $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=lock&amp;sesskey='.sesskey()
                      . '&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
-            $action  = '<a href="'.$url.'" class="lock"><img src="'.$CFG->pixpath.'/t/lock.gif" class="iconsmall" alt="'.$strlock.'" title="'
-                     . $strlock.'"/></a>';
+            $action  = '<a href="'.$url.'" class="lock"><img src="'.$CFG->pixpath.'/t/lock.gif" class="iconsmall" alt="'.s($strlock).'" title="'
+                     . s($strlock).'"/></a>';
         }
         return $action;
     }
@@ -1441,7 +1441,7 @@ class grade_structure {
                 $url = $CFG->wwwroot.'/grade/edit/tree/calculation.php?courseid='.$this->courseid.'&amp;id='.$object->id;
                 $url = $gpr->add_url_params($url);
                 $calculation_icon = '<a href="'. $url.'" class="calculation"><img src="'.$CFG->pixpath.'/t/'.$icon.'" class="iconsmall" alt="'
-                                       . $streditcalculation.'" title="'.$streditcalculation.'" /></a>'. "\n";
+                                       . s($streditcalculation).'" title="'.s($streditcalculation).'" /></a>'. "\n";
             }
         }
 

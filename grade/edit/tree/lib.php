@@ -191,7 +191,7 @@ class grade_edit_tree {
 
                     $moveto = '<tr><td colspan="12"><a href="index.php?id='.$COURSE->id.'&amp;action=move&amp;eid='.$this->moving.'&amp;moveafter='
                             . $child_eid.'&amp;sesskey='.sesskey().$first.'"><img class="movetarget" src="'.$CFG->wwwroot.'/pix/movehere.gif" alt="'
-                            . $strmovehere.'" title="'.$strmovehere.'" /></a></td></tr>';
+                            . s($strmovehere).'" title="'.s($strmovehere).'" /></a></td></tr>';
                 }
 
                 $newparents = $parents;
@@ -267,7 +267,7 @@ class grade_edit_tree {
 
             $html .= '
                     <tr class="'.$courseclass.' category '.$dimmed.$rowclasses.'">
-                      <th scope="row" title="'.$object->stripped_name.'" class="cell rowspan '.$levelclass.'" rowspan="'.($row_count+1+$row_count_offset).'"></th>';
+                      <th scope="row" title="'.s($object->stripped_name).'" class="cell rowspan '.$levelclass.'" rowspan="'.($row_count+1+$row_count_offset).'"></th>';
 
             foreach ($this->columns as $column) {
                 if (!($this->moving && $column->hide_when_moving) && !$column->is_hidden($mode)) {
