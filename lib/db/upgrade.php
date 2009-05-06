@@ -1702,15 +1702,20 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009042700);
     }
 
-    if ($result && $oldversion < 2009042800) {
+    if ($result && $oldversion < 2009043000) {
+        unset_config('grade_report_showgroups');
+        upgrade_main_savepoint($result, 2009043000);
+    }
+
+    if ($result && $oldversion < 2009050600) {
     /// Site front page blocks need to be moved due to page name change.
         $DB->set_field('block_instance', 'pagetype', 'site-index', array('pagetype' => 'course-view', 'pageid' => SITEID));
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009042800);
+        upgrade_main_savepoint($result, 2009050600);
     }
 
-    if ($result && $oldversion < 2009042801) {
+    if ($result && $oldversion < 2009050601) {
 
     /// Define table block_instance to be renamed to block_instance_old
         $table = new xmldb_table('block_instance');
@@ -1719,10 +1724,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $dbman->rename_table($table, 'block_instances');
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009042801);
+        upgrade_main_savepoint($result, 2009050601);
     }
 
-    if ($result && $oldversion < 2009042802) {
+    if ($result && $oldversion < 2009050602) {
 
     /// Define table block_instance to be renamed to block_instance_old
         $table = new xmldb_table('block_pinned');
@@ -1731,10 +1736,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $dbman->rename_table($table, 'block_pinned_old');
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009042802);
+        upgrade_main_savepoint($result, 2009050602);
     }
 
-    if ($result && $oldversion < 2009042803) {
+    if ($result && $oldversion < 2009050603) {
 
     /// Define table block_instance_old to be created
         $table = new xmldb_table('block_instance_old');
@@ -1764,18 +1769,18 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009042803);
+        upgrade_main_savepoint($result, 2009050603);
     }
 
-    if ($result && $oldversion < 2009042804) {
+    if ($result && $oldversion < 2009050604) {
     /// Copy current blocks data from block_instances to block_instance_old
         $DB->execute('INSERT INTO {block_instance_old} (oldid, blockid, pageid, pagetype, position, weight, visible, configdata)
             SELECT id, blockid, pageid, pagetype, position, weight, visible, configdata FROM {block_instances} ORDER BY id');
 
-        upgrade_main_savepoint($result, 2009042804);
+        upgrade_main_savepoint($result, 2009050604);
     }
 
-    if ($result && $oldversion < 2009042805) {
+    if ($result && $oldversion < 2009050605) {
 
     /// Define field multiple to be dropped from block
         $table = new xmldb_table('block');
@@ -1787,10 +1792,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009042805);
+        upgrade_main_savepoint($result, 2009050605);
     }
 
-    if ($result && $oldversion < 2009042806) {
+    if ($result && $oldversion < 2009050606) {
         $table = new xmldb_table('block_instances');
 
     /// Rename field weight on table block_instances to defaultweight
@@ -1802,10 +1807,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $dbman->rename_field($table, $field, 'defaultregion');
 
         /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009042806);
+        upgrade_main_savepoint($result, 2009050606);
     }
 
-    if ($result && $oldversion < 2009042807) {
+    if ($result && $oldversion < 2009050607) {
 
     /// Changing precision of field defaultregion on table block_instances to (16)
         $table = new xmldb_table('block_instances');
@@ -1815,10 +1820,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $dbman->change_field_precision($table, $field);
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009042807);
+        upgrade_main_savepoint($result, 2009050607);
     }
 
-    if ($result && $oldversion < 2009042808) {
+    if ($result && $oldversion < 2009050608) {
     /// Change regions to the new notation
         $DB->set_field('block_instances', 'defaultregion', 'side-pre', array('defaultregion' => 'l'));
         $DB->set_field('block_instances', 'defaultregion', 'side-post', array('defaultregion' => 'r'));
@@ -1827,10 +1832,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // flex page course format. Hopefully this new value is an adequate alternative.
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009042808);
+        upgrade_main_savepoint($result, 2009050608);
     }
 
-    if ($result && $oldversion < 2009042809) {
+    if ($result && $oldversion < 2009050609) {
 
     /// Define key blockname (unique) to be added to block
         $table = new xmldb_table('block');
@@ -1840,10 +1845,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $dbman->add_key($table, $key);
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009042809);
+        upgrade_main_savepoint($result, 2009050609);
     }
 
-    if ($result && $oldversion < 2009042810) {
+    if ($result && $oldversion < 2009050610) {
         $table = new xmldb_table('block_instances');
 
     /// Define field blockname to be added to block_instances
@@ -1871,10 +1876,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009042810);
+        upgrade_main_savepoint($result, 2009050610);
     }
 
-    if ($result && $oldversion < 2009042811) {
+    if ($result && $oldversion < 2009050611) {
         $table = new xmldb_table('block_instances');
 
     /// Fill in blockname from blockid
@@ -1884,10 +1889,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $DB->execute("UPDATE {block_instances} SET showinsubcontexts = 0");
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009042811);
+        upgrade_main_savepoint($result, 2009050611);
     }
 
-    if ($result && $oldversion < 2009042812) {
+    if ($result && $oldversion < 2009050612) {
 
     /// Rename field pagetype on table block_instances to pagetypepattern
         $table = new xmldb_table('block_instances');
@@ -1897,10 +1902,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $dbman->rename_field($table, $field, 'pagetypepattern');
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009042812);
+        upgrade_main_savepoint($result, 2009050612);
     }
 
-    if ($result && $oldversion < 2009042813) {
+    if ($result && $oldversion < 2009050613) {
     /// fill in contextid and subpage, and update pagetypepattern from pagetype and pageid
 
     /// site-index
@@ -1962,18 +1967,18 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009042813);
+        upgrade_main_savepoint($result, 2009050613);
     }
 
-    if ($result && $oldversion < 2009042814) {
+    if ($result && $oldversion < 2009050614) {
     /// fill in any missing contextids with a dummy value, so we can add the not-null constraint.
         $DB->execute("UPDATE {block_instances} SET contextid = -1 WHERE contextid IS NULL");
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009042814);
+        upgrade_main_savepoint($result, 2009050614);
     }
 
-    if ($result && $oldversion < 2009042815) {
+    if ($result && $oldversion < 2009050615) {
         $table = new xmldb_table('block_instances');
 
     /// Changing nullability of field blockname on table block_instances to not null
@@ -1989,10 +1994,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $dbman->change_field_notnull($table, $field);
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009042815);
+        upgrade_main_savepoint($result, 2009050615);
     }
 
-    if ($result && $oldversion < 2009042816) {
+    if ($result && $oldversion < 2009050616) {
     /// Add exiting sticky blocks.
         $blocks = $DB->get_records('block');
         $syscontext = get_context_instance(CONTEXT_SYSTEM);
@@ -2021,10 +2026,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009042816);
+        upgrade_main_savepoint($result, 2009050616);
     }
 
-    if ($result && $oldversion < 2009042817) {
+    if ($result && $oldversion < 2009050617) {
 
     /// Define table block_positions to be created
         $table = new xmldb_table('block_positions');
@@ -2053,10 +2058,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009042817);
+        upgrade_main_savepoint($result, 2009050617);
     }
 
-    if ($result && $oldversion < 2009042818) {
+    if ($result && $oldversion < 2009050618) {
     /// And block instances with visible = 0, copy that information to block_positions
         $DB->execute("INSERT INTO {block_positions} (blockinstanceid, contextid, pagetype, subpage, visible, region, weight)
                 SELECT id, contextid,
@@ -2072,10 +2077,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                 FROM {block_instances} WHERE visible = 0 AND pagetypepattern <> 'admin-*'");
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009042818);
+        upgrade_main_savepoint($result, 2009050618);
     }
 
-    if ($result && $oldversion < 2009042819) {
+    if ($result && $oldversion < 2009050619) {
         $table = new xmldb_table('block_instances');
 
     /// Define field blockid to be dropped from block_instances
@@ -2097,12 +2102,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009042819);
-    }
-
-    if ($result && $oldversion < 2009043000) {
-        unset_config('grade_report_showgroups');
-        upgrade_main_savepoint($result, 2009043000);
+        upgrade_main_savepoint($result, 2009050619);
     }
 
     return $result;
