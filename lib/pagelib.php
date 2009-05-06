@@ -52,6 +52,8 @@ class moodle_page {
 
     protected $_course = null;
 
+    protected $_context = null;
+
     /**
      * @return integer one of the STATE_... constants. You should not normally need
      * to use this in your code. It is indended for internal use by this class
@@ -85,6 +87,16 @@ class moodle_page {
     }
 
     /**
+     * @return object the main context to which this page belongs.
+     */
+    public function get_context() {
+        if (is_null($this->_context)) {
+            throw new coding_exception('$PAGE->context accessed before it was known.');
+        }
+        return $this->_context;
+    }
+
+    /**
      * Set the state. The state must be one of that STATE_... constants, and
      * the state is only allowed to advance one step at a time.
      * @param integer $state the new state.
@@ -111,6 +123,8 @@ class moodle_page {
      * call it for you if you pass a $course to it. You can use this function
      * on pages that do need to call require_login().
      *
+     * Sets $PAGE->context to the course context, if it is not already set.
+     *
      * @param object the course to set as the global course.
      */
     public function set_course($course) {
@@ -127,8 +141,20 @@ class moodle_page {
         $this->_course = clone($course);
         $COURSE = $this->_course;
 
+        if (!$this->_context) {
+            $this->set_context(get_context_instance(CONTEXT_COURSE, $this->_course->id));
+        }
+
         moodle_setlocale();
         theme_setup();
+    }
+
+    /**
+     * Set the main context to which this page belongs.
+     * @param object $context a context object, normally obtained with get_context_instance.
+     */
+    public function set_context($context) {
+        $this->_context = $context;
     }
 
     /**
