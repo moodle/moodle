@@ -513,10 +513,13 @@ class mysqli_native_moodle_database extends moodle_database {
 
         $this->query_start($sql, $params, SQL_QUERY_SELECT);
         // no MYSQLI_USE_RESULT here, it would block write ops on affected tables
-        $result = $this->mysqli->query($rawsql, MYSQLI_STORE_RESULT);
-        $this->query_end($result);
+        if ($result = $this->mysqli->query($rawsql, MYSQLI_STORE_RESULT)) {
+            $this->query_end($result);
 
-        return $this->create_recordset($result);
+            return $this->create_recordset($result);
+        } else {
+            return $result;
+        }
     }
 
     protected function create_recordset($result) {

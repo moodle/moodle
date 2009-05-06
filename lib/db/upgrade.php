@@ -1439,19 +1439,19 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($result && $oldversion < 2009021800) {
-        // Converting format of grade conditions, if any exist, to percentages. 
+        // Converting format of grade conditions, if any exist, to percentages.
         $DB->execute("
 UPDATE {course_modules_availability} SET grademin=(
     SELECT 100.0*({course_modules_availability}.grademin-gi.grademin)
-        /(gi.grademax-gi.grademin)        
-    FROM {grade_items} gi 
+        /(gi.grademax-gi.grademin)
+    FROM {grade_items} gi
     WHERE gi.id={course_modules_availability}.gradeitemid)
 WHERE gradeitemid IS NOT NULL AND grademin IS NOT NULL");
         $DB->execute("
 UPDATE {course_modules_availability} SET grademax=(
     SELECT 100.0*({course_modules_availability}.grademax-gi.grademin)
-        /(gi.grademax-gi.grademin)        
-    FROM {grade_items} gi 
+        /(gi.grademax-gi.grademin)
+    FROM {grade_items} gi
     WHERE gi.id={course_modules_availability}.gradeitemid)
 WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
@@ -1721,7 +1721,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table = new xmldb_table('block_instance');
 
     /// Launch rename table for block_instance
-        $dbman->rename_table($table, 'block_instances');
+        $dbman->rename_table($table, 'block_instance_old');
 
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2009050601);
@@ -1774,8 +1774,8 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     if ($result && $oldversion < 2009050604) {
     /// Copy current blocks data from block_instances to block_instance_old
-        $DB->execute('INSERT INTO {block_instance_old} (oldid, blockid, pageid, pagetype, position, weight, visible, configdata)
-            SELECT id, blockid, pageid, pagetype, position, weight, visible, configdata FROM {block_instances} ORDER BY id');
+        $DB->execute('INSERT INTO {block_instance_old} (oldid, blockid, pageid, pagetype, weight, visible, configdata)
+            SELECT id, blockid, pageid, pagetype, weight, visible, configdata FROM {block_instances} ORDER BY id');
 
         upgrade_main_savepoint($result, 2009050604);
     }
@@ -1910,44 +1910,61 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     /// site-index
         $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
-        $DB->execute("UPDATE {block_instances} SET (contextid, pagetypepattern, subpagepattern) =
-                (" . $frontpagecontext->id . ", 'site-index', NULL) WHERE pagetypepattern = 'site-index'");
+        $DB->execute("UPDATE {block_instances} SET contextid = " . $frontpagecontext->id . ",
+                                                   pagetypepattern = 'site-index',
+                                                   subpagepattern = NULL
+                      WHERE pagetypepattern = 'site-index'");
 
     /// course-view
-        $DB->execute("UPDATE {block_instances} SET (contextid, pagetypepattern, subpagepattern) =
-                ((
-                    SELECT {context}.id
-                    FROM {context}
-                    JOIN {course} ON instanceid = {course}.id AND contextlevel = " . CONTEXT_COURSE . "
-                    WHERE {course}.id = pageid
-                ), 'course-view-*', NULL) WHERE pagetypepattern = 'course-view'");
+        $DB->execute("UPDATE {block_instances} SET
+                        contextid = (
+                            SELECT {context}.id
+                            FROM {context}
+                            JOIN {course} ON instanceid = {course}.id AND contextlevel = " . CONTEXT_COURSE . "
+                            WHERE {course}.id = pageid
+                        ),
+                       pagetypepattern = 'course-view-*',
+                       subpagepattern = NULL
+                      WHERE pagetypepattern = 'course-view'");
 
     /// admin
         $syscontext = get_context_instance(CONTEXT_SYSTEM);
-        $DB->execute("UPDATE {block_instances} SET (contextid, pagetypepattern, subpagepattern) =
-                (" . $syscontext->id . ", 'admin-*', NULL) WHERE pagetypepattern = 'admin'");
+        $DB->execute("UPDATE {block_instances} SET
+                        contextid = " . $syscontext->id . ",
+                        pagetypepattern = 'admin-*',
+                        subpagepattern = NULL
+                      WHERE pagetypepattern = 'admin'");
 
     /// my-index
-        $DB->execute("UPDATE {block_instances} SET (contextid, pagetypepattern, subpagepattern) =
-                ((
-                    SELECT {context}.id
-                    FROM {context}
-                    JOIN {user} ON instanceid = {user}.id AND contextlevel = " . CONTEXT_USER . "
-                    WHERE {user}.id = pageid
-                ), 'my-index', NULL) WHERE pagetypepattern = 'my-index'");
+        $DB->execute("UPDATE {block_instances} SET
+                        contextid = (
+                            SELECT {context}.id
+                            FROM {context}
+                            JOIN {user} ON instanceid = {user}.id AND contextlevel = " . CONTEXT_USER . "
+                            WHERE {user}.id = pageid
+                        ),
+                        pagetypepattern = 'my-index',
+                        subpagepattern = NULL
+                      WHERE pagetypepattern = 'my-index'");
 
     /// tag-index
-        $DB->execute("UPDATE {block_instances} SET (contextid, pagetypepattern, subpagepattern) =
-                (" . $syscontext->id . ", 'tag-index', pageid) WHERE pagetypepattern = 'tag-index'");
+        $DB->execute("UPDATE {block_instances} SET
+                        contextid = " . $syscontext->id . ",
+                        pagetypepattern = 'tag-index',
+                        subpagepattern = pageid
+                      WHERE pagetypepattern = 'tag-index'");
 
     /// blog-view
-        $DB->execute("UPDATE {block_instances} SET (contextid, pagetypepattern, subpagepattern) =
-                ((
-                    SELECT {context}.id
-                    FROM {context}
-                    JOIN {user} ON instanceid = {user}.id AND contextlevel = " . CONTEXT_USER . "
-                    WHERE {user}.id = pageid
-                ), 'blog-index', NULL) WHERE pagetypepattern = 'blog-view'");
+        $DB->execute("UPDATE {block_instances} SET
+                        contextid = (
+                            SELECT {context}.id
+                            FROM {context}
+                            JOIN {user} ON instanceid = {user}.id AND contextlevel = " . CONTEXT_USER . "
+                            WHERE {user}.id = pageid
+                        ),
+                        pagetypepattern = 'blog-index',
+                        subpagepattern = NULL
+                      WHERE pagetypepattern = 'blog-view'");
 
     /// mod-xxx-view
         $moduleswithblocks = array('chat', 'data', 'lesson', 'quiz', 'dimdim', 'game', 'wiki', 'oublog');
@@ -1955,15 +1972,18 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             if (!$dbman->table_exists($modname)) {
                 continue;
             }
-            $DB->execute("UPDATE {block_instances} SET (contextid, pagetypepattern, subpagepattern) =
-                    ((
-                        SELECT {context}.id
-                        FROM {context}
-                        JOIN {course_modules} ON instanceid = {course_modules}.id AND contextlevel = " . CONTEXT_MODULE . "
-                        JOIN {modules} ON {modules}.id = {course_modules}.module AND {modules}.name = '$modname'
-                        JOIN {{$modname}} ON {course_modules}.instance = {{$modname}}.id
-                        WHERE {{$modname}}.id = pageid
-                    ), 'blog-index', NULL) WHERE pagetypepattern = 'blog-view'");
+            $DB->execute("UPDATE {block_instances} SET
+                            contextid = (
+                                SELECT {context}.id
+                                FROM {context}
+                                JOIN {course_modules} ON instanceid = {course_modules}.id AND contextlevel = " . CONTEXT_MODULE . "
+                                JOIN {modules} ON {modules}.id = {course_modules}.module AND {modules}.name = '$modname'
+                                JOIN {{$modname}} ON {course_modules}.instance = {{$modname}}.id
+                                WHERE {{$modname}}.id = pageid
+                            ),
+                            pagetypepattern = 'blog-index',
+                            subpagepattern = NULL
+                          WHERE pagetypepattern = 'blog-view'");
         }
 
     /// Main savepoint reached
