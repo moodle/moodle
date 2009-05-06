@@ -147,6 +147,7 @@ $string['invalidfieldname'] = 'Please choose another name for this field';
 $string['invalidfieldtype'] = 'Field Type is incorrect';
 $string['invalidid'] = 'Incorrect data ID';
 $string['invalidpreset'] = '$a is not a preset.';
+$string['invalidrate'] = 'Invalid database rate ($a)';
 $string['invalidratedata'] = 'Incorrect submitted ratings data';
 $string['invalidrecord'] = 'Incorrect record';
 $string['invalidurl'] = 'The URL you just entered is not valid';
