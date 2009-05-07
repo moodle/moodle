@@ -451,14 +451,14 @@ function grade_report_user_settings_definition(&$mform) {
     $mform->setHelpButton('report_user_showpercentage', array('showpercentage', get_string('showpercentage', 'grades'), 'grade'));
 
     $options = array(-1 => get_string('default', 'grades'),
-                      0 => get_string('hide'),
+                      0 => get_string('shownohidden', 'grades'),
                       1 => get_string('showhiddenuntilonly', 'grades'),
-                      2 => get_string('show'));
+                      2 => get_string('showallhidden', 'grades'));
 
     if (empty($CFG->grade_report_user_showhiddenitems)) {
         $options[-1] = get_string('defaultprev', 'grades', $options[0]);
     } else {
-        $options[-1] = get_string('defaultprev', 'grades', $options[1]);
+        $options[-1] = get_string('defaultprev', 'grades', $options[$CFG->grade_report_user_showhiddenitems]);
     }
 
     $mform->addElement('select', 'report_user_showhiddenitems', get_string('showhiddenitems', 'grades'), $options);
