@@ -69,18 +69,32 @@ function default_exception_handler($ex) {
     $place = array('file'=>$ex->getFile(), 'line'=>$ex->getLine(), 'exception'=>get_class($ex));
     array_unshift($backtrace, $place);
 
+    $earlyerror = !isset($CFG->theme) || !isset($CFG->stylesheets);
+    foreach ($backtrace as $stackframe) {
+        if (isset($stackframe['function']) && $stackframe['function'] == 'print_header') {
+            $earlyerror = true;
+            break;
+        }
+    }
+
     if ($ex instanceof moodle_exception) {
-        if (!isset($CFG->theme) or !isset($CFG->stylesheets)) {
-            _print_early_error($ex->errorcode, $ex->module, $ex->a, $backtrace, $ex->debuginfo);
-        } else {
-            _print_normal_error($ex->errorcode, $ex->module, $ex->a, $ex->link, $backtrace, $ex->debuginfo);
-        }
+        $errorcode = $ex->errorcode;
+        $module = $ex->module;
+        $a = $ex->a;
+        $link = $ex->link;
+        $debuginfo = $ex->debuginfo;
     } else {
-        if (!isset($CFG->theme) or !isset($CFG->stylesheets)) {
-            _print_early_error('generalexceptionmessage', 'error', $ex->getMessage(), $backtrace);
-        } else {
-            _print_normal_error('generalexceptionmessage', 'error', $ex->getMessage(), '', $backtrace);
-        }
+        $errorcode = 'generalexceptionmessage';
+        $module = 'error';
+        $a = $ex->getMessage();
+        $link = '';
+        $debuginfo = null;
+    }
+
+    if ($earlyerror) {
+        _print_early_error($errorcode, $module, $a, $backtrace, $debuginfo);
+    } else {
+        _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debuginfo);
     }
 }
 
