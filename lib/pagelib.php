@@ -580,10 +580,7 @@ class moodle_page {
         }
 
         $this->initialise_standard_body_classes();
-
-        if ($CFG->version >= 2009050619) {
-            $this->blocks->load_blocks();
-        }
+        $this->blocks->load_blocks();
     }
 
     /**

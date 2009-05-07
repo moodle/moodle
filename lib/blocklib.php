@@ -247,9 +247,15 @@ class block_manager implements ArrayAccess {
      * This method actually loads the blocks for our page from the database.
      */
     public function load_blocks($includeinvisible = NULL) {
-        global $DB;
+        global $DB, $CFG;
         if (!is_null($this->birecordsbyregion)) {
             // Already done.
+            return;
+        }
+
+        if ($CFG->version < 2009050619) {
+            // Upgrade/install not complete. Don't try too show any blocks.
+            $this->birecordsbyregion = array();
             return;
         }
 
