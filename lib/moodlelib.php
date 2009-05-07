@@ -6559,7 +6559,7 @@ function unzip_file ($zipfile, $destination = '', $showstatus = true) {
         if (!$list = $archive->extract(PCLZIP_OPT_PATH, $temppath,
                                        PCLZIP_CB_PRE_EXTRACT, 'unzip_cleanfilename',
                                        PCLZIP_OPT_EXTRACT_DIR_RESTRICTION, $temppath)) {
-                    if (!empty($showstatus)) {
+            if (!empty($showstatus)) {
                 notice($archive->errorInfo(true));
             }
             return false;
