@@ -1751,7 +1751,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table->add_field('blockid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_field('pageid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_field('pagetype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('region', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('position', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, null);
         $table->add_field('weight', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_field('visible', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_field('configdata', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
@@ -1775,8 +1775,8 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     if ($result && $oldversion < 2009050604) {
     /// Copy current blocks data from block_instances to block_instance_old
-        $DB->execute('INSERT INTO {block_instance_old} (oldid, blockid, pageid, pagetype, weight, visible, configdata)
-            SELECT id, blockid, pageid, pagetype, weight, visible, configdata FROM {block_instances} ORDER BY id');
+        $DB->execute('INSERT INTO {block_instance_old} (oldid, blockid, pageid, pagetype, position, weight, visible, configdata)
+            SELECT id, blockid, pageid, pagetype, position, weight, visible, configdata FROM {block_instances} ORDER BY id');
 
         upgrade_main_savepoint($result, 2009050604);
     }
