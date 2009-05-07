@@ -33,6 +33,8 @@ class edit_category_form extends moodleform {
         global $CFG, $COURSE, $DB;
         $mform =& $this->_form;
 
+        $category = $this->_customdata['current'];
+
         $this->aggregation_options = array(GRADE_AGGREGATE_MEAN            =>get_string('aggregatemean', 'grades'),
                                            GRADE_AGGREGATE_WEIGHTED_MEAN   =>get_string('aggregateweightedmean', 'grades'),
                                            GRADE_AGGREGATE_WEIGHTED_MEAN2  =>get_string('aggregateweightedmean2', 'grades'),
@@ -128,9 +130,20 @@ class edit_category_form extends moodleform {
         //$mform->disabledIf('calculation', 'gradetype', 'eq', GRADE_TYPE_NONE);
 
         $options = array(0=>get_string('usenoscale', 'grades'));
-        if ($scales = $DB->get_records('scale')) {
+        if ($scales = grade_scale::fetch_all_local($COURSE->id)) {
             foreach ($scales as $scale) {
-                $options[$scale->id] = format_string($scale->name);
+                $options[$scale->id] = $scale->get_name();
+            }
+        }
+        if ($scales = grade_scale::fetch_all_global()) {
+            foreach ($scales as $scale) {
+                $options[$scale->id] = $scale->get_name();
+            }
+        }
+        // ugly BC hack - it was possbile to use custom scale from other courses :-(
+        if (!empty($category->grade_item_scaleid) and !isset($options[$category->grade_item_scaleid])) {
+            if ($scale = grade_scale::fetch(array('id'=>$category->grade_item_scaleid))) {
+                $options[$scale->id] = $scale->get_name().' '.get_string('incorrectcustomscale', 'grades');
             }
         }
         $mform->addElement('select', 'grade_item_scaleid', get_string('scale'), $options);
@@ -239,6 +252,8 @@ class edit_category_form extends moodleform {
 //-------------------------------------------------------------------------------
         // buttons
         $this->add_action_buttons();
+//-------------------------------------------------------------------------------
+        $this->set_data($category);
     }
 
 

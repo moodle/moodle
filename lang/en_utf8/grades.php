@@ -310,6 +310,7 @@ $string['importsuccess'] = 'Grade import success';
 $string['importxml'] = 'Import XML';
 $string['includescalesinaggregation'] = 'Include scales in aggregation';
 $string['incorrectcourseid'] = 'Course ID was incorrect';
+$string['incorrectcustomscale'] = '(Incorrect custom scale, please change.)';
 $string['incorrectminmax'] = 'The minimum must be lower than the maximum';
 $string['inherit'] = 'Inherit';
 $string['intersectioninfo'] = 'Student/Grade info';

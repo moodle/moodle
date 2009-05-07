@@ -43,12 +43,6 @@ require_capability('moodle/grade:manage', $context);
 $gpr = new grade_plugin_return();
 $returnurl = $gpr->get_return_url('index.php?id='.$course->id);
 
-$mform = new edit_item_form(null, array('gpr'=>$gpr));
-
-if ($mform->is_cancelled()) {
-    redirect($returnurl);
-}
-
 $heading = get_string('itemsedit', 'grades');
 
 if ($grade_item = grade_item::fetch(array('id'=>$id, 'courseid'=>$courseid))) {
@@ -97,9 +91,12 @@ if ($parent_category->aggregation == GRADE_AGGREGATE_SUM or $parent_category->ag
     $item->aggregationcoef = format_float($item->aggregationcoef, 4);
 }
 
-$mform->set_data($item);
+$mform = new edit_item_form(null, array('current'=>$item, 'gpr'=>$gpr));
 
-if ($data = $mform->get_data()) {
+if ($mform->is_cancelled()) {
+    redirect($returnurl);
+
+} else if ($data = $mform->get_data(false)) {
 
     if (!isset($data->aggregationcoef)) {
         $data->aggregationcoef = 0;
