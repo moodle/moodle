@@ -439,6 +439,21 @@ class edit_category_form extends moodleform {
             }
         }
     }
+
+/// perform extra validation before submission
+    function validation($data, $files) {
+        global $COURSE;
+
+        $errors = parent::validation($data, $files);
+
+        if (array_key_exists('grade_item_gradetype', $data) and $data['grade_item_gradetype'] == GRADE_TYPE_SCALE) {
+            if (empty($data['grade_item_scaleid'])) {
+                $errors['grade_item_scaleid'] = get_string('missingscale', 'grades');
+            }
+        }
+
+        return $errors;
+    }
 }
 
 ?>
