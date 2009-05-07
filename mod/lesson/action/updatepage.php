@@ -47,9 +47,7 @@
     $page->contents = trim($form->contents);
     $page->title = $page->title;
     
-    if (!$DB->update_record("lesson_pages", $page)) {
-        print_error('cannotupdatepage', 'lesson');
-    }
+    $DB->update_record("lesson_pages", $page);
     if ($page->qtype == LESSON_ENDOFBRANCH || $page->qtype == LESSON_ESSAY || $page->qtype == LESSON_CLUSTER || $page->qtype == LESSON_ENDOFCLUSTER) {
         // there's just a single answer with a jump
         $oldanswer = new stdClass;

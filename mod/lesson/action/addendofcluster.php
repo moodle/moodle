@@ -30,14 +30,10 @@
     $newpage->contents = get_string("endofclustertitle", "lesson");
     $newpageid = $DB->insert_record("lesson_pages", $newpage);
     // update the linked list...
-    if (!$DB->set_field("lesson_pages", "nextpageid", $newpageid, array("id" => $pageid))) {
-        print_error('cannotupdatelink', 'lesson');
-    }
+    $DB->set_field("lesson_pages", "nextpageid", $newpageid, array("id" => $pageid));
     if ($page->nextpageid) {
         // the new page is not the last page
-        if (!$DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $page->nextpageid))) {
-            print_error('cannotupdatelink', 'lesson');
-        }
+        $DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $page->nextpageid));
     }
     // ..and the single "answer"
     $newanswer = new stdClass;

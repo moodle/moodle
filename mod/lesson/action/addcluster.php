@@ -38,9 +38,7 @@
     $newpageid = $DB->insert_record("lesson_pages", $newpage);
     // update the linked list...
     if ($pageid != 0) {
-        if (!$DB->set_field("lesson_pages", "nextpageid", $newpageid, array("id" => $pageid))) {
-            print_error('cannotupdatelink', 'lesson');
-        }
+        $DB->set_field("lesson_pages", "nextpageid", $newpageid, array("id" => $pageid));
     }
     
     if ($pageid == 0) {
@@ -48,9 +46,7 @@
     }        
     if ($page->nextpageid) {
         // the new page is not the last page
-        if (!$DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $page->nextpageid))) {
-            print_error('cannotupdatelink', 'lesson');
-        }
+        $DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $page->nextpageid));
     }
     // ..and the single "answer"
     $newanswer = new stdClass;

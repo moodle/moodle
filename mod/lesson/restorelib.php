@@ -181,9 +181,7 @@
 
             //Fix the forwards link of the previous page
             if ($prevpageid) {
-                if (!$DB->set_field("lesson_pages", "nextpageid", $newid, array("id"=>$prevpageid))) {
-                    print_error('cannotupdatepage', 'lesson');
-                }
+                $DB->set_field("lesson_pages", "nextpageid", $newid, array("id"=>$prevpageid));
             }
             $prevpageid = $newid;
 
@@ -251,9 +249,7 @@
                     // change the absolute page id
                     $page = backup_getid($restore->backup_unique_code,"lesson_pages",$answer->jumpto);
                     if ($page) {
-                        if (!$DB->set_field("lesson_answers", "jumpto", $page->new_id, array("id"=>$answer->id))) {
-                            print_error('cannotresetjump', 'lesson');
-                        }
+                        $DB->set_field("lesson_answers", "jumpto", $page->new_id, array("id"=>$answer->id));
                     }
                 }
             }

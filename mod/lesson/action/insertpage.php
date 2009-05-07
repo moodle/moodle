@@ -109,13 +109,8 @@
             $newpage->contents = trim($form->contents);
             $newpage->title = $newpage->title;
             $newpageid = $DB->insert_record("lesson_pages", $newpage);
-            if (!$newpageid) {
-                print_error('cannotfindfirstpage', 'lesson');
-            }
             // update the linked list
-            if (!$DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $newpage->nextpageid))) {
-                print_error('cannotupdatelink', 'lesson');
-            }
+            $DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $newpage->nextpageid));
         }
     }
     // now add the answers
