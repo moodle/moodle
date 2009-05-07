@@ -969,21 +969,26 @@ table.message_search_results td {
   color:#555555;
 }
 
-.forumthread .unread {
-  background: #FFD991;
-}
 #mod-forum-discuss .forumpost {
   background: none;
 }
 
-#mod-forum-discuss .forumpost.unread .content {
-  border-color: #FFD991;
+/* for unread colum in mod/forum/view.php */
+#forumheaderlist .unread {
+  border-bottom: 1px solid #FFCB44;
 }
 
-#mod-forum-discuss .forumthread .unread {
+/* for mod/forum/discuss.php
+ * will highlight the table header
+ **/ 
+#mod-forum-discuss .unread {
+  background: #FFD991;
 }
 
+/* for unread colum in mod/forum/index.php
+ **/ 
 #mod-forum-index .unread {
+  background: #FFD991;
 }
 
 
