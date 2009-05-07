@@ -1395,14 +1395,15 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
 
                 if ($mod->modname == "label") {
+                    echo "<span class=\"";
                     if (!$mod->visible) {
-                        echo "<span class=\"dimmed_text\">";
+                        echo 'dimmed_text';
+                    } else {
+                        echo 'label';
                     }
+                    echo '">';
                     echo format_text($extra, FORMAT_HTML, $labelformatoptions);
-                    if (!$mod->visible) {
-                        echo "</span>";
-                    }
-
+                    echo "</span>"; 
                 } else { // Normal activity
 
                     //Accessibility: for files get description via icon.
