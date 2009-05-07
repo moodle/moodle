@@ -27,7 +27,6 @@ require_once $CFG->libdir.'/formslib.php';
 
 class edit_category_form extends moodleform {
     private $aggregation_options = array();
-    private $allaggoptions;
 
     function definition() {
         global $CFG, $COURSE, $DB;
@@ -42,8 +41,6 @@ class edit_category_form extends moodleform {
                                            GRADE_AGGREGATE_MAX             =>get_string('aggregatemax', 'grades'),
                                            GRADE_AGGREGATE_MODE            =>get_string('aggregatemode', 'grades'),
                                            GRADE_AGGREGATE_SUM             =>get_string('aggregatesum', 'grades'));
-
-        $this->allaggoptions = array_keys($this->aggregation_options);
 
         // visible elements
         $mform->addElement('header', 'headercategory', get_string('gradecategory', 'grades'));
@@ -144,12 +141,12 @@ class edit_category_form extends moodleform {
         $mform->setHelpButton('grade_item_grademax', array('grademax', get_string('grademax', 'grades'), 'grade'), true);
         $mform->disabledIf('grade_item_grademax', 'grade_item_gradetype', 'noteq', GRADE_TYPE_VALUE);
         $mform->disabledIf('grade_item_grademax', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
-        
+
         $mform->addElement('text', 'grade_item_grademin', get_string('grademin', 'grades'));
         $mform->setHelpButton('grade_item_grademin', array('grademin', get_string('grademin', 'grades'), 'grade'), true);
         $mform->disabledIf('grade_item_grademin', 'grade_item_gradetype', 'noteq', GRADE_TYPE_VALUE);
         $mform->disabledIf('grade_item_grademin', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
-        
+
         $mform->addElement('text', 'grade_item_gradepass', get_string('gradepass', 'grades'));
         $mform->setHelpButton('grade_item_gradepass', array('gradepass', get_string('gradepass', 'grades'), 'grade'), true);
         $mform->disabledIf('grade_item_gradepass', 'grade_item_gradetype', 'eq', GRADE_TYPE_NONE);
@@ -289,13 +286,9 @@ class edit_category_form extends moodleform {
             }
         }
 
-        $current_aggregation = null;
-
         if ($id = $mform->getElementValue('id')) {
             $grade_category = grade_category::fetch(array('id'=>$id));
             $grade_item = $grade_category->load_grade_item();
-
-            $current_aggregation = $grade_category->aggregation;
 
             // remove agg coef if not used
             if ($grade_category->is_course_category()) {
@@ -351,14 +344,15 @@ class edit_category_form extends moodleform {
             }
             // remove unwanted aggregation options
             if ($mform->elementExists('aggregation')) {
+                $allaggoptions = array_keys($this->aggregation_options);
                 $agg_el =& $mform->getElement('aggregation');
                 $visible = explode(',', $CFG->grade_aggregations_visible);
-                if (!is_null($current_aggregation)) {
+                if (!is_null($grade_category->aggregation)) {
                     // current type is always visible
-                    $visible[] = $current_aggregation;
+                    $visible[] = $grade_category->aggregation;
                 }
-                foreach ($this->allaggoptions as $type) {
-                    if (!in_array($type, $visible) && $grade_category->aggregation != $type) {
+                foreach ($allaggoptions as $type) {
+                    if (!in_array($type, $visible)) {
                         $agg_el->removeOption($type);
                     }
                 }
@@ -366,9 +360,19 @@ class edit_category_form extends moodleform {
 
         } else {
             // adding new category
-
             if ($mform->elementExists('currentparentaggregation')) {
                 $mform->removeElement('currentparentaggregation');
+            }
+            // remove unwanted aggregation options
+            if ($mform->elementExists('aggregation')) {
+                $allaggoptions = array_keys($this->aggregation_options);
+                $agg_el =& $mform->getElement('aggregation');
+                $visible = explode(',', $CFG->grade_aggregations_visible);
+                foreach ($allaggoptions as $type) {
+                    if (!in_array($type, $visible)) {
+                        $agg_el->removeOption($type);
+                    }
+                }
             }
         }
 
