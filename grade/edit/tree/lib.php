@@ -154,7 +154,7 @@ class grade_edit_tree {
             $item = $category->get_grade_item();
 
             // Add aggregation coef input if not a course item and if parent category has correct aggregation type
-            $dimmed = ($item->hidden) ? " dimmed " : "";
+            $dimmed = ($item->is_hidden()) ? " dimmed " : "";
 
             // Before we print the category's row, we must find out how many rows will appear below it (for the filler cell's rowspan)
             $aggregation_position = grade_get_setting($COURSE->id, 'aggregationposition', $CFG->grade_aggregationposition);
@@ -293,7 +293,7 @@ class grade_edit_tree {
                 $categoryitemclass = 'categoryitem';
             }
 
-            $dimmed = ($item->hidden) ? " dimmed_text " : "";
+            $dimmed = ($item->is_hidden()) ? " dimmed_text " : "";
             $html .= '<tr class="'.$categoryitemclass.' item'.$dimmed.$rowclasses.'">';
 
             foreach ($this->columns as $column) {
