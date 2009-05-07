@@ -39,8 +39,8 @@
 
 
 require_once(dirname(dirname(__FILE__)) . '/config.php');
-require_once(dirname(dirname(__FILE__)) . '/lib/filelib.php');
-require_once(dirname(dirname(__FILE__)) . '/lib/formslib.php');
+require_once($CFG->libdir . '/filelib.php');
+require_once($CFG->libdir . '/formslib.php');
 // File picker javascript code
 
 /**
@@ -1793,6 +1793,45 @@ function repository_get_client($context, $id = '',  $accepted_filetypes = '*', $
 @import "$CFG->httpswwwroot/lib/yui/assets/skins/sam/treeview.css";
 </style>
 <style type="text/css">
+/* Copyright (c) 2006 Yahoo! Inc. All rights reserved. */
+/* copy from yui/examples/treeview/assets/css/folders/tree.css */
+/* first or middle sibling, no children */
+.ygtvtn { background: url($CFG->pixpath/y/tn.gif) 0 0 no-repeat; width:17px; height:22px; }
+/* first or middle sibling, collapsable */
+.ygtvtm { background: url($CFG->pixpath/y/tm.gif) 0 0 no-repeat; width:34px; height:22px; cursor:pointer }
+/* first or middle sibling, collapsable, hover */
+.ygtvtmh { background: url($CFG->pixpath/y/tmh.gif) 0 0 no-repeat; width:34px; height:22px; cursor:pointer }
+/* first or middle sibling, expandable */
+.ygtvtp { background: url($CFG->pixpath/y/tp.gif) 0 0 no-repeat; width:34px; height:22px; cursor:pointer }
+/* first or middle sibling, expandable, hover */
+.ygtvtph { background: url($CFG->pixpath/y/tph.gif) 0 0 no-repeat; width:34px; height:22px; cursor:pointer }
+/* last sibling, no children */
+.ygtvln { background: url($CFG->pixpath/y/ln.gif) 0 0 no-repeat; width:17px; height:22px; }
+/* Last sibling, collapsable */
+.ygtvlm { background: url($CFG->pixpath/y/lm.gif) 0 0 no-repeat; width:34px; height:22px; cursor:pointer }
+/* Last sibling, collapsable, hover */
+.ygtvlmh { background: url($CFG->pixpath/y/lmh.gif) 0 0 no-repeat; width:34px; height:22px; cursor:pointer }
+/* Last sibling, expandable */
+.ygtvlp { background: url($CFG->pixpath/y/lp.gif) 0 0 no-repeat; width:34px; height:22px; cursor:pointer }
+/* Last sibling, expandable, hover */
+.ygtvlph { background: url($CFG->pixpath/y/lph.gif) 0 0 no-repeat; width:34px; height:22px; cursor:pointer }
+/* Loading icon */
+.ygtvloading { background: url($CFG->pixpath/y/loading.gif) 0 0 no-repeat; width:16px; height:22px; }
+/* the style for the empty cells that are used for rendering the depth 
+ * of the node */
+.ygtvdepthcell { background: url($CFG->pixpath/y/vline.gif) 0 0 no-repeat; width:17px; height:22px; }
+.ygtvblankdepthcell { width:17px; height:22px; }
+/* the style of the div around each node */
+.ygtvitem { }  
+.ygtvitem  table{ margin-bottom:0; }
+.ygtvitem  td { border:none;padding:0; } 
+/* the style of the div around each node's collection of children */
+.ygtvchildren { }  
+* html .ygtvchildren { height:1%; }  
+/* the style of the text label in ygTextNode */
+.ygtvlabel, .ygtvlabel:link, .ygtvlabel:visited, .ygtvlabel:hover { margin-left:2px; text-decoration: none; }
+
+
 .file-picker{font-size:12px;}
 .file-picker strong{background:#FFFFCC}
 .file-picker a{color: #336699}
