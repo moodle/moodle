@@ -1718,11 +1718,11 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     if ($result && $oldversion < 2009050601) {
 
-    /// Define table block_instance to be renamed to block_instance_old
+    /// Define table block_instance to be renamed to block_instances
         $table = new xmldb_table('block_instance');
 
     /// Launch rename table for block_instance
-        $dbman->rename_table($table, 'block_instance_old');
+        $dbman->rename_table($table, 'block_instances');
 
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2009050601);
