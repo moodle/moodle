@@ -53,8 +53,6 @@ if ($id) {
     }
     $grade_category->apply_forced_settings();
     $category = $grade_category->get_record_data();
-    // Get Category preferences
-    $category->pref_aggregationview = grade_report::get_pref('aggregationview', $id);
     // set parent
     $category->parentcategory = $grade_category->parent;
     $grade_item = $grade_category->load_grade_item();
@@ -176,13 +174,6 @@ if ($mform->is_cancelled()) {
     }
 
     $grade_item->update(); // We don't need to insert it, it's already created when the category is created
-
-    // Handle user preferences
-    if (isset($data->pref_aggregationview)) {
-        if (!grade_report::set_pref('aggregationview', $data->pref_aggregationview, $grade_category->id)) {
-            print_error('cannotsetprefgrade', '', '', $value);
-        }
-    }
 
     // set parent if needed
     if (isset($data->parentcategory)) {
