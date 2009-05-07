@@ -65,7 +65,11 @@ class MoodleQuickForm_choosecoursefile extends MoodleQuickForm_group
         global $COURSE;
         $this->_elements = array();
 
-        $this->_elements[0] =& MoodleQuickForm::createElement('text', 'value', '', array('size'=>'48'));
+        if (!is_array($this->getAttributes()) || !array_key_exists('size', $this->getAttributes())) {
+            $this->updateAttributes(array('size' => 48));
+        }
+
+        $this->_elements[0] =& MoodleQuickForm::createElement('text', 'value', '', $this->getAttributes());
         $this->_elements[1] =& MoodleQuickForm::createElement('button', 'popup', get_string('chooseafile', 'resource') .' ...');
 
         $button =& $this->_elements[1];
@@ -91,6 +95,7 @@ class MoodleQuickForm_choosecoursefile extends MoodleQuickForm_group
 
         $button->updateAttributes($buttonattributes);
     }
+
     /**
      * Output a timestamp. Give it the name of the group.
      *
