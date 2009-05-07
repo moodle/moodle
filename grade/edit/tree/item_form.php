@@ -33,6 +33,8 @@ class edit_item_form extends moodleform {
 
         $mform =& $this->_form;
 
+        $item = $this->_customdata['current'];
+
 /// visible elements
         $mform->addElement('header', 'general', get_string('gradeitem', 'grades'));
 
@@ -57,11 +59,23 @@ class edit_item_form extends moodleform {
         //$mform->disabledIf('calculation', 'gradetype', 'eq', GRADE_TYPE_NONE);
 
         $options = array(0=>get_string('usenoscale', 'grades'));
-        if ($scales = get_records('scale')) {
+        if ($scales = grade_scale::fetch_all_local($COURSE->id)) {
             foreach ($scales as $scale) {
-                $options[$scale->id] = format_string($scale->name);
+                $options[$scale->id] = $scale->get_name();
             }
         }
+        if ($scales = grade_scale::fetch_all_global()) {
+            foreach ($scales as $scale) {
+                $options[$scale->id] = $scale->get_name();
+            }
+        }
+        // ugly BC hack - it was possbile to use custom scale from other courses :-(
+        if (!empty($item->scaleid) and !isset($options[$item->scaleid])) {
+            if ($scale = grade_scale::fetch(array('id'=>$item->scaleid))) {
+                $options[$scale->id] = $scale->get_name().get_string('incorrectcustomscale', 'grades');
+            }
+        }
+
         $mform->addElement('select', 'scaleid', get_string('scale'), $options);
         $mform->setHelpButton('scaleid', array('scaleid', get_string('scaleid', 'grades'), 'grade'), true);
         $mform->disabledIf('scaleid', 'gradetype', 'noteq', GRADE_TYPE_SCALE);
@@ -184,6 +198,8 @@ class edit_item_form extends moodleform {
 //-------------------------------------------------------------------------------
         // buttons
         $this->add_action_buttons();
+//-------------------------------------------------------------------------------
+        $this->set_data($item);
     }
 
 

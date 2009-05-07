@@ -44,7 +44,6 @@ $gpr = new grade_plugin_return();
 $returnurl = $gpr->get_return_url('index.php?id='.$course->id);
 
 
-$mform = new edit_category_form(null, array('gpr'=>$gpr));
 $heading = get_string('categoryedit', 'grades');
 
 if ($id) {
@@ -75,7 +74,7 @@ if ($id) {
     $category = $grade_category->get_record_data();
 }
 
-$mform->set_data($category);
+$mform = new edit_category_form(null, array('current'=>$category, 'gpr'=>$gpr));
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
