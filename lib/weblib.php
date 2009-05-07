@@ -4936,7 +4936,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
 
             }
             $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
-                    $CFG->httpswwwroot .'/lib/editor/htmlarea/lang/en.php"></script>'."\n" : '';
+                    $CFG->httpswwwroot .'/lib/editor/htmlarea/lang/en.php?id='.$courseid.'"></script>'."\n" : '';
             $scriptcount++;
 
             if ($height) {    // Usually with legacy calls
