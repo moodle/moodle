@@ -6541,16 +6541,25 @@ function unzip_file ($zipfile, $destination = '', $showstatus = true) {
     //    -$zipfilename is the name of the zip file (without path)
     //    -$destpath is the destination path where the zip file will uncompressed (dir)
 
-    $list = null;
+    $list = array();
+
+    require_once("$CFG->libdir/filelib.php");
+
+    do {
+        $temppath = "$CFG->dataroot/temp/unzip/".random_string(10);
+    } while (file_exists($temppath));
+    if (!check_dir_exists($temppath, true, true)) {
+        return false;
+    }
 
     if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
 
         include_once("$CFG->libdir/pclzip/pclzip.lib.php");
         $archive = new PclZip(cleardoubleslashes("$zippath/$zipfilename"));
-        if (!$list = $archive->extract(PCLZIP_OPT_PATH, $destpath,
+        if (!$list = $archive->extract(PCLZIP_OPT_PATH, $temppath,
                                        PCLZIP_CB_PRE_EXTRACT, 'unzip_cleanfilename',
                                        PCLZIP_OPT_EXTRACT_DIR_RESTRICTION, $temppath)) {
-            if (!empty($showstatus)) {
+                    if (!empty($showstatus)) {
                 notice($archive->errorInfo(true));
             }
             return false;
