@@ -224,19 +224,6 @@ class edit_category_form extends moodleform {
             $mform->addElement('static', 'currentparentaggregation', get_string('currentparentaggregation', 'grades'));
         }
 
-/// user preferences
-        $mform->addElement('header', 'headerpreferences', get_string('myreportpreferences', 'grades'));
-        $options = array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default', 'grades'),
-                         GRADE_REPORT_AGGREGATION_VIEW_FULL => get_string('fullmode', 'grades'),
-                         GRADE_REPORT_AGGREGATION_VIEW_AGGREGATES_ONLY => get_string('aggregatesonly', 'grades'),
-                         GRADE_REPORT_AGGREGATION_VIEW_GRADES_ONLY => get_string('gradesonly', 'grades'));
-        $label = get_string('aggregationview', 'grades') . ' (' . get_string('default', 'grades')
-               . ': ' . $options[$CFG->grade_report_aggregationview] . ')';
-        $mform->addElement('select', 'pref_aggregationview', $label, $options);
-        $mform->setHelpButton('pref_aggregationview', array('aggregationview', get_string('aggregationview', 'grades'), 'grade'), true);
-        $mform->setDefault('pref_aggregationview', GRADE_REPORT_PREFERENCE_DEFAULT);
-        $mform->setAdvanced('pref_aggregationview');
-
         // hidden params
         $mform->addElement('hidden', 'id', 0);
         $mform->setType('id', PARAM_INT);
