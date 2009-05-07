@@ -7481,15 +7481,24 @@ function unzip_file ($zipfile, $destination = '', $showstatus = true) {
     //    -$zipfilename is the name of the zip file (without path)
     //    -$destpath is the destination path where the zip file will uncompressed (dir)
 
-    $list = null;
+    $list = array();
+
+    require_once("$CFG->libdir/filelib.php");
+
+    do {
+        $temppath = "$CFG->dataroot/temp/unzip/".random_string(10);
+    } while (file_exists($temppath));
+    if (!check_dir_exists($temppath, true, true)) {
+        return false;
+    }
 
     if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
 
         include_once("$CFG->libdir/pclzip/pclzip.lib.php");
         $archive = new PclZip(cleardoubleslashes("$zippath/$zipfilename"));
-        if (!$list = $archive->extract(PCLZIP_OPT_PATH, $destpath,
+        if (!$list = $archive->extract(PCLZIP_OPT_PATH, $temppath,
                                        PCLZIP_CB_PRE_EXTRACT, 'unzip_cleanfilename',
-                                       PCLZIP_OPT_EXTRACT_DIR_RESTRICTION, $destpath)) {
+                                       PCLZIP_OPT_EXTRACT_DIR_RESTRICTION, $temppath)) {
             if (!empty($showstatus)) {
                 notice($archive->errorInfo(true));
             }
@@ -7497,15 +7506,6 @@ function unzip_file ($zipfile, $destination = '', $showstatus = true) {
         }
 
     } else {                     // Use external unzip program
-
-        require_once("$CFG->libdir/filelib.php");
-
-        do {
-            $temppath = "$CFG->dataroot/temp/unzip/".random_string(10);
-        } while (file_exists($temppath));
-        if (!check_dir_exists($temppath, true, true)) {
-            return false;
-        }
 
         $separator = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? ' &' : ' ;';
         $redirection = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? '' : ' 2>&1';
@@ -7519,22 +7519,14 @@ function unzip_file ($zipfile, $destination = '', $showstatus = true) {
             $command = str_replace('/','\\',$command);
         }
         Exec($command,$list);
-        if (is_array($list)) {
-            foreach ($list as $linenum=>$line) {
-                 // hide full paths - will not work on win32
-                $line = str_replace($temppath, $destpath, $line);
-                $line =  str_replace($CFG->dataroot, '', $line);
-                $list[$linenum] = $line;
-            }
-        }
-
-        unzip_process_temp_dir($temppath, $destpath);
-        fulldelete($temppath);
     }
+
+    unzip_process_temp_dir($temppath, $destpath);
+    fulldelete($temppath);
 
     //Display some info about the unzip execution
     if ($showstatus) {
-        unzip_show_status($list,$destpath);
+        unzip_show_status($list, $temppath, $destpath);
     }
 
     return true;
@@ -7608,7 +7600,7 @@ function unzip_cleanfilename ($p_event, &$p_header) {
     return 1;
 }
 
-function unzip_show_status ($list,$removepath) {
+function unzip_show_status($list, $removepath, $removepath2) {
 //This function shows the results of the unzip execution
 //depending of the value of the $CFG->zip, results will be
 //text or an array of files.
@@ -7628,7 +7620,8 @@ function unzip_show_status ($list,$removepath) {
         foreach ($list as $item) {
             echo "<tr>";
             $item['filename'] = str_replace(cleardoubleslashes($removepath).'/', "", $item['filename']);
-            print_cell("left", s($item['filename']));
+            $item['filename'] = str_replace(cleardoubleslashes($removepath2).'/', "", $item['filename']);
+            print_cell("left", s(clean_param($item['filename'], PARAM_PATH)));
             if (! $item['folder']) {
                 print_cell("right", display_size($item['size']));
             } else {
@@ -7645,7 +7638,9 @@ function unzip_show_status ($list,$removepath) {
         print_simple_box_start("center");
         echo "<pre>";
         foreach ($list as $item) {
-            echo s(str_replace(cleardoubleslashes($removepath.'/'), '', $item)).'<br />';
+            $item = str_replace(cleardoubleslashes($removepath.'/'), '', $item);
+            $item = str_replace(cleardoubleslashes($removepath2.'/'), '', $item);
+            echo s($item).'<br />';
         }
         echo "</pre>";
         print_simple_box_end();
