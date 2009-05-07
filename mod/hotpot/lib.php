@@ -707,7 +707,7 @@ function hotpot_get_titles_and_next_ex(&$hotpot, $filepath, $get_next=false) {
             if ($get_next) {
                 if (preg_match('|<div[^>]*class="NavButtonBar"[^>]*>(.*?)</div>|is', $source, $matches)) {
                     $navbuttonbar = $matches[1];
-                    if (preg_match_all('|<button[^>]*class="NavButton"[^>]*onclick="'."location='([^']*)'".'[^"]*"[^>]*>|is', $navbuttonbar, $matches)) {
+                    if (preg_match_all('|<button[^>]*onclick="'."location='([^']*)'".'[^"]*"[^>]*>|is', $navbuttonbar, $matches)) {
                         $lastbutton = count($matches[0])-1;
                         $next = $matches[1][$lastbutton];
                     }
