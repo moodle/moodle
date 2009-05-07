@@ -189,7 +189,7 @@ document.write(\'<object classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" wi
   <param name="controls" value="imagewindow" />\\
   <param name="console" value="video" />\\
   <param name="loop" value="true" />\\
-  <embed src="'.$url.'" width=240" height="180" loop="true" type="'.$mimetype.'" controls="imagewindow" console="video" autostart="'.$autostart.'" />\\
+  <embed src="'.$url.'" width="240" height="180" loop="true" type="'.$mimetype.'" controls="imagewindow" console="video" autostart="'.$autostart.'" />\\
   </object><br />\\
   <object classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" width="240" height="30">\\
   <param name="src" value="'.$url.'" />\\

@@ -422,10 +422,10 @@ function get_mimetypes_array() {
 
         'ps'   => array ('type'=>'application/postscript', 'icon'=>'pdf.gif'),
         'qt'   => array ('type'=>'video/quicktime', 'icon'=>'video.gif'),
-        'ra'   => array ('type'=>'audio/x-realaudio', 'icon'=>'audio.gif'),
-        'ram'  => array ('type'=>'audio/x-pn-realaudio', 'icon'=>'audio.gif'),
+        'ra'   => array ('type'=>'audio/x-realaudio-plugin', 'icon'=>'audio.gif'),
+        'ram'  => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio.gif'),
         'rhb'  => array ('type'=>'text/xml', 'icon'=>'xml.gif'),
-        'rm'   => array ('type'=>'audio/x-pn-realaudio', 'icon'=>'audio.gif'),
+        'rm'   => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio.gif'),
         'rtf'  => array ('type'=>'text/rtf', 'icon'=>'text.gif'),
         'rtx'  => array ('type'=>'text/richtext', 'icon'=>'text.gif'),
         'sh'   => array ('type'=>'application/x-sh', 'icon'=>'text.gif'),
