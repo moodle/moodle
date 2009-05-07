@@ -173,10 +173,10 @@
                 echo "<tr align=\"center\"><td>";
                 echo "<input type=\"button\" value=\"".get_string("cancel").
                     "\" onclick=\"parent.location='../../course/view.php?id=$course->id';\">  ";
-                echo "<input type=\"button\" value=\"".get_string("continue").
-                    "\" onclick=\"document.password.submit();\" />";
-                echo "</td></tr></table>";
+                echo "<input type=\"submit\" value=\"".get_string("continue")."\"/>";
+                echo "</td></tr></table></form>";
                 print_simple_box_end();
+                print_footer($course);
                 exit();
             }
         }
