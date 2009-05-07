@@ -361,7 +361,12 @@ class block_manager implements ArrayAccess {
         $blockinstance->defaultregion = $region;
         $blockinstance->defaultweight = $weight;
         $blockinstance->configdata = '';
-        $DB->insert_record('block_instances', $blockinstance);
+        $blockinstance->id = $DB->insert_record('block_instances', $blockinstance);
+
+        // If the new instance was created, allow it to do additional setup
+        if($block = block_instance($blockname, $blockinstance)) {
+            $block->instance_create();
+        }
     }
 
     /**
@@ -657,38 +662,54 @@ function blocks_name_allowed_in_format($name, $pageformat) {
     return $accept;
 }
 
-function blocks_delete_instance($instance,$pinned=false) {
+/**
+ * Delete a block, and associated data.
+ * @param object $instance a row from the block_instances table
+ * @param $nolongerused legacy parameter. Not used, but kept for bacwards compatibility.
+ * @param $skipblockstables for internal use only. Makes @see blocks_delete_all_for_context() more efficient.
+ */
+function blocks_delete_instance($instance, $nolongerused = false, $skipblockstables = false) {
+    if ($block = block_instance($block->blockname, $instance)) {
+        $block->instance_delete();
+    }
+    delete_context(CONTEXT_BLOCK, $instance->id);
+
+    if (!$skipblockstables) {
+        $DB->delete_records('block_positions', array('blockinstanceid' => $instance->id));
+        $DB->delete_records('block_instances', array('id' => $instance->id));
+    }
+}
+
+/**
+ * @deprecated since 2.0
+ * Delete all the blocks from a particular page.
+ *
+ * @param string $pagetype the page type.
+ * @param integer $pageid the page id.
+ * @return success of failure.
+ */
+function blocks_delete_all_on_page($pagetype, $pageid) {
     global $DB;
 
-    // Get the block object and call instance_delete() if possible
-    if($record = blocks_get_record($instance->blockid)) {
-        if($obj = block_instance($record->name, $instance)) {
-            // Return value ignored
-            $obj->instance_delete();
-        }
-    }
+    debugging('Call to deprecated function blocks_repopulate_page. ' .
+            'This function cannot work any more. Doing nothing. ' .
+            'Please update your code to use another method.', DEBUG_DEVELOPER);
+    return false;
+}
 
-    if (!empty($pinned)) {
-         $DB->delete_records('block_pinned_old', array('id'=>$instance->id));
-        // And now, decrement the weight of all blocks after this one
-        $sql = "UPDATE {block_pinned_old}
-                   SET weight = weight - 1
-                 WHERE pagetype = ? AND position = ? AND weight > ?";
-        $params = array($instance->pagetype, $instance->position, $instance->weight);
-        $DB->execute($sql, $params);
-    } else {
-        // Now kill the db record;
-        $DB->delete_records('block_instance_old', array('oldid'=>$instance->id));
-        delete_context(CONTEXT_BLOCK, $instance->id);
-        // And now, decrement the weight of all blocks after this one
-        $sql = "UPDATE {block_instance_old}
-                   SET weight = weight - 1
-                 WHERE pagetype = ? AND pageid = ?
-                       AND position = ? AND weight > ?";
-        $params = array($instance->pagetype, $instance->pageid, $instance->position, $instance->weight);
-        $DB->execute($sql, $params);
+/**
+ * Delete all the blocks that belong to a particular context.
+ * @param $contextid the context id.
+ */
+function blocks_delete_all_for_context($contextid) {
+    global $DB;
+    $instances = $DB->get_recordset('block_instances', array('contextid' => $contextid));
+    foreach ($instances as $instance) {
+        blocks_delete_instance($instance, true);
     }
-    return true;
+    $instances->close();
+    $DB->delete_records('block_instances', array('contextid' => $contextid));
+    $DB->delete_records('block_positions', array('contextid' => $contextid));
 }
 
 // Accepts an array of block instances and checks to see if any of them have content to display
@@ -810,6 +831,10 @@ function blocks_setup(&$page, $pinned = BLOCKS_PINNED_FALSE) {
 
 function blocks_execute_action($page, &$blockmanager, $blockaction, $instanceorid, $pinned=false, $redirect=true) {
     global $CFG, $USER, $DB;
+
+    if (!in_array($blockaction, array('config', 'add', 'delete'))) {
+        throw new moodle_exception('Sorry, blocks editing is currently broken. Will be fixed. See MDL-19010.');
+    }
 
     if (is_int($instanceorid)) {
         $blockid = $instanceorid;
@@ -998,58 +1023,29 @@ function blocks_execute_action($page, &$blockmanager, $blockaction, $instanceori
             // Add a new instance of this block, if allowed
             $block = blocks_get_record($blockid);
 
-            if(empty($block) || !$block->visible) {
+            if (empty($block) || !$block->visible) {
                 // Only allow adding if the block exists and is enabled
                 break;
             }
 
-            if(!$block->multiple && blocks_find_block($blockid, $blockmanager) !== false) {
+            if (!$block->multiple && blocks_find_block($blockid, $blockmanager) !== false) {
                 // If no multiples are allowed and we already have one, return now
                 break;
             }
 
-            if(!block_method_result($block->name, 'user_can_addto', $page)) {
+            if (!block_method_result($block->name, 'user_can_addto', $page)) {
                 // If the block doesn't want to be added...
                 break;
             }
 
-            $newpos = $page->blocks->get_default_region();
-            if (!empty($pinned)) {
-                $sql = "SELECT 1, MAX(weight) + 1 AS nextfree
-                          FROM {block_pinned_old}
-                         WHERE pagetype = ? AND position = ?";
-                $params = array($page->pagetype, $newpos);
-
-            } else {
-                $sql = "SELECT 1, MAX(weight) + 1 AS nextfree
-                          FROM {block_instance_old}
-                         WHERE pageid = ? AND pagetype = ? AND position = ?";
-                $params = array($page->get_id(), $page->pagetype, $newpos);
+            $region = $page->blocks->get_default_region();
+            $weight = $DB->get_field_sql("SELECT MAX(weight) FROM {block_instances} 
+                    WHERE contextid = ? AND defaultregion = ?", array($page->context->id, $region));
+            $pagetypepattern = $page->pagetype;
+            if (strpos($pagetypepattern, 'course-view') === 0) {
+                $pagetypepattern = 'course-view-*';
             }
-            $weight = $DB->get_record_sql($sql, $params);
-
-            $newinstance = new stdClass;
-            $newinstance->blockid    = $blockid;
-            if (empty($pinned)) {
-                $newinstance->pageid = $page->get_id();
-            }
-            $newinstance->pagetype   = $page->pagetype;
-            $newinstance->position   = $newpos;
-            $newinstance->weight     = empty($weight->nextfree) ? 0 : $weight->nextfree;
-            $newinstance->visible    = 1;
-            $newinstance->configdata = '';
-            if (!empty($pinned)) {
-                $newinstance->id = $DB->insert_record('block_pinned_old', $newinstance);
-            } else {
-                $newinstance->id = $DB->insert_record('block_instance_old', $newinstance);
-            }
-
-            // If the new instance was created, allow it to do additional setup
-            if($newinstance && ($obj = block_instance($block->name, $newinstance))) {
-                // Return value ignored
-                $obj->instance_create();
-            }
-
+            $page->blocks->add_block($block->name, $region, $weight, false, $pagetypepattern);
         break;
     }
 
@@ -1084,6 +1080,8 @@ function blocks_execute_url_action(&$PAGE, &$blockmanager,$pinned=false) {
 // in order to reduce code repetition.
 function blocks_execute_repositioning(&$instance, $newpos, $newweight, $pinned=false) {
     global $DB;
+
+    throw new moodle_exception('Sorry, blocks editing is currently broken. Will be fixed. See MDL-19010.');
 
     // If it's staying where it is, don't do anything, unless overridden
     if ($newpos == $instance->position) {
@@ -1131,6 +1129,8 @@ function blocks_execute_repositioning(&$instance, $newpos, $newweight, $pinned=f
  */
 function blocks_move_block($page, &$instance, $destpos, $destweight=NULL, $pinned=false) {
     global $CFG, $DB;
+
+    throw new moodle_exception('Sorry, blocks editing is currently broken. Will be fixed. See MDL-19010.');
 
     if ($pinned) {
         $blocklist = blocks_get_pinned($page);
@@ -1268,23 +1268,8 @@ function blocks_get_by_page_pinned($page) {
 function blocks_get_by_page($page) {
     global $DB;
 
-    $blocks = $DB->get_records_select('block_instance_old', "pageid = ? AND ? LIKE (" . $DB->sql_concat('pagetype', "'%'") . ")",
-            array($page->get_id(), $page->pagetype), 'position, weight');
-
-    $regions = $page->blocks->get_regions();
-    $arr = array();
-    foreach($regions as $key => $region) {
-        $arr[$region] = array();
-    }
-
-    if(empty($blocks)) {
-        return $arr;
-    }
-
-    foreach($blocks as $block) {
-        $arr[$block->position][$block->weight] = $block;
-    }
-    return $arr;
+    // TODO check the backwards compatibility hack.
+    return $page->blocks;
 }
 
 
@@ -1316,55 +1301,6 @@ function blocks_print_adminblock($page, $blockmanager) {
         $content = popup_form($target.'&amp;blockid=', $menu, 'add_block', '', $stradd .'...', '', '', true);
         print_side_block($strblocks, $content, NULL, NULL, NULL, array('class' => 'block_adminblock'));
     }
-}
-
-/**
- * @deprecated since 2.0
- * Delete all the blocks from a particular page.
- *
- * @param string $pagetype the page type.
- * @param integer $pageid the page id.
- * @return success of failure.
- */
-function blocks_delete_all_on_page($pagetype, $pageid) {
-    global $DB;
-
-    debugging('Call to deprecated function blocks_repopulate_page. ' .
-            'This function cannot work any more. Doing nothing. ' .
-            'Please update your code to use another method.', DEBUG_DEVELOPER);
-    return false;
-}
-
-/**
- * Delete a block, and associated data.
- * @param object $instance a row from the block_instances table
- * @param $skipblockstables for internal use only. Makes @see blocks_delete_all_for_context() more efficient.
- */
-function blocks_delete_block($instance, $skipblockstables = false) {
-    if ($block = block_instance($block->blockname, $instance)) {
-        $block->instance_delete();
-    }
-    delete_context(CONTEXT_BLOCK, $instance->id);
-
-    if (!$skipblockstables) {
-        $DB->delete_records('block_positions', array('blockinstanceid' => $instance->id));
-        $DB->delete_records('block_instances', array('id' => $instance->id));
-    }
-}
-
-/**
- * Delete all the blocks that belong to a particular context.
- * @param $contextid the context id.
- */
-function blocks_delete_all_for_context($contextid) {
-    global $DB;
-    $instances = $DB->get_recordset('block_instances', array('contextid' => $contextid));
-    foreach ($instances as $instance) {
-        blocks_delete_block($instance, true);
-    }
-    $instances->close();
-    $DB->delete_records('block_instances', array('contextid' => $contextid));
-    $DB->delete_records('block_positions', array('contextid' => $contextid));
 }
 
 /**
