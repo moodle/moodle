@@ -260,6 +260,7 @@ repository_client.req_cb = {
     success: function(o){
          var data = repository_client.parse_json(o.responseText, 'req_cb');    
          var repo = repository_client.fp[data.client_id];
+         repo.viewbar.set('disabled', false);
          var panel = new YAHOO.util.Element('panel-'+data.client_id);
          if(data && data.e) {
              panel.get('element').innerHTML = data.e;
@@ -274,6 +275,7 @@ repository_client.req_cb = {
          }else if(data.iframe) {
              repository_client.view_iframe(data.client_id);
          }else if(data.login) {
+             repo.viewbar.set('disabled', true);
              repository_client.print_login(data.client_id, data);
          }else if(data.list) {
              if(repo.view_status) {
