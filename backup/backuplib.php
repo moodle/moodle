@@ -2835,9 +2835,14 @@
             }
         }
 
-        // foreach context, call get_roles_on_exact_context insert into array
+        // foreach context, call get_roles_on_exact_context + get_roles_with_override_on_context() and insert into array
         foreach ($contexts as $context) {
-            if ($proles = get_roles_on_exact_context($context)) {
+            if ($proles = get_roles_on_exact_context($context)) { // Look for roles assignments
+                foreach ($proles as $prole) {
+                    $roles[$prole->id] = $prole;
+                }
+            }
+            if ($proles = get_roles_with_override_on_context($context)) { // Look for roles overrides
                 foreach ($proles as $prole) {
                     $roles[$prole->id] = $prole;
                 }
