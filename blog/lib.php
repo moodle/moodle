@@ -29,20 +29,21 @@
                 $tagsblock = $DB->get_record('block', array('name'=>'blog_tags'));
                 // add those 2 into block_instance page
 
-                // add blog_menu block
-                $newblock = new object();
-                $newblock->blockid  = $menublock->id;
-                $newblock->pageid   = $USER->id;
-                $newblock->pagetype = 'blog-view';
-                $newblock->position = 'r';
-                $newblock->weight   = 0;
-                $newblock->visible  = 1;
-                $DB->insert_record('block_instance_old', $newblock);
-
-                // add blog_tags menu
-                $newblock -> blockid = $tagsblock->id;
-                $newblock -> weight  = 1;
-                $DB->insert_record('block_instance_old', $newblock);
+// Commmented out since the block changes broke it. Hopefully nico will fix it ;-)
+//                // add blog_menu block
+//                $newblock = new object();
+//                $newblock->blockid  = $menublock->id;
+//                $newblock->pageid   = $USER->id;
+//                $newblock->pagetype = 'blog-view';
+//                $newblock->position = 'r';
+//                $newblock->weight   = 0;
+//                $newblock->visible  = 1;
+//                $DB->insert_record('block_instances', $newblock);
+//
+//                // add blog_tags menu
+//                $newblock -> blockid = $tagsblock->id;
+//                $newblock -> weight  = 1;
+//                $DB->insert_record('block_instances', $newblock);
 
                 // finally we set the page size pref
                 set_user_preference('blogpagesize', 10);

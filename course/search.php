@@ -116,26 +116,19 @@
 
     // get list of courses containing blocks if required
     if (!empty($blocklist) and confirm_sesskey()) {
-        $blockid = $blocklist;
-        if (!$blocks = $DB->get_records('block_instance_old', array('blockid'=>$blockid))) {
-            print_error('blockcannotread', '', '',  $blockid);
-        }
-
-        // run through blocks and get (unique) courses
+        $blockname = $DB->get_field('block', 'name', array('id' => $blocklist));
+        $courses = $DB->get_recordset_sql("
+                SELECT * FROM {course} WHERE id IN (
+                    SELECT DISTINCT ctx.instanceid
+                    FROM {context} ctx
+                    JOIN {block_instances} bi ON bi.contextid = ctx.id
+                    WHERE ctx.contextlevel = " . CONTEXT_COURSE . " AND bi.blockname = ?)",
+                array($blockname));
         $courses = array();
-        foreach ($blocks as $block) {
-            $courseid = $block->pageid;
-            // MDL-11167, blocks can be placed on mymoodle, or the blogs page
-            // and it should not show up on course search page
-            if ($courseid==0 || $block->pagetype != 'course-view') {
-                continue;
-            }
-            if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-                print_error('invalidcourseid', '', '', $courseid);
-            }
-            $courses[$courseid] = $course;
+        foreach ($courses as $course) {
+            $courses[$course->id] = $course;
         }
-        $totalcount = count( $courses );
+        $totalcount = count($courses);
     }
     // get list of courses containing modules if required
     elseif (!empty($modulelist) and confirm_sesskey()) {

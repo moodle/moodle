@@ -2825,10 +2825,8 @@
         }
 
         // add all roles assigned at block context
-        if ($courseblocks = $DB->get_records_sql("SELECT *
-                                                    FROM {block_instance_old}
-                                                   WHERE pagetype = '".PAGE_COURSE_VIEW."'
-                                                         AND pageid = ?", array($preferences->backup_course))) {
+        if ($courseblocks = $DB->get_records_sql("SELECT * FROM {block_instances} WHERE contextid = ?",
+                array($coursecontext->id))) {
 
             foreach ($courseblocks as $courseblock) {
 

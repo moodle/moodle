@@ -24,6 +24,9 @@
 
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
+    $PAGE->set_url('course/index.php');
+    $PAGE->set_context($systemcontext);
+
     if (update_category_button()) {
         if ($categoryedit !== -1) {
             $USER->editing = $categoryedit;

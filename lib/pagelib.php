@@ -330,7 +330,7 @@ class moodle_page {
         if ($this->_legacypageobject) {
             return $this->_legacypageobject->user_allowed_editing();
         }
-        return has_any_capability($this->all_editing_caps(), $this->_context);
+        return has_any_capability($this->all_editing_caps(), $this->context);
     }
 
 /// Setter methods =============================================================
@@ -974,6 +974,7 @@ function page_create_object($type, $id = NULL) {
             $legacypage->set_course($SITE);
         }
     }
+
     $legacypage->set_pagetype($type);
 
     $legacypage->set_url($ME);

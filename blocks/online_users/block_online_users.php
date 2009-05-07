@@ -37,11 +37,12 @@ class block_online_users extends block_base {
         // Get context so we can check capabilities.
         $context = $this->page->context;
 
-        // TODO
-        if (empty($this->instance->pinned)) {
-            $blockcontext = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
+        // TODO - temporary hack to get the block context only if it already exists.
+        global $DB;
+        if ($DB->record_exists('context', array('contextlevel' => CONTEXT_BLOCK, 'instanceid' => $this->instance->id))) {
+            $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
         } else {
-            $blockcontext = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
+            $context = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
         }
 
         //Calculate if we are in separate groups

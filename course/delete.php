@@ -1,7 +1,8 @@
 <?php // $Id$
       // Admin-only code to delete a course utterly
 
-    require_once("../config.php");
+    require_once(dirname(__FILE__) . '/../config.php');
+    require_once($CFG->dirroot . '/course/lib.php');
 
     $id     = required_param('id', PARAM_INT);              // course id
     $delete = optional_param('delete', '', PARAM_ALPHANUM); // delete confirmation hash

@@ -3,8 +3,6 @@
 /**
  * This file contains the parent class for moodle blocks, block_base.
  *
- * @author Jon Papaioannou
- * @version  $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package blocks
  */
@@ -303,8 +301,9 @@ class block_base {
      */
     function is_empty() {
 
-        // TODO
-        if (empty($this->instance->pinned)) {
+        // TODO - temporary hack to get the block context only if it already exists.
+        global $DB;
+        if ($DB->record_exists('context', array('contextlevel' => CONTEXT_BLOCK, 'instanceid' => $this->instance->id))) {
             $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
         } else {
             $context = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
@@ -408,8 +407,9 @@ class block_base {
     function _add_edit_controls($options) {
         global $CFG, $USER;
 
-        // TODO
-        if (empty($this->instance->pinned)) {
+        // TODO - temporary hack to get the block context only if it already exists.
+        global $DB;
+        if ($DB->record_exists('context', array('contextlevel' => CONTEXT_BLOCK, 'instanceid' => $this->instance->id))) {
             $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
         } else {
             $context = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
@@ -709,21 +709,11 @@ class block_base {
 
     /**
      * Serialize and store config data
-     * @return boolean
-     * @todo finish documenting this function
      */
-    function instance_config_save($data,$pinned=false) {
+    function instance_config_save($data, $nolongerused = false) {
         global $DB;
-
-        $data = $data;
-        $this->config = $data;
-        $table = 'block_instance_old';
-        $field = 'oldid';
-        if (!empty($pinned)) {
-            $table = 'block_pinned_old';
-            $field = 'id';
-        }
-        return $DB->set_field($table, 'configdata', base64_encode(serialize($data)), array($field => $this->instance->id));
+        $DB->set_field('block_instances', 'configdata', base64_encode(serialize($data)),
+                array($field => $this->instance->id));
     }
 
     /**
@@ -731,16 +721,9 @@ class block_base {
      * @return boolean
      * @todo finish documenting this function
      */
-    function instance_config_commit($pinned=false) {
+    function instance_config_commit($nolongerused = false) {
         global $DB;
-
-        $table = 'block_instance_old';
-        $field = 'oldid';
-        if (!empty($pinned)) {
-            $table = 'block_pinned_old';
-            $field = 'id';
-        }
-        return $DB->set_field($table, 'configdata', base64_encode(serialize($this->config)), array($field => $this->instance->id));
+        $this->instance_config_save($this->config);
     }
 
      /**
@@ -801,8 +784,9 @@ class block_list extends block_base {
 
     function is_empty() {
 
-        // TODO
-        if (empty($this->instance->pinned)) {
+        // TODO - temporary hack to get the block context only if it already exists.
+        global $DB;
+        if ($DB->record_exists('context', array('contextlevel' => CONTEXT_BLOCK, 'instanceid' => $this->instance->id))) {
             $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
         } else {
             $context = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context

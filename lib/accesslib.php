@@ -2091,28 +2091,16 @@ function create_context($contextlevel, $instanceid) {
         case CONTEXT_BLOCK:
             // Only non-pinned & course-page based
             $sql = "SELECT ctx.path, ctx.depth
-                      FROM {context}        ctx
-                      JOIN {block_instance_old} bi
-                           ON (bi.pageid=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
-                     WHERE bi.oldid=? AND bi.pagetype='course-view'";
-            $params = array($instanceid);
+                      FROM {context} ctx
+                      JOIN {block_instances} bi ON (bi.contextid=ctx.id)
+                     WHERE bi.id=? AND ctx.contextlevel=?";
+            $params = array($instanceid, CONTEXT_COURSE);
             if ($p = $DB->get_record_sql($sql, $params)) {
                 $basepath  = $p->path;
                 $basedepth = $p->depth;
-            } else if ($bi = $DB->get_record('block_instance_old', array('oldid'=>$instanceid))) {
-                if ($bi->pagetype != 'course-view') {
-                    // ok - not a course block
-                } else if ($parent = get_context_instance(CONTEXT_COURSE, $bi->pageid)) {
-                    $basepath  = $parent->path;
-                    $basedepth = $parent->depth;
-                } else {
-                    // parent course does not exist - course blocks can not exist without a course
-                    $error_message = 'parent course does not exist - course blocks can not exist without a course';
-                    $result = false;
-                }
             } else {
                 // block does not exist
-                $error_message = 'block does not exist';
+                $error_message = 'block or parent context does not exist';
                 $result = false;
             }
             break;
@@ -2294,8 +2282,8 @@ function create_contexts($contextlevel=null, $buildpaths=true) {
 
     if (empty($contextlevel) or $contextlevel == CONTEXT_BLOCK) {
         $sql = "INSERT INTO {context} (contextlevel, instanceid)
-                SELECT ".CONTEXT_BLOCK.", bi.oldid
-                  FROM {block_instance_old} bi
+                SELECT ".CONTEXT_BLOCK.", bi.id
+                  FROM {block_instances} bi
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {context} cx
                                     WHERE bi.id = cx.instanceid AND cx.contextlevel=".CONTEXT_BLOCK.")";
@@ -2358,8 +2346,8 @@ function cleanup_contexts() {
               SELECT c.contextlevel,
                      c.instanceid
                 FROM {context} c
-                LEFT OUTER JOIN {block_instance_old} t
-                     ON c.instanceid = t.oldid
+                LEFT OUTER JOIN {block_instances} t
+                     ON c.instanceid = t.id
                WHERE t.id IS NULL AND c.contextlevel = ".CONTEXT_BLOCK."
            ";
     if ($rs = $DB->get_recordset_sql($sql)) {
@@ -2407,9 +2395,10 @@ function preload_course_contexts($courseid) {
          UNION ALL
 
             SELECT x.instanceid, x.id, x.contextlevel, x.path, x.depth
-              FROM {block_instance_old} bi
-              JOIN {context} x ON x.instanceid=bi.oldid
-             WHERE bi.pageid=? AND bi.pagetype='course-view'
+              FROM {context} px
+              JOIN {block_instances} bi ON bi.contextid = px.id
+              JOIN {context} x ON x.instanceid=bi.id
+              WHERE px.instanceid = ? AND px.contextlevel = ".CONTEXT_COURSE."
                    AND x.contextlevel=".CONTEXT_BLOCK."
 
          UNION ALL
@@ -3426,18 +3415,16 @@ function print_context_name($context, $withprefix = true, $short = false) {
             break;
 
         case CONTEXT_BLOCK: // not necessarily 1 to 1 to course
-            if ($blockinstance = $DB->get_record('block_instance_old', array('oldid'=>$context->instanceid))) {
-                if ($block = $DB->get_record('block', array('id'=>$blockinstance->blockid))) {
-                    global $CFG;
-                    require_once("$CFG->dirroot/blocks/moodleblock.class.php");
-                    require_once("$CFG->dirroot/blocks/$block->name/block_$block->name.php");
-                    $blockname = "block_$block->name";
-                    if ($blockobject = new $blockname()) {
-                        if ($withprefix){
-                            $name = get_string('block').': ';
-                        }
-                        $name .= $blockobject->title;
+            if ($blockinstance = $DB->get_record('block_instances', array('id'=>$context->instanceid))) {
+                global $CFG;
+                require_once("$CFG->dirroot/blocks/moodleblock.class.php");
+                require_once("$CFG->dirroot/blocks/$blockinstance->blockname/block_$blockinstance->blockname.php");
+                $blockname = "block_$blockinstance->blockname";
+                if ($blockobject = new $blockname()) {
+                    if ($withprefix){
+                        $name = get_string('block').': ';
                     }
+                    $name .= $blockobject->title;
                 }
             }
             break;
@@ -3607,15 +3594,13 @@ function fetch_context_capabilities($context) {
         break;
 
         case CONTEXT_BLOCK: // block caps
-            $cb = $DB->get_record('block_instance_old', array('oldid'=>$context->instanceid));
-            $block = $DB->get_record('block', array('id'=>$cb->blockid));
+            $cb = $DB->get_record('block_instances', array('id'=>$context->instanceid));
 
-            $extra = "";
-            if ($blockinstance = block_instance($block->name)) {
-                if ($extracaps = $blockinstance->get_extra_capabilities()) {
-                    list($extra, $params) = $DB->get_in_or_equal($extracaps, SQL_PARAMS_NAMED, 'cap0');
-                    $extra = "OR name $extra";
-                }
+            $extra = '';
+            $extracaps = block_method_result($cb->blockname, 'get_extra_capabilities');
+            if ($extracaps) {
+                list($extra, $params) = $DB->get_in_or_equal($extracaps, SQL_PARAMS_NAMED, 'cap0');
+                $extra = "OR name $extra";
             }
 
             $SQL = "SELECT *
@@ -3750,13 +3735,13 @@ function get_sorted_contexts($select, $params = array()) {
     return $DB->get_records_sql("
             SELECT ctx.*
             FROM {context} ctx
-            LEFT JOIN {user} u ON ctx.contextlevel = 30 AND u.id = ctx.instanceid
-            LEFT JOIN {course_categories} cat ON ctx.contextlevel = 40 AND cat.id = ctx.instanceid
-            LEFT JOIN {course} c ON ctx.contextlevel = 50 AND c.id = ctx.instanceid
-            LEFT JOIN {course_modules} cm ON ctx.contextlevel = 70 AND cm.id = ctx.instanceid
-            LEFT JOIN {block_instance_old} bi ON ctx.contextlevel = 80 AND bi.oldid = ctx.instanceid
+            LEFT JOIN {user} u ON ctx.contextlevel = " . CONTEXT_USER . " AND u.id = ctx.instanceid
+            LEFT JOIN {course_categories} cat ON ctx.contextlevel = " . CONTEXT_COURSECAT . " AND cat.id = ctx.instanceid
+            LEFT JOIN {course} c ON ctx.contextlevel = " . CONTEXT_COURSE . " AND c.id = ctx.instanceid
+            LEFT JOIN {course_modules} cm ON ctx.contextlevel = " . CONTEXT_MODULE . " AND cm.id = ctx.instanceid
+            LEFT JOIN {block_instances} bi ON ctx.contextlevel = " . CONTEXT_BLOCK . " AND bi.id = ctx.instanceid
             $select
-            ORDER BY ctx.contextlevel, bi.position, COALESCE(cat.sortorder, c.sortorder, cm.section, bi.weight), u.lastname, u.firstname, cm.id
+            ORDER BY ctx.contextlevel, bi.region, COALESCE(cat.sortorder, c.sortorder, cm.section, bi.weight), u.lastname, u.firstname, cm.id
             ", $params);
 }
 

@@ -3528,6 +3528,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
     if (! $course = $DB->get_record('course', array('id'=>$courseid))) {
         print_error('invalidcourseid');
     }
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
     $strdeleted = get_string('deleted');
 
@@ -3601,40 +3602,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
     notify_local_delete_course($courseid, $showfeedback);
 
 /// Delete course blocks
-
-    if ($blocks = $DB->get_records_sql("SELECT *
-                                          FROM {block_instance_old}
-                                         WHERE pagetype = '".PAGE_COURSE_VIEW."'
-                                               AND pageid = ?", array($course->id))) {
-        if ($DB->delete_records('block_instance_old', array('pagetype'=>PAGE_COURSE_VIEW, 'pageid'=>$course->id))) {
-            if ($showfeedback) {
-                notify($strdeleted .' block_instance_old');
-            }
-
-            foreach ($blocks as $block) {  /// Delete any associated contexts for this block
-
-                delete_context(CONTEXT_BLOCK, $block->id);
-
-                // fix for MDL-7164
-                // Get the block object and call instance_delete()
-                if (!$record = blocks_get_record($block->blockid)) {
-                    $result = false;
-                    continue;
-                }
-                if (!$obj = block_instance($record->name, $block)) {
-                    $result = false;
-                    continue;
-                }
-                // Return value ignored, in core mods this does not do anything, but just in case
-                // third party blocks might have stuff to clean up
-                // we execute this anyway
-                $obj->instance_delete();
-
-            }
-        } else {
-            $result = false;
-        }
-    }
+    blocks_delete_all_for_context($context->id);
 
 /// Delete any groups, removing members and grouping/course links first.
     require_once($CFG->dirroot.'/group/lib.php');
@@ -3688,7 +3656,6 @@ function remove_course_contents($courseid, $showfeedback=true) {
     question_delete_course($course, $showfeedback);
 
 /// Remove all data from gradebook
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
     remove_course_grades($courseid, $showfeedback);
     remove_grade_letters($context, $showfeedback);
 

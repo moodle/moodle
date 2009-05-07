@@ -1336,6 +1336,23 @@ function blocks_delete_all_on_page($pagetype, $pageid) {
 }
 
 /**
+ * Delete a block, and associated data.
+ * @param object $instance a row from the block_instances table
+ * @param $skipblockstables for internal use only. Makes @see blocks_delete_all_for_context() more efficient.
+ */
+function blocks_delete_block($instance, $skipblockstables = false) {
+    if ($block = block_instance($block->blockname, $instance)) {
+        $block->instance_delete();
+    }
+    delete_context(CONTEXT_BLOCK, $instance->id);
+
+    if (!$skipblockstables) {
+        $DB->delete_records('block_positions', array('blockinstanceid' => $instance->id));
+        $DB->delete_records('block_instances', array('id' => $instance->id));
+    }
+}
+
+/**
  * Delete all the blocks that belong to a particular context.
  * @param $contextid the context id.
  */
@@ -1343,7 +1360,7 @@ function blocks_delete_all_for_context($contextid) {
     global $DB;
     $instances = $DB->get_recordset('block_instances', array('contextid' => $contextid));
     foreach ($instances as $instance) {
-        delete_context(CONTEXT_BLOCK, $instance->id);
+        blocks_delete_block($instance, true);
     }
     $instances->close();
     $DB->delete_records('block_instances', array('contextid' => $contextid));
@@ -1356,11 +1373,15 @@ function blocks_delete_all_for_context($contextid) {
  * @return array
  */
 function blocks_parse_default_blocks_list($blocksstr) {
-    list($left, $right) = explode(':', $blocksstr);
-    return array(
-        BLOCK_POS_LEFT => explode(',', $left),
-        BLOCK_POS_RIGHT => explode(',', $right),
-    );
+    $blocks = array();
+    $bits = explode(':', $blocksstr);
+    if (!empty($bits)) {
+        $blocks[BLOCK_POS_LEFT] = explode(',', array_shift($bits));
+    }
+    if (!empty($bits)) {
+        $blocks[BLOCK_POS_RIGHT] = explode(',', array_shift($bits));
+    }
+    return $blocks;
 }
 
 /**
@@ -1370,9 +1391,9 @@ function blocks_get_default_site_course_blocks() {
     global $CFG;
 
     if (!empty($CFG->defaultblocks_site)) {
-        blocks_parse_default_blocks_list($CFG->defaultblocks_site);
+        return blocks_parse_default_blocks_list($CFG->defaultblocks_site);
     } else {
-        $blocknames = array(
+        return array(
             BLOCK_POS_LEFT => array('site_main_menu', 'admin_tree'),
             BLOCK_POS_RIGHT => array('course_summary', 'calendar_month')
         );
@@ -1417,9 +1438,18 @@ function blocks_add_default_course_blocks($course) {
         }
     }
 
+    if ($course->id == SITEID) {
+        $pagetypepattern = 'site-index';
+    } else {
+        $pagetypepattern = 'course-view-*';
+    }
+
     $page = new moodle_page();
     $page->set_course($course);
-    $page->blocks->add_blocks(array($blocknames), 'course-view-*');
+    print_object($page); // DONOTCOMMIT
+    print_object($pagetypepattern); // DONOTCOMMIT
+    print_object($blocknames); // DONOTCOMMIT
+    $page->blocks->add_blocks($blocknames, $pagetypepattern);
 }
 
 /**
