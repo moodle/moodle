@@ -568,14 +568,11 @@ function upgrade_plugins_blocks($startcallback, $endcallback) {
         //Iterate over each course - there should be only site course here now
         if ($courses = $DB->get_records('course')) {
             foreach ($courses as $course) {
-                $page = page_create_object(PAGE_COURSE_VIEW, $course->id);
-                blocks_repopulate_page($page);
+                blocks_add_default_course_blocks($course);
             }
         }
 
-        $page = new moodle_page();
-        $page->set_pagetype('admin');
-        blocks_repopulate_page($page);
+        blocks_add_default_system_blocks();
     }
 }
 

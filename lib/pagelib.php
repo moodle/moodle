@@ -573,8 +573,17 @@ class moodle_page {
      * state. This is our last change to initialise things.
      */
     protected function starting_output() {
+        global $SITE, $CFG;
+
+        if (empty($CFG->rolesactive)) {
+            $this->_course = new stdClass;
+            $this->_course->id = 1;
+            moodle_setlocale();
+            theme_setup();
+            return;
+        }
+
         if (!$this->_course) {
-            global $SITE;
             $this->set_course($SITE);
         }
 
@@ -1037,57 +1046,13 @@ class page_base extends moodle_page {
 
 /**
  * @deprecated since Moodle 2.0
- * Class that models the behavior of a moodle course
+ * Class that models the behavior of a moodle course.
+ * Although this does nothing, this class declaration should be left for now
+ * since there may be legacy class doing class page_... extends page_course
  *
  * @package pages
  */
 class page_course extends page_base {
-    // SELF-REPORTING SECTION
-
-    // When we are creating a new page, use the data at your disposal to provide a textual representation of the
-    // blocks that are going to get added to this new page. Delimit block names with commas (,) and use double
-    // colons (:) to delimit between block positions in the page.
-    function _legacy_blocks_get_default() {
-        global $CFG;
-
-        $this->init_full();
-
-        if($this->id == SITEID) {
-        // Is it the site?
-            if (!empty($CFG->defaultblocks_site)) {
-                $blocknames = $CFG->defaultblocks_site;
-            }
-            /// Failsafe - in case nothing was defined.
-            else {
-                $blocknames = 'site_main_menu,admin_tree:course_summary,calendar_month';
-            }
-        }
-        // It's a normal course, so do it according to the course format
-        else {
-            $pageformat = $this->course->format;
-            if (!empty($CFG->{'defaultblocks_'. $pageformat})) {
-                $blocknames = $CFG->{'defaultblocks_'. $pageformat};
-            }
-            else {
-                $format_config = $CFG->dirroot.'/course/format/'.$pageformat.'/config.php';
-                if (@is_file($format_config) && is_readable($format_config)) {
-                    require($format_config);
-                }
-                if (!empty($format['defaultblocks'])) {
-                    $blocknames = $format['defaultblocks'];
-                }
-                else if (!empty($CFG->defaultblocks)){
-                    $blocknames = $CFG->defaultblocks;
-                }
-                /// Failsafe - in case nothing was defined.
-                else {
-                    $blocknames = 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
-                }
-            }
-        }
-
-        return $blocknames;
-    }
 }
 
 /**
@@ -1097,8 +1062,8 @@ class page_course extends page_base {
  * @package pages
  */
 class page_generic_activity extends page_base {
-    // Although this function is deprecated, it should be left here becuase people
-    // upgrading legacy code need to copy it. See
+    // Although this function is deprecated, it should be left here because
+    // people upgrading legacy code need to copy it. See
     // http://docs.moodle.org/en/Development:Migrating_your_code_code_to_the_2.0_rendering_API
     function print_header($title, $morenavlinks = NULL, $bodytags = '', $meta = '') {
         global $USER, $CFG;

@@ -5820,35 +5820,6 @@ function build_context_path($force=false) {
     $DB->execute($updatesql);
     $DB->delete_records('context_temp');
 
-    // Blocks - non-pinned course-view only
-    $sql = "INSERT INTO {context_temp} (id, path, depth)
-            SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
-              FROM {context} ctx
-              JOIN {block_instance_old} bi ON ctx.instanceid = bi.oldid
-              JOIN {context} pctx ON bi.pageid=pctx.instanceid
-             WHERE ctx.contextlevel=".CONTEXT_BLOCK."
-                   AND pctx.contextlevel=".CONTEXT_COURSE."
-                   AND bi.pagetype='course-view'
-                       AND NOT EXISTS (SELECT 'x'
-                                       FROM {context_temp} temp
-                                       WHERE temp.id = ctx.id)
-                   $ctxemptyclause";
-    $DB->execute($sql);
-
-    $DB->execute($updatesql);
-    $DB->delete_records('context_temp');
-
-    // Blocks - others
-    $sql = "UPDATE {context}
-               SET depth=2, path=".$DB->sql_concat("'$base/'", 'id')."
-             WHERE contextlevel=".CONTEXT_BLOCK."
-                   AND EXISTS (SELECT 'x'
-                                 FROM {block_instance_old} bi
-                                WHERE bi.oldid = {context}.instanceid
-                                      AND bi.pagetype!='course-view')
-                   $emptyclause ";
-    $DB->execute($sql);
-
     // User
     $sql = "UPDATE {context}
                SET depth=2, path=".$DB->sql_concat("'$base/'", 'id')."
@@ -5858,6 +5829,22 @@ function build_context_path($force=false) {
                                 WHERE u.id = {context}.instanceid)
                    $emptyclause ";
     $DB->execute($sql);
+
+    // Blocks
+    $sql = "INSERT INTO {context_temp} (id, path, depth)
+            SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
+              FROM {context} ctx
+              JOIN {block_instances} bi ON ctx.instanceid = bi.id
+              JOIN {context} pctx ON bi.contextid = pctx.id
+             WHERE ctx.contextlevel=".CONTEXT_BLOCK."
+                   AND NOT EXISTS (SELECT 'x'
+                                   FROM {context_temp} temp
+                                   WHERE temp.id = ctx.id)
+                   $ctxemptyclause";
+    $DB->execute($sql);
+
+    $DB->execute($updatesql);
+    $DB->delete_records('context_temp');
 
     // reset static course cache - it might have incorrect cached data
     global $ACCESSLIB_PRIVATE;

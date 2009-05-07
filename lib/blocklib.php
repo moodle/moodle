@@ -364,6 +364,23 @@ class block_manager implements ArrayAccess {
         $DB->insert_record('block_instances', $blockinstance);
     }
 
+    /**
+     * Convenience method, calls add_block repeatedly for all the blocks in $blocks.
+     * @param array $blocks array with arrray keys the region names, and values an array of block names.
+     * @param string $pagetypepattern optional. Passed to @see add_block()
+     * @param string $subpagepattern optional. Passed to @see add_block()
+     */
+    public function add_blocks($blocks, $pagetypepattern = NULL, $subpagepattern = NULL) {
+        $this->add_regions(array_keys($blocks));
+        foreach ($blocks as $region => $regionblocks) {
+            $weight = 0;
+            foreach ($regionblocks as $blockname) {
+                $this->add_block($blockname, $region, $weight, false, $pagetypepattern, $subpagepattern);
+                $weight += 1;
+            }
+        }
+    }
+
 /// Inner workings =============================================================
 
     /**
@@ -1302,6 +1319,7 @@ function blocks_print_adminblock($page, $blockmanager) {
 }
 
 /**
+ * @deprecated since 2.0
  * Delete all the blocks from a particular page.
  *
  * @param string $pagetype the page type.
@@ -1310,14 +1328,17 @@ function blocks_print_adminblock($page, $blockmanager) {
  */
 function blocks_delete_all_on_page($pagetype, $pageid) {
     global $DB;
-    if ($instances = $DB->get_records('block_instance_old', array('pageid' => $pageid, 'pagetype' => $pagetype))) {
-        foreach ($instances as $instance) {
-            delete_context(CONTEXT_BLOCK, $instance->id); // Ingore any failures here.
-        }
-    }
-    return $DB->delete_records('block_instance_old', array('pageid' => $pageid, 'pagetype' => $pagetype));
+
+    debugging('Call to deprecated function blocks_repopulate_page. ' .
+            'This function cannot work any more. Doing nothing. ' .
+            'Please update your code to use another method.', DEBUG_DEVELOPER);
+    return false;
 }
 
+/**
+ * Delete all the blocks that belong to a particular context.
+ * @param $contextid the context id.
+ */
 function blocks_delete_all_for_context($contextid) {
     global $DB;
     $instances = $DB->get_recordset('block_instances', array('contextid' => $contextid));
@@ -1329,66 +1350,110 @@ function blocks_delete_all_for_context($contextid) {
     $DB->delete_records('block_positions', array('contextid' => $contextid));
 }
 
-// Dispite what this function is called, it seems to be mostly used to populate
-// the default blocks when a new course (or whatever) is created.
+/**
+ * Parse a list of default blocks. See config-dist for a description of the format.
+ * @param string $blocksstr
+ * @return array
+ */
+function blocks_parse_default_blocks_list($blocksstr) {
+    list($left, $right) = explode(':', $blocksstr);
+    return array(
+        BLOCK_POS_LEFT => explode(',', $left),
+        BLOCK_POS_RIGHT => explode(',', $right),
+    );
+}
+
+/**
+ * @return array the blocks that should be added to the site course by default.
+ */
+function blocks_get_default_site_course_blocks() {
+    global $CFG;
+
+    if (!empty($CFG->defaultblocks_site)) {
+        blocks_parse_default_blocks_list($CFG->defaultblocks_site);
+    } else {
+        $blocknames = array(
+            BLOCK_POS_LEFT => array('site_main_menu', 'admin_tree'),
+            BLOCK_POS_RIGHT => array('course_summary', 'calendar_month')
+        );
+    }
+}
+
+/**
+ * Add the default blocks to a course.
+ * @param object $course a course object.
+ */
+function blocks_add_default_course_blocks($course) {
+    global $CFG;
+
+    if (!empty($CFG->defaultblocks_override)) {
+        $blocknames = blocks_parse_default_blocks_list($CFG->defaultblocks_override);
+
+    } else if ($course->id == SITEID) {
+        $blocknames = blocks_get_default_site_course_blocks();
+
+    } else {
+        $defaultblocks = 'defaultblocks_' . $course->format;
+        if (!empty($CFG->$defaultblocks)) {
+            $blocknames = blocks_parse_default_blocks_list($CFG->$defaultblocks);
+
+        } else {
+            $formatconfig = $CFG->dirroot.'/course/format/'.$pageformat.'/config.php';
+            if (file_exists_and_readable($formatconfig)) {
+                require($formatconfig);
+            }
+            if (!empty($format['defaultblocks'])) {
+                $blocknames = blocks_parse_default_blocks_list($format['defaultblocks']);
+
+            } else if (!empty($CFG->defaultblocks)){
+                $blocknames = blocks_parse_default_blocks_list($CFG->defaultblocks);
+
+            } else {
+                $blocknames = array(
+                    BLOCK_POS_LEFT => array('participants', 'activity_modules', 'search_forums', 'admin', 'course_list'),
+                    BLOCK_POS_RIGHT => array('news_items', 'calendar_upcoming', 'recent_activity')
+                );
+            }
+        }
+    }
+
+    $page = new moodle_page();
+    $page->set_course($course);
+    $page->blocks->add_blocks(array($blocknames), 'course-view-*');
+}
+
+/**
+ * Add the default system-context blocks. E.g. the admin tree.
+ */
+function blocks_add_default_system_blocks() {
+    $page = new moodle_page();
+    $page->set_context(get_context_instance(CONTEXT_SYSTEM));
+    $page->blocks->add_blocks(array(BLOCK_POS_LEFT => array('admin_tree', 'admin_bookmarks')), 'admin-*');
+}
+
+/**
+ * @deprecated since 2.0
+ * Dispite what this function is called, it seems to be mostly used to populate
+ * the default blocks when a new course (or whatever) is created.
+ * @param object $page the page to add default blocks to.
+ * @return boolean success or failure.
+ */
 function blocks_repopulate_page($page) {
-    global $CFG, $DB;
+    global $CFG;
 
-    $allblocks = blocks_get_record();
-
-    if(empty($allblocks)) {
-        print_error('cannotgetblock');
-    }
-
-    // Assemble the information to correlate block names to ids
-    $idforname = array();
-    foreach($allblocks as $block) {
-        $idforname[$block->name] = $block->id;
-    }
+    debugging('Call to deprecated function blocks_repopulate_page. ' .
+            'Use a more specific method like blocks_add_default_course_blocks, ' .
+            'or just call $PAGE->blocks->add_blocks()', DEBUG_DEVELOPER);
 
     /// If the site override has been defined, it is the only valid one.
     if (!empty($CFG->defaultblocks_override)) {
         $blocknames = $CFG->defaultblocks_override;
-    }
-    else {
+    } else {
         $blocknames = $page->blocks_get_default();
     }
 
-    $regions = $page->blocks->get_regions();
-    $posblocks = explode(':', $blocknames);
-
-    // Now one array holds the names of the positions, and the other one holds the blocks
-    // that are going to go in each position. Luckily for us, both arrays are numerically
-    // indexed and the indexes match, so we can work straight away... but CAREFULLY!
-
-    // Ready to start creating block instances, but first drop any existing ones
-    blocks_delete_all_on_page($page->pagetype, $page->get_id());
-
-    // Here we slyly count $posblocks and NOT $regions. This can actually make a difference
-    // if the textual representation has undefined slots in the end. So we only work with as many
-    // positions were retrieved, not with all the page says it has available.
-    $numpositions = count($posblocks);
-    for($i = 0; $i < $numpositions; ++$i) {
-        $region = $regions[$i];
-        $blocknames = explode(',', $posblocks[$i]);
-        $weight = 0;
-        foreach($blocknames as $blockname) {
-            $newinstance = new stdClass;
-            $newinstance->blockid    = $idforname[$blockname];
-            $newinstance->pageid     = $page->get_id();
-            $newinstance->pagetype   = $page->pagetype;
-            $newinstance->position   = $region;
-            $newinstance->weight     = $weight;
-            $newinstance->visible    = 1;
-            $newinstance->configdata = '';
-
-            if(!empty($newinstance->blockid)) {
-                // Only add block if it was recognized
-                $DB->insert_record('block_instance_old', $newinstance);
-                ++$weight;
-            }
-        }
-    }
+    $blocks = blocks_parse_default_blocks_list($blocknames);
+    $page->blocks->add_blocks($blocks);
 
     return true;
 }
