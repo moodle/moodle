@@ -6,6 +6,7 @@ $string['adminprimarynoedit'] = 'The primary admin cannot be edited by others';
 $string['authnotexisting'] = 'The autorization plugin doesn\'t exist';
 $string['authorizeerror'] = 'Authorize error';
 $string['blockdoesnotexist'] = 'This block does not exist';
+$string['blockdoesnotexistonpage'] = 'This block (id=$a->instanceid) does not exist on this page ($a->url).';
 $string['blockcannotinistantiate'] = 'Problem in instantiating block object';
 $string['blockcannotread'] = 'Could not read data for blockid= $a ';
 $string['blockcannotconfig'] = 'This block does not support global configuration';

@@ -455,7 +455,7 @@ class block_base {
         }
 
         $page = $this->page;
-        $script = $page->url->out(array('instanceid' => $this->instance->id, 'sesskey' => sesskey()));
+        $script = $page->url->out(false, array('instanceid' => $this->instance->id, 'sesskey' => sesskey()));
 
         $movebuttons .= '<a class="icon roles" title="'. $this->str->assignroles .'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">' .
                         '<img src="'.$CFG->pixpath.'/i/roles.gif" alt="'.$this->str->assignroles.'" /></a>';

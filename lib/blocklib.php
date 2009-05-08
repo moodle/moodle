@@ -45,6 +45,15 @@ define('BLOCKS_PINNED_BOTH',2);
 
 require_once($CFG->libdir.'/pagelib.php');
 
+class block_not_on_page_exception extends moodle_exception {
+    public function __construct($instanceid, $page) {
+        $a = new stdClass;
+        $a->instanceid = $instanceid;
+        $a->url = $page->url;
+        parent::__construct('blockdoesnotexistonpage', '', $page->url, $a);
+    }
+}
+
 /**
  * This class keeps track of the block that should appear on a moodle_page.
  * The page to work with as passed to the constructor.
@@ -398,6 +407,23 @@ class block_manager implements ArrayAccess {
         }
     }
 
+    /**
+     * 
+     * @param integer $instanceid
+     * @return unknown_type
+     */
+    public function find_instance($instanceid) {
+        foreach ($this->regions as $region => $notused) {
+            $this->ensure_instances_exist($region);
+            foreach($this->blockinstances[$region] as $instance) {
+                if ($instance->instance->id == $instanceid) {
+                    return $instance;
+                }
+            }
+        }
+        throw new block_not_on_page_exception($instanceid, $this->page);
+    }
+
 /// Inner workings =============================================================
 
     /**
@@ -681,7 +707,9 @@ function blocks_name_allowed_in_format($name, $pageformat) {
  * @param $skipblockstables for internal use only. Makes @see blocks_delete_all_for_context() more efficient.
  */
 function blocks_delete_instance($instance, $nolongerused = false, $skipblockstables = false) {
-    if ($block = block_instance($block->blockname, $instance)) {
+    global $DB;
+
+    if ($block = block_instance($instance->blockname, $instance)) {
         $block->instance_delete();
     }
     delete_context(CONTEXT_BLOCK, $instance->id);
@@ -822,22 +850,10 @@ function blocks_find_block($blockid, $blocksarray) {
     return false;
 }
 
-function blocks_find_instance($instanceid, $blocksarray) {
-    foreach($blocksarray as $subarray) {
-        foreach($subarray as $instance) {
-            if($instance->id == $instanceid) {
-                return $instance;
-            }
-        }
-    }
-    return false;
-}
-
 // Simple entry point for anyone that wants to use blocks
 function blocks_setup(&$page, $pinned = BLOCKS_PINNED_FALSE) {
-    // TODO deprecate.
-    blocks_execute_url_action($page, $blockmanager,($pinned==BLOCKS_PINNED_TRUE));
     $page->blocks->load_blocks();
+    blocks_execute_url_action($page, $page->blocks);
     return $page->blocks;
 }
 
@@ -933,7 +949,7 @@ function blocks_execute_action($page, &$blockmanager, $blockaction, $instanceori
             if(empty($instance))  {
                 print_error('invalidblockinstance', '', '', $blockaction);
             }
-            blocks_delete_instance($instance, $pinned);
+            blocks_delete_instance($instance->instance, $pinned);
         break;
         case 'moveup':
             if(empty($instance))  {
@@ -1080,10 +1096,8 @@ function blocks_execute_url_action(&$PAGE, &$blockmanager,$pinned=false) {
 
     if (!empty($blockid)) {
         blocks_execute_action($PAGE, $blockmanager, strtolower($blockaction), $blockid, $pinned);
-
-    }
-    else if (!empty($instanceid)) {
-        $instance = blocks_find_instance($instanceid, $blockmanager);
+    } else if (!empty($instanceid)) {
+        $instance = $blockmanager->find_instance($instanceid);
         blocks_execute_action($PAGE, $blockmanager, strtolower($blockaction), $instance, $pinned);
     }
 }

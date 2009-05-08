@@ -29,12 +29,13 @@ $PAGE = page_create_object(PAGE_COURSE_VIEW, $course->id);
 $pageblocks = blocks_setup($PAGE, BLOCKS_PINNED_BOTH);
 
 if (!empty($instanceid)) {
-    $blockinstance = blocks_find_instance($instanceid, $pageblocks);
-    if (!$blockinstance || $blockinstance->pageid != $course->id
-                        || $blockinstance->pagetype != 'course-view') {
-        error_log('AJAX commands.php: Bad block ID '.$instanceid);
-        die;
-    }
+    throw new moodle_exception('ajax blocks editing currently broken. MDL-19010');
+//    $blockinstance = blocks_find_instance($instanceid, $pageblocks);
+//    if (!$blockinstance || $blockinstance->pageid != $course->id
+//                        || $blockinstance->pagetype != 'course-view') {
+//        error_log('AJAX commands.php: Bad block ID '.$instanceid);
+//        die;
+//    }
 }
 
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
