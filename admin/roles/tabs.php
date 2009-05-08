@@ -118,54 +118,39 @@ if ($currenttab != 'update') {
             break;
 
         case CONTEXT_BLOCK:
-            if ($blockinstance = $DB->get_record('block_instance_old', array('oldid'=>$context->instanceid))) {
-                if ($block = $DB->get_record('block', array('id'=>$blockinstance->blockid))) {
-                    $blockname = print_context_name($context);
+            if ($blockinstance = $DB->get_record('block_instances', array('id' => $context->instanceid))) {
+                $blockname = print_context_name($context);
+
+                $parentcontext = get_context_instance_by_id($blockinstance->contextid);
+                $navlinks[] = array('name' => $blockname, 'link' => null, 'type' => 'misc');
+                $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
+                switch ($parentcontext->contextlevel) {
+                    case CONTEXT_SYSTEM:
+                        break;
+
+                    case CONTEXT_COURSECAT:
+                        $PAGE->set_category_by_id($parentcontext->instanceid);
+                        break;
+
+                    case CONTEXT_COURSE:
+                        require_login($parentcontext->instanceid);
+                        break;
+
+                    case CONTEXT_MODULE:
+                        $cm = get_coursemodule_from_id('', $parentcontext->instanceid);
+                        require_login($parentcontext->instanceid, false, $cm);
+                        break;
+
+                    case CONTEXT_USER:
+                        break;
+
+                    default:
+                        throw new invalid_state_exception('Block context ' . $blockname .
+                                ' has parent context with an improper contextlevel ' . $parentcontext->contextlevel);
 
 
-                    switch ($blockinstance->pagetype) {
-                        case 'course-view':
-                            if ($course = $DB->get_record('course', array('id'=>$blockinstance->pageid))) {
-
-                                require_login($course);
-
-                                $navlinks[] = array('name' => $blockname, 'link' => null, 'type' => 'misc');
-                                $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
-                                $navigation = build_navigation($navlinks);
-                                print_header("$straction: $blockname", $course->fullname, $navigation);
-                            }
-                            break;
-
-                        case 'blog-view':
-                            $strblogs = get_string('blogs','blog');
-                            $navlinks[] = array('name' => $strblogs,
-                                                 'link' => $CFG->wwwroot.'/blog/index.php',
-                                                 'type' => 'misc');
-                            $navlinks[] = array('name' => $blockname, 'link' => null, 'type' => 'misc');
-                            $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
-                            $navigation = build_navigation($navlinks);
-                            print_header("$straction: $strblogs", $SITE->fullname, $navigation);
-                            break;
-
-                        case 'tag-index':
-                            $strtags = get_string('tags');
-                            $navlinks[] = array('name' => $strtags,
-                                                 'link' => $CFG->wwwroot.'/tag/index.php',
-                                                 'type' => 'misc');
-                            $navlinks[] = array('name' => $blockname, 'link' => null, 'type' => 'misc');
-                            $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
-                            $navigation = build_navigation($navlinks);
-                            print_header("$straction: $strtags", $SITE->fullname, $navigation);
-                            break;
-
-                        default:
-                            $navlinks[] = array('name' => $blockname, 'link' => null, 'type' => 'misc');
-                            $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
-                            $navigation = build_navigation($navlinks);
-                            print_header("$straction: $blockname", $SITE->fullname, $navigation);
-                            break;
-                    }
                 }
+                print_header("$straction: $blockname", $PAGE->course->fullname, build_navigation($navlinks));
             }
             break;
 

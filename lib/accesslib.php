@@ -3594,10 +3594,10 @@ function fetch_context_capabilities($context) {
         break;
 
         case CONTEXT_BLOCK: // block caps
-            $cb = $DB->get_record('block_instances', array('id'=>$context->instanceid));
+            $bi = $DB->get_record('block_instances', array('id' => $context->instanceid));
 
             $extra = '';
-            $extracaps = block_method_result($cb->blockname, 'get_extra_capabilities');
+            $extracaps = block_method_result($bi->blockname, 'get_extra_capabilities');
             if ($extracaps) {
                 list($extra, $params) = $DB->get_in_or_equal($extracaps, SQL_PARAMS_NAMED, 'cap0');
                 $extra = "OR name $extra";
@@ -3608,7 +3608,7 @@ function fetch_context_capabilities($context) {
                      WHERE (contextlevel = ".CONTEXT_BLOCK."
                            AND component = :component)
                            $extra";
-            $params['component'] = "block/$block->name";
+            $params['component'] = 'block/' . $bi->blockname;
         break;
 
         default:

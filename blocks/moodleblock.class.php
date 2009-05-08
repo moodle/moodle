@@ -460,7 +460,8 @@ class block_base {
         $movebuttons .= '<a class="icon roles" title="'. $this->str->assignroles .'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">' .
                         '<img src="'.$CFG->pixpath.'/i/roles.gif" alt="'.$this->str->assignroles.'" /></a>';
 
-        if ($this->user_can_edit()) {
+        // TODO MDL-19010 fix and re-enable.
+        if (false && $this->user_can_edit()) {
             $movebuttons .= '<a class="icon hide" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
                             '<img src="'. $CFG->pixpath.$icon .'" alt="'.$title.'" /></a>';
         }
@@ -713,7 +714,7 @@ class block_base {
     function instance_config_save($data, $nolongerused = false) {
         global $DB;
         $DB->set_field('block_instances', 'configdata', base64_encode(serialize($data)),
-                array($field => $this->instance->id));
+                array('id' => $this->instance->id));
     }
 
     /**

@@ -384,6 +384,10 @@ class block_manager implements ArrayAccess {
         $blockinstance->configdata = '';
         $blockinstance->id = $DB->insert_record('block_instances', $blockinstance);
 
+        if ($this->page->context->contextlevel == CONTEXT_COURSE) {
+            get_context_instance(CONTEXT_BLOCK, $blockinstance->id);
+        }
+
         // If the new instance was created, allow it to do additional setup
         if($block = block_instance($blockname, $blockinstance)) {
             $block->instance_create();
@@ -872,29 +876,19 @@ function blocks_execute_action($page, &$blockmanager, $blockaction, $instanceori
 
     switch($blockaction) {
         case 'config':
-            $block = blocks_get_record($instance->blockid);
-            // Hacky hacky tricky stuff to get the original human readable block title,
-            // even if the block has configured its title to be something else.
-            // Create the object WITHOUT instance data.
-            $blockobject = block_instance($block->name);
-            if ($blockobject === false) {
-                break;
-            }
-
             // First of all check to see if the block wants to be edited
-            if(!$blockobject->user_can_edit()) {
+            if(!$instance->user_can_edit()) {
                 break;
             }
 
             // Now get the title and AFTER that load up the instance
-            $blocktitle = $blockobject->get_title();
-            $blockobject->_load_instance($instance);
+            $blocktitle = $instance->get_title();
 
             // Define the data we're going to silently include in the instance config form here,
             // so we can strip them from the submitted data BEFORE serializing it.
             $hiddendata = array(
                 'sesskey' => sesskey(),
-                'instanceid' => $instance->id,
+                'instanceid' => $instance->instance->id,
                 'blockaction' => 'config'
             );
 
@@ -906,32 +900,30 @@ function blocks_execute_action($page, &$blockmanager, $blockaction, $instanceori
                 foreach($remove as $item) {
                     unset($data->$item);
                 }
-                if(!$blockobject->instance_config_save($data, $pinned)) {
-                    print_error('cannotsaveblock');
-                }
-                // And nothing more, continue with displaying the page
-            }
-            else {
+                $instance->instance_config_save($data);
+                redirect($page->url->out());
+
+            } else {
                 // We need to show the config screen, so we highjack the display logic and then die
                 $strheading = get_string('blockconfiga', 'moodle', $blocktitle);
-                $page->print_header(get_string('pageheaderconfigablock', 'moodle'), array($strheading => ''));
+                $nav = build_navigation($strheading, $page->cm);
+                print_header($strheading, $strheading, $nav);
 
-                echo '<div class="block-config" id="'.$block->name.'">';   /// Make CSS easier
+                echo '<div class="block-config" id="'.$instance->name().'">';   /// Make CSS easier
 
                 print_heading($strheading);
                 echo '<form method="post" name="block-config" action="'. $page->url->out(false) .'">';
                 echo '<p>';
-                foreach($hiddendata as $name => $val) {
-                    echo '<input type="hidden" name="'. $name .'" value="'. $val .'" />';
-                }
+                echo $page->url->hidden_params_out(array(), 0, $hiddendata);
                 echo '</p>';
-                $blockobject->instance_config_print();
+                $instance->instance_config_print();
                 echo '</form>';
 
                 echo '</div>';
-                $PAGE->set_pagetype('blocks-' . $block->name);
+                global $PAGE;
+                $PAGE->set_docs_path('blocks/' . $instance->name());
                 print_footer();
-                die(); // Do not go on with the other page-related stuff
+                die; // Do not go on with the other page-related stuff
             }
         break;
         case 'toggle':
