@@ -1051,7 +1051,7 @@ function blocks_execute_action($page, &$blockmanager, $blockaction, $instanceori
             }
 
             $region = $page->blocks->get_default_region();
-            $weight = $DB->get_field_sql("SELECT MAX(weight) FROM {block_instances} 
+            $weight = $DB->get_field_sql("SELECT MAX(defaultweight) FROM {block_instances} 
                     WHERE contextid = ? AND defaultregion = ?", array($page->context->id, $region));
             $pagetypepattern = $page->pagetype;
             if (strpos($pagetypepattern, 'course-view') === 0) {
@@ -1295,21 +1295,18 @@ function blocks_print_adminblock($page, $blockmanager) {
         $strblocks = '<div class="title"><h2>';
         $strblocks .= get_string('blocks');
         $strblocks .= '</h2></div>';
+
         $stradd    = get_string('add');
         foreach ($missingblocks as $blockid) {
             $block = blocks_get_record($blockid);
             $blockobject = block_instance($block->name);
-            if ($blockobject === false) {
-                continue;
+            if ($blockobject !== false && $blockobject->user_can_addto($page)) {
+                $menu[$block->id] = $blockobject->get_title();
             }
-            if(!$blockobject->user_can_addto($page)) {
-                continue;
-            }
-            $menu[$block->id] = $blockobject->get_title();
         }
-        asort($menu);
+        asort($menu, SORT_LOCALE_STRING);
 
-        $target = $page->url->out(array('sesskey' => sesskey(), 'blockaction' => 'add'));
+        $target = $page->url->out(false, array('sesskey' => sesskey(), 'blockaction' => 'add'));
         $content = popup_form($target.'&amp;blockid=', $menu, 'add_block', '', $stradd .'...', '', '', true);
         print_side_block($strblocks, $content, NULL, NULL, NULL, array('class' => 'block_adminblock'));
     }

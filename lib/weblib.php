@@ -373,18 +373,21 @@ class moodle_url {
     /**
      * Output url
      *
-     * @param boolean $noquerystring whether to output page params as a query string in the url.
+     * @param boolean $omitquerystring whether to output page params as a query string in the url.
      * @param array $overrideparams params to add to the output url, these override existing ones with the same name.
      * @return string url
      */
-    public function out($noquerystring = false, $overrideparams = array()) {
+    public function out($omitquerystring = false, $overrideparams = array()) {
         $uri = $this->scheme ? $this->scheme.':'.((strtolower($this->scheme) == 'mailto') ? '':'//'): '';
         $uri .= $this->user ? $this->user.($this->pass? ':'.$this->pass:'').'@':'';
         $uri .= $this->host ? $this->host : '';
         $uri .= $this->port ? ':'.$this->port : '';
         $uri .= $this->path ? $this->path : '';
-        if (!$noquerystring) {
-            $uri .= (count($this->params)||count($overrideparams)) ? '?'.$this->get_query_string($overrideparams) : '';
+        if (!$omitquerystring) {
+            $querystring = $this->get_query_string($overrideparams);
+            if ($querystring) {
+                $uri .= '?' . $querystring;
+            }
         }
         $uri .= $this->fragment ? '#'.$this->fragment : '';
         return $uri;
