@@ -154,6 +154,11 @@ if ($mform->is_cancelled()) {
         $grade_item->aggregationcoef = $grade_item_copy->aggregationcoef;
     }
 
+    // Handle null decimals value - must be done before update!
+    if (!array_key_exists('decimals', $itemdata) or $itemdata->decimals < 0) {
+        $grade_item->decimals = null;
+    }
+
     $grade_item->outcomeid = null;
 
     // update hiding flag
@@ -165,12 +170,6 @@ if ($mform->is_cancelled()) {
 
     $grade_item->set_locktime($locktime); // locktime first - it might be removed when unlocking
     $grade_item->set_locked($locked, false, true);
-
-
-    // Handle null decimals value
-    if (!array_key_exists('decimals', $itemdata) or $itemdata->decimals < 0) {
-        $grade_item->decimals = null;
-    }
 
     $grade_item->update(); // We don't need to insert it, it's already created when the category is created
 
