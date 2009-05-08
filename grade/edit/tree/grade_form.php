@@ -35,6 +35,15 @@ class edit_grade_form extends moodleform {
         $grade_item = $this->_customdata['grade_item'];
         $gpr        = $this->_customdata['gpr'];
 
+        if ($grade_item->is_course_item()) {
+            $grade_category = null;
+        } else if ($grade_item->is_category_item()) {
+            $grade_category = $grade_item->get_item_category();
+            $grade_category = $grade_category->get_parent_category();
+        } else {
+            $grade_category = $grade_item->get_parent_category();
+        }
+
         /// information fields
         $mform->addElement('static', 'user', get_string('user'));
         $mform->addElement('static', 'itemname', get_string('itemname', 'grades'));
@@ -72,7 +81,11 @@ class edit_grade_form extends moodleform {
             $mform->disabledIf('finalgrade', 'overridden', 'notchecked');
         }
 
-        $mform->addElement('advcheckbox', 'excluded', get_string('excluded', 'grades'));
+        if ($grade_category and $grade_category->aggregation == GRADE_AGGREGATE_SUM) {
+            $mform->addElement('advcheckbox', 'excluded', get_string('excluded', 'grades'), '<small>('.get_string('warningexcludedsum', 'grades').')</small>');
+        } else {
+            $mform->addElement('advcheckbox', 'excluded', get_string('excluded', 'grades'));
+        }
         $mform->setHelpButton('excluded', array('excluded', get_string('excluded', 'grades'), 'grade'));
 
         /// hiding
