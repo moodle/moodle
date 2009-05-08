@@ -57,8 +57,8 @@ class auth_plugin_cas extends auth_plugin_base {
      * @return bool Authentication success or failure.
      */
     function user_login ($username, $password) {
-		$this->connectCAS();	
-        return phpCAS::isAuthenticated();
+		$this->connectCAS();
+        return phpCAS::isAuthenticated() && (phpCAS::getUser() == $username);
     }
     /**
      * Returns true if this authentication plugin is 'internal'.
@@ -97,7 +97,7 @@ class auth_plugin_cas extends auth_plugin_base {
           return;		  
         }
 
-		// Test si cas activé et paramêtres non remplis
+		// Test si cas activï¿½ et paramï¿½tres non remplis
 	  if (empty($this->config->hostname)) {
 		  return;
 		  }
@@ -107,7 +107,7 @@ class auth_plugin_cas extends auth_plugin_base {
 // Connection to CAS server
 	 $this->connectCAS();
 
-	  // Gestion de la connection CAS si accès direct d'un ent ou autre	 
+	  // Gestion de la connection CAS si accï¿½s direct d'un ent ou autre	 
 	 if (phpCAS::checkAuthentication()) {
 		$frm->username=phpCAS::getUser();
 //		if (phpCAS::getUser()=='esup9992')
