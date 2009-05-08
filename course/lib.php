@@ -2559,16 +2559,8 @@ function move_courses ($courseids, $categoryid) {
 
                     $course->category  = $categoryid;
                     $course->sortorder = $sortorder;
-                    $course->fullname = addslashes($course->fullname);
-                    $course->shortname = addslashes($course->shortname);
-                    $course->summary = addslashes($course->summary);
-                    $course->password = addslashes($course->password);
-                    $course->teacher = addslashes($course->teacher);
-                    $course->teachers = addslashes($course->teachers);
-                    $course->student = addslashes($course->student);
-                    $course->students = addslashes($course->students);
 
-                    if (!update_record('course', $course)) {
+                    if (!update_record('course', addslashes_recursive($course))) {
                         notify("An error occurred - course not moved!");
                     }
                     // parents changed (course category), do not delete child context relations
