@@ -25,6 +25,7 @@
     require_once(dirname(__FILE__) . '/../../config.php');
     require_once($CFG->dirroot . '/mod/data/lib.php');
     require_once($CFG->libdir . '/rsslib.php');
+    require_once($CFG->libdir . '/completionlib.php');
 
 /// One of these is necessary!
     $id = optional_param('id', 0, PARAM_INT);  // course module id

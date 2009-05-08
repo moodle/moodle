@@ -2,7 +2,8 @@
     //This file contains all the general function needed (file manipulation...)
     //not directly part of the backup/restore utility
 
-    require_once($CFG->dirroot.'/lib/uploadlib.php');
+    require_once($CFG->libdir.'/uploadlib.php');
+    require_once($CFG->libdir . '/completionlib.php');
 
     //Sets a name/value pair in config_plugin table
     function backup_set_config($name, $value) {

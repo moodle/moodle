@@ -4,7 +4,6 @@
 
     require_once('../../config.php');
     require_once('lib.php');
-    require_once($CFG->libdir.'/completionlib.php');
 
     $reply   = optional_param('reply', 0, PARAM_INT);
     $forum   = optional_param('forum', 0, PARAM_INT);

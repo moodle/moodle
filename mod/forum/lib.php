@@ -3,6 +3,7 @@
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/eventslib.php');
 require_once($CFG->libdir.'/portfoliolib.php');
+require_once($CFG->libdir . '/completionlib.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////
 

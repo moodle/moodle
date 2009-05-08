@@ -10,6 +10,7 @@
 
     require_once("../../config.php");
     require_once("lib.php");
+    require_once($CFG->libdir . '/completionlib.php');
 
     $id = required_param('id', PARAM_INT);
     $completedid = optional_param('completedid', false, PARAM_INT);
