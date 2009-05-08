@@ -3522,6 +3522,14 @@ function create_course($data) {
     unset($data->allowedmods);
     if ($CFG->restrictmodulesfor == 'all') {
         $data->restrictmodules = 1;
+
+        // if the user is not an admin, get the default allowed modules because
+        // there are no modules passed by the form
+        if(!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+            if(!$allowedmods && $CFG->defaultallowedmodules) {
+                $allowedmods = explode(',', $CFG->defaultallowedmodules);
+            }
+        }
     } else {
         $data->restrictmodules = 0;
     }
