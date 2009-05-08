@@ -167,7 +167,7 @@
         echo '</td>';
 
         echo '<td class="topic starter"><div class="subject">'.$template['title'].'</div><div class="author">';
-        $fullname = fullname($user, $template['userid']);
+        $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $COURSE->id)));
         $by = new object();
         $by->name =  '<a href="'.$CFG->wwwroot.'/user/view.php?id='.
                     $user->id.'&amp;course='.$COURSE->id.'">'.$fullname.'</a>';
