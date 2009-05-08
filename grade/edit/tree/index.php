@@ -237,6 +237,10 @@ if ($form_key && $data = data_submitted()) {
         // Grade category text inputs
         if (preg_match('/(aggregation|droplow|keephigh)_([0-9]*)/', $key, $matches) && confirm_sesskey()) {
             $value = required_param($matches[0], PARAM_INT);
+
+            // Do not allow negative values
+            $value = ($value < 0) ? 0 : $value;
+
             $param = $matches[1];
             $a->id = $matches[2];
 
