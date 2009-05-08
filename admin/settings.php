@@ -48,7 +48,7 @@ if ($data = data_submitted() and confirm_sesskey()) {
         $focus = $firsterror->id;
     }
     $adminroot = admin_get_root(true); //reload tree
-    $settingspage = $adminroot->locate($section);
+    $settingspage = $adminroot->locate($section, true);
 }
 
 if ($PAGE->user_allowed_editing() && $adminediting != -1) {
@@ -71,7 +71,7 @@ if (empty($SITE->fullname)) {
 
     echo '<form action="settings.php" method="post" id="adminsettings">';
     echo '<div class="settingsform clearfix">';
-    $PAGE->url->hidden_params_out();
+    echo $PAGE->url->hidden_params_out();
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<input type="hidden" name="return" value="'.$return.'" />';
 
@@ -138,7 +138,7 @@ if (empty($SITE->fullname)) {
 
     echo '<form action="settings.php" method="post" id="adminsettings">';
     echo '<div class="settingsform clearfix">';
-    $PAGE->url->hidden_params_out();
+    echo $PAGE->url->hidden_params_out();
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<input type="hidden" name="return" value="'.$return.'" />';
     print_heading($settingspage->visiblename);
