@@ -1109,8 +1109,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
         if ($newid = $DB->insert_record('course', $newsite)) {
             // Site created, add blocks for it
-            $page = page_create_object(PAGE_COURSE_VIEW, $newid);
-            blocks_repopulate_page($page); // Return value not checked because you can always edit later
+            blocks_add_default_course_blocks($DB->get_record('course', array('id' => $newid)));
 
             // create default course category
             $cat = get_course_category();

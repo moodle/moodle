@@ -67,13 +67,13 @@
         }
 
     /// Insert the record.
-        if ($courseid = $DB->insert_record("course",$course)) {
-            $page = page_create_object(PAGE_COURSE_VIEW, $courseid);
-            blocks_repopulate_page($page); // Return value not checked because you can always edit later
+        if ($courseid = $DB->insert_record('course', $course)) {
+            $course = $DB->get_record('course', array('id' => $courseid));
+            blocks_add_default_course_blocks($course);
             $context = get_context_instance(CONTEXT_COURSE, $courseid);
             role_assign($CFG->creatornewroleid, $teacherid, 0, $context->id); // assing teacher role
-            $course->id = $courseid;
-            if (!empty($CFG->restrictmodulesfor) && $CFG->restrictmodulesfor != 'none' && !empty($CFG->restrictbydefault)) { // if we're all or requested we're ok.
+            if (!empty($CFG->restrictmodulesfor) && $CFG->restrictmodulesfor != 'none' && !empty($CFG->restrictbydefault)) {
+                // if we're all or requested we're ok.
                 $allowedmods = explode(',',$CFG->defaultallowedmodules);
                 update_restricted_mods($course,$allowedmods);
             }

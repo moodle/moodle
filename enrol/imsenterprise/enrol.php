@@ -536,11 +536,11 @@ function process_group_tag($tagcontents){
                 // Choose a sort order that puts us at the start of the list!
                 $course->sortorder = 0;
 
-                if($course->id = $DB->insert_record('course', $course)){
+                if ($courseid = $DB->insert_record('course', $course)) {
 
                     // Setup the blocks
-                    $page = page_create_object(PAGE_COURSE_VIEW, $course->id);
-                    blocks_repopulate_page($page); // Return value not checked because you can always edit later
+                    $course = $DB->get_record('course', array('id' => $courseid));
+                    blocks_add_default_course_blocks($course);
 
                     $section = new object();
                     $section->course = $course->id;   // Create a default section.

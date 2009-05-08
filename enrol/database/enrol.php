@@ -607,8 +607,8 @@ function create_course ($course,$skip_fix_course_sortorder=0){
         $section->course  = $newcourseid;   // Create a default section.
         $section->section = 0;
         $section->id = $DB->insert_record("course_sections", $section);
-        $page = page_create_object(PAGE_COURSE_VIEW, $newcourseid);
-        blocks_repopulate_page($page); // Return value no
+        $course = $DB->get_record('course', array('id' => $newcourseid));
+        blocks_add_default_course_blocks($course);
 
         if (!$skip_fix_course_sortorder){
             fix_course_sortorder();

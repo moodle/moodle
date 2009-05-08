@@ -735,7 +735,7 @@ function blocks_delete_instance($instance, $nolongerused = false, $skipblockstab
 function blocks_delete_all_on_page($pagetype, $pageid) {
     global $DB;
 
-    debugging('Call to deprecated function blocks_repopulate_page. ' .
+    debugging('Call to deprecated function blocks_delete_all_on_page. ' .
             'This function cannot work any more. Doing nothing. ' .
             'Please update your code to use another method.', DEBUG_DEVELOPER);
     return false;

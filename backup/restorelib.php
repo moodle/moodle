@@ -842,8 +842,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         if (empty($backup_block_format)) {     // This is a backup from Moodle < 1.5
             if (empty($blockinfo)) {
                 // Looks like it's from Moodle < 1.3. Let's give the course default blocks...
-                $newpage = page_create_object(PAGE_COURSE_VIEW, $restore->course_id);
-                blocks_repopulate_page($newpage);
+                blocks_add_default_course_blocks($DB->get_record('course', array('id' => $restore->course_id)));
             } else {
                 // We just have a blockinfo field, this is a legacy 1.4 or 1.3 backup
                 $blockrecords = $DB->get_records('block', null, '', 'name, id');
