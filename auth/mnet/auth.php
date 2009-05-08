@@ -877,7 +877,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             if (isset($useridarray[$logEntryObj->username])) {
                 $logEntryObj->userid = $useridarray[$logEntryObj->username];
             } else {
-                $logEntryObj->userid = get_field('user','id','username',$logEntryObj->username);
+                $logEntryObj->userid = get_field('user','id','username',$logEntryObj->username,'mnethostid',(int)$logEntryObj->hostid);
                 if ($logEntryObj->userid == false) {
                     $logEntryObj->userid = 0;
                 }
