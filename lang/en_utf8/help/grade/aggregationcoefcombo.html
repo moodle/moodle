@@ -1,0 +1,25 @@
+<h1>Extra credit</h1>
+<h2>For Sum of Grades aggregation</h2>
+<p>When the "Sum of grades" aggregation strategy is used, a grade item can act as Extra credit for the category. This means that the grade item's maximum grade will not be added to the category total's maximum grade, but the item's grade will. Following is an example:</p>
+
+<ul>
+    <li>Item 1 is graded 0-100</li>
+    <li>Item 2 is graded 0-75</li>
+    <li>Item 1 has the "Act as extra credit" checkbox ticked, Item 2 doesn't.</li>
+    <li>Both items belong to Category 1, which has "Sum of grades" as its aggregation strategy</li>
+    <li>Category 1's total will be graded 0-75</li>
+    <li>A student gets graded 20 on Item 1 and 70 on Item 2</li>
+    <li>The student's total for Category 1 will be 75/75 (20+70 = 90 but Item 1 only acts as extra credit, so it brings the total to its maximum)</li>
+</ul>
+<h2>For Weighted Mean of Grades (extra credit)</h2>
+<p>A value greater than 0 treats this grade item's grades as Extra credit during aggregation. The number is a factor by which the grade value will be multiplied before it is added to the sum of all grades, but the item itself will not be counted in the division. For example:</p>
+
+<ul>
+    <li>Item 1 is graded 0-100 and its "Extra credit" value is set to 2</li>
+    <li>Item 2 is graded 0-100 and its "Extra credit" value is left at 0.0000</li>
+    <li>Item 3 is graded 0-100 and its "Extra credit" value is left at 0.0000</li>
+    <li>All 3 items belong to Category 1, which has "Mean of grades (with extra credits)" as its aggregation strategy</li>
+    <li>A student gets graded 20 on Item 1, 40 on Item 2 and 70 on Item 3</li>
+    <li>The student's total for Category 1 will be 95/100 since 20*2 + (40 + 70)/2 = 95</li>
+</ul>
+

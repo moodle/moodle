@@ -593,7 +593,7 @@ class grade_edit_tree_column_aggregation extends grade_edit_tree_column_category
 class grade_edit_tree_column_extracredit extends grade_edit_tree_column {
 
     public function get_header_cell() {
-        return '<th class="header" scope="col">'.get_string('extracredit', 'grades').helpbutton('aggregationcoefextra', 'aggregationcoefextra', 'grade', true, false, '', true).'</th>';
+        return '<th class="header" scope="col">'.get_string('extracredit', 'grades').helpbutton('aggregationcoefcombo', 'aggregationcoefcombo', 'grade', true, false, '', true).'</th>';
     }
 
     public function get_category_cell($category, $levelclass, $params) {
