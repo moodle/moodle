@@ -433,7 +433,7 @@ function make_upload_directory($directory, $shownotices=true) {
     // Make sure a .htaccess file is here, JUST IN CASE the files area is in the open
     if (!file_exists($currdir.'/.htaccess')) {
         if ($handle = fopen($currdir.'/.htaccess', 'w')) {   // For safety
-            @fwrite($handle, "deny from all\r\nAllowOverride None\r\n");
+            @fwrite($handle, "deny from all\r\nAllowOverride None\r\nNote: this file is broken intentionally, we do not want anybody to undo it in subdirectory!\r\n");
             @fclose($handle);
         }
     }
