@@ -45,10 +45,10 @@ class moodle_exception extends Exception {
 }
 
 /**
- * Exception indicating programming error, must be fixed by a programer.
+ * Exception indicating programming error, must be fixed by a programer. For example
+ * a core API might throw this type of exception if a plugin calls it incorrectly.
  */
 class coding_exception extends moodle_exception {
-
     /**
      * Constructor
      * @param string $hint short description of problem
@@ -56,6 +56,24 @@ class coding_exception extends moodle_exception {
      */
     function __construct($hint, $debuginfo=null) {
         parent::__construct('codingerror', 'debug', '', $hint, $debuginfo);
+    }
+}
+
+/**
+ * An exception that indicates something really weird happended. For example,
+ * if you do switch ($context->contextlevel), and have one case for each
+ * CONTEXT_... constant. You might throw an invalid_state_exception in the
+ * default case, to just in case something really weird is going on, and 
+ * $context->contextlevel is invalid - ratehr than ignoring this possibility.
+ */
+class invalid_state_exception extends moodle_exception {
+    /**
+     * Constructor
+     * @param string $hint short description of problem
+     * @param string $debuginfo optional more detailed information
+     */
+    function __construct($hint, $debuginfo=null) {
+        parent::__construct('invalidstatedetected', 'debug', '', $hint, $debuginfo);
     }
 }
 

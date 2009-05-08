@@ -298,6 +298,7 @@ $string['invalidscaleid'] = 'Incorrect scale id';
 $string['invalidsesskey'] = 'Incorrect sesskey submitted, form not accepted!';
 $string['invalidsection'] = 'Course module record contains invalid section';
 $string['invalidshortname'] = 'That\'s an invalid short course name';
+$string['invalidstatedetected'] = 'Something has gone wrong: $a. This should never normally happen.';
 $string['invalidurl'] = 'Invalid URL';
 $string['invaliduser'] = 'Invalid user';
 $string['invaliduserid'] = 'Invalid user id';
