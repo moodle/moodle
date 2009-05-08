@@ -97,9 +97,21 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 
 } else if ($data = $mform->get_data(false)) {
+    // If unset, give the aggregationcoef a default based on parent aggregation method
+    if (!isset($data->aggregationcoef) || $data->aggregationcoef == '') {
+        if ($parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
+            $data->aggregationcoef = 1;
+        } else {
+            $data->aggregationcoef = 0;
+        }
+    }
 
-    if (!isset($data->aggregationcoef)) {
-        $data->aggregationcoef = 0;
+    if (!isset($data->gradepass) || $data->gradepass == '') {
+        $data->gradepass = 0;
+    }
+
+    if (!isset($data->grademin) || $data->grademin == '') {
+        $data->grademin = 0;
     }
 
     $hidden      = empty($data->hidden) ? 0: $data->hidden;
