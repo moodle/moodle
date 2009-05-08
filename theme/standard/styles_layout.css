@@ -2305,46 +2305,46 @@ body#course-index .courseboxes {
   padding:20px;
 }
 
-body#course-category .rolelink {
+body#admin-course-category .rolelink {
   text-align:right;
   padding:10px;
 }
 
-body#course-category .addcategory {
+body#admin-course-category .addcategory {
   text-align: center;
   padding: 10px;
 }
 
-body#course-index .buttons .singlebutton,
-body#course-category .buttons .singlebutton {
+body#admin-course-index .buttons .singlebutton,
+body#admin-course-category .buttons .singlebutton {
   display: inline;
 }
 
-body#course-index .buttons,
-body#course-category .buttons {
+body#admin-course-index .buttons,
+body#admin-course-category .buttons {
   text-align: center;
   margin-bottom: 15px;
 }
 
-body#course-index #middle-column .editcourse {
+body#admin-course-index #middle-column .editcourse {
   margin-left:auto;
   margin-right:auto;
   margin-top:20px;
   margin-bottom:20px;
 }
 
-body#course-index #middle-column .editcourse th,
-body#course-index #middle-column .editcourse td {
+body#admin-course-index #middle-column .editcourse th,
+body#admin-course-index #middle-column .editcourse td {
   padding-left:10px;
   padding-right:10px;
 }
 
-body#course-index #middle-column .editcourse .count {
+body#admin-course-index #middle-column .editcourse .count {
   text-align:right;
 }
 
-body#course-index .singlebutton,
-body#course-index .addcategory {
+body#admin-course-index .singlebutton,
+body#admin-course-index .addcategory {
   text-align: center;
 }
 

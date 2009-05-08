@@ -3913,6 +3913,9 @@ function admin_externalpage_setup($section, $extrabutton = '',
     }
     $PAGE->set_url(str_replace($CFG->wwwroot . '/', '', $actualurl),
             array_merge($extraurlparams, array('section' => $section)));
+    if (strpos($PAGE->pagetype, 'admin-') !== 0) {
+        $PAGE->set_pagetype('admin-' . $PAGE->pagetype);
+    }
 
     if (empty($extpage) or !($extpage instanceof admin_externalpage)) {
         print_error('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");

@@ -54,8 +54,20 @@ require_once($CFG->libdir.'/pagelib.php');
  * only at the point that the load_blocks() method is called. It is the caller's
  * responsibility to ensure that those fields do not subsequently change.
  *
- * The implements ArrayAccess is a horrible backwards_compatibility thing.
- * TODO explain!
+ *
+ * Note about the weird 'implements ArrayAccess' part of the declaration:
+ *
+ * ArrayAccess is a magic PHP5 thing. If your class implements the ArrayAccess
+ * interface, then other code can use the $object[$index] syntax, and it will
+ * call the offsetGet method of the object.
+ * See http://php.net/manual/en/class.arrayaccess.php
+ *
+ * So, why do we do this here? Basically, some of the deprecated blocks methods
+ * like blocks_setup used to return an array of blocks on the page, with array
+ * keys BLOCK_POS_LEFT, BLOCK_POS_RIGHT. We can keep legacy code that calls those
+ * deprecated functions mostly working by changing blocks_setup to return the
+ * block_manger object, and then use 'implements ArrayAccess' so that the right
+ * thing happens when legacy code does something like $pageblocks[BLOCK_POS_LEFT].
  */
 class block_manager implements ArrayAccess {
 
@@ -1355,8 +1367,8 @@ function blocks_add_default_course_blocks($course) {
             $blocknames = blocks_parse_default_blocks_list($CFG->$defaultblocks);
 
         } else {
-            $formatconfig = $CFG->dirroot.'/course/format/'.$pageformat.'/config.php';
-            if (file_exists_and_readable($formatconfig)) {
+            $formatconfig = $CFG->dirroot.'/course/format/'.$course->format.'/config.php';
+            if (is_readable($formatconfig)) {
                 require($formatconfig);
             }
             if (!empty($format['defaultblocks'])) {
@@ -1382,9 +1394,6 @@ function blocks_add_default_course_blocks($course) {
 
     $page = new moodle_page();
     $page->set_course($course);
-    print_object($page); // DONOTCOMMIT
-    print_object($pagetypepattern); // DONOTCOMMIT
-    print_object($blocknames); // DONOTCOMMIT
     $page->blocks->add_blocks($blocknames, $pagetypepattern);
 }
 

@@ -3536,8 +3536,7 @@ function create_course($data) {
         $course = $DB->get_record('course', array('id'=>$newcourseid));
 
         // Setup the blocks
-        $page = page_create_object(PAGE_COURSE_VIEW, $course->id);
-        blocks_repopulate_page($page); // Return value not checked because you can always edit later
+        blocks_add_default_course_blocks($course);
 
         update_restricted_mods($course, $allowedmods);
 
