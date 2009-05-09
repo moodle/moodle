@@ -178,7 +178,7 @@ class null_filter_manager {
     }
 
     public function filter_string($string, $context, $courseid) {
-        return $text;
+        return $string;
     }
 
     public function text_filtering_hash() {
