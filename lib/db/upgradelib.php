@@ -589,7 +589,7 @@ function upgrade_fix_category_depths() {
 /**
  * This function will fix the status of the localhost/all records in the mnet_host table
  * checking they exist and adding them if missing + redefine CFG->mnet_localhost_id  and
- * CFG->mnet_all_hosts_id if needed + update all the users having non-existent mnhostid
+ * CFG->mnet_all_hosts_id if needed + update all the users having non-existent mnethostid
  * to correct CFG->mnet_localhost_id
  *
  * Implemented because, at some point, specially in old installations upgraded along
@@ -622,7 +622,7 @@ function upgrade_fix_incorrect_mnethostids() {
     /// Get the ip of the server
         if (empty($_SERVER['SERVER_ADDR'])) {
         /// SERVER_ADDR is only returned by Apache-like webservers
-            $count = preg_match("@^(?:http[s]?://)?([A-Z0-9\-\.]+).*@i", $$current_mnet_localhost_host->wwwroot, $matches);
+            $count = preg_match("@^(?:http[s]?://)?([A-Z0-9\-\.]+).*@i", $current_mnet_localhost_host->wwwroot, $matches);
             $my_hostname = $count > 0 ? $matches[1] : false;
             $my_ip       = gethostbyname($my_hostname);  // Returns unmodified hostname on failure. DOH!
             if ($my_ip == $my_hostname) {
