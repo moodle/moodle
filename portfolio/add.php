@@ -157,7 +157,7 @@ if (!empty($dataid)) {
     }
 
     // set up the course so that build_navigation works nice
-    course_setup($course);
+    $PAGE->set_course($course);
 
     // and now we know the course for sure, call require_login with it
     require_login($course);
