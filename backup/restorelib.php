@@ -2526,31 +2526,46 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 //Has role teacher or student or needed
                 $is_course_user = ($is_teacher or $is_student or $is_needed);
 
-                //Calculate mnethostid
-                if (empty($user->mnethosturl) || $user->mnethosturl===$CFG->wwwroot) {
-                    $user->mnethostid = $CFG->mnet_localhost_id;
-                } else {
-                    // fast url-to-id lookups
-                    if (isset($mnethosts[$user->mnethosturl])) {
-                        $user->mnethostid = $mnethosts[$user->mnethosturl]->id;
-                    } else {
-                        $user->mnethostid = $CFG->mnet_localhost_id;
-                    }
+                // in case we are restoring to same server, look for user by id
+                // it should return record always, but in sites rebuilt from scratch
+                // and being reconstructed using course backups
+                $user_data = false;
+                if (backup_is_same_site($restore)) {
+                    $user_data = get_record('user', 'id', $user->id);
                 }
-                //Arriving here, any user with mnet auth and using $CFG->mnet_localhost_id is wrong
-                //as own server cannot be accesed over mnet. Change auth to manual and inform about the switch
-                if ($user->auth == 'mnet' && $user->mnethostid == $CFG->mnet_localhost_id) {
-                    // Respect registerauth
-                    if ($CFG->registerauth == 'email') {
-                        $user->auth = 'email';
+
+                // Only try to perform mnethost/auth modifications if restoring to another server
+                // or if, while restoring to same server, the user doesn't exists yet (rebuilt site)
+                //
+                // So existing user data in same server *won't be modified by restore anymore*,
+                // under any circumpstance. If somehting is wrong with existing data, it's server fault.
+                if (!backup_is_same_site($restore) || (backup_is_same_site($restore) && !$user_data)) {
+                    //Calculate mnethostid
+                    if (empty($user->mnethosturl) || $user->mnethosturl===$CFG->wwwroot) {
+                        $user->mnethostid = $CFG->mnet_localhost_id;
                     } else {
-                        $user->auth = 'manual';
+                        // fast url-to-id lookups
+                        if (isset($mnethosts[$user->mnethosturl])) {
+                            $user->mnethostid = $mnethosts[$user->mnethosturl]->id;
+                        } else {
+                            $user->mnethostid = $CFG->mnet_localhost_id;
+                        }
                     }
-                    // inform about the automatic switch of authentication/host
-                    if(empty($user->mnethosturl)) {
-                        $user->mnethosturl = '----';
+                    //Arriving here, any user with mnet auth and using $CFG->mnet_localhost_id is wrong
+                    //as own server cannot be accesed over mnet. Change auth to manual and inform about the switch
+                    if ($user->auth == 'mnet' && $user->mnethostid == $CFG->mnet_localhost_id) {
+                        // Respect registerauth
+                        if ($CFG->registerauth == 'email') {
+                            $user->auth = 'email';
+                        } else {
+                            $user->auth = 'manual';
+                        }
+                        // inform about the automatic switch of authentication/host
+                        if(empty($user->mnethosturl)) {
+                            $user->mnethosturl = '----';
+                        }
+                        $messages[] = get_string('mnetrestore_extusers_switchuserauth', 'admin', $user);
                     }
-                    $messages[] = get_string('mnetrestore_extusers_switchuserauth', 'admin', $user);
                 }
                 unset($user->mnethosturl);
 
@@ -2558,8 +2573,11 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $newid=null;
                 //check if it exists (by username) and get its id
                 $user_exists = true;
-                $user_data = get_record("user","username",addslashes($user->username),
-                                        'mnethostid', $user->mnethostid);
+                if (!backup_is_same_site($restore)) { /// Restoring to another server, look for existing user based on fields
+                                                      /// If restoring to same server, look has been performed some lines above (by id)
+                    $user_data = get_record('user', 'username', addslashes($user->username), 'mnethostid', $user->mnethostid);
+                }
+
                 if (!$user_data) {
                     $user_exists = false;
                 } else {
