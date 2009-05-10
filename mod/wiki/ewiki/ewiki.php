@@ -1067,20 +1067,20 @@ function ewiki_page_ordered_list($orderby="created", $asc=0, $print, $title) {
 
 
 function ewiki_page_newest($id=0, $data=0) {
-   return( ewiki_page_ordered_list("created", 1, "LASTCHANGED", ewiki_t("NEWESTPAGES")) );
+   return( ewiki_page_ordered_list("created", 1, "LASTCHANGED", ewiki_t(EWIKI_PAGE_NEWEST)) );
 }
 
 function ewiki_page_updates($id=0, $data=0) {
-   return( ewiki_page_ordered_list("lastmodified", -1, "LASTCHANGED", EWIKI_PAGE_UPDATES) );
+   return( ewiki_page_ordered_list("lastmodified", -1, "LASTCHANGED", ewiki_t(EWIKI_PAGE_UPDATES)) );
 }
 
 function ewiki_page_hits($id=0, $data=0) {
    ##### BEGIN MOODLE ADDITION #####
-   return( ewiki_page_ordered_list("hits", 1, "hits", EWIKI_PAGE_HITS) );
+   return( ewiki_page_ordered_list("hits", 1, "hits", ewiki_t(EWIKI_PAGE_HITS)) );
 }
 
 function ewiki_page_versions($id=0, $data=0) {
-   return( ewiki_page_ordered_list("version", -1, "changes", EWIKI_PAGE_VERSIONS) );
+   return( ewiki_page_ordered_list("version", -1, "changes", ewiki_t(EWIKI_PAGE_VERSIONS)) );
    ##### END MOODLE ADDITION #####
 }
 

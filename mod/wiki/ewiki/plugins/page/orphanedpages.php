@@ -12,7 +12,7 @@ function ewiki_page_orphanedpages($id, $data, $action) {
 
    global $ewiki_links;
 
-   $o = ewiki_make_title($id, $id, 2);
+   $o = ewiki_make_title($id, ewiki_t($id), 2);
 
    $pages = array();
    $refs = array();
