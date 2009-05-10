@@ -808,6 +808,7 @@
         global $CFG;
         $preferences = new StdClass;
         $preferences->backup_unique_code = time();
+        $preferences->backup_users = (isset($prefs['backup_users']) ? $prefs['backup_users'] : 0);
         $preferences->backup_name = backup_get_zipfile_name($course, $preferences->backup_unique_code);
         $count = 0;
 
@@ -825,6 +826,7 @@
                 if (!function_exists($modbackup) || !function_exists($modcheckbackup)) {
                     continue;
                 }
+                $modcheckbackup($course->id, $preferences->backup_users, $preferences->backup_unique_code);
                 $var = "exists_".$modname;
                 $preferences->$var = true;
                 $count++;
@@ -866,7 +868,6 @@
 
         //Check other parameters
         $preferences->backup_metacourse = (isset($prefs['backup_metacourse']) ? $prefs['backup_metacourse'] : 0);
-        $preferences->backup_users = (isset($prefs['backup_users']) ? $prefs['backup_users'] : 0);
         $preferences->backup_logs = (isset($prefs['backup_logs']) ? $prefs['backup_logs'] : 0);
         $preferences->backup_user_files = (isset($prefs['backup_user_files']) ? $prefs['backup_user_files'] : 0);
         $preferences->backup_course_files = (isset($prefs['backup_course_files']) ? $prefs['backup_course_files'] : 0);
@@ -875,6 +876,28 @@
         $preferences->backup_gradebook_history = (isset($prefs['backup_gradebook_history']) ? $prefs['backup_gradebook_history'] : 0);
         $preferences->backup_blogs = (isset($prefs['backup_blogs']) ? $prefs['backup_blogs'] : 0);
         $preferences->backup_course = $course->id;
+
+        //Check users
+        user_check_backup($course->id,$preferences->backup_unique_code,$preferences->backup_users,$preferences->backup_messages, $preferences->backup_blogs);
+
+        //Check logs
+        log_check_backup($course->id);
+
+        //Check user files
+        user_files_check_backup($course->id,$preferences->backup_unique_code);
+
+        //Check course files
+        course_files_check_backup($course->id,$preferences->backup_unique_code);
+
+        //Check site files
+        site_files_check_backup($course->id,$preferences->backup_unique_code);
+
+        //Role assignments
+        $roles = get_records('role', '', '', 'sortorder');
+        foreach ($roles as $role) {
+            $preferences->backuproleassignments[$role->id] = $role;
+        }
+
         backup_add_static_preferences($preferences);
         return $preferences;
     }
