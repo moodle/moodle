@@ -12,6 +12,7 @@
 $string['admindirerror']='Valitud administreerimiskataloog on vale';
 $string['admindirname']='Administreerimiskataloog';
 $string['admindirsettinghead']='Kataloogi admin seadistamine ...';
+$string['bypassed']='Läbitud';
 $string['cannotcreatelangdir']='Ei saa luua lang kataloogi';
 $string['cannotcreatetempdir']='Ei saa luua temp kataloogi';
 $string['cannotdownloadcomponents']='Ei saa alla tõmmata komponente.';
@@ -83,8 +84,10 @@ $string['databasesettingssub_postgres7']='<b>Tüüp:</b> PostgreSQL<br />
 	<b>Nimi:</b> andmebaasi nimi, näiteks moodle<br />
 	<b>Kasutaja:</b> Sinu andmebaasi konto kasutajatunnus<br />
 	<b>Tabelite prefiks:</b> prefiks kasutamaks tabelite nimedes (kohustuslik)';
+$string['databasesettingswillbecreated']='<b>Märkus:</b> Installeerija püüab luua andmebaasi automaatselt, kui seda ei eksisteeri.';
 $string['dataroot']='Andmete kataloog';
 $string['datarooterror']='Sinu määratud andmete kataloogi ei suudetud leida ega luua. Paranda tee või loo ise käsitsi see kataloog.';
+$string['datarootpublicerror']='Sinu määratud andmete kataloog on otse ligipääsetav veebi kaudu. Sa pead valima mingi muu kataloogi.';
 $string['dbconnectionerror']='Me ei suutnud sinu määratud andmebaasi ühendada. Palun kontrolli oma andmebaasi seadistust.';
 $string['dbcreationerror']='Andmebaasi loomise viga. Ei suudetud luua andmebaasi nime olemasolevate seadistustega.';
 $string['dbhost']='Hosti server';
@@ -175,7 +178,7 @@ $string['password']='Salasõna';
 $string['pgsqlextensionisnotpresentinphp']='PHP laiendus PGSQL ei ole korralikult seadistatud, mistõttu ei saa ühenduda PostgreSQL\'iga. Palun kontrolli oma php.ini faili või kompileeri PHP uuesti.';
 $string['php50restricted']='PHP 5.0.x omab mitmeid probleeme. Palun uuenda 5.1.x või lase tagasi 4.3.x or 4.4.x PHP versioonile';
 $string['phpversion']='PHP versioon';
-$string['phpversionerror']='PHP versioon peab olema vähemalt 4.1.0';
+$string['phpversionerror']='PHP versioon peab olema vähemalt 4.1.0'; // ORPHANED
 $string['phpversionhelp']='<p>Moodle vajab vähemalt PHP versiooni 4.1.0</p>
 <p>Sinu jooksev versioon on $a</p>
 <p>Sa pead oma PHP-d uuendama või kolima hosti, kus on uuem PHP versioon!</p>';
