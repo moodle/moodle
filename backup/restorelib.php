@@ -2534,16 +2534,23 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     if (isset($mnethosts[$user->mnethosturl])) {
                         $user->mnethostid = $mnethosts[$user->mnethosturl]->id;
                     } else {
-                        // lookup failed, switch user auth to manual and host to local. MDL-17009
-                        if ($CFG->registerauth == 'email') {
-                            $user->auth = 'email';
-                        } else {
-                            $user->auth = 'manual';
-                        }
                         $user->mnethostid = $CFG->mnet_localhost_id;
-                        // inform about the automatic switch of authentication/host
-                        $messages[] = get_string('mnetrestore_extusers_switchuserauth', 'admin', $user);
                     }
+                }
+                //Arriving here, any user with mnet auth and using $CFG->mnet_localhost_id is wrong
+                //as own server cannot be accesed over mnet. Change auth to manual and inform about the switch
+                if ($user->auth == 'mnet' && $user->mnethostid == $CFG->mnet_localhost_id) {
+                    // Respect registerauth
+                    if ($CFG->registerauth == 'email') {
+                        $user->auth = 'email';
+                    } else {
+                        $user->auth = 'manual';
+                    }
+                    // inform about the automatic switch of authentication/host
+                    if(empty($user->mnethosturl)) {
+                        $user->mnethosturl = '----';
+                    }
+                    $messages[] = get_string('mnetrestore_extusers_switchuserauth', 'admin', $user);
                 }
                 unset($user->mnethosturl);
 
