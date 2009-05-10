@@ -34,6 +34,9 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
     
     // {{{ properties
 
+    /** add choose option */
+    var $showchoose = false;
+
     /**
      * Contains the select optgroups
      *
@@ -69,12 +72,14 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
      * @param     mixed     An array whose keys are labels for optgroups and whose values are arrays similar to those passed
      *                          to the select element with keys that are values for options and values are strings for display.  
      * @param     mixed     Either a typical HTML attribute string or an associative array
+     * @param     bool      add standard moodle "Choose..." option as first item
      * @since     1.0
      * @access    public
      * @return    void
      */
-    function MoodleQuickForm_selectgroups($elementName=null, $elementLabel=null, $optgrps=null, $attributes=null)
+    function MoodleQuickForm_selectgroups($elementName=null, $elementLabel=null, $optgrps=null, $attributes=null, $showchoose=false)
     {
+        $this->showchoose = $showchoose;
         HTML_QuickForm_element::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
         $this->_persistantFreeze = true;
         $this->_type = 'selectgroups';
@@ -407,7 +412,14 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
                             $this->getLabel().'</label>';
             }
             $strHtml .=  '<select' . $attrString . ">\n";
+            if ($this->showchoose) {
+                $strHtml .= $tabs . "\t\t<option value=\"\">" . get_string('choose') . "...</option>\n";
+            }
             foreach ($this->_optGroups as $optGroup) {
+                if (empty($optGroup['options'])) {
+                    //xhtml strict
+                    continue;
+                }
                 $strHtml .= $tabs . "\t<optgroup" . ($this->_getAttrString($optGroup['attr'])) . '>';
                 foreach ($optGroup['options'] as $option){
                     if (is_array($this->_values) && in_array((string)$option['attr']['value'], $this->_values)) {
