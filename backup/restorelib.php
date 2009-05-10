@@ -3774,8 +3774,11 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
                         //Now search if that event exists (by name, description, timestart fields) in
                         //restore->course_id course
-                        $eve_db = $DB->get_records("event",
-                            array('courseid'=>$eve->courseid, 'name'=>$eve->name, 'description'=>$eve->description, 'timestart'=>$eve->timestart));
+                        //Going to compare LOB columns so, use the cross-db sql_compare_text() in both sides.
+                        $compare_description_clause = $DB->sql_compare_text('description')  . "=" .  $DB->sql_compare_text("'" . $eve->description . "'");
+                        $eve_db = $DB->get_record_select('event',
+                            "courseid = ? AND name = ? AND $compare_description_clause AND timestart = ?",
+                            array($eve->courseid, $eve->name, $eve->timestart));
                         //If it doesn't exist, create
                         if (!$eve_db) {
                             $create_event = true;
