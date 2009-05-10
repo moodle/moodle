@@ -12,7 +12,7 @@ function ewiki_page_index($id=0, $data=0, $action=0, $args=array()) {
 
    global $ewiki_plugins;
 
-   $o = ewiki_make_title($id, $id, 2);
+   $o = ewiki_make_title($id, ewiki_t($id), 2);
 
    $sorted = array();
    $sorted = array_merge($sorted, array_keys($ewiki_plugins["page"]));
