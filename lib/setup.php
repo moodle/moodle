@@ -406,12 +406,6 @@ global $SCRIPT;
     $CFG->javascript  = $CFG->libdir .'/javascript.php';
     $CFG->moddata     = 'moddata';
 
-// Alas, in some cases we cannot deal with magic_quotes.
-    if (defined('MOODLE_SANE_INPUT') && ini_get_bool('magic_quotes_gpc')) {
-        mdie("Facilities that require MOODLE_SANE_INPUT "
-             . "cannot work with magic_quotes_gpc. Please disable "
-             . "magic_quotes_gpc.");
-    }
 /// A hack to get around magic_quotes_gpc being turned on
 /// It is strongly recommended to disable "magic_quotes_gpc"!
     if (ini_get_bool('magic_quotes_gpc')) {
