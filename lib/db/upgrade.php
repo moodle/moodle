@@ -3159,6 +3159,16 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101546.06);
     }
 
+    if ($result && $oldversion < 2007101547) {
+        // Let's check the status of mandatory mnet_host records, fixing them
+        // and moving "orphan" users to default localhost record. MDL-16879
+        notify('Fixing mnet records, this may take a while...', 'notifysuccess');
+        $db->debug = false; // Can output too much. Disabling
+        upgrade_fix_incorrect_mnethostids();
+        $db->debug = true; // Restoring debug level
+        upgrade_main_savepoint($result, 2007101547);
+    }
+
     return $result;
 }
 
