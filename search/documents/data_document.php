@@ -88,7 +88,7 @@ class DataCommentSearchDocument extends SearchDocument {
         $data->database = $comment['dataid'];
         
         // construct the parent class
-        parent::__construct($doc, $data, $course_id, $comment['groupid'], $comment['userid'], PATH_FOR_SEARCH_TYPE_DATA);
+        parent::__construct($doc, $data, $course_id, $comment['groupid'], $comment['userid'], 'mod/'.SEARCH_TYPE_DATA);
     } 
 }
 
@@ -112,19 +112,21 @@ function data_make_link($database_id, $record_id) {
 * @uses $CFG, $DB
 * @return an array of objects representing the data records.
 */
-function data_get_records($database_id, $typematch = '*') {
+function data_get_records($database_id, $typematch = '*', $recordid = 0) {
     global $CFG, $DB;
     
     $fieldset = $DB->get_records('data_fields', array('dataid' => $database_id));
+    $uniquerecordclause = ($recordid > 0) ? " AND c.recordid = $recordid " : '' ;
     $query = "
         SELECT
            c.*
         FROM 
-            {data_content} c,
-            {data_records} r
+            {data_content} as c,
+            {data_records} as r
         WHERE
             c.recordid = r.id AND
             r.dataid = ? 
+            $uniquerecordclause
         ORDER BY 
             c.fieldid
     ";
@@ -164,8 +166,8 @@ function data_get_comments($database_id) {
           c.modified,
           r.dataid
        FROM
-          {data_comments} c,
-          {data_records} r 
+          {data_comments} as c,
+          {data_records} as r 
        WHERE
           c.recordid = r.id AND
           r.dataid = ?
@@ -216,14 +218,12 @@ function data_get_content_for_index(&$database) {
             foreach($records_content[$arecordid] as $afield){
                 $content = @$content.' '.$afield;
             }
-            if (strlen($content) > 0) {
-                unset($recordMetaData);
-                $recordMetaData = $DB->get_record('data_records', array('id' => $arecordid));
-                $recordMetaData->title = $first;
-                $recordTitles[$arecordid] = $first;
-                $recordMetaData->content = $content;
-                $documents[] = new DataSearchDocument(get_object_vars($recordMetaData), $database->course, $context->id);
-            } 
+            unset($recordMetaData);
+            $recordMetaData = $DB->get_record('data_records', array('id' => $arecordid));
+            $recordMetaData->title = $first;
+            $recordTitles[$arecordid] = $first;
+            $recordMetaData->content = $content;
+            $documents[] = new DataSearchDocument(get_object_vars($recordMetaData), $database->course, $context->id);
         } 
     }
 
@@ -257,22 +257,26 @@ function data_single_document($id, $itemtype) {
         $cm = $DB->get_record('course_modules', array('course' => $record_course, 'module' => $coursemodule, 'instance' => $recordMetaData->dataid));
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         // compute text
-        $recordData = $DB->get_records_select('data_content', "recordid = ? AND type = 'text'", array($id), 'recordid');
-        $accumulator = '';
+        $recordData = data_get_records($recordMetaData->dataid, 'text', $id);
         if ($recordData){
-            $first = $recordData[0];
-            if (count($recordData) > 1){
-                $others = array_splice($recordData, 0, 1);
-                foreach($others as $aDatum){
-                    $accumulator .= $data->content.' '.$data->content1.' '.$data->content2.' '.$data->content3.' '.$data->content4.' ';
-                }
+            $dataArray = array_values($recordData);
+            $record_content = $dataArray[0]; // We cannot have more than one record here
+
+            // extract title as first record in order
+            $first = $record_content['_first'];
+            unset($record_content['_first']);
+    
+            // concatenates all other texts
+            $content = '';
+            foreach($record_content as $aField){
+                $content = @$content.' '.$aField;
             }
+            unset($recordMetaData);
+            $recordMetaData = $DB->get_record('data_records', array('id' => $aRecordId));
+            $recordMetaData->title = $first;
+            $recordMetaData->content = $content;
+            return new DataSearchDocument(get_object_vars($recordMetaData), $record_course, $context->id);
         }
-        // add extra fields
-        $recordMetaData->title = $first;
-        $recordMetaData->content = $accumulator;
-        // make document
-        $documents[] = new DataSearchDocument(get_object_vars($recordMetaData), $record_course, $context->id);
     } elseif($itemtype == 'comment') {
         // get main records
         $comment = $DB->get_record('data_comments', array('id' => $id));
@@ -287,9 +291,10 @@ function data_single_document($id, $itemtype) {
         $comment->dataid = $record->dataid;
         $comment->groupid = $record->groupid;
         // make document
-        $documents[] = new DataCommentSearchDocument(get_object_vars($comment), $record_course, $context->id);
+        return new DataCommentSearchDocument(get_object_vars($comment), $record_course, $context->id);
     } else {
        mtrace('Error : bad or missing item type');
+       return NULL;
     }
 }
 
