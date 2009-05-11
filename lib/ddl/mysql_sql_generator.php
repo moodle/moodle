@@ -211,6 +211,8 @@ class mysql_sql_generator extends sql_generator {
                     $dbtype .= '(' . $xmldb_length;
                     if (!empty($xmldb_decimals)) {
                         $dbtype .= ',' . $xmldb_decimals;
+                    } else {
+                        $dbtype .= ', 0'; // In MySQL, if length is specified, decimals are mandatory for FLOATs
                     }
                     $dbtype .= ')';
                 }
