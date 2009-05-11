@@ -53,7 +53,7 @@
     }
     $dbcontrol = new IndexDBControl();
     $update_count = 0;
-    $indexdate = @$CFG->search_indexer_update_date;
+    $indexdate = 0 + @$CFG->search_indexer_update_date;
     $startupdatedate = time();
 
 /// indexing changed resources
