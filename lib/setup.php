@@ -274,14 +274,6 @@ global $SCRIPT;
         get_system_context();
     }
 
-/// Create the $PAGE global.
-    if (!empty($CFG->moodlepageclass)) {
-        $classname = $CFG->moodlepageclass;
-    } else {
-        $classname = 'moodle_page';
-    }
-    $PAGE = new $classname();
-
 /// Set error reporting back to normal
     if ($originaldatabasedebug == -1) {
         $CFG->debug = DEBUG_MINIMAL;
@@ -317,6 +309,15 @@ global $SCRIPT;
         @ini_set('display_errors', '0');
         @ini_set('log_errors', '1');
     }
+
+/// Create the $PAGE global.
+    if (!empty($CFG->moodlepageclass)) {
+        $classname = $CFG->moodlepageclass;
+    } else {
+        $classname = 'moodle_page';
+    }
+    $PAGE = new $classname();
+    unset($classname);
 
 /// detect unsupported upgrade jump as soon as possible - do not change anything, do not use system functions
     if (!empty($CFG->version) and $CFG->version < 2007101509) {
