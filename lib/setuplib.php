@@ -64,7 +64,7 @@ class coding_exception extends moodle_exception {
  * if you do switch ($context->contextlevel), and have one case for each
  * CONTEXT_... constant. You might throw an invalid_state_exception in the
  * default case, to just in case something really weird is going on, and 
- * $context->contextlevel is invalid - ratehr than ignoring this possibility.
+ * $context->contextlevel is invalid - rather than ignoring this possibility.
  */
 class invalid_state_exception extends moodle_exception {
     /**
