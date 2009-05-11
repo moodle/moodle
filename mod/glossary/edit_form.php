@@ -21,7 +21,7 @@ class mod_glossary_entry_form extends moodleform {
         $mform->setType('concept', PARAM_TEXT);
         $mform->addRule('concept', null, 'required', null, 'client');
 
-        $mform->addElement('editor', 'definition_editor', get_string('definition', 'glossary'), $definitionoptions);
+        $mform->addElement('editor', 'definition_editor', get_string('definition', 'glossary'), null, $definitionoptions);
         $mform->setType('definition_editor', PARAM_RAW);
         $mform->addRule('definition_editor', get_string('required'), 'required', null, 'client');
 

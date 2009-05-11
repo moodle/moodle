@@ -14,7 +14,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
     protected $_options    = array('subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>0, 'changeformat'=>0);
     protected $_values     = array('text'=>null, 'format'=>null, 'itemid'=>null);
 
-    function MoodleQuickForm_editor($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
+    function MoodleQuickForm_editor($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG;
 
         $options = (array)$options;

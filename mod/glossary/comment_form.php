@@ -10,7 +10,7 @@ class mod_glossary_comment_form extends moodleform {
         $commentoptions = $this->_customdata['commentoptions'];
         
         // visible elements
-        $mform->addElement('editor', 'entrycomment_editor', get_string('comment', 'glossary'), $commentoptions);
+        $mform->addElement('editor', 'entrycomment_editor', get_string('comment', 'glossary'), null, $commentoptions);
         $mform->addRule('entrycomment_editor', get_string('required'), 'required', null, 'client');
         $mform->setType('entrycomment_editor', PARAM_RAW); // processed by trust text or cleaned before the display
 
