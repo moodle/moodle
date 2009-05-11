@@ -5,9 +5,9 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/lib/filelib.php');
 
 class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     protected $_helpbutton = '';
-    protected $_options    = array('subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>-1);
+    protected $_options    = array('subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>-1, 'filetypes'=>'*', 'returnvalue'=>'*');
 
-    function MoodleQuickForm_filemanager($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
+    function MoodleQuickForm_filemanager($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG;
 
         $options = (array)$options;
@@ -15,16 +15,6 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
             if (array_key_exists($name, $this->_options)) {
                 $this->_options[$name] = $value;
             }
-        }
-        if (!empty($options['filetypes'])) {
-            $this->filetypes = $options['filetypes'];
-        } else {
-            $this->filetypes = '*';
-        }
-        if (!empty($options['returnvalue'])) {
-            $this->returnvalue = $options['returnvalue'];
-        } else {
-            $this->returnvalue = '*';
         }
         if (!empty($options['maxbytes'])) {
             $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $options['maxbytes']);

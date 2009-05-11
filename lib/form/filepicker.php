@@ -13,11 +13,21 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/repository/lib.php');
  * @access       public
  */
 class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
-    var $_helpbutton='';
+    protected $_helpbutton = '';
+    protected $_options    = array('maxbytes'=>0, 'filetypes'=>'*', 'returnvalue'=>'*');
+    
+    function MoodleQuickForm_filepicker($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
+        global $CFG;
 
-    function MoodleQuickForm_filepicker($elementName=null, $elementLabel=null, $attributes=null, $filetypes = '*', $returnvalue = '*') {
-        $this->filetypes = $filetypes;
-        $this->returnvalue = $returnvalue;
+        $options = (array)$options;
+        foreach ($options as $name=>$value) {
+            if (array_key_exists($name, $this->_options)) {
+                $this->_options[$name] = $value;
+            }
+        }
+        if (!empty($options['maxbytes'])) {
+            $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $options['maxbytes']);
+        }
         parent::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
     }
 
@@ -73,7 +83,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
             $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
         }
         $client_id = uniqid();
-        $repository_info = repository_get_client($context, $client_id, $this->filetypes, $this->returnvalue);
+        $repository_info = repository_get_client($context, $client_id, $this->_options['filetypes'], $this->_options['returnvalue']);
 
         $id     = $this->_attributes['id'];
         $elname = $this->_attributes['name'];

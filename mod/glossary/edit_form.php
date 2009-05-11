@@ -36,7 +36,7 @@ class mod_glossary_entry_form extends moodleform {
         $mform->setType('aliases', PARAM_TEXT);
         $mform->setHelpButton('aliases', array('aliases2', strip_tags(get_string('aliases', 'glossary')), 'glossary'));
 
-        $mform->addElement('filemanager', 'attachment_filemanager', get_string('attachment', 'glossary'), $attachmentoptions);
+        $mform->addElement('filemanager', 'attachment_filemanager', get_string('attachment', 'glossary'), null, $attachmentoptions);
         $mform->setHelpButton('attachment_filemanager', array('attachment2', get_string('attachment', 'glossary'), 'glossary'));
 
         if (!$glossary->usedynalink) {
