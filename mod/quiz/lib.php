@@ -1004,6 +1004,10 @@ function quiz_reset_gradebook($courseid, $type='') {
  */
 function quiz_reset_userdata($data) {
     global $CFG, $QTYPES;
+    
+    if (empty($QTYPES)) {
+        require_once($CFG->libdir . '/questionlib.php');
+    }
 
     // TODO: this should use the delete_attempt($attempt->uniqueid) function in questionlib.php
     // require_once($CFG->libdir.'/questionlib.php');
