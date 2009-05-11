@@ -131,6 +131,9 @@ function file_prepare_standard_editor($data, $field, array $options, $context=nu
     if (!isset($options['maxfiles'])) {
         $options['maxfiles'] = 0; // no files by default
     }
+    if (!isset($options['noclean'])) {
+        $options['noclean'] = false;
+    }
 
     if (empty($data->id) or empty($context)) {
         $contextid = null;
@@ -139,18 +142,23 @@ function file_prepare_standard_editor($data, $field, array $options, $context=nu
             $data->{$field} = '';
         }
         if (!isset($data->{$field.'format'})) {
-            $data->{$field.'format'} = FORMAT_HTML; // TODO: use better default
+            $data->{$field.'format'} = FORMAT_HTML; // TODO: use better default based on user preferences and browser capabilities
         }
-        $data->{$field} = clean_text($data->{$field}, $data->{$field.'format'});
+        if (!$options['noclean']) {
+            $data->{$field} = clean_text($data->{$field}, $data->{$field.'format'});
+        }
 
     } else {
         if ($options['trusttext']) {
+            // noclean ignored if trusttext enabled
             if (!isset($data->{$field.'trust'})) {
                 $data->{$field.'trust'} = 0;
             }
             $data = trusttext_pre_edit($data, $field, $context);
         } else {
-            $data->{$field} = clean_text($data->{$field}, $data->{$field.'format'});
+            if (!$options['noclean']) {
+                $data->{$field} = clean_text($data->{$field}, $data->{$field.'format'});
+            }
         }
         $contextid = $context->id;
     }
