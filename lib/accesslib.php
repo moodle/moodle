@@ -1069,6 +1069,11 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
     } else {
         $fields = $basefields;
     }
+    // If any of the fields is '*', leave it alone, discarding the rest
+    // to avoid ambiguous columns under some silly DBs. See MDL-18746 :-D
+    if (in_array('*', $fields)) {
+        $fields = array('*');
+    }
     $coursefields = 'c.' .implode(',c.', $fields);
 
     $sort = trim($sort);
