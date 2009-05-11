@@ -15,7 +15,7 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/repository/lib.php');
 class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
     protected $_helpbutton = '';
     protected $_options    = array('maxbytes'=>0, 'filetypes'=>'*', 'returnvalue'=>'*');
-    
+
     function MoodleQuickForm_filepicker($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG;
 
@@ -70,7 +70,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         if ($draftid = (int)$this->getValue()) {
             $fs = get_file_storage();
             $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-            if ($files = $fs->get_area_files($usercontext->id, 'user_draft', $draftid, '', false)) {
+            if ($files = $fs->get_area_files($usercontext->id, 'user_draft', $draftid, 'id DESC', false)) {
                 $file = reset($files);
                 $currentfile = $file->get_filename();
                 $draftvalue = 'value="'.$draftid.'"';
@@ -107,11 +107,30 @@ function callpicker(client_id, id) {
 }
 </script>
 EOD;
-        $str .= '<input value="'.get_string('openpicker', 'repository').'" type="button" onclick="callpicker(\''+$client_id+'\', \''+$id+'\')" />'.'<span id="repo_info_'.$client_id.'" class="notifysuccess">'.$currentfile.'</span>'.$repository_info['css'].$repository_info['js'];
+        $str .= '<input value="'.get_string('openpicker', 'repository').'" type="button" onclick="callpicker(\''.$client_id.'\', \''.$id.'\')" />'.'<span id="repo_info_'.$client_id.'" class="notifysuccess">'.$currentfile.'</span>'.$repository_info['css'].$repository_info['js'];
         return $str;
     }
 
     function exportValue(&$submitValues, $assoc = false) {
+        global $USER;
+
+        // make sure max one file is present and it is not too big
+        if ($draftid = $submitValues[$this->_attributes['name']]) {
+            $fs = get_file_storage();
+            $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+            if ($files = $fs->get_area_files($usercontext->id, 'user_draft', $draftid, 'id DESC', false)) {
+                $file = array_shift($files);
+                if ($this->_options['maxbytes'] and $file->get_filesize() > $this->_options['maxbytes']) {
+                    // bad luck, somebody tries to sneak in oversized file
+                    $file->delete();
+                }
+                foreach ($files as $file) {
+                    // only one file expected
+                    $file->delete();
+                }
+            }
+        }
+
         return array($this->_attributes['name'] => $submitValues[$this->_attributes['name']]);
     }
 }
