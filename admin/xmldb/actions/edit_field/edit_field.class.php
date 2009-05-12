@@ -39,6 +39,7 @@ class edit_field extends XMLDBAction {
     /// Get needed strings
         $this->loadStrings(array(
             'change' => 'xmldb',
+            'float2numbernote' => 'xmldb',
             'vieworiginal' => 'xmldb',
             'viewedited' => 'xmldb',
             'yes' => '',
@@ -97,8 +98,15 @@ class edit_field extends XMLDBAction {
         $dbdir =& $XMLDB->dbdirs[$dirpath];
         $origstructure =& $dbdir->xml_file->getStructure();
 
+        $o = ''; /// Output starts
+
+    /// If field is XMLDB_TYPE_FLOAT, comment about to migrate it to XMLDB_TYPE_NUMBER
+        if ($field->getType() == XMLDB_TYPE_FLOAT) {
+            $o .= '<p>' . $this->str['float2numbernote'] . '</p>';
+        }
+
     /// Add the main form
-        $o = '<form id="form" action="index.php" method="post">';
+        $o.= '<form id="form" action="index.php" method="post">';
         $o.= '    <div>';
         $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
         $o.= '    <input type="hidden" name ="table" value="' . $tableparam .'" />';

@@ -74,6 +74,7 @@ $string['fields'] = 'Fields';
 $string['fieldsusedinkey'] = 'This field is used as key.';
 $string['filenotwriteable'] = 'File not writeable';
 $string['fkviolationdetails'] = 'Foreign key $a->keyname on table $a->tablename is violated by $a->numviolations out of $a->numrows rows.';
+$string['float2numbernote'] = 'Notice: Although \"float\" fields are 100% supported by XMLDB, it\'s recommended to migrate to \"number\" fields instead.';
 $string['floatincorrectdecimals'] = 'Incorrect number of decimals for float field';
 $string['floatincorrectlength'] = 'Incorrect length for float field';
 $string['generate_documentation']='Documentation';
