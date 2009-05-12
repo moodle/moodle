@@ -214,17 +214,17 @@
       </FEEDBACK>
     </UNICODE>
     <DATABASE level="required">
-      <VENDOR name="mysql" version="4.1.16">
+      <VENDOR name="mysql" version="5.0.25">
         <FEEDBACK>
           <ON_ERROR message="mysql416required" />
         </FEEDBACK>
         <BYPASS function="bypass_mysql416_reqs" message="mysql416bypassed" />
       </VENDOR>
-      <VENDOR name="postgres" version="8.0" />
+      <VENDOR name="postgres" version="8.3" />
       <VENDOR name="mssql" version="9.0" />
       <VENDOR name="odbc_mssql" version="9.0" />
       <VENDOR name="mssql_n" version="9.0" />
-      <VENDOR name="oracle" version="9.0" />
+      <VENDOR name="oracle" version="10.0" />
       <VENDOR name="sqlite" version="2.0" />
     </DATABASE>
     <PHP version="5.2.8" level="required">
