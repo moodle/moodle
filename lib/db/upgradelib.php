@@ -215,3 +215,114 @@ function upgrade_migrate_files_blog() {
     @rmdir("$CFG->dataroot/blog/attachments/");
     @rmdir("$CFG->dataroot/blog/");
 }
+
+/**
+ * This function will fix the status of the localhost/all records in the mnet_host table
+ * checking they exist and adding them if missing + redefine CFG->mnet_localhost_id  and
+ * CFG->mnet_all_hosts_id if needed + update all the users having non-existent mnethostid
+ * to correct CFG->mnet_localhost_id
+ *
+ * Implemented because, at some point, specially in old installations upgraded along
+ * multiple versions, sometimes the stuff above has ended being inconsistent, causing
+ * problems here and there (noticeablely in backup/restore). MDL-16879
+ */
+function upgrade_fix_incorrect_mnethostids() {
+
+    global $CFG, $DB;
+
+/// Get current $CFG/mnet_host records
+    $old_mnet_localhost_id = !empty($CFG->mnet_localhost_id) ? $CFG->mnet_localhost_id : 0;
+    $old_mnet_all_hosts_id = !empty($CFG->mnet_all_hosts_id) ? $CFG->mnet_all_hosts_id : 0;
+
+    $current_mnet_localhost_host = $DB->get_record('mnet_host', array('wwwroot' => $CFG->wwwroot)); /// By wwwroot
+    $current_mnet_all_hosts_host = $DB->get_record_select('mnet_host', $DB->sql_isempty('mnet_host', 'wwwroot', false, false)); /// By empty wwwroot
+
+/// Create localhost_host if necessary (pretty improbable but better to be 100% in the safe side)
+/// Code stolen from mnet_environment->init
+    if (!$current_mnet_localhost_host) {
+        $current_mnet_localhost_host                     = new stdClass();
+        $current_mnet_localhost_host->wwwroot            = $CFG->wwwroot;
+        $current_mnet_localhost_host->ip_address         = '';
+        $current_mnet_localhost_host->public_key         = '';
+        $current_mnet_localhost_host->public_key_expires = 0;
+        $current_mnet_localhost_host->last_connect_time  = 0;
+        $current_mnet_localhost_host->last_log_id        = 0;
+        $current_mnet_localhost_host->deleted            = 0;
+        $current_mnet_localhost_host->name               = '';
+    /// Get the ip of the server
+        if (empty($_SERVER['SERVER_ADDR'])) {
+        /// SERVER_ADDR is only returned by Apache-like webservers
+            $count = preg_match("@^(?:http[s]?://)?([A-Z0-9\-\.]+).*@i", $current_mnet_localhost_host->wwwroot, $matches);
+            $my_hostname = $count > 0 ? $matches[1] : false;
+            $my_ip       = gethostbyname($my_hostname);  // Returns unmodified hostname on failure. DOH!
+            if ($my_ip == $my_hostname) {
+                $current_mnet_localhost_host->ip_address = 'UNKNOWN';
+            } else {
+                $current_mnet_localhost_host->ip_address = $my_ip;
+            }
+        } else {
+            $current_mnet_localhost_host->ip_address = $_SERVER['SERVER_ADDR'];
+        }
+        $current_mnet_localhost_host->id = $DB->insert_record('mnet_host', $current_mnet_localhost_host, true);
+    }
+
+/// Create all_hosts_host if necessary (pretty improbable but better to be 100% in the safe side)
+/// Code stolen from mnet_environment->init
+    if (!$current_mnet_all_hosts_host) {
+        $current_mnet_all_hosts_host                     = new stdClass();
+        $current_mnet_all_hosts_host->wwwroot            = '';
+        $current_mnet_all_hosts_host->ip_address         = '';
+        $current_mnet_all_hosts_host->public_key         = '';
+        $current_mnet_all_hosts_host->public_key_expires = 0;
+        $current_mnet_all_hosts_host->last_connect_time  = 0;
+        $current_mnet_all_hosts_host->last_log_id        = 0;
+        $current_mnet_all_hosts_host->deleted            = 0;
+        $current_mnet_all_hosts_host->name               = 'All Hosts';
+        $current_mnet_all_hosts_host->id                 = $DB->insert_record('mnet_host', $current_mnet_all_hosts_host, true);
+    }
+
+/// Compare old_mnet_localhost_id and current_mnet_localhost_host
+
+    if ($old_mnet_localhost_id != $current_mnet_localhost_host->id) { /// Different = problems
+    /// Update $CFG->mnet_localhost_id to correct value
+        set_config('mnet_localhost_id', $current_mnet_localhost_host->id);
+
+    /// Delete $old_mnet_localhost_id if exists (users will be assigned to new one below)
+        $DB->delete_records('mnet_host', array('id' => $old_mnet_localhost_id));
+    }
+
+/// Compare old_mnet_all_hosts_id and current_mnet_all_hosts_host
+
+    if ($old_mnet_all_hosts_id != $current_mnet_all_hosts_host->id) { /// Different = problems
+    /// Update $CFG->mnet_localhost_id to correct value
+        set_config('mnet_all_hosts_id', $current_mnet_all_hosts_host->id);
+
+    /// Delete $old_mnet_all_hosts_id if exists
+        $DB->delete_records('mnet_host', array('id' => $old_mnet_all_hosts_id));
+    }
+
+/// Finally, update all the incorrect user->mnethostid to the correct CFG->mnet_localhost_id, preventing UIX dupes
+    $hosts = $DB->get_records_menu('mnet_host', null, '', 'id, id AS id2');
+    list($in_sql, $in_params) = $DB->get_in_or_equal($hosts, SQL_PARAMS_QM, null, false);
+
+    $sql = "SELECT id
+            FROM {$CFG->prefix}user u1
+            WHERE u1.mnethostid $in_sql
+              AND NOT EXISTS (
+                  SELECT 'x'
+                    FROM {$CFG->prefix}user u2
+                   WHERE u2.username = u1.username
+                     AND u2.mnethostid = ?)";
+
+    $params = array_merge($in_params, array($current_mnet_localhost_host->id));
+
+    if ($rs = $DB->get_recordset_sql($sql, $params)) {
+        foreach ($rs as $rec) {
+            $DB->set_field('user', 'mnethostid', $current_mnet_localhost_host->id, array('id' => $rec->id));
+            upgrade_set_timeout(60); /// Give upgrade at least 60 more seconds
+        }
+        $rs->close();
+    }
+}
+
+?>
