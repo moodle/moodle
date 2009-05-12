@@ -366,6 +366,11 @@ function upgrade_plugins_modules($startcallback, $endcallback) {
         require($fullmod .'/version.php');  // defines $module with version etc
 
         if (empty($module->version)) {
+            if (isset($module->version)) {
+                // Version is empty but is set - it means its value is 0 or ''. Let us skip such module.
+                // This is inteded for developers so they can work on the early stages of the module.
+                continue;
+            }
             throw new plugin_defective_exception($component, 'Missing version value in version.php');
         }
 
