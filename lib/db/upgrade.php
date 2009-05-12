@@ -2126,6 +2126,16 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009050619);
     }
 
+    if ($result && $oldversion < 2009051200) {
+    /// Let's check the status of mandatory mnet_host records, fixing them
+    /// and moving "orphan" users to default localhost record. MDL-16879
+        notify('Fixing mnet records, this may take a while...', 'notifysuccess');
+        upgrade_fix_incorrect_mnethostids();
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009051200);
+    }
+
     return $result;
 }
 
