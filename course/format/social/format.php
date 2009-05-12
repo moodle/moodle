@@ -38,7 +38,13 @@
     print_container_start();
     echo skip_main_destination();
     if ($forum = forum_get_course_forum($course->id, 'social')) {
-        print_heading_block(get_string('socialheadline'));
+
+    /// Print forum intro above posts  MDL-18483
+        if (trim($forum->intro) != '') {
+            $options = new stdclass;
+            $options->para = false;
+            print_box(format_text($forum->intro, FORMAT_MOODLE, $options), 'generalbox', 'intro');
+        }
         
         $cm = get_coursemodule_from_instance('forum', $forum->id);
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
