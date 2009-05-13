@@ -437,11 +437,13 @@ class generator {
                         $content = 'Very useful content, I am sure you would agree';
 
                         $module_type_index = 0;
+                        $module->introformat = FORMAT_MOODLE;
+                        $module->messageformat = FORMAT_MOODLE;
 
                         // Special module-specific config
                         switch ($moduledata->name) {
                             case 'assignment':
-                                $module->description = $description;
+                                $module->intro = $description;
                                 $module->assignmenttype = $this->get_module_type('assignment');
                                 $module->timedue = mktime() + 89487321;
                                 $module->grade = rand(50,100);
@@ -481,6 +483,7 @@ class generator {
                                 break;
                             case 'label':
                                 $module->content = $content;
+                                $module->intro = $description;
                                 break;
                             case 'lesson':
                                 $module->lessondefault = 1;
@@ -537,9 +540,16 @@ class generator {
                         $module->modulename = $moduledata->name;
                         $module->add = $moduledata->name;
                         $module->cmidnumber = '';
+                        $module->coursemodule = '';
                         $add_instance_function = $moduledata->name . '_add_instance';
 
+                        $section = get_course_section($i, $courseid);
+                        $module->section = $section->id;
+                        $module->coursemodule = add_course_module($module);
+                        $module->section = $i;
+                        
                         if (function_exists($add_instance_function)) {
+                            $this->verbose("Calling module function $add_instance_function");
                             $module->instance = $add_instance_function($module, '');
                         } else {
                             $this->verbose("Function $add_instance_function does not exist!");
@@ -547,11 +557,6 @@ class generator {
                                 die();
                             }
                         }
-
-                        $section = get_course_section($i, $courseid);
-                        $module->section = $section->id;
-                        $module->coursemodule = add_course_module($module);
-                        $module->section = $i;
 
                         add_mod_to_section($module);
 
@@ -568,8 +573,11 @@ class generator {
                         if (empty($modules_array[$moduledata->name])) {
                             $modules_array[$moduledata->name] = array();
                         }
-
-                        $modules_array[$moduledata->name][] = $module_record;
+                        
+                        // TODO Find out why some $module_record end up empty here... (particularly quizzes)
+                        if (!empty($module_record->instance)) {
+                            $modules_array[$moduledata->name][] = $module_record;
+                        }
                     }
                 }
             }
@@ -636,6 +644,9 @@ class generator {
 
                         // Add a random question to the quiz
                         do {
+                            if (empty($quiz->course)) {
+                                print_object($quizzes);die();
+                            }
                             $random = rand(0, count($questions[$quiz->course]));
                         } while (in_array($random, $questions_added) || !array_key_exists($random, $questions[$quiz->course]));
 
@@ -1061,6 +1072,8 @@ class generator_cli extends generator {
         // Building the USAGE output of the command line version
         $help = "Moodle Data Generator. Generates Data for Moodle sites. Good for benchmarking and other tests.\n\n"
               . "FOR DEVELOPMENT PURPOSES ONLY! DO NOT USE ON A PRODUCTION SITE!\n\n"
+              . "Note: By default the script attempts to fill DB tables prefixed with tst_\n"
+              . "To override the prefix, use the -P (--database_prefix) setting.\n\n"
               . "Usage: {$settings[0]}; [OPTION] ...\n"
               . "Options:\n"
               . "  -h,    -?, -help, --help               This output\n";
@@ -1176,6 +1189,8 @@ class generator_web extends generator {
     public $mform;
 
     public function setup() {
+        global $CFG;
+        $CFG->pixpath = $CFG->wwwroot. '/pix';
         $this->mform = new generator_form();
 
         $this->do_generation = optional_param('do_generation', false, PARAM_BOOL);
@@ -1187,7 +1202,6 @@ class generator_web extends generator {
                 }
             }
         }
-        $this->connect();
     }
 
     public function display() {
@@ -1206,6 +1220,7 @@ class generator_web extends generator {
         } else {
             $this->mform->display();
         }
+        $this->connect();
     }
 
     public function __destroy() {
@@ -1235,9 +1250,10 @@ class fake_form {
 
 class generator_form extends moodleform {
     function definition() {
-        global $generator;
+        global $generator, $CFG;
+        $CFG->pixpath = $CFG->wwwroot. '/pix';
+
         $mform =& $this->_form;
-        $mform->addElement('hidden', 'web_interface', 1);
         $mform->addElement('hidden', 'do_generation', 1);
 
         foreach ($generator->settings as $setting) {
@@ -1266,7 +1282,7 @@ class generator_form extends moodleform {
             }
 
             $mform->addElement($type, $setting->long, $label, $options, $htmloptions);
-            $mform->setHelpButton($setting->long, array(false, $label, false, true, false, $setting->help));
+            $mform->setHelpButton($setting->long, array(false, $label, $setting->help));
 
             if (isset($setting->default)) {
                 $mform->setDefault($setting->long, $setting->default);
@@ -1280,12 +1296,10 @@ class generator_form extends moodleform {
     }
 }
 
-$web_interface = optional_param('web_interface', false, PARAM_BOOL);
-
 if (isset($argv) && isset($argc)) {
     $generator = new generator_cli($argv, $argc);
     $generator->generate_data();
-} elseif($web_interface) {
+} else {
     $generator = new generator_web();
     $generator->setup();
     $generator->display();
