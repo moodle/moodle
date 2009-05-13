@@ -961,7 +961,7 @@ function uu_allowed_auths() {
     $plugins = get_enabled_auth_plugins();
     $choices = array();
     foreach ($plugins as $plugin) {
-        $choices[$plugin] = get_string('auth_'.$plugin.'title', 'auth');
+        $choices[$plugin] = auth_get_plugin_title ($plugin);
     }
 
     return $choices;
