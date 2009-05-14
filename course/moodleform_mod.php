@@ -475,7 +475,7 @@ class moodleform_mod extends moodleform {
 
             // Automatic completion once you view it
             $gotcompletionoptions = false;
-            if (plugin_supports('mod', $modname, FEATURE_COMPLETION_TRACKS_VIEWS, false)) {
+            if (plugin_supports('mod', $this->_modname, FEATURE_COMPLETION_TRACKS_VIEWS, false)) {
                 $mform->addElement('checkbox', 'completionview', get_string('completionview', 'completion'),
                     get_string('completionview_text', 'completion'));
                 $mform->setHelpButton('completionview', array('completionview', get_string('help_completionview', 'completion'), 'completion'));
@@ -484,7 +484,7 @@ class moodleform_mod extends moodleform {
             }
 
             // Automatic completion once it's graded
-            if (plugin_supports('mod', $modname, FEATURE_GRADE_HAS_GRADE, false)) {
+            if (plugin_supports('mod', $this->_modname, FEATURE_GRADE_HAS_GRADE, false)) {
                 $mform->addElement('checkbox', 'completionusegrade', get_string('completionusegrade', 'completion'),
                     get_string('completionusegrade_text', 'completion'));
                 $mform->setHelpButton('completionusegrade', array('completionusegrade', get_string('help_completionusegrade', 'completion'), 'completion'));
