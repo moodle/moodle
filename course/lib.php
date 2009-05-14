@@ -1818,7 +1818,12 @@ function print_category_info($category, $depth, $showcourses = false) {
 
     $catlinkcss = $category->visible ? '' : ' class="dimmed" ';
 
-    $coursecount = count_records('course') <= FRONTPAGECOURSELIMIT;
+    static $coursecount = null;
+    if (null === $coursecount) {
+        // only need to check this once
+        $coursecount = count_records('course') <= FRONTPAGECOURSELIMIT;
+    }
+
     if ($showcourses and $coursecount) {
         $catimage = '<img src="'.$CFG->pixpath.'/i/course.gif" alt="" />';
     } else {
