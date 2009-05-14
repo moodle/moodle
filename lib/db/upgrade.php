@@ -1646,6 +1646,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     /// 'until' date in an activity condition should have 1 second subtracted
     /// (to go from 0:00 on the following day to 23:59 on the previous one).
         $DB->execute('UPDATE {course_modules} SET availableuntil = availableuntil - 1 WHERE availableuntil <> 0');
+        require_once($CFG->dirroot . '/course/lib.php');
         rebuild_course_cache(0, true);
 
     /// Main savepoint reached
