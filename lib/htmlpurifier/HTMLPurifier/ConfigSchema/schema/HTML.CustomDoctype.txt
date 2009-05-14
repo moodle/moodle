@@ -6,5 +6,4 @@ DEFAULT: NULL
 
 A custom doctype for power-users who defined there own document
 type. This directive only applies when %HTML.Doctype is blank.
-
-
+--# vim: et sw=4 sts=4

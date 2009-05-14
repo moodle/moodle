@@ -6,3 +6,4 @@ class HTMLPurifier_HTMLModule_Tidy_Transitional extends HTMLPurifier_HTMLModule_
     public $defaultLevel = 'heavy';
 }
 
+// vim: et sw=4 sts=4

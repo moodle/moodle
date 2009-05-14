@@ -9,3 +9,4 @@ class HTMLPurifier_URIFilter_DisableExternalResources extends HTMLPurifier_URIFi
     }
 }
 
+// vim: et sw=4 sts=4

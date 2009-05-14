@@ -11,18 +11,18 @@
 
 class HTMLPurifier_AttrDef_HTML_ID extends HTMLPurifier_AttrDef
 {
-    
+
     // ref functionality disabled, since we also have to verify
     // whether or not the ID it refers to exists
-    
+
     public function validate($id, $config, $context) {
-        
+
         if (!$config->get('Attr', 'EnableID')) return false;
-        
+
         $id = trim($id); // trim it first
-        
+
         if ($id === '') return false;
-        
+
         $prefix = $config->get('Attr', 'IDPrefix');
         if ($prefix !== '') {
             $prefix .= $config->get('Attr', 'IDPrefixLocal');
@@ -32,14 +32,14 @@ class HTMLPurifier_AttrDef_HTML_ID extends HTMLPurifier_AttrDef
             trigger_error('%Attr.IDPrefixLocal cannot be used unless '.
                 '%Attr.IDPrefix is set', E_USER_WARNING);
         }
-        
+
         //if (!$this->ref) {
             $id_accumulator =& $context->get('IDAccumulator');
             if (isset($id_accumulator->ids[$id])) return false;
         //}
-        
+
         // we purposely avoid using regex, hopefully this is faster
-        
+
         if (ctype_alpha($id)) {
             $result = true;
         } else {
@@ -50,20 +50,21 @@ class HTMLPurifier_AttrDef_HTML_ID extends HTMLPurifier_AttrDef
               );
             $result = ($trim === '');
         }
-        
+
         $regexp = $config->get('Attr', 'IDBlacklistRegexp');
         if ($regexp && preg_match($regexp, $id)) {
             return false;
         }
-        
+
         if (/*!$this->ref && */$result) $id_accumulator->add($id);
-        
+
         // if no change was made to the ID, return the result
         // else, return the new id if stripping whitespace made it
         //     valid, or return false.
         return $result ? $id : false;
-        
+
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

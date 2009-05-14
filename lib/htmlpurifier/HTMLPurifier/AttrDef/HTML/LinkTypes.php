@@ -8,10 +8,10 @@
  */
 class HTMLPurifier_AttrDef_HTML_LinkTypes extends HTMLPurifier_AttrDef
 {
-    
+
     /** Name config attribute to pull. */
     protected $name;
-    
+
     public function __construct($name) {
         $configLookup = array(
             'rel' => 'AllowedRel',
@@ -24,15 +24,15 @@ class HTMLPurifier_AttrDef_HTML_LinkTypes extends HTMLPurifier_AttrDef
         }
         $this->name = $configLookup[$name];
     }
-    
+
     public function validate($string, $config, $context) {
-        
+
         $allowed = $config->get('Attr', $this->name);
         if (empty($allowed)) return false;
-        
+
         $string = $this->parseCDATA($string);
         $parts = explode(' ', $string);
-        
+
         // lookup to prevent duplicates
         $ret_lookup = array();
         foreach ($parts as $part) {
@@ -40,13 +40,14 @@ class HTMLPurifier_AttrDef_HTML_LinkTypes extends HTMLPurifier_AttrDef
             if (!isset($allowed[$part])) continue;
             $ret_lookup[$part] = true;
         }
-        
+
         if (empty($ret_lookup)) return false;
         $string = implode(' ', array_keys($ret_lookup));
-        
+
         return $string;
-        
+
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

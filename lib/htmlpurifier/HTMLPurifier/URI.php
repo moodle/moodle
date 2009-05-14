@@ -10,9 +10,9 @@
  */
 class HTMLPurifier_URI
 {
-    
+
     public $scheme, $userinfo, $host, $port, $path, $query, $fragment;
-    
+
     /**
      * @note Automatically normalizes scheme and port
      */
@@ -25,7 +25,7 @@ class HTMLPurifier_URI
         $this->query = $query;
         $this->fragment = $fragment;
     }
-    
+
     /**
      * Retrieves a scheme object corresponding to the URI's scheme/default
      * @param $config Instance of HTMLPurifier_Config
@@ -52,7 +52,7 @@ class HTMLPurifier_URI
         }
         return $scheme_obj;
     }
-    
+
     /**
      * Generic validation method applicable for all schemes. May modify
      * this URI in order to get it into a compliant form.
@@ -61,12 +61,12 @@ class HTMLPurifier_URI
      * @return True if validation/filtering succeeds, false if failure
      */
     public function validate($config, $context) {
-        
+
         // ABNF definitions from RFC 3986
         $chars_sub_delims = '!$&\'()*+,;=';
         $chars_gen_delims = ':/?#[]@';
         $chars_pchar = $chars_sub_delims . ':@';
-        
+
         // validate scheme (MUST BE FIRST!)
         if (!is_null($this->scheme) && is_null($this->host)) {
             $def = $config->getDefinition('URI');
@@ -74,25 +74,25 @@ class HTMLPurifier_URI
                 $this->scheme = null;
             }
         }
-        
+
         // validate host
         if (!is_null($this->host)) {
             $host_def = new HTMLPurifier_AttrDef_URI_Host();
             $this->host = $host_def->validate($this->host, $config, $context);
             if ($this->host === false) $this->host = null;
         }
-        
+
         // validate username
         if (!is_null($this->userinfo)) {
             $encoder = new HTMLPurifier_PercentEncoder($chars_sub_delims . ':');
             $this->userinfo = $encoder->encode($this->userinfo);
         }
-        
+
         // validate port
         if (!is_null($this->port)) {
             if ($this->port < 1 || $this->port > 65535) $this->port = null;
         }
-        
+
         // validate path
         $path_parts = array();
         $segments_encoder = new HTMLPurifier_PercentEncoder($chars_pchar . '/');
@@ -117,7 +117,7 @@ class HTMLPurifier_URI
             $segment_nc_encoder = new HTMLPurifier_PercentEncoder($chars_sub_delims . '@');
             $c = strpos($this->path, '/');
             if ($c !== false) {
-                $this->path = 
+                $this->path =
                     $segment_nc_encoder->encode(substr($this->path, 0, $c)) .
                     $segments_encoder->encode(substr($this->path, $c));
             } else {
@@ -127,22 +127,22 @@ class HTMLPurifier_URI
             // path-empty (hier and relative)
             $this->path = ''; // just to be safe
         }
-        
+
         // qf = query and fragment
         $qf_encoder = new HTMLPurifier_PercentEncoder($chars_pchar . '/?');
-        
+
         if (!is_null($this->query)) {
             $this->query = $qf_encoder->encode($this->query);
         }
-        
+
         if (!is_null($this->fragment)) {
             $this->fragment = $qf_encoder->encode($this->fragment);
         }
-        
+
         return true;
-        
+
     }
-    
+
     /**
      * Convert URI back to string
      * @return String URI appropriate for output
@@ -156,7 +156,7 @@ class HTMLPurifier_URI
             $authority .= $this->host;
             if(!is_null($this->port))     $authority .= ':' . $this->port;
         }
-        
+
         // reconstruct the result
         $result = '';
         if (!is_null($this->scheme))    $result .= $this->scheme . ':';
@@ -164,9 +164,10 @@ class HTMLPurifier_URI
         $result .= $this->path;
         if (!is_null($this->query))     $result .= '?' . $this->query;
         if (!is_null($this->fragment))  $result .= '#' . $this->fragment;
-        
+
         return $result;
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

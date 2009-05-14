@@ -10,9 +10,9 @@
  */
 
 class HTMLPurifier_URIScheme_mailto extends HTMLPurifier_URIScheme {
-    
+
     public $browsable = false;
-    
+
     public function validate(&$uri, $config, $context) {
         parent::validate($uri, $config, $context);
         $uri->userinfo = null;
@@ -21,6 +21,7 @@ class HTMLPurifier_URIScheme_mailto extends HTMLPurifier_URIScheme {
         // we need to validate path against RFC 2368's addr-spec
         return true;
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

@@ -14,3 +14,4 @@ DEFAULT: false
     <strong>Warning:</strong> It is strongly advised you use this in conjunction
     %URI.MungeSecretKey to mitigate the security risk of an open redirector.
 </p>
+--# vim: et sw=4 sts=4

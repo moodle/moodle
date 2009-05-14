@@ -25,5 +25,4 @@ array (
 
 Lookup array of color names to six digit hexadecimal number corresponding
 to color, with preceding hash mark. Used when parsing colors.
-
-
+--# vim: et sw=4 sts=4

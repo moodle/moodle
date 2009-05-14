@@ -18,3 +18,4 @@ DEFAULT: array()
     out that directive for a discussion of why you
     should think twice before using this directive.
 </p>
+--# vim: et sw=4 sts=4

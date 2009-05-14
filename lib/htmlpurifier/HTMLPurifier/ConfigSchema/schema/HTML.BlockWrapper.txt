@@ -13,6 +13,6 @@ DEFAULT: 'p'
     <code>&lt;blockquote&gt;Foo&lt;/blockquote&gt;</code> would become
     <code>&lt;blockquote&gt;&lt;p&gt;Foo&lt;/p&gt;&lt;/blockquote&gt;</code>.
     The <code>&lt;p&gt;</code> tags can be replaced with whatever you desire,
-    as long as it is a block level element. 
+    as long as it is a block level element.
 </p>
-
+--# vim: et sw=4 sts=4

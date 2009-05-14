@@ -17,3 +17,4 @@ DEFAULT: array()
     a nasty surprise when people start using the <code>background-image</code>
     CSS property.
 </p>
+--# vim: et sw=4 sts=4

@@ -4,24 +4,29 @@
  * Configuration definition, defines directives and their defaults.
  */
 class HTMLPurifier_ConfigSchema {
-    
+
     /**
      * Defaults of the directives and namespaces.
      * @note This shares the exact same structure as HTMLPurifier_Config::$conf
      */
     public $defaults = array();
-    
+
+    /**
+     * The default property list. Do not edit this property list.
+     */
+    public $defaultPlist;
+
     /**
      * Definition of the directives. The structure of this is:
-     * 
+     *
      *  array(
      *      'Namespace' => array(
      *          'Directive' => new stdclass(),
      *      )
      *  )
-     * 
+     *
      * The stdclass may have the following properties:
-     * 
+     *
      *  - If isAlias isn't set:
      *      - type: Integer type of directive, see HTMLPurifier_VarParser for definitions
      *      - allow_null: If set, this directive allows null values
@@ -30,30 +35,34 @@ class HTMLPurifier_ConfigSchema {
      *  - If isAlias is set:
      *      - namespace: Namespace this directive aliases to
      *      - name: Directive name this directive aliases to
-     * 
+     *
      * In certain degenerate cases, stdclass will actually be an integer. In
      * that case, the value is equivalent to an stdclass with the type
      * property set to the integer. If the integer is negative, type is
      * equal to the absolute value of integer, and allow_null is true.
-     * 
+     *
      * This class is friendly with HTMLPurifier_Config. If you need introspection
      * about the schema, you're better of using the ConfigSchema_Interchange,
      * which uses more memory but has much richer information.
      */
     public $info = array();
-    
+
     /**
      * Application-wide singleton
      */
     static protected $singleton;
-    
+
+    public function __construct() {
+        $this->defaultPlist = new HTMLPurifier_PropertyList();
+    }
+
     /**
      * Unserializes the default ConfigSchema.
      */
     public static function makeFromSerial() {
         return unserialize(file_get_contents(HTMLPURIFIER_PREFIX . '/HTMLPurifier/ConfigSchema/schema.ser'));
     }
-    
+
     /**
      * Retrieves an instance of the application-wide configuration definition.
      */
@@ -65,7 +74,7 @@ class HTMLPurifier_ConfigSchema {
         }
         return HTMLPurifier_ConfigSchema::$singleton;
     }
-    
+
     /**
      * Defines a directive for configuration
      * @warning Will fail of directive's namespace is defined.
@@ -84,8 +93,9 @@ class HTMLPurifier_ConfigSchema {
         if ($allow_null) $obj->allow_null = true;
         $this->info[$namespace][$name] = $obj;
         $this->defaults[$namespace][$name] = $default;
+        $this->defaultPlist->set("$namespace.$name", $default);
     }
-    
+
     /**
      * Defines a namespace for directives to be put into.
      * @warning This is slightly different from the corresponding static
@@ -96,10 +106,10 @@ class HTMLPurifier_ConfigSchema {
         $this->info[$namespace] = array();
         $this->defaults[$namespace] = array();
     }
-    
+
     /**
      * Defines a directive value alias.
-     * 
+     *
      * Directive value aliases are convenient for developers because it lets
      * them set a directive to several values and get the same result.
      * @param $namespace Directive's namespace
@@ -114,7 +124,7 @@ class HTMLPurifier_ConfigSchema {
             $this->info[$namespace][$name]->aliases[$alias] = $real;
         }
     }
-    
+
     /**
      * Defines a set of allowed values for a directive.
      * @warning This is slightly different from the corresponding static
@@ -126,7 +136,7 @@ class HTMLPurifier_ConfigSchema {
     public function addAllowedValues($namespace, $name, $allowed) {
         $this->info[$namespace][$name]->allowed = $allowed;
     }
-    
+
     /**
      * Defines a directive alias for backwards compatibility
      * @param $namespace
@@ -141,7 +151,7 @@ class HTMLPurifier_ConfigSchema {
         $obj->isAlias = true;
         $this->info[$namespace][$name] = $obj;
     }
-    
+
     /**
      * Replaces any stdclass that only has the type property with type integer.
      */
@@ -156,9 +166,9 @@ class HTMLPurifier_ConfigSchema {
             }
         }
     }
-    
+
     // DEPRECATED METHODS
-    
+
     /** @see HTMLPurifier_ConfigSchema->set() */
     public static function define($namespace, $name, $default, $type, $description) {
         HTMLPurifier_ConfigSchema::deprecated(__METHOD__);
@@ -169,21 +179,21 @@ class HTMLPurifier_ConfigSchema {
         $def = HTMLPurifier_ConfigSchema::instance();
         $def->add($namespace, $name, $default, $type, $allow_null);
     }
-    
+
     /** @see HTMLPurifier_ConfigSchema->addNamespace() */
     public static function defineNamespace($namespace, $description) {
         HTMLPurifier_ConfigSchema::deprecated(__METHOD__);
         $def = HTMLPurifier_ConfigSchema::instance();
         $def->addNamespace($namespace);
     }
-    
+
     /** @see HTMLPurifier_ConfigSchema->addValueAliases() */
     public static function defineValueAliases($namespace, $name, $aliases) {
         HTMLPurifier_ConfigSchema::deprecated(__METHOD__);
         $def = HTMLPurifier_ConfigSchema::instance();
         $def->addValueAliases($namespace, $name, $aliases);
     }
-    
+
     /** @see HTMLPurifier_ConfigSchema->addAllowedValues() */
     public static function defineAllowedValues($namespace, $name, $allowed_values) {
         HTMLPurifier_ConfigSchema::deprecated(__METHOD__);
@@ -194,28 +204,28 @@ class HTMLPurifier_ConfigSchema {
         $def = HTMLPurifier_ConfigSchema::instance();
         $def->addAllowedValues($namespace, $name, $allowed);
     }
-    
+
     /** @see HTMLPurifier_ConfigSchema->addAlias() */
     public static function defineAlias($namespace, $name, $new_namespace, $new_name) {
         HTMLPurifier_ConfigSchema::deprecated(__METHOD__);
         $def = HTMLPurifier_ConfigSchema::instance();
         $def->addAlias($namespace, $name, $new_namespace, $new_name);
     }
-    
+
     /** @deprecated, use HTMLPurifier_VarParser->parse() */
     public function validate($a, $b, $c = false) {
         trigger_error("HTMLPurifier_ConfigSchema->validate deprecated, use HTMLPurifier_VarParser->parse instead", E_USER_NOTICE);
         $parser = new HTMLPurifier_VarParser();
         return $parser->parse($a, $b, $c);
     }
-    
+
     /**
      * Throws an E_USER_NOTICE stating that a method is deprecated.
      */
     private static function deprecated($method) {
         trigger_error("Static HTMLPurifier_ConfigSchema::$method deprecated, use add*() method instead", E_USER_NOTICE);
     }
-    
+
 }
 
-
+// vim: et sw=4 sts=4

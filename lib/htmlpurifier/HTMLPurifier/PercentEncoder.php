@@ -10,12 +10,12 @@
  */
 class HTMLPurifier_PercentEncoder
 {
-    
+
     /**
      * Reserved characters to preserve when using encode().
      */
     protected $preserve = array();
-    
+
     /**
      * String of characters that should be preserved while using encode().
      */
@@ -28,7 +28,7 @@ class HTMLPurifier_PercentEncoder
         $this->preserve[46] = true; // Period       .
         $this->preserve[95] = true; // Underscore   _
         $this->preserve[126]= true; // Tilde        ~
-        
+
         // extra letters not to escape
         if ($preserve !== false) {
             for ($i = 0, $c = strlen($preserve); $i < $c; $i++) {
@@ -36,7 +36,7 @@ class HTMLPurifier_PercentEncoder
             }
         }
     }
-    
+
     /**
      * Our replacement for urlencode, it encodes all non-reserved characters,
      * as well as any extra characters that were instructed to be preserved.
@@ -58,7 +58,7 @@ class HTMLPurifier_PercentEncoder
         }
         return $ret;
     }
-    
+
     /**
      * Fix up percent-encoding by decoding unreserved characters and normalizing.
      * @warning This function is affected by $preserve, even though the
@@ -92,6 +92,7 @@ class HTMLPurifier_PercentEncoder
         }
         return $ret;
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

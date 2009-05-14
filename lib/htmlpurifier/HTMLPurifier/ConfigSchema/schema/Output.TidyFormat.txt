@@ -4,7 +4,7 @@ VERSION: 1.1.1
 DEFAULT: false
 --DESCRIPTION--
 <p>
-    Determines whether or not to run Tidy on the final output for pretty 
+    Determines whether or not to run Tidy on the final output for pretty
     formatting reasons, such as indentation and wrap.
 </p>
 <p>
@@ -22,3 +22,4 @@ DEFAULT: false
 </p>
 --ALIASES--
 Core.TidyFormat
+--# vim: et sw=4 sts=4

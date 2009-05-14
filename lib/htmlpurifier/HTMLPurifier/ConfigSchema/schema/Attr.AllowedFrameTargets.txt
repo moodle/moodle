@@ -9,3 +9,4 @@ W3C's recommendation. XHTML 1.0 Strict does not permit the target attribute
 so this directive will have no effect in that doctype. XHTML 1.1 does not
 enable the Target module by default, you will have to manually enable it
 (see the module documentation for more details.)
+--# vim: et sw=4 sts=4

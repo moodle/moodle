@@ -28,3 +28,4 @@ DEFAULT: false
   in <code>div</code> tags (the behavior is slightly different outside of
   the root node.)
 </p>
+--# vim: et sw=4 sts=4

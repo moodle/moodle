@@ -8,4 +8,4 @@ DEFAULT: NULL
     Unique identifier for a custom-built URI definition. If you  want
     to add custom URIFilters, you must specify this value.
 </p>
-
+--# vim: et sw=4 sts=4

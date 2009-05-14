@@ -5,18 +5,18 @@
  */
 class HTMLPurifier_ContentSets
 {
-    
+
     /**
      * List of content set strings (pipe seperators) indexed by name.
      */
     public $info = array();
-    
+
     /**
      * List of content set lookups (element => true) indexed by name.
      * @note This is in HTMLPurifier_HTMLDefinition->info_content_sets
      */
     public $lookup = array();
-    
+
     /**
      * Synchronized list of defined content sets (keys of info)
      */
@@ -25,7 +25,7 @@ class HTMLPurifier_ContentSets
      * Synchronized list of defined content values (values of info)
      */
     protected $values = array();
-    
+
     /**
      * Merges in module's content sets, expands identifiers in the content
      * sets and populates the keys, values and lookup member variables.
@@ -60,14 +60,14 @@ class HTMLPurifier_ContentSets
                 $this->lookup[$i] += $add;
             }
         }
-        
+
         foreach ($this->lookup as $key => $lookup) {
             $this->info[$key] = implode(' | ', array_keys($lookup));
         }
         $this->keys   = array_keys($this->info);
         $this->values = array_values($this->info);
     }
-    
+
     /**
      * Accepts a definition; generates and assigns a ChildDef for it
      * @param $def HTMLPurifier_ElementDef reference
@@ -88,11 +88,11 @@ class HTMLPurifier_ContentSets
         }
         $def->child = $this->getChildDef($def, $module);
     }
-    
+
     public function generateChildDefCallback($matches) {
         return $this->info[$matches[0]];
     }
-    
+
     /**
      * Instantiates a ChildDef based on content_model and content_model_type
      * member variables in HTMLPurifier_ElementDef
@@ -134,7 +134,7 @@ class HTMLPurifier_ContentSets
         );
         return false;
     }
-    
+
     /**
      * Converts a string list of elements separated by pipes into
      * a lookup array.
@@ -149,6 +149,7 @@ class HTMLPurifier_ContentSets
         }
         return $ret;
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

@@ -10,3 +10,4 @@ DEFAULT: false
     viewed in a different context (and setting an alternate base URI is
     not possible). %URI.Base must be set for this directive to work.
 </p>
+--# vim: et sw=4 sts=4

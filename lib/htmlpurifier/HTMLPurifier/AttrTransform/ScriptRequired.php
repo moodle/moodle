@@ -12,3 +12,5 @@ class HTMLPurifier_AttrTransform_ScriptRequired extends HTMLPurifier_AttrTransfo
         return $attr;
     }
 }
+
+// vim: et sw=4 sts=4

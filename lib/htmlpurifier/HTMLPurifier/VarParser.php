@@ -6,7 +6,7 @@
  */
 class HTMLPurifier_VarParser
 {
-    
+
     const STRING    = 1;
     const ISTRING   = 2;
     const TEXT      = 3;
@@ -18,7 +18,7 @@ class HTMLPurifier_VarParser
     const ALIST     = 9;
     const HASH      = 10;
     const MIXED     = 11;
-    
+
     /**
      * Lookup table of allowed types. Mainly for backwards compatibility, but
      * also convenient for transforming string type names to the integer constants.
@@ -36,7 +36,7 @@ class HTMLPurifier_VarParser
         'hash'      => self::HASH,
         'mixed'     => self::MIXED
     );
-    
+
     /**
      * Lookup table of types that are string, and can have aliases or
      * allowed value lists.
@@ -47,7 +47,7 @@ class HTMLPurifier_VarParser
         self::TEXT      => true,
         self::ITEXT     => true,
     );
-    
+
     /**
      * Validate a variable according to type. Throws
      * HTMLPurifier_VarParserException if invalid.
@@ -105,7 +105,7 @@ class HTMLPurifier_VarParser
         }
         $this->errorGeneric($var, $type);
     }
-    
+
     /**
      * Actually implements the parsing. Base implementation is to not
      * do anything to $var. Subclasses should overload this!
@@ -113,14 +113,14 @@ class HTMLPurifier_VarParser
     protected function parseImplementation($var, $type, $allow_null) {
         return $var;
     }
-    
+
     /**
      * Throws an exception.
      */
     protected function error($msg) {
         throw new HTMLPurifier_VarParserException($msg);
     }
-    
+
     /**
      * Throws an inconsistency exception.
      * @note This should not ever be called. It would be called if we
@@ -130,7 +130,7 @@ class HTMLPurifier_VarParser
     protected function errorInconsistent($class, $type) {
         throw new HTMLPurifier_Exception("Inconsistency in $class: ".HTMLPurifier_VarParser::getTypeName($type)." not implemented");
     }
-    
+
     /**
      * Generic error for if a type didn't work.
      */
@@ -138,7 +138,7 @@ class HTMLPurifier_VarParser
         $vtype = gettype($var);
         $this->error("Expected type ".HTMLPurifier_VarParser::getTypeName($type).", got $vtype");
     }
-    
+
     static public function getTypeName($type) {
         static $lookup;
         if (!$lookup) {
@@ -148,5 +148,7 @@ class HTMLPurifier_VarParser
         if (!isset($lookup[$type])) return 'unknown';
         return $lookup[$type];
     }
-    
+
 }
+
+// vim: et sw=4 sts=4

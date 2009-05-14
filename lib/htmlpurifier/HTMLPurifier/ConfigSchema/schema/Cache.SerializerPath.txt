@@ -8,6 +8,6 @@ DEFAULT: NULL
     Absolute path with no trailing slash to store serialized definitions in.
     Default is within the
     HTML Purifier library inside DefinitionCache/Serializer. This
-    path must be writable by the webserver. 
+    path must be writable by the webserver.
 </p>
-
+--# vim: et sw=4 sts=4

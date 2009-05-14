@@ -6,7 +6,7 @@
  */
 class HTMLPurifier_ErrorCollector
 {
-    
+
     /**
      * Identifiers for the returned error array. These are purposely numeric
      * so list() can be used.
@@ -15,23 +15,23 @@ class HTMLPurifier_ErrorCollector
     const SEVERITY = 1;
     const MESSAGE  = 2;
     const CHILDREN = 3;
-    
+
     protected $errors;
     protected $_current;
     protected $_stacks = array(array());
     protected $locale;
     protected $generator;
     protected $context;
-    
+
     protected $lines = array();
-    
+
     public function __construct($context) {
         $this->locale    =& $context->get('Locale');
         $this->context   = $context;
         $this->_current  =& $this->_stacks[0];
         $this->errors    =& $this->_stacks[0];
     }
-    
+
     /**
      * Sends an error message to the collector for later use
      * @param $severity int Error severity, PHP error style (don't use E_USER_)
@@ -40,19 +40,19 @@ class HTMLPurifier_ErrorCollector
      * @param $subst2 string ...
      */
     public function send($severity, $msg) {
-        
+
         $args = array();
         if (func_num_args() > 2) {
             $args = func_get_args();
             array_shift($args);
             unset($args[0]);
         }
-        
+
         $token = $this->context->get('CurrentToken', true);
         $line  = $token ? $token->line : $this->context->get('CurrentLine', true);
         $col   = $token ? $token->col  : $this->context->get('CurrentCol',  true);
         $attr  = $this->context->get('CurrentAttr', true);
-        
+
         // perform special substitutions, also add custom parameters
         $subst = array();
         if (!is_null($token)) {
@@ -62,15 +62,15 @@ class HTMLPurifier_ErrorCollector
             $subst['$CurrentAttr.Name'] = $attr;
             if (isset($token->attr[$attr])) $subst['$CurrentAttr.Value'] = $token->attr[$attr];
         }
-        
+
         if (empty($args)) {
             $msg = $this->locale->getMessage($msg);
         } else {
             $msg = $this->locale->formatMessage($msg, $args);
         }
-        
+
         if (!empty($subst)) $msg = strtr($msg, $subst);
-        
+
         // (numerically indexed)
         $error = array(
             self::LINENO   => $line,
@@ -79,10 +79,10 @@ class HTMLPurifier_ErrorCollector
             self::CHILDREN => array()
         );
         $this->_current[] = $error;
-        
-        
+
+
         // NEW CODE BELOW ...
-        
+
         $struct = null;
         // Top-level errors are either:
         //  TOKEN type, if $value is set appropriately, or
@@ -106,7 +106,7 @@ class HTMLPurifier_ErrorCollector
             }
         }
         ksort($this->lines, SORT_NUMERIC);
-        
+
         // Now, check if we need to operate on a lower structure
         if (!empty($attr)) {
             $struct = $struct->getChild(HTMLPurifier_ErrorStruct::ATTR, $attr);
@@ -121,11 +121,11 @@ class HTMLPurifier_ErrorCollector
                 $struct->value = array($cssprop, 'PUT VALUE HERE');
             }
         }
-        
+
         // Ok, structs are all setup, now time to register the error
         $struct->addError($severity, $msg);
     }
-    
+
     /**
      * Retrieves raw error data for custom formatter to use
      * @param List of arrays in format of array(line of error,
@@ -135,7 +135,7 @@ class HTMLPurifier_ErrorCollector
     public function getRaw() {
         return $this->errors;
     }
-    
+
     /**
      * Default HTML formatting implementation for error messages
      * @param $config Configuration array, vital for HTML output nature
@@ -143,12 +143,12 @@ class HTMLPurifier_ErrorCollector
      */
     public function getHTMLFormatted($config, $errors = null) {
         $ret = array();
-        
+
         $this->generator = new HTMLPurifier_Generator($config, $this->context);
         if ($errors === null) $errors = $this->errors;
-        
+
         // 'At line' message needs to be removed
-        
+
         // generation code for new structure goes here. It needs to be recursive.
         foreach ($this->lines as $line => $col_array) {
             if ($line == -1) continue;
@@ -159,15 +159,15 @@ class HTMLPurifier_ErrorCollector
         if (isset($this->lines[-1])) {
             $this->_renderStruct($ret, $this->lines[-1]);
         }
-        
+
         if (empty($errors)) {
             return '<p>' . $this->locale->getMessage('ErrorCollector: No errors') . '</p>';
         } else {
             return '<ul><li>' . implode('</li><li>', $ret) . '</li></ul>';
         }
-        
+
     }
-    
+
     private function _renderStruct(&$ret, $struct, $line = null, $col = null) {
         $stack = array($struct);
         $context_stack = array(array());
@@ -203,6 +203,7 @@ class HTMLPurifier_ErrorCollector
             }
         }
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

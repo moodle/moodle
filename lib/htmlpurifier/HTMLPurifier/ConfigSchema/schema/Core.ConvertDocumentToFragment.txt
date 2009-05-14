@@ -11,3 +11,4 @@ processing is not necessary.
 
 --ALIASES--
 Core.AcceptFullDocuments
+--# vim: et sw=4 sts=4

@@ -1,11 +1,11 @@
 <?php
 
 /*! @mainpage
- * 
+ *
  * HTML Purifier is an HTML filter that will take an arbitrary snippet of
  * HTML and rigorously test, validate and filter it into a version that
  * is safe for output onto webpages. It achieves this by:
- * 
+ *
  *  -# Lexing (parsing into tokens) the document,
  *  -# Executing various strategies on the tokens:
  *      -# Removing all elements not in the whitelist,
@@ -13,13 +13,13 @@
  *      -# Fixing the nesting of the nodes, and
  *      -# Validating attributes of the nodes; and
  *  -# Generating HTML from the purified tokens.
- * 
+ *
  * However, most users will only need to interface with the HTMLPurifier
  * and HTMLPurifier_Config.
  */
 
 /*
-    HTML Purifier 3.2.0 - Standards Compliant HTML Filtering
+    HTML Purifier 3.3.0 - Standards Compliant HTML Filtering
     Copyright (C) 2006-2008 Edward Z. Yang
 
     This library is free software; you can redistribute it and/or
@@ -39,44 +39,44 @@
 
 /**
  * Facade that coordinates HTML Purifier's subsystems in order to purify HTML.
- * 
- * @note There are several points in which configuration can be specified 
+ *
+ * @note There are several points in which configuration can be specified
  *       for HTML Purifier.  The precedence of these (from lowest to
  *       highest) is as follows:
  *          -# Instance: new HTMLPurifier($config)
  *          -# Invocation: purify($html, $config)
  *       These configurations are entirely independent of each other and
  *       are *not* merged (this behavior may change in the future).
- * 
+ *
  * @todo We need an easier way to inject strategies using the configuration
  *       object.
  */
 class HTMLPurifier
 {
-    
+
     /** Version of HTML Purifier */
-    public $version = '3.2.0';
-    
+    public $version = '3.3.0';
+
     /** Constant with version of HTML Purifier */
-    const VERSION = '3.2.0';
-    
+    const VERSION = '3.3.0';
+
     /** Global configuration object */
     public $config;
-    
+
     /** Array of extra HTMLPurifier_Filter objects to run on HTML, for backwards compatibility */
     private $filters = array();
-    
+
     /** Single instance of HTML Purifier */
     private static $instance;
-    
+
     protected $strategy, $generator;
-    
+
     /**
      * Resultant HTMLPurifier_Context of last run purification. Is an array
      * of contexts if the last called method was purifyArray().
      */
     public $context;
-    
+
     /**
      * Initializes the purifier.
      * @param $config Optional HTMLPurifier_Config object for all instances of
@@ -86,13 +86,13 @@ class HTMLPurifier
      *                HTMLPurifier_Config::create() supports.
      */
     public function __construct($config = null) {
-        
+
         $this->config = HTMLPurifier_Config::create($config);
-        
+
         $this->strategy     = new HTMLPurifier_Strategy_Core();
-        
+
     }
-    
+
     /**
      * Adds a filter to process the output. First come first serve
      * @param $filter HTMLPurifier_Filter object
@@ -101,10 +101,10 @@ class HTMLPurifier
         trigger_error('HTMLPurifier->addFilter() is deprecated, use configuration directives in the Filter namespace or Filter.Custom', E_USER_WARNING);
         $this->filters[] = $filter;
     }
-    
+
     /**
      * Filters an HTML snippet/document to be XSS-free and standards-compliant.
-     * 
+     *
      * @param $html String of HTML to purify
      * @param $config HTMLPurifier_Config object for this operation, if omitted,
      *                defaults to the config object specified during this
@@ -113,38 +113,38 @@ class HTMLPurifier
      * @return Purified HTML
      */
     public function purify($html, $config = null) {
-        
+
         // :TODO: make the config merge in, instead of replace
         $config = $config ? HTMLPurifier_Config::create($config) : $this->config;
-        
+
         // implementation is partially environment dependant, partially
         // configuration dependant
         $lexer = HTMLPurifier_Lexer::create($config);
-        
+
         $context = new HTMLPurifier_Context();
-        
+
         // setup HTML generator
         $this->generator = new HTMLPurifier_Generator($config, $context);
         $context->register('Generator', $this->generator);
-        
+
         // set up global context variables
         if ($config->get('Core', 'CollectErrors')) {
             // may get moved out if other facilities use it
             $language_factory = HTMLPurifier_LanguageFactory::instance();
             $language = $language_factory->create($config, $context);
             $context->register('Locale', $language);
-            
+
             $error_collector = new HTMLPurifier_ErrorCollector($context);
             $context->register('ErrorCollector', $error_collector);
         }
-        
+
         // setup id_accumulator context, necessary due to the fact that
         // AttrValidator can be called from many places
         $id_accumulator = HTMLPurifier_IDAccumulator::build($config, $context);
         $context->register('IDAccumulator', $id_accumulator);
-        
+
         $html = HTMLPurifier_Encoder::convertToUTF8($html, $config, $context);
-        
+
         // setup filters
         $filter_flags = $config->getBatch('Filter');
         $custom_filters = $filter_flags['Custom'];
@@ -161,13 +161,13 @@ class HTMLPurifier
         }
         $filters = array_merge($filters, $this->filters);
         // maybe prepare(), but later
-        
+
         for ($i = 0, $filter_size = count($filters); $i < $filter_size; $i++) {
             $html = $filters[$i]->preFilter($html, $config, $context);
         }
-        
+
         // purified HTML
-        $html = 
+        $html =
             $this->generator->generateFromTokens(
                 // list of tokens
                 $this->strategy->execute(
@@ -179,16 +179,16 @@ class HTMLPurifier
                     $config, $context
                 )
             );
-        
+
         for ($i = $filter_size - 1; $i >= 0; $i--) {
             $html = $filters[$i]->postFilter($html, $config, $context);
         }
-        
+
         $html = HTMLPurifier_Encoder::convertFromUTF8($html, $config, $context);
         $this->context =& $context;
         return $html;
     }
-    
+
     /**
      * Filters an array of HTML snippets
      * @param $config Optional HTMLPurifier_Config object for this operation.
@@ -204,7 +204,7 @@ class HTMLPurifier
         $this->context = $context_array;
         return $array_of_html;
     }
-    
+
     /**
      * Singleton for enforcing just one HTML Purifier in your system
      * @param $prototype Optional prototype HTMLPurifier instance to
@@ -223,12 +223,14 @@ class HTMLPurifier
         }
         return self::$instance;
     }
-    
+
     /**
      * @note Backwards compatibility, see instance()
      */
     public static function getInstance($prototype = null) {
         return HTMLPurifier::instance($prototype);
     }
-    
+
 }
+
+// vim: et sw=4 sts=4

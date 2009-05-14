@@ -6,22 +6,22 @@
  */
 class HTMLPurifier_Length
 {
-    
+
     /**
      * String numeric magnitude.
      */
     protected $n;
-    
+
     /**
      * String unit. False is permitted if $n = 0.
      */
     protected $unit;
-    
+
     /**
      * Whether or not this length is valid. Null if not calculated yet.
      */
     protected $isValid;
-    
+
     /**
      * Lookup array of units recognized by CSS 2.1
      */
@@ -29,7 +29,7 @@ class HTMLPurifier_Length
         'em' => true, 'ex' => true, 'px' => true, 'in' => true,
         'cm' => true, 'mm' => true, 'pt' => true, 'pc' => true
     );
-    
+
     /**
      * @param number $n Magnitude
      * @param string $u Unit
@@ -38,7 +38,7 @@ class HTMLPurifier_Length
         $this->n = (string) $n;
         $this->unit = $u !== false ? (string) $u : false;
     }
-    
+
     /**
      * @param string $s Unit string, like '2em' or '3.4in'
      * @warning Does not perform validation.
@@ -51,7 +51,7 @@ class HTMLPurifier_Length
         if ($unit === '') $unit = false;
         return new HTMLPurifier_Length($n, $unit);
     }
-    
+
     /**
      * Validates the number and unit.
      */
@@ -68,7 +68,7 @@ class HTMLPurifier_Length
         $this->n = $result;
         return true;
     }
-    
+
     /**
      * Returns string representation of number.
      */
@@ -76,17 +76,17 @@ class HTMLPurifier_Length
         if (!$this->isValid()) return false;
         return $this->n . $this->unit;
     }
-    
+
     /**
      * Retrieves string numeric magnitude.
      */
     public function getN() {return $this->n;}
-    
+
     /**
      * Retrieves string unit.
      */
     public function getUnit() {return $this->unit;}
-    
+
     /**
      * Returns true if this length unit is valid.
      */
@@ -94,7 +94,7 @@ class HTMLPurifier_Length
         if ($this->isValid === null) $this->isValid = $this->validate();
         return $this->isValid;
     }
-    
+
     /**
      * Compares two lengths, and returns 1 if greater, -1 if less and 0 if equal.
      * @warning If both values are too large or small, this calculation will
@@ -109,5 +109,7 @@ class HTMLPurifier_Length
         }
         return $this->n - $l->n;
     }
-    
+
 }
+
+// vim: et sw=4 sts=4

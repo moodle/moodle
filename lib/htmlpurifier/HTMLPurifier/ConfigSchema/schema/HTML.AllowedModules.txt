@@ -15,6 +15,6 @@ DEFAULT: NULL
     If you specify a module that does not exist, the manager will silently
     fail to use it, so be careful! User-defined modules are not affected
     by this directive. Modules defined in %HTML.CoreModules are not
-    affected by this directive. 
+    affected by this directive.
 </p>
-
+--# vim: et sw=4 sts=4

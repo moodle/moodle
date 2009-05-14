@@ -2,63 +2,63 @@
 
 class HTMLPurifier_HTMLModuleManager
 {
-    
+
     /**
      * Instance of HTMLPurifier_DoctypeRegistry
      */
     public $doctypes;
-    
+
     /**
      * Instance of current doctype
      */
     public $doctype;
-    
+
     /**
      * Instance of HTMLPurifier_AttrTypes
      */
     public $attrTypes;
-    
+
     /**
      * Active instances of modules for the specified doctype are
      * indexed, by name, in this array.
      */
     public $modules = array();
-    
+
     /**
-     * Array of recognized HTMLPurifier_Module instances, indexed by 
+     * Array of recognized HTMLPurifier_Module instances, indexed by
      * module's class name. This array is usually lazy loaded, but a
      * user can overload a module by pre-emptively registering it.
      */
     public $registeredModules = array();
-    
+
     /**
      * List of extra modules that were added by the user using addModule().
      * These get unconditionally merged into the current doctype, whatever
      * it may be.
      */
     public $userModules = array();
-    
+
     /**
      * Associative array of element name to list of modules that have
      * definitions for the element; this array is dynamically filled.
      */
     public $elementLookup = array();
-    
+
     /** List of prefixes we should use for registering small names */
     public $prefixes = array('HTMLPurifier_HTMLModule_');
-    
+
     public $contentSets;     /**< Instance of HTMLPurifier_ContentSets */
     public $attrCollections; /**< Instance of HTMLPurifier_AttrCollections */
-    
+
     /** If set to true, unsafe elements and attributes will be allowed */
     public $trusted = false;
-    
+
     public function __construct() {
-        
+
         // editable internal objects
         $this->attrTypes = new HTMLPurifier_AttrTypes();
         $this->doctypes  = new HTMLPurifier_DoctypeRegistry();
-        
+
         // setup basic modules
         $common = array(
             'CommonAttributes', 'Text', 'Hypertext', 'List',
@@ -67,12 +67,12 @@ class HTMLPurifier_HTMLModuleManager
             // Unsafe:
             'Scripting', 'Object',  'Forms',
             // Sorta legacy, but present in strict:
-            'Name', 
+            'Name',
         );
         $transitional = array('Legacy', 'Target');
         $xml = array('XMLCommonAttributes');
         $non_xml = array('NonXMLCommonAttributes');
-        
+
         // setup basic doctypes
         $this->doctypes->register(
             'HTML 4.01 Transitional', false,
@@ -82,7 +82,7 @@ class HTMLPurifier_HTMLModuleManager
             '-//W3C//DTD HTML 4.01 Transitional//EN',
             'http://www.w3.org/TR/html4/loose.dtd'
         );
-        
+
         $this->doctypes->register(
             'HTML 4.01 Strict', false,
             array_merge($common, $non_xml),
@@ -91,7 +91,7 @@ class HTMLPurifier_HTMLModuleManager
             '-//W3C//DTD HTML 4.01//EN',
             'http://www.w3.org/TR/html4/strict.dtd'
         );
-        
+
         $this->doctypes->register(
             'XHTML 1.0 Transitional', true,
             array_merge($common, $transitional, $xml, $non_xml),
@@ -100,7 +100,7 @@ class HTMLPurifier_HTMLModuleManager
             '-//W3C//DTD XHTML 1.0 Transitional//EN',
             'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'
         );
-        
+
         $this->doctypes->register(
             'XHTML 1.0 Strict', true,
             array_merge($common, $xml, $non_xml),
@@ -109,7 +109,7 @@ class HTMLPurifier_HTMLModuleManager
             '-//W3C//DTD XHTML 1.0 Strict//EN',
             'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'
         );
-        
+
         $this->doctypes->register(
             'XHTML 1.1', true,
             array_merge($common, $xml, array('Ruby')),
@@ -118,9 +118,9 @@ class HTMLPurifier_HTMLModuleManager
             '-//W3C//DTD XHTML 1.1//EN',
             'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'
         );
-        
+
     }
-    
+
     /**
      * Registers a module to the recognized module list, useful for
      * overloading pre-existing modules.
@@ -173,7 +173,7 @@ class HTMLPurifier_HTMLModuleManager
         }
         $this->registeredModules[$module->name] = $module;
     }
-    
+
     /**
      * Adds a module to the current doctype by first registering it,
      * and then tacking it on to the active doctype
@@ -183,7 +183,7 @@ class HTMLPurifier_HTMLModuleManager
         if (is_object($module)) $module = $module->name;
         $this->userModules[] = $module;
     }
-    
+
     /**
      * Adds a class prefix that registerModule() will use to resolve a
      * string name to a concrete class
@@ -191,37 +191,37 @@ class HTMLPurifier_HTMLModuleManager
     public function addPrefix($prefix) {
         $this->prefixes[] = $prefix;
     }
-    
+
     /**
      * Performs processing on modules, after being called you may
      * use getElement() and getElements()
      * @param $config Instance of HTMLPurifier_Config
      */
     public function setup($config) {
-        
+
         $this->trusted = $config->get('HTML', 'Trusted');
-        
+
         // generate
         $this->doctype = $this->doctypes->make($config);
         $modules = $this->doctype->modules;
-        
+
         // take out the default modules that aren't allowed
         $lookup = $config->get('HTML', 'AllowedModules');
         $special_cases = $config->get('HTML', 'CoreModules');
-        
+
         if (is_array($lookup)) {
             foreach ($modules as $k => $m) {
                 if (isset($special_cases[$m])) continue;
                 if (!isset($lookup[$m])) unset($modules[$k]);
             }
         }
-        
+
         // add proprietary module (this gets special treatment because
         // it is completely removed from doctypes, etc.)
         if ($config->get('HTML', 'Proprietary')) {
             $modules[] = 'Proprietary';
         }
-        
+
         // add SafeObject/Safeembed modules
         if ($config->get('HTML', 'SafeObject')) {
             $modules[] = 'SafeObject';
@@ -229,20 +229,20 @@ class HTMLPurifier_HTMLModuleManager
         if ($config->get('HTML', 'SafeEmbed')) {
             $modules[] = 'SafeEmbed';
         }
-        
+
         // merge in custom modules
         $modules = array_merge($modules, $this->userModules);
-        
+
         foreach ($modules as $module) {
             $this->processModule($module);
             $this->modules[$module]->setup($config);
         }
-        
+
         foreach ($this->doctype->tidyModules as $module) {
             $this->processModule($module);
             $this->modules[$module]->setup($config);
         }
-        
+
         // prepare any injectors
         foreach ($this->modules as $module) {
             $n = array();
@@ -255,7 +255,7 @@ class HTMLPurifier_HTMLModuleManager
             }
             $module->info_injector = $n;
         }
-        
+
         // setup lookup table based on all valid modules
         foreach ($this->modules as $module) {
             foreach ($module->info as $name => $def) {
@@ -265,7 +265,7 @@ class HTMLPurifier_HTMLModuleManager
                 $this->elementLookup[$name][] = $module->name;
             }
         }
-        
+
         // note the different choice
         $this->contentSets = new HTMLPurifier_ContentSets(
             // content set assembly deals with all possible modules,
@@ -280,7 +280,7 @@ class HTMLPurifier_HTMLModuleManager
             $this->modules
         );
     }
-    
+
     /**
      * Takes a module and adds it to the active module collection,
      * registering it if necessary.
@@ -291,13 +291,13 @@ class HTMLPurifier_HTMLModuleManager
         }
         $this->modules[$module] = $this->registeredModules[$module];
     }
-    
+
     /**
      * Retrieves merged element definitions.
      * @return Array of HTMLPurifier_ElementDef
      */
     public function getElements() {
-        
+
         $elements = array();
         foreach ($this->modules as $module) {
             if (!$this->trusted && !$module->safe) continue;
@@ -306,17 +306,17 @@ class HTMLPurifier_HTMLModuleManager
                 $elements[$name] = $this->getElement($name);
             }
         }
-        
+
         // remove dud elements, this happens when an element that
         // appeared to be safe actually wasn't
         foreach ($elements as $n => $v) {
             if ($v === false) unset($elements[$n]);
         }
-        
+
         return $elements;
-        
+
     }
-    
+
     /**
      * Retrieves a single merged element definition
      * @param $name Name of element
@@ -325,35 +325,35 @@ class HTMLPurifier_HTMLModuleManager
      * @return Merged HTMLPurifier_ElementDef
      * @note You may notice that modules are getting iterated over twice (once
      *       in getElements() and once here). This
-     *       is because 
+     *       is because
      */
     public function getElement($name, $trusted = null) {
-        
+
         if (!isset($this->elementLookup[$name])) {
             return false;
         }
-        
+
         // setup global state variables
         $def = false;
         if ($trusted === null) $trusted = $this->trusted;
-        
+
         // iterate through each module that has registered itself to this
         // element
         foreach($this->elementLookup[$name] as $module_name) {
-            
+
             $module = $this->modules[$module_name];
-            
+
             // refuse to create/merge from a module that is deemed unsafe--
             // pretend the module doesn't exist--when trusted mode is not on.
             if (!$trusted && !$module->safe) {
                 continue;
             }
-            
+
             // clone is used because, ideally speaking, the original
             // definition should not be modified. Usually, this will
             // make no difference, but for consistency's sake
             $new_def = clone $module->info[$name];
-            
+
             if (!$def && $new_def->standalone) {
                 $def = $new_def;
             } elseif ($def) {
@@ -366,11 +366,11 @@ class HTMLPurifier_HTMLModuleManager
                 // to merge into could be deferred to the end
                 continue;
             }
-            
+
             // attribute value expansions
             $this->attrCollections->performInclusions($def->attr);
             $this->attrCollections->expandIdentifiers($def->attr, $this->attrTypes);
-            
+
             // descendants_are_inline, for ChildDef_Chameleon
             if (is_string($def->content_model) &&
                 strpos($def->content_model, 'Inline') !== false) {
@@ -379,25 +379,25 @@ class HTMLPurifier_HTMLModuleManager
                     $def->descendants_are_inline = true;
                 }
             }
-            
+
             $this->contentSets->generateChildDef($def, $module);
         }
-        
+
         // This can occur if there is a blank definition, but no base to
         // mix it in with
         if (!$def) return false;
-        
+
         // add information on required attributes
         foreach ($def->attr as $attr_name => $attr_def) {
             if ($attr_def->required) {
                 $def->required_attr[] = $attr_name;
             }
         }
-        
+
         return $def;
-        
+
     }
-    
+
 }
 
-
+// vim: et sw=4 sts=4

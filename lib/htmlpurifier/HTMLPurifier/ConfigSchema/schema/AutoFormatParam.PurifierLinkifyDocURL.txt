@@ -7,6 +7,6 @@ DEFAULT: '#%s'
 <p>
   Location of configuration documentation to link to, let %s substitute
   into the configuration's namespace and directive names sans the percent
-  sign. 
+  sign.
 </p>
-
+--# vim: et sw=4 sts=4

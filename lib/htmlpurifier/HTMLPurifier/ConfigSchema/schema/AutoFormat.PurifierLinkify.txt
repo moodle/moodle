@@ -9,4 +9,4 @@ DEFAULT: false
   syntax <a>%Namespace.Directive</a> to links. <code>a</code> tags
   with the <code>href</code> attribute must be allowed.
 </p>
-
+--# vim: et sw=4 sts=4

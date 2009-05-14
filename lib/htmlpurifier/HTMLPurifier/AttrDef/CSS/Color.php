@@ -5,18 +5,18 @@
  */
 class HTMLPurifier_AttrDef_CSS_Color extends HTMLPurifier_AttrDef
 {
-    
+
     public function validate($color, $config, $context) {
-        
+
         static $colors = null;
         if ($colors === null) $colors = $config->get('Core', 'ColorKeywords');
-        
+
         $color = trim($color);
         if ($color === '') return false;
-        
+
         $lower = strtolower($color);
         if (isset($colors[$lower])) return $colors[$lower];
-        
+
         if (strpos($color, 'rgb(') !== false) {
             // rgb literal handling
             $length = strlen($color);
@@ -68,10 +68,11 @@ class HTMLPurifier_AttrDef_CSS_Color extends HTMLPurifier_AttrDef
             if ($length !== 3 && $length !== 6) return false;
             if (!ctype_xdigit($hex)) return false;
         }
-        
+
         return $color;
-        
+
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

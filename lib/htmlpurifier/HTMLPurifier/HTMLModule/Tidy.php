@@ -7,18 +7,18 @@
  */
 class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
 {
-    
+
     /**
      * List of supported levels. Index zero is a special case "no fixes"
      * level.
      */
     public $levels = array(0 => 'none', 'light', 'medium', 'heavy');
-    
+
     /**
      * Default level to place all fixes in. Disabled by default
      */
     public $defaultLevel = null;
-    
+
     /**
      * Lists of fixes used by getFixesForLevel(). Format is:
      *      HTMLModule_Tidy->fixesForLevel[$level] = array('fix-1', 'fix-2');
@@ -28,7 +28,7 @@ class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
         'medium' => array(),
         'heavy'  => array()
     );
-    
+
     /**
      * Lazy load constructs the module by determining the necessary
      * fixes to create and then delegating to the populate() function.
@@ -36,19 +36,19 @@ class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
      *       subtracted fix has no effect.
      */
     public function setup($config) {
-        
+
         // create fixes, initialize fixesForLevel
         $fixes = $this->makeFixes();
         $this->makeFixesForLevel($fixes);
-        
+
         // figure out which fixes to use
         $level = $config->get('HTML', 'TidyLevel');
         $fixes_lookup = $this->getFixesForLevel($level);
-        
+
         // get custom fix declarations: these need namespace processing
         $add_fixes    = $config->get('HTML', 'TidyAdd');
         $remove_fixes = $config->get('HTML', 'TidyRemove');
-        
+
         foreach ($fixes as $name => $fix) {
             // needs to be refactored a little to implement globbing
             if (
@@ -58,12 +58,12 @@ class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
                 unset($fixes[$name]);
             }
         }
-        
+
         // populate this module with necessary fixes
         $this->populate($fixes);
-        
+
     }
-    
+
     /**
      * Retrieves all fixes per a level, returning fixes for that specific
      * level as well as all levels below it.
@@ -94,7 +94,7 @@ class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
         }
         return $ret;
     }
-    
+
     /**
      * Dynamically populates the $fixesForLevel member variable using
      * the fixes array. It may be custom overloaded, used in conjunction
@@ -111,7 +111,7 @@ class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
         }
         $this->fixesForLevel[$this->defaultLevel] = array_keys($fixes);
     }
-    
+
     /**
      * Populates the module with transforms and other special-case code
      * based on a list of fixes passed to it
@@ -160,7 +160,7 @@ class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
             }
         }
     }
-    
+
     /**
      * Parses a fix name and determines what kind of fix it is, as well
      * as other information defined by the fix
@@ -174,34 +174,34 @@ class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
         $property = $attr = null;
         if (strpos($name, '#') !== false) list($name, $property) = explode('#', $name);
         if (strpos($name, '@') !== false) list($name, $attr)     = explode('@', $name);
-        
+
         // figure out the parameters
         $params = array();
         if ($name !== '')    $params['element'] = $name;
         if (!is_null($attr)) $params['attr'] = $attr;
-        
+
         // special case: attribute transform
         if (!is_null($attr)) {
             if (is_null($property)) $property = 'pre';
             $type = 'attr_transform_' . $property;
             return array($type, $params);
         }
-        
+
         // special case: tag transform
         if (is_null($property)) {
             return array('tag_transform', $params);
         }
-        
+
         return array($property, $params);
-        
+
     }
-    
+
     /**
      * Defines all fixes the module will perform in a compact
      * associative array of fix name to fix implementation.
      */
     public function makeFixes() {}
-    
+
 }
 
-
+// vim: et sw=4 sts=4

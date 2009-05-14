@@ -29,7 +29,7 @@ if (!defined('PHP_EOL')) {
  */
 class HTMLPurifier_Bootstrap
 {
-    
+
     /**
      * Autoload function for HTML Purifier
      * @param $class Class to load
@@ -40,7 +40,7 @@ class HTMLPurifier_Bootstrap
         require HTMLPURIFIER_PREFIX . '/' . $file;
         return true;
     }
-    
+
     /**
      * Returns the path for a specific class.
      */
@@ -56,7 +56,7 @@ class HTMLPurifier_Bootstrap
         if (!file_exists(HTMLPURIFIER_PREFIX . '/' . $file)) return false;
         return $file;
     }
-    
+
     /**
      * "Pre-registers" our autoloader on the SPL stack.
      */
@@ -92,5 +92,7 @@ class HTMLPurifier_Bootstrap
             foreach ($funcs as $func) spl_autoload_register($func);
         }
     }
-    
+
 }
+
+// vim: et sw=4 sts=4

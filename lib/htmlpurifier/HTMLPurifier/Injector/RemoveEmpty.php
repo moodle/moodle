@@ -2,16 +2,16 @@
 
 class HTMLPurifier_Injector_RemoveEmpty extends HTMLPurifier_Injector
 {
-    
+
     private $context, $config;
-    
+
     public function prepare($config, $context) {
         parent::prepare($config, $context);
         $this->config = $config;
         $this->context = $context;
         $this->attrValidator = new HTMLPurifier_AttrValidator();
     }
-    
+
     public function handleElement(&$token) {
         if (!$token instanceof HTMLPurifier_Token_Start) return;
         $next = false;
@@ -36,5 +36,7 @@ class HTMLPurifier_Injector_RemoveEmpty extends HTMLPurifier_Injector
             return;
         }
     }
-    
+
 }
+
+// vim: et sw=4 sts=4

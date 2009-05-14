@@ -17,3 +17,5 @@ class HTMLPurifier_URIFilter_HostBlacklist extends HTMLPurifier_URIFilter
         return true;
     }
 }
+
+// vim: et sw=4 sts=4

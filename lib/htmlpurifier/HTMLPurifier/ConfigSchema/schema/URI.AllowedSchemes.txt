@@ -12,3 +12,4 @@ array (
 --DESCRIPTION--
 Whitelist that defines the schemes that a URI is allowed to have.  This
 prevents XSS attacks from using pseudo-schemes like javascript or mocha.
+--# vim: et sw=4 sts=4

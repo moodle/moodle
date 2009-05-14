@@ -5,7 +5,7 @@
  */
 class HTMLPurifier_AttrTransform_Name extends HTMLPurifier_AttrTransform
 {
-    
+
     public function transform($attr, $config, $context) {
         if (!isset($attr['name'])) return $attr;
         $id = $this->confiscateAttr($attr, 'name');
@@ -13,6 +13,7 @@ class HTMLPurifier_AttrTransform_Name extends HTMLPurifier_AttrTransform
         $attr['id'] = $id;
         return $attr;
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

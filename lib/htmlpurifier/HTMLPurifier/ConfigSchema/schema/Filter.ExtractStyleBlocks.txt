@@ -27,15 +27,15 @@ EXTERNAL: CSSTidy
 <?php
     require_once '/path/to/library/HTMLPurifier.auto.php';
     require_once '/path/to/csstidy.class.php';
-    
+
     $dirty = '<style>body {color:#F00;}</style> Some text';
 
     $config = HTMLPurifier_Config::createDefault();
     $config->set('Filter', 'ExtractStyleBlocks', true);
     $purifier = new HTMLPurifier($config);
-    
+
     $html = $purifier->purify($dirty);
-    
+
     // This implementation writes the stylesheets to the styles/ directory.
     // You can also echo the styles inside the document, but it's a bit
     // more difficult to make sure they get interpreted properly by
@@ -71,3 +71,4 @@ EXTERNAL: CSSTidy
   height (somewhat reasonable). Whether or not these measures should be
   used is left to the reader.
 </p>
+--# vim: et sw=4 sts=4

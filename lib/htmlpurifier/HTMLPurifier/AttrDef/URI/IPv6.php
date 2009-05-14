@@ -8,17 +8,17 @@
  */
 class HTMLPurifier_AttrDef_URI_IPv6 extends HTMLPurifier_AttrDef_URI_IPv4
 {
-    
+
     public function validate($aIP, $config, $context) {
-        
+
         if (!$this->ip4) $this->_loadRegex();
-        
+
         $original = $aIP;
-        
+
         $hex = '[0-9a-fA-F]';
         $blk = '(?:' . $hex . '{1,4})';
         $pre = '(?:/(?:12[0-8]|1[0-1][0-9]|[1-9][0-9]|[0-9]))';   // /0 - /128
-        
+
         //      prefix check
         if (strpos($aIP, '/') !== false)
         {
@@ -32,8 +32,8 @@ class HTMLPurifier_AttrDef_URI_IPv6 extends HTMLPurifier_AttrDef_URI_IPv4
                         return false;
                 }
         }
-        
-        //      IPv4-compatiblity check       
+
+        //      IPv4-compatiblity check
         if (preg_match('#(?<=:'.')' . $this->ip4 . '$#s', $aIP, $find))
         {
                 $aIP = substr($aIP, 0, 0-strlen($find[0]));
@@ -42,7 +42,7 @@ class HTMLPurifier_AttrDef_URI_IPv6 extends HTMLPurifier_AttrDef_URI_IPv4
                 $aIP .= $ip[0] . $ip[1] . ':' . $ip[2] . $ip[3];
                 unset($find, $ip);
         }
-        
+
         //      compression check
         $aIP = explode('::', $aIP);
         $c = count($aIP);
@@ -55,12 +55,12 @@ class HTMLPurifier_AttrDef_URI_IPv6 extends HTMLPurifier_AttrDef_URI_IPv4
                 list($first, $second) = $aIP;
                 $first = explode(':', $first);
                 $second = explode(':', $second);
-               
+
                 if (count($first) + count($second) > 8)
                 {
                         return false;
                 }
-               
+
                 while(count($first) < 8)
                 {
                         array_push($first, '0');
@@ -75,12 +75,12 @@ class HTMLPurifier_AttrDef_URI_IPv6 extends HTMLPurifier_AttrDef_URI_IPv4
                 $aIP = explode(':', $aIP[0]);
         }
         $c = count($aIP);
-        
+
         if ($c != 8)
         {
                 return false;
         }
-       
+
         //      All the pieces should be 16-bit hex strings. Are they?
         foreach ($aIP as $piece)
         {
@@ -89,10 +89,11 @@ class HTMLPurifier_AttrDef_URI_IPv6 extends HTMLPurifier_AttrDef_URI_IPv4
                         return false;
                 }
         }
-        
+
         return $original;
-        
+
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

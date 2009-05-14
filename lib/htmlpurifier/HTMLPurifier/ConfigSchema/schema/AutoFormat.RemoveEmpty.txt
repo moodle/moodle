@@ -42,3 +42,4 @@ DEFAULT: false
   if a tag looked empty on the way end, it will get removed; if HTML Purifier
   made it empty, it will stay.
 </p>
+--# vim: et sw=4 sts=4

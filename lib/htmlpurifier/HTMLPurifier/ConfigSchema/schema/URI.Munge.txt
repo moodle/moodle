@@ -7,8 +7,8 @@ DEFAULT: NULL
 <p>
     Munges all browsable (usually http, https and ftp)
     absolute URIs into another URI, usually a URI redirection service.
-    This directive accepts a URI, formatted with a <code>%s</code> where 
-    the url-encoded original URI should be inserted (sample: 
+    This directive accepts a URI, formatted with a <code>%s</code> where
+    the url-encoded original URI should be inserted (sample:
     <code>http://www.google.com/url?q=%s</code>).
 </p>
 <p>
@@ -16,10 +16,10 @@ DEFAULT: NULL
 </p>
 <ul>
     <li>
-        Prevent PageRank leaks, while being fairly transparent 
-        to users (you may also want to add some client side JavaScript to 
+        Prevent PageRank leaks, while being fairly transparent
+        to users (you may also want to add some client side JavaScript to
         override the text in the statusbar). <strong>Notice</strong>:
-        Many security experts believe that this form of protection does not deter spam-bots. 
+        Many security experts believe that this form of protection does not deter spam-bots.
     </li>
     <li>
         Redirect users to a splash page telling them they are leaving your
@@ -80,3 +80,4 @@ DEFAULT: NULL
     was picked because it came after n (and I couldn't use a), p is for
     property.
 </p>
+--# vim: et sw=4 sts=4

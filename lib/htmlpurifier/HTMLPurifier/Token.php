@@ -6,20 +6,21 @@
 class HTMLPurifier_Token {
     public $line; /**< Line number node was on in source document. Null if unknown. */
     public $col;  /**< Column of line node was on in source document. Null if unknown. */
-    
+
     /**
      * Lookup array of processing that this token is exempt from.
      * Currently, valid values are "ValidateAttributes" and
      * "MakeWellFormed_TagClosedError"
      */
     public $armor = array();
-    
+
     /**
      * Used during MakeWellFormed.
      */
     public $skip;
     public $rewind;
-    
+    public $carryover;
+
     public function __get($n) {
       if ($n === 'type') {
         trigger_error('Deprecated type property called; use instanceof', E_USER_NOTICE);
@@ -33,7 +34,7 @@ class HTMLPurifier_Token {
         }
       }
     }
-    
+
     /**
      * Sets the position of the token in the source document.
      */
@@ -41,7 +42,7 @@ class HTMLPurifier_Token {
         $this->line = $l;
         $this->col  = $c;
     }
-    
+
     /**
      * Convenience function for DirectLex settings line/col position.
      */
@@ -50,5 +51,7 @@ class HTMLPurifier_Token {
         $this->line = $l;
         $this->col  = $c;
     }
-    
+
 }
+
+// vim: et sw=4 sts=4

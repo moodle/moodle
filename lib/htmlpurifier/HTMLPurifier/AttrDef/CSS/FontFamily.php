@@ -6,7 +6,7 @@
  */
 class HTMLPurifier_AttrDef_CSS_FontFamily extends HTMLPurifier_AttrDef
 {
-    
+
     public function validate($string, $config, $context) {
         static $generic_names = array(
             'serif' => true,
@@ -15,7 +15,7 @@ class HTMLPurifier_AttrDef_CSS_FontFamily extends HTMLPurifier_AttrDef
             'fantasy' => true,
             'cursive' => true
         );
-        
+
         // assume that no font names contain commas in them
         $fonts = explode(',', $string);
         $final = '';
@@ -34,7 +34,7 @@ class HTMLPurifier_AttrDef_CSS_FontFamily extends HTMLPurifier_AttrDef
                 $quote = $font[0];
                 if ($font[$length - 1] !== $quote) continue;
                 $font = substr($font, 1, $length - 2);
-                
+
                 $new_font = '';
                 for ($i = 0, $c = strlen($font); $i < $c; $i++) {
                     if ($font[$i] === '\\') {
@@ -62,19 +62,19 @@ class HTMLPurifier_AttrDef_CSS_FontFamily extends HTMLPurifier_AttrDef
                     }
                     $new_font .= $font[$i];
                 }
-                
+
                 $font = $new_font;
             }
             // $font is a pure representation of the font name
-            
+
             if (ctype_alnum($font) && $font !== '') {
                 // very simple font, allow it in unharmed
                 $final .= $font . ', ';
                 continue;
             }
-            
+
             // complicated font, requires quoting
-            
+
             // armor single quotes and new lines
             $font = str_replace("\\", "\\\\", $font);
             $font = str_replace("'", "\\'", $font);
@@ -84,6 +84,7 @@ class HTMLPurifier_AttrDef_CSS_FontFamily extends HTMLPurifier_AttrDef
         if ($final === '') return false;
         return $final;
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

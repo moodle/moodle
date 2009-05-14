@@ -5,4 +5,5 @@ DEFAULT: array()
 --DESCRIPTION--
 List of strings that are forbidden in the host of any URI. Use it to kill
 domain names of spam, etc. Note that it will catch anything in the domain,
-so <tt>moo.com</tt> will catch <tt>moo.com.example.com</tt>. 
+so <tt>moo.com</tt> will catch <tt>moo.com.example.com</tt>.
+--# vim: et sw=4 sts=4

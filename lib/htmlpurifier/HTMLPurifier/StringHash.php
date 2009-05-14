@@ -11,7 +11,7 @@
 class HTMLPurifier_StringHash extends ArrayObject
 {
     protected $accessed = array();
-    
+
     /**
      * Retrieves a value, and logs the access.
      */
@@ -19,7 +19,7 @@ class HTMLPurifier_StringHash extends ArrayObject
         $this->accessed[$index] = true;
         return parent::offsetGet($index);
     }
-    
+
     /**
      * Returns a lookup array of all array indexes that have been accessed.
      * @return Array in form array($index => true).
@@ -27,7 +27,7 @@ class HTMLPurifier_StringHash extends ArrayObject
     public function getAccessed() {
         return $this->accessed;
     }
-    
+
     /**
      * Resets the access array.
      */
@@ -35,3 +35,5 @@ class HTMLPurifier_StringHash extends ArrayObject
         $this->accessed = array();
     }
 }
+
+// vim: et sw=4 sts=4

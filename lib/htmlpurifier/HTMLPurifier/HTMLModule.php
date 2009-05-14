@@ -17,27 +17,27 @@
 
 class HTMLPurifier_HTMLModule
 {
-    
+
     // -- Overloadable ----------------------------------------------------
-    
+
     /**
      * Short unique string identifier of the module
      */
     public $name;
-    
+
     /**
      * Informally, a list of elements this module changes. Not used in
      * any significant way.
      */
     public $elements = array();
-    
+
     /**
      * Associative array of element names to element definitions.
      * Some definitions may be incomplete, to be merged in later
      * with the full definition.
      */
     public $info = array();
-    
+
     /**
      * Associative array of content set names to content set additions.
      * This is commonly used to, say, add an A element to the Inline
@@ -45,7 +45,7 @@ class HTMLPurifier_HTMLModule
      * and NOT info_content_sets member variable of HTMLDefinition.
      */
     public $content_sets = array();
-    
+
     /**
      * Associative array of attribute collection names to attribute
      * collection additions. More rarely used for adding attributes to
@@ -55,22 +55,22 @@ class HTMLPurifier_HTMLModule
      * with extra behavior associated with it.
      */
     public $attr_collections = array();
-    
+
     /**
      * Associative array of deprecated tag name to HTMLPurifier_TagTransform
      */
     public $info_tag_transform = array();
-    
+
     /**
      * List of HTMLPurifier_AttrTransform to be performed before validation.
      */
     public $info_attr_transform_pre = array();
-    
+
     /**
      * List of HTMLPurifier_AttrTransform to be performed after validation.
      */
     public $info_attr_transform_post = array();
-    
+
     /**
      * List of HTMLPurifier_Injector to be performed during well-formedness fixing.
      * An injector will only be invoked if all of it's pre-requisites are met;
@@ -78,7 +78,7 @@ class HTMLPurifier_HTMLModule
      * silently disabled.
      */
     public $info_injector = array();
-    
+
     /**
      * Boolean flag that indicates whether or not getChildDef is implemented.
      * For optimization reasons: may save a call to a function. Be sure
@@ -86,23 +86,23 @@ class HTMLPurifier_HTMLModule
      * no effect!
      */
     public $defines_child_def = false;
-    
+
     /**
      * Boolean flag whether or not this module is safe. If it is not safe, all
      * of its members are unsafe. Modules are safe by default (this might be
      * slightly dangerous, but it doesn't make much sense to force HTML Purifier,
      * which is based off of safe HTML, to explicitly say, "This is safe," even
      * though there are modules which are "unsafe")
-     * 
+     *
      * @note Previously, safety could be applied at an element level granularity.
      *       We've removed this ability, so in order to add "unsafe" elements
      *       or attributes, a dedicated module with this property set to false
      *       must be used.
      */
     public $safe = true;
-    
+
     /**
-     * Retrieves a proper HTMLPurifier_ChildDef subclass based on 
+     * Retrieves a proper HTMLPurifier_ChildDef subclass based on
      * content_model and content_model_type member variables of
      * the HTMLPurifier_ElementDef class. There is a similar function
      * in HTMLPurifier_HTMLDefinition.
@@ -110,9 +110,9 @@ class HTMLPurifier_HTMLModule
      * @return HTMLPurifier_ChildDef subclass
      */
     public function getChildDef($def) {return false;}
-    
+
     // -- Convenience -----------------------------------------------------
-    
+
     /**
      * Convenience function that sets up a new element
      * @param $element Name of element to add
@@ -124,7 +124,7 @@ class HTMLPurifier_HTMLModule
      *              element?
      * @param $attr What unique attributes does the element define?
      * @note See ElementDef for in-depth descriptions of these parameters.
-     * @return Created element definition object, so you 
+     * @return Created element definition object, so you
      *         can set advanced parameters
      */
     public function addElement($element, $type, $contents, $attr_includes = array(), $attr = array()) {
@@ -143,7 +143,7 @@ class HTMLPurifier_HTMLModule
         if (!is_string($contents)) $this->info[$element]->child = $contents;
         return $this->info[$element];
     }
-    
+
     /**
      * Convenience function that creates a totally blank, non-standalone
      * element.
@@ -160,7 +160,7 @@ class HTMLPurifier_HTMLModule
         }
         return $this->info[$element];
     }
-    
+
     /**
      * Convenience function that registers an element to a content set
      * @param Element to register
@@ -172,7 +172,7 @@ class HTMLPurifier_HTMLModule
         else $this->content_sets[$type] .= ' | ';
         $this->content_sets[$type] .= $element;
     }
-    
+
     /**
      * Convenience function that transforms single-string contents
      * into separate content model and content model type
@@ -198,7 +198,7 @@ class HTMLPurifier_HTMLModule
         $content_model = trim($content_model);
         return array($content_model_type, $content_model);
     }
-    
+
     /**
      * Convenience function that merges a list of attribute includes into
      * an attribute array.
@@ -212,7 +212,7 @@ class HTMLPurifier_HTMLModule
         }
         $attr[0] = $attr_includes;
     }
-    
+
     /**
      * Convenience function that generates a lookup table with boolean
      * true as value.
@@ -230,7 +230,7 @@ class HTMLPurifier_HTMLModule
         }
         return $ret;
     }
-    
+
     /**
      * Lazy load construction of the module after determining whether
      * or not it's needed, and also when a finalized configuration object
@@ -238,6 +238,7 @@ class HTMLPurifier_HTMLModule
      * @param $config Instance of HTMLPurifier_Config
      */
     public function setup($config) {}
-    
+
 }
 
+// vim: et sw=4 sts=4

@@ -6,7 +6,7 @@
  * the core files required by HTML Purifier. This is a convenience stub that
  * includes all files using dirname(__FILE__) and require_once. PLEASE DO NOT
  * EDIT THIS FILE, changes will be overwritten the next time the script is run.
- * 
+ *
  * Changes to include_path are not necessary.
  */
 
@@ -49,6 +49,8 @@ require_once $__dir . '/HTMLPurifier/LanguageFactory.php';
 require_once $__dir . '/HTMLPurifier/Length.php';
 require_once $__dir . '/HTMLPurifier/Lexer.php';
 require_once $__dir . '/HTMLPurifier/PercentEncoder.php';
+require_once $__dir . '/HTMLPurifier/PropertyList.php';
+require_once $__dir . '/HTMLPurifier/PropertyListIterator.php';
 require_once $__dir . '/HTMLPurifier/Strategy.php';
 require_once $__dir . '/HTMLPurifier/StringHash.php';
 require_once $__dir . '/HTMLPurifier/StringHashParser.php';

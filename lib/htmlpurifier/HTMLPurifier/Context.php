@@ -9,12 +9,12 @@
  */
 class HTMLPurifier_Context
 {
-    
+
     /**
      * Private array that stores the references.
      */
     private $_storage = array();
-    
+
     /**
      * Registers a variable into the context.
      * @param $name String name
@@ -28,7 +28,7 @@ class HTMLPurifier_Context
         }
         $this->_storage[$name] =& $ref;
     }
-    
+
     /**
      * Retrieves a variable reference from the context.
      * @param $name String name
@@ -45,7 +45,7 @@ class HTMLPurifier_Context
         }
         return $this->_storage[$name];
     }
-    
+
     /**
      * Destorys a variable in the context.
      * @param $name String name
@@ -58,7 +58,7 @@ class HTMLPurifier_Context
         }
         unset($this->_storage[$name]);
     }
-    
+
     /**
      * Checks whether or not the variable exists.
      * @param $name String name
@@ -66,7 +66,7 @@ class HTMLPurifier_Context
     public function exists($name) {
         return isset($this->_storage[$name]);
     }
-    
+
     /**
      * Loads a series of variables from an associative array
      * @param $context_array Assoc array of variables to load
@@ -76,6 +76,7 @@ class HTMLPurifier_Context
             $this->register($key, $context_array[$key]);
         }
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

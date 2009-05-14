@@ -8,3 +8,4 @@ DEFAULT: false
   those links. For example, <a href="http://example.com">example</a> becomes
   example (<a>http://example.com</a>).
 </p>
+--# vim: et sw=4 sts=4

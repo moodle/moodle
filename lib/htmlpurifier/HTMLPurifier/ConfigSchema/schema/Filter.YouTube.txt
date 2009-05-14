@@ -8,3 +8,4 @@ DEFAULT: false
   <a href="http://htmlpurifier.org/docs/enduser-youtube.html">this document
   on embedding videos</a> for more information on what this filter does.
 </p>
+--# vim: et sw=4 sts=4

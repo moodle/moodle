@@ -5,12 +5,12 @@
  */
 abstract class HTMLPurifier_TagTransform
 {
-    
+
     /**
      * Tag name to transform the tag to.
      */
     public $transform_to;
-    
+
     /**
      * Transforms the obsolete tag into the valid tag.
      * @param $tag Tag to be transformed.
@@ -18,7 +18,7 @@ abstract class HTMLPurifier_TagTransform
      * @param $context Mandatory HTMLPurifier_Context object
      */
     abstract public function transform($tag, $config, $context);
-    
+
     /**
      * Prepends CSS properties to the style attribute, creating the
      * attribute if it doesn't exist.
@@ -30,6 +30,7 @@ abstract class HTMLPurifier_TagTransform
         $attr['style'] = isset($attr['style']) ? $attr['style'] : '';
         $attr['style'] = $css . $attr['style'];
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

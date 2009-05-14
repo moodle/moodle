@@ -12,3 +12,4 @@ DEFAULT: NULL
   disable cleaning. In addition, you can supply your own concrete implementation
   of Tidy's interface to use, although I don't know why you'd want to do that.
 </p>
+--# vim: et sw=4 sts=4

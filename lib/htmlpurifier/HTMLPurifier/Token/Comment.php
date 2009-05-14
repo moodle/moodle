@@ -6,9 +6,10 @@
 class HTMLPurifier_Token_Comment extends HTMLPurifier_Token
 {
     public $data; /**< Character data within comment. */
+    public $is_whitespace = true;
     /**
      * Transparent constructor.
-     * 
+     *
      * @param $data String comment data.
      */
     public function __construct($data, $line = null, $col = null) {
@@ -18,3 +19,4 @@ class HTMLPurifier_Token_Comment extends HTMLPurifier_Token
     }
 }
 
+// vim: et sw=4 sts=4

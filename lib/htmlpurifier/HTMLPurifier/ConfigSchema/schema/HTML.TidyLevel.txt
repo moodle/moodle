@@ -21,3 +21,4 @@ There are four allowed values:</p>
 
 --ALLOWED--
 'none', 'light', 'medium', 'heavy'
+--# vim: et sw=4 sts=4

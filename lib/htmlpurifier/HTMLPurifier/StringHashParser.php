@@ -2,7 +2,7 @@
 
 /**
  * Parses string hash files. File format is as such:
- * 
+ *
  *      DefaultKeyValue
  *      KEY: Value
  *      KEY2: Value2
@@ -27,9 +27,9 @@
  */
 class HTMLPurifier_StringHashParser
 {
-    
+
     public $default = 'ID';
-    
+
     /**
      * Parses a file that contains a single string-hash.
      */
@@ -41,7 +41,7 @@ class HTMLPurifier_StringHashParser
         fclose($fh);
         return $ret;
     }
-    
+
     /**
      * Parses a file that contains multiple string-hashes delimited by '----'
      */
@@ -56,7 +56,7 @@ class HTMLPurifier_StringHashParser
         fclose($fh);
         return $ret;
     }
-    
+
     /**
      * Internal parser that acepts a file handle.
      * @note While it's possible to simulate in-memory parsing by using
@@ -75,7 +75,10 @@ class HTMLPurifier_StringHashParser
             $line = rtrim($line, "\n\r");
             if (!$state && $line === '') continue;
             if ($line === '----') break;
-            if (strncmp('--', $line, 2) === 0) {
+            if (strncmp('--#', $line, 3) === 0) {
+                // Comment
+                continue;
+            } elseif (strncmp('--', $line, 2) === 0) {
                 // Multiline declaration
                 $state = trim($line, '- ');
                 if (!isset($ret[$state])) $ret[$state] = '';
@@ -84,7 +87,8 @@ class HTMLPurifier_StringHashParser
                 $single = true;
                 if (strpos($line, ':') !== false) {
                     // Single-line declaration
-                    list($state, $line) = explode(': ', $line, 2);
+                    list($state, $line) = explode(':', $line, 2);
+                    $line = trim($line);
                 } else {
                     // Use default declaration
                     $state  = $this->default;
@@ -100,5 +104,7 @@ class HTMLPurifier_StringHashParser
         } while (!feof($fh));
         return $ret;
     }
-    
+
 }
+
+// vim: et sw=4 sts=4

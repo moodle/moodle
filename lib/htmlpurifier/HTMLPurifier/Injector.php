@@ -4,59 +4,59 @@
  * Injects tokens into the document while parsing for well-formedness.
  * This enables "formatter-like" functionality such as auto-paragraphing,
  * smiley-ification and linkification to take place.
- * 
+ *
  * A note on how handlers create changes; this is done by assigning a new
  * value to the $token reference. These values can take a variety of forms and
  * are best described HTMLPurifier_Strategy_MakeWellFormed->processToken()
  * documentation.
- * 
- * @todo Allow injectors to request a re-run on their output. This 
+ *
+ * @todo Allow injectors to request a re-run on their output. This
  *       would help if an operation is recursive.
  */
 abstract class HTMLPurifier_Injector
 {
-    
+
     /**
      * Advisory name of injector, this is for friendly error messages
      */
     public $name;
-    
+
     /**
      * Instance of HTMLPurifier_HTMLDefinition
      */
     protected $htmlDefinition;
-    
+
     /**
      * Reference to CurrentNesting variable in Context. This is an array
      * list of tokens that we are currently "inside"
      */
     protected $currentNesting;
-    
+
     /**
      * Reference to InputTokens variable in Context. This is an array
      * list of the input tokens that are being processed.
      */
     protected $inputTokens;
-    
+
     /**
      * Reference to InputIndex variable in Context. This is an integer
      * array index for $this->inputTokens that indicates what token
      * is currently being processed.
      */
     protected $inputIndex;
-    
+
     /**
      * Array of elements and attributes this injector creates and therefore
      * need to be allowed by the definition. Takes form of
      * array('element' => array('attr', 'attr2'), 'element2')
      */
     public $needed = array();
-    
+
     /**
      * Index of inputTokens to rewind to.
      */
     protected $rewind = false;
-    
+
     /**
      * Rewind to a spot to re-perform processing. This is useful if you
      * deleted a node, and now need to see if this change affected any
@@ -68,7 +68,7 @@ abstract class HTMLPurifier_Injector
     public function rewind($index) {
         $this->rewind = $index;
     }
-    
+
     /**
      * Retrieves rewind, and then unsets it.
      */
@@ -77,7 +77,7 @@ abstract class HTMLPurifier_Injector
         $this->rewind = false;
         return $r;
     }
-    
+
     /**
      * Prepares the injector by giving it the config and context objects:
      * this allows references to important variables to be made within
@@ -99,7 +99,7 @@ abstract class HTMLPurifier_Injector
         $this->inputIndex     =& $context->get('InputIndex');
         return false;
     }
-    
+
     /**
      * This function checks if the HTML environment
      * will work with the Injector: if p tags are not allowed, the
@@ -120,7 +120,7 @@ abstract class HTMLPurifier_Injector
         }
         return false;
     }
-    
+
     /**
      * Tests if the context node allows a certain element
      * @param $name Name of element to test for
@@ -139,7 +139,7 @@ abstract class HTMLPurifier_Injector
         }
         return true;
     }
-    
+
     /**
      * Iterator function, which starts with the next token and continues until
      * you reach the end of the input tokens.
@@ -155,7 +155,7 @@ abstract class HTMLPurifier_Injector
         $current = $this->inputTokens[$i];
         return true;
     }
-    
+
     /**
      * Similar to _forward, but accepts a third parameter $nesting (which
      * should be initialized at 0) and stops when we hit the end tag
@@ -172,7 +172,7 @@ abstract class HTMLPurifier_Injector
         }
         return true;
     }
-    
+
     /**
      * Iterator function, starts with the previous token and continues until
      * you reach the beginning of input tokens.
@@ -188,7 +188,7 @@ abstract class HTMLPurifier_Injector
         $current = $this->inputTokens[$i];
         return true;
     }
-    
+
     /**
      * Initializes the iterator at the current position. Use in a do {} while;
      * loop to force the _forward and _backward functions to start at the
@@ -202,31 +202,32 @@ abstract class HTMLPurifier_Injector
         if ($i === null) $i = $this->inputIndex;
         $current = $this->inputTokens[$i];
     }
-    
+
     /**
      * Handler that is called when a text token is processed
      */
     public function handleText(&$token) {}
-    
+
     /**
      * Handler that is called when a start or empty token is processed
      */
     public function handleElement(&$token) {}
-    
+
     /**
      * Handler that is called when an end token is processed
      */
     public function handleEnd(&$token) {
         $this->notifyEnd($token);
     }
-    
+
     /**
      * Notifier that is called when an end token is processed
      * @note This differs from handlers in that the token is read-only
      * @deprecated
      */
     public function notifyEnd($token) {}
-    
-    
+
+
 }
 
+// vim: et sw=4 sts=4

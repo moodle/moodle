@@ -12,3 +12,4 @@ entities), making it pretty useless for anything except the most I18N-blind
 applications, although %Core.EscapeNonASCIICharacters offers fixes this
 trouble with another tradeoff. This directive only accepts ISO-8859-1 if
 iconv is not enabled.
+--# vim: et sw=4 sts=4

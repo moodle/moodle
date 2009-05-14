@@ -11,3 +11,4 @@ VERSION: 3.1.1
  concurrently edited, although there are
  subtle differences in the input format (the HTML max is an integer).
 </p>
+--# vim: et sw=4 sts=4

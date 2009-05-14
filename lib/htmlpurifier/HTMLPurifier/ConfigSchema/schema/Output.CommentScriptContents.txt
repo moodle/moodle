@@ -4,6 +4,7 @@ VERSION: 2.0.0
 DEFAULT: true
 --DESCRIPTION--
 Determines whether or not HTML Purifier should attempt to fix up the
-contents of script tags for legacy browsers with comments. 
+contents of script tags for legacy browsers with comments.
 --ALIASES--
 Core.CommentScriptContents
+--# vim: et sw=4 sts=4

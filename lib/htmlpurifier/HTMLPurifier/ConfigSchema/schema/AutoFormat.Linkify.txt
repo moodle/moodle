@@ -7,6 +7,6 @@ DEFAULT: false
 <p>
   This directive turns on linkification, auto-linking http, ftp and
   https URLs. <code>a</code> tags with the <code>href</code> attribute
-  must be allowed. 
+  must be allowed.
 </p>
-
+--# vim: et sw=4 sts=4

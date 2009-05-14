@@ -26,3 +26,4 @@ ALIASES: Filter.ExtractStyleBlocksScope
   Purifier, and I am working to get it fixed. Until then, HTML Purifier
   performs a basic check to prevent this.
 </p>
+--# vim: et sw=4 sts=4

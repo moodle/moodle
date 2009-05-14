@@ -19,4 +19,4 @@ DEFAULT: NULL
     broken whitelists. If %HTML.AllowedElements or %HTML.AllowedAttributes
     are set, this directive has no effect.
 </p>
-
+--# vim: et sw=4 sts=4

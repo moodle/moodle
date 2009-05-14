@@ -4,9 +4,9 @@
  * Validates news (Usenet) as defined by generic RFC 1738
  */
 class HTMLPurifier_URIScheme_news extends HTMLPurifier_URIScheme {
-    
+
     public $browsable = false;
-    
+
     public function validate(&$uri, $config, $context) {
         parent::validate($uri, $config, $context);
         $uri->userinfo = null;
@@ -16,6 +16,7 @@ class HTMLPurifier_URIScheme_news extends HTMLPurifier_URIScheme {
         // typecode check needed on path
         return true;
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

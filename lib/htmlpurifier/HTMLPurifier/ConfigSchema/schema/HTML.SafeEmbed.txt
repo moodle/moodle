@@ -11,3 +11,4 @@ DEFAULT: false
     to enable this with %HTML.SafeObject.
     <strong>Highly experimental.</strong>
 </p>
+--# vim: et sw=4 sts=4

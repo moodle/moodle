@@ -13,11 +13,14 @@ class HTMLPurifier_ChildDef_Optional extends HTMLPurifier_ChildDef_Required
     public $type = 'optional';
     public function validateChildren($tokens_of_children, $config, $context) {
         $result = parent::validateChildren($tokens_of_children, $config, $context);
+        // we assume that $tokens_of_children is not modified
         if ($result === false) {
             if (empty($tokens_of_children)) return true;
+            elseif ($this->whitespace) return $tokens_of_children;
             else return array();
         }
         return $result;
     }
 }
 
+// vim: et sw=4 sts=4

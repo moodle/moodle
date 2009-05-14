@@ -8,3 +8,4 @@ DEFAULT: array()
   equivalent of the now deprecated <code>HTMLPurifier-&gt;addFilter()</code>
   method. Specify an array of concrete implementations.
 </p>
+--# vim: et sw=4 sts=4

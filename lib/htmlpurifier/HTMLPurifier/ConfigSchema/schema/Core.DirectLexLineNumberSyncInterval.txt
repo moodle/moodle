@@ -12,6 +12,6 @@ DEFAULT: 0
   performance, and this is only strictly necessary if the counting
   algorithm is buggy (in which case you should report it as a bug).
   This has no effect when %Core.MaintainLineNumbers is disabled or DirectLex is
-  not being used. 
+  not being used.
 </p>
-
+--# vim: et sw=4 sts=4

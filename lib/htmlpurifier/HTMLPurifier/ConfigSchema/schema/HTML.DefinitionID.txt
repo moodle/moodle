@@ -30,4 +30,4 @@ $def->addAttribute('a', 'tabindex', 'Number');
     You <em>must</em> specify a value to this directive to use the
     advanced API features.
 </p>
-
+--# vim: et sw=4 sts=4

@@ -5,6 +5,6 @@ DEFAULT: false
 --DESCRIPTION--
 
 <p>
-    Whether or not to allow safe, proprietary CSS values. 
+    Whether or not to allow safe, proprietary CSS values.
 </p>
-
+--# vim: et sw=4 sts=4

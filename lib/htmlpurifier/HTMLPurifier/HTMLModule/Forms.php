@@ -7,12 +7,12 @@ class HTMLPurifier_HTMLModule_Forms extends HTMLPurifier_HTMLModule
 {
     public $name = 'Forms';
     public $safe = false;
-    
+
     public $content_sets = array(
         'Block' => 'Form',
         'Inline' => 'Formctrl',
     );
-    
+
     public function setup($config) {
         $form = $this->addElement('form', 'Form',
           'Required: Heading | List | Block | fieldset', 'Common', array(
@@ -24,7 +24,7 @@ class HTMLPurifier_HTMLModule_Forms extends HTMLPurifier_HTMLModule
             'enctype' => 'Enum#application/x-www-form-urlencoded,multipart/form-data',
         ));
         $form->excludes = array('form' => true);
-        
+
         $input = $this->addElement('input', 'Formctrl', 'Empty', 'Common', array(
             'accept' => 'ContentTypes',
             'accesskey' => 'Character',
@@ -41,7 +41,7 @@ class HTMLPurifier_HTMLModule_Forms extends HTMLPurifier_HTMLModule
             'value' => 'CDATA',
         ));
         $input->attr_transform_post[] = new HTMLPurifier_AttrTransform_Input();
-        
+
         $this->addElement('select', 'Formctrl', 'Required: optgroup | option', 'Common', array(
             'disabled' => 'Bool#disabled',
             'multiple' => 'Bool#multiple',
@@ -49,7 +49,7 @@ class HTMLPurifier_HTMLModule_Forms extends HTMLPurifier_HTMLModule
             'size' => 'Number',
             'tabindex' => 'Number',
         ));
-        
+
         $this->addElement('option', false, 'Optional: #PCDATA', 'Common', array(
             'disabled' => 'Bool#disabled',
             'label' => 'Text',
@@ -59,7 +59,7 @@ class HTMLPurifier_HTMLModule_Forms extends HTMLPurifier_HTMLModule
         // It's illegal for there to be more than one selected, but not
         // be multiple. Also, no selected means undefined behavior. This might
         // be difficult to implement; perhaps an injector, or a context variable.
-        
+
         $textarea = $this->addElement('textarea', 'Formctrl', 'Optional: #PCDATA', 'Common', array(
             'accesskey' => 'Character',
             'cols*' => 'Number',
@@ -70,7 +70,7 @@ class HTMLPurifier_HTMLModule_Forms extends HTMLPurifier_HTMLModule
             'tabindex' => 'Number',
         ));
         $textarea->attr_transform_pre[] = new HTMLPurifier_AttrTransform_Textarea();
-        
+
         $button = $this->addElement('button', 'Formctrl', 'Optional: #PCDATA | Heading | List | Block | Inline', 'Common', array(
             'accesskey' => 'Character',
             'disabled' => 'Bool#disabled',
@@ -79,39 +79,40 @@ class HTMLPurifier_HTMLModule_Forms extends HTMLPurifier_HTMLModule
             'type' => 'Enum#button,submit,reset',
             'value' => 'CDATA',
         ));
-        
+
         // For exclusions, ideally we'd specify content sets, not literal elements
         $button->excludes = $this->makeLookup(
             'form', 'fieldset', // Form
             'input', 'select', 'textarea', 'label', 'button', // Formctrl
             'a' // as per HTML 4.01 spec, this is omitted by modularization
         );
-        
+
         // Extra exclusion: img usemap="" is not permitted within this element.
         // We'll omit this for now, since we don't have any good way of
         // indicating it yet.
-        
+
         // This is HIGHLY user-unfriendly; we need a custom child-def for this
         $this->addElement('fieldset', 'Form', 'Custom: (#WS?,legend,(Flow|#PCDATA)*)', 'Common');
-        
+
         $label = $this->addElement('label', 'Formctrl', 'Optional: #PCDATA | Inline', 'Common', array(
             'accesskey' => 'Character',
             // 'for' => 'IDREF', // IDREF not implemented, cannot allow
         ));
         $label->excludes = array('label' => true);
-        
+
         $this->addElement('legend', false, 'Optional: #PCDATA | Inline', 'Common', array(
             'accesskey' => 'Character',
         ));
-        
+
         $this->addElement('optgroup', false, 'Required: option', 'Common', array(
             'disabled' => 'Bool#disabled',
             'label*' => 'Text',
         ));
-        
+
         // Don't forget an injector for <isindex>. This one's a little complex
         // because it maps to multiple elements.
-        
+
     }
 }
 
+// vim: et sw=4 sts=4

@@ -11,6 +11,6 @@ DEFAULT: 1
     context: revision 3 is more up-to-date then revision 2.  Thus, when
     this gets incremented, the cache handling is smart enough to clean
     up any older revisions of your definition as well as flush the
-    cache.  
+    cache.
 </p>
-
+--# vim: et sw=4 sts=4

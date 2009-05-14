@@ -6,3 +6,4 @@ DEPRECATED-VERSION: 1.7.0
 DEPRECATED-USE: HTML.Doctype
 --DESCRIPTION--
 Determines whether or not to use Transitional (loose) or Strict rulesets.
+--# vim: et sw=4 sts=4

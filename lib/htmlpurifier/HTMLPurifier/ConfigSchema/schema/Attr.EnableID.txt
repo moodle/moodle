@@ -13,3 +13,4 @@ you use (%Attr.IDBlacklist) or prefixing all user supplied IDs
 pre-1.2.0 versions.
 --ALIASES--
 HTML.EnableAttrID
+--# vim: et sw=4 sts=4

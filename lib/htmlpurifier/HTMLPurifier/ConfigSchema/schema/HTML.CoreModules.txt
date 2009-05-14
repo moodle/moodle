@@ -18,6 +18,6 @@ array (
     that must be included for the doctype to be an conforming document
     type: put those modules here. By default, XHTML's core modules
     are used. You can set this to a blank array to disable core module
-    protection, but this is not recommended. 
+    protection, but this is not recommended.
 </p>
-
+--# vim: et sw=4 sts=4

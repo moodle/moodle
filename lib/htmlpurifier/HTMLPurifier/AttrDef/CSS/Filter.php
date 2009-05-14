@@ -7,13 +7,13 @@
  */
 class HTMLPurifier_AttrDef_CSS_Filter extends HTMLPurifier_AttrDef
 {
-    
+
     protected $intValidator;
-    
+
     public function __construct() {
         $this->intValidator = new HTMLPurifier_AttrDef_Integer();
     }
-    
+
     public function validate($value, $config, $context) {
         $value = $this->parseCDATA($value);
         if ($value === 'none') return $value;
@@ -48,5 +48,7 @@ class HTMLPurifier_AttrDef_CSS_Filter extends HTMLPurifier_AttrDef
         $ret_function = "$function($ret_parameters)";
         return $ret_function;
     }
-    
+
 }
+
+// vim: et sw=4 sts=4

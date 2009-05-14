@@ -9,17 +9,17 @@
  */
 class HTMLPurifier_AttrDef_HTML_Nmtokens extends HTMLPurifier_AttrDef
 {
-    
+
     public function validate($string, $config, $context) {
-        
+
         $string = trim($string);
-        
+
         // early abort: '' and '0' (strings that convert to false) are invalid
         if (!$string) return false;
-        
+
         // OPTIMIZABLE!
         // do the preg_match, capture all subpatterns for reformulation
-        
+
         // we don't support U+00A1 and up codepoints or
         // escaping because I don't know how to do that with regexps
         // and plus it would complicate optimization efforts (you never
@@ -29,19 +29,20 @@ class HTMLPurifier_AttrDef_HTML_Nmtokens extends HTMLPurifier_AttrDef
                    '((?:--|-?[A-Za-z_])[A-Za-z_\-0-9]*)'.
                    '(?:(?=\s)|\z)/'; // look ahead for space or string end
         preg_match_all($pattern, $string, $matches);
-        
+
         if (empty($matches[1])) return false;
-        
+
         // reconstruct string
         $new_string = '';
         foreach ($matches[1] as $token) {
             $new_string .= $token . ' ';
         }
         $new_string = rtrim($new_string);
-        
+
         return $new_string;
-        
+
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

@@ -4,23 +4,23 @@
  * Validates name/value pairs in param tags to be used in safe objects. This
  * will only allow name values it recognizes, and pre-fill certain attributes
  * with required values.
- * 
+ *
  * @note
  *      This class only supports Flash. In the future, Quicktime support
  *      may be added.
- * 
+ *
  * @warning
  *      This class expects an injector to add the necessary parameters tags.
  */
-class HTMLPurifier_AttrTransform_SafeParam extends HTMLPurifier_AttrTransform 
+class HTMLPurifier_AttrTransform_SafeParam extends HTMLPurifier_AttrTransform
 {
     public $name = "SafeParam";
     private $uri;
-    
+
     public function __construct() {
         $this->uri = new HTMLPurifier_AttrDef_URI(true); // embedded
     }
-    
+
     public function transform($attr, $config, $context) {
         // If we add support for other objects, we'll need to alter the
         // transforms.
@@ -46,3 +46,5 @@ class HTMLPurifier_AttrTransform_SafeParam extends HTMLPurifier_AttrTransform
         return $attr;
     }
 }
+
+// vim: et sw=4 sts=4
