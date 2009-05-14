@@ -443,6 +443,7 @@ $string['unknowncontext'] = 'This is an unknown context.';
 $string['unknownfiletype'] = 'Error unknown filtertype';
 $string['unknownhelp'] = 'Unknown help topic $a';
 $string['unknowngroup'] = 'Unknown group \"$a\"';
+$string['unknownjsinrequirejs'] = 'Can not find JS library: $a';
 $string['unknownrole'] = 'Unknown role \"$a\"';
 $string['unknownuseraction'] = 'Sorry, I do not understand this user action';
 $string['unknownuserselector'] = 'Unknown user selector';
