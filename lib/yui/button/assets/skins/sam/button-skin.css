@@ -1,8 +1,8 @@
 /*
-Copyright (c) 2008, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.6.0
+version: 2.7.0
 */
 .yui-skin-sam .yui-button  {
 
@@ -20,15 +20,13 @@ version: 2.6.0
     border-style: solid;
     border-color: #808080;
     margin: 0 -1px;
-    *position: relative;    /* Necessary to get negative margins working in IE */
-    *left: -1px;
-    
-	/* 
-		Don't apply rounded corners for IE 6 (Quirks and Standards Mode) and IE 7 Quirks Mode 
-		since it causes more problems than its worth.
+
+	/*
+		Using negative margins for rounded corners won't work in IE 6 and IE 7 
+		(Quirks Mode Only), so set the "margin" property to "0" for those 
+		browsers.
 	*/
-	_margin: 0;
-	_position: static;    
+ 	_margin: 0;
 
 }
 

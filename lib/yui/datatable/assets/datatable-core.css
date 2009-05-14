@@ -1,8 +1,8 @@
 /*
-Copyright (c) 2008, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.6.0
+version: 2.7.0
 */
 /* foundational CSS */
 
@@ -36,8 +36,14 @@ version: 2.6.0
     -moz-outline:none;
 }
 
+/* sortable columns */
+
+.yui-skin-sam thead .yui-dt-sortable {
+    cursor:pointer;
+}
+
 /* draggable columns */
-.yui-dt-draggable {
+.yui-skin-sam thead .yui-dt-draggable {
     cursor: move;
 }
 .yui-dt-coltarget {
@@ -65,6 +71,7 @@ th.yui-dt-resizeable .yui-dt-resizerliner {
     visibility:hidden;
     position:absolute;
     z-index:9000;
+    background-color:#CCC;opacity:0;filter: alpha(opacity=0); /* Bug 1952811: IE transparency z-index */
 }
 
 /* hidden columns */

@@ -1,8 +1,8 @@
 /*
-Copyright (c) 2008, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.6.0
+version: 2.7.0
 */
 /* default space between tabs */
 .yui-navset .yui-nav li,
@@ -16,7 +16,9 @@ version: 2.6.0
 }
 
 .yui-navset .yui-content .yui-hidden {
-    display:none;
+    position:absolute;
+    left:-999999px;
+    visibility:hidden;
 }
 
 /* default width for side tabs */
@@ -52,7 +54,8 @@ version: 2.6.0
     zoom:1;
 }
 
-.yui-navset .yui-content {
+.yui-navset .yui-content,
+.yui-navset .yui-content div {
     zoom:1;
 }
 

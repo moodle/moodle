@@ -1,15 +1,14 @@
 /*
-Copyright (c) 2008, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.6.0
+version: 2.7.0
 */
 /* .yui-navset defaults to .yui-navset-top */
 .yui-skin-sam .yui-navset .yui-nav,
 .yui-skin-sam .yui-navset .yui-navset-top .yui-nav { /* protect nested tabviews from other orientations */
     border:solid #2647a0; /* color between tab list and content */
     border-width:0 0 5px;
-    Xposition:relative;
     zoom:1;
 }
 

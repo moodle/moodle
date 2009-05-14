@@ -1,14 +1,15 @@
 /*
-Copyright (c) 2008, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.6.0
+version: 2.7.0
 */
 /* Set the cursor to busy when we are doing something */
 .yui-busy {
     cursor: wait !important;
 }
-.yui-toolbar-container fieldset {
+.yui-toolbar-container fieldset,
+.yui-editor-container fieldset {
     padding: 0;
     margin: 0;
     border: 0;
@@ -215,6 +216,13 @@ version: 2.6.0
 /* The disbled state of the Editor */
 .yui-editor-container .yui-editor-masked {
     background-color: #CCC;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: .5;
+    filter: alpha(opacity=50);
 }
 /* Style the editable iframe to hide it */
 .yui-editor-container iframe {

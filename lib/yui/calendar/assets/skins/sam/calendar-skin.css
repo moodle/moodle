@@ -1,8 +1,8 @@
 /*
-Copyright (c) 2008, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.6.0
+version: 2.7.0
 */
 /**
  * SAM
@@ -259,7 +259,7 @@ version: 2.6.0
 .yui-skin-sam .yui-calcontainer .yui-cal-nav-mask {
 	background-color:#000;
 	opacity:0.25;
-	*filter:alpha(opacity=25); /* IE */
+	filter:alpha(opacity=25); /* IE */
 }
 
 /* NAVIGATOR BOUNDING BOX */

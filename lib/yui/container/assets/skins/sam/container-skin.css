@@ -1,14 +1,14 @@
 /*
-Copyright (c) 2008, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.6.0
+version: 2.7.0
 */
 /* Panel modality mask styles */
 .yui-skin-sam .mask {
     background-color: #000;
     opacity: .25;
-    *filter: alpha(opacity=25);  /* Set opacity in IE */
+    filter: alpha(opacity=25);  /* Set opacity in IE */
 }
 
 /* Panel styles */
@@ -128,7 +128,7 @@ version: 2.6.0
 
     background-color: #000;
     opacity: .12;
-    *filter: alpha(opacity=12);  /* Set opacity in IE */
+    filter: alpha(opacity=12);  /* Set opacity in IE */
 }
 
 
@@ -238,5 +238,5 @@ version: 2.6.0
 
 .yui-skin-sam .yui-tt-shadow-visible {
     opacity: .12;
-    *filter: alpha(opacity=12);  /* For IE */
+    filter: alpha(opacity=12);  /* For IE */
 }

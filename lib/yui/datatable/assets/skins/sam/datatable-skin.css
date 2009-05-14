@@ -1,8 +1,8 @@
 /*
-Copyright (c) 2008, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.6.0
+version: 2.7.0
 */
 /* basic skin styles */
 .yui-skin-sam .yui-dt table {
@@ -67,7 +67,7 @@ version: 2.6.0
 .yui-skin-sam .yui-dt-mask {
     background-color: #000;
     opacity: .25;
-    *filter: alpha(opacity=25);  /* Set opacity in IE */
+    filter: alpha(opacity=25);  /* Set opacity in IE */
 }
 
 /* messaging */
@@ -82,9 +82,6 @@ version: 2.6.0
 .yui-skin-sam .yui-dt-scrollable .yui-dt-data tr.yui-dt-last td {border-bottom:1px solid #7F7F7F;}
 
 /* sortable columns */
-.yui-skin-sam thead .yui-dt-sortable {
-    cursor:pointer;
-}
 .yui-skin-sam th.yui-dt-asc,
 .yui-skin-sam th.yui-dt-desc {
     background:url(../../../../assets/skins/sam/sprite.png) repeat-x 0 -100px; /* sorted header gradient */
