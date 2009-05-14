@@ -41,10 +41,7 @@ if ($hassiteconfig
         $authbyname = array();
 
         foreach ($auths as $auth) {
-            $strauthname = get_string("auth_{$auth}title", "auth");
-            if ($strauthname == "[[auth_{$auth}title]]") {
-                $strauthname = get_string("auth_{$auth}title", "auth_{$auth}");
-            }
+            $strauthname = auth_get_plugin_title($auth);
             $authbyname[$strauthname] = $auth;
         }
         ksort($authbyname);

@@ -360,11 +360,7 @@ class auth_plugin_base {
      * Return the properly translated human-friendly title of this auth plugin
      */
     function get_title() {
-        $authtitle = get_string("auth_{$this->authtype}title", "auth");
-        if ($authtitle == "[[auth_{$this->authtype}title]]") {
-            $authtitle = get_string("auth_{$this->authtype}title", "auth_{$this->authtype}");
-        }
-        return $authtitle;
+        return auth_get_plugin_title($this->authtype);
     }
 
     /**
