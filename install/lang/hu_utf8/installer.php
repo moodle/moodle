@@ -37,6 +37,7 @@ $string['configurationcompletesub'] = 'A Moodle megpróbálta beállításait a 
 $string['continue'] = 'Folytatás';
 $string['ctyperecommended'] = 'Ajánlatos telepíteni az opcionális ctype PHP-bővítést a portál teljesítményének növelése érdekében, különösen abban az esetben, ha a portál támogatja nem latin nyelvek használatát.';
 $string['ctyperequired'] = 'A ctype PHP-bővítést a Moodle előírja a portál teljesítményének növelése és a több nyelvű kompatibilitás érdekében.';
+$string['curlrecommended'] = 'Ajánlatos a választható cURL-könyvtár telepítése a Moodle Networking bekapcsolásához.';
 $string['curlrecommended'] = 'Ajánlatos a választható Curl-könyvtár telepítése a Moodle Networking bekapcsolásához.';
 $string['curlrequired'] = 'A Moodle most már előírja a cURL PHP-bővítést a Moodle-adattárakkal való kommunikációhoz.';
 $string['customcheck'] = 'Egyéb ellenőrzések';
