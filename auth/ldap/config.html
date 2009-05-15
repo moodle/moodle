@@ -92,7 +92,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     <td align="right"><label for="menuversion"><?php print_string('auth_ldap_version_key','auth') ?></label></td>
     <td>
     <?php
-       $varsions = array();
+       $versions = array();
        $versions[2] = '2';
        $versions[3] = '3';
        choose_from_menu($versions, 'version', $config->version, '');
