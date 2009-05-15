@@ -16,6 +16,13 @@ define('CONDITION_MISSING_EXTRATABLE',1);
 /** The $cm variable is expected to contain nothing except the ID */
 define('CONDITION_MISSING_EVERYTHING',2);
 
+global $CONDITIONLIB_PRIVATE;
+$CONDITIONLIB_PRIVATE = new stdClass;
+// Caches whether completion values are used in availability conditions.
+// Array of course => array of cmid => true.
+$CONDITIONLIB_PRIVATE->usedincondition = array();
+
+
 class condition_info {
     private $cm, $gotdata;
 
@@ -587,18 +594,18 @@ WHERE
     public static function completion_value_used_as_condition($course, $cm) {
         // Have we already worked out a list of required completion values
         // for this course? If so just use that
-        static $affected = array();
-        if (!array_key_exists($course->id, $affected)) {
+        global $CONDITIONLIB_PRIVATE;
+        if (!array_key_exists($course->id, $CONDITIONLIB_PRIVATE->usedincondition)) {
             // We don't have data for this course, build it
             $modinfo = get_fast_modinfo($course);
-            $affected[$course->id] = array();
-            foreach ($modinfo->cms as $cm) {
-                foreach ($cm->conditionscompletion as $cmid=>$expectedcompletion) {
-                    $affected[$course->id][$cmid] = true;
+            $CONDITIONLIB_PRIVATE->usedincondition[$course->id] = array();
+            foreach ($modinfo->cms as $othercm) {
+                foreach ($othercm->conditionscompletion as $cmid=>$expectedcompletion) {
+                    $CONDITIONLIB_PRIVATE->usedincondition[$course->id][$cmid] = true;
                 }
             }
         }
-        return array_key_exists($cm->id, $affected[$course->id]);
+        return array_key_exists($cm->id, $CONDITIONLIB_PRIVATE->usedincondition[$course->id]);
     }
 }
 ?>
