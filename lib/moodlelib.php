@@ -8077,7 +8077,7 @@ function check_dir_exists($dir, $create=false, $recursive=false) {
 
     global $CFG;
 
-    if (strstr($dir, $CFG->dataroot.'/') === false) {
+    if (strstr(cleardoubleslashes($dir), cleardoubleslashes($CFG->dataroot.'/')) === false) {
         debugging('Warning. Wrong call to check_dir_exists(). $dir must be an absolute path under $CFG->dataroot ("' . $dir . '" is incorrect)', DEBUG_DEVELOPER);
     }
 
@@ -8091,9 +8091,8 @@ function check_dir_exists($dir, $create=false, $recursive=false) {
             if ($recursive) {
             /// We are going to make it recursive under $CFG->dataroot only
             /// (will help sites running open_basedir security and others)
-                $dir = str_replace($CFG->dataroot . '/', '', $dir);
+                $dir = str_replace(cleardoubleslashes($CFG->dataroot . '/'), '', cleardoubleslashes($dir));
             /// PHP 5.0 has recursive mkdir parameter, but 4.x does not :-(
-                $dir = str_replace('\\', '/', $dir); //windows compatibility
                 $dirs = explode('/', $dir); /// Extract path parts
             /// Iterate over each part with start point $CFG->dataroot
                 $dir = $CFG->dataroot . '/';
