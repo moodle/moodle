@@ -2356,10 +2356,6 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     $pageclass = $PAGE->bodyclasses;
     $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
 
-    require_once($CFG->libdir .'/editor/htmlEditor.class.php');
-    $htmlEditorObject = new htmlEditor();
-    $htmlEditor = $htmlEditorObject->configure(NULL, $COURSE->id);
-
     ob_start();
     include($CFG->header);
     $output = ob_get_contents();
@@ -4880,11 +4876,11 @@ function print_recent_activity_note($time, $user, $text, $link, $return=false, $
  * @param string $id CSS ID to add to the textarea element.
  * @param string $editorclass CSS classes to add to the textarea element when using the htmleditor. Use 'form-textarea-simple' to get a basic editor. Defaults to 'form-textarea-advanced' (complete editor). If this is null or invalid, the htmleditor will not show for this field.
  */
-function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value='', $obsolete=0, $return=false, $id='', $editorclass='form-textarea-advanced') {
+function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value='', $obsolete=0, $return=false, $id='') {
     /// $width and height are legacy fields and no longer used as pixels like they used to be.
     /// However, you can set them to zero to override the mincols and minrows values below.
 
-    global $CFG, $COURSE, $HTTPSPAGEREQUIRED, $THEME;
+    global $CFG;
 
     $mincols = 65;
     $minrows = 10;
@@ -4894,7 +4890,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         $id = 'edit-'.$name;
     }
 
-    if ( empty($CFG->editorsrc) && $usehtmleditor ) { // for backward compatibility.
+    if ($usehtmleditor) {
         if ($height && ($rows < $minrows)) {
             $rows = $minrows;
         }
@@ -4904,43 +4900,19 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
     }
 
     if ($usehtmleditor) {
-        $THEME->htmleditors[] = $id;
+        $editor = get_preferred_texteditor(FORMAT_HTML);
+        $editorclass = $editor->get_legacy_textarea_class();
     } else {
         $editorclass = '';
     }
 
-    $str .= "\n".'<textarea class="form-textarea '. $editorclass .'" id="'. $id .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">'."\n";
+    $str .= "\n".'<textarea class="form-textarea '.$editorclass.'" id="'. $id .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">'."\n";
     if ($usehtmleditor) {
         $str .= htmlspecialchars($value); // needed for editing of cleaned text!
     } else {
         $str .= s($value);
     }
     $str .= '</textarea>'."\n";
-
-    if ($usehtmleditor) {
-        require_once("$CFG->dirroot/repository/lib.php");
-        $str_toggle = '<span class="helplink"><a href="javascript:mce_toggleEditor(\''. $id .'\');"><img width="50" height="17" src="'. $CFG->httpswwwroot .'/lib/editor/tinymce/images/toggle.gif" alt="'. get_string('editortoggle') .'" title="'. get_string('editortoggle') .'" class="icontoggle" /></a></span>';
-        // Show shortcuts button if HTML editor is in use, but only if JavaScript is enabled (MDL-9556)
-        if(empty($COURSE->context)) {
-            $ctx = get_context_instance(CONTEXT_SYSTEM);
-        } else {
-            $ctx = $COURSE->context;
-        }
-        $client_id = uniqid();
-        $ret = repository_get_client($ctx, $client_id, array('image', 'video', 'media'), '*');
-
-        $str .= $ret['css'].$ret['js'];
-        $str .= '<div class="textareaicons">';
-        $str .= '<script type="text/javascript">
-//<![CDATA[
-id2clientid[\''.$id.'\']=\''.$client_id.'\';
-mce_saveOnSubmit(\''.addslashes_js($id).'\');
-document.write(\''.addslashes_js($str_toggle).'\');
-document.write(\''.addslashes_js(editorshortcutshelpbutton()).'\');
-//]]>
-</script>';
-        $str .= '</div>';
-    }
 
     if ($return) {
         return $str;

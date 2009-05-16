@@ -99,6 +99,7 @@ function get_plugin_types() {
                  'auth'          => 'auth',
                  'enrol'         => 'enrol',
                  'format'        => 'course/format',
+                 'editor'        => 'lib/editor',
                  'gradeexport'   => 'grade/export',
                  'gradeimport'   => 'grade/import',
                  'gradereport'   => 'grade/report',

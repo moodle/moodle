@@ -41,6 +41,9 @@ function events_load_def($component) {
             // are stored in 'course/format'.
             $defpath = $CFG->dirroot.'/course/format/'.$compparts[1].'/db/events.php';
 
+        } else if ($compparts[0] == 'editor') {
+            $defpath = $CFG->dirroot.'/lib/editor/'.$compparts[1].'/db/events.php';
+
         } else if ($compparts[0] == 'gradeimport') {
             $defpath = $CFG->dirroot.'/grade/import/'.$compparts[1].'/db/events.php';  
         

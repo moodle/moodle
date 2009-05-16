@@ -3069,6 +3069,10 @@ function load_capability_def($component) {
             $defpath = $CFG->dirroot.'/course/'.$component.'/db/access.php';
             $varprefix = $compparts[0].'_'.$compparts[1];
 
+        } else if ($compparts[0] == 'editor') {
+            $defpath = $CFG->dirroot.'/lib/editor/'.$compparts[1].'/db/access.php';
+            $varprefix = $compparts[0].'_'.$compparts[1];
+
         } else if ($compparts[0] == 'gradeimport') {
             $defpath = $CFG->dirroot.'/grade/import/'.$compparts[1].'/db/access.php';
             $varprefix = $compparts[0].'_'.$compparts[1];
@@ -3912,6 +3916,10 @@ function get_capability_string($capabilityname) {
 
         case 'format':
             $string = get_string($stringname, 'format_'.$componentname);
+        break;
+
+        case 'format':
+            $string = get_string($stringname, 'editor_'.$componentname);
         break;
 
         case 'gradeexport':

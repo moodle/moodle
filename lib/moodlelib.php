@@ -5240,6 +5240,7 @@ class string_manager {
             'enrol_' => array('enrol'),
             'filter_' => array('filter'),
             'format_' => array('course/format'),
+            'editor_' => array('lib/editor'),
             'quiz_' => array('mod/quiz/report'),
             'qtype_' => array('question/type'),
             'qformat_' => array('question/format'),
@@ -6471,39 +6472,6 @@ function ini_get_bool($ini_get_arg) {
 
     if ($temp == '1' or strtolower($temp) == 'on') {
         return true;
-    }
-    return false;
-}
-
- /**
- * Get the list of available HTML editors
- */
-function get_available_html_editors() {
-    return array('tinymce'=>'TinyMCE');
-}
-
-/**
- * Determines if the HTML editor is enabled.
- *
- * This depends on site and user settings, as well as the current browser being
- * used.  The current requirements are based on Tinymce's, which are available
- * on http://wiki.moxiecode.com/index.php/TinyMCE:Compatiblity
- *
- * @return mixed false if editor cannot be used, or a string representing the compatible browser
- */
-function can_use_html_editor() {
-    global $USER, $CFG;
-
-    if (!empty($USER->htmleditor) and !empty($CFG->htmleditor)) {
-        if (check_browser_version('MSIE', 5.5)) {
-            return 'MSIE';
-        } else if (check_browser_version('Gecko', 20030516)) {
-            return 'Gecko';
-        } else if (check_browser_version('Safari', 3)) {
-            return 'Safari';
-        } else if (check_browser_version('Opera', 9)) {
-            return 'Opera';
-        }
     }
     return false;
 }

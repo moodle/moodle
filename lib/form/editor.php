@@ -6,7 +6,6 @@ require_once('HTML/QuickForm/element.php');
 //  * locking
 //  * freezing
 //  * ajax format conversion
-//  * tinymce integration
 //  * better area files handling
 
 class MoodleQuickForm_editor extends HTML_QuickForm_element {
@@ -129,37 +128,27 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         $str = $this->_getTabs();
         $str .= '<div>';
 
-
-    /// format option - TODO: ajax conversion and switching
-        $formats = array(FORMAT_MOODLE=>'Moodle', FORMAT_HTML=>'HTML', FORMAT_PLAIN=>'Plaintext', FORMAT_WIKI=>'Wiki'); // TODO: localise & switch to new formats plugins
-
-        if (!isset($formats[$format])) {
-            $format = FORMAT_HTML; // TODO: some user pref
+        $editor = get_preferred_texteditor($format);
+        $strformats = format_text_menu();
+        $formats =  $editor->get_supported_formats();
+        foreach ($formats as $fid) {
+            $formats[$fid] = $strformats[$fid];
         }
 
-    /// print text area - TODO: add on-the-fly switching to tinymce, size configuration
-        $editorclass = 'form-textarea';
-        if ($format == FORMAT_HTML or $format == FORMAT_MOODLE) {
-            $editorclass = 'form-textarea-advanced';
-        }
+    /// print text area - TODO: add on-the-fly switching, size configuration, etc.
+        $editorclass = $editor->get_editor_element_class();
 
         $str .= '<div><textarea class="'.$editorclass.'" id="'.$id.'" name="'.$elname.'[text]" rows="15" cols="80">';
         $str .= s($text);
         $str .= '</textarea></div>';
 
         $str .= '<div>';
-        if ($changeformat) {
-            $str .= '<select name="'.$elname.'[format]">';
-            foreach ($formats as $key=>$desc) {
-                $selected = ($format == $key) ? 'selected="selected"' : '';
-                $str .= '<option value="'.s($key).'" '.$selected.'>'.$desc.'</option>';
-            }
-            $str .= '</select>';
-        } else {
-            // no changes of format allowed
-            $str .= '<input type="hidden" name="'.$elname.'[format]" value="' . $format . '" />';
-            $str .= $formats[$format];
+        $str .= '<select name="'.$elname.'[format]">';
+        foreach ($formats as $key=>$desc) {
+            $selected = ($format == $key) ? 'selected="selected"' : '';
+            $str .= '<option value="'.s($key).'" '.$selected.'>'.$desc.'</option>';
         }
+        $str .= '</select>';
         $str .= '</div>';
 
         if ($maxfiles != 0 ) { // 0 means no files, -1 unlimited
@@ -178,7 +167,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $str .= '</div>';
 
         require_once($CFG->dirroot.'/repository/lib.php');
-        if(empty($COURSE->context)) {
+        if (empty($COURSE->context)) {
             $ctx = get_context_instance(CONTEXT_SYSTEM);
         } else {
             $ctx = $COURSE->context;
@@ -194,8 +183,7 @@ id2itemid['$id']   = '$draftitemid';
 </script>
 EOD;
 
-        /// TODO: hide embedded file manager if tinymce used
-        if ($editorclass === 'form-textarea-advanced') {
+        if ($editor->supports_repositories()) {
             $str .= <<<EOD
 <script type="text/javascript">
 //<![CDATA[
@@ -205,10 +193,8 @@ fileman.style.height = "0";
 //]]>
 </script>
 EOD;
-
             }
         }
-
 
         $str .= '</div>';
 

@@ -166,7 +166,7 @@ function useredit_shared_definition(&$mform) {
         $mform->setDefault('trackforums', 0);
         $mform->setAdvanced('trackforums');
     }
-
+/* TODO: reimplement editor preferences
     if (!empty($CFG->htmleditor)) {
         $choices = array();
         $choices['0'] = get_string('texteditor');
@@ -175,7 +175,7 @@ function useredit_shared_definition(&$mform) {
         $mform->setDefault('htmleditor', 1);
         $mform->setAdvanced('htmleditor');
     }
-
+*/
     if (empty($CFG->enableajax)) {
         $mform->addElement('static', 'ajaxdisabled', get_string('ajaxuse'), get_string('ajaxno'));
         $mform->setAdvanced('ajaxdisabled');
