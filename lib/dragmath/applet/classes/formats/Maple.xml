@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Syntax>
+    <name AutoBrackets="true">Maple</name>
+    
+    <Initial>
+        <output1></output1>
+        <output2></output2>
+    </Initial>
+    <Text>
+        <output1></output1>
+        <output2></output2>
+    </Text>
+    <Variable>
+        <output1></output1>
+        <output2></output2>
+    </Variable>
+    <RealNumber>
+        <output1></output1>
+        <output2></output2>
+    </RealNumber>
+    
+    
+    <!--  Nary Operators   --> 
+    <Add>
+        <output>+</output>
+    </Add>
+    <Multiply>
+        <output>*</output>
+    </Multiply>
+    <Multiply2>
+        <output>*</output>
+    </Multiply2>
+    <Equals>
+        <output>=</output>
+    </Equals>
+    <Union>
+        <output> union </output>
+    </Union>
+    <Intersection>
+        <output> intersect </output>
+    </Intersection>
+    <Comma>
+        <output>,</output>
+    </Comma>
+    <Equiv>
+        <output>≡</output>
+    </Equiv>
+    
+    
+    
+    <!--  Functions   --> 
+    <UMinus>
+        <output1>-</output1>
+        <output2></output2>
+    </UMinus>
+    <Factorial>
+        <output1>factorial</output1>
+        <output2></output2>
+    </Factorial>
+    <NaturalLogarithm>
+        <output1>ln</output1>
+        <output2></output2>
+    </NaturalLogarithm>
+    <Logarithm>
+        <output1>log</output1>
+        <output2></output2>
+    </Logarithm>
+    <Sine>
+        <output1>sin</output1>
+        <output2></output2>
+    </Sine>
+    <Cosine>
+        <output1>cos</output1>
+        <output2></output2>
+    </Cosine>
+    <Tangent>
+        <output1>tan</output1>
+        <output2></output2>
+    </Tangent>
+    <ArcSine>
+        <output1>arcsin</output1>
+        <output2></output2>
+    </ArcSine>
+    <ArcCosine>
+        <output1>arccos</output1>
+        <output2></output2>
+    </ArcCosine>
+    <ArcTangent>
+        <output1>arctan</output1>
+        <output2></output2>
+    </ArcTangent>
+    <SineH>
+        <output1>sinh</output1>
+        <output2></output2>
+    </SineH>
+    <CosineH>
+        <output1>cosh</output1>
+        <output2></output2>
+    </CosineH>
+    <TanH>
+        <output1>tanh</output1>
+        <output2></output2>
+    </TanH>
+    <ArcSineH>
+        <output1>arcsinh</output1>
+        <output2></output2>
+    </ArcSineH>
+    <ArcCosineH>
+        <output1>arccosh</output1>
+        <output2></output2>
+    </ArcCosineH>
+    <ArcTanH>
+        <output1>arctanh</output1>
+        <output2></output2>
+    </ArcTanH>
+    <SquareRoot>
+        <output1>sqrt</output1>
+        <output2></output2>
+    </SquareRoot>
+    <Exp>
+        <output1>exp</output1>
+        <output2></output2>
+    </Exp>
+    <Max>
+        <output1>max</output1>
+        <output2></output2>
+    </Max>
+    <Min>
+        <output1>min</output1>
+        <output2></output2>
+    </Min>
+    <Determinant>
+        <output1>det</output1>
+        <output2></output2>
+    </Determinant>
+    <Trace>
+        <output1>trace</output1>
+        <output2></output2>
+    </Trace>
+    
+    
+    
+    <!--  Binary Operators   --> 
+    <NotEqual>
+        <output1></output1>
+        <output2>≠</output2>
+        <output3></output3>
+    </NotEqual>
+    <PlusMinus>
+        <output1></output1>
+        <output2>±</output2>
+        <output3></output3>
+    </PlusMinus>
+    <Assignment>
+        <output1></output1>
+        <output2>:=</output2>
+        <output3></output3>
+    </Assignment>
+    <Subtract>
+        <output1></output1>
+        <output2>-</output2>
+        <output3></output3>
+    </Subtract>
+    <Divide>
+        <output1></output1>
+        <output2>/</output2>
+        <output3></output3>
+    </Divide>   
+    <Divide2>
+        <output1></output1>
+        <output2>/</output2>
+        <output3></output3>
+    </Divide2>   
+    <LessThan>
+        <output1></output1>
+        <output2><![CDATA[<]]></output2>
+        <output3></output3>
+    </LessThan>    
+    <GreaterThan>
+        <output1></output1>
+        <output2>></output2>
+        <output3></output3>
+    </GreaterThan>    
+    <LTEQ>
+        <output1></output1>
+        <output2><![CDATA[<=]]></output2>
+        <output3></output3>
+    </LTEQ>    
+    <GTEQ>
+        <output1></output1>
+        <output2>>=</output2>
+        <output3></output3>
+    </GTEQ>    
+    <Subset>
+        <output1>`subset`(</output1>
+        <output2>,</output2>
+        <output3>)</output3>
+    </Subset>    
+    <SubsetEq>
+        <output1>`subset`(</output1>
+        <output2>,</output2>
+        <output3>)</output3>
+    </SubsetEq>    
+    <NSubset>
+        <output1>not `subset`(</output1>
+        <output2>,</output2>
+        <output3>)</output3>
+    </NSubset> 
+    <NSubsetEq>
+        <output1>not `subset`(</output1>
+        <output2>,</output2>
+        <output3>)</output3>
+    </NSubsetEq>  
+    <Power>
+        <output1></output1>
+        <output2>^</output2>
+        <output3></output3>
+    </Power>
+    <Subscript>
+        <output1></output1>
+        <output2>[</output2>
+        <output3>]</output3>
+    </Subscript>  
+    <NthRoot>
+        <output1>surd(</output1>
+        <output2>,</output2>
+        <output3>)</output3>
+    </NthRoot>
+    <Function>
+        <output1></output1>
+        <output2>(</output2>
+        <output3>)</output3>
+    </Function>
+    <LeftArrow>
+        <output1></output1>
+        <output2>←</output2>
+        <output3></output3>
+    </LeftArrow> 
+    <RightArrow>
+        <output1></output1>
+        <output2>→</output2>
+        <output3></output3>
+    </RightArrow> 
+    <UpArrow>
+        <output1></output1>
+        <output2>↑</output2>
+        <output3></output3>
+    </UpArrow> 
+    <DownArrow>
+        <output1></output1>
+        <output2>↓</output2>
+        <output3></output3>
+    </DownArrow> 
+    <LeftDblArrow>
+        <output1></output1>
+        <output2>⇐</output2>
+        <output3></output3>
+    </LeftDblArrow> 
+    <RightDblArrow>
+        <output1></output1>
+        <output2>⇒</output2>
+        <output3></output3>
+    </RightDblArrow> 
+    <LeftRightArrow>
+        <output1></output1>
+        <output2>↔</output2>
+        <output3></output3>
+    </LeftRightArrow> 
+    <LeftRightDblArrow>
+        <output1></output1>
+        <output2>⇔</output2>
+        <output3></output3>
+    </LeftRightDblArrow>   
+    <NorthEastArrow>
+        <output1></output1>
+        <output2>↗</output2>
+        <output3></output3>
+    </NorthEastArrow>		
+    <SouthEastArrow>
+        <output1></output1>
+        <output2>↘</output2>
+        <output3></output3>
+    </SouthEastArrow>	  
+    <NorthWestArrow>        
+        <output1></output1>
+        <output2>↖</output2>
+        <output3></output3>
+    </NorthWestArrow>	   
+    <SouthWestArrow>
+        <output1></output1>
+        <output2>↙</output2>
+        <output3></output3>
+    </SouthWestArrow>     
+    
+    <Exists>
+        <output1></output1>
+        <output2>∃</output2>
+        <output3></output3>
+    </Exists>
+    <ForAll>
+        <output1></output1>
+        <output2>∀</output2>
+        <output3></output3>
+    </ForAll>
+    <IsIn>        
+        <output1></output1>
+        <output2>∈</output2>
+        <output3></output3>
+    </IsIn>
+    <NotExists>
+        <output1></output1>
+        <output2>∄</output2>
+        <output3></output3>
+    </NotExists>
+    <NotIn>
+        <output1></output1>
+        <output2>∉</output2>
+        <output3></output3>
+    </NotIn>
+    <SimEq>
+        <output1></output1>
+        <output2>≃</output2>
+        <output3></output3>
+    </SimEq>
+    <Or>       
+        <output1></output1>
+        <output2>∨</output2>
+        <output3></output3>
+    </Or>
+    <And>
+        <output1></output1>
+        <output2>∧</output2>
+        <output3></output3>
+    </And>
+    <Not>
+        <output1></output1>
+        <output2>¬</output2>
+        <output3></output3>
+    </Not>
+    
+    
+    <!--  Nary Functions   --> 
+    <Integral>
+        <output1>int(</output1>
+        <output2>,</output2>
+        <output3>)</output3>
+    </Integral>
+    <Differential>
+        <output1>diff(</output1>
+        <output2>,</output2>
+        <output3>)</output3>
+    </Differential>
+    <PartialDifferential>
+        <output1>diff(</output1>
+        <output2>,</output2>
+        <output3>)</output3>
+    </PartialDifferential>
+    <Sum>
+        <output1>sum(</output1>
+        <output2>,</output2>
+        <output3>=</output3>
+        <output4>..</output4>
+        <output5>)</output5>
+    </Sum>
+    <Product>
+        <output1>product(</output1>
+        <output2>,</output2>
+        <output3>=</output3>
+        <output4>..</output4>
+        <output5>)</output5>
+    </Product>
+    <Limit>
+        <output1>limit(</output1>
+        <output2>,</output2>
+        <output3>=</output3>
+        <output4>)</output4>
+    </Limit>
+    <Evaluate order="2,3,1">
+        <output1>subs(</output1>
+        <output2>=</output2>
+        <output3>,</output3>
+        <output4>)</output4>
+    </Evaluate>
+    <DefiniteIntegral>
+        <output1>int(</output1>
+        <output2>,</output2>
+        <output3>=</output3>
+        <output4>..</output4>
+        <output5>)</output5>
+    </DefiniteIntegral>
+    
+    
+    
+    <!--  Matrix   --> 
+    <Matrix>
+        <matrixStart>Matrix([</matrixStart>
+        <rowStart>[</rowStart>
+        <elementStart></elementStart>
+        <elementEnd></elementEnd>
+        <elementSeparator>,</elementSeparator>
+        <rowEnd>]</rowEnd>
+        <rowSeparator>,</rowSeparator>
+        <matrixEnd>])</matrixEnd>
+    </Matrix>
+    
+    
+    
+    <!--  Grouping   --> 
+    <BracketsRnd>
+        <output1>(</output1>
+        <output2>)</output2>
+    </BracketsRnd>
+    <BracketsCurl>
+        <output1>{</output1>
+        <output2>}</output2>
+    </BracketsCurl>
+    <BracketsSq>
+        <output1>[</output1>
+        <output2>]</output2>
+    </BracketsSq>
+    <Abs>
+        <output1>abs(</output1>
+        <output2>)</output2>
+    </Abs>
+    
+    
+    
+    <!--  Symbols  --> 
+    <Infinity>
+        <output>infinity</output>
+    </Infinity>
+
+    
+    <Γ>
+        <output> Gamma </output>
+    </Γ>
+    <Δ>
+        <output> Delta </output>
+    </Δ>
+    <Θ>
+        <output> Theta </output>
+    </Θ>
+    <Λ>
+        <output> Lambda </output>
+    </Λ>
+    <Ξ>
+        <output> Xi </output>
+    </Ξ>
+    <Π>
+        <output> PI </output>
+    </Π>
+    <Σ>
+        <output> Sigma </output>
+    </Σ>
+    <Υ>
+        <output> Upsilon </output>
+    </Υ>
+    <Φ>
+        <output> Phi </output>
+    </Φ>
+    <Ψ>
+        <output> Psi </output>
+    </Ψ>
+    <Ω>
+        <output> Omega </output>
+    </Ω>
+    
+    
+    <α>
+        <output> alpha </output>
+    </α>
+    <β>
+        <output> beta </output>
+    </β>
+    <γ>
+        <output> gamma </output>
+    </γ>
+    <δ>
+        <output> delta </output>
+    </δ>
+    <ε>
+        <output> epsilon </output>
+    </ε>
+    <ζ>
+        <output> zeta </output>
+    </ζ>
+    <η>
+        <output> eta </output>
+    </η>
+    <θ>
+        <output> theta </output>
+    </θ>
+    <ι>
+        <output> iota </output>
+    </ι>
+    <κ>
+        <output> kappa </output>
+    </κ>
+    <λ>
+        <output> lambda </output>
+    </λ>
+    <μ>
+        <output> mu </output>
+    </μ>
+    <ν>
+        <output> nu </output>
+    </ν>
+    <ξ>
+        <output> xi </output>
+    </ξ>
+    <π>
+        <output> Pi </output>
+    </π>
+    <ρ>
+        <output> rho </output>
+    </ρ>
+    <σ>
+        <output> sigma </output>
+    </σ>
+    <τ>
+        <output> tau </output>
+    </τ>
+    <υ>
+        <output> upsilon </output>
+    </υ>
+    <φ>
+        <output> phi </output>
+    </φ>
+    <χ>
+        <output> chi </output>
+    </χ>
+    <ψ>
+        <output> psi </output>
+    </ψ> 
+    <ω>
+        <output> omega </output>
+    </ω>
+    
+</Syntax>
