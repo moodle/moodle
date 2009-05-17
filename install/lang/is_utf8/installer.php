@@ -31,7 +31,9 @@ $string['configfilewritten'] = 'config.php skráin hefur verið mynduð';
 $string['configurationcompletehead'] = 'Stillingu lokið';
 $string['configurationcompletesub'] = 'Moodle gerði tilraun til þess að vista uppsetningarskránna í rót Moodle skráarsafnins.';
 $string['continue'] = 'Áfram';
-$string['curlrecommended'] = 'Mælt er með innsetningu á Curl forritasafninu í því skyni að gera mögulega nettengingar Moodle vefja.';
+$string['ctyperecommended'] = 'Mælt er með uppsetningu á ctype PHP viðbótinni í því skyni að auka afköst vefsins, sérstaklega ef vefurinn styður tungumál sem ekki eru af latneskum uppruna (non-latin).';
+$string['ctyperequired'] = 'Krafist er uppsetningar á ctype PHP viðbótinni í því skyni að auka afköst vefsins og samhæfni á milli tungumála.';
+$string['customcheck'] = 'Aðrar prófanir';
 $string['database'] = 'Gagnagrunnur';
 $string['databasecreationsettingssub'] = 'Nú er komið að því að setja upp gagnagrunninn þar sem flest gögn sem tilheyra Moodle eru hýst. Uppsetningarforritið skilgreinir gagnagrunninn með neðangreindum stillingum.
 <b>Tegund:</b> sjálfgefið gildi uppsetningarforrits er \"mysql\"<br />
@@ -47,6 +49,7 @@ $string['databasesettingssub'] = '<b>Tegund:</b> mysql eða postgres7<br />
 <b>Notandi:</b> notendanafn að gagnagrunni<br />
 <b>Lykilorð:</b> lykilorð að gagnagrunni<br />
 <b>Forskeyti á töflur:</b> valkvæmt forskeyti á töflur';
+$string['databasesettingswillbecreated'] = '<b>Ath:</b>Uppsetningarforritið reynir að búa sjálft til gagnagrunninn en hann er ekki til staðar.';
 $string['dataroot'] = 'Gagnamappa';
 $string['datarooterror'] = 'Gagnamappan sem þú tilgreindir fannst ekki eða ekki var hægt að búa hana til. Lagfærðu slóðina eða búðu möppuna til handvirkt.';
 $string['dbconnectionerror'] = 'Ekki náðist tenging við uppgefinn gagnagrunn. Vinsamlegast athugaðu hvort stillingar séu réttar.';
@@ -75,8 +78,10 @@ $string['downloadlanguagenotneeded'] = 'Þú getur haldið áfram með uppsetnin
 $string['downloadlanguagesub'] = 'Nú hefur þú kost á því að sækja tungumálapakka og halda uppsetningunni áfram á því tungumáli.<br /><br />
 Ef þú getur ekki sótt tungumálapakkann þá heldur uppsetningarferlið áfram á ensku. Eftir að uppsetningu lýkur getur þú sótt og sett upp önnur tungumál.';
 $string['environmenterrortodo'] = 'Þú verður að leysa úr öllum villuboðunum hér að ofan áður en haldið er áfram með innsetningu á þessari útgáfu af Moodle!';
-$string['environmentrecommendinstall'] = 'mælum við með að sé uppsett/virkt';
+$string['environmentrecommendcustomcheck'] = 'Fall á þessu prófi gefur til kynna hugsanlegt vandamál';
+$string['environmentrecommendinstall'] = 'mælt með að sé uppsett/virkjað';
 $string['environmentrecommendversion'] = 'mælt er með útgáfu $a->needed en þú notast við útgáfu $a->current';
+$string['environmentrequirecustomcheck'] = 'Verður að standast þetta próf';
 $string['environmentrequireinstall'] = 'verður að vera uppsett/virkt';
 $string['environmentrequireversion'] = 'krafist er útgáfu $a->needed en þú notast við útgáfu $a->current';
 $string['environmentxmlerror'] = 'Villa kom upp við lestur á umhverfisgögnum
@@ -94,6 +99,7 @@ $string['langdownloaderror'] = 'Því miður tókst ekki að setja upp tungumál
 $string['langdownloadok'] = 'Tungumálið $a hefur verið sótt og sett upp. Innsetningarferlið heldur nú áfram á því máli.';
 $string['language'] = 'Tungumál';
 $string['mbstringrecommended'] = 'Mælt er með uppsetningu á MBSTRING safninu í því skyni að auka virkni vefsins, sérstaklega ef vefurinn styður við tungumál sem ekki eru af latneskum stofni (non-latin).';
+$string['memorylimit'] = 'Minnistakmörk';
 $string['missingrequiredfield'] = 'Einhverjir reitir eru enn óútfylltir';
 $string['moodledocslink'] = 'Hjálp fyrir þessa síðu';
 $string['mssql'] = 'SQL *vefþjónn (mssql)';
@@ -106,6 +112,7 @@ $string['next'] = 'Áfram';
 $string['oci8po'] = 'Oracle (oci8po)';
 $string['odbc_mssql'] = 'SQL*Server gegnum ODBC (odbc_mssql)';
 $string['ok'] = 'OK';
+$string['opensslrecommended'] = 'Mælt er með uppsetingu á OpenSSL - það opnar fyrir nettengingar á milli Moodle kerfa.';
 $string['parentlanguage'] = 'en';
 $string['pass'] = 'Staðið';
 $string['password'] = 'Lykilorð';
@@ -136,4 +143,5 @@ $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep70'] = 'Smelltu á \"Áfram\" hnappinn hér að neðan til þess að halda áfram uppsetningunni á <strong>Moodle</strong>.';
 $string['wrongzipfilename'] = 'Rang skráarheiti á ZIP skrá.';
 $string['wwwroot'] = 'Vefslóð';
+$string['ziprequired'] = 'Moodle krefst Zip PHP viðbótarinnar, info->IP eða PclZIP er ekki notað lengur.';
 ?>
