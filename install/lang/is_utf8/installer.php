@@ -27,6 +27,7 @@ $string['installation'] = 'Uppsetning';
 $string['language'] = 'Tungumál';
 $string['parentlanguage'] = 'en';
 $string['phpversion'] = 'PHP útgáfa';
+$string['reload'] = 'Endurhlaða';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = '&Iacute;slenska';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
