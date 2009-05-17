@@ -61,7 +61,7 @@ class tinymce_texteditor extends texteditor {
     public function header_js() {
         global $CFG;
 
-        $usehttps = (int)($CFG->httpswwwroot === $CFG->wwwroot); //hmm, is there a better test?
+        $usehttps = (int)($CFG->httpswwwroot !== $CFG->wwwroot); //hmm, is there a better test?
         
         $js = '<script type="text/javascript" src="'.$CFG->httpswwwroot.'/lib/editor/tinymce/tiny_mce_src.js"></script>'."\n".
               '<script type="text/javascript" src="'.$CFG->httpswwwroot.'/lib/editor/tinymce/extra/tinymce.js.php?elanguage='.current_language().'&amp;etheme='.current_theme().'&amp;eusehttps='.$usehttps.'"></script>'."\n";
