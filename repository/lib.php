@@ -1938,7 +1938,7 @@ EOD;
 
         $accepted_file_ext = json_encode($ft->get_file_ext($accepted_filetypes));
         $js .= <<<EOD
-<script>
+<script type="text/javascript">
 file_extensions.image = $image_file_ext;
 file_extensions.media = $video_file_ext;
 </script>
@@ -1959,7 +1959,7 @@ EOD;
 
     // print repository instances listing
     $js .= <<<EOD
-<script>
+<script type="text/javascript">
 repository_listing['$id'] = {};
 EOD;
     foreach ($repos as $repo) {
