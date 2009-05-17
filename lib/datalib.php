@@ -1748,8 +1748,6 @@ function get_all_instances_in_courses($modulename, $courses, $userid=NULL, $incl
         return $outputarray;
     }
 
-    require_once($CFG->dirroot.'/course/lib.php');
-
     foreach ($courses as $course) {
         $modinfo = get_fast_modinfo($course, $userid);
 
