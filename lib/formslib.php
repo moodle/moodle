@@ -49,9 +49,9 @@ function form_init_date_js() {
     global $CFG;
     static $done = false;
     if (!$done) {
+        //TODO: this is NOT xhtml strict, we will need something like require_css() 
         echo '<style type="text/css">';
-        echo '@import "' . $CFG->httpswwwroot . '/lib/yui/calendar/assets/skins/sam/calendar.css";';
-        echo '@import "' . $CFG->httpswwwroot . '/lib/yui/calendar/assets/skins/sam/container.css";';
+        echo '@import "' . $CFG->httpswwwroot . '/lib/yui/assets/skins/sam/calendar.css";';
         echo '</style>';
         require_js(array('yui_yahoo', 'yui_dom', 'yui_event', 'yui_calendar', 'yui_container'));
         print_delayed_js_call(1, 'init_date_selectors', array(get_string('firstdayofweek')));
