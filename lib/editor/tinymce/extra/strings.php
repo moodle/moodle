@@ -46,7 +46,7 @@ foreach (get_langpack_locations('en_utf8') as $location) {
     if (!file_exists($location)) {
         continue;
     }
-    include_once($location);
+    include($location);
 }
 
 // find parent language
@@ -55,7 +55,7 @@ if ($parent = get_parent_language($lang)) {
         if (!file_exists($location)) {
             continue;
         }
-        include_once($location);
+        include($location);
     }
 }
 
@@ -65,7 +65,7 @@ if ($lang !== 'en_utf8') {
         if (!file_exists($location)) {
             continue;
         }
-        include_once($location);
+        include($location);
     }
 }
 
