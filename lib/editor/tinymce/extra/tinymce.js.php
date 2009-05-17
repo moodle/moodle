@@ -29,7 +29,7 @@ define('NO_UPGRADE_CHECK', true);
 require_once('../../../../config.php');
 
 $lang     = optional_param('elanguage', 'en_utf8', PARAM_SAFEDIR);
-$editor   = optional_param('etheme', 'standard', PARAM_SAFEDIR);
+$theme    = optional_param('etheme', 'standard', PARAM_SAFEDIR);
 $usehttps = optional_param('eusehttps', 0, PARAM_BOOL);
 
 if (file_exists("$CFG->dataroot/lang/$lang") or file_exists("$CFG->dirroot/lang/$lang")) {
@@ -37,13 +37,6 @@ if (file_exists("$CFG->dataroot/lang/$lang") or file_exists("$CFG->dirroot/lang/
 } else if (file_exists("$CFG->dataroot/lang/{$lang}_utf8") or file_exists("$CFG->dirroot/lang/{$lang}_utf8")) {
     $SESSION->lang = $lang.'_utf8';
 }
-
-
-
-//TODO: finish refactorign and improvements of lang string handling
-$lang = 'en';
-$SESSION->lang = 'en_utf8';
-
 
 $xmlruleset = file_get_contents('xhtml_ruleset.txt');
 
@@ -60,8 +53,8 @@ if ($usehttps) {
     $wwwbase = $CFG->wwwroot;
 }
 
-// $contentcss should be customizable, but default to this.
-$contentcss = $CFG->themewww .'/'. current_theme() .'/styles.php'; //TODO add page parameter
+// $contentcss should be customizable
+$contentcss = "$CFG->themewww/$theme/styles.php";
 
 $output = <<<EOF
 function mc_init_editors() {

@@ -28,8 +28,8 @@ define('NO_UPGRADE_CHECK', true);
 
 require_once('../../../../config.php');
 
-$lang  = optional_param('editorlanguage', 'en', PARAM_SAFEDIR);
-$theme = optional_param('editortheme', 'advanced', PARAM_SAFEDIR);
+$lang  = optional_param('elanguage', 'en', PARAM_SAFEDIR);
+$theme = optional_param('etheme', 'advanced', PARAM_SAFEDIR);
 
 if (file_exists($CFG->dataroot .'/lang/'. $lang) or file_exists($CFG->dirroot .'/lang/'. $lang)) {
     //ok
@@ -80,6 +80,8 @@ foreach ($string as $key=>$value) {
     }
     $result[$parts[0]][$parts[1]][$parts[2]] = $value;
 }
+
+$lang = str_replace('_utf8', '', $lang); // use more standard language codes
 
 $output = '';
 
