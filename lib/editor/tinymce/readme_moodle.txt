@@ -10,7 +10,7 @@ Upgrade procedure:
  3/ copy tinymce/jscripts/tiny_mce/classes/Popup.js to Popup.js
  4/ apply plugins/media/* (extra/tinymce_plugin_media.patch) - MDL-16650
  5/ apply strings patch
- 6/ compress modified js files using yuicompressor.jar from dev package, use shell file extra/tools/compress.sh
+ 6/ copy yuicompressor.jar from dev package into extra/tools/, use shell script extra/tools/compress.sh to compress modified files
  7/ download all TinyMCE lang files and update moodle lang string files
  8/ rebuild string files 
 
