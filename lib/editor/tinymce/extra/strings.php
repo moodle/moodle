@@ -70,36 +70,20 @@ if ($lang !== 'en_utf8') {
 }
 
 //process the $strings to match expected tinymce lang array stucture
-$result = array('main'=>array(), 'plugins'=>array(), 'themes'=>array());
+$result = array();
 
 foreach ($string as $key=>$value) {
-    $parts = preg_split('|[/:]|', $key);
-    if (count($parts) != 3) {
+    $parts = explode(':', $key);
+    if (count($parts) != 2) {
         // incorrect string - ignore
         continue;
     }
-    $result[$parts[0]][$parts[1]][$parts[2]] = $value;
+    $result[$parts[0]][$parts[1]] = $value;
 }
 
 $lang = str_replace('_utf8', '', $lang); // use more standard language codes
 
-$output = '';
-
-//main
-$output .= 'tinyMCE.addI18n({'.$lang.':'.json_encode($result['main']).'});';
-
-//plugins
-foreach ($result['plugins'] as $pluginname=>$plugin) {
-    $output .= "tinyMCE.addI18n('$lang.$pluginname',".json_encode($plugin).');';
-}
-
-if (!empty($result['themes'][$theme])) {
-    $output .= "tinyMCE.addI18n('$lang.$theme',".json_encode($result['themes'][$theme]).');';
-}
-if (!empty($result['themes'][$theme.'_dlg'])) {
-    $output .= "tinyMCE.addI18n('$lang.{$theme}_dlg',".json_encode($result['themes'][$theme.'_dlg']).');';
-}
-
+$output = 'tinyMCE.addI18n({'.$lang.':'.json_encode($result).'});';
 
 $lifetime = '10'; // TODO: increase later
 @header('Content-type: text/javascript; charset=utf-8');
