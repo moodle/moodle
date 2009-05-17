@@ -8,12 +8,14 @@ Upgrade procedure:
  1/ Download latest dev package from http://tinymce.moxiecode.com/download.php
  2/ replace tiny_mce*.* files, themes/*, utils/* and plugins/* (keep dragmath, moodlenolink, spellchecker)
  3/ copy tinymce/jscripts/tiny_mce/classes/Popup.js to Popup.js
- 4/ apply patches
- 5/ compress modified js files using yuicompressor.jar from dev package, use shell file extra/tools/compress.sh
- 6/ download all TinyMCE lang files and update moodle lang string files 
+ 4/ apply plugins/media/* (extra/tinymce_plugin_media.patch) - MDL-16650
+ 5/ apply strings patch
+ 6/ compress modified js files using yuicompressor.jar from dev package, use shell file extra/tools/compress.sh
+ 7/ download all TinyMCE lang files and update moodle lang string files
+ 8/ rebuild string files 
 
 TODO:
- * apply plugins/media/* (extra/tinymce_plugin_media.patch) - MDL-16650
+
  * lang string handling
  * customize spellchecker
  * finish update with info from http://docs.moodle.org/en/Development:TinyMCE_Upgrade
