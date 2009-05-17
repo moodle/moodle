@@ -1,6 +1,12 @@
 <?PHP // $Id$ 
       // editor.php - created with Moodle 1.7 beta + (2006101003)
 
+$string['editors'] = 'Text editors';
+$string['editorsettings'] = 'Manage editors';
+$string['acteditorshhdr'] = 'Active text editors';
+$string['configeditorplugins'] = 'Please choose the editor plugins you wish to use and arrange them in recommended order.';
+
+
 
 $string['about'] = 'About this editor';
 $string['absbottom'] = 'Absbottom';

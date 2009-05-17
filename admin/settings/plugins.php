@@ -73,6 +73,14 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
     }
 
 
+/// Editor plugins
+    $ADMIN->add('modules', new admin_category('editorsettings', get_string('editors', 'editor')));
+    $temp = new admin_settingpage('manageeditors', get_string('editorsettings', 'editor'));
+    $temp->add(new admin_setting_manageeditors());
+    $ADMIN->add('editorsettings', $temp);
+
+
+/// Filter plugins
     $ADMIN->add('modules', new admin_category('filtersettings', get_string('managefilters')));
 
     $ADMIN->add('filtersettings', new admin_page_managefilters());

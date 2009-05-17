@@ -14,7 +14,7 @@ if (!defined('MOODLE_INTERNAL')) {
 <script type="text/javascript" src="<?php echo $CFG->httpswwwroot ?>/lib/overlib/overlib_cssstyle.js"></script>
 <script type="text/javascript" src="<?php echo $CFG->httpswwwroot ?>/lib/cookies.js"></script>
 <script type="text/javascript" src="<?php echo $CFG->httpswwwroot ?>/lib/ufo.js"></script>
-<script type="text/javascript" src="<?php echo $CFG->httpswwwroot ?>/lib/dropdown.js"></script>  
+<script type="text/javascript" src="<?php echo $CFG->httpswwwroot ?>/lib/dropdown.js"></script>
 
 <script type="text/javascript" defer="defer">
 //<![CDATA[
@@ -40,15 +40,16 @@ if (!empty($focus)) {
 ?>
 //]]>
 </script>
-<?php 
+<?php
     // editors integrations
-    //TODO: optimise loading of editors
+    //TODO: optimize loading of editors
     if (empty($CFG->texteditors)) {
         $CFG->texteditors = 'tinymce,textarea';
     }
     $activeeditors = explode(',', $CFG->texteditors);
     foreach ($activeeditors as $editor) {
-        $editor = get_texteditor($editor);
-        echo $editor->header_js();
+        if ($editor = get_texteditor($editor)) {
+            echo $editor->header_js();
+        }
     }
 ?>

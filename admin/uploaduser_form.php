@@ -174,6 +174,7 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
         $mform->setDefault('autosubscribe', 1);
 
+/* TODO: reimplement editor preferences
         if ($CFG->htmleditor) {
             $choices = array(0 => get_string('texteditor'), 1 => get_string('htmleditor'));
             $mform->addElement('select', 'htmleditor', get_string('textediting'), $choices);
@@ -182,6 +183,7 @@ class admin_uploaduser_form2 extends moodleform {
             $mform->addElement('static', 'htmleditor', get_string('textediting'), get_string('texteditor'));
         }
         $mform->setAdvanced('htmleditor');
+*/
 
         if (empty($CFG->enableajax)) {
             $mform->addElement('static', 'ajax', get_string('ajaxuse'), get_string('ajaxno'));

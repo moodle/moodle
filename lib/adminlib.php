@@ -3732,6 +3732,138 @@ class admin_setting_manageauths extends admin_setting {
         return highlight($query, $return);
     }
 }
+
+/**
+ * Special class for authentication administration.
+ */
+class admin_setting_manageeditors extends admin_setting {
+    public function __construct() {
+        parent::__construct('editorsui', get_string('editorsettings', 'editor'), '', '');
+    }
+
+    public function get_setting() {
+        return true;
+    }
+
+    public function get_defaultsetting() {
+        return true;
+    }
+
+    public function write_setting($data) {
+        // do not write any setting
+        return '';
+    }
+
+    public function is_related($query) {
+        if (parent::is_related($query)) {
+            return true;
+        }
+
+        $textlib = textlib_get_instance();
+        $editors_available = get_available_editors();
+        foreach ($editors_available as $editor=>$editorstr) {
+            if (strpos($editor, $query) !== false) {
+                return true;
+            }
+            if (strpos($textlib->strtolower($editorstr), $query) !== false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function output_html($data, $query='') {
+        global $CFG;
+
+        // display strings
+        $txt = get_strings(array('administration', 'settings', 'edit', 'name', 'enable', 'disable',
+                                 'up', 'down', 'none'));
+        $txt->updown = "$txt->up/$txt->down";
+
+        $editors_available = get_available_editors();
+        $active_editors = explode(',', $CFG->texteditors);
+
+        $active_editors = array_reverse($active_editors);
+        foreach ($active_editors as $key=>$editor) {
+            if (empty($editors_available[$editor])) {
+                unset($active_editors[$key]);
+            } else {
+                $name = $editors_available[$editor];
+                unset($editors_available[$editor]);
+                $editors_available[$editor] = $name;
+            }
+        }
+        if (empty($active_editors)) {
+            //$active_editors = array('textarea');
+        }
+        $editors_available = array_reverse($editors_available, true);
+        $return = print_heading(get_string('acteditorshhdr', 'editor'), '', 3, 'main', true);
+        $return .= print_box_start('generalbox editorsui', '', true);
+
+        $table = new object();
+        $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->settings);
+        $table->align = array('left', 'center', 'center', 'center');
+        $table->width = '90%';
+        $table->data  = array();
+
+        // iterate through auth plugins and add to the display table
+        $updowncount = 1;
+        $editorcount = count($active_editors);
+        $url = "editors.php?sesskey=" . sesskey();
+        foreach ($editors_available as $editor => $name) {
+            // hide/show link
+            if (in_array($editor, $active_editors)) {
+                $hideshow = "<a href=\"$url&amp;action=disable&amp;editor=$editor\">";
+                $hideshow .= "<img src=\"{$CFG->pixpath}/i/hide.gif\" class=\"icon\" alt=\"disable\" /></a>";
+                // $hideshow = "<a href=\"$url&amp;action=disable&amp;editor=$editor\"><input type=\"checkbox\" checked /></a>";
+                $enabled = true;
+                $displayname = "<span>$name</span>";
+            }
+            else {
+                $hideshow = "<a href=\"$url&amp;action=enable&amp;editor=$editor\">";
+                $hideshow .= "<img src=\"{$CFG->pixpath}/i/show.gif\" class=\"icon\" alt=\"enable\" /></a>";
+                // $hideshow = "<a href=\"$url&amp;action=enable&amp;editor=$editor\"><input type=\"checkbox\" /></a>";
+                $enabled = false;
+                $displayname = "<span class=\"dimmed_text\">$name</span>";
+            }
+
+            // up/down link (only if auth is enabled)
+            $updown = '';
+            if ($enabled) {
+                if ($updowncount > 1) {
+                    $updown .= "<a href=\"$url&amp;action=up&amp;editor=$editor\">";
+                    $updown .= "<img src=\"{$CFG->pixpath}/t/up.gif\" alt=\"up\" /></a>&nbsp;";
+                }
+                else {
+                    $updown .= "<img src=\"{$CFG->pixpath}/spacer.gif\" class=\"icon\" alt=\"\" />&nbsp;";
+                }
+                if ($updowncount < $editorcount) {
+                    $updown .= "<a href=\"$url&amp;action=down&amp;editor=$editor\">";
+                    $updown .= "<img src=\"{$CFG->pixpath}/t/down.gif\" alt=\"down\" /></a>";
+                }
+                else {
+                    $updown .= "<img src=\"{$CFG->pixpath}/spacer.gif\" class=\"icon\" alt=\"\" />";
+                }
+                ++ $updowncount;
+            }
+
+            // settings link
+            if (file_exists($CFG->dirroot.'/editor/'.$editor.'/settings.php')) {
+                $settings = "<a href=\"settings.php?section=editorsetting$editor\">{$txt->settings}</a>";
+            } else {
+                $settings = '';
+            }
+
+            // add a row to the table
+            $table->data[] =array($displayname, $hideshow, $updown, $settings);
+        }
+        $return .= print_table($table, true);
+        $return .= get_string('configeditorplugins', 'editor').'<br />'.get_string('tablenosave', 'filters');
+        $return .= print_box_end(true);
+        return highlight($query, $return);
+    }
+}
+
 /**
  * Special class for filter administration.
  */
@@ -4724,7 +4856,7 @@ class admin_setting_managerepository extends admin_setting {
             $instanceoptionnames = repository::static_function($i->get_typename(), 'get_instance_option_names');
 
             if ( !empty($typeoptionnames) || !empty($instanceoptionnames)) {
-                
+
                 //calculate number of instances in order to display them for the Moodle administrator
                 if (!empty($instanceoptionnames)) {
                     $admininstancenumber = count(repository::static_function($i->get_typename(), 'get_instances', array(get_context_instance(CONTEXT_SYSTEM)),null,false,$i->get_typename()));

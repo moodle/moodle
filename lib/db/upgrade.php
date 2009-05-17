@@ -2137,8 +2137,22 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009051200);
     }
 
+
+    if ($result && $oldversion < 2009051700) {
+    /// migrate editor settings
+        if (empty($CFG->htmleditor)) {
+            set_config('texteditors', 'textarea');
+        } else {
+            set_config('texteditors', 'tinymce,textarea');
+        }
+
+        unset_config('htmleditor');
+        unset_config('defaulthtmleditor');
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009051700);
+    }
+
     return $result;
 }
 
-
-?>

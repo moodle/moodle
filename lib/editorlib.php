@@ -23,11 +23,6 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-//TODO:
-// * remove $CFG->htmleditor and $CFG->defaulthtmleditor and $USER->htmleditor
-// *
-
-
 function get_preferred_texteditor($format=null) {
     global $CFG, $USER;
 
@@ -91,7 +86,7 @@ function get_texteditor($editor) {
 function get_available_editors() {
     $editors = array();
     foreach (get_list_of_plugins('lib/editor') as $editor) {
-        $editors['editor'] = get_string('modulename', 'editor_'.$editor);
+        $editors[$editor] = get_string('modulename', 'editor_'.$editor);
     }
     return $editors;
 }

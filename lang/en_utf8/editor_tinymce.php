@@ -1,7 +1,7 @@
 <?php
 
 //== Custom Moodle strings that are not part of upstream TinyMCE ==
-$string['modulename'] = 'TinyMCE editor';
+$string['modulename'] = 'TinyMCE HTML editor';
 
 
 // == TinyMCE upstream lang strings from all plugins ==
