@@ -208,6 +208,8 @@ function initialise_fullme() {
  * This is a private method for use by initialise_fullme.
  */
 function initialise_fullme_cli() {
+    global $CFG, $FULLME, $ME, $SCRIPT, $FULLSCRIPT;
+
     // Urls do not make much sense in CLI scripts
     $backtrace = debug_backtrace();
     $topfile = array_pop($backtrace);
