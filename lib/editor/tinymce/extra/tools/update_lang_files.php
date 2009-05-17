@@ -25,7 +25,7 @@
 
 if (isset($_SERVER['REMOTE_ADDR'])) { // this script is accessed only via the web!
     die;
-    //echo "<xmp>";
+    echo "<xmp>";
 }
 
 require_once('../../../../../config.php');
@@ -52,11 +52,13 @@ $enfile        = "$CFG->dirroot/lang/en_utf8/editor_tinymce.php";
 /// first update English lang pack
 if (file_exists("$tempdir/en.xml")) {
     $old_strings = editor_tinymce_get_all_strings($enfile);
+    ksort($old_strings);
 
 
     //remove all strings from upstream - ignore our modifications for now
     // TODO: add support for merging of our tweaks
     $parsed = editor_tinymce_parse_xml_lang("$tempdir/en.xml");
+    ksort($parsed);
     foreach ($parsed as $key=>$value) {
         if (array_key_exists($key, $old_strings)) {
             unset($old_strings[$key]);
@@ -121,6 +123,7 @@ foreach ($langs as $lang) {
 
     if (file_exists($langfile)) {
         $old_strings = editor_tinymce_get_all_strings($langfile);
+        ksort($old_strings);
         foreach ($old_strings as $key=>$value) {
             if (!array_key_exists($key, $en_strings)) {
                 unset($old_strings[$key]);
@@ -133,6 +136,7 @@ foreach ($langs as $lang) {
     //remove all strings from upstream - ignore our modifications for now
     // TODO: add support for merging of our tweaks
     $parsed = editor_tinymce_parse_xml_lang($xmlfile);
+    ksort($parsed);
     foreach ($parsed as $key=>$value) {
         if (array_key_exists($key, $old_strings)) {
             unset($old_strings[$key]);
@@ -200,6 +204,10 @@ function editor_tinymce_get_all_strings($file) {
 
     $string = array();
     require_once($file);
+
+    foreach ($string as $key=>$value) {
+        $string[$key] = str_replace("%%","%",$value);              // Unescape % characters
+    }
 
     return $string;
 }

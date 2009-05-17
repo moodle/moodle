@@ -78,6 +78,8 @@ foreach ($string as $key=>$value) {
         // incorrect string - ignore
         continue;
     }
+    $value = str_replace("%%","%",$value);              // Unescape % characters
+
     $result[$parts[0]][$parts[1]] = $value;
 }
 
