@@ -23,9 +23,8 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-if (isset($_SERVER['REMOTE_ADDR'])) { // this script is accessed only via the web!
+if (isset($_SERVER['REMOTE_ADDR'])) { // this script is accessed only via command line
     die;
-    echo "<xmp>";
 }
 
 require_once('../../../../../config.php');
@@ -34,12 +33,10 @@ if (!debugging('', DEBUG_DEVELOPER)) {
     die('Only for developers!!!!!');
 }
 
-// language correspondance: codes used in TinyMCE that matches a different
-// code in Moodle. Note that languages without an existing folder are
-// ignored if they are not in this array.
+// mapping of Moodle langs (without _utf8 suffix) to TinyMCE langs
 $langconversion = array(
-    'no' => 'nb',
-    'ko' => false,     // ignore Korean translation for now - does not parse
+    'no'    => 'nb',
+    'ko'    => false,  // ignore Korean translation for now - does not parse
     'sr_lt' => false,  //'sr_lt' => 'sr' ignore the Serbian translation
     'zh_tw' => 'zh',
 );
@@ -50,44 +47,55 @@ $enfile        = "$CFG->dirroot/lang/en_utf8/editor_tinymce.php";
 
 
 /// first update English lang pack
-if (file_exists("$tempdir/en.xml")) {
-    $old_strings = editor_tinymce_get_all_strings($enfile);
-    ksort($old_strings);
-
-
-    //remove all strings from upstream - ignore our modifications for now
-    // TODO: add support for merging of our tweaks
-    $parsed = editor_tinymce_parse_xml_lang("$tempdir/en.xml");
-    ksort($parsed);
-    foreach ($parsed as $key=>$value) {
-        if (array_key_exists($key, $old_strings)) {
-            unset($old_strings[$key]);
-        }
-    }
-
-    if (!$handle = fopen($enfile, 'w')) {
-         echo "Cannot write to $filename !!";
-         exit;
-    }
-
-    fwrite($handle, "<?php\n\n");
-
-    foreach ($old_strings as $key=>$value) {
-        fwrite($handle, editor_tinymce_encode_stringline($key, $value));
-    }
-
-    fwrite($handle, "\n\n\n\n// Automatically created strings from original TinyMCE lang files, please do not update yet\n\n");
-
-    foreach ($parsed as $key=>$value) {
-        fwrite($handle, editor_tinymce_encode_stringline($key, $value));
-    }
-
-    fclose($handle);
+if (!file_exists("$tempdir/en.xml")) {
+    die('Missing temp/en.xml! Did you download langs?');
 }
+$old_strings = editor_tinymce_get_all_strings($enfile);
+ksort($old_strings);
+
+// our modifications and upstream changes in existing strings
+$tweaked = array();
+
+//detect changes and new additions
+$parsed = editor_tinymce_parse_xml_lang("$tempdir/en.xml");
+ksort($parsed);
+foreach ($parsed as $key=>$value) {
+    if (array_key_exists($key, $old_strings)) {
+        $oldvalue = $old_strings[$key];
+        if ($oldvalue !== $value) {
+            $tweaked[$key] = $oldvalue;
+        }
+        unset($old_strings[$key]);
+    }
+}
+
+if (!$handle = fopen($enfile, 'w')) {
+     echo "Cannot write to $filename !!";
+     exit;
+}
+
+fwrite($handle, "<?php\n\n//== Custom Moodle strings that are not part of upstream TinyMCE ==\n");
+foreach ($old_strings as $key=>$value) {
+    fwrite($handle, editor_tinymce_encode_stringline($key, $value));
+}
+
+fwrite($handle, "\n\n// == TinyMCE upstream lang strings from all plugins ==\n");
+foreach ($parsed as $key=>$value) {
+    fwrite($handle, editor_tinymce_encode_stringline($key, $value));
+}
+
+if ($tweaked) {
+    fwrite($handle, "\n\n// == Our modifications or upstream changes ==\n");
+    foreach ($tweaked as $key=>$value) {
+        fwrite($handle, editor_tinymce_encode_stringline($key, $value));
+    }
+}
+
+fclose($handle);
+
 
 //now update all other langs
 $en_strings = editor_tinymce_get_all_strings($enfile);
-
 if (!file_exists($targetlangdir)) {
     echo "Can not find target lang dir: $targetlangdir !!";
 }
@@ -133,39 +141,51 @@ foreach ($langs as $lang) {
         $old_strings = array();
     }
 
-    //remove all strings from upstream - ignore our modifications for now
-    // TODO: add support for merging of our tweaks
+    // our modifications and upstream changes in existing strings
+    $tweaked = array();
+
+    //detect changes and new additions
     $parsed = editor_tinymce_parse_xml_lang($xmlfile);
     ksort($parsed);
     foreach ($parsed as $key=>$value) {
         if (array_key_exists($key, $old_strings)) {
+            $oldvalue = $old_strings[$key];
+            if ($oldvalue !== $value) {
+                $tweaked[$key] = $oldvalue;
+            }
             unset($old_strings[$key]);
         }
     }
 
     if (!$handle = fopen($langfile, 'w')) {
-         echo "Cannot write to $filename !!";
+         echo "*** Cannot write to $langfile !!\n";
          continue;
     }
-    echo "Modifying: $lang\n";
+    echo " Modifying: $lang\n";
 
-    fwrite($handle, "<?php\n\n");
-
+    fwrite($handle, "<?php\n\n//== Custom Moodle strings that are not part of upstream TinyMCE ==\n");
     foreach ($old_strings as $key=>$value) {
         fwrite($handle, editor_tinymce_encode_stringline($key, $value));
     }
 
-    fwrite($handle, "\n\n\n\n// Automatically created strings from original TinyMCE lang files, please do not update yet\n\n");
-
+    fwrite($handle, "\n\n// == TinyMCE upstream lang strings from all plugins ==\n");
     foreach ($parsed as $key=>$value) {
         fwrite($handle, editor_tinymce_encode_stringline($key, $value));
     }
+
+    if ($tweaked) {
+        fwrite($handle, "\n\n// == Our modifications or upstream changes ==\n");
+        foreach ($tweaked as $key=>$value) {
+            fwrite($handle, editor_tinymce_encode_stringline($key, $value));
+        }
+    }
+
     fclose($handle);
 }
 unset($langs);
 
 
-die("\nFinished!");
+die("\nFinished!\n\n");
 
 
 
@@ -177,7 +197,6 @@ die("\nFinished!");
 
 function editor_tinymce_encode_stringline($key, $value) {
         $value = str_replace("%","%%",$value);              // Escape % characters
-        $value = trim($value);                              // Delete leading/trailing white space
         return "\$string['$key'] = ".var_export($value, true).";\n";
 }
 
@@ -203,7 +222,7 @@ function editor_tinymce_get_all_strings($file) {
     global $CFG;
 
     $string = array();
-    require_once($file);
+    require($file);
 
     foreach ($string as $key=>$value) {
         $string[$key] = str_replace("%%","%",$value);              // Unescape % characters
