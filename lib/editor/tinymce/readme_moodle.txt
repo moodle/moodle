@@ -7,9 +7,9 @@ License:   GNU LESSER GENERAL PUBLIC LICENSE Version 2.1, February 1999
 Upgrade procedure:
  1/ Download latest dev package from http://tinymce.moxiecode.com/download.php
  2/ replace tiny_mce*.* files, themes/*, utils/* and plugins/* (keep dragmath, moodlenolink, spellchecker)
- 3/ copy tinymce/jscripts/tiny_mce/classes/Popup.js to tiny_mce_popup_src.js
+ 3/ copy tinymce/jscripts/tiny_mce/classes/Popup.js to Popup.js
  4/ apply patches
- 5/ compress modified js files using yuicompressor.jar from dev package
+ 5/ compress modified js files using yuicompressor.jar from dev package, use shell file extra/tools/compress.sh
  6/ download all TinyMCE lang files and update moodle lang string files 
 
 TODO:
