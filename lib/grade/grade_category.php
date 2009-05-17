@@ -836,6 +836,16 @@ class grade_category extends grade_object {
     }
 
     /**
+     * Returns true if category uses extra credit of any kind
+     * @return boolean true if extra credit used
+     */
+    function is_extracredit_used() {
+        return ($this->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN2
+             or $this->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN
+             or $this->aggregation == GRADE_AGGREGATE_SUM);
+    }
+
+    /**
      * Returns true if category uses special aggregation coeficient
      * @return boolean true if coeficient used
      */
