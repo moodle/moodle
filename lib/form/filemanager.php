@@ -206,12 +206,14 @@ function callpicker(el_id, client_id, itemid) {
     picker.className = 'file-picker';
     document.body.appendChild(picker);
     var el=document.getElementById(el_id);
-    var obj = {};
-    obj.env = 'filemanager';
-    obj.itemid = itemid;
-    obj.target = el;
-    obj.callback = fp_callback;
-    var fp = open_filepicker(client_id, obj);
+    var params = {};
+    params.env = 'filemanager';
+    params.maxbytes = $this->_options['maxbytes'];
+    params.maxfiles = $this->_options['maxfiles'];
+    params.itemid = itemid;
+    params.target = el;
+    params.callback = fp_callback;
+    var fp = open_filepicker(client_id, params);
 }
 //]]>
 </script>

@@ -103,7 +103,13 @@ function callpicker(client_id, id) {
     picker.className = 'file-picker';
     document.body.appendChild(picker);
     var el=document.getElementById(id);
-    open_filepicker({'env':'filepicker', 'target':el, 'callback':updatefile})
+    var params = {};
+    params.env = 'filepicker';
+    params.maxbytes = $this->_options['maxbytes'];
+    params.maxfiles = $this->_options['maxfiles'];
+    params.target = el;
+    params.callback = updatefile;
+    open_filepicker(client_id, params);
 }
 </script>
 EOD;
