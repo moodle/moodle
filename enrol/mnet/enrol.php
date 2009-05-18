@@ -287,6 +287,7 @@ class enrolment_plugin_mnet {
             $returnarray[$user->username] = array('enrol' => $user->enrol, 
                                                   'timemodified' => $user->timemodified, 
                                                   'shortname' => $user->shortname, 
+                                                  'username' => $user->username,
                                                   'name' => $user->name);
         }
         return $returnarray;
