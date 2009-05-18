@@ -314,8 +314,8 @@ repository_client.print_login = function(id, data) {
     var login = data.login;
     var panel = new YAHOO.util.Element('panel-'+id);
     var action = 'login';
-    if (data['login_search_form']) {
-        action='search';
+    if (data['login_btn_action']) {
+        action=data['login_btn_action'];
     }
     var str = '<div class="fp-login-form" onkeypress="repository_client.login_keypress(event,\''+action+'\')">';
     var has_pop = false;
@@ -354,15 +354,17 @@ repository_client.print_login = function(id, data) {
                 }
                 str += '</td>';
             }else{
-                str += '<td align="left"><input type="'+login[k].type+'"'+' name="'+login[k].name+'"'+field_value+' /></td>';
+                str += '<td align="left"><input type="'+login[k].type+'"'+' name="'+login[k].name+'"'+field_value+' '+field_id+' /></td>';
             }
         }
         str +='</tr>';
     }
     str +='</table>';
     var btn_label = data['login_btn_label']?data['login_btn_label']:fp_lang.submit;
-    if (data['login_search_form']) {
+    if (data['login_btn_action'] == 'search') {
         str += '<p><input type="button" onclick="repository_client.search(\''+id+'\', \''+data.repo_id+'\')" value="'+btn_label+'" /></p>';
+    } else if(data['login_btn_action'] == 'download') {
+        str += '<p><input type="button" onclick="repository_client.download(\''+id+'\', \''+data.repo_id+'\')" value="'+btn_label+'" /></p>';
     } else {
         if(!has_pop) {
             str += '<p><input type="button" onclick="repository_client.login(\''+id+'\', \''+data.repo_id+'\')" value="'+btn_label+'" /></p>';
@@ -403,6 +405,8 @@ repository_client.login_keypress = function(evt,action) {
     if(key == 13 || key == 10){
         if(action=='search'){
             repository_client.search(cached_id, cached_repo_id);
+        } else if (action=='download') {
+            repository_client.download(cached_id, cached_repo_id);
         } else {
             repository_client.login(cached_id, cached_repo_id);
         }

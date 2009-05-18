@@ -99,7 +99,7 @@
         require_once($CFG->dirroot.'/repository/'.$type.'/repository.class.php');
         $classname = 'repository_' . $type;
         try {
-            $repo = new $classname($repo_id, $ctx_id, array('ajax'=>true, 'name'=>$repository->name));
+            $repo = new $classname($repo_id, $ctx_id, array('ajax'=>true, 'name'=>$repository->name, 'client_id'=>$client_id));
         } catch (repository_exception $e){
             $err->e = $e->getMessage();
             die(json_encode($err));

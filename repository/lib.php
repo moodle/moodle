@@ -1960,12 +1960,12 @@ EOD;
     // print repository instances listing
     $js .= <<<EOD
 <script type="text/javascript">
-repository_listing['$id'] = {};
+repository_listing['$id'] = [];
 EOD;
     foreach ($repos as $repo) {
         $info = $repo->ajax_info();
         $js .= "\r\n";
-        $js .= 'repository_listing[\''.$id.'\'][\''.$info->id.'\']='.json_encode($repo->ajax_info()).';';
+        $js .= 'repository_listing[\''.$id.'\']['.$info->id.']='.json_encode($repo->ajax_info()).';';
         $js .= "\n";
     }
     $js .= "\r\n";

@@ -78,7 +78,7 @@ class repository_youtube extends repository {
         $search->label = get_string('search', 'repository_youtube').': ';
         $ret['login'] = array($search);
         $ret['login_btn_label'] = get_string('search');
-        $ret['login_search_form'] = true;
+        $ret['login_btn_action'] = 'search';
         return $ret;
     }
     public function supported_return_value() {

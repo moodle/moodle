@@ -151,7 +151,7 @@ class repository_flickr_public extends repository {
 
             $ret['login'] = array($fulltext, $tag, $email_field, $license);
             $ret['login_btn_label'] = get_string('search');
-            $ret['login_search_form'] = true;
+            $ret['login_btn_action'] = 'search';
             return $ret;
         }
     }
