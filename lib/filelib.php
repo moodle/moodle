@@ -165,7 +165,7 @@ function file_prepare_standard_editor($data, $field, array $options, $context=nu
 
     if ($options['maxfiles'] != 0) {
         $draftid_editor = file_get_submitted_draft_itemid($field);
-        $currenttext = file_prepare_draft_area($draftid_editor, $contextid, $filearea, $data->id, $options['subdirs'], $data->{$field}, $options['forcehttps']);
+        $currenttext = file_prepare_draft_area($draftid_editor, $contextid, $filearea, $data->id, $options, $data->{$field});
         $data->{$field.'_editor'} = array('text'=>$currenttext, 'format'=>$data->{$field.'format'}, 'itemid'=>$draftid_editor);
     } else {
         $data->{$field.'_editor'} = array('text'=>$data->{$field}, 'format'=>$data->{$field.'format'}, 0);
@@ -243,7 +243,7 @@ function file_prepare_standard_filemanager($data, $field, array $options, $conte
     }
 
     $draftid_editor = file_get_submitted_draft_itemid($field.'_filemanager');
-    file_prepare_draft_area($draftid_editor, $contextid, $filearea, $data->id, $options['subdirs']);
+    file_prepare_draft_area($draftid_editor, $contextid, $filearea, $data->id, $options);
     $data->{$field.'_filemanager'} = $draftid_editor;
 
     return $data;
@@ -320,13 +320,20 @@ function file_get_unused_draft_itemid() {
  * @param integer $contextid This parameter and the next two identify the file area to copy files from.
  * @param string $filearea helps indentify the file area.
  * @param integer $itemid helps identify the file area. Can be null if there are no files yet.
- * @param boolean $subdirs allow directory structure within the file area.
+ * @param array $options text and file options ('subdirs'=>false, 'forcehttps'=>false)
  * @param string $text some html content that needs to have embedded links rewritten to point to the draft area.
- * @param boolean $forcehttps force https urls.
  * @return string if $text was passed in, the rewritten $text is returned. Otherwise NULL.
  */
-function file_prepare_draft_area(&$draftitemid, $contextid, $filearea, $itemid, $subdirs=false, $text=null, $forcehttps=false) {
+function file_prepare_draft_area(&$draftitemid, $contextid, $filearea, $itemid, array $options=null, $text=null) {
     global $CFG, $USER;
+
+    $options = (array)$options;
+    if (!isset($options['subdirs'])) {
+        $options['subdirs'] = false;
+    }
+    if (!isset($options['forcehttps'])) {
+        $options['forcehttps'] = false;
+    }
 
     $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
     $fs = get_file_storage();
@@ -337,7 +344,7 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $filearea, $itemid, 
         $file_record = array('contextid'=>$usercontext->id, 'filearea'=>'user_draft', 'itemid'=>$draftitemid);
         if (!is_null($itemid) and $files = $fs->get_area_files($contextid, $filearea, $itemid)) {
             foreach ($files as $file) {
-                if (!$subdirs and ($file->is_directory() or $file->get_filepath() !== '/')) {
+                if (!$options['subdirs'] and ($file->is_directory() or $file->get_filepath() !== '/')) {
                     continue;
                 }
                 $fs->create_file_from_storedfile($file_record, $file);
@@ -352,7 +359,7 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $filearea, $itemid, 
     }
 
     // relink embedded files - editor can not handle @@PLUGINFILE@@ !
-    return file_rewrite_pluginfile_urls($text, 'draftfile.php', $usercontext->id, 'user_draft', $draftitemid, $forcehttps);
+    return file_rewrite_pluginfile_urls($text, 'draftfile.php', $usercontext->id, 'user_draft', $draftitemid, $options['forcehttps']);
 }
 
 /**
@@ -362,11 +369,16 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $filearea, $itemid, 
  * @param integer $contextid This parameter and the next two identify the file area to use.
  * @param string $filearea helps indentify the file area.
  * @param integer $itemid helps identify the file area.
- * @param boot $forcehttps if we should output a https URL.
+ * @param array $options text and file options ('forcehttps'=>false)
  * @return string the processed text.
  */
-function file_rewrite_pluginfile_urls($text, $file, $contextid, $filearea, $itemid, $forcehttps=false) {
+function file_rewrite_pluginfile_urls($text, $file, $contextid, $filearea, $itemid, array $options=null) {
     global $CFG;
+
+    $options = (array)$options;
+    if (!isset($options['forcehttps'])) {
+        $options['forcehttps'] = false;
+    }
 
     if (!$CFG->slasharguments) {
         $file = $file . '?file=';
@@ -378,7 +390,7 @@ function file_rewrite_pluginfile_urls($text, $file, $contextid, $filearea, $item
         $baseurl .= "$itemid/";
     }
 
-    if ($forcehttps) {
+    if ($options['forcehttps']) {
         $baseurl = str_replace('http://', 'https://', $baseurl);
     }
 

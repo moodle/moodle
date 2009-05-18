@@ -140,7 +140,7 @@
 
         if (plugin_supports('mod', $form->modulename, FEATURE_MOD_INTRO, true)) {
             $draftid_editor = file_get_submitted_draft_itemid('introeditor');
-            $currentintro = file_prepare_draft_area($draftid_editor, $context->id, $form->modulename.'_intro', 0, true, $form->intro);
+            $currentintro = file_prepare_draft_area($draftid_editor, $context->id, $form->modulename.'_intro', 0, array('subdirs'=>true), $form->intro);
             $form->introeditor = array('text'=>$currentintro, 'format'=>$form->introformat, 'itemid'=>$draftid_editor);
         }
 
@@ -593,4 +593,3 @@
         $mform->display();
         print_footer($course);
     }
-?>

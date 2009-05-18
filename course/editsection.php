@@ -21,7 +21,7 @@
     require_capability('moodle/course:update', $context);
 
     $draftitemid = file_get_submitted_draft_itemid('summary');
-    $currenttext = file_prepare_draft_area($draftitemid, $context->id, 'course_section', $section->id, true, $section->summary);
+    $currenttext = file_prepare_draft_area($draftitemid, $context->id, 'course_section', $section->id, array('subdirs'=>true), $section->summary);
     
     $mform = new editsection_form(null, $course);
     $data = array('id'=>$section->id, 'summary'=>array('text'=>$currenttext, 'format'=>FORMAT_HTML, 'itemid'=>$draftitemid));
@@ -56,4 +56,4 @@
     $mform->display();
     print_footer($course);
 
-?>
+

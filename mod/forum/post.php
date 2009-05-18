@@ -457,7 +457,7 @@
     $mform_post = new mod_forum_post_form('post.php', array('course'=>$course, 'cm'=>$cm, 'coursecontext'=>$coursecontext, 'modcontext'=>$modcontext, 'forum'=>$forum, 'post'=>$post));
 
     $draftitemid = file_get_submitted_draft_itemid('attachments');
-    file_prepare_draft_area($draftitemid, $modcontext->id, 'forum_attachment', empty($post->id)?null:$post->id , false);
+    file_prepare_draft_area($draftitemid, $modcontext->id, 'forum_attachment', empty($post->id)?null:$post->id);
 
     //load data into form NOW!
 
@@ -495,7 +495,7 @@
     }
 
     $draftid_editor = file_get_submitted_draft_itemid('message');
-    $currenttext = file_prepare_draft_area($draftid_editor, $modcontext->id, 'forum_post', empty($post->id) ? null : $post->id, true, $post->message);
+    $currenttext = file_prepare_draft_area($draftid_editor, $modcontext->id, 'forum_post', empty($post->id) ? null : $post->id, array('subdirs'=>true), $post->message);
     $mform_post->set_data(array(        'attachments'=>$draftitemid,
                                         'general'=>$heading,
                                         'subject'=>$post->subject,
