@@ -84,9 +84,21 @@
     $mnet_request->set_method('enrol/mnet/enrol.php/course_enrolments');
     $mnet_request->add_param($course->remoteid, 'int');
     $mnet_request->send($mnet_peer);
-    $all_enrolled_users = $mnet_request->response;
-
+    $raw_all_enrolled_users = $mnet_request->response;
     unset($mnet_request);
+
+    $all_enrolled_users = array();
+    if (!empty($raw_all_enrolled_users)) {
+        // Try to repair keying of remote users array, numeric usernames get lost in the fracas
+        foreach ($raw_all_enrolled_users as $username => $userdetails) {
+            if (empty($userdetails['username']) || !is_numeric($username)) {
+                //Not able to repair, or no need to repair
+                $all_enrolled_users[$username] = $userdetails;
+            } else {
+                $all_enrolled_users[$userdetails['username']] = $userdetails;
+            }
+        }
+    }
     
     $all_enrolled_usernames = '';
     $timemodified = array();
