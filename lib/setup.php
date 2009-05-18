@@ -419,6 +419,18 @@ global $HTTPSPAGEREQUIRED;
             if (!file_exists($CFG->dataroot .'/sessions')) {
                 make_upload_directory('sessions');
             }
+            if (!(disk_free_space($CFG->dataroot.'/sessions') > 0)) {
+                echo '<html><body>';
+                echo '<table align="center"><tr>';
+                echo '<td style="color:#990000; text-align:center; font-size:large; border-width:1px; '.
+                    '    border-color:#000000; border-style:solid; border-radius: 20px; border-collapse: collapse; '.
+                    '    -moz-border-radius: 20px; padding: 15px">';
+                echo '<p>The session partition is full. It is not possible to login at this time.</p>';
+                echo '<p>Please notify server administrator.</p>';
+                echo '</td></tr></table>';
+                echo '</body></html>';
+                die;
+            }
             ini_set('session.save_path', $CFG->dataroot .'/sessions');
 
         } else {                         /// Database sessions
