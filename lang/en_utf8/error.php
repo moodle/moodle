@@ -406,6 +406,7 @@ $string['sectionnotexist'] = 'This section does not exist';
 $string['secretalreadyused'] = 'Change password confirmation link was already used, password was not changed';
 $string['sendmessage'] = 'Send message';
 $string['sessioncookiesdisable'] = 'Incorrect use of require_key_login() - session cookies must be disabled!';
+$string['sessiondiskfull'] = 'The session partition is full. It is not possible to login at this time.<br /><br />Please notify server administrator.';
 $string['sessionerroruser'] = 'Your session has timed out.  Please login again.';
 $string['sessionerroruser2'] = 'A server error that affects your login session was detected. Please login again or restart your browser.';
 $string['sessionipnomatch'] = 'Sorry, but your IP number seems to have changed from when you first logged in.  This security feature prevents crackers stealing your identity while logged in to this site.  Normal users should not be seeing this message - please ask the site administrator for help.';

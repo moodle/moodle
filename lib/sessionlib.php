@@ -307,6 +307,9 @@ class legacy_file_session extends session_stub {
         if (!is_writable($CFG->dataroot .'/sessions/')) {
             print_error('sessionnotwritable', 'error');
         }
+        if (!(disk_free_space($CFG->dataroot.'/sessions') > 0)) {
+            print_error('sessiondiskfull', 'error');
+        }
         ini_set('session.save_path', $CFG->dataroot .'/sessions');
     }
 }
