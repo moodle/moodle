@@ -56,6 +56,8 @@ if ($usehttps) {
 // $contentcss should be customizable
 $contentcss = "$CFG->themewww/$theme/styles.php";
 
+//TODO: reimplement spellchecker support - the TinyMCE one is hardcoded for linux, has encoding problems, etc.
+
 $output = <<<EOF
 function mc_init_editors() {
     tinyMCE.init({
@@ -74,12 +76,12 @@ function mc_init_editors() {
         apply_source_formatting: true,
         remove_script_host: false,
         entity_encoding: "raw",
-        plugins: "safari,spellchecker,table,style,layer,advhr,advimage,advlink,emotions,inlinepopups,media,searchreplace,paste,directionality,fullscreen,moodlenolink,dragmath,nonbreaking,contextmenu,insertdatetime,save,iespell,preview,print,noneditable,visualchars,xhtmlxtras,template,pagebreak",
+        plugins: "safari,table,style,layer,advhr,advimage,advlink,emotions,inlinepopups,media,searchreplace,paste,directionality,fullscreen,moodlenolink,dragmath,nonbreaking,contextmenu,insertdatetime,save,iespell,preview,print,noneditable,visualchars,xhtmlxtras,template,pagebreak",
         theme_advanced_font_sizes: "1,2,3,4,5,6,7",
         theme_advanced_layout_manager: "SimpleLayout",
         theme_advanced_toolbar_align : "left",
         theme_advanced_buttons1: "fontselect,fontsizeselect,formatselect,styleselect",
-        theme_advanced_buttons1_add: "|,undo,redo,|,search,replace,spellchecker,|,fullscreen",
+        theme_advanced_buttons1_add: "|,undo,redo,|,search,replace,|,fullscreen",
         theme_advanced_buttons2: "bold,italic,underline,strikethrough,sub,sup,|,justifyleft,justifycenter,justifyright,justifyfull,|,cite,abbr,acronym",
         theme_advanced_buttons2_add: "|,selectall,cleanup,removeformat,pastetext,pasteword,|,forecolor,backcolor,|,ltr,rtl",
         theme_advanced_buttons3: "bullist,numlist,outdent,indent,|,link,unlink,moodlenolink,anchor,|,insertdate,inserttime,|,emotions,image,advhr,nonbreaking,charmap",
@@ -108,12 +110,12 @@ function mc_init_editors() {
         apply_source_formatting: true,
         remove_script_host: false,
         entity_encoding: "raw",
-        plugins: "safari,spellchecker,table,style,layer,advhr,advimage,advlink,emotions,inlinepopups,media,searchreplace,paste,directionality,fullscreen,moodlenolink,dragmath,nonbreaking,contextmenu,insertdatetime,save,iespell,preview,print,noneditable,visualchars,xhtmlxtras,template,pagebreak",
+        plugins: "safari,table,style,layer,advhr,advimage,advlink,emotions,inlinepopups,media,searchreplace,paste,directionality,fullscreen,moodlenolink,dragmath,nonbreaking,contextmenu,insertdatetime,save,iespell,preview,print,noneditable,visualchars,xhtmlxtras,template,pagebreak",
         theme_advanced_font_sizes: "1,2,3,4,5,6,7",
         theme_advanced_layout_manager: "SimpleLayout",
         theme_advanced_toolbar_align : "left",
         theme_advanced_buttons1: "fontselect,fontsizeselect,formatselect,styleselect",
-        theme_advanced_buttons1_add: "|,undo,redo,|,search,replace,spellchecker,|,fullscreen",
+        theme_advanced_buttons1_add: "|,undo,redo,|,search,replace,|,fullscreen",
         theme_advanced_buttons2: "bold,italic,underline,strikethrough,sub,sup,|,justifyleft,justifycenter,justifyright,justifyfull,|,cite,abbr,acronym",
         theme_advanced_buttons2_add: "|,selectall,cleanup,removeformat,pastetext,pasteword,|,forecolor,backcolor,|,ltr,rtl",
         theme_advanced_buttons3: "bullist,numlist,outdent,indent,|,link,unlink,moodlenolink,anchor,|,insertdate,inserttime,|,emotions,image,media,dragmath,advhr,nonbreaking,charmap",

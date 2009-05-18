@@ -34,7 +34,7 @@ Removed:
  *
 
 TODO:
- * customize plugins/spellchecker/*
+ * reimplement spellchecker support in plugins/spellchecker/*
 
 
 $Id$
