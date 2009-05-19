@@ -228,7 +228,7 @@
     //      put $restore->course_id and $restore->deleting (true), create the restore object.
     //    1-Existing course, adding: Select the destination course and launch the check again, then
     //      put $restore->course_id and $restore->deleting (false), create the restore object.
-    // B) Else, if user cannot create courses or he is restoring from within SITEID:
+    // B) Else, if user has 'moodle/site:restore' in only 1 course or cannot create courses or he is restoring from within SITEID:
     //    0-Current course, deleting: Put $restore->course_id and $restore->deleting (true), create the restore object
     //    1-Current course, adding: Put $restore->course_id and $restore->deleting (false), create the restore object
     // C) If the user is a creator:
@@ -240,12 +240,12 @@
     // NOTE: SITEID is prevented as a source for restoring because it's public area and we must encourage admins
     // to avoid using it as a "repository" for courses storage.
 
-    // A) If user has 'moodle/site:restore' in more than one course, cannot create courses and he isn't restoring from SITEID
+    // A) If user has 'moodle/site:restore' in more than one course and cannot create courses and he isn't restoring from SITEID
     if (count($mycourses) > 1 && !$cancreatecourses && $id != SITEID) {
         /// Nothing to do, process continues and C) will show the list of courses
 
-    // B) Else, if the user is a teacher and not a creator or we are restoring from within SITEID
-    } else if (!$cancreatecourses || $id == SITEID) {
+    // B) Else, if user has 'moodle/site:restore' is only 1 course or cannot create courses or he is restoring from within SITEID
+    } else if (count($mycourses) == 1 || !$cancreatecourses || $id == SITEID) {
         $restore->course_id = $id; /// Force restore to current course, disabling pick course from list
     }
 
