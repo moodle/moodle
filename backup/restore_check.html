@@ -291,6 +291,15 @@
         $show_continue_button = true;
         $messages = array();
 
+        //Check and warn if we are restoring over frontpage (SITEID) course. MDL-19163
+        if ($restore->course_id == SITEID) {
+            if ($restore->restoreto == 0) {
+                $messages[] = get_string ('restoretositedeleting');
+            } else if ($restore->restoreto == 1) {
+                $messages[] = get_string ('restoretositeadding');
+            }
+        }
+
         //Check if we've selected any mod's user info and restore->users
         //is set to none. Change it to course and inform.
         if ($restore->users == 2) {
