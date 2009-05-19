@@ -3842,7 +3842,7 @@ function get_sorted_contexts($select, $params = array()) {
             LEFT JOIN {course_modules} cm ON ctx.contextlevel = " . CONTEXT_MODULE . " AND cm.id = ctx.instanceid
             LEFT JOIN {block_instances} bi ON ctx.contextlevel = " . CONTEXT_BLOCK . " AND bi.id = ctx.instanceid
             $select
-            ORDER BY ctx.contextlevel, bi.region, COALESCE(cat.sortorder, c.sortorder, cm.section, bi.weight), u.lastname, u.firstname, cm.id
+            ORDER BY ctx.contextlevel, bi.defaultregion, COALESCE(cat.sortorder, c.sortorder, cm.section, bi.defaultweight), u.lastname, u.firstname, cm.id
             ", $params);
 }
 
