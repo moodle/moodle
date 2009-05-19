@@ -320,9 +320,8 @@ function file_get_unused_draft_itemid() {
  * @param integer $contextid This parameter and the next two identify the file area to copy files from.
  * @param string $filearea helps indentify the file area.
  * @param integer $itemid helps identify the file area. Can be null if there are no files yet.
- * @param boolean $subdirs allow directory structure within the file area.
+ * @param array $options text and file options ('subdirs'=>false, 'forcehttps'=>false)
  * @param string $text some html content that needs to have embedded links rewritten to point to the draft area.
- * @param boolean $forcehttps force https urls.
  * @return string if $text was passed in, the rewritten $text is returned. Otherwise NULL.
  */
 function file_prepare_draft_area(&$draftitemid, $contextid, $filearea, $itemid, array $options=null, $text=null) {
@@ -332,7 +331,7 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $filearea, $itemid, 
     if (!isset($options['subdirs'])) {
         $options['subdirs'] = false;
     }
-    if (!isset($options['maxfiles'])) {
+    if (!isset($options['forcehttps'])) {
         $options['forcehttps'] = false;
     }
 
@@ -370,11 +369,16 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $filearea, $itemid, 
  * @param integer $contextid This parameter and the next two identify the file area to use.
  * @param string $filearea helps indentify the file area.
  * @param integer $itemid helps identify the file area.
- * @param boot $forcehttps if we should output a https URL.
+ * @param array $options text and file options ('forcehttps'=>false)
  * @return string the processed text.
  */
-function file_rewrite_pluginfile_urls($text, $file, $contextid, $filearea, $itemid, $forcehttps=false) {
+function file_rewrite_pluginfile_urls($text, $file, $contextid, $filearea, $itemid, array $options=null) {
     global $CFG;
+
+    $options = (array)$options;
+    if (!isset($options['forcehttps'])) {
+        $options['forcehttps'] = false;
+    }
 
     if (!$CFG->slasharguments) {
         $file = $file . '?file=';
@@ -386,7 +390,7 @@ function file_rewrite_pluginfile_urls($text, $file, $contextid, $filearea, $item
         $baseurl .= "$itemid/";
     }
 
-    if ($forcehttps) {
+    if ($options['forcehttps']) {
         $baseurl = str_replace('http://', 'https://', $baseurl);
     }
 
