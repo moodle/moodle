@@ -80,7 +80,7 @@ class Moodle_Sniffs_Commenting_ClassCommentSniff extends Moodle_Sniffs_Commentin
         // Modify array of required tags
         $this->tags['package']['required'] = false;
         $this->tags['copyright']['required'] = false;
-        $this->tags['author']['required'] = true;
+        $this->tags['author']['required'] = false;
 
         $this->currentFile = $phpcsFile;
 
@@ -183,7 +183,7 @@ class Moodle_Sniffs_Commenting_ClassCommentSniff extends Moodle_Sniffs_Commentin
                     $newlineCount += (substr_count($long, $phpcsFile->eolChar) - $newlineSpan + 1);
                 }
 
-                $phpcsFile->addError($error, ($commentStart + $newlineCount));
+                $phpcsFile->addWarning($error, ($commentStart + $newlineCount));
                 $short = rtrim($short, $phpcsFile->eolChar.' ');
             }
         }

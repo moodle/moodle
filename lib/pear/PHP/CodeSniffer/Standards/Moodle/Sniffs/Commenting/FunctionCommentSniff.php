@@ -229,7 +229,7 @@ class Moodle_Sniffs_Commenting_FunctionCommentSniff implements PHP_CodeSniffer_S
                     $newlineCount += (substr_count($long, $phpcsFile->eolChar) - $newlineSpan + 1);
                 }
 
-                $phpcsFile->addError($error, ($commentStart + $newlineCount));
+                $phpcsFile->addWarning($error, ($commentStart + $newlineCount));
                 $short = rtrim($short, $phpcsFile->eolChar.' ');
             }
         }
@@ -321,7 +321,7 @@ class Moodle_Sniffs_Commenting_FunctionCommentSniff implements PHP_CodeSniffer_S
             if (substr_count($params[$lastParm]->getWhitespaceAfter(), $this->currentFile->eolChar) !== 2) {
                 $error    = 'Last parameter comment requires a blank newline after it';
                 $errorPos = ($params[$lastParm]->getLine() + $commentStart);
-                $this->currentFile->addError($error, $errorPos);
+                $this->currentFile->addWarning($error, $errorPos);
             }
 
             // Parameters must appear immediately after the comment.
@@ -345,7 +345,7 @@ class Moodle_Sniffs_Commenting_FunctionCommentSniff implements PHP_CodeSniffer_S
                 // Make sure that there is only one space before the var type.
                 if ($param->getWhitespaceBeforeType() !== ' ') {
                     $error = 'Expected 1 space before variable type';
-                    $this->currentFile->addError($error, $errorPos);
+                    $this->currentFile->addWarning($error, $errorPos);
                 }
 
                 $spaceCount = substr_count($param->getWhitespaceBeforeVarName(), ' ');
@@ -373,12 +373,12 @@ class Moodle_Sniffs_Commenting_FunctionCommentSniff implements PHP_CodeSniffer_S
                     // Check to see if the parameters align properly.
                     if ($param->alignsVariableWith($previousParam) === false) {
                         $error = 'The variable names for parameters '.$previousName.' ('.($pos - 1).') and '.$paramName.' ('.$pos.') do not align';
-                        $this->currentFile->addError($error, $errorPos);
+                        $this->currentFile->addWarning($error, $errorPos);
                     }
 
                     if ($param->alignsCommentWith($previousParam) === false) {
                         $error = 'The comments for parameters '.$previousName.' ('.($pos - 1).') and '.$paramName.' ('.$pos.') do not align';
-                        $this->currentFile->addError($error, $errorPos);
+                        $this->currentFile->addWarning($error, $errorPos);
                     }
                 }//end if
 

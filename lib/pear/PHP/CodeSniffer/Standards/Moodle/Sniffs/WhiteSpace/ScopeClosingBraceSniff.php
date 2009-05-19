@@ -101,6 +101,10 @@ class Moodle_Sniffs_WhiteSpace_ScopeClosingBraceSniff implements PHP_CodeSniffer
                 $phpcsFile->addError($error, $scopeEnd);
             }
         } else {
+            if (in_array($tokens[$stackPtr]['code'], array(T_CASE, T_DEFAULT))) {
+                $startColumn -= 4;
+            }
+
             if ($braceIndent !== $startColumn) {
                 $error = 'Closing brace indented incorrectly; expected '.($startColumn - 1).' spaces, found '.($braceIndent - 1);
                 $phpcsFile->addError($error, $scopeEnd);

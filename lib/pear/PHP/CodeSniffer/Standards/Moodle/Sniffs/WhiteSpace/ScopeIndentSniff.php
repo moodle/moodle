@@ -55,7 +55,7 @@ class Moodle_Sniffs_WhiteSpace_ScopeIndentSniff implements PHP_CodeSniffer_Sniff
      *
      * @var array(int)
      */
-    protected $nonIndentingScopes = array(T_SWITCH);
+    protected $nonIndentingScopes = array();
 
 
     /**

@@ -100,12 +100,26 @@ class Moodle_Sniffs_NamingConventions_ValidVariableNameSniff extends PHP_CodeSni
     protected function processVariableInString(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
-        $memberName     = ltrim($tokens[$stackPtr]['content'], '$');
-        if (preg_match('/[A-Z]+/', $memberName)) {
-            $error = "Member variable \"$memberName\" must be all lower-case";
-            $phpcsFile->addError($error, $stackPtr);
-            return;
+        if (preg_match('/\$([A-Za-z0-9_]+)(\-\>([A-Za-z0-9_]+))?/i', $tokens[$stackPtr]['content'], $matches)) {
+            $firstvar = $matches[1];
+            $objectvar = (empty($matches[3])) ? null : $matches[3];
+            $memberName = $firstvar . $objectvar;
+
+            if (preg_match('/[A-Z]+/', $firstvar, $matches)) {
+                if (!in_array($firstvar, $this->allowed_global_vars)) {
+                    $error = "Member variable \"$firstvar\" must be all lower-case";
+                    $phpcsFile->addError($error, $stackPtr);
+                    return;
+                }
+            }
+
+            if (!empty($objectvar) && preg_match('/[A-Z]+/', $objectvar, $matches)) {
+                $error = "Member variable \"$objectvar\" must be all lower-case";
+                $phpcsFile->addError($error, $stackPtr);
+                return;
+            }
         }
+
         return;
 
     }//end processVariableInString()

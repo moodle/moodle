@@ -99,7 +99,7 @@ class Moodle_Sniffs_Strings_DoubleQuoteUsageSniff implements PHP_CodeSniffer_Sni
         }
 
         $error = "String $workingString does not require double quotes; use single quotes instead";
-        $phpcsFile->addError($error, $stackPtr);
+        $phpcsFile->addWarning($error, $stackPtr);
 
     }//end process()
 

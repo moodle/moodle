@@ -78,7 +78,7 @@ class Moodle_Sniffs_WhiteSpace_MemberVarSpacingSniff extends PHP_CodeSniffer_Sta
         }//end if
 
         if ($foundLines !== 1) {
-            $phpcsFile->addError("Expected 1 blank line before member var; $foundLines found", $stackPtr);
+            // $phpcsFile->addError("Expected 1 blank line before member var; $foundLines found", $stackPtr);
         }
 
     }//end processMemberVar()

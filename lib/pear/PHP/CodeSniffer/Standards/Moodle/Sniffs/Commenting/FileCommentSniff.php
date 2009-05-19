@@ -280,8 +280,8 @@ class Moodle_Sniffs_Commenting_FileCommentSniff implements PHP_CodeSniffer_Sniff
                 $between        = $comment->getWhiteSpaceBetween();
                 $newlineBetween = substr_count($between, $phpcsFile->eolChar);
                 if ($newlineBetween !== 2) {
-                    $error = 'There must be exactly one blank line between descriptions in file comment';
-                    $phpcsFile->addError($error, ($filedocToken + $newlineCount + 1));
+                    $error = 'There should be exactly one blank line between descriptions in file comment';
+                    $phpcsFile->addWarning($error, ($filedocToken + $newlineCount + 1));
                 }
 
                 $newlineCount += $newlineBetween;
@@ -297,7 +297,7 @@ class Moodle_Sniffs_Commenting_FileCommentSniff implements PHP_CodeSniffer_Sniff
                         $newlineCount += (substr_count($long, $phpcsFile->eolChar) - $newlineSpan + 1);
                     }
 
-                    $phpcsFile->addError($error, ($filedocToken + $newlineCount));
+                    $phpcsFile->addWarning($error, ($filedocToken + $newlineCount));
                     $short = rtrim($short, $phpcsFile->eolChar.' ');
                 }
             }
@@ -448,7 +448,7 @@ class Moodle_Sniffs_Commenting_FileCommentSniff implements PHP_CodeSniffer_Sniff
                     $line    = $tagElem->getLine();
                 }
 
-                $this->currentFile->addError($error, ($commentStart + $line));
+                $this->currentFile->addWarning($error, ($commentStart + $line));
             }
         }
 

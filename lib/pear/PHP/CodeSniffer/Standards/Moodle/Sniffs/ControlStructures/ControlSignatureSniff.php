@@ -58,7 +58,6 @@ class Moodle_Sniffs_ControlStructures_ControlSignatureSniff extends PHP_CodeSnif
                 'if (...) {EOL',
                 'foreach (...) {EOL',
                 '} else if (...) {EOL',
-                '} elseif (...) {EOL',
                 '} else {EOL',
                 'do {EOL',
                );
