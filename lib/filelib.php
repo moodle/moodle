@@ -359,7 +359,7 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $filearea, $itemid, 
     }
 
     // relink embedded files - editor can not handle @@PLUGINFILE@@ !
-    return file_rewrite_pluginfile_urls($text, 'draftfile.php', $usercontext->id, 'user_draft', $draftitemid, $options['forcehttps']);
+    return file_rewrite_pluginfile_urls($text, 'draftfile.php', $usercontext->id, 'user_draft', $draftitemid, $options);
 }
 
 /**
