@@ -23,6 +23,11 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
+/**
+ * Returns users preferred editor for given format
+ * @param int $format text format or null of none
+ * @return texeditor object
+ */
 function get_preferred_texteditor($format=null) {
     global $CFG, $USER;
 
@@ -65,42 +70,82 @@ function get_preferred_texteditor($format=null) {
     return $editor;
 }
 
-function get_texteditor($editor) {
+/**
+ * Returns instance of text editor
+ * @param string $editorname name of editor (textarea, tinymce, ...)
+ * @return mixed texeditor instance or false if does not exist
+ */
+function get_texteditor($editorname) {
     global $CFG;
 
-    $libfile = "$CFG->libdir/editor/$editor/lib.php";
+    $libfile = "$CFG->libdir/editor/$editorname/lib.php";
     if (!file_exists($libfile)) {
         return false;
     }
     require_once($libfile);
-    $classname = $editor.'_texteditor';
+    $classname = $editorname.'_texteditor';
     if (!class_exists($classname)) {
         return false;
     }
     return new $classname();
 }
 
- /**
+/**
  * Get the list of available editors
+ * @return array ('editorname'=>'localised editor name')
  */
 function get_available_editors() {
     $editors = array();
-    foreach (get_list_of_plugins('lib/editor') as $editor) {
-        $editors[$editor] = get_string('modulename', 'editor_'.$editor);
+    foreach (get_list_of_plugins('lib/editor') as $editorname) {
+        $editors[$editorname] = get_string('modulename', 'editor_'.$editorname);
     }
     return $editors;
 }
 
 /**
- * Base text editor class
+ * Base abstract text editor class.
  */
 abstract class texteditor {
+    /**
+     * Is editor supported in current browser?
+     * @return bool
+     */
     public abstract function supported_by_browser();
+
+    /**
+     * Returns list of supported text formats
+     * @return array(FORMAT=>FORMAT)
+     */
     public abstract function get_supported_formats();
+
+    /**
+     * Returns main preferred text format.
+     * @return int text format
+     */
     public abstract function get_preferred_format();
+
+    /**
+     * Supports file picker and repos?
+     * @return book
+     */
     public abstract function supports_repositories();
+
+    /**
+     * Returns textarea class in formslib editor element
+     * @return string
+     */
     public abstract function get_editor_element_class();
+
+    /**
+     * Returns textarea class for legacy text editor
+     * @return string
+     */
     public abstract function get_legacy_textarea_class();
+
+    /**
+     * Returns js script statements needed in html head.
+     * @return string
+     */
     public abstract function header_js();
 }
 
@@ -108,10 +153,11 @@ abstract class texteditor {
 
 //=== DEPRECATED =====================
 /**
- * Deprecated...
+ * can_use_html_editor is deprecated...
  */
 function can_use_html_editor() {
-    //TODO: eradicate completely
+    //TODO: eradicate completely, replace with something else
 
-    return true;
+    $tinymyce = get_texteditor('tinymce');
+    return $tinymyce ->supported_by_browser();
 }
