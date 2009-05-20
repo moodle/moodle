@@ -1,4 +1,30 @@
-<?php  //$Id$
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
+/**
+ * Class representing filesin Moodle file storage.
+ *
+ * @package   moodle-core
+ * @copyright 2008 Petr Skoda (http://skodak.org)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+require_once("$CFG->libdir/file/stored_file.php");
 
 /**
  * Class representing local files stored in sha1 file pool
@@ -223,58 +249,115 @@ class stored_file {
         return $this->fs->create_directory($this->file_record->contextid, $this->file_record->filearea, $this->file_record->itemid, $filepath);
     }
 
+    /**
+     * Returns context id of the file
+     * @return int context id
+     */
     public function get_contextid() {
         return $this->file_record->contextid;
     }
 
+    /**
+     * Returns file area name, the areas do not have to be unique,
+     * but usually have form pluginname_typeofarea such as forum_attachments
+     * @return string
+     */
     public function get_filearea() {
         return $this->file_record->filearea;
     }
 
+    /**
+     * Returns returns item id of file
+     * @return int
+     */
     public function get_itemid() {
         return $this->file_record->itemid;
     }
 
+    /**
+     * Returns file path - starts and ends with /, \ are not allowed.
+     * @return string
+     */
     public function get_filepath() {
         return $this->file_record->filepath;
     }
 
+    /**
+     * Returns file name or '.' in case of directories.
+     * @return string
+     */
     public function get_filename() {
         return $this->file_record->filename;
     }
 
+    /**
+     * Returns id of user who created the file.
+     * @return int
+     */
     public function get_userid() {
         return $this->file_record->userid;
     }
 
+    /**
+     * Returns the size of file in bytes.
+     * @return int bytes
+     */
     public function get_filesize() {
         return $this->file_record->filesize;
     }
 
+    /**
+     * Returns mime type of file
+     * @return string
+     */
     public function get_mimetype() {
         return $this->file_record->mimetype;
     }
 
+    /**
+     * Returns unix timestamp of file creation date
+     * @return int
+     */
     public function get_timecreated() {
         return $this->file_record->timecreated;
     }
 
+    /**
+     * Returns unix timestamp of last file modification
+     * @return int
+     */
     public function get_timemodified() {
         return $this->file_record->timemodified;
     }
 
+    /**
+     * Returns file status flag
+     * @return int 0 means file OK, anything else is a problem and file can not be used
+     */
     public function get_status() {
         return $this->file_record->status;
     }
 
+    /**
+     * Returns file id
+     * @return int
+     */
     public function get_id() {
         return $this->file_record->id;
     }
 
+    /**
+     * Returns sha1 hash of file content
+     * @return string
+     */
     public function get_contenthash() {
         return $this->file_record->contenthash;
     }
 
+    /**
+     * Returns sha1 hash of all file path components sha1(contextid/filearea/itemid/dir/dir/filename.ext)
+     * @return string
+     */
     public function get_pathnamehash() {
         return $this->file_record->pathnamehash;
     }
