@@ -102,7 +102,7 @@ class moodle_sniffs_files_includingfilesniff implements php_codesniffer_sniff
         // Check to see if they are assigning the return value of this including call.
         // If they are then they are probably checking it, so its conditional.
         $previous = $phpcsfile->findPrevious(PHP_CodeSniffer_tokens::$emptyTokens, ($stackptr - 1), null, true);
-        if (in_array($tokens[$previous]['code'], PHP_CodeSniffer_tokens::$assignmenttokens) === true) {
+        if (in_array($tokens[$previous]['code'], PHP_CodeSniffer_tokens::$assignmentTokens) === true) {
             // The have assigned the return value to it, so its conditional.
             $inCondition = true;
         }

@@ -76,7 +76,7 @@ class moodle_sniffs_commenting_classcommentsniff extends moodle_sniffs_commentin
         $this->tags['copyright']['required'] = false;
         $this->tags['author']['required'] = false;
 
-        $this->currentFile = $phpcsfile;
+        $this->currentfile = $phpcsfile;
 
         $tokens = $phpcsfile->gettokens();
         $type   = strtolower($tokens[$stackptr]['content']);
@@ -127,15 +127,15 @@ class moodle_sniffs_commenting_classcommentsniff extends moodle_sniffs_commentin
 
         // Parse the class comment.docblock.
         try {
-            $this->commentParser = new PHP_CodeSniffer_CommentParser_ClassCommentParser($comment, $phpcsfile);
-            $this->commentParser->parse();
+            $this->commentparser = new PHP_CodeSniffer_CommentParser_ClassCommentParser($comment, $phpcsfile);
+            $this->commentparser->parse();
         } catch (PHP_CodeSniffer_CommentParser_ParserException $e) {
             $line = ($e->getlinewithinComment() + $commentStart);
             $phpcsfile->adderror($e->getMessage(), $line);
             return;
         }
 
-        $comment = $this->commentParser->getComment();
+        $comment = $this->commentparser->getComment();
         if (is_null($comment) === true) {
             $error = ucfirst($type).' doc comment is empty';
             $phpcsfile->adderror($error, $commentStart);
@@ -168,7 +168,7 @@ class moodle_sniffs_commenting_classcommentsniff extends moodle_sniffs_commentin
         }
 
         // Exactly one blank line before tags.
-        $tags = $this->commentParser->getTagOrders();
+        $tags = $this->commentparser->getTagOrders();
         if (count($tags) > 1) {
             $newlineSpan = $comment->getNewlineAfter();
             if ($newlineSpan !== 2) {
@@ -195,18 +195,18 @@ class moodle_sniffs_commenting_classcommentsniff extends moodle_sniffs_commentin
      *
      * @return void
      */
-    protected function processVersion($errorPos)
+    protected function processversion($errorPos)
     {
-        $version = $this->commentParser->getVersion();
+        $version = $this->commentparser->getVersion();
         if ($version !== null) {
             $content = $version->getcontent();
             $matches = array();
             if (empty($content) === true) {
                 $error = 'content missing for @version tag in doc comment';
-                $this->currentFile->adderror($error, $errorPos);
+                $this->currentfile->adderror($error, $errorPos);
             } else if ((strstr($content, 'Release:') === false)) {
                 $error = "Invalid version \"$content\" in doc comment; consider \"Release: <package_version>\" instead";
-                $this->currentFile->addwarning($error, $errorPos);
+                $this->currentfile->addwarning($error, $errorPos);
             }
         }
 
