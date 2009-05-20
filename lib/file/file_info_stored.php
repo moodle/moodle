@@ -1,4 +1,28 @@
-<?php  //$Id$
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
+/**
+ * Utility class for browsing of stored files.
+ *
+ * @package   moodle-core
+ * @copyright 2008 Petr Skoda (http://skodak.org)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 /**
  * Represents an actual file or folder - a row in the file table -
@@ -111,9 +135,18 @@ class file_info_stored extends file_info {
         if (!$this->lf->is_directory()) {
             return array();
         }
-        return $this->browser->build_stored_file_children($this->context, $this->lf->get_filearea(), $this->lf->get_itemid(), $this->lf->get_filepath(),
-                                                          $this->urlbase, $this->topvisiblename, $this->itemidused, $this->readaccess, $this->writeaccess,
-                                                          $this->areaonly);
+
+        $result = array();
+        $fs = get_file_storage();
+
+        $storedfiles = $fs->get_directory_files($this->context->id, $this->lf->get_filearea(), $this->lf->get_itemid(),
+                                                $this->lf->get_filepath(), false, true, "filepath, filename");
+        foreach ($storedfiles as $file) {
+            $result[] = new file_info_stored($this->browser, $this->context, $file, $this->urlbase, $this->topvisiblename,
+                                             $this->itemidused, $this->readaccess, $this->writeaccess, false);
+        }
+
+        return $result;
     }
 
     public function get_parent() {
