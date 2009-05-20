@@ -54,7 +54,7 @@ class repository_local extends repository {
         try {
             $browser = get_file_browser();
             if (!empty($encodedpath)) {
-                $decodedpath = unserialize($encodedpath);
+                $decodedpath = unserialize(base64_decode($encodedpath));
                 $itemid   = $decodedpath['itemid'];
                 $filename = $decodedpath['filename'];
                 $filearea = $decodedpath['filearea'];
@@ -71,9 +71,7 @@ class repository_local extends repository {
             if ($fileinfo = $browser->get_file_info($context, $filearea, $itemid, '/', $filename)) {
                 $level = $fileinfo->get_parent();
                 while ($level) {
-                    $params = $level->get_params_rawencoded();
-                    $params = implode('&amp;', $params);
-                    $params = serialize($level->get_params());
+                    $params = base64_encode(serialize($level->get_params()));
                     $path[] = array('name'=>$level->get_visible_name(), 'path'=>$params);
                     $level = $level->get_parent();
                 }
@@ -82,7 +80,7 @@ class repository_local extends repository {
                 $children = $fileinfo->get_children();
                 foreach ($children as $child) {
                     if ($child->is_directory()) {
-                        $params = serialize($child->get_params());
+                        $params = base64_encode(serialize($child->get_params()));
                         $node = array(
                             'title' => $child->get_visible_name(),
                             'size' => 0,
