@@ -31,12 +31,8 @@ if (class_exists('PHP_CodeSniffer_Standards_CodingStandard', true) === false) {
 /**
  * Moodle Coding Standard.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Nicolas Connault <nicolasconnault@gmail.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @version   Release: @package_version@
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @version Release: @package_version@
  */
 class php_codesniffer_standards_moodle_moodlecodingstandard extends php_codesniffer_standards_codingstandard {
     /**

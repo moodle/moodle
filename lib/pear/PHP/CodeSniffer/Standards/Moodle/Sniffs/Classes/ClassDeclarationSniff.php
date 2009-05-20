@@ -30,8 +30,7 @@
  * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_classes_classdeclarationsniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_classes_classdeclarationsniff implements php_codesniffer_sniff {
 
 
     /**
@@ -39,13 +38,8 @@ class moodle_sniffs_classes_classdeclarationsniff implements php_codesniffer_sni
      *
      * @return array
      */
-    public function register()
-    {
-        return array(
-                T_CLASS,
-                T_INTERFACE,
-               );
-
+    public function register() {
+        return array(T_CLASS, T_INTERFACE);
     }
 
 
@@ -58,8 +52,7 @@ class moodle_sniffs_classes_classdeclarationsniff implements php_codesniffer_sni
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
 
         if (isset($tokens[$stackptr]['scope_opener']) === false) {
@@ -70,33 +63,31 @@ class moodle_sniffs_classes_classdeclarationsniff implements php_codesniffer_sni
             return;
         }
 
-        $curlyBrace  = $tokens[$stackptr]['scope_opener'];
-        $lastcontent = $phpcsfile->findPrevious(T_WHITESPACE, ($curlyBrace - 1), $stackptr, true);
+        $curlybrace  = $tokens[$stackptr]['scope_opener'];
+        $lastcontent = $phpcsfile->findPrevious(T_WHITESPACE, ($curlybrace - 1), $stackptr, true);
         $classline   = $tokens[$lastcontent]['line'];
-        $braceline   = $tokens[$curlyBrace]['line'];
+        $braceline   = $tokens[$curlybrace]['line'];
+
         if ($braceline != $classline) {
             $error  = 'Opening brace of a ';
             $error .= $tokens[$stackptr]['content'];
             $error .= ' must be on the same line as the definition';
-            $phpcsfile->adderror($error, $curlyBrace);
+            $phpcsfile->adderror($error, $curlybrace);
             return;
         }
 
-        if ($tokens[($curlyBrace - 1)]['code'] === T_WHITESPACE) {
-            $prevcontent = $tokens[($curlyBrace - 1)]['content'];
+        if ($tokens[($curlybrace - 1)]['code'] === T_WHITESPACE) {
+            $prevcontent = $tokens[($curlybrace - 1)]['content'];
+
             if ($prevcontent !== $phpcsfile->eolChar) {
-                $blankSpace = substr($prevcontent, strpos($prevcontent, $phpcsfile->eolChar));
-                $spaces     = strlen($blankSpace);
+                $blankspace = substr($prevcontent, strpos($prevcontent, $phpcsfile->eolChar));
+                $spaces     = strlen($blankspace);
+
                 if ($spaces !== 1) {
                     $error = "Expected 1 space before opening brace; $spaces found";
-                    $phpcsfile->adderror($error, $curlyBrace);
+                    $phpcsfile->adderror($error, $curlybrace);
                 }
             }
         }
-
     }
-
-
 }
-
-?>
