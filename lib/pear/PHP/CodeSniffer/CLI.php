@@ -388,7 +388,7 @@ class PHP_CodeSniffer_CLI
             // Try to get the default from the config system.
             $standard = PHP_CodeSniffer::getConfigData('default_standard');
             if ($standard === null) {
-                $standard = 'Moodle';
+                $standard = 'PEAR';
             }
         }
 
@@ -416,7 +416,7 @@ class PHP_CodeSniffer_CLI
      */
     public function printUsage()
     {
-        echo 'Usage: phpcs [-nwlvi] [--report=<report>]'.PHP_EOL;
+        echo 'Usage: phpcs [-nwlvi] [--report=<report>] [--standard=<standard>]'.PHP_EOL;
         echo '    [--config-set key value] [--config-delete key] [--config-show]'.PHP_EOL;
         echo '    [--generator=<generator>] [--extensions=<extensions>]'.PHP_EOL;
         echo '    [--ignore=<patterns>] [--tab-width=<width>] <file> ...'.PHP_EOL;
@@ -432,6 +432,7 @@ class PHP_CodeSniffer_CLI
         echo '                     (only valid if checking a directory)'.PHP_EOL;
         echo '        <patterns>   A comma separated list of patterns that are used'.PHP_EOL;
         echo '                     to ignore directories and files'.PHP_EOL;
+        echo '        <standard>   The name of the coding standard to use'.PHP_EOL;
         echo '        <width>      The number of spaces each tab represents'.PHP_EOL;
         echo '        <generator>  The name of a doc generator to use'.PHP_EOL;
         echo '                     (forces doc generation instead of checking)'.PHP_EOL;
@@ -457,7 +458,7 @@ class PHP_CodeSniffer_CLI
         } else {
             $lastStandard = array_pop($installedStandards);
             if ($numStandards === 1) {
-                echo "The only coding standard installed is $lastStandard".PHP_EOL;
+                echo 'The only coding standard installed is $lastStandard'.PHP_EOL;
             } else {
                 $standardList  = implode(', ', $installedStandards);
                 $standardList .= ' and '.$lastStandard;

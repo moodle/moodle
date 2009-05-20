@@ -542,17 +542,6 @@ class PHP_CodeSniffer
                 $di = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
             }
 
-            // MOODLE CODE: If thirdpartylibs.xml is found, add these values to the ignored array
-            // first iteration to find thirdpartylibs.xml
-            foreach ($di as $file) {
-                if ($file->getFileName() == 'thirdpartylibs.xml') {
-                    $xml = simplexml_load_file($file->getPathName());
-                    foreach ($xml->library as $libobject) {
-                        $this->ignorePatterns[] = (string) $libobject->location;
-                    }
-                }
-            }
-
             foreach ($di as $file) {
                 $filePath = realpath($file->getPathname());
 

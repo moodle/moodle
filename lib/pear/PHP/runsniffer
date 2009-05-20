@@ -1,27 +1,29 @@
 #!/usr/bin/php
 <?php
 /**
- * This script will run PHP CodeSniffer across given Moodle directories and 
+ * This script will run PHP CodeSniffer across given Moodle directories and
  * produce reports of coding standard violations.
  *
  * HOW TO USE:
  *    php lib/pear/PHP/runsniffer mod/forum
+ * USEFUL PARAMETERS:
+ *    -n : only show ERROR, not WARNING
+ *    --report=summary : Outputs a summary instead of a per-file list of errors
  *
- * @package   PHP_CodeSniffer
- * @copyright 2006 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   http://matrix.squiz.net/developer/tools/php_cs/licence BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @package   lib-pear-PHP-CodeSniffer
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 error_reporting(E_ALL | E_STRICT);
 
-if (is_file(dirname(__FILE__).'/CodeSniffer/CLI.php') === true) {
-    include_once dirname(__FILE__).'/CodeSniffer/CLI.php';
+if (is_file(dirname(__FILE__).'/CodeSniffer/MoodleCLI.php') === true) {
+    include_once dirname(__FILE__).'/CodeSniffer/MoodleCLI.php';
 } else {
-    include_once 'lib/pear/PHP/CodeSniffer/CLI.php';
+    include_once 'lib/pear/PHP/CodeSniffer/MoodleCLI.php';
 }
 
-$phpcs = new PHP_CodeSniffer_CLI();
+$phpcs = new moodle_codesniffer_cli();
 $phpcs->checkRequirements();
 
 $numErrors = $phpcs->process();
