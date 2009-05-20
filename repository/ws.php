@@ -186,34 +186,42 @@ EOD;
             break;
         case 'download':
             try {
-                $path = $repo->get_file($file, $title);
-                if ($path === false) {
+                $filepath = $repo->get_file($file, $title, $itemid);
+                if ($filepath === false) {
                     $err->e = get_string('cannotdownload', 'repository');
                     die(json_encode($err));
                 }
                 if (empty($itemid)) {
                     $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
                 }
-                if (preg_match('#(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)#', $path)) {
+                if (preg_match('#(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)#', $filepath)) {
+                    $url = $filepath;
                     echo json_encode(array(
                                 /* File picker need to know this is a link
                                  * in order to attach title to url
                                  */
                                 'type'=>'link',
                                 'client_id'=>$client_id,
-                                'url'=>$path,
-                                'id'=>$path,
-                                'file'=>$path
+                                'url'=>$url,
+                                'id'=>$url,
+                                'file'=>$url
                                 )
                             );
-                } else {
-                    $info = repository::move_to_filepool($path, $title, $itemid);
+                } else if ($filepath instanceof stored_file) {
+                    $sf = $filepath;
+                    $browser = get_file_browser();
+                    $context  = get_context_instance_by_id($sf->get_contextid());
+                    $info = array();
                     $info['client_id'] = $client_id;
-                    if ($env == 'filepicker' || $env == 'filemanager'){
-                        echo json_encode($info);
-                    } else if ($env == 'editor') {
-                        echo json_encode($info);
-                    }
+                    $info['file'] = $sf->get_filename();
+                    $info['id'] = $itemid;
+                    $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$sf->get_contextid().'/user_draft/'.$itemid.'/'.$sf->get_filename();
+                    echo json_encode($info);
+                } else {
+                    // normal file path name
+                    $info = repository::move_to_filepool($filepath, $title, $itemid);
+                    $info['client_id'] = $client_id;
+                    echo json_encode($info);
                 }
             } catch (repository_exception $e){
                 $err->e = $e->getMessage();

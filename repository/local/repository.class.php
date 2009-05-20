@@ -13,56 +13,26 @@
 class repository_local extends repository {
 
     /**
-     *
-     * @global <type> $SESSION
-     * @global <type> $action
-     * @global <type> $CFG
-     * @param <type> $repositoryid
-     * @param <type> $context
-     * @param <type> $options
+     * @param int $repositoryid
+     * @param int $context
+     * @param array $options
      */
     public function __construct($repositoryid, $context = SITEID, $options = array()) {
-        global $SESSION, $action, $CFG;
         parent::__construct($repositoryid, $context, $options);
-        // TODO:
-        // get the parameter from client side
-        // $this->context can be used here.
-        // When user upload a file, $action == 'upload'
-        // You can use $_FILES to find that file
     }
 
     /**
-     *
-     * @global <type> $SESSION
-     * @param <type> $ajax
-     * @return <type>
+     * @param boolean $ajax
+     * @return mixed
      */
     public function print_login($ajax = true) {
-        global $SESSION;
-        // TODO
-        // Return file list in moodle
         return $this->get_listing();
     }
 
     /**
      *
-     * @param <type> $path
-     * @return <type>
-     */
-    private function _decode_path($path) {
-        $filearea = '';
-        $path = '';
-        if (($file = unserialize($path)) !== false) {
-            $filearea = $file[0];
-            $path = $file[1];
-        }
-        return array('filearea' => $filearea, 'path' => $path);
-    }
-
-    /**
-     *
-     * @param <type> $search_text
-     * @return <type>
+     * @param string $search_text
+     * @return mixed
      */
     public function search($search_text) {
         return $this->get_listing('', '', $search_text);
@@ -70,20 +40,77 @@ class repository_local extends repository {
 
     /**
      *
-     * @global <type> $CFG
-     * @param <type> $encodedpath
-     * @param <type> $search
-     * @return <type>
+     * @param string $encodedpath
+     * @param string $path not used by this plugin
+     * @param string $search
+     * @return mixed
      */
     public function get_listing($encodedpath = '', $page = '', $search = '') {
         global $CFG;
+        $ret = array();
+        $ret['dynload'] = true;
+        $list = array();
 
         try {
-            return repository::get_user_file_tree($search);
+            $browser = get_file_browser();
+            if (!empty($encodedpath)) {
+                $decodedpath = unserialize($encodedpath);
+                $itemid   = $decodedpath['itemid'];
+                $filename = $decodedpath['filename'];
+                $filearea = $decodedpath['filearea'];
+                $filepath = $decodedpath['filepath'];
+                $context  = get_context_instance_by_id($decodedpath['contextid']);
+            } else {
+                $itemid   = null;
+                $filename = null;
+                $filearea = null;
+                $filepath = null;
+                $context  = get_system_context();
+            }
+
+            if ($fileinfo = $browser->get_file_info($context, $filearea, $itemid, '/', $filename)) {
+                $level = $fileinfo->get_parent();
+                while ($level) {
+                    $params = $level->get_params_rawencoded();
+                    $params = implode('&amp;', $params);
+                    $params = serialize($level->get_params());
+                    $path[] = array('name'=>$level->get_visible_name(), 'path'=>$params);
+                    $level = $level->get_parent();
+                }
+                $path = array_reverse($path);
+                $ret['path'] = $path;
+                $children = $fileinfo->get_children();
+                foreach ($children as $child) {
+                    if ($child->is_directory()) {
+                        $params = serialize($child->get_params());
+                        $node = array(
+                            'title' => $child->get_visible_name(),
+                            'size' => 0,
+                            'date' => '',
+                            'path' => $params,
+                            'children'=>array(),
+                            'thumbnail' => $CFG->wwwroot .'/pix/f/folder-32.png'
+                        );
+                        $list[] = $node;
+                    } else {
+                        $params = base64_encode(serialize($child->get_params()));
+                        $node = array(
+                            'title' => $child->get_visible_name(),
+                            'size' => 0,
+                            'date' => '',
+                            'source'=> $params,
+                            'thumbnail' => $CFG->wwwroot .'/pix/f/text-32.png'
+                        );
+                        $list[] = $node;
+                    }
+                }
+            }
         }
         catch (Exception $e) {
             throw new repository_exception('emptyfilelist', 'repository_local');
         }
+        $ret['list'] = $list;
+        return $ret;
     }
 
      /**
@@ -96,37 +123,38 @@ class repository_local extends repository {
      * @return string the location of the file
      * @see curl package
      */
-    public function get_file($url, $file = '') {
-        global $CFG;
-        $path = $this->prepare_file($file);
-
-        ///retrieve the file
-        $fileparams = unserialize(base64_decode($url));
-        $contextid = $fileparams[0];
-        $filearea = $fileparams[1];
-        $itemid = $fileparams[2];
-        $filepath = $fileparams[3];
-        $filename = $fileparams[4];
+    public function get_file($encoded, $title = '', $itemid = '', $ctx_id) {
+        global $USER;
+        $params = unserialize(base64_decode($encoded));
+        $contextid = $params['contextid'];
+        $filearea  = $params['filearea'];
+        $filepath  = $params['filepath'];
+        $filename  = $params['filename'];
+        $fileitemid = $params['itemid'];
         $fs = get_file_storage();
-        $sf = $fs->get_file($contextid, $filearea, $itemid, $filepath, $filename);
-        $contents = $sf->get_content();
-        $fp = fopen($path, 'w');
-        fwrite($fp,$contents);
-        fclose($fp);
+        $oldfile = $fs->get_file($contextid, $filearea, $fileitemid, $filepath, $filename);
 
-        return $path;
+        $now = time();
+        $context = get_context_instance(CONTEXT_USER, $USER->id);
+        $recored = new stdclass;
+        $record->filearea = 'user_draft';
+        $record->contextid = $context->id;
+        $record->filename  = $title;
+        $record->filepath  = '/';
+        $record->timecreated  = $now;
+        $record->timemodified = $now;
+        $record->userid       = $USER->id;
+        $record->mimetype = $oldfile->get_mimetype();
+        if (!empty($itemid)) {
+            $record->itemid   = $itemid;
+        }
+        $newfile = $fs->create_file_from_storedfile($record, $oldfile->get_id());
+        return $newfile;
     }
 
     /**
      *
-     */
-    public function print_listing() {
-        // will be used in non-javascript file picker
-    }
-
-    /**
-     *
-     * @return <type>
+     * @return string
      */
     public function get_name(){
         return get_string('repositoryname', 'repository_local');;
