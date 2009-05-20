@@ -1,36 +1,38 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Moodle_Sniffs_Whitespace_ScopeIndentSniff.
+ * moodle_sniffs_whitespace_scopeindentsniff.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   http://matrix.squiz.net/developer/tools/php_cs/licence BSD Licence
- * @version   CVS: $Id$
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-whitespace
+ * @copyright 2008 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * Moodle_Sniffs_Whitespace_ScopeIndentSniff.
+ * moodle_sniffs_whitespace_scopeindentsniff.
  *
  * Checks that control structures are structured correctly, and their content
  * is indented correctly. This sniff will throw errors if tabs are used
  * for indentation rather than spaces.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   http://matrix.squiz.net/developer/tools/php_cs/licence BSD Licence
- * @version   Release: 1.1.0
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @copyright 2008 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class Moodle_Sniffs_WhiteSpace_ScopeIndentSniff implements PHP_CodeSniffer_Sniff
+class moodle_sniffs_whitespace_scopeindentsniff implements php_codesniffer_sniff
 {
 
     /**
@@ -65,32 +67,32 @@ class Moodle_Sniffs_WhiteSpace_ScopeIndentSniff implements PHP_CodeSniffer_Sniff
      */
     public function register()
     {
-        return PHP_CodeSniffer_Tokens::$scopeOpeners;
+        return PHP_CodeSniffer_tokens::$scopeOpeners;
 
-    }//end register()
+    }
 
 
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile All the tokens found in the document.
-     * @param int                  $stackPtr  The position of the current token
+     * @param PHP_CodeSniffer_File $phpcsfile All the tokens found in the document.
+     * @param int                  $stackptr  The position of the current token
      *                                        in the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
     {
-        $tokens = $phpcsFile->getTokens();
+        $tokens = $phpcsfile->gettokens();
 
         // If this is an inline condition (ie. there is no scope opener), then
         // return, as this is not a new scope.
-        if (isset($tokens[$stackPtr]['scope_opener']) === false) {
+        if (isset($tokens[$stackptr]['scope_opener']) === false) {
             return;
         }
 
-        if ($tokens[$stackPtr]['code'] === T_ELSE) {
-            $next = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($stackPtr + 1), null, true);
+        if ($tokens[$stackptr]['code'] === T_ELSE) {
+            $next = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($stackptr + 1), null, true);
             // We will handle the T_IF token in another call to process.
             if ($tokens[$next]['code'] === T_IF) {
                 return;
@@ -98,11 +100,11 @@ class Moodle_Sniffs_WhiteSpace_ScopeIndentSniff implements PHP_CodeSniffer_Sniff
         }
 
         // Find the first token on this line.
-        $firstToken = $stackPtr;
-        for ($i = $stackPtr; $i >= 0; $i--) {
+        $firsttoken = $stackptr;
+        for ($i = $stackptr; $i >= 0; $i--) {
             // Record the first code token on the line.
-            if (in_array($tokens[$i]['code'], PHP_CodeSniffer_Tokens::$emptyTokens) === false) {
-                $firstToken = $i;
+            if (in_array($tokens[$i]['code'], PHP_CodeSniffer_tokens::$emptyTokens) === false) {
+                $firsttoken = $i;
             }
 
             // It's the start of the line, so we've found our first php token.
@@ -113,20 +115,20 @@ class Moodle_Sniffs_WhiteSpace_ScopeIndentSniff implements PHP_CodeSniffer_Sniff
 
         // Based on the conditions that surround this token, determine the
         // indent that we expect this current content to be.
-        $expectedIndent = $this->calculateExpectedIndent($tokens, $firstToken);
+        $expectedIndent = $this->calculateExpectedIndent($tokens, $firsttoken);
 
-        if ($tokens[$firstToken]['column'] !== $expectedIndent) {
-            $error  = 'Line indented incorrectly; expected ';
+        if ($tokens[$firsttoken]['column'] !== $expectedIndent) {
+            $error  = 'line indented incorrectly; expected ';
             $error .= ($expectedIndent - 1).' spaces, found ';
-            $error .= ($tokens[$firstToken]['column'] - 1);
-            $phpcsFile->addError($error, $stackPtr);
+            $error .= ($tokens[$firsttoken]['column'] - 1);
+            $phpcsfile->adderror($error, $stackptr);
         }
 
-        $scopeOpener = $tokens[$stackPtr]['scope_opener'];
-        $scopeCloser = $tokens[$stackPtr]['scope_closer'];
+        $scopeOpener = $tokens[$stackptr]['scope_opener'];
+        $scopeCloser = $tokens[$stackptr]['scope_closer'];
 
         // Some scopes are expected not to have indents.
-        if (in_array($tokens[$firstToken]['code'], $this->nonIndentingScopes) === false) {
+        if (in_array($tokens[$firsttoken]['code'], $this->nonIndentingScopes) === false) {
             $indent = ($expectedIndent + $this->indent);
         } else {
             $indent = $expectedIndent;
@@ -142,16 +144,16 @@ class Moodle_Sniffs_WhiteSpace_ScopeIndentSniff implements PHP_CodeSniffer_Sniff
 
             // If this token is another scope, skip it as it will be handled by
             // another call to this sniff.
-            if (in_array($tokens[$i]['code'], PHP_CodeSniffer_Tokens::$scopeOpeners) === true) {
+            if (in_array($tokens[$i]['code'], PHP_CodeSniffer_tokens::$scopeOpeners) === true) {
                 if (isset($tokens[$i]['scope_opener']) === true) {
                     $i = $tokens[$i]['scope_closer'];
                 } else {
                     // If this token does not have a scope_opener indice, then
                     // it's probably an inline scope, so let's skip to the next
                     // semicolon. Inline scopes include inline if's, abstract methods etc.
-                    $nextToken = $phpcsFile->findNext(T_SEMICOLON, $i, $scopeCloser);
-                    if ($nextToken !== false) {
-                        $i = $nextToken;
+                    $nexttoken = $phpcsfile->findNext(T_SEMICOLON, $i, $scopeCloser);
+                    if ($nexttoken !== false) {
+                        $i = $nexttoken;
                     }
                 }
 
@@ -181,26 +183,26 @@ class Moodle_Sniffs_WhiteSpace_ScopeIndentSniff implements PHP_CodeSniffer_Sniff
                 // whitespace, then this must be the first token on the line that
                 // must be indented.
                 $newline    = false;
-                $firstToken = $i;
+                $firsttoken = $i;
 
-                $column = $tokens[$firstToken]['column'];
+                $column = $tokens[$firsttoken]['column'];
 
                 // Special case for non-PHP code.
-                if ($tokens[$firstToken]['code'] === T_INLINE_HTML) {
-                    $trimmedContentLength = strlen(ltrim($tokens[$firstToken]['content']));
-                    if ($trimmedContentLength === 0) {
+                if ($tokens[$firsttoken]['code'] === T_INLINE_HTML) {
+                    $trimmedcontentLength = strlen(ltrim($tokens[$firsttoken]['content']));
+                    if ($trimmedcontentLength === 0) {
                         continue;
                     }
 
-                    $contentLength = strlen($tokens[$firstToken]['content']);
-                    $column        = ($contentLength - $trimmedContentLength + 1);
+                    $contentLength = strlen($tokens[$firsttoken]['content']);
+                    $column        = ($contentLength - $trimmedcontentLength + 1);
                 }
 
                 // Check to see if this constant string spans multiple lines.
                 // If so, then make sure that the strings on lines other than the
                 // first line are indented appropriately, based on their whitespace.
-                if (in_array($tokens[$firstToken]['code'], PHP_CodeSniffer_Tokens::$stringTokens) === true) {
-                    if (in_array($tokens[($firstToken - 1)]['code'], PHP_CodeSniffer_Tokens::$stringTokens) === true) {
+                if (in_array($tokens[$firsttoken]['code'], PHP_CodeSniffer_tokens::$stringTokens) === true) {
+                    if (in_array($tokens[($firsttoken - 1)]['code'], PHP_CodeSniffer_tokens::$stringTokens) === true) {
                         // If we find a string that directly follows another string
                         // then its just a string that spans multiple lines, so we
                         // don't need to check for indenting.
@@ -210,9 +212,9 @@ class Moodle_Sniffs_WhiteSpace_ScopeIndentSniff implements PHP_CodeSniffer_Sniff
 
                 // This is a special condition for T_DOC_COMMENT and C-style
                 // comments, which contain whitespace between each line.
-                if (in_array($tokens[$firstToken]['code'], array(T_COMMENT, T_DOC_COMMENT)) === true) {
+                if (in_array($tokens[$firsttoken]['code'], array(T_COMMENT, T_DOC_COMMENT)) === true) {
 
-                    $content = trim($tokens[$firstToken]['content']);
+                    $content = trim($tokens[$firsttoken]['content']);
                     if (preg_match('|^/\*|', $content) !== 0) {
                         // Check to see if the end of the comment is on the same line
                         // as the start of the comment. If it is, then we don't
@@ -229,54 +231,54 @@ class Moodle_Sniffs_WhiteSpace_ScopeIndentSniff implements PHP_CodeSniffer_Sniff
                             continue;
                         }
 
-                        $contentLength        = strlen($tokens[$firstToken]['content']);
-                        $trimmedContentLength = strlen(ltrim($tokens[$firstToken]['content']));
-                        $column               = ($contentLength - $trimmedContentLength + 1);
+                        $contentLength        = strlen($tokens[$firsttoken]['content']);
+                        $trimmedcontentLength = strlen(ltrim($tokens[$firsttoken]['content']));
+                        $column               = ($contentLength - $trimmedcontentLength + 1);
                         if (preg_match('|\*/$|', $content) !== 0) {
                             $commentOpen = false;
                         }
-                    }//end if
-                }//end if
+                    }
+                }
 
                 // The token at the start of the line, needs to have its' column
                 // greater than the relative indent we set above. If it is less,
                 // an error should be shown.
                 if ($column !== $indent) {
                     if ($this->exact === true || $column < $indent) {
-                        $error  = 'Line indented incorrectly; expected ';
+                        $error  = 'line indented incorrectly; expected ';
                         if ($this->exact === false) {
                             $error .= 'at least ';
                         }
 
                         $error .= ($indent - 1).' spaces, found ';
                         $error .= ($column - 1);
-                        $phpcsFile->addError($error, $firstToken);
+                        $phpcsfile->adderror($error, $firsttoken);
                     }
                 }
-            }//end if
-        }//end for
+            }
+        }
 
-    }//end process()
+    }
 
 
     /**
      * Calculates the expected indent of a token.
      *
      * @param array $tokens   The stack of tokens for this file.
-     * @param int   $stackPtr The position of the token to get indent for.
+     * @param int   $stackptr The position of the token to get indent for.
      *
      * @return int
      */
-    protected function calculateExpectedIndent(array $tokens, $stackPtr)
+    protected function calculateExpectedIndent(array $tokens, $stackptr)
     {
         $conditionStack = array();
 
         // Empty conditions array (top level structure).
-        if (empty($tokens[$stackPtr]['conditions']) === true) {
+        if (empty($tokens[$stackptr]['conditions']) === true) {
             return 1;
         }
 
-        $tokenConditions = $tokens[$stackPtr]['conditions'];
+        $tokenConditions = $tokens[$stackptr]['conditions'];
         foreach ($tokenConditions as $id => $condition) {
             // If it's an indenting scope ie. it's not in our array of
             // scopes that don't indent, add it to our condition stack.
@@ -287,9 +289,9 @@ class Moodle_Sniffs_WhiteSpace_ScopeIndentSniff implements PHP_CodeSniffer_Sniff
 
         return ((count($conditionStack) * $this->indent) + 1);
 
-    }//end calculateExpectedIndent()
+    }
 
 
-}//end class
+}
 
 ?>

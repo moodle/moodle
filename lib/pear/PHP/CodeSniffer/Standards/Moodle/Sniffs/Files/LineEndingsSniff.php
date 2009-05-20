@@ -1,34 +1,36 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Moodle_Sniffs_Files_LineEndingsSniff.
+ * moodle_sniffs_files_lineendingssniff.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   http://matrix.squiz.net/developer/tools/php_cs/licence BSD Licence
- * @version   CVS: $Id$
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-files
+ * @copyright 2008 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * Moodle_Sniffs_Files_LineEndingsSniff.
+ * moodle_sniffs_files_lineendingssniff.
  *
  * Checks that end of line characters are correct.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   http://matrix.squiz.net/developer/tools/php_cs/licence BSD Licence
- * @version   Release: 1.1.0
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @copyright 2008 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class Moodle_Sniffs_Files_LineEndingsSniff implements PHP_CodeSniffer_Sniff
+class moodle_sniffs_files_lineendingssniff implements php_codesniffer_sniff
 {
 
     /**
@@ -48,41 +50,41 @@ class Moodle_Sniffs_Files_LineEndingsSniff implements PHP_CodeSniffer_Sniff
     {
         return array(T_OPEN_TAG);
 
-    }//end register()
+    }
 
 
     /**
      * Processes this sniff, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in the
+     * @param PHP_CodeSniffer_File $phpcsfile The file being scanned.
+     * @param int                  $stackptr  The position of the current token in the
      *                                        stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
     {
         // We are only interested if this is the first open tag.
-        if ($stackPtr !== 0) {
-            if ($phpcsFile->findPrevious(T_OPEN_TAG, ($stackPtr - 1)) !== false) {
+        if ($stackptr !== 0) {
+            if ($phpcsfile->findPrevious(T_OPEN_TAG, ($stackptr - 1)) !== false) {
                 return;
             }
         }
 
-        if ($phpcsFile->eolChar !== $this->eolChar) {
+        if ($phpcsfile->eolChar !== $this->eolChar) {
             $expected = $this->eolChar;
             $expected = str_replace("\n", '\n', $expected);
             $expected = str_replace("\r", '\r', $expected);
-            $found    = $phpcsFile->eolChar;
+            $found    = $phpcsfile->eolChar;
             $found    = str_replace("\n", '\n', $found);
             $found    = str_replace("\r", '\r', $found);
             $error    = "End of line character is invalid; expected \"$expected\" but found \"$found\"";
-            $phpcsFile->addError($error, $stackPtr);
+            $phpcsfile->adderror($error, $stackptr);
         }
 
-    }//end process()
+    }
 
 
-}//end class
+}
 
 ?>

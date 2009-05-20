@@ -1,34 +1,36 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Moodle_Sniffs_Strings_DoubleQuoteUsageSniff.
+ * moodle_sniffs_strings_doublequoteusagesniff.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Nicolas Connault <nicolasconnault@gmail.com>
- *
- * @copyright 2009 Nicolas Connault
+ * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-strings
+ * @copyright 2008 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @version   CVS: $Id$
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
 /**
- * Moodle_Sniffs_Strings_DoubleQuoteUsageSniff.
+ * moodle_sniffs_strings_doublequoteusagesniff.
  *
  * Makes sure that any use of Double Quotes ("") are warranted.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Nicolas Connault <nicolasconnault@gmail.com>
- *
- * @copyright 2009 Nicolas Connault
+ * @copyright 2008 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @version   Release: 1.1.0
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Moodle_Sniffs_Strings_DoubleQuoteUsageSniff implements PHP_CodeSniffer_Sniff
+class moodle_sniffs_strings_doublequoteusagesniff implements php_codesniffer_sniff
 {
 
 
@@ -43,23 +45,23 @@ class Moodle_Sniffs_Strings_DoubleQuoteUsageSniff implements PHP_CodeSniffer_Sni
                 T_CONSTANT_ENCAPSED_STRING,
                );
 
-    }//end register()
+    }
 
 
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in the
+     * @param PHP_CodeSniffer_File $phpcsfile The file being scanned.
+     * @param int                  $stackptr  The position of the current token in the
      *                                        stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
     {
-        $tokens = $phpcsFile->getTokens();
+        $tokens = $phpcsfile->gettokens();
 
-        $workingString = $tokens[$stackPtr]['content'];
+        $workingString = $tokens[$stackptr]['content'];
 
         // Check if it's a double quoted string.
         if (strpos($workingString, '"') === false) {
@@ -74,7 +76,7 @@ class Moodle_Sniffs_Strings_DoubleQuoteUsageSniff implements PHP_CodeSniffer_Sni
 
         // Work through the following tokens, in case this string is stretched
         // over multiple Lines.
-        for ($i = ($stackPtr + 1); $i < $phpcsFile->numTokens; $i++) {
+        for ($i = ($stackptr + 1); $i < $phpcsfile->numTokens; $i++) {
             if ($tokens[$i]['type'] !== 'T_CONSTANT_ENCAPSED_STRING') {
                 break;
             }
@@ -99,11 +101,11 @@ class Moodle_Sniffs_Strings_DoubleQuoteUsageSniff implements PHP_CodeSniffer_Sni
         }
 
         $error = "String $workingString does not require double quotes; use single quotes instead";
-        $phpcsFile->addWarning($error, $stackPtr);
+        $phpcsfile->addwarning($error, $stackptr);
 
-    }//end process()
+    }
 
 
-}//end class
+}
 
 ?>

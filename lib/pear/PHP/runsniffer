@@ -16,12 +16,8 @@
  */
 
 error_reporting(E_ALL | E_STRICT);
-
-if (is_file(dirname(__FILE__).'/CodeSniffer/MoodleCLI.php') === true) {
-    include_once dirname(__FILE__).'/CodeSniffer/MoodleCLI.php';
-} else {
-    include_once 'lib/pear/PHP/CodeSniffer/MoodleCLI.php';
-}
+require_once(dirname(__FILE__).'/../../../config.php');
+include_once('PHP/CodeSniffer/MoodleCLI.php');
 
 $phpcs = new moodle_codesniffer_cli();
 $phpcs->checkRequirements();

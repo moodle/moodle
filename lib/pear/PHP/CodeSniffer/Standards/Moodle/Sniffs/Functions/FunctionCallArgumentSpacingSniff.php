@@ -1,34 +1,36 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Moodle_Sniffs_Functions_FunctionCallArgumentSpacingSniff.
+ * moodle_sniffs_functions_functioncallargumentspacingsniff.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Nicolas Connault <nicolasconnault@gmail.com>
- *
- * @copyright 2009 Nicolas Connault
+ * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-functions
+ * @copyright 2008 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @version   CVS: $Id$
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
 /**
- * Moodle_Sniffs_Functions_FunctionCallArgumentSpacingSniff.
+ * moodle_sniffs_functions_functioncallargumentspacingsniff.
  *
  * Checks that calls to methods and functions are spaced correctly.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Nicolas Connault <nicolasconnault@gmail.com>
- *
- * @copyright 2009 Nicolas Connault
+ * @copyright 2008 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @version   Release: 1.1.0
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Moodle_Sniffs_Functions_FunctionCallArgumentSpacingSniff implements PHP_CodeSniffer_Sniff
+class moodle_sniffs_functions_functioncallargumentspacingsniff implements php_codesniffer_sniff
 {
 
 
@@ -41,36 +43,36 @@ class Moodle_Sniffs_Functions_FunctionCallArgumentSpacingSniff implements PHP_Co
     {
         return array(T_STRING);
 
-    }//end register()
+    }
 
 
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in the
+     * @param PHP_CodeSniffer_File $phpcsfile The file being scanned.
+     * @param int                  $stackptr  The position of the current token in the
      *                                        stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
     {
-        $tokens = $phpcsFile->getTokens();
+        $tokens = $phpcsfile->gettokens();
 
         // Skip tokens that are the names of functions or classes
         // within their definitions. For example:
         // function myFunction...
         // "myFunction" is T_STRING but we should skip because it is not a
         // function or method *call*.
-        $functionName    = $stackPtr;
-        $functionKeyword = $phpcsFile->findPrevious(PHP_CodeSniffer_Tokens::$emptyTokens, ($stackPtr - 1), null, true);
+        $functionName    = $stackptr;
+        $functionKeyword = $phpcsfile->findPrevious(PHP_CodeSniffer_tokens::$emptyTokens, ($stackptr - 1), null, true);
         if ($tokens[$functionKeyword]['code'] === T_FUNCTION || $tokens[$functionKeyword]['code'] === T_CLASS) {
             return;
         }
 
         // If the next non-whitespace token after the function or method call
         // is not an opening parenthesis then it cant really be a *call*.
-        $openBracket = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($functionName + 1), null, true);
+        $openBracket = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($functionName + 1), null, true);
         if ($tokens[$openBracket]['code'] !== T_OPEN_PARENTHESIS) {
             return;
         }
@@ -78,7 +80,7 @@ class Moodle_Sniffs_Functions_FunctionCallArgumentSpacingSniff implements PHP_Co
         $closeBracket = $tokens[$openBracket]['parenthesis_closer'];
 
         $nextSeperator = $openBracket;
-        while (($nextSeperator = $phpcsFile->findNext(array(T_COMMA, T_VARIABLE), ($nextSeperator + 1), $closeBracket)) !== false) {
+        while (($nextSeperator = $phpcsfile->findNext(array(T_COMMA, T_VARIABLE), ($nextSeperator + 1), $closeBracket)) !== false) {
             // Make sure the comma or variable belongs directly to this function call,
             // and is not inside a nested function call or array.
             $brackets    = $tokens[$nextSeperator]['nested_parenthesis'];
@@ -90,46 +92,46 @@ class Moodle_Sniffs_Functions_FunctionCallArgumentSpacingSniff implements PHP_Co
             if ($tokens[$nextSeperator]['code'] === T_COMMA) {
                 if ($tokens[($nextSeperator - 1)]['code'] === T_WHITESPACE) {
                     $error = 'Space found before comma in function call';
-                    $phpcsFile->addWarning($error, $stackPtr);
+                    $phpcsfile->addwarning($error, $stackptr);
                 }
 
                 if ($tokens[($nextSeperator + 1)]['code'] !== T_WHITESPACE) {
                     $error = 'No space found after comma in function call';
-                    $phpcsFile->addWarning($error, $stackPtr);
+                    $phpcsfile->addwarning($error, $stackptr);
                 } else {
                     // If there is a newline in the space, then the must be formatting
                     // each argument on a newline, which is valid, so ignore it.
-                    if (strpos($tokens[($nextSeperator + 1)]['content'], $phpcsFile->eolChar) === false) {
+                    if (strpos($tokens[($nextSeperator + 1)]['content'], $phpcsfile->eolChar) === false) {
                         $space = strlen($tokens[($nextSeperator + 1)]['content']);
                         if ($space > 1) {
                             $error  = 'Expected 1 space after comma in function call; ';
                             $error .= $space.' found';
-                            $phpcsFile->addWarning($error, $stackPtr);
+                            $phpcsfile->addwarning($error, $stackptr);
                         }
                     }
                 }
             } else {
-                // Token is a variable.
-                $nextToken = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($nextSeperator + 1), $closeBracket, true);
-                if ($nextToken !== false) {
-                    if ($tokens[$nextToken]['code'] === T_EQUAL) {
-                        if (($tokens[($nextToken - 1)]['code']) !== T_WHITESPACE) {
+                // token is a variable.
+                $nexttoken = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($nextSeperator + 1), $closeBracket, true);
+                if ($nexttoken !== false) {
+                    if ($tokens[$nexttoken]['code'] === T_EQUAL) {
+                        if (($tokens[($nexttoken - 1)]['code']) !== T_WHITESPACE) {
                             $error = 'Expected 1 space before = sign of default value';
-                            $phpcsFile->addWarning($error, $stackPtr);
+                            $phpcsfile->addwarning($error, $stackptr);
                         }
 
-                        if ($tokens[($nextToken + 1)]['code'] !== T_WHITESPACE) {
+                        if ($tokens[($nexttoken + 1)]['code'] !== T_WHITESPACE) {
                             $error = 'Expected 1 space after = sign of default value';
-                            $phpcsFile->addWarning($error, $stackPtr);
+                            $phpcsfile->addwarning($error, $stackptr);
                         }
                     }
                 }
-            }//end if
-        }//end while
+            }
+        }
 
-    }//end process()
+    }
 
 
-}//end class
+}
 
 ?>

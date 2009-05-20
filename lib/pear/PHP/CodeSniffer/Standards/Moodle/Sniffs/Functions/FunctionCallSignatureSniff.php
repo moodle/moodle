@@ -1,32 +1,34 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Moodle_Sniffs_Functions_FunctionCallSignatureSniff.
+ * moodle_sniffs_functions_functioncallsignaturesniff.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Nicolas Connault <nicolasconnault@gmail.com>
- *
- * @copyright 2009 Nicolas Connault
+ * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-functions
+ * @copyright 2008 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @version   CVS: $Id$
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
 /**
- * Moodle_Sniffs_Functions_FunctionCallSignatureSniff.
+ * moodle_sniffs_functions_functioncallsignaturesniff.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Nicolas Connault <nicolasconnault@gmail.com>
- *
- * @copyright 2009 Nicolas Connault
+ * @copyright 2008 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @version   Release: 1.1.0
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Moodle_Sniffs_Functions_FunctionCallSignatureSniff implements PHP_CodeSniffer_Sniff
+class moodle_sniffs_functions_functioncallsignaturesniff implements php_codesniffer_sniff
 {
 
 
@@ -39,24 +41,24 @@ class Moodle_Sniffs_Functions_FunctionCallSignatureSniff implements PHP_CodeSnif
     {
         return array(T_STRING);
 
-    }//end register()
+    }
 
 
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in the
+     * @param PHP_CodeSniffer_File $phpcsfile The file being scanned.
+     * @param int                  $stackptr  The position of the current token in the
      *                                        stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
     {
-        $tokens = $phpcsFile->getTokens();
+        $tokens = $phpcsfile->gettokens();
 
         // Find the next non-empty token.
-        $next = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($stackPtr + 1), null, true);
+        $next = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($stackptr + 1), null, true);
 
         if ($tokens[$next]['code'] !== T_OPEN_PARENTHESIS) {
             // Not a function call.
@@ -69,7 +71,7 @@ class Moodle_Sniffs_Functions_FunctionCallSignatureSniff implements PHP_CodeSnif
         }
 
         // Find the previous non-empty token.
-        $previous = $phpcsFile->findPrevious(PHP_CodeSniffer_Tokens::$emptyTokens, ($stackPtr - 1), null, true);
+        $previous = $phpcsfile->findPrevious(PHP_CodeSniffer_tokens::$emptyTokens, ($stackptr - 1), null, true);
         if ($tokens[$previous]['code'] === T_FUNCTION) {
             // It's a function definition, not a function call.
             return;
@@ -80,23 +82,23 @@ class Moodle_Sniffs_Functions_FunctionCallSignatureSniff implements PHP_CodeSnif
             return;
         }
 
-        if (($stackPtr + 1) !== $next) {
+        if (($stackptr + 1) !== $next) {
             // Checking this: $value = my_function[*](...).
             $error = 'Space before opening parenthesis of function call prohibited';
-            $phpcsFile->addError($error, $stackPtr);
+            $phpcsfile->adderror($error, $stackptr);
         }
 
         if ($tokens[($next + 1)]['code'] === T_WHITESPACE) {
             // Checking this: $value = my_function([*]...).
             $error = 'Space after opening parenthesis of function call prohibited';
-            $phpcsFile->addError($error, $stackPtr);
+            $phpcsfile->adderror($error, $stackptr);
         }
 
         $closer = $tokens[$next]['parenthesis_closer'];
 
         if ($tokens[($closer - 1)]['code'] === T_WHITESPACE) {
             // Checking this: $value = my_function(...[*]).
-            $between = $phpcsFile->findNext(T_WHITESPACE, ($next + 1), null, true);
+            $between = $phpcsfile->findNext(T_WHITESPACE, ($next + 1), null, true);
 
             // Only throw an error if there is some content between the parenthesis.
             // IE. Checking for this: $value = my_function().
@@ -105,21 +107,21 @@ class Moodle_Sniffs_Functions_FunctionCallSignatureSniff implements PHP_CodeSnif
             // $value = my_function( ).
             if ($between !== $closer) {
                 $error = 'Space before closing parenthesis of function call prohibited';
-                $phpcsFile->addError($error, $closer);
+                $phpcsfile->adderror($error, $closer);
             }
         }
 
-        $next = $phpcsFile->findNext(T_WHITESPACE, ($closer + 1), null, true);
+        $next = $phpcsfile->findNext(T_WHITESPACE, ($closer + 1), null, true);
 
         if ($tokens[$next]['code'] === T_SEMICOLON) {
-            if (in_array($tokens[($closer + 1)]['code'], PHP_CodeSniffer_Tokens::$emptyTokens) === true) {
+            if (in_array($tokens[($closer + 1)]['code'], PHP_CodeSniffer_tokens::$emptyTokens) === true) {
                 $error = 'Space after closing parenthesis of function call prohibited';
-                $phpcsFile->addError($error, $closer);
+                $phpcsfile->adderror($error, $closer);
             }
         }
 
-    }//end process()
+    }
 
 
-}//end class
+}
 ?>

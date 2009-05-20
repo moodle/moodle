@@ -1,34 +1,36 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * PHP_CodeSniffer_Sniffs_Moodle_Commenting_InlineCommentSniff.
+ * php_codesniffer_sniffs_moodle_commenting_inlinecommentsniff.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Nicolas Connault <nicolasconnault@gmail.com>
- *
- * @copyright 2009 Nicolas Connault
+ * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-commenting
+ * @copyright 2008 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @version   CVS: $Id$
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
 /**
- * PHP_CodeSniffer_Sniffs_Moodle_Commenting_InlineCommentSniff.
+ * php_codesniffer_sniffs_moodle_commenting_inlinecommentsniff.
  *
  * Checks that no perl-style comments are used.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Nicolas Connault <nicolasconnault@gmail.com>
- *
- * @copyright 2009 Nicolas Connault
+ * @copyright 2008 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @version   Release: 1.1.0
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Moodle_Sniffs_Commenting_InlineCommentSniff implements PHP_CodeSniffer_Sniff
+class moodle_sniffs_commenting_inlinecommentsniff implements php_codesniffer_sniff
 {
 
 
@@ -41,31 +43,31 @@ class Moodle_Sniffs_Commenting_InlineCommentSniff implements PHP_CodeSniffer_Sni
     {
         return array(T_COMMENT);
 
-    }//end register()
+    }
 
 
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in the
+     * @param PHP_CodeSniffer_File $phpcsfile The file being scanned.
+     * @param int                  $stackptr  The position of the current token in the
      *                                        stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
     {
-        $tokens = $phpcsFile->getTokens();
+        $tokens = $phpcsfile->gettokens();
 
-        if ($tokens[$stackPtr]['content']{0} === '#') {
+        if ($tokens[$stackptr]['content']{0} === '#') {
             $error  = 'Perl-style comments are not allowed. Use "// Comment."';
             $error .= ' or "/* comment */" instead.';
-            $phpcsFile->addError($error, $stackPtr);
+            $phpcsfile->adderror($error, $stackptr);
         }
 
-    }//end process()
+    }
 
 
-}//end class
+}
 
 ?>

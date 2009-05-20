@@ -1,17 +1,25 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * Verifies that control statements conform to their coding standards.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Nicolas Connault <nicolasconnault@gmail.com>
- *
- * @copyright 2009 Nicolas Connault
+ * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-controlstructures
+ * @copyright 2008 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @version   CVS: $Id$
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
 if (class_exists('PHP_CodeSniffer_Standards_AbstractPatternSniff', true) === false) {
@@ -21,27 +29,21 @@ if (class_exists('PHP_CodeSniffer_Standards_AbstractPatternSniff', true) === fal
 /**
  * Verifies that control statements conform to their coding standards.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Nicolas Connault <nicolasconnault@gmail.com>
- *
- * @copyright 2009 Nicolas Connault
+ * @copyright 2008 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @version   Release: 1.1.0
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Moodle_Sniffs_ControlStructures_ControlSignatureSniff extends PHP_CodeSniffer_Standards_AbstractPatternSniff
+class moodle_sniffs_controlstructures_controlsignaturesniff extends php_codesniffer_standards_abstractpatternsniff
 {
 
 
     /**
-     * Constructs a Moodle_Sniffs_ControlStructures_ControlSignatureSniff.
+     * Constructs a moodle_sniffs_controlstructures_controlsignaturesniff.
      */
     public function __construct()
     {
         parent::__construct(true);
 
-    }//end __construct()
+    }
 
 
     /**
@@ -62,9 +64,9 @@ class Moodle_Sniffs_ControlStructures_ControlSignatureSniff extends PHP_CodeSnif
                 'do {EOL',
                );
 
-    }//end getPatterns()
+    }
 
 
-}//end class
+}
 
 ?>

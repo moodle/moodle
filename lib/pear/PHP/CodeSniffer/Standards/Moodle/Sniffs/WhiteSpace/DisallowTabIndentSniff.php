@@ -1,34 +1,36 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Moodle_Sniffs_WhiteSpace_DisallowTabIndentSniff.
+ * moodle_sniffs_whitespace_disallowtabindentsniff.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Nicolas Connault <nicolasconnault@gmail.com>
- *
- * @copyright 2009 Nicolas Connault
+ * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-whitespace
+ * @copyright 2008 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @version   CVS: $Id$
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
 /**
- * Moodle_Sniffs_WhiteSpace_DisallowTabIndentSniff.
+ * moodle_sniffs_whitespace_disallowtabindentsniff.
  *
  * Throws errors if tabs are used for indentation.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Nicolas Connault <nicolasconnault@gmail.com>
- *
- * @copyright 2009 Nicolas Connault
+ * @copyright 2008 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @version   Release: 1.1.0
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Moodle_Sniffs_WhiteSpace_DisallowTabIndentSniff implements PHP_CodeSniffer_Sniff
+class moodle_sniffs_whitespace_disallowtabindentsniff implements php_codesniffer_sniff
 {
 
     /**
@@ -36,7 +38,7 @@ class Moodle_Sniffs_WhiteSpace_DisallowTabIndentSniff implements PHP_CodeSniffer
      *
      * @var array
      */
-    public $supportedTokenizers = array(
+    public $supportedtokenizers = array(
                                    'PHP',
                                    'JS',
                                   );
@@ -51,36 +53,36 @@ class Moodle_Sniffs_WhiteSpace_DisallowTabIndentSniff implements PHP_CodeSniffer
     {
         return array(T_WHITESPACE);
 
-    }//end register()
+    }
 
 
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile All the tokens found in the document.
-     * @param int                  $stackPtr  The position of the current token in
+     * @param PHP_CodeSniffer_File $phpcsfile All the tokens found in the document.
+     * @param int                  $stackptr  The position of the current token in
      *                                        the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
     {
-        $tokens = $phpcsFile->getTokens();
+        $tokens = $phpcsfile->gettokens();
 
         // Make sure this is whitespace used for indentation.
-        $line = $tokens[$stackPtr]['line'];
-        if ($stackPtr > 0 && $tokens[($stackPtr - 1)]['line'] === $line) {
+        $line = $tokens[$stackptr]['line'];
+        if ($stackptr > 0 && $tokens[($stackptr - 1)]['line'] === $line) {
             return;
         }
 
-        if (strpos($tokens[$stackPtr]['content'], "\t") !== false) {
+        if (strpos($tokens[$stackptr]['content'], "\t") !== false) {
             $error = 'Spaces must be used to indent lines; tabs are not allowed';
-            $phpcsFile->addError($error, $stackPtr);
+            $phpcsfile->adderror($error, $stackptr);
         }
 
-    }//end process()
+    }
 
 
-}//end class
+}
 
 ?>

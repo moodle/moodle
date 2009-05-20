@@ -1,34 +1,36 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Moodle_Sniffs_ControlStructures_InlineControlStructureSniff.
+ * moodle_sniffs_controlstructures_inlinecontrolstructuresniff.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   http://matrix.squiz.net/developer/tools/php_cs/licence BSD Licence
- * @version   CVS: $Id$
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-controlstructures
+ * @copyright 2008 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * Moodle_Sniffs_ControlStructures_InlineControlStructureSniff.
+ * moodle_sniffs_controlstructures_inlinecontrolstructuresniff.
  *
  * Verifies that inline control statements are not present.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   http://matrix.squiz.net/developer/tools/php_cs/licence BSD Licence
- * @version   Release: 1.1.0
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @copyright 2008 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class Moodle_Sniffs_ControlStructures_InlineControlStructureSniff implements PHP_CodeSniffer_Sniff
+class moodle_sniffs_controlstructures_inlinecontrolstructuresniff implements php_codesniffer_sniff
 {
 
     /**
@@ -36,7 +38,7 @@ class Moodle_Sniffs_ControlStructures_InlineControlStructureSniff implements PHP
      *
      * @var array
      */
-    public $supportedTokenizers = array(
+    public $supportedtokenizers = array(
                                    'PHP',
                                    'JS',
                                   );
@@ -65,33 +67,33 @@ class Moodle_Sniffs_ControlStructures_InlineControlStructureSniff implements PHP
                 T_FOR,
                );
 
-    }//end register()
+    }
 
 
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in the
+     * @param PHP_CodeSniffer_File $phpcsfile The file being scanned.
+     * @param int                  $stackptr  The position of the current token in the
      *                                        stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
     {
-        $tokens = $phpcsFile->getTokens();
+        $tokens = $phpcsfile->gettokens();
 
-        if (isset($tokens[$stackPtr]['scope_opener']) === false) {
+        if (isset($tokens[$stackptr]['scope_opener']) === false) {
             // Ignore the ELSE in ELSE IF. We'll process the IF part later.
-            if (($tokens[$stackPtr]['code'] === T_ELSE) && ($tokens[($stackPtr + 2)]['code'] === T_IF)) {
+            if (($tokens[$stackptr]['code'] === T_ELSE) && ($tokens[($stackptr + 2)]['code'] === T_IF)) {
                 return;
             }
 
-            if ($tokens[$stackPtr]['code'] === T_WHILE) {
+            if ($tokens[$stackptr]['code'] === T_WHILE) {
                 // This could be from a DO WHILE, which doesn't have an opening brace.
-                $lastContent = $phpcsFile->findPrevious(T_WHITESPACE, ($stackPtr - 1), null, true);
-                if ($tokens[$lastContent]['code'] === T_CLOSE_CURLY_BRACKET) {
-                    $brace = $tokens[$lastContent];
+                $lastcontent = $phpcsfile->findPrevious(T_WHITESPACE, ($stackptr - 1), null, true);
+                if ($tokens[$lastcontent]['code'] === T_CLOSE_CURLY_BRACKET) {
+                    $brace = $tokens[$lastcontent];
                     if (isset($brace['scope_condition']) === true) {
                         $condition = $tokens[$brace['scope_condition']];
                         if ($condition['code'] === T_DO) {
@@ -104,17 +106,17 @@ class Moodle_Sniffs_ControlStructures_InlineControlStructureSniff implements PHP
             // This is a control structure without an opening brace,
             // so it is an inline statement.
             if ($this->error === true) {
-                $phpcsFile->addError('Inline control structures are not allowed', $stackPtr);
+                $phpcsfile->adderror('Inline control structures are not allowed', $stackptr);
             } else {
-                $phpcsFile->addWarning('Inline control structures are discouraged', $stackPtr);
+                $phpcsfile->addwarning('Inline control structures are discouraged', $stackptr);
             }
 
             return;
-        }//end if
+        }
 
-    }//end process()
+    }
 
 
-}//end class
+}
 
 ?>

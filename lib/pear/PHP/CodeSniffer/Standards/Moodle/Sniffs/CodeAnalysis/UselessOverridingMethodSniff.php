@@ -1,17 +1,25 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * This file is part of the CodeAnalysis addon for PHP_CodeSniffer.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Nicolas Connault <nicolasconnault@gmail.com>
- * @author    Manuel Pichler <mapi@manuel-pichler.de>
- * @copyright 2007-2008 Manuel Pichler. All rights reserved.
- * @license   http://www.opensource.org/licenses/bsd-license.php BSD License
- * @version   CVS: $Id$
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-codeanalysis
+ * @copyright 2008 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -30,15 +38,10 @@
  * }
  * </code>
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Manuel Pichler <mapi@manuel-pichler.de>
- * @copyright 2007-2008 Manuel Pichler. All rights reserved.
- * @license   http://www.opensource.org/licenses/bsd-license.php BSD License
- * @version   Release: 1.1.0
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @copyright 2008 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class Moodle_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_CodeSniffer_Sniff
+class moodle_sniffs_codeanalysis_uselessoverridingmethodsniff implements php_codesniffer_sniff
 {
 
 
@@ -51,22 +54,22 @@ class Moodle_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_Cod
     {
         return array(T_FUNCTION);
 
-    }//end register()
+    }
 
 
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token
+     * @param PHP_CodeSniffer_File $phpcsfile The file being scanned.
+     * @param int                  $stackptr  The position of the current token
      *                                        in the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
     {
-        $tokens = $phpcsFile->getTokens();
-        $token  = $tokens[$stackPtr];
+        $tokens = $phpcsfile->gettokens();
+        $token  = $tokens[$stackptr];
 
         // Skip function without body.
         if (isset($token['scope_opener']) === false) {
@@ -74,11 +77,11 @@ class Moodle_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_Cod
         }
 
         // Get function name.
-        $methodName = $phpcsFile->getDeclarationName($stackPtr);
+        $methodName = $phpcsfile->getDeclarationName($stackptr);
 
         // Get all parameters from method signature.
         $signature = array();
-        foreach ($phpcsFile->getMethodParameters($stackPtr) as $param) {
+        foreach ($phpcsfile->getMethodParameters($stackptr) as $param) {
             $signature[] = $param['name'];
         }
 
@@ -88,7 +91,7 @@ class Moodle_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_Cod
         for (; $next <= $end; ++$next) {
             $code = $tokens[$next]['code'];
 
-            if (in_array($code, PHP_CodeSniffer_Tokens::$emptyTokens) === true) {
+            if (in_array($code, PHP_CodeSniffer_tokens::$emptyTokens) === true) {
                 continue;
             } else if ($code === T_RETURN) {
                 continue;
@@ -103,7 +106,7 @@ class Moodle_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_Cod
         }
 
         // Find next non empty token index, should be double colon.
-        $next = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($next + 1), null, true);
+        $next = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($next + 1), null, true);
 
         // Skip for invalid code.
         if ($next === false || $tokens[$next]['code'] !== T_DOUBLE_COLON) {
@@ -111,7 +114,7 @@ class Moodle_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_Cod
         }
 
         // Find next non empty token index, should be the function name.
-        $next = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($next + 1), null, true);
+        $next = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($next + 1), null, true);
 
         // Skip for invalid code or other method.
         if ($next === false || $tokens[$next]['content'] !== $methodName) {
@@ -119,7 +122,7 @@ class Moodle_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_Cod
         }
 
         // Find next non empty token index, should be the open parenthesis.
-        $next = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($next + 1), null, true);
+        $next = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($next + 1), null, true);
 
         // Skip for invalid code.
         if ($next === false || $tokens[$next]['code'] !== T_OPEN_PARENTHESIS) {
@@ -144,16 +147,16 @@ class Moodle_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_Cod
                 --$parenthesisCount;
             } else if ($parenthesisCount === 1 && $code === T_COMMA) {
                 $parameters[] = '';
-            } else if (in_array($code, PHP_CodeSniffer_Tokens::$emptyTokens) === false) {
+            } else if (in_array($code, PHP_CodeSniffer_tokens::$emptyTokens) === false) {
                 $parameters[(count($parameters) - 1)] .= $tokens[$next]['content'];
             }
 
             if ($parenthesisCount === 0) {
                 break;
             }
-        }//end for
+        }
 
-        $next = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($next + 1), null, true);
+        $next = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($next + 1), null, true);
         if ($next === false || $tokens[$next]['code'] !== T_SEMICOLON) {
             return;
         }
@@ -162,7 +165,7 @@ class Moodle_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_Cod
         for (++$next; $next <= $end; ++$next) {
             $code = $tokens[$next]['code'];
             // Skip for any other content.
-            if (in_array($code, PHP_CodeSniffer_Tokens::$emptyTokens) === false) {
+            if (in_array($code, PHP_CodeSniffer_tokens::$emptyTokens) === false) {
                 return;
             }
         }
@@ -171,12 +174,12 @@ class Moodle_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_Cod
         $parameters = array_filter($parameters);
 
         if (count($parameters) === count($signature) && $parameters === $signature) {
-            $phpcsFile->addWarning('Useless method overriding detected', $stackPtr);
+            $phpcsfile->addwarning('Useless method overriding detected', $stackptr);
         }
 
-    }//end process()
+    }
 
 
-}//end class
+}
 
 ?>

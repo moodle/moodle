@@ -1,17 +1,25 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * This file is part of the CodeAnalysis addon for PHP_CodeSniffer.
+ * File containing the moodle_sniffs_codeanalysis_emptystatementsniff Class
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Nicolas Connault <nicolasconnault@gmail.com>
- * @author    Manuel Pichler <mapi@manuel-pichler.de>
- * @copyright 2007-2008 Manuel Pichler. All rights reserved.
- * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version   CVS: $Id$
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-codeanalysis
+ * @copyright 2008 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -34,15 +42,10 @@
  * <b>elsif</b>, <b>for</b>, <b>foreach<b>, <b>if</b>, <b>switch</b>, <b>try</b>
  * and <b>while</b>.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Manuel Pichler <mapi@manuel-pichler.de>
- * @copyright 2007-2008 Manuel Pichler. All rights reserved.
- * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version   Release: 1.1.0
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @copyright 2008 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class Moodle_Sniffs_CodeAnalysis_EmptyStatementSniff implements PHP_CodeSniffer_Sniff
+class moodle_sniffs_codeanalysis_emptystatementsniff implements php_codesniffer_sniff
 {
 
     /**
@@ -77,22 +80,22 @@ class Moodle_Sniffs_CodeAnalysis_EmptyStatementSniff implements PHP_CodeSniffer_
     {
         return array_keys($this->_tokens);
 
-    }//end register()
+    }
 
 
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token
+     * @param PHP_CodeSniffer_File $phpcsfile The file being scanned.
+     * @param int                  $stackptr  The position of the current token
      *                                        in the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
     {
-        $tokens = $phpcsFile->getTokens();
-        $token  = $tokens[$stackPtr];
+        $tokens = $phpcsfile->gettokens();
+        $token  = $tokens[$stackptr];
 
         // Skip for-statements without body.
         if (isset($token['scope_opener']) === false) {
@@ -104,7 +107,7 @@ class Moodle_Sniffs_CodeAnalysis_EmptyStatementSniff implements PHP_CodeSniffer_
 
         $emptyBody = true;
         for (; $next <= $end; ++$next) {
-            if (in_array($tokens[$next]['code'], PHP_CodeSniffer_Tokens::$emptyTokens) === false) {
+            if (in_array($tokens[$next]['code'], PHP_CodeSniffer_tokens::$emptyTokens) === false) {
                 $emptyBody = false;
                 break;
             }
@@ -112,18 +115,18 @@ class Moodle_Sniffs_CodeAnalysis_EmptyStatementSniff implements PHP_CodeSniffer_
 
         if ($emptyBody === true) {
             // Get token identifier.
-            $name  = $phpcsFile->getTokensAsString($stackPtr, 1);
+            $name  = $phpcsfile->gettokensAsString($stackptr, 1);
             $error = sprintf('Empty %s statement detected', strtoupper($name));
             if ($this->_tokens[$token['code']] === true) {
-                $phpcsFile->addError($error, $stackPtr);
+                $phpcsfile->adderror($error, $stackptr);
             } else {
-                $phpcsFile->addWarning($error, $stackPtr);
+                $phpcsfile->addwarning($error, $stackptr);
             }
         }
 
-    }//end process()
+    }
 
 
-}//end class
+}
 
 ?>

@@ -15,52 +15,33 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * moodle_sniffs_php_lowercaseconstantsniff.
+ * File including class for sniffing out the closing PHP tag
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-php
+ * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-files
  * @copyright 2008 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * moodle_sniffs_php_lowercaseconstantsniff.
- *
- * Checks that all uses of true, false and null are lowerrcase.
+ * Class for sniffing out the closing PHP tag
  *
  * @copyright 2008 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_php_lowercaseconstantsniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_files_closingphptagsniff implements php_codesniffer_sniff {
 
-    /**
-     * A list of tokenizers this sniff supports.
-     *
-     * @var array
-     */
-    public $supportedtokenizers = array(
-                                   'PHP',
-                                   'JS',
-                                  );
 
     /**
      * Returns an array of tokens this test wants to listen for.
      *
      * @return array
      */
-    public function register()
-    {
-        return array(
-                T_TRUE,
-                T_FALSE,
-                T_NULL,
-               );
-
+    public function register() {
+        return array(T_CLOSE_TAG);
     }
 
-
     /**
-     * Processes this sniff, when one of its tokens is encountered.
+     * Processes this test, when one of its tokens is encountered.
      *
      * @param PHP_CodeSniffer_File $phpcsfile The file being scanned.
      * @param int                  $stackptr  The position of the current token in the
@@ -68,19 +49,13 @@ class moodle_sniffs_php_lowercaseconstantsniff implements php_codesniffer_sniff
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
 
-        $keyword = $tokens[$stackptr]['content'];
-        if (strtolower($keyword) !== $keyword) {
-            $error = 'TRUE, FALSE and NULL must be lowercase; expected "'.strtolower($keyword).'" but found "'.$keyword.'"';
-            $phpcsfile->adderror($error, $stackptr);
+        $last_token = end($tokens);
+        if ($last_token['code'] === T_CLOSE_TAG) {
+            $error  = 'Closing PHP tag is not required at the end of the file. Please remove.';
+            $phpcsfile->addwarning($error, $stackptr);
         }
-
     }
-
-
 }
-
-?>

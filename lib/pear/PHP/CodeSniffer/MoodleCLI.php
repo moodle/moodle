@@ -24,16 +24,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (is_file(dirname(__FILE__).'/../MoodleCodeSniffer.php') === true) {
-    include_once(dirname(__FILE__).'/../MoodleCodeSniffer.php');
-} else {
-    include_once('PHP/MoodleCodeSniffer.php');
-}
-
+include_once('PHP/MoodleCodeSniffer.php');
 require_once('PHP/CodeSniffer/CLI.php');
 
 /**
- * A class to process command line phpcs scripts. Modified for use within Moodle
+ * A class to process command line runsniffer scripts. Modified for use within Moodle
  *
  * @category  lib-pear-php-codesniffer
  * @copyright 2009 Nicolas Connault
@@ -59,7 +54,7 @@ class moodle_codesniffer_cli extends php_codesniffer_cli {
      * @return void
      */
     public function printusage() {
-        echo 'Usage: phpcs [-nwlvi] [--report=<report>]'.PHP_EOL;
+        echo 'Usage: runsniffer [-nwlvi] [--report=<report>]'.PHP_EOL;
         echo '    [--config-set key value] [--config-delete key] [--config-show]'.PHP_EOL;
         echo '    [--generator=<generator>] [--extensions=<extensions>]'.PHP_EOL;
         echo '    [--ignore=<patterns>] [--tab-width=<width>] <file> ...'.PHP_EOL;
@@ -82,6 +77,39 @@ class moodle_codesniffer_cli extends php_codesniffer_cli {
         echo '                     "csv" or "summary" report'.PHP_EOL;
         echo '                     (the "full" report is printed by default)'.PHP_EOL;
 
-    }//end printUsage()
+    }
 
+    /**
+     * Processes an unknown command line argument.
+     *
+     * Overriding CLI method to allow for dynamic loading of path to requested file/directory
+     *
+     * @param string $arg    The command line argument.
+     * @param int    $pos    The position of the argument on the command line.
+     * @param array  $values An array of values determined from CLI args.
+     *
+     * @return array The updated CLI values.
+     * @see getCommandLineValues()
+     */
+    public function processUnknownArgument($arg, $pos, $values) {
+        global $args, $argv, $argc;
+
+        // We don't know about any additional switches; just files.
+        if ($arg{0} === '-') {
+            echo 'ERROR: option "'.$arg.'" not known.'.PHP_EOL.PHP_EOL;
+            $this->printUsage();
+            exit(2);
+        }
+
+        $file = $_SERVER['PWD'] . '/' . $arg;
+        if (file_exists($file) === false) {
+            echo 'ERROR: The file "'.$arg.'" does not exist.'.PHP_EOL.PHP_EOL;
+            $this->printUsage();
+            exit(2);
+        } else {
+            $values['files'][] = $file;
+        }
+
+        return $values;
+    }
 }

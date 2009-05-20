@@ -1,35 +1,37 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Moodle_Sniffs_Functions_ValidDefaultValueSniff.
+ * moodle_sniffs_functions_validdefaultvaluesniff.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Nicolas Connault <nicolasconnault@gmail.com>
- *
- * @copyright 2009 Nicolas Connault
+ * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-functions
+ * @copyright 2008 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @version   CVS: $Id$
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
 /**
- * Moodle_Sniffs_Functions_ValidDefaultValueSniff.
+ * moodle_sniffs_functions_validdefaultvaluesniff.
  *
  * A Sniff to ensure that parameters defined for a function that have a default
  * value come at the end of the function signature.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Nicolas Connault <nicolasconnault@gmail.com>
- *
- * @copyright 2009 Nicolas Connault
+ * @copyright 2008 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @version   Release: 1.1.0
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Moodle_Sniffs_Functions_ValidDefaultValueSniff implements PHP_CodeSniffer_Sniff
+class moodle_sniffs_functions_validdefaultvaluesniff implements php_codesniffer_sniff
 {
 
 
@@ -42,36 +44,36 @@ class Moodle_Sniffs_Functions_ValidDefaultValueSniff implements PHP_CodeSniffer_
     {
         return array(T_FUNCTION);
 
-    }//end register()
+    }
 
 
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in the
+     * @param PHP_CodeSniffer_File $phpcsfile The file being scanned.
+     * @param int                  $stackptr  The position of the current token in the
      *                                        stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
     {
-        $tokens = $phpcsFile->getTokens();
+        $tokens = $phpcsfile->gettokens();
 
-        $argStart = $tokens[$stackPtr]['parenthesis_opener'];
-        $argEnd   = $tokens[$stackPtr]['parenthesis_closer'];
+        $argStart = $tokens[$stackptr]['parenthesis_opener'];
+        $argEnd   = $tokens[$stackptr]['parenthesis_closer'];
 
         // Flag for when we have found a default in our arg list.
         // If there is a value without a default after this, it is an error.
         $defaultFound = false;
 
         $nextArg = $argStart;
-        while (($nextArg = $phpcsFile->findNext(T_VARIABLE, ($nextArg + 1), $argEnd)) !== false) {
-            $argHasDefault = self::_argHasDefault($phpcsFile, $nextArg);
+        while (($nextArg = $phpcsfile->findNext(T_VARIABLE, ($nextArg + 1), $argEnd)) !== false) {
+            $argHasDefault = self::_argHasDefault($phpcsfile, $nextArg);
             if (($argHasDefault === false) && ($defaultFound === true)) {
                 $error  = 'Arguments with default values must be at the end';
                 $error .= ' of the argument list';
-                $phpcsFile->addError($error, $nextArg);
+                $phpcsfile->adderror($error, $nextArg);
                 return;
             }
 
@@ -80,31 +82,31 @@ class Moodle_Sniffs_Functions_ValidDefaultValueSniff implements PHP_CodeSniffer_
             }
         }
 
-    }//end process()
+    }
 
 
     /**
      * Returns true if the passed argument has a default value.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
+     * @param PHP_CodeSniffer_File $phpcsfile The file being scanned.
      * @param int                  $argPtr    The position of the argument
      *                                        in the stack.
      *
      * @return bool
      */
-    private static function _argHasDefault(PHP_CodeSniffer_File $phpcsFile, $argPtr)
+    private static function _argHasDefault(PHP_CodeSniffer_File $phpcsfile, $argPtr)
     {
-        $tokens    = $phpcsFile->getTokens();
-        $nextToken = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($argPtr + 1), null, true);
-        if ($tokens[$nextToken]['code'] !== T_EQUAL) {
+        $tokens    = $phpcsfile->gettokens();
+        $nexttoken = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($argPtr + 1), null, true);
+        if ($tokens[$nexttoken]['code'] !== T_EQUAL) {
             return false;
         }
 
         return true;
 
-    }//end _argHasDefault()
+    }
 
 
-}//end class
+}
 
 ?>

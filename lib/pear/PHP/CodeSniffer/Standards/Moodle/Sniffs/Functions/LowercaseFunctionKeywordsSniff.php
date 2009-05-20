@@ -1,32 +1,36 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Moodle_Sniffs_Functions_LowercaseFunctionKeywordsSniff.
+ * moodle_sniffs_functions_lowercasefunctionkeywordssniff.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Nicolas Connault <nicolasconnault@gmail.com>
- * @copyright 2006 Moodle Pty Ltd (ABN 77 084 670 600)
- * @license   http://www.gnu.org/copyleft/gpl.html GPL 
- * @version   CVS: $Id:
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-functions
+ * @copyright 2008 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * Moodle_Sniffs_Functions_LowercaseFunctionKeywordsSniff.
+ * moodle_sniffs_functions_lowercasefunctionkeywordssniff.
  *
  * Ensures all class keywords are lowercase.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Nicolas Connault <nicolasconnault@gmail.com>
- * @copyright 2006 Moodle Pty Ltd (ABN 77 084 670 600)
- * @license   http://www.gnu.org/copyleft/gpl.html GPL 
- * @version   CVS: $Id:
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @copyright 2008 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class Moodle_Sniffs_Functions_LowercaseFunctionKeywordsSniff implements PHP_CodeSniffer_Sniff
+class moodle_sniffs_functions_lowercasefunctionkeywordssniff implements php_codesniffer_sniff
 {
 
 
@@ -45,33 +49,33 @@ class Moodle_Sniffs_Functions_LowercaseFunctionKeywordsSniff implements PHP_Code
                 T_STATIC,
                );
 
-    }//end register()
+    }
 
 
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in
+     * @param PHP_CodeSniffer_File $phpcsfile The file being scanned.
+     * @param int                  $stackptr  The position of the current token in
      *                                        the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
     {
-        $tokens = $phpcsFile->getTokens();
+        $tokens = $phpcsfile->gettokens();
 
-        $content = $tokens[$stackPtr]['content'];
+        $content = $tokens[$stackptr]['content'];
         if ($content !== strtolower($content)) {
             $type     = strtoupper($content);
             $expected = strtolower($content);
             $error    = "$type keyword must be lowercase; expected \"$expected\" but found \"$content\"";
-            $phpcsFile->addError($error, $stackPtr);
+            $phpcsfile->adderror($error, $stackptr);
         }
 
-    }//end process()
+    }
 
 
-}//end class
+}
 
 ?>
