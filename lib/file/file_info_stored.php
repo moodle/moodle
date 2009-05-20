@@ -276,4 +276,49 @@ class file_info_stored extends file_info {
 
         return $this->lf->delete();
     }
+
+    /**
+     * Copy content of this file to local storage, overriding current file if needed.
+     * @param int $contextid
+     * @param string $filearea
+     * @param int $itemid
+     * @param string $filepath
+     * @param string $filename
+     * @return boolean success
+     */
+    public function copy_to_storage($contextid, $filearea, $itemid, $filepath, $filename) {
+        if (!$this->is_readable() or $this->is_directory()) {
+            return false;
+        }
+
+        $fs = get_file_storage();
+        if ($existing = $fs->get_file($contextid, $filearea, $itemid, $filepath, $filename)) {
+            $existing->delete();
+        }
+        $file_record = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$fileapth, 'filename'=>$filename);
+        $fs->create_file_from_storedfile($file_record, $this->lf);
+
+        return true;
+    }
+
+    /**
+     * Copy content of this file to local storage, overriding current file if needed.
+     * @param string $pathname real local full file name
+     * @return boolean success
+     */
+    public function copy_to_pathname($pathname) {
+        if (!$this->is_readable() or $this->is_directory()) {
+            return false;
+        }
+
+        if (file_exists($pathname)) {
+            if (!unlink($pathname)) {
+                return false;
+            }
+        }
+
+        $this->lf->copy_content_to($pathname);
+
+        return true;
+    }
 }

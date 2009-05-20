@@ -1,10 +1,12 @@
-<?php  //$Id$
+<?php
 
 /**
  * Base class for things in the tree navigated by @see{file_browser}.
  */
 abstract class file_info {
+
     protected $context;
+
     protected $browser;
 
     public function __construct($browser, $context) {
@@ -13,11 +15,14 @@ abstract class file_info {
     }
 
     public abstract function get_params();
-    public abstract function get_visible_name();
-    public abstract function is_directory();
-    public abstract function get_children();
-    public abstract function get_parent();
 
+    public abstract function get_visible_name();
+
+    public abstract function is_directory();
+
+    public abstract function get_children();
+
+    public abstract function get_parent();
 
     public function get_params_rawencoded() {
         $params = $this->get_params();
@@ -30,8 +35,6 @@ abstract class file_info {
 
         return $encoded;
     }
-
-
 
     public function get_url($forcedownload=false, $https=false) {
         return null;
@@ -82,9 +85,30 @@ abstract class file_info {
         return false;
     }
 
-//TODO: following methods are not implemented yet ;-)
+    /**
+     * Copy content of this file to local storage, overriding current file if needed.
+     * @param int $contextid
+     * @param string $filearea
+     * @param int $itemid
+     * @param string $filepath
+     * @param string $filename
+     * @return boolean success
+     */
+    public function copy_to_storage($contextid, $filearea, $itemid, $filepath, $filename) {
+        return false;
+    }
 
-    //public abstract function copy(location params);
+    /**
+     * Copy content of this file to local storage, overriding current file if needed.
+     * @param string $pathname real local full file name
+     * @return boolean success
+     */
+    public function copy_to_pathname($pathname) {
+        return false;
+    }
+
+
+//TODO: following methods are not implemented yet ;-)
     //public abstract function move(location params);
     //public abstract function rename(new name);
     //public abstract function unzip(location params);
