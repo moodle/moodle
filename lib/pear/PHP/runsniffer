@@ -1,25 +1,22 @@
 #!/usr/bin/php
 <?php
 /**
- * PHP_CodeSniffer tokenises PHP code and detects violations of a
- * defined set of coding standards.
+ * This script will run PHP CodeSniffer across given Moodle directories and 
+ * produce reports of coding standard violations.
  *
- * PHP version 5
+ * HOW TO USE:
+ *    php lib/pear/PHP/runsniffer mod/forum
  *
- * @category  PHP
  * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
  * @copyright 2006 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   http://matrix.squiz.net/developer/tools/php_cs/licence BSD Licence
- * @version   CVS: $Id$
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
 error_reporting(E_ALL | E_STRICT);
 
-if (is_file(dirname(__FILE__).'/../CodeSniffer/CLI.php') === true) {
-    include_once dirname(__FILE__).'/../CodeSniffer/CLI.php';
+if (is_file(dirname(__FILE__).'/CodeSniffer/CLI.php') === true) {
+    include_once dirname(__FILE__).'/CodeSniffer/CLI.php';
 } else {
     include_once 'lib/pear/PHP/CodeSniffer/CLI.php';
 }

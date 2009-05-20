@@ -74,13 +74,13 @@ class Moodle_Sniffs_Files_IncludingFileSniff implements PHP_CodeSniffer_Sniff
     {
         $tokens = $phpcsFile->getTokens();
 
-        $nextToken = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($stackPtr + 1), null, true);
-        if ($tokens[$nextToken]['code'] === T_OPEN_PARENTHESIS) {
-            $error  = '"'.$tokens[$stackPtr]['content'].'"';
-            $error .= ' is a statement, not a function; ';
-            $error .= 'no parentheses are required';
-            $phpcsFile->addError($error, $stackPtr);
-        }
+        //$nextToken = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($stackPtr + 1), null, true);
+        //if ($tokens[$nextToken]['code'] === T_OPEN_PARENTHESIS) {
+        //    $error  = '"'.$tokens[$stackPtr]['content'].'"';
+        //    $error .= ' is a statement, not a function; ';
+        //    $error .= 'no parentheses are required';
+        //    $phpcsFile->addError($error, $stackPtr);
+        //}
 
         $inCondition = (count($tokens[$stackPtr]['conditions']) !== 0) ? true : false;
 

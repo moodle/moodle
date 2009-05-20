@@ -38,7 +38,7 @@ class Moodle_Sniffs_Files_LineLengthSniff implements PHP_CodeSniffer_Sniff
      *
      * @var int
      */
-    protected $lineLimit = 80;
+    protected $lineLimit = 120;
 
     /**
      * The limit that the length of a line must not exceed.
@@ -47,7 +47,7 @@ class Moodle_Sniffs_Files_LineLengthSniff implements PHP_CodeSniffer_Sniff
      *
      * @var int
      */
-    protected $absoluteLineLimit = 120;
+    protected $absoluteLineLimit = 200;
 
 
     /**
