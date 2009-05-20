@@ -4005,7 +4005,7 @@ function forum_print_attachments($post, $cm, $type) {
             $mimetype = $file->get_mimetype();
             $icon = mimeinfo_from_type('icon', $mimetype);
             $iconimage = '<img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />';
-            $path = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.$context->id.'/forum_attachment/'.$post->id.'/'.$filename);
+            $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$context->id.'/forum_attachment/'.$post->id.'/'.$filename);
 
             if ($type == 'html') {
                 $output .= "<a href=\"$path\">$iconimage</a> ";

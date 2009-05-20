@@ -51,7 +51,7 @@ class file_info_coursefile extends file_info_stored {
 
         $path = '/'.$courseid.$filepath.$filename;
 
-        return $this->browser->encodepath($this->urlbase, $path, $forcedownload, $https);
+        return file_encode_url($this->urlbase, $path, $forcedownload, $https);
     }
 
     public function get_children() {

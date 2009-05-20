@@ -1705,7 +1705,7 @@ class assignment_base {
                 $found = true;
                 $mimetype = $file->get_mimetype();
                 $icon = mimeinfo_from_type('icon', $mimetype);
-                $path = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
+                $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
                 $output .= '<a href="'.$path.'" ><img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.s($filename).'</a>';
                 if ($this->portfolio_exportable() && has_capability('mod/assignment:exportownsubmission', $this->context)) {
                     $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'fileid' => $file->get_id()));

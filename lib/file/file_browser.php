@@ -79,32 +79,6 @@ class file_browser {
         return null;
     }
 
-    public function encodepath($urlbase, $path, $forcedownload=false, $https=false) {
-        global $CFG;
-
-        if ($CFG->slasharguments) {
-            $parts = explode('/', $path);
-            $parts = array_map('rawurlencode', $parts);
-            $path  = implode('/', $parts);
-            $return = $urlbase.$path;
-            if ($forcedownload) {
-                $return .= '?forcedownload=1';
-            }
-        } else {
-            $path = rawurlencode($path);
-            $return = $urlbase.'?file='.$path;
-            if ($forcedownload) {
-                $return .= '&amp;forcedownload=1';
-            }
-        }
-
-        if ($https) {
-            $return = str_replace('http://', 'https://', $return);
-        }
-
-        return $return;
-    }
-
     /**
      * Returns info about the files at System context
      * @param object $context

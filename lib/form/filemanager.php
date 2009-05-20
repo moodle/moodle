@@ -116,7 +116,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
             $filesize    = $filesize ? display_size($filesize) : '';
             $mimetype = $file->get_mimetype();
             $icon    = mimeinfo_from_type('icon', $mimetype);
-            $viewurl = $browser->encodepath("$CFG->wwwroot/draftfile.php", "/$contextid/user_draft/$draftid".$filepath.$filename, false, false);
+            $viewurl = file_encode_url("$CFG->wwwroot/draftfile.php", "/$contextid/user_draft/$draftid".$filepath.$filename, false, false);
             $html .= '<li>';
             $html .= "<a href=\"$viewurl\"><img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" />&nbsp;".s($filename)." ($filesize)</a> ";
             $html .= "<a href=\"###\" onclick='rm_$suffix(".$file->get_itemid().", \"".$filename."\", this)'><img src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" /></a>";;

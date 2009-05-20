@@ -279,7 +279,7 @@
             }
 
             $filename = $file->get_filename();
-            $ffurl    = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.SYSCONTEXTID.'/blog/'.$blogentry->id.'/'.$filename);
+            $ffurl    = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.SYSCONTEXTID.'/blog/'.$blogentry->id.'/'.$filename);
             $type     = $file->get_mimetype();
             $icon     = mimeinfo_from_type("icon", $type);
             $type     = mimeinfo_from_type("type", $type);

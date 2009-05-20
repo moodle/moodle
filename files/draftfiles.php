@@ -133,7 +133,7 @@
 
         } else {
             $icon    = mimeinfo_from_type('icon', $mimetype);
-            $viewurl = $browser->encodepath("$CFG->wwwroot/draftfile.php", "/$contextid/user_draft/$itemid".$filepath.$filename, false, false);
+            $viewurl = file_encode_url("$CFG->wwwroot/draftfile.php", "/$contextid/user_draft/$itemid".$filepath.$filename, false, false);
             echo '<div class="file">';
             echo "<a href=\"$viewurl\"><img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"$strfile\" />&nbsp;".s($filename)." ($filesize)</a> ";
             echo "<a href=\"draftfiles.php?itemid=$itemid&amp;filepath=$filepath&amp;delete=$filenameurl&amp;subdirs=$subdirs&amp;maxbytes=$maxbytes\"><img src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"$strdelete\" /></a>";;

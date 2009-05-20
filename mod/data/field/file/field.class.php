@@ -60,7 +60,7 @@ class data_field_file extends data_field_base {
             // Print icon if file already exists
             $browser = get_file_browser();
             $icon    = mimeinfo_from_type('icon', $file->get_mimetype());
-            $src     = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', $this->context->id.'/data_content/'.$content->id.'/'.$file->get_filename());
+            $src     = file_encode_url($CFG->wwwroot.'/pluginfile.php', $this->context->id.'/data_content/'.$content->id.'/'.$file->get_filename());
             $str .= '<img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.
                     '<a href="'.$src.'" >'.s($file->get_filename()).'</a>';
         }
@@ -119,7 +119,7 @@ class data_field_file extends data_field_base {
 
         $name   = empty($content->content1) ? $file->get_filename() : $content->content1;
         $icon   = mimeinfo_from_type('icon', $file->get_mimetype());
-        $src    = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/data_content/'.$content->id.'/'.$file->get_filename());
+        $src    = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/data_content/'.$content->id.'/'.$file->get_filename());
         $width  = $this->field->param1 ? ' width  = "'.s($this->field->param1).'" ':' ';
         $height = $this->field->param2 ? ' height = "'.s($this->field->param2).'" ':' ';
 

@@ -287,7 +287,7 @@ class assignment_upload extends assignment_base {
                 $found = true;
                 $mimetype = $file->get_mimetype();
                 $icon = mimeinfo_from_type('icon', $mimetype);
-                $path = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
+                $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
                 $output .= '<a href="'.$path.'" ><img class="icon" src="'.$CFG->pixpath.'/f/'.$icon.'" alt="'.$icon.'" />'.s($filename).'</a>&nbsp;';
 
             }
@@ -347,7 +347,7 @@ class assignment_upload extends assignment_base {
                 $filename = $file->get_filename();
                 $mimetype = $file->get_mimetype();
                 $icon = mimeinfo_from_type('icon', $mimetype);
-                $path = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
+                $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
                 $output .= '<a href="'.$path.'" ><img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.s($filename).'</a>';
 
                 if ($candelete) {
@@ -409,7 +409,7 @@ class assignment_upload extends assignment_base {
                 $found = true;
                 $mimetype = $file->get_mimetype();
                 $icon = mimeinfo_from_type('icon', $mimetype);
-                $path = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_response/'.$userid.'/'.$filename);
+                $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_response/'.$userid.'/'.$filename);
 
                 $output .= '<a href="'.$path.'" ><img src="'.$CFG->pixpath.'/f/'.$icon.'" alt="'.$icon.'" />'.$filename.'</a>';
 

@@ -59,7 +59,7 @@ class data_field_picture extends data_field_base {
         //$str .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.s($this->field->param3).'" />';
         if ($file) {
             $browser = get_file_browser();
-            $src     = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', $this->context->id.'/data_content/'.$content->id.'/'.$file->get_filename());
+            $src     = file_encode_url($CFG->wwwroot.'/pluginfile.php', $this->context->id.'/data_content/'.$content->id.'/'.$file->get_filename());
             $str .= '<img width="'.s($this->previewwidth).'" height="'.s($this->previewheight).'" src="'.$src.'" alt="" />';
         }
         $str .= '</fieldset>';
@@ -121,12 +121,12 @@ class data_field_picture extends data_field_base {
         $title = $alt;
 
         if ($template == 'listtemplate') {
-            $src = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/data_content/'.$content->id.'/'.'thumb_'.$content->content);
+            $src = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/data_content/'.$content->id.'/'.'thumb_'.$content->content);
             // no need to add width/height, because the thumb is resized properly
             $str = '<a href="view.php?d='.$this->field->dataid.'&amp;rid='.$recordid.'"><img src="'.$src.'" alt="'.s($alt).'" title="'.s($title).'" style="border:0px" /></a>';
 
         } else {
-            $src = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/data_content/'.$content->id.'/'.$content->content);
+            $src = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/data_content/'.$content->id.'/'.$content->content);
             $width  = $this->field->param1 ? ' width="'.s($this->field->param1).'" ':' ';
             $height = $this->field->param2 ? ' height="'.s($this->field->param2).'" ':' ';
             $str = '<a href="'.$src.'"><img '.$width.$height.' src="'.$src.'" alt="'.s($alt).'" title="'.s($title).'" style="border:0px" /></a>';

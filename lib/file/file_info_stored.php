@@ -99,7 +99,7 @@ class file_info_stored extends file_info {
         } else {
             $path = '/'.$contextid.'/'.$filearea.$filepath.$filename;
         }
-        return $this->browser->encodepath($this->urlbase, $path, $forcedownload, $https);
+        return file_encode_url($this->urlbase, $path, $forcedownload, $https);
     }
 
     public function is_readable() {

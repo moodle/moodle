@@ -251,18 +251,18 @@ class file_browser_test extends filelib_test {
         $fb = new file_browser();
 
         $CFG->slasharguments = true;
-        $this->assertEqual('http://test.url.com/path/to/page.php', $fb->encodepath('http://test.url.com', '/path/to/page.php'));
-        $this->assertEqual('http://test.url.com/path/to/page.php?forcedownload=1', $fb->encodepath('http://test.url.com', '/path/to/page.php', true));
-        $this->assertEqual('https://test.url.com/path/to/page.php?forcedownload=1', $fb->encodepath('http://test.url.com', '/path/to/page.php', true, true));
+        $this->assertEqual('http://test.url.com/path/to/page.php', file_encode_url('http://test.url.com', '/path/to/page.php'));
+        $this->assertEqual('http://test.url.com/path/to/page.php?forcedownload=1', file_encode_url('http://test.url.com', '/path/to/page.php', true));
+        $this->assertEqual('https://test.url.com/path/to/page.php?forcedownload=1', file_encode_url('http://test.url.com', '/path/to/page.php', true, true));
 
         // TODO add error checking for malformed path (does method support get variables?)
-        $this->assertEqual('http://test.url.com/path/to/page.php?var1=value1&var2=value2', $fb->encodepath('http://test.url.com', '/path/to/page.php?var1=value1&var2=value2'));
-        $this->assertEqual('http://test.url.com/path/to/page.php?var1=value1&var2=value2&forcedownload=1', $fb->encodepath('http://test.url.com', '/path/to/page.php?var1=value1&var2=value2', true));
+        $this->assertEqual('http://test.url.com/path/to/page.php?var1=value1&var2=value2', file_encode_url('http://test.url.com', '/path/to/page.php?var1=value1&var2=value2'));
+        $this->assertEqual('http://test.url.com/path/to/page.php?var1=value1&var2=value2&forcedownload=1', file_encode_url('http://test.url.com', '/path/to/page.php?var1=value1&var2=value2', true));
 
         $CFG->slasharguments = false;
-        $this->assertEqual('http://test.url.com?file=%2Fpath%2Fto%2Fpage.php', $fb->encodepath('http://test.url.com', '/path/to/page.php'));
-        $this->assertEqual('http://test.url.com?file=%2Fpath%2Fto%2Fpage.php&amp;forcedownload=1', $fb->encodepath('http://test.url.com', '/path/to/page.php', true));
-        $this->assertEqual('https://test.url.com?file=%2Fpath%2Fto%2Fpage.php&amp;forcedownload=1', $fb->encodepath('http://test.url.com', '/path/to/page.php', true, true));
+        $this->assertEqual('http://test.url.com?file=%2Fpath%2Fto%2Fpage.php', file_encode_url('http://test.url.com', '/path/to/page.php'));
+        $this->assertEqual('http://test.url.com?file=%2Fpath%2Fto%2Fpage.php&amp;forcedownload=1', file_encode_url('http://test.url.com', '/path/to/page.php', true));
+        $this->assertEqual('https://test.url.com?file=%2Fpath%2Fto%2Fpage.php&amp;forcedownload=1', file_encode_url('http://test.url.com', '/path/to/page.php', true, true));
     }
 }
 

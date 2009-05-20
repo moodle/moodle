@@ -107,6 +107,42 @@ function get_file_url($path, $options=null, $type='coursefile') {
     return $ffurl;
 }
 
+
+/**
+ * Encodes file serving url
+ * TODO: decide if we really need this
+ * @param string $urlbase
+ * @param string $path /filearea/itemid/dir/dir/file.exe
+ * @param bool $forcedownload
+ * @param bool $https https url required
+ * @return string encoded file url
+ */
+function file_encode_url($urlbase, $path, $forcedownload=false, $https=false) {
+    global $CFG;
+
+    if ($CFG->slasharguments) {
+        $parts = explode('/', $path);
+        $parts = array_map('rawurlencode', $parts);
+        $path  = implode('/', $parts);
+        $return = $urlbase.$path;
+        if ($forcedownload) {
+            $return .= '?forcedownload=1';
+        }
+    } else {
+        $path = rawurlencode($path);
+        $return = $urlbase.'?file='.$path;
+        if ($forcedownload) {
+            $return .= '&amp;forcedownload=1';
+        }
+    }
+
+    if ($https) {
+        $return = str_replace('http://', 'https://', $return);
+    }
+
+    return $return;
+}
+
 /**
  * Prepares standardised text field fro editing with Editor formslib element
  * @param object $data $database entry field

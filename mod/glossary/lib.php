@@ -1032,7 +1032,7 @@ function glossary_print_attachments($entry, $cm, $type=NULL, $align="left") {
             $mimetype = $file->get_mimetype();
             $icon = mimeinfo_from_type('icon', $mimetype);
             $iconimage = '<img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />';
-            $path = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.$context->id.'/glossary_attachment/'.$entry->id.'/'.$filename);
+            $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$context->id.'/glossary_attachment/'.$entry->id.'/'.$filename);
 
             if ($type == 'html') {
                 $output .= "<a href=\"$path\">$iconimage</a> ";
