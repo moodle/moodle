@@ -31,7 +31,7 @@
 abstract class file_packer {
 
     /**
-     * archive files and store the result in file storage
+     * Archive files and store the result in file storage
      * @param array $files array with zip paths as keys (archivepath=>ospathname or archivepath=>stored_file) 
      * @param int $contextid
      * @param string $filearea

@@ -41,6 +41,12 @@ class file_info_module extends file_info {
         $this->areas  = $areas;
     }
 
+    /**
+     * Returns list of standard virtual file/directory identification.
+     * The difference from stored_file parameters is that null values
+     * are allowed in all fields
+     * @return array with keys contextid, filearea, itemid, filepath and filename
+     */
     public function get_params() {
         return array('contextid'=>$this->context->id,
                      'filearea' =>null,
@@ -49,18 +55,34 @@ class file_info_module extends file_info {
                      'filename' =>null);
     }
 
+    /**
+     * Returns localised visible name.
+     * @return string
+     */
     public function get_visible_name() {
         return $this->cm->name.' ('.get_string('modulename', $this->cm->modname).')';
     }
 
+    /**
+     * Can I add new files or directories?
+     * @return bool
+     */
     public function is_writable() {
         return false;
     }
 
+    /**
+     * Is directory?
+     * @return bool
+     */
     public function is_directory() {
         return true;
     }
 
+    /**
+     * Returns list of children.
+     * @return array of file_info instances
+     */
     public function get_children() {
         $children = array();
         foreach ($this->areas as $area=>$desctiption) {
@@ -71,6 +93,10 @@ class file_info_module extends file_info {
         return $children;
     }
 
+    /**
+     * Returns parent file_info instance
+     * @return file_info or null for root
+     */
     public function get_parent() {
         $pcid = get_parent_contextid($this->context);
         $parent = get_context_instance_by_id($pcid);

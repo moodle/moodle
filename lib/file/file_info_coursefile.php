@@ -35,6 +35,12 @@ class file_info_coursefile extends file_info_stored {
         parent::__construct($browser, $context, $storedfile, $urlbase, get_string('coursefiles'), false, true, true, false);
     }
 
+    /**
+     * Returns file download url
+     * @param bool $forcedownload
+     * @param bool $htts force https
+     * @return string url
+     */
     public function get_url($forcedownload=false, $https=false) {
         global $CFG;
 
@@ -55,6 +61,10 @@ class file_info_coursefile extends file_info_stored {
         return file_encode_url($this->urlbase, $path, $forcedownload, $https);
     }
 
+    /**
+     * Returns list of children.
+     * @return array of file_info instances
+     */
     public function get_children() {
         if (!$this->lf->is_directory()) {
             return array();

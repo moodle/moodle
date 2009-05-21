@@ -32,7 +32,7 @@ require_once("$CFG->libdir/file/stored_file.php");
  * Only owner of file area may use this class to access own files,
  * for example only code in mod/assignment/* may access assignment
  * attachments. When core needs to access files of modules it has
- * to use file_browser class instead. 
+ * to use file_browser class instead.
  */
 class file_storage {
     private $filedir;

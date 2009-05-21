@@ -50,6 +50,12 @@ class file_info_stored extends file_info {
         $this->areaonly       = $areaonly;
     }
 
+    /**
+     * Returns list of standard virtual file/directory identification.
+     * The difference from stored_file parameters is that null values
+     * are allowed in all fields
+     * @return array with keys contextid, filearea, itemid, filepath and filename
+     */
     public function get_params() {
         return array('contextid'=>$this->context->id,
                      'filearea' =>$this->lf->get_filearea(),
@@ -58,6 +64,10 @@ class file_info_stored extends file_info {
                      'filename' =>$this->lf->get_filename());
     }
 
+    /**
+     * Returns localised visible name.
+     * @return string
+     */
     public function get_visible_name() {
         $filename = $this->lf->get_filename();
         $filepath = $this->lf->get_filepath();
@@ -77,6 +87,12 @@ class file_info_stored extends file_info {
         }
     }
 
+    /**
+     * Returns file download url
+     * @param bool $forcedownload
+     * @param bool $htts force https
+     * @return string url
+     */
     public function get_url($forcedownload=false, $https=false) {
         global $CFG;
 
@@ -103,35 +119,66 @@ class file_info_stored extends file_info {
         return file_encode_url($this->urlbase, $path, $forcedownload, $https);
     }
 
+    /**
+     * Can I read content of this file or enter directory?
+     * @return bool
+     */
     public function is_readable() {
         return $this->readaccess;
     }
 
+    /**
+     * Can I add new files or directories?
+     * @return bool
+     */
     public function is_writable() {
         return $this->writeaccess;
     }
 
+    /**
+     * Returns file size in bytes, null for directories
+     * @return int bytes or null if not known
+     */
     public function get_filesize() {
         return $this->lf->get_filesize();
     }
 
+    /**
+     * Returns mimetype
+     * @return string mimetype or null if not known
+     */
     public function get_mimetype() {
-        // TODO: add some custom mime icons for courses, categories??
         return $this->lf->get_mimetype();
     }
 
+    /**
+     * Returns time created unix timestamp if known
+     * @return int timestamp or null
+     */
     public function get_timecreated() {
         return $this->lf->get_timecreated();
     }
 
+    /**
+     * Returns time modified unix timestamp if known
+     * @return int timestamp or null
+     */
     public function get_timemodified() {
         return $this->lf->get_timemodified();
     }
 
+    /**
+     * Is directory?
+     * @return bool
+     */
     public function is_directory() {
         return $this->lf->is_directory();
     }
 
+    /**
+     * Returns list of children.
+     * @return array of file_info instances
+     */
     public function get_children() {
         if (!$this->lf->is_directory()) {
             return array();
@@ -150,6 +197,10 @@ class file_info_stored extends file_info {
         return $result;
     }
 
+    /**
+     * Returns parent file_info instance
+     * @return file_info or null for root
+     */
     public function get_parent() {
         if ($this->lf->get_filepath() === '/' and $this->lf->is_directory()) {
             if ($this->areaonly) {
@@ -175,6 +226,13 @@ class file_info_stored extends file_info {
         return $this->browser->get_file_info($this->context, $this->lf->get_filearea(), $this->lf->get_itemid(), $filepath, '.');
     }
 
+    /**
+     * Create new directory, may throw exception - make sure
+     * params are valid.
+     * @param string $newdirname name of new directory
+     * @param int id of author, default $USER->id
+     * @return file_info new directory
+     */
     public function create_directory($newdirname, $userid=null) {
         if (!$this->is_writable() or !$this->lf->is_directory()) {
             return null;
@@ -196,6 +254,14 @@ class file_info_stored extends file_info {
     }
 
 
+    /**
+     * Create new file from string - make sure
+     * params are valid.
+     * @param string $newfilename name of new file
+     * @param string $content of file
+     * @param int id of author, default $USER->id
+     * @return file_info new file
+     */
     public function create_file_from_string($newfilename, $content, $userid=null) {
         if (!$this->is_writable() or !$this->lf->is_directory()) {
             return null;
@@ -228,6 +294,14 @@ class file_info_stored extends file_info {
         return null;
     }
 
+    /**
+     * Create new file from pathname - make sure
+     * params are valid.
+     * @param string $newfilename name of new file
+     * @param string $pathname location of file
+     * @param int id of author, default $USER->id
+     * @return file_info new file
+     */
     public function create_file_from_pathname($newfilename, $pathname, $userid=null) {
         if (!$this->is_writable() or !$this->lf->is_directory()) {
             return null;
@@ -260,6 +334,14 @@ class file_info_stored extends file_info {
         return null;
     }
 
+    /**
+     * Create new file from stored file - make sure
+     * params are valid.
+     * @param string $newfilename name of new file
+     * @param mixed dile id or stored_file of file
+     * @param int id of author, default $USER->id
+     * @return file_info new file
+     */
     public function create_file_from_storedfile($newfilename, $fid, $userid=null) {
         if (!$this->is_writable() or $this->lf->get_filename() !== '.') {
             return null;
@@ -292,6 +374,10 @@ class file_info_stored extends file_info {
         return null;
     }
 
+    /**
+     * Delete file, make sure file is deletable first.
+     * @return bool success
+     */
     public function delete() {
         if (!$this->is_writable()) {
             return false;

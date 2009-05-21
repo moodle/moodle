@@ -60,8 +60,8 @@ abstract class file_info {
     public abstract function is_directory();
 
     /**
-     * Does this node have children?
-     * @return bool
+     * Returns list of children.
+     * @return array of file_info instances
      */
     public abstract function get_children();
 
@@ -88,7 +88,7 @@ abstract class file_info {
     }
 
     /**
-     * Returns download url for
+     * Returns file download url
      * @param bool $forcedownload
      * @param bool $htts force https
      * @return string url

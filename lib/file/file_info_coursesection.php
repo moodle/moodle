@@ -36,6 +36,12 @@ class file_info_coursesection extends file_info {
         $this->course = $course;
     }
 
+    /**
+     * Returns list of standard virtual file/directory identification.
+     * The difference from stored_file parameters is that null values
+     * are allowed in all fields
+     * @return array with keys contextid, filearea, itemid, filepath and filename
+     */
     public function get_params() {
         return array('contextid'=>$this->context->id,
                      'filearea' =>'course_section',
@@ -44,6 +50,10 @@ class file_info_coursesection extends file_info {
                      'filename' =>null);
     }
 
+    /**
+     * Returns localised visible name.
+     * @return string
+     */
     public function get_visible_name() {
         $format = $this->course->format;
         $sectionsname = get_string("coursesectionsummaries");
@@ -51,14 +61,26 @@ class file_info_coursesection extends file_info {
         return $sectionsname;
     }
 
+    /**
+     * Can I add new files or directories?
+     * @return bool
+     */
     public function is_writable() {
         return false;
     }
 
+    /**
+     * Is directory?
+     * @return bool
+     */
     public function is_directory() {
         return true;
     }
 
+    /**
+     * Returns list of children.
+     * @return array of file_info instances
+     */
     public function get_children() {
         global $DB;
 
@@ -74,6 +96,10 @@ class file_info_coursesection extends file_info {
         return $children;
     }
 
+    /**
+     * Returns parent file_info instance
+     * @return file_info or null for root
+     */
     public function get_parent() {
         return $this->browser->get_file_info($this->context);
     }
