@@ -17,9 +17,10 @@
 /**
  * File containing the Class Declaration Test.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-classes
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-classes
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -64,7 +65,7 @@ class moodle_sniffs_classes_classdeclarationsniff implements php_codesniffer_sni
         }
 
         $curlybrace  = $tokens[$stackptr]['scope_opener'];
-        $lastcontent = $phpcsfile->findPrevious(T_WHITESPACE, ($curlybrace - 1), $stackptr, true);
+        $lastcontent = $phpcsfile->findprevious(T_WHITESPACE, ($curlybrace - 1), $stackptr, true);
         $classline   = $tokens[$lastcontent]['line'];
         $braceline   = $tokens[$curlybrace]['line'];
 

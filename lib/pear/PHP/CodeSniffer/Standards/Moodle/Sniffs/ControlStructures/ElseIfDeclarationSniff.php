@@ -17,9 +17,10 @@
 /**
  * moodle_sniffs_controlstructures_elseifdeclarationsniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-controlstructures
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-controlstructures
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -28,11 +29,10 @@
  * Verifies that there are not elseif statements. The else and the if should
  * be separated by a space.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_controlstructures_elseifdeclarationsniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_controlstructures_elseifdeclarationsniff implements php_codesniffer_sniff {
 
 
     /**
@@ -40,10 +40,8 @@ class moodle_sniffs_controlstructures_elseifdeclarationsniff implements php_code
      *
      * @return array
      */
-    public function register()
-    {
+    public function register() {
         return array(T_ELSEIF);
-
     }
 
 
@@ -56,15 +54,8 @@ class moodle_sniffs_controlstructures_elseifdeclarationsniff implements php_code
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $error = 'Usage of ELSEIF not allowed. Use ELSE IF instead.';
         $phpcsfile->adderror($error, $stackptr);
-
     }
-
-
 }
-
-
-?>

@@ -17,9 +17,10 @@
 /**
  * moodle_sniffs_functions_functiondeclarationsniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-functions
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-functions
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 if (class_exists('PHP_CodeSniffer_Standards_AbstractPatternSniff', true) === false) {
@@ -31,11 +32,10 @@ if (class_exists('PHP_CodeSniffer_Standards_AbstractPatternSniff', true) === fal
  *
  * Checks the function declaration is correct.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_functions_functiondeclarationsniff extends php_codesniffer_standards_abstractpatternsniff
-{
+class moodle_sniffs_functions_functiondeclarationsniff extends php_codesniffer_standards_abstractpatternsniff {
 
 
     /**
@@ -43,16 +43,10 @@ class moodle_sniffs_functions_functiondeclarationsniff extends php_codesniffer_s
      *
      * @return array
      */
-    protected function getPatterns()
-    {
+    protected function getpatterns() {
         return array(
                 'function abc(...) {',
                 'abstract function abc(...);'
                );
-
     }
-
-
 }
-
-?>

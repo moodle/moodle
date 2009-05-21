@@ -17,9 +17,10 @@
 /**
  * Verifies that class members are spaced correctly.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-whitespace
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-whitespace
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 if (class_exists('PHP_CodeSniffer_Standards_AbstractVariableSniff', true) === false) {
@@ -29,11 +30,10 @@ if (class_exists('PHP_CodeSniffer_Standards_AbstractVariableSniff', true) === fa
 /**
  * Verifies that class members are spaced correctly.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_whitespace_membervarspacingsniff extends php_codesniffer_standards_abstractvariablesniff
-{
+class moodle_sniffs_whitespace_membervarspacingsniff extends php_codesniffer_standards_abstractvariablesniff {
 
 
     /**
@@ -44,24 +44,28 @@ class moodle_sniffs_whitespace_membervarspacingsniff extends php_codesniffer_sta
      *
      * @return void
      */
-    protected function processMemberVar(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    protected function processmembervar(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
 
         // There needs to be 1 blank line before the var, not counting comments.
         $prevlinetoken = null;
+
         for ($i = ($stackptr - 1); $i > 0; $i--) {
+
             if (in_array($tokens[$i]['code'], PHP_CodeSniffer_tokens::$commentTokens) === true) {
                 // Skip comments.
                 continue;
+
             } else if (strpos($tokens[$i]['content'], $phpcsfile->eolChar) === false) {
                 // Not the end of the line.
                 continue;
+
             } else {
                 // If this is a WHITESPACE token, and the token right before
                 // it is a DOC_COMMENT, then it is just the newline after the
                 // member var's comment, and can be skipped.
-                if ($tokens[$i]['code'] === T_WHITESPACE && in_array($tokens[($i - 1)]['code'], PHP_CodeSniffer_tokens::$commentTokens) === true) {
+                if ($tokens[$i]['code'] === T_WHITESPACE &&
+                    in_array($tokens[($i - 1)]['code'], PHP_CodeSniffer_tokens::$commentTokens) === true) {
                     continue;
                 }
 
@@ -74,15 +78,15 @@ class moodle_sniffs_whitespace_membervarspacingsniff extends php_codesniffer_sta
             // Never found the previous line, which means
             // there are 0 blank lines before the member var.
             $foundlines = 0;
+
         } else {
-            $prevcontent = $phpcsfile->findPrevious(array(T_WHITESPACE, T_DOC_COMMENT), $prevlinetoken, null, true);
+            $prevcontent = $phpcsfile->findprevious(array(T_WHITESPACE, T_DOC_COMMENT), $prevlinetoken, null, true);
             $foundlines  = ($tokens[$prevlinetoken]['line'] - $tokens[$prevcontent]['line']);
         }
 
         if ($foundlines !== 1) {
             // $phpcsfile->adderror("Expected 1 blank line before member var; $foundlines found", $stackptr);
         }
-
     }
 
 
@@ -94,11 +98,9 @@ class moodle_sniffs_whitespace_membervarspacingsniff extends php_codesniffer_sta
      *
      * @return void
      */
-    protected function processVariable(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    protected function processvariable(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         // We don't care about normal variables.
         return;
-
     }
 
 
@@ -110,14 +112,8 @@ class moodle_sniffs_whitespace_membervarspacingsniff extends php_codesniffer_sta
      *
      * @return void
      */
-    protected function processVariableInString(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    protected function processvariableinstring(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         // We don't care about normal variables.
         return;
-
     }
-
-
 }
-
-?>

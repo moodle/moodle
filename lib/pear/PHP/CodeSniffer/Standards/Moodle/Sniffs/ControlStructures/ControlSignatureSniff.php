@@ -17,9 +17,10 @@
 /**
  * Verifies that control statements conform to their coding standards.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-controlstructures
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-controlstructures
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 if (class_exists('PHP_CodeSniffer_Standards_AbstractPatternSniff', true) === false) {
@@ -29,20 +30,17 @@ if (class_exists('PHP_CodeSniffer_Standards_AbstractPatternSniff', true) === fal
 /**
  * Verifies that control statements conform to their coding standards.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_controlstructures_controlsignaturesniff extends php_codesniffer_standards_abstractpatternsniff
-{
+class moodle_sniffs_controlstructures_controlsignaturesniff extends php_codesniffer_standards_abstractpatternsniff {
 
 
     /**
      * Constructs a moodle_sniffs_controlstructures_controlsignaturesniff.
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct(true);
-
     }
 
 
@@ -51,22 +49,15 @@ class moodle_sniffs_controlstructures_controlsignaturesniff extends php_codesnif
      *
      * @return array(string)
      */
-    protected function getPatterns()
-    {
-        return array(
-                'do {EOL...} while (...);EOL',
-                'while (...) {EOL',
-                'for (...) {EOL',
-                'if (...) {EOL',
-                'foreach (...) {EOL',
-                '} else if (...) {EOL',
-                '} else {EOL',
-                'do {EOL',
-               );
-
+    protected function getpatterns() {
+        return array('do {EOL...} while (...);EOL',
+                     'while (...) {EOL',
+                     'for (...) {EOL',
+                     'if (...) {EOL',
+                     'foreach (...) {EOL',
+                     '} else if (...) {EOL',
+                     '} else {EOL',
+                     'do {EOL',
+                     'try {EOL...} catch (...) {EOL...}');
     }
-
-
 }
-
-?>

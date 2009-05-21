@@ -17,9 +17,10 @@
 /**
  * moodle_sniffs_functions_lowercasefunctionkeywordssniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-functions
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-functions
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -27,11 +28,10 @@
  *
  * Ensures all class keywords are lowercase.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_functions_lowercasefunctionkeywordssniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_functions_lowercasefunctionkeywordssniff implements php_codesniffer_sniff {
 
 
     /**
@@ -39,16 +39,8 @@ class moodle_sniffs_functions_lowercasefunctionkeywordssniff implements php_code
      *
      * @return array
      */
-    public function register()
-    {
-        return array(
-                T_FUNCTION,
-                T_PUBLIC,
-                T_PRIVATE,
-                T_PROTECTED,
-                T_STATIC,
-               );
-
+    public function register() {
+        return array(T_FUNCTION, T_PUBLIC, T_PRIVATE, T_PROTECTED, T_STATIC);
     }
 
 
@@ -61,21 +53,16 @@ class moodle_sniffs_functions_lowercasefunctionkeywordssniff implements php_code
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
 
         $content = $tokens[$stackptr]['content'];
+
         if ($content !== strtolower($content)) {
             $type     = strtoupper($content);
             $expected = strtolower($content);
             $error    = "$type keyword must be lowercase; expected \"$expected\" but found \"$content\"";
             $phpcsfile->adderror($error, $stackptr);
         }
-
     }
-
-
 }
-
-?>

@@ -17,9 +17,10 @@
 /**
  * This file is part of the CodeAnalysis addon for PHP_CodeSniffer.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-codeanalysis
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-codeanalysis
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -42,7 +43,7 @@
  * }
  * </code>
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodle_sniffs_codeanalysis_unconditionalifstatementsniff implements php_codesniffer_sniff

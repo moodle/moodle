@@ -17,9 +17,10 @@
 /**
  * moodle_sniffs_namingconventions_uppercaseconstantnamesniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-namingconventions
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-namingconventions
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -27,11 +28,10 @@
  *
  * Ensures that constant names are all uppercase.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_namingconventions_uppercaseconstantnamesniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_namingconventions_uppercaseconstantnamesniff implements php_codesniffer_sniff {
 
 
     /**
@@ -39,10 +39,8 @@ class moodle_sniffs_namingconventions_uppercaseconstantnamesniff implements php_
      *
      * @return array
      */
-    public function register()
-    {
+    public function register() {
         return array(T_STRING);
-
     }
 
 
@@ -55,8 +53,7 @@ class moodle_sniffs_namingconventions_uppercaseconstantnamesniff implements php_
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens    = $phpcsfile->gettokens();
         $constname = $tokens[$stackptr]['content'];
 
@@ -67,28 +64,24 @@ class moodle_sniffs_namingconventions_uppercaseconstantnamesniff implements php_
 
         // If the next non-whitespace token after this token
         // is not an opening parenthesis then it is not a function call.
-        $openBracket = $phpcsfile->findNext(array(T_WHITESPACE), ($stackptr + 1), null, true);
-        if ($tokens[$openBracket]['code'] !== T_OPEN_PARENTHESIS) {
-            $functionKeyword = $phpcsfile->findPrevious(array(T_WHITESPACE, T_COMMA, T_COMMENT, T_STRING), ($stackptr - 1), null, true);
+        $openbracket = $phpcsfile->findnext(array(T_WHITESPACE), ($stackptr + 1), null, true);
 
-            $declarations = array(
-                             T_FUNCTION,
-                             T_CLASS,
-                             T_INTERFACE,
-                             T_IMPLEMENTS,
-                             T_EXTENDS,
-                             T_INSTANCEOF,
-                             T_NEW,
-                            );
-            if (in_array($tokens[$functionKeyword]['code'], $declarations) === true) {
+        if ($tokens[$openbracket]['code'] !== T_OPEN_PARENTHESIS) {
+            $functionkeyword = $phpcsfile->findprevious(array(T_WHITESPACE, T_COMMA, T_COMMENT, T_STRING),
+                                                        ($stackptr - 1), null, true);
+
+            $declarations = array(T_FUNCTION, T_CLASS, T_INTERFACE, T_IMPLEMENTS, T_EXTENDS, T_INSTANCEOF, T_NEW);
+
+            if (in_array($tokens[$functionkeyword]['code'], $declarations) === true) {
                 // This is just a declaration; no constants here.
                 return;
             }
 
-            if ($tokens[$functionKeyword]['code'] === T_CONST) {
+            if ($tokens[$functionkeyword]['code'] === T_CONST) {
                 // This is a class constant.
                 if (strtoupper($constname) !== $constname) {
-                    $error = 'Class constants must be uppercase; expected '.strtoupper($constname)." but found $constname";
+                    $error = 'Class constants must be uppercase; expected '.strtoupper($constname).
+                             " but found $constname";
                     $phpcsfile->adderror($error, $stackptr);
                 }
 
@@ -96,27 +89,31 @@ class moodle_sniffs_namingconventions_uppercaseconstantnamesniff implements php_
             }
 
             // Is this a class name?
-            $nextPtr = $phpcsfile->findNext(array(T_WHITESPACE), ($stackptr + 1), null, true);
-            if ($tokens[$nextPtr]['code'] === T_DOUBLE_COLON) {
+            $nextptr = $phpcsfile->findnext(array(T_WHITESPACE), ($stackptr + 1), null, true);
+
+            if ($tokens[$nextptr]['code'] === T_DOUBLE_COLON) {
                 return;
             }
 
             // Is this a type hint?
-            if ($tokens[$nextPtr]['code'] === T_VARIABLE) {
+            if ($tokens[$nextptr]['code'] === T_VARIABLE) {
                 return;
-            } else if ($phpcsfile->isReference($nextPtr) === true) {
+
+            } else if ($phpcsfile->isReference($nextptr) === true) {
                 return;
             }
 
             // Is this a member var name?
-            $prevPtr = $phpcsfile->findPrevious(array(T_WHITESPACE), ($stackptr - 1), null, true);
-            if ($tokens[$prevPtr]['code'] === T_OBJECT_OPERATOR) {
+            $prevptr = $phpcsfile->findprevious(array(T_WHITESPACE), ($stackptr - 1), null, true);
+
+            if ($tokens[$prevptr]['code'] === T_OBJECT_OPERATOR) {
                 return;
             }
 
             // Is this an instance of declare()
-            $prevPtr = $phpcsfile->findPrevious(array(T_WHITESPACE, T_OPEN_PARENTHESIS), ($stackptr - 1), null, true);
-            if ($tokens[$prevPtr]['code'] === T_DECLARE) {
+            $prevptr = $phpcsfile->findprevious(array(T_WHITESPACE, T_OPEN_PARENTHESIS), ($stackptr - 1), null, true);
+
+            if ($tokens[$prevptr]['code'] === T_DECLARE) {
                 return;
             }
 
@@ -133,21 +130,18 @@ class moodle_sniffs_namingconventions_uppercaseconstantnamesniff implements php_
             */
 
             // The next non-whitespace token must be the constant name.
-            $constPtr = $phpcsfile->findNext(array(T_WHITESPACE), ($openBracket + 1), null, true);
-            if ($tokens[$constPtr]['code'] !== T_CONSTANT_ENCAPSED_STRING) {
+            $constptr = $phpcsfile->findnext(array(T_WHITESPACE), ($openbracket + 1), null, true);
+
+            if ($tokens[$constptr]['code'] !== T_CONSTANT_ENCAPSED_STRING) {
                 return;
             }
 
-            $constname = $tokens[$constPtr]['content'];
+            $constname = $tokens[$constptr]['content'];
+
             if (strtoupper($constname) !== $constname) {
                 $error = 'Constants must be uppercase; expected '.strtoupper($constname)." but found $constname";
                 $phpcsfile->adderror($error, $stackptr);
             }
         }
-
     }
-
-
 }
-
-?>

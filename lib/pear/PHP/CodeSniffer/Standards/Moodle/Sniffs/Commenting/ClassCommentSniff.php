@@ -17,9 +17,10 @@
 /**
  * Parses and verifies the doc comments for classes.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-commenting
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-commenting
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 if (class_exists('PHP_CodeSniffer_CommentParser_ClassCommentParser', true) === false) {
@@ -46,7 +47,7 @@ if (class_exists('moodle_sniffs_commenting_filecommentsniff', true) === false) {
  *  <li>Check required and optional tags and the format of their content.</li>
  * </ul>
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodle_sniffs_commenting_classcommentsniff extends moodle_sniffs_commenting_filecommentsniff {
@@ -87,7 +88,7 @@ class moodle_sniffs_commenting_classcommentsniff extends moodle_sniffs_commentin
                   );
 
         // Extract the class comment docblock.
-        $commentend = $phpcsfile->findPrevious($find, ($stackptr - 1), null, true);
+        $commentend = $phpcsfile->findprevious($find, ($stackptr - 1), null, true);
 
         if ($commentend !== false && $tokens[$commentend]['code'] === T_COMMENT) {
             $phpcsfile->adderror("You must use \"/**\" style comments for a $type comment", $stackptr);
@@ -98,25 +99,25 @@ class moodle_sniffs_commenting_classcommentsniff extends moodle_sniffs_commentin
             return;
         }
 
-        $commentstart = ($phpcsfile->findPrevious(T_DOC_COMMENT, ($commentend - 1), null, true) + 1);
-        $commentnext  = $phpcsfile->findPrevious(T_WHITESPACE, ($commentend + 1), $stackptr, false, $phpcsfile->eolChar);
+        $commentstart = ($phpcsfile->findprevious(T_DOC_COMMENT, ($commentend - 1), null, true) + 1);
+        $commentnext  = $phpcsfile->findprevious(T_WHITESPACE, ($commentend + 1), $stackptr, false, $phpcsfile->eolChar);
 
         // Distinguish file and class comment.
-        $prevclasstoken = $phpcsfile->findPrevious(T_CLASS, ($stackptr - 1));
+        $prevclasstoken = $phpcsfile->findprevious(T_CLASS, ($stackptr - 1));
 
         if ($prevclasstoken === false) {
             // This is the first class token in this file, need extra checks.
-            $prevnoncomment = $phpcsfile->findPrevious(T_DOC_COMMENT, ($commentstart - 1), null, true);
+            $prevnoncomment = $phpcsfile->findprevious(T_DOC_COMMENT, ($commentstart - 1), null, true);
 
             if ($prevnoncomment !== false) {
-                $prevcomment = $phpcsfile->findPrevious(T_DOC_COMMENT, ($prevnoncomment - 1));
+                $prevcomment = $phpcsfile->findprevious(T_DOC_COMMENT, ($prevnoncomment - 1));
 
                 if ($prevcomment === false) {
                     // There is only 1 doc comment between open tag and class token.
-                    $newlinetoken = $phpcsfile->findNext(T_WHITESPACE, ($commentend + 1), $stackptr, false, $phpcsfile->eolChar);
+                    $newlinetoken = $phpcsfile->findnext(T_WHITESPACE, ($commentend + 1), $stackptr, false, $phpcsfile->eolChar);
 
                     if ($newlinetoken !== false) {
-                        $newlinetoken = $phpcsfile->findNext(T_WHITESPACE, ($newlinetoken + 1), $stackptr, false, $phpcsfile->eolChar);
+                        $newlinetoken = $phpcsfile->findnext(T_WHITESPACE, ($newlinetoken + 1), $stackptr, false, $phpcsfile->eolChar);
 
                         if ($newlinetoken !== false) {
                             // Blank line between the class and the doc block.
@@ -135,6 +136,7 @@ class moodle_sniffs_commenting_classcommentsniff extends moodle_sniffs_commentin
         try {
             $this->commentparser = new PHP_CodeSniffer_CommentParser_ClassCommentParser($comment, $phpcsfile);
             $this->commentparser->parse();
+
         } catch (PHP_CodeSniffer_CommentParser_ParserException $e) {
             $line = ($e->getlinewithinComment() + $commentstart);
             $phpcsfile->adderror($e->getMessage(), $line);
@@ -166,7 +168,7 @@ class moodle_sniffs_commenting_classcommentsniff extends moodle_sniffs_commentin
         $long = $comment->getlongcomment();
 
         if (empty($long) === false) {
-            $between        = $comment->getWhiteSpaceBetween();
+            $between        = $comment->getWhiteSpacebetween();
             $newlinebetween = substr_count($between, $phpcsfile->eolChar);
 
             if ($newlinebetween !== 2) {

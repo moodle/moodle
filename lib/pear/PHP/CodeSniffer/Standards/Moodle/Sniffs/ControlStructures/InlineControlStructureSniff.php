@@ -17,9 +17,10 @@
 /**
  * moodle_sniffs_controlstructures_inlinecontrolstructuresniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-controlstructures
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-controlstructures
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -27,21 +28,17 @@
  *
  * Verifies that inline control statements are not present.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_controlstructures_inlinecontrolstructuresniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_controlstructures_inlinecontrolstructuresniff implements php_codesniffer_sniff {
 
     /**
      * A list of tokenizers this sniff supports.
      *
      * @var array
      */
-    public $supportedtokenizers = array(
-                                   'PHP',
-                                   'JS',
-                                  );
+    public $supportedtokenizers = array('PHP', 'JS');
 
     /**
      * If true, an error will be thrown; otherwise a warning.
@@ -55,18 +52,14 @@ class moodle_sniffs_controlstructures_inlinecontrolstructuresniff implements php
      *
      * @return array
      */
-    public function register()
-    {
-        return array(
-                T_IF,
-                T_ELSE,
-                T_FOREACH,
-                T_WHILE,
-                T_DO,
-                T_SWITCH,
-                T_FOR,
-               );
-
+    public function register() {
+        return array(T_IF,
+                     T_ELSE,
+                     T_FOREACH,
+                     T_WHILE,
+                     T_DO,
+                     T_SWITCH,
+                     T_FOR);
     }
 
 
@@ -79,8 +72,7 @@ class moodle_sniffs_controlstructures_inlinecontrolstructuresniff implements php
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
 
         if (isset($tokens[$stackptr]['scope_opener']) === false) {
@@ -91,11 +83,14 @@ class moodle_sniffs_controlstructures_inlinecontrolstructuresniff implements php
 
             if ($tokens[$stackptr]['code'] === T_WHILE) {
                 // This could be from a DO WHILE, which doesn't have an opening brace.
-                $lastcontent = $phpcsfile->findPrevious(T_WHITESPACE, ($stackptr - 1), null, true);
+                $lastcontent = $phpcsfile->findprevious(T_WHITESPACE, ($stackptr - 1), null, true);
+
                 if ($tokens[$lastcontent]['code'] === T_CLOSE_CURLY_BRACKET) {
                     $brace = $tokens[$lastcontent];
+
                     if (isset($brace['scope_condition']) === true) {
                         $condition = $tokens[$brace['scope_condition']];
+
                         if ($condition['code'] === T_DO) {
                             return;
                         }
@@ -113,10 +108,5 @@ class moodle_sniffs_controlstructures_inlinecontrolstructuresniff implements php
 
             return;
         }
-
     }
-
-
 }
-
-?>

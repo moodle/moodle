@@ -17,9 +17,10 @@
 /**
  * php_codesniffer_sniffs_moodle_commenting_inlinecommentsniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-commenting
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-commenting
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -27,11 +28,10 @@
  *
  * Checks that no perl-style comments are used.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_commenting_inlinecommentsniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_commenting_inlinecommentsniff implements php_codesniffer_sniff {
 
 
     /**
@@ -39,10 +39,8 @@ class moodle_sniffs_commenting_inlinecommentsniff implements php_codesniffer_sni
      *
      * @return array
      */
-    public function register()
-    {
+    public function register() {
         return array(T_COMMENT);
-
     }
 
 
@@ -55,8 +53,7 @@ class moodle_sniffs_commenting_inlinecommentsniff implements php_codesniffer_sni
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
 
         if ($tokens[$stackptr]['content']{0} === '#') {
@@ -64,10 +61,5 @@ class moodle_sniffs_commenting_inlinecommentsniff implements php_codesniffer_sni
             $error .= ' or "/* comment */" instead.';
             $phpcsfile->adderror($error, $stackptr);
         }
-
     }
-
-
 }
-
-?>

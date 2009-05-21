@@ -17,9 +17,10 @@
 /**
  * moodle_sniffs_whitespace_disallowtabindentsniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-whitespace
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-whitespace
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -27,21 +28,17 @@
  *
  * Throws errors if tabs are used for indentation.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_whitespace_disallowtabindentsniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_whitespace_disallowtabindentsniff implements php_codesniffer_sniff {
 
     /**
      * A list of tokenizers this sniff supports.
      *
      * @var array
      */
-    public $supportedtokenizers = array(
-                                   'PHP',
-                                   'JS',
-                                  );
+    public $supportedtokenizers = array('PHP', 'JS');
 
 
     /**
@@ -49,10 +46,8 @@ class moodle_sniffs_whitespace_disallowtabindentsniff implements php_codesniffer
      *
      * @return array
      */
-    public function register()
-    {
+    public function register() {
         return array(T_WHITESPACE);
-
     }
 
 
@@ -65,12 +60,12 @@ class moodle_sniffs_whitespace_disallowtabindentsniff implements php_codesniffer
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
 
         // Make sure this is whitespace used for indentation.
         $line = $tokens[$stackptr]['line'];
+
         if ($stackptr > 0 && $tokens[($stackptr - 1)]['line'] === $line) {
             return;
         }
@@ -79,10 +74,5 @@ class moodle_sniffs_whitespace_disallowtabindentsniff implements php_codesniffer
             $error = 'Spaces must be used to indent lines; tabs are not allowed';
             $phpcsfile->adderror($error, $stackptr);
         }
-
     }
-
-
 }
-
-?>

@@ -17,9 +17,10 @@
 /**
  * This file is part of the CodeAnalysis addon for PHP_CodeSniffer.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-codeanalysis
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-codeanalysis
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -38,11 +39,10 @@
  * }
  * </code>
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_codeanalysis_uselessoverridingmethodsniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_codeanalysis_uselessoverridingmethodsniff implements php_codesniffer_sniff {
 
 
     /**
@@ -81,7 +81,7 @@ class moodle_sniffs_codeanalysis_uselessoverridingmethodsniff implements php_cod
 
         // Get all parameters from method signature.
         $signature = array();
-        foreach ($phpcsfile->getmethodParameters($stackptr) as $param) {
+        foreach ($phpcsfile->getmethodparameters($stackptr) as $param) {
             $signature[] = $param['name'];
         }
 
@@ -106,7 +106,7 @@ class moodle_sniffs_codeanalysis_uselessoverridingmethodsniff implements php_cod
         }
 
         // Find next non empty token index, should be double colon.
-        $next = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($next + 1), null, true);
+        $next = $phpcsfile->findnext(PHP_CodeSniffer_tokens::$emptyTokens, ($next + 1), null, true);
 
         // Skip for invalid code.
         if ($next === false || $tokens[$next]['code'] !== T_DOUBLE_COLON) {
@@ -114,7 +114,7 @@ class moodle_sniffs_codeanalysis_uselessoverridingmethodsniff implements php_cod
         }
 
         // Find next non empty token index, should be the function name.
-        $next = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($next + 1), null, true);
+        $next = $phpcsfile->findnext(PHP_CodeSniffer_tokens::$emptyTokens, ($next + 1), null, true);
 
         // Skip for invalid code or other method.
         if ($next === false || $tokens[$next]['content'] !== $methodname) {
@@ -122,14 +122,14 @@ class moodle_sniffs_codeanalysis_uselessoverridingmethodsniff implements php_cod
         }
 
         // Find next non empty token index, should be the open parenthesis.
-        $next = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($next + 1), null, true);
+        $next = $phpcsfile->findnext(PHP_CodeSniffer_tokens::$emptyTokens, ($next + 1), null, true);
 
         // Skip for invalid code.
         if ($next === false || $tokens[$next]['code'] !== T_OPEN_PARENTHESIS) {
             return;
         }
 
-        $validParameterTypes = array(
+        $validparametertypes = array(
                                 T_VARIABLE,
                                 T_LNUMBER,
                                 T_CONSTANT_ENCAPSED_STRING,
@@ -156,7 +156,7 @@ class moodle_sniffs_codeanalysis_uselessoverridingmethodsniff implements php_cod
             }
         }
 
-        $next = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($next + 1), null, true);
+        $next = $phpcsfile->findnext(PHP_CodeSniffer_tokens::$emptyTokens, ($next + 1), null, true);
         if ($next === false || $tokens[$next]['code'] !== T_SEMICOLON) {
             return;
         }
@@ -181,5 +181,3 @@ class moodle_sniffs_codeanalysis_uselessoverridingmethodsniff implements php_cod
 
 
 }
-
-?>

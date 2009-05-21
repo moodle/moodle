@@ -17,9 +17,10 @@
 /**
  * moodle_sniffs_php_lowercasephpfunctionssniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-php
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-php
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -27,11 +28,10 @@
  *
  * Ensures all calls to inbuilt PHP functions are lowercase.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_php_lowercasephpfunctionssniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_php_lowercasephpfunctionssniff implements php_codesniffer_sniff {
 
 
     /**
@@ -39,8 +39,7 @@ class moodle_sniffs_php_lowercasephpfunctionssniff implements php_codesniffer_sn
      *
      * @return array
      */
-    public function register()
-    {
+    public function register() {
         return array(
                 T_ISSET,
                 T_ECHO,
@@ -61,7 +60,6 @@ class moodle_sniffs_php_lowercasephpfunctionssniff implements php_codesniffer_sn
                 T_DECLARE,
                 T_STRING,
                );
-
     }
 
 
@@ -74,12 +72,12 @@ class moodle_sniffs_php_lowercasephpfunctionssniff implements php_codesniffer_sn
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
 
         if ($tokens[$stackptr]['code'] !== T_STRING) {
             $content = $tokens[$stackptr]['content'];
+
             if ($content !== strtolower($content)) {
                 $type     = strtoupper($content);
                 $expected = strtolower($content);
@@ -91,7 +89,8 @@ class moodle_sniffs_php_lowercasephpfunctionssniff implements php_codesniffer_sn
         }
 
         // Make sure this is a function call.
-        $next = $phpcsfile->findNext(T_WHITESPACE, ($stackptr + 1), null, true);
+        $next = $phpcsfile->findnext(T_WHITESPACE, ($stackptr + 1), null, true);
+
         if ($next === false) {
             // Not a function call.
             return;
@@ -102,7 +101,8 @@ class moodle_sniffs_php_lowercasephpfunctionssniff implements php_codesniffer_sn
             return;
         }
 
-        $prev = $phpcsfile->findPrevious(T_WHITESPACE, ($stackptr - 1), null, true);
+        $prev = $phpcsfile->findprevious(T_WHITESPACE, ($stackptr - 1), null, true);
+
         if ($tokens[$prev]['code'] === T_FUNCTION) {
             // Function declaration, not a function call.
             return;
@@ -123,19 +123,15 @@ class moodle_sniffs_php_lowercasephpfunctionssniff implements php_codesniffer_sn
         // user defined global functions can exist, except for
         // PHP_CodeSniffer ones.
         $content = $tokens[$stackptr]['content'];
+
         if (function_exists($content) === false) {
             return;
         }
 
         if ($content !== strtolower($content)) {
             $expected = strtolower($content);
-            $error    = "Calls to inbuilt PHP functions must be lowercase; expected \"$expected\" but found \"$content\"";
+            $error = "Calls to inbuilt PHP functions must be lowercase; expected \"$expected\" but found \"$content\"";
             $phpcsfile->adderror($error, $stackptr);
         }
-
     }
-
-
 }
-
-?>

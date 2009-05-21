@@ -17,15 +17,16 @@
 /**
  * File including class for sniffing out the closing PHP tag
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-files
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-files
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
  * Class for sniffing out the closing PHP tag
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodle_sniffs_files_closingphptagsniff implements php_codesniffer_sniff {
@@ -53,6 +54,7 @@ class moodle_sniffs_files_closingphptagsniff implements php_codesniffer_sniff {
         $tokens = $phpcsfile->gettokens();
 
         $last_token = end($tokens);
+
         if ($last_token['code'] === T_CLOSE_TAG) {
             $error  = 'Closing PHP tag is not required at the end of the file. Please remove.';
             $phpcsfile->addwarning($error, $stackptr);

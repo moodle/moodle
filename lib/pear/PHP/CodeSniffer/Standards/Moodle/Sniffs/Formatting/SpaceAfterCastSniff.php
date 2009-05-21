@@ -17,9 +17,10 @@
 /**
  * moodle_sniffs_formatting_spaceaftercastsniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-formatting
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-formatting
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -27,11 +28,10 @@
  *
  * Ensures there is a single space after cast tokens.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_formatting_spaceaftercastsniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_formatting_spaceaftercastsniff implements php_codesniffer_sniff {
 
 
     /**
@@ -39,10 +39,8 @@ class moodle_sniffs_formatting_spaceaftercastsniff implements php_codesniffer_sn
      *
      * @return array
      */
-    public function register()
-    {
+    public function register() {
         return PHP_CodeSniffer_tokens::$castTokens;
-
     }
 
 
@@ -55,8 +53,7 @@ class moodle_sniffs_formatting_spaceaftercastsniff implements php_codesniffer_sn
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
 
         if ($tokens[($stackptr + 1)]['code'] !== T_WHITESPACE) {
@@ -69,10 +66,5 @@ class moodle_sniffs_formatting_spaceaftercastsniff implements php_codesniffer_sn
             $error = 'A cast statement must be followed by a single space';
             $phpcsfile->adderror($error, $stackptr);
         }
-
     }
-
-
 }
-
-?>

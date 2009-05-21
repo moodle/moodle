@@ -17,9 +17,10 @@
 /**
  * moodle_sniffs_functions_validdefaultvaluesniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-functions
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-functions
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -28,11 +29,10 @@
  * A Sniff to ensure that parameters defined for a function that have a default
  * value come at the end of the function signature.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_functions_validdefaultvaluesniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_functions_validdefaultvaluesniff implements php_codesniffer_sniff {
 
 
     /**
@@ -40,10 +40,8 @@ class moodle_sniffs_functions_validdefaultvaluesniff implements php_codesniffer_
      *
      * @return array
      */
-    public function register()
-    {
+    public function register() {
         return array(T_FUNCTION);
-
     }
 
 
@@ -56,8 +54,7 @@ class moodle_sniffs_functions_validdefaultvaluesniff implements php_codesniffer_
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
 
         $argstart = $tokens[$stackptr]['parenthesis_opener'];
@@ -65,20 +62,22 @@ class moodle_sniffs_functions_validdefaultvaluesniff implements php_codesniffer_
 
         // Flag for when we have found a default in our arg list.
         // If there is a value without a default after this, it is an error.
-        $defaultFound = false;
+        $defaultfound = false;
 
-        $nextArg = $argstart;
-        while (($nextArg = $phpcsfile->findNext(T_VARIABLE, ($nextArg + 1), $argend)) !== false) {
-            $argHasDefault = self::_argHasDefault($phpcsfile, $nextArg);
-            if (($argHasDefault === false) && ($defaultFound === true)) {
+        $nextarg = $argstart;
+
+        while (($nextarg = $phpcsfile->findnext(T_VARIABLE, ($nextarg + 1), $argend)) !== false) {
+            $arghasdefault = self::_arghasdefault($phpcsfile, $nextarg);
+
+            if (($arghasdefault === false) && ($defaultfound === true)) {
                 $error  = 'Arguments with default values must be at the end';
                 $error .= ' of the argument list';
-                $phpcsfile->adderror($error, $nextArg);
+                $phpcsfile->adderror($error, $nextarg);
                 return;
             }
 
-            if ($argHasDefault === true) {
-                $defaultFound = true;
+            if ($arghasdefault === true) {
+                $defaultfound = true;
             }
         }
 
@@ -89,15 +88,15 @@ class moodle_sniffs_functions_validdefaultvaluesniff implements php_codesniffer_
      * Returns true if the passed argument has a default value.
      *
      * @param PHP_CodeSniffer_File $phpcsfile The file being scanned.
-     * @param int                  $argPtr    The position of the argument
+     * @param int                  $argptr    The position of the argument
      *                                        in the stack.
      *
      * @return bool
      */
-    private static function _argHasDefault(PHP_CodeSniffer_File $phpcsfile, $argPtr)
-    {
+    private static function _arghasdefault(PHP_CodeSniffer_File $phpcsfile, $argptr) {
         $tokens    = $phpcsfile->gettokens();
-        $nexttoken = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($argPtr + 1), null, true);
+        $nexttoken = $phpcsfile->findnext(PHP_CodeSniffer_tokens::$emptyTokens, ($argptr + 1), null, true);
+
         if ($tokens[$nexttoken]['code'] !== T_EQUAL) {
             return false;
         }
@@ -108,5 +107,3 @@ class moodle_sniffs_functions_validdefaultvaluesniff implements php_codesniffer_
 
 
 }
-
-?>

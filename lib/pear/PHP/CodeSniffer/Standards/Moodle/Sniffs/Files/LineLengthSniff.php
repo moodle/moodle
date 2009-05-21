@@ -17,9 +17,10 @@
 /**
  * moodle_sniffs_files_linelengthsniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-files
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-files
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -29,18 +30,17 @@
  * characters in length and errors if they are over 100. Both these
  * figures can be changed by extending this sniff in your own standard.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_files_linelengthsniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_files_linelengthsniff implements php_codesniffer_sniff {
 
     /**
      * The limit that the length of a line should not exceed.
      *
      * @var int
      */
-    protected $lineLimit = 120;
+    protected $linelimit = 120;
 
     /**
      * The limit that the length of a line must not exceed.
@@ -49,7 +49,7 @@ class moodle_sniffs_files_linelengthsniff implements php_codesniffer_sniff
      *
      * @var int
      */
-    protected $absolutelineLimit = 200;
+    protected $absolutelinelimit = 200;
 
 
     /**
@@ -57,10 +57,8 @@ class moodle_sniffs_files_linelengthsniff implements php_codesniffer_sniff
      *
      * @return array
      */
-    public function register()
-    {
+    public function register() {
         return array(T_OPEN_TAG);
-
     }
 
 
@@ -73,13 +71,13 @@ class moodle_sniffs_files_linelengthsniff implements php_codesniffer_sniff
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
 
         // Make sure this is the first open tag.
-        $previousOpentag = $phpcsfile->findPrevious(array(T_OPEN_TAG), ($stackptr - 1));
-        if ($previousOpentag !== false) {
+        $previousopentag = $phpcsfile->findprevious(array(T_OPEN_TAG), ($stackptr - 1));
+
+        if ($previousopentag !== false) {
             return;
         }
 
@@ -88,17 +86,19 @@ class moodle_sniffs_files_linelengthsniff implements php_codesniffer_sniff
         $currentline        = 1;
 
         for (; $tokencount < $phpcsfile->numTokens; $tokencount++) {
+
             if ($tokens[$tokencount]['line'] === $currentline) {
                 $currentlinecontent .= $tokens[$tokencount]['content'];
+
             } else {
                 $currentlinecontent = trim($currentlinecontent, $phpcsfile->eolChar);
-                $this->checklineLength($phpcsfile, ($tokencount - 1), $currentlinecontent);
+                $this->checklinelength($phpcsfile, ($tokencount - 1), $currentlinecontent);
                 $currentlinecontent = $tokens[$tokencount]['content'];
                 $currentline++;
             }
         }
 
-        $this->checklineLength($phpcsfile, ($tokencount - 1), $currentlinecontent);
+        $this->checklinelength($phpcsfile, ($tokencount - 1), $currentlinecontent);
 
     }
 
@@ -112,25 +112,21 @@ class moodle_sniffs_files_linelengthsniff implements php_codesniffer_sniff
      *
      * @return void
      */
-    protected function checklineLength(PHP_CodeSniffer_File $phpcsfile, $stackptr, $linecontent)
-    {
+    protected function checklinelength(PHP_CodeSniffer_File $phpcsfile, $stackptr, $linecontent) {
         // If the content is a CVS or SVN id in a version tag, or it is
         // a license tag with a name and URL, there is nothing the
         // developer can do to shorten the line, so don't throw errors.
         if (preg_match('|@version[^\$]+\$Id|', $linecontent) === 0 && preg_match('|@license|', $linecontent) === 0) {
-            $lineLength = strlen($linecontent);
-            if ($this->absolutelineLimit > 0 && $lineLength > $this->absolutelineLimit) {
-                $error = 'line exceeds maximum limit of '.$this->absolutelineLimit." characters; contains $lineLength characters";
+            $linelength = strlen($linecontent);
+
+            if ($this->absolutelinelimit > 0 && $linelength > $this->absolutelinelimit) {
+                $error = 'line exceeds maximum limit of '.$this->absolutelinelimit." characters; contains $linelength characters";
                 $phpcsfile->adderror($error, $stackptr);
-            } else if ($lineLength > $this->lineLimit) {
-                $warning = 'line exceeds '.$this->lineLimit." characters; contains $lineLength characters";
+
+            } else if ($linelength > $this->linelimit) {
+                $warning = 'line exceeds '.$this->linelimit." characters; contains $linelength characters";
                 $phpcsfile->addwarning($warning, $stackptr);
             }
         }
-
     }
-
-
 }
-
-?>

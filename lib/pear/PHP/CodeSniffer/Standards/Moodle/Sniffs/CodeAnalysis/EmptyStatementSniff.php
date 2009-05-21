@@ -17,9 +17,10 @@
 /**
  * File containing the moodle_sniffs_codeanalysis_emptystatementsniff Class
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-codeanalysis
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-codeanalysis
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -42,7 +43,7 @@
  * <b>elsif</b>, <b>for</b>, <b>foreach<b>, <b>if</b>, <b>switch</b>, <b>try</b>
  * and <b>while</b>.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodle_sniffs_codeanalysis_emptystatementsniff implements php_codesniffer_sniff

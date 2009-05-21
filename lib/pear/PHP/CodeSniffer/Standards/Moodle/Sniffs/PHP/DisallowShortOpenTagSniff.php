@@ -17,9 +17,10 @@
 /**
  * moodle_sniffs_php_disallowshortopentagsniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-php
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-php
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -27,11 +28,10 @@
  *
  * Makes sure that shorthand PHP open tags are not used.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_php_disallowshortopentagsniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_php_disallowshortopentagsniff implements php_codesniffer_sniff {
 
 
     /**
@@ -39,13 +39,8 @@ class moodle_sniffs_php_disallowshortopentagsniff implements php_codesniffer_sni
      *
      * @return array
      */
-    public function register()
-    {
-        return array(
-                T_OPEN_TAG,
-                T_OPEN_TAG_WITH_ECHO,
-               );
-
+    public function register() {
+        return array(T_OPEN_TAG, T_OPEN_TAG_WITH_ECHO);
     }
 
 
@@ -58,8 +53,7 @@ class moodle_sniffs_php_disallowshortopentagsniff implements php_codesniffer_sni
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         // If short open tags are off, then any short open tags will be converted
         // to inline_html tags so we can just ignore them.
         // If its on, then we want to ban the use of them.
@@ -79,15 +73,11 @@ class moodle_sniffs_php_disallowshortopentagsniff implements php_codesniffer_sni
         }
 
         if ($opentag['code'] === T_OPEN_TAG_WITH_ECHO) {
-            $nextVar = $tokens[$phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($stackptr + 1), null, true)];
+            $nextvar = $tokens[$phpcsfile->findnext(PHP_CodeSniffer_tokens::$emptyTokens, ($stackptr + 1), null, true)];
             $error   = 'Short PHP opening tag used with echo. Found "';
-            $error  .= $opentag['content'].' '.$nextVar['content'].' ..." but expected "<?php echo '.$nextVar['content'].' ...".';
+            $error  .= $opentag['content'].' '.$nextvar['content'].' ..." but expected "<?php echo '.
+                       $nextvar['content'].' ...".';
             $phpcsfile->adderror($error, $stackptr);
         }
-
     }
-
-
 }
-
-?>

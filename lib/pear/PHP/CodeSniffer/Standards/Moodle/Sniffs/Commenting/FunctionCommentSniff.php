@@ -17,9 +17,10 @@
 /**
  * Parses and verifies the doc comments for functions.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-commenting
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-commenting
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 if (class_exists('PHP_CodeSniffer_CommentParser_FunctionCommentParser', true) === false) {
@@ -35,20 +36,19 @@ if (class_exists('PHP_CodeSniffer_CommentParser_FunctionCommentParser', true) ==
  *  <li>There is a blank newline after the short description.</li>
  *  <li>There is a blank newline between the long and short description.</li>
  *  <li>There is a blank newline between the long description and tags.</li>
- *  <li>Parameter names represent those in the method.</li>
- *  <li>Parameter comments are in the correct order</li>
- *  <li>Parameter comments are complete</li>
+ *  <li>parameter names represent those in the method.</li>
+ *  <li>parameter comments are in the correct order</li>
+ *  <li>parameter comments are complete</li>
  *  <li>A space is present before the first and after the last parameter</li>
  *  <li>A return type exists</li>
  *  <li>There must be one blank line between body and headline comments.</li>
  *  <li>Any throw tag must have an exception class.</li>
  * </ul>
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_commenting_functioncommentsniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_commenting_functioncommentsniff implements php_codesniffer_sniff {
 
     /**
      * The name of the method that we are currently processing.
@@ -76,14 +76,14 @@ class moodle_sniffs_commenting_functioncommentsniff implements php_codesniffer_s
      *
      * @var PHP_CodeSniffer_Comment_Parser_FunctionCommentParser
      */
-    protected $commentParser = null;
+    protected $commentparser = null;
 
     /**
      * The current PHP_CodeSniffer_File object we are processing.
      *
      * @var PHP_CodeSniffer_File
      */
-    protected $currentFile = null;
+    protected $currentfile = null;
 
 
     /**
@@ -91,8 +91,7 @@ class moodle_sniffs_commenting_functioncommentsniff implements php_codesniffer_s
      *
      * @return array
      */
-    public function register()
-    {
+    public function register() {
         return array(T_FUNCTION);
 
     }
@@ -107,8 +106,7 @@ class moodle_sniffs_commenting_functioncommentsniff implements php_codesniffer_s
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $find = array(
                  T_COMMENT,
                  T_DOC_COMMENT,
@@ -117,13 +115,13 @@ class moodle_sniffs_commenting_functioncommentsniff implements php_codesniffer_s
                  T_OPEN_TAG,
                 );
 
-        $commentend = $phpcsfile->findPrevious($find, ($stackptr - 1));
+        $commentend = $phpcsfile->findprevious($find, ($stackptr - 1));
 
         if ($commentend === false) {
             return;
         }
 
-        $this->currentFile = $phpcsfile;
+        $this->currentfile = $phpcsfile;
         $tokens            = $phpcsfile->gettokens();
 
         // If the token that we found was a class or a function, then this
@@ -134,6 +132,7 @@ class moodle_sniffs_commenting_functioncommentsniff implements php_codesniffer_s
             $error = 'You must use "/**" style comments for a function comment';
             $phpcsfile->adderror($error, $stackptr);
             return;
+
         } else if ($code !== T_DOC_COMMENT) {
             $phpcsfile->adderror('Missing function doc comment', $stackptr);
             return;
@@ -146,7 +145,8 @@ class moodle_sniffs_commenting_functioncommentsniff implements php_codesniffer_s
         $ignore[]  = T_WHITESPACE;
         $ignore[]  = T_ABSTRACT;
         $ignore[]  = T_FINAL;
-        $prevtoken = $phpcsfile->findPrevious($ignore, ($stackptr - 1), null, true);
+        $prevtoken = $phpcsfile->findprevious($ignore, ($stackptr - 1), null, true);
+
         if ($prevtoken !== $commentend) {
             $phpcsfile->adderror('Missing function doc comment', $stackptr);
             return;
@@ -154,20 +154,23 @@ class moodle_sniffs_commenting_functioncommentsniff implements php_codesniffer_s
 
         $this->_functiontoken = $stackptr;
 
-        foreach ($tokens[$stackptr]['conditions'] as $condPtr => $condition) {
+        foreach ($tokens[$stackptr]['conditions'] as $condptr => $condition) {
+
             if ($condition === T_CLASS || $condition === T_INTERFACE) {
-                $this->_classtoken = $condPtr;
+                $this->_classtoken = $condptr;
                 break;
             }
         }
 
         // If the first T_OPEN_TAG is right before the comment, it is probably
         // a file comment.
-        $commentstart = ($phpcsfile->findPrevious(T_DOC_COMMENT, ($commentend - 1), null, true) + 1);
-        $prevtoken    = $phpcsfile->findPrevious(T_WHITESPACE, ($commentstart - 1), null, true);
+        $commentstart = ($phpcsfile->findprevious(T_DOC_COMMENT, ($commentend - 1), null, true) + 1);
+        $prevtoken    = $phpcsfile->findprevious(T_WHITESPACE, ($commentstart - 1), null, true);
+
         if ($tokens[$prevtoken]['code'] === T_OPEN_TAG) {
             // Is this the first open tag?
-            if ($stackptr === 0 || $phpcsfile->findPrevious(T_OPEN_TAG, ($prevtoken - 1)) === false) {
+
+            if ($stackptr === 0 || $phpcsfile->findprevious(T_OPEN_TAG, ($prevtoken - 1)) === false) {
                 $phpcsfile->adderror('Missing function doc comment', $stackptr);
                 return;
             }
@@ -177,31 +180,34 @@ class moodle_sniffs_commenting_functioncommentsniff implements php_codesniffer_s
         $this->_methodname = $phpcsfile->getDeclarationname($stackptr);
 
         try {
-            $this->commentParser = new PHP_CodeSniffer_CommentParser_FunctionCommentParser($comment, $phpcsfile);
-            $this->commentParser->parse();
+            $this->commentparser = new PHP_CodeSniffer_CommentParser_FunctionCommentParser($comment, $phpcsfile);
+            $this->commentparser->parse();
+
         } catch (PHP_CodeSniffer_CommentParser_ParserException $e) {
             $line = ($e->getlinewithinComment() + $commentstart);
             $phpcsfile->adderror($e->getMessage(), $line);
             return;
         }
 
-        $comment = $this->commentParser->getComment();
+        $comment = $this->commentparser->getComment();
+
         if (is_null($comment) === true) {
             $error = 'Function doc comment is empty';
             $phpcsfile->adderror($error, $commentstart);
             return;
         }
 
-        $this->processParams($commentstart);
-        $this->processReturn($commentstart, $commentend);
-        $this->processThrows($commentstart);
+        $this->processparams($commentstart);
+        $this->processreturn($commentstart, $commentend);
+        $this->processthrows($commentstart);
 
         // No extra newline before short description.
         $short        = $comment->getShortComment();
         $newlinecount = 0;
-        $newlineSpan  = strspn($short, $phpcsfile->eolChar);
-        if ($short !== '' && $newlineSpan > 0) {
-            $line  = ($newlineSpan > 1) ? 'newlines' : 'newline';
+        $newlinespan  = strspn($short, $phpcsfile->eolChar);
+
+        if ($short !== '' && $newlinespan > 0) {
+            $line  = ($newlinespan > 1) ? 'newlines' : 'newline';
             $error = "Extra $line found before function comment short description";
             $phpcsfile->adderror($error, ($commentstart + 1));
         }
@@ -210,25 +216,30 @@ class moodle_sniffs_commenting_functioncommentsniff implements php_codesniffer_s
 
         // Exactly one blank line between short and long description.
         $long = $comment->getlongcomment();
+
         if (empty($long) === false) {
-            $between        = $comment->getWhiteSpaceBetween();
-            $newlineBetween = substr_count($between, $phpcsfile->eolChar);
-            if ($newlineBetween !== 2) {
+            $between        = $comment->getWhiteSpacebetween();
+            $newlinebetween = substr_count($between, $phpcsfile->eolChar);
+
+            if ($newlinebetween !== 2) {
                 $error = 'There must be exactly one blank line between descriptions in function comment';
                 $phpcsfile->adderror($error, ($commentstart + $newlinecount + 1));
             }
 
-            $newlinecount += $newlineBetween;
+            $newlinecount += $newlinebetween;
         }
 
         // Exactly one blank line before tags.
-        $params = $this->commentParser->gettagOrders();
+        $params = $this->commentparser->gettagOrders();
+
         if (count($params) > 1) {
-            $newlineSpan = $comment->getNewlineAfter();
-            if ($newlineSpan !== 2) {
+            $newlinespan = $comment->getNewlineAfter();
+
+            if ($newlinespan !== 2) {
                 $error = 'There must be exactly one blank line before the tags in function comment';
+
                 if ($long !== '') {
-                    $newlinecount += (substr_count($long, $phpcsfile->eolChar) - $newlineSpan + 1);
+                    $newlinecount += (substr_count($long, $phpcsfile->eolChar) - $newlinespan + 1);
                 }
 
                 $phpcsfile->addwarning($error, ($commentstart + $newlinecount));
@@ -247,23 +258,22 @@ class moodle_sniffs_commenting_functioncommentsniff implements php_codesniffer_s
      *
      * @return void
      */
-    protected function processThrows($commentstart)
-    {
-        if (count($this->commentParser->getThrows()) === 0) {
+    protected function processthrows($commentstart) {
+
+        if (count($this->commentparser->getthrows()) === 0) {
             return;
         }
 
-        foreach ($this->commentParser->getThrows() as $throw) {
+        foreach ($this->commentparser->getthrows() as $throw) {
 
-            $exception = $throw->getValue();
+            $exception = $throw->getvalue();
             $errorpos  = ($commentstart + $throw->getline());
 
             if ($exception === '') {
                 $error = '@throws tag must contain the exception class name';
-                $this->currentFile->adderror($error, $errorpos);
+                $this->currentfile->adderror($error, $errorpos);
             }
         }
-
     }
 
 
@@ -275,12 +285,12 @@ class moodle_sniffs_commenting_functioncommentsniff implements php_codesniffer_s
      *
      * @return void
      */
-    protected function processReturn($commentstart, $commentend)
-    {
+    protected function processreturn($commentstart, $commentend) {
         // Skip constructor and destructor.
         $classname = '';
+
         if ($this->_classtoken !== null) {
-            $classname = $this->currentFile->getDeclarationname($this->_classtoken);
+            $classname = $this->currentfile->getdeclarationname($this->_classtoken);
             $classname = strtolower(ltrim($classname, '_'));
         }
 
@@ -289,18 +299,17 @@ class moodle_sniffs_commenting_functioncommentsniff implements php_codesniffer_s
 
         if ($isspecialmethod === false && $methodname !== $classname) {
             // Report missing return tag.
-            if ($this->commentParser->getReturn() === null) {
+            if ($this->commentparser->getreturn() === null) {
                 $error = 'Missing @return tag in function comment';
-                $this->currentFile->adderror($error, $commentend);
-            } else if (trim($this->commentParser->getReturn()->getRawcontent()) === '') {
+                $this->currentfile->adderror($error, $commentend);
+
+            } else if (trim($this->commentparser->getreturn()->getrawcontent()) === '') {
                 $error    = '@return tag is empty in function comment';
-                $errorpos = ($commentstart + $this->commentParser->getReturn()->getline());
-                $this->currentFile->adderror($error, $errorpos);
+                $errorpos = ($commentstart + $this->commentparser->getreturn()->getline());
+                $this->currentfile->adderror($error, $errorpos);
             }
         }
-
     }
-
 
     /**
      * Process the function parameter comments.
@@ -310,155 +319,156 @@ class moodle_sniffs_commenting_functioncommentsniff implements php_codesniffer_s
      *
      * @return void
      */
-    protected function processParams($commentstart)
-    {
-        $realParams = $this->currentFile->getmethodParameters($this->_functiontoken);
+    protected function processparams($commentstart) {
+        $realparams = $this->currentfile->getmethodparameters($this->_functiontoken);
 
-        $params      = $this->commentParser->getParams();
-        $foundParams = array();
+        $params      = $this->commentparser->getparams();
+        $foundparams = array();
 
         if (empty($params) === false) {
 
-            $lastParm = (count($params) - 1);
-            if (substr_count($params[$lastParm]->getWhitespaceAfter(), $this->currentFile->eolChar) !== 2) {
+            $lastparm = (count($params) - 1);
+
+            if (substr_count($params[$lastparm]->getwhitespaceafter(), $this->currentfile->eolChar) !== 2) {
                 $error    = 'Last parameter comment requires a blank newline after it';
-                $errorpos = ($params[$lastParm]->getline() + $commentstart);
-                $this->currentFile->addwarning($error, $errorpos);
+                $errorpos = ($params[$lastparm]->getline() + $commentstart);
+                $this->currentfile->addwarning($error, $errorpos);
             }
 
-            // Parameters must appear immediately after the comment.
+            // parameters must appear immediately after the comment.
             if ($params[0]->getOrder() !== 2) {
-                $error    = 'Parameters must appear immediately after the comment';
+                $error    = 'parameters must appear immediately after the comment';
                 $errorpos = ($params[0]->getline() + $commentstart);
-                $this->currentFile->adderror($error, $errorpos);
+                $this->currentfile->adderror($error, $errorpos);
             }
 
-            $previousParam      = null;
-            $spaceBeforeVar     = 10000;
-            $spaceBeforeComment = 10000;
-            $longestType        = 0;
-            $longestVar         = 0;
+            $previousparam      = null;
+            $spacebeforevar     = 10000;
+            $spacebeforecomment = 10000;
+            $longesttype        = 0;
+            $longestvar         = 0;
 
             foreach ($params as $param) {
 
-                $paramComment = trim($param->getComment());
+                $paramcomment = trim($param->getcomment());
                 $errorpos     = ($param->getline() + $commentstart);
 
                 // Make sure that there is only one space before the var type.
-                if ($param->getWhitespaceBeforeType() !== ' ') {
+                if ($param->getwhitespacebeforetype() !== ' ') {
                     $error = 'Expected 1 space before variable type';
-                    $this->currentFile->addwarning($error, $errorpos);
+                    $this->currentfile->addwarning($error, $errorpos);
                 }
 
-                $spacecount = substr_count($param->getWhitespaceBeforeVarname(), ' ');
-                if ($spacecount < $spaceBeforeVar) {
-                    $spaceBeforeVar = $spacecount;
-                    $longestType    = $errorpos;
+                $spacecount = substr_count($param->getwhitespacebeforevarname(), ' ');
+
+                if ($spacecount < $spacebeforevar) {
+                    $spacebeforevar = $spacecount;
+                    $longesttype    = $errorpos;
                 }
 
-                $spacecount = substr_count($param->getWhitespaceBeforeComment(), ' ');
+                $spacecount = substr_count($param->getwhitespacebeforecomment(), ' ');
 
-                if ($spacecount < $spaceBeforeComment && $paramComment !== '') {
-                    $spaceBeforeComment = $spacecount;
-                    $longestVar         = $errorpos;
+                if ($spacecount < $spacebeforecomment && $paramcomment !== '') {
+                    $spacebeforecomment = $spacecount;
+                    $longestvar         = $errorpos;
                 }
 
                 // Make sure they are in the correct order,
                 // and have the correct name.
                 $pos = $param->getposition();
 
-                $paramname = ($param->getVarname() !== '') ? $param->getVarname() : '[ UNKNOWN ]';
+                $paramname = ($param->getvarname() !== '') ? $param->getvarname() : '[ UNKNOWN ]';
 
-                if ($previousParam !== null) {
-                    $previousname = ($previousParam->getVarname() !== '') ? $previousParam->getVarname() : 'UNKNOWN';
+                if ($previousparam !== null) {
+                    $previousname = ($previousparam->getvarname() !== '') ? $previousparam->getvarname() : 'UNKNOWN';
 
                     // Check to see if the parameters align properly.
-                    if ($param->alignsVariableWith($previousParam) === false) {
+                    if ($param->alignsvariablewith($previousparam) === false) {
                         $error = 'The variable names for parameters '.$previousname.' ('.($pos - 1).') and '.$paramname.' ('.$pos.') do not align';
-                        $this->currentFile->addwarning($error, $errorpos);
+                        $this->currentfile->addwarning($error, $errorpos);
                     }
 
-                    if ($param->alignsCommentWith($previousParam) === false) {
+                    if ($param->alignsCommentWith($previousparam) === false) {
                         $error = 'The comments for parameters '.$previousname.' ('.($pos - 1).') and '.$paramname.' ('.$pos.') do not align';
-                        $this->currentFile->addwarning($error, $errorpos);
+                        $this->currentfile->addwarning($error, $errorpos);
                     }
                 }
 
                 // Make sure the names of the parameter comment matches the
                 // actual parameter.
-                if (isset($realParams[($pos - 1)]) === true) {
-                    $realname      = $realParams[($pos - 1)]['name'];
-                    $foundParams[] = $realname;
+                if (isset($realparams[($pos - 1)]) === true) {
+                    $realname      = $realparams[($pos - 1)]['name'];
+                    $foundparams[] = $realname;
                     // Append ampersand to name if passing by reference.
-                    if ($realParams[($pos - 1)]['pass_by_reference'] === true) {
+                    if ($realparams[($pos - 1)]['pass_by_reference'] === true) {
                         $realname = '&'.$realname;
                     }
 
-                    if ($realname !== $param->getVarname()) {
+                    if ($realname !== $param->getvarname()) {
                         $error  = 'Doc comment var "'.$paramname;
                         $error .= '" does not match actual variable name "'.$realname;
                         $error .= '" at position '.$pos;
 
-                        $this->currentFile->adderror($error, $errorpos);
+                        $this->currentfile->adderror($error, $errorpos);
                     }
+
                 } else {
                     // We must have an extra parameter comment.
                     $error = 'Superfluous doc comment at position '.$pos;
-                    $this->currentFile->adderror($error, $errorpos);
+                    $this->currentfile->adderror($error, $errorpos);
                 }
 
-                if ($param->getVarname() === '') {
+                if ($param->getvarname() === '') {
                     $error = 'Missing parameter name at position '.$pos;
-                     $this->currentFile->adderror($error, $errorpos);
+                     $this->currentfile->adderror($error, $errorpos);
                 }
 
-                if ($param->getType() === '') {
+                if ($param->gettype() === '') {
                     $error = 'Missing type at position '.$pos;
-                    $this->currentFile->adderror($error, $errorpos);
+                    $this->currentfile->adderror($error, $errorpos);
                 }
 
-                if ($paramComment === '') {
+                if ($paramcomment === '') {
                     $error = 'Missing comment for param "'.$paramname.'" at position '.$pos;
-                    $this->currentFile->adderror($error, $errorpos);
+                    $this->currentfile->adderror($error, $errorpos);
                 }
 
-                $previousParam = $param;
+                $previousparam = $param;
 
             }
 
-            if ($spaceBeforeVar !== 1 && $spaceBeforeVar !== 10000 && $spaceBeforeComment !== 10000) {
+            if ($spacebeforevar !== 1 && $spacebeforevar !== 10000 && $spacebeforecomment !== 10000) {
                 $error = 'Expected 1 space after the longest type';
-                $this->currentFile->adderror($error, $longestType);
+                $this->currentfile->adderror($error, $longesttype);
             }
 
-            if ($spaceBeforeComment !== 1 && $spaceBeforeComment !== 10000) {
+            if ($spacebeforecomment !== 1 && $spacebeforecomment !== 10000) {
                 $error = 'Expected 1 space after the longest variable name';
-                $this->currentFile->adderror($error, $longestVar);
+                $this->currentfile->adderror($error, $longestvar);
             }
 
         }
 
         $realnames = array();
-        foreach ($realParams as $realParam) {
-            $realnames[] = $realParam['name'];
+
+        foreach ($realparams as $realparam) {
+            $realnames[] = $realparam['name'];
         }
 
         // Report and missing comments.
-        $diff = array_diff($realnames, $foundParams);
-        foreach ($diff as $neededParam) {
+        $diff = array_diff($realnames, $foundparams);
+
+        foreach ($diff as $neededparam) {
+
             if (count($params) !== 0) {
                 $errorpos = ($params[(count($params) - 1)]->getline() + $commentstart);
+
             } else {
                 $errorpos = $commentstart;
             }
 
-            $error = 'Doc comment for "'.$neededParam.'" missing';
-            $this->currentFile->adderror($error, $errorpos);
+            $error = 'Doc comment for "'.$neededparam.'" missing';
+            $this->currentfile->adderror($error, $errorpos);
         }
-
     }
-
-
 }
-
-?>

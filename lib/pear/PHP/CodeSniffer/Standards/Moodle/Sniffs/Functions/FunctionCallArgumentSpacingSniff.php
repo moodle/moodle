@@ -17,9 +17,10 @@
 /**
  * moodle_sniffs_functions_functioncallargumentspacingsniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-functions
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-functions
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -27,11 +28,10 @@
  *
  * Checks that calls to methods and functions are spaced correctly.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_functions_functioncallargumentspacingsniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_functions_functioncallargumentspacingsniff implements php_codesniffer_sniff {
 
 
     /**
@@ -39,10 +39,8 @@ class moodle_sniffs_functions_functioncallargumentspacingsniff implements php_co
      *
      * @return array
      */
-    public function register()
-    {
+    public function register() {
         return array(T_STRING);
-
     }
 
 
@@ -55,8 +53,7 @@ class moodle_sniffs_functions_functioncallargumentspacingsniff implements php_co
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
 
         // Skip tokens that are the names of functions or classes
@@ -65,44 +62,50 @@ class moodle_sniffs_functions_functioncallargumentspacingsniff implements php_co
         // "myFunction" is T_STRING but we should skip because it is not a
         // function or method *call*.
         $functionname    = $stackptr;
-        $functionKeyword = $phpcsfile->findPrevious(PHP_CodeSniffer_tokens::$emptyTokens, ($stackptr - 1), null, true);
-        if ($tokens[$functionKeyword]['code'] === T_FUNCTION || $tokens[$functionKeyword]['code'] === T_CLASS) {
+        $functionkeyword = $phpcsfile->findprevious(PHP_CodeSniffer_tokens::$emptyTokens, ($stackptr - 1), null, true);
+
+        if ($tokens[$functionkeyword]['code'] === T_FUNCTION || $tokens[$functionkeyword]['code'] === T_CLASS) {
             return;
         }
 
         // If the next non-whitespace token after the function or method call
         // is not an opening parenthesis then it cant really be a *call*.
-        $openBracket = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($functionname + 1), null, true);
-        if ($tokens[$openBracket]['code'] !== T_OPEN_PARENTHESIS) {
+        $openbracket = $phpcsfile->findnext(PHP_CodeSniffer_tokens::$emptyTokens, ($functionname + 1), null, true);
+        if ($tokens[$openbracket]['code'] !== T_OPEN_PARENTHESIS) {
             return;
         }
 
-        $closeBracket = $tokens[$openBracket]['parenthesis_closer'];
+        $closebracket = $tokens[$openbracket]['parenthesis_closer'];
 
-        $nextSeperator = $openBracket;
-        while (($nextSeperator = $phpcsfile->findNext(array(T_COMMA, T_VARIABLE), ($nextSeperator + 1), $closeBracket)) !== false) {
+        $nextseparator = $openbracket;
+
+        while (($nextseparator = $phpcsfile->findnext(array(T_COMMA, T_VARIABLE), ($nextseparator + 1), $closebracket)) !== false) {
             // Make sure the comma or variable belongs directly to this function call,
             // and is not inside a nested function call or array.
-            $brackets    = $tokens[$nextSeperator]['nested_parenthesis'];
-            $lastBracket = array_pop($brackets);
-            if ($lastBracket !== $closeBracket) {
+            $brackets    = $tokens[$nextseparator]['nested_parenthesis'];
+            $lastbracket = array_pop($brackets);
+
+            if ($lastbracket !== $closebracket) {
                 continue;
             }
 
-            if ($tokens[$nextSeperator]['code'] === T_COMMA) {
-                if ($tokens[($nextSeperator - 1)]['code'] === T_WHITESPACE) {
+            if ($tokens[$nextseparator]['code'] === T_COMMA) {
+
+                if ($tokens[($nextseparator - 1)]['code'] === T_WHITESPACE) {
                     $error = 'Space found before comma in function call';
                     $phpcsfile->addwarning($error, $stackptr);
                 }
 
-                if ($tokens[($nextSeperator + 1)]['code'] !== T_WHITESPACE) {
+                if ($tokens[($nextseparator + 1)]['code'] !== T_WHITESPACE) {
                     $error = 'No space found after comma in function call';
                     $phpcsfile->addwarning($error, $stackptr);
+
                 } else {
                     // If there is a newline in the space, then the must be formatting
                     // each argument on a newline, which is valid, so ignore it.
-                    if (strpos($tokens[($nextSeperator + 1)]['content'], $phpcsfile->eolChar) === false) {
-                        $space = strlen($tokens[($nextSeperator + 1)]['content']);
+                    if (strpos($tokens[($nextseparator + 1)]['content'], $phpcsfile->eolChar) === false) {
+                        $space = strlen($tokens[($nextseparator + 1)]['content']);
+
                         if ($space > 1) {
                             $error  = 'Expected 1 space after comma in function call; ';
                             $error .= $space.' found';
@@ -110,11 +113,15 @@ class moodle_sniffs_functions_functioncallargumentspacingsniff implements php_co
                         }
                     }
                 }
+
             } else {
                 // token is a variable.
-                $nexttoken = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($nextSeperator + 1), $closeBracket, true);
+                $nexttoken = $phpcsfile->findnext(PHP_CodeSniffer_tokens::$emptyTokens, ($nextseparator + 1), $closebracket, true);
+
                 if ($nexttoken !== false) {
+
                     if ($tokens[$nexttoken]['code'] === T_EQUAL) {
+
                         if (($tokens[($nexttoken - 1)]['code']) !== T_WHITESPACE) {
                             $error = 'Expected 1 space before = sign of default value';
                             $phpcsfile->addwarning($error, $stackptr);
@@ -128,10 +135,5 @@ class moodle_sniffs_functions_functioncallargumentspacingsniff implements php_co
                 }
             }
         }
-
     }
-
-
 }
-
-?>

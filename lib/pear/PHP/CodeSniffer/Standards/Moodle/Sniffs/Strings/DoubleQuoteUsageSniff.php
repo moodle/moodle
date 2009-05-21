@@ -17,9 +17,10 @@
 /**
  * moodle_sniffs_strings_doublequoteusagesniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-strings
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-strings
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -27,11 +28,10 @@
  *
  * Makes sure that any use of Double Quotes ("") are warranted.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_strings_doublequoteusagesniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_strings_doublequoteusagesniff implements php_codesniffer_sniff {
 
 
     /**
@@ -39,12 +39,8 @@ class moodle_sniffs_strings_doublequoteusagesniff implements php_codesniffer_sni
      *
      * @return array
      */
-    public function register()
-    {
-        return array(
-                T_CONSTANT_ENCAPSED_STRING,
-               );
-
+    public function register() {
+        return array(T_CONSTANT_ENCAPSED_STRING);
     }
 
 
@@ -57,34 +53,33 @@ class moodle_sniffs_strings_doublequoteusagesniff implements php_codesniffer_sni
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
 
-        $workingString = $tokens[$stackptr]['content'];
+        $workingstring = $tokens[$stackptr]['content'];
 
         // Check if it's a double quoted string.
-        if (strpos($workingString, '"') === false) {
+        if (strpos($workingstring, '"') === false) {
             return;
         }
 
         // Make sure it's not a part of a string started above.
         // If it is, then we have already checked it.
-        if ($workingString[0] !== '"') {
+        if ($workingstring[0] !== '"') {
             return;
         }
 
         // Work through the following tokens, in case this string is stretched
         // over multiple Lines.
         for ($i = ($stackptr + 1); $i < $phpcsfile->numTokens; $i++) {
+
             if ($tokens[$i]['type'] !== 'T_CONSTANT_ENCAPSED_STRING') {
                 break;
             }
-
-            $workingString .= $tokens[$i]['content'];
+            $workingstring .= $tokens[$i]['content'];
         }
 
-        $allowedChars = array(
+        $allowedchars = array(
                          '\n',
                          '\r',
                          '\f',
@@ -92,20 +87,17 @@ class moodle_sniffs_strings_doublequoteusagesniff implements php_codesniffer_sni
                          '\v',
                          '\x',
                          '\'',
+                         '$'
                         );
 
-        foreach ($allowedChars as $testChar) {
-            if (strpos($workingString, $testChar) !== false) {
+        foreach ($allowedchars as $testchar) {
+
+            if (strpos($workingstring, $testchar) !== false) {
                 return;
             }
         }
 
-        $error = "String $workingString does not require double quotes; use single quotes instead";
+        $error = "String $workingstring does not require double quotes; use single quotes instead";
         $phpcsfile->addwarning($error, $stackptr);
-
     }
-
-
 }
-
-?>

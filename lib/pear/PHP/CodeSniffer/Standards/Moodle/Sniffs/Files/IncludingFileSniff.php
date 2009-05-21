@@ -17,9 +17,10 @@
 /**
  * moodle_sniffs_files_includingfilesniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-files
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-files
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -29,23 +30,17 @@
  * require_once is used elsewhere. Also checks that brackets do not surround
  * the file being included.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_files_includingfilesniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_files_includingfilesniff implements php_codesniffer_sniff {
 
     /**
      * Conditions that should use include_once
      *
      * @var array(int)
      */
-    private static $_conditions = array(
-                                   T_IF,
-                                   T_ELSE,
-                                   T_ELSEIF,
-                                   T_SWITCH,
-                                  );
+    private static $_conditions = array(T_IF, T_ELSE, T_ELSEIF, T_SWITCH);
 
 
     /**
@@ -53,15 +48,8 @@ class moodle_sniffs_files_includingfilesniff implements php_codesniffer_sniff
      *
      * @return array
      */
-    public function register()
-    {
-        return array(
-                T_INCLUDE_ONCE,
-                T_REQUIRE_ONCE,
-                T_REQUIRE,
-                T_INCLUDE,
-               );
-
+    public function register() {
+        return array(T_INCLUDE_ONCE, T_REQUIRE_ONCE, T_REQUIRE, T_INCLUDE);
     }
 
 
@@ -74,11 +62,10 @@ class moodle_sniffs_files_includingfilesniff implements php_codesniffer_sniff
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
 
-        //$nexttoken = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($stackptr + 1), null, true);
+        //$nexttoken = $phpcsfile->findnext(PHP_CodeSniffer_tokens::$emptyTokens, ($stackptr + 1), null, true);
         //if ($tokens[$nexttoken]['code'] === T_OPEN_PARENTHESIS) {
         //    $error  = '"'.$tokens[$stackptr]['content'].'"';
         //    $error .= ' is a statement, not a function; ';
@@ -86,55 +73,57 @@ class moodle_sniffs_files_includingfilesniff implements php_codesniffer_sniff
         //    $phpcsfile->adderror($error, $stackptr);
         //}
 
-        $inCondition = (count($tokens[$stackptr]['conditions']) !== 0) ? true : false;
+        $incondition = (count($tokens[$stackptr]['conditions']) !== 0) ? true : false;
 
         // Check to see if this including statement is within the parenthesis of a condition.
         // If that's the case then we need to process it as being within a condition, as they
         // are checking the return value.
         if (isset($tokens[$stackptr]['nested_parenthesis']) === true) {
+
             foreach ($tokens[$stackptr]['nested_parenthesis'] as $left => $right) {
+
                 if (isset($tokens[$left]['parenthesis_owner']) === true) {
-                    $inCondition = true;
+                    $incondition = true;
                 }
             }
         }
 
         // Check to see if they are assigning the return value of this including call.
         // If they are then they are probably checking it, so its conditional.
-        $previous = $phpcsfile->findPrevious(PHP_CodeSniffer_tokens::$emptyTokens, ($stackptr - 1), null, true);
+        $previous = $phpcsfile->findprevious(PHP_CodeSniffer_tokens::$emptyTokens, ($stackptr - 1), null, true);
+
         if (in_array($tokens[$previous]['code'], PHP_CodeSniffer_tokens::$assignmentTokens) === true) {
             // The have assigned the return value to it, so its conditional.
-            $inCondition = true;
+            $incondition = true;
         }
 
-        $tokenCode = $tokens[$stackptr]['code'];
-        if ($inCondition === true) {
+        $tokencode = $tokens[$stackptr]['code'];
+
+        if ($incondition === true) {
             // We are inside a conditional statement. We need an include_once.
-            if ($tokenCode === T_REQUIRE_ONCE) {
+            if ($tokencode === T_REQUIRE_ONCE) {
                 $error  = 'File is being conditionally included; ';
                 $error .= 'use "include_once" instead';
                 $phpcsfile->adderror($error, $stackptr);
-            } else if ($tokenCode === T_REQUIRE) {
+
+            } else if ($tokencode === T_REQUIRE) {
                 $error  = 'File is being conditionally included; ';
                 $error .= 'use "include" instead';
                 $phpcsfile->adderror($error, $stackptr);
             }
+
         } else {
             // We are unconditionally including, we need a require_once.
-            if ($tokenCode === T_INCLUDE_ONCE) {
+            if ($tokencode === T_INCLUDE_ONCE) {
                 $error  = 'File is being unconditionally included; ';
                 $error .= 'use "require_once" instead';
                 $phpcsfile->adderror($error, $stackptr);
-            } else if ($tokenCode === T_INCLUDE) {
+
+            } else if ($tokencode === T_INCLUDE) {
                 $error  = 'File is being unconditionally included; ';
                 $error .= 'use "require" instead';
                 $phpcsfile->adderror($error, $stackptr);
             }
         }
-
     }
-
-
 }
-
-?>

@@ -17,9 +17,10 @@
 /**
  * moodle_sniffs_files_lineendingssniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-files
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-files
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -27,11 +28,10 @@
  *
  * Checks that end of line characters are correct.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_files_lineendingssniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_files_lineendingssniff implements php_codesniffer_sniff {
 
     /**
      * The valid EOL character.
@@ -46,8 +46,7 @@ class moodle_sniffs_files_lineendingssniff implements php_codesniffer_sniff
      *
      * @return array
      */
-    public function register()
-    {
+    public function register() {
         return array(T_OPEN_TAG);
 
     }
@@ -62,11 +61,11 @@ class moodle_sniffs_files_lineendingssniff implements php_codesniffer_sniff
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         // We are only interested if this is the first open tag.
         if ($stackptr !== 0) {
-            if ($phpcsfile->findPrevious(T_OPEN_TAG, ($stackptr - 1)) !== false) {
+
+            if ($phpcsfile->findprevious(T_OPEN_TAG, ($stackptr - 1)) !== false) {
                 return;
             }
         }
@@ -83,8 +82,4 @@ class moodle_sniffs_files_lineendingssniff implements php_codesniffer_sniff
         }
 
     }
-
-
 }
-
-?>

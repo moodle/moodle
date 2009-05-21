@@ -17,9 +17,10 @@
 /**
  * moodle_sniffs_whitespace_scopeclosingbracesniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-whitespace
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-whitespace
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -27,11 +28,10 @@
  *
  * Checks that the closing braces of scopes are aligned correctly.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_whitespace_scopeclosingbracesniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_whitespace_scopeclosingbracesniff implements php_codesniffer_sniff {
 
 
     /**
@@ -39,10 +39,8 @@ class moodle_sniffs_whitespace_scopeclosingbracesniff implements php_codesniffer
      *
      * @return array
      */
-    public function register()
-    {
+    public function register() {
         return PHP_CodeSniffer_tokens::$scopeOpeners;
-
     }
 
 
@@ -55,8 +53,7 @@ class moodle_sniffs_whitespace_scopeclosingbracesniff implements php_codesniffer
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
 
         // If this is an inline condition (ie. there is no scope opener), then
@@ -70,7 +67,9 @@ class moodle_sniffs_whitespace_scopeclosingbracesniff implements php_codesniffer
         // or an if with an else before it, then we need to start the scope
         // checking from there, rather than the current token.
         $linestart = ($stackptr - 1);
+
         for ($linestart; $linestart > 0; $linestart--) {
+
             if (strpos($tokens[$linestart]['content'], $phpcsfile->eolChar) !== false) {
                 break;
             }
@@ -78,14 +77,15 @@ class moodle_sniffs_whitespace_scopeclosingbracesniff implements php_codesniffer
 
         // We found a new line, now go forward and find the first non-whitespace
         // token.
-        $linestart = $phpcsfile->findNext(array(T_WHITESPACE), ($linestart + 1), null, true);
+        $linestart = $phpcsfile->findnext(array(T_WHITESPACE), ($linestart + 1), null, true);
 
-        $startColumn = $tokens[$linestart]['column'];
+        $startcolumn = $tokens[$linestart]['column'];
         $scopestart  = $tokens[$stackptr]['scope_opener'];
         $scopeend    = $tokens[$stackptr]['scope_closer'];
 
         // Check that the closing brace is on its own line.
-        $lastcontent = $phpcsfile->findPrevious(array(T_WHITESPACE), ($scopeend - 1), $scopestart, true);
+        $lastcontent = $phpcsfile->findprevious(array(T_WHITESPACE), ($scopeend - 1), $scopestart, true);
+
         if ($tokens[$lastcontent]['line'] === $tokens[$scopeend]['line']) {
             $error = 'Closing brace must be on a line by itself';
             $phpcsfile->adderror($error, $scopeend);
@@ -93,29 +93,29 @@ class moodle_sniffs_whitespace_scopeclosingbracesniff implements php_codesniffer
         }
 
         // Check now that the closing brace is lined up correctly.
-        $braceIndent   = $tokens[$scopeend]['column'];
-        $isBreakCloser = ($tokens[$scopeend]['code'] === T_BREAK);
-        if (in_array($tokens[$stackptr]['code'], array(T_CASE, T_DEFAULT)) === true && $isBreakCloser === true) {
+        $braceindent   = $tokens[$scopeend]['column'];
+        $isbreakcloser = ($tokens[$scopeend]['code'] === T_BREAK);
+
+        if (in_array($tokens[$stackptr]['code'], array(T_CASE, T_DEFAULT)) === true && $isbreakcloser === true) {
             // BREAK statements should be indented 4 spaces from the
             // CASE or DEFAULT statement.
-            if ($braceIndent !== ($startColumn + 4)) {
-                $error = 'Break statement indented incorrectly; expected '.($startColumn + 3).' spaces, found '.($braceIndent - 1);
+            if ($braceindent !== ($startcolumn + 4)) {
+                $error = 'Break statement indented incorrectly; expected '.($startcolumn + 3).' spaces, found '.
+                         ($braceindent - 1);
                 $phpcsfile->adderror($error, $scopeend);
             }
+
         } else {
+
             if (in_array($tokens[$stackptr]['code'], array(T_CASE, T_DEFAULT))) {
-                $startColumn -= 4;
+                $startcolumn -= 4;
             }
 
-            if ($braceIndent !== $startColumn) {
-                $error = 'Closing brace indented incorrectly; expected '.($startColumn - 1).' spaces, found '.($braceIndent - 1);
+            if ($braceindent !== $startcolumn) {
+                $error = 'Closing brace indented incorrectly; expected '.($startcolumn - 1).' spaces, found '.
+                         ($braceindent - 1);
                 $phpcsfile->adderror($error, $scopeend);
             }
         }
-
     }
-
-
 }
-
-?>

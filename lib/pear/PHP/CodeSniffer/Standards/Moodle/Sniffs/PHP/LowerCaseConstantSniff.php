@@ -17,9 +17,10 @@
 /**
  * moodle_sniffs_php_lowercaseconstantsniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-php
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-php
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -27,34 +28,25 @@
  *
  * Checks that all uses of true, false and null are lowerrcase.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_php_lowercaseconstantsniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_php_lowercaseconstantsniff implements php_codesniffer_sniff {
 
     /**
      * A list of tokenizers this sniff supports.
      *
      * @var array
      */
-    public $supportedtokenizers = array(
-                                   'PHP',
-                                   'JS',
-                                  );
+    public $supportedtokenizers = array('PHP', 'JS');
 
     /**
      * Returns an array of tokens this test wants to listen for.
      *
      * @return array
      */
-    public function register()
-    {
-        return array(
-                T_TRUE,
-                T_FALSE,
-                T_NULL,
-               );
+    public function register() {
+        return array(T_TRUE, T_FALSE, T_NULL);
 
     }
 
@@ -68,19 +60,15 @@ class moodle_sniffs_php_lowercaseconstantsniff implements php_codesniffer_sniff
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
 
         $keyword = $tokens[$stackptr]['content'];
+
         if (strtolower($keyword) !== $keyword) {
-            $error = 'TRUE, FALSE and NULL must be lowercase; expected "'.strtolower($keyword).'" but found "'.$keyword.'"';
+            $error = 'TRUE, FALSE and NULL must be lowercase; expected "'.
+                     strtolower($keyword).'" but found "'.$keyword.'"';
             $phpcsfile->adderror($error, $stackptr);
         }
-
     }
-
-
 }
-
-?>

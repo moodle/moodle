@@ -17,9 +17,10 @@
 /**
  * This file is part of the CodeAnalysis addon for PHP_CodeSniffer.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-codeanalysis
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-codeanalysis
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -31,7 +32,7 @@
  * interface that defines multiple methods but the implementation only needs some
  * of them.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodle_sniffs_codeanalysis_unusedfunctionparametersniff implements php_codesniffer_sniff
@@ -70,7 +71,7 @@ class moodle_sniffs_codeanalysis_unusedfunctionparametersniff implements php_cod
         }
 
         $params = array();
-        foreach ($phpcsfile->getmethodParameters($stackptr) as $param) {
+        foreach ($phpcsfile->getmethodparameters($stackptr) as $param) {
             $params[$param['name']] = $stackptr;
         }
 
@@ -91,7 +92,7 @@ class moodle_sniffs_codeanalysis_unusedfunctionparametersniff implements php_cod
                 return;
             } else if ($code === T_RETURN && $emptyBody === true) {
                 // Return statement and an empty body indicate an interface method.
-                $tmp = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($next + 1), null, true);
+                $tmp = $phpcsfile->findnext(PHP_CodeSniffer_tokens::$emptyTokens, ($next + 1), null, true);
                 if ($tmp === false) {
                     return;
                 }
@@ -101,7 +102,7 @@ class moodle_sniffs_codeanalysis_unusedfunctionparametersniff implements php_cod
                     return;
                 }
 
-                $tmp = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($tmp + 1), null, true);
+                $tmp = $phpcsfile->findnext(PHP_CodeSniffer_tokens::$emptyTokens, ($tmp + 1), null, true);
 
                 // There is a return <token>.
                 if ($tmp !== false && $tokens[$tmp] === T_SEMICOLON) {
@@ -140,5 +141,3 @@ class moodle_sniffs_codeanalysis_unusedfunctionparametersniff implements php_cod
 
 
 }
-
-?>

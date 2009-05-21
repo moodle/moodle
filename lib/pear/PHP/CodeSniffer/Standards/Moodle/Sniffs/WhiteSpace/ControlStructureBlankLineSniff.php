@@ -17,9 +17,10 @@
 /**
  * moodle_sniffs_whitespace_controlstructureblanklinesniff
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-whitespace
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-whitespace
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -27,7 +28,7 @@
  *
  * Checks that there is a blank line before control structures
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodle_sniffs_whitespace_controlstructureblanklinesniff implements php_codesniffer_sniff {
@@ -58,14 +59,21 @@ class moodle_sniffs_whitespace_controlstructureblanklinesniff implements php_cod
 
         // Move back until we find the previous non-whitespace, non-comment token
         do {
-            $previoustoken = $phpcsfile->findprevious(array(T_WHITESPACE, T_COMMENT, T_DOC_COMMENT), ($previoustoken - 1), null, true);
+            $previoustoken = $phpcsfile->findprevious(array(T_WHITESPACE, T_COMMENT, T_DOC_COMMENT),
+                                                      ($previoustoken - 1), null, true);
+
         } while ($tokens[$previoustoken]['line'] == $tokens[$stackptr]['line']);
 
         $previous_non_ws_token = $tokens[$previoustoken];
 
         // If this token is immediately on the line before this control structure, print a warning
         if ($previous_non_ws_token['line'] == ($tokens[$stackptr]['line'] - 1)) {
-            $phpcsfile->addWarning('You should add a blank line before control structures', $stackptr);
+            // Exception: do {EOL...} while (...);
+            if ($tokens[$stackptr]['code'] == T_WHILE && $tokens[($stackptr - 1)]['code'] == T_CLOSE_CURLY_BRACKET) {
+                // Ignore do...while (see above)
+            } else {
+                $phpcsfile->addWarning('You should add a blank line before control structures', $stackptr);
+            }
         }
     }
 }

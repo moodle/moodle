@@ -17,19 +17,19 @@
 /**
  * moodle_sniffs_functions_functioncallsignaturesniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-functions
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-functions
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
  * moodle_sniffs_functions_functioncallsignaturesniff.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_functions_functioncallsignaturesniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_functions_functioncallsignaturesniff implements php_codesniffer_sniff {
 
 
     /**
@@ -37,10 +37,8 @@ class moodle_sniffs_functions_functioncallsignaturesniff implements php_codesnif
      *
      * @return array
      */
-    public function register()
-    {
+    public function register() {
         return array(T_STRING);
-
     }
 
 
@@ -53,12 +51,11 @@ class moodle_sniffs_functions_functioncallsignaturesniff implements php_codesnif
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
 
         // Find the next non-empty token.
-        $next = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($stackptr + 1), null, true);
+        $next = $phpcsfile->findnext(PHP_CodeSniffer_tokens::$emptyTokens, ($stackptr + 1), null, true);
 
         if ($tokens[$next]['code'] !== T_OPEN_PARENTHESIS) {
             // Not a function call.
@@ -71,7 +68,8 @@ class moodle_sniffs_functions_functioncallsignaturesniff implements php_codesnif
         }
 
         // Find the previous non-empty token.
-        $previous = $phpcsfile->findPrevious(PHP_CodeSniffer_tokens::$emptyTokens, ($stackptr - 1), null, true);
+        $previous = $phpcsfile->findprevious(PHP_CodeSniffer_tokens::$emptyTokens, ($stackptr - 1), null, true);
+
         if ($tokens[$previous]['code'] === T_FUNCTION) {
             // It's a function definition, not a function call.
             return;
@@ -98,7 +96,7 @@ class moodle_sniffs_functions_functioncallsignaturesniff implements php_codesnif
 
         if ($tokens[($closer - 1)]['code'] === T_WHITESPACE) {
             // Checking this: $value = my_function(...[*]).
-            $between = $phpcsfile->findNext(T_WHITESPACE, ($next + 1), null, true);
+            $between = $phpcsfile->findnext(T_WHITESPACE, ($next + 1), null, true);
 
             // Only throw an error if there is some content between the parenthesis.
             // IE. Checking for this: $value = my_function().
@@ -111,17 +109,14 @@ class moodle_sniffs_functions_functioncallsignaturesniff implements php_codesnif
             }
         }
 
-        $next = $phpcsfile->findNext(T_WHITESPACE, ($closer + 1), null, true);
+        $next = $phpcsfile->findnext(T_WHITESPACE, ($closer + 1), null, true);
 
         if ($tokens[$next]['code'] === T_SEMICOLON) {
+
             if (in_array($tokens[($closer + 1)]['code'], PHP_CodeSniffer_tokens::$emptyTokens) === true) {
                 $error = 'Space after closing parenthesis of function call prohibited';
                 $phpcsfile->adderror($error, $closer);
             }
         }
-
     }
-
-
 }
-?>

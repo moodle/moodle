@@ -17,9 +17,10 @@
 /**
  * This file is part of the CodeAnalysis addon for PHP_CodeSniffer.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-codeanalysis
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-codeanalysis
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -41,7 +42,7 @@
  * }
  * </code>
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodle_sniffs_codeanalysis_forloopwithtestfunctioncallsniff implements php_codesniffer_sniff
@@ -100,7 +101,7 @@ class moodle_sniffs_codeanalysis_forloopwithtestfunctioncallsniff implements php
 
             // Find next non empty token, if it is a open curly brace we have a
             // function call.
-            $index = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($next + 1), null, true);
+            $index = $phpcsfile->findnext(PHP_CodeSniffer_tokens::$emptyTokens, ($next + 1), null, true);
 
             if ($tokens[$index]['code'] === T_OPEN_PARENTHESIS) {
                 $error = 'Avoid function calls in a FOR loop test part';

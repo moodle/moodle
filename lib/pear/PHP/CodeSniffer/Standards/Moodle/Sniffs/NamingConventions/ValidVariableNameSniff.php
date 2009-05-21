@@ -17,9 +17,10 @@
 /**
  * moodle_sniffs_namingconventions_validvariablenamesniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-namingconventions
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-namingconventions
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 if (class_exists('PHP_CodeSniffer_Standards_AbstractVariableSniff', true) === false) {
@@ -32,11 +33,10 @@ if (class_exists('PHP_CodeSniffer_Standards_AbstractVariableSniff', true) === fa
  *
  * Checks the naming of member variables.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_namingconventions_validvariablenamesniff extends php_codesniffer_standards_abstractvariablesniff
-{
+class moodle_sniffs_namingconventions_validvariablenamesniff extends php_codesniffer_standards_abstractvariablesniff {
 
     private $allowed_global_vars = array('CFG', 'SESSION', 'USER', 'COURSE', 'SITE', 'PAGE', 'DB', 'THEME',
                                          '_SERVER', '_GET', '_POST', '_FILES', '_REQUEST', '_SESSION',
@@ -51,10 +51,10 @@ class moodle_sniffs_namingconventions_validvariablenamesniff extends php_codesni
      *
      * @return void
      */
-    protected function processMemberVar(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    protected function processmembervar(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
         $membername     = ltrim($tokens[$stackptr]['content'], '$');
+
         if (preg_match('/[A-Z]+/', $membername)) {
             $error = "Member variable \"$membername\" must be all lower-case";
             $phpcsfile->adderror($error, $stackptr);
@@ -62,13 +62,14 @@ class moodle_sniffs_namingconventions_validvariablenamesniff extends php_codesni
         }
 
         // Must not be preceded by 'var' keyword
-        $keyword = $phpcsfile->findPrevious(T_VAR, $stackptr);
+        $keyword = $phpcsfile->findprevious(T_VAR, $stackptr);
+
         if ($tokens[$keyword]['line'] == $tokens[$stackptr]['line']) {
-            $error = "The 'var' keyword is not permitted. Visibility must be explicitly declared with public, private or protected";
+            $error = "The 'var' keyword is not permitted." .
+                     'Visibility must be explicitly declared with public, private or protected';
             $phpcsfile->adderror($error, $stackptr);
             return;
         }
-
     }
 
 
@@ -80,18 +81,18 @@ class moodle_sniffs_namingconventions_validvariablenamesniff extends php_codesni
      *
      * @return void
      */
-    protected function processVariable(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    protected function processvariable(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
         $membername     = ltrim($tokens[$stackptr]['content'], '$');
+
         if (preg_match('/[A-Z]+/', $membername)) {
+
             if (!in_array($membername, $this->allowed_global_vars)) {
                 $error = "Member variable \"$membername\" must be all lower-case";
                 $phpcsfile->adderror($error, $stackptr);
                 return;
             }
         }
-
     }
 
 

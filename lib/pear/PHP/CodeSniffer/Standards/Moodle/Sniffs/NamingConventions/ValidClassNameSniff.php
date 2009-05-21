@@ -17,9 +17,10 @@
 /**
  * moodle_sniffs_namingconventions_validclassnamesniff.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-namingconventions
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-namingconventions
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -28,11 +29,10 @@
  * Ensures class and interface names start with a capital letter
  * and use _ separators.
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_namingconventions_validclassnamesniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_namingconventions_validclassnamesniff implements php_codesniffer_sniff {
 
 
     /**
@@ -40,13 +40,8 @@ class moodle_sniffs_namingconventions_validclassnamesniff implements php_codesni
      *
      * @return array
      */
-    public function register()
-    {
-        return array(
-                T_CLASS,
-                T_INTERFACE,
-               );
-
+    public function register() {
+        return array(T_CLASS, T_INTERFACE);
     }
 
 
@@ -59,11 +54,10 @@ class moodle_sniffs_namingconventions_validclassnamesniff implements php_codesni
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
 
-        $classname = $phpcsfile->findNext(T_STRING, $stackptr);
+        $classname = $phpcsfile->findnext(T_STRING, $stackptr);
         $name      = trim($tokens[$classname]['content']);
 
         // Make sure that the word is all lowercase
@@ -72,11 +66,5 @@ class moodle_sniffs_namingconventions_validclassnamesniff implements php_codesni
             $error = ucfirst($tokens[$stackptr]['content']).' name is not valid, must be all lower-case';
             $phpcsfile->adderror($error, $stackptr);
         }
-
     }
-
-
 }
-
-
-?>

@@ -17,9 +17,10 @@
 /**
  * Parses and verifies the doc comments for files.
  *
- * @package   lib-pear-php-codesniffer-standards-moodle-sniffs-commenting
- * @copyright 2008 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage lib-pear-php-codesniffer-standards-moodle-sniffs-commenting
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 if (class_exists('PHP_CodeSniffer_CommentParser_ClassCommentParser', true) === false) {
@@ -41,7 +42,7 @@ if (class_exists('PHP_CodeSniffer_CommentParser_ClassCommentParser', true) === f
  *  <li>Check required and optional tags and the format of their content.</li>
  * </ul>
  *
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -70,7 +71,7 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
            'category'   => array(
                             'required'       => false,
                             'allow_multiple' => false,
-                            'order_text'     => 'precedes @package',
+                            'order_text'     => 'precedes @subpackage',
                            ),
            'package'    => array(
                             'required'       => true,
@@ -80,12 +81,12 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
            'subpackage' => array(
                             'required'       => false,
                             'allow_multiple' => false,
-                            'order_text'     => 'follows @package',
+                            'order_text'     => 'follows @subpackage',
                            ),
            'author'     => array(
                             'required'       => false,
                             'allow_multiple' => true,
-                            'order_text'     => 'follows @subpackage (if used) or @package',
+                            'order_text'     => 'follows @subsubpackage (if used) or @subpackage',
                            ),
            'copyright'  => array(
                             'required'       => true,
@@ -124,6 +125,10 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
                            ),
                 );
 
+    protected $core_folders = array('admin', 'backup', 'blog', 'calendar', 'course',
+                                    'error', 'group', 'iplookup', 'lib', 'login',
+                                    'message', 'mnet', 'my', 'notes', 'pix', 'rss',
+                                    'tag', 'user', 'userpix');
 
     /**
      * Returns an array of tokens this test wants to listen for.
@@ -150,7 +155,7 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
         // We are only interested if this is the first open tag.
         if ($stackptr !== 0) {
 
-            if ($phpcsfile->findPrevious(T_OPEN_TAG, ($stackptr - 1)) !== false) {
+            if ($phpcsfile->findprevious(T_OPEN_TAG, ($stackptr - 1)) !== false) {
                 return;
             }
         }
@@ -504,13 +509,13 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
         if ($tagelement instanceof PHP_CodeSniffer_CommentParser_Singleelement) {
 
             if ($tagelement->getcontent() !== '') {
-                return (strlen($tagname) + substr_count($tagelement->getWhitespaceBeforecontent(), ' '));
+                return (strlen($tagname) + substr_count($tagelement->getwhitespacebeforecontent(), ' '));
             }
 
         } else if ($tagelement instanceof PHP_CodeSniffer_CommentParser_Pairelement) {
 
             if ($tagelement->getValue() !== '') {
-                return (strlen($tagname) + substr_count($tagelement->getWhitespaceBeforeValue(), ' '));
+                return (strlen($tagname) + substr_count($tagelement->getwhitespacebeforevalue(), ' '));
             }
         }
 
@@ -567,20 +572,28 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
     protected function processpackage($errorpos) {
         global $CFG;
         $package = $this->commentparser->getPackage();
+
         $filename = str_replace($CFG->dirroot, '', $this->currentfile->getfilename());
+        $path_parts = explode('/', $filename);
 
-        // Replace slashes or backslashes in file path with dashes
-        $expected_package = strtolower(str_replace('/', '-', $filename));
+        if (in_array($path_parts[1], $this->core_folders)) {
+            $expected_package = 'moodlecore';
 
-        if (strpos($expected_package, '-')) {
-            $expected_package = strtolower(str_replace('\\', '-', $filename));
+        } else {
+
+            // Replace slashes or backslashes in file path with dashes
+            $expected_package = strtolower(str_replace('/', '-', $filename));
+
+            if (strpos($expected_package, '-')) {
+                $expected_package = strtolower(str_replace('\\', '-', $filename));
+            }
+
+            // Strip off last part: the name of the searched file
+            $expected_package = substr($expected_package, 0, strrpos($expected_package, '-'));
+
+            // Remove first dash if present
+            $expected_package = ltrim($expected_package, '-');
         }
-
-        // Strip off last part: the name of the searched file
-        $expected_package = substr($expected_package, 0, strrpos($expected_package, '-'));
-
-        // Remove first dash if present
-        $expected_package = ltrim($expected_package, '-');
 
         if ($package !== null) {
             $content = $package->getcontent();
@@ -597,7 +610,7 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
                 }
 
             } else {
-                $error = '@package tag must contain a name';
+                $error = '@subpackage tag must contain a name';
                 $this->currentfile->adderror($error, $errorpos);
             }
         }
@@ -632,7 +645,7 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
 
                     $validname = trim($newname, '_');
                     $error     = "Subpackage name \"$content\" is not valid; consider \"$validname\" instead";
-                    $this->currentfile->adderror($error, $errorpos);
+                    // $this->currentfile->adderror($error, $errorpos);
                 }
 
             } else {
