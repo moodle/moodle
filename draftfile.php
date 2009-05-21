@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This script delegates file serving to individual plugins
+ * This script serves draft files of current user
  *
  * @package    moodlecore
  * @subpackage file
