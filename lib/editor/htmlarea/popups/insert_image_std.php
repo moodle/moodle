@@ -82,9 +82,9 @@ function onPreview() {
   img.src = url;
   var win = null;
   if (!document.all) {
-    win = window.open("about:blank", "ha_imgpreview", "toolbar=no,menubar=no,personalbar=no,innerWidth=100,innerHeight=100,scrollbars=no,resizable=yes");
+    win = window.open("<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/blank.html", "ha_imgpreview", "toolbar=no,menubar=no,personalbar=no,innerWidth=100,innerHeight=100,scrollbars=no,resizable=yes");
   } else {
-    win = window.open("about:blank", "ha_imgpreview", "channelmode=no,directories=no,height=100,width=100,location=no,menubar=no,resizable=yes,scrollbars=no,toolbar=no");
+    win = window.open("<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/blank.html", "ha_imgpreview", "channelmode=no,directories=no,height=100,width=100,location=no,menubar=no,resizable=yes,scrollbars=no,toolbar=no");
   }
   preview_window = win;
   var doc = win.document;
