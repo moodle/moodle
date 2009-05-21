@@ -170,7 +170,7 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
             $phpcsfile->adderror('File must begin with License boilerplate', ($stackptr + 1));
             return;
 
-        } else if (preg_match('|\$Id\$|i', $tokens[$commentstart]['content'])) {
+        } else if (preg_match('|\$Id|i', $tokens[$commentstart]['content'])) {
             $phpcsfile->addwarning("\$Id\$ tag is no longer required, please remove.", ($stackptr + 1));
             return;
         }

@@ -335,13 +335,6 @@ class moodle_sniffs_commenting_functioncommentsniff implements php_codesniffer_s
                 $this->currentfile->addwarning($error, $errorpos);
             }
 
-            // parameters must appear immediately after the comment.
-            if ($params[0]->getOrder() !== 2) {
-                $error    = 'parameters must appear immediately after the comment';
-                $errorpos = ($params[0]->getline() + $commentstart);
-                $this->currentfile->adderror($error, $errorpos);
-            }
-
             $previousparam      = null;
             $spacebeforevar     = 10000;
             $spacebeforecomment = 10000;
