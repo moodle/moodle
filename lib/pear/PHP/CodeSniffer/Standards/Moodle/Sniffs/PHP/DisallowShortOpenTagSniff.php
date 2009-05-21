@@ -71,17 +71,17 @@ class moodle_sniffs_php_disallowshortopentagsniff implements php_codesniffer_sni
         }
 
         $tokens  = $phpcsfile->gettokens();
-        $openTag = $tokens[$stackptr];
+        $opentag = $tokens[$stackptr];
 
-        if ($openTag['content'] === '<?') {
-            $error = 'Short PHP opening tag used. Found "'.$openTag['content'].'" Expected "<?php".';
+        if ($opentag['content'] === '<?') {
+            $error = 'Short PHP opening tag used. Found "'.$opentag['content'].'" Expected "<?php".';
             $phpcsfile->adderror($error, $stackptr);
         }
 
-        if ($openTag['code'] === T_OPEN_TAG_WITH_ECHO) {
+        if ($opentag['code'] === T_OPEN_TAG_WITH_ECHO) {
             $nextVar = $tokens[$phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($stackptr + 1), null, true)];
             $error   = 'Short PHP opening tag used with echo. Found "';
-            $error  .= $openTag['content'].' '.$nextVar['content'].' ..." but expected "<?php echo '.$nextVar['content'].' ...".';
+            $error  .= $opentag['content'].' '.$nextVar['content'].' ..." but expected "<?php echo '.$nextVar['content'].' ...".';
             $phpcsfile->adderror($error, $stackptr);
         }
 

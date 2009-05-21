@@ -70,7 +70,7 @@ class moodle_sniffs_codeanalysis_unusedfunctionparametersniff implements php_cod
         }
 
         $params = array();
-        foreach ($phpcsfile->getMethodParameters($stackptr) as $param) {
+        foreach ($phpcsfile->getmethodParameters($stackptr) as $param) {
             $params[$param['name']] = $stackptr;
         }
 
@@ -130,8 +130,8 @@ class moodle_sniffs_codeanalysis_unusedfunctionparametersniff implements php_cod
         }
 
         if ($emptyBody === false && count($params) > 0) {
-            foreach ($params as $paramName => $position) {
-                $error = 'The method parameter '.$paramName.' is never used';
+            foreach ($params as $paramname => $position) {
+                $error = 'The method parameter '.$paramname.' is never used';
                 $phpcsfile->addwarning($error, $position);
             }
         }

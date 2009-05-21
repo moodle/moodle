@@ -39,7 +39,7 @@ class moodle_sniffs_whitespace_controlstructureblanklinesniff implements php_cod
      * @return array
      */
     public function register() {
-        return array(T_IF, T_FOR, T_FOREACH, T_WHILE, T_SWITCH);
+        return array(T_IF, T_FOR, T_FOREACH, T_WHILE, T_SWITCH, T_TRY, T_CATCH);
     }
 
 
@@ -56,12 +56,14 @@ class moodle_sniffs_whitespace_controlstructureblanklinesniff implements php_cod
         $tokens = $phpcsfile->gettokens();
         $previoustoken = $stackptr - 1;
 
-        while ($tokens[$previoustoken]['line'] == $tokens[$stackptr]['line']) {
-            $previoustoken = $phpcsfile->findprevious(T_WHITESPACE, ($previoustoken - 1), null, true);
-        }
+        // Move back until we find the previous non-whitespace, non-comment token
+        do {
+            $previoustoken = $phpcsfile->findprevious(array(T_WHITESPACE, T_COMMENT, T_DOC_COMMENT), ($previoustoken - 1), null, true);
+        } while ($tokens[$previoustoken]['line'] == $tokens[$stackptr]['line']);
 
         $previous_non_ws_token = $tokens[$previoustoken];
 
+        // If this token is immediately on the line before this control structure, print a warning
         if ($previous_non_ws_token['line'] == ($tokens[$stackptr]['line'] - 1)) {
             $phpcsfile->addWarning('You should add a blank line before control structures', $stackptr);
         }

@@ -78,7 +78,7 @@ class moodle_sniffs_files_lineendingssniff implements php_codesniffer_sniff
             $found    = $phpcsfile->eolChar;
             $found    = str_replace("\n", '\n', $found);
             $found    = str_replace("\r", '\r', $found);
-            $error    = "End of line character is invalid; expected \"$expected\" but found \"$found\"";
+            $error    = "end of line character is invalid; expected \"$expected\" but found \"$found\"";
             $phpcsfile->adderror($error, $stackptr);
         }
 

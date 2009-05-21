@@ -78,27 +78,27 @@ class moodle_sniffs_files_linelengthsniff implements php_codesniffer_sniff
         $tokens = $phpcsfile->gettokens();
 
         // Make sure this is the first open tag.
-        $previousOpenTag = $phpcsfile->findPrevious(array(T_OPEN_TAG), ($stackptr - 1));
-        if ($previousOpenTag !== false) {
+        $previousOpentag = $phpcsfile->findPrevious(array(T_OPEN_TAG), ($stackptr - 1));
+        if ($previousOpentag !== false) {
             return;
         }
 
-        $tokenCount         = 0;
+        $tokencount         = 0;
         $currentlinecontent = '';
         $currentline        = 1;
 
-        for (; $tokenCount < $phpcsfile->numTokens; $tokenCount++) {
-            if ($tokens[$tokenCount]['line'] === $currentline) {
-                $currentlinecontent .= $tokens[$tokenCount]['content'];
+        for (; $tokencount < $phpcsfile->numTokens; $tokencount++) {
+            if ($tokens[$tokencount]['line'] === $currentline) {
+                $currentlinecontent .= $tokens[$tokencount]['content'];
             } else {
                 $currentlinecontent = trim($currentlinecontent, $phpcsfile->eolChar);
-                $this->checklineLength($phpcsfile, ($tokenCount - 1), $currentlinecontent);
-                $currentlinecontent = $tokens[$tokenCount]['content'];
+                $this->checklineLength($phpcsfile, ($tokencount - 1), $currentlinecontent);
+                $currentlinecontent = $tokens[$tokencount]['content'];
                 $currentline++;
             }
         }
 
-        $this->checklineLength($phpcsfile, ($tokenCount - 1), $currentlinecontent);
+        $this->checklineLength($phpcsfile, ($tokencount - 1), $currentlinecontent);
 
     }
 

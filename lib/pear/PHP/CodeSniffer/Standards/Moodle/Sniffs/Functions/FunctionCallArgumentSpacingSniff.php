@@ -64,7 +64,7 @@ class moodle_sniffs_functions_functioncallargumentspacingsniff implements php_co
         // function myFunction...
         // "myFunction" is T_STRING but we should skip because it is not a
         // function or method *call*.
-        $functionName    = $stackptr;
+        $functionname    = $stackptr;
         $functionKeyword = $phpcsfile->findPrevious(PHP_CodeSniffer_tokens::$emptyTokens, ($stackptr - 1), null, true);
         if ($tokens[$functionKeyword]['code'] === T_FUNCTION || $tokens[$functionKeyword]['code'] === T_CLASS) {
             return;
@@ -72,7 +72,7 @@ class moodle_sniffs_functions_functioncallargumentspacingsniff implements php_co
 
         // If the next non-whitespace token after the function or method call
         // is not an opening parenthesis then it cant really be a *call*.
-        $openBracket = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($functionName + 1), null, true);
+        $openBracket = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($functionname + 1), null, true);
         if ($tokens[$openBracket]['code'] !== T_OPEN_PARENTHESIS) {
             return;
         }

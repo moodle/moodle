@@ -43,7 +43,7 @@ class moodle_sniffs_namingconventions_validfunctionnamesniff extends php_codesni
      *
      * @var array
      */
-    private $_magicMethods = array(
+    private $_magicmethods = array(
                               'construct',
                               'destruct',
                               'call',
@@ -91,14 +91,14 @@ class moodle_sniffs_namingconventions_validfunctionnamesniff extends php_codesni
      */
     protected function processtokenwithinScope(PHP_CodeSniffer_File $phpcsfile, $stackptr, $currScope)
     {
-        $className  = $phpcsfile->getDeclarationName($currScope);
-        $methodName = $phpcsfile->getDeclarationName($stackptr);
+        $classname  = $phpcsfile->getDeclarationname($currScope);
+        $methodname = $phpcsfile->getDeclarationname($stackptr);
 
         // Is this a magic method. IE. is prefixed with "__".
-        if (preg_match('|^__|', $methodName) !== 0) {
-            $magicPart = substr($methodName, 2);
-            if (in_array($magicPart, $this->_magicMethods) === false) {
-                 $error = "Method name \"$className::$methodName\" is invalid; only PHP magic methods should be prefixed with a double underscore";
+        if (preg_match('|^__|', $methodname) !== 0) {
+            $magicPart = substr($methodname, 2);
+            if (in_array($magicPart, $this->_magicmethods) === false) {
+                 $error = "method name \"$classname::$methodname\" is invalid; only PHP magic methods should be prefixed with a double underscore";
                  $phpcsfile->adderror($error, $stackptr);
             }
 
@@ -106,26 +106,26 @@ class moodle_sniffs_namingconventions_validfunctionnamesniff extends php_codesni
         }
 
         // PHP4 constructors are allowed to break our rules.
-        if ($methodName === $className) {
+        if ($methodname === $classname) {
             return;
         }
 
         // PHP4 destructors are allowed to break our rules.
-        if ($methodName === '_'.$className) {
+        if ($methodname === '_'.$classname) {
             return;
         }
 
-        $methodProps    = $phpcsfile->getMethodProperties($stackptr);
+        $methodProps    = $phpcsfile->getmethodProperties($stackptr);
         $isPublic       = ($methodProps['scope'] === 'private') ? false : true;
         $scope          = $methodProps['scope'];
         $scopeSpecified = $methodProps['scope_specified'];
 
         // Only lower-case accepted
-        if (preg_match('/[A-Z]+/', $methodName)) {
+        if (preg_match('/[A-Z]+/', $methodname)) {
             if ($scopeSpecified === true) {
-                $error = ucfirst($scope)." method name \"$className::$methodName\" must be in lower-case letters only";
+                $error = ucfirst($scope)." method name \"$classname::$methodname\" must be in lower-case letters only";
             } else {
-                $error = "Method name \"$className::$methodName\" must be in lower-case letters only";
+                $error = "method name \"$classname::$methodname\" must be in lower-case letters only";
             }
 
             $phpcsfile->adderror($error, $stackptr);
@@ -133,11 +133,11 @@ class moodle_sniffs_namingconventions_validfunctionnamesniff extends php_codesni
         }
 
         // No numbers accepted
-        if (preg_match('/[0-9]+/', $methodName)) {
+        if (preg_match('/[0-9]+/', $methodname)) {
             if ($scopeSpecified === true) {
-                $error = ucfirst($scope)." method name \"$className::$methodName\" must only contain letters";
+                $error = ucfirst($scope)." method name \"$classname::$methodname\" must only contain letters";
             } else {
-                $error = "Method name \"$className::$methodName\" must only contain letters";
+                $error = "Method name \"$classname::$methodname\" must only contain letters";
             }
 
             $phpcsfile->adderror($error, $stackptr);
@@ -158,13 +158,13 @@ class moodle_sniffs_namingconventions_validfunctionnamesniff extends php_codesni
      */
     protected function processtokenOutsideScope(PHP_CodeSniffer_File $phpcsfile, $stackptr)
     {
-        $functionName = $phpcsfile->getDeclarationName($stackptr);
+        $functionname = $phpcsfile->getDeclarationname($stackptr);
 
         // Is this a magic function. IE. is prefixed with "__".
-        if (preg_match('|^__|', $functionName) !== 0) {
-            $magicPart = substr($functionName, 2);
+        if (preg_match('|^__|', $functionname) !== 0) {
+            $magicPart = substr($functionname, 2);
             if (in_array($magicPart, $this->_magicFunctions) === false) {
-                 $error = "Function name \"$functionName\" is invalid; only PHP magic methods should be prefixed with a double underscore";
+                 $error = "Function name \"$functionname\" is invalid; only PHP magic methods should be prefixed with a double underscore";
                  $phpcsfile->adderror($error, $stackptr);
             }
 
@@ -172,16 +172,16 @@ class moodle_sniffs_namingconventions_validfunctionnamesniff extends php_codesni
         }
 
         // Only lower-case accepted
-        if (preg_match('/[A-Z]+/', $functionName)) {
-            $error = "function name \"$functionName\" must be lower-case letters only";
+        if (preg_match('/[A-Z]+/', $functionname)) {
+            $error = "function name \"$functionname\" must be lower-case letters only";
 
             $phpcsfile->adderror($error, $stackptr);
             return;
         }
 
         // Only letters accepted
-        if (preg_match('/[0-9]+/', $functionName)) {
-            $error = "function name \"$functionName\" must only contain letters";
+        if (preg_match('/[0-9]+/', $functionname)) {
+            $error = "function name \"$functionname\" must only contain letters";
 
             $phpcsfile->adderror($error, $stackptr);
             return;

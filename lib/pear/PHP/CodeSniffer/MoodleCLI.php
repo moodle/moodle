@@ -20,11 +20,11 @@
  * Simple modifications to the CLI class to only use the Moodle Standard
  *
  * @package   lib-pear-php-codesniffer
- * @copyright 2008 Nicolas Connault
+ * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-include_once('PHP/MoodleCodeSniffer.php');
+require_once('PHP/MoodleCodeSniffer.php');
 require_once('PHP/CodeSniffer/CLI.php');
 
 /**
@@ -91,7 +91,7 @@ class moodle_codesniffer_cli extends php_codesniffer_cli {
      * @return array The updated CLI values.
      * @see getCommandLineValues()
      */
-    public function processUnknownArgument($arg, $pos, $values) {
+    public function processunknownargument($arg, $pos, $values) {
         global $args, $argv, $argc;
 
         // We don't know about any additional switches; just files.
@@ -102,6 +102,7 @@ class moodle_codesniffer_cli extends php_codesniffer_cli {
         }
 
         $file = $_SERVER['PWD'] . '/' . $arg;
+
         if (file_exists($file) === false) {
             echo 'ERROR: The file "'.$arg.'" does not exist.'.PHP_EOL.PHP_EOL;
             $this->printUsage();

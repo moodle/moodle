@@ -58,7 +58,7 @@ class moodle_sniffs_namingconventions_uppercaseconstantnamesniff implements php_
     public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
     {
         $tokens    = $phpcsfile->gettokens();
-        $constName = $tokens[$stackptr]['content'];
+        $constname = $tokens[$stackptr]['content'];
 
         // If this token is in a heredoc, ignore it.
         if ($phpcsfile->hasCondition($stackptr, T_START_HEREDOC) === true) {
@@ -87,8 +87,8 @@ class moodle_sniffs_namingconventions_uppercaseconstantnamesniff implements php_
 
             if ($tokens[$functionKeyword]['code'] === T_CONST) {
                 // This is a class constant.
-                if (strtoupper($constName) !== $constName) {
-                    $error = 'Class constants must be uppercase; expected '.strtoupper($constName)." but found $constName";
+                if (strtoupper($constname) !== $constname) {
+                    $error = 'Class constants must be uppercase; expected '.strtoupper($constname)." but found $constname";
                     $phpcsfile->adderror($error, $stackptr);
                 }
 
@@ -121,12 +121,12 @@ class moodle_sniffs_namingconventions_uppercaseconstantnamesniff implements php_
             }
 
             // This is a real constant.
-            if (strtoupper($constName) !== $constName) {
-                $error = 'Constants must be uppercase; expected '.strtoupper($constName)." but found $constName";
+            if (strtoupper($constname) !== $constname) {
+                $error = 'Constants must be uppercase; expected '.strtoupper($constname)." but found $constname";
                 $phpcsfile->adderror($error, $stackptr);
             }
 
-        } else if (strtolower($constName) === 'define' || strtolower($constName) === 'constant') {
+        } else if (strtolower($constname) === 'define' || strtolower($constname) === 'constant') {
 
             /*
                 This may be a "define" or "constant" function call.
@@ -138,9 +138,9 @@ class moodle_sniffs_namingconventions_uppercaseconstantnamesniff implements php_
                 return;
             }
 
-            $constName = $tokens[$constPtr]['content'];
-            if (strtoupper($constName) !== $constName) {
-                $error = 'Constants must be uppercase; expected '.strtoupper($constName)." but found $constName";
+            $constname = $tokens[$constPtr]['content'];
+            if (strtoupper($constname) !== $constname) {
+                $error = 'Constants must be uppercase; expected '.strtoupper($constname)." but found $constname";
                 $phpcsfile->adderror($error, $stackptr);
             }
         }

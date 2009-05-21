@@ -60,15 +60,15 @@ class moodle_sniffs_functions_validdefaultvaluesniff implements php_codesniffer_
     {
         $tokens = $phpcsfile->gettokens();
 
-        $argStart = $tokens[$stackptr]['parenthesis_opener'];
-        $argEnd   = $tokens[$stackptr]['parenthesis_closer'];
+        $argstart = $tokens[$stackptr]['parenthesis_opener'];
+        $argend   = $tokens[$stackptr]['parenthesis_closer'];
 
         // Flag for when we have found a default in our arg list.
         // If there is a value without a default after this, it is an error.
         $defaultFound = false;
 
-        $nextArg = $argStart;
-        while (($nextArg = $phpcsfile->findNext(T_VARIABLE, ($nextArg + 1), $argEnd)) !== false) {
+        $nextArg = $argstart;
+        while (($nextArg = $phpcsfile->findNext(T_VARIABLE, ($nextArg + 1), $argend)) !== false) {
             $argHasDefault = self::_argHasDefault($phpcsfile, $nextArg);
             if (($argHasDefault === false) && ($defaultFound === true)) {
                 $error  = 'Arguments with default values must be at the end';

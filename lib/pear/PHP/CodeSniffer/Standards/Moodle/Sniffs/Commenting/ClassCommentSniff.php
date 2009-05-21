@@ -87,31 +87,37 @@ class moodle_sniffs_commenting_classcommentsniff extends moodle_sniffs_commentin
                   );
 
         // Extract the class comment docblock.
-        $commentEnd = $phpcsfile->findPrevious($find, ($stackptr - 1), null, true);
+        $commentend = $phpcsfile->findPrevious($find, ($stackptr - 1), null, true);
 
-        if ($commentEnd !== false && $tokens[$commentEnd]['code'] === T_COMMENT) {
+        if ($commentend !== false && $tokens[$commentend]['code'] === T_COMMENT) {
             $phpcsfile->adderror("You must use \"/**\" style comments for a $type comment", $stackptr);
             return;
-        } else if ($commentEnd === false || $tokens[$commentEnd]['code'] !== T_DOC_COMMENT) {
+
+        } else if ($commentend === false || $tokens[$commentend]['code'] !== T_DOC_COMMENT) {
             $phpcsfile->adderror("Missing $type doc comment", $stackptr);
             return;
         }
 
-        $commentStart = ($phpcsfile->findPrevious(T_DOC_COMMENT, ($commentEnd - 1), null, true) + 1);
-        $commentNext  = $phpcsfile->findPrevious(T_WHITESPACE, ($commentEnd + 1), $stackptr, false, $phpcsfile->eolChar);
+        $commentstart = ($phpcsfile->findPrevious(T_DOC_COMMENT, ($commentend - 1), null, true) + 1);
+        $commentnext  = $phpcsfile->findPrevious(T_WHITESPACE, ($commentend + 1), $stackptr, false, $phpcsfile->eolChar);
 
         // Distinguish file and class comment.
-        $prevClasstoken = $phpcsfile->findPrevious(T_CLASS, ($stackptr - 1));
-        if ($prevClasstoken === false) {
+        $prevclasstoken = $phpcsfile->findPrevious(T_CLASS, ($stackptr - 1));
+
+        if ($prevclasstoken === false) {
             // This is the first class token in this file, need extra checks.
-            $prevNonComment = $phpcsfile->findPrevious(T_DOC_COMMENT, ($commentStart - 1), null, true);
-            if ($prevNonComment !== false) {
-                $prevComment = $phpcsfile->findPrevious(T_DOC_COMMENT, ($prevNonComment - 1));
-                if ($prevComment === false) {
+            $prevnoncomment = $phpcsfile->findPrevious(T_DOC_COMMENT, ($commentstart - 1), null, true);
+
+            if ($prevnoncomment !== false) {
+                $prevcomment = $phpcsfile->findPrevious(T_DOC_COMMENT, ($prevnoncomment - 1));
+
+                if ($prevcomment === false) {
                     // There is only 1 doc comment between open tag and class token.
-                    $newlinetoken = $phpcsfile->findNext(T_WHITESPACE, ($commentEnd + 1), $stackptr, false, $phpcsfile->eolChar);
+                    $newlinetoken = $phpcsfile->findNext(T_WHITESPACE, ($commentend + 1), $stackptr, false, $phpcsfile->eolChar);
+
                     if ($newlinetoken !== false) {
                         $newlinetoken = $phpcsfile->findNext(T_WHITESPACE, ($newlinetoken + 1), $stackptr, false, $phpcsfile->eolChar);
+
                         if ($newlinetoken !== false) {
                             // Blank line between the class and the doc block.
                             // The doc block is most likely a file comment.
@@ -123,67 +129,74 @@ class moodle_sniffs_commenting_classcommentsniff extends moodle_sniffs_commentin
             }
         }
 
-        $comment = $phpcsfile->gettokensAsString($commentStart, ($commentEnd - $commentStart + 1));
+        $comment = $phpcsfile->gettokensAsString($commentstart, ($commentend - $commentstart + 1));
 
         // Parse the class comment.docblock.
         try {
             $this->commentparser = new PHP_CodeSniffer_CommentParser_ClassCommentParser($comment, $phpcsfile);
             $this->commentparser->parse();
         } catch (PHP_CodeSniffer_CommentParser_ParserException $e) {
-            $line = ($e->getlinewithinComment() + $commentStart);
+            $line = ($e->getlinewithinComment() + $commentstart);
             $phpcsfile->adderror($e->getMessage(), $line);
             return;
         }
 
         $comment = $this->commentparser->getComment();
+
         if (is_null($comment) === true) {
             $error = ucfirst($type).' doc comment is empty';
-            $phpcsfile->adderror($error, $commentStart);
+            $phpcsfile->adderror($error, $commentstart);
             return;
         }
 
         // No extra newline before short description.
         $short        = $comment->getShortComment();
-        $newlineCount = 0;
-        $newlineSpan  = strspn($short, $phpcsfile->eolChar);
-        if ($short !== '' && $newlineSpan > 0) {
-            $line  = ($newlineSpan > 1) ? 'newlines' : 'newline';
+        $newlinecount = 0;
+        $newlinespan  = strspn($short, $phpcsfile->eolChar);
+
+        if ($short !== '' && $newlinespan > 0) {
+            $line  = ($newlinespan > 1) ? 'newlines' : 'newline';
             $error = "Extra $line found before $type comment short description";
-            $phpcsfile->adderror($error, ($commentStart + 1));
+            $phpcsfile->adderror($error, ($commentstart + 1));
         }
 
-        $newlineCount = (substr_count($short, $phpcsfile->eolChar) + 1);
+        $newlinecount = (substr_count($short, $phpcsfile->eolChar) + 1);
 
         // Exactly one blank line between short and long description.
         $long = $comment->getlongcomment();
+
         if (empty($long) === false) {
             $between        = $comment->getWhiteSpaceBetween();
-            $newlineBetween = substr_count($between, $phpcsfile->eolChar);
-            if ($newlineBetween !== 2) {
+            $newlinebetween = substr_count($between, $phpcsfile->eolChar);
+
+            if ($newlinebetween !== 2) {
                 $error = "There must be exactly one blank line between descriptions in $type comments";
-                $phpcsfile->adderror($error, ($commentStart + $newlineCount + 1));
+                $phpcsfile->adderror($error, ($commentstart + $newlinecount + 1));
             }
 
-            $newlineCount += $newlineBetween;
+            $newlinecount += $newlinebetween;
         }
 
         // Exactly one blank line before tags.
-        $tags = $this->commentparser->getTagOrders();
+        $tags = $this->commentparser->gettagOrders();
+
         if (count($tags) > 1) {
-            $newlineSpan = $comment->getNewlineAfter();
-            if ($newlineSpan !== 2) {
+            $newlinespan = $comment->getNewlineAfter();
+
+            if ($newlinespan !== 2) {
                 $error = "There must be exactly one blank line before the tags in $type comments";
+
                 if ($long !== '') {
-                    $newlineCount += (substr_count($long, $phpcsfile->eolChar) - $newlineSpan + 1);
+                    $newlinecount += (substr_count($long, $phpcsfile->eolChar) - $newlinespan + 1);
                 }
 
-                $phpcsfile->addwarning($error, ($commentStart + $newlineCount));
+                $phpcsfile->addwarning($error, ($commentstart + $newlinecount));
                 $short = rtrim($short, $phpcsfile->eolChar.' ');
             }
         }
 
         // Check each tag.
-        $this->processTags($commentStart, $commentEnd);
+        $this->processtags($commentstart, $commentend);
 
     }
 
@@ -191,26 +204,26 @@ class moodle_sniffs_commenting_classcommentsniff extends moodle_sniffs_commentin
     /**
      * Process the version tag.
      *
-     * @param int $errorPos The line number where the error occurs.
+     * @param int $errorpos The line number where the error occurs.
      *
      * @return void
      */
-    protected function processversion($errorPos)
-    {
+    protected function processversion($errorpos) {
         $version = $this->commentparser->getVersion();
+
         if ($version !== null) {
             $content = $version->getcontent();
             $matches = array();
+
             if (empty($content) === true) {
                 $error = 'content missing for @version tag in doc comment';
-                $this->currentfile->adderror($error, $errorPos);
+                $this->currentfile->adderror($error, $errorpos);
+
             } else if ((strstr($content, 'Release:') === false)) {
                 $error = "Invalid version \"$content\" in doc comment; consider \"Release: <package_version>\" instead";
-                $this->currentfile->addwarning($error, $errorPos);
+                $this->currentfile->addwarning($error, $errorpos);
             }
         }
 
     }
 }
-
-?>

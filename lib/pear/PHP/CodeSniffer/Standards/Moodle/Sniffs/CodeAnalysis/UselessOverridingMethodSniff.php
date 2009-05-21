@@ -77,11 +77,11 @@ class moodle_sniffs_codeanalysis_uselessoverridingmethodsniff implements php_cod
         }
 
         // Get function name.
-        $methodName = $phpcsfile->getDeclarationName($stackptr);
+        $methodname = $phpcsfile->getDeclarationname($stackptr);
 
         // Get all parameters from method signature.
         $signature = array();
-        foreach ($phpcsfile->getMethodParameters($stackptr) as $param) {
+        foreach ($phpcsfile->getmethodParameters($stackptr) as $param) {
             $signature[] = $param['name'];
         }
 
@@ -117,7 +117,7 @@ class moodle_sniffs_codeanalysis_uselessoverridingmethodsniff implements php_cod
         $next = $phpcsfile->findNext(PHP_CodeSniffer_tokens::$emptyTokens, ($next + 1), null, true);
 
         // Skip for invalid code or other method.
-        if ($next === false || $tokens[$next]['content'] !== $methodName) {
+        if ($next === false || $tokens[$next]['content'] !== $methodname) {
             return;
         }
 
@@ -136,22 +136,22 @@ class moodle_sniffs_codeanalysis_uselessoverridingmethodsniff implements php_cod
                                );
 
         $parameters       = array('');
-        $parenthesisCount = 1;
+        $parenthesiscount = 1;
         $count            = count($tokens);
         for (++$next; $next < $count; ++$next) {
             $code = $tokens[$next]['code'];
 
             if ($code === T_OPEN_PARENTHESIS) {
-                ++$parenthesisCount;
+                ++$parenthesiscount;
             } else if ($code === T_CLOSE_PARENTHESIS) {
-                --$parenthesisCount;
-            } else if ($parenthesisCount === 1 && $code === T_COMMA) {
+                --$parenthesiscount;
+            } else if ($parenthesiscount === 1 && $code === T_COMMA) {
                 $parameters[] = '';
             } else if (in_array($code, PHP_CodeSniffer_tokens::$emptyTokens) === false) {
                 $parameters[(count($parameters) - 1)] .= $tokens[$next]['content'];
             }
 
-            if ($parenthesisCount === 0) {
+            if ($parenthesiscount === 0) {
                 break;
             }
         }

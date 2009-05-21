@@ -38,7 +38,9 @@ if (class_exists('PHP_CodeSniffer_Standards_AbstractVariableSniff', true) === fa
 class moodle_sniffs_namingconventions_validvariablenamesniff extends php_codesniffer_standards_abstractvariablesniff
 {
 
-    private $allowed_global_vars = array('CFG', 'SESSION', 'USER', 'COURSE', 'SITE', 'PAGE', 'DB', 'THEME');
+    private $allowed_global_vars = array('CFG', 'SESSION', 'USER', 'COURSE', 'SITE', 'PAGE', 'DB', 'THEME',
+                                         '_SERVER', '_GET', '_POST', '_FILES', '_REQUEST', '_SESSION',
+                                         '_ENV', '_COOKIE', '_HTTP_RAW_POST_DATA');
 
     /**
      * Processes class member variables.
@@ -52,9 +54,9 @@ class moodle_sniffs_namingconventions_validvariablenamesniff extends php_codesni
     protected function processMemberVar(PHP_CodeSniffer_File $phpcsfile, $stackptr)
     {
         $tokens = $phpcsfile->gettokens();
-        $memberName     = ltrim($tokens[$stackptr]['content'], '$');
-        if (preg_match('/[A-Z]+/', $memberName)) {
-            $error = "Member variable \"$memberName\" must be all lower-case";
+        $membername     = ltrim($tokens[$stackptr]['content'], '$');
+        if (preg_match('/[A-Z]+/', $membername)) {
+            $error = "Member variable \"$membername\" must be all lower-case";
             $phpcsfile->adderror($error, $stackptr);
             return;
         }
@@ -81,10 +83,10 @@ class moodle_sniffs_namingconventions_validvariablenamesniff extends php_codesni
     protected function processVariable(PHP_CodeSniffer_File $phpcsfile, $stackptr)
     {
         $tokens = $phpcsfile->gettokens();
-        $memberName     = ltrim($tokens[$stackptr]['content'], '$');
-        if (preg_match('/[A-Z]+/', $memberName)) {
-            if (!in_array($memberName, $this->allowed_global_vars)) {
-                $error = "Member variable \"$memberName\" must be all lower-case";
+        $membername     = ltrim($tokens[$stackptr]['content'], '$');
+        if (preg_match('/[A-Z]+/', $membername)) {
+            if (!in_array($membername, $this->allowed_global_vars)) {
+                $error = "Member variable \"$membername\" must be all lower-case";
                 $phpcsfile->adderror($error, $stackptr);
                 return;
             }
@@ -101,15 +103,16 @@ class moodle_sniffs_namingconventions_validvariablenamesniff extends php_codesni
      *
      * @return void
      */
-    protected function processVariableInString(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    protected function processvariableinstring(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
+
         if (preg_match('/\$([A-Za-z0-9_]+)(\-\>([A-Za-z0-9_]+))?/i', $tokens[$stackptr]['content'], $matches)) {
             $firstvar = $matches[1];
             $objectvar = (empty($matches[3])) ? null : $matches[3];
-            $memberName = $firstvar . $objectvar;
+            $membername = $firstvar . $objectvar;
 
             if (preg_match('/[A-Z]+/', $firstvar, $matches)) {
+
                 if (!in_array($firstvar, $this->allowed_global_vars)) {
                     $error = "Member variable \"$firstvar\" must be all lower-case";
                     $phpcsfile->adderror($error, $stackptr);
@@ -123,12 +126,6 @@ class moodle_sniffs_namingconventions_validvariablenamesniff extends php_codesni
                 return;
             }
         }
-
         return;
-
     }
-
-
 }
-
-?>

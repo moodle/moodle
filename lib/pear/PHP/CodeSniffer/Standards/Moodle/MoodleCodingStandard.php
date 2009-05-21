@@ -19,11 +19,10 @@
  *
  * Simple modifications to the CLI class to only use the Moodle Standard
  *
- * @package   lib-pear-php-codesniffer
+ * @package   lib-pear-php-codesniffer-standards-moodle
  * @copyright 2008 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 if (class_exists('PHP_CodeSniffer_Standards_CodingStandard', true) === false) {
     throw new PHP_CodeSniffer_Exception('Class PHP_CodeSniffer_Standards_CodingStandard not found');
 }

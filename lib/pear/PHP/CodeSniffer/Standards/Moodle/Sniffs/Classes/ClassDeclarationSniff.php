@@ -56,7 +56,7 @@ class moodle_sniffs_classes_classdeclarationsniff implements php_codesniffer_sni
         $tokens = $phpcsfile->gettokens();
 
         if (isset($tokens[$stackptr]['scope_opener']) === false) {
-            $error  = 'Possible parse error: ';
+            $error  = 'possible parse error: ';
             $error .= $tokens[$stackptr]['content'];
             $error .= ' missing opening or closing brace';
             $phpcsfile->addwarning($error, $stackptr);

@@ -130,10 +130,8 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
      *
      * @return array
      */
-    public function register()
-    {
+    public function register() {
         return array(T_OPEN_TAG);
-
     }
 
 
@@ -151,6 +149,7 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
 
         // We are only interested if this is the first open tag.
         if ($stackptr !== 0) {
+
             if ($phpcsfile->findPrevious(T_OPEN_TAG, ($stackptr - 1)) !== false) {
                 return;
             }
@@ -159,14 +158,15 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
         $tokens = $phpcsfile->gettokens();
 
         // Find the next non whitespace token.
-        $commentStart = $phpcsfile->findnext(T_WHITESPACE, ($stackptr + 1), null, true);
+        $commentstart = $phpcsfile->findnext(T_WHITESPACE, ($stackptr + 1), null, true);
 
         // Look for $Id$ and boilerplate
-        if ($tokens[$commentStart]['code'] != T_COMMENT) {
+        if ($tokens[$commentstart]['code'] != T_COMMENT) {
             $phpcsfile->adderror('File must begin with License boilerplate', ($stackptr + 1));
             return;
-        } else if (preg_match('|\$Id\$|i', $tokens[$commentStart]['content'])) {
-            $phpcsfile->addwarning('$Id$ tag is no longer required, please remove.', ($stackptr + 1));
+
+        } else if (preg_match('|\$Id\$|i', $tokens[$commentstart]['content'])) {
+            $phpcsfile->addwarning("\$Id\$ tag is no longer required, please remove.", ($stackptr + 1));
             return;
         }
 
@@ -212,16 +212,19 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
         if ($tokens[$filedoctoken]['code'] === T_CLOSE_TAG) {
             // We are only interested if this is the first open tag.
             return;
+
         } else if ($tokens[$filedoctoken]['code'] === T_COMMENT) {
             $phpcsfile->adderror('You must use "/**" style comments for a file comment', ($filedoctoken + 1));
             return;
+
         } else if ($filedoctoken === false || $tokens[$filedoctoken]['code'] !== T_DOC_COMMENT) {
             $phpcsfile->adderror('Missing file doc comment', ($filedoctoken + 1));
             return;
+
         } else {
 
             // Extract the header comment docblock.
-            $commentEnd = ($phpcsfile->findnext(T_DOC_COMMENT, ($filedoctoken + 1), null, true) - 1);
+            $commentend = ($phpcsfile->findnext(T_DOC_COMMENT, ($filedoctoken + 1), null, true) - 1);
 
             // Check if there is only 1 doc comment between the open tag and class token.
             $nexttoken   = array(
@@ -230,12 +233,17 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
                             T_FUNCTION,
                             T_DOC_COMMENT,
                            );
-            $commentNext = $phpcsfile->findnext($nexttoken, ($commentEnd + 1));
-            if ($commentNext !== false && $tokens[$commentNext]['code'] !== T_DOC_COMMENT) {
+            $commentnext = $phpcsfile->findnext($nexttoken, ($commentend + 1));
+
+            if ($commentnext !== false && $tokens[$commentnext]['code'] !== T_DOC_COMMENT) {
                 // Found a class token right after comment doc block.
-                $newlinetoken = $phpcsfile->findnext(T_WHITESPACE, ($commentEnd + 1), $commentNext, false, $phpcsfile->eolChar);
+                $newlinetoken = $phpcsfile->findnext(T_WHITESPACE, ($commentend + 1),
+                                                     $commentnext, false, $phpcsfile->eolChar);
+
                 if ($newlinetoken !== false) {
-                    $newlinetoken = $phpcsfile->findnext(T_WHITESPACE, ($newlinetoken + 1), $commentNext, false, $phpcsfile->eolChar);
+                    $newlinetoken = $phpcsfile->findnext(T_WHITESPACE, ($newlinetoken + 1),
+                                                         $commentnext, false, $phpcsfile->eolChar);
+
                     if ($newlinetoken === false) {
                         // No blank line between the class token and the doc block.
                         // The doc block is most likely a class comment.
@@ -245,12 +253,13 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
                 }
             }
 
-            $comment = $phpcsfile->gettokensAsString($filedoctoken, ($commentEnd - $filedoctoken + 1));
+            $comment = $phpcsfile->gettokensAsString($filedoctoken, ($commentend - $filedoctoken + 1));
 
             // Parse the header comment docblock.
             try {
                 $this->commentparser = new PHP_CodeSniffer_CommentParser_ClassCommentParser($comment, $phpcsfile);
                 $this->commentparser->parse();
+
             } catch (PHP_CodeSniffer_CommentParser_ParserException $e) {
                 $line = ($e->getlinewithinComment() + $filedoctoken);
                 $phpcsfile->adderror($e->getMessage(), $line);
@@ -258,6 +267,7 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
             }
 
             $comment = $this->commentparser->getComment();
+
             if (is_null($comment) === true) {
                 $error = 'File doc comment is empty';
                 $phpcsfile->adderror($error, $filedoctoken);
@@ -266,40 +276,46 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
 
             // No extra newline before short description.
             $short        = $comment->getShortComment();
-            $newlineCount = 0;
-            $newlineSpan  = strspn($short, $phpcsfile->eolChar);
-            if ($short !== '' && $newlineSpan > 0) {
-                $line  = ($newlineSpan > 1) ? 'newlines' : 'newline';
+            $newlinecount = 0;
+            $newlinespan  = strspn($short, $phpcsfile->eolChar);
+
+            if ($short !== '' && $newlinespan > 0) {
+                $line  = ($newlinespan > 1) ? 'newlines' : 'newline';
                 $error = "Extra $line found before file comment short description";
                 $phpcsfile->adderror($error, ($filedoctoken + 1));
             }
 
-            $newlineCount = (substr_count($short, $phpcsfile->eolChar) + 1);
+            $newlinecount = (substr_count($short, $phpcsfile->eolChar) + 1);
 
             // Exactly one blank line between short and long description.
             $long = $comment->getlongcomment();
+
             if (empty($long) === false) {
-                $between        = $comment->getWhiteSpaceBetween();
-                $newlineBetween = substr_count($between, $phpcsfile->eolChar);
-                if ($newlineBetween !== 2) {
+                $between        = $comment->getWhiteSpacebetween();
+                $newlinebetween = substr_count($between, $phpcsfile->eolChar);
+
+                if ($newlinebetween !== 2) {
                     $error = 'There should be exactly one blank line between descriptions in file comment';
-                    $phpcsfile->addwarning($error, ($filedoctoken + $newlineCount + 1));
+                    $phpcsfile->addwarning($error, ($filedoctoken + $newlinecount + 1));
                 }
 
-                $newlineCount += $newlineBetween;
+                $newlinecount += $newlinebetween;
             }
 
             // Exactly one blank line before tags.
-            $tags = $this->commentparser->getTagOrders();
+            $tags = $this->commentparser->gettagOrders();
+
             if (count($tags) > 1) {
-                $newlineSpan = $comment->getNewlineAfter();
-                if ($newlineSpan !== 2) {
+                $newlinespan = $comment->getNewlineAfter();
+
+                if ($newlinespan !== 2) {
                     $error = 'There must be exactly one blank line before the tags in file comment';
+
                     if ($long !== '') {
-                        $newlineCount += (substr_count($long, $phpcsfile->eolChar) - $newlineSpan + 1);
+                        $newlinecount += (substr_count($long, $phpcsfile->eolChar) - $newlinespan + 1);
                     }
 
-                    $phpcsfile->addwarning($error, ($filedoctoken + $newlineCount));
+                    $phpcsfile->addwarning($error, ($filedoctoken + $newlinecount));
                     $short = rtrim($short, $phpcsfile->eolChar.' ');
                 }
             }
@@ -308,12 +324,12 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
             /*
             if (strstr(strtolower($long), 'php version') === false) {
                 $error = 'PHP version not specified';
-                $phpcsfile->addwarning($error, $commentEnd);
+                $phpcsfile->addwarning($error, $commentend);
             }
             */
 
             // Check each tag.
-            $this->processTags($filedoctoken, $commentEnd);
+            $this->processtags($filedoctoken, $commentend);
         }
 
     }
@@ -322,62 +338,68 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
     /**
      * Processes each required or optional tag.
      *
-     * @param int $commentStart The position in the stack where the comment started.
-     * @param int $commentEnd   The position in the stack where the comment ended.
+     * @param int $commentstart The position in the stack where the comment started.
+     * @param int $commentend   The position in the stack where the comment ended.
      *
      * @return void
      */
-    protected function processtags($commentStart, $commentEnd) {
-        $docBlock    = (get_class($this) === 'moodle_sniffs_commenting_filecommentsniff') ? 'file' : 'class';
-        $foundTags   = $this->commentparser->getTagOrders();
-        $orderIndex  = 0;
+    protected function processtags($commentstart, $commentend) {
+        $docblock    = (get_class($this) === 'moodle_sniffs_commenting_filecommentsniff') ? 'file' : 'class';
+        $foundtags   = $this->commentparser->gettagOrders();
+        $orderindex  = 0;
         $indentation = array();
-        $longestTag  = 0;
-        $errorPos    = 0;
+        $longesttag  = 0;
+        $errorpos    = 0;
 
         foreach ($this->tags as $tag => $info) {
 
             // Required tag missing.
-            if ($info['required'] === true && in_array($tag, $foundTags) === false) {
-                $error = "Missing @$tag tag in $docBlock comment";
-                $this->currentfile->adderror($error, $commentEnd);
+            if ($info['required'] === true && in_array($tag, $foundtags) === false) {
+                $error = "Missing @$tag tag in $docblock comment";
+                $this->currentfile->adderror($error, $commentend);
                 continue;
             }
 
              // Get the line number for current tag.
-            $tagName = ucfirst($tag);
+            $tagname = ucfirst($tag);
+
             if ($info['allow_multiple'] === true) {
-                $tagName .= 's';
+                $tagname .= 's';
             }
 
-            $getMethod  = 'get'.$tagName;
-            $tagElement = $this->commentparser->$getMethod();
-            if (is_null($tagElement) === true || empty($tagElement) === true) {
+            $getmethod  = 'get'.$tagname;
+            $tagelement = $this->commentparser->$getmethod();
+
+            if (is_null($tagelement) === true || empty($tagelement) === true) {
                 continue;
             }
 
-            $errorPos = $commentStart;
-            if (is_array($tagElement) === false) {
-                $errorPos = ($commentStart + $tagElement->getline());
+            $errorpos = $commentstart;
+
+            if (is_array($tagelement) === false) {
+                $errorpos = ($commentstart + $tagelement->getline());
             }
 
             // Get the tag order.
-            $foundIndexes = array_keys($foundTags, $tag);
+            $foundindexes = array_keys($foundtags, $tag);
 
-            if (count($foundIndexes) > 1) {
+            if (count($foundindexes) > 1) {
                 // Multiple occurance not allowed.
                 if ($info['allow_multiple'] === false) {
-                    $error = "Only 1 @$tag tag is allowed in a $docBlock comment";
-                    $this->currentfile->adderror($error, $errorPos);
+                    $error = "Only 1 @$tag tag is allowed in a $docblock comment";
+                    $this->currentfile->adderror($error, $errorpos);
+
                 } else {
                     // Make sure same tags are grouped together.
                     $i     = 0;
-                    $count = $foundIndexes[0];
-                    foreach ($foundIndexes as $index) {
+                    $count = $foundindexes[0];
+
+                    foreach ($foundindexes as $index) {
+
                         if ($index !== $count) {
-                            $errorPosIndex = ($errorPos + $tagElement[$i]->getline());
+                            $errorposindex = ($errorpos + $tagelement[$i]->getline());
                             $error         = "@$tag tags must be grouped together";
-                            $this->currentfile->adderror($error, $errorPosIndex);
+                            $this->currentfile->adderror($error, $errorposindex);
                         }
 
                         $i++;
@@ -387,69 +409,82 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
             }
 
             // Check tag order.
-            if ($foundIndexes[0] > $orderIndex) {
-                $orderIndex = $foundIndexes[0];
+            if ($foundindexes[0] > $orderindex) {
+                $orderindex = $foundindexes[0];
+
             } else {
-                if (is_array($tagElement) === true && empty($tagElement) === false) {
-                    $errorPos += $tagElement[0]->getline();
+
+                if (is_array($tagelement) === true && empty($tagelement) === false) {
+                    $errorpos += $tagelement[0]->getline();
                 }
 
-                $orderText = $info['order_text'];
-                $error     = "The @$tag tag is in the wrong order; the tag $orderText";
-                $this->currentfile->adderror($error, $errorPos);
+                $ordertext = $info['order_text'];
+                $error     = "The @$tag tag is in the wrong order; the tag $ordertext";
+                $this->currentfile->adderror($error, $errorpos);
             }
 
             // Store the indentation for checking.
             $len = strlen($tag);
-            if ($len > $longestTag) {
-                $longestTag = $len;
+
+            if ($len > $longesttag) {
+                $longesttag = $len;
             }
 
-            if (is_array($tagElement) === true) {
-                foreach ($tagElement as $key => $element) {
+            if (is_array($tagelement) === true) {
+
+                foreach ($tagelement as $key => $element) {
                     $indentation[] = array(
                                       'tag'   => $tag,
                                       'space' => $this->getIndentation($tag, $element),
                                       'line'  => $element->getline(),
                                      );
                 }
+
             } else {
                 $indentation[] = array(
                                   'tag'   => $tag,
-                                  'space' => $this->getIndentation($tag, $tagElement),
+                                  'space' => $this->getIndentation($tag, $tagelement),
                                  );
             }
 
-            $method = 'process'.$tagName;
+            $method = 'process'.$tagname;
+
             if (method_exists($this, $method) === true) {
                 // Process each tag if a method is defined.
-                call_user_func(array($this, $method), $errorPos);
+                call_user_func(array($this, $method), $errorpos);
+
             } else {
-                if (is_array($tagElement) === true) {
-                    foreach ($tagElement as $key => $element) {
-                        $element->process($this->currentfile, $commentStart, $docBlock);
+
+                if (is_array($tagelement) === true) {
+
+                    foreach ($tagelement as $key => $element) {
+                        $element->process($this->currentfile, $commentstart, $docblock);
                     }
+
                 } else {
-                     $tagElement->process($this->currentfile, $commentStart, $docBlock);
+                     $tagelement->process($this->currentfile, $commentstart, $docblock);
                 }
             }
         }
 
-        foreach ($indentation as $indentInfo) {
-            if ($indentInfo['space'] !== 0 && $indentInfo['space'] !== ($longestTag + 1)) {
-                $expected     = (($longestTag - strlen($indentInfo['tag'])) + 1);
-                $space        = ($indentInfo['space'] - strlen($indentInfo['tag']));
-                $error        = "@$indentInfo[tag] tag comment indented incorrectly. ";
+        foreach ($indentation as $indentinfo) {
+
+            if ($indentinfo['space'] !== 0 && $indentinfo['space'] !== ($longesttag + 1)) {
+                $expected     = (($longesttag - strlen($indentinfo['tag'])) + 1);
+                $space        = ($indentinfo['space'] - strlen($indentinfo['tag']));
+                $error        = "@$indentinfo[tag] tag comment indented incorrectly. ";
                 $error       .= "Expected $expected spaces but found $space.";
-                $getTagMethod = 'get'.ucfirst($indentInfo['tag']);
-                if ($this->tags[$indentInfo['tag']]['allow_multiple'] === true) {
-                    $line = $indentInfo['line'];
+                $gettagmethod = 'get'.ucfirst($indentinfo['tag']);
+
+                if ($this->tags[$indentinfo['tag']]['allow_multiple'] === true) {
+                    $line = $indentinfo['line'];
+
                 } else {
-                    $tagElem = $this->commentparser->$getTagMethod();
-                    $line    = $tagElem->getline();
+                    $tagelem = $this->commentparser->$gettagmethod();
+                    $line    = $tagelem->getline();
                 }
 
-                $this->currentfile->addwarning($error, ($commentStart + $line));
+                $this->currentfile->addwarning($error, ($commentstart + $line));
             }
         }
 
@@ -459,57 +494,63 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
     /**
      * Get the indentation information of each tag.
      *
-     * @param string                                   $tagName    The name of the doc comment element.
-     * @param PHP_CodeSniffer_CommentParser_DocElement $tagElement The doc comment element.
+     * @param string                                   $tagname    The name of the doc comment element.
+     * @param PHP_CodeSniffer_CommentParser_Docelement $tagelement The doc comment element.
      *
      * @return void
      */
-    protected function getindentation($tagName, $tagElement)
-    {
-        if ($tagElement instanceof PHP_CodeSniffer_CommentParser_SingleElement) {
-            if ($tagElement->getcontent() !== '') {
-                return (strlen($tagName) + substr_count($tagElement->getWhitespaceBeforecontent(), ' '));
+    protected function getindentation($tagname, $tagelement) {
+
+        if ($tagelement instanceof PHP_CodeSniffer_CommentParser_Singleelement) {
+
+            if ($tagelement->getcontent() !== '') {
+                return (strlen($tagname) + substr_count($tagelement->getWhitespaceBeforecontent(), ' '));
             }
-        } else if ($tagElement instanceof PHP_CodeSniffer_CommentParser_PairElement) {
-            if ($tagElement->getValue() !== '') {
-                return (strlen($tagName) + substr_count($tagElement->getWhitespaceBeforeValue(), ' '));
+
+        } else if ($tagelement instanceof PHP_CodeSniffer_CommentParser_Pairelement) {
+
+            if ($tagelement->getValue() !== '') {
+                return (strlen($tagname) + substr_count($tagelement->getWhitespaceBeforeValue(), ' '));
             }
         }
 
         return 0;
-
     }
 
 
     /**
      * Process the category tag.
      *
-     * @param int $errorPos The line number where the error occurs.
+     * @param int $errorpos The line number where the error occurs.
      *
      * @return void
      */
-    protected function processcategory($errorPos)
-    {
+    protected function processcategory($errorpos) {
         $category = $this->commentparser->getCategory();
+
         if ($category !== null) {
             $content = $category->getcontent();
+
             if ($content !== '') {
-                if (PHP_CodeSniffer::isUnderscoreName($content) !== true) {
+
+                if (PHP_CodeSniffer::isUnderscorename($content) !== true) {
                     $newcontent = str_replace(' ', '_', $content);
-                    $nameBits   = explode('_', $newcontent);
-                    $firstBit   = array_shift($nameBits);
-                    $newName    = ucfirst($firstBit).'_';
-                    foreach ($nameBits as $bit) {
-                        $newName .= ucfirst($bit).'_';
+                    $namebits   = explode('_', $newcontent);
+                    $firstbit   = array_shift($namebits);
+                    $newname    = ucfirst($firstbit).'_';
+
+                    foreach ($namebits as $bit) {
+                        $newname .= ucfirst($bit).'_';
                     }
 
-                    $validName = trim($newName, '_');
-                    $error     = "Category name \"$content\" is not valid; consider \"$validName\" instead";
-                    // $this->currentfile->adderror($error, $errorPos);
+                    $validname = trim($newname, '_');
+                    $error     = "Category name \"$content\" is not valid; consider \"$validname\" instead";
+                    // $this->currentfile->adderror($error, $errorpos);
                 }
+
             } else {
                 $error = '@category tag must contain a name';
-                $this->currentfile->adderror($error, $errorPos);
+                $this->currentfile->adderror($error, $errorpos);
             }
         }
 
@@ -519,11 +560,11 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
     /**
      * Process the package tag.
      *
-     * @param int $errorPos The line number where the error occurs.
+     * @param int $errorpos The line number where the error occurs.
      *
      * @return void
      */
-    protected function processpackage($errorPos) {
+    protected function processpackage($errorpos) {
         global $CFG;
         $package = $this->commentparser->getPackage();
         $filename = str_replace($CFG->dirroot, '', $this->currentfile->getfilename());
@@ -540,21 +581,24 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
 
         // Remove first dash if present
         $expected_package = ltrim($expected_package, '-');
+
         if ($package !== null) {
             $content = $package->getcontent();
 
             if ($content !== $expected_package) {
                 $error = "Package name \"$content\" is not valid; \"$expected_package\" expected.";
-                $this->currentfile->adderror($error, $errorPos);
+                $this->currentfile->adderror($error, $errorpos);
 
             } else if ($content !== '') {
+
                 if (!preg_match('/^[a-z\-]*$/', $content)) {
                     $error = "Package name \"$content\" is not valid; must be lower-case with optional hyphens.";
-                    $this->currentfile->adderror($error, $errorPos);
+                    $this->currentfile->adderror($error, $errorpos);
                 }
+
             } else {
                 $error = '@package tag must contain a name';
-                $this->currentfile->adderror($error, $errorPos);
+                $this->currentfile->adderror($error, $errorpos);
             }
         }
 
@@ -564,32 +608,36 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
     /**
      * Process the subpackage tag.
      *
-     * @param int $errorPos The line number where the error occurs.
+     * @param int $errorpos The line number where the error occurs.
      *
      * @return void
      */
-    protected function processsubpackage($errorPos)
-    {
+    protected function processsubpackage($errorpos) {
         $package = $this->commentparser->getSubpackage();
+
         if ($package !== null) {
             $content = $package->getcontent();
+
             if ($content !== '') {
-                if (PHP_CodeSniffer::isUnderscoreName($content) !== true) {
+
+                if (PHP_CodeSniffer::isUnderscorename($content) !== true) {
                     $newcontent = str_replace(' ', '_', $content);
-                    $nameBits   = explode('_', $newcontent);
-                    $firstBit   = array_shift($nameBits);
-                    $newName    = strtoupper($firstBit{0}).substr($firstBit, 1).'_';
-                    foreach ($nameBits as $bit) {
-                        $newName .= strtoupper($bit{0}).substr($bit, 1).'_';
+                    $namebits   = explode('_', $newcontent);
+                    $firstbit   = array_shift($namebits);
+                    $newname    = strtoupper($firstbit{0}).substr($firstbit, 1).'_';
+
+                    foreach ($namebits as $bit) {
+                        $newname .= strtoupper($bit{0}).substr($bit, 1).'_';
                     }
 
-                    $validName = trim($newName, '_');
-                    $error     = "Subpackage name \"$content\" is not valid; consider \"$validName\" instead";
-                    $this->currentfile->adderror($error, $errorPos);
+                    $validname = trim($newname, '_');
+                    $error     = "Subpackage name \"$content\" is not valid; consider \"$validname\" instead";
+                    $this->currentfile->adderror($error, $errorpos);
                 }
+
             } else {
                 $error = '@subpackage tag must contain a name';
-                $this->currentfile->adderror($error, $errorPos);
+                $this->currentfile->adderror($error, $errorpos);
             }
         }
 
@@ -600,34 +648,37 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
      * Process the author tag(s) that this header comment has.
      *
      * This function is different from other _process functions
-     * as $authors is an array of SingleElements, so we work out
-     * the errorPos for each element separately
+     * as $authors is an array of Singleelements, so we work out
+     * the errorpos for each element separately
      *
-     * @param int $commentStart The position in the stack where
+     * @param int $commentstart The position in the stack where
      *                          the comment started.
      *
      * @return void
      */
-    protected function processauthors($commentStart)
-    {
+    protected function processauthors($commentstart) {
          $authors = $this->commentparser->getAuthors();
         // Report missing return.
         if (empty($authors) === false) {
+
             foreach ($authors as $author) {
-                $errorPos = ($commentStart + $author->getline());
+                $errorpos = ($commentstart + $author->getline());
                 $content  = $author->getcontent();
+
                 if ($content !== '') {
                     $local = '\da-zA-Z-_+';
                     // Dot character cannot be the first or last character in the local-part.
-                    $localMiddle = $local.'.\w';
-                    if (preg_match('/^([^<]*)\s+<(['.$local.']['.$localMiddle.']*['.$local.']@[\da-zA-Z][-.\w]*[\da-zA-Z]\.[a-zA-Z]{2,7})>$/', $content) === 0) {
-                        $error = 'content of the @author tag must be in the form "Display Name <username@example.com>"';
-                        $this->currentfile->adderror($error, $errorPos);
+                    $localmiddle = $local.'.\w';
+
+                    if (preg_match('/^([^<]*)\s+<(['.$local.']['.$localmiddle.']*['.$local.']@[\da-zA-Z][-.\w]*[\da-zA-Z]\.[a-zA-Z]{2,7})>$/', $content) === 0) {
+                        $error = 'content of the @author tag must be in the form "Display name <username@example.com>"';
+                        $this->currentfile->adderror($error, $errorpos);
                     }
+
                 } else {
-                    $docBlock = (get_class($this) === 'moodle_sniffs_commenting_filecommentsniff') ? 'file' : 'class';
-                    $error    = "content missing for @author tag in $docBlock comment";
-                    $this->currentfile->adderror($error, $errorPos);
+                    $docblock = (get_class($this) === 'moodle_sniffs_commenting_filecommentsniff') ? 'file' : 'class';
+                    $error    = "content missing for @author tag in $docblock comment";
+                    $this->currentfile->adderror($error, $errorpos);
                 }
             }
         }
@@ -638,39 +689,45 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
     /**
      * Process the copyright tags.
      *
-     * @param int $commentStart The position in the stack where
+     * @param int $commentstart The position in the stack where
      *                          the comment started.
      *
      * @return void
      */
-    protected function processcopyrights($commentStart)
-    {
+    protected function processcopyrights($commentstart) {
         $copyrights = $this->commentparser->getCopyrights();
+
         foreach ($copyrights as $copyright) {
-            $errorPos = ($commentStart + $copyright->getline());
+            $errorpos = ($commentstart + $copyright->getline());
             $content  = $copyright->getcontent();
+
             if ($content !== '') {
                 $matches = array();
+
                 if (preg_match('/^([0-9]{4})((.{1})([0-9]{4}))? (.+)$/', $content, $matches) !== 0) {
                     // Check earliest-latest year order.
+
                     if ($matches[3] !== '') {
+
                         if ($matches[3] !== '-') {
                             $error = 'A hyphen must be used between the earliest and latest year';
-                            $this->currentfile->adderror($error, $errorPos);
+                            $this->currentfile->adderror($error, $errorpos);
                         }
 
                         if ($matches[4] !== '' && $matches[4] < $matches[1]) {
                             $error = "Invalid year span \"$matches[1]$matches[3]$matches[4]\" found; consider \"$matches[4]-$matches[1]\" instead";
-                            $this->currentfile->addwarning($error, $errorPos);
+                            $this->currentfile->addwarning($error, $errorpos);
                         }
                     }
+
                 } else {
                     $error = '@copyright tag must contain a year and the name of the copyright holder';
-                    $this->currentfile->adderror($error, $errorPos);
+                    $this->currentfile->adderror($error, $errorpos);
                 }
+
             } else {
                 $error = '@copyright tag must contain a year and the name of the copyright holder';
-                $this->currentfile->adderror($error, $errorPos);
+                $this->currentfile->adderror($error, $errorpos);
             }
         }
 
@@ -680,56 +737,56 @@ class moodle_sniffs_commenting_filecommentsniff implements php_codesniffer_sniff
     /**
      * Process the license tag.
      *
-     * @param int $errorPos The line number where the error occurs.
+     * @param int $errorpos The line number where the error occurs.
      *
      * @return void
      */
-    protected function processlicense($errorPos)
-    {
+    protected function processlicense($errorpos) {
         $license = $this->commentparser->getLicense();
+
         if ($license !== null) {
             $value   = $license->getValue();
             $comment = $license->getComment();
+
             if ($value === '' || $comment === '') {
                 $error = '@license tag must contain a URL and a license name';
-                $this->currentfile->adderror($error, $errorPos);
+                $this->currentfile->adderror($error, $errorpos);
             }
+
             if ($comment != 'GNU GPL v3 or later') {
-                $this->currentfile->adderror('License must be "GNU GPL v3 or later", found "'.$comment.'"', $errorPos);
+                $this->currentfile->adderror('License must be "GNU GPL v3 or later", found "'.$comment.'"', $errorpos);
             }
+
             if ($value != 'http://www.gnu.org/copyleft/gpl.html') {
-                $this->currentfile->adderror('License must be "GNU GPL v3 or later"', $errorPos);
+                $this->currentfile->adderror('License must be "GNU GPL v3 or later"', $errorpos);
             }
         }
-
     }
 
 
     /**
      * Process the version tag.
      *
-     * @param int $errorPos The line number where the error occurs.
+     * @param int $errorpos The line number where the error occurs.
      *
      * @return void
      */
-    protected function processversion($errorPos)
-    {
+    protected function processversion($errorpos) {
         $version = $this->commentparser->getVersion();
+
         if ($version !== null) {
             $content = $version->getcontent();
             $matches = array();
+
             if (empty($content) === true) {
                 $error = 'content missing for @version tag in file comment';
-                $this->currentfile->adderror($error, $errorPos);
+                $this->currentfile->adderror($error, $errorpos);
+
             } else if (strstr($content, 'CVS:') === false && strstr($content, 'SVN:') === false) {
                 $error = "Invalid version \"$content\" in file comment; consider \"CVS: <cvs_id>\" or \"SVN: <svn_id>\" instead";
-                $this->currentfile->addwarning($error, $errorPos);
+                $this->currentfile->addwarning($error, $errorpos);
             }
         }
 
     }
-
-
 }
-
-?>

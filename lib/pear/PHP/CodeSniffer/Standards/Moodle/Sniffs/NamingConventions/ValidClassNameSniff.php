@@ -63,8 +63,8 @@ class moodle_sniffs_namingconventions_validclassnamesniff implements php_codesni
     {
         $tokens = $phpcsfile->gettokens();
 
-        $className = $phpcsfile->findNext(T_STRING, $stackptr);
-        $name      = trim($tokens[$className]['content']);
+        $classname = $phpcsfile->findNext(T_STRING, $stackptr);
+        $name      = trim($tokens[$classname]['content']);
 
         // Make sure that the word is all lowercase
 
