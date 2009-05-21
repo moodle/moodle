@@ -1,154 +1,178 @@
-<?php // $Id$
+<?php
 
-    require('../config.php');
-    require_once($CFG->libdir.'/filelib.php');
-    require_once($CFG->libdir.'/adminlib.php');
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-    $courseid   = optional_param('id', 0, PARAM_INT);
+/**
+ * Temporary file manager for all moodle files. To be replaced by something much better.
+ *
+ * @package    moodlecore
+ * @subpackage file
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-    $contextid  = optional_param('contextid', SYSCONTEXTID, PARAM_INT);
-    $filearea   = optional_param('filearea', '', PARAM_ALPHAEXT);
-    $itemid     = optional_param('itemid', -1, PARAM_INT);
-    $filepath   = optional_param('filepath', '', PARAM_PATH);
-    $filename   = optional_param('filename', '', PARAM_FILE);
+require('../config.php');
+require_once($CFG->libdir.'/filelib.php');
+require_once($CFG->libdir.'/adminlib.php');
 
-    $newdirname = optional_param('newdirname', '', PARAM_FILE);
-    $delete     = optional_param('delete', 0, PARAM_BOOL);
+$courseid   = optional_param('id', 0, PARAM_INT);
 
-    if ($courseid) {
-        if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-            print_error('invalidcourseid');
-        }
-        if (!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
-            print_error('invalidcontext');
-        }
-        redirect('index.php?contextid='.$context->id.'&amp;itemid=0&amp;filearea=course_content');
+$contextid  = optional_param('contextid', SYSCONTEXTID, PARAM_INT);
+$filearea   = optional_param('filearea', '', PARAM_ALPHAEXT);
+$itemid     = optional_param('itemid', -1, PARAM_INT);
+$filepath   = optional_param('filepath', '', PARAM_PATH);
+$filename   = optional_param('filename', '', PARAM_FILE);
+
+$newdirname = optional_param('newdirname', '', PARAM_FILE);
+$delete     = optional_param('delete', 0, PARAM_BOOL);
+
+if ($courseid) {
+    if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
+        print_error('invalidcourseid');
     }
-
-    if (!$context = get_context_instance_by_id($contextid)) {
+    if (!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
         print_error('invalidcontext');
     }
+    redirect('index.php?contextid='.$context->id.'&amp;itemid=0&amp;filearea=course_content');
+}
 
-    require_login();
-    require_capability('moodle/course:managefiles', $context);
+if (!$context = get_context_instance_by_id($contextid)) {
+    print_error('invalidcontext');
+}
 
-    if ($filearea === '') {
-        $filearea = null;
-    }
+require_login();
+require_capability('moodle/course:managefiles', $context);
 
-    if ($itemid < 0) {
-        $itemid = null;
-    }
+if ($filearea === '') {
+    $filearea = null;
+}
 
-    if ($filepath === '') {
-        $filepath = null;
-    }
+if ($itemid < 0) {
+    $itemid = null;
+}
 
-    if ($filename === '') {
-        $filename = null;
-    }
+if ($filepath === '') {
+    $filepath = null;
+}
 
-    $error = '';
+if ($filename === '') {
+    $filename = null;
+}
 
-    $browser = get_file_browser();
+$error = '';
 
-    $file_info = $browser->get_file_info($context, $filearea, $itemid, $filepath, $filename);
+$browser = get_file_browser();
+
+$file_info = $browser->get_file_info($context, $filearea, $itemid, $filepath, $filename);
 
 /// process actions
-    if ($file_info and $file_info->is_directory() and $file_info->is_writable() and $newdirname !== '' and data_submitted() and confirm_sesskey()) {
-        if ($newdir_info = $file_info->create_directory($newdirname, $USER->id)) {
-            $params = $newdir_info->get_params_rawencoded();
-            $params = implode('&amp;', $params);
-            redirect("index.php?$params");
-        } else {
-            $error = "Could not create new dir"; // TODO: localise
-        }
+if ($file_info and $file_info->is_directory() and $file_info->is_writable() and $newdirname !== '' and data_submitted() and confirm_sesskey()) {
+    if ($newdir_info = $file_info->create_directory($newdirname, $USER->id)) {
+        $params = $newdir_info->get_params_rawencoded();
+        $params = implode('&amp;', $params);
+        redirect("index.php?$params");
+    } else {
+        $error = "Could not create new dir"; // TODO: localise
     }
+}
 
-    if ($file_info and $file_info->is_directory() and $file_info->is_writable() and isset($_FILES['newfile']) and data_submitted() and confirm_sesskey()) {
-        $file = $_FILES['newfile'];
-        $newfilename = clean_param($file['name'], PARAM_FILE);
-        if (is_uploaded_file($_FILES['newfile']['tmp_name'])) {
-            try {
-                if ($newfile = $file_info->create_file_from_pathname($newfilename, $_FILES['newfile']['tmp_name'], $USER->id)) {
-                    $params = $file_info->get_params_rawencoded();
-                    $params = implode('&amp;', $params);
-                    redirect("index.php?$params");
+if ($file_info and $file_info->is_directory() and $file_info->is_writable() and isset($_FILES['newfile']) and data_submitted() and confirm_sesskey()) {
+    $file = $_FILES['newfile'];
+    $newfilename = clean_param($file['name'], PARAM_FILE);
+    if (is_uploaded_file($_FILES['newfile']['tmp_name'])) {
+        try {
+            if ($newfile = $file_info->create_file_from_pathname($newfilename, $_FILES['newfile']['tmp_name'], $USER->id)) {
+                $params = $file_info->get_params_rawencoded();
+                $params = implode('&amp;', $params);
+                redirect("index.php?$params");
 
-                } else {
-                    $error = "Could not create upload file"; // TODO: localise
-                }
-            } catch (file_exception $e) {
-                $error = "Exception: Could not create upload file"; // TODO: localise
+            } else {
+                $error = "Could not create upload file"; // TODO: localise
             }
+        } catch (file_exception $e) {
+            $error = "Exception: Could not create upload file"; // TODO: localise
         }
     }
+}
 
-    if ($file_info and $delete) {
-        if (!data_submitted() or !confirm_sesskey()) {
-            print_header();
-            notify(get_string('deletecheckwarning').': '.$file_info->get_visible_name());
-            $parent_info = $file_info->get_parent();
+if ($file_info and $delete) {
+    if (!data_submitted() or !confirm_sesskey()) {
+        print_header();
+        notify(get_string('deletecheckwarning').': '.$file_info->get_visible_name());
+        $parent_info = $file_info->get_parent();
 
-            $optionsno  = $parent_info->get_params();
-            $optionsyes = $file_info->get_params();
-            $optionsyes['delete'] = 1;
-            $optionsyes['sesskey'] = sesskey();
+        $optionsno  = $parent_info->get_params();
+        $optionsyes = $file_info->get_params();
+        $optionsyes['delete'] = 1;
+        $optionsyes['sesskey'] = sesskey();
 
-            notice_yesno (get_string('deletecheckfiles'), 'index.php', 'index.php', $optionsyes, $optionsno, 'post', 'get');
-            print_footer();
-            die;
-        }
-
-        if ($parent_info = $file_info->get_parent() and $parent_info->is_writable()) {
-            if (!$file_info->delete()) {
-                $error = "Could not delete file!"; // TODO: localise
-            }
-            $params = $parent_info->get_params_rawencoded();
-            $params = implode('&amp;', $params);
-            redirect("index.php?$params", $error);
-        }
+        notice_yesno (get_string('deletecheckfiles'), 'index.php', 'index.php', $optionsyes, $optionsno, 'post', 'get');
+        print_footer();
+        die;
     }
+
+    if ($parent_info = $file_info->get_parent() and $parent_info->is_writable()) {
+        if (!$file_info->delete()) {
+            $error = "Could not delete file!"; // TODO: localise
+        }
+        $params = $parent_info->get_params_rawencoded();
+        $params = implode('&amp;', $params);
+        redirect("index.php?$params", $error);
+    }
+}
 
 
 /// print dir listing
-    html_header($context, $file_info);
+html_header($context, $file_info);
 
-    if ($error !== '') {
-        notify($error);
-    }
+if ($error !== '') {
+    notify($error);
+}
 
-    displaydir($file_info);
+displaydir($file_info);
 
-    if ($file_info and $file_info->is_directory() and $file_info->is_writable()) {
-        echo '<br />';
+if ($file_info and $file_info->is_directory() and $file_info->is_writable()) {
+    echo '<br />';
 
-        echo '<form action="index.php" method="post"><div>';
-        echo '<input type="hidden" name="contextid" value="'.$contextid.'" />';
-        echo '<input type="hidden" name="filearea" value="'.$filearea.'" />';
-        echo '<input type="hidden" name="itemid" value="'.$itemid.'" />';
-        echo '<input type="hidden" name="filepath" value="'.s($filepath).'" />';
-        echo '<input type="hidden" name="filename" value="'.s($filename).'" />';
-        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        echo '<input type="text" name="newdirname" value="" />';
-        echo '<input type="submit" value="'.get_string('makeafolder').'" />';
-        echo '</div></form>';
+    echo '<form action="index.php" method="post"><div>';
+    echo '<input type="hidden" name="contextid" value="'.$contextid.'" />';
+    echo '<input type="hidden" name="filearea" value="'.$filearea.'" />';
+    echo '<input type="hidden" name="itemid" value="'.$itemid.'" />';
+    echo '<input type="hidden" name="filepath" value="'.s($filepath).'" />';
+    echo '<input type="hidden" name="filename" value="'.s($filename).'" />';
+    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+    echo '<input type="text" name="newdirname" value="" />';
+    echo '<input type="submit" value="'.get_string('makeafolder').'" />';
+    echo '</div></form>';
 
-        echo '<br />';
+    echo '<br />';
 
-        echo '<form enctype="multipart/form-data" method="post" action="index.php"><div>';
-        echo '<input type="hidden" name="contextid" value="'.$contextid.'" />';
-        echo '<input type="hidden" name="filearea" value="'.$filearea.'" />';
-        echo '<input type="hidden" name="itemid" value="'.$itemid.'" />';
-        echo '<input type="hidden" name="filepath" value="'.s($filepath).'" />';
-        echo '<input type="hidden" name="filename" value="'.s($filename).'" />';
-        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        echo '<input name="newfile" type="file" />';
-        echo '<input type="submit" value="'.get_string('uploadafile').'" />';
-        echo '</div></form>';
-    }
+    echo '<form enctype="multipart/form-data" method="post" action="index.php"><div>';
+    echo '<input type="hidden" name="contextid" value="'.$contextid.'" />';
+    echo '<input type="hidden" name="filearea" value="'.$filearea.'" />';
+    echo '<input type="hidden" name="itemid" value="'.$itemid.'" />';
+    echo '<input type="hidden" name="filepath" value="'.s($filepath).'" />';
+    echo '<input type="hidden" name="filename" value="'.s($filename).'" />';
+    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+    echo '<input name="newfile" type="file" />';
+    echo '<input type="submit" value="'.get_string('uploadafile').'" />';
+    echo '</div></form>';
+}
 
-    html_footer();
+html_footer();
 
 /// UI functions /////////////////////////
 
@@ -309,4 +333,4 @@ function displaydir($file_info) {
 
 }
 
-?>
+
