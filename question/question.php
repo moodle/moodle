@@ -205,7 +205,8 @@ if ($mform->is_cancelled()){
     }
 
     $question = $QTYPES[$question->qtype]->save_question($question, $fromform, $COURSE, $wizardnow, true);
-    if (!empty($CFG->usetags)) {
+    // a wizardpage from multipe pages questiontype like calculated may not allow editing the question tags 
+    if (!empty($CFG->usetags) && isset($fromform->tags)) {
         require_once($CFG->dirroot.'/tag/lib.php');
         tag_set('question', $question->id, $fromform->tags);
     }
