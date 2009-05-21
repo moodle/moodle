@@ -20,8 +20,8 @@
  *
  * @package    moodlecore
  * @subpackage file
- * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /** @var string unique string constant. */
