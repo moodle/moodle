@@ -142,7 +142,7 @@
 
             var prev = window.parent.ipreview;
             if(prev != null) {
-                prev.location.replace('about:blank');
+                prev.location.replace('<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/blank.html');
             }
             var uploader = window.parent.document.forms['uploader'];
             if(uploader != null) {

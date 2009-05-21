@@ -721,7 +721,7 @@ HTMLArea.prototype.generate = function () {
     // create the IFRAME
     var iframe = document.createElement("iframe");
 
-    iframe.src = "about:blank";
+    iframe.src = "<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/blank.html";
 
     iframe.className = "iframe";
 
