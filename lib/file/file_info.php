@@ -39,16 +39,42 @@ abstract class file_info {
         $this->context = $context;
     }
 
+    /**
+     * Returns list of standard virtual file/directory identification.
+     * The difference from stored_file parameters is that null values
+     * are allowed in all fields
+     * @return array with keys contextid, filearea, itemid, filepath and filename
+     */
     public abstract function get_params();
 
+    /**
+     * Returns localised visible name.
+     * @return string
+     */
     public abstract function get_visible_name();
 
+    /**
+     * Is directory?
+     * @return bool
+     */
     public abstract function is_directory();
 
+    /**
+     * Does this node have children?
+     * @return bool
+     */
     public abstract function get_children();
 
+    /**
+     * Returns parent file_info instance
+     * @return file_info or null for root
+     */
     public abstract function get_parent();
 
+    /**
+     * Returns array of url encoded params.
+     * @return array with numeric keys
+     */
     public function get_params_rawencoded() {
         $params = $this->get_params();
         $encoded = array();
@@ -61,51 +87,115 @@ abstract class file_info {
         return $encoded;
     }
 
+    /**
+     * Returns download url for
+     * @param bool $forcedownload
+     * @param bool $htts force https
+     * @return string url
+     */
     public function get_url($forcedownload=false, $https=false) {
         return null;
     }
 
+    /**
+     * Can I read content of this file or enter directory?
+     * @return bool
+     */
     public function is_readable() {
         return true;
     }
 
+    /**
+     * Can I add new files or directories?
+     * @return bool
+     */
     public function is_writable() {
         return true;
     }
 
+    /**
+     * Returns file size in bytes, null for directories
+     * @return int bytes or null if not known
+     */
     public function get_filesize() {
         return null;
     }
 
+    /**
+     * Returns mimetype
+     * @return string mimetype or null if not known
+     */
     public function get_mimetype() {
-        // TODO: add some custom mime icons for courses, categories??
         return null;
     }
 
+    /**
+     * Returns time created unix timestamp if known
+     * @return int timestamp or null
+     */
     public function get_timecreated() {
         return null;
     }
 
+    /**
+     * Returns time modified unix timestamp if known
+     * @return int timestamp or null
+     */
     public function get_timemodified() {
         return null;
     }
 
+    /**
+     * Create new directory, may throw exception - make sure
+     * params are valid.
+     * @param string $newdirname name of new directory
+     * @param int id of author, default $USER->id
+     * @return file_info new directory
+     */
     public function create_directory($newdirname, $userid=null) {
         return null;
     }
 
+    /**
+     * Create new file from string - make sure
+     * params are valid.
+     * @param string $newfilename name of new file
+     * @param string $content of file
+     * @param int id of author, default $USER->id
+     * @return file_info new file
+     */
     public function create_file_from_string($newfilename, $content, $userid=null) {
         return null;
     }
 
+    /**
+     * Create new file from pathname - make sure
+     * params are valid.
+     * @param string $newfilename name of new file
+     * @param string $pathname location of file
+     * @param int id of author, default $USER->id
+     * @return file_info new file
+     */
     public function create_file_from_pathname($newfilename, $pathname, $userid=null) {
         return null;
     }
 
+    /**
+     * Create new file from stored file - make sure
+     * params are valid.
+     * @param string $newfilename name of new file
+     * @param mixed dile id or stored_file of file
+     * @param int id of author, default $USER->id
+     * @return file_info new file
+     */
     public function create_file_from_storedfile($newfilename, $fid, $userid=null) {
         return null;
     }
 
+    /**
+     * Delete file, make sure file is deletable first.
+     * @return bool success
+     */
     public function delete() {
         return false;
     }
