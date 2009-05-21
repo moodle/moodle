@@ -422,7 +422,10 @@ class EvalMathStack {
     }
     
     function last($n=1) {
-        return $this->stack[$this->count-$n];
+        if ($this->count - $n >= 0) {
+            return $this->stack[$this->count-$n];
+        }
+        return null;
     }
 }
 
