@@ -1,7 +1,27 @@
-<?php  //$Id$
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Functions to support installation process
+ *
+ * @package    moodlecore
+ * @subpackage install
+ * @copyright  2009 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 define('INSTALL_WELCOME',       0);
@@ -14,7 +34,6 @@ define('INSTALL_SAVE',          6);
 
 /**
  *Tries to detect the right www root setting.
- *
  * @return string detected www root
  */
 function install_guess_wwwroot() {
@@ -36,6 +55,11 @@ function install_guess_wwwroot() {
     return $wwwroot;
 }
 
+/**
+ * Copy of @see{ini_get_bool()}
+ * @param string $ini_get_arg
+ * @return bool
+ */
 function install_ini_get_bool($ini_get_arg) {
     $temp = ini_get($ini_get_arg);
 
@@ -45,6 +69,12 @@ function install_ini_get_bool($ini_get_arg) {
     return false;
 }
 
+/**
+ * Print help button
+ * @param string $url
+ * @param string $titel
+ * @return void
+ */
 function install_helpbutton($url, $title='') {
     if ($title == '') {
         $title = get_string('help');
@@ -56,9 +86,10 @@ function install_helpbutton($url, $title='') {
     echo "</a>\n";
 }
 
+/**
+ * This is in function because we want the /install.php to parse in PHP4
+ */
 function install_db_validate($database, $dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions) {
-    // this is in function because we want the /install.php to parse in PHP4
-
     try {
         try {
             $database->connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
@@ -112,6 +143,11 @@ function install_get_list_of_languages() {
     return $languages;
 }
 
+/**
+ * Prints complete help page used during installation.
+ * Does not return.
+ * @param string $help
+ */
 function install_print_help_page($help) {
     global $CFG;
 
@@ -148,6 +184,14 @@ function install_print_help_page($help) {
     die;
 }
 
+/**
+ * Prints installation page header, we can no use weblib yet in isntaller.
+ * @param array $config
+ * @param string $stagename
+ * @param string $heading
+ * @param string $stagetext
+ * @return void
+ */
 function install_print_header($config, $stagename, $heading, $stagetext) {
     global $CFG;
 
@@ -208,6 +252,12 @@ function install_print_header($config, $stagename, $heading, $stagetext) {
     }
 }
 
+/**
+ * Prints installation page header, we can no use weblib yet in isntaller.
+ * @param array $config
+ * @param bool $reload print reload button instead of next
+ * @return void
+ */
 function install_print_footer($config, $reload=false) {
     global $CFG;
 
@@ -242,6 +292,10 @@ function install_print_footer($config, $reload=false) {
 }
 
 
+/**
+ * Prints css needed on installation page, tries to look like the rest of installation.
+ * Does not return.
+ */
 function install_css_styles() {
     global $CFG;
 
