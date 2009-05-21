@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This script serves user's private files
+ * This script serves users private files
  *
  * @package    moodlecore
  * @subpackage file
