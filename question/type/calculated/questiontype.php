@@ -976,8 +976,19 @@ class question_calculated_qtype extends default_questiontype {
                             WHERE definition = ? ORDER BY itemnumber", array($datasetdef->id));
                 }
                 for ($numberadded =$maxnumber+1 ; $numberadded <= $maxnumber+$numbertoadd ; $numberadded++){
-                    if (isset($datasetdefs[$defid]->items[$numberadded]) && ! $regenerate ){
-                        //  echo "<p>Reuse an previously used record".$numberadded."id".$datasetdef->id."</p>";
+                    if (isset($datasetdefs[$defid]->items[$numberadded])  ){
+	                    	// in case of regenerate it modifies the already existing record
+	                    	if ( $regenerate ) {
+		                        $datasetitem = new stdClass;
+		                        $datasetitem->id = $datasetdefs[$defid]->items[$numberadded]->id;
+		                        $datasetitem->definition = $datasetdef->id ;
+		                        $datasetitem->itemnumber = $numberadded;
+		                    		$datasetitem->value = $this->generate_dataset_item($datasetdef->options);
+						                if (!$DB->update_record('question_dataset_items', $datasetitem)) {
+						                    print_error('cannotupdateitem', 'question');
+						                }
+					              }
+				              //if not regenerate do nothing as there is already a record
                     } else {
                         $datasetitem = new stdClass;
                         $datasetitem->definition = $datasetdef->id ;
