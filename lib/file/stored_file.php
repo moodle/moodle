@@ -19,9 +19,10 @@
 /**
  * Class representing filesin Moodle file storage.
  *
- * @package   moodle-core
- * @copyright 2008 Petr Skoda (http://skodak.org)
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage file-storage
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once("$CFG->libdir/file/stored_file.php");
