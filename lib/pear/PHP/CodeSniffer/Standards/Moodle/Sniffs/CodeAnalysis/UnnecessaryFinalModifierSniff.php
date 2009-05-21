@@ -42,8 +42,7 @@
  * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_codeanalysis_unnecessaryfinalmodifiersniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_codeanalysis_unnecessaryfinalmodifiersniff implements php_codesniffer_sniff {
 
 
     /**
@@ -51,10 +50,8 @@ class moodle_sniffs_codeanalysis_unnecessaryfinalmodifiersniff implements php_co
      *
      * @return array(integer)
      */
-    public function register()
-    {
+    public function register() {
         return array(T_CLASS);
-
     }
 
 
@@ -67,8 +64,7 @@ class moodle_sniffs_codeanalysis_unnecessaryfinalmodifiersniff implements php_co
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
         $token  = $tokens[$stackptr];
 
@@ -89,15 +85,11 @@ class moodle_sniffs_codeanalysis_unnecessaryfinalmodifiersniff implements php_co
         $end  = --$token['scope_closer'];
 
         for (; $next <= $end; ++$next) {
+
             if ($tokens[$next]['code'] === T_FINAL) {
                 $error = 'Unnecessary FINAL modifier in FINAL class';
                 $phpcsfile->addwarning($error, $next);
             }
         }
-
     }
-
-
 }
-
-?>

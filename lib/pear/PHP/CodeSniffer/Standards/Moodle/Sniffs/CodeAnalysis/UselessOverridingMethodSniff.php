@@ -50,10 +50,8 @@ class moodle_sniffs_codeanalysis_uselessoverridingmethodsniff implements php_cod
      *
      * @return array(integer)
      */
-    public function register()
-    {
+    public function register() {
         return array(T_FUNCTION);
-
     }
 
 
@@ -66,8 +64,7 @@ class moodle_sniffs_codeanalysis_uselessoverridingmethodsniff implements php_cod
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
         $token  = $tokens[$stackptr];
 
@@ -77,10 +74,11 @@ class moodle_sniffs_codeanalysis_uselessoverridingmethodsniff implements php_cod
         }
 
         // Get function name.
-        $methodname = $phpcsfile->getDeclarationname($stackptr);
+        $methodname = $phpcsfile->getdeclarationname($stackptr);
 
         // Get all parameters from method signature.
         $signature = array();
+
         foreach ($phpcsfile->getmethodparameters($stackptr) as $param) {
             $signature[] = $param['name'];
         }
@@ -93,6 +91,7 @@ class moodle_sniffs_codeanalysis_uselessoverridingmethodsniff implements php_cod
 
             if (in_array($code, PHP_CodeSniffer_tokens::$emptyTokens) === true) {
                 continue;
+
             } else if ($code === T_RETURN) {
                 continue;
             }
@@ -138,15 +137,19 @@ class moodle_sniffs_codeanalysis_uselessoverridingmethodsniff implements php_cod
         $parameters       = array('');
         $parenthesiscount = 1;
         $count            = count($tokens);
+
         for (++$next; $next < $count; ++$next) {
             $code = $tokens[$next]['code'];
 
             if ($code === T_OPEN_PARENTHESIS) {
                 ++$parenthesiscount;
+
             } else if ($code === T_CLOSE_PARENTHESIS) {
                 --$parenthesiscount;
+
             } else if ($parenthesiscount === 1 && $code === T_COMMA) {
                 $parameters[] = '';
+
             } else if (in_array($code, PHP_CodeSniffer_tokens::$emptyTokens) === false) {
                 $parameters[(count($parameters) - 1)] .= $tokens[$next]['content'];
             }
@@ -157,6 +160,7 @@ class moodle_sniffs_codeanalysis_uselessoverridingmethodsniff implements php_cod
         }
 
         $next = $phpcsfile->findnext(PHP_CodeSniffer_tokens::$emptyTokens, ($next + 1), null, true);
+
         if ($next === false || $tokens[$next]['code'] !== T_SEMICOLON) {
             return;
         }
@@ -165,6 +169,7 @@ class moodle_sniffs_codeanalysis_uselessoverridingmethodsniff implements php_cod
         for (++$next; $next <= $end; ++$next) {
             $code = $tokens[$next]['code'];
             // Skip for any other content.
+
             if (in_array($code, PHP_CodeSniffer_tokens::$emptyTokens) === false) {
                 return;
             }
@@ -176,8 +181,5 @@ class moodle_sniffs_codeanalysis_uselessoverridingmethodsniff implements php_cod
         if (count($parameters) === count($signature) && $parameters === $signature) {
             $phpcsfile->addwarning('Useless method overriding detected', $stackptr);
         }
-
     }
-
-
 }

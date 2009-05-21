@@ -42,8 +42,7 @@
  * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_codeanalysis_forloopshouldbewhileloopsniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_codeanalysis_forloopshouldbewhileloopsniff implements php_codesniffer_sniff {
 
 
     /**
@@ -51,10 +50,8 @@ class moodle_sniffs_codeanalysis_forloopshouldbewhileloopsniff implements php_co
      *
      * @return array(integer)
      */
-    public function register()
-    {
+    public function register() {
         return array(T_FOR);
-
     }
 
 
@@ -67,8 +64,7 @@ class moodle_sniffs_codeanalysis_forloopshouldbewhileloopsniff implements php_co
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
         $token  = $tokens[$stackptr];
 
@@ -85,8 +81,10 @@ class moodle_sniffs_codeanalysis_forloopshouldbewhileloopsniff implements php_co
 
         for (; $next <= $end; ++$next) {
             $code = $tokens[$next]['code'];
+
             if ($code === T_SEMICOLON) {
                 ++$index;
+
             } else if (in_array($code, PHP_CodeSniffer_tokens::$emptyTokens) === false) {
                 ++$parts[$index];
             }
@@ -96,10 +94,5 @@ class moodle_sniffs_codeanalysis_forloopshouldbewhileloopsniff implements php_co
             $error = 'This FOR loop can be simplified to a WHILE loop';
             $phpcsfile->addwarning($error, $stackptr);
         }
-
     }
-
-
 }
-
-?>

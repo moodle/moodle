@@ -49,8 +49,7 @@
  * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_codeanalysis_jumbledincrementersniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_codeanalysis_jumbledincrementersniff implements php_codesniffer_sniff {
 
 
     /**
@@ -58,10 +57,8 @@ class moodle_sniffs_codeanalysis_jumbledincrementersniff implements php_codesnif
      *
      * @return array(integer)
      */
-    public function register()
-    {
+    public function register() {
         return array(T_FOR);
-
     }
 
 
@@ -74,8 +71,7 @@ class moodle_sniffs_codeanalysis_jumbledincrementersniff implements php_codesnif
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
         $token  = $tokens[$stackptr];
 
@@ -85,7 +81,7 @@ class moodle_sniffs_codeanalysis_jumbledincrementersniff implements php_codesnif
         }
 
         // Find incrementors for outer loop.
-        $outer = $this->findIncrementers($tokens, $token);
+        $outer = $this->findincrementers($tokens, $token);
 
         // Skip if empty.
         if (count($outer) === 0) {
@@ -97,11 +93,12 @@ class moodle_sniffs_codeanalysis_jumbledincrementersniff implements php_codesnif
         $end   = --$token['scope_closer'];
 
         for (; $start <= $end; ++$start) {
+
             if ($tokens[$start]['code'] !== T_FOR) {
                 continue;
             }
 
-            $inner = $this->findIncrementers($tokens, $tokens[$start]);
+            $inner = $this->findincrementers($tokens, $tokens[$start]);
             $diff  = array_intersect($outer, $inner);
 
             if (count($diff) !== 0) {
@@ -109,7 +106,6 @@ class moodle_sniffs_codeanalysis_jumbledincrementersniff implements php_codesnif
                 $phpcsfile->addwarning($error, $stackptr);
             }
         }
-
     }
 
 
@@ -121,8 +117,7 @@ class moodle_sniffs_codeanalysis_jumbledincrementersniff implements php_codesnif
      *
      * @return array(string) List of all found incrementer variables.
      */
-    protected function findIncrementers(array $tokens, array $token)
-    {
+    protected function findincrementers(array $tokens, array $token) {
         // Skip invalid statement.
         if (isset($token['parenthesis_opener']) === false) {
             return array();
@@ -133,10 +128,13 @@ class moodle_sniffs_codeanalysis_jumbledincrementersniff implements php_codesnif
 
         $incrementers = array();
         $semicolons   = 0;
+
         for ($next = $start; $next <= $end; ++$next) {
             $code = $tokens[$next]['code'];
+
             if ($code === T_SEMICOLON) {
                 ++$semicolons;
+
             } else if ($semicolons === 2 && $code === T_VARIABLE) {
                 $incrementers[] = $tokens[$next]['content'];
             }
@@ -145,8 +143,4 @@ class moodle_sniffs_codeanalysis_jumbledincrementersniff implements php_codesnif
         return $incrementers;
 
     }
-
-
 }
-
-?>

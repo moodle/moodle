@@ -35,8 +35,7 @@
  * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_codeanalysis_unusedfunctionparametersniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_codeanalysis_unusedfunctionparametersniff implements php_codesniffer_sniff {
 
 
     /**
@@ -44,10 +43,8 @@ class moodle_sniffs_codeanalysis_unusedfunctionparametersniff implements php_cod
      *
      * @return array
      */
-    public function register()
-    {
+    public function register() {
         return array(T_FUNCTION);
-
     }
 
 
@@ -60,8 +57,7 @@ class moodle_sniffs_codeanalysis_unusedfunctionparametersniff implements php_cod
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
         $token  = $tokens[$stackptr];
 
@@ -71,6 +67,7 @@ class moodle_sniffs_codeanalysis_unusedfunctionparametersniff implements php_cod
         }
 
         $params = array();
+
         foreach ($phpcsfile->getmethodparameters($stackptr) as $param) {
             $params[$param['name']] = $stackptr;
         }
@@ -78,7 +75,7 @@ class moodle_sniffs_codeanalysis_unusedfunctionparametersniff implements php_cod
         $next = ++$token['scope_opener'];
         $end  = --$token['scope_closer'];
 
-        $emptyBody = true;
+        $emptybody = true;
 
         for (; $next <= $end; ++$next) {
             $token = $tokens[$next];
@@ -87,12 +84,15 @@ class moodle_sniffs_codeanalysis_unusedfunctionparametersniff implements php_cod
             // Ingorable tokens.
             if (in_array($code, PHP_CodeSniffer_tokens::$emptyTokens) === true) {
                 continue;
-            } else if ($code === T_THROW && $emptyBody === true) {
+
+            } else if ($code === T_THROW && $emptybody === true) {
                 // Throw statement and an empty body indicate an interface method.
                 return;
-            } else if ($code === T_RETURN && $emptyBody === true) {
+
+            } else if ($code === T_RETURN && $emptybody === true) {
                 // Return statement and an empty body indicate an interface method.
                 $tmp = $phpcsfile->findnext(PHP_CodeSniffer_tokens::$emptyTokens, ($next + 1), null, true);
+
                 if ($tmp === false) {
                     return;
                 }
@@ -110,15 +110,17 @@ class moodle_sniffs_codeanalysis_unusedfunctionparametersniff implements php_cod
                 }
             }
 
-            $emptyBody = false;
+            $emptybody = false;
 
             if ($code === T_VARIABLE && isset($params[$token['content']]) === true) {
                 unset($params[$token['content']]);
+
             } else if ($code === T_DOUBLE_QUOTED_STRING) {
                 // tokenize double quote string.
                 $strtokens = token_get_all(sprintf('<?php %s;?>', $token['content']));
 
                 foreach ($strtokens as $tok) {
+
                     if (is_array($tok) === false || $tok[0] !== T_VARIABLE ) {
                         continue;
                     }
@@ -130,14 +132,12 @@ class moodle_sniffs_codeanalysis_unusedfunctionparametersniff implements php_cod
             }
         }
 
-        if ($emptyBody === false && count($params) > 0) {
+        if ($emptybody === false && count($params) > 0) {
+
             foreach ($params as $paramname => $position) {
                 $error = 'The method parameter '.$paramname.' is never used';
                 $phpcsfile->addwarning($error, $position);
             }
         }
-
     }
-
-
 }

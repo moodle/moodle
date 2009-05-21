@@ -46,8 +46,7 @@
  * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_codeanalysis_unconditionalifstatementsniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_codeanalysis_unconditionalifstatementsniff implements php_codesniffer_sniff {
 
 
     /**
@@ -55,13 +54,8 @@ class moodle_sniffs_codeanalysis_unconditionalifstatementsniff implements php_co
      *
      * @return array(integer)
      */
-    public function register()
-    {
-        return array(
-                T_IF,
-                T_ELSEIF,
-               );
-
+    public function register() {
+        return array(T_IF, T_ELSEIF);
     }
 
 
@@ -74,8 +68,7 @@ class moodle_sniffs_codeanalysis_unconditionalifstatementsniff implements php_co
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
         $token  = $tokens[$stackptr];
 
@@ -87,25 +80,22 @@ class moodle_sniffs_codeanalysis_unconditionalifstatementsniff implements php_co
         $next = ++$token['parenthesis_opener'];
         $end  = --$token['parenthesis_closer'];
 
-        $goodCondition = false;
+        $goodcondition = false;
+
         for (; $next <= $end; ++$next) {
             $code = $tokens[$next]['code'];
 
             if (in_array($code, PHP_CodeSniffer_tokens::$emptyTokens) === true) {
                 continue;
+
             } else if ($code !== T_TRUE && $code !== T_FALSE) {
-                $goodCondition = true;
+                $goodcondition = true;
             }
         }
 
-        if ($goodCondition === false) {
+        if ($goodcondition === false) {
             $error = 'Avoid IF statements that are always true or false';
             $phpcsfile->addwarning($error, $stackptr);
         }
-
     }
-
-
 }
-
-?>

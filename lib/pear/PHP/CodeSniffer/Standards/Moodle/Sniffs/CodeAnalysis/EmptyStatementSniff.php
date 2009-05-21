@@ -46,8 +46,7 @@
  * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_codeanalysis_emptystatementsniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_codeanalysis_emptystatementsniff implements php_codesniffer_sniff {
 
     /**
      * List of block tokens that this sniff covers.
@@ -77,10 +76,8 @@ class moodle_sniffs_codeanalysis_emptystatementsniff implements php_codesniffer_
      *
      * @return array(integer)
      */
-    public function register()
-    {
+    public function register() {
         return array_keys($this->_tokens);
-
     }
 
 
@@ -93,8 +90,7 @@ class moodle_sniffs_codeanalysis_emptystatementsniff implements php_codesniffer_
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
         $token  = $tokens[$stackptr];
 
@@ -106,28 +102,27 @@ class moodle_sniffs_codeanalysis_emptystatementsniff implements php_codesniffer_
         $next = ++$token['scope_opener'];
         $end  = --$token['scope_closer'];
 
-        $emptyBody = true;
+        $emptybody = true;
+
         for (; $next <= $end; ++$next) {
+
             if (in_array($tokens[$next]['code'], PHP_CodeSniffer_tokens::$emptyTokens) === false) {
-                $emptyBody = false;
+                $emptybody = false;
                 break;
             }
         }
 
-        if ($emptyBody === true) {
+        if ($emptybody === true) {
             // Get token identifier.
             $name  = $phpcsfile->gettokensAsString($stackptr, 1);
             $error = sprintf('Empty %s statement detected', strtoupper($name));
+
             if ($this->_tokens[$token['code']] === true) {
                 $phpcsfile->adderror($error, $stackptr);
+
             } else {
                 $phpcsfile->addwarning($error, $stackptr);
             }
         }
-
     }
-
-
 }
-
-?>

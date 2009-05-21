@@ -45,8 +45,7 @@
  * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodle_sniffs_codeanalysis_forloopwithtestfunctioncallsniff implements php_codesniffer_sniff
-{
+class moodle_sniffs_codeanalysis_forloopwithtestfunctioncallsniff implements php_codesniffer_sniff {
 
 
     /**
@@ -54,10 +53,8 @@ class moodle_sniffs_codeanalysis_forloopwithtestfunctioncallsniff implements php
      *
      * @return array(integer)
      */
-    public function register()
-    {
+    public function register() {
         return array(T_FOR);
-
     }
 
 
@@ -70,8 +67,7 @@ class moodle_sniffs_codeanalysis_forloopwithtestfunctioncallsniff implements php
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr)
-    {
+    public function process(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
         $tokens = $phpcsfile->gettokens();
         $token  = $tokens[$stackptr];
 
@@ -87,14 +83,17 @@ class moodle_sniffs_codeanalysis_forloopwithtestfunctioncallsniff implements php
 
         for (; $next <= $end; ++$next) {
             $code = $tokens[$next]['code'];
+
             if ($code === T_SEMICOLON) {
                 ++$position;
             }
 
             if ($position < 1) {
                 continue;
+
             } else if ($position > 1) {
                 break;
+
             } else if ($code !== T_VARIABLE && $code !== T_STRING) {
                 continue;
             }
@@ -109,10 +108,5 @@ class moodle_sniffs_codeanalysis_forloopwithtestfunctioncallsniff implements php
                 break;
             }
         }
-
     }
-
-
 }
-
-?>
