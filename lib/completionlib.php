@@ -1,8 +1,30 @@
 <?php
-// Contains a class used for tracking whether activities have been completed
-// by students ('completion')
 
-// Completion top-level options (admin setting enablecompletion)
+// This file is part of Moodle - http://moodle.org/ 
+// 
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Contains a class used for tracking whether activities have been completed
+ * by students ('completion')
+ *
+ * Completion top-level options (admin setting enablecompletion)
+ * 
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 /** The completion system is enabled in this site/course */
 define('COMPLETION_ENABLED', 1);
@@ -69,26 +91,32 @@ define('COMPLETION_AND', true);
 
 /**
  * Class represents completion information for a course.
- * (Does not contain any data, so you can safely construct it multiple times
- * without causing any problems.)
+ *
+ * Does not contain any data, so you can safely construct it multiple times
+ * without causing any problems.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
  */
 class completion_info {
+    /** @var object Passed during construction */
     private $course;
 
     /**
      * Constructs with course details.
      *
      * @param object $course Moodle course object. Must have at least ->id, ->enablecompletion
-     * @return completion_info
      */
     public function __construct($course) {
         $this->course = $course;
     }
 
     /**
-     * Static function. Determines whether completion is enabled across entire
-     * site.
+     * Determines whether completion is enabled across entire site.
+     * 
+     * Static function. 
      *
+     * @global object
      * @return int COMPLETION_ENABLED (true) if completion is enabled for the site,
      *     COMPLETION_DISABLED (false) if it's complete
      */
@@ -101,9 +129,12 @@ class completion_info {
      * Checks whether completion is enabled in a particular course and possibly
      * activity.
      *
+     * @global object
+     * @uses COMPLETION_DISABLED
+     * @uses COMPLETION_ENABLED
      * @param object $cm Course-module object. If not specified, returns the course
      *   completion enable state.
-     * @return COMPLETION_ENABLED or COMPLETION_DISABLED (==0) in the case of
+     * @return mixed COMPLETION_ENABLED or COMPLETION_DISABLED (==0) in the case of
      *   site and course; COMPLETION_TRACKING_MANUAL, _AUTOMATIC or _NONE (==0)
      *   for a course-module.
      */
@@ -132,10 +163,10 @@ class completion_info {
     /**
      * Updates (if necessary) the completion state of activity $cm for the given
      * user.
-     * <p>
+     *
      * For manual completion, this function is called when completion is toggled
      * with $possibleresult set to the target state.
-     * <p>
+     *
      * For automatic completion, this function should be called every time a module
      * does something which might influence a user's completion state. For example,
      * if a forum provides options for marking itself 'completed' once a user makes
@@ -146,6 +177,13 @@ class completion_info {
      * calling the involved module via modulename_get_completion_state() to check
      * module-specific conditions.
      *
+     * @global object
+     * @global object
+     * @uses COMPLETION_COMPLETE
+     * @uses COMPLETION_INCOMPLETE
+     * @uses COMPLETION_COMPLETE_PASS
+     * @uses COMPLETION_COMPLETE_FAIL
+     * @uses COMPLETION_TRACKING_MANUAL
      * @param object $cm Course-module
      * @param int $possibleresult Expected completion result. If the event that
      *   has just occurred (e.g. add post) can only result in making the activity
@@ -158,6 +196,7 @@ class completion_info {
      *   result. For manual events, COMPLETION_COMPLETE or COMPLETION_INCOMPLETE
      *   must be used; these directly set the specified state.
      * @param int $userid User ID to be updated. Default 0 = current user
+     * @return void
      */
     public function update_state($cm, $possibleresult=COMPLETION_UNKNOWN, $userid=0) {
         global $USER, $SESSION;
@@ -204,13 +243,22 @@ class completion_info {
 
     /**
      * Calculates the completion state for an activity and user.
-     * <p>
-     * (Internal function. Not private, so we can unit-test it.)
      *
+     * Internal function. Not private, so we can unit-test it.
+     *
+     * @global object
+     * @global object
+     * @global object
+     * @uses COMPLETION_VIEW_REQUIRED
+     * @uses COMPLETION_NOT_VIEWED
+     * @uses COMPLETION_INCOMPLETE
+     * @uses FEATURE_COMPLETION_HAS_RULES
+     * @uses COMPLETION_COMPLETE
+     * @uses COMPLETION_AND
      * @param object $cm Activity
      * @param int $userid ID of user
      * @param object $current Previous completion information from database
-     * @return unknown
+     * @return mixed
      */
     function internal_get_state($cm, $userid, $current) {
         global $USER, $DB, $CFG;
@@ -281,12 +329,16 @@ class completion_info {
 
     /**
      * Marks a module as viewed.
-     * <p>
+     *
      * Should be called whenever a module is 'viewed' (it is up to the module how to
      * determine that). Has no effect if viewing is not set as a completion condition.
      *
+     * @uses COMPLETION_VIEW_NOT_REQUIRED
+     * @uses COMPLETION_VIEWED
+     * @uses COMPLETION_COMPLETE
      * @param object $cm Activity
      * @param int $userid User ID or 0 (default) for current user
+     * @return void
      */
     public function set_module_viewed($cm, $userid=0) {
         // Don't do anything if view condition is not turned on
@@ -310,6 +362,8 @@ class completion_info {
      * deciding whether completion information should be 'locked' in the module
      * editing form.
      *
+     * @global object
+     * @global object
      * @param object $cm Activity
      * @return int The number of users who have completion data stored for this
      *   activity, 0 if none
@@ -328,9 +382,11 @@ class completion_info {
 
     /**
      * Deletes completion state related to an activity for all users.
-     * <p>
+     * 
      * Intended for use only when the activity itself is deleted.
      *
+     * @global object
+     * @global object
      * @param object $cm Activity
      */
     public function delete_all_state($cm) {
@@ -350,14 +406,18 @@ class completion_info {
 
     /**
      * Recalculates completion state related to an activity for all users.
-     * <p>
+     * 
      * Intended for use if completion conditions change. (This should be avoided
      * as it may cause some things to become incomplete when they were previously
      * complete, with the effect - for example - of hiding a later activity that
      * was previously available.)
-     * <p>
+     * 
      * Resetting state of manual tickbox has same result as deleting state for
      * it.
+     *
+     * @global object
+     * @uses COMPLETION_TRACKING_MANUAL
+     * @uses COMPLETION_UNKNOWN
      * @param object $cm Activity
      */
     public function reset_all_state($cm) {
@@ -395,6 +455,11 @@ class completion_info {
      * Obtains completion data for a particular activity and user (from the
      * session cache if available, or by SQL query)
      *
+     * @global object
+     * @global object
+     * @global object
+     * @global object
+     * @uses COMPLETION_CACHE_EXPIRY
      * @param object $cm Activity; only required field is ->id
      * @param bool $wholecourse If true (default false) then, when necessary to
      *   fill the cache, retrieves information from the entire course not just for
@@ -405,8 +470,6 @@ class completion_info {
      *   get_fast_modinfo. (Needs only list of all CMs with IDs.)
      *   Otherwise the method calls get_fast_modinfo itself.
      * @return object Completion data (record from course_modules_completion)
-     * @throws Exception In some cases where the requested course-module is not
-     *   found on the specified course
      */
     public function get_data($cm, $wholecourse=false, $userid=0, $modinfo=null) {
         global $USER, $CFG, $SESSION, $DB;
@@ -516,9 +579,12 @@ class completion_info {
     /**
      * Updates completion data for a particular coursemodule and user (user is
      * determined from $data).
-     * <p>
+     * 
      * (Internal function. Not private, so we can unit-test it.)
      *
+     * @global object
+     * @global object
+     * @global object
      * @param object $cm Activity
      * @param object $data Data about completion for that user
      */
@@ -541,6 +607,9 @@ class completion_info {
     /**
      * Obtains a list of activities for which completion is enabled on the
      * course. The list is ordered by the section order of those activities.
+     *
+     * @global object
+     * @uses COMPLETION_TRACKING_NONE
      * @param array $modinfo For unit testing only, supply the value
      *   here. Otherwise the method calls get_fast_modinfo
      * @return array Array from $cmid => $cm of all activities with completion enabled,
@@ -577,6 +646,10 @@ class completion_info {
     /**
      * Gets list of users in a course whose progress is tracked for display on the
      * progress report.
+     *
+     * @global object
+     * @global object
+     * @uses CONTEXT_COURSE
      * @param bool $sortfirstname True to sort with firstname
      * @param int $groupid Optionally restrict to groupid
      * @return array Array of user objects containing id, firstname, lastname (empty if none)
@@ -600,17 +673,18 @@ class completion_info {
     /**
      * Obtains progress information across a course for all users on that course, or
      * for all users in a specific group. Intended for use when displaying progress.
-     * <p>
+     * 
      * This includes only users who, in course context, have one of the roles for
      * which progress is tracked (the progresstrackedroles admin option).
-     * <p>
+     * 
      * Users are included (in the first array) even if they do not have
      * completion progress for any course-module.
      *
+     * @global object
+     * @global object
      * @param bool $sortfirstname If true, sort by first name, otherwise sort by
      *   last name
      * @param int $groupid Group ID or 0 (default)/false for all groups
-     * @return Array of user objects (like mdl_user id, firstname, lastname, idnumber)
      * @param int $pagesize Number of users to actually return (0 = unlimited)
      * @param int $start User to start at if paging (0 = first set)
      * @return Object with ->total and ->start (same as $start) and ->users;
@@ -661,6 +735,17 @@ WHERE
         return $resultobject;
     }
 
+    /**
+     * @todo Document this function
+     *
+     * @uses COMPLETION_TRACKING_MANUAL
+     * @uses COMPLETION_INCOMPLETE
+     * @param object $cm
+     * @param object $item
+     * @param object $grade
+     * @param bool $deleted
+     * @return void
+     */
     public function inform_grade_changed($cm, $item, $grade, $deleted) {
         // Bail out now if completion is not enabled for course-module, it is enabled
         // but is set to manual, grade is not used to compute completion, or this
@@ -689,11 +774,15 @@ WHERE
      * Calculates the completion state that would result from a graded item
      * (where grade-based completion is turned on) based on the actual grade
      * and settings.
-     * <p>
-     * (Internal function. Not private, so we can unit-test it.)
+     * 
+     * Internal function. Not private, so we can unit-test it.
      *
-     * @param grade_item $item
-     * @param grade_grade $grade
+     * @uses COMPLETION_INCOMPLETE
+     * @uses COMPLETION_COMPLETE_PASS
+     * @uses COMPLETION_COMPLETE_FAIL
+     * @uses COMPLETION_COMPLETE
+     * @param object $item grade_item
+     * @param object $grade grade_grade
      * @return int Completion state e.g. COMPLETION_INCOMPLETE
      */
     function internal_get_grade_state($item, $grade) {
@@ -723,9 +812,10 @@ WHERE
      * This is to be used only for system errors (things that shouldn't happen)
      * and not user-level errors.
      *
+     * @global object
      * @param string $error Error string (will not be displayed to user unless
      *   debugging is enabled)
-     * @throws moodle_exception Exception with the error string as debug info
+     * @return void Throws moodle_exception Exception with the error string as debug info
      */
     function internal_systemerror($error) {
         global $CFG;
@@ -733,7 +823,11 @@ WHERE
             $CFG->wwwroot.'/course/view.php?id='.$this->course->id,null,$error);
     }
 
-    /** For testing only. Wipes information cached in user session. */
+    /** 
+     * For testing only. Wipes information cached in user session. 
+     *
+     * @global object
+     */
     static function wipe_session_cache() {
         global $SESSION;
         unset($SESSION->completioncache);
