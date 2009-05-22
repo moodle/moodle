@@ -176,7 +176,6 @@ class html2text
         '/&(bull|#149|#8226);/i',                // Bullet
         '/&(pound|#163);/i',                     // Pound sign
         '/&(euro|#8364);/i',                     // Euro sign
-        '/&[^&;]+;/i',                           // Unknown/unhandled entities
         '/[ ]{2,}/'                              // Runs of spaces, post-handling
     );
 
@@ -202,8 +201,8 @@ class html2text
         "\n\n",                                 // <ol> and </ol>
         "\t* \\1\n",                            // <li> and </li>
         "\n\t* ",                               // <li>
-    	"\n-------------------------\n",        // <hr>
-    	"\n\n",                                 // <table> and </table>
+        "\n-------------------------\n",        // <hr>
+        "\n\n",                                 // <table> and </table>
         "\n",                                   // <tr> and </tr>
         "\t\t\\1\n",                            // <td> and </td>
         ' ',                                    // Non-breaking space
@@ -220,7 +219,6 @@ class html2text
         '*',
         'Â£',
         'EUR',                                  // Euro sign. € ?
-        '',                                     // Unknown/unhandled entities
         ' '                                     // Runs of spaces, post-handling
     );
 
@@ -249,11 +247,11 @@ class html2text
     *  @see $pre_replace
     */
     var $pre_search = array(
-	"/\n/",
-	"/\t/",
-	'/ /',
-	'/<pre[^>]*>/',
-	'/<\/pre>/'
+        "/\n/",
+        "/\t/",
+        '/ /',
+        '/<pre[^>]*>/',
+        '/<\/pre>/'
     );
 
     /**
@@ -264,11 +262,11 @@ class html2text
      *  @see $pre_search
      */
     var $pre_replace = array(
-	'<br>',
-	'&nbsp;&nbsp;&nbsp;&nbsp;',
-	'&nbsp;',
-	'',
-	''
+        '<br>',
+        '&nbsp;&nbsp;&nbsp;&nbsp;',
+        '&nbsp;',
+        '',
+        ''
     );
 
     /**
@@ -344,10 +342,10 @@ class html2text
         if ( !empty($source) ) {
             $this->set_html($source, $from_file);
         }
-	
+
         $this->set_base_url();
-	$this->_do_links = $do_links;
-	$this->width = $width;
+        $this->_do_links = $do_links;
+        $this->width = $width;
     }
 
     /**
@@ -361,10 +359,10 @@ class html2text
     function set_html( $source, $from_file = false )
     {
         if ( $from_file && file_exists($source) ) {
-	    $this->html = file_get_contents($source); 
+            $this->html = file_get_contents($source); 
         }
         else
-	    $this->html = $source;
+            $this->html = $source;
 
         $this->_converted = false;
     }
@@ -465,15 +463,18 @@ class html2text
 
         $text = trim(stripslashes($this->html));
 
-	// Convert <PRE>
+        // Convert <PRE>
         $this->_convert_pre($text);
-
-	// Replace known html entities
-	$text = html_entity_decode($text, ENT_COMPAT, 'UTF-8');
 
         // Run our defined search-and-replace
         $text = preg_replace($this->search, $this->replace, $text);
         $text = preg_replace_callback($this->callback_search, array('html2text', '_preg_callback'), $text);
+
+        // Replace known html entities
+        $text = html_entity_decode($text, ENT_COMPAT, 'UTF-8');
+
+        // Remove unknown/unhandled entities (this cannot be done in search-and-replace block)
+        $text = preg_replace('/&[^&;]+;/i', '', $text); 
 
         // Strip any other HTML tags
         $text = strip_tags($text, $this->allowed_tags);
@@ -521,9 +522,9 @@ class html2text
             $this->_link_count++;
             $this->_link_list .= "[" . $this->_link_count . "] $link\n";
             $additional = ' [' . $this->_link_count . ']';
-		} elseif ( substr($link, 0, 11) == 'javascript:' ) {
-			// Don't count the link; ignore it
-			$additional = '';
+	} elseif ( substr($link, 0, 11) == 'javascript:' ) {
+		// Don't count the link; ignore it
+		$additional = '';
 		// what about href="#anchor" ?
         } else {
             $this->_link_count++;
@@ -546,11 +547,10 @@ class html2text
      */
     function _convert_pre(&$text)
     {
-	while(preg_match('/<pre[^>]*>(.*)<\/pre>/ismU', $text, $matches))
-	{
-	    $result = preg_replace($this->pre_search, $this->pre_replace, $matches[1]);
-	    $text = preg_replace('/<pre[^>]*>.*<\/pre>/ismU', '<div><br>' . $result . '<br></div>', $text, 1);
-	}
+        while(preg_match('/<pre[^>]*>(.*)<\/pre>/ismU', $text, $matches)) {
+            $result = preg_replace($this->pre_search, $this->pre_replace, $matches[1]);
+            $text = preg_replace('/<pre[^>]*>.*<\/pre>/ismU', '<div><br>' . $result . '<br></div>', $text, 1);
+        }
     }
 
     /**
@@ -562,18 +562,17 @@ class html2text
      */
     function _preg_callback($matches)
     {
-	switch($matches[1])
-	{
-	    case 'b':
-	    case 'strong':
-		return $this->_strtoupper($matches[2]);
-	    case 'hr':
-		return $this->_strtoupper("\t\t". $matches[2] ."\n");
-	    case 'h':
-		return $this->_strtoupper("\n\n". $matches[2] ."\n\n");
-	    case 'a':
-    	        return $this->_build_link_list($matches[3], $matches[4]);
-	}
+        switch($matches[1]) {
+        case 'b':
+        case 'strong':
+            return $this->_strtoupper($matches[2]);
+        case 'hr':
+            return $this->_strtoupper("\t\t". $matches[2] ."\n");
+        case 'h':
+            return $this->_strtoupper("\n\n". $matches[2] ."\n\n");
+        case 'a':
+            return $this->_build_link_list($matches[3], $matches[4]);
+        }
     }
     
     /**
@@ -585,10 +584,10 @@ class html2text
      */
     function _strtoupper($str)
     {
-	if (function_exists('mb_strtoupper'))
-    	    return mb_strtoupper($str);
-    	else
-	    return strtoupper($str);
+        if (function_exists('mb_strtoupper'))
+            return mb_strtoupper($str);
+        else
+            return strtoupper($str);
     }
 }
 
