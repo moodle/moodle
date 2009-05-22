@@ -1,6 +1,13 @@
 <?php //$Id$
     //This file contains all the general function needed (file manipulation...)
-    //not directly part of the backup/restore utility
+    //not directly part of the backup/restore utility plus some constants
+
+    // Define "restoreto" options
+    define('RESTORETO_CURRENT_DELETING',  0);
+    define('RESTORETO_CURRENT_ADDING',    1);
+    define('RESTORETO_NEW_COURSE',        2);
+    define('RESTORETO_EXISTING_DELETING', 3);
+    define('RESTORETO_EXISTING_ADDING',   4);
 
     require_once($CFG->dirroot.'/lib/uploadlib.php');
 
@@ -717,7 +724,7 @@
 
         // add on some extra stuff we need...
         $SESSION->restore->metacourse   = $restore->metacourse = (isset($preferences['restore_metacourse']) ? $preferences['restore_metacourse'] : 0);
-        $SESSION->restore->restoreto    = $restore->restoreto = 1;
+        $SESSION->restore->restoreto    = $restore->restoreto = RESTORETO_CURRENT_ADDING;
         $SESSION->restore->users        = $restore->users = $userdata;
         $SESSION->restore->groups       = $restore->groups = (isset($preferences['restore_groups']) ? $preferences['restore_groups'] : RESTORE_GROUPS_NONE);
         $SESSION->restore->logs         = $restore->logs = (isset($preferences['restore_logs']) ? $preferences['restore_logs'] : 0);
@@ -725,8 +732,6 @@
         $SESSION->restore->messages     = $restore->messages = (isset($preferences['restore_messages']) ? $preferences['restore_messages'] : 0);
         $SESSION->restore->blogs        = $restore->blogs = (isset($preferences['restore_blogs']) ? $preferences['restore_blogs'] : 0);
         $SESSION->restore->course_id    = $restore->course_id = $destinationcourse;
-        $SESSION->restore->restoreto    = 1;
-        $SESSION->restore->course_id    = $destinationcourse;
         $SESSION->restore->deleting     = $emptyfirst;
         $SESSION->restore->restore_course_files = $restore->course_files = (isset($preferences['restore_course_files']) ? $preferences['restore_course_files'] : 0);
         $SESSION->restore->restore_site_files = $restore->site_files = (isset($preferences['restore_site_files']) ? $preferences['restore_site_files'] : 0);

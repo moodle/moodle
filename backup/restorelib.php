@@ -1107,7 +1107,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $section->sequence = "";
                 //Now calculate the section's newid
                 $newid = 0;
-                if ($restore->restoreto == 2) {
+                if ($restore->restoreto == RESTORETO_NEW_COURSE) {
                     //Save it to db (only if restoring to new course)
                     $newid = insert_record("course_sections",$section);
                 } else {
@@ -7889,7 +7889,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         //If we've selected to restore into new course
         //create it (course)
         //Saving conversion id variables into backup_tables
-        if ($restore->restoreto == 2) {
+        if ($restore->restoreto == RESTORETO_NEW_COURSE) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>'.get_string('creatingnewcourse') . '</li>';
             }
@@ -7949,7 +7949,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     if ($status) {
                         //Now , this situation is equivalent to the "restore to new course" one (we
                         //have a course record and nothing more), so define it as "to new course"
-                        $restore->restoreto = 2;
+                        $restore->restoreto = RESTORETO_NEW_COURSE;
                     } else {
                         if (!defined('RESTORE_SILENTLY')) {
                             notify("An error occurred while deleting some of the course contents.");
@@ -8103,7 +8103,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         //we have to do this after groups and groupings are restored, because we need the new groupings id
         if ($status) {
             //Into new course
-            if ($restore->restoreto == 2) {
+            if ($restore->restoreto == RESTORETO_NEW_COURSE) {
                 if (!defined('RESTORE_SILENTLY')) {
                     echo "<li>".get_string("creatingsections");
                 }
@@ -8119,7 +8119,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     echo '</li>';
                 }
                 //Into existing course
-            } else if ($restore->restoreto == 0 or $restore->restoreto == 1) {
+            } else if ($restore->restoreto != RESTORETO_NEW_COURSE) {
                 if (!defined('RESTORE_SILENTLY')) {
                     echo "<li>".get_string("checkingsections");
                 }
@@ -8149,7 +8149,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         //Now create metacourse info
         if ($status and $restore->metacourse) {
             //Only to new courses!
-            if ($restore->restoreto == 2) {
+            if ($restore->restoreto == RESTORETO_NEW_COURSE) {
                 if (!defined('RESTORE_SILENTLY')) {
                     echo "<li>".get_string("creatingmetacoursedata");
                 }
@@ -8361,9 +8361,11 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         }
 
         //Bring back the course blocks -- do it AFTER the modules!!!
-        if($status) {
+        if ($status) {
             //If we are deleting and bringing into a course or making a new course, same situation
-            if($restore->restoreto == 0 || $restore->restoreto == 2) {
+            if ($restore->restoreto == RESTORETO_CURRENT_DELETING ||
+                $restore->restoreto == RESTORETO_EXISTING_DELETING ||
+                $restore->restoreto == RESTORETO_NEW_COURSE) {
                 if (!defined('RESTORE_SILENTLY')) {
                     echo '<li>'.get_string('creatingblocks');
                 }
@@ -8382,9 +8384,11 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
         }
 
-        if($status) {
+        if ($status) {
             //If we are deleting and bringing into a course or making a new course, same situation
-            if($restore->restoreto == 0 || $restore->restoreto == 2) {
+            if ($restore->restoreto == RESTORETO_CURRENT_DELETING ||
+                $restore->restoreto == RESTORETO_EXISTING_DELETING ||
+                $restore->restoreto == RESTORETO_NEW_COURSE) {
                 if (!defined('RESTORE_SILENTLY')) {
                     echo '<li>'.get_string('courseformatdata');
                 }
@@ -8847,7 +8851,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             foreach ($courseoverrides as $oldroleid => $courseoverride) {
                 // if not importing into exiting course, or creating new role, we are ok
                 // local course overrides to be respected (i.e. restored course overrides ignored)
-                if ($restore->restoreto != 1 || empty($restore->rolesmapping[$oldroleid])) {
+                if (($restore->restoreto != RESTORETO_CURRENT_ADDING && $restore->restoreto != RESTORETO_EXISTING_ADDING) || empty($restore->rolesmapping[$oldroleid])) {
                     restore_write_roleoverrides($restore, $courseoverride->overrides, "course", CONTEXT_COURSE, $course->course_id, $oldroleid);
                 }
             }
@@ -8887,7 +8891,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
          * role assignments/overrides                    *
          *************************************************/
 
-        if ($restore->restoreto != 1) { // skip altogether if restoring to exisitng course by adding
+        if ($restore->restoreto != RESTORETO_CURRENT_ADDING && $restore->restoreto != RESTORETO_EXISTING_ADDING) { // skip altogether if restoring to exisitng course by adding
             if (!defined('RESTORE_SILENTLY')) {
                 echo "<li>".get_string("creatingblocksroles").'</li>';
             }
@@ -8909,6 +8913,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             }
         }
+
         /************************************************
          * Restoring assignments from userid level      *
          * role assignments/overrides                   *

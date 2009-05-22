@@ -112,9 +112,9 @@
     $cancreatecourses = user_can_create_courses();
     if (!isset($restore_restoreto)) {
         if (!$cancreatecourses) {
-            $restore_restoreto = 1;
+            $restore_restoreto = RESTORETO_CURRENT_ADDING;
         } else {
-            $restore_restoreto = 2;
+            $restore_restoreto = RESTORETO_NEW_COURSE;
         }
     }
 
@@ -194,19 +194,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
     echo "</b>";
     echo "</td><td colspan=\"3\">";
 
-
     // permission should have been checked already
-
-    /**
-     * if user has manageactivities in any course and we are not restoring from within SITEID
-     *      existingcoursedeleting
-     *      existingcourseadding
-     * else we show
-     *      currentcoursedeleting
-     *      currentcourse
-     * if user has course:create in any category, we show
-     *      newcourse
-     */
 
     // Non-cached - get accessinfo
     if (isset($USER->access)) {
@@ -217,21 +205,21 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
 
     $mycourses = get_user_courses_bycap($USER->id, 'moodle/site:restore', $accessinfo, true);
 
-    // if the user can manage 2 or more courses and we are not restoring from within SITEID,
-    // we show options for existing courses
-
-    if (count($mycourses) > 1 && $id != SITEID) {
-        $restore_restoreto_options[0] = get_string("existingcoursedeleting");
-        $restore_restoreto_options[1] = get_string("existingcourseadding");
-    // else if the user can write to current course
-    } else if (has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))){
-        $restore_restoreto_options[0] = get_string("currentcoursedeleting");
-        $restore_restoreto_options[1] = get_string("currentcourseadding");
+    // if the user can restore to current course, grant the "current" options
+    if (has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))){
+        $restore_restoreto_options[RESTORETO_CURRENT_DELETING] = get_string("currentcoursedeleting");
+        $restore_restoreto_options[RESTORETO_CURRENT_ADDING] = get_string("currentcourseadding");
     }
 
-    // if user can create any course at all, give the option
+    // if user can create any course, grant the "new course" option
     if ($cancreatecourses) {
-        $restore_restoreto_options[2] = get_string("newcourse");
+        $restore_restoreto_options[RESTORETO_NEW_COURSE] = get_string("newcourse");
+    }
+
+    // if the user can restore to 2 or more courses (or to just 1 but different from current), grant the "existing" options
+    if (count($mycourses) > 1 || (count($mycourses) == 1 && $mycourses[0]->id != $id)) {
+        $restore_restoreto_options[RESTORETO_EXISTING_DELETING] = get_string("existingcoursedeleting");
+        $restore_restoreto_options[RESTORETO_EXISTING_ADDING] = get_string("existingcourseadding");
     }
 
 /// Acummulator for hidden options and proper XHTML output
