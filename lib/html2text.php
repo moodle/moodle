@@ -471,7 +471,7 @@ class html2text
         $text = preg_replace_callback($this->callback_search, array('html2text', '_preg_callback'), $text);
 
         // Replace known html entities
-        $text = html_entity_decode($text, ENT_COMPAT, 'UTF-8');
+        $text = utf8_encode(html_entity_decode($text));
 
         // Remove unknown/unhandled entities (this cannot be done in search-and-replace block)
         $text = preg_replace('/&[^&;]+;/i', '', $text); 
