@@ -76,6 +76,12 @@
                 $item->pubdate = $blogpost->lastmodified;
                 $item->link = $CFG->wwwroot.'/blog/index.php?postid='.$blogpost->id;
                 $item->description = format_text($blogpost->summary, $blogpost->format);
+                if ( !empty($CFG->usetags) && ($blogtags = tag_get_tags_array('post', $blogpost->id)) ) {
+                    if ($blogtags) {
+                        $item->tags = $blogtags;
+                    }
+                    $item->tagscheme = $CFG->wwwroot . '/tag';
+                }
                 $items[] = $item;
             }
             $articles = rss_add_items($items);   /// Change structure to XML
