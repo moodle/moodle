@@ -46,27 +46,60 @@ class repository_local extends repository {
      * @return mixed
      */
     public function get_listing($encodedpath = '', $page = '', $search = '') {
-        global $CFG;
+        global $CFG, $USER;
         $ret = array();
         $ret['dynload'] = true;
         $list = array();
+        if (!empty($encodedpath)) {
+            $params = unserialize(base64_decode($encodedpath));
+            if (is_array($params)) {
+                $itemid   = $params['itemid'];
+                $filename = $params['filename'];
+                $filearea = $params['filearea'];
+                $filepath = $params['filepath'];
+                $context  = get_context_instance_by_id($params['contextid']);
+            }
+        } else {
+            $itemid   = null;
+            $filename = null;
+            $filearea = null;
+            $filepath = null;
+            $context  = get_system_context();
+            // append draft files directory
+            $node = array(
+                'title' => 'Current use files',
+                'size' => 0,
+                'date' => '',
+                'path' => 'draft',
+                'children'=>array(),
+                'thumbnail' => $CFG->wwwroot .'/pix/f/folder-32.png'
+            );
+            $list[] = $node;
+        }
+
+        // list draft files
+        if ($encodedpath == 'draft') {
+            $fs = get_file_storage();
+            $context = get_context_instance(CONTEXT_USER, $USER->id);
+            $files = $fs->get_area_files($context->id, 'user_draft');
+            foreach ($files as $file) {
+                if ($file->get_filename()!='.') {
+                    $node = array(
+                        'title' => $file->get_filename(),
+                        'size' => 0,
+                        'date' => '',
+                        'source'=> $file->get_id(),
+                        'thumbnail' => $CFG->wwwroot .'/pix/f/text-32.png'
+                    );
+                    $list[] = $node;
+                }
+            }
+            $ret['list'] = $list;
+            return $ret;
+        }
 
         try {
             $browser = get_file_browser();
-            if (!empty($encodedpath)) {
-                $decodedpath = unserialize(base64_decode($encodedpath));
-                $itemid   = $decodedpath['itemid'];
-                $filename = $decodedpath['filename'];
-                $filearea = $decodedpath['filearea'];
-                $filepath = $decodedpath['filepath'];
-                $context  = get_context_instance_by_id($decodedpath['contextid']);
-            } else {
-                $itemid   = null;
-                $filename = null;
-                $filearea = null;
-                $filepath = null;
-                $context  = get_system_context();
-            }
 
             if ($fileinfo = $browser->get_file_info($context, $filearea, $itemid, '/', $filename)) {
                 $level = $fileinfo->get_parent();
@@ -121,33 +154,33 @@ class repository_local extends repository {
      * @return string the location of the file
      * @see curl package
      */
-    public function get_file($encoded, $title = '', $itemid = '', $ctx_id) {
-        global $USER;
+    public function get_file($encoded, $title = '', $itemid = '') {
+        global $USER, $DB;
+        $ret = array();
+        $browser = get_file_browser();
         $params = unserialize(base64_decode($encoded));
-        $contextid = $params['contextid'];
-        $filearea  = $params['filearea'];
-        $filepath  = $params['filepath'];
-        $filename  = $params['filename'];
-        $fileitemid = $params['itemid'];
-        $fs = get_file_storage();
-        $oldfile = $fs->get_file($contextid, $filearea, $fileitemid, $filepath, $filename);
-
-        $now = time();
-        $context = get_context_instance(CONTEXT_USER, $USER->id);
-        $recored = new stdclass;
-        $record->filearea = 'user_draft';
-        $record->contextid = $context->id;
-        $record->filename  = $title;
-        $record->filepath  = '/';
-        $record->timecreated  = $now;
-        $record->timemodified = $now;
-        $record->userid       = $USER->id;
-        $record->mimetype = $oldfile->get_mimetype();
-        if (!empty($itemid)) {
-            $record->itemid   = $itemid;
+        $user_context = get_context_instance(CONTEXT_USER, $USER->id);
+        if (!$params) {
+            $fs = get_file_storage();
+            // change draft file itemid
+            $file_record = array('contextid'=>$user_context->id, 'filearea'=>'user_draft', 'itemid'=>$itemid);
+            $fs->create_file_from_storedfile($file_record, $encoded);
+        } else {
+            // the final file
+            $contextid = $params['contextid'];
+            $filearea  = $params['filearea'];
+            $filepath  = $params['filepath'];
+            $filename  = $params['filename'];
+            $fileitemid = $params['itemid'];
+            $context  = get_context_instance_by_id($contextid);
+            $file_info = $browser->get_file_info($context, $filearea, $fileitemid, $filepath, $filename);
+            $file_info->copy_to_storage($user_context->id, 'user_draft', $itemid, '/', $title);
         }
-        $newfile = $fs->create_file_from_storedfile($record, $oldfile->get_id());
-        return $newfile;
+        $ret['itemid'] = $itemid;
+        $ret['title']  = $title;
+        $ret['contextid'] = $user_context->id;
+
+        return $ret;
     }
 
     /**

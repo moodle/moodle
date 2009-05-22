@@ -207,15 +207,13 @@ EOD;
                                 'file'=>$url
                                 )
                             );
-                } else if ($filepath instanceof stored_file) {
-                    $sf = $filepath;
-                    $browser = get_file_browser();
-                    $context  = get_context_instance_by_id($sf->get_contextid());
+                } else if (is_array($filepath)) {
+                    $fileinfo = $filepath;
                     $info = array();
                     $info['client_id'] = $client_id;
-                    $info['file'] = $sf->get_filename();
+                    $info['file'] = $fileinfo['title'];
                     $info['id'] = $itemid;
-                    $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$sf->get_contextid().'/user_draft/'.$itemid.'/'.$sf->get_filename();
+                    $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user_draft/'.$itemid.'/'.$fileinfo['title'];
                     echo json_encode($info);
                 } else {
                     // normal file path name
