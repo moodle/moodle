@@ -49,13 +49,13 @@ function hotpot_restore_mods($mod, $restore) {
     //     backup_unique_code : xxxxxxxxxx
     //     file         : '/full/path/to/backupfile.zip'
     //     mods         : an array of $modinfo's (see below)
-    //     restoreto    : 0=existing course (replace), 1=existing course (append), 2=new course
+    //     restoreto    : See RESTORETO_XXX constants in backup/lib.php
     //     users        : 0=all, 1=course, 2=none
     //     logs         : 0=no, 1=yes
     //     user_files   : 0=no, 1=yes
     //     course_files : 0=no, 1=yes
     //     course_id    : id of course into which data is to be restored
-    //     deleting     : true if 'restoreto'==0, otherwise false
+    //     deleting     : true if 'restoreto'==RESTORETO_NEW_COURSE, otherwise false
     //     original_wwwroot : 'http://your.server.com/moodle'
     // $modinfo is an array
     //    'modname'    : array( 'restore'=> 0=no 1=yes, 'userinfo' => 0=no 1=yes)
