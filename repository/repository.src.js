@@ -1038,7 +1038,6 @@ upload: function(o) {
             return;
         }
         if(ret) {
-            alert(fp_lang.saved);
             repository_client.end(client_id, ret);
         }
     }
