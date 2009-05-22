@@ -121,8 +121,7 @@
  * That's all!
  *
  * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  http://dougiamas.com
- *            2001 onwards Eloy Lafuente (stronk7) http://contiento.com
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
  

@@ -1,4 +1,19 @@
-<?php // $Id$
+<?php
+
+// This file is part of Moodle - http://moodle.org/ 
+// 
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Library of functions for database manipulation.
@@ -6,25 +21,35 @@
  * Other main libraries:
  * - weblib.php - functions that produce web output
  * - moodlelib.php - general-purpose Moodle functions
- * @author Martin Dougiamas and many others
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package moodlecore
+ *
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define('MAX_COURSES_IN_CATEGORY', 10000); // MAX_COURSES_IN_CATEGORY * MAX_COURSE_CATEGORIES must not be more than max integer!
+ /** 
+  * The maximum courses in a category
+  * MAX_COURSES_IN_CATEGORY * MAX_COURSE_CATEGORIES must not be more than max integer! 
+  */
+define('MAX_COURSES_IN_CATEGORY', 10000);
+/** 
+  * The maximum number of course categories
+  * MAX_COURSES_IN_CATEGORY * MAX_COURSE_CATEGORIES must not be more than max integer! 
+  */
 define('MAX_COURSE_CATEGORIES', 10000);
 
- /// Some constants
- define('LASTACCESS_UPDATE_SECS', 60); /// Number of seconds to wait before
-                                       /// updating lastaccess information in DB.
-
-/// USER DATABASE ////////////////////////////////////////////////
+ /** 
+  * Number of seconds to wait before updating lastaccess information in DB.
+  */
+ define('LASTACCESS_UPDATE_SECS', 60); 
 
 /**
  * Returns $user object of the main admin user
  * primary admin = admin with lowest role_assignment id among admins
- * @uses $CFG
- * @return object(admin) An associative array representing the admin user.
+ *
+ * @global object
+ * @static object $myadmin
+ * @return object An associative array representing the admin user.
  */
 function get_admin () {
 
@@ -49,8 +74,8 @@ function get_admin () {
  * Returns list of all admins, using 1 DB query. It depends on DB schema v1.7
  * but does not depend on the v1.9 datastructures (context.path, etc).
  *
- * @uses $CFG
- * @return object
+ * @global object
+ * @return array
  */
 function get_admins() {
     global $DB;
@@ -73,7 +98,13 @@ function get_admins() {
     return $DB->get_records_sql($sql, $params);
 }
 
-
+/**
+ * Get all of the courses in a given meta course
+ *
+ * @global object
+ * @param int $metacourseid The metacourse id
+ * @return array
+ */
 function get_courses_in_metacourse($metacourseid) {
     global $DB;
 
@@ -86,6 +117,14 @@ function get_courses_in_metacourse($metacourseid) {
     return $DB->get_records_sql($sql, $params);
 }
 
+/**
+ * @todo Document this function
+ *
+ * @global object
+ * @uses SITEID
+ * @param int $metacourseid
+ * @return array
+ */
 function get_courses_notin_metacourse($metacourseid) {
     global $DB;
 
@@ -106,6 +145,16 @@ function get_courses_notin_metacourse($metacourseid) {
     return $DB->get_records_sql($sql, $params);
 }
 
+/**
+ * @todo Document this function
+ *
+ * This function is nearly identical to {@link get_courses_notin_metacourse()}
+ *
+ * @global object
+ * @uses SITEID
+ * @param int $metacourseid
+ * @return int The count
+ */
 function count_courses_notin_metacourse($metacourseid) {
     global $DB;
 
@@ -131,12 +180,16 @@ function count_courses_notin_metacourse($metacourseid) {
  * If $coursid specifies the site course then this function searches
  * through all undeleted and confirmed users
  *
+ * @global object
+ * @uses SITEID
+ * @uses SQL_PARAMS_NAMED
+ * @uses CONTEXT_COURSE
  * @param int $courseid The course in question.
  * @param int $groupid The group in question.
- * @param string $searchtext ?
- * @param string $sort ?
- * @param array $exceptions ?
- * @return object
+ * @param string $searchtext The string to search for
+ * @param string $sort A field to sort by
+ * @param array $exceptions A list of IDs to ignore, eg 2,4,5,8,9,10
+ * @return array
  */
 function search_users($courseid, $groupid, $searchtext, $sort='', array $exceptions=null) {
     global $DB;
@@ -199,18 +252,21 @@ function search_users($courseid, $groupid, $searchtext, $sort='', array $excepti
 /**
  * Returns a subset of users
  *
- * @uses $CFG
+ * @global object
+ * @uses DEBUG_DEVELOPER
+ * @uses SQL_PARAMS_NAMED
  * @param bool $get If false then only a count of the records is returned
  * @param string $search A simple string to search for
  * @param bool $confirmed A switch to allow/disallow unconfirmed users
- * @param array(int) $exceptions A list of IDs to ignore, eg 2,4,5,8,9,10
+ * @param array $exceptions A list of IDs to ignore, eg 2,4,5,8,9,10
  * @param string $sort A SQL snippet for the sorting criteria to use
- * @param string $firstinitial ?
- * @param string $lastinitial ?
- * @param string $page ?
- * @param string $recordsperpage ?
+ * @param string $firstinitial Users whose first name starts with $firstinitial
+ * @param string $lastinitial Users whose last name starts with $lastinitial
+ * @param string $page The page or records to return
+ * @param string $recordsperpage The number of records to return per page
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return object|false|int  {@link $USER} records unless get is false in which case the integer count of the records found is returned. False is returned if an error is encountered.
+ * @return array|int|bool  {@link $USER} records unless get is false in which case the integer count of the records found is returned. 
+  *                        False is returned if an error is encountered.
  */
 function get_users($get=true, $search='', $confirmed=false, array $exceptions=null, $sort='firstname ASC',
                    $firstinitial='', $lastinitial='', $page='', $recordsperpage='', $fields='*', $extraselect='', array $extraparams=null) {
@@ -270,19 +326,18 @@ function get_users($get=true, $search='', $confirmed=false, array $exceptions=nu
 
 
 /**
- * shortdesc (optional)
- *
- * longdesc
- *
- * @param string $sort ?
- * @param string $dir ?
- * @param int $categoryid ?
- * @param int $categoryid ?
- * @param string $search ?
- * @param string $firstinitial ?
- * @param string $lastinitial ?
- * @returnobject {@link $USER} records
  * @todo Finish documenting this function
+ *
+ * @param string $sort An SQL field to sort by
+ * @param string $dir The sort direction ASC|DESC
+ * @param int $page The page or records to return
+ * @param int $recordsperpage The number of records to return per page
+ * @param string $search A simple string to search for
+ * @param string $firstinitial Users whose first name starts with $firstinitial
+ * @param string $lastinitial Users whose last name starts with $lastinitial
+ * @param string $extraselect An additional SQL select statement to append to the query
+ * @param array $extraparams Additional parameters to use for the above $extraselect
+ * @return array Array of {@link $USER} records
  */
 
 function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperpage=0,
@@ -333,6 +388,7 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
 /**
  * Full list of users that have confirmed their accounts.
  *
+ * @global object
  * @return array of unconfirmed users
  */
 function get_users_confirmed() {
@@ -349,7 +405,9 @@ function get_users_confirmed() {
 /**
  * Returns $course object of the top-level site.
  *
- * @return course  A {@link $COURSE} object for the site
+ * @global object
+ * @global object
+ * @return bool|object A {@link $COURSE} object for the site
  */
 function get_site() {
     global $SITE, $DB;
@@ -373,8 +431,14 @@ function get_site() {
  *            we are using distinct. You almost _NEVER_ need all the fields
  *            in such a large SELECT
  *
- * @param    type description
- * @return array of courses
+ * @global object
+ * @global object
+ * @global object
+ * @uses CONTEXT_COURSE
+ * @param string|int $categoryid Either a category id or 'all' for everything
+ * @param string $sort A field and direction to sort by
+ * @param string $fields The additional fields to return
+ * @return array Array of courses
  */
 function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") {
 
@@ -434,8 +498,17 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
  *            we are using distinct. You almost _NEVER_ need all the fields
  *            in such a large SELECT
  *
- * @param    type description
- * @return array of courses
+ * @global object
+ * @global object
+ * @global object
+ * @uses CONTEXT_COURSE
+ * @param string|int $categoryid Either a category id or 'all' for everything
+ * @param string $sort A field and direction to sort by
+ * @param string $fields The additional fields to return
+ * @param int $totalcount Reference for the number of courses
+ * @param string $limitfrom The course to start from
+ * @param string $limitnum The number of courses to limit to
+ * @return array Array of courses 
  */
 function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c.*",
                           &$totalcount, $limitfrom="", $limitnum="") {
@@ -504,6 +577,17 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
  * - $course->managers - array containing RA objects that include a $user obj
  *                       with the minimal fields needed for fullname()
  *
+ * @global object
+ * @global object
+ * @global object
+ * @uses CONTEXT_COURSE
+ * @uses CONTEXT_SYSTEM
+ * @uses CONTEXT_COURSECAT
+ * @uses SITEID
+ * @param int|string $categoryid Either the categoryid for the courses or 'all'
+ * @param string $sort A SQL sort field and direction
+ * @param array $fields An array of additional fields to fetch
+ * @return array
  */
 function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=array()) {
     /*
@@ -728,13 +812,18 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
  * - the course records have $c->context which is a fully
  *   valid context object. Saves you a query per course!
  *
- * @uses $CFG,$USER
+ * @global object
+ * @global object
+ * @global object
+ * @uses CONTEXT_SYSTEM
+ * @uses CONTEXT_COURSE
+ * @uses CONTEXT_COURSECAT
  * @param int $userid The user of interest
  * @param string $sort the sortorder in the course table
- * @param array $fields - names of _additional_ fields to return (also accepts a string)
+ * @param array $fields names of _additional_ fields to return (also accepts a string)
  * @param bool $doanything True if using the doanything flag
  * @param int $limit Maximum number of records to return, or 0 for unlimited
- * @return array {@link $COURSE} of course objects
+ * @return array Array of {@link $COURSE} of course objects
  */
 function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NULL, $doanything=false,$limit=0) {
     global $CFG, $USER, $DB;
@@ -992,12 +1081,13 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
 /**
  * A list of courses that match a search
  *
- * @uses $CFG
- * @param array $searchterms ?
- * @param string $sort ?
- * @param int $page ?
- * @param int $recordsperpage ?
- * @param int $totalcount Passed in by reference. ?
+ * @global object
+ * @global object
+ * @param array $searchterms An array of search criteria
+ * @param string $sort A field and direction to sort by
+ * @param int $page The page number to get
+ * @param int $recordsperpage The number of records per page
+ * @param int $totalcount Passed in by reference.
  * @return object {@link $COURSE} records
  */
 function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $recordsperpage=50, &$totalcount) {
@@ -1104,7 +1194,8 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
  * a "shallow" resultset. Pass false to $shallow and it will return all
  * the child categories as well.
  *
- *
+ * @global object
+ * @uses CONTEXT_COURSECAT
  * @param string $parent The parent category if any
  * @param string $sort the sortorder
  * @param bool   $shallow - set to false to get the children too
@@ -1173,7 +1264,9 @@ function get_categories($parent='none', $sort=NULL, $shallow=true) {
 /**
  * Returns an array of category ids of all the subcategories for a given
  * category.
- * @param $catid - The id of the category whose subcategories we want to find.
+ *
+ * @global object
+ * @param int $catid - The id of the category whose subcategories we want to find.
  * @return array of category ids.
  */
 function get_all_subcategories($catid) {
@@ -1192,6 +1285,11 @@ function get_all_subcategories($catid) {
 
 /**
  * Return specified category, default if given does not exist
+ * 
+ * @global object
+ * @uses MAX_COURSES_IN_CATEGORY
+ * @uses CONTEXT_COURSECAT
+ * @uses SYSCONTEXTID
  * @param int $catid course category id
  * @return object caregory
  */
@@ -1232,6 +1330,14 @@ function get_course_category($catid=0) {
 /**
  * Fixes course category and course sortorder, also verifies category and course parents and paths.
  * (circular references are not fixed)
+ *
+ * @global object
+ * @global object
+ * @uses MAX_COURSES_IN_CATEGORY
+ * @uses MAX_COURSE_CATEGORIES
+ * @uses SITEID
+ * @uses CONTEXT_COURSE
+ * @return void
  */
 function fix_course_sortorder() {
     global $DB, $SITE;
@@ -1398,6 +1504,19 @@ function fix_course_sortorder() {
 
 /**
  * Internal recursive category verification function, do not use directly!
+ *
+ * @todo Document the arguments of this function better
+ *
+ * @global object
+ * @uses MAX_COURSES_IN_CATEGORY
+ * @uses CONTEXT_COURSECAT
+ * @param array $children
+ * @param int $sortorder
+ * @param string $parent
+ * @param int $depth
+ * @param string $path
+ * @param array $fixcontexts
+ * @return void
  */
 function _fix_course_cats($children, &$sortorder, $parent, $depth, $path, &$fixcontexts) {
     global $DB;
@@ -1434,8 +1553,10 @@ function _fix_course_cats($children, &$sortorder, $parent, $depth, $path, &$fixc
  * List of remote courses that a user has access to via MNET.
  * Works only on the IDP
  *
- * @uses $CFG, $USER
- * @return array {@link $COURSE} of course objects
+ * @global object
+ * @global object
+ * @param int @userid The user id to get remote courses for
+ * @return array Array of {@link $COURSE} of course objects
  */
 function get_my_remotecourses($userid=0) {
     global $DB, $USER;
@@ -1459,8 +1580,9 @@ function get_my_remotecourses($userid=0) {
  * List of remote hosts that a user has access to via MNET.
  * Works on the SP
  *
- * @uses $CFG, $USER
- * @return array of host objects
+ * @global object
+ * @global object
+ * @return array|bool Array of host objects or false
  */
 function get_my_remotehosts() {
     global $CFG, $USER;
@@ -1482,6 +1604,10 @@ function get_my_remotehosts() {
  * strings and files is a bit odd, but this is because we
  * need to maintain backward compatibility with many different
  * existing language translations and older sites.
+ *
+ * @global object
+ * @global object
+ * @return void
  */
 function make_default_scale() {
     global $CFG, $DB;
@@ -1526,9 +1652,9 @@ function make_default_scale() {
 /**
  * Returns a menu of all available scales from the site as well as the given course
  *
- * @uses $CFG
+ * @global object
  * @param int $courseid The id of the course as found in the 'course' table.
- * @return object
+ * @return array
  */
 function get_scales_menu($courseid=0) {
     global $DB;
@@ -1553,8 +1679,9 @@ function get_scales_menu($courseid=0) {
 /**
  * Given a set of timezone records, put them in the database,  replacing what is there
  *
- * @uses $CFG
+ * @global object
  * @param array $timezones An array of timezone records
+ * @return void
  */
 function update_timezone_records($timezones) {
     global $DB;
@@ -1577,8 +1704,9 @@ function update_timezone_records($timezones) {
 /**
  * Just gets a raw list of all modules in a course
  *
+ * @global object
  * @param int $courseid The id of the course as found in the 'course' table.
- * @return object
+ * @return array
  */
 function get_course_mods($courseid) {
     global $DB;
@@ -1597,11 +1725,12 @@ function get_course_mods($courseid) {
 /**
  * Given an id of a course module, finds the coursemodule description
  *
+ * @global object
  * @param string $modulename name of module type, eg. resource, assignment,... (optional, slower and less safe if not specified)
  * @param int $cmid course module id (id in course_modules table)
  * @param int $courseid optional course id for extra validation
  * @param bool $sectionnum include relative section number (0,1,2 ...)
- * @return object course module instance with instance and module name
+ * @return array Array of results
  */
 function get_coursemodule_from_id($modulename, $cmid, $courseid=0, $sectionnum=false) {
     global $DB;
@@ -1647,11 +1776,12 @@ function get_coursemodule_from_id($modulename, $cmid, $courseid=0, $sectionnum=f
 /**
  * Given an instance number of a module, finds the coursemodule description
  *
+ * @global object
  * @param string $modulename name of module type, eg. resource, assignment,...
  * @param int $instance module instance number (id in resource, assignment etc. table)
  * @param int $courseid optional course id for extra validation
  * @param bool $sectionnum include relative section number (0,1,2 ...)
- * @return object course module instance with instance and module name
+ * @return array Array of results
  */
 function get_coursemodule_from_instance($modulename, $instance, $courseid=0, $sectionnum=false) {
     global $DB;
@@ -1685,10 +1815,11 @@ function get_coursemodule_from_instance($modulename, $instance, $courseid=0, $se
 
 /**
  * Returns all course modules of given activity in course
- * @param string $modulename (forum, quiz, etc.)
- * @param int $courseid
+ *
+ * @param string $modulename The module name (forum, quiz, etc.)
+ * @param int $courseid The course id to get modules for
  * @param string $extrafields extra fields starting with m.
- * @return array of cm objects, false if not found or error
+ * @return array Array of results
  */
 function get_coursemodules_in_course($modulename, $courseid, $extrafields='') {
     global $DB;
@@ -1719,8 +1850,12 @@ function get_coursemodules_in_course($modulename, $courseid, $extrafields='') {
  * The returned objects includle the columns cw.section, cm.visible,
  * cm.groupmode and cm.groupingid, cm.groupmembersonly, and are indexed by cm.id.
  *
+ * @global object
+ * @global object
  * @param string $modulename The name of the module to get instances for
  * @param array $courses an array of course objects.
+ * @param int $userid
+ * @param int $includeinvisible
  * @return array of module instance objects, including some extra fields from the course_modules
  *          and course_sections tables, or an empty array if an error occurred.
  */
@@ -1784,10 +1919,14 @@ function get_all_instances_in_courses($modulename, $courses, $userid=NULL, $incl
  * The returned objects includle the columns cw.section, cm.visible,
  * cm.groupmode and cm.groupingid, cm.groupmembersonly, and are indexed by cm.id.
  *
+ * Simply calls {@link all_instances_in_courses()} with a single provided course
+ *
  * @param string $modulename The name of the module to get instances for
  * @param object $course The course obect.
  * @return array of module instance objects, including some extra fields from the course_modules
  *          and course_sections tables, or an empty array if an error occurred.
+ * @param int $userid
+ * @param int $includeinvisible
  */
 function get_all_instances_in_course($modulename, $course, $userid=NULL, $includeinvisible=false) {
     return get_all_instances_in_courses($modulename, array($course->id => $course), $userid, $includeinvisible);
@@ -1801,9 +1940,11 @@ function get_all_instances_in_course($modulename, $course, $userid=NULL, $includ
  * and the module's type (eg "forum") returns whether the object
  * is visible or not, groupmembersonly visibility not tested
  *
+ * @global object
+ 
  * @param $moduletype Name of the module eg 'forum'
  * @param $module Object which is the instance of the module
- * @return bool
+ * @return bool Success
  */
 function instance_is_visible($moduletype, $module) {
     global $DB;
@@ -1829,9 +1970,14 @@ function instance_is_visible($moduletype, $module) {
  * Determine whether a course module is visible within a course,
  * this is different from instance_is_visible() - faster and visibility for user
  *
+ * @global object
+ * @global object
+ * @uses DEBUG_DEVELOPER
+ * @uses CONTEXT_MODULE
+ * @uses CONDITION_MISSING_EXTRATABLE
  * @param object $cm object
  * @param int $userid empty means current user
- * @return bool
+ * @return bool Success
  */
 function coursemodule_visible_for_user($cm, $userid=0) {
     global $USER,$CFG;
@@ -1871,10 +2017,12 @@ function coursemodule_visible_for_user($cm, $userid=0) {
  * than web server hits, and provide a way to easily reconstruct what
  * any particular student has been doing.
  *
- * @uses $CFG
- * @uses $USER
- * @uses $REMOTE_ADDR
+ * @global object
+ * @global object
+ * @global object
  * @uses SITEID
+ * @uses DEBUG_DEVELOPER
+ * @uses DEBUG_ALL
  * @param    int     $courseid  The course id
  * @param    string  $module  The module name - e.g. forum, journal, resource, course, user etc
  * @param    string  $action  'view', 'update', 'add' or 'delete', possibly followed by another word to clarify.
@@ -1882,6 +2030,7 @@ function coursemodule_visible_for_user($cm, $userid=0) {
  * @param    string  $info    Additional description information
  * @param    string  $cm      The course_module->id if there is one
  * @param    string  $user    If log regards $user other than $USER
+ * @return void
  */
 function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user=0) {
     // Note that this function intentionally does not follow the normal Moodle DB access idioms.
@@ -1965,6 +2114,11 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
 /**
  * Store user last access times - called when use enters a course or site
  *
+ * @global object
+ * @global object
+ * @global object
+ * @uses LASTACCESS_UPDATE_SECS
+ * @uses SITEID
  * @param int $courseid, empty means site
  * @return void
  */
@@ -2030,6 +2184,9 @@ function user_accesstime_log($courseid=0) {
 /**
  * Select all log records based on SQL criteria
  *
+ * @todo Finish documenting this function
+ *
+ * @global object
  * @param string $select SQL select criteria
  * @param array $params named sql type params
  * @param string $order SQL order by clause to sort the records returned
@@ -2037,7 +2194,6 @@ function user_accesstime_log($courseid=0) {
  * @param int $limitnum ?
  * @param int $totalcount Passed in by reference.
  * @return object
- * @todo Finish documenting this function
  */
 function get_logs($select, array $params=null, $order='l.time DESC', $limitfrom='', $limitnum='', &$totalcount) {
     global $DB;
@@ -2072,12 +2228,13 @@ function get_logs($select, array $params=null, $order='l.time DESC', $limitfrom=
 /**
  * Select all log records for a given course and user
  *
- * @uses $CFG
+ * @todo Finish documenting this function
+ *
+ * @global object
  * @uses DAYSECS
  * @param int $userid The id of the user as found in the 'user' table.
  * @param int $courseid The id of the course as found in the 'course' table.
  * @param string $coursestart ?
- * @todo Finish documenting this function
  */
 function get_logs_usercourse($userid, $courseid, $coursestart) {
     global $DB;
@@ -2102,13 +2259,12 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
 /**
  * Select all log records for a given course, user, and day
  *
- * @uses $CFG
+ * @global object
  * @uses HOURSECS
  * @param int $userid The id of the user as found in the 'user' table.
  * @param int $courseid The id of the course as found in the 'course' table.
  * @param string $daystart ?
  * @return object
- * @todo Finish documenting this function
  */
 function get_logs_userday($userid, $courseid, $daystart) {
     global $DB;
@@ -2138,6 +2294,8 @@ function get_logs_userday($userid, $courseid, $daystart) {
  * number of accounts.  For non-admins, only the attempts on the given user
  * are shown.
  *
+ * @global object
+ * @uses CONTEXT_SYSTEM
  * @param string $mode Either 'admin', 'teacher' or 'everybody'
  * @param string $username The username we are searching for
  * @param string $lastlogin The date from which we are searching
@@ -2173,6 +2331,7 @@ function count_login_failures($mode, $username, $lastlogin) {
  * Mostly just used for debugging.
  *
  * @param mixed $object The data to be printed
+ * @return void OUtput is echo'd
  */
 function print_object($object) {
     echo '<pre class="notifytiny">' . htmlspecialchars(print_r($object,true)) . '</pre>';
@@ -2199,7 +2358,10 @@ function print_object($object) {
  * - Do NOT call this over many courses as it'll generate
  *   DB traffic. Instead, see what get_my_courses() does.
  *
- * @param mixed $object A course object
+ * @global object
+ * @global object
+ * @staticvar array $mycache
+ * @param object $course A course object
  * @return bool
  */
 function course_parent_visible($course = null) {
@@ -2251,8 +2413,9 @@ function course_parent_visible($course = null) {
  * Any script can avoid calls to this function by defining XMLDB_SKIP_DEBUG_HOOK before
  * using XMLDB classes. Obviously, also, if this function doesn't exist, it isn't invoked ;-)
  *
- * @param $message string contains the error message
- * @param $object object XMLDB object that fired the debug
+ * @uses DEBUG_DEVELOPER
+ * @param string $message string contains the error message
+ * @param object $object object XMLDB object that fired the debug
  */
 function xmldb_debug($message, $object) {
 
@@ -2260,6 +2423,8 @@ function xmldb_debug($message, $object) {
 }
 
 /**
+ * @global object
+ * @uses CONTEXT_COURSECAT
  * @return boolean Whether the user can create courses in any category in the system.
  */
 function user_can_create_courses() {

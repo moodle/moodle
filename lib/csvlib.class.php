@@ -1,24 +1,61 @@
 <?php
-/*
- * General csv import library.
- * @author Petr Skoda
- * @version $Id$
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package moodlecore
+// This file is part of Moodle - http://moodle.org/ 
+// 
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This is a one-line short description of the file
+ *
+ * You can have a rather longer description of the file as well, 
+ * if you like, and it can span multiple lines.
+ * 
+ * @copyright Petr Skoda
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   moodlecore
  */
 
 /**
  * Utitily class for importing of CSV files.
+ * @copyright Petr Skoda
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   moodlecore
  */
 class csv_import_reader {
+    /**
+     * @var int import identifier
+     */
     var $_iid;
+    /**
+     * @var string which script imports?
+     */
     var $_type;
+    /**
+     * @var string|null Null if ok, error msg otherwise
+     */
     var $_error;
-    var $_columns; //cached columns
+    /**
+     * @var array cached columns
+     */
+    var $_columns;
+    /**
+     * @var object file handle used during import
+     */
     var $_fp;
 
     /**
      * Contructor
+     *
      * @param int $iid import identifier
      * @param string $type which script imports?
      */
@@ -29,11 +66,14 @@ class csv_import_reader {
 
     /**
      * Parse this content
-     * @param string &$content passed by ref for memory reasons, unset after return
+     *
+     * @global object
+     * @global object
+     * @param string $content passed by ref for memory reasons, unset after return
      * @param string $encoding content encoding
      * @param string $delimiter_name separator (comma, semicolon, colon, cfg)
      * @param string $column_validation name of function for columns validation, must have one param $columns
-     * @return false if error, count of data lines if ok; use get_error() to get error string
+     * @return bool false if error, count of data lines if ok; use get_error() to get error string
      */
     function load_csv_content(&$content, $encoding, $delimiter_name, $column_validation=null) {
         global $USER, $CFG;
@@ -108,6 +148,7 @@ class csv_import_reader {
 
     /**
      * Returns list of columns
+     *
      * @return array
      */
     function get_columns() {
@@ -133,6 +174,10 @@ class csv_import_reader {
 
     /**
      * Init iterator.
+     *
+     * @global object
+     * @global object
+     * @return bool Success
      */
     function init() {
         global $CFG, $USER;
@@ -153,7 +198,8 @@ class csv_import_reader {
 
     /**
      * Get next line
-     * @return array of values
+     *
+     * @return mixed false, or an array of values
      */
     function next() {
         if (empty($this->_fp) or feof($this->_fp)) {
@@ -168,6 +214,8 @@ class csv_import_reader {
 
     /**
      * Release iteration related resources
+     *
+     * @return void
      */
     function close() {
         if (!empty($this->_fp)) {
@@ -178,6 +226,7 @@ class csv_import_reader {
 
     /**
      * Get last error
+     *
      * @return string error text of null if none
      */
     function get_error() {
@@ -186,8 +235,10 @@ class csv_import_reader {
 
     /**
      * Cleanup temporary data
-     * @static if $full=true
-     * @param boolean true menasdo a full cleanup - all sessions for current user, false only the active iid
+     *
+     * @global object
+     * @global object
+     * @param boolean $full true means do a full cleanup - all sessions for current user, false only the active iid
      */
     function cleanup($full=false) {
         global $USER, $CFG;
@@ -201,7 +252,7 @@ class csv_import_reader {
 
     /**
      * Get list of cvs delimiters
-     * @static
+     *
      * @return array suitable for selection box
      */
     function get_delimiter_list() {
@@ -214,9 +265,9 @@ class csv_import_reader {
 
     /**
      * Get delimiter character
-     * @static
+     *
      * @param string separator name
-     * @return char delimiter char
+     * @return string delimiter char
      */
     function get_delimiter($delimiter_name) {
         switch ($delimiter_name) {
@@ -230,9 +281,10 @@ class csv_import_reader {
 
     /**
      * Get encoded delimiter character
-     * @static
+     *
+     * @global object
      * @param string separator name
-     * @return char encoded delimiter char
+     * @return string encoded delimiter char
      */
     function get_encoded_delimiter($delimiter_name) {
         global $CFG;
@@ -245,7 +297,8 @@ class csv_import_reader {
 
     /**
      * Create new import id
-     * @static
+     *
+     * @global object
      * @param string who imports?
      * @return int iid
      */

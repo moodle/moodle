@@ -1,6 +1,27 @@
 <?php
-// Used for tracking conditions that apply before activities are displayed
-// to students ('conditional availability').
+// This file is part of Moodle - http://moodle.org/ 
+// 
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Used for tracking conditions that apply before activities are displayed
+ * to students ('conditional availability').
+ * 
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 /** The activity is not displayed to students at all when conditions aren't met. */
 define('CONDITION_STUDENTVIEW_HIDE',0);
@@ -16,19 +37,34 @@ define('CONDITION_MISSING_EXTRATABLE',1);
 /** The $cm variable is expected to contain nothing except the ID */
 define('CONDITION_MISSING_EVERYTHING',2);
 
+/**
+ * @global stdClass $CONDITIONLIB_PRIVATE
+ * @name $CONDITIONLIB_PRIVATE
+ */
 global $CONDITIONLIB_PRIVATE;
 $CONDITIONLIB_PRIVATE = new stdClass;
 // Caches whether completion values are used in availability conditions.
 // Array of course => array of cmid => true.
 $CONDITIONLIB_PRIVATE->usedincondition = array();
 
-
+/**
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
+ */
 class condition_info {
+    /**
+     * @var object, bool
+     */
     private $cm, $gotdata;
 
     /**
      * Constructs with course-module details.
      *
+     * @global object
+     * @uses CONDITION_MISSING_NOTHING
+     * @uses CONDITION_MISSING_EVERYTHING
+     * @uses DEBUG_DEVELOPER
+     * @uses CONDITION_MISSING_EXTRATABLE
      * @param object $cm Moodle course-module object. May have extra fields
      *   ->conditionsgrade, ->conditionscompletion which should come from 
      *   get_fast_modinfo. Should have ->availablefrom, ->availableuntil, 
@@ -92,7 +128,9 @@ class condition_info {
      * Adds the extra availability conditions (if any) into the given 
      * course-module object.
      *
-     * @param object &$cm Moodle course-module data object
+     * @global object
+     * @global object
+     * @param object $cm Moodle course-module data object
      */
     public static function fill_availability_conditions(&$cm) {
         if (empty($cm->id)) {
@@ -132,6 +170,8 @@ WHERE
 
     /**
      * Obtains the name of a grade item.
+     *
+     * @global object
      * @param object $gradeitemobj Object from get_record on grade_items table,
      *     (can be empty if you want to just get !missing)
      * @return string Name of item of !missing if it didn't exist
@@ -149,9 +189,9 @@ WHERE
     }
 
     /**
-     * @return A course-module object with all the information required to
+     * @see require_data()
+     * @return object A course-module object with all the information required to
      *   determine availability.
-     * @throws coding_exception If data wasn't loaded
      */
     public function get_full_course_module() {
         $this->require_data();
@@ -160,6 +200,8 @@ WHERE
 
     /**
      * Adds to the database a condition based on completion of another module.
+     *
+     * @global object
      * @param int $cmid ID of other module
      * @param int $requiredcompletion COMPLETION_xx constant
      */
@@ -177,6 +219,8 @@ WHERE
 
     /**
      * Adds to the database a condition based on the value of a grade item.
+     *
+     * @global object
      * @param int $gradeitemid ID of grade item
      * @param float $min Minimum grade (>=), up to 5 decimal points, or null if none
      * @param float $max Maximum grade (<), up to 5 decimal points, or null if none
@@ -211,6 +255,8 @@ WHERE
 
     /**
      * Erases from the database all conditions for this activity.
+     *
+     * @global object
      */
     public function wipe_conditions() {
         // Wipe from DB
@@ -226,12 +272,14 @@ WHERE
     /**
      * Obtains a string describing all availability restrictions (even if
      * they do not apply any more).
+     *
+     * @global object
+     * @global object
      * @param object $modinfo Usually leave as null for default. Specify when
      *   calling recursively from inside get_fast_modinfo. The value supplied 
      *   here must include list of all CMs with 'id' and 'name'
      * @return string Information string (for admin) about all restrictions on 
      *   this item
-     * @throws coding_exception If data wasn't loaded
      */
     public function get_full_information($modinfo=null) {
         $this->require_data();
@@ -302,7 +350,12 @@ WHERE
      * - This does not take account of the viewhiddenactivities capability.
      *   That should apply later.
      *
-     * @param string &$information If the item has availability restrictions,
+     * @global object
+     * @global object
+     * @uses COMPLETION_COMPLETE
+     * @uses COMPLETION_COMPLETE_FAIL
+     * @uses COMPLETION_COMPLETE_PASS
+     * @param string $information If the item has availability restrictions,
      *   a string that describes the conditions will be stored in this variable; 
      *   if this variable is set blank, that means don't display anything
      * @param bool $grabthelot Performance hint: if true, caches information 
@@ -313,7 +366,6 @@ WHERE
      *   calling recursively from inside get_fast_modinfo. The value supplied 
      *   here must include list of all CMs with 'id' and 'name'
      * @return bool True if this item is available to the user, false otherwise
-     * @throws coding_exception If data wasn't loaded
      */
     public function is_available(&$information, $grabthelot=false, $userid=0, $modinfo=null) {
         $this->require_data();
@@ -423,6 +475,7 @@ WHERE
     /**
      * Shows a time either as a date (if it falls exactly on the day) or 
      * a full date and time, according to user's timezone.
+     *
      * @param int $time Time
      * @param bool $until True if this date should be treated as the second of
      *   an inclusive pair - if so the time will be shown unless date is 23:59:59.
@@ -458,7 +511,8 @@ WHERE
     
     /**
      * Internal function cheks that data was loaded.
-     * @throws coding_exception If data wasn't loaded
+     *
+     * @return void throws coding_exception If data wasn't loaded
      */
     private function require_data() {
         if (!$this->gotdata) {
@@ -472,6 +526,9 @@ WHERE
      * the user, because gradebook rules might prohibit that. It may be a 
      * non-final score subject to adjustment later.
      *
+     * @global object
+     * @global object
+     * @global object
      * @param int $gradeitemid Grade item ID we're interested in
      * @param bool $grabthelot If true, grabs all scores for current user on 
      *   this course, so that later ones come from cache
@@ -548,7 +605,11 @@ WHERE
         }
     }
 
-    /** For testing only. Wipes information cached in user session. */
+    /** 
+     * For testing only. Wipes information cached in user session. 
+     *
+     * @global object
+     */
     static function wipe_session_cache() {
         global $SESSION;
         unset($SESSION->gradescorecache);
@@ -560,8 +621,8 @@ WHERE
      * course_modules_availability table based on the module form data.
      *
      * @param object $cm Course-module with as much data as necessary, min id
-     * @param unknown_type $fromform
-     * @param unknown_type $wipefirst
+     * @param object $fromform
+     * @param bool $wipefirst Defaults to true
      */
     public static function update_cm_from_form($cm, $fromform, $wipefirst=true) {
         $ci=new condition_info($cm, CONDITION_MISSING_EVERYTHING, false);
@@ -587,6 +648,8 @@ WHERE
     /**
      * Used in course/lib.php because we need to disable the completion JS if
      * a completion value affects a conditional activity.
+     *
+     * @global object
      * @param object $course Moodle course object
      * @param object $cm Moodle course-module
      * @return bool True if this is used in a condition, false otherwise
