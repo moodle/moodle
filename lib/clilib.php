@@ -1,10 +1,30 @@
-<?php  //$Id$
+<?php
+// This file is part of Moodle - http://moodle.org/ 
+// 
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * CLI support functions
- * @author Dilan
+ *
+ * @package   moodlecore
+ * @copyright Dilan
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-//include PEAR Console libraries
+/**
+ * include PEAR Console libraries
+ */
 set_include_path($CFG->libdir . PATH_SEPARATOR . $CFG->libdir . '/pear/');
 require_once('Console/Getopt.php');
 
@@ -12,8 +32,9 @@ require_once('Console/Getopt.php');
  * Check the validity of the language
  * return true or false
  *
+ * @global array
  * @param string $lang (short code for language)
- * @return true/false
+ * @return bool true/false
  */
 function valid_language($lang) {
     global $DEFAULT;
@@ -54,7 +75,7 @@ function get_short_codes ($lang = array()) {
  * Return true or false
  *
  * @param string $value
- * @return true/false
+ * @return bool true/false
  */
 function valid_yes_no($value){
     $valid=array('yes','y','n','no');
@@ -75,12 +96,12 @@ function valid_yes_no($value){
  * Can value have a valid integer in the given range
  * Return true or false
  * @link valid_param()
- *
  * 
- * @param mixedtype $value
+ * @uses PARAM_INT
+ * @param mixed $value
  * @param int $start
  * @param int $end
- * @return true/false
+ * @return bool true/false
  */
 function valid_int_range($value,$start,$end) {
     if (valid_param($value,PARAM_INT)) {
@@ -96,8 +117,8 @@ function valid_int_range($value,$start,$end) {
  * Take a value and and check it with the given set of values
  * If value if found in the set return true. False otherwise
  *
- * @param mixed type $value
- * @param array  $set of valid elements
+ * @param mixed $value
+ * @param array $set of valid elements
  * @return boolean
  */
 
@@ -120,7 +141,8 @@ function valid_element($value,$set) {
  * Take a value and Type of the value 
  * If value match the type return true, false otherwise
  * uses {@link clean_param()} in moodlelib.php
- * @param mixedtype $value
+ *
+ * @param mixed $value
  * @param int $type
  * @return boolean
  */
@@ -136,7 +158,9 @@ function valid_param($value,$type){
 /**
  * Creat long arument list for PEAR method invocation using LONGOPTOIN array
  *
- * @param long option array $long_opt
+ * @uses CLI_VAL_REQ
+ * @uses CLI_VAL_OPT
+ * @param array $long_opt long option array $long_opt
  * @return PEAR method compatible long option array 
  */
 function create_long_options($long_opt) {
@@ -159,6 +183,7 @@ function create_long_options($long_opt) {
  * This funtion return an array of options with option as key containing the value of 
  * respective option
  *
+ * @global array
  * @param array of option arguments as defined by PEAR GetOpt calss $opt
  * @return return a options arguments with options as keys and values as respective value for key
  */
@@ -196,6 +221,8 @@ function get_options($opt=array()) {
 /**
  * Validate options values 
  *
+ * @uses CLI_FULL
+ * @uses CLI_NO
  * @param array $options
  */
 function validate_option_values($options){
@@ -338,6 +365,7 @@ function read($from=STDIN,$size=1024) {
 /**
  * Read an integer
  *
+ * @uses PARAM_INT
  * @return integer
  */
 function read_int() {
@@ -371,7 +399,7 @@ function read_int_range($start,$end) {
 /**
  * Read yes/no argument
  *
- * @return string yes/no
+ * @return string|void yes/no or void
  */
 function read_yes_no() {
     $input=strtolower(read());
@@ -391,6 +419,7 @@ function read_yes_no() {
 /**
  * Read a boolean parameter from the input
  *
+ * @uses PARAM_BOOL
  * @return boolean
  */
 function read_boolean(){
@@ -402,8 +431,8 @@ function read_boolean(){
 /**
  * Reading an element from a given set
  *
- * @param mixed type array $set
- * @return mixed type
+ * @param mixed array $set
+ * @return mixed
  */
 function read_element($set=array()) {
     $input=read();
@@ -415,6 +444,12 @@ function read_element($set=array()) {
     }
 }
 //=========================================================================//
+/**
+ * Read URL
+ *
+ * @uses PARAM_URL
+ * @return mixed
+ */
 function read_url() {
     $input = read();
     $localhost = false;
@@ -436,7 +471,7 @@ function read_url() {
 //=========================================================================//
 /**
  * Enter description here...
- *
+ * @todo Document this function
  * @return string
  */
 function read_dir() {
@@ -481,7 +516,7 @@ function check_compatibility($success, $testtext,$errormessage,$caution=false,$s
 /**
  * Print environment status to standard out
  *
- * @param array $env, of type object
+ * @param array $env of type object
  */
 function print_environment_status($env = array()) {
     console_write( get_string('name') . "\t\t\t" . get_string('info') . "\t" . get_string('status') . "\n\r", '', false);
@@ -507,7 +542,7 @@ function print_environment_status($env = array()) {
 /**
  * Print environment status to standard out
  *
- * @param array $env, of type object
+ * @param array $env of type object
  */
 function print_environment_status_detailed($env = array()) {
     console_write("Status\t\tLevel\t\tCurrent ver\tRequired ver\t\tPart\t\tInfo\n\r",'',false);
