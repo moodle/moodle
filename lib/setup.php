@@ -419,7 +419,10 @@ global $HTTPSPAGEREQUIRED;
             if (!file_exists($CFG->dataroot .'/sessions')) {
                 make_upload_directory('sessions');
             }
-            if (!(disk_free_space($CFG->dataroot.'/sessions') > 0)) {
+            // Need to disable debugging since disk_free_space()
+            // will fail on very large partitions (see MDL-19222)
+            $freespace = @disk_free_space($CFG->dataroot.'/sessions');
+            if (!($freespace > 2048) and $freespace !== false) {
                 echo '<html><body>';
                 echo '<table align="center"><tr>';
                 echo '<td style="color:#990000; text-align:center; font-size:large; border-width:1px; '.
