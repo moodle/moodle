@@ -126,7 +126,7 @@
             echo '<div id="nav-bar">'.$fullnav.'</div>';
 
             if ($course->id == SITEID and $wdir != "/backupdata") {
-                print_heading(get_string("publicsitefileswarning"), "center", 2);
+                print_heading(get_string("publicsitefileswarning2"), "center", 2);
             }
 
         } else {
@@ -140,7 +140,7 @@
                     admin_externalpage_setup('sitefiles');
                     admin_externalpage_print_header();
 
-                    print_heading(get_string("publicsitefileswarning"), "center", 2);
+                    print_heading(get_string("publicsitefileswarning2"), "center", 2);
 
                 }
 
