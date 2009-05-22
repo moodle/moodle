@@ -1,27 +1,19 @@
-<?php // $Id$
+<?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/ 
+// 
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * moodlelib.php - Moodle main library
@@ -30,9 +22,10 @@
  * Other main libraries:
  *  - weblib.php      - functions that produce web output
  *  - datalib.php     - functions that access the database
- * @author Martin Dougiamas
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package moodlecore
+ *
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /// CONSTANTS (Encased in phpdoc proper comments)/////////////////////////
@@ -286,6 +279,8 @@ define ('BLOG_GLOBAL_LEVEL', 5);
  * To prevent problems with multibytes strings,Flag updating in nav not working on the review page. this should not exceed the
  * length of "varchar(255) / 3 (bytes / utf-8 character) = 85".
  * TODO: this is not correct, varchar(255) are 255 unicode chars ;-)
+ *
+ * @todo define(TAG_MAX_LENGTH) this is not correct, varchar(255) are 255 unicode chars ;-)
  */
 define('TAG_MAX_LENGTH', 50);
 
@@ -335,7 +330,8 @@ define('FEATURE_MODEDIT_DEFAULT_COMPLETION', 'modedit_default_completion');
  * used like this:
  *    $id = required_param('id');
  *
- * @param string $parname the name of the page parameter we want
+ * @param string $parname the name of the page parameter we want, 
+ *                        default PARAM_CLEAN
  * @param int $type expected type of parameter
  * @return mixed
  */
@@ -362,7 +358,7 @@ function required_param($parname, $type=PARAM_CLEAN) {
  *
  * @param string $parname the name of the page parameter we want
  * @param mixed  $default the default value to return if nothing is found
- * @param int $type expected type of parameter
+ * @param int $type expected type of parameter, default PARAM_CLEAN
  * @return mixed
  */
 function optional_param($parname, $default=NULL, $type=PARAM_CLEAN) {
@@ -386,7 +382,7 @@ function optional_param($parname, $default=NULL, $type=PARAM_CLEAN) {
  * $selectedgrade_item = clean_param($selectedgrade_item, PARAM_CLEAN);
  * </code>
  *
- * @uses $CFG
+ * @global object
  * @uses PARAM_RAW
  * @uses PARAM_CLEAN
  * @uses PARAM_CLEANHTML
@@ -651,6 +647,9 @@ function clean_param($param, $type) {
 
 /**
  * Return true if given value is integer or string with integer value
+ *
+ * @param mixed $value String or Int
+ * @return bool true if number, false if not
  */
 function is_number($value) {
     if (is_int($value)) {
@@ -663,6 +662,8 @@ function is_number($value) {
 }
 
 /**
+ * Tests whether anything was returned by text editor
+ *
  * This function is useful for testing whether something you got back from
  * the HTML editor actually contains anything. Sometimes the HTML editor
  * appear to be empty, but actually you get back a <br> tag or something.
@@ -686,10 +687,11 @@ function html_is_blank($string) {
  *
  * A NULL value will delete the entry.
  *
+ * @global object
+ * @global object
  * @param string $name the key to set
  * @param string $value the value to set (without magic quotes)
- * @param string $plugin (optional) the plugin scope
- * @uses $CFG
+ * @param string $plugin (optional) the plugin scope, default NULL
  * @return bool true or exception
  */
 function set_config($name, $value, $plugin=NULL) {
@@ -755,11 +757,10 @@ function set_config($name, $value, $plugin=NULL) {
  * If called with 2 parameters it will return a $string single
  * value or false of the value is not found.
  *
- * @param string $plugin
- * @param string $name
- * @uses $CFG
- * @return hash-like object or single value
- *
+ * @global object
+ * @param string $plugin default NULL
+ * @param string $name default NULL
+ * @return mixed hash-like object or single value
  */
 function get_config($plugin=NULL, $name=NULL) {
     global $CFG, $DB;
@@ -806,7 +807,7 @@ function get_config($plugin=NULL, $name=NULL) {
  *
  * @param string $name the key to set
  * @param string $plugin (optional) the plugin scope
- * @uses $CFG
+ * @global object
  * @return boolean whether the operation succeeded.
  */
 function unset_config($name, $plugin=NULL) {
@@ -857,9 +858,8 @@ function get_users_from_config($value, $capability) {
  * Get volatile flags
  *
  * @param string $type
- * @param int    $changedsince
+ * @param int    $changedsince default null
  * @return records array
- *
  */
 function get_cache_flags($type, $changedsince=NULL) {
     global $DB;
@@ -885,9 +885,8 @@ function get_cache_flags($type, $changedsince=NULL) {
  *
  * @param string $type
  * @param string $name
- * @param int    $changedsince
+ * @param int    $changedsince default null
  * @return records array
- *
  */
 function get_cache_flag($type, $name, $changedsince=NULL) {
     global $DB;
@@ -910,7 +909,7 @@ function get_cache_flag($type, $name, $changedsince=NULL) {
  * @param string $name the key to set
  * @param string $value the value to set (without magic quotes) - NULL will remove the flag
  * @param int $expiry (optional) epoch indicating expiry - defaults to now()+ 24hs
- * @return bool
+ * @return bool Always returns true
  */
 function set_cache_flag($type, $name, $value, $expiry=NULL) {
     global $DB;
@@ -950,9 +949,9 @@ function set_cache_flag($type, $name, $value, $expiry=NULL) {
 /**
  * Removes a single volatile flag
  *
+ * @global object
  * @param string $type the "type" namespace for the key
  * @param string $name the key to set
- * @uses $CFG
  * @return bool
  */
 function unset_cache_flag($type, $name) {
@@ -964,6 +963,7 @@ function unset_cache_flag($type, $name) {
 /**
  * Garbage-collect volatile flags
  *
+ * @return bool Always returns true
  */
 function gc_cache_flags() {
     global $DB;
@@ -975,7 +975,10 @@ function gc_cache_flags() {
 
 /**
  * Refresh current $USER session global variable with all their current preferences.
- * @uses $USER
+ *
+ * @global object
+ * @param mixed $time default null
+ * @return void
  */
 function check_user_preferences_loaded($time = null) {
     global $USER, $DB;
@@ -1013,6 +1016,9 @@ function check_user_preferences_loaded($time = null) {
 
 /**
  * Called from set/delete_user_preferences, so that the prefs can be correctly reloaded.
+ *
+ * @global object
+ * @global object
  * @param integer $userid the user whose prefs were changed.
  */
 function mark_user_preferences_changed($userid) {
@@ -1025,13 +1031,16 @@ function mark_user_preferences_changed($userid) {
 
 /**
  * Sets a preference for the current user
+ *
  * Optionally, can set a preference for a different user object
- * @uses $USER
+ *
  * @todo Add a better description and include usage examples. Add inline links to $USER and user functions in above line.
-
+ *
+ * @global object
+ * @global object
  * @param string $name The key to set as preference for the specified user
  * @param string $value The value to set forthe $name key in the specified user's record
- * @param int $otheruserid A moodle user ID
+ * @param int $otheruserid A moodle user ID, default null
  * @return bool
  */
 function set_user_preference($name, $value, $otheruserid=NULL) {
@@ -1083,6 +1092,7 @@ function set_user_preference($name, $value, $otheruserid=NULL) {
 
 /**
  * Sets a whole array of preferences for the current user
+ *
  * @param array $prefarray An array of key/value pairs to be set
  * @param int $otheruserid A moodle user ID
  * @return bool
@@ -1101,8 +1111,10 @@ function set_user_preferences($prefarray, $otheruserid=NULL) {
 
 /**
  * Unsets a preference completely by deleting it from the database
+ *
  * Optionally, can set a preference for a different user id
- * @uses $USER
+ *
+ * @global object
  * @param string  $name The key to unset as preference for the specified user
  * @param int $otheruserid A moodle user ID
  */
@@ -1130,16 +1142,21 @@ function unset_user_preference($name, $otheruserid=NULL) {
 }
 
 /**
+ * Used to fetch user preference(s)
+ *
  * If no arguments are supplied this function will return
  * all of the current user preferences as an array.
+ *
  * If a name is specified then this function
  * attempts to return that particular preference value.  If
  * none is found, then the optional value $default is returned,
  * otherwise NULL.
+ *
+ * @global object
+ * @global object
  * @param string $name Name of the key to use in finding a preference value
  * @param string $default Value to be returned if the $name key is not set in the user preferences
  * @param int $otheruserid A moodle user ID
- * @uses $USER
  * @return string
  */
 function get_user_preferences($name=NULL, $default=NULL, $otheruserid=NULL) {
@@ -1173,6 +1190,7 @@ function get_user_preferences($name=NULL, $default=NULL, $otheruserid=NULL) {
  * from JavaScript, and to specify the type of cleaning you expect to be done on
  * values.
  *
+ * @global object
  * @param string $name the name of the user_perference we should allow to be
  *      updated by remote calls.
  * @param integer $paramtype one of the PARAM_{TYPE} constants, user to clean
@@ -1193,16 +1211,16 @@ function user_preference_allow_ajax_update($name, $paramtype) {
 /**
  * Given date parts in user time produce a GMT timestamp.
  *
+ * @todo Finish documenting this function
  * @param int $year The year part to create timestamp of
  * @param int $month The month part to create timestamp of
  * @param int $day The day part to create timestamp of
  * @param int $hour The hour part to create timestamp of
  * @param int $minute The minute part to create timestamp of
  * @param int $second The second part to create timestamp of
- * @param float $timezone ?
- * @param bool $applydst ?
+ * @param float $timezone Timezone modifier
+ * @param bool $applydst Toggle Daylight Saving Time, default true
  * @return int timestamp
- * @todo Finish documenting this function
  */
 function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, $timezone=99, $applydst=true) {
 
@@ -1228,6 +1246,8 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
 }
 
 /**
+ * Format a date/time (seconds) as weeks, days, hours etc as needed
+ *
  * Given an amount of time in seconds, returns string
  * formatted nicely as weeks, days, hours etc as needed
  *
@@ -1235,9 +1255,9 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  * @uses HOURSECS
  * @uses DAYSECS
  * @uses YEARSECS
- * @param int $totalsecs ?
- * @param array $str ?
- * @return string
+ * @param int $totalsecs Time in seconds
+ * @param object $str Should be a time object
+ * @return string A nicely formatted date/time string
  */
  function format_time($totalsecs, $str=NULL) {
 
@@ -1293,6 +1313,8 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
 }
 
 /**
+ * Returns a formatted string that represents a date in user time
+ *
  * Returns a formatted string that represents a date in user time
  * <b>WARNING: note that the format is for strftime(), not date().</b>
  * Because of a bug in most Windows time libraries, we can't use
@@ -1371,11 +1393,11 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true) {
  * Given a $time timestamp in GMT (seconds since epoch),
  * returns an array that represents the date in user time
  *
+ * @todo Finish documenting this function
  * @uses HOURSECS
  * @param int $time Timestamp in GMT
  * @param float $timezone ?
  * @return array An array that represents the date in user time
- * @todo Finish documenting this function
  */
 function usergetdate($time, $timezone=99) {
 
@@ -1436,8 +1458,8 @@ function usertime($date, $timezone=99) {
  * for the current user.
  *
  * @param int $date Timestamp in GMT
- * @param float $timezone ?
- * @return ?
+ * @param float $timezone Defaults to user's timezone
+ * @return int Returns a GMT timestamp
  */
 function usergetmidnight($date, $timezone=99) {
 
@@ -1487,10 +1509,10 @@ function usertimezone($timezone=99) {
  * Returns a float which represents the user's timezone difference from GMT in hours
  * Checks various settings and picks the most dominant of those which have a value
  *
- * @uses $CFG
- * @uses $USER
+ * @global object
+ * @global object
  * @param float $tz If this value is provided and not equal to 99, it will be returned as is and no other settings will be checked
- * @return int
+ * @return float
  */
 function get_user_timezone_offset($tz = 99) {
 
@@ -1511,6 +1533,8 @@ function get_user_timezone_offset($tz = 99) {
 
 /**
  * Returns an int which represents the systems's timezone difference from GMT in seconds
+ *
+ * @global object
  * @param mixed $tz timezone
  * @return int if found, false is timezone 99 or error
  */
@@ -1537,8 +1561,8 @@ function get_timezone_offset($tz) {
  * means that for this timezone there are also DST rules to be taken into account
  * Checks various settings and picks the most dominant of those which have a value
  *
- * @uses $USER
- * @uses $CFG
+ * @global object
+ * @global object
  * @param float $tz If this value is provided and not equal to 99, it will be returned as is and no other settings will be checked
  * @return mixed
  */
@@ -1564,6 +1588,8 @@ function get_user_timezone($tz = 99) {
 /**
  * Returns cached timezone record for given $timezonename
  *
+ * @global object
+ * @global object
  * @param string $timezonename
  * @return mixed timezonerecord object or false
  */
@@ -1584,12 +1610,14 @@ function get_timezone_record($timezonename) {
 }
 
 /**
- * ?
+ * Build and store the users Daylight Saving Time (DST) table
  *
- * @uses $CFG
- * @uses $USER
- * @param ? $fromyear ?
- * @param ? $to_year ?
+ * @global object
+ * @global object
+ * @global object
+ * @param mixed $from_year Start year for the table, defaults to 1971
+ * @param mixed $to_year End year for the table, defaults to 2035
+ * @param mixed $strtimezone
  * @return bool
  */
 function calculate_user_dst_table($from_year = NULL, $to_year = NULL, $strtimezone = NULL) {
@@ -1714,6 +1742,15 @@ function calculate_user_dst_table($from_year = NULL, $to_year = NULL, $strtimezo
     return true;
 }
 
+/**
+ * Calculates the required DST change and returns a Timestamp Array
+ *
+ * @uses HOURSECS
+ * @uses MINSECS
+ * @param mixed $year Int or String Year to focus on
+ * @param object $timezone Instatiated Timezone object
+ * @return mixed Null, or Array dst=>xx, 0=>xx, std=>yy, 1=>yy
+ */
 function dst_changes_for_year($year, $timezone) {
 
     if($timezone->dst_startday == 0 && $timezone->dst_weekday == 0 && $timezone->std_startday == 0 && $timezone->std_weekday == 0) {
@@ -1739,7 +1776,13 @@ function dst_changes_for_year($year, $timezone) {
     return array('dst' => $timedst, 0 => $timedst, 'std' => $timestd, 1 => $timestd);
 }
 
-// $time must NOT be compensated at all, it has to be a pure timestamp
+/**
+ * Calculates the Daylight Saving Offest for a given date/time (timestamp)
+ *
+ * @global object
+ * @param int $time must NOT be compensated at all, it has to be a pure timestamp
+ * @return int
+ */
 function dst_offset_on($time, $strtimezone = NULL) {
     global $SESSION;
 
@@ -1781,6 +1824,16 @@ function dst_offset_on($time, $strtimezone = NULL) {
     }
 }
 
+/**
+ * ?
+ *
+ * @todo Document what this function does
+ * @param int $startday
+ * @param int $weekday
+ * @param int $month
+ * @param int $year
+ * @return int
+ */
 function find_day_in_month($startday, $weekday, $month, $year) {
 
     $daysinmonth = days_in_month($month, $year);
@@ -1867,7 +1920,8 @@ function dayofweek($day, $month, $year) {
 /**
  * Returns full login url.
  *
- * @param bool $loginguest add login guest param
+ * @global object
+ * @param bool $loginguest add login guest param, return false
  * @return string login url
  */
 function get_login_url($loginguest=false) {
@@ -1900,18 +1954,22 @@ function get_login_url($loginguest=false) {
  * If $cm is given and the coursemodule is hidden and the user is not a teacher
  * in the course then the user is redirected to the course home page.
  *
- * @uses $CFG
- * @uses $SESSION
- * @uses $USER
- * @uses $FULLME
- * @uses SITEID
- * @uses $COURSE
+ * @global object
+ * @global object
+ * @global object
+ * @global object
+ * @global string
+ * @global object
+ * @global object
+ * @global object
+ * @uses SITEID Define
  * @param mixed $courseorid id of the course or course object
- * @param bool $autologinguest
+ * @param bool $autologinguest default true
  * @param object $cm course module object
  * @param bool $setwantsurltome Define if we want to set $SESSION->wantsurl, defaults to
  *             true. Used to avoid (=false) some scripts (file.php...) to set that variable,
  *             in order to keep redirects working properly. MDL-14495
+ * @return mixed Void, exit, and die depending on path
  */
 function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsurltome=true) {
     global $CFG, $SESSION, $USER, $COURSE, $FULLME, $PAGE, $SITE, $DB;
@@ -2171,8 +2229,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
 /**
  * This function just makes sure a user is logged out.
  *
- * @uses $CFG
- * @uses $USER
+ * @global object
  */
 function require_logout() {
     global $USER;
@@ -2191,11 +2248,14 @@ function require_logout() {
 }
 
 /**
+ * Weaker version of require_login()
+ *
  * This is a weaker version of {@link require_login()} which only requires login
  * when called from within a course rather than the site page, unless
  * the forcelogin option is turned on.
+ * @see require_login()
  *
- * @uses $CFG
+ * @global object
  * @param mixed $courseorid The course object or id in question
  * @param bool $autologinguest Allow autologin guests if that is wanted
  * @param object $cm Course activity module if known
@@ -2227,8 +2287,16 @@ function require_course_login($courseorid, $autologinguest=true, $cm=null, $setw
 
 /**
  * Require key login. Function terminates with error if key not found or incorrect.
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @global object
+ * @uses NO_MOODLE_COOKIES
+ * @uses PARAM_ALPHANUM
  * @param string $script unique script identifier
  * @param int $instance optional instance id
+ * @return int Instance ID
  */
 function require_user_key_login($script, $instance=null) {
     global $USER, $SESSION, $CFG, $DB;
@@ -2275,9 +2343,11 @@ function require_user_key_login($script, $instance=null) {
 
 /**
  * Creates a new private user access key.
+ *
+ * @global object
  * @param string $script unique target identifier
  * @param int $userid
- * @param instance $int optional instance id
+ * @param int $instance optional instance id
  * @param string $iprestriction optional ip restricted access
  * @param timestamp $validuntil key valid only until given data
  * @return string access key value
@@ -2310,8 +2380,9 @@ function create_user_key($script, $userid, $instance=null, $iprestriction=null, 
  * Modify the user table by setting the currently logged in user's
  * last login to now.
  *
- * @uses $USER
- * @return bool
+ * @global object
+ * @global object
+ * @return bool Always returns true
  */
 function update_user_login_times() {
     global $USER, $DB;
@@ -2336,6 +2407,14 @@ function user_not_fully_set_up($user) {
     return ($user->username != 'guest' and (empty($user->firstname) or empty($user->lastname) or empty($user->email) or over_bounce_threshold($user)));
 }
 
+/**
+ * Check whether the user has exceeded the bounce threshold
+ *
+ * @global object
+ * @global object
+ * @param user $user A {@link $USER} object
+ * @return bool true=>User has exceeded bounce threshold
+ */
 function over_bounce_threshold($user) {
     global $CFG, $DB;
 
@@ -2366,8 +2445,12 @@ function over_bounce_threshold($user) {
 }
 
 /**
- * @param $user - object containing an id
- * @param $reset - will reset the count to 0
+ * Used to increment or reset email sent count 
+ *
+ * @global object
+ * @param user $user object containing an id
+ * @param bool $reset will reset the count to 0
+ * @return void
  */
 function set_send_count($user,$reset=false) {
     global $DB;
@@ -2391,8 +2474,11 @@ function set_send_count($user,$reset=false) {
 }
 
 /**
-* @param $user - object containing an id
- * @param $reset - will reset the count to 0
+ * Increment or reset user's email bounce count 
+ *
+ * @global object
+ * @param user $user object containing an id
+ * @param bool $reset will reset the count to 0
  */
 function set_bounce_count($user,$reset=false) {
     global $DB;
@@ -2414,7 +2500,7 @@ function set_bounce_count($user,$reset=false) {
 /**
  * Keeps track of login attempts
  *
- * @uses $SESSION
+ * @global object
  */
 function update_login_count() {
     global $SESSION;
@@ -2436,7 +2522,7 @@ function update_login_count() {
 /**
  * Resets login attempts
  *
- * @uses $SESSION
+ * @global object
  */
 function reset_login_count() {
     global $SESSION;
@@ -2444,6 +2530,13 @@ function reset_login_count() {
     $SESSION->logincount = 0;
 }
 
+/**
+ * Sync all meta courses
+ * Goes through all enrolment records for the courses inside all metacourses and syncs with them.
+ * @see sync_metacourse()
+ *
+ * @global object
+ */
 function sync_metacourses() {
     global $DB;
 
@@ -2459,7 +2552,14 @@ function sync_metacourses() {
 /**
  * Returns reference to full info about modules in course (including visibility).
  * Cached and as fast as possible (0 or 1 db query).
- * @param $course object or 'reset' string to reset caches, modinfo may be updated in db
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @uses MAX_MODINFO_CACHE_SIZE
+ * @param mixed $course object or 'reset' string to reset caches, modinfo may be updated in db
+ * @param int $userid Defaults to current user id
  * @return mixed courseinfo object or nothing if resetting
  */
 function &get_fast_modinfo(&$course, $userid=0) {
@@ -2642,7 +2742,14 @@ function &get_fast_modinfo(&$course, $userid=0) {
 /**
  * Goes through all enrolment records for the courses inside the metacourse and sync with them.
  *
+ * @todo finish timeend and timestart maybe we could rely on cron 
+ *       job to do the cleaning from time to time
+ *
+ * @global object
+ * @global object
+ * @uses CONTEXT_COURSE
  * @param mixed $course the metacourse to synch. Either the course object itself, or the courseid.
+ * @return bool Success
  */
 function sync_metacourse($course) {
     global $CFG, $DB;
@@ -2738,6 +2845,11 @@ function sync_metacourse($course) {
 
 /**
  * Adds a record to the metacourse table and calls sync_metacoures
+ *
+ * @global object
+ * @param int $metacourseid The Metacourse ID for the metacourse to add to
+ * @param int $courseid The Course ID of the course to add
+ * @return bool Success
  */
 function add_to_metacourse ($metacourseid, $courseid) {
     global $DB;
@@ -2763,6 +2875,11 @@ function add_to_metacourse ($metacourseid, $courseid) {
 
 /**
  * Removes the record from the metacourse table and calls sync_metacourse
+ *
+ * @global object
+ * @param int $metacourseid The Metacourse ID for the metacourse to remove from
+ * @param int $courseid The Course ID of the course to remove
+ * @return bool Success
  */
 function remove_from_metacourse($metacourseid, $courseid) {
     global $DB;
@@ -2777,7 +2894,7 @@ function remove_from_metacourse($metacourseid, $courseid) {
 /**
  * Determines if a user is currently logged in
  *
- * @uses $USER
+ * @global object
  * @return bool
  */
 function isloggedin() {
@@ -2791,7 +2908,9 @@ function isloggedin() {
  * This function is similar to original isguest() in 1.6 and earlier.
  * Current isguest() is deprecated - do not use it anymore.
  *
- * @param $user mixed user object or id, $USER if not specified
+ * @global object
+ * @global object
+ * @param int $user mixed user object or id, $USER if not specified
  * @return bool true if user is the real guest user, false if not logged in or other user
  */
 function isguestuser($user=NULL) {
@@ -2811,11 +2930,14 @@ function isguestuser($user=NULL) {
 }
 
 /**
- * @deprecated since Moodle 2.0 - use $PAGE->user_is_editing() instead.
  * Determines if the currently logged in user is in editing mode.
  * Note: originally this function had $userid parameter - it was not usable anyway
  *
- * @uses $USER, $PAGE
+ * @deprecated since Moodle 2.0 - use $PAGE->user_is_editing() instead.
+ * @todo Deprecated function remove when ready
+ *
+ * @global object
+ * @uses DEBUG_DEVELOPER
  * @return bool
  */
 function isediting() {
@@ -2827,7 +2949,7 @@ function isediting() {
 /**
  * Determines if the logged in user is currently moving an activity
  *
- * @uses $USER
+ * @global object
  * @param int $courseid The id of the course being tested
  * @return bool
  */
@@ -2841,6 +2963,8 @@ function ismoving($courseid) {
 }
 
 /**
+ * Returns a persons full name
+ *
  * Given an object containing firstname and lastname
  * values, this function returns a string with the
  * full name of the person.
@@ -2848,10 +2972,11 @@ function ismoving($courseid) {
  * or language.  'override' will force both names
  * to be used even if system settings specify one.
  *
- * @uses $CFG
- * @uses $SESSION
+ * @global object
+ * @global object
  * @param object $user A {@link $USER} object to get full name of
  * @param bool $override If true then the name will be first name followed by last name rather than adhering to fullnamedisplay setting.
+ * @return string
  */
 function fullname($user, $override=false) {
     global $CFG, $SESSION;
@@ -2893,7 +3018,7 @@ function fullname($user, $override=false) {
 /**
  * Returns whether a given authentication plugin exists.
  *
- * @uses $CFG
+ * @global object
  * @param string $auth Form of authentication to check for. Defaults to the
  *        global setting in {@link $CFG}.
  * @return boolean Whether the plugin is available.
@@ -2926,7 +3051,7 @@ function is_enabled_auth($auth) {
 /**
  * Returns an authentication plugin instance.
  *
- * @uses $CFG
+ * @global object
  * @param string $auth name of authentication plugin
  * @return object An instance of the required authentication plugin.
  */
@@ -2981,7 +3106,6 @@ function get_enabled_auth_plugins($fix=false) {
  * Returns true if an internal authentication method is being used.
  * if method not specified then, global default is assumed
  *
- * @uses $CFG
  * @param string $auth Form of authentication required
  * @return bool
  */
@@ -3008,12 +3132,14 @@ function get_user_fieldnames() {
 /**
  * Creates a bare-bones user record
  *
- * @uses $CFG
+ * @todo Outline auth types and provide code example
+ *
+ * @global object
+ * @global object
  * @param string $username New user's username to add to record
  * @param string $password New user's password to add to record
  * @param string $auth Form of authentication required
  * @return object A {@link $USER} object
- * @todo Outline auth types and provide code example
  */
 function create_user_record($username, $password, $auth='manual') {
     global $CFG, $DB;
@@ -3069,8 +3195,9 @@ function create_user_record($username, $password, $auth='manual') {
 /**
  * Will update a local user record from an external source
  *
- * @uses $CFG
+ * @global object
  * @param string $username New user's username to add to record
+ * @param string $authplugin Unused
  * @return user A {@link $USER} object
  */
 function update_user_record($username, $authplugin) {
@@ -3111,8 +3238,13 @@ function update_user_record($username, $authplugin) {
 }
 
 /**
- * will truncate userinfo as it comes from auth_get_userinfo (from external auth)
+ * Will truncate userinfo as it comes from auth_get_userinfo (from external auth)
  * which may have large fields
+ *
+ * @todo Add vartype handling to ensure $info is an array
+ *
+ * @param array $info Array of user properties to truncate if needed
+ * @return array The now truncated information that was passed in
  */
 function truncate_userinfo($info) {
     // define the limits
@@ -3146,7 +3278,12 @@ function truncate_userinfo($info) {
 /**
  * Marks user deleted in internal user database and notifies the auth plugin.
  * Also unenrols user from all roles and does other cleanup.
- * @param object $user       Userobject before delete    (without system magic quotes)
+ *
+ * @todo Decide if this transaction is really needed (look for internal TODO:)
+ *
+ * @global object
+ * @global object
+ * @param object $user Userobject before delete    (without system magic quotes)
  * @return boolean success
  */
 function delete_user($user) {
@@ -3217,7 +3354,8 @@ function delete_user($user) {
 /**
  * Retrieve the guest user object
  *
- * @uses $CFG
+ * @global object
+ * @global object
  * @return user A {@link $USER} object
  */
 function guest_user() {
@@ -3233,6 +3371,8 @@ function guest_user() {
 }
 
 /**
+ * Authenticates a user against the chosen authentication mechanism
+ *
  * Given a username and password, this function looks them
  * up using the currently selected authentication mechanism,
  * and if the authentication is successful, it returns a
@@ -3244,7 +3384,8 @@ function guest_user() {
  * log that the user has logged in, and call complete_user_login() to set
  * the session up.
  *
- * @uses $CFG
+ * @global object
+ * @global object
  * @param string $username  User's username
  * @param string $password  User's password
  * @return user|flase A {@link $USER} object or false if error
@@ -3343,8 +3484,11 @@ function authenticate_user_login($username, $password) {
  * NOTE:
  * - It will NOT log anything -- up to the caller to decide what to log.
  *
- * @uses $CFG, $USER
- * @param string $user obj
+ * @global object
+ * @global object
+ * @global object
+ * @param object $user
+ * @param bool $setcookie
  * @return object A {@link $USER} object - BC only, do not use
  */
 function complete_user_login($user, $setcookie=true) {
@@ -3389,8 +3533,9 @@ function complete_user_login($user, $setcookie=true) {
  * Compare password against hash stored in internal user table.
  * If necessary it also updates the stored hash to new format.
  *
- * @param object user
- * @param string plain text password
+ * @global object
+ * @param object $user
+ * @param string $password plain text password
  * @return bool is password valid?
  */
 function validate_internal_user_password(&$user, $password) {
@@ -3432,7 +3577,8 @@ function validate_internal_user_password(&$user, $password) {
 /**
  * Calculate hashed value from password using current hash mechanism.
  *
- * @param string password
+ * @global object
+ * @param string $password
  * @return string password hash
  */
 function hash_internal_user_password($password) {
@@ -3448,10 +3594,11 @@ function hash_internal_user_password($password) {
 /**
  * Update pssword hash in user object.
  *
- * @param object user
- * @param string plain text password
- * @param bool store changes also in db, default true
- * @return true if hash changed
+ * @global object
+ * @global object
+ * @param object $user
+ * @param string $password plain text password
+ * @return bool true if hash changed
  */
 function update_internal_user_password(&$user, $password) {
     global $CFG, $DB;
@@ -3469,14 +3616,17 @@ function update_internal_user_password(&$user, $password) {
 
 /**
  * Get a complete user record, which includes all the info
- * in the user record
+ * in the user record.
+ *
  * Intended for setting as $USER session variable
  *
- * @uses $CFG
+ * @global object
+ * @global object
  * @uses SITEID
  * @param string $field The user field to be checked for a given value.
  * @param string $value The value to match for $field.
- * @return user A {@link $USER} object.
+ * @param int $mnethostid
+ * @return mixed False, or A {@link $USER} object.
  */
 function get_complete_user_data($field, $value, $mnethostid=null) {
     global $CFG, $DB;
@@ -3565,7 +3715,9 @@ function get_complete_user_data($field, $value, $mnethostid=null) {
 }
 
 /**
- * @uses $CFG
+ * Validate a password against the confiured password policy
+ *
+ * @global object
  * @param string $password the password to be checked agains the password policy
  * @param string $errmsg the error message to display when the password doesn't comply with the policy.
  * @return bool true if the password is valid according to the policy. false otherwise.
@@ -3613,6 +3765,9 @@ function check_password_policy($password, &$errmsg) {
 /**
  * When logging in, this function is run to set certain preferences
  * for the current SESSION
+ *
+ * @global object
+ * @global object
  */
 function set_login_session_preferences() {
     global $SESSION, $CFG;
@@ -3633,6 +3788,8 @@ function set_login_session_preferences() {
  * Delete a course, including all related data from the database,
  * and any associated files from the moodledata folder.
  *
+ * @global object
+ * @global object
  * @param mixed $courseorid The id of the course or course object to delete.
  * @param bool $showfeedback Whether to display notifications of each action the function performs.
  * @return bool true if all the removals succeeded. false if there were any failures. If this
@@ -3694,7 +3851,8 @@ function delete_course($courseorid, $showfeedback = true) {
  * Clear a course out completely, deleting all content
  * but don't delete the course itself
  *
- * @uses $CFG
+ * @global object
+ * @global object
  * @param int $courseid The id of the course that is being deleted
  * @param bool $showfeedback Whether to display notifications of each action the function performs.
  * @return bool true if all the removals succeeded. false if there were any failures. If this
@@ -3851,10 +4009,14 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
 /**
  * Change dates in module - used from course reset.
- * @param strin $modname forum, assignent, etc
+ *
+ * @global object
+ * @global object
+ * @param string $modname forum, assignent, etc
  * @param array $fields array of date fields from mod table
  * @param int $timeshift time difference
- * @return success
+ * @param int $courseid
+ * @return bool success
  */
 function shift_course_mod_dates($modname, $fields, $timeshift, $courseid) {
     global $CFG, $DB;
@@ -3879,6 +4041,7 @@ function shift_course_mod_dates($modname, $fields, $timeshift, $courseid) {
 /**
  * This function will empty a course of user data.
  * It will retain the activities and the structure of the course.
+ *
  * @param object $data an object containing all the settings including courseid (without magic quotes)
  * @return array status array of array component, item, error
  */
@@ -4053,6 +4216,13 @@ function reset_course_userdata($data) {
     return $status;
 }
 
+/**
+ * Generate an email processing address
+ * 
+ * @param int $modid
+ * @param string $modargs
+ * @return string Returns email processing address
+ */
 function generate_email_processing_address($modid,$modargs) {
     global $CFG;
 
@@ -4060,6 +4230,15 @@ function generate_email_processing_address($modid,$modargs) {
     return $header . substr(md5($header.get_site_identifier()),0,16).'@'.$CFG->maildomain;
 }
 
+/**
+ * ?
+ *
+ * @todo Finish documenting this function
+ *
+ * @global object
+ * @param string $modargs
+ * @param string $body Currently unused
+ */
 function moodle_process_email($modargs,$body) {
     global $DB;
 
@@ -4085,8 +4264,10 @@ function moodle_process_email($modargs,$body) {
 
 /**
  * Get mailer instance, enable buffering, flush buffer or disable buffering.
- * @param $action string 'get', 'buffer', 'close' or 'flush'
- * @return reference to mailer instance if 'get' used or nothing
+ *
+ * @global object
+ * @param string $action 'get', 'buffer', 'close' or 'flush'
+ * @return object|null reference to mailer instance if 'get' used or nothing
  */
 function &get_mailer($action='get') {
     global $CFG;
@@ -4211,9 +4392,9 @@ function &get_mailer($action='get') {
 /**
  * Send an email to a specified user
  *
- * @uses $CFG
- * @uses $FULLME
- * @uses $MNETIDPJUMPURL IdentityProvider(IDP) URL user hits to jump to mnet peer.
+ * @global object
+ * @global string
+ * @global string IdentityProvider(IDP) URL user hits to jump to mnet peer.
  * @uses SITEID
  * @param user $user  A {@link $USER} object
  * @param user $from A {@link $USER} object
@@ -4224,7 +4405,9 @@ function &get_mailer($action='get') {
  * @param string $attachname the name of the file (extension indicates MIME)
  * @param bool $usetrueaddress determines whether $from email address should
  *          be sent out. Will be overruled by user profile setting for maildisplay
- * @param int $wordwrapwidth custom word wrap width
+ * @param string $replyto Email address to reply to
+ * @param string $replytoname Name of reply to recipient
+ * @param int $wordwrapwidth custom word wrap width, default 79
  * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
  */
@@ -4414,6 +4597,8 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 /**
  * Generate a signoff for emails based on support settings
  *
+ * @global object
+ * @return string
  */
 function generate_email_signoff() {
     global $CFG;
@@ -4433,6 +4618,7 @@ function generate_email_signoff() {
 
 /**
  * Generate a fake user for emails based on support settings
+ * @global object
  * @return object user info
  */
 function generate_email_supportuser() {
@@ -4457,7 +4643,8 @@ function generate_email_supportuser() {
 /**
  * Sets specified user's password and send the new password to the user via email.
  *
- * @uses $CFG
+ * @global object
+ * @global object
  * @param user $user A {@link $USER} object
  * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
@@ -4495,7 +4682,7 @@ function setnew_password_and_mail($user) {
 /**
  * Resets specified user's password and send the new password to the user via email.
  *
- * @uses $CFG
+ * @global object
  * @param user $user A {@link $USER} object
  * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
@@ -4538,7 +4725,7 @@ function reset_password_and_mail($user) {
 /**
  * Send email to specified user with confirmation text and activation link.
  *
- * @uses $CFG
+ * @global object
  * @param user $user A {@link $USER} object
  * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
@@ -4569,7 +4756,7 @@ function reset_password_and_mail($user) {
 /**
  * send_password_change_confirmation_email.
  *
- * @uses $CFG
+ * @global object
  * @param user $user A {@link $USER} object
  * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
@@ -4597,7 +4784,7 @@ function send_password_change_confirmation_email($user) {
 /**
  * send_password_change_info.
  *
- * @uses $CFG
+ * @global object
  * @param user $user A {@link $USER} object
  * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
@@ -4648,7 +4835,7 @@ function send_password_change_info($user) {
  * Check that an email is allowed.  It returns an error message if there
  * was a problem.
  *
- * @uses $CFG
+ * @global object
  * @param  string $email Content of email
  * @return string|false
  */
@@ -4696,6 +4883,15 @@ function email_is_not_allowed($email) {
     return false;
 }
 
+/**
+ * Send welcome email to specified user
+ *
+ * @global object
+ * @global object
+ * @param object $course 
+ * @param user $user A {@link $USER} object
+ * @return bool
+ */
 function email_welcome_message_to_user($course, $user=NULL) {
     global $CFG, $USER;
 
@@ -4734,6 +4930,8 @@ function email_welcome_message_to_user($course, $user=NULL) {
 
 /**
  * Returns local file storage instance
+ *
+ * @global object
  * @return object file_storage
  */
 function get_file_storage() {
@@ -4760,6 +4958,8 @@ function get_file_storage() {
 
 /**
  * Returns local file storage instance
+ *
+ * @global object
  * @return object file_storage
  */
 function get_file_browser() {
@@ -4780,7 +4980,9 @@ function get_file_browser() {
 
 /**
  * Returns file packer
- * @param string $mimetype
+ *
+ * @global object
+ * @param string $mimetype default application/zip
  * @return object file_storage
  */
 function get_file_packer($mimetype='application/zip') {
@@ -4812,7 +5014,7 @@ function get_file_packer($mimetype='application/zip') {
 /**
  * Makes an upload directory for a particular module.
  *
- * @uses $CFG
+ * @global object
  * @param int $courseid The id of the course in question - maps to id field of 'course' table.
  * @return string|false Returns full path to directory if successful, false if not
  */
@@ -4836,7 +5038,7 @@ function make_mod_upload_directory($courseid) {
 /**
  * Makes a directory for a particular user.
  *
- * @uses $CFG
+ * @global object
  * @param int $userid The id of the user in question - maps to id field of 'user' table.
  * @param bool $test Whether we are only testing the return value (do not create the directory)
  * @return string|false Returns full path to directory if successful, false if not
@@ -4865,6 +5067,7 @@ function make_user_directory($userid, $test=false) {
 /**
  * Returns an array of full paths to user directories, indexed by their userids.
  *
+ * @global object
  * @param bool $only_non_empty Only return directories that contain files
  * @param bool $legacy Search for user directories in legacy location (dataroot/users/userid) instead of (dataroot/user/section/userid)
  * @return array An associative array: userid=>array(basedir => $basedir, userfolder => $userfolder)
@@ -4940,11 +5143,12 @@ function valid_uploaded_file($newfile) {
  * Anything defined as 0 is ignored.
  * The smallest of all the non-zero numbers is returned.
  *
- * @param int $sizebytes ?
+ * @todo Finish documenting this function
+ *
+ * @param int $sizebytes Set maximum size
  * @param int $coursebytes Current course $course->maxbytes (in bytes)
  * @param int $modulebytes Current module ->maxbytes (in bytes)
  * @return int The maximum size for uploading files.
- * @todo Finish documenting this function
  */
 function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0) {
 
@@ -4976,16 +5180,20 @@ function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0) 
 }
 
 /**
+ * Returns an array of possible sizes in local language
+ *
  * Related to {@link get_max_upload_file_size()} - this function returns an
  * array of possible sizes in an array, translated to the
  * local language.
  *
+ * @todo Finish documenting this function
+ *
+ * @global object
  * @uses SORT_NUMERIC
- * @param int $sizebytes ?
+ * @param int $sizebytes Set maximum size
  * @param int $coursebytes Current course $course->maxbytes (in bytes)
  * @param int $modulebytes Current module ->maxbytes (in bytes)
  * @return int
- * @todo Finish documenting this function
  */
 function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {
     global $CFG;
@@ -5078,10 +5286,18 @@ function print_file_upload_error($filearray = '', $returnerror = false) {
 }
 
 /**
+ * Handy function for resolving file conflicts
+ *
  * handy function to loop through an array of files and resolve any filename conflicts
  * both in the array of filenames and for what is already on disk.
  * not really compatible with the similar function in uploadlib.php
  * but this could be used for files/index.php for moving files around.
+ * @see check_potential_filename()
+ *
+ * @param string $destincation destincation folder
+ * @param array $files
+ * @param string $format
+ * @return array Array of now resolved file names
  */
 
 function resolve_filename_collisions($destination,$files,$format='%s_%d.%s') {
@@ -5101,7 +5317,12 @@ function resolve_filename_collisions($destination,$files,$format='%s_%d.%s') {
 }
 
 /**
- * @used by resolve_filename_collisions
+ * Checks a file name for any conflicts
+ * @see resolve_filename_collisions()
+ *
+ * @param string $destination Destination directory
+ * @param string $filename Desired filename
+ * @param array $files Array of other file naems to check against
  */
 function check_potential_filename($destination,$filename,$files) {
     if (file_exists($destination.'/'.$filename)) {
@@ -5115,21 +5336,22 @@ function check_potential_filename($destination,$filename,$files) {
 
 
 /**
- * Returns an array with all the filenames in
- * all subdirectories, relative to the given rootdir.
+ * Returns an array with all the filenames in all subdirectories, relative to the given rootdir.
+ *
  * If excludefile is defined, then that file/directory is ignored
  * If getdirs is true, then (sub)directories are included in the output
  * If getfiles is true, then files are included in the output
  * (at least one of these must be true!)
  *
- * @param string $rootdir  ?
- * @param string $excludefile  If defined then the specified file/directory is ignored
- * @param bool $descend  ?
- * @param bool $getdirs  If true then (sub)directories are included in the output
+ * @todo Finish documenting this function. Add examples of $excludefile usage.
+ *
+ * @param string $rootdir A given root directory to start from
+ * @param string|array $excludefile If defined then the specified file/directory is ignored
+ * @param bool $descend If true then subdirectories are recursed as well
+ * @param bool $getdirs If true then (sub)directories are included in the output
  * @param bool $getfiles  If true then files are included in the output
  * @return array An array with all the filenames in
  * all subdirectories, relative to the given rootdir
- * @todo Finish documenting this function. Add examples of $excludefile usage.
  */
 function get_directory_list($rootdir, $excludefiles='', $descend=true, $getdirs=false, $getfiles=true) {
 
@@ -5182,10 +5404,11 @@ function get_directory_list($rootdir, $excludefiles='', $descend=true, $getdirs=
 /**
  * Adds up all the files in a directory and works out the size.
  *
- * @param string $rootdir  ?
- * @param string $excludefile  ?
- * @return array
  * @todo Finish documenting this function
+ *
+ * @param string $rootdir  The directory to start from
+ * @param string $excludefile A file to exclude when summing directory size
+ * @return int The summed size of all files and subfiles within the root directory
  */
 function get_directory_size($rootdir, $excludefile='') {
     global $CFG;
@@ -5231,13 +5454,14 @@ function get_directory_size($rootdir, $excludefile='') {
 /**
  * Converts bytes into display form
  *
- * @param string $size  ?
- * @return string
+ * @todo Finish documenting this function. Verify return type.
+ *
  * @staticvar string $gb Localized string for size in gigabytes
  * @staticvar string $mb Localized string for size in megabytes
  * @staticvar string $kb Localized string for size in kilobytes
  * @staticvar string $b Localized string for size in bytes
- * @todo Finish documenting this function. Verify return type.
+ * @param int $size  The size to convert to human readable form
+ * @return string
  */
 function display_size($size) {
 
@@ -5264,7 +5488,9 @@ function display_size($size) {
 
 /**
  * Cleans a given filename by removing suspicious or troublesome characters
+ * @see clean_param()
  *
+ * @uses PARAM_FILE
  * @param string $string  file name
  * @return string cleaned file name
  */
@@ -5278,9 +5504,10 @@ function clean_filename($string) {
 /**
  * Returns the code for the current language
  *
- * @uses $CFG
- * @param $USER
- * @param $SESSION
+ * @global object
+ * @global object
+ * @global object
+ * @global object
  * @return string
  */
 function current_language() {
@@ -5311,6 +5538,9 @@ function current_language() {
 
 /**
  * Returns parent language of current active language if defined
+ *
+ * @uses COURSE
+ * @uses SESSION
  * @param string $lang null means current language
  * @return string
  */
@@ -5360,8 +5590,7 @@ function get_parent_language($lang=null) {
  *
  * @param string $identifier The key identifier for the localized string
  * @param string $module The module where the key identifier is stored. If none is specified then moodle.php is used.
- * @param mixed $a An object, string or number that can be used
- * within translation strings
+ * @param mixed $a An object, string or number that can be used within translation strings
  */
 function print_string($identifier, $module='', $a=NULL) {
     echo string_manager::instance()->get_string($identifier, $module, $a);
@@ -5373,8 +5602,14 @@ function print_string($identifier, $module='', $a=NULL) {
  * Not that performance of this class is important. If you decide to change
  * this class, please use the lib/simpletest/getstringperformancetester.php
  * script to make sure your changes do not cause a performance problem.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
  */
 class string_manager {
+    /**
+    * @var array
+    */
     private $parentlangs = array('en_utf8' => NULL);
     private $searchpathsformodule = array();
     private $strings = array();
@@ -5389,13 +5624,34 @@ class string_manager {
                 'thischarset' => 1, 'thisdirection' => 1, 'thislanguage' => 1,
                 'strftimedatetimeshort' => 1, 'thousandssep' => 1);
     private $searchplacesbyplugintype;
+    /**
+    * @var string
+    */
     private $dirroot;
+    /**
+    * @var array
+    */
     private $corelocations;
     private $installstrings = NULL;
+    /**
+    * @var string
+    */
     private $parentlangfile = 'langconfig.php';
+    /**
+    * @var bool
+    */
     private $logtofile = false;
+    /**
+    * @var object
+    */
     private static $singletoninstance = NULL;
 
+    /**
+    * Creates a new instance of string_manager
+    *
+    * @global object
+    * @return object Returns a new instance of string_manager
+    */
     public static function instance() {
         if (is_null(self::$singletoninstance)) {
             global $CFG;
@@ -5408,6 +5664,14 @@ class string_manager {
     }
 
     // Some of our arrays need $CFG.
+    /**
+    * string_manager construct method to instatiate this instance
+    * 
+    * @param string $dirroot root directory path
+    * @param string $dataroot Path to the data root
+    * @param string $admin path to the admin directory
+    * @param bool $runninginstaller
+    */
     protected function __construct($dirroot, $dataroot, $admin, $runninginstaller) {
         $this->dirroot = $dirroot;
         $this->corelocations = array(
@@ -5445,6 +5709,11 @@ class string_manager {
         }
     }
 
+    /**
+     * Load extra language locations if set in $SESSION
+     *
+     * @global object
+     */
     protected function restore_extra_locations_from_session() {
         global $SESSION;
         if (!empty($SESSION->extralangsearchlocations)) {
@@ -5455,11 +5724,14 @@ class string_manager {
     }
 
     /**
-     * Register a new type of plugin with the string_manager class. A typical usage might be
+     * Register a new type of plugin with the string_manager class. 
+     *
+     * A typical usage might be
      * string_manager::instance()->register_plugin_type('mymodreport', 'mod/mymod/report');
      * This should never be needed for standard plugin types. It is intended for third-party
      * plugins that in turn want to register a sub-plugin type.
      *
+     * @global object
      * @param string $plugintype a new type of plugin
      * @param string $path the path where plugins of this type live.
      */
@@ -5481,14 +5753,22 @@ class string_manager {
     /**
      * This returns an array of all the types of plugin that may have language
      * strings. 
+     *
      * The array keys are the lang file prefix, like qtype_, and the value is
      * an array of paths relative to $CFG->dirroot.
+     *
      * @return array as described above.
      */
     public function get_registered_plugin_types() {
         return fullclone($this->searchplacesbyplugintype);
     }
 
+    /**
+     * Correct deprecated module names
+     *
+     * @param string $module The module name that is deprecated
+     * @return string The current (now converted) module name
+     */
     protected function fix_deprecated_module_name($module) {
         debugging('The module name you passed to get_string is the deprecated format ' .
                 'like mod/mymod or block/myblock. The correct form looks like mymod, or block_myblock.' , DEBUG_DEVELOPER);
@@ -5511,6 +5791,12 @@ class string_manager {
         }
     }
 
+    /**
+     * Returns an array of locations to search for modules
+     *
+     * @param string $module The name of the module you are looking for
+     * @return string|array A location or array of locations to search
+     */
     protected function locations_to_search($module) {
         if (isset($this->searchpathsformodule[$module])) {
             return $this->searchpathsformodule[$module];
@@ -5538,6 +5824,12 @@ class string_manager {
         return $locations;
     }
 
+    /**
+     * Returns a deciphered module name
+     *
+     * @param string $module The module name to decipher
+     * @return array Array ( $type, $plugin )
+     */
     protected function parse_module_name($module) {
         $dividerpos = strpos($module, '_');
         if ($dividerpos === false) {
@@ -5550,6 +5842,17 @@ class string_manager {
         return array($type, $plugin);
     }
 
+    /**
+     * An deprecated function to allow plugins to load thier language strings
+     * from the plugin dir
+     *
+     * @deprecated Deprecated function if no longer used remove
+     * @todo Remove deprecated function when no longer used
+     *
+     * @param array $locations Array of existing locations
+     * @param array $extralocations Array or new locations to add
+     * @return array Array of combined locations
+     */
     protected function add_extra_locations($locations, $extralocations) {
         // This is an old, deprecated mechanism that predates the
         // current mechanism that lets plugins include their lang strings in the
@@ -5567,6 +5870,12 @@ class string_manager {
         return $locations;
     }
 
+    /**
+     * Get the path to the parent lanugage file of a given language
+     *
+     * @param string $lang The language to get the parent of
+     * @return string The parent language
+     */
     protected function get_parent_language($lang) {
         if (array_key_exists($lang, $this->parentlangs)) {
             return $this->parentlangs[$lang];
@@ -5585,6 +5894,12 @@ class string_manager {
         return $parent;
     }
 
+    /**
+     * Loads the requested language
+     *
+     * @param $langfile The language file to load
+     * @return string
+     */
     protected function load_lang_file($langfile) {
         if (isset($this->strings[$langfile])) {
             return $this->strings[$langfile];
@@ -5597,6 +5912,15 @@ class string_manager {
         return $string;
     }
 
+    /**
+     * Get the requested string to a given language file
+     *
+     * @param string $identifier The identifier for the desired string
+     * @param string $langfile The language file the string should reside in
+     * @param string $a An object, string or number that can be used
+     *      within translation strings
+     * @return mixed The resulting string now parsed, or false if not found
+     */
     protected function get_string_from_file($identifier, $langfile, $a) {
         $string = &$this->load_lang_file($langfile);
         if (!isset($string[$identifier])) {
@@ -5621,6 +5945,15 @@ class string_manager {
         return $result;
     }
 
+    /**
+     * Find a desired help file in the correct language
+     *
+     * @param string $file The helpd file to locate
+     * @param string $module The module the help file is associated with
+     * @param string $forcelang override the default language
+     * @param bool $skiplocal Skip local help files
+     * @return array An array containing the filepath, and then the language 
+     */
     public function find_help_file($file, $module, $forcelang, $skiplocal) {
         if ($forcelang) {
             $langs = array($forcelang, 'en_utf8');
@@ -5654,10 +5987,23 @@ class string_manager {
         return array('', '');
     }
 
+    /**
+     * Set the internal log var to true to enable logging
+     */
     private function start_logging() {
         $this->logtofile = true;
     }
 
+    /**
+     * Log a call to get_string (only if logtofile is true)
+     * @see start_logging()
+     *
+     * @global object
+     * @param string $identifier The strings identifier
+     * @param string $module The module the string exists for
+     * @param string $a An object, string or number that can be used
+     *      within translation strings
+     */
     private function log_get_string_call($identifier, $module, $a) {
         global $CFG;
         if ($this->logtofile === true) {
@@ -5670,6 +6016,16 @@ class string_manager {
         fwrite($this->logtofile, "get_string('$identifier', '$module', " . var_export($a, true) . ");\n");
     }
 
+    /**
+     * Mega Function - Get String returns a requested string
+     *
+     * @param string $identifier The identifier of the string to search for
+     * @param string $module The module the string is associated with
+     * @param string $a An object, string or number that can be used
+     *      within translation strings
+     * @param array extralocations Add extra locations --- Deprecated ---
+     * @return string The String !
+     */
     public function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
         if ($this->logtofile) {
             $this->log_get_string_call($identifier, $module, $a);
@@ -5743,7 +6099,7 @@ class string_manager {
  * you just need to use the identifier 'wordforstudent'
  * <code>
  * $mystring = '<strong>'. get_string('wordforstudent') .'</strong>';
-or
+ * or
  * </code>
  * If the string you want is in another file you'd take a slightly
  * different approach. Looking in moodle/lang/en/calendar.php you find
@@ -5797,8 +6153,10 @@ function get_strings($array, $module='') {
 /**
  * Returns a list of language codes and their full names
  * hides the _local files from everyone.
- * @param bool refreshcache force refreshing of lang cache
- * @param bool returnall ignore langlist, return all languages available
+ * 
+ * @global object
+ * @param bool $refreshcache force refreshing of lang cache
+ * @param bool $returnall ignore langlist, return all languages available
  * @return array An associative array with contents in the form of LanguageCode => LanguageName
  */
 function get_list_of_languages($refreshcache=false, $returnall=false) {
@@ -5921,6 +6279,8 @@ function get_list_of_languages($refreshcache=false, $returnall=false) {
 }
 
 /**
+ * Returns a list of charset codes
+ *
  * Returns a list of charset codes. It's hardcoded, so they should be added manually
  * (cheking that such charset is supported by the texlib library!)
  *
@@ -5945,8 +6305,8 @@ function get_list_of_charsets() {
 /**
  * Returns a list of country names in the current language
  *
- * @uses $CFG
- * @uses $USER
+ * @global object
+ * @global object
  * @return array
  */
 function get_list_of_countries() {
@@ -5986,7 +6346,7 @@ function get_list_of_countries() {
 /**
  * Returns a list of valid and compatible themes
  *
- * @uses $CFG
+ * @global object
  * @return array
  */
 function get_list_of_themes() {
@@ -6020,7 +6380,7 @@ function get_list_of_themes() {
 /**
  * Returns a list of picture names in the current or specified language
  *
- * @uses $CFG
+ * @global object
  * @return array
  */
 function get_list_of_pixnames($lang = '') {
@@ -6055,7 +6415,8 @@ function get_list_of_pixnames($lang = '') {
 /**
  * Returns a list of timezones in the current language
  *
- * @uses $CFG
+ * @global object
+ * @global object
  * @return array
  */
 function get_list_of_timezones() {
@@ -6099,8 +6460,8 @@ function get_list_of_timezones() {
 /**
  * Returns a list of currencies in the current language
  *
- * @uses $CFG
- * @uses $USER
+ * @global object
+ * @global object
  * @return array
  */
 function get_list_of_currencies() {
@@ -6139,9 +6500,10 @@ function get_list_of_currencies() {
 /**
  * rc4encrypt
  *
- * @param string $data ?
- * @return string
  * @todo Finish documenting this function
+ *
+ * @param string $data Data to encrypt
+ * @return string The now encrypted data
  */
 function rc4encrypt($data) {
     $password = 'nfgjeingjk';
@@ -6151,9 +6513,10 @@ function rc4encrypt($data) {
 /**
  * rc4decrypt
  *
- * @param string $data ?
- * @return string
  * @todo Finish documenting this function
+ *
+ * @param string $data Data to decrypt
+ * @return string The now decrypted data
  */
 function rc4decrypt($data) {
     $password = 'nfgjeingjk';
@@ -6163,11 +6526,12 @@ function rc4decrypt($data) {
 /**
  * Based on a class by Mukul Sabharwal [mukulsabharwal @ yahoo.com]
  *
- * @param string $pwd ?
- * @param string $data ?
- * @param string $case ?
- * @return string
  * @todo Finish documenting this function
+ *
+ * @param string $pwd The password to use when encrypting or decrypting
+ * @param string $data The data to be decrypted/encrypted
+ * @param string $case Either 'de' for decrypt or '' for encrypt
+ * @return string
  */
 function endecrypt ($pwd, $data, $case) {
 
@@ -6231,10 +6595,12 @@ function endecrypt ($pwd, $data, $case) {
 
 /**
  * Call this function to add an event to the calendar table
- *  and to call any calendar plugins
+ * and to call any calendar plugins
  *
- * @uses $CFG
- * @param array $event An associative array representing an event from the calendar table. The event will be identified by the id field. The object event should include the following:
+ * @global object
+ * @global object
+ * @param array $event An associative array representing an event from the calendar table. 
+ * The event will be identified by the id field. The object event should include the following:
  *  <ul>
  *    <li><b>$event->name</b> - Name for the event
  *    <li><b>$event->description</b> - Description of the event (defaults to '')
@@ -6250,7 +6616,7 @@ function endecrypt ($pwd, $data, $case) {
  *    <li><b>$event->timeduration</b> - Duration (defaults to zero)
  *    <li><b>$event->visible</b> - 0 if the event should be hidden (e.g. because the activity that created it is hidden)
  *  </ul>
- * @return int The id number of the resulting record
+ * @return mixed The id number of the resulting record or false if failed
  */
  function add_event($event) {
     global $CFG, $DB;
@@ -6278,9 +6644,10 @@ function endecrypt ($pwd, $data, $case) {
  * Call this function to update an event in the calendar table
  * the event will be identified by the id field of the $event object.
  *
- * @uses $CFG
+ * @global object
+ * @global object
  * @param array $event An associative array representing an event from the calendar table. The event will be identified by the id field.
- * @return bool
+ * @return bool Success
  */
 function update_event($event) {
     global $CFG, $DB;
@@ -6302,10 +6669,12 @@ function update_event($event) {
 /**
  * Call this function to delete the event with id $id from calendar table.
  *
- * @uses $CFG
+ * @todo Verify return type
+ *
+ * @global object
+ * @global object
  * @param int $id The id of an event from the 'calendar' table.
  * @return array An associative array with the results from the SQL call.
- * @todo Verify return type
  */
 function delete_event($id) {
     global $CFG, $DB;
@@ -6326,10 +6695,12 @@ function delete_event($id) {
  * Call this function to hide an event in the calendar table
  * the event will be identified by the id field of the $event object.
  *
- * @uses $CFG
+ * @todo Verify return type
+ *
+ * @global object
+ * @global object
  * @param array $event An associative array representing an event from the calendar table. The event will be identified by the id field.
  * @return array An associative array with the results from the SQL call.
- * @todo Verify return type
  */
 function hide_event($event) {
     global $CFG, $DB;
@@ -6350,10 +6721,12 @@ function hide_event($event) {
  * Call this function to unhide an event in the calendar table
  * the event will be identified by the id field of the $event object.
  *
- * @uses $CFG
+ * @todo Verify return type
+ *
+ * @global object
+ * @global object
  * @param array $event An associative array representing an event from the calendar table. The event will be identified by the id field.
  * @return array An associative array with the results from the SQL call.
- * @todo Verify return type
  */
 function show_event($event) {
     global $CFG, $DB;
@@ -6376,11 +6749,11 @@ function show_event($event) {
 /**
  * Lists plugin directories within some directory
  *
- * @uses $CFG
+ * @global object
  * @param string $plugin dir under we'll look for plugins (defaults to 'mod')
  * @param string $exclude dir name to exclude from the list (defaults to none)
  * @param string $basedir full path to the base dir where $plugin resides (defaults to $CFG->dirroot)
- * @return array of plugins found under the requested parameters
+ * @return array Array of plugins found under the requested parameters
  */
 function get_list_of_plugins($plugin='mod', $exclude='', $basedir='') {
     global $CFG;
@@ -6470,6 +6843,8 @@ function plugin_supports($type, $name, $feature, $default=null) {
 
 /**
  * Returns true if the current version of PHP is greater that the specified one.
+ *
+ * @todo Check PHP version being required here is it too low?
  *
  * @param string $version The version of php being tested.
  * @return bool
@@ -6608,6 +6983,8 @@ function check_php_version($version='5.2.4') {
 /**
  * Returns one or several CSS class names that match the user's browser. These can be put
  * in the body tag of the page to apply browser-specific rules without relying on CSS hacks
+ *
+ * @return array An array of browser version classes
  */
 function get_browser_version_classes() {
     $classes = array();
@@ -6642,13 +7019,15 @@ function get_browser_version_classes() {
 /**
  * This function makes the return value of ini_get consistent if you are
  * setting server directives through the .htaccess file in apache.
+ *
  * Current behavior for value set from php.ini On = 1, Off = [blank]
  * Current behavior for value set from .htaccess On = On, Off = Off
  * Contributed by jdell @ unr.edu
  *
- * @param string $ini_get_arg ?
- * @return bool
  * @todo Finish documenting this function
+ *
+ * @param string $ini_get_arg The argument to get
+ * @return bool True for on false for not
  */
 function ini_get_bool($ini_get_arg) {
     $temp = ini_get($ini_get_arg);
@@ -6661,6 +7040,8 @@ function ini_get_bool($ini_get_arg) {
 
 /**
  * Can handle rotated text. Whether it is safe to use the trickery in textrotate.js.
+ *
+ * @return bool True for yes, false for no
  */
 function can_use_rotated_text() {
     global $USER;
@@ -6715,7 +7096,8 @@ function check_gd_version() {
  * Checks version numbers of main code and all modules to see
  * if there are any mismatches
  *
- * @uses $CFG
+ * @global object
+ * @global object
  * @return bool
  */
 function moodle_needs_upgrading() {
@@ -6755,8 +7137,8 @@ function moodle_needs_upgrading() {
  *
  * The script may be automatically aborted if upgrade times out.
  *
+ * @global object
  * @param int $max_execution_time in seconds (can not be less than 60 s)
- * @return void
  */
 function upgrade_set_timeout($max_execution_time=300) {
     global $CFG;
@@ -6798,7 +7180,8 @@ function upgrade_set_timeout($max_execution_time=300) {
  * It uses the cache_flags system to store temporary records, deleting them
  * by name before finishing
  *
- * @uses $CFG
+ * @global object
+ * @global object
  * @uses HOURSECS
  */
 function notify_login_failures() {
@@ -6911,11 +7294,12 @@ function notify_login_failures() {
 }
 
 /**
- * moodle_setlocale
+ * Sets the system locale
  *
- * @uses $CFG
- * @param string $locale ?
  * @todo Finish documenting this function
+ *
+ * @global object
+ * @param string $locale Can be used to force a locale
  */
 function moodle_setlocale($locale='') {
     global $CFG;
@@ -6972,11 +7356,12 @@ function moodle_setlocale($locale='') {
 /**
  * Converts string to lowercase using most compatible function available.
  *
+ * @todo Remove this function when no longer in use
+ * @deprecated Use textlib->strtolower($text) instead.
+ *
  * @param string $string The string to convert to all lowercase characters.
  * @param string $encoding The encoding on the string.
  * @return string
- * @todo Add examples of calling this function with/without encoding types
- * @deprecated Use textlib->strtolower($text) instead.
  */
 function moodle_strtolower ($string, $encoding='') {
 
@@ -7042,9 +7427,12 @@ function random_string ($length=15) {
 /**
  * Given some text (which may contain HTML) and an ideal length,
  * this function truncates the text neatly on a word boundary if possible
+ *
+ * @global object
  * @param string $text - text to be shortened
  * @param int $ideal - ideal string length
  * @param boolean $exact if false, $text will not be cut mid-word
+ * @param string $ending The string to append if the passed string is truncated
  * @return string $truncate - shortened string
  */
 
@@ -7156,11 +7544,12 @@ function shorten_text($text, $ideal=30, $exact = false, $ending='...') {
  * Given dates in seconds, how many weeks is the date from startdate
  * The first week is 1, the second 2 etc ...
  *
- * @uses WEEKSECS
- * @param ? $startdate ?
- * @param ? $thedate ?
- * @return string
  * @todo Finish documenting this function
+ *
+ * @uses WEEKSECS
+ * @param int $startdate Timestamp for the start date
+ * @param int $thedate Timestamp for the end date
+ * @return string
  */
 function getweek ($startdate, $thedate) {
     if ($thedate < $startdate) {   // error
@@ -7172,9 +7561,11 @@ function getweek ($startdate, $thedate) {
 
 /**
  * returns a randomly generated password of length $maxlen.  inspired by
+ *
  * {@link http://www.phpbuilder.com/columns/jesus19990502.php3} and
  * {@link http://es2.php.net/manual/en/function.str-shuffle.php#73254}
  *
+ * @global object
  * @param int $maxlen  The maximum size of the password being generated.
  * @return string
  */
@@ -7254,6 +7645,7 @@ function format_float($float, $decimalpoints=1, $localized=true) {
  * Do NOT try to do any math operations before this conversion on any user submitted floats!
  *
  * @param  string $locale_float locale aware float representation
+ * @return float
  */
 function unformat_float($locale_float) {
     $locale_float = trim($locale_float);
@@ -7309,10 +7701,11 @@ function swapshuffle_assoc($array) {
  * this function returns an array with that amount
  * of items.  The indexes are retained.
  *
- * @param array $array ?
- * @param ? $draws ?
- * @return ?
  * @todo Finish documenting this function
+ *
+ * @param array $array
+ * @param int $draws
+ * @return array
  */
 function draw_rand_array($array, $draws) {
     srand ((double) microtime() * 10000000);
@@ -7341,12 +7734,11 @@ function draw_rand_array($array, $draws) {
 }
 
 /**
- * microtime_diff
+ * Calculate the difference between two microtimes
  *
- * @param string $a ?
- * @param string $b ?
+ * @param string $a The first Microtime
+ * @param string $b The second Microtime
  * @return string
- * @todo Finish documenting this function
  */
 function microtime_diff($a, $b) {
     list($a_dec, $a_sec) = explode(' ', $a);
@@ -7358,9 +7750,9 @@ function microtime_diff($a, $b) {
  * Given a list (eg a,b,c,d,e) this function returns
  * an array of 1->a, 2->b, 3->c etc
  *
- * @param array $list ?
- * @param string $separator ?
- * @todo Finish documenting this function
+ * @param string $list The string to explode into array bits
+ * @param string $separator The seperator used within the list string
+ * @return array The now assembled array
  */
 function make_menu_from_list($list, $separator=',') {
 
@@ -7373,13 +7765,17 @@ function make_menu_from_list($list, $separator=',') {
 
 /**
  * Creates an array that represents all the current grades that
- * can be chosen using the given grading type.  Negative numbers
+ * can be chosen using the given grading type.  
+ *
+ * Negative numbers
  * are scales, zero is no grade, and positive numbers are maximum
  * grades.
  *
- * @param int $gradingtype ?
- * return int
  * @todo Finish documenting this function
+ *
+ * @global object
+ * @param int $gradingtype
+ * @return int
  */
 function make_grades_menu($gradingtype) {
     global $DB;
@@ -7402,10 +7798,13 @@ function make_grades_menu($gradingtype) {
  * This function returns the nummber of activities
  * using scaleid in a courseid
  *
+ * @todo Finish documenting this function
+ *
+ * @global object
+ * @global object
  * @param int $courseid ?
  * @param int $scaleid ?
  * @return int
- * @todo Finish documenting this function
  */
 function course_scale_used($courseid, $scaleid) {
     global $CFG, $DB;
@@ -7446,9 +7845,9 @@ function course_scale_used($courseid, $scaleid) {
  * This function returns the nummber of activities
  * using scaleid in the entire site
  *
- * @param int $scaleid ?
+ * @param int $scaleid
+ * @param array $courses
  * @return int
- * @todo Finish documenting this function. Is return type correct?
  */
 function site_scale_used($scaleid, &$courses) {
     $return = 0;
@@ -7470,9 +7869,11 @@ function site_scale_used($scaleid, &$courses) {
 /**
  * make_unique_id_code
  *
- * @param string $extra ?
- * @return string
  * @todo Finish documenting this function
+ *
+ * @uses $_SERVER
+ * @param string $extra Extra string to append to the end of the code
+ * @return string
  */
 function make_unique_id_code($extra='') {
 
@@ -7728,6 +8129,9 @@ function address_in_subnet($addr, $subnetstr) {
  *
  * By using this function properly, we can ensure 100% https-ized pages
  * at our entire discretion (login, forgot_password, change_password)
+ *
+ * @global object
+ * @global bool
  */
 function httpsrequired() {
 
@@ -7751,9 +8155,10 @@ function httpsrequired() {
  * For outputting debugging info
  *
  * @uses STDOUT
- * @param string $string ?
- * @param string $eol ?
- * @todo Finish documenting this function
+ * @param string $string The string to write
+ * @param string $eol The end of line char(s) to use
+ * @param string $sleep Period to make the application sleep
+ *                      This ensures any messages have time to display before redirect
  */
 function mtrace($string, $eol="\n", $sleep=0) {
 
@@ -7771,13 +8176,19 @@ function mtrace($string, $eol="\n", $sleep=0) {
     }
 }
 
-//Replace 1 or more slashes or backslashes to 1 slash
+/**
+ * Replace 1 or more slashes or backslashes to 1 slash
+ *
+ * @param string $path The path to strip
+ * @return string the path with double slashes removed
+ */
 function cleardoubleslashes ($path) {
     return preg_replace('/(\/|\\\){1,}/','/',$path);
 }
 
 /**
  * Is current ip in give list?
+ *
  * @param string $list
  * @return bool
  */
@@ -7798,6 +8209,7 @@ function remoteip_in_list($list){
 /**
  * Returns most reliable client address
  *
+ * @global object
  * @return string The remote IP address
  */
 function getremoteaddr() {
@@ -7935,8 +8347,9 @@ function cleanremoteaddr($addr, $compress=false) {
 /**
  * This function will make a complete copy of anything it's given,
  * regardless of whether it's an object or not.
- * @param mixed $thing
- * @return mixed
+ *
+ * @param mixed $thing Something you want cloned
+ * @return mixed What ever it is you passed it
  */
 function fullclone($thing) {
     return unserialize(serialize($thing));
@@ -7952,6 +8365,7 @@ function fullclone($thing) {
  * make sure apache children that hog too much mem are
  * killed.
  *
+ * @global object
  */
 function moodle_request_shutdown() {
     global $CFG;
@@ -8000,6 +8414,8 @@ function moodle_request_shutdown() {
  * If new messages are waiting for the current user, then return
  * Javascript code to create a popup window
  *
+ * @global object
+ * @global object
  * @return string Javascript code
  */
 function message_popup_window() {
@@ -8028,7 +8444,15 @@ function message_popup_window() {
     return '';
 }
 
-// Used to make sure that $min <= $value <= $max
+/**
+ * Used to make sure that $min <= $value <= $max
+ *
+ * Make sure that value is between min, and max
+ *
+ * @param int $min The minimum value
+ * @param int $value The value to check
+ * @param int $max The maximum value
+ */
 function bounded_number($min, $value, $max) {
     if($value < $min) {
         return $min;
@@ -8039,6 +8463,12 @@ function bounded_number($min, $value, $max) {
     return $value;
 }
 
+/**
+ * Check if there is a nested array within the passed array
+ *
+ * @param array $array
+ * @return bool true if there is a nested array false otherwise
+ */
 function array_is_nested($array) {
     foreach ($array as $value) {
         if (is_array($value)) {
@@ -8049,12 +8479,16 @@ function array_is_nested($array) {
 }
 
 /**
- *** get_performance_info() pairs up with init_performance_info()
- *** loaded in setup.php. Returns an array with 'html' and 'txt'
- *** values ready for use, and each of the individual stats provided
- *** separately as well.
- ***
- **/
+ * get_performance_info() pairs up with init_performance_info()
+ * loaded in setup.php. Returns an array with 'html' and 'txt'
+ * values ready for use, and each of the individual stats provided
+ * separately as well.
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @return array
+ */
 function get_performance_info() {
     global $CFG, $PERF, $DB;
 
@@ -8153,12 +8587,16 @@ function get_performance_info() {
     return $info;
 }
 
+/**
+ * @todo Document this function linux people
+ */
 function apd_get_profiling() {
     return shell_exec('pprofp -u ' . ini_get('apd.dumpdir') . '/pprof.' . getmypid() . '.*');
 }
 
 /**
  * Delete directory or only it's content
+ *
  * @param string $dir directory path
  * @param bool $content_only
  * @return bool success, true also if dir does not exist
@@ -8192,7 +8630,6 @@ function remove_dir($dir, $content_only=false) {
  * @param string absolute directory path (must be under $CFG->dataroot)
  * @param boolean create directory if does not exist
  * @param boolean create directory recursively
- *
  * @return boolean true if directory exists or created
  */
 function check_dir_exists($dir, $create=false, $recursive=false) {
@@ -8217,6 +8654,7 @@ function check_dir_exists($dir, $create=false, $recursive=false) {
 /**
  * Detect if an object or a class contains a given property
  * will take an actual object or the name of a class
+ *
  * @param mix $obj Name of class or real object to test
  * @param string $property name of property to find
  * @return bool true if property exists
@@ -8235,9 +8673,9 @@ function object_property_exists( $obj, $property ) {
 /**
  * Detect a custom script replacement in the data directory that will
  * replace an existing moodle script
+ *
  * @param string $urlpath path to the original script
- * @return string full path name if a custom script exists
- * @return bool false if no custom script exists
+ * @return string|bool full path name if a custom script exists, false if no custom script exists
  */
 function custom_script_path($urlpath='') {
     global $CFG;
@@ -8280,6 +8718,7 @@ function custom_script_path($urlpath='') {
  * Returns whether or not the user object is a remote MNET user. This function
  * is in moodlelib because it does not rely on loading any of the MNET code.
  *
+ * @global object
  * @param object $user A valid user object
  * @return bool        True if the user is from a remote Moodle.
  */
@@ -8299,6 +8738,7 @@ function is_mnet_remote_user($user) {
 /**
  * Checks if a given plugin is in the list of enabled enrolment plugins.
  *
+ * @global object
  * @param string $auth Enrolment plugin.
  * @return boolean Whether the plugin is enabled.
  */
@@ -8315,6 +8755,10 @@ function is_enabled_enrol($enrol='') {
 /**
  * This function will search for browser prefereed languages, setting Moodle
  * to use the best one available if $SESSION->lang is undefined
+ *
+ * @global object
+ * @global object
+ * @global object
  */
 function setup_lang_from_browser() {
 
@@ -8366,9 +8810,12 @@ function setup_lang_from_browser() {
 
 /**
  * check if $url matches anything in proxybypass list
- * @note any errors just result in the proxy being used (least bad)
- * @param string $url - url to check
- * @return boolean - true if we should bypass the proxy
+ *
+ * any errors just result in the proxy being used (least bad)
+ *
+ * @global object
+ * @param string $url url to check
+ * @return boolean true if we should bypass the proxy
  */
 function is_proxybypass( $url ) {
     global $CFG;
@@ -8413,6 +8860,12 @@ function is_proxybypass( $url ) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Check if the passed navigation is of the new style
+ * 
+ * @param mixed $navigation
+ * @return bool true for yes false for no
+ */
 function is_newnav($navigation) {
     if (is_array($navigation) && !empty($navigation['newnav'])) {
         return true;
@@ -8423,7 +8876,9 @@ function is_newnav($navigation) {
 
 /**
  * Checks whether the given variable name is defined as a variable within the given object.
- * @note This will NOT work with stdClass objects, which have no class variables.
+ *
+ * This will NOT work with stdClass objects, which have no class variables.
+ *
  * @param string $var The variable name
  * @param object $object The object to check
  * @return boolean
@@ -8438,9 +8893,9 @@ function in_object_vars($var, $object) {
  * Returns an array without repeated objects.
  * This function is similar to array_unique, but for arrays that have objects as values
  *
- * @param unknown_type $array
- * @param unknown_type $keep_key_assoc
- * @return unknown
+ * @param array $array
+ * @param bool $keep_key_assoc
+ * @return array
  */
 function object_array_unique($array, $keep_key_assoc = true) {
     $duplicate_keys = array();
@@ -8504,7 +8959,7 @@ function get_plugin_name($plugin, $type='mod') {
 /**
  * Is a userid the primary administrator?
  *
- * @param $userid int id of user to check
+ * @param int $userid int id of user to check
  * @return boolean
  */
 function is_primary_admin($userid){
@@ -8518,6 +8973,9 @@ function is_primary_admin($userid){
 }
 
 /**
+ * Returns the site identifier
+ *
+ * @global object
  * @return string $CFG->siteidentifier, first making sure it is properly initialised.
  */
 function get_site_identifier() {
@@ -8565,5 +9023,4 @@ function check_consecutive_identical_characters($password, $maxchars) {
     return true;
 }
 
-// vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
