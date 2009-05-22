@@ -1,7 +1,6 @@
 <?php
 /**
  * Modified by Dongsheng Cai <dongsheng@moodle.com>
- * @version: $Id$
  */
 
 /**
@@ -12,20 +11,26 @@
  * @link http://enabled.box.net
  * @access public
  * @version 1.0
- * copyright Box.net 2007
- * Available for use and distribution under GPL-license
+ * @copyright copyright Box.net 2007
+ * @license Available for use and distribution under GPL-license
  * Go to http://www.gnu.org/licenses/gpl-3.0.txt for full text
  */
-
 class boxclient {
+    /** @var string */
     public $auth_token = '';
-
+    /** @var string */
     private $_box_api_url = 'http://box.net/api/1.0/rest';
     private $_box_api_upload_url = 'http://upload.box.net/api/1.0/upload';
     private $_error_code = '';
     private $_error_msg = '';
+    /** @var bool */
     private $debug = false;
 
+    /**
+     * @param string $api_key
+     * @param string $auth_token
+     * @param bool $debug
+     */
     public function __construct($api_key, $auth_token = '', $debug = false) {
         $this->api_key    = $api_key;
         $this->auth_token = $auth_token;
@@ -34,8 +39,14 @@ class boxclient {
         } else {
             $this->debug = false;
         }
-    }
-    // Setup for Functions
+    } 
+    /**
+     * Setup for Functions
+     *
+     * @param string $method
+     * @param array $params
+     * @return array 
+     */
     function makeRequest($method, $params = array()) {
         $this->_clearErrors();
         $c = new curl(array('debug'=>$this->debug, 'cache'=>true, 'module_cache'=>'repository'));
@@ -58,6 +69,10 @@ class boxclient {
         }
         return $data;
     }
+    /**
+     * @param array $params
+     * @return array 
+     */
     function getTicket($params = array()) {
         $params['api_key'] = $this->api_key;
         $params['action']  = 'get_ticket';
@@ -79,17 +94,25 @@ class boxclient {
         return $ret_array;
     }
 
-    // $options['username'] and $options['password'] must be
-    // given, we  will use them to obtain a valid auth_token
-    // To get a token, you should use following code:
-    //
-    // $box = new boxclient('dmls97d8j3i9tn7av8y71m9eb55vrtj4');
-    // Get a ticket
-    // $t = $box->getTicket();
-    // $box->getAuthToken($t['ticket'], array(
-    //              'username'=>'dongsheng@moodle.com',
-    //              'password'=>'xxx'));
-    //
+    /**
+     * $options['username'] and $options['password'] must be
+     * given, we  will use them to obtain a valid auth_token
+     * To get a token, you should use following code:
+     *
+     * <code>
+     * $box = new boxclient('dmls97d8j3i9tn7av8y71m9eb55vrtj4');
+     * Get a ticket
+     * $t = $box->getTicket();
+     * $box->getAuthToken($t['ticket'], array(
+     *              'username'=>'dongsheng@moodle.com',
+     *              'password'=>'xxx'));
+     * </code>
+     *
+     * @param string $ticket
+     * @param string $username
+     * @param string $password
+     * @return mixed
+     */
     function getAuthToken($ticket, $username, $password) {
         $c = new curl(array('debug'=>$this->debug));
         $c->setopt(array('CURLOPT_FOLLOWLOCATION'=>0));
@@ -120,7 +143,11 @@ class boxclient {
             throw new repository_exception('invalidtoken', 'repository_boxnet');
         }
     }
-    //
+    /**
+     * @param string $path Unused
+     * @param array $params
+     * @return array
+     */
     function getfiletree($path, $params = array()) {
         $this->_clearErrors();
         $params['auth_token'] = $this->auth_token;
@@ -144,6 +171,10 @@ class boxclient {
         return $ret;
     }
 
+    /**
+     * @param array $sax
+     * @param array $tree Passed by reference
+     */
     function buildtree($sax, &$tree){
         $sax = (array)$sax;
         $count = 0;
@@ -179,7 +210,10 @@ class boxclient {
             $count++;
         }
     }
-    // Get the file list
+    /**
+     * @param array $params
+     * @return bool|array Array or false
+     */
     function getAccountTree($params = array()) {
         $params['auth_token'] = $this->auth_token;
         $params['folder_id']  = 0;
@@ -226,7 +260,11 @@ class boxclient {
         return $ret_array;
     }
 
-    // Create New Folder
+    /**
+     * @param string $new_folder_name
+     * @param array $params
+     * @return bool|array Array or false
+     */
     function CreateFolder($new_folder_name, $params = array()) {
         $params['auth_token'] =  $this->auth_token;
         $params['api_key']    = $this->api_key;
@@ -278,9 +316,11 @@ class boxclient {
         return $ret_array;
     }
 
-    /** Upload a File
-    * @param array $params the file MUST be present in key 'file' and be a moodle stored_file object.
-    */
+    /** 
+     * Upload a File
+     * @param array $params the file MUST be present in key 'file' and be a moodle stored_file object.
+     * @return array|bool Array or false
+     */
     function UploadFile ($params = array()) {
         $params['auth_token'] = $this->auth_token;
         // this param should be the full path of the file
@@ -323,7 +363,11 @@ class boxclient {
 
         return $ret_array;
     }
-
+    /**
+     * @param string $fileid
+     * @param string $newname
+     * @return bool
+     */
     function RenameFile($fileid, $newname) {
         $params = array(
             'api_key'    => $this->api_key,
@@ -348,7 +392,12 @@ class boxclient {
         return false;
     }
 
-    // Register New User
+    /**
+     * Register New User
+     *
+     * @param array $params
+     * @return array|bool Outcome Array or false
+     */
     function RegisterUser($params = array()) {
         $params['api_key'] = $this->api_key;
         $params['action']  = 'register_new_user';
@@ -384,8 +433,15 @@ class boxclient {
         return $ret_array;
     }
 
-    // Add Tags  (http://enabled.box.net/docs/rest#add_to_tag)
-
+    /**
+     * Add Tags  (http://enabled.box.net/docs/rest#add_to_tag)
+     *
+     * @param string $tag
+     * @param string $id Set to ID of file or folder
+     * @param string $target_type File or folder
+     * @param array $params
+     * @return array|bool Outcome Array or false
+     */
     function AddTag($tag, $id, $target_type, $params = array()) {
         $params['auth_token'] = $this->auth_token;
         $params['api_key']    = $this->api_key;
@@ -409,7 +465,17 @@ class boxclient {
         return $ret_array;
     }
 
-    // Public Share  (http://enabled.box.net/docs/rest#public_share)
+    /**
+     * Public Share  (http://enabled.box.net/docs/rest#public_share)
+     *
+     * @param string $message
+     * @param string $emails
+     * @param string $id Set to ID of file or folder
+     * @param string $target_type File or folder
+     * @param string $password
+     * @param array $params
+     * @return array|bool Outcome Array or false
+     */
     function PublicShare($message, $emails, $id, $target_type, $password, $params = array()) {
         $params['auth_token'] = $this->auth_token;
         $params['api_key']    = $this->api_key;
@@ -437,7 +503,12 @@ class boxclient {
 
         return $ret_array;
     }
-    // Get Friends  (http://enabled.box.net/docs/rest#get_friends)
+    /**
+     * Get Friends  (http://enabled.box.net/docs/rest#get_friends)
+     *
+     * @param array $params
+     * @return array|bool Outcome Array or false
+     */
     function GetFriends ($params = array()) {
         $params['auth_token'] = $this->auth_token;
         $params['action']     = 'get_friends';
@@ -476,7 +547,12 @@ class boxclient {
         return $ret_array;
     }
 
-    // Logout User
+    /**
+     * Logout User  (http://enabled.box.net/docs/rest#get_friends)
+     *
+     * @param array $params
+     * @return array|bool Outcome Array or false
+     */
     function Logout($params = array()) {
         $params['auth_token'] = $this->auth_token;
         $params['api_key']    = $this->api_key;
@@ -496,6 +572,10 @@ class boxclient {
             return $ret_array;
         }
     }
+    /**
+     * @param array $data
+     * @return bool
+     */
     function _checkForError($data) {
         if ($this->_error_msg != '') {
             return true;
@@ -508,25 +588,37 @@ class boxclient {
         return false;
     }
 
+    /**
+     * @return bool
+     */
     public function isError() {
         if  ($this->_error_msg != '') {
             return true;
         }
         return false;
     }
+    /**
+     *
+     */
     public function setError($code = 0, $msg){
         $this->_error_code = $code;
         $this->_error_msg  = $msg;
     }
-
+    /**
+     * @return string
+     */
     function getErrorMsg() {
         return '<p>Error: (' . $this->_error_code . ') ' . $this->_error_msg . '</p>';
     }
-
+    /**
+     * @return string
+     */
     function getErrorCode() {
         return $this->_error_code;
     }
-
+    /**
+     *
+     */
     function _clearErrors() {
         $this->_error_code = '';
         $this->_error_msg = '';
