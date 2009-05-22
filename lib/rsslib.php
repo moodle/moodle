@@ -213,6 +213,15 @@ function rss_add_items($items) {
             if (isset($item->category)) {
                 $result .= rss_full_tag('category',3,false,$item->category);
             }
+            if (isset($item->tags)) {
+                $attributes = array();
+                if (isset($item->tagscheme)) {
+                    $attributes['domain'] = $item->tagscheme;
+                }
+                foreach ($item->tags as $tag) {
+                    $result .= rss_full_tag('category', 3, false, $tag, $attributes);
+                }
+            }
             $result .= rss_full_tag('title',3,false,strip_tags($item->title));
             $result .= rss_full_tag('link',3,false,$item->link);
             $result .= rss_add_enclosures($item);
