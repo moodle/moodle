@@ -1,127 +1,135 @@
-<?php  //$Id$
+<?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
-//           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/ 
+// 
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// This library includes all the necessary stuff to use the one-click
-// download and install feature of Moodle, used to keep updated some
-// items like languages, pear, enviroment... i.e, components.
-//
-// It has been developed harcoding some important limits that are
-// explained below:
-//    - It only can check, download and install items under moodledata.
-//    - Every downloadeable item must be one zip file.
-//    - The zip file root content must be 1 directory, i.e, everything
-//      is stored under 1 directory.
-//    - Zip file name and root directory must have the same name (but
-//      the .zip extension, of course).
-//    - Every .zip file must be defined in one .md5 file that will be
-//      stored in the same remote directory than the .zip file.
-//    - The name of such .md5 file is free, although it's recommended
-//      to use the same name than the .zip (that's the default
-//      assumption if no specified).
-//    - Every remote .md5 file will be a comma separated (CVS) file where each
-//      line will follow this format:
-//        - Field 1: name of the zip file (without extension). Mandatory.
-//        - Field 2: md5 of the zip file. Mandatory.
-//        - Field 3: whatever you want (or need). Optional.
-//    -Every local .md5 file will:
-//        - Have the zip file name (without the extension) plus -md5
-//        - Will reside inside the expanded zip file dir
-//        - Will contain the md5 od the latest installed component
-// With all these details present, the process will perform this tasks:
-//    - Perform security checks. Only admins are allowed to use this for now.
-//    - Read the .md5 file from source (1).
-//    - Extract the correct line for the .zip being requested.
-//    - Compare it with the local .md5 file (2).
-//    - If different:
-//        - Download the newer .zip file from source.
-//        - Calculate its md5 (3).
-//        - Compare (1) and (3).
-//        - If equal:
-//            - Delete old directory.
-//            - Uunzip the newer .zip file.
-//            - Create the new local .md5 file.
-//            - Delete the .zip file.
-//        - If different:
-//            - ERROR. Old package won't be modified. We shouldn't
-//              reach here ever.
-//    - If component download is not possible, a message text about how to do
-//      the process manually (remotedownloaderror) must be displayed to explain it.
-//
-// General Usage:
-//
-// To install one component:
-//
-//     require_once($CFG->libdir.'/componentlib.class.php');
-//     if ($cd = new component_installer('http://download.moodle.org', 'lang16',
-//                                       'es_utf8.zip', 'languages.md5', 'lang')) {
-//         $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
-//         switch ($status) {
-//             case COMPONENT_ERROR:
-//                 if ($cd->get_error() == 'remotedownloaderror') {
-//                     $a = new stdClass();
-//                     $a->url = 'http://download.moodle.org/lang16/es_utf8.zip';
-//                     $a->dest= $CFG->dataroot.'/lang';
-//                     print_error($cd->get_error(), 'error', '', $a);
-//                 } else {
-//                     print_error($cd->get_error(), 'error');
-//                 }
-//                 break;
-//             case COMPONENT_UPTODATE:
-//                 //Print error string or whatever you want to do
-//                 break;
-//             case COMPONENT_INSTALLED:
-//                 //Print/do whatever you want
-//                 break;
-//             default:
-//                 //We shouldn't reach this point
-//         }
-//     } else {
-//         //We shouldn't reach this point
-//     }
-//
-// To switch of component (maintaining the rest of settings):
-//
-//     $status = $cd->change_zip_file('en_utf8.zip'); //returns boolean false on error
-//
-// To retrieve all the components in one remote md5 file
-//
-//     $components = $cd->get_all_components_md5();  //returns boolean false on error, array instead
-//
-// To check if current component needs to be updated
-//
-//     $status = $cd->need_upgrade();  //returns COMPONENT_(ERROR | UPTODATE | NEEDUPDATE)
-//
-// To get the 3rd field of the md5 file (optional)
-//
-//     $field = $cd->get_extra_md5_field();  //returns string (empty if not exists)
-//
-// For all the error situations the $cd->get_error() method should return always the key of the
-// error to be retrieved by one standard get_string() call against the error.php lang file.
-//
-// That's all!
+/**
+ * This library includes all the necessary stuff to use the one-click
+ * download and install feature of Moodle, used to keep updated some
+ * items like languages, pear, enviroment... i.e, components.
+ *
+ * It has been developed harcoding some important limits that are
+ * explained below:
+ *    - It only can check, download and install items under moodledata.
+ *    - Every downloadeable item must be one zip file.
+ *    - The zip file root content must be 1 directory, i.e, everything
+ *      is stored under 1 directory.
+ *    - Zip file name and root directory must have the same name (but
+ *      the .zip extension, of course).
+ *    - Every .zip file must be defined in one .md5 file that will be
+ *      stored in the same remote directory than the .zip file.
+ *    - The name of such .md5 file is free, although it's recommended
+ *      to use the same name than the .zip (that's the default
+ *      assumption if no specified).
+ *    - Every remote .md5 file will be a comma separated (CVS) file where each
+ *      line will follow this format:
+ *        - Field 1: name of the zip file (without extension). Mandatory.
+ *        - Field 2: md5 of the zip file. Mandatory.
+ *        - Field 3: whatever you want (or need). Optional.
+ *    -Every local .md5 file will:
+ *        - Have the zip file name (without the extension) plus -md5
+ *        - Will reside inside the expanded zip file dir
+ *        - Will contain the md5 od the latest installed component
+ * With all these details present, the process will perform this tasks:
+ *    - Perform security checks. Only admins are allowed to use this for now.
+ *    - Read the .md5 file from source (1).
+ *    - Extract the correct line for the .zip being requested.
+ *    - Compare it with the local .md5 file (2).
+ *    - If different:
+ *        - Download the newer .zip file from source.
+ *        - Calculate its md5 (3).
+ *        - Compare (1) and (3).
+ *        - If equal:
+ *            - Delete old directory.
+ *            - Uunzip the newer .zip file.
+ *            - Create the new local .md5 file.
+ *            - Delete the .zip file.
+ *        - If different:
+ *            - ERROR. Old package won't be modified. We shouldn't
+ *              reach here ever.
+ *    - If component download is not possible, a message text about how to do
+ *      the process manually (remotedownloaderror) must be displayed to explain it.
+ *
+ * General Usage:
+ *
+ * To install one component:
+ * <code>
+ *     require_once($CFG->libdir.'/componentlib.class.php');
+ *     if ($cd = new component_installer('http://download.moodle.org', 'lang16',
+ *                                       'es_utf8.zip', 'languages.md5', 'lang')) {
+ *         $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
+ *         switch ($status) {
+ *             case COMPONENT_ERROR:
+ *                 if ($cd->get_error() == 'remotedownloaderror') {
+ *                     $a = new stdClass();
+ *                     $a->url = 'http://download.moodle.org/lang16/es_utf8.zip';
+ *                     $a->dest= $CFG->dataroot.'/lang';
+ *                     print_error($cd->get_error(), 'error', '', $a);
+ *                 } else {
+ *                     print_error($cd->get_error(), 'error');
+ *                 }
+ *                 break;
+ *             case COMPONENT_UPTODATE:
+ *                 //Print error string or whatever you want to do
+ *                 break;
+ *             case COMPONENT_INSTALLED:
+ *                 //Print/do whatever you want
+ *                 break;
+ *             default:
+ *                 //We shouldn't reach this point
+ *         }
+ *     } else {
+ *         //We shouldn't reach this point
+ *     }
+ * </code>
+ *
+ * To switch of component (maintaining the rest of settings):
+ * <code>
+ *     $status = $cd->change_zip_file('en_utf8.zip'); //returns boolean false on error
+ * </code>
+ *
+ * To retrieve all the components in one remote md5 file
+ * <code>
+ *     $components = $cd->get_all_components_md5();  //returns boolean false on error, array instead
+ * </code>
+ *
+ * To check if current component needs to be updated
+ * <code>
+ *     $status = $cd->need_upgrade();  //returns COMPONENT_(ERROR | UPTODATE | NEEDUPDATE)
+ * </code>
+ *
+ * To get the 3rd field of the md5 file (optional)
+ * <code>
+ *     $field = $cd->get_extra_md5_field();  //returns string (empty if not exists)
+ * </code>
+ *
+ * For all the error situations the $cd->get_error() method should return always the key of the
+ * error to be retrieved by one standard get_string() call against the error.php lang file.
+ *
+ * That's all!
+ *
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  http://dougiamas.com
+ *            2001 onwards Eloy Lafuente (stronk7) http://contiento.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+ 
+ /**
+  * @global object $CFG
+  * @name $CFG
+  */
 global $CFG;
 require_once($CFG->libdir.'/filelib.php');
 
@@ -133,14 +141,20 @@ define('COMPONENT_INSTALLED',       3);
 
 /**
  * This class is used to check, download and install items from
- * download.moodle.org to the moodledata directory. It always
- * return true/false in all their public methods to say if
+ * download.moodle.org to the moodledata directory. 
+ *
+ * It always return true/false in all their public methods to say if
  * execution has ended succesfuly or not. If there is any problem
  * its getError() method can be called, returning one error string
  * to be used with the standard get/print_string() functions.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
  */
 class component_installer {
-
+    /**
+     * @var string
+     */
     var $sourcebase;   /// Full http URL, base for downloadable items
     var $zippath;      /// Relative path (from sourcebase) where the
                        /// downloadeable item resides.
@@ -155,7 +169,9 @@ class component_installer {
     var $errorstring;  /// Latest error produced. It will contain one lang string key.
     var $extramd5info; /// Contents of the optional third field in the .md5 file.
     var $requisitesok; /// Flag to see if requisites check has been passed ok.
-
+    /**
+     * @var array
+     */
     var $cachedmd5components; /// Array of cached components to avoid to
                               /// download the same md5 file more than once per request.
 
@@ -163,13 +179,13 @@ class component_installer {
      * Standard constructor of the class. It will initialize all attributes.
      * without performing any check at all.
      *
-     * @param string Full http URL, base for downloadeable items
-     * @param string Relative path (from sourcebase) where the
+     * @param string $sourcebase Full http URL, base for downloadeable items
+     * @param string $zippath Relative path (from sourcebase) where the
      *               downloadeable item resides
-     * @param string Name of the .zip file to be downloaded
-     * @param string Name of the .md5 file to be read (default '' = same
+     * @param string $zipfilename Name of the .zip file to be downloaded
+     * @param string $md5filename Name of the .md5 file to be read (default '' = same
      *               than zipfilename)
-     * @param string Relative path (from moodledata) where the .zip file will
+     * @param string $destpath Relative path (from moodledata) where the .zip file will
      *               be expanded (default='' = moodledataitself)
      * @return object
      */
@@ -194,6 +210,7 @@ class component_installer {
      * one installation. Also, it will check for required settings
      * and will fill everything as needed.
      *
+     * @global object
      * @return boolean true/false (plus detailed error in errorstring)
      */
     function check_requisites() {
@@ -240,6 +257,11 @@ class component_installer {
      * compare md5 values, download, unzip, install and regenerate
      * local md5 file
      *
+     * @global object
+     * @uses COMPONENT_ERROR
+     * @uses COMPONENT_UPTODATE
+     * @uses COMPONENT_ERROR
+     * @uses COMPONENT_INSTALLED
      * @return int COMPONENT_(ERROR | UPTODATE | INSTALLED)
      */
     function install() {
@@ -329,6 +351,9 @@ class component_installer {
      * This function will detect if remote component needs to be installed
      * because it's different from the local one
      *
+     * @uses COMPONENT_ERROR
+     * @uses COMPONENT_UPTODATE
+     * @uses COMPONENT_NEEDUPDATE
      * @return int COMPONENT_(ERROR | UPTODATE | NEEDUPDATE)
      */
     function need_upgrade() {
@@ -356,7 +381,7 @@ class component_installer {
      * to allow the class to process different components of the
      * same md5 file without intantiating more objects.
      *
-     * @param string New zip filename to process
+     * @param string $newzipfilename New zip filename to process
      * @return boolean true/false
      */
     function change_zip_file($newzipfilename) {
@@ -369,7 +394,8 @@ class component_installer {
      * This function will get the local md5 value of the installed
      * component.
      *
-     * @return string md5 of the local component (false on error)
+     * @global object
+     * @return bool|string md5 of the local component (false on error)
      */
     function get_local_md5() {
         global $CFG;
@@ -434,7 +460,7 @@ class component_installer {
      * This function allows you to retrieve the complete array of components found in
      * the md5filename
      *
-     * @return array array of components in md5 file or false if error
+     * @return bool|array array of components in md5 file or false if error
      */
     function get_all_components_md5() {
 
