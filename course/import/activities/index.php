@@ -2,6 +2,7 @@
 
     require_once('../../../config.php');
     require_once('../../lib.php');
+    require_once($CFG->dirroot.'/backup/lib.php');
     require_once($CFG->dirroot.'/backup/restorelib.php');
 
     $id               = required_param('id', PARAM_INT);   // course id to import TO
@@ -42,7 +43,7 @@
         }
         if (!empty($filename) && file_exists($CFG->dataroot.'/'.$filename) && !empty($SESSION->import_preferences)) {
             $restore = backup_to_restore_array($SESSION->import_preferences);
-            $restore->restoreto = 1;
+            $restore->restoreto = RESTORETO_CURRENT_ADDING;
             $restore->course_id = $id;
             $restore->importing = 1; // magic variable so we know that we're importing rather than just restoring.
 
