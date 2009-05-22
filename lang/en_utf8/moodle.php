@@ -1270,6 +1270,7 @@ $string['publicdirectory1'] = 'Publish the site name only';
 $string['publicdirectory2'] = 'Publish the site name with a link';
 $string['publicdirectorytitle'] = 'See the current list of sites';
 $string['publicsitefileswarning'] = 'Note: files placed here can be accessed by anyone';
+$string['publicsitefileswarning2'] = 'Note: Files placed here can be accessed by anyone who knows (or can guess) the URL. For security reasons, it is recommended that any backup files are deleted immediately after restoring them.';
 $string['question'] = 'Question';
 $string['questionsinthequestionbank'] = 'Questions in the question bank';
 $string['readinginfofrombackup'] = 'Reading info from backup';
