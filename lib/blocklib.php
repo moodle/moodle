@@ -1,35 +1,33 @@
-<?php //$Id$
+<?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/ 
+// 
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This library includes all the necessary stuff to use blocks on pages in Moodle.
+ * Block Class and Functions
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package pages
+ * @todo Document what this file does
+ * 
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+ /**
+  * Block Defines
+  */
 define('BLOCK_MOVE_LEFT',   0x01);
 define('BLOCK_MOVE_RIGHT',  0x02);
 define('BLOCK_MOVE_UP',     0x04);
@@ -45,7 +43,18 @@ define('BLOCKS_PINNED_BOTH',2);
 
 require_once($CFG->libdir.'/pagelib.php');
 
+/**
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
+ */
 class block_not_on_page_exception extends moodle_exception {
+    /**
+     * Contructor
+     *
+     * @param int $instanceid
+     * @param object $page
+     */
     public function __construct($instanceid, $page) {
         $a = new stdClass;
         $a->instanceid = $instanceid;
@@ -55,6 +64,8 @@ class block_not_on_page_exception extends moodle_exception {
 }
 
 /**
+ * Block Manager
+ *
  * This class keeps track of the block that should appear on a moodle_page.
  * The page to work with as passed to the constructor.
  * The only fields of moodle_page that is uses are ->context, ->pagetype and
@@ -77,35 +88,41 @@ class block_not_on_page_exception extends moodle_exception {
  * deprecated functions mostly working by changing blocks_setup to return the
  * block_manger object, and then use 'implements ArrayAccess' so that the right
  * thing happens when legacy code does something like $pageblocks[BLOCK_POS_LEFT].
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
  */
 class block_manager implements ArrayAccess {
 
 /// Field declarations =========================================================
-
+    /** @var object */
     protected $page;
-
+    /** @var array */
     protected $regions = array();
-
+    /** @var string */
     protected $defaultregion;
-
+    /** @var array */
     protected $allblocks = null; // Will be get_records('blocks');
-
+    /** @var array */
     protected $addableblocks = null; // Will be a subset of $allblocks.
 
     /**
      * Will be an array region-name => array(db rows loaded in load_blocks);
+     * @var array
      */
     protected $birecordsbyregion = null;
 
     /**
      * array region-name => array(block objects); populated as necessary by
      * the ensure_instances_exist method.
+     * @var array
      */
     protected $blockinstances = array();
 
     /**
      * array region-name => array(block_content objects) what acutally needs to
      * be displayed in each region.
+     * @var array
      */
     protected $visibleblockcontent = array();
 
@@ -115,7 +132,7 @@ class block_manager implements ArrayAccess {
      * Constructor.
      * @param object $page the moodle_page object object we are managing the blocks for,
      * or a reasonable faxilimily. (See the comment at the top of this classe
-     * and http://en.wikipedia.org/wiki/Duck_typing)
+     * and {@link http://en.wikipedia.org/wiki/Duck_typing})
      */
     public function __construct($page) {
         $this->page = $page;
@@ -124,6 +141,8 @@ class block_manager implements ArrayAccess {
 /// Getter methods =============================================================
 
     /**
+     * Get an array of all region names on this page where a block may appear
+     *
      * @return array the internal names of the regions on this page where block may appear.
      */
     public function get_regions() {
@@ -131,6 +150,8 @@ class block_manager implements ArrayAccess {
     }
 
     /**
+     * Get the region name of the region blocks are added to by default
+     *
      * @return string the internal names of the region where new blocks are added
      * by default, and where any blocks from an unrecognised region are shown.
      * (Imagine that blocks were added with one theme selected, then you switched
@@ -142,6 +163,7 @@ class block_manager implements ArrayAccess {
 
     /**
      * The list of block types that may be added to this page.
+     *
      * @return array block id => record from block table.
      */
     public function get_addable_blocks() {
@@ -171,11 +193,17 @@ class block_manager implements ArrayAccess {
         return $this->addableblocks;
     }
 
+    /**
+     * Find out if a block is present ? just a guess
+     * @todo Write this function and document
+     */
     public function is_block_present($blocktypeid) {
         // TODO
     }
 
     /**
+     * Find out if a block type is known by the system
+     *
      * @param string $blockname the name of ta type of block.
      * @param boolean $includeinvisible if false (default) only check 'visible' blocks, that is, blocks enabled by the admin.
      * @return boolean true if this block in installed.
@@ -191,6 +219,8 @@ class block_manager implements ArrayAccess {
     }
 
     /**
+     * Find out if a region exists on a page
+     *
      * @param string $region a region name
      * @return boolean true if this retion exists on this page.
      */
@@ -199,7 +229,9 @@ class block_manager implements ArrayAccess {
     }
 
     /**
-     * @param $region a block region that exists on this page.
+     * Get an array of all blocks within a given region
+     *
+     * @param string $region a block region that exists on this page.
      * @return array of block instances.
      */
     public function get_blocks_for_region($region) {
@@ -209,6 +241,8 @@ class block_manager implements ArrayAccess {
     }
 
     /**
+     * Returns an array of block content objects that exist in a region
+     *
      * @param $region a block region that exists on this page.
      * @return array of block block_content objects for all the blocks in a region.
      */
@@ -219,7 +253,9 @@ class block_manager implements ArrayAccess {
     }
 
     /**
-     * Get the list of all installed blocks.
+     * Get an array of all of the installed blocks.
+     *
+     * @global object
      * @return array contents of the block table.
      */
     public function get_installed_blocks() {
@@ -233,6 +269,8 @@ class block_manager implements ArrayAccess {
 /// Setter methods =============================================================
 
     /**
+     * Add a region to a page
+     *
      * @param string $region add a named region where blocks may appear on the
      * current page. This is an internal name, like 'side-pre', not a string to
      * display in the UI.
@@ -243,6 +281,9 @@ class block_manager implements ArrayAccess {
     }
 
     /**
+     * Add an array of regions
+     * @see add_region()
+     *
      * @param array $regions this utility method calls add_region for each array element.
      */
     public function add_regions($regions) {
@@ -252,6 +293,8 @@ class block_manager implements ArrayAccess {
     }
 
     /**
+     * Set the default region for new blocks on the page
+     *
      * @param string $defaultregion the internal names of the region where new
      * blocks should be added by default, and where any blocks from an
      * unrecognised region are shown.
@@ -266,6 +309,12 @@ class block_manager implements ArrayAccess {
 
     /**
      * This method actually loads the blocks for our page from the database.
+     *
+     * @global object
+     * @global object
+     * @uses SQL_PARAMS_NAMED
+     * @param bool|null $includeinvisible
+     * @return void
      */
     public function load_blocks($includeinvisible = NULL) {
         global $DB, $CFG;
@@ -357,6 +406,10 @@ class block_manager implements ArrayAccess {
     /**
      * Add a block to the current page, or related pages. The block is added to
      * context $this->page->contextid. If $pagetypepattern $subpagepattern
+     *
+     * @global object
+     * @uses CONTEXT_COURSE
+     * @uses CONTEXT_BLOCK
      * @param string $blockname The type of block to add.
      * @param string $region the block region on this page to add the block to.
      * @param integer $weight determines the order where this block appears in the region.
@@ -396,6 +449,7 @@ class block_manager implements ArrayAccess {
 
     /**
      * Convenience method, calls add_block repeatedly for all the blocks in $blocks.
+     *
      * @param array $blocks array with arrray keys the region names, and values an array of block names.
      * @param string $pagetypepattern optional. Passed to @see add_block()
      * @param string $subpagepattern optional. Passed to @see add_block()
@@ -412,9 +466,10 @@ class block_manager implements ArrayAccess {
     }
 
     /**
-     * 
+     * Find a given block by its instance id 
+     *
      * @param integer $instanceid
-     * @return unknown_type
+     * @return object
      */
     public function find_instance($instanceid) {
         foreach ($this->regions as $region => $notused) {
@@ -433,6 +488,7 @@ class block_manager implements ArrayAccess {
     /**
      * Given a specific page type, return all the page type patterns that might
      * match it.
+     *
      * @param string $pagetype for example 'course-view-weeks' or 'mod-quiz-view'.
      * @return array an array of all the page type patterns that might match this page type.
      */
@@ -453,18 +509,37 @@ class block_manager implements ArrayAccess {
         return $patterns;
     }
 
+    /**
+     * Check whether the page blocks have been loaded yet
+     *
+     * @return void Throws coding exception if already loaded
+     */
     protected function check_not_yet_loaded() {
         if (!is_null($this->birecordsbyregion)) {
             throw new coding_exception('block_manager has already loaded the blocks, to it is too late to change things that might affect which blocks are visible.');
         }
     }
 
+    /**
+     * Check whether the page blocks have been loaded yet
+     *
+     * Nearly identical to the above function {@link check_not_yet_loaded()} except different message
+     *
+     * @return void Throws coding exception if already loaded
+     */
     protected function check_is_loaded() {
         if (is_null($this->birecordsbyregion)) {
             throw new coding_exception('block_manager has not yet loaded the blocks, to it is too soon to request the information you asked for.');
         }
     }
 
+    /**
+     * Check if a block type is known and usable
+     *
+     * @param string $blockname The block type name to search for
+     * @param bool $includeinvisible Include disabled block types in the intial pass
+     * @return void Coding Exception thrown if unknown or not enabled
+     */
     protected function check_known_block_type($blockname, $includeinvisible = false) {
         if (!$this->is_known_block_type($blockname, $includeinvisible)) {
             if ($this->is_known_block_type($blockname, true)) {
@@ -475,6 +550,12 @@ class block_manager implements ArrayAccess {
         }
     }
 
+    /**
+     * Check if a region is known by its name
+     *
+     * @param string $region
+     * @return void Coding Exception thrown if the region is not known
+     */
     protected function check_region_is_known($region) {
         if (!$this->is_known_region($region)) {
             throw new coding_exception('Trying to reference an unknown block region ' . $region);
@@ -482,6 +563,8 @@ class block_manager implements ArrayAccess {
     }
 
     /**
+     * Returns an array of region names as keys and nested arrays for values
+     *
      * @return array an array where the array keys are the region names, and the array
      * values are empty arrays.
      */
@@ -493,6 +576,12 @@ class block_manager implements ArrayAccess {
         return $result;
     }
 
+    /**
+     * Create a set of new block instance from a record array
+     *
+     * @param array $birecords An array of block instance records
+     * @return array An array of instantiated block_instance objects
+     */
     protected function create_block_instances($birecords) {
         $results = array();
         foreach ($birecords as $record) {
@@ -501,6 +590,12 @@ class block_manager implements ArrayAccess {
         return $results;
     }
 
+    /**
+     * Return an array of content vars from a set of block instances
+     *
+     * @param array $instances An array of block instances
+     * @return array An array of content vars
+     */
     protected function create_block_content($instances) {
         $results = array();
         foreach ($instances as $instance) {
@@ -516,6 +611,11 @@ class block_manager implements ArrayAccess {
         return $results;
     }
 
+    /**
+     * Ensure block instances exist for a given region
+     * 
+     * @param string $region Check for bi's with the instance with this name
+     */
     protected function ensure_instances_exist($region) {
         $this->check_region_is_known($region);
         if (!array_key_exists($region, $this->blockinstances)) {
@@ -524,6 +624,11 @@ class block_manager implements ArrayAccess {
         }
     }
 
+    /**
+     * Ensure that there is some content within the given region
+     *
+     * @param string $region The name of the region to check
+     */
     protected function ensure_content_created($region) {
         $this->ensure_instances_exist($region);
         if (!array_key_exists($region, $this->visibleblockcontent)) {
@@ -533,14 +638,17 @@ class block_manager implements ArrayAccess {
     }
 
 /// Deprecated stuff for backwards compatibility ===============================
-
+    /** @deprecated Remains to ensure backwards compatibility */
     public function offsetSet($offset, $value) {
     }
+    /** @deprecated Remains to ensure backwards compatibility */
     public function offsetExists($offset) {
         return $this->is_known_region($offset);
     }
+    /** @deprecated Remains to ensure backwards compatibility */
     public function offsetUnset($offset) {
     }
+    /** @deprecated Remains to ensure backwards compatibility */
     public function offsetGet($offset) {
         return $this->get_blocks_for_region($offset);
     }
@@ -548,32 +656,37 @@ class block_manager implements ArrayAccess {
 
 /**
  * This class holds all the information required to view a block.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
  */
 abstract class block_content {
-    /** Id used to uniquely identify this block in the HTML. */
+    /** @var int    Id used to uniquely identify this block in the HTML. */
     public $id = null;
-    /** Class names to add to this block's container in the HTML. */
+    /** @var array  Class names to add to this block's container in the HTML. */
     public $classes = array();
-    /** The content that appears in the title bar at the top of the block (HTML). */
+    /** @var string The content that appears in the title bar at the top of the block (HTML). */
     public $heading = null;
-    /** Plain text name of this block instance, used in the skip links. */
+    /** @var string Plain text name of this block instance, used in the skip links. */
     public $title = null;
     /**
      * A (possibly empty) array of editing controls. Array keys should be a
      * short string, e.g. 'edit', 'move' and the values are the HTML of the icons.
+     * @var array
      */
     public $editingcontrols = array();
-    /** The content that appears within the block, as HTML. */
+    /** @var string The content that appears within the block, as HTML. */
     public $content = null;
-    /** The content that appears at the end of the block. */
+    /** @var string The content that appears at the end of the block. */
     public $footer = null;
     /**
      * Any small print that should appear under the block to explain to the
      * teacher about the block, for example 'This is a sticky block that was
      * added in the system context.'
+     * @var string
      */
     public $annotation = null;
-    /** The result of the preferred_width method, which the theme may choose to use, or ignore. */
+    /** @var string The result of the preferred_width method, which the theme may choose to use, or ignore. */
     public $preferredwidth = null;
     public abstract function get_content();
 }
@@ -582,6 +695,7 @@ abstract class block_content {
 
 /**
  * Call a class method (one that does not requrie a block instance) on a block class.
+ *
  * @param string $blockname the name of the block.
  * @param string $method the method name.
  * @param array $param parameters to pass to the method.
@@ -596,6 +710,7 @@ function block_method_result($blockname, $method, $param = NULL) {
 
 /**
  * Creates a new object of the specified block class.
+ *
  * @param string $blockname the name of the block.
  * @param $instance block_instances DB table row (optional).
  * @param moodle_page $page the page this block is appearing on.
@@ -619,6 +734,8 @@ function block_instance($blockname, $instance = NULL, $page = NULL) {
 
 /**
  * Load the block class for a particular type of block.
+ *
+ * @global object
  * @param string $blockname the name of the block.
  * @return boolean success or failure.
  */
@@ -645,8 +762,10 @@ function block_load_class($blockname) {
 
 /**
  * @deprecated since Moodle 2.0 - use $page->blocks->get
+ *
  * This function returns an array with the IDs of any blocks that you can add to your page.
  * Parameters are passed by reference for speed; they are not modified at all.
+ *
  * @param $page the page object.
  * @param $blockmanager Not used.
  * @return array of block type ids.
@@ -658,6 +777,8 @@ function blocks_get_missing(&$page, &$blockmanager) {
 /**
  * Actually delete from the database any blocks that are currently on this page,
  * but which should not be there according to blocks_name_allowed_in_format.
+ *
+ * @todo Write/Fix this function. Currently returns immediatly
  * @param $page a page object.
  */
 function blocks_remove_inappropriate($page) {
@@ -683,6 +804,13 @@ function blocks_remove_inappropriate($page) {
     }
 }
 
+/**
+ * Check that a given name is in a permittable format
+ *
+ * @param string $name
+ * @param string $pageformat
+ * @return bool
+ */
 function blocks_name_allowed_in_format($name, $pageformat) {
     $accept = NULL;
     $maxdepth = -1;
@@ -706,9 +834,12 @@ function blocks_name_allowed_in_format($name, $pageformat) {
 
 /**
  * Delete a block, and associated data.
+ *
+ * @global object
+ * @uses CONTEXT_BLOCK
  * @param object $instance a row from the block_instances table
- * @param $nolongerused legacy parameter. Not used, but kept for bacwards compatibility.
- * @param $skipblockstables for internal use only. Makes @see blocks_delete_all_for_context() more efficient.
+ * @param bool $nolongerused legacy parameter. Not used, but kept for bacwards compatibility.
+ * @param bool $skipblockstables for internal use only. Makes @see blocks_delete_all_for_context() more efficient.
  */
 function blocks_delete_instance($instance, $nolongerused = false, $skipblockstables = false) {
     global $DB;
@@ -728,9 +859,10 @@ function blocks_delete_instance($instance, $nolongerused = false, $skipblockstab
  * @deprecated since 2.0
  * Delete all the blocks from a particular page.
  *
+ * @global object
  * @param string $pagetype the page type.
  * @param integer $pageid the page id.
- * @return success of failure.
+ * @return bool success or failure.
  */
 function blocks_delete_all_on_page($pagetype, $pageid) {
     global $DB;
@@ -743,7 +875,9 @@ function blocks_delete_all_on_page($pagetype, $pageid) {
 
 /**
  * Delete all the blocks that belong to a particular context.
- * @param $contextid the context id.
+ *
+ * @global object
+ * @param int $contextid the context id.
  */
 function blocks_delete_all_for_context($contextid) {
     global $DB;
@@ -756,16 +890,36 @@ function blocks_delete_all_for_context($contextid) {
     $DB->delete_records('block_positions', array('contextid' => $contextid));
 }
 
-// Accepts an array of block instances and checks to see if any of them have content to display
-// (causing them to calculate their content in the process). Returns true or false. Parameter passed
-// by reference for speed; the array is actually not modified.
+/**
+ * Accepts an array of block instances and checks to see if any of them have content to display
+ * (causing them to calculate their content in the process). Returns true or false. Parameter passed
+ * by reference for speed; the array is actually not modified.
+ *
+ * @todo Deprecate this function
+ * @deprecated
+ *
+ * @param object $blockmanager
+ * @param string $region
+ * @return bool
+ */
 function blocks_have_content(&$blockmanager, $region) {
     // TODO deprecate
     $content = $blockmanager->get_content_for_region($region);
     return !empty($content);
 }
 
-// This function prints one group of blocks in a page
+/**
+ * This function prints one group of blocks in a page
+ *
+ * @todo Complete this function
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @param object $page
+ * @param object $blockmanager
+ * @param string $region
+ */
 function blocks_print_group($page, $blockmanager, $region) {
     global $COURSE, $CFG, $USER;
 
@@ -813,16 +967,24 @@ function blocks_print_group($page, $blockmanager, $region) {
     }
 }
 
-// This iterates over an array of blocks and calculates the preferred width
-// Parameter passed by reference for speed; it's not modified.
+/**
+ * This iterates over an array of blocks and calculates the preferred width
+ * Parameter passed by reference for speed; it's not modified.
+ *
+ * @todo Finish this function
+ *
+ * @param mixed $instances
+ */
 function blocks_preferred_width($instances) {
     $width = 210;
 }
 
 /**
  * Get the block record for a particulr blockid.
- * @param $blockid block type id. If null, an array of all block types is returned.
- * @param $notusedanymore No longer used.
+ *
+ * @global object
+ * @param $int blockid block type id. If null, an array of all block types is returned.
+ * @param bool $notusedanymore No longer used.
  * @return array|object row from block table, or all rows.
  */
 function blocks_get_record($blockid = NULL, $notusedanymore = false) {
@@ -837,6 +999,13 @@ function blocks_get_record($blockid = NULL, $notusedanymore = false) {
     }
 }
 
+/**
+ * Find a given block by its blockid within a provide array
+ *
+ * @param int $blockid
+ * @param array $blocksarray
+ * @return bool|object Instance if found else false
+ */
 function blocks_find_block($blockid, $blocksarray) {
     if (empty($blocksarray)) {
         return false;
@@ -854,13 +1023,36 @@ function blocks_find_block($blockid, $blocksarray) {
     return false;
 }
 
-// Simple entry point for anyone that wants to use blocks
+/**
+ * Simple entry point for anyone that wants to use blocks
+ *
+ * @uses BLOCKS_PINNED_FALSE
+ * @param object $page
+ * @return array
+ */
 function blocks_setup(&$page, $pinned = BLOCKS_PINNED_FALSE) {
     $page->blocks->load_blocks();
     blocks_execute_url_action($page, $page->blocks);
     return $page->blocks;
 }
 
+/**
+ * @todo Document this function, description
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @uses BLOCK_MOVE_UP
+ * @uses BLOCK_MOVE_DOWN
+ * @uses BLOCK_MOVE_RIGHT
+ * @uses BLOCK_MOVE_LEFT
+ * @param object $page The page object
+ * @param object $blockmanager The block manager object
+ * @param string $blockaction One of [config, add, delete]
+ * @param int|object $instanceorid The instance id or a block_instance object
+ * @param bool $pinned
+ * @param bool $redirect To redirect or not to that is the question but you should stick with true
+ */
 function blocks_execute_action($page, &$blockmanager, $blockaction, $instanceorid, $pinned=false, $redirect=true) {
     global $CFG, $USER, $DB;
 
@@ -1075,7 +1267,15 @@ function blocks_execute_action($page, &$blockmanager, $blockaction, $instanceori
     }
 }
 
-// You can use this to get the blocks to respond to URL actions without much hassle
+/**
+ * You can use this to get the blocks to respond to URL actions without much hassle
+ *
+ * @uses PARAM_ALPHA
+ * @uses PARAM_INT
+ * @param object $PAGE
+ * @param object $blockmanager
+ * @param bool $pinned
+ */
 function blocks_execute_url_action(&$PAGE, &$blockmanager,$pinned=false) {
     $blockaction = optional_param('blockaction', '', PARAM_ALPHA);
 
@@ -1094,8 +1294,18 @@ function blocks_execute_url_action(&$PAGE, &$blockmanager,$pinned=false) {
     }
 }
 
-// This shouldn't be used externally at all, it's here for use by blocks_execute_action()
-// in order to reduce code repetition.
+/**
+ * This shouldn't be used externally at all, it's here for use by blocks_execute_action()
+ * in order to reduce code repetition.
+ *
+ * @todo Remove exception when MDL-19010 is fixed
+ *
+ * global object
+ * @param $instance
+ * @param $newpos
+ * @param string|int $newweight
+ * @param bool $pinned
+ */
 function blocks_execute_repositioning(&$instance, $newpos, $newweight, $pinned=false) {
     global $DB;
 
@@ -1135,15 +1345,18 @@ function blocks_execute_repositioning(&$instance, $newpos, $newweight, $pinned=f
 
 /**
  * Moves a block to the new position (column) and weight (sort order).
- * @param $instance - The block instance to be moved.
- * @param $destpos - BLOCK_POS_LEFT or BLOCK_POS_RIGHT. The destination column.
- * @param $destweight - The destination sort order. If NULL, we add to the end
- *                      of the destination column.
- * @param $pinned - Are we moving pinned blocks? We can only move pinned blocks
- *                  to a new position withing the pinned list. Likewise, we
- *                  can only moved non-pinned blocks to a new position within
- *                  the non-pinned list.
- * @return boolean (success or failure).
+ *
+ * @global object
+ * @global object
+ * @param object $instance The block instance to be moved.
+ * @param string $destpos BLOCK_POS_LEFT or BLOCK_POS_RIGHT. The destination column.
+ * @param string $destweight The destination sort order. If NULL, we add to the end
+ *                    of the destination column.
+ * @param bool $pinned Are we moving pinned blocks? We can only move pinned blocks
+ *                to a new position withing the pinned list. Likewise, we
+ *                can only moved non-pinned blocks to a new position within
+ *                the non-pinned list.
+ * @return boolean success or failure
  */
 function blocks_move_block($page, &$instance, $destpos, $destweight=NULL, $pinned=false) {
     global $CFG, $DB;
@@ -1213,6 +1426,9 @@ function blocks_move_block($page, &$instance, $destpos, $destweight=NULL, $pinne
  * Returns an array consisting of 2 arrays:
  * 1) Array of pinned blocks for position BLOCK_POS_LEFT
  * 2) Array of pinned blocks for position BLOCK_POS_RIGHT
+ *
+ * @global object
+ * @param object $page
  */
 function blocks_get_pinned($page) {
     global $DB;
@@ -1253,6 +1469,9 @@ function blocks_get_pinned($page) {
  * Similar to blocks_get_by_page(), except that, the array returned includes
  * pinned blocks as well. Pinned blocks are always appended before normal
  * block instances.
+ *
+ * @param object $page
+ * @return array
  */
 function blocks_get_by_page_pinned($page) {
     $pinned = blocks_get_pinned($page);
@@ -1282,6 +1501,10 @@ function blocks_get_by_page_pinned($page) {
 
 /**
  * Returns an array of blocks for the page. Pinned blocks are excluded.
+ *
+ * @todo Check backwards compatibility hack
+ * @global object
+ * @param object $page
  */
 function blocks_get_by_page($page) {
     global $DB;
@@ -1290,8 +1513,14 @@ function blocks_get_by_page($page) {
     return $page->blocks;
 }
 
-
-//This function prints the block to admin blocks as necessary
+/**
+ * This function prints the block to admin blocks as necessary
+ *
+ * @global object
+ * @uses SORT_LOCALE_STRING
+ * @param object $page
+ * @param object $blockmanager
+ */
 function blocks_print_adminblock($page, $blockmanager) {
     global $USER;
 
@@ -1320,6 +1549,9 @@ function blocks_print_adminblock($page, $blockmanager) {
 
 /**
  * Parse a list of default blocks. See config-dist for a description of the format.
+ *
+ * @uses BLOCK_POS_LEFT
+ * @uses BLOCK_POS_RIGHT
  * @param string $blocksstr
  * @return array
  */
@@ -1336,6 +1568,9 @@ function blocks_parse_default_blocks_list($blocksstr) {
 }
 
 /**
+ * @global object
+ * @uses BLOCK_POS_LEFT
+ * @uses BLOCK_POS_RIGHT
  * @return array the blocks that should be added to the site course by default.
  */
 function blocks_get_default_site_course_blocks() {
@@ -1353,6 +1588,11 @@ function blocks_get_default_site_course_blocks() {
 
 /**
  * Add the default blocks to a course.
+ *
+ * @global object
+ * @uses SITEID
+ * @uses BLOCK_POS_LEFT
+ * @uses BLOCK_POS_RIGHT
  * @param object $course a course object.
  */
 function blocks_add_default_course_blocks($course) {
@@ -1402,6 +1642,9 @@ function blocks_add_default_course_blocks($course) {
 
 /**
  * Add the default system-context blocks. E.g. the admin tree.
+ *
+ * @uses BLOCK_POS_LEFT
+ * @uses CONTEXT_SYSTEM
  */
 function blocks_add_default_system_blocks() {
     $page = new moodle_page();
@@ -1410,9 +1653,12 @@ function blocks_add_default_system_blocks() {
 }
 
 /**
- * @deprecated since 2.0
  * Dispite what this function is called, it seems to be mostly used to populate
  * the default blocks when a new course (or whatever) is created.
+ *
+ * @deprecated since 2.0
+ * @global object
+ * @uses DEBUG_DEVELOPER
  * @param object $page the page to add default blocks to.
  * @return boolean success or failure.
  */
