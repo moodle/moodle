@@ -1,27 +1,19 @@
-<?php // $Id$
+<?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/ 
+// 
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Library of functions for web output
@@ -32,9 +24,9 @@
  * Other main libraries:
  * - datalib.php - functions that access the database.
  * - moodlelib.php - general-purpose Moodle functions.
- * @author Martin Dougiamas
- * @version  $Id$
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ *
+ * @copyright 1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package moodlecore
  */
 
@@ -85,6 +77,7 @@ define('REQUIREJS_AFTERHEADER',  2);
 /**
  * Allowed tags - string of html tags that can be tested against for safe html tags
  * @global string $ALLOWED_TAGS
+ * @name $ALLOWED_TAGS
  */
 global $ALLOWED_TAGS;
 $ALLOWED_TAGS =
@@ -93,6 +86,7 @@ $ALLOWED_TAGS =
 /**
  * Allowed protocols - array of protocols that are safe to use in links and so on
  * @global string $ALLOWED_PROTOCOLS
+ * @name $ALLOWED_PROTOCOLS
  */
 $ALLOWED_PROTOCOLS = array('http', 'https', 'ftp', 'news', 'mailto', 'rtsp', 'teamspeak', 'gopher', 'mms',
                            'color', 'callto', 'cursor', 'text-align', 'font-size', 'font-weight', 'font-style', 'font-family',
@@ -106,6 +100,8 @@ $ALLOWED_PROTOCOLS = array('http', 'https', 'ftp', 'news', 'mailto', 'rtsp', 'te
  *
  * Returns $var with HTML characters (like "<", ">", etc.) properly quoted.
  * This function is very similar to {@link p()}
+ *
+ * @todo Remove obsolete param $obsolete if not used anywhere
  *
  * @param string $var the string potentially containing HTML characters
  * @param boolean $obsolete no longer used.
@@ -124,7 +120,10 @@ function s($var, $obsolete = false) {
  * Add quotes to HTML characters
  *
  * Prints $var with HTML characters (like "<", ">", etc.) properly quoted.
- * This function is very similar to {@link s()}
+ * This function simply calls {@link s()}
+ * @see s()
+ *
+ * @todo Remove obsolete param $obsolete if not used anywhere
  *
  * @param string $var the string potentially containing HTML characters
  * @param boolean $obsolete no longer used.
@@ -136,10 +135,10 @@ function p($var, $obsolete = false) {
 
 /**
  * Does proper javascript quoting.
+ *
  * Do not use addslashes anymore, because it does not work when magic_quotes_sybase is enabled.
  *
- * @since 1.8 - 22/02/2007
- * @param mixed value
+ * @param mixed $var String, Array, or Object to add slashes to
  * @return mixed quoted result
  */
 function addslashes_js($var) {
@@ -165,7 +164,7 @@ function addslashes_js($var) {
  * Takes in a URL and returns it without the querystring portion
  *
  * @param string $url the url which may have a query string attached
- * @return string
+ * @return string The remaining URL
  */
  function strip_querystring($url) {
 
@@ -178,8 +177,10 @@ function addslashes_js($var) {
 
 /**
  * Returns the URL of the HTTP_REFERER, less the querystring portion if required
+ *
+ * @uses $_SERVER
  * @param boolean $stripquery if true, also removes the query part of the url.
- * @return string
+ * @return string The resulting referer or emtpy string
  */
 function get_referer($stripquery=true) {
     if (isset($_SERVER['HTTP_REFERER'])) {
@@ -196,12 +197,14 @@ function get_referer($stripquery=true) {
 
 /**
  * Returns the name of the current script, WITH the querystring portion.
- * this function is necessary because PHP_SELF and REQUEST_URI and SCRIPT_NAME
+ *
+ * This function is necessary because PHP_SELF and REQUEST_URI and SCRIPT_NAME
  * return different things depending on a lot of things like your OS, Web
  * server, and the way PHP is compiled (ie. as a CGI, module, ISAPI, etc.)
  * <b>NOTE:</b> This function returns false if the global variables needed are not set.
  *
- * @return string
+ * @global string
+ * @return mixed String, or false if the global variables needed are not set
  */
  function me() {
      global $ME;
@@ -209,9 +212,18 @@ function get_referer($stripquery=true) {
 }
 
 /**
+ * Returns the name of the current script, WITH the full URL.
+ *
+ * This function is necessary because PHP_SELF and REQUEST_URI and SCRIPT_NAME
+ * return different things depending on a lot of things like your OS, Web
+ * server, and the way PHP is compiled (ie. as a CGI, module, ISAPI, etc.
+ * <b>NOTE:</b> This function returns false if the global variables needed are not set.
+ *
  * Like {@link me()} but returns a full URL
  * @see me()
- * @return string
+ *
+ * @global string
+ * @return mixed String, or false if the global variables needed are not set
  */
 function qualified_me() {
     global $FULLME;
@@ -221,9 +233,31 @@ function qualified_me() {
 /**
  * Class for creating and manipulating urls.
  *
- * See short write up here http://docs.moodle.org/en/Development:lib/weblib.php_moodle_url
+ * It can be used in moodle pages where config.php has been included without any further includes.
+ *
+ * It is useful for manipulating urls with long lists of params. 
+ * One situation where it will be useful is a page which links to itself to perfrom various actions 
+ * and / or to process form data. A moodle_url object :
+ * can be created for a page to refer to itself with all the proper get params being passed from page call to 
+ * page call and methods can be used to output a url including all the params, optionally adding and overriding 
+ * params and can also be used to
+ *     - output the url without any get params
+ *     - and output the params as hidden fields to be output within a form 
+ *
+ * One important usage note is that data passed to methods out, out_action, get_query_string and
+ * hidden_params_out affect what is returned by the function and do not change the data stored in the object. 
+ * This is to help with typical usage of these objects where one object is used to output urls 
+ * in many places in a page. 
+ *
+ * @link http://docs.moodle.org/en/Development:lib/weblib.php_moodle_url See short write up here
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
  */
 class moodle_url {
+    /**
+     * @var string
+     * @access protected
+     */
     protected $scheme = ''; // e.g. http
     protected $host = '';
     protected $port = '';
@@ -231,11 +265,17 @@ class moodle_url {
     protected $pass = '';
     protected $path = '';
     protected $fragment = '';
+    /**
+     * @var array 
+     * @access protected
+     */
     protected $params = array(); // Associative array of query string params
 
     /**
-     * Pass no arguments to create a url that refers to this page. Use empty string to create empty url.
+     * Pass no arguments to create a url that refers to this page. 
+     * Use empty string to create empty url.
      *
+     * @global string
      * @param mixed $url a number of different forms are accespted:
      *      null - create a URL that is the same as the URL used to load this page, but with no query string
      *      '' - and empty URL
@@ -281,11 +321,12 @@ class moodle_url {
     }
 
     /**
-     * Add an array of params to the params for this page. The added params override existing ones if they
-     * have the same name.
+     * Add an array of params to the params for this page. 
+     *
+     * The added params override existing ones if they have the same name.
      *
      * @param array $params Defaults to null. If null then return value of param 'name'.
-     * @return array params for url.
+     * @return array Array of Params for url.
      */
     public function params($params = null) {
         if (!is_null($params)) {
@@ -296,8 +337,10 @@ class moodle_url {
     }
 
     /**
-     * Remove all params if no arguments passed. Remove selected params if
-     * arguments are passed. Can be called as either remove_params('param1', 'param2')
+     * Remove all params if no arguments passed. 
+     * Remove selected params if arguments are passed. 
+     *
+     * Can be called as either remove_params('param1', 'param2')
      * or remove_params(array('param1', 'param2')).
      *
      * @param mixed $params either an array of param names, or a string param name,
@@ -319,11 +362,13 @@ class moodle_url {
     }
 
     /**
-     * Add a param to the params for this page. The added param overrides existing one if they
-     * have the same name.
+     * Add a param to the params for this page. 
+     *
+     * The added param overrides existing one if theyhave the same name.
      *
      * @param string $paramname name
-     * @param string $param value. Defaults to null. If null then return value of param 'name'
+     * @param string $param Param value. Defaults to null. If null then return value of param 'name'
+     * @return void|string If $param was null then the value of $paramname was returned
      */
     public function param($paramname, $param = null) {
         if (!is_null($param)) {
@@ -335,6 +380,7 @@ class moodle_url {
 
     /**
      * Get the params as as a query string.
+     *
      * @param array $overrideparams params to add to the output params, these
      *      override existing ones with the same name.
      * @return string query string that can be added to a url.
@@ -351,7 +397,7 @@ class moodle_url {
     /**
      * Outputs params as hidden form elements.
      *
-     * @param  array $exclude params to ignore
+     * @param array $exclude params to ignore
      * @param integer $indent indentation
      * @param array $overrideparams params to add to the output params, these
      *      override existing ones with the same name.
@@ -375,7 +421,7 @@ class moodle_url {
      *
      * @param boolean $omitquerystring whether to output page params as a query string in the url.
      * @param array $overrideparams params to add to the output url, these override existing ones with the same name.
-     * @return string url
+     * @return string Resulting URL
      */
     public function out($omitquerystring = false, $overrideparams = array()) {
         $uri = $this->scheme ? $this->scheme.':'.((strtolower($this->scheme) == 'mailto') ? '':'//'): '';
@@ -396,7 +442,10 @@ class moodle_url {
     /**
      * Output action url with sesskey
      *
-     * @param boolean $noquerystring whether to output page params as a query string in the url.
+     * Adds sesskey and overriderparams then calls {@link out()}
+     * @see out()
+     *
+     * @param array $overrideparams Allows you to override params
      * @return string url
      */
     public function out_action($overrideparams = array()) {
@@ -415,6 +464,7 @@ class moodle_url {
  *
  * Checks that submitted POST data exists and returns it as object.
  *
+ * @uses $_POST
  * @return mixed false or object
  */
 function data_submitted() {
@@ -476,11 +526,14 @@ function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
 /**
  * This function will print a button/link/etc. form element
  * that will work on both Javascript and non-javascript browsers.
- * Relies on the Javascript function openpopup in javascript.php
  *
+ * Relies on the Javascript function openpopup in javascript.php
  * All parameters default to null, only $type and $url are mandatory.
  *
  * $url must be relative to home page  eg /mod/survey/stuff.php
+ *
+ * @global object
+ * @param string $type Can be 'button' or 'link'
  * @param string $url Web link. Either relative to $CFG->wwwroot, or a full URL.
  * @param string $name Name to be assigned to the popup window (this is used by
  *   client-side scripts to "talk" to the popup window)
@@ -489,11 +542,10 @@ function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
  * @param int $width Height to assign to popup window
  * @param string $title Text to be displayed as popup page title
  * @param string $options List of additional options for popup window
- * @param string $return If true, return as a string, otherwise print
+ * @param bool $return If true, return as a string, otherwise print
  * @param string $id id added to the element
  * @param string $class class added to the element
  * @return string
- * @uses $CFG
  */
 function element_to_popup_window ($type=null, $url=null, $name=null, $linkname=null,
                                   $height=400, $width=500, $title=null,
@@ -573,8 +625,21 @@ function element_to_popup_window ($type=null, $url=null, $name=null, $linkname=n
 /**
  * Creates and displays (or returns) a link to a popup window, using element_to_popup_window function.
  *
- * @return string html code to display a link to a popup window.
+ * Simply calls {@link element_to_popup_window()} with type set to 'link'
  * @see element_to_popup_window()
+ *
+ * @param string $url Web link. Either relative to $CFG->wwwroot, or a full URL.
+ * @param string $name Name to be assigned to the popup window (this is used by
+ *   client-side scripts to "talk" to the popup window)
+ * @param string $linkname Text to be displayed as web link
+ * @param int $height Height to assign to popup window
+ * @param int $width Height to assign to popup window
+ * @param string $title Text to be displayed as popup page title
+ * @param string $options List of additional options for popup window
+ * @param bool $return If true, return as a string, otherwise print
+ * @param string $id id added to the element
+ * @param string $class class added to the element
+ * @return string html code to display a link to a popup window.
  */
 function link_to_popup_window ($url, $name=null, $linkname=null,
                                $height=400, $width=500, $title=null,
@@ -586,8 +651,21 @@ function link_to_popup_window ($url, $name=null, $linkname=null,
 /**
  * Creates and displays (or returns) a buttons to a popup window, using element_to_popup_window function.
  *
- * @return string html code to display a button to a popup window.
+ * Simply calls {@link element_to_popup_window()} with type set to 'button'
  * @see element_to_popup_window()
+ *
+ * @param string $url Web link. Either relative to $CFG->wwwroot, or a full URL.
+ * @param string $name Name to be assigned to the popup window (this is used by
+ *   client-side scripts to "talk" to the popup window)
+ * @param string $linkname Text to be displayed as web link
+ * @param int $height Height to assign to popup window
+ * @param int $width Height to assign to popup window
+ * @param string $title Text to be displayed as popup page title
+ * @param string $options List of additional options for popup window
+ * @param bool $return If true, return as a string, otherwise print
+ * @param string $id id added to the element
+ * @param string $class class added to the element
+ * @return string html code to display a link to a popup window.
  */
 function button_to_popup_window ($url, $name=null, $linkname=null,
                                  $height=400, $width=500, $title=null, $options=null, $return=false,
@@ -599,11 +677,13 @@ function button_to_popup_window ($url, $name=null, $linkname=null,
 
 /**
  * Prints a simple button to close a window
- * @param string $name name of the window to close
+ *
+ * @global object
+ * @param string $name Name of the window to close
  * @param boolean $return whether this function should return a string or output it.
  * @param boolean $reloadopener if true, clicking the button will also reload
  *      the page that opend this popup window.
- * @return string if $return is true, nothing otherwise
+ * @return string|void if $return is true, void otherwise
  */
 function close_window_button($name='closewindow', $return=false, $reloadopener = false) {
     global $CFG;
@@ -630,6 +710,11 @@ function close_window_button($name='closewindow', $return=false, $reloadopener =
 
 /*
  * Try and close the current window using JavaScript, either immediately, or after a delay.
+ *
+ * Echo's out the resulting XHTML & javascript
+ *
+ * @global object
+ * @global object
  * @param integer $delay a delay in seconds before closing the window. Default 0.
  * @param boolean $reloadopener if true, we will see if this window was a pop-up, and try
  *      to reload the parent window before this one closes.
@@ -657,6 +742,7 @@ function close_window($delay = 0, $reloadopener = false) {
 
 /**
  * Given an array of values, output the HTML for a select element with those options.
+ *
  * Normally, you only need to use the first few parameters.
  *
  * @param array $options The options to offer. An array of the form
@@ -665,7 +751,7 @@ function close_window($delay = 0, $reloadopener = false) {
  * @param string $selected the option to select initially, default none.
  * @param string $nothing The label for the 'nothing is selected' option. Defaults to get_string('choose').
  *      Set this to '' if you don't want a 'nothing is selected' option.
- * @param string $script in not '', then this is added to the &lt;select> element as an onchange handler.
+ * @param string $script if not '', then this is added to the &lt;select> element as an onchange handler.
  * @param string $nothingvalue The value corresponding to the $nothing option. Defaults to 0.
  * @param boolean $return if false (the default) the the output is printed directly, If true, the
  *      generated HTML is returned as a string.
@@ -680,6 +766,7 @@ function close_window($delay = 0, $reloadopener = false) {
  *      when $listbox display is enabled
  * @param string $class value to use for the class attribute of the &lt;select> element. If none is given,
  *      then a suitable one is constructed.
+ * @return string|void If $return=true returns string, else echo's and returns void
  */
 function choose_from_menu ($options, $name, $selected='', $nothing='choose', $script='',
                            $nothingvalue='0', $return=false, $disabled=false, $tabindex=0,
@@ -764,12 +851,17 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
 /**
  * Choose value 0 or 1 from a menu with options 'No' and 'Yes'.
  * Other options like choose_from_menu.
- * @param string $name
- * @param string $selected
- * @param string $string (defaults to '')
- * @param boolean $return whether this function should return a string or output it (defaults to false)
+ *
+ * Calls {@link choose_from_menu()} with preset arguments
+ * @see choose_from_menu()
+ *
+ * @param string $name the name of this form control, as in &lt;select name="..." ...
+ * @param string $selected the option to select initially, default none.
+ * @param string $script if not '', then this is added to the &lt;select> element as an onchange handler.
+ * @param boolean $return Whether this function should return a string or output it (defaults to false)
  * @param boolean $disabled (defaults to false)
  * @param int $tabindex
+ * @return string|void If $return=true returns string, else echo's and returns void
  */
 function choose_from_menu_yesno($name, $selected, $script = '',
         $return = false, $disabled = false, $tabindex = 0) {
@@ -780,6 +872,25 @@ function choose_from_menu_yesno($name, $selected, $script = '',
 /**
  * Just like choose_from_menu, but takes a nested array (2 levels) and makes a dropdown menu
  * including option headings with the first level.
+ *
+ * This function is very similar to {@link choose_from_menu_yesno()} 
+ * and {@link choose_from_menu()}
+ *
+ * @todo Add datatype handling to make sure $options is an array
+ *
+ * @param array $options An array of objects to choose from
+ * @param string $name The XHTML field name
+ * @param string $selected The value to select by default
+ * @param string $nothing The label for the 'nothing is selected' option. 
+ *                        Defaults to get_string('choose').
+ * @param string $script If not '', then this is added to the &lt;select> element 
+ *                       as an onchange handler.
+ * @param string $nothingvalue The value for the first `nothing` option if $nothing is set
+ * @param bool $return Whether this function should return a string or output 
+ *                     it (defaults to false)
+ * @param bool $disabled Is the field disabled by default
+ * @param int|string $tabindex Override the tabindex attribute [numeric]
+ * @return string|void If $return=true returns string, else echo's and returns void
  */
 function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$script = '',
                                  $nothingvalue=0,$return=false,$disabled=false,$tabindex=0) {
@@ -836,9 +947,13 @@ function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$
 /**
  * Given an array of values, creates a group of radio buttons to be part of a form
  *
+ * @staticvar int $idcounter
  * @param array  $options  An array of value-label pairs for the radio group (values as keys)
  * @param string $name     Name of the radiogroup (unique in the form)
  * @param string $checked  The value that is already checked
+ * @param bool $return Whether this function should return a string or output 
+ *                     it (defaults to false)
+ * @return string|void If $return=true returns string, else echo's and returns void
  */
 function choose_from_radio ($options, $name, $checked='', $return=false) {
 
@@ -877,13 +992,20 @@ function choose_from_radio ($options, $name, $checked='', $return=false) {
     }
 }
 
-/** Display an standard html checkbox with an optional label
+/** 
+ * Display an standard html checkbox with an optional label
  *
- * @param string  $name    The name of the checkbox
- * @param string  $value   The valus that the checkbox will pass when checked
- * @param boolean $checked The flag to tell the checkbox initial state
- * @param string  $label   The label to be showed near the checkbox
- * @param string  $alt     The info to be inserted in the alt tag
+ * @staticvar int $idcounter
+ * @param string $name    The name of the checkbox
+ * @param string $value   The valus that the checkbox will pass when checked
+ * @param bool $checked The flag to tell the checkbox initial state
+ * @param string $label   The label to be showed near the checkbox
+ * @param string $alt     The info to be inserted in the alt tag
+ * @param string $script If not '', then this is added to the checkbox element 
+ *                       as an onchange handler.
+ * @param bool $return Whether this function should return a string or output 
+ *                     it (defaults to false)
+ * @return string|void If $return=true returns string, else echo's and returns void
  */
 function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '', $script='',$return=false) {
 
@@ -921,12 +1043,17 @@ function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '',
 
 }
 
-/** Display an standard html text field with an optional label
+/**
+ * Display an standard html text field with an optional label
  *
- * @param string  $name    The name of the text field
- * @param string  $value   The value of the text field
- * @param string  $label   The label to be showed near the text field
- * @param string  $alt     The info to be inserted in the alt tag
+ * @param string $name    The name of the text field
+ * @param string $value   The value of the text field
+ * @param string $alt     The info to be inserted in the alt tag
+ * @param int $size Sets the size attribute of the field. Defaults to 50
+ * @param int $maxlength Sets the maxlength attribute of the field. Not set by default
+ * @param bool $return Whether this function should return a string or output 
+ *                     it (defaults to false)
+ * @return string|void If $return=true returns string, else echo's and returns void
  */
 function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $return=false) {
 
@@ -960,11 +1087,16 @@ function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $retur
 
 
 /**
- * Implements a complete little form with a dropdown menu. When JavaScript is on
- * selecting an option from the dropdown automatically submits the form (while
- * avoiding the usual acessibility problems with this appoach). With JavaScript
- * off, a 'Go' button is printed.
+ * Implements a complete little form with a dropdown menu. 
  *
+ * When JavaScript is on selecting an option from the dropdown automatically 
+ * submits the form (while avoiding the usual acessibility problems with this appoach). 
+ * With JavaScript off, a 'Go' button is printed.
+ *
+ * @todo Finish documenting this function
+ *
+ * @global object
+ * @global object
  * @param string $baseurl The target URL up to the point of the variable that changes
  * @param array $options A list of value-label pairs for the popup list
  * @param string $formid id for the control. Must be unique on the page. Used in the HTML.
@@ -980,8 +1112,7 @@ function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $retur
  * @param string $submitvalue Optional label for the 'Go' button. Defaults to get_string('go').
  * @param boolean $disabled If true, the menu will be displayed disabled.
  * @param boolean $showbutton If true, the button will always be shown even if JavaScript is available
- * @return string If $return is true then the entire form is returned as a string.
- * @todo Finish documenting this function<br>
+ * @return string|void If $return=true returns string, else echo's and returns void
  */
 function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose', $help='', $helptext='', $return=false,
     $targetwindow='self', $selectlabel='', $optionsextra=NULL, $submitvalue='', $disabled=false, $showbutton=false) {
@@ -1152,7 +1283,7 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
 
 
 /**
- * Prints some red text
+ * Prints some red text using echo
  *
  * @param string $error The text to be displayed in red
  */
@@ -1183,6 +1314,9 @@ function validate_email($address) {
  * Extracts file argument either from file parameter or PATH_INFO
  * Note: $scriptname parameter is not needed anymore
  *
+ * @global string
+ * @uses $_SERVER
+ * @uses PARAM_PATH
  * @return string file path (only safe characters)
  */
 function get_file_argument() {
@@ -1227,19 +1361,25 @@ function format_text_menu() {
  * This function should mainly be used for long strings like posts,
  * answers, glossary items etc. For short strings @see format_string().
  *
- * @uses $CFG
+ * @todo Finish documenting this function
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @global object
  * @uses FORMAT_MOODLE
  * @uses FORMAT_HTML
  * @uses FORMAT_PLAIN
  * @uses FORMAT_WIKI
  * @uses FORMAT_MARKDOWN
+ * @uses CLI_SCRIPT
+ * @staticvar array $croncache
  * @param string $text The text to be formatted. This is raw text originally from user input.
  * @param int $format Identifier of the text format to be used
- *            (FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_WIKI, FORMAT_MARKDOWN)
- * @param  array $options ?
- * @param int $courseid ?
+ *            [FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_WIKI, FORMAT_MARKDOWN]
+ * @param object $options ?
+ * @param int $courseid The courseid to use, defaults to $COURSE->courseid
  * @return string
- * @todo Finish documenting this function
  */
 function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL) {
     global $CFG, $COURSE, $DB, $PAGE;
@@ -1413,12 +1553,18 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
     return $text;
 }
 
-/** Converts the text format from the value to the 'internal'
- *  name or vice versa. $key can either be the value or the name
- *  and you get the other back.
+/**
+ * Converts the text format from the value to the 'internal'
+ * name or vice versa. 
  *
- *  @param mixed int 0-4 or string one of 'moodle','html','plain','markdown'
- *  @return mixed as above but the other way around!
+ * $key can either be the value or the name and you get the other back.
+ *
+ * @uses FORMAT_MOODLE
+ * @uses FORMAT_HTML
+ * @uses FORMAT_PLAIN
+ * @uses FORMAT_MARKDOWN
+ * @param mixed $key int 0-4 or string one of 'moodle','html','plain','markdown'
+ * @return mixed as above but the other way around!
  */
 function text_format_name( $key ) {
   $lookup = array();
@@ -1441,6 +1587,9 @@ function text_format_name( $key ) {
 
 /**
  * Resets all data related to filters, called during upgrade or when filter settings change.
+ *
+ * @global object
+ * @global object
  * @return void
  */
 function reset_text_filters_cache() {
@@ -1451,17 +1600,23 @@ function reset_text_filters_cache() {
     remove_dir($purifdir, true);
 }
 
-/** Given a simple string, this function returns the string
- *  processed by enabled string filters if $CFG->filterall is enabled
+/** 
+ * Given a simple string, this function returns the string
+ * processed by enabled string filters if $CFG->filterall is enabled
  *
- *  This function should be used to print short strings (non html) that
- *  need filter processing e.g. activity titles, post subjects,
- *  glossary concepts.
+ * This function should be used to print short strings (non html) that
+ * need filter processing e.g. activity titles, post subjects,
+ * glossary concepts.
  *
- *  @param string  $string     The string to be filtered.
- *  @param boolean $striplinks To strip any link in the result text (Moodle 1.8 default changed from false to true! MDL-8713)
- *  @param int     $courseid   Current course as filters can, potentially, use it
- *  @return string
+ * @global object
+ * @global object
+ * @global object
+ * @staticvar bool $strcache
+ * @param string $string The string to be filtered.
+ * @param boolean $striplinks To strip any link in the result text.
+                              Moodle 1.8 default changed from false to true! MDL-8713
+ * @param int $courseid Current course as filters can, potentially, use it
+ * @return string
  */
 function format_string($string, $striplinks=true, $courseid=NULL ) {
     global $CFG, $COURSE, $PAGE;
@@ -1523,7 +1678,7 @@ function format_string($string, $striplinks=true, $courseid=NULL ) {
  * @uses FORMAT_MARKDOWN
  * @param string $text The text to be formatted. This is raw text originally from user input.
  * @param int $format Identifier of the text format to be used
- *            (FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_WIKI, FORMAT_MARKDOWN)
+ *            [FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_WIKI, FORMAT_MARKDOWN]
  * @return string
  */
 function format_text_email($text, $format) {
@@ -1559,6 +1714,9 @@ function format_text_email($text, $format) {
  * Given some text in HTML format, this function will pass it
  * through any filters that have been configured for this context.
  *
+ * @global object
+ * @global object
+ * @global object
  * @param string $text The text to be passed through format filters
  * @param int $courseid The current course.
  * @return string the filtered string.
@@ -1576,6 +1734,9 @@ function filter_text($text, $courseid=NULL) {
 }
 /**
  * Formats activity intro text
+ *
+ * @global object
+ * @uses CONTEXT_MODULE
  * @param string $module name of module
  * @param object $activity instance of activity
  * @param int $cmid course module id
@@ -1593,6 +1754,8 @@ function format_module_intro($module, $activity, $cmid, $filter=true) {
 
 /**
  * Legacy function, used for cleaning of old forum and glossary text only.
+ *
+ * @global object
  * @param string $text text that may contain TRUSTTEXT marker
  * @return text without any TRUSTTEXT marker
  */
@@ -1612,6 +1775,7 @@ function trusttext_strip($text) {
  * Must be called before editing of all texts
  * with trust flag. Removes all XSS nasties
  * from texts stored in database if needed.
+ *
  * @param object $object data object with xxx, xxxformat and xxxtrust fields
  * @param string $field name of text field
  * @param object $context active context
@@ -1629,9 +1793,11 @@ function trusttext_pre_edit($object, $field, $context) {
 }
 
 /**
- * Is urrent user trusted to enter no dangerous XSS in this context?
+ * Is current user trusted to enter no dangerous XSS in this context?
+ *
  * Please note the user must be in fact trusted everywhere on this server!!
- * @param $context
+ *
+ * @param object $context
  * @return bool true if user trusted
  */
 function trusttext_trusted($context) {
@@ -1640,7 +1806,9 @@ function trusttext_trusted($context) {
 
 /**
  * Is trusttext feature active?
- * @param $context
+ *
+ * @global object
+ * @param object $context
  * @return bool
  */
 function trusttext_active() {
@@ -1655,10 +1823,11 @@ function trusttext_active() {
  *
  * @uses FORMAT_MOODLE
  * @uses FORMAT_PLAIN
- * @uses ALLOWED_TAGS
+ * @global string
+ * @global object
  * @param string $text The text to be cleaned
  * @param int $format Identifier of the text format to be used
- *            (FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_WIKI, FORMAT_MARKDOWN)
+ *            [FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_WIKI, FORMAT_MARKDOWN]
  * @return string The cleaned up text
  */
 function clean_text($text, $format=FORMAT_MOODLE) {
@@ -1704,6 +1873,9 @@ function clean_text($text, $format=FORMAT_MOODLE) {
 
 /**
  * KSES replacement cleaning function - uses HTML Purifier.
+ *
+ * @global object
+ * @param string $text The (X)HTML string to purify
  */
 function purify_html($text) {
     global $CFG;
@@ -1730,9 +1902,9 @@ function purify_html($text) {
 
 /**
  * This function takes a string and examines it for HTML tags.
+ *
  * If tags are detected it passes the string to a helper function {@link cleanAttributes2()}
- *  which checks for attributes and filters them for malicious content
- *         17/08/2004              ::          Eamon DOT Costello AT dcu DOT ie
+ * which checks for attributes and filters them for malicious content
  *
  * @param string $str The string to be examined for html tags
  * @return string
@@ -1749,9 +1921,11 @@ function cleanAttributes($str){
 /**
  * This function takes a string with an html tag and strips out any unallowed
  * protocols e.g. javascript:
- * It calls ancillary functions in kses which are prefixed by kses
-*        17/08/2004              ::          Eamon DOT Costello AT dcu DOT ie
  *
+ * It calls ancillary functions in kses which are prefixed by kses
+ *
+ * @global object
+ * @global string
  * @param array $htmlArray An array from {@link cleanAttributes()}, containing in its 1st
  *              element the html to be cleared
  * @return string
@@ -1811,7 +1985,10 @@ function cleanAttributes2($htmlArray){
 /**
  * Replaces all known smileys in the text with image equivalents
  *
- * @uses $CFG
+ * @global object
+ * @staticvar array $e
+ * @staticvar array $img
+ * @staticvar array $emoticons
  * @param string $text Passed by reference. The string to search for smily strings.
  * @return string
  */
@@ -1881,6 +2058,8 @@ function replace_smilies(&$text) {
  * This code is called from help.php to inject a list of smilies into the
  * emoticons help file.
  *
+ * @global object
+ * @global object
  * @return string HTML for a list of smilies.
  */
 function get_emoticons_list_for_help_file(){
@@ -1915,7 +2094,7 @@ function get_emoticons_list_for_help_file(){
  * Given plain text, makes it into HTML as nicely as possible.
  * May contain HTML tags already
  *
- * @uses $CFG
+ * @global object
  * @param string $text The string to convert.
  * @param boolean $smiley Convert any smiley characters to smiley images?
  * @param boolean $para If true then the returned string will be wrapped in paragraph tags
@@ -1958,7 +2137,7 @@ function text_to_html($text, $smiley=true, $para=true, $newlines=true) {
 /**
  * Given Markdown formatted text, make it into XHTML using external function
  *
- * @uses $CFG
+ * @global object
  * @param string $text The markdown formatted text to be converted.
  * @return string Converted text
  */
@@ -1973,7 +2152,7 @@ function markdown_to_html($text) {
 /**
  * Given HTML text, make it into plain text using external function
  *
- * @uses $CFG
+ * @global object
  * @param string $html The text to be converted.
  * @return string
  */
@@ -2006,6 +2185,7 @@ function convert_urls_into_links(&$text) {
 
 /**
  * This function will highlight search words in a given string
+ *
  * It cares about HTML and will not ruin links.  It's best to use
  * this function after performing any conversions to HTML.
  *
@@ -2067,12 +2247,13 @@ function highlight($needle, $haystack, $matchcase = false,
 
 /**
  * This function will highlight instances of $needle in $haystack
- * It's faster that the above function and doesn't care about
+ *
+ * It's faster that the above function {@link highlight()} and doesn't care about
  * HTML or anything.
  *
  * @param string $needle The string to search for
  * @param string $haystack The string to search for $needle in
- * @return string
+ * @return string The highlighted HTML
  */
 function highlightfast($needle, $haystack) {
 
@@ -2102,8 +2283,9 @@ function highlightfast($needle, $haystack) {
 /**
  * Return a string containing 'lang', xml:lang and optionally 'dir' HTML attributes.
  * Internationalisation, for print_header and backup/restorelib.
- * @param $dir Default false.
- * @return string Attributes.
+ *
+ * @param bool $dir Default false
+ * @return string Attributes
  */
 function get_html_lang($dir = false) {
     $direction = '';
@@ -2122,8 +2304,10 @@ function get_html_lang($dir = false) {
 
 /**
  * Return the markup for the destination of the 'Skip to main content' links.
- *   Accessibility improvement for keyboard-only users.
- *   Used in course formats, /index.php and /course/index.php
+ * Accessibility improvement for keyboard-only users.
+ *
+ * Used in course formats, /index.php and /course/index.php
+ *
  * @return string HTML element.
  */
 function skip_main_destination() {
@@ -2136,12 +2320,18 @@ function skip_main_destination() {
 /**
  * Print a standard header
  *
- * @uses $USER
- * @uses $CFG
- * @uses $SESSION
+ * @global object
+ * @global object
+ * @global object
+ * @global object
+ * @global string Doesnt appear to be used here
+ * @global string Doesnt appear to be used here
+ * @global object
+ * @global object
+ * @uses $_SERVER
  * @param string  $title Appears at the top of the window
  * @param string  $heading Appears at the top of the page
- * @param array   $navigation Array of $navlinks arrays (keys: name, link, type) for use as breadcrumbs links
+ * @param string  $navigation Array of $navlinks arrays (keys: name, link, type) for use as breadcrumbs links
  * @param string  $focus Indicates form element to get cursor focus on load eg  inputform.password
  * @param string  $meta Meta tags to be added to the header
  * @param boolean $cache Should this page be cacheable?
@@ -2150,6 +2340,7 @@ function skip_main_destination() {
  * @param boolean $usexml use XML for this page
  * @param string  $bodytags This text will be included verbatim in the <body> tag (useful for onload() etc)
  * @param bool    $return If true, return the visible elements of the header instead of echoing them.
+ * @return string|void If return=true then string else void
  */
 function print_header ($title='', $heading='', $navigation='', $focus='',
                        $meta='', $cache=true, $button='&nbsp;', $menu='',
@@ -2407,6 +2598,13 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
  * $extracthtml = 2: this is used after printing the header and handles any
  *      require_js calls that occurred within the header itself.
  *
+ * @global object
+ * @staticvar array $loadlib
+ * @staticvar int $state Defaults to REQUIREJS_BEFOREHEADER
+ * @staticvar string $latecode
+ * @uses REQUIREJS_BEFOREHEADER
+ * @uses REQUIREJS_INHEADER
+ * @uses REQUIREJS_AFTERHEADER
  * @param mixed $lib The library or libraries to load (a string or array of strings)
  *      There are three way to specify the library:
  *      1. a shorname like 'yui_yahoo'. The list of recognised values is in lib/ajax/ajaxlib.php
@@ -2476,6 +2674,8 @@ function require_js($lib, $extracthtml = 0) {
 /**
  * Should not be called directly - use require_js. This function obtains the code
  * (script tags) needed to include JavaScript libraries.
+ *
+ * @global object
  * @param array $loadlibs Array of library files to include
  * @return string HTML code to include them
  */
@@ -2507,7 +2707,7 @@ function get_require_js_code($loadlibs) {
  * @param string $function the name of the JavaScript function to call.
  * @param array $args an optional list of arguments to the function call.
  * @param boolean $return if true, return the HTML code, otherwise output it.
- * @return mixed string if $return is true, otherwise nothing.
+ * @return string|void string if $return is true, otherwise nothing.
  */
 function print_js_call($function, $args = array(), $return = false) {
     $quotedargs = array();
@@ -2533,7 +2733,7 @@ function print_js_call($function, $args = array(), $return = false) {
  * @param string $function the name of the JavaScript function to call.
  * @param array $args an optional list of arguments to the function call.
  * @param boolean $return if true, return the HTML code, otherwise output it.
- * @return mixed string if $return is true, otherwise nothing.
+ * @return string|void string if $return is true, otherwise nothing.
  */
 function print_delayed_js_call($delay, $function, $args = array(), $return = false) {
     $quotedargs = array();
@@ -2553,6 +2753,8 @@ function print_delayed_js_call($delay, $function, $args = array(), $return = fal
 }
 
 /**
+ * Create a Javascript config object for use in code
+ *
  * Sometimes you need access to some values in your JavaScript that you can only
  * get from PHP code. You can handle this by generating your JS in PHP, but a
  * better idea is to write static javascrip code that reads some configuration
@@ -2602,9 +2804,12 @@ function print_js_config($settings = array(), $prefix='', $return = false) {
 
 /**
  * This function generates the code that defines the standard moodle_cfg object.
+ *
  * This object has a number of fields that are values that various pieces of
  * JavaScript code need access too. For example $CFG->wwwroot and $CFG->pixpath.
  *
+ * @global object
+ * @uses DEBUG_DEVELOPER
  * @return string a <script> tag that defines the moodle_cfg object.
  */
 function standard_js_config() {
@@ -2625,8 +2830,12 @@ function standard_js_config() {
  * Debugging aid: serve page as 'application/xhtml+xml' where possible,
  *     and substitute the XHTML strict document type.
  *     Note, requires the 'xmlns' fix in function print_header above.
- *     See:  http://tracker.moodle.org/browse/MDL-7883
- * TODO:
+ *     See:  {@link http://tracker.moodle.org/browse/MDL-7883}
+ *
+ * @global object
+ * @uses $_SERVER
+ * @param string The HTML to apply the strict header to
+ * @return string The HTML with strict header
  */
 function force_strict_header($output) {
     global $CFG;
@@ -2679,6 +2888,9 @@ function force_strict_header($output) {
  * provided explicitly in the strings. It can be used on the site page as in courses
  * Eventually all print_header could be replaced by print_header_simple
  *
+ * @global object
+ * @global object
+ * @uses SITEID
  * @param string $title Appears at the top of the window
  * @param string $heading Appears at the top of the page
  * @param string $navigation Premade navigation string (for use as breadcrumbs links)
@@ -2690,6 +2902,7 @@ function force_strict_header($output) {
  * @param boolean $usexml use XML for this page
  * @param string $bodytags This text will be included verbatim in the <body> tag (useful for onload() etc)
  * @param bool   $return If true, return the visible elements of the header instead of echoing them.
+ * @return string|void If $return=true the return string else nothing
  */
 function print_header_simple($title='', $heading='', $navigation='', $focus='', $meta='',
                        $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='', $return=false) {
@@ -2723,7 +2936,13 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
 /**
  * Can provide a course object to make the footer contain a link to
  * to the course home page, otherwise the link will go to the site home
- * @uses $USER
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @global object Apparently not used in this function
+ * @global string
+ * @global object
  * @param mixed $course course object, used for course link button or
  *                      'none' means no user link, only docs link
  *                      'empty' means nothing printed in footer
@@ -2852,11 +3071,11 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
 /**
  * Returns the name of the current theme
  *
- * @uses $CFG
- * @uses $USER
- * @uses $SESSION
- * @uses $COURSE
- * @uses $SCRIPT
+ * @global object
+ * @global object
+ * @global object
+ * @global object
+ * @global string
  * @return string
  */
 function current_theme() {
@@ -2942,7 +3161,8 @@ function current_theme() {
  * Retrieves the category theme if one exists, otherwise checks the parent categories.
  * Recursive function.
  *
- * @uses $COURSE
+ * @global object
+ * @global object
  * @param   integer   $categoryid   id of the category to check
  * @return  string    theme name
  */
@@ -2980,10 +3200,14 @@ function current_category_theme($categoryid=0) {
  * This function is called by stylesheets to set up the header
  * approriately as well as the current path
  *
- * @uses $CFG
- * @param int $lastmodified ?
- * @param int $lifetime ?
- * @param string $thename ?
+ * @global object
+ * @global object
+ * @uses PARAM_SAFEDIR
+ * @param int $lastmodified Always gets set to now
+ * @param int $lifetime The max-age header setting (seconds) defaults to 300
+ * @param string $themename The name of the theme to use (optional) defaults to current theme
+ * @param string $forceconfig Force a particular theme config (optional)
+ * @param string $lang Load styles for the specified language (optional)
  */
 function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $forceconfig='', $lang='') {
 
@@ -3149,7 +3373,18 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
     return $CFG->themewww.'/'.$themename;   // Only to help old themes (1.4 and earlier)
 }
 
-
+/**
+ * Sets up the global variables related to theme
+ *
+ * @global object
+ * @global object
+ * @global object Apparently not used here
+ * @global object Apparently not used here
+ * @global object
+ * @global object
+ * @param string $theme The theme to use defaults to current theme
+ * @param array $params An array of parameters to use
+ */
 function theme_setup($theme = '', $params=NULL) {
 /// Sets up global variables related to themes
 
@@ -3261,11 +3496,14 @@ function theme_setup($theme = '', $params=NULL) {
 /**
  * Returns text to be displayed to the user which reflects their login status
  *
- * @uses $CFG
- * @uses $USER
+ * @global object
+ * @global object
+ * @global object
+ * @global object
+ * @uses CONTEXT_COURSE
  * @param course $course {@link $COURSE} object containing course information
  * @param user $user {@link $USER} object containing user information
- * @return string
+ * @return string HTML
  */
 function user_login_string($course=NULL, $user=NULL) {
     global $USER, $CFG, $SITE, $DB;
@@ -3329,7 +3567,9 @@ function user_login_string($course=NULL, $user=NULL) {
  * Accessibility: right and left arrow Unicode characters for breadcrumb, calendar,
  * search forum block, etc. Important: these are 'silent' in a screen-reader
  * (unlike &gt; &raquo;), and must be accompanied by text.
- * @uses $THEME
+ *
+ * @global object
+ * @uses $_SERVER
  */
 function check_theme_arrows() {
     global $THEME;
@@ -3376,6 +3616,8 @@ function check_theme_arrows() {
 /**
  * Return the right arrow with text ('next'), and optionally embedded in a link.
  * See function above, check_theme_arrows.
+ *
+ * @global object
  * @param string $text HTML/plain text label (set to blank only for breadcrumb separator cases).
  * @param string $url An optional link to use in a surrounding HTML anchor.
  * @param bool $accesshide True if text should be hidden (for screen readers only).
@@ -3410,6 +3652,8 @@ function link_arrow_right($text, $url='', $accesshide=false, $addclass='') {
 /**
  * Return the left arrow with text ('previous'), and optionally embedded in a link.
  * See function above, check_theme_arrows.
+ *
+ * @global object
  * @param string $text HTML/plain text label (set to blank only for breadcrumb separator cases).
  * @param string $url An optional link to use in a surrounding HTML anchor.
  * @param bool $accesshide True if text should be hidden (for screen readers only).
@@ -3443,7 +3687,8 @@ function link_arrow_left($text, $url='', $accesshide=false, $addclass='') {
 
 /**
  * Return a HTML element with the class "accesshide", for accessibility.
- *   Please use cautiously - where possible, text should be visible!
+ * Please use cautiously - where possible, text should be visible!
+ *
  * @param string $text Plain text.
  * @param string $elem Lowercase element name, default "span".
  * @param string $class Additional classes for the element.
@@ -3456,6 +3701,7 @@ function get_accesshide($text, $elem='span', $class='', $attrs='') {
 
 /**
  * Return the breadcrumb trail navigation separator.
+ *
  * @return string HTML string.
  */
 function get_separator() {
@@ -3466,11 +3712,14 @@ function get_separator() {
 /**
  * Prints breadcrumb trail of links, called in theme/-/header.html
  *
- * @uses $CFG
+ * @global object
+ * @global object
+ * @global object
+ * @uses CONTEXT_SYSTEM
  * @param mixed $navigation The breadcrumb navigation string to be printed
  * @param string $separator OBSOLETE, mostly not used any more. See build_navigation instead.
  * @param boolean $return False to echo the breadcrumb string (default), true to return it.
- * @return string or null, depending on $return.
+ * @return string|void String or null, depending on $return.
  */
 function print_navigation ($navigation, $separator=0, $return=false) {
     global $CFG, $THEME, $SITE;
@@ -3584,17 +3833,19 @@ function print_navigation ($navigation, $separator=0, $return=false) {
  * the $cm->module and $cm->instance fields, but this takes extra database queries, so a
  * warning is printed in developer debug mode.
  *
- * @uses $CFG
- * @uses $THEME
- *
+ * @global object
+ * @global object
+ * @global object
+ * @global object
+ * @uses SITEID
+ * @uses DEBUG_DEVELOPER
+ * @uses CONTEXT_SYSTEM
  * @param mixed $extranavlinks - Normally an array of arrays, keys: name, link, type. If you
  *      only want one extra item with no link, you can pass a string instead. If you don't want
  *      any extra links, pass an empty string.
  * @param mixed $cm - optionally the $cm object, if you want this function to generate the
  *      activity and activityinstance levels of navigation too.
- *
- * @return $navigation as an object so it can be differentiated from old style
- *      navigation strings.
+ * @return array Navigation array
  */
 function build_navigation($extranavlinks, $cm = null) {
     global $CFG, $COURSE, $DB, $SITE;
@@ -3716,6 +3967,8 @@ function build_navigation($extranavlinks, $cm = null) {
  *
  * @param string $text The text to be displayed
  * @param int $size The size to set the font for text display.
+ * @param bool $return If set to true output is returned rather than echoed Default false
+ * @return string|void String if return is true
  */
 function print_headline($text, $size=2, $return=false) {
     $output = print_heading($text, '', $size, true);
@@ -3729,9 +3982,15 @@ function print_headline($text, $size=2, $return=false) {
 /**
  * Prints text in a format for use in headings.
  *
+ * @global string Apparently not used in this function
+ * @uses CLI_SCRIPT
  * @param string $text The text to be displayed
  * @param string $align The alignment of the printed paragraph of text
  * @param int $size The size to set the font for text display.
+ * @param string $class
+ * @param bool $return If set to true output is returned rather than echoed, default false
+ * @param string $id The id to use in the element
+ * @return string|void String if return=true nothing otherwise
  */
 function print_heading($text, $align='', $size=2, $class='main', $return=false, $id='') {
     global $verbose;
@@ -3774,6 +4033,8 @@ function print_heading($text, $align='', $size=2, $class='main', $return=false, 
  * @param string $helppage The help page to link to
  * @param string $module The module whose help should be linked to
  * @param string $icon Image to display if needed
+ * @param bool $return If set to true output is returned rather than echoed, default false
+ * @return string|void String if return=true nothing otherwise
  */
 function print_heading_with_help($text, $helppage, $module='moodle', $icon='', $return=false) {
     $output = '<div class="heading-with-help">';
@@ -3788,7 +4049,14 @@ function print_heading_with_help($text, $helppage, $module='moodle', $icon='', $
     }
 }
 
-
+/**
+ * Output a standard heading block
+ *
+ * @param string $heading The text to write into the heading
+ * @param string $class An additional Class Attr to use for the heading
+ * @param bool $return If set to true output is returned rather than echoed, default false
+ * @return string|void HTML String if return=true nothing otherwise
+ */
 function print_heading_block($heading, $class='', $return=false) {
     //Accessibility: 'headingblock' is now H1, see theme/standard/styles_*.css: ??
     $output = '<h2 class="headingblock header '.$class.'">'.$heading.'</h2>';
@@ -3804,8 +4072,11 @@ function print_heading_block($heading, $class='', $return=false) {
 /**
  * Print a link to continue on to another page.
  *
- * @uses $CFG
+ * @global object
+ * @uses $_SERVER
  * @param string $link The url to create a link to.
+ * @param bool $return If set to true output is returned rather than echoed, default false
+ * @return string|void HTML String if return=true nothing otherwise
  */
 function print_continue($link, $return=false) {
 
@@ -3847,9 +4118,9 @@ function print_continue($link, $return=false) {
  *
  * @param string $message, the content of the box
  * @param string $classes, space-separated class names.
- * @param string $idbase
+ * @param string $ids
  * @param boolean $return, return as string or just print it
- * @return mixed string or void
+ * @return string|void mixed string or void
  */
 function print_box($message, $classes='generalbox', $ids='', $return=false) {
 
@@ -3868,10 +4139,11 @@ function print_box($message, $classes='generalbox', $ids='', $return=false) {
  * Starts a box using divs
  * Replaces print_simple_box_start (see deprecatedlib.php)
  *
+ * @global object
  * @param string $classes, space-separated class names.
- * @param string $idbase
+ * @param string $ids
  * @param boolean $return, return as string or just print it
- * @return mixed string or void
+ * @return string|void  string or void
  */
 function print_box_start($classes='generalbox', $ids='', $return=false) {
     global $THEME;
@@ -3897,6 +4169,7 @@ function print_box_start($classes='generalbox', $ids='', $return=false) {
  * Replaces print_simple_box_end (see deprecatedlib.php)
  *
  * @param boolean $return, return as string or just print it
+ * @return string|void Depending on value of return
  */
 function print_box_end($return=false) {
     return print_container_end($return);
@@ -3904,8 +4177,9 @@ function print_box_end($return=false) {
 
 /**
  * Print (or return) a collapisble region, that has a caption that can
- * be clicked to expand or collapse the region. If JavaScript is off, then the region
- * will always be exanded.
+ * be clicked to expand or collapse the region.
+ * 
+ * If JavaScript is off, then the region will always be exanded.
  *
  * @param string $contents the contents of the box.
  * @param string $classes class names added to the div that is output.
@@ -3915,7 +4189,7 @@ function print_box_end($return=false) {
  *      (May be blank if you do not wish the state to be persisted.
  * @param boolean $default Inital collapsed state to use if the user_preference it not set.
  * @param boolean $return if true, return the HTML as a string, rather than printing it.
- * @return mixed if $return is false, returns nothing, otherwise returns a string of HTML.
+ * @return string|void If $return is false, returns nothing, otherwise returns a string of HTML.
  */
 function print_collapsible_region($contents, $classes, $id, $caption, $userpref = '', $default = false, $return = false) {
     $output  = print_collapsible_region_start($classes, $id, $caption, $userpref, true);
@@ -3934,14 +4208,15 @@ function print_collapsible_region($contents, $classes, $id, $caption, $userpref 
  * be clicked to expand or collapse the region. If JavaScript is off, then the region
  * will always be exanded.
  *
+ * @global object
  * @param string $classes class names added to the div that is output.
  * @param string $id id added to the div that is output. Must not be blank.
  * @param string $caption text displayed at the top. Clicking on this will cause the region to expand or contract.
- * @param string $userpref the name of the user preference that stores the user's preferred deafault state.
+ * @param boolean $userpref the name of the user preference that stores the user's preferred deafault state.
  *      (May be blank if you do not wish the state to be persisted.
  * @param boolean $default Inital collapsed state to use if the user_preference it not set.
  * @param boolean $return if true, return the HTML as a string, rather than printing it.
- * @return mixed if $return is false, returns nothing, otherwise returns a string of HTML.
+ * @return string|void if $return is false, returns nothing, otherwise returns a string of HTML.
  */
 function print_collapsible_region_start($classes, $id, $caption, $userpref = false, $default = false, $return = false) {
     global $CFG;
@@ -3981,7 +4256,7 @@ function print_collapsible_region_start($classes, $id, $caption, $userpref = fal
  * Close a region started with print_collapsible_region_start.
  *
  * @param boolean $return if true, return the HTML as a string, rather than printing it.
- * @return mixed if $return is false, returns nothing, otherwise returns a string of HTML.
+ * @return string|void if $return is false, returns nothing, otherwise returns a string of HTML.
  */
 function print_collapsible_region_end($return = false) {
     $output = '</div></div></div>';
@@ -4001,7 +4276,7 @@ function print_collapsible_region_end($return = false) {
  * @param string $classes, space-separated class names.
  * @param string $idbase
  * @param boolean $return, return as string or just print it
- * @return string or void
+ * @return string|void Depending on value of $return
  */
 function print_container($message, $clearfix=false, $classes='', $idbase='', $return=false) {
 
@@ -4019,11 +4294,12 @@ function print_container($message, $clearfix=false, $classes='', $idbase='', $re
 /**
  * Starts a container using divs
  *
+ * @global object
  * @param boolean $clearfix clear both sides
  * @param string $classes, space-separated class names.
  * @param string $idbase
  * @param boolean $return, return as string or just print it
- * @return mixed string or void
+ * @return string|void Based on value of $return
  */
 function print_container_start($clearfix=false, $classes='', $idbase='', $return=false) {
     global $THEME;
@@ -4064,8 +4340,11 @@ function print_container_start($clearfix=false, $classes='', $idbase='', $return
 
 /**
  * Simple function to end a container (see above)
+ *
+ * @global object
+ * @uses DEBUG_DEVELOPER
  * @param boolean $return, return as string or just print it
- * @return mixed string or void
+ * @return string|void Based on $return
  */
 function print_container_end($return=false) {
     global $THEME;
@@ -4092,6 +4371,8 @@ function print_container_end($return=false) {
 
 /**
  * Returns number of currently open containers
+ *
+ * @global object
  * @return int number of open containers
  */
 function open_containers() {
@@ -4106,6 +4387,7 @@ function open_containers() {
 
 /**
  * Force closing of open containers
+ *
  * @param boolean $return, return as string or just print it
  * @param int $keep number of containers to be kept open - usually theme or page containers
  * @return mixed string or void
@@ -4165,8 +4447,9 @@ function _print_custom_corners_start($clearfix=false, $classes='', $idbase='') {
 /**
  * Internal function - do not use directly!
  * Ending part of the surrounding divs for custom corners
+ *
  * @param string $idbase
- * @return string
+ * @return string HTML sttring
  */
 function _print_custom_corners_end($idbase) {
 /// Analise if we want ids for the custom corner elements
@@ -4198,7 +4481,8 @@ function _print_custom_corners_end($idbase) {
  * @param string $tooltip a tooltip to add to the button as a title attribute.
  * @param boolean $disabled if true, the button will be disabled.
  * @param string $jsconfirmmessage if not empty then display a confirm dialogue with this string as the question.
- * @return string / nothing depending on the $return paramter.
+ * @param string $formid The id attribute to use for the form
+ * @return string|void Depending on the $return paramter.
  */
 function print_single_button($link, $options, $label='OK', $method='get', $notusedanymore='',
         $return=false, $tooltip='', $disabled = false, $jsconfirmmessage='', $formid = '') {
@@ -4243,10 +4527,10 @@ function print_single_button($link, $options, $label='OK', $method='get', $notus
 /**
  * Print a spacer image with the option of including a line break.
  *
- * @param int $height ?
- * @param int $width ?
- * @param boolean $br ?
- * @todo Finish documenting this function
+ * @global object
+ * @param int $height The height in pixels to make the spacer
+ * @param int $width The width in pixels to make the spacer
+ * @param boolean $br If set to true a BR is written after the spacer
  */
 function print_spacer($height=1, $width=1, $br=true, $return=false) {
     global $CFG;
@@ -4268,12 +4552,14 @@ function print_spacer($height=1, $width=1, $br=true, $return=false) {
  * Given the path to a picture file in a course, or a URL,
  * this function includes the picture in the page.
  *
- * @param string $path ?
- * @param int $courseid ?
- * @param int $height ?
- * @param int $width ?
- * @param string $link ?
- * @todo Finish documenting this function
+ * @global object
+ * @param string $path The path the to the picture
+ * @param int $courseid The courseid the picture is associated with if any
+ * @param int $height The height of the picture in pixels if known
+ * @param int $width The width of the picture in pixels if known
+ * @param string $link If set the image is wrapped with this link
+ * @param bool $return If true the HTML is returned rather than being echo'd
+ * @return string|void Depending on $return
  */
 function print_file_picture($path, $courseid=0, $height='', $width='', $link='', $return=false) {
     global $CFG;
@@ -4313,6 +4599,8 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='',
 /**
  * Print the specified user's avatar.
  *
+ * @global object
+ * @global object
  * @param mixed $user Should be a $user object with at least fields id, picture, imagealt, firstname, lastname
  *      If any of these are missing, or if a userid is passed, the the database is queried. Avoid this
  *      if at all possible, particularly for reports. It is very bad for performance.
@@ -4324,7 +4612,7 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='',
  * @param string $target link target attribute. Makes the profile open in a popup window.
  * @param boolean $alttext add non-blank alt-text to the image. (Default true, set to false for purely
  *      decorative images, or where the username will be printed anyway.)
- * @return string or nothing, depending on $return.
+ * @return string|void String or nothing, depending on $return.
  */
 function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=false, $link=true, $target='', $alttext=true) {
     global $CFG, $DB;
@@ -4418,10 +4706,19 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
 /**
  * Prints a summary of a user in a nice little box.
  *
- * @uses $CFG
- * @uses $USER
- * @param user $user A {@link $USER} object representing a user
- * @param course $course A {@link $COURSE} object representing a course
+ * @global object
+ * @global object
+ * @staticvar object $string
+ * @staticvar object $datestring
+ * @staticvar array $countries
+ * @uses CONTEXT_COURSE
+ * @uses CONTEXT_USER
+ * @uses SITEID
+ * @param object $user A {@link $USER} object representing a user
+ * @param object $course A {@link $COURSE} object representing a course
+ * @param bool $messageselect 
+ * @param bool $return If set to true then the HTML is returned rather than echo'd
+ * @return string|void Depending on the setting of $return
  */
 function print_user($user, $course, $messageselect=false, $return=false) {
 
@@ -4549,13 +4846,14 @@ has_capability('moodle/course:viewhiddenuserfields', $context)) {
 /**
  * Print a specified group's avatar.
  *
- * @param group $group A single {@link group} object OR array of groups.
+ * @global object
+ * @uses CONTEXT_COURSE
+ * @param array $group A single {@link group} object OR array of groups.
  * @param int $courseid The course ID.
  * @param boolean $large Default small picture, or large.
  * @param boolean $return If false print picture, otherwise return the output as string
  * @param boolean $link Enclose image in a link to view specified course?
- * @return string
- * @todo Finish documenting this function
+ * @return string|void Depending on the setting of $return
  */
 function print_group_picture($group, $courseid, $large=false, $return=false, $link=true) {
     global $CFG;
@@ -4609,12 +4907,14 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
 /**
  * Print a png image.
  *
- * @param string $url ?
- * @param int $sizex ?
- * @param int $sizey ?
- * @param boolean $return ?
- * @param string $parameters ?
- * @todo Finish documenting this function
+ * @global object
+ * @staticvar bool $recentIE
+ * @param string $url The URL of the image to display
+ * @param int $sizex The width of the image in pixels
+ * @param int $sizey The height of the image in pixels
+ * @param boolean $return If true the HTML is returned rather than echo'd
+ * @param string $parameters Additional HTML attributes to set
+ * @return string|bool Depending on $return
  */
 function print_png($url, $sizex, $sizey, $return, $parameters='alt=""') {
     global $CFG;
@@ -4664,8 +4964,7 @@ function print_png($url, $sizex, $sizey, $return, $parameters='alt=""') {
  *     <li>$table->rotateheaders - Causes the contents of the heading cells to be rotated 90 degrees.
  * </ul>
  * @param bool $return whether to return an output string or echo now
- * @return boolean or $string
- * @todo Finish documenting this function
+ * @return boolean|string depending on $return
  */
 function print_table($table, $return=false) {
     $output = '';
@@ -4828,6 +5127,18 @@ function print_table($table, $return=false) {
     return true;
 }
 
+/**
+ * Display a recent activity note
+ * 
+ * @uses CONTEXT_SYSTEM
+ * @staticvar string $strftimerecent
+ * @param object A time object
+ * @param object A user object
+ * @param string $text Text for display for the note
+ * @param string $link The link to wrap around the text
+ * @param bool $return If set to true the HTML is returned rather than echo'd
+ * @param string $viewfullnames
+ */
 function print_recent_activity_note($time, $user, $text, $link, $return=false, $viewfullnames=null) {
     static $strftimerecent = null;
     $output = '';
@@ -4860,7 +5171,7 @@ function print_recent_activity_note($time, $user, $text, $link, $return=false, $
  *
  * When using this function, you should
  *
- * @uses $CFG
+ * @global object
  * @param bool $usehtmleditor Enables the use of the htmleditor for this field.
  * @param int $rows Number of rows to display  (minimum of 10 when $height is non-null)
  * @param int $cols Number of columns to display (minimum of 65 when $width is non-null)
@@ -4871,7 +5182,7 @@ function print_recent_activity_note($time, $user, $text, $link, $return=false, $
  * @param int $obsolete deprecated
  * @param bool $return If false, will output string. If true, will return string value.
  * @param string $id CSS ID to add to the textarea element.
- * @param string $editorclass CSS classes to add to the textarea element when using the htmleditor. Use 'form-textarea-simple' to get a basic editor. Defaults to 'form-textarea-advanced' (complete editor). If this is null or invalid, the htmleditor will not show for this field.
+ * @return string|void depending on the value of $return
  */
 function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value='', $obsolete=0, $return=false, $id='') {
     /// $width and height are legacy fields and no longer used as pixels like they used to be.
@@ -4923,8 +5234,8 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
  *
  * Note that the caller is responsible for capchecks.
  *
- * @uses $CFG
- * @uses $USER
+ * @global object
+ * @global object
  * @param int $courseid The course  to update by id as found in 'course' table
  * @return string
  */
@@ -4951,8 +5262,9 @@ function update_course_icon($courseid) {
 /**
  * Returns a little popup menu for switching roles
  *
- * @uses $CFG
- * @uses $USER
+ * @global object
+ * @global object
+ * @uses CONTEXT_COURSE
  * @param int $courseid The course  to update by id as found in 'course' table
  * @return string
  */
@@ -4993,8 +5305,8 @@ function switchroles_form($courseid) {
  * Returns a turn edit on/off button for course in a self contained form.
  * Used to be an icon, but it's now a simple form button
  *
- * @uses $CFG
- * @uses $USER
+ * @global object
+ * @global object
  * @param int $courseid The course  to update by id as found in 'course' table
  * @return string
  */
@@ -5019,8 +5331,9 @@ function update_mymoodle_icon() {
 /**
  * Returns a turn edit on/off button for tag in a self contained form.
  *
- * @uses $CFG
- * @uses $USER
+ * @global object
+ * @global object
+ * @param string $tagid The ID attribute
  * @return string
  */
 function update_tag_button($tagid) {
@@ -5044,9 +5357,13 @@ function update_tag_button($tagid) {
 
 /**
  * Prints the 'update this xxx' button that appears on module pages.
- * @param $cmid the course_module id.
- * @param $ignored not used any more. (Used to be courseid.)
- * @param $string the module name - get_string('modulename', 'xxx')
+ *
+ * @global object
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @param string $cmid the course_module id.
+ * @param string $ignored not used any more. (Used to be courseid.)
+ * @param string $string the module name - get_string('modulename', 'xxx')
  * @return string the HTML for the button, if this user has permission to edit it, else an empty string.
  */
 function update_module_button($cmid, $ignored, $string) {
@@ -5069,8 +5386,14 @@ function update_module_button($cmid, $ignored, $string) {
 /**
  * Prints the editing button on search results listing
  * For bulk move courses to another category
+ *
+ * @global object
+ * @global object
+ * @param string $search  The search string
+ * @param string $page
+ * @param string $perpage
+ * @return string HTML form element
  */
-
 function update_categories_search_button($search,$page,$perpage) {
     global $CFG, $PAGE;
 
@@ -5097,17 +5420,23 @@ function update_categories_search_button($search,$page,$perpage) {
 }
 
 /**
+ * Returns a small popup menu of course activity modules
+ *
  * Given a course and a (current) coursemodule
- * This function returns a small popup menu with all the
+ * his function returns a small popup menu with all the
  * course activity modules in it, as a navigation menu
  * The data is taken from the serialised array stored in
  * the course record
  *
- * @param course $course A {@link $COURSE} object.
- * @param course $cm A {@link $COURSE} object.
- * @param string $targetwindow ?
+ * @global object
+ * @global object
+ * @global object
+ * @global object
+ * @uses CONTEXT_COURSE
+ * @param object $course A {@link $COURSE} object.
+ * @param object $cm A {@link $COURSE} object.
+ * @param string $targetwindow The target window attribute to us
  * @return string
- * @todo Finish documenting this function
  */
 function navmenu($course, $cm=NULL, $targetwindow='self') {
     global $CFG, $THEME, $USER, $DB;
@@ -5250,6 +5579,8 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
 }
 
 /**
+ * Returns a popup menu with course activity modules
+ *
  * Given a course
  * This function returns a small popup menu with all the
  * course activity modules in it, as a navigation menu
@@ -5257,9 +5588,18 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
  * The data is taken from the serialised array stored in
  * the course record
  *
- * @param course $course A {@link $COURSE} object.
- * @return string
  * @todo Finish documenting this function
+ *
+ * @global object
+ * @uses CONTEXT_COURSE
+ * @param course $course A {@link $COURSE} object.
+ * @param string $sections
+ * @param string $modinfo
+ * @param string $strsection
+ * @param string $strjumpto
+ * @param int $width
+ * @param string $cmid
+ * @return string The HTML block
  */
 function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $width=50, $cmid=0) {
 
@@ -5345,7 +5685,8 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
  * @param string $month  fieldname
  * @param string $year  fieldname
  * @param int $currenttime A default timestamp in GMT
- * @param boolean $return
+ * @param boolean $return If set to true returns rather than echo's
+ * @return string|bool Depending on value of $return
  */
 function print_date_selector($day, $month, $year, $currenttime=0, $return=false) {
 
@@ -5384,13 +5725,14 @@ function print_date_selector($day, $month, $year, $currenttime=0, $return=false)
 }
 
 /**
- *Prints form items with the names $hour and $minute
+ * Prints form items with the names $hour and $minute
  *
  * @param string $hour  fieldname
- * @param string ? $minute  fieldname
- * @param $currenttime A default timestamp in GMT
+ * @param string $minute  fieldname
+ * @param int $currenttime A default timestamp in GMT
  * @param int $step minute spacing
- * @param boolean $return
+ * @param boolean $return If set to true returns rather than echo's
+ * @return string|bool Depending on value of $return 
  */
 function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=false) {
 
@@ -5428,11 +5770,15 @@ function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=fa
 /**
  * Prints time limit value selector
  *
- * @uses $CFG
+ * Uses {@link choose_from_menu()} to generate HTML
+ * @see choose_from_menu()
+ *
+ * @global object
  * @param int $timelimit default
  * @param string $unit
  * @param string $name
- * @param boolean $return
+ * @param boolean $return If set to true returns rather than echo's
+ * @return string|bool Depending on value of $return
  */
 function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit', $return=false) {
 
@@ -5455,12 +5801,15 @@ function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit', $
  * Prints a grade menu (as part of an existing form) with help
  * Showing all possible numerical grades and scales
  *
- * @uses $CFG
- * @param int $courseid ?
- * @param string $name ?
- * @param string $current ?
- * @param boolean $includenograde ?
  * @todo Finish documenting this function
+ *
+ * @global object
+ * @param int $courseid The course ID
+ * @param string $name 
+ * @param string $current 
+ * @param boolean $includenograde Include those with no grades
+ * @param boolean $return If set to true returns rather than echo's
+ * @return string|bool Depending on value of $return
  */
 function print_grade_menu($courseid, $name, $current, $includenograde=true, $return=false) {
 
@@ -5497,10 +5846,12 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true, $ret
  * Prints a scale menu (as part of an existing form) including help button
  * Just like {@link print_grade_menu()} but without the numeric grades
  *
+ * @global object
  * @param int $courseid ?
  * @param string $name ?
  * @param string $current ?
- * @todo Finish documenting this function
+ * @param boolean $return If set to true returns rather than echo's
+ * @return string|bool Depending on value of $return
  */
 function print_scale_menu($courseid, $name, $current, $return=false) {
 
@@ -5523,10 +5874,11 @@ function print_scale_menu($courseid, $name, $current, $return=false) {
 /**
  * Prints a help button about a scale
  *
- * @uses $CFG
- * @param id $courseid ?
- * @param object $scale ?
- * @todo Finish documenting this function
+ * @global object
+ * @param id $courseid 
+ * @param object $scale
+ * @param boolean $return If set to true returns rather than echo's
+ * @return string|bool Depending on value of $return
  */
 function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
 
@@ -5548,11 +5900,13 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
 /**
  * Print an error page displaying an error message.  New method - use this for new code.
  *
+ * @global object
+ * @global object
  * @param string $errorcode The name of the string from error.php to print
  * @param string $module name of module
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
  * @param object $a Extra words and phrases that might be required in the error string
- * @return terminates script, does not return!
+ * @return void terminates script, does not return!
  */
 function print_error($errorcode, $module='error', $link='', $a=NULL) {
     global $CFG, $UNITTEST;
@@ -5578,6 +5932,20 @@ function print_error($errorcode, $module='error', $link='', $a=NULL) {
 
 /**
  * Internal function - do not use directly!!
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @global object
+ * @global object
+ * @param string $errorcode
+ * @param string $module
+ * @param string $a
+ * @param string $link
+ * @param array $backtrace
+ * @param string $debuginfo
+ * @param bool $showerrordebugwarning
+ * @return void Script dies no return
  */
 function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debuginfo=null, $showerrordebugwarning=false) {
     global $CFG, $SESSION, $THEME, $DB, $PAGE;
@@ -5667,6 +6035,16 @@ function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debugi
 /**
  * Internal function - do not use directly!!
  * This function is used if fatal error occures before the themes are fully initialised (eg. in lib/setup.php)
+ *
+ * @uses $_SERVER
+ * @uses DEBUG_DEVELOPER
+ * @param string $errorcode
+ * @param string $module
+ * @param string $a
+ * @param string $link
+ * @param array $backtrace
+ * @param string $debuginfo
+ * @return void Script dies does not return
  */
 function _print_early_error($errorcode, $module, $a, $backtrace=null, $debuginfo=null) {
     $message = get_string($errorcode, $module, $a);
@@ -5733,9 +6111,12 @@ function mdie($msg='', $errorcode=1) {
 /**
  * Returns a string of html with an image of a help icon linked to a help page on a number of help topics.
  * Should be used only with htmleditor or textarea.
+ *
+ * @global object
+ * @global object
  * @param mixed $helptopics variable amount of params accepted. Each param may be a string or an array of arguments for
  *                  helpbutton.
- * @return string
+ * @return string Link to help button
  */
 function editorhelpbutton(){
     global $CFG, $SESSION;
@@ -5796,7 +6177,9 @@ function editorhelpbutton(){
 /**
  * Print a help button.
  *
- * @uses $CFG
+ * @global object
+ * @global object
+ * @uses DEBUG_DEVELOPER
  * @param string $page  The keyword that defines a help page
  * @param string $title The title of links, rollover tips, alt tags etc
  *           'Help with' (or the language equivalent) will be prefixed and '...' will be stripped.
@@ -5807,8 +6190,7 @@ function editorhelpbutton(){
  *           the $page variable is ignored.
  * @param boolean $return If true then the output is returned as a string, if false it is printed to the current page.
  * @param string $imagetext The full text for the helpbutton icon. If empty use default help.gif
- * @return string
- * @todo Finish documenting this function
+ * @return string|void Depending on value of $return
  */
 function helpbutton($page, $title, $module='moodle', $image=true, $linktext=false, $text='', $return=false,
                      $imagetext='') {
@@ -5885,11 +6267,15 @@ function helpbutton($page, $title, $module='moodle', $image=true, $linktext=fals
  * Print a help button.
  *
  * Prints a special help button that is a link to the "live" emoticon popup
- * @uses $CFG
- * @uses $SESSION
+ *
+ * @todo Finish documenting this function
+ *
+ * @global object
+ * @global object
  * @param string $form ?
  * @param string $field ?
- * @todo Finish documenting this function
+ * @param boolean $return If true then the output is returned as a string, if false it is printed to the current page.
+ * @return string|void Depending on value of $return
  */
 function emoticonhelpbutton($form, $field, $return = false) {
 
@@ -5910,7 +6296,10 @@ function emoticonhelpbutton($form, $field, $return = false) {
  * Print a help button.
  *
  * Prints a special help button for html editors (htmlarea in this case)
- * @uses $CFG
+ *
+ * @todo Write code into this function! detect current editor and print correct info
+ * @global object
+ * @return string Only returns an empty string at the moment
  */
 function editorshortcutshelpbutton() {
 
@@ -5926,10 +6315,16 @@ function editorshortcutshelpbutton() {
 /**
  * Print a message and exit.
  *
- * @uses $CFG
- * @param string $message ?
- * @param string $link ?
- * @todo Finish documenting this function
+ * @global object
+ * @global object Apparently not used in this function
+ * @global object
+ * @global object
+ * @global object
+ * @uses CLI_SCRIPT
+ * @param string $message The message to print in the notice
+ * @param string $link The link to use for the continue button
+ * @param object $course A course object
+ * @return void This function simply exits
  */
 function notice ($message, $link='', $course=NULL) {
     global $CFG, $SITE, $THEME, $COURSE, $PAGE;
@@ -5963,10 +6358,15 @@ function notice ($message, $link='', $course=NULL) {
 /**
  * Print a message along with "Yes" and "No" links for the user to continue.
  *
+ * @global object
  * @param string $message The text to display
  * @param string $linkyes The link to take the user to if they choose "Yes"
  * @param string $linkno The link to take the user to if they choose "No"
- * TODO Document remaining arguments
+ * @param string $optionyes The yes option to show on the notice
+ * @param string $optionsno The no option to show
+ * @param string $methodyes Form action method to use if yes [post, get]
+ * @param string $methodno Form action method to use if no [post, get]
+ * @return void Output is echo'd
  */
 function notice_yesno ($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno=NULL, $methodyes='post', $methodno='post') {
 
@@ -5988,14 +6388,23 @@ function notice_yesno ($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno
 /**
  * Redirects the user to another page, after printing a notice
  *
- * @param string $url The url to take the user to
- * @param string $message The text message to display to the user about the redirect, if any
- * @param string $delay How long before refreshing to the new page at $url?
- * @todo '&' needs to be encoded into '&amp;' for XHTML compliance,
+  * @todo '&' needs to be encoded into '&amp;' for XHTML compliance,
  *      however, this is not true for javascript. Therefore we
  *      first decode all entities in $url (since we cannot rely on)
  *      the correct input) and then encode for where it's needed
  *      echo "<script type='text/javascript'>alert('Redirect $url');</script>";
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @global object
+ * @uses $_COOKIE
+ * @uses DEBUG_DEVELOPER
+ * @uses DEBUG_ALL
+ * @param string $url The url to take the user to
+ * @param string $message The text message to display to the user about the redirect, if any
+ * @param string $delay How long before refreshing to the new page at $url?
+ * @return void Dies 
  */
 function redirect($url, $message='', $delay=-1) {
     global $CFG, $THEME, $SESSION, $PAGE;
@@ -6091,10 +6500,13 @@ function redirect($url, $message='', $delay=-1) {
 /**
  * Print a bold message in an optional color.
  *
+ * @global object
+ * @uses CLI_SCRIPT
  * @param string $message The message to print out
  * @param string $style Optional style to display message text in
  * @param string $align Alignment option
  * @param bool $return whether to return an output string or echo now
+ * @return string|bool Depending on $result 
  */
 function notify($message, $style='notifyproblem', $align='center', $return=false) {
     global $DB;
@@ -6130,7 +6542,7 @@ function notify($message, $style='notifyproblem', $align='center', $return=false
  * Given an email address, this function will return an obfuscated version of it
  *
  * @param string $email The email address to obfuscate
- * @return string
+ * @return string The obfuscated email address
  */
  function obfuscate_email($email) {
 
@@ -6153,7 +6565,7 @@ function notify($message, $style='notifyproblem', $align='center', $return=false
  * with HTML entity equivalents.   Return string is obviously longer.
  *
  * @param string $plaintext The text to be obfuscated
- * @return string
+ * @return string The obfuscated text
  */
 function obfuscate_text($plaintext) {
 
@@ -6185,7 +6597,7 @@ function obfuscate_text($plaintext) {
  * @param string $email The email address to display
  * @param string $label The text to dispalyed as hyperlink to $email
  * @param boolean $dimmed If true then use css class 'dimmed' for hyperlink
- * @return string
+ * @return string The obfuscated mailto link
  */
 function obfuscate_mailto($email, $label='', $dimmed=false) {
 
@@ -6215,7 +6627,7 @@ function obfuscate_mailto($email, $label='', $dimmed=false) {
  * @param string $pagevar This is the variable name that you use for the page number in your code (ie. 'tablepage', 'blogpage', etc)
  * @param bool $nocurr do not display the current page as a link
  * @param bool $return whether to return an output string or echo now
- * @return bool or string
+ * @return bool|string depending on $result
  */
 function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page',$nocurr=false, $return=false) {
     $maxdisplay = 18;
@@ -6309,6 +6721,9 @@ function rebuildnolinktag($text) {
  * Prints a nice side block with an optional header.  The content can either
  * be a block of HTML or a list of text with optional icons.
  *
+ * @todo Finish documenting this function. Show example of various attributes, etc.
+ *
+ * @static int $block_id Increments for each call to the function
  * @param string $heading HTML for the heading. Can include full HTML or just
  *   plain text - plain text will automatically be enclosed in the appropriate
  *   heading tags.
@@ -6320,7 +6735,7 @@ function rebuildnolinktag($text) {
  * outer div of this block. If there is a class attribute ' sideblock' gets appended to it. If there isn't
  * already a class, class='sideblock' is used.
  * @param string $title Plain text title, as embedded in the $heading.
- * @todo Finish documenting this function. Show example of various attributes, etc.
+ * @return void Echo's output
  */
 function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $footer='', $attributes = array(), $title='') {
 
@@ -6376,11 +6791,15 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
 /**
  * Starts a nice side block with an optional header.
  *
+ * @todo Finish documenting this function
+ *
+ * @global object
+ * @global object
  * @param string $heading HTML for the heading. Can include full HTML or just
  *   plain text - plain text will automatically be enclosed in the appropriate
  *   heading tags.
- * @param array $attributes ?
- * @todo Finish documenting this function
+ * @param array $attributes HTML attributes to apply if possible
+ * @return void Echo's output
  */
 function print_side_block_start($heading='', $attributes = array()) {
 
@@ -6458,6 +6877,12 @@ function print_side_block_start($heading='', $attributes = array()) {
 
 /**
  * Print table ending tags for a side block box.
+ *
+ * @global object
+ * @global object
+ * @param array $attributes HTML attributes to apply if possible [id]
+ * @param string $title
+ * @return void Echo's output
  */
 function print_side_block_end($attributes = array(), $title='') {
     global $CFG, $THEME;
@@ -6482,7 +6907,10 @@ function print_side_block_end($attributes = array(), $title='') {
 }
 
 /**
+ * @todo Remove this deprecated function when no longer used
  * @deprecated since Moodle 2.0 - use $PAGE->pagetype instead of the .
+ *
+ * @global object
  * @param string $getid used to return $PAGE->pagetype.
  * @param string $getclass used to return $PAGE->legacyclass.
  */
@@ -6495,6 +6923,10 @@ function page_id_and_class(&$getid, &$getclass) {
 
 /**
  * Prints a maintenance message from /maintenance.html
+ *
+ * @global object
+ * @global object
+ * @return void 
  */
 function print_maintenance_message () {
     global $CFG, $SITE;
@@ -6510,6 +6942,10 @@ function print_maintenance_message () {
 
 /**
  * Adjust the list of allowed tags based on $CFG->allowobjectembed and user roles (admin)
+ *
+ * @global object
+ * @global string
+ * @return void
  */
 function adjust_allowed_tags() {
 
@@ -6520,16 +6956,33 @@ function adjust_allowed_tags() {
     }
 }
 
-/// Some code to print tabs
-
-/// A class for tabs
+/**
+ * A class for tabs, Some code to print tabs
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
+ */
 class tabobject {
+    /**
+     * @var string
+     */
     var $id;
     var $link;
     var $text;
+    /**
+     * @var bool
+     */
     var $linkedwhenselected;
 
-    /// A constructor just because I like constructors
+    /** 
+     * A constructor just because I like constructors
+     * 
+     * @param string $id
+     * @param string $link
+     * @param string $text
+     * @param string $title
+     * @param bool $linkedwhenselected
+     */
     function tabobject ($id, $link='', $text='', $title='', $linkedwhenselected=false) {
         $this->id   = $id;
         $this->link = $link;
@@ -6544,11 +6997,13 @@ class tabobject {
 /**
  * Returns a string containing a nested list, suitable for formatting into tabs with CSS.
  *
+ * @global object
  * @param array $tabrows An array of rows where each row is an array of tab objects
  * @param string $selected  The id of the selected tab (whatever row it's on)
  * @param array  $inactive  An array of ids of inactive tabs that are not selectable.
  * @param array  $activated An array of ids of other tabs that are currently activated
-**/
+ * @param bool $return If true output is returned rather then echo'd
+ **/
 function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $activated=NULL, $return=false) {
     global $CFG;
 
@@ -6581,7 +7036,13 @@ function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $activated=NULL, $
     echo $output;
 }
 
-
+/**
+ * Converts a nested array tree into HTML ul:li [recursive]
+ *
+ * @param array $tree A tree array to convert
+ * @param int $row Used in identifing the iteration level and in ul classes
+ * @return string HTML structure
+ */
 function convert_tree_to_html($tree, $row=0) {
 
     $str = "\n".'<ul class="tabrow'.$row.'">'."\n";
@@ -6638,7 +7099,15 @@ function convert_tree_to_html($tree, $row=0) {
     return $str;
 }
 
-
+/**
+ * Convert nested tabrows to a nested array
+ *
+ * @param array $tabrows A [nested] array of tab row objects
+ * @param string $selected The tabrow to select (by id)
+ * @param array $inactive An array of tabrow id's to make inactive
+ * @param array $activated An array of tabrow id's to make active
+ * @return array The nested array 
+ */
 function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
 
 /// Work backwards through the rows (bottom to top) collecting the tree as we go.
@@ -6673,8 +7142,11 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
  * Returns a string containing a link to the user documentation for the current
  * page. Also contains an icon by default. Shown to teachers and admin only.
  *
+ * @global object
+ * @global object
  * @param string $text The text to be displayed for the link
  * @param string $iconpath The path to the icon to be displayed
+ * @return string The link to user documentation for this current page
  */
 function page_doc_link($text='', $iconpath='') {
     global $CFG, $PAGE;
@@ -6694,8 +7166,11 @@ function page_doc_link($text='', $iconpath='') {
 }
 
 /**
+ * Returns the Moodle Docs URL in the users language
+ *
+ * @global object
  * @param string $path the end of the URL.
- * @return The MoodleDocs URL in the user's language. for example http://docs.moodle.org/en/$path
+ * @return string The MoodleDocs URL in the user's language. for example {@link http://docs.moodle.org/en/ http://docs.moodle.org/en/$path}
  */
 function get_docs_url($path) {
     global $CFG;
@@ -6706,9 +7181,11 @@ function get_docs_url($path) {
  * Returns a string containing a link to the user documentation.
  * Also contains an icon by default. Shown to teachers and admin only.
  *
+ * @global object
  * @param string $path The page link after doc root and language, no leading slash.
  * @param string $text The text to be displayed for the link
  * @param string $iconpath The path to the icon to be displayed
+ * @return string Either the link or an empty string
  */
 function doc_link($path='', $text='', $iconpath='') {
     global $CFG;
@@ -6738,6 +7215,8 @@ function doc_link($path='', $text='', $iconpath='') {
 
 
 /**
+ * Standard Debugging Function
+ *
  * Returns true if the current site debugging settings are equal or above specified level.
  * If passed a parameter it will emit a debugging notice similar to trigger_error(). The
  * routing of notices is controlled by $CFG->debugdisplay
@@ -6754,6 +7233,8 @@ function doc_link($path='', $text='', $iconpath='') {
  * JS and HTTP headers.
  *
  *
+ * @global object
+ * @uses DEBUG_NORMAL
  * @param string $message a message to print
  * @param int $level the level at which this debugging statement should show
  * @param array $backtrace use different backtrace
@@ -6792,9 +7273,11 @@ function debugging($message='', $level=DEBUG_NORMAL, $backtrace=null) {
 
 /**
  * Prints formatted backtrace
- * @param backtrace array
- * @param return return as string or print
- * @return mixed
+ *
+ * @global object
+ * @param array $callers backtrace array
+ * @param bool $return return as string or print
+ * @return string|bool Depending on $return
  */
 function print_backtrace($callers, $return=false) {
     global $CFG;
@@ -6838,6 +7321,8 @@ function print_backtrace($callers, $return=false) {
 
 /**
  * Disable debug messages from debugging(), while keeping PHP error reporting level as is.
+ *
+ * @global object
  */
 function disable_debugging() {
     global $CFG;
@@ -6847,6 +7332,9 @@ function disable_debugging() {
 
 /**
  *  Returns string to add a frame attribute, if required
+ *
+ * @global object
+ * @return bool
  */
 function frametarget() {
     global $CFG;
@@ -6861,11 +7349,13 @@ function frametarget() {
 /**
 * Outputs a HTML comment to the browser. This is used for those hard-to-debug
 * pages that use bits from many different files in very confusing ways (e.g. blocks).
-* @usage print_location_comment(__FILE__, __LINE__);
+*
+* <code>print_location_comment(__FILE__, __LINE__);</code>
+*
 * @param string $file
 * @param integer $line
 * @param boolean $return Whether to return or print the comment
-* @return mixed Void unless true given as third parameter
+* @return string|void Void unless true given as third parameter
 */
 function print_location_comment($file, $line, $return = false)
 {
@@ -6880,13 +7370,15 @@ function print_location_comment($file, $line, $return = false)
 /**
  * Returns an image of an up or down arrow, used for column sorting. To avoid unnecessary DB accesses, please
  * provide this function with the language strings for sortasc and sortdesc.
+ *
  * If no sort string is associated with the direction, an arrow with no alt text will be printed/returned.
+ *
+ * @global object
  * @param string $direction 'up' or 'down'
  * @param string $strsort The language string used for the alt attribute of this image
  * @param bool $return Whether to print directly or return the html string
- * @return string HTML for the image
+ * @return string|void depending on $return
  *
- * TODO See if this isn't already defined somewhere. If not, move this to weblib
  */
 function print_arrow($direction='up', $strsort=null, $return=false) {
     global $CFG;
@@ -6930,6 +7422,8 @@ function print_arrow($direction='up', $strsort=null, $return=false) {
 /**
  * Returns boolean true if the current language is right-to-left (Hebrew, Arabic etc)
  *
+ * @staticvar bool $result
+ * @return bool
  */
 function right_to_left() {
     static $result;
@@ -6962,10 +7456,10 @@ function fix_align_rtl($align) {
  * Returns true if the page is displayed in a popup window.
  * Gets the information from the URL parameter inpopup.
  *
- * @return boolean
+ * @todo Use a central function to create the popup calls allover Moodle and
+ * In the moment only works with resources and probably questions.
  *
- * TODO Use a central function to create the popup calls allover Moodle and
- * TODO In the moment only works with resources and probably questions.
+ * @return boolean
  */
 function is_in_popup() {
     $inpopup = optional_param('inpopup', '', PARAM_BOOL);
@@ -6977,9 +7471,10 @@ function is_in_popup() {
 /**
  * Write to standard out and error with exit in error.
  *
- * @param standard out/err $stream
- * @param string  $identifier
- * @param name of module $module
+ * @uses $_SERVER
+ * @param string $identifier
+ * @param string $module name of module $module
+ * @param bool $use_string_lib 
  */
 function console_write($identifier, $module='install', $use_string_lib=true) {
     if (!isset($_SERVER['REMOTE_ADDR'])) {
@@ -7003,9 +7498,10 @@ function console_write($identifier, $module='install', $use_string_lib=true) {
 /**
  * Write to standard out and error with exit in error.
  *
- * @param standard out/err $stream
- * @param string  $identifier
- * @param name of module $module
+ * @param string $identifier
+ * @param string $module name of module $module
+ * @param bool $use_string_lib 
+ * @return void Die! Die! Die!
  */
 function console_write_error($identifier, $module='install', $use_string_lib=true) {
     if (!isset($_SERVER['REMOTE_ADDR'])) {
@@ -7034,16 +7530,37 @@ function console_write_error($identifier, $module='install', $use_string_lib=tru
  * - construct
  * - call create (or use the 3rd param to the constructor)
  * - call update or update_full repeatedly
- * - 
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
  */
 class progress_bar {
+    /**
+     * @var str
+     */
     private $html_id;
+    /**
+     * @var int
+     */
     private $percent;
     private $width;
+    /**
+     * @var object
+     */
     private $clr;
+    /**
+     * @var int
+     */
     private $lastcall;
     private $time_start;
     private $minimum_time = 2; //min time between updates.
+    /**
+     * Contructor
+     *
+     * @param string $html_id
+     * @param int $width
+     * @param bool $autostart Default to false
+     */
     function __construct($html_id = 'pid', $width = 500, $autostart = false){
         $this->html_id  = $html_id;
         $this->clr      = new stdClass;
@@ -7057,6 +7574,7 @@ class progress_bar {
     }
     /**
       * set progress bar color, call before $this->create
+      *
       * Usage:
       *     $clr->done = 'red';
       *     $clr->process = 'blue';
@@ -7064,7 +7582,7 @@ class progress_bar {
       *     $pb->create();
       *     ......
       *
-      * @param $clr object
+      * @param object $clr
       */
     function setclr($clr){
         foreach($clr as $n=>$v) {
@@ -7072,9 +7590,9 @@ class progress_bar {
         }
     }
     /**
-      * Create a new progress bar, this function will output
-      * html.
-      *
+      * Create a new progress bar, this function will output html.
+      * 
+      * @return void Echo's output
       */
     function create(){
             flush();
@@ -7129,6 +7647,14 @@ EOT;
             echo $htmlcode;
             flush();
     }
+    /**
+     * Update the progress bar
+     *
+     * @param int $percent from 1-100
+     * @param string $msg
+     * @param mixed $es
+     * @return void Echo's output
+     */
     function _update($percent, $msg, $es){
         if(empty($this->time_start)){
             $this->time_start = microtime(true);
@@ -7146,8 +7672,9 @@ EOT;
     /**
       * estimate time
       *
-      * @param $curtime int the time call this function
-      * @param $percent int
+      * @param int $curtime the time call this function
+      * @param int $percent from 1-100
+      * @return mixed Null, or int
       */
     function estimate($curtime, $pt){
         $consume = $curtime - $this->time_start;
@@ -7168,8 +7695,8 @@ EOT;
     /**
       * Update progress bar according percent
       *
-      * @param $percent int from 1-100
-      * @param $msg     string the message needed to be shown
+      * @param int $percent from 1-100
+      * @param string $msg the message needed to be shown
       */
     function update_full($percent, $msg){
         $percent = max(min($percent, 100), 0);
@@ -7181,9 +7708,9 @@ EOT;
     /**
       * Update progress bar according the nubmer of tasks
       *
-      * @param $cur   int       current task number
-      * @param $total int       total task number
-      * @param $msg   string    message
+      * @param int $cur current task number
+      * @param int $total total task number
+      * @param string $msg message
       */
     function update($cur, $total, $msg){
         $cur = max($cur, 0);
@@ -7215,6 +7742,9 @@ EOT;
 /**
  * Use this class from long operations where you want to output occasional information about
  * what is going on, but don't know if, or in what format, the output should be.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
  */
 abstract class moodle_progress_trace {
     /**
@@ -7234,16 +7764,36 @@ abstract class moodle_progress_trace {
 
 /**
  * This subclass of moodle_progress_trace does not ouput anything.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
  */
 class null_progress_trace extends moodle_progress_trace {
+    /**
+     * Does Nothing
+     *
+     * @param string $message
+     * @param int $depth
+     * @return void Does Nothing
+     */
     public function output($message, $depth = 0) {
     }
 }
 
 /**
  * This subclass of moodle_progress_trace outputs to plain text.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
  */
 class text_progress_trace extends moodle_progress_trace {
+    /**
+     * Output the trace message
+     *
+     * @param string $message
+     * @param int $depth
+     * @return void Output is echo'd
+     */
     public function output($message, $depth = 0) {
         echo str_repeat('  ', $depth), $message, "\n";
         flush();
@@ -7252,17 +7802,41 @@ class text_progress_trace extends moodle_progress_trace {
 
 /**
  * This subclass of moodle_progress_trace outputs as HTML.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
  */
 class html_progress_trace extends moodle_progress_trace {
+    /**
+     * Output the trace message
+     *
+     * @param string $message
+     * @param int $depth
+     * @return void Output is echo'd
+     */
     public function output($message, $depth = 0) {
         echo '<p>', str_repeat('&#160;&#160;', $depth), htmlspecialchars($message), "</p>\n";
         flush();
     }
 }
 
+/**
+ * HTML List Progress Tree
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
+ */
 class html_list_progress_trace extends moodle_progress_trace {
+    /** @var int */
     protected $currentdepth = -1;
 
+    /**
+     * Echo out the list
+     *
+     * @param string $message The message to display
+     * @param int $depth
+     * @return void Output is echoed
+     */
     public function output($message, $depth = 0) {
         $samedepth = true;
         while ($this->currentdepth > $depth) {
@@ -7285,6 +7859,9 @@ class html_list_progress_trace extends moodle_progress_trace {
         flush();
     }
 
+    /**
+     * Called when the processing is finished.
+     */
     public function finished() {
         while ($this->currentdepth >= 0) {
             echo "</li>\n</ul>\n";
@@ -7295,6 +7872,7 @@ class html_list_progress_trace extends moodle_progress_trace {
 
 /**
  * Return the authentication plugin title
+ *
  * @param string $authtype plugin type
  * @return string
  */
@@ -7306,5 +7884,4 @@ function auth_get_plugin_title ($authtype) {
     return $authtitle;
 }
 
-// vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
