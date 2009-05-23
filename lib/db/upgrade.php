@@ -1747,15 +1747,15 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table = new xmldb_table('block_instance_old');
 
     /// Adding fields to table block_instance_old
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('oldid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('blockid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('pageid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('pagetype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('position', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('weight', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('visible', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('configdata', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('oldid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('blockid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('pageid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('pagetype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('position', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('weight', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('visible', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('configdata', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
 
     /// Adding keys to table block_instance_old
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1801,11 +1801,11 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table = new xmldb_table('block_instances');
 
     /// Rename field weight on table block_instances to defaultweight
-        $field = new xmldb_field('weight', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, null, null, '0', 'position');
+        $field = new xmldb_field('weight', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, '0', 'position');
         $dbman->rename_field($table, $field, 'defaultweight');
 
     /// Rename field position on table block_instances to defaultregion
-        $field = new xmldb_field('position', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, null, 'pagetype');
+        $field = new xmldb_field('position', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, 'pagetype');
         $dbman->rename_field($table, $field, 'defaultregion');
 
         /// Main savepoint reached
@@ -1816,7 +1816,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     /// Changing precision of field defaultregion on table block_instances to (16)
         $table = new xmldb_table('block_instances');
-        $field = new xmldb_field('defaultregion', XMLDB_TYPE_CHAR, '16', null, XMLDB_NOTNULL, null, null, null, null, 'subpagepattern');
+        $field = new xmldb_field('defaultregion', XMLDB_TYPE_CHAR, '16', null, XMLDB_NOTNULL, null, null, 'subpagepattern');
 
     /// Launch change of precision for field defaultregion
         $dbman->change_field_precision($table, $field);
@@ -1854,25 +1854,25 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table = new xmldb_table('block_instances');
 
     /// Define field blockname to be added to block_instances
-        $field = new xmldb_field('blockname', XMLDB_TYPE_CHAR, '40', null, null, null, null, null, null, 'blockid');
+        $field = new xmldb_field('blockname', XMLDB_TYPE_CHAR, '40', null, null, null, null, 'blockid');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
     /// Define field contextid to be added to block_instances
-        $field = new xmldb_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null, 'blockname');
+        $field = new xmldb_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, 'blockname');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
     /// Define field showinsubcontexts to be added to block_instances
-        $field = new xmldb_field('showinsubcontexts', XMLDB_TYPE_INTEGER, '4', null, null, null, null, null, null, 'contextid');
+        $field = new xmldb_field('showinsubcontexts', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'contextid');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
     /// Define field subpagepattern to be added to block_instances
-        $field = new xmldb_field('subpagepattern', XMLDB_TYPE_CHAR, '16', null, null, null, null, null, null, 'pagetype');
+        $field = new xmldb_field('subpagepattern', XMLDB_TYPE_CHAR, '16', null, null, null, null, 'pagetype');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -1898,7 +1898,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     /// Rename field pagetype on table block_instances to pagetypepattern
         $table = new xmldb_table('block_instances');
-        $field = new xmldb_field('pagetype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, null, 'pageid');
+        $field = new xmldb_field('pagetype', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, 'pageid');
 
     /// Launch rename field pagetype
         $dbman->rename_field($table, $field, 'pagetypepattern');
@@ -2004,15 +2004,15 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table = new xmldb_table('block_instances');
 
     /// Changing nullability of field blockname on table block_instances to not null
-        $field = new xmldb_field('blockname', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null, null, null, 'id');
+        $field = new xmldb_field('blockname', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null, 'id');
         $dbman->change_field_notnull($table, $field);
 
     /// Changing nullability of field contextid on table block_instances to not null
-        $field = new xmldb_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'blockname');
+        $field = new xmldb_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, 'blockname');
         $dbman->change_field_notnull($table, $field);
 
     /// Changing nullability of field showinsubcontexts on table block_instances to not null
-        $field = new xmldb_field('showinsubcontexts', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, null, 'contextid');
+        $field = new xmldb_field('showinsubcontexts', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, 'contextid');
         $dbman->change_field_notnull($table, $field);
 
     /// Main savepoint reached
@@ -2057,14 +2057,14 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table = new xmldb_table('block_positions');
 
     /// Adding fields to table block_positions
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('blockinstanceid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('pagetype', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('subpage', XMLDB_TYPE_CHAR, '16', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('visible', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, '1');
-        $table->add_field('region', XMLDB_TYPE_CHAR, '16', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('weight', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('blockinstanceid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('pagetype', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('subpage', XMLDB_TYPE_CHAR, '16', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('visible', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '1');
+        $table->add_field('region', XMLDB_TYPE_CHAR, '16', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('weight', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
     /// Adding keys to table block_positions
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
