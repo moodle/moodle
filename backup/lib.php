@@ -747,7 +747,7 @@
         site_files_check_backup($course->id,$preferences->backup_unique_code);
 
         //Role assignments
-        $roles = get_records('role', '', '', 'sortorder');
+        $roles = $DB->get_records('role', null, 'sortorder');
         foreach ($roles as $role) {
             $preferences->backuproleassignments[$role->id] = $role;
         }
