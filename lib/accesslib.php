@@ -180,7 +180,8 @@ function cache_context($context) {
     // If there are too many items in the cache already, remove items until
     // there is space
     while (count($context_cache_id) >= MAX_CONTEXT_CACHE_SIZE) {
-        $first = array_shift($context_cache_id);
+        $first = reset($context_cache_id);
+        unset($context_cache_id[$first->id]);
         unset($context_cache[$first->contextlevel][$first->instanceid]);
     }
 
