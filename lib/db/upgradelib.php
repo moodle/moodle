@@ -306,11 +306,11 @@ function upgrade_fix_incorrect_mnethostids() {
     list($in_sql, $in_params) = $DB->get_in_or_equal($hosts, SQL_PARAMS_QM, null, false);
 
     $sql = "SELECT id
-            FROM {$CFG->prefix}user u1
+            FROM {user} u1
             WHERE u1.mnethostid $in_sql
               AND NOT EXISTS (
                   SELECT 'x'
-                    FROM {$CFG->prefix}user u2
+                    FROM {user} u2
                    WHERE u2.username = u1.username
                      AND u2.mnethostid = ?)";
 
