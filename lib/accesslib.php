@@ -235,7 +235,8 @@ function cache_context($context) {
     // If there are too many items in the cache already, remove items until
     // there is space
     while (count($ACCESSLIB_PRIVATE->contextsbyid) >= MAX_CONTEXT_CACHE_SIZE) {
-        $first = array_shift($ACCESSLIB_PRIVATE->contextsbyid);
+        $first = reset($ACCESSLIB_PRIVATE->contextsbyid);
+        unset($ACCESSLIB_PRIVATE->contextsbyid[$first->id]);
         unset($ACCESSLIB_PRIVATE->contexts[$first->contextlevel][$first->instanceid]);
     }
 
