@@ -235,14 +235,23 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo '<label for="menurestore_restorecatto">'.get_string ('category').'</label>';
         echo "</td>";
         echo "<td>";
-        // Category selection isn't alowed if restoring from within SITEID course
-        if ($id != SITEID) {
-            make_categories_list($categories, $parents);
-            choose_from_menu($categories, "restore_restorecatto", $course_header->category->id, "");
+        // Get the list of categories where the user can create courses
+        make_categories_list($categories, $parents, 'moodle/course:create');
+        $category_default = null;
+        // Best default 1: restoring in same site, use category of original course if available
+        if (backup_is_same_site($info) &&
+            !empty($course_header->category->id) &&
+            array_key_exists($course_header->category->id, $categories)) {
+            $category_default = $course_header->category->id;
+        // Best default 2: restore to the category of the course we are restoring from if available
         } else {
-            print_string('notavailable');
-            echo '<input type="hidden" name="restore_restorecatto" id="menurestore_restorecatto" value="0" />';
+            $fromcat = get_field('course', 'category', 'id', $id);
+            if (!empty($fromcat) &&
+                array_key_exists($fromcat, $categories)) {
+                $category_default = $fromcat;
+            }
         }
+        choose_from_menu($categories, 'restore_restorecatto', $category_default, "");
         echo "</td>";
         echo "</tr>";
 
