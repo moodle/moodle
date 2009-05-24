@@ -2733,7 +2733,9 @@ function &get_fast_modinfo(&$course, $userid=0) {
 
     // Ensure cache does not use too much RAM
     if (count($cache) > MAX_MODINFO_CACHE_SIZE) {
-        array_shift($cache);
+        reset($cache);
+        $key = key($cache);
+        unset($cache[$key]);
     }
 
     return $cache[$course->id];
