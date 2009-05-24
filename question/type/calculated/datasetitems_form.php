@@ -55,10 +55,7 @@ class question_dataset_dependent_items_form extends moodleform {
         }
         foreach ($this->datasetdefs as $defid => $datasetdef) {
             if (isset($datasetdef->id)) {
-                $this->datasetdefs[$defid]->items = $DB->get_records_sql( // Use number as key!!
-                        " SELECT itemnumber, definition, id, value
-                          FROM {question_dataset_items}
-                          WHERE definition = ? ", array($datasetdef->id));
+                $this->datasetdefs[$defid]->items = $this->qtypeobj->get_database_dataset_items($datasetdef->id);
             }
         }
         parent::moodleform($submiturl);
