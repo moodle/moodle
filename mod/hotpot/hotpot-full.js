@@ -2922,14 +2922,23 @@ hpInterceptClues();
 hpInterceptChecks();
 function hpFindForm(formname, w) {
 	if (w==null) w = self;
-	var f = w.document.forms[formname];
-	if (f==null && w.frames) {
+    var f = w.document.getElementById(formname);
+    if (f) {
+        return f;
+    }
+    var f = w.document.forms[formname];
+    if (f) {
+        return f;
+    }
+	if (w.frames) {
 		for (var i=0; i<w.frames.length; i++) {
-				f = hpFindForm(formname, w.frames[i]);
-				if (f) break;
+				var f = hpFindForm(formname, w.frames[i]);
+				if (f) {
+                    return f;
+                }
 		}
 	}
-	return f;
+	return null;
 }
 function Finish(quizstatus) {
 	var mark = hpScore();

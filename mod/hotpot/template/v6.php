@@ -48,6 +48,12 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         if (!empty($pattern)) {
             $this->expand_strings('html', $pattern);
         }
+        // fix doctype (convert short dtd to long dtd)
+        $this->html = preg_replace(
+            '/<!DOCTYPE[^>]*>/',
+            '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">',
+            $this->html, 1
+        );
     }
 
     // captions and messages
@@ -68,7 +74,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $this->int_value('hotpot-config-file,global,include-back');
     }
     function v6_expand_BackCaption() {
-        return $this->parent->xml_value('hotpot-config-file,global,back-caption');
+        return str_replace('<=', '&lt;=', $this->parent->xml_value('hotpot-config-file,global,back-caption'));
     }
     function v6_expand_ClickToAdd() {
         return $this->parent->xml_value('hotpot-config-file,'.$this->parent->quiztype.',click-to-add');
@@ -115,8 +121,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $this->int_value('hotpot-config-file,global,include-next-ex');
     }
     function v6_expand_NextExCaption() {
-        $caption = $this->parent->xml_value('hotpot-config-file,global,next-ex-caption');
-        return ($caption=='=>' ? '=&gt;' : $caption);
+        return str_replace('=>', '=&gt;', $this->parent->xml_value('hotpot-config-file,global,next-ex-caption'));
     }
     function v6_expand_NextQCaption() {
         return $this->parent->xml_value('hotpot-config-file,global,next-q-caption');
