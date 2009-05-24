@@ -1666,19 +1666,21 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
         $this->html = preg_replace('|</head>|i', $script.'</head>', $this->html, 1);
     }
     function insert_submission_form($attemptid, $startblock, $endblock, $keep_contents=false) {
-        $form_name = 'store';
+        $form_id = 'store';
         $form_fields = ''
+        .   '<fieldset style="display:none">'
         .   '<input type="hidden" name="attemptid" value="'.$attemptid.'" />'
         .   '<input type="hidden" name="starttime" value="" />'
         .   '<input type="hidden" name="endtime" value="" />'
         .   '<input type="hidden" name="mark" value="" />'
         .   '<input type="hidden" name="detail" value="" />'
         .   '<input type="hidden" name="status" value="" />'
+        .   '</fieldset>'
         ;
-        $this->insert_form($startblock, $endblock, $form_name, $form_fields, $keep_contents);
+        $this->insert_form($startblock, $endblock, $form_id, $form_fields, $keep_contents);
     }
     function insert_giveup_form($attemptid, $startblock, $endblock, $keep_contents=false) {
-        $form_name = ''; // no <form> tag will be generated
+        $form_id = ''; // no <form> tag will be generated
         $form_fields = ''
         .   '<button onclick="Finish('.HOTPOT_STATUS_ABANDONED.')" class="FuncButton" '
         .   'onfocus="FuncBtnOver(this)" onblur="FuncBtnOut(this)" '
@@ -1686,17 +1688,22 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
         .   'onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)">'
         .   get_string('giveup', 'hotpot').'</button>'
         ;
-        $this->insert_form($startblock, $endblock, $form_name, $form_fields, $keep_contents, true);
+        $this->insert_form($startblock, $endblock, $form_id, $form_fields, $keep_contents, true);
     }
-    function insert_form($startblock, $endblock, $form_name, $form_fields, $keep_contents, $center=false) {
+    function insert_form($startblock, $endblock, $form_id, $form_fields, $keep_contents, $center=false) {
         global $CFG;
         $search = '#('.preg_quote($startblock).')(.*?)('.preg_quote($endblock).')#s';
         $replace = $form_fields;
         if ($keep_contents) {
             $replace .= '\\2';
         }
-        if ($form_name) {
-            $replace = '<form action="'.$CFG->wwwroot.'/mod/hotpot/attempt.php" method="POST" name="'.$form_name.'" target="'.$CFG->framename.'">'.$replace.'</form>';
+        if (! empty($CFG->framename)) {
+            $frametarget = ' onsubmit="'."this.target='$CFG->framename';".'"';
+        } else {
+            $frametarget = '';
+        }
+        if ($form_id) {
+            $replace = '<form action="'.$CFG->wwwroot.'/mod/hotpot/attempt.php" method="post" id="'.$form_id.'"'.$frametarget.'>'.$replace.'</form>';
         }
         if ($center) {
             $replace = '<div style="margin-left:auto; margin-right:auto; text-align: center;">'.$replace.'</div>';
