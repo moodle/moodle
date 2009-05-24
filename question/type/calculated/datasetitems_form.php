@@ -36,6 +36,12 @@ class question_dataset_dependent_items_form extends moodleform {
         $this->regenerate = $regenerate;
         $this->question = $question;
         $this->qtypeobj =& $QTYPES[$this->question->qtype];
+				// Validate the question category.
+				if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
+				    print_error('categorydoesnotexist', 'question', $returnurl);
+				}
+        $this->category = $category;
+        $this->categorycontext = get_context_instance_by_id($category->contextid);
         //get the dataset defintions for this question
         if (empty($question->id)) {
             $this->datasetdefs = $this->qtypeobj->get_dataset_definitions($question->id, $SESSION->calculated->definitionform->dataset);
@@ -195,6 +201,10 @@ class question_dataset_dependent_items_form extends moodleform {
         $mform->setType('courseid', PARAM_INT);
         $mform->setDefault('courseid', 0);
 
+        $mform->addElement('hidden', 'category');
+        $mform->setType('category', PARAM_RAW);
+        $mform->setDefault('category', array('contexts' => array($this->categorycontext)));
+              
         $mform->addElement('hidden', 'cmid');
         $mform->setType('cmid', PARAM_INT);
         $mform->setDefault('cmid', 0);

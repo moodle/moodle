@@ -25,9 +25,15 @@ class question_dataset_dependent_definitions_form extends moodleform {
      * @param MoodleQuickForm $mform the form being built.
      */
     function question_dataset_dependent_definitions_form($submiturl, $question){
-        global $QTYPES;
+        global $QTYPES, $DB;
         $this->question = $question;
         $this->qtypeobj =& $QTYPES[$this->question->qtype];
+				// Validate the question category.
+				if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
+				    print_error('categorydoesnotexist', 'question', $returnurl);
+				}
+        $this->category = $category;
+        $this->categorycontext = get_context_instance_by_id($category->contextid);
         parent::moodleform($submiturl);
     }
     function definition() {
@@ -99,6 +105,10 @@ class question_dataset_dependent_definitions_form extends moodleform {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
+        $mform->addElement('hidden', 'category');
+        $mform->setType('category', PARAM_RAW);
+        $mform->setDefault('category', array('contexts' => array($this->categorycontext)));
+                  
         $mform->addElement('hidden', 'courseid');
         $mform->setType('courseid', PARAM_INT);
         $mform->setDefault('courseid', 0);
