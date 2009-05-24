@@ -105,10 +105,7 @@ class question_calculated_qtype extends default_questiontype {
                      if ($def->itemcount > 0 ) {
                         // get the datasetitems
                         $def->items = array();
-                        $sql1= (" SELECT itemnumber, definition, id, value
-                        FROM {question_dataset_items}
-                        WHERE definition = ? order by itemnumber ASC ");
-                        if ($items = $DB->get_records_sql($sql1, array($def->id))){
+                        if ($items = $this->get_database_dataset_items($def->id)){
                             $n = 0;
                             foreach( $items as $ii){
                                 $n++;
@@ -890,6 +887,30 @@ class question_calculated_qtype extends default_questiontype {
         }
     }
 
+		/**
+		* This function get the dataset items using id as unique parameter and return an
+		* array with itemnumber as index sorted ascendant 
+		* If the multiple records with the same itemnumber exist, only the newest one 
+		* i.e with the greatest id is used, the others are ignored but not deleted.
+		* MDL-19210
+		*/ 
+    function get_database_dataset_items($definition){
+    	global $CFG, $DB;
+    		$databasedataitems = $DB->get_records_sql( // Use number as key!!
+                        " SELECT id , itemnumber, definition,  value
+                          FROM {$CFG->prefix}question_dataset_items
+                          WHERE definition = $definition order by id DESC ", array($definition));
+      	$dataitems = Array();
+       	foreach($databasedataitems as $id => $dataitem  ){
+       	if (!isset($dataitems[$dataitem->itemnumber])){
+       		    $dataitems[$dataitem->itemnumber] = $dataitem ;
+       		  }else {
+       		  	// deleting the unused records could be added here
+       		  }
+       	}
+       	ksort($dataitems);
+       	return $dataitems ;
+    }
             
     function save_dataset_items($question, $fromform){
         global $CFG, $DB;
@@ -969,11 +990,10 @@ class question_calculated_qtype extends default_questiontype {
             //add the other items.
             // Generate a new dataset item (or reuse an old one)
             foreach ($datasetdefs as $defid => $datasetdef) {
+            	// in case that for category datasets some new items has been added
+            	// get actual values
                 if (isset($datasetdef->id)) {
-                    $datasetdefs[$defid]->items = $DB->get_records_sql( // Use number as key!!
-                          " SELECT itemnumber, definition, id, value
-                            FROM {question_dataset_items}
-                            WHERE definition = ? ORDER BY itemnumber", array($datasetdef->id));
+                	$datasetdefs[$defid]->items = $this->get_database_dataset_items($datasetdef->id);
                 }
                 for ($numberadded =$maxnumber+1 ; $numberadded <= $maxnumber+$numbertoadd ; $numberadded++){
                     if (isset($datasetdefs[$defid]->items[$numberadded])  ){
@@ -1368,10 +1388,7 @@ class question_calculated_qtype extends default_questiontype {
                         print_error('cannotcreatedataset', 'question', '', $defid);
                    }
                    //copy the dataitems
-                   $olditems = $DB->get_records_sql( // Use number as key!!
-                        " SELECT itemnumber, value
-                          FROM {question_dataset_items}
-                          WHERE definition =  ? ", array($olddatasetid));
+                   $olditems = $this->get_database_dataset_items($olddatasetid);
                    if (count($olditems) > 0 ) {
                         $itemcount = 0;
                         foreach($olditems as $item ){
@@ -1453,18 +1470,25 @@ class question_calculated_qtype extends default_questiontype {
         // An array indexed by the variable names (d.name) pointing to the value
         // to be substituted
         global $CFG, $DB;
-        if (!$dataset = $DB->get_records_sql(
-                        "SELECT d.name, i.value
+        if (!$dataitems = $DB->get_records_sql(
+                        "SELECT i.id, d.name, i.value
                         FROM {question_dataset_definitions} d,
                              {question_dataset_items} i,
                              {question_datasets} q
                         WHERE q.question = ?
                         AND q.datasetdefinition = d.id
                         AND d.id = i.definition
-                        AND i.itemnumber = ?", array($question->id, $datasetitem))) {
+                        AND i.itemnumber = ? ORDER by i.id DESC ", array($question->id, $datasetitem))) {
             print_error('cannotgetdsfordependent', 'question', '', array($question->id, $datasetitem));
         }
-        array_walk($dataset, create_function('&$val', '$val = $val->value;'));
+        $dataset = Array();
+       	foreach($dataitems as $id => $dataitem  ){
+	       	if (!isset($dataset[$dataitem->name])){
+	       		    $dataset[$dataitem->name] = $dataitem->value ;
+	       		  }else {
+	       		  	// deleting the unused records could be added here
+	       		  }
+       	}
         return $dataset;
     }
     
@@ -1732,7 +1756,7 @@ class question_calculated_qtype extends default_questiontype {
         return $status;
     }
 
-/**
+	/**
    * Runs all the code required to set up and save an essay question for testing purposes.
    * Alternate DB table prefix may be used to facilitate data deletion.
    */
