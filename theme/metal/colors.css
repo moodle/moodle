@@ -590,7 +590,7 @@ table.message_search_results td {
 
 #mod-forum-discuss .forumpost.unread .content {
   border-width:3px;
-  border-color: #FFD991; 
+/*  border-color: #FFD991; */ 
 } 
 
 #mod-forum-discuss .forumthread .unread {

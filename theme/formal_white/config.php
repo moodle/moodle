@@ -12,7 +12,7 @@ $THEME->sheets = array('fw_layout','fw_color','fw_fonts');
 /// stylesheet files you want included in this theme, and in what order
 ////////////////////////////////////////////////////////////////////////////////
 
-$THEME->standardsheets = array('styles_layout');
+$THEME->standardsheets = array('styles_layout', 'styles_color');
 ///$THEME->standardsheets = true;
 
 /// This variable can be set to an array containing
