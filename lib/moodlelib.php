@@ -662,6 +662,19 @@ function is_number($value) {
 }
 
 /**
+ * Returns host part from url
+ * @param string $url full url
+ * @return string host, null if not found
+ */
+function get_host_from_url($url) {
+    preg_match('|^[a-z]+://([a-zA-Z0-9-.]+)|i', $url, $matches);
+    if ($matches) {
+        return $matches[1];
+    }
+    return null;
+}
+
+/**
  * Tests whether anything was returned by text editor
  *
  * This function is useful for testing whether something you got back from
