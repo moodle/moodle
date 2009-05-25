@@ -118,10 +118,10 @@ function install_get_list_of_languages() {
 
     $languages = array();
 
-/// Get raw list of lang directories
+    // Get raw list of lang directories
     $langdirs = get_list_of_plugins('install/lang');
     asort($langdirs);
-/// Get some info from each lang
+    // Get some info from each lang
     foreach ($langdirs as $lang) {
         if ($lang == 'en') {
             continue;
@@ -139,8 +139,57 @@ function install_get_list_of_languages() {
             }
         }
     }
-/// Return array
+    // Return array
     return $languages;
+}
+
+/**
+ * Returns content of config.php file.
+ * @param moodle_database $database database instance
+ * @param object $cfg copy of $CFG
+ * @param bool $userealpath allows symbolic links in dirroot
+ * @return string
+ */
+function install_generate_configphp($database, $cfg, $userealpath=false) {
+    $configphp = '<?php  // Moodle Configuration File ' . "\r\n\r\n";
+
+    $configphp .= 'unset($CFG);'."\r\n";
+    $configphp .= '$CFG = new stdClass();'."\r\n\r\n"; // prevent PHP5 strict warnings
+
+    $dbconfig = $database->export_dbconfig();
+
+    foreach ($dbconfig as $key=>$value) {
+        $key = str_pad($key, 9);
+        $configphp .= '$CFG->'.$key.' = '.var_export($value, true).";\r\n";
+    }
+    $configphp .= "\r\n";
+
+    $configphp .= '$CFG->wwwroot   = '.var_export($cfg->wwwroot, true).";\r\n";
+
+    if ($userealpath) {
+        $dirroot = str_replace('\\', '/', $cfg->dirroot); // win32 fix
+        $dirroot = rtrim($dirroot, '/');  // no trailing /
+        $configphp .= '$CFG->dirroot   = realpath('.var_export($dirroot, true).");\r\n"; // fix for sym links
+    } else {
+        $dirroot = str_replace('\\', '/', $cfg->dirroot); // win32 fix
+        $dirroot = rtrim($dirroot, '/');  // no trailing /
+        $configphp .= '$CFG->dirroot   = '.var_export($dirroot, true).";\r\n";
+    }
+
+    $dataroot = str_replace('\\', '/', $cfg->dataroot); // win32 fix
+    $dataroot = rtrim($dataroot, '/');  // no trailing /
+    $configphp .= '$CFG->dataroot  = '.var_export($dataroot, true).";\r\n";
+
+    $configphp .= '$CFG->admin     = '.var_export($cfg->admin, true).";\r\n\r\n";
+
+    $configphp .= '$CFG->directorypermissions = 00777;  // try 02777 on a server in Safe Mode'."\r\n";
+    $configphp .= "\r\n";
+
+    $configphp .= 'require_once("$CFG->dirroot/lib/setup.php");'."\r\n\r\n";
+    $configphp .= '// There is no php closing tag in this file,'."\r\n";
+    $configphp .= '// it is intentional because it prevents trailing whitespace problems!'."\r\n";
+
+    return $configphp;
 }
 
 /**
