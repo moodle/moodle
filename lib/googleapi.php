@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Moodle - Modular Object-Oriented Dynamic Learning Environment
  *          http://moodle.org
@@ -17,14 +17,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    moodle
+ * @package    moodlecore
  * @subpackage lib
- * @author     Dan Poltawski <talktodan@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
+ * @copyright Dan Poltawski <talktodan@gmail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  * Simple implementation of some Google API functions for Moodle.
  */
 
+ /** Include essential file */
 require_once($CFG->libdir.'/filelib.php');
 
 /**
@@ -33,6 +34,11 @@ require_once($CFG->libdir.'/filelib.php');
  * Most Google API Calls required that requests are sent with an 
  * Authorization header + token. This class extends the curl class
  * to aid this
+ *
+ * @package    moodlecore
+ * @subpackage lib
+ * @copyright Dan Poltawski <talktodan@gmail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class google_auth_request extends curl{
     protected $token = '';
@@ -78,6 +84,11 @@ abstract class google_auth_request extends curl{
 /**
  * Used to uprade a google AuthSubRequest one-time token into
  * a session token which can be used long term.
+ *
+ * @package    moodlecore
+ * @subpackage lib
+ * @copyright Dan Poltawski <talktodan@gmail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class google_authsub_request extends google_auth_request {
     const AUTHSESSION_URL = 'https://www.google.com/accounts/AuthSubSessionToken';
@@ -114,6 +125,11 @@ class google_authsub_request extends google_auth_request {
 
 /**
  * Allows http calls using google subauth authorisation
+ *
+ * @package    moodlecore
+ * @subpackage lib
+ * @copyright Dan Poltawski <talktodan@gmail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class google_authsub extends google_auth_request {
     const LOGINAUTH_URL    = 'https://www.google.com/accounts/AuthSubRequest';
@@ -199,7 +215,12 @@ class google_authsub extends google_auth_request {
 /**
  * Class for manipulating google documents through the google data api
  * Docs for this can be found here:
- * http://code.google.com/apis/documents/docs/2.0/developers_guide_protocol.html
+ * {@link http://code.google.com/apis/documents/docs/2.0/developers_guide_protocol.html}
+ *
+ * @package    moodlecore
+ * @subpackage lib
+ * @copyright Dan Poltawski <talktodan@gmail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class google_docs {
     // need both docs and the spreadsheets realm
@@ -320,7 +341,12 @@ class google_docs {
 /**
  * Class for manipulating picasa through the google data api
  * Docs for this can be found here:
- * http://code.google.com/apis/picasaweb/developers_guide_protocol.html
+ * {@link http://code.google.com/apis/picasaweb/developers_guide_protocol.html}
+ *
+ * @package    moodlecore
+ * @subpackage lib
+ * @copyright Dan Poltawski <talktodan@gmail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class google_picasa {
     const REALM             = 'http://picasaweb.google.com/data/';
@@ -502,10 +528,15 @@ class google_picasa {
 /**
  * Beginings of an implementation of Clientogin authenticaton for google 
  * accounts as documented here:
- * http://code.google.com/apis/accounts/docs/AuthForInstalledApps.html#ClientLogin
+ * {@link http://code.google.com/apis/accounts/docs/AuthForInstalledApps.html#ClientLogin}
  *
  * With this authentication we have to accept a username and password and to post 
  * it to google. Retrieving a token for use afterwards.
+ *
+ * @package    moodlecore
+ * @subpackage lib
+ * @copyright Dan Poltawski <talktodan@gmail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class google_authclient extends google_auth_request {
     const LOGIN_URL = 'https://www.google.com/accounts/ClientLogin';

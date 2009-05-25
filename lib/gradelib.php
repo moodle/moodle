@@ -1,36 +1,29 @@
-<?php // $Id$
+<?php
 
-///////////////////////////////////////////////////////////////////////////
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards  Martin Dougiamas  http://moodle.com       //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/ 
+// 
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Library of functions for gradebook - both public and internal
  *
- * @author Moodle HQ developers
- * @version  $Id$
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package moodlecore
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+ /** Include essential files */
 require_once($CFG->libdir . '/grade/constants.php');
 
 require_once($CFG->libdir . '/grade/grade_category.php');
@@ -52,7 +45,10 @@ require_once($CFG->libdir . '/grade/grade_outcome.php');
  * 'grademin', 'scaleid', 'multfactor', 'plusfactor', 'deleted' and 'hidden'. 'reset' means delete all current grades including locked ones.
  *
  * Manual, course or category items can not be updated by this function.
- * @public
+ * @access public
+ * @global object
+ * @global object
+ * @global object
  * @param string $source source of the grade such as 'mod/assignment'
  * @param int $courseid id of course
  * @param string $itemtype type of grade item - mod, block
@@ -304,7 +300,8 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
 /**
  * Updates outcomes of user
  * Manual outcomes can not be updated.
- * @public
+ *
+ * @access public
  * @param string $source source of the grade such as 'mod/assignment'
  * @param int $courseid id of course
  * @param string $itemtype 'mod', 'block'
@@ -328,13 +325,15 @@ function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $item
 /**
  * Returns grading information for given activity - optionally with users grades
  * Manual, course or category items can not be queried.
- * @public
+ *
+ * @access public
+ * @global object
  * @param int $courseid id of course
  * @param string $itemtype 'mod', 'block'
  * @param string $itemmodule 'forum, 'quiz', etc.
  * @param int $iteminstance id of the item module
  * @param int $userid_or_ids optional id of the graded user or array of ids; if userid not used, returns only information about grade_item
- * @return array of grade information objects (scaleid, name, grade and locked status, etc.) indexed with itemnumbers
+ * @return array Array of grade information objects (scaleid, name, grade and locked status, etc.) indexed with itemnumbers
  */
 function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $userid_or_ids=null) {
     global $CFG;
@@ -547,8 +546,11 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
 
 /**
  * Returns course gradebook setting
+ *
+ * @global object
  * @param int $courseid
  * @param string $name of setting, maybe null if reset only
+ * @param string $default
  * @param bool $resetcache force reset of internal static cache
  * @return string value, NULL if no setting
  */
@@ -583,6 +585,8 @@ function grade_get_setting($courseid, $name, $default=null, $resetcache=false) {
 
 /**
  * Returns all course gradebook settings as object properties
+ *
+ * @global object
  * @param int $courseid
  * @return object
  */
@@ -603,6 +607,8 @@ function grade_get_settings($courseid) {
 
 /**
  * Add/update course gradebook setting
+ *
+ * @global object
  * @param int $courseid
  * @param string $name of setting
  * @param string value, NULL means no setting==remove
@@ -633,11 +639,12 @@ function grade_set_setting($courseid, $name, $value) {
 
 /**
  * Returns string representation of grade value
+ *
  * @param float $value grade value
  * @param object $grade_item - by reference to prevent scale reloading
  * @param bool $localized use localised decimal separator
  * @param int $displaytype type of display - GRADE_DISPLAY_TYPE_REAL, GRADE_DISPLAY_TYPE_PERCENTAGE, GRADE_DISPLAY_TYPE_LETTER
- * @param int $decimalplaces number of decimal places when displaying float values
+ * @param int $decimals number of decimal places when displaying float values
  * @return string
  */
 function grade_format_gradevalue($value, &$grade_item, $localized=true, $displaytype=null, $decimals=null) {
@@ -701,6 +708,9 @@ function grade_format_gradevalue($value, &$grade_item, $localized=true, $display
     }
 }
 
+/**
+ * @todo Document this function 
+ */
 function grade_format_gradevalue_real($value, $grade_item, $decimals, $localized) {
     if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
         if (!$scale = $grade_item->load_scale()) {
@@ -714,7 +724,9 @@ function grade_format_gradevalue_real($value, $grade_item, $decimals, $localized
         return format_float($value, $decimals, $localized);
     }
 }
-
+/**
+ * @todo Document this function 
+ */
 function grade_format_gradevalue_percentage($value, $grade_item, $decimals, $localized) {
     $min = $grade_item->grademin;
     $max = $grade_item->grademax;
@@ -725,7 +737,9 @@ function grade_format_gradevalue_percentage($value, $grade_item, $decimals, $loc
     $percentage = (($value-$min)*100)/($max-$min);
     return format_float($percentage, $decimals, $localized).' %';
 }
-
+/**
+ * @todo Document this function 
+ */
 function grade_format_gradevalue_letter($value, $grade_item) {
     $context = get_context_instance(CONTEXT_COURSE, $grade_item->courseid);
     if (!$letters = grade_get_letters($context)) {
@@ -749,6 +763,7 @@ function grade_format_gradevalue_letter($value, $grade_item) {
 
 /**
  * Returns grade options for gradebook category menu
+ *
  * @param int $courseid
  * @param bool $includenew include option for new category (-1)
  * @return array of grade categories in course
@@ -783,6 +798,7 @@ function grade_get_categories_menu($courseid, $includenew=false) {
 
 /**
  * Returns grade letters array used in context
+ *
  * @param object $context object or null for defaults
  * @return array of grade_boundary=>letter_string
  */
@@ -830,10 +846,12 @@ function grade_get_letters($context=null) {
 
 /**
  * Verify new value of idnumber - checks for uniqueness of new idnumbers, old are kept intact
+ *
+ * @global object
  * @param string idnumber string (with magic quotes)
- * @param int $courseid - id numbers are course unique only
+ * @param int $courseid id numbers are course unique only
+ * @param object $grade_item is item idnumber
  * @param object $cm used for course module idnumbers and items attached to modules
- * @param object $gradeitem is item idnumber
  * @return boolean true means idnumber ok
  */
 function grade_verify_idnumber($idnumber, $courseid, $grade_item=null, $cm=null) {
@@ -864,6 +882,8 @@ function grade_verify_idnumber($idnumber, $courseid, $grade_item=null, $cm=null)
 
 /**
  * Force final grade recalculation in all course items
+ *
+ * @global object
  * @param int $courseid
  */
 function grade_force_full_regrading($courseid) {
@@ -873,6 +893,8 @@ function grade_force_full_regrading($courseid) {
 
 /**
  * Forces regrading of all site grades - usualy when chanign site setings
+ * @global object
+ * @global object
  */
 function grade_force_site_regrading() {
     global $CFG, $DB;
@@ -998,9 +1020,12 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
 
 /**
  * Refetches data from all course activities
+ *
+ * @global object
+ * @global object
  * @param int $courseid
  * @param string $modname
- * @return success
+ * @return void
  */
 function grade_grab_course_grades($courseid, $modname=null) {
     global $CFG, $DB;
@@ -1049,7 +1074,11 @@ function grade_grab_course_grades($courseid, $modname=null) {
 
 /**
  * Force full update of module grades in central gradebook
+ *
+ * @global object
+ * @global object
  * @param object $modinstance object with extra cmidnumber and modname property
+ * @param int $userid
  * @return boolean success
  */
 function grade_update_mod_grades($modinstance, $userid=0) {
@@ -1079,7 +1108,10 @@ function grade_update_mod_grades($modinstance, $userid=0) {
 
 /**
  * Remove grade letters for given context
+ *
+ * @global object
  * @param object $context
+ * @param bool $showfeedback
  */
 function remove_grade_letters($context, $showfeedback) {
     global $DB;
@@ -1093,6 +1125,8 @@ function remove_grade_letters($context, $showfeedback) {
 }
 /**
  * Remove all grade related course data - history is kept
+ *
+ * @global object
  * @param int $courseid
  * @param bool $showfeedback print feedback
  */
@@ -1134,6 +1168,8 @@ function remove_course_grades($courseid, $showfeedback) {
 
 /**
  * Called when course category deleted - cleanup gradebook
+ *
+ * @global object
  * @param int $categoryid course category id
  * @param int $newparentid empty means everything deleted, otherwise id of category where content moved
  * @param bool $showfeedback print feedback
@@ -1147,6 +1183,10 @@ function grade_course_category_delete($categoryid, $newparentid, $showfeedback) 
 
 /**
  * Does gradebook cleanup when module uninstalled.
+ *
+ * @global object
+ * @global object
+ * @param string $modname
  */
 function grade_uninstalled_module($modname) {
     global $CFG, $DB;
@@ -1167,6 +1207,9 @@ function grade_uninstalled_module($modname) {
 
 /**
  * Grading cron job
+ *
+ * @global object
+ * @global object
  */
 function grade_cron() {
     global $CFG, $DB;
@@ -1221,8 +1264,9 @@ function grade_cron() {
 
 /**
  * Resel all course grades
+ *
  * @param int $courseid
- * @return success
+ * @return bool success
  */
 function grade_course_reset($courseid) {
 
@@ -1245,7 +1289,8 @@ function grade_course_reset($courseid) {
 /**
  * Convert number to 5 decimalfloat, empty tring or null db compatible format
  * (we need this to decide if db value changed)
- * @param mixed number
+ *
+ * @param mixed $number
  * @return mixed float or null
  */
 function grade_floatval($number) {
@@ -1260,9 +1305,10 @@ function grade_floatval($number) {
 /**
  * Compare two float numbers safely. Uses 5 decimals php precision. Nulls accepted too.
  * Used for skipping of db updates
+ *
  * @param float $f1
  * @param float $f2
- * @return true if different
+ * @return bool true if different
  */
 function grade_floats_different($f1, $f2) {
     // note: db rounding for 10,5 is different from php round() function

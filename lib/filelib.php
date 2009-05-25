@@ -35,6 +35,9 @@ require_once("$CFG->libdir/packer/zip_packer.php");
 
 /**
  * Given a physical path to a file, returns the URL through which it can be reached in Moodle.
+ *
+ * @global object
+ * @global string
  * @param string $path Physical path to a file
  * @param array $options associative array of GET variables to append to the URL
  * @param string $type (questionfile|rssfile|user|usergroup|httpscoursefile|coursefile)
@@ -104,7 +107,9 @@ function get_file_url($path, $options=null, $type='coursefile') {
 
 /**
  * Encodes file serving url
- * TODO: decide if we really need this
+ *
+ * @todo decide if we really need this
+ * @global object
  * @param string $urlbase
  * @param string $path /filearea/itemid/dir/dir/file.exe
  * @param bool $forcedownload
@@ -139,6 +144,7 @@ function file_encode_url($urlbase, $path, $forcedownload=false, $https=false) {
 
 /**
  * Prepares standardised text field fro editing with Editor formslib element
+ *
  * @param object $data $database entry field
  * @param string $field name of data field
  * @param array $options various options
@@ -206,6 +212,7 @@ function file_prepare_standard_editor($data, $field, array $options, $context=nu
 
 /**
  * Prepares editing with File manager formslib element
+ *
  * @param object $data $database entry field
  * @param string $field name of data field
  * @param array $options various options
@@ -252,6 +259,7 @@ function file_postupdate_standard_editor($data, $field, array $options, $context
 
 /**
  * Saves text and files modified by Editor formslib element
+ *
  * @param object $data $database entry field
  * @param string $field name of data field
  * @param array $options various options
@@ -281,6 +289,7 @@ function file_prepare_standard_filemanager($data, $field, array $options, $conte
 
 /**
  * Saves files modified by File manager formslib element
+ *
  * @param object $data $database entry field
  * @param string $field name of data field
  * @param array $options various options
@@ -319,6 +328,9 @@ function file_postupdate_standard_filemanager($data, $field, array $options, $co
 }
 
 /**
+ *
+ * @global object
+ * @global object
  * @return int a random but available draft itemid that can be used to create a new draft
  * file area.
  */
@@ -346,6 +358,9 @@ function file_get_unused_draft_itemid() {
  * Initialise a draft file area from a real one by copying the files. A draft
  * area will be created if one does not already exist. Normally you should
  * get $draftitemid by calling file_get_submitted_draft_itemid('elementname');
+ *
+ * @global object
+ * @global object
  * @param int &$draftitemid the id of the draft area to use, or 0 to create a new one, in which case this parameter is updated.
  * @param integer $contextid This parameter and the next two identify the file area to copy files from.
  * @param string $filearea helps indentify the file area.
@@ -394,6 +409,8 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $filearea, $itemid, 
 
 /**
  * Convert encoded URLs in $text from the @@PLUGINFILE@@/... form to an actual URL.
+ *
+ * @global object
  * @param string $text The content that may contain ULRs in need of rewriting.
  * @param string $file The script that should be used to serve these files. pluginfile.php, draftfile.php, etc.
  * @param integer $contextid This parameter and the next two identify the file area to use.
@@ -429,6 +446,9 @@ function file_rewrite_pluginfile_urls($text, $file, $contextid, $filearea, $item
 
 /**
  * Returns information about files in a draft area.
+ *
+ * @global object
+ * @global object
  * @param integer $draftitemid the draft area item id.
  * @return array with the following entries:
  *      'filecount' => number of files in the draft area.
@@ -451,6 +471,7 @@ function file_get_draft_area_info($draftitemid) {
 
 /**
  * Returns draft area itemid for a given element.
+ *
  * @param string $elname name of formlib editor element, or a hidden form field that stores the draft area item id, etc.
  * @return inteter the itemid, or 0 if there is not one yet.
  */
@@ -468,12 +489,15 @@ function file_get_submitted_draft_itemid($elname) {
 /**
  * Saves files from a draft file area to a real one (merging the list of files).
  * Can rewrite URLs in some content at the same time if desired.
- * @param int $draftitemid the id of the draft area to use. Normally obtained
+ *
+ * @global object
+ * @global object
+ * @param integer $draftitemid the id of the draft area to use. Normally obtained
  *      from file_get_submitted_draft_itemid('elementname') or similar.
  * @param integer $contextid This parameter and the next two identify the file area to save to.
  * @param string $filearea indentifies the file area.
  * @param integer $itemid helps identifies the file area.
- * @param array $optionss area options (subdirs=>false, maxfiles=-1, maxbytes=0)
+ * @param array $options area options (subdirs=>false, maxfiles=-1, maxbytes=0)
  * @param string $text some html content that needs to have embedded links rewritten
  *      to the @@PLUGINFILE@@ form for saving in the database.
  * @param boolean $forcehttps force https urls.
@@ -598,8 +622,9 @@ function file_save_draft_area_files($draftitemid, $contextid, $filearea, $itemid
 
 /**
  * Returns description of upload error
+ *
  * @param int $errorcode found in $_FILES['filename.ext']['error']
- * @return error description string, '' if ok
+ * @return string error description string, '' if ok
  */
 function file_get_upload_error($errorcode) {
 
@@ -649,6 +674,7 @@ function file_get_upload_error($errorcode) {
  * Fetches content of file from Internet (using proxy if defined). Uses cURL extension if present.
  * Due to security concerns only downloads from http(s) sources are supported.
  *
+ * @global object
  * @param string $url file url starting with http(s)://
  * @param array $headers http headers, null if none. If set, should be an
  *   associative array of header name => value pairs.
@@ -839,7 +865,7 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
 }
 
 /**
- * @return List of information about file types based on extensions.
+ * @return array List of information about file types based on extensions.
  *   Associative array of extension (lower-case) to associative array
  *   from 'element name' to data. Current element names are 'type' and 'icon'.
  *   Unknown types should use the 'xxx' entry which includes defaults.
@@ -1014,6 +1040,8 @@ function get_mimetypes_array() {
  * Obtains information about a filetype based on its extension. Will
  * use a default if no information is present about that particular
  * extension.
+ *
+ * @global object
  * @param string $element Desired information (usually 'icon'
  *   for icon filename or 'type' for MIME type)
  * @param string $filename Filename we're looking up
@@ -1054,6 +1082,7 @@ function mimeinfo($element, $filename) {
 /**
  * Obtains information about a filetype based on the MIME type rather than
  * the other way around.
+ *
  * @param string $element Desired information (usually 'icon')
  * @param string $mimetype MIME type we're looking up
  * @return string Requested piece of information from array
@@ -1074,6 +1103,7 @@ function mimeinfo_from_type($element, $mimetype) {
 
 /**
  * Get information about a filetype based on the icon file.
+ *
  * @param string $element Desired information (usually 'icon')
  * @param string $icon Icon file path.
  * @param boolean $all return all matching entries (defaults to false - last match)
@@ -1103,6 +1133,7 @@ function mimeinfo_from_icon($element, $icon, $all=false) {
 /**
  * Obtains descriptions for file types (e.g. 'Microsoft Word document') from the
  * mimetypes.php language file.
+ *
  * @param string $mimetype MIME type (can be obtained using the mimeinfo function)
  * @param bool $capitalise If true, capitalises first character of result
  * @return string Text description
@@ -1122,6 +1153,7 @@ function get_mimetype_description($mimetype,$capitalise=false) {
 
 /**
  * Reprot file is not found or not accessible
+ *
  * @return does not return, terminates script
  */
 function send_file_not_found() {
@@ -1133,6 +1165,8 @@ function send_file_not_found() {
 /**
  * Handles the sending of temporary file to user, download is forced.
  * File is deleted after abort or succesful sending.
+ *
+ * @global object
  * @param string $path path to file, preferably from moodledata/temp/something; or content of file itself
  * @param string $filename proposed file name when saving file
  * @param bool $path is content of file
@@ -1200,6 +1234,10 @@ function send_temp_file_finished($path) {
 /**
  * Handles the sending of file data to the user's browser, including support for
  * byteranges etc.
+ *
+ * @global object
+ * @global object
+ * @global object
  * @param string $path Path of file on disk (including real filename), or actual content of file as string
  * @param string $filename Filename to send
  * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
@@ -1414,17 +1452,20 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
 /**
  * Handles the sending of file data to the user's browser, including support for
  * byteranges etc.
+ *
+ * @global object
+ * @global object
+ * @global object
  * @param object $stored_file local file object
  * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
  * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
  * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
  * @param string $filename Override filename
- * @param string $mimetype Include to specify the MIME type; leave blank to have it guess the type from $filename
  * @param bool $dontdie - return control to caller afterwards. this is not recommended and only used for cleanup tasks.
  *                        if this is passed as true, ignore_user_abort is called.  if you don't want your processing to continue on cancel,
  *                        you must detect this case when control is returned using connection_aborted. Please not that session is closed
  *                        and should not be reopened.
- * @return no return or void, script execution stopped unless $dontdie is true
+ * @return void no return or void, script execution stopped unless $dontdie is true
  */
 function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownload=false, $filename=null, $dontdie=false) {
     global $CFG, $COURSE, $SESSION;
@@ -1594,6 +1635,16 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
     die; //no more chars to output!!!
 }
 
+/**
+ * Retreievs an array of records from a CSV file and places
+ * them into a given table structure
+ *
+ * @global object
+ * @global object
+ * @param string $file The path to a CSV file
+ * @param string $table The table to retrieve columns from
+ * @return bool|array Returns an array of CSV records or false
+ */
 function get_records_csv($file, $table) {
     global $CFG, $DB;
 
@@ -1634,6 +1685,15 @@ function get_records_csv($file, $table) {
     return $rows;
 }
 
+/**
+ * 
+ * @global object
+ * @global object
+ * @param string $file The file to put the CSV content into
+ * @param array $records An array of records to write to a CSV file
+ * @param string $table The table to get columns from
+ * @return bool success
+ */
 function put_records_csv($file, $records, $table = NULL) {
     global $CFG, $DB;
 
@@ -1701,6 +1761,7 @@ function put_records_csv($file, $records, $table = NULL) {
  * considered an error.
  *
  * @param $location the path to remove.
+ * @return bool
  */
 function fulldelete($location) {
     if (is_dir($location)) {
@@ -1734,6 +1795,11 @@ function fulldelete($location) {
 
 /**
  * Send requested byterange of file.
+ *
+ * @param object $handle A file handle
+ * @param string $mimetype The mimetype for the output
+ * @param array $ranges An array of ranges to send
+ * @param string $filesize The size of the content if only one range is used
  */
 function byteserving_send_file($handle, $mimetype, $ranges, $filesize) {
     $chunksize = 1*(1024*1024); // 1MB chunks - must be less than 2MB!
@@ -1791,8 +1857,10 @@ function byteserving_send_file($handle, $mimetype, $ranges, $filesize) {
 /**
  * add includes (js and css) into uploaded files
  * before returning them, useful for themes and utf.js includes
- * @param string text - text to search and replace
- * @return string - text with added head includes
+ *
+ * @global object
+ * @param string $text text to search and replace
+ * @return string text with added head includes
  */
 function file_modify_html_header($text) {
     // first look for <head> tag
@@ -1842,7 +1910,7 @@ function file_modify_html_header($text) {
  * RESTful cURL class
  *
  * This is a wrapper class for curl, it is quite easy to use:
- *
+ * <code>
  * $c = new curl;
  * // enable cache
  * $c = new curl(array('cache'=>true));
@@ -1857,28 +1925,40 @@ function file_modify_html_header($text) {
  * $html = $c->post('http://example.com/', array('q'=>'words', 'name'=>'moodle'));
  * // HTTP PUT Method
  * $html = $c->put('http://example.com/', array('file'=>'/var/www/test.txt');
+ * </code>
  *
+ * @package moodlecore
  * @author Dongsheng Cai <dongsheng@cvs.moodle.org>
- * @version 0.4 dev
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
 class curl {
+    /** @var bool */
     public  $cache    = false;
     public  $proxy    = false;
+    /** @var string */
     public  $version  = '0.4 dev';
+    /** @var array */
     public  $response = array();
     public  $header   = array();
+    /** @var string */
     public  $info;
     public  $error;
-
+    
+    /** @var array */
     private $options;
+    /** @var string */
     private $proxy_host = '';
     private $proxy_auth = '';
     private $proxy_type = '';
+    /** @var bool */
     private $debug    = false;
     private $cookie   = false;
 
+    /**
+     * @global object
+     * @param array $options
+     */
     public function __construct($options = array()){
         global $CFG;
         if (!function_exists('curl_init')) {
@@ -1933,6 +2013,9 @@ class curl {
             $this->proxy = array('proxy'=>$this->proxy_host);
         }
     }
+    /**
+     * Resets the CURL options that have already been set
+     */
     public function resetopt(){
         $this->options = array();
         $this->options['CURLOPT_USERAGENT']         = 'MoodleBot/1.0';
@@ -1958,10 +2041,6 @@ class curl {
 
     /**
      * Reset Cookie
-     *
-     * @param array $options If array is null, this function will
-     * reset the options to default value.
-     *
      */
     public function resetcookie() {
         if (!empty($this->cookie)) {
@@ -2032,6 +2111,9 @@ class curl {
      * private callback function
      * Formatting HTTP Response Header
      *
+     * @param mixed $ch Apparently not used
+     * @param string $header
+     * @return int The strlen of the header
      */
     private function formatHeader($ch, $header)
     {
@@ -2058,6 +2140,10 @@ class curl {
 
     /**
      * Set options for individual curl instance
+     *
+     * @param object $curl A curl handle
+     * @param array $options
+     * @return object The curl handle
      */
     private function apply_opt($curl, $options) {
         // Clean up
@@ -2102,13 +2188,22 @@ class curl {
         }
         return $curl;
     }
-    /*
+    /**
      * Download multiple files in parallel
+     *
+     * Calls {@link multi()} with specific download headers
+     *
+     * <code>
      * $c = new curl;
      * $c->download(array(
      *              array('url'=>'http://localhost/', 'file'=>fopen('a', 'wb')),
      *              array('url'=>'http://localhost/20/', 'file'=>fopen('b', 'wb'))
      *              ));
+     * </code>
+     *
+     * @param array $requests An array of files to request
+     * @param array $options An array of options to set
+     * @return array An array of results
      */
     public function download($requests, $options = array()) {
         $options['CURLOPT_BINARYTRANSFER'] = 1;
@@ -2118,6 +2213,10 @@ class curl {
     /*
      * Mulit HTTP Requests
      * This function could run multi-requests in parallel.
+     *
+     * @param array $requests An array of files to request
+     * @param array $options An array of options to set
+     * @return array An array of results
      */
     protected function multi($requests, $options = array()) {
         $count   = count($requests);
@@ -2150,6 +2249,10 @@ class curl {
     }
     /**
      * Single HTTP Request
+     *
+     * @param string $url The URL to request
+     * @param array $options
+     * @return bool
      */
     protected function request($url, $options = array()){
         // create curl instance
@@ -2188,6 +2291,12 @@ class curl {
 
     /**
      * HTTP HEAD method
+     *
+     * @see request() 
+     *
+     * @param string $url
+     * @param array $options
+     * @return bool
      */
     public function head($url, $options = array()){
         $options['CURLOPT_HTTPGET'] = 0;
@@ -2198,6 +2307,11 @@ class curl {
 
     /**
      * HTTP POST method
+     *
+     * @param string $url
+     * @param array|string $params 
+     * @param array $options
+     * @return bool
      */
     public function post($url, $params = '', $options = array()){
         $options['CURLOPT_POST']       = 1;
@@ -2221,6 +2335,11 @@ class curl {
 
     /**
      * HTTP GET method
+     *
+     * @param string $url
+     * @param array $params 
+     * @param array $options
+     * @return bool
      */
     public function get($url, $params = array(), $options = array()){
         $options['CURLOPT_HTTPGET'] = 1;
@@ -2234,6 +2353,11 @@ class curl {
 
     /**
      * HTTP PUT method
+     *
+     * @param string $url
+     * @param array $params 
+     * @param array $options
+     * @return bool
      */
     public function put($url, $params = array(), $options = array()){
         $file = $params['file'];
@@ -2255,6 +2379,11 @@ class curl {
 
     /**
      * HTTP DELETE method
+     *
+     * @param string $url
+     * @param array $params 
+     * @param array $options
+     * @return bool
      */
     public function delete($url, $param = array(), $options = array()){
         $options['CURLOPT_CUSTOMREQUEST'] = 'DELETE';
@@ -2266,6 +2395,10 @@ class curl {
     }
     /**
      * HTTP TRACE method
+     *
+     * @param string $url
+     * @param array $options
+     * @return bool
      */
     public function trace($url, $options = array()){
         $options['CURLOPT_CUSTOMREQUEST'] = 'TRACE';
@@ -2274,6 +2407,10 @@ class curl {
     }
     /**
      * HTTP OPTIONS method
+     *
+     * @param string $url
+     * @param array $options
+     * @return bool
      */
     public function options($url, $options = array()){
         $options['CURLOPT_CUSTOMREQUEST'] = 'OPTIONS';
@@ -2285,19 +2422,26 @@ class curl {
 /**
  * This class is used by cURL class, use case:
  *
+ * <code>
  * $CFG->repositorycacheexpire = 120;
  * $CFG->curlcache = 120;
  *
  * $c = new curl(array('cache'=>true), 'module_cache'=>'repository');
  * $ret = $c->get('http://www.google.com');
+ * </code>
  *
+ * @package moodlecore
+ * @subpackage file
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class curl_cache {
+    /** @var string */
     public $dir = '';
     /**
      *
-     * @global $CFG
-     * @param string @module, which module is using curl_cache
+     * @global object
+     * @param string @module which module is using curl_cache
      *
      */
     function __construct($module = 'repository'){
@@ -2324,7 +2468,12 @@ class curl_cache {
     }
 
     /**
-     * TODO Document
+     * @todo Document this function
+     *
+     * @global object
+     * @global object
+     * @param mixed $param
+     * @return bool|string
      */
     public function get($param){
         global $CFG, $USER;
@@ -2346,7 +2495,12 @@ class curl_cache {
     }
 
     /**
-     * TODO Document
+     * @todo Document this function
+     *
+     * @global object
+     * @global object
+     * @param mixed $param
+     * @param mixed $val
      */
     public function set($param, $val){
         global $CFG, $USER;
@@ -2357,7 +2511,9 @@ class curl_cache {
     }
 
     /**
-     * TODO Document
+     * @todo Document this function
+     *
+     * @param int $expire The number os seconds before expiry
      */
     public function cleanup($expire){
         if($dir = opendir($this->dir)){
@@ -2374,7 +2530,8 @@ class curl_cache {
     /**
      * delete current user's cache file
      *
-     * @return null
+     * @global object
+     * @global object
      */
     public function refresh(){
         global $CFG, $USER;
@@ -2391,9 +2548,19 @@ class curl_cache {
 }
 
 /**
- * TODO Document
+ * @todo Document this class
+ *
+ * @package moodlecore
+ * @subpackage file
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class file_type_to_ext {
+    /**
+     * @todo Document this function
+     * @global object
+     * @param string $file
+     */
     public function __construct($file = '') {
         global $CFG;
         if (empty($file)) {
@@ -2406,7 +2573,9 @@ class file_type_to_ext {
     }
 
     /**
-     * TODO Document
+     * @todo Document this function
+     * @param array $parent
+     * @param array $types
      */
     private function _browse_nodes($parent, $types) {
         $key = (string)$parent['TEXT'];
@@ -2425,7 +2594,8 @@ class file_type_to_ext {
     }
 
     /**
-     * TODO Document
+     * @todo Document this function
+     * @param array $parent
      */
     private function _select_nodes($parent){
         if(isset($parent->node)) {
@@ -2439,7 +2609,9 @@ class file_type_to_ext {
 
 
     /**
-     * TODO Document
+     * @todo Document this function
+     * @param array $types
+     * @return mixed
      */
     public function get_file_ext($types) {
         $this->result = array();

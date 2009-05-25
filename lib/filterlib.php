@@ -1,41 +1,35 @@
-<?php // $Id$
+<?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/ 
+// 
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Library functions for managing text filter plugins.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * The states a filter can be in, stored in the filter_active table.
- */
+/** The states a filter can be in, stored in the filter_active table. */
 define('TEXTFILTER_ON', 1);
+/** The states a filter can be in, stored in the filter_active table. */
 define('TEXTFILTER_INHERIT', 0);
+/** The states a filter can be in, stored in the filter_active table. */
 define('TEXTFILTER_OFF', -1);
+/** The states a filter can be in, stored in the filter_active table. */
 define('TEXTFILTER_DISABLED', -9999);
 
 /**
@@ -44,20 +38,28 @@ define('TEXTFILTER_DISABLED', -9999);
  * format_text and format_string functions.
  *
  * This class is a singleton.
+ *
+ * @package moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class filter_manager {
-    /** This list of active filters, by context, for filtering content.
-     * An array contextid => array of filter objects. */
+    /** 
+     * @var array This list of active filters, by context, for filtering content.
+     * An array contextid => array of filter objects. 
+     */
     protected $textfilters = array();
 
-    /** This list of active filters, by context, for filtering strings.
-     * An array contextid => array of filter objects. */
+    /**
+     * @var array This list of active filters, by context, for filtering strings.
+     * An array contextid => array of filter objects. 
+     */
     protected $stringfilters = array();
 
-    /** Exploded version of $CFG->stringfilters. */
+    /** @var array Exploded version of $CFG->stringfilters. */
     protected $stringfilternames = array();
 
-    /** Holds the singleton instance. */
+    /** @var object Holds the singleton instance. */
     protected static $singletoninstance;
 
     protected function __construct() {
@@ -65,7 +67,8 @@ class filter_manager {
     }
 
     /**
-     * @return the singleton instance.
+     * @global object
+     * @return object the singleton instance.
      */
     public static function instance() {
         if (is_null(self::$singletoninstance)) {
@@ -79,7 +82,12 @@ class filter_manager {
         return self::$singletoninstance;
     }
 
-    /** Load all the filters required by this context. */
+    /** 
+     * Load all the filters required by this context. 
+     *
+     * @param object $context
+     * @param int $courseid
+     */
     protected function load_filters($context, $courseid) {
         $filters = filter_get_active_in_context($context);
         $this->textfilters[$context->id] = array();
@@ -97,12 +105,14 @@ class filter_manager {
     }
 
     /**
-     * Factory method for creating a filter.
+     * Factory method for creating a filter
+     *
+     * @global object
      * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
-     * @param $context context object.
-     * @param $courseid course if.
-     * @param $localconfig array of local configuration variables for this filter.
-     * @return moodle_text_filter The filter, or null, if this type of filter is
+     * @param object $context context object.
+     * @param int $courseid course id.
+     * @param array $localconfig array of local configuration variables for this filter.
+     * @return object moodle_text_filter The filter, or null, if this type of filter is
      *      not recognised or could not be created.
      */
     protected function make_filter_object($filtername, $context, $courseid, $localconfig) {
@@ -126,6 +136,12 @@ class filter_manager {
         return null;
     }
 
+    /**
+     * @todo Document this function 
+     * @param string $text
+     * @param array $filterchain
+     * @return string $text
+     */
     protected function apply_filter_chain($text, $filterchain) {
         foreach ($filterchain as $filter) {
             $text = $filter->filter($text);
@@ -133,6 +149,12 @@ class filter_manager {
         return $text;
     }
 
+    /**
+     * @todo Document this function 
+     * @param object $context
+     * @param int $courseid
+     * @return object A text filter
+     */
     protected function get_text_filters($context, $courseid) {
         if (!isset($this->textfilters[$context->id])) {
             $this->load_filters($context, $courseid);
@@ -140,6 +162,12 @@ class filter_manager {
         return $this->textfilters[$context->id];
     }
 
+    /**
+     * @todo Document this function 
+     * @param object $context
+     * @param int $courseid
+     * @return object A string filter
+     */
     protected function get_string_filters($context, $courseid) {
         if (!isset($this->stringfilters[$context->id])) {
             $this->load_filters($context, $courseid);
@@ -147,6 +175,14 @@ class filter_manager {
         return $this->stringfilters[$context->id];
     }
 
+    /**
+     * Filter some text
+     *
+     * @param string $text The text to filter
+     * @param object $context
+     * @param int $courseid
+     * @return string resulting text
+     */
     public function filter_text($text, $context, $courseid) {
         $text = $this->apply_filter_chain($text, $this->get_text_filters($context, $courseid));
         /// <nolink> tags removed for XHTML compatibility
@@ -154,10 +190,24 @@ class filter_manager {
         return $text;
     }
 
+    /**
+     * Filter a peice of string
+     *
+     * @param string $string The text to filter
+     * @param object $context
+     * @param int $courseid
+     * @return string resulting string
+     */
     public function filter_string($string, $context, $courseid) {
         return $this->apply_filter_chain($string, $this->get_string_filters($context, $courseid));
     }
 
+    /**
+     * @todo Document this function 
+     * @param object $context
+     * @param int $courseid
+     * @return object A string filter
+     */
     public function text_filtering_hash($context, $courseid) {
         $filters = $this->get_text_filters($context, $courseid);
         $hashes = array();
@@ -171,16 +221,31 @@ class filter_manager {
 /**
  * Filter manager subclass that does nothing. Having this simplifies the logic
  * of format_text, etc.
+ *
+ * @todo Document this class
+ *
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class null_filter_manager {
+    /**
+     * @return string
+     */
     public function filter_text($text, $context, $courseid) {
         return $text;
     }
 
+    /**
+     * @return string
+     */
     public function filter_string($string, $context, $courseid) {
         return $string;
     }
 
+    /**
+     * @return string
+     */
     public function text_filtering_hash() {
         return '';
     }
@@ -188,27 +253,56 @@ class null_filter_manager {
 
 /**
  * Filter manager subclass that tacks how much work it does.
+ *
+ * @todo Document this class
+ *
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class performance_measuring_filter_manager extends filter_manager {
+    /** @var int */
     protected $filterscreated = 0;
     protected $textsfiltered = 0;
     protected $stringsfiltered = 0;
 
+    /**
+     * @param string $filtername
+     * @param object $context
+     * @param int $courseid
+     * @param mixed $localconfig
+     * @return mixed
+     */
     protected function make_filter_object($filtername, $context, $courseid, $localconfig) {
         $this->filterscreated++;
         return parent::make_filter_object($filtername, $context, $courseid, $localconfig);
     }
 
+    /**
+     * @param string $text
+     * @param object $context
+     * @param int $courseid
+     * @return mixed
+     */
     public function filter_text($text, $context, $courseid) {
         $this->textsfiltered++;
         return parent::filter_text($text, $context, $courseid);
     }
 
+    /**
+     * @param string $string
+     * @param object $context
+     * @param int $courseid
+     * @return mixed
+     */
     public function filter_string($string, $context, $courseid) {
         $this->stringsfiltered++;
         return parent::filter_string($string, $context, $courseid);
     }
 
+    /**
+     * @return array
+     */
     public function get_performance_summary() {
         return array(array(
             'contextswithfilters' => count($this->textfilters),
@@ -227,13 +321,17 @@ class performance_measuring_filter_manager extends filter_manager {
 /**
  * Base class for text filters. You just need to override this class and
  * implement the filter method.
+ *
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class moodle_text_filter {
-    /** The course we are in. */
+    /** @var int The course we are in. */
     protected $courseid;
-    /** The context we are in. */
+    /** @var object The context we are in. */
     protected $context;
-    /** Any local configuration for this filter in this context. */
+    /** @var object Any local configuration for this filter in this context. */
     protected $localconfig;
 
     /**
@@ -248,12 +346,16 @@ abstract class moodle_text_filter {
         $this->localconfig = $localconfig;
     }
 
+    /**
+     * @return string The class name of the current class
+     */
     public function hash() {
         return __CLASS__;
     }
 
     /**
      * Override this funciton to actually implement the filtering.
+     *
      * @param $text some HTML content.
      * @return the HTML content after the filtering has been applied.
      */
@@ -263,12 +365,18 @@ abstract class moodle_text_filter {
 /**
  * moodle_text_filter implementation that encapsulates an old-style filter that
  * only defines a function, not a class.
+ *
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class legacy_filter extends moodle_text_filter {
+    /** @var string */
     protected $filterfunction;
 
     /**
      * Set any context-specific configuration for this filter.
+     *
      * @param string $filterfunction
      * @param object $context The current course id.
      * @param object $context The current context.
@@ -279,27 +387,40 @@ class legacy_filter extends moodle_text_filter {
         $this->filterfunction = $filterfunction;
     }
 
+    /**
+     * @param string $text
+     * @return mixed
+     */
     public function filter($text) {
         return call_user_func($this->filterfunction, $this->courseid, $text);
     }
 }
 
-/// Define one exclusive separator that we'll use in the temp saved tags
-/// keys. It must be something rare enough to avoid having matches with
-/// filterobjects. MDL-18165
+/**
+ * Define one exclusive separator that we'll use in the temp saved tags
+ *  keys. It must be something rare enough to avoid having matches with
+ *  filterobjects. MDL-18165
+ */
 define('EXCL_SEPARATOR', '-%-');
 
 /**
  * This is just a little object to define a phrase and some instructions 
  * for how to process it.  Filters can create an array of these to pass 
  * to the filter_phrases function below.
+ *
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 class filterobject {
+    /** @var string */
     var $phrase;
     var $hreftagbegin;
     var $hreftagend;
+    /** @var bool */
     var $casesensitive;
     var $fullmatch;
+    /** @var mixed */
     var $replacementphrase;
     var $work_phrase;
     var $work_hreftagbegin;
@@ -307,9 +428,19 @@ class filterobject {
     var $work_casesensitive;
     var $work_fullmatch;
     var $work_replacementphrase;
+    /** @var bool */
     var $work_calculated;
 
-    /// a constructor just because I like constructing
+    /**
+     * A constructor just because I like constructing
+     *
+     * @param string $phrase
+     * @param string $hreftagbegin
+     * @param string $hreftagend
+     * @param bool $casesensitive
+     * @param bool $fullmatch
+     * @param mixed $replacementphrase
+     */
     function filterobject($phrase, $hreftagbegin='<span class="highlight">', 
                                    $hreftagend='</span>', 
                                    $casesensitive=false, 
@@ -333,7 +464,7 @@ class filterobject {
  * else if $filterlocation = 'filter' then does get_string('filtername', 'filter_' . $filter);
  * with a fallback to get_string('filtername', $filter) for backwards compatibility.
  * These are the only two options supported at the moment.
- * @param string $filterlocation 'filter' or 'mod'.
+ *
  * @param string $filter the folder name where the filter lives.
  * @return string the human-readable name for this filter.
  */
@@ -362,6 +493,8 @@ function filter_get_name($filter) {
 
 /**
  * Get the names of all the filters installed in this Moodle.
+ *
+ * @global object
  * @return array path => filter name from the appropriate lang file. e.g.
  * array('mod/glossary' => 'Glossary Auto-linking', 'filter/tex' => 'TeX Notation');
  * sorted in alphabetical order of name.
@@ -386,6 +519,8 @@ function filter_get_all_installed() {
 
 /**
  * Set the global activated state for a text filter.
+ *
+ * @global object
  * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
  * @param integer $state One of the values TEXTFILTER_ON, TEXTFILTER_OFF or TEXTFILTER_DISABLED.
  * @param integer $sortorder (optional) a position in the sortorder to place this filter.
@@ -479,6 +614,8 @@ function filter_is_enabled($filter) {
 
 /**
  * Return a list of all the filters that may be in use somewhere.
+ *
+ * @staticvar array $enabledfilters
  * @return array where the keys and values are both the filter name, like 'filter/tex'.
  */
 function filter_get_globally_enabled() {
@@ -498,6 +635,8 @@ function filter_get_globally_enabled() {
 /**
  * Return the names of the filters that should also be applied to strings
  * (when they are enabled).
+ *
+ * @global object
  * @return array where the keys and values are both the filter name, like 'filter/tex'.
  */
 function filter_get_string_filters() {
@@ -513,6 +652,7 @@ function filter_get_string_filters() {
 /**
  * Sets whether a particular active filter should be applied to all strings by
  * format_string, or just used by format_text.
+ *
  * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
  * @param boolean $applytostrings if true, this filter will apply to format_string
  *      and format_text, when it is enabled.
@@ -533,9 +673,12 @@ function filter_set_applies_to_strings($filter, $applytostrings) {
 
 /**
  * Set the local activated state for a text filter.
+ *
+ * @global object
  * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
  * @param integer $contextid The id of the context to get the local config for.
  * @param integer $state One of the values TEXTFILTER_ON, TEXTFILTER_OFF or TEXTFILTER_INHERIT.
+ * @return void
  */
 function filter_set_local_state($filter, $contextid, $state) {
     global $DB;
@@ -576,6 +719,8 @@ function filter_set_local_state($filter, $contextid, $state) {
 
 /**
  * Set a particular local config variable for a filter in a context.
+ *
+ * @global object
  * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
  * @param integer $contextid The id of the context to get the local config for.
  * @param string $name the setting name.
@@ -604,6 +749,8 @@ function filter_set_local_config($filter, $contextid, $name, $value) {
 
 /**
  * Remove a particular local config variable for a filter in a context.
+ *
+ * @global object
  * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
  * @param integer $contextid The id of the context to get the local config for.
  * @param string $name the setting name.
@@ -618,6 +765,8 @@ function filter_unset_local_config($filter, $contextid, $name) {
  * filter is running) you don't need to call this, becuase the config is fetched
  * for you automatically. You only need this, for example, when you are getting
  * the config so you can show the user an editing from.
+ *
+ * @global object
  * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
  * @param integer $contextid The ID of the context to get the local config for.
  * @return array of name => value pairs.
@@ -630,7 +779,10 @@ function filter_get_local_config($filter, $contextid) {
 /**
  * This function is for use by backup. Gets all the filter information specific
  * to one context.
- * @return array with two elements. The first element is an array of objects with
+ *
+ * @global object
+ * @param int $contextid
+ * @return array Array with two elements. The first element is an array of objects with
  *      fields filter and active. These come from the filter_active table. The
  *      second element is an array of objects with fields filter, name and value
  *      from the filter_config table.
@@ -648,8 +800,8 @@ function filter_get_all_local_settings($contextid) {
  * Get the list of active filters, in the order that they should be used
  * for a particular context, along with any local configuration variables.
  *
+ * @global object
  * @param object $context a context
- *
  * @return array an array where the keys are the filter names, for example
  *      'filter/tex' or 'mod/glossary' and the values are any local
  *      configuration for that filter, as an array of name => value pairs
@@ -695,6 +847,8 @@ function filter_get_active_in_context($context) {
 /**
  * List all of the filters that are available in this context, and what the
  * local and interited states of that filter are.
+ *
+ * @global object
  * @param object $context a context that is not the system context.
  * @return array an array with filter names, for example 'filter/tex' or
  *      'mod/glossary' as keys. and and the values are objects with fields:
@@ -736,6 +890,8 @@ function filter_get_available_in_context($context) {
 
 /**
  * This function is for use by the filter administration page.
+ *
+ * @global object
  * @return array 'filtername' => object with fields 'filter' (=filtername), 'active' and 'sortorder'
  */
 function filter_get_global_states() {
@@ -746,6 +902,8 @@ function filter_get_global_states() {
 
 /**
  * Delete all the data in the database relating to a filter, prior to deleting it.
+ *
+ * @global object
  * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
  */
 function filter_delete_all_for_filter($filter) {
@@ -759,6 +917,8 @@ function filter_delete_all_for_filter($filter) {
 
 /**
  * Delete all the data in the database relating to a context, used when contexts are deleted.
+ *
+ * @global object
  * @param integer $contextid The id of the context being deleted.
  */
 function filter_delete_all_for_context($contextid) {
@@ -772,6 +932,7 @@ function filter_delete_all_for_context($contextid) {
  * (The settings page for a filter must be called, for example,
  * filtersettingfiltertex or filtersettingmodglossay.)
  *
+ * @global object
  * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
  * @return boolean Whether there should be a 'Settings' link on the config page.
  */
@@ -784,6 +945,7 @@ function filter_has_global_settings($filter) {
 /**
  * Does this filter have local (per-context) settings?
  *
+ * @global object
  * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
  * @return boolean Whether there should be a 'Settings' link on the manage filters in context page.
  */
@@ -796,6 +958,7 @@ function filter_has_local_settings($filter) {
 /**
  * Certain types of context (block and user) may not have local filter settings.
  * the function checks a context to see whether it may have local config.
+ *
  * @param object $context a context.
  * @return boolean whether this context may have local filter settings.
  */
@@ -806,10 +969,13 @@ function filter_context_may_have_filter_settings($context) {
 /**
  * Process phrases intelligently found within a HTML text (such as adding links)
  *
- * param  text             the text that we are filtering
- * param  link_array       an array of filterobjects
- * param  ignoretagsopen   an array of opening tags that we should ignore while filtering
- * param  ignoretagsclose  an array of corresponding closing tags
+ * @global object
+ * @staticvar array $usedpharses
+ * @param string $text             the text that we are filtering
+ * @param array $link_array       an array of filterobjects
+ * @param array $ignoretagsopen   an array of opening tags that we should ignore while filtering
+ * @param array $ignoretagsclose  an array of corresponding closing tags
+ * @return string
  **/
 function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsclose=NULL) {
 
@@ -1005,6 +1171,11 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
     return $text;
 }
 
+/**
+ * @todo Document this function
+ * @param array $linkarray
+ * @return array
+ */
 function filter_remove_duplicates($linkarray) {
 
     $concepts  = array(); // keep a record of concepts as we cycle through
@@ -1035,10 +1206,10 @@ function filter_remove_duplicates($linkarray) {
  * converted with some <#xEXCL_SEPARATORx#> codes replacing the extracted text. Such extracted
  * texts are returned in the ignoretags array (as values), with codes as keys.
  *
- * param  text                  the text that we are filtering (in/out)
- * param  filterignoretagsopen  an array of open tags to start searching
- * param  filterignoretagsclose an array of close tags to end searching 
- * param  ignoretags            an array of saved strings useful to rebuild the original text (in/out)
+ * @param string $text                  the text that we are filtering (in/out)
+ * @param array $filterignoretagsopen  an array of open tags to start searching
+ * @param array $filterignoretagsclose an array of close tags to end searching 
+ * @param array $ignoretags            an array of saved strings useful to rebuild the original text (in/out)
  **/
 function filter_save_ignore_tags(&$text,$filterignoretagsopen,$filterignoretagsclose,&$ignoretags) {
 
@@ -1066,8 +1237,8 @@ function filter_save_ignore_tags(&$text,$filterignoretagsopen,$filterignoretagsc
  * It returns the text converted with some <%xEXCL_SEPARATORx%> codes replacing the extracted text. Such extracted
  * texts are returned in the tags array (as values), with codes as keys.
  *      
- * param  text   the text that we are filtering (in/out)
- * param  tags   an array of saved strings useful to rebuild the original text (in/out)
+ * @param string $text   the text that we are filtering (in/out)
+ * @param array $tags   an array of saved strings useful to rebuild the original text (in/out)
  **/
 function filter_save_tags(&$text,&$tags) {
 
@@ -1083,6 +1254,10 @@ function filter_save_tags(&$text,&$tags) {
 
 /**
  * Add missing openpopup javascript to HTML files.
+ *
+ * @global object
+ * @param string $text
+ * @return string
  */
 function filter_add_javascript($text) {
     global $CFG;

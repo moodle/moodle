@@ -1,31 +1,44 @@
 <?php
 
+// This file is part of Moodle - http://moodle.org/ 
+// 
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * gdlib.php - Collection of routines in Moodle related to
  * processing images using GD
  *
- * @author Martin Dougiamas etc
- * @version  $Id$
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * short description (optional)
  *
  * long description
- * @uses $CFG
- * @param type? $dst_img description?
- * @param type? $src_img description?
- * @param type? $dst_x description?
- * @param type? $dst_y description?
- * @param type? $src_x description?
- * @param type? $src_y description?
- * @param type? $dst_w description?
- * @param type? $dst_h description?
- * @param type? $src_w description?
- * @param type? $src_h description?
- * @return ?
+ * @global object
+ * @param object $dst_img
+ * @param object $src_img
+ * @param int $dst_x 
+ * @param int $dst_y 
+ * @param int $src_x 
+ * @param int $src_y 
+ * @param int $dst_w 
+ * @param int $dst_h 
+ * @param int $src_w 
+ * @param int $src_h 
+ * @return bool
  * @todo Finish documenting this function
  */
 function ImageCopyBicubic ($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h) {
@@ -73,6 +86,8 @@ function ImageCopyBicubic ($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $
 
 /**
  * Delete profile images associated with user or group
+ *
+ * @global object
  * @param int $id user or group id
  * @param string $dir type of entity - 'groups' or 'users'
  * @return boolean success
@@ -94,6 +109,7 @@ function delete_profile_image($id, $dir='users') {
  * Given an upload manager with the right settings, this function performs a virus scan, and then scales and crops
  * it and saves it in the right place to be a "user" or "group" image.
  *
+ * @global object
  * @param int $id user or group id
  * @param string $dir type of entity - groups, user, ...
  * @return string $destination (profile image destination path) or false on error
@@ -153,7 +169,7 @@ function save_profile_image($id, $userform, $dir='user') {
  * Given a path to an image file this function scales and crops it and saves it in
  * the right place to be a "user" or "group" image.
  *
- * @uses $CFG
+ * @global object
  * @param string $originalfile the path of the original image file
  * @param string $destination the final destination directory of the profile image
  * @return boolean
@@ -256,8 +272,9 @@ function process_profile_image($originalfile, $destination) {
  * Given a user id this function scales and crops the user images to remove
  * the one pixel black border.
  *
- * @uses $CFG
- * @param int $id description?
+ * @global object
+ * @param int $id
+ * @param string $dir
  * @return boolean
  */
 function upgrade_profile_image($id, $dir='users') {
