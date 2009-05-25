@@ -249,6 +249,8 @@ class database_manager {
     /**
      * Given one xmldb_field, check if it has a check constraint in DB
      *
+     * TODO: Moodle 2.1 - Drop check_constraint_exists()
+     *
      * @param xmldb_table the table
      * @param xmldb_field the field to be searched for any existing constraint
      * @return boolean true/false
