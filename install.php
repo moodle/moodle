@@ -36,20 +36,20 @@ if (isset($_REQUEST['admin'])) {
     $admin = 'admin';
 }
 
-/// If config.php exists we just created config.php and need to redirect to continue installation
+// If config.php exists we just created config.php and need to redirect to continue installation
 $configfile = './config.php';
 if (file_exists($configfile)) {
     header("Location: $admin/index.php?lang=$lang");
     die;
 }
 
-/// make sure PHP errors are displayed - helps with diagnosing of problems
+// make sure PHP errors are displayed - helps with diagnosing of problems
 @error_reporting(E_ALL);
 @ini_set('display_errors', '1');
 // we need a lot of memory
 @ini_set('memory_limit', '40M');
 
-/// Check that PHP is of a sufficient version
+// Check that PHP is of a sufficient version
 if (version_compare(phpversion(), "5.2.0") < 0) {
     $phpversion = phpversion();
     // do NOT localise - lang strings would not work here and we CAN not move it after installib
@@ -123,7 +123,7 @@ if (!empty($_POST)) {
     $config->dataroot = empty($distro->dataroot) ? null  : $distro->dataroot; // initialised later after including libs or by distro
 }
 
-/// Fake some settings so that we can use selected functions from moodlelib.php and weblib.php
+// Fake some settings so that we can use selected functions from moodlelib.php and weblib.php
 $CFG = new stdClass();
 $CFG->lang                 = $config->lang;
 $CFG->dirroot              = str_replace('\\', '/', dirname(__FILE__)); // Fix for win32
@@ -137,7 +137,7 @@ $CFG->docroot              = 'http://docs.moodle.org';
 $CFG->directorypermissions = 00777;
 $CFG->running_installer    = true;
 
-/// Require all needed libs
+// Require all needed libs
 require_once($CFG->libdir.'/setuplib.php');
 require_once($CFG->libdir.'/textlib.class.php');
 require_once($CFG->libdir.'/weblib.php');
@@ -169,17 +169,17 @@ $hint_dirroot  = '';
 $hint_admindir = '';
 $hint_database = '';
 
-/// Are we in help mode?
+// Are we in help mode?
 if (isset($_GET['help'])) {
     install_print_help_page($_GET['help']);
 }
 
-/// send css?
+// send css?
 if (isset($_GET['css'])) {
     install_css_styles();
 }
 
-///first time here? find out suitable dataroot
+//first time here? find out suitable dataroot
 if (is_null($CFG->dataroot)) {
     $CFG->dataroot = str_replace('\\', '/', dirname(dirname(__FILE__)).'/moodledata');
 
@@ -212,57 +212,27 @@ if ($config->stage == INSTALL_SAVE) {
     if (!$database->driver_installed()) {
         $config->stage = INSTALL_DATABASETYPE;
     } else {
-        if (function_exists('distro_pre_create_db')) { /// Hook for distros needing to do something before DB creation
+        if (function_exists('distro_pre_create_db')) { // Hook for distros needing to do something before DB creation
             $distro = distro_pre_create_db($database, $config->dbhost, $config->dbuser, $config->dbpass, $config->dbname, $config->prefix, array('dbpersit'=>0, 'dbsocket'=>$config->dbsocket), $distro);
         }
         $hint_database = install_db_validate($database, $config->dbhost, $config->dbuser, $config->dbpass, $config->dbname, $config->prefix, array('dbpersit'=>0, 'dbsocket'=>$config->dbsocket));
 
         if ($hint_database === '') {
-            $configphp = '<?php  /// Moodle Configuration File ' . "\r\n\r\n";
-
-            $configphp .= 'unset($CFG);'."\r\n";
-            $configphp .= '$CFG = new stdClass();'."\r\n\r\n"; // prevent PHP5 strict warnings
-
-            $dbconfig = $database->export_dbconfig();
-
-            foreach ($dbconfig as $key=>$value) {
-                $key = str_pad($key, 9);
-                $configphp .= '$CFG->'.$key.' = '.var_export($value, true).";\r\n";
-            }
-            $configphp .= "\r\n";
-
-            $configphp .= '$CFG->wwwroot   = '.var_export($CFG->wwwroot, true).";\r\n";
-
-            if ($CFG->dirroot !== $config->dirroot) {
-                $dirroot = str_replace('\\', '/', $config->dirroot); // win32 fix
-                $dirroot = rtrim($dirroot, '/');  // no trailing /
-                $configphp .= '$CFG->dirroot   = realpath('.var_export($dirroot, true).");\r\n"; // fix for sym links
+            // extra hackery needed for symbolic link support
+            if  ($CFG->dirroot !== $config->dirroot) {
+                $CFG->dirroot = $config->dirroot;
+                $userealpath = true;
             } else {
-                $dirroot = str_replace('\\', '/', $CFG->dirroot); // win32 fix
-                $dirroot = rtrim($dirroot, '/');  // no trailing /
-                $configphp .= '$CFG->dirroot   = '.var_export($dirroot, true).";\r\n";
+                $userealpath = false;
             }
-
-            $dataroot = str_replace('\\', '/', $config->dataroot); // win32 fix
-            $dataroot = rtrim($dataroot, '/');  // no trailing /
-            $configphp .= '$CFG->dataroot  = '.var_export($dataroot, true).";\r\n";
-
-            $configphp .= '$CFG->admin     = '.var_export($config->admin, true).";\r\n\r\n";
-
-            $configphp .= '$CFG->directorypermissions = 00777;  // try 02777 on a server in Safe Mode'."\r\n";
-            $configphp .= "\r\n";
-
-            $configphp .= 'require_once("$CFG->dirroot/lib/setup.php");'."\r\n\r\n";
-            $configphp .= '// There is no php closing tag in this file,'."\r\n";
-            $configphp .= '// it is intentional because it prevents trailing whitespace problems!'."\r\n";
+            $configphp = install_generate_configphp($database, $CFG, $userealpath);
 
             umask(0137);
-    
             if (($fh = @fopen($configfile, 'w')) !== false) {
                 fwrite($fh, $configphp);
                 fclose($fh);
             }
-    
+
             if (file_exists($configfile)) {
                 // config created, let's continue!
                 redirect("$CFG->wwwroot/$config->admin/index.php?lang=$config->lang");
@@ -302,7 +272,7 @@ if ($config->stage == INSTALL_DOWNLOADLANG) {
             $hint_dataroot = get_string('pathsroparentdataroot', 'install', $a);
             $config->stage = INSTALL_PATHS;
         } else {
-            if (!make_upload_directory(false, false)) {
+            if (!make_upload_directory('lang', false)) {
                 $hint_dataroot = get_string('pathserrcreatedataroot', 'install', $a);
                 $config->stage = INSTALL_PATHS;
             }
@@ -347,11 +317,11 @@ if ($config->stage == INSTALL_DATABASETYPE) {
 if ($config->stage == INSTALL_DOWNLOADLANG) {
     $downloaderror = '';
 
-/// Create necessary lang dir
+// Create necessary lang dir
     if (!make_upload_directory('lang', false)) {
         $downloaderror = get_string('cannotcreatelangdir', 'error');
 
-/// Download and install lang component
+// Download and install lang component
     } else if ($cd = new component_installer('http://download.moodle.org', 'lang16', $CFG->lang.'.zip', 'languages.md5', 'lang')) {
         if ($cd->install() == COMPONENT_ERROR) {
             if ($cd->get_error() == 'remotedownloaderror') {
@@ -441,7 +411,7 @@ if ($config->stage == INSTALL_DATABASE) {
 
 
 if ($config->stage == INSTALL_DATABASETYPE) {
-    /// Finally ask for DB type
+    // Finally ask for DB type
     install_print_header($config, get_string('database', 'install'),
                                   get_string('databasetypehead', 'install'),
                                   get_string('databasetypesub', 'install'));
@@ -586,7 +556,7 @@ if ($distro) {
     install_print_header($config, get_string('language'),
                                   get_string('chooselanguagehead', 'install'),
                                   $sub);
-    
+
 } else {
     install_print_header($config, get_string('language'),
                                   get_string('chooselanguagehead', 'install'),
