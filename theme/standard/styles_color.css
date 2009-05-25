@@ -728,6 +728,14 @@ body#course-user .section {
   background-color: #fdfdfd;
 }
 
+/**
+ * unread count background on
+ * course/view.php 
+ **/
+#course-view .unread{
+	background: #9EBEFF; 
+}
+
 
 /***
  *** Doc
@@ -936,59 +944,106 @@ table.message_search_results td {
  *** Modules: Forum
  ***/
 
+/**
+ * Patch MDL-18971 version 3 puts the forum classes
+ * in page sequence. Also added one course class (above)
+ * for course/view.php 
+ **/
+
+/** The location of these classes is unknown
+ * Commented out with patch MDL-18971 version 3
+ **/
+/*.sideblock .post .head {
+  color:#555555; 
+}*/
+
+/** Unread Posts count background on
+ * mod/forum/index.php
+ **/
+#mod-forum-index .unread {
+	background: #9EBEFF;
+}
+
+/** wire frame around cells in 
+ * mod/forum/view.php 
+ **/
+.forumheaderlist td {
+  border-color: #FFFFFF;
+}
+
+/** Discussion column background in 
+ * mod/forum/view.php 
+ * The inner class is actually "topic starter"
+ **/
+.forumheaderlist .discussion .starter {
+  background:#DDDDDD;
+}
+
+/** unread column background on
+ * mod/forum/view.php 
+ **/
+#mod-forum-view .unread{
+	background: #9EBEFF;
+}
+
+/** border around posts in 
+ * mod/forum/view.php (forumheaderlist) and 
+ * mod/forum/discuss.php (forumpost)
+ **/
 .forumheaderlist,
 .forumpost {
   border-color:#DDDDDD;
 }
 
+/** post body color in 
+ * mod/forum/discuss.php 
+ **/
 .forumpost .content {
   background: #FFFFFF;
 }
 
+/** left photo section of each post in 
+ * mod/forum/discuss.php 
+ **/
 .forumpost .left {
   background:#EEEEEE;
 }
 
+/** line between header and post body in 
+ * mod/forum/discuss.php 
+ **/
 .forumpost .topic {
   border-bottom-color: #EEEEEE;
 }
 
+/** header of the first post in 
+ * mod/forum/discuss.php 
+ **/
 .forumpost .starter {
   background:#DDDDDD;
 }
 
-.forumheaderlist .discussion .starter {
-  background:#DDDDDD;
-}
-
-.forumheaderlist td {
-  border-color: #FFFFFF;
-}
-
-.sideblock .post .head {
-  color:#555555;
-}
-
+/** header of reply posts and
+ * lower corners of all posts in 
+ * mod/forum/discuss.php 
+ **/
 #mod-forum-discuss .forumpost {
   background: none;
 }
 
-/* for unread colum in mod/forum/view.php */
-#forumheaderlist .unread {
-  border-bottom: 1px solid #FFCB44;
+/** inside border of unread posts in nested format in
+ * mod/forum/discuss.php 
+ **/
+#mod-forum-discuss .forumpost.unread .content {
+  border-width:2px;
+  border-color: #0046C7; 
 }
 
-/* for mod/forum/discuss.php
- * will highlight the table header
- **/ 
-#mod-forum-discuss .unread {
-  background: #FFD991;
-}
-
-/* for unread colum in mod/forum/index.php
- **/ 
-#mod-forum-index .unread {
-  background: #FFD991;
+/** headers of unread posts in threaded format in
+ * mod/forum/discuss.php 
+ **/
+#mod-forum-discuss .forumthread.unread {
+  background: #9EBEFF; 
 }
 
 
