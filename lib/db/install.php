@@ -152,7 +152,7 @@ function xmldb_main_install() {
     $admin->lastname     = get_string('user');
     $admin->username     = 'admin';
     $admin->password     = 'adminsetuppending';
-    $admin->email        = 'root@localhost';
+    $admin->email        = '';
     $admin->confirmed    = 1;
     $admin->mnethostid   = $CFG->mnet_localhost_id;
     $admin->lang         = $CFG->lang;

@@ -24,6 +24,12 @@
         print_error('invalidcourseid');
     }
 
+    // special hack for cli installer - continue to site settings
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+    if ($SITE->shortname === '' and has_capability('moodle/site:config', $systemcontext)) {
+        redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
+    }
+
 /// Make sure the current user is allowed to see this user
 
     if (empty($USER->id)) {
@@ -38,7 +44,6 @@
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
     }
     $usercontext   = get_context_instance(CONTEXT_USER, $user->id);       // User context
-    $systemcontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
 
     if (!empty($CFG->forcelogin) || $course->id != SITEID) {
         // do not force parents to enrol

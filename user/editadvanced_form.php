@@ -84,11 +84,6 @@ class user_editadvanced_form extends moodleform {
         // admin must choose some password and supply correct email
         if (!empty($USER->newadminuser)) {
             $mform->addRule('newpassword', get_string('required'), 'required', null, 'client');
-
-            $email_el =& $mform->getElement('email');
-            if ($email_el->getValue() == 'root@localhost') {
-                $email_el->setValue('');
-            }
         }
 
         // require password for new users
