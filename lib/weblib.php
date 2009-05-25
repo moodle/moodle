@@ -2358,11 +2358,11 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     $heading = format_string($heading); // Fix for MDL-8582
 
     if (CLI_SCRIPT) {
-        $output = $heading;
+        $output = $heading."\n";
         if ($return) {
             return $output;
         } else {
-            console_write($output . "\n",'',false);
+            echo $output;
             return;
         }
     }
@@ -4020,7 +4020,7 @@ function print_heading($text, $align='', $size=2, $class='main', $return=false, 
         if (!CLI_SCRIPT) {
             echo $output;
         } else {
-            console_write($output."\n", '', false);
+            echo $output."\n";
         }
     }
 }
@@ -5968,8 +5968,14 @@ function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debugi
     }
 
     if (CLI_SCRIPT) {
-        // Errors in cron should be mtrace'd.
-        mtrace($message);
+        echo("!!! $message !!!\n");
+        if (debugging('', DEBUG_DEVELOPER)) {
+            if ($debuginfo) {
+                debugging($debuginfo, DEBUG_DEVELOPER, $backtrace);
+            } else {
+                notify('Stack trace:'.print_backtrace($backtrace, true), 'notifytiny');
+            }
+        }
         die;
     }
 
@@ -6332,8 +6338,7 @@ function notice ($message, $link='', $course=NULL) {
     $message = clean_text($message);   // In case nasties are in here
 
     if (CLI_SCRIPT) {
-        // notices in cron should be mtrace'd.
-        mtrace($message);
+        echo("!!$message!!\n");
         die;
     }
 
@@ -6520,9 +6525,9 @@ function notify($message, $style='notifyproblem', $align='center', $return=false
         $output = '<div class="'.$style.'" style="text-align:'. $align .'">'. $message .'</div>'."\n";
     } else {
         if ($style === 'notifysuccess') {
-            $output = '++'.$message.'++';
+            $output = '++'.$message.'++'."\n";
         } else {
-            $output = '!!'.$message.'!!';
+            $output = '!!'.$message.'!!'."\n";
         }
     }
 
@@ -6530,11 +6535,7 @@ function notify($message, $style='notifyproblem', $align='center', $return=false
         return $output;
     }
 
-    if (!CLI_SCRIPT) {
-        echo $output;
-    } else {
-        console_write($output."\n", '', false);
-    }
+    echo $output;
 }
 
 
@@ -7465,64 +7466,6 @@ function is_in_popup() {
     $inpopup = optional_param('inpopup', '', PARAM_BOOL);
 
     return ($inpopup);
-}
-
-//=========================================================================//
-/**
- * Write to standard out and error with exit in error.
- *
- * @uses $_SERVER
- * @param string $identifier
- * @param string $module name of module $module
- * @param bool $use_string_lib 
- */
-function console_write($identifier, $module='install', $use_string_lib=true) {
-    if (!isset($_SERVER['REMOTE_ADDR'])) {
-        // real CLI script
-        if ($use_string_lib) {
-            fwrite(STDOUT, get_string($identifier, $module));
-        } else {
-            fwrite(STDOUT, $identifier);
-        }
-    } else {
-        // emulated cli script - something like cron
-        if ($use_string_lib) {
-            echo get_string($identifier, $module);
-        } else {
-            echo $identifier;
-        }
-    }
-}
-
-//=========================================================================//
-/**
- * Write to standard out and error with exit in error.
- *
- * @param string $identifier
- * @param string $module name of module $module
- * @param bool $use_string_lib 
- * @return void Die! Die! Die!
- */
-function console_write_error($identifier, $module='install', $use_string_lib=true) {
-    if (!isset($_SERVER['REMOTE_ADDR'])) {
-        // real CLI script
-        if ($use_string_lib) {
-            fwrite(STDERR, get_string($identifier, $module));
-        } else {
-            fwrite(STDERR, $identifier);
-        }
-        fwrite(STDERR, "\n\n".get_string('aborting', $module)."\n\n");
-    } else {
-        // emulated cli script - something like cron
-        if ($use_string_lib) {
-            echo get_string($identifier, $module);
-        } else {
-            echo $identifier;
-        }
-        echo "\n\n".get_string('aborting', $module)."\n\n";
-    }
-
-    die; die; die;
 }
 
 /**
