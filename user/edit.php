@@ -23,6 +23,8 @@
             $SESSION->wantsurl = $CFG->httpswwwroot.'/user/edit.php';
         }
         redirect(get_login_url());
+    } else {
+        $PAGE->set_course($course);
     }
 
     // Guest can not edit
@@ -43,7 +45,7 @@
     // User interests separated by commas
     if (!empty($CFG->usetags)) {
         require_once($CFG->dirroot.'/tag/lib.php');
-        $user->interests = tag_get_tags_array('user', $id);
+        $user->interests = tag_get_tags_array('user', $user->id);
     }
 
     // remote users cannot be edited
