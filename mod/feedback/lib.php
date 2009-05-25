@@ -615,20 +615,34 @@ function feedback_check_is_switchrole(){
     return false;
 }
 
-/**
+/** 
  *  get users which have the complete-capability
- *  @param int $cmid
- *  @param mixed $groups single groupid or array of groupids - group(s) user is in
+ *  @param object $cm
+ *  @param int $group single groupid
  *  @return object the userrecords
  */
-function feedback_get_complete_users($cmid, $groups = false) {
-
-    if (!$context = get_context_instance(CONTEXT_MODULE, $cmid)) {
+function feedback_get_complete_users($cm, $group = false) {
+    global $DB;
+    
+    if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
             print_error('badcontext');
     }
 
-    //description of the call below: get_users_by_capability($context, $capability, $fields='', $sort='', $limitfrom='', $limitnum='', $groups='', $exceptions='', $doanything=true)
-    return get_users_by_capability($context, 'mod/feedback:complete', '', 'lastname', '', '', $groups, '', false);
+    $params = array($cm->instance);
+
+    $fromgroup = '';
+    $wheregroup = '';
+    if($group) {
+        $fromgroup = ', {groups_members} g';
+        $wheregroup = ' AND g.id = ? AND g.userid = c.userid';
+        $params[] = $group;
+    }
+    $sql = 'SELECT u.* FROM {user} u, {feedback_completed} c'.$fromgroup.'
+              WHERE u.id = c.userid AND c.feedback = ?
+              '.$wheregroup.'
+              ORDER BY u.lastname';
+    
+    return $DB->get_records_sql($sql, $params);
 }
 
 /**

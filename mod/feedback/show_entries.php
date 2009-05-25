@@ -126,12 +126,12 @@
                     $mygroupid = $SESSION->feedback->lstgroupid;
                 }
                 if($mygroupid) {
-                    $students = feedback_get_complete_users($cm->id, $mygroupid);
+                    $students = feedback_get_complete_users($cm, $mygroupid);
                 } else {
-                    $students = feedback_get_complete_users($cm->id);
+                    $students = feedback_get_complete_users($cm);
                 }
             }else {
-                $students = feedback_get_complete_users($cm->id);
+                $students = feedback_get_complete_users($cm);
             }
 
             $mygroupid=isset($mygroupid)?$mygroupid:NULL;
