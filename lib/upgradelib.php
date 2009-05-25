@@ -1,11 +1,27 @@
-<?php  //$Id$
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * upgradelib.php - Contains functions used during upgrade
+ * Various upgrade related functions an classes.
  *
- * @author Martin Dougiamas and many others
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package moodlecore
+ * @package    moodlecore
+ * @subpackage upgrade
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 define('UPGRADE_LOG_NORMAL', 0);
@@ -882,6 +898,54 @@ function print_upgrade_part_end($plugin, $installation) {
     }
     notify(get_string('success'), 'notifysuccess');
     print_upgrade_separator();
+}
+
+/**
+ * Silent start upgrade callback - does not output anything
+ * @param string $plugin
+ * @param bool $installation true if installation, false menas upgrade
+ */
+function silent_upgrade_part_start($plugin, $installation) {
+    if (empty($plugin) or $plugin == 'moodle') {
+        upgrade_started($installation); // does not store upgrade running flag yet
+    } else {
+        upgrade_started();
+    }
+    if ($installation) {
+        if (empty($plugin) or $plugin == 'moodle') {
+            // no need to log - log table not yet there ;-)
+        } else {
+            upgrade_log(UPGRADE_LOG_NORMAL, $plugin, 'Starting plugin installation');
+        }
+    } else {
+        if (empty($plugin) or $plugin == 'moodle') {
+            upgrade_log(UPGRADE_LOG_NORMAL, $plugin, 'Starting core upgrade');
+        } else {
+            upgrade_log(UPGRADE_LOG_NORMAL, $plugin, 'Starting plugin upgrade');
+        }
+    }
+}
+
+/**
+ * Silent end upgrade callback - does not output anything
+ * @param string $plugin
+ * @param bool $installation true if installation, false menas upgrade
+ */
+function silent_upgrade_part_end($plugin, $installation) {
+    upgrade_started();
+    if ($installation) {
+        if (empty($plugin) or $plugin == 'moodle') {
+            upgrade_log(UPGRADE_LOG_NORMAL, $plugin, 'Core installed');
+        } else {
+            upgrade_log(UPGRADE_LOG_NORMAL, $plugin, 'Plugin installed');
+        }
+    } else {
+        if (empty($plugin) or $plugin == 'moodle') {
+            upgrade_log(UPGRADE_LOG_NORMAL, $plugin, 'Core upgraded');
+        } else {
+            upgrade_log(UPGRADE_LOG_NORMAL, $plugin, 'Plugin upgraded');
+        }
+    }
 }
 
 function upgrade_get_javascript() {
