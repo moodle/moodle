@@ -203,7 +203,6 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
             print_box(get_string('importskippedoutcome', 'grades', $csv_data[$imported_headers['outcome_shortname']]));
             continue;
         }
-        break;
         // new outcome will be added, search for compatible existing scale...
         $scale = get_records_select('scale', 'name =\''. addslashes($csv_data[$imported_headers['scale_name']]) .'\' and scale =\''. addslashes($csv_data[$imported_headers['scale_items']]) .'\' and (courseid = '. $courseid .' or courseid = 0)');
 
