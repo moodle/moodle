@@ -20,8 +20,10 @@ $settings->add(new admin_setting_configtext('forum_longpost', get_string('longpo
 $settings->add(new admin_setting_configtext('forum_manydiscussions', get_string('manydiscussions', 'forum'),
                    get_string('configmanydiscussions', 'forum'), 100, PARAM_INT));
 
-$settings->add(new admin_setting_configselect('forum_maxbytes', get_string('maxattachmentsize', 'forum'),
-                   get_string('configmaxbytes', 'forum'), 512000, get_max_upload_sizes($CFG->maxbytes)));
+if (isset($CFG->maxbytes)) {
+    $settings->add(new admin_setting_configselect('forum_maxbytes', get_string('maxattachmentsize', 'forum'),
+                       get_string('configmaxbytes', 'forum'), 512000, get_max_upload_sizes($CFG->maxbytes)));
+}
 
 // Default number of attachments allowed per post in all forums
 $settings->add(new admin_setting_configtext('forum_maxattachments', get_string('maxattachments', 'forum'),
