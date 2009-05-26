@@ -6,14 +6,19 @@
  *
  * Released into the public domain for version 0.90 of ODBC Socket Server
  * {@link http://odbc.linuxbox.com/}
+ * 
+ * @package moodlecore
  * @author Team FXML
  * @copyright Copyright (c) 1999 Team FXML
  * @license http://odbc.linuxbox.com/ public domain
- * @package moodlecore
  */
  
- /**
+/**
  * ODBC Socket Server class
+ *
+ * @package moodlecore
+ * @copyright Copyright (c) 1999 Team FXML
+ * @license http://odbc.linuxbox.com/ public domain
  */
 class ODBCSocketServer {
 

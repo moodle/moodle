@@ -1,4 +1,20 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * This file provides hooks from moodle core into custom code.
  *
@@ -103,6 +119,10 @@
  * In there, implement the function local_delete_course($courseid). This
  * function will then be called whenever the functions remove_course_contents()
  * or delete_course() from moodlelib are called.
+ *
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -110,9 +130,10 @@
  * Look for a function local_delete_course() in a file called
  * local/lib.php andn call it if it is there.
  *
+ * @global object
  * @param int $courseid the course that is being deleted.
  * @param bool $showfeedback Whether to display notifications on success.
- * @return false if local_delete_course failed, or true if
+ * @return bool false if local_delete_course failed, or true if
  *          there was noting to do or local_delete_course succeeded.
  */
 function notify_local_delete_course($courseid, $showfeedback) {
