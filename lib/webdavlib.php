@@ -1,30 +1,32 @@
 <?php
-/*
-$Id$
-$Author$
-$Date$
-$Revision$
- */
+
+// webdav_client v0.1.5, a php based webdav client class.
+// Copyright (C) 2003 Christian Juerges
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ 
 /**
  * webdav_client v0.1.5, a php based webdav client class.
  *
- * Copyright (C) 2003 Christian Juerges
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
-
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
+ * @package moodlecore
+ * @author Christian Juerges <christian.juerges@xwave.ch>, Xwave GmbH, Josefstr. 92, 8005 Zuerich - Switzerland
+ * @copyright (C) 2003/2004, Christian Juerges
+ * @license http://opensource.org/licenses/lgpl-license.php GNU Lesser General Public License
+ * @version 0.1.5
  */
+
 /**
  * class webdav client. a php based nearly RFC 2518 conforming client.
  *
@@ -35,12 +37,10 @@ $Revision$
  * Please notice that all Filenames coming from or going to the webdav server should be UTF-8 encoded (see RFC 2518).
  * This class tries to convert all you filenames into utf-8 when it's needed. 
  *
- * @author Christian Juerges <christian.juerges@xwave.ch>, Xwave GmbH, Josefstr. 92, 8005 Zuerich - Switzerland.
- * @version 0.1.5
+ * @author Christian Juerges <christian.juerges@xwave.ch>, Xwave GmbH, Josefstr. 92, 8005 Zuerich - Switzerland
  * @copyright (C) 2003/2004, Christian Juerges
  * @license http://opensource.org/licenses/lgpl-license.php GNU Lesser General Public License
  * @package webdav_client
- *
  */
 class webdav_client {
 

@@ -1,20 +1,51 @@
 <?php
-// Utility function to convert wiki-like to Markdown format
-// Howard Miller, 2005
 
-// state defines
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Utility function to convert wiki-like to Markdown format
+ *
+ * @package   moodlecore
+ * @copyright Howard Miller, 2005
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**#@+
+ *  state defines 
+ */
 define( "STATE_NONE",1 ); // blank line has been detected, so looking for first line on next para
 define( "STATE_PARAGRAPH",2 ); // currently processing vanilla paragraph
 define( "STATE_BLOCKQUOTE",3 ); // currently processing blockquote section
 define( "STATE_PREFORM",4 ); // currently processing preformatted text
 define( "STATE_NOTIKI",5 ); // currently processing preformatted / no formatting
-
-// list defines
+/**#@-*/
+/**#@+
+ * list defines
+ */
 define( "LIST_NONE", 1 ); // no lists active
 define( "LIST_UNORDERED", 2 ); // unordered list active
 define( "LIST_ORDERED", 3 ); // ordered list active
 define( "LIST_DEFINITION", 4 ); // definition list active
+/**#@-*/
 
+/**
+ * @package   moodlecore
+ * @copyright Howard Miller, 2005
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class WikiToMarkdown {
 
   var $block_state;

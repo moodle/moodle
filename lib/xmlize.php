@@ -9,10 +9,12 @@
  * on my part is to blame for the credit these people aren't receiving.
  * None of the code was copyrighted, though.
  *
+ * @package moodlecore
  * @author Hans Anderson
  * @version This is a stable release, 1.0.  I don't foresee any changes, but you
  * might check {@link http://www.hansanderson.com/php/xml/} to see
- * @package moodlecore
+ * @copyright Hans Anderson
+ * @license Feel Free To Use it However
  */
 
 /**
