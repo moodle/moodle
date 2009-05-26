@@ -358,6 +358,15 @@ class xmldb_field extends xmldb_object {
             $this->next = trim($xmlarr['@']['NEXT']);
         }
 
+    /// TODO: Drop this check in Moodle 2.1
+    /// Detect if there is old enum information in the XML file
+        if (isset($xmlarr['@']['ENUM']) && isset($xmlarr['@']['ENUMVALUES'])) {
+            $this->hasenums = true;
+            if ($xmlarr['@']['ENUM'] == 'true') {
+                $this->hasenumsenabled = true;
+            }
+        }
+
     /// Set some attributes
         if ($result) {
             $this->loaded = true;
