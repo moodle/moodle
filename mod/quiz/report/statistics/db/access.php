@@ -16,5 +16,3 @@ $quizreport_statistics_capabilities = array(
         'clonepermissionsfrom' =>  'mod/quiz:viewreports'
     )
 );
-?>
-

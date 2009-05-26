@@ -142,4 +142,3 @@ function xmldb_quizreport_statistics_upgrade($oldversion) {
     return $result;
 }
 
-?>
