@@ -1,13 +1,35 @@
-<?php //$Id$
+<?php
 
-/***
- *** olson_to_timezones ($filename)
- ***
- *** Parses the olson files for Zones and DST rules.
- *** It updates the Moodle database with the Zones/DST rules
- ***
- *** Returns true/false
- ***
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
+ * olson_to_timezones ($filename)
+ *
+ * Parses the olson files for Zones and DST rules.
+ * It updates the Moodle database with the Zones/DST rules
+ *
+ * @param string $filename
+ * @return bool true/false
+ *
  */
 function olson_to_timezones ($filename) {
 
@@ -182,14 +204,14 @@ if(isset($mdl_tz['dst_time']) && !strpos($mdl_tz['dst_time'], ':') || isset($mdl
 }
 
 
-/***
- *** olson_simple_rule_parser($filename)
- ***
- *** Parses the olson files for DST rules.
- *** It's a simple implementation that simplifies some fields
- ***
- *** Returns a multidimensional array, or false on error
- ***
+/**
+ * olson_simple_rule_parser($filename)
+ *
+ * Parses the olson files for DST rules.
+ * It's a simple implementation that simplifies some fields
+ *
+ * @return array a multidimensional array, or false on error
+ *
  */
 function olson_simple_rule_parser ($filename) {
 
@@ -403,13 +425,13 @@ function olson_simple_rule_parser ($filename) {
     return $moodle_rules;
 }
 
-/***
- *** olson_simple_zone_parser($filename)
- ***
- *** Parses the olson files for zone info
- ***
- *** Returns a multidimensional array, or false on error
- ***
+/**
+ * olson_simple_zone_parser($filename)
+ *
+ * Parses the olson files for zone info
+ *
+ * @return array a multidimensional array, or false on error
+ *
  */
 function olson_simple_zone_parser ($filename) {
 
@@ -525,11 +547,13 @@ function olson_simple_zone_parser ($filename) {
     return $zones;
 }
 
-/***
- *** olson_parse_offset($offset)
- ***
- *** parses time offsets from the GMTOFF and SAVE
- *** fields into +/-MINUTES 
+/**
+ * olson_parse_offset($offset)
+ *
+ * parses time offsets from the GMTOFF and SAVE
+ * fields into +/-MINUTES
+ *
+ * @return int
  */
 function olson_parse_offset ($offset) {
     $offset = trim($offset);
@@ -554,30 +578,30 @@ function olson_parse_offset ($offset) {
 }
 
 
-/***
- *** olson_parse_on_($on)
- ***
- *** see `man zic`. This function translates the following formats 
- *** 5        the fifth of the month
- *** lastSun  the last Sunday in the month
- *** lastMon  the last Monday in the month
- *** Sun>=8   first Sunday on or after the eighth
- *** Sun<=25  last Sunday on or before the 25th
- ***
- *** to a moodle friendly format. Returns an array with:
- ***
- *** startday: the day of the month that we start counting from.
- ***           if negative, it means we start from that day and
- ***           count backwards. since -1 would be meaningless,
- ***           it means "end of month and backwards".
- *** weekday:  the day of the week that we must find. we will
- ***           scan days from the startday until we find the
- ***           first such weekday. 0...6 = Sun...Sat.
- ***           -1 means that any day of the week will do,
- ***           effectively ending the search on startday.
- *** skipweeks:after finding our end day as outlined above,
- ***           skip this many weeks. this enables us to find
- ***           "the second sunday >= 10". usually will be 0.
+/**
+ * olson_parse_on_($on)
+ *
+ * see `man zic`. This function translates the following formats 
+ * 5        the fifth of the month
+ * lastSun  the last Sunday in the month
+ * lastMon  the last Monday in the month
+ * Sun>=8   first Sunday on or after the eighth
+ * Sun<=25  last Sunday on or before the 25th
+ *
+ * to a moodle friendly format. Returns an array with:
+ *
+ * startday: the day of the month that we start counting from.
+ *           if negative, it means we start from that day and
+ *           count backwards. since -1 would be meaningless,
+ *           it means "end of month and backwards".
+ * weekday:  the day of the week that we must find. we will
+ *           scan days from the startday until we find the
+ *           first such weekday. 0...6 = Sun...Sat.
+ *           -1 means that any day of the week will do,
+ *           effectively ending the search on startday.
+ * skipweeks:after finding our end day as outlined above,
+ *           skip this many weeks. this enables us to find
+ *           "the second sunday >= 10". usually will be 0.
  */
 function olson_parse_on ($on) {
 
@@ -635,25 +659,25 @@ function olson_parse_on ($on) {
 }
 
 
-/***
- *** olson_parse_at($at, $set, $gmtoffset)
- ***
- *** see `man zic`. This function translates
- ***
- ***      2        time in hours
- ***      2:00     time in hours and minutes
- ***     15:00     24-hour format time (for times after noon)
- ***      1:28:14  time in hours, minutes, and seconds
- ***
- ***  Any of these forms may be followed by the letter w if the given
- ***  time is local "wall clock" time, s if the given time  is  local
- ***  "standard"  time, or u (or g or z) if the given time is univer-
- ***  sal time; in the absence of an indicator, wall  clock  time  is
- ***  assumed.
- ***
- *** returns a moodle friendly $at, in GMT, which is what Moodle wants
- ***
- *** 
+/**
+ * olson_parse_at($at, $set, $gmtoffset)
+ *
+ * see `man zic`. This function translates
+ *
+ *      2        time in hours
+ *      2:00     time in hours and minutes
+ *     15:00     24-hour format time (for times after noon)
+ *      1:28:14  time in hours, minutes, and seconds
+ *
+ *  Any of these forms may be followed by the letter w if the given
+ *  time is local "wall clock" time, s if the given time  is  local
+ *  "standard"  time, or u (or g or z) if the given time is univer-
+ *  sal time; in the absence of an indicator, wall  clock  time  is
+ *  assumed.
+ *
+ * @return string a moodle friendly $at, in GMT, which is what Moodle wants
+ *
+ * 
  */
 function olson_parse_at ($at, $set = 'set', $gmtoffset) {
 

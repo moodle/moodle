@@ -1,34 +1,35 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Moodle - Modular Object-Oriented Dynamic Learning Environment
- *          http://moodle.org
- * Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * @package    moodle
- * @subpackage portfolio
- * @author     Penny Leach <penny@catalyst.net.nz>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright  (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
- *
  * This file contains all global functions to do with manipulating portfolios
  * everything else that is logically namespaced by class is in its own file
  * in lib/portfolio/ directory.
+ *
+ * Major Contributors
+ *     - Penny Leach <penny@catalyst.net.nz>
+ *
+ * @package    moodlecore
+ * @subpackage portfolio
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// require all the sublibraries first.
+/** require all the sublibraries first. */
 require_once($CFG->libdir . '/portfolio/constants.php');   // all the constants for time, export format etc.
 require_once($CFG->libdir . '/portfolio/exceptions.php');  // exception classes used by portfolio code
 require_once($CFG->libdir . '/portfolio/formats.php');     // the export format hierarchy
@@ -38,21 +39,30 @@ require_once($CFG->libdir . '/portfolio/plugin.php');      // the base classes f
 require_once($CFG->libdir . '/portfolio/caller.php');      // the base classes for calling code
 
 /**
-* use this to add a portfolio button or icon or form to a page
-*
-* These class methods do not check permissions. the caller must check permissions first.
-* Later, during the export process, the caller class is instantiated and the check_permissions method is called
-*
-* This class can be used like this:
-* $button = new portfolio_add_button();
-* $button->set_callback_options('name_of_caller_class', array('id' => 6), '/your/mod/lib.php');
-* $button->render(PORTFOLIO_ADD_FULL_FORM, get_string('addeverythingtoportfolio', 'yourmodule'));
-*
-* or like this:
-* $button = new portfolio_add_button(array('callbackclass' => 'name_of_caller_class', 'callbackargs' => array('id' => 6), 'callbackfile' => '/your/mod/lib.php'));
-* $somehtml .= $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
-*
-* See http://docs.moodle.org/en/Development:Adding_a_Portfolio_Button_to_a_page for more information
+ * use this to add a portfolio button or icon or form to a page
+ *
+ * These class methods do not check permissions. the caller must check permissions first.
+ * Later, during the export process, the caller class is instantiated and the check_permissions method is called
+ *
+ * This class can be used like this:
+ * <code>
+ * $button = new portfolio_add_button();
+ * $button->set_callback_options('name_of_caller_class', array('id' => 6), '/your/mod/lib.php');
+ * $button->render(PORTFOLIO_ADD_FULL_FORM, get_string('addeverythingtoportfolio', 'yourmodule'));
+ * </code>
+ *
+ * or like this:
+ * <code>
+ * $button = new portfolio_add_button(array('callbackclass' => 'name_of_caller_class', 'callbackargs' => array('id' => 6), 'callbackfile' => '/your/mod/lib.php'));
+ * $somehtml .= $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
+ * </code>
+ *
+ * See {@link http://docs.moodle.org/en/Development:Adding_a_Portfolio_Button_to_a_page} for more information
+ *
+ * @package    moodlecore
+ * @subpackage portfolio
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 class portfolio_add_button {
 
@@ -823,16 +833,17 @@ function portfolio_cron() {
 }
 
 /**
-* helper function to rethrow a caught portfolio_exception as an export exception
-*
-* used because when a portfolio_export exception is thrown the export is cancelled
-*
-* @param portfolio_exporter $exporter  current exporter object
-* @param exception          $exception exception to rethrow
-*
-* @return void
-* @throws portfolio_export_exceptiog
-*/
+ * helper function to rethrow a caught portfolio_exception as an export exception
+ *
+ * used because when a portfolio_export exception is thrown the export is cancelled
+ *
+ * throws portfolio_export_exceptiog
+ *
+ * @param portfolio_exporter $exporter  current exporter object
+ * @param exception          $exception exception to rethrow
+ *
+ * @return void
+ */
 function portfolio_export_rethrow_exception($exporter, $exception) {
     throw new portfolio_export_exception($exporter, $exception->errorcode, $exception->module, $exception->link, $exception->a);
 }
@@ -841,8 +852,8 @@ function portfolio_export_rethrow_exception($exporter, $exception) {
 * try and determine expected_time for purely file based exports
 * or exports that might include large file attachments.
 *
+ * @global object
 * @param mixed $totest - either an array of stored_file objects or a single stored_file object
-*
 * @return constant PORTFOLIO_TIME_XXX
 */
 function portfolio_expected_time_file($totest) {
@@ -904,8 +915,8 @@ function portfolio_filesize_info() {
 * try and determine expected_time for purely database based exports
 * or exports that might include large parts of a database
 *
+ * @global object
 * @param integer $recordcount - number of records trying to export
-*
 * @return constant PORTFOLIO_TIME_XXX
 */
 function portfolio_expected_time_db($recordcount) {
@@ -925,6 +936,9 @@ function portfolio_expected_time_db($recordcount) {
     return PORTFOLIO_TIME_HIGH;
 }
 
+/**
+ * @global object
+ */
 function portfolio_insane_notify_admins($insane, $instances=false) {
 
     global $CFG;

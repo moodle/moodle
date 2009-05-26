@@ -1,8 +1,33 @@
-<?php  // $Id$
-       // This file contains all the common stuff to be used in RSS System
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This file contains all the common stuff to be used in RSS System
+ *
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 /**
  * This function returns the icon (from theme) with the link to rss/file.php
+ *
+ * @global object
+ * @global object
  */
 function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
 
@@ -26,6 +51,8 @@ function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
 
 /**
  * This function returns the URL for the RSS XML file.
+ *
+ * @global object
  */
 function rss_get_url($courseid, $userid, $modulename, $id) {
     global $CFG;
@@ -45,6 +72,9 @@ function rss_print_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
  * This function iterates over each module in the server to see if
  * it supports generating rss feeds, searching for a MODULENAME_rss_feeds()
  * function and invoking it foreach activity as necessary
+ *
+ * @global object
+ * @global object
  */
 function cron_rss_feeds () {
     global $CFG, $DB;
@@ -100,6 +130,8 @@ function cron_rss_feeds () {
 
 /**
  * This function saves to file the rss feed specified in the parameters
+ *
+ * @global object
  */
 function rss_save_file($modname, $mod, $result) {
     global $CFG;
@@ -133,6 +165,9 @@ function rss_file_name($modname, $mod) {
 
 /**
  * This function return all the common headers for every rss feed in the site
+ *
+ * @global object
+ * @global object
  */
 function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
     global $CFG, $USER;
@@ -464,6 +499,11 @@ function rss_print_form($act='none', $url='', $rssid='', $preferredtitle='', $sh
 
 /**
  * Prints or returns a form for managing rss feed entries.
+ *
+ * @global object
+ * @global object
+ * @global int
+ * @global string
  * @param string $act The current action. If "rssedit" then and "update" button is used, otherwise "add" is used.
  * @param string $url The url of the feed that is being updated or NULL
  * @param int $rssid The dataabse id of the feed that is being updated or NULL
@@ -550,23 +590,26 @@ function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $shar
 
 
 /**
-* Adds RSS Media Enclosures for "podcasting" by examining links to media files,
-* and attachments which are media files. Please note that the RSS that is
-* produced cannot be strictly valid for the linked files, since we do not know
-* the files' sizes and cannot include them in the "length" attribute. At
-* present, the validity (and therefore the podcast working in most software)
-* can only be ensured for attachments, and not for links.
-* Note also that iTunes does some things very badly - one thing it does is
-* refuse to download ANY of your files if you're using "file.php?file=blah"
-* and can't use the more elegant "file.php/blah" slasharguments setting. It
-* stops after ".php" and assumes the files are not media files, despite what
-* is specified in the "type" attribute. Dodgy coding all round!
-*
-* @param    $item     object representing an RSS item
-* @return   string    RSS enclosure tags
-* @author   Hannes Gassert <hannes@mediagonal.ch>
-* @author   Dan Stowell
-*/
+ * Adds RSS Media Enclosures for "podcasting" by examining links to media files,
+ * and attachments which are media files. Please note that the RSS that is
+ * produced cannot be strictly valid for the linked files, since we do not know
+ * the files' sizes and cannot include them in the "length" attribute. At
+ * present, the validity (and therefore the podcast working in most software)
+ * can only be ensured for attachments, and not for links.
+ * Note also that iTunes does some things very badly - one thing it does is
+ * refuse to download ANY of your files if you're using "file.php?file=blah"
+ * and can't use the more elegant "file.php/blah" slasharguments setting. It
+ * stops after ".php" and assumes the files are not media files, despite what
+ * is specified in the "type" attribute. Dodgy coding all round!
+ *
+ * Authors
+ *     - Hannes Gassert <hannes@mediagonal.ch>
+ *     - Dan Stowell
+ *
+ * @global object
+ * @param    $item     object representing an RSS item
+ * @return   string    RSS enclosure tags
+ */
 function rss_add_enclosures($item){
     global $CFG;
 

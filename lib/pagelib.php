@@ -1,35 +1,29 @@
-<?php // $Id$
+<?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * This file contains the moodle_page class. There is normally a single instance
  * of this class in the $PAGE global variable. This class is a central reporitory
  * of information about the page we are building up to send back to the user.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package pages
+ * @package   moodlecore
+ * @subpackage pages
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -38,6 +32,11 @@
  * except keep track of information, however, it serves as the access point to
  * some more significant components like $PAGE->theme, $PAGE->requires,
  * $PAGE->blocks, etc.
+ *
+ * @package   moodlecore
+ * @subpackage pages
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodle_page {
     /**#@+ Tracks the where we are in the generation of the page. */
@@ -135,6 +134,8 @@ class moodle_page {
 
     /**
      * Please do not call this method directly, use the ->course syntax. @see __get().
+     *
+     * @global object
      * @return object the current course that we are inside - a row from the
      * course table. (Also available as $COURSE global.) If we are not inside
      * an actual course, this will be the site course.
@@ -1016,7 +1017,10 @@ function page_map_class($type, $classname = NULL) {
  * @deprecated since Moodle 2.0
  * Parent class from which all Moodle page classes derive
  *
- * @package pages
+ * @package   moodlecore
+ * @subpackage pages
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_base extends moodle_page {
     /**
@@ -1051,7 +1055,10 @@ class page_base extends moodle_page {
  * Although this does nothing, this class declaration should be left for now
  * since there may be legacy class doing class page_... extends page_course
  *
- * @package pages
+ * @package   moodlecore
+ * @subpackage pages
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_course extends page_base {
 }
@@ -1060,7 +1067,10 @@ class page_course extends page_base {
  * @deprecated since Moodle 2.0
  * Class that models the common parts of all activity modules
  *
- * @package pages
+ * @package   moodlecore
+ * @subpackage pages
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_generic_activity extends page_base {
     // Although this function is deprecated, it should be left here because

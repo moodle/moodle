@@ -1,4 +1,20 @@
-<?php  // $Id$
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Code for handling and processing questions
  *
@@ -10,12 +26,13 @@
  * TODO: separate those functions which form part of the API
  *       from the helper functions.
  *
- * @author Martin Dougiamas and many others. This has recently been completely
- *         rewritten by Alex Smith, Julian Sedding and Gustav Delius as part of
- *         the Serving Mathematics project
- *         {@link http://maths.york.ac.uk/serving_maths}
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package question
+ * Major Contributors
+ *     - Alex Smith, Julian Sedding and Gustav Delius {@link http://maths.york.ac.uk/serving_maths}
+ *
+ * @package moodlecore
+ * @subpackage question
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /// CONSTANTS ///////////////////////////////////
@@ -119,7 +136,11 @@ define('QUESTION_FLAGSSHOWN', 1);
 define('QUESTION_FLAGSEDITABLE', 2);
 /**#@-*/
 
-/// GLOBAL VARAIBLES //////////////////
+/**
+ * GLOBAL VARAIBLES
+ * @global array $QTYPES
+ * @name $QTYPES
+ */
 global $QTYPES;
 /**
  * Array holding question type objects. Initialised via calls to
@@ -130,6 +151,7 @@ $QTYPES = array();
 /**
  * Add a new question type to the various global arrays above.
  *
+ * @global object
  * @param object $qtype An instance of the new question type class.
  */
 function question_register_questiontype($qtype) {
@@ -163,6 +185,7 @@ foreach($qtypenames as $qtypename) {
  * The array returned will only hold the names of all the question types that the user should
  * be able to create directly. Some internal question types like random questions are excluded.
  *
+ * @global object
  * @return array an array of question type names translated to the user's language.
  */
 function question_type_menu() {
@@ -248,6 +271,7 @@ function question_reorder_qtypes($sortedqtypes, $tomove, $direction) {
 
 /**
  * Save a new question type order to the config_plugins table.
+ * @global object
  * @param $neworder An arra $index => $qtype. Indices should start at 0 and be in order.
  * @param $config get_config('question'), if you happen to have it around, to save one DB query.
  */
@@ -270,6 +294,11 @@ function question_save_qtype_order($neworder, $config = null) {
 
 /**
  * This holds the options that are set by the course module
+ *
+ * @package moodlecore
+ * @subpackage question
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cmoptions {
     /**
@@ -328,6 +357,8 @@ class cmoptions {
 /**
  * Returns an array of names of activity modules that use this question
  *
+ * @global object
+ * @global object
  * @param object $questionid
  * @return array of strings
  */
@@ -353,6 +384,7 @@ function question_list_instances($questionid) {
  * question categories contain any questions. This will return true even if all the questions are
  * hidden.
  *
+ * @global object
  * @param mixed $context either a context object, or a context id.
  * @return boolean whether any of the question categories beloning to this context have
  *         any questions in them.
@@ -472,6 +504,7 @@ function match_grade_options($gradeoptionsfull, $grade, $matchgrades='error') {
 /**
  * Tests whether a category is in use by any activity module
  *
+ * @global object
  * @return boolean
  * @param integer $categoryid
  * @param boolean $recursive Whether to examine category children recursively
@@ -505,6 +538,8 @@ function question_category_isused($categoryid, $recursive = false) {
 /**
  * Deletes all data associated to an attempt from the database
  *
+ * @global object
+ * @global object
  * @param integer $attemptid The id of the attempt being deleted
  */
 function delete_attempt($attemptid) {
@@ -531,6 +566,9 @@ function delete_attempt($attemptid) {
  * Deletes question and all associated data from the database
  *
  * It will not delete a question if it is used by an activity module
+ *
+ * @global object
+ * @global object
  * @param object $question  The question being deleted
  */
 function delete_question($questionid) {
@@ -591,6 +629,7 @@ function delete_question($questionid) {
 /**
  * All question categories and their questions are deleted for this course.
  *
+ * @global object
  * @param object $mod an object representing the activity
  * @param boolean $feedback to specify if the process must output a summary of its work
  * @return boolean
@@ -644,6 +683,7 @@ function question_delete_course($course, $feedback=true) {
  * 1/ All question categories and their questions are deleted for this course category.
  * 2/ All questions are moved to new category
  *
+ * @global object
  * @param object $category course category object
  * @param object $newcategory empty means everything deleted, otherwise id of category where content moved
  * @param boolean $feedback to specify if the process must output a summary of its work
@@ -723,6 +763,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
 /**
  * Enter description here...
  *
+ * @global object
  * @param string $questionids list of questionids
  * @param object $newcontext the context to create the saved category in.
  * @param string $oldplace a textual description of the think being deleted, e.g. from get_context_name
@@ -756,6 +797,7 @@ function question_save_from_deletion($questionids, $newcontextid, $oldplace, $ne
 /**
  * All question categories and their questions are deleted for this activity.
  *
+ * @global object
  * @param object $cm the course module object representing the activity
  * @param boolean $feedback to specify if the process must output a summary of its work
  * @return boolean
@@ -807,6 +849,7 @@ function question_delete_activity($cm, $feedback=true) {
  * acutally moving questions and associated data. However, callers of this function also have to
  * do other work, which is why you should not call this method directly from outside the questionbank.
  *
+ * @global object
  * @param string $questionids a comma-separated list of question ids.
  * @param integer $newcategory the id of the category to move to.
  */
@@ -827,6 +870,8 @@ function question_move_questions_to_category($questionids, $newcategory) {
 }
 
 /**
+ * @global object
+ * @global object
  * @param array $row tab objects
  * @param question_edit_contexts $contexts object representing contexts available from this context
  * @param string $querystring to append to urls
@@ -851,6 +896,8 @@ function questionbank_navigation_tabs(&$row, $contexts, $querystring) {
  * See, for example, the usage in mod/quiz/attemptlib.php, and
  * read the code below to see how the SQL is assembled. Throws exceptions on error.
  *
+ * @global object
+ * @global object
  * @param array $questionids array of question ids.
  * @param string $extrafields extra SQL code to be added to the query.
  * @param string $join extra SQL code to be added to the query.
@@ -921,6 +968,8 @@ function question_load_questions($questionids, $extrafields = '', $join = '') {
 /**
  * Private function to factor common code out of get_question_options().
  *
+ * @global object
+ * @global object
  * @param object $question the question to tidy.
  * @param boolean $loadtags load the question tags from the tags table. Optional, default false.
  * @return boolean true if successful, else false.
@@ -972,6 +1021,7 @@ function get_question_options(&$questions, $loadtags = false) {
 /**
  * Load the basic state information for 
  *
+ * @global object
  * @param integer $attemptid the attempt id to load the states for.
  * @return array an array of state data from the database, you will subsequently
  *      need to call question_load_states to get fully loaded states that can be
@@ -1019,6 +1069,8 @@ function question_preload_states($attemptid) {
  * question_preload_states, creating new states for any question where there
  * is not a state in the database.
  *
+ * @global object
+ * @global object
  * @param array $questions the questions to load state for.
  * @param array $states the partially loaded states this array is updated.
  * @param object $cmoptions options from the module we are loading the states for. E.g. $quiz.
@@ -1158,6 +1210,7 @@ function get_question_states(&$questions, $cmoptions, $attempt, $lastattemptid =
 /**
  * Load a particular previous state of a question.
  *
+ * @global object
  * @param array $question The question to load the state for.
  * @param object $cmoptions Options from the specifica activity module, e.g. $quiz.
  * @param object $attempt The attempt for which the question sessions are to be loaded.
@@ -1207,6 +1260,8 @@ function question_load_specific_state($question, $cmoptions, $attempt, $stateid)
 *
 * Extends the state objects for a question by calling
 * {@link restore_session_and_responses()}
+ *
+ * @global object
 * @param object $question The question for which the state is needed
 * @param object $state The state as loaded from the database
 * @return boolean Represents success or failure
@@ -1240,6 +1295,9 @@ function restore_question_state(&$question, &$state) {
 * to the answer field of the database table. The information in the
 * question_sessions table is updated.
 * The question type specific data is then saved.
+ *
+ * @global array
+ * @global object
 * @return mixed           The id of the saved or updated state or false
 * @param object $question The question for which session is to be saved.
 * @param object $state    The state information to be saved. In particular the
@@ -1401,6 +1459,8 @@ function question_extract_responses($questions, $formdata, $defaultevent=QUESTIO
 
 /**
  * Returns the html for question feedback image.
+ *
+ * @global object
  * @param float   $fraction  value representing the correctness of the user's
  *                           response to a question.
  * @param boolean $selected  whether or not the answer is the one that the
@@ -1446,8 +1506,9 @@ function question_get_feedback_class($fraction) {
 * This is used when a question is changed and old student
 * responses need to be marked with the new version of a question.
 *
-* TODO: Make sure this is not quiz-specific
+* @todo Make sure this is not quiz-specific
 *
+ * @global object
 * @return boolean            Indicates whether the grade has changed
 * @param object  $question   A question object
 * @param object  $attempt    The attempt, in which the question needs to be regraded.
@@ -1573,6 +1634,7 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
 /**
 * Processes an array of student responses, grading and saving them as appropriate
 *
+ * @global array
 * @param object $question Full question object, passed by reference
 * @param object $state    Full state object, passed by reference
 * @param object $action   object with the fields ->responses which
@@ -1775,6 +1837,8 @@ function question_apply_penalty_and_timelimit(&$question, &$state, $attempt, $cm
 /**
 * Print the icon for the question type
 *
+ * @global array
+ * @global object
 * @param object $question The question object for which the icon is required
 *       only $question->qtype is used.
 * @param boolean $return If true the functions returns the link as a string
@@ -1800,6 +1864,8 @@ function print_question_icon($question, $return = false) {
 /**
 * Returns a html link to the question image if there is one
 *
+ * @global object
+ * @global object
 * @return string The html image tag or the empy string if there is no image.
 * @param object $question The question object
 */
@@ -1825,6 +1891,9 @@ function get_question_image($question) {
     return $img;
 }
 
+/**
+ * @global array
+ */
 function question_print_comment_fields($question, $state, $prefix, $cmoptions, $caption = '') {
     global $QTYPES;
     $idprefix = preg_replace('/[^-_a-zA-Z0-9]/', '', $prefix);
@@ -1874,6 +1943,7 @@ function question_print_comment_fields($question, $state, $prefix, $cmoptions, $
  * database. $state is only updated in memory, it is up to the call to store
  * that, if appropriate.
  *
+ * @global object
  * @param object $question the question
  * @param object $state the state to be updated.
  * @param object $attempt the attempt the state belongs to, to be updated.
@@ -1984,6 +2054,8 @@ function question_id_and_key_from_post_name($name) {
  * the question code needs to also have a unique id by which to identify all these
  * attempts. Hence a module, when creating a new attempt, calls this function and
  * stores the return value in the 'uniqueid' field of its attempts table.
+ *
+ * @global object
  */
 function question_new_attempt_uniqueid($modulename='quiz') {
     global $DB;
@@ -2033,6 +2105,8 @@ function question_format_grade($cmoptions, $grade) {
 }
 
 /**
+ *
+ * @global object
  * @return string An inline script that creates a JavaScript object storing
  * various strings and bits of configuration that the scripts in qengine.js need
  * to get from PHP.
@@ -2055,6 +2129,8 @@ function question_init_qenginejs_script() {
  * Get the HTML that needs to be included in the head tag when the
  * questions in $questionlist are printed in the gives states.
  *
+ * @global object
+ * @global array
  * @param array $questionlist a list of questionids of the questions what will appear on this page.
  * @param array $questions an array of question objects, whose keys are question ids.
  *      Must contain all the questions in $questionlist
@@ -2088,6 +2164,7 @@ function get_html_head_contributions($questionlist, &$questions, &$states) {
  * Like @see{get_html_head_contributions} but for the editing page
  * question/question.php.
  *
+ * @global array
  * @param $question A question object. Only $question->qtype is used.
  * @return string some HTML code that can go inside the head tag.
  */
@@ -2101,6 +2178,8 @@ function get_editing_head_contributions($question) {
  * Prints a question
  *
  * Simply calls the question type specific print_question() method.
+ *
+ * @global array
  * @param object $question The question to be rendered.
  * @param object $state    The state to render the question in.
  * @param integer $number  The number for this question.
@@ -2115,6 +2194,8 @@ function print_question(&$question, &$state, $number, $cmoptions, $options=null)
  * Saves question options
  *
  * Simply calls the question type specific save_question_options() method.
+ *
+ * @global array
  */
 function save_question_options($question) {
     global $QTYPES;
@@ -2126,6 +2207,8 @@ function save_question_options($question) {
 * Gets all teacher stored answers for a given question
 *
 * Simply calls the question type specific get_all_responses() method.
+ *
+ * @global array
 */
 // ULPGC ecastro
 function get_question_responses($question, $state) {
@@ -2138,6 +2221,8 @@ function get_question_responses($question, $state) {
 * Gets the response given by the user in a particular state
 *
 * Simply calls the question type specific get_actual_response() method.
+ *
+ * @global array
 */
 // ULPGC ecastro
 function get_question_actual_response($question, $state) {
@@ -2149,6 +2234,8 @@ function get_question_actual_response($question, $state) {
 
 /**
 * TODO: document this
+ *
+ * @global array
 */
 // ULPGc ecastro
 function get_question_fraction_grade($question, $state) {
@@ -2158,6 +2245,7 @@ function get_question_fraction_grade($question, $state) {
     return $r;
 }
 /**
+ * @global array
 * @return integer grade out of 1 that a random guess by a student might score.
 */
 // ULPGc ecastro
@@ -2173,6 +2261,8 @@ function question_get_random_guess_score($question) {
  * returns the categories with their names ordered following parent-child relationships
  * finally it tries to return pending categories (those being orphaned, whose parent is
  * incorrect) to avoid missing any category from original array.
+ *
+ * @global object
  */
 function sort_categories_by_tree(&$categories, $id = 0, $level = 1) {
     global $DB;
@@ -2292,6 +2382,7 @@ function question_category_select_menu($contexts, $top = false, $currentcat = 0,
 }
 
 /**
+ * @global object
  * @param integer $contextid a context id.
  * @return object the default question category for that context, or false if none.
  */
@@ -2306,6 +2397,8 @@ function question_get_default_category($contextid) {
 }
 
 /**
+ * @global object
+ * @global object
  * @param object $context a context
  * @return string A URL for editing questions in this context.
  */
@@ -2338,6 +2431,7 @@ function question_edit_url($context) {
 * Gets the default category in the most specific context.
 * If no categories exist yet then default ones are created in all contexts.
 *
+ * @global object
 * @param array $contexts  The context objects for this context and all parent contexts.
 * @return object The default category - the category in the course context
 */
@@ -2387,6 +2481,7 @@ function question_make_default_categories($contexts) {
  * Get all the category objects, including a count of the number of questions in that category,
  * for all the categories in the lists $contexts.
  *
+ * @global object
  * @param mixed $contexts either a single contextid, or a comma-separated list of context ids.
  * @param string $sortorder used as the ORDER BY clause in the select statement.
  * @return array of category objects.
@@ -2403,6 +2498,7 @@ function get_categories_for_contexts($contexts, $sortorder = 'parent, sortorder,
 
 /**
  * Output an array of question categories.
+ * @global object
  */
 function question_category_options($contexts, $top = false, $currentcat = 0, $popupform = false, $nochildrenof = -1) {
     global $CFG;
@@ -2473,6 +2569,7 @@ function question_add_tops($categories, $pcontexts){
 
 /**
  * Returns a comma separated list of ids of the category and all subcategories
+ * @global object
  */
 function question_categorylist($categoryid) {
     global $DB;
@@ -2496,9 +2593,11 @@ function question_categorylist($categoryid) {
 
 /**
  * Get list of available import or export formats
+ *
+ * @global object
  * @param string $type 'import' if import list, otherwise export list assumed
  * @return array sorted list of import/export formats available
-**/
+ */
 function get_import_export_formats( $type ) {
 
     global $CFG;
@@ -2581,6 +2680,13 @@ function default_export_filename($course,$category) {
 
     return $export_name;
 }
+
+/**
+ * @package moodlecore
+ * @subpackage question
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class context_to_string_translator{
     /**
      * @var array used to translate between contextids and strings for this context.
@@ -2655,6 +2761,9 @@ function question_get_all_capabilities() {
 
 /**
  * Check capability on category
+ *
+ * @global object
+ * @global object
  * @param mixed $question object or id
  * @param string $cap 'add', 'edit', 'view', 'use', 'move'
  * @param integer $cachecat useful to cache all question records in a category
@@ -2719,6 +2828,9 @@ function question_require_capability_on($question, $cap){
     return true;
 }
 
+/**
+ * @global object
+ */
 function question_file_links_base_url($courseid){
     global $CFG;
     $baseurl = preg_quote("$CFG->wwwroot/file.php", '!');
@@ -2728,8 +2840,9 @@ function question_file_links_base_url($courseid){
     return $baseurl;
 }
 
-/*
+/**
  * Find all course / site files linked to in a piece of html.
+ * @global object
  * @param string html the html to search
  * @param int course search for files for courseid course or set to siteid for
  *              finding site files.
@@ -2767,6 +2880,7 @@ function question_find_file_links_from_html($html, $courseid){
 /**
  * Check that url doesn't point anywhere it shouldn't
  *
+ * @global object
  * @param $url string relative url within course files directory
  * @return mixed boolean false if not OK or cleaned URL as string if OK
  */
@@ -2782,6 +2896,8 @@ function question_url_check($url){
 
 /**
  * Find all course / site files linked to in a piece of html.
+ *
+ * @global object
  * @param string html the html to search
  * @param int course search for files for courseid course or set to siteid for
  *              finding site files.
@@ -2801,6 +2917,9 @@ function question_replace_file_links_in_html($html, $fromcourseid, $tocourseid, 
     return $newhtml;
 }
 
+/**
+ * @global object
+ */
 function get_filesdir_from_context($context){
     global $DB;
 
@@ -2843,6 +2962,7 @@ function question_get_real_state($state){
 /**
  * Update the flagged state of a particular question session.
  *
+ * @global object
  * @param integer $sessionid question_session id.
  * @param boolean $newstate the new state for the flag.
  * @return boolean success or failure.
@@ -2855,6 +2975,7 @@ function question_update_flag($sessionid, $newstate) {
 /**
  * Update the flagged state of all the questions in an attempt, where a new .
  *
+ * @global object
  * @param integer $sessionid question_session id.
  * @param boolean $newstate the new state for the flag.
  * @return boolean success or failure.
@@ -2881,6 +3002,8 @@ function question_save_flags($formdata, $attemptid, $questionids) {
 }
 
 /**
+ *
+ * @global object
  * @param integer $attemptid the question_attempt id.
  * @param integer $questionid the question id.
  * @param integer $sessionid the question_session id.

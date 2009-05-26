@@ -1,14 +1,40 @@
 <?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/** Includes */
 require_once('Console/Getopt.php');
 
 /**
-* Profiler adapted from Pear::APD's pprofp script. Not quite there yet, I need
-* to get this to accept a similar list of arguments as the script does,
-* and process them the same way. Also make sure that the file being loaded
-* is the right one. Also support multiple pids used in one page load (up to 4 so far).
-* Then output all this in a nicely formatted table.
-*/
+ * Profiler adapted from Pear::APD's pprofp script. Not quite there yet, I need
+ * to get this to accept a similar list of arguments as the script does,
+ * and process them the same way. Also make sure that the file being loaded
+ * is the right one. Also support multiple pids used in one page load (up to 4 so far).
+ * Then output all this in a nicely formatted table.
+ *
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class Profiler
 {
     var $stimes;
@@ -29,6 +55,8 @@ class Profiler
      * WARNING: If you switch cleanup off, profiling data will
      * accumulate from one pageload to the next.
      *
+     * @global object
+     * @global object
      * @param boolean $cleanup Whether to delete pprof files or not.
      * @return String Profiling raw data
      */
@@ -60,7 +88,7 @@ class Profiler
      * Returns profiling information gathered using APD functions.
      * Accepts a numerical array of command-line arguments.
      * 
-     * @usage Profiler::get_profiling($args)
+     * Profiler::get_profiling($args)
      *  Sort options
      *  -a          Sort by alphabetic names of subroutines.
      *  -l          Sort by number of calls to subroutines

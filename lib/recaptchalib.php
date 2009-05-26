@@ -1,14 +1,15 @@
 <?php
-/*
+
+/**
  * This is a PHP library that handles calling reCAPTCHA.
  *    - Documentation and latest version
- *          http://recaptcha.net/plugins/php/
+ *          {@link http://recaptcha.net/plugins/php/}
  *    - Get a reCAPTCHA API Key
- *          http://recaptcha.net/api/getkey
+ *          {@link http://recaptcha.net/api/getkey}
  *    - Discussion group
- *          http://groups.google.com/group/recaptcha
+ *          {@link http://groups.google.com/group/recaptcha}
  *
- * Copyright (c) 2007 reCAPTCHA -- http://recaptcha.net
+ * Copyright (c) 2007 reCAPTCHA -- {@link http://recaptcha.net}
  * AUTHORS:
  *   Mike Crawford
  *   Ben Maurer
@@ -30,6 +31,9 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
+ *
+ * @package moodlecore
+ * @copyright (c) 2007 reCAPTCHA -- {@link http://recaptcha.net}
  */
 
 /**
@@ -58,6 +62,8 @@ function _recaptcha_qsencode ($data) {
 
 /**
  * Submits an HTTP POST to a reCAPTCHA server
+ *
+ * @global object
  * @param string $host
  * @param string $path
  * @param array $data
@@ -96,6 +102,8 @@ function _recaptcha_http_post($host, $path, $data, $port = 80, $https=false) {
  * Gets the challenge HTML (javascript and non-javascript version).
  * This is called from the browser, and the resulting reCAPTCHA HTML widget
  * is embedded within the HTML form it was called from.
+ *
+ * @global object
  * @param string $pubkey A public key for reCAPTCHA
  * @param string $error The error given by reCAPTCHA (optional, default is null)
  * @param boolean $use_ssl Should the request be made over ssl? (optional, default is false)
@@ -175,6 +183,9 @@ function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false) {
 
 /**
  * A ReCaptchaResponse is returned from recaptcha_check_answer()
+ *
+ * @package moodlecore
+ * @copyright (c) 2007 reCAPTCHA -- {@link http://recaptcha.net}
  */
 class ReCaptchaResponse {
         var $is_valid;
