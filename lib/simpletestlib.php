@@ -1,4 +1,20 @@
-<?php // $Id$
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Utility functions to make unit testing easier.
  *
@@ -6,13 +22,18 @@
  * dirty methods for getting things done in test cases. None of these
  * methods should be used outside test code.
  *
+ * Major Contirbutors
+ *     - T.J.Hunt@open.ac.uk
+ *
+ * @package moodlecore
+ * @subpackage simpletestex
  * @copyright &copy; 2006 The Open University
- * @author T.J.Hunt@open.ac.uk
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @version $Id$
- * @package SimpleTestEx
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Includes
+ */
 require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->libdir . '/simpletestlib/simpletest.php');
 require_once($CFG->libdir . '/simpletestlib/unit_tester.php');
@@ -52,6 +73,11 @@ function recurseFolders($path, $callback, $fileregexp = '/.*/', $exclude = false
 
 /**
  * An expectation for comparing strings ignoring whitespace.
+ *
+ * @package moodlecore
+ * @subpackage simpletestex
+ * @copyright &copy; 2006 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class IgnoreWhitespaceExpectation extends SimpleExpectation {
     var $expect;
@@ -76,6 +102,11 @@ class IgnoreWhitespaceExpectation extends SimpleExpectation {
 
 /**
  * An Expectation that two arrays contain the same list of values.
+ *
+ * @package moodlecore
+ * @subpackage simpletestex
+ * @copyright &copy; 2006 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class ArraysHaveSameValuesExpectation extends SimpleExpectation {
     var $expect;
@@ -108,6 +139,11 @@ class ArraysHaveSameValuesExpectation extends SimpleExpectation {
  * An Expectation that compares to objects, and ensures that for every field in the
  * expected object, there is a key of the same name in the actual object, with
  * the same value. (The actual object may have other fields to, but we ignore them.)
+ *
+ * @package moodlecore
+ * @subpackage simpletestex
+ * @copyright &copy; 2006 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class CheckSpecifiedFieldsExpectation extends SimpleExpectation {
     var $expect;
@@ -160,6 +196,11 @@ class CheckSpecifiedFieldsExpectation extends SimpleExpectation {
  * The tear-down method for this class should automatically revert any changes
  * you make during test set-up using the metods defined here. That is, it will
  * drop tables for you automatically and revert to the real $DB and $USER->id.
+ *
+ * @package moodlecore
+ * @subpackage simpletestex
+ * @copyright &copy; 2006 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class UnitTestCaseUsingDatabase extends UnitTestCase {
     private $realdb;
@@ -378,6 +419,12 @@ class UnitTestCaseUsingDatabase extends UnitTestCase {
     }
 }
 
+/**
+ * @package moodlecore
+ * @subpackage simpletestex
+ * @copyright &copy; 2006 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class FakeDBUnitTestCase extends UnitTestCase {
     public $tables = array();
     public $pkfile;
@@ -389,7 +436,8 @@ class FakeDBUnitTestCase extends UnitTestCase {
      * If this file already exists, it means that a previous run of unit tests
      * did not complete, and has left data undeleted in the DB. This data is then
      * deleted and the file is retained. Otherwise it is created.
-     * @throws moodle_exception if CSV file cannot be created
+     *
+     * throws moodle_exception if CSV file cannot be created
      */
     public function __construct($label = false) {
         global $DB, $CFG;
@@ -455,8 +503,10 @@ class FakeDBUnitTestCase extends UnitTestCase {
      * Given a filename, opens it and parses the csv contained therein. It expects two fields per line:
      * 1. Table name
      * 2. Max id
+     *
+     * throws moodle_exception if file doesn't exist
+     *
      * @param string $filename
-     * @throws moodle_exception if file doesn't exist
      */
     public function get_table_data($filename) {
         global $CFG;
@@ -485,7 +535,7 @@ class FakeDBUnitTestCase extends UnitTestCase {
     /**
      * Method called before each test method. Replaces the real $DB with the one configured for unit tests (different prefix, $CFG->unittestprefix).
      * Also detects if this config setting is properly set, and if the user table exists.
-     * TODO Improve detection of incorrectly built DB test tables (e.g. detect version discrepancy and offer to upgrade/rebuild)
+     * @todo Improve detection of incorrectly built DB test tables (e.g. detect version discrepancy and offer to upgrade/rebuild)
      */
     public function setUp() {
         global $DB, $CFG;
@@ -602,6 +652,11 @@ class FakeDBUnitTestCase extends UnitTestCase {
  * Internally, it routes all calls to $DB to a real instance of the database engine (aggregated as a member variable),
  * except those that are defined in this proxy class. This makes it possible to add extra code to the database engine
  * without subclassing it.
+ *
+ * @package moodlecore
+ * @subpackage simpletestex
+ * @copyright &copy; 2006 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class UnitTestDB {
     public static $DB;
@@ -672,7 +727,8 @@ class UnitTestDB {
     /**
      * Overriding update_record: If we are updating a record that was NOT inserted by unit tests,
      * throw an exception and cancel update.
-     * @throws moodle_exception If trying to update a record not inserted by unit tests.
+     * 
+     * throws moodle_exception If trying to update a record not inserted by unit tests.
      */
     public function update_record($table, $dataobject, $bulk=false) {
         global $DB;
@@ -691,7 +747,8 @@ class UnitTestDB {
     /**
      * Overriding delete_record: If we are deleting a record that was NOT inserted by unit tests,
      * throw an exception and cancel delete.
-     * @throws moodle_exception If trying to delete a record not inserted by unit tests.
+     *
+     * throws moodle_exception If trying to delete a record not inserted by unit tests.
      */
     public function delete_records($table, array $conditions=array()) {
         global $DB;
@@ -730,7 +787,8 @@ class UnitTestDB {
     /**
      * Overriding delete_records_select: If we are deleting a record that was NOT inserted by unit tests,
      * throw an exception and cancel delete.
-     * @throws moodle_exception If trying to delete a record not inserted by unit tests.
+     *
+     * throws moodle_exception If trying to delete a record not inserted by unit tests.
      */
     public function delete_records_select($table, $select, array $params=null) {
         global $DB;

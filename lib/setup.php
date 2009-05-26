@@ -1,13 +1,29 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * setup.php - Sets up sessions, connects to databases and so on
  *
  * Normally this is only called by the main config.php file
  * Normally this file does not need to be edited.
- * @author Martin Dougiamas
- * @version $Id$
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package moodlecore
+ *
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -20,12 +36,14 @@
  *  - $CFG->libdir  - Path to moodle's library folder on server's filesystem.
  *
  * @global object $CFG
+ * @name $CFG
  */
 global $CFG;
 
 /**
  * Database connection. Used for all access to the database.
  * @global moodle_database $DB
+ * @name $DB
  */
 global $DB;
 
@@ -33,6 +51,7 @@ global $DB;
  * Moodle's wrapper round PHP's $_SESSION.
  *
  * @global object $SESSION
+ * @name $SESSION
  */
 global $SESSION;
 
@@ -54,6 +73,7 @@ global $SESSION;
  *  - $USER->lang - The user's language choice.
  *
  * @global object $USER
+ * @name $USER
  */
 global $USER;
 
@@ -62,12 +82,14 @@ global $USER;
  * generating in response to the user's request.
  *
  * @global moodle_page $PAGE
+ * @name $PAGE
  */
 global $PAGE;
 
 /**
  * The current course. An alias for $PAGE->course.
  * @global object $COURSE
+ * @name $COURSE
  */
 global $COURSE;
 
@@ -79,12 +101,14 @@ global $COURSE;
  *  - $THEME->cellheading2 - Alternate cell colors.
  *
  * @global object $THEME
+ * @name THEME
  */
 global $THEME;
 
 /**
  * Shared memory cache.
  * @global object $MCACHE
+ * @name $MCACHE
  */
 global $MCACHE;
 
@@ -93,19 +117,38 @@ global $MCACHE;
  *
  * Its primary goal is to allow 100% HTTPS pages when $CFG->loginhttps is enabled. Default to false.
  * Its enabled only by the httpsrequired() function and used in some pages to update some URLs
-*/
+ *
+ * @global bool $HTTPSPAGEREQUIRED
+ * @name $HTTPSPAGEREQUIRED
+ */
 global $HTTPSPAGEREQUIRED;
 
-/** Full script path including all params, slash arguments, scheme and host.*/
+/**
+ * Full script path including all params, slash arguments, scheme and host.
+ * @global string $FULLME
+ * @name $FULLME
+ */
 global $FULLME;
 
-/** Script path including query string and slash arguments without host. */
+/**
+ * Script path including query string and slash arguments without host.
+ * @global string $ME
+ * @name $ME
+ */
 global $ME;
 
-/** $FULLME without slasharguments and query string.*/
+/**
+ * $FULLME without slasharguments and query string.
+ * @global string $FULLSCRIPT
+ * @name $FULLSCRIPT
+ */
 global $FULLSCRIPT;
 
-/** Relative moodle script path '/course/view.php' */
+/**
+ * Relative moodle script path '/course/view.php'
+ * @global string $SCRIPT
+ * @name $SCRIPT
+ */
 global $SCRIPT;
 
     if (!isset($CFG->wwwroot)) {
@@ -118,6 +161,7 @@ global $SCRIPT;
         if (isset($_SERVER['REMOTE_ADDR'])) {
             define('CLI_SCRIPT', false);
         } else {
+            /** @ignore */
             define('CLI_SCRIPT', true);
         }
     }

@@ -1,9 +1,30 @@
-<?php  //$Id$
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Factory method returning moodle_session object.
- * @return moodle_session
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+/**
+  * Factory method returning moodle_session object.
+  * @return moodle_session
+  */
 function session_get_instance() {
     global $CFG, $DB;
 
@@ -35,6 +56,11 @@ function session_get_instance() {
     return $session;
 }
 
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 interface moodle_session {
     /**
      * Terminate current session
@@ -52,6 +78,10 @@ interface moodle_session {
 
 /**
  * Class handling all session and cookies related stuff.
+ *
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class session_stub implements moodle_session {
     protected $justloggedout;
@@ -285,6 +315,10 @@ abstract class session_stub implements moodle_session {
 
 /**
  * Legacy moodle sessions stored in files, not recommended any more.
+ *
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class legacy_file_session extends session_stub {
     protected function init_session_storage() {
@@ -319,6 +353,10 @@ class legacy_file_session extends session_stub {
 
 /**
  * Recommended moodle session storage.
+ *
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class database_session extends session_stub {
     protected $record   = null;

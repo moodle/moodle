@@ -1,13 +1,34 @@
 <?php
 
-// Web services wrapper library script
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Web services wrapper library script
+ *
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 if (check_php_version('5') && class_exists('SoapClient')) {
-    // Use the native PHP5 support
+    /** Use the native PHP5 support */
     require_once($CFG->libdir . '/soap/phpsoap.php');
 }
 else{
-    // Use nuSOAP instead
+    /** Use nuSOAP instead */
     require_once($CFG->libdir . '/soap/nusoap.php');
 
     function make_soap_fault($faultcode, $faultstring, $faultactor='', $detail='', $faultname='', $headerfault='') {
@@ -26,6 +47,7 @@ else{
         }
     }
     else {
+        /** @ignore */
         function soap_connect($wsdl, $trace=false) {
             return new soapclient($wsdl, 'wsdl');
         }
