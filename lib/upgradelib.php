@@ -24,12 +24,20 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/** UPGRADE_LOG_NORMAL = 0 */
 define('UPGRADE_LOG_NORMAL', 0);
+/** UPGRADE_LOG_NOTICE = 1 */
 define('UPGRADE_LOG_NOTICE', 1);
+/** UPGRADE_LOG_ERROR = 2 */
 define('UPGRADE_LOG_ERROR',  2);
 
 /**
  * Exception indicating unknown error during upgrade.
+ *
+ * @package    moodlecore
+ * @subpackage upgrade
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class upgrade_exception extends moodle_exception {
     function __construct($plugin, $version) {
@@ -41,6 +49,11 @@ class upgrade_exception extends moodle_exception {
 
 /**
  * Exception indicating downgrade error during upgrade.
+ *
+ * @package    moodlecore
+ * @subpackage upgrade
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class downgrade_exception extends moodle_exception {
     function __construct($plugin, $oldversion, $newversion) {
@@ -51,6 +64,12 @@ class downgrade_exception extends moodle_exception {
     }
 }
 
+/**
+ * @package    moodlecore
+ * @subpackage upgrade
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class upgrade_requires_exception extends moodle_exception {
     function __construct($plugin, $pluginversion, $currentmoodle, $requiremoodle) {
         global $CFG;
@@ -63,6 +82,12 @@ class upgrade_requires_exception extends moodle_exception {
     }
 }
 
+/**
+ * @package    moodlecore
+ * @subpackage upgrade
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class plugin_defective_exception extends moodle_exception {
     function __construct($plugin, $details) {
         global $CFG;
@@ -74,6 +99,7 @@ class plugin_defective_exception extends moodle_exception {
  * Insert or update log display entry. Entry may already exist.
  * $module, $action must be unique
  *
+ * @global object
  * @param string $module
  * @param string $action
  * @param string $mtable
@@ -108,6 +134,7 @@ function update_log_display_entry($module, $action, $mtable, $field) {
  * Please do not make large upgrade blocks with lots of operations,
  * for example when adding tables keep only one table operation per block.
  *
+ * @global object
  * @param bool $result false if upgrade step failed, true if completed
  * @param string or float $version main version
  * @param bool $allowabort allow user to abort script execution here
@@ -142,6 +169,7 @@ function upgrade_main_savepoint($result, $version, $allowabort=true) {
  * It stores module version, resets upgrade timeout
  * and abort upgrade if user cancels page loading.
  *
+ * @global object
  * @param bool $result false if upgrade step failed, true if completed
  * @param string or float $version main version
  * @param string $modname name of module
@@ -181,6 +209,7 @@ function upgrade_mod_savepoint($result, $version, $modname, $allowabort=true) {
  * It stores block version, resets upgrade timeout
  * and abort upgrade if user cancels page loading.
  *
+ * @global object
  * @param bool $result false if upgrade step failed, true if completed
  * @param string or float $version main version
  * @param string $blockname name of block
@@ -256,7 +285,8 @@ function upgrade_plugin_savepoint($result, $version, $type, $dir, $allowabort=tr
 /**
  * Upgrade plugins
  *
- * @uses $CFG
+ * @global object
+ * @global object
  * @param string $type The type of plugins that should be updated (e.g. 'enrol', 'qtype')
  * @param string $dir  The directory where the plugins are located (e.g. 'question/questiontypes')
  * @param string $return The url to prompt the user to continue to
@@ -359,6 +389,9 @@ function upgrade_plugins($type, $dir, $startcallback, $endcallback) {
 
 /**
  * Find and check all modules and load them up or upgrade them if necessary
+ *
+ * @global object
+ * @global object
  */
 function upgrade_plugins_modules($startcallback, $endcallback) {
     global $CFG, $DB;
@@ -460,6 +493,9 @@ function upgrade_plugins_modules($startcallback, $endcallback) {
 /**
  * This function finds all available blocks and install them
  * into blocks table or do all the upgrade process if newer.
+ *
+ * @global object
+ * @global object
  */
 function upgrade_plugins_blocks($startcallback, $endcallback) {
     global $CFG, $DB;
@@ -604,7 +640,8 @@ function upgrade_plugins_blocks($startcallback, $endcallback) {
  * in a file called 'local/db/upgrade.php', and if it's there calls it with the
  * appropiate $oldversion parameter. Then it updates $CFG->local_version.
  *
- * @uses $CFG
+ * @global object
+ * @global object
  */
 function upgrade_local_db($startcallback, $endcallback) {
     global $CFG, $DB;
@@ -655,9 +692,11 @@ function upgrade_local_db($startcallback, $endcallback) {
 }
 
 
-////////////////////////////////////////////////
-/// upgrade logging functions
-////////////////////////////////////////////////
+/**
+ * upgrade logging functions
+ *
+ * @global object
+ */
 
 function upgrade_handle_exception($ex, $plugin=null) {
     global $CFG;
@@ -691,6 +730,9 @@ function upgrade_handle_exception($ex, $plugin=null) {
 /**
  * Adds log entry into upgrade_log table
  *
+ * @global object
+ * @global object
+ * @global object
  * @param int $type UPGRADE_LOG_NORMAL, UPGRADE_LOG_NOTICE or UPGRADE_LOG_ERROR
  * @param string $plugin plugin or null if main
  * @param string $info short description text of log entry
@@ -759,6 +801,10 @@ function upgrade_log($type, $plugin, $info, $details=null, $backtrace=null) {
 /**
  * Marks start of upgrade, blocks any other access to site.
  * The upgrade is finished at the end of script or after timeout.
+ *
+ * @global object
+ * @global object
+ * @global object
  */
 function upgrade_started($preinstall=false) {
     global $CFG, $DB, $PAGE;
@@ -800,6 +846,9 @@ function upgrade_finished_handler() {
  * Indicates upgrade is finished.
  *
  * This function may be called repeatedly.
+ *
+ * @global object
+ * @global object
  */
 function upgrade_finished($continueurl=null) {
     global $CFG, $DB;
@@ -816,6 +865,10 @@ function upgrade_finished($continueurl=null) {
     }
 }
 
+/**
+ * @global object
+ * @global object
+ */
 function upgrade_setup_debug($starting) {
     global $CFG, $DB;
 
@@ -833,6 +886,9 @@ function upgrade_setup_debug($starting) {
     }
 }
 
+/**
+ * @global object
+ */
 function print_upgrade_reload($url) {
     global $CFG;
 
@@ -948,6 +1004,9 @@ function silent_upgrade_part_end($plugin, $installation) {
     }
 }
 
+/**
+ * @global object
+ */
 function upgrade_get_javascript() {
     global $CFG;
     return '<script type="text/javascript" src="'.$CFG->wwwroot.'/lib/scroll_to_page_end.js"></script>';
@@ -956,6 +1015,7 @@ function upgrade_get_javascript() {
 
 /**
  * Try to upgrade the given language pack (or current language)
+ * @global object
  */
 function upgrade_language_pack($lang='') {
     global $CFG;

@@ -1,16 +1,49 @@
-<?php // $Id$
+<?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/** TABLE_VAR_SORT = 1 */
 define('TABLE_VAR_SORT',   1);
+/** TABLE_VAR_HIDE = 2 */
 define('TABLE_VAR_HIDE',   2);
+/** TABLE_VAR_SHOW = 3 */
 define('TABLE_VAR_SHOW',   3);
+/** TABLE_VAR_IFIRST = 4 */
 define('TABLE_VAR_IFIRST', 4);
+/** TABLE_VAR_ILAST = 5 */
 define('TABLE_VAR_ILAST',  5);
+/** TABLE_VAR_PAGE = 6 */
 define('TABLE_VAR_PAGE',   6);
 
+/** TABLE_P_TOP = 1 */
 define('TABLE_P_TOP',   1);
+/** TABLE_P_BOTTOM = 2 */
 define('TABLE_P_BOTTOM',  2);
 
-
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class flexible_table {
 
     var $uniqueid        = NULL;
@@ -1140,6 +1173,11 @@ class flexible_table {
     }
 }
 
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class table_sql extends flexible_table{
 
     public $countsql = NULL;
@@ -1280,6 +1318,11 @@ class table_sql extends flexible_table{
     }
 }
 
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class table_default_export_format_parent{
     /**
      * @var flexible_table or child class reference pointing to table class
@@ -1321,6 +1364,11 @@ class table_default_export_format_parent{
     }
 }
 
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class table_spreadsheet_export_format_parent extends table_default_export_format_parent{
     var $rownum;
     var $workbook;
@@ -1391,6 +1439,11 @@ class table_spreadsheet_export_format_parent extends table_default_export_format
     }
 }
 
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class table_excel_export_format extends table_spreadsheet_export_format_parent{
     var $fileextension = 'xls';
 
@@ -1403,6 +1456,11 @@ class table_excel_export_format extends table_spreadsheet_export_format_parent{
 
 }
 
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class table_ods_export_format extends table_spreadsheet_export_format_parent{
     var $fileextension = 'ods';
     function define_workbook(){
@@ -1413,6 +1471,11 @@ class table_ods_export_format extends table_spreadsheet_export_format_parent{
     }
 }
 
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class table_text_export_format_parent extends table_default_export_format_parent{
     var $seperator = "\t";
     function start_document($filename){
@@ -1442,16 +1505,31 @@ class table_text_export_format_parent extends table_default_export_format_parent
     }
 }
 
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class table_tsv_export_format extends table_text_export_format_parent{
     var $seperator = "\t";
 
 }
 
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class table_csv_export_format extends table_text_export_format_parent{
     var $seperator = ",";
 
 }
 
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class table_xhtml_export_format extends table_default_export_format_parent{
     function start_document($filename){
         header("Content-Type: application/download\n");

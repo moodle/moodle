@@ -1,19 +1,38 @@
 <?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * uploadlib.php - This class handles all aspects of fileuploading
  *
- * @author ?
- * @version $Id$
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package moodlecore
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/** {@see eventslib.php} */
 require_once($CFG->libdir.'/eventslib.php');
 
 //error_reporting(E_ALL ^ E_NOTICE);
 /**
  * This class handles all aspects of fileuploading
+ *
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class upload_manager {
 
@@ -490,6 +509,7 @@ UPLOAD_PRINT_FORM_FRAGMENT DOESN'T REALLY BELONG IN THE CLASS BUT CERTAINLY IN T
 /**
  * This function prints out a number of upload form elements.
  *
+ * @global object
  * @param int $numfiles The number of elements required (optional, defaults to 1)
  * @param array $names Array of element names to use (optional, defaults to FILE_n)
  * @param array $descriptions Array of strings to be printed out before each file bit.
@@ -531,8 +551,8 @@ function upload_print_form_fragment($numfiles=1, $names=null, $descriptions=null
  *
  * If moving it fails, it deletes it.
  *
- *@uses $CFG
- * @uses $USER
+ * @global object
+ * @global object
  * @param string $file Full path to the file
  * @param int $userid If not used, defaults to $USER->id (there in case called from cron)
  * @param boolean $basiconly Admin level reporting or user level reporting.
@@ -597,6 +617,7 @@ function clam_handle_infected_file($file, $userid=0, $basiconly=false) {
  *
  * The replacement string is used to notify that the original file had a virus
  * This is to avoid missing files but could result in the wrong content-type.
+ * 
  * @param string $file Full path to the file.
  * @return boolean
  */
@@ -616,6 +637,9 @@ function clam_replace_infected_file($file) {
  * If $CFG->runclamonupload is set, we scan a given file. (called from {@link preprocess_files()})
  *
  * This function will add on a uploadlog index in $file.
+ *
+ * @global object
+ * @global object
  * @param mixed $file The file to scan from $files. or an absolute path to a file.
  * @param course $course {@link $COURSE}
  * @return int 1 if good, 0 if something goes wrong (opposite from actual error code from clam)
@@ -763,8 +787,8 @@ function get_clam_error_code($returncode) {
 /**
  * Adds a file upload to the log table so that clam can resolve the filename to the user later if necessary
  *
- * @uses $CFG
- * @uses $USER
+ * @global object
+ * @global object
  * @param string $newfilepath ?
  * @param course $course {@link $COURSE}
  * @param boolean $nourl ?
@@ -787,6 +811,7 @@ function clam_log_upload($newfilepath, $course=null, $nourl=false) {
 /**
  * This function logs to error_log and to the log table that an infected file has been found and what's happened to it.
  *
+ * @global object
  * @param string $oldfilepath Full path to the infected file before it was moved.
  * @param string $newfilepath Full path to the infected file since it was moved to the quarantine directory (if the file was deleted, leave empty).
  * @param int $userid The user id of the user who uploaded the file.
@@ -811,7 +836,7 @@ function clam_log_infected($oldfilepath='', $newfilepath='', $userid=0) {
 /**
  * Some of the modules allow moving attachments (glossary), in which case we need to hunt down an original log and change the path.
  *
- * @uses $CFG
+ * @global object
  * @param string $oldpath The old path to the file (should be in the log)
  * @param string $newpath The new path to the file 
  * @param boolean $update If true this function will overwrite old record (used for forum moving etc).

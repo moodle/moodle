@@ -1,36 +1,36 @@
-<?php  // $Id$
+<?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
-//           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/// As we implement the singleton pattern to use this class (only one instance
-/// is shared globally), we need this helper function
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-/// IMPORTANT Note: Typo3 libraries always expect lowercase charsets to use 100%
-///                 its capabilities so, don't forget to make the conversion
-///                 from every wrapper function!
-
+/**
+ * As we implement the singleton pattern to use this class (only one instance
+ * is shared globally), we need this helper function
+ *
+ * IMPORTANT Note: Typo3 libraries always expect lowercase charsets to use 100%
+ * its capabilities so, don't forget to make the conversion
+ * from every wrapper function!
+ *
+ * @global object
+ */
 function textlib_get_instance() {
     global $CFG;
 
@@ -92,6 +92,10 @@ function textlib_get_instance() {
  * really a cool group of utilities to handle texts and encoding conversion.
  *
  * Take a look to its own copyright and license details.
+ *
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class textlib {
 
