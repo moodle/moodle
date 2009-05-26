@@ -246,9 +246,43 @@ class main_view extends XMLDBAction {
                     if ($structure =& $dbdir->xml_file->getStructure()) {
                         if ($errors = $structure->getAllErrors()) {
                             if ($hithis) {
-                                $o .= '<tr class="highlight"><td class="error cell" colspan="8">' . implode (', ', $errors) . '</td></tr>';
+                                $o .= '<tr class="highlight"><td class="error cell" colspan="9">' . implode (', ', $errors) . '</td></tr>';
                             } else {
-                                $o .= '<tr class="r' . $row . '"><td class="error cell" colspan="8">' . implode (', ', $errors) . '</td></tr>';
+                                $o .= '<tr class="r' . $row . '"><td class="error cell" colspan="9">' . implode (', ', $errors) . '</td></tr>';
+                            }
+                        }
+                    }
+                }
+            /// TODO: Drop this check in Moodle 2.1
+            /// Intercept loaded structure here and look for ENUM fields
+                if (isset($dbdir->xml_file)) {
+                    if ($structure =& $dbdir->xml_file->getStructure()) {
+                        if ($tables = $structure->getTables()) {
+                            foreach ($tables as $table) {
+                                if ($fields = $table->getFields()) {
+                                    foreach ($fields as $field) {
+                                        if (!empty($field->hasenums)) {
+                                            if ($hithis) {
+                                                $o .= '<tr class="highlight"><td class="error cell" colspan="9">';
+                                            } else {
+                                                $o .= '<tr class="r' . $row . '"><td class="error cell" colspan="9">';
+                                            }
+                                            $o .= 'Table ' . $table->getName() . ', field ' . $field->getName() . ' has ENUM info';
+                                            if (!empty($field->hasenumsenabled)) {
+                                                $o .= ' that seems to be active (true). ENUMs support has been dropped in Moodle 2.0, '  .
+                                                      ' the XMLDB Editor will delete any ENUM reference next time you save this file' .
+                                                      ' and you MUST provide  one upgrade block in your code to drop them from DB. See' .
+                                                      ' <a href="http://docs.moodle.org/en/Development:DB_layer_2.0_migration_docs#The_changes">' .
+                                                      ' Moodle Docs</a> for more info and examples.';
+                                            } else {
+                                                $o .= ' that seem to be inactive (false). ENUMs support has been dropped in Moodle 2.0,' .
+                                                      ' the XMLDB Editor will, simply, delete any ENUM reference next time you save this file.' .
+                                                      ' No further action is necessary.';
+                                            }
+                                            $o .= '</td></tr>';
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
