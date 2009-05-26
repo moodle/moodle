@@ -305,7 +305,7 @@ class google_docs {
                     'url' => "{$gdoc->link[0]->attributes()->href}",
                     'source' => $source, 
                     'date'   => usertime(strtotime($gdoc->updated)),
-                    'thumbnail' => $CFG->pixpath.'/f/'.mimeinfo('icon32', $title)
+                    'thumbnail' => $CFG->wwwroot.'/pix/f/'.mimeinfo('icon32', $title)
                 );
             }
         }
