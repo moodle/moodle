@@ -1,47 +1,52 @@
-<?php  // $Id$
+<?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
-//           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/ 
+// 
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-//setup.php icludes our hacked pear libs first
+/**
+ * excellib.class.php
+ * 
+ * @copyright (C) 2001-3001 Eloy Lafuente (stronk7) {@link http://contiento.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   moodlecore
+ */
+
+/** setup.php icludes our hacked pear libs first */
 require_once 'Spreadsheet/Excel/Writer.php';
 
 /**
-* Define and operate over one Moodle Workbook.
-*
-* A big part of this class acts as a wrapper over the PEAR
-* Spreadsheet_Excel_Writer_Workbook and OLE libraries
-* maintaining Moodle functions isolated from underlying code.
-*/
+ * Define and operate over one Moodle Workbook.
+ *
+ * A big part of this class acts as a wrapper over the PEAR
+ * Spreadsheet_Excel_Writer_Workbook and OLE libraries
+ * maintaining Moodle functions isolated from underlying code.
+ *
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
+ */
 class MoodleExcelWorkbook {
-
+    /** @var object */
     var $pear_excel_workbook;
+    /** @var bool */
     var $latin_output;
 
     /**
      * Constructs one Moodle Workbook.
      *
+     * @global object
      * @param string $filename The name of the file
      */
     function MoodleExcelWorkbook($filename) {
@@ -64,6 +69,7 @@ class MoodleExcelWorkbook {
      * Create one Moodle Worksheet
      *
      * @param string $name Name of the sheet
+     * @return object MoodleExcelWorksheet
      */
     function &add_worksheet($name = '') {
     /// Create the Moodle Worksheet. Returns one pointer to it
@@ -78,6 +84,7 @@ class MoodleExcelWorkbook {
      *                          valid names are set_XXXX existing
      *                          functions without the set_ part
      *                          i.e: [bold]=1 for set_bold(1)...Optional!
+     * @return object MoodleExcelFormat
      */
     function &add_format($properties = array()) {
     /// Create the Moodle Format. Returns one pointer to it
@@ -95,7 +102,7 @@ class MoodleExcelWorkbook {
     /**
      * Write the correct HTTP headers
      *
-     * @param string $name Name of the downloaded file
+     * @param string $filename Name of the downloaded file
      */
     function send($filename) {
         $this->pear_excel_workbook->send($filename);
@@ -103,15 +110,20 @@ class MoodleExcelWorkbook {
 }
 
 /**
-* Define and operate over one Worksheet.
-*
-* A big part of this class acts as a wrapper over the PEAR
-* Spreadsheet_Excel_Writer_Workbook and OLE libraries
-* maintaining Moodle functions isolated from underlying code.
-*/
+ * Define and operate over one Worksheet.
+ *
+ * A big part of this class acts as a wrapper over the PEAR
+ * Spreadsheet_Excel_Writer_Workbook and OLE libraries
+ * maintaining Moodle functions isolated from underlying code.
+ *
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
+ */
 class MoodleExcelWorksheet {
-
+    /** @var object */
     var $pear_excel_worksheet;
+    /** @var bool Only if don't want to use latin (win1252) stronger output */
     var $latin_output;
 
     /**
@@ -119,6 +131,7 @@ class MoodleExcelWorksheet {
      *
      * @param string $filename The name of the file
      * @param object $workbook The internal PEAR Workbook onject we are creating
+     * @param bool $latin_output Only if don't want to use latin (win1252) stronger output
      */
     function MoodleExcelWorksheet($name, &$workbook, $latin_output=false) {
 
@@ -221,6 +234,7 @@ class MoodleExcelWorksheet {
      * @param integer $col    Zero indexed column
      * @param mixed   $token  What we are writing
      * @param mixed   $format The XF format for the cell
+     * @return void
      */
     function write($row, $col, $token, $format=null) {
 
@@ -339,7 +353,7 @@ class MoodleExcelWorksheet {
     /**
      * Returns the PEAR Excel Format for one Moodle Excel Format
      *
-     * @param mixed MoodleExcelFormat object
+     * @param mixed $format MoodleExcelFormat object
      * @return mixed PEAR Excel Format object
      */
     function MoodleExcelFormat2PearExcelFormat($format) {
@@ -353,20 +367,25 @@ class MoodleExcelWorksheet {
 
 
 /**
-* Define and operate over one Format.
-*
-* A big part of this class acts as a wrapper over the PEAR
-* Spreadsheet_Excel_Writer_Workbook and OLE libraries
-* maintaining Moodle functions isolated from underlying code.
-*/
+ * Define and operate over one Format.
+ *
+ * A big part of this class acts as a wrapper over the PEAR
+ * Spreadsheet_Excel_Writer_Workbook and OLE libraries
+ * maintaining Moodle functions isolated from underlying code.
+ *
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
+ */
 class MoodleExcelFormat {
-
+    /** @var object */
     var $pear_excel_format;
 
     /**
      * Constructs one Moodle Format.
      *
      * @param object $workbook The internal PEAR Workbook onject we are creating
+     * @param array $properties
      */
     function MoodleExcelFormat(&$workbook, $properties = array()) {
     /// Internally, add one sheet to the workbook    
