@@ -1,34 +1,38 @@
-<?php  // $Id$
+<?php
 
-/*
-Graph Class. PHP Class to draw line, point, bar, and area graphs, including numeric x-axis and double y-axis.
-Version: 1.6.3
-Copyright (C) 2000  Herman Veluwenkamp
-
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
-
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-Copy of GNU Lesser General Public License at: http://www.gnu.org/copyleft/lesser.txt
-Contact author at: hermanV@mindless.com
-*/
+/**
+ * Graph Class. PHP Class to draw line, point, bar, and area graphs, including numeric x-axis and double y-axis.
+ * Version: 1.6.3
+ * Copyright (C) 2000  Herman Veluwenkamp
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Copy of GNU Lesser General Public License at: http://www.gnu.org/copyleft/lesser.txt
+ * Contact author at: hermanV@mindless.com
+ * 
+ * @package moodlecore
+ */
 
 /* This file contains modifications by Martin Dougiamas
  * as part of Moodle (http://moodle.com).  Modified lines
  * are marked with "Moodle".
  */
 
-
+/**
+ * @package moodlecore
+ */
 class graph {
   var $image;
   var $debug             =   FALSE;        // be careful!!

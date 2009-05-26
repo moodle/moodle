@@ -23,6 +23,12 @@
 //
 
 /**
+ * @package moodlecore
+ * @copyright (c) 2001 The PHP Group
+ * @license GNU GPL v2.0 http://www.php.net/license/2_02.txt
+ */
+
+/**
  * Base32 encode a binary string
  *
  * @param    $inString   Binary string to base32 encode

@@ -256,7 +256,9 @@ function groups_get_all_groupings($courseid) {
 /**
  * Determines if the user is a member of the given group.
  *
- * @global object $USER If $userid is null, use the global object.
+ * If $userid is null, use the global object.
+ *
+ * @global object
  * @global object
  * @param int $groupid The group to check for membership.
  * @param int $userid The user to check against the group.
@@ -780,9 +782,11 @@ function groups_get_activity_allowed_groups($cm,$userid=0) {
 
 /**
  * Determine if a course module is currently visible to a user
- * 
+ *
+ * $USER If $userid is null, use the global object.
+ *
  * @global object
- * @global object $USER If $userid is null, use the global object.
+ * @global object
  * @param int $cm The course module
  * @param int $userid The user to check against the group.
  * @return boolean True if the user can view the course module, false otherwise.
