@@ -4,6 +4,8 @@
     require('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
 
+die('TODO: This needs to be reimplemented, probably via new cli script and $CFG->maintenance setting');
+
     $action = optional_param('action', '', PARAM_ALPHA);
 
     admin_externalpage_setup('maintenancemode');

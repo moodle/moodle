@@ -30,7 +30,7 @@ if (!file_exists('../config.php')) {
 }
 
 // Check that PHP is of a sufficient version as soon as possible
-if (version_compare(phpversion(), "5.2.0") < 0) {
+if (version_compare(phpversion(), '5.2.0') < 0) {
     $phpversion = phpversion();
     // do NOT localise - lang strings would not work here and we CAN NOT move it to later place
     echo "Sorry, Moodle 2.0 requires PHP 5.2.8 or later (currently using version $phpversion). ";
@@ -40,12 +40,10 @@ if (version_compare(phpversion(), "5.2.0") < 0) {
 
 // try to flush everything all the time
 @ob_implicit_flush(true);
-while(@ob_end_clean()); // ob_end_flush prevents sending of headers
-
 
 require('../config.php');
-require_once($CFG->libdir.'/adminlib.php');        // Contains various admin-only functions
-require_once($CFG->libdir.'/upgradelib.php');
+require_once($CFG->libdir.'/adminlib.php');    // various admin-only functions
+require_once($CFG->libdir.'/upgradelib.php');  // general upgrade/install related functions
 
 $id             = optional_param('id', '', PARAM_TEXT);
 $confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
@@ -75,7 +73,7 @@ if (is_float_problem()) {
 
 // Check settings in config.php
 
-$dirroot = dirname(realpath("../index.php"));
+$dirroot = dirname(realpath('../index.php'));
 // Check correct dirroot, ignoring slashes (though should be always forward slashes). MDL-18195
 if (!empty($dirroot) and str_replace('\\', '/', $dirroot) != str_replace('\\', '/', $CFG->dirroot)) {
     print_error('fixsetting', 'debug', '', (object)array('current'=>$CFG->dirroot, 'found'=>str_replace('\\', '/', $dirroot)));
@@ -83,13 +81,13 @@ if (!empty($dirroot) and str_replace('\\', '/', $dirroot) != str_replace('\\', '
 
 // Set some necessary variables during set-up to avoid PHP warnings later on this page
 if (!isset($CFG->framename)) {
-    $CFG->framename = "_top";
+    $CFG->framename = '_top';
 }
 if (!isset($CFG->release)) {
-    $CFG->release = "";
+    $CFG->release = '';
 }
 if (!isset($CFG->version)) {
-    $CFG->version = "";
+    $CFG->version = '';
 }
 
 $version = null;
@@ -136,22 +134,22 @@ if (!$maintables) {
     if (empty($agreelicense)) {
         $strlicense = get_string('license');
         $navigation = build_navigation(array(array('name'=>$strlicense, 'link'=>null, 'type'=>'misc')));
-        print_header($strinstallation.' - Moodle '.$CFG->target_release, $strinstallation, $navigation, "", "", false, "&nbsp;", "&nbsp;");
-        print_heading("<a href=\"http://moodle.org\">Moodle</a> - Modular Object-Oriented Dynamic Learning Environment");
+        print_header($strinstallation.' - Moodle '.$CFG->target_release, $strinstallation, $navigation, '', '', false, '&nbsp;', '&nbsp;');
+        print_heading('<a href="http://moodle.org">Moodle</a> - Modular Object-Oriented Dynamic Learning Environment');
         print_heading(get_string('copyrightnotice'));
         $copyrightnotice = text_to_html(get_string('gpl'));
         $copyrightnotice = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $copyrightnotice); // extremely ugly validation hack
         print_box($copyrightnotice, 'copyrightnotice');
-        echo "<br />";
+        echo '<br />';
         notice_yesno(get_string('doyouagree'), "index.php?agreelicense=1&lang=$CFG->lang",
                                                "http://docs.moodle.org/en/License");
         print_footer('upgrade');
         die;
     }
     if (empty($confirmrelease)) {
-        $strcurrentrelease = get_string("currentrelease");
+        $strcurrentrelease = get_string('currentrelease');
         $navigation = build_navigation(array(array('name'=>$strcurrentrelease, 'link'=>null, 'type'=>'misc')));
-        print_header($strinstallation.' - Moodle '.$CFG->target_release, $strinstallation, $navigation, "", "", false, "&nbsp;", "&nbsp;");
+        print_header($strinstallation.' - Moodle '.$CFG->target_release, $strinstallation, $navigation, '', '', false, '&nbsp;', '&nbsp;');
         print_heading("Moodle $release");
         $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes');
         $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
@@ -169,9 +167,9 @@ if (!$maintables) {
         die;
     }
 
-    $strdatabasesetup = get_string("databasesetup");
+    $strdatabasesetup = get_string('databasesetup');
     $navigation = build_navigation(array(array('name'=>$strdatabasesetup, 'link'=>null, 'type'=>'misc')));
-    print_header($strinstallation.' - Moodle '.$CFG->target_release, $strinstallation, $navigation, "", upgrade_get_javascript(), false, "&nbsp;", "&nbsp;");
+    print_header($strinstallation.' - Moodle '.$CFG->target_release, $strinstallation, $navigation, '', upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
 
     if (!$DB->setup_is_unicodedb()) {
         if (!$DB->change_db_encoding()) {
@@ -195,25 +193,25 @@ if (empty($CFG->version)) {
 }
 
 if ($version > $CFG->version) {  // upgrade
-    require_once($CFG->libdir.'/db/upgrade.php'); // Defines upgrades
-    require_once($CFG->libdir.'/db/upgradelib.php');   // Upgrade-related functions
+    require_once($CFG->libdir.'/db/upgrade.php');    // Defines upgrades
+    require_once($CFG->libdir.'/db/upgradelib.php'); // Core Upgrade-related functions
 
     $a->oldversion = "$CFG->release ($CFG->version)";
     $a->newversion = "$release ($version)";
-    $strdatabasechecking = get_string("databasechecking", "", $a);
+    $strdatabasechecking = get_string('databasechecking', '', $a);
 
     if (empty($confirmupgrade)) {
         $navigation = build_navigation(array(array('name'=>$strdatabasechecking, 'link'=>null, 'type'=>'misc')));
-        print_header($strdatabasechecking, $stradministration, $navigation, "", "", false, "&nbsp;", "&nbsp;");
+        print_header($strdatabasechecking, $stradministration, $navigation, '', '', false, '&nbsp;', '&nbsp;');
 
         notice_yesno(get_string('upgradesure', 'admin', $a->newversion), 'index.php?confirmupgrade=1', 'index.php');
         print_footer('upgrade');
         exit;
 
     } else if (empty($confirmrelease)){
-        $strcurrentrelease = get_string("currentrelease");
+        $strcurrentrelease = get_string('currentrelease');
         $navigation = build_navigation(array(array('name'=>$strcurrentrelease, 'link'=>null, 'type'=>'misc')));
-        print_header($strcurrentrelease, $strcurrentrelease, $navigation, "", "", false, "&nbsp;", "&nbsp;");
+        print_header($strcurrentrelease, $strcurrentrelease, $navigation, '', '', false, '&nbsp;', '&nbsp;');
         print_heading("Moodle $release");
         $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes');
         $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
@@ -238,7 +236,7 @@ if ($version > $CFG->version) {  // upgrade
     } elseif (empty($confirmplugins)) {
         $strplugincheck = get_string('plugincheck');
         $navigation = build_navigation(array(array('name'=>$strplugincheck, 'link'=>null, 'type'=>'misc')));
-        print_header($strplugincheck, $strplugincheck, $navigation, "", "", false, "&nbsp;", "&nbsp;");
+        print_header($strplugincheck, $strplugincheck, $navigation, '', '', false, '&nbsp;', '&nbsp;');
         print_heading($strplugincheck);
         print_box_start('generalbox', 'notice');
         print_string('pluginchecknotice');
@@ -254,12 +252,12 @@ if ($version > $CFG->version) {  // upgrade
         upgrade_core($version, true);
     }
 } else if ($version < $CFG->version) {
-    notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
+    notify('WARNING!!!  The code you are using is OLDER than the version that made these databases!');
 }
 
 // Updated human-readable release version if necessary
 if ($release <> $CFG->release) {  // Update the release version
-    set_config("release", $release);
+    set_config('release', $release);
 }
 
 // upgrade all plugins and other parts
@@ -338,8 +336,7 @@ if (!empty($id) and $id == $CFG->siteidentifier) {
 }
 
 // setup critical warnings before printing admin tree block
-$insecuredataroot         = is_dataroot_insecure(true);
-
+$insecuredataroot = is_dataroot_insecure(true);
 $SESSION->admin_critical_warning = ($insecuredataroot==INSECURE_DATAROOT_ERROR);
 
 $adminroot = admin_get_root();
@@ -352,19 +349,8 @@ if (any_new_admin_settings($adminroot)){
 // Everything should now be set up, and the user is an admin
 
 // Print default admin page with notifications.
-
 admin_externalpage_setup('adminnotifications');
 admin_externalpage_print_header();
-
-// Deprecated database! Warning!!
-if (!empty($CFG->migrated_to_new_db)) {
-    print_box(print_string('dbmigrationdeprecateddb', 'admin'), 'generalbox adminwarning');
-}
-
-// Check for any special upgrades that might need to be run
-if (!empty($CFG->upgrade)) {
-    print_box(get_string("upgrade$CFG->upgrade", "admin", "$CFG->wwwroot/$CFG->admin/upgrade$CFG->upgrade.php"));
-}
 
 if ($insecuredataroot == INSECURE_DATAROOT_WARNING) {
     print_box(get_string('datarootsecuritywarning', 'admin', $CFG->dataroot), 'generalbox adminwarning');
@@ -382,7 +368,7 @@ $lastcron = $DB->get_field_sql('SELECT MAX(lastcron) FROM {modules}');
 if (time() - $lastcron > 3600 * 24) {
     $strinstallation = get_string('installation', 'install');
     $helpbutton = helpbutton('install', $strinstallation, 'moodle', true, false, '', true);
-    print_box(get_string('cronwarning', 'admin')."&nbsp;".$helpbutton, 'generalbox adminwarning');
+    print_box(get_string('cronwarning', 'admin').'&nbsp;'.$helpbutton, 'generalbox adminwarning');
 }
 
 // Print multilang upgrade notice if needed
@@ -391,6 +377,7 @@ if (empty($CFG->filter_multilang_converted)) {
 }
 
 // Alert if we are currently in maintenance mode
+// TODO: we are not using coursefiles directories anymore anymore - needs rewrite
 if (file_exists($CFG->dataroot.'/1/maintenance.html')) {
     print_box(get_string('sitemaintenancewarning', 'admin'), 'generalbox adminwarning');
 }
