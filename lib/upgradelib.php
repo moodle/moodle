@@ -1106,6 +1106,9 @@ function install_core($version, $verbose) {
 function upgrade_core($version, $verbose) {
     global $CFG;
 
+    require_once($CFG->libdir.'/db/upgrade.php');    // Defines upgrades
+    require_once($CFG->libdir.'/db/upgradelib.php'); // Core Upgrade-related functions
+
     try {
         // Upgrade current language pack if we can
         if (empty($CFG->skiplangupgrade)) {
@@ -1188,4 +1191,25 @@ function upgrade_noncore($verbose) {
     } catch (Exception $ex) {
         upgrade_handle_exception($ex);
     }
+}
+
+/**
+ * Checks if the main tables have been installed yet or not.
+ * @return bool
+ */
+function core_tables_exist() {
+    global $DB;
+
+    if (!$tables = $DB->get_tables() ) {    // No tables yet at all.
+        return false;
+    
+    } else {                                 // Check for missing main tables
+        $mtables = array('config', 'course', 'groupings'); // some tables used in 1.9 and 2.0, preferable something from the start and end of install.xml
+        foreach ($mtables as $mtable) {
+            if (!in_array($mtable, $tables)) {
+                return false;
+            }
+        }
+        return true;
+    }        
 }

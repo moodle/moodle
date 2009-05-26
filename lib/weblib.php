@@ -7541,6 +7541,9 @@ class progress_bar {
             flush();
             $this->lastcall->pt = 0;
             $this->lastcall->time = microtime(true);
+            if (CLI_SCRIPT) {
+                return; // temporary solution for cli scripts
+            }
             $htmlcode = <<<EOT
             <script type="text/javascript">
             Number.prototype.fixed=function(n){
@@ -7606,6 +7609,9 @@ EOT;
         $this->lastcall->time = microtime(true);
         $this->lastcall->pt   = $percent;
         $w = $this->percent * $this->width;
+        if (CLI_SCRIPT) {
+            return; // temporary solution for cli scripts
+        }
         if ($es === null){
             $es = "Infinity";
         }
@@ -7827,4 +7833,3 @@ function auth_get_plugin_title ($authtype) {
     return $authtitle;
 }
 
-?>

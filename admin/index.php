@@ -99,28 +99,11 @@ if (!$version or !$release) {
     print_error('withoutversion', 'debug'); // without version, stop
 }
 
-// Check if the main tables have been installed yet or not.
-if (!$tables = $DB->get_tables() ) {    // No tables yet at all.
-    $maintables = false;
-
-} else {                                 // Check for missing main tables
-    $maintables = true;
-    $mtables = array('config', 'course', 'groupings'); // some tables used in 1.9 and 2.0, preferable something from the start and end of install.xml
-    foreach ($mtables as $mtable) {
-        if (!in_array($mtable, $tables)) {
-            $maintables = false;
-            break;
-        }
-    }
-    unset($mtables);
-}
-unset($tables);
-
 // Turn off xmlstrictheaders during upgrade.
 $origxmlstrictheaders = !empty($CFG->xmlstrictheaders);
 $CFG->xmlstrictheaders = false;
 
-if (!$maintables) {
+if (!core_tables_exist()) {
     // hide errors from headers in case debug enabled in config.php
 
     // fake some settings
@@ -193,9 +176,6 @@ if (empty($CFG->version)) {
 }
 
 if ($version > $CFG->version) {  // upgrade
-    require_once($CFG->libdir.'/db/upgrade.php');    // Defines upgrades
-    require_once($CFG->libdir.'/db/upgradelib.php'); // Core Upgrade-related functions
-
     $a->oldversion = "$CFG->release ($CFG->version)";
     $a->newversion = "$release ($version)";
     $strdatabasechecking = get_string('databasechecking', '', $a);
