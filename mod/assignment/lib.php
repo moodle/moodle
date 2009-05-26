@@ -1,34 +1,78 @@
-<?PHP  // $Id$
+<?PHP
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * assignment_base is the base class for assignment types
  *
  * This class provides all the functionality for an assignment
+ *
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/** Include eventslib.php */
 require_once($CFG->libdir.'/eventslib.php');
+/** Include formslib.php */
 require_once($CFG->libdir.'/formslib.php');
+/** Include portfoliolib.php */
 require_once($CFG->libdir.'/portfoliolib.php');
 
+/** ASSIGNMENT_COUNT_WORDS = 1 */
 DEFINE ('ASSIGNMENT_COUNT_WORDS', 1);
+/** ASSIGNMENT_COUNT_LETTERS = 2 */
 DEFINE ('ASSIGNMENT_COUNT_LETTERS', 2);
 
 /**
  * Standard base class for all assignment submodules (assignment types).
+ * 
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class assignment_base {
 
+    /** @var object */
     var $cm;
+    /** @var object */
     var $course;
+    /** @var object */
     var $assignment;
+    /** @var string */
     var $strassignment;
+    /** @var string */
     var $strassignments;
+    /** @var string */
     var $strsubmissions;
+    /** @var string */
     var $strlastmodified;
+    /** @var string */
     var $pagetitle;
+    /** @var bool */
     var $usehtmleditor;
+    /**
+     * @todo document this var
+     */
     var $defaultformat;
+    /**
+     * @todo document this var
+     */
     var $context;
+    /** @var string */
     var $type;
 
     /**
@@ -39,10 +83,12 @@ class assignment_base {
      * If the assignment is hidden and the user is not a teacher then
      * this prints a page header and notice.
      *
-     * @param cmid   integer, the current course module id - not set for new assignments
-     * @param assignment   object, usually null, but if we have it we pass it to save db access
-     * @param cm   object, usually null, but if we have it we pass it to save db access
-     * @param course   object, usually null, but if we have it we pass it to save db access
+     * @global object
+     * @global object
+     * @param int $cmid the current course module id - not set for new assignments
+     * @param object $assignment usually null, but if we have it we pass it to save db access
+     * @param object $cm usually null, but if we have it we pass it to save db access
+     * @param object $course usually null, but if we have it we pass it to save db access
      */
     function assignment_base($cmid='staticonly', $assignment=NULL, $cm=NULL, $course=NULL) {
         global $COURSE, $DB;
@@ -128,7 +174,8 @@ class assignment_base {
      * it can be used on other pages in which case the string to denote the
      * page in the navigation trail should be passed as an argument
      *
-     * @param $subpage string Description of subpage to be used in navigation trail
+     * @global object
+     * @param string $subpage Description of subpage to be used in navigation trail
      */
     function view_header($subpage='') {
 
@@ -206,7 +253,10 @@ class assignment_base {
      * This default method prints the teacher picture and name, date when marked,
      * grade and teacher submissioncomment.
      *
-     * @param $submission object The submission object or NULL in which case it will be loaded
+     * @global object
+     * @global object
+     * @global object
+     * @param object $submission The submission object or NULL in which case it will be loaded
      */
     function view_feedback($submission=NULL) {
         global $USER, $CFG, $DB;
@@ -285,6 +335,9 @@ class assignment_base {
      * For teachers it gives the number of submitted assignments with a link
      * For students it gives the time of their submission.
      * This will be suitable for most assignment types.
+     *
+     * @global object
+     * @global object
      * @param bool $allgroup print all groups info if user can access all groups, suitable for index.php
      * @return string
      */
@@ -327,6 +380,9 @@ class assignment_base {
     }
 
 
+    /**
+     * @todo Document this function
+     */
     function setup_elements(&$mform) {
 
     }
@@ -341,7 +397,9 @@ class assignment_base {
      * The due data is added to the calendar
      * This is common to all assignment types.
      *
-     * @param $assignment object The data from the form on mod_form.php
+     * @global object
+     * @global object
+     * @param object $assignment The data from the form on mod_form.php
      * @return int The id of the assignment
      */
     function add_instance($assignment) {
@@ -381,7 +439,10 @@ class assignment_base {
      * Deletes an assignment activity
      *
      * Deletes all database records, files and calendar events for this assignment.
-     * @param $assignment object The assignment to be deleted
+     *
+     * @global object
+     * @global object
+     * @param object $assignment The assignment to be deleted
      * @return boolean False indicates error
      */
     function delete_instance($assignment) {
@@ -424,7 +485,9 @@ class assignment_base {
      * The due date is updated in the calendar
      * This is common to all assignment types.
      *
-     * @param $assignment object The data from the form on mod_form.php
+     * @global object
+     * @global object
+     * @param object $assignment The data from the form on mod_form.php
      * @return int The assignment id
      */
     function update_instance($assignment) {
@@ -487,7 +550,8 @@ class assignment_base {
      * This is for handling the teacher interaction with the grading interface
      * This should be suitable for most assignment types.
      *
-     * @param $mode string Specifies the kind of teacher interaction taking place
+     * @global object
+     * @param string $mode Specifies the kind of teacher interaction taking place
      */
     function submissions($mode) {
         ///The main switch is changed to facilitate
@@ -648,10 +712,12 @@ class assignment_base {
     }
 
     /**
-    * Helper method updating the listing on the main script from popup using javascript
-    *
-    * @param $submission object The submission whose data is to be updated on the main page
-    */
+     * Helper method updating the listing on the main script from popup using javascript
+     *
+     * @global object
+     * @global object
+     * @param $submission object The submission whose data is to be updated on the main page
+     */
     function update_main_listing($submission) {
         global $SESSION, $CFG;
 
@@ -740,7 +806,8 @@ class assignment_base {
     /**
      *  Return a grade in user-friendly form, whether it's a scale or not
      *
-     * @param $grade
+     * @global object
+     * @param mixed $grade
      * @return string User-friendly representation of grade
      */
     function display_grade($grade) {
@@ -780,6 +847,10 @@ class assignment_base {
      * Calls preprocess_submission() to give assignment type plug-ins a chance
      * to process submissions before they are graded
      * This method gets its arguments from the page parameters userid and offset
+     *
+     * @global object
+     * @global object
+     * @param string $extra_javascript
      */
     function display_submission($extra_javascript = '') {
         global $CFG, $DB;
@@ -995,13 +1066,21 @@ class assignment_base {
      *
      * Called by display_submission()
      * The default type does nothing here.
-     * @param $submission object The submission object
+     *
+     * @param object $submission The submission object
      */
     function preprocess_submission(&$submission) {
     }
 
     /**
      *  Display all the submissions ready for grading
+     *
+     * @global object
+     * @global object
+     * @global object
+     * @global object
+     * @param string $message
+     * @return bool|void
      */
     function display_submissions($message='') {
         global $CFG, $DB, $USER, $DB;
@@ -1370,7 +1449,11 @@ class assignment_base {
      *
      * This is called by submissions() when a grading even has taken place.
      * It gets its data from the submitted form.
-     * @return object The updated submission object
+     *
+     * @global object
+     * @global object
+     * @global object
+     * @return object|bool The updated submission object or false
      */
     function process_feedback() {
         global $CFG, $USER, $DB;
@@ -1468,6 +1551,8 @@ class assignment_base {
     /**
      * Load the submission object for a particular user
      *
+     * @global object
+     * @global object
      * @param $userid int The id of the user whose submission we want or 0 in which case USER->id is used
      * @param $createnew boolean optional Defaults to false. If set to true a new submission object will be created in the database
      * @param bool $teachermodified student submission set if false
@@ -1497,7 +1582,8 @@ class assignment_base {
      * Instantiates a new submission object for a given user
      *
      * Sets the assignment, userid and times, everything else is set to default values.
-     * @param $userid int The userid for which we want a submission object
+     *
+     * @param int $userid The userid for which we want a submission object
      * @param bool $teachermodified student submission set if false
      * @return object The submission
      */
@@ -1528,8 +1614,8 @@ class assignment_base {
     /**
      * Return all assignment submissions by ENROLLED students (even empty)
      *
-     * @param $sort string optional field names for the ORDER BY in the sql query
-     * @param $dir string optional specifying the sort direction, defaults to DESC
+     * @param string $sort optional field names for the ORDER BY in the sql query
+     * @param string $dir optional specifying the sort direction, defaults to DESC
      * @return array The submission objects indexed by id
      */
     function get_submissions($sort='', $dir='DESC') {
@@ -1539,7 +1625,7 @@ class assignment_base {
     /**
      * Counts all real assignment submissions by ENROLLED students (not empty ones)
      *
-     * @param $groupid int optional If nonzero then count is restricted to this group
+     * @param int $groupid optional If nonzero then count is restricted to this group
      * @return int The number of submissions
      */
     function count_real_submissions($groupid=0) {
@@ -1552,7 +1638,11 @@ class assignment_base {
      * First checks whether the option to email teachers is set for this assignment.
      * Sends an email to ALL teachers in the course (or in the group if using separate groups).
      * Uses the methods email_teachers_text() and email_teachers_html() to construct the content.
+     *
+     * @global object
+     * @global object
      * @param $submission object The submission that has changed
+     * @return void
      */
     function email_teachers($submission) {
         global $CFG, $DB;
@@ -1594,6 +1684,11 @@ class assignment_base {
         }
     }
 
+    /**
+     * @param string $filearea
+     * @param array $args
+     * @return bool
+     */
     function send_file($filearea, $args) {
         debugging('plugin does not implement file sending', DEBUG_DEVELOPER);
         return false;
@@ -1601,6 +1696,9 @@ class assignment_base {
 
     /**
      * Returns a list of teachers that should be grading given submission
+     *
+     * @param object $user
+     * @return array
      */
     function get_graders($user) {
         //potential graders
@@ -1939,6 +2037,11 @@ class assignment_base {
     }
 } ////// End of the assignment_base class
 
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class mod_assignment_upload_file_form extends moodleform {
     function definition() {
         $mform = $this->_form;
@@ -3138,6 +3241,11 @@ function assignment_get_extra_capabilities() {
     return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames');
 }
 
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class assignment_portfolio_caller extends portfolio_module_caller_base {
 
     /**
