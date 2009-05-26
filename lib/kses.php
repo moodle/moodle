@@ -1,35 +1,50 @@
 <?php
+/**
+ * kses 0.2.2 - HTML/XHTML filter that only allows some elements and attributes
+ * Copyright (C) 2002, 2003, 2005  Ulf Harnhammar
+ *
+ * This program is free software and open source software; you can redistribute
+ * it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA  or visit
+ * http://www.gnu.org/licenses/gpl.html
+ *
+ * *** CONTACT INFORMATION ***
+ *
+ * E-mail:      metaur at users dot sourceforge dot net
+ * Web page:    http://sourceforge.net/projects/kses
+ * Paper mail:  Ulf Harnhammar
+ *              Ymergatan 17 C
+ *              753 25  Uppsala
+ *              SWEDEN
+ *
+ * [kses strips evil scripts!]
+ *
+ * @package   moodlecore
+ * @copyright Ulf Harnhammar  {@link http://sourceforge.net/projects/kses}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-# kses 0.2.2 - HTML/XHTML filter that only allows some elements and attributes
-# Copyright (C) 2002, 2003, 2005  Ulf Harnhammar
-#
-# This program is free software and open source software; you can redistribute
-# it and/or modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the License,
-# or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-# more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with this program; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA  or visit
-# http://www.gnu.org/licenses/gpl.html
-#
-# *** CONTACT INFORMATION ***
-#
-# E-mail:      metaur at users dot sourceforge dot net
-# Web page:    http://sourceforge.net/projects/kses
-# Paper mail:  Ulf Harnhammar
-#              Ymergatan 17 C
-#              753 25  Uppsala
-#              SWEDEN
-#
-# [kses strips evil scripts!]
-
-
+/**
+ * This function makes sure that only the allowed HTML element names, attribute
+ * names and attribute values plus only sane HTML entities will occur in
+ * $string. You have to remove any slashes from PHP's magic quotes before you
+ * call this function.
+ *
+ * @param string $string
+ * @param string $allowed_html
+ * @param array $allowed_protocols
+ * @return string
+ */
 function kses($string, $allowed_html, $allowed_protocols =
                array('http', 'https', 'ftp', 'news', 'nntp', 'telnet',
                      'gopher', 'mailto'))
@@ -49,6 +64,12 @@ function kses($string, $allowed_html, $allowed_protocols =
 } # function kses
 
 
+/**
+ * You add any kses hooks here
+ *
+ * @param string $string
+ * @return string
+ */
 function kses_hook($string)
 ###############################################################################
 # You add any kses hooks here.
@@ -57,7 +78,11 @@ function kses_hook($string)
   return $string;
 } # function kses_hook
 
-
+/**
+ * This function returns kses' version number.
+ *
+ * @return string
+ */
 function kses_version()
 ###############################################################################
 # This function returns kses' version number.
@@ -67,6 +92,15 @@ function kses_version()
 } # function kses_version
 
 
+/**
+ * This function searches for HTML tags, no matter how malformed. It also
+ * matches stray ">" characters.
+ *
+ * @param string $string
+ * @param string $allowed_html
+ * @param array $allowed_protocols
+ * @return string
+ */
 function kses_split($string, $allowed_html, $allowed_protocols)
 ###############################################################################
 # This function searches for HTML tags, no matter how malformed. It also
@@ -82,7 +116,17 @@ function kses_split($string, $allowed_html, $allowed_protocols)
                       $string);
 } # function kses_split
 
-
+/**
+ * This function does a lot of work. It rejects some very malformed things
+ * like <:::>. It returns an empty string, if the element isn't allowed (look
+ * ma, no strip_tags()!). Otherwise it splits the tag into an element and an
+ * attribute list.
+ *
+ * @param string $string
+ * @param string $allowed_html
+ * @param array $allowed_protocols
+ * @return string
+ */
 function kses_split2($string, $allowed_html, $allowed_protocols)
 ###############################################################################
 # This function does a lot of work. It rejects some very malformed things
@@ -117,7 +161,20 @@ function kses_split2($string, $allowed_html, $allowed_protocols)
                    $allowed_protocols);
 } # function kses_split2
 
-
+/**
+ * This function removes all attributes, if none are allowed for this element.
+ * If some are allowed it calls kses_hair() to split them further, and then it
+ * builds up new HTML code from the data that kses_hair() returns. It also
+ * removes "<" and ">" characters, if there are any left. One more thing it
+ * does is to check if the tag has a closing XHTML slash, and if it does,
+ * it puts one in the returned code as well.
+ *
+ * @param string $element
+ * @param string $attr
+ * @param string $allowed_html
+ * @param array $allowed_protocols
+ * @return string
+ */
 function kses_attr($element, $attr, $allowed_html, $allowed_protocols)
 ###############################################################################
 # This function removes all attributes, if none are allowed for this element.
@@ -182,7 +239,18 @@ function kses_attr($element, $attr, $allowed_html, $allowed_protocols)
   return "<$element$attr2$xhtml_slash>";
 } # function kses_attr
 
-
+/**
+ * This function does a lot of work. It parses an attribute list into an array
+ * with attribute data, and tries to do the right thing even if it gets weird
+ * input. It will add quotes around attribute values that don't have any quotes
+ * or apostrophes around them, to make it easier to produce HTML code that will
+ * conform to W3C's HTML specification. It will also remove bad URL protocols
+ * from attribute values.
+ *
+ * @param string $attr
+ * @param array $allowed_protocols
+ * @return array
+ */
 function kses_hair($attr, $allowed_protocols)
 ###############################################################################
 # This function does a lot of work. It parses an attribute list into an array
@@ -307,7 +375,17 @@ function kses_hair($attr, $allowed_protocols)
   return $attrarr;
 } # function kses_hair
 
-
+/**
+ * This function performs different checks for attribute values. The currently
+ * implemented checks are "maxlen", "minlen", "maxval", "minval" and "valueless"
+ * with even more checks to come soon.
+ *
+ * @param string $value
+ * @param string $vless
+ * @param string $checkname
+ * @param string $checkvalue
+ * @return bool
+ */
 function kses_check_attr_val($value, $vless, $checkname, $checkvalue)
 ###############################################################################
 # This function performs different checks for attribute values. The currently
@@ -373,7 +451,16 @@ function kses_check_attr_val($value, $vless, $checkname, $checkvalue)
   return $ok;
 } # function kses_check_attr_val
 
-
+/**
+ * This function removes all non-allowed protocols from the beginning of
+ * $string. It ignores whitespace and the case of the letters, and it does
+ * understand HTML entities. It does its work in a while loop, so it won't be
+ * fooled by a string like "javascript:javascript:alert(57)".
+ *
+ * @param string $string
+ * @param array $$allowed_protocols
+ * @return string
+ */
 function kses_bad_protocol($string, $allowed_protocols)
 ###############################################################################
 # This function removes all non-allowed protocols from the beginning of
@@ -395,7 +482,12 @@ function kses_bad_protocol($string, $allowed_protocols)
   return $string;
 } # function kses_bad_protocol
 
-
+/**
+ * This function removes any NULL characters in $string.
+ *
+ * @param string $string
+ * @return string
+ */
 function kses_no_null($string)
 ###############################################################################
 # This function removes any NULL characters in $string.
@@ -408,6 +500,14 @@ function kses_no_null($string)
 } # function kses_no_null
 
 
+/**
+ * This function changes the character sequence  \"  to just  "
+ * It leaves all other slashes alone. It's really weird, but the quoting from
+ * preg_replace(//e) seems to require this.
+ *
+ * @param string $string
+ * @return string
+ */
 function kses_stripslashes($string)
 ###############################################################################
 # This function changes the character sequence  \"  to just  "
@@ -419,6 +519,12 @@ function kses_stripslashes($string)
 } # function kses_stripslashes
 
 
+/**
+ * This function goes through an array, and changes the keys to all lower case.
+ *
+ * @param array $inarray
+ * @return array
+ */
 function kses_array_lc($inarray)
 ###############################################################################
 # This function goes through an array, and changes the keys to all lower case.
@@ -441,7 +547,12 @@ function kses_array_lc($inarray)
   return $outarray;
 } # function kses_array_lc
 
-
+/**
+ * This function removes the HTML JavaScript entities found in early versions of
+ * Netscape 4.
+ *
+ * @param string $string
+ */
 function kses_js_entities($string)
 ###############################################################################
 # This function removes the HTML JavaScript entities found in early versions of
@@ -451,7 +562,14 @@ function kses_js_entities($string)
   return preg_replace('%&\s*\{[^}]*(\}\s*;?|$)%', '', $string);
 } # function kses_js_entities
 
-
+/**
+ * This function deals with parsing errors in kses_hair(). The general plan is
+ * to remove everything to and including some whitespace, but it deals with
+ * quotes and apostrophes as well.
+ *
+ * @param string $string
+ * @return string
+ */
 function kses_html_error($string)
 ###############################################################################
 # This function deals with parsing errors in kses_hair(). The general plan is
@@ -462,7 +580,14 @@ function kses_html_error($string)
   return preg_replace('/^("[^"]*("|$)|\'[^\']*(\'|$)|\S)*\s*/', '', $string);
 } # function kses_html_error
 
-
+/**
+ * This function searches for URL protocols at the beginning of $string, while
+ * handling whitespace and HTML entities.
+ *
+ * @param string $string
+ * @param string $allowed_protocols
+ * @return string
+ */
 function kses_bad_protocol_once($string, $allowed_protocols)
 ###############################################################################
 # This function searches for URL protocols at the beginning of $string, while
@@ -477,7 +602,14 @@ function kses_bad_protocol_once($string, $allowed_protocols)
   return $string;
 } # function kses_bad_protocol_once
 
-
+/**
+ * This function processes URL protocols, checks to see if they're in the white-
+ * list or not, and returns different data depending on the answer.
+ *
+ * @param string $string
+ * @param string $allowed_protocols
+ * @return string
+ */
 function kses_bad_protocol_once2($string, $allowed_protocols)
 ###############################################################################
 # This function processes URL protocols, checks to see if they're in the white-
@@ -505,7 +637,13 @@ function kses_bad_protocol_once2($string, $allowed_protocols)
     return '';
 } # function kses_bad_protocol_once2
 
-
+/**
+ * This function normalizes HTML entities. It will convert "AT&T" to the correct
+ * "AT&amp;T", "&#00058;" to "&#58;", "&#XYZZY;" to "&amp;#XYZZY;" and so on.
+ *
+ * @param string $string
+ * @return string
+ */
 function kses_normalize_entities($string)
 ###############################################################################
 # This function normalizes HTML entities. It will convert "AT&T" to the correct
@@ -528,7 +666,13 @@ function kses_normalize_entities($string)
   return $string;
 } # function kses_normalize_entities
 
-
+/**
+ * This function helps kses_normalize_entities() to only accept 16 bit values
+ * and nothing more for &#number; entities.
+ *
+ * @param int $i
+ * @return string
+ */
 function kses_normalize_entities2($i)
 ###############################################################################
 # This function helps kses_normalize_entities() to only accept 16 bit values
@@ -538,7 +682,14 @@ function kses_normalize_entities2($i)
   return (($i > 65535) ? "&amp;#$i;" : "&#$i;");
 } # function kses_normalize_entities2
 
-
+/**
+ * This function decodes numeric HTML entities (&#65; and &#x41;). It doesn't
+ * do anything with other entities like &auml;, but we don't need them in the
+ * URL protocol whitelisting system anyway.
+ *
+ * @param string $string
+ * @return string
+ */
 function kses_decode_entities($string)
 ###############################################################################
 # This function decodes numeric HTML entities (&#65; and &#x41;). It doesn't

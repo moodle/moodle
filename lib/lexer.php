@@ -1,23 +1,36 @@
-<?php  // $Id$
+<?php
 
-/* PHP lexer code snarfed from the CVS tree for the lamplib project at 
+/**
+ * PHP lexer code snarfed from the CVS tree for the lamplib project at
  * http://sourceforge.net/projects/lamplib
  * This project is administered by Markus Baker, Harry Fuecks and Matt
  * Mitchell, and the project  code is in the public domain.
  * 
  * Thanks, guys!
+ *
+ * @package   moodlecore
+ * @copyright Markus Baker, Harry Fuecks and Matt Mitchell
+ * @license   Public Domain {@link http://sourceforge.net/projects/lamplib}
  */
 
+    /** LEXER_ENTER = 1 */
     define("LEXER_ENTER", 1);
+    /** LEXER_MATCHED = 2 */
     define("LEXER_MATCHED", 2);
+    /** LEXER_UNMATCHED = 3 */
     define("LEXER_UNMATCHED", 3);
+    /** LEXER_EXIT = 4 */
     define("LEXER_EXIT", 4);
+    /** LEXER_SPECIAL = 5 */
     define("LEXER_SPECIAL", 5);
     
     /**
-     *    Compounded regular expression. Any of
-     *    the contained patterns could match and
-     *    when one does it's label is returned.
+     * Compounded regular expression. Any of
+     * the contained patterns could match and
+     * when one does it's label is returned.
+     * @package   moodlecore
+     * @copyright Markus Baker, Harry Fuecks and Matt Mitchell
+     * @license   Public Domain {@link http://sourceforge.net/projects/lamplib}
      */
     class ParallelRegex {
         var $_patterns;
@@ -27,9 +40,9 @@
         
         /**
          *    Constructor. Starts with no patterns.
-         *    @param $case    True for case sensitive, false
+         *    @param bool $case    True for case sensitive, false
          *                    for insensitive.
-         *    @public
+         *    @access public
          */
         function ParallelRegex($case) {
             $this->_case = $case;
@@ -40,11 +53,11 @@
         
         /**
          *    Adds a pattern with an optional label.
-         *    @param $pattern      Perl style regex, but ( and )
+         *    @param string $pattern      Perl style regex, but ( and )
          *                         lose the usual meaning.
-         *    @param $label        Label of regex to be returned
+         *    @param string $label        Label of regex to be returned
          *                         on a match.
-         *    @public
+         *    @access public
          */
         function addPattern($pattern, $label = true) {
             $count = count($this->_patterns);
@@ -56,11 +69,11 @@
         /**
          *    Attempts to match all patterns at once against
          *    a string.
-         *    @param $subject      String to match against.
-         *    @param $match        First matched portion of
+         *    @param string $subject      String to match against.
+         *    @param string $match        First matched portion of
          *                         subject.
-         *    @return              True on success.
-         *    @public
+         *    @return bool             True on success.
+         *    @access public
          */
         function match($subject, &$match) {
             if (count($this->_patterns) == 0) {
@@ -84,8 +97,7 @@
          *    regular expression separated with the
          *    "or" operator. Caches the regex.
          *    Will automatically escape (, ) and / tokens.
-         *    @param $patterns    List of patterns in order.
-         *    @private
+         *    @access private
          */
         function _getCompoundedRegex() {
             if ($this->_regex == null) {
@@ -102,8 +114,8 @@
         
         /**
          *    Accessor for perl regex mode flags to use.
-         *    @return        Flags as string.
-         *    @private
+         *    @return string       Flags as string.
+         *    @access private
          */
         function _getPerlMatchingFlags() {
             return ($this->_case ? "msS" : "msSi");
@@ -111,15 +123,19 @@
     }
     
     /**
-     *    States for a stack machine.
+     * States for a stack machine.
+     *
+     * @package   moodlecore
+     * @copyright Markus Baker, Harry Fuecks and Matt Mitchell
+     * @license   Public Domain {@link http://sourceforge.net/projects/lamplib}
      */
     class StateStack {
         var $_stack;
         
         /**
          *    Constructor. Starts in named state.
-         *    @param $start        Starting state name.
-         *    @public
+         *    @param string $start        Starting state name.
+         *    @access public
          */
         function StateStack($start) {
             $this->_stack = array($start);
@@ -127,8 +143,8 @@
         
         /**
          *    Accessor for current state.
-         *    @return        State as string.
-         *    @public
+         *    @return string State as string.
+         *    @access public
          */
         function getCurrent() {
             return $this->_stack[count($this->_stack) - 1];
@@ -137,8 +153,8 @@
         /**
          *    Adds a state to the stack and sets it
          *    to be the current state.
-         *    @param $state        New state.
-         *    @public
+         *    @param string $state        New state.
+         *    @access public
          */
         function enter($state) {
             array_push($this->_stack, $state);
@@ -147,9 +163,9 @@
         /**
          *    Leaves the current state and reverts
          *    to the previous one.
-         *    @return     False if we drop off
+         *    @return bool     False if we drop off
          *                the bottom of the list.
-         *    @public
+         *    @access public
          */
         function leave() {
             if (count($this->_stack) == 1) {
@@ -161,11 +177,15 @@
     }
     
     /**
-     *    Accepts text and breaks it into tokens.
-     *    Some optimisation to make the sure the
-     *    content is only scanned by the PHP regex
-     *    parser once. Lexer modes must not start
-     *    with leading underscores.
+     * Accepts text and breaks it into tokens.
+     * Some optimisation to make the sure the
+     * content is only scanned by the PHP regex
+     * parser once. Lexer modes must not start
+     * with leading underscores.
+     *
+     * @package   moodlecore
+     * @copyright Markus Baker, Harry Fuecks and Matt Mitchell
+     * @license   Public Domain {@link http://sourceforge.net/projects/lamplib}
      */
     class Lexer {
         var $_regexes;
@@ -177,11 +197,11 @@
         /**
          *    Sets up the lexer in case insensitive matching
          *    by default.
-         *    @param $parser     Handling strategy by
+         *    @param object $parser     Handling strategy by
          *                       reference.
-         *    @param $start      Starting handler.
-         *    @param $case       True for case sensitive.
-         *    @public
+         *    @param string $start      Starting handler.
+         *    @param bool $case       True for case sensitive.
+         *    @access public
          */
         function Lexer(&$parser, $start = "accept", $case = false) {
             $this->_case = $case;
@@ -195,12 +215,12 @@
          *    Adds a token search pattern for a particular
          *    parsing mode. The pattern does not change the
          *    current mode.
-         *    @param $pattern      Perl style regex, but ( and )
+         *    @param string $pattern      Perl style regex, but ( and )
          *                         lose the usual meaning.
-         *    @param $mode         Should only apply this
+         *    @param string $mode         Should only apply this
          *                         pattern when dealing with
          *                         this type of input.
-         *    @public
+         *    @access public
          */
         function addPattern($pattern, $mode = "accept") {
             if (!isset($this->_regexes[$mode])) {
@@ -213,14 +233,14 @@
          *    Adds a pattern that will enter a new parsing
          *    mode. Useful for entering parenthesis, strings,
          *    tags, etc.
-         *    @param $pattern      Perl style regex, but ( and )
+         *    @param string $pattern      Perl style regex, but ( and )
          *                         lose the usual meaning.
-         *    @param $mode         Should only apply this
+         *    @param string $mode         Should only apply this
          *                         pattern when dealing with
          *                         this type of input.
-         *    @param $new_mode     Change parsing to this new
+         *    @param string $new_mode     Change parsing to this new
          *                         nested mode.
-         *    @public
+         *    @access public
          */
         function addEntryPattern($pattern, $mode, $new_mode) {
             if (!isset($this->_regexes[$mode])) {
@@ -232,10 +252,10 @@
         /**
          *    Adds a pattern that will exit the current mode
          *    and re-enter the previous one.
-         *    @param $pattern      Perl style regex, but ( and )
+         *    @param string $pattern      Perl style regex, but ( and )
          *                         lose the usual meaning.
-         *    @param $mode         Mode to leave.
-         *    @public
+         *    @param string $mode         Mode to leave.
+         *    @access public
          */
         function addExitPattern($pattern, $mode) {
             if (!isset($this->_regexes[$mode])) {
@@ -247,13 +267,13 @@
         /**
          *    Adds a pattern that has a special mode.
          *    Acts as an entry and exit pattern in one go.
-         *    @param $pattern      Perl style regex, but ( and )
+         *    @param string $pattern      Perl style regex, but ( and )
          *                         lose the usual meaning.
-         *    @param $mode         Should only apply this
+         *    @param string $mode         Should only apply this
          *                         pattern when dealing with
          *                         this type of input.
-         *    @param $special      Use this mode for this one token.
-         *    @public
+         *    @param string $special      Use this mode for this one token.
+         *    @access public
          */
         function addSpecialPattern($pattern, $mode, $special) {
             if (!isset($this->_regexes[$mode])) {
@@ -264,9 +284,9 @@
         
         /**
          *    Adds a mapping from a mode to another handler.
-         *    @param $mode        Mode to be remapped.
-         *    @param $handler     New target handler.
-         *    @public
+         *    @param string $mode        Mode to be remapped.
+         *    @param string $handler     New target handler.
+         *    @access public
          */
         function mapHandler($mode, $handler) {
             $this->_mode_handlers[$mode] = $handler;
@@ -278,9 +298,9 @@
          *    content is consumed. If successful then each
          *    unparsed and parsed token invokes a call to the
          *    held listener.
-         *    @param $raw        Raw HTML text.
-         *    @return            True on success, else false.
-         *    @public
+         *    @param string $raw        Raw HTML text.
+         *    @return bool           True on success, else false.
+         *    @access public
          */
         function parse($raw) {
             if (!isset($this->_parser)) {
@@ -307,14 +327,14 @@
          *    Sends the matched token and any leading unmatched
          *    text to the parser changing the lexer to a new
          *    mode if one is listed.
-         *    @param $unmatched    Unmatched leading portion.
-         *    @param $matched      Actual token match.
-         *    @param $mode         Mode after match. The "_exit"
+         *    @param string $unmatched    Unmatched leading portion.
+         *    @param string $matched      Actual token match.
+         *    @param string $mode         Mode after match. The "_exit"
          *                         mode causes a stack pop. An
          *                         false mode causes no change.
-         *    @return              False if there was any error
+         *    @return bool              False if there was any error
          *                         from the parser.
-         *    @private
+         *    @access private
          */
         function _dispatchTokens($unmatched, $matched, $mode = false) {
             if (!$this->_invokeParser($unmatched, LEXER_UNMATCHED)) {
@@ -344,10 +364,10 @@
         /**
          *    Calls the parser method named after the current
          *    mode. Empty content will be ignored.
-         *    @param $content        Text parsed.
-         *    @param $is_match       Token is recognised rather
+         *    @param string $content        Text parsed.
+         *    @param string $is_match       Token is recognised rather
          *                           than unparsed data.
-         *    @private
+         *    @access private
          */
         function _invokeParser($content, $is_match) {
             if (($content === "") || ($content === false)) {
@@ -364,15 +384,15 @@
          *    Tries to match a chunk of text and if successful
          *    removes the recognised chunk and any leading
          *    unparsed data. Empty strings will not be matched.
-         *    @param $raw         The subject to parse. This is the
+         *    @param string $raw  The subject to parse. This is the
          *                        content that will be eaten.
-         *    @return             Three item list of unparsed
+         *    @return bool|array  Three item list of unparsed
          *                        content followed by the
          *                        recognised token and finally the
          *                        action the parser is to take.
          *                        True if no match, false if there
          *                        is a parsing error.
-         *    @private
+         *    @access private
          */
         function _reduce(&$raw) {
             if (!isset($this->_regexes[$this->_mode->getCurrent()])) {

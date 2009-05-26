@@ -24,16 +24,23 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/** INSTALL_WELCOME = 0 */
 define('INSTALL_WELCOME',       0);
+/** INSTALL_ENVIRONMENT = 1 */
 define('INSTALL_ENVIRONMENT',   1);
+/** INSTALL_PATHS = 2 */
 define('INSTALL_PATHS',         2);
+/** INSTALL_DOWNLOADLANG = 3 */
 define('INSTALL_DOWNLOADLANG',  3);
+/** INSTALL_DATABASETYPE = 4 */
 define('INSTALL_DATABASETYPE',  4);
+/** INSTALL_DATABASE = 5 */
 define('INSTALL_DATABASE',      5);
+/** INSTALL_SAVE = 6 */
 define('INSTALL_SAVE',          6);
 
 /**
- *Tries to detect the right www root setting.
+ * Tries to detect the right www root setting.
  * @return string detected www root
  */
 function install_guess_wwwroot() {
@@ -88,6 +95,15 @@ function install_helpbutton($url, $title='') {
 
 /**
  * This is in function because we want the /install.php to parse in PHP4
+ *
+ * @param object $database
+ * @param string $dbhsot
+ * @param string $dbuser
+ * @param string $dbpass
+ * @param string $dbname
+ * @param string $prefix
+ * @param mixed $dboptions
+ * @return string
  */
 function install_db_validate($database, $dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions) {
     try {
@@ -111,6 +127,8 @@ function install_db_validate($database, $dbhost, $dbuser, $dbpass, $dbname, $pre
  * This function returns a list of languages and their full names. The
  * list of available languages is fetched from install/lang/xx/installer.php
  * and it's used exclusively by the installation process
+ *
+ * @global object
  * @return array An associative array with contents in the form of LanguageCode => LanguageName
  */
 function install_get_list_of_languages() {
@@ -195,6 +213,8 @@ function install_generate_configphp($database, $cfg, $userealpath=false) {
 /**
  * Prints complete help page used during installation.
  * Does not return.
+ *
+ * @global object
  * @param string $help
  */
 function install_print_help_page($help) {
@@ -235,6 +255,8 @@ function install_print_help_page($help) {
 
 /**
  * Prints installation page header, we can no use weblib yet in isntaller.
+ *
+ * @global object
  * @param array $config
  * @param string $stagename
  * @param string $heading
@@ -303,6 +325,8 @@ function install_print_header($config, $stagename, $heading, $stagetext) {
 
 /**
  * Prints installation page header, we can no use weblib yet in isntaller.
+ *
+ * @global object
  * @param array $config
  * @param bool $reload print reload button instead of next
  * @return void
@@ -344,6 +368,8 @@ function install_print_footer($config, $reload=false) {
 /**
  * Prints css needed on installation page, tries to look like the rest of installation.
  * Does not return.
+ *
+ * @global object
  */
 function install_css_styles() {
     global $CFG;
