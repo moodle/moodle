@@ -94,7 +94,7 @@ abstract class moodle_database {
     /**
      * Destructor - cleans up and flushes everything needed.
      */
-    public function __desctruct() {
+    public function __destruct() {
         $this->dispose();
     }
 

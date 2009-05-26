@@ -166,11 +166,11 @@ class pgsql_native_moodle_database extends moodle_database {
      * Do NOT use connect() again, create a new instance if needed.
      */
     public function dispose() {
+        parent::dispose(); // Call parent dispose to write/close session and other common stuff before clossing conn
         if ($this->pgsql) {
             pg_close($this->pgsql);
             $this->pgsql = null;
         }
-        parent::dispose();
     }
 
 

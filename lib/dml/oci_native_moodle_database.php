@@ -154,11 +154,11 @@ class oci_native_moodle_database extends moodle_database {
      * Do NOT use connect() again, create a new instance if needed.
      */
     public function dispose() {
+        parent::dispose(); // Call parent dispose to write/close session and other common stuff before clossing conn
         if ($this->oci) {
             oci_close($this->oci);
             $this->oci = null;
         }
-        parent::dispose();
     }
 
 
