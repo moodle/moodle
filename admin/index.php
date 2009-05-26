@@ -1,4 +1,27 @@
-<?php // $Id$
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Main administration script.
+ *
+ * @package    moodlecore
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 /// Check that config.php exists, if not then call the install script
     if (!file_exists('../config.php')) {
@@ -157,31 +180,7 @@
             }
         }
 
-        try {
-            print_upgrade_part_start('moodle', true); // does not store upgrade running flag
-
-            $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml");
-            upgrade_started();     // we want the flag to be stored in config table ;-)
-
-        /// set all core default records and default settings
-            require_once("$CFG->libdir/db/install.php");
-            xmldb_main_install();
-
-        /// store version
-            upgrade_main_savepoint(true, $version, false);
-
-        /// Continue with the instalation
-            events_update_definition('moodle');
-            message_update_providers('moodle');
-            message_update_providers('message');
-
-        /// Write default settings unconditionlly
-            admin_apply_default_settings(NULL, true);
-
-            print_upgrade_part_end(null, true);
-        } catch (exception $ex) {
-            upgrade_handle_exception($ex);
-        }
+        install_core($version, true);
     }
 
 
@@ -251,74 +250,20 @@
             die();
 
         } else {
-
-        /// Launch main upgrade
-            try {
-
-                // Upgrade current language pack if we can
-                if (empty($CFG->skiplangupgrade)) {
-                    upgrade_language_pack(false);
-                }
-
-                print_upgrade_part_start('moodle', false);
-
-                $result = xmldb_main_upgrade($CFG->version);
-                if ($version > $CFG->version) {
-                    // store version if not already there
-                    upgrade_main_savepoint($result, $version, false);
-                }
-
-                // perform all other component upgrade routines
-                update_capabilities('moodle');
-                events_update_definition('moodle');
-                message_update_providers('moodle');
-                message_update_providers('message');
-
-                remove_dir($CFG->dataroot . '/cache', true); // flush cache
-
-                print_upgrade_part_end('moodle', false);
-            } catch (Exception $ex) {
-                upgrade_handle_exception($ex);
-            }
+            // Launch main upgrade
+            upgrade_core($version, true);
         }
     } else if ($version < $CFG->version) {
         notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
     }
 
 /// Updated human-readable release version if necessary
-
     if ($release <> $CFG->release) {  // Update the release version
         set_config("release", $release);
     }
 
-/// upgrade all plugins types
-    try {
-        $plugintypes = get_plugin_types();
-        foreach ($plugintypes as $type=>$location) {
-            upgrade_plugins($type, $location, 'print_upgrade_part_start', 'print_upgrade_part_end');
-        }
-    } catch (Exception $ex) {
-        upgrade_handle_exception($ex);
-    }
-
-/// Check for changes to RPC functions
-    if ($CFG->mnet_dispatcher_mode != 'off') {
-        try {
-            // this needs a full rewrite, sorry to mention that :-(
-            require_once("$CFG->dirroot/$CFG->admin/mnet/adminlib.php");
-            upgrade_RPC_functions();  // Return here afterwards
-        } catch (Exception $ex) {
-            upgrade_handle_exception($ex);
-        }
-    }
-
-/// Check for local database customisations
-    try {
-        require_once("$CFG->dirroot/lib/locallib.php");
-        upgrade_local_db('print_upgrade_part_start', 'print_upgrade_part_end');
-    } catch (Exception $ex) {
-        upgrade_handle_exception($ex);
-    }
+    // upgrade all plugins and other parts
+    upgrade_noncore(true);
 
 /// indicate that this site is fully configured except the admin password
     if (empty($CFG->rolesactive)) {
@@ -463,4 +408,3 @@
 
     admin_externalpage_print_footer();
 
-?>

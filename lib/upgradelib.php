@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Various upgrade related functions an classes.
+ * Various upgrade/install related functions and classes.
  *
  * @package    moodlecore
  * @subpackage upgrade
@@ -909,7 +909,7 @@ function print_upgrade_separator() {
  * @param string $plugin
  * @param bool $installation true if installation, false menas upgrade
  */
-function print_upgrade_part_start($plugin, $installation) {
+function print_upgrade_part_start($plugin, $installation=false) {
     if (empty($plugin) or $plugin == 'moodle') {
         upgrade_started($installation); // does not store upgrade running flag yet
         print_heading(get_string('coresystem'));
@@ -937,7 +937,7 @@ function print_upgrade_part_start($plugin, $installation) {
  * @param string $plugin
  * @param bool $installation true if installation, false menas upgrade
  */
-function print_upgrade_part_end($plugin, $installation) {
+function print_upgrade_part_end($plugin, $installation=false) {
     upgrade_started();
     if ($installation) {
         if (empty($plugin) or $plugin == 'moodle') {
@@ -961,7 +961,7 @@ function print_upgrade_part_end($plugin, $installation) {
  * @param string $plugin
  * @param bool $installation true if installation, false menas upgrade
  */
-function silent_upgrade_part_start($plugin, $installation) {
+function silent_upgrade_part_start($plugin, $installation=false) {
     if (empty($plugin) or $plugin == 'moodle') {
         upgrade_started($installation); // does not store upgrade running flag yet
     } else {
@@ -987,7 +987,7 @@ function silent_upgrade_part_start($plugin, $installation) {
  * @param string $plugin
  * @param bool $installation true if installation, false menas upgrade
  */
-function silent_upgrade_part_end($plugin, $installation) {
+function silent_upgrade_part_end($plugin, $installation=false) {
     upgrade_started();
     if ($installation) {
         if (empty($plugin) or $plugin == 'moodle') {
@@ -1051,4 +1051,141 @@ function upgrade_language_pack($lang='') {
     }
 
     print_upgrade_separator();
+}
+
+/**
+ * Install core moodle tables and initialize
+ * @param float $version target version
+ * @param bool $verbose
+ * @return void, may throw exception
+ */
+function install_core($version, $verbose) {
+    global $CFG, $DB;
+
+    try {
+        if ($verbose) {
+            print_upgrade_part_start('moodle', true); // does not store upgrade running flag
+        } else {
+            silent_upgrade_part_start('moodle', true); // does not store upgrade running flag
+        }
+
+        $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml");
+        upgrade_started();     // we want the flag to be stored in config table ;-)
+
+        // set all core default records and default settings
+        require_once("$CFG->libdir/db/install.php");
+        xmldb_main_install();
+
+        // store version
+        upgrade_main_savepoint(true, $version, false);
+
+        // Continue with the instalation
+        events_update_definition('moodle');
+        message_update_providers('moodle');
+        message_update_providers('message');
+
+        // Write default settings unconditionlly
+        admin_apply_default_settings(NULL, true);
+
+        if ($verbose) {
+            print_upgrade_part_end(null, true);
+        } else {
+            silent_upgrade_part_end(null, true);
+        }
+    } catch (exception $ex) {
+        upgrade_handle_exception($ex);
+    }
+}
+
+/**
+ * Upgrade moodle core
+ * @param float $version target version
+ * @param bool $verbose
+ * @return void, may throw exception
+ */
+function upgrade_core($version, $verbose) {
+    global $CFG;
+
+    try {
+        // Upgrade current language pack if we can
+        if (empty($CFG->skiplangupgrade)) {
+            upgrade_language_pack(false);
+        }
+
+        if ($verbose) {
+            print_upgrade_part_start('moodle');
+        } else {
+            silent_upgrade_part_start('moodle');
+        }
+
+        $result = xmldb_main_upgrade($CFG->version);
+        if ($version > $CFG->version) {
+            // store version if not already there
+            upgrade_main_savepoint($result, $version, false);
+        }
+
+        // perform all other component upgrade routines
+        update_capabilities('moodle');
+        events_update_definition('moodle');
+        message_update_providers('moodle');
+        message_update_providers('message');
+
+        remove_dir($CFG->dataroot . '/cache', true); // flush cache
+
+        if ($verbose) {
+            print_upgrade_part_end('moodle');
+        } else {
+            silent_upgrade_part_end('moodle');
+        }
+    } catch (Exception $ex) {
+        upgrade_handle_exception($ex);
+    }
+}
+
+/**
+ * Upgrade/install other parts of moodle
+ * @param bool $verbose
+ * @return void, may throw exception
+ */
+function upgrade_noncore($verbose) {
+    global $CFG;
+
+    // setup callbacks
+    if ($verbose) {
+        $start = 'print_upgrade_part_start';
+        $end   = 'print_upgrade_part_end';
+    } else {
+        $start = 'silent_upgrade_part_start';
+        $end   = 'silent_upgrade_part_end';
+    }
+
+    // upgrade all plugins types
+    try {
+        $plugintypes = get_plugin_types();
+        foreach ($plugintypes as $type=>$location) {
+            upgrade_plugins($type, $location, $start, $end);
+        }
+    } catch (Exception $ex) {
+        upgrade_handle_exception($ex);
+    }
+
+    // Check for changes to RPC functions
+    if ($CFG->mnet_dispatcher_mode != 'off') {
+        try {
+            // this needs a full rewrite, sorry to mention that :-(
+            // we have to make it part of standard WS framework
+            require_once("$CFG->dirroot/$CFG->admin/mnet/adminlib.php");
+            upgrade_RPC_functions();  // Return here afterwards
+        } catch (Exception $ex) {
+            upgrade_handle_exception($ex);
+        }
+    }
+
+    // Check for local database customisations
+    try {
+        require_once("$CFG->dirroot/lib/locallib.php");
+        upgrade_local_db($start, $end);
+    } catch (Exception $ex) {
+        upgrade_handle_exception($ex);
+    }
 }
