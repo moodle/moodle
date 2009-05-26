@@ -186,6 +186,17 @@ class xmldb_object {
                 }
             }
         }
+    /// Check there aren't duplicate names
+        if ($arr) {
+            $existing_fields = array();
+            foreach($arr as $element) {
+                if (in_array($element->getName(), $existing_fields)) {
+                    debugging('Object ' . $element->getName() . ' is duplicated!', DEBUG_DEVELOPER);
+                    $result = false;
+                }
+                $existing_fields[] = $element->getName();
+            }
+        }
         return $result;
     }
 
@@ -240,7 +251,7 @@ class xmldb_object {
                 }
             }
             if ($counter != 1) {
-                debugging('The number of tables with previous not set is different from 1', DEBUG_DEVELOPER);
+                debugging('The number of objects with previous not set is different from 1', DEBUG_DEVELOPER);
                 $result = false;
             }
         }
@@ -253,7 +264,7 @@ class xmldb_object {
                 }
             }
             if ($counter != 1) {
-                debugging('The number of tables with next not set is different from 1', DEBUG_DEVELOPER);
+                debugging('The number of objects with next not set is different from 1', DEBUG_DEVELOPER);
                 $result = false;
             }
         }
@@ -263,7 +274,7 @@ class xmldb_object {
                 if ($element->getPrevious()) {
                     $i = $this->findObjectInArray($element->getPrevious(), $arr);
                     if ($i === NULL) {
-                        debugging('Table ' . $element->getName() . ' says PREVIOUS="' . $element->getPrevious() . '" but that other table does not exist.', DEBUG_DEVELOPER);
+                        debugging('Object ' . $element->getName() . ' says PREVIOUS="' . $element->getPrevious() . '" but that other object does not exist.', DEBUG_DEVELOPER);
                         $result = false;
                     }
                 }
@@ -275,7 +286,7 @@ class xmldb_object {
                 if ($element->getNext()) {
                     $i = $this->findObjectInArray($element->getNext(), $arr);
                     if ($i === NULL) {
-                        debugging('Table ' . $element->getName() . ' says NEXT="' . $element->getNext() . '" but that other table does not exist.', DEBUG_DEVELOPER);
+                        debugging('Object ' . $element->getName() . ' says NEXT="' . $element->getNext() . '" but that other object does not exist.', DEBUG_DEVELOPER);
                         $result = false;
                     }
                 }
@@ -287,7 +298,7 @@ class xmldb_object {
             foreach($arr as $element) {
                 if (in_array($element->getPrevious(), $existarr)) {
                     $result = false;
-                    debugging('Table ' . $element->getName() . ' says PREVIOUS="' . $element->getPrevious() . '" but another table has already said that!', DEBUG_DEVELOPER);
+                    debugging('Object ' . $element->getName() . ' says PREVIOUS="' . $element->getPrevious() . '" but another object has already said that!', DEBUG_DEVELOPER);
                 } else {
                     $existarr[] = $element->getPrevious();
                 }
@@ -299,9 +310,27 @@ class xmldb_object {
             foreach($arr as $element) {
                 if (in_array($element->getNext(), $existarr)) {
                     $result = false;
-                    debugging('Table ' . $element->getName() . ' says NEXT="' . $element->getNext() . '" but another table has already said that!', DEBUG_DEVELOPER);
+                    debugging('Object ' . $element->getName() . ' says NEXT="' . $element->getNext() . '" but another object has already said that!', DEBUG_DEVELOPER);
                 } else {
                     $existarr[] = $element->getNext();
+                }
+            }
+        }
+    /// Check that there aren't next values pointing to themselves
+        if ($result && $arr) {
+            foreach($arr as $element) {
+                if ($element->getNext() == $element->getName()) {
+                    $result = false;
+                    debugging('Object ' . $element->getName() . ' says NEXT="' . $element->getNext() . '" and that is wrongly recursive!', DEBUG_DEVELOPER);
+                }
+            }
+        }
+    /// Check that there aren't prev values pointing to themselves
+        if ($result && $arr) {
+            foreach($arr as $element) {
+                if ($element->getPrevious() == $element->getName()) {
+                    $result = false;
+                    debugging('Object ' . $element->getName() . ' says PREVIOUS="' . $element->getPrevious() . '" and that is wrongly recursive!', DEBUG_DEVELOPER);
                 }
             }
         }
