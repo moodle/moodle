@@ -1,6 +1,29 @@
-<?php  // $Id$
+<?php
 
-/// Library of functions and constants for module chat
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Library of functions and constants for module chat
+ *
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/** Include portfoliolib.php */
 require_once($CFG->libdir.'/portfoliolib.php');
 
 $CFG->chat_ajax_debug  = false;
@@ -57,6 +80,10 @@ EOD;
 // Dummy data that gets output to the browser as needed, in order to make it show output
 $CHAT_DUMMY_DATA = padding(200);
 
+/**
+ * @param int $n
+ * @return string
+ */
 function padding($n){
     $str = '';
     for($i=0; $i<$n; $i++){
@@ -65,12 +92,18 @@ function padding($n){
     return $str;
 }
 
+/**
+ * Given an object containing all the necessary data,
+ * (defined by the form in mod_form.php) this function
+ * will create a new instance and return the id number
+ * of the new instance.
+ *
+ * @global object
+ * @param object $chat
+ * @return int
+ */
 function chat_add_instance($chat) {
     global $DB;
-/// Given an object containing all the necessary data,
-/// (defined by the form in mod_form.php) this function
-/// will create a new instance and return the id number
-/// of the new instance.
 
     $chat->timemodified = time();
 
@@ -94,12 +127,17 @@ function chat_add_instance($chat) {
     return $returnid;
 }
 
-
+/**
+ * Given an object containing all the necessary data,
+ * (defined by the form in mod_form.php) this function
+ * will update an existing instance with new data.
+ *
+ * @global object
+ * @param object $chat
+ * @return int
+ */
 function chat_update_instance($chat) {
     global $DB;
-/// Given an object containing all the necessary data,
-/// (defined by the form in mod_form.php) this function
-/// will update an existing instance with new data.
 
     $chat->timemodified = time();
     $chat->id = $chat->instance;
@@ -122,12 +160,18 @@ function chat_update_instance($chat) {
     return $returnid;
 }
 
-
+/**
+ * Given an ID of an instance of this module,
+ * this function will permanently delete the instance
+ * and any data that depends on it.
+ *
+ * @global object
+ * @param int $id
+ * @return bool
+ */
 function chat_delete_instance($id) {
     global $DB;
-/// Given an ID of an instance of this module,
-/// this function will permanently delete the instance
-/// and any data that depends on it.
+
 
     if (! $chat = $DB->get_record('chat', array('id'=>$id))) {
         return false;
@@ -157,24 +201,52 @@ function chat_delete_instance($id) {
     return $result;
 }
 
+/**
+ * Return a small object with summary information about what a
+ * user has done with a given particular instance of this module
+ * Used for user activity reports.
+ * <code>
+ * $return->time = the time they did it
+ * $return->info = a short text description
+ * </code>
+ *
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $chat
+ * @return void
+ */
 function chat_user_outline($course, $user, $mod, $chat) {
-/// Return a small object with summary information about what a
-/// user has done with a given particular instance of this module
-/// Used for user activity reports.
-/// $return->time = the time they did it
-/// $return->info = a short text description
     return NULL;
 }
 
+/**
+ * Print a detailed representation of what a  user has done with
+ * a given particular instance of this module, for user activity reports.
+ *
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $chat
+ * @return bool
+ */
 function chat_user_complete($course, $user, $mod, $chat) {
-/// Print a detailed representation of what a  user has done with
-/// a given particular instance of this module, for user activity reports.
     return true;
 }
 
+/**
+ * Given a course and a date, prints a summary of all chat rooms past and present
+ * This function is called from course/lib.php: print_recent_activity()
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @param object $course
+ * @param array $viewfullnames
+ * @param int|string $timestart Timestamp
+ * @return bool
+ */
 function chat_print_recent_activity($course, $viewfullnames, $timestart) {
-/// Given a course and a date, prints a summary of all chat rooms past and present
-/// This function is called from course/lib.php: print_recent_activity()
     global $CFG, $USER, $DB;
 
     // this is approximate only, but it is really fast ;-)
@@ -316,11 +388,15 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
     return true;
 }
 
-
+/**
+ * Function to be run periodically according to the moodle cron
+ * This function searches for things that need to be done, such
+ * as sending out mail, toggling flags etc ...
+ *
+ * @global object
+ * @return bool
+ */
 function chat_cron () {
-/// Function to be run periodically according to the moodle cron
-/// This function searches for things that need to be done, such
-/// as sending out mail, toggling flags etc ...
     global $DB;
 
     chat_update_chat_times();
@@ -348,9 +424,16 @@ function chat_cron () {
     return true;
 }
 
+/**
+ * Returns the users with data in one chat
+ * (users with records in chat_messages, students)
+ *
+ * @global object
+ * @param int $chatid
+ * @param int $groupid
+ * @return array
+ */
 function chat_get_participants($chatid, $groupid=0) {
-//Returns the users with data in one chat
-//(users with records in chat_messages, students)
     global $DB;
 
     $params = array('groupid'=>$groupid, 'chatid'=>$chatid);
@@ -371,12 +454,18 @@ function chat_get_participants($chatid, $groupid=0) {
     return ($students);
 }
 
+/**
+ * This standard function will check all instances of this module
+ * and make sure there are up-to-date events created for each of them.
+ * If courseid = 0, then every chat event in the site is checked, else
+ * only chat events belonging to the course specified are checked.
+ * This function is used, in its new format, by restore_refresh_events()
+ *
+ * @global object
+ * @param int $courseid
+ * @return bool
+ */
 function chat_refresh_events($courseid = 0) {
-// This standard function will check all instances of this module
-// and make sure there are up-to-date events created for each of them.
-// If courseid = 0, then every chat event in the site is checked, else
-// only chat events belonging to the course specified are checked.
-// This function is used, in its new format, by restore_refresh_events()
     global $DB;
 
     if ($courseid) {
@@ -420,6 +509,13 @@ function chat_refresh_events($courseid = 0) {
 //////////////////////////////////////////////////////////////////////
 /// Functions that require some SQL
 
+/**
+ * @global object
+ * @param int $chatid
+ * @param int $groupid
+ * @param int $groupingid
+ * @return array
+ */
 function chat_get_users($chatid, $groupid=0, $groupingid=0) {
     global $DB;
 
@@ -446,6 +542,12 @@ function chat_get_users($chatid, $groupid=0, $groupingid=0) {
         ORDER BY c.firstping ASC", $params);
 }
 
+/**
+ * @global object
+ * @param int $chatid
+ * @param int $groupid
+ * @return array
+ */
 function chat_get_latest_message($chatid, $groupid=0) {
     global $DB;
 
@@ -469,6 +571,17 @@ function chat_get_latest_message($chatid, $groupid=0) {
 //////////////////////////////////////////////////////////////////////
 // login if not already logged in
 
+/**
+ * login if not already logged in
+ *
+ * @global object
+ * @global object
+ * @param int $chatid
+ * @param string $version
+ * @param int $groupid
+ * @param object $course
+ * @return bool|int Returns the chat users sid or false
+ */
 function chat_login_user($chatid, $version, $groupid, $course) {
     global $USER, $DB;
 
@@ -543,6 +656,12 @@ function chat_login_user($chatid, $version, $groupid, $course) {
     return $chatuser->sid;
 }
 
+/**
+ * Delete the old and in the way
+ *
+ * @global object
+ * @global object
+ */
 function chat_delete_old_users() {
 // Delete the old and in the way
     global $CFG, $DB;
@@ -573,7 +692,13 @@ function chat_delete_old_users() {
     }
 }
 
-
+/**
+ * Updates chat records so that the next chat time is correct
+ *
+ * @global object
+ * @param int $chatid
+ * @return void
+ */
 function chat_update_chat_times($chatid=0) {
 /// Updates chat records so that the next chat time is correct
     global $DB;
@@ -623,7 +748,16 @@ function chat_update_chat_times($chatid=0) {
     }
 }
 
-
+/**
+ * @global object
+ * @global object
+ * @param object $message
+ * @param int $courseid
+ * @param object $sender
+ * @param object $currentuser
+ * @param string $chat_lastrow
+ * @return bool|string Returns HTML or false
+ */
 function chat_format_message_manually($message, $courseid, $sender, $currentuser, $chat_lastrow=NULL) {
     global $CFG, $USER;
 
@@ -744,6 +878,14 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     return $output;
 }
 
+/**
+ * @global object
+ * @param object $message
+ * @param int $courseid
+ * @param object $currentuser
+ * @param string $chat_lastrow
+ * @return bool|string Returns HTML or false
+ */
 function chat_format_message($message, $courseid, $currentuser, $chat_lastrow=NULL) {
 /// Given a message object full of information, this function
 /// formats it appropriately into text and html, then
@@ -762,14 +904,26 @@ function chat_format_message($message, $courseid, $currentuser, $chat_lastrow=NU
     return chat_format_message_manually($message, $courseid, $user, $currentuser, $chat_lastrow);
 }
 
+/**
+ * @return array
+ */
 function chat_get_view_actions() {
     return array('view','view all','report');
 }
 
+/**
+ * @return array
+ */
 function chat_get_post_actions() {
     return array('talk');
 }
 
+/**
+ * @global object
+ * @global object
+ * @param array $courses
+ * @param array $htmlarray Passed by reference
+ */
 function chat_print_overview($courses, &$htmlarray) {
     global $USER, $CFG;
 
@@ -805,7 +959,8 @@ function chat_print_overview($courses, &$htmlarray) {
 /**
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the chat.
- * @param $mform form passed by reference
+ *
+ * @param object $mform form passed by reference
  */
 function chat_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'chatheader', get_string('modulenameplural', 'chat'));
@@ -814,6 +969,9 @@ function chat_reset_course_form_definition(&$mform) {
 
 /**
  * Course reset form defaults.
+ *
+ * @param object $course
+ * @return array
  */
 function chat_reset_course_form_defaults($course) {
     return array('reset_chat'=>1);
@@ -822,7 +980,10 @@ function chat_reset_course_form_defaults($course) {
 /**
  * Actual implementation of the rest coures functionality, delete all the
  * chat messages for course $data->courseid.
- * @param $data the data submitted from the reset course.
+ *
+ * @global object
+ * @global object
+ * @param object $data the data submitted from the reset course.
  * @return array status array
  */
 function chat_reset_userdata($data) {
@@ -854,17 +1015,28 @@ function chat_reset_userdata($data) {
 
 /**
  * Returns all other caps used in module
+ *
+ * @return array
  */
 function chat_get_extra_capabilities() {
     return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames');
 }
 
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class chat_portfolio_caller extends portfolio_module_caller_base {
-
+    /** @var object */
     private $chat;
+    /** @var int Timestamp */
     protected $start;
+    /** @var int Timestamp */
     protected $end;
-
+    /**
+     * @return array
+     */
     public static function expected_callbackargs() {
         return array(
             'id'    => true,
@@ -872,7 +1044,9 @@ class chat_portfolio_caller extends portfolio_module_caller_base {
             'end'   => false,
         );
     }
-
+    /**
+     * @global object
+     */
     public function load_data() {
         global $DB;
 
@@ -901,15 +1075,21 @@ class chat_portfolio_caller extends portfolio_module_caller_base {
             $params
         );
     }
-
+    /**
+     * @return array
+     */
     public static function supported_formats() {
         return array(PORTFOLIO_FORMAT_PLAINHTML);
     }
-
+    /**
+     *
+     */
     public function expected_time() {
         return portfolio_expected_time_db(count($this->messages));
     }
-
+    /**
+     * @return string
+     */
     public function get_sha1() {
         $str = '';
         ksort($this->messages);
@@ -919,13 +1099,19 @@ class chat_portfolio_caller extends portfolio_module_caller_base {
         return sha1($str);
     }
 
+    /**
+     * @return bool
+     */
     public function check_permissions() {
         $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
         return has_capability('mod/chat:exportsession', $context)
             || ($this->participated
                 && has_capability('mod/chat:exportparticipatedsession', $context));
     }
-
+    
+    /**
+     * @todo Document this function
+     */
     public function prepare_package() {
         $content = '';
         $lasttime = 0;
@@ -948,10 +1134,17 @@ class chat_portfolio_caller extends portfolio_module_caller_base {
         $this->exporter->write_new_file($content, clean_filename($this->cm->name . '-session.html'), false);
     }
 
+    /**
+     * @return string
+     */
     public static function display_name() {
         return get_string('modulename', 'chat');
     }
 
+    /**
+     * @global object
+     * @return string
+     */
     public function get_return_url() {
         global $CFG;
 
