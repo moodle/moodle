@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   mod-chat
+ * @package   mod-data
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -40,7 +40,7 @@ define ('DATA_CAP_EXPORT', 'mod/data:viewalluserpresets');
 // In Moodle >= 2, new roles may be introduced and used instead.
 
 /**
- * @package   mod-chat
+ * @package   mod-data
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2192,7 +2192,7 @@ function clean_preset($folder) {
 }
 
 /**
- * @package   mod-chat
+ * @package   mod-data
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2935,7 +2935,7 @@ function data_pluginfile($course, $cminfo, $context, $filearea, $args) {
 }
 
 /**
- * @package   mod-chat
+ * @package   mod-data
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
