@@ -20,14 +20,19 @@
  *
  * @package    moodlecore
  * @subpackage editor
- * @copyright  2009 Petr Skoda (http://skodak.org)
+ * @copyright  2009 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
  * Returns users preferred editor for given format
+ *
+ * @todo  implement user preferences for text editors
+ *
+ * @global object
+ * @global object
  * @param int $format text format or null of none
- * @return texeditor object
+ * @return object texteditor object
  */
 function get_preferred_texteditor($format=null) {
     global $CFG, $USER;
@@ -73,8 +78,10 @@ function get_preferred_texteditor($format=null) {
 
 /**
  * Returns instance of text editor
+ *
+ * @global object
  * @param string $editorname name of editor (textarea, tinymce, ...)
- * @return mixed texeditor instance or false if does not exist
+ * @return object|bool texeditor instance or false if does not exist
  */
 function get_texteditor($editorname) {
     global $CFG;
@@ -93,7 +100,8 @@ function get_texteditor($editorname) {
 
 /**
  * Get the list of available editors
- * @return array ('editorname'=>'localised editor name')
+ *
+ * @return array Array ('editorname'=>'localised editor name')
  */
 function get_available_editors() {
     $editors = array();
@@ -105,6 +113,10 @@ function get_available_editors() {
 
 /**
  * Base abstract text editor class.
+ *
+ * @copyright  2009 Petr Skoda {@link http://skodak.org}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
  */
 abstract class texteditor {
     /**
@@ -115,7 +127,7 @@ abstract class texteditor {
 
     /**
      * Returns list of supported text formats
-     * @return array(FORMAT=>FORMAT)
+     * @return array Array (FORMAT=>FORMAT)
      */
     public abstract function get_supported_formats();
 
@@ -127,7 +139,7 @@ abstract class texteditor {
 
     /**
      * Supports file picker and repos?
-     * @return book
+     * @return object book object
      */
     public abstract function supports_repositories();
 
@@ -155,6 +167,9 @@ abstract class texteditor {
 //=== DEPRECATED =====================
 /**
  * can_use_html_editor is deprecated...
+ * @deprecated
+ * @todo Deprecated: eradicate completely, replace with something else
+ * @return bool
  */
 function can_use_html_editor() {
     //TODO: eradicate completely, replace with something else

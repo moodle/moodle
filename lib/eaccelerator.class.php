@@ -1,24 +1,52 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/ 
+// 
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- ** This class abstracts eaccelerator/turckmmcache
- ** API to provide
- ** 
- ** - get()
- ** - set()
- ** - delete()
- ** - getforfill()
- ** - releaseforfill()
- **
- ** Author: Martin Langhoff <martin@catalyst.net.nz>
- **
- ** Note: do NOT store booleans here. For compatibility with
- ** memcached, a false value is indistinguisable from a 
- ** "not found in cache" response.
- **/
+ * This class abstracts eaccelerator/turckmmcache
+ * API to provide
+ * 
+ * - get()
+ * - set()
+ * - delete()
+ * - getforfill()
+ * - releaseforfill()
+ *
+ * Note: do NOT store booleans here. For compatibility with
+ * memcached, a false value is indistinguisable from a 
+ * "not found in cache" response.
+ *
+ * @copyright Martin Langhoff <martin@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
+ */
 
-
+/**
+ *
+ * @copyright Martin Langhoff <martin@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
+ */
 class eaccelerator {
 
+    /**
+     * @todo Document this function
+     *
+     * @global object
+     */
     function eaccelerator() {
         global $CFG;
         if ( function_exists('eaccelerator_get')) {
@@ -32,6 +60,12 @@ class eaccelerator {
         $this->prefix = $CFG->dbname .'|' . $CFG->prefix . '|';
     }
 
+    /**
+     * The status of the eaccelerator, if it has been established
+     * this will return true
+     *
+     * @return bool
+     */
     function status() {
         if (isset($this->mode)) {
             return true;
@@ -39,6 +73,14 @@ class eaccelerator {
         return false;
     }
 
+    /**
+     * @todo Document this function
+     *
+     * @param string $key
+     * @param string $value
+     * @param int $ttl
+     * @return mixed
+     */
     function set($key, $value, $ttl=0) {
         $set    = $this->mode . '_put';
         $unlock = $this->mode . '_unlock';
@@ -50,6 +92,12 @@ class eaccelerator {
         return $set($this->prefix . $key, serialize($value), $ttl);
     }
 
+    /**
+     * @todo Document this function
+     *
+     * @param string $key
+     * @return string|bool String if success else false
+     */
     function get($key) {
         $fn = $this->mode . '_get';
         $rec = $fn($this->prefix . $key);
@@ -58,7 +106,13 @@ class eaccelerator {
         }
         return unserialize($rec);
     } 
-        
+    
+    /**
+     * @todo Document this function
+     *
+     * @param string $key
+     * @return mixed
+     */    
     function delete($key) {
         $fn = $this->mode . '_rm';
         return $fn($this->prefix . $key);

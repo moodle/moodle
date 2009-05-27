@@ -1,46 +1,57 @@
-<?php // $Id$
+<?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/ 
+// 
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/// This library contains all the Data Manipulation Language (DML) functions
-/// used to interact with the DB. All the dunctions in this library must be
-/// generic and work against the major number of RDBMS possible. This is the
-/// list of currently supported and tested DBs: mysql, postresql, mssql, oracle
+/**
+ * This library contains all the Data Manipulation Language (DML) functions
+ * used to interact with the DB
+ *
+ * This library contains all the Data Manipulation Language (DML) functions
+ * used to interact with the DB. All the dunctions in this library must be
+ * generic and work against the major number of RDBMS possible. This is the
+ * list of currently supported and tested DBs: mysql, postresql, mssql, oracle
 
-/// This library is automatically included by Moodle core so you never need to
-/// include it yourself.
+ * This library is automatically included by Moodle core so you never need to
+ * include it yourself.
 
-/// For more info about the functions available in this library, please visit:
-///     http://docs.moodle.org/en/DML_functions
-/// (feel free to modify, improve and document such page, thanks!)
+ * For more info about the functions available in this library, please visit:
+ *     http://docs.moodle.org/en/DML_functions
+ * (feel free to modify, improve and document such page, thanks!)
+ * 
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
+ */
 
+ /** Require the essential */
 require_once($CFG->libdir.'/dml/moodle_database.php');
 
 /**
  * DML exception class, use instead of error() in dml code.
+ *
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
  */
 class dml_exception extends moodle_exception {
+    /**
+     * @param string $errorcode
+     * @param string $a
+     * @param string $debuginfo
+     */
     function __construct($errorcode, $a=NULL, $debuginfo=null) {
         parent::__construct($errorcode, '', '', $a, $debuginfo);
     }
@@ -48,8 +59,15 @@ class dml_exception extends moodle_exception {
 
 /**
  * DML db connection exception - triggered if database not accessible.
+ *
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
  */
 class dml_connection_exception extends dml_exception {
+    /**
+     * @param string $error
+     */
     function __construct($error) {
         $errorinfo = '<em>'.s($error).'</em>';
         parent::__construct('dbconnectionfailed', NULL, $errorinfo);
@@ -58,12 +76,23 @@ class dml_connection_exception extends dml_exception {
 
 /**
  * DML read exception - triggered by SQL syntax errors, missing tables, etc.
+ *
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
  */
 class dml_read_exception extends dml_exception {
+    /** @var string */
     public $error;
     public $sql;
+    /** @var array */
     public $params;
-
+    
+    /**
+     * @param string $error
+     * @param string $sql
+     * @param array $params
+     */
     function __construct($error, $sql=null, array $params=null) {
         $this->error  = $error;
         $this->sql    = $sql;
@@ -75,12 +104,23 @@ class dml_read_exception extends dml_exception {
 
 /**
  * DML read exception - triggered by SQL syntax errors, missing tables, etc.
+ *
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package moodlecore
  */
 class dml_write_exception extends dml_exception {
+    /** @var string */
     public $error;
     public $sql;
+    /** @var array */
     public $params;
 
+    /**
+     * @param string $error
+     * @param string $sql
+     * @param array $params
+     */
     function __construct($error, $sql=null, array $params=null) {
         $this->error  = $error;
         $this->sql    = $sql;
@@ -92,6 +132,9 @@ class dml_write_exception extends dml_exception {
 
 /**
  * Sets up global $DB moodle_database instance
+ *
+ * @global object
+ * @global object
  * @return void
  */
 function setup_DB() {

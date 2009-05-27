@@ -1,23 +1,39 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/ 
+// 
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Library of functions for events manipulation.
  * 
  * The public API is all at the end of this file.
  *
- * @author Martin Dougiamas and many others
- * @version $Id$
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   moodlecore
  */
-
 
 /**
  * Loads the events definitions for the component (from file). If no
  * events are defined for the component, we simply return an empty array.
- * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
- * @return array of capabilities or empty array if not exists
  *
  * INTERNAL - to be used from eventslib only
+ *
+ * @global object
+ * @param string $component examples: 'moodle', 'mod/forum', 'block/quiz_results'
+ * @return array of capabilities or empty array if not exists
  */
 function events_load_def($component) {
     global $CFG;
@@ -71,10 +87,12 @@ function events_load_def($component) {
 /**
  * Gets the capabilities that have been cached in the database for this
  * component.
- * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
- * @return array of events
  *
  * INTERNAL - to be used from eventslib only
+ *
+ * @global object
+ * @param string $component examples: 'moodle', 'mod/forum', 'block/quiz_results'
+ * @return array of events
  */
 function events_get_cached($component) {
     global $DB;
@@ -102,7 +120,8 @@ function events_get_cached($component) {
  * will cause any queued events for the component to be removed from
  * the database.
  *
- * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
+ * @global object
+ * @param string $component examples: 'moodle', 'mod/forum', 'block/quiz_results'
  * @return boolean
  */
 function events_update_definition($component='moodle') {
@@ -163,7 +182,8 @@ function events_update_definition($component='moodle') {
 
 /**
  * Remove all event handlers and queued events
- * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
+ *
+ * @param string $component examples: 'moodle', 'mod/forum', 'block/quiz_results'
  */
 function events_uninstall($component) {
     $cachedhandlers = events_get_cached($component);
@@ -172,11 +192,13 @@ function events_uninstall($component) {
 
 /**
  * Deletes cached events that are no longer needed by the component.
- * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
- * @param $chachedevents - array of the cached events definitions that will be
- * @return int - number of deprecated capabilities that have been removed
  *
  * INTERNAL - to be used from eventslib only
+ *
+ * @global object
+ * @param string $component examples: 'moodle', 'mod/forum', 'block/quiz_results'
+ * @param array $chachedevents array of the cached events definitions that will be
+ * @return int number of deprecated capabilities that have been removed
  */
 function events_cleanup($component, $cachedhandlers) {
     global $DB;
@@ -200,11 +222,14 @@ function events_cleanup($component, $cachedhandlers) {
 
 /**
  * puts a handler on queue
- * @param object handler - event handler object from db
- * @param object eventdata - event data object
- * @return id number of new queue handler
  *
  * INTERNAL - to be used from eventslib only
+ *
+ * @global object
+ * @param object $handler event handler object from db
+ * @param object $event event data object
+ * @param string $errormessage The error message indicating the problem
+ * @return id number of new queue handler
  */
 function events_queue_handler($handler, $event, $errormessage) {
     global $DB;
@@ -231,12 +256,13 @@ function events_queue_handler($handler, $event, $errormessage) {
 
 /**
  * trigger a single event with a specified handler
- * @param handler - hander object from db
- * @param eventdata - event dataobject
- * @param errormessage - error message indicating problem
- * @return bool - success or fail
  *
  * INTERNAL - to be used from eventslib only
+ *
+ * @param handler $hander object from db
+ * @param eventdata $eventdata dataobject
+ * @param string $errormessage error message indicating problem
+ * @return bool success or fail
  */
 function events_dispatch($handler, $eventdata, &$errormessage) {
     global $CFG;
@@ -266,10 +292,13 @@ function events_dispatch($handler, $eventdata, &$errormessage) {
 
 /**
  * given a queued handler, call the respective event handler to process the event
- * @param object qhandler - events_queued_handler object from db
- * @return boolean meaning success, or NULL on fatal failure
  *
  * INTERNAL - to be used from eventslib only
+ *
+ * @global object
+ * @global object
+ * @param object $qhandler events_queued_handler object from db
+ * @return boolean meaning success, or NULL on fatal failure
  */
 function events_process_queued_handler($qhandler) {
     global $CFG, $DB;
@@ -312,10 +341,13 @@ function events_process_queued_handler($qhandler) {
 
 /**
  * removes this queued handler from the events_queued_handler table
+ *
  * removes events_queue record from events_queue if no more references to this event object exists
- * @param object qhandler - events_queued_handler object from db
  *
  * INTERNAL - to be used from eventslib only
+ *
+ * @global object
+ * @param object $qhandler events_queued_handler object from db
  */
 function events_dequeue($qhandler) {
     global $DB;
@@ -331,10 +363,13 @@ function events_dequeue($qhandler) {
 
 /**
  * Returns hanflers for given event. Uses caching for better perf.
- * @param string $eventanme name of even or 'reset'
- * @return mixed array of handlers or false otherwise
  *
  * INTERNAL - to be used from eventslib only
+ *
+ * @global object
+ * @staticvar array $handlers
+ * @param string $eventanme name of even or 'reset'
+ * @return mixed array of handlers or false otherwise
  */
 function events_get_handlers($eventname) {
     global $DB;
@@ -357,10 +392,12 @@ function events_get_handlers($eventname) {
 
 /**
  * Events cron will try to empty the events queue by processing all the queued events handlers
- * @param string eventname - empty means all
- * @return number of dispatched+removed broken events
  *
  * PUBLIC
+ *
+ * @global object
+ * @param string $eventname empty means all
+ * @return number of dispatched+removed broken events
  */
 function events_cron($eventname='') {
     global $DB;
@@ -402,11 +439,15 @@ function events_cron($eventname='') {
 
 /**
  * Function to call all eventhandlers when triggering an event
- * @param eventname - name of the event
- * @param eventdata - event data object
- * @return number of failed events
  *
  * PUBLIC
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @param string $eventname name of the event
+ * @param object $eventdata event data object
+ * @return int number of failed events
  */
 function events_trigger($eventname, $eventdata) {
     global $CFG, $USER, $DB;
@@ -499,11 +540,11 @@ function events_trigger($eventname, $eventdata) {
 
 /**
  * checks if an event is registered for this component
- * @param string eventname - name of the event
- * @param string component - component name, can be mod/data or moodle
- * @return bool
  *
- * PUBLIC
+ * @global object
+ * @param string $eventname name of the event
+ * @param string $component component name, can be mod/data or moodle
+ * @return bool
  */
 function events_is_registered($eventname, $component) {
     global $DB;
@@ -512,10 +553,13 @@ function events_is_registered($eventname, $component) {
 
 /**
  * checks if an event is queued for processing - either cron handlers attached or failed instant handlers
- * @param string eventname - name of the event
- * @return int number of queued events
  *
  * PUBLIC
+ *
+ * @global object
+ * @global object
+ * @param string $eventname name of the event
+ * @return int number of queued events
  */
 function events_pending_count($eventname) {
     global $CFG, $DB;
