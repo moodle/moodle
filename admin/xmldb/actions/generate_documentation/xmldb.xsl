@@ -7,35 +7,55 @@
 <xsl:template match="/">
   <p>This documentation is generated automatically from the XMLDB database
     definition. It is available only in English.</p>
-  <p><em>Note: This documentation currently does not show full details of field types.</em></p>
   <xsl:apply-templates/>
 </xsl:template>
 
 <!-- Tables: heading, comment -->
 <xsl:template match="TABLE">
-  <h3 style="margin-top:3em"><xsl:value-of select="@NAME"/></h3>
+  <xsl:variable name="tableid">table_<xsl:value-of select="@NAME"/></xsl:variable>
+  <h3 id="{$tableid}" style="margin-top:3em"><xsl:value-of select="@NAME"/></h3>
   <xsl:call-template name="display-comment"><xsl:with-param name="PARA">y</xsl:with-param></xsl:call-template>
-  <xsl:apply-templates/>
+  <xsl:apply-templates>
+    <xsl:with-param name="tableid" select="$tableid" />
+  </xsl:apply-templates>
 </xsl:template>
 
 <!-- Fields (if any): table with field, type, comment -->
 <xsl:template match="FIELDS[FIELD]">
+  <xsl:param name="tableid" />
   <table class="generaltable boxaligncenter" style="margin:1em 0" cellspacing="1" cellpadding="5" width="100%">
     <tr>
       <th class="header c0" scope="col">Field</th>
       <th class="header c1" scope="col">Type</th>
       <th class="header c2 lastcol" scope="col">Description</th>
     </tr>
-    <xsl:apply-templates/>
+    <xsl:apply-templates>
+      <xsl:with-param name="tableid" select="$tableid" />
+    </xsl:apply-templates>
   </table>
 </xsl:template>
 
 <!-- Each individual field -->
 <xsl:template match="FIELD">
+  <xsl:param name="tableid" />
+  <xsl:variable name="fieldid"><xsl:value-of select="$tableid"/>_field_<xsl:value-of select="@NAME"/></xsl:variable>
   <xsl:variable name="COUNT" select="count(preceding-sibling::*)"/>
   <tr class="r{$COUNT}">
-    <td class="cell c0"><xsl:value-of select="@NAME"/></td>
-    <td class="cell c1"><xsl:value-of select="@TYPE"/> (<xsl:value-of select="@LENGTH"/>)</td>
+    <td id="{$fieldid}" class="cell c0"><xsl:value-of select="@NAME"/></td>
+    <td class="cell c1" style="white-space: nowrap;">
+      <xsl:value-of select="@TYPE"/>
+      (<xsl:value-of select="@LENGTH"/><xsl:if test="@DECIMALS">, <xsl:value-of select="@DECIMALS"/></xsl:if>)
+      <xsl:if test="@UNSIGNED='true'">unsigned </xsl:if>
+      <xsl:if test="@NOTNULL='true'">not null </xsl:if>
+      <xsl:if test="@DEFAULT">
+        <xsl:choose>
+          <xsl:when test="@TYPE='char'">default '<xsl:value-of select="@DEFAULT"/>'</xsl:when>
+          <xsl:when test="@TYPE='text'">default '<xsl:value-of select="@DEFAULT"/>'</xsl:when>
+          <xsl:otherwise>default <xsl:value-of select="@DEFAULT"/></xsl:otherwise>
+        </xsl:choose>
+      </xsl:if>
+      <xsl:if test="@SEQUENCE='true'">seq</xsl:if>
+    </td>
     <td class="cell c2 lastcol"><xsl:call-template name="display-comment"/></td>
   </tr>
 </xsl:template>
@@ -69,7 +89,8 @@
     <td class="cell c2"><xsl:value-of select="@FIELDS"/></td>
     <td class="cell c3">
       <xsl:if test="@REFTABLE">
-        <xsl:value-of select="@REFTABLE"/> (<xsl:value-of select="@REFFIELDS"/>)
+        <xsl:variable name="tableid">table_<xsl:value-of select="@REFTABLE"/></xsl:variable>
+        <a href="#{$tableid}"><xsl:value-of select="@REFTABLE"/></a> (<xsl:value-of select="@REFFIELDS"/>)
       </xsl:if>
     </td>
     <xsl:if test="../*[normalize-space(@COMMENT)!='']">
