@@ -5976,7 +5976,7 @@ function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debugi
                 notify('Stack trace:'.print_backtrace($backtrace, true), 'notifytiny');
             }
         }
-        die;
+        exit(1); // general error code
     }
 
     if (empty($link) and !defined('ADMIN_EXT_HEADER_PRINTED')) {
@@ -6035,7 +6035,7 @@ function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debugi
     for ($i=0;$i<512;$i++) {  // Padding to help IE work with 404
         echo ' ';
     }
-    die;
+    exit(1); // general error code
 }
 
 /**
@@ -6095,7 +6095,7 @@ function _print_early_error($errorcode, $module, $a, $backtrace=null, $debuginfo
     }
 
     echo '</body></html>';
-    die;
+    exit(1); // general error code
 }
 
 /**
@@ -6339,7 +6339,7 @@ function notice ($message, $link='', $course=NULL) {
 
     if (CLI_SCRIPT) {
         echo("!!$message!!\n");
-        die;
+        exit(1); // no success
     }
 
     if (!$PAGE->headerprinted) {
@@ -6357,7 +6357,7 @@ function notice ($message, $link='', $course=NULL) {
     } else {
         print_footer($course);
     }
-    exit;
+    exit(1); // general error code
 }
 
 /**
