@@ -1,8 +1,30 @@
-<?php  // $Id$
+<?php
 
-/// Library of functions and constants for module glossary
-/// (replace glossary with the name of your module and delete this line)
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Library of functions and constants for module glossary
+ * (replace glossary with the name of your module and delete this line)
+ *
+ * @package   mod-glossary
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/** Include Portfolio lib */
 require_once($CFG->libdir.'/portfoliolib.php');
 
 define("GLOSSARY_SHOW_ALL_CATEGORIES", 0);
@@ -19,7 +41,11 @@ define("GLOSSARY_EXPORT_VIEW", 6);
 define("GLOSSARY_APPROVAL_VIEW", 7);
 
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
-
+/**
+ * @global object
+ * @param object $glossary
+ * @return int
+ */
 function glossary_add_instance($glossary) {
     global $DB;
 /// Given an object containing all the necessary data,
@@ -61,11 +87,17 @@ function glossary_add_instance($glossary) {
     return $returnid;
 }
 
-
+/**
+ * Given an object containing all the necessary data,
+ * (defined by the form in mod_form.php) this function
+ * will update an existing instance with new data.
+ *
+ * @global object
+ * @global object
+ * @param object $glossary
+ * @return bool
+ */
 function glossary_update_instance($glossary) {
-/// Given an object containing all the necessary data,
-/// (defined by the form in mod_form.php) this function
-/// will update an existing instance with new data.
     global $CFG, $DB;
 
     if (empty($glossary->globalglossary)) {
@@ -109,6 +141,8 @@ function glossary_update_instance($glossary) {
  * Given an ID of an instance of this module,
  * this function will permanently delete the instance
  * and any data that depends on it.
+ *
+ * @global object
  * @param int $id glossary id
  * @return bool success
  */
@@ -182,12 +216,20 @@ function glossary_delete_instance($id) {
     return $DB->delete_records('glossary', array('id'=>$id));
 }
 
+/**
+ * Return a small object with summary information about what a
+ * user has done with a given particular instance of this module
+ * Used for user activity reports.
+ * $return->time = the time they did it
+ * $return->info = a short text description
+ *
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $glossary
+ * @return object|null
+ */
 function glossary_user_outline($course, $user, $mod, $glossary) {
-/// Return a small object with summary information about what a
-/// user has done with a given particular instance of this module
-/// Used for user activity reports.
-/// $return->time = the time they did it
-/// $return->info = a short text description
 
     if ($entries = glossary_get_user_entries($glossary->id, $user->id)) {
         $result = new object();
@@ -200,6 +242,12 @@ function glossary_user_outline($course, $user, $mod, $glossary) {
     return NULL;
 }
 
+/**
+ * @global object
+ * @param int $glossaryid
+ * @param int $userid
+ * @return array
+ */
 function glossary_get_user_entries($glossaryid, $userid) {
 /// Get all the entries for a user in a glossary
     global $DB;
@@ -213,9 +261,17 @@ function glossary_get_user_entries($glossaryid, $userid) {
                           ORDER BY e.timemodified ASC", array($glossaryid, $userid));
 }
 
+/**
+ * Print a detailed representation of what a  user has done with
+ * a given particular instance of this module, for user activity reports.
+ *
+ * @global object
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $glossary
+ */
 function glossary_user_complete($course, $user, $mod, $glossary) {
-/// Print a detailed representation of what a  user has done with
-/// a given particular instance of this module, for user activity reports.
     global $CFG;
 
     if ($entries = glossary_get_user_entries($glossary->id, $user->id)) {
@@ -228,12 +284,20 @@ function glossary_user_complete($course, $user, $mod, $glossary) {
         echo '</td></tr></table>';
     }
 }
-
+/**
+ * Given a course and a time, this module should find recent activity
+ * that has occurred in glossary activities and print it out.
+ * Return true if there was output, or false is there was none.
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @param object $course
+ * @param object $viewfullnames
+ * @param int $timestart
+ * @return bool
+ */
 function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
-/// Given a course and a time, this module should find recent activity
-/// that has occurred in glossary activities and print it out.
-/// Return true if there was output, or false is there was none.
-
     global $CFG, $USER, $DB;
 
     //TODO: use timestamp in approved field instead of changing timemodified when approving in 2.0
@@ -304,7 +368,10 @@ function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
     return true;
 }
 
-
+/**
+ * @global object
+ * @param object $log
+ */
 function glossary_log_info($log) {
     global $DB;
 
@@ -313,16 +380,20 @@ function glossary_log_info($log) {
                                  WHERE e.id = ? AND u.id = ?", array($log->info, $log->userid));
 }
 
+/**
+ * Function to be run periodically according to the moodle cron
+ * This function searches for things that need to be done, such
+ * as sending out mail, toggling flags etc ...
+ * @return bool
+ */
 function glossary_cron () {
-/// Function to be run periodically according to the moodle cron
-/// This function searches for things that need to be done, such
-/// as sending out mail, toggling flags etc ...
     return true;
 }
 
 /**
  * Return grade for given user or all users.
  *
+ * @global object
  * @param int $glossaryid id of glossary
  * @param int $userid optional user id, 0 means all users
  * @return array array of grades, false if none
@@ -347,6 +418,8 @@ function glossary_get_user_grades($glossary, $userid=0) {
 /**
  * Update activity grades
  *
+ * @global object
+ * @global object
  * @param object $glossary null means all glossaries (with extra cmidnumber property)
  * @param int $userid specific user only, 0 means all
  */
@@ -373,6 +446,8 @@ function glossary_update_grades($glossary=null, $userid=0, $nullifnone=true) {
 
 /**
  * Update all grades in gradebook.
+ *
+ * @global object
  */
 function glossary_upgrade_grades() {
     global $DB;
@@ -401,6 +476,7 @@ function glossary_upgrade_grades() {
 /**
  * Create/update grade item for given glossary
  *
+ * @global object
  * @param object $glossary object with extra cmidnumber
  * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int, 0 if ok, error code otherwise
@@ -434,7 +510,8 @@ function glossary_grade_item_update($glossary, $grades=NULL) {
 
 /**
  * Delete grade item for given glossary
- *
+ * 
+ * @global object
  * @param object $glossary object
  */
 function glossary_grade_item_delete($glossary) {
@@ -444,9 +521,15 @@ function glossary_grade_item_delete($glossary) {
     return grade_update('mod/glossary', $glossary->course, 'mod', 'glossary', $glossary->id, 0, NULL, array('deleted'=>1));
 }
 
+/**
+ * Returns the users with data in one glossary
+ * (users with records in glossary_entries, students)
+ *
+ * @global object
+ * @param int $glossaryid
+ * @return array
+ */
 function glossary_get_participants($glossaryid) {
-//Returns the users with data in one glossary
-//(users with records in glossary_entries, students)
     global $DB;
 
     //Get students
@@ -458,6 +541,12 @@ function glossary_get_participants($glossaryid) {
     return $students;
 }
 
+/**
+ * @global object
+ * @param int $gloassryid
+ * @param int $scaleid
+ * @return bool
+ */
 function glossary_scale_used ($glossaryid,$scaleid) {
 //This function returns if a scale is being used by one glossary
     global $DB;
@@ -477,7 +566,9 @@ function glossary_scale_used ($glossaryid,$scaleid) {
  * Checks if scale is being used by any instance of glossary
  *
  * This is used to find out if scale used anywhere
- * @param $scaleid int
+ *
+ * @global object
+ * @param int $scaleid
  * @return boolean True if the scale is used by any glossary
  */
 function glossary_scale_used_anywhere($scaleid) {
@@ -494,10 +585,16 @@ function glossary_scale_used_anywhere($scaleid) {
 /// Any other glossary functions go here.  Each of them must have a name that
 /// starts with glossary_
 
-//This function return an array of valid glossary_formats records
-//Everytime it's called, every existing format is checked, new formats
-//are included if detected and old formats are deleted and any glossary
-//using an invalid format is updated to the default (dictionary).
+/**
+ * This function return an array of valid glossary_formats records
+ * Everytime it's called, every existing format is checked, new formats
+ * are included if detected and old formats are deleted and any glossary
+ * using an invalid format is updated to the default (dictionary).
+ *
+ * @global object
+ * @global object
+ * @return array
+ */
 function glossary_get_available_formats() {
     global $CFG, $DB;
 
@@ -552,6 +649,11 @@ function glossary_get_available_formats() {
     return $formats;
 }
 
+/**
+ * @param bool $debug
+ * @param string $text
+ * @param int $br
+ */
 function glossary_debug($debug,$text,$br=1) {
     if ( $debug ) {
         echo '<font color="red">' . $text . '</font>';
@@ -561,6 +663,14 @@ function glossary_debug($debug,$text,$br=1) {
     }
 }
 
+/**
+ *
+ * @global object
+ * @param int $glossaryid
+ * @param string $entrylist
+ * @param string $pivot
+ * @return array
+ */
 function glossary_get_entries($glossaryid, $entrylist, $pivot = "") {
     global $DB;
     if ($pivot) {
@@ -573,6 +683,13 @@ function glossary_get_entries($glossaryid, $entrylist, $pivot = "") {
                                         AND id IN ($entrylist)", array($glossaryid));
 }
 
+/**
+ * @global object
+ * @global object
+ * @param object $concept
+ * @param string $courseid
+ * @return array
+ */
 function glossary_get_entries_search($concept, $courseid) {
     global $CFG, $DB;
 
@@ -608,6 +725,21 @@ function glossary_get_entries_search($concept, $courseid) {
                                          g.usedynalink != 0", $params);
 }
 
+/**
+ * @global object
+ * @global object
+ * @param object $course
+ * @param object $course
+ * @param object $glossary
+ * @param object $entry
+ * @param string $mode
+ * @param string $hook
+ * @param int $printicons
+ * @param int $displayformat
+ * @param array $ratings
+ * @param bool $printview
+ * @return mixed
+ */
 function glossary_print_entry($course, $cm, $glossary, $entry, $mode='',$hook='',$printicons = 1, $displayformat  = -1, $ratings = NULL, $printview = false) {
     global $USER, $CFG;
     $return = false;
@@ -635,7 +767,14 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $mode='',$hook=''
     return $return;
 }
 
- //Default (old) print format used if custom function doesn't exist in format
+/**
+ * Default (old) print format used if custom function doesn't exist in format
+ *
+ * @param object $entry
+ * @param object $glossary
+ * @param object $cm
+ * @return void Output is echo'd
+ */
 function glossary_print_entry_default ($entry, $glossary, $cm) {
     echo '<h3>'. strip_tags($entry->concept) . ': </h3>';
 
@@ -656,6 +795,7 @@ function glossary_print_entry_default ($entry, $glossary, $cm) {
 
 /**
  * Print glossary concept/term as a heading &lt;h3>
+ * @param object $entry
  */
 function  glossary_print_entry_concept($entry) {
     $options = new object();
@@ -667,6 +807,14 @@ function  glossary_print_entry_concept($entry) {
     echo $text;
 }
 
+/**
+ *
+ * @global object
+ * @global array
+ * @param object $entry
+ * @param object $glossary
+ * @param object $cm
+ */
 function glossary_print_entry_definition($entry, $glossary, $cm) {
     global $DB;
 
@@ -705,6 +853,18 @@ function glossary_print_entry_definition($entry, $glossary, $cm) {
     echo $text;
 }
 
+/**
+ *
+ * @global object
+ * @param object $course
+ * @param object $cm
+ * @param object $glossary
+ * @param object $entry
+ * @param string $mode
+ * @param string $hook
+ * @param string $type
+ * @return string|void
+ */
 function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode='',$hook='', $type = 'print') {
     global $DB;
 
@@ -729,6 +889,20 @@ function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode='',
     }
 }
 
+/**
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @param object $course
+ * @param object $cm
+ * @param object $glossary
+ * @param object $entry
+ * @param string $mode
+ * @param string $hook
+ * @param string $type
+ * @return string|void
+ */
 function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$hook='', $type = 'print') {
     global $USER, $CFG, $DB;
 
@@ -809,6 +983,17 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
     }
 }
 
+/**
+ * @global object
+ * @param object $course
+ * @param object $cm
+ * @param object $glossary
+ * @param object $entry
+ * @param string $mode
+ * @param string $hook
+ * @param string $type
+ * @return string|void
+ */
 function glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode,$hook, $type = 'print') {
     global $DB;
 
@@ -833,6 +1018,18 @@ function glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode
     }
 }
 
+/**
+ * @param object $course
+ * @param object $cm
+ * @param object $glossary
+ * @param object $entry
+ * @param string $mode
+ * @param object $hook
+ * @param bool $printicons
+ * @param array $ratings
+ * @param bool $aliases
+ * @return mixed
+ */
 function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases=true) {
 
     if ($aliases) {
@@ -862,6 +1059,9 @@ function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $m
     return $return;
 }
 
+/**
+ * @todo Document this function
+ */
 function glossary_print_entry_attachment($entry, $cm, $format=NULL, $align="right", $insidetable=true) {
 ///   valid format values: html  : Return the HTML link for the attachment as an icon
 ///                        text  : Return the HTML link for tha attachment as text
@@ -877,6 +1077,14 @@ function glossary_print_entry_attachment($entry, $cm, $format=NULL, $align="righ
     }
 }
 
+/**
+ * @global object
+ * @param object $cm
+ * @param object $entry
+ * @param string $mode
+ * @param string $align
+ * @param bool $insidetable
+ */
 function  glossary_print_entry_approval($cm, $entry, $mode, $align="right", $insidetable=true) {
     global $CFG;
 
@@ -891,10 +1099,20 @@ function  glossary_print_entry_approval($cm, $entry, $mode, $align="right", $ins
     }
 }
 
+/**
+ * It returns all entries from all glossaries that matches the specified criteria
+ *  within a given $course. It performs an $extended search if necessary.
+ * It restrict the search to only one $glossary if the $glossary parameter is set.
+ *
+ * @global object
+ * @global object
+ * @param object $course
+ * @param array $searchterms
+ * @param int $extended
+ * @param object $glossary
+ * @return array
+ */
 function glossary_search($course, $searchterms, $extended = 0, $glossary = NULL) {
-// It returns all entries from all glossaries that matches the specified criteria
-//    within a given $course. It performs an $extended search if necessary.
-// It restrict the search to only one $glossary if the $glossary parameter is set.
     global $CFG, $DB;
 
     if ( !$glossary ) {
@@ -983,6 +1201,13 @@ function glossary_search($course, $searchterms, $extended = 0, $glossary = NULL)
     return $DB->get_records_sql($sql, $params);
 }
 
+/**
+ * @global object
+ * @param array $searchterms
+ * @param object $glossary
+ * @param bool $extended
+ * @return array
+ */
 function glossary_search_entries($searchterms, $glossary, $extended) {
     global $DB;
 
@@ -995,11 +1220,14 @@ function glossary_search_entries($searchterms, $glossary, $extended) {
  * if return=text, then return a text-only string.
  * otherwise, print HTML for non-images, and return image HTML
  *     if attachment is an image, $align set its aligment.
+ *
+ * @global object
+ * @global object
  * @param object $entry
  * @param object $cm
  * @param string $type html, txt, empty
  * @param string $align left or right
- * @return image string or nothing depending on $type param
+ * @return string image string or nothing depending on $type param
  */
 function glossary_print_attachments($entry, $cm, $type=NULL, $align="left") {
     global $CFG, $DB;
@@ -1065,6 +1293,11 @@ function glossary_print_attachments($entry, $cm, $type=NULL, $align="left") {
 
 /**
  * Lists all browsable file areas
+ *
+ * @param object $course
+ * @param object $cm
+ * @param object $context
+ * @return array
  */
 function glossary_get_file_areas($course, $cm, $context) {
     $areas = array();
@@ -1073,6 +1306,10 @@ function glossary_get_file_areas($course, $cm, $context) {
 
 /**
  * Serves the glossary attachments. Implements needed access control ;-)
+ *
+ * @global object
+ * @global object
+ * @return bool
  */
 function glossary_pluginfile($course, $cminfo, $context, $filearea, $args) {
     global $CFG, $DB;
@@ -1124,10 +1361,21 @@ function glossary_pluginfile($course, $cminfo, $context, $filearea, $args) {
     return false;
 }
 
+/**
+ *
+ */
 function glossary_print_tabbed_table_end() {
      echo "</div></div>";
 }
 
+/**
+ * @param object $cm
+ * @param object $glossary
+ * @param string $mode
+ * @param string $hook
+ * @param string $sortkey
+ * @param string $sortorder
+ */
 function glossary_print_approval_menu($cm, $glossary,$mode, $hook, $sortkey = '', $sortorder = '') {
     if ($glossary->showalphabet) {
         echo '<div class="glossaryexplain">' . get_string("explainalphabet","glossary") . '</div><br />';
@@ -1140,15 +1388,34 @@ function glossary_print_approval_menu($cm, $glossary,$mode, $hook, $sortkey = ''
 
     glossary_print_sorting_links($cm, $mode, 'CREATION', 'asc');
 }
-
+/**
+ * @param object $cm
+ * @param object $glossary
+ * @param string $hook
+ * @param string $sortkey
+ * @param string $sortorder
+ */
 function glossary_print_import_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
     echo '<div class="glossaryexplain">' . get_string("explainimport","glossary") . '</div>';
 }
 
+/**
+ * @param object $cm
+ * @param object $glossary
+ * @param string $hook
+ * @param string $sortkey
+ * @param string $sortorder
+ */
 function glossary_print_export_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
     echo '<div class="glossaryexplain">' . get_string("explainexport","glossary") . '</div>';
 }
-
+/**
+ * @param object $cm
+ * @param object $glossary
+ * @param string $hook
+ * @param string $sortkey
+ * @param string $sortorder
+ */
 function glossary_print_alphabet_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
     if ( $mode != 'date' ) {
         if ($glossary->showalphabet) {
@@ -1165,6 +1432,13 @@ function glossary_print_alphabet_menu($cm, $glossary, $mode, $hook, $sortkey='',
     }
 }
 
+/**
+ * @param object $cm
+ * @param object $glossary
+ * @param string $hook
+ * @param string $sortkey
+ * @param string $sortorder
+ */
 function glossary_print_author_menu($cm, $glossary,$mode, $hook, $sortkey = '', $sortorder = '') {
     if ($glossary->showalphabet) {
         echo '<div class="glossaryexplain">' . get_string("explainalphabet","glossary") . '</div><br />';
@@ -1175,6 +1449,14 @@ function glossary_print_author_menu($cm, $glossary,$mode, $hook, $sortkey = '', 
     glossary_print_sorting_links($cm, $mode, $sortkey,$sortorder);
 }
 
+/**
+ * @global object
+ * @global object
+ * @param object $cm
+ * @param object $glossary
+ * @param string $hook
+ * @param object $category
+ */
 function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
      global $CFG, $DB;
 
@@ -1242,6 +1524,13 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
      echo '</table>';
 }
 
+/**
+ * @global object
+ * @param object $cm
+ * @param object $glossary
+ * @param string $mode
+ * @param string $hook
+ */
 function glossary_print_all_links($cm, $glossary, $mode, $hook) {
 global $CFG;
      if ( $glossary->showall) {
@@ -1255,6 +1544,13 @@ global $CFG;
      }
 }
 
+/**
+ * @global object
+ * @param object $cm
+ * @param object $glossary
+ * @param string $mode
+ * @param string $hook
+ */
 function glossary_print_special_links($cm, $glossary, $mode, $hook) {
 global $CFG;
      if ( $glossary->showspecial) {
@@ -1268,6 +1564,14 @@ global $CFG;
      }
 }
 
+/**
+ * @global object
+ * @param object $glossary
+ * @param string $mode
+ * @param string $hook
+ * @param string $sortkey
+ * @param string $sortorder
+ */
 function glossary_print_alphabet_links($cm, $glossary, $mode, $hook, $sortkey, $sortorder) {
 global $CFG;
      if ( $glossary->showalphabet) {
@@ -1288,8 +1592,15 @@ global $CFG;
      }
 }
 
+/**
+ * @global object
+ * @param object $cm
+ * @param string $mode
+ * @param string $sortkey
+ * @param string $sortorder
+ */
 function glossary_print_sorting_links($cm, $mode, $sortkey = '',$sortorder = '') {
-global $CFG;
+    global $CFG;
 
     $asc    = get_string("ascending","glossary");
     $desc   = get_string("descending","glossary");
@@ -1383,6 +1694,12 @@ global $CFG;
                           "$fbtag<a title=\"$fsort $fordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&amp;sortkey=$forder$fneworder&amp;mode=$mode\">$fsort$ficon</a>$fendbtag<br />";
 }
 
+/**
+ *
+ * @param object $entry0
+ * @param object $entry1
+ * @return int [-1 | 0 | 1]
+ */
 function glossary_sort_entries ( $entry0, $entry1 ) {
 
     if ( moodle_strtolower(ltrim($entry0->concept)) < moodle_strtolower(ltrim($entry1->concept)) ) {
@@ -1394,6 +1711,16 @@ function glossary_sort_entries ( $entry0, $entry1 ) {
     }
 }
 
+/**
+ * @global object
+ * @global object
+ * @global object
+ * @param object $course
+ * @param object $cm
+ * @param object $glossary
+ * @param object $entry
+ * @param object $comment
+ */
 function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     global $CFG, $USER, $DB;
 
@@ -1444,6 +1771,15 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
 
 }
 
+/**
+ * @global object
+ * @global object
+ * @global object
+ * @param object $course
+ * @param object $entry
+ * @param array $ratings
+ * @return bool
+ */
 function  glossary_print_entry_ratings($course, $entry, $ratings = NULL) {
     global $USER, $CFG, $DB;
 
@@ -1481,6 +1817,15 @@ function  glossary_print_entry_ratings($course, $entry, $ratings = NULL) {
     return $ratingsmenuused;
 }
 
+/**
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @param int $courseid
+ * @param array $entries
+ * @param int $displayformat
+ */
 function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
     global $USER,$CFG, $DB;
 
@@ -1530,6 +1875,14 @@ function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
     echo '</tr></table></div>';
 }
 
+/**
+ *
+ * @global object
+ * @param array $entries
+ * @param array $aliases
+ * @param array $categories
+ * @return string
+ */
 function glossary_generate_export_csv($entries, $aliases, $categories) {
     global $CFG;
     $csv = '';
@@ -1584,6 +1937,15 @@ function glossary_generate_export_csv($entries, $aliases, $categories) {
     return $returnstr;
 }
 
+/**
+ * @todo Check whether the third argument is valid
+ * @global object
+ * @global object
+ * @param object $glossary
+ * @param string $hook
+ * @param int $hook
+ * @return string
+ */
 function glossary_generate_export_file($glossary, $hook = "", $hook = 0) {
     global $CFG, $DB;
 
@@ -1678,7 +2040,13 @@ function glossary_generate_export_file($glossary, $hook = "", $hook = 0) {
 /// Functions designed by Eloy Lafuente
 /// Functions to create, open and write header of the xml file
 
-// Read import file and convert to current charset
+/**
+ * Read import file and convert to current charset
+ *
+ * @global object
+ * @param string $file
+ * @return string
+ */
 function glossary_read_imported_file($file) {
     require_once "../../lib/xmlize.php";
     global $CFG;
@@ -1695,7 +2063,14 @@ function glossary_read_imported_file($file) {
     return xmlize($line, 0);
 }
 
-//Return the xml start tag
+/**
+ * Return the xml start tag
+ *
+ * @param string $tag
+ * @param int $level
+ * @param bool $endline
+ * @return string
+ */
 function glossary_start_tag($tag,$level=0,$endline=false) {
         if ($endline) {
            $endchar = "\n";
@@ -1705,7 +2080,13 @@ function glossary_start_tag($tag,$level=0,$endline=false) {
         return str_repeat(" ",$level*2)."<".strtoupper($tag).">".$endchar;
 }
 
-//Return the xml end tag
+/**
+ * Return the xml end tag
+ * @param string $tag
+ * @param int $level
+ * @param bool $endline
+ * @return string
+ */
 function glossary_end_tag($tag,$level=0,$endline=true) {
         if ($endline) {
            $endchar = "\n";
@@ -1715,7 +2096,16 @@ function glossary_end_tag($tag,$level=0,$endline=true) {
         return str_repeat(" ",$level*2)."</".strtoupper($tag).">".$endchar;
 }
 
-//Return the start tag, the contents and the end tag
+/**
+ * Return the start tag, the contents and the end tag
+ *
+ * @global object
+ * @param string $tag
+ * @param int $level
+ * @param bool $endline
+ * @param string $content
+ * @return string
+ */
 function glossary_full_tag($tag,$level=0,$endline=true,$content) {
         global $CFG;
 
@@ -1725,12 +2115,14 @@ function glossary_full_tag($tag,$level=0,$endline=true,$content) {
         return $st.$co.$et;
 }
 
-/*
-* Adding grading functions
-*/
-
+/**
+ * Returns a list of ratings for a particular entry - sorted.
+ *
+ * @global object
+ * @param int $entryid
+ * @param string $sort
+ */
 function glossary_get_ratings($entryid, $sort="u.firstname ASC") {
-/// Returns a list of ratings for a particular entry - sorted.
     global $DB;
     return $DB->get_records_sql("SELECT u.*, r.rating, r.time
                                    FROM {glossary_ratings} r, {user} u
@@ -1738,8 +2130,15 @@ function glossary_get_ratings($entryid, $sort="u.firstname ASC") {
                                ORDER BY $sort", array($entryid));
 }
 
+/**
+ * How many unrated entries are in the given glossary for a given user?
+ *
+ * @global object
+ * @param int $glossaryid
+ * @param int $userid
+ * @return int
+ */
 function glossary_count_unrated_entries($glossaryid, $userid) {
-// How many unrated entries are in the given glossary for a given user?
     global $DB;
     if ($entries = $DB->get_record_sql("SELECT count('x') as num
                                           FROM {glossary_entries}
@@ -1763,9 +2162,14 @@ function glossary_count_unrated_entries($glossaryid, $userid) {
     }
 }
 
-function glossary_print_ratings_mean($entryid, $scale) {
-/// Print the multiple ratings on a entry given to the current user by others.
-/// Scale is an array of ratings
+/**
+ * Print the multiple ratings on a entry given to the current user by others.
+ * Scale is an array of ratings
+ *
+ * @param int $entryid
+ * @param array $scale
+ */
+function glossary_print_ratings_mean($entryid, $scale) { 
 
     static $strrate;
 
@@ -1782,11 +2186,18 @@ function glossary_print_ratings_mean($entryid, $scale) {
     }
 }
 
-
+/**
+ * Return the mean rating of a entry given to the current user by others.
+ * Scale is an array of possible ratings in the scale
+ * Ratings is an optional simple array of actual ratings (just integers)
+ *
+ * @global object
+ * @param int $entryid
+ * @param array $scale
+ * @param array $ratings
+ * @return string
+ */
 function glossary_get_ratings_mean($entryid, $scale, $ratings=NULL) {
-/// Return the mean rating of a entry given to the current user by others.
-/// Scale is an array of possible ratings in the scale
-/// Ratings is an optional simple array of actual ratings (just integers)
     global $DB;
 
     if (!$ratings) {
@@ -1821,10 +2232,18 @@ function glossary_get_ratings_mean($entryid, $scale, $ratings=NULL) {
     }
 }
 
+/**
+ * Return a summary of entry ratings given to the current user by others.
+ * Scale is an array of possible ratings in the scale
+ *  Ratings is an optional simple array of actual ratings (just integers)
+ *
+ * @global object
+ * @param int $entryid
+ * @param array $scale
+ * @param array $ratings
+ * @return string
+ */
 function glossary_get_ratings_summary($entryid, $scale, $ratings=NULL) {
-/// Return a summary of entry ratings given to the current user by others.
-/// Scale is an array of possible ratings in the scale
-/// Ratings is an optional simple array of actual ratings (just integers)
     global $DB;
 
     if (!$ratings) {
@@ -1860,10 +2279,17 @@ function glossary_get_ratings_summary($entryid, $scale, $ratings=NULL) {
     return $summary;
 }
 
+/**
+ * Print the menu of ratings as part of a larger form.
+ * If the entry has already been - set that value.
+ * Scale is an array of ratings
+ *
+ * @global object
+ * @param int $entryid
+ * @param int $userid
+ * @param array $scale
+ */
 function glossary_print_rating_menu($entryid, $userid, $scale) {
-/// Print the menu of ratings as part of a larger form.
-/// If the entry has already been - set that value.
-/// Scale is an array of ratings
     global $DB;
 
     static $strrate;
@@ -1879,26 +2305,28 @@ function glossary_print_rating_menu($entryid, $userid, $scale) {
     choose_from_menu($scale, $entryid, $rating->rating, "$strrate...",'',-999);
 }
 
-
+/**
+ *
+ * Returns the html code to represent any pagging bar. Paramenters are:
+ *
+ * The function dinamically show the first and last pages, and "scroll" over pages.
+ * Fully compatible with Moodle's print_paging_bar() function. Perhaps some day this
+ * could replace the general one. ;-)
+ *
+ * @param int $totalcount total number of records to be displayed
+ * @param int $page page currently selected (0 based)
+ * @param int $perpage number of records per page
+ * @param string $baseurl url to link in each page, the string 'page=XX' will be added automatically.
+ * 
+ * @param int $maxpageallowed Optional maximum number of page allowed.
+ * @param int $maxdisplay Optional maximum number of page links to show in the bar
+ * @param string $separator Optional string to be used between pages in the bar
+ * @param string $specialtext Optional string to be showed as an special link
+ * @param string $specialvalue Optional value (page) to be used in the special link
+ * @param bool $previousandnext Optional to decide if we want the previous and next links
+ * @return string
+ */
 function glossary_get_paging_bar($totalcount, $page, $perpage, $baseurl, $maxpageallowed=99999, $maxdisplay=20, $separator="&nbsp;", $specialtext="", $specialvalue=-1, $previousandnext = true) {
-// Returns the html code to represent any pagging bar. Paramenters are:
-//
-//  Mandatory:
-//     $totalcount: total number of records to be displayed
-//     $page: page currently selected (0 based)
-//     $perpage: number of records per page
-//     $baseurl: url to link in each page, the string 'page=XX' will be added automatically.
-//  Optional:
-//     $maxpageallowed: maximum number of page allowed.
-//     $maxdisplay: maximum number of page links to show in the bar
-//     $separator: string to be used between pages in the bar
-//     $specialtext: string to be showed as an special link
-//     $specialvalue: value (page) to be used in the special link
-//     $previousandnext: to decide if we want the previous and next links
-//
-// The function dinamically show the first and last pages, and "scroll" over pages.
-// Fully compatible with Moodle's print_paging_bar() function. Perhaps some day this
-// could replace the general one. ;-)
 
     $code = '';
 
@@ -2016,11 +2444,15 @@ function glossary_get_paging_bar($totalcount, $page, $perpage, $baseurl, $maxpag
 
     return $code;
 }
-
+/**
+ * @return array
+ */
 function glossary_get_view_actions() {
     return array('view','view all','view entry');
 }
-
+/**
+ * @return array
+ */
 function glossary_get_post_actions() {
     return array('add category','add comment','add entry','approve entry','delete category','delete comment','delete entry','edit category','update comment','update entry');
 }
@@ -2029,7 +2461,7 @@ function glossary_get_post_actions() {
 /**
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the glossary.
- * @param $mform form passed by reference
+ * @param object $mform form passed by reference
  */
 function glossary_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'glossaryheader', get_string('modulenameplural', 'glossary'));
@@ -2052,6 +2484,7 @@ function glossary_reset_course_form_definition(&$mform) {
 
 /**
  * Course reset form defaults.
+ * @return array
  */
 function glossary_reset_course_form_defaults($course) {
     return array('reset_glossary_all'=>0, 'reset_glossary_ratings'=>1, 'reset_glossary_comments'=>1, 'reset_glossary_notenrolled'=>0);
@@ -2059,6 +2492,8 @@ function glossary_reset_course_form_defaults($course) {
 
 /**
  * Removes all grades from gradebook
+ *
+ * @global object
  * @param int $courseid
  * @param string optional type
  */
@@ -2084,6 +2519,8 @@ function glossary_reset_gradebook($courseid, $type='') {
 /**
  * Actual implementation of the rest coures functionality, delete all the
  * glossary responses for course $data->courseid.
+ *
+ * @global object
  * @param $data the data submitted from the reset course.
  * @return array status array
  */
@@ -2245,6 +2682,7 @@ function glossary_reset_userdata($data) {
 
 /**
  * Returns all other caps used in module
+ * @return array
  */
 function glossary_get_extra_capabilities() {
     return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames', 'moodle/site:trustcontent');
@@ -2267,18 +2705,26 @@ function glossary_supports($feature) {
         default: return null;
     }
 }
-
+/**
+ * @package   mod-glossary
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
 
     private $glossary;
     private $exportdata;
-
+    /**
+     * @return array
+     */
     public static function expected_callbackargs() {
         return array(
             'id' => true,
         );
     }
-
+    /**
+     * @return global
+     */
     public function load_data() {
         global $DB;
         if (!$this->cm = get_coursemodule_from_id('glossary', $this->id)) {
@@ -2299,14 +2745,21 @@ class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
         $this->exportdata = array('entries' => $entries, 'aliases' => $aliases, 'categoryentries' => $categoryentries);
     }
 
+    /**
+     * @return string
+     */
     public function expected_time() {
         return portfolio_expected_time_db(count($this->exportdata['entries']));
     }
-
+    /**
+     * @return string
+     */
     public function get_sha1() {
         return sha1(serialize($this->exportdata));
     }
-
+    /**
+     * @return object
+     */
     public function prepare_package() {
         $entries = $this->exportdata['entries'];
         $aliases = array();
@@ -2330,29 +2783,42 @@ class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
         $csv = glossary_generate_export_csv($entries, $aliases, $categories);
         return $this->exporter->write_new_file($csv, clean_filename($this->cm->name) . '.csv', false);
     }
-
+    /**
+     * @return bool
+     */
     public function check_permissions() {
         return has_capability('mod/glossary:export', get_context_instance(CONTEXT_MODULE, $this->cm->id));
     }
-
+    /**
+     * @return string
+     */
     public static function display_name() {
         return get_string('modulename', 'glossary');
     }
 }
 
+/**
+ * @package   mod-glossary
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
 
     private $glossary;
     private $entry;
     protected $entryid;
-
+    /*
+     * @return array
+     */
     public static function expected_callbackargs() {
         return array(
             'entryid' => true,
             'id'      => true,
         );
     }
-
+    /**
+     * @global object
+     */
     public function load_data() {
         global $DB;
         if (!$this->cm = get_coursemodule_from_id('glossary', $this->id)) {
@@ -2370,21 +2836,29 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
         }
         $this->supportedformats = array(PORTFOLIO_FORMAT_PLAINHTML);
     }
-
+    /**
+     * @return string
+     */
     public function expected_time() {
         return PORTFOLIO_TIME_LOW;
     }
-
+    /**
+     * @return bool
+     */
     public function check_permissions() {
         $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
         return has_capability('mod/glossary:exportentry', $context)
             || ($this->entry->userid == $this->user->id && has_capability('mod/glossary:exportownentry', $context));
     }
-
+    /**
+     * @return string
+     */
     public static function display_name() {
         return get_string('modulename', 'glossary');
     }
-
+    /**
+     * @return object
+     */
     public function prepare_package() {
         define('PORTFOLIO_INTERNAL', true);
         ob_start();
@@ -2393,7 +2867,9 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
         $content = ob_get_clean();
         return $this->exporter->write_new_file($content, clean_filename($this->entry->concept) . '.html', false);
     }
-
+    /**
+     * @return string
+     */
     public function get_sha1() {
         return sha1(serialize($this->entry));
     }
