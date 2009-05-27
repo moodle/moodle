@@ -1,16 +1,32 @@
-<?php // $Id$
-/**
-* includes the main-part of feedback-functions
-*
-* @version $Id$
-* @author Andreas Grabs
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package feedback
-*/
+<?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Library of functions and constants for module feedback
+ * includes the main-part of feedback-functions
+ *
+ * @package mod-feedback
+ * @copyright Andreas Grabs
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/** Include eventslib.php */
 require_once($CFG->libdir.'/eventslib.php');
 
-/// Library of functions and constants for module feedback
 
 define('FEEDBACK_INCLUDE_TEST', 1);
 define('FEEDBACK_ANONYMOUS_YES', 1);
@@ -30,6 +46,13 @@ if(!isset($SESSION->feedback) OR !is_object($SESSION->feedback)) {
 }
 
 /**
+ * @uses FEATURE_GROUPS
+ * @uses FEATURE_GROUPINGS
+ * @uses FEATURE_GROUPMEMBERSONLY
+ * @uses FEATURE_MOD_INTRO
+ * @uses FEATURE_COMPLETION_TRACKS_VIEWS
+ * @uses FEATURE_GRADE_HAS_GRADE
+ * @uses FEATURE_GRADE_OUTCOMES
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, null if doesn't know
  */
@@ -48,11 +71,13 @@ function feedback_supports($feature) {
 }
 
 /**
-* this will create a new instance and return the id number
-* of the new instance.
-* @param object $feedback the object given by mod_feedback_mod_form
-* @return int
-*/
+ * this will create a new instance and return the id number
+ * of the new instance.
+ *
+ * @global object
+ * @param object $feedback the object given by mod_feedback_mod_form
+ * @return int
+ */
 function feedback_add_instance($feedback) {
     global $DB;
 
@@ -83,10 +108,12 @@ function feedback_add_instance($feedback) {
 }
 
 /**
-* this will update a given instance
-* @param object $feedback the object given by mod_feedback_mod_form
-* @return boolean
-*/
+ * this will update a given instance
+ *
+ * @global object
+ * @param object $feedback the object given by mod_feedback_mod_form
+ * @return boolean
+ */
 function feedback_update_instance($feedback) {
     global $DB;
 
@@ -116,11 +143,13 @@ function feedback_update_instance($feedback) {
 }
 
 /**
-* this will delete a given instance.
-* all referenced data also will be deleted
-* @param int $id the instanceid of feedback
-* @return boolean
-*/
+ * this will delete a given instance.
+ * all referenced data also will be deleted
+ *
+ * @global object
+ * @param int $id the instanceid of feedback
+ * @return boolean
+ */
 function feedback_delete_instance($id) {
     global $DB;
 
@@ -151,11 +180,13 @@ function feedback_delete_instance($id) {
 }
 
 /**
-* this is called after deleting all instances if the course will be deleted.
-* only templates have to be deleted
-* @param object $course
-* @return boolean
-*/
+ * this is called after deleting all instances if the course will be deleted.
+ * only templates have to be deleted
+ *
+ * @global object
+ * @param object $course
+ * @return boolean
+ */
 function feedback_delete_course($course) {
     global $DB;
 
@@ -164,17 +195,18 @@ function feedback_delete_course($course) {
 }
 
 /**
-* Return a small object with summary information about what a
-* user has done with a given particular instance of this module
-* Used for user activity reports.
-* $return->time = the time they did it
-* $return->info = a short text description
-* @param object $course
-* @param object $user
-* @param object $mod
-* @param object $feedback
-* @return object
-*/
+ * Return a small object with summary information about what a
+ * user has done with a given particular instance of this module
+ * Used for user activity reports.
+ * $return->time = the time they did it
+ * $return->info = a short text description
+ *
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $feedback
+ * @return object
+ */
 function feedback_user_outline($course, $user, $mod, $feedback) {
     return null;
 }
@@ -182,6 +214,20 @@ function feedback_user_outline($course, $user, $mod, $feedback) {
 /**
  * Returns all users who has completed a specified feedback since a given time
  * many thanks to Manolescu Dorel, who contributed these two functions
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @param array $activities Passed by reference
+ * @param int $index Passed by reference
+ * @param int $timemodified Timestamp
+ * @param int $courseid
+ * @param int $cmid
+ * @param int $userid
+ * @param int $groupid
+ * @return void
  */
 function feedback_get_recent_mod_activity(&$activities, &$index, $timemodified, $courseid, $cmid, $userid="", $groupid="")  {
     global $CFG, $COURSE, $USER, $DB;
@@ -272,6 +318,13 @@ function feedback_get_recent_mod_activity(&$activities, &$index, $timemodified, 
 /**
  * Prints all users who has completed a specified feedback since a given time
  * many thanks to Manolescu Dorel, who contributed these two functions
+ *
+ * @global object
+ * @param object $activity
+ * @param int $courseid
+ * @param string $detail
+ * @param array $modnames
+ * @return void Output is echo'd
  */
 function feedback_print_recent_mod_activity($activity, $courseid, $detail, $modnames) {
     global $CFG;
@@ -306,27 +359,37 @@ function feedback_print_recent_mod_activity($activity, $courseid, $detail, $modn
 
 
 /**
-* Print a detailed representation of what a  user has done with
-* a given particular instance of this module, for user activity reports.
-* @param object $course
-* @param object $user
-* @param object $mod
-* @param object $feedback
-* @return object
-*/
+ * Print a detailed representation of what a  user has done with
+ * a given particular instance of this module, for user activity reports.
+ * 
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $feedback
+ * @return bool
+ */
 function feedback_user_complete($course, $user, $mod, $feedback) {
     return true;
 }
 
-
+/**
+ * @return bool true
+ */
 function feedback_cron () {
     return true;
 }
 
+/**
+ * @return bool false
+ */
 function feedback_get_participants($feedbackid) {
     return false;
 }
 
+
+/**
+ * @return bool false
+ */
 function feedback_scale_used ($feedbackid,$scaleid) {
     return false;
 }
@@ -335,7 +398,12 @@ function feedback_scale_used ($feedbackid,$scaleid) {
  * This function is used by the reset_course_userdata function in moodlelib.
  * This function will remove all responses from the specified feedback
  * and clean up any related data.
- * @param $data the data submitted from the reset course.
+ *
+ * @global object
+ * @global object
+ * @uses FEEDBACK_RESETFORM_RESET
+ * @uses FEEDBACK_RESETFORM_DROP
+ * @param object $data the data submitted from the reset course.
  * @return array status array
  */
 function feedback_reset_userdata($data) {
@@ -383,7 +451,10 @@ function feedback_reset_userdata($data) {
 
 /**
  * Called by course/reset.php
- * @param $mform form passed by reference
+ *
+ * @global object
+ * @uses FEEDBACK_RESETFORM_RESET
+ * @param object $mform form passed by reference
  */
 function feedback_reset_course_form_definition(&$mform) {
     global $COURSE, $DB;
@@ -403,6 +474,10 @@ function feedback_reset_course_form_definition(&$mform) {
 
 /**
  * Course reset form defaults.
+ *
+ * @global object
+ * @uses FEEDBACK_RESETFORM_RESET
+ * @param object $course
  */
 function feedback_reset_course_form_defaults($course) {
     global $DB;
@@ -422,6 +497,10 @@ function feedback_reset_course_form_defaults($course) {
  * Called by course/reset.php and shows the formdata by coursereset.
  * it prints checkboxes for each feedback available at the given course
  * there are two checkboxes: 1) delete userdata and keep the feedback 2) delete userdata and drop the feedback
+ *
+ * @global object
+ * @uses FEEDBACK_RESETFORM_RESET
+ * @uses FEEDBACK_RESETFORM_DROP
  * @param object $course
  * @return void
  */
@@ -443,9 +522,11 @@ function feedback_reset_course_form($course) {
 }
 
 /**
- *  This creates new events given as timeopen and closeopen by $feedback.
- *  @param object $feedback
- *  @return void
+ * This creates new events given as timeopen and closeopen by $feedback.
+ *
+ * @global object
+ * @param object $feedback
+ * @return void
  */
 function feedback_set_events($feedback) {
     global $DB;
@@ -502,6 +583,8 @@ function feedback_set_events($feedback) {
 /**
  *  this function is called by {@link feedback_delete_userdata()}
  *  it drops the feedback-instance from the course_module table
+ *
+ * @global object
  *  @param int $id the id from the coursemodule
  *  @return boolean
  */
@@ -522,6 +605,8 @@ function feedback_delete_course_module($id) {
 
 /**
  *  returns the context-id related to the given coursemodule-id
+ *
+ * @staticvar object $context
  *  @param int $cmid the coursemodule-id
  *  @return object $context
  */
@@ -538,6 +623,8 @@ function feedback_get_context($cmid) {
 
 /**
  *  get the capabilities for the feedback
+ *
+ * @staticvar object $cb
  *  @param int $cmid
  *  @return object the available capabilities from current user
  */
@@ -572,6 +659,8 @@ function feedback_load_capabilities($cmid) {
 /**
  *  get the capabilities for the course.
  *  this is used by feedback/index.php
+ *
+ * @staticvar object $ccb
  *  @param int $courseid
  *  @return object the available capabilities from current user
  */
@@ -605,6 +694,8 @@ function feedback_load_course_capabilities($courseid) {
 
 /**
  *  returns true if the current role is faked by switching role feature
+ *
+ * @global object
  *  @return boolean
  */
 function feedback_check_is_switchrole(){
@@ -616,10 +707,13 @@ function feedback_check_is_switchrole(){
 }
 
 /** 
- *  get users which have the complete-capability
- *  @param object $cm
- *  @param int $group single groupid
- *  @return object the userrecords
+ * get users which have the complete-capability
+ *
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @param object $cm
+ * @param int $group single groupid
+ * @return object the userrecords
  */
 function feedback_get_complete_users($cm, $group = false) {
     global $DB;
@@ -646,10 +740,12 @@ function feedback_get_complete_users($cm, $group = false) {
 }
 
 /**
- *  get users which have the viewreports-capability
- *  @param int $cmid
- *  @param mixed $groups single groupid or array of groupids - group(s) user is in
- *  @return object the userrecords
+ * get users which have the viewreports-capability
+ *
+ * @uses CONTEXT_MODULE
+ * @param int $cmid
+ * @param mixed $groups single groupid or array of groupids - group(s) user is in
+ * @return object the userrecords
  */
 function feedback_get_viewreports_users($cmid, $groups = false) {
 
@@ -662,10 +758,12 @@ function feedback_get_viewreports_users($cmid, $groups = false) {
 }
 
 /**
- *  get users which have the receivemail-capability
- *  @param int $cmid
- *  @param mixed $groups single groupid or array of groupids - group(s) user is in
- *  @return object the userrecords
+ * get users which have the receivemail-capability
+ *
+ * @uses CONTEXT_MODULE
+ * @param int $cmid
+ * @param mixed $groups single groupid or array of groupids - group(s) user is in
+ * @return object the userrecords
  */
 function feedback_get_receivemail_users($cmid, $groups = false) {
 
@@ -683,11 +781,13 @@ function feedback_get_receivemail_users($cmid, $groups = false) {
 ////////////////////////////////////////////////
 
 /**
- *  creates a new template-record.
- *  @param int $courseid
- *  @param string $name the name of template shown in the templatelist
- *  @param int $ispublic 0:privat 1:public
- *  @return int the new templateid
+ * creates a new template-record.
+ *
+ * @global object
+ * @param int $courseid
+ * @param string $name the name of template shown in the templatelist
+ * @param int $ispublic 0:privat 1:public
+ * @return int the new templateid
  */
 function feedback_create_template($courseid, $name, $ispublic = 0) {
     global $DB;
@@ -701,13 +801,15 @@ function feedback_create_template($courseid, $name, $ispublic = 0) {
 }
 
 /**
- *  creates new template items.
- *  all items will be copied and the attribute feedback will be set to 0
- *  and the attribute template will be set to the new templateid
- *  @param object $feedback
- *  @param string $name the name of template shown in the templatelist
- *  @param int $ispublic 0:privat 1:public
- *  @return boolean
+ * creates new template items.
+ * all items will be copied and the attribute feedback will be set to 0
+ * and the attribute template will be set to the new templateid
+ *
+ * @global object
+ * @param object $feedback
+ * @param string $name the name of template shown in the templatelist
+ * @param int $ispublic 0:privat 1:public
+ * @return boolean
  */
 function feedback_save_as_template($feedback, $name, $ispublic = 0) {
     global $DB;
@@ -730,9 +832,11 @@ function feedback_save_as_template($feedback, $name, $ispublic = 0) {
 }
 
 /**
- *  deletes all feedback_items related to the given template id
- *  @param int $id the templateid
- *  @return void
+ * deletes all feedback_items related to the given template id
+ *
+ * @global object
+ * @param int $id the templateid
+ * @return void
  */
 function feedback_delete_template($id) {
     global $DB;
@@ -742,12 +846,14 @@ function feedback_delete_template($id) {
 }
 
 /**
- *  creates new feedback_item-records from template.
- *  if $deleteold is set true so the existing items of the given feedback will be deleted
- *  if $deleteold is set false so the new items will be appanded to the old items
- *  @param object $feedback
- *  @param int $templateid
- *  @param boolean $deleteold
+ * creates new feedback_item-records from template.
+ * if $deleteold is set true so the existing items of the given feedback will be deleted
+ * if $deleteold is set false so the new items will be appanded to the old items
+ *
+ * @global object
+ * @param object $feedback
+ * @param int $templateid
+ * @param boolean $deleteold
  */
 function feedback_items_from_template($feedback, $templateid, $deleteold = false) {
     global $DB;
@@ -788,12 +894,14 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
 }
 
 /**
- *  get the list of available templates.
- *  if the $onlyown param is set true so only templates from own course will be served
- *  this is important for droping templates
- *  @param object $course
- *  @param boolean $onlyown
- *  @return array the template recordsets
+ * get the list of available templates.
+ * if the $onlyown param is set true so only templates from own course will be served
+ * this is important for droping templates
+ *
+ * @global object
+ * @param object $course
+ * @param boolean $onlyown
+ * @return array the template recordsets
  */
 function feedback_get_template_list($course, $onlyown = false) {
     global $DB;
@@ -812,10 +920,12 @@ function feedback_get_template_list($course, $onlyown = false) {
 ////////////////////////////////////////////////
 
 /**
- *  load the available item plugins from given subdirectory of $CFG->dirroot
- *  the default is "mod/feedback/item"
- *  @param string $dir the subdir
- *  @return array pluginnames as string
+ * load the available item plugins from given subdirectory of $CFG->dirroot
+ * the default is "mod/feedback/item"
+ *
+ * @global object
+ * @param string $dir the subdir
+ * @return array pluginnames as string
  */
 function feedback_load_feedback_items($dir = 'mod/feedback/item') {
     global $CFG;
@@ -832,8 +942,10 @@ function feedback_load_feedback_items($dir = 'mod/feedback/item') {
 }
 
 /**
- *  load the available item plugins to use as dropdown-options
- *  @return array pluginnames as string
+ * load the available item plugins to use as dropdown-options
+ *
+ * @global object
+ * @return array pluginnames as string
  */
 function feedback_load_feedback_items_options() {
     global $CFG;
@@ -853,9 +965,11 @@ function feedback_load_feedback_items_options() {
 }
 
 /**
- *  creates a new item-record
- *  @param object $data the data from edit_item_form
- *  @return int the new itemid
+ * creates a new item-record
+ *
+ * @global object
+ * @param object $data the data from edit_item_form
+ * @return int the new itemid
  */
 function feedback_create_item($data) {
     global $DB;
@@ -894,10 +1008,12 @@ function feedback_create_item($data) {
 }
 
 /**
- *  save the changes of a given item.
- *  @param object $item
- *  @param object $data the data from edit_item_form
- *  @return boolean
+ * save the changes of a given item.
+ *
+ * @global object
+ * @param object $item
+ * @param object $data the data from edit_item_form
+ * @return boolean
  */
 function feedback_update_item($item, $data = null){
     global $DB;
@@ -928,10 +1044,12 @@ function feedback_update_item($item, $data = null){
 }
 
 /**
- *  deletes a item and also deletes all related values
- *  @param int $itemid
- *  @param boolean $renumber should the kept items renumbered Yes/No
- *  @return void
+ * deletes a item and also deletes all related values
+ *
+ * @global object
+ * @param int $itemid
+ * @param boolean $renumber should the kept items renumbered Yes/No
+ * @return void
  */
 function feedback_delete_item($itemid, $renumber = true){
     global $DB;
@@ -946,9 +1064,11 @@ function feedback_delete_item($itemid, $renumber = true){
 }
 
 /**
- *  deletes all items of the given feedbackid
- *  @param int $feedbackid
- *  @return void
+ * deletes all items of the given feedbackid
+ *
+ * @global object
+ * @param int $feedbackid
+ * @return void
  */
 function feedback_delete_all_items($feedbackid){
     global $DB;
@@ -964,9 +1084,11 @@ function feedback_delete_all_items($feedbackid){
 }
 
 /**
- *  this function toggled the item-attribute required (yes/no)
- *  @param object $item
- *  @return boolean
+ * this function toggled the item-attribute required (yes/no)
+ *
+ * @global object
+ * @param object $item
+ * @return boolean
  */
 function feedback_switch_item_required($item) {
     global $DB;
@@ -982,9 +1104,11 @@ function feedback_switch_item_required($item) {
 }
 
 /**
- *  renumbers all items of the given feedbackid
- *  @param int $feedbackid
- *  @return void
+ * renumbers all items of the given feedbackid
+ *
+ * @global object
+ * @param int $feedbackid
+ * @return void
  */
 function feedback_renumber_items($feedbackid){
     global $DB;
@@ -1001,9 +1125,11 @@ function feedback_renumber_items($feedbackid){
 }
 
 /**
- *  this decreases the position of the given item
- *  @param object $item
- *  @return void
+ * this decreases the position of the given item
+ *
+ * @global object
+ * @param object $item
+ * @return void
  */
 function feedback_moveup_item($item){
     global $DB;
@@ -1017,9 +1143,11 @@ function feedback_moveup_item($item){
 }
 
 /**
- *  this increased the position of the given item
- *  @param object $item
- *  @return void
+ * this increased the position of the given item
+ *
+ * @global object
+ * @param object $item
+ * @return void
  */
 function feedback_movedown_item($item){
     global $DB;
@@ -1035,10 +1163,12 @@ function feedback_movedown_item($item){
 }
 
 /**
- *  here the position of the given item will be set to the value in $pos
- *  @param object $moveitem
- *  @param int $pos
- *  @return boolean
+ * here the position of the given item will be set to the value in $pos
+ *
+ * @global object
+ * @param object $moveitem
+ * @param int $pos
+ * @return boolean
  */
 function feedback_move_item($moveitem, $pos){
     global $DB;
@@ -1073,15 +1203,16 @@ function feedback_move_item($moveitem, $pos){
 }
 
 /**
- *  prints the given item.
- *  if $readonly is set true so the ouput only is for showing responses and not for editing or completing.
- *  each item-class has an own print_item function implemented.
- *  @param object $item the item what we want to print out
- *  @param mixed $value the value if $readonly is set true and we showing responses
- *  @param boolean $readonly
- *  @param boolean $edit should the item print out for completing or for editing?
- *  @param boolean $highlightrequire if this set true and the value are false on completing so the item will be highlighted
- *  @return void
+ * prints the given item.
+ * if $readonly is set true so the ouput only is for showing responses and not for editing or completing.
+ * each item-class has an own print_item function implemented.
+ *
+ * @param object $item the item what we want to print out
+ * @param mixed $value the value if $readonly is set true and we showing responses
+ * @param boolean $readonly
+ * @param boolean $edit should the item print out for completing or for editing?
+ * @param boolean $highlightrequire if this set true and the value are false on completing so the item will be highlighted
+ * @return void
  */
 function feedback_print_item($item, $value = false, $readonly = false, $edit = false, $highlightrequire = false){
     if($item->typ == 'pagebreak') return;
@@ -1095,10 +1226,12 @@ function feedback_print_item($item, $value = false, $readonly = false, $edit = f
 }
 
 /**
- *  if the user completes a feedback and there is a pagebreak so the values are saved temporary.
- *  the values are saved permanently not until the user click on save button
- *  @param object $feedbackcompleted
- *  @return object temporary saved completed-record
+ * if the user completes a feedback and there is a pagebreak so the values are saved temporary.
+ * the values are saved permanently not until the user click on save button
+ *
+ * @global object
+ * @param object $feedbackcompleted
+ * @return object temporary saved completed-record
  */
 function feedback_set_tmp_values($feedbackcompleted) {
     global $DB;
@@ -1127,11 +1260,13 @@ function feedback_set_tmp_values($feedbackcompleted) {
 }
 
 /**
- *  this saves the temporary saved values permanently
- *  @param object $feedbackcompletedtmp the temporary completed
- *  @param object $feedbackcompleted the target completed
- *  @param int $userid
- *  @return int the id of the completed
+ * this saves the temporary saved values permanently
+ *
+ * @global object
+ * @param object $feedbackcompletedtmp the temporary completed
+ * @param object $feedbackcompleted the target completed
+ * @param int $userid
+ * @return int the id of the completed
  */
 function feedback_save_tmp_values($feedbackcompletedtmp, $feedbackcompleted, $userid) {
     global $DB;
@@ -1190,9 +1325,11 @@ function feedback_save_tmp_values($feedbackcompletedtmp, $feedbackcompleted, $us
 }
 
 /**
- *  deletes the given temporary completed and all related temporary values
- *  @param int $tmpcplid
- *  @return void
+ * deletes the given temporary completed and all related temporary values
+ *
+ * @global object
+ * @param int $tmpcplid
+ * @return void
  */
 function feedback_delete_completedtmp($tmpcplid) {
     global $DB;
@@ -1208,10 +1345,12 @@ function feedback_delete_completedtmp($tmpcplid) {
 ////////////////////////////////////////////////
 
 /**
- *  this creates a pagebreak.
- *  a pagebreak is a special kind of item
- *  @param int $feedbackid
- *  @return mixed false if there already is a pagebreak on last position or the id of the pagebreak-item
+ * this creates a pagebreak.
+ * a pagebreak is a special kind of item
+ *
+ * @global object
+ * @param int $feedbackid
+ * @return mixed false if there already is a pagebreak on last position or the id of the pagebreak-item
  */
 function feedback_create_pagebreak($feedbackid) {
     global $DB;
@@ -1241,9 +1380,11 @@ function feedback_create_pagebreak($feedbackid) {
 }
 
 /**
- *  get all positions of pagebreaks in the given feedback
- *  @param int $feedbackid
- *  @return array all ordered pagebreak positions
+ * get all positions of pagebreaks in the given feedback
+ *
+ * @global object
+ * @param int $feedbackid
+ * @return array all ordered pagebreak positions
  */
 function feedback_get_all_break_positions($feedbackid) {
     global $DB;
@@ -1253,9 +1394,10 @@ function feedback_get_all_break_positions($feedbackid) {
 }
 
 /**
- *  get the position of the last pagebreak
- *  @param int $feedbackid
- *  @return int the position of the last pagebreak
+ * get the position of the last pagebreak
+ * 
+ * @param int $feedbackid
+ * @return int the position of the last pagebreak
  */
 function feedback_get_last_break_position($feedbackid) {
     if(!$allbreaks = feedback_get_all_break_positions($feedbackid)) return false;
@@ -1263,11 +1405,15 @@ function feedback_get_last_break_position($feedbackid) {
 }
 
 /**
- *  this returns the position where the user can continue the completing.
- *  @param int $feedbackid
- *  @param int $courseid
- *  @param string $guestid this id will be saved temporary and is unique
- *  @return int the position to continue
+ * this returns the position where the user can continue the completing.
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @param int $feedbackid
+ * @param int $courseid
+ * @param string $guestid this id will be saved temporary and is unique
+ * @return int the position to continue
  */
 function feedback_get_page_to_continue($feedbackid, $courseid = false, $guestid) {
     global $CFG, $USER, $DB;
@@ -1320,14 +1466,16 @@ function feedback_get_page_to_continue($feedbackid, $courseid = false, $guestid)
 ////////////////////////////////////////////////
 
 /**
- *  this saves the values of an completed.
- *  if the param $tmp is set true so the values are saved temporary in table feedback_valuetmp
- *  if there is already a completed and the userid is set so the values are updated
- *  on all other things new value records will be created
- *  @param object $data the data from complete form
- *  @param int $userid
- *  @param boolean $tmp
- *  @return mixed false on error or the completeid
+ * this saves the values of an completed.
+ * if the param $tmp is set true so the values are saved temporary in table feedback_valuetmp
+ * if there is already a completed and the userid is set so the values are updated
+ * on all other things new value records will be created
+ * 
+ * @global object
+ * @param object $data the data from complete form
+ * @param int $userid
+ * @param boolean $tmp
+ * @return mixed false on error or the completeid
  */
 function feedback_save_values($data, $usrid, $tmp = false) {
     global $DB;
@@ -1348,10 +1496,12 @@ function feedback_save_values($data, $usrid, $tmp = false) {
 }
 
 /**
- *  this saves the values from anonymous user such as guest on the main-site
- *  @param object $data the data form complete_guest form
- *  @param string $guestid the unique guestidentifier
- *  @return mixed false on error or the completeid
+ * this saves the values from anonymous user such as guest on the main-site
+ *
+ * @global object
+ * @param object $data the data form complete_guest form
+ * @param string $guestid the unique guestidentifier
+ * @return mixed false on error or the completeid
  */
 function feedback_save_guest_values($data, $guestid) {
     global $DB;
@@ -1366,12 +1516,14 @@ function feedback_save_guest_values($data, $guestid) {
 }
 
 /**
- *  get the value from the given item related to the given completed.
- *  the value can come as temporary or as permanently value. the deciding is done by $tmp
- *  @param int $completeid
- *  @param int $itemid
- *  @param boolean $tmp
- *  @return mixed the value, the type depends on plugin-definition
+ * get the value from the given item related to the given completed.
+ * the value can come as temporary or as permanently value. the deciding is done by $tmp
+ *
+ * @global object
+ * @param int $completeid
+ * @param int $itemid
+ * @param boolean $tmp
+ * @return mixed the value, the type depends on plugin-definition
  */
 function feedback_get_item_value($completedid, $itemid, $tmp = false) {
     global $DB;
@@ -1381,14 +1533,16 @@ function feedback_get_item_value($completedid, $itemid, $tmp = false) {
 }
 
 /**
- *  this function checks the correctness of values.
- *  the rules for this are implemented in the class of each item.
- *  it can be the required attribute or the value self e.g. numeric.
- *  the params first/lastitem are given to determine the visible range between pagebreaks.
- *  @param object $data the data of complete form
- *  @param int $firstitem the position of firstitem for checking
- *  @param int $lastitem the position of lastitem for checking
- *  @return boolean
+ * this function checks the correctness of values.
+ * the rules for this are implemented in the class of each item.
+ * it can be the required attribute or the value self e.g. numeric.
+ * the params first/lastitem are given to determine the visible range between pagebreaks.
+ *
+ * @global object
+ * @param object $data the data of complete form
+ * @param int $firstitem the position of firstitem for checking
+ * @param int $lastitem the position of lastitem for checking
+ * @return boolean
  */
 function feedback_check_values($data, $firstitem, $lastitem) {
     global $DB;
@@ -1433,14 +1587,16 @@ function feedback_check_values($data, $firstitem, $lastitem) {
 }
 
 /**
- *  this function create a complete-record and the related value-records.
- *  depending on the $tmp (true/false) the values are saved temporary or permanently
- *  @param object $data the data of the complete form
- *  @param int $userid
- *  @param int $timemodified
- *  @param boolean $tmp
- *  @param string $guestid a unique identifier to save temporary data
- *  @return mixed false on error or the completedid
+ * this function create a complete-record and the related value-records.
+ * depending on the $tmp (true/false) the values are saved temporary or permanently
+ *
+ * @global object
+ * @param object $data the data of the complete form
+ * @param int $userid
+ * @param int $timemodified
+ * @param boolean $tmp
+ * @param string $guestid a unique identifier to save temporary data
+ * @return mixed false on error or the completedid
  */
 function feedback_create_values($data, $usrid, $timemodified, $tmp = false, $guestid = false){
     global $DB;
@@ -1491,12 +1647,14 @@ function feedback_create_values($data, $usrid, $timemodified, $tmp = false, $gue
 }
 
 /**
- *  this function updates a complete-record and the related value-records.
- *  depending on the $tmp (true/false) the values are saved temporary or permanently
- *  @param object $data the data of the complete form
- *  @param object $completed
- *  @param boolean $tmp
- *  @return int the completedid
+ * this function updates a complete-record and the related value-records.
+ * depending on the $tmp (true/false) the values are saved temporary or permanently
+ *
+ * @global object
+ * @param object $data the data of the complete form
+ * @param object $completed
+ * @param boolean $tmp
+ * @return int the completedid
  */
 function feedback_update_values($data, $completed, $tmp = false) {
     global $DB;
@@ -1549,12 +1707,15 @@ function feedback_update_values($data, $completed, $tmp = false) {
 }
 
 /**
- *  get the values of an item depending on the given groupid.
- *  if the feedback is anonymous so the values are shuffled
- *  @param object $item
- *  @param int $groupid
- *  @param int $courseid
- *  @return array the value-records
+ * get the values of an item depending on the given groupid.
+ * if the feedback is anonymous so the values are shuffled
+ *
+ * @global object
+ * @global object
+ * @param object $item
+ * @param int $groupid
+ * @param int $courseid
+ * @return array the value-records
  */
 function feedback_get_group_values($item, $groupid = false, $courseid = false){
     global $CFG, $DB;
@@ -1585,11 +1746,14 @@ function feedback_get_group_values($item, $groupid = false, $courseid = false){
 }
 
 /**
- *  check for multiple_submit = false.
- *  if the feedback is global so the courseid must be given
- *  @param int $feedbackid
- *  @param int $courseid
- *  @return boolean true if the feedback already is submitted otherwise false
+ * check for multiple_submit = false.
+ * if the feedback is global so the courseid must be given
+ *
+ * @global object
+ * @global object
+ * @param int $feedbackid
+ * @param int $courseid
+ * @return boolean true if the feedback already is submitted otherwise false
  */
 function feedback_is_already_submitted($feedbackid, $courseid = false) {
     global $USER, $DB;
@@ -1609,13 +1773,17 @@ function feedback_is_already_submitted($feedbackid, $courseid = false) {
 }
 
 /**
- *  if the completion of a feedback will be continued eg. by pagebreak or by multiple submit so the complete must be found.
- *  if the param $tmp is set true so all things are related to temporary completeds
- *  @param int $feedbackid
- *  @param boolean $tmp
- *  @param int $courseid
- *  @param string $guestid
- *  return int the id of the found completed
+ * if the completion of a feedback will be continued eg. by pagebreak or by multiple submit so the complete must be found.
+ * if the param $tmp is set true so all things are related to temporary completeds
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @param int $feedbackid
+ * @param boolean $tmp
+ * @param int $courseid
+ * @param string $guestid
+ * @return int the id of the found completed
  */
 function feedback_get_current_completed($feedbackid, $tmp = false, $courseid = false, $guestid = false) {
     global $USER, $CFG, $DB;
@@ -1658,10 +1826,13 @@ function feedback_get_current_completed($feedbackid, $tmp = false, $courseid = f
 }
 
 /**
- *  get the completeds depending on the given groupid.
- *  @param object $feedback
- *  @param int $groupid
- *  @return mixed array of found completeds otherwise false
+ * get the completeds depending on the given groupid.
+ *
+ * @global object
+ * @global object
+ * @param object $feedback
+ * @param int $groupid
+ * @return mixed array of found completeds otherwise false
  */
 function feedback_get_completeds_group($feedback, $groupid = false, $courseid = false) {
     global $CFG, $DB;
@@ -1701,11 +1872,14 @@ function feedback_get_completeds_group($feedback, $groupid = false, $courseid = 
 }
 
 /**
- *  get the count of completeds depending on the given groupid.
- *  @param object $feedback
- *  @param int $groupid
- *  @param int $courseid
- *  @return mixed count of completeds or false
+ * get the count of completeds depending on the given groupid.
+ *
+ * @global object
+ * @global object
+ * @param object $feedback
+ * @param int $groupid
+ * @param int $courseid
+ * @return mixed count of completeds or false
  */
 function feedback_get_completeds_group_count($feedback, $groupid = false, $courseid = false) {
     global $CFG, $DB;
@@ -1746,10 +1920,12 @@ function feedback_get_groupid($course, $cm) {
  */
 
 /**
- *  deletes all completed-recordsets from a feedback.
- *  all related data such as values also will be deleted
- *  @param int $feedbackid
- *  @return void
+ * deletes all completed-recordsets from a feedback.
+ * all related data such as values also will be deleted
+ *
+ * @global object
+ * @param int $feedbackid
+ * @return void
  */
 function feedback_delete_all_completeds($feedbackid) {
     global $DB;
@@ -1763,10 +1939,12 @@ function feedback_delete_all_completeds($feedbackid) {
 }
 
 /**
- *  deletes a completed given by completedid.
- *  all related data such values or tracking data also will be deleted
- *  @param int $completedid
- *  @return boolean
+ * deletes a completed given by completedid.
+ * all related data such values or tracking data also will be deleted
+ * 
+ * @global object
+ * @param int $completedid
+ * @return boolean
  */
 function feedback_delete_completed($completedid) {
     global $DB;
@@ -1793,10 +1971,12 @@ function feedback_delete_completed($completedid) {
 ////////////////////////////////////////////////
 
 /**
- *  checks if the course and the feedback is in the table feedback_sitecourse_map.
- *  @param int $feedbackid
- *  @param int $courseid
- *  @return int the count of records
+ * checks if the course and the feedback is in the table feedback_sitecourse_map.
+ *
+ * @global object
+ * @param int $feedbackid
+ * @param int $courseid
+ * @return int the count of records
  */
 function feedback_is_course_in_sitecourse_map($feedbackid, $courseid) {
     global $DB;
@@ -1804,9 +1984,11 @@ function feedback_is_course_in_sitecourse_map($feedbackid, $courseid) {
 }
 
 /**
- *  checks if the feedback is in the table feedback_sitecourse_map.
- *  @param int $feedbackid
- *  @return boolean
+ * checks if the feedback is in the table feedback_sitecourse_map.
+ *
+ * @global object
+ * @param int $feedbackid
+ * @return boolean
  */
 function feedback_is_feedback_in_sitecourse_map($feedbackid) {
     global $Db;
@@ -1814,13 +1996,16 @@ function feedback_is_feedback_in_sitecourse_map($feedbackid) {
 }
 
 /**
- *  gets the feedbacks from table feedback_sitecourse_map.
- *  this is used to show the global feedbacks on the feedback block
- *  all feedbacks with the following criteria will be selected:<br />
- *  1) all feedbacks which id are listed together with the courseid in sitecoursemap and<br />
- *  2) all feedbacks which not are listed in sitecoursemap
- *  @param int $courseid
- *  @return array the feedback-records
+ * gets the feedbacks from table feedback_sitecourse_map.
+ * this is used to show the global feedbacks on the feedback block
+ * all feedbacks with the following criteria will be selected:<br />
+ *
+ * 1) all feedbacks which id are listed together with the courseid in sitecoursemap and<br />
+ * 2) all feedbacks which not are listed in sitecoursemap
+ *
+ * @global object
+ * @param int $courseid
+ * @return array the feedback-records
  */
 function feedback_get_feedbacks_from_sitecourse_map($courseid) {
     global $DB;
@@ -1861,9 +2046,11 @@ function feedback_get_feedbacks_from_sitecourse_map($courseid) {
 }
 
 /**
- *  gets the courses from table feedback_sitecourse_map.
- *  @param int $feedbackid
- *  @return array the course-records
+ * gets the courses from table feedback_sitecourse_map.
+ *
+ * @global object
+ * @param int $feedbackid
+ * @return array the course-records
  */
 function feedback_get_courses_from_sitecourse_map($feedbackid) {
     global $DB;
@@ -1879,10 +2066,12 @@ function feedback_get_courses_from_sitecourse_map($feedbackid) {
 }
 
 /**
- *  removes non existing courses or feedbacks from sitecourse_map.
- *  it shouldn't be called all too often
- *  a good place for it could be the mapcourse.php or unmapcourse.php
- *  @return void
+ * removes non existing courses or feedbacks from sitecourse_map.
+ * it shouldn't be called all too often
+ * a good place for it could be the mapcourse.php or unmapcourse.php
+ * 
+ * @global object
+ * @return void
  */
 function feedback_clean_up_sitecourse_map() {
     global $DB;
@@ -1908,12 +2097,12 @@ function feedback_clean_up_sitecourse_map() {
 ////////////////////////////////////////////////
 
 /**
- *  prints the option items of a selection-input item (dropdownlist).
- *  @param int $startval the first value of the list
- *  @param int $endval the last value of the list
- *  @param int $selectval which item should be selected
- *  @param int $interval the stepsize from the first to the last value
- *  @return void
+ * prints the option items of a selection-input item (dropdownlist).
+ * @param int $startval the first value of the list
+ * @param int $endval the last value of the list
+ * @param int $selectval which item should be selected
+ * @param int $interval the stepsize from the first to the last value
+ * @return void
  */
 function feedback_print_numeric_option_list($startval, $endval, $selectval = '', $interval = 1){
     for($i = $startval; $i <= $endval; $i += $interval){
@@ -1927,12 +2116,17 @@ function feedback_print_numeric_option_list($startval, $endval, $selectval = '',
 }
 
 /**
- *  sends an email to the teachers of the course where the given feedback is placed.
- *  @param object $cm the coursemodule-record
- *  @param $feedback
- *  @param $course
- *  @param $userid
- *  @return void
+ * sends an email to the teachers of the course where the given feedback is placed.
+ *
+ * @global object
+ * @global object
+ * @uses FEEDBACK_ANONYMOUS_NO
+ * @uses FORMAT_PLAIN
+ * @param object $cm the coursemodule-record
+ * @param object $feedback
+ * @param object $course
+ * @param int $userid
+ * @return void
  */
 function feedback_send_email($cm, $feedback, $course, $userid) {
     global $CFG, $DB;
@@ -2004,11 +2198,14 @@ function feedback_send_email($cm, $feedback, $course, $userid) {
 }
 
 /**
- *  sends an email to the teachers of the course where the given feedback is placed.
- *  @param object $cm the coursemodule-record
- *  @param $feedback
- *  @param $course
- *  @return void
+ * sends an email to the teachers of the course where the given feedback is placed.
+ *
+ * @global object
+ * @uses FORMAT_PLAIN
+ * @param object $cm the coursemodule-record
+ * @param object $feedback
+ * @param object $course
+ * @return void
  */
 function feedback_send_email_anonym($cm, $feedback, $course) {
     global $CFG;
@@ -2052,10 +2249,11 @@ function feedback_send_email_anonym($cm, $feedback, $course) {
 }
 
 /**
- *  send the text-part of the email
- *  @param object $info includes some infos about the feedback you want to send
- *  @param object $course
- *  @return string the text you want to post
+ * send the text-part of the email
+ *
+ * @param object $info includes some infos about the feedback you want to send
+ * @param object $course
+ * @return string the text you want to post
  */
 function feedback_send_email_text($info, $course) {
     $posttext  = $course->shortname.' -> '.get_string('modulenameplural', 'feedback').' -> '.
@@ -2068,10 +2266,12 @@ function feedback_send_email_text($info, $course) {
 
 
 /**
- *  send the html-part of the email
- *  @param object $info includes some infos about the feedback you want to send
- *  @param object $course
- *  @return string the text you want to post
+ * send the html-part of the email
+ *
+ * @global object
+ * @param object $info includes some infos about the feedback you want to send
+ * @param object $course
+ * @return string the text you want to post
  */
 function feedback_send_email_html($info, $course, $cm) {
     global $CFG;
@@ -2086,8 +2286,10 @@ function feedback_send_email_html($info, $course, $cm) {
 }
 
 /**
- *  print some errors to inform users about this.
- *  @return void
+ * print some errors to inform users about this.
+ *
+ * @global object
+ * @return void
  */
 function feedback_print_errors() {
 
@@ -2111,6 +2313,10 @@ function feedback_print_errors() {
     $SESSION->feedback->errors = array(); //remove errors
 }
 
+/**
+ * @param string $url
+ * @return string
+ */
 function feedback_encode_target_url($url) {
     if (strpos($url, '?')) {
         list($part1, $part2) = explode('?', $url, 2); //maximal 2 parts
