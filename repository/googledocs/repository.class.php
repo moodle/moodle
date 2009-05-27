@@ -22,10 +22,6 @@ class repository_googledocs extends repository {
             $gauth = new google_authsub(false, $googletoken); // will throw exception if fails
             google_docs::set_sesskey($gauth->get_sessiontoken(), $USER->id);
         }
-
-        # fixme - we are not checking login before all functions in the repo api.. eg search
-        # MDL-17474
-        $this->check_login();
     }
 
     public function check_login() {
