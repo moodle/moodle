@@ -42,7 +42,7 @@
 
     echo "<form id=\"mform1\" class=\"mform\" action=\"http://moodle.org/register/\" method=\"post\">\n";
     echo '<fieldset id="registration">';
-    echo '<legend>Registration Information</legend>';
+    echo '<legend>'.get_string("registrationinfotitle").'</legend>';
 
     echo "<!-- The following hidden variables are to help prevent fake entries being sent. -->\n";
     echo "<!-- Together they form a key.  If any of these change between updates then the entry  -->\n";
