@@ -18,7 +18,7 @@
 /**
  * Library of functions and constants for module chat
  *
- * @package   moodlecore
+ * @package   mod-chat
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1023,7 +1023,7 @@ function chat_get_extra_capabilities() {
 }
 
 /**
- * @package   moodlecore
+ * @package   mod-chat
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

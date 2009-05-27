@@ -20,7 +20,7 @@
  *
  * This class provides all the functionality for an assignment
  *
- * @package   moodlecore
+ * @package   mod-assignment
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -40,7 +40,7 @@ DEFINE ('ASSIGNMENT_COUNT_LETTERS', 2);
 /**
  * Standard base class for all assignment submodules (assignment types).
  * 
- * @package   moodlecore
+ * @package   mod-assignment
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2038,7 +2038,7 @@ class assignment_base {
 } ////// End of the assignment_base class
 
 /**
- * @package   moodlecore
+ * @package   mod-assignment
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3242,7 +3242,7 @@ function assignment_get_extra_capabilities() {
 }
 
 /**
- * @package   moodlecore
+ * @package   mod-assignment
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
