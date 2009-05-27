@@ -1,5 +1,27 @@
-<?php  // $Id$
+<?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package   mod-forum
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/** Include required files */
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/eventslib.php');
 require_once($CFG->libdir.'/portfoliolib.php');
@@ -36,6 +58,9 @@ define ('FORUM_AGGREGATE_SUM', 5);
  * (defined by the form in mod_form.php) this function
  * will create a new instance and return the id number
  * of the new instance.
+ *
+ * @global object
+ * @global object
  * @param object $forum add forum instance (with magic quotes)
  * @return int intance id
  */
@@ -98,6 +123,8 @@ function forum_add_instance($forum) {
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
+ *
+ * @global object
  * @param object $forum forum instance (with magic quotes)
  * @return bool success
  */
@@ -182,7 +209,9 @@ function forum_update_instance($forum) {
  * Given an ID of an instance of this module,
  * this function will permanently delete the instance
  * and any data that depends on it.
- * @param int forum instance id
+ *
+ * @global object
+ * @param int $id forum instance id
  * @return bool success
  */
 function forum_delete_instance($id) {
@@ -233,6 +262,14 @@ function forum_delete_instance($id) {
 /**
  * Indicates API features that the forum supports.
  *
+ * @uses FEATURE_GROUPS
+ * @uses FEATURE_GROUPINGS
+ * @uses FEATURE_GROUPMEMBERSONLY
+ * @uses FEATURE_MOD_INTRO
+ * @uses FEATURE_COMPLETION_TRACKS_VIEWS
+ * @uses FEATURE_COMPLETION_HAS_RULES
+ * @uses FEATURE_GRADE_HAS_GRADE
+ * @uses FEATURE_GRADE_OUTCOMES
  * @param string $feature
  * @return mixed True if yes (some features may use other values)
  */
@@ -256,6 +293,8 @@ function forum_supports($feature) {
  * Obtains the automatic completion state for this forum based on any conditions
  * in forum settings.
  *
+ * @global object
+ * @global object
  * @param object $course Course
  * @param object $cm Course-module
  * @param int $userid User ID
@@ -318,6 +357,14 @@ WHERE
  * Function to be run periodically according to the moodle cron
  * Finds all posts that have yet to be mailed out, and mails them
  * out to all subscribers
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @uses CONTEXT_COURSE
+ * @uses SITEID
+ * @uses FORMAT_PLAIN
  * @return void
  */
 function forum_cron() {
@@ -914,7 +961,11 @@ function forum_cron() {
 /**
  * Builds and returns the body of the email notification in plain text.
  *
+ * @global object
+ * @global object
+ * @uses CONTEXT_MODULE
  * @param object $course
+ * @param object $cm
  * @param object $forum
  * @param object $discussion
  * @param object $post
@@ -988,7 +1039,9 @@ function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfro
 /**
  * Builds and returns the body of the email notification in html format.
  *
+ * @global object
  * @param object $course
+ * @param object $cm
  * @param object $forum
  * @param object $discussion
  * @param object $post
@@ -1065,7 +1118,12 @@ function forum_user_outline($course, $user, $mod, $forum) {
 
 
 /**
- *
+ * @global object
+ * @global object
+ * @param object $coure
+ * @param object $user
+ * @param object $mod
+ * @param object $forum
  */
 function forum_user_complete($course, $user, $mod, $forum) {
     global $CFG,$USER;
@@ -1124,7 +1182,11 @@ function forum_user_complete($course, $user, $mod, $forum) {
 
 
 /**
- *
+ * @global object
+ * @global object
+ * @global object
+ * @param array $courses
+ * @param array $htmlarray
  */
 function forum_print_overview($courses,&$htmlarray) {
     global $USER, $CFG, $DB;
@@ -1239,6 +1301,12 @@ function forum_print_overview($courses,&$htmlarray) {
 /**
  * Given a course and a date, prints a summary of all the new
  * messages posted in the course since that date
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @uses VISIBLEGROUPS
  * @param object $course
  * @param bool $viewfullnames capability
  * @param int $timestart
@@ -1350,7 +1418,9 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
 /**
  * Return grade for given user or all users.
  *
- * @param int $forumid id of forum
+ * @global object
+ * @global object
+ * @param object $forum
  * @param int $userid optional user id, 0 means all users
  * @return array array of grades, false if none
  */
@@ -1444,6 +1514,8 @@ function forum_get_user_grades($forum, $userid=0) {
 /**
  * Update activity grades
  *
+ * @global object
+ * @global object
  * @param object $forum
  * @param int $userid specific user only, 0 means all
  * @param boolean $nullifnone return null if grade does not exist
@@ -1472,6 +1544,7 @@ function forum_update_grades($forum, $userid=0, $nullifnone=true) {
 
 /**
  * Update all grades in gradebook.
+ * @global object
  */
 function forum_upgrade_grades() {
     global $DB;
@@ -1500,8 +1573,12 @@ function forum_upgrade_grades() {
 /**
  * Create/update grade item for given forum
  *
+ * @global object
+ * @uses GRADE_TYPE_NONE
+ * @uses GRADE_TYPE_VALUE
+ * @uses GRADE_TYPE_SCALE
  * @param object $forum object with extra cmidnumber
- * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
+ * @param mixed $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int 0 if ok
  */
 function forum_grade_item_update($forum, $grades=NULL) {
@@ -1536,6 +1613,7 @@ function forum_grade_item_update($forum, $grades=NULL) {
 /**
  * Delete grade item for given forum
  *
+ * @global object
  * @param object $forum object
  * @return object grade_item
  */
@@ -1550,6 +1628,9 @@ function forum_grade_item_delete($forum) {
 /**
  * Returns the users with data in one forum
  * (users with records in forum_subscriptions, forum_posts and forum_ratings, students)
+ *
+ * @global object
+ * @global object
  * @param int $forumid
  * @return mixed array or false if none
  */
@@ -1601,6 +1682,8 @@ function forum_get_participants($forumid) {
 
 /**
  * This function returns if a scale is being used by one forum
+ *
+ * @global object
  * @param int $forumid
  * @param int $scaleid negative number
  * @return bool
@@ -1622,6 +1705,8 @@ function forum_scale_used ($forumid,$scaleid) {
  * Checks if scale is being used by any instance of forum
  *
  * This is used to find out if scale used anywhere
+ *
+ * @global object
  * @param $scaleid int
  * @return boolean True if the scale is used by any forum
  */
@@ -1639,6 +1724,9 @@ function forum_scale_used_anywhere($scaleid) {
 /**
  * Gets a post with all info ready for forum_print_post
  * Most of these joins are just to get the forum id
+ *
+ * @global object
+ * @global object
  * @param int $postid
  * @return mixed array of posts or false
  */
@@ -1656,6 +1744,9 @@ function forum_get_post_full($postid) {
  * Gets posts with all info ready for forum_print_post
  * We pass forumid in because we always know it so no need to make a
  * complicated join to find it out.
+ *
+ * @global object
+ * @global object
  * @return mixed array of posts or false
  */
 function forum_get_discussion_posts($discussion, $sort, $forumid) {
@@ -1670,6 +1761,10 @@ function forum_get_discussion_posts($discussion, $sort, $forumid) {
 
 /**
  * Gets all posts in discussion including top parent.
+ *
+ * @global object
+ * @global object
+ * @global object
  * @param int $discussionid
  * @param string $sort
  * @param bool $tracking does user track the forum?
@@ -1725,6 +1820,12 @@ function forum_get_all_discussion_posts($discussionid, $sort, $tracking=false) {
  * Gets posts with all info ready for forum_print_post
  * We pass forumid in because we always know it so no need to make a
  * complicated join to find it out.
+ *
+ * @global object
+ * @global object
+ * @param int $parent
+ * @param int $forumid
+ * @return array
  */
 function forum_get_child_posts($parent, $forumid) {
     global $CFG, $DB;
@@ -1738,8 +1839,12 @@ function forum_get_child_posts($parent, $forumid) {
 
 /**
  * An array of forum objects that the user is allowed to read/search through.
- * @param $userid
- * @param $courseid - if 0, we look for forums throughout the whole site.
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @param int $userid
+ * @param int $courseid if 0, we look for forums throughout the whole site.
  * @return array of forum objects, or false if no matches
  *         Forum objects have the following attributes:
  *         id, type, course, cmid, cmvisible, cmgroupmode, accessallgroups,
@@ -1847,13 +1952,17 @@ function forum_get_readable_forums($userid, $courseid=0) {
 
 /**
  * Returns a list of posts found using an array of search terms.
- * @param $searchterms - array of search terms, e.g. word +word -word
- * @param $courseid - if 0, we search through the whole site
- * @param $page
- * @param $recordsperpage=50
- * @param &$totalcount
- * @param $extrasql
- * @return array of posts found
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @param array $searchterms array of search terms, e.g. word +word -word
+ * @param int $courseid if 0, we search through the whole site
+ * @param int $limitfrom
+ * @param int $limitnum
+ * @param int &$totalcount
+ * @param string $extrasql
+ * @return array|bool Array of posts found or false
  */
 function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=50,
                             &$totalcount, $extrasql='') {
@@ -1987,6 +2096,9 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
 
 /**
  * Returns a list of ratings for all posts in discussion
+ *
+ * @global object
+ * @global object
  * @param object $discussion
  * @return array of ratings or false
  */
@@ -2001,11 +2113,11 @@ function forum_get_all_discussion_ratings($discussion) {
 
 /**
  * Returns a list of ratings for one specific user for all posts in discussion
- * @global object $CFG
- * @global object $DB
+ * @global object
+ * @global object
  * @param object $discussions the discussions for which we return all ratings
  * @param int $userid the user for who we return all ratings
- * @return object
+ * @return array
  */
 function forum_get_all_user_ratings($userid, $discussions) {
     global $CFG, $DB;
@@ -2041,9 +2153,12 @@ function forum_get_all_user_ratings($userid, $discussions) {
 
 /**
  * Returns a list of ratings for a particular post - sorted.
+ *
+ * @global object
+ * @global object
  * @param int $postid
  * @param string $sort
- * @return array of ratings or false
+ * @return array Array of ratings or false
  */
 function forum_get_ratings($postid, $sort="u.firstname ASC") {
     global $CFG, $DB;
@@ -2057,9 +2172,13 @@ function forum_get_ratings($postid, $sort="u.firstname ASC") {
 
 /**
  * Returns a list of all new posts that have not been mailed yet
- * @param int $starttime - posts created after this time
- * @param int $endtime - posts created before this
- * @param int $now - used for timed discussions only
+ *
+ * @global object
+ * @global object
+ * @param int $starttime posts created after this time
+ * @param int $endtime posts created before this
+ * @param int $now used for timed discussions only
+ * @return array
  */
 function forum_get_unmailed_posts($starttime, $endtime, $now=null) {
     global $CFG, $DB;
@@ -2088,6 +2207,12 @@ function forum_get_unmailed_posts($starttime, $endtime, $now=null) {
 
 /**
  * Marks posts before a certain time as being mailed already
+ *
+ * @global object
+ * @global object
+ * @param int $endtime
+ * @param int $now Defaults to time()
+ * @return bool
  */
 function forum_mark_old_posts_as_mailed($endtime, $now=null) {
     global $CFG, $DB;
@@ -2114,6 +2239,11 @@ function forum_mark_old_posts_as_mailed($endtime, $now=null) {
 
 /**
  * Get all the posts for a user in a forum suitable for forum_print_post
+ *
+ * @global object
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @return array
  */
 function forum_get_user_posts($forumid, $userid) {
     global $CFG, $DB;
@@ -2144,9 +2274,13 @@ function forum_get_user_posts($forumid, $userid) {
 
 /**
  * Get all the discussions user participated in
+ *
+ * @global object
+ * @global object
+ * @uses CONTEXT_MODULE
  * @param int $forumid
  * @param int $userid
- * @return array or false
+ * @return array Array or false
  */
 function forum_get_user_involved_discussions($forumid, $userid) {
     global $CFG, $DB;
@@ -2174,6 +2308,9 @@ function forum_get_user_involved_discussions($forumid, $userid) {
 
 /**
  * Get all the posts for a user in a forum suitable for forum_print_post
+ *
+ * @global object
+ * @global object
  * @param int $forumid
  * @param int $userid
  * @return array of counts or false
@@ -2205,6 +2342,11 @@ function forum_count_user_posts($forumid, $userid) {
 
 /**
  * Given a log entry, return the forum post details for it.
+ *
+ * @global object
+ * @global object
+ * @param object $log
+ * @return array|null
  */
 function forum_get_post_from_log($log) {
     global $CFG, $DB;
@@ -2243,6 +2385,11 @@ function forum_get_post_from_log($log) {
 
 /**
  * Given a discussion id, return the first post from the discussion
+ *
+ * @global object
+ * @global object
+ * @param int $dicsussionid
+ * @return array
  */
 function forum_get_firstpost_from_discussion($discussionid) {
     global $CFG, $DB;
@@ -2256,6 +2403,15 @@ function forum_get_firstpost_from_discussion($discussionid) {
 
 /**
  * Returns an array of counts of replies to each discussion
+ *
+ * @global object
+ * @global object
+ * @param int $forumid
+ * @param string $forumsort
+ * @param int $limit
+ * @param int $page
+ * @param int $perpage
+ * @return array
  */
 function forum_count_discussion_replies($forumid, $forumsort="", $limit=-1, $page=-1, $perpage=0) {
     global $CFG, $DB;
@@ -2301,6 +2457,16 @@ function forum_count_discussion_replies($forumid, $forumsort="", $limit=-1, $pag
     }
 }
 
+/**
+ * @global object
+ * @global object
+ * @global object
+ * @staticvar array $cache
+ * @param object $forum
+ * @param object $cm
+ * @param object $course
+ * @return mixed
+ */
 function forum_count_discussions($forum, $cm, $course) {
     global $CFG, $DB, $USER;
 
@@ -2395,6 +2561,12 @@ function forum_count_discussions($forum, $cm, $course) {
 
 /**
  * How many unrated posts are in the given discussion for a given user?
+ *
+ * @global object
+ * @global object
+ * @param int $discussionid
+ * @param int $userid
+ * @return mixed
  */
 function forum_count_unrated_posts($discussionid, $userid) {
     global $CFG, $DB;
@@ -2426,6 +2598,21 @@ function forum_count_unrated_posts($discussionid, $userid) {
 
 /**
  * Get all discussions in a forum
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @uses VISIBLEGROUPS
+ * @param object $cm
+ * @param string $forumsort
+ * @param bool $fullpost
+ * @param int $unused
+ * @param int $limit
+ * @param bool $userlastmodified
+ * @param int $page
+ * @param int $perpage
+ * @return array
  */
 function forum_get_discussions($cm, $forumsort="d.timemodified DESC", $fullpost=true, $unused=-1, $limit=-1, $userlastmodified=false, $page=-1, $perpage=0) {
     global $CFG, $DB, $USER;
@@ -2527,6 +2714,16 @@ function forum_get_discussions($cm, $forumsort="d.timemodified DESC", $fullpost=
     return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
 }
 
+/**
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @uses VISIBLEGROUPS
+ * @param object $cm
+ * @return array
+ */
 function forum_get_discussions_unread($cm) {
     global $CFG, $DB, $USER;
 
@@ -2588,6 +2785,15 @@ function forum_get_discussions_unread($cm) {
     }
 }
 
+/**
+ * @global object
+ * @global object
+ * @global object
+ * @uses CONEXT_MODULE
+ * @uses VISIBLEGROUPS
+ * @param object $cm
+ * @return array
+ */
 function forum_get_discussions_count($cm) {
     global $CFG, $DB, $USER;
 
@@ -2653,6 +2859,14 @@ function forum_get_discussions_count($cm) {
 /**
  * Get all discussions started by a particular user in a course (or group)
  * This function no longer used ...
+ *
+ * @todo Remove this function if no longer used
+ * @global object
+ * @global object
+ * @param int $courseid
+ * @param int $userid
+ * @param int $groupid
+ * @return array
  */
 function forum_get_user_discussions($courseid, $userid, $groupid=0) {
     global $CFG, $DB;
@@ -2695,6 +2909,8 @@ function forum_get_potential_subscribers($forumcontext, $groupid, $fields, $sort
 /**
  * Returns list of user objects that are subscribed to this forum
  *
+ * @global object
+ * @global object
  * @param object $course the course
  * @param forum $forum the forum
  * @param integer $groupid group id, or 0 for all.
@@ -2773,6 +2989,12 @@ function forum_subscribed_users($course, $forum, $groupid=0, $context = NULL) {
 // OTHER FUNCTIONS ///////////////////////////////////////////////////////////
 
 
+/**
+ * @global object
+ * @global object
+ * @param int $courseid
+ * @param string $type
+ */
 function forum_get_course_forum($courseid, $type) {
 // How to set up special 1-per-course forums
     global $CFG, $DB;
@@ -2843,9 +3065,24 @@ function forum_get_course_forum($courseid, $type) {
 
 
 /**
-* Given the data about a posting, builds up the HTML to display it and
-* returns the HTML in a string.  This is designed for sending via HTML email.
-*/
+ * Given the data about a posting, builds up the HTML to display it and
+ * returns the HTML in a string.  This is designed for sending via HTML email.
+ *
+ * @global object
+ * @param object $course
+ * @param object $cm
+ * @param object $forum
+ * @param object $discussion
+ * @param object $post
+ * @param object $userform
+ * @param object $userto
+ * @param bool $ownpost
+ * @param bool $reply
+ * @param bool $link
+ * @param bool $rate
+ * @param string $footer
+ * @return string
+ */
 function forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfrom, $userto,
                               $ownpost=false, $reply=false, $link=false, $rate=false, $footer="") {
 
@@ -2951,8 +3188,19 @@ function forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfro
 /**
  * Print a forum post
  *
+ * @global object
+ * @global object
+ * @uses FORUM_MODE_THREADED
+ * @uses PORTFOLIO_FORMAT_PLAINHTML
+ * @uses PORTFOLIO_FORMAT_FILE
+ * @uses PORTFOLIO_FORMAT_RICHHTML
+ * @uses PORTFOLIO_ADD_TEXT_LINK
+ * @uses CONTEXT_MODULE
  * @param object $post The post to print.
- * @param integer $courseid The course this post belongs to.
+ * @param object $discussion
+ * @param object $forum
+ * @param object $cm
+ * @param object $course
  * @param boolean $ownpost Whether this post belongs to the current user.
  * @param boolean $reply Whether to print a 'reply' link at the bottom of the message.
  * @param boolean $link Just print a shortened version of the post as a link to the full post.
@@ -2966,6 +3214,7 @@ function forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfro
  *          the current user can't see this post, if this argument is true
  *          (the default) then print a dummy 'you can't see this post' post.
  *          If false, don't output anything at all.
+ * @param bool|null $istracked
  */
 function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=false, $reply=false, $link=false,
                           $ratings=NULL, $footer="", $highlight="", $post_read=null, $dummyifcantsee=true, $istracked=null) {
@@ -3332,6 +3581,8 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
  * happen to be combined for efficiency in the $post parameter by the function
  * that calls this one: forum_print_latest_discussions()
  *
+ * @global object
+ * @global object
  * @param object $post The post object (passed by reference for speed).
  * @param object $forum The forum object.
  * @param int $group Current group.
@@ -3459,6 +3710,10 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
  * Given a post object that we already know has a long message
  * this function truncates the message nicely to the first
  * sane place between $CFG->forum_longpost and $CFG->forum_shortpost
+ *
+ * @global object
+ * @param string $message
+ * @return string
  */
 function forum_shorten_post($message) {
 
@@ -3512,6 +3767,19 @@ function forum_shorten_post($message) {
  * Print the multiple ratings on a post given to the current user by others.
  * Forumid prevents the double lookup of the forumid in discussion to determine the aggregate type
  * Scale is an array of ratings
+ *
+ * @uses FORUM_AGGREGATE_AVG
+ * @uses FORUM_AGGREGATE_COUNT
+ * @uses FORUM_AGGREGATE_MAX
+ * @uses FORUM_AGGREGATE_MIN
+ * @uses FORUM_AGGREGATE_SUM
+ * @param int $postid
+ * @param array $scale
+ * @param int $aggregatetype
+ * @param bool $link
+ * @param array $ratings
+ * @param bool $return
+ * @return string|void
  */
 function forum_print_ratings($postid, $scale, $aggregatetype, $link=true, $ratings=null, $return=false) {
 
@@ -3565,9 +3833,12 @@ function forum_print_ratings($postid, $scale, $aggregatetype, $link=true, $ratin
 
 /**
  * Return the mean rating of a post given to the current user by others.
- * Scale is an array of possible ratings in the scale
- * Ratings is an optional simple array of actual ratings (just integers)
- * Forumid is the forum id field needed - passing it avoids a double query of lookup up the discusion and then the forum id to get the aggregate type
+ *
+ * @global object
+ * @param int $postid
+ * @param array $scal Scale is an array of possible ratings in the scale
+ * @param array $ratings Ratings is an optional simple array of actual ratings (just integers)
+ * @return string
  */
 function forum_get_ratings_mean($postid, $scale, $ratings=NULL) {
     global $DB;
@@ -3614,9 +3885,11 @@ function forum_get_ratings_mean($postid, $scale, $ratings=NULL) {
  * and $scale looks like Array( 1 => 'poor', 2 => 'weak', 3 => 'good' )
  * In case of no ratings done yet, we have nothing to display.
  *
+ * @global object
  * @param int $postid
  * @param array $scale Possible ratings in the scale - the end of the scale is the highest or max grade
  * @param array $ratings An optional simple array of actual ratings (just integers)
+ * @return string
  */
 function forum_get_ratings_count($postid, $scale, $ratings=NULL) {
     global $DB;
@@ -3664,8 +3937,11 @@ function forum_get_ratings_count($postid, $scale, $ratings=NULL) {
 
 /**
  * Return the max rating of a post given to the current user by others.
- * Scale is an array of possible ratings in the scale
- * Ratings is an optional simple array of actual ratings (just integers)
+ *
+ * @global object
+ * @param int $postid
+ * @param array $scale Scale is an array of possible ratings in the scale
+ * @param array $ratings Ratings is an optional simple array of actual ratings (just integers)
  */
 function forum_get_ratings_max($postid, $scale, $ratings=NULL) {
 
@@ -3701,8 +3977,12 @@ function forum_get_ratings_max($postid, $scale, $ratings=NULL) {
 
 /**
  * Return the min rating of a post given to the current user by others.
- * Scale is an array of possible ratings in the scale
- * Ratings is an optional simple array of actual ratings (just integers)
+ *
+ * @global object
+ * @param int postid
+ * @param array $scale Scale is an array of possible ratings in the scale
+ * @param array $ratings  Ratings is an optional simple array of actual ratings (just integers)
+ * @return string
  */
 function forum_get_ratings_min($postid, $scale,  $ratings=NULL) {
     global $DB;
@@ -3738,8 +4018,12 @@ function forum_get_ratings_min($postid, $scale,  $ratings=NULL) {
 
 /**
  * Return the sum or total of ratings of a post given to the current user by others.
- * Scale is an array of possible ratings in the scale
- * Ratings is an optional simple array of actual ratings (just integers)
+ *
+ * @global object
+ * @param int $postid
+ * @param array $scale Scale is an array of possible ratings in the scale
+ * @param array $ratings Ratings is an optional simple array of actual ratings (just integers)
+ * @return string
  */
 function forum_get_ratings_sum($postid, $scale, $ratings=NULL) {
     global $DB;
@@ -3780,8 +4064,12 @@ function forum_get_ratings_sum($postid, $scale, $ratings=NULL) {
 
 /**
  * Return a summary of post ratings given to the current user by others.
- * Scale is an array of possible ratings in the scale
- * Ratings is an optional simple array of actual ratings (just integers)
+ *
+ * @global object
+ * @param int $postid
+ * @param array $scale Scale is an array of possible ratings in the scale
+ * @param array $ratings Ratings is an optional simple array of actual ratings (just integers)
+ * @return string
  */
 function forum_get_ratings_summary($postid, $scale, $ratings=NULL) {
     global $DB;
@@ -3821,7 +4109,12 @@ function forum_get_ratings_summary($postid, $scale, $ratings=NULL) {
 /**
  * Print the menu of ratings as part of a larger form.
  * If the post has already been - set that value.
- * Scale is an array of ratings
+ *
+ * @global object
+ * @param int $postid
+ * @param int $userid
+ * @param array $scale is an array of ratings
+ * @param int $myrating
  */
 function forum_print_rating_menu($postid, $userid, $scale, $myrating=NULL) {
 
@@ -3846,10 +4139,11 @@ function forum_print_rating_menu($postid, $userid, $scale, $myrating=NULL) {
 /**
  * Print the drop down that allows the user to select how they want to have
  * the discussion displayed.
- * @param $id - forum id if $forumtype is 'single',
+ *
+ * @param int $id forum id if $forumtype is 'single',
  *              discussion id for any other forum type
- * @param $mode - forum layout mode
- * @param $forumtype - optional
+ * @param mixed $mode forum layout mode
+ * @param string $forumtype optional
  */
 function forum_print_mode_form($id, $mode, $forumtype='') {
     if ($forumtype == 'single') {
@@ -3862,7 +4156,10 @@ function forum_print_mode_form($id, $mode, $forumtype='') {
 }
 
 /**
- *
+ * @global object
+ * @param object $course
+ * @param string $search
+ * @return string
  */
 function forum_search_form($course, $search='') {
     global $CFG;
@@ -3883,7 +4180,8 @@ function forum_search_form($course, $search='') {
 
 
 /**
- *
+ * @global object
+ * @global object
  */
 function forum_set_return() {
     global $CFG, $SESSION;
@@ -3903,7 +4201,9 @@ function forum_set_return() {
 
 
 /**
- *
+ * @global object
+ * @param string $default
+ * @return string
  */
 function forum_go_back_to($default) {
     global $SESSION;
@@ -3923,7 +4223,8 @@ function forum_go_back_to($default) {
  * for attachments, and if any are found, these are
  * moved to the new forum directory.
  *
- * @param $discussion object
+ * @global object
+ * @param object $discussion
  * @param int $forumfrom source forum id
  * @param int $forumto target forum id
  * @return bool success
@@ -3969,9 +4270,13 @@ function forum_move_attachments($discussion, $forumfrom, $forumto) {
 
 /**
  * Returns attachments as formated text/html optionally with separate images
+ *
+ * @global object
+ * @global object
+ * @global object
  * @param object $post
  * @param object $cm
- * @param string type - html/text/separateimages
+ * @param string $type html/text/separateimages
  * @return mixed string or array of (html text withouth images and image HTML)
  */
 function forum_print_attachments($post, $cm, $type) {
@@ -4053,6 +4358,11 @@ function forum_print_attachments($post, $cm, $type) {
 
 /**
  * Lists all browsable file areas
+ *
+ * @param object $course
+ * @param object $cm
+ * @param object $context
+ * @return array
  */
 function forum_get_file_areas($course, $cm, $context) {
     $areas = array();
@@ -4061,6 +4371,13 @@ function forum_get_file_areas($course, $cm, $context) {
 
 /**
  * Serves the forum attachments. Implements needed access control ;-)
+ *
+ * @param object $course
+ * @param object $cminfo
+ * @param object $context
+ * @param string $filearea
+ * @param array $args
+ * @return bool
  */
 function forum_pluginfile($course, $cminfo, $context, $filearea, $args) {
     global $CFG, $DB;
@@ -4119,9 +4436,14 @@ function forum_pluginfile($course, $cminfo, $context, $filearea, $args) {
 
 /**
  * If successful, this function returns the name of the file
- * @param $post is a full post record, including course and forum
- * @param $newfile is a full upload array from $_FILES
- * @param $message is a string to hold the messages.
+ *
+ * @global object
+ * @param object $post is a full post record, including course and forum
+ * @param object $forum
+ * @param object $cm
+ * @param mixed $mform
+ * @param string $message
+ * @return bool
  */
 function forum_add_attachment($post, $forum, $cm, $mform=null, &$message=null) {
     global $DB;
@@ -4143,6 +4465,14 @@ function forum_add_attachment($post, $forum, $cm, $mform=null, &$message=null) {
 
 /**
  * Add a new post in an existing discussion.
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @param object $post
+ * @param mixed $mform
+ * @param string $message
+ * @return int
  */
 function forum_add_new_post($post, $mform, &$message) {
     global $USER, $CFG, $DB;
@@ -4178,6 +4508,14 @@ function forum_add_new_post($post, $mform, &$message) {
 
 /**
  * Update a post
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @param object $post
+ * @param mixed $mform
+ * @param string $message
+ * @return bool
  */
 function forum_update_post($post, $mform, &$message) {
     global $USER, $CFG, $DB;
@@ -4220,6 +4558,14 @@ function forum_update_post($post, $mform, &$message) {
 /**
  * Given an object containing all the necessary data,
  * create a new discussion and return the id
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @param object $post
+ * @param mixed $mform
+ * @param string $message
+ * @return object
  */
 function forum_add_discussion($discussion, $mform=null, &$message=null) {
     global $USER, $CFG, $DB;
@@ -4289,11 +4635,14 @@ function forum_add_discussion($discussion, $mform=null, &$message=null) {
 
 /**
  * Deletes a discussion and handles all associated cleanup.
+ *
+ * @global object
  * @param object $discussion Discussion to delete
  * @param bool $fulldelete True when deleting entire forum
  * @param object $course Course
  * @param object $cm Course-module
  * @param object $forum Forum
+ * @return bool
  */
 function forum_delete_discussion($discussion, $fulldelete, $course, $cm, $forum) {
     global $DB;
@@ -4331,6 +4680,8 @@ function forum_delete_discussion($discussion, $fulldelete, $course, $cm, $forum)
 
 /**
  * Deletes a single forum post.
+ *
+ * @global object
  * @param object $post Forum post object
  * @param mixed $children Whether to delete children. If false, returns false
  *   if there are any children (without deleting the post). If true,
@@ -4342,6 +4693,7 @@ function forum_delete_discussion($discussion, $fulldelete, $course, $cm, $forum)
  * @param object $forum Forum
  * @param bool $skipcompletion True to skip updating completion state if it
  *   would otherwise be updated, i.e. when deleting entire forum anyway.
+ * @return bool
  */
 function forum_delete_post($post, $children, $course, $cm, $forum, $skipcompletion=false) {
     global $DB;
@@ -4389,7 +4741,10 @@ function forum_delete_post($post, $children, $course, $cm, $forum, $skipcompleti
 }
 
 /**
- *
+ * @global object
+ * @param object $post
+ * @param bool $children
+ * @return int
  */
 function forum_count_replies($post, $children=true) {
     global $DB;
@@ -4411,7 +4766,10 @@ function forum_count_replies($post, $children=true) {
 
 
 /**
- *
+ * @global object
+ * @param int $forumid
+ * @param mixed $value
+ * @return bool
  */
 function forum_forcesubscribe($forumid, $value=1) {
     global $DB;
@@ -4419,7 +4777,9 @@ function forum_forcesubscribe($forumid, $value=1) {
 }
 
 /**
- *
+ * @global object
+ * @param object $forum
+ * @return bool
  */
 function forum_is_forcesubscribed($forum) {
     global $DB;
@@ -4431,7 +4791,10 @@ function forum_is_forcesubscribed($forum) {
 }
 
 /**
- *
+ * @global object
+ * @param int $userid
+ * @param object $forum
+ * @return bool
  */
 function forum_is_subscribed($userid, $forum) {
     global $DB;
@@ -4463,6 +4826,10 @@ function forum_get_subscribed_forums($course) {
 
 /**
  * Adds user to the subscriber list
+ *
+ * @global object
+ * @param int $userid
+ * @param int $forumid
  */
 function forum_subscribe($userid, $forumid) {
     global $DB;
@@ -4480,6 +4847,10 @@ function forum_subscribe($userid, $forumid) {
 
 /**
  * Removes user from the subscriber list
+ *
+ * @global object
+ * @param int $userid
+ * @param int $forumid
  */
 function forum_unsubscribe($userid, $forumid) {
     global $DB;
@@ -4489,6 +4860,10 @@ function forum_unsubscribe($userid, $forumid) {
 /**
  * Given a new post, subscribes or unsubscribes as appropriate.
  * Returns some text which describes what happened.
+ *
+ * @global objec
+ * @param object $post
+ * @param object $forum
  */
 function forum_post_subscription($post, $forum) {
 
@@ -4540,13 +4915,20 @@ function forum_post_subscription($post, $forum) {
 
 /**
  * Generate and return the subscribe or unsubscribe link for a forum.
+ *
+ * @global object
+ * @global object
  * @param object $forum the forum. Fields used are $forum->id and $forum->forcesubscribe.
  * @param object $context the context object for this forum.
  * @param array $messages text used for the link in its various states
  *      (subscribed, unsubscribed, forcesubscribed or cantsubscribe).
  *      Any strings not passed in are taken from the $defaultmessages array
  *      at the top of the function.
- * @param
+ * @param bool $cantaccessagroup
+ * @param bool $fakelink
+ * @param bool $backtoindex
+ * @param array $subscribed_forums
+ * @return string
  */
 function forum_get_subscribe_link($forum, $context, $messages = array(), $cantaccessagroup = false, $fakelink=true, $backtoindex=false, $subscribed_forums=null) {
     global $CFG, $USER;
@@ -4615,7 +4997,13 @@ EOD;
 
 /**
  * Generate and return the track or no track link for a forum.
+ *
+ * @global object
+ * @global object
  * @param object $forum the forum. Fields used are $forum->id and $forum->forcesubscribe.
+ * @param array $messages
+ * @param bool $fakelink
+ * @return string
  */
 function forum_get_tracking_link($forum, $messages=array(), $fakelink=true) {
     global $CFG, $USER;
@@ -4667,6 +5055,9 @@ function forum_get_tracking_link($forum, $messages=array(), $fakelink=true) {
 
 /**
  * Returns true if user created new discussion already
+ *
+ * @global object
+ * @global object
  * @param int $forumid
  * @param int $userid
  * @return bool
@@ -4682,7 +5073,11 @@ function forum_user_has_posted_discussion($forumid, $userid) {
 }
 
 /**
- *
+ * @global object
+ * @global object
+ * @param int $forumid
+ * @param int $userid
+ * @return array
  */
 function forum_discussions_user_has_posted_in($forumid, $userid) {
     global $CFG, $DB;
@@ -4699,7 +5094,12 @@ function forum_discussions_user_has_posted_in($forumid, $userid) {
 }
 
 /**
- *
+ * @global object
+ * @global object
+ * @param int $forumid
+ * @param int $did
+ * @param int $userid
+ * @return bool
  */
 function forum_user_has_posted($forumid, $did, $userid) {
     global $DB;
@@ -4717,7 +5117,13 @@ function forum_user_has_posted($forumid, $did, $userid) {
 }
 
 /**
- *
+ * @global object
+ * @param object $forum
+ * @param object $currentgroup
+ * @param int $unused
+ * @param object $cm
+ * @param object $context
+ * @return bool
  */
 function forum_user_can_post_discussion($forum, $currentgroup=null, $unused=-1, $cm=NULL, $context=NULL) {
 // $forum is an object
@@ -4778,8 +5184,19 @@ function forum_user_can_post_discussion($forum, $currentgroup=null, $unused=-1, 
  * This function checks whether the user can reply to posts in a forum
  * discussion. Use forum_user_can_post_discussion() to check whether the user
  * can start discussions.
- * @param $forum - forum object
- * @param $user - user object
+ *
+ * @global object
+ * @global object
+ * @uses DEBUG_DEVELOPER
+ * @uses CONTEXT_MODULE
+ * @uses VISIBLEGROUPS
+ * @param object $forum forum object
+ * @param object $discussion
+ * @param object $user
+ * @param object $cm
+ * @param object $course
+ * @param object $context
+ * @return bool
  */
 function forum_user_can_post($forum, $discussion, $user=NULL, $cm=NULL, $course=NULL, $context=NULL) {
     global $USER, $DB;
@@ -4855,7 +5272,20 @@ function forum_user_can_post($forum, $discussion, $user=NULL, $cm=NULL, $course=
 }
 
 
-//checks to see if a user can view a particular post
+/**
+ * checks to see if a user can view a particular post
+ *
+ * @global object
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @uses SEPARATEGROUPS
+ * @param object $post
+ * @param object $course
+ * @param object $cm
+ * @param object $forum
+ * @param object $discussion
+ * @param object $user
+ */
 function forum_user_can_view_post($post, $course, $cm, $forum, $discussion, $user=NULL){
 
     global $CFG, $USER;
@@ -4881,7 +5311,14 @@ function forum_user_can_view_post($post, $course, $cm, $forum, $discussion, $use
 
 
 /**
- *
+ * @global object
+ * @global object
+ * @uses DEBUG_DEVELOPER
+ * @param object $forum
+ * @param object $discussion
+ * @param object $context
+ * @param object $user
+ * @return bool
  */
 function forum_user_can_see_discussion($forum, $discussion, $context, $user=NULL) {
     global $USER, $DB;
@@ -4918,7 +5355,14 @@ function forum_user_can_see_discussion($forum, $discussion, $context, $user=NULL
 
 
 /**
- *
+ * @global object
+ * @global object
+ * @param object $forum
+ * @param object $discussion
+ * @param object $post
+ * @param object $user
+ * @param object $cm
+ * @return bool
  */
 function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NULL) {
     global $USER, $DB;
@@ -4994,6 +5438,8 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
 /**
  * Prints the discussion view screen for a forum.
  *
+ * @global object
+ * @global object
  * @param object $course The current course object.
  * @param object $forum Forum to be printed.
  * @param int $maxdiscussions .
@@ -5002,7 +5448,7 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
  * @param int $groupmode Group mode of the forum (optional).
  * @param void $unused (originally current group)
  * @param int $page Page mode, page to display (optional).
- * @param int perpage The maximum number of discussions per page(optional)
+ * @param int $perpage The maximum number of discussions per page(optional)
  *
  */
 function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $displayformat='plain', $sort='',
@@ -5258,7 +5704,21 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
 
 
 /**
- *
+ * @global object
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @uses FORUM_MODE_FLATNEWEST
+ * @uses FORUM_MODE_FLATOLDEST
+ * @uses FORUM_MODE_THREADED
+ * @uses FORUM_MODE_NESTED
+ * @param object $course
+ * @param object $cm
+ * @param object $forum
+ * @param object $discussion
+ * @param object $post
+ * @param object $mode
+ * @param mixed $canreply
+ * @param bool $cancreate
  */
 function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode, $canreply=NULL, $canrate=false) {
 
@@ -5400,7 +5860,19 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
 
 
 /**
- *
+ * @global object
+ * @global object
+ * @uses FORUM_MODE_FLATNEWEST
+ * @param object $course
+ * @param object $cm
+ * @param object $forum
+ * @param object $discussion
+ * @param object $post
+ * @param object $mode
+ * @param object $ratings
+ * @param bool $reply
+ * @param bool $forumtracked
+ * @param array $posts
  */
 function forum_print_posts_flat($course, &$cm, $forum, $discussion, $post, $mode, $ratings, $reply, $forumtracked, $posts) {
     global $USER, $CFG;
@@ -5434,7 +5906,11 @@ function forum_print_posts_flat($course, &$cm, $forum, $discussion, $post, $mode
 
 
 /**
- * TODO document
+ * @todo Document this function
+ *
+ * @global object
+ * @global object
+ * @uses CONTEXT_MODULE
  */
 function forum_print_posts_threaded($course, &$cm, $forum, $discussion, $parent, $depth, $ratings, $reply, $forumtracked, $posts) {
     global $USER, $CFG;
@@ -5495,7 +5971,9 @@ function forum_print_posts_threaded($course, &$cm, $forum, $discussion, $parent,
 }
 
 /**
- *
+ * @todo Document this function
+ * @global object
+ * @global object
  */
 function forum_print_posts_nested($course, &$cm, $forum, $discussion, $parent, $ratings, $reply, $forumtracked, $posts) {
     global $USER, $CFG;
@@ -5533,6 +6011,12 @@ function forum_print_posts_nested($course, &$cm, $forum, $discussion, $parent, $
 
 /**
  * Returns all forum posts since a given time in specified forum.
+ *
+ * @todo Document this functions args
+ * @global object
+ * @global object
+ * @global object
+ * @global object
  */
 function forum_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0)  {
     global $CFG, $COURSE, $USER, $DB;
@@ -5652,7 +6136,8 @@ function forum_get_recent_mod_activity(&$activities, &$index, $timestart, $cours
 }
 
 /**
- *
+ * @todo Document this function
+ * @global object
  */
 function forum_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames) {
     global $CFG;
@@ -5692,6 +6177,11 @@ function forum_print_recent_mod_activity($activity, $courseid, $detail, $modname
 /**
  * recursively sets the discussion field to $discussionid on $postid and all its children
  * used when pruning a post
+ *
+ * @global object
+ * @param int $postid
+ * @param int $discussionid
+ * @return bool
  */
 function forum_change_discussionid($postid, $discussionid) {
     global $DB;
@@ -5706,6 +6196,12 @@ function forum_change_discussionid($postid, $discussionid) {
 
 /**
  * Prints the editing button on subscribers page
+ *
+ * @global object
+ * @global object
+ * @param int $courseid
+ * @param int $forumid
+ * @return string
  */
 function forum_update_subscriptions_button($courseid, $forumid) {
     global $CFG, $USER;
@@ -5724,11 +6220,12 @@ function forum_update_subscriptions_button($courseid, $forumid) {
            "<input type=\"submit\" value=\"$string\" /></form>";
 }
 
-/*
+/**
  * This function gets run whenever a role is assigned to a user in a context
  *
  * @param integer $userid
  * @param object $context
+ * @param itn $roleid
  * @return bool
  */
 function forum_role_assign($userid, $context, $roleid) {
@@ -5769,6 +6266,15 @@ function forum_role_unassign($userid, $context) {
 
 /**
  * Add subscriptions for new users
+ *
+ * @global object
+ * @uses CONTEXT_SYSTEM
+ * @uses CONTEXT_COURSE
+ * @uses CONTEXT_COURSECAT
+ * @uses FORUM_INITIALSUBSCRIBE
+ * @param int $userid
+ * @param object $context
+ * @return bool
  */
 function forum_add_user_default_subscriptions($userid, $context) {
     global $DB;
@@ -5840,6 +6346,16 @@ function forum_add_user_default_subscriptions($userid, $context) {
 
 /**
  * Remove subscriptions for a user in a context
+ *
+ * @global object
+ * @global object
+ * @uses CONTEXT_SYSTEM
+ * @uses CONTEXT_COURSECAT
+ * @uses CONTEXT_COURSE
+ * @uses CONTEXT_MODULE
+ * @param int $userid
+ * @param object $context
+ * @return bool
  */
 function forum_remove_user_subscriptions($userid, $context) {
 
@@ -5924,6 +6440,16 @@ function forum_remove_user_subscriptions($userid, $context) {
 
 /**
  * Remove post tracking for a user in a context
+ *
+ * @global object
+ * @global object
+ * @uses CONTEXT_SYSTEM
+ * @uses CONTEXT_COURSECAT
+ * @uses CONTEXT_COURSE
+ * @uses CONTEXT_MODULE
+ * @param int $userid
+ * @param object $context
+ * @return bool
  */
 function forum_remove_user_tracking($userid, $context) {
 
@@ -6035,6 +6561,9 @@ function forum_remove_user_tracking($userid, $context) {
 
 /**
  * Mark posts as read.
+ *
+ * @global object
+ * @global object
  * @param object $user object
  * @param array $postids array of post ids
  * @return boolean success
@@ -6110,6 +6639,10 @@ function forum_tp_mark_posts_read($user, $postids) {
 
 /**
  * Mark post as read.
+ * @global object
+ * @global object
+ * @param int $userid
+ * @param int $postid
  */
 function forum_tp_add_read_record($userid, $postid) {
     global $CFG, $DB;
@@ -6137,6 +6670,13 @@ function forum_tp_add_read_record($userid, $postid) {
 /**
  * Returns all records in the 'forum_read' table matching the passed keys, indexed
  * by userid.
+ *
+ * @global object
+ * @param int $userid
+ * @param int $postid
+ * @param int $discussionid
+ * @param int $forumid
+ * @return array
  */
 function forum_tp_get_read_records($userid=-1, $postid=-1, $discussionid=-1, $forumid=-1) {
     global $DB;
@@ -6169,6 +6709,10 @@ function forum_tp_get_read_records($userid=-1, $postid=-1, $discussionid=-1, $fo
 
 /**
  * Returns all read records for the provided user and discussion, indexed by postid.
+ *
+ * @global object
+ * @param inti $userid
+ * @param int $discussionid
  */
 function forum_tp_get_discussion_read_records($userid, $discussionid) {
     global $DB;
@@ -6179,6 +6723,8 @@ function forum_tp_get_discussion_read_records($userid, $discussionid) {
 
 /**
  * If its an old post, do nothing. If the record exists, the maintenance will clear it up later.
+ * 
+ * @return bool
  */
 function forum_tp_mark_post_read($userid, $post, $forumid) {
     if (!forum_tp_is_post_old($post)) {
@@ -6190,6 +6736,13 @@ function forum_tp_mark_post_read($userid, $post, $forumid) {
 
 /**
  * Marks a whole forum as read, for a given user
+ *
+ * @global object
+ * @global object
+ * @param object $user
+ * @param int $forumid
+ * @param int|bool $groupid
+ * @return bool
  */
 function forum_tp_mark_forum_read($user, $forumid, $groupid=false) {
     global $CFG, $DB;
@@ -6222,6 +6775,12 @@ function forum_tp_mark_forum_read($user, $forumid, $groupid=false) {
 
 /**
  * Marks a whole discussion as read, for a given user
+ *
+ * @global object
+ * @global object
+ * @param object $user
+ * @param int $discussionid
+ * @return bool
  */
 function forum_tp_mark_discussion_read($user, $discussionid) {
     global $CFG, $DB;
@@ -6243,7 +6802,9 @@ function forum_tp_mark_discussion_read($user, $discussionid) {
 }
 
 /**
- *
+ * @global object
+ * @param int $userid
+ * @param object $post
  */
 function forum_tp_is_post_read($userid, $post) {
     global $DB;
@@ -6252,7 +6813,9 @@ function forum_tp_is_post_read($userid, $post) {
 }
 
 /**
- *
+ * @global object
+ * @param object $post
+ * @param int $time Defautls to time()
  */
 function forum_tp_is_post_old($post, $time=null) {
     global $CFG;
@@ -6265,6 +6828,12 @@ function forum_tp_is_post_old($post, $time=null) {
 
 /**
  * Returns the count of records for the provided user and discussion.
+ *
+ * @global object
+ * @global object
+ * @param int $userid
+ * @param int $discussionid
+ * @return bool
  */
 function forum_tp_count_discussion_read_records($userid, $discussionid) {
     global $CFG, $DB;
@@ -6283,6 +6852,12 @@ function forum_tp_count_discussion_read_records($userid, $discussionid) {
 
 /**
  * Returns the count of records for the provided user and discussion.
+ *
+ * @global object
+ * @global object
+ * @param int $userid
+ * @param int $discussionid
+ * @return int
  */
 function forum_tp_count_discussion_unread_posts($userid, $discussionid) {
     global $CFG, $DB;
@@ -6300,6 +6875,11 @@ function forum_tp_count_discussion_unread_posts($userid, $discussionid) {
 
 /**
  * Returns the count of posts for the provided forum and [optionally] group.
+ * @global object
+ * @global object
+ * @param int $forumid
+ * @param int|bool $groupid
+ * @return int
  */
 function forum_tp_count_forum_posts($forumid, $groupid=false) {
     global $CFG, $DB;
@@ -6319,6 +6899,12 @@ function forum_tp_count_forum_posts($forumid, $groupid=false) {
 
 /**
  * Returns the count of records for the provided user and forum and [optionally] group.
+ * @global object
+ * @global object
+ * @param int $userid
+ * @param int $forumid
+ * @param int|bool $groupid
+ * @return int
  */
 function forum_tp_count_forum_read_records($userid, $forumid, $groupid=false) {
     global $CFG, $DB;
@@ -6346,6 +6932,12 @@ function forum_tp_count_forum_read_records($userid, $forumid, $groupid=false) {
 /**
  * Returns the count of records for the provided user and course.
  * Please note that group access is ignored!
+ *
+ * @global object
+ * @global object
+ * @param int $userid
+ * @param int $courseid
+ * @return array
  */
 function forum_tp_get_course_unread_posts($userid, $courseid) {
     global $CFG, $DB;
@@ -6385,6 +6977,13 @@ function forum_tp_get_course_unread_posts($userid, $courseid) {
 
 /**
  * Returns the count of records for the provided user and forum and [optionally] group.
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @param object $cm
+ * @param object $course
+ * @return int
  */
 function forum_tp_count_forum_unread_posts($cm, $course) {
     global $CFG, $USER, $DB;
@@ -6467,6 +7066,13 @@ function forum_tp_count_forum_unread_posts($cm, $course) {
 
 /**
  * Deletes read records for the specified index. At least one parameter must be specified.
+ *
+ * @global object
+ * @param int $userid
+ * @param int $postid
+ * @param int $discussionid
+ * @param int $forumid
+ * @return bool
  */
 function forum_tp_delete_read_records($userid=-1, $postid=-1, $discussionid=-1, $forumid=-1) {
     global $DB;
@@ -6503,6 +7109,8 @@ function forum_tp_delete_read_records($userid=-1, $postid=-1, $discussionid=-1, 
 /**
  * Get a list of forums not tracked by the user.
  *
+ * @global object
+ * @global object
  * @param int $userid The id of the user to use.
  * @param int $courseid The id of the course being checked.
  * @return mixed An array indexed by forum id, or false.
@@ -6533,6 +7141,9 @@ function forum_tp_get_untracked_forums($userid, $courseid) {
  * Checks the site settings, the user settings and the forum settings (if
  * requested).
  *
+ * @global object
+ * @global object
+ * @global object
  * @param mixed $forum The forum object to test, or the int id (optional).
  * @param mixed $userid The user object to check for (optional).
  * @return boolean
@@ -6576,6 +7187,9 @@ function forum_tp_can_track_forums($forum=false, $user=false) {
  * Tells whether a specific forum is tracked by the user. A user can optionally
  * be specified. If not specified, the current user is assumed.
  *
+ * @global object
+ * @global object
+ * @global object
  * @param mixed $forum If int, the id of the forum being checked; if object, the forum object
  * @param int $userid The id of the user being checked (optional).
  * @return boolean
@@ -6609,7 +7223,10 @@ function forum_tp_is_tracked($forum, $user=false) {
 }
 
 /**
- *
+ * @global object
+ * @global object
+ * @param int $forumid
+ * @param int $userid
  */
 function forum_tp_start_tracking($forumid, $userid=false) {
     global $USER, $DB;
@@ -6622,7 +7239,10 @@ function forum_tp_start_tracking($forumid, $userid=false) {
 }
 
 /**
- *
+ * @global object
+ * @global object
+ * @param int $forumid
+ * @param int $userid
  */
 function forum_tp_stop_tracking($forumid, $userid=false) {
     global $USER, $DB;
@@ -6644,6 +7264,9 @@ function forum_tp_stop_tracking($forumid, $userid=false) {
 
 /**
  * Clean old records from the forum_read table.
+ * @global object
+ * @global object
+ * @return void
  */
 function forum_tp_clean_read_records() {
     global $CFG, $DB;
@@ -6674,6 +7297,11 @@ function forum_tp_clean_read_records() {
 
 /**
  * Sets the last post for a given discussion
+ *
+ * @global object
+ * @global object
+ * @param into $discussionid
+ * @return bool|int
  **/
 function forum_discussion_update_last_post($discussionid) {
     global $CFG, $DB;
@@ -6708,14 +7336,14 @@ function forum_discussion_update_last_post($discussionid) {
 
 
 /**
- *
+ * @return array
  */
 function forum_get_view_actions() {
     return array('view discussion','search','forum','forums','subscribers');
 }
 
 /**
- *
+ * @return array
  */
 function forum_get_post_actions() {
     return array('add discussion','add post','delete discussion','delete post','move discussion','prune post','update post');
@@ -6723,6 +7351,9 @@ function forum_get_post_actions() {
 
 /**
  * this function returns all the separate forum ids, given a courseid
+ *
+ * @global object
+ * @global object
  * @param int $courseid
  * @return array
  */
@@ -6740,7 +7371,12 @@ function forum_get_separate_modules($courseid) {
 }
 
 /**
- *
+ * @global object
+ * @global object
+ * @global object
+ * @param object $forum
+ * @param object $cm
+ * @return bool
  */
 function forum_check_throttling($forum, $cm=null) {
     global $USER, $CFG, $DB;
@@ -6798,8 +7434,11 @@ function forum_check_throttling($forum, $cm=null) {
 
 /**
  * Removes all grades from gradebook
+ *
+ * @global object
+ * @global object
  * @param int $courseid
- * @param string optional type
+ * @param string $type optional
  */
 function forum_reset_gradebook($courseid, $type='') {
     global $CFG, $DB;
@@ -6826,6 +7465,9 @@ function forum_reset_gradebook($courseid, $type='') {
  * This function is used by the reset_course_userdata function in moodlelib.
  * This function will remove all posts from the specified forum
  * and clean up any related data.
+ *
+ * @global object
+ * @global object
  * @param $data the data submitted from the reset course.
  * @return array status array
  */
@@ -6954,6 +7596,7 @@ function forum_reset_userdata($data) {
 
 /**
  * Called by course/reset.php
+ *
  * @param $mform form passed by reference
  */
 function forum_reset_course_form_definition(&$mform) {
@@ -6978,6 +7621,7 @@ function forum_reset_course_form_definition(&$mform) {
 
 /**
  * Course reset form defaults.
+ * @return array
  */
 function forum_reset_course_form_defaults($course) {
     return array('reset_forum_all'=>1, 'reset_forum_subscriptions'=>0, 'reset_forum_track_prefs'=>0, 'reset_forum_ratings'=>1);
@@ -6985,14 +7629,17 @@ function forum_reset_course_form_defaults($course) {
 
 /**
  * Converts a forum to use the Roles System
- * @param $forum        - a forum object with the same attributes as a record
+ *
+ * @global object
+ * @global object
+ * @param object $forum        a forum object with the same attributes as a record
  *                        from the forum database table
- * @param $forummodid   - the id of the forum module, from the modules table
- * @param $teacherroles - array of roles that have moodle/legacy:teacher
- * @param $studentroles - array of roles that have moodle/legacy:student
- * @param $guestroles   - array of roles that have moodle/legacy:guest
- * @param $cmid         - the course_module id for this forum instance
- * @return boolean      - forum was converted or not
+ * @param int $forummodid   the id of the forum module, from the modules table
+ * @param array $teacherroles array of roles that have moodle/legacy:teacher
+ * @param array $studentroles array of roles that have moodle/legacy:student
+ * @param array $guestroles   array of roles that have moodle/legacy:guest
+ * @param int $cmid         the course_module id for this forum instance
+ * @return boolean      forum was converted or not
  */
 function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(),
                                 $studentroles=array(), $guestroles=array(), $cmid=NULL) {
@@ -7210,6 +7857,8 @@ function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(),
 
 /**
  * Returns array of forum aggregate types
+ *
+ * @return array
  */
 function forum_get_aggregate_types() {
     return array (FORUM_AGGREGATE_NONE  => get_string('aggregatenone', 'forum'),
@@ -7222,6 +7871,8 @@ function forum_get_aggregate_types() {
 
 /**
  * Returns array of forum layout modes
+ *
+ * @return array
  */
 function forum_get_layout_modes() {
     return array (FORUM_MODE_FLATOLDEST => get_string('modeflatoldestfirst', 'forum'),
@@ -7232,6 +7883,8 @@ function forum_get_layout_modes() {
 
 /**
  * Returns array of forum types
+ *
+ * @return array
  */
 function forum_get_forum_types() {
     return array ('general'  => get_string('generalforum', 'forum'),
@@ -7242,6 +7895,8 @@ function forum_get_forum_types() {
 
 /**
  * Returns array of all forum layout modes
+ *
+ * @return array
  */
 function forum_get_forum_types_all() {
     return array ('news'     => get_string('namenews','forum'),
@@ -7254,6 +7909,8 @@ function forum_get_forum_types_all() {
 
 /**
  * Returns array of forum open modes
+ *
+ * @return array
  */
 function forum_get_open_modes() {
     return array ('2' => get_string('openmode2', 'forum'),
@@ -7263,11 +7920,18 @@ function forum_get_open_modes() {
 
 /**
  * Returns all other caps used in module
+ *
+ * @return array
  */
 function forum_get_extra_capabilities() {
     return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames', 'moodle/site:trustcontent');
 }
 
+/**
+ * @package   mod-forum
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class forum_portfolio_caller extends portfolio_module_caller_base {
 
     protected $postid;
@@ -7279,7 +7943,9 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
     private $discussion;
     private $posts;
     private $keyedfiles;
-
+    /**
+     * @return array
+     */
     public static function expected_callbackargs() {
         return array(
             'postid'       => false,
@@ -7287,14 +7953,18 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
             'attachment'   => false,
         );
     }
-
+    /**
+     * @param array $callbackargs
+     */
     function __construct($callbackargs) {
         parent::__construct($callbackargs);
         if (!$this->postid && !$this->discussionid) {
             throw new portfolio_caller_exception('mustprovidediscussionorpost', 'forum');
         }
     }
-
+    /**
+     * @global object
+     */
     public function load_data() {
         global $DB;
 
@@ -7352,12 +8022,18 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
             $this->supportedformats = array(PORTFOLIO_FORMAT_PLAINHTML);
         }
     }
-
+    /**
+     * @global object
+     * @return string
+     */
     function get_return_url() {
         global $CFG;
         return $CFG->wwwroot . '/mod/forum/discuss.php?d=' . $this->discussion->id;
     }
-
+    /**
+     * @global object
+     * @return array
+     */
     function get_navigation() {
         global $CFG;
 
@@ -7369,7 +8045,12 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         );
         return array($navlinks, $this->cm);
     }
-
+    /**
+     * @global object
+     * @global object
+     * @uses PORTFOLIO_FORMAT_RICH
+     * @return mixed
+     */
     function prepare_package() {
         global $CFG, $SESSION;
         // either a whole discussion
@@ -7391,7 +8072,11 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         $post = $this->prepare_post($this->post);
         $this->get('exporter')->write_new_file($post, 'post.html', $manifest);
     }
-
+    /**
+     * @param array $files
+     * @param bool $justone
+     * @return bool|void
+     */
     private function copy_files($files, $justone=false) {
         if (empty($files)) {
             return;
@@ -7407,8 +8092,12 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         }
     }
     /**
-    * this is a very cut down version of what is in forum_make_mail_post
-    */
+     * this is a very cut down version of what is in forum_make_mail_post
+     *
+     * @global object
+     * @param int $post
+     * @return string
+     */
     private function prepare_post($post) {
         global $DB;
         static $users;
@@ -7464,7 +8153,9 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
 
         return $output;
     }
-
+    /**
+     * @return string
+     */
     function get_sha1() {
         $filesha = '';
         try {
@@ -7492,7 +8183,10 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         }
         return $filetime;
     }
-
+    /**
+     * @uses CONTEXT_MODULE
+     * @return bool
+     */
     function check_permissions() {
         $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
         if ($this->post) {
@@ -7502,7 +8196,9 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         }
         return has_capability('mod/forum:exportdiscussion', $context);
     }
-
+    /**
+     * @return string
+     */
     public static function display_name() {
         return get_string('modulename', 'forum');
     }
