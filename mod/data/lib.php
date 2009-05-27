@@ -1,27 +1,27 @@
-<?php  // $Id$
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 2005 Moodle Pty Ltd    http://moodle.com                //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+<?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/** Require portfoliolib.php */
 require_once($CFG->libdir . '/portfoliolib.php');
 
 // Some constants
@@ -39,19 +39,37 @@ define ('DATA_CAP_EXPORT', 'mod/data:viewalluserpresets');
 // Using the mod/data capability "viewalluserpresets" existing in Moodle 1.9.x.
 // In Moodle >= 2, new roles may be introduced and used instead.
 
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class data_field_base {     // Base class for Database Field Types (see field/*/field.class.php)
 
-    var $type = 'unknown';  // Subclasses must override the type with their name
-    var $data = NULL;       // The database object that this field belongs to
-    var $field = NULL;      // The field object itself, if we know it
+    /** @var string Subclasses must override the type with their name */
+    var $type = 'unknown';
+    /** @var object The database object that this field belongs to */
+    var $data = NULL;
+    /** @var object The field object itself, if we know it */
+    var $field = NULL;   
+    /** @var int Width of the icon for this fieldtype */
+    var $iconwidth = 16;
+    /** @var int Width of the icon for this fieldtype */
+    var $iconheight = 16;
+    /** @var object course module or cmifno */
+    var $cm;
+    /** @var object activity context */
+    var $context;
 
-    var $iconwidth = 16;    // Width of the icon for this fieldtype
-    var $iconheight = 16;   // Width of the icon for this fieldtype
-
-    var $cm;                // course module or cmifno
-    var $context;           // activity context
-
-// Constructor function
+    /**
+     * Constructor function
+     *
+     * @global object
+     * @uses CONTEXT_MODULE
+     * @param int $field
+     * @param int $data
+     * @param int $cm
+     */
     function __construct($field=0, $data=0, $cm=0) {   // Field or data or both, each can be id or object
         global $DB;
 
@@ -98,7 +116,11 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     }
 
 
-// This field just sets up a default field object
+    /**
+     * This field just sets up a default field object
+     *
+     * @return bool
+     */
     function define_default_field() {
         if (empty($this->data->id)) {
             notify('Programmer error: dataid not defined in field class');
@@ -116,7 +138,11 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         return true;
     }
 
-// Set up the field object according to data in an object.  Now is the time to clean it!
+    /**
+     * Set up the field object according to data in an object.  Now is the time to clean it!
+     *
+     * @return bool
+     */
     function define_field($data) {
         $this->field->type        = $this->type;
         $this->field->dataid      = $this->data->id;
@@ -143,8 +169,13 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         return true;
     }
 
-// Insert a new field in the database
-// We assume the field object is already defined as $this->field
+    /**
+     * Insert a new field in the database
+     * We assume the field object is already defined as $this->field
+     *
+     * @global object
+     * @return bool
+     */
     function insert_field() {
         global $DB;
 
@@ -161,7 +192,12 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     }
 
 
-// Update a field in the database
+    /**
+     * Update a field in the database
+     *
+     * @global object
+     * @return bool
+     */
     function update_field() {
         global $DB;
 
@@ -172,7 +208,12 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         return true;
     }
 
-// Delete a field completely
+    /**
+     * Delete a field completely
+     *
+     * @global object
+     * @return bool
+     */
     function delete_field() {
         global $DB;
 
@@ -183,7 +224,13 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         return true;
     }
 
-// Print the relevant form element in the ADD template for this field
+    /**
+     * Print the relevant form element in the ADD template for this field
+     *
+     * @global object
+     * @param int $recordid
+     * @return string
+     */
     function display_add_field($recordid=0){
         global $DB;
 
@@ -205,8 +252,14 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         return $str;
     }
 
-// Print the relevant form element to define the attributes for this field
-// viewable by teachers only.
+    /**
+     * Print the relevant form element to define the attributes for this field
+     * viewable by teachers only.
+     *
+     * @global object
+     * @global object
+     * @return void Output is echo'd
+     */
     function display_edit_field() {
         global $CFG, $DB;
 
@@ -242,7 +295,14 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         print_simple_box_end();
     }
 
-// Display the content of the field in browse mode
+    /**
+     * Display the content of the field in browse mode
+     *
+     * @global object
+     * @param int $recordid
+     * @param object $template
+     * @return bool|string
+     */
     function display_browse_field($recordid, $template) {
         global $DB;
 
@@ -264,7 +324,14 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         return false;
     }
 
-// Update the content of one data field in the data_content table
+    /**
+     * Update the content of one data field in the data_content table
+     * @global object
+     * @param int $recordid
+     * @param mixed $value
+     * @param string $name
+     * @return bool
+     */
     function update_content($recordid, $value, $name=''){
         global $DB;
 
@@ -281,7 +348,13 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         }
     }
 
-// Delete all content associated with the field
+    /**
+     * Delete all content associated with the field
+     *
+     * @global object
+     * @param int $recordid
+     * @return bool
+     */
     function delete_content($recordid=0) {
         global $DB;
 
@@ -302,37 +375,65 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         return $DB->delete_records('data_content', $conditions);
     }
 
-// Check if a field from an add form is empty
+    /**
+     * Check if a field from an add form is empty
+     *
+     * @param mixed $value
+     * @param mixed $name
+     * @return bool
+     */
     function notemptyfield($value, $name) {
         return !empty($value);
     }
 
-// Just in case a field needs to print something before the whole form
+    /**
+     * Just in case a field needs to print something before the whole form
+     */
     function print_before_form() {
     }
 
-// Just in case a field needs to print something after the whole form
+    /**
+     * Just in case a field needs to print something after the whole form
+     */
     function print_after_form() {
     }
 
 
-// Returns the sortable field for the content. By default, it's just content
-// but for some plugins, it could be content 1 - content4
+    /**
+     * Returns the sortable field for the content. By default, it's just content
+     * but for some plugins, it could be content 1 - content4
+     *
+     * @return string
+     */
     function get_sort_field() {
         return 'content';
     }
 
-// Returns the SQL needed to refer to the column.  Some fields may need to CAST() etc.
+    /**
+     * Returns the SQL needed to refer to the column.  Some fields may need to CAST() etc.
+     *
+     * @param string $fieldname
+     * @return string $fieldname
+     */
     function get_sort_sql($fieldname) {
         return $fieldname;
     }
 
-// Returns the name/type of the field
+    /**
+     * Returns the name/type of the field
+     *
+     * @return string
+     */
     function name() {
         return get_string('name'.$this->type, 'data');
     }
 
-// Prints the respective type icon
+    /**
+     * Prints the respective type icon
+     *
+     * @global object
+     * @return string
+     */
     function image() {
         global $CFG;
 
@@ -342,30 +443,50 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         return $str;
     }
 
-//  Per default, it is assumed that fields support text exporting. Override this (return false) on fields not supporting text exporting.
+    /**
+     * Per default, it is assumed that fields support text exporting.
+     * Override this (return false) on fields not supporting text exporting.
+     *
+     * @return bool true
+     */
     function text_export_supported() {
         return true;
     }
 
-//  Per default, return the record's text value only from the "content" field. Override this in fields class if necesarry.
+    /**
+     * Per default, return the record's text value only from the "content" field.
+     * Override this in fields class if necesarry.
+     *
+     * @param string $record
+     * @return string
+     */
     function export_text_value($record) {
         if ($this->text_export_supported()) {
             return $record->content;
         }
     }
 
+    /**
+     * @param string $relativepath
+     * @return bool false
+     */
     function file_ok($relativepath) {
         return false;
     }
 }
 
 
-/*****************************************************************************
-/* Given a template and a dataid, generate a default case template               *
- * input @param template - addtemplate, singletemplate, listtempalte, rsstemplate*
- *       @param dataid                                                       *
- * output null                                                               *
- *****************************************************************************/
+/**
+ * Given a template and a dataid, generate a default case template
+ *
+ * @global object
+ * @param object $data
+ * @param string template [addtemplate, singletemplate, listtempalte, rsstemplate]
+ * @param int $recordid
+ * @param bool $form
+ * @param bool $update
+ * @return bool|string
+ */
 function data_generate_default_template(&$data, $template, $recordid=0, $form=false, $update=true) {
     global $DB;
 
@@ -441,11 +562,17 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
 }
 
 
-/***********************************************************************
- * Search for a field name and replaces it with another one in all the *
- * form templates. Set $newfieldname as '' if you want to delete the   *
- * field from the form.                                                *
- ***********************************************************************/
+/**
+ * Search for a field name and replaces it with another one in all the 
+ * form templates. Set $newfieldname as '' if you want to delete the   
+ * field from the form.
+ *
+ * @global object
+ * @param object $data
+ * @param string $searchfieldname
+ * @param string $newfieldname
+ * @return bool
+ */
 function data_replace_field_in_templates($data, $searchfieldname, $newfieldname) {
     global $DB;
 
@@ -481,9 +608,13 @@ function data_replace_field_in_templates($data, $searchfieldname, $newfieldname)
 }
 
 
-/********************************************************
- * Appends a new field at the end of the form template. *
- ********************************************************/
+/**
+ * Appends a new field at the end of the form template.
+ *
+ * @global object
+ * @param object $data
+ * @param string $newfieldname
+ */
 function data_append_new_field_to_templates($data, $newfieldname) {
     global $DB;
 
@@ -509,10 +640,15 @@ function data_append_new_field_to_templates($data, $newfieldname) {
 }
 
 
-/************************************************************************
- * given a field name *
- * this function creates an instance of the particular subfield class   *
- ************************************************************************/
+/**
+ * given a field name
+ * this function creates an instance of the particular subfield class
+ *
+ * @global object
+ * @param string $name
+ * @param object $data
+ * @return object|bool
+ */
 function data_get_field_from_name($name, $data){
     global $DB;
 
@@ -525,10 +661,15 @@ function data_get_field_from_name($name, $data){
     }
 }
 
-/************************************************************************
- * given a field id *
- * this function creates an instance of the particular subfield class   *
- ************************************************************************/
+/**
+ * given a field id
+ * this function creates an instance of the particular subfield class
+ *
+ * @global object
+ * @param int $fieldid
+ * @param object $data
+ * @return bool|object
+ */
 function data_get_field_from_id($fieldid, $data){
     global $DB;
 
@@ -541,10 +682,15 @@ function data_get_field_from_id($fieldid, $data){
     }
 }
 
-/************************************************************************
- * given a field id *
- * this function creates an instance of the particular subfield class   *
- ************************************************************************/
+/**
+ * given a field id
+ * this function creates an instance of the particular subfield class
+ *
+ * @global object
+ * @param string $type
+ * @param object $data
+ * @return object
+ */
 function data_get_field_new($type, $data) {
     global $CFG;
 
@@ -554,11 +700,17 @@ function data_get_field_new($type, $data) {
     return $newfield;
 }
 
-/************************************************************************
- * returns a subclass field object given a record of the field, used to *
- * invoke plugin methods                                                *
- * input: $param $field - record from db                                *
- ************************************************************************/
+/**
+ * returns a subclass field object given a record of the field, used to
+ * invoke plugin methods
+ * input: $param $field - record from db
+ *
+ * @global object
+ * @param object $field
+ * @param object $data
+ * @param object $cm
+ * @return object
+ */
 function data_get_field($field, $data, $cm=null) {
     global $CFG;
 
@@ -573,7 +725,10 @@ function data_get_field($field, $data, $cm=null) {
 
 /**
  * Given record object (or id), returns true if the record belongs to the current user
- * @param mixed $rid - record object or id
+ *
+ * @global object
+ * @global object
+ * @param mixed $record record object or id
  * @return bool
  */
 function data_isowner($record) {
@@ -592,11 +747,12 @@ function data_isowner($record) {
     return ($record->userid == $USER->id);
 }
 
-/***********************************************************************
- * has a user reached the max number of entries?                       *
- * input object $data                                                  *
- * output bool                                                         *
- ***********************************************************************/
+/**
+ * has a user reached the max number of entries?
+ *
+ * @param object $data
+ * @return bool
+ */
 function data_atmaxentries($data){
     if (!$data->maxentries){
         return false;
@@ -606,24 +762,30 @@ function data_atmaxentries($data){
     }
 }
 
-/**********************************************************************
- * returns the number of entries already made by this user            *
- * input @param object $data                                          *
- * uses global $CFG, $USER                                            *
- * output int                                                         *
- **********************************************************************/
+/**
+ * returns the number of entries already made by this user
+ * 
+ * @global object
+ * @global object
+ * @param object $data                                                
+ * @return int
+ */
 function data_numentries($data){
     global $USER, $DB;
     $sql = 'SELECT COUNT(*) FROM {data_records} WHERE dataid=? AND userid=?';
     return $DB->count_records_sql($sql, array($data->id, $USER->id));
 }
 
-/****************************************************************
- * function that takes in a dataid and adds a record            *
- * this is used everytime an add template is submitted          *
- * input @param int $dataid, $groupid                           *
- * output bool                                                  *
- ****************************************************************/
+/**
+ * function that takes in a dataid and adds a record            
+ * this is used everytime an add template is submitted
+ *
+ * @global object
+ * @global object
+ * @param object $data
+ * @param int $groupid
+ * @return bool
+ */
 function data_add_record($data, $groupid=0){
     global $USER, $DB;
 
@@ -643,15 +805,16 @@ function data_add_record($data, $groupid=0){
     return $DB->insert_record('data_records', $record);
 }
 
-/*******************************************************************
- * check the multple existence any tag in a template               *
- * input @param string                                             *
- * output true-valid, false-invalid                                *
- * check to see if there are 2 or more of the same tag being used. *
- * input @param int $dataid,                                       *
- *       @param string $template                                   *
- * output bool                                                     *
- *******************************************************************/
+/**
+ * check the multple existence any tag in a template
+ *
+ * check to see if there are 2 or more of the same tag being used.
+ *
+ * @global object
+ * @param int $dataid,
+ * @param string $template                                   
+ * @return bool
+ */
 function data_tags_check($dataid, $template) {
     global $DB;
 
@@ -670,9 +833,13 @@ function data_tags_check($dataid, $template) {
     return $tagsok;
 }
 
-/************************************************************************
- * Adds an instance of a data                                           *
- ************************************************************************/
+/**
+ * Adds an instance of a data
+ *
+ * @global object
+ * @param object $data
+ * @return $int
+ */
 function data_add_instance($data) {
     global $DB;
 
@@ -691,9 +858,13 @@ function data_add_instance($data) {
     return $data->id;
 }
 
-/************************************************************************
- * updates an instance of a data                                        *
- ************************************************************************/
+/**
+ * updates an instance of a data
+ *
+ * @global object
+ * @param object $data
+ * @return bool
+ */
 function data_update_instance($data) {
     global $DB;
 
@@ -718,9 +889,13 @@ function data_update_instance($data) {
 
 }
 
-/************************************************************************
- * deletes an instance of a data                                        *
- ************************************************************************/
+/**
+ * deletes an instance of a data
+ *
+ * @global object
+ * @param int $id
+ * @return bool
+ */
 function data_delete_instance($id) {    // takes the dataid
     global $DB;
 
@@ -757,9 +932,16 @@ function data_delete_instance($id) {    // takes the dataid
     return $result;
 }
 
-/************************************************************************
- * returns a summary of data activity of this user                      *
- ************************************************************************/
+/**
+ * returns a summary of data activity of this user
+ *
+ * @global object
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $data
+ * @return object|null
+ */
 function data_user_outline($course, $user, $mod, $data) {
     global $DB;
 
@@ -775,9 +957,15 @@ function data_user_outline($course, $user, $mod, $data) {
     return NULL;
 }
 
-/************************************************************************
- * Prints all the records uploaded by this user                         *
- ************************************************************************/
+/**
+ * Prints all the records uploaded by this user
+ *
+ * @global object
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $data
+ */
 function data_user_complete($course, $user, $mod, $data) {
     global $DB;
 
@@ -789,7 +977,8 @@ function data_user_complete($course, $user, $mod, $data) {
 /**
  * Return grade for given user or all users.
  *
- * @param int $dataid id of data
+ * @global object
+ * @param object $data
  * @param int $userid optional user id, 0 means all users
  * @return array array of grades, false if none
  */
@@ -813,8 +1002,11 @@ function data_get_user_grades($data, $userid=0) {
 /**
  * Update activity grades
  *
+ * @global object
+ * @global object
  * @param object $data
  * @param int $userid specific user only, 0 means all
+ * @param bool $nullifnone
  */
 function data_update_grades($data, $userid=0, $nullifnone=true) {
     global $CFG, $DB;
@@ -839,6 +1031,8 @@ function data_update_grades($data, $userid=0, $nullifnone=true) {
 
 /**
  * Update all grades in gradebook.
+ *
+ * @global object
  */
 function data_upgrade_grades() {
     global $DB;
@@ -868,6 +1062,7 @@ function data_upgrade_grades() {
 /**
  * Update/create grade item for given data
  *
+ * @global object
  * @param object $data object with extra cmidnumber
  * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return object grade_item
@@ -902,6 +1097,7 @@ function data_grade_item_update($data, $grades=NULL) {
 /**
  * Delete grade item for given data
  *
+ * @global object
  * @param object $data object
  * @return object grade_item
  */
@@ -912,9 +1108,12 @@ function data_grade_item_delete($data) {
     return grade_update('mod/data', $data->course, 'mod', 'data', $data->id, 0, NULL, array('deleted'=>1));
 }
 
-/************************************************************************
- * returns a list of participants of this database                      *
- ************************************************************************/
+/**
+ * returns a list of participants of this database
+ *
+ * @global object
+ * @return array
+ */
 function data_get_participants($dataid) {
 // Returns the users with data in one data
 // (users with records in data_records, data_comments and data_ratings)
@@ -954,15 +1153,20 @@ function data_get_participants($dataid) {
 }
 
 // junk functions
-/************************************************************************
- * takes a list of records, the current data, a search string,          *
- * and mode to display prints the translated template                   *
- * input @param array $records                                          *
- *       @param object $data                                            *
- *       @param string $search                                          *
- *       @param string $template                                        *
- * output null                                                          *
- ************************************************************************/
+/**
+ * takes a list of records, the current data, a search string,          
+ * and mode to display prints the translated template
+ *
+ * @global object
+ * @global object
+ * @param string $template
+ * @param array $records                                          
+ * @param object $data
+ * @param string $search                                          
+ * @param int $page
+ * @param bool $return
+ * @return mixed
+ */
 function data_print_template($template, $records, $data, $search='', $page=0, $return=false) {
     global $CFG, $DB;
     $cm = get_coursemodule_from_instance('data', $data->id);
@@ -1093,19 +1297,26 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
 }
 
 
-/************************************************************************
- * function that takes in the current data, number of items per page,   *
- * a search string and prints a preference box in view.php              *
- *                                                                      *
- * This preference box prints a searchable advanced search template if  *
- *     a) A template is defined                                         *
- *  b) The advanced search checkbox is checked.                         *
- *                                                                      *
- * input @param object $data                                            *
- *       @param int $perpage                                            *
- *       @param string $search                                          *
- * output null                                                          *
- ************************************************************************/
+/**
+ * function that takes in the current data, number of items per page,   
+ * a search string and prints a preference box in view.php              
+ *                                                                      
+ * This preference box prints a searchable advanced search template if  
+ *     a) A template is defined                                         
+ *  b) The advanced search checkbox is checked.                         
+ *
+ * @global object
+ * @global object
+ * @param object $data                                            
+ * @param int $perpage                                            
+ * @param string $search
+ * @param string $sort
+ * @param string $order
+ * @param array $search_array
+ * @param int $advanced
+ * @param string $mode
+ * @return void
+ */
 function data_print_preference_form($data, $perpage, $search, $sort='', $order='ASC', $search_array = '', $advanced = 0, $mode= ''){
     global $CFG, $DB;
 
@@ -1301,6 +1512,13 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '</div>';
 }
 
+/**
+ * @global object
+ * @global object
+ * @param object $data
+ * @param object $record
+ * @return void Output echo'd
+ */
 function data_print_ratings($data, $record) {
     global $USER, $DB;
 
@@ -1341,9 +1559,16 @@ function data_print_ratings($data, $record) {
     }
 }
 
+/**
+ * Print the multiple ratings on a post given to the current user by others.
+ * Scale is an array of ratings
+ *
+ * @staticvar string $strrate
+ * @param int $recordid
+ * @param array $scale
+ * @param bool $link
+ */
 function data_print_ratings_mean($recordid, $scale, $link=true) {
-// Print the multiple ratings on a post given to the current user by others.
-// Scale is an array of ratings
     static $strrate;
 
     $mean = data_get_ratings_mean($recordid, $scale);
@@ -1363,11 +1588,16 @@ function data_print_ratings_mean($recordid, $scale, $link=true) {
     }
 }
 
-
+/**
+ * Return the mean rating of a post given to the current user by others.
+ * Scale is an array of possible ratings in the scale
+ * Ratings is an optional simple array of actual ratings (just integers)
+ *
+ * @param int $recordid
+ * @param array $scale
+ * @param array $ratings
+ */
 function data_get_ratings_mean($recordid, $scale, $ratings=NULL) {
-// Return the mean rating of a post given to the current user by others.
-// Scale is an array of possible ratings in the scale
-// Ratings is an optional simple array of actual ratings (just integers)
     global $DB;
 
     if (!$ratings) {
@@ -1403,10 +1633,18 @@ function data_get_ratings_mean($recordid, $scale, $ratings=NULL) {
 }
 
 
+/**
+ * Print the menu of ratings as part of a larger form.
+ * If the post has already been - set that value.
+ * Scale is an array of ratings
+ *
+ * @global object
+ * @staticvar string $strrate
+ * @param int $recordid
+ * @param int $userid
+ * @param array $scale
+ */
 function data_print_rating_menu($recordid, $userid, $scale) {
-// Print the menu of ratings as part of a larger form.
-// If the post has already been - set that value.
-// Scale is an array of ratings
     global $DB;
 
     static $strrate;
@@ -1424,6 +1662,11 @@ function data_print_rating_menu($recordid, $userid, $scale) {
 
 /**
  * Returns a list of ratings for a particular post - sorted.
+ *
+ * @global object
+ * @param int $recordid
+ * @param string $sort
+ * @return array
  */
 function data_get_ratings($recordid, $sort="u.firstname ASC") {
     global  $DB;
@@ -1434,7 +1677,17 @@ function data_get_ratings($recordid, $sort="u.firstname ASC") {
                                ORDER BY $sort", array($recordid));
 }
 
-// prints all comments + a text box for adding additional comment
+/**
+ * Prints all comments + a text box for adding additional comment
+ *
+ * @global object
+ * @global object
+ * @param object $data
+ * @param object $record
+ * @param int $page
+ * @param bool $mform
+ * @return void Output is echo'd
+ */
 function data_print_comments($data, $record, $page=0, $mform=false) {
     global $CFG, $DB;
 
@@ -1472,7 +1725,18 @@ function data_print_comments($data, $record, $page=0, $mform=false) {
     }
 }
 
-// prints a single comment entry
+/**
+ * prints a single comment entry
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @param object $data
+ * @param string $comment
+ * @param int $page
+ * @return void Output is echo'd
+ */
 function data_print_comment($data, $comment, $page=0) {
     global $USER, $CFG, $DB;
 
@@ -1527,15 +1791,30 @@ function data_print_comment($data, $comment, $page=0) {
 }
 
 
-// For Participantion Reports
+/**
+ * For Participantion Reports
+ *
+ * @return array
+ */
 function data_get_view_actions() {
     return array('view');
 }
 
+/**
+ * @return array
+ */
 function data_get_post_actions() {
     return array('add','update','record delete');
 }
 
+/**
+ * @global object
+ * @global object
+ * @param string $name
+ * @param int $dataid
+ * @param int $fieldid
+ * @return bool
+ */
 function data_fieldname_exists($name, $dataid, $fieldid=0) {
     global $CFG, $DB;
 
@@ -1550,6 +1829,9 @@ function data_fieldname_exists($name, $dataid, $fieldid=0) {
     }
 }
 
+/**
+ * @param array $fieldinput
+ */
 function data_convert_arrays_to_strings(&$fieldinput) {
     foreach ($fieldinput as $key => $val) {
         if (is_array($val)) {
@@ -1567,14 +1849,20 @@ function data_convert_arrays_to_strings(&$fieldinput) {
 
 /**
  * Converts a database (module instance) to use the Roles System
- * @param $data         - a data object with the same attributes as a record
- *                        from the data database table
- * @param $datamodid    - the id of the data module, from the modules table
- * @param $teacherroles - array of roles that have moodle/legacy:teacher
- * @param $studentroles - array of roles that have moodle/legacy:student
- * @param $guestroles   - array of roles that have moodle/legacy:guest
- * @param $cmid         - the course_module id for this data instance
- * @return boolean      - data module was converted or not
+ *
+ * @global object
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @uses CAP_PREVENT
+ * @uses CAP_ALLOW
+ * @param object $data a data object with the same attributes as a record
+ *                     from the data database table
+ * @param int $datamodid the id of the data module, from the modules table
+ * @param array $teacherroles array of roles that have moodle/legacy:teacher
+ * @param array $studentroles array of roles that have moodle/legacy:student
+ * @param array $guestroles array of roles that have moodle/legacy:guest
+ * @param int $cmid the course_module id for this data instance
+ * @return boolean data module was converted or not
  */
 function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array(), $cmid=NULL) {
     global $CFG, $DB;
@@ -1701,8 +1989,12 @@ function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array
     return true;
 }
 
-/*
+/**
  * Returns the best name to show for a preset
+ *
+ * @param string $shortname
+ * @param  string $path
+ * @return string
  */
 function data_preset_name($shortname, $path) {
 
@@ -1716,8 +2008,12 @@ function data_preset_name($shortname, $path) {
     }
 }
 
-/*
+/**
  * Returns an array of all the available presets
+ *
+ * @global object
+ * @global object
+ * @return array
  */
 function data_get_available_presets($context) {
     global $CFG, $USER;
@@ -1780,7 +2076,15 @@ function data_get_available_presets($context) {
     return $presets;
 }
 
-
+/**
+ * @global object
+ * @global string
+ * @global string
+ * @param object $course
+ * @param object $cm
+ * @param object $data
+ * @param string $currenttab
+ */
 function data_print_header($course, $cm, $data, $currenttab='') {
 
     global $CFG, $displaynoticegood, $displaynoticebad;
@@ -1811,6 +2115,13 @@ function data_print_header($course, $cm, $data, $currenttab='') {
     }
 }
 
+/**
+ * @global object
+ * @param object $data
+ * @param mixed $currentgroup
+ * @param int $groupmode
+ * @return bool
+ */
 function data_user_can_add_entry($data, $currentgroup, $groupmode) {
     global $USER;
 
@@ -1840,6 +2151,9 @@ function data_user_can_add_entry($data, $currentgroup, $groupmode) {
 }
 
 
+/**
+ * @return bool
+ */
 function is_directory_a_preset($directory) {
     $directory = rtrim($directory, '/\\') . '/';
     $status = file_exists($directory.'singletemplate.html') &&
@@ -1856,7 +2170,9 @@ function is_directory_a_preset($directory) {
     return $status;
 }
 
-
+/**
+ * @return bool
+ */
 function clean_preset($folder) {
     $status = @unlink($folder.'/singletemplate.html') &&
               @unlink($folder.'/listtemplate.html') &&
@@ -1875,8 +2191,20 @@ function clean_preset($folder) {
     return $status;
 }
 
-
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class PresetImporter {
+    /**
+     * @global object
+     * @param object $course
+     * @param object $cm
+     * @param object $data
+     * @param int $userid
+     * @param string $shortname
+     */
     function PresetImporter($course, $cm, $data, $userid, $shortname) {
         global $CFG;
         $this->course = $course;
@@ -1886,7 +2214,11 @@ class PresetImporter {
         $this->shortname = $shortname;
         $this->folder = data_preset_path($course, $userid, $shortname);
     }
-
+    /**
+     * @global object
+     * @global object
+     * @return array
+     */
     function get_settings() {
         global $CFG, $DB;
 
@@ -1963,6 +2295,9 @@ class PresetImporter {
         return array($settings, $fields, $currentfields);
     }
 
+    /**
+     *
+     */
     function import_options() {
         if (!confirm_sesskey()) {
             print_error('invalidsesskey');
@@ -2027,6 +2362,11 @@ class PresetImporter {
 
     }
 
+    /**
+     * @global object
+     * @global object
+     * @return bool
+     */
     function import() {
         global $CFG, $DB;
 
@@ -2142,6 +2482,14 @@ class PresetImporter {
     }
 }
 
+/**
+ * @global object
+ * @global object
+ * @param object $course
+ * @param int $userid
+ * @param string $shortname
+ * @return string
+ */
 function data_preset_path($course, $userid, $shortname) {
     global $USER, $CFG;
 
@@ -2163,6 +2511,7 @@ function data_preset_path($course, $userid, $shortname) {
 /**
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the data.
+ *
  * @param $mform form passed by reference
  */
 function data_reset_course_form_definition(&$mform) {
@@ -2181,6 +2530,7 @@ function data_reset_course_form_definition(&$mform) {
 
 /**
  * Course reset form defaults.
+ * @return array
  */
 function data_reset_course_form_defaults($course) {
     return array('reset_data'=>0, 'reset_data_ratings'=>1, 'reset_data_comments'=>1, 'reset_data_notenrolled'=>0);
@@ -2188,8 +2538,11 @@ function data_reset_course_form_defaults($course) {
 
 /**
  * Removes all grades from gradebook
+ *
+ * @global object
+ * @global object
  * @param int $courseid
- * @param string optional type
+ * @param string $type optional type
  */
 function data_reset_gradebook($courseid, $type='') {
     global $CFG, $DB;
@@ -2208,7 +2561,10 @@ function data_reset_gradebook($courseid, $type='') {
 /**
  * Actual implementation of the rest coures functionality, delete all the
  * data responses for course $data->courseid.
- * @param $data the data submitted from the reset course.
+ *
+ * @global object
+ * @global object
+ * @param object $data the data submitted from the reset course.
  * @return array status array
  */
 function data_reset_userdata($data) {
@@ -2314,6 +2670,8 @@ function data_reset_userdata($data) {
 
 /**
  * Returns all other caps used in module
+ *
+ * @return array
  */
 function data_get_extra_capabilities() {
     return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames');
@@ -2336,6 +2694,15 @@ function data_supports($feature) {
         default: return null;
             }
 }
+/**
+ * @global object
+ * @param array $export
+ * @param string $delimiter_name
+ * @param object $database
+ * @param int $count
+ * @param bool $return
+ * @return string|void
+ */
 function data_export_csv($export, $delimiter_name, $dataname, $count, $return=false) {
     global $CFG;
     require_once($CFG->libdir . '/csvlib.class.php');
@@ -2369,7 +2736,13 @@ function data_export_csv($export, $delimiter_name, $dataname, $count, $return=fa
     return $returnstr;
 }
 
-
+/**
+ * @global object
+ * @param array $export
+ * @param string $dataname
+ * @param int $count
+ * @return string
+ */
 function data_export_xls($export, $dataname, $count) {
     global $CFG;
     require_once("$CFG->libdir/excellib.class.php");
@@ -2398,7 +2771,13 @@ function data_export_xls($export, $dataname, $count) {
     return $filename;
 }
 
-
+/**
+ * @global object
+ * @param array $export
+ * @param string $dataname
+ * @param int $count
+ * @param string
+ */
 function data_export_ods($export, $dataname, $count) {
     global $CFG;
     require_once("$CFG->libdir/odslib.class.php");
@@ -2426,6 +2805,13 @@ function data_export_ods($export, $dataname, $count) {
     return $filename;
 }
 
+/**
+ * @global object
+ * @param int $dataid
+ * @param array $fields
+ * @param array $selectedfields
+ * @return array
+ */
 function data_get_exportdata($dataid, $fields, $selectedfields) {
     global $DB;
 
@@ -2463,6 +2849,11 @@ function data_get_exportdata($dataid, $fields, $selectedfields) {
 
 /**
  * Lists all browsable file areas
+ *
+ * @param object $course
+ * @param object $cm
+ * @param object $context
+ * @return array
  */
 function data_get_file_areas($course, $cm, $context) {
     $areas = array();
@@ -2471,6 +2862,15 @@ function data_get_file_areas($course, $cm, $context) {
 
 /**
  * Serves the data attachments. Implements needed access control ;-)
+ *
+ * @global object
+ * @global object
+ * @param object $course
+ * @param object $cminfo
+ * @param object $context
+ * @param string filearea
+ * @param array $args
+ * @return bool
  */
 function data_pluginfile($course, $cminfo, $context, $filearea, $args) {
     global $CFG, $DB;
@@ -2534,20 +2934,36 @@ function data_pluginfile($course, $cminfo, $context, $filearea, $args) {
     return false;
 }
 
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 class data_portfolio_caller extends portfolio_module_caller_base {
 
+    /** @var int */
     protected $recordid;
+    /** @var string */
     protected $exporttype;
+    /** @var string */
     protected $delimiter_name;
 
+    /** @var object */
     private $data;
+    /**#@+ @var array */
     private $selectedfields;
     private $fields;
     private $fieldtypes;
     private $exportdata;
+    /**#@-*/
+    /**#@+ @var object */
     private $singlerecord;
     private $singlefield;
-
+    /**#@-*/
+    /**
+     * @return array
+     */
     public static function expected_callbackargs() {
         return array(
             'id'             => true,
@@ -2556,7 +2972,9 @@ class data_portfolio_caller extends portfolio_module_caller_base {
             'exporttype'     => false,
         );
     }
-
+    /**
+     * @param array $callbackargs
+     */
     public function __construct($callbackargs) {
         parent::__construct($callbackargs);
         if (empty($this->exporttype)) {
@@ -2570,6 +2988,9 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         }
     }
 
+    /**
+     * @global object
+     */
     public function load_data() {
         global $DB;
         if (!$this->cm = get_coursemodule_from_id('data', $this->id)) {
@@ -2606,12 +3027,20 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         }
     }
 
+    /**
+     * @todo penny  later when we suport exporting to more than just csv, we may
+     * need to ask the user here if we have not already passed it
+     *
+     * @return bool
+     */
     public function has_export_config() {
-        // @todo penny  later when we suport exporting to more than just csv, we may need to ask the user here
-        // if we have not already passed it
         return false;
     }
 
+    /**
+     * @uses PORTFOLIO_TIME_LOW
+     * @return mixed
+     */
     public function expected_time() {
         if ($this->exporttype == 'single') {
             return PORTFOLIO_TIME_LOW;
@@ -2619,6 +3048,9 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         return portfolio_expected_time_db(count($this->exportdata));
     }
 
+    /**
+     * @return string
+     */
     public function get_sha1() {
         if ($this->exporttype == 'singlefile') {
             return $this->singlefile->get_contenthash();
@@ -2644,7 +3076,9 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         }
         return sha1($str . ',' . $this->exporttype);
     }
-
+    /**
+     * @global object
+     */
     public function prepare_package() {
         global $DB;
         $count = count($this->exportdata);
@@ -2680,14 +3114,24 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         );
     }
 
+    /**
+     * @return bool
+     */
     public function check_permissions() {
         return has_capability('mod/data:exportallentries', get_context_instance(CONTEXT_MODULE, $this->cm->id));
     }
 
+    /**
+     *  @return string
+     */
     public static function display_name() {
         return get_string('modulename', 'data');
     }
 
+    /**
+     * @global object
+     * @return bool|void
+     */
     public function __wakeup() {
         global $CFG;
         if (empty($CFG)) {
@@ -2699,6 +3143,10 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         }
     }
 
+    /**
+     * @global object
+     * @return string
+     */
     private function exportsingle() {
         global $DB;
     // Replacing tags
@@ -2751,6 +3199,14 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         return str_ireplace($patterns, $replacement, $this->data->singletemplate);
     }
 
+    /**
+     * @param array $fields
+     * @param object $record
+     * @uses PORTFOLIO_FORMAT_PLAINHTML
+     * @uses PORTFOLIO_FORMAT_FILE
+     * @uses PORTFOLIO_FORMAT_RICHHTML
+     * @return array
+     */
     public static function formats($fields, $record) {
         $formats = array(PORTFOLIO_FORMAT_PLAINHTML);
         $includedfiles = array();

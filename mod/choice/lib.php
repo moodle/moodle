@@ -1,5 +1,27 @@
-<?php // $Id$
+<?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/** @global int $COLUMN_HEIGHT */
 $COLUMN_HEIGHT = 300;
 
 define('CHOICE_PUBLISH_ANONYMOUS', '0');
@@ -13,19 +35,30 @@ define('CHOICE_SHOWRESULTS_ALWAYS',       '3');
 define('CHOICE_DISPLAY_HORIZONTAL',  '0');
 define('CHOICE_DISPLAY_VERTICAL',    '1');
 
+/** @global array $CHOICE_PUBLISH */
 $CHOICE_PUBLISH = array (CHOICE_PUBLISH_ANONYMOUS  => get_string('publishanonymous', 'choice'),
                          CHOICE_PUBLISH_NAMES      => get_string('publishnames', 'choice'));
 
+/** @global array $CHOICE_SHOWRESULTS */
 $CHOICE_SHOWRESULTS = array (CHOICE_SHOWRESULTS_NOT          => get_string('publishnot', 'choice'),
                          CHOICE_SHOWRESULTS_AFTER_ANSWER => get_string('publishafteranswer', 'choice'),
                          CHOICE_SHOWRESULTS_AFTER_CLOSE  => get_string('publishafterclose', 'choice'),
                          CHOICE_SHOWRESULTS_ALWAYS       => get_string('publishalways', 'choice'));
 
+/** @global array $CHOICE_DISPLAY */
 $CHOICE_DISPLAY = array (CHOICE_DISPLAY_HORIZONTAL   => get_string('displayhorizontal', 'choice'),
                          CHOICE_DISPLAY_VERTICAL     => get_string('displayvertical','choice'));
 
 /// Standard functions /////////////////////////////////////////////////////////
 
+/**
+ * @global object
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $choice
+ * @return object|null
+ */
 function choice_user_outline($course, $user, $mod, $choice) {
     global $DB;
     if ($answer = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $user->id))) {
@@ -36,7 +69,14 @@ function choice_user_outline($course, $user, $mod, $choice) {
     return NULL;
 }
 
-
+/**
+ * @global object
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $choice
+ * @return string|void
+ */
 function choice_user_complete($course, $user, $mod, $choice) {
     global $DB;
     if ($answer = $DB->get_record('choice_answers', array("choiceid" => $choice->id, "userid" => $user->id))) {
@@ -48,13 +88,18 @@ function choice_user_complete($course, $user, $mod, $choice) {
     }
 }
 
-
+/**
+ * Given an object containing all the necessary data,
+ * (defined by the form in mod_form.php) this function
+ * will create a new instance and return the id number
+ * of the new instance.
+ *
+ * @global object
+ * @param object $choice
+ * @return int
+ */
 function choice_add_instance($choice) {
     global $DB;
-// Given an object containing all the necessary data,
-// (defined by the form in mod_form.php) this function
-// will create a new instance and return the id number
-// of the new instance.
 
     $choice->timemodified = time();
 
@@ -82,12 +127,17 @@ function choice_add_instance($choice) {
     return $choice->id;
 }
 
-
+/**
+ * Given an object containing all the necessary data,
+ * (defined by the form in mod_form.php) this function
+ * will update an existing instance with new data.
+ *
+ * @global object
+ * @param object $choice
+ * @return bool
+ */
 function choice_update_instance($choice) {
     global $DB;
-// Given an object containing all the necessary data,
-// (defined by the form in mod_form.php) this function
-// will update an existing instance with new data.
 
     $choice->id = $choice->instance;
     $choice->timemodified = time();
@@ -126,6 +176,14 @@ function choice_update_instance($choice) {
 
 }
 
+/**
+ * @global object
+ * @param object $choice
+ * @param object $user
+ * @param object $cm
+ * @param array $allresponses
+ * @return void output is echo'd
+ */
 function choice_show_form($choice, $user, $cm, $allresponses) {
     global $DB;
 //$cdisplay is an array of the display info for a choice $cdisplay[$optionid]->text  - text name of option.
@@ -242,6 +300,14 @@ function choice_show_form($choice, $user, $cm, $allresponses) {
     echo "</div>";
 }
 
+/**
+ * @global object
+ * @param int $formanswer
+ * @param object $choice
+ * @param int $userid
+ * @param int $courseid
+ * @param object $cm
+ */
 function choice_user_submit_response($formanswer, $choice, $userid, $courseid, $cm) {
     global $DB;
     $current = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $userid));
@@ -311,6 +377,11 @@ WHERE
     }
 }
 
+/**
+ * @param array $user
+ * @param object $cm
+ * @return void Output is echo'd
+ */
 function choice_show_reportlink($user, $cm) {
     $responsecount =0;
     foreach($user as $optionid => $userlist) {
@@ -324,6 +395,20 @@ function choice_show_reportlink($user, $cm) {
     echo '</div>';
 }
 
+/**
+ * @global object
+ * @global int
+ * @global string
+ * @uses CONTEXT_MODULE
+ * @uses CHOICE_PUBLISH_NAMES
+ * @uses CHOICE_PUBLISH_ANONYMOUS
+ * @param object $choice
+ * @param object $course
+ * @param object $cm
+ * @param array $allresponses
+ * @param int $forcepublish
+ * @return void Output is echo'd
+ */
 function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish='') {
     global $CFG, $COLUMN_HEIGHT, $FULLSCRIPT;
 
@@ -561,7 +646,12 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
     }
 }
 
-
+/**
+ * @global object
+ * @param array $attemptids
+ * @param int $choiceid
+ * @return bool
+ */
 function choice_delete_responses($attemptids, $choiceid) {
     global $DB;
     if(!is_array($attemptids) || empty($attemptids)) {
@@ -583,11 +673,17 @@ function choice_delete_responses($attemptids, $choiceid) {
 }
 
 
+/**
+ * Given an ID of an instance of this module,
+ * this function will permanently delete the instance
+ * and any data that depends on it.
+ *
+ * @global object
+ * @param int $id
+ * @return bool
+ */
 function choice_delete_instance($id) {
     global $DB;
-// Given an ID of an instance of this module,
-// this function will permanently delete the instance
-// and any data that depends on it.
 
     if (! $choice = $DB->get_record("choice", array("id"=>"$id"))) {
         return false;
@@ -610,10 +706,14 @@ function choice_delete_instance($id) {
     return $result;
 }
 
+/**
+ * Returns the users with data in one choice
+ * (users with records in choice_responses, students)
+ *
+ * @param int $choiceid
+ * @return array
+ */
 function choice_get_participants($choiceid) {
-//Returns the users with data in one choice
-//(users with records in choice_responses, students)
-
     global $DB;
 
     //Get students
@@ -627,10 +727,17 @@ function choice_get_participants($choiceid) {
     return ($students);
 }
 
-
+/**
+ * Returns text string which is the answer that matches the id
+ *
+ * @global object
+ * @param object $choice
+ * @param int $id
+ * @return string
+ */
 function choice_get_option_text($choice, $id) {
     global $DB;
-// Returns text string which is the answer that matches the id
+
     if ($result = $DB->get_record("choice_options", array("id" => $id))) {
         return $result->text;
     } else {
@@ -638,9 +745,15 @@ function choice_get_option_text($choice, $id) {
     }
 }
 
+/**
+ * Gets a full choice record
+ *
+ * @global object
+ * @param int $choiceid
+ * @return object|bool The choice or false
+ */
 function choice_get_choice($choiceid) {
     global $DB;
-// Gets a full choice record
 
     if ($choice = $DB->get_record("choice", array("id" => $choiceid))) {
         if ($options = $DB->get_records("choice_options", array("choiceid" => $choiceid), "id")) {
@@ -654,10 +767,16 @@ function choice_get_choice($choiceid) {
     return false;
 }
 
+/**
+ * @return array
+ */
 function choice_get_view_actions() {
     return array('view','view all','report');
 }
 
+/**
+ * @return array
+ */
 function choice_get_post_actions() {
     return array('choose','choose again');
 }
@@ -666,7 +785,8 @@ function choice_get_post_actions() {
 /**
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the choice.
- * @param $mform form passed by reference
+ * 
+ * @param object $mform form passed by reference
  */
 function choice_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'choiceheader', get_string('modulenameplural', 'choice'));
@@ -675,6 +795,8 @@ function choice_reset_course_form_definition(&$mform) {
 
 /**
  * Course reset form defaults.
+ *
+ * @return array
  */
 function choice_reset_course_form_defaults($course) {
     return array('reset_choice'=>1);
@@ -683,7 +805,10 @@ function choice_reset_course_form_defaults($course) {
 /**
  * Actual implementation of the rest coures functionality, delete all the
  * choice responses for course $data->courseid.
- * @param $data the data submitted from the reset course.
+ *
+ * @global object
+ * @global object
+ * @param object $data the data submitted from the reset course.
  * @return array status array
  */
 function choice_reset_userdata($data) {
@@ -710,6 +835,16 @@ function choice_reset_userdata($data) {
     return $status;
 }
 
+/**
+ * @global object
+ * @global object
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @param object $choice
+ * @param object $cm
+ * @param int $groupmode
+ * @return array
+ */
 function choice_get_response_data($choice, $cm, $groupmode) {
     global $CFG, $USER, $DB;
 
@@ -751,12 +886,21 @@ function choice_get_response_data($choice, $cm, $groupmode) {
 
 /**
  * Returns all other caps used in module
+ *
+ * @return array
  */
 function choice_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
 }
 
 /**
+ * @uses FEATURE_GROUPS
+ * @uses FEATURE_GROUPINGS
+ * @uses FEATURE_GROUPMEMBERSONLY
+ * @uses FEATURE_MOD_INTRO
+ * @uses FEATURE_COMPLETION_TRACKS_VIEWS
+ * @uses FEATURE_GRADE_HAS_GRADE
+ * @uses FEATURE_GRADE_OUTCOMES
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, null if doesn't know
  */
