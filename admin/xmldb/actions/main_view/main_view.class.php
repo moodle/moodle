@@ -58,7 +58,8 @@ class main_view extends XMLDBAction {
             'checkforeignkeys' => 'xmldb',
             'checkbigints' => 'xmldb',
             'doc' => 'xmldb',
-            'viewxml' => 'xmldb'
+            'viewxml' => 'xmldb',
+            'pendingchangescannotbesaved' => 'xmldb'
         ));
     }
 
@@ -265,9 +266,9 @@ class main_view extends XMLDBAction {
                     if ($structure =& $dbdir->xml_file->getStructure()) {
                         if ($errors = $structure->getAllErrors()) {
                             if ($hithis) {
-                                $o .= '<tr class="highlight"><td class="error cell" colspan="9">' . implode (', ', $errors) . '</td></tr>';
+                                $o .= '<tr class="highlight"><td class="error cell" colspan="10">' . implode (', ', $errors) . '</td></tr>';
                             } else {
-                                $o .= '<tr class="r' . $row . '"><td class="error cell" colspan="9">' . implode (', ', $errors) . '</td></tr>';
+                                $o .= '<tr class="r' . $row . '"><td class="error cell" colspan="10">' . implode (', ', $errors) . '</td></tr>';
                             }
                         }
                     }
@@ -282,9 +283,9 @@ class main_view extends XMLDBAction {
                                     foreach ($fields as $field) {
                                         if (!empty($field->hasenums)) {
                                             if ($hithis) {
-                                                $o .= '<tr class="highlight"><td class="error cell" colspan="9">';
+                                                $o .= '<tr class="highlight"><td class="error cell" colspan="10">';
                                             } else {
-                                                $o .= '<tr class="r' . $row . '"><td class="error cell" colspan="9">';
+                                                $o .= '<tr class="r' . $row . '"><td class="error cell" colspan="10">';
                                             }
                                             $o .= 'Table ' . $table->getName() . ', field ' . $field->getName() . ' has ENUM info';
                                             if (!empty($field->hasenumsenabled)) {
@@ -305,6 +306,21 @@ class main_view extends XMLDBAction {
                             }
                         }
                     }
+                }
+            /// If there are changes pending to be saved, but the file cannot be written... inform here
+                if ($dbdir->path_exists &&
+                    file_exists($key . '/install.xml') &&
+                    !empty($dbdir->xml_loaded) &&
+                    !empty($dbdir->xml_changed) &&
+                    (!is_writeable($key . '/install.xml') || !is_writeable($key))) {
+
+                    if ($hithis) {
+                        $o .= '<tr class="highlight"><td class="error cell" colspan="10">';
+                    } else {
+                        $o .= '<tr class="r' . $row . '"><td class="error cell" colspan="10">';
+                    }
+                    $o .= $this->str['pendingchangescannotbesaved'];
+                    $o .= '</td></tr>';
                 }
             }
             $o .= '</table>';
