@@ -1,31 +1,36 @@
-<?php // $Id$
+<?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
-//           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/// This class will edit one loaded XML file
+/**
+ * @package   xmldb-editor
+ * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
+/**
+ * This class will edit one loaded XML file
+ *
+ * Main page to start editing one XML file. From here it's possible to access
+ * to tables/statements edition plus PHP code generation and other utilities
+ *
+ * @package   xmldb-editor
+ * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class edit_xml_file extends XMLDBAction {
 
     /**
@@ -53,7 +58,8 @@ class edit_xml_file extends XMLDBAction {
             'viewsqlcode' => 'xmldb',
             'viewphpcode' => 'xmldb',
             'reserved' => 'xmldb',
-            'backtomainview' => 'xmldb'
+            'backtomainview' => 'xmldb',
+            'viewxml' => 'xmldb'
         ));
     }
 
@@ -144,9 +150,9 @@ class edit_xml_file extends XMLDBAction {
                 $b .= '&nbsp;<a href="index.php?action=view_structure_php&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['viewphpcode'] . ']</a>';
                 $b .= '</p>';
                 $o .= $b;
+
             /// Join all the reserved words into one big array
             /// Calculate list of available SQL generators
-
                 require_once("$CFG->libdir/ddl/sql_generator.php");
                 $reserved_words = sql_generator::getAllReservedWords();
 
@@ -157,6 +163,8 @@ class edit_xml_file extends XMLDBAction {
                     $o .= '<table id="listtables" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
                     $row = 0;
                     foreach ($tables as $table) {
+                    /// The table name (link to edit table)
+                        $t = '<a href="index.php?action=edit_table&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">' . $table->getName() . '</a>';
                     /// Calculate buttons
                         $b = '</td><td class="button cell">';
                     /// The edit button
@@ -184,13 +192,16 @@ class edit_xml_file extends XMLDBAction {
                         } else {
                             $b .= '[' . $this->str['delete'] . ']';
                         }
+                        $b .= '</td><td class="button cell">';
+                    /// The view xml button
+                        $b .= '<a href="index.php?action=view_table_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;table=' . $table->getName() . '&amp;select=edited">[' . $this->str['viewxml'] . ']</a>';
                     /// Detect if the table name is a reserved word
                          if (array_key_exists($table->getName(), $reserved_words)) {
                              $b .= '&nbsp;<a href="index.php?action=view_reserved_words"><span class="error">' . $this->str['reserved'] . '</span></a>';
                          }
                         $b .= '</td>';
                     /// Print table row
-                        $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_table_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;table=' . $table->getName() . '&amp;select=edited">' . $table->getName() . '</a>' . $b . '</tr>';
+                        $o .= '<tr class="r' . $row . '"><td class="table cell">' . $t . $b . '</tr>';
                         $row = ($row + 1) % 2;
                     }
                     $o .= '</table>';
@@ -202,6 +213,8 @@ class edit_xml_file extends XMLDBAction {
                     $o .= '<table id="liststatements" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
                     $row = 0;
                     foreach ($statements as $statement) {
+                    /// The statement name (link to edit statement)
+                        $s = '<a href="index.php?action=edit_statement&amp;statement=' . $statement->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">' . $statement->getName() . '</a>';
                     /// Calculate buttons
                         $b = '</td><td class="button cell">';
                     /// The edit button
@@ -223,9 +236,12 @@ class edit_xml_file extends XMLDBAction {
                         $b .= '</td><td class="button cell">';
                     /// The delete button
                         $b .= '<a href="index.php?action=delete_statement&amp;statement=' . $statement->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
+                        $b .= '</td><td class="button cell">';
+                    /// The view xml button
+                        $b .= '<a href="index.php?action=view_statement_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;statement=' . $statement->getName() . '&amp;select=edited">[' . $this->str['viewxml'] . ']</a>';
                         $b .= '</td>';
                     /// Print statement row
-                        $o .= '<tr class="r' . $row . '"><td class="statement cell"><a href="index.php?action=view_statement_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;statement=' . $statement->getName() . '&amp;select=edited">' . $statement->getName() . '</a>' . $b . '</tr>';
+                        $o .= '<tr class="r' . $row . '"><td class="statement cell">' . $s . $b . '</tr>';
                         $row = ($row + 1) % 2;
                     }
                     $o .= '</table>';
