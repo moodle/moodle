@@ -59,7 +59,7 @@ class main_view extends XMLDBAction {
             'checkbigints' => 'xmldb',
             'doc' => 'xmldb',
             'viewxml' => 'xmldb',
-            'pendingchangescannotbesaved' => 'xmldb'
+            'pendingchangescannotbesavedreload' => 'xmldb'
         ));
     }
 
@@ -319,7 +319,7 @@ class main_view extends XMLDBAction {
                     } else {
                         $o .= '<tr class="r' . $row . '"><td class="error cell" colspan="10">';
                     }
-                    $o .= $this->str['pendingchangescannotbesaved'];
+                    $o .= $this->str['pendingchangescannotbesavedreload'];
                     $o .= '</td></tr>';
                 }
             }
