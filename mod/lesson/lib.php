@@ -1,15 +1,33 @@
-<?php  // $Id$
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Standard library of functions and constants for lesson
  *
- * @version $Id$
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package lesson
+ * @package   mod-lesson
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 
+/** Include {@link eventslib.php} */
 require_once($CFG->libdir.'/eventslib.php');
 
-define("LESSON_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
+/** LESSON_MAX_EVENT_LENGTH = 432000 ; 5 days maximum */
+define("LESSON_MAX_EVENT_LENGTH", "432000"); 
 
 /**
  * Given an object containing all the necessary data,
@@ -17,6 +35,8 @@ define("LESSON_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
  * will create a new instance and return the id number
  * of the new instance.
  *
+ * @global object
+ * @global object
  * @param object $lesson Lesson post data from the form
  * @return int
  **/
@@ -41,6 +61,7 @@ function lesson_add_instance($lesson) {
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
  *
+ * @global object
  * @param object $lesson Lesson post data from the form
  * @return boolean
  **/
@@ -67,12 +88,17 @@ function lesson_update_instance($lesson) {
 }
 
 
-/*******************************************************************/
+/**
+ * Given an ID of an instance of this module,
+ * this function will permanently delete the instance
+ * and any data that depends on it.
+ *
+ * @global object
+ * @param int $id
+ * @return bool
+ */
 function lesson_delete_instance($id) {
     global $DB;
-/// Given an ID of an instance of this module,
-/// this function will permanently delete the instance
-/// and any data that depends on it.
 
     if (! $lesson = $DB->get_record("lesson", array("id"=>$id))) {
         return false;
@@ -121,6 +147,7 @@ function lesson_delete_instance($id) {
  *
  * As of now, this function just cleans the lesson_default table
  *
+ * @global object
  * @param object $course an object representing the course that is being deleted
  * @param boolean $feedback to specify if the process must output a summary of its work
  * @return boolean
@@ -139,13 +166,21 @@ function lesson_delete_course($course, $feedback=true) {
     return true;
 }
 
-/*******************************************************************/
+/**
+ * Return a small object with summary information about what a
+ * user has done with a given particular instance of this module
+ * Used for user activity reports.
+ * $return->time = the time they did it
+ * $return->info = a short text description
+ *
+ * @global object
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $lesson
+ * @return object
+ */
 function lesson_user_outline($course, $user, $mod, $lesson) {
-/// Return a small object with summary information about what a
-/// user has done with a given particular instance of this module
-/// Used for user activity reports.
-/// $return->time = the time they did it
-/// $return->info = a short text description
     global $DB;
     
     $params = array ("lessonid" => $lesson->id, "userid" => $user->id);
@@ -168,10 +203,18 @@ function lesson_user_outline($course, $user, $mod, $lesson) {
     return $return;
 }
 
-/*******************************************************************/
+/**
+ * Print a detailed representation of what a  user has done with
+ * a given particular instance of this module, for user activity reports.
+ *
+ * @global object
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $lesson
+ * @return bool
+ */
 function lesson_user_complete($course, $user, $mod, $lesson) {
-/// Print a detailed representation of what a  user has done with
-/// a given particular instance of this module, for user activity reports.
     global $DB;
     
     $params = array ("lessonid" => $lesson->id, "userid" => $user->id);
@@ -243,8 +286,13 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
  * lessons that have a deadline that has not already passed
  * and it is available for taking.
  *
+ * @global object
+ * @global stdClass
+ * @global object
+ * @uses CONTEXT_MODULE
  * @param array $courses An array of course objects to get lesson instances from
  * @param array $htmlarray Store overview output array( course ID => 'lesson' => HTML output )
+ * @return void
  */
 function lesson_print_overview($courses, &$htmlarray) {
     global $USER, $CFG, $DB;
@@ -300,12 +348,14 @@ function lesson_print_overview($courses, &$htmlarray) {
     }
 }
 
-/*******************************************************************/
+/**
+ * Function to be run periodically according to the moodle cron
+ * This function searches for things that need to be done, such
+ * as sending out mail, toggling flags etc ...
+ * @global stdClass
+ * @return bool true
+ */
 function lesson_cron () {
-/// Function to be run periodically according to the moodle cron
-/// This function searches for things that need to be done, such
-/// as sending out mail, toggling flags etc ...
-
     global $CFG;
 
     return true;
@@ -314,6 +364,8 @@ function lesson_cron () {
 /**
  * Return grade for given user or all users.
  *
+ * @global stdClass
+ * @global object
  * @param int $lessonid id of lesson
  * @param int $userid optional user id, 0 means all users
  * @return array array of grades, false if none
@@ -371,8 +423,11 @@ function lesson_get_user_grades($lesson, $userid=0) {
 /**
  * Update grades in central gradebook
  *
+ * @global stdclass
+ * @global object
  * @param object $lesson
  * @param int $userid specific user only, 0 means all
+ * @param bool $nullifnone
  */
 function lesson_update_grades($lesson, $userid=0, $nullifnone=true) {
     global $CFG, $DB;
@@ -397,6 +452,8 @@ function lesson_update_grades($lesson, $userid=0, $nullifnone=true) {
 
 /**
  * Update all grades in gradebook.
+ *
+ * @global object
  */
 function lesson_upgrade_grades() {
     global $DB;
@@ -425,8 +482,11 @@ function lesson_upgrade_grades() {
 /**
  * Create grade item for given lesson
  *
+ * @global stdClass
+ * @uses GRADE_TYPE_VALUE
+ * @uses GRADE_TYPE_NONE
  * @param object $lesson object with extra cmidnumber
- * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
+ * @param array|object $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int 0 if ok, error code otherwise
  */
 function lesson_grade_item_update($lesson, $grades=NULL) {
@@ -474,6 +534,7 @@ function lesson_grade_item_update($lesson, $grades=NULL) {
 /**
  * Delete grade item for given lesson
  *
+ * @global stdClass
  * @param object $lesson object
  * @return object lesson
  */
@@ -485,12 +546,17 @@ function lesson_grade_item_delete($lesson) {
 }
 
 
-/*******************************************************************/
+/**
+ * Must return an array of user records (all data) who are participants
+ * for a given instance of lesson. Must include every user involved
+ * in the instance, independient of his role (student, teacher, admin...)
+ *
+ * @global stdClass
+ * @global object
+ * @param int $lessonid
+ * @return array
+ */
 function lesson_get_participants($lessonid) {
-//Must return an array of user records (all data) who are participants
-//for a given instance of lesson. Must include every user involved
-//in the instance, independient of his role (student, teacher, admin...)
-
     global $CFG, $DB;
 
     //Get students
@@ -505,10 +571,16 @@ function lesson_get_participants($lessonid) {
     return ($students);
 }
 
+/**
+ * @return array
+ */
 function lesson_get_view_actions() {
     return array('view','view all');
 }
 
+/**
+ * @return array
+ */
 function lesson_get_post_actions() {
     return array('end','start', 'update grade attempt');
 }
@@ -517,6 +589,7 @@ function lesson_get_post_actions() {
  * Runs any processes that must run before
  * a lesson insert/update
  *
+ * @global object
  * @param object $lesson Lesson form data
  * @return void
  **/
@@ -574,6 +647,7 @@ function lesson_process_pre_save(&$lesson) {
  * Runs any processes that must be run
  * after a lesson insert/update
  *
+ * @global object
  * @param object $lesson Lesson form data
  * @return void
  **/
@@ -625,6 +699,7 @@ function lesson_process_post_save(&$lesson) {
 /**
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the lesson.
+ * 
  * @param $mform form passed by reference
  */
 function lesson_reset_course_form_definition(&$mform) {
@@ -634,6 +709,8 @@ function lesson_reset_course_form_definition(&$mform) {
 
 /**
  * Course reset form defaults.
+ * @param object $course
+ * @return array
  */
 function lesson_reset_course_form_defaults($course) {
     return array('reset_lesson'=>1);
@@ -641,6 +718,9 @@ function lesson_reset_course_form_defaults($course) {
 
 /**
  * Removes all grades from gradebook
+ *
+ * @global stdClass
+ * @global object
  * @param int $courseid
  * @param string optional type
  */
@@ -661,7 +741,10 @@ function lesson_reset_gradebook($courseid, $type='') {
 /**
  * Actual implementation of the rest coures functionality, delete all the
  * lesson attempts for course $data->courseid.
- * @param $data the data submitted from the reset course.
+ *
+ * @global stdClass
+ * @global object
+ * @param object $data the data submitted from the reset course.
  * @return array status array
  */
 function lesson_reset_userdata($data) {
@@ -700,14 +783,22 @@ function lesson_reset_userdata($data) {
 
 /**
  * Returns all other caps used in module
+ * @return array
  */
 function lesson_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
 }
 
 /**
+ * @uses FEATURE_GROUPS
+ * @uses FEATURE_GROUPINGS
+ * @uses FEATURE_GROUPMEMBERSONLY
+ * @uses FEATURE_MOD_INTRO
+ * @uses FEATURE_COMPLETION_TRACKS_VIEWS
+ * @uses FEATURE_GRADE_HAS_GRADE
+ * @uses FEATURE_GRADE_OUTCOMES
  * @param string $feature FEATURE_xx constant for requested feature
- * @return mixed True if module supports feature, null if doesn't know
+ * @return mixed True if module supports feature, false if not, null if doesn't know
  */
 function lesson_supports($feature) {
     switch($feature) {

@@ -1,27 +1,19 @@
-<?php  // $Id$
+<?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Library of functions for the quiz module.
@@ -29,10 +21,12 @@
  * This contains functions that are called also from outside the quiz module
  * Functions that are only called by the quiz module itself are in {@link locallib.php}
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package quiz
+ * @package mod-quiz
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/** Require {@link eventslib.php} */
 require_once($CFG->libdir . '/eventslib.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////////////
@@ -101,6 +95,7 @@ define("QUIZ_MAX_EVENT_LENGTH", 5*24*60*60);   // 5 days maximum
  * will create a new instance and return the id number
  * of the new instance.
  *
+ * @global object
  * @param object $quiz the data that came from the form.
  * @return mixed the id of the new instance on success,
  *          false or a string error message on failure.
@@ -130,6 +125,8 @@ function quiz_add_instance($quiz) {
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
  *
+ * @global stdClass
+ * @global object
  * @param object $quiz the data that came from the form.
  * @return mixed true on success, false or a string error message on failure.
  */
@@ -163,11 +160,17 @@ function quiz_update_instance($quiz, $mform) {
     return true;
 }
 
+/**
+ * Given an ID of an instance of this module,
+ * this function will permanently delete the instance
+ * and any data that depends on it.
+ *
+ * @global object
+ * @param int $id
+ * @return bool
+ */
 function quiz_delete_instance($id) {
     global $DB;
-/// Given an ID of an instance of this module,
-/// this function will permanently delete the instance
-/// and any data that depends on it.
 
     if (!$quiz = $DB->get_record('quiz', array('id' => $id))) {
         return false;
@@ -191,7 +194,10 @@ function quiz_delete_instance($id) {
 
 /**
  * Delete all the attempts belonging to a quiz.
- * @param $quiz The quiz object.
+ *
+ * @global stdClass
+ * @global object
+ * @param object $quiz The quiz object.
  */
 function quiz_delete_all_attempts($quiz) {
     global $CFG, $DB;
@@ -204,13 +210,22 @@ function quiz_delete_all_attempts($quiz) {
     $DB->delete_records('quiz_grades', array('quiz' => $quiz->id));
 }
 
+/**
+ * Return a small object with summary information about what a
+ * user has done with a given particular instance of this module
+ * Used for user activity reports.
+ * $return->time = the time they did it
+ * $return->info = a short text description
+ *
+ * @global object
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $quiz
+ * @return object|null
+ */
 function quiz_user_outline($course, $user, $mod, $quiz) {
     global $DB;
-/// Return a small object with summary information about what a
-/// user has done with a given particular instance of this module
-/// Used for user activity reports.
-/// $return->time = the time they did it
-/// $return->info = a short text description
     $grade = quiz_get_best_grade($quiz, $user->id);
     if (is_null($grade)) {
         return NULL;
@@ -237,6 +252,7 @@ function quiz_has_grades($quiz) {
 /**
  * Get the best current grade for a particular user in a quiz.
  *
+ * @global object
  * @param object $quiz the quiz object.
  * @param integer $userid the id of the user.
  * @return float the user's current grade for this quiz, or NULL if this user does
@@ -254,10 +270,19 @@ function quiz_get_best_grade($quiz, $userid) {
     }
 }
 
+/**
+ * Print a detailed representation of what a  user has done with
+ * a given particular instance of this module, for user activity reports.
+ *
+ * @global object
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $quiz
+ * @return bool
+ */
 function quiz_user_complete($course, $user, $mod, $quiz) {
     global $DB;
-/// Print a detailed representation of what a  user has done with
-/// a given particular instance of this module, for user activity reports.
 
     if ($attempts = $DB->get_records('quiz_attempts', array('userid' => $user->id, 'quiz' => $quiz->id), 'attempt')) {
         if (quiz_has_grades($quiz) && $grade = quiz_get_best_grade($quiz, $user->id)) {
@@ -279,20 +304,26 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
     return true;
 }
 
+/**
+ * Function to be run periodically according to the moodle cron
+ * This function searches for things that need to be done, such
+ * as sending out mail, toggling flags etc ...
+ *
+ * @global stdClass
+ * @return bool true
+ */
 function quiz_cron() {
-/// Function to be run periodically according to the moodle cron
-/// This function searches for things that need to be done, such
-/// as sending out mail, toggling flags etc ...
-
     global $CFG;
 
     return true;
 }
 
 /**
+ * @global object
  * @param integer $quizid the quiz id.
  * @param integer $userid the userid.
  * @param string $status 'all', 'finished' or 'unfinished' to control
+ * @param bool $includepreviews
  * @return an array of all the user's attempts at this quiz. Returns an empty array if there are none.
  */
 function quiz_get_user_attempts($quizid, $userid=0, $status = 'finished', $includepreviews = false) {
@@ -325,6 +356,8 @@ function quiz_get_user_attempts($quizid, $userid=0, $status = 'finished', $inclu
 /**
  * Return grade for given user or all users.
  *
+ * @global stdClass
+ * @global object
  * @param int $quizid id of quiz
  * @param int $userid optional user id, 0 means all users
  * @return array array of grades, false if none. These are raw grades. They should
@@ -352,6 +385,7 @@ function quiz_get_user_grades($quiz, $userid=0) {
  *
  * @param object $quiz The quiz table row, only $quiz->decimalpoints is used.
  * @param float $grade The grade to round.
+ * @return float
  */
 function quiz_format_grade($quiz, $grade) {
     return format_float($grade, $quiz->decimalpoints);
@@ -362,6 +396,7 @@ function quiz_format_grade($quiz, $grade) {
  *
  * @param object $quiz The quiz table row, only $quiz->decimalpoints is used.
  * @param float $grade The grade to round.
+ * @return float
  */
 function quiz_format_question_grade($quiz, $grade) {
     if ($quiz->questiondecimalpoints == -1) {
@@ -374,6 +409,8 @@ function quiz_format_question_grade($quiz, $grade) {
 /**
  * Update grades in central gradebook
  *
+ * @global stdClass
+ * @global object
  * @param object $quiz
  * @param int $userid specific user only, 0 means all
  */
@@ -400,6 +437,8 @@ function quiz_update_grades($quiz, $userid=0, $nullifnone=true) {
     
 /**
  * Update all grades in gradebook.
+ *
+ * @global object
  */
 function quiz_upgrade_grades() {
     global $DB;
@@ -428,8 +467,16 @@ function quiz_upgrade_grades() {
 /**
  * Create grade item for given quiz
  *
+ * @global stdClass
+ * @uses GRADE_TYPE_VALUE
+ * @uses GRADE_TYPE_NONE
+ * @uses QUIZ_REVIEW_SCORES
+ * @uses QUIZ_REVIEW_CLOSED
+ * @uses QUIZ_REVIEW_OPEN
+ * @uses PARAM_INT
+ * @uses GRADE_UPDATE_ITEM_LOCKED
  * @param object $quiz object with extra cmidnumber
- * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
+ * @param mixed $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int 0 if ok, error code otherwise
  */
 function quiz_grade_item_update($quiz, $grades=NULL) {
@@ -510,6 +557,7 @@ function quiz_grade_item_update($quiz, $grades=NULL) {
 /**
  * Delete grade item for given quiz
  *
+ * @global stdClass
  * @param object $quiz object
  * @return object quiz
  */
@@ -531,8 +579,15 @@ function quiz_get_grading_options() {
             QUIZ_ATTEMPTLAST  => get_string('attemptlast', 'quiz'));
 }
 
+/**
+ * Returns an array of users who have data in a given quiz
+ *
+ * @global stdClass
+ * @global object
+ * @param int $quizid
+ * @return array
+ */
 function quiz_get_participants($quizid) {
-/// Returns an array of users who have data in a given quiz
     global $CFG, $DB;
 
     //Get users from attempts
@@ -547,13 +602,20 @@ function quiz_get_participants($quizid) {
 
 }
 
+/**
+ * This standard function will check all instances of this module
+ * and make sure there are up-to-date events created for each of them.
+ * If courseid = 0, then every quiz event in the site is checked, else
+ * only quiz events belonging to the course specified are checked.
+ * This function is used, in its new format, by restore_refresh_events()
+ *
+ * @global object
+ * @uses QUIZ_MAX_EVENT_LENGTH
+ * @param int $courseid
+ * @return bool
+ */
 function quiz_refresh_events($courseid = 0) {
     global $DB;
-// This standard function will check all instances of this module
-// and make sure there are up-to-date events created for each of them.
-// If courseid = 0, then every quiz event in the site is checked, else
-// only quiz events belonging to the course specified are checked.
-// This function is used, in its new format, by restore_refresh_events()
 
     if ($courseid == 0) {
         if (! $quizzes = $DB->get_records('quiz')) {
@@ -633,6 +695,20 @@ function quiz_refresh_events($courseid = 0) {
 
 /**
  * Returns all quiz graded users since a given time for specified quiz
+ *
+ * @global stdClass
+ * @global object
+ * @global object
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @param array $activities By reference
+ * @param int $index By reference
+ * @param int $timestart
+ * @param int $courseid
+ * @param int $cmid
+ * @param int $userid
+ * @param int $groupid
+ * @return void
  */
 function quiz_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0)  {
     global $CFG, $COURSE, $USER, $DB;
@@ -732,6 +808,14 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart, $course
   return;
 }
 
+/**
+ * @global stdClass
+ * @param object $activity
+ * @param int $courseid
+ * @param bool $detail
+ * @param array $modnames
+ * @return void output is echo'd
+ */
 function quiz_print_recent_mod_activity($activity, $courseid, $detail, $modnames) {
     global $CFG;
 
@@ -770,7 +854,19 @@ function quiz_print_recent_mod_activity($activity, $courseid, $detail, $modnames
  * Pre-process the quiz options form data, making any necessary adjustments.
  * Called by add/update instance in this file.
  *
+ * @uses QUIZ_REVIEW_OVERALLFEEDBACK
+ * @uses QUIZ_REVIEW_CLOSED
+ * @uses QUIZ_REVIEW_OPEN
+ * @uses QUIZ_REVIEW_IMMEDIATELY
+ * @uses QUIZ_REVIEW_GENERALFEEDBACK
+ * @uses QUIZ_REVIEW_SOLUTIONS
+ * @uses QUIZ_REVIEW_ANSWERS
+ * @uses QUIZ_REVIEW_FEEDBACK
+ * @uses QUIZ_REVIEW_SCORES
+ * @uses QUIZ_REVIEW_RESPONSES
+ * @uses QUESTION_ADAPTIVE
  * @param object $quiz The variables set on the form.
+ * @return string
  */
 function quiz_process_options(&$quiz) {
     $quiz->timemodified = time();
@@ -945,7 +1041,10 @@ function quiz_process_options(&$quiz) {
  * This function is called at the end of quiz_add_instance
  * and quiz_update_instance, to do the common processing.
  *
+ * @global object
+ * @uses QUIZ_MAX_EVENT_LENGTH
  * @param object $quiz the quiz object.
+ * @return void|string Void or error message
  */
 function quiz_after_add_or_update($quiz) {
     global $DB;
@@ -1009,10 +1108,16 @@ function quiz_after_add_or_update($quiz) {
     quiz_grade_item_update($quiz);
 }
 
+/**
+ * @return array
+ */
 function quiz_get_view_actions() {
     return array('view', 'view all', 'report', 'review');
 }
 
+/**
+ * @return array
+ */
 function quiz_get_post_actions() {
     return array('attempt', 'close attempt', 'preview', 'editquestions', 'delete attempt', 'manualgrade');
 }
@@ -1020,6 +1125,8 @@ function quiz_get_post_actions() {
 /**
  * Returns an array of names of quizzes that use this question
  *
+ * @global stdClass
+ * @global object
  * @param object $questionid
  * @return array of strings
  */
@@ -1043,6 +1150,7 @@ function quiz_question_list_instances($questionid) {
 /**
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the quiz.
+ * 
  * @param $mform form passed by reference
  */
 function quiz_reset_course_form_definition(&$mform) {
@@ -1052,6 +1160,7 @@ function quiz_reset_course_form_definition(&$mform) {
 
 /**
  * Course reset form defaults.
+ * @return array
  */
 function quiz_reset_course_form_defaults($course) {
     return array('reset_quiz_attempts'=>1);
@@ -1059,6 +1168,9 @@ function quiz_reset_course_form_defaults($course) {
 
 /**
  * Removes all grades from gradebook
+ *
+ * @global stdClass
+ * @global object
  * @param int $courseid
  * @param string optional type
  */
@@ -1082,7 +1194,10 @@ function quiz_reset_gradebook($courseid, $type='') {
  * set and true.
  *
  * Also, move the quiz open and close dates, if the course start date is changing.
- * @param $data the data submitted from the reset course.
+ *
+ * @global stdClass
+ * @global object
+ * @param object $data the data submitted from the reset course.
  * @return array status array
  */
 function quiz_reset_userdata($data) {
@@ -1119,6 +1234,9 @@ function quiz_reset_userdata($data) {
  * Checks whether the current user is allowed to view a file uploaded in a quiz.
  * Teachers can view any from their courses, students can only view their own.
  *
+ * @global object
+ * @global object
+ * @uses CONTEXT_COURSE
  * @param int $attemptuniqueid int attempt id
  * @param int $questionid int question id
  * @return boolean to indicate access granted or denied
@@ -1144,6 +1262,11 @@ function quiz_check_file_access($attemptuniqueid, $questionid) {
 
 /**
  * Prints quiz summaries on MyMoodle Page
+ *
+ * @global object
+ * @global object
+ * @param arry $courses
+ * @param array $htmlarray
  */
 function quiz_print_overview($courses, &$htmlarray) {
     global $USER, $CFG;
@@ -1206,6 +1329,10 @@ function quiz_print_overview($courses, &$htmlarray) {
 /**
  * Return a textual summary of the number of attemtps that have been made at a particular quiz,
  * returns '' if no attemtps have been made yet, unless $returnzero is passed as true.
+ *
+ * @global stdClass
+ * @global object
+ * @global object
  * @param object $quiz the quiz object. Only $quiz->id is used at the moment.
  * @param object $cm the cm object. Only $cm->course, $cm->groupmode and $cm->groupingid fields are used at the moment.
  * @param boolean $returnzero if false (default), when no attempts have been made '' is returned instead of 'Attempts: 0'.
@@ -1242,6 +1369,13 @@ function quiz_num_attempt_summary($quiz, $cm, $returnzero = false, $currentgroup
 }
 
 /**
+ * @uses FEATURE_GROUPS
+ * @uses FEATURE_GROUPINGS
+ * @uses FEATURE_GROUPMEMBERSONLY
+ * @uses FEATURE_MOD_INTRO
+ * @uses FEATURE_COMPLETION_TRACKS_VIEWS
+ * @uses FEATURE_GRADE_HAS_GRADE
+ * @uses FEATURE_GRADE_OUTCOMES
  * @param string $feature FEATURE_xx constant for requested feature
  * @return bool True if quiz supports feature
  */
@@ -1260,6 +1394,8 @@ function quiz_supports($feature) {
 }
 
 /**
+ * @global object
+ * @global stdClass
  * @return array all other caps used in module
  */
 function quiz_get_extra_capabilities() {
