@@ -1,7 +1,27 @@
-<?PHP  // $Id$
+<?PHP
 
-//////////////////////////////////
-/// CONSTANTS and GLOBAL VARIABLES
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package   mod-hotpot
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**  CONSTANTS and GLOBAL VARIABLES */
 
 $CFG->hotpotroot = "$CFG->dirroot/mod/hotpot";
 $CFG->hotpottemplate = "$CFG->hotpotroot/template";
@@ -184,6 +204,11 @@ define("HOTPOT_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
 //  $hotpot->mode         : 'add' or 'update'
 //  $hotpot->sesskey      : unique string required for Moodle's session management
 
+/**
+ * @global object
+ * @param object $hotpot
+ * @return bool
+ */
 function hotpot_add_instance($hotpot) {
     global $DB;
 
@@ -199,6 +224,11 @@ function hotpot_add_instance($hotpot) {
     return $result;
 }
 
+/**
+ * @global object
+ * @param object $hotpot
+ * @return bool
+ */
 function hotpot_update_instance($hotpot) {
     global $DB;
 
@@ -213,6 +243,11 @@ function hotpot_update_instance($hotpot) {
     }
     return $result;
 }
+
+/**
+ * @global object
+ * @param object $hotpot
+ */
 function hotpot_update_events($hotpot) {
     global $DB;
 
@@ -267,6 +302,11 @@ function hotpot_update_events($hotpot) {
     }
 }
 
+/**
+ * @global object
+ * @param object $hotpot By Reference
+ * @return bool
+ */
 function hotpot_set_form_values(&$hotpot) {
     $ok = true;
     $hotpot->errors = array(); // these will be reported by moderr.html
@@ -359,6 +399,12 @@ function hotpot_set_form_values(&$hotpot) {
     }
     return $ok;
 }
+
+/**
+ * @global object
+ * @param object $cm By Reference
+ * @return bool|array
+ */
 function hotpot_get_chain(&$cm) {
     global $DB;
     // get details of course_modules in this section
@@ -425,6 +471,14 @@ function hotpot_get_chain(&$cm) {
 
     return $found ? $chain : false;
 }
+
+/**
+ * @global object
+ * @global object
+ * @global object
+ * @param object $cm By Reference
+ * @return bool
+ */
 function hotpot_is_visible(&$cm) {
     global $CFG, $COURSE, $DB;
 
@@ -469,6 +523,14 @@ function hotpot_is_visible(&$cm) {
     }
     return $visible;
 }
+
+/**
+ * @global object
+ * @global object
+ * @global object
+ * @param object $hotpot By Reference
+ * @return bool|array
+ */
 function hotpot_add_chain(&$hotpot) {
 /// add a chain of hotpot actiivities
 
@@ -615,6 +677,11 @@ function hotpot_add_chain(&$hotpot) {
 
     return $ok;
 }
+
+/**
+ * @param object $hotpot By Reference
+ * @param int $chain_index
+ */
 function hotpot_set_name_summary_reference(&$hotpot, $chain_index=NULL) {
 
     $xml_quiz = NULL;
@@ -672,6 +739,11 @@ function hotpot_set_name_summary_reference(&$hotpot, $chain_index=NULL) {
         } // end switch
     } // end foreach
 }
+/**
+ * @param object $hotpot By Reference
+ * @param string $filepath
+ * @param bool $get_next
+ */
 function hotpot_get_titles_and_next_ex(&$hotpot, $filepath, $get_next=false) {
 
     $hotpot->exercisetitle = '';
@@ -744,6 +816,13 @@ function hotpot_get_titles_and_next_ex(&$hotpot, $filepath, $get_next=false) {
         $hotpot->exercisesubtitle = (empty($subtitle) || is_array($subtitle)) ? $hotpot->exercisetitle : $subtitle;
     }
 }
+/**
+ * @global object
+ * @global object
+ * @param string $modulename
+ * @param object $course
+ * @return array
+ */
 function hotpot_get_all_instances_in_course($modulename, $course) {
 /// called from index.php
     global $CFG, $DB;
@@ -818,7 +897,11 @@ function hotpot_get_all_instances_in_course($modulename, $course) {
 
     return $instances;
 }
-
+/**
+ * @global object
+ * @param object $hotpot By Reference
+ * @return bool
+ */
 function hotpot_update_chain(&$hotpot) {
 /// update a chain of hotpot actiivities
     global $DB;
@@ -867,6 +950,11 @@ function hotpot_update_chain(&$hotpot) {
     }
     return $ok;
 }
+/**
+ * @global object
+ * @param int $id
+ * @return bool
+ */
 function hotpot_delete_instance($id) {
     global $DB;
 /// Given an ID of an instance of this module,
@@ -897,6 +985,13 @@ function hotpot_delete_instance($id) {
 
     return true;
 }
+/**
+ * @global object
+ * @param string $table
+ * @param string $select
+ * @param array $params
+ * @param string $strtable
+ */
 function hotpot_delete_and_notify($table, $select, $params, $strtable) {
     global $DB;
 
@@ -910,10 +1005,16 @@ function hotpot_delete_and_notify($table, $select, $params, $strtable) {
     }
 }
 
+/**
+ * Print a detailed representation of what a  user has done with
+ * a given particular instance of this module, for user activity reports.
+ *
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $hotpot
+ */
 function hotpot_user_complete($course, $user, $mod, $hotpot) {
-/// Print a detailed representation of what a  user has done with
-/// a given particular instance of this module, for user activity reports.
-
     $report = hotpot_user_outline($course, $user, $mod, $hotpot);
     if (empty($report)) {
         print get_string("noactivity", "hotpot");
@@ -924,12 +1025,20 @@ function hotpot_user_complete($course, $user, $mod, $hotpot) {
     return true;
 }
 
+/**
+ * Return a small object with summary information about what a
+ * user has done with a given particular instance of this module
+ * Used for user activity reports.
+ * $report->time = the time they did it
+ * $report->info = a short text description
+ *
+ * @global object
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $hotpot
+ */
 function hotpot_user_outline($course, $user, $mod, $hotpot) {
-/// Return a small object with summary information about what a
-/// user has done with a given particular instance of this module
-/// Used for user activity reports.
-/// $report->time = the time they did it
-/// $report->info = a short text description
     global $DB;
 
     $report = NULL;
@@ -952,6 +1061,11 @@ function hotpot_user_outline($course, $user, $mod, $hotpot) {
     return $report;
 }
 
+/**
+ * @param object $record
+ * @param string $undefined
+ * @return string
+ */
 function hotpot_format_score($record, $undefined='&nbsp;') {
     if (isset($record->score)) {
         $score = $record->score;
@@ -961,6 +1075,12 @@ function hotpot_format_score($record, $undefined='&nbsp;') {
     return $score;
 }
 
+/**
+ * @global array
+ * @param object $record
+ * @param string $undefined
+ * @return string
+ */
 function hotpot_format_status($record, $undefined='&nbsp;') {
     global $HOTPOT_STATUS;
 
@@ -972,10 +1092,19 @@ function hotpot_format_status($record, $undefined='&nbsp;') {
     return $status;
 }
 
+/**
+ * Given a course and a time, this module should find recent activity
+ * that has occurred in hotpot activities and print it out.
+ * Return true if there was output, or false is there was none.
+ *
+ * @global object
+ * @global object
+ * @param object $course
+ * @param bool $isteacher
+ * @param int $timestart
+ * @return bool
+ */
 function hotpot_print_recent_activity($course, $isteacher, $timestart) {
-/// Given a course and a time, this module should find recent activity
-/// that has occurred in hotpot activities and print it out.
-/// Return true if there was output, or false is there was none.
     global $CFG, $DB;
 
     $result = false;
@@ -1028,8 +1157,19 @@ function hotpot_print_recent_activity($course, $isteacher, $timestart) {
     return $result;  //  True if anything was printed, otherwise false
 }
 
+/**
+ * Returns all quizzes since a given time.
+ * @global object
+ * @global object
+ * @param array $activities
+ * @param int $index
+ * @param int $sincetime
+ * @param int $courseid
+ * @param int $cmid
+ * @param int $userid
+ * @param int $groupid
+ */
 function hotpot_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $cmid="", $userid="", $groupid="") {
-// Returns all quizzes since a given time.
     global $CFG, $DB;
 
     // If $cmid or $userid are specified, then this restricts the results
@@ -1094,8 +1234,17 @@ function hotpot_get_recent_mod_activity(&$activities, &$index, $sincetime, $cour
     }
 }
 
+/**
+ * Basically, this function prints the results of "hotpot_get_recent_activity"
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @param object $activity
+ * @param object $course
+ * @param bool $detail
+ */
 function hotpot_print_recent_mod_activity($activity, $course, $detail=false) {
-/// Basically, this function prints the results of "hotpot_get_recent_activity"
 
     global $CFG, $THEME, $USER;
 
@@ -1144,16 +1293,26 @@ function hotpot_print_recent_mod_activity($activity, $course, $detail=false) {
     print "</table>";
 }
 
+/**
+ * Function to be run periodically according to the moodle cron
+ * This function searches for things that need to be done, such
+ * as sending out mail, toggling flags etc ...
+ *
+ * @return true
+ */
 function hotpot_cron () {
-/// Function to be run periodically according to the moodle cron
-/// This function searches for things that need to be done, such
-/// as sending out mail, toggling flags etc ...
     return true;
 }
 
+/**
+ * Must return an array of grades for a given instance of this module,
+ * indexed by user.  It also returns a maximum allowed grade.
+ *
+ * @global object
+ * @param itn $hotpotid
+ * @return object
+ */
 function hotpot_grades($hotpotid) {
-/// Must return an array of grades for a given instance of this module,
-/// indexed by user.  It also returns a maximum allowed grade.
     global $DB;
 
     $hotpot = $DB->get_record('hotpot', array('id'=>$hotpotid));
@@ -1164,6 +1323,13 @@ function hotpot_grades($hotpotid) {
 
     return $return;
 }
+/**
+ * @global object
+ * @global object
+ * @param object $hotpot
+ * @param arry $user_ids
+ * @return array
+ */
 function hotpot_get_grades($hotpot, $user_ids='') {
     global $CFG, $DB;
 
@@ -1214,6 +1380,9 @@ function hotpot_get_grades($hotpot, $user_ids='') {
 
     return $grades;
 }
+/**
+ * @return int
+ */
 function hotpot_get_precision(&$hotpot) {
     return ($hotpot->grademethod==HOTPOT_GRADEMETHOD_AVERAGE || $hotpot->grade<100) ? 1 : 0;
 }
@@ -1244,8 +1413,11 @@ function hotpot_get_user_grades($hotpot, $userid=0) {
 
 /**
  * Update grades in central gradebook
+ * @global object
+ * @global object
  * @param object $hotpot
  * @param int $userid specific user only, 0 means all users
+ * @param bool $nullifnone
  */
 function hotpot_update_grades($hotpot, $userid=0, $nullifnone=true) {
     global $CFG, $DB;
@@ -1272,6 +1444,7 @@ function hotpot_update_grades($hotpot, $userid=0, $nullifnone=true) {
  * Update all grades in gradebook.
  * this function is called from db/upgrade.php
  *     it iterates through the hotpots, calling hotpot_update_grades() to create a grade record for each hotpot
+ * @global object
  */
 function hotpot_upgrade_grades() {
     global $DB;
@@ -1304,6 +1477,7 @@ function hotpot_upgrade_grades() {
 /**
  * Update/create grade item for given hotpot
  *
+ * @global object
  * @param object $hotpot object with extra cmidnumber
  * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return object grade_item
@@ -1331,6 +1505,7 @@ function hotpot_grade_item_update($hotpot, $grades=null) {
 /**
  * Delete grade item for given hotpot
  *
+ * @global object
  * @param object $hotpot object
  * @return object grade_item
  */
@@ -1340,11 +1515,16 @@ function hotpot_grade_item_delete($hotpot) {
     return grade_update('mod/hotpot', $hotpot->course, 'mod', 'hotpot', $hotpot->id, 0, null, array('deleted'=>1));
 }
 
+/**
+ * Must return an array of user ids who are participants
+ * for a given instance of hotpot. Must include every user involved
+ * in the instance, independient of his role (student, teacher, admin...)
+ * See other modules as example.
+ *
+ * @global object
+ * @param int $hotpotid
+ */
 function hotpot_get_participants($hotpotid) {
-//Must return an array of user ids who are participants
-//for a given instance of hotpot. Must include every user involved
-//in the instance, independient of his role (student, teacher, admin...)
-//See other modules as example.
     global $DB;
 
     return $DB->get_records_sql("
@@ -1359,12 +1539,18 @@ function hotpot_get_participants($hotpotid) {
     ", array($hotpotid));
 }
 
-function hotpot_scale_used ($hotpotid, $scaleid) {
-//This function returns if a scale is being used by one hotpot
-//it it has support for grading and scales. Commented code should be
-//modified if necessary. See forum, glossary or journal modules
-//as reference.
+/**
+ * This function returns if a scale is being used by one hotpot
+ * it it has support for grading and scales. Commented code should be
+ * modified if necessary. See forum, glossary or journal modules
+ * as reference.
+ * 
+ * @param int $hotpotid
+ * @param int $scaleid
+ * @return bool
+ */
 
+function hotpot_scale_used ($hotpotid, $scaleid) {
     $report = false;
 
     //$rec = $DB->get_record("hotpot", array("id"=>"$hotpotid","scale"=>-$scaleid));
@@ -1380,7 +1566,7 @@ function hotpot_scale_used ($hotpotid, $scaleid) {
  * Checks if scale is being used by any instance of hotpot
  *
  * This is used to find out if scale used anywhere
- * @param $scaleid int
+ * @param int $scaleid
  * @return boolean True if the scale is used by any hotpot
  */
 function hotpot_scale_used_anywhere($scaleid) {
@@ -1391,7 +1577,15 @@ function hotpot_scale_used_anywhere($scaleid) {
 /// Any other hotpot functions go here.
 /// Each of them must have a name that starts with hotpot
 
-
+/**
+ * @global object
+ * @global stdClass
+ * @global object
+ * @uses HOTPOT_STATUS_INPROGRESS
+ * @uses HOTPOT_STATUS_ABANDONED
+ * @param int @hotpotid
+ * @return bool
+ */
 function hotpot_add_attempt($hotpotid) {
     global $DB, $CFG, $USER;
 
@@ -1421,6 +1615,12 @@ function hotpot_add_attempt($hotpotid) {
 
     return $DB->insert_record("hotpot_attempts", $attempt);
 }
+/**
+ * @global object
+ * @global object
+ * @param int $hotpotid
+ * @return int
+ */
 function hotpot_get_next_attempt($hotpotid) {
     global $USER, $DB;
 
@@ -1429,6 +1629,10 @@ function hotpot_get_next_attempt($hotpotid) {
 
     return empty($i) ? 1 : ($i+1);
 }
+/**
+ * @param object $question
+ * @return string
+ */
 function hotpot_get_question_name($question) {
     $name = '';
     if (isset($question->text)) {
@@ -1439,6 +1643,11 @@ function hotpot_get_question_name($question) {
     }
     return $name;
 }
+/**
+ * @global object
+ * @param array $ids
+ * @return string
+ */
 function hotpot_strings($ids) {
     global $DB;
 
@@ -1462,6 +1671,11 @@ function hotpot_strings($ids) {
     }
     return implode(',', $strings);
 }
+/**
+ * @global object
+ * @param int $id
+ * @return object
+ */
 function hotpot_string($id) {
     global $DB;
     return $DB->get_field('hotpot_strings', 'string', array('id'=>$id));
@@ -1476,7 +1690,16 @@ require_once("$CFG->libdir/xmlize.php");
 // get the default class for hotpot quiz templates
 require_once("$CFG->hotpottemplate/default.php");
 
+/**
+ * @package   mod-hotpot
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class hotpot_xml_tree {
+    /**
+     * @param string $str
+     * @param string $xml_root
+     */
     function hotpot_xml_tree($str, $xml_root='') {
         if (empty($str)) {
             $this->xml =  array();
@@ -1485,6 +1708,11 @@ class hotpot_xml_tree {
         }
         $this->xml_root = $xml_root;
     }
+    /**
+     * @param string $tags
+     * @param string $more_tags
+     * @return string
+     */
     function xml_value($tags, $more_tags="[0]['#']") {
 
         $tags = empty($tags) ? '' : "['".str_replace(",", "'][0]['#']['", $tags)."']";
@@ -1531,6 +1759,10 @@ class hotpot_xml_tree {
         }
         return $value;
     }
+    /**
+     * @param string $tags
+     * @return array
+     */
     function xml_values($tags) {
         $i = 0;
         $values = array();
@@ -1539,9 +1771,18 @@ class hotpot_xml_tree {
         }
         return $values;
     }
+    /**
+     * @param object $obj
+     * @param string $name
+     * @return mixed
+     */
     function obj_value(&$obj, $name) {
         return is_object($obj) ? @$obj->$name : (is_array($obj) ? @$obj[$name] : NULL);
     }
+    /**
+     * @param string $str
+     * @param string $tag
+     */
     function encode_cdata(&$str, $tag) {
 
         // conversion tables
@@ -1579,11 +1820,34 @@ class hotpot_xml_tree {
     }
 }
 
+/**
+ * @package   mod-hotpot
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class hotpot_xml_quiz extends hotpot_xml_tree {
 
-    // constructor function
+    /**
+     * constructor function
+     *
+     * @global stdClass
+     * @global array
+     * @global array
+     * @uses HOTPOT_LOCATION_SITEFILES
+     * @uses HOTPOT_LOCATION_COURSEFILES
+     * @uses HOTPOT_OUTPUTFORMAT_MOBILE
+     * @uses HOTPOT_OUTPUTFORMAT_BEST
+     * @uses HOTPOT_OUTPUTFORMAT_V6_PLUS
+     * @uses HOTPOT_OUTPUTFORMAT_V6
+     * @param mixed @obj obj can be the $_GET array or a form object/array
+     * @param bool $read_file
+     * @param bool $parse_xml
+     * @param bool $convert_urls
+     * @param bool $report_errors
+     * @param bool $create_html
+     * @return void
+     */
     function hotpot_xml_quiz(&$obj, $read_file=true, $parse_xml=true, $convert_urls=true, $report_errors=true, $create_html=true) {
-        // obj can be the $_GET array or a form object/array
 
         global $CFG, $HOTPOT_OUTPUTFORMAT, $HOTPOT_OUTPUTFORMAT_DIR;
 
@@ -1771,6 +2035,9 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
         } // end if $this->read_file
     } // end constructor function
 
+    /**
+     * @param string $str By reference
+     */
     function hotpot_convert_relative_urls(&$str) {
         $tagopen = '(?:(<)|(&lt;)|(&amp;#x003C;))'; // left angle bracket
         $tagclose = '(?(2)>|(?(3)&gt;|(?(4)&amp;#x003E;)))'; //  right angle bracket (to match left angle bracket)
@@ -1795,8 +2062,12 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
         }
     }
 
+    /**
+     * set the url base (first time only)
+     *
+     * @return string
+     */
     function get_baseurl() {
-        // set the url base (first time only)
         if (!isset($this->baseurl)) {
             global $CFG;
             require_once($CFG->libdir.'/filelib.php');
@@ -1807,15 +2078,29 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 
 
     // insert forms and messages
-
+    /**
+     *
+     */
     function remove_nav_buttons() {
         $search = '#<!-- Begin(Top|Bottom)NavButtons -->(.*?)<!-- End(Top|Bottom)NavButtons -->#s';
         $this->html = preg_replace($search, '', $this->html);
     }
+    /**
+     * @uses HOTPOT_JS
+     * @param string $src Defaults to HOTPOT_JS
+     */
     function insert_script($src=HOTPOT_JS) {
         $script = '<script src="'.$src.'" type="text/javascript"></script>'."\n";
         $this->html = preg_replace('|</head>|i', $script.'</head>', $this->html, 1);
     }
+    /**
+     * @see insert_form()
+     * @param int|string $attemptid
+     * @param string $startblock
+     * @param string $endblock
+     * @param bool $keep_contents
+     * @param string $targetframe
+     */
     function insert_submission_form($attemptid, $startblock, $endblock, $keep_contents=false, $targetframe='') {
         $form_id = 'store';
         $form_fields = ''
@@ -1830,6 +2115,13 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
         ;
         $this->insert_form($startblock, $endblock, $form_id, $form_fields, $keep_contents, false, $targetframe);
     }
+    /**
+     * @see insert_form()
+     * @param int|string $attemptid
+     * @param string $startblock
+     * @param string $endblock
+     * @param bool $keep_contents
+     */
     function insert_giveup_form($attemptid, $startblock, $endblock, $keep_contents=false) {
         $form_id = ''; // no <form> tag will be generated
         $form_fields = ''
@@ -1841,6 +2133,16 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
         ;
         $this->insert_form($startblock, $endblock, $form_id, $form_fields, $keep_contents, true);
     }
+    /**
+     * @global stdClass
+     * @param string $startblock
+     * @param string $endblock
+     * @param string $form_id
+     * @param mixed $form_fields
+     * @param bool $keep_contents
+     * @param bool $center
+     * @param string $targetframe
+     */
     function insert_form($startblock, $endblock, $form_id, $form_fields, $keep_contents, $center=false, $targetframe='') {
         global $CFG;
         $search = '#('.preg_quote($startblock).')(.*?)('.preg_quote($endblock).')#s';
@@ -1866,11 +2168,19 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
         $replace = '\\1'.$replace.'\\3';
         $this->html = preg_replace($search, $replace, $this->html, 1);
     }
+    /**
+     * @param string $start_str
+     * @param string $message
+     * @param string $color
+     * @param string $align
+     */
     function insert_message($start_str, $message, $color='red', $align='center') {
         $message = '<p align="'.$align.'" style="text-align:'.$align.'"><b><font color="'.$color.'">'.$message."</font></b></p>\n";
         $this->html = preg_replace('|'.preg_quote($start_str).'|', $start_str.$message, $this->html, 1);
     }
-
+    /**
+     * @global stdClass
+     */
     function adjust_media_urls() {
 
         if ($this->forceplugins) {
@@ -1935,14 +2245,26 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
     }
 
 } // end class
-
+/**
+ * strip slashes from  double quotes, single quotes and  back slashes
+ * the slashes were added by preg_replace() when using the "e" modifier
+ *
+ * @staticvar array $escapedchars
+ * @staticvar array $escapedchars
+ * @param string
+ */
 function hotpot_stripslashes($str) {
-    // strip slashes from  double quotes, single quotes and  back slashes
-    // the slashes were added by preg_replace() when using the "e" modifier
     static $escapedchars = array('\\\\', '\\"', "\\'");
     static $unescapedchars = array('\\', '"', "'");
     return str_replace($escapedchars, $unescapedchars, $str);
 }
+/**
+ * @param string $baseurl
+ * @param string $reference
+ * @param string $css
+ * @param bool $stripslashes
+ * @return string
+ */
 function hotpot_convert_stylesheets_urls($baseurl, $reference, $css, $stripslashes=true) {
     if ($stripslashes) {
         $css = hotpot_stripslashes($css);
@@ -1951,6 +2273,13 @@ function hotpot_convert_stylesheets_urls($baseurl, $reference, $css, $stripslash
     $replace = "hotpot_convert_url('".$baseurl."','".$reference."','\\1')";
     return preg_replace($search, $replace, $css);
 }
+/**
+ * @param string $baseurl
+ * @param string $reference
+ * @param array|string $urls
+ * @param bool $stripslashes
+ * @return string
+ */
 function hotpot_convert_preloadimages_urls($baseurl, $reference, $urls, $stripslashes=true) {
     if ($stripslashes) {
         $urls = hotpot_stripslashes($urls);
@@ -1959,6 +2288,16 @@ function hotpot_convert_preloadimages_urls($baseurl, $reference, $urls, $stripsl
     $replace = "hotpot_convert_url('".$baseurl."','".$reference."','\\1')";
     return preg_replace($search, $replace, $urls);
 }
+/**
+ * @global stdClass
+ * @global object
+ * @param string $baseurl
+ * @param string $reference
+ * @param string $url
+ * @param object $course
+ * @param bool $stripslashes
+ * @return string
+ */
 function hotpot_convert_navbutton_url($baseurl, $reference, $url, $course, $stripslashes=true) {
     global $CFG, $DB;
 
@@ -1977,7 +2316,15 @@ function hotpot_convert_navbutton_url($baseurl, $reference, $url, $course, $stri
 
     return $url;
 }
-
+/**
+ * @param string $baseurl
+ * @param string $reference
+ * @param string $opentage
+ * @param string $url
+ * @param string $closetage
+ * @param bool $stripslashes
+ * @return string
+ */
 function hotpot_convert_relative_url($baseurl, $reference, $opentag, $url, $closetag, $stripslashes=true) {
     if ($stripslashes) {
         $opentag = hotpot_stripslashes($opentag);
@@ -2021,7 +2368,13 @@ function hotpot_convert_relative_url($baseurl, $reference, $opentag, $url, $clos
 
     return $url;
 }
-
+/**
+ * @staticvar array $HOTPOT_RELATIVE_URLS
+ * @param string $baseurl
+ * @param string $reference
+ * @param string $url
+ * @param bool $stripslashes
+ */
 function hotpot_convert_url($baseurl, $reference, $url, $stripslashes=true) {
     // maintain a cache of converted urls
     static $HOTPOT_RELATIVE_URLS = array();
@@ -2066,10 +2419,11 @@ function hotpot_convert_url($baseurl, $reference, $url, $stripslashes=true) {
     return $url;
 }
 
-// ===================================================
-// function for adding attempt questions and responses
-// ===================================================
-
+/**
+ * function for adding attempt questions and responses
+ *
+ * @param object $attempt
+ */
 function hotpot_add_attempt_details(&$attempt) {
 
     // encode ampersands so that HTML entities are preserved in the XML parser
@@ -2193,6 +2547,13 @@ function hotpot_add_attempt_details(&$attempt) {
     // add the final question and response, if any
     hotpot_add_response($attempt, $question, $response);
 }
+/**
+ * @global object
+ * @global string
+ * @param object $attempt
+ * @param object $question
+ * @param object $response
+ */
 function hotpot_add_response(&$attempt, &$question, &$response) {
     global $DB, $next_url;
 
@@ -2242,6 +2603,13 @@ function hotpot_add_response(&$attempt, &$question, &$response) {
         }
     } // end while
 }
+/**
+ * @param string $quiztype
+ * @param object $question
+ * @param string $num
+ * @param string $name
+ * @param int|string $data
+ */
 function hotpot_adjust_response_field($quiztype, &$question, &$num, &$name, &$data) {
     switch ($quiztype) {
         case 'jbc':
@@ -2362,6 +2730,10 @@ function hotpot_adjust_response_field($quiztype, &$question, &$num, &$name, &$da
             break;
     }
 }
+/**
+ * @param string $field_value
+ * @return string
+ */
 function hotpot_string_ids($field_value) {
     $ids = array();
     $strings = explode(',', $field_value);
@@ -2372,6 +2744,11 @@ function hotpot_string_ids($field_value) {
     }
     return implode(',', $ids);
 }
+/**
+ * @global object
+ * @param string $str
+ * @return int|string 
+ */
 function hotpot_string_id($str) {
     global $DB;
 
@@ -2396,15 +2773,25 @@ function hotpot_string_id($str) {
     }
     return $id;
 }
-
+/**
+ * @return array
+ */
 function hotpot_get_view_actions() {
     return array('view','view all','report');
 }
-
+/**
+ * @return array
+ */
 function hotpot_get_post_actions() {
     return array('attempt','review','submit');
 }
 
+/**
+ * @staticvar array $HOTPOT_UTF8_DECREMENT
+ * @staticvar array $HOTPOT_UTF8_SHIFT
+ * @param string $char
+ * @return string
+ */
 function hotpot_utf8_to_html_entity($char) {
     // http://www.zend.com/codex.php?id=835&single=1
 
@@ -2431,7 +2818,17 @@ function hotpot_utf8_to_html_entity($char) {
     }
     return '&#x'.sprintf('%04X', $dec).';';
 }
-
+/**
+ * @global object
+ * @param string $course
+ * @param string $location
+ * @param string $reference
+ * @param string $actions
+ * @param string $spacer
+ * @param bool $new_window
+ * @param bool $return
+ * @return string|void
+ */
 function hotpot_print_show_links($course, $location, $reference, $actions='', $spacer=' &nbsp; ', $new_window=false, $return=false) {
     global $CFG;
     if (is_string($actions)) {
@@ -2531,6 +2928,7 @@ END_OF_SCRIPT;
 
 /**
  * Returns all other caps used in module
+ * @return array
  */
 function hotpot_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
@@ -2539,7 +2937,10 @@ function hotpot_get_extra_capabilities() {
 /**
  * This function is used by the reset_course_userdata function in moodlelib.
  * This function will remove all attempts from hotpot quizzes in the specified course.
- * @param $data the data submitted from the reset course.
+ *
+ * @global stdClass
+ * @global object
+ * @param object $data the data submitted from the reset course.
  * @return array status array
  */
 function hotpot_reset_userdata($data) {
@@ -2567,6 +2968,7 @@ function hotpot_reset_userdata($data) {
 
 /**
  * Called by course/reset.php
+ * 
  * @param $mform form passed by reference
  */
 function hotpot_reset_course_form_definition(&$mform) {
@@ -2576,6 +2978,8 @@ function hotpot_reset_course_form_definition(&$mform) {
 
 /**
  * Course reset form defaults.
+ *
+ * @return array
  */
 function hotpot_reset_course_form_defaults($course) {
     return array('reset_hotpot_deleteallattempts' => 1);
