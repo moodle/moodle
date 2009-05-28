@@ -1,9 +1,40 @@
-<?php // $Id$
+<?php
 
-// Graph size
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package   mod-survey
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
+ * Graph size
+ * @global int $SURVEY_GHEIGHT
+ */
 $SURVEY_GHEIGHT = 500;
+/**
+ * Graph size
+ * @global int $SURVEY_GWIDTH
+ */
 $SURVEY_GWIDTH  = 900;
-
+/**
+ * Question Type
+ * @global array $SURVEY_QTYPE
+ */
 $SURVEY_QTYPE = array (
         "-3" => "Virtual Actual and Preferred",
         "-2" => "Virtual Preferred",
@@ -23,13 +54,18 @@ define("SURVEY_CIQ",                     "5");
 
 
 // STANDARD FUNCTIONS ////////////////////////////////////////////////////////
-
+/**
+ * Given an object containing all the necessary data,
+ * (defined by the form in mod_form.php) this function
+ * will create a new instance and return the id number
+ * of the new instance.
+ *
+ * @global object
+ * @param object $survey
+ * @return int|bool
+ */
 function survey_add_instance($survey) {
     global $DB;
-// Given an object containing all the necessary data, 
-// (defined by the form in mod_form.php) this function 
-// will create a new instance and return the id number 
-// of the new instance.
 
     if (!$template = $DB->get_record("survey", array("id"=>$survey->template))) {
         return 0;
@@ -43,12 +79,17 @@ function survey_add_instance($survey) {
 
 }
 
-
+/**
+ * Given an object containing all the necessary data,
+ * (defined by the form in mod_form.php) this function
+ * will update an existing instance with new data.
+ *
+ * @global object
+ * @param object $survey
+ * @return bool
+ */
 function survey_update_instance($survey) {
     global $DB;
-// Given an object containing all the necessary data, 
-// (defined by the form in mod_form.php) this function 
-// will update an existing instance with new data.
 
     if (!$template = $DB->get_record("survey", array("id"=>$survey->template))) {
         return 0;
@@ -61,11 +102,17 @@ function survey_update_instance($survey) {
     return $DB->update_record("survey", $survey);
 }
 
+/**
+ * Given an ID of an instance of this module,
+ * this function will permanently delete the instance
+ * and any data that depends on it.  
+ *
+ * @global object
+ * @param int $id
+ * @return bool
+ */
 function survey_delete_instance($id) {
     global $DB;
-// Given an ID of an instance of this module, 
-// this function will permanently delete the instance 
-// and any data that depends on it.  
 
     if (! $survey = $DB->get_record("survey", array("id"=>$id))) {
         return false;
@@ -88,6 +135,14 @@ function survey_delete_instance($id) {
     return $result;
 }
 
+/**
+ * @global object
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $survey
+ * @return $result
+ */
 function survey_user_outline($course, $user, $mod, $survey) {
     global $DB;
 
@@ -102,7 +157,15 @@ function survey_user_outline($course, $user, $mod, $survey) {
     return NULL;
 }
 
-
+/**
+ * @global stdObject
+ * @global object
+ * @uses SURVEY_CIQ
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $survey
+ */
 function survey_user_complete($course, $user, $mod, $survey) {
     global $CFG, $DB;
 
@@ -137,6 +200,14 @@ function survey_user_complete($course, $user, $mod, $survey) {
     }
 }
 
+/**
+ * @global stdClass
+ * @global object
+ * @param object $course
+ * @param mixed $viewfullnames
+ * @param int $timestamp
+ * @return bool
+ */
 function survey_print_recent_activity($course, $viewfullnames, $timestart) {
     global $CFG, $DB;
 
@@ -191,9 +262,15 @@ function survey_print_recent_activity($course, $viewfullnames, $timestart) {
     return true;
 }
 
+/**
+ * Returns the users with data in one survey
+ * (users with records in survey_analysis and survey_answers, students)
+ *
+ * @global object
+ * @param int $surveyid
+ * @return array
+ */
 function survey_get_participants($surveyid) {
-//Returns the users with data in one survey
-//(users with records in survey_analysis and survey_answers, students)
     global $DB;
 
     //Get students from survey_analysis
@@ -219,7 +296,11 @@ function survey_get_participants($surveyid) {
 
 // SQL FUNCTIONS ////////////////////////////////////////////////////////
 
-
+/**
+ * @global object
+ * @param sting $log
+ * @return array
+ */
 function survey_log_info($log) {
     global $DB;
     return $DB->get_record_sql("SELECT s.name, u.firstname, u.lastname, u.picture
@@ -227,6 +308,13 @@ function survey_log_info($log) {
                                  WHERE s.id = ?  AND u.id = ?", array($log->info, $log->userid));
 }
 
+/**
+ * @global object
+ * @param int $surveyid
+ * @param int $groupid
+ * @param int $groupingid
+ * @return array
+ */
 function survey_get_responses($surveyid, $groupid, $groupingid) {
     global $DB;
 
@@ -251,6 +339,12 @@ function survey_get_responses($surveyid, $groupid, $groupingid) {
                                ORDER BY time ASC", $params);
 }
 
+/**
+ * @global object
+ * @param int $survey
+ * @param int $user
+ * @return array
+ */
 function survey_get_analysis($survey, $user) {
     global $DB;
 
@@ -259,6 +353,12 @@ function survey_get_analysis($survey, $user) {
                                  WHERE survey=? AND userid=?", array($survey, $user));
 }
 
+/**
+ * @global object
+ * @param int $survey
+ * @param int $user
+ * @param string $notes
+ */
 function survey_update_analysis($survey, $user, $notes) {
     global $DB;
 
@@ -268,7 +368,13 @@ function survey_update_analysis($survey, $user, $notes) {
                             AND userid=?", array($notes, $survey, $user));
 }
 
-
+/**
+ * @global object
+ * @param int $surveyid
+ * @param int $groupid
+ * @param string $sort
+ * @return array
+ */
 function survey_get_user_answers($surveyid, $questionid, $groupid, $sort="sa.answer1,sa.answer2 ASC") {
     global $DB;
 
@@ -288,6 +394,13 @@ function survey_get_user_answers($surveyid, $questionid, $groupid, $sort="sa.ans
                                ORDER BY $sort", $params);
 }
 
+/**
+ * @global object
+ * @param int $surveyid
+ * @param int $questionid
+ * @param int $userid
+ * @return array
+ */
 function survey_get_user_answer($surveyid, $questionid, $userid) {
     global $DB;
 
@@ -299,7 +412,13 @@ function survey_get_user_answer($surveyid, $questionid, $userid) {
 }
 
 // MODULE FUNCTIONS ////////////////////////////////////////////////////////
-
+/**
+ * @global object
+ * @param int $survey
+ * @param int $user
+ * @param string $notes
+ * @return bool|int
+ */
 function survey_add_analysis($survey, $user, $notes) {
     global $DB;
 
@@ -310,13 +429,23 @@ function survey_add_analysis($survey, $user, $notes) {
 
     return $DB->insert_record("survey_analysis", $record, false);
 }
-
+/**
+ * @global object
+ * @param int $survey
+ * @param int $user
+ * @return bool
+ */
 function survey_already_done($survey, $user) {
     global $DB;
 
     return $DB->record_exists("survey_answers", array("survey"=>$survey, "userid"=>$user));
 }
-
+/**
+ * @param int $surveyid
+ * @param int $groupid
+ * @param int $groupingid
+ * @return int
+ */
 function survey_count_responses($surveyid, $groupid, $groupingid) {
     if ($responses = survey_get_responses($surveyid, $groupid, $groupingid)) {
         return count($responses);
@@ -325,7 +454,11 @@ function survey_count_responses($surveyid, $groupid, $groupingid) {
     }
 }
 
-
+/**
+ * @param int $cmid
+ * @param array $results
+ * @param int $courseid
+ */
 function survey_print_all_responses($cmid, $results, $courseid) {
 
     $table = new object();
@@ -342,7 +475,11 @@ function survey_print_all_responses($cmid, $results, $courseid) {
     print_table($table);
 }
 
-
+/**
+ * @global object
+ * @param int $templateid
+ * @return string
+ */
 function survey_get_template_name($templateid) {
     global $DB;
 
@@ -356,7 +493,11 @@ function survey_get_template_name($templateid) {
 }
 
 
-
+/**
+ * @param string $name
+ * @param array $numwords
+ * @return string
+ */
 function survey_shorten_name ($name, $numwords) {
     $words = explode(" ", $name);
     for ($i=0; $i < $numwords; $i++) {
@@ -365,8 +506,16 @@ function survey_shorten_name ($name, $numwords) {
     return $output;
 }
 
-
-
+/**
+ * @todo Check this function
+ *
+ * @global object
+ * @global object
+ * @global int
+ * @global void This is never defined
+ * @global object This is defined twice?
+ * @param object $question
+ */
 function survey_print_multi($question) {
     global $USER, $DB, $qnum, $checklist, $DB;
 
@@ -461,7 +610,11 @@ function survey_print_multi($question) {
 }
 
 
-
+/**
+ * @global object
+ * @global int
+ * @param object $question
+ */
 function survey_print_single($question) {
     global $DB, $qnum;
 
@@ -500,6 +653,11 @@ function survey_print_single($question) {
 
 }
 
+/**
+ *
+ * @param int $qnum
+ * @return string
+ */
 function survey_question_rowclass($qnum) {
 
     if ($qnum) {
@@ -509,6 +667,12 @@ function survey_question_rowclass($qnum) {
     }
 }
 
+/**
+ * @global object
+ * @global int
+ * @global int
+ * @param string $url
+ */
 function survey_print_graph($url) {
     global $CFG, $SURVEY_GHEIGHT, $SURVEY_GWIDTH;
 
@@ -521,10 +685,16 @@ function survey_print_graph($url) {
     }
 }
 
+/**
+ * @return array
+ */
 function survey_get_view_actions() {
     return array('download','view all','view form','view graph','view report');
 }
 
+/**
+ * @return array
+ */
 function survey_get_post_actions() {
     return array('submit');
 }
@@ -533,7 +703,8 @@ function survey_get_post_actions() {
 /**
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the survey.
- * @param $mform form passed by reference
+ * 
+ * @param object $mform form passed by reference
  */
 function survey_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'surveyheader', get_string('modulenameplural', 'survey'));
@@ -544,6 +715,7 @@ function survey_reset_course_form_definition(&$mform) {
 
 /**
  * Course reset form defaults.
+ * @return array
  */
 function survey_reset_course_form_defaults($course) {
     return array('reset_survey_answers'=>1, 'reset_survey_analysis'=>1);
@@ -552,6 +724,8 @@ function survey_reset_course_form_defaults($course) {
 /**
  * Actual implementation of the rest coures functionality, delete all the
  * survey responses for course $data->courseid.
+ *
+ * @global object
  * @param $data the data submitted from the reset course.
  * @return array status array
  */
@@ -583,14 +757,23 @@ function survey_reset_userdata($data) {
 
 /**
  * Returns all other caps used in module
+ *
+ * @return array
  */
 function survey_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
 }
 
 /**
+ * @uses FEATURE_GROUPS
+ * @uses FEATURE_GROUPINGS
+ * @uses FEATURE_GROUPMEMBERSONLY
+ * @uses FEATURE_MOD_INTRO
+ * @uses FEATURE_COMPLETION_TRACKS_VIEWS
+ * @uses FEATURE_GRADE_HAS_GRADE
+ * @uses FEATURE_GRADE_OUTCOMES
  * @param string $feature FEATURE_xx constant for requested feature
- * @return mixed True if module supports feature, null if doesn't know
+ * @return mixed True if module supports feature, false if not, null if doesn't know
  */
 function survey_supports($feature) {
     switch($feature) {

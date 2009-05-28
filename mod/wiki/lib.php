@@ -1,11 +1,34 @@
-<?php  // $Id$
+<?php
 
-/// Library of functions and constants for module wiki
-/// (replace wiki with the name of your module and delete this line)
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Library of functions and constants for module wiki
+ * (replace wiki with the name of your module and delete this line)
+ * 
+ * @package   mod-wiki
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
+/** @global int $wiki_CONSTANT */
 $wiki_CONSTANT = 7;     /// for example
+/** @global object $site */
 $site = get_site();
+/** @global array $WIKI_TYPES */
 $WIKI_TYPES = array ('teacher' =>   get_string('defaultcourseteacher'),
                      'group' =>     get_string('groups',"wiki"),
                      'student' =>   get_string('defaultcoursestudent') );
@@ -21,8 +44,13 @@ define("WIKI_LOCK_RECONFIRM",60);
 define('SESSION_WIKI_LOCKS','wikilocks');
 
 /*** Moodle 1.7 compatibility functions *****
- *
  ********************************************/
+
+/**
+ * @todo add some $cm caching if needed
+ * @param object $wiki
+ * @return object
+ */
 function wiki_context($wiki) {
     //TODO: add some $cm caching if needed
     if (is_object($wiki)) {
@@ -35,33 +63,57 @@ function wiki_context($wiki) {
     return get_context_instance(CONTEXT_MODULE, $cm->id);
 }
 
+/**
+ * @param object $wiki
+ * @param int $userid
+ * @return bool
+ */
 function wiki_is_teacher($wiki, $userid=NULL) {
     return has_capability('mod/wiki:manage', wiki_context($wiki), $userid);
 }
-
+/**
+ * @param object $wiki
+ * @param int $userid
+ * @return bool
+ */
 function wiki_is_teacheredit($wiki, $userid=NULL) {
     return has_capability('mod/wiki:manage', wiki_context($wiki), $userid)
        and has_capability('moodle/site:accessallgroups', wiki_context($wiki), $userid);
 }
-
+/**
+ * @param object $wiki
+ * @param int $userid
+ * @return bool
+ */
 function wiki_is_student($wiki, $userid=NULL) {
     return has_capability('mod/wiki:participate', wiki_context($wiki), $userid);
 }
-
+/**
+ * @param object $wiki
+ * @param string $groups
+ * @param string $sort
+ * @param string $fields
+ * @return array
+ */
 function wiki_get_students($wiki, $groups='', $sort='u.lastaccess', $fields='u.*') {
     return $users = get_users_by_capability(wiki_context($wiki), 'mod/wiki:participate', $fields, $sort, '', '', $groups);
 }
 
 /* end of compatibility functions */
 
-
+/**
+ * Given an object containing all the necessary data,
+ * (defined by the form in mod_form.php) this function
+ * will create a new instance and return the id number
+ * of the new instance.
+ *
+ * @global object
+ * @param object $wiki
+ * @return bool|int
+ */
 function wiki_add_instance($wiki) {
     global $DB;
-/// Given an object containing all the necessary data,
-/// (defined by the form in mod_form.php) this function
-/// will create a new instance and return the id number
-/// of the new instance.
-
+    
     $wiki->timemodified = time();
 
     # May have to add extra stuff in here #
@@ -72,12 +124,17 @@ function wiki_add_instance($wiki) {
     return $DB->insert_record("wiki", $wiki);
 }
 
-
+/**
+ * Given an object containing all the necessary data,
+ * (defined by the form in mod_form.php) this function
+ * will update an existing instance with new data.
+ *
+ * @global object
+ * @param object @wiki
+ * @return bool
+ */
 function wiki_update_instance($wiki) {
     global $DB;
-/// Given an object containing all the necessary data,
-/// (defined by the form in mod_form.php) this function
-/// will update an existing instance with new data.
 
     /// Determine the pagename for this wiki.
     $wiki->pagename = wiki_page_name($wiki);
@@ -87,7 +144,11 @@ function wiki_update_instance($wiki) {
     return $DB->update_record("wiki", $wiki);
 }
 
-/// Delete all Directories recursively
+/**
+ * Delete all Directories recursively
+ *
+ * @param string $basedir
+ */
 function wiki_rmdir($basedir) {
   $handle = @opendir($basedir);
   if($handle) {
@@ -101,10 +162,17 @@ function wiki_rmdir($basedir) {
   @rmdir($basedir);
 }
 
+/**
+ * Given an ID of an instance of this module,
+ * this function will permanently delete the instance
+ * and any data that depends on it.
+ *
+ * @global stdObject
+ * @global object
+ * @param int $id
+ * @return bool
+ */
 function wiki_delete_instance($id) {
-/// Given an ID of an instance of this module,
-/// this function will permanently delete the instance
-/// and any data that depends on it.
     global $CFG, $DB;
 
     if (! $wiki = $DB->get_record("wiki", array("id"=>$id))) {
@@ -155,29 +223,52 @@ function wiki_delete_instance($id) {
     return $result;
 }
 
+/**
+ * Return a small object with summary information about what a
+ * user has done with a given particular instance of this module
+ * Used for user activity reports.
+ * $return->time = the time they did it
+ * $return->info = a short text description
+ *
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $wiki
+ * @return null
+ */
 function wiki_user_outline($course, $user, $mod, $wiki) {
-/// Return a small object with summary information about what a
-/// user has done with a given particular instance of this module
-/// Used for user activity reports.
-/// $return->time = the time they did it
-/// $return->info = a short text description
 
     $return = NULL;
     return $return;
 }
 
+/**
+ * Print a detailed representation of what a  user has done with
+ * a given particular instance of this module, for user activity reports.
+ *
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $wiki
+ * @return bool true
+ */
 function wiki_user_complete($course, $user, $mod, $wiki) {
-/// Print a detailed representation of what a  user has done with
-/// a given particular instance of this module, for user activity reports.
-
     return true;
 }
 
+/**
+ * Given a course and a time, this module should find recent activity
+ * that has occurred in wiki activities and print it out.
+ * Return true if there was output, or false is there was none.
+ *
+ * @global stdClass
+ * @global object
+ * @param object $course
+ * @param bool $isteacher
+ * @param int $timestart
+ * @return bool
+ */
 function wiki_print_recent_activity($course, $isteacher, $timestart) {
-/// Given a course and a time, this module should find recent activity
-/// that has occurred in wiki activities and print it out.
-/// Return true if there was output, or false is there was none.
-
     global $CFG, $DB;
     
     $sql = "SELECT l.*, cm.instance
@@ -221,6 +312,12 @@ function wiki_print_recent_activity($course, $isteacher, $timestart) {
     return false;
 }
 
+/**
+ * @global stdClass
+ * @global object
+ * @param string $log
+ * @return array
+ */
 function wiki_log_info($log) {
     global $CFG, $DB;
     return $DB->get_record_sql("SELECT u.firstname, u.lastname
@@ -228,10 +325,15 @@ function wiki_log_info($log) {
                                  WHERE u.id = ?", array($log->userid));
 }
 
+/**
+ * Function to be run periodically according to the moodle cron
+ * This function searches for things that need to be done, such
+ * as sending out mail, toggling flags etc ...
+ *
+ * @global object
+ * @return bool
+ */
 function wiki_cron () {
-/// Function to be run periodically according to the moodle cron
-/// This function searches for things that need to be done, such
-/// as sending out mail, toggling flags etc ...
     global $DB;
 
     // Delete expired locks
@@ -240,9 +342,17 @@ function wiki_cron () {
     return $result;
 }
 
+/**
+ * Returns the users with data in one wiki
+ * (users with records in wiki_pages and wiki_entries)
+ *
+ * @global stdClass
+ * @global object
+ * @param int $wikiid
+ * @return array
+ */
 function wiki_get_participants($wikiid) {
-//Returns the users with data in one wiki
-//(users with records in wiki_pages and wiki_entries)
+
     global $CFG, $DB;
 
     //Get users from wiki_pages
@@ -273,10 +383,15 @@ function wiki_get_participants($wikiid) {
 /// Any other wiki functions go here.  Each of them must have a name that
 /// starts with wiki_
 
+/**
+ * Return the passed in string in Wiki name format.
+ * Remove any leading and trailing whitespace, capitalize all the words
+ * and then remove any internal whitespace.
+ *
+ * @param string $wikinane
+ * @return string
+ */
 function wiki_wiki_name($wikiname) {
-/// Return the passed in string in Wiki name format.
-/// Remove any leading and trailing whitespace, capitalize all the words
-/// and then remove any internal whitespace.
 
     if (wiki_is_wiki_name($wikiname)) {
         return $wikiname;
@@ -296,8 +411,13 @@ function wiki_wiki_name($wikiname) {
     }
 }
 
+/**
+ * Check for correct wikiname syntax and return true or false.
+ *
+ * @param string $wikiname
+ * @return bool
+ */
 function wiki_is_wiki_name($wikiname) {
-/// Check for correct wikiname syntax and return true or false.
 
     /// If there are spaces between the words, incorrect format.
     if (preg_match_all('/\w+/', $wikiname, $out) > 1) {
@@ -313,8 +433,12 @@ function wiki_is_wiki_name($wikiname) {
     }
 }
 
+/**
+ * Determines the wiki's page name and returns it.
+ * @param object $wiki
+ * @return string
+ */
 function wiki_page_name(&$wiki) {
-/// Determines the wiki's page name and returns it.
     if (!empty($wiki->initialcontent)) {
         $ppos = strrpos($wiki->initialcontent, '/');
         if ($ppos === false) {
@@ -333,6 +457,11 @@ function wiki_page_name(&$wiki) {
     return $pagename;
 }
 
+/**
+ * @global stdClass
+ * @param object $wiki
+ * @return string
+ */
 function wiki_content_dir(&$wiki) {
 /// Determines the wiki's default content directory (if there is one).
     global $CFG;
@@ -353,8 +482,15 @@ function wiki_content_dir(&$wiki) {
     return $contentdir;
 }
 
+/**
+ * Returns all wikis for the specified course and optionally of the specified type.
+ *
+ * @global object
+ * @param int $courseid
+ * @param string $wtype
+ * @return array
+ */
 function wiki_get_course_wikis($courseid, $wtype='*') {
-/// Returns all wikis for the specified course and optionally of the specified type.
     global $DB;
 
     $select = 'course = ?';
@@ -366,17 +502,29 @@ function wiki_get_course_wikis($courseid, $wtype='*') {
     return $DB->get_records_select('wiki', $select, $params, 'id');
 }
 
+/**
+ * Returns true if wiki already has wiki entries; otherwise false.
+ * @global object
+ * @param object $wiki
+ * @return bool
+ */
 function wiki_has_entries(&$wiki) {
-/// Returns true if wiki already has wiki entries; otherwise false.
     global $DB;
 
     return $DB->record_exists('wiki_entries', array('wikiid'=>$wiki->id));
 }
 
+/**
+ * Returns an array with all wiki entries indexed by entry id; false if there are none.
+ * If the optional $byindex is specified, returns the entries indexed by that field.
+ * Valid values for $byindex are 'student', 'group'.
+ *
+ * @global stdClass
+ * @global object
+ * @param object $wiki
+ * @param string $byindex
+ */
 function wiki_get_entries(&$wiki, $byindex=NULL) {
-/// Returns an array with all wiki entries indexed by entry id; false if there are none.
-/// If the optional $byindex is specified, returns the entries indexed by that field.
-/// Valid values for $byindex are 'student', 'group'.
     global $CFG, $DB;
     
     if ($byindex == 'student') {
@@ -392,11 +540,21 @@ function wiki_get_entries(&$wiki, $byindex=NULL) {
     }
 }
 
+/**
+ * Returns the wiki entry according to the wiki type.
+ *
+ * Optionally, will return wiki entry for $userid student wiki, or
+ * $groupid group or teacher wiki.
+ * Creates one if it needs to and it can.
+ *
+ * @global object
+ * @param object $wiki By reference
+ * @param object $course By reference
+ * @param int $userid
+ * @param int $groupid
+ * @return object
+ */
 function wiki_get_default_entry(&$wiki, &$course, $userid=0, $groupid=0) {
-/// Returns the wiki entry according to the wiki type.
-/// Optionally, will return wiki entry for $userid student wiki, or
-/// $groupid group or teacher wiki.
-/// Creates one if it needs to and it can.
     global $USER;
     /// If there is a groupmode, get the user's group id.
     $groupmode = groups_get_activity_groupmode($wiki);
@@ -429,10 +587,19 @@ function wiki_get_default_entry(&$wiki, &$course, $userid=0, $groupid=0) {
     return $wiki_entry;
 }
 
+/**
+ * Returns the wiki entry according to the wiki type.
+ *
+ * Optionally, will return wiki entry for $userid student wiki, or
+ * $groupid group or teacher wiki.
+ * @global object
+ * @param object $wiki By reference
+ * @param object $course By reference
+ * @param int $userid
+ * @param int $groupid
+ * @return object
+ */
 function wiki_get_entry(&$wiki, &$course, $userid=0, $groupid=0) {
-/// Returns the wiki entry according to the wiki type.
-/// Optionally, will return wiki entry for $userid student wiki, or
-/// $groupid group or teacher wiki.
     global $USER;
 
     switch ($wiki->wtype) {
@@ -502,20 +669,42 @@ function wiki_get_entry(&$wiki, &$course, $userid=0, $groupid=0) {
     return $wentry;
 }
 
+/**
+ * Returns the wiki entry for the wiki teacher type.
+ *
+ * @global object
+ * @param object $wiki
+ * @param int $groupid
+ * @return object
+ */
 function wiki_get_teacher_entry(&$wiki, $groupid=0) {
     global $DB;
-/// Returns the wiki entry for the wiki teacher type.
     return $DB->get_record('wiki_entries', array('wikiid'=>$wiki->id, 'course'=>$wiki->course, 'groupid'=>$groupid));
 }
 
+/**
+ * Returns the wiki entry for the given group.
+ *
+ * @global object
+ * @param object $wiki
+ * @param int $groupid
+ * @return object
+ */
 function wiki_get_group_entry(&$wiki, $groupid=null) {
     global $DB;
-/// Returns the wiki entry for the given group.
     return $DB->get_record('wiki_entries', array('wikiid'=>$wiki->id, 'groupid'=>$groupid));
 }
 
+/**
+ * Returns the wiki entry for the given student.
+ *
+ * @global object
+ * @global object
+ * @param object $wiki
+ * @param int $userid
+ * @return object
+ */
 function wiki_get_student_entry(&$wiki, $userid=null) {
-/// Returns the wiki entry for the given student.
     global $USER, $DB;
 
     if (is_null($userid)) {
@@ -524,10 +713,20 @@ function wiki_get_student_entry(&$wiki, $userid=null) {
     return $DB->get_record('wiki_entries', array('wikiid'=>$wiki->id, 'userid'=>$userid));
 }
 
+/**
+ * Returns a list of other wikis to display, depending on the type, group and user.
+ * Returns the key containing the currently selected entry as well.
+ *
+ * @global stdClass
+ * @global int
+ * @global object
+ * @param object $wiki
+ * @param object $user
+ * @param object $course
+ * @param int $currentid
+ * @return array
+ */
 function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
-    /// Returns a list of other wikis to display, depending on the type, group and user.
-    /// Returns the key containing the currently selected entry as well.
-
     global $CFG, $id, $DB;
 
     $wikis = false;
@@ -880,11 +1079,21 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
     return $wikis;
 }
 
+/**
+ * Adds a new wiki entry of the specified type, unless already entered.
+ *
+ * No checking is done here. It is assumed that the caller has the correct
+ * privileges to add this entry.
+ *
+ * @global object
+ * @global object
+ * @param object $wiki
+ * @param object $course
+ * @param int $userid
+ * @param int $groupid
+ * @return bool
+ */
 function wiki_add_entry(&$wiki, &$course, $userid=0, $groupid=0) {
-/// Adds a new wiki entry of the specified type, unless already entered.
-/// No checking is done here. It is assumed that the caller has the correct
-/// privileges to add this entry.
-
     global $USER, $DB;
 
     /// If this wiki already has a wiki_type entry, return false.
@@ -947,9 +1156,17 @@ function wiki_add_entry(&$wiki, &$course, $userid=0, $groupid=0) {
     return $DB->insert_record("wiki_entries", $wiki_entry, true);
 }
 
+/**
+ * Returns true or false if the user can add a wiki entry for this wiki.
+ *
+ * @param object $wiki By reference
+ * @param object $user By reference
+ * @param object $course By reference
+ * @param int $userid
+ * @param int $groupid
+ * @return bool
+ */
 function wiki_can_add_entry(&$wiki, &$user, &$course, $userid=0, $groupid=0) {
-/// Returns true or false if the user can add a wiki entry for this wiki.
-
     /// Get the groupmode. It's been added to the wiki object.
     $groupmode = groups_get_activity_groupmode($wiki);
     $mygroupid = mygroupid($course->id);
@@ -1015,8 +1232,16 @@ function wiki_can_add_entry(&$wiki, &$user, &$course, $userid=0, $groupid=0) {
     return false;
 }
 
+/**
+ * Returns true or false if the user can edit this wiki entry.
+ *
+ * @param object $wiki_entry by reference
+ * @param object $wiki by reference
+ * @param object $user by reference
+ * @param object $course by reference
+ * @return bool
+ */
 function wiki_can_edit_entry(&$wiki_entry, &$wiki, &$user, &$course) {
-/// Returns true or false if the user can edit this wiki entry.
 
     $can_edit = false;
     $groupmode = groups_get_activity_groupmode($wiki);
@@ -1065,6 +1290,13 @@ function wiki_can_edit_entry(&$wiki_entry, &$wiki, &$user, &$course) {
     return $can_edit;
 }
 
+/**
+ * @global object
+ * @param object $wiki by reference
+ * @param int $userid
+ * @param object $course
+ * @return bool
+ */
 function wiki_user_can_access_student_wiki(&$wiki, $userid, &$course) {
     global $USER;
 
@@ -1095,6 +1327,13 @@ function wiki_user_can_access_student_wiki(&$wiki, $userid, &$course) {
     return $can_access;
 }
 
+/**
+ * @global object
+ * @param object $wiki by reference
+ * @param int $groupid
+ * @param object $course
+ * @return bool
+ */
 function wiki_user_can_access_group_wiki(&$wiki, $groupid, &$course) {
     global $USER;
 
@@ -1121,6 +1360,13 @@ function wiki_user_can_access_group_wiki(&$wiki, $groupid, &$course) {
     return $can_access;
 }
 
+/**
+ * @global object
+ * @param object $wiki by reference
+ * @param int $groupid
+ * @param object $course by reference
+ * @return bool
+ */
 function wiki_user_can_access_teacher_wiki(&$wiki, $groupid, &$course) {
     global $USER;
 
@@ -1143,6 +1389,11 @@ function wiki_user_can_access_teacher_wiki(&$wiki, $groupid, &$course) {
     return $can_access;
 }
 
+/**
+ * @global object
+ * @param object $wiki_entry by reference
+ * @return string
+ */
 function wiki_get_owner(&$wiki_entry) {
     global $DB;
 
@@ -1163,6 +1414,17 @@ function wiki_get_owner(&$wiki_entry) {
     return $owner;
 }
 
+/**
+ * @todo Add Group and User !!!
+ *
+ * @global stdClass
+ * @param int $cmid
+ * @param string $search
+ * @param int $userid
+ * @param int $groupid
+ * @param bool $return
+ * @return string
+ */
 function wiki_print_search_form($cmid, $search="", $userid, $groupid, $return=false) {
     global $CFG;
     # TODO: Add Group and User !!!
@@ -1185,8 +1447,16 @@ function wiki_print_search_form($cmid, $search="", $userid, $groupid, $return=fa
     echo $output;
 }
 
+/**
+ * Prints a link-list of special wiki-pages
+ *
+ * @global object
+ * @global string
+ * @param int $cmid
+ * @param bool $binary
+ * @param bool $return
+ */
 function wiki_print_wikilinks_block($cmid, $binary=false, $return=false) {
-/// Prints a link-list of special wiki-pages
    global $CFG, $ewiki_title;
 
    $links=array();
@@ -1206,8 +1476,16 @@ function wiki_print_wikilinks_block($cmid, $binary=false, $return=false) {
    popup_form(EWIKI_SCRIPT, $links, "wikilinks", "", get_string("choosewikilinks", "wiki"), "", "", $return);
 }
 
+/**
+ * Displays actions which can be performed on the page
+ * @param int $cmit
+ * @param array $specialpages
+ * @param array $page
+ * @param string $action
+ * @param bool $binary
+ * @param bool $canedit
+ */
 function wiki_print_page_actions($cmid, $specialpages, $page, $action, $binary=false, $canedit=true) {
-/// Displays actions which can be performed on the page
 
   $page=array();
 
@@ -1231,8 +1509,18 @@ function wiki_print_page_actions($cmid, $specialpages, $page, $action, $binary=f
   popup_form(EWIKI_SCRIPT, $page, "wikiactions", "", get_string("action", "wiki"), "", "", false);
 }
 
+/**
+ * Displays actions which can be performed on the page
+ *
+ * @param object $wiki
+ * @param int $cmid
+ * @param int $userid
+ * @param int $groupid
+ * @param object $page
+ * @param bool $noeditor
+ * @param object $course
+ */
 function wiki_print_administration_actions($wiki, $cmid, $userid, $groupid, $page, $noeditor, $course) {
-/// Displays actions which can be performed on the page
 
   /// Create the URL
   $ewscript = 'admin.php?id='.$cmid;
@@ -1265,6 +1553,15 @@ function wiki_print_administration_actions($wiki, $cmid, $userid, $groupid, $pag
   popup_form($ewscript, $action, "wikiadministration", "", get_string("chooseadministration", "wiki"), "", "", false);
 }
 
+/**
+ * @uses EWIKI_DB_F_TEXT
+ * @uses EWIKI_DB_F_BINARY
+ * @uses EWIKI_DB_F_DISABLED
+ * @uses EWIKI_DB_F_HTML
+ * @uses EWIKI_DB_F_READONLY
+ * @uses EWIKI_DB_F_WRITEABLE
+ * @return array
+ */
 function wiki_admin_get_flagarray() {
   $ret = array(
      EWIKI_DB_F_TEXT => get_string("flagtxt","wiki"),
@@ -1279,6 +1576,11 @@ function wiki_admin_get_flagarray() {
 }
 
 ///////// Ewiki Administration. Mostly taken from the ewiki/tools folder and changed
+
+/**
+ * @param bool $pageflagstatus
+ * @return object
+ */
 function wiki_admin_setpageflags_list($pageflagstatus) {
   $FD = wiki_admin_get_flagarray();
   $table = new Object();
@@ -1316,6 +1618,10 @@ function wiki_admin_setpageflags_list($pageflagstatus) {
   return $table;
 }
 
+/**
+ * @param array $pageflags
+ * @return array Status array
+ */
 function wiki_admin_setpageflags($pageflags) {
   $FD = wiki_admin_get_flagarray();
 
@@ -1350,7 +1656,10 @@ function wiki_admin_setpageflags($pageflags) {
   return $status;
 }
 
-
+/**
+ * @param bool $listall
+ * @return object
+ */
 function wiki_admin_remove_list($listall="") {
   /// Table header
   $table = new Object();
@@ -1450,7 +1759,15 @@ function wiki_admin_remove_list($listall="") {
   return $table;
 }
 
-/// This function actually removes the pages
+/**
+ * This function actually removes the pages
+ * @param array $pagestodelete
+ * @param object $course
+ * @param object $wiki
+ * @param int $userid
+ * @param int $groupid
+ * @return string
+ */
 function wiki_admin_remove($pagestodelete, $course, $wiki, $userid, $groupid) {
   $ret="";
   foreach ($pagestodelete as $id) {
@@ -1470,6 +1787,12 @@ function wiki_admin_remove($pagestodelete, $course, $wiki, $userid, $groupid) {
   return $ret;
 }
 
+/**
+ * @param array $pagestostrip
+ * @param string $version
+ * @param string $err
+ * @return object
+ */
 function wiki_admin_strip_list($pagestostrip="",$version="",$err="") {
   /// Table header
   $table = new Object();
@@ -1504,6 +1827,12 @@ function wiki_admin_strip_list($pagestostrip="",$version="",$err="") {
   return $table;
 }
 
+/**
+ * @param array $pagestostrip
+ * @param string $version
+ * @param string $err
+ * @return array
+ */
 function wiki_admin_strip_versions($pagestostrip, $version, &$err) {
   $ret=array();
   foreach ($pagestostrip as $key => $id_ue) {
@@ -1534,6 +1863,9 @@ function wiki_admin_strip_versions($pagestostrip, $version, &$err) {
   return $ret;
 }
 
+/**
+ * @param array $pagestostrip
+ */
 function wiki_admin_strip($pagestostrip) {
   /// Purges old page-versions
   foreach($pagestostrip as $id => $versions) {
@@ -1543,6 +1875,9 @@ function wiki_admin_strip($pagestostrip) {
   }
 }
 
+/**
+ * @return array
+ */
 function wiki_admin_checklinks_list() {
   $ret=array();
   $result = ewiki_database("GETALL",array());
@@ -1555,8 +1890,11 @@ function wiki_admin_checklinks_list() {
   return $ret;
 }
 
+/**
+ * Checks http:// Links
+ * @return string
+ */
 function wiki_admin_checklinks($pagetocheck) {
-  /// Checks http:// Links
   $ret="";
   if($pagetocheck) {
      $get = ewiki_database("GET", array("id" => $pagetocheck));
@@ -1605,6 +1943,14 @@ function wiki_admin_checklinks($pagetocheck) {
   return $ret;
 }
 
+/**
+ * @param bool $proceed
+ * @param string $authorfieldpattern
+ * @param int $changesfield
+ * @param string $howtooperate
+ * @param int $deleteversions
+ * @return string
+ */
 function wiki_admin_revert($proceed, $authorfieldpattern, $changesfield, $howtooperate, $deleteversions) {
   $ret="";
   #-- params
@@ -1663,10 +2009,16 @@ function wiki_admin_revert($proceed, $authorfieldpattern, $changesfield, $howtoo
 }
 
 
+/**
+ * @return array
+ */
 function wiki_get_view_actions() {
     return array('view','view all');
 }
 
+/**
+ * @return array
+ */
 function wiki_get_post_actions() {
     return array('hack');
 }
@@ -1674,6 +2026,9 @@ function wiki_get_post_actions() {
 
 /**
  * Obtains an editing lock on a wiki page.
+ *
+ * @global object
+ * @global object
  * @param int $wikiid ID of wiki object.
  * @param string $pagename Name of page.
  * @return array Two-element array with a boolean true (if lock has been obtained)
@@ -1732,6 +2087,8 @@ function wiki_obtain_lock($wikiid,$pagename) {
  * browser crashes or something) since locks time out anyway. This is just
  * to avoid confusion of the 'what? it says I'm editing that page but I'm
  * not, I just saved it!' variety.
+ *
+ * @global object
  * @param int $wikiid ID of wiki object.
  * @param string $pagename Name of page.
  */
@@ -1756,12 +2113,21 @@ function wiki_release_lock($wikiid,$pagename) {
 
 /**
  * Returns all other caps used in module
+ *
+ * @return array
  */
 function wiki_get_extra_capabilities() {
     return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames');
 }
 
 /**
+ * @uses FEATURE_GROUPS
+ * @uses FEATURE_GROUPINGS
+ * @uses FEATURE_GROUPMEMBERSONLY
+ * @uses FEATURE_MOD_INTRO
+ * @uses FEATURE_COMPLETION_TRACKS_VIEWS
+ * @uses FEATURE_GRADE_HAS_GRADE
+ * @uses FEATURE_GRADE_OUTCOMES
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, null if doesn't know
  */
