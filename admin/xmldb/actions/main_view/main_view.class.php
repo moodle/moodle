@@ -89,6 +89,8 @@ class main_view extends XMLDBAction {
         $b .= '&nbsp;<a href="index.php?action=view_reserved_words">[' . $this->str['reservedwords'] . ']</a>';
     /// The test button
         $b .= '&nbsp;<a href="index.php?action=test">[' . $this->str['test'] . ']</a>';
+    /// The docs button
+        $b .= '&nbsp;<a href="index.php?action=generate_all_documentation">[' . $this->str['doc'] . ']</a>';
     /// The check indexes button
         $b .= '&nbsp;<a href="index.php?action=check_indexes">[' . $this->str['checkindexes'] . ']</a>';
     /// The check defaults button
