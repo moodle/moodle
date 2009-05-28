@@ -38,7 +38,8 @@ class generate_documentation extends XMLDBAction {
 
     /// Get needed strings
         $this->loadStrings(array(
-            'backtomainview' => 'xmldb'
+            'backtomainview' => 'xmldb',
+            'documentationintro' => 'xmldb'
         ));
     }
 
@@ -73,6 +74,11 @@ class generate_documentation extends XMLDBAction {
         $b .= '&nbsp;<a href="index.php?action=main_view#lastused">[' . $this->str['backtomainview'] . ']</a>';
         $b .= '</p>';
         $this->output=$b;
+
+        $c = ' <p class="centerpara">';
+        $c .= $this->str['documentationintro'];
+        $c .= '</p>';
+        $this->output.=$c;
 
         if(class_exists('XSLTProcessor')) {
         /// Transform XML file and display it

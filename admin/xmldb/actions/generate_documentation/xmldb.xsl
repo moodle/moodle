@@ -5,8 +5,6 @@
 
 <!-- Top level: disclaimer/intro -->
 <xsl:template match="/">
-  <p>This documentation is generated automatically from the XMLDB database
-    definition. It is available only in English.</p>
   <xsl:apply-templates/>
 </xsl:template>
 
