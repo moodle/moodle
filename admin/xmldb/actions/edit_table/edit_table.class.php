@@ -61,7 +61,10 @@ class edit_table extends XMLDBAction {
             'delete' => 'xmldb',
             'reserved' => 'xmldb',
             'back' => 'xmldb',
-            'viewxml' => 'xmldb'
+            'viewxml' => 'xmldb',
+            'pendingchanges' => 'xmldb',
+            'pendingchangescannotbesaved' => 'xmldb',
+            'save' => 'xmldb'
         ));
     }
 
@@ -92,6 +95,12 @@ class edit_table extends XMLDBAction {
         } else {
             return false;
         }
+    /// Check if the dir exists and copy it from dbdirs
+    /// (because we need straight load in case of saving from here)
+        if (!isset($XMLDB->editeddirs[$dirpath])) {
+            $XMLDB->editeddirs[$dirpath] = unserialize(serialize($dbdir));
+        }
+
         if (!empty($XMLDB->editeddirs)) {
             $editeddir =& $XMLDB->editeddirs[$dirpath];
             $structure =& $editeddir->xml_file->getStructure();
@@ -126,6 +135,17 @@ class edit_table extends XMLDBAction {
         $o.= '      <tr valign="top"><td>&nbsp;</td><td><input type="submit" value="' .$this->str['change'] . '" /></td></tr>';
         $o.= '    </table>';
         $o.= '</div></form>';
+    /// Calculate the pending changes / save message
+        $e = '';
+        $cansavenow = false;
+        if ($structure->hasChanged()) {
+            if (!is_writeable($dirpath . '/install.xml') || !is_writeable($dirpath)) {
+                $e .= '<p class="centerpara error">' . $this->str['pendingchangescannotbesaved'] . '</p>';
+            } else {
+                $e .= '<p class="centerpara warning">' . $this->str['pendingchanges'] . '</p>';
+                $cansavenow = true;
+            }
+        }
     /// Calculate the buttons
         $b = ' <p class="centerpara buttons">';
     /// The view original XML button
@@ -146,16 +166,21 @@ class edit_table extends XMLDBAction {
         $b .= '&nbsp;<a href="index.php?action=new_key&amp;postaction=edit_key&amp;table=' . $tableparam . '&amp;key=changeme&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newkey'] . ']</a>';
     /// The new index button
         $b .= '&nbsp;<a href="index.php?action=new_index&amp;postaction=edit_index&amp;table=' . $tableparam . '&amp;index=changeme&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newindex'] . ']</a>';
-    /// The back to edit xml file button
-        $b .= '&nbsp;<a href="index.php?action=edit_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a>';
         $b .= '</p>';
+
         $b .= ' <p class="centerpara buttons">';
     /// The view sql code button
         $b .= '<a href="index.php?action=view_table_sql&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' .$this->str['viewsqlcode'] . ']</a>';
     /// The view php code button
         $b .= '&nbsp;<a href="index.php?action=view_table_php&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['viewphpcode'] . ']</a>';
+    /// The save button (if possible)
+        if ($cansavenow) {
+            $b .= '&nbsp;<a href="index.php?action=save_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;time=' . time() . '&amp;unload=false&amp;postaction=edit_table&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['save'] . ']</a>';
+        }
+    /// The back to edit xml file button
+        $b .= '&nbsp;<a href="index.php?action=edit_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a>';
         $b .= '</p>';
-        $o .= $b;
+        $o .= $e . $b;
 
         require_once("$CFG->libdir/ddl/sql_generator.php");
         $reserved_words = sql_generator::getAllReservedWords();
