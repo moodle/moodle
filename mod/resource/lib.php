@@ -1,9 +1,36 @@
-<?php  // $Id$
+<?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package   mod-resource
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/** Require {@link portfoliolib.php} */
 require_once($CFG->libdir.'/portfoliolib.php');
 
+/** RESOURCE_LOCALPATH = LOCALPATH */
 define('RESOURCE_LOCALPATH', 'LOCALPATH');
 
+/**
+ * @global array $RESOURCE_WINDOW_OPTIONS
+ * @name $RESOURCE_WINDOW_OPTIONS
+ */
 global $RESOURCE_WINDOW_OPTIONS; // must be global because it might be included from a function!
 $RESOURCE_WINDOW_OPTIONS = array('resizable', 'scrollbars', 'directories', 'location',
                                  'menubar', 'toolbar', 'status', 'width', 'height');
@@ -13,11 +40,13 @@ if (!isset($CFG->resource_hide_repository)) {
 }
 
 /**
-* resource_base is the base class for resource types
-*
-* This class provides all the functionality for a resource
-*/
-
+ * resource_base is the base class for resource types
+ *
+ * This class provides all the functionality for a resource
+ * @package   mod-resource
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class resource_base {
 
     var $cm;
@@ -26,14 +55,18 @@ class resource_base {
     var $navlinks;
 
     /**
-    * Constructor for the base resource class
-    *
-    * Constructor for the base resource class.
-    * If cmid is set create the cm, course, resource objects.
-    * and do some checks to make sure people can be here, and so on.
-    *
-    * @param cmid   integer, the current course module id - not set for new resources
-    */
+     * Constructor for the base resource class
+     *
+     * Constructor for the base resource class.
+     * If cmid is set create the cm, course, resource objects.
+     * and do some checks to make sure people can be here, and so on.
+     *
+     * @global stdClass
+     * @global object
+     * @global object
+     * @uses CONTEXT_MODULE
+     * @param int $cmid the current course module id - not set for new resources
+     */
     function resource_base($cmid=0) {
         global $CFG, $COURSE, $DB;
 
@@ -78,8 +111,14 @@ class resource_base {
 
 
     /**
-    * Display the resource with the course blocks.
-    */
+     * Display the resource with the course blocks.
+     *
+     * @global stdClass
+     * @uses PAGE_COURSE_VIEW
+     * @uses PARAM_BOOL
+     * @uses BLOCK_POS_LEFT
+     * @uses BLOCK_POS_RIGHT
+     */
     function display_course_blocks_start() {
         global $CFG, $USER, $THEME;
 
@@ -147,6 +186,11 @@ class resource_base {
 
     /**
      * Finish displaying the resource with the course blocks
+     *
+     * @global stdClass
+     * @global object
+     * @uses BLOCK_POS_LEFT
+     * @uses BLOCK_POS_RIGHT
      */
     function display_course_blocks_end() {
         global $CFG, $THEME;
@@ -199,25 +243,35 @@ class resource_base {
 
     }
 
-
+    /**
+     * Given an object containing all the necessary data,
+     * (defined by the form in mod_form.php) this function
+     * will create a new instance and return the id number
+     * of the new instance.
+     *
+     * @global object
+     * @param object $resource
+     * @return int|bool
+     */
     function add_instance($resource) {
         global $DB;
-    // Given an object containing all the necessary data,
-    // (defined by the form in mod_form.php) this function
-    // will create a new instance and return the id number
-    // of the new instance.
 
         $resource->timemodified = time();
 
         return $DB->insert_record("resource", $resource);
     }
 
-
+    /**
+     * Given an object containing all the necessary data,
+     * (defined by the form in mod_form.php) this function
+     * will update an existing instance with new data.
+     *
+     * @global object
+     * @param object $resource
+     * @return bool
+     */
     function update_instance($resource) {
         global $DB;
-    // Given an object containing all the necessary data,
-    // (defined by the form in mod_form.php) this function
-    // will update an existing instance with new data.
 
         $resource->id = $resource->instance;
         $resource->timemodified = time();
@@ -225,12 +279,17 @@ class resource_base {
         return $DB->update_record("resource", $resource);
     }
 
-
+    /**
+     * Given an object containing the resource data
+     * this function will permanently delete the instance
+     * and any data that depends on it.
+     *
+     * @global object
+     * @param object $resource
+     * @return bool
+     */
     function delete_instance($resource) {
         global $DB;
-    // Given an object containing the resource data
-    // this function will permanently delete the instance
-    // and any data that depends on it.
 
         $result = true;
 
@@ -241,19 +300,35 @@ class resource_base {
         return $result;
     }
 
+    /**
+     *
+     */
     function setup_elements(&$mform) {
         //override to add your own options
     }
 
+    /**
+    *
+    */
     function setup_preprocessing(&$default_values){
         //override to add your own options
     }
 
+    /**
+     * @todo penny implement later - see MDL-15758
+     */
     function portfolio_prepare_package_uploaded($exporter) {
         // @todo penny implement later - see MDL-15758
 
     }
 
+    /**
+     * @uses FORMAT_MOODLE
+     * @uses FORMAT_HTML
+     * @param object $exporter
+     * @param bool $text
+     * @return int|bool
+     */
     function portfolio_prepare_package_online($exporter, $text=false) {
         $filename = clean_filename($this->cm->name . '.' . 'html');
         $formatoptions = (object)array('noclean' => true);
@@ -262,6 +337,12 @@ class resource_base {
         return $exporter->write_new_file($content, $filename, false);
     }
 
+    /**
+     * @param bool $text
+     * @uses FORMAT_MOODLE
+     * @uses FORMAT_HTML
+     * @return string
+     */
     function portfolio_get_sha1_online($text=false) {
         $formatoptions = (object)array('noclean' => true);
         $format = (($text) ? FORMAT_MOODLE : FORMAT_HTML);
@@ -269,6 +350,9 @@ class resource_base {
         return sha1($content);
     }
 
+    /**
+     * @todo penny implement later.
+     */
     function portfolio_get_sha1_uploaded() {
         // @todo penny implement later.
     }
@@ -276,7 +360,12 @@ class resource_base {
 } /// end of class definition
 
 
-
+/**
+ * @global stdClass
+ * @uses PARAM_SAFEDIR
+ * @param object $resource
+ * @return int|bool
+ */
 function resource_add_instance($resource) {
     global $CFG;
 
@@ -289,6 +378,12 @@ function resource_add_instance($resource) {
     return $res->add_instance($resource);
 }
 
+/**
+ * @global stdClass
+ * @uses PARAM_SAFEDIR
+ * @param object $resource
+ * @return bool
+ */
 function resource_update_instance($resource) {
     global $CFG;
 
@@ -301,6 +396,13 @@ function resource_update_instance($resource) {
     return $res->update_instance($resource);
 }
 
+/**
+ * @global stdClass
+ * @global object
+ * @uses PARAM_SAFEDIR
+ * @param int $id
+ * @return bool
+ */
 function resource_delete_instance($id) {
     global $CFG, $DB;
 
@@ -317,7 +419,15 @@ function resource_delete_instance($id) {
     return $res->delete_instance($resource);
 }
 
-
+/**
+ *
+ * @global object
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $resource
+ * @return object|null
+ */
 function resource_user_outline($course, $user, $mod, $resource) {
     global $DB;
 
@@ -336,7 +446,14 @@ function resource_user_outline($course, $user, $mod, $resource) {
     return NULL;
 }
 
-
+/**
+ * @global stdClass
+ * @global object
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $resource
+ */
 function resource_user_complete($course, $user, $mod, $resource) {
     global $CFG, $DB;
 
@@ -355,20 +472,30 @@ function resource_user_complete($course, $user, $mod, $resource) {
     }
 }
 
+/**
+ * Returns the users with data in one resource
+ * (NONE, byt must exists on EVERY mod !!)
+ *
+ * @param int $resourceid
+ * @return bool false
+ */
 function resource_get_participants($resourceid) {
-//Returns the users with data in one resource
-//(NONE, byt must exists on EVERY mod !!)
-
     return false;
 }
 
+/**
+ * Given a course_module object, this function returns any
+ * "extra" information that may be needed when printing
+ * this activity in a course listing.
+ *
+ * See {@link get_array_of_activities()} in course/lib.php
+ *
+ * @global stdClass
+ * @global object
+ * @param object $coursemodule
+ * @return object info
+ */
 function resource_get_coursemodule_info($coursemodule) {
-/// Given a course_module object, this function returns any
-/// "extra" information that may be needed when printing
-/// this activity in a course listing.
-///
-/// See get_array_of_activities() in course/lib.php
-///
    global $CFG, $DB;
 
    $info = NULL;
@@ -403,6 +530,14 @@ function resource_get_coursemodule_info($coursemodule) {
    return $info;
 }
 
+/**
+ * @param string $text
+ * @param string $url
+ * @param string $tagtoparse
+ * @param string $keytoparse
+ * @param string $prefix
+ * @return string
+ */
 function resource_redirect_tags($text, $url, $tagtoparse, $keytoparse,$prefix = "" ) {
     $valid = 1;
     if ( strpos($url,"?") == FALSE ) {
@@ -491,6 +626,10 @@ function resource_redirect_tags($text, $url, $tagtoparse, $keytoparse,$prefix = 
     return $text;
 }
 
+/**
+ * @param string $path
+ * @return bool
+ */
 function resource_is_url($path) {
     if (strpos($path, '://')) {     // eg http:// https:// ftp://  etc
         return true;
@@ -501,6 +640,11 @@ function resource_is_url($path) {
     return false;
 }
 
+/**
+ * @global stdClass
+ * @uses MOD_CLASS_RESOURCE
+ * @return array
+ */
 function resource_get_types() {
     global $CFG;
 
@@ -535,14 +679,28 @@ function resource_get_types() {
     return $types;
 }
 
+/**
+ * @return array
+ */
 function resource_get_view_actions() {
     return array('view','view all');
 }
 
+/**
+ * @return array
+ */
 function resource_get_post_actions() {
     return array();
 }
 
+/**
+ * @global stdClass
+ * @global object
+ * @param object $course
+ * @param string $wdir
+ * @param string $oldname
+ * @param string $name
+ */
 function resource_renamefiles($course, $wdir, $oldname, $name) {
     global $CFG, $DB;
 
@@ -592,6 +750,13 @@ function resource_renamefiles($course, $wdir, $oldname, $name) {
     }
 }
 
+/**
+ * @global stdClass
+ * @global object
+ * @param object $course
+ * @param array $files
+ * @return bool
+ */
 function resource_delete_warning($course, $files) {
     global $CFG, $DB;
 
@@ -644,6 +809,7 @@ function resource_delete_warning($course, $files) {
 
 /**
  * This function is used by the reset_course_userdata function in moodlelib.
+ * 
  * @param $data the data submitted from the reset course.
  * @return array status array
  */
@@ -653,22 +819,36 @@ function resource_reset_userdata($data) {
 
 /**
  * Returns all other caps used in module
+ *
+ * @return array
  */
 function resource_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
 }
 
+/**
+ * @package   mod-resource
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class resource_portfolio_caller extends portfolio_module_caller_base {
 
     private $resource;
     private $resourcefile;
 
+    /**
+     * @return array
+     */
     public static function expected_callbackargs() {
         return array(
             'id' => true,
         );
     }
 
+    /**
+     * @global stdClass
+     * @global object
+     */
     public function load_data() {
         global $CFG, $DB;
         if (!$this->cm = get_coursemodule_from_instance('resource', $this->id)) {
@@ -686,6 +866,13 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
         $this->supportedformats = array(self::type_to_format($this->cm->type));
     }
 
+    /**
+     * @uses PORTFOLIO_FORMAT_FILE
+     * @uses PORTFOLIO_FORMAT_PLAINHTML
+     * @uses PORTFOLIO_FORMAT_TEXT
+     * @param string $type
+     * @return string
+     */
     public static function type_to_format($type) {
         // this is kind of yuk... but there's just not good enough OO here
         $format = PORTFOLIO_FORMAT_FILE;
@@ -700,6 +887,10 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
         return $format;
     }
 
+    /**
+     * @global stdClass
+     * @return void
+     */
     public function __wakeup() {
         global $CFG;
         if (empty($CFG)) {
@@ -709,20 +900,38 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
         $this->resource = unserialize(serialize($this->resource));
     }
 
+    /**
+     * @todo penny check filesize if the type is uploadey (not implemented yet)
+     * like this: return portfolio_expected_time_file($this->file); or whatever
+     *
+     * @return string
+     */
     public function expected_time() {
-        // @todo penny check filesize if the type is uploadey (not implemented yet)
-        // like this: return portfolio_expected_time_file($this->file); // or whatever
         return PORTFOLIO_TIME_LOW;
     }
 
+    /**
+     *
+     */
     public function prepare_package() {
         return $this->resource->portfolio_prepare_package($this->exporter);
     }
 
+    /**
+     * @uses CONTEXT_MODULE
+     * @return bool
+     */
     public function check_permissions() {
         return has_capability('mod/resource:exportresource', get_context_instance(CONTEXT_MODULE, $this->cm->id));
     }
 
+    /**
+     * @uses CONTEXT_MODULE
+     * @param object $resource
+     * @param mixed $format
+     * @param bool $return
+     * @return mixed
+     */
     public static function add_button($resource, $format=null, $return=false) {
         if (!has_capability('mod/resource:exportresource', get_context_instance(CONTEXT_MODULE, $resource->cm->id))) {
             return;
@@ -744,18 +953,31 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
         $button->render($format);
     }
 
+    /**
+     * @return string
+     */
     public function get_sha1() {
         return $this->resource->portfolio_get_sha1();
     }
 
+    /**
+     * @return string
+     */
     public static function display_name() {
         return get_string('modulename', 'resource');
     }
 }
 
 /**
+ * @uses FEATURE_GROUPS
+ * @uses FEATURE_GROUPINGS
+ * @uses FEATURE_GROUPMEMBERSONLY
+ * @uses FEATURE_MOD_INTRO
+ * @uses FEATURE_COMPLETION_TRACKS_VIEWS
+ * @uses FEATURE_GRADE_HAS_GRADE
+ * @uses FEATURE_GRADE_OUTCOMES
  * @param string $feature FEATURE_xx constant for requested feature
- * @return mixed True if module supports feature, null if doesn't know
+ * @return mixed True if module supports feature, false if not, null if doesn't know
  */
 function resource_supports($feature) {
     switch($feature) {
@@ -777,6 +999,7 @@ function resource_supports($feature) {
  * level.
  *
  * @param string $type shortname (or directory name) of the resource type
+ * @return string
  */
 function resource_get_name($type) {
     $name = get_string("resourcetype$type", "resource_$type");

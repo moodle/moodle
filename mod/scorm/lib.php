@@ -1,22 +1,53 @@
-<?php  // $Id$
+<?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package   mod-scorm
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/** SCORM_TYPE_LOCAL = local */
 define('SCORM_TYPE_LOCAL', 'local');
+/** SCORM_TYPE_LOCALSYNC = localsync */
 define('SCORM_TYPE_LOCALSYNC', 'localsync');
+/** SCORM_TYPE_EXTERNAL = external */
 define('SCORM_TYPE_EXTERNAL', 'external');
+/** SCORM_TYPE_IMSREPOSITORY = imsrepository */
 define('SCORM_TYPE_IMSREPOSITORY', 'imsrepository');
 
 
 /**
-* Given an object containing all the necessary data,
-* (defined by the form in mod_form.php) this function
-* will create a new instance and return the id number
-* of the new instance.
-*
-* @param object $scorm Form data
-* @param object $mform
-* @return int new instance id
-*/
-
+ * Given an object containing all the necessary data,
+ * (defined by the form in mod_form.php) this function
+ * will create a new instance and return the id number
+ * of the new instance.
+ *
+ * @global stdClass
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @uses SCORM_TYPE_LOCAL
+ * @uses SCORM_TYPE_LOCALSYNC
+ * @uses SCORM_TYPE_EXTERNAL
+ * @uses SCORM_TYPE_IMSREPOSITORY
+ * @param object $scorm Form data
+ * @param object $mform
+ * @return int new instance id
+ */
 function scorm_add_instance($scorm, $mform=null) {
     global $CFG, $DB;
 
@@ -96,14 +127,21 @@ function scorm_add_instance($scorm, $mform=null) {
 }
 
 /**
-* Given an object containing all the necessary data,
-* (defined by the form in mod_form.php) this function
-* will update an existing instance with new data.
-*
-* @param object $scorm Form data
-* @param object $mform
-* @return bool success
-*/
+ * Given an object containing all the necessary data,
+ * (defined by the form in mod_form.php) this function
+ * will update an existing instance with new data.
+ *
+ * @global stdClass
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @uses SCORM_TYPE_LOCAL
+ * @uses SCORM_TYPE_LOCALSYNC
+ * @uses SCORM_TYPE_EXTERNAL
+ * @uses SCORM_TYPE_IMSREPOSITORY
+ * @param object $scorm Form data
+ * @param object $mform
+ * @return bool
+ */
 function scorm_update_instance($scorm, $mform=null) {
     global $CFG, $DB;
 
@@ -175,13 +213,15 @@ function scorm_update_instance($scorm, $mform=null) {
 }
 
 /**
-* Given an ID of an instance of this module,
-* this function will permanently delete the instance
-* and any data that depends on it.
-*
-* @param int $id Scorm instance id
-* @return boolean
-*/
+ * Given an ID of an instance of this module,
+ * this function will permanently delete the instance
+ * and any data that depends on it.
+ *
+ * @global stdClass
+ * @global object
+ * @param int $id Scorm instance id
+ * @return boolean
+ */
 function scorm_delete_instance($id) {
     global $CFG, $DB;
 
@@ -237,16 +277,17 @@ function scorm_delete_instance($id) {
 }
 
 /**
-* Return a small object with summary information about what a
-* user has done with a given particular instance of this module
-* Used for user activity reports.
-*
-* @param int $course Course id
-* @param int $user User id
-* @param int $mod
-* @param int $scorm The scorm id
-* @return mixed
-*/
+ * Return a small object with summary information about what a
+ * user has done with a given particular instance of this module
+ * Used for user activity reports.
+ *
+ * @global stdClass
+ * @param int $course Course id
+ * @param int $user User id
+ * @param int $mod
+ * @param int $scorm The scorm id
+ * @return mixed
+ */
 function scorm_user_outline($course, $user, $mod, $scorm) {
     global $CFG;
     require_once('locallib.php');
@@ -257,15 +298,17 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
 }
 
 /**
-* Print a detailed representation of what a user has done with
-* a given particular instance of this module, for user activity reports.
-*
-* @param int $course Course id
-* @param int $user User id
-* @param int $mod
-* @param int $scorm The scorm id
-* @return boolean
-*/
+ * Print a detailed representation of what a user has done with
+ * a given particular instance of this module, for user activity reports.
+ *
+ * @global stdClass
+ * @global object
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $scorm
+ * @return boolean
+ */
 function scorm_user_complete($course, $user, $mod, $scorm) {
     global $CFG, $DB;
 
@@ -400,12 +443,14 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
 }
 
 /**
-* Function to be run periodically according to the moodle cron
-* This function searches for things that need to be done, such
-* as sending out mail, toggling flags etc ...
-*
-* @return boolean
-*/
+ * Function to be run periodically according to the moodle cron
+ * This function searches for things that need to be done, such
+ * as sending out mail, toggling flags etc ...
+ *
+ * @global stdClass
+ * @global object
+ * @return boolean
+ */
 function scorm_cron () {
     global $CFG, $DB;
 
@@ -439,6 +484,8 @@ function scorm_cron () {
 /**
  * Return grade for given user or all users.
  *
+ * @global stdClass
+ * @global object
  * @param int $scormid id of scorm
  * @param int $userid optional user id, 0 means all users
  * @return array array of grades, false if none
@@ -476,8 +523,11 @@ function scorm_get_user_grades($scorm, $userid=0) {
 /**
  * Update grades in central gradebook
  *
+ * @global stdClass
+ * @global object
  * @param object $scorm
  * @param int $userid specific user only, 0 mean all
+ * @param bool $nullifnone
  */
 function scorm_update_grades($scorm, $userid=0, $nullifnone=true) {
     global $CFG, $DB;
@@ -499,6 +549,8 @@ function scorm_update_grades($scorm, $userid=0, $nullifnone=true) {
 
 /**
  * Update all grades in gradebook.
+ *
+ * @global object
  */
 function scorm_upgrade_grades() {
     global $DB;
@@ -527,8 +579,12 @@ function scorm_upgrade_grades() {
 /**
  * Update/create grade item for given scorm
  *
+ * @global stdClass
+ * @global object
+ * @uses GRADE_TYPE_VALUE
+ * @uses GRADE_TYPE_NONE
  * @param object $scorm object with extra cmidnumber
- * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
+ * @param mixed $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return object grade_item
  */
 function scorm_grade_item_update($scorm, $grades=NULL) {
@@ -567,6 +623,7 @@ function scorm_grade_item_update($scorm, $grades=NULL) {
 /**
  * Delete grade item for given scorm
  *
+ * @global stdClass
  * @param object $scorm object
  * @return object grade_item
  */
@@ -577,14 +634,24 @@ function scorm_grade_item_delete($scorm) {
     return grade_update('mod/scorm', $scorm->course, 'mod', 'scorm', $scorm->id, 0, NULL, array('deleted'=>1));
 }
 
+/**
+ * @return array
+ */
 function scorm_get_view_actions() {
     return array('pre-view','view','view all','report');
 }
 
+/**
+ * @return array
+ */
 function scorm_get_post_actions() {
     return array();
 }
 
+/**
+ * @param object $scorm
+ * @return object $scorm
+ */
 function scorm_option2text($scorm) {
     $scorm_popoup_options = scorm_get_popup_options_array();
     
@@ -612,7 +679,8 @@ function scorm_option2text($scorm) {
 /**
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the scorm.
- * @param $mform form passed by reference
+ * 
+ * @param object $mform form passed by reference
  */
 function scorm_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'scormheader', get_string('modulenameplural', 'scorm'));
@@ -621,6 +689,8 @@ function scorm_reset_course_form_definition(&$mform) {
 
 /**
  * Course reset form defaults.
+ *
+ * @return array
  */
 function scorm_reset_course_form_defaults($course) {
     return array('reset_scorm'=>1);
@@ -628,6 +698,9 @@ function scorm_reset_course_form_defaults($course) {
 
 /**
  * Removes all grades from gradebook
+ *
+ * @global stdClass
+ * @global object
  * @param int $courseid
  * @param string optional type
  */
@@ -648,7 +721,10 @@ function scorm_reset_gradebook($courseid, $type='') {
 /**
  * Actual implementation of the rest coures functionality, delete all the
  * scorm attempts for course $data->courseid.
- * @param $data the data submitted from the reset course.
+ *
+ * @global stdClass
+ * @global object
+ * @param object $data the data submitted from the reset course.
  * @return array status array
  */
 function scorm_reset_userdata($data) {
@@ -679,6 +755,8 @@ function scorm_reset_userdata($data) {
 
 /**
  * Returns all other caps used in module
+ *
+ * @return array
  */
 function scorm_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
@@ -686,6 +764,11 @@ function scorm_get_extra_capabilities() {
 
 /**
  * Lists all file areas current user may browse
+ *
+ * @param object $course
+ * @param object $cm
+ * @param object $context
+ * @return array
  */
 function scorm_get_file_areas($course, $cm, $context) {
     $areas = array();
@@ -698,6 +781,8 @@ function scorm_get_file_areas($course, $cm, $context) {
 
 /**
  * File browsing support
+ * 
+ * @todo Document this function
  */
 function scorm_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
     global $CFG;
@@ -724,6 +809,11 @@ function scorm_get_file_info($browser, $areas, $course, $cm, $context, $filearea
                 return null;
             }
         }
+        /**
+         * @package   mod-scorm
+         * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+         * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+         */
         class scorm_package_file_info extends file_info_stored {
             public function get_parent() {
                 if ($this->lf->get_filepath() === '/' and $this->lf->get_filename() === '.') {
@@ -763,6 +853,14 @@ function scorm_get_file_info($browser, $areas, $course, $cm, $context, $filearea
 
 /**
  * Serves scorm content, introduction images and packages. Implements needed access control ;-)
+ *
+ * @global stdClass
+ * @param object $course
+ * @param object $cminfo
+ * @param object $context
+ * @param string $filearea
+ * @param array $args
+ * @return bool
  */
 function scorm_pluginfile($course, $cminfo, $context, $filearea, $args) {
     global $CFG;
@@ -801,8 +899,15 @@ function scorm_pluginfile($course, $cminfo, $context, $filearea, $args) {
 }
 
 /**
+ * @uses FEATURE_GROUPS
+ * @uses FEATURE_GROUPINGS
+ * @uses FEATURE_GROUPMEMBERSONLY
+ * @uses FEATURE_MOD_INTRO
+ * @uses FEATURE_COMPLETION_TRACKS_VIEWS
+ * @uses FEATURE_GRADE_HAS_GRADE
+ * @uses FEATURE_GRADE_OUTCOMES
  * @param string $feature FEATURE_xx constant for requested feature
- * @return mixed True if module supports feature, null if doesn't know
+ * @return mixed True if module supports feature, false if not, null if doesn't know
  */
 function scorm_supports($feature) {
     switch($feature) {
