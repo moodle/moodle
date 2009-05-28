@@ -148,6 +148,7 @@ $string['viewedited'] = 'View Edited';
 $string['vieworiginal'] = 'View Original';
 $string['viewphpcode'] = 'View PHP Code';
 $string['viewsqlcode'] = 'View SQL Code';
+$string['viewxml'] = 'XML';
 $string['violatedforeignkeys'] = 'Violated foreign keys';
 $string['violatedforeignkeysfound'] = 'Violated foreign keys found';
 $string['violations'] = 'Violations';
