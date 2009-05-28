@@ -1,31 +1,37 @@
-<?php // $Id$
+<?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
-//           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/// This class will provide the interface for all the edit table actions
+/**
+ * @package   xmldb-editor
+ * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
+/**
+ * This class provides the interface for all the edit table actions
+ *
+ * Main page of edit table actions, from here fields/indexes/keys edition
+ * can be invoked, plus links to PHP code generator, view SQL, rearrange
+ * elements and so on.
+ *
+ * @package   xmldb-editor
+ * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class edit_table extends XMLDBAction {
 
     /**
@@ -54,7 +60,8 @@ class edit_table extends XMLDBAction {
             'down' => 'xmldb',
             'delete' => 'xmldb',
             'reserved' => 'xmldb',
-            'back' => 'xmldb'
+            'back' => 'xmldb',
+            'viewxml' => 'xmldb'
         ));
     }
 
@@ -165,6 +172,12 @@ class edit_table extends XMLDBAction {
             $o .= '<table id="listfields" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
             $row = 0;
             foreach ($fields as $field) {
+            /// The field name (link to edit - if the field has no uses)
+                if (!$structure->getFieldUses($table->getName(), $field->getName())) {
+                    $f = '<a href="index.php?action=edit_field&amp;field=' .$field->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">' . $field->getName() . '</a>';
+                } else {
+                    $f = $field->getName();
+                }
             /// Calculate buttons
                 $b = '</td><td class="button cell">';
             /// The edit button (if the field has no uses)
@@ -195,6 +208,9 @@ class edit_table extends XMLDBAction {
                 } else {
                     $b .= '[' . $this->str['delete'] . ']';
                 }
+                $b .= '</td><td class="button cell">';
+            /// The view xml button
+                $b .= '<a href="index.php?action=view_field_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;field=' . $field->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited">[' . $this->str['viewxml'] . ']</a>';
             /// Detect if the table name is a reserved word
                 if (array_key_exists($field->getName(), $reserved_words)) {
                     $b .= '&nbsp;<a href="index.php?action=view_reserved_words"><span class="error">' . $this->str['reserved'] . '</span></a>';
@@ -202,7 +218,7 @@ class edit_table extends XMLDBAction {
             /// The readable info
                 $r = '</td><td class="readableinfo cell">' . $field->readableInfo() . '</td>';
             /// Print table row
-            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_field_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;field=' . $field->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited">' . $field->getName() . '</a>' . $b . $r . '</tr>';
+                $o .= '<tr class="r' . $row . '"><td class="table cell">' . $f . $b . $r . '</tr>';
                 $row = ($row + 1) % 2;
             }
             $o .= '</table>';
@@ -214,13 +230,19 @@ class edit_table extends XMLDBAction {
             $o .= '<table id="listkeys" border="0"  cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
             $row = 0;
             foreach ($keys as $key) {
+            /// The key name (link to edit - if the key has no uses)
+                if (!$structure->getKeyUses($table->getName(), $key->getName())) {
+                    $k = '<a href="index.php?action=edit_key&amp;key=' .$key->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">' . $key->getName() . '</a>';
+                } else {
+                    $k = $key->getName();
+                }
             /// Calculate buttons
                 $b = '</td><td class="button cell">';
             /// The edit button (if the key hasn't uses)
                 if (!$structure->getKeyUses($table->getName(), $key->getName())) {
                     $b .= '<a href="index.php?action=edit_key&amp;key=' .$key->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['edit'] . ']</a>';
                 } else {
-                     $b .= '[' . $this->str['edit'] . ']';
+                    $b .= '[' . $this->str['edit'] . ']';
                 }
                 $b .= '</td><td class="button cell">';
             /// The up button
@@ -243,10 +265,13 @@ class edit_table extends XMLDBAction {
                 } else {
                     $b .= '[' . $this->str['delete'] . ']';
                 }
+                $b .= '</td><td class="button cell">';
+            /// The view xml button
+                $b .= '<a href="index.php?action=view_key_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;key=' . $key->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited">[' . $this->str['viewxml'] . ']</a>';
             /// The readable info
                 $r = '</td><td class="readableinfo cell">' . $key->readableInfo() . '</td>';
             /// Print table row
-            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_key_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;key=' . $key->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited">' . $key->getName() . '</a>' . $b . $r .'</tr>';
+            $o .= '<tr class="r' . $row . '"><td class="table cell">' . $k . $b . $r .'</tr>';
                 $row = ($row + 1) % 2;
             }
             $o .= '</table>';
@@ -258,10 +283,12 @@ class edit_table extends XMLDBAction {
             $o .= '<table id="listindexes" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
             $row = 0;
             foreach ($indexes as $index) {
+            /// The index name (link to edit)
+                $i = '<a href="index.php?action=edit_index&amp;index=' .$index->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">' . $index->getName() . '</a>';
             /// Calculate buttons
                 $b = '</td><td class="button cell">';
             /// The edit button
-            $b .= '<a href="index.php?action=edit_index&amp;index=' .$index->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['edit'] . ']</a>';
+                $b .= '<a href="index.php?action=edit_index&amp;index=' .$index->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['edit'] . ']</a>';
                 $b .= '</td><td class="button cell">';
             /// The up button
                 if ($index->getPrevious()) {
@@ -279,10 +306,13 @@ class edit_table extends XMLDBAction {
                 $b .= '</td><td class="button cell">';
             /// The delete button
                     $b .= '<a href="index.php?action=delete_index&amp;index=' . $index->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
+                $b .= '</td><td class="button cell">';
+            /// The view xml button
+                $b .= '<a href="index.php?action=view_index_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;index=' . $index->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited">[' . $this->str['viewxml'] . ']</a>';
             /// The readable info
                 $r = '</td><td class="readableinfo cell">' . $index->readableInfo() . '</td>';
             /// Print table row
-            $o .= '<tr class="r' . $row . '"><td class="table cell"><a href="index.php?action=view_index_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;index=' . $index->getName() . '&amp;table=' . $table->getName() . '&amp;select=edited">' . $index->getName() . '</a>' . $b . $r .'</tr>';
+            $o .= '<tr class="r' . $row . '"><td class="table cell">' . $i . $b . $r .'</tr>';
                 $row = ($row + 1) % 2;
             }
             $o .= '</table>';
