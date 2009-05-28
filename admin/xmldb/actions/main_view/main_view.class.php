@@ -1,31 +1,36 @@
-<?php // $Id$
+<?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
-//           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/// This class will show all the actions available under the XMLDB interface
+/**
+ * @package   xmldb-editor
+ * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
+/**
+ * This class will show all the actions available under the XMLDB editor interface
+ *
+ * From here, files can be created, edited, saved and deleted, plus some
+ * extra utilities like displaying docs, xml info and performing various tests
+ *
+ * @package   xmldb-editor
+ * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class main_view extends XMLDBAction {
 
     /**
@@ -52,7 +57,8 @@ class main_view extends XMLDBAction {
             'checkdefaults' => 'xmldb',
             'checkforeignkeys' => 'xmldb',
             'checkbigints' => 'xmldb',
-            'doc' => 'xmldb'
+            'doc' => 'xmldb',
+            'viewxml' => 'xmldb'
         ));
     }
 
@@ -133,6 +139,16 @@ class main_view extends XMLDBAction {
                         }
                     }
                 }
+            /// The file name (link to edit if the file is loaded)
+                if ($dbdir->path_exists &&
+                    file_exists($key . '/install.xml') &&
+                    is_readable($key . '/install.xml') &&
+                    is_readable($key) &&
+                    !empty($dbdir->xml_loaded)) {
+                    $f = '<a href="index.php?action=edit_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '">' . $elementtext . '</a>';
+                } else {
+                    $f = $elementtext;
+                }
             /// Calculate the buttons
                 $b = ' <td class="button cell">';
             /// The create button
@@ -194,6 +210,15 @@ class main_view extends XMLDBAction {
                     $b .= '[' . $this->str['doc'] . ']';
                 }
                 $b .= '</td><td class="button cell">';
+            /// The view xml button
+                if ($dbdir->path_exists &&
+                    file_exists($key . '/install.xml') &&
+                    is_readable($key . '/install.xml')) {
+                    $b .= '<a href="index.php?action=view_xml&amp;file=' . urlencode(str_replace($CFG->dirroot, '', $key) . '/install.xml') . '">[' . $this->str['viewxml'] . ']</a>';
+                } else {
+                    $b .= '[' . $this->str['viewxml'] . ']';
+                }
+                $b .= '</td><td class="button cell">';
             /// The revert button
                 if ($dbdir->path_exists &&
                     file_exists($key . '/install.xml') &&
@@ -228,19 +253,11 @@ class main_view extends XMLDBAction {
                     $b .= '[' . $this->str['delete'] . ']';
                 }
                 $b .= '</td>';
-            /// if the file, exist, XML is viewable
-                if ($dbdir->path_exists &&
-                    file_exists($key . '/install.xml') &&
-                    is_readable($key . '/install.xml')) {
-                    $elementtext = '<a href="index.php?action=view_xml&amp;file=' . urlencode(str_replace($CFG->dirroot, '', $key) . '/install.xml') . '">' . $elementtext . '</a></td>';
-                } else {
-                    $elementtext = $elementtext . '</td>';
-                }
             /// include the higlight
                 if ($hithis) {
-                    $o .= '<tr class="highlight"><td class="directory cell"><a name="lastused" />' . $elementtext . $b . '</tr>';
+                    $o .= '<tr class="highlight"><td class="directory cell"><a name="lastused" />' . $f . $b . '</tr>';
                 } else {
-                    $o .= '<tr class="r' . $row . '"><td class="directory cell">' . $elementtext . $b . '</tr>';
+                    $o .= '<tr class="r' . $row . '"><td class="directory cell">' . $f . $b . '</tr>';
                 }
                 $row = ($row + 1) % 2;
             /// show errors if they exist
