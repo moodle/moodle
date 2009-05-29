@@ -381,7 +381,7 @@ class edit_category_form extends moodleform {
 
 
         // no parent header for course category
-        if (!$mform->elementExists('aggregationcoef') and !$mform->elementExists('parentcategory')) {
+        if (!$mform->elementExists('parentcategory')) {
             $mform->removeElement('headerparent');
         }
 

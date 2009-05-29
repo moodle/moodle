@@ -56,13 +56,26 @@ if ($id) {
     $category->parentcategory = $grade_category->parent;
     $grade_item = $grade_category->load_grade_item();
     // nomalize coef values if needed
-    if ($parent_category = $grade_category->get_parent_category()) {
-        if ($parent_category->aggregation == GRADE_AGGREGATE_SUM or $parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN2) {
-            $grade_item->aggregationcoef = $grade_item->aggregationcoef == 0 ? 0 : 1;
-        }
-    }
+    $parent_category = $grade_category->get_parent_category();
+
     foreach ($grade_item->get_record_data() as $key => $value) {
         $category->{"grade_item_$key"} = $value;
+    }
+
+    $decimalpoints = $grade_item->get_decimals();
+
+    $category->grade_item_grademax   = format_float($category->grade_item_grademax, $decimalpoints);
+    $category->grade_item_grademin   = format_float($category->grade_item_grademin, $decimalpoints);
+    $category->grade_item_gradepass  = format_float($category->grade_item_gradepass, $decimalpoints);
+    $category->grade_item_multfactor = format_float($category->grade_item_multfactor, 4);
+    $category->grade_item_plusfactor = format_float($category->grade_item_plusfactor, 4);
+
+    if (!$parent_category) {
+        // keep as is
+    } else if ($parent_category->aggregation == GRADE_AGGREGATE_SUM or $parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN2) {
+        $category->grade_item_aggregationcoef = $category->grade_item_aggregationcoef == 0 ? 0 : 1;
+    } else {
+        $category->grade_item_aggregationcoef = format_float($category->grade_item_aggregationcoef, 4);
     }
 
 } else {
@@ -176,14 +189,6 @@ if ($mform->is_cancelled()) {
     // set parent if needed
     if (isset($data->parentcategory)) {
         $grade_category->set_parent($data->parentcategory, 'gradebook');
-    }
-
-    // update agg coef if needed
-    if (isset($data->aggregationcoef)) {
-        $data->aggregationcoef = unformat_float($data->aggregationcoef);
-        $grade_item = $grade_category->load_grade_item();
-        $grade_item->aggregationcoef = $data->aggregationcoef;
-        $grade_item->update();
     }
 
     redirect($returnurl);
