@@ -24,10 +24,10 @@ class repository_boxnet extends repository {
         $options['username']   = optional_param('boxusername', '', PARAM_RAW);
         $options['password']   = optional_param('boxpassword', '', PARAM_RAW);
         $options['ticket']     = optional_param('ticket', '', PARAM_RAW);
-        parent::__construct($repositoryid, $context, $options);
-        $this->api_key = $this->get_option('api_key');
         $sess_name = 'box_token'.$this->id;
         $this->sess_name = 'box_token'.$this->id;
+        parent::__construct($repositoryid, $context, $options);
+        $this->api_key = $this->get_option('api_key');
         // do login
         if(!empty($options['username']) && !empty($options['password']) && !empty($options['ticket']) ) {
             $this->box = new boxclient($this->api_key);
