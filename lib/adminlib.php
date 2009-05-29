@@ -5690,7 +5690,7 @@ function admin_output_new_settings_by_page($node) {
 function format_admin_setting($setting, $title='', $form='', $description='', $label=true, $warning='', $defaultinfo=NULL, $query='') {
     global $CFG;
 
-    $name     = $setting->name;
+    $name     = empty($setting->plugin) ? $setting->name : "$setting->plugin | $setting->name";
     $fullname = $setting->get_full_name();
 
     // sometimes the id is not id_s_name, but id_s_name_m or something, and this does not validate
@@ -5700,7 +5700,7 @@ function format_admin_setting($setting, $title='', $form='', $description='', $l
         $labelfor = '';
     }
 
-    if (empty($setting->plugin) and array_key_exists($name, $CFG->config_php_settings)) {
+    if (empty($setting->plugin) and array_key_exists($setting->name, $CFG->config_php_settings)) {
         $override = '<div class="form-overridden">'.get_string('configoverride', 'admin').'</div>';
     } else {
         $override = '';
