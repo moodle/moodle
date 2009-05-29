@@ -35,16 +35,52 @@ if (isset($_SERVER['REMOTE_ADDR'])) {
     exit;
 }
 
-$olddir = getcwd();
+$help =
+"Command line Moodle installer, creates config.php and initializes database.
+Please note you must execute this script with the same uid as apache
+or use chmod/chown after installation.
 
-// change directory so that includes bellow work properly
-chdir(dirname($_SERVER['argv'][0]));
+Site defaults may be changed via local/defaults.php.
+
+Options:
+--lang=CODE           Installation and default site language.
+--wwwroot=URL         Web address for the Moodle site,
+                      required in non-interactive mode.
+--dataroot=DIR        Location of the moodle data folder,
+                      must not be web accessible. Default is moodleroot
+                      in parent directory.
+--dbtype=TYPE         Database type. Default is mysqli
+--dbhost=HOST         Database host. Default is localhost
+--dbname=NAME         Database name. Default is moodle
+--dbuser=USERNAME     Database user. Default is root
+--dbpass=PASSWORD     Database password. Default is blank
+--dbsocket            Use database sockets. Available for some databases only.
+--prefix=STRING       Table prefix for above database tables. Default is mdl_
+--admin-password=PASS Password for the moodle admin account,
+                      required in non-interactive mode.
+--non-interactive     No interactive questions, installation fails if any
+                      problem encountered.
+--agreelicense        Indicates agreement with software license,
+                      required in non-interactive mode.
+-h, --help            Print out this help
+
+Example: \$sudo -u wwwrun /usr/bin/php admin/cli/install.php --lang=cs
+"; //TODO: localize, mark as needed in install
+
 
 // Nothing to do if config.php exists
 $configfile = dirname(dirname(dirname(__FILE__))).'/config.php';
 if (file_exists($configfile)) {
-    die("Moodle already installed, please use admin/cli/upgrade.php if you want to upgrade your site.\n");
+    require($configfile);
+    echo("Moodle already installed, please use admin/cli/upgrade.php if you want to upgrade your site.\n\n"); // TODO: localize
+    echo $help;
+    die(1);
 }
+
+$olddir = getcwd();
+
+// change directory so that includes bellow work properly
+chdir(dirname($_SERVER['argv'][0]));
 
 // make sure PHP errors are displayed - helps with diagnosing of problems
 @error_reporting(E_ALL);
@@ -140,39 +176,6 @@ if ($unrecognized) {
 }
 
 if ($options['help']) {
-
-$help =
-"Command line Moodle installer, creates config.php and initializes database.
-Please note you must execute this script with the same uid as apache
-or use chmod/chown after installation.
-
-Site defaults may be changed via local/defaults.php.
-
-Options:
---lang=CODE           Installation and default site language.
---wwwroot=URL         Web address for the Moodle site,
-                      required in non-interactive mode.
---dataroot=DIR        Location of the moodle data folder,
-                      must not be web accessible. Default is moodleroot
-                      in parent directory.
---dbtype=TYPE         Database type. Default is mysqli
---dbhost=HOST         Database host. Default is localhost
---dbname=NAME         Database name. Default is moodle
---dbuser=USERNAME     Database user. Default is root
---dbpass=PASSWORD     Database password. Default is blank
---dbsocket            Use database sockets. Available for some databases only.
---prefix=STRING       Table prefix for above database tables. Default is mdl_
---admin-password=PASS Password for the moodle admin account,
-                      required in non-interactive mode.
---non-interactive     No interactive questions, installation fails if any
-                      problem encountered.
---agreelicense        Indicates agreement with software license,
-                      required in non-interactive mode.
--h, --help            Print out this help
-
-Example: \$sudo -u wwwrun /usr/bin/php admin/cli/install.php --lang=cs
-"; //TODO: localize, mark as needed in install
-
     echo $help;
     die;
 }
