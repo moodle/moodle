@@ -21,7 +21,9 @@ class repository_url extends repository {
     public function __construct($repositoryid, $context = SITEID, $options = array()){
         global $SESSION, $action, $CFG;
         parent::__construct($repositoryid, $context, $options);
-        $this->client_id = $options['client_id'];
+        if (!empty($options['client_id'])) {
+            $this->client_id = $options['client_id'];
+        }
         $this->file_url = optional_param('download_from', '', PARAM_RAW);
     }
 
@@ -31,7 +33,6 @@ class repository_url extends repository {
         $fp = fopen($path, 'w');
         $c = new curl;
         $c->download(array(array('url'=>$url, 'file'=>$fp)));
-
         return $path;
     }
 
