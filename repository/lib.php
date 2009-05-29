@@ -1094,54 +1094,12 @@ abstract class repository {
         } else {
             $options = $this->get_option();
         }
-        $this->options = array();
         foreach ($options as $n => $v) {
             $this->options[$n] = $v;
         }
         $this->name = $this->get_name();
         $this->check_login();
         $this->super_called = true;
-    }
-
-    /**
-     * set options for repository instance
-     *
-     * @param string $name
-     * @param mixed $value
-     */
-    public function __set($name, $value) {
-        $this->options[$name] = $value;
-    }
-
-    /**
-     * get options for repository instance
-     *
-     * @param string $name
-     * @return mixed
-     */
-    public function __get($name) {
-        if (array_key_exists($name, $this->options)) {
-            return $this->options[$name];
-        }
-        trigger_error('Undefined property: '.$name, E_USER_NOTICE);
-        return null;
-    }
-
-    /**
-     * test option name
-     *
-     * @param string name
-     */
-    public function __isset($name) {
-        return isset($this->options[$name]);
-    }
-
-    /**
-     * Return the name of the repository class
-     * @return string
-     */
-    public function __toString() {
-        return 'Repository class: '.__CLASS__;
     }
 
     /**
@@ -1194,7 +1152,7 @@ abstract class repository {
      * @return boolean
      */
     public function is_visible() {
-        $type = repository::get_type_by_id($this->typeid);
+        $type = repository::get_type_by_id($this->options['typeid']);
         $instanceoptions = repository::static_function($type->get_typename(), 'get_instance_option_names');
 
         if ($type->get_visible()) {
@@ -1254,17 +1212,17 @@ abstract class repository {
      * @global object $CFG
      * @return object
      */
-    final public function ajax_info() {
+    final public function get_meta() {
         global $CFG;
         $ft = new file_type_to_ext;
-        $repo = new stdclass;
-        $repo->id   = $this->id;
-        $repo->name = $this->get_name();
-        $repo->type = $this->options['type'];
-        $repo->icon = $CFG->httpswwwroot.'/repository/'.$repo->type.'/icon.png';
-        $repo->supported_types = $ft->get_file_ext($this->supported_filetypes());
-        $repo->accepted_types = $this->accepted_types;
-        return $repo;
+        $meta = new stdclass;
+        $meta->id   = $this->id;
+        $meta->name = $this->get_name();
+        $meta->type = $this->options['type'];
+        $meta->icon = $CFG->httpswwwroot.'/repository/'.$repo->type.'/icon.png';
+        $meta->supported_types = $ft->get_file_ext($this->supported_filetypes());
+        $meta->accepted_types = $this->options['accepted_types'];
+        return $meta;
     }
 
     /**
@@ -1964,9 +1922,9 @@ EOD;
 repository_listing['$id'] = [];
 EOD;
     foreach ($repos as $repo) {
-        $info = $repo->ajax_info();
+        $meta = $repo->get_meta();
         $js .= "\r\n";
-        $js .= 'repository_listing[\''.$id.'\']['.$info->id.']='.json_encode($repo->ajax_info()).';';
+        $js .= 'repository_listing[\''.$id.'\']['.$meta->id.']='.json_encode($meta).';';
         $js .= "\n";
     }
     $js .= "\r\n";
