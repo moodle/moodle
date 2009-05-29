@@ -1219,7 +1219,7 @@ abstract class repository {
         $meta->id   = $this->id;
         $meta->name = $this->get_name();
         $meta->type = $this->options['type'];
-        $meta->icon = $CFG->httpswwwroot.'/repository/'.$repo->type.'/icon.png';
+        $meta->icon = $CFG->httpswwwroot.'/repository/'.$meta->type.'/icon.png';
         $meta->supported_types = $ft->get_file_ext($this->supported_filetypes());
         $meta->accepted_types = $this->options['accepted_types'];
         return $meta;
