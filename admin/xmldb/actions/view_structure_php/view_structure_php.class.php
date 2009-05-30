@@ -1,32 +1,34 @@
-<?php // $Id$
+<?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
-//           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/// This class will show the PHP needed to perform the desired action
-/// with the specified table.
+/**
+ * @package   xmldb-editor
+ * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
+/**
+ * This class will show the PHP needed (upgrade block) to perform
+ * the desired DDL action with the specified table
+ *
+ * @package   xmldb-editor
+ * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class view_structure_php extends XMLDBAction {
 
     /**
@@ -309,36 +311,5 @@ class view_structure_php extends XMLDBAction {
         return $result;
     }
 
-    /**
-     * This function will generate the PHP code needed to
-     * implement the upgrade_xxxx_savepoint() php calls in
-     * upgrade code generated from the editor
-     *
-     * @param xmldb_structure structure object containing all the info
-     * @return string PHP code to be used to stabilish a savepoint
-     */
-    function upgrade_savepoint_php ($structure) {
-
-        $path = $structure->getPath();
-
-        $result = '';
-
-    /// Split path into components
-        $patharr = explode('/', $path);
-
-        switch ($patharr[0]) {
-            case 'lib':
-                $result = XMLDB_LINEFEED .
-                         '    /// Main savepoint reached' . XMLDB_LINEFEED .
-                         '        upgrade_main_savepoint($result, XXXXXXXXXX);' . XMLDB_LINEFEED;
-                break;
-            case 'mod':
-                $result = XMLDB_LINEFEED .
-                         '    /// ' . $patharr[1] . ' savepoint reached' . XMLDB_LINEFEED .
-                         '        upgrade_mod_savepoint($result, XXXXXXXXXX, ' . "'$patharr[1]'" . ');' . XMLDB_LINEFEED;
-                break;
-        }
-        return $result;
-    }
 }
 ?>

@@ -1,32 +1,36 @@
-<?php // $Id$
+<?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
-//           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/// This is the main action class. It implements all the basic
-/// functionalities to be shared by each action.
+/**
+ * @package   xmldb-editor
+ * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
+/**
+ * Main xmldb action clasee
+ *
+ * Main xmldb action class. It implements all the basic
+ * functionalities to be shared by each action.
+ *
+ * @package   xmldb-editor
+ * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class XMLDBAction {
 
     var $does_generate;  //Type of value returned by the invoke method
@@ -184,6 +188,61 @@ class XMLDBAction {
             }
         } else {
             $this->errormsg = "Error: wrong action specified ($action)";
+        }
+        return $result;
+    }
+
+    /**
+     * This function will generate the PHP code needed to
+     * implement the upgrade_xxxx_savepoint() php calls in
+     * upgrade code generated from the editor. It's used by
+     * the view_structure_php and view_table_php actions
+     *
+     * @param xmldb_structure structure object containing all the info
+     * @return string PHP code to be used to stabilish a savepoint
+     */
+    function upgrade_savepoint_php ($structure) {
+
+        $path = $structure->getPath();
+
+    /// Trim "db" from path
+        $path = dirname($path);
+
+    /// Get all the available plugin types
+        $plugintypes = get_plugin_types();
+
+    /// Get pluginname, plugindir and plugintype
+        $pluginname = basename($path);
+        if ($path == 'lib') { /// exception for lib (not proper plugin)
+            $plugindir = 'lib';
+            $plugintype = 'lib';
+        } else { /// rest of plugins
+            $plugindir = dirname($path);
+            $plugintype = array_search($plugindir, $plugintypes);
+        }
+
+        $result = '';
+
+        switch ($plugintype ) {
+            case 'lib': /// has own savepoint function
+                $result = XMLDB_LINEFEED .
+                          '    /// Main savepoint reached' . XMLDB_LINEFEED .
+                          '        upgrade_main_savepoint($result, XXXXXXXXXX);' . XMLDB_LINEFEED;
+                break;
+            case 'mod': /// has own savepoint function
+                $result = XMLDB_LINEFEED .
+                          '    /// ' . $pluginname . ' savepoint reached' . XMLDB_LINEFEED .
+                          '        upgrade_mod_savepoint($result, XXXXXXXXXX, ' . "'$pluginname'" . ');' . XMLDB_LINEFEED;
+                break;
+            case 'block': /// has own savepoint function
+                $result = XMLDB_LINEFEED .
+                          '    /// ' . $pluginname . ' savepoint reached' . XMLDB_LINEFEED .
+                          '        upgrade_block_savepoint($result, XXXXXXXXXX, ' . "'$pluginname'" . ');' . XMLDB_LINEFEED;
+                break;
+            default: /// rest of plugins
+                $result = XMLDB_LINEFEED .
+                          '    /// ' . $pluginname . ' savepoint reached' . XMLDB_LINEFEED .
+                          '        upgrade_plugin_savepoint($result, XXXXXXXXXX, ' . "'$plugintype'" . ', ' . "'$pluginname'" . ');' . XMLDB_LINEFEED;
         }
         return $result;
     }
