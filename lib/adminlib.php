@@ -244,65 +244,14 @@ function get_db_directories() {
 /// First, the main one (lib/db)
     $dbdirs[] = $CFG->libdir.'/db';
 
-/// Now, activity modules (mod/xxx/db)
-    if ($plugins = get_list_of_plugins('mod')) {
-        foreach ($plugins as $plugin) {
-            $dbdirs[] = $CFG->dirroot.'/mod/'.$plugin.'/db';
-        }
-    }
-
-/// Now, assignment submodules (mod/assignment/type/xxx/db)
-    if ($plugins = get_list_of_plugins('mod/assignment/type')) {
-        foreach ($plugins as $plugin) {
-            $dbdirs[] = $CFG->dirroot.'/mod/assignment/type/'.$plugin.'/db';
-        }
-    }
-
-/// Now, question types (question/type/xxx/db)
-    if ($plugins = get_list_of_plugins('question/type')) {
-        foreach ($plugins as $plugin) {
-            $dbdirs[] = $CFG->dirroot.'/question/type/'.$plugin.'/db';
-        }
-    }
-
-/// Now, blocks (blocks/xxx/db)
-    if ($plugins = get_list_of_plugins('blocks', 'db')) {
-        foreach ($plugins as $plugin) {
-            $dbdirs[] = $CFG->dirroot.'/blocks/'.$plugin.'/db';
-        }
-    }
-
-/// Now, course formats (course/format/xxx/db)
-    if ($plugins = get_list_of_plugins('course/format', 'db')) {
-        foreach ($plugins as $plugin) {
-            $dbdirs[] = $CFG->dirroot.'/course/format/'.$plugin.'/db';
-        }
-    }
-
-/// Now, enrolment plugins (enrol/xxx/db)
-    if ($plugins = get_list_of_plugins('enrol', 'db')) {
-        foreach ($plugins as $plugin) {
-            $dbdirs[] = $CFG->dirroot.'/enrol/'.$plugin.'/db';
-        }
-    }
-
-/// Now admin report plugins (admin/report/xxx/db)
-    if ($plugins = get_list_of_plugins($CFG->admin.'/report', 'db')) {
-        foreach ($plugins as $plugin) {
-            $dbdirs[] = $CFG->dirroot.'/'.$CFG->admin.'/report/'.$plugin.'/db';
-        }
-    }
-
-/// Now quiz report plugins (mod/quiz/report/xxx/db)
-    if ($plugins = get_list_of_plugins('mod/quiz/report', 'db')) {
-        foreach ($plugins as $plugin) {
-            $dbdirs[] = $CFG->dirroot.'/mod/quiz/report/'.$plugin.'/db';
-        }
-    }
-
-    if ($plugins = get_list_of_plugins('portfolio/type', 'db')) {
-        foreach ($plugins as $plugin) {
-            $dbdirs[] = $CFG->dirroot . '/portfolio/type/' . $plugin . '/db';
+/// Then, all the ones defined by get_plugin_types()
+    if ($plugintypes = get_plugin_types()) {
+        foreach ($plugintypes as $plugintype => $pluginbasedir) {
+            if ($plugins = get_list_of_plugins($pluginbasedir, 'db')) {
+                foreach ($plugins as $plugin) {
+                    $dbdirs[] = $CFG->dirroot . '/' . $pluginbasedir . '/' . $plugin . '/db';
+                }
+            }
         }
     }
 
