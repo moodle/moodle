@@ -236,6 +236,7 @@ $string['odbcextensionisnotpresentinphp'] = 'PHP-ն ճիշտ չէ կազմաձև
 $string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
 $string['ok'] = 'OK';
 $string['opensslrecommended'] = 'Խորհուրդ է տրվում լրացուցիչ OpenSSL գրադարանի տեղակայումը -- այն հնարավոր է դարձնում Moodle ցանցային  գործառույթը։';
+$string['parentlanguage'] = '<< Թարգմանիչներ. Եթե Ձեր լեզուն ունի մայր լեզու, որը Moodle-ը պետք է օգտագործի Ձեր փաթեթի բացակա տողերի փոխարեն, այստեղ նշեք այդ կոդը։ Եթե դատարկ թողեք, կօգտագործվի անգլերենը։ Օրինակ՝ nl >>';
 $string['pass'] = 'Անցում';
 $string['password'] = 'Գաղտնաբառ';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP-ն ճիշտ չէ կազմաձևվել PGSQL ընդլայնման հետ, որպեսզի կարողանա աշխատել PostgreSQL-ի հետ։  Ստուգեք Ձեր php.ini ֆայլը կամ վերակազմարկեք PHP-ն։';
