@@ -276,6 +276,7 @@ class SearchQuery {
                     $resultdoc->doctype = $hit->doctype;
                     $resultdoc->author  = $hit->author;
                     $resultdoc->courseid = $hit->course_id;
+                    $resultdoc->userid  = $hit->user_id; 
                     
                     //and store it
                     $resultdocs[] = clone($resultdoc);
@@ -324,7 +325,9 @@ class SearchQuery {
     */
     public function page_numbers() {
       $pages  = $this->total_pages();
-      $query  = htmlentities($this->term);
+      // $query  = htmlentities($this->term);
+      // http://moodle.org/mod/forum/discuss.php?d=115788
+      $query = htmlentities($this->term,ENT_NOQUOTES,'utf-8');
       $page   = $this->pagenumber;
       $next   = get_string('next', 'search');
       $back   = get_string('back', 'search');

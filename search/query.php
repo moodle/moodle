@@ -119,9 +119,9 @@
         } 
         
         // add module restriction
-        $doctypestr = get_string('doctype', 'search');
-        $titlestr = get_string('title', 'search');
-        $authorstr = get_string('author', 'search');
+        $doctypestr = 'doctype';
+        $titlestr = 'title';
+        $authorstr = 'author';
         if ($adv->module != 'all') {
             $query_string .= " +{$doctypestr}:".$adv->module;
         } 
@@ -340,9 +340,8 @@
 
             foreach ($hits as $listing) {  
                 
-                if ($listing->doctype == 'user'){ // A special handle for users
-                    
-                    $icon = print_user_picture ($listing->author, 0, true, 0, true, false) ;
+                if ($listing->doctype == 'user'){ // A special handle for users                    
+                    $icon = print_user_picture ($listing->userid, 0, true, 0, true, false) ;
                 } else {
                     $iconpath = $CFG->modpixpath.'/'.$listing->doctype.'/icon.gif';
                     $icon = "<img align=\"top\" src=\"".$iconpath."\" class=\"activityicon\" alt=\"\"/>";
@@ -351,9 +350,6 @@
                 $courseword = mb_convert_case(get_string('course', 'moodle'), MB_CASE_LOWER, 'UTF-8');
                 $course = ($listing->doctype != 'user') ? '<strong> ('.$courseword.': \''.$coursename.'\')</strong>' : '' ;
 
-                //if ($CFG->unicodedb) {
-                //$listing->title = mb_convert_encoding($listing->title, 'auto', 'UTF8');
-                //}
                 $title_post_processing_function = $listing->doctype.'_link_post_processing';
                 $searchable_instance = $searchables[$listing->doctype];
                 if ($searchable_instance->location == 'internal'){
