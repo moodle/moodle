@@ -124,6 +124,35 @@ function cli_get_params(array $longoptions, array $shortmapping=null) {
 }
 
 /**
+ * Print or return section separator string
+ * @param bool $return false means print, true return as string
+ * @return mixed void or string
+ */
+function cli_separator($return=false) {
+    $separator = str_repeat('-', 79)."\n";
+    if ($return) {
+        return $separator;
+    } else {
+        echo $separator;
+    }
+}
+
+/**
+ * Print or return section heading string
+ * @param string $string text
+ * @param bool $return false means print, true return as string
+ * @return mixed void or string
+ */
+function cli_heading($string, $return=false) {
+    $string = "== $string ==\n";
+    if ($return) {
+        return $string;
+    } else {
+        echo $string;
+    }
+}
+
+/**
  * Write error notification
  * @param $text
  * @return void

@@ -60,21 +60,27 @@ Options:
                       required in non-interactive mode.
 --non-interactive     No interactive questions, installation fails if any
                       problem encountered.
---agreelicense        Indicates agreement with software license,
+--agree-license       Indicates agreement with software license,
                       required in non-interactive mode.
 -h, --help            Print out this help
 
 Example: \$sudo -u wwwrun /usr/bin/php admin/cli/install.php --lang=cs
-"; //TODO: localize, mark as needed in install
+"; //TODO: localize, mark as needed in install - to be translated later when everything is finished
 
 
 // Nothing to do if config.php exists
 $configfile = dirname(dirname(dirname(__FILE__))).'/config.php';
 if (file_exists($configfile)) {
     require($configfile);
-    echo("Moodle already installed, please use admin/cli/upgrade.php if you want to upgrade your site.\n\n"); // TODO: localize
-    echo $help;
-    die(1);
+    require_once($CFG->libdir.'/clilib.php');
+    list($options, $unrecognized) = cli_get_params(array('help'=>false), array('h'=>'help'));
+
+    if ($options['help']) {
+        echo $help;
+        echo "\n\n";
+    }
+
+    cli_error(get_string('clialreadyinstalled', 'install'));
 }
 
 $olddir = getcwd();
@@ -108,7 +114,7 @@ $CFG->httpsthemewww        = $CFG->wwwroot;
 $CFG->dataroot             = str_replace('\\', '/', dirname(dirname(dirname(__FILE__))).'/moodledata');
 $CFG->docroot              = 'http://docs.moodle.org';
 $CFG->directorypermissions = 00777;
-$CFG->running_installer    = true;
+//$CFG->running_installer    = true;
 $parts = explode('/', str_replace('\\', '/', dirname(dirname(__FILE__))));
 $CFG->admin                = array_pop($parts);
 
@@ -146,16 +152,16 @@ foreach ($databases as $type=>$database) {
     }
 }
 if (empty($databases)) {
-    cli_error('No db drivers available!'); // TODO: localize
+    $defaultdb = '';
+} else {
+    reset($databases);
+    $defaultdb = key($databases);
 }
-
-reset($databases);
-$defaultdb = key($databases);
 
 // now get cli options
 list($options, $unrecognized) = cli_get_params(array('lang'=>$CFG->lang, 'wwwroot'=>'', 'dataroot'=>$CFG->dataroot, 'dbtype'=>$defaultdb, 'dbhost'=>'localhost',
                                                      'dbname'=>'moodle', 'dbuser'=>'root', 'dbpass'=>'', 'dbsocket'=>false, 'prefix'=>'mdl_', 'admin-password'=>'',
-                                                     'non-interactive'=>false, 'agreelicense'=>false, 'help'=>false),
+                                                     'non-interactive'=>false, 'agree-license'=>false, 'help'=>false),
                                                array('h'=>'help'));
 
 $interactive = empty($options['non-interactive']);
@@ -171,8 +177,8 @@ if (file_exists($CFG->dirroot.'/install/lang/'.$lang)) {
 }
 
 if ($unrecognized) {
-    $error = implode("\n  ", $unrecognized);
-    cli_error("Unrecognized options:\n  $error \n. Please use --help option."); // TODO: localize, mark as needed in install
+    $unrecognized = implode("\n  ", $unrecognized);
+    cli_error('cliunknowoption', 'admin', $unrecognized);
 }
 
 if ($options['help']) {
@@ -180,16 +186,14 @@ if ($options['help']) {
     die;
 }
 
-$separator = str_repeat('=', 79)."\n";
-
 //Print header
-echo "Moodle $CFG->target_release command line installation program.\n"; // TODO: localize, mark as needed in install
+echo get_string('cliinstallheader', 'install', $CFG->target_release)."\n";
 
 //Fist select language
 if ($interactive) {
-    echo $separator;
+    cli_separator();
     $languages = install_get_list_of_languages();
-    // fomrat the langs nicely - 4 per line
+    // format the langs nicely - 3 per line
     $c = 0;
     $langlist = '';
     foreach ($languages as $key=>$lang) {
@@ -202,7 +206,9 @@ if ($interactive) {
         }
     }
     $default = str_replace('_utf8', '', $CFG->lang);
-    $prompt = "Available languages:\n$langlist\nType language code or press Enter to use default value ($default)"; // TODO: localize, mark as needed in install
+    cli_heading(get_string('availablelangs', 'install'));
+    echo $langlist."\n";
+    $prompt = get_string('clitypevaluedefault', 'admin', $default);
     $error = '';
     do {
         echo $error;
@@ -210,14 +216,14 @@ if ($interactive) {
         $input = clean_param($input, PARAM_SAFEDIR);
 
         if (!file_exists($CFG->dirroot.'/install/lang/'.$input.'_utf8')) {
-            $error = "Incorrect value, please retry.\n"; // TODO: localize, mark as needed in install
+            $error = get_string('cliincorrectvalueretry', 'admin')."\n";
         } else {
             $error = '';
         }
     } while ($error !== '');
     $CFG->lang = $input.'_utf8';
 } else {
-    // already verified
+    // already selected and verified
 }
 
 
@@ -225,11 +231,13 @@ if ($interactive) {
 $wwwroot = clean_param($options['wwwroot'], PARAM_URL);
 $wwwroot = trim($wwwroot, '/');
 if ($interactive) {
-    echo $separator;
+    cli_separator();
+    cli_heading(get_string('wwwroot', 'install'));
     if (strpos($wwwroot, 'http') === 0) {
-        $prompt = "Type URL of your site \nor press Enter to use default value ($wwwroot)"; // TODO: localize, mark as needed in install
+        $prompt = get_string('clitypevaluedefault', 'admin', $wwwroot);
     } else {
-        $prompt = "Type URL of your site"; // TODO: localize, mark as needed in install
+        $wwwroot = null;
+        $prompt = get_string('clitypevalue', 'admin');
     }
     $error = '';
     do {
@@ -238,7 +246,7 @@ if ($interactive) {
         $input = clean_param($input, PARAM_URL);
         $input = trim($input, '/');
         if (strpos($input, 'http') !== 0) {
-            $error = "Incorrect value, please retry.\n"; // TODO: localize, mark as needed in install
+            $error = get_string('cliincorrectvalueretry', 'admin')."\n";
         } else {
             $error = '';
         }
@@ -247,7 +255,8 @@ if ($interactive) {
 
 } else {
     if (strpos($wwwroot, 'http') !== 0) {
-        cli_error("Error:\n wwwroot parametr value \"$wwwroot\" in not correct. Please use different value."); // TODO: localize, mark as needed in install
+        $a = (object)array('option'=>'wwwroot', 'value'=>$wwwroot);
+        cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
     }
 }
 $CFG->wwwroot       = $wwwroot;
@@ -257,7 +266,7 @@ $CFG->httpsthemewww = $CFG->wwwroot;
 
 //We need dataroot before lang download
 if ($interactive) {
-    echo $separator;
+    cli_separator();
     $i=0;
     while(is_dataroot_insecure()) {
         $parrent = dirname($CFG->dataroot);
@@ -268,25 +277,27 @@ if ($interactive) {
         }
         $CFG->dataroot = dirname($parrent).'/moodledata';
     }
+    cli_heading(get_string('dataroot', 'install'));
     $error = '';
     do {
         if ($CFG->dataroot !== '') {
-            $prompt = "Type Moodle data directory \nor press Enter to use default value ($CFG->dataroot)"; // TODO: localize, mark as needed in install
+            $prompt = get_string('clitypevaluedefault', 'admin', $CFG->dataroot);
         } else {
-            $prompt = "Type Moodle data directory"; // TODO: localize, mark as needed in install
+            $prompt = get_string('clitypevalue', 'admin');
         }
         echo $error;
         $CFG->dataroot = cli_input($prompt, $CFG->dataroot);
         if ($CFG->dataroot === '') {
-            $error = "Incorrect value, please retry.\n"; // TODO: localize, mark as needed in install
+            $error = get_string('cliincorrectvalueretry', 'admin')."\n";
         } else if (is_dataroot_insecure()) {
             $CFG->dataroot = '';
-            $error = "Directory may not be secure, please retry.\n"; // TODO: localize, mark as needed in install
+            //TODO: use unsecure warning instead
+            $error = get_string('cliincorrectvalueretry', 'admin')."\n";
         } else {
             if (make_upload_directory('lang', false)) {
                 $error = '';
             } else {
-                $error = "Can not create dataroot directory, verify permissions or create directory manually.\n"; // TODO: localize, mark as needed in install
+                $error = get_string('pathserrcreatedataroot', 'install', $CFG->dataroot)."\n";
             }
         }
 
@@ -294,16 +305,17 @@ if ($interactive) {
 
 } else {
     if (is_dataroot_insecure()) {
-        cli_error("Error:\n directory $CFG->dataroot may be directly accessible via web. Please use different directory."); // TODO: localize, mark as needed in install
+        $a = (object)array('option'=>'dataroot', 'value'=>$CFG->dataroot);
+        //TODO: use unsecure warning instead
+        cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
+    }
+    if (!make_upload_directory('lang', false)) {
+        cli_error(get_string('pathserrcreatedataroot', 'install', $CFG->dataroot));
     }
 }
 
 //download lang pack with optional notification
 if ($CFG->lang != 'en_utf8') {
-    if ($interactive) {
-        echo $separator;
-        echo "Downloading latest language package from moodle.org...\n"; // TODO: localize, mark as needed in install
-    }
     if ($cd = new component_installer('http://download.moodle.org', 'lang16', $CFG->lang.'.zip', 'languages.md5', 'lang')) {
         if ($cd->install() == COMPONENT_ERROR) {
             if ($cd->get_error() == 'remotedownloaderror') {
@@ -323,9 +335,6 @@ if ($CFG->lang != 'en_utf8') {
             }
         }
     }
-    if ($interactive) {
-        echo "...finished lang download.\n"; // TODO: localize
-    }
 }
 unset($CFG->running_installer); // we use full lang packs from now on
 
@@ -333,23 +342,22 @@ unset($CFG->running_installer); // we use full lang packs from now on
 // ask for db type - show only drivers available
 if ($interactive) {
     $options['dbtype'] = strtolower($options['dbtype']);
-    echo $separator;
-    echo "Available database drivers\n";
+    cli_separator();
+    cli_heading(get_string('databasetypehead', 'install'));
     foreach ($databases as $type=>$database) {
-        echo " $type:".$database->get_name()."\n";
+        echo " $type \n";
     }
-    echo "\n";
     if (!empty($databases[$options['dbtype']])) {
-        $prompt = "Type driver short name\nor press Enter to use default value (".$options['dbtype'].")"; // TODO: localize
+        $prompt = get_string('clitypevaluedefault', 'admin', $options['dbtype']);
     } else {
-        $prompt = "Type driver short name"; // TODO: localize
+        $prompt = get_string('clitypevalue', 'admin');
     }
-
     $CFG->dbtype = cli_input($prompt, $options['dbtype'], array_keys($databases));
 
 } else {
     if (empty($databases[$options['dbtype']])) {
-        cli_error("Error:\n dbtype parametr value \"".$options['dbtype']."\" in not correct. Please use different value."); // TODO: localize
+        $a = (object)array('option'=>'dbtype', 'value'=>$options['dbtype']);
+        cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
     }
     $CFG->dbtype = $options['dbtype'];
 }
@@ -358,13 +366,13 @@ $database = $databases[$CFG->dbtype];
 
 // ask for db host
 if ($interactive) {
-    echo $separator;
+    cli_separator();
+    cli_heading(get_string('databasehost', 'install'));
     if ($options['dbhost'] !== '') {
-        $prompt = "Type database host\nor press Enter to use default value (".$options['dbhost'].")"; // TODO: localize
+        $prompt = get_string('clitypevaluedefault', 'admin', $options['dbhost']);
     } else {
-        $prompt = "Type database host"; // TODO: localize
+        $prompt = get_string('clitypevalue', 'admin');
     }
-
     $CFG->dbhost = cli_input($prompt, $options['dbhost']);
 
 } else {
@@ -373,13 +381,13 @@ if ($interactive) {
 
 // ask for db name
 if ($interactive) {
-    echo $separator;
+    cli_separator();
+    cli_heading(get_string('databasename', 'install'));
     if ($options['dbname'] !== '') {
-        $prompt = "Type database name\nor press Enter to use default value (".$options['dbname'].")"; // TODO: localize
+        $prompt = get_string('clitypevaluedefault', 'admin', $options['dbname']);
     } else {
-        $prompt = "Type database name"; // TODO: localize
+        $prompt = get_string('clitypevalue', 'admin');
     }
-
     $CFG->dbname = cli_input($prompt, $options['dbname']);
 
 } else {
@@ -388,14 +396,14 @@ if ($interactive) {
 
 // ask for db prefix
 if ($interactive) {
-    echo $separator;
+    cli_separator();
+    cli_heading(get_string('dbprefix', 'install'));
     //TODO: solve somehow the prefix trouble for oci
     if ($options['prefix'] !== '') {
-        $prompt = "Type table prefix\nor press Enter to use default value (".$options['prefix'].")"; // TODO: localize
+        $prompt = get_string('clitypevaluedefault', 'admin', $options['prefix']);
     } else {
-        $prompt = "Type table prefix"; // TODO: localize
+        $prompt = get_string('clitypevalue', 'admin');
     }
-
     $CFG->prefix = cli_input($prompt, $options['prefix']);
 
 } else {
@@ -404,13 +412,13 @@ if ($interactive) {
 
 // ask for db user
 if ($interactive) {
-    echo $separator;
+    cli_separator();
+    cli_heading(get_string('databaseuser', 'install'));
     if ($options['dbuser'] !== '') {
-        $prompt = "Type database user name\nor press Enter to use default value (".$options['dbuser'].")"; // TODO: localize
+        $prompt = get_string('clitypevaluedefault', 'admin', $options['dbuser']);
     } else {
-        $prompt = "Type database user name"; // TODO: localize
+        $prompt = get_string('clitypevalue', 'admin');
     }
-
     $CFG->dbuser = cli_input($prompt, $options['dbuser']);
 
 } else {
@@ -419,12 +427,13 @@ if ($interactive) {
 
 // ask for db password
 if ($interactive) {
-    echo $separator;
+    cli_separator();
+    cli_heading(get_string('databasepass', 'install'));
     do {
         if ($options['dbpass'] !== '') {
-            $prompt = "Type database user password\nor press Enter to use default value (".$options['dbpass'].")"; // TODO: localize
+            $prompt = get_string('clitypevaluedefault', 'admin', $options['dbpass']);
         } else {
-            $prompt = "Type database user password"; // TODO: localize
+            $prompt = get_string('clitypevalue', 'admin');
         }
 
         $CFG->dbpass = cli_input($prompt, $options['dbpass']);
@@ -435,32 +444,34 @@ if ($interactive) {
     $CFG->dbpass = $options['dbpass'];
     $hint_database = install_db_validate($database, $CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, array('dbpersit'=>0, 'dbsocket'=>$options['dbsocket']));
     if ($hint_database !== '') {
-        cli_error('Can not open connection to database!');
+        cli_error(get_string('dbconnectionerror', 'install'));
     }
 }
 
 // ask for admin user password
 if ($interactive) {
-    echo $separator;
-    $prompt = "Type requested password for user 'admin'"; // TODO: localize
+    cli_separator();
+    cli_heading(get_string('cliadminpassword', 'install'));
+    $prompt = get_string('clitypevalue', 'admin');
     do {
         $options['admin-password'] = cli_input($prompt);
     } while (empty($options['admin-password']) or $options['admin-password'] === 'admin');
 } else {
     if (empty($options['admin-password']) or $options['admin-password'] === 'admin') {
-        cli_error('Requested administrator password must not be empty or easy to guess..'); //TODO: localize
+        $a = (object)array('option'=>'admin-password', 'value'=>$options['admin-password']);
+        cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
     }
 }
 
 if ($interactive) {
-    echo $separator;
-    if (!$options['agreelicense']) {
+    cli_separator();
+    if (!$options['agree-license']) {
         echo "Do you agree to Moodle license blah blah blah?\n"; //TODO: localize and use real license
         $input = cli_input('Type yes or y if you agree, ctrl+c if not', '', array('yes', 'y')); // TODO: localize including yes/y
     }
 } else {
-    if (!$options['agreelicense']) {
-        cli_error('You must aggree to license by specifying --agreelicense'); //TODO: localize
+    if (!$options['agree-license']) {
+        cli_error('You must aggree to license by specifying --agree-license'); //TODO: localize
     }
 }
 
@@ -475,7 +486,7 @@ if (($fh = fopen($configfile, 'w')) !== false) {
 if (!file_exists($configfile)) {
     cli_error('Can not create config file.');
 } else if ($interactive) {
-    echo $separator;
+    cli_separator();
     echo "config.php created\n";
 }
 
@@ -508,7 +519,7 @@ if (!$DB->setup_is_unicodedb()) {
 }
 
 if ($interactive) {
-    echo $separator;
+    cli_separator();
     echo get_string('databasesetup')."\n";
 }
 

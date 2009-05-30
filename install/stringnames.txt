@@ -1,4 +1,5 @@
 admindir
+availablelangs
 cannotcreatelangdir
 cannotdownloadcomponents
 cannotdownloadzipfile
@@ -8,11 +9,17 @@ cannotsavezipfile
 cannotunzipfile
 chooselanguagehead
 chooselanguagesub
+cliincorrectvalueerror
+cliincorrectvalueretry
+cliinstallheader
+clitypevalue
+clitypevaluedefault
+cliunknowoption
+dataroot
+dirroot
 environment
 errorsinenvironment
 environmentsub2
-dataroot
-dirroot
 environmentrequireinstall
 environmentrequireversion
 installation
